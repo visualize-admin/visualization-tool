@@ -15,7 +15,10 @@ test("tooltip content", async ({ actions, selectors, within, page }) => {
     selectors.edition.controlSection("Filters")
   );
 
-  await filterLocator.getByText("All greenhouse gas").click();
+  await filterLocator
+    .getByRole("textbox", { name: "2. Greenhouse gas" })
+    .click();
+    
   await selectors.mui
     .popover()
     .findByText("Methane", undefined, { timeout: 10_000 });
