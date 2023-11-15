@@ -14,13 +14,15 @@ describe("Filters", () => {
     await selectors.chart.loaded();
     await selectors.edition.drawerLoaded();
 
-    const filters = selectors.edition.controlSection("Filters");
+    const filters = selectors.edition.controlSectionBySubtitle("Filters");
 
     await filters.locator("label").first().waitFor({ timeout: 30_000 });
 
     const labels = filters.locator("label[for^=select-single-filter]");
 
     const texts = await labels.allTextContents();
+
+    console.log(texts);
     // Hierarchical dimensions should come first.
     expect(texts[0]).toEqual("1. Region");
     expect(texts[1]).toEqual("2. tree status");
