@@ -7,7 +7,7 @@ const selectActiveEditorField =
   ({ selectors, within }: ActionTestContext) =>
   async (field: string) => {
     const fieldLocator = await within(
-      selectors.edition.controlSection("Chart Options")
+      selectors.edition.controlSectionBySubtitle("Chart Options")
     ).findByText(field);
     await fieldLocator.click();
     await selectors.panels
@@ -95,7 +95,8 @@ export const createActions = ({
     },
   },
   drawer: {
-    close: async () => await screen.locator('text="Back to main"').click(),
+    close: async () =>
+      await screen.getByRole("button", { name: "Back to main" }).click(),
   },
   common: {
     switchLang: async (lang: "de" | "fr" | "en" | "it") => {

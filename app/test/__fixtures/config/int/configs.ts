@@ -32,11 +32,12 @@ const configs: TestConfig[] = [
     name: "Pie - Red list",
     slug: "pie-red-list",
   },
-  {
-    chartId: "jky5IEw6poT3",
-    name: "Map - NFI: Topics by tree status",
-    slug: "map-nfi",
-  },
+  // FIX: currently broken and should be rebuilt from PROD datasets and stored in local config
+  // {
+  //   chartId: "jky5IEw6poT3",
+  //   name: "Map - NFI: Topics by tree status",
+  //   slug: "map-nfi",
+  // },
   {
     chartId: "nI6X4V_EcK2c",
     name: "Bathing water quality (interactive filters hierarchie)",

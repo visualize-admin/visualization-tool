@@ -29,6 +29,7 @@ const Page: NextPage = () => {
   const [config, setConfig] = useState<{ key: string; data: DbConfig }>();
 
   useEffect(() => {
+    if (!env || !slug) return;
     const run = async () => {
       const importedConfig = (
         await import(`../../../test/__fixtures/config/${env}/${slug}`)

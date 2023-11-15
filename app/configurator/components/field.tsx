@@ -213,6 +213,7 @@ export const DataFilterSelect = ({
     return (
       <SelectTree
         label={<FieldLabel label={label} isOptional={isOptional} />}
+        id={id}
         options={hierarchyOptions}
         onClose={handleClose}
         onOpen={handleOpen}

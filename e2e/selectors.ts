@@ -70,9 +70,13 @@ export const createSelectors = ({ screen, page, within }: Ctx) => {
         screen.findByTestId("chart-type-selector-regular"),
       filtersLoaded: () =>
         screen.findByText("Selected filters", undefined, { timeout: 10_000 }),
-      controlSection: (title: string) =>
+      controlSectionBySubtitle: (title: string) =>
         page.locator("[data-testid=controlSection]", {
           has: page.locator(`h5:text-is("${title}")`),
+        }),
+      controlSectionByTitle: (title: string) =>
+        page.locator("[data-testid=controlSection]", {
+          has: page.locator(`h4:text-is("${title}")`),
         }),
       dataFilterInput: (label: string) =>
         page.locator(`div[role="button"]:has-text("${label}")`),
