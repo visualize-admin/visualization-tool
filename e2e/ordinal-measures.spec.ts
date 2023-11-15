@@ -29,7 +29,7 @@ describe("viewing a dataset with only ordinal measures", () => {
     await selectors.edition.drawerLoaded();
 
     const enabledButtons = await (
-      await selectors.edition.chartTypeSelector()
+      await selectors.edition.chartTypeSelectorRegular()
     ).locator("button:not(.Mui-disabled)");
 
     expect(await enabledButtons.count()).toEqual(2);
@@ -56,7 +56,7 @@ describe("viewing a dataset with only ordinal measures", () => {
 
     await selectors.chart.loaded();
 
-    await within(selectors.edition.controlSection("Symbols"))
+    await within(selectors.edition.controlSectionByTitle("Symbols"))
       .getByText("None")
       .click();
 
@@ -69,7 +69,7 @@ describe("viewing a dataset with only ordinal measures", () => {
     // Chart needs to re-load when symbol layer is selected
     await selectors.chart.loaded();
 
-    await within(selectors.edition.controlSection("Segmentation"))
+    await within(selectors.edition.controlSectionBySubtitle("Color"))
       .getByText("None")
       .click();
 
