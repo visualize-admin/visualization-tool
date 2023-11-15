@@ -12,13 +12,13 @@ test("tooltip content", async ({ actions, selectors, within, page }) => {
   await selectors.edition.drawerLoaded();
 
   const filterLocator = await within(
-    selectors.edition.controlSection("Filters")
+    selectors.edition.controlSectionBySubtitle("Filters")
   );
 
   await filterLocator
     .getByRole("textbox", { name: "2. Greenhouse gas" })
     .click();
-    
+
   await selectors.mui
     .popover()
     .findByText("Methane", undefined, { timeout: 10_000 });
