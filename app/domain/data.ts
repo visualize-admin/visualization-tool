@@ -49,7 +49,7 @@ export type DataCubesComponents = {
 
 export type DataCubeMetadata = {
   iri: string;
-  identifier: string;
+  identifier?: string;
   title: string;
   description: string;
   version?: string;
@@ -66,7 +66,6 @@ export type DataCubeMetadata = {
   publisher?: string;
   landingPage?: string;
   expires?: string;
-  keywords?: string[];
   workExamples?: string[];
 };
 

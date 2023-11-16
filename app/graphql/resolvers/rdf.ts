@@ -30,6 +30,7 @@ import {
   getCubesDimensions,
   getLatestCube,
 } from "@/rdf/queries";
+import { getCubeMetadata } from "@/rdf/query-cube-metadata";
 import { unversionObservation } from "@/rdf/query-dimension-values";
 import { queryHierarchy } from "@/rdf/query-hierarchies";
 import { SearchResult, searchCubes as _searchCubes } from "@/rdf/query-search";
@@ -292,7 +293,7 @@ export const dataCubesComponents: NonNullable<
 export const dataCubesMetadata: NonNullable<
   QueryResolvers["dataCubesMetadata"]
 > = async (_, { locale, filters }, { setup }, info) => {
-  const { loaders } = await setup(info);
+  const { loaders, sparqlClient } = await setup(info);
 
   return await Promise.all(
     filters.map(async (filter) => {
@@ -300,13 +301,15 @@ export const dataCubesMetadata: NonNullable<
       const rawCube = await loaders.cube.load(iri);
 
       if (!rawCube) {
-        throw new Error("Cube not found");
+        throw new Error("Cube not found!");
       }
 
       const cube = latest ? await getLatestCube(rawCube) : rawCube;
-      await cube.fetchShape();
 
-      return parseCube({ cube, locale: locale ?? defaultLocale }).data;
+      return await getCubeMetadata(cube.term?.value!, {
+        locale,
+        sparqlClient,
+      });
     })
   );
 };

@@ -90,7 +90,6 @@ export const parseCube = ({
       publisher: cube.out(ns.dcterms.publisher)?.value,
       landingPage: cube.out(ns.dcat.landingPage)?.value,
       expires: cube.out(ns.schema.expires)?.value,
-      keywords: cube.out(ns.dcat.keyword)?.values,
       workExamples: cube.out(ns.schema.workExample)?.values,
     },
   };

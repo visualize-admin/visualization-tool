@@ -14,7 +14,6 @@ import React, { ReactNode } from "react";
 import Tag from "@/components/tag";
 import { DataSource } from "@/config-types";
 import { DataCubeMetadata } from "@/domain/data";
-import { truthy } from "@/domain/types";
 import { useFormatDate } from "@/formatters";
 import { useDataCubesMetadataQuery } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
@@ -176,37 +175,58 @@ const DatasetTags = ({ cube }: { cube: DataCubeMetadata }) => {
         <Trans id="dataset-preview.keywords">Keywords</Trans>
       </DatasetMetadataTitle>
       <Stack spacing={1} direction="column" sx={{ mt: 3 }}>
-        {[cube.creator, ...(cube.themes ?? [])].filter(truthy).map((t) => {
-          const type =
-            t.__typename === "DataCubeTheme" ? "theme" : "organization";
-
-          return t.label ? (
-            <NextLink
-              key={t.iri}
-              href={`/browse/${type}/${encodeURIComponent(t.iri)}`}
-              passHref
-              legacyBehavior
-            >
-              <Tag
-                component={MUILink}
-                // @ts-ignore
-                underline="none"
-                type={type}
-                title={t.label || undefined}
-                sx={{
-                  maxWidth: "100%",
-                  display: "flex",
-                  whiteSpace: "nowrap",
-                  textOverflow: "ellipsis",
-                  overflow: "hidden",
-                }}
-              >
-                {t.label}
-              </Tag>
-            </NextLink>
-          ) : null;
-        })}
+        {cube.creator?.iri && (
+          <DatasetMetadataTag
+            type="organization"
+            iri={cube.creator.iri}
+            label={cube.creator.label}
+          />
+        )}
+        {cube.themes?.map((t) => (
+          <DatasetMetadataTag
+            key={t.iri}
+            type="theme"
+            iri={t.iri}
+            label={t.label}
+          />
+        ))}
       </Stack>
     </>
+  );
+};
+
+type DatasetMetadataTagProps = {
+  type: "organization" | "theme";
+  iri: string;
+  label?: string | null;
+};
+
+const DatasetMetadataTag = (props: DatasetMetadataTagProps) => {
+  const { type, iri, label } = props;
+
+  return (
+    <NextLink
+      key={iri}
+      href={`/browse/${type}/${encodeURIComponent(iri)}`}
+      passHref
+      legacyBehavior
+    >
+      <Tag
+        component={MUILink}
+        // @ts-ignore
+        underline="none"
+        type={type}
+        title={label ?? undefined}
+        sx={{
+          maxWidth: "100%",
+          display: "flex",
+          whiteSpace: "nowrap",
+          textOverflow: "ellipsis",
+          overflow: "hidden",
+        }}
+      >
+        {label}
+      </Tag>
+    </NextLink>
   );
 };

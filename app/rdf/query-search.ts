@@ -9,12 +9,16 @@ import {
   DataCubePublicationStatus,
   SearchCubeFilter,
 } from "@/graphql/resolver-types";
-import { defaultLocale, locales } from "@/locales/locales";
+import { defaultLocale } from "@/locales/locales";
 import * as ns from "@/rdf/namespace";
 
 import { pragmas } from "./create-source";
 import { computeScores, highlight } from "./query-search-score-utils";
-import { makeVisualizeDatasetFilter } from "./query-utils";
+import {
+  GROUP_SEPARATOR,
+  buildLocalizedSubQuery,
+  makeVisualizeDatasetFilter,
+} from "./query-utils";
 
 // Keep in sync with the query.
 type RawSearchCube = {
@@ -57,34 +61,6 @@ const parseRawSearchCube = (cube: RawSearchCube): ParsedRawSearchCube => {
   };
 };
 
-const getOrderedLocales = (locale: string) => {
-  const rest = locales.filter((d) => d !== locale);
-  return [locale, ...rest];
-};
-
-const buildLocalizedSubQuery = (
-  s: string,
-  p: string,
-  o: string,
-  { locale }: { locale: string }
-) => {
-  // Include the empty locale as well.
-  const locales = getOrderedLocales(locale).concat("");
-
-  return `${locales
-    .map(
-      (locale) => `OPTIONAL {
-          ?${s} ${p} ?${o}_${locale} .
-          FILTER(LANG(?${o}_${locale}) = "${locale}")
-        }`
-    )
-    .join("\n")}
-      BIND(COALESCE(${locales
-        .map((locale) => `?${o}_${locale}`)
-        .join(", ")}) AS ?${o})
-  `;
-};
-
 const makeInFilter = (name: string, values: string[]) => {
   return `
     ${
@@ -95,8 +71,6 @@ const makeInFilter = (name: string, values: string[]) => {
         : ""
     }`;
 };
-
-const GROUP_SEPARATOR = "|||";
 
 export const searchCubes = async ({
   query,
