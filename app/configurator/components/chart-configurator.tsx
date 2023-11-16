@@ -311,7 +311,6 @@ const useFilterReorder = ({
     chartConfig.dataSet,
   ]);
 
-  // const metadata = metadataData?.dataCubesMetadata;
   const dimensions = componentsData?.dataCubesComponents?.dimensions;
   const measures = componentsData?.dataCubesComponents?.measures;
 

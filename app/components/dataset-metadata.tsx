@@ -37,6 +37,7 @@ export const DataSetMetadata = ({
       filters: [{ iri: dataSetIri }],
     },
   });
+  // FIXME: adapt to design
   const cube = data?.dataCubesMetadata[0];
   const openDataLink = cube ? makeOpenDataLink(locale, cube) : null;
   if (fetching || error || !cube) {
