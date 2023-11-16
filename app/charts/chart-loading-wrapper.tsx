@@ -15,9 +15,9 @@ import {
 } from "@/components/hint";
 import { ChartConfig } from "@/configurator";
 import {
-  DataCubeObservationsQuery,
   DataCubesComponentsQuery,
   DataCubesMetadataQuery,
+  DataCubesObservationsQuery,
 } from "@/graphql/query-hooks";
 
 type ElementProps<RE> = RE extends React.ElementType<infer P> ? P : never;
@@ -43,7 +43,7 @@ export const ChartLoadingWrapper = <
     "data" | "fetching" | "error"
   >;
   observationsQuery: Pick<
-    UseQueryResponse<DataCubeObservationsQuery>[0],
+    UseQueryResponse<DataCubesObservationsQuery>[0],
     "data" | "fetching" | "error"
   >;
   chartConfig: TChartConfig;
@@ -71,7 +71,7 @@ export const ChartLoadingWrapper = <
   } = observationsQuery;
 
   const metadata = metadataData?.dataCubesMetadata;
-  const observations = observationsData?.dataCubeByIri?.observations.data;
+  const observations = observationsData?.dataCubesObservations?.data;
   const dimensions = componentsData?.dataCubesComponents.dimensions;
   const measures = componentsData?.dataCubesComponents.measures;
 

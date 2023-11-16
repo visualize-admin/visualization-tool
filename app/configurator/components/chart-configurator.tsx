@@ -76,8 +76,8 @@ import {
   PossibleFiltersDocument,
   PossibleFiltersQuery,
   PossibleFiltersQueryVariables,
-  useDataCubeObservationsQuery,
   useDataCubesComponentsQuery,
+  useDataCubesObservationsQuery,
 } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
@@ -755,18 +755,21 @@ const ChartFields = (props: ChartFieldsProps) => {
   const components = [...dimensions, ...measures];
   const queryFilters = useQueryFilters({ chartConfig });
   const locale = useLocale();
-
-  const [{ data: observationsData }] = useDataCubeObservationsQuery({
+  const [{ data: observationsData }] = useDataCubesObservationsQuery({
     variables: {
       locale,
-      iri: chartConfig.dataSet,
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
-      componentIris: components.map((d) => d.iri),
-      filters: queryFilters,
+      filters: [
+        {
+          iri: chartConfig.dataSet,
+          componentIris: components.map((d) => d.iri),
+          filters: queryFilters,
+        },
+      ],
     },
   });
-  const observations = observationsData?.dataCubeByIri?.observations.data ?? [];
+  const observations = observationsData?.dataCubesObservations?.data ?? [];
 
   return (
     <>

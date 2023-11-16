@@ -346,6 +346,7 @@ input DataCubeFilter {
 
 scalar DataCubesComponents
 scalar DataCubeMetadata
+scalar DataCubesObservations
 
 # The "Query" type is special: it lists all of the available queries that
 # clients can execute, along with the return type for each.
@@ -362,6 +363,12 @@ type Query {
     locale: String!
     filters: [DataCubeFilter!]!
   ): [DataCubeMetadata!]!
+  dataCubesObservations(
+    sourceType: String!
+    sourceUrl: String!
+    locale: String!
+    filters: [DataCubeFilter!]!
+  ): DataCubesObservations!
   dataCubeByIri(
     sourceType: String!
     sourceUrl: String!

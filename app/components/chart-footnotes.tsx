@@ -12,8 +12,8 @@ import { DataDownloadMenu, RunSparqlQuery } from "@/components/data-download";
 import { ChartConfig, DataSource } from "@/configurator";
 import { useTimeFormatLocale } from "@/formatters";
 import {
-  useDataCubeObservationsQuery,
   useDataCubesMetadataQuery,
+  useDataCubesObservationsQuery,
 } from "@/graphql/query-hooks";
 import { Icon, getChartIcon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
@@ -69,33 +69,23 @@ export const ChartFootnotes = ({
     setShareUrl(`${window.location.origin}/${locale}/v/${configKey}`);
   }, [configKey, locale]);
 
+  const filters = useQueryFilters({ chartConfig });
+  const componentIris = extractChartConfigComponentIris(chartConfig);
   const commonQueryVariables = {
     sourceType: dataSource.type,
     sourceUrl: dataSource.url,
     locale,
+    filters: [{ iri: dataSetIri, componentIris, filters }],
   };
   const [{ data }] = useDataCubesMetadataQuery({
-    variables: {
-      ...commonQueryVariables,
-      filters: [{ iri: dataSetIri }],
-    },
+    variables: commonQueryVariables,
   });
   // Data for data download
-  const filters = useQueryFilters({ chartConfig });
-  const componentIris = extractChartConfigComponentIris(chartConfig);
-  const [{ data: visibleData }] = useDataCubeObservationsQuery({
-    variables: {
-      ...commonQueryVariables,
-      iri: dataSetIri,
-      componentIris,
-      filters,
-    },
+  const [{ data: visibleData }] = useDataCubesObservationsQuery({
+    variables: commonQueryVariables,
   });
-  const sparqlEditorUrl =
-    visibleData?.dataCubeByIri?.observations.sparqlEditorUrl;
-
+  const sparqlEditorUrls = visibleData?.dataCubesObservations?.sparqlEditorUrls;
   const formatLocale = useTimeFormatLocale();
-
   const [
     {
       showDownload,
@@ -113,6 +103,9 @@ export const ChartFootnotes = ({
       {data?.dataCubesMetadata
         ? data.dataCubesMetadata.map((dataCubeMetadata) => {
             const cubeLink = makeOpenDataLink(locale, dataCubeMetadata);
+            const sparqlEditorUrl = sparqlEditorUrls?.find(
+              (d) => d.cubeIri === dataCubeMetadata.iri
+            )?.url;
 
             return (
               <Box key={dataCubeMetadata.iri} sx={{ mt: 2 }}>
@@ -252,7 +245,10 @@ export const ChartFootnotes = ({
                     </Button>
                   )}
                   {sparqlEditorUrl && showSparqlQuery !== false && (
-                    <RunSparqlQuery url={sparqlEditorUrl as string} />
+                    <RunSparqlQuery
+                      key={sparqlEditorUrl}
+                      url={sparqlEditorUrl}
+                    />
                   )}
                   {configKey && shareUrl && !visualizeLinkText && (
                     <LinkButton href={shareUrl}>

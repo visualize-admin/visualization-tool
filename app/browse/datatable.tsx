@@ -30,9 +30,9 @@ import {
 } from "@/domain/data";
 import { useDimensionFormatters } from "@/formatters";
 import {
-  useDataCubeObservationsQuery,
   useDataCubesComponentsQuery,
   useDataCubesMetadataQuery,
+  useDataCubesObservationsQuery,
 } from "@/graphql/query-hooks";
 import SvgIcChevronDown from "@/icons/components/IcChevronDown";
 import { useLocale } from "@/locales/use-locale";
@@ -256,26 +256,16 @@ export const DataSetTable = ({
     sourceType: dataSource.type,
     sourceUrl: dataSource.url,
     locale,
+    filters: [{ iri: dataSetIri, componentIris, filters }],
   };
   const [{ data: metadataData }] = useDataCubesMetadataQuery({
-    variables: {
-      ...commonQueryVariables,
-      filters: [{ iri: dataSetIri }],
-    },
+    variables: commonQueryVariables,
   });
   const [{ data: componentsData }] = useDataCubesComponentsQuery({
-    variables: {
-      ...commonQueryVariables,
-      filters: [{ iri: dataSetIri, componentIris, filters }],
-    },
+    variables: commonQueryVariables,
   });
-  const [{ data: observationsData }] = useDataCubeObservationsQuery({
-    variables: {
-      ...commonQueryVariables,
-      iri: dataSetIri,
-      componentIris,
-      filters,
-    },
+  const [{ data: observationsData }] = useDataCubesObservationsQuery({
+    variables: commonQueryVariables,
   });
 
   const headers = useMemo(() => {
@@ -291,14 +281,14 @@ export const DataSetTable = ({
 
   return metadataData?.dataCubesMetadata &&
     componentsData?.dataCubesComponents &&
-    observationsData?.dataCubeByIri ? (
+    observationsData?.dataCubesObservations ? (
     <Box sx={{ maxHeight: "600px", overflow: "auto", ...sx }}>
       <PreviewTable
         // FIXME: adapt to design
         title={metadataData.dataCubesMetadata.map((d) => d.title).join(", ")}
         headers={headers}
-        observations={observationsData.dataCubeByIri.observations.data}
-        linkToMetadataPanel={true}
+        observations={observationsData.dataCubesObservations.data}
+        linkToMetadataPanel
       />
     </Box>
   ) : (

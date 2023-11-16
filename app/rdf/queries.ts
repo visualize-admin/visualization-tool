@@ -536,9 +536,9 @@ export const getCubeObservations = async ({
   locale: string;
   sparqlClient: ParsingClient;
   /** Observations filters that should be considered */
-  filters?: Filters;
+  filters?: Filters | null;
   /** Limit on the number of observations returned */
-  limit?: number;
+  limit?: number | null;
   /** Returns IRIs instead of labels for NamedNodes  */
   raw?: boolean;
   componentIris?: Maybe<string[]>;
@@ -876,7 +876,7 @@ async function fetchViewObservations({
   observationsView,
   disableDistinct,
 }: {
-  limit: number | undefined;
+  limit?: number | null;
   observationsView: View;
   disableDistinct: boolean;
 }) {

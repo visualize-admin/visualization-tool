@@ -20,8 +20,8 @@ import { Loading } from "@/components/hint";
 import { Dimension, HierarchyValue } from "@/domain/data";
 import {
   Measure,
-  useDataCubeObservationsQuery,
   useDataCubesComponentsQuery,
+  useDataCubesObservationsQuery,
 } from "@/graphql/query-hooks";
 import { visitHierarchy } from "@/rdf/tree-utils";
 import useEvent from "@/utils/use-event";
@@ -175,12 +175,12 @@ const PivotTable = ({ dataset }: { dataset: typeof datasets[string] }) => {
       },
     });
   const [{ data: observationsData, fetching: fetchingObservations }] =
-    useDataCubeObservationsQuery({
+    useDataCubesObservationsQuery({
       variables: {
-        iri: dataset.iri,
         sourceUrl: "https://int.lindas.admin.ch/query",
         sourceType: "sparql",
         locale: "en",
+        filters: [{ iri: dataset.iri }],
       },
     });
 
@@ -192,8 +192,8 @@ const PivotTable = ({ dataset }: { dataset: typeof datasets[string] }) => {
   }, [allDimensions, ignoredDimensions]);
   const measures = componentsData?.dataCubesComponents?.measures;
   const observations = useMemo(() => {
-    return observationsData?.dataCubeByIri?.observations.data || [];
-  }, [observationsData?.dataCubeByIri?.observations.data]);
+    return observationsData?.dataCubesObservations?.data ?? [];
+  }, [observationsData?.dataCubesObservations?.data]);
 
   const handleChangePivot = (ev: ChangeEvent<HTMLSelectElement>) => {
     const name = ev.currentTarget.value;

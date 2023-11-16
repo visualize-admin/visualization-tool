@@ -5,9 +5,11 @@ import { LRUCache } from "typescript-lru-cache";
 
 import { Filters } from "@/configurator";
 import {
+  DataCubesObservations,
   Dimension,
   DimensionValue,
   Measure,
+  Observation,
   TemporalDimension,
 } from "@/domain/data";
 import { truthy } from "@/domain/types";
@@ -34,6 +36,7 @@ import { getCubeMetadata } from "@/rdf/query-cube-metadata";
 import { unversionObservation } from "@/rdf/query-dimension-values";
 import { queryHierarchy } from "@/rdf/query-hierarchies";
 import { SearchResult, searchCubes as _searchCubes } from "@/rdf/query-search";
+import { getSparqlEditorUrl } from "@/rdf/sparql-utils";
 
 const sortResults = (
   results: SearchResult[],
@@ -314,6 +317,54 @@ export const dataCubesMetadata: NonNullable<
   );
 };
 
+export const dataCubesObservations: NonNullable<
+  QueryResolvers["dataCubesObservations"]
+> = async (_, { locale, filters }, { setup }, info) => {
+  const { loaders, sparqlClient, cache } = await setup(info);
+
+  const data: Observation[] = [];
+  const sparqlEditorUrls: DataCubesObservations["sparqlEditorUrls"] = [];
+
+  await Promise.all(
+    filters.map(async (filter) => {
+      const { iri, latest = true, filters, componentIris } = filter;
+      const rawCube = await loaders.cube.load(iri);
+
+      if (!rawCube) {
+        throw new Error("Cube not found!");
+      }
+
+      const cube = latest ? await getLatestCube(rawCube) : rawCube;
+      // TODO: optimize to avoid fetching the shape at all
+      await cube.fetchShape();
+      const { query, observations } = await getCubeObservations({
+        cube,
+        locale,
+        sparqlClient,
+        filters,
+        componentIris,
+        cache,
+      });
+      data.push(...observations);
+      sparqlEditorUrls.push({
+        cubeIri: cube.term?.value!,
+        url: getSparqlEditorUrl({
+          query,
+          dataSource: {
+            type: info.variableValues.sourceType,
+            url: info.variableValues.sourceUrl,
+          },
+        }),
+      });
+    })
+  );
+
+  return {
+    data,
+    sparqlEditorUrls,
+  };
+};
+
 export const dataCubeDimensions: NonNullable<DataCubeResolvers["dimensions"]> =
   async ({ cube, locale }, { componentIris }, { setup }, info) => {
     const { sparqlClient, cache } = await setup(info);
@@ -378,8 +429,8 @@ export const dataCubeObservations: NonNullable<
     cube,
     locale,
     sparqlClient,
-    filters: filters ?? undefined,
-    limit: limit ?? undefined,
+    filters,
+    limit,
     componentIris,
     cache,
   });
