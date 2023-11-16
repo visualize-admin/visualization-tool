@@ -95,11 +95,16 @@ export type DataCubeMeasuresArgs = {
 
 export type DataCubeFilter = {
   iri: Scalars['String'];
-  componentIris?: Maybe<Array<Scalars['String']>>;
-  filters?: Maybe<Scalars['Filters']>;
   latest?: Maybe<Scalars['Boolean']>;
+  filters?: Maybe<Scalars['Filters']>;
+  componentIris?: Maybe<Array<Scalars['String']>>;
 };
 
+
+export type DataCubeMetadataFilter = {
+  iri: Scalars['String'];
+  latest?: Maybe<Scalars['Boolean']>;
+};
 
 export type DataCubeOrganization = {
   __typename?: 'DataCubeOrganization';
@@ -387,7 +392,7 @@ export type QueryDataCubesMetadataArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   locale: Scalars['String'];
-  filters: Array<DataCubeFilter>;
+  filters: Array<DataCubeMetadataFilter>;
 };
 
 
@@ -640,6 +645,7 @@ export type ResolversTypes = ResolversObject<{
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   DataCubeFilter: DataCubeFilter;
   DataCubeMetadata: ResolverTypeWrapper<Scalars['DataCubeMetadata']>;
+  DataCubeMetadataFilter: DataCubeMetadataFilter;
   DataCubeOrganization: ResolverTypeWrapper<DataCubeOrganization>;
   DataCubePublicationStatus: DataCubePublicationStatus;
   DataCubeTheme: ResolverTypeWrapper<DataCubeTheme>;
@@ -687,6 +693,7 @@ export type ResolversParentTypes = ResolversObject<{
   Boolean: Scalars['Boolean'];
   DataCubeFilter: DataCubeFilter;
   DataCubeMetadata: Scalars['DataCubeMetadata'];
+  DataCubeMetadataFilter: DataCubeMetadataFilter;
   DataCubeOrganization: DataCubeOrganization;
   DataCubeTheme: DataCubeTheme;
   DataCubesComponents: Scalars['DataCubesComponents'];

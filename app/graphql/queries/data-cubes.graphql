@@ -16,7 +16,7 @@ query DataCubesMetadata(
   $sourceType: String!
   $sourceUrl: String!
   $locale: String!
-  $filters: [DataCubeFilter!]!
+  $filters: [DataCubeMetadataFilter!]!
 ) {
   dataCubesMetadata(
     sourceType: $sourceType
