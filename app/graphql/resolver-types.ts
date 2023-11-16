@@ -93,7 +93,7 @@ export type DataCubeMeasuresArgs = {
   disableValuesLoad?: Maybe<Scalars['Boolean']>;
 };
 
-export type DataCubeFilter = {
+export type DataCubeComponentFilter = {
   iri: Scalars['String'];
   latest?: Maybe<Scalars['Boolean']>;
   filters?: Maybe<Scalars['Filters']>;
@@ -104,6 +104,14 @@ export type DataCubeFilter = {
 export type DataCubeMetadataFilter = {
   iri: Scalars['String'];
   latest?: Maybe<Scalars['Boolean']>;
+};
+
+export type DataCubeObservationFilter = {
+  iri: Scalars['String'];
+  latest?: Maybe<Scalars['Boolean']>;
+  filters?: Maybe<Scalars['Filters']>;
+  componentIris?: Maybe<Array<Scalars['String']>>;
+  joinBy?: Maybe<Scalars['String']>;
 };
 
 export type DataCubeOrganization = {
@@ -384,7 +392,7 @@ export type QueryDataCubesComponentsArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   locale: Scalars['String'];
-  filters: Array<DataCubeFilter>;
+  filters: Array<DataCubeComponentFilter>;
 };
 
 
@@ -400,7 +408,7 @@ export type QueryDataCubesObservationsArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   locale: Scalars['String'];
-  filters: Array<DataCubeFilter>;
+  filters: Array<DataCubeObservationFilter>;
 };
 
 
@@ -643,9 +651,10 @@ export type ResolversTypes = ResolversObject<{
   String: ResolverTypeWrapper<Scalars['String']>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
-  DataCubeFilter: DataCubeFilter;
+  DataCubeComponentFilter: DataCubeComponentFilter;
   DataCubeMetadata: ResolverTypeWrapper<Scalars['DataCubeMetadata']>;
   DataCubeMetadataFilter: DataCubeMetadataFilter;
+  DataCubeObservationFilter: DataCubeObservationFilter;
   DataCubeOrganization: ResolverTypeWrapper<DataCubeOrganization>;
   DataCubePublicationStatus: DataCubePublicationStatus;
   DataCubeTheme: ResolverTypeWrapper<DataCubeTheme>;
@@ -691,9 +700,10 @@ export type ResolversParentTypes = ResolversObject<{
   String: Scalars['String'];
   Int: Scalars['Int'];
   Boolean: Scalars['Boolean'];
-  DataCubeFilter: DataCubeFilter;
+  DataCubeComponentFilter: DataCubeComponentFilter;
   DataCubeMetadata: Scalars['DataCubeMetadata'];
   DataCubeMetadataFilter: DataCubeMetadataFilter;
+  DataCubeObservationFilter: DataCubeObservationFilter;
   DataCubeOrganization: DataCubeOrganization;
   DataCubeTheme: DataCubeTheme;
   DataCubesComponents: Scalars['DataCubesComponents'];

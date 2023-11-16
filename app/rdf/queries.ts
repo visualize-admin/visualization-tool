@@ -8,7 +8,7 @@ import { ParsingClient } from "sparql-http-client/ParsingClient";
 import { LRUCache } from "typescript-lru-cache";
 
 import { PromiseValue, truthy } from "@/domain/types";
-import { DataCubeFilter } from "@/graphql/resolver-types";
+import { DataCubeComponentFilter } from "@/graphql/resolver-types";
 import { pragmas } from "@/rdf/create-source";
 import { ExtendedCube } from "@/rdf/extended-cube";
 
@@ -122,7 +122,7 @@ const getDimensionUnits = (d: CubeDimension) => {
 export const getCubesDimensions = async (
   cubes: ExtendedCube[],
   options: {
-    filters: DataCubeFilter[];
+    filters: DataCubeComponentFilter[];
     locale: string;
     sparqlClient: ParsingClient;
     cache: LRUCache | undefined;

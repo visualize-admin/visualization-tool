@@ -15,7 +15,7 @@ import {
 import { truthy } from "@/domain/types";
 import { Loaders } from "@/graphql/context";
 import {
-  DataCubeFilter,
+  DataCubeComponentFilter,
   DataCubeResolvers,
   DimensionResolvers,
   QueryResolvers,
@@ -156,7 +156,7 @@ export const dataCubesComponents: NonNullable<
     info
   );
   // If the cube was updated, we need to also update the filter with the correct iri.
-  const filtersWithCorrectIri: DataCubeFilter[] = [];
+  const filtersWithCorrectIri: DataCubeComponentFilter[] = [];
 
   const cubes = (
     await Promise.all(

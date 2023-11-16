@@ -337,7 +337,7 @@ enum SearchCubeResultOrder {
   CREATED_DESC
 }
 
-input DataCubeFilter {
+input DataCubeComponentFilter {
   iri: String!
   latest: Boolean
   filters: Filters
@@ -347,6 +347,14 @@ input DataCubeFilter {
 input DataCubeMetadataFilter {
   iri: String!
   latest: Boolean
+}
+
+input DataCubeObservationFilter {
+  iri: String!
+  latest: Boolean
+  filters: Filters
+  componentIris: [String!]
+  joinBy: String
 }
 
 scalar DataCubesComponents
@@ -360,7 +368,7 @@ type Query {
     sourceType: String!
     sourceUrl: String!
     locale: String!
-    filters: [DataCubeFilter!]!
+    filters: [DataCubeComponentFilter!]!
   ): DataCubesComponents!
   dataCubesMetadata(
     sourceType: String!
@@ -372,7 +380,7 @@ type Query {
     sourceType: String!
     sourceUrl: String!
     locale: String!
-    filters: [DataCubeFilter!]!
+    filters: [DataCubeObservationFilter!]!
   ): DataCubesObservations!
   dataCubeByIri(
     sourceType: String!
