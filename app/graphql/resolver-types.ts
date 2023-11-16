@@ -297,13 +297,7 @@ export type ObservationFilter = {
 
 export type ObservationsQuery = {
   __typename?: 'ObservationsQuery';
-  /** Observations with their values parsed to native JS types */
   data: Array<Scalars['Observation']>;
-  /** Observations with their original RDF-y type */
-  rawData: Array<Scalars['RawObservation']>;
-  /** The generated SPARQL query string of the current query (doesn't fetch any data) */
-  sparql: Scalars['String'];
-  /** The generated SPARQL query URL of the current query to run a query on the endpoint's editor directly */
   sparqlEditorUrl?: Maybe<Scalars['String']>;
 };
 
@@ -889,8 +883,6 @@ export type ObservationFilterResolvers<ContextType = VisualizeGraphQLContext, Pa
 
 export type ObservationsQueryResolvers<ContextType = VisualizeGraphQLContext, ParentType extends ResolversParentTypes['ObservationsQuery'] = ResolversParentTypes['ObservationsQuery']> = ResolversObject<{
   data?: Resolver<Array<ResolversTypes['Observation']>, ParentType, ContextType>;
-  rawData?: Resolver<Array<ResolversTypes['RawObservation']>, ParentType, ContextType>;
-  sparql?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   sparqlEditorUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;

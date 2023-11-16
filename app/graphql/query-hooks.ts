@@ -296,13 +296,7 @@ export type ObservationFilter = {
 
 export type ObservationsQuery = {
   __typename: 'ObservationsQuery';
-  /** Observations with their values parsed to native JS types */
   data: Array<Scalars['Observation']>;
-  /** Observations with their original RDF-y type */
-  rawData: Array<Scalars['RawObservation']>;
-  /** The generated SPARQL query string of the current query (doesn't fetch any data) */
-  sparql: Scalars['String'];
-  /** The generated SPARQL query URL of the current query to run a query on the endpoint's editor directly */
   sparqlEditorUrl?: Maybe<Scalars['String']>;
 };
 
@@ -584,7 +578,7 @@ export type DataCubePreviewQueryVariables = Exact<{
 }>;
 
 
-export type DataCubePreviewQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, title: string, description?: Maybe<string>, publicationStatus: DataCubePublicationStatus, observations: { __typename: 'ObservationsQuery', data: Array<Observation>, sparql: string, sparqlEditorUrl?: Maybe<string> } }> };
+export type DataCubePreviewQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, title: string, description?: Maybe<string>, publicationStatus: DataCubePublicationStatus, observations: { __typename: 'ObservationsQuery', data: Array<Observation>, sparqlEditorUrl?: Maybe<string> } }> };
 
 export type DataCubesMetadataQueryVariables = Exact<{
   sourceType: Scalars['String'];
@@ -692,7 +686,6 @@ export const DataCubePreviewDocument = gql`
     publicationStatus
     observations(sourceType: $sourceType, sourceUrl: $sourceUrl, limit: 10) {
       data
-      sparql
       sparqlEditorUrl
     }
   }

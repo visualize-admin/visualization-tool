@@ -1,5 +1,4 @@
 import { CubeDimension } from "rdf-cube-view-query";
-import { Literal, NamedNode } from "rdf-js";
 
 import { ExtendedCube } from "@/rdf/extended-cube";
 
@@ -54,6 +53,5 @@ export type ResolvedObservationsQuery = {
   data: {
     query: string;
     observations: Observation[];
-    observationsRaw: Record<string, Literal | NamedNode>[];
   };
 };

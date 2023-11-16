@@ -9,13 +9,7 @@ scalar ValuePosition
 scalar HierarchyValue
 
 type ObservationsQuery {
-  "Observations with their values parsed to native JS types"
   data: [Observation!]!
-  "Observations with their original RDF-y type"
-  rawData: [RawObservation!]!
-  "The generated SPARQL query string of the current query (doesn't fetch any data)"
-  sparql: String!
-  "The generated SPARQL query URL of the current query to run a query on the endpoint's editor directly"
   sparqlEditorUrl: String
 }
 

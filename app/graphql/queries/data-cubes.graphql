@@ -44,7 +44,6 @@ query DataCubePreview(
     publicationStatus
     observations(sourceType: $sourceType, sourceUrl: $sourceUrl, limit: 10) {
       data
-      sparql
       sparqlEditorUrl
     }
   }

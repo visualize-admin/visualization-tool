@@ -313,7 +313,6 @@ export const dataCubeObservations: NonNullable<
     data: {
       query: "",
       observations,
-      observationsRaw: [],
       selectedFields: [],
     },
   };

@@ -374,7 +374,7 @@ export const dataCubeObservations: NonNullable<
   info
 ) => {
   const { sparqlClient, cache } = await setup(info);
-  const { query, observations, observationsRaw } = await getCubeObservations({
+  const { query, observations } = await getCubeObservations({
     cube,
     locale,
     sparqlClient,
@@ -390,7 +390,6 @@ export const dataCubeObservations: NonNullable<
     data: {
       query,
       observations,
-      observationsRaw,
       selectedFields: [],
     },
   };

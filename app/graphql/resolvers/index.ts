@@ -181,9 +181,6 @@ export const resolvers: Resolvers = {
   },
   ObservationsQuery: {
     data: async ({ data: { observations } }) => observations,
-    rawData: async ({ data: { observationsRaw } }) => observationsRaw,
-    sparql: async ({ data: { query } }) =>
-      query.replace(/\n+/g, " ").replace(/"/g, "'"),
     sparqlEditorUrl: async (
       { data: { query } },
       {},

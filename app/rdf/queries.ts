@@ -21,7 +21,10 @@ import {
   parseRDFLiteral,
   shouldLoadMinMaxValues,
 } from "../domain/data";
-import { ResolvedDimension } from "../graphql/shared-types";
+import {
+  ResolvedDimension,
+  ResolvedObservationsQuery,
+} from "../graphql/shared-types";
 
 import * as ns from "./namespace";
 import { schema } from "./namespace";
@@ -540,11 +543,7 @@ export const getCubeObservations = async ({
   raw?: boolean;
   componentIris?: Maybe<string[]>;
   cache: LRUCache | undefined;
-}): Promise<{
-  query: string;
-  observations: Observation[];
-  observationsRaw: Record<string, Literal | NamedNode>[];
-}> => {
+}): Promise<ResolvedObservationsQuery["data"]> => {
   const cubeView = View.fromCube(cube, false);
 
   const allResolvedDimensions = await getCubeDimensions({
@@ -609,7 +608,7 @@ export const getCubeObservations = async ({
   const { query, observationsRaw } = await fetchViewObservations({
     limit,
     observationsView,
-    disableDistinct: !!(!filters || Object.keys(filters).length === 0),
+    disableDistinct: !filters || Object.keys(filters).length === 0,
   });
 
   const serverFilter =
@@ -659,11 +658,7 @@ export const getCubeObservations = async ({
     }
   }
 
-  return {
-    query,
-    observationsRaw: serverFilter ? filteredObservationsRaw : observationsRaw,
-    observations,
-  };
+  return { query, observations };
 };
 
 const makeServerFilter = (filters: Record<string, FilterValueMulti>) => {
