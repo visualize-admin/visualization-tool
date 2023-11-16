@@ -256,16 +256,24 @@ export const DataSetTable = ({
     sourceType: dataSource.type,
     sourceUrl: dataSource.url,
     locale,
-    filters: [{ iri: dataSetIri, componentIris, filters }],
   };
   const [{ data: metadataData }] = useDataCubesMetadataQuery({
-    variables: commonQueryVariables,
+    variables: {
+      ...commonQueryVariables,
+      filters: [{ iri: dataSetIri }],
+    },
   });
   const [{ data: componentsData }] = useDataCubesComponentsQuery({
-    variables: commonQueryVariables,
+    variables: {
+      ...commonQueryVariables,
+      filters: [{ iri: dataSetIri, componentIris }],
+    },
   });
   const [{ data: observationsData }] = useDataCubesObservationsQuery({
-    variables: commonQueryVariables,
+    variables: {
+      ...commonQueryVariables,
+      filters: [{ iri: dataSetIri, componentIris, filters }],
+    },
   });
 
   const headers = useMemo(() => {

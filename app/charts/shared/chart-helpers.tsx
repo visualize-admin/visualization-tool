@@ -185,7 +185,8 @@ export const extractChartConfigComponentIris = (chartConfig: ChartConfig) => {
     [...fieldIris, ...additionalFieldIris, ...filterIris, ...IFIris].filter(
       Boolean
     )
-  );
+    // Important so the order is consistent when querying.
+  ).sort();
 };
 
 /** Use to remove missing values from chart data. */

@@ -75,14 +75,19 @@ export const ChartFootnotes = ({
     sourceType: dataSource.type,
     sourceUrl: dataSource.url,
     locale,
-    filters: [{ iri: dataSetIri, componentIris, filters }],
   };
   const [{ data }] = useDataCubesMetadataQuery({
-    variables: commonQueryVariables,
+    variables: {
+      ...commonQueryVariables,
+      filters: [{ iri: dataSetIri }],
+    },
   });
   // Data for data download
   const [{ data: visibleData }] = useDataCubesObservationsQuery({
-    variables: commonQueryVariables,
+    variables: {
+      ...commonQueryVariables,
+      filters: [{ iri: dataSetIri, componentIris, filters }],
+    },
   });
   const sparqlEditorUrls = visibleData?.dataCubesObservations?.sparqlEditorUrls;
   const formatLocale = useTimeFormatLocale();

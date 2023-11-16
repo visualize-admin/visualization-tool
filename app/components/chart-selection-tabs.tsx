@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import React from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 
+import { extractChartConfigComponentIris } from "@/charts/shared/chart-helpers";
 import Flex from "@/components/flex";
 import {
   ChartConfig,
@@ -253,14 +254,14 @@ const PublishChartButton = () => {
   const locale = useLocale();
   const [state, dispatch] = useConfiguratorState(hasChartConfigs);
   const chartConfig = getChartConfig(state);
-  const commonQueryVariables = {
-    sourceType: state.dataSource.type,
-    sourceUrl: state.dataSource.url,
-    locale,
-    filters: [{ iri: chartConfig.dataSet }],
-  };
+  const componentIris = extractChartConfigComponentIris(chartConfig);
   const [{ data: components }] = useDataCubesComponentsQuery({
-    variables: commonQueryVariables,
+    variables: {
+      sourceType: state.dataSource.type,
+      sourceUrl: state.dataSource.url,
+      locale,
+      filters: [{ iri: chartConfig.dataSet, componentIris }],
+    },
   });
   const goNext = useEvent(() => {
     if (components?.dataCubesComponents) {

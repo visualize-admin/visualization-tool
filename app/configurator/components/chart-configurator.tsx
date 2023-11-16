@@ -30,7 +30,10 @@ import {
 import { useClient } from "urql";
 
 import { getChartSpec } from "@/charts/chart-config-ui-options";
-import { useQueryFilters } from "@/charts/shared/chart-helpers";
+import {
+  extractChartConfigComponentIris,
+  useQueryFilters,
+} from "@/charts/shared/chart-helpers";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import MoveDragButtons from "@/components/move-drag-buttons";
 import useDisclosure from "@/components/use-disclosure";
@@ -754,6 +757,7 @@ const ChartFields = (props: ChartFieldsProps) => {
   const { dataSource, chartConfig, dimensions, measures } = props;
   const components = [...dimensions, ...measures];
   const queryFilters = useQueryFilters({ chartConfig });
+  const componentIris = extractChartConfigComponentIris(chartConfig);
   const locale = useLocale();
   const [{ data: observationsData }] = useDataCubesObservationsQuery({
     variables: {
@@ -761,11 +765,7 @@ const ChartFields = (props: ChartFieldsProps) => {
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       filters: [
-        {
-          iri: chartConfig.dataSet,
-          componentIris: components.map((d) => d.iri),
-          filters: queryFilters,
-        },
+        { iri: chartConfig.dataSet, componentIris, filters: queryFilters },
       ],
     },
   });

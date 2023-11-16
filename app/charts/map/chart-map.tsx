@@ -45,16 +45,24 @@ export const ChartMapVisualization = ({
     sourceType: dataSource.type,
     sourceUrl: dataSource.url,
     locale,
-    filters: [{ iri: dataSetIri, componentIris, filters: queryFilters }],
   };
   const [metadataQuery] = useDataCubesMetadataQuery({
-    variables: commonQueryVariables,
+    variables: {
+      ...commonQueryVariables,
+      filters: [{ iri: dataSetIri }],
+    },
   });
   const [componentsQuery] = useDataCubesComponentsQuery({
-    variables: commonQueryVariables,
+    variables: {
+      ...commonQueryVariables,
+      filters: [{ iri: dataSetIri, componentIris }],
+    },
   });
   const [observationsQuery] = useDataCubesObservationsQuery({
-    variables: commonQueryVariables,
+    variables: {
+      ...commonQueryVariables,
+      filters: [{ iri: dataSetIri, componentIris, filters: queryFilters }],
+    },
   });
   const { data: componentsData } = componentsQuery;
   const { data: observationsData } = observationsQuery;

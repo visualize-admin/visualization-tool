@@ -253,7 +253,10 @@ export const dataCubesComponents: NonNullable<
               locale,
               sparqlClient,
               sparqlClientStream,
-              cache
+              cache,
+              // Only pass values if there are no filters, as we need to fetch
+              // the full, not filtered hierarchy.
+              cubeFilters?.filters ? undefined : values
             )
           : null;
         const baseDimension = {
