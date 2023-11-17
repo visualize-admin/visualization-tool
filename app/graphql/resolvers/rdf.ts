@@ -10,6 +10,7 @@ import {
   DimensionValue,
   Measure,
   Observation,
+  ObservationValue,
   TemporalDimension,
 } from "@/domain/data";
 import { truthy } from "@/domain/types";
@@ -332,7 +333,7 @@ export const dataCubesObservations: NonNullable<
   // If the cube was updated, we need to also update the filter with the correct iri.
   const filtersWithCorrectIri: DataCubeObservationFilter[] = [];
 
-  const data: Observation[] = [];
+  const dataByCubeIri: Record<string, Observation[]> = {};
   const sparqlEditorUrls: DataCubesObservations["sparqlEditorUrls"] = [];
 
   await Promise.all(
@@ -360,7 +361,8 @@ export const dataCubesObservations: NonNullable<
         componentIris,
         cache,
       });
-      data.push(...observations);
+
+      dataByCubeIri[cube.term?.value!] = observations;
       sparqlEditorUrls.push({
         cubeIri: cube.term?.value!,
         url: getSparqlEditorUrl({
@@ -374,8 +376,49 @@ export const dataCubesObservations: NonNullable<
     })
   );
 
+  const joinBys = filtersWithCorrectIri.reduce<Record<string, string>>(
+    (acc, f) => {
+      acc[f.iri] = f.joinBy!;
+      return acc;
+    },
+    {}
+  );
+
+  // FIXME: handle situation where we have column of the same name in multiple cubes
+  const mergedObservations: Record<string, Observation> = {};
+  const keys = Object.entries(dataByCubeIri).flatMap(([_, obs]) => {
+    return Object.keys(obs[0]);
+  });
+
+  Object.entries(dataByCubeIri).forEach(([cubeIri, observations]) => {
+    const joinBy = joinBys[cubeIri];
+
+    observations.forEach((observation) => {
+      const key = observation[joinBy];
+
+      if (!key) {
+        return;
+      }
+
+      const base = keys.reduce<
+        Record<string, ObservationValue> & {
+          joinBy: NonNullable<ObservationValue>;
+        }
+      >(
+        (acc, d) => {
+          acc[d] = null;
+          return acc;
+        },
+        { joinBy: key }
+      );
+
+      const existing = mergedObservations[key];
+      mergedObservations[key] = Object.assign(existing ?? base, observation);
+    });
+  });
+
   return {
-    data,
+    data: Object.values(mergedObservations),
     sparqlEditorUrls,
   };
 };
