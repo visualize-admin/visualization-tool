@@ -27,9 +27,9 @@ import { LegendColor } from "@/charts/shared/legend-color";
 import { ColumnConfig, DataSource, QueryFilters } from "@/config-types";
 import { TimeSlider } from "@/configurator/interactive-filters/time-slider";
 import {
-  useDataCubeObservationsQuery,
   useDataCubesComponentsQuery,
   useDataCubesMetadataQuery,
+  useDataCubesObservationsQuery,
 } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 
@@ -66,12 +66,10 @@ export const ChartColumnsVisualization = ({
       filters: [{ iri: dataSetIri, componentIris }],
     },
   });
-  const [observationsQuery] = useDataCubeObservationsQuery({
+  const [observationsQuery] = useDataCubesObservationsQuery({
     variables: {
       ...commonQueryVariables,
-      iri: dataSetIri,
-      componentIris,
-      filters: queryFilters,
+      filters: [{ iri: dataSetIri, componentIris, filters: queryFilters }],
     },
   });
 

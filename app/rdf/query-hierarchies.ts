@@ -10,7 +10,7 @@ import { StreamClient } from "sparql-http-client";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
 import { LRUCache } from "typescript-lru-cache";
 
-import { HierarchyValue, parseTerm } from "@/domain/data";
+import { DimensionValue, HierarchyValue, parseTerm } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { ResolvedDimension } from "@/graphql/shared-types";
 import { ExtendedCube } from "@/rdf/extended-cube";
@@ -105,7 +105,9 @@ export const queryHierarchy = async (
   locale: string,
   sparqlClient: ParsingClient,
   sparqlClientStream: StreamClient,
-  cache: LRUCache | undefined
+  cache: LRUCache | undefined,
+  // If values are provided, we don't need to fetch them again
+  values?: DimensionValue[]
 ): Promise<HierarchyValue[] | null> => {
   const {
     cube,
@@ -117,13 +119,15 @@ export const queryHierarchy = async (
     return null;
   }
 
-  const dimensionValuesWithLabels = await getCubeDimensionValuesWithMetadata({
-    cube: rdimension.cube,
-    dimension: rdimension.dimension,
-    sparqlClient,
-    locale,
-    cache,
-  });
+  const dimensionValuesWithLabels =
+    values ??
+    (await getCubeDimensionValuesWithMetadata({
+      cube: rdimension.cube,
+      dimension: rdimension.dimension,
+      sparqlClient,
+      locale,
+      cache,
+    }));
 
   const hierarchies = await Promise.all(
     hierarchyPointers.map(async (pointer) => {

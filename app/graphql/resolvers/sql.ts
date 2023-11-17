@@ -313,8 +313,16 @@ export const dataCubeObservations: NonNullable<
     data: {
       query: "",
       observations,
-      observationsRaw: [],
       selectedFields: [],
     },
+  };
+};
+
+export const dataCubesObservations: NonNullable<
+  QueryResolvers["dataCubesObservations"]
+> = async () => {
+  return {
+    data: [],
+    sparqlEditorUrls: [],
   };
 };

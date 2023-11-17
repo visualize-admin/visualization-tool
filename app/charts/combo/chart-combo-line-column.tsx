@@ -17,9 +17,9 @@ import {
   QueryFilters,
 } from "@/config-types";
 import {
-  useDataCubeObservationsQuery,
   useDataCubesComponentsQuery,
   useDataCubesMetadataQuery,
+  useDataCubesObservationsQuery,
 } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 
@@ -56,12 +56,10 @@ export const ChartComboLineColumnVisualization = (
       filters: [{ iri: dataSetIri, componentIris }],
     },
   });
-  const [observationsQuery] = useDataCubeObservationsQuery({
+  const [observationsQuery] = useDataCubesObservationsQuery({
     variables: {
       ...commonQueryVariables,
-      componentIris,
-      iri: dataSetIri,
-      filters: queryFilters,
+      filters: [{ iri: dataSetIri, componentIris, filters: queryFilters }],
     },
   });
 

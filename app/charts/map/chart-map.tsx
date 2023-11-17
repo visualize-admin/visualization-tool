@@ -15,9 +15,9 @@ import { TimeSlider } from "@/configurator/interactive-filters/time-slider";
 import { GeoShapes } from "@/domain/data";
 import {
   GeoCoordinates,
-  useDataCubeObservationsQuery,
   useDataCubesComponentsQuery,
   useDataCubesMetadataQuery,
+  useDataCubesObservationsQuery,
   useGeoCoordinatesByDimensionIriQuery,
   useGeoShapesByDimensionIriQuery,
 } from "@/graphql/query-hooks";
@@ -58,12 +58,10 @@ export const ChartMapVisualization = ({
       filters: [{ iri: dataSetIri, componentIris }],
     },
   });
-  const [observationsQuery] = useDataCubeObservationsQuery({
+  const [observationsQuery] = useDataCubesObservationsQuery({
     variables: {
       ...commonQueryVariables,
-      iri: dataSetIri,
-      componentIris,
-      filters: queryFilters,
+      filters: [{ iri: dataSetIri, componentIris, filters: queryFilters }],
     },
   });
   const { data: componentsData } = componentsQuery;
@@ -71,7 +69,7 @@ export const ChartMapVisualization = ({
 
   const dimensions = componentsData?.dataCubesComponents?.dimensions;
   const measures = componentsData?.dataCubesComponents?.measures;
-  const observations = observationsData?.dataCubeByIri?.observations.data;
+  const observations = observationsData?.dataCubesObservations?.data;
 
   const [{ data: fetchedGeoCoordinates, error: geoCoordinatesError }] =
     useGeoCoordinatesByDimensionIriQuery({

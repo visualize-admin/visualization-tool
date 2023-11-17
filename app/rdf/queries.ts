@@ -8,7 +8,7 @@ import { ParsingClient } from "sparql-http-client/ParsingClient";
 import { LRUCache } from "typescript-lru-cache";
 
 import { PromiseValue, truthy } from "@/domain/types";
-import { DataCubeFilter } from "@/graphql/resolver-types";
+import { DataCubeComponentFilter } from "@/graphql/resolver-types";
 import { pragmas } from "@/rdf/create-source";
 import { ExtendedCube } from "@/rdf/extended-cube";
 
@@ -21,7 +21,10 @@ import {
   parseRDFLiteral,
   shouldLoadMinMaxValues,
 } from "../domain/data";
-import { ResolvedDimension } from "../graphql/shared-types";
+import {
+  ResolvedDimension,
+  ResolvedObservationsQuery,
+} from "../graphql/shared-types";
 
 import * as ns from "./namespace";
 import { schema } from "./namespace";
@@ -119,7 +122,7 @@ const getDimensionUnits = (d: CubeDimension) => {
 export const getCubesDimensions = async (
   cubes: ExtendedCube[],
   options: {
-    filters: DataCubeFilter[];
+    filters: DataCubeComponentFilter[];
     locale: string;
     sparqlClient: ParsingClient;
     cache: LRUCache | undefined;
@@ -533,18 +536,14 @@ export const getCubeObservations = async ({
   locale: string;
   sparqlClient: ParsingClient;
   /** Observations filters that should be considered */
-  filters?: Filters;
+  filters?: Filters | null;
   /** Limit on the number of observations returned */
-  limit?: number;
+  limit?: number | null;
   /** Returns IRIs instead of labels for NamedNodes  */
   raw?: boolean;
   componentIris?: Maybe<string[]>;
   cache: LRUCache | undefined;
-}): Promise<{
-  query: string;
-  observations: Observation[];
-  observationsRaw: Record<string, Literal | NamedNode>[];
-}> => {
+}): Promise<ResolvedObservationsQuery["data"]> => {
   const cubeView = View.fromCube(cube, false);
 
   const allResolvedDimensions = await getCubeDimensions({
@@ -609,7 +608,7 @@ export const getCubeObservations = async ({
   const { query, observationsRaw } = await fetchViewObservations({
     limit,
     observationsView,
-    disableDistinct: !!(!filters || Object.keys(filters).length === 0),
+    disableDistinct: !filters || Object.keys(filters).length === 0,
   });
 
   const serverFilter =
@@ -659,11 +658,7 @@ export const getCubeObservations = async ({
     }
   }
 
-  return {
-    query,
-    observationsRaw: serverFilter ? filteredObservationsRaw : observationsRaw,
-    observations,
-  };
+  return { query, observations };
 };
 
 const makeServerFilter = (filters: Record<string, FilterValueMulti>) => {
@@ -881,7 +876,7 @@ async function fetchViewObservations({
   observationsView,
   disableDistinct,
 }: {
-  limit: number | undefined;
+  limit?: number | null;
   observationsView: View;
   disableDistinct: boolean;
 }) {

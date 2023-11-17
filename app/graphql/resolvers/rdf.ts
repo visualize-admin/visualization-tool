@@ -5,15 +5,19 @@ import { LRUCache } from "typescript-lru-cache";
 
 import { Filters } from "@/configurator";
 import {
+  DataCubesObservations,
   Dimension,
   DimensionValue,
   Measure,
+  Observation,
+  ObservationValue,
   TemporalDimension,
 } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { Loaders } from "@/graphql/context";
 import {
-  DataCubeFilter,
+  DataCubeComponentFilter,
+  DataCubeObservationFilter,
   DataCubeResolvers,
   DimensionResolvers,
   QueryResolvers,
@@ -34,6 +38,7 @@ import { getCubeMetadata } from "@/rdf/query-cube-metadata";
 import { unversionObservation } from "@/rdf/query-dimension-values";
 import { queryHierarchy } from "@/rdf/query-hierarchies";
 import { SearchResult, searchCubes as _searchCubes } from "@/rdf/query-search";
+import { getSparqlEditorUrl } from "@/rdf/sparql-utils";
 
 const sortResults = (
   results: SearchResult[],
@@ -153,7 +158,7 @@ export const dataCubesComponents: NonNullable<
     info
   );
   // If the cube was updated, we need to also update the filter with the correct iri.
-  const filtersWithCorrectIri: DataCubeFilter[] = [];
+  const filtersWithCorrectIri: DataCubeComponentFilter[] = [];
 
   const cubes = (
     await Promise.all(
@@ -250,7 +255,10 @@ export const dataCubesComponents: NonNullable<
               locale,
               sparqlClient,
               sparqlClientStream,
-              cache
+              cache,
+              // Only pass values if there are no filters, as we need to fetch
+              // the full, not filtered hierarchy.
+              cubeFilters?.filters ? undefined : values
             )
           : null;
         const baseDimension = {
@@ -314,6 +322,107 @@ export const dataCubesMetadata: NonNullable<
   );
 };
 
+export const dataCubesObservations: NonNullable<
+  QueryResolvers["dataCubesObservations"]
+> = async (_, { locale, filters }, { setup }, info) => {
+  if (filters.length > 1 && filters.some((f) => f.joinBy === undefined)) {
+    throw new Error("Can't query multiple cubes observations without joinBy!");
+  }
+
+  const { loaders, sparqlClient, cache } = await setup(info);
+  // If the cube was updated, we need to also update the filter with the correct iri.
+  const filtersWithCorrectIri: DataCubeObservationFilter[] = [];
+
+  const dataByCubeIri: Record<string, Observation[]> = {};
+  const sparqlEditorUrls: DataCubesObservations["sparqlEditorUrls"] = [];
+
+  await Promise.all(
+    filters.map(async (filter) => {
+      const { iri, latest = true, filters, componentIris } = filter;
+      const rawCube = await loaders.cube.load(iri);
+
+      if (!rawCube) {
+        throw new Error("Cube not found!");
+      }
+
+      const cube = latest ? await getLatestCube(rawCube) : rawCube;
+      // TODO: optimize to avoid fetching the shape at all
+      await cube.fetchShape();
+      filtersWithCorrectIri.push({
+        ...filter,
+        iri: cube.term?.value!,
+      });
+
+      const { query, observations } = await getCubeObservations({
+        cube,
+        locale,
+        sparqlClient,
+        filters,
+        componentIris,
+        cache,
+      });
+
+      dataByCubeIri[cube.term?.value!] = observations;
+      sparqlEditorUrls.push({
+        cubeIri: cube.term?.value!,
+        url: getSparqlEditorUrl({
+          query,
+          dataSource: {
+            type: info.variableValues.sourceType,
+            url: info.variableValues.sourceUrl,
+          },
+        }),
+      });
+    })
+  );
+
+  const joinBys = filtersWithCorrectIri.reduce<Record<string, string>>(
+    (acc, f) => {
+      acc[f.iri] = f.joinBy!;
+      return acc;
+    },
+    {}
+  );
+
+  // FIXME: handle situation where we have column of the same name in multiple cubes
+  const mergedObservations: Record<string, Observation> = {};
+  const keys = Object.entries(dataByCubeIri).flatMap(([_, obs]) => {
+    return Object.keys(obs[0]);
+  });
+
+  Object.entries(dataByCubeIri).forEach(([cubeIri, observations]) => {
+    const joinBy = joinBys[cubeIri];
+
+    observations.forEach((observation) => {
+      const key = observation[joinBy];
+
+      if (!key) {
+        return;
+      }
+
+      const base = keys.reduce<
+        Record<string, ObservationValue> & {
+          joinBy: NonNullable<ObservationValue>;
+        }
+      >(
+        (acc, d) => {
+          acc[d] = null;
+          return acc;
+        },
+        { joinBy: key }
+      );
+
+      const existing = mergedObservations[key];
+      mergedObservations[key] = Object.assign(existing ?? base, observation);
+    });
+  });
+
+  return {
+    data: Object.values(mergedObservations),
+    sparqlEditorUrls,
+  };
+};
+
 export const dataCubeDimensions: NonNullable<DataCubeResolvers["dimensions"]> =
   async ({ cube, locale }, { componentIris }, { setup }, info) => {
     const { sparqlClient, cache } = await setup(info);
@@ -374,12 +483,12 @@ export const dataCubeObservations: NonNullable<
   info
 ) => {
   const { sparqlClient, cache } = await setup(info);
-  const { query, observations, observationsRaw } = await getCubeObservations({
+  const { query, observations } = await getCubeObservations({
     cube,
     locale,
     sparqlClient,
-    filters: filters ?? undefined,
-    limit: limit ?? undefined,
+    filters,
+    limit,
     componentIris,
     cache,
   });
@@ -390,7 +499,6 @@ export const dataCubeObservations: NonNullable<
     data: {
       query,
       observations,
-      observationsRaw,
       selectedFields: [],
     },
   };

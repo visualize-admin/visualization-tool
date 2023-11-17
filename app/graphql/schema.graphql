@@ -9,13 +9,7 @@ scalar ValuePosition
 scalar HierarchyValue
 
 type ObservationsQuery {
-  "Observations with their values parsed to native JS types"
   data: [Observation!]!
-  "Observations with their original RDF-y type"
-  rawData: [RawObservation!]!
-  "The generated SPARQL query string of the current query (doesn't fetch any data)"
-  sparql: String!
-  "The generated SPARQL query URL of the current query to run a query on the endpoint's editor directly"
   sparqlEditorUrl: String
 }
 
@@ -343,15 +337,29 @@ enum SearchCubeResultOrder {
   CREATED_DESC
 }
 
-input DataCubeFilter {
+input DataCubeComponentFilter {
   iri: String!
-  componentIris: [String!]
-  filters: Filters
   latest: Boolean
+  filters: Filters
+  componentIris: [String!]
+}
+
+input DataCubeMetadataFilter {
+  iri: String!
+  latest: Boolean
+}
+
+input DataCubeObservationFilter {
+  iri: String!
+  latest: Boolean
+  filters: Filters
+  componentIris: [String!]
+  joinBy: String
 }
 
 scalar DataCubesComponents
 scalar DataCubeMetadata
+scalar DataCubesObservations
 
 # The "Query" type is special: it lists all of the available queries that
 # clients can execute, along with the return type for each.
@@ -360,14 +368,20 @@ type Query {
     sourceType: String!
     sourceUrl: String!
     locale: String!
-    filters: [DataCubeFilter!]!
+    filters: [DataCubeComponentFilter!]!
   ): DataCubesComponents!
   dataCubesMetadata(
     sourceType: String!
     sourceUrl: String!
     locale: String!
-    filters: [DataCubeFilter!]!
+    filters: [DataCubeMetadataFilter!]!
   ): [DataCubeMetadata!]!
+  dataCubesObservations(
+    sourceType: String!
+    sourceUrl: String!
+    locale: String!
+    filters: [DataCubeObservationFilter!]!
+  ): DataCubesObservations!
   dataCubeByIri(
     sourceType: String!
     sourceUrl: String!

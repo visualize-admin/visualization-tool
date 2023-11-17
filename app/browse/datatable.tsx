@@ -30,9 +30,9 @@ import {
 } from "@/domain/data";
 import { useDimensionFormatters } from "@/formatters";
 import {
-  useDataCubeObservationsQuery,
   useDataCubesComponentsQuery,
   useDataCubesMetadataQuery,
+  useDataCubesObservationsQuery,
 } from "@/graphql/query-hooks";
 import SvgIcChevronDown from "@/icons/components/IcChevronDown";
 import { useLocale } from "@/locales/use-locale";
@@ -266,15 +266,13 @@ export const DataSetTable = ({
   const [{ data: componentsData }] = useDataCubesComponentsQuery({
     variables: {
       ...commonQueryVariables,
-      filters: [{ iri: dataSetIri, componentIris, filters }],
+      filters: [{ iri: dataSetIri, componentIris }],
     },
   });
-  const [{ data: observationsData }] = useDataCubeObservationsQuery({
+  const [{ data: observationsData }] = useDataCubesObservationsQuery({
     variables: {
       ...commonQueryVariables,
-      iri: dataSetIri,
-      componentIris,
-      filters,
+      filters: [{ iri: dataSetIri, componentIris, filters }],
     },
   });
 
@@ -291,14 +289,14 @@ export const DataSetTable = ({
 
   return metadataData?.dataCubesMetadata &&
     componentsData?.dataCubesComponents &&
-    observationsData?.dataCubeByIri ? (
+    observationsData?.dataCubesObservations ? (
     <Box sx={{ maxHeight: "600px", overflow: "auto", ...sx }}>
       <PreviewTable
         // FIXME: adapt to design
         title={metadataData.dataCubesMetadata.map((d) => d.title).join(", ")}
         headers={headers}
-        observations={observationsData.dataCubeByIri.observations.data}
-        linkToMetadataPanel={true}
+        observations={observationsData.dataCubesObservations.data}
+        linkToMetadataPanel
       />
     </Box>
   ) : (

@@ -62,13 +62,11 @@ describe("possible filters", () => {
     getCubeObservations.mockImplementation(async ({ filters }) => {
       if (Object.keys(filters).length == 2) {
         return {
-          observations: [],
-          observationsRaw: {},
           query: "",
+          observations: [],
         };
       } else {
         return {
-          observationsRaw: {},
           query: "",
           observations: [
             {

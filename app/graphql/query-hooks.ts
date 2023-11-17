@@ -1,5 +1,6 @@
 import { DataCubeMetadata } from '../domain/data';
 import { DataCubesComponents } from '../domain/data';
+import { DataCubesObservations } from '../domain/data';
 import { DimensionValue } from '../domain/data';
 import { QueryFilters } from '../configurator';
 import { HierarchyValue } from '../domain/data';
@@ -22,6 +23,7 @@ export type Scalars = {
   Float: number;
   DataCubeMetadata: DataCubeMetadata;
   DataCubesComponents: DataCubesComponents;
+  DataCubesObservations: DataCubesObservations;
   DimensionValue: DimensionValue;
   FilterValue: any;
   Filters: QueryFilters;
@@ -90,13 +92,26 @@ export type DataCubeMeasuresArgs = {
   disableValuesLoad?: Maybe<Scalars['Boolean']>;
 };
 
-export type DataCubeFilter = {
+export type DataCubeComponentFilter = {
   iri: Scalars['String'];
-  componentIris?: Maybe<Array<Scalars['String']>>;
+  latest?: Maybe<Scalars['Boolean']>;
   filters?: Maybe<Scalars['Filters']>;
+  componentIris?: Maybe<Array<Scalars['String']>>;
+};
+
+
+export type DataCubeMetadataFilter = {
+  iri: Scalars['String'];
   latest?: Maybe<Scalars['Boolean']>;
 };
 
+export type DataCubeObservationFilter = {
+  iri: Scalars['String'];
+  latest?: Maybe<Scalars['Boolean']>;
+  filters?: Maybe<Scalars['Filters']>;
+  componentIris?: Maybe<Array<Scalars['String']>>;
+  joinBy?: Maybe<Scalars['String']>;
+};
 
 export type DataCubeOrganization = {
   __typename: 'DataCubeOrganization';
@@ -114,6 +129,7 @@ export type DataCubeTheme = {
   iri: Scalars['String'];
   label?: Maybe<Scalars['String']>;
 };
+
 
 
 export type Dimension = {
@@ -296,13 +312,7 @@ export type ObservationFilter = {
 
 export type ObservationsQuery = {
   __typename: 'ObservationsQuery';
-  /** Observations with their values parsed to native JS types */
   data: Array<Scalars['Observation']>;
-  /** Observations with their original RDF-y type */
-  rawData: Array<Scalars['RawObservation']>;
-  /** The generated SPARQL query string of the current query (doesn't fetch any data) */
-  sparql: Scalars['String'];
-  /** The generated SPARQL query URL of the current query to run a query on the endpoint's editor directly */
   sparqlEditorUrl?: Maybe<Scalars['String']>;
 };
 
@@ -370,6 +380,7 @@ export type Query = {
   __typename: 'Query';
   dataCubesComponents: Scalars['DataCubesComponents'];
   dataCubesMetadata: Array<Scalars['DataCubeMetadata']>;
+  dataCubesObservations: Scalars['DataCubesObservations'];
   dataCubeByIri?: Maybe<DataCube>;
   possibleFilters: Array<ObservationFilter>;
   searchCubes: Array<SearchCubeResult>;
@@ -380,7 +391,7 @@ export type QueryDataCubesComponentsArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   locale: Scalars['String'];
-  filters: Array<DataCubeFilter>;
+  filters: Array<DataCubeComponentFilter>;
 };
 
 
@@ -388,7 +399,15 @@ export type QueryDataCubesMetadataArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   locale: Scalars['String'];
-  filters: Array<DataCubeFilter>;
+  filters: Array<DataCubeMetadataFilter>;
+};
+
+
+export type QueryDataCubesObservationsArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
+  locale: Scalars['String'];
+  filters: Array<DataCubeObservationFilter>;
 };
 
 
@@ -561,6 +580,36 @@ export enum TimeUnit {
 
 
 
+export type DataCubesComponentsQueryVariables = Exact<{
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
+  locale: Scalars['String'];
+  filters: Array<DataCubeComponentFilter> | DataCubeComponentFilter;
+}>;
+
+
+export type DataCubesComponentsQuery = { __typename: 'Query', dataCubesComponents: DataCubesComponents };
+
+export type DataCubesMetadataQueryVariables = Exact<{
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
+  locale: Scalars['String'];
+  filters: Array<DataCubeMetadataFilter> | DataCubeMetadataFilter;
+}>;
+
+
+export type DataCubesMetadataQuery = { __typename: 'Query', dataCubesMetadata: Array<DataCubeMetadata> };
+
+export type DataCubesObservationsQueryVariables = Exact<{
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
+  locale: Scalars['String'];
+  filters: Array<DataCubeObservationFilter> | DataCubeObservationFilter;
+}>;
+
+
+export type DataCubesObservationsQuery = { __typename: 'Query', dataCubesObservations: DataCubesObservations };
+
 export type SearchCubesQueryVariables = Exact<{
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
@@ -584,27 +633,7 @@ export type DataCubePreviewQueryVariables = Exact<{
 }>;
 
 
-export type DataCubePreviewQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, title: string, description?: Maybe<string>, publicationStatus: DataCubePublicationStatus, observations: { __typename: 'ObservationsQuery', data: Array<Observation>, sparql: string, sparqlEditorUrl?: Maybe<string> } }> };
-
-export type DataCubesMetadataQueryVariables = Exact<{
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
-  locale: Scalars['String'];
-  filters: Array<DataCubeFilter> | DataCubeFilter;
-}>;
-
-
-export type DataCubesMetadataQuery = { __typename: 'Query', dataCubesMetadata: Array<DataCubeMetadata> };
-
-export type DataCubesComponentsQueryVariables = Exact<{
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
-  locale: Scalars['String'];
-  filters: Array<DataCubeFilter> | DataCubeFilter;
-}>;
-
-
-export type DataCubesComponentsQuery = { __typename: 'Query', dataCubesComponents: DataCubesComponents };
+export type DataCubePreviewQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, title: string, description?: Maybe<string>, publicationStatus: DataCubePublicationStatus, observations: { __typename: 'ObservationsQuery', data: Array<Observation>, sparqlEditorUrl?: Maybe<string> } }> };
 
 export type GeoCoordinatesByDimensionIriQueryVariables = Exact<{
   dataCubeIri: Scalars['String'];
@@ -630,20 +659,6 @@ export type GeoShapesByDimensionIriQueryVariables = Exact<{
 
 export type GeoShapesByDimensionIriQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', dimensionByIri?: Maybe<{ __typename: 'GeoCoordinatesDimension' } | { __typename: 'GeoShapesDimension', geoShapes?: Maybe<any> } | { __typename: 'NominalDimension' } | { __typename: 'NumericalMeasure' } | { __typename: 'OrdinalDimension' } | { __typename: 'OrdinalMeasure' } | { __typename: 'StandardErrorDimension' } | { __typename: 'TemporalDimension' } | { __typename: 'TemporalOrdinalDimension' }> }> };
 
-export type DataCubeObservationsQueryVariables = Exact<{
-  iri: Scalars['String'];
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
-  locale: Scalars['String'];
-  componentIris?: Maybe<Array<Scalars['String']> | Scalars['String']>;
-  filters?: Maybe<Scalars['Filters']>;
-  latest?: Maybe<Scalars['Boolean']>;
-  limit?: Maybe<Scalars['Int']>;
-}>;
-
-
-export type DataCubeObservationsQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', observations: { __typename: 'ObservationsQuery', data: Array<Observation>, sparqlEditorUrl?: Maybe<string> } }> };
-
 export type PossibleFiltersQueryVariables = Exact<{
   iri: Scalars['String'];
   sourceType: Scalars['String'];
@@ -655,6 +670,48 @@ export type PossibleFiltersQueryVariables = Exact<{
 export type PossibleFiltersQuery = { __typename: 'Query', possibleFilters: Array<{ __typename: 'ObservationFilter', iri: string, type: string, value?: Maybe<any> }> };
 
 
+export const DataCubesComponentsDocument = gql`
+    query DataCubesComponents($sourceType: String!, $sourceUrl: String!, $locale: String!, $filters: [DataCubeComponentFilter!]!) {
+  dataCubesComponents(
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    locale: $locale
+    filters: $filters
+  )
+}
+    `;
+
+export function useDataCubesComponentsQuery(options: Omit<Urql.UseQueryArgs<DataCubesComponentsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<DataCubesComponentsQuery>({ query: DataCubesComponentsDocument, ...options });
+};
+export const DataCubesMetadataDocument = gql`
+    query DataCubesMetadata($sourceType: String!, $sourceUrl: String!, $locale: String!, $filters: [DataCubeMetadataFilter!]!) {
+  dataCubesMetadata(
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    locale: $locale
+    filters: $filters
+  )
+}
+    `;
+
+export function useDataCubesMetadataQuery(options: Omit<Urql.UseQueryArgs<DataCubesMetadataQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<DataCubesMetadataQuery>({ query: DataCubesMetadataDocument, ...options });
+};
+export const DataCubesObservationsDocument = gql`
+    query DataCubesObservations($sourceType: String!, $sourceUrl: String!, $locale: String!, $filters: [DataCubeObservationFilter!]!) {
+  dataCubesObservations(
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    locale: $locale
+    filters: $filters
+  )
+}
+    `;
+
+export function useDataCubesObservationsQuery(options: Omit<Urql.UseQueryArgs<DataCubesObservationsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<DataCubesObservationsQuery>({ query: DataCubesObservationsDocument, ...options });
+};
 export const SearchCubesDocument = gql`
     query SearchCubes($sourceType: String!, $sourceUrl: String!, $locale: String!, $query: String, $order: SearchCubeResultOrder, $includeDrafts: Boolean, $filters: [SearchCubeFilter!]) {
   searchCubes(
@@ -692,7 +749,6 @@ export const DataCubePreviewDocument = gql`
     publicationStatus
     observations(sourceType: $sourceType, sourceUrl: $sourceUrl, limit: 10) {
       data
-      sparql
       sparqlEditorUrl
     }
   }
@@ -701,34 +757,6 @@ export const DataCubePreviewDocument = gql`
 
 export function useDataCubePreviewQuery(options: Omit<Urql.UseQueryArgs<DataCubePreviewQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<DataCubePreviewQuery>({ query: DataCubePreviewDocument, ...options });
-};
-export const DataCubesMetadataDocument = gql`
-    query DataCubesMetadata($sourceType: String!, $sourceUrl: String!, $locale: String!, $filters: [DataCubeFilter!]!) {
-  dataCubesMetadata(
-    sourceType: $sourceType
-    sourceUrl: $sourceUrl
-    locale: $locale
-    filters: $filters
-  )
-}
-    `;
-
-export function useDataCubesMetadataQuery(options: Omit<Urql.UseQueryArgs<DataCubesMetadataQueryVariables>, 'query'> = {}) {
-  return Urql.useQuery<DataCubesMetadataQuery>({ query: DataCubesMetadataDocument, ...options });
-};
-export const DataCubesComponentsDocument = gql`
-    query DataCubesComponents($sourceType: String!, $sourceUrl: String!, $locale: String!, $filters: [DataCubeFilter!]!) {
-  dataCubesComponents(
-    sourceType: $sourceType
-    sourceUrl: $sourceUrl
-    locale: $locale
-    filters: $filters
-  )
-}
-    `;
-
-export function useDataCubesComponentsQuery(options: Omit<Urql.UseQueryArgs<DataCubesComponentsQueryVariables>, 'query'> = {}) {
-  return Urql.useQuery<DataCubesComponentsQuery>({ query: DataCubesComponentsDocument, ...options });
 };
 export const GeoCoordinatesByDimensionIriDocument = gql`
     query GeoCoordinatesByDimensionIri($dataCubeIri: String!, $dimensionIri: String!, $sourceType: String!, $sourceUrl: String!, $locale: String!, $latest: Boolean) {
@@ -784,32 +812,6 @@ export const GeoShapesByDimensionIriDocument = gql`
 
 export function useGeoShapesByDimensionIriQuery(options: Omit<Urql.UseQueryArgs<GeoShapesByDimensionIriQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<GeoShapesByDimensionIriQuery>({ query: GeoShapesByDimensionIriDocument, ...options });
-};
-export const DataCubeObservationsDocument = gql`
-    query DataCubeObservations($iri: String!, $sourceType: String!, $sourceUrl: String!, $locale: String!, $componentIris: [String!], $filters: Filters, $latest: Boolean, $limit: Int) {
-  dataCubeByIri(
-    iri: $iri
-    sourceType: $sourceType
-    sourceUrl: $sourceUrl
-    locale: $locale
-    latest: $latest
-  ) {
-    observations(
-      sourceType: $sourceType
-      sourceUrl: $sourceUrl
-      componentIris: $componentIris
-      filters: $filters
-      limit: $limit
-    ) {
-      data
-      sparqlEditorUrl
-    }
-  }
-}
-    `;
-
-export function useDataCubeObservationsQuery(options: Omit<Urql.UseQueryArgs<DataCubeObservationsQueryVariables>, 'query'> = {}) {
-  return Urql.useQuery<DataCubeObservationsQuery>({ query: DataCubeObservationsDocument, ...options });
 };
 export const PossibleFiltersDocument = gql`
     query PossibleFilters($iri: String!, $sourceType: String!, $sourceUrl: String!, $filters: Filters!) {

@@ -17,9 +17,9 @@ import { LegendColor } from "@/charts/shared/legend-color";
 import { InteractionHorizontal } from "@/charts/shared/overlay-horizontal";
 import { AreaConfig, DataSource, QueryFilters } from "@/config-types";
 import {
-  useDataCubeObservationsQuery,
   useDataCubesComponentsQuery,
   useDataCubesMetadataQuery,
+  useDataCubesObservationsQuery,
 } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 
@@ -56,12 +56,10 @@ export const ChartAreasVisualization = ({
       filters: [{ iri: dataSetIri, componentIris }],
     },
   });
-  const [observationsQuery] = useDataCubeObservationsQuery({
+  const [observationsQuery] = useDataCubesObservationsQuery({
     variables: {
       ...commonQueryVariables,
-      iri: dataSetIri,
-      componentIris,
-      filters: queryFilters,
+      filters: [{ iri: dataSetIri, componentIris, filters: queryFilters }],
     },
   });
 

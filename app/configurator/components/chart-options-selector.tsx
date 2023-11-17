@@ -80,8 +80,8 @@ import {
   Observation,
 } from "@/domain/data";
 import {
-  useDataCubeObservationsQuery,
   useDataCubesComponentsQuery,
+  useDataCubesObservationsQuery,
 } from "@/graphql/query-hooks";
 import { NumericalMeasure } from "@/graphql/resolver-types";
 import SvgIcExclamation from "@/icons/components/IcExclamation";
@@ -97,29 +97,20 @@ export const ChartOptionsSelector = ({
   const { activeField } = chartConfig;
   const locale = useLocale();
   const commonVariables = {
-    iri: chartConfig.dataSet,
     sourceType: dataSource.type,
     sourceUrl: dataSource.url,
     locale,
+    filters: [{ iri: chartConfig.dataSet, filters: chartConfig.filters }],
   };
   const [{ data: componentsData }] = useDataCubesComponentsQuery({
-    variables: {
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
-      filters: [{ iri: chartConfig.dataSet }],
-    },
+    variables: commonVariables,
   });
-  const [{ data: observationsData }] = useDataCubeObservationsQuery({
-    variables: {
-      ...commonVariables,
-      filters: chartConfig.filters,
-    },
+  const [{ data: observationsData }] = useDataCubesObservationsQuery({
+    variables: commonVariables,
   });
-
   const dimensions = componentsData?.dataCubesComponents.dimensions;
   const measures = componentsData?.dataCubesComponents.measures;
-  const observations = observationsData?.dataCubeByIri?.observations.data;
+  const observations = observationsData?.dataCubesObservations?.data;
 
   return dimensions && measures && observations ? (
     <Box

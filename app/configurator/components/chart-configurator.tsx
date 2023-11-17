@@ -30,7 +30,10 @@ import {
 import { useClient } from "urql";
 
 import { getChartSpec } from "@/charts/chart-config-ui-options";
-import { useQueryFilters } from "@/charts/shared/chart-helpers";
+import {
+  extractChartConfigComponentIris,
+  useQueryFilters,
+} from "@/charts/shared/chart-helpers";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import MoveDragButtons from "@/components/move-drag-buttons";
 import useDisclosure from "@/components/use-disclosure";
@@ -76,8 +79,8 @@ import {
   PossibleFiltersDocument,
   PossibleFiltersQuery,
   PossibleFiltersQueryVariables,
-  useDataCubeObservationsQuery,
   useDataCubesComponentsQuery,
+  useDataCubesObservationsQuery,
 } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
@@ -754,19 +757,19 @@ const ChartFields = (props: ChartFieldsProps) => {
   const { dataSource, chartConfig, dimensions, measures } = props;
   const components = [...dimensions, ...measures];
   const queryFilters = useQueryFilters({ chartConfig });
+  const componentIris = extractChartConfigComponentIris(chartConfig);
   const locale = useLocale();
-
-  const [{ data: observationsData }] = useDataCubeObservationsQuery({
+  const [{ data: observationsData }] = useDataCubesObservationsQuery({
     variables: {
       locale,
-      iri: chartConfig.dataSet,
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
-      componentIris: components.map((d) => d.iri),
-      filters: queryFilters,
+      filters: [
+        { iri: chartConfig.dataSet, componentIris, filters: queryFilters },
+      ],
     },
   });
-  const observations = observationsData?.dataCubeByIri?.observations.data ?? [];
+  const observations = observationsData?.dataCubesObservations?.data ?? [];
 
   return (
     <>

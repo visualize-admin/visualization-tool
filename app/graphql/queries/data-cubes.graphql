@@ -1,3 +1,45 @@
+query DataCubesComponents(
+  $sourceType: String!
+  $sourceUrl: String!
+  $locale: String!
+  $filters: [DataCubeComponentFilter!]!
+) {
+  dataCubesComponents(
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    locale: $locale
+    filters: $filters
+  )
+}
+
+query DataCubesMetadata(
+  $sourceType: String!
+  $sourceUrl: String!
+  $locale: String!
+  $filters: [DataCubeMetadataFilter!]!
+) {
+  dataCubesMetadata(
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    locale: $locale
+    filters: $filters
+  )
+}
+
+query DataCubesObservations(
+  $sourceType: String!
+  $sourceUrl: String!
+  $locale: String!
+  $filters: [DataCubeObservationFilter!]!
+) {
+  dataCubesObservations(
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    locale: $locale
+    filters: $filters
+  )
+}
+
 query SearchCubes(
   $sourceType: String!
   $sourceUrl: String!
@@ -44,38 +86,9 @@ query DataCubePreview(
     publicationStatus
     observations(sourceType: $sourceType, sourceUrl: $sourceUrl, limit: 10) {
       data
-      sparql
       sparqlEditorUrl
     }
   }
-}
-
-query DataCubesMetadata(
-  $sourceType: String!
-  $sourceUrl: String!
-  $locale: String!
-  $filters: [DataCubeFilter!]!
-) {
-  dataCubesMetadata(
-    sourceType: $sourceType
-    sourceUrl: $sourceUrl
-    locale: $locale
-    filters: $filters
-  )
-}
-
-query DataCubesComponents(
-  $sourceType: String!
-  $sourceUrl: String!
-  $locale: String!
-  $filters: [DataCubeFilter!]!
-) {
-  dataCubesComponents(
-    sourceType: $sourceType
-    sourceUrl: $sourceUrl
-    locale: $locale
-    filters: $filters
-  )
 }
 
 query GeoCoordinatesByDimensionIri(
@@ -133,36 +146,6 @@ query GeoShapesByDimensionIri(
       ... on GeoShapesDimension {
         geoShapes
       }
-    }
-  }
-}
-
-query DataCubeObservations(
-  $iri: String!
-  $sourceType: String!
-  $sourceUrl: String!
-  $locale: String!
-  $componentIris: [String!]
-  $filters: Filters
-  $latest: Boolean
-  $limit: Int
-) {
-  dataCubeByIri(
-    iri: $iri
-    sourceType: $sourceType
-    sourceUrl: $sourceUrl
-    locale: $locale
-    latest: $latest
-  ) {
-    observations(
-      sourceType: $sourceType
-      sourceUrl: $sourceUrl
-      componentIris: $componentIris
-      filters: $filters
-      limit: $limit
-    ) {
-      data
-      sparqlEditorUrl
     }
   }
 }

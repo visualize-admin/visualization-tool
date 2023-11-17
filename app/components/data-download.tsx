@@ -38,12 +38,12 @@ import {
   getFormattersForLocale,
 } from "@/formatters";
 import {
-  DataCubeObservationsDocument,
-  DataCubeObservationsQuery,
-  DataCubeObservationsQueryVariables,
   DataCubesComponentsDocument,
   DataCubesComponentsQuery,
   DataCubesComponentsQueryVariables,
+  DataCubesObservationsDocument,
+  DataCubesObservationsQuery,
+  DataCubesObservationsQueryVariables,
 } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import { Locale } from "@/locales/locales";
@@ -327,11 +327,12 @@ const DownloadMenuItem = ({
   const download = useCallback(
     async (
       componentsData: DataCubesComponentsQuery,
-      observationsData: DataCubeObservationsQuery
+      observationsData: DataCubesObservationsQuery
     ) => {
       if (
         !(
-          componentsData?.dataCubesComponents && observationsData?.dataCubeByIri
+          componentsData?.dataCubesComponents &&
+          observationsData?.dataCubesObservations
         )
       ) {
         return;
@@ -340,7 +341,7 @@ const DownloadMenuItem = ({
       const { dimensions, measures } = componentsData.dataCubesComponents;
       const components = [...dimensions, ...measures];
       const dimensionParsers = getDimensionParsers(components, { locale });
-      const observations = observationsData.dataCubeByIri.observations.data;
+      const observations = observationsData.dataCubesObservations.data;
       const { columnKeys, data } = prepareData({
         components,
         observations,
@@ -392,20 +393,18 @@ const DownloadMenuItem = ({
                 sourceType: dataSource.type,
                 sourceUrl: dataSource.url,
                 locale,
-                filters: [{ iri: dataSetIri }],
+                filters: [{ iri: dataSetIri, filters }],
               })
               .toPromise(),
             urqlClient
               .query<
-                DataCubeObservationsQuery,
-                DataCubeObservationsQueryVariables
-              >(DataCubeObservationsDocument, {
-                iri: dataSetIri,
+                DataCubesObservationsQuery,
+                DataCubesObservationsQueryVariables
+              >(DataCubesObservationsDocument, {
                 sourceType: dataSource.type,
                 sourceUrl: dataSource.url,
                 locale,
-                componentIris: undefined,
-                filters,
+                filters: [{ iri: dataSetIri, filters }],
               })
               .toPromise(),
           ]);
