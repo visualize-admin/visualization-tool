@@ -376,6 +376,13 @@ export const dataCubesObservations: NonNullable<
     })
   );
 
+  if (filtersWithCorrectIri.length === 1) {
+    return {
+      data: dataByCubeIri[filtersWithCorrectIri[0].iri],
+      sparqlEditorUrls,
+    };
+  }
+
   const joinBys = filtersWithCorrectIri.reduce<Record<string, string>>(
     (acc, f) => {
       acc[f.iri] = f.joinBy!;
