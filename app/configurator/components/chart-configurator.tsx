@@ -30,10 +30,7 @@ import {
 import { useClient } from "urql";
 
 import { getChartSpec } from "@/charts/chart-config-ui-options";
-import {
-  extractChartConfigComponentIris,
-  useQueryFilters,
-} from "@/charts/shared/chart-helpers";
+import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import MoveDragButtons from "@/components/move-drag-buttons";
 import useDisclosure from "@/components/use-disclosure";
@@ -42,8 +39,10 @@ import {
   ConfiguratorStateConfiguringChart,
   ConfiguratorStatePublishing,
   DataSource,
+  Filters,
   getChartConfig,
   isMapConfig,
+  useChartConfigFilters,
 } from "@/configurator";
 import { TitleAndDescriptionConfigurator } from "@/configurator/components/chart-annotator";
 import {
@@ -168,7 +167,7 @@ const useEnsurePossibleFilters = ({
   const chartConfig = getChartConfig(state);
   const [fetching, setFetching] = useState(false);
   const [error, setError] = useState<Error>();
-  const lastFilters = useRef<ChartConfig["filters"]>();
+  const lastFilters = useRef<Filters>();
   const client = useClient();
 
   useEffect(() => {
@@ -213,7 +212,7 @@ const useEnsurePossibleFilters = ({
             x.iri,
             { type: x.type, value: x.value },
           ])
-        ) as ChartConfig["filters"],
+        ) as Filters,
         mappedFilters
       );
 
@@ -515,13 +514,13 @@ const FiltersBadge = ({ sx }: { sx?: BadgeProps["sx"] }) => {
   const ctx = useControlSectionContext();
   const [state] = useConfiguratorState(isConfiguring);
   const chartConfig = getChartConfig(state);
+  const filters = useChartConfigFilters(chartConfig);
 
   return (
     <Badge
       invisible={ctx.isOpen}
       badgeContent={
-        Object.values(chartConfig.filters).filter((d) => d.type === "single")
-          .length
+        Object.values(filters).filter((d) => d.type === "single").length
       }
       color="secondary"
       sx={{ display: "block", ...sx }}
@@ -756,17 +755,14 @@ type ChartFieldsProps = {
 const ChartFields = (props: ChartFieldsProps) => {
   const { dataSource, chartConfig, dimensions, measures } = props;
   const components = [...dimensions, ...measures];
-  const queryFilters = useQueryFilters({ chartConfig });
-  const componentIris = extractChartConfigComponentIris(chartConfig);
+  const filters = useQueryFilters({ chartConfig, dimensions });
   const locale = useLocale();
   const [{ data: observationsData }] = useDataCubesObservationsQuery({
     variables: {
       locale,
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
-      filters: [
-        { iri: chartConfig.dataSet, componentIris, filters: queryFilters },
-      ],
+      filters,
     },
   });
   const observations = observationsData?.dataCubesObservations?.data ?? [];

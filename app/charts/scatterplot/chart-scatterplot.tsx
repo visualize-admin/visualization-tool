@@ -19,9 +19,14 @@ import {
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
 import { InteractionVoronoi } from "@/charts/shared/overlay-voronoi";
-import { DataSource, QueryFilters, ScatterPlotConfig } from "@/config-types";
+import {
+  DataSource,
+  ScatterPlotConfig,
+  useChartConfigFilters,
+} from "@/config-types";
 import { TimeSlider } from "@/configurator/interactive-filters/time-slider";
 import {
+  DataCubeObservationFilter,
   useDataCubesComponentsQuery,
   useDataCubesMetadataQuery,
   useDataCubesObservationsQuery,
@@ -31,17 +36,15 @@ import { useLocale } from "@/locales/use-locale";
 import { ChartProps } from "../shared/ChartProps";
 
 export const ChartScatterplotVisualization = ({
-  dataSetIri,
   dataSource,
   componentIris,
   chartConfig,
   queryFilters,
 }: {
-  dataSetIri: string;
   dataSource: DataSource;
   componentIris: string[] | undefined;
   chartConfig: ScatterPlotConfig;
-  queryFilters: QueryFilters;
+  queryFilters: DataCubeObservationFilter[];
 }) => {
   const locale = useLocale();
   const commonQueryVariables = {
@@ -52,19 +55,22 @@ export const ChartScatterplotVisualization = ({
   const [metadataQuery] = useDataCubesMetadataQuery({
     variables: {
       ...commonQueryVariables,
-      filters: [{ iri: dataSetIri }],
+      filters: chartConfig.cubes.map((cube) => ({ iri: cube.iri })),
     },
   });
   const [componentsQuery] = useDataCubesComponentsQuery({
     variables: {
       ...commonQueryVariables,
-      filters: [{ iri: dataSetIri, componentIris }],
+      filters: chartConfig.cubes.map((cube) => ({
+        iri: cube.iri,
+        componentIris,
+      })),
     },
   });
   const [observationsQuery] = useDataCubesObservationsQuery({
     variables: {
       ...commonQueryVariables,
-      filters: [{ iri: dataSetIri, componentIris, filters: queryFilters }],
+      filters: queryFilters,
     },
   });
 
@@ -82,7 +88,8 @@ export const ChartScatterplotVisualization = ({
 export const ChartScatterplot = memo(
   (props: ChartProps<ScatterPlotConfig> & { published: boolean }) => {
     const { chartConfig, dimensions, published } = props;
-    const { fields, filters, interactiveFiltersConfig } = chartConfig;
+    const { fields, interactiveFiltersConfig } = chartConfig;
+    const filters = useChartConfigFilters(chartConfig);
 
     return (
       <ScatterplotChart aspectRatio={published ? 1 : 0.4} {...props}>

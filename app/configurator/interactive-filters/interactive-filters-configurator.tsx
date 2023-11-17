@@ -40,7 +40,7 @@ export const InteractiveFiltersConfigurator = ({
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
-      filters: [{ iri: chartConfig.dataSet }],
+      filters: chartConfig.cubes.map((cube) => ({ iri: cube.iri })),
     },
   });
 

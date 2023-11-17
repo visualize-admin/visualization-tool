@@ -111,7 +111,7 @@ const useAreasState = (
   const calculationType = useInteractiveFilters((d) => d.calculation.type);
 
   const segmentsByValue = useMemo(() => {
-    const values = segmentDimension?.values || [];
+    const values = segmentDimension?.values ?? [];
 
     return new Map(values.map((d) => [d.value, d]));
   }, [segmentDimension?.values]);
@@ -122,7 +122,8 @@ const useAreasState = (
   const segmentSortingOrder = segmentSorting?.sortingOrder;
 
   const segmentFilter = segmentDimension?.iri
-    ? chartConfig.filters[segmentDimension?.iri]
+    ? chartConfig.cubes.find((d) => d.iri === segmentDimension.cubeIri)
+        ?.filters[segmentDimension.iri]
     : undefined;
 
   const sumsBySegment = useMemo(() => {

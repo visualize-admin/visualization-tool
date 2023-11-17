@@ -76,7 +76,9 @@ const usePieState = (
   }, [segmentDimension.values]);
 
   // Map ordered segments to colors
-  const segmentFilter = chartConfig.filters[segmentDimension.iri];
+  const segmentFilter = chartConfig.cubes.find(
+    (d) => d.iri === segmentDimension.cubeIri
+  )?.filters[segmentDimension.iri];
   const { colors, allSegments, segments, ySum } = useMemo(() => {
     const colors = scaleOrdinal<string, string>();
     const measureBySegment = Object.fromEntries(

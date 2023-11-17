@@ -24,9 +24,14 @@ import {
 } from "@/charts/shared/containers";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
-import { ColumnConfig, DataSource, QueryFilters } from "@/config-types";
+import {
+  ColumnConfig,
+  DataSource,
+  useChartConfigFilters,
+} from "@/config-types";
 import { TimeSlider } from "@/configurator/interactive-filters/time-slider";
 import {
+  DataCubeObservationFilter,
   useDataCubesComponentsQuery,
   useDataCubesMetadataQuery,
   useDataCubesObservationsQuery,
@@ -36,17 +41,15 @@ import { useLocale } from "@/locales/use-locale";
 import { ChartProps } from "../shared/ChartProps";
 
 export const ChartColumnsVisualization = ({
-  dataSetIri,
   dataSource,
   componentIris,
   chartConfig,
   queryFilters,
 }: {
-  dataSetIri: string;
   dataSource: DataSource;
   componentIris: string[] | undefined;
   chartConfig: ColumnConfig;
-  queryFilters: QueryFilters;
+  queryFilters: DataCubeObservationFilter[];
 }) => {
   const locale = useLocale();
   const commonQueryVariables = {
@@ -57,19 +60,22 @@ export const ChartColumnsVisualization = ({
   const [metadataQuery] = useDataCubesMetadataQuery({
     variables: {
       ...commonQueryVariables,
-      filters: [{ iri: dataSetIri }],
+      filters: chartConfig.cubes.map((cube) => ({ iri: cube.iri })),
     },
   });
   const [componentsQuery] = useDataCubesComponentsQuery({
     variables: {
       ...commonQueryVariables,
-      filters: [{ iri: dataSetIri, componentIris }],
+      filters: chartConfig.cubes.map((cube) => ({
+        iri: cube.iri,
+        componentIris,
+      })),
     },
   });
   const [observationsQuery] = useDataCubesObservationsQuery({
     variables: {
       ...commonQueryVariables,
-      filters: [{ iri: dataSetIri, componentIris, filters: queryFilters }],
+      filters: queryFilters,
     },
   });
 
@@ -86,7 +92,8 @@ export const ChartColumnsVisualization = ({
 
 export const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
   const { chartConfig, dimensions } = props;
-  const { fields, filters, interactiveFiltersConfig } = chartConfig;
+  const { fields, interactiveFiltersConfig } = chartConfig;
+  const filters = useChartConfigFilters(chartConfig);
 
   return (
     <>

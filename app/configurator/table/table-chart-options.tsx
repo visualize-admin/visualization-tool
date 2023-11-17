@@ -344,10 +344,8 @@ export const TableColumnOptions = ({
               <DimensionValuesSingleFilter dimension={component} />
             ) : isMeasure(component) ? null : (
               <DimensionValuesMultiFilter
-                key={component.iri}
                 field={component.iri}
                 dimension={component}
-                dataSetIri={chartConfig.dataSet}
                 colorComponent={component}
                 colorConfigPath="columnStyle"
               />

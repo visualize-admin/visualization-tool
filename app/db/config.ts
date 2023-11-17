@@ -91,16 +91,21 @@ const migrateDataSet = (dataSet: string): string => {
 const ensureFiltersOrder = (chartConfig: ChartConfig) => {
   return {
     ...chartConfig,
-    filters: Object.fromEntries(
-      Object.entries(chartConfig.filters)
-        .sort(([, a], [, b]) => {
-          return (a.position ?? 0) - (b.position ?? 0);
-        })
-        .map(([k, v]) => {
-          const { position, ...rest } = v;
-          return [k, rest];
-        })
-    ),
+    cubes: chartConfig.cubes.map((cube) => {
+      return {
+        ...cube,
+        filters: Object.fromEntries(
+          Object.entries(cube.filters)
+            .sort(([, a], [, b]) => {
+              return (a.position ?? 0) - (b.position ?? 0);
+            })
+            .map(([k, v]) => {
+              const { position, ...rest } = v;
+              return [k, rest];
+            })
+        ),
+      };
+    }),
   };
 };
 

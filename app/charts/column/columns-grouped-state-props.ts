@@ -19,7 +19,11 @@ import {
   useSegmentVariables,
 } from "@/charts/shared/chart-state";
 import { useRenderingKeyVariable } from "@/charts/shared/rendering-utils";
-import { ColumnConfig, ColumnFields } from "@/configurator";
+import {
+  ColumnConfig,
+  ColumnFields,
+  useChartConfigFilters,
+} from "@/configurator";
 import { Observation } from "@/domain/data";
 import { sortByIndex } from "@/utils/array";
 
@@ -43,8 +47,9 @@ export const useColumnsGroupedStateVariables = (
     measures,
     measuresByIri,
   } = props;
-  const { fields, filters, interactiveFiltersConfig } = chartConfig;
+  const { fields, interactiveFiltersConfig } = chartConfig;
   const { x, y, segment, animation } = fields;
+  const filters = useChartConfigFilters(chartConfig);
 
   const baseVariables = useBaseVariables(chartConfig);
   const bandXVariables = useBandXVariables(x, {

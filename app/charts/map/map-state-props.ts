@@ -16,7 +16,7 @@ import {
   useBaseVariables,
   useChartData,
 } from "@/charts/shared/chart-state";
-import { MapConfig } from "@/configurator";
+import { MapConfig, useChartConfigFilters } from "@/configurator";
 import {
   Dimension,
   GeoData,
@@ -97,6 +97,7 @@ export const useMapStateData = (
 ): MapStateData => {
   const { chartConfig, observations, shapes, coordinates } = chartProps;
   const { areaLayerDimension, symbolLayerDimension, getSymbol } = variables;
+  const filters = useChartConfigFilters(chartConfig);
   // No need to sort the data for map.
   const plottableData = usePlottableData(observations, {});
   const data = useChartData(plottableData, {
@@ -104,21 +105,23 @@ export const useMapStateData = (
   });
 
   const areaLayer = React.useMemo(() => {
-    if (areaLayerDimension?.iri && shapes) {
-      const { topology } = shapes;
-      const topojson = prepareTopojson({
-        dimensionIri: areaLayerDimension.iri,
-        topology,
-        filters: chartConfig.filters[areaLayerDimension.iri],
-        observations: data.chartData,
-      });
-
-      return {
-        shapes: topojson,
-        mesh: mesh(topology, topology.objects.shapes),
-      };
+    if (!(areaLayerDimension?.iri && shapes)) {
+      return;
     }
-  }, [areaLayerDimension?.iri, shapes, chartConfig.filters, data.chartData]);
+
+    const { topology } = shapes;
+    const topojson = prepareTopojson({
+      dimensionIri: areaLayerDimension.iri,
+      topology,
+      filters: filters[areaLayerDimension.iri],
+      observations: data.chartData,
+    });
+
+    return {
+      shapes: topojson,
+      mesh: mesh(topology, topology.objects.shapes),
+    };
+  }, [areaLayerDimension?.iri, shapes, filters, data.chartData]);
 
   const symbolLayer = React.useMemo(() => {
     if (
@@ -157,13 +160,15 @@ export const useMapStateData = (
       isGeoShapesDimension(symbolLayerDimension as Dimension | undefined) &&
       shapes
     ) {
+      if (!symbolLayerDimension?.iri) {
+        return;
+      }
+
       const { topology } = shapes;
       const topojson = prepareTopojson({
-        // @ts-ignore
         dimensionIri: symbolLayerDimension.iri,
         topology,
-        // @ts-ignore
-        filters: chartConfig.filters[symbolLayerDimension.iri],
+        filters: filters[symbolLayerDimension.iri],
         observations: data.chartData,
       });
 
@@ -180,7 +185,7 @@ export const useMapStateData = (
     data.chartData,
     shapes,
     coordinates,
-    chartConfig.filters,
+    filters,
   ]);
 
   return {

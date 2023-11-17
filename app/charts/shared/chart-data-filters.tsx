@@ -19,6 +19,7 @@ import {
   Filters,
   getFiltersByMappingStatus,
   QueryFilters,
+  useChartConfigFilters,
   useConfiguratorState,
 } from "@/configurator";
 import { orderedIsEqual } from "@/configurator/components/chart-configurator";
@@ -52,17 +53,21 @@ import { hierarchyToOptions } from "@/utils/hierarchy";
 import useEvent from "@/utils/use-event";
 
 type ChartDataFiltersProps = {
-  dataSet: string;
   dataSource: DataSource;
   chartConfig: ChartConfig;
+  dimensions: Dimension[];
 };
 
 export const ChartDataFilters = (props: ChartDataFiltersProps) => {
-  const { dataSet, dataSource, chartConfig } = props;
+  const { dataSource, chartConfig, dimensions } = props;
   const { loading } = useLoadingState();
   const dataFilters = useInteractiveFilters((d) => d.dataFilters);
   // We want to keep the none filter without removing them.
-  const queryFilters = useQueryFilters({ chartConfig, allowNoneValues: true });
+  const queryFilters = useQueryFilters({
+    chartConfig,
+    dimensions,
+    allowNoneValues: true,
+  });
   const componentIris = chartConfig.interactiveFiltersConfig?.dataFilters
     .componentIris as string[];
   const [filtersVisible, setFiltersVisible] = React.useState(false);
@@ -203,6 +208,7 @@ const DataFilter = (props: DataFilterProps) => {
     disabled,
   } = props;
   const locale = useLocale();
+  const filters = useChartConfigFilters(chartConfig);
   const chartLoadingState = useLoadingState();
   const updateDataFilter = useInteractiveFilters((d) => d.updateDataFilter);
   const keys = Object.keys(interactiveFilters);
@@ -236,9 +242,7 @@ const DataFilter = (props: DataFilterProps) => {
     }
   );
 
-  const configFilter = dimension
-    ? chartConfig.filters[dimension.iri]
-    : undefined;
+  const configFilter = dimension ? filters[dimension.iri] : undefined;
   const configFilterValue =
     configFilter && configFilter.type === "single"
       ? configFilter.value
@@ -545,6 +549,7 @@ const useEnsurePossibleInteractiveFilters = (
   const client = useClient();
   const IFRaw = useInteractiveFiltersRaw();
   const setDataFilters = useInteractiveFilters((d) => d.setDataFilters);
+  const filters = useChartConfigFilters(chartConfig);
 
   React.useEffect(() => {
     const run = async () => {
@@ -622,7 +627,7 @@ const useEnsurePossibleInteractiveFilters = (
     client,
     dispatch,
     chartConfig.fields,
-    chartConfig.filters,
+    filters,
     dataSet,
     dataSource.type,
     dataSource.url,

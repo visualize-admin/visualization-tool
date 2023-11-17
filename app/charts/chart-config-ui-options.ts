@@ -502,9 +502,15 @@ export const defaultSegmentOnChange: OnEncodingChange<
     chartConfig.fields.segment.colorMapping = colorMapping;
   }
 
-  if (selectedValues.length) {
-    const multiFilter = makeMultiFilter(selectedValues.map((d) => d.value));
-    chartConfig.filters[iri] = multiFilter;
+  if (!selectedValues.length || !component) {
+    return;
+  }
+
+  const multiFilter = makeMultiFilter(selectedValues.map((d) => d.value));
+  const cube = chartConfig.cubes.find((d) => d.iri === component.cubeIri);
+
+  if (cube) {
+    cube.filters[iri] = multiFilter;
   }
 };
 

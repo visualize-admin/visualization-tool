@@ -49,6 +49,7 @@ import {
   getFilterValue,
   isConfiguring,
   MultiFilterContextProvider,
+  useChartConfigFilters,
   useConfiguratorState,
   useMultiFilterContext,
 } from "@/configurator";
@@ -227,10 +228,9 @@ const MultiFilterContent = ({
   const chartConfig = getChartConfig(config);
   const { dimensionIri, activeKeys, allValues, colorConfigPath } =
     useMultiFilterContext();
-  const rawValues = chartConfig.filters[dimensionIri];
-
+  const filters = useChartConfigFilters(chartConfig);
+  const rawValues = filters[dimensionIri];
   const classes = useStyles();
-
   const { sortedTree, flatOptions, optionsByValue } = useMemo(() => {
     const sortedTree = sortHierarchy(tree);
     const flatOptions = getOptionsFromTree(sortedTree);
@@ -851,7 +851,6 @@ export const DimensionValuesMultiFilter = ({
   colorComponent,
   field = "segment",
 }: {
-  dataSetIri: string;
   dimension: Dimension;
   colorConfigPath?: string;
   colorComponent?: Component;

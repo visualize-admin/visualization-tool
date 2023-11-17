@@ -11,7 +11,7 @@ import {
   useSegmentVariables,
 } from "@/charts/shared/chart-state";
 import { useRenderingKeyVariable } from "@/charts/shared/rendering-utils";
-import { PieConfig } from "@/configurator";
+import { PieConfig, useChartConfigFilters } from "@/configurator";
 
 import { ChartProps } from "../shared/ChartProps";
 
@@ -30,8 +30,9 @@ export const usePieStateVariables = (
     dimensionsByIri,
     measuresByIri,
   } = props;
-  const { fields, filters, interactiveFiltersConfig } = chartConfig;
+  const { fields, interactiveFiltersConfig } = chartConfig;
   const { y, segment, animation } = fields;
+  const filters = useChartConfigFilters(chartConfig);
 
   const baseVariables = useBaseVariables(chartConfig);
   const numericalYVariables = useNumericalYVariables(y, {

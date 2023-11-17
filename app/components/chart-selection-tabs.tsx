@@ -260,7 +260,10 @@ const PublishChartButton = () => {
       sourceType: state.dataSource.type,
       sourceUrl: state.dataSource.url,
       locale,
-      filters: [{ iri: chartConfig.dataSet, componentIris }],
+      filters: chartConfig.cubes.map((cube) => ({
+        iri: cube.iri,
+        componentIris,
+      })),
     },
   });
   const goNext = useEvent(() => {

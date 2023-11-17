@@ -10,10 +10,11 @@ import {
   ChartControlsContainer,
 } from "@/charts/shared/containers";
 import { NoGeometriesHint } from "@/components/hint";
-import { DataSource, MapConfig, QueryFilters } from "@/config-types";
+import { DataSource, MapConfig, useChartConfigFilters } from "@/config-types";
 import { TimeSlider } from "@/configurator/interactive-filters/time-slider";
 import { GeoShapes } from "@/domain/data";
 import {
+  DataCubeObservationFilter,
   GeoCoordinates,
   useDataCubesComponentsQuery,
   useDataCubesMetadataQuery,
@@ -26,17 +27,15 @@ import { useLocale } from "@/locales/use-locale";
 import { ChartProps } from "../shared/ChartProps";
 
 export const ChartMapVisualization = ({
-  dataSetIri,
   dataSource,
   componentIris,
   chartConfig,
   queryFilters,
 }: {
-  dataSetIri: string;
   dataSource: DataSource;
   componentIris: string[] | undefined;
   chartConfig: MapConfig;
-  queryFilters: QueryFilters;
+  queryFilters: DataCubeObservationFilter[];
 }) => {
   const locale = useLocale();
   const areaDimensionIri = chartConfig.fields.areaLayer?.componentIri || "";
@@ -49,19 +48,22 @@ export const ChartMapVisualization = ({
   const [metadataQuery] = useDataCubesMetadataQuery({
     variables: {
       ...commonQueryVariables,
-      filters: [{ iri: dataSetIri }],
+      filters: chartConfig.cubes.map((cube) => ({ iri: cube.iri })),
     },
   });
   const [componentsQuery] = useDataCubesComponentsQuery({
     variables: {
       ...commonQueryVariables,
-      filters: [{ iri: dataSetIri, componentIris }],
+      filters: chartConfig.cubes.map((cube) => ({
+        iri: cube.iri,
+        componentIris,
+      })),
     },
   });
   const [observationsQuery] = useDataCubesObservationsQuery({
     variables: {
       ...commonQueryVariables,
-      filters: [{ iri: dataSetIri, componentIris, filters: queryFilters }],
+      filters: queryFilters,
     },
   });
   const { data: componentsData } = componentsQuery;
@@ -74,7 +76,8 @@ export const ChartMapVisualization = ({
   const [{ data: fetchedGeoCoordinates, error: geoCoordinatesError }] =
     useGeoCoordinatesByDimensionIriQuery({
       variables: {
-        dataCubeIri: dataSetIri,
+        // FIXME: This assumes that there is only one cube.
+        dataCubeIri: chartConfig.cubes[0].iri,
         sourceType: dataSource.type,
         sourceUrl: dataSource.url,
         dimensionIri: symbolDimensionIri,
@@ -93,7 +96,8 @@ export const ChartMapVisualization = ({
   const [{ data: fetchedGeoShapes, error: geoShapesError }] =
     useGeoShapesByDimensionIriQuery({
       variables: {
-        dataCubeIri: dataSetIri,
+        // FIXME: This assumes that there is only one cube.
+        dataCubeIri: chartConfig.cubes[0].iri,
         sourceType: dataSource.type,
         sourceUrl: dataSource.url,
         dimensionIri: geoShapesIri,
@@ -157,7 +161,8 @@ export const ChartMap = memo(
     }
   ) => {
     const { chartConfig, dimensions } = props;
-    const { fields, filters } = chartConfig;
+    const { fields } = chartConfig;
+    const filters = useChartConfigFilters(chartConfig);
 
     return (
       <MapChart {...props}>

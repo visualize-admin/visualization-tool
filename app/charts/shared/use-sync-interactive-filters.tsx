@@ -4,6 +4,7 @@ import {
   ChartConfig,
   FilterValueSingle,
   isSegmentInConfig,
+  useChartConfigFilters,
 } from "@/config-types";
 import { parseDate } from "@/configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
@@ -19,6 +20,7 @@ import { useInteractiveFilters } from "@/stores/interactive-filters";
  */
 const useSyncInteractiveFilters = (chartConfig: ChartConfig) => {
   const { interactiveFiltersConfig } = chartConfig;
+  const filters = useChartConfigFilters(chartConfig);
   const resetCategories = useInteractiveFilters((d) => d.resetCategories);
   const dataFilters = useInteractiveFilters((d) => d.dataFilters);
   const setDataFilters = useInteractiveFilters((d) => d.setDataFilters);
@@ -53,7 +55,7 @@ const useSyncInteractiveFilters = (chartConfig: ChartConfig) => {
       const newInteractiveDataFilters = componentIris.reduce<{
         [key: string]: FilterValueSingle;
       }>((obj, iri) => {
-        const configFilter = chartConfig.filters[iri];
+        const configFilter = filters[iri];
 
         if (Object.keys(dataFilters).includes(iri)) {
           obj[iri] = dataFilters[iri];
@@ -69,7 +71,7 @@ const useSyncInteractiveFilters = (chartConfig: ChartConfig) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [componentIris, setDataFilters]);
 
-  const changes = useFilterChanges(chartConfig.filters);
+  const changes = useFilterChanges(filters);
   useEffect(() => {
     if (changes.length !== 1) {
       return;

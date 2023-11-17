@@ -13,6 +13,7 @@ import { EncodingFieldType } from "@/charts/chart-config-ui-options";
 import {
   ChartConfig,
   ChartType,
+  Filters,
   getChartConfig,
   isComboChartConfig,
 } from "@/config-types";
@@ -403,10 +404,11 @@ export const useChartType = (
         value: {
           chartConfig: getInitialConfig({
             chartType,
-            dataSet:
+            iris: [
               state.state === "CONFIGURING_CHART"
-                ? getChartConfig(state, state.activeChartKey).dataSet
-                : chartConfig.dataSet,
+                ? getChartConfig(state, state.activeChartKey).cubes[0].iri
+                : chartConfig.cubes[0].iri,
+            ],
             dimensions,
             measures,
           }),
@@ -507,11 +509,11 @@ export const useSingleFilterField = ({
 };
 
 export const isMultiFilterFieldChecked = (
-  chartConfig: ChartConfig,
+  filters: Filters,
   dimensionIri: string,
   value: string
 ) => {
-  const filter = chartConfig.filters[dimensionIri];
+  const filter = filters[dimensionIri];
   const fieldChecked =
     filter?.type === "multi" ? filter.values?.[value] ?? false : false;
 

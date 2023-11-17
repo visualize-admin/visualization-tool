@@ -100,45 +100,47 @@ const DebugConfigurator = () => {
       <Typography component="h3" variant="h4" sx={{ px: 5, color: "grey.700" }}>
         Cube Tools
       </Typography>
-      <Stack spacing={2} sx={{ pl: 5, py: 3 }}>
-        <Button
-          component="a"
-          color="primary"
-          variant="text"
-          size="small"
-          href={`https://cube-viewer.zazuko.com/?endpointUrl=${encodeURIComponent(
-            configuratorState.dataSource.url
-          )}&user=&password=&sourceGraph=&cube=${encodeURIComponent(
-            chartConfig.dataSet
-          )}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          startIcon={<Icon name="linkExternal" size={16} />}
-        >
-          <Typography variant="body2">Open in Cube Viewer</Typography>
-        </Button>
-        <Button
-          component="a"
-          color="primary"
-          variant="text"
-          size="small"
-          href={`${sparqlEditorUrl}#query=${encodeURIComponent(
-            `#pragma describe.strategy cbd
-              #pragma join.hash off
+      {chartConfig.cubes.map((cube) => (
+        <Stack key={cube.iri} spacing={2} sx={{ pl: 5, py: 3 }}>
+          <Button
+            component="a"
+            color="primary"
+            variant="text"
+            size="small"
+            href={`https://cube-viewer.zazuko.com/?endpointUrl=${encodeURIComponent(
+              configuratorState.dataSource.url
+            )}&user=&password=&sourceGraph=&cube=${encodeURIComponent(
+              cube.iri
+            )}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            startIcon={<Icon name="linkExternal" size={16} />}
+          >
+            <Typography variant="body2">Open in Cube Viewer</Typography>
+          </Button>
+          <Button
+            component="a"
+            color="primary"
+            variant="text"
+            size="small"
+            href={`${sparqlEditorUrl}#query=${encodeURIComponent(
+              `#pragma describe.strategy cbd
+               #pragma join.hash off
               
-DESCRIBE <${chartConfig.dataSet}>`
-          )}&requestMethod=POST`}
-          target="_blank"
-          rel="noopener noreferrer"
-          startIcon={<Icon name="linkExternal" size={16} />}
-        >
-          <Typography variant="body2">Cube Metadata Query</Typography>
-        </Button>
-        <CubeMetadata
-          datasetIri={chartConfig.dataSet}
-          dataSource={configuratorState.dataSource}
-        />
-      </Stack>
+               DESCRIBE <${cube.iri}>`
+            )}&requestMethod=POST`}
+            target="_blank"
+            rel="noopener noreferrer"
+            startIcon={<Icon name="linkExternal" size={16} />}
+          >
+            <Typography variant="body2">Cube Metadata Query</Typography>
+          </Button>
+          <CubeMetadata
+            datasetIri={cube.iri}
+            dataSource={configuratorState.dataSource}
+          />
+        </Stack>
+      ))}
       <Typography
         component="h3"
         variant="h4"

@@ -30,7 +30,11 @@ import {
 } from "@/components/form";
 import SelectTree from "@/components/select-tree";
 import useDisclosure from "@/components/use-disclosure";
-import { ChartConfig, getChartConfig } from "@/config-types";
+import {
+  ChartConfig,
+  getChartConfig,
+  useChartConfigFilters,
+} from "@/config-types";
 import { ColorPickerMenu } from "@/configurator/components/chart-controls/color-picker";
 import {
   AnnotatorTab,
@@ -558,6 +562,7 @@ export const MetaInputField = ({
 const useMultiFilterColorPicker = (value: string) => {
   const [state, dispatch] = useConfiguratorState(isConfiguring);
   const chartConfig = getChartConfig(state);
+  const filters = useChartConfigFilters(chartConfig);
   const { dimensionIri, colorConfigPath } = useMultiFilterContext();
   const { activeField } = chartConfig;
   const onChange = useCallback(
@@ -596,7 +601,7 @@ const useMultiFilterColorPicker = (value: string) => {
   }, [chartConfig, colorConfigPath, activeField]);
 
   const checkedState = dimensionIri
-    ? isMultiFilterFieldChecked(chartConfig, dimensionIri, value)
+    ? isMultiFilterFieldChecked(filters, dimensionIri, value)
     : null;
 
   return useMemo(

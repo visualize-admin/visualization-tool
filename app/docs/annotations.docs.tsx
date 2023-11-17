@@ -57,7 +57,12 @@ ${(
               it: "",
             },
           },
-          dataSet: "",
+          cubes: [
+            {
+              iri: "",
+              filters: {},
+            },
+          ],
           chartType: "column",
           fields,
           interactiveFiltersConfig: {
@@ -70,7 +75,6 @@ ${(
             dataFilters: { active: false, componentIris: [] },
             calculation: { active: false, type: "identity" },
           },
-          filters: {},
           activeField: undefined,
         }}
         aspectRatio={0.4}
@@ -222,7 +226,12 @@ ${(
               it: "",
             },
           },
-          dataSet: "",
+          cubes: [
+            {
+              iri: "",
+              filters: {},
+            },
+          ],
           chartType: "column",
           fields,
           interactiveFiltersConfig: {
@@ -235,7 +244,6 @@ ${(
             dataFilters: { active: false, componentIris: [] },
             calculation: { active: false, type: "identity" },
           },
-          filters: {},
           activeField: undefined,
         }}
         aspectRatio={0.4}
@@ -286,7 +294,12 @@ ${(
               it: "",
             },
           },
-          dataSet: "",
+          cubes: [
+            {
+              iri: "",
+              filters: {},
+            },
+          ],
           chartType: "column",
           fields,
           interactiveFiltersConfig: {
@@ -299,7 +312,6 @@ ${(
             dataFilters: { active: false, componentIris: [] },
             calculation: { active: false, type: "identity" },
           },
-          filters: {},
           activeField: undefined,
         }}
         aspectRatio={0.4}

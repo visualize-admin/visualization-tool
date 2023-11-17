@@ -30,7 +30,7 @@ import { useClient } from "urql";
 
 import { getSortedColumns } from "@/browse/datatable";
 import Flex from "@/components/flex";
-import { DataSource, QueryFilters, SortingField } from "@/config-types";
+import { DataSource, SortingField } from "@/config-types";
 import { Component, Observation } from "@/domain/data";
 import {
   dateFormatterFromDimension,
@@ -38,6 +38,7 @@ import {
   getFormattersForLocale,
 } from "@/formatters";
 import {
+  DataCubeObservationFilter,
   DataCubesComponentsDocument,
   DataCubesComponentsQuery,
   DataCubesComponentsQueryVariables,
@@ -172,20 +173,17 @@ const RawMenuItem = ({ children }: PropsWithChildren<{}>) => {
 
 export const DataDownloadMenu = memo(
   ({
-    dataSetIri,
     dataSource,
     filters,
     title,
   }: {
-    dataSetIri: string;
     dataSource: DataSource;
-    filters?: QueryFilters;
+    filters: DataCubeObservationFilter[];
     title: string;
   }) => {
     return (
       <DataDownloadStateProvider>
         <DataDownloadInnerMenu
-          dataSetIri={dataSetIri}
           dataSource={dataSource}
           fileName={title}
           filters={filters}
@@ -196,15 +194,13 @@ export const DataDownloadMenu = memo(
 );
 
 const DataDownloadInnerMenu = ({
-  dataSetIri,
   dataSource,
   fileName,
   filters,
 }: {
-  dataSetIri: string;
   dataSource: DataSource;
   fileName: string;
-  filters?: QueryFilters;
+  filters: DataCubeObservationFilter[];
 }) => {
   const [state] = useDataDownloadState();
   const popupState = usePopupState({
@@ -242,22 +238,24 @@ const DataDownloadInnerMenu = ({
           sx: { width: 200, pt: 1, pb: 2 },
         }}
       >
-        {filters && (
-          <DataDownloadMenuSection
-            dataSetIri={dataSetIri}
-            dataSource={dataSource}
-            subheader={
-              <Trans id="button.download.data.visible">Chart dataset</Trans>
-            }
-            fileName={`${fileName}-filtered`}
-            filters={filters}
-          />
-        )}
         <DataDownloadMenuSection
-          dataSetIri={dataSetIri}
+          dataSource={dataSource}
+          subheader={
+            <Trans id="button.download.data.visible">Chart dataset</Trans>
+          }
+          fileName={`${fileName}-filtered`}
+          filters={filters}
+        />
+        <DataDownloadMenuSection
           dataSource={dataSource}
           subheader={<Trans id="button.download.data.all">Full dataset</Trans>}
           fileName={`${fileName}-full`}
+          filters={filters.map((d) => {
+            return {
+              iri: d.iri,
+              componentIris: d.componentIris,
+            };
+          })}
         />
         {state.error && (
           <RawMenuItem>
@@ -272,17 +270,15 @@ const DataDownloadInnerMenu = ({
 };
 
 const DataDownloadMenuSection = ({
-  dataSetIri,
   dataSource,
   subheader,
   fileName,
   filters,
 }: {
-  dataSetIri: string;
   dataSource: DataSource;
   subheader: ReactNode;
   fileName: string;
-  filters?: QueryFilters;
+  filters: DataCubeObservationFilter[];
 }) => {
   return (
     <>
@@ -294,7 +290,6 @@ const DataDownloadMenuSection = ({
           {FILE_FORMATS.map((fileFormat) => (
             <DownloadMenuItem
               key={fileFormat}
-              dataSetIri={dataSetIri}
               dataSource={dataSource}
               fileName={fileName}
               fileFormat={fileFormat}
@@ -308,17 +303,15 @@ const DataDownloadMenuSection = ({
 };
 
 const DownloadMenuItem = ({
-  dataSetIri,
   dataSource,
   fileName,
   fileFormat,
   filters,
 }: {
-  dataSetIri: string;
   dataSource: DataSource;
   fileName: string;
   fileFormat: FileFormat;
-  filters?: QueryFilters;
+  filters: DataCubeObservationFilter[];
 }) => {
   const locale = useLocale();
   const i18n = useI18n();
@@ -393,7 +386,7 @@ const DownloadMenuItem = ({
                 sourceType: dataSource.type,
                 sourceUrl: dataSource.url,
                 locale,
-                filters: [{ iri: dataSetIri, filters }],
+                filters,
               })
               .toPromise(),
             urqlClient
@@ -404,7 +397,7 @@ const DownloadMenuItem = ({
                 sourceType: dataSource.type,
                 sourceUrl: dataSource.url,
                 locale,
-                filters: [{ iri: dataSetIri, filters }],
+                filters,
               })
               .toPromise(),
           ]);

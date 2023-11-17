@@ -15,7 +15,7 @@ import {
   useChartData,
 } from "@/charts/shared/chart-state";
 import { useRenderingKeyVariable } from "@/charts/shared/rendering-utils";
-import { ComboLineColumnConfig } from "@/configurator";
+import { ComboLineColumnConfig, useChartConfigFilters } from "@/configurator";
 
 import { ChartProps } from "../shared/ChartProps";
 
@@ -46,8 +46,9 @@ export const useComboLineColumnStateVariables = (
     measuresByIri,
     observations,
   } = props;
-  const { fields, filters, interactiveFiltersConfig } = chartConfig;
+  const { fields, interactiveFiltersConfig } = chartConfig;
   const { x } = fields;
+  const filters = useChartConfigFilters(chartConfig);
 
   const baseVariables = useBaseVariables(chartConfig);
   const bandXVariables = useBandXVariables(x, {

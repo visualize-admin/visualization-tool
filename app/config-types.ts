@@ -2,6 +2,7 @@
 import { fold } from "fp-ts/lib/Either";
 import { pipe } from "fp-ts/lib/function";
 import * as t from "io-ts";
+import React from "react";
 
 import { Dimension, Measure, ObservationValue } from "@/domain/data";
 
@@ -240,28 +241,25 @@ const SortingField = t.partial({
 });
 export type SortingField = t.TypeOf<typeof SortingField>;
 
-// const Cube = t.type({
-//   iri: t.string,
-//   filters: Filters,
-// });
-// export type Cube = t.TypeOf<typeof Cube>;
-
-// const GenericChartConfig = t.type({
-//   key: t.string,
-//   version: t.string,
-//   meta: Meta,
-//   cubes: t.array(Cube),
-//   activeField: t.union([t.string, t.undefined]),
-// });
+const Cube = t.intersection([
+  t.type({
+    iri: t.string,
+    filters: Filters,
+  }),
+  t.partial({
+    joinBy: t.string,
+  }),
+]);
+export type Cube = t.TypeOf<typeof Cube>;
 
 const GenericChartConfig = t.type({
   key: t.string,
   version: t.string,
   meta: Meta,
-  dataSet: t.string,
-  filters: Filters,
+  cubes: t.array(Cube),
   activeField: t.union([t.string, t.undefined]),
 });
+
 export type GenericChartConfig = t.TypeOf<typeof GenericChartConfig>;
 
 const ChartSubType = t.union([t.literal("stacked"), t.literal("grouped")]);
@@ -940,7 +938,7 @@ type _InteractiveFiltersAdjusters = {
 };
 
 type BaseAdjusters<NewChartConfigType extends ChartConfig> = {
-  filters: FieldAdjuster<NewChartConfigType, Filters>;
+  cubes: FieldAdjuster<NewChartConfigType, GenericChartConfig["cubes"]>;
   interactiveFiltersConfig: InteractiveFiltersAdjusters;
 };
 
@@ -1021,7 +1019,7 @@ type PieAdjusters = BaseAdjusters<PieConfig> & {
 };
 
 type TableAdjusters = {
-  filters: FieldAdjuster<TableConfig, Filters>;
+  cubes: FieldAdjuster<TableConfig, GenericChartConfig["cubes"]>;
   fields: FieldAdjuster<
     TableConfig,
     | ColumnSegmentField
@@ -1220,4 +1218,24 @@ export const getChartConfig = (
   const key = chartKey ?? activeChartKey;
 
   return chartConfigs.find((d) => d.key === key) ?? chartConfigs[0];
+};
+
+export const getChartConfigFilters = (
+  cubes: Cube[],
+  cubeIri?: string
+): Filters => {
+  return cubes
+    .filter((d) => (cubeIri ? d.iri === cubeIri : true))
+    .reduce((acc, cube) => {
+      return { ...acc, ...cube.filters };
+    }, {});
+};
+
+export const useChartConfigFilters = (
+  chartConfig: ChartConfig,
+  cubeIri?: string
+): Filters => {
+  return React.useMemo(() => {
+    return getChartConfigFilters(chartConfig.cubes, cubeIri);
+  }, [chartConfig.cubes, cubeIri]);
 };

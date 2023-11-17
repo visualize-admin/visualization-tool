@@ -128,7 +128,7 @@ export const ChartTypeSelector = ({
       sourceType: state.dataSource.type,
       sourceUrl: state.dataSource.url,
       locale,
-      filters: [{ iri: chartConfig.dataSet }],
+      filters: chartConfig.cubes.map((cube) => ({ iri: cube.iri })),
     },
   });
   const dimensions = data?.dataCubesComponents?.dimensions ?? [];

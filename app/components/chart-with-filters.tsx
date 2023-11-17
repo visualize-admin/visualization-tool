@@ -8,6 +8,7 @@ import useSyncInteractiveFilters from "@/charts/shared/use-sync-interactive-filt
 import { ChartFiltersList } from "@/components/chart-filters-list";
 import Flex from "@/components/flex";
 import { ChartConfig, DataSource } from "@/configurator";
+import { Dimension } from "@/domain/data";
 
 const ChartAreasVisualization = dynamic(
   import("@/charts/area/chart-area").then(
@@ -71,17 +72,16 @@ const ChartTableVisualization = dynamic(
 );
 
 type GenericChartProps = {
-  dataSet: string;
   dataSource: DataSource;
   componentIris: string[] | undefined;
   chartConfig: ChartConfig;
+  dimensions: Dimension[];
 };
 
 const GenericChart = (props: GenericChartProps) => {
-  const { dataSet, dataSource, componentIris, chartConfig } = props;
-  const queryFilters = useQueryFilters({ chartConfig });
+  const { dataSource, componentIris, chartConfig, dimensions } = props;
+  const queryFilters = useQueryFilters({ chartConfig, dimensions });
   const commonProps = {
-    dataSetIri: dataSet,
     dataSource,
     queryFilters,
     componentIris,
@@ -148,10 +148,10 @@ const GenericChart = (props: GenericChartProps) => {
 };
 
 type ChartWithFiltersProps = {
-  dataSet: string;
   dataSource: DataSource;
   componentIris: string[] | undefined;
   chartConfig: ChartConfig;
+  dimensions: Dimension[];
 };
 
 export const ChartWithFilters = React.forwardRef<

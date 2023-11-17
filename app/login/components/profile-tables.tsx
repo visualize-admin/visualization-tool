@@ -168,7 +168,7 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
   const { userId, config, onRemoveSuccess } = props;
   const { dataSource } = config.data;
   const dataSets = Array.from(
-    new Set(config.data.chartConfigs.map((d) => d.dataSet))
+    new Set(config.data.chartConfigs.flatMap((d) => d.cubes.map((d) => d.iri)))
   );
   const dataSet = dataSets.length === 1 ? dataSets[0] : null;
   const locale = useLocale();
