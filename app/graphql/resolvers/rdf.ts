@@ -16,6 +16,7 @@ import { truthy } from "@/domain/types";
 import { Loaders } from "@/graphql/context";
 import {
   DataCubeComponentFilter,
+  DataCubeObservationFilter,
   DataCubeResolvers,
   DimensionResolvers,
   QueryResolvers,
@@ -328,6 +329,8 @@ export const dataCubesObservations: NonNullable<
   }
 
   const { loaders, sparqlClient, cache } = await setup(info);
+  // If the cube was updated, we need to also update the filter with the correct iri.
+  const filtersWithCorrectIri: DataCubeObservationFilter[] = [];
 
   const data: Observation[] = [];
   const sparqlEditorUrls: DataCubesObservations["sparqlEditorUrls"] = [];
@@ -344,6 +347,11 @@ export const dataCubesObservations: NonNullable<
       const cube = latest ? await getLatestCube(rawCube) : rawCube;
       // TODO: optimize to avoid fetching the shape at all
       await cube.fetchShape();
+      filtersWithCorrectIri.push({
+        ...filter,
+        iri: cube.term?.value!,
+      });
+
       const { query, observations } = await getCubeObservations({
         cube,
         locale,
