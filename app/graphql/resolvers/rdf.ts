@@ -323,6 +323,10 @@ export const dataCubesMetadata: NonNullable<
 export const dataCubesObservations: NonNullable<
   QueryResolvers["dataCubesObservations"]
 > = async (_, { locale, filters }, { setup }, info) => {
+  if (filters.length > 1 && filters.some((f) => f.joinBy === undefined)) {
+    throw new Error("Can't query multiple cubes observations without joinBy!");
+  }
+
   const { loaders, sparqlClient, cache } = await setup(info);
 
   const data: Observation[] = [];
