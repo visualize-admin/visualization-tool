@@ -323,22 +323,25 @@ const useFilterReorder = ({
     }
 
     const dimension = dimensions.find((d) => d.iri === dimensionIri);
-    const newChartConfig = moveFilterField(chartConfig, {
-      dimensionIri,
-      delta,
-      possibleValues: dimension ? dimension.values : [],
-    });
 
-    dispatch({
-      type: "CHART_CONFIG_REPLACED",
-      value: {
-        chartConfig: newChartConfig,
-        dataCubesComponents: {
-          dimensions,
-          measures,
+    if (dimension) {
+      const newChartConfig = moveFilterField(chartConfig, {
+        dimension,
+        delta,
+        possibleValues: dimension ? dimension.values.map((d) => d.value) : [],
+      });
+
+      dispatch({
+        type: "CHART_CONFIG_REPLACED",
+        value: {
+          chartConfig: newChartConfig,
+          dataCubesComponents: {
+            dimensions,
+            measures,
+          },
         },
-      },
-    });
+      });
+    }
   });
 
   const handleAddDimensionFilter = useEvent((dimension: Dimension) => {
@@ -347,6 +350,7 @@ const useFilterReorder = ({
     dispatch({
       type: "CHART_CONFIG_FILTER_SET_SINGLE",
       value: {
+        cubeIri: dimension.cubeIri,
         dimensionIri: dimension.iri,
         value: `${filterValue.value}`,
       },
@@ -357,6 +361,7 @@ const useFilterReorder = ({
     dispatch({
       type: "CHART_CONFIG_FILTER_REMOVE_SINGLE",
       value: {
+        cubeIri: dimension.cubeIri,
         dimensionIri: dimension.iri,
       },
     });

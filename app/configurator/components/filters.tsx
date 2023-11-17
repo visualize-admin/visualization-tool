@@ -226,7 +226,7 @@ const MultiFilterContent = ({
 }) => {
   const [config, dispatch] = useConfiguratorState(isConfiguring);
   const chartConfig = getChartConfig(config);
-  const { dimensionIri, activeKeys, allValues, colorConfigPath } =
+  const { cubeIri, dimensionIri, activeKeys, allValues, colorConfigPath } =
     useMultiFilterContext();
   const filters = useChartConfigFilters(chartConfig);
   const rawValues = filters[dimensionIri];
@@ -291,6 +291,7 @@ const MultiFilterContent = ({
     dispatch({
       type: "CHART_CONFIG_FILTER_SET_MULTI",
       value: {
+        cubeIri,
         dimensionIri,
         values: newValues,
       },
@@ -897,19 +898,19 @@ export const TimeFilter = (props: TimeFilterProps) => {
   const formatLocale = useTimeFormatLocale();
   const timeFormatUnit = useTimeFormatUnit();
   const [state, dispatch] = useConfiguratorState();
-
   const setFilterRange = useCallback(
     ([from, to]: [string, string]) => {
       dispatch({
         type: "CHART_CONFIG_FILTER_SET_RANGE",
         value: {
+          cubeIri: dimension.cubeIri,
           dimensionIri: dimension.iri,
           from,
           to,
         },
       });
     },
-    [dispatch, dimension.iri]
+    [dispatch, dimension.cubeIri, dimension.iri]
   );
 
   const temporalDimension =
@@ -1187,6 +1188,7 @@ export const DimensionValuesSingleFilter = ({
         return (
           <SingleFilterField
             key={dv.value}
+            cubeIri={dimension.cubeIri}
             dimensionIri={dimension.iri}
             label={dv.label}
             value={`${dv.value}`}

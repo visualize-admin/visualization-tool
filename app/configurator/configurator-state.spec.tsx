@@ -429,26 +429,34 @@ describe("applyDimensionToFilters", () => {
 describe("moveField", () => {
   const chartConfig = {
     state: "CONFIGURING",
-    filters: {
-      species: {
-        type: "single",
-        value: "penguins",
+    cubes: [
+      {
+        iri: "",
+        filters: {
+          species: {
+            type: "single",
+            value: "penguins",
+          },
+          date: {
+            type: "single",
+            value: "2020.11.20",
+          },
+        },
       },
-      date: {
-        type: "single",
-        value: "2020.11.20",
-      },
-    },
+    ],
   } as unknown as ChartConfig;
 
   it("should be possible to move an existing field up", () => {
     const newChartConfig = moveFilterField(chartConfig, {
-      dimensionIri: "date",
+      dimension: { iri: "date", cubeIri: "" } as any as Dimension,
       delta: -1,
       possibleValues: ["2020.11.20", "2020.11.10"],
     });
-    expect(Object.keys(newChartConfig.filters)).toEqual(["date", "species"]);
-    expect(Object.values(newChartConfig.filters)).toEqual([
+    expect(Object.keys(newChartConfig.cubes[0].filters)).toEqual([
+      "date",
+      "species",
+    ]);
+    expect(Object.values(newChartConfig.cubes[0].filters)).toEqual([
       { type: "single", value: "2020.11.20" },
       { type: "single", value: "penguins" },
     ]);
@@ -456,12 +464,15 @@ describe("moveField", () => {
 
   it("should be possible to move an existing field down", () => {
     const newChartConfig = moveFilterField(chartConfig, {
-      dimensionIri: "species",
+      dimension: { iri: "species", cubeIri: "" } as any as Dimension,
       delta: 1,
       possibleValues: ["penguins", "tigers"],
     });
-    expect(Object.keys(newChartConfig.filters)).toEqual(["date", "species"]);
-    expect(Object.values(newChartConfig.filters)).toEqual([
+    expect(Object.keys(newChartConfig.cubes[0].filters)).toEqual([
+      "date",
+      "species",
+    ]);
+    expect(Object.values(newChartConfig.cubes[0].filters)).toEqual([
       { type: "single", value: "2020.11.20" },
       { type: "single", value: "penguins" },
     ]);
@@ -469,16 +480,16 @@ describe("moveField", () => {
 
   it("should be possible to move an absent field up", () => {
     const newChartConfig = moveFilterField(chartConfig, {
-      dimensionIri: "color",
+      dimension: { iri: "color", cubeIri: "" } as any as Dimension,
       delta: -1,
       possibleValues: ["red", "blue"],
     });
-    expect(Object.keys(newChartConfig.filters)).toEqual([
+    expect(Object.keys(newChartConfig.cubes[0].filters)).toEqual([
       "species",
       "color",
       "date",
     ]);
-    expect(Object.values(newChartConfig.filters)).toEqual([
+    expect(Object.values(newChartConfig.cubes[0].filters)).toEqual([
       { type: "single", value: "penguins" },
       { type: "single", value: "red" },
       { type: "single", value: "2020.11.20" },
@@ -487,12 +498,15 @@ describe("moveField", () => {
 
   it("should not be possible to move an existing field too much above", () => {
     const newChartConfig = moveFilterField(chartConfig, {
-      dimensionIri: "species",
+      dimension: { iri: "species", cubeIri: "" } as any as Dimension,
       delta: -1,
       possibleValues: ["penguins", "tigers"],
     });
-    expect(Object.keys(newChartConfig.filters)).toEqual(["species", "date"]);
-    expect(Object.values(newChartConfig.filters)).toEqual([
+    expect(Object.keys(newChartConfig.cubes[0].filters)).toEqual([
+      "species",
+      "date",
+    ]);
+    expect(Object.values(newChartConfig.cubes[0].filters)).toEqual([
       { type: "single", value: "penguins" },
       { type: "single", value: "2020.11.20" },
     ]);
@@ -500,12 +514,15 @@ describe("moveField", () => {
 
   it("should not be possible to move an existing field too much below", () => {
     const newChartConfig = moveFilterField(chartConfig, {
-      dimensionIri: "date",
+      dimension: { iri: "date", cubeIri: "" } as any as Dimension,
       delta: 1,
       possibleValues: ["penguins", "tigers"],
     });
-    expect(Object.keys(newChartConfig.filters)).toEqual(["species", "date"]);
-    expect(Object.values(newChartConfig.filters)).toEqual([
+    expect(Object.keys(newChartConfig.cubes[0].filters)).toEqual([
+      "species",
+      "date",
+    ]);
+    expect(Object.values(newChartConfig.cubes[0].filters)).toEqual([
       { type: "single", value: "penguins" },
       { type: "single", value: "2020.11.20" },
     ]);
@@ -842,7 +859,12 @@ describe("colorMapping", () => {
               componentIri: "measure",
             },
           },
-          filters: {},
+          cubes: [
+            {
+              iri: "",
+              filters: {},
+            },
+          ],
         },
       ],
       activeChartKey: "abc",
@@ -965,7 +987,6 @@ describe("handleChartOptionChanged", () => {
   it("should reset previous color filters", () => {
     const state = {
       state: "CONFIGURING_CHART",
-      dataSet: "mapDataset",
       dataSource: {
         type: "sparql",
         url: "fakeUrl",
@@ -989,15 +1010,20 @@ describe("handleChartOptionChanged", () => {
               },
             },
           },
-          filters: {
-            areaLayerColorIri: {
-              type: "multi",
-              values: {
-                red: true,
-                green: true,
+          cubes: [
+            {
+              iri: "mapDataset",
+              filters: {
+                areaLayerColorIri: {
+                  type: "multi",
+                  values: {
+                    red: true,
+                    green: true,
+                  },
+                },
               },
             },
-          },
+          ],
         },
       ],
       activeChartKey: "cab",
@@ -1013,7 +1039,7 @@ describe("handleChartOptionChanged", () => {
       },
     });
 
-    expect(Object.keys(state.chartConfigs[0].filters)).not.toContain(
+    expect(Object.keys(state.chartConfigs[0].cubes[0].filters)).not.toContain(
       "areaLayerColorIri"
     );
   });

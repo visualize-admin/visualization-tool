@@ -2,7 +2,7 @@ import isEqual from "lodash/isEqual";
 
 import useChanges from "../utils/use-changes";
 
-import { ChartConfig, FilterValue } from ".";
+import { FilterValue, Filters } from ".";
 
 const isEqualFilter = (fa?: FilterValue, fb?: FilterValue) => {
   if (fa?.type === "single" && fb?.type === "single") {
@@ -19,21 +19,20 @@ const isEqualFilter = (fa?: FilterValue, fb?: FilterValue) => {
   return false;
 };
 
-const computeFilterChanges = (
-  prev: ChartConfig["filters"],
-  cur: ChartConfig["filters"]
-) => {
+const computeFilterChanges = (prev: Filters, cur: Filters) => {
   const allKeys = new Set([...Object.keys(prev), ...Object.keys(cur)]);
   const res = [];
-  for (let key of allKeys) {
+
+  for (const key of allKeys) {
     if (!isEqualFilter(prev[key], cur[key])) {
       res.push([key, prev[key], cur[key]] as const);
     }
   }
+
   return res;
 };
 
-const useFilterChanges = (cur: ChartConfig["filters"]) => {
+const useFilterChanges = (cur: Filters) => {
   return useChanges(cur, computeFilterChanges);
 };
 
