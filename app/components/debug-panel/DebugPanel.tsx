@@ -18,7 +18,7 @@ import {
   useConfiguratorState,
 } from "@/configurator";
 import { dataSourceToSparqlEditorUrl } from "@/domain/datasource";
-import { useComponentsWithHierarchiesQuery } from "@/graphql/query-hooks";
+import { useDataCubesComponentsQuery } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import { useLocale } from "@/src";
 import { useInteractiveFiltersRaw } from "@/stores/interactive-filters";
@@ -48,12 +48,12 @@ const CubeMetadata = ({
 }) => {
   const locale = useLocale();
   const [expanded, setExpanded] = useState(false);
-  const [{ data, fetching }] = useComponentsWithHierarchiesQuery({
+  const [{ data, fetching }] = useDataCubesComponentsQuery({
     variables: {
-      iri: datasetIri,
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
+      filters: [{ iri: datasetIri }],
     },
     pause: !expanded,
   });
@@ -71,12 +71,12 @@ const CubeMetadata = ({
         <AccordionDetails>
           {fetching ? <CircularProgress size={12} color="secondary" /> : null}
 
-          {expanded && data?.dataCubeByIri ? (
+          {expanded && data?.dataCubesComponents ? (
             <Inspector
               data={Object.fromEntries([
                 [
-                  ...data.dataCubeByIri.dimensions,
-                  ...data.dataCubeByIri.measures,
+                  ...data.dataCubesComponents.dimensions,
+                  ...data.dataCubesComponents.measures,
                 ].map((d) => [d.label, d]),
               ])}
               table={false}

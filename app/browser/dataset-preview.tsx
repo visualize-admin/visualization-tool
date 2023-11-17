@@ -11,7 +11,10 @@ import { DataDownloadMenu, RunSparqlQuery } from "@/components/data-download";
 import Flex from "@/components/flex";
 import { HintRed, Loading, LoadingDataError } from "@/components/hint";
 import { DataSource } from "@/config-types";
-import { useDataCubePreviewQuery } from "@/graphql/query-hooks";
+import {
+  useDataCubePreviewQuery,
+  useDataCubesComponentsQuery,
+} from "@/graphql/query-hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import { useLocale } from "@/locales/use-locale";
 
@@ -91,7 +94,9 @@ export const DataSetPreview = ({
 }) => {
   const footnotesClasses = useFootnotesStyles({ useMarginTop: false });
   const locale = useLocale();
-  const [{ data: metadata, fetching, error }] = useDataCubePreviewQuery({
+  const [
+    { data: previewData, fetching: fetchingPreview, error: previewError },
+  ] = useDataCubePreviewQuery({
     variables: {
       iri: dataSetIri,
       sourceType: dataSource.type,
@@ -99,22 +104,40 @@ export const DataSetPreview = ({
       locale,
     },
   });
+  const [
+    {
+      data: componentsData,
+      fetching: fetchingComponents,
+      error: componentsError,
+    },
+  ] = useDataCubesComponentsQuery({
+    variables: {
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+      filters: [{ iri: dataSetIri }],
+    },
+  });
   const classes = useStyles({
-    descriptionPresent: !!metadata?.dataCubeByIri?.description,
+    descriptionPresent: !!previewData?.dataCubeByIri?.description,
   });
 
   React.useEffect(() => {
     window.scrollTo({ top: 0 });
   }, []);
 
-  if (fetching) {
+  if (fetchingPreview || fetchingComponents) {
     return (
       <Flex className={classes.loadingWrapper}>
         <Loading />
       </Flex>
     );
-  } else if (metadata?.dataCubeByIri) {
-    const { dataCubeByIri } = metadata;
+  } else if (
+    previewData?.dataCubeByIri &&
+    componentsData?.dataCubesComponents
+  ) {
+    const { dataCubeByIri } = previewData;
+    const { dataCubesComponents } = componentsData;
 
     return (
       <Flex className={classes.root}>
@@ -165,8 +188,8 @@ export const DataSetPreview = ({
           <Flex className={classes.tableWrapper}>
             <DataSetPreviewTable
               title={dataCubeByIri.title}
-              dimensions={dataCubeByIri.dimensions}
-              measures={dataCubeByIri.measures}
+              dimensions={dataCubesComponents.dimensions}
+              measures={dataCubesComponents.measures}
               observations={dataCubeByIri.observations.data}
             />
           </Flex>
@@ -199,7 +222,9 @@ export const DataSetPreview = ({
   } else {
     return (
       <Flex className={classes.loadingWrapper}>
-        <LoadingDataError message={error?.message} />
+        <LoadingDataError
+          message={previewError?.message ?? componentsError?.message}
+        />
       </Flex>
     );
   }

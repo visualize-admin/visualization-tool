@@ -8,6 +8,7 @@ import { ParsingClient } from "sparql-http-client/ParsingClient";
 import { LRUCache } from "typescript-lru-cache";
 
 import { PromiseValue, truthy } from "@/domain/types";
+import { DataCubeFilter } from "@/graphql/resolver-types";
 import { pragmas } from "@/rdf/create-source";
 import { ExtendedCube } from "@/rdf/extended-cube";
 
@@ -115,6 +116,38 @@ const getDimensionUnits = (d: CubeDimension) => {
   return t ? [t] : [];
 };
 
+export const getCubesDimensions = async (
+  cubes: ExtendedCube[],
+  options: {
+    filters: DataCubeFilter[];
+    locale: string;
+    sparqlClient: ParsingClient;
+    cache: LRUCache | undefined;
+  }
+) => {
+  const { filters, locale, sparqlClient, cache } = options;
+  const filtersByIri = keyBy(filters, (d) => d.iri);
+
+  return (
+    await Promise.all(
+      cubes.map(async (cube) => {
+        const iri = cube.term?.value;
+        const componentIris = iri
+          ? filtersByIri[iri]?.componentIris
+          : undefined;
+
+        return await getCubeDimensions({
+          cube,
+          locale,
+          sparqlClient,
+          componentIris,
+          cache,
+        });
+      })
+    )
+  ).flat();
+};
+
 export const getCubeDimensions = async ({
   cube,
   locale,
@@ -145,7 +178,6 @@ export const getCubeDimensions = async ({
       });
 
     const dimensionUnits = dimensions.flatMap(getDimensionUnits);
-
     const dimensionUnitIndex = index(
       await loadUnits({
         ids: dimensionUnits,

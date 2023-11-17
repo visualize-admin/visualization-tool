@@ -1,84 +1,3 @@
-fragment dimensionMetadata on Dimension {
-  iri
-  label
-  description
-  isNumerical
-  isKeyDimension
-  dataType
-  scaleType
-  order
-  values(
-    sourceType: $sourceType
-    sourceUrl: $sourceUrl
-    filters: $filters
-    disableLoad: $disableValuesLoad
-  )
-  unit
-  related {
-    iri
-    type
-  }
-  ... on TemporalDimension {
-    timeUnit
-    timeFormat
-  }
-  ... on NumericalMeasure {
-    isCurrency
-    currencyExponent
-    resolution
-    isDecimal
-  }
-}
-
-fragment dimensionMetadataWithHierarchies on Dimension {
-  iri
-  label
-  description
-  isNumerical
-  isKeyDimension
-  scaleType
-  dataType
-  order
-  values(sourceType: $sourceType, sourceUrl: $sourceUrl, filters: $filters)
-  unit
-  related {
-    iri
-    type
-  }
-  ... on TemporalDimension {
-    timeUnit
-    timeFormat
-  }
-  ... on NumericalMeasure {
-    isCurrency
-    currencyExponent
-    resolution
-    isDecimal
-  }
-  ...hierarchyMetadata
-}
-
-fragment hierarchyMetadata on Dimension {
-  hierarchy(sourceType: $sourceType, sourceUrl: $sourceUrl) {
-    ...hierarchyValueFields
-    children {
-      ...hierarchyValueFields
-      children {
-        ...hierarchyValueFields
-        children {
-          ...hierarchyValueFields
-          children {
-            ...hierarchyValueFields
-            children {
-              ...hierarchyValueFields
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
 query SearchCubes(
   $sourceType: String!
   $sourceUrl: String!
@@ -109,7 +28,6 @@ query DataCubePreview(
   $sourceUrl: String!
   $locale: String!
   $latest: Boolean
-  $filters: Filters
   $disableValuesLoad: Boolean = true
 ) {
   dataCubeByIri(
@@ -124,20 +42,6 @@ query DataCubePreview(
     title
     description
     publicationStatus
-    dimensions(
-      sourceType: $sourceType
-      sourceUrl: $sourceUrl
-      disableValuesLoad: $disableValuesLoad
-    ) {
-      ...dimensionMetadata
-    }
-    measures(
-      sourceType: $sourceType
-      sourceUrl: $sourceUrl
-      disableValuesLoad: $disableValuesLoad
-    ) {
-      ...dimensionMetadata
-    }
     observations(sourceType: $sourceType, sourceUrl: $sourceUrl, limit: 10) {
       data
       sparql
@@ -185,100 +89,18 @@ query DataCubeMetadata(
   }
 }
 
-query Components(
-  $iri: String!
+query DataCubesComponents(
   $sourceType: String!
   $sourceUrl: String!
   $locale: String!
-  $latest: Boolean
-  $filters: Filters
-  $componentIris: [String!]
-  $disableValuesLoad: Boolean = false
+  $filters: [DataCubeFilter!]!
 ) {
-  dataCubeByIri(
-    iri: $iri
+  dataCubesComponents(
     sourceType: $sourceType
     sourceUrl: $sourceUrl
     locale: $locale
-    latest: $latest
-    disableValuesLoad: $disableValuesLoad
-  ) {
-    dimensions(
-      sourceType: $sourceType
-      sourceUrl: $sourceUrl
-      componentIris: $componentIris
-      disableValuesLoad: $disableValuesLoad
-    ) {
-      ...dimensionMetadata
-    }
-    measures(
-      sourceType: $sourceType
-      sourceUrl: $sourceUrl
-      componentIris: $componentIris
-      disableValuesLoad: $disableValuesLoad
-    ) {
-      ...dimensionMetadata
-    }
-  }
-}
-
-query ComponentsWithHierarchies(
-  $iri: String!
-  $sourceType: String!
-  $sourceUrl: String!
-  $locale: String!
-  $latest: Boolean
-  $filters: Filters
-  $componentIris: [String!]
-) {
-  dataCubeByIri(
-    iri: $iri
-    sourceType: $sourceType
-    sourceUrl: $sourceUrl
-    locale: $locale
-    latest: $latest
-  ) {
-    dimensions(
-      sourceType: $sourceType
-      sourceUrl: $sourceUrl
-      componentIris: $componentIris
-    ) {
-      ...dimensionMetadataWithHierarchies
-    }
-    measures(
-      sourceType: $sourceType
-      sourceUrl: $sourceUrl
-      componentIris: $componentIris
-    ) {
-      ...dimensionMetadataWithHierarchies
-    }
-  }
-}
-
-query DimensionValues(
-  $dataCubeIri: String!
-  $dimensionIri: String!
-  $sourceType: String!
-  $sourceUrl: String!
-  $locale: String!
-  $latest: Boolean
-  $filters: Filters
-) {
-  dataCubeByIri(
-    iri: $dataCubeIri
-    sourceType: $sourceType
-    sourceUrl: $sourceUrl
-    locale: $locale
-    latest: $latest
-  ) {
-    dimensionByIri(
-      iri: $dimensionIri
-      sourceType: $sourceType
-      sourceUrl: $sourceUrl
-    ) {
-      ...dimensionMetadataWithHierarchies
-    }
-  }
+    filters: $filters
+  )
 }
 
 query GeoCoordinatesByDimensionIri(
@@ -385,39 +207,5 @@ query PossibleFilters(
     iri
     type
     value
-  }
-}
-
-fragment hierarchyValueFields on HierarchyValue {
-  value
-  dimensionIri
-  depth
-  label
-  alternateName
-  hasValue
-  position
-  identifier
-}
-
-query DimensionHierarchy(
-  $sourceType: String!
-  $sourceUrl: String!
-  $locale: String!
-  $cubeIri: String!
-  $dimensionIri: String!
-) {
-  dataCubeByIri(
-    iri: $cubeIri
-    sourceType: $sourceType
-    sourceUrl: $sourceUrl
-    locale: $locale
-  ) {
-    dimensionByIri(
-      iri: $dimensionIri
-      sourceType: $sourceType
-      sourceUrl: $sourceUrl
-    ) {
-      ...hierarchyMetadata
-    }
   }
 }

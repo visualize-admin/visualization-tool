@@ -55,8 +55,11 @@ import {
   useErrorVariable,
 } from "@/configurator/components/ui-helpers";
 import {
+  Component,
+  Dimension,
   GeoData,
   GeoShapes,
+  Measure,
   Observation,
   ObservationValue,
   findRelatedErrorDimension,
@@ -64,10 +67,7 @@ import {
 } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { formatNumberWithUnit, useFormatNumber } from "@/formatters";
-import {
-  DimensionMetadataFragment,
-  GeoCoordinates,
-} from "@/graphql/query-hooks";
+import { GeoCoordinates } from "@/graphql/query-hooks";
 import { getColorInterpolator } from "@/palettes";
 
 import { ChartProps } from "../shared/ChartProps";
@@ -93,11 +93,11 @@ export type MapState = CommonChartState &
       | {
           data: Observation[];
           dataDomain: [number, number];
-          measureDimension?: DimensionMetadataFragment;
+          measureDimension?: Measure;
           measureLabel: string;
           getLabel: (d: Observation) => string;
           getValue: (d: Observation) => number | null;
-          errorDimension?: DimensionMetadataFragment;
+          errorDimension?: Component;
           getFormattedError: null | ((d: Observation) => string);
           radiusScale: ScalePower<number, number>;
           colors: SymbolLayerColors;
@@ -248,7 +248,7 @@ type AreaLayerColors =
   | {
       type: "categorical";
       palette: string;
-      component: DimensionMetadataFragment;
+      component: Dimension;
       domain: string[];
       getValue: (d: Observation) => string;
       getColor: (d: Observation) => number[];
@@ -257,7 +257,7 @@ type AreaLayerColors =
   | {
       type: "continuous";
       palette: string;
-      component: DimensionMetadataFragment;
+      component: Measure;
       domain: [number, number];
       // Needed for the legend.
       scale:
@@ -330,12 +330,12 @@ const getFixedColors = (color: FixedColorField) => {
 
 const getCategoricalColors = (
   color: CategoricalColorField,
-  dimensions: DimensionMetadataFragment[],
-  measures: DimensionMetadataFragment[]
+  dimensions: Dimension[],
+  measures: Measure[]
 ) => {
   const component = [...dimensions, ...measures].find(
     (d) => d.iri === color.componentIri
-  ) as DimensionMetadataFragment;
+  ) as Component;
   const valuesByLabel = keyBy(component.values, (d) => d.label);
   const valuesByAbbreviationOrLabel = keyBy(
     component.values,
@@ -380,13 +380,13 @@ const getCategoricalColors = (
 const getNumericalColors = (
   color: NumericalColorField,
   data: Observation[],
-  dimensions: DimensionMetadataFragment[],
-  measures: DimensionMetadataFragment[],
+  dimensions: Dimension[],
+  measures: Measure[],
   { formatNumber }: { formatNumber: ReturnType<typeof useFormatNumber> }
 ) => {
   const component = measures.find(
     (d) => d.iri === color.componentIri
-  ) as DimensionMetadataFragment;
+  ) as Measure;
   const domain = extent(
     data.map((d) => d[color.componentIri]),
     (d) => +d!
@@ -446,8 +446,8 @@ const useColors = ({
 }: {
   color?: MapSymbolLayer["color"];
   data: Observation[];
-  dimensions: DimensionMetadataFragment[];
-  measures: DimensionMetadataFragment[];
+  dimensions: Dimension[];
+  measures: Measure[];
 }) => {
   const formatNumber = useFormatNumber();
 
@@ -494,7 +494,7 @@ const usePreparedData = ({
   geoDimensionIri: string;
   getLabel: (d: Observation) => string;
   data: Observation[];
-  dimensions: DimensionMetadataFragment[];
+  dimensions: Dimension[];
   features: GeoData;
 }) => {
   return useMemo(() => {
@@ -537,8 +537,8 @@ const useLayerState = ({
   measureIri: string | undefined;
   data: Observation[];
   features: GeoData;
-  dimensions: DimensionMetadataFragment[];
-  measures: DimensionMetadataFragment[];
+  dimensions: Dimension[];
+  measures: Measure[];
 }) => {
   const formatNumber = useFormatNumber();
 

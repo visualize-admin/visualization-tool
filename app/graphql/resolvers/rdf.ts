@@ -4,21 +4,30 @@ import ParsingClient from "sparql-http-client/ParsingClient";
 import { LRUCache } from "typescript-lru-cache";
 
 import { Filters } from "@/configurator";
-import { DimensionValue } from "@/domain/data";
+import {
+  Dimension,
+  DimensionValue,
+  Measure,
+  TemporalDimension,
+} from "@/domain/data";
+import { truthy } from "@/domain/types";
 import { Loaders } from "@/graphql/context";
 import {
+  DataCubeFilter,
   DataCubeResolvers,
   DimensionResolvers,
   QueryResolvers,
   Resolvers,
   SearchCubeResultOrder,
 } from "@/graphql/resolver-types";
+import { resolveDimensionType, resolveMeasureType } from "@/graphql/resolvers";
 import { defaultLocale } from "@/locales/locales";
-import { parseCube } from "@/rdf/parse";
+import { parseCube, parseIri } from "@/rdf/parse";
 import {
   createCubeDimensionValuesLoader,
   getCubeDimensions,
   getCubeObservations,
+  getCubesDimensions,
   getLatestCube,
 } from "@/rdf/queries";
 import { unversionObservation } from "@/rdf/query-dimension-values";
@@ -135,6 +144,150 @@ export const possibleFilters: NonNullable<QueryResolvers["possibleFilters"]> =
 
     return [];
   };
+
+export const dataCubesComponents: NonNullable<
+  QueryResolvers["dataCubesComponents"]
+> = async (_, { locale, filters }, { setup }, info) => {
+  const { loaders, sparqlClient, sparqlClientStream, cache } = await setup(
+    info
+  );
+  // If the cube was updated, we need to also update the filter with the correct iri.
+  const filtersWithCorrectIri: DataCubeFilter[] = [];
+
+  const cubes = (
+    await Promise.all(
+      filters.map(async (filter) => {
+        const { iri, latest = true } = filter;
+        const cube = await loaders.cube.load(iri);
+
+        if (!cube) {
+          throw new Error(`Cube ${iri} not found!`);
+        }
+
+        if (latest) {
+          const latestCube = await getLatestCube(cube);
+          await latestCube.fetchShape();
+
+          filtersWithCorrectIri.push({
+            ...filter,
+            iri: latestCube.term?.value!,
+          });
+
+          return latestCube;
+        }
+
+        await cube.fetchShape();
+        filtersWithCorrectIri.push(filter);
+
+        return cube;
+      })
+    )
+  ).filter(truthy);
+
+  const rawComponents = await getCubesDimensions(cubes, {
+    locale,
+    sparqlClient,
+    filters: filtersWithCorrectIri,
+    cache,
+  });
+
+  const dimensions: Dimension[] = [];
+  const measures: Measure[] = [];
+
+  await Promise.all(
+    rawComponents.map(async (component) => {
+      const { cube, data } = component;
+      const cubeFilters = filtersWithCorrectIri.find(
+        (d) => d.iri === component.cube.term?.value
+      );
+      const dimensionValuesLoader = getDimensionValuesLoader(
+        sparqlClient,
+        loaders,
+        cache,
+        cubeFilters?.filters
+      );
+      const values: DimensionValue[] = await dimensionValuesLoader.load(
+        component
+      );
+      values.sort((a, b) =>
+        ascending(
+          a.position ?? a.value ?? undefined,
+          b.position ?? b.value ?? undefined
+        )
+      );
+      const baseComponent = {
+        cubeIri: parseIri(cube),
+        iri: data.iri,
+        label: data.name,
+        description: data.description,
+        unit: data.unit,
+        scaleType: data.scaleType,
+        dataType: data.dataType,
+        order: data.order,
+        isNumerical: data.isNumerical,
+        isKeyDimension: data.isKeyDimension,
+        values,
+        related: data.related,
+      };
+
+      if (data.isMeasureDimension) {
+        const result: Measure = {
+          __typename: resolveMeasureType(component),
+          isCurrency: data.isCurrency,
+          isDecimal: data.isDecimal,
+          currencyExponent: data.currencyExponent,
+          resolution: data.resolution,
+          ...baseComponent,
+        };
+
+        measures.push(result);
+      } else {
+        const dimensionType = resolveDimensionType(component);
+        const hierarchy = true // TODO: make this configurable
+          ? await queryHierarchy(
+              component,
+              locale,
+              sparqlClient,
+              sparqlClientStream,
+              cache
+            )
+          : null;
+        const baseDimension = {
+          ...baseComponent,
+          hierarchy,
+        };
+
+        switch (dimensionType) {
+          case "TemporalDimension": {
+            if (!data.timeFormat || !data.timeUnit) {
+              throw new Error(
+                `Temporal dimension ${data.iri} is missing timeFormat or timeUnit!`
+              );
+            }
+
+            const dimension: TemporalDimension = {
+              __typename: dimensionType,
+              timeFormat: data.timeFormat,
+              timeUnit: data.timeUnit,
+              ...baseDimension,
+            };
+            dimensions.push(dimension);
+            break;
+          }
+          default: {
+            const dimension: Dimension = {
+              __typename: dimensionType,
+              ...baseDimension,
+            };
+            dimensions.push(dimension);
+          }
+        }
+      }
+    })
+  );
+
+  return { dimensions, measures };
+};
 
 export const dataCubeDimensions: NonNullable<DataCubeResolvers["dimensions"]> =
   async ({ cube, locale }, { componentIris }, { setup }, info) => {

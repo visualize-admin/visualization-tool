@@ -27,9 +27,13 @@ import { DataSetMetadata } from "@/components/dataset-metadata";
 import { MotionBox } from "@/components/presence";
 import { BackButton, DataSource } from "@/configurator";
 import { DRAWER_WIDTH } from "@/configurator/components/drawer";
-import { DimensionValue, isStandardErrorDimension } from "@/domain/data";
+import {
+  Component,
+  DimensionValue,
+  isStandardErrorDimension,
+  TemporalDimension,
+} from "@/domain/data";
 import { useDimensionFormatters } from "@/formatters";
-import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import SvgIcArrowRight from "@/icons/components/IcArrowRight";
 import SvgIcClose from "@/icons/components/IcClose";
@@ -45,14 +49,14 @@ type MetadataPanelSection = "general" | "data";
 type MetadataPanelState = {
   open: boolean;
   activeSection: MetadataPanelSection;
-  selectedDimension: DimensionMetadataFragment | undefined;
+  selectedDimension: Component | undefined;
   actions: {
     setOpen: (d: boolean) => void;
     toggle: () => void;
     setActiveSection: (d: MetadataPanelSection) => void;
-    setSelectedDimension: (d: DimensionMetadataFragment) => void;
+    setSelectedDimension: (d: Component) => void;
     clearSelectedDimension: () => void;
-    openDimension: (d: DimensionMetadataFragment) => void;
+    openDimension: (d: Component) => void;
     reset: () => void;
   };
 };
@@ -72,13 +76,13 @@ export const createMetadataPanelStore = () =>
       setActiveSection: (d: MetadataPanelSection) => {
         set({ activeSection: d });
       },
-      setSelectedDimension: (d: DimensionMetadataFragment) => {
+      setSelectedDimension: (d: Component) => {
         set({ selectedDimension: d });
       },
       clearSelectedDimension: () => {
         set({ selectedDimension: undefined });
       },
-      openDimension: (d: DimensionMetadataFragment) => {
+      openDimension: (d: Component) => {
         set({ open: true, activeSection: "data", selectedDimension: d });
       },
       reset: () => {
@@ -236,7 +240,7 @@ const animationProps: Transition = {
 export const OpenMetadataPanelWrapper = ({
   dim,
   children,
-}: React.PropsWithChildren<{ dim: DimensionMetadataFragment }>) => {
+}: React.PropsWithChildren<{ dim: Component }>) => {
   const classes = useOtherStyles();
   const { openDimension } = useMetadataPanelStoreActions();
   const handleClick = useEvent((e: React.MouseEvent) => {
@@ -264,7 +268,7 @@ export const OpenMetadataPanelWrapper = ({
 type MetadataPanelProps = {
   datasetIri: string;
   dataSource: DataSource;
-  dimensions: DimensionMetadataFragment[];
+  dimensions: Component[];
   container?: HTMLDivElement | null;
   top?: number;
 };
@@ -417,11 +421,7 @@ const TabPanelGeneral = ({
   );
 };
 
-const TabPanelData = ({
-  dimensions,
-}: {
-  dimensions: DimensionMetadataFragment[];
-}) => {
+const TabPanelData = ({ dimensions }: { dimensions: Component[] }) => {
   const classes = useOtherStyles();
   const selectedDimension = useMetadataPanelStore(
     (state) => state.selectedDimension
@@ -524,21 +524,18 @@ const TabPanelDataDimension = ({
   dim,
   expanded,
 }: {
-  dim: DimensionMetadataFragment;
+  dim: Component;
   expanded: boolean;
 }) => {
   const classes = useOtherStyles();
   const { setSelectedDimension } = useMetadataPanelStoreActions();
   const description = React.useMemo(() => {
     if (!expanded && dim.description && dim.description.length > 180) {
-      return dim.description.slice(0, 180) + "…";
+      return `${dim.description.slice(0, 180)}…`;
     }
 
     return dim.description;
   }, [dim.description, expanded]);
-  // const iconName = React.useMemo(() => {
-  //   return getDimensionIconName(dim.__typename);
-  // }, [dim.__typename]);
 
   const handleClick = React.useCallback(() => {
     if (!expanded) {
@@ -568,7 +565,6 @@ const TabPanelDataDimension = ({
             <Typography variant="body2">{description}</Typography>
           )}
         </div>
-        {/* <Icon name={iconName} /> */}
       </Flex>
 
       <AnimatePresence>
@@ -610,7 +606,7 @@ const TabPanelDataDimension = ({
   );
 };
 
-const DimensionValues = ({ dim }: { dim: DimensionMetadataFragment }) => {
+const DimensionValues = ({ dim }: { dim: Component }) => {
   const sortedValues = useMemo(() => {
     const sorters = makeDimensionValueSorters(dim);
     return orderBy(
@@ -632,7 +628,6 @@ const DimensionValues = ({ dim }: { dim: DimensionMetadataFragment }) => {
     case "GeoShapesDimension":
       return <DimensionValuesNominal values={sortedValues} />;
     case "NumericalMeasure":
-    case "StandardErrorDimension":
       return sortedValues.length > 0 ? (
         <DimensionValuesNumeric values={sortedValues} />
       ) : null;
@@ -683,7 +678,7 @@ const DimensionValuesTemporal = ({
   dim,
   values,
 }: {
-  dim: DimensionMetadataFragment;
+  dim: TemporalDimension;
   values: DimensionValue[];
 }) => {
   const formatters = useDimensionFormatters([dim]);

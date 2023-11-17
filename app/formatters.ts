@@ -12,13 +12,14 @@ import keyBy from "lodash/keyBy";
 import memoize from "lodash/memoize";
 import { useMemo } from "react";
 
-import { isNumericalMeasure, isTemporalDimension } from "@/domain/data";
 import {
-  DimensionMetadataFragment,
+  Component,
   NumericalMeasure,
   TemporalDimension,
-  TimeUnit,
-} from "@/graphql/query-hooks";
+  isNumericalMeasure,
+  isTemporalDimension,
+} from "@/domain/data";
+import { TimeUnit } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 
 import { parseDate } from "./configurator/components/ui-helpers";
@@ -28,12 +29,16 @@ const DIMENSION_VALUE_UNDEFINED = "https://cube.link/Undefined";
 
 export type DateFormatter = (d: string | Date | null) => string;
 
-const isNamedNodeDimension = (d: DimensionMetadataFragment) => {
+const isNamedNodeDimension = (d: Component) => {
   const first = d.values?.[0];
   return first && first.label !== first.value;
 };
 
-const namedNodeFormatter = (d: DimensionMetadataFragment) => {
+const isDataCubeNamedNodeDimension = (d: Component) => {
+  return isNamedNodeDimension(d as Component);
+};
+
+const namedNodeFormatter = (d: Component) => {
   const valuesByIri = keyBy(d.values, (x) => x.value);
   return (v: string) => {
     return valuesByIri[v]?.label || v;
@@ -141,18 +146,18 @@ const decimalFormatter = (dim: NumericalMeasure, formatNumber: Formatter) => {
 };
 
 export const getDimensionFormatters = ({
-  dimensions,
+  components,
   formatNumber,
   formatDateAuto,
   dateFormatters,
 }: {
-  dimensions: DimensionMetadataFragment[];
+  components: Component[];
   formatNumber: (d: number | string) => string;
   formatDateAuto: (d: Date | string | null) => string;
   dateFormatters: LocalDateFormatters;
 }) => {
   return Object.fromEntries(
-    dimensions.map((d) => {
+    components.map((d) => {
       let formatter: (s: any) => string;
       if (isNumericalMeasure(d)) {
         if (d.isCurrency) {
@@ -168,7 +173,7 @@ export const getDimensionFormatters = ({
           dateFormatters,
           formatDateAuto
         );
-      } else if (isNamedNodeDimension(d)) {
+      } else if (isDataCubeNamedNodeDimension(d)) {
         formatter = namedNodeFormatter(d);
       } else if (
         // It makes no sense to format numeric values of ordinal dimensions
@@ -187,9 +192,7 @@ export const getDimensionFormatters = ({
   );
 };
 
-export const useDimensionFormatters = (
-  dimensions: DimensionMetadataFragment[]
-) => {
+export const useDimensionFormatters = (components: Component[]) => {
   const formatNumber = useFormatNumber() as unknown as (
     d: number | string
   ) => string;
@@ -198,12 +201,12 @@ export const useDimensionFormatters = (
 
   return useMemo(() => {
     return getDimensionFormatters({
-      dimensions,
+      components,
       formatNumber,
       formatDateAuto,
       dateFormatters,
     });
-  }, [dimensions, formatNumber, formatDateAuto, dateFormatters]);
+  }, [components, formatNumber, formatDateAuto, dateFormatters]);
 };
 
 export const getFormatFullDateAuto = (formatters: LocalDateFormatters) => {

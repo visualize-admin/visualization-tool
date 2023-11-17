@@ -11,8 +11,14 @@ import type { BaseChartProps } from "@/charts/shared/ChartProps";
 import { getTimeInterval } from "@/intervals";
 
 import { TableColumn, TableFields } from "../../config-types";
-import { DimensionValue, Observation } from "../../domain/data";
-import { DimensionMetadataFragment, TimeUnit } from "../../graphql/query-hooks";
+import {
+  Component,
+  Dimension,
+  DimensionValue,
+  Measure,
+  Observation,
+} from "../../domain/data";
+import { TimeUnit } from "../../graphql/query-hooks";
 import { IconName } from "../../icons";
 import { getPalette } from "../../palettes";
 
@@ -96,8 +102,8 @@ export const useErrorMeasure = (
     dimensions,
     measures,
   }: {
-    dimensions: DimensionMetadataFragment[];
-    measures: DimensionMetadataFragment[];
+    dimensions: Dimension[];
+    measures: Measure[];
   }
 ) => {
   return useMemo(() => {
@@ -105,7 +111,7 @@ export const useErrorMeasure = (
   }, [componentIri, dimensions, measures]);
 };
 
-export const useErrorVariable = (errorMeasure?: DimensionMetadataFragment) => {
+export const useErrorVariable = (errorMeasure?: Component) => {
   return useMemo(() => {
     return errorMeasure
       ? (d: Observation) => {
@@ -116,7 +122,7 @@ export const useErrorVariable = (errorMeasure?: DimensionMetadataFragment) => {
 };
 
 export const useErrorRange = (
-  errorMeasure: DimensionMetadataFragment | undefined,
+  errorMeasure: Component | undefined,
   valueGetter: (d: Observation) => number | null
 ) => {
   return useMemo(() => {
@@ -250,7 +256,7 @@ export const useOrderedTableColumns = (fields: TableFields): TableColumn[] => {
   }, [fields]);
 };
 
-export const canUseAbbreviations = (d?: DimensionMetadataFragment): boolean => {
+export const canUseAbbreviations = (d?: Component): boolean => {
   if (!d) {
     return false;
   }
@@ -266,7 +272,5 @@ export const canUseAbbreviations = (d?: DimensionMetadataFragment): boolean => {
       return false;
   }
 
-  const anyAbbreviationsPresent = !!d.values.find((d) => d.alternateName);
-
-  return anyAbbreviationsPresent;
+  return !!d.values.find((d) => d.alternateName);
 };

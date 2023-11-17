@@ -20,8 +20,8 @@ import {
 import { ChartTypeSelector } from "@/configurator/components/chart-type-selector";
 import { getIconName } from "@/configurator/components/ui-helpers";
 import {
-  useComponentsQuery,
   useDataCubeMetadataQuery,
+  useDataCubesComponentsQuery,
 } from "@/graphql/query-hooks";
 import { Icon, IconName } from "@/icons";
 import { useLocale } from "@/src";
@@ -256,22 +256,28 @@ const PublishChartButton = () => {
   const locale = useLocale();
   const [state, dispatch] = useConfiguratorState(hasChartConfigs);
   const chartConfig = getChartConfig(state);
-  const variables = {
-    iri: chartConfig.dataSet,
+  const commonQueryVariables = {
     sourceType: state.dataSource.type,
     sourceUrl: state.dataSource.url,
     locale,
   };
-  const [{ data: metadata }] = useDataCubeMetadataQuery({ variables });
-  const [{ data: components }] = useComponentsQuery({ variables });
+  const [{ data: metadata }] = useDataCubeMetadataQuery({
+    variables: {
+      ...commonQueryVariables,
+      iri: chartConfig.dataSet,
+    },
+  });
+  const [{ data: components }] = useDataCubesComponentsQuery({
+    variables: {
+      ...commonQueryVariables,
+      filters: [{ iri: chartConfig.dataSet }],
+    },
+  });
   const goNext = useEvent(() => {
-    if (metadata?.dataCubeByIri && components?.dataCubeByIri) {
+    if (metadata?.dataCubeByIri && components?.dataCubesComponents) {
       dispatch({
         type: "STEP_NEXT",
-        dataSetMetadata: {
-          ...metadata.dataCubeByIri,
-          ...components.dataCubeByIri,
-        },
+        dataCubesComponents: components.dataCubesComponents,
       });
     }
   });

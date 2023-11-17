@@ -35,8 +35,8 @@ import {
   useIsTrustedDataSource,
 } from "@/domain/datasource";
 import {
-  useComponentsQuery,
   useDataCubeMetadataQuery,
+  useDataCubesComponentsQuery,
 } from "@/graphql/query-hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import { useLocale } from "@/locales/use-locale";
@@ -133,34 +133,35 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
   const locale = useLocale();
   const isTrustedDataSource = useIsTrustedDataSource(dataSource);
   const commonQueryVariables = {
-    iri: chartConfig.dataSet,
     sourceType: dataSource.type,
     sourceUrl: dataSource.url,
     locale,
   };
-
   const [{ data: metadata }] = useDataCubeMetadataQuery({
-    variables: commonQueryVariables,
-  });
-  const componentIris = extractChartConfigsComponentIris(state.chartConfigs);
-  const [{ data: components }] = useComponentsQuery({
     variables: {
       ...commonQueryVariables,
-      componentIris,
+      iri: chartConfig.dataSet,
+    },
+  });
+  const componentIris = extractChartConfigsComponentIris(state.chartConfigs);
+  const [{ data: components }] = useDataCubesComponentsQuery({
+    variables: {
+      ...commonQueryVariables,
+      filters: [{ iri: chartConfig.dataSet, componentIris }],
     },
   });
   const handleToggleTableView = useEvent(() => setIsTablePreview((c) => !c));
 
   const allComponents = useMemo(() => {
-    if (!components?.dataCubeByIri) {
+    if (!components?.dataCubesComponents) {
       return [];
     }
 
     return [
-      ...components.dataCubeByIri.dimensions,
-      ...components.dataCubeByIri.measures,
+      ...components.dataCubesComponents.dimensions,
+      ...components.dataCubesComponents.measures,
     ];
-  }, [components?.dataCubeByIri]);
+  }, [components?.dataCubesComponents]);
 
   const [{ showDownload }] = useEmbedOptions();
 

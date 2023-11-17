@@ -14,7 +14,7 @@ import { LinesState } from "@/charts/line/lines-state";
 import { MapState } from "@/charts/map/map-state";
 import { PieState } from "@/charts/pie/pie-state";
 import { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
-import { ComponentsByIri } from "@/charts/shared/ChartProps";
+import { DimensionsByIri, MeasuresByIri } from "@/charts/shared/ChartProps";
 import {
   getLabelWithUnit,
   useDimensionWithAbbreviations,
@@ -38,21 +38,20 @@ import {
   useErrorVariable,
 } from "@/configurator/components/ui-helpers";
 import {
+  Component,
+  Dimension,
   DimensionValue,
+  GeoCoordinatesDimension,
+  GeoShapesDimension,
+  Measure,
+  NumericalMeasure,
   Observation,
   ObservationValue,
   isNumericalMeasure,
   isTemporalDimension,
 } from "@/domain/data";
 import { Has } from "@/domain/types";
-import { DimensionMetadataFragment } from "@/graphql/query-hooks";
-import {
-  GeoCoordinatesDimension,
-  GeoShapesDimension,
-  NumericalMeasure,
-  TemporalDimension,
-  TimeUnit,
-} from "@/graphql/resolver-types";
+import { TemporalDimension, TimeUnit } from "@/graphql/resolver-types";
 import { useInteractiveFilters } from "@/stores/interactive-filters";
 
 export type ChartState =
@@ -121,7 +120,7 @@ export const useBaseVariables = (chartConfig: ChartConfig): BaseVariables => {
 };
 
 export type BandXVariables = {
-  xDimension: DimensionMetadataFragment;
+  xDimension: Dimension;
   getX: StringValueGetter;
   getXLabel: (d: string) => string;
   getXAbbreviationOrLabel: (d: Observation) => string;
@@ -135,7 +134,7 @@ export const useBandXVariables = (
     dimensionsByIri,
     observations,
   }: {
-    dimensionsByIri: ComponentsByIri;
+    dimensionsByIri: DimensionsByIri;
     observations: Observation[];
   }
 ): BandXVariables => {
@@ -177,7 +176,7 @@ export type TemporalXVariables = {
 
 export const useTemporalXVariables = (
   x: GenericField,
-  { dimensionsByIri }: { dimensionsByIri: ComponentsByIri }
+  { dimensionsByIri }: { dimensionsByIri: DimensionsByIri }
 ): TemporalXVariables => {
   const xDimension = dimensionsByIri[x.componentIri];
   if (!xDimension) {
@@ -206,7 +205,7 @@ export type NumericalXVariables = {
 
 export const useNumericalXVariables = (
   x: GenericField,
-  { measuresByIri }: { measuresByIri: ComponentsByIri }
+  { measuresByIri }: { measuresByIri: MeasuresByIri }
 ): NumericalXVariables => {
   const xMeasure = measuresByIri[x.componentIri];
   if (!xMeasure) {
@@ -235,7 +234,7 @@ export type NumericalYVariables = {
 
 export const useNumericalYVariables = (
   y: GenericField,
-  { measuresByIri }: { measuresByIri: ComponentsByIri }
+  { measuresByIri }: { measuresByIri: MeasuresByIri }
 ): NumericalYVariables => {
   const yMeasure = measuresByIri[y.componentIri];
   if (!yMeasure) {
@@ -258,7 +257,7 @@ export const useNumericalYVariables = (
 
 export type NumericalYErrorVariables = {
   showYStandardError: boolean;
-  yErrorMeasure: DimensionMetadataFragment | undefined;
+  yErrorMeasure: Component | undefined;
   getYError: ((d: Observation) => ObservationValue) | null;
   getYErrorRange: null | ((d: Observation) => [number, number]);
 };
@@ -271,8 +270,8 @@ export const useNumericalYErrorVariables = (
     measures,
   }: {
     numericalYVariables: NumericalYVariables;
-    dimensions: DimensionMetadataFragment[];
-    measures: DimensionMetadataFragment[];
+    dimensions: Dimension[];
+    measures: Measure[];
   }
 ): NumericalYErrorVariables => {
   const showYStandardError = get(y, ["showStandardError"], true);
@@ -292,7 +291,7 @@ export const useNumericalYErrorVariables = (
 };
 
 export type SegmentVariables = {
-  segmentDimension: DimensionMetadataFragment | undefined;
+  segmentDimension: Dimension | undefined;
   segmentsByAbbreviationOrLabel: Map<string, DimensionValue>;
   getSegment: StringValueGetter;
   getSegmentAbbreviationOrLabel: StringValueGetter;
@@ -305,7 +304,7 @@ export const useSegmentVariables = (
     dimensionsByIri,
     observations,
   }: {
-    dimensionsByIri: ComponentsByIri;
+    dimensionsByIri: DimensionsByIri;
     observations: Observation[];
   }
 ): SegmentVariables => {

@@ -14,8 +14,7 @@ import {
 } from "@/configurator/components/chart-controls/section";
 import { getIconName } from "@/configurator/components/ui-helpers";
 import { useActiveFieldField } from "@/configurator/config-form";
-import { DimensionMetadataFragment } from "@/graphql/query-hooks";
-import { DataCubeMetadataWithHierarchies } from "@/graphql/types";
+import { Component, Dimension, Measure } from "@/domain/data";
 
 const useStyles = makeStyles((theme: Theme) => ({
   filterRow: {
@@ -54,7 +53,8 @@ type Props = {
   id: string;
   title: ReactNode;
   items: TableColumn[];
-  metaData: DataCubeMetadataWithHierarchies;
+  dimensions: Dimension[];
+  measures: Measure[];
   isDropDisabled?: boolean;
   emptyComponent?: React.ReactNode;
   onUp: (idx: number) => void;
@@ -64,13 +64,13 @@ export const TabDropZone = ({
   id,
   items,
   title,
-  metaData,
+  dimensions,
+  measures,
   isDropDisabled,
   emptyComponent,
   onUp,
   onDown,
 }: Props) => {
-  const { dimensions, measures } = metaData;
   const classes = useStyles();
   const components = [...dimensions, ...measures];
 
@@ -163,7 +163,7 @@ const DraggableTabField = ({
   upperLabel,
   disabled,
 }: {
-  component: DimensionMetadataFragment;
+  component: Component;
   value: string;
   disabled?: boolean;
   isDragging: boolean;

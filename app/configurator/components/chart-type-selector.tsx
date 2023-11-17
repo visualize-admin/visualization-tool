@@ -29,7 +29,7 @@ import { ControlSectionSkeleton } from "@/configurator/components/chart-controls
 import { getFieldLabel } from "@/configurator/components/field-i18n";
 import { getIconName } from "@/configurator/components/ui-helpers";
 import { FieldProps, useChartType } from "@/configurator/config-form";
-import { useComponentsWithHierarchiesQuery } from "@/graphql/query-hooks";
+import { useDataCubesComponentsQuery } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
 
@@ -123,19 +123,21 @@ export const ChartTypeSelector = ({
 } & BoxProps) => {
   const locale = useLocale();
   const chartConfig = getChartConfig(state);
-  const [{ data }] = useComponentsWithHierarchiesQuery({
+  const [{ data }] = useDataCubesComponentsQuery({
     variables: {
-      iri: chartConfig.dataSet,
       sourceType: state.dataSource.type,
       sourceUrl: state.dataSource.url,
       locale,
+      filters: [{ iri: chartConfig.dataSet }],
     },
   });
+  const dimensions = data?.dataCubesComponents?.dimensions ?? [];
+  const measures = data?.dataCubesComponents?.measures ?? [];
   const { value: chartType, onChange: onChangeChartType } = useChartType(
     chartKey,
     type,
-    data?.dataCubeByIri?.dimensions ?? [],
-    data?.dataCubeByIri?.measures ?? []
+    dimensions,
+    measures
   );
 
   const onClick = React.useCallback(
@@ -152,14 +154,11 @@ export const ChartTypeSelector = ({
     [chartType, onChangeChartType, type]
   );
 
-  if (!data?.dataCubeByIri) {
+  if (!data?.dataCubesComponents) {
     return <ControlSectionSkeleton />;
   }
 
-  const possibleChartTypes = getPossibleChartTypes({
-    dimensions: data.dataCubeByIri.dimensions,
-    measures: data.dataCubeByIri.measures,
-  });
+  const possibleChartTypes = getPossibleChartTypes({ dimensions, measures });
 
   return (
     <Box {...props}>

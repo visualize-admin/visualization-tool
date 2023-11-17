@@ -1,10 +1,11 @@
 import { FilterValue, SortingField } from "@/configurator";
 import {
+  Component,
   DimensionValue,
+  isMeasure,
   isNumericalMeasure,
   isTemporalDimension,
 } from "@/domain/data";
-import { DimensionMetadataWithHierarchiesFragment } from "@/graphql/query-hooks";
 
 import { bfs } from "./bfs";
 import { uniqueMapBy } from "./uniqueMapBy";
@@ -28,7 +29,7 @@ export const maybeInt = (value?: string | number): number | string => {
 };
 
 export const makeDimensionValueSorters = (
-  dimension: DimensionMetadataWithHierarchiesFragment | undefined,
+  component?: Component,
   options: {
     dimensionFilter?: FilterValue;
     sorting?:
@@ -45,10 +46,14 @@ export const makeDimensionValueSorters = (
     dimensionFilter: undefined,
   }
 ): ((label: string) => string | undefined | number)[] => {
+  if (!component) {
+    return [];
+  }
+
   if (
-    isNumericalMeasure(dimension) ||
-    isTemporalDimension(dimension) ||
-    dimension?.isNumerical
+    isNumericalMeasure(component) ||
+    isTemporalDimension(component) ||
+    component?.isNumerical
   ) {
     return [
       (d) => {
@@ -67,25 +72,23 @@ export const makeDimensionValueSorters = (
   } = options;
   const sortingType = sorting?.sortingType;
 
-  if (!dimension) {
-    return [];
-  }
-
   const addAlternateName = (d: DimensionValue) => ({
     ...d,
     label: d.alternateName ?? d.label,
   });
 
   let values = useAbbreviations
-    ? dimension.values.map(addAlternateName)
-    : dimension.values;
+    ? component.values.map(addAlternateName)
+    : component.values;
 
   if (dimensionFilter?.type === "multi") {
     const filterValues = dimensionFilter.values;
     values = values.filter((dv) => filterValues[dv.value]);
   }
 
-  const allHierarchyValues = bfs(dimension.hierarchy ?? [], (node) => node);
+  const allHierarchyValues = isMeasure(component)
+    ? []
+    : bfs(component.hierarchy ?? [], (node) => node);
 
   // For hierarchies, we always fetch /__iri__.
   const hierarchyValuesByValue = uniqueMapBy(

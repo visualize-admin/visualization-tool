@@ -835,6 +835,10 @@
         }
       ],
       "__typename": "DataCube"
+    },
+    "dataCubesComponents": {
+      "dimensions": [],
+      "measures": []
     }
   }
 }

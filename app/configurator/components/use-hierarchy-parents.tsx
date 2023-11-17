@@ -1,28 +1,15 @@
 import { groups } from "d3-array";
 import { useMemo } from "react";
 
-import { DataSource } from "@/config-types";
-import {
-  DimensionHierarchyQuery,
-  useDimensionHierarchyQuery,
-} from "@/graphql/query-hooks";
-import { HierarchyValue } from "@/graphql/resolver-types";
-import { DataCubeMetadata } from "@/graphql/types";
+import { Dimension, HierarchyValue } from "@/domain/data";
 import { bfs } from "@/utils/bfs";
-
-type NN<T> = NonNullable<T>;
-export type DimensionHierarchyQueryHierarchy = NN<
-  NN<
-    NN<DimensionHierarchyQuery["dataCubeByIri"]>["dimensionByIri"]
-  >["hierarchy"]
->;
 
 export type HierarchyParents = [
   HierarchyValue[],
   { node: HierarchyValue; parents: HierarchyValue[] }[]
 ][];
 
-export const groupByParents = (hierarchy: DimensionHierarchyQueryHierarchy) => {
+export const groupByParents = (hierarchy: HierarchyValue[]) => {
   const allHierarchyValues = bfs(hierarchy, (node, { depth, parents }) => ({
     node,
     parents,
@@ -33,56 +20,25 @@ export const groupByParents = (hierarchy: DimensionHierarchyQueryHierarchy) => {
 };
 
 const useHierarchyParents = ({
-  datasetIri,
-  dataSource,
   dimension,
-  locale,
-  pause,
 }: {
-  datasetIri: string;
-  dataSource: DataSource;
-  dimension: DataCubeMetadata["dimensions"][number];
-  locale: string;
-  pause?: boolean;
-}): {
-  fetching: boolean;
-  data: HierarchyParents | undefined;
-} => {
-  const [hierarchyResp] = useDimensionHierarchyQuery({
-    variables: {
-      cubeIri: datasetIri,
-      dimensionIri: dimension?.iri,
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale: locale,
-    },
-    pause: pause || !dimension,
-  });
-
-  const hierarchy =
-    hierarchyResp?.data?.dataCubeByIri?.dimensionByIri?.hierarchy;
-  const data = useMemo(() => {
-    if (!hierarchy || !dimension) {
+  dimension: Dimension;
+}): HierarchyParents | undefined => {
+  return useMemo(() => {
+    if (!dimension.hierarchy) {
       return;
     }
+
     const values = dimension.values;
     const valueSet = new Set(values.map((v) => v.value));
-    const valueGroups = groupByParents(hierarchy);
+    const valueGroups = groupByParents(dimension.hierarchy);
 
     return valueGroups
       .map(([parents, nodes]) => {
         return [parents, nodes.filter((n) => valueSet.has(n.node.value))];
       })
       .filter((x) => x[1].length > 0) as HierarchyParents;
-  }, [dimension, hierarchy]);
-
-  return useMemo(
-    () => ({
-      data,
-      fetching: hierarchyResp.fetching,
-    }),
-    [hierarchyResp.fetching, data]
-  );
+  }, [dimension]);
 };
 
 /**
@@ -91,9 +47,7 @@ const useHierarchyParents = ({
  *
  * @see https://dreampuf.github.io/GraphvizOnline/
  */
-export const hierarchyToGraphviz = (
-  hierarchy: DimensionHierarchyQueryHierarchy
-) => {
+export const hierarchyToGraphviz = (hierarchy: HierarchyValue[]) => {
   const lines = [] as string[];
   bfs(hierarchy, (node, { parents }) => {
     lines.push(`"${node.value}"[label="${node.label.replace(/"/g, "")}"]`);

@@ -4,12 +4,13 @@ import {
   getTimeIntervalFormattedSelectOptions,
   getTimeIntervalWithProps,
 } from "./configurator/components/ui-helpers";
+import { Component } from "./domain/data";
 import {
   useDimensionFormatters,
   useFormatFullDateAuto,
   useTimeFormatLocale,
 } from "./formatters";
-import { DimensionMetadataFragment, TimeUnit } from "./graphql/query-hooks";
+import { TimeUnit } from "./graphql/query-hooks";
 
 describe("useFormatFullDateAuto", () => {
   const setup = () => {
@@ -43,7 +44,7 @@ describe("useDimensionFormatters", () => {
           isNumerical: false,
           isKeyDimension: false,
           __typename: "TemporalDimension",
-        } as DimensionMetadataFragment,
+        } as Component,
         {
           iri: "iri-yearly",
           timeFormat: "%Y",
@@ -51,12 +52,12 @@ describe("useDimensionFormatters", () => {
           isNumerical: false,
           isKeyDimension: false,
           __typename: "TemporalDimension",
-        } as DimensionMetadataFragment,
+        } as Component,
         {
           iri: "iri-number",
           isNumerical: true,
           isKeyDimension: false,
-        } as DimensionMetadataFragment,
+        } as Component,
         {
           iri: "iri-currency",
           isNumerical: true,
@@ -64,7 +65,7 @@ describe("useDimensionFormatters", () => {
           isCurrency: true,
           currencyExponent: 1,
           __typename: "NumericalMeasure",
-        } as DimensionMetadataFragment,
+        } as Component,
         {
           iri: "iri-currency-int",
           isNumerical: true,
@@ -73,7 +74,7 @@ describe("useDimensionFormatters", () => {
           currencyExponent: 1,
           resolution: 0,
           __typename: "NumericalMeasure",
-        } as DimensionMetadataFragment,
+        } as Component,
         {
           iri: "iri-decimal",
           isNumerical: true,
@@ -81,7 +82,7 @@ describe("useDimensionFormatters", () => {
           isDecimal: true,
           currencyExponent: 1,
           __typename: "NumericalMeasure",
-        } as DimensionMetadataFragment,
+        } as Component,
         {
           iri: "iri-decimal-resolution",
           isNumerical: true,
@@ -90,7 +91,7 @@ describe("useDimensionFormatters", () => {
           currencyExponent: 1,
           resolution: 2,
           __typename: "NumericalMeasure",
-        } as DimensionMetadataFragment,
+        } as Component,
       ])
     );
     return { formatters };

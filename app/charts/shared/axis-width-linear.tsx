@@ -10,7 +10,6 @@ import {
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { useFormatNumber } from "@/formatters";
-import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { useTransitionStore } from "@/stores/transition";
 import { getTextWidth } from "@/utils/get-text-width";
 
@@ -89,7 +88,7 @@ export const AxisWidthLinear = () => {
         height={axisLabelFontSize * 2}
         style={{ textAlign: "right" }}
       >
-        <OpenMetadataPanelWrapper dim={xMeasure as DimensionMetadataFragment}>
+        <OpenMetadataPanelWrapper dim={xMeasure}>
           <span style={{ fontSize: axisLabelFontSize }}>{xAxisLabel}</span>
         </OpenMetadataPanelWrapper>
       </foreignObject>

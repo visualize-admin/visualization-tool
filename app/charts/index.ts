@@ -22,6 +22,7 @@ import {
   ComboChartType,
   ComboLineColumnFields,
   ComboLineSingleFields,
+  DimensionType,
   FieldAdjuster,
   GenericFields,
   GenericSegmentField,
@@ -54,28 +55,22 @@ import {
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import {
+  Component,
+  Dimension,
+  GeoCoordinatesDimension,
+  GeoShapesDimension,
   getCategoricalDimensions,
   getGeoDimensions,
   getTemporalDimensions,
-  isGeoCoordinatesDimension,
+  HierarchyValue,
   isGeoDimension,
   isGeoShapesDimension,
   isNumericalMeasure,
   isOrdinalMeasure,
   isTemporalDimension,
-} from "@/domain/data";
-import {
-  DimensionMetadataFragment,
-  GeoCoordinatesDimension,
-  GeoShapesDimension,
+  Measure,
   NumericalMeasure,
-  OrdinalMeasure,
-} from "@/graphql/query-hooks";
-import { HierarchyValue } from "@/graphql/resolver-types";
-import {
-  DataCubeMetadata,
-  DataCubeMetadataWithHierarchies,
-} from "@/graphql/types";
+} from "@/domain/data";
 import {
   DEFAULT_CATEGORICAL_PALETTE_NAME,
   getDefaultCategoricalPaletteName,
@@ -141,8 +136,8 @@ export const chartTypesOrder: { [k in ChartType]: number } = {
  * @param preferredType
  */
 export const findPreferredDimension = (
-  dimensions: DataCubeMetadata["dimensions"],
-  preferredType?: DimensionMetadataFragment["__typename"]
+  dimensions: Component[],
+  preferredType?: DimensionType
 ) => {
   const dim =
     dimensions.find(
@@ -201,30 +196,29 @@ export const DEFAULT_SORTING: SortingOption = {
 /**
  * Finds bottomost layer for the first hierarchy
  */
-const findBottommostLayers = (
-  dimension: DataCubeMetadataWithHierarchies["dimensions"][0]
-) => {
+const findBottommostLayers = (dimension: Dimension) => {
   const leaves = [] as HierarchyValue[];
   let hasSeenMultiHierarchyNode = false;
   bfs(dimension?.hierarchy as HierarchyValue[], (node) => {
     if (isMultiHierarchyNode(node)) {
       if (hasSeenMultiHierarchyNode) {
         return bfs.IGNORE;
-      } else {
-        hasSeenMultiHierarchyNode = true;
       }
+
+      hasSeenMultiHierarchyNode = true;
     }
+
     if ((!node.children || node.children.length === 0) && node.hasValue) {
       leaves.push(node);
     }
   });
+
   return leaves;
 };
 
-const makeInitialFiltersForArea = (
-  dimension: DataCubeMetadata["dimensions"][0]
-) => {
-  let filters = {} as ChartConfig["filters"];
+const makeInitialFiltersForArea = (dimension: Dimension) => {
+  const filters = {} as ChartConfig["filters"];
+
   // Setting the filters so that bottommost areas are shown first
   // @ts-ignore
   if (dimension?.hierarchy) {
@@ -236,6 +230,7 @@ const makeInitialFiltersForArea = (
       };
     }
   }
+
   return filters;
 };
 
@@ -249,15 +244,15 @@ export const initializeMapLayerField = ({
   chartConfig: MapConfig;
   field: EncodingFieldType;
   componentIri: string;
-  dimensions: DimensionMetadataFragment[];
-  measures: DimensionMetadataFragment[];
+  dimensions: Dimension[];
+  measures: Measure[];
 }) => {
   if (field === "areaLayer") {
     chartConfig.fields.areaLayer = getInitialAreaLayer({
       component: dimensions
         .filter(isGeoShapesDimension)
         .find((d) => d.iri === componentIri)!,
-      measure: measures[0] as NumericalMeasure | OrdinalMeasure,
+      measure: measures[0],
     });
   } else if (field === "symbolLayer") {
     chartConfig.fields.symbolLayer = getInitialSymbolLayer({
@@ -274,8 +269,7 @@ export const getInitialAreaLayer = ({
   measure,
 }: {
   component: GeoShapesDimension;
-  // color
-  measure: NumericalMeasure | OrdinalMeasure;
+  measure: Measure;
 }): MapAreaLayer => {
   const palette = getDefaultCategoricalPaletteName(measure);
 
@@ -306,12 +300,11 @@ export const getInitialSymbolLayer = ({
   measure,
 }: {
   component: GeoShapesDimension | GeoCoordinatesDimension;
-  // size, probably should be extracted to a field
   measure: NumericalMeasure | undefined;
 }): MapSymbolLayer => {
   return {
     componentIri: component.iri,
-    measureIri: measure?.iri || FIELD_VALUE_NONE,
+    measureIri: measure?.iri ?? FIELD_VALUE_NONE,
     color: DEFAULT_FIXED_COLOR_FIELD,
   };
 };
@@ -335,8 +328,8 @@ type GetInitialConfigOptions = {
   key?: string;
   dataSet: string;
   chartType: ChartType;
-  dimensions: DataCubeMetadataWithHierarchies["dimensions"];
-  measures: DataCubeMetadataWithHierarchies["measures"];
+  dimensions: Dimension[];
+  measures: Measure[];
 };
 
 export const getInitialConfig = (
@@ -377,9 +370,7 @@ export const getInitialConfig = (
       };
     case "column":
       const columnXComponentIri = findPreferredDimension(
-        sortBy(dimensions, (x) =>
-          isGeoCoordinatesDimension(x) || isGeoShapesDimension(x) ? 1 : -1
-        ),
+        sortBy(dimensions, (d) => (isGeoDimension(d) ? 1 : -1)),
         "TemporalDimension"
       ).iri;
 
@@ -451,7 +442,7 @@ export const getInitialConfig = (
       };
     case "pie":
       const pieSegmentComponent =
-        getCategoricalDimensions(dimensions)[0] ||
+        getCategoricalDimensions(dimensions)[0] ??
         getGeoDimensions(dimensions)[0];
       const piePalette = getDefaultCategoricalPaletteName(pieSegmentComponent);
 
@@ -669,8 +660,8 @@ export const getChartConfigAdjustedToChartType = ({
 }: {
   chartConfig: ChartConfig;
   newChartType: ChartType;
-  dimensions: DataCubeMetadata["dimensions"];
-  measures: DataCubeMetadata["measures"];
+  dimensions: Dimension[];
+  measures: Measure[];
 }): ChartConfig => {
   const oldChartType = chartConfig.chartType;
   const initialConfig = getInitialConfig({
@@ -715,8 +706,8 @@ const getAdjustedChartConfig = ({
   pathOverrides: ChartConfigPathOverrides;
   oldChartConfig: ChartConfig;
   newChartConfig: ChartConfig;
-  dimensions: DataCubeMetadata["dimensions"];
-  measures: DataCubeMetadata["measures"];
+  dimensions: Dimension[];
+  measures: Measure[];
 }) => {
   // For filters & segments we can't reach a primitive level as we need to
   // pass the whole object. Table fields have an [iri: Config] structure,
@@ -1892,8 +1883,8 @@ export const getPossibleChartTypes = ({
   dimensions,
   measures,
 }: {
-  dimensions: DimensionMetadataFragment[];
-  measures: DimensionMetadataFragment[];
+  dimensions: Dimension[];
+  measures: Measure[];
 }): ChartType[] => {
   const numericalMeasures = measures.filter(isNumericalMeasure);
   const ordinalMeasures = measures.filter(isOrdinalMeasure);
@@ -1993,8 +1984,8 @@ const convertTableFieldsToSegmentField = ({
   measures,
 }: {
   fields: TableFields;
-  dimensions: DataCubeMetadata["dimensions"];
-  measures: DataCubeMetadata["measures"];
+  dimensions: Dimension[];
+  measures: Measure[];
 }): GenericSegmentField | undefined => {
   const groupedColumns = group(Object.values(fields), (d) => d.isGroup)
     .get(true)
@@ -2007,22 +1998,24 @@ const convertTableFieldsToSegmentField = ({
     .sort((a, b) => a.index - b.index);
   const component = groupedColumns?.[0];
 
-  if (component) {
-    const { componentIri } = component;
-    const actualComponent = [...dimensions, ...measures].find(
-      (d) => d.iri === componentIri
-    ) as DimensionMetadataFragment;
-    const palette = getDefaultCategoricalPaletteName(actualComponent);
-
-    return {
-      componentIri,
-      palette,
-      colorMapping: mapValueIrisToColor({
-        palette,
-        dimensionValues: actualComponent.values,
-      }),
-    };
+  if (!component) {
+    return;
   }
+
+  const { componentIri } = component;
+  const actualComponent = [...dimensions, ...measures].find(
+    (d) => d.iri === componentIri
+  ) as Component;
+  const palette = getDefaultCategoricalPaletteName(actualComponent);
+
+  return {
+    componentIri,
+    palette,
+    colorMapping: mapValueIrisToColor({
+      palette,
+      dimensionValues: actualComponent.values,
+    }),
+  };
 };
 
 export const getChartSymbol = (

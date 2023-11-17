@@ -5,12 +5,8 @@ import React, {
   InputHTMLAttributes,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
-  useRef,
-  useState,
 } from "react";
-import { useClient } from "urql";
 
 import { getFieldComponentIri, getInitialConfig } from "@/charts";
 import { EncodingFieldType } from "@/charts/chart-config-ui-options";
@@ -28,13 +24,12 @@ import {
 } from "@/configurator/configurator-state";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import {
-  DimensionHierarchyDocument,
-  DimensionHierarchyQuery,
-  DimensionHierarchyQueryVariables,
-  DimensionValuesQuery,
-} from "@/graphql/query-hooks";
-import { HierarchyValue } from "@/graphql/resolver-types";
-import { DataCubeMetadataWithHierarchies } from "@/graphql/types";
+  Component,
+  Dimension,
+  HierarchyValue,
+  Measure,
+  isMeasure,
+} from "@/domain/data";
 import { useLocale } from "@/locales/use-locale";
 import { bfs } from "@/utils/bfs";
 import { isMultiHierarchyNode } from "@/utils/hierarchy";
@@ -68,9 +63,10 @@ const getLeaves = (
   const leaves = tree ? ([] as HierarchyValue[]) : undefined;
   if (tree && leaves) {
     bfs(tree, (node) => {
-      if (ignoreNode && ignoreNode(node)) {
+      if (ignoreNode?.(node)) {
         return bfs.IGNORE;
       }
+
       if (
         (!node.children || node.children.length === 0) &&
         node.hasValue &&
@@ -80,6 +76,7 @@ const getLeaves = (
       }
     });
   }
+
   return leaves;
 };
 
@@ -87,49 +84,27 @@ const getLeaves = (
 
 export const useChartFieldField = ({
   field,
+  components,
 }: {
   field: EncodingFieldType;
-}): SelectProps & {
-  fetching: boolean;
-} => {
-  const unmountedRef = useRef(false);
-  const [fetching, setFetching] = useState(false);
+  components: Component[];
+}): SelectProps => {
   const [state, dispatch] = useConfiguratorState();
-  const chartConfig = getChartConfig(state);
-  const client = useClient();
   const locale = useLocale();
-
-  useEffect(() => {
-    return () => {
-      unmountedRef.current = true;
-    };
-  }, []);
-
   const handleChange = useEvent(async (e: SelectChangeEvent<unknown>) => {
     if (e.target.value !== FIELD_VALUE_NONE) {
-      setFetching(true);
       const dimensionIri = e.target.value as string;
-      const { data: hierarchyData } = await client
-        .query<DimensionHierarchyQuery, DimensionHierarchyQueryVariables>(
-          DimensionHierarchyDocument,
-          {
-            locale,
-            cubeIri: chartConfig.dataSet,
-            dimensionIri,
-            sourceUrl: state.dataSource.url,
-            sourceType: state.dataSource.type,
-          }
-        )
-        .toPromise();
-      const tree = hierarchyData?.dataCubeByIri?.dimensionByIri
-        ?.hierarchy as HierarchyValue[];
+      const dimension = components.find(
+        (c) => c.iri === dimensionIri
+      ) as Component;
+      const hierarchy = (isMeasure(dimension) ? [] : dimension.hierarchy) ?? [];
 
       /**
        * When there are multiple hierarchies, we only want to select leaves from
        * the first hierarchy.
        */
       let hasSeenMultiHierarchyNode = false;
-      const leaves = getLeaves(tree, {
+      const leaves = getLeaves(hierarchy, {
         ignoreNode: (hv) => {
           if (isMultiHierarchyNode(hv)) {
             if (hasSeenMultiHierarchyNode) {
@@ -145,27 +120,24 @@ export const useChartFieldField = ({
         },
       });
 
-      if (!unmountedRef.current) {
-        dispatch({
-          type: "CHART_FIELD_CHANGED",
-          value: {
-            locale,
-            field,
-            componentIri: dimensionIri,
-            selectedValues: leaves,
-          },
-        });
-        setFetching(false);
-      }
-    } else {
       dispatch({
-        type: "CHART_FIELD_DELETED",
+        type: "CHART_FIELD_CHANGED",
         value: {
           locale,
           field,
+          componentIri: dimensionIri,
+          selectedValues: leaves,
         },
       });
+      return;
     }
+    dispatch({
+      type: "CHART_FIELD_DELETED",
+      value: {
+        locale,
+        field,
+      },
+    });
   });
 
   let value: string | undefined;
@@ -178,7 +150,6 @@ export const useChartFieldField = ({
     name: field,
     value,
     onChange: handleChange,
-    fetching,
   };
 };
 
@@ -407,8 +378,8 @@ export const useActiveFieldField = ({
 export const useChartType = (
   chartKey: string,
   type: "add" | "edit" = "edit",
-  dimensions: DataCubeMetadataWithHierarchies["dimensions"],
-  measures: DataCubeMetadataWithHierarchies["measures"]
+  dimensions: Dimension[],
+  measures: Measure[]
 ): {
   value: ChartType;
   onChange: (chartType: ChartType) => void;
@@ -559,44 +530,23 @@ export const useMultiFilterContext = () => {
   return useContext(MultiFilterContext);
 };
 
-type NN<T> = NonNullable<T>;
-type GQLHierarchyValue = NN<
-  NN<
-    NN<DimensionHierarchyQuery["dataCubeByIri"]>["dimensionByIri"]
-  >["hierarchy"]
->[number];
-
 export const MultiFilterContextProvider = ({
-  dimensionIri,
+  dimension,
   colorConfigPath,
-  dimensionData,
   children,
   getValueColor,
 }: {
-  dimensionIri: string;
-  hierarchyData: GQLHierarchyValue[] | undefined;
-  dimensionData: NonNullable<
-    DimensionValuesQuery["dataCubeByIri"]
-  >["dimensionByIri"];
+  dimension: Dimension;
   children: React.ReactNode;
   colorConfigPath?: string;
   getValueColor: (value: string) => string;
 }) => {
   const [state] = useConfiguratorState();
-
-  const activeFilter = dimensionData
-    ? getFilterValue(state, dimensionData.iri)
-    : null;
-
+  const activeFilter = getFilterValue(state, dimension.iri);
   const allValues = useMemo(() => {
-    return dimensionData?.values.map((d) => `${d.value}`) ?? [];
-  }, [dimensionData?.values]);
-
+    return dimension.values.map((d) => `${d.value}`) ?? [];
+  }, [dimension.values]);
   const activeKeys: Set<string> = useMemo(() => {
-    if (!dimensionData) {
-      return new Set();
-    }
-
     const activeKeys = activeFilter
       ? activeFilter.type === "single"
         ? [String(activeFilter.value)]
@@ -605,17 +555,17 @@ export const MultiFilterContextProvider = ({
         : []
       : allValues;
     return new Set(activeKeys);
-  }, [dimensionData, activeFilter, allValues]);
+  }, [activeFilter, allValues]);
 
   const ctx = useMemo(() => {
     return {
       allValues,
       activeKeys,
-      dimensionIri,
+      dimensionIri: dimension.iri,
       colorConfigPath,
       getValueColor,
     };
-  }, [allValues, dimensionIri, activeKeys, colorConfigPath, getValueColor]);
+  }, [allValues, dimension.iri, activeKeys, colorConfigPath, getValueColor]);
 
   return (
     <MultiFilterContext.Provider value={ctx}>

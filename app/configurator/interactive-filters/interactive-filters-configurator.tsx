@@ -15,7 +15,7 @@ import {
   SubsectionTitle,
 } from "@/configurator/components/chart-controls/section";
 import { ControlTabField } from "@/configurator/components/field";
-import { useComponentsQuery } from "@/graphql/query-hooks";
+import { useDataCubesComponentsQuery } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 
 export type InteractiveFilterType = "legend" | "timeRange" | "dataFilters";
@@ -35,17 +35,17 @@ export const InteractiveFiltersConfigurator = ({
   const chartConfig = getChartConfig(state);
   const { fields } = chartConfig;
   const locale = useLocale();
-  const [{ data }] = useComponentsQuery({
+  const [{ data }] = useDataCubesComponentsQuery({
     variables: {
-      iri: chartConfig.dataSet,
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
+      filters: [{ iri: chartConfig.dataSet }],
     },
   });
 
-  if (data?.dataCubeByIri) {
-    const { dimensions, measures } = data.dataCubeByIri;
+  if (data?.dataCubesComponents) {
+    const { dimensions, measures } = data.dataCubesComponents;
     const allComponents = [...dimensions, ...measures];
 
     const animationComponent = allComponents.find(

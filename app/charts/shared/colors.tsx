@@ -1,6 +1,6 @@
 import { color, RGBColor } from "d3";
 
-import { DimensionMetadataFragment } from "@/graphql/query-hooks";
+import { Component } from "@/domain/data";
 
 export const colorToRgbArray = (_color: string, opacity?: number): number[] => {
   const { r, g, b } = color(_color) as RGBColor;
@@ -21,8 +21,6 @@ export const rgbArrayToHex = (rgbArray: number[]): string => {
   }
 };
 
-export const hasDimensionColors = (
-  d?: DimensionMetadataFragment
-): d is DimensionMetadataFragment => {
+export const hasDimensionColors = (d?: Component): d is Component => {
   return !!d?.values?.some((d) => d.color !== undefined);
 };

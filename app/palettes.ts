@@ -35,11 +35,11 @@ import {
 
 import { hasDimensionColors } from "./charts/shared/colors";
 import { DivergingPaletteType, SequentialPaletteType } from "./config-types";
-import { DimensionMetadataFragment } from "./graphql/query-hooks";
+import { Component } from "./domain/data";
 
 // Colors
 export const getDefaultCategoricalPaletteName = (
-  d?: DimensionMetadataFragment,
+  d?: Component,
   previousPaletteName?: string
 ): string => {
   const hasColors = hasDimensionColors(d);

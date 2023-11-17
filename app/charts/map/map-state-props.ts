@@ -18,6 +18,7 @@ import {
 } from "@/charts/shared/chart-state";
 import { MapConfig } from "@/configurator";
 import {
+  Dimension,
   GeoData,
   GeoPoint,
   GeoShapes,
@@ -25,7 +26,6 @@ import {
   isGeoDimension,
   isGeoShapesDimension,
 } from "@/domain/data";
-import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { GeoCoordinates } from "@/rdf/query-geo-coordinates";
 
 import { ChartProps } from "../shared/ChartProps";
@@ -123,7 +123,7 @@ export const useMapStateData = (
   const symbolLayer = React.useMemo(() => {
     if (
       isGeoCoordinatesDimension(
-        symbolLayerDimension as DimensionMetadataFragment | undefined
+        symbolLayerDimension as Dimension | undefined
       ) &&
       coordinates
     ) {
@@ -154,9 +154,7 @@ export const useMapStateData = (
         points,
       };
     } else if (
-      isGeoShapesDimension(
-        symbolLayerDimension as DimensionMetadataFragment | undefined
-      ) &&
+      isGeoShapesDimension(symbolLayerDimension as Dimension | undefined) &&
       shapes
     ) {
       const { topology } = shapes;

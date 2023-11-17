@@ -123,6 +123,12 @@ export const searchCubes: NonNullable<QueryResolvers["searchCubes"]> =
     }));
   };
 
+export const dataCubesComponents: NonNullable<
+  QueryResolvers["dataCubesComponents"]
+> = async () => {
+  return { dimensions: [], measures: [] };
+};
+
 export const dataCubeByIri: NonNullable<QueryResolvers["dataCubeByIri"]> =
   async (_, { iri }) => {
     const result = await fetchSQL({ path: `cubes/${iri}` });

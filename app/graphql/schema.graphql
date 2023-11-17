@@ -6,6 +6,7 @@ scalar Filters
 scalar GeoShapes
 scalar ValueIdentifier
 scalar ValuePosition
+scalar HierarchyValue
 
 type ObservationsQuery {
   "Observations with their values parsed to native JS types"
@@ -76,18 +77,6 @@ type DataCube {
 type RelatedDimension {
   type: String!
   iri: String!
-}
-
-type HierarchyValue {
-  value: String!
-  label: String!
-  alternateName: String
-  position: ValuePosition
-  identifier: ValueIdentifier
-  dimensionIri: String!
-  depth: Int!
-  children: [HierarchyValue!]
-  hasValue: Boolean
 }
 
 interface Dimension {
@@ -354,9 +343,24 @@ enum SearchCubeResultOrder {
   CREATED_DESC
 }
 
+input DataCubeFilter {
+  iri: String!
+  componentIris: [String!]
+  filters: Filters
+  latest: Boolean
+}
+
+scalar DataCubesComponents
+
 # The "Query" type is special: it lists all of the available queries that
 # clients can execute, along with the return type for each.
 type Query {
+  dataCubesComponents(
+    sourceType: String!
+    sourceUrl: String!
+    locale: String!
+    filters: [DataCubeFilter!]!
+  ): DataCubesComponents!
   dataCubeByIri(
     sourceType: String!
     sourceUrl: String!

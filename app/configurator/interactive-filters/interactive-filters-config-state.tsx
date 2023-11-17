@@ -7,7 +7,7 @@ import {
   isConfiguring,
   useConfiguratorState,
 } from "@/configurator/configurator-state";
-import { DimensionMetadataFragment } from "@/graphql/query-hooks";
+import { Dimension } from "@/domain/data";
 import useEvent from "@/utils/use-event";
 
 export const useInteractiveFiltersToggle = (target: "legend") => {
@@ -113,7 +113,7 @@ export const updateInteractiveTimeRangeFilter = produce(
 export const useInteractiveDataFiltersToggle = ({
   dimensions,
 }: {
-  dimensions: DimensionMetadataFragment[];
+  dimensions: Dimension[];
 }) => {
   const [state, dispatch] = useConfiguratorState(isConfiguring);
   const chartConfig = getChartConfig(state);

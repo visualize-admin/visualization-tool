@@ -39,6 +39,9 @@ import {
 import { getFieldLabel } from "@/configurator/components/field-i18n";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import {
+  Component,
+  Dimension,
+  Measure,
   Observation,
   canDimensionBeMultiFiltered,
   isNumericalMeasure,
@@ -46,7 +49,6 @@ import {
   isTemporalDimension,
   isTemporalOrdinalDimension,
 } from "@/domain/data";
-import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { getDefaultCategoricalPaletteName, getPalette } from "@/palettes";
 
 /**
@@ -66,8 +68,8 @@ type OnEncodingOptionChange<V, T extends ChartConfig = ChartConfig> = (
   value: V,
   options: {
     chartConfig: T;
-    dimensions: DimensionMetadataFragment[];
-    measures: DimensionMetadataFragment[];
+    dimensions: Dimension[];
+    measures: Measure[];
     field: EncodingFieldType;
   }
 ) => void;
@@ -76,7 +78,7 @@ export type EncodingOptionChartSubType<T extends ChartConfig = ChartConfig> = {
   field: "chartSubType";
   getValues: (
     chartConfig: T,
-    dimensions: DimensionMetadataFragment[]
+    dimensions: Component[]
   ) => {
     value: ChartSubType;
     disabled: boolean;
@@ -233,8 +235,8 @@ type OnEncodingChange<T extends ChartConfig = ChartConfig> = (
   iri: string,
   options: {
     chartConfig: T;
-    dimensions: DimensionMetadataFragment[];
-    measures: DimensionMetadataFragment[];
+    dimensions: Dimension[];
+    measures: Measure[];
     initializing: boolean;
     selectedValues: any[];
     field: EncodingFieldType;
@@ -262,7 +264,7 @@ export interface EncodingSpec<T extends ChartConfig = ChartConfig> {
   onChange?: OnEncodingChange<T>;
   getDisabledState?: (
     chartConfig: T,
-    components: DimensionMetadataFragment[],
+    components: Component[],
     observations: Observation[]
   ) => {
     disabled: boolean;
@@ -457,11 +459,11 @@ const isMissingDataPresent = (chartConfig: AreaConfig, data: Observation[]) => {
   return checkForMissingValuesInSegments(grouped, segments);
 };
 
-export const disableStacked = (d?: DimensionMetadataFragment): boolean => {
+export const disableStacked = (d?: Component): boolean => {
   return d?.scaleType !== "Ratio";
 };
 
-const defaultSegmentOnChange: OnEncodingChange<
+export const defaultSegmentOnChange: OnEncodingChange<
   | AreaConfig
   | ColumnConfig
   | LineConfig
@@ -484,7 +486,6 @@ const defaultSegmentOnChange: OnEncodingChange<
     palette,
     dimensionValues: component ? component.values : selectedValues,
   });
-  const multiFilter = makeMultiFilter(selectedValues.map((d) => d.value));
 
   if (initializing) {
     chartConfig.fields.segment = {
@@ -501,7 +502,10 @@ const defaultSegmentOnChange: OnEncodingChange<
     chartConfig.fields.segment.colorMapping = colorMapping;
   }
 
-  chartConfig.filters[iri] = multiFilter;
+  if (selectedValues.length) {
+    const multiFilter = makeMultiFilter(selectedValues.map((d) => d.value));
+    chartConfig.filters[iri] = multiFilter;
+  }
 };
 
 const onMapFieldChange: OnEncodingChange<MapConfig> = (

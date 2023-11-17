@@ -22,8 +22,8 @@ import {
   useConfiguratorState,
 } from "@/configurator";
 import {
-  useComponentsQuery,
   useDataCubeMetadataQuery,
+  useDataCubesComponentsQuery,
 } from "@/graphql/query-hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import { useLocale } from "@/locales/use-locale";
@@ -75,12 +75,12 @@ export const ChartPreviewInner = (props: ChartPreviewProps) => {
       locale,
     },
   });
-  const [{ data: components }] = useComponentsQuery({
+  const [{ data: components }] = useDataCubesComponentsQuery({
     variables: {
-      iri: dataSetIri,
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
+      filters: [{ iri: dataSetIri }],
     },
   });
   const {
@@ -93,15 +93,15 @@ export const ChartPreviewInner = (props: ChartPreviewProps) => {
   const handleToggleTableView = useEvent(() => setIsTablePreview((c) => !c));
 
   const allComponents = useMemo(() => {
-    if (!components?.dataCubeByIri) {
+    if (!components?.dataCubesComponents) {
       return [];
     }
 
     return [
-      ...components.dataCubeByIri.dimensions,
-      ...components.dataCubeByIri.measures,
+      ...components.dataCubesComponents.dimensions,
+      ...components.dataCubesComponents.measures,
     ];
-  }, [components?.dataCubeByIri]);
+  }, [components?.dataCubesComponents]);
 
   return (
     <Flex

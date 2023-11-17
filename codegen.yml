@@ -17,10 +17,12 @@ generates:
         Observation: "../domain/data#Observation"
         ObservationValue: "../domain/data#ObservationValue"
         DimensionValue: "../domain/data#DimensionValue"
+        HierarchyValue: "../domain/data#HierarchyValue"
         RawObservation: "../domain/data#RawObservation"
         Filters: "../configurator#QueryFilters"
         GeoShape: "../domain/data#GeoShape"
         SearchCube: "../domain/data#SearchCube"
+        DataCubesComponents: "../domain/data#DataCubesComponents"
   app/graphql/resolver-types.ts:
     plugins:
       - "typescript"
@@ -33,10 +35,12 @@ generates:
         Observation: "../domain/data#Observation"
         ObservationValue: "../domain/data#ObservationValue"
         DimensionValue: "../domain/data#DimensionValue"
+        HierarchyValue: "../domain/data#HierarchyValue"
         RawObservation: "../domain/data#RawObservation"
         Filters: "../configurator#Filters"
         GeoShape: "../domain/data#GeoShape"
         SearchCube: "../domain/data#SearchCube"
+        DataCubesComponents: "../domain/data#DataCubesComponents"
       mappers:
         DataCube: "./shared-types#ResolvedDataCube"
         ObservationsQuery: "./shared-types#ResolvedObservationsQuery"

@@ -27,9 +27,9 @@ import { LegendColor } from "@/charts/shared/legend-color";
 import { ColumnConfig, DataSource, QueryFilters } from "@/config-types";
 import { TimeSlider } from "@/configurator/interactive-filters/time-slider";
 import {
-  useComponentsWithHierarchiesQuery,
   useDataCubeMetadataQuery,
   useDataCubeObservationsQuery,
+  useDataCubesComponentsQuery,
 } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 
@@ -50,23 +50,26 @@ export const ChartColumnsVisualization = ({
 }) => {
   const locale = useLocale();
   const commonQueryVariables = {
-    iri: dataSetIri,
     sourceType: dataSource.type,
     sourceUrl: dataSource.url,
     locale,
   };
   const [metadataQuery] = useDataCubeMetadataQuery({
-    variables: commonQueryVariables,
-  });
-  const [componentsWithHierarchiesQuery] = useComponentsWithHierarchiesQuery({
     variables: {
       ...commonQueryVariables,
-      componentIris,
+      iri: dataSetIri,
+    },
+  });
+  const [componentsQuery] = useDataCubesComponentsQuery({
+    variables: {
+      ...commonQueryVariables,
+      filters: [{ iri: dataSetIri, componentIris }],
     },
   });
   const [observationsQuery] = useDataCubeObservationsQuery({
     variables: {
       ...commonQueryVariables,
+      iri: dataSetIri,
       componentIris,
       filters: queryFilters,
     },
@@ -75,7 +78,7 @@ export const ChartColumnsVisualization = ({
   return (
     <ChartLoadingWrapper
       metadataQuery={metadataQuery}
-      componentsQuery={componentsWithHierarchiesQuery}
+      componentsQuery={componentsQuery}
       observationsQuery={observationsQuery}
       chartConfig={chartConfig}
       Component={ChartColumns}

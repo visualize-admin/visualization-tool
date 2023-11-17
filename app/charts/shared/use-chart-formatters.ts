@@ -12,9 +12,8 @@ const useChartFormatters = (
     () => [...dimensions, ...measures],
     [dimensions, measures]
   );
-  const formatters = useDimensionFormatters(components);
 
-  return formatters;
+  return useDimensionFormatters(components);
 };
 
 export default useChartFormatters;

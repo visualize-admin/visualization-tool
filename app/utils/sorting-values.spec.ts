@@ -1,10 +1,7 @@
 import orderBy from "lodash/orderBy";
 
 import { SortingField } from "@/configurator";
-import {
-  DimensionMetadataFragment,
-  DimensionMetadataWithHierarchiesFragment,
-} from "@/graphql/query-hooks";
+import { Dimension, Measure } from "@/domain/data";
 import {
   getSortingOrders,
   makeDimensionValueSorters,
@@ -38,7 +35,7 @@ const dimension = {
       identifier: "C",
     },
   ],
-} as unknown as DimensionMetadataFragment;
+} as unknown as Dimension;
 
 const measureBySegment = {
   A: 10,
@@ -49,12 +46,12 @@ const measureBySegment = {
 
 const measure = {
   __typename: "NumericalMeasure",
-} as unknown as DimensionMetadataFragment;
+} as unknown as Measure;
 
 const ordinalNumericalDimension = {
   __typename: "OrdinalDimension",
   isNumerical: true,
-} as unknown as DimensionMetadataFragment;
+} as unknown as Measure;
 
 const hierarchicalDimension = {
   hierarchy: [
@@ -115,7 +112,7 @@ const hierarchicalDimension = {
       identifier: "CH-PROD-EAST",
     },
   ],
-} as unknown as DimensionMetadataWithHierarchiesFragment;
+} as unknown as Dimension;
 
 const temporalDimensionYear = {
   __typename: "TemporalDimension",
@@ -124,7 +121,7 @@ const temporalDimensionYear = {
     { value: "1996", label: "1996" },
     { value: "2019", label: "2019" },
   ],
-} as unknown as DimensionMetadataFragment;
+} as unknown as Dimension;
 
 const temporalDimensionFullDate = {
   __typename: "TemporalDimension",
@@ -133,7 +130,7 @@ const temporalDimensionFullDate = {
     { value: "1996-05-05", label: "1996-05-05" },
     { value: "2019-12-12", label: "2019-12-12" },
   ],
-} as unknown as DimensionMetadataFragment;
+} as unknown as Dimension;
 
 describe("maybeInt", () => {
   it("should return 0 if the input is 0", () => {

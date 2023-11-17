@@ -6,15 +6,18 @@ import {
   Filters,
   InteractiveFiltersConfig,
 } from "@/configurator";
-import { isStandardErrorDimension, Observation } from "@/domain/data";
-import { DimensionMetadataFragment } from "@/graphql/query-hooks";
+import {
+  Component,
+  isStandardErrorDimension,
+  Observation,
+} from "@/domain/data";
 import { TransitionStore } from "@/stores/transition";
 
 /** Use to create a unique key for rendering the shapes.
  * It's important to animate them correctly when using d3.
  */
 export const useRenderingKeyVariable = (
-  dimensions: DimensionMetadataFragment[],
+  dimensions: Component[],
   filters: Filters,
   interactiveFiltersConfig: InteractiveFiltersConfig,
   animationField: AnimationField | undefined

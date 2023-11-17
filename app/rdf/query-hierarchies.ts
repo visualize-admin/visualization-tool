@@ -10,14 +10,13 @@ import { StreamClient } from "sparql-http-client";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
 import { LRUCache } from "typescript-lru-cache";
 
-import { parseTerm } from "@/domain/data";
+import { HierarchyValue, parseTerm } from "@/domain/data";
 import { truthy } from "@/domain/types";
-import { HierarchyValue } from "@/graphql/resolver-types";
 import { ResolvedDimension } from "@/graphql/shared-types";
 import { ExtendedCube } from "@/rdf/extended-cube";
+import { getCubeDimensionValuesWithMetadata } from "@/rdf/queries";
 
 import * as ns from "./namespace";
-import { getCubeDimensionValuesWithMetadata } from "./queries";
 import {
   getOptionsFromTree,
   mapTree,
@@ -36,7 +35,8 @@ const getName = (pointer: AnyPointer, language: string) => {
 const toTree = (
   results: HierarchyNode[],
   dimensionIri: string,
-  locale: string
+  locale: string,
+  hasValue: (value: string) => boolean
 ): HierarchyValue[] => {
   const sortChildren = (children: HierarchyValue[]) =>
     orderBy(children, ["position", "identifier"]);
@@ -50,11 +50,12 @@ const toTree = (
     // @see https://zulip.zazuko.com/#narrow/stream/40-bafu-ext/topic/labels.20for.20each.20hierarchy.20level/near/312845
 
     const identifier = parseTerm(node.resource.out(ns.schema.identifier)?.term);
+    const value = node.resource.value;
     const res: HierarchyValue | undefined = name
       ? {
           label: name || "-",
           alternateName: node.resource.out(ns.schema.alternateName).term?.value,
-          value: node.resource.value,
+          value,
           children: sortChildren(
             node.nextInHierarchy
               .map((childNode) => serializeNode(childNode, depth + 1))
@@ -65,6 +66,7 @@ const toTree = (
           identifier,
           depth,
           dimensionIri,
+          hasValue: hasValue(value),
         }
       : undefined;
     return res;
@@ -133,10 +135,14 @@ export const queryHierarchy = async (
     })
   );
 
+  const dimensionValues = new Set(
+    dimensionValuesWithLabels.map((d) => `${d.value}`)
+  );
+
   const trees = hierarchies.map(({ nodes, hierarchyName }) => {
     const tree: (HierarchyValue & {
       hierarchyName?: string;
-    })[] = toTree(nodes, iri, locale);
+    })[] = toTree(nodes, iri, locale, (d) => dimensionValues.has(d));
 
     if (tree.length > 0) {
       // Augment hierarchy value with hierarchyName so that when regrouping
@@ -149,28 +155,22 @@ export const queryHierarchy = async (
   const tree = regroupTrees(trees);
 
   const treeValues = new Set(getOptionsFromTree(tree).map((d) => d.value));
-  const dimensionValues = new Set(
-    dimensionValuesWithLabels.map((d) => `${d.value}`)
-  );
   const prunedTree = mapTree(
     pruneTree(tree, (node) => dimensionValues.has(node.value)),
     (node) => ({ ...node, hasValue: dimensionValues.has(node.value) })
   );
-  const additionalTreeValues = dimensionValuesWithLabels
+  const additionalTreeValues: HierarchyValue[] = dimensionValuesWithLabels
     .filter((d) => !treeValues.has(`${d.value}`))
-    .map(
-      (d) =>
-        ({
-          label: d.label || "ADDITIONAL",
-          value: `${d.value}`,
-          depth: -1,
-          children: [],
-          dimensionIri: rdimension.data.iri,
-          hasValue: true,
-          position: "-1",
-          identifier: "",
-        } as HierarchyValue)
-    );
+    .map((d) => ({
+      label: d.label || "ADDITIONAL",
+      value: `${d.value}`,
+      depth: -1,
+      dimensionIri: rdimension.data.iri,
+      hasValue: true,
+      position: -1,
+      identifier: "",
+      children: [],
+    }));
 
   return [...prunedTree, ...additionalTreeValues];
 };

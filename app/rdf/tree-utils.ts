@@ -1,7 +1,7 @@
 import orderBy from "lodash/orderBy";
 import sortBy from "lodash/sortBy";
 
-import { HierarchyValue } from "@/graphql/resolver-types";
+import { HierarchyValue } from "@/domain/data";
 import { bfs } from "@/utils/bfs";
 
 export const mapTree = <T extends { children?: T[] | null }>(

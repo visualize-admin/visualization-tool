@@ -3,21 +3,39 @@ import { fold } from "fp-ts/lib/Either";
 import { pipe } from "fp-ts/lib/function";
 import * as t from "io-ts";
 
-import { ObservationValue } from "@/domain/data";
-import { DataCubeMetadata } from "@/graphql/types";
+import { Dimension, Measure, ObservationValue } from "@/domain/data";
 
-const ComponentType = t.union([
-  t.literal("NumericalMeasure"),
-  t.literal("OrdinalMeasure"),
-  t.literal("GeoCoordinatesDimension"),
-  t.literal("GeoShapesDimension"),
+const DimensionType = t.union([
   t.literal("NominalDimension"),
   t.literal("OrdinalDimension"),
   t.literal("TemporalDimension"),
   t.literal("TemporalOrdinalDimension"),
+  t.literal("GeoCoordinatesDimension"),
+  t.literal("GeoShapesDimension"),
   t.literal("StandardErrorDimension"),
 ]);
+export type DimensionType = t.TypeOf<typeof DimensionType>;
+export const dimensionTypes: DimensionType[] = [
+  "NominalDimension",
+  "OrdinalDimension",
+  "TemporalDimension",
+  "TemporalOrdinalDimension",
+  "GeoCoordinatesDimension",
+  "GeoShapesDimension",
+  "StandardErrorDimension",
+];
 
+const MeasureType = t.union([
+  t.literal("NumericalMeasure"),
+  t.literal("OrdinalMeasure"),
+]);
+export type MeasureType = t.TypeOf<typeof MeasureType>;
+export const measureTypes: MeasureType[] = [
+  "NumericalMeasure",
+  "OrdinalMeasure",
+];
+
+const ComponentType = t.union([DimensionType, MeasureType]);
 export type ComponentType = t.TypeOf<typeof ComponentType>;
 
 // Filters
@@ -221,6 +239,20 @@ const SortingField = t.partial({
   }),
 });
 export type SortingField = t.TypeOf<typeof SortingField>;
+
+// const Cube = t.type({
+//   iri: t.string,
+//   filters: Filters,
+// });
+// export type Cube = t.TypeOf<typeof Cube>;
+
+// const GenericChartConfig = t.type({
+//   key: t.string,
+//   version: t.string,
+//   meta: Meta,
+//   cubes: t.array(Cube),
+//   activeField: t.union([t.string, t.undefined]),
+// });
 
 const GenericChartConfig = t.type({
   key: t.string,
@@ -879,8 +911,8 @@ export type FieldAdjuster<
   oldValue: OldValueType;
   oldChartConfig: ChartConfig;
   newChartConfig: NewChartConfigType;
-  dimensions: DataCubeMetadata["dimensions"];
-  measures: DataCubeMetadata["measures"];
+  dimensions: Dimension[];
+  measures: Measure[];
 }) => NewChartConfigType;
 
 type AssureKeys<T, U extends { [K in keyof T]: unknown }> = {
