@@ -171,25 +171,25 @@ describe("getChartConfigComponentIris", () => {
     const componentsIris = extractChartConfigComponentIris(lineConfig);
     expect(componentsIris).toEqual([
       "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/0",
-      "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/0",
       "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/1",
       "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2",
       "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/3",
       "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/4",
+      "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/0",
     ]);
   });
 
   it("should return correct componentIris for map chart", () => {
     const componentsIris = extractChartConfigComponentIris(mapConfig);
     expect(componentsIris).toEqual([
-      "https://environment.ld.admin.ch/foen/nfi/unitOfReference",
-      "https://environment.ld.admin.ch/foen/nfi/Topic/3r",
       "https://environment.ld.admin.ch/foen/nfi/Topic/3",
+      "https://environment.ld.admin.ch/foen/nfi/Topic/3r",
       "https://environment.ld.admin.ch/foen/nfi/classificationUnit",
-      "https://environment.ld.admin.ch/foen/nfi/inventory",
       "https://environment.ld.admin.ch/foen/nfi/evaluationType",
       "https://environment.ld.admin.ch/foen/nfi/grid",
+      "https://environment.ld.admin.ch/foen/nfi/inventory",
       "https://environment.ld.admin.ch/foen/nfi/unitOfEvaluation",
+      "https://environment.ld.admin.ch/foen/nfi/unitOfReference",
     ]);
   });
 });
