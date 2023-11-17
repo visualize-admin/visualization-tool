@@ -3,44 +3,17 @@ import { Literal, NamedNode } from "rdf-js";
 
 import { ExtendedCube } from "@/rdf/extended-cube";
 
-import { Observation } from "../domain/data";
+import { DataCubeMetadata, Observation } from "../domain/data";
 
 import { RelatedDimension } from "./query-hooks";
-import {
-  DataCubeOrganization,
-  DataCubePublicationStatus,
-  DataCubeTheme,
-  ScaleType,
-  TimeUnit,
-} from "./resolver-types";
+import { ScaleType, TimeUnit } from "./resolver-types";
 
 /** Types shared by graphql-codegen and resolver code */
 
 export type ResolvedDataCube = {
   cube: ExtendedCube;
   locale: string;
-  data: {
-    iri: string;
-    identifier: string;
-    title: string;
-    description: string;
-    version?: string;
-    datePublished?: string;
-    dateModified?: string;
-    publicationStatus: DataCubePublicationStatus;
-    themes?: DataCubeTheme[];
-    creator?: DataCubeOrganization;
-    versionHistory?: string;
-    contactPoint?: {
-      name?: string;
-      email?: string;
-    };
-    publisher?: string;
-    landingPage?: string;
-    expires?: string;
-    keywords?: string[];
-    workExamples?: string[];
-  };
+  data: DataCubeMetadata;
 };
 
 export type ResolvedDimension = {

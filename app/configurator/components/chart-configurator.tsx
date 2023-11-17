@@ -73,11 +73,9 @@ import {
   Measure,
 } from "@/domain/data";
 import {
-  DataCubeMetadataQuery,
   PossibleFiltersDocument,
   PossibleFiltersQuery,
   PossibleFiltersQueryVariables,
-  useDataCubeMetadataQuery,
   useDataCubeObservationsQuery,
   useDataCubesComponentsQuery,
 } from "@/graphql/query-hooks";
@@ -280,12 +278,6 @@ const useFilterReorder = ({
   ]);
 
   const [
-    { data: metadataData, fetching: metadataFetching },
-    executeMetadataQuery,
-  ] = useDataCubeMetadataQuery({
-    variables,
-  });
-  const [
     { data: componentsData, fetching: componentsFetching },
     exectueComponentsQuery,
   ] = useDataCubesComponentsQuery({
@@ -300,7 +292,6 @@ const useFilterReorder = ({
   });
 
   useEffect(() => {
-    executeMetadataQuery({ variables });
     exectueComponentsQuery({
       variables: {
         sourceType: state.dataSource.type,
@@ -313,7 +304,6 @@ const useFilterReorder = ({
     });
   }, [
     variables,
-    executeMetadataQuery,
     exectueComponentsQuery,
     state.dataSource.type,
     state.dataSource.url,
@@ -321,13 +311,12 @@ const useFilterReorder = ({
     chartConfig.dataSet,
   ]);
 
-  const metadata = metadataData?.dataCubeByIri;
   const dimensions = componentsData?.dataCubesComponents?.dimensions;
   const measures = componentsData?.dataCubesComponents?.measures;
 
   // Handlers
   const handleMove = useEvent((dimensionIri: string, delta: number) => {
-    if (!metadata || !dimensions || !measures) {
+    if (!dimensions || !measures) {
       return;
     }
 
@@ -342,7 +331,6 @@ const useFilterReorder = ({
       type: "CHART_CONFIG_REPLACED",
       value: {
         chartConfig: newChartConfig,
-        dataCubeMetadata: metadata,
         dataCubesComponents: {
           dimensions,
           measures,
@@ -389,8 +377,7 @@ const useFilterReorder = ({
   const { fetching: possibleFiltersFetching } = useEnsurePossibleFilters({
     state,
   });
-  const fetching =
-    possibleFiltersFetching || metadataFetching || componentsFetching;
+  const fetching = possibleFiltersFetching || componentsFetching;
 
   const { filterDimensions, addableDimensions } = useMemo(() => {
     const keysOrder = Object.fromEntries(
@@ -422,7 +409,6 @@ const useFilterReorder = ({
     handleMove,
     handleDragEnd,
     fetching,
-    metadata,
     dimensions,
     measures,
     filterDimensions,
@@ -556,7 +542,6 @@ export const ChartConfigurator = ({
     handleAddDimensionFilter,
     handleRemoveDimensionFilter,
     handleDragEnd,
-    metadata,
     dimensions,
     measures,
     filterDimensions,
@@ -575,7 +560,7 @@ export const ChartConfigurator = ({
 
   const classes = useStyles({ fetching });
 
-  if (!metadata || !dimensions || !measures) {
+  if (!dimensions || !measures) {
     return (
       <>
         <ControlSectionSkeleton />
@@ -612,7 +597,6 @@ export const ChartConfigurator = ({
           <ChartFields
             dataSource={state.dataSource}
             chartConfig={chartConfig}
-            metadata={metadata}
             dimensions={dimensions}
             measures={measures}
           />
@@ -762,13 +746,12 @@ export const ChartConfigurator = ({
 type ChartFieldsProps = {
   dataSource: DataSource;
   chartConfig: ChartConfig;
-  metadata: NonNullable<DataCubeMetadataQuery["dataCubeByIri"]>;
   dimensions: Dimension[];
   measures: Measure[];
 };
 
 const ChartFields = (props: ChartFieldsProps) => {
-  const { dataSource, chartConfig, metadata, dimensions, measures } = props;
+  const { dataSource, chartConfig, dimensions, measures } = props;
   const components = [...dimensions, ...measures];
   const queryFilters = useQueryFilters({ chartConfig });
   const locale = useLocale();
@@ -776,7 +759,7 @@ const ChartFields = (props: ChartFieldsProps) => {
   const [{ data: observationsData }] = useDataCubeObservationsQuery({
     variables: {
       locale,
-      iri: metadata.iri,
+      iri: chartConfig.dataSet,
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       componentIris: components.map((d) => d.iri),

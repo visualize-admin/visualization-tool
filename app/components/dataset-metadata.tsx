@@ -13,12 +13,9 @@ import React, { ReactNode } from "react";
 
 import Tag from "@/components/tag";
 import { DataSource } from "@/config-types";
-import { truthy } from "@/domain/types";
+import { DataCubeMetadata } from "@/domain/data";
 import { useFormatDate } from "@/formatters";
-import {
-  DataCubeMetadataQuery,
-  useDataCubeMetadataQuery,
-} from "@/graphql/query-hooks";
+import { useDataCubesMetadataQuery } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
 import { makeOpenDataLink } from "@/utils/opendata";
@@ -32,16 +29,17 @@ export const DataSetMetadata = ({
 }) => {
   const locale = useLocale();
   const formatDate = useFormatDate();
-  const [{ data, fetching, error }] = useDataCubeMetadataQuery({
+  const [{ data, fetching, error }] = useDataCubesMetadataQuery({
     variables: {
-      iri: dataSetIri,
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
+      filters: [{ iri: dataSetIri }],
     },
   });
-  const cube = data?.dataCubeByIri;
-  const openDataLink = makeOpenDataLink(locale, cube);
+  // FIXME: adapt to design
+  const cube = data?.dataCubesMetadata[0];
+  const openDataLink = cube ? makeOpenDataLink(locale, cube) : null;
   if (fetching || error || !cube) {
     // The error and loading are managed by the component
     // displayed in the middle panel
@@ -83,10 +81,10 @@ export const DataSetMetadata = ({
         <Trans id="dataset.metadata.email">Contact points</Trans>
       </DatasetMetadataTitle>
       <DatasetMetadataBody>
-        {cube.contactEmail ? (
+        {cube.contactPoint?.email && cube.contactPoint.name ? (
           <DatasetMetadataLink
-            href={`mailto:${cube.contactEmail}`}
-            label={cube.contactName ?? cube.contactEmail}
+            href={`mailto:${cube.contactPoint.email}`}
+            label={cube.contactPoint.name ?? cube.contactPoint.email}
           />
         ) : (
           "–"
@@ -171,48 +169,65 @@ const DatasetMetadataLink = ({
   </Link>
 );
 
-const DatasetTags = ({
-  cube,
-}: {
-  cube: NonNullable<DataCubeMetadataQuery["dataCubeByIri"]>;
-}) => {
+const DatasetTags = ({ cube }: { cube: DataCubeMetadata }) => {
   return (
     <>
       <DatasetMetadataTitle>
         <Trans id="dataset-preview.keywords">Keywords</Trans>
       </DatasetMetadataTitle>
       <Stack spacing={1} direction="column" sx={{ mt: 3 }}>
-        {[cube.creator, ...cube.themes].filter(truthy).map((t) => {
-          const type =
-            t.__typename === "DataCubeTheme" ? "theme" : "organization";
-
-          return t.label ? (
-            <NextLink
-              key={t.iri}
-              href={`/browse/${type}/${encodeURIComponent(t.iri)}`}
-              passHref
-              legacyBehavior
-            >
-              <Tag
-                component={MUILink}
-                // @ts-ignore
-                underline="none"
-                type={type}
-                title={t.label || undefined}
-                sx={{
-                  maxWidth: "100%",
-                  display: "flex",
-                  whiteSpace: "nowrap",
-                  textOverflow: "ellipsis",
-                  overflow: "hidden",
-                }}
-              >
-                {t.label}
-              </Tag>
-            </NextLink>
-          ) : null;
-        })}
+        {cube.creator?.iri && (
+          <DatasetMetadataTag
+            type="organization"
+            iri={cube.creator.iri}
+            label={cube.creator.label}
+          />
+        )}
+        {cube.themes?.map((t) => (
+          <DatasetMetadataTag
+            key={t.iri}
+            type="theme"
+            iri={t.iri}
+            label={t.label}
+          />
+        ))}
       </Stack>
     </>
+  );
+};
+
+type DatasetMetadataTagProps = {
+  type: "organization" | "theme";
+  iri: string;
+  label?: string | null;
+};
+
+const DatasetMetadataTag = (props: DatasetMetadataTagProps) => {
+  const { type, iri, label } = props;
+
+  return (
+    <NextLink
+      key={iri}
+      href={`/browse/${type}/${encodeURIComponent(iri)}`}
+      passHref
+      legacyBehavior
+    >
+      <Tag
+        component={MUILink}
+        // @ts-ignore
+        underline="none"
+        type={type}
+        title={label ?? undefined}
+        sx={{
+          maxWidth: "100%",
+          display: "flex",
+          whiteSpace: "nowrap",
+          textOverflow: "ellipsis",
+          overflow: "hidden",
+        }}
+      >
+        {label}
+      </Tag>
+    </NextLink>
   );
 };

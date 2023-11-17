@@ -11,10 +11,7 @@ import {
   useConfiguratorState,
 } from "@/configurator/configurator-state";
 import { moveFields } from "@/configurator/table/table-config-state";
-import {
-  useDataCubeMetadataQuery,
-  useDataCubesComponentsQuery,
-} from "@/graphql/query-hooks";
+import { useDataCubesComponentsQuery } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 
 export const useTableChartController = (
@@ -23,14 +20,6 @@ export const useTableChartController = (
   const locale = useLocale();
   const [, dispatch] = useConfiguratorState(isConfiguring);
   const chartConfig = getChartConfig(state);
-  const [{ data: metadata }] = useDataCubeMetadataQuery({
-    variables: {
-      iri: chartConfig.dataSet,
-      sourceType: state.dataSource.type,
-      sourceUrl: state.dataSource.url,
-      locale,
-    },
-  });
   const [{ data: components }] = useDataCubesComponentsQuery({
     variables: {
       sourceType: state.dataSource.type,
@@ -57,7 +46,7 @@ export const useTableChartController = (
       if (
         !destination ||
         chartConfig.chartType !== "table" ||
-        !(metadata?.dataCubeByIri && components?.dataCubesComponents)
+        !components?.dataCubesComponents
       ) {
         return;
       }
@@ -71,17 +60,11 @@ export const useTableChartController = (
         type: "CHART_CONFIG_REPLACED",
         value: {
           chartConfig: newChartConfig,
-          dataCubeMetadata: metadata.dataCubeByIri,
           dataCubesComponents: components.dataCubesComponents,
         },
       });
     },
-    [
-      chartConfig,
-      components?.dataCubesComponents,
-      dispatch,
-      metadata?.dataCubeByIri,
-    ]
+    [chartConfig, components?.dataCubesComponents, dispatch]
   );
 
   const handleDragStart = useCallback<OnDragStartResponder>(
@@ -107,7 +90,6 @@ export const useTableChartController = (
   );
 
   return {
-    metadata,
     dimensions: components?.dataCubesComponents.dimensions,
     measures: components?.dataCubesComponents.measures,
     currentDraggableId,

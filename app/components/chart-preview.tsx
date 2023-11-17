@@ -22,8 +22,8 @@ import {
   useConfiguratorState,
 } from "@/configurator";
 import {
-  useDataCubeMetadataQuery,
   useDataCubesComponentsQuery,
+  useDataCubesMetadataQuery,
 } from "@/graphql/query-hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import { useLocale } from "@/locales/use-locale";
@@ -67,21 +67,17 @@ export const ChartPreviewInner = (props: ChartPreviewProps) => {
   const chartConfig = getChartConfig(state);
   const locale = useLocale();
   const classes = useStyles();
-  const [{ data: metadata }] = useDataCubeMetadataQuery({
-    variables: {
-      iri: dataSetIri,
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
-    },
+  const commonQueryVariables = {
+    sourceType: dataSource.type,
+    sourceUrl: dataSource.url,
+    locale,
+    filters: [{ iri: dataSetIri }],
+  };
+  const [{ data: metadata }] = useDataCubesMetadataQuery({
+    variables: commonQueryVariables,
   });
   const [{ data: components }] = useDataCubesComponentsQuery({
-    variables: {
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
-      filters: [{ iri: dataSetIri }],
-    },
+    variables: commonQueryVariables,
   });
   const {
     state: isTablePreview,
@@ -115,8 +111,10 @@ export const ChartPreviewInner = (props: ChartPreviewProps) => {
       }}
     >
       <ChartErrorBoundary resetKeys={[state]}>
-        {metadata?.dataCubeByIri?.publicationStatus ===
-          DataCubePublicationStatus.Draft && (
+        {/* FIXME: adapt to design */}
+        {metadata?.dataCubesMetadata.some(
+          (d) => d.publicationStatus === DataCubePublicationStatus.Draft
+        ) && (
           <Box sx={{ mb: 4 }}>
             <HintYellow iconName="datasetError" iconSize={64}>
               <Trans id="dataset.publicationStatus.draft.warning">
@@ -171,7 +169,8 @@ export const ChartPreviewInner = (props: ChartPreviewProps) => {
               <Head>
                 <title key="title">
                   {chartConfig.meta.title[locale] === ""
-                    ? metadata?.dataCubeByIri?.title
+                    ? // FIXME: adapt to design
+                      metadata?.dataCubesMetadata.map((d) => d.title).join(", ")
                     : chartConfig.meta.title[locale]}{" "}
                   - visualize.admin.ch
                 </title>

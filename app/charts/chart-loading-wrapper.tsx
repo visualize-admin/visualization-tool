@@ -15,9 +15,9 @@ import {
 } from "@/components/hint";
 import { ChartConfig } from "@/configurator";
 import {
-  DataCubeMetadataQuery,
   DataCubeObservationsQuery,
   DataCubesComponentsQuery,
+  DataCubesMetadataQuery,
 } from "@/graphql/query-hooks";
 
 type ElementProps<RE> = RE extends React.ElementType<infer P> ? P : never;
@@ -35,7 +35,7 @@ export const ChartLoadingWrapper = <
   ComponentProps,
 }: {
   metadataQuery: Pick<
-    UseQueryResponse<DataCubeMetadataQuery>[0],
+    UseQueryResponse<DataCubesMetadataQuery>[0],
     "data" | "fetching" | "error"
   >;
   componentsQuery: Pick<
@@ -70,7 +70,7 @@ export const ChartLoadingWrapper = <
     error: observationsError,
   } = observationsQuery;
 
-  const metadata = metadataData?.dataCubeByIri;
+  const metadata = metadataData?.dataCubesMetadata;
   const observations = observationsData?.dataCubeByIri?.observations.data;
   const dimensions = componentsData?.dataCubesComponents.dimensions;
   const measures = componentsData?.dataCubesComponents.measures;
@@ -90,7 +90,8 @@ export const ChartLoadingWrapper = <
   }, [dimensions, measures]);
 
   if (metadata && dimensions && measures && observations) {
-    const { title } = metadata;
+    // FIXME: adapt to design
+    const title = metadata.map((d) => d.title).join(", ");
 
     return (
       <Box

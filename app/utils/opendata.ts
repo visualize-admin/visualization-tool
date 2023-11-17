@@ -1,9 +1,6 @@
-import { DataCubeMetadataQuery } from "@/graphql/query-hooks";
+import { DataCubeMetadata } from "@/domain/data";
 
-const makeOpenDataLink = (
-  lang: string,
-  cube: DataCubeMetadataQuery["dataCubeByIri"]
-) => {
+const makeOpenDataLink = (lang: string, cube: DataCubeMetadata) => {
   const identifier = cube?.identifier;
   const creatorIri = cube?.creator?.iri;
   const isPublished = cube?.workExamples?.includes(

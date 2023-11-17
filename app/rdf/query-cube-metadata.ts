@@ -1,14 +1,171 @@
 import RDF from "@rdfjs/data-model";
-import { SELECT, sparql } from "@tpluscode/sparql-builder";
+import { SELECT } from "@tpluscode/sparql-builder";
 import keyBy from "lodash/keyBy";
+import { Literal, NamedNode } from "rdf-js";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
 
-import { schema, dcat, dcterms, cube } from "../../app/rdf/namespace";
-import { DataCubeOrganization, DataCubeTheme } from "../graphql/query-hooks";
+import { DataCubeMetadata } from "@/domain/data";
+import * as ns from "@/rdf/namespace";
+
+import { cube, schema } from "../../app/rdf/namespace";
+import {
+  DataCubeOrganization,
+  DataCubePublicationStatus,
+  DataCubeTheme,
+} from "../graphql/query-hooks";
 
 import { pragmas } from "./create-source";
 import { makeLocalesFilter } from "./query-labels";
-import { makeVisualizeDatasetFilter } from "./query-utils";
+import {
+  GROUP_SEPARATOR,
+  buildLocalizedSubQuery,
+  makeVisualizeDatasetFilter,
+} from "./query-utils";
+
+type RawDataCubeMetadata = {
+  iri: NamedNode;
+  identifier: NamedNode;
+  title: Literal;
+  description: Literal;
+  version: Literal;
+  datePublished: Literal;
+  dateModified: Literal;
+  status: NamedNode;
+  themeIris: NamedNode;
+  themeLabels: Literal;
+  creatorIri: NamedNode;
+  creatorLabel: Literal;
+  versionHistory: NamedNode;
+  contactPointEmail: Literal;
+  contactPointName: Literal;
+  publisher: NamedNode;
+  landingPage: NamedNode;
+  expires: Literal;
+  workExamples: NamedNode;
+};
+
+const parseRawMetadata = (cube: RawDataCubeMetadata): DataCubeMetadata => {
+  const themeIris = cube.themeIris.value.split(GROUP_SEPARATOR);
+  const themeLabels = cube.themeLabels.value.split(GROUP_SEPARATOR);
+
+  return {
+    iri: cube.iri.value,
+    identifier: cube.identifier?.value,
+    title: cube.title.value,
+    description: cube.description?.value,
+    version: cube.version?.value,
+    datePublished: cube.datePublished?.value,
+    dateModified: cube.dateModified?.value,
+    publicationStatus:
+      cube.status.value ===
+      ns.adminVocabulary("CreativeWorkStatus/Published").value
+        ? DataCubePublicationStatus.Published
+        : DataCubePublicationStatus.Draft,
+    themes:
+      themeIris.length === themeLabels.length
+        ? themeIris.map((iri, i) => ({
+            iri,
+            label: themeLabels[i],
+          }))
+        : [],
+    creator:
+      cube.creatorIri && cube.creatorLabel
+        ? { iri: cube.creatorIri.value, label: cube.creatorLabel.value }
+        : undefined,
+    versionHistory: cube.versionHistory?.value,
+    contactPoint: {
+      email: cube.contactPointEmail?.value,
+      name: cube.contactPointName?.value,
+    },
+    publisher: cube.publisher?.value,
+    landingPage: cube.landingPage?.value,
+    expires: cube.expires?.value,
+    workExamples: cube.workExamples?.value.split(GROUP_SEPARATOR),
+  };
+};
+
+export const getCubeMetadata = async (
+  iri: string,
+  { locale, sparqlClient }: { locale: string; sparqlClient: ParsingClient }
+): Promise<DataCubeMetadata> => {
+  const query = SELECT`
+    ?iri ?identifier ?title ?description ?version ?datePublished ?dateModified ?status ?creatorIri ?creatorLabel ?versionHistory ?contactPointName ?contactPointEmail ?publisher ?landingPage ?expires
+    (GROUP_CONCAT(DISTINCT ?themeIri; SEPARATOR="${GROUP_SEPARATOR}") AS ?themeIris) (GROUP_CONCAT(DISTINCT ?themeLabel; SEPARATOR="${GROUP_SEPARATOR}") AS ?themeLabels)
+    (GROUP_CONCAT(DISTINCT ?subthemeIri; SEPARATOR="${GROUP_SEPARATOR}") AS ?subthemeIris) (GROUP_CONCAT(DISTINCT ?subthemeLabel; SEPARATOR="${GROUP_SEPARATOR}") AS ?subthemeLabels)
+    (GROUP_CONCAT(DISTINCT ?workExample; SEPARATOR="${GROUP_SEPARATOR}") AS ?workExamples)
+    `.WHERE`
+    VALUES ?iri { <${iri}> }
+    OPTIONAL { ?iri ${ns.dcterms.identifier} ?identifier . }
+    ${buildLocalizedSubQuery("iri", "schema:name", "title", {
+      locale,
+    })}
+    ${buildLocalizedSubQuery("iri", "schema:description", "description", {
+      locale,
+    })}
+    OPTIONAL { ?iri ${ns.schema.version} ?version . }
+    OPTIONAL { ?iri ${ns.schema.datePublished} ?datePublished . }
+    OPTIONAL { ?iri ${ns.schema.dateModified} ?dateModified . }
+    ?iri ${ns.schema.creativeWorkStatus} ?status .
+    OPTIONAL {
+      ?iri ${ns.dcterms.creator} ?creatorIri .
+      GRAPH <https://lindas.admin.ch/sfa/opendataswiss> {
+        ?creatorIri a ${ns.schema.Organization} ;
+          ${
+            ns.schema.inDefinedTermSet
+          } <https://register.ld.admin.ch/opendataswiss/org> .
+          ${buildLocalizedSubQuery(
+            "creatorIri",
+            "schema:name",
+            "creatorLabel",
+            { locale }
+          )}
+      }
+    }
+    OPTIONAL {
+      ?iri ${ns.dcat.theme} ?themeIri .
+      GRAPH <https://lindas.admin.ch/sfa/opendataswiss> {
+        ?themeIri a ${ns.schema.DefinedTerm} ;
+        ${
+          ns.schema.inDefinedTermSet
+        } <https://register.ld.admin.ch/opendataswiss/category> .
+        ${buildLocalizedSubQuery("themeIri", "schema:name", "themeLabel", {
+          locale,
+        })}
+      }
+    }
+    OPTIONAL { ?versionHistory ${ns.schema.hasPart} ?iri . }
+    OPTIONAL {
+      ?iri ${ns.dcat.contactPoint} ?contactPoint .
+      ?contactPoint ${ns.vcard.fn} ?contactPointName .
+      ?contactPoint ${ns.vcard.hasEmail} ?contactPointEmail .
+    }
+    OPTIONAL { ?iri ${ns.dcterms.publisher} ?publisher . }
+    OPTIONAL { ?iri ${ns.dcat.landingPage} ?landingPage . }
+    OPTIONAL { ?iri ${ns.schema.expires} ?expires . }
+    OPTIONAL { ?iri ${ns.schema.workExample} ?workExample . }
+  `.GROUP().BY`?iri`.THEN.BY`?identifier`.THEN.BY`?title`.THEN.BY`?description`
+    .THEN.BY`?version`.THEN.BY`?datePublished`.THEN.BY`?dateModified`.THEN
+    .BY`?status`.THEN.BY`?creatorIri`.THEN.BY`?creatorLabel`.THEN
+    .BY`?versionHistory`.THEN.BY`?contactPointName`.THEN.BY`?contactPointEmail`
+    .THEN.BY`?publisher`.THEN.BY`?landingPage`.THEN.BY`?expires`
+    .prologue`${pragmas}`;
+
+  const results = (await query.execute(sparqlClient.query, {
+    operation: "postUrlencoded",
+  })) as RawDataCubeMetadata[];
+
+  if (results.length === 0) {
+    throw new Error(`No cube found for ${iri}!`);
+  }
+
+  if (results.length > 1) {
+    throw new Error(`Multiple cubes found for ${iri}!`);
+  }
+
+  const result = results[0];
+
+  return parseRawMetadata(result);
+};
 
 type RawDataCubeTheme = Omit<DataCubeTheme, "__typename">;
 type RawDataCubeOrganization = Omit<DataCubeOrganization, "__typename">;
@@ -54,8 +211,7 @@ export const createThemeLoader =
       });
     }
 
-    const parsed = results.map(parseSparqlTheme);
-    return parsed;
+    return results.map(parseSparqlTheme);
   };
 
 export const createOrganizationLoader =
@@ -80,118 +236,8 @@ export const createOrganizationLoader =
       });
     }
 
-    const parsed = results.map(parseSparqlOrganization);
-    return parsed;
+    return results.map(parseSparqlOrganization);
   };
-
-export const loadThemes = ({
-  locale,
-  sparqlClient,
-}: {
-  locale: string;
-  sparqlClient: ParsingClient;
-}) => {
-  return createThemeLoader({ locale, sparqlClient })();
-};
-
-export const loadOrganizations = ({
-  locale,
-  sparqlClient,
-}: {
-  locale: string;
-  sparqlClient: ParsingClient;
-}) => {
-  return createOrganizationLoader({ locale, sparqlClient })();
-};
-
-export const queryDatasetCountByOrganization = async ({
-  sparqlClient,
-  theme,
-  includeDrafts,
-}: {
-  sparqlClient: ParsingClient;
-  theme?: string;
-  includeDrafts?: boolean;
-}) => {
-  const query = SELECT`(count(?iri) as ?count) ?creator`.WHERE`
-    ?iri ${dcterms.creator} ?creator.
-    ${theme ? sparql`?iri ${dcat.theme} <${theme}>.` : ``}
-    ${makeVisualizeDatasetFilter({ includeDrafts })}
-  `.GROUP().BY`?creator`.build();
-  const results = await sparqlClient.query.select(query, {
-    operation: "postUrlencoded",
-  });
-  return results
-    .map((r) => {
-      return {
-        count: parseInt(r.count.value, 10),
-        iri: r.creator?.value,
-      };
-    })
-    .filter((r) => r.iri);
-};
-
-export const queryDatasetCountByTheme = async ({
-  sparqlClient,
-  organization,
-  includeDrafts,
-}: {
-  sparqlClient: ParsingClient;
-  organization?: string;
-  includeDrafts?: boolean;
-}) => {
-  const query = SELECT`(count(?iri) as ?count) ?theme`.WHERE`
-    ?iri ${dcat.theme} ?theme.
-    ${organization ? sparql`?iri ${dcterms.creator} <${organization}>.` : ``}
-    ?theme ${
-      schema.inDefinedTermSet
-    } <https://register.ld.admin.ch/opendataswiss/category>.
-    ${makeVisualizeDatasetFilter({ includeDrafts })}
-  `.GROUP().BY`?theme`.build();
-  const results = await sparqlClient.query.select(query, {
-    operation: "postUrlencoded",
-  });
-  return results
-    .map((r) => {
-      return {
-        count: parseInt(r.count.value, 10),
-        iri: r.theme?.value,
-      };
-    })
-    .filter((r) => r.iri);
-};
-
-export const queryDatasetCountBySubTheme = async ({
-  sparqlClient,
-  organization,
-  theme,
-  includeDrafts,
-}: {
-  sparqlClient: ParsingClient;
-  organization?: string;
-  theme?: string;
-  includeDrafts?: boolean;
-}) => {
-  const baseQuery = SELECT`(count(?iri) as ?count) ?subtheme`.WHERE`
-    ?iri ${schema.about} ?subtheme.
-    ${organization ? sparql`?iri ${dcterms.creator} <${organization}>.` : ``}
-    ${theme ? sparql`?iri ${dcat.theme} <${theme}>.` : ``}
-    ?iri ${schema.about} ?subtheme. 
-    ${makeVisualizeDatasetFilter({ includeDrafts })}
-  `.build();
-  const query = `${baseQuery} GROUP BY ?subtheme`;
-  const results = await sparqlClient.query.select(query, {
-    operation: "postUrlencoded",
-  });
-  return results
-    .map((r) => {
-      return {
-        count: parseInt(r.count.value, 10),
-        iri: r.subtheme?.value,
-      };
-    })
-    .filter((r) => r.iri);
-};
 
 export const queryLatestPublishedCubeFromUnversionedIri = async (
   sparqlClient: ParsingClient,
@@ -227,28 +273,4 @@ export const queryLatestPublishedCubeFromUnversionedIri = async (
   return {
     iri: results[0].iri.value,
   };
-};
-
-export const loadSubthemes = async ({
-  sparqlClient,
-  parentIri,
-  locale,
-}: {
-  sparqlClient: ParsingClient;
-  parentIri: string;
-  locale: string;
-}) => {
-  const query = SELECT`?iri ?label`.WHERE`
-    ?iri ${schema.inDefinedTermSet} <${parentIri}>;
-    ${makeLocalesFilter("?iri", schema.name, "?label", locale)}
-  `.build();
-  const results = await sparqlClient.query.select(query, {
-    operation: "postUrlencoded",
-  });
-  return results.map((r) => {
-    return {
-      iri: r.iri.value,
-      label: r.label.value,
-    };
-  });
 };
