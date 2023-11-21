@@ -5,7 +5,6 @@ import Head from "next/head";
 import { useMemo } from "react";
 
 import { DataSetTable } from "@/browse/datatable";
-import { extractChartConfigComponentIris } from "@/charts/shared/chart-helpers";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
 import { ChartFootnotes } from "@/components/chart-footnotes";
 import {
@@ -76,7 +75,7 @@ export const ChartPreviewInner = (props: ChartPreviewProps) => {
       filters: chartConfig.cubes.map((cube) => ({ iri: cube.iri })),
     },
   });
-  const componentIris = extractChartConfigComponentIris(chartConfig);
+  const componentIris = undefined;
   const [{ data: components }] = useDataCubesComponentsQuery({
     variables: {
       ...commonQueryVariables,
