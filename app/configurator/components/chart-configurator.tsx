@@ -572,9 +572,7 @@ export const ChartConfigurator = ({
       state,
     });
   const fetching = possibleFiltersFetching || dataFetching;
-
   const filterMenuButtonRef = useRef(null);
-
   const classes = useStyles({ fetching });
 
   if (!dimensions || !measures) {
@@ -763,12 +761,12 @@ export const ChartConfigurator = ({
 type ChartFieldsProps = {
   dataSource: DataSource;
   chartConfig: ChartConfig;
-  dimensions: Dimension[];
-  measures: Measure[];
+  dimensions?: Dimension[];
+  measures?: Measure[];
 };
 
 const ChartFields = (props: ChartFieldsProps) => {
-  const { dataSource, chartConfig, dimensions, measures } = props;
+  const { dataSource, chartConfig, dimensions = [], measures = [] } = props;
   const components = [...dimensions, ...measures];
   const filters = useQueryFilters({
     chartConfig,
@@ -781,8 +779,9 @@ const ChartFields = (props: ChartFieldsProps) => {
       locale,
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
-      filters,
+      filters: filters ?? [],
     },
+    pause: !filters,
   });
   const observations = observationsData?.dataCubesObservations?.data ?? [];
 

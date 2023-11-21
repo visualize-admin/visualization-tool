@@ -64,8 +64,8 @@ type PreparedFilter = {
 type ChartDataFiltersProps = {
   dataSource: DataSource;
   chartConfig: ChartConfig;
-  dimensions: Dimension[];
-  measures: Measure[];
+  dimensions?: Dimension[];
+  measures?: Measure[];
 };
 
 export const ChartDataFilters = (props: ChartDataFiltersProps) => {
@@ -88,7 +88,11 @@ export const ChartDataFilters = (props: ChartDataFiltersProps) => {
     }
   }, [componentIris.length]);
 
-  const preparedFilters: PreparedFilter[] = React.useMemo(() => {
+  const preparedFilters: PreparedFilter[] | undefined = React.useMemo(() => {
+    if (!queryFilters) {
+      return;
+    }
+
     return chartConfig.cubes.map((cube) => {
       const cubeQueryFilters = queryFilters.find(
         (d) => d.iri === cube.iri
@@ -184,7 +188,7 @@ export const ChartDataFilters = (props: ChartDataFiltersProps) => {
             gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
           }}
         >
-          {preparedFilters.map(({ cubeIri, interactiveFilters }) =>
+          {preparedFilters?.map(({ cubeIri, interactiveFilters }) =>
             Object.keys(interactiveFilters).map((dimensionIri) => (
               <DataFilter
                 key={dimensionIri}
@@ -536,7 +540,7 @@ const DataFilterTemporalDimension = ({
 type EnsurePossibleInteractiveFiltersProps = {
   dataSource: DataSource;
   chartConfig: ChartConfig;
-  preparedFilters: PreparedFilter[];
+  preparedFilters?: PreparedFilter[];
 };
 
 /**
@@ -555,7 +559,7 @@ const useEnsurePossibleInteractiveFilters = (
   const IFRaw = useInteractiveFiltersRaw();
   const setDataFilters = useInteractiveFilters((d) => d.setDataFilters);
   const filtersByCubeIri = React.useMemo(() => {
-    return preparedFilters.reduce<Record<string, PreparedFilter>>((acc, d) => {
+    return preparedFilters?.reduce<Record<string, PreparedFilter>>((acc, d) => {
       acc[d.cubeIri] = d;
       return acc;
     }, {});
@@ -563,6 +567,10 @@ const useEnsurePossibleInteractiveFilters = (
 
   React.useEffect(() => {
     const run = async () => {
+      if (!filtersByCubeIri) {
+        return;
+      }
+
       chartConfig.cubes.forEach(async (cube) => {
         const { unmappedQueryFilters, interactiveFilters, mappedFilters } =
           filtersByCubeIri[cube.iri];

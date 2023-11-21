@@ -118,9 +118,9 @@ export const ChartOptionsSelector = ({
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
-      filters,
+      filters: filters ?? [],
     },
-    pause: fetchingComponents,
+    pause: fetchingComponents || !filters,
   });
   const observations = observationsData?.dataCubesObservations?.data;
 

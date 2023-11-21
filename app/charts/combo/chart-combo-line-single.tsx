@@ -31,7 +31,7 @@ type ChartComboLineSingleVisualizationProps = {
   dataSource: DataSource;
   componentIris: string[] | undefined;
   chartConfig: ComboLineSingleConfig;
-  queryFilters: DataCubeObservationFilter[];
+  queryFilters?: DataCubeObservationFilter[];
 };
 
 export const ChartComboLineSingleVisualization = (
@@ -62,8 +62,9 @@ export const ChartComboLineSingleVisualization = (
   const [observationsQuery] = useDataCubesObservationsQuery({
     variables: {
       ...commonQueryVariables,
-      filters: queryFilters,
+      filters: queryFilters ?? [],
     },
+    pause: !queryFilters,
   });
 
   return (

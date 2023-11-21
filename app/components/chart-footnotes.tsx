@@ -49,8 +49,8 @@ export const ChartFootnotes = ({
 }: {
   dataSource: DataSource;
   chartConfig: ChartConfig;
-  dimensions: Dimension[];
-  measures: Measure[];
+  dimensions?: Dimension[];
+  measures?: Measure[];
   configKey?: string;
   onToggleTableView: () => void;
   visualizeLinkText?: JSX.Element;
@@ -88,8 +88,9 @@ export const ChartFootnotes = ({
   const [{ data: downloadData }] = useDataCubesObservationsQuery({
     variables: {
       ...commonQueryVariables,
-      filters,
+      filters: filters ?? [],
     },
+    pause: !filters,
   });
   const sparqlEditorUrls =
     downloadData?.dataCubesObservations?.sparqlEditorUrls;

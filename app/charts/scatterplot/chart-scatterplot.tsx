@@ -44,7 +44,7 @@ export const ChartScatterplotVisualization = ({
   dataSource: DataSource;
   componentIris: string[] | undefined;
   chartConfig: ScatterPlotConfig;
-  queryFilters: DataCubeObservationFilter[];
+  queryFilters?: DataCubeObservationFilter[];
 }) => {
   const locale = useLocale();
   const commonQueryVariables = {
@@ -70,8 +70,9 @@ export const ChartScatterplotVisualization = ({
   const [observationsQuery] = useDataCubesObservationsQuery({
     variables: {
       ...commonQueryVariables,
-      filters: queryFilters,
+      filters: queryFilters ?? [],
     },
+    pause: !queryFilters,
   });
 
   return (

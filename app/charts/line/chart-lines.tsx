@@ -36,7 +36,7 @@ export const ChartLinesVisualization = ({
   dataSource: DataSource;
   componentIris: string[] | undefined;
   chartConfig: LineConfig;
-  queryFilters: DataCubeObservationFilter[];
+  queryFilters?: DataCubeObservationFilter[];
 }) => {
   const locale = useLocale();
   const commonQueryVariables = {
@@ -62,8 +62,9 @@ export const ChartLinesVisualization = ({
   const [observationsQuery] = useDataCubesObservationsQuery({
     variables: {
       ...commonQueryVariables,
-      filters: queryFilters,
+      filters: queryFilters ?? [],
     },
+    pause: !queryFilters,
   });
 
   return (

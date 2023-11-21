@@ -75,8 +75,8 @@ type GenericChartProps = {
   dataSource: DataSource;
   componentIris: string[] | undefined;
   chartConfig: ChartConfig;
-  dimensions: Dimension[];
-  measures: Measure[];
+  dimensions?: Dimension[];
+  measures?: Measure[];
 };
 
 const GenericChart = (props: GenericChartProps) => {
@@ -84,8 +84,8 @@ const GenericChart = (props: GenericChartProps) => {
     props;
   const queryFilters = useQueryFilters({
     chartConfig,
-    dimensions,
-    measures,
+    dimensions: dimensions ?? [],
+    measures: measures ?? [],
   });
   const commonProps = {
     dataSource,
@@ -157,8 +157,8 @@ type ChartWithFiltersProps = {
   dataSource: DataSource;
   componentIris: string[] | undefined;
   chartConfig: ChartConfig;
-  dimensions: Dimension[];
-  measures: Measure[];
+  dimensions?: Dimension[];
+  measures?: Measure[];
 };
 
 export const ChartWithFilters = React.forwardRef<

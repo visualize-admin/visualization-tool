@@ -23,8 +23,8 @@ import { useInteractiveFilters } from "@/stores/interactive-filters";
 type ChartFiltersListProps = {
   dataSource: DataSource;
   chartConfig: ChartConfig;
-  dimensions: Dimension[];
-  measures: Measure[];
+  dimensions?: Dimension[];
+  measures?: Measure[];
 };
 
 export const ChartFiltersList = (props: ChartFiltersListProps) => {
@@ -43,15 +43,18 @@ export const ChartFiltersList = (props: ChartFiltersListProps) => {
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
-      filters: filters.map((filter) => ({
-        iri: filter.iri,
-        componentIris: filter.componentIris,
-        filters: filter.filters,
-      })),
+      filters: filters
+        ? filters.map((filter) => ({
+            iri: filter.iri,
+            componentIris: filter.componentIris,
+            filters: filter.filters,
+          }))
+        : [],
     },
+    pause: !filters,
   });
   const allFilters = React.useMemo(() => {
-    if (!data?.dataCubesComponents) {
+    if (!data?.dataCubesComponents || !filters || !dimensions || !measures) {
       return [];
     }
 
@@ -121,9 +124,10 @@ export const ChartFiltersList = (props: ChartFiltersListProps) => {
     });
   }, [
     data?.dataCubesComponents,
+    dimensions,
+    measures,
     filters,
     animationField,
-    dimensions,
     timeFormatUnit,
     timeSlider.value,
     timeSlider.type,

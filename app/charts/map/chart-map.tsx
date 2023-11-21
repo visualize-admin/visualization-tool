@@ -35,7 +35,7 @@ export const ChartMapVisualization = ({
   dataSource: DataSource;
   componentIris: string[] | undefined;
   chartConfig: MapConfig;
-  queryFilters: DataCubeObservationFilter[];
+  queryFilters?: DataCubeObservationFilter[];
 }) => {
   const locale = useLocale();
   const areaDimensionIri = chartConfig.fields.areaLayer?.componentIri || "";
@@ -63,8 +63,9 @@ export const ChartMapVisualization = ({
   const [observationsQuery] = useDataCubesObservationsQuery({
     variables: {
       ...commonQueryVariables,
-      filters: queryFilters,
+      filters: queryFilters ?? [],
     },
+    pause: !queryFilters,
   });
   const { data: componentsData } = componentsQuery;
   const { data: observationsData } = observationsQuery;

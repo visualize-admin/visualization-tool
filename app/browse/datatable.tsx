@@ -282,15 +282,15 @@ export const DataSetTable = ({
   }, [componentsData?.dataCubesComponents]);
   const queryFilters = useQueryFilters({
     chartConfig,
-    dimensions: componentsData?.dataCubesComponents?.dimensions ?? [],
-    measures: componentsData?.dataCubesComponents?.measures ?? [],
+    dimensions: componentsData?.dataCubesComponents?.dimensions,
+    measures: componentsData?.dataCubesComponents?.measures,
   });
   const [{ data: observationsData }] = useDataCubesObservationsQuery({
     variables: {
       ...commonQueryVariables,
-      filters: queryFilters,
+      filters: queryFilters ?? [],
     },
-    pause: fetchingComponents,
+    pause: fetchingComponents || !queryFilters,
   });
 
   return metadataData?.dataCubesMetadata &&

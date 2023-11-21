@@ -178,7 +178,7 @@ export const DataDownloadMenu = memo(
     title,
   }: {
     dataSource: DataSource;
-    filters: DataCubeObservationFilter[];
+    filters?: DataCubeObservationFilter[];
     title: string;
   }) => {
     return (
@@ -200,7 +200,7 @@ const DataDownloadInnerMenu = ({
 }: {
   dataSource: DataSource;
   fileName: string;
-  filters: DataCubeObservationFilter[];
+  filters?: DataCubeObservationFilter[];
 }) => {
   const [state] = useDataDownloadState();
   const popupState = usePopupState({
@@ -250,7 +250,7 @@ const DataDownloadInnerMenu = ({
           dataSource={dataSource}
           subheader={<Trans id="button.download.data.all">Full dataset</Trans>}
           fileName={`${fileName}-full`}
-          filters={filters.map((d) => {
+          filters={filters?.map((d) => {
             return {
               iri: d.iri,
               componentIris: d.componentIris,
@@ -278,7 +278,7 @@ const DataDownloadMenuSection = ({
   dataSource: DataSource;
   subheader: ReactNode;
   fileName: string;
-  filters: DataCubeObservationFilter[];
+  filters?: DataCubeObservationFilter[];
 }) => {
   return (
     <>
@@ -311,7 +311,7 @@ const DownloadMenuItem = ({
   dataSource: DataSource;
   fileName: string;
   fileFormat: FileFormat;
-  filters: DataCubeObservationFilter[];
+  filters?: DataCubeObservationFilter[];
 }) => {
   const locale = useLocale();
   const i18n = useI18n();
@@ -374,6 +374,10 @@ const DownloadMenuItem = ({
       size="small"
       disabled={state.isDownloading}
       onClick={async () => {
+        if (!filters) {
+          return;
+        }
+
         dispatch({ isDownloading: true });
 
         try {

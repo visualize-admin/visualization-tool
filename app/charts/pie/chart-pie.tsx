@@ -32,7 +32,7 @@ export const ChartPieVisualization = ({
   dataSource: DataSource;
   componentIris: string[] | undefined;
   chartConfig: PieConfig;
-  queryFilters: DataCubeObservationFilter[];
+  queryFilters?: DataCubeObservationFilter[];
 }) => {
   const locale = useLocale();
   const commonQueryVariables = {
@@ -58,8 +58,9 @@ export const ChartPieVisualization = ({
   const [observationsQuery] = useDataCubesObservationsQuery({
     variables: {
       ...commonQueryVariables,
-      filters: queryFilters,
+      filters: queryFilters ?? [],
     },
+    pause: !queryFilters,
   });
 
   return (
