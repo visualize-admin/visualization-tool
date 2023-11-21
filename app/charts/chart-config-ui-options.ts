@@ -198,10 +198,15 @@ const onColorComponentIriChange: OnEncodingOptionChange<string, MapConfig> = (
         interpolationType: "linear",
       };
     }
+
+    // Remove old filter.
+    const cube = chartConfig.cubes.find((d) => d.iri === component.cubeIri);
+
+    if (cube) {
+      unset(cube, `filters["${currentColorComponentIri}"]`);
+    }
   }
 
-  // Remove old filter.
-  unset(chartConfig, `filters["${currentColorComponentIri}"]`);
   setWith(chartConfig, `${basePath}.color`, newField, Object);
 };
 
