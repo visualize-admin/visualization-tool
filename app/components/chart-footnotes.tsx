@@ -7,7 +7,7 @@ import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import { useChartTablePreview } from "@/components/chart-table-preview";
 import { DataDownloadMenu, RunSparqlQuery } from "@/components/data-download";
 import { ChartConfig, DataSource } from "@/configurator";
-import { Dimension } from "@/domain/data";
+import { Dimension, Measure } from "@/domain/data";
 import { useTimeFormatLocale } from "@/formatters";
 import {
   useDataCubesMetadataQuery,
@@ -42,6 +42,7 @@ export const ChartFootnotes = ({
   dataSource,
   chartConfig,
   dimensions,
+  measures,
   configKey,
   onToggleTableView,
   visualizeLinkText,
@@ -49,6 +50,7 @@ export const ChartFootnotes = ({
   dataSource: DataSource;
   chartConfig: ChartConfig;
   dimensions: Dimension[];
+  measures: Measure[];
   configKey?: string;
   onToggleTableView: () => void;
   visualizeLinkText?: JSX.Element;
@@ -67,7 +69,11 @@ export const ChartFootnotes = ({
     setShareUrl(`${window.location.origin}/${locale}/v/${configKey}`);
   }, [configKey, locale]);
 
-  const filters = useQueryFilters({ chartConfig, dimensions });
+  const filters = useQueryFilters({
+    chartConfig,
+    dimensions,
+    measures,
+  });
   const commonQueryVariables = {
     sourceType: dataSource.type,
     sourceUrl: dataSource.url,

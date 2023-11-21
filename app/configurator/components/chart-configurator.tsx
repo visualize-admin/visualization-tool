@@ -760,7 +760,11 @@ type ChartFieldsProps = {
 const ChartFields = (props: ChartFieldsProps) => {
   const { dataSource, chartConfig, dimensions, measures } = props;
   const components = [...dimensions, ...measures];
-  const filters = useQueryFilters({ chartConfig, dimensions });
+  const filters = useQueryFilters({
+    chartConfig,
+    dimensions,
+    measures,
+  });
   const locale = useLocale();
   const [{ data: observationsData }] = useDataCubesObservationsQuery({
     variables: {

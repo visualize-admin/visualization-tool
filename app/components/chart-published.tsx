@@ -157,6 +157,8 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
   });
   const handleToggleTableView = useEvent(() => setIsTablePreview((c) => !c));
 
+  const dimensions = components?.dataCubesComponents.dimensions ?? [];
+  const measures = components?.dataCubesComponents.measures ?? [];
   const allComponents = useMemo(() => {
     if (!components?.dataCubesComponents) {
       return [];
@@ -260,14 +262,16 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
                   dataSource={dataSource}
                   componentIris={componentIris}
                   chartConfig={chartConfig}
-                  dimensions={components?.dataCubesComponents.dimensions ?? []}
+                  dimensions={dimensions}
+                  measures={measures}
                 />
               )}
             </Flex>
             <ChartFootnotes
               dataSource={dataSource}
               chartConfig={chartConfig}
-              dimensions={components?.dataCubesComponents.dimensions ?? []}
+              dimensions={dimensions}
+              measures={measures}
               configKey={configKey}
               onToggleTableView={handleToggleTableView}
               visualizeLinkText={

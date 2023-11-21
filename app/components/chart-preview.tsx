@@ -94,8 +94,8 @@ export const ChartPreviewInner = (props: ChartPreviewProps) => {
   } = useChartTablePreview();
 
   const handleToggleTableView = useEvent(() => setIsTablePreview((c) => !c));
-
   const dimensions = components?.dataCubesComponents.dimensions ?? [];
+  const measures = components?.dataCubesComponents.measures ?? [];
   const allComponents = useMemo(() => {
     if (!components?.dataCubesComponents) {
       return [];
@@ -223,6 +223,7 @@ export const ChartPreviewInner = (props: ChartPreviewProps) => {
                   componentIris={componentIris}
                   chartConfig={chartConfig}
                   dimensions={dimensions}
+                  measures={measures}
                 />
               )}
             </Box>
@@ -232,6 +233,7 @@ export const ChartPreviewInner = (props: ChartPreviewProps) => {
                 chartConfig={chartConfig}
                 onToggleTableView={handleToggleTableView}
                 dimensions={dimensions}
+                measures={measures}
               />
             )}
             <DebugPanel configurator interactiveFilters />

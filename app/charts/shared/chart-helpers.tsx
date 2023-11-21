@@ -30,7 +30,7 @@ import {
 } from "@/configurator";
 import { parseDate } from "@/configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
-import { Component, Dimension, Observation } from "@/domain/data";
+import { Component, Dimension, Measure, Observation } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { DataCubeObservationFilter } from "@/graphql/resolver-types";
 import {
@@ -68,10 +68,12 @@ export const prepareQueryFilters = (
 export const useQueryFilters = ({
   chartConfig,
   dimensions,
+  measures,
   allowNoneValues,
 }: {
   chartConfig: ChartConfig;
   dimensions: Dimension[];
+  measures: Measure[];
   allowNoneValues?: boolean;
 }): DataCubeObservationFilter[] => {
   const allDataFilters = useInteractiveFilters((d) => d.dataFilters);
@@ -87,7 +89,7 @@ export const useQueryFilters = ({
 
       return {
         iri: cube.iri,
-        componentIris: dimensions
+        componentIris: [...dimensions, ...measures]
           .filter((d) => d.cubeIri === cube.iri)
           .map((d) => d.iri),
         filters: prepareQueryFilters(
@@ -97,6 +99,7 @@ export const useQueryFilters = ({
           dataFilters,
           allowNoneValues
         ),
+        joinBy: cube.joinBy,
       };
     });
   }, [
@@ -106,6 +109,7 @@ export const useQueryFilters = ({
     allDataFilters,
     allowNoneValues,
     dimensions,
+    measures,
   ]);
 };
 

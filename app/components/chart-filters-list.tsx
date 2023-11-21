@@ -12,6 +12,7 @@ import {
 } from "@/configurator";
 import {
   Dimension,
+  Measure,
   isTemporalDimension,
   isTemporalOrdinalDimension,
 } from "@/domain/data";
@@ -24,10 +25,11 @@ type ChartFiltersListProps = {
   dataSource: DataSource;
   chartConfig: ChartConfig;
   dimensions: Dimension[];
+  measures: Measure[];
 };
 
 export const ChartFiltersList = (props: ChartFiltersListProps) => {
-  const { dataSource, chartConfig, dimensions } = props;
+  const { dataSource, chartConfig, dimensions, measures } = props;
   const locale = useLocale();
   const timeFormatUnit = useTimeFormatUnit();
   const timeSlider = useInteractiveFilters((d) => d.timeSlider);
@@ -35,6 +37,7 @@ export const ChartFiltersList = (props: ChartFiltersListProps) => {
   const filters = useQueryFilters({
     chartConfig,
     dimensions,
+    measures,
   });
   const [{ data }] = useDataCubesComponentsQuery({
     variables: {

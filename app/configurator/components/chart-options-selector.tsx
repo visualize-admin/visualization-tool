@@ -107,9 +107,11 @@ export const ChartOptionsSelector = ({
       },
     });
   const dimensions = componentsData?.dataCubesComponents.dimensions;
+  const measures = componentsData?.dataCubesComponents.measures;
   const filters = useQueryFilters({
     chartConfig,
     dimensions: dimensions ?? [],
+    measures: measures ?? [],
   });
   const [{ data: observationsData }] = useDataCubesObservationsQuery({
     variables: {
@@ -120,7 +122,6 @@ export const ChartOptionsSelector = ({
     },
     pause: fetchingComponents,
   });
-  const measures = componentsData?.dataCubesComponents.measures;
   const observations = observationsData?.dataCubesObservations?.data;
 
   return dimensions && measures && observations ? (

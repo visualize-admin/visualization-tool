@@ -33,6 +33,7 @@ import {
   Dimension,
   HierarchyValue,
   isTemporalDimension,
+  Measure,
   TemporalDimension,
 } from "@/domain/data";
 import { useTimeFormatLocale } from "@/formatters";
@@ -56,16 +57,18 @@ type ChartDataFiltersProps = {
   dataSource: DataSource;
   chartConfig: ChartConfig;
   dimensions: Dimension[];
+  measures: Measure[];
 };
 
 export const ChartDataFilters = (props: ChartDataFiltersProps) => {
-  const { dataSource, chartConfig, dimensions } = props;
+  const { dataSource, chartConfig, dimensions, measures } = props;
   const { loading } = useLoadingState();
   const dataFilters = useInteractiveFilters((d) => d.dataFilters);
   // We want to keep the none filter without removing them.
   const queryFilters = useQueryFilters({
     chartConfig,
     dimensions,
+    measures,
     allowNoneValues: true,
   });
   const componentIris = chartConfig.interactiveFiltersConfig?.dataFilters
