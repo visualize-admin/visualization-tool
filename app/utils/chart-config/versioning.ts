@@ -12,7 +12,7 @@ type Migration = {
   down: (config: any, migrationProps?: any) => any;
 };
 
-export const CHART_CONFIG_VERSION = "2.3.0";
+export const CHART_CONFIG_VERSION = "3.0.0";
 
 const chartConfigMigrations: Migration[] = [
   {
@@ -775,13 +775,44 @@ const chartConfigMigrations: Migration[] = [
       });
     },
   },
+  {
+    description: `ALL {
+      + cubes {
+        + iri
+        + filters
+        + joinBy?
+      }
+      - dataSet
+      - filters
+    }`,
+    from: "2.3.0",
+    to: "3.0.0",
+    up: (config) => {
+      const newConfig = { ...config, version: "3.0.0" };
+
+      return produce(newConfig, (draft: any) => {
+        draft.cubes = [{ iri: draft.dataSet, filters: draft.filters }];
+        delete draft.dataSet;
+        delete draft.filters;
+      });
+    },
+    down: (config) => {
+      const newConfig = { ...config, version: "2.3.0" };
+
+      return produce(newConfig, (draft: any) => {
+        draft.dataSet = draft.cubes[0].iri;
+        draft.filters = draft.cubes[0].filters;
+        delete draft.cubes;
+      });
+    },
+  },
 ];
 
 export const migrateChartConfig = makeMigrate(chartConfigMigrations, {
   defaultToVersion: CHART_CONFIG_VERSION,
 });
 
-export const CONFIGURATOR_STATE_VERSION = "3.0.0";
+export const CONFIGURATOR_STATE_VERSION = "3.0.1";
 
 const configuratorStateMigrations: Migration[] = [
   {
@@ -867,6 +898,45 @@ const configuratorStateMigrations: Migration[] = [
         }
 
         draft.dataSet = dataSet;
+      });
+    },
+  },
+  {
+    description: "ALL (bump ChartConfig version)",
+    from: "3.0.0",
+    to: "3.0.1",
+    up: (config) => {
+      const newConfig = { ...config, version: "3.0.1" };
+
+      return produce(newConfig, (draft: any) => {
+        const chartConfigs: any[] = [];
+
+        for (const chartConfig of draft.chartConfigs) {
+          const migratedChartConfig = migrateChartConfig(chartConfig, {
+            migrationProps: draft,
+            toVersion: "3.0.0",
+          });
+          chartConfigs.push(migratedChartConfig);
+        }
+
+        draft.chartConfigs = chartConfigs;
+      });
+    },
+    down: (config) => {
+      const newConfig = { ...config, version: "3.0.0" };
+
+      return produce(newConfig, (draft: any) => {
+        const chartConfigs: any[] = [];
+
+        for (const chartConfig of draft.chartConfigs) {
+          const migratedChartConfig = migrateChartConfig(chartConfig, {
+            migrationProps: draft,
+            toVersion: "2.3.0",
+          });
+          chartConfigs.push(migratedChartConfig);
+        }
+
+        draft.chartConfigs = chartConfigs;
       });
     },
   },
