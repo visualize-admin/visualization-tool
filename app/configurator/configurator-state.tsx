@@ -425,7 +425,7 @@ export const moveFilterField = produce(
 
 export const deriveFiltersFromFields = produce(
   (chartConfig: ChartConfig, components: Component[]) => {
-    const { chartType, fields, filters } = chartConfig;
+    const { chartType, fields, cubes } = chartConfig;
 
     if (chartType === "table") {
       // As dimensions in tables behave differently than in other chart types,
@@ -435,37 +435,49 @@ export const deriveFiltersFromFields = produce(
       const isHidden = (iri: string) => hiddenFieldIris.has(iri);
       const isGrouped = (iri: string) => groupedDimensionIris.has(iri);
 
-      components.forEach((component) => {
-        if (isMeasure(component)) {
-          return;
-        }
+      cubes.forEach((cube) => {
+        const cubeComponents = components.filter(
+          (component) => component.cubeIri === cube.iri
+        );
 
-        applyTableDimensionToFilters({
-          filters,
-          dimension: component,
-          isHidden: isHidden(component.iri),
-          isGrouped: isGrouped(component.iri),
+        cubeComponents.forEach((component) => {
+          if (isMeasure(component)) {
+            return;
+          }
+
+          applyTableDimensionToFilters({
+            filters: cube.filters,
+            dimension: component,
+            isHidden: isHidden(component.iri),
+            isGrouped: isGrouped(component.iri),
+          });
         });
       });
     } else {
       const fieldDimensionIris = getFieldComponentIris(fields);
       const isField = (iri: string) => fieldDimensionIris.has(iri);
 
-      // Apply hierarchical dimensions first
-      const sortedComponents = sortBy(
-        components,
-        (d) => (isGeoDimension(d) ? -1 : 1),
-        (d) => (isMeasure(d) ? 1 : d.hierarchy ? -1 : 1)
-      );
-      sortedComponents.forEach((component) => {
-        if (isMeasure(component)) {
-          return;
-        }
+      cubes.forEach((cube) => {
+        const cubeComponents = components.filter(
+          (component) => component.cubeIri === cube.iri
+        );
+        // Apply hierarchical dimensions first
+        const sortedCubeComponents = sortBy(
+          cubeComponents,
+          (d) => (isGeoDimension(d) ? -1 : 1),
+          (d) => (isMeasure(d) ? 1 : d.hierarchy ? -1 : 1)
+        );
 
-        applyNonTableDimensionToFilters({
-          filters,
-          dimension: component,
-          isField: isField(component.iri),
+        sortedCubeComponents.forEach((component) => {
+          if (isMeasure(component)) {
+            return;
+          }
+
+          applyNonTableDimensionToFilters({
+            filters: cube.filters,
+            dimension: component,
+            isField: isField(component.iri),
+          });
         });
       });
     }
@@ -712,17 +724,18 @@ export const getNonGenericFieldValues = (
  * is structured at the moment (colorField) is a subfield of areaLayer and
  * symbolLayer fields.
  */
-export const getFiltersByMappingStatus = (chartConfig: ChartConfig) => {
+export const getFiltersByMappingStatus = (
+  chartConfig: ChartConfig,
+  cubeIri?: string
+) => {
   const genericFieldValues = Object.values(chartConfig.fields).map(
     (d) => d.componentIri
   );
   const nonGenericFieldValues = getNonGenericFieldValues(chartConfig);
   const iris = new Set([...genericFieldValues, ...nonGenericFieldValues]);
-  const mappedFilters = pickBy(chartConfig.filters, (_, iri) => iris.has(iri));
-  const unmappedFilters = pickBy(
-    chartConfig.filters,
-    (_, iri) => !iris.has(iri)
-  );
+  const filters = getChartConfigFilters(chartConfig.cubes, cubeIri);
+  const mappedFilters = pickBy(filters, (_, iri) => iris.has(iri));
+  const unmappedFilters = pickBy(filters, (_, iri) => !iris.has(iri));
 
   return { mappedFilters, mappedFiltersIris: iris, unmappedFilters };
 };
@@ -1277,13 +1290,10 @@ const ConfiguratorStateContext = createContext<
   [ConfiguratorState, Dispatch<ConfiguratorStateAction>] | undefined
 >(undefined);
 
-type ChartId = string;
-type DatasetIri = string;
-
 export const initChartStateFromChartCopy = async (
-  from: ChartId
+  fromChartId: string
 ): Promise<ConfiguratorStateConfiguringChart | undefined> => {
-  const config = await fetchChartConfig(from);
+  const config = await fetchChartConfig(fromChartId);
 
   if (config?.data) {
     return migrateConfiguratorState({
@@ -1294,9 +1304,9 @@ export const initChartStateFromChartCopy = async (
 };
 
 export const initChartStateFromChartEdit = async (
-  from: ChartId
+  fromChartId: string
 ): Promise<ConfiguratorStateConfiguringChart | undefined> => {
-  const config = await fetchChartConfig(from);
+  const config = await fetchChartConfig(fromChartId);
 
   if (config?.data) {
     return migrateConfiguratorState({

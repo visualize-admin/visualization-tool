@@ -18,7 +18,6 @@ import {
 import { makeStyles } from "@mui/styles";
 import isEmpty from "lodash/isEmpty";
 import isEqual from "lodash/isEqual";
-import omitBy from "lodash/omitBy";
 import sortBy from "lodash/sortBy";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -41,6 +40,7 @@ import {
   DataSource,
   Filters,
   getChartConfig,
+  getChartConfigFilters,
   isMapConfig,
   useChartConfigFilters,
 } from "@/configurator";
@@ -167,63 +167,74 @@ const useEnsurePossibleFilters = ({
   const chartConfig = getChartConfig(state);
   const [fetching, setFetching] = useState(false);
   const [error, setError] = useState<Error>();
-  const lastFilters = useRef<Filters>();
+  const lastFilters = useRef<Record<string, Filters>>({});
   const client = useClient();
 
   useEffect(() => {
     const run = async () => {
-      const { mappedFilters, unmappedFilters } =
-        getFiltersByMappingStatus(chartConfig);
-      if (
-        lastFilters.current &&
-        orderedIsEqual(lastFilters.current, unmappedFilters)
-      ) {
-        return;
-      }
-      lastFilters.current = unmappedFilters;
+      chartConfig.cubes.forEach(async (cube) => {
+        const { mappedFilters, unmappedFilters } = getFiltersByMappingStatus(
+          chartConfig,
+          cube.iri
+        );
 
-      setFetching(true);
-      const { data, error } = await client
-        .query<PossibleFiltersQuery, PossibleFiltersQueryVariables>(
-          PossibleFiltersDocument,
-          {
-            iri: chartConfig.dataSet,
-            sourceType: state.dataSource.type,
-            sourceUrl: state.dataSource.url,
-            filters: unmappedFilters,
+        if (
+          lastFilters.current[cube.iri] &&
+          orderedIsEqual(lastFilters.current[cube.iri], unmappedFilters)
+        ) {
+          return;
+        }
 
-            // @ts-ignore This is to make urql requery
-            filterKey: Object.keys(unmappedFilters).join(", "),
-          }
-        )
-        .toPromise();
-      if (error || !data) {
-        setError(error);
+        lastFilters.current[cube.iri] = unmappedFilters;
+        setFetching(true);
+
+        const { data, error } = await client
+          .query<PossibleFiltersQuery, PossibleFiltersQueryVariables>(
+            PossibleFiltersDocument,
+            {
+              iri: cube.iri,
+              sourceType: state.dataSource.type,
+              sourceUrl: state.dataSource.url,
+              filters: unmappedFilters,
+              // @ts-ignore This is to make urql requery
+              filterKey: Object.keys(unmappedFilters).join(", "),
+            }
+          )
+          .toPromise();
+
+        if (error || !data) {
+          setError(error);
+          setFetching(false);
+          console.error("Could not fetch possible filters", error);
+
+          return;
+        }
+
+        setError(undefined);
         setFetching(false);
-        console.error("Could not fetch possible filters", error);
-        return;
-      }
-      setError(undefined);
-      setFetching(false);
 
-      const filters = Object.assign(
-        Object.fromEntries(
-          data.possibleFilters.map((x) => [
-            x.iri,
-            { type: x.type, value: x.value },
-          ])
-        ) as Filters,
-        mappedFilters
-      );
+        const filters = Object.assign(
+          Object.fromEntries(
+            data.possibleFilters.map((x) => [
+              x.iri,
+              { type: x.type, value: x.value },
+            ])
+          ) as Filters,
+          mappedFilters
+        );
 
-      if (!isEqual(filters, chartConfig.filters) && !isEmpty(filters)) {
-        dispatch({
-          type: "CHART_CONFIG_FILTERS_UPDATE",
-          value: {
-            filters,
-          },
-        });
-      }
+        const oldFilters = getChartConfigFilters(chartConfig.cubes, cube.iri);
+
+        if (!isEqual(filters, oldFilters) && !isEmpty(filters)) {
+          dispatch({
+            type: "CHART_CONFIG_FILTERS_UPDATE",
+            value: {
+              cubeIri: cube.iri,
+              filters,
+            },
+          });
+        }
+      });
     };
 
     run();
@@ -231,7 +242,7 @@ const useEnsurePossibleFilters = ({
     client,
     dispatch,
     chartConfig,
-    chartConfig.dataSet,
+    chartConfig.cubes,
     state.dataSource.type,
     state.dataSource.url,
   ]);
@@ -247,37 +258,41 @@ const useFilterReorder = ({
   const [state, dispatch] = useConfiguratorState(isConfiguring);
   const chartConfig = getChartConfig(state);
   const locale = useLocale();
-
-  const { filters } = chartConfig;
-  const { unmappedFilters, mappedFiltersIris } = useMemo(() => {
+  const filters = getChartConfigFilters(chartConfig.cubes);
+  const { mappedFiltersIris } = useMemo(() => {
     return getFiltersByMappingStatus(chartConfig);
   }, [chartConfig]);
 
   const variables = useMemo(() => {
-    const hasUnmappedFilters = Object.keys(unmappedFilters).length > 0;
-    const vars = {
-      iri: chartConfig.dataSet,
-      sourceType: state.dataSource.type,
-      sourceUrl: state.dataSource.url,
-      locale,
-      filters: hasUnmappedFilters ? unmappedFilters : undefined,
-      // This is important for urql not to think that filters
-      // are the same  while the order of the keys has changed.
-      // If this is not present, we'll have outdated dimension
-      // values after we change the filter order
-      filterKeys: hasUnmappedFilters
-        ? Object.keys(unmappedFilters).join(", ")
-        : undefined,
-    };
+    const filters = chartConfig.cubes.map((cube) => {
+      const { unmappedFilters } = getFiltersByMappingStatus(
+        chartConfig,
+        cube.iri
+      );
+      return Object.keys(unmappedFilters).length > 0
+        ? {
+            iri: cube.iri,
+            filters: unmappedFilters,
+          }
+        : {
+            iri: cube.iri,
+            filters: undefined,
+          };
+    });
 
-    return omitBy(vars, (x) => x === undefined) as typeof vars;
-  }, [
-    chartConfig.dataSet,
-    state.dataSource.type,
-    state.dataSource.url,
-    locale,
-    unmappedFilters,
-  ]);
+    // This is important for urql not to think that filters
+    // are the same  while the order of the keys has changed.
+    // If this is not present, we'll have outdated dimension
+    // values after we change the filter order
+    const requeryKey = filters.reduce((acc, d) => {
+      return `${acc}${d.iri}${JSON.stringify(d.filters)}`;
+    }, "");
+
+    return {
+      filters,
+      requeryKey: requeryKey ? requeryKey : undefined,
+    };
+  }, [chartConfig]);
 
   const [
     { data: componentsData, fetching: componentsFetching },
@@ -287,9 +302,7 @@ const useFilterReorder = ({
       sourceType: state.dataSource.type,
       sourceUrl: state.dataSource.url,
       locale,
-      filters: [{ iri: chartConfig.dataSet, filters: variables.filters }],
-      // @ts-ignore This is to make urql requery
-      filterKeys: variables.filterKeys,
+      ...variables,
     },
   });
 
@@ -299,9 +312,7 @@ const useFilterReorder = ({
         sourceType: state.dataSource.type,
         sourceUrl: state.dataSource.url,
         locale,
-        filters: [{ iri: chartConfig.dataSet, filters: variables.filters }],
-        // @ts-ignore This is to make urql requery
-        filterKeys: variables.filterKeys,
+        ...variables,
       },
     });
   }, [
@@ -310,7 +321,6 @@ const useFilterReorder = ({
     state.dataSource.type,
     state.dataSource.url,
     locale,
-    chartConfig.dataSet,
   ]);
 
   const dimensions = componentsData?.dataCubesComponents?.dimensions;

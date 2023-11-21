@@ -435,15 +435,17 @@ export const useSingleFilterSelect = ({
     [cubeIri, dimensionIri, dispatch]
   );
 
-  let value: string | undefined;
+  let value = FIELD_VALUE_NONE;
+
   if (state.state === "CONFIGURING_CHART") {
     const chartConfig = getChartConfig(state);
-    value = get(
-      chartConfig,
-      ["filters", dimensionIri, "value"],
-      FIELD_VALUE_NONE
-    );
+    const cube = chartConfig.cubes.find((cube) => cube.iri === cubeIri);
+
+    if (cube) {
+      value = get(cube, ["filters", dimensionIri, "value"], FIELD_VALUE_NONE);
+    }
   }
+
   return {
     value,
     onChange,
