@@ -1,5 +1,4 @@
 import { fireEvent, render } from "@testing-library/react";
-import merge from "lodash/merge";
 import { useState } from "react";
 
 import useSyncInteractiveFilters from "@/charts/shared/use-sync-interactive-filters";
@@ -94,14 +93,23 @@ const setup = ({
 describe("useSyncInteractiveFilters", () => {
   it("should keep interactive filters in sync with values from chart config", async () => {
     const { getIFState, clickUseModified } = setup({
-      modifiedChartConfig: merge({}, chartConfig, {
-        filters: {
-          "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1": {
-            value:
-              "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1/1",
+      modifiedChartConfig: {
+        ...chartConfig,
+        cubes: [
+          {
+            ...chartConfig.cubes[0],
+            filters: {
+              ...chartConfig.cubes[0].filters,
+              "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1":
+                {
+                  type: "single",
+                  value:
+                    "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1/1",
+                },
+            },
           },
-        },
-      }),
+        ],
+      },
     });
 
     // interactive filters are initialized correctly
