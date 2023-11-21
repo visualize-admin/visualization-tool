@@ -26,7 +26,7 @@ import {
 } from "@/graphql/resolver-types";
 import { resolveDimensionType, resolveMeasureType } from "@/graphql/resolvers";
 import { defaultLocale } from "@/locales/locales";
-import { parseCube, parseIri } from "@/rdf/parse";
+import { parseCube } from "@/rdf/parse";
 import {
   createCubeDimensionValuesLoader,
   getCubeDimensions,
@@ -158,7 +158,9 @@ export const dataCubesComponents: NonNullable<
     info
   );
   // If the cube was updated, we need to also update the filter with the correct iri.
-  const filtersWithCorrectIri: DataCubeComponentFilter[] = [];
+  const filtersWithCorrectIri: (DataCubeComponentFilter & {
+    originalIri: string;
+  })[] = [];
 
   const cubes = (
     await Promise.all(
@@ -177,13 +179,17 @@ export const dataCubesComponents: NonNullable<
           filtersWithCorrectIri.push({
             ...filter,
             iri: latestCube.term?.value!,
+            originalIri: iri,
           });
 
           return latestCube;
         }
 
         await cube.fetchShape();
-        filtersWithCorrectIri.push(filter);
+        filtersWithCorrectIri.push({
+          ...filter,
+          originalIri: iri,
+        });
 
         return cube;
       })
@@ -204,7 +210,7 @@ export const dataCubesComponents: NonNullable<
     rawComponents.map(async (component) => {
       const { cube, data } = component;
       const cubeFilters = filtersWithCorrectIri.find(
-        (d) => d.iri === component.cube.term?.value
+        (d) => d.iri === cube.term?.value
       );
       const dimensionValuesLoader = getDimensionValuesLoader(
         sparqlClient,
@@ -222,7 +228,7 @@ export const dataCubesComponents: NonNullable<
         )
       );
       const baseComponent = {
-        cubeIri: parseIri(cube),
+        cubeIri: cubeFilters?.originalIri as string,
         iri: data.iri,
         label: data.name,
         description: data.description,
