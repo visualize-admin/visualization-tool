@@ -1,8 +1,7 @@
 import { Box, Typography } from "@mui/material";
-import { Fragment } from "react";
+import React, { Fragment } from "react";
 
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
-import Flex from "@/components/flex";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import {
   ChartConfig,
@@ -51,108 +50,105 @@ export const ChartFiltersList = (props: ChartFiltersListProps) => {
       })),
     },
   });
+  const allFilters = React.useMemo(() => {
+    if (!data?.dataCubesComponents) {
+      return [];
+    }
 
-  if (data?.dataCubesComponents) {
-    const { dimensions } = data.dataCubesComponents;
+    return filters.flatMap((filter) => {
+      const namedFilters = Object.entries<FilterValue>(
+        filter.filters ?? {}
+      ).flatMap(([iri, f]) => {
+        if (f?.type !== "single") {
+          return [];
+        }
 
-    return (
-      <>
-        {filters.map((filter) => {
-          const namedFilters = Object.entries<FilterValue>(
-            filter.filters ?? {}
-          ).flatMap(([iri, f]) => {
-            if (f?.type !== "single") {
-              return [];
+        const dimension = dimensions.find(
+          (d) => d.iri === iri && d.cubeIri === filter.iri
+        );
+
+        if (!dimension) {
+          return [];
+        }
+
+        const value = isTemporalDimension(dimension)
+          ? {
+              value: f.value,
+              label: timeFormatUnit(`${f.value}`, dimension.timeUnit),
             }
+          : dimension.values.find((d) => d.value === f.value);
 
-            const dimension = dimensions.find(
-              (d) => d.iri === iri && d.cubeIri === filter.iri
-            );
+        return [{ dimension, value }];
+      });
 
-            if (!dimension) {
-              return [];
-            }
+      if (animationField) {
+        const dimension = dimensions.find(
+          (d) =>
+            d.iri === animationField.componentIri && d.cubeIri === filter.iri
+        );
 
-            const value = isTemporalDimension(dimension)
-              ? {
-                  value: f.value,
-                  label: timeFormatUnit(`${f.value}`, dimension.timeUnit),
-                }
-              : dimension.values.find((d) => d.value === f.value);
-
-            return [{ dimension, value }];
-          });
-
-          if (animationField) {
-            const dimension = dimensions.find(
-              (d) =>
-                d.iri === animationField.componentIri &&
-                d.cubeIri === filter.iri
-            );
-
-            if (timeSlider.value) {
-              if (
-                timeSlider.type === "interval" &&
-                isTemporalDimension(dimension)
-              ) {
-                namedFilters.push({
-                  dimension,
-                  value: {
-                    value: `${timeSlider.value}`,
-                    label: timeFormatUnit(timeSlider.value, dimension.timeUnit),
-                  },
-                });
-              }
-
-              if (
-                timeSlider.type === "ordinal" &&
-                timeSlider.value &&
-                isTemporalOrdinalDimension(dimension)
-              ) {
-                namedFilters.push({
-                  dimension,
-                  value: {
-                    value: timeSlider.value,
-                    label: timeSlider.value,
-                  },
-                });
-              }
-            }
+        if (timeSlider.value) {
+          if (
+            timeSlider.type === "interval" &&
+            isTemporalDimension(dimension)
+          ) {
+            namedFilters.push({
+              dimension,
+              value: {
+                value: `${timeSlider.value}`,
+                label: timeFormatUnit(timeSlider.value, dimension.timeUnit),
+              },
+            });
           }
 
-          return (
-            <Flex key={filter.iri} sx={{ flexDirection: "column", my: 2 }}>
-              {namedFilters.length > 0 && (
-                <Typography
-                  component="div"
-                  variant="body2"
-                  sx={{ color: "grey.800" }}
-                  data-testid="chart-filters-list"
-                >
-                  {namedFilters.map(({ dimension, value }, i) => (
-                    <Fragment key={dimension.iri}>
-                      <Box component="span" fontWeight="bold">
-                        <OpenMetadataPanelWrapper dim={dimension}>
-                          <span style={{ fontWeight: "bold" }}>
-                            {dimension.label}
-                          </span>
-                        </OpenMetadataPanelWrapper>
+          if (
+            timeSlider.type === "ordinal" &&
+            timeSlider.value &&
+            isTemporalOrdinalDimension(dimension)
+          ) {
+            namedFilters.push({
+              dimension,
+              value: {
+                value: timeSlider.value,
+                label: timeSlider.value,
+              },
+            });
+          }
+        }
+      }
 
-                        {": "}
-                      </Box>
+      return namedFilters;
+    });
+  }, [
+    data?.dataCubesComponents,
+    filters,
+    animationField,
+    dimensions,
+    timeFormatUnit,
+    timeSlider.value,
+    timeSlider.type,
+  ]);
 
-                      <Box component="span">{value && value.label}</Box>
-                      {i < namedFilters.length - 1 && ", "}
-                    </Fragment>
-                  ))}
-                </Typography>
-              )}
-            </Flex>
-          );
-        })}
-      </>
-    );
-  } else {
-    return null;
-  }
+  return allFilters.length ? (
+    <Typography
+      component="div"
+      variant="body2"
+      sx={{ color: "grey.800" }}
+      data-testid="chart-filters-list"
+    >
+      {allFilters.map(({ dimension, value }, i) => (
+        <Fragment key={dimension.iri}>
+          <Box component="span" fontWeight="bold">
+            <OpenMetadataPanelWrapper dim={dimension}>
+              <span style={{ fontWeight: "bold" }}>{dimension.label}</span>
+            </OpenMetadataPanelWrapper>
+            {": "}
+          </Box>
+
+          <Box component="span">{value && value.label}</Box>
+          {i < allFilters.length - 1 && ", "}
+        </Fragment>
+      ))}
+    </Typography>
+  ) : null;
 };
