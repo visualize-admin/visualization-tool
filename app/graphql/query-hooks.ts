@@ -65,6 +65,7 @@ export type DataCubeObservationsArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   limit?: Maybe<Scalars['Int']>;
+  preview?: Maybe<Scalars['Boolean']>;
   componentIris?: Maybe<Array<Scalars['String']>>;
   filters?: Maybe<Scalars['Filters']>;
 };
@@ -108,6 +109,7 @@ export type DataCubeMetadataFilter = {
 export type DataCubeObservationFilter = {
   iri: Scalars['String'];
   latest?: Maybe<Scalars['Boolean']>;
+  preview?: Maybe<Scalars['Boolean']>;
   filters?: Maybe<Scalars['Filters']>;
   componentIris?: Maybe<Array<Scalars['String']>>;
   joinBy?: Maybe<Scalars['String']>;
@@ -747,7 +749,12 @@ export const DataCubePreviewDocument = gql`
     title
     description
     publicationStatus
-    observations(sourceType: $sourceType, sourceUrl: $sourceUrl, limit: 10) {
+    observations(
+      sourceType: $sourceType
+      sourceUrl: $sourceUrl
+      preview: true
+      limit: 10
+    ) {
       data
       sparqlEditorUrl
     }

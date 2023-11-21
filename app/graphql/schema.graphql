@@ -45,6 +45,7 @@ type DataCube {
     sourceType: String!
     sourceUrl: String!
     limit: Int
+    preview: Boolean
     componentIris: [String!]
     filters: Filters
   ): ObservationsQuery!
@@ -352,6 +353,7 @@ input DataCubeMetadataFilter {
 input DataCubeObservationFilter {
   iri: String!
   latest: Boolean
+  preview: Boolean
   filters: Filters
   componentIris: [String!]
   joinBy: String

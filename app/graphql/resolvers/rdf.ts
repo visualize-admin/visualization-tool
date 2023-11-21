@@ -485,7 +485,7 @@ export const dataCubeObservations: NonNullable<
   DataCubeResolvers["observations"]
 > = async (
   { cube, locale },
-  { limit, filters, componentIris },
+  { preview, limit, filters, componentIris },
   { setup },
   info
 ) => {
@@ -495,6 +495,7 @@ export const dataCubeObservations: NonNullable<
     locale,
     sparqlClient,
     filters,
+    preview,
     limit,
     componentIris,
     cache,

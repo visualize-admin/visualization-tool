@@ -84,7 +84,12 @@ query DataCubePreview(
     title
     description
     publicationStatus
-    observations(sourceType: $sourceType, sourceUrl: $sourceUrl, limit: 10) {
+    observations(
+      sourceType: $sourceType
+      sourceUrl: $sourceUrl
+      preview: true
+      limit: 10
+    ) {
       data
       sparqlEditorUrl
     }
