@@ -6,18 +6,13 @@ import {
   getWideData,
   prepareQueryFilters,
 } from "@/charts/shared/chart-helpers";
-import {
-  ChartType,
-  Filters,
-  InteractiveFiltersConfig,
-  LineConfig,
-  MapConfig,
-} from "@/configurator";
+import { ChartType, Filters, InteractiveFiltersConfig } from "@/configurator";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { Observation } from "@/domain/data";
 import { InteractiveFiltersState } from "@/stores/interactive-filters";
 import map1Fixture from "@/test/__fixtures/config/int/map-nfi.json";
 import line1Fixture from "@/test/__fixtures/config/prod/line-1.json";
+import { migrateChartConfig } from "@/utils/chart-config/versioning";
 
 jest.mock("rdf-cube-view-query", () => ({
   Node: class {
@@ -164,32 +159,41 @@ describe("getWideData", () => {
 });
 
 describe("getChartConfigComponentIris", () => {
-  const lineConfig = line1Fixture.data.chartConfig as unknown as LineConfig;
-  const mapConfig = map1Fixture.data.chartConfig as unknown as MapConfig;
+  const migrationOptions = {
+    migrationProps: { dataSet: "foo", meta: {} },
+  };
+  const lineConfig = migrateChartConfig(
+    line1Fixture.data.chartConfig,
+    migrationOptions
+  );
+  const mapConfig = migrateChartConfig(
+    map1Fixture.data.chartConfig,
+    migrationOptions
+  );
 
   it("should return correct componentIris for line chart", () => {
     const componentsIris = extractChartConfigComponentIris(lineConfig);
     expect(componentsIris).toEqual([
       "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/0",
-      "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/0",
       "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/1",
       "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2",
       "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/3",
       "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/4",
+      "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/0",
     ]);
   });
 
   it("should return correct componentIris for map chart", () => {
     const componentsIris = extractChartConfigComponentIris(mapConfig);
     expect(componentsIris).toEqual([
-      "https://environment.ld.admin.ch/foen/nfi/unitOfReference",
-      "https://environment.ld.admin.ch/foen/nfi/Topic/3r",
       "https://environment.ld.admin.ch/foen/nfi/Topic/3",
+      "https://environment.ld.admin.ch/foen/nfi/Topic/3r",
       "https://environment.ld.admin.ch/foen/nfi/classificationUnit",
-      "https://environment.ld.admin.ch/foen/nfi/inventory",
       "https://environment.ld.admin.ch/foen/nfi/evaluationType",
       "https://environment.ld.admin.ch/foen/nfi/grid",
+      "https://environment.ld.admin.ch/foen/nfi/inventory",
       "https://environment.ld.admin.ch/foen/nfi/unitOfEvaluation",
+      "https://environment.ld.admin.ch/foen/nfi/unitOfReference",
     ]);
   });
 });

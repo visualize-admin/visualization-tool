@@ -10,7 +10,6 @@ import {
   ConfiguratorStateConfiguringChart,
   DataSource,
   MapConfig,
-  TableConfig,
   getChartConfig,
 } from "@/config-types";
 import {
@@ -68,6 +67,7 @@ jest.mock("@/graphql/client", () => {
               dimensions: [
                 {
                   __typename: "GeoShapesDimension",
+                  cubeIri: "mapDataset",
                   iri: "newAreaLayerColorIri",
                   values: [
                     {
@@ -757,14 +757,19 @@ describe("retainChartConfigWhenSwitchingChartType", () => {
   it("should retain appropriate x & y fields and discard the others", () => {
     runChecks(
       migrateChartConfig(covid19ColumnChartConfig, {
-        migrationProps: { meta: {} },
+        migrationProps: { meta: {}, dataSet: "foo" },
       }),
       xyChecks
     );
   });
 
   it("should retain appropriate segment fields and discard the others", () => {
-    runChecks(covid19TableChartConfig as unknown as TableConfig, segmentChecks);
+    runChecks(
+      migrateChartConfig(covid19TableChartConfig, {
+        migrationProps: { meta: {}, dataSet: "foo" },
+      }),
+      segmentChecks
+    );
   });
 });
 
@@ -772,6 +777,15 @@ describe("getFiltersByMappingStatus", () => {
   it("should correctly retrieve categorical color iris", () => {
     const config = {
       chartType: "map",
+      cubes: [
+        {
+          iri: "foo",
+          filters: {
+            areaColorIri: {},
+            symbolColorIri: {},
+          },
+        },
+      ],
       fields: {
         areaLayer: {
           componentIri: "areaIri",
@@ -784,7 +798,7 @@ describe("getFiltersByMappingStatus", () => {
       },
     } as any as MapConfig;
 
-    const { mappedFiltersIris } = getFiltersByMappingStatus(config, "");
+    const { mappedFiltersIris } = getFiltersByMappingStatus(config, "foo");
 
     expect([...mappedFiltersIris]).toEqual(
       expect.arrayContaining(["areaColorIri", "symbolColorIri"])
@@ -893,7 +907,6 @@ describe("handleChartFieldChanged", () => {
   it("should not reset symbol layer when it's being updated", () => {
     const state = {
       state: "CONFIGURING_CHART",
-      dataSet: "mapDataset",
       dataSource: {
         type: "sparql",
         url: "fakeUrl",
@@ -902,6 +915,12 @@ describe("handleChartFieldChanged", () => {
         {
           key: "cba",
           chartType: "map",
+          cubes: [
+            {
+              iri: "mapDataset",
+              filters: {},
+            },
+          ],
           fields: {
             symbolLayer: {
               componentIri: "symbolLayerIri",
@@ -942,7 +961,6 @@ describe("handleChartOptionChanged", () => {
   it("should set required scale properties", () => {
     const state = {
       state: "CONFIGURING_CHART",
-      dataSet: "mapDataset",
       dataSource: {
         type: "sparql",
         url: "fakeUrl",
@@ -951,6 +969,12 @@ describe("handleChartOptionChanged", () => {
         {
           key: "bac",
           chartType: "map",
+          cubes: [
+            {
+              iri: "mapDataset",
+              filters: {},
+            },
+          ],
           fields: {
             areaLayer: {
               componentIri: "areaLayerIri",
