@@ -20,11 +20,56 @@ const useQueryKey = (options: object) => {
   }, [options]);
 };
 
+const makeUseQuery =
+  <T extends { variables: object; pause?: boolean }, V>(
+    executeQueryFn: (
+      options: T["variables"],
+      onFetching?: () => void
+    ) => Promise<{
+      data?: V;
+      error?: Error;
+      fetching: boolean;
+    }>
+  ) =>
+  (options: T) => {
+    const [result, setResult] = React.useState<{
+      data?: V;
+      error?: Error;
+      fetching: boolean;
+    }>({ fetching: !options.pause });
+    const queryKey = useQueryKey(options);
+    const executeQuery = React.useCallback(
+      async (options: T) => {
+        const result = await executeQueryFn(options.variables, () =>
+          setResult((prev) => ({ ...prev, fetching: true }))
+        );
+        setResult(result);
+      },
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      [queryKey]
+    );
+
+    React.useEffect(() => {
+      if (options.pause) {
+        return;
+      }
+
+      executeQuery(options);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [queryKey]);
+
+    return [result, executeQuery] as const;
+  };
+
 type DataCubesMetadataOptions = {
   variables: Omit<DataCubeMetadataQueryVariables, "cubeFilter"> & {
     cubeFilters: DataCubeMetadataFilter[];
   };
   pause?: boolean;
+};
+
+type DataCubesMetadataData = {
+  dataCubesMetadata: DataCubeMetadata[];
 };
 
 export const executeDataCubesMetadataQuery = async (
@@ -68,46 +113,20 @@ export const executeDataCubesMetadataQuery = async (
   };
 };
 
-export const useDataCubesMetadataQuery = (
-  options: DataCubesMetadataOptions
-) => {
-  const [result, setResult] = React.useState<{
-    data?: { dataCubesMetadata: DataCubeMetadata[] };
-    error?: Error;
-    fetching: boolean;
-  }>({ fetching: !options.pause });
-
-  const queryKey = useQueryKey(options);
-
-  const executeQuery = React.useCallback(
-    async (options: DataCubesMetadataOptions) => {
-      const result = await executeDataCubesMetadataQuery(
-        options.variables,
-        () => setResult((prev) => ({ ...prev, fetching: true }))
-      );
-      setResult(result);
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [queryKey]
-  );
-
-  React.useEffect(() => {
-    if (options.pause) {
-      return;
-    }
-
-    executeQuery(options);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [queryKey]);
-
-  return [result, executeQuery] as const;
-};
+export const useDataCubesMetadataQuery = makeUseQuery<
+  DataCubesMetadataOptions,
+  DataCubesMetadataData
+>(executeDataCubesMetadataQuery);
 
 type DataCubesComponentsOptions = {
   variables: Omit<DataCubeComponentsQueryVariables, "cubeFilter"> & {
     cubeFilters: DataCubeComponentFilter[];
   };
   pause?: boolean;
+};
+
+type DataCubesComponentsData = {
+  dataCubesComponents: DataCubeComponents;
 };
 
 export const executeDataCubesComponentsQuery = async (
@@ -163,37 +182,7 @@ export const executeDataCubesComponentsQuery = async (
   };
 };
 
-export const useDataCubesComponentsQuery = (
-  options: DataCubesComponentsOptions
-) => {
-  const [result, setResult] = React.useState<{
-    data?: { dataCubesComponents: DataCubeComponents };
-    error?: Error;
-    fetching: boolean;
-  }>({ fetching: !options.pause });
-
-  const queryKey = useQueryKey(options);
-
-  const executeQuery = React.useCallback(
-    async (options: DataCubesComponentsOptions) => {
-      const result = await executeDataCubesComponentsQuery(
-        options.variables,
-        () => setResult((prev) => ({ ...prev, fetching: true }))
-      );
-      setResult(result);
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [queryKey]
-  );
-
-  React.useEffect(() => {
-    if (options.pause) {
-      return;
-    }
-
-    executeQuery(options);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [queryKey]);
-
-  return [result, executeQuery] as const;
-};
+export const useDataCubesComponentsQuery = makeUseQuery<
+  DataCubesComponentsOptions,
+  DataCubesComponentsData
+>(executeDataCubesComponentsQuery);
