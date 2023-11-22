@@ -9,10 +9,8 @@ import { DataDownloadMenu, RunSparqlQuery } from "@/components/data-download";
 import { ChartConfig, DataSource } from "@/configurator";
 import { Dimension, Measure } from "@/domain/data";
 import { useTimeFormatLocale } from "@/formatters";
-import {
-  useDataCubesMetadataQuery,
-  useDataCubesObservationsQuery,
-} from "@/graphql/query-hooks";
+import { useDataCubesMetadataQuery } from "@/graphql/hooks";
+import { useDataCubesObservationsQuery } from "@/graphql/query-hooks";
 import { Icon, getChartIcon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
 import { useEmbedOptions } from "@/utils/embed";
@@ -82,7 +80,7 @@ export const ChartFootnotes = ({
   const [{ data }] = useDataCubesMetadataQuery({
     variables: {
       ...commonQueryVariables,
-      filters: chartConfig.cubes.map((cube) => ({ iri: cube.iri })),
+      cubeFilters: chartConfig.cubes.map((cube) => ({ iri: cube.iri })),
     },
   });
   const [{ data: downloadData }] = useDataCubesObservationsQuery({

@@ -30,10 +30,10 @@ import {
   useChartConfigFilters,
 } from "@/config-types";
 import { TimeSlider } from "@/configurator/interactive-filters/time-slider";
+import { useDataCubesMetadataQuery } from "@/graphql/hooks";
 import {
   DataCubeObservationFilter,
   useDataCubesComponentsQuery,
-  useDataCubesMetadataQuery,
   useDataCubesObservationsQuery,
 } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
@@ -60,7 +60,7 @@ export const ChartColumnsVisualization = ({
   const [metadataQuery] = useDataCubesMetadataQuery({
     variables: {
       ...commonQueryVariables,
-      filters: chartConfig.cubes.map((cube) => ({ iri: cube.iri })),
+      cubeFilters: chartConfig.cubes.map((cube) => ({ iri: cube.iri })),
     },
   });
   const [componentsQuery] = useDataCubesComponentsQuery({

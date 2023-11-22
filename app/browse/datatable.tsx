@@ -29,9 +29,9 @@ import {
   isNumericalMeasure,
 } from "@/domain/data";
 import { useDimensionFormatters } from "@/formatters";
+import { useDataCubesMetadataQuery } from "@/graphql/hooks";
 import {
   useDataCubesComponentsQuery,
-  useDataCubesMetadataQuery,
   useDataCubesObservationsQuery,
 } from "@/graphql/query-hooks";
 import SvgIcChevronDown from "@/icons/components/IcChevronDown";
@@ -257,7 +257,7 @@ export const DataSetTable = ({
   const [{ data: metadataData }] = useDataCubesMetadataQuery({
     variables: {
       ...commonQueryVariables,
-      filters: chartConfig.cubes.map((cube) => ({ iri: cube.iri })),
+      cubeFilters: chartConfig.cubes.map((cube) => ({ iri: cube.iri })),
     },
   });
   const [{ data: componentsData, fetching: fetchingComponents }] =

@@ -13,11 +13,11 @@ import { NoGeometriesHint } from "@/components/hint";
 import { DataSource, MapConfig, useChartConfigFilters } from "@/config-types";
 import { TimeSlider } from "@/configurator/interactive-filters/time-slider";
 import { GeoShapes } from "@/domain/data";
+import { useDataCubesMetadataQuery } from "@/graphql/hooks";
 import {
   DataCubeObservationFilter,
   GeoCoordinates,
   useDataCubesComponentsQuery,
-  useDataCubesMetadataQuery,
   useDataCubesObservationsQuery,
   useGeoCoordinatesByDimensionIriQuery,
   useGeoShapesByDimensionIriQuery,
@@ -48,7 +48,7 @@ export const ChartMapVisualization = ({
   const [metadataQuery] = useDataCubesMetadataQuery({
     variables: {
       ...commonQueryVariables,
-      filters: chartConfig.cubes.map((cube) => ({ iri: cube.iri })),
+      cubeFilters: chartConfig.cubes.map((cube) => ({ iri: cube.iri })),
     },
   });
   const [componentsQuery] = useDataCubesComponentsQuery({

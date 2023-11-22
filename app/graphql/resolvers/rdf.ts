@@ -304,29 +304,23 @@ export const dataCubesComponents: NonNullable<
   return { dimensions, measures };
 };
 
-export const dataCubesMetadata: NonNullable<
-  QueryResolvers["dataCubesMetadata"]
-> = async (_, { locale, filters }, { setup }, info) => {
-  const { loaders, sparqlClient } = await setup(info);
+export const dataCubeMetadata: NonNullable<QueryResolvers["dataCubeMetadata"]> =
+  async (_, { locale, cubeFilter }, { setup }, info) => {
+    const { loaders, sparqlClient } = await setup(info);
+    const { iri, latest = true } = cubeFilter;
+    const rawCube = await loaders.cube.load(iri);
 
-  return await Promise.all(
-    filters.map(async (filter) => {
-      const { iri, latest = true } = filter;
-      const rawCube = await loaders.cube.load(iri);
+    if (!rawCube) {
+      throw new Error("Cube not found!");
+    }
 
-      if (!rawCube) {
-        throw new Error("Cube not found!");
-      }
+    const cube = latest ? await getLatestCube(rawCube) : rawCube;
 
-      const cube = latest ? await getLatestCube(rawCube) : rawCube;
-
-      return await getCubeMetadata(cube.term?.value!, {
-        locale,
-        sparqlClient,
-      });
-    })
-  );
-};
+    return await getCubeMetadata(cube.term?.value!, {
+      locale,
+      sparqlClient,
+    });
+  };
 
 export const dataCubesObservations: NonNullable<
   QueryResolvers["dataCubesObservations"]

@@ -15,7 +15,7 @@ import Tag from "@/components/tag";
 import { DataSource } from "@/config-types";
 import { DataCubeMetadata } from "@/domain/data";
 import { useFormatDate } from "@/formatters";
-import { useDataCubesMetadataQuery } from "@/graphql/query-hooks";
+import { useDataCubesMetadataQuery } from "@/graphql/hooks";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
 import { makeOpenDataLink } from "@/utils/opendata";
@@ -34,7 +34,7 @@ export const DataSetMetadata = ({
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
-      filters: [{ iri: dataSetIri }],
+      cubeFilters: [{ iri: dataSetIri }],
     },
   });
   // FIXME: adapt to design

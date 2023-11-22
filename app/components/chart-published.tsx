@@ -34,10 +34,8 @@ import {
   DEFAULT_DATA_SOURCE,
   useIsTrustedDataSource,
 } from "@/domain/datasource";
-import {
-  useDataCubesComponentsQuery,
-  useDataCubesMetadataQuery,
-} from "@/graphql/query-hooks";
+import { useDataCubesMetadataQuery } from "@/graphql/hooks";
+import { useDataCubesComponentsQuery } from "@/graphql/query-hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import { useLocale } from "@/locales/use-locale";
 import { InteractiveFiltersProvider } from "@/stores/interactive-filters";
@@ -142,7 +140,7 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
-      filters: chartConfig.cubes.map((cube) => ({ iri: cube.iri })),
+      cubeFilters: chartConfig.cubes.map((cube) => ({ iri: cube.iri })),
     },
   });
   const componentIris = extractChartConfigsComponentIris(state.chartConfigs);

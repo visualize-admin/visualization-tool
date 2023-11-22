@@ -14,9 +14,9 @@ import {
   NoDataHint,
 } from "@/components/hint";
 import { ChartConfig } from "@/configurator";
+import { useDataCubesMetadataQuery } from "@/graphql/hooks";
 import {
   DataCubesComponentsQuery,
-  DataCubesMetadataQuery,
   DataCubesObservationsQuery,
 } from "@/graphql/query-hooks";
 
@@ -34,10 +34,7 @@ export const ChartLoadingWrapper = <
   Component,
   ComponentProps,
 }: {
-  metadataQuery: Pick<
-    UseQueryResponse<DataCubesMetadataQuery>[0],
-    "data" | "fetching" | "error"
-  >;
+  metadataQuery: ReturnType<typeof useDataCubesMetadataQuery>[0];
   componentsQuery: Pick<
     UseQueryResponse<DataCubesComponentsQuery>[0],
     "data" | "fetching" | "error"

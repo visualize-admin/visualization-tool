@@ -12,17 +12,17 @@ query DataCubesComponents(
   )
 }
 
-query DataCubesMetadata(
+query DataCubeMetadata(
   $sourceType: String!
   $sourceUrl: String!
   $locale: String!
-  $filters: [DataCubeMetadataFilter!]!
+  $cubeFilter: DataCubeMetadataFilter!
 ) {
-  dataCubesMetadata(
+  dataCubeMetadata(
     sourceType: $sourceType
     sourceUrl: $sourceUrl
     locale: $locale
-    filters: $filters
+    cubeFilter: $cubeFilter
   )
 }
 

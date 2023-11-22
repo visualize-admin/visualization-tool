@@ -12,10 +12,10 @@ import { Ruler } from "@/charts/shared/interaction/ruler";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { InteractionHorizontal } from "@/charts/shared/overlay-horizontal";
 import { ComboLineDualConfig, DataSource } from "@/config-types";
+import { useDataCubesMetadataQuery } from "@/graphql/hooks";
 import {
   DataCubeObservationFilter,
   useDataCubesComponentsQuery,
-  useDataCubesMetadataQuery,
   useDataCubesObservationsQuery,
 } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
@@ -42,7 +42,7 @@ export const ChartComboLineDualVisualization = (
   const [metadataQuery] = useDataCubesMetadataQuery({
     variables: {
       ...commonQueryVariables,
-      filters: chartConfig.cubes.map((cube) => ({ iri: cube.iri })),
+      cubeFilters: chartConfig.cubes.map((cube) => ({ iri: cube.iri })),
     },
   });
   const [componentsQuery] = useDataCubesComponentsQuery({

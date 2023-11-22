@@ -382,7 +382,7 @@ export type OrdinalMeasureHierarchyArgs = {
 export type Query = {
   __typename?: 'Query';
   dataCubesComponents: Scalars['DataCubesComponents'];
-  dataCubesMetadata: Array<Scalars['DataCubeMetadata']>;
+  dataCubeMetadata: Scalars['DataCubeMetadata'];
   dataCubesObservations: Scalars['DataCubesObservations'];
   dataCubeByIri?: Maybe<DataCube>;
   possibleFilters: Array<ObservationFilter>;
@@ -398,11 +398,11 @@ export type QueryDataCubesComponentsArgs = {
 };
 
 
-export type QueryDataCubesMetadataArgs = {
+export type QueryDataCubeMetadataArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   locale: Scalars['String'];
-  filters: Array<DataCubeMetadataFilter>;
+  cubeFilter: DataCubeMetadataFilter;
 };
 
 
@@ -958,7 +958,7 @@ export type OrdinalMeasureResolvers<ContextType = VisualizeGraphQLContext, Paren
 
 export type QueryResolvers<ContextType = VisualizeGraphQLContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   dataCubesComponents?: Resolver<ResolversTypes['DataCubesComponents'], ParentType, ContextType, RequireFields<QueryDataCubesComponentsArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'filters'>>;
-  dataCubesMetadata?: Resolver<Array<ResolversTypes['DataCubeMetadata']>, ParentType, ContextType, RequireFields<QueryDataCubesMetadataArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'filters'>>;
+  dataCubeMetadata?: Resolver<ResolversTypes['DataCubeMetadata'], ParentType, ContextType, RequireFields<QueryDataCubeMetadataArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'cubeFilter'>>;
   dataCubesObservations?: Resolver<ResolversTypes['DataCubesObservations'], ParentType, ContextType, RequireFields<QueryDataCubesObservationsArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'filters'>>;
   dataCubeByIri?: Resolver<Maybe<ResolversTypes['DataCube']>, ParentType, ContextType, RequireFields<QueryDataCubeByIriArgs, 'sourceType' | 'sourceUrl' | 'iri' | 'latest'>>;
   possibleFilters?: Resolver<Array<ResolversTypes['ObservationFilter']>, ParentType, ContextType, RequireFields<QueryPossibleFiltersArgs, 'iri' | 'sourceType' | 'sourceUrl' | 'filters'>>;

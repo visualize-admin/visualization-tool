@@ -372,12 +372,12 @@ type Query {
     locale: String!
     filters: [DataCubeComponentFilter!]!
   ): DataCubesComponents!
-  dataCubesMetadata(
+  dataCubeMetadata(
     sourceType: String!
     sourceUrl: String!
     locale: String!
-    filters: [DataCubeMetadataFilter!]!
-  ): [DataCubeMetadata!]!
+    cubeFilter: DataCubeMetadataFilter!
+  ): DataCubeMetadata!
   dataCubesObservations(
     sourceType: String!
     sourceUrl: String!
