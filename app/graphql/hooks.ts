@@ -20,72 +20,87 @@ const useQueryKey = (options: object) => {
   }, [options]);
 };
 
-export const useDataCubesMetadataQuery = (options: {
+type DataCubesMetadataOptions = {
   variables: Omit<DataCubeMetadataQueryVariables, "cubeFilter"> & {
     cubeFilters: DataCubeMetadataFilter[];
   };
   pause?: boolean;
-}) => {
-  const { variables, pause } = options;
+};
+
+export const executeDataCubesMetadataQuery = async (
+  variables: DataCubesMetadataOptions["variables"],
+  /** Callback triggered when data fetching starts (cache miss). */
+  onFetching?: () => void
+) => {
   const { locale, sourceType, sourceUrl, cubeFilters } = variables;
+
+  const queries = await Promise.all(
+    cubeFilters.map((cubeFilter) => {
+      const cubeVariables = { locale, sourceType, sourceUrl, cubeFilter };
+      const cached = client.readQuery<
+        DataCubeMetadataQuery,
+        DataCubeMetadataQueryVariables
+      >(DataCubeMetadataDocument, cubeVariables);
+
+      if (cached) {
+        return Promise.resolve(cached);
+      }
+
+      onFetching?.();
+
+      return client
+        .query<DataCubeMetadataQuery, DataCubeMetadataQueryVariables>(
+          DataCubeMetadataDocument,
+          cubeVariables
+        )
+        .toPromise();
+    })
+  );
+  const error = queries.find((q) => q.error)?.error;
+  const fetching = !error && queries.some((q) => !q.data);
+
+  return {
+    data: fetching
+      ? undefined
+      : { dataCubesMetadata: queries.map((q) => q.data!.dataCubeMetadata) },
+    error,
+    fetching,
+  };
+};
+
+export const useDataCubesMetadataQuery = (
+  options: DataCubesMetadataOptions
+) => {
   const [result, setResult] = React.useState<{
     data?: { dataCubesMetadata: DataCubeMetadata[] };
     error?: Error;
     fetching: boolean;
-  }>({ fetching: !pause });
+  }>({ fetching: !options.pause });
 
   const queryKey = useQueryKey(options);
 
+  const executeQuery = React.useCallback(
+    async (options: DataCubesMetadataOptions) => {
+      const result = await executeDataCubesMetadataQuery(
+        options.variables,
+        () => setResult((prev) => ({ ...prev, fetching: true }))
+      );
+      setResult(result);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [queryKey]
+  );
+
   React.useEffect(() => {
-    if (pause) {
+    if (options.pause) {
       return;
     }
 
-    const run = async () => {
-      const queries = await Promise.all(
-        cubeFilters.map((cubeFilter) => {
-          const cubeVariables = { locale, sourceType, sourceUrl, cubeFilter };
-          const cached = client.readQuery<
-            DataCubeMetadataQuery,
-            DataCubeMetadataQueryVariables
-          >(DataCubeMetadataDocument, cubeVariables);
-
-          if (cached) {
-            return Promise.resolve(cached);
-          }
-
-          if (!result.fetching) {
-            setResult({
-              ...result,
-              fetching: true,
-            });
-          }
-
-          return client
-            .query<DataCubeMetadataQuery, DataCubeMetadataQueryVariables>(
-              DataCubeMetadataDocument,
-              cubeVariables
-            )
-            .toPromise();
-        })
-      );
-      const error = queries.find((q) => q.error)?.error;
-      const fetching = !error && queries.some((q) => !q.data);
-
-      setResult({
-        data: fetching
-          ? undefined
-          : { dataCubesMetadata: queries.map((q) => q.data!.dataCubeMetadata) },
-        error,
-        fetching,
-      });
-    };
-
-    run();
+    executeQuery(options);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [queryKey]);
 
-  return [result];
+  return [result, executeQuery] as const;
 };
 
 type DataCubesComponentsOptions = {
@@ -114,9 +129,7 @@ export const executeDataCubesComponentsQuery = async (
         return Promise.resolve(cached);
       }
 
-      if (onFetching) {
-        onFetching();
-      }
+      onFetching?.();
 
       return client
         .query<DataCubeComponentsQuery, DataCubeComponentsQueryVariables>(
