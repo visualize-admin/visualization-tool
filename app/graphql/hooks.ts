@@ -96,7 +96,9 @@ type DataCubesComponentsOptions = {
 };
 
 export const executeDataCubesComponentsQuery = async (
-  variables: DataCubesComponentsOptions["variables"]
+  variables: DataCubesComponentsOptions["variables"],
+  /** Callback triggered when data fetching starts (cache miss). */
+  onFetching?: () => void
 ) => {
   const { locale, sourceType, sourceUrl, cubeFilters } = variables;
 
@@ -110,6 +112,10 @@ export const executeDataCubesComponentsQuery = async (
 
       if (cached) {
         return Promise.resolve(cached);
+      }
+
+      if (onFetching) {
+        onFetching();
       }
 
       return client
@@ -131,7 +137,6 @@ export const executeDataCubesComponentsQuery = async (
           dataCubesComponents: queries.reduce<DataCubeComponents>(
             (acc, query) => {
               const { dimensions, measures } = query.data?.dataCubeComponents!;
-
               acc.dimensions.push(...dimensions);
               acc.measures.push(...measures);
 
@@ -158,7 +163,10 @@ export const useDataCubesComponentsQuery = (
 
   const executeQuery = React.useCallback(
     async (options: DataCubesComponentsOptions) => {
-      const result = await executeDataCubesComponentsQuery(options.variables);
+      const result = await executeDataCubesComponentsQuery(
+        options.variables,
+        () => setResult((prev) => ({ ...prev, fetching: true }))
+      );
       setResult(result);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
