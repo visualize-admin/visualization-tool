@@ -16,10 +16,12 @@ import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
 import { InteractionHorizontal } from "@/charts/shared/overlay-horizontal";
 import { AreaConfig, DataSource } from "@/config-types";
-import { useDataCubesMetadataQuery } from "@/graphql/hooks";
+import {
+  useDataCubesComponentsQuery,
+  useDataCubesMetadataQuery,
+} from "@/graphql/hooks";
 import {
   DataCubeObservationFilter,
-  useDataCubesComponentsQuery,
   useDataCubesObservationsQuery,
 } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
@@ -52,7 +54,7 @@ export const ChartAreasVisualization = ({
   const [componentsQuery] = useDataCubesComponentsQuery({
     variables: {
       ...commonQueryVariables,
-      filters: chartConfig.cubes.map((cube) => ({
+      cubeFilters: chartConfig.cubes.map((cube) => ({
         iri: cube.iri,
         componentIris,
       })),

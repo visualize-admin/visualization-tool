@@ -4,11 +4,11 @@ import { ChartLoadingWrapper } from "@/charts/chart-loading-wrapper";
 import { Table } from "@/charts/table/table";
 import { TableChart } from "@/charts/table/table-state";
 import { DataSource, TableConfig } from "@/configurator";
-import { useDataCubesMetadataQuery } from "@/graphql/hooks";
 import {
   useDataCubesComponentsQuery,
-  useDataCubesObservationsQuery,
-} from "@/graphql/query-hooks";
+  useDataCubesMetadataQuery,
+} from "@/graphql/hooks";
+import { useDataCubesObservationsQuery } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 
 import { ChartProps } from "../shared/ChartProps";
@@ -37,7 +37,7 @@ export const ChartTableVisualization = ({
   const [componentsQuery] = useDataCubesComponentsQuery({
     variables: {
       ...commonQueryVariables,
-      filters: chartConfig.cubes.map((cube) => ({
+      cubeFilters: chartConfig.cubes.map((cube) => ({
         iri: cube.iri,
         componentIris,
       })),

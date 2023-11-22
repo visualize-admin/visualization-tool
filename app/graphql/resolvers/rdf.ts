@@ -13,7 +13,6 @@ import {
   ObservationValue,
   TemporalDimension,
 } from "@/domain/data";
-import { truthy } from "@/domain/types";
 import { Loaders } from "@/graphql/context";
 import {
   DataCubeComponentFilter,
@@ -31,7 +30,6 @@ import {
   createCubeDimensionValuesLoader,
   getCubeDimensions,
   getCubeObservations,
-  getCubesDimensions,
   getLatestCube,
 } from "@/rdf/queries";
 import { getCubeMetadata } from "@/rdf/query-cube-metadata";
@@ -151,55 +149,36 @@ export const possibleFilters: NonNullable<QueryResolvers["possibleFilters"]> =
     return [];
   };
 
-export const dataCubesComponents: NonNullable<
-  QueryResolvers["dataCubesComponents"]
-> = async (_, { locale, filters }, { setup }, info) => {
+export const dataCubeComponents: NonNullable<
+  QueryResolvers["dataCubeComponents"]
+> = async (_, { locale, cubeFilter }, { setup }, info) => {
   const { loaders, sparqlClient, sparqlClientStream, cache } = await setup(
     info
   );
+  const { iri, latest = true } = cubeFilter;
+  const rawCube = await loaders.cube.load(iri);
+
+  if (!rawCube) {
+    throw new Error(`Cube ${iri} not found!`);
+  }
+
+  const cube = latest ? await getLatestCube(rawCube) : rawCube;
+  await cube.fetchShape();
+
   // If the cube was updated, we need to also update the filter with the correct iri.
-  const filtersWithCorrectIri: (DataCubeComponentFilter & {
+  const correctCubeFilter: DataCubeComponentFilter & {
     originalIri: string;
-  })[] = [];
+  } = {
+    ...cubeFilter,
+    iri: cube.term?.value!,
+    originalIri: iri,
+  };
 
-  const cubes = (
-    await Promise.all(
-      filters.map(async (filter) => {
-        const { iri, latest = true } = filter;
-        const cube = await loaders.cube.load(iri);
-
-        if (!cube) {
-          throw new Error(`Cube ${iri} not found!`);
-        }
-
-        if (latest) {
-          const latestCube = await getLatestCube(cube);
-          await latestCube.fetchShape();
-
-          filtersWithCorrectIri.push({
-            ...filter,
-            iri: latestCube.term?.value!,
-            originalIri: iri,
-          });
-
-          return latestCube;
-        }
-
-        await cube.fetchShape();
-        filtersWithCorrectIri.push({
-          ...filter,
-          originalIri: iri,
-        });
-
-        return cube;
-      })
-    )
-  ).filter(truthy);
-
-  const rawComponents = await getCubesDimensions(cubes, {
+  const rawComponents = await getCubeDimensions({
+    cube,
     locale,
     sparqlClient,
-    filters: filtersWithCorrectIri,
+    componentIris: correctCubeFilter.componentIris,
     cache,
   });
 
@@ -208,15 +187,12 @@ export const dataCubesComponents: NonNullable<
 
   await Promise.all(
     rawComponents.map(async (component) => {
-      const { cube, data } = component;
-      const cubeFilters = filtersWithCorrectIri.find(
-        (d) => d.iri === cube.term?.value
-      );
+      const { data } = component;
       const dimensionValuesLoader = getDimensionValuesLoader(
         sparqlClient,
         loaders,
         cache,
-        cubeFilters?.filters
+        correctCubeFilter?.filters
       );
       const values: DimensionValue[] = await dimensionValuesLoader.load(
         component
@@ -228,7 +204,7 @@ export const dataCubesComponents: NonNullable<
         )
       );
       const baseComponent = {
-        cubeIri: cubeFilters?.originalIri as string,
+        cubeIri: correctCubeFilter?.originalIri as string,
         iri: data.iri,
         label: data.name,
         description: data.description,
@@ -264,7 +240,7 @@ export const dataCubesComponents: NonNullable<
               cache,
               // Only pass values if there are no filters, as we need to fetch
               // the full, not filtered hierarchy.
-              cubeFilters?.filters ? undefined : values
+              correctCubeFilter?.filters ? undefined : values
             )
           : null;
         const baseDimension = {

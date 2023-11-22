@@ -1,5 +1,5 @@
+import { DataCubeComponents } from '../domain/data';
 import { DataCubeMetadata } from '../domain/data';
-import { DataCubesComponents } from '../domain/data';
 import { DataCubesObservations } from '../domain/data';
 import { DimensionValue } from '../domain/data';
 import { QueryFilters } from '../configurator';
@@ -21,8 +21,8 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  DataCubeComponents: DataCubeComponents;
   DataCubeMetadata: DataCubeMetadata;
-  DataCubesComponents: DataCubesComponents;
   DataCubesObservations: DataCubesObservations;
   DimensionValue: DimensionValue;
   FilterValue: any;
@@ -101,6 +101,7 @@ export type DataCubeComponentFilter = {
 };
 
 
+
 export type DataCubeMetadataFilter = {
   iri: Scalars['String'];
   latest?: Maybe<Scalars['Boolean']>;
@@ -131,7 +132,6 @@ export type DataCubeTheme = {
   iri: Scalars['String'];
   label?: Maybe<Scalars['String']>;
 };
-
 
 
 export type Dimension = {
@@ -380,7 +380,7 @@ export type OrdinalMeasureHierarchyArgs = {
 
 export type Query = {
   __typename: 'Query';
-  dataCubesComponents: Scalars['DataCubesComponents'];
+  dataCubeComponents: Scalars['DataCubeComponents'];
   dataCubeMetadata: Scalars['DataCubeMetadata'];
   dataCubesObservations: Scalars['DataCubesObservations'];
   dataCubeByIri?: Maybe<DataCube>;
@@ -389,11 +389,11 @@ export type Query = {
 };
 
 
-export type QueryDataCubesComponentsArgs = {
+export type QueryDataCubeComponentsArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   locale: Scalars['String'];
-  filters: Array<DataCubeComponentFilter>;
+  cubeFilter: DataCubeComponentFilter;
 };
 
 
@@ -582,15 +582,15 @@ export enum TimeUnit {
 
 
 
-export type DataCubesComponentsQueryVariables = Exact<{
+export type DataCubeComponentsQueryVariables = Exact<{
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   locale: Scalars['String'];
-  filters: Array<DataCubeComponentFilter> | DataCubeComponentFilter;
+  cubeFilter: DataCubeComponentFilter;
 }>;
 
 
-export type DataCubesComponentsQuery = { __typename: 'Query', dataCubesComponents: DataCubesComponents };
+export type DataCubeComponentsQuery = { __typename: 'Query', dataCubeComponents: DataCubeComponents };
 
 export type DataCubeMetadataQueryVariables = Exact<{
   sourceType: Scalars['String'];
@@ -672,19 +672,19 @@ export type PossibleFiltersQueryVariables = Exact<{
 export type PossibleFiltersQuery = { __typename: 'Query', possibleFilters: Array<{ __typename: 'ObservationFilter', iri: string, type: string, value?: Maybe<any> }> };
 
 
-export const DataCubesComponentsDocument = gql`
-    query DataCubesComponents($sourceType: String!, $sourceUrl: String!, $locale: String!, $filters: [DataCubeComponentFilter!]!) {
-  dataCubesComponents(
+export const DataCubeComponentsDocument = gql`
+    query DataCubeComponents($sourceType: String!, $sourceUrl: String!, $locale: String!, $cubeFilter: DataCubeComponentFilter!) {
+  dataCubeComponents(
     sourceType: $sourceType
     sourceUrl: $sourceUrl
     locale: $locale
-    filters: $filters
+    cubeFilter: $cubeFilter
   )
 }
     `;
 
-export function useDataCubesComponentsQuery(options: Omit<Urql.UseQueryArgs<DataCubesComponentsQueryVariables>, 'query'> = {}) {
-  return Urql.useQuery<DataCubesComponentsQuery>({ query: DataCubesComponentsDocument, ...options });
+export function useDataCubeComponentsQuery(options: Omit<Urql.UseQueryArgs<DataCubeComponentsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<DataCubeComponentsQuery>({ query: DataCubeComponentsDocument, ...options });
 };
 export const DataCubeMetadataDocument = gql`
     query DataCubeMetadata($sourceType: String!, $sourceUrl: String!, $locale: String!, $cubeFilter: DataCubeMetadataFilter!) {

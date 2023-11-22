@@ -1,14 +1,14 @@
-query DataCubesComponents(
+query DataCubeComponents(
   $sourceType: String!
   $sourceUrl: String!
   $locale: String!
-  $filters: [DataCubeComponentFilter!]!
+  $cubeFilter: DataCubeComponentFilter!
 ) {
-  dataCubesComponents(
+  dataCubeComponents(
     sourceType: $sourceType
     sourceUrl: $sourceUrl
     locale: $locale
-    filters: $filters
+    cubeFilter: $cubeFilter
   )
 }
 

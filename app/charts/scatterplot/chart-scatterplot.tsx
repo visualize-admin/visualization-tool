@@ -25,10 +25,12 @@ import {
   useChartConfigFilters,
 } from "@/config-types";
 import { TimeSlider } from "@/configurator/interactive-filters/time-slider";
-import { useDataCubesMetadataQuery } from "@/graphql/hooks";
+import {
+  useDataCubesComponentsQuery,
+  useDataCubesMetadataQuery,
+} from "@/graphql/hooks";
 import {
   DataCubeObservationFilter,
-  useDataCubesComponentsQuery,
   useDataCubesObservationsQuery,
 } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
@@ -61,7 +63,7 @@ export const ChartScatterplotVisualization = ({
   const [componentsQuery] = useDataCubesComponentsQuery({
     variables: {
       ...commonQueryVariables,
-      filters: chartConfig.cubes.map((cube) => ({
+      cubeFilters: chartConfig.cubes.map((cube) => ({
         iri: cube.iri,
         componentIris,
       })),

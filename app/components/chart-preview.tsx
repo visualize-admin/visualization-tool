@@ -21,8 +21,10 @@ import {
   getChartConfig,
   useConfiguratorState,
 } from "@/configurator";
-import { useDataCubesMetadataQuery } from "@/graphql/hooks";
-import { useDataCubesComponentsQuery } from "@/graphql/query-hooks";
+import {
+  useDataCubesComponentsQuery,
+  useDataCubesMetadataQuery,
+} from "@/graphql/hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import { useLocale } from "@/locales/use-locale";
 import useEvent from "@/utils/use-event";
@@ -77,7 +79,7 @@ export const ChartPreviewInner = (props: ChartPreviewProps) => {
   const [{ data: components }] = useDataCubesComponentsQuery({
     variables: {
       ...commonQueryVariables,
-      filters: chartConfig.cubes.map((cube) => ({
+      cubeFilters: chartConfig.cubes.map((cube) => ({
         iri: cube.iri,
         componentIris,
       })),

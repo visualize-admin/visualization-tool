@@ -50,7 +50,7 @@ export type DataCubesObservations = {
   }[];
 };
 
-export type DataCubesComponents = {
+export type DataCubeComponents = {
   dimensions: Dimension[];
   measures: Measure[];
 };

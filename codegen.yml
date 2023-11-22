@@ -22,7 +22,7 @@ generates:
         Filters: "../configurator#QueryFilters"
         GeoShape: "../domain/data#GeoShape"
         SearchCube: "../domain/data#SearchCube"
-        DataCubesComponents: "../domain/data#DataCubesComponents"
+        DataCubeComponents: "../domain/data#DataCubeComponents"
         DataCubeMetadata: "../domain/data#DataCubeMetadata"
         DataCubesObservations: "../domain/data#DataCubesObservations"
   app/graphql/resolver-types.ts:
@@ -42,7 +42,7 @@ generates:
         Filters: "../configurator#Filters"
         GeoShape: "../domain/data#GeoShape"
         SearchCube: "../domain/data#SearchCube"
-        DataCubesComponents: "../domain/data#DataCubesComponents"
+        DataCubeComponents: "../domain/data#DataCubeComponents"
         DataCubeMetadata: "../domain/data#DataCubeMetadata"
         DataCubesObservations: "../domain/data#DataCubesObservations"
       mappers:

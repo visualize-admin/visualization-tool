@@ -37,12 +37,12 @@ import {
   TemporalDimension,
 } from "@/domain/data";
 import { useTimeFormatLocale } from "@/formatters";
+import { useDataCubesComponentsQuery } from "@/graphql/hooks";
 import {
   DataCubeObservationFilter,
   PossibleFiltersDocument,
   PossibleFiltersQuery,
   PossibleFiltersQueryVariables,
-  useDataCubesComponentsQuery,
 } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
@@ -238,7 +238,7 @@ const DataFilter = (props: DataFilterProps) => {
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
-      filters: [
+      cubeFilters: [
         {
           iri: cubeIri,
           componentIris: [dimensionIri],

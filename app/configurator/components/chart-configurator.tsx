@@ -74,11 +74,11 @@ import {
   isTemporalDimension,
   Measure,
 } from "@/domain/data";
+import { useDataCubesComponentsQuery } from "@/graphql/hooks";
 import {
   PossibleFiltersDocument,
   PossibleFiltersQuery,
   PossibleFiltersQueryVariables,
-  useDataCubesComponentsQuery,
   useDataCubesObservationsQuery,
 } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
@@ -264,11 +264,12 @@ const useFilterReorder = ({
   }, [chartConfig]);
 
   const variables = useMemo(() => {
-    const filters = chartConfig.cubes.map((cube) => {
+    const cubeFilters = chartConfig.cubes.map((cube) => {
       const { unmappedFilters } = getFiltersByMappingStatus(
         chartConfig,
         cube.iri
       );
+
       return Object.keys(unmappedFilters).length > 0
         ? {
             iri: cube.iri,
@@ -284,12 +285,12 @@ const useFilterReorder = ({
     // are the same  while the order of the keys has changed.
     // If this is not present, we'll have outdated dimension
     // values after we change the filter order
-    const requeryKey = filters.reduce((acc, d) => {
+    const requeryKey = cubeFilters.reduce((acc, d) => {
       return `${acc}${d.iri}${JSON.stringify(d.filters)}`;
     }, "");
 
     return {
-      filters,
+      cubeFilters,
       requeryKey: requeryKey ? requeryKey : undefined,
     };
   }, [chartConfig]);

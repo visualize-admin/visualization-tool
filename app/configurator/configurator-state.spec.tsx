@@ -1,4 +1,3 @@
-import { Client } from "@urql/core";
 import { createDraft, current } from "immer";
 import get from "lodash/get";
 
@@ -30,7 +29,6 @@ import { Component, Dimension, Measure, NominalDimension } from "@/domain/data";
 import covid19ColumnChartConfig from "@/test/__fixtures/config/dev/chartConfig-column-covid19.json";
 import covid19TableChartConfig from "@/test/__fixtures/config/dev/chartConfig-table-covid19.json";
 import { data as fakeVizFixture } from "@/test/__fixtures/config/prod/line-1.json";
-import bathingWaterMetadata from "@/test/__fixtures/data/DataCubeMetadataWithComponentValues-bathingWater.json";
 import covid19Metadata from "@/test/__fixtures/data/DataCubeMetadataWithComponentValues-covid19.json";
 import * as api from "@/utils/chart-config/api";
 import {
@@ -168,26 +166,12 @@ describe("initChartFromLocalStorage", () => {
 });
 
 describe("initChartStateFromCube", () => {
-  const setup = ({ cubeMetadata }: { cubeMetadata: object }) => {
-    const client = new Client({
-      url: "https://example.com/graphql",
-    });
-
-    // @ts-ignore
-    jest.spyOn(client, "query").mockReturnValue({
-      toPromise: jest.fn().mockResolvedValue(cubeMetadata),
-    });
-
-    return { client };
-  };
   it("should work init fields with existing dataset and go directly to 2nd step", async () => {
-    const { client } = setup({ cubeMetadata: bathingWaterMetadata });
     const dataSource: DataSource = {
       url: "https://example.com/api",
       type: "sparql",
     };
     const res = await initChartStateFromCube(
-      client,
       "https://environment.ld.admin.ch/foen/ubd0104/3/",
       dataSource,
       "en"

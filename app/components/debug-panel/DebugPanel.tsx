@@ -18,7 +18,7 @@ import {
   useConfiguratorState,
 } from "@/configurator";
 import { dataSourceToSparqlEditorUrl } from "@/domain/datasource";
-import { useDataCubesComponentsQuery } from "@/graphql/query-hooks";
+import { useDataCubesComponentsQuery } from "@/graphql/hooks";
 import { Icon } from "@/icons";
 import { useLocale } from "@/src";
 import { useInteractiveFiltersRaw } from "@/stores/interactive-filters";
@@ -53,7 +53,7 @@ const CubeMetadata = ({
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
-      filters: [{ iri: datasetIri }],
+      cubeFilters: [{ iri: datasetIri }],
     },
     pause: !expanded,
   });

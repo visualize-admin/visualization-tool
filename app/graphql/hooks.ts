@@ -1,9 +1,13 @@
 import React from "react";
 
-import { DataCubeMetadata } from "@/domain/data";
+import { DataCubeComponents, DataCubeMetadata } from "@/domain/data";
 
 import { client } from "./client";
 import {
+  DataCubeComponentFilter,
+  DataCubeComponentsDocument,
+  DataCubeComponentsQuery,
+  DataCubeComponentsQueryVariables,
   DataCubeMetadataDocument,
   DataCubeMetadataFilter,
   DataCubeMetadataQuery,
@@ -82,4 +86,93 @@ export const useDataCubesMetadataQuery = (options: {
   }, [queryKey]);
 
   return [result];
+};
+
+type DataCubesComponentsOptions = {
+  variables: Omit<DataCubeComponentsQueryVariables, "cubeFilter"> & {
+    cubeFilters: DataCubeComponentFilter[];
+  };
+  pause?: boolean;
+};
+
+export const executeDataCubesComponentsQuery = async (
+  variables: DataCubesComponentsOptions["variables"]
+) => {
+  const { locale, sourceType, sourceUrl, cubeFilters } = variables;
+
+  const queries = await Promise.all(
+    cubeFilters.map((cubeFilter) => {
+      const cubeVariables = { locale, sourceType, sourceUrl, cubeFilter };
+      const cached = client.readQuery<
+        DataCubeComponentsQuery,
+        DataCubeComponentsQueryVariables
+      >(DataCubeComponentsDocument, cubeVariables);
+
+      if (cached) {
+        return Promise.resolve(cached);
+      }
+
+      return client
+        .query<DataCubeComponentsQuery, DataCubeComponentsQueryVariables>(
+          DataCubeComponentsDocument,
+          cubeVariables
+        )
+        .toPromise();
+    })
+  );
+
+  const error = queries.find((q) => q.error)?.error;
+  const fetching = !error && queries.some((q) => !q.data);
+
+  return {
+    data: fetching
+      ? undefined
+      : {
+          dataCubesComponents: queries.reduce<DataCubeComponents>(
+            (acc, query) => {
+              const { dimensions, measures } = query.data?.dataCubeComponents!;
+
+              acc.dimensions.push(...dimensions);
+              acc.measures.push(...measures);
+
+              return acc;
+            },
+            { dimensions: [], measures: [] }
+          ),
+        },
+    error,
+    fetching,
+  };
+};
+
+export const useDataCubesComponentsQuery = (
+  options: DataCubesComponentsOptions
+) => {
+  const [result, setResult] = React.useState<{
+    data?: { dataCubesComponents: DataCubeComponents };
+    error?: Error;
+    fetching: boolean;
+  }>({ fetching: !options.pause });
+
+  const queryKey = useQueryKey(options);
+
+  const executeQuery = React.useCallback(
+    async (options: DataCubesComponentsOptions) => {
+      const result = await executeDataCubesComponentsQuery(options.variables);
+      setResult(result);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [queryKey]
+  );
+
+  React.useEffect(() => {
+    if (options.pause) {
+      return;
+    }
+
+    executeQuery(options);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [queryKey]);
+
+  return [result, executeQuery] as const;
 };

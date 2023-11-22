@@ -31,17 +31,15 @@ import { useClient } from "urql";
 import { getSortedColumns } from "@/browse/datatable";
 import Flex from "@/components/flex";
 import { DataSource, SortingField } from "@/config-types";
-import { Component, Observation } from "@/domain/data";
+import { Component, DataCubeComponents, Observation } from "@/domain/data";
 import {
   dateFormatterFromDimension,
   getFormatFullDateAuto,
   getFormattersForLocale,
 } from "@/formatters";
+import { executeDataCubesComponentsQuery } from "@/graphql/hooks";
 import {
   DataCubeObservationFilter,
-  DataCubesComponentsDocument,
-  DataCubesComponentsQuery,
-  DataCubesComponentsQueryVariables,
   DataCubesObservationsDocument,
   DataCubesObservationsQuery,
   DataCubesObservationsQueryVariables,
@@ -319,7 +317,7 @@ const DownloadMenuItem = ({
   const [state, dispatch] = useDataDownloadState();
   const download = useCallback(
     async (
-      componentsData: DataCubesComponentsQuery,
+      componentsData: { dataCubesComponents: DataCubeComponents } | undefined,
       observationsData: DataCubesObservationsQuery
     ) => {
       if (
@@ -382,17 +380,12 @@ const DownloadMenuItem = ({
 
         try {
           const [componentsResult, observationsResult] = await Promise.all([
-            urqlClient
-              .query<
-                DataCubesComponentsQuery,
-                DataCubesComponentsQueryVariables
-              >(DataCubesComponentsDocument, {
-                sourceType: dataSource.type,
-                sourceUrl: dataSource.url,
-                locale,
-                filters,
-              })
-              .toPromise(),
+            executeDataCubesComponentsQuery({
+              sourceType: dataSource.type,
+              sourceUrl: dataSource.url,
+              locale,
+              cubeFilters: filters,
+            }),
             urqlClient
               .query<
                 DataCubesObservationsQuery,

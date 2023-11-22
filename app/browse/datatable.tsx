@@ -29,11 +29,11 @@ import {
   isNumericalMeasure,
 } from "@/domain/data";
 import { useDimensionFormatters } from "@/formatters";
-import { useDataCubesMetadataQuery } from "@/graphql/hooks";
 import {
   useDataCubesComponentsQuery,
-  useDataCubesObservationsQuery,
-} from "@/graphql/query-hooks";
+  useDataCubesMetadataQuery,
+} from "@/graphql/hooks";
+import { useDataCubesObservationsQuery } from "@/graphql/query-hooks";
 import SvgIcChevronDown from "@/icons/components/IcChevronDown";
 import { useLocale } from "@/locales/use-locale";
 import { uniqueMapBy } from "@/utils/uniqueMapBy";
@@ -264,7 +264,7 @@ export const DataSetTable = ({
     useDataCubesComponentsQuery({
       variables: {
         ...commonQueryVariables,
-        filters: chartConfig.cubes.map((cube) => ({
+        cubeFilters: chartConfig.cubes.map((cube) => ({
           iri: cube.iri,
           componentIris,
         })),

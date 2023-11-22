@@ -123,8 +123,8 @@ export const searchCubes: NonNullable<QueryResolvers["searchCubes"]> =
     }));
   };
 
-export const dataCubesComponents: NonNullable<
-  QueryResolvers["dataCubesComponents"]
+export const dataCubeComponents: NonNullable<
+  QueryResolvers["dataCubeComponents"]
 > = async () => {
   return { dimensions: [], measures: [] };
 };

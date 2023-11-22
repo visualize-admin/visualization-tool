@@ -6,7 +6,7 @@ import sortBy from "lodash/sortBy";
 import unset from "lodash/unset";
 import { useRouter } from "next/router";
 import { Dispatch, createContext, useContext, useEffect, useMemo } from "react";
-import { Client, useClient } from "urql";
+import { useClient } from "urql";
 import { Reducer, useImmerReducer } from "use-immer";
 
 import {
@@ -53,7 +53,7 @@ import { toggleInteractiveFilterDataDimension } from "@/configurator/interactive
 import { ParsedConfig } from "@/db/config";
 import {
   Component,
-  DataCubesComponents,
+  DataCubeComponents,
   Dimension,
   DimensionValue,
   ObservationValue,
@@ -62,10 +62,11 @@ import {
 } from "@/domain/data";
 import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
 import { client } from "@/graphql/client";
+import { executeDataCubesComponentsQuery } from "@/graphql/hooks";
 import {
-  DataCubesComponentsDocument,
-  DataCubesComponentsQuery,
-  DataCubesComponentsQueryVariables,
+  DataCubeComponentsDocument,
+  DataCubeComponentsQuery,
+  DataCubeComponentsQueryVariables,
 } from "@/graphql/query-hooks";
 import { Locale } from "@/locales/locales";
 import { useLocale } from "@/locales/use-locale";
@@ -95,7 +96,7 @@ export type ConfiguratorStateAction =
     }
   | {
       type: "STEP_NEXT";
-      dataCubesComponents: DataCubesComponents;
+      dataCubesComponents: DataCubeComponents;
     }
   | {
       type: "STEP_PREVIOUS";
@@ -193,7 +194,7 @@ export type ConfiguratorStateAction =
       type: "CHART_CONFIG_REPLACED";
       value: {
         chartConfig: ChartConfig;
-        dataCubesComponents: DataCubesComponents;
+        dataCubesComponents: DataCubeComponents;
       };
     }
   | {
@@ -336,18 +337,30 @@ const getCachedComponents = (
   draft: ConfiguratorStateConfiguringChart,
   cubeIris: string[],
   locale: Locale
-): DataCubesComponents | undefined => {
-  const componentsQuery = client.readQuery<
-    DataCubesComponentsQuery,
-    DataCubesComponentsQueryVariables
-  >(DataCubesComponentsDocument, {
-    sourceType: draft.dataSource.type,
-    sourceUrl: draft.dataSource.url,
-    locale,
-    filters: cubeIris.map((iri) => ({ iri })),
-  });
+): DataCubeComponents | undefined => {
+  return cubeIris.reduce<DataCubeComponents>(
+    (acc, cubeIri) => {
+      const componentsQuery = client.readQuery<
+        DataCubeComponentsQuery,
+        DataCubeComponentsQueryVariables
+      >(DataCubeComponentsDocument, {
+        sourceType: draft.dataSource.type,
+        sourceUrl: draft.dataSource.url,
+        locale,
+        cubeFilter: { iri: cubeIri },
+      });
 
-  return componentsQuery?.data?.dataCubesComponents;
+      if (componentsQuery?.data?.dataCubeComponents) {
+        acc.dimensions.push(
+          ...componentsQuery.data.dataCubeComponents.dimensions
+        );
+        acc.measures.push(...componentsQuery.data.dataCubeComponents.measures);
+      }
+
+      return acc;
+    },
+    { dimensions: [], measures: [] }
+  );
 };
 
 export const getFilterValue = (
@@ -605,7 +618,7 @@ const transitionStepNext = (
   draft: ConfiguratorState,
   options: {
     cubeIris?: string[];
-    dataCubesComponents: DataCubesComponents;
+    dataCubesComponents: DataCubeComponents;
   }
 ): ConfiguratorState => {
   const { cubeIris, dataCubesComponents } = options;
@@ -1317,22 +1330,16 @@ export const initChartStateFromChartEdit = async (
 };
 
 export const initChartStateFromCube = async (
-  client: Client,
   cubeIri: string,
   dataSource: DataSource,
   locale: string
 ): Promise<ConfiguratorState | undefined> => {
-  const { data: components } = await client
-    .query<DataCubesComponentsQuery, DataCubesComponentsQueryVariables>(
-      DataCubesComponentsDocument,
-      {
-        sourceType: dataSource.type,
-        sourceUrl: dataSource.url,
-        locale,
-        filters: [{ iri: cubeIri }],
-      }
-    )
-    .toPromise();
+  const { data: components } = await executeDataCubesComponentsQuery({
+    sourceType: dataSource.type,
+    sourceUrl: dataSource.url,
+    locale,
+    cubeFilters: [{ iri: cubeIri }],
+  });
 
   if (components?.dataCubesComponents) {
     return transitionStepNext(getStateWithCurrentDataSource(EMPTY_STATE), {
@@ -1413,7 +1420,6 @@ const ConfiguratorStateProviderInternal = (
             newChartState = await initChartStateFromChartEdit(query.edit);
           } else if (query.cube && typeof query.cube === "string") {
             newChartState = await initChartStateFromCube(
-              client,
               query.cube,
               dataSource,
               locale

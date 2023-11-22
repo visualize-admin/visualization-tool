@@ -16,7 +16,7 @@ import {
   isTemporalOrdinalDimension,
 } from "@/domain/data";
 import { useTimeFormatUnit } from "@/formatters";
-import { useDataCubesComponentsQuery } from "@/graphql/query-hooks";
+import { useDataCubesComponentsQuery } from "@/graphql/hooks";
 import { useLocale } from "@/locales/use-locale";
 import { useInteractiveFilters } from "@/stores/interactive-filters";
 
@@ -43,7 +43,7 @@ export const ChartFiltersList = (props: ChartFiltersListProps) => {
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
-      filters: filters
+      cubeFilters: filters
         ? filters.map((filter) => ({
             iri: filter.iri,
             componentIris: filter.componentIris,
