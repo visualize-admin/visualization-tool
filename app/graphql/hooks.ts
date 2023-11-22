@@ -39,19 +39,31 @@ export const useDataCubesMetadataQuery = (options: {
 
     const run = async () => {
       const queries = await Promise.all(
-        cubeFilters.map((cubeFilter) =>
-          client
+        cubeFilters.map((cubeFilter) => {
+          const cubeVariables = { locale, sourceType, sourceUrl, cubeFilter };
+          const cached = client.readQuery<
+            DataCubeMetadataQuery,
+            DataCubeMetadataQueryVariables
+          >(DataCubeMetadataDocument, cubeVariables);
+
+          if (cached) {
+            return Promise.resolve(cached);
+          }
+
+          if (!result.fetching) {
+            setResult({
+              ...result,
+              fetching: true,
+            });
+          }
+
+          return client
             .query<DataCubeMetadataQuery, DataCubeMetadataQueryVariables>(
               DataCubeMetadataDocument,
-              {
-                locale,
-                sourceType,
-                sourceUrl,
-                cubeFilter,
-              }
+              cubeVariables
             )
-            .toPromise()
-        )
+            .toPromise();
+        })
       );
       const error = queries.find((q) => q.error)?.error;
       const fetching = !error && queries.some((q) => !q.data);
