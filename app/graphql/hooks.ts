@@ -4,10 +4,10 @@ import {
   DataCubeComponents,
   DataCubeMetadata,
   DataCubesObservations,
-  Observation,
 } from "@/domain/data";
 
 import { client } from "./client";
+import { mergeObservations } from "./hook-utils";
 import {
   DataCubeComponentFilter,
   DataCubeComponentsDocument,
@@ -257,25 +257,7 @@ export const executeDataCubesObservationsQuery = async (
   const observations =
     // If we are fetching data from multiple cubes, we need to merge them into one
     queries.length > 1
-      ? Object.values(
-          queries.reduce<Record<string | number, Observation>>((acc, query) => {
-            const joinBy = query.operation.variables?.cubeFilter.joinBy!;
-            const observations = query.data?.dataCubeObservations?.data!;
-
-            for (const observation of observations) {
-              const key = observation[joinBy];
-
-              if (!key) {
-                continue;
-              }
-
-              const existing = acc[key];
-              acc[key] = Object.assign(existing ?? {}, observation);
-            }
-
-            return acc;
-          }, {})
-        )
+      ? mergeObservations(queries)
       : // If we are fetching data from a single cube, we can just return the data
         queries[0].data?.dataCubeObservations?.data!;
 
