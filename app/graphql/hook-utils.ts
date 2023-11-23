@@ -1,12 +1,11 @@
 import { OperationResult } from "urql";
 
 import { Observation, ObservationValue } from "@/domain/data";
-
 import {
   DataCubeObservationsQuery,
   DataCubeObservationsQueryVariables,
   Exact,
-} from "./query-hooks";
+} from "@/graphql/query-hooks";
 
 /** Use to merge observations coming from several DataCubesObservationQueries.
  *
