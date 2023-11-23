@@ -114,9 +114,10 @@ export const executeDataCubesMetadataQuery = async (
   const fetching = !error && queries.some((q) => !q.data);
 
   return {
-    data: fetching
-      ? undefined
-      : { dataCubesMetadata: queries.map((q) => q.data!.dataCubeMetadata) },
+    data:
+      error || fetching
+        ? undefined
+        : { dataCubesMetadata: queries.map((q) => q.data!.dataCubeMetadata) },
     error,
     fetching,
   };
@@ -172,20 +173,22 @@ export const executeDataCubesComponentsQuery = async (
   const fetching = !error && queries.some((q) => !q.data);
 
   return {
-    data: fetching
-      ? undefined
-      : {
-          dataCubesComponents: queries.reduce<DataCubeComponents>(
-            (acc, query) => {
-              const { dimensions, measures } = query.data?.dataCubeComponents!;
-              acc.dimensions.push(...dimensions);
-              acc.measures.push(...measures);
+    data:
+      error || fetching
+        ? undefined
+        : {
+            dataCubesComponents: queries.reduce<DataCubeComponents>(
+              (acc, query) => {
+                const { dimensions, measures } =
+                  query.data?.dataCubeComponents!;
+                acc.dimensions.push(...dimensions);
+                acc.measures.push(...measures);
 
-              return acc;
-            },
-            { dimensions: [], measures: [] }
-          ),
-        },
+                return acc;
+              },
+              { dimensions: [], measures: [] }
+            ),
+          },
     error,
     fetching,
   };
@@ -246,7 +249,7 @@ export const executeDataCubesObservationsQuery = async (
   const error = queries.find((q) => q.error)?.error;
   const fetching = !error && queries.some((q) => !q.data);
 
-  if (fetching) {
+  if (error || fetching) {
     return {
       data: undefined,
       error,
