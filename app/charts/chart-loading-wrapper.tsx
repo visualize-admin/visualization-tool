@@ -1,7 +1,6 @@
 import { Box } from "@mui/material";
 import keyBy from "lodash/keyBy";
 import React from "react";
-import { UseQueryResponse } from "urql";
 
 import { ChartProps } from "@/charts/shared/ChartProps";
 import { A11yTable } from "@/charts/shared/a11y-table";
@@ -17,8 +16,8 @@ import { ChartConfig } from "@/configurator";
 import {
   useDataCubesComponentsQuery,
   useDataCubesMetadataQuery,
+  useDataCubesObservationsQuery,
 } from "@/graphql/hooks";
-import { DataCubesObservationsQuery } from "@/graphql/query-hooks";
 
 type ElementProps<RE> = RE extends React.ElementType<infer P> ? P : never;
 
@@ -36,10 +35,7 @@ export const ChartLoadingWrapper = <
 }: {
   metadataQuery: ReturnType<typeof useDataCubesMetadataQuery>[0];
   componentsQuery: ReturnType<typeof useDataCubesComponentsQuery>[0];
-  observationsQuery: Pick<
-    UseQueryResponse<DataCubesObservationsQuery>[0],
-    "data" | "fetching" | "error"
-  >;
+  observationsQuery: ReturnType<typeof useDataCubesObservationsQuery>[0];
   chartConfig: TChartConfig;
   Component: TChartComponent;
   ComponentProps?: Omit<

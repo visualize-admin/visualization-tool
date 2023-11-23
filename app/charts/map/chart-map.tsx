@@ -16,11 +16,11 @@ import { GeoShapes } from "@/domain/data";
 import {
   useDataCubesComponentsQuery,
   useDataCubesMetadataQuery,
+  useDataCubesObservationsQuery,
 } from "@/graphql/hooks";
 import {
   DataCubeObservationFilter,
   GeoCoordinates,
-  useDataCubesObservationsQuery,
   useGeoCoordinatesByDimensionIriQuery,
   useGeoShapesByDimensionIriQuery,
 } from "@/graphql/query-hooks";
@@ -65,7 +65,7 @@ export const ChartMapVisualization = ({
   const [observationsQuery] = useDataCubesObservationsQuery({
     variables: {
       ...commonQueryVariables,
-      filters: queryFilters ?? [],
+      cubeFilters: queryFilters ?? [],
     },
     pause: !queryFilters,
   });

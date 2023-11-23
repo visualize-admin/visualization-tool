@@ -32,8 +32,8 @@ import { useDimensionFormatters } from "@/formatters";
 import {
   useDataCubesComponentsQuery,
   useDataCubesMetadataQuery,
+  useDataCubesObservationsQuery,
 } from "@/graphql/hooks";
-import { useDataCubesObservationsQuery } from "@/graphql/query-hooks";
 import SvgIcChevronDown from "@/icons/components/IcChevronDown";
 import { useLocale } from "@/locales/use-locale";
 import { uniqueMapBy } from "@/utils/uniqueMapBy";
@@ -288,7 +288,7 @@ export const DataSetTable = ({
   const [{ data: observationsData }] = useDataCubesObservationsQuery({
     variables: {
       ...commonQueryVariables,
-      filters: queryFilters ?? [],
+      cubeFilters: queryFilters ?? [],
     },
     pause: fetchingComponents || !queryFilters,
   });

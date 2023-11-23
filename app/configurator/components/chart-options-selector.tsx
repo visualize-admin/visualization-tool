@@ -80,8 +80,10 @@ import {
   Measure,
   Observation,
 } from "@/domain/data";
-import { useDataCubesComponentsQuery } from "@/graphql/hooks";
-import { useDataCubesObservationsQuery } from "@/graphql/query-hooks";
+import {
+  useDataCubesComponentsQuery,
+  useDataCubesObservationsQuery,
+} from "@/graphql/hooks";
 import { NumericalMeasure } from "@/graphql/resolver-types";
 import SvgIcExclamation from "@/icons/components/IcExclamation";
 import { useLocale } from "@/locales/use-locale";
@@ -106,7 +108,7 @@ export const ChartOptionsSelector = ({
     });
   const dimensions = componentsData?.dataCubesComponents.dimensions;
   const measures = componentsData?.dataCubesComponents.measures;
-  const filters = useQueryFilters({
+  const queryFilters = useQueryFilters({
     chartConfig,
     dimensions: dimensions ?? [],
     measures: measures ?? [],
@@ -116,9 +118,9 @@ export const ChartOptionsSelector = ({
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
-      filters: filters ?? [],
+      cubeFilters: queryFilters ?? [],
     },
-    pause: fetchingComponents || !filters,
+    pause: fetchingComponents || !queryFilters,
   });
   const observations = observationsData?.dataCubesObservations?.data;
 

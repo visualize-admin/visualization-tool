@@ -10,7 +10,10 @@ export const Lines = () => {
     useChartState() as LinesState;
 
   const lineGenerator = line<Observation>()
-    .defined((d) => getY(d) !== null)
+    .defined((d) => {
+      const y = getY(d);
+      return y !== null && !isNaN(y);
+    })
     .x((d) => xScale(getX(d)))
     .y((d) => yScale(getY(d) as number));
 

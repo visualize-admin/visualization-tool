@@ -7,8 +7,8 @@ import { DataSource, TableConfig } from "@/configurator";
 import {
   useDataCubesComponentsQuery,
   useDataCubesMetadataQuery,
+  useDataCubesObservationsQuery,
 } from "@/graphql/hooks";
-import { useDataCubesObservationsQuery } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 
 import { ChartProps } from "../shared/ChartProps";
@@ -46,7 +46,7 @@ export const ChartTableVisualization = ({
   const [observationsQuery] = useDataCubesObservationsQuery({
     variables: {
       ...commonQueryVariables,
-      filters: chartConfig.cubes.map((cube) => ({
+      cubeFilters: chartConfig.cubes.map((cube) => ({
         iri: cube.iri,
         componentIris,
       })),

@@ -20,11 +20,9 @@ import { DataSource, LineConfig } from "@/config-types";
 import {
   useDataCubesComponentsQuery,
   useDataCubesMetadataQuery,
-} from "@/graphql/hooks";
-import {
-  DataCubeObservationFilter,
   useDataCubesObservationsQuery,
-} from "@/graphql/query-hooks";
+} from "@/graphql/hooks";
+import { DataCubeObservationFilter } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 
 import { ChartProps } from "../shared/ChartProps";
@@ -64,7 +62,7 @@ export const ChartLinesVisualization = ({
   const [observationsQuery] = useDataCubesObservationsQuery({
     variables: {
       ...commonQueryVariables,
-      filters: queryFilters ?? [],
+      cubeFilters: queryFilters ?? [],
     },
     pause: !queryFilters,
   });

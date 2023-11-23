@@ -18,8 +18,11 @@ import { Column, useExpanded, useSortBy, useTable } from "react-table";
 
 import { Loading } from "@/components/hint";
 import { Dimension, HierarchyValue } from "@/domain/data";
-import { useDataCubesComponentsQuery } from "@/graphql/hooks";
-import { Measure, useDataCubesObservationsQuery } from "@/graphql/query-hooks";
+import {
+  useDataCubesComponentsQuery,
+  useDataCubesObservationsQuery,
+} from "@/graphql/hooks";
+import { Measure } from "@/graphql/query-hooks";
 import { visitHierarchy } from "@/rdf/tree-utils";
 import useEvent from "@/utils/use-event";
 
@@ -177,7 +180,7 @@ const PivotTable = ({ dataset }: { dataset: typeof datasets[string] }) => {
         sourceUrl: "https://int.lindas.admin.ch/query",
         sourceType: "sparql",
         locale: "en",
-        filters: [{ iri: dataset.iri }],
+        cubeFilters: [{ iri: dataset.iri }],
       },
     });
 

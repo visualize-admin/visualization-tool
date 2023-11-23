@@ -42,6 +42,11 @@ export type HierarchyValue = {
 
 export type Observation = Record<string, ObservationValue>;
 
+export type DataCubeObservations = {
+  data: Observation[];
+  sparqlEditorUrl: string;
+};
+
 export type DataCubesObservations = {
   data: Observation[];
   sparqlEditorUrls: {

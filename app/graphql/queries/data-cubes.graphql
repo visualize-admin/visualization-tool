@@ -26,17 +26,17 @@ query DataCubeMetadata(
   )
 }
 
-query DataCubesObservations(
+query DataCubeObservations(
   $sourceType: String!
   $sourceUrl: String!
   $locale: String!
-  $filters: [DataCubeObservationFilter!]!
+  $cubeFilter: DataCubeObservationFilter!
 ) {
-  dataCubesObservations(
+  dataCubeObservations(
     sourceType: $sourceType
     sourceUrl: $sourceUrl
     locale: $locale
-    filters: $filters
+    cubeFilter: $cubeFilter
   )
 }
 

@@ -74,12 +74,14 @@ import {
   isTemporalDimension,
   Measure,
 } from "@/domain/data";
-import { useDataCubesComponentsQuery } from "@/graphql/hooks";
+import {
+  useDataCubesComponentsQuery,
+  useDataCubesObservationsQuery,
+} from "@/graphql/hooks";
 import {
   PossibleFiltersDocument,
   PossibleFiltersQuery,
   PossibleFiltersQueryVariables,
-  useDataCubesObservationsQuery,
 } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
@@ -769,7 +771,7 @@ type ChartFieldsProps = {
 const ChartFields = (props: ChartFieldsProps) => {
   const { dataSource, chartConfig, dimensions = [], measures = [] } = props;
   const components = [...dimensions, ...measures];
-  const filters = useQueryFilters({
+  const queryFilters = useQueryFilters({
     chartConfig,
     dimensions,
     measures,
@@ -780,9 +782,9 @@ const ChartFields = (props: ChartFieldsProps) => {
       locale,
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
-      filters: filters ?? [],
+      cubeFilters: queryFilters ?? [],
     },
-    pause: !filters,
+    pause: !queryFilters,
   });
   const observations = observationsData?.dataCubesObservations?.data ?? [];
 

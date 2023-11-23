@@ -294,34 +294,33 @@ const filterObservations = (
 };
 
 // FIXME: should be a call to API (to be able to implement proper filtering)
-export const dataCubeObservations: NonNullable<
-  DataCubeResolvers["observations"]
-> = async ({ cube, locale }, { filters, limit }) => {
-  const rawObservations = (cube as any).observations as Observation[];
-  const allObservations = limit
-    ? rawObservations.slice(0, limit)
-    : rawObservations;
-  const observations = filterObservations(
-    allObservations,
-    filters as QueryFilters | undefined
-  );
+export const observations: NonNullable<DataCubeResolvers["observations"]> =
+  async ({ cube, locale }, { filters, limit }) => {
+    const rawObservations = (cube as any).observations as Observation[];
+    const allObservations = limit
+      ? rawObservations.slice(0, limit)
+      : rawObservations;
+    const observations = filterObservations(
+      allObservations,
+      filters as QueryFilters | undefined
+    );
 
-  return {
-    cube,
-    locale,
-    data: {
-      query: "",
-      observations,
-      selectedFields: [],
-    },
+    return {
+      cube,
+      locale,
+      data: {
+        query: "",
+        observations,
+        selectedFields: [],
+      },
+    };
   };
-};
 
-export const dataCubesObservations: NonNullable<
-  QueryResolvers["dataCubesObservations"]
+export const dataCubeObservations: NonNullable<
+  QueryResolvers["dataCubeObservations"]
 > = async () => {
   return {
     data: [],
-    sparqlEditorUrls: [],
+    sparqlEditorUrl: "",
   };
 };
