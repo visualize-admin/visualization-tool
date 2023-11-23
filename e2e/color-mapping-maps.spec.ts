@@ -27,14 +27,12 @@ test("should be possible to de-select options from color component in maps", asy
   await selectors.chart.loaded();
 
   const colorControlSection = within(
-    selectors.edition.controlSection("Segmentation")
+    selectors.edition.controlSectionBySubtitle("Color")
   );
 
-  const filtersButton = await colorControlSection.findByText(
-    "Edit filters",
-    { selector: "button" },
-    { timeout: 5_000 }
-  );
+  const filtersButton = await colorControlSection.findByRole("button", {
+    name: "Edit filters",
+  });
   await filtersButton.click();
   const filters = selectors.edition.filterDrawer().within();
   await (await filters.findByText("moderate danger")).click();

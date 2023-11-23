@@ -201,6 +201,7 @@ export const ChartTypeSelector = ({
               chartTypes={regularChartTypes}
               possibleChartTypes={possibleChartTypes}
               onClick={onClick}
+              testId="chart-type-selector-regular"
             />
             <Divider />
             <ChartTypeSelectorMenu
@@ -218,6 +219,7 @@ export const ChartTypeSelector = ({
               chartTypes={comboChartTypes}
               possibleChartTypes={possibleChartTypes}
               onClick={onClick}
+              testId="chart-type-selector-combo"
             />
           </Flex>
         )}
@@ -234,6 +236,7 @@ type ChartTypeSelectorMenuProps = {
   chartTypes: ChartType[];
   possibleChartTypes: ChartType[];
   onClick: (e: React.SyntheticEvent<HTMLButtonElement, Event>) => void;
+  testId?: string;
 };
 
 const ChartTypeSelectorMenu = (props: ChartTypeSelectorMenuProps) => {
@@ -245,6 +248,7 @@ const ChartTypeSelectorMenu = (props: ChartTypeSelectorMenuProps) => {
     chartTypes,
     possibleChartTypes,
     onClick,
+    testId,
   } = props;
 
   return (
@@ -263,7 +267,7 @@ const ChartTypeSelectorMenu = (props: ChartTypeSelectorMenuProps) => {
         {titleHint && <WarnIconTooltip title={titleHint} />}
       </Typography>
       <Box
-        data-testid="chart-type-selector-combo"
+        data-testid={testId}
         sx={{
           display: "grid",
           gridTemplateColumns: ["1fr 1fr", "1fr 1fr", "1fr 1fr 1fr"],

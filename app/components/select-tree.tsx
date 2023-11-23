@@ -20,7 +20,6 @@ import {
   useEventCallback,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import useId from "@mui/utils/useId";
 import clsx from "clsx";
 import * as React from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -268,6 +267,7 @@ export type SelectTreeProps = {
   onOpen?: () => void;
   onClose?: () => void;
   open?: boolean;
+  id?: string;
 };
 
 const getFilteredOptions = (options: Tree, value: string) => {
@@ -290,6 +290,7 @@ function SelectTree({
   onOpen,
   onClose,
   open,
+  id,
 }: SelectTreeProps) {
   const [openState, setOpenState] = useState(false);
   const [minMenuWidth, setMinMenuWidth] = useState<number>();
@@ -303,7 +304,6 @@ function SelectTree({
 
   const parentsRef = React.useRef({} as Record<NodeId, NodeId>);
   const menuRef = React.useRef<PopoverActions>(null);
-  const id = useId();
   const inputRef = React.useRef<HTMLDivElement>();
 
   const defaultExpanded = useMemo(() => {
@@ -487,6 +487,7 @@ function SelectTree({
       )}
       <OutlinedInput
         id={id}
+        name={id}
         readOnly
         value={value ? labelsByValue[value] : undefined}
         disabled={disabled}

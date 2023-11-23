@@ -14,35 +14,36 @@ describe("Filters", () => {
     await selectors.chart.loaded();
     await selectors.edition.drawerLoaded();
 
-    const filters = selectors.edition.controlSection("Filters");
+    const filters = selectors.edition.controlSectionBySubtitle("Filters");
 
     await filters.locator("label").first().waitFor({ timeout: 30_000 });
 
     const labels = filters.locator("label[for^=select-single-filter]");
 
     const texts = await labels.allTextContents();
+
     // Hierarchical dimensions should come first.
-    expect(texts[0]).toEqual("1. Region");
-    expect(texts[1]).toEqual("2. tree status");
+    expect(texts[0]).toEqual("1. Region ");
+    expect(texts[1]).toEqual("2. tree status ");
 
     const productionRegionFilter =
-      selectors.edition.dataFilterInput("1. Region");
+      selectors.edition.dataFilterInput("1. Region ");
 
     const productionRegionFilterValue = await productionRegionFilter
       .locator("input[name^=select-single-filter]")
       .inputValue();
     expect(productionRegionFilterValue).toEqual(
-      "https://ld.admin.ch/country/CHE"
+      "Switzerland"
     );
 
     const treeStatusFilter =
-      selectors.edition.dataFilterInput("2. tree status");
+      selectors.edition.dataFilterInput("2. tree status ");
     const treeStatusFilterValue = await treeStatusFilter
       .locator("input[name^=select-single-filter]")
       .inputValue();
 
     expect(treeStatusFilterValue).toEqual(
-      "https://environment.ld.admin.ch/foen/nfi/ClassificationUnit/Total"
+      "Total"
     );
   });
 
