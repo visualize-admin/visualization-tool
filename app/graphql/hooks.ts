@@ -177,17 +177,14 @@ export const executeDataCubesComponentsQuery = async (
       error || fetching
         ? undefined
         : {
-            dataCubesComponents: queries.reduce<DataCubeComponents>(
-              (acc, query) => {
-                const { dimensions, measures } =
-                  query.data?.dataCubeComponents!;
-                acc.dimensions.push(...dimensions);
-                acc.measures.push(...measures);
-
-                return acc;
-              },
-              { dimensions: [], measures: [] }
-            ),
+            dataCubesComponents: {
+              dimensions: queries.flatMap(
+                (q) => q.data?.dataCubeComponents.dimensions!
+              ),
+              measures: queries.flatMap(
+                (q) => q.data?.dataCubeComponents.measures!
+              ),
+            },
           },
     error,
     fetching,
@@ -259,45 +256,37 @@ export const executeDataCubesObservationsQuery = async (
 
   const observations =
     // If we are fetching data from multiple cubes, we need to merge them into one
-    cubeFilters.length > 1
-      ? queries.reduce<Record<string | number, Observation>>((acc, query) => {
-          const joinBy = query.operation.variables?.cubeFilter.joinBy as string;
-          const observations = query.data?.dataCubeObservations
-            ?.data as Observation[];
+    queries.length > 1
+      ? Object.values(
+          queries.reduce<Record<string | number, Observation>>((acc, query) => {
+            const joinBy = query.operation.variables?.cubeFilter.joinBy!;
+            const observations = query.data?.dataCubeObservations?.data!;
 
-          for (const observation of observations) {
-            const key = observation[joinBy];
+            for (const observation of observations) {
+              const key = observation[joinBy];
 
-            if (!key) {
-              continue;
+              if (!key) {
+                continue;
+              }
+
+              const existing = acc[key];
+              acc[key] = Object.assign(existing ?? {}, observation);
             }
 
-            const existing = acc[key];
-            acc[key] = Object.assign(existing ?? {}, observation);
-          }
-
-          return acc;
-        }, {})
+            return acc;
+          }, {})
+        )
       : // If we are fetching data from a single cube, we can just return the data
-        (queries[0].data?.dataCubeObservations?.data as Observation[]);
-  const sparqlEditorUrls = queries.reduce<
-    DataCubesObservations["sparqlEditorUrls"]
-  >((acc, query) => {
-    const cubeIri = query.operation.variables?.cubeFilter.iri;
-    const url = query.data?.dataCubeObservations?.sparqlEditorUrl;
-
-    if (cubeIri && url) {
-      acc.push({ cubeIri, url });
-    }
-
-    return acc;
-  }, []);
+        queries[0].data?.dataCubeObservations?.data!;
 
   return {
     data: {
       dataCubesObservations: {
-        data: Object.values(observations),
-        sparqlEditorUrls,
+        data: observations,
+        sparqlEditorUrls: queries.flatMap((q) => ({
+          cubeIri: q.operation.variables?.cubeFilter.iri!,
+          url: q.data?.dataCubeObservations?.sparqlEditorUrl!,
+        })),
       },
     },
     error,
