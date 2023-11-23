@@ -61,7 +61,7 @@ jest.mock("@/graphql/client", () => {
         return {
           data: {
             dataCubeByIri: {},
-            dataCubesComponents: {
+            dataCubeComponents: {
               dimensions: [
                 {
                   __typename: "GeoShapesDimension",
