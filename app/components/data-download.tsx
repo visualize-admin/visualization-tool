@@ -26,24 +26,26 @@ import {
   useContext,
   useState,
 } from "react";
-import { useClient } from "urql";
 
 import { getSortedColumns } from "@/browse/datatable";
 import Flex from "@/components/flex";
 import { DataSource, SortingField } from "@/config-types";
-import { Component, DataCubeComponents, Observation } from "@/domain/data";
+import {
+  Component,
+  DataCubeComponents,
+  DataCubesObservations,
+  Observation,
+} from "@/domain/data";
 import {
   dateFormatterFromDimension,
   getFormatFullDateAuto,
   getFormattersForLocale,
 } from "@/formatters";
-import { executeDataCubesComponentsQuery } from "@/graphql/hooks";
 import {
-  DataCubeObservationFilter,
-  DataCubesObservationsDocument,
-  DataCubesObservationsQuery,
-  DataCubesObservationsQueryVariables,
-} from "@/graphql/query-hooks";
+  executeDataCubesComponentsQuery,
+  executeDataCubesObservationsQuery,
+} from "@/graphql/hooks";
+import { DataCubeObservationFilter } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import { Locale } from "@/locales/locales";
 import { useLocale } from "@/src";
@@ -313,12 +315,13 @@ const DownloadMenuItem = ({
 }) => {
   const locale = useLocale();
   const i18n = useI18n();
-  const urqlClient = useClient();
   const [state, dispatch] = useDataDownloadState();
   const download = useCallback(
     async (
       componentsData: { dataCubesComponents: DataCubeComponents } | undefined,
-      observationsData: DataCubesObservationsQuery
+      observationsData:
+        | { dataCubesObservations: DataCubesObservations }
+        | undefined
     ) => {
       if (
         !(
@@ -386,17 +389,12 @@ const DownloadMenuItem = ({
               locale,
               cubeFilters: filters,
             }),
-            urqlClient
-              .query<
-                DataCubesObservationsQuery,
-                DataCubesObservationsQueryVariables
-              >(DataCubesObservationsDocument, {
-                sourceType: dataSource.type,
-                sourceUrl: dataSource.url,
-                locale,
-                filters,
-              })
-              .toPromise(),
+            executeDataCubesObservationsQuery({
+              sourceType: dataSource.type,
+              sourceUrl: dataSource.url,
+              locale,
+              cubeFilters: filters,
+            }),
           ]);
 
           if (componentsResult.data && observationsResult.data) {
