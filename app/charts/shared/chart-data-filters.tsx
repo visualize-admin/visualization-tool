@@ -19,6 +19,7 @@ import {
   Filters,
   getFiltersByMappingStatus,
   QueryFilters,
+  useChartConfigFilters,
   useConfiguratorState,
 } from "@/configurator";
 import { orderedIsEqual } from "@/configurator/components/chart-configurator";
@@ -32,14 +33,16 @@ import {
   Dimension,
   HierarchyValue,
   isTemporalDimension,
+  Measure,
   TemporalDimension,
 } from "@/domain/data";
 import { useTimeFormatLocale } from "@/formatters";
+import { useDataCubesComponentsQuery } from "@/graphql/hooks";
 import {
+  DataCubeObservationFilter,
   PossibleFiltersDocument,
   PossibleFiltersQuery,
   PossibleFiltersQueryVariables,
-  useDataCubesComponentsQuery,
 } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
@@ -51,18 +54,30 @@ import {
 import { hierarchyToOptions } from "@/utils/hierarchy";
 import useEvent from "@/utils/use-event";
 
+type PreparedFilter = {
+  cubeIri: string;
+  interactiveFilters: Filters;
+  unmappedQueryFilters: Filters;
+  mappedFilters: Filters;
+};
+
 type ChartDataFiltersProps = {
-  dataSet: string;
   dataSource: DataSource;
   chartConfig: ChartConfig;
+  dimensions?: Dimension[];
+  measures?: Measure[];
 };
 
 export const ChartDataFilters = (props: ChartDataFiltersProps) => {
-  const { dataSet, dataSource, chartConfig } = props;
+  const { dataSource, chartConfig, dimensions, measures } = props;
   const { loading } = useLoadingState();
   const dataFilters = useInteractiveFilters((d) => d.dataFilters);
-  // We want to keep the none filter without removing them.
-  const queryFilters = useQueryFilters({ chartConfig, allowNoneValues: true });
+  const queryFilters = useQueryFilters({
+    chartConfig,
+    dimensions,
+    measures,
+    allowNoneValues: true,
+  });
   const componentIris = chartConfig.interactiveFiltersConfig?.dataFilters
     .componentIris as string[];
   const [filtersVisible, setFiltersVisible] = React.useState(false);
@@ -73,33 +88,41 @@ export const ChartDataFilters = (props: ChartDataFiltersProps) => {
     }
   }, [componentIris.length]);
 
-  const { interactiveFilters, unmappedQueryFilters, mappedFilters } =
-    React.useMemo(() => {
-      const filtersByMappingStatus = getFiltersByMappingStatus(chartConfig);
-      const { mappedFilters, unmappedFilters } = filtersByMappingStatus;
-      const unmappedKeys = Object.keys(unmappedFilters);
-      const unmappedQueryFiltersArray = Object.entries(queryFilters).filter(
-        ([k]) => unmappedKeys.includes(k)
+  const preparedFilters: PreparedFilter[] | undefined = React.useMemo(() => {
+    if (!queryFilters) {
+      return;
+    }
+
+    return chartConfig.cubes.map((cube) => {
+      const cubeQueryFilters = queryFilters.find(
+        (d) => d.iri === cube.iri
+      ) as DataCubeObservationFilter;
+      const filtersByMappingStatus = getFiltersByMappingStatus(
+        chartConfig,
+        cube.iri
       );
+      const { unmappedFilters, mappedFilters } = filtersByMappingStatus;
+      const unmappedKeys = Object.keys(unmappedFilters);
+      const unmappedQueryFiltersArray = Object.entries(
+        cubeQueryFilters.filters as Filters
+      ).filter(([k]) => unmappedKeys.includes(k));
       const interactiveFiltersArray = unmappedQueryFiltersArray.filter(([k]) =>
         componentIris.includes(k)
       );
 
       return {
+        cubeIri: cube.iri,
         interactiveFilters: Object.fromEntries(interactiveFiltersArray),
         unmappedQueryFilters: Object.fromEntries(unmappedQueryFiltersArray),
         mappedFilters,
       };
-    }, [chartConfig, componentIris, queryFilters]);
+    });
+  }, [chartConfig, componentIris, queryFilters]);
 
   const { error } = useEnsurePossibleInteractiveFilters({
-    dataSet,
     dataSource,
     chartConfig,
-    dataFilters,
-    unmappedQueryFilters,
-    mappedFilters,
-    interactiveFilters,
+    preparedFilters,
   });
 
   return error ? (
@@ -109,7 +132,7 @@ export const ChartDataFilters = (props: ChartDataFiltersProps) => {
         reload the page.
       </Trans>
     </Typography>
-  ) : dataSet ? (
+  ) : (
     <Flex sx={{ flexDirection: "column", my: 4 }}>
       <Flex
         sx={{
@@ -120,9 +143,10 @@ export const ChartDataFilters = (props: ChartDataFiltersProps) => {
         }}
       >
         <ChartFiltersList
-          dataSet={dataSet}
           dataSource={dataSource}
           chartConfig={chartConfig}
+          dimensions={dimensions}
+          measures={measures}
         />
 
         {componentIris.length > 0 && (
@@ -164,27 +188,29 @@ export const ChartDataFilters = (props: ChartDataFiltersProps) => {
             gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
           }}
         >
-          {Object.keys(interactiveFilters).map((iri) => (
-            <DataFilter
-              key={iri}
-              dimensionIri={iri}
-              dataSetIri={dataSet}
-              dataSource={dataSource}
-              chartConfig={chartConfig}
-              dataFilters={dataFilters}
-              interactiveFilters={interactiveFilters}
-              disabled={loading}
-            />
-          ))}
+          {preparedFilters?.map(({ cubeIri, interactiveFilters }) =>
+            Object.keys(interactiveFilters).map((dimensionIri) => (
+              <DataFilter
+                key={dimensionIri}
+                cubeIri={cubeIri}
+                dimensionIri={dimensionIri}
+                dataSource={dataSource}
+                chartConfig={chartConfig}
+                dataFilters={dataFilters}
+                interactiveFilters={interactiveFilters}
+                disabled={loading}
+              />
+            ))
+          )}
         </Box>
       )}
     </Flex>
-  ) : null;
+  );
 };
 
 type DataFilterProps = {
+  cubeIri: string;
   dimensionIri: string;
-  dataSetIri: string;
   dataSource: DataSource;
   chartConfig: ChartConfig;
   dataFilters: DataFilters;
@@ -194,8 +220,8 @@ type DataFilterProps = {
 
 const DataFilter = (props: DataFilterProps) => {
   const {
+    cubeIri,
     dimensionIri,
-    dataSetIri,
     dataSource,
     chartConfig,
     dataFilters,
@@ -203,6 +229,7 @@ const DataFilter = (props: DataFilterProps) => {
     disabled,
   } = props;
   const locale = useLocale();
+  const filters = useChartConfigFilters(chartConfig);
   const chartLoadingState = useLoadingState();
   const updateDataFilter = useInteractiveFilters((d) => d.updateDataFilter);
   const keys = Object.keys(interactiveFilters);
@@ -211,9 +238,9 @@ const DataFilter = (props: DataFilterProps) => {
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
-      filters: [
+      cubeFilters: [
         {
-          iri: dataSetIri,
+          iri: cubeIri,
           componentIris: [dimensionIri],
           filters: keys.length > 0 ? interactiveFilters : undefined,
         },
@@ -236,9 +263,7 @@ const DataFilter = (props: DataFilterProps) => {
     }
   );
 
-  const configFilter = dimension
-    ? chartConfig.filters[dimension.iri]
-    : undefined;
+  const configFilter = dimension ? filters[dimension.iri] : undefined;
   const configFilterValue =
     configFilter && configFilter.type === "single"
       ? configFilter.value
@@ -513,13 +538,9 @@ const DataFilterTemporalDimension = ({
 };
 
 type EnsurePossibleInteractiveFiltersProps = {
-  dataSet: string;
   dataSource: DataSource;
   chartConfig: ChartConfig;
-  dataFilters: DataFilters;
-  unmappedQueryFilters: Filters;
-  mappedFilters: Filters;
-  interactiveFilters: Filters;
+  preparedFilters?: PreparedFilter[];
 };
 
 /**
@@ -529,92 +550,108 @@ type EnsurePossibleInteractiveFiltersProps = {
 const useEnsurePossibleInteractiveFilters = (
   props: EnsurePossibleInteractiveFiltersProps
 ) => {
-  const {
-    dataSet,
-    dataSource,
-    chartConfig,
-    dataFilters,
-    unmappedQueryFilters,
-    mappedFilters,
-    interactiveFilters,
-  } = props;
+  const { dataSource, chartConfig, preparedFilters } = props;
   const [, dispatch] = useConfiguratorState();
   const loadingState = useLoadingState();
   const [error, setError] = React.useState<Error>();
-  const lastFilters = React.useRef<Filters>();
+  const lastFilters = React.useRef<Record<string, Filters>>({});
   const client = useClient();
   const IFRaw = useInteractiveFiltersRaw();
   const setDataFilters = useInteractiveFilters((d) => d.setDataFilters);
+  const filtersByCubeIri = React.useMemo(() => {
+    return preparedFilters?.reduce<Record<string, PreparedFilter>>((acc, d) => {
+      acc[d.cubeIri] = d;
+      return acc;
+    }, {});
+  }, [preparedFilters]);
 
   React.useEffect(() => {
     const run = async () => {
-      if (
-        lastFilters.current &&
-        orderedIsEqual(lastFilters.current, unmappedQueryFilters)
-      ) {
-        return;
-      }
-      lastFilters.current = unmappedQueryFilters;
-      loadingState.set("possible-interactive-filters", true);
-      const { data, error } = await client
-        .query<PossibleFiltersQuery, PossibleFiltersQueryVariables>(
-          PossibleFiltersDocument,
-          {
-            iri: dataSet,
-            sourceType: dataSource.type,
-            sourceUrl: dataSource.url,
-            filters: unmappedQueryFilters,
-            // @ts-ignore This is to make urql requery
-            filterKeys: Object.keys(unmappedQueryFilters).join(", "),
-          }
-        )
-        .toPromise();
-
-      if (error || !data) {
-        setError(error);
-        loadingState.set("possible-interactive-filters", false);
-        console.error("Could not fetch possible filters", error);
-
+      if (!filtersByCubeIri) {
         return;
       }
 
-      setError(undefined);
-      loadingState.set("possible-interactive-filters", false);
+      chartConfig.cubes.forEach(async (cube) => {
+        const { unmappedQueryFilters, interactiveFilters, mappedFilters } =
+          filtersByCubeIri[cube.iri];
 
-      const filters = Object.assign(
-        Object.fromEntries(
-          data.possibleFilters.map((d) => {
-            const interactiveFilter = interactiveFilters[d.iri];
-            return [
-              d.iri,
-              {
-                type: d.type,
-                value:
-                  // We want to keep the none filter without overriding them.
-                  interactiveFilter?.type === "single" &&
-                  interactiveFilter.value === FIELD_VALUE_NONE
-                    ? FIELD_VALUE_NONE
-                    : d.value,
-              },
-            ];
-          })
-        ) as Filters,
-        mappedFilters
-      );
-
-      // We need to get the values dynamically, as they can get updated by
-      // useSyncInteractiveFilters and this callback runs with old value.
-      const dataFilters = { ...IFRaw.getState().dataFilters };
-
-      if (!isEqual(filters, interactiveFilters) && !isEmpty(filters)) {
-        for (const [k, v] of Object.entries(filters)) {
-          if (k in dataFilters && v.type === "single") {
-            dataFilters[k] = v;
-          }
+        if (
+          lastFilters.current[cube.iri] &&
+          orderedIsEqual(lastFilters.current[cube.iri], unmappedQueryFilters)
+        ) {
+          return;
         }
 
-        setDataFilters(dataFilters);
-      }
+        lastFilters.current[cube.iri] = unmappedQueryFilters;
+        loadingState.set("possible-interactive-filters", true);
+        const { data, error } = await client
+          .query<PossibleFiltersQuery, PossibleFiltersQueryVariables>(
+            PossibleFiltersDocument,
+            {
+              iri: cube.iri,
+              sourceType: dataSource.type,
+              sourceUrl: dataSource.url,
+              filters: unmappedQueryFilters,
+              // @ts-ignore This is to make urql requery
+              filterKeys: Object.keys(unmappedQueryFilters).join(", "),
+            }
+          )
+          .toPromise();
+
+        if (error || !data) {
+          setError(error);
+          loadingState.set("possible-interactive-filters", false);
+          console.error("Could not fetch possible filters", error);
+
+          return;
+        }
+
+        setError(undefined);
+        loadingState.set("possible-interactive-filters", false);
+
+        const filters = Object.assign(
+          Object.fromEntries(
+            data.possibleFilters.map((d) => {
+              const interactiveFilter = interactiveFilters[d.iri];
+              return [
+                d.iri,
+                {
+                  type: d.type,
+                  value:
+                    // We want to keep the none filter without overriding them.
+                    interactiveFilter?.type === "single" &&
+                    interactiveFilter.value === FIELD_VALUE_NONE
+                      ? FIELD_VALUE_NONE
+                      : d.value,
+                },
+              ];
+            })
+          ) as Filters,
+          mappedFilters
+        );
+
+        // We need to get the values dynamically, as they can get updated by
+        // useSyncInteractiveFilters and this callback runs with old value.
+        const dataFilters = { ...IFRaw.getState().dataFilters };
+        const filtersToUpdate = Object.fromEntries(
+          Object.entries(filters).filter(
+            ([k, v]) => k in dataFilters && v.type === "single"
+          )
+        );
+
+        if (
+          !isEqual(filtersToUpdate, interactiveFilters) &&
+          !isEmpty(filtersToUpdate)
+        ) {
+          for (const [k, v] of Object.entries(filters)) {
+            if (k in dataFilters && v.type === "single") {
+              dataFilters[k] = v;
+            }
+          }
+
+          setDataFilters(dataFilters);
+        }
+      });
     };
 
     run();
@@ -622,18 +659,13 @@ const useEnsurePossibleInteractiveFilters = (
     client,
     dispatch,
     chartConfig.fields,
-    chartConfig.filters,
-    dataSet,
+    chartConfig.cubes,
     dataSource.type,
     dataSource.url,
-    chartConfig,
     setDataFilters,
-    dataFilters,
-    unmappedQueryFilters,
-    mappedFilters,
     loadingState,
-    interactiveFilters,
     IFRaw,
+    filtersByCubeIri,
   ]);
 
   return { error };

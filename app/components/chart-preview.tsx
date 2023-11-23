@@ -5,7 +5,6 @@ import Head from "next/head";
 import { useMemo } from "react";
 
 import { DataSetTable } from "@/browse/datatable";
-import { extractChartConfigComponentIris } from "@/charts/shared/chart-helpers";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
 import { ChartFootnotes } from "@/components/chart-footnotes";
 import {
@@ -25,22 +24,19 @@ import {
 import {
   useDataCubesComponentsQuery,
   useDataCubesMetadataQuery,
-} from "@/graphql/query-hooks";
+} from "@/graphql/hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import { useLocale } from "@/locales/use-locale";
 import useEvent from "@/utils/use-event";
 
 type ChartPreviewProps = {
-  dataSetIri: string;
   dataSource: DataSource;
 };
 
 export const ChartPreview = (props: ChartPreviewProps) => {
-  const { dataSetIri, dataSource } = props;
-
   return (
     <ChartTablePreviewProvider>
-      <ChartPreviewInner dataSetIri={dataSetIri} dataSource={dataSource} />
+      <ChartPreviewInner {...props} />
     </ChartTablePreviewProvider>
   );
 };
@@ -63,7 +59,7 @@ const useStyles = makeStyles<Theme>({
 });
 
 export const ChartPreviewInner = (props: ChartPreviewProps) => {
-  const { dataSetIri, dataSource } = props;
+  const { dataSource } = props;
   const [state, dispatch] = useConfiguratorState();
   const chartConfig = getChartConfig(state);
   const locale = useLocale();
@@ -76,15 +72,17 @@ export const ChartPreviewInner = (props: ChartPreviewProps) => {
   const [{ data: metadata }] = useDataCubesMetadataQuery({
     variables: {
       ...commonQueryVariables,
-      filters: [{ iri: dataSetIri }],
+      cubeFilters: chartConfig.cubes.map((cube) => ({ iri: cube.iri })),
     },
   });
-  const componentIris = extractChartConfigComponentIris(chartConfig);
+  const componentIris = undefined;
   const [{ data: components }] = useDataCubesComponentsQuery({
     variables: {
       ...commonQueryVariables,
-      // FIXME: make a distinction per cube
-      filters: [{ iri: dataSetIri, componentIris }],
+      cubeFilters: chartConfig.cubes.map((cube) => ({
+        iri: cube.iri,
+        componentIris,
+      })),
     },
   });
   const {
@@ -95,7 +93,8 @@ export const ChartPreviewInner = (props: ChartPreviewProps) => {
   } = useChartTablePreview();
 
   const handleToggleTableView = useEvent(() => setIsTablePreview((c) => !c));
-
+  const dimensions = components?.dataCubesComponents.dimensions ?? [];
+  const measures = components?.dataCubesComponents.measures ?? [];
   const allComponents = useMemo(() => {
     if (!components?.dataCubesComponents) {
       return [];
@@ -168,7 +167,8 @@ export const ChartPreviewInner = (props: ChartPreviewProps) => {
                 </Typography>
 
                 <MetadataPanel
-                  datasetIri={dataSetIri}
+                  // FIXME: adapt to design
+                  datasetIri={chartConfig.cubes[0].iri}
                   dataSource={dataSource}
                   dimensions={allComponents}
                   top={96}
@@ -213,25 +213,26 @@ export const ChartPreviewInner = (props: ChartPreviewProps) => {
                     width: "100%",
                     maxHeight: "100%",
                   }}
-                  dataSetIri={dataSetIri}
                   dataSource={dataSource}
                   chartConfig={chartConfig}
                 />
               ) : (
                 <ChartWithFilters
-                  dataSet={dataSetIri}
                   dataSource={dataSource}
                   componentIris={componentIris}
                   chartConfig={chartConfig}
+                  dimensions={dimensions}
+                  measures={measures}
                 />
               )}
             </Box>
             {chartConfig && (
               <ChartFootnotes
-                dataSetIri={dataSetIri}
                 dataSource={dataSource}
                 chartConfig={chartConfig}
                 onToggleTableView={handleToggleTableView}
+                dimensions={dimensions}
+                measures={measures}
               />
             )}
             <DebugPanel configurator interactiveFilters />

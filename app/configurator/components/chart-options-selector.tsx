@@ -14,6 +14,7 @@ import {
   getChartSpec,
 } from "@/charts/chart-config-ui-options";
 import { getMap } from "@/charts/map/ref";
+import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import { LegendSymbol } from "@/charts/shared/legend-color";
 import Flex from "@/components/flex";
 import { FieldSetLegend, Radio, Select } from "@/components/form";
@@ -82,7 +83,7 @@ import {
 import {
   useDataCubesComponentsQuery,
   useDataCubesObservationsQuery,
-} from "@/graphql/query-hooks";
+} from "@/graphql/hooks";
 import { NumericalMeasure } from "@/graphql/resolver-types";
 import SvgIcExclamation from "@/icons/components/IcExclamation";
 import { useLocale } from "@/locales/use-locale";
@@ -96,20 +97,31 @@ export const ChartOptionsSelector = ({
   const { dataSource } = state;
   const { activeField } = chartConfig;
   const locale = useLocale();
-  const commonVariables = {
-    sourceType: dataSource.type,
-    sourceUrl: dataSource.url,
-    locale,
-    filters: [{ iri: chartConfig.dataSet, filters: chartConfig.filters }],
-  };
-  const [{ data: componentsData }] = useDataCubesComponentsQuery({
-    variables: commonVariables,
-  });
-  const [{ data: observationsData }] = useDataCubesObservationsQuery({
-    variables: commonVariables,
-  });
+  const [{ data: componentsData, fetching: fetchingComponents }] =
+    useDataCubesComponentsQuery({
+      variables: {
+        sourceType: dataSource.type,
+        sourceUrl: dataSource.url,
+        locale,
+        cubeFilters: chartConfig.cubes.map((cube) => ({ iri: cube.iri })),
+      },
+    });
   const dimensions = componentsData?.dataCubesComponents.dimensions;
   const measures = componentsData?.dataCubesComponents.measures;
+  const queryFilters = useQueryFilters({
+    chartConfig,
+    dimensions: dimensions ?? [],
+    measures: measures ?? [],
+  });
+  const [{ data: observationsData }] = useDataCubesObservationsQuery({
+    variables: {
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+      cubeFilters: queryFilters ?? [],
+    },
+    pause: fetchingComponents || !queryFilters,
+  });
   const observations = observationsData?.dataCubesObservations?.data;
 
   return dimensions && measures && observations ? (
@@ -1188,7 +1200,6 @@ const ChartFieldMultiFilter = ({
           !isMeasure(component) && (
             <DimensionValuesMultiFilter
               dimension={component}
-              dataSetIri={chartConfig.dataSet}
               field={field}
               colorComponent={colorComponent ?? component}
               // If colorType is defined, we are dealing with color field and
@@ -1602,8 +1613,6 @@ const ChartFieldColorComponent = (props: ChartFieldColorComponentProps) => {
           colorComponent &&
           !isMeasure(colorComponent) ? (
             <DimensionValuesMultiFilter
-              key={component.iri}
-              dataSetIri={chartConfig.dataSet}
               dimension={colorComponent}
               field={field}
               colorConfigPath="color"

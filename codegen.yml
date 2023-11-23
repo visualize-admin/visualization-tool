@@ -22,9 +22,9 @@ generates:
         Filters: "../configurator#QueryFilters"
         GeoShape: "../domain/data#GeoShape"
         SearchCube: "../domain/data#SearchCube"
-        DataCubesComponents: "../domain/data#DataCubesComponents"
+        DataCubeComponents: "../domain/data#DataCubeComponents"
         DataCubeMetadata: "../domain/data#DataCubeMetadata"
-        DataCubesObservations: "../domain/data#DataCubesObservations"
+        DataCubeObservations: "../domain/data#DataCubeObservations"
   app/graphql/resolver-types.ts:
     plugins:
       - "typescript"
@@ -42,9 +42,9 @@ generates:
         Filters: "../configurator#Filters"
         GeoShape: "../domain/data#GeoShape"
         SearchCube: "../domain/data#SearchCube"
-        DataCubesComponents: "../domain/data#DataCubesComponents"
+        DataCubeComponents: "../domain/data#DataCubeComponents"
         DataCubeMetadata: "../domain/data#DataCubeMetadata"
-        DataCubesObservations: "../domain/data#DataCubesObservations"
+        DataCubeObservations: "../domain/data#DataCubeObservations"
       mappers:
         DataCube: "./shared-types#ResolvedDataCube"
         ObservationsQuery: "./shared-types#ResolvedObservationsQuery"

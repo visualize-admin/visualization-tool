@@ -11,10 +11,8 @@ import { DataDownloadMenu, RunSparqlQuery } from "@/components/data-download";
 import Flex from "@/components/flex";
 import { HintRed, Loading, LoadingDataError } from "@/components/hint";
 import { DataSource } from "@/config-types";
-import {
-  useDataCubePreviewQuery,
-  useDataCubesComponentsQuery,
-} from "@/graphql/query-hooks";
+import { useDataCubesComponentsQuery } from "@/graphql/hooks";
+import { useDataCubePreviewQuery } from "@/graphql/query-hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import { useLocale } from "@/locales/use-locale";
 
@@ -94,6 +92,7 @@ export const DataSetPreview = ({
 }) => {
   const footnotesClasses = useFootnotesStyles({ useMarginTop: false });
   const locale = useLocale();
+  const filters = [{ iri: dataSetIri }];
   const [
     { data: previewData, fetching: fetchingPreview, error: previewError },
   ] = useDataCubePreviewQuery({
@@ -115,7 +114,7 @@ export const DataSetPreview = ({
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
-      filters: [{ iri: dataSetIri }],
+      cubeFilters: filters,
     },
   });
   const classes = useStyles({
@@ -196,9 +195,9 @@ export const DataSetPreview = ({
           <Flex className={classes.footnotesWrapper}>
             <Flex className={footnotesClasses.actions}>
               <DataDownloadMenu
-                dataSetIri={dataSetIri}
                 dataSource={dataSource}
                 title={dataCubeByIri.title}
+                filters={filters}
               />
               {dataCubeByIri.observations.sparqlEditorUrl && (
                 <RunSparqlQuery

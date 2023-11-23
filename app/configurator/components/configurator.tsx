@@ -22,12 +22,11 @@ import {
   PanelLeftWrapper,
   PanelMiddleWrapper,
 } from "@/configurator/components/layout";
+import { ChartConfiguratorTable } from "@/configurator/table/table-chart-configurator";
 import SvgIcChevronLeft from "@/icons/components/IcChevronLeft";
 import { useDataSourceStore } from "@/stores/data-source";
 import { InteractiveFiltersProvider } from "@/stores/interactive-filters";
 import useEvent from "@/utils/use-event";
-
-import { ChartConfiguratorTable } from "../table/table-chart-configurator";
 
 const BackContainer = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -92,7 +91,7 @@ const ConfigureChartStep = () => {
       {
         pathname: `/browse`,
         query: {
-          dataset: chartConfig.dataSet,
+          dataset: chartConfig.cubes[0].iri,
         },
       },
       undefined,
@@ -136,10 +135,7 @@ const ConfigureChartStep = () => {
       </PanelLeftWrapper>
       <PanelMiddleWrapper>
         <ChartPanel>
-          <ChartPreview
-            dataSetIri={chartConfig.dataSet}
-            dataSource={state.dataSource}
-          />
+          <ChartPreview dataSource={state.dataSource} />
         </ChartPanel>
       </PanelMiddleWrapper>
       <ConfiguratorDrawer
@@ -174,7 +170,6 @@ const ConfigureChartStep = () => {
 
 const PublishStep = () => {
   const [state] = useConfiguratorState();
-  const chartConfig = getChartConfig(state);
 
   if (state.state !== "PUBLISHING") {
     return null;
@@ -184,10 +179,7 @@ const PublishStep = () => {
     <PanelMiddleWrapper>
       <ChartPanel>
         <InteractiveFiltersProvider>
-          <ChartPreview
-            dataSetIri={chartConfig.dataSet}
-            dataSource={state.dataSource}
-          />
+          <ChartPreview dataSource={state.dataSource} />
         </InteractiveFiltersProvider>
       </ChartPanel>
     </PanelMiddleWrapper>

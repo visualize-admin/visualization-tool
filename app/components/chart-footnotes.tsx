@@ -3,18 +3,16 @@ import { Box, Button, Link, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { PropsWithChildren, useEffect, useState } from "react";
 
-import {
-  extractChartConfigComponentIris,
-  useQueryFilters,
-} from "@/charts/shared/chart-helpers";
+import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import { useChartTablePreview } from "@/components/chart-table-preview";
 import { DataDownloadMenu, RunSparqlQuery } from "@/components/data-download";
 import { ChartConfig, DataSource } from "@/configurator";
+import { Dimension, Measure } from "@/domain/data";
 import { useTimeFormatLocale } from "@/formatters";
 import {
   useDataCubesMetadataQuery,
   useDataCubesObservationsQuery,
-} from "@/graphql/query-hooks";
+} from "@/graphql/hooks";
 import { Icon, getChartIcon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
 import { useEmbedOptions } from "@/utils/embed";
@@ -41,16 +39,18 @@ export const useFootnotesStyles = makeStyles<Theme, { useMarginTop: boolean }>(
 );
 
 export const ChartFootnotes = ({
-  dataSetIri,
   dataSource,
   chartConfig,
+  dimensions,
+  measures,
   configKey,
   onToggleTableView,
   visualizeLinkText,
 }: {
-  dataSetIri: string;
   dataSource: DataSource;
   chartConfig: ChartConfig;
+  dimensions?: Dimension[];
+  measures?: Measure[];
   configKey?: string;
   onToggleTableView: () => void;
   visualizeLinkText?: JSX.Element;
@@ -69,8 +69,11 @@ export const ChartFootnotes = ({
     setShareUrl(`${window.location.origin}/${locale}/v/${configKey}`);
   }, [configKey, locale]);
 
-  const filters = useQueryFilters({ chartConfig });
-  const componentIris = extractChartConfigComponentIris(chartConfig);
+  const filters = useQueryFilters({
+    chartConfig,
+    dimensions,
+    measures,
+  });
   const commonQueryVariables = {
     sourceType: dataSource.type,
     sourceUrl: dataSource.url,
@@ -79,17 +82,18 @@ export const ChartFootnotes = ({
   const [{ data }] = useDataCubesMetadataQuery({
     variables: {
       ...commonQueryVariables,
-      filters: [{ iri: dataSetIri }],
+      cubeFilters: chartConfig.cubes.map((cube) => ({ iri: cube.iri })),
     },
   });
-  // Data for data download
-  const [{ data: visibleData }] = useDataCubesObservationsQuery({
+  const [{ data: downloadData }] = useDataCubesObservationsQuery({
     variables: {
       ...commonQueryVariables,
-      filters: [{ iri: dataSetIri, componentIris, filters }],
+      cubeFilters: filters ?? [],
     },
+    pause: !filters,
   });
-  const sparqlEditorUrls = visibleData?.dataCubesObservations?.sparqlEditorUrls;
+  const sparqlEditorUrls =
+    downloadData?.dataCubesObservations?.sparqlEditorUrls;
   const formatLocale = useTimeFormatLocale();
   const [
     {
@@ -194,7 +198,6 @@ export const ChartFootnotes = ({
                 <Box className={classes.actions}>
                   {showDownload !== false ? (
                     <DataDownloadMenu
-                      dataSetIri={dataSetIri}
                       dataSource={dataSource}
                       title={dataCubeMetadata.title}
                       filters={filters}

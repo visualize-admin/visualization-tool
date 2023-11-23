@@ -11,29 +11,28 @@ import {
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
 import { OnlyNegativeDataHint } from "@/components/hint";
-import { DataSource, PieConfig, QueryFilters } from "@/config-types";
+import { DataSource, PieConfig, useChartConfigFilters } from "@/config-types";
 import { TimeSlider } from "@/configurator/interactive-filters/time-slider";
 import {
   useDataCubesComponentsQuery,
   useDataCubesMetadataQuery,
   useDataCubesObservationsQuery,
-} from "@/graphql/query-hooks";
+} from "@/graphql/hooks";
+import { DataCubeObservationFilter } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 
 import { ChartProps } from "../shared/ChartProps";
 
 export const ChartPieVisualization = ({
-  dataSetIri,
   dataSource,
   componentIris,
   chartConfig,
   queryFilters,
 }: {
-  dataSetIri: string;
   dataSource: DataSource;
   componentIris: string[] | undefined;
   chartConfig: PieConfig;
-  queryFilters: QueryFilters;
+  queryFilters?: DataCubeObservationFilter[];
 }) => {
   const locale = useLocale();
   const commonQueryVariables = {
@@ -44,20 +43,24 @@ export const ChartPieVisualization = ({
   const [metadataQuery] = useDataCubesMetadataQuery({
     variables: {
       ...commonQueryVariables,
-      filters: [{ iri: dataSetIri }],
+      cubeFilters: chartConfig.cubes.map((cube) => ({ iri: cube.iri })),
     },
   });
   const [componentsQuery] = useDataCubesComponentsQuery({
     variables: {
       ...commonQueryVariables,
-      filters: [{ iri: dataSetIri, componentIris }],
+      cubeFilters: chartConfig.cubes.map((cube) => ({
+        iri: cube.iri,
+        componentIris,
+      })),
     },
   });
   const [observationsQuery] = useDataCubesObservationsQuery({
     variables: {
       ...commonQueryVariables,
-      filters: [{ iri: dataSetIri, componentIris, filters: queryFilters }],
+      cubeFilters: queryFilters ?? [],
     },
+    pause: !queryFilters,
   });
 
   return (
@@ -74,10 +77,11 @@ export const ChartPieVisualization = ({
 export const ChartPie = memo(
   (props: ChartProps<PieConfig> & { published: boolean }) => {
     const { chartConfig, observations, dimensions, published } = props;
-    const { fields, filters, interactiveFiltersConfig } = chartConfig;
+    const { fields, interactiveFiltersConfig } = chartConfig;
     const somePositive = observations.some(
       (d) => (d[fields?.y?.componentIri] as number) > 0
     );
+    const filters = useChartConfigFilters(chartConfig);
 
     if (!somePositive) {
       return <OnlyNegativeDataHint />;

@@ -527,6 +527,7 @@ export const getCubeObservations = async ({
   locale,
   sparqlClient,
   filters,
+  preview,
   limit,
   raw,
   componentIris,
@@ -537,6 +538,10 @@ export const getCubeObservations = async ({
   sparqlClient: ParsingClient;
   /** Observations filters that should be considered */
   filters?: Filters | null;
+  /** Enable performance preview mode. Useful when there is no need to filter or
+   * sort the observations to significantly improve performance.
+   */
+  preview?: boolean | null;
   /** Limit on the number of observations returned */
   limit?: number | null;
   /** Returns IRIs instead of labels for NamedNodes  */
@@ -606,6 +611,7 @@ export const getCubeObservations = async ({
   });
 
   const { query, observationsRaw } = await fetchViewObservations({
+    preview,
     limit,
     observationsView,
     disableDistinct: !filters || Object.keys(filters).length === 0,
@@ -872,23 +878,35 @@ const buildFilters = ({
 type ObservationRaw = Record<string, Literal | NamedNode>;
 
 async function fetchViewObservations({
+  preview,
   limit,
   observationsView,
   disableDistinct,
 }: {
+  preview?: boolean | null;
   limit?: number | null;
   observationsView: View;
   disableDistinct: boolean;
 }) {
+  /**
+   * Add LIMIT to query
+   */
+  if (!preview && limit !== undefined) {
+    // From https://github.com/zazuko/cube-creator/blob/a32a90ff93b2c6c1c5ab8fd110a9032a8d179670/apis/core/lib/domain/observations/lib/index.ts#L41
+    observationsView.ptr.addOut(ns.cubeView.projection, (projection: $FixMe) =>
+      projection.addOut(ns.cubeView.limit, limit)
+    );
+  }
+
   const fullQuery = observationsView.observationsQuery({ disableDistinct });
   const query = (
-    limit ? fullQuery.previewQuery({ limit }) : fullQuery.query
+    preview && limit ? fullQuery.previewQuery({ limit }) : fullQuery.query
   ).toString();
 
   let observationsRaw: PromiseValue<ObservationRaw[]> | undefined;
 
   try {
-    observationsRaw = await (limit
+    observationsRaw = await (preview && limit
       ? observationsView.preview({ limit })
       : observationsView.observations({ disableDistinct }));
   } catch (e) {

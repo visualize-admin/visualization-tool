@@ -49,7 +49,12 @@ export const states: ConfiguratorState[] = [
             it: "",
           },
         },
-        dataSet: "",
+        cubes: [
+          {
+            iri: "",
+            filters: {},
+          },
+        ],
         chartType: "column",
         fields: {
           x: {
@@ -60,7 +65,6 @@ export const states: ConfiguratorState[] = [
             componentIri: "foo",
           },
         },
-        filters: {},
         interactiveFiltersConfig: {
           legend: {
             active: false,
@@ -841,9 +845,13 @@ export const tableConfig: TableConfig = {
       it: "",
     },
   },
-  dataSet: "",
+  cubes: [
+    {
+      iri: "",
+      filters: {},
+    },
+  ],
   chartType: "table",
-  filters: {},
   interactiveFiltersConfig: undefined,
   settings: { showSearch: true, showAllRows: true },
   sorting: [

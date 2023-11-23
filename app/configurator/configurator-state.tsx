@@ -6,7 +6,7 @@ import sortBy from "lodash/sortBy";
 import unset from "lodash/unset";
 import { useRouter } from "next/router";
 import { Dispatch, createContext, useContext, useEffect, useMemo } from "react";
-import { Client, useClient } from "urql";
+import { useClient } from "urql";
 import { Reducer, useImmerReducer } from "use-immer";
 
 import {
@@ -34,7 +34,6 @@ import {
   ConfiguratorStateSelectingDataSet,
   DataSource,
   FilterValue,
-  FilterValueMultiValues,
   Filters,
   GenericField,
   GenericFields,
@@ -42,6 +41,7 @@ import {
   InteractiveFiltersConfig,
   decodeConfiguratorState,
   getChartConfig,
+  getChartConfigFilters,
   isAreaConfig,
   isColorFieldInConfig,
   isTableConfig,
@@ -53,18 +53,20 @@ import { toggleInteractiveFilterDataDimension } from "@/configurator/interactive
 import { ParsedConfig } from "@/db/config";
 import {
   Component,
-  DataCubesComponents,
+  DataCubeComponents,
   Dimension,
   DimensionValue,
+  ObservationValue,
   isGeoDimension,
   isMeasure,
 } from "@/domain/data";
 import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
 import { client } from "@/graphql/client";
+import { executeDataCubesComponentsQuery } from "@/graphql/hooks";
 import {
-  DataCubesComponentsDocument,
-  DataCubesComponentsQuery,
-  DataCubesComponentsQueryVariables,
+  DataCubeComponentsDocument,
+  DataCubeComponentsQuery,
+  DataCubeComponentsQueryVariables,
 } from "@/graphql/query-hooks";
 import { Locale } from "@/locales/locales";
 import { useLocale } from "@/locales/use-locale";
@@ -94,7 +96,7 @@ export type ConfiguratorStateAction =
     }
   | {
       type: "STEP_NEXT";
-      dataCubesComponents: DataCubesComponents;
+      dataCubesComponents: DataCubeComponents;
     }
   | {
       type: "STEP_PREVIOUS";
@@ -192,12 +194,13 @@ export type ConfiguratorStateAction =
       type: "CHART_CONFIG_REPLACED";
       value: {
         chartConfig: ChartConfig;
-        dataCubesComponents: DataCubesComponents;
+        dataCubesComponents: DataCubeComponents;
       };
     }
   | {
       type: "CHART_CONFIG_FILTER_SET_SINGLE";
       value: {
+        cubeIri: string;
         dimensionIri: string;
         value: string;
       };
@@ -205,18 +208,21 @@ export type ConfiguratorStateAction =
   | {
       type: "CHART_CONFIG_FILTER_REMOVE_SINGLE";
       value: {
+        cubeIri: string;
         dimensionIri: string;
       };
     }
   | {
       type: "CHART_CONFIG_FILTERS_UPDATE";
       value: {
+        cubeIri: string;
         filters: Filters;
       };
     }
   | {
       type: "CHART_CONFIG_FILTER_SET_MULTI";
       value: {
+        cubeIri: string;
         dimensionIri: string;
         values: string[];
       };
@@ -232,24 +238,9 @@ export type ConfiguratorStateAction =
       };
     }
   | {
-      type: "CHART_CONFIG_FILTER_ADD_MULTI";
-      value: {
-        dimensionIri: string;
-        values: string[];
-        allValues: string[];
-      };
-    }
-  | {
-      type: "CHART_CONFIG_FILTER_REMOVE_MULTI";
-      value: {
-        dimensionIri: string;
-        values: string[];
-        allValues: string[];
-      };
-    }
-  | {
       type: "CHART_CONFIG_FILTER_SET_RANGE";
       value: {
+        cubeIri: string;
         dimensionIri: string;
         from: string;
         to: string;
@@ -258,18 +249,7 @@ export type ConfiguratorStateAction =
   | {
       type: "CHART_CONFIG_FILTER_RESET_RANGE";
       value: {
-        dimensionIri: string;
-      };
-    }
-  | {
-      type: "CHART_CONFIG_FILTER_RESET_MULTI";
-      value: {
-        dimensionIri: string;
-      };
-    }
-  | {
-      type: "CHART_CONFIG_FILTER_SET_NONE_MULTI";
-      value: {
+        cubeIri: string;
         dimensionIri: string;
       };
     }
@@ -355,38 +335,74 @@ const EMPTY_STATE: ConfiguratorStateSelectingDataSet = {
 
 const getCachedComponents = (
   draft: ConfiguratorStateConfiguringChart,
-  dataSet: string,
+  cubeIris: string[],
   locale: Locale
-): DataCubesComponents | undefined => {
-  const componentsQuery = client.readQuery<
-    DataCubesComponentsQuery,
-    DataCubesComponentsQueryVariables
-  >(DataCubesComponentsDocument, {
-    sourceType: draft.dataSource.type,
-    sourceUrl: draft.dataSource.url,
-    locale,
-    filters: [{ iri: dataSet }],
-  });
+): DataCubeComponents | undefined => {
+  return cubeIris.reduce<DataCubeComponents>(
+    (acc, cubeIri) => {
+      const componentsQuery = client.readQuery<
+        DataCubeComponentsQuery,
+        DataCubeComponentsQueryVariables
+      >(DataCubeComponentsDocument, {
+        sourceType: draft.dataSource.type,
+        sourceUrl: draft.dataSource.url,
+        locale,
+        cubeFilter: { iri: cubeIri },
+      });
 
-  return componentsQuery?.data?.dataCubesComponents;
+      if (componentsQuery?.data?.dataCubeComponents) {
+        acc.dimensions.push(
+          ...componentsQuery.data.dataCubeComponents.dimensions
+        );
+        acc.measures.push(...componentsQuery.data.dataCubeComponents.measures);
+      }
+
+      return acc;
+    },
+    { dimensions: [], measures: [] }
+  );
 };
 
 export const getFilterValue = (
   state: ConfiguratorState,
   dimensionIri: string
 ): FilterValue | undefined => {
-  return state.state !== "INITIAL" && state.state !== "SELECTING_DATASET"
-    ? getChartConfig(state).filters[dimensionIri]
-    : undefined;
+  if (state.state === "INITIAL" || state.state === "SELECTING_DATASET") {
+    return;
+  }
+
+  const chartConfig = getChartConfig(state);
+  const filters = getChartConfigFilters(chartConfig.cubes);
+
+  return filters[dimensionIri];
 };
 
 export const moveFilterField = produce(
-  (chartConfig: ChartConfig, { dimensionIri, delta, possibleValues }) => {
+  (
+    chartConfig: ChartConfig,
+    {
+      dimension,
+      delta,
+      possibleValues,
+    }: {
+      dimension: Dimension;
+      delta: number;
+      possibleValues: ObservationValue[];
+    }
+  ) => {
+    const cube = chartConfig.cubes.find(
+      (cube) => cube.iri === dimension.cubeIri
+    );
+
+    if (!cube) {
+      return;
+    }
+
     // Use getOwnPropertyNames instead of keys since the spec ensures that
     // the order of the keys received is in insertion order
     // https://262.ecma-international.org/6.0/#sec-ordinary-object-internal-methods-and-internal-slots-ownpropertykeys
-    const keys = Object.getOwnPropertyNames(chartConfig.filters);
-    const fieldIndex = Object.keys(chartConfig.filters).indexOf(dimensionIri);
+    const keys = Object.getOwnPropertyNames(cube.filters);
+    const fieldIndex = Object.keys(cube.filters).indexOf(dimension.iri);
 
     if (fieldIndex === 0 && delta === -1) {
       return;
@@ -403,7 +419,7 @@ export const moveFilterField = produce(
     const replacedIndex =
       fieldIndex === -1 ? keys.length - 1 : fieldIndex + delta;
     const replaced = keys[replacedIndex];
-    keys[replacedIndex] = dimensionIri;
+    keys[replacedIndex] = dimension.iri;
 
     if (fieldIndex === -1) {
       keys.push(replaced);
@@ -411,10 +427,10 @@ export const moveFilterField = produce(
       keys[fieldIndex] = replaced;
     }
 
-    chartConfig.filters = Object.fromEntries(
+    cube.filters = Object.fromEntries(
       keys.map((k) => [
         k,
-        chartConfig.filters[k] ?? { type: "single", value: possibleValues[0] },
+        cube.filters[k] ?? { type: "single", value: possibleValues[0] },
       ])
     );
   }
@@ -422,7 +438,7 @@ export const moveFilterField = produce(
 
 export const deriveFiltersFromFields = produce(
   (chartConfig: ChartConfig, components: Component[]) => {
-    const { chartType, fields, filters } = chartConfig;
+    const { chartType, fields, cubes } = chartConfig;
 
     if (chartType === "table") {
       // As dimensions in tables behave differently than in other chart types,
@@ -432,37 +448,49 @@ export const deriveFiltersFromFields = produce(
       const isHidden = (iri: string) => hiddenFieldIris.has(iri);
       const isGrouped = (iri: string) => groupedDimensionIris.has(iri);
 
-      components.forEach((component) => {
-        if (isMeasure(component)) {
-          return;
-        }
+      cubes.forEach((cube) => {
+        const cubeComponents = components.filter(
+          (component) => component.cubeIri === cube.iri
+        );
 
-        applyTableDimensionToFilters({
-          filters,
-          dimension: component,
-          isHidden: isHidden(component.iri),
-          isGrouped: isGrouped(component.iri),
+        cubeComponents.forEach((component) => {
+          if (isMeasure(component)) {
+            return;
+          }
+
+          applyTableDimensionToFilters({
+            filters: cube.filters,
+            dimension: component,
+            isHidden: isHidden(component.iri),
+            isGrouped: isGrouped(component.iri),
+          });
         });
       });
     } else {
       const fieldDimensionIris = getFieldComponentIris(fields);
       const isField = (iri: string) => fieldDimensionIris.has(iri);
 
-      // Apply hierarchical dimensions first
-      const sortedComponents = sortBy(
-        components,
-        (d) => (isGeoDimension(d) ? -1 : 1),
-        (d) => (isMeasure(d) ? 1 : d.hierarchy ? -1 : 1)
-      );
-      sortedComponents.forEach((component) => {
-        if (isMeasure(component)) {
-          return;
-        }
+      cubes.forEach((cube) => {
+        const cubeComponents = components.filter(
+          (component) => component.cubeIri === cube.iri
+        );
+        // Apply hierarchical dimensions first
+        const sortedCubeComponents = sortBy(
+          cubeComponents,
+          (d) => (isGeoDimension(d) ? -1 : 1),
+          (d) => (isMeasure(d) ? 1 : d.hierarchy ? -1 : 1)
+        );
 
-        applyNonTableDimensionToFilters({
-          filters,
-          dimension: component,
-          isField: isField(component.iri),
+        sortedCubeComponents.forEach((component) => {
+          if (isMeasure(component)) {
+            return;
+          }
+
+          applyNonTableDimensionToFilters({
+            filters: cube.filters,
+            dimension: component,
+            isField: isField(component.iri),
+          });
         });
       });
     }
@@ -589,15 +617,15 @@ export const applyNonTableDimensionToFilters = ({
 const transitionStepNext = (
   draft: ConfiguratorState,
   options: {
-    dataSet?: string;
-    dataCubesComponents: DataCubesComponents;
+    cubeIris?: string[];
+    dataCubesComponents: DataCubeComponents;
   }
 ): ConfiguratorState => {
-  const { dataSet, dataCubesComponents } = options;
+  const { cubeIris, dataCubesComponents } = options;
 
   switch (draft.state) {
     case "SELECTING_DATASET":
-      if (dataSet) {
+      if (cubeIris) {
         const possibleChartTypes = getPossibleChartTypes({
           dimensions: dataCubesComponents.dimensions,
           measures: dataCubesComponents.measures,
@@ -605,7 +633,7 @@ const transitionStepNext = (
         const chartConfig = deriveFiltersFromFields(
           getInitialConfig({
             chartType: possibleChartTypes[0],
-            dataSet,
+            iris: cubeIris,
             dimensions: dataCubesComponents.dimensions,
             measures: dataCubesComponents.measures,
           }),
@@ -705,21 +733,22 @@ export const getNonGenericFieldValues = (
 
 /** Get all filters by mapping status.
  *
- * We need to handle some fields differently
- * due to the way the chart config is structured at the moment (colorField) is a
- * subfield of areaLayer and symbolLayer fields.
+ * We need to handle some fields differently due to the way the chart config
+ * is structured at the moment (colorField) is a subfield of areaLayer and
+ * symbolLayer fields.
  */
-export const getFiltersByMappingStatus = (chartConfig: ChartConfig) => {
+export const getFiltersByMappingStatus = (
+  chartConfig: ChartConfig,
+  cubeIri?: string
+) => {
   const genericFieldValues = Object.values(chartConfig.fields).map(
     (d) => d.componentIri
   );
   const nonGenericFieldValues = getNonGenericFieldValues(chartConfig);
   const iris = new Set([...genericFieldValues, ...nonGenericFieldValues]);
-  const mappedFilters = pickBy(chartConfig.filters, (_, iri) => iris.has(iri));
-  const unmappedFilters = pickBy(
-    chartConfig.filters,
-    (_, iri) => !iris.has(iri)
-  );
+  const filters = getChartConfigFilters(chartConfig.cubes, cubeIri);
+  const mappedFilters = pickBy(filters, (_, iri) => iris.has(iri));
+  const unmappedFilters = pickBy(filters, (_, iri) => !iris.has(iri));
 
   return { mappedFilters, mappedFiltersIris: iris, unmappedFilters };
 };
@@ -757,7 +786,7 @@ export const handleChartFieldChanged = (
   const f = get(chartConfig.fields, field);
   const dataCubesComponents = getCachedComponents(
     draft,
-    chartConfig.dataSet,
+    chartConfig.cubes.map((cube) => cube.iri),
     locale
   );
   const dimensions = dataCubesComponents?.dimensions ?? [];
@@ -811,7 +840,7 @@ export const handleChartOptionChanged = (
     const updatePath = field === null ? path : `fields["${field}"].${path}`;
     const dataCubesComponents = getCachedComponents(
       draft,
-      chartConfig.dataSet,
+      chartConfig.cubes.map((cube) => cube.iri),
       locale
     );
     const dimensions = dataCubesComponents?.dimensions ?? [];
@@ -924,7 +953,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         const chartConfig = getChartConfig(draft, chartKey);
         const dataCubesComponents = getCachedComponents(
           draft,
-          chartConfig.dataSet,
+          chartConfig.cubes.map((cube) => cube.iri),
           locale
         );
         const dimensions = dataCubesComponents?.dimensions;
@@ -967,7 +996,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         delete (chartConfig.fields as GenericFields)[action.value.field];
         const dataCubesComponents = getCachedComponents(
           draft,
-          chartConfig.dataSet,
+          chartConfig.cubes.map((cube) => cube.iri),
           action.value.locale
         );
         const dimensions = dataCubesComponents?.dimensions ?? [];
@@ -1079,27 +1108,35 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
     case "CHART_CONFIG_FILTER_SET_SINGLE":
       if (draft.state === "CONFIGURING_CHART") {
-        const { dimensionIri, value } = action.value;
+        const { cubeIri, dimensionIri, value } = action.value;
         const chartConfig = getChartConfig(draft);
-        chartConfig.filters[dimensionIri] = {
-          type: "single",
-          value,
-        };
+        const cube = chartConfig.cubes.find((cube) => cube.iri === cubeIri);
+
+        if (cube) {
+          cube.filters[dimensionIri] = {
+            type: "single",
+            value,
+          };
+        }
       }
 
       return draft;
 
     case "CHART_CONFIG_FILTER_REMOVE_SINGLE":
       if (draft.state === "CONFIGURING_CHART") {
-        const { dimensionIri } = action.value;
+        const { cubeIri, dimensionIri } = action.value;
         const chartConfig = getChartConfig(draft);
-        delete chartConfig.filters[dimensionIri];
-        const newIFConfig = toggleInteractiveFilterDataDimension(
-          chartConfig.interactiveFiltersConfig,
-          dimensionIri,
-          false
-        );
-        chartConfig.interactiveFiltersConfig = newIFConfig;
+        const cube = chartConfig.cubes.find((cube) => cube.iri === cubeIri);
+
+        if (cube) {
+          delete cube.filters[dimensionIri];
+          const newIFConfig = toggleInteractiveFilterDataDimension(
+            chartConfig.interactiveFiltersConfig,
+            dimensionIri,
+            false
+          );
+          chartConfig.interactiveFiltersConfig = newIFConfig;
+        }
       }
 
       return draft;
@@ -1109,109 +1146,54 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
     case "CHART_CONFIG_FILTER_SET_MULTI":
       if (draft.state === "CONFIGURING_CHART") {
-        const { dimensionIri, values } = action.value;
+        const { cubeIri, dimensionIri, values } = action.value;
         const chartConfig = getChartConfig(draft);
-        chartConfig.filters[dimensionIri] = makeMultiFilter(values);
-      }
+        const cube = chartConfig.cubes.find((cube) => cube.iri === cubeIri);
 
-      return draft;
-
-    case "CHART_CONFIG_FILTER_ADD_MULTI":
-      if (draft.state === "CONFIGURING_CHART") {
-        const { dimensionIri, values, allValues } = action.value;
-        const chartConfig = getChartConfig(draft);
-        const f = chartConfig.filters[dimensionIri];
-        const newFilter = makeMultiFilter(values);
-        if (f && f.type === "multi") {
-          f.values = {
-            ...f.values,
-            ...newFilter.values,
-          };
-          // If all values are selected, we remove the filter again!
-          if (allValues.every((v) => v in f.values)) {
-            delete chartConfig.filters[dimensionIri];
-          }
-        } else {
-          chartConfig.filters[dimensionIri] = newFilter;
+        if (cube) {
+          cube.filters[dimensionIri] = makeMultiFilter(values);
         }
       }
 
       return draft;
 
-    case "CHART_CONFIG_FILTER_REMOVE_MULTI":
-      if (draft.state === "CONFIGURING_CHART") {
-        const { dimensionIri, values, allValues } = action.value;
-        const chartConfig = getChartConfig(draft);
-        const f = chartConfig.filters[dimensionIri];
-
-        if (f && f.type === "multi" && Object.keys(f.values).length > 0) {
-          // If there are existing object keys, we just remove the current one
-          for (const v of values) {
-            delete f.values[v];
-          }
-        } else {
-          // Otherwise we set the filters to all values minus the current one
-          const updatedValues = allValues.reduce<FilterValueMultiValues>(
-            (_values, v) => {
-              // Efficient until values has a lot of values...
-              if (values.indexOf(v) === -1) {
-                _values[v] = true;
-              }
-              return _values;
-            },
-            {}
-          );
-          chartConfig.filters[dimensionIri] = {
-            type: "multi",
-            values: updatedValues,
-          };
-        }
-      }
-
-      return draft;
-
-    case "CHART_CONFIG_FILTER_RESET_MULTI":
     case "CHART_CONFIG_FILTER_RESET_RANGE":
       if (draft.state === "CONFIGURING_CHART") {
-        const { dimensionIri } = action.value;
+        const { cubeIri, dimensionIri } = action.value;
         const chartConfig = getChartConfig(draft);
-        delete chartConfig.filters[dimensionIri];
-      }
+        const cube = chartConfig.cubes.find((cube) => cube.iri === cubeIri);
 
-      return draft;
-
-    case "CHART_CONFIG_FILTER_SET_NONE_MULTI":
-      if (draft.state === "CONFIGURING_CHART") {
-        const { dimensionIri } = action.value;
-        const chartConfig = getChartConfig(draft);
-        chartConfig.filters[dimensionIri] = {
-          type: "multi",
-          values: {},
-        };
+        if (cube) {
+          delete cube.filters[dimensionIri];
+        }
       }
 
       return draft;
 
     case "CHART_CONFIG_FILTER_SET_RANGE":
       if (draft.state === "CONFIGURING_CHART") {
-        const { dimensionIri, from, to } = action.value;
+        const { cubeIri, dimensionIri, from, to } = action.value;
         const chartConfig = getChartConfig(draft);
-        chartConfig.filters[dimensionIri] = {
-          type: "range",
-          from,
-          to,
-        };
+        const cube = chartConfig.cubes.find((cube) => cube.iri === cubeIri);
 
-        if (chartConfig.interactiveFiltersConfig) {
-          chartConfig.interactiveFiltersConfig.timeRange = {
-            componentIri: dimensionIri,
-            active: chartConfig.interactiveFiltersConfig.timeRange.active,
-            presets: {
-              type: "range",
-              from,
-              to,
-            },
+        if (cube) {
+          cube.filters[dimensionIri] = {
+            type: "range",
+            from,
+            to,
           };
+
+          if (chartConfig.interactiveFiltersConfig) {
+            chartConfig.interactiveFiltersConfig.timeRange = {
+              componentIri: dimensionIri,
+              active: chartConfig.interactiveFiltersConfig.timeRange.active,
+              presets: {
+                type: "range",
+                from,
+                to,
+              },
+            };
+          }
         }
       }
 
@@ -1219,9 +1201,13 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
     case "CHART_CONFIG_FILTERS_UPDATE":
       if (draft.state === "CONFIGURING_CHART") {
-        const { filters } = action.value;
+        const { cubeIri, filters } = action.value;
         const chartConfig = getChartConfig(draft);
-        chartConfig.filters = filters;
+        const cube = chartConfig.cubes.find((cube) => cube.iri === cubeIri);
+
+        if (cube) {
+          cube.filters = filters;
+        }
       }
 
       return draft;
@@ -1260,7 +1246,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         const chartConfig = getChartConfig(draft);
         const dataCubesComponents = getCachedComponents(
           draft,
-          chartConfig.dataSet,
+          chartConfig.cubes.map((cube) => cube.iri),
           action.value.locale
         );
 
@@ -1317,13 +1303,10 @@ const ConfiguratorStateContext = createContext<
   [ConfiguratorState, Dispatch<ConfiguratorStateAction>] | undefined
 >(undefined);
 
-type ChartId = string;
-type DatasetIri = string;
-
 export const initChartStateFromChartCopy = async (
-  from: ChartId
+  fromChartId: string
 ): Promise<ConfiguratorStateConfiguringChart | undefined> => {
-  const config = await fetchChartConfig(from);
+  const config = await fetchChartConfig(fromChartId);
 
   if (config?.data) {
     return migrateConfiguratorState({
@@ -1334,9 +1317,9 @@ export const initChartStateFromChartCopy = async (
 };
 
 export const initChartStateFromChartEdit = async (
-  from: ChartId
+  fromChartId: string
 ): Promise<ConfiguratorStateConfiguringChart | undefined> => {
-  const config = await fetchChartConfig(from);
+  const config = await fetchChartConfig(fromChartId);
 
   if (config?.data) {
     return migrateConfiguratorState({
@@ -1347,31 +1330,25 @@ export const initChartStateFromChartEdit = async (
 };
 
 export const initChartStateFromCube = async (
-  client: Client,
-  datasetIri: DatasetIri,
+  cubeIri: string,
   dataSource: DataSource,
   locale: string
 ): Promise<ConfiguratorState | undefined> => {
-  const { data: components } = await client
-    .query<DataCubesComponentsQuery, DataCubesComponentsQueryVariables>(
-      DataCubesComponentsDocument,
-      {
-        sourceType: dataSource.type,
-        sourceUrl: dataSource.url,
-        locale,
-        filters: [{ iri: datasetIri }],
-      }
-    )
-    .toPromise();
+  const { data: components } = await executeDataCubesComponentsQuery({
+    sourceType: dataSource.type,
+    sourceUrl: dataSource.url,
+    locale,
+    cubeFilters: [{ iri: cubeIri }],
+  });
 
   if (components?.dataCubesComponents) {
     return transitionStepNext(getStateWithCurrentDataSource(EMPTY_STATE), {
       dataCubesComponents: components.dataCubesComponents,
-      dataSet: datasetIri,
+      cubeIris: [cubeIri],
     });
   }
 
-  console.warn(`Could not fetch cube with iri ${datasetIri}`);
+  console.warn(`Could not fetch cube with iri ${cubeIri}!`);
 };
 
 /**
@@ -1443,7 +1420,6 @@ const ConfiguratorStateProviderInternal = (
             newChartState = await initChartStateFromChartEdit(query.edit);
           } else if (query.cube && typeof query.cube === "string") {
             newChartState = await initChartStateFromCube(
-              client,
               query.cube,
               dataSource,
               locale
@@ -1518,17 +1494,22 @@ const ConfiguratorStateProviderInternal = (
               const preparedConfig: ConfiguratorStatePublishing = {
                 ...state,
                 chartConfigs: [
-                  ...state.chartConfigs.map((d) => {
+                  ...state.chartConfigs.map((chartConfig) => {
                     return {
-                      ...d,
-                      // Ensure that the filters are in the correct order, as JSON
-                      // does not guarantee order (and we need this as interactive
-                      // filters are dependent on the order of the filters).
-                      filters: Object.fromEntries(
-                        Object.entries(d.filters).map(([k, v], i) => {
-                          return [k, { ...v, position: i }];
-                        })
-                      ),
+                      ...chartConfig,
+                      cubes: chartConfig.cubes.map((cube) => {
+                        return {
+                          ...cube,
+                          // Ensure that the filters are in the correct order, as JSON
+                          // does not guarantee order (and we need this as interactive
+                          // filters are dependent on the order of the filters).
+                          filters: Object.fromEntries(
+                            Object.entries(cube.filters).map(([k, v], i) => {
+                              return [k, { ...v, position: i }];
+                            })
+                          ),
+                        };
+                      }),
                     };
                   }),
                 ],

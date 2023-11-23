@@ -20,7 +20,7 @@ import {
 } from "@/configurator";
 import { ChartTypeSelector } from "@/configurator/components/chart-type-selector";
 import { getIconName } from "@/configurator/components/ui-helpers";
-import { useDataCubesComponentsQuery } from "@/graphql/query-hooks";
+import { useDataCubesComponentsQuery } from "@/graphql/hooks";
 import { Icon, IconName } from "@/icons";
 import { useLocale } from "@/src";
 import { fetchChartConfig } from "@/utils/chart-config/api";
@@ -260,7 +260,10 @@ const PublishChartButton = () => {
       sourceType: state.dataSource.type,
       sourceUrl: state.dataSource.url,
       locale,
-      filters: [{ iri: chartConfig.dataSet, componentIris }],
+      cubeFilters: chartConfig.cubes.map((cube) => ({
+        iri: cube.iri,
+        componentIris,
+      })),
     },
   });
   const goNext = useEvent(() => {

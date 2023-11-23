@@ -93,8 +93,12 @@ const chartConfig: ColumnConfig = {
       it: "",
     },
   },
-  dataSet: "",
-  filters: {},
+  cubes: [
+    {
+      iri: "",
+      filters: {},
+    },
+  ],
   fields: columnFields,
   interactiveFiltersConfig: {
     legend: {

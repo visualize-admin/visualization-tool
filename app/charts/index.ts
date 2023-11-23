@@ -22,8 +22,10 @@ import {
   ComboChartType,
   ComboLineColumnFields,
   ComboLineSingleFields,
+  Cube,
   DimensionType,
   FieldAdjuster,
+  Filters,
   GenericFields,
   GenericSegmentField,
   InteractiveFiltersAdjusters,
@@ -217,7 +219,7 @@ const findBottommostLayers = (dimension: Dimension) => {
 };
 
 const makeInitialFiltersForArea = (dimension: Dimension) => {
-  const filters = {} as ChartConfig["filters"];
+  const filters: Filters = {};
 
   // Setting the filters so that bottommost areas are shown first
   // @ts-ignore
@@ -326,7 +328,7 @@ const META: Meta = {
 
 type GetInitialConfigOptions = {
   key?: string;
-  dataSet: string;
+  iris: string[];
   chartType: ChartType;
   dimensions: Dimension[];
   measures: Measure[];
@@ -335,19 +337,26 @@ type GetInitialConfigOptions = {
 export const getInitialConfig = (
   options: GetInitialConfigOptions
 ): ChartConfig => {
-  const { key, dataSet, chartType, dimensions, measures } = options;
-  const genericConfigProps: {
+  const { key, iris, chartType, dimensions, measures } = options;
+  const getGenericConfigProps = (
+    filters?: Filters
+  ): {
     key: string;
     version: string;
     meta: Meta;
-    dataSet: string;
+    cubes: Cube[];
     activeField: string | undefined;
-  } = {
-    key: key ?? createChartId(),
-    version: CHART_CONFIG_VERSION,
-    meta: META,
-    dataSet,
-    activeField: undefined,
+  } => {
+    return {
+      key: key ?? createChartId(),
+      version: CHART_CONFIG_VERSION,
+      meta: META,
+      // Technically, we should scope filters per cube; but as we only set initial
+      // filters for area charts, and we can only have multi-cubes for combo charts,
+      // we can ignore the filters scoping for now.
+      cubes: iris.map((iri) => ({ iri, filters: filters ?? {} })),
+      activeField: undefined,
+    };
   };
   const numericalMeasures = measures.filter(isNumericalMeasure);
   const temporalDimensions = getTemporalDimensions(dimensions);
@@ -357,9 +366,8 @@ export const getInitialConfig = (
       const areaXComponentIri = temporalDimensions[0].iri;
 
       return {
-        ...genericConfigProps,
+        ...getGenericConfigProps(),
         chartType,
-        filters: {},
         interactiveFiltersConfig: getInitialInteractiveFiltersConfig({
           timeRangeComponentIri: areaXComponentIri,
         }),
@@ -375,9 +383,8 @@ export const getInitialConfig = (
       ).iri;
 
       return {
-        ...genericConfigProps,
+        ...getGenericConfigProps(),
         chartType,
-        filters: {},
         interactiveFiltersConfig: getInitialInteractiveFiltersConfig({
           timeRangeComponentIri: columnXComponentIri,
         }),
@@ -393,9 +400,8 @@ export const getInitialConfig = (
       const lineXComponentIri = temporalDimensions[0].iri;
 
       return {
-        ...genericConfigProps,
+        ...getGenericConfigProps(),
         chartType,
-        filters: {},
         interactiveFiltersConfig: getInitialInteractiveFiltersConfig({
           timeRangeComponentIri: lineXComponentIri,
         }),
@@ -412,9 +418,8 @@ export const getInitialConfig = (
       const showSymbolLayer = !showAreaLayer;
 
       return {
-        ...genericConfigProps,
+        ...getGenericConfigProps(makeInitialFiltersForArea(areaDimension)),
         chartType,
-        filters: makeInitialFiltersForArea(areaDimension),
         interactiveFiltersConfig: getInitialInteractiveFiltersConfig(),
         baseLayer: {
           show: true,
@@ -447,9 +452,8 @@ export const getInitialConfig = (
       const piePalette = getDefaultCategoricalPaletteName(pieSegmentComponent);
 
       return {
-        ...genericConfigProps,
+        ...getGenericConfigProps(),
         chartType,
-        filters: {},
         interactiveFiltersConfig: getInitialInteractiveFiltersConfig(),
         fields: {
           y: { componentIri: numericalMeasures[0].iri },
@@ -473,9 +477,8 @@ export const getInitialConfig = (
       );
 
       return {
-        ...genericConfigProps,
+        ...getGenericConfigProps(),
         chartType: "scatterplot",
-        filters: {},
         interactiveFiltersConfig: getInitialInteractiveFiltersConfig(),
         fields: {
           x: { componentIri: numericalMeasures[0].iri },
@@ -503,9 +506,8 @@ export const getInitialConfig = (
       );
 
       return {
-        ...genericConfigProps,
+        ...getGenericConfigProps(),
         chartType,
-        filters: {},
         interactiveFiltersConfig: undefined,
         settings: {
           showSearch: true,
@@ -543,9 +545,8 @@ export const getInitialConfig = (
         .map((d) => d.iri);
 
       return {
-        ...genericConfigProps,
+        ...getGenericConfigProps(),
         chartType: "comboLineSingle",
-        filters: {},
         interactiveFiltersConfig: getInitialInteractiveFiltersConfig({
           timeRangeComponentIri: temporalDimensions[0].iri,
         }),
@@ -579,9 +580,8 @@ export const getInitialConfig = (
       )!.iri;
 
       return {
-        ...genericConfigProps,
+        ...getGenericConfigProps(),
         chartType: "comboLineDual",
-        filters: {},
         interactiveFiltersConfig: getInitialInteractiveFiltersConfig({
           timeRangeComponentIri: temporalDimensions[0].iri,
         }),
@@ -618,9 +618,8 @@ export const getInitialConfig = (
       )!.iri;
 
       return {
-        ...genericConfigProps,
+        ...getGenericConfigProps(),
         chartType: "comboLineColumn",
-        filters: {},
         interactiveFiltersConfig: getInitialInteractiveFiltersConfig({
           timeRangeComponentIri: temporalDimensions[0].iri,
         }),
@@ -667,7 +666,7 @@ export const getChartConfigAdjustedToChartType = ({
   const initialConfig = getInitialConfig({
     key: chartConfig.key,
     chartType: newChartType,
-    dataSet: chartConfig.dataSet,
+    iris: chartConfig.cubes.map((d) => d.iri),
     dimensions,
     measures,
   });
@@ -864,9 +863,9 @@ const interactiveFiltersAdjusters: InteractiveFiltersAdjusters = {
 
 const chartConfigsAdjusters: ChartConfigsAdjusters = {
   column: {
-    filters: ({ oldValue, newChartConfig }) => {
+    cubes: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
-        draft.filters = oldValue;
+        draft.cubes = oldValue;
       });
     },
     fields: {
@@ -951,9 +950,9 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     interactiveFiltersConfig: interactiveFiltersAdjusters,
   },
   line: {
-    filters: ({ oldValue, newChartConfig }) => {
+    cubes: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
-        draft.filters = oldValue;
+        draft.cubes = oldValue;
       });
     },
     fields: {
@@ -1023,9 +1022,9 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     interactiveFiltersConfig: interactiveFiltersAdjusters,
   },
   area: {
-    filters: ({ oldValue, newChartConfig }) => {
+    cubes: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
-        draft.filters = oldValue;
+        draft.cubes = oldValue;
       });
     },
     fields: {
@@ -1107,9 +1106,9 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     interactiveFiltersConfig: interactiveFiltersAdjusters,
   },
   scatterplot: {
-    filters: ({ oldValue, newChartConfig }) => {
+    cubes: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
-        draft.filters = oldValue;
+        draft.cubes = oldValue;
       });
     },
     fields: {
@@ -1173,9 +1172,9 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     interactiveFiltersConfig: interactiveFiltersAdjusters,
   },
   pie: {
-    filters: ({ oldValue, newChartConfig }) => {
+    cubes: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
-        draft.filters = oldValue;
+        draft.cubes = oldValue;
       });
     },
     fields: {
@@ -1237,9 +1236,9 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     interactiveFiltersConfig: interactiveFiltersAdjusters,
   },
   table: {
-    filters: ({ oldValue, newChartConfig }) => {
+    cubes: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
-        draft.filters = oldValue;
+        draft.cubes = oldValue;
       });
     },
     fields: ({ oldValue, newChartConfig }) => {
@@ -1255,15 +1254,19 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     },
   },
   map: {
-    filters: ({ oldValue, newChartConfig }) => {
+    cubes: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
         // Filters have been reset by the initial config of the map.
         // We need to set them back to their old value, taking care not
         // to override the filters that have been set by the initial config
         // of the map.
-        for (const [iri, value] of Object.entries(oldValue)) {
-          if (draft.filters[iri] === undefined) {
-            draft.filters[iri] = value;
+        for (const oldCube of oldValue) {
+          const cube = draft.cubes.find((d) => d.iri === oldCube.iri) as Cube;
+
+          for (const [iri, value] of Object.entries(oldCube.filters)) {
+            if (cube.filters[iri] === undefined) {
+              cube.filters[iri] = value;
+            }
           }
         }
       });
@@ -1308,9 +1311,9 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     interactiveFiltersConfig: interactiveFiltersAdjusters,
   },
   comboLineSingle: {
-    filters: ({ oldValue, newChartConfig }) => {
+    cubes: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
-        draft.filters = oldValue;
+        draft.cubes = oldValue;
       });
     },
     fields: {
@@ -1371,9 +1374,9 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     interactiveFiltersConfig: interactiveFiltersAdjusters,
   },
   comboLineDual: {
-    filters: ({ oldValue, newChartConfig }) => {
+    cubes: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
-        draft.filters = oldValue;
+        draft.cubes = oldValue;
       });
     },
     fields: {
@@ -1470,9 +1473,9 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     interactiveFiltersConfig: interactiveFiltersAdjusters,
   },
   comboLineColumn: {
-    filters: ({ oldValue, newChartConfig }) => {
+    cubes: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
-        draft.filters = oldValue;
+        draft.cubes = oldValue;
       });
     },
     fields: {

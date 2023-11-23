@@ -16,6 +16,7 @@ import {
   GenericSegmentField,
   MapConfig,
   isSegmentInConfig,
+  useChartConfigFilters,
   useReadOnlyConfiguratorState,
 } from "@/configurator";
 import { Component, Dimension, Measure, Observation } from "@/domain/data";
@@ -119,6 +120,7 @@ const useLegendGroups = ({
   values: string[];
 }) => {
   const configState = useReadOnlyConfiguratorState();
+  const filters = useChartConfigFilters(chartConfig);
 
   if (
     configState.state === "INITIAL" ||
@@ -133,7 +135,7 @@ const useLegendGroups = ({
     isSegmentInConfig(chartConfig) ? chartConfig.fields.segment : null
   ) as GenericSegmentField | null | undefined;
   const segmentFilters = segmentField?.componentIri
-    ? chartConfig.filters[segmentField.componentIri]
+    ? filters[segmentField.componentIri]
     : null;
   const segmentValues =
     segmentFilters?.type === "multi" ? segmentFilters.values : emptyObj;
@@ -196,7 +198,8 @@ export const MapLegendColor = memo(function LegendColor({
   useAbbreviations: boolean;
   chartConfig: MapConfig;
 }) {
-  const componentFilter = chartConfig.filters[component.iri];
+  const filters = useChartConfigFilters(chartConfig);
+  const componentFilter = filters[component.iri];
   const sortedValues = useMemo(() => {
     const sorters = makeDimensionValueSorters(component, {
       sorting: {

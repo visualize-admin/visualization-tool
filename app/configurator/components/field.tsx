@@ -30,7 +30,11 @@ import {
 } from "@/components/form";
 import SelectTree from "@/components/select-tree";
 import useDisclosure from "@/components/use-disclosure";
-import { ChartConfig, getChartConfig } from "@/config-types";
+import {
+  ChartConfig,
+  getChartConfig,
+  useChartConfigFilters,
+} from "@/config-types";
 import { ColorPickerMenu } from "@/configurator/components/chart-controls/color-picker";
 import {
   AnnotatorTab,
@@ -165,13 +169,14 @@ export const DataFilterSelect = ({
   onOpen?: () => void;
   loading?: boolean;
 }) => {
-  const fieldProps = useSingleFilterSelect({ dimensionIri: dimension.iri });
-
+  const fieldProps = useSingleFilterSelect({
+    cubeIri: dimension.cubeIri,
+    dimensionIri: dimension.iri,
+  });
   const noneLabel = t({
     id: "controls.dimensionvalue.none",
     message: `No Filter`,
   });
-
   const sortedValues = useMemo(() => {
     const sorters = makeDimensionValueSorters(dimension);
 
@@ -263,18 +268,18 @@ export const DataFilterSelectDay = ({
   isOptional?: boolean;
   controls?: React.ReactNode;
 }) => {
-  const fieldProps = useSingleFilterSelect({ dimensionIri: dimension.iri });
-
+  const fieldProps = useSingleFilterSelect({
+    cubeIri: dimension.cubeIri,
+    dimensionIri: dimension.iri,
+  });
   const noneLabel = t({
     id: "controls.dimensionvalue.none",
     message: `No Filter`,
   });
-
   const optionalLabel = t({
     id: "controls.select.optional",
     message: `optional`,
   });
-
   const allOptions = useMemo(() => {
     return isOptional
       ? [
@@ -362,19 +367,19 @@ export const DataFilterSelectTime = ({
   isOptional?: boolean;
   controls?: React.ReactNode;
 }) => {
-  const fieldProps = useSingleFilterSelect({ dimensionIri: dimension.iri });
+  const fieldProps = useSingleFilterSelect({
+    cubeIri: dimension.cubeIri,
+    dimensionIri: dimension.iri,
+  });
   const formatLocale = useTimeFormatLocale();
-
   const noneLabel = t({
     id: "controls.dimensionvalue.none",
     message: `No Filter`,
   });
-
   const optionalLabel = t({
     id: "controls.select.optional",
     message: `optional`,
   });
-
   const fullLabel = isOptional ? (
     <>
       {label} <div style={{ marginLeft: "0.25rem" }}>({optionalLabel})</div>
@@ -559,6 +564,7 @@ export const MetaInputField = ({
 const useMultiFilterColorPicker = (value: string) => {
   const [state, dispatch] = useConfiguratorState(isConfiguring);
   const chartConfig = getChartConfig(state);
+  const filters = useChartConfigFilters(chartConfig);
   const { dimensionIri, colorConfigPath } = useMultiFilterContext();
   const { activeField } = chartConfig;
   const onChange = useCallback(
@@ -597,7 +603,7 @@ const useMultiFilterColorPicker = (value: string) => {
   }, [chartConfig, colorConfigPath, activeField]);
 
   const checkedState = dimensionIri
-    ? isMultiFilterFieldChecked(chartConfig, dimensionIri, value)
+    ? isMultiFilterFieldChecked(filters, dimensionIri, value)
     : null;
 
   return useMemo(
@@ -647,21 +653,19 @@ export const MultiFilterFieldColorPicker = ({
 };
 
 export const SingleFilterField = ({
+  cubeIri,
   dimensionIri,
   label,
   value,
   disabled,
 }: {
+  cubeIri: string;
   dimensionIri: string;
   label: string;
   value: string;
   disabled?: boolean;
 }) => {
-  const field = useSingleFilterField({
-    dimensionIri,
-    value,
-  });
-
+  const field = useSingleFilterField({ cubeIri, dimensionIri, value });
   return <Radio label={label} disabled={disabled} {...field} />;
 };
 

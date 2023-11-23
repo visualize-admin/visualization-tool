@@ -123,17 +123,16 @@ export const searchCubes: NonNullable<QueryResolvers["searchCubes"]> =
     }));
   };
 
-export const dataCubesComponents: NonNullable<
-  QueryResolvers["dataCubesComponents"]
+export const dataCubeComponents: NonNullable<
+  QueryResolvers["dataCubeComponents"]
 > = async () => {
   return { dimensions: [], measures: [] };
 };
 
-export const dataCubesMetadata: NonNullable<
-  QueryResolvers["dataCubesMetadata"]
-> = async () => {
-  return [];
-};
+export const dataCubeMetadata: NonNullable<QueryResolvers["dataCubeMetadata"]> =
+  async () => {
+    return {} as any;
+  };
 
 export const dataCubeByIri: NonNullable<QueryResolvers["dataCubeByIri"]> =
   async (_, { iri }) => {
@@ -295,34 +294,33 @@ const filterObservations = (
 };
 
 // FIXME: should be a call to API (to be able to implement proper filtering)
-export const dataCubeObservations: NonNullable<
-  DataCubeResolvers["observations"]
-> = async ({ cube, locale }, { filters, limit }) => {
-  const rawObservations = (cube as any).observations as Observation[];
-  const allObservations = limit
-    ? rawObservations.slice(0, limit)
-    : rawObservations;
-  const observations = filterObservations(
-    allObservations,
-    filters as QueryFilters | undefined
-  );
+export const observations: NonNullable<DataCubeResolvers["observations"]> =
+  async ({ cube, locale }, { filters, limit }) => {
+    const rawObservations = (cube as any).observations as Observation[];
+    const allObservations = limit
+      ? rawObservations.slice(0, limit)
+      : rawObservations;
+    const observations = filterObservations(
+      allObservations,
+      filters as QueryFilters | undefined
+    );
 
-  return {
-    cube,
-    locale,
-    data: {
-      query: "",
-      observations,
-      selectedFields: [],
-    },
+    return {
+      cube,
+      locale,
+      data: {
+        query: "",
+        observations,
+        selectedFields: [],
+      },
+    };
   };
-};
 
-export const dataCubesObservations: NonNullable<
-  QueryResolvers["dataCubesObservations"]
+export const dataCubeObservations: NonNullable<
+  QueryResolvers["dataCubeObservations"]
 > = async () => {
   return {
     data: [],
-    sparqlEditorUrls: [],
+    sparqlEditorUrl: "",
   };
 };

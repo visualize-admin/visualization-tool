@@ -9,15 +9,15 @@ import { DataSource } from "@/configurator";
 
 import { GRAPHQL_ENDPOINT } from "../domain/env";
 import {
+  DataCubeComponentsDocument,
+  DataCubeComponentsQuery,
+  DataCubeComponentsQueryVariables,
+  DataCubeMetadataDocument,
+  DataCubeMetadataQuery,
+  DataCubeMetadataQueryVariables,
   DataCubePreviewDocument,
   DataCubePreviewQuery,
   DataCubePreviewQueryVariables,
-  DataCubesComponentsDocument,
-  DataCubesComponentsQuery,
-  DataCubesComponentsQueryVariables,
-  DataCubesMetadataDocument,
-  DataCubesMetadataQuery,
-  DataCubesMetadataQueryVariables,
 } from "../graphql/query-hooks";
 
 config();
@@ -44,13 +44,13 @@ const showCubeInfo = async ({
   report,
 }: Args<CubeQueryOptions>) => {
   const res = await client
-    .query<DataCubesMetadataQuery, DataCubesMetadataQueryVariables>(
-      DataCubesMetadataDocument,
+    .query<DataCubeMetadataQuery, DataCubeMetadataQueryVariables>(
+      DataCubeMetadataDocument,
       {
         sourceType,
         sourceUrl,
         locale,
-        filters: [{ iri, latest }],
+        cubeFilter: { iri, latest },
       }
     )
     .toPromise();
@@ -59,7 +59,7 @@ const showCubeInfo = async ({
     throw new Error(res.error.message);
   }
 
-  const cube = res.data?.dataCubesMetadata[0];
+  const cube = res.data?.dataCubeMetadata;
 
   if (cube?.iri !== iri) {
     console.warn(
@@ -79,13 +79,13 @@ const showCubeComponents = async ({
   report,
 }: Args<CubeQueryOptions>) => {
   const res = await client
-    .query<DataCubesComponentsQuery, DataCubesComponentsQueryVariables>(
-      DataCubesComponentsDocument,
+    .query<DataCubeComponentsQuery, DataCubeComponentsQueryVariables>(
+      DataCubeComponentsDocument,
       {
         sourceType,
         sourceUrl,
         locale,
-        filters: [{ iri, latest }],
+        cubeFilter: { iri, latest },
       }
     )
     .toPromise();
@@ -94,7 +94,7 @@ const showCubeComponents = async ({
     throw new Error(res.error.message);
   }
 
-  report(res.data?.dataCubesComponents);
+  report(res.data?.dataCubeComponents);
 };
 
 const previewCube = async ({
@@ -107,13 +107,13 @@ const previewCube = async ({
   report,
 }: Args<CubeQueryOptions>) => {
   const { data: info, error } = await client
-    .query<DataCubesMetadataQuery, DataCubesMetadataQueryVariables>(
-      DataCubesMetadataDocument,
+    .query<DataCubeMetadataQuery, DataCubeMetadataQueryVariables>(
+      DataCubeMetadataDocument,
       {
         sourceType,
         sourceUrl,
         locale,
-        filters: [{ iri, latest }],
+        cubeFilter: { iri, latest },
       }
     )
     .toPromise();
@@ -122,8 +122,8 @@ const previewCube = async ({
     throw new Error(error.message);
   }
 
-  if (!info || !info.dataCubesMetadata[0]) {
-    throw new Error(`Could not find datacube ${iri}`);
+  if (!info || !info.dataCubeMetadata) {
+    throw new Error(`Could not find cube with iri of ${iri}`);
   }
 
   const res = await client

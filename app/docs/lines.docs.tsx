@@ -143,11 +143,15 @@ const chartConfig: LineConfig = {
       it: "",
     },
   },
-  dataSet: "",
+  cubes: [
+    {
+      iri: "",
+      filters: {},
+    },
+  ],
   chartType: "line",
   interactiveFiltersConfig,
   fields,
-  filters: {},
   activeField: undefined,
 };
 

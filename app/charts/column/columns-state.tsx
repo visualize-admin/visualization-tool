@@ -109,7 +109,9 @@ const useColumnsState = (
       measureBySegment: sumsByX,
       useAbbreviations: fields.x.useAbbreviations,
       dimensionFilter: xDimension?.iri
-        ? chartConfig.filters[xDimension.iri]
+        ? chartConfig.cubes.find((d) => d.iri === xDimension.cubeIri)?.filters[
+            xDimension.iri
+          ]
         : undefined,
     });
     const sortingOrders = getSortingOrders(sorters, fields.x.sorting);
@@ -185,7 +187,7 @@ const useColumnsState = (
     fields.x.sorting,
     fields.x.useAbbreviations,
     xDimension,
-    chartConfig.filters,
+    chartConfig.cubes,
     sumsByX,
   ]);
 

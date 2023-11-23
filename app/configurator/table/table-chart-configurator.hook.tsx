@@ -11,7 +11,7 @@ import {
   useConfiguratorState,
 } from "@/configurator/configurator-state";
 import { moveFields } from "@/configurator/table/table-config-state";
-import { useDataCubesComponentsQuery } from "@/graphql/query-hooks";
+import { useDataCubesComponentsQuery } from "@/graphql/hooks";
 import { useLocale } from "@/locales/use-locale";
 
 export const useTableChartController = (
@@ -25,7 +25,7 @@ export const useTableChartController = (
       sourceType: state.dataSource.type,
       sourceUrl: state.dataSource.url,
       locale,
-      filters: [{ iri: chartConfig.dataSet }],
+      cubeFilters: chartConfig.cubes.map((cube) => ({ iri: cube.iri })),
     },
   });
 

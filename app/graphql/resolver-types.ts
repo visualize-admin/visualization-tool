@@ -1,6 +1,6 @@
+import { DataCubeComponents } from '../domain/data';
 import { DataCubeMetadata } from '../domain/data';
-import { DataCubesComponents } from '../domain/data';
-import { DataCubesObservations } from '../domain/data';
+import { DataCubeObservations } from '../domain/data';
 import { DimensionValue } from '../domain/data';
 import { Filters } from '../configurator';
 import { HierarchyValue } from '../domain/data';
@@ -22,9 +22,9 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  DataCubeComponents: DataCubeComponents;
   DataCubeMetadata: DataCubeMetadata;
-  DataCubesComponents: DataCubesComponents;
-  DataCubesObservations: DataCubesObservations;
+  DataCubeObservations: DataCubeObservations;
   DimensionValue: DimensionValue;
   FilterValue: any;
   Filters: Filters;
@@ -66,6 +66,7 @@ export type DataCubeObservationsArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   limit?: Maybe<Scalars['Int']>;
+  preview?: Maybe<Scalars['Boolean']>;
   componentIris?: Maybe<Array<Scalars['String']>>;
   filters?: Maybe<Scalars['Filters']>;
 };
@@ -101,6 +102,7 @@ export type DataCubeComponentFilter = {
 };
 
 
+
 export type DataCubeMetadataFilter = {
   iri: Scalars['String'];
   latest?: Maybe<Scalars['Boolean']>;
@@ -109,10 +111,12 @@ export type DataCubeMetadataFilter = {
 export type DataCubeObservationFilter = {
   iri: Scalars['String'];
   latest?: Maybe<Scalars['Boolean']>;
+  preview?: Maybe<Scalars['Boolean']>;
   filters?: Maybe<Scalars['Filters']>;
   componentIris?: Maybe<Array<Scalars['String']>>;
   joinBy?: Maybe<Scalars['String']>;
 };
+
 
 export type DataCubeOrganization = {
   __typename?: 'DataCubeOrganization';
@@ -130,8 +134,6 @@ export type DataCubeTheme = {
   iri: Scalars['String'];
   label?: Maybe<Scalars['String']>;
 };
-
-
 
 export type Dimension = {
   iri: Scalars['String'];
@@ -379,36 +381,36 @@ export type OrdinalMeasureHierarchyArgs = {
 
 export type Query = {
   __typename?: 'Query';
-  dataCubesComponents: Scalars['DataCubesComponents'];
-  dataCubesMetadata: Array<Scalars['DataCubeMetadata']>;
-  dataCubesObservations: Scalars['DataCubesObservations'];
+  dataCubeComponents: Scalars['DataCubeComponents'];
+  dataCubeMetadata: Scalars['DataCubeMetadata'];
+  dataCubeObservations: Scalars['DataCubeObservations'];
   dataCubeByIri?: Maybe<DataCube>;
   possibleFilters: Array<ObservationFilter>;
   searchCubes: Array<SearchCubeResult>;
 };
 
 
-export type QueryDataCubesComponentsArgs = {
+export type QueryDataCubeComponentsArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   locale: Scalars['String'];
-  filters: Array<DataCubeComponentFilter>;
+  cubeFilter: DataCubeComponentFilter;
 };
 
 
-export type QueryDataCubesMetadataArgs = {
+export type QueryDataCubeMetadataArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   locale: Scalars['String'];
-  filters: Array<DataCubeMetadataFilter>;
+  cubeFilter: DataCubeMetadataFilter;
 };
 
 
-export type QueryDataCubesObservationsArgs = {
+export type QueryDataCubeObservationsArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   locale: Scalars['String'];
-  filters: Array<DataCubeObservationFilter>;
+  cubeFilter: DataCubeObservationFilter;
 };
 
 
@@ -652,14 +654,14 @@ export type ResolversTypes = ResolversObject<{
   Int: ResolverTypeWrapper<Scalars['Int']>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   DataCubeComponentFilter: DataCubeComponentFilter;
+  DataCubeComponents: ResolverTypeWrapper<Scalars['DataCubeComponents']>;
   DataCubeMetadata: ResolverTypeWrapper<Scalars['DataCubeMetadata']>;
   DataCubeMetadataFilter: DataCubeMetadataFilter;
   DataCubeObservationFilter: DataCubeObservationFilter;
+  DataCubeObservations: ResolverTypeWrapper<Scalars['DataCubeObservations']>;
   DataCubeOrganization: ResolverTypeWrapper<DataCubeOrganization>;
   DataCubePublicationStatus: DataCubePublicationStatus;
   DataCubeTheme: ResolverTypeWrapper<DataCubeTheme>;
-  DataCubesComponents: ResolverTypeWrapper<Scalars['DataCubesComponents']>;
-  DataCubesObservations: ResolverTypeWrapper<Scalars['DataCubesObservations']>;
   Dimension: ResolverTypeWrapper<ResolvedDimension>;
   DimensionValue: ResolverTypeWrapper<Scalars['DimensionValue']>;
   FilterValue: ResolverTypeWrapper<Scalars['FilterValue']>;
@@ -701,13 +703,13 @@ export type ResolversParentTypes = ResolversObject<{
   Int: Scalars['Int'];
   Boolean: Scalars['Boolean'];
   DataCubeComponentFilter: DataCubeComponentFilter;
+  DataCubeComponents: Scalars['DataCubeComponents'];
   DataCubeMetadata: Scalars['DataCubeMetadata'];
   DataCubeMetadataFilter: DataCubeMetadataFilter;
   DataCubeObservationFilter: DataCubeObservationFilter;
+  DataCubeObservations: Scalars['DataCubeObservations'];
   DataCubeOrganization: DataCubeOrganization;
   DataCubeTheme: DataCubeTheme;
-  DataCubesComponents: Scalars['DataCubesComponents'];
-  DataCubesObservations: Scalars['DataCubesObservations'];
   Dimension: ResolvedDimension;
   DimensionValue: Scalars['DimensionValue'];
   FilterValue: Scalars['FilterValue'];
@@ -763,8 +765,16 @@ export type DataCubeResolvers<ContextType = VisualizeGraphQLContext, ParentType 
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export interface DataCubeComponentsScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DataCubeComponents'], any> {
+  name: 'DataCubeComponents';
+}
+
 export interface DataCubeMetadataScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DataCubeMetadata'], any> {
   name: 'DataCubeMetadata';
+}
+
+export interface DataCubeObservationsScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DataCubeObservations'], any> {
+  name: 'DataCubeObservations';
 }
 
 export type DataCubeOrganizationResolvers<ContextType = VisualizeGraphQLContext, ParentType extends ResolversParentTypes['DataCubeOrganization'] = ResolversParentTypes['DataCubeOrganization']> = ResolversObject<{
@@ -778,14 +788,6 @@ export type DataCubeThemeResolvers<ContextType = VisualizeGraphQLContext, Parent
   label?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
-
-export interface DataCubesComponentsScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DataCubesComponents'], any> {
-  name: 'DataCubesComponents';
-}
-
-export interface DataCubesObservationsScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DataCubesObservations'], any> {
-  name: 'DataCubesObservations';
-}
 
 export type DimensionResolvers<ContextType = VisualizeGraphQLContext, ParentType extends ResolversParentTypes['Dimension'] = ResolversParentTypes['Dimension']> = ResolversObject<{
   __resolveType: TypeResolveFn<'GeoCoordinatesDimension' | 'GeoShapesDimension' | 'NominalDimension' | 'NumericalMeasure' | 'OrdinalDimension' | 'OrdinalMeasure' | 'StandardErrorDimension' | 'TemporalDimension' | 'TemporalOrdinalDimension', ParentType, ContextType>;
@@ -955,9 +957,9 @@ export type OrdinalMeasureResolvers<ContextType = VisualizeGraphQLContext, Paren
 }>;
 
 export type QueryResolvers<ContextType = VisualizeGraphQLContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
-  dataCubesComponents?: Resolver<ResolversTypes['DataCubesComponents'], ParentType, ContextType, RequireFields<QueryDataCubesComponentsArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'filters'>>;
-  dataCubesMetadata?: Resolver<Array<ResolversTypes['DataCubeMetadata']>, ParentType, ContextType, RequireFields<QueryDataCubesMetadataArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'filters'>>;
-  dataCubesObservations?: Resolver<ResolversTypes['DataCubesObservations'], ParentType, ContextType, RequireFields<QueryDataCubesObservationsArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'filters'>>;
+  dataCubeComponents?: Resolver<ResolversTypes['DataCubeComponents'], ParentType, ContextType, RequireFields<QueryDataCubeComponentsArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'cubeFilter'>>;
+  dataCubeMetadata?: Resolver<ResolversTypes['DataCubeMetadata'], ParentType, ContextType, RequireFields<QueryDataCubeMetadataArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'cubeFilter'>>;
+  dataCubeObservations?: Resolver<ResolversTypes['DataCubeObservations'], ParentType, ContextType, RequireFields<QueryDataCubeObservationsArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'cubeFilter'>>;
   dataCubeByIri?: Resolver<Maybe<ResolversTypes['DataCube']>, ParentType, ContextType, RequireFields<QueryDataCubeByIriArgs, 'sourceType' | 'sourceUrl' | 'iri' | 'latest'>>;
   possibleFilters?: Resolver<Array<ResolversTypes['ObservationFilter']>, ParentType, ContextType, RequireFields<QueryPossibleFiltersArgs, 'iri' | 'sourceType' | 'sourceUrl' | 'filters'>>;
   searchCubes?: Resolver<Array<ResolversTypes['SearchCubeResult']>, ParentType, ContextType, RequireFields<QuerySearchCubesArgs, 'sourceType' | 'sourceUrl'>>;
@@ -1045,11 +1047,11 @@ export interface ValuePositionScalarConfig extends GraphQLScalarTypeConfig<Resol
 
 export type Resolvers<ContextType = VisualizeGraphQLContext> = ResolversObject<{
   DataCube?: DataCubeResolvers<ContextType>;
+  DataCubeComponents?: GraphQLScalarType;
   DataCubeMetadata?: GraphQLScalarType;
+  DataCubeObservations?: GraphQLScalarType;
   DataCubeOrganization?: DataCubeOrganizationResolvers<ContextType>;
   DataCubeTheme?: DataCubeThemeResolvers<ContextType>;
-  DataCubesComponents?: GraphQLScalarType;
-  DataCubesObservations?: GraphQLScalarType;
   Dimension?: DimensionResolvers<ContextType>;
   DimensionValue?: GraphQLScalarType;
   FilterValue?: GraphQLScalarType;

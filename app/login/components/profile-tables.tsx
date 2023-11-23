@@ -27,7 +27,7 @@ import useDisclosure from "@/components/use-disclosure";
 import { ParsedConfig } from "@/db/config";
 import { sourceToLabel } from "@/domain/datasource";
 import { truthy } from "@/domain/types";
-import { useDataCubesMetadataQuery } from "@/graphql/query-hooks";
+import { useDataCubesMetadataQuery } from "@/graphql/hooks";
 import { Icon, IconName } from "@/icons";
 import { useRootStyles } from "@/login/utils";
 import { useLocale } from "@/src";
@@ -168,24 +168,19 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
   const { userId, config, onRemoveSuccess } = props;
   const { dataSource } = config.data;
   const dataSets = Array.from(
-    new Set(config.data.chartConfigs.map((d) => d.dataSet))
+    new Set(config.data.chartConfigs.flatMap((d) => d.cubes.map((d) => d.iri)))
   );
   const dataSet = dataSets.length === 1 ? dataSets[0] : null;
   const locale = useLocale();
-  const [{ data, fetching }] = useDataCubesMetadataQuery(
-    dataSet
-      ? {
-          variables: {
-            sourceType: dataSource.type,
-            sourceUrl: dataSource.url,
-            locale,
-            filters: [{ iri: dataSet }],
-          },
-        }
-      : {
-          pause: true,
-        }
-  );
+  const [{ data, fetching }] = useDataCubesMetadataQuery({
+    variables: {
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+      cubeFilters: [{ iri: dataSet! }],
+    },
+    pause: !dataSet,
+  });
   const actions = React.useMemo(() => {
     const actions: ActionProps[] = [
       {

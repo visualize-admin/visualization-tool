@@ -19,19 +19,20 @@ import {
   InteractiveFiltersLegend,
   InteractiveFiltersTimeRange,
   MapConfig,
-  QueryFilters,
 } from "@/config-types";
 import {
   CategoricalColorField,
   ComboChartConfig,
   GenericField,
   NumericalColorField,
+  getChartConfigFilters,
   isComboChartConfig,
 } from "@/configurator";
 import { parseDate } from "@/configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
-import { Component, Dimension, Observation } from "@/domain/data";
+import { Component, Dimension, Measure, Observation } from "@/domain/data";
 import { truthy } from "@/domain/types";
+import { DataCubeObservationFilter } from "@/graphql/resolver-types";
 import {
   InteractiveFiltersState,
   useInteractiveFilters,
@@ -58,41 +59,71 @@ export const prepareQueryFilters = (
 
   return allowNoneValues
     ? queryFilters
-    : omitBy(queryFilters, (v) => {
-        return v.type === "single" && v.value === FIELD_VALUE_NONE;
-      });
+    : omitBy(
+        queryFilters,
+        (v) => v.type === "single" && v.value === FIELD_VALUE_NONE
+      );
 };
 
 export const useQueryFilters = ({
   chartConfig,
+  dimensions,
+  measures,
   allowNoneValues,
 }: {
   chartConfig: ChartConfig;
+  dimensions?: Dimension[];
+  measures?: Measure[];
   allowNoneValues?: boolean;
-}): QueryFilters => {
-  const dataFilters = useInteractiveFilters((d) => d.dataFilters);
+}): DataCubeObservationFilter[] | undefined => {
+  const allDataFilters = useInteractiveFilters((d) => d.dataFilters);
 
-  return useMemo(() => {
-    return prepareQueryFilters(
-      chartConfig.chartType,
-      chartConfig.filters,
-      chartConfig.interactiveFiltersConfig,
-      dataFilters,
-      allowNoneValues
-    );
+  return React.useMemo(() => {
+    if (!dimensions || !measures) {
+      return;
+    }
+
+    return chartConfig.cubes.map((cube) => {
+      const filters = getChartConfigFilters(chartConfig.cubes, cube.iri);
+      const dataFilters = Object.fromEntries(
+        Object.entries(allDataFilters).filter(([k]) =>
+          dimensions.find((d) => d.iri === k)
+        )
+      );
+
+      return {
+        iri: cube.iri,
+        componentIris:
+          dimensions.length > 0 && measures.length > 0
+            ? [...dimensions, ...measures]
+                .filter((d) => d.cubeIri === cube.iri)
+                .map((d) => d.iri)
+            : undefined,
+        filters: prepareQueryFilters(
+          chartConfig.chartType,
+          filters,
+          chartConfig.interactiveFiltersConfig,
+          dataFilters,
+          allowNoneValues
+        ),
+        joinBy: cube.joinBy,
+      };
+    });
   }, [
+    chartConfig.cubes,
     chartConfig.chartType,
-    chartConfig.filters,
     chartConfig.interactiveFiltersConfig,
-    dataFilters,
+    allDataFilters,
     allowNoneValues,
+    dimensions,
+    measures,
   ]);
 };
 
 type IFKey = keyof NonNullable<InteractiveFiltersConfig>;
 
-export const getChartConfigFilterComponentIris = ({ filters }: ChartConfig) => {
-  return Object.keys(filters);
+export const getChartConfigFilterComponentIris = ({ cubes }: ChartConfig) => {
+  return Object.keys(getChartConfigFilters(cubes));
 };
 
 const getMapChartConfigAdditionalFields = ({ fields }: MapConfig) => {

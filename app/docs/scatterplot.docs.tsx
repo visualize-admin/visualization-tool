@@ -144,9 +144,13 @@ const chartConfig: ScatterPlotConfig = {
       it: "",
     },
   },
-  dataSet: "",
+  cubes: [
+    {
+      iri: "",
+      filters: {},
+    },
+  ],
   chartType: "scatterplot",
-  filters: {},
   interactiveFiltersConfig,
   fields: scatterplotFields,
   activeField: undefined,

@@ -1,4 +1,3 @@
-import { Client } from "@urql/core";
 import { createDraft, current } from "immer";
 import get from "lodash/get";
 
@@ -10,7 +9,6 @@ import {
   ConfiguratorStateConfiguringChart,
   DataSource,
   MapConfig,
-  TableConfig,
   getChartConfig,
 } from "@/config-types";
 import {
@@ -31,7 +29,6 @@ import { Component, Dimension, Measure, NominalDimension } from "@/domain/data";
 import covid19ColumnChartConfig from "@/test/__fixtures/config/dev/chartConfig-column-covid19.json";
 import covid19TableChartConfig from "@/test/__fixtures/config/dev/chartConfig-table-covid19.json";
 import { data as fakeVizFixture } from "@/test/__fixtures/config/prod/line-1.json";
-import bathingWaterMetadata from "@/test/__fixtures/data/DataCubeMetadataWithComponentValues-bathingWater.json";
 import covid19Metadata from "@/test/__fixtures/data/DataCubeMetadataWithComponentValues-covid19.json";
 import * as api from "@/utils/chart-config/api";
 import {
@@ -64,10 +61,11 @@ jest.mock("@/graphql/client", () => {
         return {
           data: {
             dataCubeByIri: {},
-            dataCubesComponents: {
+            dataCubeComponents: {
               dimensions: [
                 {
                   __typename: "GeoShapesDimension",
+                  cubeIri: "mapDataset",
                   iri: "newAreaLayerColorIri",
                   values: [
                     {
@@ -168,26 +166,12 @@ describe("initChartFromLocalStorage", () => {
 });
 
 describe("initChartStateFromCube", () => {
-  const setup = ({ cubeMetadata }: { cubeMetadata: object }) => {
-    const client = new Client({
-      url: "https://example.com/graphql",
-    });
-
-    // @ts-ignore
-    jest.spyOn(client, "query").mockReturnValue({
-      toPromise: jest.fn().mockResolvedValue(cubeMetadata),
-    });
-
-    return { client };
-  };
   it("should work init fields with existing dataset and go directly to 2nd step", async () => {
-    const { client } = setup({ cubeMetadata: bathingWaterMetadata });
     const dataSource: DataSource = {
       url: "https://example.com/api",
       type: "sparql",
     };
     const res = await initChartStateFromCube(
-      client,
       "https://environment.ld.admin.ch/foen/ubd0104/3/",
       dataSource,
       "en"
@@ -429,26 +413,34 @@ describe("applyDimensionToFilters", () => {
 describe("moveField", () => {
   const chartConfig = {
     state: "CONFIGURING",
-    filters: {
-      species: {
-        type: "single",
-        value: "penguins",
+    cubes: [
+      {
+        iri: "",
+        filters: {
+          species: {
+            type: "single",
+            value: "penguins",
+          },
+          date: {
+            type: "single",
+            value: "2020.11.20",
+          },
+        },
       },
-      date: {
-        type: "single",
-        value: "2020.11.20",
-      },
-    },
+    ],
   } as unknown as ChartConfig;
 
   it("should be possible to move an existing field up", () => {
     const newChartConfig = moveFilterField(chartConfig, {
-      dimensionIri: "date",
+      dimension: { iri: "date", cubeIri: "" } as any as Dimension,
       delta: -1,
       possibleValues: ["2020.11.20", "2020.11.10"],
     });
-    expect(Object.keys(newChartConfig.filters)).toEqual(["date", "species"]);
-    expect(Object.values(newChartConfig.filters)).toEqual([
+    expect(Object.keys(newChartConfig.cubes[0].filters)).toEqual([
+      "date",
+      "species",
+    ]);
+    expect(Object.values(newChartConfig.cubes[0].filters)).toEqual([
       { type: "single", value: "2020.11.20" },
       { type: "single", value: "penguins" },
     ]);
@@ -456,12 +448,15 @@ describe("moveField", () => {
 
   it("should be possible to move an existing field down", () => {
     const newChartConfig = moveFilterField(chartConfig, {
-      dimensionIri: "species",
+      dimension: { iri: "species", cubeIri: "" } as any as Dimension,
       delta: 1,
       possibleValues: ["penguins", "tigers"],
     });
-    expect(Object.keys(newChartConfig.filters)).toEqual(["date", "species"]);
-    expect(Object.values(newChartConfig.filters)).toEqual([
+    expect(Object.keys(newChartConfig.cubes[0].filters)).toEqual([
+      "date",
+      "species",
+    ]);
+    expect(Object.values(newChartConfig.cubes[0].filters)).toEqual([
       { type: "single", value: "2020.11.20" },
       { type: "single", value: "penguins" },
     ]);
@@ -469,16 +464,16 @@ describe("moveField", () => {
 
   it("should be possible to move an absent field up", () => {
     const newChartConfig = moveFilterField(chartConfig, {
-      dimensionIri: "color",
+      dimension: { iri: "color", cubeIri: "" } as any as Dimension,
       delta: -1,
       possibleValues: ["red", "blue"],
     });
-    expect(Object.keys(newChartConfig.filters)).toEqual([
+    expect(Object.keys(newChartConfig.cubes[0].filters)).toEqual([
       "species",
       "color",
       "date",
     ]);
-    expect(Object.values(newChartConfig.filters)).toEqual([
+    expect(Object.values(newChartConfig.cubes[0].filters)).toEqual([
       { type: "single", value: "penguins" },
       { type: "single", value: "red" },
       { type: "single", value: "2020.11.20" },
@@ -487,12 +482,15 @@ describe("moveField", () => {
 
   it("should not be possible to move an existing field too much above", () => {
     const newChartConfig = moveFilterField(chartConfig, {
-      dimensionIri: "species",
+      dimension: { iri: "species", cubeIri: "" } as any as Dimension,
       delta: -1,
       possibleValues: ["penguins", "tigers"],
     });
-    expect(Object.keys(newChartConfig.filters)).toEqual(["species", "date"]);
-    expect(Object.values(newChartConfig.filters)).toEqual([
+    expect(Object.keys(newChartConfig.cubes[0].filters)).toEqual([
+      "species",
+      "date",
+    ]);
+    expect(Object.values(newChartConfig.cubes[0].filters)).toEqual([
       { type: "single", value: "penguins" },
       { type: "single", value: "2020.11.20" },
     ]);
@@ -500,12 +498,15 @@ describe("moveField", () => {
 
   it("should not be possible to move an existing field too much below", () => {
     const newChartConfig = moveFilterField(chartConfig, {
-      dimensionIri: "date",
+      dimension: { iri: "date", cubeIri: "" } as any as Dimension,
       delta: 1,
       possibleValues: ["penguins", "tigers"],
     });
-    expect(Object.keys(newChartConfig.filters)).toEqual(["species", "date"]);
-    expect(Object.values(newChartConfig.filters)).toEqual([
+    expect(Object.keys(newChartConfig.cubes[0].filters)).toEqual([
+      "species",
+      "date",
+    ]);
+    expect(Object.values(newChartConfig.cubes[0].filters)).toEqual([
       { type: "single", value: "penguins" },
       { type: "single", value: "2020.11.20" },
     ]);
@@ -740,14 +741,19 @@ describe("retainChartConfigWhenSwitchingChartType", () => {
   it("should retain appropriate x & y fields and discard the others", () => {
     runChecks(
       migrateChartConfig(covid19ColumnChartConfig, {
-        migrationProps: { meta: {} },
+        migrationProps: { meta: {}, dataSet: "foo" },
       }),
       xyChecks
     );
   });
 
   it("should retain appropriate segment fields and discard the others", () => {
-    runChecks(covid19TableChartConfig as unknown as TableConfig, segmentChecks);
+    runChecks(
+      migrateChartConfig(covid19TableChartConfig, {
+        migrationProps: { meta: {}, dataSet: "foo" },
+      }),
+      segmentChecks
+    );
   });
 });
 
@@ -755,6 +761,15 @@ describe("getFiltersByMappingStatus", () => {
   it("should correctly retrieve categorical color iris", () => {
     const config = {
       chartType: "map",
+      cubes: [
+        {
+          iri: "foo",
+          filters: {
+            areaColorIri: {},
+            symbolColorIri: {},
+          },
+        },
+      ],
       fields: {
         areaLayer: {
           componentIri: "areaIri",
@@ -767,7 +782,7 @@ describe("getFiltersByMappingStatus", () => {
       },
     } as any as MapConfig;
 
-    const { mappedFiltersIris } = getFiltersByMappingStatus(config);
+    const { mappedFiltersIris } = getFiltersByMappingStatus(config, "foo");
 
     expect([...mappedFiltersIris]).toEqual(
       expect.arrayContaining(["areaColorIri", "symbolColorIri"])
@@ -842,7 +857,12 @@ describe("colorMapping", () => {
               componentIri: "measure",
             },
           },
-          filters: {},
+          cubes: [
+            {
+              iri: "",
+              filters: {},
+            },
+          ],
         },
       ],
       activeChartKey: "abc",
@@ -871,7 +891,6 @@ describe("handleChartFieldChanged", () => {
   it("should not reset symbol layer when it's being updated", () => {
     const state = {
       state: "CONFIGURING_CHART",
-      dataSet: "mapDataset",
       dataSource: {
         type: "sparql",
         url: "fakeUrl",
@@ -880,6 +899,12 @@ describe("handleChartFieldChanged", () => {
         {
           key: "cba",
           chartType: "map",
+          cubes: [
+            {
+              iri: "mapDataset",
+              filters: {},
+            },
+          ],
           fields: {
             symbolLayer: {
               componentIri: "symbolLayerIri",
@@ -920,7 +945,6 @@ describe("handleChartOptionChanged", () => {
   it("should set required scale properties", () => {
     const state = {
       state: "CONFIGURING_CHART",
-      dataSet: "mapDataset",
       dataSource: {
         type: "sparql",
         url: "fakeUrl",
@@ -929,6 +953,12 @@ describe("handleChartOptionChanged", () => {
         {
           key: "bac",
           chartType: "map",
+          cubes: [
+            {
+              iri: "mapDataset",
+              filters: {},
+            },
+          ],
           fields: {
             areaLayer: {
               componentIri: "areaLayerIri",
@@ -965,7 +995,6 @@ describe("handleChartOptionChanged", () => {
   it("should reset previous color filters", () => {
     const state = {
       state: "CONFIGURING_CHART",
-      dataSet: "mapDataset",
       dataSource: {
         type: "sparql",
         url: "fakeUrl",
@@ -989,15 +1018,20 @@ describe("handleChartOptionChanged", () => {
               },
             },
           },
-          filters: {
-            areaLayerColorIri: {
-              type: "multi",
-              values: {
-                red: true,
-                green: true,
+          cubes: [
+            {
+              iri: "mapDataset",
+              filters: {
+                areaLayerColorIri: {
+                  type: "multi",
+                  values: {
+                    red: true,
+                    green: true,
+                  },
+                },
               },
             },
-          },
+          ],
         },
       ],
       activeChartKey: "cab",
@@ -1013,7 +1047,7 @@ describe("handleChartOptionChanged", () => {
       },
     });
 
-    expect(Object.keys(state.chartConfigs[0].filters)).not.toContain(
+    expect(Object.keys(state.chartConfigs[0].cubes[0].filters)).not.toContain(
       "areaLayerColorIri"
     );
   });

@@ -23,9 +23,7 @@ export type InteractiveFiltersState = {
   };
 };
 
-export type DataFilters = {
-  [d: string]: FilterValueSingle;
-};
+export type DataFilters = Record<string, FilterValueSingle>;
 
 type TimeSlider =
   | {

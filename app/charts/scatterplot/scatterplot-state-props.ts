@@ -13,7 +13,7 @@ import {
   useSegmentVariables,
 } from "@/charts/shared/chart-state";
 import { useRenderingKeyVariable } from "@/charts/shared/rendering-utils";
-import { ScatterPlotConfig } from "@/configurator";
+import { ScatterPlotConfig, useChartConfigFilters } from "@/configurator";
 
 import { ChartProps } from "../shared/ChartProps";
 
@@ -33,8 +33,9 @@ export const useScatterplotStateVariables = (
     dimensionsByIri,
     measuresByIri,
   } = props;
-  const { fields, filters, interactiveFiltersConfig } = chartConfig;
+  const { fields, interactiveFiltersConfig } = chartConfig;
   const { x, y, segment, animation } = fields;
+  const filters = useChartConfigFilters(chartConfig);
 
   const baseVariables = useBaseVariables(chartConfig);
   const numericalXVariables = useNumericalXVariables(x, {

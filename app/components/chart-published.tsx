@@ -37,7 +37,7 @@ import {
 import {
   useDataCubesComponentsQuery,
   useDataCubesMetadataQuery,
-} from "@/graphql/query-hooks";
+} from "@/graphql/hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import { useLocale } from "@/locales/use-locale";
 import { InteractiveFiltersProvider } from "@/stores/interactive-filters";
@@ -142,18 +142,23 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
-      filters: [{ iri: chartConfig.dataSet }],
+      cubeFilters: chartConfig.cubes.map((cube) => ({ iri: cube.iri })),
     },
   });
   const componentIris = extractChartConfigsComponentIris(state.chartConfigs);
   const [{ data: components }] = useDataCubesComponentsQuery({
     variables: {
       ...commonQueryVariables,
-      filters: [{ iri: chartConfig.dataSet, componentIris }],
+      cubeFilters: chartConfig.cubes.map((cube) => ({
+        iri: cube.iri,
+        componentIris,
+      })),
     },
   });
   const handleToggleTableView = useEvent(() => setIsTablePreview((c) => !c));
 
+  const dimensions = components?.dataCubesComponents.dimensions;
+  const measures = components?.dataCubesComponents.measures;
   const allComponents = useMemo(() => {
     if (!components?.dataCubesComponents) {
       return [];
@@ -226,7 +231,8 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
             </Typography>
 
             <MetadataPanel
-              datasetIri={chartConfig.dataSet}
+              // FIXME: adapt to design
+              datasetIri={chartConfig.cubes[0].iri}
               dataSource={dataSource}
               dimensions={allComponents}
               container={rootRef.current}
@@ -248,23 +254,24 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
               {isTablePreview ? (
                 <DataSetTable
                   sx={{ maxHeight: "100%" }}
-                  dataSetIri={chartConfig.dataSet}
                   dataSource={dataSource}
                   chartConfig={chartConfig}
                 />
               ) : (
                 <ChartWithFilters
-                  dataSet={chartConfig.dataSet}
                   dataSource={dataSource}
                   componentIris={componentIris}
                   chartConfig={chartConfig}
+                  dimensions={dimensions}
+                  measures={measures}
                 />
               )}
             </Flex>
             <ChartFootnotes
-              dataSetIri={chartConfig.dataSet}
               dataSource={dataSource}
               chartConfig={chartConfig}
+              dimensions={dimensions}
+              measures={measures}
               configKey={configKey}
               onToggleTableView={handleToggleTableView}
               visualizeLinkText={

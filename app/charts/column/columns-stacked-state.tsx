@@ -136,7 +136,8 @@ const useColumnsStackedState = (
   }, [getSegment, getY, scalesData]);
 
   const segmentFilter = segmentDimension?.iri
-    ? chartConfig.filters[segmentDimension?.iri]
+    ? chartConfig.cubes.find((d) => d.iri === segmentDimension.cubeIri)
+        ?.filters[segmentDimension.iri]
     : undefined;
   const { allSegments, segments } = useMemo(() => {
     const allUniqueSegments = Array.from(new Set(segmentData.map(getSegment)));
@@ -206,7 +207,8 @@ const useColumnsStackedState = (
     });
   }, [getSegment, getY, chartDataGroupedByX, segments, xKey]);
 
-  const xFilter = chartConfig.filters[xDimension.iri];
+  const xFilter = chartConfig.cubes.find((d) => d.iri === xDimension.cubeIri)
+    ?.filters[xDimension.iri];
   // Map ordered segments labels to colors
   const {
     colors,

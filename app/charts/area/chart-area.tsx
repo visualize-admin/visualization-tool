@@ -15,27 +15,26 @@ import { Ruler } from "@/charts/shared/interaction/ruler";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
 import { InteractionHorizontal } from "@/charts/shared/overlay-horizontal";
-import { AreaConfig, DataSource, QueryFilters } from "@/config-types";
+import { AreaConfig, DataSource } from "@/config-types";
 import {
   useDataCubesComponentsQuery,
   useDataCubesMetadataQuery,
   useDataCubesObservationsQuery,
-} from "@/graphql/query-hooks";
+} from "@/graphql/hooks";
+import { DataCubeObservationFilter } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 
 import { ChartProps } from "../shared/ChartProps";
 
 export const ChartAreasVisualization = ({
-  dataSetIri,
   dataSource,
   chartConfig,
   queryFilters,
   componentIris,
 }: {
-  dataSetIri: string;
   dataSource: DataSource;
   chartConfig: AreaConfig;
-  queryFilters: QueryFilters;
+  queryFilters?: DataCubeObservationFilter[];
   componentIris: string[] | undefined;
 }) => {
   const locale = useLocale();
@@ -47,20 +46,24 @@ export const ChartAreasVisualization = ({
   const [metadataQuery] = useDataCubesMetadataQuery({
     variables: {
       ...commonQueryVariables,
-      filters: [{ iri: dataSetIri }],
+      cubeFilters: chartConfig.cubes.map((cube) => ({ iri: cube.iri })),
     },
   });
   const [componentsQuery] = useDataCubesComponentsQuery({
     variables: {
       ...commonQueryVariables,
-      filters: [{ iri: dataSetIri, componentIris }],
+      cubeFilters: chartConfig.cubes.map((cube) => ({
+        iri: cube.iri,
+        componentIris,
+      })),
     },
   });
   const [observationsQuery] = useDataCubesObservationsQuery({
     variables: {
       ...commonQueryVariables,
-      filters: [{ iri: dataSetIri, componentIris, filters: queryFilters }],
+      cubeFilters: queryFilters ?? [],
     },
+    pause: !queryFilters,
   });
 
   return (

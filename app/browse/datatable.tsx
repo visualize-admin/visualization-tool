@@ -33,7 +33,7 @@ import {
   useDataCubesComponentsQuery,
   useDataCubesMetadataQuery,
   useDataCubesObservationsQuery,
-} from "@/graphql/query-hooks";
+} from "@/graphql/hooks";
 import SvgIcChevronDown from "@/icons/components/IcChevronDown";
 import { useLocale } from "@/locales/use-locale";
 import { uniqueMapBy } from "@/utils/uniqueMapBy";
@@ -239,19 +239,16 @@ export const DataSetPreviewTable = ({
 };
 
 export const DataSetTable = ({
-  dataSetIri,
   dataSource,
   chartConfig,
   sx,
 }: {
-  dataSetIri: string;
   dataSource: DataSource;
   chartConfig: ChartConfig;
   sx?: SxProps<Theme>;
 }) => {
   const locale = useLocale();
   const componentIris = extractChartConfigComponentIris(chartConfig);
-  const filters = useQueryFilters({ chartConfig });
   const commonQueryVariables = {
     sourceType: dataSource.type,
     sourceUrl: dataSource.url,
@@ -260,22 +257,19 @@ export const DataSetTable = ({
   const [{ data: metadataData }] = useDataCubesMetadataQuery({
     variables: {
       ...commonQueryVariables,
-      filters: [{ iri: dataSetIri }],
+      cubeFilters: chartConfig.cubes.map((cube) => ({ iri: cube.iri })),
     },
   });
-  const [{ data: componentsData }] = useDataCubesComponentsQuery({
-    variables: {
-      ...commonQueryVariables,
-      filters: [{ iri: dataSetIri, componentIris }],
-    },
-  });
-  const [{ data: observationsData }] = useDataCubesObservationsQuery({
-    variables: {
-      ...commonQueryVariables,
-      filters: [{ iri: dataSetIri, componentIris, filters }],
-    },
-  });
-
+  const [{ data: componentsData, fetching: fetchingComponents }] =
+    useDataCubesComponentsQuery({
+      variables: {
+        ...commonQueryVariables,
+        cubeFilters: chartConfig.cubes.map((cube) => ({
+          iri: cube.iri,
+          componentIris,
+        })),
+      },
+    });
   const headers = useMemo(() => {
     if (!componentsData?.dataCubesComponents) {
       return [];
@@ -286,6 +280,18 @@ export const DataSetTable = ({
       ...componentsData.dataCubesComponents.measures,
     ]);
   }, [componentsData?.dataCubesComponents]);
+  const queryFilters = useQueryFilters({
+    chartConfig,
+    dimensions: componentsData?.dataCubesComponents?.dimensions,
+    measures: componentsData?.dataCubesComponents?.measures,
+  });
+  const [{ data: observationsData }] = useDataCubesObservationsQuery({
+    variables: {
+      ...commonQueryVariables,
+      cubeFilters: queryFilters ?? [],
+    },
+    pause: fetchingComponents || !queryFilters,
+  });
 
   return metadataData?.dataCubesMetadata &&
     componentsData?.dataCubesComponents &&

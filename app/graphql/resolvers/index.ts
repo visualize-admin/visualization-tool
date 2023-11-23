@@ -25,17 +25,17 @@ export const Query: QueryResolvers = {
     const source = getSource(args.sourceType);
     return await source.searchCubes(parent, args, context, info);
   },
-  dataCubesComponents: async (parent, args, context, info) => {
+  dataCubeComponents: async (parent, args, context, info) => {
     const source = getSource(args.sourceType);
-    return await source.dataCubesComponents(parent, args, context, info);
+    return await source.dataCubeComponents(parent, args, context, info);
   },
-  dataCubesMetadata: async (parent, args, context, info) => {
+  dataCubeMetadata: async (parent, args, context, info) => {
     const source = getSource(args.sourceType);
-    return await source.dataCubesMetadata(parent, args, context, info);
+    return await source.dataCubeMetadata(parent, args, context, info);
   },
-  dataCubesObservations: async (parent, args, context, info) => {
+  dataCubeObservations: async (parent, args, context, info) => {
     const source = getSource(args.sourceType);
-    return await source.dataCubesObservations(parent, args, context, info);
+    return await source.dataCubeObservations(parent, args, context, info);
   },
   dataCubeByIri: async (parent, args, context, info) => {
     const source = getSource(args.sourceType);
@@ -78,7 +78,7 @@ const DataCube: DataCubeResolvers = {
   },
   observations: async (parent, args, context, info) => {
     const source = getSource(args.sourceType);
-    return source.dataCubeObservations(parent, args, context, info);
+    return source.observations(parent, args, context, info);
   },
 };
 

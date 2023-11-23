@@ -13,6 +13,7 @@ import { EncodingFieldType } from "@/charts/chart-config-ui-options";
 import {
   ChartConfig,
   ChartType,
+  Filters,
   getChartConfig,
   isComboChartConfig,
 } from "@/config-types";
@@ -198,28 +199,6 @@ export const useChartOptionSelectField = <V extends {} = string>(
   };
 };
 
-export const useDimensionSelection = (dimensionIri: string) => {
-  const [_, dispatch] = useConfiguratorState();
-
-  const selectAll = useCallback(() => {
-    dispatch({
-      type: "CHART_CONFIG_FILTER_RESET_MULTI",
-      value: {
-        dimensionIri,
-      },
-    });
-  }, [dispatch, dimensionIri]);
-
-  const selectNone = useCallback(() => {
-    dispatch({
-      type: "CHART_CONFIG_FILTER_SET_NONE_MULTI",
-      value: { dimensionIri },
-    });
-  }, [dispatch, dimensionIri]);
-
-  return useMemo(() => ({ selectAll, selectNone }), [selectAll, selectNone]);
-};
-
 export const useChartOptionSliderField = ({
   field,
   path,
@@ -403,10 +382,11 @@ export const useChartType = (
         value: {
           chartConfig: getInitialConfig({
             chartType,
-            dataSet:
+            iris: [
               state.state === "CONFIGURING_CHART"
-                ? getChartConfig(state, state.activeChartKey).dataSet
-                : chartConfig.dataSet,
+                ? getChartConfig(state, state.activeChartKey).cubes[0].iri
+                : chartConfig.cubes[0].iri,
+            ],
             dimensions,
             measures,
           }),
@@ -426,12 +406,13 @@ export const useChartType = (
 
 // Used in the configurator filters
 export const useSingleFilterSelect = ({
+  cubeIri,
   dimensionIri,
 }: {
+  cubeIri: string;
   dimensionIri: string;
 }) => {
   const [state, dispatch] = useConfiguratorState();
-
   const onChange = useCallback<
     (
       e:
@@ -443,6 +424,7 @@ export const useSingleFilterSelect = ({
       dispatch({
         type: "CHART_CONFIG_FILTER_SET_SINGLE",
         value: {
+          cubeIri,
           dimensionIri,
           value: (e.target.value === ""
             ? FIELD_VALUE_NONE
@@ -450,18 +432,20 @@ export const useSingleFilterSelect = ({
         },
       });
     },
-    [dimensionIri, dispatch]
+    [cubeIri, dimensionIri, dispatch]
   );
 
-  let value: string | undefined;
+  let value = FIELD_VALUE_NONE;
+
   if (state.state === "CONFIGURING_CHART") {
     const chartConfig = getChartConfig(state);
-    value = get(
-      chartConfig,
-      ["filters", dimensionIri, "value"],
-      FIELD_VALUE_NONE
-    );
+    const cube = chartConfig.cubes.find((cube) => cube.iri === cubeIri);
+
+    if (cube) {
+      value = get(cube, ["filters", dimensionIri, "value"], FIELD_VALUE_NONE);
+    }
   }
+
   return {
     value,
     onChange,
@@ -470,25 +454,27 @@ export const useSingleFilterSelect = ({
 
 // Used in the Table Chart options
 export const useSingleFilterField = ({
+  cubeIri,
   dimensionIri,
   value,
 }: {
+  cubeIri: string;
   value: string;
   dimensionIri: string;
 }): FieldProps => {
   const [state, dispatch] = useConfiguratorState();
-
   const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
     (e) => {
       dispatch({
         type: "CHART_CONFIG_FILTER_SET_SINGLE",
         value: {
+          cubeIri,
           dimensionIri,
           value: e.currentTarget.value,
         },
       });
     },
-    [dispatch, dimensionIri]
+    [dispatch, cubeIri, dimensionIri]
   );
 
   const stateValue =
@@ -507,11 +493,11 @@ export const useSingleFilterField = ({
 };
 
 export const isMultiFilterFieldChecked = (
-  chartConfig: ChartConfig,
+  filters: Filters,
   dimensionIri: string,
   value: string
 ) => {
-  const filter = chartConfig.filters[dimensionIri];
+  const filter = filters[dimensionIri];
   const fieldChecked =
     filter?.type === "multi" ? filter.values?.[value] ?? false : false;
 
@@ -521,6 +507,7 @@ export const isMultiFilterFieldChecked = (
 const MultiFilterContext = React.createContext({
   activeKeys: new Set() as Set<string>,
   allValues: [] as string[],
+  cubeIri: "",
   dimensionIri: "",
   colorConfigPath: undefined as string | undefined,
   getValueColor: (_: string) => "" as string,
@@ -561,11 +548,19 @@ export const MultiFilterContextProvider = ({
     return {
       allValues,
       activeKeys,
+      cubeIri: dimension.cubeIri,
       dimensionIri: dimension.iri,
       colorConfigPath,
       getValueColor,
     };
-  }, [allValues, dimension.iri, activeKeys, colorConfigPath, getValueColor]);
+  }, [
+    allValues,
+    dimension.cubeIri,
+    dimension.iri,
+    activeKeys,
+    colorConfigPath,
+    getValueColor,
+  ]);
 
   return (
     <MultiFilterContext.Provider value={ctx}>

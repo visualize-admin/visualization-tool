@@ -1,42 +1,42 @@
-query DataCubesComponents(
+query DataCubeComponents(
   $sourceType: String!
   $sourceUrl: String!
   $locale: String!
-  $filters: [DataCubeComponentFilter!]!
+  $cubeFilter: DataCubeComponentFilter!
 ) {
-  dataCubesComponents(
+  dataCubeComponents(
     sourceType: $sourceType
     sourceUrl: $sourceUrl
     locale: $locale
-    filters: $filters
+    cubeFilter: $cubeFilter
   )
 }
 
-query DataCubesMetadata(
+query DataCubeMetadata(
   $sourceType: String!
   $sourceUrl: String!
   $locale: String!
-  $filters: [DataCubeMetadataFilter!]!
+  $cubeFilter: DataCubeMetadataFilter!
 ) {
-  dataCubesMetadata(
+  dataCubeMetadata(
     sourceType: $sourceType
     sourceUrl: $sourceUrl
     locale: $locale
-    filters: $filters
+    cubeFilter: $cubeFilter
   )
 }
 
-query DataCubesObservations(
+query DataCubeObservations(
   $sourceType: String!
   $sourceUrl: String!
   $locale: String!
-  $filters: [DataCubeObservationFilter!]!
+  $cubeFilter: DataCubeObservationFilter!
 ) {
-  dataCubesObservations(
+  dataCubeObservations(
     sourceType: $sourceType
     sourceUrl: $sourceUrl
     locale: $locale
-    filters: $filters
+    cubeFilter: $cubeFilter
   )
 }
 
@@ -84,7 +84,12 @@ query DataCubePreview(
     title
     description
     publicationStatus
-    observations(sourceType: $sourceType, sourceUrl: $sourceUrl, limit: 10) {
+    observations(
+      sourceType: $sourceType
+      sourceUrl: $sourceUrl
+      preview: true
+      limit: 10
+    ) {
       data
       sparqlEditorUrl
     }

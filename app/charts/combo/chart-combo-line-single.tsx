@@ -16,33 +16,28 @@ import { Ruler } from "@/charts/shared/interaction/ruler";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
 import { InteractionHorizontal } from "@/charts/shared/overlay-horizontal";
-import {
-  ComboLineSingleConfig,
-  DataSource,
-  QueryFilters,
-} from "@/config-types";
+import { ComboLineSingleConfig, DataSource } from "@/config-types";
 import {
   useDataCubesComponentsQuery,
   useDataCubesMetadataQuery,
   useDataCubesObservationsQuery,
-} from "@/graphql/query-hooks";
+} from "@/graphql/hooks";
+import { DataCubeObservationFilter } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 
 import { ChartProps } from "../shared/ChartProps";
 
 type ChartComboLineSingleVisualizationProps = {
-  dataSetIri: string;
   dataSource: DataSource;
   componentIris: string[] | undefined;
   chartConfig: ComboLineSingleConfig;
-  queryFilters: QueryFilters;
+  queryFilters?: DataCubeObservationFilter[];
 };
 
 export const ChartComboLineSingleVisualization = (
   props: ChartComboLineSingleVisualizationProps
 ) => {
-  const { dataSetIri, dataSource, componentIris, chartConfig, queryFilters } =
-    props;
+  const { dataSource, componentIris, chartConfig, queryFilters } = props;
   const locale = useLocale();
   const commonQueryVariables = {
     sourceType: dataSource.type,
@@ -52,20 +47,24 @@ export const ChartComboLineSingleVisualization = (
   const [metadataQuery] = useDataCubesMetadataQuery({
     variables: {
       ...commonQueryVariables,
-      filters: [{ iri: dataSetIri }],
+      cubeFilters: chartConfig.cubes.map((cube) => ({ iri: cube.iri })),
     },
   });
   const [componentsQuery] = useDataCubesComponentsQuery({
     variables: {
       ...commonQueryVariables,
-      filters: [{ iri: dataSetIri, componentIris }],
+      cubeFilters: chartConfig.cubes.map((cube) => ({
+        iri: cube.iri,
+        componentIris,
+      })),
     },
   });
   const [observationsQuery] = useDataCubesObservationsQuery({
     variables: {
       ...commonQueryVariables,
-      filters: [{ iri: dataSetIri, componentIris, filters: queryFilters }],
+      cubeFilters: queryFilters ?? [],
     },
+    pause: !queryFilters,
   });
 
   return (

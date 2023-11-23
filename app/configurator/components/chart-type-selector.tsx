@@ -29,7 +29,7 @@ import { ControlSectionSkeleton } from "@/configurator/components/chart-controls
 import { getFieldLabel } from "@/configurator/components/field-i18n";
 import { getIconName } from "@/configurator/components/ui-helpers";
 import { FieldProps, useChartType } from "@/configurator/config-form";
-import { useDataCubesComponentsQuery } from "@/graphql/query-hooks";
+import { useDataCubesComponentsQuery } from "@/graphql/hooks";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
 
@@ -83,6 +83,7 @@ export const ChartTypeSelectionButton = ({
   onClick: (e: SyntheticEvent<HTMLButtonElement>) => void;
 } & FieldProps) => {
   const classes = useSelectionButtonStyles();
+
   return (
     <ButtonBase
       tabIndex={0}
@@ -128,7 +129,7 @@ export const ChartTypeSelector = ({
       sourceType: state.dataSource.type,
       sourceUrl: state.dataSource.url,
       locale,
-      filters: [{ iri: chartConfig.dataSet }],
+      cubeFilters: chartConfig.cubes.map((cube) => ({ iri: cube.iri })),
     },
   });
   const dimensions = data?.dataCubesComponents?.dimensions ?? [];

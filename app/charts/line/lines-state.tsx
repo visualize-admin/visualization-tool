@@ -148,7 +148,8 @@ const useLinesState = (
 
   // segments
   const segmentFilter = segmentDimension?.iri
-    ? chartConfig.filters[segmentDimension?.iri]
+    ? chartConfig.cubes.find((d) => d.iri === segmentDimension.cubeIri)
+        ?.filters[segmentDimension.iri]
     : undefined;
   const { allSegments, segments } = useMemo(() => {
     const allUniqueSegments = Array.from(new Set(segmentData.map(getSegment)));

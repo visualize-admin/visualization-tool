@@ -8,18 +8,16 @@ import {
   useDataCubesComponentsQuery,
   useDataCubesMetadataQuery,
   useDataCubesObservationsQuery,
-} from "@/graphql/query-hooks";
+} from "@/graphql/hooks";
 import { useLocale } from "@/locales/use-locale";
 
 import { ChartProps } from "../shared/ChartProps";
 
 export const ChartTableVisualization = ({
-  dataSetIri,
   dataSource,
   componentIris,
   chartConfig,
 }: {
-  dataSetIri: string;
   dataSource: DataSource;
   componentIris: string[] | undefined;
   chartConfig: TableConfig;
@@ -33,19 +31,25 @@ export const ChartTableVisualization = ({
   const [metadataQuery] = useDataCubesMetadataQuery({
     variables: {
       ...commonQueryVariables,
-      filters: [{ iri: dataSetIri }],
+      cubeFilters: chartConfig.cubes.map((cube) => ({ iri: cube.iri })),
     },
   });
   const [componentsQuery] = useDataCubesComponentsQuery({
     variables: {
       ...commonQueryVariables,
-      filters: [{ iri: dataSetIri, componentIris }],
+      cubeFilters: chartConfig.cubes.map((cube) => ({
+        iri: cube.iri,
+        componentIris,
+      })),
     },
   });
   const [observationsQuery] = useDataCubesObservationsQuery({
     variables: {
       ...commonQueryVariables,
-      filters: [{ iri: dataSetIri, componentIris }],
+      cubeFilters: chartConfig.cubes.map((cube) => ({
+        iri: cube.iri,
+        componentIris,
+      })),
     },
   });
 

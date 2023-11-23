@@ -1,7 +1,7 @@
 import { renderHook } from "@testing-library/react-hooks";
 import merge from "lodash/merge";
 
-import { ChartConfig } from "@/config-types";
+import { Filters } from "@/config-types";
 import useFilterChanges from "@/configurator/use-filter-changes";
 
 describe("use-filter-changes", () => {
@@ -15,7 +15,7 @@ describe("use-filter-changes", () => {
         type: "single",
         value: "ok",
       },
-    } as ChartConfig["filters"];
+    } as Filters;
     let filters = filters1;
 
     const { result, rerender } = renderHook(() => useFilterChanges(filters));
@@ -26,7 +26,7 @@ describe("use-filter-changes", () => {
         type: "single",
         value: "endangered",
       },
-    }) as ChartConfig["filters"];
+    }) as Filters;
     rerender();
     expect(result.current).toEqual([
       [

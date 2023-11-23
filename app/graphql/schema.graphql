@@ -45,6 +45,7 @@ type DataCube {
     sourceType: String!
     sourceUrl: String!
     limit: Int
+    preview: Boolean
     componentIris: [String!]
     filters: Filters
   ): ObservationsQuery!
@@ -352,36 +353,37 @@ input DataCubeMetadataFilter {
 input DataCubeObservationFilter {
   iri: String!
   latest: Boolean
+  preview: Boolean
   filters: Filters
   componentIris: [String!]
   joinBy: String
 }
 
-scalar DataCubesComponents
+scalar DataCubeComponents
 scalar DataCubeMetadata
-scalar DataCubesObservations
+scalar DataCubeObservations
 
 # The "Query" type is special: it lists all of the available queries that
 # clients can execute, along with the return type for each.
 type Query {
-  dataCubesComponents(
+  dataCubeComponents(
     sourceType: String!
     sourceUrl: String!
     locale: String!
-    filters: [DataCubeComponentFilter!]!
-  ): DataCubesComponents!
-  dataCubesMetadata(
+    cubeFilter: DataCubeComponentFilter!
+  ): DataCubeComponents!
+  dataCubeMetadata(
     sourceType: String!
     sourceUrl: String!
     locale: String!
-    filters: [DataCubeMetadataFilter!]!
-  ): [DataCubeMetadata!]!
-  dataCubesObservations(
+    cubeFilter: DataCubeMetadataFilter!
+  ): DataCubeMetadata!
+  dataCubeObservations(
     sourceType: String!
     sourceUrl: String!
     locale: String!
-    filters: [DataCubeObservationFilter!]!
-  ): DataCubesObservations!
+    cubeFilter: DataCubeObservationFilter!
+  ): DataCubeObservations!
   dataCubeByIri(
     sourceType: String!
     sourceUrl: String!

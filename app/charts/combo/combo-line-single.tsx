@@ -14,7 +14,10 @@ export const ComboLineSingle = () => {
       {y.lines.map(({ iri, label, getY }) => {
         const line = d3
           .line<Observation>()
-          .defined((d) => getY(d) !== null)
+          .defined((d) => {
+            const y = getY(d);
+            return y !== null && !isNaN(y);
+          })
           .x((d) => xScale(getX(d)))
           .y((d) => yScale(getY(d) as number));
 

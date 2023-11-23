@@ -26,25 +26,26 @@ import {
   useContext,
   useState,
 } from "react";
-import { useClient } from "urql";
 
 import { getSortedColumns } from "@/browse/datatable";
 import Flex from "@/components/flex";
-import { DataSource, QueryFilters, SortingField } from "@/config-types";
-import { Component, Observation } from "@/domain/data";
+import { DataSource, SortingField } from "@/config-types";
+import {
+  Component,
+  DataCubeComponents,
+  DataCubesObservations,
+  Observation,
+} from "@/domain/data";
 import {
   dateFormatterFromDimension,
   getFormatFullDateAuto,
   getFormattersForLocale,
 } from "@/formatters";
 import {
-  DataCubesComponentsDocument,
-  DataCubesComponentsQuery,
-  DataCubesComponentsQueryVariables,
-  DataCubesObservationsDocument,
-  DataCubesObservationsQuery,
-  DataCubesObservationsQueryVariables,
-} from "@/graphql/query-hooks";
+  executeDataCubesComponentsQuery,
+  executeDataCubesObservationsQuery,
+} from "@/graphql/hooks";
+import { DataCubeObservationFilter } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import { Locale } from "@/locales/locales";
 import { useLocale } from "@/src";
@@ -172,20 +173,17 @@ const RawMenuItem = ({ children }: PropsWithChildren<{}>) => {
 
 export const DataDownloadMenu = memo(
   ({
-    dataSetIri,
     dataSource,
     filters,
     title,
   }: {
-    dataSetIri: string;
     dataSource: DataSource;
-    filters?: QueryFilters;
+    filters?: DataCubeObservationFilter[];
     title: string;
   }) => {
     return (
       <DataDownloadStateProvider>
         <DataDownloadInnerMenu
-          dataSetIri={dataSetIri}
           dataSource={dataSource}
           fileName={title}
           filters={filters}
@@ -196,15 +194,13 @@ export const DataDownloadMenu = memo(
 );
 
 const DataDownloadInnerMenu = ({
-  dataSetIri,
   dataSource,
   fileName,
   filters,
 }: {
-  dataSetIri: string;
   dataSource: DataSource;
   fileName: string;
-  filters?: QueryFilters;
+  filters?: DataCubeObservationFilter[];
 }) => {
   const [state] = useDataDownloadState();
   const popupState = usePopupState({
@@ -242,22 +238,24 @@ const DataDownloadInnerMenu = ({
           sx: { width: 200, pt: 1, pb: 2 },
         }}
       >
-        {filters && (
-          <DataDownloadMenuSection
-            dataSetIri={dataSetIri}
-            dataSource={dataSource}
-            subheader={
-              <Trans id="button.download.data.visible">Chart dataset</Trans>
-            }
-            fileName={`${fileName}-filtered`}
-            filters={filters}
-          />
-        )}
         <DataDownloadMenuSection
-          dataSetIri={dataSetIri}
+          dataSource={dataSource}
+          subheader={
+            <Trans id="button.download.data.visible">Chart dataset</Trans>
+          }
+          fileName={`${fileName}-filtered`}
+          filters={filters}
+        />
+        <DataDownloadMenuSection
           dataSource={dataSource}
           subheader={<Trans id="button.download.data.all">Full dataset</Trans>}
           fileName={`${fileName}-full`}
+          filters={filters?.map((d) => {
+            return {
+              iri: d.iri,
+              componentIris: d.componentIris,
+            };
+          })}
         />
         {state.error && (
           <RawMenuItem>
@@ -272,17 +270,15 @@ const DataDownloadInnerMenu = ({
 };
 
 const DataDownloadMenuSection = ({
-  dataSetIri,
   dataSource,
   subheader,
   fileName,
   filters,
 }: {
-  dataSetIri: string;
   dataSource: DataSource;
   subheader: ReactNode;
   fileName: string;
-  filters?: QueryFilters;
+  filters?: DataCubeObservationFilter[];
 }) => {
   return (
     <>
@@ -294,7 +290,6 @@ const DataDownloadMenuSection = ({
           {FILE_FORMATS.map((fileFormat) => (
             <DownloadMenuItem
               key={fileFormat}
-              dataSetIri={dataSetIri}
               dataSource={dataSource}
               fileName={fileName}
               fileFormat={fileFormat}
@@ -308,26 +303,25 @@ const DataDownloadMenuSection = ({
 };
 
 const DownloadMenuItem = ({
-  dataSetIri,
   dataSource,
   fileName,
   fileFormat,
   filters,
 }: {
-  dataSetIri: string;
   dataSource: DataSource;
   fileName: string;
   fileFormat: FileFormat;
-  filters?: QueryFilters;
+  filters?: DataCubeObservationFilter[];
 }) => {
   const locale = useLocale();
   const i18n = useI18n();
-  const urqlClient = useClient();
   const [state, dispatch] = useDataDownloadState();
   const download = useCallback(
     async (
-      componentsData: DataCubesComponentsQuery,
-      observationsData: DataCubesObservationsQuery
+      componentsData: { dataCubesComponents: DataCubeComponents } | undefined,
+      observationsData:
+        | { dataCubesObservations: DataCubesObservations }
+        | undefined
     ) => {
       if (
         !(
@@ -381,32 +375,26 @@ const DownloadMenuItem = ({
       size="small"
       disabled={state.isDownloading}
       onClick={async () => {
+        if (!filters) {
+          return;
+        }
+
         dispatch({ isDownloading: true });
 
         try {
           const [componentsResult, observationsResult] = await Promise.all([
-            urqlClient
-              .query<
-                DataCubesComponentsQuery,
-                DataCubesComponentsQueryVariables
-              >(DataCubesComponentsDocument, {
-                sourceType: dataSource.type,
-                sourceUrl: dataSource.url,
-                locale,
-                filters: [{ iri: dataSetIri, filters }],
-              })
-              .toPromise(),
-            urqlClient
-              .query<
-                DataCubesObservationsQuery,
-                DataCubesObservationsQueryVariables
-              >(DataCubesObservationsDocument, {
-                sourceType: dataSource.type,
-                sourceUrl: dataSource.url,
-                locale,
-                filters: [{ iri: dataSetIri, filters }],
-              })
-              .toPromise(),
+            executeDataCubesComponentsQuery({
+              sourceType: dataSource.type,
+              sourceUrl: dataSource.url,
+              locale,
+              cubeFilters: filters,
+            }),
+            executeDataCubesObservationsQuery({
+              sourceType: dataSource.type,
+              sourceUrl: dataSource.url,
+              locale,
+              cubeFilters: filters,
+            }),
           ]);
 
           if (componentsResult.data && observationsResult.data) {
