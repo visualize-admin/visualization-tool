@@ -7,6 +7,10 @@ import {
   Exact,
 } from "@/graphql/query-hooks";
 
+type JoinByKey = NonNullable<
+  DataCubeObservationsQueryVariables["cubeFilter"]["joinBy"]
+>;
+
 /** Use to merge observations coming from several DataCubesObservationQueries.
  *
  * Observations are merged by the value of the `joinBy` property of the cube filter.
@@ -20,12 +24,13 @@ export const mergeObservations = (
     Exact<DataCubeObservationsQueryVariables>
   >[]
 ): Observation[] => {
-  const merged = queries.reduce<
-    //    <joinByKey,       Observation>
-    Record<string | number, Observation>
-  >((acc, q) => {
-    const joinBy = q.operation.variables?.cubeFilter.joinBy!;
-    const obs = q.data?.dataCubeObservations?.data!;
+  const merged = queries.reduce<Record<JoinByKey, Observation>>((acc, q) => {
+    const joinBy = q.operation.variables?.cubeFilter.joinBy;
+    const obs = q.data?.dataCubeObservations.data;
+
+    if (!obs || !joinBy) {
+      return acc;
+    }
 
     for (const o of obs) {
       const key: ObservationValue | undefined = o[joinBy];
