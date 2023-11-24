@@ -7,16 +7,17 @@ import {
   Exact,
 } from "@/graphql/query-hooks";
 
-// FIXME: figure out why mergeObservations import fails
 describe("mergeObservations", () => {
-  it.skip("should merge observations", () => {
+  it("should merge observations", () => {
     const queries = [
       {
         data: {
-          dataCubeObservations: [
-            { year: 2010, amount: 2010 },
-            { year: 2011, amount: 2011 },
-          ],
+          dataCubeObservations: {
+            data: [
+              { year: 2010, amount: 2010 },
+              { year: 2011, amount: 2011 },
+            ],
+          },
         },
         operation: {
           variables: {
@@ -28,11 +29,13 @@ describe("mergeObservations", () => {
       },
       {
         data: {
-          dataCubeObservations: [
-            { YEAR: 2000, AMOUNT: 2000 },
-            { YEAR: 2010, AMOUNT: 2010 },
-            { YEAR: 2020, AMOUNT: 2020 },
-          ],
+          dataCubeObservations: {
+            data: [
+              { YEAR: 2000, AMOUNT: 2000 },
+              { YEAR: 2010, AMOUNT: 2010 },
+              { YEAR: 2020, AMOUNT: 2020 },
+            ],
+          },
         },
         operation: {
           variables: {
