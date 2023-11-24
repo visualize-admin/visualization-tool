@@ -685,12 +685,8 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         filters: true,
         sorting: COLUMN_SEGMENT_SORTING,
         onChange: (iri, options) => {
-          const { chartConfig, dimensions, measures, initializing } = options;
+          const { chartConfig, dimensions, measures } = options;
           defaultSegmentOnChange(iri, options);
-
-          if (!initializing) {
-            return;
-          }
 
           const components = [...dimensions, ...measures];
           const segment: ColumnSegmentField = get(
