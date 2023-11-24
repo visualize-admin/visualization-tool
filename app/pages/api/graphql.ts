@@ -36,7 +36,10 @@ const server = new ApolloServer({
   },
   context: createContext,
   introspection: true,
-  plugins: [ApolloServerPluginLandingPageGraphQLPlayground, SentryPlugin],
+  plugins:
+    process.env.NODE_ENV === "production"
+      ? [ApolloServerPluginLandingPageGraphQLPlayground, SentryPlugin]
+      : [ApolloServerPluginLandingPageGraphQLPlayground],
 });
 
 export const config = {
