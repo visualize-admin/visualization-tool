@@ -564,17 +564,18 @@ export const applyNonTableDimensionToFilters = ({
           delete filters[dimension.iri];
         }
         break;
+      // Multi-filters are not allowed in the left panel.
       case "multi":
         if (!isField) {
-          // Multi-filters are not allowed in the left panel.
-          // TODO: currently, the filters are sorted by their keys, which in some
-          // cases are IRIs - so if a multi-filter is applied, the default behavior
-          // is to use the first value from selected values, which isn't the same value
-          // as expected by looking at the UI (where filters are sorted alphabetically).
+          const hierarchyTopMost = dimension.hierarchy
+            ? findInHierarchy(dimension.hierarchy, (v) => !!v.hasValue)
+            : undefined;
+          const filterValue = hierarchyTopMost
+            ? hierarchyTopMost.value
+            : Object.keys(currentFilter.values)[0] ?? dimension.values[0].value;
           filters[dimension.iri] = {
             type: "single",
-            value:
-              Object.keys(currentFilter.values)[0] ?? dimension.values[0].value,
+            value: filterValue,
           };
         }
         break;
