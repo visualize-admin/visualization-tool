@@ -437,18 +437,16 @@ export const moveFilterField = produce(
 );
 
 export const deriveFiltersFromFields = produce(
-  (chartConfig: ChartConfig, components: Component[]) => {
-    const { chartType, fields, cubes } = chartConfig;
-
-    if (chartType === "table") {
+  (draft: ChartConfig, components: Component[]) => {
+    if (draft.chartType === "table") {
       // As dimensions in tables behave differently than in other chart types,
       // they need to be handled in a different way.
-      const hiddenFieldIris = getHiddenFieldIris(fields);
-      const groupedDimensionIris = getGroupedFieldIris(fields);
+      const hiddenFieldIris = getHiddenFieldIris(draft.fields);
+      const groupedDimensionIris = getGroupedFieldIris(draft.fields);
       const isHidden = (iri: string) => hiddenFieldIris.has(iri);
       const isGrouped = (iri: string) => groupedDimensionIris.has(iri);
 
-      cubes.forEach((cube) => {
+      draft.cubes.forEach((cube) => {
         const cubeComponents = components.filter(
           (component) => component.cubeIri === cube.iri
         );
@@ -467,10 +465,10 @@ export const deriveFiltersFromFields = produce(
         });
       });
     } else {
-      const fieldDimensionIris = getFieldComponentIris(fields);
+      const fieldDimensionIris = getFieldComponentIris(draft.fields);
       const isField = (iri: string) => fieldDimensionIris.has(iri);
 
-      cubes.forEach((cube) => {
+      draft.cubes.forEach((cube) => {
         const cubeComponents = components.filter(
           (component) => component.cubeIri === cube.iri
         );
@@ -494,8 +492,6 @@ export const deriveFiltersFromFields = produce(
         });
       });
     }
-
-    return chartConfig;
   }
 );
 
@@ -1000,7 +996,11 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
           action.value.locale
         );
         const dimensions = dataCubesComponents?.dimensions ?? [];
-        deriveFiltersFromFields(chartConfig, dimensions);
+        const newConfig = deriveFiltersFromFields(chartConfig, dimensions);
+        const index = draft.chartConfigs.findIndex(
+          (d) => d.key === chartConfig.key
+        );
+        draft.chartConfigs[index] = newConfig;
 
         if (
           action.value.field === "segment" &&
