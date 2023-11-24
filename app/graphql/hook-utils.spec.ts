@@ -45,6 +45,26 @@ describe("mergeObservations", () => {
           },
         },
       },
+      {
+        data: undefined,
+        operation: {
+          variables: {
+            cubeFilter: {
+              joinBy: "YEAR",
+            },
+          },
+        },
+      },
+      {
+        data: { dataCubeObservations: [] },
+        operation: {
+          variables: {
+            cubeFilter: {
+              joinBy: undefined,
+            },
+          },
+        },
+      },
     ] as any as OperationResult<
       DataCubeObservationsQuery,
       Exact<DataCubeObservationsQueryVariables>

@@ -25,8 +25,12 @@ export const mergeObservations = (
   >[]
 ): Observation[] => {
   const merged = queries.reduce<Record<JoinByKey, Observation>>((acc, q) => {
-    const joinBy = q.operation.variables?.cubeFilter.joinBy!;
-    const obs = q.data?.dataCubeObservations?.data!;
+    const joinBy = q.operation.variables?.cubeFilter.joinBy;
+    const obs = q.data?.dataCubeObservations.data;
+
+    if (!obs || !joinBy) {
+      return acc;
+    }
 
     for (const o of obs) {
       const key: ObservationValue | undefined = o[joinBy];
