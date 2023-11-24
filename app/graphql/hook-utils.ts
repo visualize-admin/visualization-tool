@@ -7,6 +7,67 @@ import {
   Exact,
 } from "@/graphql/query-hooks";
 
+/** Use to exclude joinBy dimensions when fetching dimensions, and create
+ * a new joinBy dimension with values from all joinBy dimensions.
+ */
+export const joinDimensions = (
+  queries: OperationResult<
+    DataCubeComponentsQuery,
+    Exact<DataCubeComponentsQueryVariables>
+  >[]
+) => {
+  const joinByDimensions: Dimension[] = [];
+  const dimensions: Dimension[] = [];
+
+  for (const q of queries) {
+    if (!q.data?.dataCubeComponents) {
+      continue;
+    }
+
+    const { dimensions: queryDimensions } = q.data.dataCubeComponents;
+
+    const joinBy = q.operation.variables?.cubeFilter.joinBy;
+    const joinByDimension = queryDimensions.find((d) => d.iri === joinBy);
+
+    if (!joinByDimension) {
+      dimensions.push(...queryDimensions);
+
+      continue;
+    }
+
+    joinByDimensions.push(joinByDimension);
+    dimensions.push(
+      ...queryDimensions.filter((d) => d.iri !== joinByDimension.iri)
+    );
+  }
+
+  if (joinByDimensions.length > 1) {
+    const joinByDimension = joinByDimensions.slice(1).reduce<Dimension>(
+      (acc, d) => {
+        acc.values.push(...d.values);
+
+        return acc;
+      },
+      {
+        ...joinByDimensions[0],
+        iri: "joinBy",
+        cubeIri: "joinBy",
+        label: "joinBy",
+      }
+    );
+    joinByDimension.values = uniqBy(joinByDimension.values, "value").sort(
+      (a, b) =>
+        ascending(
+          a.position ?? a.value ?? undefined,
+          b.position ?? b.value ?? undefined
+        )
+    );
+    dimensions.unshift(joinByDimension);
+  }
+
+  return dimensions;
+};
+
 type JoinByKey = NonNullable<
   DataCubeObservationsQueryVariables["cubeFilter"]["joinBy"]
 >;
@@ -39,9 +100,12 @@ export const mergeObservations = (
         continue;
       }
 
+      // Remove joinBy dimension from the observation, to use explicit joinBy as key
+      const { [joinBy]: x, ...om } = o;
+      om.joinBy = key;
       const existing: Observation | undefined = acc[key];
       // TODO: handle cases of same column names across merged observations
-      acc[key] = Object.assign(existing ?? {}, o);
+      acc[key] = Object.assign(existing ?? {}, om);
     }
 
     return acc;

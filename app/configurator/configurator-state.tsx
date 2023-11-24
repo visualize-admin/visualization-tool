@@ -62,8 +62,10 @@ import {
 } from "@/domain/data";
 import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
 import { client } from "@/graphql/client";
+import { joinDimensions } from "@/graphql/hook-utils";
 import { executeDataCubesComponentsQuery } from "@/graphql/hooks";
 import {
+  DataCubeComponentFilter,
   DataCubeComponentsDocument,
   DataCubeComponentsQuery,
   DataCubeComponentsQueryVariables,
@@ -335,32 +337,25 @@ const EMPTY_STATE: ConfiguratorStateSelectingDataSet = {
 
 const getCachedComponents = (
   draft: ConfiguratorStateConfiguringChart,
-  cubeIris: string[],
+  cubeFilters: DataCubeComponentFilter[],
   locale: Locale
 ): DataCubeComponents | undefined => {
-  return cubeIris.reduce<DataCubeComponents>(
-    (acc, cubeIri) => {
-      const componentsQuery = client.readQuery<
-        DataCubeComponentsQuery,
-        DataCubeComponentsQueryVariables
-      >(DataCubeComponentsDocument, {
-        sourceType: draft.dataSource.type,
-        sourceUrl: draft.dataSource.url,
-        locale,
-        cubeFilter: { iri: cubeIri },
-      });
+  const queries = cubeFilters.map((cubeFilter) => {
+    return client.readQuery<
+      DataCubeComponentsQuery,
+      DataCubeComponentsQueryVariables
+    >(DataCubeComponentsDocument, {
+      sourceType: draft.dataSource.type,
+      sourceUrl: draft.dataSource.url,
+      locale,
+      cubeFilter: { iri: cubeFilter.iri, joinBy: cubeFilter.joinBy },
+    })!;
+  });
 
-      if (componentsQuery?.data?.dataCubeComponents) {
-        acc.dimensions.push(
-          ...componentsQuery.data.dataCubeComponents.dimensions
-        );
-        acc.measures.push(...componentsQuery.data.dataCubeComponents.measures);
-      }
-
-      return acc;
-    },
-    { dimensions: [], measures: [] }
-  );
+  return {
+    dimensions: joinDimensions(queries),
+    measures: queries.flatMap((q) => q.data?.dataCubeComponents.measures!),
+  };
 };
 
 export const getFilterValue = (
@@ -783,7 +778,10 @@ export const handleChartFieldChanged = (
   const f = get(chartConfig.fields, field);
   const dataCubesComponents = getCachedComponents(
     draft,
-    chartConfig.cubes.map((cube) => cube.iri),
+    chartConfig.cubes.map((cube) => ({
+      iri: cube.iri,
+      joinBy: cube.joinBy,
+    })),
     locale
   );
   const dimensions = dataCubesComponents?.dimensions ?? [];
@@ -837,7 +835,10 @@ export const handleChartOptionChanged = (
     const updatePath = field === null ? path : `fields["${field}"].${path}`;
     const dataCubesComponents = getCachedComponents(
       draft,
-      chartConfig.cubes.map((cube) => cube.iri),
+      chartConfig.cubes.map((cube) => ({
+        iri: cube.iri,
+        joinBy: cube.joinBy,
+      })),
       locale
     );
     const dimensions = dataCubesComponents?.dimensions ?? [];
@@ -950,7 +951,10 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         const chartConfig = getChartConfig(draft, chartKey);
         const dataCubesComponents = getCachedComponents(
           draft,
-          chartConfig.cubes.map((cube) => cube.iri),
+          chartConfig.cubes.map((cube) => ({
+            iri: cube.iri,
+            joinBy: cube.joinBy,
+          })),
           locale
         );
         const dimensions = dataCubesComponents?.dimensions;
@@ -993,7 +997,10 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         delete (chartConfig.fields as GenericFields)[action.value.field];
         const dataCubesComponents = getCachedComponents(
           draft,
-          chartConfig.cubes.map((cube) => cube.iri),
+          chartConfig.cubes.map((cube) => ({
+            iri: cube.iri,
+            joinBy: cube.joinBy,
+          })),
           action.value.locale
         );
         const dimensions = dataCubesComponents?.dimensions ?? [];
@@ -1247,7 +1254,10 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         const chartConfig = getChartConfig(draft);
         const dataCubesComponents = getCachedComponents(
           draft,
-          chartConfig.cubes.map((cube) => cube.iri),
+          chartConfig.cubes.map((cube) => ({
+            iri: cube.iri,
+            joinBy: cube.joinBy,
+          })),
           action.value.locale
         );
 
