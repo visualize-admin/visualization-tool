@@ -276,10 +276,12 @@ const useFilterReorder = ({
         ? {
             iri: cube.iri,
             filters: unmappedFilters,
+            joinBy: cube.joinBy,
           }
         : {
             iri: cube.iri,
             filters: undefined,
+            joinBy: cube.joinBy,
           };
     });
 

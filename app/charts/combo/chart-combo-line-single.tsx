@@ -56,6 +56,7 @@ export const ChartComboLineSingleVisualization = (
       cubeFilters: chartConfig.cubes.map((cube) => ({
         iri: cube.iri,
         componentIris,
+        joinBy: cube.joinBy,
       })),
     },
   });

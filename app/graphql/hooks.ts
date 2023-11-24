@@ -146,6 +146,12 @@ export const executeDataCubesComponentsQuery = async (
 ) => {
   const { locale, sourceType, sourceUrl, cubeFilters } = variables;
 
+  if (cubeFilters.length > 1 && !cubeFilters.every((f) => f.joinBy)) {
+    throw new Error(
+      "When fetching data from multiple cubes, all cube filters must have joinBy property set."
+    );
+  }
+
   const queries = await Promise.all(
     cubeFilters.map((cubeFilter) => {
       const cubeVariables = { locale, sourceType, sourceUrl, cubeFilter };

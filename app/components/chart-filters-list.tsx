@@ -48,6 +48,7 @@ export const ChartFiltersList = (props: ChartFiltersListProps) => {
             iri: filter.iri,
             componentIris: filter.componentIris,
             filters: filter.filters,
+            joinBy: filter.joinBy,
           }))
         : [],
     },

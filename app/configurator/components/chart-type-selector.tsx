@@ -129,7 +129,10 @@ export const ChartTypeSelector = ({
       sourceType: state.dataSource.type,
       sourceUrl: state.dataSource.url,
       locale,
-      cubeFilters: chartConfig.cubes.map((cube) => ({ iri: cube.iri })),
+      cubeFilters: chartConfig.cubes.map((cube) => ({
+        iri: cube.iri,
+        joinBy: cube.joinBy,
+      })),
     },
   });
   const dimensions = data?.dataCubesComponents?.dimensions ?? [];
