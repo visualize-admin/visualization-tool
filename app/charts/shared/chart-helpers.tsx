@@ -93,12 +93,12 @@ export const useQueryFilters = ({
 
       return {
         iri: cube.iri,
-        componentIris:
-          dimensions.length > 0 && measures.length > 0
-            ? [...dimensions, ...measures]
-                .filter((d) => d.cubeIri === cube.iri)
-                .map((d) => d.iri)
-            : undefined,
+        // componentIris:
+        //   dimensions.length > 0 && measures.length > 0
+        //     ? [...dimensions, ...measures]
+        //         .filter((d) => d.cubeIri === cube.iri)
+        //         .map((d) => d.iri)
+        //     : undefined,
         filters: prepareQueryFilters(
           chartConfig.chartType,
           filters,
