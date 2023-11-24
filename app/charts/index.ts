@@ -137,7 +137,7 @@ export const chartTypesOrder: { [k in ChartType]: number } = {
  * @param dimensions
  * @param preferredType
  */
-export const findPreferredDimension = (
+const findPreferredDimension = (
   dimensions: Component[],
   preferredType?: DimensionType
 ) => {
