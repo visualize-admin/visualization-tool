@@ -1,7 +1,7 @@
 import max from "lodash/max";
 import min from "lodash/min";
 
-import { QueryFilters } from "@/config-types";
+import { Filters } from "@/configurator";
 import { DimensionValue, Observation } from "@/domain/data";
 import { SQL_ENDPOINT } from "@/domain/env";
 import {
@@ -220,7 +220,7 @@ export const dimensionValues: NonNullable<
   // FIXME: type of cube should be different for RDF and SQL.
   const observations = filterObservations(
     (cube as any).observations,
-    slicedFilters as QueryFilters | undefined
+    slicedFilters as Filters | undefined
   );
   const values = Array.from(new Set(observations.map((d) => d[iri])));
 
@@ -248,7 +248,7 @@ export const dataCubeMeasures: NonNullable<DataCubeResolvers["measures"]> =
 
 const filterObservations = (
   allObservations: Observation[],
-  filters: QueryFilters | undefined
+  filters: Filters | undefined
 ) => {
   const observations: Observation[] = [];
 
@@ -302,7 +302,7 @@ export const observations: NonNullable<DataCubeResolvers["observations"]> =
       : rawObservations;
     const observations = filterObservations(
       allObservations,
-      filters as QueryFilters | undefined
+      filters as Filters | undefined
     );
 
     return {
