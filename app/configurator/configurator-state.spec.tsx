@@ -8,6 +8,7 @@ import {
   ColumnConfig,
   ConfiguratorStateConfiguringChart,
   DataSource,
+  Filters,
   MapConfig,
   getChartConfig,
 } from "@/config-types";
@@ -296,8 +297,34 @@ describe("applyDimensionToFilters", () => {
       expect(initialFilters).toEqual(expectedFilters);
     });
 
-    it("should select top-most hierarchy value by default", () => {
+    it("should select top-most hierarchy value by default when no filter was present", () => {
       const initialFilters = {};
+      const expectedFilters = {
+        nominalDimensionIri: {
+          type: "single",
+          value: "switzerland",
+        },
+      };
+
+      applyNonTableDimensionToFilters({
+        filters: initialFilters,
+        dimension: keyDimensionWithHierarchy,
+        isField: false,
+      });
+
+      expect(initialFilters).toEqual(expectedFilters);
+    });
+
+    it("should select top-most hierarchy value by default when multi-filter was present", () => {
+      const initialFilters: Filters = {
+        nominalDimensionIri: {
+          type: "multi",
+          values: {
+            brienz: true,
+            switzerland: true,
+          },
+        },
+      };
       const expectedFilters = {
         nominalDimensionIri: {
           type: "single",
