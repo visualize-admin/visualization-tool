@@ -1,7 +1,11 @@
+import { ascending } from "d3";
+import uniqBy from "lodash/uniqBy";
 import { OperationResult } from "urql";
 
-import { Observation, ObservationValue } from "@/domain/data";
+import { Dimension, Observation, ObservationValue } from "@/domain/data";
 import {
+  DataCubeComponentsQuery,
+  DataCubeComponentsQueryVariables,
   DataCubeObservationsQuery,
   DataCubeObservationsQueryVariables,
   Exact,

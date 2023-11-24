@@ -18,7 +18,6 @@ import {
   DataSource,
   Filters,
   getFiltersByMappingStatus,
-  QueryFilters,
   useChartConfigFilters,
   useConfiguratorState,
 } from "@/configurator";
@@ -214,7 +213,7 @@ type DataFilterProps = {
   dataSource: DataSource;
   chartConfig: ChartConfig;
   dataFilters: DataFilters;
-  interactiveFilters: QueryFilters;
+  interactiveFilters: Filters;
   disabled: boolean;
 };
 
