@@ -80,12 +80,12 @@ export const removeConfig = async ({
   });
 };
 
-const migrateDataSet = (dataSet: string): string => {
-  if (dataSet.includes("https://environment.ld.admin.ch/foen/nfi")) {
-    return dataSet.replace(/None-None-/, "");
+const migrateCubeIri = (iri: string): string => {
+  if (iri.includes("https://environment.ld.admin.ch/foen/nfi")) {
+    return iri.replace(/None-None-/, "");
   }
 
-  return dataSet;
+  return iri;
 };
 
 const ensureFiltersOrder = (chartConfig: ChartConfig) => {
@@ -127,7 +127,13 @@ const parseDbConfig = (
       ...migratedData,
       chartConfigs: migratedData.chartConfigs
         .map(ensureFiltersOrder)
-        .map((d: any) => ({ ...d, dataSet: migrateDataSet(d.dataSet) })),
+        .map((chartConfig: ChartConfig) => ({
+          ...chartConfig,
+          cubes: chartConfig.cubes.map((cube) => ({
+            ...cube,
+            iri: migrateCubeIri(cube.iri),
+          })),
+        })),
     },
   };
 };
