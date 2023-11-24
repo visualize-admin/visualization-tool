@@ -6,14 +6,16 @@ import * as Sentry from "@sentry/nextjs";
 
 import { BUILD_VERSION, SENTRY_DSN, SENTRY_ENV } from "./domain/env";
 
-Sentry.init({
-  dsn: SENTRY_DSN,
-  environment: SENTRY_ENV,
-  release: `visualization-tool@${BUILD_VERSION}`,
-  tracesSampleRate: 1.0,
-  ignoreErrors: [
-    // The ResizeObserver error is actually not problematic
-    // @see https://forum.sentry.io/t/resizeobserver-loop-limit-exceeded/8402
-    "ResizeObserver loop",
-  ],
-});
+if (process.env.NODE_ENV !== "development") {
+  Sentry.init({
+    dsn: SENTRY_DSN,
+    environment: SENTRY_ENV,
+    release: `visualization-tool@${BUILD_VERSION}`,
+    tracesSampleRate: 1.0,
+    ignoreErrors: [
+      // The ResizeObserver error is actually not problematic
+      // @see https://forum.sentry.io/t/resizeobserver-loop-limit-exceeded/8402
+      "ResizeObserver loop",
+    ],
+  });
+}
