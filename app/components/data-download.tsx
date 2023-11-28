@@ -353,13 +353,16 @@ const DownloadMenuItem = ({
       switch (fileFormat) {
         case "csv":
           const csv = await workbook.csv.writeBuffer();
-          saveAs(new Blob([csv], { type: "text/csv" }), `${fileName}.csv`);
+          saveAs(
+            new Blob([csv], { type: "text/csv;charset=utf-8" }),
+            `${fileName}.csv`
+          );
           break;
         case "xlsx":
           const xlsx = await workbook.xlsx.writeBuffer();
           saveAs(
             new Blob([xlsx], {
-              type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+              type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8",
             }),
             `${fileName}.xlsx`
           );

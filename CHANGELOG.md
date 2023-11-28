@@ -12,6 +12,7 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 - Fixes
   - Conslidated behavior of setting initial filters (top-most hierarchy value) when filter was not present and multi-filter was removed
   - Fixed switching between segmentation dimensions in column charts
+  - Added UTF-8 formatting to CSV and XLSX files (data download)
 
 # [3.24.1] - 2023-11-13
 
