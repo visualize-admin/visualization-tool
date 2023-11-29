@@ -238,14 +238,16 @@ const DataDownloadInnerMenu = ({
           sx: { width: 200, pt: 1, pb: 2 },
         }}
       >
-        <DataDownloadMenuSection
-          dataSource={dataSource}
-          subheader={
-            <Trans id="button.download.data.visible">Chart dataset</Trans>
-          }
-          fileName={`${fileName}-filtered`}
-          filters={filters}
-        />
+        {filters?.some((f) => f.filters) && (
+          <DataDownloadMenuSection
+            dataSource={dataSource}
+            subheader={
+              <Trans id="button.download.data.visible">Chart dataset</Trans>
+            }
+            fileName={`${fileName}-filtered`}
+            filters={filters}
+          />
+        )}
         <DataDownloadMenuSection
           dataSource={dataSource}
           subheader={<Trans id="button.download.data.all">Full dataset</Trans>}
