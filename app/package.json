@@ -40,7 +40,7 @@
     "@prisma/client": "^4.5.0",
     "@rdfjs/namespace": "^1.1.0",
     "@reach/auto-id": "^0.15.0",
-    "@sentry/nextjs": "^7.46.0",
+    "@sentry/nextjs": "^7.7.0",
     "@tpluscode/rdf-ns-builders": "2.0.1",
     "@tpluscode/rdf-string": "^0.2.26",
     "@tpluscode/sparql-builder": "^0.3.24",

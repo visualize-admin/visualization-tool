@@ -11,7 +11,7 @@ if (process.env.NODE_ENV !== "development") {
     dsn: SENTRY_DSN,
     environment: SENTRY_ENV,
     release: `visualization-tool@${BUILD_VERSION}`,
-    tracesSampleRate: 1.0,
+    tracesSampleRate: 0.1,
     instrumenter: {
       patch: (mod, path, logger) => {
         // Ignore auth calls to prevent 405 Keycloak errors.
