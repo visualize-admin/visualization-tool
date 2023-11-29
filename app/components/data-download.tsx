@@ -356,7 +356,7 @@ const DownloadMenuItem = ({
         case "csv":
           const csv = await workbook.csv.writeBuffer();
           saveAs(
-            new Blob([csv], { type: "text/csv;charset=utf-8" }),
+            new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8" }),
             `${fileName}.csv`
           );
           break;
