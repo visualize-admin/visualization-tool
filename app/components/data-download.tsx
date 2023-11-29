@@ -238,14 +238,16 @@ const DataDownloadInnerMenu = ({
           sx: { width: 200, pt: 1, pb: 2 },
         }}
       >
-        <DataDownloadMenuSection
-          dataSource={dataSource}
-          subheader={
-            <Trans id="button.download.data.visible">Chart dataset</Trans>
-          }
-          fileName={`${fileName}-filtered`}
-          filters={filters}
-        />
+        {filters?.some((f) => f.filters) && (
+          <DataDownloadMenuSection
+            dataSource={dataSource}
+            subheader={
+              <Trans id="button.download.data.visible">Chart dataset</Trans>
+            }
+            fileName={`${fileName}-filtered`}
+            filters={filters}
+          />
+        )}
         <DataDownloadMenuSection
           dataSource={dataSource}
           subheader={<Trans id="button.download.data.all">Full dataset</Trans>}
@@ -353,13 +355,16 @@ const DownloadMenuItem = ({
       switch (fileFormat) {
         case "csv":
           const csv = await workbook.csv.writeBuffer();
-          saveAs(new Blob([csv], { type: "text/csv" }), `${fileName}.csv`);
+          saveAs(
+            new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8" }),
+            `${fileName}.csv`
+          );
           break;
         case "xlsx":
           const xlsx = await workbook.xlsx.writeBuffer();
           saveAs(
             new Blob([xlsx], {
-              type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+              type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8",
             }),
             `${fileName}.xlsx`
           );
