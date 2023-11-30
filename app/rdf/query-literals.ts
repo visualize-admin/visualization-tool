@@ -1,6 +1,6 @@
 import { SELECT, sparql } from "@tpluscode/sparql-builder";
 import uniqBy from "lodash/uniqBy";
-import { NamedNode, Literal } from "rdf-js";
+import { Literal, NamedNode } from "rdf-js";
 import ParsingClient from "sparql-http-client/ParsingClient";
 import { LRUCache } from "typescript-lru-cache";
 
