@@ -9,7 +9,7 @@ import { LRUCache } from "typescript-lru-cache";
 
 import { PromiseValue, truthy } from "@/domain/types";
 import { DataCubeComponentFilter } from "@/graphql/resolver-types";
-import { pragmas } from "@/rdf/create-source";
+import { createSource, pragmas } from "@/rdf/create-source";
 import { ExtendedCube } from "@/rdf/extended-cube";
 
 import { FilterValueMulti, Filters } from "../configurator";
@@ -609,6 +609,14 @@ export const getCubeObservations = async ({
     dimensions: observationDimensions,
     filters: observationFilters,
   });
+
+  // In order to fix an error with cartesian products introduced in preview query
+  // when using #pragma join.hash off, we need to have a clean source without
+  // decorating the sparql client. However we still need to keep the pragmas
+  // for the full query, to vastly improve performance.
+  observationsView.getMainSource = preview
+    ? () => createSource(sparqlClient)
+    : cubeView.getMainSource;
 
   const { query, observationsRaw } = await fetchViewObservations({
     preview,
