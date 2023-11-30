@@ -10,9 +10,9 @@ import { LRUCache } from "typescript-lru-cache";
 import { SPARQL_GEO_ENDPOINT } from "@/domain/env";
 import { Awaited } from "@/domain/types";
 import { Timings } from "@/gql-flamegraph/resolvers";
-import { createSource } from "@/rdf/create-source";
+import { createSource, pragmas } from "@/rdf/create-source";
 import { ExtendedCube } from "@/rdf/extended-cube";
-import { timed, TimingCallback } from "@/utils/timed";
+import { TimingCallback, timed } from "@/utils/timed";
 
 import { createCubeDimensionValuesLoader } from "../rdf/queries";
 import {
@@ -27,7 +27,7 @@ import { RequestQueryMeta } from "./query-meta";
 export const MAX_BATCH_SIZE = 500;
 
 export const getRawCube = async (sparqlClient: ParsingClient, iri: string) => {
-  const source = createSource(sparqlClient);
+  const source = createSource(sparqlClient, pragmas);
   const cube = new ExtendedCube({
     parent: source,
     term: rdf.namedNode(iri),

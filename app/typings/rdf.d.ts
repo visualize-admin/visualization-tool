@@ -116,6 +116,7 @@ declare module "rdf-cube-view-query" {
     addDimension(dimension: Dimension): View;
     createDimension(options: $FixMe): Dimension;
     setDefaultColumns(): void;
+    getMainSource(): Source;
   }
 
   export type SourceOptions = NodeInit & {

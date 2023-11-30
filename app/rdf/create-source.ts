@@ -6,11 +6,14 @@ export const pragmas = `#pragma describe.strategy cbd
 #pragma join.hash off
 `;
 
-export const createSource = (sparqlClient: ParsingClient) => {
+export const createSource = (
+  sparqlClient: ParsingClient,
+  queryPrefix?: string
+) => {
   return new Source({
     client: sparqlClient,
     queryOperation: "postUrlencoded",
-    queryPrefix: pragmas,
+    queryPrefix,
     sourceGraph: rdf.defaultGraph(),
   });
 };
