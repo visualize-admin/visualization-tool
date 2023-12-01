@@ -24,16 +24,20 @@ export const buildLocalizedSubQuery = (
   return `${locales
     .map(
       (locale) => `OPTIONAL {
-          ?${s} ${p} ?${o}_${locale} .
-          FILTER(LANG(?${o}_${locale}) = "${locale}")
-        }`
+  ?${s} ${p} ?${o}_${locale} .
+  FILTER(LANG(?${o}_${locale}) = "${locale}")
+}`
     )
-    .join("\n")}
-    ${fallbackToNonLocalized ? `OPTIONAL { ?${s} ${p} ?${o}_raw }` : ""}
-      BIND(COALESCE(${locales.map((locale) => `?${o}_${locale}`).join(", ")} ${
+    .join("\n")}${
+    fallbackToNonLocalized
+      ? `\nOPTIONAL {
+  ?${s} ${p} ?${o}_raw .
+}`
+      : ""
+  }
+BIND(COALESCE(${locales.map((locale) => `?${o}_${locale}`).join(", ")}${
     fallbackToNonLocalized ? `, ?${o}_raw` : ``
-  }) AS ?${o})
-  `;
+  }) AS ?${o})`;
 };
 
 const getOrderedLocales = (locale: string) => {
