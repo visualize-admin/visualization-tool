@@ -84,7 +84,7 @@ export type DataCubeMetadata = {
 
 export type Component = Dimension | Measure;
 
-type BasicComponent = {
+export type BaseComponent = {
   cubeIri: string;
   iri: string;
   label: string;
@@ -99,7 +99,7 @@ type BasicComponent = {
   related?: RelatedDimension[];
 };
 
-type BasicDimension = BasicComponent & {
+export type BaseDimension = BaseComponent & {
   hierarchy?: HierarchyValue[] | null;
 } & (
     | {
@@ -124,50 +124,50 @@ export type Dimension =
   | GeoShapesDimension
   | StandardErrorDimension;
 
-export type NominalDimension = BasicDimension & {
+export type NominalDimension = BaseDimension & {
   __typename: "NominalDimension";
 };
 
-export type OrdinalDimension = BasicDimension & {
+export type OrdinalDimension = BaseDimension & {
   __typename: "OrdinalDimension";
 };
 
-export type TemporalDimension = BasicDimension & {
+export type TemporalDimension = BaseDimension & {
   __typename: "TemporalDimension";
   timeUnit: TimeUnit;
   timeFormat: string;
 };
 
-export type TemporalOrdinalDimension = BasicDimension & {
+export type TemporalOrdinalDimension = BaseDimension & {
   __typename: "TemporalOrdinalDimension";
 };
 
-export type GeoCoordinatesDimension = BasicDimension & {
+export type GeoCoordinatesDimension = BaseDimension & {
   __typename: "GeoCoordinatesDimension";
 };
 
-export type GeoShapesDimension = BasicDimension & {
+export type GeoShapesDimension = BaseDimension & {
   __typename: "GeoShapesDimension";
 };
 
-export type StandardErrorDimension = BasicDimension & {
+export type StandardErrorDimension = BaseDimension & {
   __typename: "StandardErrorDimension";
 };
 
 export type Measure = NumericalMeasure | OrdinalMeasure;
 
-type BasicMeasure = BasicComponent & {
+type BaseMeasure = BaseComponent & {
   isCurrency?: boolean;
   isDecimal?: boolean;
   currencyExponent?: number;
   resolution?: number;
 };
 
-export type NumericalMeasure = BasicMeasure & {
+export type NumericalMeasure = BaseMeasure & {
   __typename: "NumericalMeasure";
 };
 
-export type OrdinalMeasure = BasicMeasure & {
+export type OrdinalMeasure = BaseMeasure & {
   __typename: "OrdinalMeasure";
 };
 

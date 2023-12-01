@@ -5,6 +5,8 @@ import { LRUCache } from "typescript-lru-cache";
 
 import { Filters } from "@/configurator";
 import {
+  BaseComponent,
+  BaseDimension,
   Dimension,
   DimensionValue,
   Measure,
@@ -189,7 +191,7 @@ export const dataCubeComponents: NonNullable<
           b.position ?? b.value ?? undefined
         )
       );
-      const baseComponent = {
+      const baseComponent: BaseComponent = {
         // We need to use original iri here, as the cube iri might have changed.
         cubeIri: iri,
         iri: data.iri,
@@ -230,7 +232,7 @@ export const dataCubeComponents: NonNullable<
               filters ? undefined : values
             )
           : null;
-        const baseDimension = {
+        const baseDimension: BaseDimension = {
           ...baseComponent,
           hierarchy,
         };
@@ -253,7 +255,7 @@ export const dataCubeComponents: NonNullable<
             break;
           }
           default: {
-            const dimension: Dimension = {
+            const dimension: Exclude<Dimension, TemporalDimension> = {
               __typename: dimensionType,
               ...baseDimension,
             };
