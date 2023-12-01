@@ -90,6 +90,7 @@ jest.mock("@/graphql/client", () => {
               ],
             },
           },
+          operation: {},
         };
       },
     },
