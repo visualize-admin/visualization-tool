@@ -101,7 +101,19 @@ type BasicComponent = {
 
 type BasicDimension = BasicComponent & {
   hierarchy?: HierarchyValue[] | null;
-};
+} & (
+    | {
+        isJoinByDimension: true;
+        originalIris: {
+          cubeIri: string;
+          dimensionIri: string;
+        }[];
+      }
+    | {
+        isJoinByDimension?: never;
+        originalIris?: never;
+      }
+  );
 
 export type Dimension =
   | NominalDimension

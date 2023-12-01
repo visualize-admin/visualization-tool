@@ -57,6 +57,11 @@ export const joinDimensions = (
         iri: "joinBy",
         cubeIri: "joinBy",
         label: "joinBy",
+        isJoinByDimension: true,
+        originalIris: joinByDimensions.map((d) => ({
+          cubeIri: d.cubeIri,
+          dimensionIri: d.iri,
+        })),
       }
     );
     joinByDimension.values = uniqBy(joinByDimension.values, "value").sort(
