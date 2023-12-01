@@ -9,7 +9,8 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
-Nothing yet.
+- Features
+  - Localized cube landing pages are now supported (dcat:landingPage) 🌎
 
 # [3.24.2] - 2023-11-28
 
