@@ -429,7 +429,7 @@ const useColumnsStackedState = (
       });
 
       const xAnchorRaw = (xScale(x) as number) + bw * 0.5;
-      const yAnchor = yScale(sum(yValues.map((d) => Math.abs(d ?? 0))) * 0.5);
+      const yAnchor = yScale(sum(yValues.map((d) => d ?? 0)) * 0.5);
       const placement = getCenteredTooltipPlacement({
         chartWidth,
         xAnchor: xAnchorRaw,

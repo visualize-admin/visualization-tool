@@ -9,9 +9,17 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
+- Features
+  - Localized cube landing pages are now supported (dcat:landingPage) 🌎
+
+# [3.24.2] - 2023-11-28
+
+- Features
+  - Implemented initial version of merging the cubes (not yet exposed through UI)
 - Fixes
   - Conslidated behavior of setting initial filters (top-most hierarchy value) when filter was not present and multi-filter was removed
   - Fixed switching between segmentation dimensions in column charts
+  - Added UTF-8 formatting to CSV and XLSX files (data download)
 
 # [3.24.1] - 2023-11-13
 

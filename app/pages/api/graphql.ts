@@ -4,8 +4,9 @@ import configureCors from "cors";
 import "global-agent/bootstrap";
 import { NextApiRequest, NextApiResponse } from "next";
 
+import { SentryPlugin } from "@/graphql/apollo-sentry-plugin";
+
 import { setupFlamegraph } from "../../gql-flamegraph/resolvers";
-import { SentryPlugin } from "../../graphql/apollo-sentry-plugin";
 import { createContext, VisualizeGraphQLContext } from "../../graphql/context";
 import { resolvers } from "../../graphql/resolvers";
 import typeDefs from "../../graphql/schema.graphql";

@@ -140,7 +140,10 @@ export const getCubeMetadata = async (
       ?contactPoint ${ns.vcard.hasEmail} ?contactPointEmail .
     }
     OPTIONAL { ?iri ${ns.dcterms.publisher} ?publisher . }
-    OPTIONAL { ?iri ${ns.dcat.landingPage} ?landingPage . }
+    ${buildLocalizedSubQuery("iri", "dcat:landingPage", "landingPage", {
+      locale,
+      fallbackToNonLocalized: true,
+    })}
     OPTIONAL { ?iri ${ns.schema.expires} ?expires . }
     OPTIONAL { ?iri ${ns.schema.workExample} ?workExample . }
   `.GROUP().BY`?iri`.THEN.BY`?identifier`.THEN.BY`?title`.THEN.BY`?description`
