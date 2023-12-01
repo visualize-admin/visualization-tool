@@ -242,8 +242,7 @@ export type ConfiguratorStateAction =
   | {
       type: "CHART_CONFIG_FILTER_SET_RANGE";
       value: {
-        cubeIri: string;
-        dimensionIri: string;
+        dimension: Dimension;
         from: string;
         to: string;
       };
@@ -1197,28 +1196,38 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
     case "CHART_CONFIG_FILTER_SET_RANGE":
       if (draft.state === "CONFIGURING_CHART") {
-        const { cubeIri, dimensionIri, from, to } = action.value;
+        const { dimension, from, to } = action.value;
         const chartConfig = getChartConfig(draft);
-        const cube = chartConfig.cubes.find((cube) => cube.iri === cubeIri);
+        const adjustFilter = (cubeIri: string, dimensionIri: string) => {
+          const cube = chartConfig.cubes.find((cube) => cube.iri === cubeIri);
 
-        if (cube) {
-          cube.filters[dimensionIri] = {
-            type: "range",
-            from,
-            to,
-          };
-
-          if (chartConfig.interactiveFiltersConfig) {
-            chartConfig.interactiveFiltersConfig.timeRange = {
-              componentIri: dimensionIri,
-              active: chartConfig.interactiveFiltersConfig.timeRange.active,
-              presets: {
-                type: "range",
-                from,
-                to,
-              },
+          if (cube) {
+            cube.filters[dimensionIri] = {
+              type: "range",
+              from,
+              to,
             };
           }
+        };
+
+        if (dimension.isJoinByDimension) {
+          for (const { cubeIri, dimensionIri } of dimension.originalIris) {
+            adjustFilter(cubeIri, dimensionIri);
+          }
+        } else {
+          adjustFilter(dimension.cubeIri, dimension.iri);
+        }
+
+        if (chartConfig.interactiveFiltersConfig) {
+          chartConfig.interactiveFiltersConfig.timeRange = {
+            componentIri: dimension.iri,
+            active: chartConfig.interactiveFiltersConfig.timeRange.active,
+            presets: {
+              type: "range",
+              from,
+              to,
+            },
+          };
         }
       }
 
