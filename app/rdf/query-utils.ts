@@ -10,7 +10,13 @@ export const buildLocalizedSubQuery = (
   s: string,
   p: string,
   o: string,
-  { locale }: { locale: string }
+  {
+    locale,
+    fallbackToNonLocalized,
+  }: {
+    locale: string;
+    fallbackToNonLocalized?: boolean;
+  }
 ) => {
   // Include the empty locale as well.
   const locales = getOrderedLocales(locale).concat("");
@@ -23,9 +29,10 @@ export const buildLocalizedSubQuery = (
         }`
     )
     .join("\n")}
-      BIND(COALESCE(${locales
-        .map((locale) => `?${o}_${locale}`)
-        .join(", ")}) AS ?${o})
+    ${fallbackToNonLocalized ? `OPTIONAL { ?${s} ${p} ?${o}_raw }` : ""}
+      BIND(COALESCE(${locales.map((locale) => `?${o}_${locale}`).join(", ")} ${
+    fallbackToNonLocalized ? `, ?${o}_raw` : ``
+  }) AS ?${o})
   `;
 };
 
