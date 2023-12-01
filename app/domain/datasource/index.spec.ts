@@ -1,4 +1,4 @@
-import { act, renderHook } from "@testing-library/react-hooks";
+import { act, renderHook } from "@testing-library/react";
 import mittEmitter from "next/dist/shared/lib/mitt";
 import { SingletonRouter } from "next/router";
 

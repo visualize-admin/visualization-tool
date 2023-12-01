@@ -1,4 +1,4 @@
-import { renderHook } from "@testing-library/react-hooks";
+import { renderHook } from "@testing-library/react";
 
 import { useObservationLabels } from "@/charts/shared/observation-labels";
 import { Observation } from "@/domain/data";

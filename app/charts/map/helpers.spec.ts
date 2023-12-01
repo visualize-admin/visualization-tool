@@ -1,4 +1,4 @@
-import { renderHook } from "@testing-library/react-hooks";
+import { renderHook } from "@testing-library/react";
 
 import { BBox } from "@/config-types";
 
@@ -22,8 +22,8 @@ const featuresBBox = [
 describe("useViewState", () => {
   it("should properly set defaultViewState", () => {
     const { result, rerender } = renderHook<
-      ViewStateInitializationProps,
-      ReturnType<typeof useViewState>
+      ReturnType<typeof useViewState>,
+      ViewStateInitializationProps
     >((props: ViewStateInitializationProps) => useViewState(props), {
       initialProps: {
         width,
@@ -49,8 +49,8 @@ describe("useViewState", () => {
 
   it("should properly set viewState", () => {
     const { result } = renderHook<
-      ViewStateInitializationProps,
-      ReturnType<typeof useViewState>
+      ReturnType<typeof useViewState>,
+      ViewStateInitializationProps
     >((props: ViewStateInitializationProps) => useViewState(props), {
       initialProps: {
         width,
@@ -66,8 +66,8 @@ describe("useViewState", () => {
     );
 
     const { result: resultLocked } = renderHook<
-      ViewStateInitializationProps,
-      ReturnType<typeof useViewState>
+      ReturnType<typeof useViewState>,
+      ViewStateInitializationProps
     >((props: ViewStateInitializationProps) => useViewState(props), {
       initialProps: {
         width,

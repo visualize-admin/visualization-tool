@@ -1,4 +1,4 @@
-import { renderHook } from "@testing-library/react-hooks";
+import { renderHook } from "@testing-library/react";
 import { NextRouter, useRouter } from "next/router";
 
 import { useLocale } from "@/locales/use-locale";
