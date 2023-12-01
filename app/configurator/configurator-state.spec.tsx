@@ -809,7 +809,9 @@ describe("getFiltersByMappingStatus", () => {
       },
     } as any as MapConfig;
 
-    const { mappedFiltersIris } = getFiltersByMappingStatus(config, "foo");
+    const { mappedFiltersIris } = getFiltersByMappingStatus(config, {
+      cubeIri: "foo",
+    });
 
     expect([...mappedFiltersIris]).toEqual(
       expect.arrayContaining(["areaColorIri", "symbolColorIri"])

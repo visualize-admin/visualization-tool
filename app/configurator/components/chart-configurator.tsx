@@ -19,7 +19,7 @@ import { makeStyles } from "@mui/styles";
 import isEmpty from "lodash/isEmpty";
 import isEqual from "lodash/isEqual";
 import sortBy from "lodash/sortBy";
-import { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   DragDropContext,
   Draggable,
@@ -74,6 +74,7 @@ import {
   isTemporalDimension,
   Measure,
 } from "@/domain/data";
+import { truthy } from "@/domain/types";
 import {
   useDataCubesComponentsQuery,
   useDataCubesObservationsQuery,
@@ -171,13 +172,16 @@ const useEnsurePossibleFilters = ({
   const [error, setError] = useState<Error>();
   const lastFilters = useRef<Record<string, Filters>>({});
   const client = useClient();
+  const joinByIris = React.useMemo(() => {
+    return chartConfig.cubes.flatMap((cube) => cube.joinBy).filter(truthy);
+  }, [chartConfig.cubes]);
 
   useEffect(() => {
     const run = async () => {
       chartConfig.cubes.forEach(async (cube) => {
         const { mappedFilters, unmappedFilters } = getFiltersByMappingStatus(
           chartConfig,
-          cube.iri
+          { cubeIri: cube.iri, joinByIris }
         );
 
         if (
@@ -247,6 +251,7 @@ const useEnsurePossibleFilters = ({
     chartConfig.cubes,
     state.dataSource.type,
     state.dataSource.url,
+    joinByIris,
   ]);
 
   return { error, fetching };
@@ -261,16 +266,19 @@ const useFilterReorder = ({
   const chartConfig = getChartConfig(state);
   const locale = useLocale();
   const filters = getChartConfigFilters(chartConfig.cubes);
+  const joinByIris = React.useMemo(() => {
+    return chartConfig.cubes.flatMap((cube) => cube.joinBy).filter(truthy);
+  }, [chartConfig.cubes]);
   const { mappedFiltersIris } = useMemo(() => {
-    return getFiltersByMappingStatus(chartConfig);
-  }, [chartConfig]);
+    return getFiltersByMappingStatus(chartConfig, { joinByIris });
+  }, [chartConfig, joinByIris]);
 
   const variables = useMemo(() => {
     const cubeFilters = chartConfig.cubes.map((cube) => {
-      const { unmappedFilters } = getFiltersByMappingStatus(
-        chartConfig,
-        cube.iri
-      );
+      const { unmappedFilters } = getFiltersByMappingStatus(chartConfig, {
+        cubeIri: cube.iri,
+        joinByIris,
+      });
 
       return Object.keys(unmappedFilters).length > 0
         ? {
@@ -297,7 +305,7 @@ const useFilterReorder = ({
       cubeFilters,
       requeryKey: requeryKey ? requeryKey : undefined,
     };
-  }, [chartConfig]);
+  }, [chartConfig, joinByIris]);
 
   const [
     { data: componentsData, fetching: componentsFetching },

@@ -587,7 +587,11 @@ export const applyNonTableDimensionToFilters = ({
         const _exhaustiveCheck: never = currentFilter;
         return _exhaustiveCheck;
     }
-  } else if (!isField && dimension.isKeyDimension) {
+  } else if (
+    !isField &&
+    dimension.isKeyDimension &&
+    !dimension.isJoinByDimension
+  ) {
     // If this scenario appears, it means that current filter is undefined -
     // which means it must be converted to a single-filter (if it's a keyDimension,
     // otherwise a 'No filter' option should be selected by default).
@@ -731,13 +735,26 @@ export const getNonGenericFieldValues = (
  */
 export const getFiltersByMappingStatus = (
   chartConfig: ChartConfig,
-  cubeIri?: string
+  options: {
+    /** Treat original iris of joinBy dimension as fields (currently joinBy dimension
+     * can only be mapped to a field).
+     *
+     * This ensures that we won't apply single filters to original joinBy dimensions.
+     *  */
+    joinByIris?: string[];
+    cubeIri?: string;
+  }
 ) => {
+  const { joinByIris, cubeIri } = options;
   const genericFieldValues = Object.values(chartConfig.fields).map(
     (d) => d.componentIri
   );
   const nonGenericFieldValues = getNonGenericFieldValues(chartConfig);
-  const iris = new Set([...genericFieldValues, ...nonGenericFieldValues]);
+  const iris = new Set([
+    ...genericFieldValues,
+    ...nonGenericFieldValues,
+    ...(joinByIris ?? []),
+  ]);
   const filters = getChartConfigFilters(chartConfig.cubes, cubeIri);
   const mappedFilters = pickBy(filters, (_, iri) => iris.has(iri));
   const unmappedFilters = pickBy(filters, (_, iri) => !iris.has(iri));
