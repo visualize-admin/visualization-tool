@@ -13,6 +13,7 @@ import {
   getChartConfig,
 } from "@/config-types";
 import {
+  ConfiguratorStateAction,
   applyNonTableDimensionToFilters,
   applyTableDimensionToFilters,
   deriveFiltersFromFields,
@@ -24,6 +25,7 @@ import {
   initChartStateFromCube,
   initChartStateFromLocalStorage,
   moveFilterField,
+  setRangeFilter,
   updateColorMapping,
 } from "@/configurator/configurator-state";
 import { Component, Dimension, Measure, NominalDimension } from "@/domain/data";
@@ -1080,5 +1082,82 @@ describe("handleChartOptionChanged", () => {
     expect(Object.keys(state.chartConfigs[0].cubes[0].filters)).not.toContain(
       "areaLayerColorIri"
     );
+  });
+});
+
+describe("filtering", () => {
+  it("should add range filter", () => {
+    const draft = {
+      chartConfigs: [{ key: "ABC", cubes: [{ iri: "foo", filters: {} }] }],
+      activeChartKey: "ABC",
+    } as any as ConfiguratorStateConfiguringChart;
+    const action: Extract<
+      ConfiguratorStateAction,
+      { type: "CHART_CONFIG_FILTER_SET_RANGE" }
+    > = {
+      type: "CHART_CONFIG_FILTER_SET_RANGE",
+      value: {
+        dimension: { cubeIri: "foo", iri: "time" } as any as Dimension,
+        from: "2010",
+        to: "2014",
+      },
+    };
+
+    setRangeFilter(draft, action);
+
+    expect(draft.chartConfigs[0].cubes[0].filters).toEqual({
+      time: { type: "range", from: "2010", to: "2014" },
+    });
+  });
+
+  it("should add range filters to every cube if using joinBy dimension", () => {
+    const draft = {
+      chartConfigs: [
+        {
+          key: "ABC",
+          cubes: [
+            { iri: "foo1", filters: {} },
+            { iri: "foo2", filters: {} },
+            { iri: "foo3", filters: {} },
+          ],
+        },
+      ],
+      activeChartKey: "ABC",
+    } as any as ConfiguratorStateConfiguringChart;
+    const action: Extract<
+      ConfiguratorStateAction,
+      { type: "CHART_CONFIG_FILTER_SET_RANGE" }
+    > = {
+      type: "CHART_CONFIG_FILTER_SET_RANGE",
+      value: {
+        dimension: {
+          isJoinByDimension: true,
+          originalIris: [
+            {
+              cubeIri: "foo1",
+              dimensionIri: "time1",
+            },
+            {
+              cubeIri: "foo2",
+              dimensionIri: "time2",
+            },
+            {
+              cubeIri: "foo3",
+              dimensionIri: "time3",
+            },
+          ],
+        } as any as Dimension,
+        from: "2010",
+        to: "2014",
+      },
+    };
+
+    setRangeFilter(draft, action);
+
+    expect(draft.chartConfigs[0].cubes.map((cube) => cube.filters)).toEqual([
+      { time1: { type: "range", from: "2010", to: "2014" } },
+      { time2: { type: "range", from: "2010", to: "2014" } },
+      { time3: { type: "range", from: "2010", to: "2014" } },
+    ]);
   });
 });

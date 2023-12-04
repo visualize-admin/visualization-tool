@@ -946,6 +946,48 @@ const handleInteractiveFilterChanged = (
   return draft;
 };
 
+export const setRangeFilter = (
+  draft: ConfiguratorState,
+  action: Extract<
+    ConfiguratorStateAction,
+    { type: "CHART_CONFIG_FILTER_SET_RANGE" }
+  >
+) => {
+  const { dimension, from, to } = action.value;
+  const chartConfig = getChartConfig(draft);
+  const adjustFilter = (cubeIri: string, dimensionIri: string) => {
+    const cube = chartConfig.cubes.find((cube) => cube.iri === cubeIri);
+
+    if (cube) {
+      cube.filters[dimensionIri] = {
+        type: "range",
+        from,
+        to,
+      };
+    }
+  };
+
+  if (dimension.isJoinByDimension) {
+    for (const { cubeIri, dimensionIri } of dimension.originalIris) {
+      adjustFilter(cubeIri, dimensionIri);
+    }
+  } else {
+    adjustFilter(dimension.cubeIri, dimension.iri);
+  }
+
+  if (chartConfig.interactiveFiltersConfig) {
+    chartConfig.interactiveFiltersConfig.timeRange = {
+      componentIri: dimension.iri,
+      active: chartConfig.interactiveFiltersConfig.timeRange.active,
+      presets: {
+        type: "range",
+        from,
+        to,
+      },
+    };
+  }
+};
+
 const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
   draft,
   action
@@ -1196,39 +1238,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
     case "CHART_CONFIG_FILTER_SET_RANGE":
       if (draft.state === "CONFIGURING_CHART") {
-        const { dimension, from, to } = action.value;
-        const chartConfig = getChartConfig(draft);
-        const adjustFilter = (cubeIri: string, dimensionIri: string) => {
-          const cube = chartConfig.cubes.find((cube) => cube.iri === cubeIri);
-
-          if (cube) {
-            cube.filters[dimensionIri] = {
-              type: "range",
-              from,
-              to,
-            };
-          }
-        };
-
-        if (dimension.isJoinByDimension) {
-          for (const { cubeIri, dimensionIri } of dimension.originalIris) {
-            adjustFilter(cubeIri, dimensionIri);
-          }
-        } else {
-          adjustFilter(dimension.cubeIri, dimension.iri);
-        }
-
-        if (chartConfig.interactiveFiltersConfig) {
-          chartConfig.interactiveFiltersConfig.timeRange = {
-            componentIri: dimension.iri,
-            active: chartConfig.interactiveFiltersConfig.timeRange.active,
-            presets: {
-              type: "range",
-              from,
-              to,
-            },
-          };
-        }
+        setRangeFilter(draft, action);
       }
 
       return draft;
