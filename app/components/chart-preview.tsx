@@ -82,6 +82,7 @@ export const ChartPreviewInner = (props: ChartPreviewProps) => {
       cubeFilters: chartConfig.cubes.map((cube) => ({
         iri: cube.iri,
         componentIris,
+        filters: cube.filters,
         joinBy: cube.joinBy,
       })),
     },

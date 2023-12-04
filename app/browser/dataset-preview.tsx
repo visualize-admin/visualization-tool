@@ -92,7 +92,7 @@ export const DataSetPreview = ({
 }) => {
   const footnotesClasses = useFootnotesStyles({ useMarginTop: false });
   const locale = useLocale();
-  const filters = [{ iri: dataSetIri }];
+  const cubeFilters = [{ iri: dataSetIri }];
   const [
     { data: previewData, fetching: fetchingPreview, error: previewError },
   ] = useDataCubePreviewQuery({
@@ -114,7 +114,7 @@ export const DataSetPreview = ({
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
-      cubeFilters: filters,
+      cubeFilters,
     },
   });
   const classes = useStyles({
@@ -197,7 +197,7 @@ export const DataSetPreview = ({
               <DataDownloadMenu
                 dataSource={dataSource}
                 title={dataCubeByIri.title}
-                filters={filters}
+                filters={cubeFilters}
               />
               {dataCubeByIri.observations.sparqlEditorUrl && (
                 <RunSparqlQuery
