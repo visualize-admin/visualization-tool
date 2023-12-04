@@ -32,6 +32,7 @@ import { parseDate } from "@/configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { Component, Dimension, Measure, Observation } from "@/domain/data";
 import { truthy } from "@/domain/types";
+import { JOIN_BY_DIMENSION_IRI } from "@/graphql/hook-utils";
 import { DataCubeObservationFilter } from "@/graphql/resolver-types";
 import {
   InteractiveFiltersState,
@@ -158,7 +159,7 @@ type IFKey = keyof NonNullable<InteractiveFiltersConfig>;
 
 export const getChartConfigFilterComponentIris = ({ cubes }: ChartConfig) => {
   return Object.keys(getChartConfigFilters(cubes)).filter(
-    (d) => d !== "joinBy"
+    (d) => d !== JOIN_BY_DIMENSION_IRI
   );
 };
 
@@ -254,7 +255,7 @@ export const extractChartConfigComponentIris = (chartConfig: ChartConfig) => {
         Boolean
       )
     )
-      .filter((d) => d !== "joinBy")
+      .filter((d) => d !== JOIN_BY_DIMENSION_IRI)
       // Important so the order is consistent when querying.
       .sort()
   );

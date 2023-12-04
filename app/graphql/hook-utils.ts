@@ -11,6 +11,8 @@ import {
   Exact,
 } from "@/graphql/query-hooks";
 
+export const JOIN_BY_DIMENSION_IRI = "joinBy";
+
 /** Use to exclude joinBy dimensions when fetching dimensions, and create
  * a new joinBy dimension with values from all joinBy dimensions.
  */
@@ -54,9 +56,11 @@ export const joinDimensions = (
       },
       {
         ...joinByDimensions[0],
-        iri: "joinBy",
-        cubeIri: "joinBy",
-        label: "joinBy",
+        iri: JOIN_BY_DIMENSION_IRI,
+        // Non-relevant, as we rely on the originalIris property.
+        cubeIri: JOIN_BY_DIMENSION_IRI,
+        // FIXME: adapt to design
+        label: JOIN_BY_DIMENSION_IRI,
         isJoinByDimension: true,
         originalIris: joinByDimensions.map((d) => ({
           cubeIri: d.cubeIri,
