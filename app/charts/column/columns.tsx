@@ -96,7 +96,8 @@ export const Columns = () => {
     return chartData.map((d) => {
       const key = getRenderingKey(d);
       const xScaled = xScale(getX(d)) as number;
-      const y = getY(d) ?? NaN;
+      const yRaw = getY(d);
+      const y = yRaw === null || isNaN(yRaw) ? 0 : yRaw;
       const yScaled = yScale(y);
       const yRender = yScale(Math.max(y, 0));
       const height = Math.abs(yScaled - y0);

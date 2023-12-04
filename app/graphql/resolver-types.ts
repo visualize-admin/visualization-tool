@@ -99,6 +99,7 @@ export type DataCubeComponentFilter = {
   latest?: Maybe<Scalars['Boolean']>;
   filters?: Maybe<Scalars['Filters']>;
   componentIris?: Maybe<Array<Scalars['String']>>;
+  joinBy?: Maybe<Scalars['String']>;
 };
 
 

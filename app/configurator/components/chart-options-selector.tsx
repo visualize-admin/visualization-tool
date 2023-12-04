@@ -103,15 +103,18 @@ export const ChartOptionsSelector = ({
         sourceType: dataSource.type,
         sourceUrl: dataSource.url,
         locale,
-        cubeFilters: chartConfig.cubes.map((cube) => ({ iri: cube.iri })),
+        cubeFilters: chartConfig.cubes.map((cube) => ({
+          iri: cube.iri,
+          joinBy: cube.joinBy,
+        })),
       },
     });
   const dimensions = componentsData?.dataCubesComponents.dimensions;
   const measures = componentsData?.dataCubesComponents.measures;
   const queryFilters = useQueryFilters({
     chartConfig,
-    dimensions: dimensions ?? [],
-    measures: measures ?? [],
+    dimensions,
+    measures,
   });
   const [{ data: observationsData }] = useDataCubesObservationsQuery({
     variables: {

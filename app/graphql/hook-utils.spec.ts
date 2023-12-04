@@ -73,10 +73,10 @@ describe("mergeObservations", () => {
     const result = mergeObservations(queries);
 
     expect(result).toEqual([
-      { YEAR: 2000, AMOUNT: 2000 },
-      { year: 2010, amount: 2010, YEAR: 2010, AMOUNT: 2010 },
-      { year: 2011, amount: 2011 },
-      { YEAR: 2020, AMOUNT: 2020 },
+      { joinBy: 2000, AMOUNT: 2000 },
+      { joinBy: 2010, amount: 2010, AMOUNT: 2010 },
+      { joinBy: 2011, amount: 2011 },
+      { joinBy: 2020, AMOUNT: 2020 },
     ]);
   });
 });

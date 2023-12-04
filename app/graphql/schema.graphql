@@ -343,6 +343,7 @@ input DataCubeComponentFilter {
   latest: Boolean
   filters: Filters
   componentIris: [String!]
+  joinBy: String
 }
 
 input DataCubeMetadataFilter {

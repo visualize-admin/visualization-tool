@@ -18,7 +18,6 @@ import {
   DataSource,
   Filters,
   getFiltersByMappingStatus,
-  QueryFilters,
   useChartConfigFilters,
   useConfiguratorState,
 } from "@/configurator";
@@ -97,10 +96,9 @@ export const ChartDataFilters = (props: ChartDataFiltersProps) => {
       const cubeQueryFilters = queryFilters.find(
         (d) => d.iri === cube.iri
       ) as DataCubeObservationFilter;
-      const filtersByMappingStatus = getFiltersByMappingStatus(
-        chartConfig,
-        cube.iri
-      );
+      const filtersByMappingStatus = getFiltersByMappingStatus(chartConfig, {
+        cubeIri: cube.iri,
+      });
       const { unmappedFilters, mappedFilters } = filtersByMappingStatus;
       const unmappedKeys = Object.keys(unmappedFilters);
       const unmappedQueryFiltersArray = Object.entries(
@@ -214,7 +212,7 @@ type DataFilterProps = {
   dataSource: DataSource;
   chartConfig: ChartConfig;
   dataFilters: DataFilters;
-  interactiveFilters: QueryFilters;
+  interactiveFilters: Filters;
   disabled: boolean;
 };
 

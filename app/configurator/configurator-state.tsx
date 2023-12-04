@@ -62,8 +62,10 @@ import {
 } from "@/domain/data";
 import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
 import { client } from "@/graphql/client";
+import { joinDimensions } from "@/graphql/hook-utils";
 import { executeDataCubesComponentsQuery } from "@/graphql/hooks";
 import {
+  DataCubeComponentFilter,
   DataCubeComponentsDocument,
   DataCubeComponentsQuery,
   DataCubeComponentsQueryVariables,
@@ -240,8 +242,7 @@ export type ConfiguratorStateAction =
   | {
       type: "CHART_CONFIG_FILTER_SET_RANGE";
       value: {
-        cubeIri: string;
-        dimensionIri: string;
+        dimension: Dimension;
         from: string;
         to: string;
       };
@@ -335,32 +336,25 @@ const EMPTY_STATE: ConfiguratorStateSelectingDataSet = {
 
 const getCachedComponents = (
   draft: ConfiguratorStateConfiguringChart,
-  cubeIris: string[],
+  cubeFilters: DataCubeComponentFilter[],
   locale: Locale
 ): DataCubeComponents | undefined => {
-  return cubeIris.reduce<DataCubeComponents>(
-    (acc, cubeIri) => {
-      const componentsQuery = client.readQuery<
-        DataCubeComponentsQuery,
-        DataCubeComponentsQueryVariables
-      >(DataCubeComponentsDocument, {
-        sourceType: draft.dataSource.type,
-        sourceUrl: draft.dataSource.url,
-        locale,
-        cubeFilter: { iri: cubeIri },
-      });
+  const queries = cubeFilters.map((cubeFilter) => {
+    return client.readQuery<
+      DataCubeComponentsQuery,
+      DataCubeComponentsQueryVariables
+    >(DataCubeComponentsDocument, {
+      sourceType: draft.dataSource.type,
+      sourceUrl: draft.dataSource.url,
+      locale,
+      cubeFilter: { iri: cubeFilter.iri, joinBy: cubeFilter.joinBy },
+    })!;
+  });
 
-      if (componentsQuery?.data?.dataCubeComponents) {
-        acc.dimensions.push(
-          ...componentsQuery.data.dataCubeComponents.dimensions
-        );
-        acc.measures.push(...componentsQuery.data.dataCubeComponents.measures);
-      }
-
-      return acc;
-    },
-    { dimensions: [], measures: [] }
-  );
+  return {
+    dimensions: joinDimensions(queries),
+    measures: queries.flatMap((q) => q.data?.dataCubeComponents.measures!),
+  };
 };
 
 export const getFilterValue = (
@@ -592,7 +586,11 @@ export const applyNonTableDimensionToFilters = ({
         const _exhaustiveCheck: never = currentFilter;
         return _exhaustiveCheck;
     }
-  } else if (!isField && dimension.isKeyDimension) {
+  } else if (
+    !isField &&
+    dimension.isKeyDimension &&
+    !dimension.isJoinByDimension
+  ) {
     // If this scenario appears, it means that current filter is undefined -
     // which means it must be converted to a single-filter (if it's a keyDimension,
     // otherwise a 'No filter' option should be selected by default).
@@ -736,13 +734,26 @@ export const getNonGenericFieldValues = (
  */
 export const getFiltersByMappingStatus = (
   chartConfig: ChartConfig,
-  cubeIri?: string
+  options: {
+    /** Treat original iris of joinBy dimension as fields (currently joinBy dimension
+     * can only be mapped to a field).
+     *
+     * This ensures that we won't apply single filters to original joinBy dimensions.
+     *  */
+    joinByIris?: string[];
+    cubeIri?: string;
+  }
 ) => {
+  const { joinByIris, cubeIri } = options;
   const genericFieldValues = Object.values(chartConfig.fields).map(
     (d) => d.componentIri
   );
   const nonGenericFieldValues = getNonGenericFieldValues(chartConfig);
-  const iris = new Set([...genericFieldValues, ...nonGenericFieldValues]);
+  const iris = new Set([
+    ...genericFieldValues,
+    ...nonGenericFieldValues,
+    ...(joinByIris ?? []),
+  ]);
   const filters = getChartConfigFilters(chartConfig.cubes, cubeIri);
   const mappedFilters = pickBy(filters, (_, iri) => iris.has(iri));
   const unmappedFilters = pickBy(filters, (_, iri) => !iris.has(iri));
@@ -783,7 +794,10 @@ export const handleChartFieldChanged = (
   const f = get(chartConfig.fields, field);
   const dataCubesComponents = getCachedComponents(
     draft,
-    chartConfig.cubes.map((cube) => cube.iri),
+    chartConfig.cubes.map((cube) => ({
+      iri: cube.iri,
+      joinBy: cube.joinBy,
+    })),
     locale
   );
   const dimensions = dataCubesComponents?.dimensions ?? [];
@@ -837,7 +851,10 @@ export const handleChartOptionChanged = (
     const updatePath = field === null ? path : `fields["${field}"].${path}`;
     const dataCubesComponents = getCachedComponents(
       draft,
-      chartConfig.cubes.map((cube) => cube.iri),
+      chartConfig.cubes.map((cube) => ({
+        iri: cube.iri,
+        joinBy: cube.joinBy,
+      })),
       locale
     );
     const dimensions = dataCubesComponents?.dimensions ?? [];
@@ -929,6 +946,48 @@ const handleInteractiveFilterChanged = (
   return draft;
 };
 
+export const setRangeFilter = (
+  draft: ConfiguratorState,
+  action: Extract<
+    ConfiguratorStateAction,
+    { type: "CHART_CONFIG_FILTER_SET_RANGE" }
+  >
+) => {
+  const { dimension, from, to } = action.value;
+  const chartConfig = getChartConfig(draft);
+  const adjustFilter = (cubeIri: string, dimensionIri: string) => {
+    const cube = chartConfig.cubes.find((cube) => cube.iri === cubeIri);
+
+    if (cube) {
+      cube.filters[dimensionIri] = {
+        type: "range",
+        from,
+        to,
+      };
+    }
+  };
+
+  if (dimension.isJoinByDimension) {
+    for (const { cubeIri, dimensionIri } of dimension.originalIris) {
+      adjustFilter(cubeIri, dimensionIri);
+    }
+  } else {
+    adjustFilter(dimension.cubeIri, dimension.iri);
+  }
+
+  if (chartConfig.interactiveFiltersConfig) {
+    chartConfig.interactiveFiltersConfig.timeRange = {
+      componentIri: dimension.iri,
+      active: chartConfig.interactiveFiltersConfig.timeRange.active,
+      presets: {
+        type: "range",
+        from,
+        to,
+      },
+    };
+  }
+};
+
 const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
   draft,
   action
@@ -950,7 +1009,10 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         const chartConfig = getChartConfig(draft, chartKey);
         const dataCubesComponents = getCachedComponents(
           draft,
-          chartConfig.cubes.map((cube) => cube.iri),
+          chartConfig.cubes.map((cube) => ({
+            iri: cube.iri,
+            joinBy: cube.joinBy,
+          })),
           locale
         );
         const dimensions = dataCubesComponents?.dimensions;
@@ -993,7 +1055,10 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         delete (chartConfig.fields as GenericFields)[action.value.field];
         const dataCubesComponents = getCachedComponents(
           draft,
-          chartConfig.cubes.map((cube) => cube.iri),
+          chartConfig.cubes.map((cube) => ({
+            iri: cube.iri,
+            joinBy: cube.joinBy,
+          })),
           action.value.locale
         );
         const dimensions = dataCubesComponents?.dimensions ?? [];
@@ -1173,29 +1238,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
     case "CHART_CONFIG_FILTER_SET_RANGE":
       if (draft.state === "CONFIGURING_CHART") {
-        const { cubeIri, dimensionIri, from, to } = action.value;
-        const chartConfig = getChartConfig(draft);
-        const cube = chartConfig.cubes.find((cube) => cube.iri === cubeIri);
-
-        if (cube) {
-          cube.filters[dimensionIri] = {
-            type: "range",
-            from,
-            to,
-          };
-
-          if (chartConfig.interactiveFiltersConfig) {
-            chartConfig.interactiveFiltersConfig.timeRange = {
-              componentIri: dimensionIri,
-              active: chartConfig.interactiveFiltersConfig.timeRange.active,
-              presets: {
-                type: "range",
-                from,
-                to,
-              },
-            };
-          }
-        }
+        setRangeFilter(draft, action);
       }
 
       return draft;
@@ -1247,7 +1290,10 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         const chartConfig = getChartConfig(draft);
         const dataCubesComponents = getCachedComponents(
           draft,
-          chartConfig.cubes.map((cube) => cube.iri),
+          chartConfig.cubes.map((cube) => ({
+            iri: cube.iri,
+            joinBy: cube.joinBy,
+          })),
           action.value.locale
         );
 

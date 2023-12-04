@@ -1,11 +1,78 @@
+import { ascending } from "d3";
 import { OperationResult } from "urql";
 
-import { Observation, ObservationValue } from "@/domain/data";
+import { Dimension, Observation, ObservationValue } from "@/domain/data";
 import {
+  DataCubeComponentsQuery,
+  DataCubeComponentsQueryVariables,
   DataCubeObservationsQuery,
   DataCubeObservationsQueryVariables,
   Exact,
 } from "@/graphql/query-hooks";
+
+export const JOIN_BY_DIMENSION_IRI = "joinBy";
+
+/** Use to exclude joinBy dimensions when fetching dimensions, and create
+ * a new joinBy dimension with values from all joinBy dimensions.
+ */
+export const joinDimensions = (
+  queries: OperationResult<
+    DataCubeComponentsQuery,
+    Exact<DataCubeComponentsQueryVariables>
+  >[]
+) => {
+  const joinByDimensions: Dimension[] = [];
+  const dimensions: Dimension[] = [];
+
+  for (const q of queries) {
+    if (!q.data?.dataCubeComponents) {
+      continue;
+    }
+
+    const { dimensions: queryDimensions } = q.data.dataCubeComponents;
+
+    const joinBy = q.operation.variables?.cubeFilter.joinBy;
+    const joinByDimension = queryDimensions.find((d) => d.iri === joinBy);
+
+    if (!joinByDimension) {
+      dimensions.push(...queryDimensions);
+
+      continue;
+    }
+
+    joinByDimensions.push(joinByDimension);
+    dimensions.push(
+      ...queryDimensions.filter((d) => d.iri !== joinByDimension.iri)
+    );
+  }
+
+  if (joinByDimensions.length > 1) {
+    const joinByDimension: Dimension = {
+      ...joinByDimensions[0],
+      values: joinByDimensions
+        .flatMap((d) => d.values)
+        .sort((a, b) =>
+          ascending(
+            a.position ?? a.value ?? undefined,
+            b.position ?? b.value ?? undefined
+          )
+        ),
+      iri: JOIN_BY_DIMENSION_IRI,
+      // Non-relevant, as we rely on the originalIris property.
+      cubeIri: JOIN_BY_DIMENSION_IRI,
+      // FIXME: adapt to design
+      label: JOIN_BY_DIMENSION_IRI,
+      isJoinByDimension: true,
+      originalIris: joinByDimensions.map((d) => ({
+        cubeIri: d.cubeIri,
+        dimensionIri: d.iri,
+      })),
+    };
+    dimensions.unshift(joinByDimension);
+  }
+
+  return dimensions;
+};
 
 type JoinByKey = NonNullable<
   DataCubeObservationsQueryVariables["cubeFilter"]["joinBy"]
@@ -39,9 +106,12 @@ export const mergeObservations = (
         continue;
       }
 
+      // Remove joinBy dimension from the observation, to use explicit joinBy as key
+      const { [joinBy]: x, ...om } = o;
+      om.joinBy = key;
       const existing: Observation | undefined = acc[key];
       // TODO: handle cases of same column names across merged observations
-      acc[key] = Object.assign(existing ?? {}, o);
+      acc[key] = Object.assign(existing ?? {}, om);
     }
 
     return acc;

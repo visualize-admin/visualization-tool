@@ -43,13 +43,13 @@ export const ChartFiltersList = (props: ChartFiltersListProps) => {
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
-      cubeFilters: filters
-        ? filters.map((filter) => ({
-            iri: filter.iri,
-            componentIris: filter.componentIris,
-            filters: filter.filters,
-          }))
-        : [],
+      cubeFilters:
+        filters?.map((filter) => ({
+          iri: filter.iri,
+          componentIris: filter.componentIris,
+          filters: filter.filters,
+          joinBy: filter.joinBy,
+        })) ?? [],
     },
     pause: !filters,
   });

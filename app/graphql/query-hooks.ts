@@ -2,7 +2,7 @@ import { DataCubeComponents } from '../domain/data';
 import { DataCubeMetadata } from '../domain/data';
 import { DataCubeObservations } from '../domain/data';
 import { DimensionValue } from '../domain/data';
-import { QueryFilters } from '../configurator';
+import { Filters } from '../configurator';
 import { HierarchyValue } from '../domain/data';
 import { Observation } from '../domain/data';
 import { RawObservation } from '../domain/data';
@@ -26,7 +26,7 @@ export type Scalars = {
   DataCubeObservations: DataCubeObservations;
   DimensionValue: DimensionValue;
   FilterValue: any;
-  Filters: QueryFilters;
+  Filters: Filters;
   GeoShapes: any;
   HierarchyValue: HierarchyValue;
   Observation: Observation;
@@ -98,6 +98,7 @@ export type DataCubeComponentFilter = {
   latest?: Maybe<Scalars['Boolean']>;
   filters?: Maybe<Scalars['Filters']>;
   componentIris?: Maybe<Array<Scalars['String']>>;
+  joinBy?: Maybe<Scalars['String']>;
 };
 
 

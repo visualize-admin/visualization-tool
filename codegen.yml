@@ -19,7 +19,7 @@ generates:
         DimensionValue: "../domain/data#DimensionValue"
         HierarchyValue: "../domain/data#HierarchyValue"
         RawObservation: "../domain/data#RawObservation"
-        Filters: "../configurator#QueryFilters"
+        Filters: "../configurator#Filters"
         GeoShape: "../domain/data#GeoShape"
         SearchCube: "../domain/data#SearchCube"
         DataCubeComponents: "../domain/data#DataCubeComponents"

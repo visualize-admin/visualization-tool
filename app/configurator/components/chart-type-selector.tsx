@@ -13,6 +13,7 @@ import clsx from "clsx";
 import React, { SyntheticEvent } from "react";
 
 import {
+  chartTypes,
   comboChartTypes,
   getPossibleChartTypes,
   regularChartTypes,
@@ -129,7 +130,10 @@ export const ChartTypeSelector = ({
       sourceType: state.dataSource.type,
       sourceUrl: state.dataSource.url,
       locale,
-      cubeFilters: chartConfig.cubes.map((cube) => ({ iri: cube.iri })),
+      cubeFilters: chartConfig.cubes.map((cube) => ({
+        iri: cube.iri,
+        joinBy: cube.joinBy,
+      })),
     },
   });
   const dimensions = data?.dataCubesComponents?.dimensions ?? [];
@@ -159,7 +163,12 @@ export const ChartTypeSelector = ({
     return <ControlSectionSkeleton />;
   }
 
-  const possibleChartTypes = getPossibleChartTypes({ dimensions, measures });
+  const possibleChartTypes = getPossibleChartTypes({
+    dimensions,
+    measures,
+    allowedChartTypes:
+      chartConfig.cubes.length > 1 ? comboChartTypes : chartTypes,
+  });
 
   return (
     <Box {...props}>

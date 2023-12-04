@@ -7,7 +7,7 @@ import {
 } from "@/domain/data";
 
 import { client } from "./client";
-import { mergeObservations } from "./hook-utils";
+import { joinDimensions, mergeObservations } from "./hook-utils";
 import {
   DataCubeComponentFilter,
   DataCubeComponentsDocument,
@@ -146,6 +146,12 @@ export const executeDataCubesComponentsQuery = async (
 ) => {
   const { locale, sourceType, sourceUrl, cubeFilters } = variables;
 
+  if (cubeFilters.length > 1 && !cubeFilters.every((f) => f.joinBy)) {
+    throw new Error(
+      "When fetching data from multiple cubes, all cube filters must have joinBy property set."
+    );
+  }
+
   const queries = await Promise.all(
     cubeFilters.map((cubeFilter) => {
       const cubeVariables = { locale, sourceType, sourceUrl, cubeFilter };
@@ -172,20 +178,34 @@ export const executeDataCubesComponentsQuery = async (
   const error = queries.find((q) => q.error)?.error;
   const fetching = !error && queries.some((q) => !q.data);
 
+  if (error || fetching) {
+    return {
+      data: undefined,
+      error,
+      fetching,
+    };
+  }
+
+  if (queries.length === 1) {
+    return {
+      data: {
+        dataCubesComponents: {
+          dimensions: queries[0].data?.dataCubeComponents.dimensions!,
+          measures: queries[0].data?.dataCubeComponents.measures!,
+        },
+      },
+      error,
+      fetching,
+    };
+  }
+
   return {
-    data:
-      error || fetching
-        ? undefined
-        : {
-            dataCubesComponents: {
-              dimensions: queries.flatMap(
-                (q) => q.data?.dataCubeComponents.dimensions!
-              ),
-              measures: queries.flatMap(
-                (q) => q.data?.dataCubeComponents.measures!
-              ),
-            },
-          },
+    data: {
+      dataCubesComponents: {
+        dimensions: joinDimensions(queries),
+        measures: queries.flatMap((q) => q.data?.dataCubeComponents.measures!),
+      },
+    },
     error,
     fetching,
   };

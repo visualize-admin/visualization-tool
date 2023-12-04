@@ -235,6 +235,8 @@ const useColumnsState = (
       return `${getYError(d)}${yErrorMeasure?.unit ?? ""}`;
     };
 
+    const y = getY(d);
+
     return {
       xAnchor,
       yAnchor,
@@ -246,7 +248,7 @@ const useColumnsState = (
       xValue: xTimeUnit ? timeFormatUnit(xLabel, xTimeUnit) : xLabel,
       datum: {
         label: undefined,
-        value: `${yValueFormatter(getY(d))}`,
+        value: y !== null && isNaN(y) ? "-" : `${yValueFormatter(getY(d))}`,
         error: getError(d),
         color: "",
       },

@@ -903,14 +903,13 @@ export const TimeFilter = (props: TimeFilterProps) => {
       dispatch({
         type: "CHART_CONFIG_FILTER_SET_RANGE",
         value: {
-          cubeIri: dimension.cubeIri,
-          dimensionIri: dimension.iri,
+          dimension,
           from,
           to,
         },
       });
     },
-    [dispatch, dimension.cubeIri, dimension.iri]
+    [dispatch, dimension]
   );
 
   const temporalDimension =

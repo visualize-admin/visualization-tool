@@ -137,7 +137,7 @@ export const chartTypesOrder: { [k in ChartType]: number } = {
  * @param dimensions
  * @param preferredType
  */
-export const findPreferredDimension = (
+const findPreferredDimension = (
   dimensions: Component[],
   preferredType?: DimensionType
 ) => {
@@ -1885,9 +1885,11 @@ const adjustSegmentSorting = ({
 export const getPossibleChartTypes = ({
   dimensions,
   measures,
+  allowedChartTypes,
 }: {
   dimensions: Dimension[];
   measures: Measure[];
+  allowedChartTypes?: ChartType[];
 }): ChartType[] => {
   const numericalMeasures = measures.filter(isNumericalMeasure);
   const ordinalMeasures = measures.filter(isOrdinalMeasure);
@@ -1945,7 +1947,11 @@ export const getPossibleChartTypes = ({
   }
 
   return chartTypes
-    .filter((d) => possibles.includes(d))
+    .filter(
+      (d) =>
+        possibles.includes(d) &&
+        (!allowedChartTypes || allowedChartTypes.includes(d))
+    )
     .sort((a, b) => chartTypesOrder[a] - chartTypesOrder[b]);
 };
 
