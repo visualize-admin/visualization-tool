@@ -6,6 +6,7 @@ import {
   ChartConfig,
   ChartType,
   ColumnConfig,
+  ComboLineDualConfig,
   ConfiguratorStateConfiguringChart,
   DataSource,
   Filters,
@@ -818,6 +819,40 @@ describe("getFiltersByMappingStatus", () => {
 
     expect([...mappedFiltersIris]).toEqual(
       expect.arrayContaining(["areaColorIri", "symbolColorIri"])
+    );
+  });
+
+  it("should correctly retrieve filters when using joinBy dimension", () => {
+    const config = {
+      chartType: "line-dual",
+      cubes: [
+        {
+          iri: "fo1",
+          filters: {},
+          joinBy: "X1",
+        },
+        {
+          iri: "foo2",
+          filters: {},
+          joinBy: "X2",
+        },
+      ],
+      fields: {
+        x: {
+          componentIri: "joinBy",
+        },
+      },
+    } as any as ComboLineDualConfig;
+
+    const { mappedFiltersIris } = getFiltersByMappingStatus(config, {
+      cubeIri: "foo",
+      joinByIris: ["X1", "X2"],
+    });
+
+    // If the joinBy dimensions are treated as being mapped, we won't apply
+    // single filters to them when deriving filters from fields.
+    expect([...mappedFiltersIris]).toEqual(
+      expect.arrayContaining(["X1", "X2"])
     );
   });
 });
