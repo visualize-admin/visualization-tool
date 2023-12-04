@@ -94,8 +94,8 @@ export const ChartPreviewInner = (props: ChartPreviewProps) => {
   } = useChartTablePreview();
 
   const handleToggleTableView = useEvent(() => setIsTablePreview((c) => !c));
-  const dimensions = components?.dataCubesComponents.dimensions ?? [];
-  const measures = components?.dataCubesComponents.measures ?? [];
+  const dimensions = components?.dataCubesComponents.dimensions;
+  const measures = components?.dataCubesComponents.measures;
   const allComponents = useMemo(() => {
     if (!components?.dataCubesComponents) {
       return [];

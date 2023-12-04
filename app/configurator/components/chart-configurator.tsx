@@ -779,8 +779,8 @@ type ChartFieldsProps = {
 };
 
 const ChartFields = (props: ChartFieldsProps) => {
-  const { dataSource, chartConfig, dimensions = [], measures = [] } = props;
-  const components = [...dimensions, ...measures];
+  const { dataSource, chartConfig, dimensions, measures } = props;
+  const components = [...(dimensions ?? []), ...(measures ?? [])];
   const queryFilters = useQueryFilters({
     chartConfig,
     dimensions,

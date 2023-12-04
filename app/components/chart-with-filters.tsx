@@ -84,8 +84,8 @@ const GenericChart = (props: GenericChartProps) => {
     props;
   const queryFilters = useQueryFilters({
     chartConfig,
-    dimensions: dimensions ?? [],
-    measures: measures ?? [],
+    dimensions,
+    measures,
   });
   const commonProps = {
     dataSource,
