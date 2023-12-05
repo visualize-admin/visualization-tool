@@ -29,6 +29,7 @@ import {
   ColumnStyleCategory,
   ConfiguratorState,
   ConfiguratorStateConfiguringChart,
+  ConfiguratorStateLayouting,
   ConfiguratorStatePublished,
   ConfiguratorStatePublishing,
   ConfiguratorStateSelectingDataSet,
@@ -1708,6 +1709,12 @@ export const isConfiguring = (
   return s.state === "CONFIGURING_CHART";
 };
 
+export const isLayouting = (
+  s: ConfiguratorState
+): s is ConfiguratorStateLayouting => {
+  return s.state === "LAYOUTING";
+};
+
 export const isPublishing = (
   s: ConfiguratorState
 ): s is ConfiguratorStatePublishing => {
@@ -1722,9 +1729,14 @@ export const isPublished = (
 
 export const hasChartConfigs = (
   s: ConfiguratorState
-): s is
-  | ConfiguratorStateConfiguringChart
-  | ConfiguratorStatePublishing
-  | ConfiguratorStatePublished => {
-  return isConfiguring(s) || isPublishing(s) || isPublished(s);
+): s is ConfiguratorStateWithChartConfigs => {
+  return (
+    isConfiguring(s) || isLayouting(s) || isPublishing(s) || isPublished(s)
+  );
 };
+
+export type ConfiguratorStateWithChartConfigs =
+  | ConfiguratorStateConfiguringChart
+  | ConfiguratorStateLayouting
+  | ConfiguratorStatePublishing
+  | ConfiguratorStatePublished;

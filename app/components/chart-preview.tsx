@@ -19,6 +19,7 @@ import { MetadataPanel } from "@/components/metadata-panel";
 import {
   DataSource,
   getChartConfig,
+  hasChartConfigs,
   useConfiguratorState,
 } from "@/configurator";
 import {
@@ -134,8 +135,7 @@ export const ChartPreviewInner = (props: ChartPreviewProps) => {
             </HintYellow>
           </Box>
         )}
-        {(state.state === "CONFIGURING_CHART" ||
-          state.state === "PUBLISHING") && (
+        {hasChartConfigs(state) && (
           <>
             <>
               <Flex

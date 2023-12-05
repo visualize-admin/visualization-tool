@@ -12,6 +12,7 @@ import { Loading } from "@/components/hint";
 import { getChartConfig, useConfiguratorState } from "@/configurator";
 import { ChartAnnotationsSelector } from "@/configurator/components/chart-annotations-selector";
 import { ChartConfigurator } from "@/configurator/components/chart-configurator";
+import { ChartLayouter } from "@/configurator/components/chart-layouter";
 import { ChartOptionsSelector } from "@/configurator/components/chart-options-selector";
 import {
   ConfiguratorDrawer,
@@ -168,6 +169,85 @@ const ConfigureChartStep = () => {
   );
 };
 
+const LayoutingStep = () => {
+  const [state, dispatch] = useConfiguratorState();
+  const chartConfig = getChartConfig(state);
+  const { dataSource, setDataSource } = useDataSourceStore();
+
+  const handleClosePanel = useEvent(() => {
+    dispatch({
+      type: "ACTIVE_FIELD_CHANGED",
+      value: undefined,
+    });
+  });
+
+  const handlePrevious = useEvent(() => {
+    if (state.state !== "LAYOUTING") {
+      return;
+    }
+    dispatch({ type: "STEP_PREVIOUS" });
+  });
+
+  React.useEffect(() => {
+    if (
+      state.state === "LAYOUTING" &&
+      state.dataSource.url !== dataSource.url
+    ) {
+      setDataSource(state.dataSource);
+    }
+  }, [dataSource.url, setDataSource, state.dataSource, state.state]);
+
+  if (state.state !== "LAYOUTING") {
+    return null;
+  }
+
+  return (
+    <InteractiveFiltersProvider>
+      <PanelLeftWrapper
+        sx={{
+          flexGrow: 1,
+          display: "flex",
+          height: "100%",
+          flexDirection: "column",
+        }}
+      >
+        <BackContainer>
+          <BackButton onClick={handlePrevious}>
+            <Trans id="controls.nav.back-to-preview">Back to preview</Trans>
+          </BackButton>
+        </BackContainer>
+        <ChartLayouter state={state} />
+      </PanelLeftWrapper>
+      <PanelMiddleWrapper>
+        <ChartPanel>
+          <ChartPreview dataSource={state.dataSource} />
+        </ChartPanel>
+      </PanelMiddleWrapper>
+      <ConfiguratorDrawer
+        anchor="left"
+        open={!!chartConfig.activeField}
+        hideBackdrop
+        onClose={handleClosePanel}
+      >
+        <div style={{ width: DRAWER_WIDTH }} data-testid="panel-drawer">
+          <BackContainer>
+            <Button
+              variant="text"
+              color="inherit"
+              size="small"
+              sx={{ fontWeight: "bold" }}
+              startIcon={<SvgIcChevronLeft />}
+              onClick={handleClosePanel}
+            >
+              <Trans id="controls.nav.back-to-main">Back to main</Trans>
+            </Button>
+          </BackContainer>
+        </div>
+      </ConfiguratorDrawer>
+    </InteractiveFiltersProvider>
+  );
+};
+
 const PublishStep = () => {
   const [state] = useConfiguratorState();
 
@@ -201,6 +281,7 @@ export const Configurator = () => {
   ) : (
     <PanelLayout>
       {state === "CONFIGURING_CHART" ? <ConfigureChartStep /> : null}
+      {state === "LAYOUTING" ? <LayoutingStep /> : null}
       {state === "PUBLISHING" ? <PublishStep /> : null}
     </PanelLayout>
   );

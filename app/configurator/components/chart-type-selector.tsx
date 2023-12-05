@@ -22,14 +22,14 @@ import Flex from "@/components/flex";
 import { Hint } from "@/components/hint";
 import {
   ChartType,
-  ConfiguratorStateConfiguringChart,
-  ConfiguratorStatePublishing,
+  ConfiguratorStatePublished,
   getChartConfig,
 } from "@/config-types";
 import { ControlSectionSkeleton } from "@/configurator/components/chart-controls/section";
 import { getFieldLabel } from "@/configurator/components/field-i18n";
 import { getIconName } from "@/configurator/components/ui-helpers";
 import { FieldProps, useChartType } from "@/configurator/config-form";
+import { ConfiguratorStateWithChartConfigs } from "@/configurator/configurator-state";
 import { useDataCubesComponentsQuery } from "@/graphql/hooks";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
@@ -118,7 +118,7 @@ export const ChartTypeSelector = ({
   chartKey,
   ...props
 }: {
-  state: ConfiguratorStateConfiguringChart | ConfiguratorStatePublishing;
+  state: Exclude<ConfiguratorStateWithChartConfigs, ConfiguratorStatePublished>;
   type?: "add" | "edit";
   showHelp?: boolean;
   chartKey: string;

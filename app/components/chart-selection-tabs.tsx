@@ -11,11 +11,14 @@ import Flex from "@/components/flex";
 import {
   ChartConfig,
   ChartType,
-  ConfiguratorStateConfiguringChart,
-  ConfiguratorStatePublishing,
+  ConfiguratorStatePublished,
+  ConfiguratorStateWithChartConfigs,
   getChartConfig,
   hasChartConfigs,
+  isConfiguring,
+  isLayouting,
   isPublished,
+  isPublishing,
   useConfiguratorState,
 } from "@/configurator";
 import { ChartTypeSelector } from "@/configurator/components/chart-type-selector";
@@ -71,7 +74,7 @@ const TabsStateProvider = (props: React.PropsWithChildren<{}>) => {
 export const ChartSelectionTabs = () => {
   const [state] = useConfiguratorState(hasChartConfigs);
   const editable =
-    state.state === "CONFIGURING_CHART" || state.state === "PUBLISHING";
+    isConfiguring(state) || isLayouting(state) || isPublishing(state);
 
   if (!editable && state.chartConfigs.length === 1) {
     return null;
@@ -98,7 +101,7 @@ export const ChartSelectionTabs = () => {
 };
 
 type TabsEditableProps = {
-  state: ConfiguratorStateConfiguringChart | ConfiguratorStatePublishing;
+  state: Exclude<ConfiguratorStateWithChartConfigs, ConfiguratorStatePublished>;
   chartConfig: ChartConfig;
   data: TabDatum[];
 };
