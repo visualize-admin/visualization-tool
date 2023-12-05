@@ -1,5 +1,4 @@
 import { ascending } from "d3";
-import uniqBy from "lodash/uniqBy";
 import { OperationResult } from "urql";
 
 import { Dimension, Observation, ObservationValue } from "@/domain/data";
@@ -10,6 +9,8 @@ import {
   DataCubeObservationsQueryVariables,
   Exact,
 } from "@/graphql/query-hooks";
+
+export const JOIN_BY_DIMENSION_IRI = "joinBy";
 
 /** Use to exclude joinBy dimensions when fetching dimensions, and create
  * a new joinBy dimension with values from all joinBy dimensions.
@@ -46,31 +47,27 @@ export const joinDimensions = (
   }
 
   if (joinByDimensions.length > 1) {
-    const joinByDimension = joinByDimensions.slice(1).reduce<Dimension>(
-      (acc, d) => {
-        acc.values.push(...d.values);
-
-        return acc;
-      },
-      {
-        ...joinByDimensions[0],
-        iri: "joinBy",
-        cubeIri: "joinBy",
-        label: "joinBy",
-        isJoinByDimension: true,
-        originalIris: joinByDimensions.map((d) => ({
-          cubeIri: d.cubeIri,
-          dimensionIri: d.iri,
-        })),
-      }
-    );
-    joinByDimension.values = uniqBy(joinByDimension.values, "value").sort(
-      (a, b) =>
-        ascending(
-          a.position ?? a.value ?? undefined,
-          b.position ?? b.value ?? undefined
-        )
-    );
+    const joinByDimension: Dimension = {
+      ...joinByDimensions[0],
+      values: joinByDimensions
+        .flatMap((d) => d.values)
+        .sort((a, b) =>
+          ascending(
+            a.position ?? a.value ?? undefined,
+            b.position ?? b.value ?? undefined
+          )
+        ),
+      iri: JOIN_BY_DIMENSION_IRI,
+      // Non-relevant, as we rely on the originalIris property.
+      cubeIri: JOIN_BY_DIMENSION_IRI,
+      // FIXME: adapt to design
+      label: JOIN_BY_DIMENSION_IRI,
+      isJoinByDimension: true,
+      originalIris: joinByDimensions.map((d) => ({
+        cubeIri: d.cubeIri,
+        dimensionIri: d.iri,
+      })),
+    };
     dimensions.unshift(joinByDimension);
   }
 
