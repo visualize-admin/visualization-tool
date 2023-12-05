@@ -133,6 +133,7 @@ const TabsEditable = (props: TabsEditableProps) => {
     <>
       <TabsInner
         data={data}
+        addable={state.state === "CONFIGURING_CHART"}
         editable
         draggable={state.chartConfigs.length > 1}
         onChartAdd={(e) => {
@@ -242,9 +243,10 @@ const TabsFixed = (props: TabsFixedProps) => {
   return (
     <TabsInner
       data={data}
+      addable={false}
       editable={false}
       draggable={false}
-      onChartSwitch={(key: string) => {
+      onChartSwitch={(key) => {
         dispatch({
           type: "SWITCH_ACTIVE_CHART",
           value: key,
@@ -343,6 +345,7 @@ export const PublishChartButton = () => {
 
 type TabsInnerProps = {
   data: TabDatum[];
+  addable: boolean;
   editable: boolean;
   draggable: boolean;
   onChartAdd?: (e: React.MouseEvent<HTMLElement>) => void;
@@ -351,8 +354,15 @@ type TabsInnerProps = {
 };
 
 const TabsInner = (props: TabsInnerProps) => {
-  const { data, editable, draggable, onChartEdit, onChartAdd, onChartSwitch } =
-    props;
+  const {
+    data,
+    addable,
+    editable,
+    draggable,
+    onChartEdit,
+    onChartAdd,
+    onChartSwitch,
+  } = props;
   const [state, dispatch] = useConfiguratorState(hasChartConfigs);
 
   return (
@@ -438,7 +448,7 @@ const TabsInner = (props: TabsInnerProps) => {
               ))}
               <div style={{ opacity: 0 }}>{provided.placeholder}</div>
 
-              {editable && (
+              {addable && (
                 <Tab
                   sx={{
                     ml: (theme) => `-${theme.spacing(2)}`,

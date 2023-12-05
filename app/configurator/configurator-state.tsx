@@ -1340,7 +1340,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       return draft;
 
     case "CHART_CONFIG_REORDER":
-      if (draft.state === "CONFIGURING_CHART") {
+      if (draft.state === "CONFIGURING_CHART" || draft.state === "LAYOUTING") {
         const { oldIndex, newIndex } = action.value;
         const [removed] = draft.chartConfigs.splice(oldIndex, 1);
         draft.chartConfigs.splice(newIndex, 0, removed);
@@ -1349,7 +1349,11 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       return draft;
 
     case "SWITCH_ACTIVE_CHART":
-      if (draft.state === "CONFIGURING_CHART" || draft.state === "PUBLISHED") {
+      if (
+        draft.state === "CONFIGURING_CHART" ||
+        draft.state === "LAYOUTING" ||
+        draft.state === "PUBLISHED"
+      ) {
         draft.activeChartKey = action.value;
       }
 
