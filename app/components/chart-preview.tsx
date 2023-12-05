@@ -116,7 +116,7 @@ export const ChartPreviewInner = (props: ChartPreviewProps) => {
         justifyContent: "space-between",
         flexGrow: 1,
         color: "grey.800",
-        p: 5,
+        p: 6,
         width: "100%",
       }}
     >

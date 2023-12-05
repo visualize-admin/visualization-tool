@@ -41,7 +41,7 @@ const useStyles = makeStyles<Theme>((theme) => ({
   panelMiddle: {
     overflowX: "hidden",
     overflowY: "auto",
-    padding: theme.spacing(4),
+    padding: theme.spacing(5),
     gridArea: "middle",
   },
   panelRight: {
