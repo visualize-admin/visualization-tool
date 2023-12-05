@@ -11,6 +11,7 @@ import { DataDownloadMenu, RunSparqlQuery } from "@/components/data-download";
 import Flex from "@/components/flex";
 import { HintRed, Loading, LoadingDataError } from "@/components/hint";
 import { DataSource } from "@/config-types";
+import { sourceToLabel } from "@/domain/datasource";
 import { useDataCubesComponentsQuery } from "@/graphql/hooks";
 import { useDataCubePreviewQuery } from "@/graphql/query-hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
@@ -162,7 +163,9 @@ export const DataSetPreview = ({
             {dataCubeByIri.title}
           </Typography>
           <Link
-            href={`/create/new?cube=${dataCubeByIri.iri}`}
+            href={`/create/new?cube=${
+              dataCubeByIri.iri
+            }&dataSource=${sourceToLabel(dataSource)}`}
             passHref
             legacyBehavior
           >
