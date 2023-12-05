@@ -7,12 +7,12 @@ import React from "react";
 import { SelectDatasetStep } from "@/browser/select-dataset-step";
 import { ChartPanel } from "@/components/chart-panel";
 import { ChartPreview } from "@/components/chart-preview";
+import { PublishChartButton } from "@/components/chart-selection-tabs";
 import { HEADER_HEIGHT } from "@/components/header";
 import { Loading } from "@/components/hint";
 import { getChartConfig, useConfiguratorState } from "@/configurator";
 import { ChartAnnotationsSelector } from "@/configurator/components/chart-annotations-selector";
 import { ChartConfigurator } from "@/configurator/components/chart-configurator";
-import { ChartLayouter } from "@/configurator/components/chart-layouter";
 import { ChartOptionsSelector } from "@/configurator/components/chart-options-selector";
 import {
   ConfiguratorDrawer,
@@ -20,7 +20,11 @@ import {
 } from "@/configurator/components/drawer";
 import {
   LMPanelLayout,
+  LMRPanelHeaderWrapper,
   LMRPanelLayout,
+  PanelHeaderLeftWrapper,
+  PanelHeaderMiddleWrapper,
+  PanelHeaderRightWrapper,
   PanelLeftWrapper,
   PanelMiddleWrapper,
 } from "@/configurator/components/layout";
@@ -207,23 +211,39 @@ const LayoutingStep = () => {
   return (
     <InteractiveFiltersProvider>
       <LMRPanelLayout>
-        <PanelLeftWrapper
-          sx={{
-            flexGrow: 1,
-            display: "flex",
-            height: "100%",
-            flexDirection: "column",
-          }}
-        >
-          <BackContainer>
-            <BackButton onClick={handlePrevious}>
-              <Trans id="controls.nav.back-to-configurator">
-                Back to configurator
-              </Trans>
-            </BackButton>
-          </BackContainer>
-          <ChartLayouter state={state} />
-        </PanelLeftWrapper>
+        <LMRPanelHeaderWrapper sx={{ p: 4 }}>
+          <PanelHeaderLeftWrapper>
+            <BackContainer>
+              <BackButton onClick={handlePrevious}>
+                <Trans id="controls.nav.back-to-configurator">
+                  Back to configurator
+                </Trans>
+              </BackButton>
+            </BackContainer>
+          </PanelHeaderLeftWrapper>
+          <PanelHeaderMiddleWrapper
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 3,
+              mx: "auto",
+            }}
+          >
+            <Button>123</Button>
+            <Button>321</Button>
+            <Button>213</Button>
+          </PanelHeaderMiddleWrapper>
+          <PanelHeaderRightWrapper
+            sx={{
+              display: "flex",
+              alignItems: "start",
+              justifyContent: "flex-end",
+            }}
+          >
+            <PublishChartButton />
+          </PanelHeaderRightWrapper>
+        </LMRPanelHeaderWrapper>
         <PanelMiddleWrapper>
           <ChartPanel>
             <ChartPreview dataSource={state.dataSource} />
