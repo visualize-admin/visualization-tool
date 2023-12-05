@@ -19,7 +19,8 @@ import {
   DRAWER_WIDTH,
 } from "@/configurator/components/drawer";
 import {
-  PanelLayout,
+  LMPanelLayout,
+  LMRPanelLayout,
   PanelLeftWrapper,
   PanelMiddleWrapper,
 } from "@/configurator/components/layout";
@@ -115,7 +116,7 @@ const ConfigureChartStep = () => {
 
   return (
     <InteractiveFiltersProvider>
-      <PanelLayout>
+      <LMPanelLayout>
         <PanelLeftWrapper
           sx={{
             flexGrow: 1,
@@ -166,7 +167,7 @@ const ConfigureChartStep = () => {
             )}
           </div>
         </ConfiguratorDrawer>
-      </PanelLayout>
+      </LMPanelLayout>
     </InteractiveFiltersProvider>
   );
 };
@@ -205,7 +206,7 @@ const LayoutingStep = () => {
 
   return (
     <InteractiveFiltersProvider>
-      <PanelLayout>
+      <LMRPanelLayout>
         <PanelLeftWrapper
           sx={{
             flexGrow: 1,
@@ -249,7 +250,7 @@ const LayoutingStep = () => {
             </BackContainer>
           </div>
         </ConfiguratorDrawer>
-      </PanelLayout>
+      </LMRPanelLayout>
     </InteractiveFiltersProvider>
   );
 };
@@ -262,7 +263,7 @@ const PublishStep = () => {
   }
 
   return (
-    <PanelLayout>
+    <LMPanelLayout>
       <PanelMiddleWrapper>
         <ChartPanel>
           <InteractiveFiltersProvider>
@@ -270,7 +271,7 @@ const PublishStep = () => {
           </InteractiveFiltersProvider>
         </ChartPanel>
       </PanelMiddleWrapper>
-    </PanelLayout>
+    </LMPanelLayout>
   );
 };
 

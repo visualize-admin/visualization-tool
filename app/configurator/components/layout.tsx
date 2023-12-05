@@ -52,14 +52,45 @@ const useStyles = makeStyles<Theme>((theme) => ({
     "header header"
     "left middle"`,
   },
+  LMRPanelLayout: {
+    gridTemplateColumns: `${DRAWER_WIDTH}px minmax(22rem, 1fr) ${DRAWER_WIDTH}px`,
+    gridTemplateAreas: `
+    "header header header"
+    "left middle right"`,
+  },
 }));
 
-export const PanelLayout = (props: BoxProps) => {
+export const LMPanelLayout = (props: BoxProps) => {
   const { children, ...rest } = props;
   const classes = useStyles();
 
   return (
-    <Box {...rest} className={clsx(classes.panelLayout, rest.className)}>
+    <Box
+      {...rest}
+      className={clsx(
+        classes.panelLayout,
+        classes.LMPanelLayout,
+        rest.className
+      )}
+    >
+      {children}
+    </Box>
+  );
+};
+
+export const LMRPanelLayout = (props: BoxProps) => {
+  const { children, ...rest } = props;
+  const classes = useStyles();
+
+  return (
+    <Box
+      {...rest}
+      className={clsx(
+        classes.panelLayout,
+        classes.LMRPanelLayout,
+        rest.className
+      )}
+    >
       {children}
     </Box>
   );
