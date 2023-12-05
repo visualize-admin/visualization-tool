@@ -13,6 +13,7 @@ import {
   ChartType,
   ConfiguratorStatePublished,
   ConfiguratorStateWithChartConfigs,
+  enableLayouting,
   getChartConfig,
   hasChartConfigs,
   isConfiguring,
@@ -253,7 +254,8 @@ const TabsFixed = (props: TabsFixedProps) => {
   );
 };
 
-const PublishChartButton = () => {
+const NextStepButton = (props: React.PropsWithChildren<{}>) => {
+  const { children } = props;
   const locale = useLocale();
   const [state, dispatch] = useConfiguratorState(hasChartConfigs);
   const chartConfig = getChartConfig(state);
@@ -271,7 +273,7 @@ const PublishChartButton = () => {
       })),
     },
   });
-  const goNext = useEvent(() => {
+  const handleClick = useEvent(() => {
     if (components?.dataCubesComponents) {
       dispatch({
         type: "STEP_NEXT",
@@ -280,6 +282,27 @@ const PublishChartButton = () => {
     }
   });
 
+  return (
+    <Button
+      color="primary"
+      variant="contained"
+      onClick={handleClick}
+      sx={{ minWidth: "fit-content" }}
+    >
+      {children}
+    </Button>
+  );
+};
+
+export const LayoutChartButton = () => {
+  return (
+    <NextStepButton>
+      <Trans id="button.layout">Proceed to layout options</Trans>
+    </NextStepButton>
+  );
+};
+
+export const PublishChartButton = () => {
   const { asPath } = useRouter();
   const session = useSession();
   const chartId = getRouterChartId(asPath);
@@ -291,17 +314,11 @@ const PublishChartButton = () => {
     enable: !!(session.data?.user && chartId),
     initialStatus: "fetching",
   });
-
   const editingPublishedChart =
     session.data?.user.id && config?.user_id === session.data.user.id;
 
   return status === "fetching" ? null : (
-    <Button
-      color="primary"
-      variant="contained"
-      onClick={components ? goNext : undefined}
-      sx={{ minWidth: "fit-content" }}
-    >
+    <NextStepButton>
       {editingPublishedChart ? (
         <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
           <Tooltip
@@ -320,7 +337,7 @@ const PublishChartButton = () => {
       ) : (
         <Trans id="button.publish">Publish this visualization</Trans>
       )}
-    </Button>
+    </NextStepButton>
   );
 };
 
@@ -336,7 +353,7 @@ type TabsInnerProps = {
 const TabsInner = (props: TabsInnerProps) => {
   const { data, editable, draggable, onChartEdit, onChartAdd, onChartSwitch } =
     props;
-  const [, dispatch] = useConfiguratorState();
+  const [state, dispatch] = useConfiguratorState(hasChartConfigs);
 
   return (
     <Box
@@ -441,7 +458,13 @@ const TabsInner = (props: TabsInnerProps) => {
         </Droppable>
       </DragDropContext>
 
-      {editable && <PublishChartButton />}
+      {editable &&
+        isConfiguring(state) &&
+        (enableLayouting(state) ? (
+          <LayoutChartButton />
+        ) : (
+          <PublishChartButton />
+        ))}
     </Box>
   );
 };

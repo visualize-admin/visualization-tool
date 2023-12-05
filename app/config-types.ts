@@ -1165,7 +1165,11 @@ export type ConfiguratorStateLayouting = t.TypeOf<
 >;
 
 export const enableLayouting = (
-  state: ConfiguratorStateConfiguringChart | ConfiguratorStatePublishing
+  state:
+    | ConfiguratorStateConfiguringChart
+    | ConfiguratorStateLayouting
+    | ConfiguratorStatePublishing
+    | ConfiguratorStatePublished
 ) => {
   return state.chartConfigs.length > 1;
 };

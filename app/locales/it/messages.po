@@ -18,14 +18,17 @@ msgid "Add filter"
 msgstr "Aggiungi filtro"
 
 #: app/configurator/components/chart-configurator.tsx
+#: app/configurator/components/chart-controls/drag-and-drop-tab.tsx
 msgid "Drag filters to reorganize"
 msgstr "Trascina i filtri per riorganizzarli"
 
 #: app/configurator/components/chart-configurator.tsx
+#: app/configurator/components/chart-controls/drag-and-drop-tab.tsx
 msgid "Move filter down"
 msgstr "Sposta il filtro in basso"
 
 #: app/configurator/components/chart-configurator.tsx
+#: app/configurator/components/chart-controls/drag-and-drop-tab.tsx
 msgid "Move filter up"
 msgstr "Sposta il filtro in alto"
 
@@ -107,6 +110,10 @@ msgstr "Clicca per copiare"
 #: app/components/copy-to-clipboard-text-input.tsx
 msgid "button.hint.copied"
 msgstr "Copiato!"
+
+#: app/components/chart-selection-tabs.tsx
+msgid "button.layout"
+msgstr "Procedi alle opzioni di layout"
 
 #: app/pages/v/[chartId].tsx
 msgid "button.new.visualization"
@@ -245,8 +252,8 @@ msgid "controls.chart.category.regular"
 msgstr "Normale"
 
 #: app/configurator/components/chart-options-selector.tsx
-msgid "controls.chart.combo.y.axis-orientation"
-msgstr "Orientamento dell'asse"
+#~ msgid "controls.chart.combo.y.axis-orientation"
+#~ msgstr "Orientamento dell'asse"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.chart.combo.y.column-measure"
@@ -458,7 +465,7 @@ msgstr "Consenti agli utenti di modificare il filtro"
 msgid "controls.filters.select.from"
 msgstr "Della"
 
-#: app/configurator/components/filters.tsx
+#: app/configurator/components/chart-controls/color-palette.tsx
 msgid "controls.filters.select.refresh-colors"
 msgstr "Mescolare i colori"
 
@@ -544,9 +551,11 @@ msgid "controls.metadata-panel.section.general"
 msgstr "Generale"
 
 #: app/configurator/components/configurator.tsx
+#: app/configurator/components/configurator.tsx
 msgid "controls.nav.back-to-main"
 msgstr "Torna alle impostazioni generali"
 
+#: app/configurator/components/configurator.tsx
 #: app/configurator/components/configurator.tsx
 msgid "controls.nav.back-to-preview"
 msgstr "Torna all'anteprima"
@@ -686,6 +695,7 @@ msgstr "Per questo tipo di grafico, i valori di sostituzione devono essere asseg
 msgid "controls.section.interactive.filters"
 msgstr "Animazione"
 
+#: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.layout-options"
 msgstr "Opzioni di layout"
@@ -1142,8 +1152,8 @@ msgid "interactive.data.filters.show"
 msgstr "Mostra i filtri"
 
 #: app/configurator/components/chart-options-selector.tsx
-msgid "left"
-msgstr "Sinistra"
+#~ msgid "left"
+#~ msgstr "Sinistra"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.copy"
@@ -1207,6 +1217,10 @@ msgstr "Tipo"
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.my-visualizations.dataset-name"
 msgstr "Set di dati"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.profile.my-visualizations.multiple-datasets"
+msgstr ""
 
 #: app/components/header.tsx
 #: app/components/header.tsx
@@ -1298,8 +1312,8 @@ msgid "publication.share.mail.subject"
 msgstr "visualize.admin.ch"
 
 #: app/configurator/components/chart-options-selector.tsx
-msgid "right"
-msgstr "Diritto"
+#~ msgid "right"
+#~ msgstr "Diritto"
 
 #: app/browser/dataset-browse.tsx
 #: app/configurator/components/filters.tsx

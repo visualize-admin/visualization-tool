@@ -18,14 +18,17 @@ msgid "Add filter"
 msgstr "Add filter"
 
 #: app/configurator/components/chart-configurator.tsx
+#: app/configurator/components/chart-controls/drag-and-drop-tab.tsx
 msgid "Drag filters to reorganize"
 msgstr "Drag filters to reorganize"
 
 #: app/configurator/components/chart-configurator.tsx
+#: app/configurator/components/chart-controls/drag-and-drop-tab.tsx
 msgid "Move filter down"
 msgstr "Move filter down"
 
 #: app/configurator/components/chart-configurator.tsx
+#: app/configurator/components/chart-controls/drag-and-drop-tab.tsx
 msgid "Move filter up"
 msgstr "Move filter up"
 
@@ -107,6 +110,10 @@ msgstr "Click to copy"
 #: app/components/copy-to-clipboard-text-input.tsx
 msgid "button.hint.copied"
 msgstr "Copied!"
+
+#: app/components/chart-selection-tabs.tsx
+msgid "button.layout"
+msgstr "Proceed to layout options"
 
 #: app/pages/v/[chartId].tsx
 msgid "button.new.visualization"
@@ -245,8 +252,8 @@ msgid "controls.chart.category.regular"
 msgstr "Regular"
 
 #: app/configurator/components/chart-options-selector.tsx
-msgid "controls.chart.combo.y.axis-orientation"
-msgstr "Axis orientation"
+#~ msgid "controls.chart.combo.y.axis-orientation"
+#~ msgstr "Axis orientation"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.chart.combo.y.column-measure"
@@ -458,7 +465,7 @@ msgstr "Allow users to change filters"
 msgid "controls.filters.select.from"
 msgstr "From"
 
-#: app/configurator/components/filters.tsx
+#: app/configurator/components/chart-controls/color-palette.tsx
 msgid "controls.filters.select.refresh-colors"
 msgstr "Shuffle colors"
 
@@ -544,9 +551,11 @@ msgid "controls.metadata-panel.section.general"
 msgstr "General"
 
 #: app/configurator/components/configurator.tsx
+#: app/configurator/components/configurator.tsx
 msgid "controls.nav.back-to-main"
 msgstr "Back to main"
 
+#: app/configurator/components/configurator.tsx
 #: app/configurator/components/configurator.tsx
 msgid "controls.nav.back-to-preview"
 msgstr "Back to preview"
@@ -686,6 +695,7 @@ msgstr "For this chart type, replacement values should be assigned to missing va
 msgid "controls.section.interactive.filters"
 msgstr "Animation"
 
+#: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.layout-options"
 msgstr "Layout options"
@@ -1142,8 +1152,8 @@ msgid "interactive.data.filters.show"
 msgstr "Show Filters"
 
 #: app/configurator/components/chart-options-selector.tsx
-msgid "left"
-msgstr "Left"
+#~ msgid "left"
+#~ msgstr "Left"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.copy"
@@ -1207,6 +1217,10 @@ msgstr "Type"
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.my-visualizations.dataset-name"
 msgstr "Dataset"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.profile.my-visualizations.multiple-datasets"
+msgstr "Multiple datasets"
 
 #: app/components/header.tsx
 #: app/components/header.tsx
@@ -1298,8 +1312,8 @@ msgid "publication.share.mail.subject"
 msgstr "visualize.admin.ch"
 
 #: app/configurator/components/chart-options-selector.tsx
-msgid "right"
-msgstr "Right"
+#~ msgid "right"
+#~ msgstr "Right"
 
 #: app/browser/dataset-browse.tsx
 #: app/configurator/components/filters.tsx
