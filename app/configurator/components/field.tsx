@@ -1,4 +1,4 @@
-import { t } from "@lingui/macro";
+import { Trans, t } from "@lingui/macro";
 import {
   CircularProgress,
   FormControlLabel,
@@ -6,7 +6,7 @@ import {
   Typography,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { TimeLocaleObject, extent, timeFormat, timeParse } from "d3";
+import { TimeLocaleObject } from "d3";
 import get from "lodash/get";
 import orderBy from "lodash/orderBy";
 import React, {
@@ -28,6 +28,7 @@ import {
   Slider,
   Switch,
 } from "@/components/form";
+import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import SelectTree from "@/components/select-tree";
 import useDisclosure from "@/components/use-disclosure";
 import {
@@ -42,7 +43,10 @@ import {
   ControlTab,
   OnOffControlTab,
 } from "@/configurator/components/chart-controls/control-tab";
-import { DatePickerField } from "@/configurator/components/field-date-picker";
+import {
+  DatePickerField,
+  DatePickerTimeUnit,
+} from "@/configurator/components/field-date-picker";
 import {
   getTimeIntervalFormattedSelectOptions,
   getTimeIntervalWithProps,
@@ -72,7 +76,6 @@ import {
   HierarchyValue,
   TemporalDimension,
 } from "@/domain/data";
-import { truthy } from "@/domain/types";
 import { useTimeFormatLocale } from "@/formatters";
 import { TimeUnit } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
@@ -252,94 +255,85 @@ export const DataFilterSelect = ({
   );
 };
 
-const formatDate = timeFormat("%Y-%m-%d");
-const parseDate = timeParse("%Y-%m-%d");
-
-export const DataFilterSelectDay = ({
-  dimension,
-  label,
-  disabled,
-  isOptional,
-  controls,
-}: {
+type DataFilterTemporalProps = {
   dimension: TemporalDimension;
-  label: React.ReactNode;
+  timeUnit: DatePickerTimeUnit;
   disabled?: boolean;
   isOptional?: boolean;
   controls?: React.ReactNode;
-}) => {
+};
+
+export const DataFilterTemporal = (props: DataFilterTemporalProps) => {
+  const { dimension, timeUnit, disabled, isOptional, controls } = props;
+  const { label: _label, values, timeFormat } = dimension;
+  const formatLocale = useTimeFormatLocale();
+  const formatDate = formatLocale.format(timeFormat);
+  const parseDate = formatLocale.parse(timeFormat);
   const fieldProps = useSingleFilterSelect({
     cubeIri: dimension.cubeIri,
     dimensionIri: dimension.iri,
   });
-  const noneLabel = t({
-    id: "controls.dimensionvalue.none",
-    message: `No Filter`,
-  });
-  const optionalLabel = t({
-    id: "controls.select.optional",
-    message: `optional`,
-  });
-  const allOptions = useMemo(() => {
-    return isOptional
-      ? [
-          {
-            value: FIELD_VALUE_NONE,
-            label: noneLabel,
-            isNoneValue: true,
-          },
-          ...dimension.values,
-        ]
-      : dimension.values;
-  }, [isOptional, dimension.values, noneLabel]);
-
-  const allOptionsSet = useMemo(() => {
-    return new Set(
-      allOptions
-        .filter((x) => x.value !== FIELD_VALUE_NONE)
-        .map((x) => {
-          try {
-            return x.value as string;
-          } catch (e) {
-            console.warn(`Bad value ${x.value}`);
-            return;
-          }
-        })
-        .filter(truthy)
-    );
-  }, [allOptions]);
-
-  const isDisabled = useCallback(
-    (date: Date) => {
-      return !allOptionsSet.has(formatDate(date));
-    },
-    [allOptionsSet]
+  const label = isOptional ? (
+    <>
+      {_label}{" "}
+      <span style={{ marginLeft: "0.25rem" }}>
+        (<Trans id="controls.select.optional">optional</Trans>)
+      </span>
+    </>
+  ) : (
+    _label
   );
+  const { minDate, maxDate, optionValues } = React.useMemo(() => {
+    if (values.length) {
+      const options = values.map((d) => {
+        return {
+          label: `${d.value}`,
+          value: `${d.value}`,
+        };
+      });
 
-  const dateValue = useMemo(() => {
-    const parsed = fieldProps.value ? parseDate(fieldProps.value) : undefined;
-    return parsed || new Date();
-  }, [fieldProps.value]);
-
-  const [minDate, maxDate] = useMemo(() => {
-    const [min, max] = extent(Array.from(allOptionsSet));
-    if (!min || !max) {
-      return [];
+      return {
+        minDate: parseDate(`${values[0].value}`) as Date,
+        maxDate: parseDate(`${values[values.length - 1].value}`) as Date,
+        optionValues: options.map((d) => d.value),
+      };
+    } else {
+      const date = new Date();
+      return {
+        minDate: date,
+        maxDate: date,
+        optionValues: [],
+      };
     }
-    return [new Date(min), new Date(max)] as const;
-  }, [allOptionsSet]);
+  }, [values, parseDate]);
+  const isDateDisabled = React.useCallback(
+    (date: Date) => {
+      return !optionValues.includes(formatDate(date));
+    },
+    [optionValues, formatDate]
+  );
 
   return (
     <DatePickerField
-      label={isOptional ? `${label} (${optionalLabel})` : label}
-      disabled={disabled}
-      controls={controls}
+      name={`date-picker-${dimension.iri}`}
+      label={
+        <FieldLabel
+          label={
+            <OpenMetadataPanelWrapper dim={dimension}>
+              {label}
+            </OpenMetadataPanelWrapper>
+          }
+        />
+      }
+      value={parseDate(fieldProps.value) as Date}
       onChange={fieldProps.onChange}
-      name={dimension.iri}
-      value={dateValue}
-      isDateDisabled={isDisabled}
+      isDateDisabled={isDateDisabled}
+      timeUnit={timeUnit}
+      dateFormat={formatDate}
       minDate={minDate}
       maxDate={maxDate}
+      disabled={disabled}
+      controls={controls}
     />
   );
 };

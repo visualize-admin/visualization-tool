@@ -107,7 +107,7 @@ export const DatePickerField = (props: DatePickerFieldProps) => {
   );
 };
 
-type DatePickerTimeUnit =
+export type DatePickerTimeUnit =
   | TimeUnit.Day
   | TimeUnit.Week
   | TimeUnit.Month
