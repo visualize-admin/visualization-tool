@@ -115,56 +115,58 @@ const ConfigureChartStep = () => {
 
   return (
     <InteractiveFiltersProvider>
-      <PanelLeftWrapper
-        sx={{
-          flexGrow: 1,
-          display: "flex",
-          height: "100%",
-          flexDirection: "column",
-        }}
-      >
-        <BackContainer>
-          <BackButton onClick={handlePrevious}>
-            <Trans id="controls.nav.back-to-preview">Back to preview</Trans>
-          </BackButton>
-        </BackContainer>
-        {chartConfig.chartType === "table" ? (
-          <ChartConfiguratorTable state={state} />
-        ) : (
-          <ChartConfigurator state={state} />
-        )}
-      </PanelLeftWrapper>
-      <PanelMiddleWrapper>
-        <ChartPanel>
-          <ChartPreview dataSource={state.dataSource} />
-        </ChartPanel>
-      </PanelMiddleWrapper>
-      <ConfiguratorDrawer
-        anchor="left"
-        open={!!chartConfig.activeField}
-        hideBackdrop
-        onClose={handleClosePanel}
-      >
-        <div style={{ width: DRAWER_WIDTH }} data-testid="panel-drawer">
+      <PanelLayout>
+        <PanelLeftWrapper
+          sx={{
+            flexGrow: 1,
+            display: "flex",
+            height: "100%",
+            flexDirection: "column",
+          }}
+        >
           <BackContainer>
-            <Button
-              variant="text"
-              color="inherit"
-              size="small"
-              sx={{ fontWeight: "bold" }}
-              startIcon={<SvgIcChevronLeft />}
-              onClick={handleClosePanel}
-            >
-              <Trans id="controls.nav.back-to-main">Back to main</Trans>
-            </Button>
+            <BackButton onClick={handlePrevious}>
+              <Trans id="controls.nav.back-to-preview">Back to preview</Trans>
+            </BackButton>
           </BackContainer>
-          {isAnnotationField(chartConfig.activeField) ? (
-            <ChartAnnotationsSelector state={state} />
+          {chartConfig.chartType === "table" ? (
+            <ChartConfiguratorTable state={state} />
           ) : (
-            <ChartOptionsSelector state={state} />
+            <ChartConfigurator state={state} />
           )}
-        </div>
-      </ConfiguratorDrawer>
+        </PanelLeftWrapper>
+        <PanelMiddleWrapper>
+          <ChartPanel>
+            <ChartPreview dataSource={state.dataSource} />
+          </ChartPanel>
+        </PanelMiddleWrapper>
+        <ConfiguratorDrawer
+          anchor="left"
+          open={!!chartConfig.activeField}
+          hideBackdrop
+          onClose={handleClosePanel}
+        >
+          <div style={{ width: DRAWER_WIDTH }} data-testid="panel-drawer">
+            <BackContainer>
+              <Button
+                variant="text"
+                color="inherit"
+                size="small"
+                sx={{ fontWeight: "bold" }}
+                startIcon={<SvgIcChevronLeft />}
+                onClick={handleClosePanel}
+              >
+                <Trans id="controls.nav.back-to-main">Back to main</Trans>
+              </Button>
+            </BackContainer>
+            {isAnnotationField(chartConfig.activeField) ? (
+              <ChartAnnotationsSelector state={state} />
+            ) : (
+              <ChartOptionsSelector state={state} />
+            )}
+          </div>
+        </ConfiguratorDrawer>
+      </PanelLayout>
     </InteractiveFiltersProvider>
   );
 };
@@ -203,49 +205,51 @@ const LayoutingStep = () => {
 
   return (
     <InteractiveFiltersProvider>
-      <PanelLeftWrapper
-        sx={{
-          flexGrow: 1,
-          display: "flex",
-          height: "100%",
-          flexDirection: "column",
-        }}
-      >
-        <BackContainer>
-          <BackButton onClick={handlePrevious}>
-            <Trans id="controls.nav.back-to-configurator">
-              Back to configurator
-            </Trans>
-          </BackButton>
-        </BackContainer>
-        <ChartLayouter state={state} />
-      </PanelLeftWrapper>
-      <PanelMiddleWrapper>
-        <ChartPanel>
-          <ChartPreview dataSource={state.dataSource} />
-        </ChartPanel>
-      </PanelMiddleWrapper>
-      <ConfiguratorDrawer
-        anchor="left"
-        open={!!chartConfig.activeField}
-        hideBackdrop
-        onClose={handleClosePanel}
-      >
-        <div style={{ width: DRAWER_WIDTH }} data-testid="panel-drawer">
+      <PanelLayout>
+        <PanelLeftWrapper
+          sx={{
+            flexGrow: 1,
+            display: "flex",
+            height: "100%",
+            flexDirection: "column",
+          }}
+        >
           <BackContainer>
-            <Button
-              variant="text"
-              color="inherit"
-              size="small"
-              sx={{ fontWeight: "bold" }}
-              startIcon={<SvgIcChevronLeft />}
-              onClick={handleClosePanel}
-            >
-              <Trans id="controls.nav.back-to-main">Back to main</Trans>
-            </Button>
+            <BackButton onClick={handlePrevious}>
+              <Trans id="controls.nav.back-to-configurator">
+                Back to configurator
+              </Trans>
+            </BackButton>
           </BackContainer>
-        </div>
-      </ConfiguratorDrawer>
+          <ChartLayouter state={state} />
+        </PanelLeftWrapper>
+        <PanelMiddleWrapper>
+          <ChartPanel>
+            <ChartPreview dataSource={state.dataSource} />
+          </ChartPanel>
+        </PanelMiddleWrapper>
+        <ConfiguratorDrawer
+          anchor="left"
+          open={!!chartConfig.activeField}
+          hideBackdrop
+          onClose={handleClosePanel}
+        >
+          <div style={{ width: DRAWER_WIDTH }} data-testid="panel-drawer">
+            <BackContainer>
+              <Button
+                variant="text"
+                color="inherit"
+                size="small"
+                sx={{ fontWeight: "bold" }}
+                startIcon={<SvgIcChevronLeft />}
+                onClick={handleClosePanel}
+              >
+                <Trans id="controls.nav.back-to-main">Back to main</Trans>
+              </Button>
+            </BackContainer>
+          </div>
+        </ConfiguratorDrawer>
+      </PanelLayout>
     </InteractiveFiltersProvider>
   );
 };
@@ -258,13 +262,15 @@ const PublishStep = () => {
   }
 
   return (
-    <PanelMiddleWrapper>
-      <ChartPanel>
-        <InteractiveFiltersProvider>
-          <ChartPreview dataSource={state.dataSource} />
-        </InteractiveFiltersProvider>
-      </ChartPanel>
-    </PanelMiddleWrapper>
+    <PanelLayout>
+      <PanelMiddleWrapper>
+        <ChartPanel>
+          <InteractiveFiltersProvider>
+            <ChartPreview dataSource={state.dataSource} />
+          </InteractiveFiltersProvider>
+        </ChartPanel>
+      </PanelMiddleWrapper>
+    </PanelLayout>
   );
 };
 
@@ -281,11 +287,11 @@ export const Configurator = () => {
   ) : state === "SELECTING_DATASET" ? (
     <SelectDatasetStep />
   ) : (
-    <PanelLayout>
+    <>
       {state === "CONFIGURING_CHART" && <ConfigureChartStep />}
       {state === "LAYOUTING" && <LayoutingStep />}
       {state === "PUBLISHING" && <PublishStep />}
-    </PanelLayout>
+    </>
   );
 };
 
