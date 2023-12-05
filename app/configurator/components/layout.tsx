@@ -3,8 +3,12 @@ import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 
 import { HEADER_HEIGHT } from "@/components/header";
+import { DRAWER_WIDTH } from "@/configurator/components/drawer";
 
 const useStyles = makeStyles<Theme>((theme) => ({
+  panelHeader: {
+    gridArea: "header",
+  },
   panelLeft: {
     overflowX: "hidden",
     overflowY: "auto",
@@ -14,6 +18,12 @@ const useStyles = makeStyles<Theme>((theme) => ({
     borderRightWidth: "1px",
     borderRightStyle: "solid",
     gridArea: "left",
+  },
+  panelMiddle: {
+    overflowX: "hidden",
+    overflowY: "auto",
+    padding: theme.spacing(4),
+    gridArea: "middle",
   },
   panelRight: {
     backgroundColor: "white",
@@ -32,22 +42,47 @@ const useStyles = makeStyles<Theme>((theme) => ({
     height: `calc(100vh - ${HEADER_HEIGHT}px)`,
     display: "grid",
     gridTemplateRows: "auto minmax(0, 1fr)",
-    gridTemplateAreas: `
-    "header header"
-    "left middle"`,
     marginLeft: "auto",
     marginRight: "auto",
   },
-  panelMiddle: {
-    overflowX: "hidden",
-    overflowY: "auto",
-    padding: theme.spacing(4),
-    gridArea: "middle",
+  // Left-Middle
+  LMPanelLayout: {
+    gridTemplateColumns: `${DRAWER_WIDTH}px minmax(22rem, 1fr)`,
+    gridTemplateAreas: `
+    "header header"
+    "left middle"`,
   },
 }));
 
+export const PanelLayout = (props: BoxProps) => {
+  const { children, ...rest } = props;
+  const classes = useStyles();
+
+  return (
+    <Box {...rest} className={clsx(classes.panelLayout, rest.className)}>
+      {children}
+    </Box>
+  );
+};
+
+export const PanelHeaderWrapper = (props: BoxProps) => {
+  const { children, className, ...rest } = props;
+  const classes = useStyles();
+
+  return (
+    <Box
+      {...rest}
+      component="section"
+      data-testid="panel-header"
+      className={clsx(classes.panelHeader, className)}
+    >
+      {children}
+    </Box>
+  );
+};
+
 export const PanelLeftWrapper = (props: BoxProps) => {
-  const { children, sx, className, ...rest } = props;
+  const { children, className, ...rest } = props;
   const classes = useStyles();
 
   return (
@@ -56,7 +91,6 @@ export const PanelLeftWrapper = (props: BoxProps) => {
       component="section"
       data-testid="panel-left"
       className={clsx(classes.panelLeft, className)}
-      sx={sx}
     >
       {children}
     </Box>
@@ -67,57 +101,8 @@ PanelLeftWrapper.defaultProps = {
   raised: true,
 };
 
-export const PanelRightWrapper = (props: BoxProps) => {
-  const { children, sx, className, ...rest } = props;
-  const classes = useStyles();
-
-  return (
-    <Box
-      {...rest}
-      component="section"
-      data-testid="panel-right"
-      className={clsx(classes.panelRight, className)}
-      sx={sx}
-    >
-      {children}
-    </Box>
-  );
-};
-
-export const PanelLayout = (props: BoxProps) => {
-  const { children, ...rest } = props;
-  const { sx } = rest;
-  const classes = useStyles();
-
-  return (
-    <Box
-      {...rest}
-      className={clsx(classes.panelLayout, rest.className)}
-      sx={sx}
-    >
-      {children}
-    </Box>
-  );
-};
-
-export const PanelHeader = (props: BoxProps) => {
-  const { children, ...boxProps } = props;
-  const { sx } = boxProps;
-
-  return (
-    <Box
-      component="section"
-      role="navigation"
-      {...boxProps}
-      sx={{ gridArea: "header", ...sx }}
-    >
-      {children}
-    </Box>
-  );
-};
-
 export const PanelMiddleWrapper = (props: BoxProps) => {
-  const { children, sx, className, ...rest } = props;
+  const { children, className, ...rest } = props;
   const classes = useStyles();
 
   return (
@@ -126,7 +111,22 @@ export const PanelMiddleWrapper = (props: BoxProps) => {
       component="section"
       data-testid="panel-middle"
       className={clsx(classes.panelMiddle, className)}
-      sx={sx}
+    >
+      {children}
+    </Box>
+  );
+};
+
+export const PanelRightWrapper = (props: BoxProps) => {
+  const { children, className, ...rest } = props;
+  const classes = useStyles();
+
+  return (
+    <Box
+      {...rest}
+      component="section"
+      data-testid="panel-right"
+      className={clsx(classes.panelRight, className)}
     >
       {children}
     </Box>
