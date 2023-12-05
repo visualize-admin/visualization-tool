@@ -213,7 +213,9 @@ const LayoutingStep = () => {
       >
         <BackContainer>
           <BackButton onClick={handlePrevious}>
-            <Trans id="controls.nav.back-to-preview">Back to preview</Trans>
+            <Trans id="controls.nav.back-to-configurator">
+              Back to configurator
+            </Trans>
           </BackButton>
         </BackContainer>
         <ChartLayouter state={state} />

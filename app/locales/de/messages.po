@@ -551,11 +551,14 @@ msgid "controls.metadata-panel.section.general"
 msgstr "Allgemeines"
 
 #: app/configurator/components/configurator.tsx
+msgid "controls.nav.back-to-configurator"
+msgstr "Zurück zum Konfigurator"
+
+#: app/configurator/components/configurator.tsx
 #: app/configurator/components/configurator.tsx
 msgid "controls.nav.back-to-main"
 msgstr "Zurück zur Übersicht"
 
-#: app/configurator/components/configurator.tsx
 #: app/configurator/components/configurator.tsx
 msgid "controls.nav.back-to-preview"
 msgstr "Zurück zur Vorschau"
