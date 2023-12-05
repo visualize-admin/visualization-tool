@@ -211,7 +211,7 @@ const LayoutingStep = () => {
   return (
     <InteractiveFiltersProvider>
       <LMRPanelLayout>
-        <LMRPanelHeaderWrapper sx={{ p: 4 }}>
+        <LMRPanelHeaderWrapper>
           <PanelHeaderLeftWrapper>
             <BackContainer>
               <BackButton onClick={handlePrevious}>

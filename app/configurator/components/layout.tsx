@@ -8,6 +8,7 @@ import { DRAWER_WIDTH } from "@/configurator/components/drawer";
 const useStyles = makeStyles<Theme>((theme) => ({
   panelHeader: {
     gridArea: "header",
+    padding: theme.spacing(5),
   },
   LMRPanelHeader: {
     width: "100%",
