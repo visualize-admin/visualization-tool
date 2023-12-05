@@ -1,12 +1,10 @@
 import { Box, BoxProps, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
-import React from "react";
 
 import { HEADER_HEIGHT } from "@/components/header";
-import { DRAWER_WIDTH } from "@/configurator/components/drawer";
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles<Theme>((theme) => ({
   panelLeft: {
     overflowX: "hidden",
     overflowY: "auto",
@@ -33,7 +31,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: "100%",
     height: `calc(100vh - ${HEADER_HEIGHT}px)`,
     display: "grid",
-    gridTemplateColumns: `${DRAWER_WIDTH}px minmax(22rem, 1fr)`,
     gridTemplateRows: "auto minmax(0, 1fr)",
     gridTemplateAreas: `
     "header header"
@@ -49,18 +46,13 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-export const PanelLeftWrapper = ({
-  children,
-  sx,
-  className,
-}: {
-  children?: React.ReactNode;
-  sx?: BoxProps["sx"];
-  className?: BoxProps["className"];
-}) => {
+export const PanelLeftWrapper = (props: BoxProps) => {
+  const { children, sx, className, ...rest } = props;
   const classes = useStyles();
+
   return (
     <Box
+      {...rest}
       component="section"
       data-testid="panel-left"
       className={clsx(classes.panelLeft, className)}
@@ -75,18 +67,13 @@ PanelLeftWrapper.defaultProps = {
   raised: true,
 };
 
-export const PanelRightWrapper = ({
-  children,
-  sx,
-  className,
-}: {
-  children?: React.ReactNode;
-  sx?: BoxProps["sx"];
-  className?: BoxProps["className"];
-}) => {
+export const PanelRightWrapper = (props: BoxProps) => {
+  const { children, sx, className, ...rest } = props;
   const classes = useStyles();
+
   return (
     <Box
+      {...rest}
       component="section"
       data-testid="panel-right"
       className={clsx(classes.panelRight, className)}
@@ -97,18 +84,15 @@ export const PanelRightWrapper = ({
   );
 };
 
-export const PanelLayout = ({
-  children,
-  ...boxProps
-}: {
-  children: React.ReactNode;
-} & BoxProps) => {
-  const { sx } = boxProps;
+export const PanelLayout = (props: BoxProps) => {
+  const { children, ...rest } = props;
+  const { sx } = rest;
   const classes = useStyles();
+
   return (
     <Box
-      {...boxProps}
-      className={clsx(classes.panelLayout, boxProps.className)}
+      {...rest}
+      className={clsx(classes.panelLayout, rest.className)}
       sx={sx}
     >
       {children}
@@ -116,13 +100,10 @@ export const PanelLayout = ({
   );
 };
 
-export const PanelHeader = ({
-  children,
-  ...boxProps
-}: {
-  children: React.ReactNode;
-} & BoxProps) => {
+export const PanelHeader = (props: BoxProps) => {
+  const { children, ...boxProps } = props;
   const { sx } = boxProps;
+
   return (
     <Box
       component="section"
@@ -135,22 +116,16 @@ export const PanelHeader = ({
   );
 };
 
-export const PanelMiddleWrapper = ({
-  children,
-  sx,
-  className,
-}: {
-  children: React.ReactNode;
-  sx?: BoxProps["sx"];
-  className?: BoxProps["className"];
-}) => {
+export const PanelMiddleWrapper = (props: BoxProps) => {
+  const { children, sx, className, ...rest } = props;
   const classes = useStyles();
 
   return (
     <Box
-      className={clsx(classes.panelMiddle, className)}
+      {...rest}
       component="section"
       data-testid="panel-middle"
+      className={clsx(classes.panelMiddle, className)}
       sx={sx}
     >
       {children}

@@ -282,9 +282,9 @@ export const Configurator = () => {
     <SelectDatasetStep />
   ) : (
     <PanelLayout>
-      {state === "CONFIGURING_CHART" ? <ConfigureChartStep /> : null}
-      {state === "LAYOUTING" ? <LayoutingStep /> : null}
-      {state === "PUBLISHING" ? <PublishStep /> : null}
+      {state === "CONFIGURING_CHART" && <ConfigureChartStep />}
+      {state === "LAYOUTING" && <LayoutingStep />}
+      {state === "PUBLISHING" && <PublishStep />}
     </PanelLayout>
   );
 };
