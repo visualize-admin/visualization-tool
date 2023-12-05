@@ -1154,6 +1154,22 @@ export type ConfiguratorStateConfiguringChart = t.TypeOf<
   typeof ConfiguratorStateConfiguringChart
 >;
 
+const ConfiguratorStateLayouting = t.intersection([
+  t.type({
+    state: t.literal("LAYOUTING"),
+  }),
+  Config,
+]);
+export type ConfiguratorStateLayouting = t.TypeOf<
+  typeof ConfiguratorStateLayouting
+>;
+
+export const enableLayouting = (
+  state: ConfiguratorStateConfiguringChart | ConfiguratorStatePublishing
+) => {
+  return state.chartConfigs.length > 1;
+};
+
 const ConfiguratorStatePublishing = t.intersection([
   t.type({
     state: t.literal("PUBLISHING"),
@@ -1178,6 +1194,7 @@ const ConfiguratorState = t.union([
   ConfiguratorStateInitial,
   ConfiguratorStateSelectingDataSet,
   ConfiguratorStateConfiguringChart,
+  ConfiguratorStateLayouting,
   ConfiguratorStatePublishing,
   ConfiguratorStatePublished,
 ]);

@@ -40,6 +40,7 @@ import {
   ImputationType,
   InteractiveFiltersConfig,
   decodeConfiguratorState,
+  enableLayouting,
   getChartConfig,
   getChartConfigFilters,
   isAreaConfig,
@@ -648,6 +649,11 @@ const transitionStepNext = (
     case "CONFIGURING_CHART":
       return {
         ...draft,
+        state: enableLayouting(draft) ? "LAYOUTING" : "PUBLISHING",
+      };
+    case "LAYOUTING":
+      return {
+        ...draft,
         state: "PUBLISHING",
       };
 
@@ -663,14 +669,20 @@ const transitionStepNext = (
 };
 
 const getPreviousState = (
-  state: ConfiguratorState["state"]
+  draft: ConfiguratorState
 ): Exclude<ConfiguratorState["state"], "INITIAL" | "PUBLISHING"> => {
-  switch (state) {
+  switch (draft.state) {
     case "SELECTING_DATASET":
-      return state;
+      return draft.state;
     case "CONFIGURING_CHART":
       return "SELECTING_DATASET";
+    case "LAYOUTING":
+      return "CONFIGURING_CHART";
     case "PUBLISHING":
+      if (enableLayouting(draft)) {
+        return "LAYOUTING";
+      }
+
       return "CONFIGURING_CHART";
     default:
       return "SELECTING_DATASET";
@@ -681,7 +693,7 @@ const transitionStepPrevious = (
   draft: ConfiguratorState,
   to?: Exclude<ConfiguratorState["state"], "INITIAL" | "PUBLISHING">
 ): ConfiguratorState => {
-  const stepTo = to ?? getPreviousState(draft.state);
+  const stepTo = to ?? getPreviousState(draft);
 
   // Special case when we're already at INITIAL
   if (draft.state === "INITIAL" || draft.state === "SELECTING_DATASET") {
@@ -697,6 +709,7 @@ const transitionStepPrevious = (
         state: stepTo,
       };
     case "CONFIGURING_CHART":
+    case "LAYOUTING":
       return {
         ...draft,
         state: stepTo,
