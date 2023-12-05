@@ -2,6 +2,8 @@ import { Trans, t } from "@lingui/macro";
 import {
   CircularProgress,
   FormControlLabel,
+  FormGroup,
+  Switch as MUISwitch,
   Theme,
   Typography,
 } from "@mui/material";
@@ -74,6 +76,7 @@ import {
   Component,
   Dimension,
   HierarchyValue,
+  ObservationValue,
   TemporalDimension,
 } from "@/domain/data";
 import { useTimeFormatLocale } from "@/formatters";
@@ -255,6 +258,21 @@ export const DataFilterSelect = ({
   );
 };
 
+/** We can pin some filters' values to max value dynamically, so that when a new
+ * value is added to the dataset, it will be automatically used as default filter
+ * value for published charts.
+ */
+const VISUALIZE_MAX_VALUE = "VISUALIZE_MAX_VALUE";
+
+/** Checks if a given filter value is supposed to be dynamiaclly pinned to max
+ * value.
+ */
+export const isDynamicMaxValue = (
+  value: ObservationValue
+): value is "VISUALIZE_MAX_VALUE" => {
+  return value === VISUALIZE_MAX_VALUE;
+};
+
 type DataFilterTemporalProps = {
   dimension: TemporalDimension;
   timeUnit: DatePickerTimeUnit;
@@ -273,6 +291,7 @@ export const DataFilterTemporal = (props: DataFilterTemporalProps) => {
     cubeIri: dimension.cubeIri,
     dimensionIri: dimension.iri,
   });
+  const usesMostRecentDate = isDynamicMaxValue(fieldProps.value);
   const label = isOptional ? (
     <>
       {_label}{" "}
@@ -317,22 +336,53 @@ export const DataFilterTemporal = (props: DataFilterTemporalProps) => {
     <DatePickerField
       name={`date-picker-${dimension.iri}`}
       label={
-        <FieldLabel
-          label={
-            <OpenMetadataPanelWrapper dim={dimension}>
-              {label}
-            </OpenMetadataPanelWrapper>
-          }
-        />
+        <Flex
+          sx={{
+            width: "100%",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <FieldLabel
+            label={
+              <OpenMetadataPanelWrapper dim={dimension}>
+                {label}
+              </OpenMetadataPanelWrapper>
+            }
+          />
+          {/* FIXME: adapt to design */}
+          <FormGroup>
+            <FormControlLabel
+              control={
+                <MUISwitch
+                  checked={usesMostRecentDate}
+                  onChange={() =>
+                    fieldProps.onChange({
+                      target: {
+                        value: usesMostRecentDate
+                          ? formatDate(maxDate)
+                          : VISUALIZE_MAX_VALUE,
+                      },
+                    })
+                  }
+                />
+              }
+              // FIXME: adapt to design, translate
+              label={<Typography variant="caption">Use most recent</Typography>}
+            />
+          </FormGroup>
+        </Flex>
       }
-      value={parseDate(fieldProps.value) as Date}
+      value={
+        usesMostRecentDate ? maxDate : (parseDate(fieldProps.value) as Date)
+      }
       onChange={fieldProps.onChange}
       isDateDisabled={isDateDisabled}
       timeUnit={timeUnit}
       dateFormat={formatDate}
       minDate={minDate}
       maxDate={maxDate}
-      disabled={disabled}
+      disabled={disabled || usesMostRecentDate}
       controls={controls}
     />
   );

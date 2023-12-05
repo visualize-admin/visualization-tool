@@ -57,6 +57,7 @@ import {
   ControlTabField,
   DataFilterSelect,
   DataFilterTemporal,
+  isDynamicMaxValue,
   OnOffControlTabField,
 } from "@/configurator/components/field";
 import { canRenderDatePickerField } from "@/configurator/components/field-date-picker";
@@ -221,6 +222,21 @@ const useEnsurePossibleFilters = ({
         );
 
         const oldFilters = getChartConfigFilters(chartConfig.cubes, cube.iri);
+
+        // Replace resolved values with potential dynamic max values to not
+        // override the dynamic max value with the resolved value
+        for (const [key, value] of Object.entries(oldFilters)) {
+          if (
+            value.type === "single" &&
+            isDynamicMaxValue(value.value) &&
+            filters[key]
+          ) {
+            filters[key] = {
+              type: "single",
+              value: `${value.value}`,
+            };
+          }
+        }
 
         if (!isEqual(filters, oldFilters) && !isEmpty(filters)) {
           dispatch({

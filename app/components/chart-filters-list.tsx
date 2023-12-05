@@ -9,6 +9,7 @@ import {
   FilterValue,
   getAnimationField,
 } from "@/configurator";
+import { isDynamicMaxValue } from "@/configurator/components/field";
 import {
   Dimension,
   Measure,
@@ -74,12 +75,15 @@ export const ChartFiltersList = (props: ChartFiltersListProps) => {
           return [];
         }
 
+        const filterValue = isDynamicMaxValue(f.value)
+          ? dimension.values[dimension.values.length - 1].value
+          : f.value;
         const value = isTemporalDimension(dimension)
           ? {
-              value: f.value,
-              label: timeFormatUnit(`${f.value}`, dimension.timeUnit),
+              value: filterValue,
+              label: timeFormatUnit(`${filterValue}`, dimension.timeUnit),
             }
-          : dimension.values.find((d) => d.value === f.value);
+          : dimension.values.find((d) => d.value === filterValue);
 
         return [{ dimension, value }];
       });
