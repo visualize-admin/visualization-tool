@@ -42,6 +42,7 @@ const useStyles = makeStyles<Theme>((theme) => ({
   },
   panelHeaderLayout: {
     gridArea: "header",
+    background: theme.palette.background.paper,
   },
   LMRPanelHeaderLayout: {
     width: "100%",
@@ -141,7 +142,7 @@ type PanelLayoutProps = BoxProps & {
 };
 
 export const PanelLayout = (props: PanelLayoutProps) => {
-  const { children, type = "LM", ...rest } = props;
+  const { children, type, ...rest } = props;
   const classes = useStyles();
 
   return (

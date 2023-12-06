@@ -1,11 +1,5 @@
-import { ConfiguratorStateLayouting, getChartConfig } from "@/config-types";
+import { ConfiguratorStateLayouting } from "@/config-types";
 
-export const ChartLayouter = ({
-  state,
-}: {
-  state: ConfiguratorStateLayouting;
-}) => {
-  const chartConfig = getChartConfig(state);
-
+export const ChartLayouter = ({}: { state: ConfiguratorStateLayouting }) => {
   return <></>;
 };

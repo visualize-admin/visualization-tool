@@ -179,16 +179,7 @@ const ConfigureChartStep = () => {
 
 const LayoutingStep = () => {
   const [state, dispatch] = useConfiguratorState();
-  const chartConfig = getChartConfig(state);
   const { dataSource, setDataSource } = useDataSourceStore();
-
-  const handleClosePanel = useEvent(() => {
-    dispatch({
-      type: "ACTIVE_FIELD_CHANGED",
-      value: undefined,
-    });
-  });
-
   const handlePrevious = useEvent(() => {
     if (state.state !== "LAYOUTING") {
       return;
@@ -211,8 +202,8 @@ const LayoutingStep = () => {
 
   return (
     <InteractiveFiltersProvider>
-      <PanelLayout type="M" sx={{ background: "#eee" }}>
-        <PanelHeaderLayout type="LMR" sx={{ background: "#fff" }}>
+      <PanelLayout type="M" sx={{ background: (t) => t.palette.muted.main }}>
+        <PanelHeaderLayout type="LMR">
           <PanelHeaderWrapper type="L">
             <BackContainer>
               <BackButton onClick={handlePrevious}>
@@ -254,27 +245,6 @@ const LayoutingStep = () => {
             </ChartPanel>
           </Box>
         </PanelBodyWrapper>
-        <ConfiguratorDrawer
-          anchor="left"
-          open={!!chartConfig.activeField}
-          hideBackdrop
-          onClose={handleClosePanel}
-        >
-          <div style={{ width: DRAWER_WIDTH }} data-testid="panel-drawer">
-            <BackContainer>
-              <Button
-                variant="text"
-                color="inherit"
-                size="small"
-                sx={{ fontWeight: "bold" }}
-                startIcon={<SvgIcChevronLeft />}
-                onClick={handleClosePanel}
-              >
-                <Trans id="controls.nav.back-to-main">Back to main</Trans>
-              </Button>
-            </BackContainer>
-          </div>
-        </ConfiguratorDrawer>
       </PanelLayout>
     </InteractiveFiltersProvider>
   );
