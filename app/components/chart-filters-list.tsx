@@ -137,7 +137,7 @@ export const ChartFiltersList = (props: ChartFiltersListProps) => {
     <Typography
       component="div"
       variant="body2"
-      sx={{ my: 4, color: "grey.800" }}
+      sx={{ mb: 4, color: "grey.800" }}
       data-testid="chart-filters-list"
     >
       {allFilters.map(({ dimension, value }, i) => (

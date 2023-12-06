@@ -246,6 +246,7 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
               ref={containerRef}
               height={containerHeight.current!}
               flexGrow={1}
+              mt={4}
             >
               {isTablePreview ? (
                 <DataSetTable

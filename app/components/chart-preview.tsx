@@ -174,7 +174,7 @@ export const ChartPreviewInner = (props: ChartPreviewProps) => {
                   }
                 />
             </>
-            <Box ref={containerRef} height={containerHeight.current!}>
+            <Box ref={containerRef} height={containerHeight.current!} mt={4}>
               {isTablePreview ? (
                 <DataSetTable
                   sx={{
