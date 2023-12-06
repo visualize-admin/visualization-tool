@@ -164,6 +164,10 @@ const fieldLabels = {
     id: "controls.chart.type.comboLineColumn",
     message: "Column-line",
   }),
+  "controls.layout.tab": defineMessage({
+    id: "controls.layout.tab",
+    message: "Tab Layout",
+  }),
   "controls.language.english": defineMessage({
     id: "controls.language.english",
     message: "English",
@@ -353,6 +357,10 @@ export function getFieldLabel(field: string): string {
       return i18n._(fieldLabels["controls.chart.type.comboLineDual"]);
     case "comboLineColumn":
       return i18n._(fieldLabels["controls.chart.type.comboLineColumn"]);
+
+    // Layout types
+    case "layoutTab":
+      return i18n._(fieldLabels["controls.layout.tab"]);
 
     // Languages
     case "en":

@@ -530,6 +530,10 @@ msgid "controls.language.italian"
 msgstr "Italienisch"
 
 #: app/configurator/components/field-i18n.ts
+msgid "controls.layout.tab"
+msgstr "Tab Layout"
+
+#: app/configurator/components/field-i18n.ts
 msgid "controls.measure"
 msgstr "Messwert"
 
@@ -554,7 +558,6 @@ msgstr "Allgemeines"
 msgid "controls.nav.back-to-configurator"
 msgstr "Zurück zum Konfigurator"
 
-#: app/configurator/components/configurator.tsx
 #: app/configurator/components/configurator.tsx
 msgid "controls.nav.back-to-main"
 msgstr "Zurück zur Übersicht"
