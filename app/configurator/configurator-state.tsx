@@ -6,7 +6,6 @@ import sortBy from "lodash/sortBy";
 import unset from "lodash/unset";
 import { useRouter } from "next/router";
 import { Dispatch, createContext, useContext, useEffect, useMemo } from "react";
-import { useClient } from "urql";
 import { Reducer, useImmerReducer } from "use-immer";
 
 import {
@@ -1482,13 +1481,11 @@ const ConfiguratorStateProviderInternal = (
   const stateAndDispatch = useImmerReducer(reducer, initialStateWithDataSource);
   const [state, dispatch] = stateAndDispatch;
   const { asPath, push, replace, query } = useRouter();
-  const client = useClient();
   const user = useUser();
 
   // Initialize state on page load.
   useEffect(() => {
     let stateToInitialize = initialStateWithDataSource;
-
     const initialize = async () => {
       try {
         let newChartState;
@@ -1507,7 +1504,9 @@ const ConfiguratorStateProviderInternal = (
           }
         } else if (chartId !== "published") {
           newChartState = await initChartStateFromLocalStorage(chartId);
-          if (!newChartState && allowDefaultRedirect) replace(`/create/new`);
+          if (!newChartState && allowDefaultRedirect) {
+            replace(`/create/new`);
+          }
         }
 
         stateToInitialize = newChartState ?? stateToInitialize;
@@ -1517,17 +1516,8 @@ const ConfiguratorStateProviderInternal = (
     };
 
     initialize();
-  }, [
-    dataSource,
-    dispatch,
-    chartId,
-    replace,
-    initialStateWithDataSource,
-    allowDefaultRedirect,
-    query,
-    locale,
-    client,
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     try {
