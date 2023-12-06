@@ -1103,11 +1103,18 @@ const DataSource = t.type({
 });
 export type DataSource = t.TypeOf<typeof DataSource>;
 
+const Layout = t.type({
+  type: t.literal("tab"),
+});
+export type Layout = t.TypeOf<typeof Layout>;
+export type LayoutType = Layout["type"];
+
 const Config = t.type(
   {
     version: t.string,
     dataSource: DataSource,
     meta: Meta,
+    layout: Layout,
     chartConfigs: t.array(ChartConfig),
     activeChartKey: t.string,
   },

@@ -224,7 +224,17 @@ const LayoutingStep = () => {
               mx: "auto",
             }}
           >
-            <IconButton label="layoutTab" onClick={() => {}} />
+            <IconButton
+              label="layoutTab"
+              checked={state.layout.type === "tab"}
+              onClick={() => {
+                if (state.layout.type === "tab") {
+                  return;
+                }
+
+                dispatch({ type: "LAYOUT_CHANGED", value: { type: "tab" } });
+              }}
+            />
           </PanelHeaderWrapper>
           <PanelHeaderWrapper
             type="R"

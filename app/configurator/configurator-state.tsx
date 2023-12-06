@@ -40,6 +40,7 @@ import {
   GenericFields,
   ImputationType,
   InteractiveFiltersConfig,
+  LayoutType,
   decodeConfiguratorState,
   enableLayouting,
   getChartConfig,
@@ -292,6 +293,12 @@ export type ConfiguratorStateAction =
   | {
       type: "SWITCH_ACTIVE_CHART";
       value: string;
+    }
+  | {
+      type: "LAYOUT_CHANGED";
+      value: {
+        type: LayoutType;
+      };
     };
 
 const LOCALSTORAGE_PREFIX = "vizualize-configurator-state";
@@ -642,6 +649,7 @@ const transitionStepNext = (
           state: "CONFIGURING_CHART",
           dataSource: draft.dataSource,
           meta: draft.meta,
+          layout: { type: "tab" },
           chartConfigs: [chartConfig],
           activeChartKey: chartConfig.key,
         };
@@ -1355,6 +1363,13 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         draft.state === "PUBLISHED"
       ) {
         draft.activeChartKey = action.value;
+      }
+
+      return draft;
+
+    case "LAYOUT_CHANGED":
+      if (draft.state === "LAYOUTING") {
+        draft.layout = action.value;
       }
 
       return draft;
