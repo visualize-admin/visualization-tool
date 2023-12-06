@@ -38,7 +38,7 @@ const useSelectionButtonStyles = makeStyles((theme: Theme) => ({
   root: {
     width: "86px",
     height: "64px",
-    borderRadius: 4,
+    borderRadius: 8,
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
