@@ -11,7 +11,11 @@ import { ChartPreview } from "@/components/chart-preview";
 import { PublishChartButton } from "@/components/chart-selection-tabs";
 import { HEADER_HEIGHT } from "@/components/header";
 import { Loading } from "@/components/hint";
-import { getChartConfig, useConfiguratorState } from "@/configurator";
+import {
+  ConfiguratorState,
+  getChartConfig,
+  useConfiguratorState,
+} from "@/configurator";
 import { ChartAnnotationsSelector } from "@/configurator/components/chart-annotations-selector";
 import { ChartConfigurator } from "@/configurator/components/chart-configurator";
 import { ChartOptionsSelector } from "@/configurator/components/chart-options-selector";
@@ -75,10 +79,31 @@ const isAnnotationField = (field: string | undefined) => {
   return field === "title" || field === "description";
 };
 
+const useAssureCorrectDataSource = (stateGuard: ConfiguratorState["state"]) => {
+  const [state] = useConfiguratorState();
+  const { dataSource, setDataSource } = useDataSourceStore();
+
+  React.useEffect(() => {
+    if (state.state !== stateGuard) {
+      return;
+    }
+
+    if (state.dataSource.url !== dataSource.url) {
+      setDataSource(state.dataSource);
+    }
+  }, [
+    dataSource.url,
+    setDataSource,
+    state.dataSource,
+    state.state,
+    stateGuard,
+  ]);
+};
+
 const ConfigureChartStep = () => {
   const [state, dispatch] = useConfiguratorState();
   const chartConfig = getChartConfig(state);
-  const { dataSource, setDataSource } = useDataSourceStore();
+  const router = useRouter();
 
   const handleClosePanel = useEvent(() => {
     dispatch({
@@ -86,8 +111,6 @@ const ConfigureChartStep = () => {
       value: undefined,
     });
   });
-
-  const router = useRouter();
 
   const handlePrevious = useEvent(() => {
     if (state.state !== "CONFIGURING_CHART") {
@@ -106,14 +129,7 @@ const ConfigureChartStep = () => {
     );
   });
 
-  React.useEffect(() => {
-    if (
-      state.state === "CONFIGURING_CHART" &&
-      state.dataSource.url !== dataSource.url
-    ) {
-      setDataSource(state.dataSource);
-    }
-  }, [dataSource.url, setDataSource, state.dataSource, state.state]);
+  useAssureCorrectDataSource("CONFIGURING_CHART");
 
   if (state.state !== "CONFIGURING_CHART") {
     return null;
@@ -180,7 +196,6 @@ const ConfigureChartStep = () => {
 
 const LayoutingStep = () => {
   const [state, dispatch] = useConfiguratorState();
-  const { dataSource, setDataSource } = useDataSourceStore();
   const handlePrevious = useEvent(() => {
     if (state.state !== "LAYOUTING") {
       return;
@@ -188,14 +203,7 @@ const LayoutingStep = () => {
     dispatch({ type: "STEP_PREVIOUS" });
   });
 
-  React.useEffect(() => {
-    if (
-      state.state === "LAYOUTING" &&
-      state.dataSource.url !== dataSource.url
-    ) {
-      setDataSource(state.dataSource);
-    }
-  }, [dataSource.url, setDataSource, state.dataSource, state.state]);
+  useAssureCorrectDataSource("LAYOUTING");
 
   if (state.state !== "LAYOUTING") {
     return null;
