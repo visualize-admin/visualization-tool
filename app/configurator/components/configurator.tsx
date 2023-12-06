@@ -208,7 +208,7 @@ const LayoutingStep = () => {
             <BackContainer>
               <BackButton onClick={handlePrevious}>
                 <Trans id="controls.nav.back-to-configurator">
-                  Back to configurator
+                  Back to editing
                 </Trans>
               </BackButton>
             </BackContainer>

@@ -556,7 +556,7 @@ msgstr "Allgemeines"
 
 #: app/configurator/components/configurator.tsx
 msgid "controls.nav.back-to-configurator"
-msgstr "Zurück zum Konfigurator"
+msgstr "Zurück zum Editieren"
 
 #: app/configurator/components/configurator.tsx
 msgid "controls.nav.back-to-main"
