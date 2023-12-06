@@ -1523,6 +1523,7 @@ const ConfiguratorStateProviderInternal = (
     try {
       switch (state.state) {
         case "CONFIGURING_CHART":
+        case "LAYOUTING":
           if (chartId === "new") {
             if (query.edit && typeof query.edit === "string") {
               replace(`/create/${query.edit}`);
@@ -1547,6 +1548,7 @@ const ConfiguratorStateProviderInternal = (
           }
 
           return;
+
         case "PUBLISHING":
           (async () => {
             try {
