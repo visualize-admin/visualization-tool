@@ -530,6 +530,10 @@ msgid "controls.language.italian"
 msgstr "Italien"
 
 #: app/configurator/components/field-i18n.ts
+msgid "controls.layout.dashboard"
+msgstr "Dashboard"
+
+#: app/configurator/components/field-i18n.ts
 msgid "controls.layout.tab"
 msgstr "Tab Layout"
 

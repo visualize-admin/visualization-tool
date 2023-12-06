@@ -168,6 +168,10 @@ const fieldLabels = {
     id: "controls.layout.tab",
     message: "Tab Layout",
   }),
+  "controls.layout.dashboard": defineMessage({
+    id: "controls.layout.dashboard",
+    message: "Dashboard",
+  }),
   "controls.language.english": defineMessage({
     id: "controls.language.english",
     message: "English",
@@ -361,6 +365,8 @@ export function getFieldLabel(field: string): string {
     // Layout types
     case "layoutTab":
       return i18n._(fieldLabels["controls.layout.tab"]);
+    case "layoutDashboard":
+      return i18n._(fieldLabels["controls.layout.dashboard"]);
 
     // Languages
     case "en":

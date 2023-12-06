@@ -68,6 +68,7 @@ import { default as Image } from "@/icons/components/IcImage";
 import { default as Indeterminate } from "@/icons/components/IcIndeterminate";
 import { default as Info } from "@/icons/components/IcInfo";
 import { default as Laptop } from "@/icons/components/IcLaptop";
+import { default as LayoutDashboard } from "@/icons/components/IcLayoutDashboard";
 import { default as LayoutTab } from "@/icons/components/IcLayoutTab";
 import { default as LeftAligned } from "@/icons/components/IcLeftAligned";
 import { default as Link } from "@/icons/components/IcLink";
@@ -212,6 +213,7 @@ export const Icons = {
   indeterminate: Indeterminate,
   info: Info,
   laptop: Laptop,
+  layoutDashboard: LayoutDashboard,
   layoutTab: LayoutTab,
   leftAligned: LeftAligned,
   linkExternal: LinkExternal,

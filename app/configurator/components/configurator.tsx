@@ -243,6 +243,20 @@ const LayoutingStep = () => {
                 dispatch({ type: "LAYOUT_CHANGED", value: { type: "tab" } });
               }}
             />
+            <IconButton
+              label="layoutDashboard"
+              checked={state.layout.type === "dashboard"}
+              onClick={() => {
+                if (state.layout.type === "dashboard") {
+                  return;
+                }
+
+                dispatch({
+                  type: "LAYOUT_CHANGED",
+                  value: { type: "dashboard" },
+                });
+              }}
+            />
           </PanelHeaderWrapper>
           <PanelHeaderWrapper
             type="R"
