@@ -1,6 +1,5 @@
 import { Trans } from "@lingui/macro";
-import { Box, Theme, Typography } from "@mui/material";
-import { makeStyles } from "@mui/styles";
+import { Box } from "@mui/material";
 import Head from "next/head";
 import { useMemo } from "react";
 
@@ -22,6 +21,7 @@ import {
   hasChartConfigs,
   useConfiguratorState,
 } from "@/configurator";
+import { Description, Title } from "@/configurator/components/annotator";
 import {
   useDataCubesComponentsQuery,
   useDataCubesMetadataQuery,
@@ -42,29 +42,11 @@ export const ChartPreview = (props: ChartPreviewProps) => {
   );
 };
 
-const useStyles = makeStyles<Theme>({
-  title: {
-    marginBottom: 2,
-    cursor: "pointer",
-    "&:hover": {
-      textDecoration: "underline",
-    },
-  },
-  description: {
-    marginBottom: 2,
-    cursor: "pointer",
-    "&:hover": {
-      textDecoration: "underline",
-    },
-  },
-});
-
 export const ChartPreviewInner = (props: ChartPreviewProps) => {
   const { dataSource } = props;
   const [state, dispatch] = useConfiguratorState();
   const chartConfig = getChartConfig(state);
   const locale = useLocale();
-  const classes = useStyles();
   const commonQueryVariables = {
     sourceType: dataSource.type,
     sourceUrl: dataSource.url,
@@ -145,28 +127,20 @@ export const ChartPreviewInner = (props: ChartPreviewProps) => {
                   gap: 2,
                 }}
               >
-                <Typography
-                  variant="h2"
-                  sx={{
-                    color:
-                      chartConfig.meta.title[locale] === ""
-                        ? "grey.500"
-                        : "text",
-                  }}
-                  className={classes.title}
-                  onClick={() =>
+                  <Title
+                    text={chartConfig.meta.title[locale]}
+                    lighterColor
+                    onClick={
+                      state.state === "CONFIGURING_CHART"
+                        ? () => {
                     dispatch({
                       type: "ACTIVE_FIELD_CHANGED",
                       value: "title",
-                    })
-                  }
-                >
-                  {chartConfig.meta.title[locale] === "" ? (
-                    <Trans id="annotation.add.title">[ Title ]</Trans>
-                  ) : (
-                    chartConfig.meta.title[locale]
-                  )}
-                </Typography>
+                            });
+                          }
+                        : undefined
+                    }
+                  />
 
                 <MetadataPanel
                   // FIXME: adapt to design
@@ -185,28 +159,20 @@ export const ChartPreviewInner = (props: ChartPreviewProps) => {
                   - visualize.admin.ch
                 </title>
               </Head>
-              <Typography
-                variant="body1"
-                className={classes.description}
-                sx={{
-                  color:
-                    chartConfig.meta.description[locale] === ""
-                      ? "grey.500"
-                      : "text",
-                }}
-                onClick={() =>
+                <Description
+                  text={chartConfig.meta.description[locale]}
+                  lighterColor
+                  onClick={
+                    state.state === "CONFIGURING_CHART"
+                      ? () => {
                   dispatch({
                     type: "ACTIVE_FIELD_CHANGED",
                     value: "description",
-                  })
-                }
-              >
-                {chartConfig.meta.description[locale] === "" ? (
-                  <Trans id="annotation.add.description">[ Description ]</Trans>
-                ) : (
-                  chartConfig.meta.description[locale]
-                )}
-              </Typography>
+                          });
+                        }
+                      : undefined
+                  }
+                />
             </>
             <Box ref={containerRef} height={containerHeight.current!}>
               {isTablePreview ? (

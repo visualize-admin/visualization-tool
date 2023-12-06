@@ -1,5 +1,5 @@
 import { Trans } from "@lingui/macro";
-import { Box, Theme, Typography } from "@mui/material";
+import { Box, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { useEffect, useMemo, useRef } from "react";
 import { useStore } from "zustand";
@@ -29,6 +29,7 @@ import {
   isPublished,
   useConfiguratorState,
 } from "@/configurator";
+import { Description, Title } from "@/configurator/components/annotator";
 import { DRAWER_WIDTH } from "@/configurator/components/drawer";
 import {
   DEFAULT_DATA_SOURCE,
@@ -222,15 +223,12 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
           )}
           <Flex
             sx={{
-              justifyContent: "space-between",
+              justifyContent: meta.title[locale] ? "space-between" : "flex-end",
               alignItems: "center",
               gap: 2,
             }}
           >
-            <Typography component="div" variant="h2" mb={2}>
-              {meta.title[locale]}
-            </Typography>
-
+            {meta.title[locale] && <Title text={meta.title[locale]} />}
             <MetadataPanel
               // FIXME: adapt to design
               datasetIri={chartConfig.cubes[0].iri}
@@ -239,11 +237,8 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
               container={rootRef.current}
             />
           </Flex>
-
           {meta.description[locale] && (
-            <Typography component="div" variant="body1" mb={2}>
-              {meta.description[locale]}
-            </Typography>
+            <Description text={meta.description[locale]} />
           )}
           <InteractiveFiltersProvider>
             <Flex

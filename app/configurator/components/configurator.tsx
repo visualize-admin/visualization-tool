@@ -16,6 +16,7 @@ import {
   getChartConfig,
   useConfiguratorState,
 } from "@/configurator";
+import { Description, Title } from "@/configurator/components/annotator";
 import { ChartAnnotationsSelector } from "@/configurator/components/chart-annotations-selector";
 import { ChartConfigurator } from "@/configurator/components/chart-configurator";
 import { ChartOptionsSelector } from "@/configurator/components/chart-options-selector";
@@ -32,6 +33,7 @@ import {
 } from "@/configurator/components/layout";
 import { ChartConfiguratorTable } from "@/configurator/table/table-chart-configurator";
 import SvgIcChevronLeft from "@/icons/components/IcChevronLeft";
+import { useLocale } from "@/locales/use-locale";
 import { useDataSourceStore } from "@/stores/data-source";
 import { InteractiveFiltersProvider } from "@/stores/interactive-filters";
 import useEvent from "@/utils/use-event";
@@ -195,6 +197,7 @@ const ConfigureChartStep = () => {
 };
 
 const LayoutingStep = () => {
+  const locale = useLocale();
   const [state, dispatch] = useConfiguratorState();
   const handlePrevious = useEvent(() => {
     if (state.state !== "LAYOUTING") {
@@ -271,6 +274,21 @@ const LayoutingStep = () => {
         </PanelHeaderLayout>
         <PanelBodyWrapper type="M">
           <Box sx={{ maxWidth: 980, mx: "auto" }}>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 1,
+                mt: 3,
+                mb: 4,
+              }}
+            >
+              <Title text={state.meta.title[locale]} onClick={() => {}} />
+              <Description
+                text={state.meta.description[locale]}
+                onClick={() => {}}
+              />
+            </Box>
             <ChartPanel>
               <ChartPreview dataSource={state.dataSource} />
             </ChartPanel>

@@ -9,9 +9,8 @@ import {
 } from "@/configurator/components/chart-controls/section";
 import { AnnotatorTabField } from "@/configurator/components/field";
 import { getFieldLabel } from "@/configurator/components/field-i18n";
+import { isConfiguring } from "@/configurator/configurator-state";
 import { useConfiguratorState, useLocale } from "@/src";
-
-import { isConfiguring } from "../configurator-state";
 
 export const TitleAndDescriptionConfigurator = () => {
   const [state] = useConfiguratorState(isConfiguring);
