@@ -1,4 +1,5 @@
 import { Trans } from "@lingui/macro";
+import { SxProps } from "@mui/material";
 import Box from "@mui/material/Box";
 import Button, { ButtonProps } from "@mui/material/Button";
 import { useRouter } from "next/router";
@@ -19,14 +20,10 @@ import {
   DRAWER_WIDTH,
 } from "@/configurator/components/drawer";
 import {
-  LMPanelLayout,
-  LMRPanelHeaderWrapper,
-  LMRPanelLayout,
-  PanelHeaderLeftWrapper,
-  PanelHeaderMiddleWrapper,
-  PanelHeaderRightWrapper,
-  PanelLeftWrapper,
-  PanelMiddleWrapper,
+  PanelBodyWrapper,
+  PanelHeaderLayout,
+  PanelHeaderWrapper,
+  PanelLayout,
 } from "@/configurator/components/layout";
 import { ChartConfiguratorTable } from "@/configurator/table/table-chart-configurator";
 import SvgIcChevronLeft from "@/icons/components/IcChevronLeft";
@@ -34,7 +31,9 @@ import { useDataSourceStore } from "@/stores/data-source";
 import { InteractiveFiltersProvider } from "@/stores/interactive-filters";
 import useEvent from "@/utils/use-event";
 
-const BackContainer = ({ children }: { children: React.ReactNode }) => {
+const BackContainer = (props: React.PropsWithChildren<{ sx?: SxProps }>) => {
+  const { children, sx } = props;
+
   return (
     <Box
       sx={{
@@ -42,6 +41,7 @@ const BackContainer = ({ children }: { children: React.ReactNode }) => {
         minHeight: 78,
         display: "flex",
         alignItems: "center",
+        ...sx,
       }}
     >
       {children}
@@ -120,8 +120,9 @@ const ConfigureChartStep = () => {
 
   return (
     <InteractiveFiltersProvider>
-      <LMPanelLayout>
-        <PanelLeftWrapper
+      <PanelLayout type="LM">
+        <PanelBodyWrapper
+          type="L"
           sx={{
             flexGrow: 1,
             display: "flex",
@@ -139,12 +140,12 @@ const ConfigureChartStep = () => {
           ) : (
             <ChartConfigurator state={state} />
           )}
-        </PanelLeftWrapper>
-        <PanelMiddleWrapper>
+        </PanelBodyWrapper>
+        <PanelBodyWrapper type="M">
           <ChartPanel>
             <ChartPreview dataSource={state.dataSource} />
           </ChartPanel>
-        </PanelMiddleWrapper>
+        </PanelBodyWrapper>
         <ConfiguratorDrawer
           anchor="left"
           open={!!chartConfig.activeField}
@@ -171,7 +172,7 @@ const ConfigureChartStep = () => {
             )}
           </div>
         </ConfiguratorDrawer>
-      </LMPanelLayout>
+      </PanelLayout>
     </InteractiveFiltersProvider>
   );
 };
@@ -210,9 +211,9 @@ const LayoutingStep = () => {
 
   return (
     <InteractiveFiltersProvider>
-      <LMRPanelLayout>
-        <LMRPanelHeaderWrapper>
-          <PanelHeaderLeftWrapper>
+      <PanelLayout type="M" sx={{ background: "#eee" }}>
+        <PanelHeaderLayout type="LMR" sx={{ background: "#fff" }}>
+          <PanelHeaderWrapper type="L">
             <BackContainer>
               <BackButton onClick={handlePrevious}>
                 <Trans id="controls.nav.back-to-configurator">
@@ -220,8 +221,9 @@ const LayoutingStep = () => {
                 </Trans>
               </BackButton>
             </BackContainer>
-          </PanelHeaderLeftWrapper>
-          <PanelHeaderMiddleWrapper
+          </PanelHeaderWrapper>
+          <PanelHeaderWrapper
+            type="M"
             sx={{
               display: "flex",
               alignItems: "center",
@@ -230,11 +232,12 @@ const LayoutingStep = () => {
               mx: "auto",
             }}
           >
-            <Button>123</Button>
-            <Button>321</Button>
-            <Button>213</Button>
-          </PanelHeaderMiddleWrapper>
-          <PanelHeaderRightWrapper
+            <Button>Tab layout</Button>
+            <Button>Dashboard</Button>
+            <Button>Single URLs</Button>
+          </PanelHeaderWrapper>
+          <PanelHeaderWrapper
+            type="R"
             sx={{
               display: "flex",
               alignItems: "start",
@@ -242,13 +245,15 @@ const LayoutingStep = () => {
             }}
           >
             <PublishChartButton />
-          </PanelHeaderRightWrapper>
-        </LMRPanelHeaderWrapper>
-        <PanelMiddleWrapper>
-          <ChartPanel>
-            <ChartPreview dataSource={state.dataSource} />
-          </ChartPanel>
-        </PanelMiddleWrapper>
+          </PanelHeaderWrapper>
+        </PanelHeaderLayout>
+        <PanelBodyWrapper type="M">
+          <Box sx={{ maxWidth: 980, mx: "auto" }}>
+            <ChartPanel>
+              <ChartPreview dataSource={state.dataSource} />
+            </ChartPanel>
+          </Box>
+        </PanelBodyWrapper>
         <ConfiguratorDrawer
           anchor="left"
           open={!!chartConfig.activeField}
@@ -270,7 +275,7 @@ const LayoutingStep = () => {
             </BackContainer>
           </div>
         </ConfiguratorDrawer>
-      </LMRPanelLayout>
+      </PanelLayout>
     </InteractiveFiltersProvider>
   );
 };
@@ -283,15 +288,15 @@ const PublishStep = () => {
   }
 
   return (
-    <LMPanelLayout>
-      <PanelMiddleWrapper>
+    <PanelLayout type="LM">
+      <PanelBodyWrapper type="M">
         <ChartPanel>
           <InteractiveFiltersProvider>
             <ChartPreview dataSource={state.dataSource} />
           </InteractiveFiltersProvider>
         </ChartPanel>
-      </PanelMiddleWrapper>
-    </LMPanelLayout>
+      </PanelBodyWrapper>
+    </PanelLayout>
   );
 };
 

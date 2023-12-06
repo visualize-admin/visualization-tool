@@ -6,55 +6,6 @@ import { HEADER_HEIGHT } from "@/components/header";
 import { DRAWER_WIDTH } from "@/configurator/components/drawer";
 
 const useStyles = makeStyles<Theme>((theme) => ({
-  panelHeader: {
-    gridArea: "header",
-    padding: theme.spacing(5),
-  },
-  LMRPanelHeader: {
-    width: "100%",
-    display: "grid",
-    gridTemplateColumns: `${DRAWER_WIDTH}px minmax(22rem, 1fr) ${DRAWER_WIDTH}px`,
-    gridTemplateAreas: `
-    "left middle right"
-    `,
-    marginLeft: "auto",
-    marginRight: "auto",
-  },
-  panelHeaderLeft: {
-    gridArea: "left",
-  },
-  panelHeaderMiddle: {
-    gridArea: "middle",
-  },
-  panelHeaderRight: {
-    gridArea: "right",
-  },
-  panelLeft: {
-    overflowX: "hidden",
-    overflowY: "auto",
-    backgroundColor: theme.palette.grey[100],
-    boxShadow: "none",
-    borderRightColor: theme.palette.divider,
-    borderRightWidth: "1px",
-    borderRightStyle: "solid",
-    gridArea: "left",
-  },
-  panelMiddle: {
-    overflowX: "hidden",
-    overflowY: "auto",
-    padding: theme.spacing(5),
-    gridArea: "middle",
-  },
-  panelRight: {
-    backgroundColor: "white",
-    overflowX: "hidden",
-    overflowY: "auto",
-    boxShadow: theme.shadows[5],
-    borderLeftColor: theme.palette.divider,
-    borderLeftWidth: "1px",
-    borderLeftStyle: "solid",
-    gridArea: "right",
-  },
   panelLayout: {
     position: "fixed",
     top: HEADER_HEIGHT,
@@ -65,12 +16,23 @@ const useStyles = makeStyles<Theme>((theme) => ({
     marginLeft: "auto",
     marginRight: "auto",
   },
-  // Left-Middle
+  MPanelLayout: {
+    gridTemplateColumns: `minmax(22rem, 1fr)`,
+    gridTemplateAreas: `
+    "header"
+    "middle"`,
+  },
   LMPanelLayout: {
     gridTemplateColumns: `${DRAWER_WIDTH}px minmax(22rem, 1fr)`,
     gridTemplateAreas: `
     "header header"
     "left middle"`,
+  },
+  MRPanelLayout: {
+    gridTemplateColumns: `minmax(22rem, 1fr) ${DRAWER_WIDTH}px`,
+    gridTemplateAreas: `
+    "header header"
+    "middle right"`,
   },
   LMRPanelLayout: {
     gridTemplateColumns: `${DRAWER_WIDTH}px minmax(22rem, 1fr) ${DRAWER_WIDTH}px`,
@@ -78,46 +40,64 @@ const useStyles = makeStyles<Theme>((theme) => ({
     "header header header"
     "left middle right"`,
   },
+  panelHeaderLayout: {
+    gridArea: "header",
+  },
+  LMRPanelHeaderLayout: {
+    width: "100%",
+    display: "grid",
+    gridTemplateColumns: `${DRAWER_WIDTH}px minmax(22rem, 1fr) ${DRAWER_WIDTH}px`,
+    gridTemplateAreas: `
+    "left middle right"
+    `,
+    marginLeft: "auto",
+    marginRight: "auto",
+  },
+  LPanelHeaderWrapper: {
+    gridArea: "left",
+  },
+  MPanelHeaderWrapper: {
+    gridArea: "middle",
+    padding: theme.spacing(5),
+  },
+  RPanelHeaderWrapper: {
+    gridArea: "right",
+    padding: theme.spacing(5),
+  },
+  LPanelBodyWrapper: {
+    overflowX: "hidden",
+    overflowY: "auto",
+    backgroundColor: theme.palette.grey[100],
+    boxShadow: "none",
+    borderRightColor: theme.palette.divider,
+    borderRightWidth: "1px",
+    borderRightStyle: "solid",
+    gridArea: "left",
+  },
+  MPanelBodyWrapper: {
+    overflowX: "hidden",
+    overflowY: "auto",
+    padding: theme.spacing(5),
+    gridArea: "middle",
+  },
+  RPanelBodyWrapper: {
+    backgroundColor: "white",
+    overflowX: "hidden",
+    overflowY: "auto",
+    boxShadow: theme.shadows[5],
+    borderLeftColor: theme.palette.divider,
+    borderLeftWidth: "1px",
+    borderLeftStyle: "solid",
+    gridArea: "right",
+  },
 }));
 
-export const LMPanelLayout = (props: BoxProps) => {
-  const { children, ...rest } = props;
-  const classes = useStyles();
-
-  return (
-    <Box
-      {...rest}
-      className={clsx(
-        classes.panelLayout,
-        classes.LMPanelLayout,
-        rest.className
-      )}
-    >
-      {children}
-    </Box>
-  );
+type PanelHeaderLayoutProps = BoxProps & {
+  type: "LMR";
 };
 
-export const LMRPanelLayout = (props: BoxProps) => {
-  const { children, ...rest } = props;
-  const classes = useStyles();
-
-  return (
-    <Box
-      {...rest}
-      className={clsx(
-        classes.panelLayout,
-        classes.LMRPanelLayout,
-        rest.className
-      )}
-    >
-      {children}
-    </Box>
-  );
-};
-
-export const LMRPanelHeaderWrapper = (props: BoxProps) => {
-  const { children, className, ...rest } = props;
+export const PanelHeaderLayout = (props: PanelHeaderLayoutProps) => {
+  const { children, type, ...rest } = props;
   const classes = useStyles();
 
   return (
@@ -125,107 +105,73 @@ export const LMRPanelHeaderWrapper = (props: BoxProps) => {
       {...rest}
       component="section"
       data-testid="panel-header"
-      className={clsx(classes.panelHeader, classes.LMRPanelHeader, className)}
+      className={clsx(
+        classes.panelHeaderLayout,
+        classes[`${type}PanelHeaderLayout`],
+        rest.className
+      )}
     >
       {children}
     </Box>
   );
 };
 
-export const PanelHeaderLeftWrapper = (props: BoxProps) => {
-  const { children, className, ...rest } = props;
+type PanelHeaderWrapperProps = BoxProps & {
+  type: "L" | "M" | "R";
+};
+
+export const PanelHeaderWrapper = (props: PanelHeaderWrapperProps) => {
+  const { children, type, ...rest } = props;
   const classes = useStyles();
 
   return (
     <Box
       {...rest}
       component="section"
-      data-testid="panel-header-left"
-      className={clsx(classes.panelHeaderLeft, className)}
+      data-testid={`panel-header-${type}`}
+      className={clsx(classes[`${type}PanelHeaderWrapper`], rest.className)}
     >
       {children}
     </Box>
   );
 };
 
-export const PanelHeaderMiddleWrapper = (props: BoxProps) => {
-  const { children, className, ...rest } = props;
+type PanelLayoutProps = BoxProps & {
+  type: "M" | "LM" | "MR" | "LMR";
+};
+
+export const PanelLayout = (props: PanelLayoutProps) => {
+  const { children, type = "LM", ...rest } = props;
   const classes = useStyles();
 
   return (
     <Box
       {...rest}
-      component="section"
-      data-testid="panel-header-middle"
-      className={clsx(classes.panelHeaderMiddle, className)}
+      className={clsx(
+        classes.panelLayout,
+        classes[`${type}PanelLayout`],
+        rest.className
+      )}
     >
       {children}
     </Box>
   );
 };
 
-export const PanelHeaderRightWrapper = (props: BoxProps) => {
-  const { children, className, ...rest } = props;
+type PanelBodyWrapperProps = BoxProps & {
+  type: "L" | "M" | "R";
+};
+
+export const PanelBodyWrapper = (props: PanelBodyWrapperProps) => {
+  const { children, type, ...rest } = props;
   const classes = useStyles();
 
   return (
     <Box
       {...rest}
       component="section"
-      data-testid="panel-header-right"
-      className={clsx(classes.panelHeaderRight, className)}
-    >
-      {children}
-    </Box>
-  );
-};
-
-export const PanelLeftWrapper = (props: BoxProps) => {
-  const { children, className, ...rest } = props;
-  const classes = useStyles();
-
-  return (
-    <Box
-      {...rest}
-      component="section"
-      data-testid="panel-left"
-      className={clsx(classes.panelLeft, className)}
-    >
-      {children}
-    </Box>
-  );
-};
-
-PanelLeftWrapper.defaultProps = {
-  raised: true,
-};
-
-export const PanelMiddleWrapper = (props: BoxProps) => {
-  const { children, className, ...rest } = props;
-  const classes = useStyles();
-
-  return (
-    <Box
-      {...rest}
-      component="section"
-      data-testid="panel-middle"
-      className={clsx(classes.panelMiddle, className)}
-    >
-      {children}
-    </Box>
-  );
-};
-
-export const PanelRightWrapper = (props: BoxProps) => {
-  const { children, className, ...rest } = props;
-  const classes = useStyles();
-
-  return (
-    <Box
-      {...rest}
-      component="section"
-      data-testid="panel-right"
-      className={clsx(classes.panelRight, className)}
+      data-testid={`panel-body-${type}`}
+      className={clsx(classes[`${type}PanelBodyWrapper`], rest.className)}
     >
       {children}
     </Box>
