@@ -110,6 +110,7 @@ type TabsEditableProps = {
 const TabsEditable = (props: TabsEditableProps) => {
   const { state, chartConfig, data } = props;
   const [, dispatch] = useConfiguratorState();
+  const isConfiguringChart = isConfiguring(state);
   const locale = useLocale();
   const [tabsState, setTabsState] = useTabsState();
   const [popoverAnchorEl, setPopoverAnchorEl] =
@@ -133,8 +134,8 @@ const TabsEditable = (props: TabsEditableProps) => {
     <>
       <TabsInner
         data={data}
-        addable={state.state === "CONFIGURING_CHART"}
-        editable
+        addable={isConfiguringChart}
+        editable={isConfiguringChart}
         draggable={state.chartConfigs.length > 1}
         onChartAdd={(e) => {
           setPopoverAnchorEl(e.currentTarget);
