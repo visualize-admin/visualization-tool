@@ -64,7 +64,7 @@ export const BackButton = ({
   return (
     <Button
       variant="text"
-      color="inherit"
+      color="primary"
       size="small"
       sx={{ fontWeight: "bold", ...sx }}
       startIcon={<SvgIcChevronLeft />}
