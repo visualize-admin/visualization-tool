@@ -19,6 +19,7 @@ import {
   ConfiguratorDrawer,
   DRAWER_WIDTH,
 } from "@/configurator/components/drawer";
+import { IconButton } from "@/configurator/components/icon-button";
 import {
   PanelBodyWrapper,
   PanelHeaderLayout,
@@ -223,9 +224,7 @@ const LayoutingStep = () => {
               mx: "auto",
             }}
           >
-            <Button>Tab layout</Button>
-            <Button>Dashboard</Button>
-            <Button>Single URLs</Button>
+            <IconButton label="layoutTab" onClick={() => {}} />
           </PanelHeaderWrapper>
           <PanelHeaderWrapper
             type="R"

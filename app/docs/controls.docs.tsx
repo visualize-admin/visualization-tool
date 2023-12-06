@@ -13,7 +13,7 @@ import {
   ControlSection,
   SectionTitle,
 } from "@/configurator/components/chart-controls/section";
-import { ChartTypeSelectionButton } from "@/configurator/components/chart-type-selector";
+import { IconButton } from "@/configurator/components/icon-button";
 import { getPalette } from "@/palettes";
 
 const ControlsDoc = () => {
@@ -26,26 +26,22 @@ const ControlsDoc = () => {
 ## Chart Type Selector
   ${(
     <ReactSpecimen span={2}>
-      <ChartTypeSelectionButton
-        label={"line"}
-        name={"Linien"}
-        value={"Linien"}
-        onClick={(e) => {
-          console.log(e.currentTarget.value);
-        }}
+      <IconButton
+        label="line"
+        name="Linien"
+        value="Linien"
+        onClick={() => {}}
       />
     </ReactSpecimen>
   )}
   ${(
     <ReactSpecimen span={2}>
-      <ChartTypeSelectionButton
-        label={"scatterplot"}
-        name={"Scatterplot"}
-        value={"Scatterplot"}
-        checked={true}
-        onClick={(e) => {
-          console.log(e.currentTarget.value);
-        }}
+      <IconButton
+        label="scatterplot"
+        name="Scatterplot"
+        value="Scatterplot"
+        checked
+        onClick={() => {}}
       />
     </ReactSpecimen>
   )}
@@ -94,43 +90,43 @@ ${(
 
       <ControlList>
         <Checkbox
-          label={"Bern"}
-          checked={true}
-          name={"Bern"}
-          value={"Bern"}
+          label="Bern"
+          checked
+          name="Bern"
+          value="Bern"
           onChange={() => {}}
         />
         <Checkbox
-          label={"Aargau"}
-          name={"Aargau"}
-          value={"Aargau"}
+          label="Aargau"
+          name="Aargau"
+          value="Aargau"
           onChange={() => {}}
         />
         <Checkbox
-          label={"Ticino"}
-          name={"Ticino"}
-          value={"Ticino"}
+          label="Ticino"
+          name="Ticino"
+          value="Ticino"
           onChange={() => {}}
         />
       </ControlList>
       <ControlList>
         <Radio
-          label={"Bern"}
-          checked={true}
-          name={"Bern"}
-          value={"Bern"}
+          label="Bern"
+          checked
+          name="Bern"
+          value="Bern"
           onChange={() => {}}
         />
         <Radio
-          label={"Aargau"}
-          name={"Aargau"}
-          value={"Aargau"}
+          label="Aargau"
+          name="Aargau"
+          value="Aargau"
           onChange={() => {}}
         />
         <Radio
-          label={"Ticino"}
-          name={"Ticino"}
-          value={"Ticino"}
+          label="Ticino"
+          name="Ticino"
+          value="Ticino"
           onChange={() => {}}
         />
       </ControlList>
@@ -143,21 +139,21 @@ ${(
   <ReactSpecimen span={2}>
     <ControlList>
       <Checkbox
-        label={"Scatterplot"}
-        name={"Scatterplot"}
-        value={"Scatterplot"}
+        label="Scatterplot"
+        name="Scatterplot"
+        value="Scatterplot"
         onChange={() => {}}
       />
       <Checkbox
-        label={"Line Chart"}
-        name={"Line Chart"}
-        value={"Line Chart"}
+        label="Line Chart"
+        name="Line Chart"
+        value="Line Chart"
         onChange={() => {}}
       />
       <Checkbox
-        label={"Bar chart"}
-        name={"Bar chart"}
-        value={"Bar chart"}
+        label="Bar chart"
+        name="Bar chart"
+        value="Bar chart"
         onChange={() => {}}
       />
     </ControlList>
