@@ -10,6 +10,7 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 ## Unreleased
 
 - Features
+  - Added layout step to the chart creation flow (tab layout, vertical or tall dashboard)
   - Localized cube landing pages are now supported (dcat:landingPage) 🌎
 - Fixes
   - Copying a link to a new visualization from a dataset preview now correctly includes a data source
