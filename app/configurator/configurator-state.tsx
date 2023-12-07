@@ -297,6 +297,7 @@ export type ConfiguratorStateAction =
       type: "LAYOUT_CHANGED";
       value: {
         type: LayoutType;
+        activeField: string | undefined;
       };
     };
 
@@ -648,7 +649,10 @@ const transitionStepNext = (
           state: "CONFIGURING_CHART",
           dataSource: draft.dataSource,
           meta: draft.meta,
-          layout: { type: "tab" },
+          layout: {
+            type: "tab",
+            activeField: undefined,
+          },
           chartConfigs: [chartConfig],
           activeChartKey: chartConfig.key,
         };

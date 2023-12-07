@@ -1103,13 +1103,18 @@ const DataSource = t.type({
 });
 export type DataSource = t.TypeOf<typeof DataSource>;
 
-const Layout = t.union([
+const Layout = t.intersection([
   t.type({
-    type: t.literal("tab"),
+    activeField: t.union([t.undefined, t.string]),
   }),
-  t.type({
-    type: t.literal("dashboard"),
-  }),
+  t.union([
+    t.type({
+      type: t.literal("tab"),
+    }),
+    t.type({
+      type: t.literal("dashboard"),
+    }),
+  ]),
 ]);
 export type Layout = t.TypeOf<typeof Layout>;
 export type LayoutType = Layout["type"];

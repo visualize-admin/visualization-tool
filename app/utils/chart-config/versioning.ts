@@ -948,7 +948,10 @@ const configuratorStateMigrations: Migration[] = [
       const newConfig = { ...config, version: "3.1.0" };
 
       return produce(newConfig, (draft: any) => {
-        draft.layout = { type: "tab" };
+        draft.layout = {
+          type: "tab",
+          activeField: undefined,
+        };
       });
     },
     down: (config) => {

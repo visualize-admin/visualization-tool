@@ -243,7 +243,13 @@ const LayoutingStep = () => {
                   return;
                 }
 
-                dispatch({ type: "LAYOUT_CHANGED", value: { type: "tab" } });
+                dispatch({
+                  type: "LAYOUT_CHANGED",
+                  value: {
+                    type: "tab",
+                    activeField: undefined,
+                  },
+                });
               }}
             />
             <IconButton
@@ -256,7 +262,10 @@ const LayoutingStep = () => {
 
                 dispatch({
                   type: "LAYOUT_CHANGED",
-                  value: { type: "dashboard" },
+                  value: {
+                    type: "dashboard",
+                    activeField: undefined,
+                  },
                 });
               }}
             />
