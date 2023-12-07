@@ -3,7 +3,6 @@ import { NextPage } from "next";
 import NextLink from "next/link";
 import React, { useEffect, useRef, useState } from "react";
 
-import { ChartPanel } from "@/components/chart-panel";
 import { ChartPublished } from "@/components/chart-published";
 import Flex from "@/components/flex";
 import { ContentLayout } from "@/components/layout";
@@ -101,30 +100,24 @@ const Page: NextPage<PageProps> = ({ configs }) => {
                   chartId="published"
                   initialState={config.data as ConfiguratorStatePublished}
                 >
-                  <ChartPanel layout={config.data.layout}>
-                    <HiddenUntilScrolledTo
-                      initialVisible={i < 5}
-                      fallback={<div>Loading...</div>}
-                    >
-                      <ChartPublished />
-                    </HiddenUntilScrolledTo>
-                    <Box
-                      mb={2}
-                      mx={4}
-                      mr={6}
-                      textAlign="right"
-                      typography="caption"
-                    >
-                      Id: {config.key} -{" "}
-                      <NextLink
-                        href={`/v/${config.key}`}
-                        passHref
-                        legacyBehavior
-                      >
-                        <Link color="primary">Open</Link>
-                      </NextLink>{" "}
-                    </Box>
-                  </ChartPanel>
+                  <HiddenUntilScrolledTo
+                    initialVisible={i < 5}
+                    fallback={<div>Loading...</div>}
+                  >
+                    <ChartPublished />
+                  </HiddenUntilScrolledTo>
+                  <Box
+                    mb={2}
+                    mx={4}
+                    mr={6}
+                    textAlign="right"
+                    typography="caption"
+                  >
+                    Id: {config.key} -{" "}
+                    <NextLink href={`/v/${config.key}`} passHref legacyBehavior>
+                      <Link color="primary">Open</Link>
+                    </NextLink>{" "}
+                  </Box>
                 </ConfiguratorStateProvider>
               </Box>
             );

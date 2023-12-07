@@ -6,7 +6,6 @@ import { useRouter } from "next/router";
 import React from "react";
 
 import { SelectDatasetStep } from "@/browser/select-dataset-step";
-import { ChartPanel } from "@/components/chart-panel";
 import { ChartPreview } from "@/components/chart-preview";
 import { PublishChartButton } from "@/components/chart-selection-tabs";
 import { HEADER_HEIGHT } from "@/components/header";
@@ -184,9 +183,7 @@ const ConfigureChartStep = () => {
           )}
         </PanelBodyWrapper>
         <PanelBodyWrapper type="M">
-          <ChartPanel editing layout={state.layout}>
-            <ChartPreview dataSource={state.dataSource} />
-          </ChartPanel>
+          <ChartPreview dataSource={state.dataSource} />
         </PanelBodyWrapper>
         <ConfiguratorDrawer
           anchor="left"
@@ -335,9 +332,7 @@ const LayoutingStep = () => {
               }}
             />
           </Box>
-          <ChartPanel layout={state.layout}>
-            <ChartPreview dataSource={state.dataSource} />
-          </ChartPanel>
+          <ChartPreview dataSource={state.dataSource} />
         </PanelBodyWrapper>
         <ConfiguratorDrawer
           anchor="left"
@@ -367,11 +362,9 @@ const PublishStep = () => {
   return (
     <PanelLayout type="LM">
       <PanelBodyWrapper type="M">
-        <ChartPanel layout={state.layout}>
-          <InteractiveFiltersProvider>
-            <ChartPreview dataSource={state.dataSource} />
-          </InteractiveFiltersProvider>
-        </ChartPanel>
+        <InteractiveFiltersProvider>
+          <ChartPreview dataSource={state.dataSource} />
+        </InteractiveFiltersProvider>
       </PanelBodyWrapper>
     </PanelLayout>
   );

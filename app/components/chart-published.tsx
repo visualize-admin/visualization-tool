@@ -9,6 +9,7 @@ import { extractChartConfigsComponentIris } from "@/charts/shared/chart-helpers"
 import { isUsingImputation } from "@/charts/shared/imputation";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
 import { ChartFootnotes } from "@/components/chart-footnotes";
+import { ChartPanelLayout, ChartWrapper } from "@/components/chart-panel";
 import {
   ChartTablePreviewProvider,
   useChartTablePreview,
@@ -57,12 +58,29 @@ export const ChartPublished = (props: ChartPublishedProps) => {
 
   return (
     <ChartTablePreviewProvider>
-      <ChartPublishedInner
-        dataSource={dataSource}
-        state={state}
-        chartConfig={chartConfig}
-        configKey={configKey}
-      />
+      {state.layout.type === "dashboard" ? (
+        <ChartPanelLayout type={state.layout.layout}>
+          {state.chartConfigs.map((chartConfig) => (
+            <ChartWrapper key={chartConfig.key} layout={state.layout}>
+              <ChartPublishedInner
+                dataSource={dataSource}
+                state={state}
+                chartConfig={chartConfig}
+                configKey={configKey}
+              />
+            </ChartWrapper>
+          ))}
+        </ChartPanelLayout>
+      ) : (
+        <ChartWrapper layout={state.layout}>
+          <ChartPublishedInner
+            dataSource={dataSource}
+            state={state}
+            chartConfig={chartConfig}
+            configKey={configKey}
+          />
+        </ChartWrapper>
+      )}
     </ChartTablePreviewProvider>
   );
 };

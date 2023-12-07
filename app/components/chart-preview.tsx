@@ -6,6 +6,7 @@ import { useMemo } from "react";
 import { DataSetTable } from "@/browse/datatable";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
 import { ChartFootnotes } from "@/components/chart-footnotes";
+import { ChartPanelLayout, ChartWrapper } from "@/components/chart-panel";
 import {
   ChartTablePreviewProvider,
   useChartTablePreview,
@@ -19,6 +20,7 @@ import {
   DataSource,
   getChartConfig,
   hasChartConfigs,
+  isConfiguring,
   useConfiguratorState,
 } from "@/configurator";
 import { Description, Title } from "@/configurator/components/annotators";
@@ -35,17 +37,40 @@ type ChartPreviewProps = {
 };
 
 export const ChartPreview = (props: ChartPreviewProps) => {
+  const [state] = useConfiguratorState(hasChartConfigs);
+  const editing = isConfiguring(state);
+
   return (
     <ChartTablePreviewProvider>
-      <ChartPreviewInner {...props} />
+      {state.layout.type === "dashboard" && !editing ? (
+        <ChartPanelLayout type={state.layout.layout}>
+          {state.chartConfigs.map((chartConfig) => (
+            <ChartWrapper
+              key={chartConfig.key}
+              editing={editing}
+              layout={state.layout}
+            >
+              <ChartPreviewInner {...props} chartKey={chartConfig.key} />
+            </ChartWrapper>
+          ))}
+        </ChartPanelLayout>
+      ) : (
+        <ChartWrapper editing={editing} layout={state.layout}>
+          <ChartPreviewInner {...props} />
+        </ChartWrapper>
+      )}
     </ChartTablePreviewProvider>
   );
 };
 
-export const ChartPreviewInner = (props: ChartPreviewProps) => {
-  const { dataSource } = props;
+type ChartPreviewInnerProps = ChartPreviewProps & {
+  chartKey?: string;
+};
+
+export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
+  const { dataSource, chartKey } = props;
   const [state, dispatch] = useConfiguratorState();
-  const chartConfig = getChartConfig(state);
+  const chartConfig = getChartConfig(state, chartKey);
   const locale = useLocale();
   const commonQueryVariables = {
     sourceType: dataSource.type,
