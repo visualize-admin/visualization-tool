@@ -185,7 +185,7 @@ export type ConfiguratorStateAction =
       };
     }
   | {
-      type: "CHART_DESCRIPTION_CHANGED";
+      type: "CHART_ANNOTATION_CHANGED";
       value: {
         path: string | string[];
         value: string;
@@ -305,6 +305,13 @@ export type ConfiguratorStateAction =
   | {
       type: "LAYOUT_ACTIVE_FIELD_CHANGED";
       value: string | undefined;
+    }
+  | {
+      type: "LAYOUT_ANNOTATION_CHANGED";
+      value: {
+        path: string | string[];
+        value: string;
+      };
     };
 
 const LOCALSTORAGE_PREFIX = "vizualize-configurator-state";
@@ -1174,7 +1181,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       }
       return draft;
 
-    case "CHART_DESCRIPTION_CHANGED":
+    case "CHART_ANNOTATION_CHANGED":
       if (draft.state === "CONFIGURING_CHART") {
         const chartConfig = getChartConfig(draft);
         setWith(
@@ -1387,6 +1394,18 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
     case "LAYOUT_ACTIVE_FIELD_CHANGED":
       if (draft.state === "LAYOUTING") {
         draft.layout.activeField = action.value;
+      }
+
+      return draft;
+
+    case "LAYOUT_ANNOTATION_CHANGED":
+      if (draft.state === "LAYOUTING") {
+        setWith(
+          draft,
+          `layout.meta.${action.value.path}`,
+          action.value.value,
+          Object
+        );
       }
 
       return draft;

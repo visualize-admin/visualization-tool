@@ -588,27 +588,30 @@ export const MultiFilterContextProvider = ({
 };
 
 export const useMetaField = ({
+  type,
   metaKey,
   locale,
   value,
 }: {
+  type: "chart" | "layout";
   metaKey: string;
   locale: string;
   value?: string;
 }): FieldProps => {
   const [, dispatch] = useConfiguratorState();
-
   const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
     (e) => {
       dispatch({
-        type: "CHART_DESCRIPTION_CHANGED",
+        type: `${
+          type.toUpperCase() as Uppercase<typeof type>
+        }_ANNOTATION_CHANGED`,
         value: {
           path: `${metaKey}.${locale}`,
           value: e.currentTarget.value,
         },
       });
     },
-    [dispatch, metaKey, locale]
+    [type, dispatch, metaKey, locale]
   );
 
   return {

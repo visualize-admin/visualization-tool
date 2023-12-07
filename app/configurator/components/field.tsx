@@ -51,6 +51,7 @@ import {
   Option,
   isMultiFilterFieldChecked,
   useActiveChartField,
+  useActiveLayoutField,
   useChartFieldField,
   useChartOptionBooleanField,
   useChartOptionRadioField,
@@ -63,6 +64,7 @@ import {
 } from "@/configurator/config-form";
 import {
   isConfiguring,
+  isLayouting,
   useConfiguratorState,
 } from "@/configurator/configurator-state";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
@@ -511,16 +513,35 @@ export const ChartAnnotatorTabField = (props: AnnotatorTabFieldProps) => {
   const [state] = useConfiguratorState(isConfiguring);
   const chartConfig = getChartConfig(state);
   const locale = useLocale();
-  const hasText = useMemo(() => {
-    const key = value as "title" | "description";
-    return chartConfig.meta[key]?.[locale] !== "";
-  }, [chartConfig, value, locale]);
 
   return (
     <AnnotatorTab
       {...tabProps}
       lowerLabel={
-        hasText ? null : (
+        (chartConfig.meta as any)[value]?.[locale] ? null : (
+          <Typography variant="caption" color="warning.main">
+            {emptyValueWarning}
+          </Typography>
+        )
+      }
+      value={`${fieldProps.value}`}
+      checked={fieldProps.checked}
+      onClick={fieldProps.onClick}
+    />
+  );
+};
+
+export const LayoutAnnotatorTabField = (props: AnnotatorTabFieldProps) => {
+  const { value, emptyValueWarning, ...tabProps } = props;
+  const fieldProps = useActiveLayoutField({ value });
+  const [state] = useConfiguratorState(isLayouting);
+  const locale = useLocale();
+
+  return (
+    <AnnotatorTab
+      {...tabProps}
+      lowerLabel={
+        (state.layout.meta as any)[value]?.[locale] ? null : (
           <Typography variant="caption" color="warning.main">
             {emptyValueWarning}
           </Typography>
@@ -534,19 +555,21 @@ export const ChartAnnotatorTabField = (props: AnnotatorTabFieldProps) => {
 };
 
 export const MetaInputField = ({
+  type,
   label,
   metaKey,
   locale,
   value,
   disabled,
 }: {
+  type: "chart" | "layout";
   label: string | ReactNode;
   metaKey: string;
   locale: string;
   value?: string;
   disabled?: boolean;
 }) => {
-  const field = useMetaField({ metaKey, locale, value });
+  const field = useMetaField({ type, metaKey, locale, value });
   return <Input label={label} {...field} disabled={disabled} />;
 };
 

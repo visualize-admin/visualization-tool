@@ -16,7 +16,10 @@ import {
   getChartConfig,
   useConfiguratorState,
 } from "@/configurator";
-import { ChartAnnotationsSelector } from "@/configurator/components/annotation-options";
+import {
+  ChartAnnotationsSelector,
+  LayoutAnnotationsSelector,
+} from "@/configurator/components/annotation-options";
 import { Description, Title } from "@/configurator/components/annotators";
 import { ChartConfigurator } from "@/configurator/components/chart-configurator";
 import { ChartOptionsSelector } from "@/configurator/components/chart-options-selector";
@@ -78,7 +81,9 @@ export const BackButton = ({
   );
 };
 
-const isAnnotationField = (field: string | undefined) => {
+export const isAnnotationField = (
+  field: string | undefined
+): field is "title" | "description" => {
   return field === "title" || field === "description";
 };
 
@@ -101,6 +106,28 @@ const useAssureCorrectDataSource = (stateGuard: ConfiguratorState["state"]) => {
     state.state,
     stateGuard,
   ]);
+};
+
+type BackToMainButtonProps = {
+  onClick: () => void;
+};
+
+const BackToMainButton = (props: BackToMainButtonProps) => {
+  const { onClick } = props;
+  return (
+    <BackContainer>
+      <Button
+        variant="text"
+        color="inherit"
+        size="small"
+        sx={{ fontWeight: "bold" }}
+        startIcon={<SvgIcChevronLeft />}
+        onClick={onClick}
+      >
+        <Trans id="controls.nav.back-to-main">Back to main</Trans>
+      </Button>
+    </BackContainer>
+  );
 };
 
 const ConfigureChartStep = () => {
@@ -168,20 +195,9 @@ const ConfigureChartStep = () => {
           onClose={handleClosePanel}
         >
           <div style={{ width: DRAWER_WIDTH }} data-testid="panel-drawer">
-            <BackContainer>
-              <Button
-                variant="text"
-                color="inherit"
-                size="small"
-                sx={{ fontWeight: "bold" }}
-                startIcon={<SvgIcChevronLeft />}
-                onClick={handleClosePanel}
-              >
-                <Trans id="controls.nav.back-to-main">Back to main</Trans>
-              </Button>
-            </BackContainer>
+            <BackToMainButton onClick={handleClosePanel} />
             {isAnnotationField(chartConfig.activeField) ? (
-              <ChartAnnotationsSelector state={state} />
+              <ChartAnnotationsSelector />
             ) : (
               <ChartOptionsSelector state={state} />
             )}
@@ -195,6 +211,9 @@ const ConfigureChartStep = () => {
 const LayoutingStep = () => {
   const locale = useLocale();
   const [state, dispatch] = useConfiguratorState();
+  const handleClosePanel = useEvent(() => {
+    dispatch({ type: "LAYOUT_ACTIVE_FIELD_CHANGED", value: undefined });
+  });
   const handlePrevious = useEvent(() => {
     if (state.state !== "LAYOUTING") {
       return;
@@ -319,6 +338,21 @@ const LayoutingStep = () => {
             <ChartPreview dataSource={state.dataSource} />
           </ChartPanel>
         </PanelBodyWrapper>
+        <ConfiguratorDrawer
+          anchor="left"
+          open={!!state.layout.activeField}
+          hideBackdrop
+          onClose={handleClosePanel}
+        >
+          <div style={{ width: DRAWER_WIDTH }} data-testid="panel-drawer">
+            <BackToMainButton onClick={handleClosePanel} />
+            {isAnnotationField(state.layout.activeField) ? (
+              <LayoutAnnotationsSelector />
+            ) : (
+              "OPTIONS"
+            )}
+          </div>
+        </ConfiguratorDrawer>
       </PanelLayout>
     </InteractiveFiltersProvider>
   );
