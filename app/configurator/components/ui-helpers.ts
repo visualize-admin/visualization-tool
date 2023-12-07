@@ -211,7 +211,10 @@ export const getIconName = (name: string): IconName => {
     case "layoutTab":
       return "layoutTab";
     case "layoutDashboard":
+    case "layoutTall":
       return "layoutDashboard";
+    case "layoutVertical":
+      return "layoutVertical";
 
     default:
       return "table";

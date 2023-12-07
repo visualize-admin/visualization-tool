@@ -37,11 +37,11 @@ msgstr "Filter nach oben verschieben"
 msgid "No results"
 msgstr "Kein Ergebnis"
 
-#: app/components/chart-preview.tsx
+#: app/configurator/components/annotators.tsx
 msgid "annotation.add.description"
 msgstr "[ Ohne Beschreibung ]"
 
-#: app/components/chart-preview.tsx
+#: app/configurator/components/annotators.tsx
 #: app/login/components/profile-tables.tsx
 msgid "annotation.add.title"
 msgstr "[ Ohne Titel ]"
@@ -207,11 +207,13 @@ msgstr "Fügen Sie ein weiteres Diagramm hinzu."
 msgid "controls.animation"
 msgstr "Animation"
 
-#: app/configurator/components/chart-annotator.tsx
+#: app/configurator/components/annotators.tsx
+#: app/configurator/components/annotators.tsx
 msgid "controls.annotator.add-description-warning"
 msgstr "Fügen Sie eine Beschreibung hinzu"
 
-#: app/configurator/components/chart-annotator.tsx
+#: app/configurator/components/annotators.tsx
+#: app/configurator/components/annotators.tsx
 msgid "controls.annotator.add-title-warning"
 msgstr "Füge einen Titel hinzu"
 
@@ -538,6 +540,14 @@ msgid "controls.layout.tab"
 msgstr "Tab Layout"
 
 #: app/configurator/components/field-i18n.ts
+msgid "controls.layout.tall"
+msgstr ""
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.layout.vertical"
+msgstr ""
+
+#: app/configurator/components/field-i18n.ts
 msgid "controls.measure"
 msgstr "Messwert"
 
@@ -674,7 +684,8 @@ msgstr "Keine Filter"
 msgid "controls.section.data.filters.possible-filters-error"
 msgstr "Beim Abrufen möglicher Filter ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut oder laden Sie die Seite neu."
 
-#: app/configurator/components/chart-annotator.tsx
+#: app/configurator/components/annotators.tsx
+#: app/configurator/components/annotators.tsx
 msgid "controls.section.description"
 msgstr "Titel & Beschreibung"
 
@@ -707,6 +718,7 @@ msgstr "Animation"
 
 #: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/layout-configurator.tsx
 msgid "controls.section.layout-options"
 msgstr "Layout-Optionen"
 
@@ -730,7 +742,8 @@ msgstr "Tabellensortierung"
 msgid "controls.section.tableoptions"
 msgstr "Tabellenoptionen"
 
-#: app/configurator/components/chart-annotator.tsx
+#: app/configurator/components/annotators.tsx
+#: app/configurator/components/annotators.tsx
 msgid "controls.section.title.warning"
 msgstr "Fügen Sie einen Titel oder eine Beschreibung hinzu"
 

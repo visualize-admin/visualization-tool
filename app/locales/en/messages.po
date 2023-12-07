@@ -37,11 +37,11 @@ msgstr "Move filter up"
 msgid "No results"
 msgstr "No results"
 
-#: app/components/chart-preview.tsx
+#: app/configurator/components/annotators.tsx
 msgid "annotation.add.description"
 msgstr "[ No Description ]"
 
-#: app/components/chart-preview.tsx
+#: app/configurator/components/annotators.tsx
 #: app/login/components/profile-tables.tsx
 msgid "annotation.add.title"
 msgstr "[ No Title ]"
@@ -207,11 +207,13 @@ msgstr "Add another chart."
 msgid "controls.animation"
 msgstr "Animation"
 
-#: app/configurator/components/chart-annotator.tsx
+#: app/configurator/components/annotators.tsx
+#: app/configurator/components/annotators.tsx
 msgid "controls.annotator.add-description-warning"
 msgstr "Please add a description"
 
-#: app/configurator/components/chart-annotator.tsx
+#: app/configurator/components/annotators.tsx
+#: app/configurator/components/annotators.tsx
 msgid "controls.annotator.add-title-warning"
 msgstr "Please add a title"
 
@@ -538,6 +540,14 @@ msgid "controls.layout.tab"
 msgstr "Tab Layout"
 
 #: app/configurator/components/field-i18n.ts
+msgid "controls.layout.tall"
+msgstr "Tall"
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.layout.vertical"
+msgstr "Vertical"
+
+#: app/configurator/components/field-i18n.ts
 msgid "controls.measure"
 msgstr "Measure"
 
@@ -674,7 +684,8 @@ msgstr "No filters"
 msgid "controls.section.data.filters.possible-filters-error"
 msgstr "An error happened while fetching possible filters, please retry later or reload the page."
 
-#: app/configurator/components/chart-annotator.tsx
+#: app/configurator/components/annotators.tsx
+#: app/configurator/components/annotators.tsx
 msgid "controls.section.description"
 msgstr "Title & Description"
 
@@ -707,8 +718,9 @@ msgstr "Animation"
 
 #: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/layout-configurator.tsx
 msgid "controls.section.layout-options"
-msgstr "Layout options"
+msgstr "Layout Options"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.show-standard-error"
@@ -730,7 +742,8 @@ msgstr "Table Sorting"
 msgid "controls.section.tableoptions"
 msgstr "Table Options"
 
-#: app/configurator/components/chart-annotator.tsx
+#: app/configurator/components/annotators.tsx
+#: app/configurator/components/annotators.tsx
 msgid "controls.section.title.warning"
 msgstr "Please add a title or description."
 

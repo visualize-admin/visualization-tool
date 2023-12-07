@@ -39,8 +39,7 @@ import {
   GenericFields,
   ImputationType,
   InteractiveFiltersConfig,
-  LayoutType,
-  Meta,
+  Layout,
   decodeConfiguratorState,
   enableLayouting,
   getChartConfig,
@@ -296,11 +295,7 @@ export type ConfiguratorStateAction =
     }
   | {
       type: "LAYOUT_CHANGED";
-      value: {
-        type: LayoutType;
-        meta: Meta;
-        activeField: string | undefined;
-      };
+      value: Layout;
     }
   | {
       type: "LAYOUT_ACTIVE_FIELD_CHANGED";
