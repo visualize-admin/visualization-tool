@@ -122,26 +122,31 @@ export const ChartPreviewInner = (props: ChartPreviewProps) => {
             <>
               <Flex
                 sx={{
-                  justifyContent: "space-between",
+                  justifyContent:
+                    state.state === "CONFIGURING_CHART" ||
+                    chartConfig.meta.title[locale]
+                      ? "space-between"
+                      : "flex-end",
                   alignItems: "flex-start",
                   gap: 2,
                 }}
               >
+                {(state.state === "CONFIGURING_CHART" ||
+                  chartConfig.meta.title[locale]) && (
                   <Title
                     text={chartConfig.meta.title[locale]}
                     lighterColor
                     onClick={
                       state.state === "CONFIGURING_CHART"
-                        ? () => {
-                    dispatch({
-                      type: "ACTIVE_FIELD_CHANGED",
-                      value: "title",
-                            });
-                          }
+                        ? () =>
+                            dispatch({
+                              type: "CHART_ACTIVE_FIELD_CHANGED",
+                              value: "title",
+                            })
                         : undefined
                     }
                   />
-
+                )}
                 <MetadataPanel
                   // FIXME: adapt to design
                   datasetIri={chartConfig.cubes[0].iri}
@@ -152,27 +157,30 @@ export const ChartPreviewInner = (props: ChartPreviewProps) => {
               </Flex>
               <Head>
                 <title key="title">
-                  {chartConfig.meta.title[locale] === ""
+                  {!chartConfig.meta.title[locale]
                     ? // FIXME: adapt to design
                       metadata?.dataCubesMetadata.map((d) => d.title).join(", ")
                     : chartConfig.meta.title[locale]}{" "}
                   - visualize.admin.ch
                 </title>
               </Head>
+              {(state.state === "CONFIGURING_CHART" ||
+                chartConfig.meta.description[locale]) && (
                 <Description
                   text={chartConfig.meta.description[locale]}
                   lighterColor
                   onClick={
                     state.state === "CONFIGURING_CHART"
                       ? () => {
-                  dispatch({
-                    type: "ACTIVE_FIELD_CHANGED",
-                    value: "description",
+                          dispatch({
+                            type: "CHART_ACTIVE_FIELD_CHANGED",
+                            value: "description",
                           });
                         }
                       : undefined
                   }
                 />
+              )}
             </>
             <Box ref={containerRef} height={containerHeight.current!} mt={4}>
               {isTablePreview ? (
