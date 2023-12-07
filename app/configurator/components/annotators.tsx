@@ -21,13 +21,13 @@ import {
 } from "@/configurator/configurator-state";
 import { useLocale } from "@/locales/use-locale";
 
-const useStyles = makeStyles<Theme, { hoverable?: boolean }>({
+const useStyles = makeStyles<Theme, { interactive?: boolean }>({
   text: {
     marginBottom: 4,
-    cursor: "pointer",
+    cursor: ({ interactive }) => (interactive ? "pointer" : "text"),
 
     "&:hover": {
-      textDecoration: ({ hoverable }) => (hoverable ? "underline" : "none"),
+      textDecoration: ({ interactive }) => (interactive ? "underline" : "none"),
     },
   },
 });
@@ -43,7 +43,7 @@ type Props = TypographyProps & {
 
 export const Title = (props: Props) => {
   const { text, lighterColor, onClick, className, sx, ...rest } = props;
-  const classes = useStyles({ hoverable: !!onClick });
+  const classes = useStyles({ interactive: !!onClick });
 
   return (
     <Typography
@@ -60,7 +60,7 @@ export const Title = (props: Props) => {
 
 export const Description = (props: Props) => {
   const { text, lighterColor, onClick, className, sx, ...rest } = props;
-  const classes = useStyles({ hoverable: !!onClick });
+  const classes = useStyles({ interactive: !!onClick });
 
   return (
     <Typography
