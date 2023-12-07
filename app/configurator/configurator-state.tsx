@@ -738,6 +738,10 @@ const transitionStepPrevious = (
           ...draft.layout,
           activeField: undefined,
         },
+        chartConfigs: draft.chartConfigs.map((chartConfig) => ({
+          ...chartConfig,
+          activeField: undefined,
+        })),
         activeChartKey: draft.chartConfigs[0].key,
       };
     case "LAYOUTING":
