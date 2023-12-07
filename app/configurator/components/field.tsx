@@ -50,7 +50,7 @@ import {
 import {
   Option,
   isMultiFilterFieldChecked,
-  useActiveFieldField,
+  useActiveChartField,
   useChartFieldField,
   useChartOptionBooleanField,
   useChartOptionRadioField,
@@ -105,7 +105,7 @@ type ControlTabFieldProps = {
 export const ControlTabField = (props: ControlTabFieldProps) => {
   const { chartConfig, component, value, labelId, disabled, warnMessage } =
     props;
-  const field = useActiveFieldField({ value });
+  const field = useActiveChartField({ value });
 
   return (
     <ControlTab
@@ -132,10 +132,7 @@ export const OnOffControlTabField = ({
   icon: string;
   active?: boolean;
 }) => {
-  const { checked, onClick } = useActiveFieldField({
-    value,
-  });
-
+  const { checked, onClick } = useActiveChartField({ value });
   return (
     <OnOffControlTab
       value={value}
@@ -503,15 +500,14 @@ export const TimeInput = ({
   );
 };
 
-export const ChartAnnotatorTabField = ({
-  value,
-  emptyValueWarning,
-  ...tabProps
-}: {
+type AnnotatorTabFieldProps = {
   value: string;
   emptyValueWarning?: React.ReactNode;
-} & Omit<AnnotatorTabProps, "onClick">) => {
-  const fieldProps = useActiveFieldField({ value });
+} & Omit<AnnotatorTabProps, "onClick">;
+
+export const ChartAnnotatorTabField = (props: AnnotatorTabFieldProps) => {
+  const { value, emptyValueWarning, ...tabProps } = props;
+  const fieldProps = useActiveChartField({ value });
   const [state] = useConfiguratorState(isConfiguring);
   const chartConfig = getChartConfig(state);
   const locale = useLocale();

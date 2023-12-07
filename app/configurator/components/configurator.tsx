@@ -16,8 +16,8 @@ import {
   getChartConfig,
   useConfiguratorState,
 } from "@/configurator";
+import { ChartAnnotationsSelector } from "@/configurator/components/annotation-options";
 import { Description, Title } from "@/configurator/components/annotators";
-import { ChartAnnotationsSelector } from "@/configurator/components/chart-annotations-selector";
 import { ChartConfigurator } from "@/configurator/components/chart-configurator";
 import { ChartOptionsSelector } from "@/configurator/components/chart-options-selector";
 import {
@@ -107,14 +107,9 @@ const ConfigureChartStep = () => {
   const [state, dispatch] = useConfiguratorState();
   const chartConfig = getChartConfig(state);
   const router = useRouter();
-
   const handleClosePanel = useEvent(() => {
-    dispatch({
-      type: "ACTIVE_FIELD_CHANGED",
-      value: undefined,
-    });
+    dispatch({ type: "CHART_ACTIVE_FIELD_CHANGED", value: undefined });
   });
-
   const handlePrevious = useEvent(() => {
     if (state.state !== "CONFIGURING_CHART") {
       return;
@@ -297,10 +292,27 @@ const LayoutingStep = () => {
               mb: 4,
             }}
           >
-            <Title text={state.layout.meta.title[locale]} onClick={() => {}} />
+            <Title
+              text={state.layout.meta.title[locale]}
+              onClick={() => {
+                if (state.layout.activeField !== "title") {
+                  dispatch({
+                    type: "LAYOUT_ACTIVE_FIELD_CHANGED",
+                    value: "title",
+                  });
+                }
+              }}
+            />
             <Description
               text={state.layout.meta.description[locale]}
-              onClick={() => {}}
+              onClick={() => {
+                if (state.layout.activeField !== "description") {
+                  dispatch({
+                    type: "LAYOUT_ACTIVE_FIELD_CHANGED",
+                    value: "description",
+                  });
+                }
+              }}
             />
           </Box>
           <ChartPanel>

@@ -9,7 +9,10 @@ import {
   ControlSectionContent,
   SubsectionTitle,
 } from "@/configurator/components/chart-controls/section";
-import { ChartAnnotatorTabField } from "@/configurator/components/field";
+import {
+  ChartAnnotatorTabField,
+  LayoutAnnotatorTabField,
+} from "@/configurator/components/field";
 import { getFieldLabel } from "@/configurator/components/field-i18n";
 import {
   isConfiguring,
@@ -158,7 +161,26 @@ export const LayoutAnnotator = () => {
         <Trans id="controls.section.description">Title & Description</Trans>
       </SubsectionTitle>
       <ControlSectionContent px="small" gap="none">
-        123
+        <LayoutAnnotatorTabField
+          value="title"
+          icon="text"
+          emptyValueWarning={
+            <Trans id="controls.annotator.add-title-warning">
+              Please add a title
+            </Trans>
+          }
+          mainLabel={getFieldLabel("title")}
+        />
+        <LayoutAnnotatorTabField
+          value="description"
+          icon="description"
+          emptyValueWarning={
+            <Trans id="controls.annotator.add-description-warning">
+              Please add a description
+            </Trans>
+          }
+          mainLabel={getFieldLabel("description")}
+        />
       </ControlSectionContent>
     </ControlSection>
   );

@@ -2,6 +2,10 @@ import { Box } from "@mui/material";
 import { useEffect, useRef } from "react";
 
 import {
+  ConfiguratorStateConfiguringChart,
+  getChartConfig,
+} from "@/config-types";
+import {
   ControlSection,
   ControlSectionContent,
   SectionTitle,
@@ -10,11 +14,6 @@ import { MetaInputField } from "@/configurator/components/field";
 import { getFieldLabel } from "@/configurator/components/field-i18n";
 import { locales } from "@/locales/locales";
 import { useLocale } from "@/locales/use-locale";
-
-import {
-  ConfiguratorStateConfiguringChart,
-  getChartConfig,
-} from "../../config-types";
 
 const TitleAndDescriptionOptions = ({
   state,

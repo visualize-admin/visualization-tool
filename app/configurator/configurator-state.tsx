@@ -123,7 +123,7 @@ export type ConfiguratorStateAction =
       };
     }
   | {
-      type: "ACTIVE_FIELD_CHANGED";
+      type: "CHART_ACTIVE_FIELD_CHANGED";
       value: string | undefined;
     }
   | {
@@ -301,6 +301,10 @@ export type ConfiguratorStateAction =
         meta: Meta;
         activeField: string | undefined;
       };
+    }
+  | {
+      type: "LAYOUT_ACTIVE_FIELD_CHANGED";
+      value: string | undefined;
     };
 
 const LOCALSTORAGE_PREFIX = "vizualize-configurator-state";
@@ -1066,7 +1070,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
       return draft;
 
-    case "ACTIVE_FIELD_CHANGED":
+    case "CHART_ACTIVE_FIELD_CHANGED":
       if (draft.state === "CONFIGURING_CHART") {
         const chartConfig = getChartConfig(draft);
         chartConfig.activeField = action.value;
@@ -1376,6 +1380,13 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
     case "LAYOUT_CHANGED":
       if (draft.state === "LAYOUTING") {
         draft.layout = action.value;
+      }
+
+      return draft;
+
+    case "LAYOUT_ACTIVE_FIELD_CHANGED":
+      if (draft.state === "LAYOUTING") {
+        draft.layout.activeField = action.value;
       }
 
       return draft;

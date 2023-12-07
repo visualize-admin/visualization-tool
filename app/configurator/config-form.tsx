@@ -21,6 +21,7 @@ import {
   getChartOptionField,
   getFilterValue,
   isConfiguring,
+  isLayouting,
   useConfiguratorState,
 } from "@/configurator/configurator-state";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
@@ -327,24 +328,41 @@ export const overrideChecked = (
   return isComboChartConfig(chartConfig) && field === "y";
 };
 
-export const useActiveFieldField = ({
-  value,
-}: {
+type UseActiveFieldProps = {
   value: string;
-}): FieldProps & {
+};
+
+export const useActiveChartField = (
+  props: UseActiveFieldProps
+): FieldProps & {
   onClick: (x: string) => void;
 } => {
+  const { value } = props;
   const [state, dispatch] = useConfiguratorState(isConfiguring);
   const chartConfig = getChartConfig(state);
-
   const onClick = useCallback(() => {
-    dispatch({
-      type: "ACTIVE_FIELD_CHANGED",
-      value,
-    });
+    dispatch({ type: "CHART_ACTIVE_FIELD_CHANGED", value });
   }, [dispatch, value]);
-
   const checked = chartConfig.activeField === value;
+
+  return {
+    value,
+    checked,
+    onClick,
+  };
+};
+
+export const useActiveLayoutField = (
+  props: UseActiveFieldProps
+): FieldProps & {
+  onClick: (x: string) => void;
+} => {
+  const { value } = props;
+  const [state, dispatch] = useConfiguratorState(isLayouting);
+  const onClick = useCallback(() => {
+    dispatch({ type: "LAYOUT_ACTIVE_FIELD_CHANGED", value });
+  }, [dispatch, value]);
+  const checked = state.layout.activeField === value;
 
   return {
     value,
