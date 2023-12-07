@@ -44,7 +44,7 @@ import {
   isMapConfig,
   useChartConfigFilters,
 } from "@/configurator";
-import { TitleAndDescriptionConfigurator } from "@/configurator/components/chart-annotator";
+import { ChartAnnotator } from "@/configurator/components/annotators";
 import {
   ControlSection,
   ControlSectionContent,
@@ -763,7 +763,7 @@ export const ChartConfigurator = ({
           </ControlSectionContent>
         </ControlSection>
       )}
-      <TitleAndDescriptionConfigurator />
+      <ChartAnnotator />
       {chartConfig.chartType !== "table" && (
         <InteractiveFiltersConfigurator state={state} />
       )}

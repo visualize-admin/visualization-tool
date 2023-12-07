@@ -29,7 +29,7 @@ import {
   isPublished,
   useConfiguratorState,
 } from "@/configurator";
-import { Description, Title } from "@/configurator/components/annotator";
+import { Description, Title } from "@/configurator/components/annotators";
 import { DRAWER_WIDTH } from "@/configurator/components/drawer";
 import {
   DEFAULT_DATA_SOURCE,

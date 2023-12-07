@@ -21,7 +21,7 @@ import {
   hasChartConfigs,
   useConfiguratorState,
 } from "@/configurator";
-import { Description, Title } from "@/configurator/components/annotator";
+import { Description, Title } from "@/configurator/components/annotators";
 import {
   useDataCubesComponentsQuery,
   useDataCubesMetadataQuery,

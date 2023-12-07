@@ -16,7 +16,7 @@ import {
   getChartConfig,
   useConfiguratorState,
 } from "@/configurator";
-import { Description, Title } from "@/configurator/components/annotator";
+import { Description, Title } from "@/configurator/components/annotators";
 import { ChartAnnotationsSelector } from "@/configurator/components/chart-annotations-selector";
 import { ChartConfigurator } from "@/configurator/components/chart-configurator";
 import { ChartOptionsSelector } from "@/configurator/components/chart-options-selector";
@@ -214,7 +214,7 @@ const LayoutingStep = () => {
 
   return (
     <InteractiveFiltersProvider>
-      <PanelLayout type="M" sx={{ background: (t) => t.palette.muted.main }}>
+      <PanelLayout type="LM" sx={{ background: (t) => t.palette.muted.main }}>
         <PanelHeaderLayout type="LMR">
           <PanelHeaderWrapper type="L">
             <BackContainer>
@@ -272,27 +272,26 @@ const LayoutingStep = () => {
             <PublishChartButton />
           </PanelHeaderWrapper>
         </PanelHeaderLayout>
+        <PanelBodyWrapper type="L">{state.layout.type}</PanelBodyWrapper>
         <PanelBodyWrapper type="M">
-          <Box sx={{ maxWidth: 980, mx: "auto" }}>
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                gap: 1,
-                mt: 3,
-                mb: 4,
-              }}
-            >
-              <Title text={state.meta.title[locale]} onClick={() => {}} />
-              <Description
-                text={state.meta.description[locale]}
-                onClick={() => {}}
-              />
-            </Box>
-            <ChartPanel>
-              <ChartPreview dataSource={state.dataSource} />
-            </ChartPanel>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 1,
+              mt: 3,
+              mb: 4,
+            }}
+          >
+            <Title text={state.meta.title[locale]} onClick={() => {}} />
+            <Description
+              text={state.meta.description[locale]}
+              onClick={() => {}}
+            />
           </Box>
+          <ChartPanel>
+            <ChartPreview dataSource={state.dataSource} />
+          </ChartPanel>
         </PanelBodyWrapper>
       </PanelLayout>
     </InteractiveFiltersProvider>
