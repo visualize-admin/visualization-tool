@@ -40,6 +40,7 @@ import {
   ImputationType,
   InteractiveFiltersConfig,
   LayoutType,
+  Meta,
   decodeConfiguratorState,
   enableLayouting,
   getChartConfig,
@@ -297,6 +298,7 @@ export type ConfiguratorStateAction =
       type: "LAYOUT_CHANGED";
       value: {
         type: LayoutType;
+        meta: Meta;
         activeField: string | undefined;
       };
     };
@@ -326,20 +328,7 @@ const EMPTY_STATE: ConfiguratorStateSelectingDataSet = {
   state: "SELECTING_DATASET",
   dataSource: DEFAULT_DATA_SOURCE,
   chartConfigs: undefined,
-  meta: {
-    title: {
-      de: "",
-      fr: "",
-      it: "",
-      en: "",
-    },
-    description: {
-      de: "",
-      fr: "",
-      it: "",
-      en: "",
-    },
-  },
+  layout: undefined,
   activeChartKey: undefined,
 };
 
@@ -648,9 +637,22 @@ const transitionStepNext = (
           version: CONFIGURATOR_STATE_VERSION,
           state: "CONFIGURING_CHART",
           dataSource: draft.dataSource,
-          meta: draft.meta,
           layout: {
             type: "tab",
+            meta: {
+              title: {
+                de: "",
+                en: "",
+                fr: "",
+                it: "",
+              },
+              description: {
+                de: "",
+                en: "",
+                fr: "",
+                it: "",
+              },
+            },
             activeField: undefined,
           },
           chartConfigs: [chartConfig],
@@ -716,6 +718,7 @@ const transitionStepPrevious = (
     case "SELECTING_DATASET":
       return {
         ...draft,
+        layout: undefined,
         chartConfigs: undefined,
         activeChartKey: undefined,
         state: stepTo,

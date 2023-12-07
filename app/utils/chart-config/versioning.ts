@@ -950,14 +950,30 @@ const configuratorStateMigrations: Migration[] = [
       return produce(newConfig, (draft: any) => {
         draft.layout = {
           type: "tab",
+          meta: draft.meta,
           activeField: undefined,
         };
+        delete draft.meta;
       });
     },
     down: (config) => {
       const newConfig = { ...config, version: "3.0.1" };
 
       return produce(newConfig, (draft: any) => {
+        draft.meta = draft.layout.meta ?? {
+          title: {
+            de: "",
+            fr: "",
+            it: "",
+            en: "",
+          },
+          description: {
+            de: "",
+            fr: "",
+            it: "",
+            en: "",
+          },
+        };
         delete draft.layout;
       });
     },

@@ -36,11 +36,14 @@ ${(
         version: CONFIGURATOR_STATE_VERSION,
         state: "PUBLISHED",
         dataSource: { type: "sparql", url: "" },
-        meta: {
-          title: { en: "", de: "", fr: "", it: "" },
-          description: { en: "", de: "", fr: "", it: "" },
+        layout: {
+          type: "tab",
+          meta: {
+            title: { en: "", de: "", fr: "", it: "" },
+            description: { en: "", de: "", fr: "", it: "" },
+          },
+          activeField: undefined,
         },
-        layout: { type: "tab" },
         chartConfigs: [chartConfig],
         activeChartKey: "scatterplot",
       }}

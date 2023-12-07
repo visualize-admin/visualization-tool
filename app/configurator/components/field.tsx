@@ -513,11 +513,12 @@ export const ChartAnnotatorTabField = ({
 } & Omit<AnnotatorTabProps, "onClick">) => {
   const fieldProps = useActiveFieldField({ value });
   const [state] = useConfiguratorState(isConfiguring);
+  const chartConfig = getChartConfig(state);
   const locale = useLocale();
   const hasText = useMemo(() => {
     const key = value as "title" | "description";
-    return state.meta[key]?.[locale] !== "";
-  }, [state.meta, value, locale]);
+    return chartConfig.meta[key]?.[locale] !== "";
+  }, [chartConfig, value, locale]);
 
   return (
     <AnnotatorTab

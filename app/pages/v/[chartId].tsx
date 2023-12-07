@@ -126,10 +126,10 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
         <meta name="twitter:card" content="summary_large_image" />
         {/* FIXME: possibly we'll need to copy the content of first chart when migrating / saving to db
         or have additional annotator for dashboards / compositions. */}
-        <meta property="og:title" content={state.meta.title[locale]} />
+        <meta property="og:title" content={state.layout.meta.title[locale]} />
         <meta
           property="og:description"
-          content={state.meta.description[locale]}
+          content={state.layout.meta.description[locale]}
         />
         {/* og:url is set in _app.tsx */}
       </Head>

@@ -248,6 +248,7 @@ const LayoutingStep = () => {
                   type: "LAYOUT_CHANGED",
                   value: {
                     type: "tab",
+                    meta: state.layout.meta,
                     activeField: undefined,
                   },
                 });
@@ -265,6 +266,7 @@ const LayoutingStep = () => {
                   type: "LAYOUT_CHANGED",
                   value: {
                     type: "dashboard",
+                    meta: state.layout.meta,
                     activeField: undefined,
                   },
                 });
@@ -295,9 +297,9 @@ const LayoutingStep = () => {
               mb: 4,
             }}
           >
-            <Title text={state.meta.title[locale]} onClick={() => {}} />
+            <Title text={state.layout.meta.title[locale]} onClick={() => {}} />
             <Description
-              text={state.meta.description[locale]}
+              text={state.layout.meta.description[locale]}
               onClick={() => {}}
             />
           </Box>

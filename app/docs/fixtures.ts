@@ -11,41 +11,21 @@ export const states: ConfiguratorState[] = [
     version: CONFIGURATOR_STATE_VERSION,
     dataSource: DEFAULT_DATA_SOURCE,
     chartConfigs: undefined,
-    meta: {
-      title: {
-        de: "",
-        fr: "",
-        it: "",
-        en: "",
-      },
-      description: {
-        de: "",
-        fr: "",
-        it: "",
-        en: "",
-      },
-    },
+    layout: undefined,
     activeChartKey: undefined,
   },
   {
     state: "CONFIGURING_CHART",
     version: CONFIGURATOR_STATE_VERSION,
     dataSource: DEFAULT_DATA_SOURCE,
-    meta: {
-      title: {
-        de: "",
-        fr: "",
-        it: "",
-        en: "",
+    layout: {
+      type: "tab",
+      meta: {
+        title: { en: "", de: "", fr: "", it: "" },
+        description: { en: "", de: "", fr: "", it: "" },
       },
-      description: {
-        de: "",
-        fr: "",
-        it: "",
-        en: "",
-      },
+      activeField: undefined,
     },
-    layout: { type: "tab" },
     chartConfigs: [
       {
         key: "column",

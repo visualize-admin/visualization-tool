@@ -133,7 +133,7 @@ export const ChartAnnotator = () => {
 export const LayoutAnnotator = () => {
   const locale = useLocale();
   const [state] = useConfiguratorState(isLayouting);
-  const { title, description } = state.meta;
+  const { title, description } = state.layout.meta;
   const disabled = !(title[locale] && description[locale]);
 
   return (

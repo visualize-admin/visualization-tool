@@ -1110,9 +1110,11 @@ const Layout = t.intersection([
   t.union([
     t.type({
       type: t.literal("tab"),
+      meta: Meta,
     }),
     t.type({
       type: t.literal("dashboard"),
+      meta: Meta,
     }),
   ]),
 ]);
@@ -1123,7 +1125,6 @@ const Config = t.type(
   {
     version: t.string,
     dataSource: DataSource,
-    meta: Meta,
     layout: Layout,
     chartConfigs: t.array(ChartConfig),
     activeChartKey: t.string,
@@ -1153,8 +1154,8 @@ const ConfiguratorStateSelectingDataSet = t.type({
   version: t.string,
   state: t.literal("SELECTING_DATASET"),
   dataSource: DataSource,
-  meta: Meta,
   chartConfigs: t.undefined,
+  layout: t.undefined,
   activeChartKey: t.undefined,
 });
 export type ConfiguratorStateSelectingDataSet = t.TypeOf<
@@ -1162,9 +1163,7 @@ export type ConfiguratorStateSelectingDataSet = t.TypeOf<
 >;
 
 const ConfiguratorStateConfiguringChart = t.intersection([
-  t.type({
-    state: t.literal("CONFIGURING_CHART"),
-  }),
+  t.type({ state: t.literal("CONFIGURING_CHART") }),
   Config,
 ]);
 export type ConfiguratorStateConfiguringChart = t.TypeOf<
@@ -1172,9 +1171,7 @@ export type ConfiguratorStateConfiguringChart = t.TypeOf<
 >;
 
 const ConfiguratorStateLayouting = t.intersection([
-  t.type({
-    state: t.literal("LAYOUTING"),
-  }),
+  t.type({ state: t.literal("LAYOUTING") }),
   Config,
 ]);
 export type ConfiguratorStateLayouting = t.TypeOf<
