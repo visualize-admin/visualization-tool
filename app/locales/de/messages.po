@@ -121,7 +121,7 @@ msgstr "Neue Visualisierung erstellen"
 
 #: app/components/chart-selection-tabs.tsx
 msgid "button.publish"
-msgstr "Diese Visualisierung veröffentlichen"
+msgstr "Veröffentlichen"
 
 #: app/components/publish-actions.tsx
 msgid "button.share"

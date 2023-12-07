@@ -338,7 +338,7 @@ export const PublishChartButton = () => {
           <Trans id="button.update">Update this visualization</Trans>
         </Box>
       ) : (
-        <Trans id="button.publish">Publish this visualization</Trans>
+        <Trans id="button.publish">Publish</Trans>
       )}
     </NextStepButton>
   );
