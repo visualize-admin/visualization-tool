@@ -101,7 +101,7 @@ const Page: NextPage<PageProps> = ({ configs }) => {
                   chartId="published"
                   initialState={config.data as ConfiguratorStatePublished}
                 >
-                  <ChartPanel>
+                  <ChartPanel layout={config.data.layout}>
                     <HiddenUntilScrolledTo
                       initialVisible={i < 5}
                       fallback={<div>Loading...</div>}

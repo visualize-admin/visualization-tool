@@ -4,13 +4,18 @@ import React from "react";
 
 import { ChartSelectionTabs } from "@/components/chart-selection-tabs";
 import Flex from "@/components/flex";
+import { Layout } from "@/config-types";
 
-export const ChartPanel = (props: React.PropsWithChildren<{}>) => {
-  const { children } = props;
+type ChartPanelProps = React.PropsWithChildren<{
+  editing?: boolean;
+  layout: Layout;
+}>;
 
+export const ChartPanel = (props: ChartPanelProps) => {
+  const { children, editing, layout } = props;
   return (
     <>
-      <ChartSelectionTabs />
+      {(editing || layout.type === "tab") && <ChartSelectionTabs />}
       <ChartPanelInner>{children}</ChartPanelInner>
     </>
   );

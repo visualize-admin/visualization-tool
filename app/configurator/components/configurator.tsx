@@ -184,7 +184,7 @@ const ConfigureChartStep = () => {
           )}
         </PanelBodyWrapper>
         <PanelBodyWrapper type="M">
-          <ChartPanel>
+          <ChartPanel editing layout={state.layout}>
             <ChartPreview dataSource={state.dataSource} />
           </ChartPanel>
         </PanelBodyWrapper>
@@ -335,7 +335,7 @@ const LayoutingStep = () => {
               }}
             />
           </Box>
-          <ChartPanel>
+          <ChartPanel layout={state.layout}>
             <ChartPreview dataSource={state.dataSource} />
           </ChartPanel>
         </PanelBodyWrapper>
@@ -347,10 +347,8 @@ const LayoutingStep = () => {
         >
           <div style={{ width: DRAWER_WIDTH }} data-testid="panel-drawer">
             <BackToMainButton onClick={handleClosePanel} />
-            {isAnnotationField(state.layout.activeField) ? (
+            {isAnnotationField(state.layout.activeField) && (
               <LayoutAnnotationsSelector />
-            ) : (
-              "OPTIONS"
             )}
           </div>
         </ConfiguratorDrawer>
@@ -369,7 +367,7 @@ const PublishStep = () => {
   return (
     <PanelLayout type="LM">
       <PanelBodyWrapper type="M">
-        <ChartPanel>
+        <ChartPanel layout={state.layout}>
           <InteractiveFiltersProvider>
             <ChartPreview dataSource={state.dataSource} />
           </InteractiveFiltersProvider>

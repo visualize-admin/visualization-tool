@@ -153,7 +153,7 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
             )}
 
             <ConfiguratorStateProvider chartId="published" initialState={state}>
-              <ChartPanel>
+              <ChartPanel layout={state.layout}>
                 <ChartPublished configKey={key} />
               </ChartPanel>
             </ConfiguratorStateProvider>
