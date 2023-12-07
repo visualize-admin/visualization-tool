@@ -9,10 +9,11 @@ import {
   ControlSectionContent,
   SubsectionTitle,
 } from "@/configurator/components/chart-controls/section";
-import { AnnotatorTabField } from "@/configurator/components/field";
+import { ChartAnnotatorTabField } from "@/configurator/components/field";
 import { getFieldLabel } from "@/configurator/components/field-i18n";
 import {
   isConfiguring,
+  isLayouting,
   useConfiguratorState,
 } from "@/configurator/configurator-state";
 import { useLocale } from "@/locales/use-locale";
@@ -104,7 +105,7 @@ export const ChartAnnotator = () => {
         <Trans id="controls.section.description">Title & Description</Trans>
       </SubsectionTitle>
       <ControlSectionContent px="small" gap="none">
-        <AnnotatorTabField
+        <ChartAnnotatorTabField
           value="title"
           icon="text"
           emptyValueWarning={
@@ -114,7 +115,7 @@ export const ChartAnnotator = () => {
           }
           mainLabel={getFieldLabel("title")}
         />
-        <AnnotatorTabField
+        <ChartAnnotatorTabField
           value="description"
           icon="description"
           emptyValueWarning={
@@ -129,4 +130,36 @@ export const ChartAnnotator = () => {
   );
 };
 
-export const ConfiguratorAnnotator = () => {};
+export const LayoutAnnotator = () => {
+  const locale = useLocale();
+  const [state] = useConfiguratorState(isLayouting);
+  const { title, description } = state.meta;
+  const disabled = !(title[locale] && description[locale]);
+
+  return (
+    <ControlSection
+      role="tablist"
+      aria-labelledby="controls-design"
+      collapse
+      defaultExpanded={false}
+    >
+      <SubsectionTitle
+        titleId="controls-design"
+        disabled={disabled}
+        warnMessage={
+          disabled ? (
+            <Trans id="controls.section.title.warning">
+              Please add a title or description.
+            </Trans>
+          ) : undefined
+        }
+        gutterBottom={false}
+      >
+        <Trans id="controls.section.description">Title & Description</Trans>
+      </SubsectionTitle>
+      <ControlSectionContent px="small" gap="none">
+        123
+      </ControlSectionContent>
+    </ControlSection>
+  );
+};

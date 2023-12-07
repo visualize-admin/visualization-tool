@@ -31,6 +31,7 @@ import {
   PanelHeaderWrapper,
   PanelLayout,
 } from "@/configurator/components/layout";
+import { LayoutConfigurator } from "@/configurator/components/layout-configurator";
 import { ChartConfiguratorTable } from "@/configurator/table/table-chart-configurator";
 import SvgIcChevronLeft from "@/icons/components/IcChevronLeft";
 import { useLocale } from "@/locales/use-locale";
@@ -281,7 +282,9 @@ const LayoutingStep = () => {
             <PublishChartButton />
           </PanelHeaderWrapper>
         </PanelHeaderLayout>
-        <PanelBodyWrapper type="L">{state.layout.type}</PanelBodyWrapper>
+        <PanelBodyWrapper type="L">
+          <LayoutConfigurator />
+        </PanelBodyWrapper>
         <PanelBodyWrapper type="M">
           <Box
             sx={{

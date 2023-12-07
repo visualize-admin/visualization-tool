@@ -503,7 +503,7 @@ export const TimeInput = ({
   );
 };
 
-export const AnnotatorTabField = ({
+export const ChartAnnotatorTabField = ({
   value,
   emptyValueWarning,
   ...tabProps
@@ -511,10 +511,7 @@ export const AnnotatorTabField = ({
   value: string;
   emptyValueWarning?: React.ReactNode;
 } & Omit<AnnotatorTabProps, "onClick">) => {
-  const fieldProps = useActiveFieldField({
-    value,
-  });
-
+  const fieldProps = useActiveFieldField({ value });
   const [state] = useConfiguratorState(isConfiguring);
   const locale = useLocale();
   const hasText = useMemo(() => {
@@ -552,12 +549,7 @@ export const MetaInputField = ({
   value?: string;
   disabled?: boolean;
 }) => {
-  const field = useMetaField({
-    metaKey,
-    locale,
-    value,
-  });
-
+  const field = useMetaField({ metaKey, locale, value });
   return <Input label={label} {...field} disabled={disabled} />;
 };
 
