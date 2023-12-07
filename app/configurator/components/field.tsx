@@ -502,10 +502,10 @@ export const TimeInput = ({
   );
 };
 
-type AnnotatorTabFieldProps = {
-  value: string;
+type AnnotatorTabFieldProps<T extends string = string> = {
+  value: T;
   emptyValueWarning?: React.ReactNode;
-} & Omit<AnnotatorTabProps, "onClick">;
+} & Omit<AnnotatorTabProps, "onClick" | "value">;
 
 export const ChartAnnotatorTabField = (props: AnnotatorTabFieldProps) => {
   const { value, emptyValueWarning, ...tabProps } = props;
@@ -531,7 +531,9 @@ export const ChartAnnotatorTabField = (props: AnnotatorTabFieldProps) => {
   );
 };
 
-export const LayoutAnnotatorTabField = (props: AnnotatorTabFieldProps) => {
+export const LayoutAnnotatorTabField = (
+  props: AnnotatorTabFieldProps<"title" | "description">
+) => {
   const { value, emptyValueWarning, ...tabProps } = props;
   const fieldProps = useActiveLayoutField({ value });
   const [state] = useConfiguratorState(isLayouting);
@@ -541,7 +543,7 @@ export const LayoutAnnotatorTabField = (props: AnnotatorTabFieldProps) => {
     <AnnotatorTab
       {...tabProps}
       lowerLabel={
-        (state.layout.meta as any)[value]?.[locale] ? null : (
+        state.layout.meta[value][locale] ? null : (
           <Typography variant="caption" color="warning.main">
             {emptyValueWarning}
           </Typography>
