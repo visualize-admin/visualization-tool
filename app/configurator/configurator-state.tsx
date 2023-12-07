@@ -675,6 +675,7 @@ const transitionStepNext = (
       return {
         ...draft,
         state: enableLayouting(draft) ? "LAYOUTING" : "PUBLISHING",
+        activeChartKey: draft.chartConfigs[0].key,
       };
     case "LAYOUTING":
       return {
@@ -735,6 +736,15 @@ const transitionStepPrevious = (
         state: stepTo,
       };
     case "CONFIGURING_CHART":
+      return {
+        ...draft,
+        state: stepTo,
+        layout: {
+          ...draft.layout,
+          activeField: undefined,
+        },
+        activeChartKey: draft.chartConfigs[0].key,
+      };
     case "LAYOUTING":
       return {
         ...draft,
