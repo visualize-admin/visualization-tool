@@ -1,7 +1,7 @@
 import { Trans } from "@lingui/macro";
 import { Box } from "@mui/material";
 import Head from "next/head";
-import { useMemo } from "react";
+import React, { useMemo } from "react";
 
 import { DataSetTable } from "@/browse/datatable";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
@@ -17,6 +17,7 @@ import Flex from "@/components/flex";
 import { HintYellow } from "@/components/hint";
 import { MetadataPanel } from "@/components/metadata-panel";
 import {
+  ChartConfig,
   DataSource,
   getChartConfig,
   hasChartConfigs,
@@ -39,21 +40,20 @@ type ChartPreviewProps = {
 export const ChartPreview = (props: ChartPreviewProps) => {
   const [state] = useConfiguratorState(hasChartConfigs);
   const editing = isConfiguring(state);
+  const renderChart = React.useCallback(
+    (chartConfig: ChartConfig) => (
+      <ChartPreviewInner {...props} chartKey={chartConfig.key} />
+    ),
+    [props]
+  );
 
   return (
     <ChartTablePreviewProvider>
       {state.layout.type === "dashboard" && !editing ? (
-        <ChartPanelLayout type={state.layout.layout}>
-          {state.chartConfigs.map((chartConfig) => (
-            <ChartWrapper
-              key={chartConfig.key}
-              editing={editing}
-              layout={state.layout}
-            >
-              <ChartPreviewInner {...props} chartKey={chartConfig.key} />
-            </ChartWrapper>
-          ))}
-        </ChartPanelLayout>
+        <ChartPanelLayout
+          chartConfigs={state.chartConfigs}
+          renderChart={renderChart}
+        />
       ) : (
         <ChartWrapper editing={editing} layout={state.layout}>
           <ChartPreviewInner {...props} />
