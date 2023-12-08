@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   panelLayoutTall: {
     display: "grid",
-    gridTemplateColumns: "repeat(2, 1fr)",
+    gridTemplateColumns: "repeat(2, 50%)",
     gap: theme.spacing(4),
 
     "& > :nth-child(3n - 2)": {
