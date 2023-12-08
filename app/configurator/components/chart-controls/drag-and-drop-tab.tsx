@@ -13,7 +13,7 @@ import {
   SubsectionTitle,
 } from "@/configurator/components/chart-controls/section";
 import { getIconName } from "@/configurator/components/ui-helpers";
-import { useActiveFieldField } from "@/configurator/config-form";
+import { useActiveChartField } from "@/configurator/config-form";
 import { Component, Dimension, Measure } from "@/domain/data";
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -169,10 +169,7 @@ const DraggableTabField = ({
   isDragging: boolean;
   upperLabel: ReactNode;
 }) => {
-  const field = useActiveFieldField({
-    value,
-  });
-
+  const field = useActiveChartField({ value });
   const iconName = getIconName(
     `tableColumn${component.__typename}${disabled ? "Hidden" : ""}`
   );

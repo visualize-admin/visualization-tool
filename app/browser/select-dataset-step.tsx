@@ -30,9 +30,8 @@ import {
   smoothPresenceProps,
 } from "@/components/presence";
 import {
+  PanelBodyWrapper,
   PanelLayout,
-  PanelLeftWrapper,
-  PanelMiddleWrapper,
 } from "@/configurator/components/layout";
 import { truthy } from "@/domain/types";
 import {
@@ -277,8 +276,8 @@ const SelectDatasetStepContent = () => {
           </MotionBox>
         )}
       </AnimatePresence>
-      <PanelLayout className={classes.panelLayout} key="panel">
-        <PanelLeftWrapper className={classes.panelLeft}>
+      <PanelLayout type="LM" className={classes.panelLayout} key="panel">
+        <PanelBodyWrapper type="L" className={classes.panelLeft}>
           <AnimatePresence mode="wait">
             {dataset ? (
               <MotionBox
@@ -310,8 +309,9 @@ const SelectDatasetStepContent = () => {
               </MotionBox>
             )}
           </AnimatePresence>
-        </PanelLeftWrapper>
-        <PanelMiddleWrapper
+        </PanelBodyWrapper>
+        <PanelBodyWrapper
+          type="M"
           className={classes.panelMiddle}
           sx={{ maxWidth: 1040 }}
         >
@@ -383,7 +383,7 @@ const SelectDatasetStepContent = () => {
               </MotionBox>
             )}
           </AnimatePresence>
-        </PanelMiddleWrapper>
+        </PanelBodyWrapper>
       </PanelLayout>
       <Box
         sx={{

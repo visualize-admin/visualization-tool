@@ -812,7 +812,7 @@ export const migrateChartConfig = makeMigrate(chartConfigMigrations, {
   defaultToVersion: CHART_CONFIG_VERSION,
 });
 
-export const CONFIGURATOR_STATE_VERSION = "3.0.1";
+export const CONFIGURATOR_STATE_VERSION = "3.1.0";
 
 const configuratorStateMigrations: Migration[] = [
   {
@@ -937,6 +937,44 @@ const configuratorStateMigrations: Migration[] = [
         }
 
         draft.chartConfigs = chartConfigs;
+      });
+    },
+  },
+  {
+    description: "ALL + layout",
+    from: "3.0.1",
+    to: "3.1.0",
+    up: (config) => {
+      const newConfig = { ...config, version: "3.1.0" };
+
+      return produce(newConfig, (draft: any) => {
+        draft.layout = {
+          type: "tab",
+          meta: draft.meta,
+          activeField: undefined,
+        };
+        delete draft.meta;
+      });
+    },
+    down: (config) => {
+      const newConfig = { ...config, version: "3.0.1" };
+
+      return produce(newConfig, (draft: any) => {
+        draft.meta = draft.layout.meta ?? {
+          title: {
+            de: "",
+            fr: "",
+            it: "",
+            en: "",
+          },
+          description: {
+            de: "",
+            fr: "",
+            it: "",
+            en: "",
+          },
+        };
+        delete draft.layout;
       });
     },
   },

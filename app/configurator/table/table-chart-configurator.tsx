@@ -12,7 +12,7 @@ import {
   SubsectionTitle,
 } from "@/configurator/components/chart-controls/section";
 import { ChartTypeSelector } from "@/configurator/components/chart-type-selector";
-import { AnnotatorTabField } from "@/configurator/components/field";
+import { ChartAnnotatorTabField } from "@/configurator/components/field";
 
 import { useOrderedTableColumns } from "../components/ui-helpers";
 
@@ -95,15 +95,15 @@ export const ChartConfiguratorTable = ({
           role="tablist"
           aria-labelledby="controls-settings"
         >
-          <AnnotatorTabField
-            key={"settings"}
-            value={"table-settings"}
+          <ChartAnnotatorTabField
+            key="settings"
+            value="table-settings"
             icon="settings"
             mainLabel={<Trans id="controls.table.settings">Settings</Trans>}
           />
-          <AnnotatorTabField
-            key={"sorting"}
-            value={"table-sorting"}
+          <ChartAnnotatorTabField
+            key="sorting"
+            value="table-sorting"
             icon="sort"
             mainLabel={<Trans id="controls.table.sorting">Sorting</Trans>}
           />

@@ -16,7 +16,10 @@ import {
 import { ConfiguratorStateProvider } from "@/configurator/configurator-state";
 import { Dimension, Measure } from "@/domain/data";
 import { InteractiveFiltersProvider } from "@/stores/interactive-filters";
-import { CHART_CONFIG_VERSION } from "@/utils/chart-config/versioning";
+import {
+  CHART_CONFIG_VERSION,
+  CONFIGURATOR_STATE_VERSION,
+} from "@/utils/chart-config/versioning";
 
 export const Docs = () => markdown`
 
@@ -27,13 +30,17 @@ ${(
     <ConfiguratorStateProvider
       chartId="published"
       initialState={{
-        version: "2.0.0",
+        version: CONFIGURATOR_STATE_VERSION,
         state: "PUBLISHED",
-        meta: {
-          title: { en: "", de: "", fr: "", it: "" },
-          description: { en: "", de: "", fr: "", it: "" },
-        },
         dataSource: { type: "sparql", url: "" },
+        layout: {
+          type: "tab",
+          meta: {
+            title: { en: "", de: "", fr: "", it: "" },
+            description: { en: "", de: "", fr: "", it: "" },
+          },
+          activeField: undefined,
+        },
         chartConfigs: [chartConfig],
         activeChartKey: "line",
       }}

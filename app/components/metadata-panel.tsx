@@ -117,7 +117,7 @@ const useDrawerStyles = makeStyles<Theme, { top: number }>((theme) => {
       "& > .MuiPaper-root": {
         top: ({ top }: { top: number }) => top,
         bottom: 0,
-        width: DRAWER_WIDTH + 1,
+        width: DRAWER_WIDTH,
         height: "auto",
         paddingLeft: theme.spacing(4),
         paddingRight: theme.spacing(4),

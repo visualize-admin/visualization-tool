@@ -48,7 +48,10 @@ const Page: NextPage = () => {
       <EmbedOptionsProvider>
         <ConfiguratorStateProvider
           chartId="published"
-          initialState={{ ...config.data, state: "PUBLISHED" }}
+          initialState={migrateConfiguratorState({
+            ...config.data,
+            state: "PUBLISHED",
+          })}
         >
           <ChartPublished />
         </ConfiguratorStateProvider>

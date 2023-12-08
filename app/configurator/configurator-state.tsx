@@ -6,7 +6,6 @@ import sortBy from "lodash/sortBy";
 import unset from "lodash/unset";
 import { useRouter } from "next/router";
 import { Dispatch, createContext, useContext, useEffect, useMemo } from "react";
-import { useClient } from "urql";
 import { Reducer, useImmerReducer } from "use-immer";
 
 import {
@@ -29,6 +28,7 @@ import {
   ColumnStyleCategory,
   ConfiguratorState,
   ConfiguratorStateConfiguringChart,
+  ConfiguratorStateLayouting,
   ConfiguratorStatePublished,
   ConfiguratorStatePublishing,
   ConfiguratorStateSelectingDataSet,
@@ -39,7 +39,9 @@ import {
   GenericFields,
   ImputationType,
   InteractiveFiltersConfig,
+  Layout,
   decodeConfiguratorState,
+  enableLayouting,
   getChartConfig,
   getChartConfigFilters,
   isAreaConfig,
@@ -120,7 +122,7 @@ export type ConfiguratorStateAction =
       };
     }
   | {
-      type: "ACTIVE_FIELD_CHANGED";
+      type: "CHART_ACTIVE_FIELD_CHANGED";
       value: string | undefined;
     }
   | {
@@ -182,7 +184,7 @@ export type ConfiguratorStateAction =
       };
     }
   | {
-      type: "CHART_DESCRIPTION_CHANGED";
+      type: "CHART_ANNOTATION_CHANGED";
       value: {
         path: string | string[];
         value: string;
@@ -290,6 +292,21 @@ export type ConfiguratorStateAction =
   | {
       type: "SWITCH_ACTIVE_CHART";
       value: string;
+    }
+  | {
+      type: "LAYOUT_CHANGED";
+      value: Layout;
+    }
+  | {
+      type: "LAYOUT_ACTIVE_FIELD_CHANGED";
+      value: string | undefined;
+    }
+  | {
+      type: "LAYOUT_ANNOTATION_CHANGED";
+      value: {
+        path: string | string[];
+        value: string;
+      };
     };
 
 const LOCALSTORAGE_PREFIX = "vizualize-configurator-state";
@@ -317,20 +334,7 @@ const EMPTY_STATE: ConfiguratorStateSelectingDataSet = {
   state: "SELECTING_DATASET",
   dataSource: DEFAULT_DATA_SOURCE,
   chartConfigs: undefined,
-  meta: {
-    title: {
-      de: "",
-      fr: "",
-      it: "",
-      en: "",
-    },
-    description: {
-      de: "",
-      fr: "",
-      it: "",
-      en: "",
-    },
-  },
+  layout: undefined,
   activeChartKey: undefined,
 };
 
@@ -639,13 +643,36 @@ const transitionStepNext = (
           version: CONFIGURATOR_STATE_VERSION,
           state: "CONFIGURING_CHART",
           dataSource: draft.dataSource,
-          meta: draft.meta,
+          layout: {
+            type: "tab",
+            meta: {
+              title: {
+                de: "",
+                en: "",
+                fr: "",
+                it: "",
+              },
+              description: {
+                de: "",
+                en: "",
+                fr: "",
+                it: "",
+              },
+            },
+            activeField: undefined,
+          },
           chartConfigs: [chartConfig],
           activeChartKey: chartConfig.key,
         };
       }
       break;
     case "CONFIGURING_CHART":
+      return {
+        ...draft,
+        state: enableLayouting(draft) ? "LAYOUTING" : "PUBLISHING",
+        activeChartKey: draft.chartConfigs[0].key,
+      };
+    case "LAYOUTING":
       return {
         ...draft,
         state: "PUBLISHING",
@@ -663,14 +690,20 @@ const transitionStepNext = (
 };
 
 const getPreviousState = (
-  state: ConfiguratorState["state"]
+  draft: ConfiguratorState
 ): Exclude<ConfiguratorState["state"], "INITIAL" | "PUBLISHING"> => {
-  switch (state) {
+  switch (draft.state) {
     case "SELECTING_DATASET":
-      return state;
+      return draft.state;
     case "CONFIGURING_CHART":
       return "SELECTING_DATASET";
+    case "LAYOUTING":
+      return "CONFIGURING_CHART";
     case "PUBLISHING":
+      if (enableLayouting(draft)) {
+        return "LAYOUTING";
+      }
+
       return "CONFIGURING_CHART";
     default:
       return "SELECTING_DATASET";
@@ -681,7 +714,7 @@ const transitionStepPrevious = (
   draft: ConfiguratorState,
   to?: Exclude<ConfiguratorState["state"], "INITIAL" | "PUBLISHING">
 ): ConfiguratorState => {
-  const stepTo = to ?? getPreviousState(draft.state);
+  const stepTo = to ?? getPreviousState(draft);
 
   // Special case when we're already at INITIAL
   if (draft.state === "INITIAL" || draft.state === "SELECTING_DATASET") {
@@ -692,11 +725,26 @@ const transitionStepPrevious = (
     case "SELECTING_DATASET":
       return {
         ...draft,
+        layout: undefined,
         chartConfigs: undefined,
         activeChartKey: undefined,
         state: stepTo,
       };
     case "CONFIGURING_CHART":
+      return {
+        ...draft,
+        state: stepTo,
+        layout: {
+          ...draft.layout,
+          activeField: undefined,
+        },
+        chartConfigs: draft.chartConfigs.map((chartConfig) => ({
+          ...chartConfig,
+          activeField: undefined,
+        })),
+        activeChartKey: draft.chartConfigs[0].key,
+      };
+    case "LAYOUTING":
       return {
         ...draft,
         state: stepTo,
@@ -1038,7 +1086,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
       return draft;
 
-    case "ACTIVE_FIELD_CHANGED":
+    case "CHART_ACTIVE_FIELD_CHANGED":
       if (draft.state === "CONFIGURING_CHART") {
         const chartConfig = getChartConfig(draft);
         chartConfig.activeField = action.value;
@@ -1142,7 +1190,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       }
       return draft;
 
-    case "CHART_DESCRIPTION_CHANGED":
+    case "CHART_ANNOTATION_CHANGED":
       if (draft.state === "CONFIGURING_CHART") {
         const chartConfig = getChartConfig(draft);
         setWith(
@@ -1326,7 +1374,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       return draft;
 
     case "CHART_CONFIG_REORDER":
-      if (draft.state === "CONFIGURING_CHART") {
+      if (draft.state === "CONFIGURING_CHART" || draft.state === "LAYOUTING") {
         const { oldIndex, newIndex } = action.value;
         const [removed] = draft.chartConfigs.splice(oldIndex, 1);
         draft.chartConfigs.splice(newIndex, 0, removed);
@@ -1335,8 +1383,38 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       return draft;
 
     case "SWITCH_ACTIVE_CHART":
-      if (draft.state === "CONFIGURING_CHART" || draft.state === "PUBLISHED") {
+      if (
+        draft.state === "CONFIGURING_CHART" ||
+        draft.state === "LAYOUTING" ||
+        draft.state === "PUBLISHED"
+      ) {
         draft.activeChartKey = action.value;
+      }
+
+      return draft;
+
+    case "LAYOUT_CHANGED":
+      if (draft.state === "LAYOUTING") {
+        draft.layout = action.value;
+      }
+
+      return draft;
+
+    case "LAYOUT_ACTIVE_FIELD_CHANGED":
+      if (draft.state === "LAYOUTING") {
+        draft.layout.activeField = action.value;
+      }
+
+      return draft;
+
+    case "LAYOUT_ANNOTATION_CHANGED":
+      if (draft.state === "LAYOUTING") {
+        setWith(
+          draft,
+          `layout.meta.${action.value.path}`,
+          action.value.value,
+          Object
+        );
       }
 
       return draft;
@@ -1449,13 +1527,11 @@ const ConfiguratorStateProviderInternal = (
   const stateAndDispatch = useImmerReducer(reducer, initialStateWithDataSource);
   const [state, dispatch] = stateAndDispatch;
   const { asPath, push, replace, query } = useRouter();
-  const client = useClient();
   const user = useUser();
 
   // Initialize state on page load.
   useEffect(() => {
     let stateToInitialize = initialStateWithDataSource;
-
     const initialize = async () => {
       try {
         let newChartState;
@@ -1474,7 +1550,9 @@ const ConfiguratorStateProviderInternal = (
           }
         } else if (chartId !== "published") {
           newChartState = await initChartStateFromLocalStorage(chartId);
-          if (!newChartState && allowDefaultRedirect) replace(`/create/new`);
+          if (!newChartState && allowDefaultRedirect) {
+            replace(`/create/new`);
+          }
         }
 
         stateToInitialize = newChartState ?? stateToInitialize;
@@ -1484,22 +1562,14 @@ const ConfiguratorStateProviderInternal = (
     };
 
     initialize();
-  }, [
-    dataSource,
-    dispatch,
-    chartId,
-    replace,
-    initialStateWithDataSource,
-    allowDefaultRedirect,
-    query,
-    locale,
-    client,
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     try {
       switch (state.state) {
         case "CONFIGURING_CHART":
+        case "LAYOUTING":
           if (chartId === "new") {
             if (query.edit && typeof query.edit === "string") {
               replace(`/create/${query.edit}`);
@@ -1524,6 +1594,7 @@ const ConfiguratorStateProviderInternal = (
           }
 
           return;
+
         case "PUBLISHING":
           (async () => {
             try {
@@ -1695,6 +1766,12 @@ export const isConfiguring = (
   return s.state === "CONFIGURING_CHART";
 };
 
+export const isLayouting = (
+  s: ConfiguratorState
+): s is ConfiguratorStateLayouting => {
+  return s.state === "LAYOUTING";
+};
+
 export const isPublishing = (
   s: ConfiguratorState
 ): s is ConfiguratorStatePublishing => {
@@ -1709,9 +1786,14 @@ export const isPublished = (
 
 export const hasChartConfigs = (
   s: ConfiguratorState
-): s is
-  | ConfiguratorStateConfiguringChart
-  | ConfiguratorStatePublishing
-  | ConfiguratorStatePublished => {
-  return isConfiguring(s) || isPublishing(s) || isPublished(s);
+): s is ConfiguratorStateWithChartConfigs => {
+  return (
+    isConfiguring(s) || isLayouting(s) || isPublishing(s) || isPublished(s)
+  );
 };
+
+export type ConfiguratorStateWithChartConfigs =
+  | ConfiguratorStateConfiguringChart
+  | ConfiguratorStateLayouting
+  | ConfiguratorStatePublishing
+  | ConfiguratorStatePublished;

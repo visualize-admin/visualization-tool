@@ -8,7 +8,6 @@ import NextLink from "next/link";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 
-import { ChartPanel } from "@/components/chart-panel";
 import { ChartPublished } from "@/components/chart-published";
 import { Success } from "@/components/hint";
 import { ContentLayout } from "@/components/layout";
@@ -126,10 +125,10 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
         <meta name="twitter:card" content="summary_large_image" />
         {/* FIXME: possibly we'll need to copy the content of first chart when migrating / saving to db
         or have additional annotator for dashboards / compositions. */}
-        <meta property="og:title" content={state.meta.title[locale]} />
+        <meta property="og:title" content={state.layout.meta.title[locale]} />
         <meta
           property="og:description"
-          content={state.meta.description[locale]}
+          content={state.layout.meta.description[locale]}
         />
         {/* og:url is set in _app.tsx */}
       </Head>
@@ -153,9 +152,7 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
             )}
 
             <ConfiguratorStateProvider chartId="published" initialState={state}>
-              <ChartPanel>
-                <ChartPublished configKey={key} />
-              </ChartPanel>
+              <ChartPublished configKey={key} />
             </ConfiguratorStateProvider>
 
             <Typography component="div" my={4}>

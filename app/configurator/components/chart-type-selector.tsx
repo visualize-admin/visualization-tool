@@ -2,15 +2,13 @@ import { Trans, t } from "@lingui/macro";
 import {
   Box,
   BoxProps,
-  ButtonBase,
   Divider,
   Theme,
   Tooltip,
   Typography,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import clsx from "clsx";
-import React, { SyntheticEvent } from "react";
+import React from "react";
 
 import {
   chartTypes,
@@ -22,107 +20,26 @@ import Flex from "@/components/flex";
 import { Hint } from "@/components/hint";
 import {
   ChartType,
-  ConfiguratorStateConfiguringChart,
-  ConfiguratorStatePublishing,
+  ConfiguratorStatePublished,
   getChartConfig,
 } from "@/config-types";
 import { ControlSectionSkeleton } from "@/configurator/components/chart-controls/section";
-import { getFieldLabel } from "@/configurator/components/field-i18n";
-import { getIconName } from "@/configurator/components/ui-helpers";
-import { FieldProps, useChartType } from "@/configurator/config-form";
+import { IconButton } from "@/configurator/components/icon-button";
+import { useChartType } from "@/configurator/config-form";
+import { ConfiguratorStateWithChartConfigs } from "@/configurator/configurator-state";
 import { useDataCubesComponentsQuery } from "@/graphql/hooks";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
 
-const useSelectionButtonStyles = makeStyles((theme: Theme) => ({
-  root: {
-    width: "86px",
-    height: "64px",
-    borderRadius: 4,
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-
-    transition: "all .2s",
-    cursor: "pointer",
-
-    "&:hover": {
-      backgroundColor: theme.palette.action.hover,
-    },
-    "& svg": {
-      color: theme.palette.primary.main,
-    },
-  },
-  checked: {
-    color: "white",
-    backgroundColor: theme.palette.primary.main,
-    "&:hover": {
-      backgroundColor: theme.palette.primary.main,
-    },
-    "& svg": {
-      color: "white",
-    },
-  },
-  disabled: {
-    cursor: "initial",
-    "& svg": {
-      color: theme.palette.grey[500],
-    },
-  },
-}));
-
-export const ChartTypeSelectionButton = ({
-  label,
-  value,
-  checked,
-  disabled,
-  onClick,
-}: {
-  label: string;
-  disabled?: boolean;
-  onClick: (e: SyntheticEvent<HTMLButtonElement>) => void;
-} & FieldProps) => {
-  const classes = useSelectionButtonStyles();
-
-  return (
-    <ButtonBase
-      tabIndex={0}
-      value={value}
-      onClick={onClick}
-      disabled={disabled}
-      className={clsx(
-        classes.root,
-        disabled ? classes.disabled : null,
-        checked ? classes.checked : null
-      )}
-    >
-      <Icon size={24} name={getIconName(label)} />
-      <Typography
-        variant="caption"
-        sx={{
-          color: disabled ? "text.primary" : "inherit",
-          mt: 1,
-        }}
-      >
-        {getFieldLabel(label)}
-      </Typography>
-    </ButtonBase>
-  );
-};
-
-export const ChartTypeSelector = ({
-  state,
-  type = "edit",
-  showHelp,
-  chartKey,
-  ...props
-}: {
-  state: ConfiguratorStateConfiguringChart | ConfiguratorStatePublishing;
+type ChartTypeSelectorProps = {
+  state: Exclude<ConfiguratorStateWithChartConfigs, ConfiguratorStatePublished>;
   type?: "add" | "edit";
   showHelp?: boolean;
   chartKey: string;
-} & BoxProps) => {
+} & BoxProps;
+
+export const ChartTypeSelector = (props: ChartTypeSelectorProps) => {
+  const { state, type = "edit", showHelp, chartKey, ...rest } = props;
   const locale = useLocale();
   const chartConfig = getChartConfig(state);
   const [{ data }] = useDataCubesComponentsQuery({
@@ -171,7 +88,7 @@ export const ChartTypeSelector = ({
   });
 
   return (
-    <Box {...props}>
+    <Box {...rest}>
       <legend style={{ display: "none" }}>
         <Trans id="controls.select.chart.type">Chart Type</Trans>
       </legend>
@@ -285,7 +202,7 @@ const ChartTypeSelectorMenu = (props: ChartTypeSelectorMenuProps) => {
         }}
       >
         {chartTypes.map((d) => (
-          <ChartTypeSelectionButton
+          <IconButton
             key={d}
             label={d}
             value={d}

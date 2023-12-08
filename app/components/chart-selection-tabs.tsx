@@ -11,11 +11,15 @@ import Flex from "@/components/flex";
 import {
   ChartConfig,
   ChartType,
-  ConfiguratorStateConfiguringChart,
-  ConfiguratorStatePublishing,
+  ConfiguratorStatePublished,
+  ConfiguratorStateWithChartConfigs,
+  enableLayouting,
   getChartConfig,
   hasChartConfigs,
+  isConfiguring,
+  isLayouting,
   isPublished,
+  isPublishing,
   useConfiguratorState,
 } from "@/configurator";
 import { ChartTypeSelector } from "@/configurator/components/chart-type-selector";
@@ -71,7 +75,7 @@ const TabsStateProvider = (props: React.PropsWithChildren<{}>) => {
 export const ChartSelectionTabs = () => {
   const [state] = useConfiguratorState(hasChartConfigs);
   const editable =
-    state.state === "CONFIGURING_CHART" || state.state === "PUBLISHING";
+    isConfiguring(state) || isLayouting(state) || isPublishing(state);
 
   if (!editable && state.chartConfigs.length === 1) {
     return null;
@@ -98,7 +102,7 @@ export const ChartSelectionTabs = () => {
 };
 
 type TabsEditableProps = {
-  state: ConfiguratorStateConfiguringChart | ConfiguratorStatePublishing;
+  state: Exclude<ConfiguratorStateWithChartConfigs, ConfiguratorStatePublished>;
   chartConfig: ChartConfig;
   data: TabDatum[];
 };
@@ -106,6 +110,7 @@ type TabsEditableProps = {
 const TabsEditable = (props: TabsEditableProps) => {
   const { state, chartConfig, data } = props;
   const [, dispatch] = useConfiguratorState();
+  const isConfiguringChart = isConfiguring(state);
   const locale = useLocale();
   const [tabsState, setTabsState] = useTabsState();
   const [popoverAnchorEl, setPopoverAnchorEl] =
@@ -129,7 +134,8 @@ const TabsEditable = (props: TabsEditableProps) => {
     <>
       <TabsInner
         data={data}
-        editable
+        addable={isConfiguringChart}
+        editable={isConfiguringChart}
         draggable={state.chartConfigs.length > 1}
         onChartAdd={(e) => {
           setPopoverAnchorEl(e.currentTarget);
@@ -238,9 +244,10 @@ const TabsFixed = (props: TabsFixedProps) => {
   return (
     <TabsInner
       data={data}
+      addable={false}
       editable={false}
       draggable={false}
-      onChartSwitch={(key: string) => {
+      onChartSwitch={(key) => {
         dispatch({
           type: "SWITCH_ACTIVE_CHART",
           value: key,
@@ -250,7 +257,8 @@ const TabsFixed = (props: TabsFixedProps) => {
   );
 };
 
-const PublishChartButton = () => {
+const NextStepButton = (props: React.PropsWithChildren<{}>) => {
+  const { children } = props;
   const locale = useLocale();
   const [state, dispatch] = useConfiguratorState(hasChartConfigs);
   const chartConfig = getChartConfig(state);
@@ -268,7 +276,7 @@ const PublishChartButton = () => {
       })),
     },
   });
-  const goNext = useEvent(() => {
+  const handleClick = useEvent(() => {
     if (components?.dataCubesComponents) {
       dispatch({
         type: "STEP_NEXT",
@@ -277,6 +285,27 @@ const PublishChartButton = () => {
     }
   });
 
+  return (
+    <Button
+      color="primary"
+      variant="contained"
+      onClick={handleClick}
+      sx={{ minWidth: "fit-content" }}
+    >
+      {children}
+    </Button>
+  );
+};
+
+export const LayoutChartButton = () => {
+  return (
+    <NextStepButton>
+      <Trans id="button.layout">Proceed to layout options</Trans>
+    </NextStepButton>
+  );
+};
+
+export const PublishChartButton = () => {
   const { asPath } = useRouter();
   const session = useSession();
   const chartId = getRouterChartId(asPath);
@@ -288,17 +317,11 @@ const PublishChartButton = () => {
     enable: !!(session.data?.user && chartId),
     initialStatus: "fetching",
   });
-
   const editingPublishedChart =
     session.data?.user.id && config?.user_id === session.data.user.id;
 
   return status === "fetching" ? null : (
-    <Button
-      color="primary"
-      variant="contained"
-      onClick={components ? goNext : undefined}
-      sx={{ minWidth: "fit-content" }}
-    >
+    <NextStepButton>
       {editingPublishedChart ? (
         <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
           <Tooltip
@@ -315,14 +338,15 @@ const PublishChartButton = () => {
           <Trans id="button.update">Update this visualization</Trans>
         </Box>
       ) : (
-        <Trans id="button.publish">Publish this visualization</Trans>
+        <Trans id="button.publish">Publish</Trans>
       )}
-    </Button>
+    </NextStepButton>
   );
 };
 
 type TabsInnerProps = {
   data: TabDatum[];
+  addable: boolean;
   editable: boolean;
   draggable: boolean;
   onChartAdd?: (e: React.MouseEvent<HTMLElement>) => void;
@@ -331,9 +355,16 @@ type TabsInnerProps = {
 };
 
 const TabsInner = (props: TabsInnerProps) => {
-  const { data, editable, draggable, onChartEdit, onChartAdd, onChartSwitch } =
-    props;
-  const [, dispatch] = useConfiguratorState();
+  const {
+    data,
+    addable,
+    editable,
+    draggable,
+    onChartEdit,
+    onChartAdd,
+    onChartSwitch,
+  } = props;
+  const [state, dispatch] = useConfiguratorState(hasChartConfigs);
 
   return (
     <Box
@@ -418,7 +449,7 @@ const TabsInner = (props: TabsInnerProps) => {
               ))}
               <div style={{ opacity: 0 }}>{provided.placeholder}</div>
 
-              {editable && (
+              {addable && (
                 <Tab
                   sx={{
                     ml: (theme) => `-${theme.spacing(2)}`,
@@ -438,7 +469,13 @@ const TabsInner = (props: TabsInnerProps) => {
         </Droppable>
       </DragDropContext>
 
-      {editable && <PublishChartButton />}
+      {editable &&
+        isConfiguring(state) &&
+        (enableLayouting(state) ? (
+          <LayoutChartButton />
+        ) : (
+          <PublishChartButton />
+        ))}
     </Box>
   );
 };

@@ -214,7 +214,7 @@ type TitleProps = {
   iconName?: IconName;
   titleId?: string;
   disabled?: boolean;
-  warnMessage?: string;
+  warnMessage?: string | React.ReactNode;
   children: ReactNode;
   gutterBottom?: boolean;
   sx?: TypographyProps["sx"];
@@ -305,7 +305,7 @@ export const ControlSectionSkeleton = ({
 );
 
 type WarningProps = {
-  title: string;
+  title: string | React.ReactNode;
 };
 
 const Warning = (props: WarningProps) => {

@@ -1,5 +1,5 @@
 import { Trans } from "@lingui/macro";
-import { Box, Theme, Typography } from "@mui/material";
+import { Box, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { useEffect, useMemo, useRef } from "react";
 import { useStore } from "zustand";
@@ -9,6 +9,7 @@ import { extractChartConfigsComponentIris } from "@/charts/shared/chart-helpers"
 import { isUsingImputation } from "@/charts/shared/imputation";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
 import { ChartFootnotes } from "@/components/chart-footnotes";
+import { ChartPanelLayout, ChartWrapper } from "@/components/chart-panel";
 import {
   ChartTablePreviewProvider,
   useChartTablePreview,
@@ -29,6 +30,7 @@ import {
   isPublished,
   useConfiguratorState,
 } from "@/configurator";
+import { Description, Title } from "@/configurator/components/annotators";
 import { DRAWER_WIDTH } from "@/configurator/components/drawer";
 import {
   DEFAULT_DATA_SOURCE,
@@ -52,16 +54,70 @@ export const ChartPublished = (props: ChartPublishedProps) => {
   const { configKey } = props;
   const [state] = useConfiguratorState(isPublished);
   const { dataSource } = state;
-  const chartConfig = getChartConfig(state);
+  const locale = useLocale();
 
   return (
     <ChartTablePreviewProvider>
-      <ChartPublishedInner
-        dataSource={dataSource}
-        state={state}
-        chartConfig={chartConfig}
-        configKey={configKey}
-      />
+      {state.layout.type === "dashboard" ? (
+        <>
+          <Box
+            sx={{
+              mb:
+                state.layout.meta.title[locale] ||
+                state.layout.meta.description[locale]
+                  ? 4
+                  : 0,
+            }}
+          >
+            {state.layout.meta.title[locale] && (
+              <Title text={state.layout.meta.title[locale]} />
+            )}
+            {state.layout.meta.description[locale] && (
+              <Description text={state.layout.meta.description[locale]} />
+            )}
+          </Box>
+          <ChartPanelLayout type={state.layout.layout}>
+            {state.chartConfigs.map((chartConfig) => (
+              <ChartWrapper key={chartConfig.key} layout={state.layout}>
+                <ChartPublishedInner
+                  dataSource={dataSource}
+                  state={state}
+                  chartConfig={chartConfig}
+                  configKey={configKey}
+                />
+              </ChartWrapper>
+            ))}
+          </ChartPanelLayout>
+        </>
+      ) : (
+        <>
+          <Flex
+            sx={{
+              flexDirection: "column",
+              mb:
+                state.layout.meta.title[locale] ||
+                state.layout.meta.description[locale]
+                  ? 4
+                  : 0,
+            }}
+          >
+            {state.layout.meta.title[locale] && (
+              <Title text={state.layout.meta.title[locale]} />
+            )}
+            {state.layout.meta.description[locale] && (
+              <Description text={state.layout.meta.description[locale]} />
+            )}
+          </Flex>
+          <ChartWrapper layout={state.layout}>
+            <ChartPublishedInner
+              dataSource={dataSource}
+              state={state}
+              chartConfig={getChartConfig(state)}
+              configKey={configKey}
+            />
+          </ChartWrapper>
+        </>
+      )}
     </ChartTablePreviewProvider>
   );
 };
@@ -222,15 +278,12 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
           )}
           <Flex
             sx={{
-              justifyContent: "space-between",
+              justifyContent: meta.title[locale] ? "space-between" : "flex-end",
               alignItems: "center",
               gap: 2,
             }}
           >
-            <Typography component="div" variant="h2" mb={2}>
-              {meta.title[locale]}
-            </Typography>
-
+            {meta.title[locale] && <Title text={meta.title[locale]} />}
             <MetadataPanel
               // FIXME: adapt to design
               datasetIri={chartConfig.cubes[0].iri}
@@ -239,11 +292,8 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
               container={rootRef.current}
             />
           </Flex>
-
           {meta.description[locale] && (
-            <Typography component="div" variant="body1" mb={2}>
-              {meta.description[locale]}
-            </Typography>
+            <Description text={meta.description[locale]} />
           )}
           <InteractiveFiltersProvider>
             <Flex
@@ -251,6 +301,7 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
               ref={containerRef}
               height={containerHeight.current!}
               flexGrow={1}
+              mt={4}
             >
               {isTablePreview ? (
                 <DataSetTable

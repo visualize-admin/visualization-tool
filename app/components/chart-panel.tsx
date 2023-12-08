@@ -1,23 +1,31 @@
-import { Theme } from "@mui/material";
+import { Box, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import capitalize from "lodash/capitalize";
 import React from "react";
 
 import { ChartSelectionTabs } from "@/components/chart-selection-tabs";
-import Flex from "@/components/flex";
+import { Layout } from "@/config-types";
 
-export const ChartPanel = (props: React.PropsWithChildren<{}>) => {
-  const { children } = props;
+const useStyles = makeStyles((theme: Theme) => ({
+  panelLayoutVertical: {
+    display: "flex",
+    flexDirection: "column",
+    gap: theme.spacing(4),
+  },
+  panelLayoutTall: {
+    display: "grid",
+    gridTemplateColumns: "repeat(2, 1fr)",
+    gap: theme.spacing(4),
 
-  return (
-    <>
-      <ChartSelectionTabs />
-      <ChartPanelInner>{children}</ChartPanelInner>
-    </>
-  );
-};
-
-const useChartPanelInnerStyles = makeStyles<Theme>((theme) => ({
-  root: {
+    "& > :nth-child(3n - 2)": {
+      gridColumn: "1 / span 2",
+    },
+    "& > :nth-child(3n - 1, 3n)": {
+      gridColumn: "1 / span 1",
+    },
+  },
+  chartWrapper: {
+    display: "flex",
     flexDirection: "column",
     backgroundColor: theme.palette.grey[100],
     border: "1px solid",
@@ -27,13 +35,44 @@ const useChartPanelInnerStyles = makeStyles<Theme>((theme) => ({
   },
 }));
 
-const ChartPanelInner = (props: React.PropsWithChildren<{}>) => {
-  const { children } = props;
-  const classes = useChartPanelInnerStyles();
+type ChartPanelLayoutProps = React.PropsWithChildren<{
+  type: Extract<Layout, { type: "dashboard" }>["layout"];
+}>;
+
+export const ChartPanelLayout = (props: ChartPanelLayoutProps) => {
+  const { children, type } = props;
+  const classes = useStyles();
 
   return (
-    <Flex className={classes.root} sx={{ minHeight: [150, 300, 500] }}>
+    <div
+      className={
+        classes[
+          `panelLayout${
+            capitalize(type) as Capitalize<ChartPanelLayoutProps["type"]>
+          }`
+        ]
+      }
+    >
       {children}
-    </Flex>
+    </div>
+  );
+};
+
+type ChartPanelProps = React.PropsWithChildren<{
+  editing?: boolean;
+  layout?: Layout;
+}>;
+
+export const ChartWrapper = (props: ChartPanelProps) => {
+  const { children, editing, layout } = props;
+  const classes = useStyles();
+
+  return (
+    <>
+      {(editing || layout?.type === "tab") && <ChartSelectionTabs />}
+      <Box className={classes.chartWrapper} sx={{ minHeight: [150, 300, 500] }}>
+        {children}
+      </Box>
+    </>
   );
 };

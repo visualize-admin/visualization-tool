@@ -18,14 +18,17 @@ msgid "Add filter"
 msgstr "Filter hinzufügen"
 
 #: app/configurator/components/chart-configurator.tsx
+#: app/configurator/components/chart-controls/drag-and-drop-tab.tsx
 msgid "Drag filters to reorganize"
 msgstr "Ziehen Sie die Filter per Drag & Drop, um sie neu zu organisieren"
 
 #: app/configurator/components/chart-configurator.tsx
+#: app/configurator/components/chart-controls/drag-and-drop-tab.tsx
 msgid "Move filter down"
 msgstr "Filter nach unten verschieben"
 
 #: app/configurator/components/chart-configurator.tsx
+#: app/configurator/components/chart-controls/drag-and-drop-tab.tsx
 msgid "Move filter up"
 msgstr "Filter nach oben verschieben"
 
@@ -34,11 +37,11 @@ msgstr "Filter nach oben verschieben"
 msgid "No results"
 msgstr "Kein Ergebnis"
 
-#: app/components/chart-preview.tsx
+#: app/configurator/components/annotators.tsx
 msgid "annotation.add.description"
 msgstr "[ Ohne Beschreibung ]"
 
-#: app/components/chart-preview.tsx
+#: app/configurator/components/annotators.tsx
 #: app/login/components/profile-tables.tsx
 msgid "annotation.add.title"
 msgstr "[ Ohne Titel ]"
@@ -108,13 +111,17 @@ msgstr "Kopieren"
 msgid "button.hint.copied"
 msgstr "Kopiert!"
 
+#: app/components/chart-selection-tabs.tsx
+msgid "button.layout"
+msgstr "Weiter zu den Layout-Optionen"
+
 #: app/pages/v/[chartId].tsx
 msgid "button.new.visualization"
 msgstr "Neue Visualisierung erstellen"
 
 #: app/components/chart-selection-tabs.tsx
 msgid "button.publish"
-msgstr "Diese Visualisierung veröffentlichen"
+msgstr "Veröffentlichen"
 
 #: app/components/publish-actions.tsx
 msgid "button.share"
@@ -200,11 +207,13 @@ msgstr "Fügen Sie ein weiteres Diagramm hinzu."
 msgid "controls.animation"
 msgstr "Animation"
 
-#: app/configurator/components/chart-annotator.tsx
+#: app/configurator/components/annotators.tsx
+#: app/configurator/components/annotators.tsx
 msgid "controls.annotator.add-description-warning"
 msgstr "Fügen Sie eine Beschreibung hinzu"
 
-#: app/configurator/components/chart-annotator.tsx
+#: app/configurator/components/annotators.tsx
+#: app/configurator/components/annotators.tsx
 msgid "controls.annotator.add-title-warning"
 msgstr "Füge einen Titel hinzu"
 
@@ -245,8 +254,8 @@ msgid "controls.chart.category.regular"
 msgstr "Normal"
 
 #: app/configurator/components/chart-options-selector.tsx
-msgid "controls.chart.combo.y.axis-orientation"
-msgstr "Achsenausrichtung"
+#~ msgid "controls.chart.combo.y.axis-orientation"
+#~ msgstr "Achsenausrichtung"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.chart.combo.y.column-measure"
@@ -458,7 +467,7 @@ msgstr "Erlauben Sie Benutzern, Filter zu ändern"
 msgid "controls.filters.select.from"
 msgstr "Von"
 
-#: app/configurator/components/filters.tsx
+#: app/configurator/components/chart-controls/color-palette.tsx
 msgid "controls.filters.select.refresh-colors"
 msgstr "Farben mischen"
 
@@ -523,6 +532,22 @@ msgid "controls.language.italian"
 msgstr "Italienisch"
 
 #: app/configurator/components/field-i18n.ts
+msgid "controls.layout.dashboard"
+msgstr "Dashboard"
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.layout.tab"
+msgstr "Tab Layout"
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.layout.tall"
+msgstr ""
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.layout.vertical"
+msgstr ""
+
+#: app/configurator/components/field-i18n.ts
 msgid "controls.measure"
 msgstr "Messwert"
 
@@ -542,6 +567,10 @@ msgstr "Daten"
 #: app/components/metadata-panel.tsx
 msgid "controls.metadata-panel.section.general"
 msgstr "Allgemeines"
+
+#: app/configurator/components/configurator.tsx
+msgid "controls.nav.back-to-configurator"
+msgstr "Zurück zum Editieren"
 
 #: app/configurator/components/configurator.tsx
 msgid "controls.nav.back-to-main"
@@ -655,7 +684,8 @@ msgstr "Keine Filter"
 msgid "controls.section.data.filters.possible-filters-error"
 msgstr "Beim Abrufen möglicher Filter ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut oder laden Sie die Seite neu."
 
-#: app/configurator/components/chart-annotator.tsx
+#: app/configurator/components/annotators.tsx
+#: app/configurator/components/annotators.tsx
 msgid "controls.section.description"
 msgstr "Titel & Beschreibung"
 
@@ -687,6 +717,8 @@ msgid "controls.section.interactive.filters"
 msgstr "Animation"
 
 #: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/layout-configurator.tsx
 msgid "controls.section.layout-options"
 msgstr "Layout-Optionen"
 
@@ -710,7 +742,8 @@ msgstr "Tabellensortierung"
 msgid "controls.section.tableoptions"
 msgstr "Tabellenoptionen"
 
-#: app/configurator/components/chart-annotator.tsx
+#: app/configurator/components/annotators.tsx
+#: app/configurator/components/annotators.tsx
 msgid "controls.section.title.warning"
 msgstr "Fügen Sie einen Titel oder eine Beschreibung hinzu"
 
@@ -1142,8 +1175,8 @@ msgid "interactive.data.filters.show"
 msgstr "Filter anzeigen"
 
 #: app/configurator/components/chart-options-selector.tsx
-msgid "left"
-msgstr "Links"
+#~ msgid "left"
+#~ msgstr "Links"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.copy"
@@ -1207,6 +1240,10 @@ msgstr "Typ"
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.my-visualizations.dataset-name"
 msgstr "Datensatz"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.profile.my-visualizations.multiple-datasets"
+msgstr ""
 
 #: app/components/header.tsx
 #: app/components/header.tsx
@@ -1298,8 +1335,8 @@ msgid "publication.share.mail.subject"
 msgstr "visualize.admin.ch"
 
 #: app/configurator/components/chart-options-selector.tsx
-msgid "right"
-msgstr "Rechts"
+#~ msgid "right"
+#~ msgstr "Rechts"
 
 #: app/browser/dataset-browse.tsx
 #: app/configurator/components/filters.tsx

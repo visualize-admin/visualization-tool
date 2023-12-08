@@ -5,6 +5,7 @@ import * as t from "io-ts";
 import React from "react";
 
 import { Dimension, Measure, ObservationValue } from "@/domain/data";
+import { flag } from "@/flags";
 
 const DimensionType = t.union([
   t.literal("NominalDimension"),
@@ -1103,11 +1104,30 @@ const DataSource = t.type({
 });
 export type DataSource = t.TypeOf<typeof DataSource>;
 
+const Layout = t.intersection([
+  t.type({
+    activeField: t.union([t.undefined, t.string]),
+  }),
+  t.union([
+    t.type({
+      type: t.literal("tab"),
+      meta: Meta,
+    }),
+    t.type({
+      type: t.literal("dashboard"),
+      layout: t.union([t.literal("vertical"), t.literal("tall")]),
+      meta: Meta,
+    }),
+  ]),
+]);
+export type Layout = t.TypeOf<typeof Layout>;
+export type LayoutType = Layout["type"];
+
 const Config = t.type(
   {
     version: t.string,
     dataSource: DataSource,
-    meta: Meta,
+    layout: Layout,
     chartConfigs: t.array(ChartConfig),
     activeChartKey: t.string,
   },
@@ -1136,8 +1156,8 @@ const ConfiguratorStateSelectingDataSet = t.type({
   version: t.string,
   state: t.literal("SELECTING_DATASET"),
   dataSource: DataSource,
-  meta: Meta,
   chartConfigs: t.undefined,
+  layout: t.undefined,
   activeChartKey: t.undefined,
 });
 export type ConfiguratorStateSelectingDataSet = t.TypeOf<
@@ -1145,14 +1165,30 @@ export type ConfiguratorStateSelectingDataSet = t.TypeOf<
 >;
 
 const ConfiguratorStateConfiguringChart = t.intersection([
-  t.type({
-    state: t.literal("CONFIGURING_CHART"),
-  }),
+  t.type({ state: t.literal("CONFIGURING_CHART") }),
   Config,
 ]);
 export type ConfiguratorStateConfiguringChart = t.TypeOf<
   typeof ConfiguratorStateConfiguringChart
 >;
+
+const ConfiguratorStateLayouting = t.intersection([
+  t.type({ state: t.literal("LAYOUTING") }),
+  Config,
+]);
+export type ConfiguratorStateLayouting = t.TypeOf<
+  typeof ConfiguratorStateLayouting
+>;
+
+export const enableLayouting = (
+  state:
+    | ConfiguratorStateConfiguringChart
+    | ConfiguratorStateLayouting
+    | ConfiguratorStatePublishing
+    | ConfiguratorStatePublished
+) => {
+  return state.chartConfigs.length > 1 && flag("layoutStep");
+};
 
 const ConfiguratorStatePublishing = t.intersection([
   t.type({
@@ -1178,6 +1214,7 @@ const ConfiguratorState = t.union([
   ConfiguratorStateInitial,
   ConfiguratorStateSelectingDataSet,
   ConfiguratorStateConfiguringChart,
+  ConfiguratorStateLayouting,
   ConfiguratorStatePublishing,
   ConfiguratorStatePublished,
 ]);

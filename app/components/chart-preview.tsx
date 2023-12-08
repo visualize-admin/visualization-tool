@@ -1,12 +1,12 @@
 import { Trans } from "@lingui/macro";
-import { Box, Theme, Typography } from "@mui/material";
-import { makeStyles } from "@mui/styles";
+import { Box } from "@mui/material";
 import Head from "next/head";
 import { useMemo } from "react";
 
 import { DataSetTable } from "@/browse/datatable";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
 import { ChartFootnotes } from "@/components/chart-footnotes";
+import { ChartPanelLayout, ChartWrapper } from "@/components/chart-panel";
 import {
   ChartTablePreviewProvider,
   useChartTablePreview,
@@ -19,8 +19,11 @@ import { MetadataPanel } from "@/components/metadata-panel";
 import {
   DataSource,
   getChartConfig,
+  hasChartConfigs,
+  isConfiguring,
   useConfiguratorState,
 } from "@/configurator";
+import { Description, Title } from "@/configurator/components/annotators";
 import {
   useDataCubesComponentsQuery,
   useDataCubesMetadataQuery,
@@ -34,36 +37,41 @@ type ChartPreviewProps = {
 };
 
 export const ChartPreview = (props: ChartPreviewProps) => {
+  const [state] = useConfiguratorState(hasChartConfigs);
+  const editing = isConfiguring(state);
+
   return (
     <ChartTablePreviewProvider>
-      <ChartPreviewInner {...props} />
+      {state.layout.type === "dashboard" && !editing ? (
+        <ChartPanelLayout type={state.layout.layout}>
+          {state.chartConfigs.map((chartConfig) => (
+            <ChartWrapper
+              key={chartConfig.key}
+              editing={editing}
+              layout={state.layout}
+            >
+              <ChartPreviewInner {...props} chartKey={chartConfig.key} />
+            </ChartWrapper>
+          ))}
+        </ChartPanelLayout>
+      ) : (
+        <ChartWrapper editing={editing} layout={state.layout}>
+          <ChartPreviewInner {...props} />
+        </ChartWrapper>
+      )}
     </ChartTablePreviewProvider>
   );
 };
 
-const useStyles = makeStyles<Theme>({
-  title: {
-    marginBottom: 2,
-    cursor: "pointer",
-    "&:hover": {
-      textDecoration: "underline",
-    },
-  },
-  description: {
-    marginBottom: 2,
-    cursor: "pointer",
-    "&:hover": {
-      textDecoration: "underline",
-    },
-  },
-});
+type ChartPreviewInnerProps = ChartPreviewProps & {
+  chartKey?: string;
+};
 
-export const ChartPreviewInner = (props: ChartPreviewProps) => {
-  const { dataSource } = props;
+export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
+  const { dataSource, chartKey } = props;
   const [state, dispatch] = useConfiguratorState();
-  const chartConfig = getChartConfig(state);
+  const chartConfig = getChartConfig(state, chartKey);
   const locale = useLocale();
-  const classes = useStyles();
   const commonQueryVariables = {
     sourceType: dataSource.type,
     sourceUrl: dataSource.url,
@@ -115,7 +123,7 @@ export const ChartPreviewInner = (props: ChartPreviewProps) => {
         justifyContent: "space-between",
         flexGrow: 1,
         color: "grey.800",
-        p: 5,
+        p: 6,
         width: "100%",
       }}
     >
@@ -134,40 +142,36 @@ export const ChartPreviewInner = (props: ChartPreviewProps) => {
             </HintYellow>
           </Box>
         )}
-        {(state.state === "CONFIGURING_CHART" ||
-          state.state === "PUBLISHING") && (
+        {hasChartConfigs(state) && (
           <>
             <>
               <Flex
                 sx={{
-                  justifyContent: "space-between",
+                  justifyContent:
+                    state.state === "CONFIGURING_CHART" ||
+                    chartConfig.meta.title[locale]
+                      ? "space-between"
+                      : "flex-end",
                   alignItems: "flex-start",
                   gap: 2,
                 }}
               >
-                <Typography
-                  variant="h2"
-                  sx={{
-                    color:
-                      chartConfig.meta.title[locale] === ""
-                        ? "grey.500"
-                        : "text",
-                  }}
-                  className={classes.title}
-                  onClick={() =>
-                    dispatch({
-                      type: "ACTIVE_FIELD_CHANGED",
-                      value: "title",
-                    })
-                  }
-                >
-                  {chartConfig.meta.title[locale] === "" ? (
-                    <Trans id="annotation.add.title">[ Title ]</Trans>
-                  ) : (
-                    chartConfig.meta.title[locale]
-                  )}
-                </Typography>
-
+                {(state.state === "CONFIGURING_CHART" ||
+                  chartConfig.meta.title[locale]) && (
+                  <Title
+                    text={chartConfig.meta.title[locale]}
+                    lighterColor
+                    onClick={
+                      state.state === "CONFIGURING_CHART"
+                        ? () =>
+                            dispatch({
+                              type: "CHART_ACTIVE_FIELD_CHANGED",
+                              value: "title",
+                            })
+                        : undefined
+                    }
+                  />
+                )}
                 <MetadataPanel
                   // FIXME: adapt to design
                   datasetIri={chartConfig.cubes[0].iri}
@@ -178,37 +182,32 @@ export const ChartPreviewInner = (props: ChartPreviewProps) => {
               </Flex>
               <Head>
                 <title key="title">
-                  {chartConfig.meta.title[locale] === ""
+                  {!chartConfig.meta.title[locale]
                     ? // FIXME: adapt to design
                       metadata?.dataCubesMetadata.map((d) => d.title).join(", ")
                     : chartConfig.meta.title[locale]}{" "}
                   - visualize.admin.ch
                 </title>
               </Head>
-              <Typography
-                variant="body1"
-                className={classes.description}
-                sx={{
-                  color:
-                    chartConfig.meta.description[locale] === ""
-                      ? "grey.500"
-                      : "text",
-                }}
-                onClick={() =>
-                  dispatch({
-                    type: "ACTIVE_FIELD_CHANGED",
-                    value: "description",
-                  })
-                }
-              >
-                {chartConfig.meta.description[locale] === "" ? (
-                  <Trans id="annotation.add.description">[ Description ]</Trans>
-                ) : (
-                  chartConfig.meta.description[locale]
-                )}
-              </Typography>
+              {(state.state === "CONFIGURING_CHART" ||
+                chartConfig.meta.description[locale]) && (
+                <Description
+                  text={chartConfig.meta.description[locale]}
+                  lighterColor
+                  onClick={
+                    state.state === "CONFIGURING_CHART"
+                      ? () => {
+                          dispatch({
+                            type: "CHART_ACTIVE_FIELD_CHANGED",
+                            value: "description",
+                          });
+                        }
+                      : undefined
+                  }
+                />
+              )}
             </>
-            <Box ref={containerRef} height={containerHeight.current!}>
+            <Box ref={containerRef} height={containerHeight.current!} mt={4}>
               {isTablePreview ? (
                 <DataSetTable
                   sx={{

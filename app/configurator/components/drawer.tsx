@@ -10,8 +10,8 @@ export const ConfiguratorDrawer = styled(MuiDrawer)(({ theme }) => ({
   "& > .MuiPaper-root": {
     top: 96,
     bottom: 0,
+    width: DRAWER_WIDTH,
     height: "auto",
-    borderLeft: `1px ${theme.palette.divider} solid`,
     borderRight: `1px ${theme.palette.divider} solid`,
     boxShadow: "none",
   },

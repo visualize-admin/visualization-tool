@@ -164,6 +164,22 @@ const fieldLabels = {
     id: "controls.chart.type.comboLineColumn",
     message: "Column-line",
   }),
+  "controls.layout.tab": defineMessage({
+    id: "controls.layout.tab",
+    message: "Tab Layout",
+  }),
+  "controls.layout.dashboard": defineMessage({
+    id: "controls.layout.dashboard",
+    message: "Dashboard",
+  }),
+  "controls.layout.tall": defineMessage({
+    id: "controls.layout.tall",
+    message: "Tall",
+  }),
+  "controls.layout.vertical": defineMessage({
+    id: "controls.layout.vertical",
+    message: "Vertical",
+  }),
   "controls.language.english": defineMessage({
     id: "controls.language.english",
     message: "English",
@@ -353,6 +369,16 @@ export function getFieldLabel(field: string): string {
       return i18n._(fieldLabels["controls.chart.type.comboLineDual"]);
     case "comboLineColumn":
       return i18n._(fieldLabels["controls.chart.type.comboLineColumn"]);
+
+    // Layout types
+    case "layoutTab":
+      return i18n._(fieldLabels["controls.layout.tab"]);
+    case "layoutDashboard":
+      return i18n._(fieldLabels["controls.layout.dashboard"]);
+    case "layoutTall":
+      return i18n._(fieldLabels["controls.layout.tall"]);
+    case "layoutVertical":
+      return i18n._(fieldLabels["controls.layout.vertical"]);
 
     // Languages
     case "en":
