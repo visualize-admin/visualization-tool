@@ -1193,7 +1193,8 @@ const ChartFieldMultiFilter = ({
         <legend style={{ display: "none" }}>
           <Trans id="controls.section.filter">Filter</Trans>
         </legend>
-        {isTemporalDimension(component) ? (
+        {/* For temporal-based segments, we want to treat values as nominal. */}
+        {isTemporalDimension(component) && field !== "segment" ? (
           <TimeFilter
             dimension={component}
             disableInteractiveFilters={encoding.disableInteractiveFilters}

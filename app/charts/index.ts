@@ -999,17 +999,23 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           }
         } else {
           const oldSegment = oldValue as Exclude<typeof oldValue, TableFields>;
-          newSegment = {
-            componentIri: oldSegment.componentIri,
-            palette: oldSegment.palette,
-            colorMapping: oldSegment.colorMapping,
-            sorting:
-              "sorting" in oldSegment &&
-              oldSegment.sorting &&
-              "sortingOrder" in oldSegment.sorting
-                ? oldSegment.sorting ?? DEFAULT_FIXED_COLOR_FIELD
-                : DEFAULT_SORTING,
-          };
+          const segmentDimension = dimensions.find(
+            (d) => d.iri === oldValue.componentIri
+          );
+
+          if (!isTemporalDimension(segmentDimension)) {
+            newSegment = {
+              componentIri: oldSegment.componentIri,
+              palette: oldSegment.palette,
+              colorMapping: oldSegment.colorMapping,
+              sorting:
+                "sorting" in oldSegment &&
+                oldSegment.sorting &&
+                "sortingOrder" in oldSegment.sorting
+                  ? oldSegment.sorting ?? DEFAULT_FIXED_COLOR_FIELD
+                  : DEFAULT_SORTING,
+            };
+          }
         }
 
         return produce(newChartConfig, (draft) => {
@@ -1084,16 +1090,22 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           }
         } else {
           const oldSegment = oldValue as Exclude<typeof oldValue, TableFields>;
-          newSegment = {
-            componentIri: oldSegment.componentIri,
-            palette: oldSegment.palette,
-            colorMapping: oldSegment.colorMapping,
-            sorting: adjustSegmentSorting({
-              segment: oldSegment,
-              acceptedValues: AREA_SEGMENT_SORTING.map((d) => d.sortingType),
-              defaultValue: "byTotalSize",
-            }),
-          };
+          const segmentDimension = dimensions.find(
+            (d) => d.iri === oldValue.componentIri
+          );
+
+          if (!isTemporalDimension(segmentDimension)) {
+            newSegment = {
+              componentIri: oldSegment.componentIri,
+              palette: oldSegment.palette,
+              colorMapping: oldSegment.colorMapping,
+              sorting: adjustSegmentSorting({
+                segment: oldSegment,
+                acceptedValues: AREA_SEGMENT_SORTING.map((d) => d.sortingType),
+                defaultValue: "byTotalSize",
+              }),
+            };
+          }
         }
 
         return produce(newChartConfig, (draft) => {

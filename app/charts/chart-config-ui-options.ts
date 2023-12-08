@@ -302,6 +302,7 @@ interface ChartSpecs {
 const SEGMENT_COMPONENT_TYPES: ComponentType[] = [
   "NominalDimension",
   "OrdinalDimension",
+  "TemporalDimension",
   "TemporalOrdinalDimension",
   "GeoCoordinatesDimension",
   "GeoShapesDimension",
