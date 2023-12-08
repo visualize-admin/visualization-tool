@@ -90,14 +90,33 @@ export const ChartPublished = (props: ChartPublishedProps) => {
           </ChartPanelLayout>
         </>
       ) : (
-        <ChartWrapper layout={state.layout}>
-          <ChartPublishedInner
-            dataSource={dataSource}
-            state={state}
-            chartConfig={getChartConfig(state)}
-            configKey={configKey}
-          />
-        </ChartWrapper>
+        <>
+          <Flex
+            sx={{
+              flexDirection: "column",
+              mb:
+                state.layout.meta.title[locale] ||
+                state.layout.meta.description[locale]
+                  ? 4
+                  : 0,
+            }}
+          >
+            {state.layout.meta.title[locale] && (
+              <Title text={state.layout.meta.title[locale]} />
+            )}
+            {state.layout.meta.description[locale] && (
+              <Description text={state.layout.meta.description[locale]} />
+            )}
+          </Flex>
+          <ChartWrapper layout={state.layout}>
+            <ChartPublishedInner
+              dataSource={dataSource}
+              state={state}
+              chartConfig={getChartConfig(state)}
+              configKey={configKey}
+            />
+          </ChartWrapper>
+        </>
       )}
     </ChartTablePreviewProvider>
   );
