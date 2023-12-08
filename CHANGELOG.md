@@ -11,6 +11,7 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 - Features
   - Localized cube landing pages are now supported (dcat:landingPage) 🌎
+  - Temporal dimension filters can now be pinned to dynamically use the most recent value (so that published charts automatically switch to it when the cube is updated) 📅
   - Temporal dimensions can now be used as segmentation fields (excluding area and line charts)
 - Fixes
   - Copying a link to a new visualization from a dataset preview now correctly includes a data source

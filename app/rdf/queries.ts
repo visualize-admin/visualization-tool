@@ -1,3 +1,4 @@
+import { SELECT } from "@tpluscode/sparql-builder";
 import { descending, group, index } from "d3";
 import { Maybe } from "graphql-tools";
 import keyBy from "lodash/keyBy";
@@ -7,6 +8,7 @@ import { Literal, NamedNode } from "rdf-js";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
 import { LRUCache } from "typescript-lru-cache";
 
+import { isDynamicMaxValue } from "@/configurator/components/field";
 import { PromiseValue, truthy } from "@/domain/types";
 import { DataCubeComponentFilter } from "@/graphql/resolver-types";
 import { createSource, pragmas } from "@/rdf/create-source";
@@ -550,14 +552,12 @@ export const getCubeObservations = async ({
   cache: LRUCache | undefined;
 }): Promise<ResolvedObservationsQuery["data"]> => {
   const cubeView = View.fromCube(cube, false);
-
   const allResolvedDimensions = await getCubeDimensions({
     cube,
     locale,
     sparqlClient,
     cache,
   });
-
   const resolvedDimensions = allResolvedDimensions.filter((d) => {
     if (componentIris) {
       return (
@@ -569,7 +569,6 @@ export const getCubeObservations = async ({
     return true;
   });
   const resolvedDimensionsByIri = keyBy(resolvedDimensions, (d) => d.data.iri);
-
   componentIris = resolvedDimensions.map((d) => d.data.iri);
 
   const serverFilters: Record<string, FilterValueMulti> = {};
@@ -592,7 +591,13 @@ export const getCubeObservations = async ({
   }
 
   const observationFilters = filters
-    ? buildFilters({ cube, view: cubeView, filters: dbFilters, locale })
+    ? await buildFilters({
+        cube,
+        view: cubeView,
+        filters: dbFilters,
+        locale,
+        sparqlClient,
+      })
     : [];
 
   const observationDimensions = buildDimensions({
@@ -784,103 +789,130 @@ export const hasHierarchy = (dim: CubeDimension) => {
   );
 };
 
-const buildFilters = ({
+const buildFilters = async ({
   cube,
   view,
   filters,
   locale,
+  sparqlClient,
 }: {
   cube: ExtendedCube;
   view: View;
   filters: Filters;
   locale: string;
-}): Filter[] => {
+  sparqlClient: ParsingClient;
+}): Promise<Filter[]> => {
   const lookupSource = LookupSource.fromSource(cube.source);
   lookupSource.queryPrefix = pragmas;
 
-  return Object.entries(filters).flatMap(([iri, filter]) => {
-    const cubeDimension = cube.dimensions.find((d) => d.path?.value === iri);
+  return await Promise.all(
+    Object.entries(filters).flatMap(async ([iri, filter]) => {
+      const cubeDimension = cube.dimensions.find((d) => d.path?.value === iri);
 
-    if (!cubeDimension) {
-      console.warn(`WARNING: No cube dimension ${iri}`);
-      return [];
-    }
+      if (!cubeDimension) {
+        console.warn(`WARNING: No cube dimension ${iri}`);
+        return [];
+      }
 
-    const dimension = view.dimension({ cubeDimension: iri });
+      const dimension = view.dimension({ cubeDimension: iri });
 
-    if (!dimension) {
-      console.warn(`WARNING: No dimension ${iri}`);
-      return [];
-    }
+      if (!dimension) {
+        console.warn(`WARNING: No dimension ${iri}`);
+        return [];
+      }
 
-    // FIXME: Adding this dimension will make the query return nothing for dimensions that don't have it (no way to make it optional)
+      // FIXME: Adding this dimension will make the query return nothing for dimensions that don't have it (no way to make it optional)
 
-    /**
-     * When dealing with a versioned dimension, the value provided from the config is unversioned
-     * The relationship is expressed with schema:sameAs, so we need to look up the *versioned* value to apply the filter
-     * If the dimension is not versioned (e.g. if its values are Literals), it can be used directly to filter
-     */
-    const filterDimension = dimensionIsVersioned(cubeDimension)
-      ? view.createDimension({
-          source: lookupSource,
-          path: ns.schema.sameAs,
-          join: dimension,
-          as: labelDimensionIri(`${iri}/__sameAs__`), // Just a made up dimension name that is used in the generated query but nowhere else
-        })
-      : dimension;
+      /**
+       * When dealing with a versioned dimension, the value provided from the config is unversioned
+       * The relationship is expressed with schema:sameAs, so we need to look up the *versioned* value to apply the filter
+       * If the dimension is not versioned (e.g. if its values are Literals), it can be used directly to filter
+       */
+      const filterDimension = dimensionIsVersioned(cubeDimension)
+        ? view.createDimension({
+            source: lookupSource,
+            path: ns.schema.sameAs,
+            join: dimension,
+            as: labelDimensionIri(`${iri}/__sameAs__`), // Just a made up dimension name that is used in the generated query but nowhere else
+          })
+        : dimension;
 
-    const parsedCubeDimension = parseCubeDimension({
-      dim: cubeDimension,
-      cube,
-      locale,
-    });
+      const parsedCubeDimension = parseCubeDimension({
+        dim: cubeDimension,
+        cube,
+        locale,
+      });
 
-    const { dataType } = parsedCubeDimension.data;
+      const { dataType } = parsedCubeDimension.data;
 
-    if (ns.rdf.langString.value === dataType) {
-      throw new Error(
-        `Dimension <${iri}> has dataType 'langString', which is not supported by Visualize. In order to fix it, change the dataType to 'string' in the cube definition.`
-      );
-    }
+      if (ns.rdf.langString.value === dataType) {
+        throw new Error(
+          `Dimension <${iri}> has dataType 'langString', which is not supported by Visualize. In order to fix it, change the dataType to 'string' in the cube definition.`
+        );
+      }
 
-    const dimensionHasHierarchy = hasHierarchy(cubeDimension);
-    const toRDFValue = (d: string): NamedNode | Literal => {
-      return dataType && !dimensionHasHierarchy
-        ? parsedCubeDimension.data.hasUndefinedValues &&
-          d === DIMENSION_VALUE_UNDEFINED
-          ? rdf.literal("", ns.cube.Undefined)
-          : rdf.literal(d, dataType)
-        : rdf.namedNode(d);
-    };
+      const dimensionHasHierarchy = hasHierarchy(cubeDimension);
+      const toRDFValue = (d: string): NamedNode | Literal => {
+        return dataType && !dimensionHasHierarchy
+          ? parsedCubeDimension.data.hasUndefinedValues &&
+            d === DIMENSION_VALUE_UNDEFINED
+            ? rdf.literal("", ns.cube.Undefined)
+            : rdf.literal(d, dataType)
+          : rdf.namedNode(d);
+      };
 
-    return filter.type === "single"
-      ? [
-          filterDimension.filter.eq(
-            toRDFValue(
-              typeof filter.value === "number"
-                ? filter.value.toString()
-                : filter.value
-            )
-          ),
-        ]
-      : filter.type === "multi"
-      ? // If values is an empty object, we filter by something that doesn't exist
-        [
-          filterDimension.filter.in(
-            Object.keys(filter.values).length > 0
-              ? Object.entries(filter.values).flatMap(([iri, selected]) =>
-                  selected ? [toRDFValue(iri)] : []
-                )
-              : [rdf.namedNode("EMPTY_VALUE")]
-          ),
-        ]
-      : filter.type === "range"
-      ? [
-          filterDimension.filter.gte(toRDFValue(filter.from)),
-          filterDimension.filter.lte(toRDFValue(filter.to)),
-        ]
-      : [];
-  });
+      switch (filter.type) {
+        case "single": {
+          if (isDynamicMaxValue(filter.value)) {
+            if (cubeDimension.maxInclusive) {
+              return [
+                filterDimension.filter.eq(
+                  toRDFValue(cubeDimension.maxInclusive.value)
+                ),
+              ];
+            }
+
+            // Ideally we would query the max value directly in the observations
+            // query, but it doesn't seem to be supported by the cube-view-query
+            const maxValueQuery = SELECT`(MAX(?value) as ?value)`
+              .WHERE` <${cube.term?.value}> <https://cube.link/observationSet> ?observationSet .
+  ?observationSet <https://cube.link/observation> ?source .
+  ?source <${cubeDimension.path?.value}> ?value .`;
+            const maxValueRaw = await maxValueQuery.execute(
+              sparqlClient.query,
+              { operation: "postUrlencoded" }
+            );
+            const maxValue = maxValueRaw?.[0]?.value?.value as string;
+
+            return [filterDimension.filter.eq(toRDFValue(maxValue))];
+          }
+
+          return [filterDimension.filter.eq(toRDFValue(`${filter.value}`))];
+        }
+        case "multi": {
+          // If values is an empty object, we filter by something that doesn't exist
+          return [
+            filterDimension.filter.in(
+              Object.keys(filter.values).length > 0
+                ? Object.entries(filter.values).flatMap(([iri, selected]) =>
+                    selected ? [toRDFValue(iri)] : []
+                  )
+                : [rdf.namedNode("EMPTY_VALUE")]
+            ),
+          ];
+        }
+        case "range": {
+          return [
+            filterDimension.filter.gte(toRDFValue(filter.from)),
+            filterDimension.filter.lte(toRDFValue(filter.to)),
+          ];
+        }
+        default:
+          const _exhaustiveCheck: never = filter;
+          return _exhaustiveCheck;
+      }
+    })
+  ).then((d) => d.flat());
 };
 
 type ObservationRaw = Record<string, Literal | NamedNode>;

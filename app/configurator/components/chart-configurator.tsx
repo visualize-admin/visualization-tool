@@ -56,10 +56,11 @@ import { ChartTypeSelector } from "@/configurator/components/chart-type-selector
 import {
   ControlTabField,
   DataFilterSelect,
-  DataFilterSelectDay,
-  DataFilterSelectTime,
+  DataFilterTemporal,
+  isDynamicMaxValue,
   OnOffControlTabField,
 } from "@/configurator/components/field";
+import { canRenderDatePickerField } from "@/configurator/components/field-date-picker";
 import {
   getFiltersByMappingStatus,
   isConfiguring,
@@ -97,7 +98,6 @@ type DataFilterSelectGenericProps = {
 
 const DataFilterSelectGeneric = (props: DataFilterSelectGenericProps) => {
   const { dimension, index, disabled, onRemove } = props;
-  const values = dimension.values;
   const controls = dimension.isKeyDimension ? null : (
     <Box sx={{ display: "flex", flexGrow: 1 }}>
       <IconButton
@@ -124,25 +124,17 @@ const DataFilterSelectGeneric = (props: DataFilterSelectGenericProps) => {
     isOptional: !dimension.isKeyDimension,
   };
 
-  if (isTemporalDimension(dimension)) {
-    if (dimension.timeUnit === "Day") {
-      return <DataFilterSelectDay {...sharedProps} dimension={dimension} />;
-    } else if (dimension.timeUnit === "Month") {
-      return <DataFilterSelect {...sharedProps} />;
-    } else {
-      const from = `${values[0].value}`;
-      const to = `${values[values.length - 1]?.value || from}`;
-
-      return (
-        <DataFilterSelectTime
-          {...sharedProps}
-          from={from}
-          to={to}
-          timeUnit={dimension.timeUnit}
-          timeFormat={dimension.timeFormat}
-        />
-      );
-    }
+  if (
+    isTemporalDimension(dimension) &&
+    canRenderDatePickerField(dimension.timeUnit)
+  ) {
+    return (
+      <DataFilterTemporal
+        {...sharedProps}
+        dimension={dimension}
+        timeUnit={dimension.timeUnit}
+      />
+    );
   } else {
     return (
       <DataFilterSelect {...sharedProps} hierarchy={dimension.hierarchy} />
@@ -230,6 +222,21 @@ const useEnsurePossibleFilters = ({
         );
 
         const oldFilters = getChartConfigFilters(chartConfig.cubes, cube.iri);
+
+        // Replace resolved values with potential dynamic max values to not
+        // override the dynamic max value with the resolved value
+        for (const [key, value] of Object.entries(oldFilters)) {
+          if (
+            value.type === "single" &&
+            isDynamicMaxValue(value.value) &&
+            filters[key]
+          ) {
+            filters[key] = {
+              type: "single",
+              value: `${value.value}`,
+            };
+          }
+        }
 
         if (!isEqual(filters, oldFilters) && !isEmpty(filters)) {
           dispatch({
