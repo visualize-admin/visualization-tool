@@ -36,7 +36,7 @@ jobs:
 
       - name: Testing GraphQL - Components
         if: always()
-        uses: grafana/k6-action@v0.2.0
+        uses: grafana/k6-action@v0.3.1
         with:
           filename: k6/graphql/components.js
           cloud: ${{ inputs.cloud }}
@@ -45,7 +45,7 @@ jobs:
 
       - name: Testing GraphQL - Observations
         if: always()
-        uses: grafana/k6-action@v0.2.0
+        uses: grafana/k6-action@v0.3.1
         with:
           filename: k6/graphql/observations.js
           cloud: ${{ inputs.cloud }}
@@ -54,7 +54,7 @@ jobs:
 
       - name: Testing HAR - Edition
         if: always()
-        uses: grafana/k6-action@v0.2.0
+        uses: grafana/k6-action@v0.3.1
         with:
           filename: k6/har/${{ env.ENV }}/edition.js
           cloud: ${{ inputs.cloud }}
