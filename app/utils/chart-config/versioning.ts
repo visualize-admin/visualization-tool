@@ -830,6 +830,20 @@ const configuratorStateMigrations: Migration[] = [
         draft.chartConfigs = [migratedChartConfig];
         delete draft.chartConfig;
         delete draft.activeField;
+        draft.meta = {
+          title: {
+            de: "",
+            fr: "",
+            it: "",
+            en: "",
+          },
+          description: {
+            de: "",
+            fr: "",
+            it: "",
+            en: "",
+          },
+        };
         draft.activeChartKey = migratedChartConfig.key;
       });
     },
