@@ -80,24 +80,16 @@ export const PreviewTable = ({
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">();
   const formatters = useDimensionFormatters(headers);
   const sortedObservations = useMemo(() => {
-    if (sortBy === undefined) {
+    if (!sortBy) {
       return observations;
     }
 
     const compare = sortDirection === "asc" ? ascending : descending;
-    const valuesIndex = uniqueMapBy(sortBy.values, (x) => x.label);
+    const valuesIndex = uniqueMapBy(sortBy.values, (d) => d.label);
     const convert =
       isNumericalMeasure(sortBy) || sortBy.isNumerical
-        ? (d: string) => +d
-        : (d: string) => {
-            const value = valuesIndex.get(d);
-
-            if (value?.position) {
-              return value.position;
-            }
-
-            return d;
-          };
+        ? (value: string) => +value
+        : (value: string) => valuesIndex.get(value)?.position ?? value;
 
     return [...observations].sort((a, b) =>
       compare(
@@ -111,11 +103,7 @@ export const PreviewTable = ({
 
   // Tooltip contained inside the table so as not to overflow when table is scrolled
   const tooltipProps = useMemo(
-    () => ({
-      PopperProps: {
-        container: tooltipContainerRef.current,
-      },
-    }),
+    () => ({ PopperProps: { container: tooltipContainerRef.current } }),
     []
   );
 
