@@ -9,8 +9,12 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
+Nothing yet.
+
+# [3.25.0] - 2023-12-12
+
 - Features
-  - Added layout step to the chart creation flow (tab layout, vertical or tall dashboard)
+  - Added a layout step to the chart creation flow (tab layout, vertical or tall dashboard), accessible when using a `flag__layoutStep=true`
   - Localized cube landing pages are now supported (dcat:landingPage) 🌎
   - Temporal dimension filters can now be pinned to dynamically use the most recent value (so that published charts automatically switch to it when the cube is updated) 📅
   - Temporal dimensions can now be used as segmentation fields (excluding area and line charts)
