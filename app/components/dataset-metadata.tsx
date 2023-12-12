@@ -183,14 +183,18 @@ const DatasetTags = ({ cube }: { cube: DataCubeMetadata }) => {
             label={cube.creator.label}
           />
         )}
-        {cube.themes?.map((t) => (
-          <DatasetMetadataTag
-            key={t.iri}
-            type="theme"
-            iri={t.iri}
-            label={t.label}
-          />
-        ))}
+        {cube.themes?.map(
+          (t) =>
+            t.iri &&
+            t.label && (
+              <DatasetMetadataTag
+                key={t.iri}
+                type="theme"
+                iri={t.iri}
+                label={t.label}
+              />
+            )
+        )}
       </Stack>
     </>
   );

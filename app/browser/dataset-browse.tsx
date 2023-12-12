@@ -185,7 +185,6 @@ export const SearchDatasetControls = ({
           name="dataset-include-drafts"
           value="dataset-include-drafts"
           checked={includeDrafts}
-          disabled={false}
           onChange={onToggleIncludeDrafts}
         />
         <label htmlFor="datasetSort">
@@ -869,6 +868,7 @@ export const DatasetResult = ({
     );
   });
   const classes = useResultStyles();
+
   return (
     <MotionCard {...smoothPresenceProps} elevation={1} className={classes.root}>
       <Stack spacing={2} sx={{ mb: 6, alignItems: "flex-start" }}>
@@ -881,7 +881,7 @@ export const DatasetResult = ({
           }}
         >
           <Typography variant="body2" fontWeight={700} gutterBottom={false}>
-            {datePublished ? <DateFormat date={datePublished} /> : null}
+            {datePublished && <DateFormat date={datePublished} />}
           </Typography>
           {isDraft && (
             <Tag type="draft">
@@ -933,23 +933,27 @@ export const DatasetResult = ({
       </Stack>
       <Flex sx={{ flexWrap: "wrap", gap: "6px" }}>
         {themes && showTags
-          ? sortBy(themes, (t) => t.label).map((t) => (
-              <Link
-                key={t.iri}
-                href={`/browse/theme/${encodeURIComponent(t.iri)}`}
-                passHref
-                legacyBehavior
-              >
-                <MUILink
-                  color="inherit"
-                  // The whole card is a link too, so we have to stop propagating the
-                  // event, otherwise we go first to <tag> page then to <result> page
-                  onClick={(ev) => ev.stopPropagation()}
-                >
-                  <Tag type="theme">{t.label}</Tag>
-                </MUILink>
-              </Link>
-            ))
+          ? sortBy(themes, (t) => t.label).map(
+              (t) =>
+                t.iri &&
+                t.label && (
+                  <Link
+                    key={t.iri}
+                    href={`/browse/theme/${encodeURIComponent(t.iri)}`}
+                    passHref
+                    legacyBehavior
+                  >
+                    <MUILink
+                      color="inherit"
+                      // The whole card is a link too, so we have to stop propagating the
+                      // event, otherwise we go first to <tag> page then to <result> page
+                      onClick={(ev) => ev.stopPropagation()}
+                    >
+                      <Tag type="theme">{t.label}</Tag>
+                    </MUILink>
+                  </Link>
+                )
+            )
           : null}
         {creator?.label ? (
           <Link
