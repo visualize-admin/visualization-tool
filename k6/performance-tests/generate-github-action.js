@@ -20,7 +20,7 @@ const commands = envs
   .flatMap((e) =>
     queries.flatMap((q) => cubes.map((c) => getRunCommand(e, q, c)))
   )
-  .join(" && ");
+  .join(" &&\n            ");
 
 const generate = () => {
   const file = `name: GraphQL performance tests
@@ -39,7 +39,8 @@ jobs:
         with:
           image: grafana/k6:latest
           options: -v \${{ github.workspace }}:/root -e K6_PROMETHEUS_RW_USERNAME=\${{ secrets.K6_PROMETHEUS_RW_USERNAME }} -e K6_PROMETHEUS_RW_PASSWORD=\${{ secrets.K6_PROMETHEUS_RW_PASSWORD }} -e K6_PROMETHEUS_RW_SERVER_URL=\${{ secrets.K6_PROMETHEUS_RW_SERVER_URL }}
-          run: ${commands}`;
+          run: |
+            ${commands}`;
 
   fs.writeFileSync("./.github/workflows/performance-tests.yml", file);
 };
