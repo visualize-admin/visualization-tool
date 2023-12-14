@@ -6,7 +6,7 @@
 import { group, sleep } from "k6";
 import http from "k6/http";
 
-import { DISTRIBUTION, PROJECT_ID } from "../../utils.js";
+import { DISTRIBUTION, PROJECT_ID } from "../../../k6-utils.js";
 
 const enableCache = __ENV.ENABLE_GQL_SERVER_SIDE_CACHE === "true";
 const cache = enableCache ? "cache" : "no-cache";
