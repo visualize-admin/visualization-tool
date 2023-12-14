@@ -1,7 +1,7 @@
 const fs = require("fs");
 
 const envs = ["test", "int", "prod"];
-const queries = ["DataCubeComponents", "DataCubeMetadata"];
+const queries = ["DataCubeComponents", "DataCubeMetadata", "DataCubePreview"];
 const cubes = [
   {
     iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9",
@@ -38,7 +38,11 @@ jobs:
         uses: addnab/docker-run-action@v3
         with:
           image: grafana/k6:latest
-          options: -v \${{ github.workspace }}:/root -e K6_PROMETHEUS_RW_USERNAME=\${{ secrets.K6_PROMETHEUS_RW_USERNAME }} -e K6_PROMETHEUS_RW_PASSWORD=\${{ secrets.K6_PROMETHEUS_RW_PASSWORD }} -e K6_PROMETHEUS_RW_SERVER_URL=\${{ secrets.K6_PROMETHEUS_RW_SERVER_URL }}
+          options: |
+            -v \${{ github.workspace }}:/root
+            -e K6_PROMETHEUS_RW_USERNAME=\${{ secrets.K6_PROMETHEUS_RW_USERNAME }}
+            -e K6_PROMETHEUS_RW_PASSWORD=\${{ secrets.K6_PROMETHEUS_RW_PASSWORD }}
+            -e K6_PROMETHEUS_RW_SERVER_URL=\${{ secrets.K6_PROMETHEUS_RW_SERVER_URL }}
           run: |
             ${commands}`;
 
