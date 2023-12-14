@@ -20,12 +20,12 @@ jobs:
         uses: addnab/docker-run-action@v3
         with:
           image: grafana/k6:latest
-          options: -e K6_PROMETHEUS_RW_USERNAME=\${{ secrets.K6_PROMETHEUS_RW_USERNAME }} -e K6_PROMETHEUS_RW_PASSWORD=\${{ secrets.K6_PROMETHEUS_RW_PASSWORD }} -e K6_PROMETHEUS_RW_SERVER_URL=\${{ secrets.K6_PROMETHEUS_RW_SERVER_URL }}
+          options: -v \${{ github.workspace }}:/root -e K6_PROMETHEUS_RW_USERNAME=\${{ secrets.K6_PROMETHEUS_RW_USERNAME }} -e K6_PROMETHEUS_RW_PASSWORD=\${{ secrets.K6_PROMETHEUS_RW_PASSWORD }} -e K6_PROMETHEUS_RW_SERVER_URL=\${{ secrets.K6_PROMETHEUS_RW_SERVER_URL }}
           run: ${envs
             .map((env) => {
               return queries.map((query) => {
                 return cubes.map((cube) => {
-                  return `k6 run -o experimental-prometheus-rw --tag testid=${cube} --env ENV=${env} --env CUBE=${cube} - <k6/performance-tests/graphql/${query}.js`;
+                  return `k6 run -o experimental-prometheus-rw --tag testid=${cube} --env ENV=${env} --env CUBE=${cube} - </root/k6/performance-tests/graphql/${query}.js`;
                 });
               });
             })
