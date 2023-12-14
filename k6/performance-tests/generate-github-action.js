@@ -4,12 +4,16 @@ const envs = ["test", "int", "prod"];
 const queries = ["DataCubeMetadata"];
 const cubes = [
   {
-    iri: "https://culture.ld.admin.ch/sfa/StateAccounts_Office/4/",
-    label: "StateAccounts_Office/4/",
+    iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9",
+    label: "Photovoltaikanlagen/9",
   },
   {
     iri: "https://environment.ld.admin.ch/foen/nfi/nfi_C-96/cube/2023-2",
-    label: "nfi_C-96/cube/2023-2",
+    label: "NFI/2023-2",
+  },
+  {
+    iri: "https://energy.ld.admin.ch/elcom/electricityprice",
+    label: "Elcom",
   },
 ];
 const commands = envs
