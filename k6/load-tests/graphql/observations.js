@@ -1,9 +1,8 @@
 import { sleep } from "k6";
 import http from "k6/http";
 
-import { DISTRIBUTION, PROJECT_ID } from "../utils.js";
-
-import { getHeaders, getUrl } from "./utils.js";
+import { getHeaders, getUrl } from "../../graphql-utils.js";
+import { DISTRIBUTION, PROJECT_ID } from "../../k6-utils.js";
 
 const query = `query DataCubeObservations(
   $iri: String!
