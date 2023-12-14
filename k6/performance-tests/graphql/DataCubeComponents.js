@@ -1,3 +1,4 @@
+import { check, fail } from "k6";
 import exec from "k6/execution";
 import http from "k6/http";
 
@@ -42,9 +43,13 @@ export default function Components() {
   exec.vu.metrics.tags.env = env;
   exec.vu.metrics.tags.cube = cubeLabel;
 
-  http.post(
+  const res = http.post(
     `https://${env === "prod" ? "" : `${env}.`}visualize.admin.ch/api/graphql`,
     JSON.stringify({ query, variables }),
     { headers }
   );
+
+  if (!check(res, { "Status code must be 200": (res) => res.status == 200 })) {
+    fail("Status code was *not* 200!");
+  }
 }
