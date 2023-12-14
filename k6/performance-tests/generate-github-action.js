@@ -1,7 +1,7 @@
 const fs = require("fs");
 
 const envs = ["test", "int", "prod"];
-const queries = ["metadata"];
+const queries = ["DataCubeMetadata"];
 const cubes = ["StateAccounts_Office/4/"];
 
 const generate = () => {
@@ -25,7 +25,7 @@ jobs:
             .map((env) => {
               return queries.map((query) => {
                 return cubes.map((cube) => {
-                  return `k6 run -o experimental-prometheus-rw --tag testid=${cube} --env ENV=${env} --env CUBE=${cube} - </root/k6/performance-tests/graphql/${query}.js`;
+                  return `k6 run -o experimental-prometheus-rw --tag testid=${query} --env ENV=${env} --env CUBE=${cube} - </root/k6/performance-tests/graphql/${query}.js`;
                 });
               });
             })
