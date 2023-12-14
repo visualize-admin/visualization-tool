@@ -24,32 +24,25 @@ const variables = {
   },
 };
 
-const env = __ENV.ENV || "prod";
-const enableCache = __ENV.ENABLE_GQL_SERVER_SIDE_CACHE === "true";
+const env = __ENV.ENV;
+const cube = __ENV.CUBE;
 
 /** @type {import("k6/options").Options} */
 export const options = {
   iterations: 1,
-  ext: {
-    loadimpact: {
-      name: `GraphQL - DataCubeMetadata (${env.toUpperCase()}, GQL ${
-        enableCache ? "cache" : "no-cache"
-      })`,
-    },
-  },
 };
 
 export default function Components() {
-  // Set tags for metrics
-  exec.vu.metrics.tags.env = "int";
-  exec.vu.metrics.tags.cube = "StateAccounts_Office/4/";
+  exec.vu.metrics.tags.env = env;
+  exec.vu.metrics.tags.cube = cube;
 
   http.post(
-    "https://int.visualize.admin.ch/api/graphql",
+    `https://${env === "prod" ? "" : `${env}.`}visualize.admin.ch/api/graphql`,
     JSON.stringify({ query, variables }),
     {
       headers: {
         "Content-Type": "application/json",
+        "x-visualize-cache-control": "no-cache",
       },
     }
   );
