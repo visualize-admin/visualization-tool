@@ -8,7 +8,7 @@ const cubes = [
     label: "Photovoltaikanlagen/9",
   },
   {
-    iri: "https://environment.ld.admin.ch/foen/nfi/nfi_C-96/cube/2023-3",
+    iri: "https://environment.ld.admin.ch/foen/nfi/nfi_C-20/cube/2023-3",
     label: "NFI/2023-3",
   },
   {
