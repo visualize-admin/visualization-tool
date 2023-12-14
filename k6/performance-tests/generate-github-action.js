@@ -25,7 +25,10 @@ const commands = envs
 const generate = () => {
   const file = `name: GraphQL performance tests
 
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: 37 * * * *"
 
 jobs:
   run_tests:
