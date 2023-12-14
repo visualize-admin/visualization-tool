@@ -28,7 +28,7 @@ const generate = () => {
 on:
   workflow_dispatch:
   schedule:
-    - cron: 37 * * * *"
+    - cron: "37 * * * *"
 
 jobs:
   run_tests:
