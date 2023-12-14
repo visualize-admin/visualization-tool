@@ -40,7 +40,7 @@ const cubeLabel = __ENV.CUBE_LABEL;
 const variables = {
   iri: cubeIri,
   sourceType: "sparql",
-  sourceUrl: `https://${env === "prod" ? "" : `${env}.`}lindas.admin.ch/query`,
+  sourceUrl: "https://lindas.admin.ch/query",
   locale: "en",
   latest: false,
 };

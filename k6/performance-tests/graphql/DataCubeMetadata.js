@@ -22,7 +22,7 @@ const cubeLabel = __ENV.CUBE_LABEL;
 const variables = {
   locale: "en",
   sourceType: "sparql",
-  sourceUrl: `https://${env === "prod" ? "" : `${env}.`}lindas.admin.ch/query`,
+  sourceUrl: "https://lindas.admin.ch/query",
   cubeFilter: {
     iri: cubeIri,
   },
