@@ -8,8 +8,8 @@ const cubes = [
     label: "Photovoltaikanlagen/9",
   },
   {
-    iri: "https://environment.ld.admin.ch/foen/nfi/nfi_C-96/cube/2023-2",
-    label: "NFI/2023-2",
+    iri: "https://environment.ld.admin.ch/foen/nfi/nfi_C-96/cube/2023-3",
+    label: "NFI/2023-3",
   },
   {
     iri: "https://energy.ld.admin.ch/elcom/electricityprice",
