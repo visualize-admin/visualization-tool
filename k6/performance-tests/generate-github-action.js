@@ -1,7 +1,7 @@
 const fs = require("fs");
 
 const envs = ["test", "int", "prod"];
-const queries = ["DataCubeMetadata"];
+const queries = ["DataCubeComponents", "DataCubeMetadata"];
 const cubes = [
   {
     iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9",
