@@ -2,7 +2,12 @@ const fs = require("fs");
 
 const envs = ["test", "int", "prod"];
 const queries = ["DataCubeMetadata"];
-const cubes = ["StateAccounts_Office/4/"];
+const cubes = [
+  {
+    iri: "https://culture.ld.admin.ch/sfa/StateAccounts_Office/4/",
+    label: "StateAccounts_Office/4/",
+  },
+];
 
 const generate = () => {
   const file = `name: Performance tests
@@ -25,7 +30,7 @@ jobs:
             .map((env) => {
               return queries.map((query) => {
                 return cubes.map((cube) => {
-                  return `k6 run -o experimental-prometheus-rw --tag testid=${query} --env ENV=${env} --env CUBE=${cube} - </root/k6/performance-tests/graphql/${query}.js`;
+                  return `k6 run -o experimental-prometheus-rw --tag testid=${query} --env ENV=${env} --env CUBE_IRI=${cube.iri} --env CUBE_LABEL=${cube.label} - </root/k6/performance-tests/graphql/${query}.js`;
                 });
               });
             })
