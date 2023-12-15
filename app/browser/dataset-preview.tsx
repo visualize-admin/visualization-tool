@@ -115,7 +115,10 @@ export const DataSetPreview = ({
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
-      cubeFilters,
+      cubeFilters: cubeFilters.map((filter) => ({
+        ...filter,
+        disableValuesLoad: true,
+      })),
     },
   });
   const classes = useStyles({

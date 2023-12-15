@@ -152,7 +152,13 @@ export const dataCubeComponents: NonNullable<
   const { loaders, sparqlClient, sparqlClientStream, cache } = await setup(
     info
   );
-  const { iri, latest = true, componentIris, filters } = cubeFilter;
+  const {
+    iri,
+    latest = true,
+    componentIris,
+    filters,
+    disableValuesLoad,
+  } = cubeFilter;
   const rawCube = await loaders.cube.load(iri);
 
   if (!rawCube) {
@@ -176,21 +182,27 @@ export const dataCubeComponents: NonNullable<
   await Promise.all(
     rawComponents.map(async (component) => {
       const { data } = component;
-      const dimensionValuesLoader = getDimensionValuesLoader(
-        sparqlClient,
-        loaders,
-        cache,
-        filters
-      );
-      const values: DimensionValue[] = await dimensionValuesLoader.load(
-        component
-      );
-      values.sort((a, b) =>
-        ascending(
-          a.position ?? a.value ?? undefined,
-          b.position ?? b.value ?? undefined
-        )
-      );
+
+      let values: DimensionValue[] = [];
+
+      if (!disableValuesLoad) {
+        const dimensionValuesLoader = getDimensionValuesLoader(
+          sparqlClient,
+          loaders,
+          cache,
+          filters
+        );
+        const values: DimensionValue[] = await dimensionValuesLoader.load(
+          component
+        );
+        values.sort((a, b) =>
+          ascending(
+            a.position ?? a.value ?? undefined,
+            b.position ?? b.value ?? undefined
+          )
+        );
+      }
+
       const baseComponent: BaseComponent = {
         // We need to use original iri here, as the cube iri might have changed.
         cubeIri: iri,
@@ -220,7 +232,7 @@ export const dataCubeComponents: NonNullable<
         measures.push(result);
       } else {
         const dimensionType = resolveDimensionType(component);
-        const hierarchy = true // TODO: make this configurable
+        const hierarchy = !disableValuesLoad
           ? await queryHierarchy(
               component,
               locale,

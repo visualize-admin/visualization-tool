@@ -99,6 +99,7 @@ export type DataCubeComponentFilter = {
   filters?: Maybe<Scalars['Filters']>;
   componentIris?: Maybe<Array<Scalars['String']>>;
   joinBy?: Maybe<Scalars['String']>;
+  disableValuesLoad?: Maybe<Scalars['Boolean']>;
 };
 
 

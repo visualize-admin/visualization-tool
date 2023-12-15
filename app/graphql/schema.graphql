@@ -344,6 +344,7 @@ input DataCubeComponentFilter {
   filters: Filters
   componentIris: [String!]
   joinBy: String
+  disableValuesLoad: Boolean
 }
 
 input DataCubeMetadataFilter {
