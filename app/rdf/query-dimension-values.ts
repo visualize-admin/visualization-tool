@@ -1,3 +1,4 @@
+import RDF from "@rdfjs/data-model";
 import { SELECT, sparql } from "@tpluscode/sparql-builder";
 import keyBy from "lodash/keyBy";
 import mapValues from "lodash/mapValues";
@@ -183,12 +184,22 @@ export async function loadMaxDimensionValue(
     ? getFiltersList(filters, dimensionIri?.value)
     : [];
 
-  const query = SELECT`(MAX(?value) as ?value)`.WHERE`
+  // The following query works both for numeric, date and ordinal dimensions
+  const query = SELECT`?value`.WHERE`
     ${datasetIri} ${cubeNs.observationSet} ?observationSet .
     ?observationSet ${cubeNs.observation} ?observation .
     ?observation ${dimensionIri} ?value .
+    OPTIONAL {
+      ?value <https://www.w3.org/TR/owl-time/hasEnd> ?hasEnd .
+      ?value ${ns.schema.position} ?position .
+    }
     ${getQueryFilters(filterList, cube, dimensionIri?.value)}
-  `.prologue`${pragmas}`;
+  `
+    .ORDER()
+    .BY(RDF.variable("hasEnd"), true)
+    .THEN.BY(RDF.variable("value"), true)
+    .THEN.BY(RDF.variable("position"), true)
+    .LIMIT(1).prologue`${pragmas}`;
 
   let result: Array<DimensionValue> = [];
 
