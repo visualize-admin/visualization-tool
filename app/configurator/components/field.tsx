@@ -354,6 +354,7 @@ export const DataFilterTemporal = (props: DataFilterTemporalProps) => {
             <FormControlLabel
               control={
                 <MUISwitch
+                  size="small"
                   checked={usesMostRecentDate}
                   onChange={() =>
                     fieldProps.onChange({

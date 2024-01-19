@@ -637,12 +637,17 @@ theme.components = {
   },
   MuiSwitch: {
     styleOverrides: {
-      root: {
-        width: 28,
-        height: 16,
-        padding: 0,
-
+      root: ({ ownerState }) => ({
         display: "flex",
+        ...(ownerState.size === "small" && {
+          width: 24,
+          height: 12,
+        }),
+        ...(ownerState.size === "medium" && {
+          width: 28,
+          height: 16,
+        }),
+        padding: 0,
 
         "& .MuiSwitch-switchBase": {
           padding: 2,
@@ -661,8 +666,14 @@ theme.components = {
         },
         "& .MuiSwitch-thumb": {
           backgroundColor: theme.palette.background.paper,
-          width: 12,
-          height: 12,
+          ...(ownerState.size === "small" && {
+            width: 8,
+            height: 8,
+          }),
+          ...(ownerState.size === "medium" && {
+            width: 12,
+            height: 12,
+          }),
           borderRadius: 6,
           transition: theme.transitions.create(["width"], {
             duration: 200,
@@ -683,7 +694,7 @@ theme.components = {
             transform: "translateX(9px)",
           },
         },
-      },
+      }),
     },
   },
   MuiTableCell: {
