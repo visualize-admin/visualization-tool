@@ -367,8 +367,13 @@ export const DataFilterTemporal = (props: DataFilterTemporalProps) => {
                   }
                 />
               }
-              // FIXME: adapt to design, translate
-              label={<Typography variant="caption">Use most recent</Typography>}
+              label={
+                <Typography variant="caption">
+                  <Trans id="controls.filter.use-most-recent">
+                    Use most recent
+                  </Trans>
+                </Typography>
+              }
               sx={{ mr: 0 }}
             />
           </FormGroup>
