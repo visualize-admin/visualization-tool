@@ -1,0 +1,60 @@
+# Only used for dev atm!
+version: "3"
+services:
+  ## Running in Docker slows down development a lot, so this is only kept for reference here.
+  # nextjs:
+  #   image: "node:18"
+  #   ports:
+  #     - "3000:3000"
+  #   volumes:
+  #     - "./:/usr/src/app:delegated"
+  #     - "mitmproxy-config:/mitmproxy/"
+  #   working_dir: "/usr/src/app"
+  #   command: ["sh", "-c", "yarn && yarn dev:mitmproxy"]
+  #   depends_on:
+  #     - db
+  #   environment:
+  #     DATABASE_URL: "postgres://postgres:password@db:5432/template1"
+  #     HTTP_PROXY: "http://mitmweb:8080"
+  #     NODE_EXTRA_CA_CERTS: "/mitmproxy/mitmproxy-ca-cert.pem"
+  #     NO_PROXY: "localhost,127.0.0.1"
+  #   restart: "always"
+
+  visualize:
+    image: "ghcr.io/visualize-admin/visualization-tool/visualization-tool:release"
+    ports:
+      - "3000:3000"
+    volumes:
+      - "mitmproxy-config:/mitmproxy/"
+    working_dir: "/usr/src/app"
+    depends_on:
+      - db
+      - mitmweb
+    environment:
+      DATABASE_URL: "postgres://postgres:password@db:5432/template1"
+      HTTP_PROXY: "http://mitmweb:8080"
+      NODE_EXTRA_CA_CERTS: "/mitmproxy/mitmproxy-ca-cert.pem"
+      NO_PROXY: "localhost,127.0.0.1"
+    restart: "always"
+
+  db:
+    image: "postgres:11"
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: "visualization_tool"
+      POSTGRES_PASSWORD: "password"
+
+  mitmweb:
+    image: "mitmproxy/mitmproxy:latest"
+    ports:
+      - 8080:8080
+      - 8081:8081
+    volumes:
+      - "mitmproxy-config:/root/.mitmproxy/"
+    user: root:root
+    command: ["sh", "-c", "cd && pwd && whoami && mitmweb --web-host 0.0.0.0 --no-web-open-browser"]
+
+
+volumes:
+  mitmproxy-config:
