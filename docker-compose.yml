@@ -3,7 +3,7 @@ version: "3"
 services:
   ## Running in Docker slows down development a lot, so this is only kept for reference here.
   # nextjs:
-  #   image: "node:12"
+  #   image: "node:18"
   #   ports:
   #     - "3000:3000"
   #   volumes:
@@ -13,7 +13,7 @@ services:
   #   depends_on:
   #     - db
   #   environment:
-  #     DATABASE_URL: "postgres://postgres@db:5432/template1"
+  #     DATABASE_URL: "postgres://postgres:password@db:5432/template1"
   #   restart: "always"
   db:
     image: "postgres:11"
