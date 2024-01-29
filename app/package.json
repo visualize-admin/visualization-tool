@@ -24,6 +24,7 @@
     "@deck.gl/mapbox": "^8.9.19",
     "@deck.gl/mesh-layers": "^8.9.19",
     "@deck.gl/react": "^8.9.19",
+    "@dnd-kit/core": "^6.1.0",
     "@emotion/react": "^11.8.2",
     "@emotion/styled": "^11.8.1",
     "@juggle/resize-observer": "^3.2.0",
