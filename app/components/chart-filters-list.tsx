@@ -1,7 +1,10 @@
 import { Box, Typography } from "@mui/material";
 import React, { Fragment } from "react";
 
-import { useQueryFilters } from "@/charts/shared/chart-helpers";
+import {
+  extractChartConfigComponentIris,
+  useQueryFilters,
+} from "@/charts/shared/chart-helpers";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import {
   ChartConfig,
@@ -38,6 +41,7 @@ export const ChartFiltersList = (props: ChartFiltersListProps) => {
     chartConfig,
     dimensions,
     measures,
+    componentIris: extractChartConfigComponentIris(chartConfig),
   });
   const [{ data }] = useDataCubesComponentsQuery({
     variables: {

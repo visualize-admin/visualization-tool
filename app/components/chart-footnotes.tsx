@@ -3,7 +3,10 @@ import { Box, Button, Link, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { PropsWithChildren, useEffect, useState } from "react";
 
-import { useQueryFilters } from "@/charts/shared/chart-helpers";
+import {
+  extractChartConfigComponentIris,
+  useQueryFilters,
+} from "@/charts/shared/chart-helpers";
 import { useChartTablePreview } from "@/components/chart-table-preview";
 import { DataDownloadMenu, RunSparqlQuery } from "@/components/data-download";
 import { ChartConfig, DataSource } from "@/configurator";
@@ -73,6 +76,7 @@ export const ChartFootnotes = ({
     chartConfig,
     dimensions,
     measures,
+    componentIris: extractChartConfigComponentIris(chartConfig),
   });
   const commonQueryVariables = {
     sourceType: dataSource.type,

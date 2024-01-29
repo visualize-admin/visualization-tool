@@ -285,6 +285,7 @@ export const DataSetTable = ({
     chartConfig,
     dimensions: componentsData?.dataCubesComponents?.dimensions,
     measures: componentsData?.dataCubesComponents?.measures,
+    componentIris,
   });
   const [{ data: observationsData }] = useDataCubesObservationsQuery({
     variables: {

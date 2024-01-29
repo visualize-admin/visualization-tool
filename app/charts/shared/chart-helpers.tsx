@@ -71,11 +71,13 @@ export const useQueryFilters = ({
   dimensions,
   measures,
   allowNoneValues,
+  componentIris,
 }: {
   chartConfig: ChartConfig;
   dimensions?: Dimension[];
   measures?: Measure[];
   allowNoneValues?: boolean;
+  componentIris?: string[];
 }): DataCubeObservationFilter[] | undefined => {
   const allDataFilters = useInteractiveFilters((d) => d.dataFilters);
 
@@ -94,10 +96,7 @@ export const useQueryFilters = ({
 
       return {
         iri: cube.iri,
-        // componentIris: getComponentIris(cube.iri, {
-        //   dimensions,
-        //   measures,
-        // }),
+        componentIris,
         filters: prepareQueryFilters(
           chartConfig.chartType,
           filters,
@@ -116,6 +115,7 @@ export const useQueryFilters = ({
     allowNoneValues,
     dimensions,
     measures,
+    componentIris,
   ]);
 };
 

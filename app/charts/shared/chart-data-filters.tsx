@@ -71,14 +71,15 @@ export const ChartDataFilters = (props: ChartDataFiltersProps) => {
   const { dataSource, chartConfig, dimensions, measures } = props;
   const { loading } = useLoadingState();
   const dataFilters = useInteractiveFilters((d) => d.dataFilters);
+  const componentIris = chartConfig.interactiveFiltersConfig?.dataFilters
+    .componentIris as string[];
   const queryFilters = useQueryFilters({
     chartConfig,
     dimensions,
     measures,
     allowNoneValues: true,
+    componentIris,
   });
-  const componentIris = chartConfig.interactiveFiltersConfig?.dataFilters
-    .componentIris as string[];
   const [filtersVisible, setFiltersVisible] = React.useState(false);
 
   React.useEffect(() => {
