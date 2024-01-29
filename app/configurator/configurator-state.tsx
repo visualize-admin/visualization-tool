@@ -1376,8 +1376,10 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
     case "CHART_CONFIG_REORDER":
       if (draft.state === "CONFIGURING_CHART" || draft.state === "LAYOUTING") {
         const { oldIndex, newIndex } = action.value;
-        const [removed] = draft.chartConfigs.splice(oldIndex, 1);
-        draft.chartConfigs.splice(newIndex, 0, removed);
+        const oldChartConfig = draft.chartConfigs[oldIndex];
+        const newChartConfig = draft.chartConfigs[newIndex];
+        draft.chartConfigs[oldIndex] = newChartConfig;
+        draft.chartConfigs[newIndex] = oldChartConfig;
       }
 
       return draft;
