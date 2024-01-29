@@ -119,42 +119,6 @@ export const useQueryFilters = ({
   ]);
 };
 
-// Handle correctly when improving performance of data fetching!
-// const getComponentIris = (
-//   cubeIri: string,
-//   options: {
-//     dimensions: Dimension[];
-//     measures: Measure[];
-//   }
-// ) => {
-//   const { dimensions, measures } = options;
-
-//   if (dimensions.length === 0 && measures.length === 0) {
-//     return;
-//   }
-
-//   const filteredDimensionIris: string[] = [];
-
-//   for (const dimension of dimensions) {
-//     if (dimension.isJoinByDimension) {
-//       if (dimension.originalIris.some((d) => d.cubeIri === cubeIri)) {
-//         filteredDimensionIris.push(
-//           ...dimension.originalIris.map((d) => d.dimensionIri)
-//         );
-//       }
-//     } else {
-//       if (dimension.cubeIri === cubeIri) {
-//         filteredDimensionIris.push(dimension.iri);
-//       }
-//     }
-//   }
-
-//   return [
-//     ...filteredDimensionIris,
-//     ...measures.filter((d) => d.cubeIri === cubeIri).map((d) => d.iri),
-//   ];
-// };
-
 type IFKey = keyof NonNullable<InteractiveFiltersConfig>;
 
 export const getChartConfigFilterComponentIris = ({ cubes }: ChartConfig) => {
