@@ -86,6 +86,7 @@ const GenericChart = (props: GenericChartProps) => {
     chartConfig,
     dimensions,
     measures,
+    componentIris,
   });
   const commonProps = {
     dataSource,
