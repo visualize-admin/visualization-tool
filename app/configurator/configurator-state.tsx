@@ -1566,6 +1566,10 @@ const ConfiguratorStateProviderInternal = (
   }, []);
 
   useEffect(() => {
+    dispatch({ type: "DATASOURCE_CHANGED", value: dataSource });
+  }, [dataSource, dispatch]);
+
+  useEffect(() => {
     try {
       switch (state.state) {
         case "CONFIGURING_CHART":
