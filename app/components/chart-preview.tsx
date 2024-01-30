@@ -1,5 +1,12 @@
-import { DndContext, useDraggable, useDroppable } from "@dnd-kit/core";
-import { restrictToParentElement } from "@dnd-kit/modifiers";
+import {
+  DndContext,
+  DragOverlay,
+  Over,
+  pointerWithin,
+  useDraggable,
+  useDroppable,
+} from "@dnd-kit/core";
+import { snapCenterToCursor } from "@dnd-kit/modifiers";
 import { Trans } from "@lingui/macro";
 import { Box } from "@mui/material";
 import Head from "next/head";
@@ -46,14 +53,31 @@ type ChartPreviewProps = {
 export const ChartPreview = (props: ChartPreviewProps) => {
   const [state, dispatch] = useConfiguratorState(hasChartConfigs);
   const editing = isConfiguring(state);
+  const [isDragging, setIsDragging] = React.useState(false);
+  const [activeChartKey, setActiveChartKey] = React.useState<string | null>(
+    null
+  );
+  const [over, setOver] = React.useState<Over | null>(null);
 
   return (
     <ChartTablePreviewProvider>
       {state.layout.type === "dashboard" && !editing ? (
         <ChartPanelLayout type={state.layout.layout}>
           <DndContext
-            modifiers={[restrictToParentElement]}
+            collisionDetection={pointerWithin}
+            onDragStart={(e) => {
+              setIsDragging(true);
+              setActiveChartKey(e.active.id.toString());
+            }}
+            onDragMove={(e) => {
+              if (e.over?.id !== over?.id) {
+                setOver(e.over);
+              }
+            }}
             onDragEnd={(e) => {
+              setIsDragging(false);
+              setActiveChartKey(null);
+              setOver(null);
               const { active, over } = e;
 
               if (!active || !over) {
@@ -82,6 +106,33 @@ export const ChartPreview = (props: ChartPreviewProps) => {
                 layout={state.layout}
               />
             ))}
+            {isDragging && (
+              <DragOverlay
+                zIndex={1000}
+                modifiers={[snapCenterToCursor]}
+                style={{
+                  width: "min(40vh, 400px)",
+                  height: "fit-content",
+                  border:
+                    over && over.id !== activeChartKey
+                      ? "2px solid green"
+                      : "2px solid transparent",
+                  opacity: over && over.id !== activeChartKey ? 0.8 : 1,
+                  cursor: "grabbing",
+                  pointerEvents: "none",
+                  transition:
+                    "border 0.2s ease-in-out, opacity 0.2s ease-in-out",
+                }}
+              >
+                <ChartWrapper editing={editing} layout={state.layout}>
+                  <ChartPreviewInner
+                    {...props}
+                    chartKey={activeChartKey ?? undefined}
+                    disableMetadataButton
+                  />
+                </ChartWrapper>
+              </DragOverlay>
+            )}
           </DndContext>
         </ChartPanelLayout>
       ) : (
@@ -106,7 +157,6 @@ const DndChartPreview = (props: DndChartPreviewProps) => {
     setNodeRef: setDraggableNodeRef,
     attributes,
     listeners,
-    transform,
     isDragging,
   } = useDraggable({ id: chartKey });
 
@@ -130,11 +180,13 @@ const DndChartPreview = (props: DndChartPreviewProps) => {
       ref={setRef}
       {...attributes}
       style={{
-        zIndex: isDragging ? 1000 : undefined,
-        transform: `translate(${transform?.x ?? 0}px, ${transform?.y ?? 0}px)`,
-        opacity: isOverDroppable && !isDragging ? 0.5 : 1,
-        // Disable tooltip interactions while dragging
+        opacity: isOverDroppable && !isDragging ? 0.8 : 1,
+        border:
+          isOverDroppable && !isDragging
+            ? "2px solid green"
+            : "2px solid transparent",
         pointerEvents: active ? "none" : "auto",
+        transition: "border 0.2s ease-in-out, opacity 0.2s ease-in-out",
       }}
     >
       <ChartPreviewInner
