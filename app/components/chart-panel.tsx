@@ -32,6 +32,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     borderColor: theme.palette.divider,
     overflow: "hidden",
     width: "auto",
+    height: "100%",
   },
 }));
 
