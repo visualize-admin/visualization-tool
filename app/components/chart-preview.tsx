@@ -59,7 +59,7 @@ export const ChartPreview = (props: ChartPreviewProps) => {
               }
 
               dispatch({
-                type: "CHART_CONFIG_REORDER",
+                type: "CHART_CONFIG_SWAP",
                 value: {
                   oldIndex: state.chartConfigs.findIndex(
                     (c) => c.key === active.id
