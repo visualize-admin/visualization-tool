@@ -1,3 +1,4 @@
+import { DndContext } from "@dnd-kit/core";
 import { Trans } from "@lingui/macro";
 import { Box } from "@mui/material";
 import Head from "next/head";
@@ -6,7 +7,11 @@ import { useMemo } from "react";
 import { DataSetTable } from "@/browse/datatable";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
 import { ChartFootnotes } from "@/components/chart-footnotes";
-import { ChartPanelLayout, ChartWrapper } from "@/components/chart-panel";
+import {
+  ChartPanelLayout,
+  ChartWrapper,
+  DndChartWrapper,
+} from "@/components/chart-panel";
 import {
   ChartTablePreviewProvider,
   useChartTablePreview,
@@ -37,22 +42,45 @@ type ChartPreviewProps = {
 };
 
 export const ChartPreview = (props: ChartPreviewProps) => {
-  const [state] = useConfiguratorState(hasChartConfigs);
+  const [state, dispatch] = useConfiguratorState(hasChartConfigs);
   const editing = isConfiguring(state);
 
   return (
     <ChartTablePreviewProvider>
       {state.layout.type === "dashboard" && !editing ? (
         <ChartPanelLayout type={state.layout.layout}>
-          {state.chartConfigs.map((chartConfig) => (
-            <ChartWrapper
-              key={chartConfig.key}
-              editing={editing}
-              layout={state.layout}
-            >
-              <ChartPreviewInner {...props} chartKey={chartConfig.key} />
-            </ChartWrapper>
-          ))}
+          <DndContext
+            onDragEnd={(e) => {
+              const { active, over } = e;
+
+              if (!active || !over) {
+                return;
+              }
+
+              dispatch({
+                type: "CHART_CONFIG_REORDER",
+                value: {
+                  oldIndex: state.chartConfigs.findIndex(
+                    (c) => c.key === active.id
+                  ),
+                  newIndex: state.chartConfigs.findIndex(
+                    (c) => c.key === over.id
+                  ),
+                },
+              });
+            }}
+          >
+            {state.chartConfigs.map((chartConfig) => (
+              <DndChartWrapper
+                key={chartConfig.key}
+                chartKey={chartConfig.key}
+                editing={editing}
+                layout={state.layout}
+              >
+                <ChartPreviewInner {...props} chartKey={chartConfig.key} />
+              </DndChartWrapper>
+            ))}
+          </DndContext>
         </ChartPanelLayout>
       ) : (
         <ChartWrapper editing={editing} layout={state.layout}>
