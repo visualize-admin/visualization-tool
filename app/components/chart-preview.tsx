@@ -1,4 +1,5 @@
 import { DndContext, useDraggable, useDroppable } from "@dnd-kit/core";
+import { restrictToParentElement } from "@dnd-kit/modifiers";
 import { Trans } from "@lingui/macro";
 import { Box } from "@mui/material";
 import Head from "next/head";
@@ -51,6 +52,7 @@ export const ChartPreview = (props: ChartPreviewProps) => {
       {state.layout.type === "dashboard" && !editing ? (
         <ChartPanelLayout type={state.layout.layout}>
           <DndContext
+            modifiers={[restrictToParentElement]}
             onDragEnd={(e) => {
               const { active, over } = e;
 
