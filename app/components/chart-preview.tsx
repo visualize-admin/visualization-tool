@@ -149,7 +149,7 @@ const DashboardPreview = (props: DashboardPreviewProps) => {
               <ChartPreviewInner
                 dataSource={dataSource}
                 chartKey={activeChartKey}
-                disableMetadataButton
+                disableMetadataPanel
               />
             </ChartWrapper>
           </DragOverlay>
@@ -208,14 +208,13 @@ const DndChartPreview = (props: DndChartPreviewProps) => {
       <ChartPreviewInner
         dataSource={dataSource}
         chartKey={chartKey}
-        titleSlot={
+        dragHandleSlot={
           <DragHandle
             {...listeners}
             ref={setActivatorNodeRef}
             dragging={isDragging}
           />
         }
-        disableMetadataButton
       />
     </ChartWrapper>
   );
@@ -223,12 +222,12 @@ const DndChartPreview = (props: DndChartPreviewProps) => {
 
 type ChartPreviewInnerProps = ChartPreviewProps & {
   chartKey?: string | null;
-  titleSlot?: React.ReactNode;
-  disableMetadataButton?: boolean;
+  dragHandleSlot?: React.ReactNode;
+  disableMetadataPanel?: boolean;
 };
 
 export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
-  const { dataSource, chartKey, titleSlot, disableMetadataButton } = props;
+  const { dataSource, chartKey, dragHandleSlot, disableMetadataPanel } = props;
   const [state, dispatch] = useConfiguratorState();
   const chartConfig = getChartConfig(state, chartKey);
   const locale = useLocale();
@@ -331,16 +330,18 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
                   }
                 />
               )}
-              {titleSlot}
-              {!disableMetadataButton && (
-                <MetadataPanel
-                  // FIXME: adapt to design
-                  datasetIri={chartConfig.cubes[0].iri}
-                  dataSource={dataSource}
-                  dimensions={allComponents}
-                  top={96}
-                />
-              )}
+              <Flex sx={{ alignItems: "center", gap: 2 }}>
+                {!disableMetadataPanel && (
+                  <MetadataPanel
+                    // FIXME: adapt to design
+                    datasetIri={chartConfig.cubes[0].iri}
+                    dataSource={dataSource}
+                    dimensions={allComponents}
+                    top={96}
+                  />
+                )}
+                {dragHandleSlot}
+              </Flex>
             </Flex>
             <Head>
               <title key="title">
