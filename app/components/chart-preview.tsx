@@ -6,7 +6,8 @@ import {
   useDraggable,
   useDroppable,
 } from "@dnd-kit/core";
-import { snapCenterToCursor } from "@dnd-kit/modifiers";
+// import { snapCenterToCursor } from "@dnd-kit/modifiers";
+import { getEventCoordinates } from "@dnd-kit/utilities";
 import { Trans } from "@lingui/macro";
 import { Box } from "@mui/material";
 import Head from "next/head";
@@ -49,6 +50,8 @@ import { useLocale } from "@/locales/use-locale";
 import { useTransitionStore } from "@/stores/transition";
 import { useTheme } from "@/themes";
 import useEvent from "@/utils/use-event";
+
+import type { Modifier } from "@dnd-kit/core";
 
 type ChartPreviewProps = {
   dataSource: DataSource;
@@ -136,7 +139,7 @@ const DashboardPreview = (props: DashboardPreviewProps) => {
         {isDragging && (
           <DragOverlay
             zIndex={1000}
-            modifiers={[snapCenterToCursor]}
+            modifiers={[snapCornerToCursor]}
             style={{
               opacity: over ? 0.8 : 1,
               width: "min(40vh, 400px)",
@@ -408,4 +411,28 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
       </ChartErrorBoundary>
     </Flex>
   );
+};
+
+const snapCornerToCursor: Modifier = ({
+  activatorEvent,
+  draggingNodeRect,
+  transform,
+}) => {
+  if (draggingNodeRect && activatorEvent) {
+    const activatorCoordinates = getEventCoordinates(activatorEvent);
+
+    if (!activatorCoordinates) {
+      return transform;
+    }
+
+    const offsetX = activatorCoordinates.x - draggingNodeRect.left + 48;
+
+    return {
+      ...transform,
+      x: transform.x + offsetX - draggingNodeRect.width,
+      y: transform.y,
+    };
+  }
+
+  return transform;
 };
