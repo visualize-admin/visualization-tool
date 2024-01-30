@@ -80,6 +80,7 @@ import {
   HierarchyValue,
   ObservationValue,
   TemporalDimension,
+  isTemporalOrdinalDimension,
 } from "@/domain/data";
 import { useTimeFormatLocale } from "@/formatters";
 import { TimeUnit } from "@/graphql/query-hooks";
@@ -240,11 +241,56 @@ export const DataFilterSelect = ({
     );
   }
 
+  const canUseMostRecentValue = isTemporalOrdinalDimension(dimension);
+  const usesMostRecentValue = isDynamicMaxValue(fieldProps.value);
+  const maxValue = sortedValues[sortedValues.length - 1].value;
+
   return (
     <Select
       id={id}
-      label={<FieldLabel label={label} isOptional={isOptional} />}
-      disabled={disabled}
+      label={
+        canUseMostRecentValue ? (
+          <Flex
+            sx={{
+              width: "100%",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <FieldLabel label={label} isOptional={isOptional} />
+            <FormGroup>
+              <FormControlLabel
+                control={
+                  <MUISwitch
+                    size="small"
+                    checked={usesMostRecentValue}
+                    onChange={() =>
+                      fieldProps.onChange({
+                        target: {
+                          value: usesMostRecentValue
+                            ? `${maxValue}`
+                            : VISUALIZE_MAX_VALUE,
+                        },
+                      })
+                    }
+                  />
+                }
+                label={
+                  <Typography variant="caption">
+                    <Trans id="controls.filter.use-most-recent">
+                      Use most recent
+                    </Trans>
+                  </Typography>
+                }
+                sx={{ mr: 0 }}
+              />
+            </FormGroup>
+          </Flex>
+        ) : (
+          <FieldLabel label={label} isOptional={isOptional} />
+        )
+      }
+      disabled={disabled || usesMostRecentValue}
       options={allValues}
       sortOptions={false}
       controls={controls}
@@ -253,6 +299,7 @@ export const DataFilterSelect = ({
       onOpen={handleOpen}
       loading={loading}
       {...fieldProps}
+      value={usesMostRecentValue ? maxValue : fieldProps.value}
     />
   );
 };
@@ -349,11 +396,11 @@ export const DataFilterTemporal = (props: DataFilterTemporalProps) => {
               </OpenMetadataPanelWrapper>
             }
           />
-          {/* FIXME: adapt to design */}
           <FormGroup>
             <FormControlLabel
               control={
                 <MUISwitch
+                  size="small"
                   checked={usesMostRecentDate}
                   onChange={() =>
                     fieldProps.onChange({
@@ -366,8 +413,14 @@ export const DataFilterTemporal = (props: DataFilterTemporalProps) => {
                   }
                 />
               }
-              // FIXME: adapt to design, translate
-              label={<Typography variant="caption">Use most recent</Typography>}
+              label={
+                <Typography variant="caption">
+                  <Trans id="controls.filter.use-most-recent">
+                    Use most recent
+                  </Trans>
+                </Typography>
+              }
+              sx={{ mr: 0 }}
             />
           </FormGroup>
         </Flex>

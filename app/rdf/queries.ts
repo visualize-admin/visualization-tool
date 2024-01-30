@@ -1,4 +1,3 @@
-import { SELECT } from "@tpluscode/sparql-builder";
 import { descending, group, index } from "d3";
 import { Maybe } from "graphql-tools";
 import keyBy from "lodash/keyBy";
@@ -39,6 +38,7 @@ import {
 } from "./parse";
 import {
   loadDimensionValues,
+  loadMaxDimensionValue,
   loadMinMaxDimensionValues,
 } from "./query-dimension-values";
 import { loadResourceLabels } from "./query-labels";
@@ -343,10 +343,13 @@ export const getCubeDimensionValuesWithMetadata = async ({
     const loaders = [
       filters ? undefined : () => dimension.in ?? [],
       () =>
-        loadDimensionValues(
-          { datasetIri: cube.term, dimension, cube, sparqlClient },
-          filters
-        ),
+        loadDimensionValues({
+          datasetIri: cube.term,
+          dimension,
+          cube,
+          sparqlClient,
+          filters,
+        }),
     ].filter(truthy);
 
     for (const loader of loaders) {
@@ -864,27 +867,15 @@ const buildFilters = async ({
       switch (filter.type) {
         case "single": {
           if (isDynamicMaxValue(filter.value)) {
-            if (cubeDimension.maxInclusive) {
-              return [
-                filterDimension.filter.eq(
-                  toRDFValue(cubeDimension.maxInclusive.value)
-                ),
-              ];
-            }
+            const maxValue = await loadMaxDimensionValue({
+              datasetIri: cube.term,
+              dimension: cubeDimension,
+              cube,
+              sparqlClient,
+              filters,
+            });
 
-            // Ideally we would query the max value directly in the observations
-            // query, but it doesn't seem to be supported by the cube-view-query
-            const maxValueQuery = SELECT`(MAX(?value) as ?value)`
-              .WHERE` <${cube.term?.value}> <https://cube.link/observationSet> ?observationSet .
-  ?observationSet <https://cube.link/observation> ?source .
-  ?source <${cubeDimension.path?.value}> ?value .`;
-            const maxValueRaw = await maxValueQuery.execute(
-              sparqlClient.query,
-              { operation: "postUrlencoded" }
-            );
-            const maxValue = maxValueRaw?.[0]?.value?.value as string;
-
-            return [filterDimension.filter.eq(toRDFValue(maxValue))];
+            return [filterDimension.filter.eq(toRDFValue(maxValue[0].value))];
           }
 
           return [filterDimension.filter.eq(toRDFValue(`${filter.value}`))];

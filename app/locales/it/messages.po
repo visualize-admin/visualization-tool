@@ -421,7 +421,6 @@ msgstr "Descrizione"
 #: app/charts/shared/chart-data-filters.tsx
 #: app/configurator/components/field.tsx
 #: app/configurator/components/field.tsx
-#: app/configurator/components/field.tsx
 msgid "controls.dimensionvalue.none"
 msgstr "Nessun filtro"
 
@@ -440,6 +439,10 @@ msgstr "Seleziona tutti"
 #: app/configurator/components/filters.tsx
 msgid "controls.filter.select.none"
 msgstr "Deseleziona tutto"
+
+#: app/configurator/components/field.tsx
+msgid "controls.filter.use-most-recent"
+msgstr "Usare il più recente"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.filters.interactive.calculation"

@@ -353,7 +353,7 @@ export const Select = ({
     <LoadingMenuPaperContext.Provider value={loading}>
       <Box sx={{ width: "100%", ...sx }}>
         {label && (
-          <Label htmlFor={id} smaller sx={{ my: 1 }}>
+          <Label htmlFor={id} smaller sx={{ my: "6px" }}>
             {label}
             {controls}
           </Label>

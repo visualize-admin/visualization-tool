@@ -481,7 +481,7 @@ function SelectTree({
   return (
     <div>
       {label && (
-        <Label htmlFor={id!} smaller sx={{ my: 1 }}>
+        <Label htmlFor={id!} smaller sx={{ my: "6px" }}>
           {label} {controls}
         </Label>
       )}

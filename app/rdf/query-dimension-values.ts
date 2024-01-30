@@ -1,3 +1,4 @@
+import RDF from "@rdfjs/data-model";
 import { SELECT, sparql } from "@tpluscode/sparql-builder";
 import keyBy from "lodash/keyBy";
 import mapValues from "lodash/mapValues";
@@ -8,6 +9,7 @@ import { Literal, NamedNode, Term } from "rdf-js";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
 import { LRUCache } from "typescript-lru-cache";
 
+import { isDynamicMaxValue } from "@/configurator/components/field";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { parseObservationValue } from "@/domain/data";
 import { pragmas } from "@/rdf/create-source";
@@ -124,6 +126,14 @@ const getFilterOrder = (filter: Filters[number]) => {
   }
 };
 
+type LoadDimensionValuesProps = {
+  datasetIri: Term | undefined;
+  dimension: CubeDimension;
+  cube: ExtendedCube;
+  sparqlClient: ParsingClient;
+  filters?: Filters;
+};
+
 /**
  * Load dimension values.
  *
@@ -131,74 +141,19 @@ const getFilterOrder = (filter: Filters[number]) => {
  *
  */
 export async function loadDimensionValues(
-  {
-    datasetIri,
-    dimension,
-    cube,
-    sparqlClient,
-  }: {
-    datasetIri: Term | undefined;
-    dimension: CubeDimension;
-    cube: ExtendedCube;
-    sparqlClient: ParsingClient;
-  },
-  filters?: Filters
+  props: LoadDimensionValuesProps
 ): Promise<Array<Literal | NamedNode>> {
+  const { datasetIri, dimension, cube, sparqlClient, filters } = props;
   const dimensionIri = dimension.path;
-  const allFiltersList = filters ? Object.entries(filters) : [];
-  const filterList =
-    // Consider filters before the current filter to fetch the values for
-    // the current filter
-    sortBy(
-      allFiltersList.slice(
-        0,
-        allFiltersList.findIndex(([iri]) => iri == dimensionIri?.value)
-      ),
-      ([, filterValue]) => getFilterOrder(filterValue)
-    );
+  const filterList = filters
+    ? getFiltersList(filters, dimensionIri?.value)
+    : [];
 
   const query = SELECT.DISTINCT`?value`.WHERE`
     ${datasetIri} ${cubeNs.observationSet} ?observationSet .
     ?observationSet ${cubeNs.observation} ?observation .
     ?observation ${dimensionIri} ?value .
-    ${
-      filters
-        ? filterList.map(([iri, value], idx) => {
-            const filterDimension = cube.dimensions.find(
-              (d) => d.path?.value === iri
-            );
-
-            if (!filterDimension || dimensionIri?.value === iri) {
-              return "";
-            }
-
-            if (value.type === "single" && value.value === FIELD_VALUE_NONE) {
-              return "";
-            }
-
-            // Ignore range filters for now.
-            if (value.type === "range") {
-              return "";
-            }
-            const versioned = filterDimension
-              ? dimensionIsVersioned(filterDimension)
-              : false;
-
-            return sparql`${
-              versioned
-                ? sparql`?dimension${idx} ${ns.schema.sameAs} ?dimension_unversioned${idx}.`
-                : ""
-            }
-            ?observation <${iri}> ?dimension${idx}.
-            ${formatFilterIntoSparqlFilter(
-              value,
-              filterDimension,
-              versioned,
-              idx
-            )}`;
-          })
-        : ""
-    }
+    ${getQueryFilters(filterList, cube, dimensionIri?.value)}
   `.prologue`${pragmas}`;
 
   let result: Array<DimensionValue> = [];
@@ -208,11 +163,109 @@ export async function loadDimensionValues(
       operation: "postUrlencoded",
     })) as unknown as Array<DimensionValue>;
   } catch {
-    console.warn(`Failed to fetch dimension values for ${datasetIri}.`);
+    console.warn(`Failed to fetch dimension values for ${datasetIri}!`);
   } finally {
     return result.map((d) => d.value);
   }
 }
+
+/**
+ * Load max dimension value.
+ *
+ * Filters on other dimensions can be passed.
+ *
+ */
+export async function loadMaxDimensionValue(
+  props: LoadDimensionValuesProps
+): Promise<Array<Literal | NamedNode>> {
+  const { datasetIri, dimension, cube, sparqlClient, filters } = props;
+  const dimensionIri = dimension.path;
+  const filterList = filters
+    ? getFiltersList(filters, dimensionIri?.value)
+    : [];
+
+  // The following query works both for numeric, date and ordinal dimensions
+  const query = SELECT`?value`.WHERE`
+    ${datasetIri} ${cubeNs.observationSet} ?observationSet .
+    ?observationSet ${cubeNs.observation} ?observation .
+    ?observation ${dimensionIri} ?value .
+    OPTIONAL {
+      ?value <https://www.w3.org/TR/owl-time/hasEnd> ?hasEnd .
+      ?value ${ns.schema.position} ?position .
+    }
+    ${getQueryFilters(filterList, cube, dimensionIri?.value)}
+  `
+    .ORDER()
+    .BY(RDF.variable("hasEnd"), true)
+    .THEN.BY(RDF.variable("value"), true)
+    .THEN.BY(RDF.variable("position"), true)
+    .LIMIT(1).prologue`${pragmas}`;
+
+  let result: Array<DimensionValue> = [];
+
+  try {
+    result = (await query.execute(sparqlClient.query, {
+      operation: "postUrlencoded",
+    })) as unknown as Array<DimensionValue>;
+  } catch {
+    console.warn(`Failed to fetch max dimension value for ${datasetIri}!`);
+  } finally {
+    return result.map((d) => d.value);
+  }
+}
+
+const getFiltersList = (filters: Filters, dimensionIri: string | undefined) => {
+  const entries = Object.entries(filters);
+  // Consider filters before the current filter to fetch the values for
+  // the current filter
+  return sortBy(
+    entries.slice(
+      0,
+      entries.findIndex(([iri]) => iri == dimensionIri)
+    ),
+    ([, v]) => getFilterOrder(v)
+  );
+};
+
+const getQueryFilters = (
+  filtersList: ReturnType<typeof getFiltersList>,
+  cube: ExtendedCube,
+  dimensionIri: string | undefined
+) => {
+  return filtersList.length > 0
+    ? filtersList.map(([iri, value], i) => {
+        const dimension = cube.dimensions.find((d) => d.path?.value === iri);
+
+        // Ignore the current dimension
+        if (!dimension || dimensionIri === iri) {
+          return "";
+        }
+
+        // Ignore filters with no value or with the special value
+        if (
+          value.type === "single" &&
+          (value.value === FIELD_VALUE_NONE || isDynamicMaxValue(value.value))
+        ) {
+          return "";
+        }
+
+        // Ignore range filters for now
+        if (value.type === "range") {
+          return "";
+        }
+
+        const versioned = dimension ? dimensionIsVersioned(dimension) : false;
+
+        return sparql`${
+          versioned
+            ? sparql`?dimension${i} ${ns.schema.sameAs} ?dimension_unversioned${i}.`
+            : ""
+        }
+      ?observation <${iri}> ?dimension${i}.
+      ${formatFilterIntoSparqlFilter(value, dimension, versioned, i)}`;
+      })
+    : "";
+};
 
 type MinMaxResult = [{ minValue: LiteralExt; maxValue: LiteralExt }];
 
