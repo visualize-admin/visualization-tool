@@ -46,6 +46,7 @@ import {
 } from "@/graphql/hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import { useLocale } from "@/locales/use-locale";
+import { useTransitionStore } from "@/stores/transition";
 import { useTheme } from "@/themes";
 import useEvent from "@/utils/use-event";
 
@@ -80,6 +81,7 @@ const DashboardPreview = (props: DashboardPreviewProps) => {
   const { dataSource, layoutType } = props;
   const [state, dispatch] = useConfiguratorState(isLayouting);
   const theme = useTheme();
+  const transition = useTransitionStore();
   const [isDragging, setIsDragging] = React.useState(false);
   const [activeChartKey, setActiveChartKey] = React.useState<string | null>(
     null
@@ -91,6 +93,7 @@ const DashboardPreview = (props: DashboardPreviewProps) => {
       <DndContext
         collisionDetection={pointerWithin}
         onDragStart={(e) => {
+          transition.setEnable(false);
           setIsDragging(true);
           setActiveChartKey(`${e.active.id}`);
         }}
@@ -100,6 +103,7 @@ const DashboardPreview = (props: DashboardPreviewProps) => {
           }
         }}
         onDragEnd={(e) => {
+          transition.setEnable(true);
           setIsDragging(false);
           setActiveChartKey(null);
           setOver(null);
@@ -196,7 +200,7 @@ const DndChartPreview = (props: DndChartPreviewProps) => {
       ref={setRef}
       {...attributes}
       style={{
-        opacity: isOver && !isDragging ? 0.8 : 1,
+        opacity: isDragging ? 0 : isOver ? 0.8 : 1,
         border: `2px solid ${
           isOver && !isDragging ? theme.palette.primary.main : "transparent"
         }`,
