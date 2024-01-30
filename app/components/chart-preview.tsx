@@ -1,8 +1,8 @@
-import { DndContext } from "@dnd-kit/core";
+import { DndContext, useDraggable, useDroppable } from "@dnd-kit/core";
 import { Trans } from "@lingui/macro";
 import { Box } from "@mui/material";
 import Head from "next/head";
-import { useMemo } from "react";
+import React from "react";
 
 import { DataSetTable } from "@/browse/datatable";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
@@ -10,8 +10,9 @@ import { ChartFootnotes } from "@/components/chart-footnotes";
 import {
   ChartPanelLayout,
   ChartWrapper,
-  DndChartWrapper,
+  ChartWrapperProps,
 } from "@/components/chart-panel";
+import { DragHandle } from "@/components/chart-selection-tabs";
 import {
   ChartTablePreviewProvider,
   useChartTablePreview,
@@ -71,14 +72,13 @@ export const ChartPreview = (props: ChartPreviewProps) => {
             }}
           >
             {state.chartConfigs.map((chartConfig) => (
-              <DndChartWrapper
+              <DndChartPreview
                 key={chartConfig.key}
                 chartKey={chartConfig.key}
+                dataSource={props.dataSource}
                 editing={editing}
                 layout={state.layout}
-              >
-                <ChartPreviewInner {...props} chartKey={chartConfig.key} />
-              </DndChartWrapper>
+              />
             ))}
           </DndContext>
         </ChartPanelLayout>
@@ -91,12 +91,72 @@ export const ChartPreview = (props: ChartPreviewProps) => {
   );
 };
 
+type DndChartPreviewProps = ChartWrapperProps & {
+  chartKey: string;
+  dataSource: DataSource;
+};
+
+const DndChartPreview = (props: DndChartPreviewProps) => {
+  const { children, chartKey, dataSource, ...rest } = props;
+
+  const {
+    setActivatorNodeRef,
+    setNodeRef: setDraggableNodeRef,
+    attributes,
+    listeners,
+    transform,
+    isDragging,
+  } = useDraggable({ id: chartKey });
+
+  const {
+    setNodeRef: setDroppableNodeRef,
+    isOver: isOverDroppable,
+    active,
+  } = useDroppable({ id: chartKey });
+
+  const setRef = React.useCallback(
+    (node: HTMLElement | null) => {
+      setDraggableNodeRef(node);
+      setDroppableNodeRef(node);
+    },
+    [setDraggableNodeRef, setDroppableNodeRef]
+  );
+
+  return (
+    <ChartWrapper
+      {...rest}
+      ref={setRef}
+      {...attributes}
+      style={{
+        zIndex: isDragging ? 1000 : undefined,
+        transform: `translate(${transform?.x ?? 0}px, ${transform?.y ?? 0}px)`,
+        opacity: isOverDroppable && !isDragging ? 0.5 : 1,
+        // Disable tooltip interactions while dragging
+        pointerEvents: active ? "none" : "auto",
+      }}
+    >
+      <ChartPreviewInner
+        {...props}
+        chartKey={chartKey}
+        titleSlot={
+          <DragHandle
+            ref={setActivatorNodeRef}
+            {...listeners}
+            dragging={isDragging}
+          />
+        }
+      />
+    </ChartWrapper>
+  );
+};
+
 type ChartPreviewInnerProps = ChartPreviewProps & {
   chartKey?: string;
+  titleSlot?: React.ReactNode;
 };
 
 export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
-  const { dataSource, chartKey } = props;
+  const { dataSource, chartKey, titleSlot } = props;
   const [state, dispatch] = useConfiguratorState();
   const chartConfig = getChartConfig(state, chartKey);
   const locale = useLocale();
@@ -133,7 +193,7 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
   const handleToggleTableView = useEvent(() => setIsTablePreview((c) => !c));
   const dimensions = components?.dataCubesComponents.dimensions;
   const measures = components?.dataCubesComponents.measures;
-  const allComponents = useMemo(() => {
+  const allComponents = React.useMemo(() => {
     if (!components?.dataCubesComponents) {
       return [];
     }
@@ -172,69 +232,68 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
         )}
         {hasChartConfigs(state) && (
           <>
-            <>
-              <Flex
-                sx={{
-                  justifyContent:
-                    state.state === "CONFIGURING_CHART" ||
-                    chartConfig.meta.title[locale]
-                      ? "space-between"
-                      : "flex-end",
-                  alignItems: "flex-start",
-                  gap: 2,
-                }}
-              >
-                {(state.state === "CONFIGURING_CHART" ||
-                  chartConfig.meta.title[locale]) && (
-                  <Title
-                    text={chartConfig.meta.title[locale]}
-                    lighterColor
-                    onClick={
-                      state.state === "CONFIGURING_CHART"
-                        ? () =>
-                            dispatch({
-                              type: "CHART_ACTIVE_FIELD_CHANGED",
-                              value: "title",
-                            })
-                        : undefined
-                    }
-                  />
-                )}
-                <MetadataPanel
-                  // FIXME: adapt to design
-                  datasetIri={chartConfig.cubes[0].iri}
-                  dataSource={dataSource}
-                  dimensions={allComponents}
-                  top={96}
-                />
-              </Flex>
-              <Head>
-                <title key="title">
-                  {!chartConfig.meta.title[locale]
-                    ? // FIXME: adapt to design
-                      metadata?.dataCubesMetadata.map((d) => d.title).join(", ")
-                    : chartConfig.meta.title[locale]}{" "}
-                  - visualize.admin.ch
-                </title>
-              </Head>
+            <Flex
+              sx={{
+                justifyContent:
+                  state.state === "CONFIGURING_CHART" ||
+                  chartConfig.meta.title[locale]
+                    ? "space-between"
+                    : "flex-end",
+                alignItems: "flex-start",
+                gap: 2,
+              }}
+            >
               {(state.state === "CONFIGURING_CHART" ||
-                chartConfig.meta.description[locale]) && (
-                <Description
-                  text={chartConfig.meta.description[locale]}
+                chartConfig.meta.title[locale]) && (
+                <Title
+                  text={chartConfig.meta.title[locale]}
                   lighterColor
                   onClick={
                     state.state === "CONFIGURING_CHART"
-                      ? () => {
+                      ? () =>
                           dispatch({
                             type: "CHART_ACTIVE_FIELD_CHANGED",
-                            value: "description",
-                          });
-                        }
+                            value: "title",
+                          })
                       : undefined
                   }
                 />
               )}
-            </>
+              {titleSlot}
+              <MetadataPanel
+                // FIXME: adapt to design
+                datasetIri={chartConfig.cubes[0].iri}
+                dataSource={dataSource}
+                dimensions={allComponents}
+                top={96}
+              />
+            </Flex>
+            <Head>
+              <title key="title">
+                {!chartConfig.meta.title[locale]
+                  ? // FIXME: adapt to design
+                    metadata?.dataCubesMetadata.map((d) => d.title).join(", ")
+                  : chartConfig.meta.title[locale]}{" "}
+                - visualize.admin.ch
+              </title>
+            </Head>
+            {(state.state === "CONFIGURING_CHART" ||
+              chartConfig.meta.description[locale]) && (
+              <Description
+                text={chartConfig.meta.description[locale]}
+                lighterColor
+                onClick={
+                  state.state === "CONFIGURING_CHART"
+                    ? () => {
+                        dispatch({
+                          type: "CHART_ACTIVE_FIELD_CHANGED",
+                          value: "description",
+                        });
+                      }
+                    : undefined
+                }
+              />
+            )}
             <Box ref={containerRef} height={containerHeight.current!} mt={4}>
               {isTablePreview ? (
                 <DataSetTable

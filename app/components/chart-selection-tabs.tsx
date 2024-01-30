@@ -1,5 +1,14 @@
 import { Trans, t } from "@lingui/macro";
-import { Box, Button, Popover, Tab, Tabs, Theme, Tooltip } from "@mui/material";
+import {
+  Box,
+  BoxProps,
+  Button,
+  Popover,
+  Tab,
+  Tabs,
+  Theme,
+  Tooltip,
+} from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
@@ -568,16 +577,31 @@ const TabContent = (props: TabContentProps) => {
         </Button>
       )}
 
-      {draggable && (
-        <Box
-          className={classes.dragIconWrapper}
-          sx={{
-            color: dragging ? "secondary.active" : "secondary.disabled",
-          }}
-        >
-          <Icon name="dragndrop" />
-        </Box>
-      )}
+      {draggable && <DragHandle dragging={dragging} />}
     </Flex>
   );
 };
+
+type DragHandleProps = BoxProps & {
+  dragging?: boolean;
+};
+
+export const DragHandle = React.forwardRef<HTMLDivElement, DragHandleProps>(
+  (props, ref) => {
+    const { dragging, ...rest } = props;
+    const classes = useIconStyles({ active: false, dragging });
+
+    return (
+      <Box
+        ref={ref}
+        {...rest}
+        className={classes.dragIconWrapper}
+        sx={{
+          color: dragging ? "secondary.active" : "secondary.disabled",
+        }}
+      >
+        <Icon name="dragndrop" />
+      </Box>
+    );
+  }
+);

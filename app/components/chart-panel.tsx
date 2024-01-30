@@ -1,4 +1,3 @@
-import { useDraggable, useDroppable } from "@dnd-kit/core";
 import { Box, BoxProps, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import capitalize from "lodash/capitalize";
@@ -59,7 +58,7 @@ export const ChartPanelLayout = (props: ChartPanelLayoutProps) => {
   );
 };
 
-type ChartWrapperProps = BoxProps & {
+export type ChartWrapperProps = BoxProps & {
   editing?: boolean;
   layout?: Layout;
 };
@@ -82,50 +81,3 @@ export const ChartWrapper = React.forwardRef<HTMLDivElement, ChartWrapperProps>(
     );
   }
 );
-
-type DndChartWrapperProps = ChartWrapperProps & {
-  chartKey: string;
-};
-
-export const DndChartWrapper = (props: DndChartWrapperProps) => {
-  const { chartKey, ...rest } = props;
-
-  const {
-    setNodeRef: setDraggableNodeRef,
-    attributes,
-    listeners,
-    transform,
-    isDragging,
-  } = useDraggable({ id: chartKey });
-
-  const {
-    setNodeRef: setDroppableNodeRef,
-    isOver: isOverDroppable,
-    active,
-  } = useDroppable({ id: chartKey });
-
-  const setRef = React.useCallback(
-    (node: HTMLElement | null) => {
-      setDraggableNodeRef(node);
-      setDroppableNodeRef(node);
-    },
-    [setDraggableNodeRef, setDroppableNodeRef]
-  );
-
-  return (
-    <ChartWrapper
-      {...rest}
-      ref={setRef}
-      {...attributes}
-      {...listeners}
-      style={{
-        zIndex: isDragging ? 1000 : undefined,
-        transform: `translate(${transform?.x ?? 0}px, ${transform?.y ?? 0}px)`,
-        border:
-          isOverDroppable && !isDragging ? "2px dashed" : "2px transparent",
-        // Disable tooltip interactions while dragging
-        pointerEvents: active ? "none" : "auto",
-      }}
-    />
-  );
-};
