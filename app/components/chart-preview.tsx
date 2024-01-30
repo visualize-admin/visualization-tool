@@ -147,6 +147,7 @@ const DndChartPreview = (props: DndChartPreviewProps) => {
             dragging={isDragging}
           />
         }
+        disableMetadataButton
       />
     </ChartWrapper>
   );
@@ -155,10 +156,11 @@ const DndChartPreview = (props: DndChartPreviewProps) => {
 type ChartPreviewInnerProps = ChartPreviewProps & {
   chartKey?: string;
   titleSlot?: React.ReactNode;
+  disableMetadataButton?: boolean;
 };
 
 export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
-  const { dataSource, chartKey, titleSlot } = props;
+  const { dataSource, chartKey, titleSlot, disableMetadataButton } = props;
   const [state, dispatch] = useConfiguratorState();
   const chartConfig = getChartConfig(state, chartKey);
   const locale = useLocale();
@@ -262,13 +264,15 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
                 />
               )}
               {titleSlot}
-              <MetadataPanel
-                // FIXME: adapt to design
-                datasetIri={chartConfig.cubes[0].iri}
-                dataSource={dataSource}
-                dimensions={allComponents}
-                top={96}
-              />
+              {!disableMetadataButton && (
+                <MetadataPanel
+                  // FIXME: adapt to design
+                  datasetIri={chartConfig.cubes[0].iri}
+                  dataSource={dataSource}
+                  dimensions={allComponents}
+                  top={96}
+                />
+              )}
             </Flex>
             <Head>
               <title key="title">
