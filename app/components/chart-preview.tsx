@@ -32,9 +32,11 @@ import { HintYellow } from "@/components/hint";
 import { MetadataPanel } from "@/components/metadata-panel";
 import {
   DataSource,
+  Layout,
   getChartConfig,
   hasChartConfigs,
   isConfiguring,
+  isLayouting,
   useConfiguratorState,
 } from "@/configurator";
 import { Description, Title } from "@/configurator/components/annotators";
@@ -44,6 +46,7 @@ import {
 } from "@/graphql/hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import { useLocale } from "@/locales/use-locale";
+import { useTheme } from "@/themes";
 import useEvent from "@/utils/use-event";
 
 type ChartPreviewProps = {
@@ -51,8 +54,32 @@ type ChartPreviewProps = {
 };
 
 export const ChartPreview = (props: ChartPreviewProps) => {
-  const [state, dispatch] = useConfiguratorState(hasChartConfigs);
+  const { dataSource } = props;
+  const [state] = useConfiguratorState(hasChartConfigs);
   const editing = isConfiguring(state);
+  const { layout } = state;
+
+  return (
+    <ChartTablePreviewProvider>
+      {layout.type === "dashboard" && !editing ? (
+        <DashboardPreview dataSource={dataSource} layoutType={layout.layout} />
+      ) : (
+        <ChartWrapper editing={editing} layout={layout}>
+          <ChartPreviewInner dataSource={dataSource} />
+        </ChartWrapper>
+      )}
+    </ChartTablePreviewProvider>
+  );
+};
+
+type DashboardPreviewProps = ChartPreviewProps & {
+  layoutType: Extract<Layout, { type: "dashboard" }>["layout"];
+};
+
+const DashboardPreview = (props: DashboardPreviewProps) => {
+  const { dataSource, layoutType } = props;
+  const [state, dispatch] = useConfiguratorState(isLayouting);
+  const theme = useTheme();
   const [isDragging, setIsDragging] = React.useState(false);
   const [activeChartKey, setActiveChartKey] = React.useState<string | null>(
     null
@@ -60,87 +87,75 @@ export const ChartPreview = (props: ChartPreviewProps) => {
   const [over, setOver] = React.useState<Over | null>(null);
 
   return (
-    <ChartTablePreviewProvider>
-      {state.layout.type === "dashboard" && !editing ? (
-        <ChartPanelLayout type={state.layout.layout}>
-          <DndContext
-            collisionDetection={pointerWithin}
-            onDragStart={(e) => {
-              setIsDragging(true);
-              setActiveChartKey(e.active.id.toString());
-            }}
-            onDragMove={(e) => {
-              if (e.over?.id !== over?.id) {
-                setOver(e.over);
-              }
-            }}
-            onDragEnd={(e) => {
-              setIsDragging(false);
-              setActiveChartKey(null);
-              setOver(null);
-              const { active, over } = e;
+    <ChartPanelLayout type={layoutType}>
+      <DndContext
+        collisionDetection={pointerWithin}
+        onDragStart={(e) => {
+          setIsDragging(true);
+          setActiveChartKey(`${e.active.id}`);
+        }}
+        onDragMove={(e) => {
+          if (e.over?.id !== over?.id && e.over?.id !== activeChartKey) {
+            setOver(e.over);
+          }
+        }}
+        onDragEnd={(e) => {
+          setIsDragging(false);
+          setActiveChartKey(null);
+          setOver(null);
 
-              if (!active || !over) {
-                return;
-              }
+          const { active, over } = e;
 
-              dispatch({
-                type: "CHART_CONFIG_SWAP",
-                value: {
-                  oldIndex: state.chartConfigs.findIndex(
-                    (c) => c.key === active.id
-                  ),
-                  newIndex: state.chartConfigs.findIndex(
-                    (c) => c.key === over.id
-                  ),
-                },
-              });
+          if (!active || !over) {
+            return;
+          }
+
+          dispatch({
+            type: "CHART_CONFIG_SWAP",
+            value: {
+              oldIndex: state.chartConfigs.findIndex(
+                (c) => c.key === active.id
+              ),
+              newIndex: state.chartConfigs.findIndex((c) => c.key === over.id),
+            },
+          });
+        }}
+      >
+        {state.chartConfigs.map((chartConfig) => (
+          <DndChartPreview
+            key={chartConfig.key}
+            chartKey={chartConfig.key}
+            dataSource={props.dataSource}
+            layout={state.layout}
+          />
+        ))}
+        {isDragging && (
+          <DragOverlay
+            zIndex={1000}
+            modifiers={[snapCenterToCursor]}
+            style={{
+              opacity: over ? 0.8 : 1,
+              width: "min(40vh, 400px)",
+              height: "fit-content",
+              border: `2px solid ${
+                over ? theme.palette.primary.main : "transparent"
+              }`,
+              cursor: "grabbing",
+              pointerEvents: "none",
+              transition: "border 0.2s ease-in-out, opacity 0.2s ease-in-out",
             }}
           >
-            {state.chartConfigs.map((chartConfig) => (
-              <DndChartPreview
-                key={chartConfig.key}
-                chartKey={chartConfig.key}
-                dataSource={props.dataSource}
-                editing={editing}
-                layout={state.layout}
+            <ChartWrapper layout={state.layout}>
+              <ChartPreviewInner
+                dataSource={dataSource}
+                chartKey={activeChartKey}
+                disableMetadataButton
               />
-            ))}
-            {isDragging && (
-              <DragOverlay
-                zIndex={1000}
-                modifiers={[snapCenterToCursor]}
-                style={{
-                  width: "min(40vh, 400px)",
-                  height: "fit-content",
-                  border:
-                    over && over.id !== activeChartKey
-                      ? "2px solid green"
-                      : "2px solid transparent",
-                  opacity: over && over.id !== activeChartKey ? 0.8 : 1,
-                  cursor: "grabbing",
-                  pointerEvents: "none",
-                  transition:
-                    "border 0.2s ease-in-out, opacity 0.2s ease-in-out",
-                }}
-              >
-                <ChartWrapper editing={editing} layout={state.layout}>
-                  <ChartPreviewInner
-                    {...props}
-                    chartKey={activeChartKey ?? undefined}
-                    disableMetadataButton
-                  />
-                </ChartWrapper>
-              </DragOverlay>
-            )}
-          </DndContext>
-        </ChartPanelLayout>
-      ) : (
-        <ChartWrapper editing={editing} layout={state.layout}>
-          <ChartPreviewInner {...props} />
-        </ChartWrapper>
-      )}
-    </ChartTablePreviewProvider>
+            </ChartWrapper>
+          </DragOverlay>
+        )}
+      </DndContext>
+    </ChartPanelLayout>
   );
 };
 
@@ -151,6 +166,7 @@ type DndChartPreviewProps = ChartWrapperProps & {
 
 const DndChartPreview = (props: DndChartPreviewProps) => {
   const { children, chartKey, dataSource, ...rest } = props;
+  const theme = useTheme();
 
   const {
     setActivatorNodeRef,
@@ -162,7 +178,7 @@ const DndChartPreview = (props: DndChartPreviewProps) => {
 
   const {
     setNodeRef: setDroppableNodeRef,
-    isOver: isOverDroppable,
+    isOver,
     active,
   } = useDroppable({ id: chartKey });
 
@@ -180,22 +196,22 @@ const DndChartPreview = (props: DndChartPreviewProps) => {
       ref={setRef}
       {...attributes}
       style={{
-        opacity: isOverDroppable && !isDragging ? 0.8 : 1,
-        border:
-          isOverDroppable && !isDragging
-            ? "2px solid green"
-            : "2px solid transparent",
+        opacity: isOver && !isDragging ? 0.8 : 1,
+        border: `2px solid ${
+          isOver && !isDragging ? theme.palette.primary.main : "transparent"
+        }`,
+        outline: "none",
         pointerEvents: active ? "none" : "auto",
         transition: "border 0.2s ease-in-out, opacity 0.2s ease-in-out",
       }}
     >
       <ChartPreviewInner
-        {...props}
+        dataSource={dataSource}
         chartKey={chartKey}
         titleSlot={
           <DragHandle
-            ref={setActivatorNodeRef}
             {...listeners}
+            ref={setActivatorNodeRef}
             dragging={isDragging}
           />
         }
@@ -206,7 +222,7 @@ const DndChartPreview = (props: DndChartPreviewProps) => {
 };
 
 type ChartPreviewInnerProps = ChartPreviewProps & {
-  chartKey?: string;
+  chartKey?: string | null;
   titleSlot?: React.ReactNode;
   disableMetadataButton?: boolean;
 };
