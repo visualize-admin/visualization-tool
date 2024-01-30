@@ -1566,8 +1566,10 @@ const ConfiguratorStateProviderInternal = (
   }, []);
 
   useEffect(() => {
-    dispatch({ type: "DATASOURCE_CHANGED", value: dataSource });
-  }, [dataSource, dispatch]);
+    if (state.state === "INITIAL" || state.state === "SELECTING_DATASET") {
+      dispatch({ type: "DATASOURCE_CHANGED", value: dataSource });
+    }
+  }, [dataSource, dispatch, state.state]);
 
   useEffect(() => {
     try {
