@@ -146,9 +146,9 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
         >
           <Box
             sx={{
-              pt: 4,
-              maxWidth: { xs: "100%", xl: 1360 },
+              maxWidth: { xs: "100%", lg: 1280 },
               margin: "auto",
+              pt: 4,
               px: 6,
             }}
           >
