@@ -178,12 +178,11 @@ export const ChartWithFilters = React.forwardRef<
           flexGrow: 1,
         }}
       >
-        {props.chartConfig.interactiveFiltersConfig?.dataFilters.active ? (
+        {props.chartConfig.interactiveFiltersConfig?.dataFilters.active && (
           <ChartDataFilters {...props} />
-        ) : (
-          <ChartFiltersList {...props} />
         )}
         <GenericChart {...props} />
+        <ChartFiltersList {...props} />
       </Flex>
     </LoadingStateProvider>
   );

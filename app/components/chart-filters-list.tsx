@@ -1,3 +1,4 @@
+import { Trans } from "@lingui/macro";
 import { Box, Typography } from "@mui/material";
 import React, { Fragment } from "react";
 
@@ -144,10 +145,19 @@ export const ChartFiltersList = (props: ChartFiltersListProps) => {
   return allFilters.length ? (
     <Typography
       component="div"
-      variant="body2"
-      sx={{ mb: 4, color: "grey.800" }}
+      variant="caption"
+      color="grey.600"
       data-testid="chart-filters-list"
     >
+      <Typography
+        component="span"
+        variant="inherit"
+        fontWeight="bold"
+        color="grey.600"
+        sx={{ mr: 2 }}
+      >
+        <Trans id="controls.section.data.filters">Filters</Trans>:
+      </Typography>
       {allFilters.map(({ dimension, value }, i) => (
         <Fragment key={dimension.iri}>
           <Box component="span" fontWeight="bold">
