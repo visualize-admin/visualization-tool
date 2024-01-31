@@ -149,7 +149,6 @@ const DashboardPreview = (props: DashboardPreviewProps) => {
               }`,
               cursor: "grabbing",
               pointerEvents: "none",
-              transition: "border 0.2s ease-in-out, opacity 0.2s ease-in-out",
             }}
           >
             <ChartWrapper layout={state.layout}>
@@ -209,7 +208,6 @@ const DndChartPreview = (props: DndChartPreviewProps) => {
         }`,
         outline: "none",
         pointerEvents: active ? "none" : "auto",
-        transition: "border 0.2s ease-in-out, opacity 0.2s ease-in-out",
       }}
     >
       <ChartPreviewInner
