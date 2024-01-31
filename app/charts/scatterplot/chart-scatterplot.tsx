@@ -87,44 +87,42 @@ export const ChartScatterplotVisualization = ({
   );
 };
 
-export const ChartScatterplot = memo(
-  (props: ChartProps<ScatterPlotConfig> & { published: boolean }) => {
-    const { chartConfig, dimensions, published } = props;
-    const { fields, interactiveFiltersConfig } = chartConfig;
-    const filters = useChartConfigFilters(chartConfig);
+export const ChartScatterplot = memo((props: ChartProps<ScatterPlotConfig>) => {
+  const { chartConfig, dimensions } = props;
+  const { fields, interactiveFiltersConfig } = chartConfig;
+  const filters = useChartConfigFilters(chartConfig);
 
-    return (
-      <ScatterplotChart aspectRatio={published ? 1 : 0.4} {...props}>
-        <ChartContainer>
-          <ChartSvg>
-            <AxisWidthLinear />
-            <AxisHeightLinear />
-            <AxisWidthLinearDomain />
-            <AxisHeightLinearDomain />
-            <Scatterplot />
-            <InteractionVoronoi />
-          </ChartSvg>
-          <Tooltip type="single" />
-        </ChartContainer>
-        {(fields.animation || fields.segment) && (
-          <ChartControlsContainer>
-            {fields.animation && (
-              <TimeSlider
-                filters={filters}
-                dimensions={dimensions}
-                {...fields.animation}
-              />
-            )}
-            {fields.segment && (
-              <LegendColor
-                chartConfig={chartConfig}
-                symbol="circle"
-                interactive={interactiveFiltersConfig?.legend.active}
-              />
-            )}
-          </ChartControlsContainer>
-        )}
-      </ScatterplotChart>
-    );
-  }
-);
+  return (
+    <ScatterplotChart aspectRatio={0.4} {...props}>
+      <ChartContainer>
+        <ChartSvg>
+          <AxisWidthLinear />
+          <AxisHeightLinear />
+          <AxisWidthLinearDomain />
+          <AxisHeightLinearDomain />
+          <Scatterplot />
+          <InteractionVoronoi />
+        </ChartSvg>
+        <Tooltip type="single" />
+      </ChartContainer>
+      {(fields.animation || fields.segment) && (
+        <ChartControlsContainer>
+          {fields.animation && (
+            <TimeSlider
+              filters={filters}
+              dimensions={dimensions}
+              {...fields.animation}
+            />
+          )}
+          {fields.segment && (
+            <LegendColor
+              chartConfig={chartConfig}
+              symbol="circle"
+              interactive={interactiveFiltersConfig?.legend.active}
+            />
+          )}
+        </ChartControlsContainer>
+      )}
+    </ScatterplotChart>
+  );
+});

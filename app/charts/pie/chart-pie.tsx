@@ -75,44 +75,42 @@ export const ChartPieVisualization = ({
   );
 };
 
-export const ChartPie = memo(
-  (props: ChartProps<PieConfig> & { published: boolean }) => {
-    const { chartConfig, observations, dimensions, published } = props;
-    const { fields, interactiveFiltersConfig } = chartConfig;
-    const somePositive = observations.some(
-      (d) => (d[fields?.y?.componentIri] as number) > 0
-    );
-    const filters = useChartConfigFilters(chartConfig);
+export const ChartPie = memo((props: ChartProps<PieConfig>) => {
+  const { chartConfig, observations, dimensions } = props;
+  const { fields, interactiveFiltersConfig } = chartConfig;
+  const somePositive = observations.some(
+    (d) => (d[fields?.y?.componentIri] as number) > 0
+  );
+  const filters = useChartConfigFilters(chartConfig);
 
-    if (!somePositive) {
-      return <OnlyNegativeDataHint />;
-    }
-
-    return (
-      <PieChart aspectRatio={published ? 1 : 0.4} {...props}>
-        <ChartContainer>
-          <ChartSvg>
-            <Pie />
-          </ChartSvg>
-          <Tooltip type="single" />
-        </ChartContainer>
-        <ChartControlsContainer>
-          {fields.animation && (
-            <TimeSlider
-              filters={filters}
-              dimensions={dimensions}
-              {...fields.animation}
-            />
-          )}
-          <LegendColor
-            chartConfig={chartConfig}
-            symbol="square"
-            interactive={
-              fields.segment && interactiveFiltersConfig?.legend.active
-            }
-          />
-        </ChartControlsContainer>
-      </PieChart>
-    );
+  if (!somePositive) {
+    return <OnlyNegativeDataHint />;
   }
-);
+
+  return (
+    <PieChart aspectRatio={0.4} {...props}>
+      <ChartContainer>
+        <ChartSvg>
+          <Pie />
+        </ChartSvg>
+        <Tooltip type="single" />
+      </ChartContainer>
+      <ChartControlsContainer>
+        {fields.animation && (
+          <TimeSlider
+            filters={filters}
+            dimensions={dimensions}
+            {...fields.animation}
+          />
+        )}
+        <LegendColor
+          chartConfig={chartConfig}
+          symbol="square"
+          interactive={
+            fields.segment && interactiveFiltersConfig?.legend.active
+          }
+        />
+      </ChartControlsContainer>
+    </PieChart>
+  );
+});
