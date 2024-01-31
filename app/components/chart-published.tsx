@@ -56,69 +56,69 @@ export const ChartPublished = (props: ChartPublishedProps) => {
   const { dataSource } = state;
   const locale = useLocale();
 
-  return (
-    <ChartTablePreviewProvider>
-      {state.layout.type === "dashboard" ? (
-        <>
-          <Box
-            sx={{
-              mb:
-                state.layout.meta.title[locale] ||
-                state.layout.meta.description[locale]
-                  ? 4
-                  : 0,
-            }}
-          >
-            {state.layout.meta.title[locale] && (
-              <Title text={state.layout.meta.title[locale]} />
-            )}
-            {state.layout.meta.description[locale] && (
-              <Description text={state.layout.meta.description[locale]} />
-            )}
-          </Box>
-          <ChartPanelLayout type={state.layout.layout}>
-            {state.chartConfigs.map((chartConfig) => (
-              <ChartWrapper key={chartConfig.key} layout={state.layout}>
-                <ChartPublishedInner
-                  dataSource={dataSource}
-                  state={state}
-                  chartConfig={chartConfig}
-                  configKey={configKey}
-                />
-              </ChartWrapper>
-            ))}
-          </ChartPanelLayout>
-        </>
-      ) : (
-        <>
-          <Flex
-            sx={{
-              flexDirection: "column",
-              mb:
-                state.layout.meta.title[locale] ||
-                state.layout.meta.description[locale]
-                  ? 4
-                  : 0,
-            }}
-          >
-            {state.layout.meta.title[locale] && (
-              <Title text={state.layout.meta.title[locale]} />
-            )}
-            {state.layout.meta.description[locale] && (
-              <Description text={state.layout.meta.description[locale]} />
-            )}
-          </Flex>
-          <ChartWrapper layout={state.layout}>
-            <ChartPublishedInner
-              dataSource={dataSource}
-              state={state}
-              chartConfig={getChartConfig(state)}
-              configKey={configKey}
-            />
-          </ChartWrapper>
-        </>
-      )}
-    </ChartTablePreviewProvider>
+  return state.layout.type === "dashboard" ? (
+    <>
+      <Box
+        sx={{
+          mb:
+            state.layout.meta.title[locale] ||
+            state.layout.meta.description[locale]
+              ? 4
+              : 0,
+        }}
+      >
+        {state.layout.meta.title[locale] && (
+          <Title text={state.layout.meta.title[locale]} />
+        )}
+        {state.layout.meta.description[locale] && (
+          <Description text={state.layout.meta.description[locale]} />
+        )}
+      </Box>
+      <ChartPanelLayout type={state.layout.layout}>
+        {state.chartConfigs.map((chartConfig) => (
+          <ChartTablePreviewProvider key={chartConfig.key}>
+            <ChartWrapper layout={state.layout}>
+              <ChartPublishedInner
+                dataSource={dataSource}
+                state={state}
+                chartConfig={chartConfig}
+                configKey={configKey}
+              />
+            </ChartWrapper>
+          </ChartTablePreviewProvider>
+        ))}
+      </ChartPanelLayout>
+    </>
+  ) : (
+    <>
+      <Flex
+        sx={{
+          flexDirection: "column",
+          mb:
+            state.layout.meta.title[locale] ||
+            state.layout.meta.description[locale]
+              ? 4
+              : 0,
+        }}
+      >
+        {state.layout.meta.title[locale] && (
+          <Title text={state.layout.meta.title[locale]} />
+        )}
+        {state.layout.meta.description[locale] && (
+          <Description text={state.layout.meta.description[locale]} />
+        )}
+      </Flex>
+      <ChartTablePreviewProvider>
+        <ChartWrapper layout={state.layout}>
+          <ChartPublishedInner
+            dataSource={dataSource}
+            state={state}
+            chartConfig={getChartConfig(state)}
+            configKey={configKey}
+          />
+        </ChartWrapper>
+      </ChartTablePreviewProvider>
+    </>
   );
 };
 

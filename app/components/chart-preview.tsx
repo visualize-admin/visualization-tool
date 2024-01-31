@@ -40,25 +40,21 @@ export const ChartPreview = (props: ChartPreviewProps) => {
   const [state] = useConfiguratorState(hasChartConfigs);
   const editing = isConfiguring(state);
 
-  return (
+  return state.layout.type === "dashboard" && !editing ? (
+    <ChartPanelLayout type={state.layout.layout}>
+      {state.chartConfigs.map((chartConfig) => (
+        <ChartTablePreviewProvider key={chartConfig.key}>
+          <ChartWrapper editing={editing} layout={state.layout}>
+            <ChartPreviewInner {...props} chartKey={chartConfig.key} />
+          </ChartWrapper>
+        </ChartTablePreviewProvider>
+      ))}
+    </ChartPanelLayout>
+  ) : (
     <ChartTablePreviewProvider>
-      {state.layout.type === "dashboard" && !editing ? (
-        <ChartPanelLayout type={state.layout.layout}>
-          {state.chartConfigs.map((chartConfig) => (
-            <ChartWrapper
-              key={chartConfig.key}
-              editing={editing}
-              layout={state.layout}
-            >
-              <ChartPreviewInner {...props} chartKey={chartConfig.key} />
-            </ChartWrapper>
-          ))}
-        </ChartPanelLayout>
-      ) : (
-        <ChartWrapper editing={editing} layout={state.layout}>
-          <ChartPreviewInner {...props} />
-        </ChartWrapper>
-      )}
+      <ChartWrapper editing={editing} layout={state.layout}>
+        <ChartPreviewInner {...props} />
+      </ChartWrapper>
     </ChartTablePreviewProvider>
   );
 };
