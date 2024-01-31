@@ -225,130 +225,128 @@ const LayoutingStep = () => {
   }
 
   return (
-    <InteractiveFiltersProvider>
-      <PanelLayout type="LM" sx={{ background: (t) => t.palette.muted.main }}>
-        <PanelHeaderLayout type="LMR">
-          <PanelHeaderWrapper type="L">
-            <BackContainer>
-              <BackButton onClick={handlePrevious}>
-                <Trans id="controls.nav.back-to-configurator">
-                  Back to editing
-                </Trans>
-              </BackButton>
-            </BackContainer>
-          </PanelHeaderWrapper>
-          <PanelHeaderWrapper
-            type="M"
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: 3,
-              mx: "auto",
-            }}
-          >
-            <IconButton
-              label="layoutTab"
-              checked={state.layout.type === "tab"}
-              onClick={() => {
-                if (state.layout.type === "tab") {
-                  return;
-                }
-
-                dispatch({
-                  type: "LAYOUT_CHANGED",
-                  value: {
-                    type: "tab",
-                    meta: state.layout.meta,
-                    activeField: undefined,
-                  },
-                });
-              }}
-            />
-            <IconButton
-              label="layoutDashboard"
-              checked={state.layout.type === "dashboard"}
-              onClick={() => {
-                if (state.layout.type === "dashboard") {
-                  return;
-                }
-
-                dispatch({
-                  type: "LAYOUT_CHANGED",
-                  value: {
-                    type: "dashboard",
-                    meta: state.layout.meta,
-                    layout: "vertical",
-                    activeField: undefined,
-                  },
-                });
-              }}
-            />
-          </PanelHeaderWrapper>
-          <PanelHeaderWrapper
-            type="R"
-            sx={{
-              display: "flex",
-              alignItems: "start",
-              justifyContent: "flex-end",
-            }}
-          >
-            <PublishChartButton />
-          </PanelHeaderWrapper>
-        </PanelHeaderLayout>
-        <PanelBodyWrapper type="L">
-          <LayoutConfigurator />
-        </PanelBodyWrapper>
-        <PanelBodyWrapper type="M">
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              gap: 1,
-              mt: 3,
-              mb: 4,
-            }}
-          >
-            <Title
-              text={state.layout.meta.title[locale]}
-              onClick={() => {
-                if (state.layout.activeField !== "title") {
-                  dispatch({
-                    type: "LAYOUT_ACTIVE_FIELD_CHANGED",
-                    value: "title",
-                  });
-                }
-              }}
-            />
-            <Description
-              text={state.layout.meta.description[locale]}
-              onClick={() => {
-                if (state.layout.activeField !== "description") {
-                  dispatch({
-                    type: "LAYOUT_ACTIVE_FIELD_CHANGED",
-                    value: "description",
-                  });
-                }
-              }}
-            />
-          </Box>
-          <ChartPreview dataSource={state.dataSource} />
-        </PanelBodyWrapper>
-        <ConfiguratorDrawer
-          anchor="left"
-          open={!!state.layout.activeField}
-          hideBackdrop
-          onClose={handleClosePanel}
+    <PanelLayout type="LM" sx={{ background: (t) => t.palette.muted.main }}>
+      <PanelHeaderLayout type="LMR">
+        <PanelHeaderWrapper type="L">
+          <BackContainer>
+            <BackButton onClick={handlePrevious}>
+              <Trans id="controls.nav.back-to-configurator">
+                Back to editing
+              </Trans>
+            </BackButton>
+          </BackContainer>
+        </PanelHeaderWrapper>
+        <PanelHeaderWrapper
+          type="M"
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 3,
+            mx: "auto",
+          }}
         >
-          <div style={{ width: DRAWER_WIDTH }} data-testid="panel-drawer">
-            <BackToMainButton onClick={handleClosePanel} />
-            {isAnnotationField(state.layout.activeField) && (
-              <LayoutAnnotationsSelector />
-            )}
-          </div>
-        </ConfiguratorDrawer>
-      </PanelLayout>
-    </InteractiveFiltersProvider>
+          <IconButton
+            label="layoutTab"
+            checked={state.layout.type === "tab"}
+            onClick={() => {
+              if (state.layout.type === "tab") {
+                return;
+              }
+
+              dispatch({
+                type: "LAYOUT_CHANGED",
+                value: {
+                  type: "tab",
+                  meta: state.layout.meta,
+                  activeField: undefined,
+                },
+              });
+            }}
+          />
+          <IconButton
+            label="layoutDashboard"
+            checked={state.layout.type === "dashboard"}
+            onClick={() => {
+              if (state.layout.type === "dashboard") {
+                return;
+              }
+
+              dispatch({
+                type: "LAYOUT_CHANGED",
+                value: {
+                  type: "dashboard",
+                  meta: state.layout.meta,
+                  layout: "vertical",
+                  activeField: undefined,
+                },
+              });
+            }}
+          />
+        </PanelHeaderWrapper>
+        <PanelHeaderWrapper
+          type="R"
+          sx={{
+            display: "flex",
+            alignItems: "start",
+            justifyContent: "flex-end",
+          }}
+        >
+          <PublishChartButton />
+        </PanelHeaderWrapper>
+      </PanelHeaderLayout>
+      <PanelBodyWrapper type="L">
+        <LayoutConfigurator />
+      </PanelBodyWrapper>
+      <PanelBodyWrapper type="M">
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 1,
+            mt: 3,
+            mb: 4,
+          }}
+        >
+          <Title
+            text={state.layout.meta.title[locale]}
+            onClick={() => {
+              if (state.layout.activeField !== "title") {
+                dispatch({
+                  type: "LAYOUT_ACTIVE_FIELD_CHANGED",
+                  value: "title",
+                });
+              }
+            }}
+          />
+          <Description
+            text={state.layout.meta.description[locale]}
+            onClick={() => {
+              if (state.layout.activeField !== "description") {
+                dispatch({
+                  type: "LAYOUT_ACTIVE_FIELD_CHANGED",
+                  value: "description",
+                });
+              }
+            }}
+          />
+        </Box>
+        <ChartPreview dataSource={state.dataSource} />
+      </PanelBodyWrapper>
+      <ConfiguratorDrawer
+        anchor="left"
+        open={!!state.layout.activeField}
+        hideBackdrop
+        onClose={handleClosePanel}
+      >
+        <div style={{ width: DRAWER_WIDTH }} data-testid="panel-drawer">
+          <BackToMainButton onClick={handleClosePanel} />
+          {isAnnotationField(state.layout.activeField) && (
+            <LayoutAnnotationsSelector />
+          )}
+        </div>
+      </ConfiguratorDrawer>
+    </PanelLayout>
   );
 };
 
@@ -362,9 +360,7 @@ const PublishStep = () => {
   return (
     <PanelLayout type="LM">
       <PanelBodyWrapper type="M">
-        <InteractiveFiltersProvider>
-          <ChartPreview dataSource={state.dataSource} />
-        </InteractiveFiltersProvider>
+        <ChartPreview dataSource={state.dataSource} />
       </PanelBodyWrapper>
     </PanelLayout>
   );

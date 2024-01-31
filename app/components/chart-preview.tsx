@@ -30,6 +30,7 @@ import {
 } from "@/graphql/hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import { useLocale } from "@/locales/use-locale";
+import { InteractiveFiltersProvider } from "@/stores/interactive-filters";
 import useEvent from "@/utils/use-event";
 
 type ChartPreviewProps = {
@@ -203,36 +204,38 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
                 />
               )}
             </>
-            <Box ref={containerRef} height={containerHeight.current!} mt={4}>
-              {isTablePreview ? (
-                <DataSetTable
-                  sx={{
-                    width: "100%",
-                    maxHeight: "100%",
-                  }}
+            <InteractiveFiltersProvider>
+              <Box ref={containerRef} height={containerHeight.current!} mt={4}>
+                {isTablePreview ? (
+                  <DataSetTable
+                    sx={{
+                      width: "100%",
+                      maxHeight: "100%",
+                    }}
+                    dataSource={dataSource}
+                    chartConfig={chartConfig}
+                  />
+                ) : (
+                  <ChartWithFilters
+                    dataSource={dataSource}
+                    componentIris={componentIris}
+                    chartConfig={chartConfig}
+                    dimensions={dimensions}
+                    measures={measures}
+                  />
+                )}
+              </Box>
+              {chartConfig && (
+                <ChartFootnotes
                   dataSource={dataSource}
                   chartConfig={chartConfig}
-                />
-              ) : (
-                <ChartWithFilters
-                  dataSource={dataSource}
-                  componentIris={componentIris}
-                  chartConfig={chartConfig}
+                  onToggleTableView={handleToggleTableView}
                   dimensions={dimensions}
                   measures={measures}
                 />
               )}
-            </Box>
-            {chartConfig && (
-              <ChartFootnotes
-                dataSource={dataSource}
-                chartConfig={chartConfig}
-                onToggleTableView={handleToggleTableView}
-                dimensions={dimensions}
-                measures={measures}
-              />
-            )}
-            <DebugPanel configurator interactiveFilters />
+              <DebugPanel configurator interactiveFilters />
+            </InteractiveFiltersProvider>
           </>
         )}
       </ChartErrorBoundary>
