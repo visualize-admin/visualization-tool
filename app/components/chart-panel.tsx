@@ -14,15 +14,17 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   panelLayoutTall: {
     display: "grid",
-    gridTemplateColumns: "repeat(2, 1fr)",
+    gridTemplateColumns: "1fr",
+    [theme.breakpoints.up("sm")]: {
+      gridTemplateColumns: "1fr 1fr",
+      "& > :nth-child(3n - 2)": {
+        gridColumn: "1 / span 2",
+      },
+      "& > :nth-child(3n - 1, 3n)": {
+        gridColumn: "1 / span 1",
+      },
+    },
     gap: theme.spacing(4),
-
-    "& > :nth-child(3n - 2)": {
-      gridColumn: "1 / span 2",
-    },
-    "& > :nth-child(3n - 1, 3n)": {
-      gridColumn: "1 / span 1",
-    },
   },
   chartWrapper: {
     display: "flex",
