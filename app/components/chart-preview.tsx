@@ -7,7 +7,7 @@ import {
   useDroppable,
 } from "@dnd-kit/core";
 import { Trans } from "@lingui/macro";
-import { Box, useMediaQuery } from "@mui/material";
+import { Box } from "@mui/material";
 import Head from "next/head";
 import React from "react";
 
@@ -17,9 +17,10 @@ import { LoadingStateProvider } from "@/charts/shared/chart-loading-state";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
 import { ChartFootnotes } from "@/components/chart-footnotes";
 import {
-  ChartPanel,
-  ChartPanelLayout,
-  ChartPanelProps,
+  ChartPanelLayoutTall,
+  ChartPanelLayoutVertical,
+  ChartWrapper,
+  ChartWrapperProps,
 } from "@/components/chart-panel";
 import { DragHandle } from "@/components/chart-selection-tabs";
 import {
@@ -38,7 +39,6 @@ import {
   getChartConfig,
   hasChartConfigs,
   isConfiguring,
-  isLayouting,
   useConfiguratorState,
 } from "@/configurator";
 import { Description, Title } from "@/configurator/components/annotators";
@@ -53,106 +53,6 @@ import { useTransitionStore } from "@/stores/transition";
 import { useTheme } from "@/themes";
 import { snapCornerToCursor } from "@/utils/dnd";
 import useEvent from "@/utils/use-event";
-
-type TallLayoutRowProps = {
-  row: TallLayoutRow;
-  dataSource: DataSource;
-  editing?: boolean;
-  layout?: Layout;
-};
-
-const TallLayoutRow = (props: TallLayoutRowProps) => {
-  const { row, dataSource, editing, layout } = props;
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-
-  switch (row.type) {
-    case "wide":
-      return (
-        <DndChartPreview
-          chartKey={row.chartConfig.key}
-          dataSource={dataSource}
-          layout={layout}
-          editing={editing}
-        />
-      );
-    case "narrow":
-      if (isMobile) {
-        return (
-          <>
-            {row.chartConfigs.map((chartConfig) => (
-              <AlignChartElementsProvider key={chartConfig.key}>
-                <DndChartPreview
-                  chartKey={chartConfig.key}
-                  dataSource={dataSource}
-                  layout={layout}
-                  editing={editing}
-                />
-              </AlignChartElementsProvider>
-            ))}
-          </>
-        );
-      }
-
-      return (
-        <Box
-          sx={{
-            display: "grid",
-            gridTemplateColumns: {
-              xs: "1fr",
-              md: "calc(50% - 8px) calc(50% - 8px)",
-            },
-            gap: 4,
-          }}
-        >
-          <AlignChartElementsProvider>
-            {row.chartConfigs.map((chartConfig) => (
-              <DndChartPreview
-                key={chartConfig.key}
-                chartKey={chartConfig.key}
-                dataSource={dataSource}
-                layout={layout}
-                editing={editing}
-              />
-            ))}
-          </AlignChartElementsProvider>
-        </Box>
-      );
-  }
-};
-
-type TallLayoutRow =
-  | {
-      type: "wide";
-      chartConfig: ChartConfig;
-    }
-  | {
-      type: "narrow";
-      chartConfigs: [ChartConfig] | [ChartConfig, ChartConfig];
-    };
-
-const getTallLayoutRows = (chartConfigs: ChartConfig[]): TallLayoutRow[] => {
-  const result: TallLayoutRow[] = [];
-
-  for (let i = 0; i < chartConfigs.length; i += 1) {
-    if (i % 3 === 0) {
-      result.push({ type: "wide", chartConfig: chartConfigs[i] });
-    }
-
-    if (i % 3 === 1) {
-      const currentConfig = chartConfigs[i];
-      const nextConfig = chartConfigs[i + 1];
-      result.push({
-        type: "narrow",
-        chartConfigs: nextConfig
-          ? [currentConfig, nextConfig]
-          : [currentConfig],
-      });
-    }
-  }
-
-  return result;
-};
 
 type AlignChartElementsContext = {
   reset: () => void;
@@ -224,9 +124,9 @@ export const ChartPreview = (props: ChartPreviewProps) => {
     <DashboardPreview dataSource={dataSource} layoutType={layout.layout} />
   ) : (
     <ChartTablePreviewProvider>
-      <ChartPanel editing={editing} layout={layout}>
+      <ChartWrapper editing={editing} layoutType={layout.type}>
         <ChartPreviewInner dataSource={dataSource} />
-      </ChartPanel>
+      </ChartWrapper>
     </ChartTablePreviewProvider>
   );
 };
@@ -238,7 +138,7 @@ type DashboardPreviewProps = ChartPreviewProps & {
 
 const DashboardPreview = (props: DashboardPreviewProps) => {
   const { dataSource, layoutType, editing } = props;
-  const [state, dispatch] = useConfiguratorState(isLayouting);
+  const [state, dispatch] = useConfiguratorState(hasChartConfigs);
   const theme = useTheme();
   const transition = useTransitionStore();
   const [isDragging, setIsDragging] = React.useState(false);
@@ -246,82 +146,91 @@ const DashboardPreview = (props: DashboardPreviewProps) => {
     null
   );
   const [over, setOver] = React.useState<Over | null>(null);
+  const renderChart = React.useCallback(
+    (chartConfig: ChartConfig) => (
+      <DndChartPreview
+        chartKey={chartConfig.key}
+        dataSource={dataSource}
+        layoutType={state.layout.type}
+        editing={editing}
+      />
+    ),
+    [dataSource, editing, state.layout]
+  );
 
   return (
-    <ChartPanelLayout type={layoutType}>
-      <DndContext
-        collisionDetection={pointerWithin}
-        onDragStart={(e) => {
-          transition.setEnable(false);
-          setIsDragging(true);
-          setActiveChartKey(`${e.active.id}`);
-        }}
-        onDragMove={(e) => {
-          if (e.over?.id !== over?.id && e.over?.id !== activeChartKey) {
-            setOver(e.over);
-          }
-        }}
-        onDragEnd={(e) => {
-          transition.setEnable(true);
-          setIsDragging(false);
-          setActiveChartKey(null);
-          setOver(null);
+    <DndContext
+      collisionDetection={pointerWithin}
+      onDragStart={(e) => {
+        transition.setEnable(false);
+        setIsDragging(true);
+        setActiveChartKey(`${e.active.id}`);
+      }}
+      onDragMove={(e) => {
+        if (e.over?.id !== over?.id && e.over?.id !== activeChartKey) {
+          setOver(e.over);
+        }
+      }}
+      onDragEnd={(e) => {
+        transition.setEnable(true);
+        setIsDragging(false);
+        setActiveChartKey(null);
+        setOver(null);
 
-          const { active, over } = e;
+        const { active, over } = e;
 
-          if (!active || !over) {
-            return;
-          }
+        if (!active || !over) {
+          return;
+        }
 
-          dispatch({
-            type: "CHART_CONFIG_SWAP",
-            value: {
-              oldIndex: state.chartConfigs.findIndex(
-                (c) => c.key === active.id
-              ),
-              newIndex: state.chartConfigs.findIndex((c) => c.key === over.id),
-            },
-          });
-        }}
-      >
-        {getTallLayoutRows(state.chartConfigs).map((chartConfig, i) => (
-          <TallLayoutRow
-            key={i}
-            row={chartConfig}
-            dataSource={props.dataSource}
-            layout={state.layout}
-            editing={editing}
-          />
-        ))}
-        {isDragging && (
-          <DragOverlay
-            zIndex={1000}
-            modifiers={[snapCornerToCursor]}
-            style={{
-              opacity: over ? 0.8 : 1,
-              width: "min(40vh, 400px)",
-              height: "fit-content",
-              border: `2px solid ${
-                over ? theme.palette.primary.main : "transparent"
-              }`,
-              cursor: "grabbing",
-            }}
-          >
-            <ChartPanel layout={state.layout}>
-              <ChartPreviewInner
-                dataSource={dataSource}
-                chartKey={activeChartKey}
-                dragHandleSlot={<DragHandle dragging />}
-              />
-            </ChartPanel>
-          </DragOverlay>
-        )}
-      </DndContext>
-    </ChartPanelLayout>
+        dispatch({
+          type: "CHART_CONFIG_SWAP",
+          value: {
+            oldIndex: state.chartConfigs.findIndex((c) => c.key === active.id),
+            newIndex: state.chartConfigs.findIndex((c) => c.key === over.id),
+          },
+        });
+      }}
+    >
+      {layoutType === "tall" ? (
+        <ChartPanelLayoutTall
+          chartConfigs={state.chartConfigs}
+          renderChart={renderChart}
+        />
+      ) : (
+        <ChartPanelLayoutVertical
+          chartConfigs={state.chartConfigs}
+          renderChart={renderChart}
+        />
+      )}
+      {isDragging && (
+        <DragOverlay
+          zIndex={1000}
+          modifiers={[snapCornerToCursor]}
+          style={{
+            opacity: over ? 0.8 : 1,
+            width: "min(40vh, 400px)",
+            height: "fit-content",
+            border: `2px solid ${
+              over ? theme.palette.primary.main : "transparent"
+            }`,
+            cursor: "grabbing",
+          }}
+        >
+          <ChartWrapper>
+            <ChartPreviewInner
+              dataSource={dataSource}
+              chartKey={activeChartKey}
+              dragHandleSlot={<DragHandle dragging />}
+            />
+          </ChartWrapper>
+        </DragOverlay>
+      )}
+    </DndContext>
   );
 };
 
-type DndChartPreviewProps = ChartPanelProps & {
+type DndChartPreviewProps = ChartWrapperProps & {
   chartKey: string;
   dataSource: DataSource;
 };
@@ -360,7 +269,7 @@ const DndChartPreview = (props: DndChartPreviewProps) => {
 
   return (
     <ChartTablePreviewProvider>
-      <ChartPanel
+      <ChartWrapper
         {...rest}
         ref={setRef}
         {...attributes}
@@ -384,7 +293,7 @@ const DndChartPreview = (props: DndChartPreviewProps) => {
             />
           }
         />
-      </ChartPanel>
+      </ChartWrapper>
     </ChartTablePreviewProvider>
   );
 };
