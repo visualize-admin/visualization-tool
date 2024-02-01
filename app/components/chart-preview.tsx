@@ -81,13 +81,14 @@ const TallLayoutRow = (props: TallLayoutRowProps) => {
         return (
           <>
             {row.chartConfigs.map((chartConfig) => (
+              <AlignChartElementsProvider key={chartConfig.key}>
               <DndChartPreview
-                key={chartConfig.key}
                 chartKey={chartConfig.key}
                 dataSource={dataSource}
                 layout={layout}
                 editing={editing}
               />
+              </AlignChartElementsProvider>
             ))}
           </>
         );
@@ -97,10 +98,11 @@ const TallLayoutRow = (props: TallLayoutRowProps) => {
         <Box
           sx={{
             display: "grid",
-            gridTemplateColumns: { xs: "1fr", md: "50% 50%" },
+            gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
             gap: 4,
           }}
         >
+          <AlignChartElementsProvider>
           {row.chartConfigs.map((chartConfig) => (
             <DndChartPreview
               key={chartConfig.key}
@@ -110,6 +112,7 @@ const TallLayoutRow = (props: TallLayoutRowProps) => {
               editing={editing}
             />
           ))}
+          </AlignChartElementsProvider>
         </Box>
       );
   }
@@ -146,6 +149,70 @@ const getTallLayoutRows = (chartConfigs: ChartConfig[]): TallLayoutRow[] => {
   }
 
   return result;
+};
+
+type AlignChartElementsContext = {
+  reset: () => void;
+  maxHeaderHeight: number;
+  setMaxHeaderHeight: (height: number) => void;
+  maxChartHeight: number;
+  setMaxChartHeight: (height: number) => void;
+  maxLegendHeight: number;
+  setMaxLegendHeight: (height: number) => void;
+};
+
+const AlignChartElementsContext =
+  React.createContext<AlignChartElementsContext>({
+    reset: () => {},
+    maxHeaderHeight: 0,
+    setMaxHeaderHeight: () => {},
+    maxChartHeight: 0,
+    setMaxChartHeight: () => {},
+    maxLegendHeight: 0,
+    setMaxLegendHeight: () => {},
+  });
+
+export const useAlignChartElements = () => {
+  const ctx = React.useContext(AlignChartElementsContext);
+
+  if (ctx === undefined) {
+    throw Error(
+      "You need to wrap your component in <AlignChartElementsProvider /> to useAlignChartElements()"
+    );
+  }
+
+  return ctx;
+};
+
+export const AlignChartElementsProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
+  const [maxHeaderHeight, setMaxHeaderHeight] = React.useState(0);
+  const [maxChartHeight, setMaxChartHeight] = React.useState(0);
+  const [maxLegendHeight, setMaxLegendHeight] = React.useState(0);
+  const reset = React.useCallback(() => {
+    setMaxHeaderHeight(0);
+    setMaxChartHeight(0);
+    setMaxLegendHeight(0);
+  }, []);
+
+  return (
+    <AlignChartElementsContext.Provider
+      value={{
+        reset,
+        maxHeaderHeight,
+        setMaxHeaderHeight,
+        maxChartHeight,
+        setMaxChartHeight,
+        maxLegendHeight,
+        setMaxLegendHeight,
+      }}
+    >
+      {children}
+    </AlignChartElementsContext.Provider>
+  );
 };
 
 type ChartPreviewProps = {
@@ -267,6 +334,12 @@ type DndChartPreviewProps = ChartPanelProps & {
 const DndChartPreview = (props: DndChartPreviewProps) => {
   const { children, chartKey, dataSource, ...rest } = props;
   const theme = useTheme();
+  const { reset: resetAlignChartElements } = useAlignChartElements();
+
+  // Reset max heights when the order of the charts changes.
+  React.useEffect(() => {
+    resetAlignChartElements();
+  }, [chartKey, resetAlignChartElements]);
 
   const {
     setActivatorNodeRef,
@@ -361,6 +434,27 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
     containerRef,
     containerHeight,
   } = useChartTablePreview();
+  const alignChartElements = useAlignChartElements();
+  const headerRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    if (headerRef.current) {
+      const { height } = headerRef.current.getBoundingClientRect();
+
+      if (height > alignChartElements.maxHeaderHeight) {
+        alignChartElements.setMaxHeaderHeight(height);
+      }
+    }
+  }, [alignChartElements]);
+
+  const headerMarginBottom = React.useMemo(() => {
+    if (headerRef.current) {
+      const { height } = headerRef.current.getBoundingClientRect();
+      return alignChartElements.maxHeaderHeight - height;
+    }
+
+    return 0;
+  }, [alignChartElements.maxHeaderHeight]);
 
   const handleToggleTableView = useEvent(() => setIsTablePreview((c) => !c));
   const dimensions = components?.dataCubesComponents.dimensions;
@@ -380,7 +474,6 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
     <Flex
       sx={{
         flexDirection: "column",
-        justifyContent: "space-between",
         flexGrow: 1,
         color: "grey.800",
         p: 6,
@@ -474,12 +567,9 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
               <Box ref={containerRef} height={containerHeight.current} mt={4}>
                 {isTablePreview ? (
                   <DataSetTable
-                    sx={{
-                      width: "100%",
-                      maxHeight: "100%",
-                    }}
                     dataSource={dataSource}
                     chartConfig={chartConfig}
+                      sx={{ width: "100%", maxHeight: "100%" }}
                   />
                 ) : (
                   <ChartWithFilters
