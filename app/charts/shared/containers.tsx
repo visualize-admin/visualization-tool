@@ -4,6 +4,7 @@ import React, { ReactNode } from "react";
 
 import { useChartState } from "@/charts/shared/chart-state";
 import { CalculationToggle } from "@/charts/shared/interactive-filter-calculation-toggle";
+import { useAlignChartElements } from "@/components/chart-preview";
 import { useTransitionStore } from "@/stores/transition";
 
 export const ChartContainer = ({ children }: { children: ReactNode }) => {
@@ -12,6 +13,7 @@ export const ChartContainer = ({ children }: { children: ReactNode }) => {
   const transitionDuration = useTransitionStore((state) => state.duration);
   const { bounds } = useChartState();
   const { width, height } = bounds;
+  const alignChartElements = useAlignChartElements();
 
   React.useEffect(() => {
     if (ref.current) {
@@ -27,8 +29,25 @@ export const ChartContainer = ({ children }: { children: ReactNode }) => {
     }
   }, [height, enableTransition, transitionDuration]);
 
+  React.useEffect(() => {
+    if (height > alignChartElements.maxChartHeight) {
+      alignChartElements.setMaxChartHeight(height);
+    }
+  }, [height, alignChartElements]);
+
   return (
-    <div ref={ref} aria-hidden="true" style={{ position: "relative", width }}>
+    <div
+      ref={ref}
+      aria-hidden="true"
+      style={{
+        position: "relative",
+        width,
+        marginBottom: `${Math.max(
+          alignChartElements.maxChartHeight - height,
+          0
+        )}px`,
+      }}
+    >
       {children}
     </div>
   );
