@@ -4,7 +4,7 @@ import React, { ReactNode } from "react";
 
 import { useChartState } from "@/charts/shared/chart-state";
 import { CalculationToggle } from "@/charts/shared/interactive-filter-calculation-toggle";
-import { useAlignChartElements } from "@/components/chart-preview";
+import { useAlignChartElements } from "@/components/chart-helpers";
 import { useTransitionStore } from "@/stores/transition";
 
 export const ChartContainer = ({ children }: { children: ReactNode }) => {

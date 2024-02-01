@@ -3,7 +3,7 @@ import { makeStyles } from "@mui/styles";
 import capitalize from "lodash/capitalize";
 import React from "react";
 
-import { AlignChartElementsProvider } from "@/components/chart-preview";
+import { AlignChartElementsProvider } from "@/components/chart-helpers";
 import { ChartSelectionTabs } from "@/components/chart-selection-tabs";
 import { ChartConfig, Layout } from "@/config-types";
 import { useTheme } from "@/themes";

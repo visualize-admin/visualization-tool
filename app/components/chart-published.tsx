@@ -11,6 +11,7 @@ import { LoadingStateProvider } from "@/charts/shared/chart-loading-state";
 import { isUsingImputation } from "@/charts/shared/imputation";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
 import { ChartFootnotes } from "@/components/chart-footnotes";
+import { useChartHeaderMarginBottom } from "@/components/chart-helpers";
 import {
   ChartPanelLayoutTall,
   ChartPanelLayoutVertical,
@@ -51,8 +52,6 @@ import { useLocale } from "@/locales/use-locale";
 import { InteractiveFiltersProvider } from "@/stores/interactive-filters";
 import { useEmbedOptions } from "@/utils/embed";
 import useEvent from "@/utils/use-event";
-
-import { useChartHeaderMarginBottom } from "./chart-preview";
 
 type ChartPublishedProps = {
   configKey?: string;
