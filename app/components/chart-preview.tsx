@@ -39,7 +39,7 @@ import {
   isLayouting,
   useConfiguratorState,
 } from "@/configurator";
-import { Title } from "@/configurator/components/annotators";
+import { Description, Title } from "@/configurator/components/annotators";
 import {
   useDataCubesComponentsQuery,
   useDataCubesMetadataQuery,
@@ -357,6 +357,23 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
                 {dragHandleSlot}
               </Flex>
             </Flex>
+            {(state.state === "CONFIGURING_CHART" ||
+              chartConfig.meta.description[locale]) && (
+              <Description
+                text={chartConfig.meta.description[locale]}
+                lighterColor
+                onClick={
+                  state.state === "CONFIGURING_CHART"
+                    ? () => {
+                        dispatch({
+                          type: "CHART_ACTIVE_FIELD_CHANGED",
+                          value: "description",
+                        });
+                      }
+                    : undefined
+                }
+              />
+            )}
 
             <InteractiveFiltersProvider>
               <Box ref={containerRef} height={containerHeight.current!} mt={4}>
