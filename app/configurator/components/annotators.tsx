@@ -51,7 +51,11 @@ export const Title = (props: Props) => {
       variant="h2"
       className={clsx(classes.text, className)}
       onClick={onClick}
-      sx={{ color: text ? text : getEmptyColor(lighterColor), ...sx }}
+      sx={{
+        color: text ? text : getEmptyColor(lighterColor),
+        wordBreak: "break-word",
+        ...sx,
+      }}
     >
       {text ? text : <Trans id="annotation.add.title">[ Title ]</Trans>}
     </Typography>
@@ -68,7 +72,11 @@ export const Description = (props: Props) => {
       variant="body1"
       className={clsx(classes.text, className)}
       onClick={onClick}
-      sx={{ color: text ? text : getEmptyColor(lighterColor), ...sx }}
+      sx={{
+        color: text ? text : getEmptyColor(lighterColor),
+        wordBreak: "break-word",
+        ...sx,
+      }}
     >
       {text ? (
         text
