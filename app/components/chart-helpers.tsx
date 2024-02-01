@@ -70,6 +70,7 @@ export const AlignChartElementsProvider = ({
 export const useChartHeaderMarginBottom = () => {
   const alignChartElements = useAlignChartElements();
   const headerRef = React.useRef<HTMLDivElement>(null);
+  const oldMargin = React.useRef(0);
 
   React.useEffect(() => {
     if (headerRef.current) {
@@ -84,7 +85,13 @@ export const useChartHeaderMarginBottom = () => {
   const headerMarginBottom = React.useMemo(() => {
     if (headerRef.current) {
       const { height } = headerRef.current.getBoundingClientRect();
-      return alignChartElements.maxHeaderHeight - height;
+      const newMargin =
+        alignChartElements.maxHeaderHeight === 0
+          ? oldMargin.current
+          : alignChartElements.maxHeaderHeight - height;
+      oldMargin.current = newMargin;
+
+      return newMargin;
     }
 
     return 0;
