@@ -1,3 +1,4 @@
+import debounce from "lodash/debounce";
 import React from "react";
 
 type AlignChartElementsContext = {
@@ -41,6 +42,15 @@ export const AlignChartElementsProvider = ({
     setMaxHeaderHeight(0);
     setMaxChartHeight(0);
   }, []);
+
+  React.useEffect(() => {
+    const resizeReset = debounce(reset, 100);
+    window.addEventListener("resize", resizeReset);
+
+    return () => {
+      window.removeEventListener("resize", resizeReset);
+    };
+  }, [reset]);
 
   return (
     <AlignChartElementsContext.Provider

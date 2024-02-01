@@ -298,9 +298,12 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
           )}
           <LoadingStateProvider>
             <InteractiveFiltersProvider>
-              <Box
+              <div
                 ref={headerRef}
-                sx={{ marginBottom: `${headerMarginBottom}px` }}
+                style={{
+                  marginBottom: `${headerMarginBottom}px`,
+                  transition: "margin-bottom 0.2s ease-in-out",
+                }}
               >
                 <Flex
                   sx={{
@@ -331,7 +334,7 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
                     measures={measures}
                   />
                 )}
-              </Box>
+              </div>
               <Flex
                 flexDirection="column"
                 ref={containerRef}

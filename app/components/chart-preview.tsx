@@ -348,11 +348,13 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
                     height: "100%",
                   }}
                 >
-                  <Box style={{ height: "100%" }}>
-                    <Box
+                  <div style={{ height: "100%" }}>
+                    <div
                       ref={headerRef}
-                      sx={{ mb: `${headerMarginBottom}px` }}
-                      data-X={headerMarginBottom}
+                      style={{
+                        marginBottom: `${headerMarginBottom}px`,
+                        transition: "margin-bottom 0.2s ease-in-out",
+                      }}
                     >
                       <Flex
                         sx={{
@@ -420,7 +422,7 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
                           measures={measures}
                         />
                       )}
-                    </Box>
+                    </div>
                     <Box
                       ref={containerRef}
                       height={containerHeight.current}
@@ -442,7 +444,7 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
                         />
                       )}
                     </Box>
-                  </Box>
+                  </div>
                   <ChartFootnotes
                     dataSource={dataSource}
                     chartConfig={chartConfig}
