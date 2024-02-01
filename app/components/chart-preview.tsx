@@ -159,8 +159,6 @@ type AlignChartElementsContext = {
   setMaxHeaderHeight: (height: number) => void;
   maxChartHeight: number;
   setMaxChartHeight: (height: number) => void;
-  maxLegendHeight: number;
-  setMaxLegendHeight: (height: number) => void;
 };
 
 const AlignChartElementsContext =
@@ -170,8 +168,6 @@ const AlignChartElementsContext =
     setMaxHeaderHeight: () => {},
     maxChartHeight: 0,
     setMaxChartHeight: () => {},
-    maxLegendHeight: 0,
-    setMaxLegendHeight: () => {},
   });
 
 export const useAlignChartElements = () => {
@@ -193,11 +189,9 @@ export const AlignChartElementsProvider = ({
 }) => {
   const [maxHeaderHeight, setMaxHeaderHeight] = React.useState(0);
   const [maxChartHeight, setMaxChartHeight] = React.useState(0);
-  const [maxLegendHeight, setMaxLegendHeight] = React.useState(0);
   const reset = React.useCallback(() => {
     setMaxHeaderHeight(0);
     setMaxChartHeight(0);
-    setMaxLegendHeight(0);
   }, []);
 
   return (
@@ -208,8 +202,6 @@ export const AlignChartElementsProvider = ({
         setMaxHeaderHeight,
         maxChartHeight,
         setMaxChartHeight,
-        maxLegendHeight,
-        setMaxLegendHeight,
       }}
     >
       {children}
@@ -510,97 +502,113 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
             </Head>
             <LoadingStateProvider>
               <InteractiveFiltersProvider>
-                <Box ref={headerRef} sx={{ mb: `${headerMarginBottom}px` }}>
-                  <Flex
-                    sx={{
-                      justifyContent:
-                        state.state === "CONFIGURING_CHART" ||
-                        chartConfig.meta.title[locale]
-                          ? "space-between"
-                          : "flex-end",
-                      alignItems: "flex-start",
-                      gap: 2,
-                    }}
-                  >
-                    {(state.state === "CONFIGURING_CHART" ||
-                      chartConfig.meta.title[locale]) && (
-                      <Title
-                        text={chartConfig.meta.title[locale]}
-                        lighterColor
-                        onClick={
-                          state.state === "CONFIGURING_CHART"
-                            ? () =>
-                                dispatch({
-                                  type: "CHART_ACTIVE_FIELD_CHANGED",
-                                  value: "title",
-                                })
-                            : undefined
-                        }
-                      />
-                    )}
-                    <Flex sx={{ alignItems: "center", gap: 2 }}>
-                      {!disableMetadataPanel && (
-                        <MetadataPanel
-                          // FIXME: adapt to design
-                          datasetIri={chartConfig.cubes[0].iri}
-                          dataSource={dataSource}
-                          dimensions={allComponents}
-                          top={96}
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                    height: "100%",
+                  }}
+                >
+                  <Box style={{ height: "100%" }}>
+                    <Box ref={headerRef} sx={{ mb: `${headerMarginBottom}px` }}>
+                      <Flex
+                        sx={{
+                          justifyContent:
+                            state.state === "CONFIGURING_CHART" ||
+                            chartConfig.meta.title[locale]
+                              ? "space-between"
+                              : "flex-end",
+                          alignItems: "flex-start",
+                          gap: 2,
+                        }}
+                      >
+                        {(state.state === "CONFIGURING_CHART" ||
+                          chartConfig.meta.title[locale]) && (
+                          <Title
+                            text={chartConfig.meta.title[locale]}
+                            lighterColor
+                            onClick={
+                              state.state === "CONFIGURING_CHART"
+                                ? () =>
+                                    dispatch({
+                                      type: "CHART_ACTIVE_FIELD_CHANGED",
+                                      value: "title",
+                                    })
+                                : undefined
+                            }
+                          />
+                        )}
+                        <Flex sx={{ alignItems: "center", gap: 2 }}>
+                          {!disableMetadataPanel && (
+                            <MetadataPanel
+                              // FIXME: adapt to design
+                              datasetIri={chartConfig.cubes[0].iri}
+                              dataSource={dataSource}
+                              dimensions={allComponents}
+                              top={96}
+                            />
+                          )}
+                          {dragHandleSlot}
+                        </Flex>
+                      </Flex>
+                      {(state.state === "CONFIGURING_CHART" ||
+                        chartConfig.meta.description[locale]) && (
+                        <Description
+                          text={chartConfig.meta.description[locale]}
+                          lighterColor
+                          onClick={
+                            state.state === "CONFIGURING_CHART"
+                              ? () => {
+                                  dispatch({
+                                    type: "CHART_ACTIVE_FIELD_CHANGED",
+                                    value: "description",
+                                  });
+                                }
+                              : undefined
+                          }
                         />
                       )}
-                      {dragHandleSlot}
-                    </Flex>
-                  </Flex>
-                  {(state.state === "CONFIGURING_CHART" ||
-                    chartConfig.meta.description[locale]) && (
-                    <Description
-                      text={chartConfig.meta.description[locale]}
-                      lighterColor
-                      onClick={
-                        state.state === "CONFIGURING_CHART"
-                          ? () => {
-                              dispatch({
-                                type: "CHART_ACTIVE_FIELD_CHANGED",
-                                value: "description",
-                              });
-                            }
-                          : undefined
-                      }
-                    />
-                  )}
-                  {chartConfig.interactiveFiltersConfig?.dataFilters.active && (
-                    <ChartDataFilters
-                      dataSource={dataSource}
-                      chartConfig={chartConfig}
-                      dimensions={dimensions}
-                      measures={measures}
-                    />
-                  )}
+                      {chartConfig.interactiveFiltersConfig?.dataFilters
+                        .active && (
+                        <ChartDataFilters
+                          dataSource={dataSource}
+                          chartConfig={chartConfig}
+                          dimensions={dimensions}
+                          measures={measures}
+                        />
+                      )}
+                    </Box>
+                    <Box
+                      ref={containerRef}
+                      height={containerHeight.current}
+                      mt={4}
+                    >
+                      {isTablePreview ? (
+                        <DataSetTable
+                          dataSource={dataSource}
+                          chartConfig={chartConfig}
+                          sx={{ width: "100%", maxHeight: "100%" }}
+                        />
+                      ) : (
+                        <ChartWithFilters
+                          dataSource={dataSource}
+                          componentIris={componentIris}
+                          chartConfig={chartConfig}
+                          dimensions={dimensions}
+                          measures={measures}
+                        />
+                      )}
+                    </Box>
+                  </Box>
+                  <ChartFootnotes
+                    dataSource={dataSource}
+                    chartConfig={chartConfig}
+                    onToggleTableView={handleToggleTableView}
+                    dimensions={dimensions}
+                    measures={measures}
+                  />
                 </Box>
-                <Box ref={containerRef} height={containerHeight.current} mt={4}>
-                  {isTablePreview ? (
-                    <DataSetTable
-                      dataSource={dataSource}
-                      chartConfig={chartConfig}
-                      sx={{ width: "100%", maxHeight: "100%" }}
-                    />
-                  ) : (
-                    <ChartWithFilters
-                      dataSource={dataSource}
-                      componentIris={componentIris}
-                      chartConfig={chartConfig}
-                      dimensions={dimensions}
-                      measures={measures}
-                    />
-                  )}
-                </Box>
-                <ChartFootnotes
-                  dataSource={dataSource}
-                  chartConfig={chartConfig}
-                  onToggleTableView={handleToggleTableView}
-                  dimensions={dimensions}
-                  measures={measures}
-                />
                 <DebugPanel configurator interactiveFilters />
               </InteractiveFiltersProvider>
             </LoadingStateProvider>
