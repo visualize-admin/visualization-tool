@@ -13,20 +13,11 @@ const useStyles = makeStyles((theme: Theme) => ({
     gap: theme.spacing(4),
   },
   panelLayoutTall: {
-    display: "grid",
-    gridTemplateColumns: "1fr",
-    [theme.breakpoints.up("sm")]: {
-      gridTemplateColumns: "50% 50%",
-      "& > :nth-child(3n - 2)": {
-        gridColumn: "1 / span 2",
-      },
-      "& > :nth-child(3n - 1, 3n)": {
-        gridColumn: "1 / span 1",
-      },
-    },
+    display: "flex",
+    flexDirection: "column",
     gap: theme.spacing(4),
   },
-  chartWrapper: {
+  chartPanel: {
     display: "flex",
     flexDirection: "column",
     backgroundColor: theme.palette.grey[100],
@@ -34,7 +25,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     borderColor: theme.palette.divider,
     overflow: "hidden",
     width: "auto",
-    height: "100%",
   },
 }));
 
@@ -61,12 +51,12 @@ export const ChartPanelLayout = (props: ChartPanelLayoutProps) => {
   );
 };
 
-export type ChartWrapperProps = BoxProps & {
+export type ChartPanelProps = BoxProps & {
   editing?: boolean;
   layout?: Layout;
 };
 
-export const ChartWrapper = React.forwardRef<HTMLDivElement, ChartWrapperProps>(
+export const ChartPanel = React.forwardRef<HTMLDivElement, ChartPanelProps>(
   (props, ref) => {
     const { children, editing, layout, ...rest } = props;
     const classes = useStyles();
@@ -74,10 +64,7 @@ export const ChartWrapper = React.forwardRef<HTMLDivElement, ChartWrapperProps>(
     return (
       <Box ref={ref} {...rest}>
         {(editing || layout?.type === "tab") && <ChartSelectionTabs />}
-        <Box
-          className={classes.chartWrapper}
-          sx={{ minHeight: [150, 300, 500] }}
-        >
+        <Box className={classes.chartPanel} sx={{ minHeight: [150, 300, 500] }}>
           {children}
         </Box>
       </Box>

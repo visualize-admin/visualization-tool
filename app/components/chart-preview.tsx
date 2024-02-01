@@ -16,9 +16,9 @@ import { DataSetTable } from "@/browse/datatable";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
 import { ChartFootnotes } from "@/components/chart-footnotes";
 import {
+  ChartPanel,
   ChartPanelLayout,
-  ChartWrapper,
-  ChartWrapperProps,
+  ChartPanelProps,
 } from "@/components/chart-panel";
 import { DragHandle } from "@/components/chart-selection-tabs";
 import {
@@ -67,9 +67,9 @@ export const ChartPreview = (props: ChartPreviewProps) => {
     <DashboardPreview dataSource={dataSource} layoutType={layout.layout} />
   ) : (
     <ChartTablePreviewProvider>
-      <ChartWrapper editing={editing} layout={layout}>
+      <ChartPanel editing={editing} layout={layout}>
         <ChartPreviewInner dataSource={dataSource} />
-      </ChartWrapper>
+      </ChartPanel>
     </ChartTablePreviewProvider>
   );
 };
@@ -148,13 +148,13 @@ const DashboardPreview = (props: DashboardPreviewProps) => {
               cursor: "grabbing",
             }}
           >
-            <ChartWrapper layout={state.layout}>
+            <ChartPanel layout={state.layout}>
               <ChartPreviewInner
                 dataSource={dataSource}
                 chartKey={activeChartKey}
                 dragHandleSlot={<DragHandle dragging />}
               />
-            </ChartWrapper>
+            </ChartPanel>
           </DragOverlay>
         )}
       </DndContext>
@@ -162,7 +162,7 @@ const DashboardPreview = (props: DashboardPreviewProps) => {
   );
 };
 
-type DndChartPreviewProps = ChartWrapperProps & {
+type DndChartPreviewProps = ChartPanelProps & {
   chartKey: string;
   dataSource: DataSource;
 };
@@ -195,7 +195,7 @@ const DndChartPreview = (props: DndChartPreviewProps) => {
 
   return (
     <ChartTablePreviewProvider>
-      <ChartWrapper
+      <ChartPanel
         {...rest}
         ref={setRef}
         {...attributes}
@@ -219,7 +219,7 @@ const DndChartPreview = (props: DndChartPreviewProps) => {
             />
           }
         />
-      </ChartWrapper>
+      </ChartPanel>
     </ChartTablePreviewProvider>
   );
 };

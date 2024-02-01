@@ -9,7 +9,7 @@ import { extractChartConfigsComponentIris } from "@/charts/shared/chart-helpers"
 import { isUsingImputation } from "@/charts/shared/imputation";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
 import { ChartFootnotes } from "@/components/chart-footnotes";
-import { ChartPanelLayout, ChartWrapper } from "@/components/chart-panel";
+import { ChartPanel, ChartPanelLayout } from "@/components/chart-panel";
 import {
   ChartTablePreviewProvider,
   useChartTablePreview,
@@ -77,14 +77,14 @@ export const ChartPublished = (props: ChartPublishedProps) => {
       <ChartPanelLayout type={state.layout.layout}>
         {state.chartConfigs.map((chartConfig) => (
           <ChartTablePreviewProvider key={chartConfig.key}>
-            <ChartWrapper layout={state.layout}>
+            <ChartPanel layout={state.layout}>
               <ChartPublishedInner
                 dataSource={dataSource}
                 state={state}
                 chartConfig={chartConfig}
                 configKey={configKey}
               />
-            </ChartWrapper>
+            </ChartPanel>
           </ChartTablePreviewProvider>
         ))}
       </ChartPanelLayout>
@@ -109,14 +109,14 @@ export const ChartPublished = (props: ChartPublishedProps) => {
         )}
       </Flex>
       <ChartTablePreviewProvider>
-        <ChartWrapper layout={state.layout}>
+        <ChartPanel layout={state.layout}>
           <ChartPublishedInner
             dataSource={dataSource}
             state={state}
             chartConfig={getChartConfig(state)}
             configKey={configKey}
           />
-        </ChartWrapper>
+        </ChartPanel>
       </ChartTablePreviewProvider>
     </>
   );
