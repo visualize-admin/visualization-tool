@@ -1,16 +1,21 @@
 import { Trans } from "@lingui/macro";
 import { Box, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { useEffect, useMemo, useRef } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import { useStore } from "zustand";
 
 import { DataSetTable } from "@/browse/datatable";
+import { ChartDataFilters } from "@/charts/shared/chart-data-filters";
 import { extractChartConfigsComponentIris } from "@/charts/shared/chart-helpers";
 import { LoadingStateProvider } from "@/charts/shared/chart-loading-state";
 import { isUsingImputation } from "@/charts/shared/imputation";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
 import { ChartFootnotes } from "@/components/chart-footnotes";
-import { ChartPanelLayout, ChartWrapper } from "@/components/chart-panel";
+import {
+  ChartPanelLayoutTall,
+  ChartPanelLayoutVertical,
+  ChartWrapper,
+} from "@/components/chart-panel";
 import {
   ChartTablePreviewProvider,
   useChartTablePreview,
@@ -47,6 +52,8 @@ import { InteractiveFiltersProvider } from "@/stores/interactive-filters";
 import { useEmbedOptions } from "@/utils/embed";
 import useEvent from "@/utils/use-event";
 
+import { useChartHeaderMarginBottom } from "./chart-preview";
+
 type ChartPublishedProps = {
   configKey?: string;
 };
@@ -56,6 +63,21 @@ export const ChartPublished = (props: ChartPublishedProps) => {
   const [state] = useConfiguratorState(isPublished);
   const { dataSource } = state;
   const locale = useLocale();
+  const renderChart = React.useCallback(
+    (chartConfig: ChartConfig) => (
+      <ChartTablePreviewProvider key={chartConfig.key}>
+        <ChartWrapper key={chartConfig.key} layoutType={state.layout.type}>
+          <ChartPublishedInner
+            dataSource={dataSource}
+            state={state}
+            chartConfig={chartConfig}
+            configKey={configKey}
+          />
+        </ChartWrapper>
+      </ChartTablePreviewProvider>
+    ),
+    [configKey, dataSource, state]
+  );
 
   return state.layout.type === "dashboard" ? (
     <>
@@ -75,20 +97,17 @@ export const ChartPublished = (props: ChartPublishedProps) => {
           <Description text={state.layout.meta.description[locale]} />
         )}
       </Box>
-      <ChartPanelLayout type={state.layout.layout}>
-        {state.chartConfigs.map((chartConfig) => (
-          <ChartTablePreviewProvider key={chartConfig.key}>
-            <ChartWrapper layoutType={state.layout.type}>
-              <ChartPublishedInner
-                dataSource={dataSource}
-                state={state}
-                chartConfig={chartConfig}
-                configKey={configKey}
-              />
-            </ChartWrapper>
-          </ChartTablePreviewProvider>
-        ))}
-      </ChartPanelLayout>
+      {state.layout.layout === "tall" ? (
+        <ChartPanelLayoutTall
+          chartConfigs={state.chartConfigs}
+          renderChart={renderChart}
+        />
+      ) : (
+        <ChartPanelLayoutVertical
+          chartConfigs={state.chartConfigs}
+          renderChart={renderChart}
+        />
+      )}
     </>
   ) : (
     <>
@@ -162,6 +181,7 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
     containerHeight,
     computeContainerHeight,
   } = useChartTablePreview();
+  const { headerRef, headerMarginBottom } = useChartHeaderMarginBottom();
 
   const metadataPanelStore = useMemo(() => createMetadataPanelStore(), []);
   const metadataPanelOpen = useStore(metadataPanelStore, (state) => state.open);
@@ -277,27 +297,42 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
               </HintBlue>
             </Box>
           )}
-          <Flex
-            sx={{
-              justifyContent: meta.title[locale] ? "space-between" : "flex-end",
-              alignItems: "center",
-              gap: 2,
-            }}
-          >
-            {meta.title[locale] && <Title text={meta.title[locale]} />}
-            <MetadataPanel
-              // FIXME: adapt to design
-              datasetIri={chartConfig.cubes[0].iri}
-              dataSource={dataSource}
-              dimensions={allComponents}
-              container={rootRef.current}
-            />
-          </Flex>
-          {meta.description[locale] && (
-            <Description text={meta.description[locale]} />
-          )}
           <LoadingStateProvider>
             <InteractiveFiltersProvider>
+              <Box
+                ref={headerRef}
+                sx={{ marginBottom: `${headerMarginBottom}px` }}
+              >
+                <Flex
+                  sx={{
+                    justifyContent: meta.title[locale]
+                      ? "space-between"
+                      : "flex-end",
+                    alignItems: "center",
+                    gap: 2,
+                  }}
+                >
+                  {meta.title[locale] && <Title text={meta.title[locale]} />}
+                  <MetadataPanel
+                    // FIXME: adapt to design
+                    datasetIri={chartConfig.cubes[0].iri}
+                    dataSource={dataSource}
+                    dimensions={allComponents}
+                    container={rootRef.current}
+                  />
+                </Flex>
+                {meta.description[locale] && (
+                  <Description text={meta.description[locale]} />
+                )}
+                {chartConfig.interactiveFiltersConfig?.dataFilters.active && (
+                  <ChartDataFilters
+                    dataSource={dataSource}
+                    chartConfig={chartConfig}
+                    dimensions={dimensions}
+                    measures={measures}
+                  />
+                )}
+              </Box>
               <Flex
                 flexDirection="column"
                 ref={containerRef}

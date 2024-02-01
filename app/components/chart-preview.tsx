@@ -110,6 +110,32 @@ export const AlignChartElementsProvider = ({
   );
 };
 
+export const useChartHeaderMarginBottom = () => {
+  const alignChartElements = useAlignChartElements();
+  const headerRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    if (headerRef.current) {
+      const { height } = headerRef.current.getBoundingClientRect();
+
+      if (height > alignChartElements.maxHeaderHeight) {
+        alignChartElements.setMaxHeaderHeight(height);
+      }
+    }
+  }, [alignChartElements]);
+
+  const headerMarginBottom = React.useMemo(() => {
+    if (headerRef.current) {
+      const { height } = headerRef.current.getBoundingClientRect();
+      return alignChartElements.maxHeaderHeight - height;
+    }
+
+    return 0;
+  }, [alignChartElements.maxHeaderHeight]);
+
+  return { headerRef, headerMarginBottom };
+};
+
 type ChartPreviewProps = {
   dataSource: DataSource;
 };
@@ -338,27 +364,7 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
     containerRef,
     containerHeight,
   } = useChartTablePreview();
-  const alignChartElements = useAlignChartElements();
-  const headerRef = React.useRef<HTMLDivElement>(null);
-
-  React.useEffect(() => {
-    if (headerRef.current) {
-      const { height } = headerRef.current.getBoundingClientRect();
-
-      if (height > alignChartElements.maxHeaderHeight) {
-        alignChartElements.setMaxHeaderHeight(height);
-      }
-    }
-  }, [alignChartElements]);
-
-  const headerMarginBottom = React.useMemo(() => {
-    if (headerRef.current) {
-      const { height } = headerRef.current.getBoundingClientRect();
-      return alignChartElements.maxHeaderHeight - height;
-    }
-
-    return 0;
-  }, [alignChartElements.maxHeaderHeight]);
+  const { headerRef, headerMarginBottom } = useChartHeaderMarginBottom();
 
   const handleToggleTableView = useEvent(() => setIsTablePreview((c) => !c));
   const dimensions = components?.dataCubesComponents.dimensions;
@@ -421,7 +427,11 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
                   }}
                 >
                   <Box style={{ height: "100%" }}>
-                    <Box ref={headerRef} sx={{ mb: `${headerMarginBottom}px` }}>
+                    <Box
+                      ref={headerRef}
+                      sx={{ mb: `${headerMarginBottom}px` }}
+                      data-X={headerMarginBottom}
+                    >
                       <Flex
                         sx={{
                           justifyContent:

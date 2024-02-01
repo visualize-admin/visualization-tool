@@ -131,7 +131,7 @@ export const ChartDataFilters = (props: ChartDataFiltersProps) => {
       </Trans>
     </Typography>
   ) : (
-    <Flex sx={{ flexDirection: "column", my: 4 }}>
+    <Flex sx={{ flexDirection: "column", mt: 4 }}>
       <Flex
         sx={{
           justifyContent: "flex-end",
