@@ -146,14 +146,13 @@ const DashboardPreview = (props: DashboardPreviewProps) => {
                 over ? theme.palette.primary.main : "transparent"
               }`,
               cursor: "grabbing",
-              pointerEvents: "none",
             }}
           >
             <ChartWrapper layout={state.layout}>
               <ChartPreviewInner
                 dataSource={dataSource}
                 chartKey={activeChartKey}
-                disableMetadataPanel
+                dragHandleSlot={<DragHandle dragging />}
               />
             </ChartWrapper>
           </DragOverlay>
