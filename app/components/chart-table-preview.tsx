@@ -7,7 +7,7 @@ type Context = {
   setState: Dispatch<SetStateAction<boolean>>;
   setStateRaw: Dispatch<SetStateAction<boolean>>;
   containerRef: RefObject<HTMLDivElement>;
-  containerHeight: RefObject<"auto" | number>;
+  containerHeight: { current: "auto" | number };
   computeContainerHeight: () => void;
 };
 

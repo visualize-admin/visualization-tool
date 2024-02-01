@@ -299,7 +299,7 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
             <Flex
               flexDirection="column"
               ref={containerRef}
-              height={containerHeight.current!}
+              height={containerHeight.current}
               flexGrow={1}
               mt={4}
             >

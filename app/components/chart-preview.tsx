@@ -373,9 +373,8 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
                 }
               />
             )}
-
             <InteractiveFiltersProvider>
-              <Box ref={containerRef} height={containerHeight.current!} mt={4}>
+              <Box ref={containerRef} height={containerHeight.current} mt={4}>
                 {isTablePreview ? (
                   <DataSetTable
                     sx={{
@@ -395,15 +394,13 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
                   />
                 )}
               </Box>
-              {chartConfig && (
-                <ChartFootnotes
-                  dataSource={dataSource}
-                  chartConfig={chartConfig}
-                  onToggleTableView={handleToggleTableView}
-                  dimensions={dimensions}
-                  measures={measures}
-                />
-              )}
+              <ChartFootnotes
+                dataSource={dataSource}
+                chartConfig={chartConfig}
+                onToggleTableView={handleToggleTableView}
+                dimensions={dimensions}
+                measures={measures}
+              />
               <DebugPanel configurator interactiveFilters />
             </InteractiveFiltersProvider>
           </>
