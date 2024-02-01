@@ -1244,7 +1244,7 @@ export const decodeConfiguratorState = (
  */
 export const getChartConfig = (
   state: ConfiguratorState,
-  chartKey?: string
+  chartKey?: string | null
 ): ChartConfig => {
   if (state.state === "INITIAL" || state.state === "SELECTING_DATASET") {
     throw new Error("No chart config available!");

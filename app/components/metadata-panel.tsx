@@ -132,7 +132,6 @@ const useOtherStyles = makeStyles<Theme>((theme) => {
   return {
     toggleButton: {
       alignSelf: "flex-start",
-      marginTop: theme.spacing(2),
     },
     header: {
       display: "flex",

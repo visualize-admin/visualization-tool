@@ -12,7 +12,7 @@ type Context = {
 };
 
 const ChartTablePreviewContext = React.createContext<Context>({
-  state: true,
+  state: false,
   setState: () => {},
   setStateRaw: () => {},
   containerRef: { current: null },
