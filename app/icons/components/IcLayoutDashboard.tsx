@@ -6,14 +6,13 @@ function SvgIcLayoutDashboard(props: React.SVGProps<SVGSVGElement>) {
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
       width="1em"
-      height="1em"
+      height="1m"
       {...props}
     >
       <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
-        d="M2 2H22V12H2V2ZM13 14H22V22H13V14ZM11 14H2V22H11V14Z"
         fill="currentColor"
+        fill-rule="evenodd"
+        d="M11 2H2V14H11V2ZM22 2H13V8H22V2ZM13 10H22V22H13V10ZM11 16H2V22H11V16Z"
       />
     </svg>
   );

@@ -1,4 +1,4 @@
-import { Box, Theme } from "@mui/material";
+import { Box, BoxProps, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import capitalize from "lodash/capitalize";
 import React from "react";
@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   panelLayoutTall: {
     display: "grid",
-    gridTemplateColumns: "repeat(2, 1fr)",
+    gridTemplateColumns: "repeat(2, 50%)",
     gap: theme.spacing(4),
 
     "& > :nth-child(3n - 2)": {
@@ -32,6 +32,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     borderColor: theme.palette.divider,
     overflow: "hidden",
     width: "auto",
+    height: "100%",
   },
 }));
 
@@ -58,21 +59,26 @@ export const ChartPanelLayout = (props: ChartPanelLayoutProps) => {
   );
 };
 
-type ChartPanelProps = React.PropsWithChildren<{
+export type ChartWrapperProps = BoxProps & {
   editing?: boolean;
   layout?: Layout;
-}>;
-
-export const ChartWrapper = (props: ChartPanelProps) => {
-  const { children, editing, layout } = props;
-  const classes = useStyles();
-
-  return (
-    <>
-      {(editing || layout?.type === "tab") && <ChartSelectionTabs />}
-      <Box className={classes.chartWrapper} sx={{ minHeight: [150, 300, 500] }}>
-        {children}
-      </Box>
-    </>
-  );
 };
+
+export const ChartWrapper = React.forwardRef<HTMLDivElement, ChartWrapperProps>(
+  (props, ref) => {
+    const { children, editing, layout, ...rest } = props;
+    const classes = useStyles();
+
+    return (
+      <Box ref={ref} {...rest}>
+        {(editing || layout?.type === "tab") && <ChartSelectionTabs />}
+        <Box
+          className={classes.chartWrapper}
+          sx={{ minHeight: [150, 300, 500] }}
+        >
+          {children}
+        </Box>
+      </Box>
+    );
+  }
+);
