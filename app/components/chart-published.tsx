@@ -6,6 +6,7 @@ import { useStore } from "zustand";
 
 import { DataSetTable } from "@/browse/datatable";
 import { extractChartConfigsComponentIris } from "@/charts/shared/chart-helpers";
+import { LoadingStateProvider } from "@/charts/shared/chart-loading-state";
 import { isUsingImputation } from "@/charts/shared/imputation";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
 import { ChartFootnotes } from "@/components/chart-footnotes";
@@ -295,46 +296,48 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
           {meta.description[locale] && (
             <Description text={meta.description[locale]} />
           )}
-          <InteractiveFiltersProvider>
-            <Flex
-              flexDirection="column"
-              ref={containerRef}
-              height={containerHeight.current}
-              flexGrow={1}
-              mt={4}
-            >
-              {isTablePreview ? (
-                <DataSetTable
-                  sx={{ maxHeight: "100%" }}
-                  dataSource={dataSource}
-                  chartConfig={chartConfig}
-                />
-              ) : (
-                <ChartWithFilters
-                  dataSource={dataSource}
-                  componentIris={componentIris}
-                  chartConfig={chartConfig}
-                  dimensions={dimensions}
-                  measures={measures}
-                />
-              )}
-            </Flex>
-            <ChartFootnotes
-              dataSource={dataSource}
-              chartConfig={chartConfig}
-              dimensions={dimensions}
-              measures={measures}
-              configKey={configKey}
-              onToggleTableView={handleToggleTableView}
-              visualizeLinkText={
-                showDownload === false ? (
-                  <Trans id="metadata.link.created.with.visualize.alternate">
-                    visualize.admin.ch
-                  </Trans>
-                ) : undefined
-              }
-            />
-          </InteractiveFiltersProvider>
+          <LoadingStateProvider>
+            <InteractiveFiltersProvider>
+              <Flex
+                flexDirection="column"
+                ref={containerRef}
+                height={containerHeight.current}
+                flexGrow={1}
+                mt={4}
+              >
+                {isTablePreview ? (
+                  <DataSetTable
+                    sx={{ maxHeight: "100%" }}
+                    dataSource={dataSource}
+                    chartConfig={chartConfig}
+                  />
+                ) : (
+                  <ChartWithFilters
+                    dataSource={dataSource}
+                    componentIris={componentIris}
+                    chartConfig={chartConfig}
+                    dimensions={dimensions}
+                    measures={measures}
+                  />
+                )}
+              </Flex>
+              <ChartFootnotes
+                dataSource={dataSource}
+                chartConfig={chartConfig}
+                dimensions={dimensions}
+                measures={measures}
+                configKey={configKey}
+                onToggleTableView={handleToggleTableView}
+                visualizeLinkText={
+                  showDownload === false ? (
+                    <Trans id="metadata.link.created.with.visualize.alternate">
+                      visualize.admin.ch
+                    </Trans>
+                  ) : undefined
+                }
+              />
+            </InteractiveFiltersProvider>
+          </LoadingStateProvider>
         </ChartErrorBoundary>
       </Box>
     </MetadataPanelStoreContext.Provider>
