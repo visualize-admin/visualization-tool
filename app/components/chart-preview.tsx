@@ -8,7 +8,7 @@ import {
 } from "@dnd-kit/core";
 import { getEventCoordinates } from "@dnd-kit/utilities";
 import { Trans } from "@lingui/macro";
-import { Box } from "@mui/material";
+import { Box, useMediaQuery } from "@mui/material";
 import Head from "next/head";
 import React from "react";
 
@@ -31,6 +31,7 @@ import Flex from "@/components/flex";
 import { HintYellow } from "@/components/hint";
 import { MetadataPanel } from "@/components/metadata-panel";
 import {
+  ChartConfig,
   DataSource,
   Layout,
   getChartConfig,
@@ -52,6 +53,100 @@ import { useTheme } from "@/themes";
 import useEvent from "@/utils/use-event";
 
 import type { Modifier } from "@dnd-kit/core";
+
+type TallLayoutRowProps = {
+  row: TallLayoutRow;
+  dataSource: DataSource;
+  editing?: boolean;
+  layout?: Layout;
+};
+
+const TallLayoutRow = (props: TallLayoutRowProps) => {
+  const { row, dataSource, editing, layout } = props;
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+
+  switch (row.type) {
+    case "wide":
+      return (
+        <DndChartPreview
+          chartKey={row.chartConfig.key}
+          dataSource={dataSource}
+          layout={layout}
+          editing={editing}
+        />
+      );
+    case "narrow":
+      if (isMobile) {
+        return (
+          <>
+            {row.chartConfigs.map((chartConfig) => (
+              <DndChartPreview
+                key={chartConfig.key}
+                chartKey={chartConfig.key}
+                dataSource={dataSource}
+                layout={layout}
+                editing={editing}
+              />
+            ))}
+          </>
+        );
+      }
+
+      return (
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: { xs: "1fr", md: "50% 50%" },
+            gap: 4,
+          }}
+        >
+          {row.chartConfigs.map((chartConfig) => (
+            <DndChartPreview
+              key={chartConfig.key}
+              chartKey={chartConfig.key}
+              dataSource={dataSource}
+              layout={layout}
+              editing={editing}
+            />
+          ))}
+        </Box>
+      );
+  }
+};
+
+type TallLayoutRow =
+  | {
+      type: "wide";
+      chartConfig: ChartConfig;
+    }
+  | {
+      type: "narrow";
+      chartConfigs: [ChartConfig] | [ChartConfig, ChartConfig];
+    };
+
+const getTallLayoutRows = (chartConfigs: ChartConfig[]): TallLayoutRow[] => {
+  const result: TallLayoutRow[] = [];
+
+  for (let i = 0; i < chartConfigs.length; i += 1) {
+    if (i % 3 === 0) {
+      result.push({ type: "wide", chartConfig: chartConfigs[i] });
+    }
+
+    if (i % 3 === 1) {
+      const currentConfig = chartConfigs[i];
+      const nextConfig = chartConfigs[i + 1];
+      result.push({
+        type: "narrow",
+        chartConfigs: nextConfig
+          ? [currentConfig, nextConfig]
+          : [currentConfig],
+      });
+    }
+  }
+
+  return result;
+};
 
 type ChartPreviewProps = {
   dataSource: DataSource;
@@ -76,10 +171,11 @@ export const ChartPreview = (props: ChartPreviewProps) => {
 
 type DashboardPreviewProps = ChartPreviewProps & {
   layoutType: Extract<Layout, { type: "dashboard" }>["layout"];
+  editing?: boolean;
 };
 
 const DashboardPreview = (props: DashboardPreviewProps) => {
-  const { dataSource, layoutType } = props;
+  const { dataSource, layoutType, editing } = props;
   const [state, dispatch] = useConfiguratorState(isLayouting);
   const theme = useTheme();
   const transition = useTransitionStore();
@@ -126,12 +222,13 @@ const DashboardPreview = (props: DashboardPreviewProps) => {
           });
         }}
       >
-        {state.chartConfigs.map((chartConfig) => (
-          <DndChartPreview
-            key={chartConfig.key}
-            chartKey={chartConfig.key}
+        {getTallLayoutRows(state.chartConfigs).map((chartConfig, i) => (
+          <TallLayoutRow
+            key={i}
+            row={chartConfig}
             dataSource={props.dataSource}
             layout={state.layout}
+            editing={editing}
           />
         ))}
         {isDragging && (
