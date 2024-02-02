@@ -7,6 +7,7 @@ import {
   extractChartConfigComponentIris,
   useQueryFilters,
 } from "@/charts/shared/chart-helpers";
+import { ChartFiltersList } from "@/components/chart-filters-list";
 import { useChartTablePreview } from "@/components/chart-table-preview";
 import { DataDownloadMenu, RunSparqlQuery } from "@/components/data-download";
 import { ChartConfig, DataSource } from "@/configurator";
@@ -112,7 +113,13 @@ export const ChartFootnotes = ({
   ] = useEmbedOptions();
 
   return (
-    <>
+    <div>
+      <ChartFiltersList
+        dataSource={dataSource}
+        chartConfig={chartConfig}
+        dimensions={dimensions}
+        measures={measures}
+      />
       {data?.dataCubesMetadata
         ? data.dataCubesMetadata.map((dataCubeMetadata) => {
             const cubeLink = makeOpenDataLink(locale, dataCubeMetadata);
@@ -274,7 +281,7 @@ export const ChartFootnotes = ({
             );
           })
         : null}
-    </>
+    </div>
   );
 };
 

@@ -6,18 +6,23 @@ import {
   useDraggable,
   useDroppable,
 } from "@dnd-kit/core";
-// import { snapCenterToCursor } from "@dnd-kit/modifiers";
-import { getEventCoordinates } from "@dnd-kit/utilities";
 import { Trans } from "@lingui/macro";
 import { Box } from "@mui/material";
 import Head from "next/head";
 import React from "react";
 
 import { DataSetTable } from "@/browse/datatable";
+import { ChartDataFilters } from "@/charts/shared/chart-data-filters";
+import { LoadingStateProvider } from "@/charts/shared/chart-loading-state";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
 import { ChartFootnotes } from "@/components/chart-footnotes";
 import {
-  ChartPanelLayout,
+  useAlignChartElements,
+  useChartHeaderMarginBottom,
+} from "@/components/chart-helpers";
+import {
+  ChartPanelLayoutTall,
+  ChartPanelLayoutVertical,
   ChartWrapper,
   ChartWrapperProps,
 } from "@/components/chart-panel";
@@ -32,12 +37,12 @@ import Flex from "@/components/flex";
 import { HintYellow } from "@/components/hint";
 import { MetadataPanel } from "@/components/metadata-panel";
 import {
+  ChartConfig,
   DataSource,
   Layout,
   getChartConfig,
   hasChartConfigs,
   isConfiguring,
-  isLayouting,
   useConfiguratorState,
 } from "@/configurator";
 import { Description, Title } from "@/configurator/components/annotators";
@@ -47,11 +52,11 @@ import {
 } from "@/graphql/hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import { useLocale } from "@/locales/use-locale";
+import { InteractiveFiltersProvider } from "@/stores/interactive-filters";
 import { useTransitionStore } from "@/stores/transition";
 import { useTheme } from "@/themes";
+import { snapCornerToCursor } from "@/utils/dnd";
 import useEvent from "@/utils/use-event";
-
-import type { Modifier } from "@dnd-kit/core";
 
 type ChartPreviewProps = {
   dataSource: DataSource;
@@ -63,26 +68,25 @@ export const ChartPreview = (props: ChartPreviewProps) => {
   const editing = isConfiguring(state);
   const { layout } = state;
 
-  return (
+  return layout.type === "dashboard" && !editing ? (
+    <DashboardPreview dataSource={dataSource} layoutType={layout.layout} />
+  ) : (
     <ChartTablePreviewProvider>
-      {layout.type === "dashboard" && !editing ? (
-        <DashboardPreview dataSource={dataSource} layoutType={layout.layout} />
-      ) : (
-        <ChartWrapper editing={editing} layout={layout}>
-          <ChartPreviewInner dataSource={dataSource} />
-        </ChartWrapper>
-      )}
+      <ChartWrapper editing={editing} layoutType={layout.type}>
+        <ChartPreviewInner dataSource={dataSource} />
+      </ChartWrapper>
     </ChartTablePreviewProvider>
   );
 };
 
 type DashboardPreviewProps = ChartPreviewProps & {
   layoutType: Extract<Layout, { type: "dashboard" }>["layout"];
+  editing?: boolean;
 };
 
 const DashboardPreview = (props: DashboardPreviewProps) => {
-  const { dataSource, layoutType } = props;
-  const [state, dispatch] = useConfiguratorState(isLayouting);
+  const { dataSource, layoutType, editing } = props;
+  const [state, dispatch] = useConfiguratorState(hasChartConfigs);
   const theme = useTheme();
   const transition = useTransitionStore();
   const [isDragging, setIsDragging] = React.useState(false);
@@ -90,78 +94,87 @@ const DashboardPreview = (props: DashboardPreviewProps) => {
     null
   );
   const [over, setOver] = React.useState<Over | null>(null);
+  const renderChart = React.useCallback(
+    (chartConfig: ChartConfig) => (
+      <DndChartPreview
+        chartKey={chartConfig.key}
+        dataSource={dataSource}
+        layoutType={state.layout.type}
+        editing={editing}
+      />
+    ),
+    [dataSource, editing, state.layout]
+  );
 
   return (
-    <ChartPanelLayout type={layoutType}>
-      <DndContext
-        collisionDetection={pointerWithin}
-        onDragStart={(e) => {
-          transition.setEnable(false);
-          setIsDragging(true);
-          setActiveChartKey(`${e.active.id}`);
-        }}
-        onDragMove={(e) => {
-          if (e.over?.id !== over?.id && e.over?.id !== activeChartKey) {
-            setOver(e.over);
-          }
-        }}
-        onDragEnd={(e) => {
-          transition.setEnable(true);
-          setIsDragging(false);
-          setActiveChartKey(null);
-          setOver(null);
+    <DndContext
+      collisionDetection={pointerWithin}
+      onDragStart={(e) => {
+        transition.setEnable(false);
+        setIsDragging(true);
+        setActiveChartKey(`${e.active.id}`);
+      }}
+      onDragMove={(e) => {
+        if (e.over?.id !== over?.id && e.over?.id !== activeChartKey) {
+          setOver(e.over);
+        }
+      }}
+      onDragEnd={(e) => {
+        transition.setEnable(true);
+        setIsDragging(false);
+        setActiveChartKey(null);
+        setOver(null);
 
-          const { active, over } = e;
+        const { active, over } = e;
 
-          if (!active || !over) {
-            return;
-          }
+        if (!active || !over) {
+          return;
+        }
 
-          dispatch({
-            type: "CHART_CONFIG_SWAP",
-            value: {
-              oldIndex: state.chartConfigs.findIndex(
-                (c) => c.key === active.id
-              ),
-              newIndex: state.chartConfigs.findIndex((c) => c.key === over.id),
-            },
-          });
-        }}
-      >
-        {state.chartConfigs.map((chartConfig) => (
-          <DndChartPreview
-            key={chartConfig.key}
-            chartKey={chartConfig.key}
-            dataSource={props.dataSource}
-            layout={state.layout}
-          />
-        ))}
-        {isDragging && (
-          <DragOverlay
-            zIndex={1000}
-            modifiers={[snapCornerToCursor]}
-            style={{
-              opacity: over ? 0.8 : 1,
-              width: "min(40vh, 400px)",
-              height: "fit-content",
-              border: `2px solid ${
-                over ? theme.palette.primary.main : "transparent"
-              }`,
-              cursor: "grabbing",
-              pointerEvents: "none",
-            }}
-          >
-            <ChartWrapper layout={state.layout}>
-              <ChartPreviewInner
-                dataSource={dataSource}
-                chartKey={activeChartKey}
-                disableMetadataPanel
-              />
-            </ChartWrapper>
-          </DragOverlay>
-        )}
-      </DndContext>
-    </ChartPanelLayout>
+        dispatch({
+          type: "CHART_CONFIG_SWAP",
+          value: {
+            oldIndex: state.chartConfigs.findIndex((c) => c.key === active.id),
+            newIndex: state.chartConfigs.findIndex((c) => c.key === over.id),
+          },
+        });
+      }}
+    >
+      {layoutType === "tall" ? (
+        <ChartPanelLayoutTall
+          chartConfigs={state.chartConfigs}
+          renderChart={renderChart}
+        />
+      ) : (
+        <ChartPanelLayoutVertical
+          chartConfigs={state.chartConfigs}
+          renderChart={renderChart}
+        />
+      )}
+      {isDragging && (
+        <DragOverlay
+          zIndex={1000}
+          modifiers={[snapCornerToCursor]}
+          style={{
+            opacity: over ? 0.8 : 1,
+            width: "min(40vh, 400px)",
+            height: "fit-content",
+            border: `2px solid ${
+              over ? theme.palette.primary.main : "transparent"
+            }`,
+            cursor: "grabbing",
+          }}
+        >
+          <ChartWrapper>
+            <ChartPreviewInner
+              dataSource={dataSource}
+              chartKey={activeChartKey}
+              dragHandleSlot={<DragHandle dragging />}
+            />
+          </ChartWrapper>
+        </DragOverlay>
+      )}
+    </DndContext>
   );
 };
 
@@ -173,6 +186,12 @@ type DndChartPreviewProps = ChartWrapperProps & {
 const DndChartPreview = (props: DndChartPreviewProps) => {
   const { children, chartKey, dataSource, ...rest } = props;
   const theme = useTheme();
+  const { reset: resetAlignChartElements } = useAlignChartElements();
+
+  // Reset max heights when the order of the charts changes.
+  React.useEffect(() => {
+    resetAlignChartElements();
+  }, [chartKey, resetAlignChartElements]);
 
   const {
     setActivatorNodeRef,
@@ -197,31 +216,33 @@ const DndChartPreview = (props: DndChartPreviewProps) => {
   );
 
   return (
-    <ChartWrapper
-      {...rest}
-      ref={setRef}
-      {...attributes}
-      style={{
-        opacity: isDragging ? 0 : isOver ? 0.8 : 1,
-        border: `2px solid ${
-          isOver && !isDragging ? theme.palette.primary.main : "transparent"
-        }`,
-        outline: "none",
-        pointerEvents: active ? "none" : "auto",
-      }}
-    >
-      <ChartPreviewInner
-        dataSource={dataSource}
-        chartKey={chartKey}
-        dragHandleSlot={
-          <DragHandle
-            {...listeners}
-            ref={setActivatorNodeRef}
-            dragging={isDragging}
-          />
-        }
-      />
-    </ChartWrapper>
+    <ChartTablePreviewProvider>
+      <ChartWrapper
+        {...rest}
+        ref={setRef}
+        {...attributes}
+        style={{
+          opacity: isDragging ? 0 : isOver ? 0.8 : 1,
+          border: `2px solid ${
+            isOver && !isDragging ? theme.palette.primary.main : "transparent"
+          }`,
+          outline: "none",
+          pointerEvents: active ? "none" : "auto",
+        }}
+      >
+        <ChartPreviewInner
+          dataSource={dataSource}
+          chartKey={chartKey}
+          dragHandleSlot={
+            <DragHandle
+              {...listeners}
+              ref={setActivatorNodeRef}
+              dragging={isDragging}
+            />
+          }
+        />
+      </ChartWrapper>
+    </ChartTablePreviewProvider>
   );
 };
 
@@ -265,6 +286,7 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
     containerRef,
     containerHeight,
   } = useChartTablePreview();
+  const { headerRef, headerMarginBottom } = useChartHeaderMarginBottom();
 
   const handleToggleTableView = useEvent(() => setIsTablePreview((c) => !c));
   const dimensions = components?.dataCubesComponents.dimensions;
@@ -284,7 +306,6 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
     <Flex
       sx={{
         flexDirection: "column",
-        justifyContent: "space-between",
         flexGrow: 1,
         color: "grey.800",
         p: 6,
@@ -308,46 +329,6 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
         )}
         {hasChartConfigs(state) && (
           <>
-            <Flex
-              sx={{
-                justifyContent:
-                  state.state === "CONFIGURING_CHART" ||
-                  chartConfig.meta.title[locale]
-                    ? "space-between"
-                    : "flex-end",
-                alignItems: "flex-start",
-                gap: 2,
-              }}
-            >
-              {(state.state === "CONFIGURING_CHART" ||
-                chartConfig.meta.title[locale]) && (
-                <Title
-                  text={chartConfig.meta.title[locale]}
-                  lighterColor
-                  onClick={
-                    state.state === "CONFIGURING_CHART"
-                      ? () =>
-                          dispatch({
-                            type: "CHART_ACTIVE_FIELD_CHANGED",
-                            value: "title",
-                          })
-                      : undefined
-                  }
-                />
-              )}
-              <Flex sx={{ alignItems: "center", gap: 2 }}>
-                {!disableMetadataPanel && (
-                  <MetadataPanel
-                    // FIXME: adapt to design
-                    datasetIri={chartConfig.cubes[0].iri}
-                    dataSource={dataSource}
-                    dimensions={allComponents}
-                    top={96}
-                  />
-                )}
-                {dragHandleSlot}
-              </Flex>
-            </Flex>
             <Head>
               <title key="title">
                 {!chartConfig.meta.title[locale]
@@ -357,80 +338,127 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
                 - visualize.admin.ch
               </title>
             </Head>
-            {(state.state === "CONFIGURING_CHART" ||
-              chartConfig.meta.description[locale]) && (
-              <Description
-                text={chartConfig.meta.description[locale]}
-                lighterColor
-                onClick={
-                  state.state === "CONFIGURING_CHART"
-                    ? () => {
-                        dispatch({
-                          type: "CHART_ACTIVE_FIELD_CHANGED",
-                          value: "description",
-                        });
-                      }
-                    : undefined
-                }
-              />
-            )}
-            <Box ref={containerRef} height={containerHeight.current!} mt={4}>
-              {isTablePreview ? (
-                <DataSetTable
+            <LoadingStateProvider>
+              <InteractiveFiltersProvider>
+                <Box
                   sx={{
-                    width: "100%",
-                    maxHeight: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                    height: "100%",
                   }}
-                  dataSource={dataSource}
-                  chartConfig={chartConfig}
-                />
-              ) : (
-                <ChartWithFilters
-                  dataSource={dataSource}
-                  componentIris={componentIris}
-                  chartConfig={chartConfig}
-                  dimensions={dimensions}
-                  measures={measures}
-                />
-              )}
-            </Box>
-            {chartConfig && (
-              <ChartFootnotes
-                dataSource={dataSource}
-                chartConfig={chartConfig}
-                onToggleTableView={handleToggleTableView}
-                dimensions={dimensions}
-                measures={measures}
-              />
-            )}
-            <DebugPanel configurator interactiveFilters />
+                >
+                  <div style={{ height: "100%" }}>
+                    <div
+                      ref={headerRef}
+                      style={{
+                        marginBottom: `${headerMarginBottom}px`,
+                        transition: "margin-bottom 0.2s ease-in-out",
+                      }}
+                    >
+                      <Flex
+                        sx={{
+                          justifyContent:
+                            state.state === "CONFIGURING_CHART" ||
+                            chartConfig.meta.title[locale]
+                              ? "space-between"
+                              : "flex-end",
+                          alignItems: "flex-start",
+                          gap: 2,
+                        }}
+                      >
+                        {(state.state === "CONFIGURING_CHART" ||
+                          chartConfig.meta.title[locale]) && (
+                          <Title
+                            text={chartConfig.meta.title[locale]}
+                            lighterColor
+                            onClick={
+                              state.state === "CONFIGURING_CHART"
+                                ? () =>
+                                    dispatch({
+                                      type: "CHART_ACTIVE_FIELD_CHANGED",
+                                      value: "title",
+                                    })
+                                : undefined
+                            }
+                          />
+                        )}
+                        <Flex sx={{ alignItems: "center", gap: 2 }}>
+                          {!disableMetadataPanel && (
+                            <MetadataPanel
+                              // FIXME: adapt to design
+                              datasetIri={chartConfig.cubes[0].iri}
+                              dataSource={dataSource}
+                              dimensions={allComponents}
+                              top={96}
+                            />
+                          )}
+                          {dragHandleSlot}
+                        </Flex>
+                      </Flex>
+                      {(state.state === "CONFIGURING_CHART" ||
+                        chartConfig.meta.description[locale]) && (
+                        <Description
+                          text={chartConfig.meta.description[locale]}
+                          lighterColor
+                          onClick={
+                            state.state === "CONFIGURING_CHART"
+                              ? () => {
+                                  dispatch({
+                                    type: "CHART_ACTIVE_FIELD_CHANGED",
+                                    value: "description",
+                                  });
+                                }
+                              : undefined
+                          }
+                        />
+                      )}
+                      {chartConfig.interactiveFiltersConfig?.dataFilters
+                        .active && (
+                        <ChartDataFilters
+                          dataSource={dataSource}
+                          chartConfig={chartConfig}
+                          dimensions={dimensions}
+                          measures={measures}
+                        />
+                      )}
+                    </div>
+                    <Box
+                      ref={containerRef}
+                      height={containerHeight.current}
+                      pt={4}
+                    >
+                      {isTablePreview ? (
+                        <DataSetTable
+                          dataSource={dataSource}
+                          chartConfig={chartConfig}
+                          sx={{ width: "100%", maxHeight: "100%" }}
+                        />
+                      ) : (
+                        <ChartWithFilters
+                          dataSource={dataSource}
+                          componentIris={componentIris}
+                          chartConfig={chartConfig}
+                          dimensions={dimensions}
+                          measures={measures}
+                        />
+                      )}
+                    </Box>
+                  </div>
+                  <ChartFootnotes
+                    dataSource={dataSource}
+                    chartConfig={chartConfig}
+                    onToggleTableView={handleToggleTableView}
+                    dimensions={dimensions}
+                    measures={measures}
+                  />
+                </Box>
+                <DebugPanel configurator interactiveFilters />
+              </InteractiveFiltersProvider>
+            </LoadingStateProvider>
           </>
         )}
       </ChartErrorBoundary>
     </Flex>
   );
-};
-
-const snapCornerToCursor: Modifier = ({
-  activatorEvent,
-  draggingNodeRect,
-  transform,
-}) => {
-  if (draggingNodeRect && activatorEvent) {
-    const activatorCoordinates = getEventCoordinates(activatorEvent);
-
-    if (!activatorCoordinates) {
-      return transform;
-    }
-
-    const offsetX = activatorCoordinates.x - draggingNodeRect.left + 48;
-
-    return {
-      ...transform,
-      x: transform.x + offsetX - draggingNodeRect.width,
-      y: transform.y,
-    };
-  }
-
-  return transform;
 };

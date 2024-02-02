@@ -1,12 +1,8 @@
 import dynamic from "next/dynamic";
 import React from "react";
 
-import { ChartDataFilters } from "@/charts/shared/chart-data-filters";
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
-import { LoadingStateProvider } from "@/charts/shared/chart-loading-state";
 import useSyncInteractiveFilters from "@/charts/shared/use-sync-interactive-filters";
-import { ChartFiltersList } from "@/components/chart-filters-list";
-import Flex from "@/components/flex";
 import { ChartConfig, DataSource } from "@/configurator";
 import { Dimension, Measure } from "@/domain/data";
 
@@ -169,23 +165,9 @@ export const ChartWithFilters = React.forwardRef<
   useSyncInteractiveFilters(props.chartConfig);
 
   return (
-    <LoadingStateProvider>
-      <Flex
-        ref={ref}
-        sx={{
-          flexDirection: "column",
-          justifyContent: "space-between",
-          flexGrow: 1,
-        }}
-      >
-        {props.chartConfig.interactiveFiltersConfig?.dataFilters.active ? (
-          <ChartDataFilters {...props} />
-        ) : (
-          <ChartFiltersList {...props} />
-        )}
-        <GenericChart {...props} />
-      </Flex>
-    </LoadingStateProvider>
+    <div ref={ref}>
+      <GenericChart {...props} />
+    </div>
   );
 });
 ChartWithFilters.displayName = "ChartWithFilters";

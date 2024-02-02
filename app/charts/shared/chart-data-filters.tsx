@@ -7,7 +7,6 @@ import { useClient } from "urql";
 
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import { useLoadingState } from "@/charts/shared/chart-loading-state";
-import { ChartFiltersList } from "@/components/chart-filters-list";
 import Flex from "@/components/flex";
 import { Select } from "@/components/form";
 import { Loading } from "@/components/hint";
@@ -132,39 +131,41 @@ export const ChartDataFilters = (props: ChartDataFiltersProps) => {
       </Trans>
     </Typography>
   ) : (
-    <Flex sx={{ flexDirection: "column", my: 4 }}>
+    <Flex sx={{ flexDirection: "column", mt: 4 }}>
       <Flex
         sx={{
-          justifyContent: "space-between",
+          justifyContent: "flex-end",
           alignItems: "flex-start",
           gap: 3,
           minHeight: 20,
         }}
       >
-        <ChartFiltersList
-          dataSource={dataSource}
-          chartConfig={chartConfig}
-          dimensions={dimensions}
-          measures={measures}
-        />
-
         {componentIris.length > 0 && (
           <Button
             variant="text"
-            endIcon={<Icon name={filtersVisible ? "close" : "add"} size={15} />}
+            endIcon={
+              <Icon
+                name="add"
+                size={16}
+                style={{
+                  transform: filtersVisible ? "rotate(45deg)" : "rotate(0deg)",
+                  transition: "transform 0.2s ease-in-out",
+                }}
+              />
+            }
             sx={{
               display: "flex",
               fontSize: ["0.75rem", "0.75rem", "0.75rem"],
               alignItems: "center",
-              gap: 2,
               minWidth: "fit-content",
-              minHeight: 36,
-              px: 3,
+              minHeight: 0,
+              px: 2,
+              py: 1,
             }}
             onClick={() => setFiltersVisible(!filtersVisible)}
           >
             {loading && (
-              <span style={{ marginTop: "0.1rem" }}>
+              <span style={{ marginTop: "0.1rem", marginRight: "0.5rem" }}>
                 <LoadingIndicator />
               </span>
             )}

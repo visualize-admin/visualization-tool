@@ -144,7 +144,14 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
           width="100%"
           overflow="hidden"
         >
-          <Box sx={{ pt: 4, maxWidth: "50rem", margin: "auto" }}>
+          <Box
+            sx={{
+              maxWidth: { xs: "100%", lg: 1280 },
+              margin: "auto",
+              pt: 4,
+              px: 6,
+            }}
+          >
             {publishSuccess && (
               <Box mt={2} mb={5}>
                 <Success />

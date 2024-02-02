@@ -7,12 +7,12 @@ type Context = {
   setState: Dispatch<SetStateAction<boolean>>;
   setStateRaw: Dispatch<SetStateAction<boolean>>;
   containerRef: RefObject<HTMLDivElement>;
-  containerHeight: RefObject<"auto" | number>;
+  containerHeight: { current: "auto" | number };
   computeContainerHeight: () => void;
 };
 
 const ChartTablePreviewContext = React.createContext<Context>({
-  state: true,
+  state: false,
   setState: () => {},
   setStateRaw: () => {},
   containerRef: { current: null },
