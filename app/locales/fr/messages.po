@@ -543,6 +543,10 @@ msgstr "Dashboard"
 msgid "controls.layout.singleURLs"
 msgstr "URL uniques"
 
+#: app/configurator/components/configurator.tsx
+msgid "controls.layout.singleURLs.publish"
+msgstr "Sélectionner les graphiques à publier séparément."
+
 #: app/configurator/components/field-i18n.ts
 msgid "controls.layout.tab"
 msgstr "Tab Layout"
