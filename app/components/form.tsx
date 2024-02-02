@@ -206,7 +206,7 @@ export const Checkbox = ({
   className,
 }: CheckboxProps) => (
   <FormControlLabel
-    label={label || "-"}
+    label={label}
     htmlFor={`${name}`}
     disabled={disabled}
     className={className}
