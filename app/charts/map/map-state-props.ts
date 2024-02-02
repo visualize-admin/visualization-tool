@@ -54,11 +54,6 @@ export const useMapStateVariables = (
     );
   }
 
-  const { getValue: getArea } = useDimensionWithAbbreviations(
-    areaLayerDimension,
-    { observations, field: areaLayer }
-  );
-
   const symbolLayerDimension = dimensions.find(
     (d) => d.iri === symbolLayer?.componentIri
   );
@@ -70,17 +65,18 @@ export const useMapStateVariables = (
     );
   }
 
-  const { getValue: getSymbol } = useDimensionWithAbbreviations(
-    symbolLayerDimension,
-    { observations, field: symbolLayer }
-  );
+  const { getValue: getSymbol, getLabel: getSymbolLabel } =
+    useDimensionWithAbbreviations(symbolLayerDimension, {
+      observations,
+      field: symbolLayer,
+    });
 
   return {
     ...baseVariables,
     areaLayerDimension,
-    getArea,
     symbolLayerDimension,
     getSymbol,
+    getSymbolLabel,
   };
 };
 
@@ -96,7 +92,12 @@ export const useMapStateData = (
   variables: MapStateVariables
 ): MapStateData => {
   const { chartConfig, observations, shapes, coordinates } = chartProps;
-  const { areaLayerDimension, symbolLayerDimension, getSymbol } = variables;
+  const {
+    areaLayerDimension,
+    symbolLayerDimension,
+    getSymbol,
+    getSymbolLabel,
+  } = variables;
   const filters = useChartConfigFilters(chartConfig);
   // No need to sort the data for map.
   const plottableData = usePlottableData(observations, {});
@@ -134,8 +135,9 @@ export const useMapStateData = (
       const coordsByLabel = keyBy(coordinates, (d) => d.label);
 
       data.chartData.forEach((d) => {
-        const label = getSymbol(d);
-        const coords = coordsByLabel[label];
+        const value = getSymbol(d);
+        const label = getSymbolLabel(value);
+        const coords = coordsByLabel[value] ?? coordsByLabel[label];
 
         if (coords) {
           const { iri, label, latitude, longitude } = coords;
@@ -182,6 +184,7 @@ export const useMapStateData = (
   }, [
     symbolLayerDimension,
     getSymbol,
+    getSymbolLabel,
     data.chartData,
     shapes,
     coordinates,

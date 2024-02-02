@@ -330,7 +330,6 @@ export const useSegmentVariables = (
 
 export type AreaLayerVariables = {
   areaLayerDimension: GeoShapesDimension | undefined;
-  getArea: StringValueGetter;
 };
 
 export type SymbolLayerVariables = {
@@ -339,6 +338,7 @@ export type SymbolLayerVariables = {
     | GeoCoordinatesDimension
     | undefined;
   getSymbol: StringValueGetter;
+  getSymbolLabel: (d: string) => string;
 };
 
 export type ChartStateData = {
