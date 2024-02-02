@@ -1,5 +1,5 @@
 import { Trans } from "@lingui/macro";
-import { SxProps } from "@mui/material";
+import { SxProps, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import Button, { ButtonProps } from "@mui/material/Button";
 import { useRouter } from "next/router";
@@ -225,8 +225,14 @@ const LayoutingStep = () => {
     return null;
   }
 
+  const isSingleURLs = state.layout.type === "singleURLs";
+
   return (
-    <PanelLayout type="LM" sx={{ background: (t) => t.palette.muted.main }}>
+    <PanelLayout
+      // SingleURLs layout doesn't have an options panel
+      type={isSingleURLs ? "M" : "LM"}
+      sx={{ background: (t) => t.palette.muted.main }}
+    >
       <PanelHeaderLayout type="LMR">
         <PanelHeaderWrapper type="L">
           <BackContainer>
@@ -319,45 +325,70 @@ const LayoutingStep = () => {
           <PublishChartButton />
         </PanelHeaderWrapper>
       </PanelHeaderLayout>
-      <PanelBodyWrapper type="L">
-        <LayoutConfigurator />
-      </PanelBodyWrapper>
+      {!isSingleURLs && (
+        <PanelBodyWrapper type="L">
+          <LayoutConfigurator />
+        </PanelBodyWrapper>
+      )}
       <PanelBodyWrapper type="M">
-        {state.layout.type !== "singleURLs" && (
+        <Box
+          sx={
+            isSingleURLs
+              ? {
+                  width: "100%",
+                  maxWidth: { xs: "100%", lg: 1280 },
+                  mx: "auto",
+                }
+              : {}
+          }
+        >
           <Box
             sx={{
               display: "flex",
               flexDirection: "column",
               gap: 1,
               mt: 3,
-              mb: 4,
+              mb: isSingleURLs ? 6 : 4,
             }}
           >
-            <Title
-              text={state.layout.meta.title[locale]}
-              onClick={() => {
-                if (state.layout.activeField !== "title") {
-                  dispatch({
-                    type: "LAYOUT_ACTIVE_FIELD_CHANGED",
-                    value: "title",
-                  });
-                }
-              }}
-            />
-            <Description
-              text={state.layout.meta.description[locale]}
-              onClick={() => {
-                if (state.layout.activeField !== "description") {
-                  dispatch({
-                    type: "LAYOUT_ACTIVE_FIELD_CHANGED",
-                    value: "description",
-                  });
-                }
-              }}
-            />
+            {isSingleURLs ? (
+              <Typography
+                variant="h3"
+                sx={{ fontWeight: "normal", color: "secondary.active" }}
+              >
+                <Trans id="controls.layout.singleURLs.publish">
+                  Select the charts to publish separately.
+                </Trans>
+              </Typography>
+            ) : (
+              <>
+                <Title
+                  text={state.layout.meta.title[locale]}
+                  onClick={() => {
+                    if (state.layout.activeField !== "title") {
+                      dispatch({
+                        type: "LAYOUT_ACTIVE_FIELD_CHANGED",
+                        value: "title",
+                      });
+                    }
+                  }}
+                />
+                <Description
+                  text={state.layout.meta.description[locale]}
+                  onClick={() => {
+                    if (state.layout.activeField !== "description") {
+                      dispatch({
+                        type: "LAYOUT_ACTIVE_FIELD_CHANGED",
+                        value: "description",
+                      });
+                    }
+                  }}
+                />
+              </>
+            )}
           </Box>
-        )}
-        <ChartPreview dataSource={state.dataSource} />
+          <ChartPreview dataSource={state.dataSource} />
+        </Box>
       </PanelBodyWrapper>
       <ConfiguratorDrawer
         anchor="left"
