@@ -1630,7 +1630,7 @@ const ConfiguratorStateProviderInternal = (
 
                   // Do not use Promise.all here, as we want to publish the charts in order
                   // and not in parallel and keep the current tab open with first chart
-                  reversedChartKeys.forEach(async (chartKey, i) => {
+                  return reversedChartKeys.forEach(async (chartKey, i) => {
                     const preparedConfig = preparePublishingState(
                       {
                         ...state,
