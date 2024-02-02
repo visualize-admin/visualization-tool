@@ -1643,7 +1643,8 @@ const ConfiguratorStateProviderInternal = (
                       },
                       state.chartConfigs.filter(
                         (d) => d.key === chartKey
-                      ) as ChartConfig[]
+                      ) as ChartConfig[],
+                      chartKey
                     );
 
                     const result = await createConfig(preparedConfig);
@@ -1719,7 +1720,8 @@ const ConfiguratorStateProviderInternal = (
 
 const preparePublishingState = (
   state: ConfiguratorStatePublishing,
-  chartConfigs: ChartConfig[]
+  chartConfigs: ChartConfig[],
+  activeChartKey?: string
 ): ConfiguratorStatePublishing => {
   return {
     ...state,
@@ -1750,7 +1752,7 @@ const preparePublishingState = (
     // have multiple charts in the "stepper mode", and we'd like to start
     // the story from a specific point and e.g. toggle back and forth between
     // the different charts).
-    activeChartKey: state.chartConfigs[0].key,
+    activeChartKey: activeChartKey ?? state.chartConfigs[0].key,
   };
 };
 
