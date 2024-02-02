@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import React from "react";
 
 import { SelectDatasetStep } from "@/browser/select-dataset-step";
+import { META } from "@/charts";
 import { ChartPreview } from "@/components/chart-preview";
 import { PublishChartButton } from "@/components/chart-selection-tabs";
 import { HEADER_HEIGHT } from "@/components/header";
@@ -298,7 +299,9 @@ const LayoutingStep = () => {
                   publishableChartKeys: state.chartConfigs.map(
                     (chartConfig) => chartConfig.key
                   ),
-                  meta: state.layout.meta,
+                  // Clear the meta data, as it's not used in singleURLs layout,
+                  // but makes the types more consistent
+                  meta: META,
                   activeField: undefined,
                 },
               });
@@ -320,38 +323,40 @@ const LayoutingStep = () => {
         <LayoutConfigurator />
       </PanelBodyWrapper>
       <PanelBodyWrapper type="M">
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            gap: 1,
-            mt: 3,
-            mb: 4,
-          }}
-        >
-          <Title
-            text={state.layout.meta.title[locale]}
-            onClick={() => {
-              if (state.layout.activeField !== "title") {
-                dispatch({
-                  type: "LAYOUT_ACTIVE_FIELD_CHANGED",
-                  value: "title",
-                });
-              }
+        {state.layout.type !== "singleURLs" && (
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 1,
+              mt: 3,
+              mb: 4,
             }}
-          />
-          <Description
-            text={state.layout.meta.description[locale]}
-            onClick={() => {
-              if (state.layout.activeField !== "description") {
-                dispatch({
-                  type: "LAYOUT_ACTIVE_FIELD_CHANGED",
-                  value: "description",
-                });
-              }
-            }}
-          />
-        </Box>
+          >
+            <Title
+              text={state.layout.meta.title[locale]}
+              onClick={() => {
+                if (state.layout.activeField !== "title") {
+                  dispatch({
+                    type: "LAYOUT_ACTIVE_FIELD_CHANGED",
+                    value: "title",
+                  });
+                }
+              }}
+            />
+            <Description
+              text={state.layout.meta.description[locale]}
+              onClick={() => {
+                if (state.layout.activeField !== "description") {
+                  dispatch({
+                    type: "LAYOUT_ACTIVE_FIELD_CHANGED",
+                    value: "description",
+                  });
+                }
+              }}
+            />
+          </Box>
+        )}
         <ChartPreview dataSource={state.dataSource} />
       </PanelBodyWrapper>
       <ConfiguratorDrawer
