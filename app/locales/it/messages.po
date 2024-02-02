@@ -441,6 +441,7 @@ msgid "controls.filter.select.none"
 msgstr "Deseleziona tutto"
 
 #: app/configurator/components/field.tsx
+#: app/configurator/components/field.tsx
 msgid "controls.filter.use-most-recent"
 msgstr "Usare il più recente"
 
@@ -537,6 +538,10 @@ msgstr "Italiano"
 #: app/configurator/components/field-i18n.ts
 msgid "controls.layout.dashboard"
 msgstr "Dashboard"
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.layout.singleURLs"
+msgstr "URL singolo"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.layout.tab"
@@ -674,6 +679,7 @@ msgstr "Colonne"
 msgid "controls.section.columnstyle"
 msgstr "Stile della colonna"
 
+#: app/components/chart-filters-list.tsx
 #: app/configurator/components/chart-configurator.tsx
 msgid "controls.section.data.filters"
 msgstr "Filtri"

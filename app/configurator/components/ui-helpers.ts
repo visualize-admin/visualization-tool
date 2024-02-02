@@ -208,6 +208,8 @@ export const getIconName = (name: string): IconName => {
       return "time";
     case "animation":
       return "animation";
+    case "layoutSingleURLs":
+      return "layoutSingleURLs";
     case "layoutTab":
       return "layoutTab";
     case "layoutDashboard":

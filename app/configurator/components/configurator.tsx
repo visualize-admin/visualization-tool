@@ -283,6 +283,27 @@ const LayoutingStep = () => {
               });
             }}
           />
+          <IconButton
+            label="layoutSingleURLs"
+            checked={state.layout.type === "singleURLs"}
+            onClick={() => {
+              if (state.layout.type === "singleURLs") {
+                return;
+              }
+
+              dispatch({
+                type: "LAYOUT_CHANGED",
+                value: {
+                  type: "singleURLs",
+                  publishableChartKeys: state.chartConfigs.map(
+                    (chartConfig) => chartConfig.key
+                  ),
+                  meta: state.layout.meta,
+                  activeField: undefined,
+                },
+              });
+            }}
+          />
         </PanelHeaderWrapper>
         <PanelHeaderWrapper
           type="R"
