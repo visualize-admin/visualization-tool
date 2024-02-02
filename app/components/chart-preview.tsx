@@ -271,12 +271,8 @@ const SingleURLsPreview = (props: SingleURLsPreviewProps) => {
               actionElementSlot={
                 <Checkbox
                   checked={checked}
+                  disabled={keys.length === 1 && checked}
                   onChange={() => {
-                    // At least one chart must be publishable
-                    if (keys.length === 1 && checked) {
-                      return;
-                    }
-
                     dispatch({
                       type: "LAYOUT_CHANGED",
                       value: {
