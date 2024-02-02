@@ -70,6 +70,8 @@ export const ChartPreview = (props: ChartPreviewProps) => {
 
   return layout.type === "dashboard" && !editing ? (
     <DashboardPreview dataSource={dataSource} layoutType={layout.layout} />
+  ) : layout.type === "singleURLs" ? (
+    <SingleURLsPreview dataSource={dataSource} />
   ) : (
     <ChartTablePreviewProvider>
       <ChartWrapper editing={editing} layoutType={layout.type}>
@@ -243,6 +245,32 @@ const DndChartPreview = (props: DndChartPreviewProps) => {
         />
       </ChartWrapper>
     </ChartTablePreviewProvider>
+  );
+};
+
+const SingleURLsPreview = (props: ChartPreviewProps) => {
+  const { dataSource } = props;
+  const [state] = useConfiguratorState(hasChartConfigs);
+
+  const renderChart = React.useCallback(
+    (chartConfig: ChartConfig) => (
+      <ChartTablePreviewProvider>
+        <ChartWrapper>
+          <ChartPreviewInner
+            dataSource={dataSource}
+            chartKey={chartConfig.key}
+          />
+        </ChartWrapper>
+      </ChartTablePreviewProvider>
+    ),
+    [dataSource]
+  );
+
+  return (
+    <ChartPanelLayoutVertical
+      chartConfigs={state.chartConfigs}
+      renderChart={renderChart}
+    />
   );
 };
 
