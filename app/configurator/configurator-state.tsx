@@ -4,7 +4,7 @@ import pickBy from "lodash/pickBy";
 import setWith from "lodash/setWith";
 import sortBy from "lodash/sortBy";
 import unset from "lodash/unset";
-import { useRouter } from "next/router";
+import { NextRouter, useRouter } from "next/router";
 import { Dispatch, createContext, useContext, useEffect, useMemo } from "react";
 import { Reducer, useImmerReducer } from "use-immer";
 
@@ -1622,74 +1622,71 @@ const ConfiguratorStateProviderInternal = (
         case "PUBLISHING":
           (async () => {
             try {
-              let dbConfig: ParsedConfig | undefined;
-              const key = getRouterChartId(asPath);
+              switch (state.layout.type) {
+                case "singleURLs": {
+                  const reversedChartKeys = state.layout.publishableChartKeys
+                    .slice()
+                    .reverse();
 
-              if (key && user) {
-                const config = await fetchChartConfig(key);
+                  // Do not use Promise.all here, as we want to publish the charts in order
+                  // and not in parallel and keep the current tab open with first chart
+                  return reversedChartKeys.forEach(async (chartKey, i) => {
+                    const preparedConfig = preparePublishingState(
+                      {
+                        ...state,
+                        // Ensure that the layout is reset to single-chart mode
+                        layout: {
+                          type: "tab",
+                          meta: state.layout.meta,
+                          activeField: undefined,
+                        },
+                      },
+                      state.chartConfigs.filter(
+                        (d) => d.key === chartKey
+                      ) as ChartConfig[],
+                      chartKey
+                    );
 
-                if (config && config.user_id === user.id) {
-                  dbConfig = config;
+                    const result = await createConfig(preparedConfig);
+
+                    if (i < reversedChartKeys.length - 1) {
+                      // Open new tab for each chart, except the first one
+                      return window.open(
+                        `/${locale}/v/${result.key}`,
+                        "_blank"
+                      );
+                    }
+
+                    await handlePublishSuccess(result.key, push);
+                  });
+                }
+                default: {
+                  let dbConfig: ParsedConfig | undefined;
+                  const key = getRouterChartId(asPath);
+
+                  if (key && user) {
+                    const config = await fetchChartConfig(key);
+
+                    if (config && config.user_id === user.id) {
+                      dbConfig = config;
+                    }
+                  }
+
+                  const preparedConfig = preparePublishingState(
+                    state,
+                    state.chartConfigs
+                  );
+
+                  const result = await (dbConfig && user
+                    ? updateConfig(preparedConfig, {
+                        key: dbConfig.key,
+                        userId: user.id,
+                      })
+                    : createConfig(preparedConfig));
+
+                  await handlePublishSuccess(result.key, push);
                 }
               }
-
-              const preparedConfig: ConfiguratorStatePublishing = {
-                ...state,
-                chartConfigs: [
-                  ...state.chartConfigs.map((chartConfig) => {
-                    return {
-                      ...chartConfig,
-                      cubes: chartConfig.cubes.map((cube) => {
-                        return {
-                          ...cube,
-                          // Ensure that the filters are in the correct order, as JSON
-                          // does not guarantee order (and we need this as interactive
-                          // filters are dependent on the order of the filters).
-                          filters: Object.fromEntries(
-                            Object.entries(cube.filters).map(([k, v], i) => {
-                              return [k, { ...v, position: i }];
-                            })
-                          ),
-                        };
-                      }),
-                    };
-                  }),
-                ],
-                // Technically, we do not need to store the active chart key, as
-                // it's only used in the edit mode, but it makes it easier to manage
-                // the state when retrieving the chart from the database. Potentially,
-                // it might also be useful for other things in the future (e.g. when we
-                // have multiple charts in the "stepper mode", and we'd like to start
-                // the story from a specific point and e.g. toggle back and forth between
-                // the different charts).
-                activeChartKey: state.chartConfigs[0].key,
-              };
-
-              const result = await (dbConfig && user
-                ? updateConfig(preparedConfig, {
-                    key: dbConfig.key,
-                    userId: user.id,
-                  })
-                : createConfig(preparedConfig));
-
-              /**
-               * EXPERIMENTAL: Post back created chart ID to opener and close window.
-               *
-               * This allows the chart creation workflow to be integrated with other tools like a CMS
-               */
-
-              // FIXME: Check for more than just opener?
-              const opener = window.opener;
-              if (opener) {
-                opener.postMessage(`CHART_ID:${result.key}`, "*");
-                window.close();
-                return;
-              }
-
-              await push({
-                pathname: `/v/${result.key}`,
-                query: { publishSuccess: true },
-              });
             } catch (e) {
               console.error(e);
               dispatch({ type: "PUBLISH_FAILED" });
@@ -1719,6 +1716,68 @@ const ConfiguratorStateProviderInternal = (
       {children}
     </ConfiguratorStateContext.Provider>
   );
+};
+
+const preparePublishingState = (
+  state: ConfiguratorStatePublishing,
+  chartConfigs: ChartConfig[],
+  activeChartKey?: string
+): ConfiguratorStatePublishing => {
+  return {
+    ...state,
+    chartConfigs: [
+      ...chartConfigs.map((chartConfig) => {
+        return {
+          ...chartConfig,
+          cubes: chartConfig.cubes.map((cube) => {
+            return {
+              ...cube,
+              // Ensure that the filters are in the correct order, as JSON
+              // does not guarantee order (and we need this as interactive
+              // filters are dependent on the order of the filters).
+              filters: Object.fromEntries(
+                Object.entries(cube.filters).map(([k, v], i) => {
+                  return [k, { ...v, position: i }];
+                })
+              ),
+            };
+          }),
+        };
+      }),
+    ],
+    // Technically, we do not need to store the active chart key, as
+    // it's only used in the edit mode, but it makes it easier to manage
+    // the state when retrieving the chart from the database. Potentially,
+    // it might also be useful for other things in the future (e.g. when we
+    // have multiple charts in the "stepper mode", and we'd like to start
+    // the story from a specific point and e.g. toggle back and forth between
+    // the different charts).
+    activeChartKey: activeChartKey ?? state.chartConfigs[0].key,
+  };
+};
+
+const handlePublishSuccess = async (
+  chartId: string,
+  push: NextRouter["push"]
+) => {
+  /**
+   * EXPERIMENTAL: Post back created chart ID to opener and close window.
+   *
+   * This allows the chart creation workflow to be integrated with other tools like a CMS
+   */
+
+  // FIXME: Check for more than just opener?
+  const opener = window.opener;
+  if (opener) {
+    opener.postMessage(`CHART_ID:${chartId}`, "*");
+    window.close();
+    return;
+  }
+
+  await push({
+    pathname: `/v/${chartId}`,
+    query: { publishSuccess: true },
+  });
 };
 
 type ConfiguratorStateProviderProps = React.PropsWithChildren<{

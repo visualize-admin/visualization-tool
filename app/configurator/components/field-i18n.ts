@@ -172,6 +172,10 @@ const fieldLabels = {
     id: "controls.layout.dashboard",
     message: "Dashboard",
   }),
+  "controls.layout.singleURLs": defineMessage({
+    id: "controls.layout.singleURLs",
+    message: "Single URLs",
+  }),
   "controls.layout.tall": defineMessage({
     id: "controls.layout.tall",
     message: "Tall",
@@ -379,6 +383,8 @@ export function getFieldLabel(field: string): string {
       return i18n._(fieldLabels["controls.layout.tall"]);
     case "layoutVertical":
       return i18n._(fieldLabels["controls.layout.vertical"]);
+    case "layoutSingleURLs":
+      return i18n._(fieldLabels["controls.layout.singleURLs"]);
 
     // Languages
     case "en":

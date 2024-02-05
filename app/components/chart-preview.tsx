@@ -34,6 +34,7 @@ import {
 import { ChartWithFilters } from "@/components/chart-with-filters";
 import DebugPanel from "@/components/debug-panel";
 import Flex from "@/components/flex";
+import { Checkbox } from "@/components/form";
 import { HintYellow } from "@/components/hint";
 import { MetadataPanel } from "@/components/metadata-panel";
 import {
@@ -70,6 +71,8 @@ export const ChartPreview = (props: ChartPreviewProps) => {
 
   return layout.type === "dashboard" && !editing ? (
     <DashboardPreview dataSource={dataSource} layoutType={layout.layout} />
+  ) : layout.type === "singleURLs" ? (
+    <SingleURLsPreview dataSource={dataSource} layout={layout} />
   ) : (
     <ChartTablePreviewProvider>
       <ChartWrapper editing={editing} layoutType={layout.type}>
@@ -169,7 +172,7 @@ const DashboardPreview = (props: DashboardPreviewProps) => {
             <ChartPreviewInner
               dataSource={dataSource}
               chartKey={activeChartKey}
-              dragHandleSlot={<DragHandle dragging />}
+              actionElementSlot={<DragHandle dragging />}
             />
           </ChartWrapper>
         </DragOverlay>
@@ -233,7 +236,7 @@ const DndChartPreview = (props: DndChartPreviewProps) => {
         <ChartPreviewInner
           dataSource={dataSource}
           chartKey={chartKey}
-          dragHandleSlot={
+          actionElementSlot={
             <DragHandle
               {...listeners}
               ref={setActivatorNodeRef}
@@ -246,14 +249,70 @@ const DndChartPreview = (props: DndChartPreviewProps) => {
   );
 };
 
+type SingleURLsPreviewProps = ChartPreviewProps & {
+  layout: Extract<Layout, { type: "singleURLs" }>;
+};
+
+const SingleURLsPreview = (props: SingleURLsPreviewProps) => {
+  const { dataSource, layout } = props;
+  const [state, dispatch] = useConfiguratorState(hasChartConfigs);
+  const renderChart = React.useCallback(
+    (chartConfig: ChartConfig) => {
+      const checked = layout.publishableChartKeys.includes(chartConfig.key);
+      const { publishableChartKeys: keys } = layout;
+      const { key } = chartConfig;
+
+      return (
+        <ChartTablePreviewProvider>
+          <ChartWrapper>
+            <ChartPreviewInner
+              dataSource={dataSource}
+              chartKey={chartConfig.key}
+              actionElementSlot={
+                <Checkbox
+                  checked={checked}
+                  disabled={keys.length === 1 && checked}
+                  onChange={() => {
+                    dispatch({
+                      type: "LAYOUT_CHANGED",
+                      value: {
+                        ...layout,
+                        publishableChartKeys: checked
+                          ? keys.filter((k) => k !== key)
+                          : state.chartConfigs
+                              .map((c) => c.key)
+                              .filter((k) => keys.includes(k) || k === key),
+                      },
+                    });
+                  }}
+                  label=""
+                />
+              }
+            />
+          </ChartWrapper>
+        </ChartTablePreviewProvider>
+      );
+    },
+    [dataSource, dispatch, layout, state.chartConfigs]
+  );
+
+  return (
+    <ChartPanelLayoutVertical
+      chartConfigs={state.chartConfigs}
+      renderChart={renderChart}
+    />
+  );
+};
+
 type ChartPreviewInnerProps = ChartPreviewProps & {
   chartKey?: string | null;
-  dragHandleSlot?: React.ReactNode;
+  actionElementSlot?: React.ReactNode;
   disableMetadataPanel?: boolean;
 };
 
 export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
-  const { dataSource, chartKey, dragHandleSlot, disableMetadataPanel } = props;
+  const { dataSource, chartKey, actionElementSlot, disableMetadataPanel } =
+    props;
   const [state, dispatch] = useConfiguratorState();
   const chartConfig = getChartConfig(state, chartKey);
   const locale = useLocale();
@@ -393,7 +452,7 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
                               top={96}
                             />
                           )}
-                          {dragHandleSlot}
+                          {actionElementSlot}
                         </Flex>
                       </Flex>
                       {(state.state === "CONFIGURING_CHART" ||

@@ -1118,6 +1118,11 @@ const Layout = t.intersection([
       layout: t.union([t.literal("vertical"), t.literal("tall")]),
       meta: Meta,
     }),
+    t.type({
+      type: t.literal("singleURLs"),
+      publishableChartKeys: t.array(t.string),
+      meta: Meta,
+    }),
   ]),
 ]);
 export type Layout = t.TypeOf<typeof Layout>;

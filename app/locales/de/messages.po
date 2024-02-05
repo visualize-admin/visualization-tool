@@ -441,6 +441,7 @@ msgid "controls.filter.select.none"
 msgstr "Alle abwählen"
 
 #: app/configurator/components/field.tsx
+#: app/configurator/components/field.tsx
 msgid "controls.filter.use-most-recent"
 msgstr "Letztes Datum verwenden"
 
@@ -537,6 +538,14 @@ msgstr "Italienisch"
 #: app/configurator/components/field-i18n.ts
 msgid "controls.layout.dashboard"
 msgstr "Dashboard"
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.layout.singleURLs"
+msgstr "Einzelne URLs"
+
+#: app/configurator/components/configurator.tsx
+msgid "controls.layout.singleURLs.publish"
+msgstr "Wählen Sie die separat zu veröffentlichenden Diagramme aus."
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.layout.tab"
@@ -674,6 +683,7 @@ msgstr "Spalten"
 msgid "controls.section.columnstyle"
 msgstr "Spaltenstil"
 
+#: app/components/chart-filters-list.tsx
 #: app/configurator/components/chart-configurator.tsx
 msgid "controls.section.data.filters"
 msgstr "Filter"

@@ -69,6 +69,7 @@ import { default as Indeterminate } from "@/icons/components/IcIndeterminate";
 import { default as Info } from "@/icons/components/IcInfo";
 import { default as Laptop } from "@/icons/components/IcLaptop";
 import { default as LayoutDashboard } from "@/icons/components/IcLayoutDashboard";
+import { default as LayoutSingleURLs } from "@/icons/components/IcLayoutSingleURLs";
 import { default as LayoutTab } from "@/icons/components/IcLayoutTab";
 import { default as LayoutTall } from "@/icons/components/IcLayoutTall";
 import { default as LayoutVertical } from "@/icons/components/IcLayoutVertical";
@@ -216,6 +217,7 @@ export const Icons = {
   info: Info,
   laptop: Laptop,
   layoutDashboard: LayoutDashboard,
+  layoutSingleURLs: LayoutSingleURLs,
   layoutTall: LayoutTall,
   layoutTab: LayoutTab,
   layoutVertical: LayoutVertical,
