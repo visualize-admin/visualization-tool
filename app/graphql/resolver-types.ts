@@ -1,6 +1,7 @@
 import { DataCubeComponents } from '../domain/data';
 import { DataCubeMetadata } from '../domain/data';
 import { DataCubeObservations } from '../domain/data';
+import { DataCubePreview } from '../domain/data';
 import { DimensionValue } from '../domain/data';
 import { Filters } from '../configurator';
 import { HierarchyValue } from '../domain/data';
@@ -25,6 +26,7 @@ export type Scalars = {
   DataCubeComponents: DataCubeComponents;
   DataCubeMetadata: DataCubeMetadata;
   DataCubeObservations: DataCubeObservations;
+  DataCubePreview: DataCubePreview;
   DimensionValue: DimensionValue;
   FilterValue: any;
   Filters: Filters;
@@ -112,7 +114,6 @@ export type DataCubeMetadataFilter = {
 export type DataCubeObservationFilter = {
   iri: Scalars['String'];
   latest?: Maybe<Scalars['Boolean']>;
-  preview?: Maybe<Scalars['Boolean']>;
   filters?: Maybe<Scalars['Filters']>;
   componentIris?: Maybe<Array<Scalars['String']>>;
   joinBy?: Maybe<Scalars['String']>;
@@ -123,6 +124,12 @@ export type DataCubeOrganization = {
   __typename?: 'DataCubeOrganization';
   iri: Scalars['String'];
   label?: Maybe<Scalars['String']>;
+};
+
+
+export type DataCubePreviewFilter = {
+  iri: Scalars['String'];
+  latest?: Maybe<Scalars['Boolean']>;
 };
 
 export enum DataCubePublicationStatus {
@@ -385,6 +392,7 @@ export type Query = {
   dataCubeComponents: Scalars['DataCubeComponents'];
   dataCubeMetadata: Scalars['DataCubeMetadata'];
   dataCubeObservations: Scalars['DataCubeObservations'];
+  dataCubePreview: Scalars['DataCubePreview'];
   dataCubeByIri?: Maybe<DataCube>;
   possibleFilters: Array<ObservationFilter>;
   searchCubes: Array<SearchCubeResult>;
@@ -412,6 +420,14 @@ export type QueryDataCubeObservationsArgs = {
   sourceUrl: Scalars['String'];
   locale: Scalars['String'];
   cubeFilter: DataCubeObservationFilter;
+};
+
+
+export type QueryDataCubePreviewArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
+  locale: Scalars['String'];
+  cubeFilter: DataCubePreviewFilter;
 };
 
 
@@ -661,6 +677,8 @@ export type ResolversTypes = ResolversObject<{
   DataCubeObservationFilter: DataCubeObservationFilter;
   DataCubeObservations: ResolverTypeWrapper<Scalars['DataCubeObservations']>;
   DataCubeOrganization: ResolverTypeWrapper<DataCubeOrganization>;
+  DataCubePreview: ResolverTypeWrapper<Scalars['DataCubePreview']>;
+  DataCubePreviewFilter: DataCubePreviewFilter;
   DataCubePublicationStatus: DataCubePublicationStatus;
   DataCubeTheme: ResolverTypeWrapper<DataCubeTheme>;
   Dimension: ResolverTypeWrapper<ResolvedDimension>;
@@ -710,6 +728,8 @@ export type ResolversParentTypes = ResolversObject<{
   DataCubeObservationFilter: DataCubeObservationFilter;
   DataCubeObservations: Scalars['DataCubeObservations'];
   DataCubeOrganization: DataCubeOrganization;
+  DataCubePreview: Scalars['DataCubePreview'];
+  DataCubePreviewFilter: DataCubePreviewFilter;
   DataCubeTheme: DataCubeTheme;
   Dimension: ResolvedDimension;
   DimensionValue: Scalars['DimensionValue'];
@@ -783,6 +803,10 @@ export type DataCubeOrganizationResolvers<ContextType = VisualizeGraphQLContext,
   label?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
+
+export interface DataCubePreviewScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DataCubePreview'], any> {
+  name: 'DataCubePreview';
+}
 
 export type DataCubeThemeResolvers<ContextType = VisualizeGraphQLContext, ParentType extends ResolversParentTypes['DataCubeTheme'] = ResolversParentTypes['DataCubeTheme']> = ResolversObject<{
   iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -961,6 +985,7 @@ export type QueryResolvers<ContextType = VisualizeGraphQLContext, ParentType ext
   dataCubeComponents?: Resolver<ResolversTypes['DataCubeComponents'], ParentType, ContextType, RequireFields<QueryDataCubeComponentsArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'cubeFilter'>>;
   dataCubeMetadata?: Resolver<ResolversTypes['DataCubeMetadata'], ParentType, ContextType, RequireFields<QueryDataCubeMetadataArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'cubeFilter'>>;
   dataCubeObservations?: Resolver<ResolversTypes['DataCubeObservations'], ParentType, ContextType, RequireFields<QueryDataCubeObservationsArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'cubeFilter'>>;
+  dataCubePreview?: Resolver<ResolversTypes['DataCubePreview'], ParentType, ContextType, RequireFields<QueryDataCubePreviewArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'cubeFilter'>>;
   dataCubeByIri?: Resolver<Maybe<ResolversTypes['DataCube']>, ParentType, ContextType, RequireFields<QueryDataCubeByIriArgs, 'sourceType' | 'sourceUrl' | 'iri' | 'latest'>>;
   possibleFilters?: Resolver<Array<ResolversTypes['ObservationFilter']>, ParentType, ContextType, RequireFields<QueryPossibleFiltersArgs, 'iri' | 'sourceType' | 'sourceUrl' | 'filters'>>;
   searchCubes?: Resolver<Array<ResolversTypes['SearchCubeResult']>, ParentType, ContextType, RequireFields<QuerySearchCubesArgs, 'sourceType' | 'sourceUrl'>>;
@@ -1052,6 +1077,7 @@ export type Resolvers<ContextType = VisualizeGraphQLContext> = ResolversObject<{
   DataCubeMetadata?: GraphQLScalarType;
   DataCubeObservations?: GraphQLScalarType;
   DataCubeOrganization?: DataCubeOrganizationResolvers<ContextType>;
+  DataCubePreview?: GraphQLScalarType;
   DataCubeTheme?: DataCubeThemeResolvers<ContextType>;
   Dimension?: DimensionResolvers<ContextType>;
   DimensionValue?: GraphQLScalarType;

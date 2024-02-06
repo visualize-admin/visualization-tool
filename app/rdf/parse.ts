@@ -95,7 +95,7 @@ export const parseCube = ({
   };
 };
 
-const timeUnits = new Map<string, TimeUnit>([
+export const timeUnits = new Map<string, TimeUnit>([
   [ns.time.unitYear.value, TimeUnit.Year],
   [ns.time.unitMonth.value, TimeUnit.Month],
   [ns.time.unitWeek.value, TimeUnit.Week],
@@ -105,16 +105,16 @@ const timeUnits = new Map<string, TimeUnit>([
   [ns.time.unitSecond.value, TimeUnit.Second],
 ]);
 
-const timeFormats = new Map<string, string>([
+export const timeFormats = new Map<string, string>([
   [ns.xsd.gYear.value, "%Y"],
   [ns.xsd.gYearMonth.value, "%Y-%m"],
   [ns.xsd.date.value, "%Y-%m-%d"],
   [ns.xsd.dateTime.value, "%Y-%m-%dT%H:%M:%S"],
 ]);
 
-export const getScaleType = (dim: CubeDimension): ScaleType | undefined => {
-  const scaleTypeTerm = dim.out(ns.qudt.scaleType).term;
-
+export const getScaleType = (
+  scaleTypeTerm: Term | undefined
+): ScaleType | undefined => {
   return scaleTypeTerm?.equals(ns.qudt.NominalScale)
     ? ScaleType.Nominal
     : scaleTypeTerm?.equals(ns.qudt.OrdinalScale)
@@ -126,7 +126,7 @@ export const getScaleType = (dim: CubeDimension): ScaleType | undefined => {
     : undefined;
 };
 
-const getDataKind = (term: Term | undefined) => {
+export const getDataKind = (term: Term | undefined) => {
   return term?.equals(ns.time.GeneralDateTimeDescription)
     ? "Time"
     : term?.equals(ns.schema.GeoCoordinates)
@@ -285,7 +285,7 @@ export const parseCubeDimension = ({
       dataKind: getDataKind(dataKindTerm),
       timeUnit: timeUnits.get(timeUnitTerm?.value ?? ""),
       timeFormat: timeFormats.get(dataType?.value ?? ""),
-      scaleType: getScaleType(dim),
+      scaleType: getScaleType(dim.out(ns.qudt.scaleType).term),
     },
   };
 };

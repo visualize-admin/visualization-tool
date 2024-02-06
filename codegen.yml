@@ -25,6 +25,7 @@ generates:
         DataCubeComponents: "../domain/data#DataCubeComponents"
         DataCubeMetadata: "../domain/data#DataCubeMetadata"
         DataCubeObservations: "../domain/data#DataCubeObservations"
+        DataCubePreview: "../domain/data#DataCubePreview"
   app/graphql/resolver-types.ts:
     plugins:
       - "typescript"
@@ -45,6 +46,7 @@ generates:
         DataCubeComponents: "../domain/data#DataCubeComponents"
         DataCubeMetadata: "../domain/data#DataCubeMetadata"
         DataCubeObservations: "../domain/data#DataCubeObservations"
+        DataCubePreview: "../domain/data#DataCubePreview"
       mappers:
         DataCube: "./shared-types#ResolvedDataCube"
         ObservationsQuery: "./shared-types#ResolvedObservationsQuery"

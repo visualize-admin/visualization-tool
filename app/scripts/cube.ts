@@ -130,11 +130,10 @@ const previewCube = async ({
     .query<DataCubePreviewQuery, DataCubePreviewQueryVariables>(
       DataCubePreviewDocument,
       {
-        iri,
         sourceType,
         sourceUrl,
         locale,
-        latest,
+        cubeFilter: { iri, latest },
       }
     )
     .toPromise();
@@ -143,7 +142,7 @@ const previewCube = async ({
     throw new Error(res.error.message);
   }
 
-  report(res.data?.dataCubeByIri?.observations);
+  report(res.data?.dataCubePreview?.observations);
 };
 
 const main = async () => {

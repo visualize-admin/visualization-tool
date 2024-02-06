@@ -354,15 +354,20 @@ input DataCubeMetadataFilter {
 input DataCubeObservationFilter {
   iri: String!
   latest: Boolean
-  preview: Boolean
   filters: Filters
   componentIris: [String!]
   joinBy: String
 }
 
+input DataCubePreviewFilter {
+  iri: String!
+  latest: Boolean
+}
+
 scalar DataCubeComponents
 scalar DataCubeMetadata
 scalar DataCubeObservations
+scalar DataCubePreview
 
 # The "Query" type is special: it lists all of the available queries that
 # clients can execute, along with the return type for each.
@@ -385,6 +390,12 @@ type Query {
     locale: String!
     cubeFilter: DataCubeObservationFilter!
   ): DataCubeObservations!
+  dataCubePreview(
+    sourceType: String!
+    sourceUrl: String!
+    locale: String!
+    cubeFilter: DataCubePreviewFilter!
+  ): DataCubePreview!
   dataCubeByIri(
     sourceType: String!
     sourceUrl: String!

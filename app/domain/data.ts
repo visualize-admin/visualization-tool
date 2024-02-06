@@ -40,21 +40,6 @@ export type HierarchyValue = {
   children?: HierarchyValue[];
 };
 
-export type Observation = Record<string, ObservationValue>;
-
-export type DataCubeObservations = {
-  data: Observation[];
-  sparqlEditorUrl: string;
-};
-
-export type DataCubesObservations = {
-  data: Observation[];
-  sparqlEditorUrls: {
-    cubeIri: string;
-    url: string;
-  }[];
-};
-
 export type DataCubeComponents = {
   dimensions: Dimension[];
   measures: Measure[];
@@ -80,6 +65,27 @@ export type DataCubeMetadata = {
   landingPage?: string;
   expires?: string;
   workExamples?: string[];
+};
+
+export type Observation = Record<string, ObservationValue>;
+
+export type DataCubeObservations = {
+  data: Observation[];
+  sparqlEditorUrl: string;
+};
+
+export type DataCubesObservations = {
+  data: Observation[];
+  sparqlEditorUrls: {
+    cubeIri: string;
+    url: string;
+  }[];
+};
+
+export type DataCubePreview = {
+  dimensions: Dimension[];
+  measures: Measure[];
+  observations: Observation[];
 };
 
 export type Component = Dimension | Measure;

@@ -30,6 +30,7 @@ import {
   getLatestCube,
 } from "@/rdf/queries";
 import { getCubeMetadata } from "@/rdf/query-cube-metadata";
+import { getCubePreview } from "@/rdf/query-cube-preview";
 import { unversionObservation } from "@/rdf/query-dimension-values";
 import { queryHierarchy } from "@/rdf/query-hierarchies";
 import { SearchResult, searchCubes as _searchCubes } from "@/rdf/query-search";
@@ -209,7 +210,7 @@ export const dataCubeComponents: NonNullable<
 
       if (data.isMeasureDimension) {
         const result: Measure = {
-          __typename: resolveMeasureType(component),
+          __typename: resolveMeasureType(component.data.scaleType),
           isCurrency: data.isCurrency,
           isDecimal: data.isDecimal,
           currencyExponent: data.currencyExponent,
@@ -219,7 +220,12 @@ export const dataCubeComponents: NonNullable<
 
         measures.push(result);
       } else {
-        const dimensionType = resolveDimensionType(component);
+        const { dataKind, scaleType, related } = component.data;
+        const dimensionType = resolveDimensionType(
+          dataKind,
+          scaleType,
+          related
+        );
         const hierarchy = true // TODO: make this configurable
           ? await queryHierarchy(
               component,
@@ -321,6 +327,18 @@ export const dataCubeObservations: NonNullable<
     }),
   };
 };
+
+export const dataCubePreview: NonNullable<QueryResolvers["dataCubePreview"]> =
+  async (_, { locale, cubeFilter }, { setup }, info) => {
+    const { sparqlClient } = await setup(info);
+    const { iri, latest } = cubeFilter;
+
+    return await getCubePreview(iri, {
+      locale,
+      latest: !!latest,
+      sparqlClient,
+    });
+  };
 
 export const dataCubeDimensions: NonNullable<DataCubeResolvers["dimensions"]> =
   async ({ cube, locale }, { componentIris }, { setup }, info) => {
