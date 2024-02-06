@@ -284,7 +284,7 @@ const LayoutingStep = () => {
                 value: {
                   type: "dashboard",
                   meta: state.layout.meta,
-                  layout: "vertical",
+                  layout: "tall",
                   activeField: undefined,
                 },
               });

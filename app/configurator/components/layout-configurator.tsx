@@ -51,8 +51,8 @@ const LayoutLayoutConfigurator = () => {
                 m: 2,
               }}
             >
-              <LayoutButton type="vertical" layout={layout} />
               <LayoutButton type="tall" layout={layout} />
+              <LayoutButton type="vertical" layout={layout} />
             </Box>
           </ControlSectionContent>
         </ControlSection>
