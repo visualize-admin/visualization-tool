@@ -5,7 +5,6 @@ import * as t from "io-ts";
 import React from "react";
 
 import { Dimension, Measure, ObservationValue } from "@/domain/data";
-import { flag } from "@/flags";
 
 const DimensionType = t.union([
   t.literal("NominalDimension"),
@@ -1192,7 +1191,7 @@ export const enableLayouting = (
     | ConfiguratorStatePublishing
     | ConfiguratorStatePublished
 ) => {
-  return state.chartConfigs.length > 1 && flag("layoutStep");
+  return state.chartConfigs.length > 1;
 };
 
 const ConfiguratorStatePublishing = t.intersection([
