@@ -66,31 +66,19 @@ export const getCubePreview = async (
         OPTIONAL { ?dimension rdf:type ?dimensionType . }
         OPTIONAL { ?dimension qudt:scaleType ?dimensionScaleType . }
         OPTIONAL {
-          ?dimension qudt:unit ?_dimensionUnit .
-          OPTIONAL { ?_dimensionUnit rdfs:label ?_dimensionUnitRdfsLabel . }
-          OPTIONAL { ?_dimensionUnit qudt:symbol ?_dimensionUnitSymbol . }
-          OPTIONAL { ?_dimensionUnit qudt:ucumCode ?_dimensionUnitUcumCode . }
-          OPTIONAL { ?_dimensionUnit qudt:expression ?_dimensionUnitExpression . }
-          OPTIONAL { ?_dimensionUnit ?_isCurrencyUnit qudt:CurrencyUnit . }
-          OPTIONAL { ?_dimensionUnit qudt:currencyExponent ?_dimensionUnitCurrencyExponent . }
-          BIND(STR(COALESCE(STR(?_dimensionUnitSymbol), STR(?_dimensionUnitUcumCode), STR(?_dimensionUnitExpression), STR(?_dimensionUnitRdfsLabel), "?")) AS ?_dimensionUnitLabel)
-          FILTER (LANG(?_dimensionUnitRdfsLabel) = "en")
+          { ?dimension qudt:unit ?dimensionUnit . }
+          UNION {
+            ?dimension qudt:hasUnit ?dimensionUnit .
+          }
+          OPTIONAL { ?dimensionUnit rdfs:label ?dimensionUnitRdfsLabel . }
+          OPTIONAL { ?dimensionUnit qudt:symbol ?dimensionUnitSymbol . }
+          OPTIONAL { ?dimensionUnit qudt:ucumCode ?dimensionUnitUcumCode . }
+          OPTIONAL { ?dimensionUnit qudt:expression ?dimensionUnitExpression . }
+          OPTIONAL { ?dimensionUnit ?dimensionUnitIsCurrency qudt:CurrencyUnit . }
+          OPTIONAL { ?dimensionUnit qudt:currencyExponent ?dimensionUnitCurrencyExponent . }
+          BIND(STR(COALESCE(STR(?dimensionUnitSymbol), STR(?dimensionUnitUcumCode), STR(?dimensionUnitExpression), STR(?dimensionUnitRdfsLabel))) AS ?dimensionUnitLabel)
+          FILTER (LANG(?dimensionUnitRdfsLabel) = "en")
         }
-        OPTIONAL {
-          ?dimension qudt:hasUnit ?_dimensionHasUnit .
-          OPTIONAL { ?_dimensionHasUnit rdfs:label ?_dimensionHasUnitRdfsLabel . }
-          OPTIONAL { ?_dimensionHasUnit qudt:symbol ?_dimensionHasUnitSymbol . }
-          OPTIONAL { ?_dimensionHasUnit qudt:ucumCode ?_dimensionHasUnitUcumCode . }
-          OPTIONAL { ?_dimensionHasUnit qudt:expression ?_dimensionHasUnitExpression . }
-          OPTIONAL { ?_dimensionHasUnit ?_isCurrencyHasUnit qudt:CurrencyUnit . }
-          OPTIONAL { ?_dimensionHasUnit qudt:currencyExponent ?_dimensionHasUnitCurrencyExponent . }
-          BIND(STR(COALESCE(STR(?_dimensionHasUnitSymbol), STR(?_dimensionHasUnitUcumCode), STR(?_dimensionHasUnitExpression), STR(?_dimensionHasUnitRdfsLabel), "?")) AS ?_dimensionHasUnitLabel)
-          FILTER (LANG(?_dimensionHasUnitRdfsLabel) = "en")
-        }
-        BIND(COALESCE(?_dimensionUnit, ?_dimensionHasUnit) as ?dimensionUnit)
-        BIND(COALESCE(?_dimensionUnitLabel, ?_dimensionHasUnitLabel) as ?dimensionUnitLabel)
-        BIND(COALESCE(?_dimensionUnitIsCurrency, ?_dimensionHasUnitIsCurrency) as ?dimensionUnitIsCurrency)
-        BIND(COALESCE(?_dimensionUnitCurrencyExponent, ?_dimensionHasUnitCurrencyExponent) as ?dimensionUnitCurrencyExponent)
         OPTIONAL { ?dimension sh:order ?dimensionOrder . }
         OPTIONAL {
           ?dimension meta:dataKind ?dimensionDataKind .
