@@ -161,7 +161,9 @@ CONSTRUCT {
     const scaleType = getScaleType(qScaleType?.o);
     const qDataType = qsDim.find((q) => q.p.equals(ns.sh.datatype));
     const qUnit = qsDim.find((q) => q.p.equals(ns.qudt.unit));
-    const qUnitLabel = qs.find((q) => q.s.equals(qUnit?.o));
+    const qUnitLabel = qs.find(
+      (q) => q.s.equals(qUnit?.o) && q.p.equals(ns.schema.name)
+    );
     const qDataKind = qsDim.find((q) => q.p.equals(ns.cube("meta/dataKind")));
     const qDataKindType = qs.find(
       (q) => q.s.equals(qDataKind?.o) && q.p.equals(ns.rdf.type)
@@ -169,9 +171,11 @@ CONSTRUCT {
     const qTimeUnitType = qs.find(
       (q) => q.s.equals(qDataKind?.o) && q.p.equals(ns.time.unitType)
     );
-    const qIsCurrency = qsDim.find((q) => q.p.equals(ns.qudt.CurrencyUnit));
-    const qCurrencyExponent = qsDim.find((q) =>
-      q.p.equals(ns.qudt.currencyExponent)
+    const qIsCurrency = qs.find(
+      (q) => q.s.equals(qUnit?.o) && q.p.equals(ns.qudt.CurrencyUnit)
+    );
+    const qCurrencyExponent = qs.find(
+      (q) => q.s.equals(qUnit?.o) && q.p.equals(ns.qudt.currencyExponent)
     );
     const isKeyDimension = qsType.some((q) => q.o.equals(ns.cube.KeyDimension));
     const isMeasureDimension = qsType.some((q) =>
