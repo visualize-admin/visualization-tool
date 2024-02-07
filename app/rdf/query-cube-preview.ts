@@ -108,11 +108,6 @@ export const getCubePreview = async (
         } LIMIT 10 }
     
         { SELECT * WHERE {
-        { SELECT * WHERE {
-          ?cube cube:observationSet/cube:observation ?observation .
-          FILTER(NOT EXISTS { ?cube cube:observationConstraint/sh:property/sh:datatype cube:Undefined . } && NOT EXISTS { ?observation ?p ""^^cube:Undefined . })
-        } LIMIT 10 }
-    
           ?observation ?dimensionIri ?observationValue .
           ${buildLocalizedSubQuery(
             "observationValue",
