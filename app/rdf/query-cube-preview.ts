@@ -13,9 +13,18 @@ import {
 import { resolveDimensionType, resolveMeasureType } from "@/graphql/resolvers";
 
 import * as ns from "./namespace";
-import { getDataKind, getScaleType, timeFormats, timeUnits } from "./parse";
+import {
+  getDataKind,
+  getIsNumerical,
+  getScaleType,
+  getTimeFormat,
+  getTimeUnit,
+  parseNumericalTerm,
+  parseResolution,
+} from "./parse";
 import { buildLocalizedSubQuery } from "./query-utils";
 
+// ?s ?p ?o
 type ShortQuad = Omit<Quad, "subject" | "predicate" | "object"> & {
   s: Quad["subject"];
   p: Quad["predicate"];
@@ -176,8 +185,7 @@ CONSTRUCT {
       description: qDesc?.o.value,
       scaleType,
       unit: qUnitLabel?.o.value,
-      order:
-        qOrder?.o.termType === "Literal" ? parseInt(qOrder.o.value) : undefined,
+      order: parseNumericalTerm(qOrder?.o),
       isNumerical: false,
       isKeyDimension,
       values: [],
@@ -190,20 +198,9 @@ CONSTRUCT {
         __typename: resolveMeasureType(scaleType),
         isCurrency: qIsCurrency ? true : false,
         isDecimal,
-        currencyExponent: qCurrencyExponent
-          ? parseInt(qCurrencyExponent.o.value)
-          : undefined,
-        resolution:
-          qDataType?.o.equals(ns.xsd.int) || qDataType?.o.equals(ns.xsd.integer)
-            ? 0
-            : undefined,
-        isNumerical:
-          qDataType?.o.equals(ns.xsd.int) ||
-          qDataType?.o.equals(ns.xsd.integer) ||
-          isDecimal ||
-          qDataType?.o.equals(ns.xsd.float) ||
-          qDataType?.o.equals(ns.xsd.double) ||
-          false,
+        currencyExponent: parseNumericalTerm(qCurrencyExponent?.o),
+        resolution: parseResolution(qDataType?.o),
+        isNumerical: getIsNumerical(qDataType?.o),
       };
 
       measures.push(result);
@@ -217,8 +214,8 @@ CONSTRUCT {
 
       switch (dimensionType) {
         case "TemporalDimension": {
-          const timeUnit = timeUnits.get(qTimeUnitType?.o.value ?? "");
-          const timeFormat = timeFormats.get(qDataType?.o.value ?? "");
+          const timeUnit = getTimeUnit(qTimeUnitType?.o);
+          const timeFormat = getTimeFormat(qDataType?.o);
 
           if (!timeFormat || !timeUnit) {
             throw new Error(
@@ -256,14 +253,14 @@ CONSTRUCT {
       if (!quad) return acc;
 
       if (!acc[quad.p.value]) {
-        const rootObservationId = qs.find((q) => q.o.equals(quad.o));
+        const rootObservationIri = qs.find((q) => q.o.equals(quad.o));
 
         acc[quad.p.value] =
           qs.find(
             (q) =>
-              q.s.equals(rootObservationId?.s) &&
-              q.p.equals(quad.p) &&
-              q.o.termType === "Literal"
+              q.o.termType === "Literal" &&
+              q.s.equals(rootObservationIri?.s) &&
+              q.p.equals(quad.p)
           )?.o.value ?? quad.o.value;
       }
 
