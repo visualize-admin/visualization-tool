@@ -187,11 +187,6 @@ export const DataSetPreview = ({
                 title={dataCubeMetadata.title}
                 filters={[variables.cubeFilter]}
               />
-              {/* {dataCubeByIri.observations.sparqlEditorUrl && (
-                <RunSparqlQuery
-                  url={dataCubeByIri.observations.sparqlEditorUrl}
-                />
-              )} */}
             </Flex>
             <Typography
               className={classes.numberOfRows}
