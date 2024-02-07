@@ -63,8 +63,8 @@ export const getCubePreview = async (
       ?dimension schema:name ?dimensionLabel .
       ?dimension schema:description ?dimensionDescription .
 
-      ?observation ?dimensionIri ?observationValue .
-      ?observation ?dimensionIri ?observationValueLabel .
+      ?observation ?observationPredicate ?observationValue .
+      ?observation ?observationPredicate ?observationValueLabel .
     } WHERE {
       VALUES ?cube { <${iri}> }
       FILTER(EXISTS { ?cube a cube:Cube . }) {}
@@ -76,9 +76,7 @@ export const getCubePreview = async (
         OPTIONAL { ?dimension qudt:scaleType ?dimensionScaleType . }
         OPTIONAL {
           { ?dimension qudt:unit ?dimensionUnit . }
-          UNION {
-            ?dimension qudt:hasUnit ?dimensionUnit .
-          }
+      UNION { ?dimension qudt:hasUnit ?dimensionUnit . }
           OPTIONAL { ?dimensionUnit rdfs:label ?dimensionUnitRdfsLabel . }
           OPTIONAL { ?dimensionUnit qudt:symbol ?dimensionUnitSymbol . }
           OPTIONAL { ?dimensionUnit qudt:ucumCode ?dimensionUnitUcumCode . }
@@ -106,8 +104,9 @@ export const getCubePreview = async (
           "dimensionDescription",
           { locale }
         )}
+    FILTER(?dimensionIri != cube:observedBy && ?dimensionIri != rdf:type)
       } UNION {
-        ?cube cube:observationConstraint/sh:property/sh:path ?dimensionIri .
+        ?cube cube:observationConstraint/sh:property/sh:path ?observationPredicate .
     
         { SELECT * WHERE {
           ?cube cube:observationSet ?observationSet .
@@ -116,13 +115,14 @@ export const getCubePreview = async (
         } LIMIT 10 }
     
         { SELECT * WHERE {
-          ?observation ?dimensionIri ?observationValue .
+          ?observation ?observationPredicate ?observationValue .
           ${buildLocalizedSubQuery(
             "observationValue",
             "schema:name",
             "observationValueLabel",
             { locale }
           )}
+          FILTER(?observationPredicate != cube:observedBy)
         }}
       }
     }`,
@@ -138,15 +138,10 @@ export const getCubePreview = async (
     throw new Error(`No cube found for ${iri}!`);
   }
 
-  const qsDims = qs.filter(
-    ({ p, o }) =>
-      p.equals(ns.sh.path) &&
-      !o.equals(ns.cube.observedBy) &&
-      !o.equals(ns.rdf.type)
-  );
+  const qsDims = qs.filter(({ p }) => p.equals(ns.sh.path));
   const dimensions: Dimension[] = [];
   const measures: Measure[] = [];
-  uniqBy(qsDims, ({ o }) => o.value).map(({ s, o }) => {
+  qsDims.map(({ s, o }) => {
     const dimIri = o.value;
     const qsDim = qs.filter((q) => q.s.equals(s));
     const qLabel = qsDim.find((q) => q.p.equals(ns.schema.name));
