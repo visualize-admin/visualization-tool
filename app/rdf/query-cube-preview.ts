@@ -10,6 +10,7 @@ import {
   Measure,
   TemporalDimension,
 } from "@/domain/data";
+import { truthy } from "@/domain/types";
 import { resolveDimensionType, resolveMeasureType } from "@/graphql/resolvers";
 
 import * as ns from "./namespace";
@@ -249,23 +250,25 @@ CONSTRUCT {
 
   const qsObs = qs.filter(({ p }) => p.equals(ns.cube.observation));
   const observations = uniqBy(qsObs, ({ o }) => o.value).map(({ o }) => {
-    const sqDimValue = qsDims.map((quad) => {
-      return qs.find((q) => q.s.equals(o) && q.p.equals(quad.o));
-    });
+    const sqDimValue = qsDims
+      .map((quad) => qs.find((q) => q.s.equals(o) && q.p.equals(quad.o)))
+      .filter(truthy);
 
     return sqDimValue.reduce((acc, quad) => {
-      if (!quad) return acc;
-
       if (!acc[quad.p.value]) {
-        const rootObservationIri = qs.find((q) => q.o.equals(quad.o));
-
-        acc[quad.p.value] =
-          qs.find(
+        // Retrieve the label of the observation value if it's a named node
+        if (quad.o.termType === "NamedNode") {
+          const sIri = qs.find((q) => q.o.equals(quad.o));
+          const qLabel = qs.find(
             (q) =>
-              q.o.termType === "Literal" &&
-              q.s.equals(rootObservationIri?.s) &&
-              q.p.equals(quad.p)
-          )?.o.value ?? quad.o.value;
+              q.s.equals(sIri?.s) &&
+              q.p.equals(quad.p) &&
+              q.o.termType === "Literal"
+          );
+          acc[quad.p.value] = qLabel?.o.value ?? quad.o.value;
+        } else {
+          acc[quad.p.value] = quad.o.value;
+        }
       }
 
       return acc;
