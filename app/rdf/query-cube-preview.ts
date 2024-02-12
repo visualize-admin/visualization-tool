@@ -70,8 +70,7 @@ CONSTRUCT {
   ?dimension schema:name ?dimensionLabel .
   ?dimension schema:description ?dimensionDescription .
 
-  ?observation ?observationPredicate ?observationValue .
-  ?observation ?observationPredicate ?observationValueLabel .
+  ?observation ?observationPredicate ?observationLabel .
 } WHERE {
   VALUES ?cube { <${iri}> }
   FILTER(EXISTS { ?cube a cube:Cube . }) {}
@@ -125,8 +124,8 @@ CONSTRUCT {
       ${buildLocalizedSubQuery(
         "observationValue",
         "schema:name",
-        "observationValueLabel",
-        { locale }
+        "observationLabel",
+        { locale, additionalFallbacks: ["observationValue"] }
       )}
       FILTER(?observationPredicate != cube:observedBy && ?observationPredicate != rdf:type)
     }}
@@ -254,19 +253,7 @@ CONSTRUCT {
 
     return sqDimValue.reduce((acc, quad) => {
       if (!acc[quad.p.value]) {
-        // Retrieve the label of the observation value if it's a named node
-        if (quad.o.termType === "NamedNode") {
-          const sIri = qs.find((q) => q.o.equals(quad.o));
-          const qLabel = qs.find(
-            (q) =>
-              q.s.equals(sIri?.s) &&
-              q.p.equals(quad.p) &&
-              q.o.termType === "Literal"
-          );
-          acc[quad.p.value] = qLabel?.o.value ?? quad.o.value;
-        } else {
-          acc[quad.p.value] = quad.o.value;
-        }
+        acc[quad.p.value] = quad.o.value;
       }
 
       return acc;
