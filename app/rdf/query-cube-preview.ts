@@ -1,5 +1,6 @@
 import uniqBy from "lodash/uniqBy";
-import { Quad } from "rdf-js";
+import rdf from "rdf-ext";
+import { NamedNode, Quad } from "rdf-js";
 import ParsingClient from "sparql-http-client/ParsingClient";
 
 import {
@@ -72,8 +73,6 @@ CONSTRUCT {
   UNION {
     ?cube cube:observationConstraint/sh:property ?dimension .
     ?dimension sh:path ?dimensionIri .
-    OPTIONAL { ?dimension sh:datatype ?dimensionDataType . }
-    OPTIONAL { ?dimension sh:or/rdf:rest*/rdf:first/sh:datatype ?dimensionDataType . }
     OPTIONAL { ?dimension rdf:type ?dimensionType . }
     OPTIONAL { ?dimension qudt:scaleType ?dimensionScaleType . }
     OPTIONAL {
@@ -138,13 +137,16 @@ CONSTRUCT {
   const measures: Measure[] = [];
   const observations: Observation[] = [];
   const qsDims = qs.filter(({ predicate: p }) => p.equals(ns.sh.path));
-  const dimValuesByDimIri: Record<string, DimensionValue[]> = qsDims.reduce(
-    (acc, dim) => {
-      acc[dim.object.value] = [];
-      return acc;
-    },
-    {} as Record<string, DimensionValue[]>
-  );
+  const dimMetadataByDimIri: Record<
+    string,
+    { values: DimensionValue[]; dataType: NamedNode }
+  > = qsDims.reduce((acc, dim) => {
+    acc[dim.object.value] = {
+      values: [],
+      dataType: rdf.namedNode(""),
+    };
+    return acc;
+  }, {} as Record<string, { values: DimensionValue[]; dataType: NamedNode }>);
   // Only take quads that use dimension iris as predicates (observations values)
   const qUniqueObservations = uniqBy(
     qs.filter(({ predicate: p }) => qsDims.some((q) => q.object.equals(p))),
@@ -165,7 +167,7 @@ CONSTRUCT {
 
       if (!observation[dimIri]) {
         // Retrieve the label of the observation value if it's a named node
-        if (quad.object.termType === "NamedNode") {
+        if (qDimValue.termType === "NamedNode") {
           const sIri = qs.find((q) => q.object.equals(quad.object));
           const qLabel = qs.find(
             (q) =>
@@ -173,6 +175,11 @@ CONSTRUCT {
               q.predicate.equals(qDimIri) &&
               q.object.termType === "Literal"
           );
+
+          if (qLabel?.object.termType === "Literal") {
+            dimMetadataByDimIri[dimIri].dataType = qLabel.object.datatype;
+          }
+
           qPosition = qs.find(
             (q) =>
               q.subject.equals(sIri?.object) &&
@@ -180,6 +187,10 @@ CONSTRUCT {
           );
           observation[qDimIri.value] = qLabel?.object.value ?? qDimValue.value;
         } else {
+          if (qDimValue.termType === "Literal") {
+            dimMetadataByDimIri[dimIri].dataType = qDimValue.datatype;
+          }
+
           observation[qDimIri.value] = qDimValue.value;
         }
       }
@@ -189,15 +200,15 @@ CONSTRUCT {
         label: `${observation[qDimIri.value]}`,
         position: qPosition ? +qPosition.object.value : undefined,
       };
-      dimValuesByDimIri[dimIri].push(dimensionValue);
+      dimMetadataByDimIri[dimIri].values.push(dimensionValue);
     });
 
     observations.push(observation);
   });
 
-  for (const dimIri in dimValuesByDimIri) {
-    dimValuesByDimIri[dimIri] = uniqBy(
-      dimValuesByDimIri[dimIri],
+  for (const dimIri in dimMetadataByDimIri) {
+    dimMetadataByDimIri[dimIri].values = uniqBy(
+      dimMetadataByDimIri[dimIri].values,
       (d) => d.value
     ).sort((a, b) =>
       (a.position ?? a.label) > (b.position ?? b.label) ? 1 : -1
@@ -213,7 +224,7 @@ CONSTRUCT {
     const qsType = qsDim.filter((q) => q.predicate.equals(ns.rdf.type));
     const qScaleType = qsDim.find((q) => q.predicate.equals(ns.qudt.scaleType));
     const scaleType = getScaleType(qScaleType?.object);
-    const qDataType = qsDim.find((q) => q.predicate.equals(ns.sh.datatype));
+    const dataType = dimMetadataByDimIri[dimIri].dataType;
     const qUnit = qsDim.find((q) => q.predicate.equals(ns.qudt.unit));
     const qUnitLabel = qs.find(
       (q) =>
@@ -258,19 +269,19 @@ CONSTRUCT {
       order: parseNumericalTerm(qOrder?.object),
       isNumerical: false,
       isKeyDimension,
-      values: dimValuesByDimIri[dimIri],
+      values: dimMetadataByDimIri[dimIri].values,
     };
 
     if (isMeasureDimension) {
-      const isDecimal = qDataType?.object.equals(ns.xsd.decimal) ?? false;
+      const isDecimal = dataType.equals(ns.xsd.decimal) ?? false;
       const result: Measure = {
         ...baseComponent,
         __typename: resolveMeasureType(scaleType),
         isCurrency: qIsCurrency ? true : false,
         isDecimal,
         currencyExponent: parseNumericalTerm(qCurrencyExponent?.object),
-        resolution: parseResolution(qDataType?.object),
-        isNumerical: getIsNumerical(qDataType?.object),
+        resolution: parseResolution(dataType),
+        isNumerical: getIsNumerical(dataType),
       };
 
       measures.push(result);
@@ -285,7 +296,7 @@ CONSTRUCT {
       switch (dimensionType) {
         case "TemporalDimension": {
           const timeUnit = getTimeUnit(qTimeUnitType?.object);
-          const timeFormat = getTimeFormat(qDataType?.object);
+          const timeFormat = getTimeFormat(dataType);
 
           if (!timeFormat || !timeUnit) {
             throw new Error(
