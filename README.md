@@ -1,5 +1,37 @@
 # Visualization Tool
 
+<!-- vscode-markdown-toc -->
+
+- 1. [Documentation](#Documentation)
+- 2. [Development Environment](#DevelopmentEnvironment)
+  - 2.1. [Setting up the dev environment](#Settingupthedevenvironment)
+  - 2.2. [Dev server](#Devserver)
+  - 2.3. [Postgres database](#Postgresdatabase)
+  - 2.4. [Building the Embed script `/dist/embed.js`](#BuildingtheEmbedscriptdistembed.js)
+    - 2.4.1. [Database migrations](#Databasemigrations)
+- 3. [Versioning](#Versioning)
+- 4. [Deployment](#Deployment)
+  - 4.1. [Heroku](#Heroku)
+  - 4.2. [Abraxas](#Abraxas)
+  - 4.3. [Docker (anywhere)](#Dockeranywhere)
+- 5. [E2E tests](#E2Etests)
+- 6. [GraphQL performance tests](#GraphQLperformancetests)
+  - 6.1. [Automation](#Automation)
+  - 6.2. [How to add or modify the tests](#Howtoaddormodifythetests)
+- 7. [Load tests](#Loadtests)
+  - 7.1. [Automation](#Automation-1)
+  - 7.2. [Local setup](#Localsetup)
+  - 7.3. [Running the tests locally](#Runningthetestslocally)
+  - 7.4. [Recording the tests using Playwright](#RecordingthetestsusingPlaywright)
+- 8. [Authentication](#Authentication)
+  - 8.1. [Locally](#Locally)
+
+<!-- vscode-markdown-toc-config
+	numbering=true
+	autoSave=true
+	/vscode-markdown-toc-config -->
+<!-- /vscode-markdown-toc -->
+
 ## Documentation
 
 A public documentation is available at https://visualize.admin.ch/docs/.
