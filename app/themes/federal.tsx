@@ -1,5 +1,5 @@
 import { Fade, Grow } from "@mui/material";
-import { Breakpoint, Theme, createTheme } from "@mui/material/styles";
+import { Breakpoint, createTheme, Theme } from "@mui/material/styles";
 import merge from "lodash/merge";
 import omit from "lodash/omit";
 
@@ -7,7 +7,7 @@ import { Icon } from "@/icons";
 import shadows from "@/themes/shadows";
 
 const isSafari15 =
-  typeof navigator !== "undefined" && navigator.vendor.indexOf("Apple") >= 0
+  typeof navigator !== "undefined" && navigator.vendor?.indexOf("Apple") >= 0
     ? navigator.userAgent
         .match(/Version[/\s]([\d]+)/g)?.[0]
         ?.split("/")?.[1] === "15"
