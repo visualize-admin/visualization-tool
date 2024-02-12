@@ -43,7 +43,8 @@ export const getCubePreview = async (
   const { sparqlClient, locale } = options;
   const qs: ShortQuad[] = await sparqlClient.query
     .construct(
-      `PREFIX cube: <https://cube.link/>
+      `
+PREFIX cube: <https://cube.link/>
 PREFIX meta: <https://cube.link/meta/>
 PREFIX qudt: <http://qudt.org/schema/qudt/>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -52,12 +53,8 @@ PREFIX schema: <http://schema.org/>
 PREFIX sh: <http://www.w3.org/ns/shacl#>
 PREFIX time: <http://www.w3.org/2006/time#>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
-    
-CONSTRUCT {
-  ?cube schema:version ?cubeVersion .
-  ?cube cube:observationSet ?observationSet .
-  ?observationSet cube:observation ?observation .
 
+CONSTRUCT {
   ?dimension sh:path ?dimensionIri .
   ?dimension sh:datatype ?dimensionDataType .
   ?dimension rdf:type ?dimensionType .
@@ -73,6 +70,7 @@ CONSTRUCT {
   ?dimension schema:name ?dimensionLabel .
   ?dimension schema:description ?dimensionDescription .
 
+  ?observationSet cube:observation ?observation .
   ?observation ?observationPredicate ?observationValue .
   ?observation ?observationPredicate ?observationValueLabel .
 } WHERE {
