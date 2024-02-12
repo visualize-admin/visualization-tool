@@ -7,7 +7,9 @@ import {
   BaseDimension,
   DataCubePreview,
   Dimension,
+  DimensionValue,
   Measure,
+  Observation,
   TemporalDimension,
 } from "@/domain/data";
 import { truthy } from "@/domain/types";
@@ -70,7 +72,9 @@ CONSTRUCT {
   ?dimension schema:name ?dimensionLabel .
   ?dimension schema:description ?dimensionDescription .
 
+  ?observation ?observationPredicate ?observationValue .
   ?observation ?observationPredicate ?observationLabel .
+  ?observationValue schema:position ?observationPosition .
 } WHERE {
   VALUES ?cube { <${iri}> }
   FILTER(EXISTS { ?cube a cube:Cube . }) {}
@@ -125,8 +129,9 @@ CONSTRUCT {
         "observationValue",
         "schema:name",
         "observationLabel",
-        { locale, additionalFallbacks: ["observationValue"] }
+        { locale }
       )}
+      OPTIONAL { ?observationValue schema:position ?observationPosition . }
       FILTER(?observationPredicate != cube:observedBy && ?observationPredicate != rdf:type)
     }}
   }
@@ -146,6 +151,66 @@ CONSTRUCT {
   const qsDims = qs.filter(({ p }) => p.equals(ns.sh.path));
   const dimensions: Dimension[] = [];
   const measures: Measure[] = [];
+  const observations: Observation[] = [];
+  const dimValuesByDimIri: Record<string, DimensionValue[]> = qsDims.reduce(
+    (acc, dim) => {
+      acc[dim.o.value] = [];
+      return acc;
+    },
+    {} as Record<string, DimensionValue[]>
+  );
+  // Only take quads that use dimension iris as predicates (observations values)
+  const qUniqueObservations = uniqBy(
+    qs.filter(({ p }) => qsDims.some((q) => q.o.equals(p))),
+    ({ s }) => s.value
+  );
+  qUniqueObservations.forEach(({ s }) => {
+    const sqDimValues = qsDims
+      .map((quad) => qs.find((q) => q.s.equals(s) && q.p.equals(quad.o)))
+      .filter(truthy);
+    const observation: Observation = {};
+    sqDimValues.forEach((quad) => {
+      const qDimIri = quad.p;
+      const dimIri = qDimIri.value;
+      const qDimValue = quad.o;
+      let sIri: ShortQuad | undefined;
+
+      if (!observation[dimIri]) {
+        // Retrieve the label of the observation value if it's a named node
+        if (quad.o.termType === "NamedNode") {
+          sIri = qs.find((q) => q.o.equals(quad.o));
+          const qLabel = qs.find(
+            (q) =>
+              q.s.equals(sIri?.s) &&
+              q.p.equals(qDimIri) &&
+              q.o.termType === "Literal"
+          );
+          observation[qDimIri.value] = qLabel?.o.value ?? qDimValue.value;
+        } else {
+          observation[qDimIri.value] = qDimValue.value;
+        }
+      }
+
+      const position = qs.find(
+        (q) => q.s.equals(sIri?.o) && q.p.equals(ns.schema.position)
+      )?.o.value;
+      const dimensionValue: DimensionValue = {
+        value: qDimValue.value,
+        label: `${observation[qDimIri.value]}`,
+        position: position !== undefined ? +position : undefined,
+      };
+      dimValuesByDimIri[dimIri].push(dimensionValue);
+    });
+
+    observations.push(observation);
+  });
+
+  for (const dimIri in dimValuesByDimIri) {
+    dimValuesByDimIri[dimIri] = uniqBy(dimValuesByDimIri[dimIri], "value").sort(
+      (a, b) => ((a.position ?? a.label) > (b.position ?? b.label) ? 1 : -1)
+    );
+  }
+
   qsDims.map(({ s, o }) => {
     const dimIri = o.value;
     const qsDim = qs.filter((q) => q.s.equals(s));
@@ -188,7 +253,7 @@ CONSTRUCT {
       order: parseNumericalTerm(qOrder?.o),
       isNumerical: false,
       isKeyDimension,
-      values: [],
+      values: dimValuesByDimIri[dimIri],
     };
 
     if (isMeasureDimension) {
@@ -241,23 +306,6 @@ CONSTRUCT {
         }
       }
     }
-  });
-
-  const observations = uniqBy(
-    qs.filter(({ p }) => qsDims.some((q) => q.o.equals(p))),
-    ({ s }) => s.value
-  ).map(({ s }) => {
-    const sqDimValue = qsDims
-      .map((quad) => qs.find((q) => q.s.equals(s) && q.p.equals(quad.o)))
-      .filter(truthy);
-
-    return sqDimValue.reduce((acc, quad) => {
-      if (!acc[quad.p.value]) {
-        acc[quad.p.value] = quad.o.value;
-      }
-
-      return acc;
-    }, {} as Record<string, string>);
   });
 
   return { dimensions, measures, observations };
