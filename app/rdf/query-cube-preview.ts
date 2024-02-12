@@ -27,13 +27,6 @@ import {
 } from "./parse";
 import { buildLocalizedSubQuery } from "./query-utils";
 
-// ?s ?p ?o
-type ShortQuad = Omit<Quad, "subject" | "predicate" | "object"> & {
-  s: Quad["subject"];
-  p: Quad["predicate"];
-  o: Quad["object"];
-};
-
 export const getCubePreview = async (
   iri: string,
   options: {
@@ -43,9 +36,8 @@ export const getCubePreview = async (
   }
 ): Promise<DataCubePreview> => {
   const { sparqlClient, locale } = options;
-  const qs: ShortQuad[] = await sparqlClient.query
-    .construct(
-      `
+  const qs = await sparqlClient.query.construct(
+    `
 PREFIX cube: <https://cube.link/>
 PREFIX meta: <https://cube.link/meta/>
 PREFIX qudt: <http://qudt.org/schema/qudt/>
@@ -136,64 +128,63 @@ CONSTRUCT {
     }}
   }
 }`,
-      { operation: "postUrlencoded" }
-    )
-    .then((qs) => {
-      return qs.map(({ subject, predicate, object, ...rest }) => {
-        return { ...rest, s: subject, p: predicate, o: object };
-      });
-    });
+    { operation: "postUrlencoded" }
+  );
 
   if (qs.length === 0) {
     throw new Error(`No cube found for ${iri}!`);
   }
 
-  const qsDims = qs.filter(({ p }) => p.equals(ns.sh.path));
+  const qsDims = qs.filter(({ predicate: p }) => p.equals(ns.sh.path));
   const dimensions: Dimension[] = [];
   const measures: Measure[] = [];
   const observations: Observation[] = [];
   const dimValuesByDimIri: Record<string, DimensionValue[]> = qsDims.reduce(
     (acc, dim) => {
-      acc[dim.o.value] = [];
+      acc[dim.object.value] = [];
       return acc;
     },
     {} as Record<string, DimensionValue[]>
   );
   // Only take quads that use dimension iris as predicates (observations values)
   const qUniqueObservations = uniqBy(
-    qs.filter(({ p }) => qsDims.some((q) => q.o.equals(p))),
-    ({ s }) => s.value
+    qs.filter(({ predicate: p }) => qsDims.some((q) => q.object.equals(p))),
+    ({ subject: s }) => s.value
   );
-  qUniqueObservations.forEach(({ s }) => {
+  qUniqueObservations.forEach(({ subject: s }) => {
     const sqDimValues = qsDims
-      .map((quad) => qs.find((q) => q.s.equals(s) && q.p.equals(quad.o)))
+      .map((quad) =>
+        qs.find((q) => q.subject.equals(s) && q.predicate.equals(quad.object))
+      )
       .filter(truthy);
     const observation: Observation = {};
     sqDimValues.forEach((quad) => {
-      const qDimIri = quad.p;
+      const qDimIri = quad.predicate;
       const dimIri = qDimIri.value;
-      const qDimValue = quad.o;
-      let sIri: ShortQuad | undefined;
+      const qDimValue = quad.object;
+      let sIri: Quad | undefined;
 
       if (!observation[dimIri]) {
         // Retrieve the label of the observation value if it's a named node
-        if (quad.o.termType === "NamedNode") {
-          sIri = qs.find((q) => q.o.equals(quad.o));
+        if (quad.object.termType === "NamedNode") {
+          sIri = qs.find((q) => q.object.equals(quad.object));
           const qLabel = qs.find(
             (q) =>
-              q.s.equals(sIri?.s) &&
-              q.p.equals(qDimIri) &&
-              q.o.termType === "Literal"
+              q.subject.equals(sIri?.subject) &&
+              q.predicate.equals(qDimIri) &&
+              q.object.termType === "Literal"
           );
-          observation[qDimIri.value] = qLabel?.o.value ?? qDimValue.value;
+          observation[qDimIri.value] = qLabel?.object.value ?? qDimValue.value;
         } else {
           observation[qDimIri.value] = qDimValue.value;
         }
       }
 
       const position = qs.find(
-        (q) => q.s.equals(sIri?.o) && q.p.equals(ns.schema.position)
-      )?.o.value;
+        (q) =>
+          q.subject.equals(sIri?.object) &&
+          q.predicate.equals(ns.schema.position)
+      )?.object.value;
       const dimensionValue: DimensionValue = {
         value: qDimValue.value,
         label: `${observation[qDimIri.value]}`,
@@ -211,67 +202,79 @@ CONSTRUCT {
     );
   }
 
-  qsDims.map(({ s, o }) => {
+  qsDims.map(({ subject: s, object: o }) => {
     const dimIri = o.value;
-    const qsDim = qs.filter((q) => q.s.equals(s));
-    const qLabel = qsDim.find((q) => q.p.equals(ns.schema.name));
-    const qDesc = qsDim.find((q) => q.p.equals(ns.schema.description));
-    const qOrder = qsDim.find((q) => q.p.equals(ns.sh.order));
-    const qsType = qsDim.filter((q) => q.p.equals(ns.rdf.type));
-    const qScaleType = qsDim.find((q) => q.p.equals(ns.qudt.scaleType));
-    const scaleType = getScaleType(qScaleType?.o);
-    const qDataType = qsDim.find((q) => q.p.equals(ns.sh.datatype));
-    const qUnit = qsDim.find((q) => q.p.equals(ns.qudt.unit));
+    const qsDim = qs.filter((q) => q.subject.equals(s));
+    const qLabel = qsDim.find((q) => q.predicate.equals(ns.schema.name));
+    const qDesc = qsDim.find((q) => q.predicate.equals(ns.schema.description));
+    const qOrder = qsDim.find((q) => q.predicate.equals(ns.sh.order));
+    const qsType = qsDim.filter((q) => q.predicate.equals(ns.rdf.type));
+    const qScaleType = qsDim.find((q) => q.predicate.equals(ns.qudt.scaleType));
+    const scaleType = getScaleType(qScaleType?.object);
+    const qDataType = qsDim.find((q) => q.predicate.equals(ns.sh.datatype));
+    const qUnit = qsDim.find((q) => q.predicate.equals(ns.qudt.unit));
     const qUnitLabel = qs.find(
-      (q) => q.s.equals(qUnit?.o) && q.p.equals(ns.schema.name)
+      (q) =>
+        q.subject.equals(qUnit?.object) && q.predicate.equals(ns.schema.name)
     );
-    const qDataKind = qsDim.find((q) => q.p.equals(ns.cube("meta/dataKind")));
+    const qDataKind = qsDim.find((q) =>
+      q.predicate.equals(ns.cube("meta/dataKind"))
+    );
     const qDataKindType = qs.find(
-      (q) => q.s.equals(qDataKind?.o) && q.p.equals(ns.rdf.type)
+      (q) =>
+        q.subject.equals(qDataKind?.object) && q.predicate.equals(ns.rdf.type)
     );
     const qTimeUnitType = qs.find(
-      (q) => q.s.equals(qDataKind?.o) && q.p.equals(ns.time.unitType)
+      (q) =>
+        q.subject.equals(qDataKind?.object) &&
+        q.predicate.equals(ns.time.unitType)
     );
     const qIsCurrency = qs.find(
-      (q) => q.s.equals(qUnit?.o) && q.p.equals(ns.qudt.CurrencyUnit)
+      (q) =>
+        q.subject.equals(qUnit?.object) &&
+        q.predicate.equals(ns.qudt.CurrencyUnit)
     );
     const qCurrencyExponent = qs.find(
-      (q) => q.s.equals(qUnit?.o) && q.p.equals(ns.qudt.currencyExponent)
+      (q) =>
+        q.subject.equals(qUnit?.object) &&
+        q.predicate.equals(ns.qudt.currencyExponent)
     );
-    const isKeyDimension = qsType.some((q) => q.o.equals(ns.cube.KeyDimension));
+    const isKeyDimension = qsType.some((q) =>
+      q.object.equals(ns.cube.KeyDimension)
+    );
     const isMeasureDimension = qsType.some((q) =>
-      q.o.equals(ns.cube.MeasureDimension)
+      q.object.equals(ns.cube.MeasureDimension)
     );
 
     const baseComponent: BaseComponent = {
       cubeIri: iri,
       iri: dimIri,
-      label: qLabel?.o.value ?? "",
-      description: qDesc?.o.value,
+      label: qLabel?.object.value ?? "",
+      description: qDesc?.object.value,
       scaleType,
-      unit: qUnitLabel?.o.value,
-      order: parseNumericalTerm(qOrder?.o),
+      unit: qUnitLabel?.object.value,
+      order: parseNumericalTerm(qOrder?.object),
       isNumerical: false,
       isKeyDimension,
       values: dimValuesByDimIri[dimIri],
     };
 
     if (isMeasureDimension) {
-      const isDecimal = qDataType?.o.equals(ns.xsd.decimal) ?? false;
+      const isDecimal = qDataType?.object.equals(ns.xsd.decimal) ?? false;
       const result: Measure = {
         ...baseComponent,
         __typename: resolveMeasureType(scaleType),
         isCurrency: qIsCurrency ? true : false,
         isDecimal,
-        currencyExponent: parseNumericalTerm(qCurrencyExponent?.o),
-        resolution: parseResolution(qDataType?.o),
-        isNumerical: getIsNumerical(qDataType?.o),
+        currencyExponent: parseNumericalTerm(qCurrencyExponent?.object),
+        resolution: parseResolution(qDataType?.object),
+        isNumerical: getIsNumerical(qDataType?.object),
       };
 
       measures.push(result);
     } else {
       const dimensionType = resolveDimensionType(
-        getDataKind(qDataKindType?.o),
+        getDataKind(qDataKindType?.object),
         scaleType,
         []
       );
@@ -279,8 +282,8 @@ CONSTRUCT {
 
       switch (dimensionType) {
         case "TemporalDimension": {
-          const timeUnit = getTimeUnit(qTimeUnitType?.o);
-          const timeFormat = getTimeFormat(qDataType?.o);
+          const timeUnit = getTimeUnit(qTimeUnitType?.object);
+          const timeFormat = getTimeFormat(qDataType?.object);
 
           if (!timeFormat || !timeUnit) {
             throw new Error(
