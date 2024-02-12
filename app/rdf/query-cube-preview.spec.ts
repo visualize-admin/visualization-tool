@@ -1,0 +1,111 @@
+import rdf from "rdf-ext";
+import ParsingClient from "sparql-http-client/ParsingClient";
+
+import * as ns from "./namespace";
+import { getCubePreview } from "./query-cube-preview";
+
+jest.mock("rdf-cube-view-query", () => ({}));
+jest.mock("./extended-cube", () => ({}));
+jest.mock("@zazuko/cube-hierarchy-query/index", () => ({}));
+
+describe("dataset preview", () => {
+  const dim = rdf.blankNode();
+  const measure = rdf.blankNode();
+  const observation = rdf.namedNode(
+    "https://environment.ld.admin.ch/foen/gefahren-waldbrand-warnung/observation/336>"
+  );
+  const quads = [
+    rdf.quad(
+      dim,
+      ns.sh.path,
+      rdf.namedNode(
+        "https://environment.ld.admin.ch/foen/gefahren-waldbrand-warnung/region"
+      )
+    ),
+    rdf.quad(dim, ns.schema.name, rdf.literal("Region")),
+    rdf.quad(
+      measure,
+      ns.sh.path,
+      rdf.namedNode(
+        "https://environment.ld.admin.ch/foen/gefahren-waldbrand-warnung/level"
+      )
+    ),
+    rdf.quad(measure, ns.schema.name, rdf.literal("Danger ratings")),
+    rdf.quad(measure, ns.rdf.type, ns.cube.MeasureDimension),
+    rdf.quad(
+      observation,
+      rdf.namedNode(
+        "https://environment.ld.admin.ch/foen/gefahren-waldbrand-warnung/region"
+      ),
+      rdf.namedNode(
+        "https://ld.admin.ch/dimension/bgdi/biota/forestfirewarningregions/1300"
+      )
+    ),
+    rdf.quad(
+      observation,
+      rdf.namedNode(
+        "https://environment.ld.admin.ch/foen/gefahren-waldbrand-warnung/region"
+      ),
+      rdf.literal("Bern")
+    ),
+    rdf.quad(
+      rdf.namedNode(
+        "https://ld.admin.ch/dimension/bgdi/biota/forestfirewarningregions/1300"
+      ),
+      ns.schema.position,
+      rdf.literal("3")
+    ),
+    rdf.quad(
+      observation,
+      rdf.namedNode(
+        "https://environment.ld.admin.ch/foen/gefahren-waldbrand-warnung/level"
+      ),
+      rdf.namedNode(
+        "https://environment.ld.admin.ch/foen/gefahren-waldbrand-warnung/level/1"
+      )
+    ),
+    rdf.quad(
+      observation,
+      rdf.namedNode(
+        "https://environment.ld.admin.ch/foen/gefahren-waldbrand-warnung/level"
+      ),
+      rdf.literal("considerable danger")
+    ),
+  ];
+  const sparqlClient = {
+    query: {
+      construct: async () => Promise.resolve(quads),
+    },
+  } as any as ParsingClient;
+
+  it("should return correct preview", async () => {
+    const { dimensions, measures, observations } = await getCubePreview(
+      "awesome iri",
+      {
+        sparqlClient,
+        locale: "en",
+        latest: true,
+      }
+    );
+    const dim = dimensions[0];
+
+    expect(dim.iri).toEqual(
+      "https://environment.ld.admin.ch/foen/gefahren-waldbrand-warnung/region"
+    );
+    expect(dim.label).toEqual("Region");
+    expect(dim.values).toHaveLength(1);
+    expect(dim.values[0].position).toEqual(3);
+
+    const measure = measures[0];
+
+    expect(measure.iri).toEqual(
+      "https://environment.ld.admin.ch/foen/gefahren-waldbrand-warnung/level"
+    );
+    expect(measure.label).toEqual("Danger ratings");
+
+    const obs = observations[0];
+
+    expect(obs[dim.iri]).toEqual("Bern");
+    expect(obs[measure.iri]).toEqual("considerable danger");
+  });
+});
