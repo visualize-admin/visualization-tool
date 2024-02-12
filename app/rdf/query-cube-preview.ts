@@ -135,10 +135,10 @@ CONSTRUCT {
     throw new Error(`No cube found for ${iri}!`);
   }
 
-  const qsDims = qs.filter(({ predicate: p }) => p.equals(ns.sh.path));
   const dimensions: Dimension[] = [];
   const measures: Measure[] = [];
   const observations: Observation[] = [];
+  const qsDims = qs.filter(({ predicate: p }) => p.equals(ns.sh.path));
   const dimValuesByDimIri: Record<string, DimensionValue[]> = qsDims.reduce(
     (acc, dim) => {
       acc[dim.object.value] = [];
@@ -162,17 +162,22 @@ CONSTRUCT {
       const qDimIri = quad.predicate;
       const dimIri = qDimIri.value;
       const qDimValue = quad.object;
-      let sIri: Quad | undefined;
+      let qPosition: Quad | undefined;
 
       if (!observation[dimIri]) {
         // Retrieve the label of the observation value if it's a named node
         if (quad.object.termType === "NamedNode") {
-          sIri = qs.find((q) => q.object.equals(quad.object));
+          const sIri = qs.find((q) => q.object.equals(quad.object));
           const qLabel = qs.find(
             (q) =>
               q.subject.equals(sIri?.subject) &&
               q.predicate.equals(qDimIri) &&
               q.object.termType === "Literal"
+          );
+          qPosition = qs.find(
+            (q) =>
+              q.subject.equals(sIri?.object) &&
+              q.predicate.equals(ns.schema.position)
           );
           observation[qDimIri.value] = qLabel?.object.value ?? qDimValue.value;
         } else {
@@ -180,15 +185,10 @@ CONSTRUCT {
         }
       }
 
-      const position = qs.find(
-        (q) =>
-          q.subject.equals(sIri?.object) &&
-          q.predicate.equals(ns.schema.position)
-      )?.object.value;
       const dimensionValue: DimensionValue = {
         value: qDimValue.value,
         label: `${observation[qDimIri.value]}`,
-        position: position !== undefined ? +position : undefined,
+        position: qPosition ? +qPosition.object.value : undefined,
       };
       dimValuesByDimIri[dimIri].push(dimensionValue);
     });
@@ -197,8 +197,11 @@ CONSTRUCT {
   });
 
   for (const dimIri in dimValuesByDimIri) {
-    dimValuesByDimIri[dimIri] = uniqBy(dimValuesByDimIri[dimIri], "value").sort(
-      (a, b) => ((a.position ?? a.label) > (b.position ?? b.label) ? 1 : -1)
+    dimValuesByDimIri[dimIri] = uniqBy(
+      dimValuesByDimIri[dimIri],
+      (d) => d.value
+    ).sort((a, b) =>
+      (a.position ?? a.label) > (b.position ?? b.label) ? 1 : -1
     );
   }
 
