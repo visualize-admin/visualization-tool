@@ -70,7 +70,6 @@ CONSTRUCT {
   ?dimension schema:name ?dimensionLabel .
   ?dimension schema:description ?dimensionDescription .
 
-  ?observationSet cube:observation ?observation .
   ?observation ?observationPredicate ?observationValue .
   ?observation ?observationPredicate ?observationValueLabel .
 } WHERE {
@@ -129,7 +128,7 @@ CONSTRUCT {
         "observationValueLabel",
         { locale }
       )}
-      FILTER(?observationPredicate != cube:observedBy)
+      FILTER(?observationPredicate != cube:observedBy && ?observationPredicate != rdf:type)
     }}
   }
 }`,
@@ -245,10 +244,12 @@ CONSTRUCT {
     }
   });
 
-  const qsObs = qs.filter(({ p }) => p.equals(ns.cube.observation));
-  const observations = uniqBy(qsObs, ({ o }) => o.value).map(({ o }) => {
+  const observations = uniqBy(
+    qs.filter(({ p }) => qsDims.some((q) => q.o.equals(p))),
+    ({ s }) => s.value
+  ).map(({ s }) => {
     const sqDimValue = qsDims
-      .map((quad) => qs.find((q) => q.s.equals(o) && q.p.equals(quad.o)))
+      .map((quad) => qs.find((q) => q.s.equals(s) && q.p.equals(quad.o)))
       .filter(truthy);
 
     return sqDimValue.reduce((acc, quad) => {
