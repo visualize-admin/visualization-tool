@@ -82,6 +82,7 @@ CONSTRUCT {
     ?cube cube:observationConstraint/sh:property ?dimension .
     ?dimension sh:path ?dimensionIri .
     OPTIONAL { ?dimension sh:datatype ?dimensionDataType . }
+    OPTIONAL { ?dimension sh:or/rdf:rest*/rdf:first/sh:datatype ?dimensionDataType . }
     OPTIONAL { ?dimension rdf:type ?dimensionType . }
     OPTIONAL { ?dimension qudt:scaleType ?dimensionScaleType . }
     OPTIONAL {
@@ -117,7 +118,6 @@ CONSTRUCT {
     FILTER(?dimensionIri != cube:observedBy && ?dimensionIri != rdf:type)
   } UNION {
     ?cube cube:observationConstraint/sh:property/sh:path ?observationPredicate .
-
     { SELECT * WHERE {
     { SELECT * WHERE {
       ?cube cube:observationSet ?observationSet .
