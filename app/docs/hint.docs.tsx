@@ -2,13 +2,13 @@ import { Stack } from "@mui/material";
 import { markdown, ReactSpecimen } from "catalog";
 
 import {
-  Loading,
-  Error,
-  Success,
-  OnlyNegativeDataHint,
   ChartUnexpectedError,
-  LoadingGeoDimensionsError,
+  Error,
+  Loading,
   LoadingDataError,
+  LoadingGeoDimensionsError,
+  OnlyNegativeDataHint,
+  PublishSuccess,
 } from "@/components/hint";
 
 export default () => markdown`
@@ -37,7 +37,7 @@ ${(
 ## Success message
 ${(
   <ReactSpecimen>
-    <Success />
+    <PublishSuccess />
   </ReactSpecimen>
 )}
 

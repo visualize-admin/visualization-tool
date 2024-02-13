@@ -9,7 +9,7 @@ import { useRouter } from "next/router";
 import React, { useState } from "react";
 
 import { ChartPublished } from "@/components/chart-published";
-import { Success } from "@/components/hint";
+import { PublishSuccess } from "@/components/hint";
 import { ContentLayout } from "@/components/layout";
 import { PublishActions } from "@/components/publish-actions";
 import {
@@ -19,7 +19,7 @@ import {
   getChartConfig,
 } from "@/configurator";
 import { getConfig } from "@/db/config";
-import { Serialized, deserializeProps, serializeProps } from "@/db/serialize";
+import { deserializeProps, Serialized, serializeProps } from "@/db/serialize";
 import { useLocale } from "@/locales/use-locale";
 import { useDataSourceStore } from "@/stores/data-source";
 import { EmbedOptionsProvider } from "@/utils/embed";
@@ -154,7 +154,7 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
           >
             {publishSuccess && (
               <Box mt={2} mb={5}>
-                <Success />
+                <PublishSuccess />
               </Box>
             )}
 
