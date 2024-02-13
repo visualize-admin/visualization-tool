@@ -9,7 +9,18 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
-Nothing yet.
+- Features
+  - Layout step is now available without using a flag
+  - Added Single URLs layout
+  - Added drag and drop functionality to dashboard layouts
+  - Improved responsiveness of charts in Tall layout
+- Fixes
+  - Interactive filters and table previews now work correctly in dashboard layout layouts
+  - Table filters are now applied correctly again
+- Performance
+  - Significantly improved performance of dataset previews
+- Maintenance
+  - Added GQL performance monitoring tests
 
 # [3.25.0] - 2023-12-12
 
