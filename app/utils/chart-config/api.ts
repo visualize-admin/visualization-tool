@@ -1,4 +1,9 @@
+import { PUBLISHED_STATE } from "@prisma/client";
+import isUndefined from "lodash/isUndefined";
+import omitBy from "lodash/omitBy";
 import { InferAPIResponse } from "nextkit";
+
+import { ParsedConfig } from "@/db/config";
 
 import { ConfiguratorStatePublishing } from "../../config-types";
 import { apiFetch } from "../api";
@@ -6,7 +11,6 @@ import { createChartId } from "../create-chart-id";
 
 import type apiConfigCreate from "../../pages/api/config-create";
 import type apiConfigUpdate from "../../pages/api/config-update";
-import type apiConfigList from "../../pages/api/config/list";
 import type apiConfig from "../../pages/api/config/[key]";
 
 export const createConfig = async (state: ConfiguratorStatePublishing) => {
@@ -33,31 +37,35 @@ export const createConfig = async (state: ConfiguratorStatePublishing) => {
 type UpdateConfigOptions = {
   key: string;
   userId: number;
+  published_state?: PUBLISHED_STATE;
 };
 
 export const updateConfig = async (
   state: ConfiguratorStatePublishing,
   options: UpdateConfigOptions
 ) => {
-  const { key, userId } = options;
+  const { key, userId, published_state } = options;
 
   return apiFetch<InferAPIResponse<typeof apiConfigUpdate, "POST">>(
     "/api/config-update",
     {
       method: "POST",
-      data: {
-        key,
-        userId,
-        data: {
+      data: omitBy(
+        {
           key,
-          version: state.version,
-          dataSource: state.dataSource,
-          layout: state.layout,
-          chartConfigs: state.chartConfigs,
-          activeChartKey: state.activeChartKey,
-          publishedState: state.publishedState,
+          userId,
+          data: {
+            key,
+            version: state.version,
+            dataSource: state.dataSource,
+            layout: state.layout,
+            chartConfigs: state.chartConfigs,
+            activeChartKey: state.activeChartKey,
+          },
+          published_state,
         },
-      },
+        isUndefined
+      ),
     }
   );
 };
@@ -84,7 +92,5 @@ export const fetchChartConfig = async (id: string) => {
 };
 
 export const fetchChartConfigs = async () => {
-  return await apiFetch<InferAPIResponse<typeof apiConfigList, "GET">>(
-    `/api/config/list`
-  );
+  return await apiFetch<ParsedConfig[]>(`/api/config/list`);
 };

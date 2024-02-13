@@ -20,6 +20,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
+import { PUBLISHED_STATE } from "@prisma/client";
 import NextLink from "next/link";
 import React from "react";
 
@@ -32,7 +33,7 @@ import { useDataCubesMetadataQuery } from "@/graphql/hooks";
 import { Icon, IconName } from "@/icons";
 import { useRootStyles } from "@/login/utils";
 import { useLocale } from "@/src";
-import { removeConfig } from "@/utils/chart-config/api";
+import { removeConfig, updateConfig } from "@/utils/chart-config/api";
 import { useMutate } from "@/utils/use-fetch-data";
 
 const PREVIEW_LIMIT = 3;
@@ -177,6 +178,7 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
 
   const { invalidate: invalidateUserConfigs } = useUserConfigs();
 
+  const updatePublishedStateMut = useMutate(updateConfig);
   const removeMut = useMutate(removeConfig);
   const actions = React.useMemo(() => {
     const actions: ActionProps[] = [
@@ -197,6 +199,41 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
         href: `/v/${config.key}`,
         label: t({ id: "login.chart.share", message: "Share" }),
         iconName: "linkExternal",
+      },
+      {
+        type: "button",
+        label: t({
+          id: "login.chart.draft",
+          message:
+            config.published_state === PUBLISHED_STATE.DRAFT
+              ? `Publish`
+              : "Turn into draft",
+        }),
+        iconName:
+          updatePublishedStateMut.status === "fetching"
+            ? "loading"
+            : "linkExternal",
+
+        onClick: async () => {
+          await updatePublishedStateMut.mutate(
+            {
+              ...config.data,
+              state: "PUBLISHING",
+            },
+            {
+              key: config.key,
+              userId,
+              published_state:
+                config.published_state === PUBLISHED_STATE.DRAFT
+                  ? PUBLISHED_STATE.PUBLISHED
+                  : PUBLISHED_STATE.DRAFT,
+            }
+          );
+          invalidateUserConfigs();
+        },
+        onSuccess: () => {
+          invalidateUserConfigs();
+        },
       },
       {
         type: "button",
@@ -228,6 +265,7 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
     config.published_state,
     invalidateUserConfigs,
     removeMut,
+    updatePublishedStateMut,
     userId,
   ]);
 

@@ -45,10 +45,12 @@ export const updateConfig = async ({
   key,
   data,
   userId,
+  published_state,
 }: {
   key: string;
-  data: Prisma.ConfigCreateInput["data"];
+  data: Prisma.ConfigUpdateInput["data"];
   userId: User["id"];
+  published_state: Prisma.ConfigUpdateInput["published_state"];
 }): Promise<{ key: string }> => {
   return await prisma.config.update({
     where: {
@@ -58,6 +60,8 @@ export const updateConfig = async ({
       key,
       data,
       user_id: userId,
+      updated_at: new Date(),
+      published_state: published_state,
     },
   });
 };
@@ -109,15 +113,7 @@ const ensureFiltersOrder = (chartConfig: ChartConfig) => {
   };
 };
 
-const parseDbConfig = (
-  d: Config
-): {
-  id: number;
-  key: string;
-  data: ConfiguratorStatePublished;
-  created_at: Date;
-  user_id: number | null;
-} => {
+const parseDbConfig = (d: Config) => {
   const data = d.data as ConfiguratorStatePublished;
   const migratedData = migrateConfiguratorState(data);
 
@@ -134,7 +130,7 @@ const parseDbConfig = (
             iri: migrateCubeIri(cube.iri),
           })),
         })),
-    },
+    } as ConfiguratorStatePublished,
   };
 };
 

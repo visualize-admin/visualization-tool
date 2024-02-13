@@ -10,7 +10,7 @@ const route = api({
   POST: async ({ req, res }) => {
     const session = await getServerSession(req, res, nextAuthOptions);
     const serverUserId = session?.user?.id;
-    const { key, userId, data } = req.body;
+    const { key, userId, data, published_state } = req.body;
 
     if (serverUserId !== userId) {
       throw new Error("Unauthorized!");
@@ -20,6 +20,7 @@ const route = api({
       key,
       data,
       userId,
+      published_state,
     });
   },
 });

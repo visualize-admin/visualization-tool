@@ -7,14 +7,23 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum PUBLISHED_STATE {
+  PUBLISHED
+  ARCHIVED
+  DRAFT
+}
+
 model Config {
   id         Int      @id @default(autoincrement())
   key        String   @unique @db.Char(12)
   data       Json
   created_at DateTime @default(now()) @db.Timestamp(6)
+  updated_at DateTime @default(now()) @db.Timestamp(6)
 
   user    User? @relation(fields: [user_id], references: [id])
   user_id Int?
+
+  published_state PUBLISHED_STATE @default(DRAFT)
 
   @@map("config")
 }
