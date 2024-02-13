@@ -40,6 +40,20 @@ query DataCubeObservations(
   )
 }
 
+query DataCubePreview(
+  $sourceType: String!
+  $sourceUrl: String!
+  $locale: String!
+  $cubeFilter: DataCubePreviewFilter!
+) {
+  dataCubePreview(
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    locale: $locale
+    cubeFilter: $cubeFilter
+  )
+}
+
 query SearchCubes(
   $sourceType: String!
   $sourceUrl: String!
@@ -61,38 +75,6 @@ query SearchCubes(
     highlightedTitle
     highlightedDescription
     cube
-  }
-}
-
-query DataCubePreview(
-  $iri: String!
-  $sourceType: String!
-  $sourceUrl: String!
-  $locale: String!
-  $latest: Boolean
-  $disableValuesLoad: Boolean = true
-) {
-  dataCubeByIri(
-    iri: $iri
-    sourceType: $sourceType
-    sourceUrl: $sourceUrl
-    locale: $locale
-    latest: $latest
-    disableValuesLoad: $disableValuesLoad
-  ) {
-    iri
-    title
-    description
-    publicationStatus
-    observations(
-      sourceType: $sourceType
-      sourceUrl: $sourceUrl
-      preview: true
-      limit: 10
-    ) {
-      data
-      sparqlEditorUrl
-    }
   }
 }
 

@@ -400,7 +400,7 @@ export const getCubeDimensionValuesWithMetadata = async ({
   const result: DimensionValue[] = [];
 
   if (namedNodes.length > 0) {
-    const scaleType = getScaleType(dimension);
+    const scaleType = getScaleType(dimension.out(ns.qudt.scaleType).term);
     const [labels, descriptions, literals, unversioned] = await Promise.all([
       loadResourceLabels({
         ids: namedNodes,

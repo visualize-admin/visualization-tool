@@ -324,3 +324,12 @@ export const dataCubeObservations: NonNullable<
     sparqlEditorUrl: "",
   };
 };
+
+export const dataCubePreview: NonNullable<QueryResolvers["dataCubePreview"]> =
+  async () => {
+    return {
+      dimensions: [],
+      measures: [],
+      observations: [],
+    };
+  };

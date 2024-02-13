@@ -7,13 +7,15 @@ import * as React from "react";
 
 import { DataSetPreviewTable } from "@/browse/datatable";
 import { useFootnotesStyles } from "@/components/chart-footnotes";
-import { DataDownloadMenu, RunSparqlQuery } from "@/components/data-download";
+import { DataDownloadMenu } from "@/components/data-download";
 import Flex from "@/components/flex";
 import { HintRed, Loading, LoadingDataError } from "@/components/hint";
 import { DataSource } from "@/config-types";
 import { sourceToLabel } from "@/domain/datasource";
-import { useDataCubesComponentsQuery } from "@/graphql/hooks";
-import { useDataCubePreviewQuery } from "@/graphql/query-hooks";
+import {
+  useDataCubeMetadataQuery,
+  useDataCubePreviewQuery,
+} from "@/graphql/query-hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import { useLocale } from "@/locales/use-locale";
 
@@ -93,55 +95,38 @@ export const DataSetPreview = ({
 }) => {
   const footnotesClasses = useFootnotesStyles({ useMarginTop: false });
   const locale = useLocale();
-  const cubeFilters = [{ iri: dataSetIri }];
+  const variables = {
+    sourceType: dataSource.type,
+    sourceUrl: dataSource.url,
+    locale,
+    cubeFilter: { iri: dataSetIri },
+  };
+  const [{ data: metadata, fetching: fetchingMetadata, error: metadataError }] =
+    useDataCubeMetadataQuery({ variables });
   const [
     { data: previewData, fetching: fetchingPreview, error: previewError },
-  ] = useDataCubePreviewQuery({
-    variables: {
-      iri: dataSetIri,
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
-    },
-  });
-  const [
-    {
-      data: componentsData,
-      fetching: fetchingComponents,
-      error: componentsError,
-    },
-  ] = useDataCubesComponentsQuery({
-    variables: {
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
-      cubeFilters,
-    },
-  });
+  ] = useDataCubePreviewQuery({ variables });
   const classes = useStyles({
-    descriptionPresent: !!previewData?.dataCubeByIri?.description,
+    descriptionPresent: !!metadata?.dataCubeMetadata.description,
   });
 
   React.useEffect(() => {
     window.scrollTo({ top: 0 });
   }, []);
 
-  if (fetchingPreview || fetchingComponents) {
+  if (fetchingMetadata || fetchingPreview) {
     return (
       <Flex className={classes.loadingWrapper}>
         <Loading />
       </Flex>
     );
-  } else if (
-    previewData?.dataCubeByIri &&
-    componentsData?.dataCubesComponents
-  ) {
-    const { dataCubeByIri } = previewData;
-    const { dataCubesComponents } = componentsData;
+  } else if (metadata?.dataCubeMetadata && previewData?.dataCubePreview) {
+    const { dataCubeMetadata } = metadata;
+    const { dataCubePreview } = previewData;
 
     return (
       <Flex className={classes.root}>
-        {dataCubeByIri.publicationStatus ===
+        {dataCubeMetadata.publicationStatus ===
           DataCubePublicationStatus.Draft && (
           <Box sx={{ mb: 4 }}>
             <HintRed iconName="datasetError" iconSize={64}>
@@ -156,15 +141,15 @@ export const DataSetPreview = ({
         <Flex className={classes.header}>
           <Head>
             <title key="title">
-              {dataCubeByIri.title} - visualize.admin.ch
+              {dataCubeMetadata.title} - visualize.admin.ch
             </title>
           </Head>
           <Typography className={classes.title} component="div" variant="h1">
-            {dataCubeByIri.title}
+            {dataCubeMetadata.title}
           </Typography>
           <Link
             href={`/create/new?cube=${
-              dataCubeByIri.iri
+              dataCubeMetadata.iri
             }&dataSource=${sourceToLabel(dataSource)}`}
             passHref
             legacyBehavior
@@ -177,36 +162,31 @@ export const DataSetPreview = ({
           </Link>
         </Flex>
         <Paper className={classes.paper} elevation={5}>
-          {dataCubeByIri.description && (
+          {dataCubeMetadata.description && (
             <Typography
               className={classes.description}
               component="div"
               variant="body2"
             >
-              {dataCubeByIri.description}
+              {dataCubeMetadata.description}
             </Typography>
           )}
 
           <Flex className={classes.tableWrapper}>
             <DataSetPreviewTable
-              title={dataCubeByIri.title}
-              dimensions={dataCubesComponents.dimensions}
-              measures={dataCubesComponents.measures}
-              observations={dataCubeByIri.observations.data}
+              title={dataCubeMetadata.title}
+              dimensions={dataCubePreview.dimensions}
+              measures={dataCubePreview.measures}
+              observations={dataCubePreview.observations}
             />
           </Flex>
           <Flex className={classes.footnotesWrapper}>
             <Flex className={footnotesClasses.actions}>
               <DataDownloadMenu
                 dataSource={dataSource}
-                title={dataCubeByIri.title}
-                filters={cubeFilters}
+                title={dataCubeMetadata.title}
+                filters={[variables.cubeFilter]}
               />
-              {dataCubeByIri.observations.sparqlEditorUrl && (
-                <RunSparqlQuery
-                  url={dataCubeByIri.observations.sparqlEditorUrl}
-                />
-              )}
             </Flex>
             <Typography
               className={classes.numberOfRows}
@@ -225,7 +205,7 @@ export const DataSetPreview = ({
     return (
       <Flex className={classes.loadingWrapper}>
         <LoadingDataError
-          message={previewError?.message ?? componentsError?.message}
+          message={metadataError?.message ?? previewError?.message}
         />
       </Flex>
     );

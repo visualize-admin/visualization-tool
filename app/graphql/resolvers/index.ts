@@ -9,6 +9,7 @@ import {
   DataCubeResolvers,
   QueryResolvers,
   Resolvers,
+  ScaleType,
 } from "@/graphql/resolver-types";
 import * as RDF from "@/graphql/resolvers/rdf";
 import * as SQL from "@/graphql/resolvers/sql";
@@ -36,6 +37,10 @@ export const Query: QueryResolvers = {
   dataCubeObservations: async (parent, args, context, info) => {
     const source = getSource(args.sourceType);
     return await source.dataCubeObservations(parent, args, context, info);
+  },
+  dataCubePreview: async (parent, args, context, info) => {
+    const source = getSource(args.sourceType);
+    return await source.dataCubePreview(parent, args, context, info);
   },
   dataCubeByIri: async (parent, args, context, info) => {
     const source = getSource(args.sourceType);
@@ -83,10 +88,10 @@ const DataCube: DataCubeResolvers = {
 };
 
 export const resolveDimensionType = (
-  component: ResolvedDimension
+  dataKind: ResolvedDimension["data"]["dataKind"] | undefined,
+  scaleType: ScaleType | undefined,
+  related: ResolvedDimension["data"]["related"]
 ): DimensionType => {
-  const { dataKind, scaleType, related } = component.data;
-
   if (related.some((d) => d.type === "StandardError")) {
     return "StandardErrorDimension";
   }
@@ -113,16 +118,14 @@ export const resolveDimensionType = (
 };
 
 export const resolveMeasureType = (
-  component: ResolvedDimension
+  scaleType: ScaleType | undefined
 ): MeasureType => {
-  const { scaleType } = component.data;
-
   return scaleType === "Ordinal" ? "OrdinalMeasure" : "NumericalMeasure";
 };
 
 const mkDimensionResolvers = (_: string): Resolvers["Dimension"] => ({
-  __resolveType(dimension) {
-    return resolveDimensionType(dimension);
+  __resolveType({ data: { dataKind, scaleType, related } }) {
+    return resolveDimensionType(dataKind, scaleType, related);
   },
   iri: ({ data: { iri } }) => iri,
   label: ({ data: { name } }) => name,
@@ -201,8 +204,8 @@ export const resolvers: Resolvers = {
     },
   },
   Dimension: {
-    __resolveType(dimension) {
-      return resolveDimensionType(dimension);
+    __resolveType({ data: { dataKind, scaleType, related } }) {
+      return resolveDimensionType(dataKind, scaleType, related);
     },
   },
   NominalDimension: {
@@ -273,7 +276,7 @@ export const resolvers: Resolvers = {
   },
   Measure: {
     __resolveType(dimension) {
-      return resolveMeasureType(dimension);
+      return resolveMeasureType(dimension.data.scaleType);
     },
   },
   NumericalMeasure: {

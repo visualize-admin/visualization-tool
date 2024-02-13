@@ -112,9 +112,9 @@ const timeFormats = new Map<string, string>([
   [ns.xsd.dateTime.value, "%Y-%m-%dT%H:%M:%S"],
 ]);
 
-export const getScaleType = (dim: CubeDimension): ScaleType | undefined => {
-  const scaleTypeTerm = dim.out(ns.qudt.scaleType).term;
-
+export const getScaleType = (
+  scaleTypeTerm: Term | undefined
+): ScaleType | undefined => {
   return scaleTypeTerm?.equals(ns.qudt.NominalScale)
     ? ScaleType.Nominal
     : scaleTypeTerm?.equals(ns.qudt.OrdinalScale)
@@ -126,7 +126,7 @@ export const getScaleType = (dim: CubeDimension): ScaleType | undefined => {
     : undefined;
 };
 
-const getDataKind = (term: Term | undefined) => {
+export const getDataKind = (term: Term | undefined) => {
   return term?.equals(ns.time.GeneralDateTimeDescription)
     ? "Time"
     : term?.equals(ns.schema.GeoCoordinates)
@@ -228,18 +228,10 @@ export const parseCubeDimension = ({
     parseDimensionDatatype(dim);
 
   const isDecimal = dataType?.equals(ns.xsd.decimal) ?? false;
-  const isNumerical =
-    dataType?.equals(ns.xsd.int) ||
-    dataType?.equals(ns.xsd.integer) ||
-    isDecimal ||
-    dataType?.equals(ns.xsd.float) ||
-    dataType?.equals(ns.xsd.double) ||
-    false;
-
+  const isNumerical = getIsNumerical(dataType);
   const isKeyDimension = dim
     .out(ns.rdf.type)
     .terms.some((t) => t.equals(ns.cube.KeyDimension));
-
   const isMeasureDimension = dim
     .out(ns.rdf.type)
     .terms.some((t) => t.equals(ns.cube.MeasureDimension));
@@ -248,14 +240,7 @@ export const parseCubeDimension = ({
   const unitTerm = dim.out(ns.qudt.unit).term ?? dim.out(ns.qudt.hasUnit).term;
   const unit = unitTerm ? units?.get(unitTerm.value) : undefined;
   const unitLabel = unit?.label?.value;
-
-  const rawOrder = dim.out(ns.sh.order).value;
-  const order = rawOrder !== undefined ? parseInt(rawOrder, 10) : undefined;
-
-  const resolution =
-    dataType?.equals(ns.xsd.int) || dataType?.equals(ns.xsd.integer)
-      ? 0
-      : undefined;
+  const resolution = parseResolution(dataType);
 
   return {
     cube,
@@ -281,13 +266,43 @@ export const parseCubeDimension = ({
       currencyExponent: unit?.currencyExponent?.value
         ? parseInt(unit.currencyExponent.value)
         : undefined,
-      order,
+      order: parseNumericalTerm(dim.out(ns.sh.order).term),
       dataKind: getDataKind(dataKindTerm),
-      timeUnit: timeUnits.get(timeUnitTerm?.value ?? ""),
-      timeFormat: timeFormats.get(dataType?.value ?? ""),
-      scaleType: getScaleType(dim),
+      timeUnit: getTimeUnit(timeUnitTerm),
+      timeFormat: getTimeFormat(dataType),
+      scaleType: getScaleType(dim.out(ns.qudt.scaleType).term),
     },
   };
+};
+
+export const parseNumericalTerm = (term: Term | undefined) => {
+  return term !== undefined ? parseInt(term.value, 10) : undefined;
+};
+
+export const getTimeUnit = (timeUnitTerm: Term | undefined) => {
+  return timeUnits.get(timeUnitTerm?.value ?? "");
+};
+
+export const getTimeFormat = (dataTypeTerm: Term | undefined) => {
+  return timeFormats.get(dataTypeTerm?.value ?? "");
+};
+
+export const parseResolution = (dataTypeTerm: Term | undefined) => {
+  return dataTypeTerm?.equals(ns.xsd.int) ||
+    dataTypeTerm?.equals(ns.xsd.integer)
+    ? 0
+    : undefined;
+};
+
+export const getIsNumerical = (dataTypeTerm: Term | undefined) => {
+  return (
+    dataTypeTerm?.equals(ns.xsd.int) ||
+    dataTypeTerm?.equals(ns.xsd.integer) ||
+    dataTypeTerm?.equals(ns.xsd.float) ||
+    dataTypeTerm?.equals(ns.xsd.double) ||
+    dataTypeTerm?.equals(ns.xsd.decimal) ||
+    false
+  );
 };
 
 const timeIntervals = new Map<string, CountableTimeInterval>([

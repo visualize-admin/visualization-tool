@@ -13,9 +13,11 @@ export const buildLocalizedSubQuery = (
   {
     locale,
     fallbackToNonLocalized,
+    additionalFallbacks,
   }: {
     locale: string;
     fallbackToNonLocalized?: boolean;
+    additionalFallbacks?: string[];
   }
 ) => {
   // Include the empty locale as well.
@@ -37,6 +39,10 @@ export const buildLocalizedSubQuery = (
   }
 BIND(COALESCE(${locales.map((locale) => `?${o}_${locale}`).join(", ")}${
     fallbackToNonLocalized ? `, ?${o}_raw` : ``
+  }${
+    additionalFallbacks
+      ? ", " + additionalFallbacks.map((d) => `?${d}`).join(", ")
+      : ""
   }) AS ?${o})`;
 };
 
