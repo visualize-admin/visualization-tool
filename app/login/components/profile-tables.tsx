@@ -33,6 +33,7 @@ import { Icon, IconName } from "@/icons";
 import { useRootStyles } from "@/login/utils";
 import { useLocale } from "@/src";
 import { removeConfig } from "@/utils/chart-config/api";
+import { useMutate } from "@/utils/use-fetch-data";
 
 const PREVIEW_LIMIT = 3;
 
@@ -176,6 +177,7 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
 
   const { invalidate: invalidateUserConfigs } = useUserConfigs();
 
+  const removeMut = useMutate(removeConfig);
   const actions = React.useMemo(() => {
     const actions: ActionProps[] = [
       {
@@ -199,7 +201,7 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
       {
         type: "button",
         label: t({ id: "login.chart.delete", message: "Delete" }),
-        iconName: "trash",
+        iconName: removeMut.status === "fetching" ? "loading" : "linkExternal",
         requireConfirmation: true,
         confirmationTitle: t({
           id: "login.chart.delete.confirmation",
@@ -210,8 +212,8 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
           message:
             "Keep in mind that removing this visualization will affect all the places where it might be already embedded!",
         }),
-        onClick: async () => {
-          await removeConfig({ key: config.key, userId });
+        onClick: () => {
+          removeMut.mutate({ key: config.key, userId });
         },
         onSuccess: () => {
           invalidateUserConfigs();
@@ -220,7 +222,14 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
     ];
 
     return actions;
-  }, [config.key, invalidateUserConfigs, userId]);
+  }, [
+    config.data,
+    config.key,
+    config.published_state,
+    invalidateUserConfigs,
+    removeMut,
+    userId,
+  ]);
 
   const chartTitle = React.useMemo(() => {
     const title = config.data.chartConfigs
@@ -380,7 +389,7 @@ type ActionButtonProps = {
   requireConfirmation?: boolean;
   confirmationTitle?: string;
   confirmationText?: string;
-  onClick: () => Promise<void>;
+  onClick: () => Promise<void> | void;
   onDialogClose?: () => void;
   onSuccess?: () => void;
 };
