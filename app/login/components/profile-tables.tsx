@@ -3,7 +3,6 @@ import {
   Box,
   Button,
   CircularProgress,
-  ClickAwayListener,
   Dialog,
   DialogActions,
   DialogContent,
@@ -11,13 +10,14 @@ import {
   DialogTitle,
   IconButton,
   Link,
+  Menu,
+  MenuItem,
   Skeleton,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableRow,
-  Tooltip,
   Typography,
 } from "@mui/material";
 import { PUBLISHED_STATE } from "@prisma/client";
@@ -352,29 +352,20 @@ const Actions = (props: ActionsProps) => {
   const { isOpen, open, close } = useDisclosure();
 
   return (
-    <ClickAwayListener onClickAway={close}>
-      <Tooltip
-        arrow
-        open={isOpen}
-        title={
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-            {actions.map((props, i) => (
-              <Action
-                key={i}
-                {...props}
-                {...(props.type === "button" ? { onDialogClose: close } : {})}
-              />
-            ))}
-          </Box>
-        }
-        sx={{ p: 2 }}
-        componentsProps={{ tooltip: { sx: { p: 3, pb: 2 } } }}
-      >
-        <IconButton ref={buttonRef} onClick={isOpen ? close : open}>
-          <Icon name="more" size={16} />
-        </IconButton>
-      </Tooltip>
-    </ClickAwayListener>
+    <>
+      <IconButton ref={buttonRef} onClick={isOpen ? close : open}>
+        <Icon name="more" size={16} />
+      </IconButton>
+      <Menu onClose={close} open={isOpen} anchorEl={buttonRef.current}>
+        {actions.map((props, i) => (
+          <Action
+            key={i}
+            {...props}
+            {...(props.type === "button" ? { onDialogClose: close } : {})}
+          />
+        ))}
+      </Menu>
+    </>
   );
 };
 
@@ -404,7 +395,8 @@ const ActionLink = (props: ActionLinkProps) => {
 
   return (
     <NextLink href={href} passHref legacyBehavior>
-      <Link
+      <MenuItem
+        component={Link}
         target="_blank"
         sx={{
           display: "flex",
@@ -415,7 +407,7 @@ const ActionLink = (props: ActionLinkProps) => {
       >
         <Icon name={iconName} size={16} />
         <Typography variant="body2">{label}</Typography>
-      </Link>
+      </MenuItem>
     </NextLink>
   );
 };
@@ -448,7 +440,8 @@ const ActionButton = (props: ActionButtonProps) => {
 
   return (
     <>
-      <Link
+      <MenuItem
+        component={Link}
         onClick={(e) => {
           // To prevent the click away listener from closing the dialog.
           e.stopPropagation();
@@ -469,7 +462,7 @@ const ActionButton = (props: ActionButtonProps) => {
       >
         <Icon name={iconName} size={16} style={{ margin: 0 }} />
         <Typography variant="body2">{label}</Typography>
-      </Link>
+      </MenuItem>
       {requireConfirmation && (
         <Dialog
           open={isOpen}
