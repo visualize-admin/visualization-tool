@@ -55,6 +55,7 @@ export const updateConfig = async (
           layout: state.layout,
           chartConfigs: state.chartConfigs,
           activeChartKey: state.activeChartKey,
+          publishedState: state.publishedState,
         },
       },
     }
