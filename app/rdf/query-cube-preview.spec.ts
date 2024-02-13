@@ -10,6 +10,7 @@ jest.mock("@zazuko/cube-hierarchy-query/index", () => ({}));
 
 describe("dataset preview", () => {
   const dim = rdf.blankNode();
+  const genericDim = rdf.blankNode();
   const measure = rdf.blankNode();
   const observation = rdf.namedNode(
     "https://environment.ld.admin.ch/foen/gefahren-waldbrand-warnung/observation/336>"
@@ -23,6 +24,8 @@ describe("dataset preview", () => {
       )
     ),
     rdf.quad(dim, ns.schema.name, rdf.literal("Region")),
+    rdf.quad(genericDim, ns.sh.path, ns.schema.name),
+    rdf.quad(genericDim, ns.schema.name, rdf.literal("Name")),
     rdf.quad(
       measure,
       ns.sh.path,
@@ -87,14 +90,18 @@ describe("dataset preview", () => {
         latest: true,
       }
     );
-    const dim = dimensions[0];
+    const dim = dimensions.find(
+      (d) =>
+        d.iri ===
+        "https://environment.ld.admin.ch/foen/gefahren-waldbrand-warnung/region"
+    );
 
-    expect(dim.iri).toEqual(
+    expect(dim?.iri).toEqual(
       "https://environment.ld.admin.ch/foen/gefahren-waldbrand-warnung/region"
     );
-    expect(dim.label).toEqual("Region");
-    expect(dim.values).toHaveLength(1);
-    expect(dim.values[0].position).toEqual(3);
+    expect(dim?.label).toEqual("Region");
+    expect(dim?.values).toHaveLength(1);
+    expect(dim?.values[0].position).toEqual(3);
 
     const measure = measures[0];
 
@@ -103,9 +110,10 @@ describe("dataset preview", () => {
     );
     expect(measure.label).toEqual("Danger ratings");
 
+    expect(observations).toHaveLength(1);
     const obs = observations[0];
 
-    expect(obs[dim.iri]).toEqual("Bern");
+    expect(obs[dim?.iri ?? ""]).toEqual("Bern");
     expect(obs[measure.iri]).toEqual("considerable danger");
   });
 });
