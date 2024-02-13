@@ -5,7 +5,7 @@ import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 import React from "react";
 
-import { ParsedConfig } from "@/db/config";
+import { useUserConfigs } from "@/domain/user-configs";
 import { ProfileVisualizationsTable } from "@/login/components/profile-tables";
 import { useRootStyles } from "@/login/utils";
 import useEvent from "@/utils/use-event";
@@ -38,18 +38,22 @@ const useStyles = makeStyles<Theme>((theme) => ({
 
 type ProfileContentTabsProps = {
   userId: number;
-  userConfigs: ParsedConfig[];
 };
 
 export const ProfileContentTabs = (props: ProfileContentTabsProps) => {
-  const { userId, userConfigs: _userConfigs } = props;
-  const [userConfigs, setUserConfigs] = React.useState(_userConfigs);
+  const { userId } = props;
+
+  const { data: userConfigs } = useUserConfigs();
   const [value, setValue] = React.useState("Home");
   const handleChange = useEvent((_: React.SyntheticEvent, v: string) => {
     setValue(v);
   });
   const rootClasses = useRootStyles();
   const classes = useStyles();
+
+  if (!userConfigs) {
+    return null;
+  }
 
   return (
     <TabContext value={value}>
@@ -78,7 +82,6 @@ export const ProfileContentTabs = (props: ProfileContentTabsProps) => {
           <ProfileVisualizationsTable
             userId={userId}
             userConfigs={userConfigs}
-            setUserConfigs={setUserConfigs}
             preview
             onShowAll={() =>
               setValue(
@@ -102,7 +105,6 @@ export const ProfileContentTabs = (props: ProfileContentTabsProps) => {
           <ProfileVisualizationsTable
             userId={userId}
             userConfigs={userConfigs}
-            setUserConfigs={setUserConfigs}
           />
         </Box>
       </TabPanel>

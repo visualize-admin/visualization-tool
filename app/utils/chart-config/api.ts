@@ -6,6 +6,7 @@ import { createChartId } from "../create-chart-id";
 
 import type apiConfigCreate from "../../pages/api/config-create";
 import type apiConfigUpdate from "../../pages/api/config-update";
+import type apiConfigList from "../../pages/api/config/list";
 import type apiConfig from "../../pages/api/config/[key]";
 
 export const createConfig = async (state: ConfiguratorStatePublishing) => {
@@ -78,5 +79,11 @@ export const removeConfig = async (options: UpdateConfigOptions) => {
 export const fetchChartConfig = async (id: string) => {
   return await apiFetch<InferAPIResponse<typeof apiConfig, "GET">>(
     `/api/config/${id}`
+  );
+};
+
+export const fetchChartConfigs = async () => {
+  return await apiFetch<InferAPIResponse<typeof apiConfigList, "GET">>(
+    `/api/config/list`
   );
 };

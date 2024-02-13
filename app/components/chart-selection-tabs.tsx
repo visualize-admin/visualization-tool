@@ -1,4 +1,4 @@
-import { Trans, t } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
 import {
   Box,
   BoxProps,
@@ -33,14 +33,13 @@ import {
 } from "@/configurator";
 import { ChartTypeSelector } from "@/configurator/components/chart-type-selector";
 import { getIconName } from "@/configurator/components/ui-helpers";
+import { useUserConfig } from "@/domain/user-configs";
 import { useDataCubesComponentsQuery } from "@/graphql/hooks";
 import { Icon, IconName } from "@/icons";
 import { useLocale } from "@/src";
-import { fetchChartConfig } from "@/utils/chart-config/api";
 import { createChartId } from "@/utils/create-chart-id";
 import { getRouterChartId } from "@/utils/router/helpers";
 import useEvent from "@/utils/use-event";
-import { useFetchData } from "@/utils/use-fetch-data";
 
 type TabsState = {
   popoverOpen: boolean;
@@ -318,14 +317,7 @@ export const PublishChartButton = () => {
   const { asPath } = useRouter();
   const session = useSession();
   const chartId = getRouterChartId(asPath);
-  const queryFn = React.useCallback(
-    () => fetchChartConfig(chartId ?? ""),
-    [chartId]
-  );
-  const { data: config, status } = useFetchData(queryFn, {
-    enable: !!(session.data?.user && chartId),
-    initialStatus: "fetching",
-  });
+  const { data: config, status } = useUserConfig(chartId);
   const editingPublishedChart =
     session.data?.user.id && config?.user_id === session.data.user.id;
 

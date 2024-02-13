@@ -1,4 +1,4 @@
-import { Trans, t } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
 import {
   Box,
   Button,
@@ -27,6 +27,7 @@ import useDisclosure from "@/components/use-disclosure";
 import { ParsedConfig } from "@/db/config";
 import { sourceToLabel } from "@/domain/datasource";
 import { truthy } from "@/domain/types";
+import { useUserConfigs } from "@/domain/user-configs";
 import { useDataCubesMetadataQuery } from "@/graphql/hooks";
 import { Icon, IconName } from "@/icons";
 import { useRootStyles } from "@/login/utils";
@@ -71,7 +72,6 @@ const ProfileTable = (props: ProfileTableProps) => {
 type ProfileVisualizationsTableProps = {
   userId: number;
   userConfigs: ParsedConfig[];
-  setUserConfigs: React.Dispatch<React.SetStateAction<ParsedConfig[]>>;
   preview?: boolean;
   onShowAll?: () => void;
 };
@@ -79,13 +79,7 @@ type ProfileVisualizationsTableProps = {
 export const ProfileVisualizationsTable = (
   props: ProfileVisualizationsTableProps
 ) => {
-  const { userId, userConfigs, setUserConfigs, preview, onShowAll } = props;
-  const onRemoveSuccess = React.useCallback(
-    (key: string) => {
-      setUserConfigs((prev) => prev.filter((d) => d.key !== key));
-    },
-    [setUserConfigs]
-  );
+  const { userId, userConfigs, preview, onShowAll } = props;
 
   return (
     <ProfileTable
@@ -140,7 +134,6 @@ export const ProfileVisualizationsTable = (
                   key={config.key}
                   userId={userId}
                   config={config}
-                  onRemoveSuccess={onRemoveSuccess}
                 />
               ))}
           </TableBody>
@@ -161,11 +154,10 @@ export const ProfileVisualizationsTable = (
 type ProfileVisualizationsRowProps = {
   userId: number;
   config: ParsedConfig;
-  onRemoveSuccess: (key: string) => void;
 };
 
 const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
-  const { userId, config, onRemoveSuccess } = props;
+  const { userId, config } = props;
   const { dataSource } = config.data;
   const dataSets = Array.from(
     new Set(config.data.chartConfigs.flatMap((d) => d.cubes.map((d) => d.iri)))
@@ -181,6 +173,9 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
     },
     pause: !dataSet,
   });
+
+  const { invalidate: invalidateUserConfigs } = useUserConfigs();
+
   const actions = React.useMemo(() => {
     const actions: ActionProps[] = [
       {
@@ -219,13 +214,13 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
           await removeConfig({ key: config.key, userId });
         },
         onSuccess: () => {
-          onRemoveSuccess(config.key);
+          invalidateUserConfigs();
         },
       },
     ];
 
     return actions;
-  }, [config.key, onRemoveSuccess, userId]);
+  }, [config.key, invalidateUserConfigs, userId]);
 
   const chartTitle = React.useMemo(() => {
     const title = config.data.chartConfigs
