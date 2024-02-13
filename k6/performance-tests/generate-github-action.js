@@ -6,6 +6,7 @@ const queries = [
   "DataCubeMetadata",
   "DataCubeObservations",
   "DataCubePreview",
+  "PossibleFilters",
 ];
 const cubes = [
   {
