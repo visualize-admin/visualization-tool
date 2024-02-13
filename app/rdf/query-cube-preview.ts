@@ -155,7 +155,12 @@ CONSTRUCT {
   }, {} as Record<string, { values: DimensionValue[]; dataType: NamedNode }>);
   // Only take quads that use dimension iris as predicates (observation values)
   const qUniqueObservations = uniqBy(
-    qs.filter(({ predicate: p }) => qsDims.some((q) => q.object.equals(p))),
+    qs.filter(
+      ({ subject: s, predicate: p }) =>
+        // Exclude situations where the subject is a blank node (e.g. dimension IRI
+        // is not unique, but something like ns.schema.name)
+        s.termType !== "BlankNode" && qsDims.some((q) => q.object.equals(p))
+    ),
     ({ subject: s }) => s.value
   );
   qUniqueObservations.forEach(({ subject: s }) => {
