@@ -1,3 +1,4 @@
+import groupBy from "lodash/groupBy";
 import uniqBy from "lodash/uniqBy";
 import rdf from "rdf-ext";
 import { NamedNode, Quad } from "rdf-js";
@@ -133,31 +134,38 @@ CONSTRUCT {
     throw new Error(`No cube found for ${iri}!`);
   }
 
+  const sQs = groupBy(qs, (q) => q.subject.value);
+  const spQs = Object.fromEntries(
+    Object.entries(sQs).map(([k, v]) => {
+      const pQs = groupBy(v, (q) => q.predicate.value);
+      return [k, pQs];
+    })
+  );
+
   const dimensions: Dimension[] = [];
   const measures: Measure[] = [];
   const observations: Observation[] = [];
   const qsDims = qs.filter(({ predicate: p }) => p.equals(ns.sh.path));
-  const dimMetadataByDimIri: Record<
-    string,
-    { values: DimensionValue[]; dataType: NamedNode }
-  > = qsDims.reduce((acc, dim) => {
+  const dimMetadataByDimIri = qsDims.reduce((acc, dim) => {
     acc[dim.object.value] = {
       values: [],
       dataType: rdf.namedNode(""),
     };
     return acc;
   }, {} as Record<string, { values: DimensionValue[]; dataType: NamedNode }>);
-  // Only take quads that use dimension iris as predicates (observations values)
+  // Only take quads that use dimension iris as predicates (observation values)
   const qUniqueObservations = uniqBy(
     qs.filter(({ predicate: p }) => qsDims.some((q) => q.object.equals(p))),
     ({ subject: s }) => s.value
   );
   qUniqueObservations.forEach(({ subject: s }) => {
-    const sqDimValues = qsDims
-      .map((quad) =>
-        qs.find((q) => q.subject.equals(s) && q.predicate.equals(quad.object))
-      )
-      .filter(truthy);
+    const sqDimValues = uniqBy(
+      qsDims
+        .map((quad) => spQs[s.value]?.[quad.object.value])
+        .flat()
+        .filter(truthy),
+      (d) => d.predicate.value
+    );
     const observation: Observation = {};
     sqDimValues.forEach((quad) => {
       const qDimIri = quad.predicate;
@@ -170,21 +178,21 @@ CONSTRUCT {
         if (qDimValue.termType === "NamedNode") {
           const sIri = qs.find((q) => q.object.equals(quad.object));
           const qLabel = qs.find(
-            (q) =>
-              q.subject.equals(sIri?.subject) &&
-              q.predicate.equals(qDimIri) &&
-              q.object.termType === "Literal"
+            ({ subject: s, predicate: p, object: o }) =>
+              s.equals(sIri?.subject) &&
+              p.equals(qDimIri) &&
+              o.termType === "Literal"
           );
 
           if (qLabel?.object.termType === "Literal") {
             dimMetadataByDimIri[dimIri].dataType = qLabel.object.datatype;
           }
 
-          qPosition = qs.find(
-            (q) =>
-              q.subject.equals(sIri?.object) &&
-              q.predicate.equals(ns.schema.position)
-          );
+          if (sIri?.object.value) {
+            qPosition =
+              spQs[sIri.object.value]?.[ns.schema.position.value]?.[0];
+          }
+
           observation[qDimIri.value] = qLabel?.object.value ?? qDimValue.value;
         } else {
           if (qDimValue.termType === "Literal") {
@@ -217,45 +225,30 @@ CONSTRUCT {
 
   qsDims.map(({ subject: s, object: o }) => {
     const dimIri = o.value;
-    const qsDim = qs.filter((q) => q.subject.equals(s));
-    const qLabel = qsDim.find((q) => q.predicate.equals(ns.schema.name));
-    const qDesc = qsDim.find((q) => q.predicate.equals(ns.schema.description));
-    const qOrder = qsDim.find((q) => q.predicate.equals(ns.sh.order));
-    const qsType = qsDim.filter((q) => q.predicate.equals(ns.rdf.type));
-    const qScaleType = qsDim.find((q) => q.predicate.equals(ns.qudt.scaleType));
+    const qsDim = sQs[s.value];
+    const pQsDim = groupBy(qsDim, (q) => q.predicate.value);
+    const qLabel = pQsDim[ns.schema.name.value]?.[0];
+    const qDesc = pQsDim[ns.schema.description.value]?.[0];
+    const qOrder = pQsDim[ns.sh.order.value]?.[0];
+    const qsType = pQsDim[ns.rdf.type.value];
+    const qScaleType = pQsDim[ns.qudt.scaleType.value]?.[0];
     const scaleType = getScaleType(qScaleType?.object);
     const dataType = dimMetadataByDimIri[dimIri].dataType;
-    const qUnit = qsDim.find((q) => q.predicate.equals(ns.qudt.unit));
-    const qUnitLabel = qs.find(
-      (q) =>
-        q.subject.equals(qUnit?.object) && q.predicate.equals(ns.schema.name)
-    );
-    const qDataKind = qsDim.find((q) =>
-      q.predicate.equals(ns.cube("meta/dataKind"))
-    );
-    const qDataKindType = qs.find(
-      (q) =>
-        q.subject.equals(qDataKind?.object) && q.predicate.equals(ns.rdf.type)
-    );
-    const qTimeUnitType = qs.find(
-      (q) =>
-        q.subject.equals(qDataKind?.object) &&
-        q.predicate.equals(ns.time.unitType)
-    );
-    const qIsCurrency = qs.find(
-      (q) =>
-        q.subject.equals(qUnit?.object) &&
-        q.predicate.equals(ns.qudt.CurrencyUnit)
-    );
-    const qCurrencyExponent = qs.find(
-      (q) =>
-        q.subject.equals(qUnit?.object) &&
-        q.predicate.equals(ns.qudt.currencyExponent)
-    );
-    const isKeyDimension = qsType.some((q) =>
+    const qUnit = pQsDim[ns.qudt.unit.value]?.[0];
+    const qUnitLabel = spQs[qUnit?.object.value]?.[ns.schema.name.value]?.[0];
+    const qDataKind = pQsDim[ns.cube("meta/dataKind").value]?.[0];
+    const qDataKindType =
+      spQs[qDataKind?.object.value]?.[ns.rdf.type.value]?.[0];
+    const qTimeUnitType =
+      spQs[qDataKind?.object.value]?.[ns.time.unitType.value]?.[0];
+    const qIsCurrency =
+      spQs[qUnit?.object.value]?.[ns.qudt.CurrencyUnit.value]?.[0];
+    const qCurrencyExponent =
+      spQs[qUnit?.object.value]?.[ns.qudt.currencyExponent.value]?.[0];
+    const isKeyDimension = qsType?.some((q) =>
       q.object.equals(ns.cube.KeyDimension)
     );
-    const isMeasureDimension = qsType.some((q) =>
+    const isMeasureDimension = qsType?.some((q) =>
       q.object.equals(ns.cube.MeasureDimension)
     );
 
