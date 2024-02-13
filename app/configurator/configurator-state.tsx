@@ -5,7 +5,7 @@ import setWith from "lodash/setWith";
 import sortBy from "lodash/sortBy";
 import unset from "lodash/unset";
 import { NextRouter, useRouter } from "next/router";
-import { Dispatch, createContext, useContext, useEffect, useMemo } from "react";
+import { createContext, Dispatch, useContext, useEffect, useMemo } from "react";
 import { Reducer, useImmerReducer } from "use-immer";
 
 import {
@@ -33,20 +33,20 @@ import {
   ConfiguratorStatePublishing,
   ConfiguratorStateSelectingDataSet,
   DataSource,
-  FilterValue,
-  Filters,
-  GenericField,
-  GenericFields,
-  ImputationType,
-  InteractiveFiltersConfig,
-  Layout,
   decodeConfiguratorState,
   enableLayouting,
+  Filters,
+  FilterValue,
+  GenericField,
+  GenericFields,
   getChartConfig,
   getChartConfigFilters,
+  ImputationType,
+  InteractiveFiltersConfig,
   isAreaConfig,
   isColorFieldInConfig,
   isTableConfig,
+  Layout,
   makeMultiFilter,
 } from "@/config-types";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
@@ -58,9 +58,9 @@ import {
   DataCubeComponents,
   Dimension,
   DimensionValue,
-  ObservationValue,
   isGeoDimension,
   isMeasure,
+  ObservationValue,
 } from "@/domain/data";
 import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
 import { client } from "@/graphql/client";
@@ -1624,7 +1624,8 @@ const ConfiguratorStateProviderInternal = (
             try {
               switch (state.layout.type) {
                 case "singleURLs": {
-                  const reversedChartKeys = state.layout.publishableChartKeys
+                  const { publishableChartKeys, meta } = state.layout;
+                  const reversedChartKeys = publishableChartKeys
                     .slice()
                     .reverse();
 
@@ -1637,7 +1638,7 @@ const ConfiguratorStateProviderInternal = (
                         // Ensure that the layout is reset to single-chart mode
                         layout: {
                           type: "tab",
-                          meta: state.layout.meta,
+                          meta: meta,
                           activeField: undefined,
                         },
                       },
