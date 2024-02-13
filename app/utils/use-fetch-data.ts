@@ -123,3 +123,34 @@ export const useHydrate = <T>(queryKey: QueryKey, data: T) => {
     hasHydrated.current = true;
   }
 };
+
+export const useMutate = <TArgs extends any[], TOutput>(
+  queryFn: (...args: TArgs) => Promise<TOutput>
+) => {
+  const [data, setData] = useState<Awaited<TOutput> | null>(null);
+  const [error, setError] = useState<Error | null>(null);
+  const [status, setStatus] = useState<Status>("idle");
+
+  const mutate = useCallback(
+    async (...args: TArgs) => {
+      setStatus("fetching");
+      try {
+        const result = await queryFn(...args);
+        setData(result);
+        setStatus("success");
+      } catch (error) {
+        setError(error as Error);
+        setStatus("error");
+      }
+    },
+    [queryFn]
+  );
+
+  const reset = useCallback(() => {
+    setData(null);
+    setError(null);
+    setStatus("idle");
+  }, []);
+
+  return { data, error, status, mutate, reset };
+};
