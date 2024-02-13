@@ -3,35 +3,17 @@ import exec from "k6/execution";
 import http from "k6/http";
 
 const query = `query DataCubePreview(
-  $iri: String!
   $sourceType: String!
   $sourceUrl: String!
   $locale: String!
-  $latest: Boolean
-  $disableValuesLoad: Boolean = true
+  $cubeFilter: DataCubePreviewFilter!
 ) {
-  dataCubeByIri(
-    iri: $iri
+  dataCubePreview(
     sourceType: $sourceType
     sourceUrl: $sourceUrl
     locale: $locale
-    latest: $latest
-    disableValuesLoad: $disableValuesLoad
-  ) {
-    iri
-    title
-    description
-    publicationStatus
-    observations(
-      sourceType: $sourceType
-      sourceUrl: $sourceUrl
-      preview: true
-      limit: 10
-    ) {
-      data
-      sparqlEditorUrl
-    }
-  }
+    cubeFilter: $cubeFilter
+  )
 }`;
 
 const env = __ENV.ENV;
@@ -39,11 +21,13 @@ const cubeIri = __ENV.CUBE_IRI;
 const cubeLabel = __ENV.CUBE_LABEL;
 
 const variables = {
-  iri: cubeIri,
+  locale: "en",
   sourceType: "sparql",
   sourceUrl: "https://lindas.admin.ch/query",
-  locale: "en",
-  latest: false,
+  cubeFilter: {
+    iri: cubeIri,
+    latest: false,
+  },
 };
 
 /** @type {import("k6/options").Options} */
