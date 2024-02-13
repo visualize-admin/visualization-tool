@@ -1,7 +1,12 @@
 const fs = require("fs");
 
 const envs = ["test", "int", "prod"];
-const queries = ["DataCubeComponents", "DataCubeMetadata", "DataCubePreview"];
+const queries = [
+  "DataCubeComponents",
+  "DataCubeMetadata",
+  "DataCubeObservations",
+  "DataCubePreview",
+];
 const cubes = [
   {
     iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9",
@@ -17,8 +22,10 @@ const cubes = [
   },
 ];
 const commands = envs
-  .flatMap((e) =>
-    queries.flatMap((q) => cubes.map((c) => getRunCommand(e, q, c)))
+  .flatMap((env) =>
+    queries.flatMap((query) =>
+      cubes.map((cube) => getRunCommand(env, query, cube))
+    )
   )
   .join(" &&\n            ");
 
