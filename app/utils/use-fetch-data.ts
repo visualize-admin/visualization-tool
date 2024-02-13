@@ -103,7 +103,7 @@ export const useFetchData = <TData>(
       return;
     }
 
-    if (!cached) {
+    if (!cached.data) {
       fetchData();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
