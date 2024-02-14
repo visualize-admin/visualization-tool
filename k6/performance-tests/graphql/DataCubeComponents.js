@@ -16,9 +16,17 @@ const query = `query DataCubeComponents(
   )
 }`;
 
+const metadataByCubeIri = {
+  "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9":
+    {},
+  "https://environment.ld.admin.ch/foen/nfi/nfi_C-20/cube/2023-3": {},
+  "https://energy.ld.admin.ch/elcom/electricityprice": {},
+};
+
 const env = __ENV.ENV;
 const cubeIri = __ENV.CUBE_IRI;
 const cubeLabel = __ENV.CUBE_LABEL;
+const metadata = metadataByCubeIri[cubeIri];
 
 const variables = {
   locale: "en",
@@ -31,7 +39,7 @@ const variables = {
 
 /** @type {import("k6/options").Options} */
 export const options = {
-  iterations: 1,
+  iterations: 2,
 };
 
 const headers = {
@@ -49,7 +57,17 @@ export default function Components() {
     { headers }
   );
 
-  if (!check(res, { "Status code must be 200": (res) => res.status == 200 })) {
-    fail("Status code was *not* 200!");
-  }
+  check(res, {
+    "Response must have data": (res) => {
+      const body = res.json();
+      return (
+        body.data &&
+        body.data.dataCubeComponents &&
+        body.data.dataCubeComponents.dimensions &&
+        body.data.dataCubeComponents.dimensions.length > 0 &&
+        body.data.dataCubeComponents.measures &&
+        body.data.dataCubeComponents.measures.length > 0
+      );
+    },
+  });
 }
