@@ -541,11 +541,11 @@ msgstr "Dashboard"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.layout.singleURLs"
-msgstr "Einzelne URLs"
+msgstr "Separate URLs"
 
 #: app/configurator/components/configurator.tsx
 msgid "controls.layout.singleURLs.publish"
-msgstr "Wählen Sie die separat zu veröffentlichenden Diagramme aus."
+msgstr "Wählen Sie die Diagramme aus, die separat veröffentlicht werden sollen. Nach der Veröffentlichung werden die ausgewählten Diagramme in einzelnen Registerkarten geöffnet."
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.layout.tab"
