@@ -1,4 +1,4 @@
-import { check, fail } from "k6";
+import { check } from "k6";
 import exec from "k6/execution";
 import http from "k6/http";
 
@@ -29,6 +29,7 @@ const metadataByCubeIri = {
             },
         },
       },
+      expectedQueryDuration: 500,
     },
   "https://environment.ld.admin.ch/foen/nfi/nfi_C-20/cube/2023-3": {
     cubeFilter: {
@@ -58,6 +59,7 @@ const metadataByCubeIri = {
         },
       },
     },
+    expectedQueryDuration: 1500,
   },
   "https://energy.ld.admin.ch/elcom/electricityprice": {
     cubeFilter: {
@@ -87,6 +89,7 @@ const metadataByCubeIri = {
         },
       },
     },
+    expectedQueryDuration: 4000,
   },
 };
 

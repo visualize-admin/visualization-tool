@@ -1,4 +1,4 @@
-import { check, fail } from "k6";
+import { check } from "k6";
 import exec from "k6/execution";
 import http from "k6/http";
 
@@ -31,6 +31,7 @@ const metadataByCubeIri = {
             value: "https://ld.admin.ch/canton/1",
           },
       },
+      expectedQueryDuration: 600,
     },
   "https://environment.ld.admin.ch/foen/nfi/nfi_C-20/cube/2023-3": {
     iri: "https://environment.ld.admin.ch/foen/nfi/nfi_C-20/cube/2023-3",
@@ -57,6 +58,7 @@ const metadataByCubeIri = {
         value: "https://environment.ld.admin.ch/foen/nfi/EvaluationType/1",
       },
     },
+    expectedQueryDuration: 1500,
   },
   "https://energy.ld.admin.ch/elcom/electricityprice": {
     iri: "https://energy.ld.admin.ch/elcom/electricityprice",
@@ -80,6 +82,7 @@ const metadataByCubeIri = {
           "https://energy.ld.admin.ch/elcom/electricityprice/product/standard",
       },
     },
+    expectedQueryDuration: 3500,
   },
 };
 
