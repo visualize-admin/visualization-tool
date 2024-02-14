@@ -20,7 +20,7 @@ const query = `query PossibleFilters(
   }
 }`;
 
-const cubeFilterByCubeIri = {
+const metadataByCubeIri = {
   "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9":
     {
       iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9",
@@ -86,13 +86,14 @@ const cubeFilterByCubeIri = {
 const env = __ENV.ENV;
 const cubeIri = __ENV.CUBE_IRI;
 const cubeLabel = __ENV.CUBE_LABEL;
+const metadata = metadataByCubeIri[cubeIri];
 
 const variables = {
   iri: cubeIri,
   locale: "en",
   sourceType: "sparql",
   sourceUrl: "https://lindas.admin.ch/query",
-  filters: cubeFilterByCubeIri[cubeIri],
+  filters: metadata.filters,
 };
 
 /** @type {import("k6/options").Options} */

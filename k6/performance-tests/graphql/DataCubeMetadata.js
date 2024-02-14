@@ -16,9 +16,17 @@ const query = `query DataCubeMetadata(
   )
 }`;
 
+const metadataByCubeIri = {
+  "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9":
+    {},
+  "https://environment.ld.admin.ch/foen/nfi/nfi_C-20/cube/2023-3": {},
+  "https://energy.ld.admin.ch/elcom/electricityprice": {},
+};
+
 const env = __ENV.ENV;
 const cubeIri = __ENV.CUBE_IRI;
 const cubeLabel = __ENV.CUBE_LABEL;
+const metadata = metadataByCubeIri[cubeIri];
 
 const variables = {
   locale: "en",
