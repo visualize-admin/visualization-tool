@@ -57,7 +57,17 @@ export default function Components() {
     { headers }
   );
 
-  if (!check(res, { "Status code must be 200": (res) => res.status == 200 })) {
-    fail("Status code was *not* 200!");
-  }
+  check(res, {
+    "Response must have data": (res) => {
+      const body = res.json();
+      return (
+        body.data &&
+        body.data.dataCubeComponents &&
+        body.data.dataCubeComponents.dimensions &&
+        body.data.dataCubeComponents.dimensions.length > 0 &&
+        body.data.dataCubeComponents.measures &&
+        body.data.dataCubeComponents.measures.length > 0
+      );
+    },
+  });
 }

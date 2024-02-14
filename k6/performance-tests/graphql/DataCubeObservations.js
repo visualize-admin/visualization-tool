@@ -122,7 +122,16 @@ export default function Observations() {
     { headers }
   );
 
-  if (!check(res, { "Status code must be 200": (res) => res.status == 200 })) {
-    fail("Status code was *not* 200!");
-  }
+  check(res, {
+    "Response must have data": (res) => {
+      const body = res.json();
+      return (
+        body.data &&
+        body.data.dataCubeObservations &&
+        body.data.dataCubeObservations &&
+        body.data.dataCubeObservations.data.length > 0 &&
+        body.data.dataCubeObservations.sparqlEditorUrl
+      );
+    },
+  });
 }
