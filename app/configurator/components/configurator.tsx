@@ -357,7 +357,9 @@ const LayoutingStep = () => {
                 sx={{ fontWeight: "normal", color: "secondary.active" }}
               >
                 <Trans id="controls.layout.singleURLs.publish">
-                  Select the charts to publish separately.
+                  Select the charts to publish separately. After proceeding to
+                  publish, the selected charts will be opened in individual
+                  tabs.
                 </Trans>
               </Typography>
             ) : (

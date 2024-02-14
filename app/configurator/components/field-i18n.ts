@@ -174,7 +174,7 @@ const fieldLabels = {
   }),
   "controls.layout.singleURLs": defineMessage({
     id: "controls.layout.singleURLs",
-    message: "Single URLs",
+    message: "Separate URLs",
   }),
   "controls.layout.tall": defineMessage({
     id: "controls.layout.tall",
