@@ -104,7 +104,7 @@ const variables = {
 
 /** @type {import("k6/options").Options} */
 export const options = {
-  iterations: 1,
+  iterations: 2,
 };
 
 const headers = {
