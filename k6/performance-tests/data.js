@@ -1,4 +1,4 @@
-export const cubes = [
+const cubes = [
   {
     iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9",
     label: "Photovoltaikanlagen/9",
@@ -83,3 +83,5 @@ export const cubes = [
     },
   },
 ];
+
+module.exports = cubes;

@@ -1,6 +1,6 @@
 import fs from "fs";
 
-import { cubes } from "./data.mjs";
+import cubes from "./data.js";
 
 const envs = ["test", "int", "prod"];
 const queries = [
@@ -109,5 +109,5 @@ function getRunCommand(env, query, cube, endpoint, sendToPrometheus = true) {
     cube.iri
   } --env CUBE_LABEL=${
     cube.label
-  } - </root/k6/performance-tests/graphql/${query}.js`;
+  } --env ROOT_PATH=/root/ - </root/k6/performance-tests/graphql/${query}.js`;
 }

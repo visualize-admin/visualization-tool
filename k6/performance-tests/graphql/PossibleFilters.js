@@ -2,7 +2,8 @@ import { check } from "k6";
 import exec from "k6/execution";
 import http from "k6/http";
 
-import { cubes } from "../data.mjs";
+const rootPath = __ENV.ROOT_PATH || "../../../";
+const cubes = require(`${rootPath}k6/performance-tests/data.js`);
 
 const query = `query PossibleFilters(
   $iri: String!
