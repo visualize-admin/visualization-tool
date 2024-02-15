@@ -23,7 +23,6 @@ import {
 import { PUBLISHED_STATE } from "@prisma/client";
 import NextLink from "next/link";
 import React from "react";
-import { ObjectInspector } from "react-inspector";
 
 import useDisclosure from "@/components/use-disclosure";
 import { ParsedConfig } from "@/db/config";
@@ -214,13 +213,16 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
       },
       {
         type: "button",
-        label: t({
-          id: "login.chart.draft",
-          message:
-            config.published_state === PUBLISHED_STATE.DRAFT
-              ? `Publish`
-              : "Turn into draft",
-        }),
+        label:
+          config.published_state === PUBLISHED_STATE.DRAFT
+            ? t({
+                id: "login.chart.actions.turn-into-draft",
+                message: "Turn into draft",
+              })
+            : t({
+                id: "login.chart.actions.publish",
+                message: `Publish`,
+              }),
         iconName:
           updatePublishedStateMut.status === "fetching"
             ? "loading"

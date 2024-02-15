@@ -123,6 +123,10 @@ msgstr "Créer une nouvelle visualisation"
 msgid "button.publish"
 msgstr "Publier"
 
+#: app/components/chart-selection-tabs.tsx
+msgid "button.save-draft"
+msgstr "Sauver le brouillon"
+
 #: app/components/publish-actions.tsx
 msgid "button.share"
 msgstr "Partager"
@@ -191,10 +195,6 @@ msgstr "Gras"
 msgid "columnStyle.textStyle.regular"
 msgstr "Normal"
 
-#: app/configurator/interactive-filters/editor-time-brush.tsx
-#~ msgid "controls..interactiveFilters.time.defaultSettings"
-#~ msgstr "Paramètres d'origine"
-
 #: app/configurator/components/field-i18n.ts
 msgid "controls.abbreviations"
 msgstr "Utiliser des abréviations"
@@ -252,10 +252,6 @@ msgstr "Les types de graphiques comparatifs combinent plusieurs mesures dans un 
 #: app/configurator/components/chart-type-selector.tsx
 msgid "controls.chart.category.regular"
 msgstr "Normal"
-
-#: app/configurator/components/chart-options-selector.tsx
-#~ msgid "controls.chart.combo.y.axis-orientation"
-#~ msgstr "Orientation de l'axe"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.chart.combo.y.column-measure"
@@ -510,14 +506,6 @@ msgstr "-"
 #: app/configurator/components/field-i18n.ts
 msgid "controls.imputation.type.zeros"
 msgstr "Zéros"
-
-#: app/configurator/interactive-filters/interactive-filters-config-options.tsx
-#~ msgid "controls.interactiveFilters.time.noTimeDimension"
-#~ msgstr "Il n'y a pas de dimension temporelle!"
-
-#: app/configurator/interactive-filters/interactive-filters-config-options.tsx
-#~ msgid "controls.interactiveFilters.time.toggleTimeFilter"
-#~ msgstr "Afficher le filtre temporel"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.language.english"
@@ -1175,6 +1163,10 @@ msgstr "Ce type de graphique ne permet pas de représenter des données négativ
 msgid "hint.only.negative.data.title"
 msgstr "Valeurs négatives"
 
+#: app/pages/v/[chartId].tsx
+msgid "hint.publication.draft"
+msgstr "Ce graphique est un brouillon."
+
 #: app/components/hint.tsx
 msgid "hint.publication.success"
 msgstr "Votre visualisation est à présent publiée. Partagez-là en copiant l'URL ou en utilisant les options d'intégration."
@@ -1187,9 +1179,13 @@ msgstr "Masquer les filtres"
 msgid "interactive.data.filters.show"
 msgstr "Afficher les filtres"
 
-#: app/configurator/components/chart-options-selector.tsx
-#~ msgid "left"
-#~ msgstr "Gauche"
+#: app/login/components/profile-tables.tsx
+msgid "login.chart.actions.publish"
+msgstr "Veröffentlichen"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.chart.actions.turn-into-draft"
+msgstr "In Entwurf umwandeln"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.copy"
@@ -1210,6 +1206,10 @@ msgstr "Editer"
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.share"
 msgstr "Partager"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.chart.view"
+msgstr "Voir"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.create-chart"
@@ -1249,6 +1249,10 @@ msgstr "Publié"
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.my-visualizations.chart-type"
 msgstr "Type"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.profile.my-visualizations.chart-updated-date"
+msgstr "Modifié"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.my-visualizations.dataset-name"
@@ -1346,10 +1350,6 @@ msgstr "Voici une visualisation que j'ai créée sur visualize.admin.ch"
 #: app/components/publish-actions.tsx
 msgid "publication.share.mail.subject"
 msgstr "visualize.admin.ch"
-
-#: app/configurator/components/chart-options-selector.tsx
-#~ msgid "right"
-#~ msgstr "Droit"
 
 #: app/browser/dataset-browse.tsx
 #: app/configurator/components/filters.tsx

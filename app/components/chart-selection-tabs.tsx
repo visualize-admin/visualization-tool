@@ -321,7 +321,6 @@ export const LayoutChartButton = () => {
 
 const SaveAsDraftButton = ({ chartId }: { chartId: string | undefined }) => {
   const { data: config, invalidate: invalidateConfig } = useUserConfig(chartId);
-  console.log("config", config?.user_id);
   const session = useSession();
 
   const [state] = useConfiguratorState();

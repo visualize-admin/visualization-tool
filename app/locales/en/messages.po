@@ -123,6 +123,10 @@ msgstr "Create New Visualization"
 msgid "button.publish"
 msgstr "Publish"
 
+#: app/components/chart-selection-tabs.tsx
+msgid "button.save-draft"
+msgstr "Save draft"
+
 #: app/components/publish-actions.tsx
 msgid "button.share"
 msgstr "Share"
@@ -191,10 +195,6 @@ msgstr "Bold"
 msgid "columnStyle.textStyle.regular"
 msgstr "Regular"
 
-#: app/configurator/interactive-filters/editor-time-brush.tsx
-#~ msgid "controls..interactiveFilters.time.defaultSettings"
-#~ msgstr "Default Settings"
-
 #: app/configurator/components/field-i18n.ts
 msgid "controls.abbreviations"
 msgstr "Use abbreviations"
@@ -252,10 +252,6 @@ msgstr "Comparison chart types combine several measures in a chart, helping to v
 #: app/configurator/components/chart-type-selector.tsx
 msgid "controls.chart.category.regular"
 msgstr "Regular"
-
-#: app/configurator/components/chart-options-selector.tsx
-#~ msgid "controls.chart.combo.y.axis-orientation"
-#~ msgstr "Axis orientation"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.chart.combo.y.column-measure"
@@ -510,14 +506,6 @@ msgstr "-"
 #: app/configurator/components/field-i18n.ts
 msgid "controls.imputation.type.zeros"
 msgstr "Zeros"
-
-#: app/configurator/interactive-filters/interactive-filters-config-options.tsx
-#~ msgid "controls.interactiveFilters.time.noTimeDimension"
-#~ msgstr "There is no time dimension!"
-
-#: app/configurator/interactive-filters/interactive-filters-config-options.tsx
-#~ msgid "controls.interactiveFilters.time.toggleTimeFilter"
-#~ msgstr "Show time filter"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.language.english"
@@ -1175,6 +1163,10 @@ msgstr "Negative data values cannot be displayed with this chart type."
 msgid "hint.only.negative.data.title"
 msgstr "Negative Values"
 
+#: app/pages/v/[chartId].tsx
+msgid "hint.publication.draft"
+msgstr "This chart is still in draft."
+
 #: app/components/hint.tsx
 msgid "hint.publication.success"
 msgstr "Your visualization is now published. Share it by copying the URL or use the Embed menu above."
@@ -1187,9 +1179,13 @@ msgstr "Hide Filters"
 msgid "interactive.data.filters.show"
 msgstr "Show Filters"
 
-#: app/configurator/components/chart-options-selector.tsx
-#~ msgid "left"
-#~ msgstr "Left"
+#: app/login/components/profile-tables.tsx
+msgid "login.chart.actions.publish"
+msgstr "Publish"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.chart.actions.turn-into-draft"
+msgstr "Turn into draft"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.copy"
@@ -1210,6 +1206,10 @@ msgstr "Edit"
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.share"
 msgstr "Share"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.chart.view"
+msgstr "View"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.create-chart"
@@ -1249,6 +1249,10 @@ msgstr "Published"
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.my-visualizations.chart-type"
 msgstr "Type"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.profile.my-visualizations.chart-updated-date"
+msgstr "Updated"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.my-visualizations.dataset-name"
@@ -1346,10 +1350,6 @@ msgstr "Here is a visualization I created using visualize.admin.ch"
 #: app/components/publish-actions.tsx
 msgid "publication.share.mail.subject"
 msgstr "visualize.admin.ch"
-
-#: app/configurator/components/chart-options-selector.tsx
-#~ msgid "right"
-#~ msgstr "Right"
 
 #: app/browser/dataset-browse.tsx
 #: app/configurator/components/filters.tsx
