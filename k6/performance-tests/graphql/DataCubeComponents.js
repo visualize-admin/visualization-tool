@@ -1,6 +1,9 @@
-import { check, fail } from "k6";
+import { check } from "k6";
 import exec from "k6/execution";
 import http from "k6/http";
+
+const rootPath = __ENV.ROOT_PATH || "../../../";
+const cubes = require(`${rootPath}k6/performance-tests/data.js`);
 
 const query = `query DataCubeComponents(
   $sourceType: String!
@@ -16,17 +19,11 @@ const query = `query DataCubeComponents(
   )
 }`;
 
-const metadataByCubeIri = {
-  "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9":
-    {},
-  "https://environment.ld.admin.ch/foen/nfi/nfi_C-20/cube/2023-3": {},
-  "https://energy.ld.admin.ch/elcom/electricityprice": {},
-};
-
 const env = __ENV.ENV;
 const cubeIri = __ENV.CUBE_IRI;
 const cubeLabel = __ENV.CUBE_LABEL;
-const metadata = metadataByCubeIri[cubeIri];
+const endpoint = __ENV.ENDPOINT;
+const metadata = cubes.find((cube) => cube.iri === cubeIri);
 
 const variables = {
   locale: "en",
@@ -40,6 +37,11 @@ const variables = {
 /** @type {import("k6/options").Options} */
 export const options = {
   iterations: 2,
+  thresholds: {
+    http_req_duration: [
+      `avg<${2 * metadata.queries.DataCubeComponents.expectedDuration}`,
+    ],
+  },
 };
 
 const headers = {
@@ -51,11 +53,9 @@ export default function Components() {
   exec.vu.metrics.tags.env = env;
   exec.vu.metrics.tags.cube = cubeLabel;
 
-  const res = http.post(
-    `https://${env === "prod" ? "" : `${env}.`}visualize.admin.ch/api/graphql`,
-    JSON.stringify({ query, variables }),
-    { headers }
-  );
+  const res = http.post(endpoint, JSON.stringify({ query, variables }), {
+    headers,
+  });
 
   check(res, {
     "Response must have data": (res) => {
