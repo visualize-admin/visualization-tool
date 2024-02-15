@@ -1,4 +1,6 @@
-const fs = require("fs");
+import fs from "fs";
+
+import { cubes } from "./data.mjs";
 
 const envs = ["test", "int", "prod"];
 const queries = [
@@ -7,20 +9,6 @@ const queries = [
   "DataCubeObservations",
   "DataCubePreview",
   "PossibleFilters",
-];
-const cubes = [
-  {
-    iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9",
-    label: "Photovoltaikanlagen/9",
-  },
-  {
-    iri: "https://environment.ld.admin.ch/foen/nfi/nfi_C-20/cube/2023-3",
-    label: "NFI/2023-3",
-  },
-  {
-    iri: "https://energy.ld.admin.ch/elcom/electricityprice",
-    label: "Elcom",
-  },
 ];
 const commands = envs
   .flatMap((env) =>
