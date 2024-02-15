@@ -1,19 +1,20 @@
 import { Trans } from "@lingui/macro";
-import { Box, Button, Stack, Theme, Typography } from "@mui/material";
+import { Alert, Box, Button, Stack, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import { Config, PUBLISHED_STATE } from "@prisma/client";
 import { GetServerSideProps } from "next";
 import ErrorPage from "next/error";
 import Head from "next/head";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { ChartPublished } from "@/components/chart-published";
 import { PublishSuccess } from "@/components/hint";
 import { ContentLayout } from "@/components/layout";
 import { PublishActions } from "@/components/publish-actions";
 import {
-  Config,
+  Config as ChartConfig,
   ConfiguratorStateProvider,
   ConfiguratorStatePublished,
   getChartConfig,
@@ -30,9 +31,8 @@ type PageProps =
     }
   | {
       status: "found";
-      config: {
-        key: string;
-        data: Config;
+      config: Omit<Config, "data"> & {
+        data: ChartConfig;
       };
     };
 
@@ -74,7 +74,7 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
 
   // Keep initial value of publishSuccess
   const [publishSuccess] = useState(() => !!query.publishSuccess);
-  const { status } = deserializeProps(props);
+  const { status, config } = deserializeProps(props);
 
   const { key, state } = React.useMemo(() => {
     if (props.status === "found") {
@@ -163,6 +163,16 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
             {publishSuccess && (
               <Box mt={2} mb={5}>
                 <PublishSuccess />
+              </Box>
+            )}
+
+            {config.published_state === PUBLISHED_STATE.DRAFT && (
+              <Box mt={2} mb={5}>
+                <Alert severity="warning">
+                  <Trans id="hint.publication.draft">
+                    This chart is still in draft.
+                  </Trans>
+                </Alert>
               </Box>
             )}
 
