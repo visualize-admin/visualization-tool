@@ -1628,7 +1628,7 @@ const ConfiguratorStateProviderInternal = (
               }
               switch (state.layout.type) {
                 case "singleURLs": {
-                  return saveState(
+                  return publishState(
                     user,
                     key,
                     state,
@@ -1646,7 +1646,7 @@ const ConfiguratorStateProviderInternal = (
                   );
                 }
                 default: {
-                  return saveState(user, key, state, async (result) => {
+                  return publishState(user, key, state, async (result) => {
                     await handlePublishSuccess(result.key, push);
                   });
                 }
@@ -1845,10 +1845,12 @@ export type ConfiguratorStateWithChartConfigs =
   | ConfiguratorStatePublishing
   | ConfiguratorStatePublished;
 
-async function saveState(
+async function publishState(
   user: ReturnType<typeof useUser>,
   key: string,
   state: Extract<ConfiguratorState, { state: "PUBLISHING" }>,
+
+  /** Will be called for all config that have been shared (multiple one in case of layout:singleURLs) */
   onSaveConfig: (savedConfig: { key: string }, i: number, total: number) => void
 ) {
   switch (state.layout.type) {
