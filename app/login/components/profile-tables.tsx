@@ -216,12 +216,12 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
         label:
           config.published_state === PUBLISHED_STATE.DRAFT
             ? t({
-                id: "login.chart.actions.turn-into-draft",
-                message: "Turn into draft",
-              })
-            : t({
                 id: "login.chart.actions.publish",
                 message: `Publish`,
+              })
+            : t({
+                id: "login.chart.actions.turn-into-draft",
+                message: "Turn into draft",
               }),
         iconName:
           updatePublishedStateMut.status === "fetching"
