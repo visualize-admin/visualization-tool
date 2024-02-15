@@ -10,16 +10,26 @@ const queries = [
   "DataCubePreview",
   "PossibleFilters",
 ];
+
 const commands = envs
   .flatMap((env) =>
     queries.flatMap((query) =>
-      cubes.map((cube) => getRunCommand(env, query, cube))
+      cubes.map((cube) =>
+        getRunCommand(
+          env,
+          query,
+          cube,
+          `https://${
+            env === "prod" ? "" : `${env}.`
+          }visualize.admin.ch/api/graphql`
+        )
+      )
     )
   )
   .join(" &&\n            ");
 
 const generate = () => {
-  const file = `name: GraphQL performance tests
+  const file = `name: GraphQL performance tests (auto)
 
 on:
   workflow_dispatch:
@@ -51,12 +61,6 @@ jobs:
 
 generate();
 
-function getRunCommand(env, query, cube) {
-  return `k6 run -o experimental-prometheus-rw --tag testid=${query} --env ENV=${env} --env ENDPOINT=${`https://${
-    env === "prod" ? "" : `${env}.`
-  }visualize.admin.ch/api/graphql`} --env CUBE_IRI=${
-    cube.iri
-  } --env CUBE_LABEL=${
-    cube.label
-  } - </root/k6/performance-tests/graphql/${query}.js`;
+function getRunCommand(env, query, cube, endpoint) {
+  return `k6 run -o experimental-prometheus-rw --tag testid=${query} --env ENV=${env} --env ENDPOINT=${endpoint} --env CUBE_IRI=${cube.iri} --env CUBE_LABEL=${cube.label} - </root/k6/performance-tests/graphql/${query}.js`;
 }

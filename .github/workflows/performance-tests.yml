@@ -1,4 +1,4 @@
-name: GraphQL performance tests
+name: GraphQL performance tests (auto)
 
 on:
   workflow_dispatch:
