@@ -1,0 +1,33 @@
+name: GraphQL performance tests (PR)
+
+on: [deployment_status]
+
+jobs:
+  run_tests:
+    if: github.event.deployment_status.state == 'success'
+    name: Run tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out
+        uses: actions/checkout@v2
+      - name: Run k6
+        uses: addnab/docker-run-action@v3
+        with:
+          image: grafana/k6:latest
+          options: -v ${{ github.workspace }}:/root
+          run: |
+            k6 run --tag testid=DataCubeComponents --env ENV=PR --env ENDPOINT=${{ github.event.deployment_status.target_url }}/api/graphql --env CUBE_IRI=https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9 --env CUBE_LABEL=Photovoltaikanlagen/9 - </root/k6/performance-tests/graphql/DataCubeComponents.js &&
+            k6 run --tag testid=DataCubeComponents --env ENV=PR --env ENDPOINT=${{ github.event.deployment_status.target_url }}/api/graphql --env CUBE_IRI=https://environment.ld.admin.ch/foen/nfi/nfi_C-20/cube/2023-3 --env CUBE_LABEL=NFI/2023-3 - </root/k6/performance-tests/graphql/DataCubeComponents.js &&
+            k6 run --tag testid=DataCubeComponents --env ENV=PR --env ENDPOINT=${{ github.event.deployment_status.target_url }}/api/graphql --env CUBE_IRI=https://energy.ld.admin.ch/elcom/electricityprice --env CUBE_LABEL=Elcom - </root/k6/performance-tests/graphql/DataCubeComponents.js &&
+            k6 run --tag testid=DataCubeMetadata --env ENV=PR --env ENDPOINT=${{ github.event.deployment_status.target_url }}/api/graphql --env CUBE_IRI=https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9 --env CUBE_LABEL=Photovoltaikanlagen/9 - </root/k6/performance-tests/graphql/DataCubeMetadata.js &&
+            k6 run --tag testid=DataCubeMetadata --env ENV=PR --env ENDPOINT=${{ github.event.deployment_status.target_url }}/api/graphql --env CUBE_IRI=https://environment.ld.admin.ch/foen/nfi/nfi_C-20/cube/2023-3 --env CUBE_LABEL=NFI/2023-3 - </root/k6/performance-tests/graphql/DataCubeMetadata.js &&
+            k6 run --tag testid=DataCubeMetadata --env ENV=PR --env ENDPOINT=${{ github.event.deployment_status.target_url }}/api/graphql --env CUBE_IRI=https://energy.ld.admin.ch/elcom/electricityprice --env CUBE_LABEL=Elcom - </root/k6/performance-tests/graphql/DataCubeMetadata.js &&
+            k6 run --tag testid=DataCubeObservations --env ENV=PR --env ENDPOINT=${{ github.event.deployment_status.target_url }}/api/graphql --env CUBE_IRI=https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9 --env CUBE_LABEL=Photovoltaikanlagen/9 - </root/k6/performance-tests/graphql/DataCubeObservations.js &&
+            k6 run --tag testid=DataCubeObservations --env ENV=PR --env ENDPOINT=${{ github.event.deployment_status.target_url }}/api/graphql --env CUBE_IRI=https://environment.ld.admin.ch/foen/nfi/nfi_C-20/cube/2023-3 --env CUBE_LABEL=NFI/2023-3 - </root/k6/performance-tests/graphql/DataCubeObservations.js &&
+            k6 run --tag testid=DataCubeObservations --env ENV=PR --env ENDPOINT=${{ github.event.deployment_status.target_url }}/api/graphql --env CUBE_IRI=https://energy.ld.admin.ch/elcom/electricityprice --env CUBE_LABEL=Elcom - </root/k6/performance-tests/graphql/DataCubeObservations.js &&
+            k6 run --tag testid=DataCubePreview --env ENV=PR --env ENDPOINT=${{ github.event.deployment_status.target_url }}/api/graphql --env CUBE_IRI=https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9 --env CUBE_LABEL=Photovoltaikanlagen/9 - </root/k6/performance-tests/graphql/DataCubePreview.js &&
+            k6 run --tag testid=DataCubePreview --env ENV=PR --env ENDPOINT=${{ github.event.deployment_status.target_url }}/api/graphql --env CUBE_IRI=https://environment.ld.admin.ch/foen/nfi/nfi_C-20/cube/2023-3 --env CUBE_LABEL=NFI/2023-3 - </root/k6/performance-tests/graphql/DataCubePreview.js &&
+            k6 run --tag testid=DataCubePreview --env ENV=PR --env ENDPOINT=${{ github.event.deployment_status.target_url }}/api/graphql --env CUBE_IRI=https://energy.ld.admin.ch/elcom/electricityprice --env CUBE_LABEL=Elcom - </root/k6/performance-tests/graphql/DataCubePreview.js &&
+            k6 run --tag testid=PossibleFilters --env ENV=PR --env ENDPOINT=${{ github.event.deployment_status.target_url }}/api/graphql --env CUBE_IRI=https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9 --env CUBE_LABEL=Photovoltaikanlagen/9 - </root/k6/performance-tests/graphql/PossibleFilters.js &&
+            k6 run --tag testid=PossibleFilters --env ENV=PR --env ENDPOINT=${{ github.event.deployment_status.target_url }}/api/graphql --env CUBE_IRI=https://environment.ld.admin.ch/foen/nfi/nfi_C-20/cube/2023-3 --env CUBE_LABEL=NFI/2023-3 - </root/k6/performance-tests/graphql/PossibleFilters.js &&
+            k6 run --tag testid=PossibleFilters --env ENV=PR --env ENDPOINT=${{ github.event.deployment_status.target_url }}/api/graphql --env CUBE_IRI=https://energy.ld.admin.ch/elcom/electricityprice --env CUBE_LABEL=Elcom - </root/k6/performance-tests/graphql/PossibleFilters.js

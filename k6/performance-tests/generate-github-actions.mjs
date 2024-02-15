@@ -11,24 +11,23 @@ const queries = [
   "PossibleFilters",
 ];
 
-const commands = envs
-  .flatMap((env) =>
-    queries.flatMap((query) =>
-      cubes.map((cube) =>
-        getRunCommand(
-          env,
-          query,
-          cube,
-          `https://${
-            env === "prod" ? "" : `${env}.`
-          }visualize.admin.ch/api/graphql`
+const generateAutoTests = () => {
+  const commands = envs
+    .flatMap((env) =>
+      queries.flatMap((query) =>
+        cubes.map((cube) =>
+          getRunCommand(
+            env,
+            query,
+            cube,
+            `https://${
+              env === "prod" ? "" : `${env}.`
+            }visualize.admin.ch/api/graphql`
+          )
         )
       )
     )
-  )
-  .join(" &&\n            ");
-
-const generate = () => {
+    .join(" &&\n            ");
   const file = `name: GraphQL performance tests (auto)
 
 on:
@@ -54,13 +53,61 @@ jobs:
             -e K6_PROMETHEUS_RW_SERVER_URL=\${{ secrets.K6_PROMETHEUS_RW_SERVER_URL }}
             -e K6_PROMETHEUS_RW_TREND_STATS=avg
           run: |
-            ${commands}`;
+            ${commands}
+`;
 
   fs.writeFileSync("./.github/workflows/performance-tests.yml", file);
 };
 
-generate();
+generateAutoTests();
 
-function getRunCommand(env, query, cube, endpoint) {
-  return `k6 run -o experimental-prometheus-rw --tag testid=${query} --env ENV=${env} --env ENDPOINT=${endpoint} --env CUBE_IRI=${cube.iri} --env CUBE_LABEL=${cube.label} - </root/k6/performance-tests/graphql/${query}.js`;
+const generatePRTests = () => {
+  const commands = queries
+    .flatMap((query) =>
+      cubes.map((cube) =>
+        getRunCommand(
+          "PR",
+          query,
+          cube,
+          "${{ github.event.deployment_status.target_url }}/api/graphql",
+          false
+        )
+      )
+    )
+
+    .join(" &&\n            ");
+  const file = `name: GraphQL performance tests (PR)
+
+on: [deployment_status]
+
+jobs:
+  run_tests:
+    if: github.event.deployment_status.state == 'success'
+    name: Run tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out
+        uses: actions/checkout@v2
+      - name: Run k6
+        uses: addnab/docker-run-action@v3
+        with:
+          image: grafana/k6:latest
+          options: -v \${{ github.workspace }}:/root
+          run: |
+            ${commands}
+`;
+
+  fs.writeFileSync("./.github/workflows/performance-tests-pr.yml", file);
+};
+
+generatePRTests();
+
+function getRunCommand(env, query, cube, endpoint, sendToPrometheus = true) {
+  return `k6 run${
+    sendToPrometheus ? " -o experimental-prometheus-rw" : ""
+  } --tag testid=${query} --env ENV=${env} --env ENDPOINT=${endpoint} --env CUBE_IRI=${
+    cube.iri
+  } --env CUBE_LABEL=${
+    cube.label
+  } - </root/k6/performance-tests/graphql/${query}.js`;
 }
