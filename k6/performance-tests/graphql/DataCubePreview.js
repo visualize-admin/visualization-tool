@@ -19,6 +19,7 @@ const query = `query DataCubePreview(
 const env = __ENV.ENV;
 const cubeIri = __ENV.CUBE_IRI;
 const cubeLabel = __ENV.CUBE_LABEL;
+const endpoint = __ENV.ENDPOINT;
 
 const variables = {
   locale: "en",
@@ -44,11 +45,9 @@ export default function Components() {
   exec.vu.metrics.tags.env = env;
   exec.vu.metrics.tags.cube = cubeLabel;
 
-  const res = http.post(
-    `https://${env === "prod" ? "" : `${env}.`}visualize.admin.ch/api/graphql`,
-    JSON.stringify({ query, variables }),
-    { headers }
-  );
+  const res = http.post(endpoint, JSON.stringify({ query, variables }), {
+    headers,
+  });
 
   check(res, {
     "Response must have data": (res) => {

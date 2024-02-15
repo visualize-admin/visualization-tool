@@ -52,5 +52,11 @@ jobs:
 generate();
 
 function getRunCommand(env, query, cube) {
-  return `k6 run -o experimental-prometheus-rw --tag testid=${query} --env ENV=${env} --env CUBE_IRI=${cube.iri} --env CUBE_LABEL=${cube.label} - </root/k6/performance-tests/graphql/${query}.js`;
+  return `k6 run -o experimental-prometheus-rw --tag testid=${query} --env ENV=${env} --env ENDPOINT=${`https://${
+    env === "prod" ? "" : `${env}.`
+  }visualize.admin.ch/api/graphql`} --env CUBE_IRI=${
+    cube.iri
+  } --env CUBE_LABEL=${
+    cube.label
+  } - </root/k6/performance-tests/graphql/${query}.js`;
 }
