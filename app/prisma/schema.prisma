@@ -23,7 +23,7 @@ model Config {
   user    User? @relation(fields: [user_id], references: [id])
   user_id Int?
 
-  published_state PUBLISHED_STATE @default(DRAFT)
+  published_state PUBLISHED_STATE @default(PUBLISHED)
 
   @@map("config")
 }

@@ -1127,21 +1127,17 @@ const Layout = t.intersection([
 export type Layout = t.TypeOf<typeof Layout>;
 export type LayoutType = Layout["type"];
 
-const Config = t.intersection([
-  t.type(
-    {
-      version: t.string,
-      dataSource: DataSource,
-      layout: Layout,
-      chartConfigs: t.array(ChartConfig),
-      activeChartKey: t.string,
-    },
-    "Config"
-  ),
-  t.partial({
-    publishedState: t.string,
-  }),
-]);
+const Config = t.type(
+  {
+    version: t.string,
+    dataSource: DataSource,
+    layout: Layout,
+    chartConfigs: t.array(ChartConfig),
+    activeChartKey: t.string,
+  },
+  "Config"
+);
+[];
 export type Config = t.TypeOf<typeof Config>;
 
 export const isValidConfig = (config: unknown): config is Config => {

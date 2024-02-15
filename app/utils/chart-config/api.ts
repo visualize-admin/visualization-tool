@@ -5,7 +5,7 @@ import { InferAPIResponse } from "nextkit";
 
 import { ParsedConfig } from "@/db/config";
 
-import { ConfiguratorStatePublishing } from "../../config-types";
+import { ConfiguratorState } from "../../config-types";
 import { apiFetch } from "../api";
 import { createChartId } from "../create-chart-id";
 
@@ -13,7 +13,10 @@ import type apiConfigCreate from "../../pages/api/config-create";
 import type apiConfigUpdate from "../../pages/api/config-update";
 import type apiConfig from "../../pages/api/config/[key]";
 
-export const createConfig = async (state: ConfiguratorStatePublishing) => {
+export const createConfig = async (
+  state: ConfiguratorState,
+  publishedState: PUBLISHED_STATE
+) => {
   return apiFetch<InferAPIResponse<typeof apiConfigCreate, "POST">>(
     "/api/config-create",
     {
@@ -23,12 +26,9 @@ export const createConfig = async (state: ConfiguratorStatePublishing) => {
           // Create a new chart ID, as the one in the state could be already
           // used by a chart that has been published.
           key: createChartId(),
-          version: state.version,
-          dataSource: state.dataSource,
-          layout: state.layout,
-          chartConfigs: state.chartConfigs,
-          activeChartKey: state.activeChartKey,
+          ...state,
         },
+        publishedState: publishedState,
       },
     }
   );
@@ -41,7 +41,7 @@ type UpdateConfigOptions = {
 };
 
 export const updateConfig = async (
-  state: ConfiguratorStatePublishing,
+  state: ConfiguratorState,
   options: UpdateConfigOptions
 ) => {
   const { key, userId, published_state } = options;
@@ -56,11 +56,7 @@ export const updateConfig = async (
           userId,
           data: {
             key,
-            version: state.version,
-            dataSource: state.dataSource,
-            layout: state.layout,
-            chartConfigs: state.chartConfigs,
-            activeChartKey: state.activeChartKey,
+            ...state,
           },
           published_state,
         },

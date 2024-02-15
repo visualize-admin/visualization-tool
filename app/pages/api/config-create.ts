@@ -10,12 +10,13 @@ const route = api({
   POST: async ({ req, res }) => {
     const session = await getServerSession(req, res, nextAuthOptions);
     const userId = session?.user?.id;
-    const { data } = req.body;
+    const { data, publishedState } = req.body;
 
     return await createConfig({
       key: data.key,
       data,
       userId,
+      publishedState: publishedState,
     });
   },
 });

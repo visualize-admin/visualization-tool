@@ -2,7 +2,7 @@
  * Server side methods to connect to the database
  */
 
-import { Config, Prisma, User } from "@prisma/client";
+import { Config, Prisma, PUBLISHED_STATE, User } from "@prisma/client";
 
 import { ChartConfig, ConfiguratorStatePublished } from "@/configurator";
 import { migrateConfiguratorState } from "@/utils/chart-config/versioning";
@@ -20,16 +20,19 @@ export const createConfig = async ({
   key,
   data,
   userId,
+  publishedState,
 }: {
   key: string;
   data: Prisma.ConfigCreateInput["data"];
   userId?: User["id"] | undefined;
+  publishedState: PUBLISHED_STATE;
 }): Promise<{ key: string }> => {
   return await prisma.config.create({
     data: {
       key,
       data,
       user_id: userId,
+      published_state: publishedState,
     },
   });
 };

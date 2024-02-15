@@ -1,3 +1,4 @@
+import { PUBLISHED_STATE } from "@prisma/client";
 import produce, { current } from "immer";
 import get from "lodash/get";
 import pickBy from "lodash/pickBy";
@@ -1875,7 +1876,10 @@ async function publishState(
           chartKey
         );
 
-        const result = await createConfig(preparedConfig);
+        const result = await createConfig(
+          preparedConfig,
+          PUBLISHED_STATE.PUBLISHED
+        );
 
         onSaveConfig(result, i, reversedChartKeys.length);
         return result;
@@ -1897,8 +1901,9 @@ async function publishState(
         ? updateConfig(preparedConfig, {
             key: dbConfig.key,
             userId: user.id,
+            published_state: PUBLISHED_STATE.PUBLISHED,
           })
-        : createConfig(preparedConfig));
+        : createConfig(preparedConfig, PUBLISHED_STATE.PUBLISHED));
 
       onSaveConfig(result, 0, 1);
       return result;

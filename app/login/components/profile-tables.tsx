@@ -23,6 +23,7 @@ import {
 import { PUBLISHED_STATE } from "@prisma/client";
 import NextLink from "next/link";
 import React from "react";
+import { ObjectInspector } from "react-inspector";
 
 import useDisclosure from "@/components/use-disclosure";
 import { ParsedConfig } from "@/db/config";
@@ -122,6 +123,11 @@ export const ProfileVisualizationsTable = (
                 Published
               </Trans>
             </TableCell>
+            <TableCell>
+              <Trans id="login.profile.my-visualizations.chart-updated-date">
+                Updated
+              </Trans>
+            </TableCell>
             <TableCell align="right">
               <Trans id="login.profile.my-visualizations.chart-actions">
                 Actions
@@ -182,6 +188,12 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
   const removeMut = useMutate(removeConfig);
   const actions = React.useMemo(() => {
     const actions: ActionProps[] = [
+      {
+        type: "link",
+        href: `/v/${config.key}`,
+        label: t({ id: "login.chart.view", message: "View" }),
+        iconName: "eye",
+      },
       {
         type: "link",
         href: `/create/new?copy=${config.key}`,
@@ -332,7 +344,14 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
       </TableCell>
       <TableCell width={120}>
         <Typography variant="body2">
-          {config.created_at.toLocaleDateString("de")}
+          {config.published_state === PUBLISHED_STATE.DRAFT
+            ? "Draft"
+            : config.created_at.toLocaleDateString("de")}
+        </Typography>
+      </TableCell>
+      <TableCell width={120}>
+        <Typography variant="body2">
+          {config.updated_at.toLocaleDateString("de")}
         </Typography>
       </TableCell>
       <TableCell width="auto" align="right">

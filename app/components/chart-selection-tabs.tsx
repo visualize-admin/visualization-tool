@@ -8,8 +8,10 @@ import {
   Tabs,
   Theme,
   Tooltip,
+  useEventCallback,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import { PUBLISHED_STATE } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import React from "react";
@@ -37,9 +39,13 @@ import { useUserConfig } from "@/domain/user-configs";
 import { useDataCubesComponentsQuery } from "@/graphql/hooks";
 import { Icon, IconName } from "@/icons";
 import { useLocale } from "@/src";
+import { createConfig, updateConfig } from "@/utils/chart-config/api";
 import { createChartId } from "@/utils/create-chart-id";
 import { getRouterChartId } from "@/utils/router/helpers";
 import useEvent from "@/utils/use-event";
+import { useMutate } from "@/utils/use-fetch-data";
+
+import { useLocalSnack } from "./use-local-snack";
 
 type TabsState = {
   popoverOpen: boolean;
@@ -313,15 +319,97 @@ export const LayoutChartButton = () => {
   );
 };
 
-export const PublishChartButton = () => {
-  const { asPath } = useRouter();
+const SaveAsDraftButton = ({ chartId }: { chartId: string | undefined }) => {
+  const { data: config, invalidate: invalidateConfig } = useUserConfig(chartId);
+  console.log("config", config?.user_id);
   const session = useSession();
-  const chartId = getRouterChartId(asPath);
+
+  const [state] = useConfiguratorState();
+
+  const [snack, enqueueSnackbar] = useLocalSnack();
+  const { asPath, replace } = useRouter();
+
+  const createConfigMut = useMutate(createConfig);
+  const updatePublishedStateMut = useMutate(updateConfig);
+  const loggedInId = session.data?.user.id;
+
+  const handleClick = useEventCallback(async () => {
+    try {
+      if (config?.user_id && loggedInId) {
+        const updated = await updatePublishedStateMut.mutate(state, {
+          userId: loggedInId,
+          published_state: PUBLISHED_STATE.DRAFT,
+          key: config.key,
+        });
+
+        if (updated) {
+          if (asPath !== `/create/${updated.key}`) {
+            replace(`/create/new?edit=${updated.key}`);
+          }
+          enqueueSnackbar({
+            message: "Draft updated !",
+            variant: "success",
+          });
+        } else {
+          throw new Error("Could not update draft");
+        }
+      } else if (state) {
+        const saved = await createConfigMut.mutate(
+          state,
+          PUBLISHED_STATE.DRAFT
+        );
+        if (saved) {
+          enqueueSnackbar({
+            message: "Draft saved !",
+            variant: "success",
+          });
+          replace(`/create/${saved.key}`);
+        } else {
+          throw new Error("Could not save draft");
+        }
+      }
+      invalidateConfig();
+    } catch (e) {
+      enqueueSnackbar({
+        message: `Error while saving draft: ${
+          e instanceof Error ? e.message : e
+        }`,
+        variant: "error",
+      });
+    }
+  });
+
+  return (
+    <Tooltip
+      arrow
+      title={snack?.message ?? ""}
+      open={!!snack}
+      disableFocusListener
+      disableHoverListener
+      disableTouchListener
+    >
+      <Button variant="outlined" onClick={handleClick}>
+        <Trans id="button.save-draft">Save draft</Trans>
+      </Button>
+    </Tooltip>
+  );
+};
+
+export const PublishChartButton = ({
+  chartId,
+}: {
+  chartId: string | undefined;
+}) => {
+  const session = useSession();
   const { data: config, status } = useUserConfig(chartId);
   const editingPublishedChart =
-    session.data?.user.id && config?.user_id === session.data.user.id;
+    session.data?.user.id &&
+    config?.user_id === session.data.user.id &&
+    config.published_state === "PUBLISHED";
 
-  return status === "fetching" ? null : (
+  return status === "fetching" && !config ? (
+    <>{status}</>
+  ) : (
     <NextStepButton>
       {editingPublishedChart ? (
         <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
@@ -366,6 +454,9 @@ const TabsInner = (props: TabsInnerProps) => {
     onChartSwitch,
   } = props;
   const [state, dispatch] = useConfiguratorState(hasChartConfigs);
+
+  const { asPath } = useRouter();
+  const chartId = getRouterChartId(asPath);
 
   return (
     <Box
@@ -414,6 +505,7 @@ const TabsInner = (props: TabsInnerProps) => {
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
                         style={{ ...style, transform, opacity: 1 }}
+                        component="div"
                         key={d.key}
                         sx={{
                           mr: 2,
@@ -475,7 +567,10 @@ const TabsInner = (props: TabsInnerProps) => {
         (enableLayouting(state) ? (
           <LayoutChartButton />
         ) : (
-          <PublishChartButton />
+          <Box gap={"1rem"} display="flex">
+            <SaveAsDraftButton chartId={chartId} />
+            <PublishChartButton chartId={chartId} />
+          </Box>
         ))}
     </Box>
   );
