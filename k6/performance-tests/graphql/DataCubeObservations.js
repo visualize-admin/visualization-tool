@@ -38,6 +38,11 @@ const variables = {
 /** @type {import("k6/options").Options} */
 export const options = {
   iterations: 2,
+  thresholds: {
+    http_req_duration: [
+      `avg<${2 * metadata.queries.DataCubeObservations.expectedDuration}`,
+    ],
+  },
 };
 
 const headers = {

@@ -2,6 +2,9 @@ import { check } from "k6";
 import exec from "k6/execution";
 import http from "k6/http";
 
+const rootPath = __ENV.ROOT_PATH || "../../../";
+const cubes = require(`${rootPath}k6/performance-tests/data.js`);
+
 const query = `query DataCubePreview(
   $sourceType: String!
   $sourceUrl: String!
@@ -20,6 +23,7 @@ const env = __ENV.ENV;
 const cubeIri = __ENV.CUBE_IRI;
 const cubeLabel = __ENV.CUBE_LABEL;
 const endpoint = __ENV.ENDPOINT;
+const metadata = cubes.find((cube) => cube.iri === cubeIri);
 
 const variables = {
   locale: "en",
@@ -34,6 +38,11 @@ const variables = {
 /** @type {import("k6/options").Options} */
 export const options = {
   iterations: 2,
+  thresholds: {
+    http_req_duration: [
+      `avg<${2 * metadata.queries.DataCubePreview.expectedDuration}`,
+    ],
+  },
 };
 
 const headers = {
