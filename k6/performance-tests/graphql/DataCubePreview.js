@@ -16,23 +16,9 @@ const query = `query DataCubePreview(
   )
 }`;
 
-const metadataByCubeIri = {
-  "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9":
-    {
-      expectedQueryDuration: 1250,
-    },
-  "https://environment.ld.admin.ch/foen/nfi/nfi_C-20/cube/2023-3": {
-    expectedQueryDuration: 1250,
-  },
-  "https://energy.ld.admin.ch/elcom/electricityprice": {
-    expectedQueryDuration: 1250,
-  },
-};
-
 const env = __ENV.ENV;
 const cubeIri = __ENV.CUBE_IRI;
 const cubeLabel = __ENV.CUBE_LABEL;
-const metadata = metadataByCubeIri[cubeIri];
 
 const variables = {
   locale: "en",
