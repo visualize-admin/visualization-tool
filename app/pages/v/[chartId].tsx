@@ -95,21 +95,29 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
   const chartConfig = state ? getChartConfig(state) : undefined;
 
   const { dataSource, setDataSource } = useDataSourceStore();
-  React.useEffect(() => {
-    // Remove publishSuccess from URL so that when reloading of sharing the link
-    // to someone, there is no publishSuccess mention
-    if (query.publishSuccess) {
-      replace({ pathname: window.location.pathname });
-    }
+  useEffect(
+    function removePulishSuccessFromURL() {
+      // Remove publishSuccess from URL so that when reloading of sharing the link
+      // to someone, there is no publishSuccess mention
+      if (query.publishSuccess) {
+        replace({ pathname: window.location.pathname });
+      }
+    },
+    [query.publishSuccess, replace]
+  );
 
-    if (
-      props.status === "found" &&
-      props.config.data.dataSource.url !== dataSource.url
-    ) {
-      setDataSource(props.config.data.dataSource);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dataSource.url, setDataSource, props]);
+  useEffect(
+    function setCorrectDataSource() {
+      if (
+        props.status === "found" &&
+        props.config.data.dataSource.url !== dataSource.url
+      ) {
+        setDataSource(props.config.data.dataSource);
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    },
+    [dataSource.url, setDataSource, props]
+  );
 
   if (
     status === "notfound" ||
