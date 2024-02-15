@@ -226,6 +226,7 @@ const LayoutingStep = () => {
   }
 
   const isSingleURLs = state.layout.type === "singleURLs";
+  const chartId = getRouterChartId(asPath);
 
   return (
     <PanelLayout
@@ -322,7 +323,7 @@ const LayoutingStep = () => {
             justifyContent: "flex-end",
           }}
         >
-          <PublishChartButton />
+          <PublishChartButton chartId={chartId} />
         </PanelHeaderWrapper>
       </PanelHeaderLayout>
       {!isSingleURLs && (
