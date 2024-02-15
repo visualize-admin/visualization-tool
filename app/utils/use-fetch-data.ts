@@ -27,7 +27,6 @@ class QueryCache {
   }
 
   set(queryKey: QueryKey, value: QueryCacheValue<unknown>) {
-    console.log("setting", queryKey, value);
     this.cache.set(stringifyVariables(queryKey), value);
     this.fire(queryKey);
   }
@@ -78,7 +77,6 @@ export const useFetchData = <TData>(
     cache.set(queryKey, { ...cache.get(queryKey), status: "fetching" });
     try {
       const result = await queryFn();
-      console.log("fetched", { result });
       cache.set(queryKey, { data: result, error: null, status: "success" });
     } catch (error) {
       cache.set(queryKey, {
@@ -103,11 +101,11 @@ export const useFetchData = <TData>(
       return;
     }
 
-    if (!cached.data) {
+    if (cached.status === "idle") {
       fetchData();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [enable, fetchData]);
+  }, [enable, fetchData, cached.data]);
 
   const invalidate = useCallback(() => {
     fetchData();
@@ -138,6 +136,7 @@ export const useMutate = <TArgs extends any[], TOutput>(
         const result = await queryFn(...args);
         setData(result);
         setStatus("success");
+        return result;
       } catch (error) {
         setError(error as Error);
         setStatus("error");
