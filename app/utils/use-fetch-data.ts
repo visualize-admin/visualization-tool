@@ -17,18 +17,24 @@ type QueryCacheValue<T> = {
   status: Status;
 };
 
+/**
+ * Stores what has been queried through useFetchData. Is listened to by useCacheKey.
+ */
 class QueryCache {
   cache: Map<string, QueryCacheValue<unknown>>;
   listeners: [string, () => void][];
+  version: number;
 
   constructor() {
     this.cache = new Map();
     this.listeners = [];
+    this.version = 0;
   }
 
   set(queryKey: QueryKey, value: QueryCacheValue<unknown>) {
     this.cache.set(stringifyVariables(queryKey), value);
     this.fire(queryKey);
+    this.version++;
   }
 
   get(queryKey: QueryKey) {
@@ -58,6 +64,24 @@ class QueryCache {
 
 const cache = new QueryCache();
 
+const useCacheKey = (cache: QueryCache, queryKey: QueryKey) => {
+  const [version, setVersion] = useState(cache.version);
+  useEffect(() => {
+    return cache.listen(queryKey, () => {
+      setVersion(() => cache.version);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return version;
+};
+
+/**
+ * Access remote data, very similar to useFetch from react-query. A global cache
+ * is used to store the data. If data is not fetched, it will be fetched automatically.
+ * Two useFetchData on the same queryKey will result in only 1 queryFn called. Both useFetchData
+ * will share the same cache and data.
+ */
 export const useFetchData = <TData>(
   queryKey: any[],
   queryFn: () => Promise<TData>,
@@ -65,7 +89,6 @@ export const useFetchData = <TData>(
 ) => {
   const { enable = true, defaultData } = options;
 
-  const [, setState] = useState(0);
   const cached = cache.get(queryKey) as QueryCacheValue<TData>;
   const { data, error, status } = cached ?? {};
 
@@ -88,12 +111,7 @@ export const useFetchData = <TData>(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [queryKey]);
 
-  useEffect(() => {
-    return cache.listen(queryKey, () => {
-      setState((n) => n + 1);
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  useCacheKey(cache, queryKey);
 
   useEffect(() => {
     if (!enable) {
@@ -114,6 +132,9 @@ export const useFetchData = <TData>(
   return { data: data ?? defaultData, error, status, invalidate };
 };
 
+/**
+ * Use this to populate (hydrate) the client store with the server side data
+ */
 export const useHydrate = <T>(queryKey: QueryKey, data: T) => {
   const hasHydrated = useRef(false);
   if (!hasHydrated.current) {
@@ -122,6 +143,9 @@ export const useHydrate = <T>(queryKey: QueryKey, data: T) => {
   }
 };
 
+/**
+ * Tracks a server mutation with loading/error states
+ */
 export const useMutate = <TArgs extends any[], TOutput>(
   queryFn: (...args: TArgs) => Promise<TOutput>
 ) => {
