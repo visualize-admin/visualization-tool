@@ -1599,20 +1599,15 @@ const ConfiguratorStateProviderInternal = (
         case "CONFIGURING_CHART":
         case "LAYOUTING":
           if (chartId === "new") {
-            if (query.edit && typeof query.edit === "string") {
-              replace(`/create/${query.edit}`);
-              window.localStorage.setItem(
-                getLocalStorageKey(query.edit),
-                JSON.stringify(state)
-              );
-            } else {
-              const newChartId = createChartId();
-              window.localStorage.setItem(
-                getLocalStorageKey(newChartId),
-                JSON.stringify(state)
-              );
-              replace(`/create/${newChartId}`);
-            }
+            const chartId =
+              query.edit && typeof query.edit === "string"
+                ? query.edit
+                : createChartId();
+            replace(`/create/${chartId}`);
+            window.localStorage.setItem(
+              getLocalStorageKey(chartId),
+              JSON.stringify(state)
+            );
           } else {
             // Store current state in localstorage
             window.localStorage.setItem(
