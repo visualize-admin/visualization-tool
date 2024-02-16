@@ -68,15 +68,16 @@ export default function Components() {
         body.data.dataCubePreview.observations.length > 0
       );
     },
-    ...(checkTiming
-      ? {
-          "Response time must be fast": (res) => {
-            return (
-              res.timings.duration <
-              2 * metadata.queries.DataCubePreview.expectedDuration
-            );
-          },
-        }
-      : {}),
   });
+
+  if (checkTiming) {
+    check(res, {
+      "Response time must be fast": (res) => {
+        return (
+          res.timings.duration <
+          2 * metadata.queries.DataCubePreview.expectedDuration
+        );
+      },
+    });
+  }
 }

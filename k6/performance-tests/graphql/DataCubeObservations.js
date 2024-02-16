@@ -65,15 +65,16 @@ export default function Observations() {
         body.data.dataCubeObservations.sparqlEditorUrl
       );
     },
-    ...(checkTiming
-      ? {
-          "Response time must be fast": (res) => {
-            return (
-              res.timings.duration <
-              2 * metadata.queries.DataCubeObservations.expectedDuration
-            );
-          },
-        }
-      : {}),
   });
+
+  if (checkTiming) {
+    check(res, {
+      "Response time must be fast": (res) => {
+        return (
+          res.timings.duration <
+          2 * metadata.queries.DataCubeObservations.expectedDuration
+        );
+      },
+    });
+  }
 }
