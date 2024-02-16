@@ -4147,7 +4147,6 @@
         "icon-size": 1,
         "text-font": ["Frutiger Neue Condensed Bold"],
         "text-size": 10.5,
-        "icon-image": "box_white_grey_casing_{ref_length}",
         "text-field": "{ref}",
         "visibility": "visible",
         "icon-offset": [0, -1.3],

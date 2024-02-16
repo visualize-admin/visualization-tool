@@ -1,10 +1,11 @@
 import { GeoJsonLayer, ScatterplotLayer } from "@deck.gl/layers/typed";
+import { supported } from "@mapbox/mapbox-gl-supported";
 import { Button, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { geoArea } from "d3";
 import debounce from "lodash/debounce";
 import orderBy from "lodash/orderBy";
-import maplibregl from "maplibre-gl";
+import maplibreglraw from "maplibre-gl";
 import React, { useState } from "react";
 import Map, { LngLatLike, MapboxEvent } from "react-map-gl";
 
@@ -24,6 +25,9 @@ import { DeckGLOverlay, useViewState } from "./helpers";
 import { MapState } from "./map-state";
 import { HoverObjectType, useMapTooltip } from "./map-tooltip";
 import { getMap, setMap } from "./ref";
+
+// supported was removed as of maplibre-gl v3.0.0, so we need to add it back
+const maplibregl = { ...maplibreglraw, supported };
 
 const useStyles = makeStyles<Theme>((theme) => ({
   controlButtons: {
