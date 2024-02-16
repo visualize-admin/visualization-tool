@@ -318,10 +318,14 @@ theme.components = {
         lineHeight: 1.25,
         justifyContent: "flex-start",
         borderRadius: 3,
-        transition: "background-color .2s",
+        transition: "background-color .2s, transform 0.1s ease",
         cursor: "pointer",
         display: "inline-flex",
         flexGrow: 0,
+
+        "&:active": {
+          transform: "scale(0.98)",
+        },
 
         "& > svg": {
           width: 22,

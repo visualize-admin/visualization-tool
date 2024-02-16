@@ -413,7 +413,6 @@ export const SaveDraftButton = ({
       onClose={() => dismissSnack()}
     >
       <Button
-        layout
         endIcon={
           hasUpdated || debouncedHasUpdated ? (
             <Grow in={hasUpdated}>
