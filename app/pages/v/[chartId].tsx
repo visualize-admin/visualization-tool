@@ -112,7 +112,7 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
 
   const { dataSource, setDataSource } = useDataSourceStore();
   useEffect(
-    function removePulishSuccessFromURL() {
+    function removePublishSuccessFromURL() {
       // Remove publishSuccess from URL so that when reloading of sharing the link
       // to someone, there is no publishSuccess mention
       if (query.publishSuccess) {
