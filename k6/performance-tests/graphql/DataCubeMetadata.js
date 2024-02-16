@@ -62,15 +62,16 @@ export default function Components() {
         body.data.dataCubeMetadata.iri === cubeIri
       );
     },
-    ...(checkTiming
-      ? {
-          "Response time must be fast": (res) => {
-            return (
-              res.timings.duration <
-              2 * metadata.queries.DataCubeMetadata.expectedDuration
-            );
-          },
-        }
-      : {}),
   });
+
+  if (checkTiming) {
+    check(res, {
+      "Response time must be fast": (res) => {
+        return (
+          res.timings.duration <
+          2 * metadata.queries.DataCubeMetadata.expectedDuration
+        );
+      },
+    });
+  }
 }

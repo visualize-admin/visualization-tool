@@ -65,15 +65,16 @@ export default function Observations() {
         body.data.possibleFilters.length > 0
       );
     },
-    ...(checkTiming
-      ? {
-          "Response time must be fast": (res) => {
-            return (
-              res.timings.duration <
-              2 * metadata.queries.PossibleFilters.expectedDuration
-            );
-          },
-        }
-      : {}),
   });
+
+  if (checkTiming) {
+    check(res, {
+      "Response time must be fast": (res) => {
+        return (
+          res.timings.duration <
+          2 * metadata.queries.PossibleFilters.expectedDuration
+        );
+      },
+    });
+  }
 }
