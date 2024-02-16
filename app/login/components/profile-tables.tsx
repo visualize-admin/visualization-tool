@@ -309,7 +309,7 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
       </TableCell>
       <TableCell width="auto" sx={{ maxWidth: 320 }}>
         <NextLink href={`/v/${config.key}`} passHref legacyBehavior>
-          <Link target="_blank" color="primary">
+          <Link color="primary">
             <Typography variant="body2" noWrap>
               {chartTitle}
             </Typography>
@@ -327,7 +327,7 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
             passHref
             legacyBehavior
           >
-            <Link target="_blank" color="primary">
+            <Link color="primary">
               <Typography variant="body2" noWrap>
                 {data?.dataCubesMetadata[0]?.title ?? ""}
               </Typography>
