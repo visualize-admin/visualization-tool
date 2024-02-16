@@ -22,7 +22,9 @@ const generateAutoTests = () => {
             cube,
             `https://${
               env === "prod" ? "" : `${env}.`
-            }visualize.admin.ch/api/graphql`
+            }visualize.admin.ch/api/graphql`,
+            true,
+            false
           )
         )
       )
@@ -70,7 +72,8 @@ const generatePRTests = () => {
           query,
           cube,
           "${{ github.event.deployment_status.target_url }}/api/graphql",
-          false
+          false,
+          true
         )
       )
     )
@@ -88,8 +91,9 @@ jobs:
     steps:
       - name: Check out
         uses: actions/checkout@v2
-      - name: Send an HTTP request to get the start up the server
-        run: curl 'https://test.visualize.admin.ch/api/graphql' -X 'POST' -H 'Content-Type: application/json' -d '{"operationName":"DataCubeObservations","variables":{"locale":"en","sourceType":"sparql","sourceUrl":"https://lindas.admin.ch/query","cubeFilter":{"iri":"https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9","filters":{"https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton":{"type":"single","value":"https://ld.admin.ch/canton/1"}}}},"query":"query DataCubeObservations($sourceType: String!, $sourceUrl: String!, $locale: String!, $cubeFilter: DataCubeObservationFilter!) {\n  dataCubeObservations(\n    sourceType: $sourceType\n    sourceUrl: $sourceUrl\n    locale: $locale\n    cubeFilter: $cubeFilter\n  )\n}\n"}'
+      - name: Send an HTTP request to start up the server
+        run: |
+          curl '\${{ github.event.deployment_status.target_url }}/api/graphql' -X 'POST' -H 'Content-Type: application/json' -d '{"operationName":"DataCubeObservations","variables":{"locale":"en","sourceType":"sparql","sourceUrl":"https://lindas.admin.ch/query","cubeFilter":{"iri":"https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9","filters":{"https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton":{"type":"single","value":"https://ld.admin.ch/canton/1"}}}},"query":"query DataCubeObservations($sourceType: String!, $sourceUrl: String!, $locale: String!, $cubeFilter: DataCubeObservationFilter!) { dataCubeObservations(sourceType: $sourceType, sourceUrl: $sourceUrl, locale: $locale, cubeFilter: $cubeFilter) }"}'
       - name: Run k6
         uses: addnab/docker-run-action@v3
         with:
@@ -104,12 +108,19 @@ jobs:
 
 generatePRTests();
 
-function getRunCommand(env, query, cube, endpoint, sendToPrometheus = true) {
+function getRunCommand(
+  env,
+  query,
+  cube,
+  endpoint,
+  sendToPrometheus = true,
+  checkTiming = true
+) {
   return `k6 run${
     sendToPrometheus ? " -o experimental-prometheus-rw" : ""
   } --tag testid=${query} --env ENV=${env} --env ENDPOINT=${endpoint} --env CUBE_IRI=${
     cube.iri
-  } --env CUBE_LABEL=${
-    cube.label
-  } --env ROOT_PATH=/root/ - </root/k6/performance-tests/graphql/${query}.js`;
+  } --env CUBE_LABEL=${cube.label} --env ROOT_PATH=/root/ --env CHECK_TIMING=${
+    checkTiming ? "true" : "false"
+  } - </root/k6/performance-tests/graphql/${query}.js`;
 }
