@@ -24,7 +24,7 @@ import {
   Typography,
 } from "@mui/material";
 import { PUBLISHED_STATE } from "@prisma/client";
-import { sortBy } from "lodash";
+import sortBy from "lodash/sortBy";
 import NextLink from "next/link";
 import React from "react";
 
