@@ -8,7 +8,10 @@ import React from "react";
 import { SelectDatasetStep } from "@/browser/select-dataset-step";
 import { META } from "@/charts";
 import { ChartPreview } from "@/components/chart-preview";
-import { PublishChartButton } from "@/components/chart-selection-tabs";
+import {
+  PublishChartButton,
+  SaveAsDraftButton,
+} from "@/components/chart-selection-tabs";
 import { HEADER_HEIGHT } from "@/components/header";
 import { Loading } from "@/components/hint";
 import {
@@ -40,6 +43,7 @@ import SvgIcChevronLeft from "@/icons/components/IcChevronLeft";
 import { useLocale } from "@/locales/use-locale";
 import { useDataSourceStore } from "@/stores/data-source";
 import { InteractiveFiltersProvider } from "@/stores/interactive-filters";
+import { getRouterChartId } from "@/utils/router/helpers";
 import useEvent from "@/utils/use-event";
 
 const BackContainer = (props: React.PropsWithChildren<{ sx?: SxProps }>) => {
@@ -220,6 +224,7 @@ const LayoutingStep = () => {
   });
 
   useAssureCorrectDataSource("LAYOUTING");
+  const { asPath } = useRouter();
 
   if (state.state !== "LAYOUTING") {
     return null;
@@ -321,8 +326,10 @@ const LayoutingStep = () => {
             display: "flex",
             alignItems: "start",
             justifyContent: "flex-end",
+            gap: "1rem",
           }}
         >
+          <SaveAsDraftButton chartId={chartId} />
           <PublishChartButton chartId={chartId} />
         </PanelHeaderWrapper>
       </PanelHeaderLayout>

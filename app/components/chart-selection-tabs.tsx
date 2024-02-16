@@ -16,6 +16,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import React from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import { useDebounce } from "use-debounce";
 
 import { extractChartConfigComponentIris } from "@/charts/shared/chart-helpers";
 import Flex from "@/components/flex";
@@ -319,13 +320,18 @@ export const LayoutChartButton = () => {
   );
 };
 
-const SaveAsDraftButton = ({ chartId }: { chartId: string | undefined }) => {
+export const SaveAsDraftButton = ({
+  chartId,
+}: {
+  chartId: string | undefined;
+}) => {
   const { data: config, invalidate: invalidateConfig } = useUserConfig(chartId);
   const session = useSession();
 
   const [state] = useConfiguratorState();
 
-  const [snack, enqueueSnackbar] = useLocalSnack();
+  const [snack, enqueueSnackbar, dismissSnack] = useLocalSnack();
+  const [debouncedSnack] = useDebounce(snack, 500);
   const { asPath, replace } = useRouter();
 
   const createConfigMut = useMutate(createConfig);
@@ -383,11 +389,12 @@ const SaveAsDraftButton = ({ chartId }: { chartId: string | undefined }) => {
   return (
     <Tooltip
       arrow
-      title={snack?.message ?? ""}
+      title={debouncedSnack?.message ?? ""}
       open={!!snack}
       disableFocusListener
       disableHoverListener
       disableTouchListener
+      onClose={() => dismissSnack()}
     >
       <Button variant="outlined" onClick={handleClick}>
         <Trans id="button.save-draft">Save draft</Trans>
@@ -402,15 +409,13 @@ export const PublishChartButton = ({
   chartId: string | undefined;
 }) => {
   const session = useSession();
-  const { data: config, status } = useUserConfig(chartId);
+  const { data: config } = useUserConfig(chartId);
   const editingPublishedChart =
     session.data?.user.id &&
     config?.user_id === session.data.user.id &&
     config.published_state === "PUBLISHED";
 
-  return status === "fetching" && !config ? (
-    <>{status}</>
-  ) : (
+  return (
     <NextStepButton>
       {editingPublishedChart ? (
         <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
@@ -564,16 +569,16 @@ const TabsInner = (props: TabsInnerProps) => {
         </Droppable>
       </DragDropContext>
 
-      {editable &&
-        isConfiguring(state) &&
-        (enableLayouting(state) ? (
-          <LayoutChartButton />
-        ) : (
-          <Box gap={"1rem"} display="flex">
-            <SaveAsDraftButton chartId={chartId} />
+      <Box gap={"1rem"} display="flex">
+        {isConfiguring(state) ? <SaveAsDraftButton chartId={chartId} /> : null}
+        {editable &&
+          isConfiguring(state) &&
+          (enableLayouting(state) ? (
+            <LayoutChartButton />
+          ) : (
             <PublishChartButton chartId={chartId} />
-          </Box>
-        ))}
+          ))}
+      </Box>
     </Box>
   );
 };
