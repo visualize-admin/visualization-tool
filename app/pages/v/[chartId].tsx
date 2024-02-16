@@ -1,8 +1,17 @@
 import { Trans } from "@lingui/macro";
-import { Alert, Box, Button, Stack, Theme, Typography } from "@mui/material";
+import {
+  Alert,
+  alertClasses,
+  Box,
+  Button,
+  Stack,
+  Theme,
+  Typography,
+} from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { Config, PUBLISHED_STATE } from "@prisma/client";
 import { GetServerSideProps } from "next";
+import { useSession } from "next-auth/react";
 import ErrorPage from "next/error";
 import Head from "next/head";
 import NextLink from "next/link";
@@ -28,6 +37,7 @@ import { EmbedOptionsProvider } from "@/utils/embed";
 type PageProps =
   | {
       status: "notfound";
+      config: null;
     }
   | {
       status: "found";
@@ -49,7 +59,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
 
   res.statusCode = 404;
 
-  return { props: { status: "notfound" } };
+  return { props: { status: "notfound", config: null } };
 };
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -75,6 +85,12 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
   // Keep initial value of publishSuccess
   const [publishSuccess] = useState(() => !!query.publishSuccess);
   const { status, config } = deserializeProps(props);
+
+  const session = useSession();
+  const canEdit =
+    status === "found" &&
+    config.user_id &&
+    config.user_id === session.data?.user.id;
 
   const { key, state } = React.useMemo(() => {
     if (props.status === "found") {
@@ -168,10 +184,38 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
 
             {config.published_state === PUBLISHED_STATE.DRAFT && (
               <Box mt={2} mb={5}>
-                <Alert severity="warning">
-                  <Trans id="hint.publication.draft">
-                    This chart is still in draft.
-                  </Trans>
+                <Alert
+                  severity="warning"
+                  sx={{
+                    maxWidth: 600,
+                    margin: "auto",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    [`& .${alertClasses.message}`]: {
+                      alignItems: "center",
+                      flexGrow: 1,
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                    },
+                  }}
+                >
+                  <div>
+                    <Trans id="hint.publication.draft">
+                      This chart is still in draft.
+                    </Trans>
+                  </div>
+
+                  {canEdit ? (
+                    <Button
+                      component={NextLink}
+                      href={`/create/new?edit=${config.key}`}
+                      variant="outlined"
+                      color="inherit"
+                      size="small"
+                    >
+                      Edit
+                    </Button>
+                  ) : null}
                 </Alert>
               </Box>
             )}
