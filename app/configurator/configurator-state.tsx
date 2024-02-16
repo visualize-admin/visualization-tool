@@ -1879,10 +1879,10 @@ async function publishState(
           chartKey
         );
 
-        const result = await createConfig(
-          preparedConfig,
-          PUBLISHED_STATE.PUBLISHED
-        );
+        const result = await createConfig({
+          data: preparedConfig,
+          published_state: PUBLISHED_STATE.PUBLISHED,
+        });
 
         onSaveConfig(result, i, reversedChartKeys.length);
         return result;
@@ -1901,12 +1901,16 @@ async function publishState(
       const preparedConfig = preparePublishingState(state, state.chartConfigs);
 
       const result = await (dbConfig && user
-        ? updateConfig(preparedConfig, {
+        ? updateConfig({
+            data: preparedConfig,
             key: dbConfig.key,
-            userId: user.id,
+            user_id: user.id,
             published_state: PUBLISHED_STATE.PUBLISHED,
           })
-        : createConfig(preparedConfig, PUBLISHED_STATE.PUBLISHED));
+        : createConfig({
+            data: preparedConfig,
+            published_state: PUBLISHED_STATE.PUBLISHED,
+          }));
 
       onSaveConfig(result, 0, 1);
       return result;

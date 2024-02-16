@@ -1,5 +1,6 @@
-import { PUBLISHED_STATE } from "@prisma/client";
+import { Config, PUBLISHED_STATE } from "@prisma/client";
 import isUndefined from "lodash/isUndefined";
+import omit from "lodash/omit";
 import omitBy from "lodash/omitBy";
 import { InferAPIResponse } from "nextkit";
 
@@ -13,61 +14,76 @@ import type apiConfigCreate from "../../pages/api/config-create";
 import type apiConfigUpdate from "../../pages/api/config-update";
 import type apiConfig from "../../pages/api/config/[key]";
 
-export const createConfig = async (
-  state: ConfiguratorState,
-  publishedState: PUBLISHED_STATE
-) => {
-  return apiFetch<InferAPIResponse<typeof apiConfigCreate, "POST">>(
-    "/api/config-create",
-    {
-      method: "POST",
-      data: {
-        data: {
-          // Create a new chart ID, as the one in the state could be already
-          // used by a chart that has been published.
-          key: createChartId(),
-          ...state,
-        },
-        publishedState: publishedState,
-      },
-    }
-  );
+type CreateConfigOptions = {
+  key?: string;
+  user_id?: number;
+  published_state?: PUBLISHED_STATE;
+  data: ConfiguratorState;
 };
 
 type UpdateConfigOptions = {
   key: string;
-  userId: number;
+  user_id: number;
   published_state?: PUBLISHED_STATE;
+  data: ConfiguratorState;
 };
 
-export const updateConfig = async (
-  state: ConfiguratorState,
-  options: UpdateConfigOptions
-) => {
-  const { key, userId, published_state } = options;
+const prepareForServer = (configState: Partial<Config>) => {
+  return omitBy(
+    {
+      ...configState,
+      data:
+        "data" in configState
+          ? omit(configState["data"] as {}, ["state"])
+          : undefined,
+    },
+    isUndefined
+  );
+};
+
+export const createConfig = async (options: CreateConfigOptions) => {
+  return apiFetch<InferAPIResponse<typeof apiConfigCreate, "POST">>(
+    "/api/config-create",
+    {
+      method: "POST",
+      data: prepareForServer({
+        data: {
+          // Create a new chart ID, as the one in the state could be already
+          // used by a chart that has been published.
+          key: createChartId(),
+          ...options.data,
+        },
+        user_id: options.user_id,
+        published_state: options.published_state,
+      }),
+    }
+  );
+};
+
+export const updateConfig = async (options: UpdateConfigOptions) => {
+  const { key, user_id, published_state } = options;
+
+  console.log("hello", key, user_id, published_state);
 
   return apiFetch<InferAPIResponse<typeof apiConfigUpdate, "POST">>(
     "/api/config-update",
     {
       method: "POST",
-      data: omitBy(
-        {
+      data: prepareForServer({
+        key,
+        user_id,
+        data: {
           key,
-          userId,
-          data: {
-            key,
-            ...state,
-          },
-          published_state,
+          ...options.data,
         },
-        isUndefined
-      ),
+        published_state,
+      }),
     }
   );
 };
 
-export const removeConfig = async (options: UpdateConfigOptions) => {
-  const { key, userId } = options;
+export const removeConfig = async (options: { key: string }) => {
+  const { key } = options;
 
   return apiFetch<InferAPIResponse<typeof apiConfigUpdate, "POST">>(
     "/api/config-remove",
@@ -75,7 +91,6 @@ export const removeConfig = async (options: UpdateConfigOptions) => {
       method: "POST",
       data: {
         key,
-        userId,
       },
     }
   );

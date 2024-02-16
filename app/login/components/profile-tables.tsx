@@ -229,20 +229,18 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
             : "linkExternal",
 
         onClick: async () => {
-          await updatePublishedStateMut.mutate(
-            {
+          await updatePublishedStateMut.mutate({
+            key: config.key,
+            user_id: userId,
+            data: {
               ...config.data,
               state: "PUBLISHING",
             },
-            {
-              key: config.key,
-              userId,
-              published_state:
-                config.published_state === PUBLISHED_STATE.DRAFT
-                  ? PUBLISHED_STATE.PUBLISHED
-                  : PUBLISHED_STATE.DRAFT,
-            }
-          );
+            published_state:
+              config.published_state === PUBLISHED_STATE.DRAFT
+                ? PUBLISHED_STATE.PUBLISHED
+                : PUBLISHED_STATE.DRAFT,
+          });
           invalidateUserConfigs();
         },
         onSuccess: () => {
@@ -264,7 +262,7 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
             "Keep in mind that removing this visualization will affect all the places where it might be already embedded!",
         }),
         onClick: () => {
-          removeMut.mutate({ key: config.key, userId });
+          removeMut.mutate({ key: config.key });
         },
         onSuccess: () => {
           invalidateUserConfigs();

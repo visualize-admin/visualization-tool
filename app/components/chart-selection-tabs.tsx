@@ -335,8 +335,9 @@ const SaveAsDraftButton = ({ chartId }: { chartId: string | undefined }) => {
   const handleClick = useEventCallback(async () => {
     try {
       if (config?.user_id && loggedInId) {
-        const updated = await updatePublishedStateMut.mutate(state, {
-          userId: loggedInId,
+        const updated = await updatePublishedStateMut.mutate({
+          data: state,
+          user_id: loggedInId,
           published_state: PUBLISHED_STATE.DRAFT,
           key: config.key,
         });
@@ -353,10 +354,11 @@ const SaveAsDraftButton = ({ chartId }: { chartId: string | undefined }) => {
           throw new Error("Could not update draft");
         }
       } else if (state) {
-        const saved = await createConfigMut.mutate(
-          state,
-          PUBLISHED_STATE.DRAFT
-        );
+        const saved = await createConfigMut.mutate({
+          data: state,
+          user_id: loggedInId,
+          published_state: PUBLISHED_STATE.DRAFT,
+        });
         if (saved) {
           enqueueSnackbar({
             message: "Draft saved !",
