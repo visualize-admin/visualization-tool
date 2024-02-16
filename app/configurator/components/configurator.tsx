@@ -326,7 +326,7 @@ const LayoutingStep = () => {
             display: "flex",
             alignItems: "start",
             justifyContent: "flex-end",
-            gap: "1rem",
+            gap: "0.5rem",
           }}
         >
           <SaveDraftButton chartId={chartId} />
