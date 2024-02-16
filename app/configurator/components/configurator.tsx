@@ -10,7 +10,7 @@ import { META } from "@/charts";
 import { ChartPreview } from "@/components/chart-preview";
 import {
   PublishChartButton,
-  SaveAsDraftButton,
+  SaveDraftButton,
 } from "@/components/chart-selection-tabs";
 import { HEADER_HEIGHT } from "@/components/header";
 import { Loading } from "@/components/hint";
@@ -329,7 +329,7 @@ const LayoutingStep = () => {
             gap: "1rem",
           }}
         >
-          <SaveAsDraftButton chartId={chartId} />
+          <SaveDraftButton chartId={chartId} />
           <PublishChartButton chartId={chartId} />
         </PanelHeaderWrapper>
       </PanelHeaderLayout>

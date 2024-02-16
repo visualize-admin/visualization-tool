@@ -320,7 +320,7 @@ export const LayoutChartButton = () => {
   );
 };
 
-export const SaveAsDraftButton = ({
+export const SaveDraftButton = ({
   chartId,
 }: {
   chartId: string | undefined;
@@ -367,7 +367,10 @@ export const SaveAsDraftButton = ({
         });
         if (saved) {
           enqueueSnackbar({
-            message: "Draft saved !",
+            message: t({
+              id: "button.save-draft.saved",
+              message: "Draft saved",
+            }),
             variant: "success",
           });
           replace(`/create/${saved.key}`);
@@ -377,10 +380,14 @@ export const SaveAsDraftButton = ({
       }
       invalidateConfig();
     } catch (e) {
+      console.log(
+        `Error while saving draft: ${e instanceof Error ? e.message : e}`
+      );
       enqueueSnackbar({
-        message: `Error while saving draft: ${
-          e instanceof Error ? e.message : e
-        }`,
+        message: t({
+          id: "button.save-draft.saved",
+          message: "Draft saved",
+        }),
         variant: "error",
       });
     }
@@ -573,8 +580,8 @@ const TabsInner = (props: TabsInnerProps) => {
         </Droppable>
       </DragDropContext>
 
-      <Box gap={"1rem"} display="flex">
-        {isConfiguring(state) ? <SaveAsDraftButton chartId={chartId} /> : null}
+      <Box gap="0.5rem" display="flex">
+        {isConfiguring(state) ? <SaveDraftButton chartId={chartId} /> : null}
         {editable &&
           isConfiguring(state) &&
           (enableLayouting(state) ? (
