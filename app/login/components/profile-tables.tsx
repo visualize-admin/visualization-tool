@@ -102,16 +102,11 @@ export const ProfileVisualizationsTable = (
                 </Trans>
               </TableCell>
               <TableCell>
-                <Trans id="login.profile.my-visualizations.chart-published-date">
-                  Published
+                <Trans id="login.profile.my-visualizations.chart-updated-date">
+                  Last edit
                 </Trans>
               </TableCell>
               <TableCell>
-                <Trans id="login.profile.my-visualizations.chart-updated-date">
-                  Updated
-                </Trans>
-              </TableCell>
-              <TableCell align="right">
                 <Trans id="login.profile.my-visualizations.chart-actions">
                   Actions
                 </Trans>
@@ -340,19 +335,12 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
           </Typography>
         )}
       </TableCell>
-      <TableCell width={120}>
-        <Typography variant="body2">
-          {config.published_state === PUBLISHED_STATE.DRAFT
-            ? "Draft"
-            : config.created_at.toLocaleDateString("de")}
-        </Typography>
-      </TableCell>
-      <TableCell width={120}>
-        <Typography variant="body2">
+      <TableCell>
+        <Typography width="auto" variant="body2">
           {config.updated_at.toLocaleDateString("de")}
         </Typography>
       </TableCell>
-      <TableCell width="auto" align="right">
+      <TableCell width={120} align="right">
         <Actions actions={actions} />
       </TableCell>
     </TableRow>

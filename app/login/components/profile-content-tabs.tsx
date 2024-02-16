@@ -3,7 +3,8 @@ import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { Box, Tab, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
-import React from "react";
+import groupBy from "lodash/groupBy";
+import React, { useMemo } from "react";
 
 import { useUserConfigs } from "@/domain/user-configs";
 import { ProfileVisualizationsTable } from "@/login/components/profile-tables";
@@ -51,6 +52,14 @@ export const ProfileContentTabs = (props: ProfileContentTabsProps) => {
   const rootClasses = useRootStyles();
   const classes = useStyles();
 
+  const { DRAFT: draftConfigs = [], PUBLISHED: publishedConfigs = [] } =
+    useMemo(() => {
+      return groupBy(
+        userConfigs,
+        (x: { published_state: any }) => x.published_state
+      );
+    }, [userConfigs]);
+
   if (!userConfigs) {
     return null;
   }
@@ -66,6 +75,10 @@ export const ProfileContentTabs = (props: ProfileContentTabsProps) => {
                 t({
                   id: "login.profile.my-visualizations",
                   message: "My visualizations",
+                }),
+                t({
+                  id: "login.profile.my-drafts",
+                  message: "My drafts",
                 }),
               ].map((d) => (
                 <Tab key={d} className={classes.tab} label={d} value={d} />
@@ -85,13 +98,30 @@ export const ProfileContentTabs = (props: ProfileContentTabsProps) => {
               message: "My visualizations",
             })}
             userId={userId}
-            userConfigs={userConfigs}
+            userConfigs={publishedConfigs}
             preview
             onShowAll={() =>
               setValue(
                 t({
                   id: "login.profile.my-visualizations",
                   message: "My visualizations",
+                })
+              )
+            }
+          />
+          <ProfileVisualizationsTable
+            title={t({
+              id: "login.profile.my-drafts",
+              message: "My drafts",
+            })}
+            userId={userId}
+            userConfigs={draftConfigs}
+            preview
+            onShowAll={() =>
+              setValue(
+                t({
+                  id: "login.profile.my-drafts",
+                  message: "My drafts",
                 })
               )
             }
@@ -112,7 +142,25 @@ export const ProfileContentTabs = (props: ProfileContentTabsProps) => {
               message: "My visualizations",
             })}
             userId={userId}
-            userConfigs={userConfigs}
+            userConfigs={publishedConfigs}
+          />
+        </Box>
+      </TabPanel>
+      <TabPanel
+        className={classes.tabPanel}
+        value={t({
+          id: "login.profile.my-drafts",
+          message: "My drafts",
+        })}
+      >
+        <Box className={classes.tabPanelContent}>
+          <ProfileVisualizationsTable
+            title={t({
+              id: "login.profile.my-drafts",
+              message: "My drafts",
+            })}
+            userId={userId}
+            userConfigs={draftConfigs}
           />
         </Box>
       </TabPanel>
