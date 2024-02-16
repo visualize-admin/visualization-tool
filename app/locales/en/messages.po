@@ -127,6 +127,14 @@ msgstr "Publish"
 msgid "button.save-draft"
 msgstr "Save draft"
 
+#: app/components/chart-selection-tabs.tsx
+msgid "button.save-draft.error"
+msgstr "Could not save draft"
+
+#: app/components/chart-selection-tabs.tsx
+msgid "button.save-draft.saved"
+msgstr "Draft saved"
+
 #: app/components/publish-actions.tsx
 msgid "button.share"
 msgstr "Share"
@@ -1230,7 +1238,16 @@ msgstr "Keep in mind that removing this visualization will affect all the places
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
-#: app/login/components/profile-tables.tsx
+#: app/login/components/profile-content-tabs.tsx
+#: app/login/components/profile-content-tabs.tsx
+msgid "login.profile.my-drafts"
+msgstr "My drafts"
+
+#: app/login/components/profile-content-tabs.tsx
+#: app/login/components/profile-content-tabs.tsx
+#: app/login/components/profile-content-tabs.tsx
+#: app/login/components/profile-content-tabs.tsx
+#: app/login/components/profile-content-tabs.tsx
 msgid "login.profile.my-visualizations"
 msgstr "My visualizations"
 
@@ -1243,8 +1260,8 @@ msgid "login.profile.my-visualizations.chart-name"
 msgstr "Name"
 
 #: app/login/components/profile-tables.tsx
-msgid "login.profile.my-visualizations.chart-published-date"
-msgstr "Published"
+#~ msgid "login.profile.my-visualizations.chart-published-date"
+#~ msgstr "Published"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.my-visualizations.chart-type"

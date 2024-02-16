@@ -127,6 +127,14 @@ msgstr "Publier"
 msgid "button.save-draft"
 msgstr "Sauver le brouillon"
 
+#: app/components/chart-selection-tabs.tsx
+msgid "button.save-draft.error"
+msgstr "Impossible d'enregistrer le brouillon"
+
+#: app/components/chart-selection-tabs.tsx
+msgid "button.save-draft.saved"
+msgstr "Brouillon enregistré"
+
 #: app/components/publish-actions.tsx
 msgid "button.share"
 msgstr "Partager"
@@ -1230,7 +1238,16 @@ msgstr "Gardez à l'esprit que la suppression de cette visualisation affectera t
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
-#: app/login/components/profile-tables.tsx
+#: app/login/components/profile-content-tabs.tsx
+#: app/login/components/profile-content-tabs.tsx
+msgid "login.profile.my-drafts"
+msgstr "Mes brouillons"
+
+#: app/login/components/profile-content-tabs.tsx
+#: app/login/components/profile-content-tabs.tsx
+#: app/login/components/profile-content-tabs.tsx
+#: app/login/components/profile-content-tabs.tsx
+#: app/login/components/profile-content-tabs.tsx
 msgid "login.profile.my-visualizations"
 msgstr "Mes visualisations"
 
@@ -1243,8 +1260,8 @@ msgid "login.profile.my-visualizations.chart-name"
 msgstr "Nom"
 
 #: app/login/components/profile-tables.tsx
-msgid "login.profile.my-visualizations.chart-published-date"
-msgstr "Publié"
+#~ msgid "login.profile.my-visualizations.chart-published-date"
+#~ msgstr "Publié"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.my-visualizations.chart-type"

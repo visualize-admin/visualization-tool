@@ -213,7 +213,7 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
                       color="inherit"
                       size="small"
                     >
-                      Edit
+                      <Trans id="login.chart.edit">Edit</Trans>
                     </Button>
                   ) : null}
                 </Alert>

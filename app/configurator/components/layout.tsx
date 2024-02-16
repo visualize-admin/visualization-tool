@@ -47,7 +47,7 @@ const useStyles = makeStyles<Theme>((theme) => ({
   LMRPanelHeaderLayout: {
     width: "100%",
     display: "grid",
-    gridTemplateColumns: `${DRAWER_WIDTH}px minmax(22rem, 1fr) ${DRAWER_WIDTH}px`,
+    gridTemplateColumns: `${DRAWER_WIDTH}px minmax(22rem, 1fr) auto`,
     gridTemplateAreas: `
     "left middle right"
     `,
