@@ -24,6 +24,7 @@ const cubeIri = __ENV.CUBE_IRI;
 const cubeLabel = __ENV.CUBE_LABEL;
 const endpoint = __ENV.ENDPOINT;
 const metadata = cubes.find((cube) => cube.iri === cubeIri);
+const checkTiming = __ENV.CHECK_TIMING === "true";
 
 const variables = {
   locale: "en",
@@ -37,11 +38,6 @@ const variables = {
 /** @type {import("k6/options").Options} */
 export const options = {
   iterations: 2,
-  thresholds: {
-    http_req_duration: [
-      `avg<${2 * metadata.queries.DataCubeMetadata.expectedDuration}`,
-    ],
-  },
 };
 
 const headers = {
@@ -66,5 +62,15 @@ export default function Components() {
         body.data.dataCubeMetadata.iri === cubeIri
       );
     },
+    ...(checkTiming
+      ? {
+          "Response time must be fast": (res) => {
+            return (
+              res.timings.duration <
+              2 * metadata.queries.DataCubeMetadata.expectedDuration
+            );
+          },
+        }
+      : {}),
   });
 }
