@@ -3,6 +3,7 @@ import {
   Box,
   BoxProps,
   Button,
+  Grow,
   Popover,
   Tab,
   Tabs,
@@ -352,10 +353,6 @@ export const SaveDraftButton = ({
           if (asPath !== `/create/${updated.key}`) {
             replace(`/create/new?edit=${updated.key}`);
           }
-          enqueueSnackbar({
-            message: "Draft updated !",
-            variant: "success",
-          });
         } else {
           throw new Error("Could not update draft");
         }
@@ -385,13 +382,21 @@ export const SaveDraftButton = ({
       );
       enqueueSnackbar({
         message: t({
-          id: "button.save-draft.saved",
-          message: "Draft saved",
+          id: "button.save-draft.error",
+          message: "Could not save draft",
         }),
         variant: "error",
       });
     }
+
+    setTimeout(() => {
+      updatePublishedStateMut.reset();
+      createConfigMut.reset();
+    }, 2000);
   });
+
+  const hasUpdated = !!(updatePublishedStateMut.data || createConfigMut.data);
+  const [debouncedHasUpdated] = useDebounce(hasUpdated, 300);
 
   if (!loggedInId) {
     return null;
@@ -407,7 +412,20 @@ export const SaveDraftButton = ({
       disableTouchListener
       onClose={() => dismissSnack()}
     >
-      <Button variant="outlined" onClick={handleClick}>
+      <Button
+        layout
+        endIcon={
+          hasUpdated || debouncedHasUpdated ? (
+            <Grow in={hasUpdated}>
+              <span>
+                <Icon name="check" />
+              </span>
+            </Grow>
+          ) : null
+        }
+        variant="outlined"
+        onClick={handleClick}
+      >
         <Trans id="button.save-draft">Save draft</Trans>
       </Button>
     </Tooltip>

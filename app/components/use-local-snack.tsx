@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
  */
 export const useLocalSnack = () => {
   type Snack = {
-    message: string;
+    message: string | React.ReactNode;
     variant: "success" | "error";
     duration?: number;
   };
