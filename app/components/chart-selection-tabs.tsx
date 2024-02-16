@@ -373,7 +373,7 @@ export const SaveDraftButton = ({
             }),
             variant: "success",
           });
-          replace(`/create/${saved.key}`);
+          replace(`/create/new?edit=${saved.key}`);
         } else {
           throw new Error("Could not save draft");
         }
