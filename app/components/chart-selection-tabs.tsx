@@ -386,6 +386,10 @@ export const SaveAsDraftButton = ({
     }
   });
 
+  if (!loggedInId) {
+    return null;
+  }
+
   return (
     <Tooltip
       arrow
