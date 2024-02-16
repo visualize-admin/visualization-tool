@@ -22,13 +22,17 @@ export const useLocalSnack = () => {
 
   return [
     snack,
-    useCallback((snack: Snack | undefined) => {
+    useCallback(function enqueue(snack: Snack | undefined) {
       setSnack(snack);
       if (snack) {
         timeoutRef.current = setTimeout(() => {
           setSnack(undefined);
         }, snack.duration || 5000);
       }
+    }, []),
+
+    useCallback(function dismiss() {
+      setSnack(undefined);
     }, []),
   ] as const;
 };
