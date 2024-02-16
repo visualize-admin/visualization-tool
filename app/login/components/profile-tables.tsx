@@ -41,40 +41,27 @@ import { useMutate } from "@/utils/use-fetch-data";
 
 const PREVIEW_LIMIT = 3;
 
-type ProfileTableProps = React.PropsWithChildren<{
+const SectionContent = ({
+  children,
+  title,
+}: {
+  children: React.ReactNode;
   title: string;
-  preview?: boolean;
-  onShowAll?: () => void;
-}>;
-
-const ProfileTable = (props: ProfileTableProps) => {
-  const { title, preview, onShowAll, children } = props;
+}) => {
   const rootClasses = useRootStyles();
-
   return (
     <Box className={rootClasses.sectionContent}>
       <Typography variant="h2" sx={{ mb: 4 }}>
         {title}
       </Typography>
-      <Table>{children}</Table>
-      {preview && (
-        <Button
-          variant="text"
-          color="primary"
-          size="small"
-          onClick={onShowAll}
-          sx={{ ml: 1, mt: 2 }}
-        >
-          <Typography variant="body2">
-            <Trans id="show.all">Show all</Trans>
-          </Typography>
-        </Button>
-      )}
+
+      {children}
     </Box>
   );
 };
 
 type ProfileVisualizationsTableProps = {
+  title: string;
   userId: number;
   userConfigs: ParsedConfig[];
   preview?: boolean;
@@ -84,69 +71,77 @@ type ProfileVisualizationsTableProps = {
 export const ProfileVisualizationsTable = (
   props: ProfileVisualizationsTableProps
 ) => {
-  const { userId, userConfigs, preview, onShowAll } = props;
+  const { title, userId, userConfigs, preview, onShowAll } = props;
 
   return (
-    <ProfileTable
-      title={t({
-        id: "login.profile.my-visualizations",
-        message: "My visualizations",
-      })}
-      preview={preview && userConfigs.length > PREVIEW_LIMIT}
-      onShowAll={onShowAll}
-    >
+    <SectionContent title={title}>
       {userConfigs.length > 0 ? (
         <>
-          <TableHead
-            sx={{
-              "& > .MuiTableCell-root": {
-                borderBottomColor: "divider",
-                color: "secondary.main",
-              },
-            }}
-          >
-            <TableCell>
-              <Trans id="login.profile.my-visualizations.chart-type">
-                Type
-              </Trans>
-            </TableCell>
-            <TableCell>
-              <Trans id="login.profile.my-visualizations.chart-name">
-                Name
-              </Trans>
-            </TableCell>
-            <TableCell>
-              <Trans id="login.profile.my-visualizations.dataset-name">
-                Dataset
-              </Trans>
-            </TableCell>
-            <TableCell>
-              <Trans id="login.profile.my-visualizations.chart-published-date">
-                Published
-              </Trans>
-            </TableCell>
-            <TableCell>
-              <Trans id="login.profile.my-visualizations.chart-updated-date">
-                Updated
-              </Trans>
-            </TableCell>
-            <TableCell align="right">
-              <Trans id="login.profile.my-visualizations.chart-actions">
-                Actions
-              </Trans>
-            </TableCell>
-          </TableHead>
-          <TableBody>
-            {userConfigs
-              .slice(0, preview ? PREVIEW_LIMIT : undefined)
-              .map((config) => (
-                <ProfileVisualizationsRow
-                  key={config.key}
-                  userId={userId}
-                  config={config}
-                />
-              ))}
-          </TableBody>
+          <Table>
+            <TableHead
+              sx={{
+                "& > .MuiTableCell-root": {
+                  borderBottomColor: "divider",
+                  color: "secondary.main",
+                },
+              }}
+            >
+              <TableCell>
+                <Trans id="login.profile.my-visualizations.chart-type">
+                  Type
+                </Trans>
+              </TableCell>
+              <TableCell>
+                <Trans id="login.profile.my-visualizations.chart-name">
+                  Name
+                </Trans>
+              </TableCell>
+              <TableCell>
+                <Trans id="login.profile.my-visualizations.dataset-name">
+                  Dataset
+                </Trans>
+              </TableCell>
+              <TableCell>
+                <Trans id="login.profile.my-visualizations.chart-published-date">
+                  Published
+                </Trans>
+              </TableCell>
+              <TableCell>
+                <Trans id="login.profile.my-visualizations.chart-updated-date">
+                  Updated
+                </Trans>
+              </TableCell>
+              <TableCell align="right">
+                <Trans id="login.profile.my-visualizations.chart-actions">
+                  Actions
+                </Trans>
+              </TableCell>
+            </TableHead>
+            <TableBody>
+              {userConfigs
+                .slice(0, preview ? PREVIEW_LIMIT : undefined)
+                .map((config) => (
+                  <ProfileVisualizationsRow
+                    key={config.key}
+                    userId={userId}
+                    config={config}
+                  />
+                ))}
+            </TableBody>
+          </Table>
+          {preview && (
+            <Button
+              variant="text"
+              color="primary"
+              size="small"
+              onClick={onShowAll}
+              sx={{ ml: 1, mt: 2 }}
+            >
+              <Typography variant="body2">
+                <Trans id="show.all">Show all</Trans>
+              </Typography>
+            </Button>
+          )}
         </>
       ) : (
         <Typography variant="body1">
@@ -157,7 +152,7 @@ export const ProfileVisualizationsTable = (
           .
         </Typography>
       )}
-    </ProfileTable>
+    </SectionContent>
   );
 };
 

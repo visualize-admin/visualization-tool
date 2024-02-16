@@ -80,6 +80,10 @@ export const ProfileContentTabs = (props: ProfileContentTabsProps) => {
           sx={{ display: "flex", flexDirection: "column", gap: 6 }}
         >
           <ProfileVisualizationsTable
+            title={t({
+              id: "login.profile.my-visualizations",
+              message: "My visualizations",
+            })}
             userId={userId}
             userConfigs={userConfigs}
             preview
@@ -103,6 +107,10 @@ export const ProfileContentTabs = (props: ProfileContentTabsProps) => {
       >
         <Box className={classes.tabPanelContent}>
           <ProfileVisualizationsTable
+            title={t({
+              id: "login.profile.my-visualizations",
+              message: "My visualizations",
+            })}
             userId={userId}
             userConfigs={userConfigs}
           />
