@@ -12,7 +12,9 @@ import {
   Link,
   Menu,
   MenuItem,
+  paperClasses,
   Skeleton,
+  styled,
   Table,
   TableBody,
   TableCell,
@@ -365,6 +367,27 @@ type ActionsProps = {
   actions: ActionProps[];
 };
 
+const ArrowMenu = styled(Menu)(({ theme }) => ({
+  [`& .${paperClasses.root}`]: {
+    overflowY: "visible",
+    overflowX: "visible",
+    "&:before": {
+      content: '" "',
+      display: "block",
+      background: theme.palette.background.paper,
+      width: 10,
+      height: 10,
+      transform: "rotate(45deg)",
+      position: "absolute",
+      margin: "auto",
+      top: -5,
+
+      left: 0,
+      right: 0,
+    },
+  },
+}));
+
 const Actions = (props: ActionsProps) => {
   const { actions } = props;
   const buttonRef = React.useRef<HTMLButtonElement>(null);
@@ -375,7 +398,14 @@ const Actions = (props: ActionsProps) => {
       <IconButton ref={buttonRef} onClick={isOpen ? close : open}>
         <Icon name="more" size={16} />
       </IconButton>
-      <Menu onClose={close} open={isOpen} anchorEl={buttonRef.current}>
+      <ArrowMenu
+        onClose={close}
+        open={isOpen}
+        anchorEl={buttonRef.current}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        transformOrigin={{ horizontal: "center", vertical: "top" }}
+        sx={{}}
+      >
         {actions.map((props, i) => (
           <Action
             key={i}
@@ -383,7 +413,7 @@ const Actions = (props: ActionsProps) => {
             {...(props.type === "button" ? { onDialogClose: close } : {})}
           />
         ))}
-      </Menu>
+      </ArrowMenu>
     </>
   );
 };
