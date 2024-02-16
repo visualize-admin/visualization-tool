@@ -543,6 +543,7 @@ const TabsInner = (props: TabsInnerProps) => {
 
               {addable && (
                 <Tab
+                  component="div"
                   sx={{
                     ml: (theme) => `-${theme.spacing(2)}`,
                     p: 0,
