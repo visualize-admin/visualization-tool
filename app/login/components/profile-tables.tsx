@@ -7,6 +7,7 @@ import {
   DialogActions,
   DialogContent,
   DialogContentText,
+  DialogProps,
   DialogTitle,
   IconButton,
   Link,
@@ -393,8 +394,15 @@ const Actions = (props: ActionsProps) => {
   const buttonRef = React.useRef<HTMLButtonElement>(null);
   const { isOpen, open, close } = useDisclosure();
 
+  const [primaryAction, ...rest] = actions;
+
   return (
-    <>
+    <Box gap="0.5rem" display="flex" justifyContent="flex-end">
+      <Action
+        as="button"
+        {...primaryAction}
+        {...(primaryAction.type === "button" ? { onDialogClose: close } : {})}
+      />
       <IconButton ref={buttonRef} onClick={isOpen ? close : open}>
         <Icon name="more" size={16} />
       </IconButton>
@@ -406,118 +414,106 @@ const Actions = (props: ActionsProps) => {
         transformOrigin={{ horizontal: "center", vertical: "top" }}
         sx={{}}
       >
-        {actions.map((props, i) => (
+        {rest.map((props, i) => (
           <Action
+            as="menuitem"
             key={i}
             {...props}
             {...(props.type === "button" ? { onDialogClose: close } : {})}
           />
         ))}
       </ArrowMenu>
-    </>
+    </Box>
   );
 };
 
-type ActionProps = ActionLinkProps | ActionButtonProps;
+type ActionProps =
+  | {
+      type: "link";
+      href: string;
+      label: string;
+      iconName: IconName;
+    }
+  | {
+      type: "button";
+      label: string;
+      iconName: IconName;
+      onClick: () => Promise<void> | void;
+      requireConfirmation?: false | undefined;
+    }
+  | {
+      type: "button";
+      label: string;
+      iconName: IconName;
+      onClick: () => Promise<void> | void;
+      requireConfirmation: true;
+      confirmationTitle?: string;
+      confirmationText?: string;
+      onDialogClose?: () => void;
+      onSuccess?: () => void;
+    };
+const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  gap: theme.spacing(1),
+  color: theme.palette.primary.main,
+})) as typeof MenuItem;
 
-const Action = (props: ActionProps) => {
-  switch (props.type) {
-    case "link":
-      return <ActionLink {...props} />;
-    case "button":
-      return <ActionButton {...props} />;
-    default:
-      const _exhaustiveCheck: never = props;
-      return _exhaustiveCheck;
-  }
-};
+const Action = (props: ActionProps & { as: "menuitem" | "button" }) => {
+  const { label, iconName } = props;
+  const { isOpen: isConfirmationOpen } = useDisclosure();
 
-type ActionLinkProps = {
-  type: "link";
-  href: string;
-  label: string;
-  iconName: IconName;
-};
-
-const ActionLink = (props: ActionLinkProps) => {
-  const { href, label, iconName } = props;
-
-  return (
-    <NextLink href={href} passHref legacyBehavior>
-      <MenuItem
-        component={Link}
-        target="_blank"
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          gap: 1,
-          color: "primary.main",
-        }}
-      >
-        <Icon name={iconName} size={16} />
-        <Typography variant="body2">{label}</Typography>
-      </MenuItem>
-    </NextLink>
-  );
-};
-
-type ActionButtonProps = {
-  type: "button";
-  label: string;
-  iconName: IconName;
-  requireConfirmation?: boolean;
-  confirmationTitle?: string;
-  confirmationText?: string;
-  onClick: () => Promise<void> | void;
-  onDialogClose?: () => void;
-  onSuccess?: () => void;
-};
-
-const ActionButton = (props: ActionButtonProps) => {
-  const {
-    label,
-    iconName,
-    requireConfirmation,
-    confirmationTitle,
-    confirmationText,
-    onClick,
-    onSuccess,
-  } = props;
-  const { isOpen, open, close } = useDisclosure();
-
+  const Wrapper = ({ icon, label }: { icon: IconName; label: string }) => {
+    const forwardedProps =
+      props.type === "button"
+        ? {
+            onClick: props.onClick,
+          }
+        : {
+            href: props.href,
+          };
+    if (props.as === "button") {
+      return (
+        <Button
+          size="small"
+          startIcon={<Icon size={16} name={icon} />}
+          component={props.type === "link" ? Link : "button"}
+          variant="contained"
+          color="primary"
+          {...forwardedProps}
+        >
+          {label}
+        </Button>
+      );
+    } else {
+      return (
+        <StyledMenuItem
+          component={props.type === "link" ? Link : "button"}
+          {...forwardedProps}
+        >
+          <Icon size={16} name={icon} />
+          {label}
+        </StyledMenuItem>
+      );
+    }
+  };
   return (
     <>
-      <MenuItem
-        component={Link}
-        onClick={(e) => {
-          // To prevent the click away listener from closing the dialog.
-          e.stopPropagation();
-
-          if (requireConfirmation) {
-            open();
-          } else {
-            onClick();
-          }
-        }}
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          gap: 1,
-          color: "primary.main",
-          cursor: "pointer",
-        }}
-      >
-        <Icon name={iconName} size={16} style={{ margin: 0 }} />
-        <Typography variant="body2">{label}</Typography>
-      </MenuItem>
-      {requireConfirmation && (
+      {props.type === "link" ? (
+        <NextLink href={props.href} passHref legacyBehavior>
+          <Wrapper label={label} icon={iconName} />
+        </NextLink>
+      ) : props.type === "button" ? (
+        <Wrapper label={label} icon={iconName} />
+      ) : null}
+      {props.type === "button" && props.requireConfirmation && (
         <ConfirmationDialog
-          open={isOpen}
           onClose={close}
-          title={confirmationTitle}
-          text={confirmationText}
-          onClick={onClick}
-          onSuccess={onSuccess}
+          open={isConfirmationOpen}
+          title={props.confirmationTitle}
+          text={props.confirmationText}
+          onClick={props.onClick}
+          onSuccess={props.onSuccess}
         />
       )}
     </>
