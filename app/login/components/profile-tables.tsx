@@ -24,6 +24,7 @@ import {
   Typography,
 } from "@mui/material";
 import { PUBLISHED_STATE } from "@prisma/client";
+import { sortBy } from "lodash";
 import NextLink from "next/link";
 import React from "react";
 
@@ -185,6 +186,8 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
         href: `/v/${config.key}`,
         label: t({ id: "login.chart.view", message: "View" }),
         iconName: "eye",
+        priority:
+          config.published_state === PUBLISHED_STATE.PUBLISHED ? 0 : undefined,
       },
       {
         type: "link",
@@ -197,6 +200,8 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
         href: `/create/new?edit=${config.key}`,
         label: t({ id: "login.chart.edit", message: "Edit" }),
         iconName: "edit",
+        priority:
+          config.published_state === PUBLISHED_STATE.DRAFT ? 0 : undefined,
       },
       {
         type: "link",
@@ -263,7 +268,7 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
       },
     ];
 
-    return actions;
+    return sortBy(actions, (x) => x.priority);
   }, [
     config.data,
     config.key,
@@ -340,7 +345,7 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
           {config.updated_at.toLocaleDateString("de")}
         </Typography>
       </TableCell>
-      <TableCell width={120} align="right">
+      <TableCell width={150} align="right">
         <Actions actions={actions} />
       </TableCell>
     </TableRow>
@@ -410,31 +415,30 @@ const Actions = (props: ActionsProps) => {
   );
 };
 
-type ActionProps =
+type ActionProps = {
+  label: string;
+  iconName: IconName;
+  priority?: number;
+} & (
   | {
       type: "link";
       href: string;
-      label: string;
-      iconName: IconName;
     }
   | {
       type: "button";
-      label: string;
-      iconName: IconName;
       onClick: () => Promise<void> | void;
       requireConfirmation?: false | undefined;
     }
   | {
       type: "button";
-      label: string;
-      iconName: IconName;
       onClick: () => Promise<void> | void;
       requireConfirmation: true;
       confirmationTitle?: string;
       confirmationText?: string;
       onDialogClose?: () => void;
       onSuccess?: () => void;
-    };
+    }
+);
 const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
   display: "flex",
   alignItems: "center",
@@ -459,7 +463,6 @@ const Action = (props: ActionProps & { as: "menuitem" | "button" }) => {
       return (
         <Button
           size="small"
-          startIcon={<Icon size={16} name={icon} />}
           component={props.type === "link" ? Link : "button"}
           variant="contained"
           color="primary"
