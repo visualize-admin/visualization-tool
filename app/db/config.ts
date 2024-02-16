@@ -75,11 +75,7 @@ export const updateConfig = async ({
  *
  * @param key Key of the config to be updated
  */
-export const removeConfig = async ({
-  key,
-}: {
-  key: string;
-}): Promise<{ key: string }> => {
+export const removeConfig = async ({ key }: { key: string }) => {
   return await prisma.config.delete({
     where: {
       key,
