@@ -474,7 +474,7 @@ const Action = (props: ActionProps & { as: "menuitem" | "button" }) => {
     } else {
       return (
         <StyledMenuItem
-          component={props.type === "link" ? Link : "button"}
+          component={props.type === "link" ? Link : "div"}
           {...forwardedProps}
         >
           <Icon size={16} name={icon} />
