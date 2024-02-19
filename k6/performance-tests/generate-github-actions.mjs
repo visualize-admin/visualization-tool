@@ -88,7 +88,7 @@ env:
 
 jobs:
   run_tests:
-    if: github.event.deployment_status.state == 'success'
+    if: github.event.deployment_status.state == 'success' && github.event_name == 'pull_request'
     name: Run tests
     runs-on: ubuntu-latest
     steps:
