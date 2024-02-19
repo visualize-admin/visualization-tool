@@ -77,7 +77,7 @@ const generatePRTests = () => {
         )
       )
     )
-    .map((command) => `echo "SUMMARY=$SUMMARY$(${command})" >> $GITHUB_ENV`)
+    .map((command) => `echo "SUMMARY=\${SUMMARY}$(${command})" >> $GITHUB_ENV`)
     .join(" &&\n            ");
   const file = `name: GraphQL performance tests (PR)
 
@@ -88,7 +88,7 @@ env:
 
 jobs:
   run_tests:
-    if: github.event.deployment_status.state == 'success'
+    if: github.event.deployment_status.state == 'success' && github.event_name == 'pull_request'
     name: Run tests
     runs-on: ubuntu-latest
     steps:
