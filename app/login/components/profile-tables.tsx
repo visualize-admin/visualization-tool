@@ -236,7 +236,8 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
       {
         type: "button",
         label: t({ id: "login.chart.delete", message: "Delete" }),
-        iconName: removeMut.status === "fetching" ? "loading" : "linkExternal",
+        color: "error",
+        iconName: removeMut.status === "fetching" ? "loading" : "trash",
         requireConfirmation: true,
         confirmationTitle: t({
           id: "login.chart.delete.confirmation",

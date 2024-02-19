@@ -8,22 +8,59 @@ import { Icon, IconName } from "@/icons";
 
 import { ArrowMenu } from "./arrow-menu";
 
+export type ActionProps = {
+  label: string;
+  iconName: IconName;
+  priority?: number;
+  color?: "primary" | "error";
+} & (
+  | {
+      type: "link";
+      href: string;
+    }
+  | {
+      type: "button";
+      onClick: () => Promise<void> | void;
+      requireConfirmation?: false | undefined;
+    }
+  | {
+      type: "button";
+      onClick: () => Promise<void> | void;
+      requireConfirmation: true;
+      confirmationTitle?: string;
+      confirmationText?: string;
+      onDialogClose?: () => void;
+      onSuccess?: () => void;
+    }
+);
+
 type ActionsProps = {
   actions: ActionProps[];
 };
 
-const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
+const StyledMenuItem = styled(MenuItem)(({ theme, color }) => ({
   display: "flex",
   alignItems: "center",
-  gap: theme.spacing(1),
-  color: theme.palette.primary.main,
+  gap: theme.spacing(2),
+  color:
+    color === "primary" || color === "error"
+      ? theme.palette[color].main
+      : theme.palette.primary.main,
 })) as typeof MenuItem;
 
 export const Action = (props: ActionProps & { as: "menuitem" | "button" }) => {
   const { label, iconName } = props;
   const { isOpen: isConfirmationOpen } = useDisclosure();
 
-  const Wrapper = ({ icon, label }: { icon: IconName; label: string }) => {
+  const Wrapper = ({
+    icon,
+    label,
+    color = "primary",
+  }: {
+    icon: IconName;
+    label: string;
+    color?: ActionProps["color"];
+  }) => {
     const forwardedProps =
       props.type === "button"
         ? {
@@ -37,8 +74,8 @@ export const Action = (props: ActionProps & { as: "menuitem" | "button" }) => {
         <Button
           size="xsmall"
           component={props.type === "link" ? Link : "button"}
+          color={color}
           variant="contained"
-          color="primary"
           {...forwardedProps}
         >
           {label}
@@ -47,6 +84,7 @@ export const Action = (props: ActionProps & { as: "menuitem" | "button" }) => {
     } else {
       return (
         <StyledMenuItem
+          color={color}
           component={props.type === "link" ? Link : "div"}
           {...forwardedProps}
         >
@@ -60,10 +98,10 @@ export const Action = (props: ActionProps & { as: "menuitem" | "button" }) => {
     <>
       {props.type === "link" ? (
         <NextLink href={props.href} passHref legacyBehavior>
-          <Wrapper label={label} icon={iconName} />
+          <Wrapper label={label} icon={iconName} color={props.color} />
         </NextLink>
       ) : props.type === "button" ? (
-        <Wrapper label={label} icon={iconName} />
+        <Wrapper label={label} icon={iconName} color={props.color} />
       ) : null}
       {props.type === "button" && props.requireConfirmation && (
         <ConfirmationDialog
@@ -116,27 +154,3 @@ export const RowActions = (props: ActionsProps) => {
     </Box>
   );
 };
-export type ActionProps = {
-  label: string;
-  iconName: IconName;
-  priority?: number;
-} & (
-  | {
-      type: "link";
-      href: string;
-    }
-  | {
-      type: "button";
-      onClick: () => Promise<void> | void;
-      requireConfirmation?: false | undefined;
-    }
-  | {
-      type: "button";
-      onClick: () => Promise<void> | void;
-      requireConfirmation: true;
-      confirmationTitle?: string;
-      confirmationText?: string;
-      onDialogClose?: () => void;
-      onSuccess?: () => void;
-    }
-);
