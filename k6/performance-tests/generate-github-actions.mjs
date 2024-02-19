@@ -77,11 +77,14 @@ const generatePRTests = () => {
         )
       )
     )
-
+    .map((command) => `echo "SUMMARY=$SUMMARY$(${command})" >> $GITHUB_ENV`)
     .join(" &&\n            ");
   const file = `name: GraphQL performance tests (PR)
 
 on: [deployment_status]
+
+env:
+  SUMMARY: ''
 
 jobs:
   run_tests:
@@ -101,6 +104,30 @@ jobs:
           options: -v \${{ github.workspace }}:/root
           run: |
             ${commands}
+      - name: GQL performance tests ✅
+        if: \${{ env.SUMMARY == '' }}
+        run: |
+          curl --request POST \
+          --url https://api.github.com/repos/\${{ github.repository }}/statuses/\${{ github.sha }} \
+          --header 'authorization: Bearer \${{ secrets.GITHUB_TOKEN }}' \
+          --header 'content-type: application/json' \
+          --data '{
+            "context": "GQL performance tests",
+            "state": "success",
+            "description": "GQL performance tests passed"
+          }'
+      - name: GQL performance tests 🚨
+        if: \${{ env.SUMMARY != '' }}
+        run: |
+          curl --request POST  \
+          --url https://api.github.com/repos/\${{ github.repository }}/statuses/\${{ github.sha }} \
+          --header 'authorization: Bearer \${{ secrets.GITHUB_TOKEN }}' \
+          --header 'content-type: application/json' \
+          --data '{
+            "context": "GQL performance tests",
+            "state": "failure",
+            "description": "GQL performance tests failed for the following queries: \${{ env.SUMMARY }}"
+          }'
 `;
 
   fs.writeFileSync("./.github/workflows/performance-tests-pr.yml", file);
