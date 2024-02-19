@@ -80,7 +80,19 @@ export default function Observations() {
 }
 
 export function handleSummary(data) {
+  if (
+    data.metrics.http_req_duration.values.avg >
+    2 * metadata.queries.PossibleFilters.expectedDuration
+  ) {
+    return {
+      stdout: `${Math.round(
+        (100 * data.metrics.http_req_duration.values.avg) /
+          metadata.queries.PossibleFilters.expectedDuration
+      )}% – PossibleFilters – ${cubeLabel}\n`,
+    };
+  }
+
   return {
-    stdout: `PossibleFilters`,
+    stdout: "",
   };
 }

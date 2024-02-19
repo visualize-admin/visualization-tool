@@ -83,7 +83,19 @@ export default function Components() {
 }
 
 export function handleSummary(data) {
+  if (
+    data.metrics.http_req_duration.values.avg >
+    2 * metadata.queries.DataCubePreview.expectedDuration
+  ) {
+    return {
+      stdout: `${Math.round(
+        (100 * data.metrics.http_req_duration.values.avg) /
+          metadata.queries.DataCubePreview.expectedDuration
+      )}% – DataCubePreview – ${cubeLabel}\n`,
+    };
+  }
+
   return {
-    stdout: `DataCubePreview`,
+    stdout: "",
   };
 }
