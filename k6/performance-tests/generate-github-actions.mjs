@@ -77,7 +77,7 @@ const generatePRTests = () => {
         )
       )
     )
-    .map((command) => `echo "SUMMARY=$SUMMARY$(${command})" >> $GITHUB_ENV`)
+    .map((command) => `echo "SUMMARY=\${SUMMARY}$(${command})" >> $GITHUB_ENV`)
     .join(" &&\n            ");
   const file = `name: GraphQL performance tests (PR)
 
