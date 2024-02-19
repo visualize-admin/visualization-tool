@@ -77,8 +77,7 @@ const generatePRTests = () => {
         )
       )
     )
-    .map((command) => `echo "SUMMARY=\${SUMMARY}$(${command})" >> $GITHUB_ENV`)
-    .join(" &&\n            ");
+    .join(" && ");
   const file = `name: GraphQL performance tests (PR)
 
 on: [deployment_status]
@@ -103,7 +102,7 @@ jobs:
           image: grafana/k6:latest
           options: -v \${{ github.workspace }}:/root
           run: |
-            ${commands}
+            echo "SUMMARY=$(${commands})" >> $GITHUB_ENV
       - name: GQL performance tests ✅
         if: \${{ env.SUMMARY == '' }}
         run: |
@@ -149,7 +148,5 @@ function getRunCommand(
     cube.iri
   } --env CUBE_LABEL=${cube.label} --env ROOT_PATH=/root/ --env CHECK_TIMING=${
     checkTiming ? "true" : "false"
-  } - </root/k6/performance-tests/graphql/${query}.js`;
+  } - </root/k6/performance-tests/graphql/${query}.js --quiet`;
 }
-
-// 123
