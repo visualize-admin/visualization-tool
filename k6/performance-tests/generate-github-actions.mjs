@@ -88,7 +88,7 @@ env:
 
 jobs:
   run_tests:
-    if: github.event.deployment_status.state == 'success' && github.event_name == 'pull_request'
+    if: github.event.deployment_status.state == 'success'
     name: Run tests
     runs-on: ubuntu-latest
     steps:
@@ -151,3 +151,5 @@ function getRunCommand(
     checkTiming ? "true" : "false"
   } - </root/k6/performance-tests/graphql/${query}.js`;
 }
+
+// 123
