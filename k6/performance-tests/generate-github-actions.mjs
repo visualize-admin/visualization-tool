@@ -82,9 +82,6 @@ const generatePRTests = () => {
 
 on: [deployment_status]
 
-env:
-  SUMMARY: ''
-
 jobs:
   run_tests:
     if: github.event.deployment_status.state == 'success'
@@ -102,7 +99,11 @@ jobs:
           image: grafana/k6:latest
           options: -v \${{ github.workspace }}:/root
           run: |
-            echo "SUMMARY=$(${commands})" >> $GITHUB_ENV
+            touch /root/summary.txt
+            echo "$(${commands})" > /root/summary.txt
+      - name: Set env variable for easier access
+        run: |
+          echo "SUMMARY=$(< summary.txt)" >> $GITHUB_ENV
       - name: GQL performance tests ✅
         if: \${{ env.SUMMARY == '' }}
         run: |
@@ -115,7 +116,7 @@ jobs:
             "state": "success",
             "description": "GQL performance tests passed"
           }'
-      - name: GQL performance tests 🚨
+      - name: GQL performance tests ❌
         if: \${{ env.SUMMARY != '' }}
         run: |
           curl --request POST  \
@@ -125,7 +126,7 @@ jobs:
           --data '{
             "context": "GQL performance tests",
             "state": "failure",
-            "description": "GQL performance tests failed for the following queries: \${{ env.SUMMARY }}"
+            "description": "\${{ env.SUMMARY }}"
           }'
 `;
 
@@ -148,5 +149,5 @@ function getRunCommand(
     cube.iri
   } --env CUBE_LABEL=${cube.label} --env ROOT_PATH=/root/ --env CHECK_TIMING=${
     checkTiming ? "true" : "false"
-  } - </root/k6/performance-tests/graphql/${query}.js --quiet`;
+  } --quiet - </root/k6/performance-tests/graphql/${query}.js`;
 }
