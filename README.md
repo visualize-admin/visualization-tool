@@ -136,6 +136,12 @@ services:
       - "5432:5432"
 ```
 
+## Developing GitHub Actions
+
+Several checks are run on different types of events that happen within the repository, including E2E or GraphQL performance tests. In order to be able to build and test the actions locally, we use [act](https://github.com/nektos/act), with example mocked event payloads defined in [this folder](https://github.com/visualize-admin/visualization-tool/tree/main/act).
+
+After [installing](https://nektosact.com/installation/index.html) the library, you can run a given action like e.g. `act deployment_status -W ".github/workflows/performance-tests-pr.yml" -e act/deployment_status.json`, modifying the event payload or adding a new one as needed.
+
 ## E2E tests
 
 Playwright is run on every successful deployment of a branch. Screenshots are made with Percy and sent directly to their cloud service for diffing.
