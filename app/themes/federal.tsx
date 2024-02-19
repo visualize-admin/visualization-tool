@@ -1,5 +1,5 @@
 import { Fade, Grow } from "@mui/material";
-import { Breakpoint, createTheme, Theme } from "@mui/material/styles";
+import { Breakpoint, Theme, createTheme } from "@mui/material/styles";
 import merge from "lodash/merge";
 import omit from "lodash/omit";
 
@@ -288,6 +288,12 @@ theme.components = {
       color: "primary",
     },
     styleOverrides: {
+      sizeXsmall: {
+        height: "24px",
+        minWidth: "auto",
+        padding: "0 8px",
+        fontSize: "12px",
+      },
       sizeSmall: {
         ".MuiButton-startIcon": {
           marginRight: 4,

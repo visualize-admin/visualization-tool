@@ -1,5 +1,5 @@
-import { Theme, useTheme } from "@mui/material";
 import type {} from "@mui/lab/themeAugmentation";
+import { Theme, useTheme } from "@mui/material";
 
 export interface ThemeModule {
   theme: Theme;
@@ -54,7 +54,15 @@ declare module "@mui/material" {
     inline: true;
     inverted: true;
   }
+
+  interface ButtonClasses {
+    sizeXsmall: true;
+  }
+
+  interface ButtonPropsSizeOverrides {
+    xsmall: true;
+  }
 }
 
-export { useTheme };
 export { theme as federal } from "./federal";
+export { useTheme };

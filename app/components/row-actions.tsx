@@ -35,7 +35,7 @@ export const Action = (props: ActionProps & { as: "menuitem" | "button" }) => {
     if (props.as === "button") {
       return (
         <Button
-          size="small"
+          size="xsmall"
           component={props.type === "link" ? Link : "button"}
           variant="contained"
           color="primary"
@@ -87,7 +87,7 @@ export const RowActions = (props: ActionsProps) => {
   const [primaryAction, ...rest] = actions;
 
   return (
-    <Box gap="0.5rem" display="flex" justifyContent="flex-end">
+    <Box gap="0.5rem" display="flex" alignItems="center">
       <Action
         as="button"
         {...primaryAction}
