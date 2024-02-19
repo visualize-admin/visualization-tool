@@ -81,3 +81,9 @@ export default function Components() {
     });
   }
 }
+
+export function handleSummary(data) {
+  return {
+    stdout: `DataCubePreview`,
+  };
+}

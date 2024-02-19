@@ -78,3 +78,9 @@ export default function Observations() {
     });
   }
 }
+
+export function handleSummary(data) {
+  return {
+    stdout: `DataCubeObservations`,
+  };
+}
