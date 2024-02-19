@@ -289,12 +289,12 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
         },
       }}
     >
-      <TableCell width={80}>
+      <TableCell width="10%">
         <Typography variant="body2">
           {config.data.chartConfigs.length > 1 ? "multi" : "single"}
         </Typography>
       </TableCell>
-      <TableCell width="auto" sx={{ maxWidth: 320 }}>
+      <TableCell width="35%">
         <NextLink href={`/v/${config.key}`} passHref legacyBehavior>
           <Link color="primary">
             <Typography variant="body2" noWrap>
@@ -303,7 +303,7 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
           </Link>
         </NextLink>
       </TableCell>
-      <TableCell width="auto" sx={{ maxWidth: 320 }}>
+      <TableCell width="35%">
         {fetching ? (
           <Skeleton width="50%" height={32} />
         ) : dataSet ? (
@@ -329,12 +329,12 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
           </Typography>
         )}
       </TableCell>
-      <TableCell>
+      <TableCell width="10%">
         <Typography width="auto" variant="body2">
           {config.updated_at.toLocaleDateString("de")}
         </Typography>
       </TableCell>
-      <TableCell width={150} align="right">
+      <TableCell width="20%" align="right">
         <RowActions actions={actions} />
       </TableCell>
     </TableRow>
