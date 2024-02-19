@@ -97,7 +97,7 @@ jobs:
         uses: addnab/docker-run-action@v3
         with:
           image: grafana/k6:latest
-          options: -v \${{ github.workspace }}:/root
+          options: -v \${{ github.workspace }}:/root -u root
           run: |
             touch /root/summary.txt
             echo "$(${commands})" > /root/summary.txt
