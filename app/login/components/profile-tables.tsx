@@ -2,20 +2,8 @@ import { t, Trans } from "@lingui/macro";
 import {
   Box,
   Button,
-  CircularProgress,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogProps,
-  DialogTitle,
-  IconButton,
   Link,
-  Menu,
-  MenuItem,
-  paperClasses,
   Skeleton,
-  styled,
   Table,
   TableBody,
   TableCell,
@@ -28,17 +16,17 @@ import sortBy from "lodash/sortBy";
 import NextLink from "next/link";
 import React from "react";
 
-import useDisclosure from "@/components/use-disclosure";
 import { ParsedConfig } from "@/db/config";
 import { sourceToLabel } from "@/domain/datasource";
 import { truthy } from "@/domain/types";
 import { useUserConfigs } from "@/domain/user-configs";
 import { useDataCubesMetadataQuery } from "@/graphql/hooks";
-import { Icon, IconName } from "@/icons";
 import { useRootStyles } from "@/login/utils";
 import { useLocale } from "@/src";
 import { removeConfig, updateConfig } from "@/utils/chart-config/api";
 import { useMutate } from "@/utils/use-fetch-data";
+
+import { ActionProps, RowActions } from "../../components/row-actions";
 
 const PREVIEW_LIMIT = 3;
 
@@ -346,231 +334,8 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
         </Typography>
       </TableCell>
       <TableCell width={150} align="right">
-        <Actions actions={actions} />
+        <RowActions actions={actions} />
       </TableCell>
     </TableRow>
-  );
-};
-
-type ActionsProps = {
-  actions: ActionProps[];
-};
-
-const ArrowMenu = styled(Menu)(({ theme }) => ({
-  [`& .${paperClasses.root}`]: {
-    overflowY: "visible",
-    overflowX: "visible",
-    "&:before": {
-      content: '" "',
-      display: "block",
-      background: theme.palette.background.paper,
-      width: 10,
-      height: 10,
-      transform: "rotate(45deg)",
-      position: "absolute",
-      margin: "auto",
-      top: -5,
-
-      left: 0,
-      right: 0,
-    },
-  },
-}));
-
-const Actions = (props: ActionsProps) => {
-  const { actions } = props;
-  const buttonRef = React.useRef<HTMLButtonElement>(null);
-  const { isOpen, open, close } = useDisclosure();
-
-  const [primaryAction, ...rest] = actions;
-
-  return (
-    <Box gap="0.5rem" display="flex" justifyContent="flex-end">
-      <Action
-        as="button"
-        {...primaryAction}
-        {...(primaryAction.type === "button" ? { onDialogClose: close } : {})}
-      />
-      <IconButton ref={buttonRef} onClick={isOpen ? close : open}>
-        <Icon name="more" size={16} />
-      </IconButton>
-      <ArrowMenu
-        onClose={close}
-        open={isOpen}
-        anchorEl={buttonRef.current}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        transformOrigin={{ horizontal: "center", vertical: "top" }}
-        sx={{}}
-      >
-        {rest.map((props, i) => (
-          <Action
-            as="menuitem"
-            key={i}
-            {...props}
-            {...(props.type === "button" ? { onDialogClose: close } : {})}
-          />
-        ))}
-      </ArrowMenu>
-    </Box>
-  );
-};
-
-type ActionProps = {
-  label: string;
-  iconName: IconName;
-  priority?: number;
-} & (
-  | {
-      type: "link";
-      href: string;
-    }
-  | {
-      type: "button";
-      onClick: () => Promise<void> | void;
-      requireConfirmation?: false | undefined;
-    }
-  | {
-      type: "button";
-      onClick: () => Promise<void> | void;
-      requireConfirmation: true;
-      confirmationTitle?: string;
-      confirmationText?: string;
-      onDialogClose?: () => void;
-      onSuccess?: () => void;
-    }
-);
-const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  gap: theme.spacing(1),
-  color: theme.palette.primary.main,
-})) as typeof MenuItem;
-
-const Action = (props: ActionProps & { as: "menuitem" | "button" }) => {
-  const { label, iconName } = props;
-  const { isOpen: isConfirmationOpen } = useDisclosure();
-
-  const Wrapper = ({ icon, label }: { icon: IconName; label: string }) => {
-    const forwardedProps =
-      props.type === "button"
-        ? {
-            onClick: props.onClick,
-          }
-        : {
-            href: props.href,
-          };
-    if (props.as === "button") {
-      return (
-        <Button
-          size="small"
-          component={props.type === "link" ? Link : "button"}
-          variant="contained"
-          color="primary"
-          {...forwardedProps}
-        >
-          {label}
-        </Button>
-      );
-    } else {
-      return (
-        <StyledMenuItem
-          component={props.type === "link" ? Link : "div"}
-          {...forwardedProps}
-        >
-          <Icon size={16} name={icon} />
-          {label}
-        </StyledMenuItem>
-      );
-    }
-  };
-  return (
-    <>
-      {props.type === "link" ? (
-        <NextLink href={props.href} passHref legacyBehavior>
-          <Wrapper label={label} icon={iconName} />
-        </NextLink>
-      ) : props.type === "button" ? (
-        <Wrapper label={label} icon={iconName} />
-      ) : null}
-      {props.type === "button" && props.requireConfirmation && (
-        <ConfirmationDialog
-          onClose={close}
-          open={isConfirmationOpen}
-          title={props.confirmationTitle}
-          text={props.confirmationText}
-          onClick={props.onClick}
-          onSuccess={props.onSuccess}
-        />
-      )}
-    </>
-  );
-};
-
-const ConfirmationDialog = ({
-  title,
-  text,
-  onClick,
-  onSuccess,
-  onConfirm,
-  ...props
-}: DialogProps & {
-  title?: string;
-  text?: string;
-  onSuccess?: () => Promise<unknown> | void;
-  onConfirm?: () => Promise<unknown> | void;
-  onClick: () => Promise<unknown> | void;
-}) => {
-  const [loading, setLoading] = React.useState(false);
-
-  return (
-    <Dialog
-      // To prevent the click away listener from closing the dialog.
-      onClick={(e) => e.stopPropagation()}
-      onClose={close}
-      maxWidth="xs"
-      {...props}
-    >
-      <DialogTitle>
-        <Typography variant="h3">
-          {title ??
-            t({
-              id: "login.profile.chart.confirmation.default",
-              message: "Are you sure you want to perform this action?",
-            })}
-        </Typography>
-      </DialogTitle>
-      {text && (
-        <DialogContent>
-          <DialogContentText>{text}</DialogContentText>
-        </DialogContent>
-      )}
-      <DialogActions
-        sx={{
-          "& > .MuiButton-root": {
-            justifyContent: "center",
-            pointerEvents: loading ? "none" : "auto",
-          },
-        }}
-      >
-        <Button variant="text" onClick={close}>
-          <Trans id="no">No</Trans>
-        </Button>
-        <Button
-          variant="text"
-          onClick={async (e) => {
-            e.stopPropagation();
-            setLoading(true);
-
-            await onClick();
-            await new Promise((r) => setTimeout(r, 100));
-
-            props.onClose?.({}, "escapeKeyDown");
-            onSuccess?.();
-          }}
-        >
-          {loading ? <CircularProgress /> : <Trans id="yes">Yes</Trans>}
-        </Button>
-      </DialogActions>
-    </Dialog>
   );
 };
