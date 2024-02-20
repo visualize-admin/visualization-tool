@@ -1173,7 +1173,7 @@ msgstr "Negative Values"
 
 #: app/pages/v/[chartId].tsx
 msgid "hint.publication.draft"
-msgstr "This chart is still in draft."
+msgstr "This chart is still a draft."
 
 #: app/components/hint.tsx
 msgid "hint.publication.success"

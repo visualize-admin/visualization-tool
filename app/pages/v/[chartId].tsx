@@ -201,7 +201,7 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
                 >
                   <div>
                     <Trans id="hint.publication.draft">
-                      This chart is still in draft.
+                      This chart is still a draft.
                     </Trans>
                   </div>
 
