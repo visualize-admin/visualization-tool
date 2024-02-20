@@ -11,12 +11,16 @@ import {
   Divider,
   Link,
   Skeleton,
+  styled,
   Tab,
   Table,
   TableBody,
   TableCell,
+  tableCellClasses,
   TableHead,
+  tableHeadClasses,
   TableRow,
+  tableRowClasses,
   TextField,
   Typography,
   useEventCallback,
@@ -69,6 +73,19 @@ type ProfileVisualizationsTableProps = {
   onShowAll?: () => void;
 };
 
+const StyledTable = styled(Table)(({ theme }) => ({
+  [`& .${tableRowClasses.root}`]: {
+    verticalAlign: "middle",
+    height: 56,
+    [`& > .${tableCellClasses.root}`]: {
+      borderBottomColor: theme.palette.divider,
+    },
+  },
+  [`& .${tableHeadClasses.root} .${tableCellClasses.root}`]: {
+    color: theme.palette.grey[600],
+  },
+}));
+
 export const ProfileVisualizationsTable = (
   props: ProfileVisualizationsTableProps
 ) => {
@@ -78,7 +95,7 @@ export const ProfileVisualizationsTable = (
     <SectionContent title={title}>
       {userConfigs.length > 0 ? (
         <>
-          <Table>
+          <StyledTable>
             <TableHead
               sx={{
                 "& > .MuiTableCell-root": {
@@ -87,31 +104,33 @@ export const ProfileVisualizationsTable = (
                 },
               }}
             >
-              <TableCell>
-                <Trans id="login.profile.my-visualizations.chart-type">
-                  Type
-                </Trans>
-              </TableCell>
-              <TableCell>
-                <Trans id="login.profile.my-visualizations.chart-name">
-                  Name
-                </Trans>
-              </TableCell>
-              <TableCell>
-                <Trans id="login.profile.my-visualizations.dataset-name">
-                  Dataset
-                </Trans>
-              </TableCell>
-              <TableCell>
-                <Trans id="login.profile.my-visualizations.chart-updated-date">
-                  Last edit
-                </Trans>
-              </TableCell>
-              <TableCell>
-                <Trans id="login.profile.my-visualizations.chart-actions">
-                  Actions
-                </Trans>
-              </TableCell>
+              <TableRow sx={{}}>
+                <TableCell>
+                  <Trans id="login.profile.my-visualizations.chart-type">
+                    Type
+                  </Trans>
+                </TableCell>
+                <TableCell>
+                  <Trans id="login.profile.my-visualizations.chart-name">
+                    Name
+                  </Trans>
+                </TableCell>
+                <TableCell>
+                  <Trans id="login.profile.my-visualizations.dataset-name">
+                    Dataset
+                  </Trans>
+                </TableCell>
+                <TableCell>
+                  <Trans id="login.profile.my-visualizations.chart-updated-date">
+                    Last edit
+                  </Trans>
+                </TableCell>
+                <TableCell>
+                  <Trans id="login.profile.my-visualizations.chart-actions">
+                    Actions
+                  </Trans>
+                </TableCell>
+              </TableRow>
             </TableHead>
             <TableBody>
               {userConfigs
@@ -124,7 +143,7 @@ export const ProfileVisualizationsTable = (
                   />
                 ))}
             </TableBody>
-          </Table>
+          </StyledTable>
           {preview && (
             <Button
               variant="text"
@@ -444,15 +463,7 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
   }, [config.data.chartConfigs, locale]);
 
   return (
-    <TableRow
-      sx={{
-        verticalAlign: "middle",
-        height: 56,
-        "& > .MuiTableCell-root": {
-          borderBottomColor: "divider",
-        },
-      }}
-    >
+    <TableRow>
       <TableCell width="10%">
         <Typography variant="body2">
           {config.data.chartConfigs.length > 1 ? "multi" : "single"}
