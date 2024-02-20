@@ -70,17 +70,27 @@ export default function Components() {
   if (checkTiming) {
     check(res, {
       "Response time must be fast": (res) => {
-        return (
-          res.timings.duration <
-          2 * metadata.queries.DataCubeComponents.expectedDuration
-        );
+        return !durationExceedsThreshold(res.timings.duration);
       },
     });
   }
 }
 
 export function handleSummary(data) {
+  if (durationExceedsThreshold(data.metrics.http_req_duration.values.avg)) {
+    return {
+      stdout: `${Math.round(
+        (100 * data.metrics.http_req_duration.values.avg) /
+          metadata.queries.DataCubeComponents.expectedDuration
+      )}% – DataCubeComponents – ${cubeLabel}. `,
+    };
+  }
+
   return {
-    stdout: `DataCubeComponents`,
+    stdout: "",
   };
+}
+
+function durationExceedsThreshold(duration) {
+  return duration > 2 * metadata.queries.DataCubeComponents.expectedDuration;
 }

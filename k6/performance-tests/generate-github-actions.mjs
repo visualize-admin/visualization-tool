@@ -30,7 +30,9 @@ const generateAutoTests = () => {
       )
     )
     .join(" &&\n            ");
-  const file = `name: GraphQL performance tests (auto)
+  const file = `# GENERATED FILE, DO NOT EDIT MANUALLY - use yarn run github:codegen instead
+
+name: GraphQL performance tests (auto)
 
 on:
   workflow_dispatch:
@@ -78,12 +80,11 @@ const generatePRTests = () => {
       )
     )
     .join(" && ");
-  const file = `name: GraphQL performance tests (PR)
+  const file = `# GENERATED FILE, DO NOT EDIT MANUALLY - use yarn run github:codegen instead
+
+name: GraphQL performance tests (PR)
 
 on: [deployment_status]
-
-env:
-  SUMMARY: ''
 
 jobs:
   run_tests:
@@ -95,27 +96,19 @@ jobs:
         uses: actions/checkout@v2
       - name: Send an HTTP request to start up the server
         run: |
-          curl '\${{ github.event.deployment_status.target_url }}/api/graphql' -X 'POST' -H 'Content-Type: application/json' -d '{"operationName":"DataCubeObservations","variables":{"locale":"en","sourceType":"sparql","sourceUrl":"https://lindas.admin.ch/query","cubeFilter":{"iri":"https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9","filters":{"https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton":{"type":"single","value":"https://ld.admin.ch/canton/1"}}}},"query":"query DataCubeObservations($sourceType: String!, $sourceUrl: String!, $locale: String!, $cubeFilter: DataCubeObservationFilter!) { dataCubeObservations(sourceType: $sourceType, sourceUrl: $sourceUrl, locale: $locale, cubeFilter: $cubeFilter) }"}'
+          curl -s '\${{ github.event.deployment_status.target_url }}/api/graphql' -X 'POST' -H 'Content-Type: application/json' -d '{"operationName":"DataCubeObservations","variables":{"locale":"en","sourceType":"sparql","sourceUrl":"https://lindas.admin.ch/query","cubeFilter":{"iri":"https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9","filters":{"https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton":{"type":"single","value":"https://ld.admin.ch/canton/1"}}}},"query":"query DataCubeObservations($sourceType: String!, $sourceUrl: String!, $locale: String!, $cubeFilter: DataCubeObservationFilter!) { dataCubeObservations(sourceType: $sourceType, sourceUrl: $sourceUrl, locale: $locale, cubeFilter: $cubeFilter) }"}' > /dev/null
       - name: Run k6
         uses: addnab/docker-run-action@v3
         with:
           image: grafana/k6:latest
-          options: -v \${{ github.workspace }}:/root
+          options: -v \${{ github.workspace }}:/root -u root
           run: |
-            echo "SUMMARY=$(${commands})" >> $GITHUB_ENV
-      - name: GQL performance tests ✅
-        if: \${{ env.SUMMARY == '' }}
+            touch /root/summary.txt
+            echo "$(${commands})" > /root/summary.txt
+      - name: Set env variable for easier access
         run: |
-          curl --request POST \
-          --url https://api.github.com/repos/\${{ github.repository }}/statuses/\${{ github.sha }} \
-          --header 'authorization: Bearer \${{ secrets.GITHUB_TOKEN }}' \
-          --header 'content-type: application/json' \
-          --data '{
-            "context": "GQL performance tests",
-            "state": "success",
-            "description": "GQL performance tests passed"
-          }'
-      - name: GQL performance tests 🚨
+          echo "SUMMARY=$(< summary.txt)" >> $GITHUB_ENV
+      - name: GQL performance tests ❌
         if: \${{ env.SUMMARY != '' }}
         run: |
           curl --request POST  \
@@ -125,7 +118,7 @@ jobs:
           --data '{
             "context": "GQL performance tests",
             "state": "failure",
-            "description": "GQL performance tests failed for the following queries: \${{ env.SUMMARY }}"
+            "description": "\${{ env.SUMMARY }}"
           }'
 `;
 
@@ -148,5 +141,5 @@ function getRunCommand(
     cube.iri
   } --env CUBE_LABEL=${cube.label} --env ROOT_PATH=/root/ --env CHECK_TIMING=${
     checkTiming ? "true" : "false"
-  } - </root/k6/performance-tests/graphql/${query}.js --quiet`;
+  } --quiet - </root/k6/performance-tests/graphql/${query}.js`;
 }
