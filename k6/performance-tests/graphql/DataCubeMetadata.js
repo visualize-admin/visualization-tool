@@ -67,20 +67,14 @@ export default function Components() {
   if (checkTiming) {
     check(res, {
       "Response time must be fast": (res) => {
-        return (
-          res.timings.duration <
-          2 * metadata.queries.DataCubeMetadata.expectedDuration
-        );
+        return !durationExceedsThreshold(res.timings.duration);
       },
     });
   }
 }
 
 export function handleSummary(data) {
-  if (
-    data.metrics.http_req_duration.values.avg >
-    2 * metadata.queries.DataCubeMetadata.expectedDuration
-  ) {
+  if (durationExceedsThreshold(data.metrics.http_req_duration.values.avg)) {
     return {
       stdout: `${Math.round(
         (100 * data.metrics.http_req_duration.values.avg) /
@@ -92,4 +86,8 @@ export function handleSummary(data) {
   return {
     stdout: "",
   };
+}
+
+function durationExceedsThreshold(duration) {
+  return duration > 2 * metadata.queries.DataCubeMetadata.expectedDuration;
 }
