@@ -20,19 +20,19 @@ export const createConfig = async ({
   key,
   data,
   userId,
-  publishedState,
+  published_state,
 }: {
   key: string;
   data: Prisma.ConfigCreateInput["data"];
   userId?: User["id"] | undefined;
-  publishedState: PUBLISHED_STATE;
+  published_state: PUBLISHED_STATE;
 }): Promise<{ key: string }> => {
   return await prisma.config.create({
     data: {
       key,
       data,
       user_id: userId,
-      published_state: publishedState,
+      published_state,
     },
   });
 };

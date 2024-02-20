@@ -13,13 +13,13 @@ const ConfigController = controller({
   create: async ({ req, res }) => {
     const session = await getServerSession(req, res, nextAuthOptions);
     const userId = session?.user?.id;
-    const { data, publishedState } = req.body;
+    const { data, published_state } = req.body;
 
     return await createConfig({
       key: data.key,
       data,
       userId,
-      publishedState: publishedState,
+      published_state: published_state,
     });
   },
 
