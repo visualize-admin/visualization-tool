@@ -1135,7 +1135,7 @@ export const getTimeFilterOptions = (props: GetTimeFilterOptionsProps) => {
   };
 };
 
-export const InteractiveTimeRangeToggle = (
+const InteractiveTimeRangeToggle = (
   props: Omit<FormControlLabelProps, "control" | "label">
 ) => {
   const { checked, toggle } = useInteractiveTimeRangeToggle();
