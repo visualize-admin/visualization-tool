@@ -336,7 +336,6 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
 
   const { invalidate: invalidateUserConfigs } = useUserConfigs();
 
-  const updateConfigMut = useMutate(updateConfig);
   const removeConfigMut = useMutate(removeConfig);
 
   const {
@@ -375,40 +374,40 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
         label: t({ id: "login.chart.share", message: "Share" }),
         iconName: "linkExternal",
       },
-      {
-        type: "button",
-        label:
-          config.published_state === PUBLISHED_STATE.DRAFT
-            ? t({
-                id: "login.chart.actions.publish",
-                message: `Publish`,
-              })
-            : t({
-                id: "login.chart.actions.turn-into-draft",
-                message: "Turn into draft",
-              }),
-        iconName:
-          updateConfigMut.status === "fetching" ? "loading" : "linkExternal",
+      // {
+      //   type: "button",
+      //   label:
+      //     config.published_state === PUBLISHED_STATE.DRAFT
+      //       ? t({
+      //           id: "login.chart.actions.publish",
+      //           message: `Publish`,
+      //         })
+      //       : t({
+      //           id: "login.chart.actions.turn-into-draft",
+      //           message: "Turn into draft",
+      //         }),
+      //   iconName:
+      //     updateConfigMut.status === "fetching" ? "loading" : "linkExternal",
 
-        onClick: async () => {
-          await updateConfigMut.mutate({
-            key: config.key,
-            user_id: userId,
-            data: {
-              ...config.data,
-              state: "PUBLISHING",
-            },
-            published_state:
-              config.published_state === PUBLISHED_STATE.DRAFT
-                ? PUBLISHED_STATE.PUBLISHED
-                : PUBLISHED_STATE.DRAFT,
-          });
-          invalidateUserConfigs();
-        },
-        onSuccess: () => {
-          invalidateUserConfigs();
-        },
-      },
+      //   onClick: async () => {
+      //     await updateConfigMut.mutate({
+      //       key: config.key,
+      //       user_id: userId,
+      //       data: {
+      //         ...config.data,
+      //         state: "PUBLISHING",
+      //       },
+      //       published_state:
+      //         config.published_state === PUBLISHED_STATE.DRAFT
+      //           ? PUBLISHED_STATE.PUBLISHED
+      //           : PUBLISHED_STATE.DRAFT,
+      //     });
+      //     invalidateUserConfigs();
+      //   },
+      //   onSuccess: () => {
+      //     invalidateUserConfigs();
+      //   },
+      // },
       {
         type: "button",
         label: t({ id: "login.chart.rename", message: "Rename" }),
