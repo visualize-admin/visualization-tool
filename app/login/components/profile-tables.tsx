@@ -1,26 +1,38 @@
 import { t, Trans } from "@lingui/macro";
+import { LoadingButton, TabContext, TabList, TabPanel } from "@mui/lab";
 import {
   Box,
   Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogProps,
+  DialogTitle,
+  Divider,
   Link,
   Skeleton,
+  Tab,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableRow,
+  TextField,
   Typography,
+  useEventCallback,
 } from "@mui/material";
 import { PUBLISHED_STATE } from "@prisma/client";
 import sortBy from "lodash/sortBy";
 import NextLink from "next/link";
-import React from "react";
+import React, { FormEvent, useState } from "react";
 
+import useDisclosure from "@/components/use-disclosure";
 import { ParsedConfig } from "@/db/config";
 import { sourceToLabel } from "@/domain/datasource";
 import { truthy } from "@/domain/types";
 import { useUserConfigs } from "@/domain/user-configs";
 import { useDataCubesMetadataQuery } from "@/graphql/hooks";
+import { Locale } from "@/locales/locales";
 import { useRootStyles } from "@/login/utils";
 import { useLocale } from "@/src";
 import { removeConfig, updateConfig } from "@/utils/chart-config/api";
@@ -145,6 +157,144 @@ type ProfileVisualizationsRowProps = {
   config: ParsedConfig;
 };
 
+const RenameDialog = ({
+  config,
+  locale,
+  onClose,
+  userId,
+  ...props
+}: {
+  config: ParsedConfig;
+  locale: Locale;
+  onClose: () => void;
+  userId: number;
+} & Omit<DialogProps, "onClose">) => {
+  const { invalidate: invalidateUserConfigs } = useUserConfigs();
+  const [renameIndex, setRenameIndex] = useState(0);
+
+  const updateConfigMut = useMutate(updateConfig);
+
+  const handleRename = useEventCallback(
+    async (ev: FormEvent<HTMLFormElement>) => {
+      const formData = Array.from(new FormData(ev.currentTarget)).reduce(
+        (acc, [key, value]) => {
+          const [_field, indexS, lang] = key.split(".");
+          const index = Number(indexS);
+          acc[index] = acc[index] || ({} as Record<string, string>);
+          acc[index][lang as Locale] = `${value}`;
+          return acc;
+        },
+        [] as Record<Locale, string>[]
+      );
+      ev.preventDefault();
+
+      await updateConfigMut.mutate({
+        key: config.key,
+        user_id: userId,
+        data: {
+          ...config.data,
+          chartConfigs: config.data.chartConfigs.map((x, i) => ({
+            ...x,
+            meta: {
+              ...x.meta,
+              title: formData[i],
+            },
+          })),
+        },
+      });
+
+      invalidateUserConfigs();
+      onClose?.();
+    }
+  );
+
+  return (
+    <Dialog {...props} fullWidth>
+      <form style={{ display: "contents" }} onSubmit={handleRename}>
+        <DialogTitle>
+          <Trans id="chart.rename">Rename</Trans>
+        </DialogTitle>
+        <DialogContent>
+          <Typography variant="body2">
+            <Trans id="login.profile.chart.rename-dialog.title">
+              Enhance chart clarity with a clear title; a good title helps
+              understanding chart content.
+            </Trans>
+          </Typography>
+          <TabContext value={`${renameIndex}`}>
+            <TabList onChange={(_ev, newTab) => setRenameIndex(newTab)}>
+              {config.data.chartConfigs.map((x, i) => {
+                return (
+                  <Tab
+                    key={i}
+                    value={`${i}`}
+                    label={
+                      <span>
+                        {x.meta.title[locale] !== ""
+                          ? x.meta.title[locale]
+                          : t({ id: "annotation.add.title" })}
+                      </span>
+                    }
+                  />
+                );
+              })}
+            </TabList>
+            <Divider sx={{ mb: "1rem" }} />
+            {config.data.chartConfigs.map((x, i) => {
+              return (
+                <TabPanel
+                  value={`${i}`}
+                  key={i}
+                  sx={{
+                    gap: "1rem",
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
+                  <TextField
+                    name={`title.${i}.de`}
+                    label={t({ id: "controls.language.german" })}
+                    defaultValue={x.meta.title.de}
+                  />
+                  <TextField
+                    name={`title.${i}.fr`}
+                    label={t({ id: "controls.language.french" })}
+                    defaultValue={x.meta.title.fr}
+                  />
+                  <TextField
+                    name={`title.${i}.it`}
+                    label={t({ id: "controls.language.italian" })}
+                    defaultValue={x.meta.title.it}
+                  />
+                  <TextField
+                    name={`title.${i}.en`}
+                    label={t({ id: "controls.language.english" })}
+                    defaultValue={x.meta.title.en}
+                  />
+                </TabPanel>
+              );
+            })}
+          </TabContext>
+        </DialogContent>
+        <DialogActions sx={{ pb: 6, pr: 6 }}>
+          <Button variant="outlined" onClick={onClose}>
+            Cancel
+          </Button>
+          <LoadingButton
+            sx={{ minWidth: "auto" }}
+            loading={updateConfigMut.status === "fetching"}
+            variant="contained"
+            color="primary"
+            type="submit"
+          >
+            OK
+          </LoadingButton>
+        </DialogActions>
+      </form>
+    </Dialog>
+  );
+};
+
 const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
   const { userId, config } = props;
   const { dataSource } = config.data;
@@ -165,8 +315,15 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
 
   const { invalidate: invalidateUserConfigs } = useUserConfigs();
 
-  const updatePublishedStateMut = useMutate(updateConfig);
-  const removeMut = useMutate(removeConfig);
+  const updateConfigMut = useMutate(updateConfig);
+  const removeConfigMut = useMutate(removeConfig);
+
+  const {
+    isOpen: isRenameOpen,
+    open: openRename,
+    close: closeRename,
+  } = useDisclosure();
+
   const actions = React.useMemo(() => {
     const actions: ActionProps[] = [
       {
@@ -210,12 +367,10 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
                 message: "Turn into draft",
               }),
         iconName:
-          updatePublishedStateMut.status === "fetching"
-            ? "loading"
-            : "linkExternal",
+          updateConfigMut.status === "fetching" ? "loading" : "linkExternal",
 
         onClick: async () => {
-          await updatePublishedStateMut.mutate({
+          await updateConfigMut.mutate({
             key: config.key,
             user_id: userId,
             data: {
@@ -235,9 +390,17 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
       },
       {
         type: "button",
+        label: t({ id: "login.chart.rename", message: "Rename" }),
+        iconName: "text",
+        onClick: () => {
+          openRename();
+        },
+      },
+      {
+        type: "button",
         label: t({ id: "login.chart.delete", message: "Delete" }),
         color: "error",
-        iconName: removeMut.status === "fetching" ? "loading" : "trash",
+        iconName: removeConfigMut.status === "fetching" ? "loading" : "trash",
         requireConfirmation: true,
         confirmationTitle: t({
           id: "login.chart.delete.confirmation",
@@ -249,7 +412,7 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
             "Keep in mind that removing this visualization will affect all the places where it might be already embedded!",
         }),
         onClick: () => {
-          removeMut.mutate({ key: config.key });
+          removeConfigMut.mutate({ key: config.key });
         },
         onSuccess: () => {
           invalidateUserConfigs();
@@ -263,8 +426,9 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
     config.key,
     config.published_state,
     invalidateUserConfigs,
-    removeMut,
-    updatePublishedStateMut,
+    openRename,
+    removeConfigMut,
+    updateConfigMut,
     userId,
   ]);
 
@@ -336,6 +500,13 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
       </TableCell>
       <TableCell width="20%" align="right">
         <RowActions actions={actions} />
+        <RenameDialog
+          config={config}
+          open={isRenameOpen}
+          onClose={closeRename}
+          locale={locale}
+          userId={userId}
+        />
       </TableCell>
     </TableRow>
   );

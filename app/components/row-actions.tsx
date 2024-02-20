@@ -12,7 +12,9 @@ export type ActionProps = {
   label: string;
   iconName: IconName;
   priority?: number;
+  stayOpen?: boolean;
   color?: "primary" | "error";
+  onClick?: () => Promise<void> | void;
 } & (
   | {
       type: "link";
@@ -20,8 +22,8 @@ export type ActionProps = {
     }
   | {
       type: "button";
-      onClick: () => Promise<void> | void;
       requireConfirmation?: false | undefined;
+      onClick: () => Promise<void> | void;
     }
   | {
       type: "button";
@@ -120,10 +122,10 @@ export const Action = (props: ActionProps & { as: "menuitem" | "button" }) => {
 export const RowActions = (props: ActionsProps) => {
   const { actions } = props;
   const buttonRef = React.useRef<HTMLButtonElement>(null);
-  const { isOpen, open, close } = useDisclosure();
+  const menuDisclosure = useDisclosure();
+  const { isOpen, open, close } = menuDisclosure;
 
   const [primaryAction, ...rest] = actions;
-
   return (
     <Box gap="0.5rem" display="flex" alignItems="center">
       <Action
@@ -147,6 +149,12 @@ export const RowActions = (props: ActionsProps) => {
             as="menuitem"
             key={i}
             {...props}
+            onClick={() => {
+              if (!props.stayOpen) {
+                menuDisclosure.close();
+              }
+              return props.onClick?.();
+            }}
             {...(props.type === "button" ? { onDialogClose: close } : {})}
           />
         ))}
