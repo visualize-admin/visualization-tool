@@ -85,7 +85,7 @@ export function handleSummary(data) {
       stdout: `${Math.round(
         (100 * data.metrics.http_req_duration.values.avg) /
           metadata.queries.DataCubePreview.expectedDuration
-      )}% – DataCubePreview – ${cubeLabel}\n`,
+      )}% – DataCubePreview – ${cubeLabel}. `,
     };
   }
 
