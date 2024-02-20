@@ -63,8 +63,6 @@ export const createConfig = async (options: CreateConfigOptions) => {
 export const updateConfig = async (options: UpdateConfigOptions) => {
   const { key, user_id, published_state } = options;
 
-  console.log("hello", key, user_id, published_state);
-
   return apiFetch<InferAPIResponse<typeof apiConfigUpdate, "POST">>(
     "/api/config-update",
     {

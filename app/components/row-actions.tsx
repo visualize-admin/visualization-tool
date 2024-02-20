@@ -52,7 +52,11 @@ const StyledMenuItem = styled(MenuItem)(({ theme, color }) => ({
 
 export const Action = (props: ActionProps & { as: "menuitem" | "button" }) => {
   const { label, iconName } = props;
-  const { isOpen: isConfirmationOpen } = useDisclosure();
+  const {
+    isOpen: isConfirmationOpen,
+    open: openConfirmation,
+    close: closeConfirmation,
+  } = useDisclosure();
 
   const Wrapper = ({
     icon,
@@ -63,10 +67,19 @@ export const Action = (props: ActionProps & { as: "menuitem" | "button" }) => {
     label: string;
     color?: ActionProps["color"];
   }) => {
+    const handleClick = () => {
+      if (props.onClick) {
+        if ("requireConfirmation" in props && props.requireConfirmation) {
+          openConfirmation();
+        } else {
+          return props.onClick();
+        }
+      }
+    };
     const forwardedProps =
       props.type === "button"
         ? {
-            onClick: props.onClick,
+            onClick: handleClick,
           }
         : {
             href: props.href,
@@ -107,7 +120,7 @@ export const Action = (props: ActionProps & { as: "menuitem" | "button" }) => {
       ) : null}
       {props.type === "button" && props.requireConfirmation && (
         <ConfirmationDialog
-          onClose={close}
+          onClose={closeConfirmation}
           open={isConfirmationOpen}
           title={props.confirmationTitle}
           text={props.confirmationText}
