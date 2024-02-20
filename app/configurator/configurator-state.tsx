@@ -1532,6 +1532,14 @@ export const initChartStateFromLocalStorage = async (
   window.localStorage.removeItem(getLocalStorageKey(chartId));
 };
 
+export const saveChartLocally = (chartId: string, state: ConfiguratorState) => {
+  window.localStorage.setItem(
+    getLocalStorageKey(chartId),
+    JSON.stringify(state)
+  );
+  return;
+};
+
 const ConfiguratorStateProviderInternal = (
   props: ConfiguratorStateProviderProps
 ) => {
@@ -1598,24 +1606,16 @@ const ConfiguratorStateProviderInternal = (
       switch (state.state) {
         case "CONFIGURING_CHART":
         case "LAYOUTING":
-          if (chartId === "new") {
-            const chartId =
-              query.edit && typeof query.edit === "string"
+          const savedChartId =
+            chartId === "new"
+              ? query.edit && typeof query.edit === "string"
                 ? query.edit
-                : createChartId();
-            replace(`/create/${chartId}`);
-            window.localStorage.setItem(
-              getLocalStorageKey(chartId),
-              JSON.stringify(state)
-            );
-          } else {
-            // Store current state in localstorage
-            window.localStorage.setItem(
-              getLocalStorageKey(chartId),
-              JSON.stringify(state)
-            );
+                : createChartId()
+              : chartId;
+          if (chartId === "new") {
+            replace(`/create/${savedChartId}`);
           }
-
+          saveChartLocally(savedChartId, state);
           return;
 
         case "PUBLISHING":
