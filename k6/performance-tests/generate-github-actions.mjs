@@ -30,7 +30,9 @@ const generateAutoTests = () => {
       )
     )
     .join(" &&\n            ");
-  const file = `name: GraphQL performance tests (auto)
+  const file = `# GENERATED FILE, DO NOT EDIT MANUALLY - use yarn run github:codegen instead
+
+name: GraphQL performance tests (auto)
 
 on:
   workflow_dispatch:
@@ -78,7 +80,9 @@ const generatePRTests = () => {
       )
     )
     .join(" && ");
-  const file = `name: GraphQL performance tests (PR)
+  const file = `# GENERATED FILE, DO NOT EDIT MANUALLY - use yarn run github:codegen instead
+
+name: GraphQL performance tests (PR)
 
 on: [deployment_status]
 
