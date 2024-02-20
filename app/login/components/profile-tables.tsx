@@ -442,14 +442,11 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
 
     return sortBy(actions, (x) => x.priority);
   }, [
-    config.data,
     config.key,
     config.published_state,
     invalidateUserConfigs,
     openRename,
     removeConfigMut,
-    updateConfigMut,
-    userId,
   ]);
 
   const chartTitle = React.useMemo(() => {
