@@ -431,7 +431,7 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
             "Keep in mind that removing this visualization will affect all the places where it might be already embedded!",
         }),
         onClick: () => {
-          removeConfigMut.mutate({ key: config.key });
+          return removeConfigMut.mutate({ key: config.key });
         },
         onSuccess: () => {
           invalidateUserConfigs();

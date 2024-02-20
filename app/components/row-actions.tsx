@@ -14,7 +14,7 @@ export type ActionProps = {
   priority?: number;
   stayOpen?: boolean;
   color?: "primary" | "error";
-  onClick?: () => Promise<void> | void;
+  onClick?: () => Promise<unknown> | void;
 } & (
   | {
       type: "link";
@@ -23,11 +23,11 @@ export type ActionProps = {
   | {
       type: "button";
       requireConfirmation?: false | undefined;
-      onClick: () => Promise<void> | void;
+      onClick: () => Promise<unknown> | void;
     }
   | {
       type: "button";
-      onClick: () => Promise<void> | void;
+      onClick: () => Promise<unknown> | void;
       requireConfirmation: true;
       confirmationTitle?: string;
       confirmationText?: string;
