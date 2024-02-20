@@ -188,7 +188,7 @@ export const useChartOptionSelectField = <V extends {} = string>(
   if (state.state === "CONFIGURING_CHART") {
     value = get(
       getChartConfig(state),
-      `fields.${field}.${path}`,
+      `fields["${field}"].${path}`,
       FIELD_VALUE_NONE
     );
   }
