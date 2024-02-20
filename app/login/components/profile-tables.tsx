@@ -469,7 +469,7 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
           {config.data.chartConfigs.length > 1 ? "multi" : "single"}
         </Typography>
       </TableCell>
-      <TableCell width="35%">
+      <TableCell width="30%">
         <NextLink href={`/v/${config.key}`} passHref legacyBehavior>
           <Link color="primary">
             <Typography variant="body2" noWrap>
@@ -478,7 +478,7 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
           </Link>
         </NextLink>
       </TableCell>
-      <TableCell width="35%">
+      <TableCell width="30%">
         {fetching ? (
           <Skeleton width="50%" height={32} />
         ) : dataSet ? (
