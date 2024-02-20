@@ -1,149 +1,162 @@
-import { Trans, t } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
+import { LoadingButton, TabContext, TabList, TabPanel } from "@mui/lab";
 import {
   Box,
   Button,
-  CircularProgress,
-  ClickAwayListener,
   Dialog,
   DialogActions,
   DialogContent,
-  DialogContentText,
+  DialogProps,
   DialogTitle,
-  IconButton,
+  Divider,
   Link,
   Skeleton,
+  styled,
+  Tab,
   Table,
   TableBody,
   TableCell,
+  tableCellClasses,
   TableHead,
+  tableHeadClasses,
   TableRow,
-  Tooltip,
+  tableRowClasses,
+  TextField,
   Typography,
+  useEventCallback,
 } from "@mui/material";
+import { PUBLISHED_STATE } from "@prisma/client";
+import sortBy from "lodash/sortBy";
 import NextLink from "next/link";
-import React from "react";
+import React, { FormEvent, useState } from "react";
 
 import useDisclosure from "@/components/use-disclosure";
 import { ParsedConfig } from "@/db/config";
 import { sourceToLabel } from "@/domain/datasource";
 import { truthy } from "@/domain/types";
+import { useUserConfigs } from "@/domain/user-configs";
 import { useDataCubesMetadataQuery } from "@/graphql/hooks";
-import { Icon, IconName } from "@/icons";
+import { Locale } from "@/locales/locales";
 import { useRootStyles } from "@/login/utils";
 import { useLocale } from "@/src";
-import { removeConfig } from "@/utils/chart-config/api";
+import { removeConfig, updateConfig } from "@/utils/chart-config/api";
+import { useMutate } from "@/utils/use-fetch-data";
+
+import { ActionProps, RowActions } from "../../components/row-actions";
 
 const PREVIEW_LIMIT = 3;
 
-type ProfileTableProps = React.PropsWithChildren<{
+const SectionContent = ({
+  children,
+  title,
+}: {
+  children: React.ReactNode;
   title: string;
-  preview?: boolean;
-  onShowAll?: () => void;
-}>;
-
-const ProfileTable = (props: ProfileTableProps) => {
-  const { title, preview, onShowAll, children } = props;
+}) => {
   const rootClasses = useRootStyles();
-
   return (
     <Box className={rootClasses.sectionContent}>
       <Typography variant="h2" sx={{ mb: 4 }}>
         {title}
       </Typography>
-      <Table>{children}</Table>
-      {preview && (
-        <Button
-          variant="text"
-          color="primary"
-          size="small"
-          onClick={onShowAll}
-          sx={{ ml: 1, mt: 2 }}
-        >
-          <Typography variant="body2">
-            <Trans id="show.all">Show all</Trans>
-          </Typography>
-        </Button>
-      )}
+
+      {children}
     </Box>
   );
 };
 
 type ProfileVisualizationsTableProps = {
+  title: string;
   userId: number;
   userConfigs: ParsedConfig[];
-  setUserConfigs: React.Dispatch<React.SetStateAction<ParsedConfig[]>>;
   preview?: boolean;
   onShowAll?: () => void;
 };
 
+const StyledTable = styled(Table)(({ theme }) => ({
+  [`& .${tableRowClasses.root}`]: {
+    verticalAlign: "middle",
+    height: 56,
+    [`& > .${tableCellClasses.root}`]: {
+      borderBottomColor: theme.palette.divider,
+    },
+  },
+  [`& .${tableHeadClasses.root} .${tableCellClasses.root}`]: {
+    color: theme.palette.grey[600],
+  },
+}));
+
 export const ProfileVisualizationsTable = (
   props: ProfileVisualizationsTableProps
 ) => {
-  const { userId, userConfigs, setUserConfigs, preview, onShowAll } = props;
-  const onRemoveSuccess = React.useCallback(
-    (key: string) => {
-      setUserConfigs((prev) => prev.filter((d) => d.key !== key));
-    },
-    [setUserConfigs]
-  );
+  const { title, userId, userConfigs, preview, onShowAll } = props;
 
   return (
-    <ProfileTable
-      title={t({
-        id: "login.profile.my-visualizations",
-        message: "My visualizations",
-      })}
-      preview={preview && userConfigs.length > PREVIEW_LIMIT}
-      onShowAll={onShowAll}
-    >
+    <SectionContent title={title}>
       {userConfigs.length > 0 ? (
         <>
-          <TableHead
-            sx={{
-              "& > .MuiTableCell-root": {
-                borderBottomColor: "divider",
-                color: "secondary.main",
-              },
-            }}
-          >
-            <TableCell>
-              <Trans id="login.profile.my-visualizations.chart-type">
-                Type
-              </Trans>
-            </TableCell>
-            <TableCell>
-              <Trans id="login.profile.my-visualizations.chart-name">
-                Name
-              </Trans>
-            </TableCell>
-            <TableCell>
-              <Trans id="login.profile.my-visualizations.dataset-name">
-                Dataset
-              </Trans>
-            </TableCell>
-            <TableCell>
-              <Trans id="login.profile.my-visualizations.chart-published-date">
-                Published
-              </Trans>
-            </TableCell>
-            <TableCell align="right">
-              <Trans id="login.profile.my-visualizations.chart-actions">
-                Actions
-              </Trans>
-            </TableCell>
-          </TableHead>
-          <TableBody>
-            {userConfigs
-              .slice(0, preview ? PREVIEW_LIMIT : undefined)
-              .map((config) => (
-                <ProfileVisualizationsRow
-                  key={config.key}
-                  userId={userId}
-                  config={config}
-                  onRemoveSuccess={onRemoveSuccess}
-                />
-              ))}
-          </TableBody>
+          <StyledTable>
+            <TableHead
+              sx={{
+                "& > .MuiTableCell-root": {
+                  borderBottomColor: "divider",
+                  color: "secondary.main",
+                },
+              }}
+            >
+              <TableRow sx={{}}>
+                <TableCell>
+                  <Trans id="login.profile.my-visualizations.chart-type">
+                    Type
+                  </Trans>
+                </TableCell>
+                <TableCell>
+                  <Trans id="login.profile.my-visualizations.chart-name">
+                    Name
+                  </Trans>
+                </TableCell>
+                <TableCell>
+                  <Trans id="login.profile.my-visualizations.dataset-name">
+                    Dataset
+                  </Trans>
+                </TableCell>
+                <TableCell>
+                  <Trans id="login.profile.my-visualizations.chart-updated-date">
+                    Last edit
+                  </Trans>
+                </TableCell>
+                <TableCell>
+                  <Trans id="login.profile.my-visualizations.chart-actions">
+                    Actions
+                  </Trans>
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {userConfigs
+                .slice(0, preview ? PREVIEW_LIMIT : undefined)
+                .map((config) => (
+                  <ProfileVisualizationsRow
+                    key={config.key}
+                    userId={userId}
+                    config={config}
+                  />
+                ))}
+            </TableBody>
+          </StyledTable>
+          {preview && (
+            <Button
+              variant="text"
+              color="primary"
+              size="small"
+              onClick={onShowAll}
+              sx={{ ml: 1, mt: 2 }}
+            >
+              <Typography variant="body2">
+                <Trans id="show.all">Show all</Trans>
+              </Typography>
+            </Button>
+          )}
         </>
       ) : (
         <Typography variant="body1">
@@ -154,18 +167,155 @@ export const ProfileVisualizationsTable = (
           .
         </Typography>
       )}
-    </ProfileTable>
+    </SectionContent>
   );
 };
 
 type ProfileVisualizationsRowProps = {
   userId: number;
   config: ParsedConfig;
-  onRemoveSuccess: (key: string) => void;
+};
+
+const RenameDialog = ({
+  config,
+  locale,
+  onClose,
+  userId,
+  ...props
+}: {
+  config: ParsedConfig;
+  locale: Locale;
+  onClose: () => void;
+  userId: number;
+} & Omit<DialogProps, "onClose">) => {
+  const { invalidate: invalidateUserConfigs } = useUserConfigs();
+  const [renameIndex, setRenameIndex] = useState(0);
+
+  const updateConfigMut = useMutate(updateConfig);
+
+  const handleRename = useEventCallback(
+    async (ev: FormEvent<HTMLFormElement>) => {
+      const formData = Array.from(new FormData(ev.currentTarget)).reduce(
+        (acc, [key, value]) => {
+          const [_field, indexS, lang] = key.split(".");
+          const index = Number(indexS);
+          acc[index] = acc[index] || ({} as Record<string, string>);
+          acc[index][lang as Locale] = `${value}`;
+          return acc;
+        },
+        [] as Record<Locale, string>[]
+      );
+      ev.preventDefault();
+
+      await updateConfigMut.mutate({
+        key: config.key,
+        user_id: userId,
+        data: {
+          ...config.data,
+          chartConfigs: config.data.chartConfigs.map((x, i) => ({
+            ...x,
+            meta: {
+              ...x.meta,
+              title: formData[i],
+            },
+          })),
+        },
+      });
+
+      invalidateUserConfigs();
+      onClose?.();
+    }
+  );
+
+  return (
+    <Dialog {...props} fullWidth>
+      <form style={{ display: "contents" }} onSubmit={handleRename}>
+        <DialogTitle>
+          <Trans id="chart.rename">Rename</Trans>
+        </DialogTitle>
+        <DialogContent>
+          <Typography variant="body2">
+            <Trans id="login.profile.chart.rename-dialog.title">
+              Enhance chart clarity with a clear title; a good title helps
+              understanding chart content.
+            </Trans>
+          </Typography>
+          <TabContext value={`${renameIndex}`}>
+            <TabList onChange={(_ev, newTab) => setRenameIndex(newTab)}>
+              {config.data.chartConfigs.map((x, i) => {
+                return (
+                  <Tab
+                    key={i}
+                    value={`${i}`}
+                    label={
+                      <span>
+                        {x.meta.title[locale] !== ""
+                          ? x.meta.title[locale]
+                          : t({ id: "annotation.add.title" })}
+                      </span>
+                    }
+                  />
+                );
+              })}
+            </TabList>
+            <Divider sx={{ mb: "1rem" }} />
+            {config.data.chartConfigs.map((x, i) => {
+              return (
+                <TabPanel
+                  value={`${i}`}
+                  key={i}
+                  sx={{
+                    gap: "1rem",
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
+                  <TextField
+                    name={`title.${i}.de`}
+                    label={t({ id: "controls.language.german" })}
+                    defaultValue={x.meta.title.de}
+                  />
+                  <TextField
+                    name={`title.${i}.fr`}
+                    label={t({ id: "controls.language.french" })}
+                    defaultValue={x.meta.title.fr}
+                  />
+                  <TextField
+                    name={`title.${i}.it`}
+                    label={t({ id: "controls.language.italian" })}
+                    defaultValue={x.meta.title.it}
+                  />
+                  <TextField
+                    name={`title.${i}.en`}
+                    label={t({ id: "controls.language.english" })}
+                    defaultValue={x.meta.title.en}
+                  />
+                </TabPanel>
+              );
+            })}
+          </TabContext>
+        </DialogContent>
+        <DialogActions sx={{ pb: 6, pr: 6 }}>
+          <Button variant="outlined" onClick={onClose}>
+            Cancel
+          </Button>
+          <LoadingButton
+            sx={{ minWidth: "auto" }}
+            loading={updateConfigMut.status === "fetching"}
+            variant="contained"
+            color="primary"
+            type="submit"
+          >
+            OK
+          </LoadingButton>
+        </DialogActions>
+      </form>
+    </Dialog>
+  );
 };
 
 const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
-  const { userId, config, onRemoveSuccess } = props;
+  const { userId, config } = props;
   const { dataSource } = config.data;
   const dataSets = Array.from(
     new Set(config.data.chartConfigs.flatMap((d) => d.cubes.map((d) => d.iri)))
@@ -181,8 +331,28 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
     },
     pause: !dataSet,
   });
+
+  const { invalidate: invalidateUserConfigs } = useUserConfigs();
+
+  const updateConfigMut = useMutate(updateConfig);
+  const removeConfigMut = useMutate(removeConfig);
+
+  const {
+    isOpen: isRenameOpen,
+    open: openRename,
+    close: closeRename,
+  } = useDisclosure();
+
   const actions = React.useMemo(() => {
     const actions: ActionProps[] = [
+      {
+        type: "link",
+        href: `/v/${config.key}`,
+        label: t({ id: "login.chart.view", message: "View" }),
+        iconName: "eye",
+        priority:
+          config.published_state === PUBLISHED_STATE.PUBLISHED ? 0 : undefined,
+      },
       {
         type: "link",
         href: `/create/new?copy=${config.key}`,
@@ -194,6 +364,8 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
         href: `/create/new?edit=${config.key}`,
         label: t({ id: "login.chart.edit", message: "Edit" }),
         iconName: "edit",
+        priority:
+          config.published_state === PUBLISHED_STATE.DRAFT ? 0 : undefined,
       },
       {
         type: "link",
@@ -203,8 +375,51 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
       },
       {
         type: "button",
+        label:
+          config.published_state === PUBLISHED_STATE.DRAFT
+            ? t({
+                id: "login.chart.actions.publish",
+                message: `Publish`,
+              })
+            : t({
+                id: "login.chart.actions.turn-into-draft",
+                message: "Turn into draft",
+              }),
+        iconName:
+          updateConfigMut.status === "fetching" ? "loading" : "linkExternal",
+
+        onClick: async () => {
+          await updateConfigMut.mutate({
+            key: config.key,
+            user_id: userId,
+            data: {
+              ...config.data,
+              state: "PUBLISHING",
+            },
+            published_state:
+              config.published_state === PUBLISHED_STATE.DRAFT
+                ? PUBLISHED_STATE.PUBLISHED
+                : PUBLISHED_STATE.DRAFT,
+          });
+          invalidateUserConfigs();
+        },
+        onSuccess: () => {
+          invalidateUserConfigs();
+        },
+      },
+      {
+        type: "button",
+        label: t({ id: "login.chart.rename", message: "Rename" }),
+        iconName: "text",
+        onClick: () => {
+          openRename();
+        },
+      },
+      {
+        type: "button",
         label: t({ id: "login.chart.delete", message: "Delete" }),
-        iconName: "trash",
+        color: "error",
+        iconName: removeConfigMut.status === "fetching" ? "loading" : "trash",
         requireConfirmation: true,
         confirmationTitle: t({
           id: "login.chart.delete.confirmation",
@@ -215,17 +430,26 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
           message:
             "Keep in mind that removing this visualization will affect all the places where it might be already embedded!",
         }),
-        onClick: async () => {
-          await removeConfig({ key: config.key, userId });
+        onClick: () => {
+          return removeConfigMut.mutate({ key: config.key });
         },
         onSuccess: () => {
-          onRemoveSuccess(config.key);
+          invalidateUserConfigs();
         },
       },
     ];
 
-    return actions;
-  }, [config.key, onRemoveSuccess, userId]);
+    return sortBy(actions, (x) => x.priority);
+  }, [
+    config.data,
+    config.key,
+    config.published_state,
+    invalidateUserConfigs,
+    openRename,
+    removeConfigMut,
+    updateConfigMut,
+    userId,
+  ]);
 
   const chartTitle = React.useMemo(() => {
     const title = config.data.chartConfigs
@@ -239,30 +463,22 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
   }, [config.data.chartConfigs, locale]);
 
   return (
-    <TableRow
-      sx={{
-        verticalAlign: "middle",
-        height: 56,
-        "& > .MuiTableCell-root": {
-          borderBottomColor: "divider",
-        },
-      }}
-    >
-      <TableCell width={80}>
+    <TableRow>
+      <TableCell width="10%">
         <Typography variant="body2">
           {config.data.chartConfigs.length > 1 ? "multi" : "single"}
         </Typography>
       </TableCell>
-      <TableCell width="auto" sx={{ maxWidth: 320 }}>
+      <TableCell width="30%">
         <NextLink href={`/v/${config.key}`} passHref legacyBehavior>
-          <Link target="_blank" color="primary">
+          <Link color="primary">
             <Typography variant="body2" noWrap>
               {chartTitle}
             </Typography>
           </Link>
         </NextLink>
       </TableCell>
-      <TableCell width="auto" sx={{ maxWidth: 320 }}>
+      <TableCell width="30%">
         {fetching ? (
           <Skeleton width="50%" height={32} />
         ) : dataSet ? (
@@ -273,7 +489,7 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
             passHref
             legacyBehavior
           >
-            <Link target="_blank" color="primary">
+            <Link color="primary">
               <Typography variant="body2" noWrap>
                 {data?.dataCubesMetadata[0]?.title ?? ""}
               </Typography>
@@ -288,198 +504,21 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
           </Typography>
         )}
       </TableCell>
-      <TableCell width={120}>
-        <Typography variant="body2">
-          {config.created_at.toLocaleDateString("de")}
+      <TableCell width="10%">
+        <Typography width="auto" variant="body2">
+          {config.updated_at.toLocaleDateString("de")}
         </Typography>
       </TableCell>
-      <TableCell width="auto" align="right">
-        <Actions actions={actions} />
+      <TableCell width="20%" align="right">
+        <RowActions actions={actions} />
+        <RenameDialog
+          config={config}
+          open={isRenameOpen}
+          onClose={closeRename}
+          locale={locale}
+          userId={userId}
+        />
       </TableCell>
     </TableRow>
-  );
-};
-
-type ActionsProps = {
-  actions: ActionProps[];
-};
-
-const Actions = (props: ActionsProps) => {
-  const { actions } = props;
-  const buttonRef = React.useRef<HTMLButtonElement>(null);
-  const { isOpen, open, close } = useDisclosure();
-
-  return (
-    <ClickAwayListener onClickAway={close}>
-      <Tooltip
-        arrow
-        open={isOpen}
-        title={
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-            {actions.map((props, i) => (
-              <Action
-                key={i}
-                {...props}
-                {...(props.type === "button" ? { onDialogClose: close } : {})}
-              />
-            ))}
-          </Box>
-        }
-        sx={{ p: 2 }}
-        componentsProps={{ tooltip: { sx: { p: 3, pb: 2 } } }}
-      >
-        <IconButton ref={buttonRef} onClick={isOpen ? close : open}>
-          <Icon name="more" size={16} />
-        </IconButton>
-      </Tooltip>
-    </ClickAwayListener>
-  );
-};
-
-type ActionProps = ActionLinkProps | ActionButtonProps;
-
-const Action = (props: ActionProps) => {
-  switch (props.type) {
-    case "link":
-      return <ActionLink {...props} />;
-    case "button":
-      return <ActionButton {...props} />;
-    default:
-      const _exhaustiveCheck: never = props;
-      return _exhaustiveCheck;
-  }
-};
-
-type ActionLinkProps = {
-  type: "link";
-  href: string;
-  label: string;
-  iconName: IconName;
-};
-
-const ActionLink = (props: ActionLinkProps) => {
-  const { href, label, iconName } = props;
-
-  return (
-    <NextLink href={href} passHref legacyBehavior>
-      <Link
-        target="_blank"
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          gap: 1,
-          color: "primary.main",
-        }}
-      >
-        <Icon name={iconName} size={16} />
-        <Typography variant="body2">{label}</Typography>
-      </Link>
-    </NextLink>
-  );
-};
-
-type ActionButtonProps = {
-  type: "button";
-  label: string;
-  iconName: IconName;
-  requireConfirmation?: boolean;
-  confirmationTitle?: string;
-  confirmationText?: string;
-  onClick: () => Promise<void>;
-  onDialogClose?: () => void;
-  onSuccess?: () => void;
-};
-
-const ActionButton = (props: ActionButtonProps) => {
-  const {
-    label,
-    iconName,
-    requireConfirmation,
-    confirmationTitle,
-    confirmationText,
-    onClick,
-    onDialogClose,
-    onSuccess,
-  } = props;
-  const { isOpen, open, close } = useDisclosure();
-  const [loading, setLoading] = React.useState(false);
-
-  return (
-    <>
-      <Link
-        onClick={(e) => {
-          // To prevent the click away listener from closing the dialog.
-          e.stopPropagation();
-
-          if (requireConfirmation) {
-            open();
-          } else {
-            onClick();
-          }
-        }}
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          gap: 1,
-          color: "primary.main",
-          cursor: "pointer",
-        }}
-      >
-        <Icon name={iconName} size={16} style={{ margin: 0 }} />
-        <Typography variant="body2">{label}</Typography>
-      </Link>
-      {requireConfirmation && (
-        <Dialog
-          open={isOpen}
-          // To prevent the click away listener from closing the dialog.
-          onClick={(e) => e.stopPropagation()}
-          onClose={close}
-          maxWidth="xs"
-        >
-          <DialogTitle>
-            <Typography variant="h3">
-              {confirmationTitle ??
-                t({
-                  id: "login.profile.chart.confirmation.default",
-                  message: "Are you sure you want to perform this action?",
-                })}
-            </Typography>
-          </DialogTitle>
-          {confirmationText && (
-            <DialogContent>
-              <DialogContentText>{confirmationText}</DialogContentText>
-            </DialogContent>
-          )}
-          <DialogActions
-            sx={{
-              "& > .MuiButton-root": {
-                justifyContent: "center",
-                pointerEvents: loading ? "none" : "auto",
-              },
-            }}
-          >
-            <Button variant="text" onClick={close}>
-              <Trans id="no">No</Trans>
-            </Button>
-            <Button
-              variant="text"
-              onClick={async (e) => {
-                e.stopPropagation();
-                setLoading(true);
-
-                await onClick();
-                close();
-                await new Promise((r) => setTimeout(r, 100));
-
-                onDialogClose?.();
-                onSuccess?.();
-              }}
-            >
-              {loading ? <CircularProgress /> : <Trans id="yes">Yes</Trans>}
-            </Button>
-          </DialogActions>
-        </Dialog>
-      )}
-    </>
   );
 };

@@ -1,3 +1,5 @@
+import SuperJSON from "superjson";
+
 export const apiFetch = async <T>(
   relativeUrl: string,
   options?: {
@@ -21,7 +23,9 @@ export const apiFetch = async <T>(
   );
   const json = await res.json();
   if (json.success) {
-    return json.data;
+    return json.data && "json" in json.data && "meta" in json.data
+      ? (SuperJSON.deserialize(json.data) as T)
+      : (json.data as T);
   } else {
     throw new Error(json.message);
   }

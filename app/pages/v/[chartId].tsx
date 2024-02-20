@@ -1,25 +1,35 @@
 import { Trans } from "@lingui/macro";
-import { Box, Button, Stack, Theme, Typography } from "@mui/material";
+import {
+  Alert,
+  alertClasses,
+  Box,
+  Button,
+  Stack,
+  Theme,
+  Typography,
+} from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import { Config, PUBLISHED_STATE } from "@prisma/client";
 import { GetServerSideProps } from "next";
+import { useSession } from "next-auth/react";
 import ErrorPage from "next/error";
 import Head from "next/head";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { ChartPublished } from "@/components/chart-published";
-import { Success } from "@/components/hint";
+import { PublishSuccess } from "@/components/hint";
 import { ContentLayout } from "@/components/layout";
 import { PublishActions } from "@/components/publish-actions";
 import {
-  Config,
+  Config as ChartConfig,
   ConfiguratorStateProvider,
   ConfiguratorStatePublished,
   getChartConfig,
 } from "@/configurator";
 import { getConfig } from "@/db/config";
-import { Serialized, deserializeProps, serializeProps } from "@/db/serialize";
+import { deserializeProps, Serialized, serializeProps } from "@/db/serialize";
 import { useLocale } from "@/locales/use-locale";
 import { useDataSourceStore } from "@/stores/data-source";
 import { EmbedOptionsProvider } from "@/utils/embed";
@@ -27,12 +37,12 @@ import { EmbedOptionsProvider } from "@/utils/embed";
 type PageProps =
   | {
       status: "notfound";
+      config: null;
     }
   | {
       status: "found";
-      config: {
-        key: string;
-        data: Config;
+      config: Omit<Config, "data"> & {
+        data: ChartConfig;
       };
     };
 
@@ -49,7 +59,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
 
   res.statusCode = 404;
 
-  return { props: { status: "notfound" } };
+  return { props: { status: "notfound", config: null } };
 };
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -74,7 +84,13 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
 
   // Keep initial value of publishSuccess
   const [publishSuccess] = useState(() => !!query.publishSuccess);
-  const { status } = deserializeProps(props);
+  const { status, config } = deserializeProps(props);
+
+  const session = useSession();
+  const canEdit =
+    status === "found" &&
+    config.user_id &&
+    config.user_id === session.data?.user.id;
 
   const { key, state } = React.useMemo(() => {
     if (props.status === "found") {
@@ -95,21 +111,29 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
   const chartConfig = state ? getChartConfig(state) : undefined;
 
   const { dataSource, setDataSource } = useDataSourceStore();
-  React.useEffect(() => {
-    // Remove publishSuccess from URL so that when reloading of sharing the link
-    // to someone, there is no publishSuccess mention
-    if (query.publishSuccess) {
-      replace({ pathname: window.location.pathname });
-    }
+  useEffect(
+    function removePublishSuccessFromURL() {
+      // Remove publishSuccess from URL so that when reloading of sharing the link
+      // to someone, there is no publishSuccess mention
+      if (query.publishSuccess) {
+        replace({ pathname: window.location.pathname });
+      }
+    },
+    [query.publishSuccess, replace]
+  );
 
-    if (
-      props.status === "found" &&
-      props.config.data.dataSource.url !== dataSource.url
-    ) {
-      setDataSource(props.config.data.dataSource);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dataSource.url, setDataSource, props]);
+  useEffect(
+    function setCorrectDataSource() {
+      if (
+        props.status === "found" &&
+        props.config.data.dataSource.url !== dataSource.url
+      ) {
+        setDataSource(props.config.data.dataSource);
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    },
+    [dataSource.url, setDataSource, props]
+  );
 
   if (
     status === "notfound" ||
@@ -154,7 +178,45 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
           >
             {publishSuccess && (
               <Box mt={2} mb={5}>
-                <Success />
+                <PublishSuccess />
+              </Box>
+            )}
+
+            {config.published_state === PUBLISHED_STATE.DRAFT && (
+              <Box mt={2} mb={5}>
+                <Alert
+                  severity="warning"
+                  sx={{
+                    maxWidth: 600,
+                    margin: "auto",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    [`& .${alertClasses.message}`]: {
+                      alignItems: "center",
+                      flexGrow: 1,
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                    },
+                  }}
+                >
+                  <div>
+                    <Trans id="hint.publication.draft">
+                      This chart is still a draft.
+                    </Trans>
+                  </div>
+
+                  {canEdit ? (
+                    <Button
+                      component={NextLink}
+                      href={`/create/new?edit=${config.key}`}
+                      variant="outlined"
+                      color="inherit"
+                      size="small"
+                    >
+                      <Trans id="login.chart.edit">Edit</Trans>
+                    </Button>
+                  ) : null}
+                </Alert>
               </Box>
             )}
 

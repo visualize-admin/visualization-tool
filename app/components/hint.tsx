@@ -265,7 +265,7 @@ export const OnlyNegativeDataHint = () => (
   </Alert>
 );
 
-export const Success = () => (
+export const PublishSuccess = () => (
   <Alert severity="success" icon={<Icon name="datasetSuccess" size={64} />}>
     <Trans id="hint.publication.success">
       Your visualization is now published. You can share and embed it using the

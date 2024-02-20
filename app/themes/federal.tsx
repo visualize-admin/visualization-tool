@@ -7,7 +7,7 @@ import { Icon } from "@/icons";
 import shadows from "@/themes/shadows";
 
 const isSafari15 =
-  typeof navigator !== "undefined" && navigator.vendor.indexOf("Apple") >= 0
+  typeof navigator !== "undefined" && navigator.vendor?.indexOf("Apple") >= 0
     ? navigator.userAgent
         .match(/Version[/\s]([\d]+)/g)?.[0]
         ?.split("/")?.[1] === "15"
@@ -288,6 +288,12 @@ theme.components = {
       color: "primary",
     },
     styleOverrides: {
+      sizeXsmall: {
+        height: "24px",
+        minWidth: "auto",
+        padding: "0 8px",
+        fontSize: "12px",
+      },
       sizeSmall: {
         ".MuiButton-startIcon": {
           marginRight: 4,
@@ -318,10 +324,14 @@ theme.components = {
         lineHeight: 1.25,
         justifyContent: "flex-start",
         borderRadius: 3,
-        transition: "background-color .2s",
+        transition: "background-color .2s, transform 0.1s ease",
         cursor: "pointer",
         display: "inline-flex",
         flexGrow: 0,
+
+        "&:active": {
+          transform: "scale(0.98)",
+        },
 
         "& > svg": {
           width: 22,

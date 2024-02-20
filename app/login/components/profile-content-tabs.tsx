@@ -3,9 +3,10 @@ import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { Box, Tab, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
-import React from "react";
+import groupBy from "lodash/groupBy";
+import React, { useMemo } from "react";
 
-import { ParsedConfig } from "@/db/config";
+import { useUserConfigs } from "@/domain/user-configs";
 import { ProfileVisualizationsTable } from "@/login/components/profile-tables";
 import { useRootStyles } from "@/login/utils";
 import useEvent from "@/utils/use-event";
@@ -38,18 +39,30 @@ const useStyles = makeStyles<Theme>((theme) => ({
 
 type ProfileContentTabsProps = {
   userId: number;
-  userConfigs: ParsedConfig[];
 };
 
 export const ProfileContentTabs = (props: ProfileContentTabsProps) => {
-  const { userId, userConfigs: _userConfigs } = props;
-  const [userConfigs, setUserConfigs] = React.useState(_userConfigs);
+  const { userId } = props;
+
+  const { data: userConfigs } = useUserConfigs();
   const [value, setValue] = React.useState("Home");
   const handleChange = useEvent((_: React.SyntheticEvent, v: string) => {
     setValue(v);
   });
   const rootClasses = useRootStyles();
   const classes = useStyles();
+
+  const { DRAFT: draftConfigs = [], PUBLISHED: publishedConfigs = [] } =
+    useMemo(() => {
+      return groupBy(
+        userConfigs,
+        (x: { published_state: any }) => x.published_state
+      );
+    }, [userConfigs]);
+
+  if (!userConfigs) {
+    return null;
+  }
 
   return (
     <TabContext value={value}>
@@ -62,6 +75,10 @@ export const ProfileContentTabs = (props: ProfileContentTabsProps) => {
                 t({
                   id: "login.profile.my-visualizations",
                   message: "My visualizations",
+                }),
+                t({
+                  id: "login.profile.my-drafts",
+                  message: "My drafts",
                 }),
               ].map((d) => (
                 <Tab key={d} className={classes.tab} label={d} value={d} />
@@ -76,15 +93,35 @@ export const ProfileContentTabs = (props: ProfileContentTabsProps) => {
           sx={{ display: "flex", flexDirection: "column", gap: 6 }}
         >
           <ProfileVisualizationsTable
+            title={t({
+              id: "login.profile.my-visualizations",
+              message: "My visualizations",
+            })}
             userId={userId}
-            userConfigs={userConfigs}
-            setUserConfigs={setUserConfigs}
+            userConfigs={publishedConfigs}
             preview
             onShowAll={() =>
               setValue(
                 t({
                   id: "login.profile.my-visualizations",
                   message: "My visualizations",
+                })
+              )
+            }
+          />
+          <ProfileVisualizationsTable
+            title={t({
+              id: "login.profile.my-drafts",
+              message: "My drafts",
+            })}
+            userId={userId}
+            userConfigs={draftConfigs}
+            preview
+            onShowAll={() =>
+              setValue(
+                t({
+                  id: "login.profile.my-drafts",
+                  message: "My drafts",
                 })
               )
             }
@@ -100,9 +137,30 @@ export const ProfileContentTabs = (props: ProfileContentTabsProps) => {
       >
         <Box className={classes.tabPanelContent}>
           <ProfileVisualizationsTable
+            title={t({
+              id: "login.profile.my-visualizations",
+              message: "My visualizations",
+            })}
             userId={userId}
-            userConfigs={userConfigs}
-            setUserConfigs={setUserConfigs}
+            userConfigs={publishedConfigs}
+          />
+        </Box>
+      </TabPanel>
+      <TabPanel
+        className={classes.tabPanel}
+        value={t({
+          id: "login.profile.my-drafts",
+          message: "My drafts",
+        })}
+      >
+        <Box className={classes.tabPanelContent}>
+          <ProfileVisualizationsTable
+            title={t({
+              id: "login.profile.my-drafts",
+              message: "My drafts",
+            })}
+            userId={userId}
+            userConfigs={draftConfigs}
           />
         </Box>
       </TabPanel>

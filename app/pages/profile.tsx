@@ -4,12 +4,14 @@ import { GetServerSideProps } from "next";
 import { getServerSession } from "next-auth";
 
 import { AppLayout } from "@/components/layout";
-import { ParsedConfig, getUserConfigs } from "@/db/config";
-import { Serialized, deserializeProps, serializeProps } from "@/db/serialize";
+import { getUserConfigs, ParsedConfig } from "@/db/config";
+import { deserializeProps, Serialized, serializeProps } from "@/db/serialize";
 import { findBySub } from "@/db/user";
+import { userConfigsKey } from "@/domain/user-configs";
 import { ProfileContentTabs } from "@/login/components/profile-content-tabs";
 import { ProfileHeader } from "@/login/components/profile-header";
 import { useRootStyles } from "@/login/utils";
+import { useHydrate } from "@/utils/use-fetch-data";
 
 import { nextAuthOptions } from "./api/auth/[...nextauth]";
 
@@ -49,11 +51,13 @@ const ProfilePage = (props: Serialized<PageProps>) => {
   const { user, userConfigs } = deserializeProps(props);
   const rootClasses = useRootStyles();
 
+  useHydrate(userConfigsKey, userConfigs);
+
   return (
     <AppLayout>
       <Box className={rootClasses.root}>
         <ProfileHeader user={user} />
-        <ProfileContentTabs userId={user.id} userConfigs={userConfigs} />
+        <ProfileContentTabs userId={user.id} />
       </Box>
     </AppLayout>
   );

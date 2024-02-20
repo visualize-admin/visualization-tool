@@ -1,6 +1,6 @@
 import { getServerSession } from "next-auth";
 
-import { removeConfig } from "@/db/config";
+import { getConfig, removeConfig } from "@/db/config";
 
 import { api } from "../../server/nextkit";
 
@@ -9,10 +9,11 @@ import { nextAuthOptions } from "./auth/[...nextauth]";
 const route = api({
   POST: async ({ req, res }) => {
     const session = await getServerSession(req, res, nextAuthOptions);
-    const serverUserId = session?.user?.id;
-    const { key, userId } = req.body;
+    const sessionUserId = session?.user?.id;
+    const { key } = req.body;
 
-    if (serverUserId !== userId) {
+    const config = await getConfig(key);
+    if (sessionUserId !== config?.user_id) {
       throw new Error("Unauthorized!");
     }
 

@@ -10,6 +10,7 @@ export const states: ConfiguratorState[] = [
     state: "SELECTING_DATASET",
     version: CONFIGURATOR_STATE_VERSION,
     dataSource: DEFAULT_DATA_SOURCE,
+    published_state: "PUBLISHED",
     chartConfigs: undefined,
     layout: undefined,
     activeChartKey: undefined,
@@ -18,6 +19,7 @@ export const states: ConfiguratorState[] = [
     state: "CONFIGURING_CHART",
     version: CONFIGURATOR_STATE_VERSION,
     dataSource: DEFAULT_DATA_SOURCE,
+    published_state: "PUBLISHED",
     layout: {
       type: "tab",
       meta: {

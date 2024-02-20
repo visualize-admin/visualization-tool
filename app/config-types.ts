@@ -1134,9 +1134,11 @@ const Config = t.type(
     layout: Layout,
     chartConfigs: t.array(ChartConfig),
     activeChartKey: t.string,
+    published_state: t.string,
   },
   "Config"
 );
+[];
 export type Config = t.TypeOf<typeof Config>;
 
 export const isValidConfig = (config: unknown): config is Config => {
@@ -1148,21 +1150,23 @@ export const decodeConfig = (config: unknown) => {
 };
 
 const ConfiguratorStateInitial = t.type({
-  version: t.string,
   state: t.literal("INITIAL"),
+  version: t.string,
   dataSource: DataSource,
+  published_state: t.string,
 });
 export type ConfiguratorStateInitial = t.TypeOf<
   typeof ConfiguratorStateInitial
 >;
 
 const ConfiguratorStateSelectingDataSet = t.type({
-  version: t.string,
   state: t.literal("SELECTING_DATASET"),
+  version: t.string,
   dataSource: DataSource,
   chartConfigs: t.undefined,
   layout: t.undefined,
   activeChartKey: t.undefined,
+  published_state: t.string,
 });
 export type ConfiguratorStateSelectingDataSet = t.TypeOf<
   typeof ConfiguratorStateSelectingDataSet

@@ -2,7 +2,7 @@
  * Server side methods to connect to the database
  */
 
-import { Config, Prisma, User } from "@prisma/client";
+import { Config, Prisma, PUBLISHED_STATE, User } from "@prisma/client";
 
 import { ChartConfig, ConfiguratorStatePublished } from "@/configurator";
 import { migrateConfiguratorState } from "@/utils/chart-config/versioning";
@@ -20,16 +20,19 @@ export const createConfig = async ({
   key,
   data,
   userId,
+  publishedState,
 }: {
   key: string;
   data: Prisma.ConfigCreateInput["data"];
   userId?: User["id"] | undefined;
+  publishedState: PUBLISHED_STATE;
 }): Promise<{ key: string }> => {
   return await prisma.config.create({
     data: {
       key,
       data,
       user_id: userId,
+      published_state: publishedState,
     },
   });
 };
@@ -44,11 +47,13 @@ export const createConfig = async ({
 export const updateConfig = async ({
   key,
   data,
-  userId,
+  user_id,
+  published_state,
 }: {
   key: string;
-  data: Prisma.ConfigCreateInput["data"];
-  userId: User["id"];
+  data: Prisma.ConfigUpdateInput["data"];
+  user_id: User["id"];
+  published_state: Prisma.ConfigUpdateInput["published_state"];
 }): Promise<{ key: string }> => {
   return await prisma.config.update({
     where: {
@@ -57,7 +62,9 @@ export const updateConfig = async ({
     data: {
       key,
       data,
-      user_id: userId,
+      user_id,
+      updated_at: new Date(),
+      published_state: published_state,
     },
   });
 };
@@ -68,11 +75,7 @@ export const updateConfig = async ({
  *
  * @param key Key of the config to be updated
  */
-export const removeConfig = async ({
-  key,
-}: {
-  key: string;
-}): Promise<{ key: string }> => {
+export const removeConfig = async ({ key }: { key: string }) => {
   return await prisma.config.delete({
     where: {
       key,
@@ -109,15 +112,7 @@ const ensureFiltersOrder = (chartConfig: ChartConfig) => {
   };
 };
 
-const parseDbConfig = (
-  d: Config
-): {
-  id: number;
-  key: string;
-  data: ConfiguratorStatePublished;
-  created_at: Date;
-  user_id: number | null;
-} => {
+const parseDbConfig = (d: Config) => {
   const data = d.data as ConfiguratorStatePublished;
   const migratedData = migrateConfiguratorState(data);
 
@@ -134,7 +129,7 @@ const parseDbConfig = (
             iri: migrateCubeIri(cube.iri),
           })),
         })),
-    },
+    } as ConfiguratorStatePublished,
   };
 };
 

@@ -1,3 +1,4 @@
+import { PUBLISHED_STATE } from "@prisma/client";
 import produce, { current } from "immer";
 import get from "lodash/get";
 import pickBy from "lodash/pickBy";
@@ -5,7 +6,7 @@ import setWith from "lodash/setWith";
 import sortBy from "lodash/sortBy";
 import unset from "lodash/unset";
 import { NextRouter, useRouter } from "next/router";
-import { Dispatch, createContext, useContext, useEffect, useMemo } from "react";
+import { createContext, Dispatch, useContext, useEffect, useMemo } from "react";
 import { Reducer, useImmerReducer } from "use-immer";
 
 import {
@@ -33,20 +34,20 @@ import {
   ConfiguratorStatePublishing,
   ConfiguratorStateSelectingDataSet,
   DataSource,
-  FilterValue,
-  Filters,
-  GenericField,
-  GenericFields,
-  ImputationType,
-  InteractiveFiltersConfig,
-  Layout,
   decodeConfiguratorState,
   enableLayouting,
+  Filters,
+  FilterValue,
+  GenericField,
+  GenericFields,
   getChartConfig,
   getChartConfigFilters,
+  ImputationType,
+  InteractiveFiltersConfig,
   isAreaConfig,
   isColorFieldInConfig,
   isTableConfig,
+  Layout,
   makeMultiFilter,
 } from "@/config-types";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
@@ -58,9 +59,9 @@ import {
   DataCubeComponents,
   Dimension,
   DimensionValue,
-  ObservationValue,
   isGeoDimension,
   isMeasure,
+  ObservationValue,
 } from "@/domain/data";
 import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
 import { client } from "@/graphql/client";
@@ -333,6 +334,7 @@ const INITIAL_STATE: ConfiguratorState = {
   version: CONFIGURATOR_STATE_VERSION,
   state: "INITIAL",
   dataSource: DEFAULT_DATA_SOURCE,
+  published_state: PUBLISHED_STATE.DRAFT,
 };
 
 const EMPTY_STATE: ConfiguratorStateSelectingDataSet = {
@@ -343,6 +345,7 @@ const EMPTY_STATE: ConfiguratorStateSelectingDataSet = {
   chartConfigs: undefined,
   layout: undefined,
   activeChartKey: undefined,
+  published_state: PUBLISHED_STATE.DRAFT,
 };
 
 const getCachedComponents = (
@@ -650,6 +653,7 @@ const transitionStepNext = (
           version: CONFIGURATOR_STATE_VERSION,
           state: "CONFIGURING_CHART",
           dataSource: draft.dataSource,
+          published_state: draft.published_state,
           layout: {
             type: "tab",
             meta: {
@@ -1595,20 +1599,15 @@ const ConfiguratorStateProviderInternal = (
         case "CONFIGURING_CHART":
         case "LAYOUTING":
           if (chartId === "new") {
-            if (query.edit && typeof query.edit === "string") {
-              replace(`/create/${query.edit}`);
-              window.localStorage.setItem(
-                getLocalStorageKey(query.edit),
-                JSON.stringify(state)
-              );
-            } else {
-              const newChartId = createChartId();
-              window.localStorage.setItem(
-                getLocalStorageKey(newChartId),
-                JSON.stringify(state)
-              );
-              replace(`/create/${newChartId}`);
-            }
+            const chartId =
+              query.edit && typeof query.edit === "string"
+                ? query.edit
+                : createChartId();
+            replace(`/create/${chartId}`);
+            window.localStorage.setItem(
+              getLocalStorageKey(chartId),
+              JSON.stringify(state)
+            );
           } else {
             // Store current state in localstorage
             window.localStorage.setItem(
@@ -1622,69 +1621,33 @@ const ConfiguratorStateProviderInternal = (
         case "PUBLISHING":
           (async () => {
             try {
+              const key = getRouterChartId(asPath);
+              if (!key) {
+                return;
+              }
               switch (state.layout.type) {
                 case "singleURLs": {
-                  const reversedChartKeys = state.layout.publishableChartKeys
-                    .slice()
-                    .reverse();
-
-                  // Do not use Promise.all here, as we want to publish the charts in order
-                  // and not in parallel and keep the current tab open with first chart
-                  return reversedChartKeys.forEach(async (chartKey, i) => {
-                    const preparedConfig = preparePublishingState(
-                      {
-                        ...state,
-                        // Ensure that the layout is reset to single-chart mode
-                        layout: {
-                          type: "tab",
-                          meta: state.layout.meta,
-                          activeField: undefined,
-                        },
-                      },
-                      state.chartConfigs.filter(
-                        (d) => d.key === chartKey
-                      ) as ChartConfig[],
-                      chartKey
-                    );
-
-                    const result = await createConfig(preparedConfig);
-
-                    if (i < reversedChartKeys.length - 1) {
-                      // Open new tab for each chart, except the first one
-                      return window.open(
-                        `/${locale}/v/${result.key}`,
-                        "_blank"
-                      );
+                  return publishState(
+                    user,
+                    key,
+                    state,
+                    async (result, i, total) => {
+                      if (i < total) {
+                        // Open new tab for each chart, except the first one
+                        return window.open(
+                          `/${locale}/v/${result.key}`,
+                          "_blank"
+                        );
+                      } else {
+                        await handlePublishSuccess(result.key, push);
+                      }
                     }
-
-                    await handlePublishSuccess(result.key, push);
-                  });
+                  );
                 }
                 default: {
-                  let dbConfig: ParsedConfig | undefined;
-                  const key = getRouterChartId(asPath);
-
-                  if (key && user) {
-                    const config = await fetchChartConfig(key);
-
-                    if (config && config.user_id === user.id) {
-                      dbConfig = config;
-                    }
-                  }
-
-                  const preparedConfig = preparePublishingState(
-                    state,
-                    state.chartConfigs
-                  );
-
-                  const result = await (dbConfig && user
-                    ? updateConfig(preparedConfig, {
-                        key: dbConfig.key,
-                        userId: user.id,
-                      })
-                    : createConfig(preparedConfig));
-
-                  await handlePublishSuccess(result.key, push);
+                  return publishState(user, key, state, async (result) => {
+                    await handlePublishSuccess(result.key, push);
+                  });
                 }
               }
             } catch (e) {
@@ -1880,3 +1843,84 @@ export type ConfiguratorStateWithChartConfigs =
   | ConfiguratorStateLayouting
   | ConfiguratorStatePublishing
   | ConfiguratorStatePublished;
+
+async function publishState(
+  user: ReturnType<typeof useUser>,
+  key: string,
+  state: Extract<ConfiguratorState, { state: "PUBLISHING" }>,
+
+  /** Will be called for all config that have been shared (multiple one in case of layout:singleURLs) */
+  onSaveConfig: (savedConfig: { key: string }, i: number, total: number) => void
+) {
+  switch (state.layout.type) {
+    case "singleURLs":
+      const { publishableChartKeys, meta } = state.layout;
+      const reversedChartKeys = publishableChartKeys.slice().reverse();
+
+      // Charts are published in order, keep the current tab open with first chart
+      // subSequent charts are opened in a new window
+      return allSequential(reversedChartKeys, async (chartKey, i) => {
+        const preparedConfig = preparePublishingState(
+          {
+            ...state,
+            // Ensure that the layout is reset to single-chart mode
+            layout: {
+              type: "tab",
+              meta: meta,
+              activeField: undefined,
+            },
+          },
+          state.chartConfigs.filter((d) => d.key === chartKey) as ChartConfig[],
+          chartKey
+        );
+
+        const result = await createConfig({
+          data: preparedConfig,
+          published_state: PUBLISHED_STATE.PUBLISHED,
+        });
+
+        onSaveConfig(result, i, reversedChartKeys.length);
+        return result;
+      });
+    default:
+      let dbConfig: ParsedConfig | undefined;
+
+      if (key && user) {
+        const config = await fetchChartConfig(key);
+
+        if (config && config.user_id === user.id) {
+          dbConfig = config;
+        }
+      }
+
+      const preparedConfig = preparePublishingState(state, state.chartConfigs);
+
+      const result = await (dbConfig && user
+        ? updateConfig({
+            data: preparedConfig,
+            key: dbConfig.key,
+            user_id: user.id,
+            published_state: PUBLISHED_STATE.PUBLISHED,
+          })
+        : createConfig({
+            data: preparedConfig,
+            published_state: PUBLISHED_STATE.PUBLISHED,
+          }));
+
+      onSaveConfig(result, 0, 1);
+      return result;
+  }
+}
+
+const allSequential = async <TInput, TOutput>(
+  input: TInput[],
+  cb: (item: TInput, i: number) => TOutput
+) => {
+  const res = [];
+  for (let i = 0; i < input.length; i++) {
+    const r = input[i];
+    const result = await cb(r, i);
+    res.push(result);
+  }
+  return res;
+};

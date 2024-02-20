@@ -10,13 +10,13 @@ import {
   ConfiguratorStateConfiguringChart,
   DataSource,
   Filters,
-  MapConfig,
   getChartConfig,
+  MapConfig,
 } from "@/config-types";
 import {
-  ConfiguratorStateAction,
   applyNonTableDimensionToFilters,
   applyTableDimensionToFilters,
+  ConfiguratorStateAction,
   deriveFiltersFromFields,
   getFiltersByMappingStatus,
   getLocalStorageKey,
@@ -153,7 +153,11 @@ describe("initChartFromLocalStorage", () => {
   it("should initialize from localStorage if valid", async () => {
     localStorage.setItem(
       getLocalStorageKey("viz1234"),
-      JSON.stringify({ state: "CONFIGURING_CHART", ...fakeVizFixture })
+      JSON.stringify({
+        state: "CONFIGURING_CHART",
+        published_state: "PUBLISHED",
+        ...fakeVizFixture,
+      })
     );
     const state = await initChartStateFromLocalStorage("viz1234");
     expect(state).not.toBeUndefined();

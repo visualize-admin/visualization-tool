@@ -1,10 +1,12 @@
 import createAPI from "nextkit";
 
 export const api = createAPI({
-  async onError() {
+  async onError(_req, _res, error) {
     return {
       status: 500,
-      message: "Something went wrong.",
+      message: `Something went wrong: ${
+        error instanceof Error ? error.message : error
+      }`,
     };
   },
 });
