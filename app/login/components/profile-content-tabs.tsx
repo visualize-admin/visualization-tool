@@ -90,7 +90,7 @@ export const ProfileContentTabs = (props: ProfileContentTabsProps) => {
       <TabPanel className={classes.tabPanel} value="Home">
         <Box
           className={classes.tabPanelContent}
-          sx={{ display: "flex", flexDirection: "column", gap: 6 }}
+          sx={{ display: "flex", flexDirection: "column", gap: "3rem" }}
         >
           <ProfileVisualizationsTable
             title={t({
