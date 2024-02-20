@@ -104,18 +104,6 @@ jobs:
       - name: Set env variable for easier access
         run: |
           echo "SUMMARY=$(< summary.txt)" >> $GITHUB_ENV
-      - name: GQL performance tests ✅
-        if: \${{ env.SUMMARY == '' }}
-        run: |
-          curl --request POST \
-          --url https://api.github.com/repos/\${{ github.repository }}/statuses/\${{ github.sha }} \
-          --header 'authorization: Bearer \${{ secrets.GITHUB_TOKEN }}' \
-          --header 'content-type: application/json' \
-          --data '{
-            "context": "GQL performance tests",
-            "state": "success",
-            "description": "GQL performance tests passed"
-          }'
       - name: GQL performance tests ❌
         if: \${{ env.SUMMARY != '' }}
         run: |
