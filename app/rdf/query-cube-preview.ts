@@ -113,7 +113,7 @@ CONSTRUCT {
     { SELECT * WHERE {
       ?cube cube:observationSet ?observationSet .
       ?observationSet cube:observation ?observation .
-      FILTER(NOT EXISTS { ?cube cube:observationConstraint/sh:property/sh:datatype cube:Undefined . } && NOT EXISTS { ?observation ?p ""^^cube:Undefined . })
+      FILTER(EXISTS { ?cube cube:observationConstraint/sh:property/sh:datatype cube:Undefined . } || NOT EXISTS { ?observation ?p ""^^cube:Undefined . })
     } LIMIT 10 }
       ?observation ?observationPredicate ?observationValue .
       ${buildLocalizedSubQuery(
