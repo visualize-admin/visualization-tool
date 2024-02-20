@@ -43,6 +43,7 @@ msgstr "[ Nessuna descrizione ]"
 
 #: app/configurator/components/annotators.tsx
 #: app/login/components/profile-tables.tsx
+#: app/login/components/profile-tables.tsx
 msgid "annotation.add.title"
 msgstr "[ Nessun titolo ]"
 
@@ -172,6 +173,10 @@ msgstr "Simboli"
 #: app/charts/table/table.tsx
 msgid "chart.published.toggle.mobile.view"
 msgstr "Vista compatta"
+
+#: app/login/components/profile-tables.tsx
+#~ msgid "chart.rename"
+#~ msgstr "Rinominare"
 
 #: app/charts/table/table.tsx
 msgid "chart.table.number.of.lines"
@@ -516,18 +521,22 @@ msgid "controls.imputation.type.zeros"
 msgstr "Zeri"
 
 #: app/configurator/components/field-i18n.ts
+#: app/login/components/profile-tables.tsx
 msgid "controls.language.english"
 msgstr "Inglese"
 
 #: app/configurator/components/field-i18n.ts
+#: app/login/components/profile-tables.tsx
 msgid "controls.language.french"
 msgstr "Francese"
 
 #: app/configurator/components/field-i18n.ts
+#: app/login/components/profile-tables.tsx
 msgid "controls.language.german"
 msgstr "Tedesco"
 
 #: app/configurator/components/field-i18n.ts
+#: app/login/components/profile-tables.tsx
 msgid "controls.language.italian"
 msgstr "Italiano"
 
@@ -1208,8 +1217,13 @@ msgid "login.chart.delete.confirmation"
 msgstr "Sei sicuro di voler cancellare questo grafico?"
 
 #: app/login/components/profile-tables.tsx
+#: app/pages/v/[chartId].tsx
 msgid "login.chart.edit"
 msgstr "Modifica"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.chart.rename"
+msgstr ""
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.share"
@@ -1227,13 +1241,17 @@ msgstr "creane uno"
 msgid "login.no-charts"
 msgstr "Non ci sono ancora grafici"
 
-#: app/login/components/profile-tables.tsx
+#: app/components/confirmation-dialog.tsx
 msgid "login.profile.chart.confirmation.default"
 msgstr "Siete sicuri di voler eseguire questa azione?"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.chart.delete.warning"
 msgstr "Tenete presente che la rimozione di questa visualizzazione avrà effetto su tutti i luoghi in cui potrebbe essere già incorporata!"
+
+#: app/login/components/profile-tables.tsx
+#~ msgid "login.profile.chart.rename-dialog.title"
+#~ msgstr ""
 
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
@@ -1304,9 +1322,17 @@ msgstr "Passare alla visualizzazione del grafico"
 msgid "metadata.switch.table"
 msgstr "Passare alla vista tabella"
 
-#: app/login/components/profile-tables.tsx
+#: app/components/confirmation-dialog.tsx
 msgid "no"
 msgstr "No"
+
+#: app/login/components/profile-tables.tsx
+msgid "profile.chart.rename-dialog.description"
+msgstr ""
+
+#: app/login/components/profile-tables.tsx
+msgid "profile.chart.rename-dialog.title"
+msgstr ""
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.AEM"
@@ -1392,6 +1418,6 @@ msgstr "Colonna {0}"
 msgid "typography.colon"
 msgstr ": "
 
-#: app/login/components/profile-tables.tsx
+#: app/components/confirmation-dialog.tsx
 msgid "yes"
 msgstr "Sì"

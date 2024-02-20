@@ -43,6 +43,7 @@ msgstr "[ Ohne Beschreibung ]"
 
 #: app/configurator/components/annotators.tsx
 #: app/login/components/profile-tables.tsx
+#: app/login/components/profile-tables.tsx
 msgid "annotation.add.title"
 msgstr "[ Ohne Titel ]"
 
@@ -172,6 +173,10 @@ msgstr "Symbole"
 #: app/charts/table/table.tsx
 msgid "chart.published.toggle.mobile.view"
 msgstr "Kompakte Ansicht"
+
+#: app/login/components/profile-tables.tsx
+#~ msgid "chart.rename"
+#~ msgstr "Umbenennen"
 
 #: app/charts/table/table.tsx
 msgid "chart.table.number.of.lines"
@@ -516,18 +521,22 @@ msgid "controls.imputation.type.zeros"
 msgstr "Nullen"
 
 #: app/configurator/components/field-i18n.ts
+#: app/login/components/profile-tables.tsx
 msgid "controls.language.english"
 msgstr "Englisch"
 
 #: app/configurator/components/field-i18n.ts
+#: app/login/components/profile-tables.tsx
 msgid "controls.language.french"
 msgstr "Französisch"
 
 #: app/configurator/components/field-i18n.ts
+#: app/login/components/profile-tables.tsx
 msgid "controls.language.german"
 msgstr "Deutsch"
 
 #: app/configurator/components/field-i18n.ts
+#: app/login/components/profile-tables.tsx
 msgid "controls.language.italian"
 msgstr "Italienisch"
 
@@ -1208,8 +1217,13 @@ msgid "login.chart.delete.confirmation"
 msgstr "Sind Sie sicher, dass Sie diese Grafik löschen wollen?"
 
 #: app/login/components/profile-tables.tsx
+#: app/pages/v/[chartId].tsx
 msgid "login.chart.edit"
 msgstr "Bearbeiten"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.chart.rename"
+msgstr ""
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.share"
@@ -1227,13 +1241,17 @@ msgstr "erstellen Sie einen"
 msgid "login.no-charts"
 msgstr "Noch keine Charts"
 
-#: app/login/components/profile-tables.tsx
+#: app/components/confirmation-dialog.tsx
 msgid "login.profile.chart.confirmation.default"
 msgstr "Sind Sie sicher, dass Sie diese Aktion durchführen wollen?"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.chart.delete.warning"
 msgstr "Denken Sie daran, dass das Entfernen dieser Visualisierung sich auf alle Stellen auswirkt, an denen sie möglicherweise bereits eingebettet ist!"
+
+#: app/login/components/profile-tables.tsx
+#~ msgid "login.profile.chart.rename-dialog.title"
+#~ msgstr ""
 
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
@@ -1304,9 +1322,17 @@ msgstr "Zur Diagrammansicht wechseln"
 msgid "metadata.switch.table"
 msgstr "Zur Tabellenansicht wechseln"
 
-#: app/login/components/profile-tables.tsx
+#: app/components/confirmation-dialog.tsx
 msgid "no"
 msgstr "Nein"
+
+#: app/login/components/profile-tables.tsx
+msgid "profile.chart.rename-dialog.description"
+msgstr "Verbessern Sie die Klarheit des Diagramms mit einem klaren Titel. Ein guter Titel hilft Diagramminhalte verstehen."
+
+#: app/login/components/profile-tables.tsx
+msgid "profile.chart.rename-dialog.title"
+msgstr "Benennen Sie die Visualisierung um"
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.AEM"
@@ -1392,6 +1418,6 @@ msgstr "Spalte {0}"
 msgid "typography.colon"
 msgstr ": "
 
-#: app/login/components/profile-tables.tsx
+#: app/components/confirmation-dialog.tsx
 msgid "yes"
 msgstr "Ja"

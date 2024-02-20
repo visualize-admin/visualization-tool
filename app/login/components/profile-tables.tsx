@@ -231,11 +231,13 @@ const RenameDialog = ({
     <Dialog {...props} fullWidth>
       <form style={{ display: "contents" }} onSubmit={handleRename}>
         <DialogTitle>
-          <Trans id="chart.rename">Rename</Trans>
+          <Trans id="profile.chart.rename-dialog.title">
+            Rename the visualization
+          </Trans>
         </DialogTitle>
         <DialogContent>
           <Typography variant="body2">
-            <Trans id="login.profile.chart.rename-dialog.title">
+            <Trans id="profile.chart.rename-dialog.description">
               Enhance chart clarity with a clear title; a good title helps
               understanding chart content.
             </Trans>

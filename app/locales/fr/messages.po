@@ -43,6 +43,7 @@ msgstr "[ Pas de description ]"
 
 #: app/configurator/components/annotators.tsx
 #: app/login/components/profile-tables.tsx
+#: app/login/components/profile-tables.tsx
 msgid "annotation.add.title"
 msgstr "[ Pas de titre ]"
 
@@ -172,6 +173,10 @@ msgstr "Symboles"
 #: app/charts/table/table.tsx
 msgid "chart.published.toggle.mobile.view"
 msgstr "Vue compacte"
+
+#: app/login/components/profile-tables.tsx
+#~ msgid "chart.rename"
+#~ msgstr "Renommer"
 
 #: app/charts/table/table.tsx
 msgid "chart.table.number.of.lines"
@@ -516,18 +521,22 @@ msgid "controls.imputation.type.zeros"
 msgstr "Zéros"
 
 #: app/configurator/components/field-i18n.ts
+#: app/login/components/profile-tables.tsx
 msgid "controls.language.english"
 msgstr "Anglais"
 
 #: app/configurator/components/field-i18n.ts
+#: app/login/components/profile-tables.tsx
 msgid "controls.language.french"
 msgstr "Français"
 
 #: app/configurator/components/field-i18n.ts
+#: app/login/components/profile-tables.tsx
 msgid "controls.language.german"
 msgstr "Allemand"
 
 #: app/configurator/components/field-i18n.ts
+#: app/login/components/profile-tables.tsx
 msgid "controls.language.italian"
 msgstr "Italien"
 
@@ -549,11 +558,11 @@ msgstr "Tab Layout"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.layout.tall"
-msgstr ""
+msgstr "Haut"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.layout.vertical"
-msgstr ""
+msgstr "Vertical"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.measure"
@@ -830,7 +839,7 @@ msgstr "Sélectionner une variable"
 #: app/configurator/components/field.tsx
 #: app/configurator/components/field.tsx
 msgid "controls.select.optional"
-msgstr ""
+msgstr "Optionnel"
 
 #: app/configurator/components/filters.tsx
 #: app/configurator/components/filters.tsx
@@ -1208,8 +1217,13 @@ msgid "login.chart.delete.confirmation"
 msgstr "Êtes-vous sûr de vouloir supprimer cette carte ?"
 
 #: app/login/components/profile-tables.tsx
+#: app/pages/v/[chartId].tsx
 msgid "login.chart.edit"
 msgstr "Editer"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.chart.rename"
+msgstr "Renommer"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.share"
@@ -1227,13 +1241,17 @@ msgstr "créez-en un"
 msgid "login.no-charts"
 msgstr "Pas encore de graphiques"
 
-#: app/login/components/profile-tables.tsx
+#: app/components/confirmation-dialog.tsx
 msgid "login.profile.chart.confirmation.default"
 msgstr "Êtes-vous sûr de vouloir effectuer cette action ?"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.chart.delete.warning"
 msgstr "Gardez à l'esprit que la suppression de cette visualisation affectera tous les endroits où elle est déjà intégrée !"
+
+#: app/login/components/profile-tables.tsx
+#~ msgid "login.profile.chart.rename-dialog.title"
+#~ msgstr "Renommer la visualisation"
 
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
@@ -1304,9 +1322,17 @@ msgstr "Passer à la vue graphique"
 msgid "metadata.switch.table"
 msgstr "Passer à la vue en tableau"
 
-#: app/login/components/profile-tables.tsx
+#: app/components/confirmation-dialog.tsx
 msgid "no"
 msgstr "Non"
+
+#: app/login/components/profile-tables.tsx
+msgid "profile.chart.rename-dialog.description"
+msgstr "Améliorez la clarté de la visualisation avec un titre clair ; un bon titre aide à comprendre le contenu de la visualisation."
+
+#: app/login/components/profile-tables.tsx
+msgid "profile.chart.rename-dialog.title"
+msgstr "Renommer la visualisation"
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.AEM"
@@ -1392,6 +1418,6 @@ msgstr "Colonne {0}"
 msgid "typography.colon"
 msgstr " : "
 
-#: app/login/components/profile-tables.tsx
+#: app/components/confirmation-dialog.tsx
 msgid "yes"
 msgstr "Oui"
