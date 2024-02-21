@@ -1,6 +1,6 @@
 import fs from "fs";
 
-import cubes from "./data.js";
+import cubes from "./data.json" assert { type: "json" };
 
 const envs = ["test", "int", "prod"];
 const queries = [
@@ -15,17 +15,19 @@ const generateAutoTests = () => {
   const commands = envs
     .flatMap((env) =>
       queries.flatMap((query) =>
-        cubes.map((cube) =>
-          getRunCommand(
-            env,
-            query,
-            cube,
-            `https://${
-              env === "prod" ? "" : `${env}.`
-            }visualize.admin.ch/api/graphql`,
-            true,
-            false
-          )
+        cubes.map(
+          (cube) =>
+            "K6_PROMETHEUS_RW_USERNAME=${{ secrets.K6_PROMETHEUS_RW_USERNAME }} K6_PROMETHEUS_RW_PASSWORD=${{ secrets.K6_PROMETHEUS_RW_PASSWORD }} K6_PROMETHEUS_RW_SERVER_URL=${{ secrets.K6_PROMETHEUS_RW_SERVER_URL }} K6_PROMETHEUS_RW_TREND_STATS=avg " +
+            getRunCommand(
+              env,
+              query,
+              cube,
+              `https://${
+                env === "prod" ? "" : `${env}.`
+              }visualize.admin.ch/api/graphql`,
+              true,
+              false
+            )
         )
       )
     )
@@ -38,9 +40,6 @@ on:
   workflow_dispatch:
   schedule:
     - cron: "37 * * * *"
-
-env:
-  CUBES: '${JSON.stringify(cubes)}'
 
 jobs:
   run_tests:
@@ -57,10 +56,6 @@ jobs:
             export PATH=$PATH:/usr/local/bin
       - name: Run k6 and upload results to Prometheus
         run: |
-          K6_PROMETHEUS_RW_USERNAME=\${{ secrets.K6_PROMETHEUS_RW_USERNAME }}
-          K6_PROMETHEUS_RW_PASSWORD=\${{ secrets.K6_PROMETHEUS_RW_PASSWORD }}
-          K6_PROMETHEUS_RW_SERVER_URL=\${{ secrets.K6_PROMETHEUS_RW_SERVER_URL }}
-          K6_PROMETHEUS_RW_TREND_STATS=avg
           ${commands}
 `;
 
@@ -89,7 +84,6 @@ name: GraphQL performance tests (PR)
 on: [deployment_status]
 
 env:
-  CUBES: '${JSON.stringify(cubes)}'
   SUMMARY: ''
 
 jobs:
@@ -148,5 +142,5 @@ function getRunCommand(
     cube.iri
   } --env CUBE_LABEL=${cube.label} --env CHECK_TIMING=${
     checkTiming ? "true" : "false"
-  } --env CUBES='\${{ env.CUBES }}' --quiet - <k6/performance-tests/graphql/${query}.js`;
+  } --env WORKSPACE=\${{ github.workspace }} --quiet - <k6/performance-tests/graphql/${query}.js`;
 }
