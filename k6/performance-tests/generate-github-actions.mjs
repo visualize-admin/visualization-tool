@@ -23,14 +23,13 @@ const generateAutoTests = () => {
             `https://${
               env === "prod" ? "" : `${env}.`
             }visualize.admin.ch/api/graphql`,
-            "/root/",
             true,
             false
           )
         )
       )
     )
-    .join(" &&\n            ");
+    .join(" &&\n          ");
   const file = `# GENERATED FILE, DO NOT EDIT MANUALLY - use yarn run github:codegen instead
 
 name: GraphQL performance tests (auto)
@@ -40,6 +39,9 @@ on:
   schedule:
     - cron: "37 * * * *"
 
+env:
+  CUBES: '${JSON.stringify(cubes)}'
+
 jobs:
   run_tests:
     name: Run tests
@@ -47,18 +49,19 @@ jobs:
     steps:
       - name: Check out
         uses: actions/checkout@v2
+      - name: Download, unzip and install k6 binary
+        run: |
+            wget https://github.com/grafana/k6/releases/download/v0.49.0/k6-v0.49.0-linux-amd64.tar.gz
+            tar -xzf k6-v0.49.0-linux-amd64.tar.gz
+            sudo cp k6-v0.49.0-linux-amd64/k6 /usr/local/bin/k6
+            export PATH=$PATH:/usr/local/bin
       - name: Run k6 and upload results to Prometheus
-        uses: addnab/docker-run-action@v3
-        with:
-          image: grafana/k6:latest
-          options: |
-            -v \${{ github.workspace }}:/root
-            -e K6_PROMETHEUS_RW_USERNAME=\${{ secrets.K6_PROMETHEUS_RW_USERNAME }}
-            -e K6_PROMETHEUS_RW_PASSWORD=\${{ secrets.K6_PROMETHEUS_RW_PASSWORD }}
-            -e K6_PROMETHEUS_RW_SERVER_URL=\${{ secrets.K6_PROMETHEUS_RW_SERVER_URL }}
-            -e K6_PROMETHEUS_RW_TREND_STATS=avg
-          run: |
-            ${commands}
+        run: |
+          K6_PROMETHEUS_RW_USERNAME=\${{ secrets.K6_PROMETHEUS_RW_USERNAME }}
+          K6_PROMETHEUS_RW_PASSWORD=\${{ secrets.K6_PROMETHEUS_RW_PASSWORD }}
+          K6_PROMETHEUS_RW_SERVER_URL=\${{ secrets.K6_PROMETHEUS_RW_SERVER_URL }}
+          K6_PROMETHEUS_RW_TREND_STATS=avg
+          ${commands}
 `;
 
   fs.writeFileSync("./.github/workflows/performance-tests.yml", file);
@@ -74,7 +77,6 @@ const generatePRTests = () => {
         query,
         cube,
         "${{ github.event.deployment_status.target_url }}/api/graphql",
-        "",
         false,
         true
       )
@@ -137,7 +139,6 @@ function getRunCommand(
   query,
   cube,
   endpoint,
-  rootPath,
   sendToPrometheus = true,
   checkTiming = true
 ) {
@@ -147,5 +148,5 @@ function getRunCommand(
     cube.iri
   } --env CUBE_LABEL=${cube.label} --env CHECK_TIMING=${
     checkTiming ? "true" : "false"
-  } --env CUBES='\${{ env.CUBES }}' --quiet - <${rootPath}k6/performance-tests/graphql/${query}.js`;
+  } --env CUBES='\${{ env.CUBES }}' --quiet - <k6/performance-tests/graphql/${query}.js`;
 }
