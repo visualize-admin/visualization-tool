@@ -29,10 +29,12 @@ import {
   enableLayouting,
   getChartConfig,
   hasChartConfigs,
+  initChartStateFromChartEdit,
   isConfiguring,
   isLayouting,
   isPublished,
   isPublishing,
+  saveChartLocally,
   useConfiguratorState,
 } from "@/configurator";
 import { ChartTypeSelector } from "@/configurator/components/chart-type-selector";
@@ -329,7 +331,7 @@ export const SaveDraftButton = ({
   const { data: config, invalidate: invalidateConfig } = useUserConfig(chartId);
   const session = useSession();
 
-  const [state] = useConfiguratorState();
+  const [state, dispatch] = useConfiguratorState();
 
   const [snack, enqueueSnackbar, dismissSnack] = useLocalSnack();
   const [debouncedSnack] = useDebounce(snack, 500);
@@ -370,7 +372,15 @@ export const SaveDraftButton = ({
             }),
             variant: "success",
           });
-          replace(`/create/new?edit=${saved.key}`);
+          const config = await initChartStateFromChartEdit(saved.key);
+          if (!config) {
+            return;
+          }
+          dispatch({ type: "INITIALIZED", value: config });
+          saveChartLocally(saved.key, config);
+          replace(`/create/${saved.key}`, undefined, {
+            shallow: true,
+          });
         } else {
           throw new Error("Could not save draft");
         }
