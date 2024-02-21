@@ -2,7 +2,9 @@ import { check } from "k6";
 import exec from "k6/execution";
 import http from "k6/http";
 
-const cubes = JSON.parse(__ENV.CUBES);
+const cubes = JSON.parse(
+  open(`${__ENV.WORKSPACE}/k6/performance-tests/data.json`)
+);
 const query = `query DataCubePreview(
   $sourceType: String!
   $sourceUrl: String!

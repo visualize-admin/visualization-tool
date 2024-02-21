@@ -1,6 +1,6 @@
 import fs from "fs";
 
-import cubes from "./data.js";
+import cubes from "./data.json" assert { type: "json" };
 
 const envs = ["test", "int", "prod"];
 const queries = [
@@ -38,9 +38,6 @@ on:
   workflow_dispatch:
   schedule:
     - cron: "37 * * * *"
-
-env:
-  CUBES: '${JSON.stringify(cubes)}'
 
 jobs:
   run_tests:
@@ -89,7 +86,6 @@ name: GraphQL performance tests (PR)
 on: [deployment_status]
 
 env:
-  CUBES: '${JSON.stringify(cubes)}'
   SUMMARY: ''
 
 jobs:
@@ -148,5 +144,5 @@ function getRunCommand(
     cube.iri
   } --env CUBE_LABEL=${cube.label} --env CHECK_TIMING=${
     checkTiming ? "true" : "false"
-  } --env CUBES='\${{ env.CUBES }}' --quiet - <k6/performance-tests/graphql/${query}.js`;
+  } --env WORKSPACE=\${{ github.workspace }} --quiet - <k6/performance-tests/graphql/${query}.js`;
 }
