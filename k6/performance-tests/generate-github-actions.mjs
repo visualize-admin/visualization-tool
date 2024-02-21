@@ -12,26 +12,24 @@ const queries = [
 ];
 
 const generateAutoTests = () => {
-  const commands = envs
-    .flatMap((env) =>
-      queries.flatMap((query) =>
-        cubes.map(
-          (cube) =>
-            "K6_PROMETHEUS_RW_USERNAME=${{ secrets.K6_PROMETHEUS_RW_USERNAME }} K6_PROMETHEUS_RW_PASSWORD=${{ secrets.K6_PROMETHEUS_RW_PASSWORD }} K6_PROMETHEUS_RW_SERVER_URL=${{ secrets.K6_PROMETHEUS_RW_SERVER_URL }} K6_PROMETHEUS_RW_TREND_STATS=avg " +
-            getRunCommand(
-              env,
-              query,
-              cube,
-              `https://${
-                env === "prod" ? "" : `${env}.`
-              }visualize.admin.ch/api/graphql`,
-              true,
-              false
-            )
-        )
+  const commands = envs.flatMap((env) =>
+    queries.flatMap((query) =>
+      cubes.map(
+        (cube) =>
+          "K6_PROMETHEUS_RW_USERNAME=${{ secrets.K6_PROMETHEUS_RW_USERNAME }} K6_PROMETHEUS_RW_PASSWORD=${{ secrets.K6_PROMETHEUS_RW_PASSWORD }} K6_PROMETHEUS_RW_SERVER_URL=${{ secrets.K6_PROMETHEUS_RW_SERVER_URL }} K6_PROMETHEUS_RW_TREND_STATS=avg " +
+          getRunCommand(
+            env,
+            query,
+            cube,
+            `https://${
+              env === "prod" ? "" : `${env}.`
+            }visualize.admin.ch/api/graphql`,
+            true,
+            false
+          )
       )
     )
-    .join(" &&\n          ");
+  );
   const file = `# GENERATED FILE, DO NOT EDIT MANUALLY - use yarn run github:codegen instead
 
 name: GraphQL performance tests (auto)
@@ -54,10 +52,12 @@ jobs:
             tar -xzf k6-v0.49.0-linux-amd64.tar.gz
             sudo cp k6-v0.49.0-linux-amd64/k6 /usr/local/bin/k6
             export PATH=$PATH:/usr/local/bin
-      - name: Run k6 and upload results to Prometheus
-        run: |
-          ${commands}
-`;
+${commands
+  .map(
+    (command, i) => `      - name: Run k6 test (iteration ${i + 1})
+        run: ${command}`
+  )
+  .join("\n")}`;
 
   fs.writeFileSync("./.github/workflows/performance-tests.yml", file);
 };
