@@ -376,7 +376,11 @@ export const TableColumnOptions = ({
                 id={`select-single-filter-time`}
               />
             ) : (
-              <TimeFilter key={component.iri} dimension={component} />
+              <TimeFilter
+                key={component.iri}
+                dimension={component}
+                disableInteractiveFilters
+              />
             )}
           </ControlSectionContent>
         </ControlSection>

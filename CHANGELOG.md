@@ -17,6 +17,8 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 - Fixes
   - Interactive filters and table previews now work correctly in dashboard layout layouts
   - Table filters are now applied correctly again
+  - Select elements for table column styles are not empty by default anymore
+  - Disabled `Interactive` toggle for temporal dimensions used in column charts, as they don't support interactive filters
 - Performance
   - Significantly improved performance of dataset previews
 - Maintenance
