@@ -87,6 +87,7 @@ name: GraphQL performance tests (PR)
 on: [deployment_status]
 
 env:
+  CUBES: '${JSON.stringify(cubes)}'
   SUMMARY: ''
 
 jobs:
@@ -100,7 +101,7 @@ jobs:
       - name: Send an HTTP request to start up the server
         run: |
           curl -s '\${{ github.event.deployment_status.target_url }}/api/graphql' -X 'POST' -H 'Content-Type: application/json' -d '{"operationName":"DataCubeObservations","variables":{"locale":"en","sourceType":"sparql","sourceUrl":"https://lindas.admin.ch/query","cubeFilter":{"iri":"https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9","filters":{"https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton":{"type":"single","value":"https://ld.admin.ch/canton/1"}}}},"query":"query DataCubeObservations($sourceType: String!, $sourceUrl: String!, $locale: String!, $cubeFilter: DataCubeObservationFilter!) { dataCubeObservations(sourceType: $sourceType, sourceUrl: $sourceUrl, locale: $locale, cubeFilter: $cubeFilter) }"}' > /dev/null
-      - name: Download, unzip and install k6 binary from https://github.com/grafana/k6/releases/download/v0.49.0/k6-v0.49.0-linux-arm64.tar.gz
+      - name: Download, unzip and install k6 binary
         run: |
             wget https://github.com/grafana/k6/releases/download/v0.49.0/k6-v0.49.0-linux-amd64.tar.gz
             tar -xzf k6-v0.49.0-linux-amd64.tar.gz
@@ -109,9 +110,7 @@ jobs:
 ${commands
   .map(
     (command, i) => `      - name: Run k6 test (iteration ${i + 1})
-        run: |
-          echo "SUMMARY=\${{ env.SUMMARY }}$(${command})" >> $GITHUB_ENV
-      `
+        run: echo "SUMMARY=\${{ env.SUMMARY }}$(${command})" >> $GITHUB_ENV`
   )
   .join("\n")}
       - name: GQL performance tests ❌
@@ -148,7 +147,5 @@ function getRunCommand(
     cube.iri
   } --env CUBE_LABEL=${cube.label} --env CHECK_TIMING=${
     checkTiming ? "true" : "false"
-  } --env CUBES='${JSON.stringify(
-    cubes
-  )}' --quiet - <${rootPath}k6/performance-tests/graphql/${query}.js`;
+  } --env CUBES='\${{ env.CUBES }}' --quiet - <${rootPath}k6/performance-tests/graphql/${query}.js`;
 }
