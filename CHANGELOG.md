@@ -7,13 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 You can also check the [release page](https://github.com/visualize-admin/visualization-tool/releases)
 
-## Unreleased
+# Unreleased
+
+Nothing yet.
+
+# [3.26.0] - 2023-12-21
 
 - Features
   - Layout step is now available without using a flag
   - Added Single URLs layout
   - Added drag and drop functionality to dashboard layouts
   - Improved responsiveness of charts in Tall layout
+  - Added draft chart(s) functionality (for logged in users)
+  - Added chart renaming from profile profile page
 - Fixes
   - Interactive filters and table previews now work correctly in dashboard layout layouts
   - Table filters are now applied correctly again
