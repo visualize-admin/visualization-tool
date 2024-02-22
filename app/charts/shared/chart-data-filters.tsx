@@ -242,7 +242,7 @@ const DataFilter = (props: DataFilterProps) => {
         {
           iri: cubeIri,
           componentIris: [dimensionIri],
-          filters: keys.length > 0 ? interactiveFilters : undefined,
+          filters: keys.length > 1 ? interactiveFilters : undefined,
         },
       ],
       // This is important for urql not to think that filters
