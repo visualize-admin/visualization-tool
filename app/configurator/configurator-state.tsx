@@ -1490,7 +1490,7 @@ export const initChartStateFromCube = async (
     sourceType: dataSource.type,
     sourceUrl: dataSource.url,
     locale,
-    cubeFilters: [{ iri: cubeIri }],
+    cubeFilters: [{ iri: cubeIri, loadValues: true }],
   });
 
   if (components?.dataCubesComponents) {
