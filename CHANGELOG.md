@@ -7,9 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 You can also check the [release page](https://github.com/visualize-admin/visualization-tool/releases)
 
-# Unreleased
+# [3.26.1] - 2023-12-22
 
-Nothing yet.
+- Fixes
+  - Ability to copy/edit previous charts
 
 # [3.26.0] - 2023-12-21
 
