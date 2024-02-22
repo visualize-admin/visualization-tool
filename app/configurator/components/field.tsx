@@ -243,7 +243,7 @@ export const DataFilterSelect = ({
 
   const canUseMostRecentValue = isTemporalOrdinalDimension(dimension);
   const usesMostRecentValue = isDynamicMaxValue(fieldProps.value);
-  const maxValue = sortedValues[sortedValues.length - 1].value;
+  const maxValue = sortedValues[sortedValues.length - 1]?.value;
 
   return (
     <Select
