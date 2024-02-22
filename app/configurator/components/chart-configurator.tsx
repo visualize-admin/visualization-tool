@@ -18,6 +18,7 @@ import {
 import { makeStyles } from "@mui/styles";
 import isEmpty from "lodash/isEmpty";
 import isEqual from "lodash/isEqual";
+import pickBy from "lodash/pickBy";
 import sortBy from "lodash/sortBy";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -90,14 +91,40 @@ import { useLocale } from "@/locales/use-locale";
 import useEvent from "@/utils/use-event";
 
 type DataFilterSelectGenericProps = {
-  dimension: Dimension;
+  rawDimension: Dimension;
+  filterDimensionIris: string[];
   index: number;
   disabled?: boolean;
   onRemove: () => void;
 };
 
 const DataFilterSelectGeneric = (props: DataFilterSelectGenericProps) => {
-  const { dimension, index, disabled, onRemove } = props;
+  const { rawDimension, filterDimensionIris, index, disabled, onRemove } =
+    props;
+  const locale = useLocale();
+  const [state] = useConfiguratorState();
+  const chartConfig = getChartConfig(state);
+  const [{ data, fetching }] = useDataCubesComponentsQuery({
+    variables: {
+      sourceType: state.dataSource.type,
+      sourceUrl: state.dataSource.url,
+      locale,
+      cubeFilters: chartConfig.cubes.map((cube) => {
+        const rawFilters = pickBy(cube.filters, (_, key) =>
+          filterDimensionIris.includes(key)
+        );
+        return {
+          iri: cube.iri,
+          joinBy: cube.joinBy,
+          componentIris: [rawDimension.iri],
+          filters: Object.keys(rawFilters).length > 0 ? rawFilters : undefined,
+          loadValues: true,
+        };
+      }),
+    },
+  });
+
+  const dimension = data?.dataCubesComponents?.dimensions?.[0] ?? rawDimension;
   const controls = dimension.isKeyDimension ? null : (
     <Box sx={{ display: "flex", flexGrow: 1 }}>
       <IconButton
@@ -120,8 +147,9 @@ const DataFilterSelectGeneric = (props: DataFilterSelectGenericProps) => {
     ),
     controls,
     id: `select-single-filter-${index}`,
-    disabled,
+    disabled: fetching || disabled,
     isOptional: !dimension.isKeyDimension,
+    loading: fetching,
   };
 
   if (
@@ -297,6 +325,7 @@ const useFilterReorder = ({
             iri: cube.iri,
             filters: undefined,
             joinBy: cube.joinBy,
+            loadValues: true,
           };
     });
 
@@ -704,7 +733,10 @@ export const ChartConfigurator = ({
                             </div>
                             <DataFilterSelectGeneric
                               key={dimension.iri}
-                              dimension={dimension}
+                              rawDimension={dimension}
+                              filterDimensionIris={filterDimensions
+                                .slice(0, i)
+                                .map((d) => d.iri)}
                               index={i}
                               disabled={fetching}
                               onRemove={() =>
