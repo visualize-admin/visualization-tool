@@ -14,7 +14,7 @@ type Migration = {
 
 export const CHART_CONFIG_VERSION = "3.0.0";
 
-const chartConfigMigrations: Migration[] = [
+export const chartConfigMigrations: Migration[] = [
   {
     description: `MAP
     baseLayer {
@@ -814,7 +814,7 @@ export const migrateChartConfig = makeMigrate(chartConfigMigrations, {
 
 export const CONFIGURATOR_STATE_VERSION = "3.1.0";
 
-const configuratorStateMigrations: Migration[] = [
+export const configuratorStateMigrations: Migration[] = [
   {
     description: "ALL",
     from: "1.0.0",
@@ -1049,7 +1049,7 @@ function makeMigrate(
   };
 }
 
-const upOrDown = (
+export const upOrDown = (
   fromVersion: string,
   toVersion: string
 ): "up" | "down" | "same" => {

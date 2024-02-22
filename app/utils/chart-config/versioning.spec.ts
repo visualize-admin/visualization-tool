@@ -5,7 +5,14 @@ import {
   MapConfig,
 } from "@/config-types";
 
-import { migrateChartConfig } from "./versioning";
+import {
+  chartConfigMigrations,
+  CHART_CONFIG_VERSION,
+  configuratorStateMigrations,
+  CONFIGURATOR_STATE_VERSION,
+  migrateChartConfig,
+  upOrDown,
+} from "./versioning";
 
 const CONFIGURATOR_STATE = {
   meta: {
@@ -158,5 +165,23 @@ describe("config migrations", () => {
     expect(
       migratedOldConfig.interactiveFiltersConfig?.timeRange.componentIri
     ).toEqual("");
+  });
+});
+
+describe("last version", () => {
+  it("should have a version superior to the last migration (configurator state)", () => {
+    const direction = upOrDown(
+      CONFIGURATOR_STATE_VERSION,
+      configuratorStateMigrations[configuratorStateMigrations.length - 1].to
+    );
+    expect(direction).toBe("same");
+  });
+
+  it("should have a version superior to the last migration (chart config)", () => {
+    const direction = upOrDown(
+      CHART_CONFIG_VERSION,
+      chartConfigMigrations[chartConfigMigrations.length - 1].to
+    );
+    expect(direction).toBe("same");
   });
 });
