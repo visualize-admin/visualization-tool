@@ -361,6 +361,7 @@ const getCachedComponents = (
       locale,
       cubeFilter: {
         iri: cubeFilter.iri,
+        componentIris: undefined,
         joinBy: cubeFilter.joinBy,
         loadValues: true,
       },
@@ -617,11 +618,14 @@ export const applyNonTableDimensionToFilters = ({
       : undefined;
     const filterValue = hierarchyTopMost
       ? hierarchyTopMost.value
-      : dimension.values[0].value;
-    filters[dimension.iri] = {
-      type: "single",
-      value: filterValue,
-    };
+      : dimension.values[0]?.value;
+
+    if (filterValue) {
+      filters[dimension.iri] = {
+        type: "single",
+        value: filterValue,
+      };
+    }
   }
 };
 
