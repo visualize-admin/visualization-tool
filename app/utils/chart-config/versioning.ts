@@ -1,4 +1,3 @@
-import { PUBLISHED_STATE } from "@prisma/client";
 import produce from "immer";
 
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
@@ -990,25 +989,6 @@ const configuratorStateMigrations: Migration[] = [
           },
         };
         delete draft.layout;
-      });
-    },
-  },
-  {
-    description: "ALL + published_state",
-    from: "3.1.0",
-    to: "3.2.0",
-    up: (config) => {
-      const newConfig = { ...config, version: "3.2.0" };
-
-      return produce(newConfig, (draft: any) => {
-        draft.published_state = PUBLISHED_STATE.PUBLISHED;
-      });
-    },
-    down: (config) => {
-      const newConfig = { ...config, version: "3.1.0" };
-
-      return produce(newConfig, (draft: any) => {
-        delete draft.published_state;
       });
     },
   },
