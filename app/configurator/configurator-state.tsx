@@ -334,7 +334,6 @@ const INITIAL_STATE: ConfiguratorState = {
   version: CONFIGURATOR_STATE_VERSION,
   state: "INITIAL",
   dataSource: DEFAULT_DATA_SOURCE,
-  published_state: PUBLISHED_STATE.DRAFT,
 };
 
 const EMPTY_STATE: ConfiguratorStateSelectingDataSet = {
@@ -345,7 +344,6 @@ const EMPTY_STATE: ConfiguratorStateSelectingDataSet = {
   chartConfigs: undefined,
   layout: undefined,
   activeChartKey: undefined,
-  published_state: PUBLISHED_STATE.DRAFT,
 };
 
 const getCachedComponents = (
@@ -653,7 +651,6 @@ const transitionStepNext = (
           version: CONFIGURATOR_STATE_VERSION,
           state: "CONFIGURING_CHART",
           dataSource: draft.dataSource,
-          published_state: draft.published_state,
           layout: {
             type: "tab",
             meta: {

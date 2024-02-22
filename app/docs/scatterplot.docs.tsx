@@ -36,7 +36,6 @@ ${(
         version: CONFIGURATOR_STATE_VERSION,
         state: "PUBLISHED",
         dataSource: { type: "sparql", url: "" },
-        published_state: "PUBLISHED",
         layout: {
           type: "tab",
           meta: {

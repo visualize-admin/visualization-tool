@@ -1,4 +1,3 @@
-import { PUBLISHED_STATE } from "@prisma/client";
 import produce from "immer";
 
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
@@ -15,7 +14,7 @@ type Migration = {
 
 export const CHART_CONFIG_VERSION = "3.0.0";
 
-const chartConfigMigrations: Migration[] = [
+export const chartConfigMigrations: Migration[] = [
   {
     description: `MAP
     baseLayer {
@@ -815,7 +814,7 @@ export const migrateChartConfig = makeMigrate(chartConfigMigrations, {
 
 export const CONFIGURATOR_STATE_VERSION = "3.1.0";
 
-const configuratorStateMigrations: Migration[] = [
+export const configuratorStateMigrations: Migration[] = [
   {
     description: "ALL",
     from: "1.0.0",
@@ -993,25 +992,6 @@ const configuratorStateMigrations: Migration[] = [
       });
     },
   },
-  {
-    description: "ALL + published_state",
-    from: "3.1.0",
-    to: "3.2.0",
-    up: (config) => {
-      const newConfig = { ...config, version: "3.2.0" };
-
-      return produce(newConfig, (draft: any) => {
-        draft.published_state = PUBLISHED_STATE.PUBLISHED;
-      });
-    },
-    down: (config) => {
-      const newConfig = { ...config, version: "3.1.0" };
-
-      return produce(newConfig, (draft: any) => {
-        delete draft.published_state;
-      });
-    },
-  },
 ];
 
 export const migrateConfiguratorState = makeMigrate(
@@ -1069,7 +1049,7 @@ function makeMigrate(
   };
 }
 
-const upOrDown = (
+export const upOrDown = (
   fromVersion: string,
   toVersion: string
 ): "up" | "down" | "same" => {

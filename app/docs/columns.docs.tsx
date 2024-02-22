@@ -41,7 +41,6 @@ ${(
         },
         chartConfigs: [chartConfig],
         activeChartKey: "scatterplot",
-        published_state: "PUBLISHED",
       }}
     >
       <InteractiveFiltersProvider>
