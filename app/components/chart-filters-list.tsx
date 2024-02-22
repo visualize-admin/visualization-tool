@@ -21,6 +21,8 @@ import {
   isTemporalOrdinalDimension,
 } from "@/domain/data";
 import { useTimeFormatUnit } from "@/formatters";
+import { useDataCubesComponentsQuery } from "@/graphql/hooks";
+import { useLocale } from "@/locales/use-locale";
 import { useInteractiveFilters } from "@/stores/interactive-filters";
 
 type ChartFiltersListProps = {
@@ -31,7 +33,8 @@ type ChartFiltersListProps = {
 };
 
 export const ChartFiltersList = (props: ChartFiltersListProps) => {
-  const { chartConfig, dimensions, measures } = props;
+  const { dataSource, chartConfig, dimensions, measures } = props;
+  const locale = useLocale();
   const timeFormatUnit = useTimeFormatUnit();
   const timeSlider = useInteractiveFilters((d) => d.timeSlider);
   const animationField = getAnimationField(chartConfig);
@@ -41,8 +44,24 @@ export const ChartFiltersList = (props: ChartFiltersListProps) => {
     measures,
     componentIris: extractChartConfigComponentIris(chartConfig),
   });
+  const [{ data }] = useDataCubesComponentsQuery({
+    variables: {
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+      cubeFilters:
+        filters?.map((filter) => ({
+          iri: filter.iri,
+          componentIris: filter.componentIris,
+          filters: filter.filters,
+          joinBy: filter.joinBy,
+          loadValues: true,
+        })) ?? [],
+    },
+    pause: !filters,
+  });
   const allFilters = React.useMemo(() => {
-    if (!filters || !dimensions || !measures) {
+    if (!data?.dataCubesComponents || !filters || !dimensions || !measures) {
       return [];
     }
 
@@ -54,7 +73,7 @@ export const ChartFiltersList = (props: ChartFiltersListProps) => {
           return [];
         }
 
-        const dimension = dimensions.find(
+        const dimension = data.dataCubesComponents.dimensions.find(
           (d) => d.iri === iri && d.cubeIri === filter.iri
         );
 
@@ -114,6 +133,7 @@ export const ChartFiltersList = (props: ChartFiltersListProps) => {
       return namedFilters;
     });
   }, [
+    data?.dataCubesComponents,
     dimensions,
     measures,
     filters,
