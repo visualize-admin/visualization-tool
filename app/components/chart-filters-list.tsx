@@ -21,8 +21,6 @@ import {
   isTemporalOrdinalDimension,
 } from "@/domain/data";
 import { useTimeFormatUnit } from "@/formatters";
-import { useDataCubesComponentsQuery } from "@/graphql/hooks";
-import { useLocale } from "@/locales/use-locale";
 import { useInteractiveFilters } from "@/stores/interactive-filters";
 
 type ChartFiltersListProps = {
@@ -33,8 +31,7 @@ type ChartFiltersListProps = {
 };
 
 export const ChartFiltersList = (props: ChartFiltersListProps) => {
-  const { dataSource, chartConfig, dimensions, measures } = props;
-  const locale = useLocale();
+  const { chartConfig, dimensions, measures } = props;
   const timeFormatUnit = useTimeFormatUnit();
   const timeSlider = useInteractiveFilters((d) => d.timeSlider);
   const animationField = getAnimationField(chartConfig);
@@ -44,23 +41,8 @@ export const ChartFiltersList = (props: ChartFiltersListProps) => {
     measures,
     componentIris: extractChartConfigComponentIris(chartConfig),
   });
-  const [{ data }] = useDataCubesComponentsQuery({
-    variables: {
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
-      cubeFilters:
-        filters?.map((filter) => ({
-          iri: filter.iri,
-          componentIris: filter.componentIris,
-          filters: filter.filters,
-          joinBy: filter.joinBy,
-        })) ?? [],
-    },
-    pause: !filters,
-  });
   const allFilters = React.useMemo(() => {
-    if (!data?.dataCubesComponents || !filters || !dimensions || !measures) {
+    if (!filters || !dimensions || !measures) {
       return [];
     }
 
@@ -132,7 +114,6 @@ export const ChartFiltersList = (props: ChartFiltersListProps) => {
       return namedFilters;
     });
   }, [
-    data?.dataCubesComponents,
     dimensions,
     measures,
     filters,
