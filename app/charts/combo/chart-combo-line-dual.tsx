@@ -52,6 +52,7 @@ export const ChartComboLineDualVisualization = (
         iri: cube.iri,
         componentIris,
         joinBy: cube.joinBy,
+        loadValues: true,
       })),
     },
   });

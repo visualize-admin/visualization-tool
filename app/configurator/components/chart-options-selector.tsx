@@ -106,6 +106,7 @@ export const ChartOptionsSelector = ({
         cubeFilters: chartConfig.cubes.map((cube) => ({
           iri: cube.iri,
           joinBy: cube.joinBy,
+          loadValues: true,
         })),
       },
     });
