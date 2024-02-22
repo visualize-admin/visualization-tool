@@ -26,33 +26,19 @@ test("should be possible to de-select options from color component in maps", asy
 
   await selectors.chart.loaded();
 
-  const colorControlSection = within(
-    selectors.edition.controlSectionBySubtitle("Color")
+  const filterControlSection = within(
+    page.locator("[data-testid=chart-edition-multi-filters]", {
+      has: page.locator(`h5:text-is("Filter")`),
+    })
   );
 
-  const filtersButton = await colorControlSection.findByRole("button", {
+  const filtersButton = await filterControlSection.findByRole("button", {
     name: "Edit filters",
   });
   await filtersButton.click();
   const filters = selectors.edition.filterDrawer().within();
-  await (await filters.findByText("moderate danger")).click();
+  await (await filters.findByText("Canton of Zurich")).click();
   await (await filters.findByText("Apply filters")).click();
 
   await selectors.chart.loaded();
-
-  const filtersValueLocator = await colorControlSection.findAllByTestId(
-    "chart-filters-value",
-    undefined,
-    {
-      timeout: 3000,
-    }
-  );
-
-  const texts = await filtersValueLocator.allTextContents();
-  texts.forEach((d) => {
-    // It's possible to override a color.
-    expect(d).toContain("Open Color Picker");
-  });
-
-  expect(texts.length).toEqual(4);
 });

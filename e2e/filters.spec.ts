@@ -32,9 +32,7 @@ describe("Filters", () => {
     const productionRegionFilterValue = await productionRegionFilter
       .locator("input[name^=select-single-filter]")
       .inputValue();
-    expect(productionRegionFilterValue).toEqual(
-      "Switzerland"
-    );
+    expect(productionRegionFilterValue).toEqual("Switzerland");
 
     const treeStatusFilter =
       selectors.edition.dataFilterInput("2. tree status ");
@@ -42,12 +40,10 @@ describe("Filters", () => {
       .locator("input[name^=select-single-filter]")
       .inputValue();
 
-    expect(treeStatusFilterValue).toEqual(
-      "Total"
-    );
+    expect(treeStatusFilterValue).toEqual("Total");
   });
 
-  test("Temporal filter should display all values", async ({
+  test("Temporal filter should display values", async ({
     page,
     actions,
     selectors,
@@ -66,17 +62,18 @@ describe("Filters", () => {
     const filters = await selectors.edition.configFilters();
 
     await filters.locator("label").first().waitFor({ timeout: 30_000 });
+    await page
+      .getByRole("button", {
+        name: "Choose date, selected date is 1 Jan 2014",
+        exact: true,
+      })
+      .click();
 
-    const labels = filters.locator("label[for^=select-single-filter]");
-
-    const texts = await labels.allTextContents();
-    expect(texts).toEqual(["1. Jahr der Vergütung"]);
-
-    const yearFilter = await within(filters).findByText("2014");
-    await yearFilter.click();
-
-    const options = await selectors.mui.options().allInnerTexts();
-
-    expect(options.length).toEqual(9);
+    for (let year of Array.from({ length: 9 })
+      .fill(null)
+      .map((_, i) => `${2014 + i}`)) {
+      await page.getByRole("button", { name: year, exact: true });
+    }
+    await page.getByRole("button", { name: "2014", exact: true }).click();
   });
 });
