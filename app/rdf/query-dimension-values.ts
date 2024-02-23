@@ -243,8 +243,8 @@ const getQueryFilters = (
   const otherDimensionFilters = cube.dimensions
     .filter(
       (dim) =>
-        !filterDimensionIris.includes(dim.path?.value ?? "") ||
-        dim.path?.equals(ns.cube.observedBy)
+        !filterDimensionIris.includes(dim.path?.value ?? "") &&
+        !dim.path?.equals(ns.cube.observedBy)
     )
     .map((dim) => `?observation <${dim.path?.value}> ?dimension${i++} .`);
   const filterDimensionFilters = filtersList.map(([iri, value], j) => {
