@@ -1197,12 +1197,12 @@ msgid "interactive.data.filters.show"
 msgstr "Show Filters"
 
 #: app/login/components/profile-tables.tsx
-msgid "login.chart.actions.publish"
-msgstr "Publish"
+#~ msgid "login.chart.actions.publish"
+#~ msgstr "Publish"
 
 #: app/login/components/profile-tables.tsx
-msgid "login.chart.actions.turn-into-draft"
-msgstr "Turn into draft"
+#~ msgid "login.chart.actions.turn-into-draft"
+#~ msgstr "Turn into draft"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.copy"
@@ -1256,18 +1256,18 @@ msgstr "Keep in mind that removing this visualization will affect all the places
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
-#: app/login/components/profile-content-tabs.tsx
-#: app/login/components/profile-content-tabs.tsx
 msgid "login.profile.my-drafts"
-msgstr "My drafts"
+msgstr "My draft visualisations"
 
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
+msgid "login.profile.my-published-visualizations"
+msgstr "My published visualizations"
+
 #: app/login/components/profile-content-tabs.tsx
-#: app/login/components/profile-content-tabs.tsx
-msgid "login.profile.my-visualizations"
-msgstr "My visualizations"
+#~ msgid "login.profile.my-visualizations"
+#~ msgstr "My visualizations"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.my-visualizations.chart-actions"

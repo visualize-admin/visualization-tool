@@ -73,12 +73,12 @@ export const ProfileContentTabs = (props: ProfileContentTabsProps) => {
               {[
                 "Home",
                 t({
-                  id: "login.profile.my-visualizations",
-                  message: "My visualizations",
+                  id: "login.profile.my-published-visualizations",
+                  message: "My Published Visualizations",
                 }),
                 t({
                   id: "login.profile.my-drafts",
-                  message: "My drafts",
+                  message: "My Drafts Visualizations",
                 }),
               ].map((d) => (
                 <Tab key={d} className={classes.tab} label={d} value={d} />
@@ -94,70 +94,44 @@ export const ProfileContentTabs = (props: ProfileContentTabsProps) => {
         >
           <ProfileVisualizationsTable
             title={t({
-              id: "login.profile.my-visualizations",
-              message: "My visualizations",
-            })}
-            userId={userId}
-            userConfigs={publishedConfigs}
-            preview
-            onShowAll={() =>
-              setValue(
-                t({
-                  id: "login.profile.my-visualizations",
-                  message: "My visualizations",
-                })
-              )
-            }
-          />
-          <ProfileVisualizationsTable
-            title={t({
               id: "login.profile.my-drafts",
-              message: "My drafts",
+              message: "My Drafts Visualizations",
             })}
             userId={userId}
             userConfigs={draftConfigs}
             preview
-            onShowAll={() =>
-              setValue(
-                t({
-                  id: "login.profile.my-drafts",
-                  message: "My drafts",
-                })
-              )
-            }
+            onShowAll={() => setValue("drafts")}
+          />
+          <ProfileVisualizationsTable
+            title={t({
+              id: "login.profile.my-published-visualizations",
+              message: "My Published Visualizations",
+            })}
+            userId={userId}
+            userConfigs={publishedConfigs}
+            preview
+            onShowAll={() => setValue("published")}
           />
         </Box>
       </TabPanel>
-      <TabPanel
-        className={classes.tabPanel}
-        value={t({
-          id: "login.profile.my-visualizations",
-          message: "My visualizations",
-        })}
-      >
+      <TabPanel className={classes.tabPanel} value="published">
         <Box className={classes.tabPanelContent}>
           <ProfileVisualizationsTable
             title={t({
-              id: "login.profile.my-visualizations",
-              message: "My visualizations",
+              id: "login.profile.my-published-visualizations",
+              message: "My Published Visualizations",
             })}
             userId={userId}
             userConfigs={publishedConfigs}
           />
         </Box>
       </TabPanel>
-      <TabPanel
-        className={classes.tabPanel}
-        value={t({
-          id: "login.profile.my-drafts",
-          message: "My drafts",
-        })}
-      >
+      <TabPanel className={classes.tabPanel} value="drafts">
         <Box className={classes.tabPanelContent}>
           <ProfileVisualizationsTable
             title={t({
               id: "login.profile.my-drafts",
-              message: "My drafts",
+              message: "My Drafts Visualizations",
             })}
             userId={userId}
             userConfigs={draftConfigs}

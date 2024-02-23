@@ -56,7 +56,7 @@ const SectionContent = ({
   const rootClasses = useRootStyles();
   return (
     <Box className={rootClasses.sectionContent}>
-      <Typography variant="h2" sx={{ mb: 4 }}>
+      <Typography variant="h3" sx={{ mb: 4 }}>
         {title}
       </Typography>
 

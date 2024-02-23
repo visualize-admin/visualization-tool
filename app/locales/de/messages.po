@@ -1197,12 +1197,12 @@ msgid "interactive.data.filters.show"
 msgstr "Filter anzeigen"
 
 #: app/login/components/profile-tables.tsx
-msgid "login.chart.actions.publish"
-msgstr "Veröffentlichen"
+#~ msgid "login.chart.actions.publish"
+#~ msgstr "Veröffentlichen"
 
 #: app/login/components/profile-tables.tsx
-msgid "login.chart.actions.turn-into-draft"
-msgstr "In Entwurf umwandeln"
+#~ msgid "login.chart.actions.turn-into-draft"
+#~ msgstr "In Entwurf umwandeln"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.copy"
@@ -1256,18 +1256,13 @@ msgstr "Denken Sie daran, dass das Entfernen dieser Visualisierung sich auf alle
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
-#: app/login/components/profile-content-tabs.tsx
-#: app/login/components/profile-content-tabs.tsx
 msgid "login.profile.my-drafts"
-msgstr "Meine Entwürfe"
+msgstr "Meine Entwurfsvisualisierungen"
 
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
-#: app/login/components/profile-content-tabs.tsx
-#: app/login/components/profile-content-tabs.tsx
-#: app/login/components/profile-content-tabs.tsx
-msgid "login.profile.my-visualizations"
-msgstr "Meine Visualisierungen"
+msgid "login.profile.my-published-visualizations"
+msgstr "Meine veröffentlichten Visualisierungen"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.my-visualizations.chart-actions"
