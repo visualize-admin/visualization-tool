@@ -46,9 +46,9 @@ export const createSelectors = ({ screen, page, within }: Ctx) => {
       },
     },
     panels: {
-      left: () => screen.getByTestId("panel-left"),
+      left: () => screen.getByTestId("panel-body-L"),
       drawer: () => screen.getByTestId("panel-drawer"),
-      middle: () => screen.getByTestId("panel-middle"),
+      middle: () => screen.getByTestId("panel-body-M"),
       metadata: () => screen.getByTestId("panel-metadata"),
     },
     edition: {
