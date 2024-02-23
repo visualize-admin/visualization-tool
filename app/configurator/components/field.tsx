@@ -243,7 +243,9 @@ export const DataFilterSelect = ({
 
   const canUseMostRecentValue = isTemporalOrdinalDimension(dimension);
   const usesMostRecentValue = isDynamicMaxValue(fieldProps.value);
-  const maxValue = sortedValues[sortedValues.length - 1].value;
+  // Dimension values can be empty just before a filter is reloaded through
+  // ensurePossibleFilters
+  const maxValue = sortedValues[sortedValues.length - 1]?.value;
 
   return (
     <Select
