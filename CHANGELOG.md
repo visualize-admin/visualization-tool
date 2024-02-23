@@ -15,6 +15,8 @@ Nothing yet.
 
 - Fixes
   - The application no longer breaks in specific cases when filters were re-loaded
+- Maintenance
+  - Increased timeout duration for GQL API (Vercel deployments)
 
 # [3.26.1] - 2024-02-22
 

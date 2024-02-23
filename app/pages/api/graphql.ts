@@ -47,6 +47,8 @@ export const config = {
   api: {
     bodyParser: false,
   },
+  // see https://vercel.com/docs/functions/configuring-functions/duration
+  maxDuration: 60,
 };
 
 const start = server.start();
