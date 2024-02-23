@@ -146,7 +146,9 @@ export const ChartFiltersList = (props: ChartFiltersListProps) => {
 
   return fetching ? (
     <Typography component="div" variant="caption" color="grey.600">
-      <Trans id="controls.section.data.filters">Filters</Trans>:{" "}
+      <b>
+        <Trans id="controls.section.data.filters">Filters</Trans>:
+      </b>{" "}
       <Trans id="hint.loading.data">Loading data...</Trans>
     </Typography>
   ) : allFilters.length ? (
