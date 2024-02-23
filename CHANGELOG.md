@@ -7,12 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 You can also check the [release page](https://github.com/visualize-admin/visualization-tool/releases)
 
-# [3.26.1] - 2023-12-22
+## Unreleased
+
+- Fixes
+  - The application no longer breaks in specific cases when filters were re-loaded
+
+# [3.26.1] - 2024-02-23
 
 - Fixes
   - Ability to copy/edit previous charts
 
-# [3.26.0] - 2023-12-21
+# [3.26.0] - 2024-02-20
 
 - Features
   - Layout step is now available without using a flag
