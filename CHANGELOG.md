@@ -9,10 +9,14 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
+Nothing yet.
+
+# [3.26.2] - 2024-02-23
+
 - Fixes
   - The application no longer breaks in specific cases when filters were re-loaded
 
-# [3.26.1] - 2024-02-23
+# [3.26.1] - 2024-02-22
 
 - Fixes
   - Ability to copy/edit previous charts
