@@ -1254,6 +1254,10 @@ msgstr "Tenete presente che la rimozione di questa visualizzazione avrà effetto
 #~ msgstr ""
 
 #: app/login/components/profile-content-tabs.tsx
+msgid "login.profile.home"
+msgstr "Accoglienza"
+
+#: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
 msgid "login.profile.my-drafts"

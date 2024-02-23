@@ -1254,6 +1254,10 @@ msgstr "Keep in mind that removing this visualization will affect all the places
 #~ msgstr "Enhance chart clarity with a clear title; a good title helps understanding chart content."
 
 #: app/login/components/profile-content-tabs.tsx
+msgid "login.profile.home"
+msgstr "Home"
+
+#: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
 msgid "login.profile.my-drafts"

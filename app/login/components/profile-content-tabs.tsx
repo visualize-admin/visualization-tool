@@ -45,7 +45,7 @@ export const ProfileContentTabs = (props: ProfileContentTabsProps) => {
   const { userId } = props;
 
   const { data: userConfigs } = useUserConfigs();
-  const [value, setValue] = React.useState("Home");
+  const [value, setValue] = React.useState("home");
   const handleChange = useEvent((_: React.SyntheticEvent, v: string) => {
     setValue(v);
   });
@@ -70,24 +70,35 @@ export const ProfileContentTabs = (props: ProfileContentTabsProps) => {
         <Box className={rootClasses.sectionContent}>
           <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
             <TabList className={classes.tabList} onChange={handleChange}>
-              {[
-                "Home",
-                t({
+              <Tab
+                className={classes.tab}
+                label={t({
+                  id: "login.profile.home",
+                  message: "Home",
+                })}
+                value="home"
+              />
+              <Tab
+                className={classes.tab}
+                label={t({
                   id: "login.profile.my-published-visualizations",
                   message: "My Published Visualizations",
-                }),
-                t({
+                })}
+                value="published"
+              />
+              <Tab
+                className={classes.tab}
+                label={t({
                   id: "login.profile.my-drafts",
                   message: "My Drafts Visualizations",
-                }),
-              ].map((d) => (
-                <Tab key={d} className={classes.tab} label={d} value={d} />
-              ))}
+                })}
+                value="drafts"
+              />
             </TabList>
           </Box>
         </Box>
       </Box>
-      <TabPanel className={classes.tabPanel} value="Home">
+      <TabPanel className={classes.tabPanel} value="home">
         <Box
           className={classes.tabPanelContent}
           sx={{ display: "flex", flexDirection: "column", gap: "3rem" }}

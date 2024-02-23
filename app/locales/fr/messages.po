@@ -1254,6 +1254,10 @@ msgstr "Gardez à l'esprit que la suppression de cette visualisation affectera t
 #~ msgstr "Renommer la visualisation"
 
 #: app/login/components/profile-content-tabs.tsx
+msgid "login.profile.home"
+msgstr "Accueil"
+
+#: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
 msgid "login.profile.my-drafts"
