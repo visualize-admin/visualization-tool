@@ -806,7 +806,34 @@ export const ChartConfigurator = ({
       {chartConfig.chartType !== "table" && (
         <InteractiveFiltersConfigurator state={state} />
       )}
+      <ChooseDatasetsControlSection chartConfig={chartConfig} />
     </>
+  );
+};
+
+const ChooseDatasetsControlSection = ({
+  chartConfig,
+}: {
+  chartConfig: ChartConfig;
+}) => {
+  return (
+    <ControlSection collapse>
+      <SubsectionTitle titleId="controls-data" gutterBottom={false}>
+        <Trans id="controls.section.datasets.title">Datasets</Trans>{" "}
+        <FiltersBadge sx={{ ml: "auto", mr: 4 }} />
+      </SubsectionTitle>
+      <ControlSectionContent
+        aria-labelledby="controls-data"
+        data-testid="configurator-filters"
+      >
+        {chartConfig.cubes.map((x) => {
+          return <div key={x.iri}>{x.iri}</div>;
+        })}
+        {chartConfig.cubes.length === 1 ? (
+          <Button variant="contained">Add</Button>
+        ) : null}
+      </ControlSectionContent>
+    </ControlSection>
   );
 };
 
