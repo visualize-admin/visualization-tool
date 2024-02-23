@@ -26,6 +26,10 @@ jest.mock("rdf-cube-view-query", () => ({
   },
 }));
 
+jest.mock("../../rdf/extended-cube", () => ({
+  ExtendedCube: jest.fn(),
+}));
+
 const makeCubeNsGetters = (cubeIri: string) => ({
   col: (col: string) => `${cubeIri}/dimension/${col}`,
   val: (col: string, n: string) => `${cubeIri}/dimension/${col}/${n}`,

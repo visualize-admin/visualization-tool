@@ -15,6 +15,10 @@ jest.mock("rdf-cube-view-query", () => ({
   },
 }));
 
+jest.mock("../../rdf/extended-cube", () => ({
+  ExtendedCube: jest.fn(),
+}));
+
 describe("TimeInput", () => {
   const expectedValue = "2020-05-24";
   const setup = ({ isOptional, id }: { isOptional: boolean; id: string }) => {

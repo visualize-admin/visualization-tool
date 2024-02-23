@@ -14,6 +14,10 @@ jest.mock("rdf-cube-view-query", () => ({
   },
 }));
 
+jest.mock("../rdf/extended-cube", () => ({
+  ExtendedCube: jest.fn(),
+}));
+
 describe("defaultSegmentOnChange", () => {
   it("should not modify filters if selected values are empty", () => {
     const filters = { iri: { type: "single", value: "value" } };
