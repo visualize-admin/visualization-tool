@@ -1,5 +1,5 @@
 import { Fade, Grow } from "@mui/material";
-import { Breakpoint, Theme, createTheme } from "@mui/material/styles";
+import { Breakpoint, createTheme, Theme } from "@mui/material/styles";
 import merge from "lodash/merge";
 import omit from "lodash/omit";
 
@@ -378,6 +378,30 @@ theme.components = {
         "&$endIcon": {
           marginLeft: 4,
         },
+      },
+    },
+  },
+  MuiDialog: {
+    styleOverrides: {
+      root: "",
+    },
+  },
+  MuiDialogContent: {
+    styleOverrides: {
+      root: {
+        padding: "30px",
+        paddingBottom: "16px",
+      },
+    },
+  },
+  MuiDialogTitle: {
+    defaultProps: {
+      // @ts-ignore
+      variant: "h4",
+    },
+    styleOverrides: {
+      root: {
+        padding: "30px",
       },
     },
   },

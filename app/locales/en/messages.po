@@ -1301,6 +1301,14 @@ msgstr "Dataset"
 msgid "login.profile.my-visualizations.multiple-datasets"
 msgstr "Multiple datasets"
 
+#: app/login/components/profile-tables.tsx
+msgid "login.rename-dialog.cancel"
+msgstr "Cancel"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.rename-dialog.save"
+msgstr "Save"
+
 #: app/components/header.tsx
 #: app/components/header.tsx
 msgid "logo.swiss.confederation"

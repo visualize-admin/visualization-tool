@@ -268,6 +268,7 @@ const RenameDialog = ({
                   value={`${i}`}
                   key={i}
                   sx={{
+                    padding: 0,
                     gap: "1rem",
                     display: "flex",
                     flexDirection: "column",
@@ -300,7 +301,7 @@ const RenameDialog = ({
         </DialogContent>
         <DialogActions sx={{ pb: 6, pr: 6 }}>
           <Button variant="outlined" onClick={onClose}>
-            Cancel
+            {t({ id: "login.rename-dialog.cancel" })}
           </Button>
           <LoadingButton
             sx={{ minWidth: "auto" }}
@@ -309,7 +310,7 @@ const RenameDialog = ({
             color="primary"
             type="submit"
           >
-            OK
+            {t({ id: "login.rename-dialog.save" })}
           </LoadingButton>
         </DialogActions>
       </form>
