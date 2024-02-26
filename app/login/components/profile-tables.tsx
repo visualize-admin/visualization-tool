@@ -1,5 +1,5 @@
 import { t, Trans } from "@lingui/macro";
-import { LoadingButton, TabContext, TabList, TabPanel } from "@mui/lab";
+import { LoadingButton, TabContext, TabPanel } from "@mui/lab";
 import {
   Box,
   Button,
@@ -8,11 +8,9 @@ import {
   DialogContent,
   DialogProps,
   DialogTitle,
-  Divider,
   Link,
   Skeleton,
   styled,
-  Tab,
   Table,
   TableBody,
   TableCell,
@@ -30,6 +28,7 @@ import sortBy from "lodash/sortBy";
 import NextLink from "next/link";
 import React, { FormEvent, useState } from "react";
 
+import { VisualizeTab, VisualizeTabList } from "@/components/tabs";
 import useDisclosure from "@/components/use-disclosure";
 import { ParsedConfig } from "@/db/config";
 import { sourceToLabel } from "@/domain/datasource";
@@ -243,10 +242,13 @@ const RenameDialog = ({
             </Trans>
           </Typography>
           <TabContext value={`${renameIndex}`}>
-            <TabList onChange={(_ev, newTab) => setRenameIndex(newTab)}>
+            <VisualizeTabList
+              sx={{ my: "1rem" }}
+              onChange={(_ev, newTab) => setRenameIndex(newTab)}
+            >
               {config.data.chartConfigs.map((x, i) => {
                 return (
-                  <Tab
+                  <VisualizeTab
                     key={i}
                     value={`${i}`}
                     label={
@@ -259,8 +261,7 @@ const RenameDialog = ({
                   />
                 );
               })}
-            </TabList>
-            <Divider sx={{ mb: "1rem" }} />
+            </VisualizeTabList>
             {config.data.chartConfigs.map((x, i) => {
               return (
                 <TabPanel

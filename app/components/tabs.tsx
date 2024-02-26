@@ -1,73 +1,41 @@
-import { Button } from "@mui/material";
-import React, { useContext, useMemo, useState } from "react";
+import { TabList, TabListProps } from "@mui/lab";
+import { styled, Tab, TabProps, tabsClasses } from "@mui/material";
 
-type TabsState = {
-  currentTab: string;
-  requestChangeTab: (newTab: string) => void;
-};
+export const VisualizeTabList = styled(TabList)<TabListProps>(({ theme }) => {
+  return {
+    position: "relative",
+    [`& .${tabsClasses.indicator}`]: {
+      display: "none",
+    },
 
-const TabsContext = React.createContext<TabsState>({
-  currentTab: "",
-  requestChangeTab: () => undefined,
+    // Use before so that bottom border of tabs can go "over" the tab list
+    // bottom border
+    "&:before": {
+      content: '" "',
+      display: "block",
+      position: "absolute",
+      bottom: 0,
+      left: 0,
+      right: 0,
+      margin: "auto",
+      borderBottom: `1px solid ${theme.palette.divider}`,
+    },
+  };
 });
 
-export const Tab = ({
-  children,
-  value,
-}: {
-  value: string;
-  children: React.ReactNode;
-}) => {
-  const { requestChangeTab, currentTab } = useContext(TabsContext);
-
-  return (
-    <Button
-      variant="contained"
-      onClick={() => requestChangeTab(value)}
-      sx={{
-        ml: 2,
-        background: "transparent",
-        borderBottom: "2px solid",
-        borderRadius: 0,
-        borderColor: value === currentTab ? "primary" : "transparent",
-        color: value === currentTab ? "primary" : "black",
-        fontWeight: "bold",
-      }}
-      color="primary"
-      size="small"
-    >
-      {children}
-    </Button>
-  );
-};
-
-export const TabContent = ({
-  children,
-  value,
-}: {
-  value: string;
-  children: React.ReactNode;
-}) => {
-  const { currentTab } = useContext(TabsContext);
-  return currentTab === value ? <>{children}</> : null;
-};
-
-export const Tabs = ({
-  children,
-  initialValue,
-}: {
-  children: React.ReactNode;
-  initialValue: string;
-}) => {
-  const [currentTab, setCurrentTab] = useState<string>(initialValue);
-  const context = useMemo(() => {
-    return {
-      currentTab,
-      requestChangeTab: (newTab: string) => setCurrentTab(newTab),
-    };
-  }, [currentTab]);
-
-  return (
-    <TabsContext.Provider value={context}>{children}</TabsContext.Provider>
-  );
-};
+export const VisualizeTab = styled(Tab)<TabProps>(({ theme }) => {
+  return {
+    marginRight: theme.spacing(2),
+    background: theme.palette.background.paper,
+    border: `1px solid ${theme.palette.divider}`,
+    position: "relative",
+    top: 0,
+    zIndex: 1,
+    borderBottom: `1px solid ${theme.palette.divider}`,
+    "&.Mui-selected": {
+      borderBottomColor: theme.palette.background.paper,
+    },
+    minWidth: "fit-content",
+    padding: theme.spacing(0, 2),
+  };
+});
