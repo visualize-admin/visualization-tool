@@ -1,5 +1,4 @@
 import * as React from "react";
-
 function SvgIcFilter(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
@@ -17,5 +16,4 @@ function SvgIcFilter(props: React.SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
-
 export default SvgIcFilter;

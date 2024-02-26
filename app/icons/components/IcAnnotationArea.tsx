@@ -1,5 +1,4 @@
 import * as React from "react";
-
 function SvgIcAnnotationArea(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
@@ -18,5 +17,4 @@ function SvgIcAnnotationArea(props: React.SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
-
 export default SvgIcAnnotationArea;

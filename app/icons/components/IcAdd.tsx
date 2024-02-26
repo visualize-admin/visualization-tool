@@ -1,5 +1,4 @@
 import * as React from "react";
-
 function SvgIcAdd(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
@@ -16,5 +15,4 @@ function SvgIcAdd(props: React.SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
-
 export default SvgIcAdd;

@@ -1,5 +1,4 @@
 import * as React from "react";
-
 function SvgIcTriangle(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
@@ -16,5 +15,4 @@ function SvgIcTriangle(props: React.SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
-
 export default SvgIcTriangle;

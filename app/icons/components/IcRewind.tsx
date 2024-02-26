@@ -1,5 +1,4 @@
 import * as React from "react";
-
 function SvgIcRewind(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
@@ -19,5 +18,4 @@ function SvgIcRewind(props: React.SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
-
 export default SvgIcRewind;
