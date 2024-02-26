@@ -14,6 +14,7 @@ import {
 import { makeStyles } from "@mui/styles";
 import { PUBLISHED_STATE } from "@prisma/client";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
@@ -46,6 +47,7 @@ import { useLocale } from "@/src";
 import { createConfig, updateConfig } from "@/utils/chart-config/api";
 import { createChartId } from "@/utils/create-chart-id";
 import { getRouterChartId } from "@/utils/router/helpers";
+import { replaceLinks } from "@/utils/ui-strings";
 import useEvent from "@/utils/use-event";
 import { useMutate } from "@/utils/use-fetch-data";
 
@@ -365,13 +367,6 @@ export const SaveDraftButton = ({
           published_state: PUBLISHED_STATE.DRAFT,
         });
         if (saved) {
-          enqueueSnackbar({
-            message: t({
-              id: "button.save-draft.saved",
-              message: "Draft saved",
-            }),
-            variant: "success",
-          });
           const config = await initChartStateFromChartEdit(saved.key);
           if (!config) {
             return;
@@ -385,6 +380,28 @@ export const SaveDraftButton = ({
           throw new Error("Could not save draft");
         }
       }
+
+      enqueueSnackbar({
+        message: (
+          <>
+            {replaceLinks(
+              t({
+                id: "button.save-draft.saved",
+                message: "Draft saved in [My visualisations](/profile)",
+              }),
+              (label, href) => {
+                return (
+                  <div>
+                    <Link href={href}>{label}</Link>
+                  </div>
+                );
+              }
+            )}
+          </>
+        ),
+        variant: "success",
+      });
+
       invalidateConfig();
     } catch (e) {
       console.log(

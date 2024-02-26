@@ -134,7 +134,7 @@ msgstr "Impossible d'enregistrer le brouillon"
 
 #: app/components/chart-selection-tabs.tsx
 msgid "button.save-draft.saved"
-msgstr "Brouillon enregistré"
+msgstr "Brouillon enregistré dans [Mes visualisations](/profile)"
 
 #: app/components/publish-actions.tsx
 msgid "button.share"

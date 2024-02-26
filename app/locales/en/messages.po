@@ -134,7 +134,7 @@ msgstr "Could not save draft"
 
 #: app/components/chart-selection-tabs.tsx
 msgid "button.save-draft.saved"
-msgstr "Draft saved"
+msgstr "Draft saved in [My visualisations](/profile)"
 
 #: app/components/publish-actions.tsx
 msgid "button.share"

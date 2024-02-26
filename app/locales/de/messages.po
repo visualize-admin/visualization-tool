@@ -134,7 +134,7 @@ msgstr "Entwurf konnte nicht gespeichert werden"
 
 #: app/components/chart-selection-tabs.tsx
 msgid "button.save-draft.saved"
-msgstr "Entwurf gespeichert"
+msgstr "Entwurf gespeichert in [Meine veröffentlichten Visualisierungen](/profile)"
 
 #: app/components/publish-actions.tsx
 msgid "button.share"
