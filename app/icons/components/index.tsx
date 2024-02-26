@@ -139,6 +139,7 @@ import { default as Trash } from "@/icons/components/IcTrash";
 import { default as Triangle } from "@/icons/components/IcTriangle";
 import { default as Twitter } from "@/icons/components/IcTwitter";
 import { default as Unfold } from "@/icons/components/IcUnfold";
+import { default as Unpublish } from "@/icons/components/IcUnpublish";
 import { default as Warning } from "@/icons/components/IcWarning";
 import { default as Word } from "@/icons/components/IcWord";
 import { default as XAxis } from "@/icons/components/IcXAxis";
@@ -287,6 +288,7 @@ export const Icons = {
   triangle: Triangle,
   twitter: Twitter,
   unfold: Unfold,
+  unpublish: Unpublish,
   warning: Warning,
   word: Word,
   xAxis: XAxis,

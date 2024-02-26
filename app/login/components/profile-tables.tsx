@@ -337,6 +337,7 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
   const { invalidate: invalidateUserConfigs } = useUserConfigs();
 
   const removeConfigMut = useMutate(removeConfig);
+  const updateConfigMut = useMutate(updateConfig);
 
   const {
     isOpen: isRenameOpen,
@@ -374,40 +375,34 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
         label: t({ id: "login.chart.share", message: "Share" }),
         iconName: "linkExternal",
       },
-      // {
-      //   type: "button",
-      //   label:
-      //     config.published_state === PUBLISHED_STATE.DRAFT
-      //       ? t({
-      //           id: "login.chart.actions.publish",
-      //           message: `Publish`,
-      //         })
-      //       : t({
-      //           id: "login.chart.actions.turn-into-draft",
-      //           message: "Turn into draft",
-      //         }),
-      //   iconName:
-      //     updateConfigMut.status === "fetching" ? "loading" : "linkExternal",
+      config.published_state === PUBLISHED_STATE.PUBLISHED
+        ? {
+            type: "button",
+            label: t({
+              id: "login.chart.actions.unpublish",
+              message: "Unpublish",
+            }),
+            iconName: (updateConfigMut.status === "fetching"
+              ? "loading"
+              : "unpublish") as ActionProps["iconName"],
 
-      //   onClick: async () => {
-      //     await updateConfigMut.mutate({
-      //       key: config.key,
-      //       user_id: userId,
-      //       data: {
-      //         ...config.data,
-      //         state: "PUBLISHING",
-      //       },
-      //       published_state:
-      //         config.published_state === PUBLISHED_STATE.DRAFT
-      //           ? PUBLISHED_STATE.PUBLISHED
-      //           : PUBLISHED_STATE.DRAFT,
-      //     });
-      //     invalidateUserConfigs();
-      //   },
-      //   onSuccess: () => {
-      //     invalidateUserConfigs();
-      //   },
-      // },
+            onClick: async () => {
+              await updateConfigMut.mutate({
+                key: config.key,
+                user_id: userId,
+                data: {
+                  ...config.data,
+                  state: "PUBLISHING",
+                },
+                published_state: PUBLISHED_STATE.DRAFT,
+              });
+              invalidateUserConfigs();
+            },
+            onSuccess: () => {
+              invalidateUserConfigs();
+            },
+          }
+        : null,
       {
         type: "button",
         label: t({ id: "login.chart.rename", message: "Rename" }),
@@ -438,15 +433,18 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
           invalidateUserConfigs();
         },
       },
-    ];
+    ].filter(truthy);
 
     return sortBy(actions, (x) => x.priority);
   }, [
+    config.data,
     config.key,
     config.published_state,
     invalidateUserConfigs,
     openRename,
     removeConfigMut,
+    updateConfigMut,
+    userId,
   ]);
 
   const chartTitle = React.useMemo(() => {

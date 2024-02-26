@@ -1201,8 +1201,8 @@ msgstr "Filter anzeigen"
 #~ msgstr "Veröffentlichen"
 
 #: app/login/components/profile-tables.tsx
-#~ msgid "login.chart.actions.turn-into-draft"
-#~ msgstr "In Entwurf umwandeln"
+msgid "login.chart.actions.unpublish"
+msgstr "Veröffentlichung aufheben"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.copy"

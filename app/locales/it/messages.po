@@ -1201,8 +1201,8 @@ msgstr "Mostra i filtri"
 #~ msgstr "Pubblicare"
 
 #: app/login/components/profile-tables.tsx
-#~ msgid "login.chart.actions.turn-into-draft"
-#~ msgstr "Trasforma in bozza"
+msgid "login.chart.actions.unpublish"
+msgstr "Annullare la pubblicazione"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.copy"

@@ -1201,8 +1201,8 @@ msgstr "Show Filters"
 #~ msgstr "Publish"
 
 #: app/login/components/profile-tables.tsx
-#~ msgid "login.chart.actions.turn-into-draft"
-#~ msgstr "Turn into draft"
+msgid "login.chart.actions.unpublish"
+msgstr "Unpublish"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.copy"
