@@ -21,7 +21,8 @@ export const VisualizeTabList = styled(TabList)<TabListProps>(({ theme }) => {
       borderBottom: `1px solid ${theme.palette.divider}`,
     },
   };
-});
+  // Need to do the type assertion otherwise we cannot use the "component" prop down the line
+}) as typeof TabList;
 
 export const VisualizeTab = styled(Tab)<TabProps>(({ theme }) => {
   return {
@@ -38,4 +39,5 @@ export const VisualizeTab = styled(Tab)<TabProps>(({ theme }) => {
     minWidth: "fit-content",
     padding: theme.spacing(0, 2),
   };
-});
+  // Need to do the type assertion otherwise we cannot use the "component" prop down the line
+}) as typeof Tab;

@@ -1,12 +1,11 @@
 import { t, Trans } from "@lingui/macro";
+import { TabContext } from "@mui/lab";
 import {
   Box,
   BoxProps,
   Button,
   Grow,
   Popover,
-  Tab,
-  Tabs,
   Theme,
   Tooltip,
   useEventCallback,
@@ -22,6 +21,7 @@ import { useDebounce } from "use-debounce";
 
 import { extractChartConfigComponentIris } from "@/charts/shared/chart-helpers";
 import Flex from "@/components/flex";
+import { VisualizeTab, VisualizeTabList } from "@/components/tabs";
 import {
   ChartConfig,
   ChartType,
@@ -528,101 +528,91 @@ const TabsInner = (props: TabsInnerProps) => {
         gap: 5,
       }}
     >
-      <DragDropContext
-        onDragEnd={(d) => {
-          if (d.destination && d.source.index !== d.destination.index) {
-            dispatch({
-              type: "CHART_CONFIG_REORDER",
-              value: {
-                oldIndex: d.source.index,
-                newIndex: d.destination.index,
-              },
-            });
-          }
-        }}
-      >
-        <Droppable droppableId="droppable" direction="horizontal">
-          {(provided) => (
-            <Tabs
-              ref={provided.innerRef}
-              variant="scrollable"
-              value={0}
-              scrollButtons={false}
-              TabIndicatorProps={{ style: { display: "none" } }}
-              sx={{ position: "relative", top: 1 }}
-            >
-              {data.map((d, i) => (
-                <Draggable key={d.key} draggableId={d.key} index={i}>
-                  {(provided, snapshot) => {
-                    const { style } = provided.draggableProps;
-                    // Limit the drag movement to the x-axis.
-                    const transform = style?.transform
-                      ? `${style.transform.split(",")[0]}, 0px)`
-                      : undefined;
+      <TabContext value={`${data.findIndex((x) => x.active)}`}>
+        <DragDropContext
+          onDragEnd={(d) => {
+            if (d.destination && d.source.index !== d.destination.index) {
+              dispatch({
+                type: "CHART_CONFIG_REORDER",
+                value: {
+                  oldIndex: d.source.index,
+                  newIndex: d.destination.index,
+                },
+              });
+            }
+          }}
+        >
+          <Droppable droppableId="droppable" direction="horizontal">
+            {(provided) => (
+              <VisualizeTabList
+                ref={provided.innerRef}
+                variant="scrollable"
+                value={0}
+                scrollButtons={false}
+                TabIndicatorProps={{ style: { display: "none" } }}
+                sx={{ position: "relative", top: 1 }}
+              >
+                {data.map((d, i) => (
+                  <Draggable key={d.key} draggableId={d.key} index={i}>
+                    {(provided, snapshot) => {
+                      const { style } = provided.draggableProps;
+                      // Limit the drag movement to the x-axis.
+                      const transform = style?.transform
+                        ? `${style.transform.split(",")[0]}, 0px)`
+                        : undefined;
 
-                    return (
-                      <Tab
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                        style={{ ...style, transform, opacity: 1 }}
-                        component="div"
-                        key={d.key}
-                        sx={{
-                          mr: 2,
-                          p: 0,
-                          background: (theme) => theme.palette.background.paper,
-                          border: (theme) =>
-                            `1px solid ${theme.palette.divider}`,
-                          borderBottom: (theme) =>
-                            `1px solid ${
-                              d.active ? "transparent" : theme.palette.divider
-                            }`,
-                          minWidth: "fit-content",
-                        }}
-                        label={
-                          <TabContent
-                            iconName={getIconName(d.chartType)}
-                            chartKey={d.key}
-                            editable={editable}
-                            draggable={draggable}
-                            active={d.active}
-                            dragging={snapshot.isDragging}
-                            onEditClick={(e) => {
-                              onChartEdit?.(e, d.key);
-                            }}
-                            onSwitchClick={() => {
-                              onChartSwitch?.(d.key);
-                            }}
-                          />
-                        }
-                      />
-                    );
-                  }}
-                </Draggable>
-              ))}
-              <div style={{ opacity: 0 }}>{provided.placeholder}</div>
+                      return (
+                        <VisualizeTab
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                          style={{ ...style, transform, opacity: 1 }}
+                          component="div"
+                          key={d.key}
+                          value={`${i}`}
+                          sx={{
+                            px: 0,
+                            minWidth: "fit-content",
+                          }}
+                          label={
+                            <TabContent
+                              iconName={getIconName(d.chartType)}
+                              chartKey={d.key}
+                              editable={editable}
+                              draggable={draggable}
+                              active={d.active}
+                              dragging={snapshot.isDragging}
+                              onEditClick={(e) => {
+                                onChartEdit?.(e, d.key);
+                              }}
+                              onSwitchClick={() => {
+                                onChartSwitch?.(d.key);
+                              }}
+                            />
+                          }
+                        />
+                      );
+                    }}
+                  </Draggable>
+                ))}
+                <div style={{ opacity: 0 }}>{provided.placeholder}</div>
 
-              {addable && (
-                <Tab
-                  component="div"
-                  sx={{
-                    ml: (theme) => `-${theme.spacing(2)}`,
-                    p: 0,
-                    background: "white",
-                    borderBottomWidth: 1,
-                    borderBottomStyle: "solid",
-                    borderBottomColor: "divider",
-                    minWidth: "fit-content",
-                  }}
-                  onClick={onChartAdd}
-                  label={<TabContent iconName="add" chartKey="" />}
-                />
-              )}
-            </Tabs>
-          )}
-        </Droppable>
-      </DragDropContext>
+                {addable && (
+                  <VisualizeTab
+                    component="div"
+                    sx={{
+                      px: 0,
+                      minWidth: "fit-content",
+                    }}
+                    onClick={onChartAdd}
+                    label={<TabContent iconName="add" chartKey="" />}
+                  />
+                )}
+              </VisualizeTabList>
+            )}
+          </Droppable>
+        </DragDropContext>
+      </TabContext>
 
       <Box gap="0.5rem" display="flex">
         {isConfiguring(state) ? <SaveDraftButton chartId={chartId} /> : null}
