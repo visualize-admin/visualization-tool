@@ -1,5 +1,5 @@
 import { t, Trans } from "@lingui/macro";
-import { LoadingButton, TabContext, TabPanel } from "@mui/lab";
+import { LoadingButton, TabContext } from "@mui/lab";
 import {
   Box,
   Button,
@@ -194,16 +194,14 @@ const RenameDialog = ({
 
   const handleRename = useEventCallback(
     async (ev: FormEvent<HTMLFormElement>) => {
-      const formData = Array.from(new FormData(ev.currentTarget)).reduce(
-        (acc, [key, value]) => {
-          const [_field, indexS, lang] = key.split(".");
-          const index = Number(indexS);
-          acc[index] = acc[index] || ({} as Record<string, string>);
-          acc[index][lang as Locale] = `${value}`;
-          return acc;
-        },
-        [] as Record<Locale, string>[]
-      );
+      const arrData = Array.from(new FormData(ev.currentTarget));
+      const formData = arrData.reduce((acc, [key, value]) => {
+        const [_field, indexS, lang] = key.split(".");
+        const index = Number(indexS);
+        acc[index] = acc[index] || ({} as Record<string, string>);
+        acc[index][lang as Locale] = `${value}`;
+        return acc;
+      }, [] as Record<Locale, string>[]);
       ev.preventDefault();
 
       await updateConfigMut.mutate({
@@ -227,7 +225,7 @@ const RenameDialog = ({
   );
 
   return (
-    <Dialog {...props} fullWidth>
+    <Dialog {...props} onClose={onClose} fullWidth>
       <form style={{ display: "contents" }} onSubmit={handleRename}>
         <DialogTitle>
           <Trans id="profile.chart.rename-dialog.title">
@@ -253,8 +251,8 @@ const RenameDialog = ({
                     value={`${i}`}
                     label={
                       <span>
-                        {x.meta.title[locale] !== ""
-                          ? x.meta.title[locale]
+                        {x.meta.title?.[locale] !== ""
+                          ? x.meta.title?.[locale]
                           : t({ id: "annotation.add.title" })}
                       </span>
                     }
@@ -264,37 +262,36 @@ const RenameDialog = ({
             </VisualizeTabList>
             {config.data.chartConfigs.map((x, i) => {
               return (
-                <TabPanel
-                  value={`${i}`}
+                <Box
                   key={i}
                   sx={{
                     padding: 0,
                     gap: "1rem",
-                    display: "flex",
                     flexDirection: "column",
+                    display: `${renameIndex}` === `${i}` ? "flex" : "none",
                   }}
                 >
                   <TextField
                     name={`title.${i}.de`}
                     label={t({ id: "controls.language.german" })}
-                    defaultValue={x.meta.title.de}
+                    defaultValue={x.meta.title?.de}
                   />
                   <TextField
                     name={`title.${i}.fr`}
                     label={t({ id: "controls.language.french" })}
-                    defaultValue={x.meta.title.fr}
+                    defaultValue={x.meta.title?.fr}
                   />
                   <TextField
                     name={`title.${i}.it`}
                     label={t({ id: "controls.language.italian" })}
-                    defaultValue={x.meta.title.it}
+                    defaultValue={x.meta.title?.it}
                   />
                   <TextField
                     name={`title.${i}.en`}
                     label={t({ id: "controls.language.english" })}
-                    defaultValue={x.meta.title.en}
+                    defaultValue={x.meta.title?.en}
                   />
-                </TabPanel>
+                </Box>
               );
             })}
           </TabContext>
@@ -451,7 +448,7 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
 
   const chartTitle = React.useMemo(() => {
     const title = config.data.chartConfigs
-      .map((d) => d.meta.title[locale])
+      .map((d) => d.meta.title?.[locale] ?? false)
       .filter(truthy)
       .join(", ");
 
