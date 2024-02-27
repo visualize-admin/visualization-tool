@@ -12,13 +12,7 @@ import { Ruler } from "@/charts/shared/interaction/ruler";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { InteractionHorizontal } from "@/charts/shared/overlay-horizontal";
 import { ComboLineDualConfig, DataSource } from "@/config-types";
-import {
-  useDataCubesComponentsQuery,
-  useDataCubesMetadataQuery,
-  useDataCubesObservationsQuery,
-} from "@/graphql/hooks";
 import { DataCubeObservationFilter } from "@/graphql/query-hooks";
-import { useLocale } from "@/locales/use-locale";
 
 import { ChartProps } from "../shared/ChartProps";
 
@@ -32,44 +26,11 @@ type ChartComboLineDualVisualizationProps = {
 export const ChartComboLineDualVisualization = (
   props: ChartComboLineDualVisualizationProps
 ) => {
-  const { dataSource, componentIris, chartConfig, queryFilters } = props;
-  const locale = useLocale();
-  const commonQueryVariables = {
-    sourceType: dataSource.type,
-    sourceUrl: dataSource.url,
-    locale,
-  };
-  const [metadataQuery] = useDataCubesMetadataQuery({
-    variables: {
-      ...commonQueryVariables,
-      cubeFilters: chartConfig.cubes.map((cube) => ({ iri: cube.iri })),
-    },
-  });
-  const [componentsQuery] = useDataCubesComponentsQuery({
-    variables: {
-      ...commonQueryVariables,
-      cubeFilters: chartConfig.cubes.map((cube) => ({
-        iri: cube.iri,
-        componentIris,
-        joinBy: cube.joinBy,
-        loadValues: true,
-      })),
-    },
-  });
-  const [observationsQuery] = useDataCubesObservationsQuery({
-    variables: {
-      ...commonQueryVariables,
-      cubeFilters: queryFilters ?? [],
-    },
-    pause: !queryFilters,
-  });
-
   return (
     <ChartLoadingWrapper
-      metadataQuery={metadataQuery}
-      componentsQuery={componentsQuery}
-      observationsQuery={observationsQuery}
-      chartConfig={chartConfig}
+      chartConfig={props.chartConfig}
+      dataSource={props.dataSource}
+      queryFilters={props.queryFilters}
       Component={ChartComboLineDual}
     />
   );

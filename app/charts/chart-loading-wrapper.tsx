@@ -12,12 +12,14 @@ import {
   LoadingOverlay,
   NoDataHint,
 } from "@/components/hint";
-import { ChartConfig } from "@/configurator";
+import { ChartConfig, DataSource } from "@/configurator";
 import {
   useDataCubesComponentsQuery,
   useDataCubesMetadataQuery,
   useDataCubesObservationsQuery,
 } from "@/graphql/hooks";
+import { DataCubeObservationFilter } from "@/graphql/query-hooks";
+import { useLocale } from "@/src";
 
 type ElementProps<RE> = RE extends React.ElementType<infer P> ? P : never;
 
@@ -26,24 +28,56 @@ export const ChartLoadingWrapper = <
   TOtherProps,
   TChartComponent extends React.ElementType
 >({
-  metadataQuery,
-  componentsQuery,
-  observationsQuery,
   chartConfig,
   Component,
   ComponentProps,
+  componentIris,
+  dataSource,
+  queryFilters,
 }: {
-  metadataQuery: ReturnType<typeof useDataCubesMetadataQuery>[0];
-  componentsQuery: ReturnType<typeof useDataCubesComponentsQuery>[0];
-  observationsQuery: ReturnType<typeof useDataCubesObservationsQuery>[0];
   chartConfig: TChartConfig;
   Component: TChartComponent;
   ComponentProps?: Omit<
     ElementProps<TChartComponent>,
     keyof ChartProps<TChartConfig>
   >;
+  componentIris?: string[];
+  dataSource: DataSource;
+  queryFilters?: DataCubeObservationFilter[];
 }) => {
   const chartLoadingState = useLoadingState();
+
+  const locale = useLocale();
+  const commonQueryVariables = {
+    sourceType: dataSource.type,
+    sourceUrl: dataSource.url,
+    locale,
+  };
+  const [metadataQuery] = useDataCubesMetadataQuery({
+    variables: {
+      ...commonQueryVariables,
+      cubeFilters: chartConfig.cubes.map((cube) => ({ iri: cube.iri })),
+    },
+  });
+  const [componentsQuery] = useDataCubesComponentsQuery({
+    variables: {
+      ...commonQueryVariables,
+      cubeFilters: chartConfig.cubes.map((cube) => ({
+        iri: cube.iri,
+        componentIris,
+        joinBy: cube.joinBy,
+        loadValues: true,
+      })),
+    },
+  });
+  const [observationsQuery] = useDataCubesObservationsQuery({
+    variables: {
+      ...commonQueryVariables,
+      cubeFilters: queryFilters ?? [],
+    },
+    pause: !queryFilters,
+  });
+
   const {
     data: metadataData,
     fetching: fetchingMetadata,

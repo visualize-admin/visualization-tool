@@ -148,9 +148,9 @@ export const ChartMapVisualization = ({
     <NoGeometriesHint />
   ) : (
     <ChartLoadingWrapper
-      metadataQuery={metadataQuery}
-      componentsQuery={componentsQuery}
-      observationsQuery={observationsQueryResp}
+      dataSource={dataSource}
+      componentIris={componentIris}
+      queryFilters={queryFilters}
       Component={ChartMap}
       ComponentProps={{ shapes, coordinates }}
       chartConfig={chartConfig}

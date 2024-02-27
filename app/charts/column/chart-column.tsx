@@ -30,13 +30,7 @@ import {
   useChartConfigFilters,
 } from "@/config-types";
 import { TimeSlider } from "@/configurator/interactive-filters/time-slider";
-import {
-  useDataCubesComponentsQuery,
-  useDataCubesMetadataQuery,
-  useDataCubesObservationsQuery,
-} from "@/graphql/hooks";
 import { DataCubeObservationFilter } from "@/graphql/query-hooks";
-import { useLocale } from "@/locales/use-locale";
 
 import { ChartProps } from "../shared/ChartProps";
 
@@ -51,42 +45,11 @@ export const ChartColumnsVisualization = ({
   chartConfig: ColumnConfig;
   queryFilters?: DataCubeObservationFilter[];
 }) => {
-  const locale = useLocale();
-  const commonQueryVariables = {
-    sourceType: dataSource.type,
-    sourceUrl: dataSource.url,
-    locale,
-  };
-  const [metadataQuery] = useDataCubesMetadataQuery({
-    variables: {
-      ...commonQueryVariables,
-      cubeFilters: chartConfig.cubes.map((cube) => ({ iri: cube.iri })),
-    },
-  });
-  const [componentsQuery] = useDataCubesComponentsQuery({
-    variables: {
-      ...commonQueryVariables,
-      cubeFilters: chartConfig.cubes.map((cube) => ({
-        iri: cube.iri,
-        componentIris,
-        joinBy: cube.joinBy,
-        loadValues: true,
-      })),
-    },
-  });
-  const [observationsQuery] = useDataCubesObservationsQuery({
-    variables: {
-      ...commonQueryVariables,
-      cubeFilters: queryFilters ?? [],
-    },
-    pause: !queryFilters,
-  });
-
   return (
     <ChartLoadingWrapper
-      metadataQuery={metadataQuery}
-      componentsQuery={componentsQuery}
-      observationsQuery={observationsQuery}
+      dataSource={dataSource}
+      componentIris={componentIris}
+      queryFilters={queryFilters}
       chartConfig={chartConfig}
       Component={ChartColumns}
     />
