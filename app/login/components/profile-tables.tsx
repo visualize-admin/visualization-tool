@@ -251,8 +251,8 @@ const RenameDialog = ({
                     value={`${i}`}
                     label={
                       <span>
-                        {x.meta.title?.[locale] !== ""
-                          ? x.meta.title?.[locale]
+                        {x.meta.title[locale] !== ""
+                          ? x.meta.title[locale]
                           : t({ id: "annotation.add.title" })}
                       </span>
                     }
@@ -274,22 +274,22 @@ const RenameDialog = ({
                   <TextField
                     name={`title.${i}.de`}
                     label={t({ id: "controls.language.german" })}
-                    defaultValue={x.meta.title?.de}
+                    defaultValue={x.meta.title.de}
                   />
                   <TextField
                     name={`title.${i}.fr`}
                     label={t({ id: "controls.language.french" })}
-                    defaultValue={x.meta.title?.fr}
+                    defaultValue={x.meta.title.fr}
                   />
                   <TextField
                     name={`title.${i}.it`}
                     label={t({ id: "controls.language.italian" })}
-                    defaultValue={x.meta.title?.it}
+                    defaultValue={x.meta.title.it}
                   />
                   <TextField
                     name={`title.${i}.en`}
                     label={t({ id: "controls.language.english" })}
-                    defaultValue={x.meta.title?.en}
+                    defaultValue={x.meta.title.en}
                   />
                 </Box>
               );
