@@ -57,6 +57,7 @@ export const ChartLinesVisualization = ({
         iri: cube.iri,
         componentIris,
         joinBy: cube.joinBy,
+        loadValues: true,
       })),
     },
   });

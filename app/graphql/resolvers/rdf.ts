@@ -153,7 +153,7 @@ export const dataCubeComponents: NonNullable<
   const { loaders, sparqlClient, sparqlClientStream, cache } = await setup(
     info
   );
-  const { iri, latest = true, componentIris, filters } = cubeFilter;
+  const { iri, latest = true, componentIris, filters, loadValues } = cubeFilter;
   const rawCube = await loaders.cube.load(iri);
 
   if (!rawCube) {
@@ -183,9 +183,9 @@ export const dataCubeComponents: NonNullable<
         cache,
         filters
       );
-      const values: DimensionValue[] = await dimensionValuesLoader.load(
-        component
-      );
+      const values: DimensionValue[] = loadValues
+        ? await dimensionValuesLoader.load(component)
+        : [];
       values.sort((a, b) =>
         ascending(
           a.position ?? a.value ?? undefined,

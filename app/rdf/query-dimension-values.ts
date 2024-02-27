@@ -227,44 +227,65 @@ const getFiltersList = (filters: Filters, dimensionIri: string | undefined) => {
   );
 };
 
-const getQueryFilters = (
+export const getQueryFilters = (
   filtersList: ReturnType<typeof getFiltersList>,
   cube: ExtendedCube,
   dimensionIri: string | undefined
 ) => {
-  return filtersList.length > 0
-    ? filtersList.map(([iri, value], i) => {
-        const dimension = cube.dimensions.find((d) => d.path?.value === iri);
+  if (filtersList.length === 0) {
+    return "";
+  }
 
-        // Ignore the current dimension
-        if (!dimension || dimensionIri === iri) {
-          return "";
-        }
+  let i = 0;
+  const filterDimensionIris = filtersList.map(([iri]) => iri);
+  // Also include other dimensions to make sure we don't return values that could
+  // result in no observations. Inclusion of other dimensions is necessary to
+  // filter out unobserved values.
+  const otherDimensionFilters = cube.dimensions
+    .filter(
+      (dim) =>
+        !filterDimensionIris.includes(dim.path?.value ?? "") &&
+        !dim.path?.equals(ns.cube.observedBy)
+    )
+    .map((dim) => `?observation <${dim.path?.value}> ?dimension${i++} .`);
+  const filterDimensionFilters = filtersList.map(([iri, value], j) => {
+    const dimension = cube.dimensions.find((d) => d.path?.value === iri);
 
-        // Ignore filters with no value or with the special value
-        if (
-          value.type === "single" &&
-          (value.value === FIELD_VALUE_NONE || isDynamicMaxValue(value.value))
-        ) {
-          return "";
-        }
+    // Ignore the current dimension
+    if (!dimension || dimensionIri === iri) {
+      return "";
+    }
 
-        // Ignore range filters for now
-        if (value.type === "range") {
-          return "";
-        }
+    // Ignore filters with no value or with the special value
+    if (
+      value.type === "single" &&
+      (value.value === FIELD_VALUE_NONE || isDynamicMaxValue(value.value))
+    ) {
+      return "";
+    }
 
-        const versioned = dimension ? dimensionIsVersioned(dimension) : false;
+    // Ignore range filters for now
+    if (value.type === "range") {
+      return "";
+    }
 
-        return sparql`${
-          versioned
-            ? sparql`?dimension${i} ${ns.schema.sameAs} ?dimension_unversioned${i}.`
-            : ""
-        }
-      ?observation <${iri}> ?dimension${i}.
-      ${formatFilterIntoSparqlFilter(value, dimension, versioned, i)}`;
-      })
-    : "";
+    const versioned = dimension ? dimensionIsVersioned(dimension) : false;
+
+    return sparql`${
+      versioned
+        ? sparql`?dimension${i + j} ${ns.schema.sameAs} ?dimension_unversioned${
+            i + j
+          } .`
+        : ""
+    }
+?observation <${iri}> ?dimension${i + j} .
+${formatFilterIntoSparqlFilter(value, dimension, versioned, i + j)}`;
+  });
+
+  return `
+    ${otherDimensionFilters.join("\n")}
+    ${filterDimensionFilters.join("\n")}
+  `;
 };
 
 type MinMaxResult = [{ minValue: LiteralExt; maxValue: LiteralExt }];

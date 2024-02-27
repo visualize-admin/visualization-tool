@@ -6,7 +6,7 @@ import setWith from "lodash/setWith";
 import sortBy from "lodash/sortBy";
 import unset from "lodash/unset";
 import { NextRouter, useRouter } from "next/router";
-import { createContext, Dispatch, useContext, useEffect, useMemo } from "react";
+import { Dispatch, createContext, useContext, useEffect, useMemo } from "react";
 import { Reducer, useImmerReducer } from "use-immer";
 
 import {
@@ -34,20 +34,20 @@ import {
   ConfiguratorStatePublishing,
   ConfiguratorStateSelectingDataSet,
   DataSource,
-  decodeConfiguratorState,
-  enableLayouting,
-  Filters,
   FilterValue,
+  Filters,
   GenericField,
   GenericFields,
-  getChartConfig,
-  getChartConfigFilters,
   ImputationType,
   InteractiveFiltersConfig,
+  Layout,
+  decodeConfiguratorState,
+  enableLayouting,
+  getChartConfig,
+  getChartConfigFilters,
   isAreaConfig,
   isColorFieldInConfig,
   isTableConfig,
-  Layout,
   makeMultiFilter,
 } from "@/config-types";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
@@ -59,9 +59,9 @@ import {
   DataCubeComponents,
   Dimension,
   DimensionValue,
+  ObservationValue,
   isGeoDimension,
   isMeasure,
-  ObservationValue,
 } from "@/domain/data";
 import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
 import { client } from "@/graphql/client";
@@ -359,7 +359,12 @@ const getCachedComponents = (
       sourceType: draft.dataSource.type,
       sourceUrl: draft.dataSource.url,
       locale,
-      cubeFilter: { iri: cubeFilter.iri, joinBy: cubeFilter.joinBy },
+      cubeFilter: {
+        iri: cubeFilter.iri,
+        componentIris: undefined,
+        joinBy: cubeFilter.joinBy,
+        loadValues: true,
+      },
     })!;
   });
 
@@ -613,11 +618,14 @@ export const applyNonTableDimensionToFilters = ({
       : undefined;
     const filterValue = hierarchyTopMost
       ? hierarchyTopMost.value
-      : dimension.values[0].value;
-    filters[dimension.iri] = {
-      type: "single",
-      value: filterValue,
-    };
+      : dimension.values[0]?.value;
+
+    if (filterValue) {
+      filters[dimension.iri] = {
+        type: "single",
+        value: filterValue,
+      };
+    }
   }
 };
 
@@ -1482,7 +1490,7 @@ export const initChartStateFromCube = async (
     sourceType: dataSource.type,
     sourceUrl: dataSource.url,
     locale,
-    cubeFilters: [{ iri: cubeIri }],
+    cubeFilters: [{ iri: cubeIri, loadValues: true }],
   });
 
   if (components?.dataCubesComponents) {

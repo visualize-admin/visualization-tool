@@ -44,7 +44,8 @@ export const ChartFiltersList = (props: ChartFiltersListProps) => {
     measures,
     componentIris: extractChartConfigComponentIris(chartConfig),
   });
-  const [{ data }] = useDataCubesComponentsQuery({
+  // TODO: Refactor to somehow access current filter labels instead of fetching them again
+  const [{ data, fetching }] = useDataCubesComponentsQuery({
     variables: {
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
@@ -55,6 +56,7 @@ export const ChartFiltersList = (props: ChartFiltersListProps) => {
           componentIris: filter.componentIris,
           filters: filter.filters,
           joinBy: filter.joinBy,
+          loadValues: true,
         })) ?? [],
     },
     pause: !filters,
@@ -72,7 +74,7 @@ export const ChartFiltersList = (props: ChartFiltersListProps) => {
           return [];
         }
 
-        const dimension = dimensions.find(
+        const dimension = data.dataCubesComponents.dimensions.find(
           (d) => d.iri === iri && d.cubeIri === filter.iri
         );
 
@@ -142,7 +144,14 @@ export const ChartFiltersList = (props: ChartFiltersListProps) => {
     timeSlider.type,
   ]);
 
-  return allFilters.length ? (
+  return fetching ? (
+    <Typography component="div" variant="caption" color="grey.600">
+      <b>
+        <Trans id="controls.section.data.filters">Filters</Trans>:
+      </b>{" "}
+      <Trans id="hint.loading.data">Loading data...</Trans>
+    </Typography>
+  ) : allFilters.length ? (
     <Typography
       component="div"
       variant="caption"

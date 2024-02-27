@@ -9,7 +9,6 @@ import { LRUCache } from "typescript-lru-cache";
 
 import { isDynamicMaxValue } from "@/configurator/components/field";
 import { PromiseValue, truthy } from "@/domain/types";
-import { DataCubeComponentFilter } from "@/graphql/resolver-types";
 import { createSource, pragmas } from "@/rdf/create-source";
 import { ExtendedCube } from "@/rdf/extended-cube";
 
@@ -119,38 +118,6 @@ const getDimensionUnits = (d: CubeDimension) => {
   const t = d.out(ns.qudt.unit).term ?? d.out(ns.qudt.hasUnit).term;
 
   return t ? [t] : [];
-};
-
-export const getCubesDimensions = async (
-  cubes: ExtendedCube[],
-  options: {
-    filters: DataCubeComponentFilter[];
-    locale: string;
-    sparqlClient: ParsingClient;
-    cache: LRUCache | undefined;
-  }
-) => {
-  const { filters, locale, sparqlClient, cache } = options;
-  const filtersByIri = keyBy(filters, (d) => d.iri);
-
-  return (
-    await Promise.all(
-      cubes.map(async (cube) => {
-        const iri = cube.term?.value;
-        const componentIris = iri
-          ? filtersByIri[iri]?.componentIris
-          : undefined;
-
-        return await getCubeDimensions({
-          cube,
-          locale,
-          sparqlClient,
-          componentIris,
-          cache,
-        });
-      })
-    )
-  ).flat();
 };
 
 export const getCubeDimensions = async ({

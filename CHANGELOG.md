@@ -9,7 +9,12 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
-Nothing yet.
+- Fixes
+  - Fixed an issue with fetching filter values that sometimes included values that couldn't be selected
+- Performance
+  - Disabled loading of dimension values where applicable
+  - Adjusted several places in the application to not send filters when fetching dimension values but rather use `sh:in` property of given dimension
+  - Changed the behavior of loading dimension values to populate filters to not block the whole application, but rather be scoped to this part of the application
 
 # [3.26.2] - 2024-02-23
 

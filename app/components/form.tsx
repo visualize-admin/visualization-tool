@@ -3,6 +3,7 @@ import {
   Box,
   BoxProps,
   ButtonBase,
+  CircularProgress,
   FormControlLabel,
   FormControlLabelProps,
   InputLabel,
@@ -353,9 +354,23 @@ export const Select = ({
     <LoadingMenuPaperContext.Provider value={loading}>
       <Box sx={{ width: "100%", ...sx }}>
         {label && (
-          <Label htmlFor={id} smaller sx={{ my: "6px" }}>
+          <Label
+            htmlFor={id}
+            smaller
+            sx={{ display: "flex", alignItems: "center", my: "6px" }}
+          >
             {label}
             {controls}
+            {loading && (
+              <CircularProgress
+                size={12}
+                sx={{
+                  color: "grey.700",
+                  display: "inline-block",
+                  marginLeft: 2,
+                }}
+              />
+            )}
           </Label>
         )}
         <MUISelect
