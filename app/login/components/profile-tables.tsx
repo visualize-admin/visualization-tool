@@ -345,7 +345,7 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
   } = useDisclosure();
 
   const actions = React.useMemo(() => {
-    const actions: ActionProps[] = [
+    const actions: (ActionProps | null)[] = [
       {
         type: "link",
         href: `/v/${config.key}`,
@@ -432,9 +432,9 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
           invalidateUserConfigs();
         },
       },
-    ].filter(truthy);
+    ];
 
-    return sortBy(actions, (x) => x.priority);
+    return sortBy(actions.filter(truthy), (x) => x.priority);
   }, [
     config.data,
     config.key,
