@@ -90,7 +90,7 @@ export const ProfileContentTabs = (props: ProfileContentTabsProps) => {
                 className={classes.tab}
                 label={t({
                   id: "login.profile.my-drafts",
-                  message: "My Drafts Visualizations",
+                  message: "My draft visualizations",
                 })}
                 value="drafts"
               />
@@ -106,7 +106,7 @@ export const ProfileContentTabs = (props: ProfileContentTabsProps) => {
           <ProfileVisualizationsTable
             title={t({
               id: "login.profile.my-drafts",
-              message: "My Drafts Visualizations",
+              message: "My draft visualizations",
             })}
             userId={userId}
             userConfigs={draftConfigs}
@@ -116,7 +116,7 @@ export const ProfileContentTabs = (props: ProfileContentTabsProps) => {
           <ProfileVisualizationsTable
             title={t({
               id: "login.profile.my-published-visualizations",
-              message: "My Published Visualizations",
+              message: "My published visualizations",
             })}
             userId={userId}
             userConfigs={publishedConfigs}
@@ -130,7 +130,7 @@ export const ProfileContentTabs = (props: ProfileContentTabsProps) => {
           <ProfileVisualizationsTable
             title={t({
               id: "login.profile.my-published-visualizations",
-              message: "My Published Visualizations",
+              message: "My published visualizations",
             })}
             userId={userId}
             userConfigs={publishedConfigs}
@@ -142,7 +142,7 @@ export const ProfileContentTabs = (props: ProfileContentTabsProps) => {
           <ProfileVisualizationsTable
             title={t({
               id: "login.profile.my-drafts",
-              message: "My Drafts Visualizations",
+              message: "My draft visualizations",
             })}
             userId={userId}
             userConfigs={draftConfigs}
