@@ -1,6 +1,6 @@
 import React from "react";
 
-import { ChartLoadingWrapper } from "@/charts/chart-loading-wrapper";
+import { ChartDataWrapper } from "@/charts/chart-data-wrapper";
 import { AxisHeightLinearDual } from "@/charts/combo/axis-height-linear-dual";
 import { ComboLineDual } from "@/charts/combo/combo-line-dual";
 import { ComboLineDualChart } from "@/charts/combo/combo-line-dual-state";
@@ -27,7 +27,7 @@ export const ChartComboLineDualVisualization = (
   props: ChartComboLineDualVisualizationProps
 ) => {
   return (
-    <ChartLoadingWrapper
+    <ChartDataWrapper
       chartConfig={props.chartConfig}
       dataSource={props.dataSource}
       queryFilters={props.queryFilters}

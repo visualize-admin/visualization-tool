@@ -1,6 +1,6 @@
 import { memo } from "react";
 
-import { ChartLoadingWrapper } from "@/charts/chart-loading-wrapper";
+import { ChartDataWrapper } from "@/charts/chart-data-wrapper";
 import { MapComponent } from "@/charts/map/map";
 import { MapLegend } from "@/charts/map/map-legend";
 import { MapChart } from "@/charts/map/map-state";
@@ -147,7 +147,7 @@ export const ChartMapVisualization = ({
   return displayNoDataError ? (
     <NoGeometriesHint />
   ) : (
-    <ChartLoadingWrapper
+    <ChartDataWrapper
       dataSource={dataSource}
       componentIris={componentIris}
       queryFilters={queryFilters}

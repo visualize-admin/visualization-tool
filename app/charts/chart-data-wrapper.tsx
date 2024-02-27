@@ -2,9 +2,9 @@ import { Box } from "@mui/material";
 import keyBy from "lodash/keyBy";
 import React from "react";
 
-import { ChartProps } from "@/charts/shared/ChartProps";
 import { A11yTable } from "@/charts/shared/a11y-table";
 import { useLoadingState } from "@/charts/shared/chart-loading-state";
+import { ChartProps } from "@/charts/shared/ChartProps";
 import Flex from "@/components/flex";
 import {
   Loading,
@@ -23,7 +23,12 @@ import { useLocale } from "@/src";
 
 type ElementProps<RE> = RE extends React.ElementType<infer P> ? P : never;
 
-export const ChartLoadingWrapper = <
+/**
+ * Responsible for fetching the data for the chart.
+ * - Provides observations, dimensions and measures to the chart Component
+ * - Handles loading & error state
+ */
+export const ChartDataWrapper = <
   TChartConfig extends ChartConfig,
   TOtherProps,
   TChartComponent extends React.ElementType

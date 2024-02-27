@@ -1,6 +1,6 @@
 import React from "react";
 
-import { ChartLoadingWrapper } from "@/charts/chart-loading-wrapper";
+import { ChartDataWrapper } from "@/charts/chart-data-wrapper";
 import { InteractionColumns } from "@/charts/column/overlay-columns";
 import { AxisHeightLinearDual } from "@/charts/combo/axis-height-linear-dual";
 import { ComboLineColumn } from "@/charts/combo/combo-line-column";
@@ -28,7 +28,7 @@ export const ChartComboLineColumnVisualization = (
 ) => {
   const { dataSource, componentIris, chartConfig, queryFilters } = props;
   return (
-    <ChartLoadingWrapper
+    <ChartDataWrapper
       dataSource={dataSource}
       componentIris={componentIris}
       queryFilters={queryFilters}

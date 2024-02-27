@@ -2,7 +2,7 @@ import { memo } from "react";
 
 import { Areas } from "@/charts/area/areas";
 import { AreaChart } from "@/charts/area/areas-state";
-import { ChartLoadingWrapper } from "@/charts/chart-loading-wrapper";
+import { ChartDataWrapper } from "@/charts/chart-data-wrapper";
 import { AxisHeightLinear } from "@/charts/shared/axis-height-linear";
 import { AxisTime, AxisTimeDomain } from "@/charts/shared/axis-width-time";
 import { BrushTime } from "@/charts/shared/brush";
@@ -16,13 +16,7 @@ import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
 import { InteractionHorizontal } from "@/charts/shared/overlay-horizontal";
 import { AreaConfig, DataSource } from "@/config-types";
-import {
-  useDataCubesComponentsQuery,
-  useDataCubesMetadataQuery,
-  useDataCubesObservationsQuery,
-} from "@/graphql/hooks";
 import { DataCubeObservationFilter } from "@/graphql/query-hooks";
-import { useLocale } from "@/locales/use-locale";
 
 import { ChartProps } from "../shared/ChartProps";
 
@@ -37,42 +31,11 @@ export const ChartAreasVisualization = ({
   queryFilters?: DataCubeObservationFilter[];
   componentIris: string[] | undefined;
 }) => {
-  const locale = useLocale();
-  const commonQueryVariables = {
-    sourceType: dataSource.type,
-    sourceUrl: dataSource.url,
-    locale,
-  };
-  const [metadataQuery] = useDataCubesMetadataQuery({
-    variables: {
-      ...commonQueryVariables,
-      cubeFilters: chartConfig.cubes.map((cube) => ({ iri: cube.iri })),
-    },
-  });
-  const [componentsQuery] = useDataCubesComponentsQuery({
-    variables: {
-      ...commonQueryVariables,
-      cubeFilters: chartConfig.cubes.map((cube) => ({
-        iri: cube.iri,
-        componentIris,
-        joinBy: cube.joinBy,
-        loadValues: true,
-      })),
-    },
-  });
-  const [observationsQuery] = useDataCubesObservationsQuery({
-    variables: {
-      ...commonQueryVariables,
-      cubeFilters: queryFilters ?? [],
-    },
-    pause: !queryFilters,
-  });
-
   return (
-    <ChartLoadingWrapper
-      metadataQuery={metadataQuery}
-      componentsQuery={componentsQuery}
-      observationsQuery={observationsQuery}
+    <ChartDataWrapper
+      dataSource={dataSource}
+      componentIris={componentIris}
+      queryFilters={queryFilters}
       chartConfig={chartConfig}
       Component={ChartAreas}
     />

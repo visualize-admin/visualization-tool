@@ -1,6 +1,6 @@
 import { memo } from "react";
 
-import { ChartLoadingWrapper } from "@/charts/chart-loading-wrapper";
+import { ChartDataWrapper } from "@/charts/chart-data-wrapper";
 import { Lines } from "@/charts/line/lines";
 import { LineChart } from "@/charts/line/lines-state";
 import { AxisHeightLinear } from "@/charts/shared/axis-height-linear";
@@ -33,7 +33,7 @@ export const ChartLinesVisualization = ({
   queryFilters?: DataCubeObservationFilter[];
 }) => {
   return (
-    <ChartLoadingWrapper
+    <ChartDataWrapper
       dataSource={dataSource}
       componentIris={componentIris}
       queryFilters={queryFilters}

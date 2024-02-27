@@ -1,6 +1,6 @@
 import { memo } from "react";
 
-import { ChartLoadingWrapper } from "@/charts/chart-loading-wrapper";
+import { ChartDataWrapper } from "@/charts/chart-data-wrapper";
 import { Pie } from "@/charts/pie/pie";
 import { PieChart } from "@/charts/pie/pie-state";
 import {
@@ -29,7 +29,7 @@ export const ChartPieVisualization = ({
   queryFilters?: DataCubeObservationFilter[];
 }) => {
   return (
-    <ChartLoadingWrapper
+    <ChartDataWrapper
       dataSource={dataSource}
       componentIris={componentIris}
       queryFilters={queryFilters}

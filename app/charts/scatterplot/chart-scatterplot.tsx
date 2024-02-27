@@ -1,6 +1,6 @@
 import { memo } from "react";
 
-import { ChartLoadingWrapper } from "@/charts/chart-loading-wrapper";
+import { ChartDataWrapper } from "@/charts/chart-data-wrapper";
 import { Scatterplot } from "@/charts/scatterplot/scatterplot";
 import { ScatterplotChart } from "@/charts/scatterplot/scatterplot-state";
 import {
@@ -41,7 +41,7 @@ export const ChartScatterplotVisualization = ({
   queryFilters?: DataCubeObservationFilter[];
 }) => {
   return (
-    <ChartLoadingWrapper
+    <ChartDataWrapper
       dataSource={dataSource}
       componentIris={componentIris}
       queryFilters={queryFilters}

@@ -1,6 +1,6 @@
 import { memo } from "react";
 
-import { ChartLoadingWrapper } from "@/charts/chart-loading-wrapper";
+import { ChartDataWrapper } from "@/charts/chart-data-wrapper";
 import { Table } from "@/charts/table/table";
 import { TableChart } from "@/charts/table/table-state";
 import { DataSource, TableConfig } from "@/configurator";
@@ -17,7 +17,7 @@ export const ChartTableVisualization = ({
   chartConfig: TableConfig;
 }) => {
   return (
-    <ChartLoadingWrapper
+    <ChartDataWrapper
       dataSource={dataSource}
       componentIris={componentIris}
       Component={ChartTable}
