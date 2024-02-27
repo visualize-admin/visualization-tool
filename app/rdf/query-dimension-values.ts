@@ -227,7 +227,7 @@ const getFiltersList = (filters: Filters, dimensionIri: string | undefined) => {
   );
 };
 
-const getQueryFilters = (
+export const getQueryFilters = (
   filtersList: ReturnType<typeof getFiltersList>,
   cube: ExtendedCube,
   dimensionIri: string | undefined
@@ -239,7 +239,8 @@ const getQueryFilters = (
   let i = 0;
   const filterDimensionIris = filtersList.map(([iri]) => iri);
   // Also include other dimensions to make sure we don't return values that could
-  // result in no observations
+  // result in no observations. Inclusion of other dimensions is necessary to
+  // filter out unobserved values.
   const otherDimensionFilters = cube.dimensions
     .filter(
       (dim) =>
