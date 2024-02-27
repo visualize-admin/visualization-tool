@@ -1,6 +1,6 @@
 import { TabContext, TabList } from "@mui/lab";
 import { Tab } from "@mui/material";
-import { markdown, ReactSpecimen } from "catalog";
+import { ReactSpecimen, markdown } from "catalog";
 import { useState } from "react";
 
 import { VisualizeTab, VisualizeTabList } from "@/components/tabs";
@@ -16,7 +16,7 @@ const TabsDoc = () => {
   ${(
     <ReactSpecimen span={2}>
       <TabContext value={tab}>
-        <TabList onChange={(ev, newTab) => setTab(newTab)}>
+        <TabList onChange={(_ev, newTab) => setTab(newTab)}>
           <Tab value="line" label="Line" />
           <Tab value="pie" label="Pie" />
         </TabList>
@@ -29,7 +29,7 @@ const TabsDoc = () => {
   ${(
     <ReactSpecimen span={2}>
       <TabContext value={tab}>
-        <VisualizeTabList onChange={(ev, newTab) => setTab(newTab)}>
+        <VisualizeTabList onChange={(_ev, newTab) => setTab(newTab)}>
           <VisualizeTab value="line" label="Line" />
           <VisualizeTab value="pie" label="Pie" />
         </VisualizeTabList>
