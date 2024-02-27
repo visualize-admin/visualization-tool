@@ -519,6 +519,8 @@ const TabsInner = (props: TabsInnerProps) => {
   const { asPath } = useRouter();
   const chartId = getRouterChartId(asPath);
 
+  const activeTabIndex = data.findIndex((x) => x.active);
+
   return (
     <Box
       sx={{
@@ -528,7 +530,7 @@ const TabsInner = (props: TabsInnerProps) => {
         gap: 5,
       }}
     >
-      <TabContext value={`${data.findIndex((x) => x.active)}`}>
+      <TabContext value={`${activeTabIndex}`}>
         <DragDropContext
           onDragEnd={(d) => {
             if (d.destination && d.source.index !== d.destination.index) {
@@ -547,10 +549,8 @@ const TabsInner = (props: TabsInnerProps) => {
               <VisualizeTabList
                 ref={provided.innerRef}
                 variant="scrollable"
-                value={0}
                 scrollButtons={false}
-                TabIndicatorProps={{ style: { display: "none" } }}
-                sx={{ position: "relative", top: 1 }}
+                sx={{ top: 1 }}
               >
                 {data.map((d, i) => (
                   <Draggable key={d.key} draggableId={d.key} index={i}>
@@ -570,6 +570,11 @@ const TabsInner = (props: TabsInnerProps) => {
                           component="div"
                           key={d.key}
                           value={`${i}`}
+                          className={`${
+                            // We need to add the "selected" class ourselves since we are wrapping
+                            // the tabs by Draggable.
+                            i === activeTabIndex ? "Mui-selected" : ""
+                          }`}
                           sx={{
                             px: 0,
                             minWidth: "fit-content",
