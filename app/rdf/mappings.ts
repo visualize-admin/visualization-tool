@@ -12,6 +12,10 @@ export const timeUnits = new Map<string, TimeUnit>([
   [ns.time.unitSecond.value, TimeUnit.Second],
 ]);
 
+export const unitsToNode = new Map(
+  Array.from(timeUnits.entries()).map(([k, v]) => [v, k])
+);
+
 export const timeFormats = new Map<string, string>([
   [ns.xsd.gYear.value, "%Y"],
   [ns.xsd.gYearMonth.value, "%Y-%m"],

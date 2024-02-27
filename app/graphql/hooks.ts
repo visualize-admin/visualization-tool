@@ -211,6 +211,7 @@ export const executeDataCubesComponentsQuery = async (
   };
 };
 
+/** Fetches components/dimensions along with the values */
 export const useDataCubesComponentsQuery = makeUseQuery<
   DataCubesComponentsOptions,
   DataCubesComponentsData

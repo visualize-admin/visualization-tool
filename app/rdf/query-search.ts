@@ -5,11 +5,13 @@ import ParsingClient from "sparql-http-client/ParsingClient";
 
 import { SearchCube } from "@/domain/data";
 import { truthy } from "@/domain/types";
+import { TimeUnit } from "@/graphql/query-hooks";
 import {
   DataCubePublicationStatus,
   SearchCubeFilter,
 } from "@/graphql/resolver-types";
 import { defaultLocale } from "@/locales/locales";
+import { unitsToNode } from "@/rdf/mappings";
 import * as ns from "@/rdf/namespace";
 
 import { pragmas } from "./create-source";
@@ -95,7 +97,7 @@ export const searchCubes = async ({
       ?.filter((x) => x.type === "DataCubeOrganization")
       .map((v) => v.value) ?? [];
 
-  const scoresQuery = SELECT`
+  const scoresQuery = SELECT.DISTINCT`
     ?iri ?title ?status ?datePublished ?description ?publisher ?creatorIri ?creatorLabel
     (GROUP_CONCAT(DISTINCT ?themeIri; SEPARATOR="${GROUP_SEPARATOR}") AS ?themeIris) (GROUP_CONCAT(DISTINCT ?themeLabel; SEPARATOR="${GROUP_SEPARATOR}") AS ?themeLabels)
     (GROUP_CONCAT(DISTINCT ?subthemeIri; SEPARATOR="${GROUP_SEPARATOR}") AS ?subthemeIris) (GROUP_CONCAT(DISTINCT ?subthemeLabel; SEPARATOR="${GROUP_SEPARATOR}") AS ?subthemeLabels)
@@ -107,6 +109,24 @@ export const searchCubes = async ({
       ${buildLocalizedSubQuery("iri", "schema:description", "description", {
         locale,
       })}
+
+      ${filters?.map((df) => {
+        if (df.type === "Temporal") {
+          return;
+        }
+
+        const value = df.value as TimeUnit;
+        const unitNode = unitsToNode.get(value);
+        if (!unitNode) {
+          throw new Error(`Invalid temporal unit used ${value}`);
+        }
+
+        return sparql`
+          ?cube ${ns.cube.observationConstraint} ?shape .
+          ?shape ${ns.sh.property} ?prop .
+          ?prop ${ns.cubeMeta.dataKind}/${ns.time.unitType} <${unitNode}>.`;
+      })}
+
       OPTIONAL { ?iri ${ns.dcterms.publisher} ?publisher . }
       ?iri ${ns.schema.creativeWorkStatus} ?status .
       OPTIONAL { ?iri ${ns.schema.datePublished} ?datePublished . }
@@ -221,9 +241,9 @@ export const searchCubes = async ({
       }
   `.GROUP().BY`?iri`.THEN.BY`?title`.THEN.BY`?status`.THEN.BY`?datePublished`
     .THEN.BY`?description`.THEN.BY`?publisher`.THEN.BY`?creatorIri`.THEN
-    .BY`?creatorLabel`.prologue`${pragmas}`
-    .prologue`#pragma join.bind off`; // HOTFIX WRT Stardog v9.2.1 bug see https://control.vshn.net/tickets/sbar-1066
+    .BY`?creatorLabel`.prologue`${pragmas}`.prologue`#pragma join.bind off`; // HOTFIX WRT Stardog v9.2.1 bug see https://control.vshn.net/tickets/sbar-1066
 
+  console.log(scoresQuery.build());
   const scoreResults = await scoresQuery.execute(sparqlClient.query, {
     operation: "postUrlencoded",
   });
