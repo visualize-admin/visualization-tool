@@ -1,5 +1,4 @@
 import * as React from "react";
-
 function SvgIcTableColumnCategoricalHidden(
   props: React.SVGProps<SVGSVGElement>
 ) {
@@ -21,5 +20,4 @@ function SvgIcTableColumnCategoricalHidden(
     </svg>
   );
 }
-
 export default SvgIcTableColumnCategoricalHidden;

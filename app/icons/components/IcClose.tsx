@@ -1,5 +1,4 @@
 import * as React from "react";
-
 function SvgIcClose(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
@@ -17,5 +16,4 @@ function SvgIcClose(props: React.SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
-
 export default SvgIcClose;

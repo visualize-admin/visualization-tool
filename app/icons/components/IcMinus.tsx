@@ -1,5 +1,4 @@
 import * as React from "react";
-
 function SvgIcMinus(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
@@ -16,5 +15,4 @@ function SvgIcMinus(props: React.SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
-
 export default SvgIcMinus;

@@ -45,7 +45,7 @@ export const ProfileContentTabs = (props: ProfileContentTabsProps) => {
   const { userId } = props;
 
   const { data: userConfigs } = useUserConfigs();
-  const [value, setValue] = React.useState("Home");
+  const [value, setValue] = React.useState("home");
   const handleChange = useEvent((_: React.SyntheticEvent, v: string) => {
     setValue(v);
   });
@@ -70,94 +70,79 @@ export const ProfileContentTabs = (props: ProfileContentTabsProps) => {
         <Box className={rootClasses.sectionContent}>
           <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
             <TabList className={classes.tabList} onChange={handleChange}>
-              {[
-                "Home",
-                t({
-                  id: "login.profile.my-visualizations",
-                  message: "My visualizations",
-                }),
-                t({
+              <Tab
+                className={classes.tab}
+                label={t({
+                  id: "login.profile.home",
+                  message: "Home",
+                })}
+                value="home"
+              />
+              <Tab
+                className={classes.tab}
+                label={t({
+                  id: "login.profile.my-published-visualizations",
+                  message: "My Published Visualizations",
+                })}
+                value="published"
+              />
+              <Tab
+                className={classes.tab}
+                label={t({
                   id: "login.profile.my-drafts",
-                  message: "My drafts",
-                }),
-              ].map((d) => (
-                <Tab key={d} className={classes.tab} label={d} value={d} />
-              ))}
+                  message: "My draft visualizations",
+                })}
+                value="drafts"
+              />
             </TabList>
           </Box>
         </Box>
       </Box>
-      <TabPanel className={classes.tabPanel} value="Home">
+      <TabPanel className={classes.tabPanel} value="home">
         <Box
           className={classes.tabPanelContent}
           sx={{ display: "flex", flexDirection: "column", gap: "3rem" }}
         >
           <ProfileVisualizationsTable
             title={t({
-              id: "login.profile.my-visualizations",
-              message: "My visualizations",
-            })}
-            userId={userId}
-            userConfigs={publishedConfigs}
-            preview
-            onShowAll={() =>
-              setValue(
-                t({
-                  id: "login.profile.my-visualizations",
-                  message: "My visualizations",
-                })
-              )
-            }
-          />
-          <ProfileVisualizationsTable
-            title={t({
               id: "login.profile.my-drafts",
-              message: "My drafts",
+              message: "My draft visualizations",
             })}
             userId={userId}
             userConfigs={draftConfigs}
             preview
-            onShowAll={() =>
-              setValue(
-                t({
-                  id: "login.profile.my-drafts",
-                  message: "My drafts",
-                })
-              )
-            }
+            onShowAll={() => setValue("drafts")}
+          />
+          <ProfileVisualizationsTable
+            title={t({
+              id: "login.profile.my-published-visualizations",
+              message: "My published visualizations",
+            })}
+            userId={userId}
+            userConfigs={publishedConfigs}
+            preview
+            onShowAll={() => setValue("published")}
           />
         </Box>
       </TabPanel>
-      <TabPanel
-        className={classes.tabPanel}
-        value={t({
-          id: "login.profile.my-visualizations",
-          message: "My visualizations",
-        })}
-      >
+      <TabPanel className={classes.tabPanel} value="published">
         <Box className={classes.tabPanelContent}>
           <ProfileVisualizationsTable
             title={t({
-              id: "login.profile.my-visualizations",
-              message: "My visualizations",
+              id: "login.profile.my-published-visualizations",
+              message: "My published visualizations",
             })}
             userId={userId}
             userConfigs={publishedConfigs}
           />
         </Box>
       </TabPanel>
-      <TabPanel
-        className={classes.tabPanel}
-        value={t({
-          id: "login.profile.my-drafts",
-          message: "My drafts",
-        })}
-      >
+      <TabPanel className={classes.tabPanel} value="drafts">
         <Box className={classes.tabPanelContent}>
           <ProfileVisualizationsTable
             title={t({
               id: "login.profile.my-drafts",
-              message: "My drafts",
+              message: "My draft visualizations",
             })}
             userId={userId}
             userConfigs={draftConfigs}

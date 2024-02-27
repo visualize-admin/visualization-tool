@@ -1,12 +1,11 @@
 import { t, Trans } from "@lingui/macro";
+import { TabContext } from "@mui/lab";
 import {
   Box,
   BoxProps,
   Button,
   Grow,
   Popover,
-  Tab,
-  Tabs,
   Theme,
   Tooltip,
   useEventCallback,
@@ -14,6 +13,7 @@ import {
 import { makeStyles } from "@mui/styles";
 import { PUBLISHED_STATE } from "@prisma/client";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
@@ -21,6 +21,7 @@ import { useDebounce } from "use-debounce";
 
 import { extractChartConfigComponentIris } from "@/charts/shared/chart-helpers";
 import Flex from "@/components/flex";
+import { VisualizeTab, VisualizeTabList } from "@/components/tabs";
 import {
   ChartConfig,
   ChartType,
@@ -46,6 +47,7 @@ import { useLocale } from "@/src";
 import { createConfig, updateConfig } from "@/utils/chart-config/api";
 import { createChartId } from "@/utils/create-chart-id";
 import { getRouterChartId } from "@/utils/router/helpers";
+import { replaceLinks } from "@/utils/ui-strings";
 import useEvent from "@/utils/use-event";
 import { useMutate } from "@/utils/use-fetch-data";
 
@@ -365,13 +367,6 @@ export const SaveDraftButton = ({
           published_state: PUBLISHED_STATE.DRAFT,
         });
         if (saved) {
-          enqueueSnackbar({
-            message: t({
-              id: "button.save-draft.saved",
-              message: "Draft saved",
-            }),
-            variant: "success",
-          });
           const config = await initChartStateFromChartEdit(saved.key);
           if (!config) {
             return;
@@ -385,6 +380,28 @@ export const SaveDraftButton = ({
           throw new Error("Could not save draft");
         }
       }
+
+      enqueueSnackbar({
+        message: (
+          <>
+            {replaceLinks(
+              t({
+                id: "button.save-draft.saved",
+                message: "Draft saved in [My visualisations](/profile)",
+              }),
+              (label, href) => {
+                return (
+                  <div>
+                    <Link href={href}>{label}</Link>
+                  </div>
+                );
+              }
+            )}
+          </>
+        ),
+        variant: "success",
+      });
+
       invalidateConfig();
     } catch (e) {
       console.log(
@@ -502,6 +519,8 @@ const TabsInner = (props: TabsInnerProps) => {
   const { asPath } = useRouter();
   const chartId = getRouterChartId(asPath);
 
+  const activeTabIndex = data.findIndex((x) => x.active);
+
   return (
     <Box
       sx={{
@@ -511,101 +530,94 @@ const TabsInner = (props: TabsInnerProps) => {
         gap: 5,
       }}
     >
-      <DragDropContext
-        onDragEnd={(d) => {
-          if (d.destination && d.source.index !== d.destination.index) {
-            dispatch({
-              type: "CHART_CONFIG_REORDER",
-              value: {
-                oldIndex: d.source.index,
-                newIndex: d.destination.index,
-              },
-            });
-          }
-        }}
-      >
-        <Droppable droppableId="droppable" direction="horizontal">
-          {(provided) => (
-            <Tabs
-              ref={provided.innerRef}
-              variant="scrollable"
-              value={0}
-              scrollButtons={false}
-              TabIndicatorProps={{ style: { display: "none" } }}
-              sx={{ position: "relative", top: 1 }}
-            >
-              {data.map((d, i) => (
-                <Draggable key={d.key} draggableId={d.key} index={i}>
-                  {(provided, snapshot) => {
-                    const { style } = provided.draggableProps;
-                    // Limit the drag movement to the x-axis.
-                    const transform = style?.transform
-                      ? `${style.transform.split(",")[0]}, 0px)`
-                      : undefined;
+      <TabContext value={`${activeTabIndex}`}>
+        <DragDropContext
+          onDragEnd={(d) => {
+            if (d.destination && d.source.index !== d.destination.index) {
+              dispatch({
+                type: "CHART_CONFIG_REORDER",
+                value: {
+                  oldIndex: d.source.index,
+                  newIndex: d.destination.index,
+                },
+              });
+            }
+          }}
+        >
+          <Droppable droppableId="droppable" direction="horizontal">
+            {(provided) => (
+              <VisualizeTabList
+                ref={provided.innerRef}
+                variant="scrollable"
+                scrollButtons={false}
+                sx={{ top: 1 }}
+              >
+                {data.map((d, i) => (
+                  <Draggable key={d.key} draggableId={d.key} index={i}>
+                    {(provided, snapshot) => {
+                      const { style } = provided.draggableProps;
+                      // Limit the drag movement to the x-axis.
+                      const transform = style?.transform
+                        ? `${style.transform.split(",")[0]}, 0px)`
+                        : undefined;
 
-                    return (
-                      <Tab
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                        style={{ ...style, transform, opacity: 1 }}
-                        component="div"
-                        key={d.key}
-                        sx={{
-                          mr: 2,
-                          p: 0,
-                          background: (theme) => theme.palette.background.paper,
-                          border: (theme) =>
-                            `1px solid ${theme.palette.divider}`,
-                          borderBottom: (theme) =>
-                            `1px solid ${
-                              d.active ? "transparent" : theme.palette.divider
-                            }`,
-                          minWidth: "fit-content",
-                        }}
-                        label={
-                          <TabContent
-                            iconName={getIconName(d.chartType)}
-                            chartKey={d.key}
-                            editable={editable}
-                            draggable={draggable}
-                            active={d.active}
-                            dragging={snapshot.isDragging}
-                            onEditClick={(e) => {
-                              onChartEdit?.(e, d.key);
-                            }}
-                            onSwitchClick={() => {
-                              onChartSwitch?.(d.key);
-                            }}
-                          />
-                        }
-                      />
-                    );
-                  }}
-                </Draggable>
-              ))}
-              <div style={{ opacity: 0 }}>{provided.placeholder}</div>
+                      return (
+                        <VisualizeTab
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                          style={{ ...style, transform, opacity: 1 }}
+                          component="div"
+                          key={d.key}
+                          value={`${i}`}
+                          className={`${
+                            // We need to add the "selected" class ourselves since we are wrapping
+                            // the tabs by Draggable.
+                            i === activeTabIndex ? "Mui-selected" : ""
+                          }`}
+                          sx={{
+                            px: 0,
+                            minWidth: "fit-content",
+                          }}
+                          label={
+                            <TabContent
+                              iconName={getIconName(d.chartType)}
+                              chartKey={d.key}
+                              editable={editable}
+                              draggable={draggable}
+                              active={d.active}
+                              dragging={snapshot.isDragging}
+                              onEditClick={(e) => {
+                                onChartEdit?.(e, d.key);
+                              }}
+                              onSwitchClick={() => {
+                                onChartSwitch?.(d.key);
+                              }}
+                            />
+                          }
+                        />
+                      );
+                    }}
+                  </Draggable>
+                ))}
+                <div style={{ opacity: 0 }}>{provided.placeholder}</div>
 
-              {addable && (
-                <Tab
-                  component="div"
-                  sx={{
-                    ml: (theme) => `-${theme.spacing(2)}`,
-                    p: 0,
-                    background: "white",
-                    borderBottomWidth: 1,
-                    borderBottomStyle: "solid",
-                    borderBottomColor: "divider",
-                    minWidth: "fit-content",
-                  }}
-                  onClick={onChartAdd}
-                  label={<TabContent iconName="add" chartKey="" />}
-                />
-              )}
-            </Tabs>
-          )}
-        </Droppable>
-      </DragDropContext>
+                {addable && (
+                  <VisualizeTab
+                    component="div"
+                    sx={{
+                      px: 0,
+                      minWidth: "fit-content",
+                    }}
+                    onClick={onChartAdd}
+                    label={<TabContent iconName="add" chartKey="" />}
+                  />
+                )}
+              </VisualizeTabList>
+            )}
+          </Droppable>
+        </DragDropContext>
+      </TabContext>
 
       <Box gap="0.5rem" display="flex">
         {isConfiguring(state) ? <SaveDraftButton chartId={chartId} /> : null}

@@ -1,5 +1,5 @@
 import { t, Trans } from "@lingui/macro";
-import { LoadingButton, TabContext, TabList, TabPanel } from "@mui/lab";
+import { LoadingButton, TabContext } from "@mui/lab";
 import {
   Box,
   Button,
@@ -8,11 +8,9 @@ import {
   DialogContent,
   DialogProps,
   DialogTitle,
-  Divider,
   Link,
   Skeleton,
   styled,
-  Tab,
   Table,
   TableBody,
   TableCell,
@@ -30,6 +28,7 @@ import sortBy from "lodash/sortBy";
 import NextLink from "next/link";
 import React, { FormEvent, useState } from "react";
 
+import { VisualizeTab, VisualizeTabList } from "@/components/tabs";
 import useDisclosure from "@/components/use-disclosure";
 import { ParsedConfig } from "@/db/config";
 import { sourceToLabel } from "@/domain/datasource";
@@ -56,7 +55,7 @@ const SectionContent = ({
   const rootClasses = useRootStyles();
   return (
     <Box className={rootClasses.sectionContent}>
-      <Typography variant="h2" sx={{ mb: 4 }}>
+      <Typography variant="h3" sx={{ mb: 4 }}>
         {title}
       </Typography>
 
@@ -195,16 +194,14 @@ const RenameDialog = ({
 
   const handleRename = useEventCallback(
     async (ev: FormEvent<HTMLFormElement>) => {
-      const formData = Array.from(new FormData(ev.currentTarget)).reduce(
-        (acc, [key, value]) => {
-          const [_field, indexS, lang] = key.split(".");
-          const index = Number(indexS);
-          acc[index] = acc[index] || ({} as Record<string, string>);
-          acc[index][lang as Locale] = `${value}`;
-          return acc;
-        },
-        [] as Record<Locale, string>[]
-      );
+      const arrData = Array.from(new FormData(ev.currentTarget));
+      const formData = arrData.reduce((acc, [key, value]) => {
+        const [_field, indexS, lang] = key.split(".");
+        const index = Number(indexS);
+        acc[index] = acc[index] || ({} as Record<string, string>);
+        acc[index][lang as Locale] = `${value}`;
+        return acc;
+      }, [] as Record<Locale, string>[]);
       ev.preventDefault();
 
       await updateConfigMut.mutate({
@@ -228,7 +225,7 @@ const RenameDialog = ({
   );
 
   return (
-    <Dialog {...props} fullWidth>
+    <Dialog {...props} onClose={onClose} fullWidth>
       <form style={{ display: "contents" }} onSubmit={handleRename}>
         <DialogTitle>
           <Trans id="profile.chart.rename-dialog.title">
@@ -243,10 +240,13 @@ const RenameDialog = ({
             </Trans>
           </Typography>
           <TabContext value={`${renameIndex}`}>
-            <TabList onChange={(_ev, newTab) => setRenameIndex(newTab)}>
+            <VisualizeTabList
+              sx={{ my: "1rem" }}
+              onChange={(_ev, newTab) => setRenameIndex(newTab)}
+            >
               {config.data.chartConfigs.map((x, i) => {
                 return (
-                  <Tab
+                  <VisualizeTab
                     key={i}
                     value={`${i}`}
                     label={
@@ -259,17 +259,16 @@ const RenameDialog = ({
                   />
                 );
               })}
-            </TabList>
-            <Divider sx={{ mb: "1rem" }} />
+            </VisualizeTabList>
             {config.data.chartConfigs.map((x, i) => {
               return (
-                <TabPanel
-                  value={`${i}`}
+                <Box
                   key={i}
                   sx={{
+                    padding: 0,
                     gap: "1rem",
-                    display: "flex",
                     flexDirection: "column",
+                    display: `${renameIndex}` === `${i}` ? "flex" : "none",
                   }}
                 >
                   <TextField
@@ -292,14 +291,14 @@ const RenameDialog = ({
                     label={t({ id: "controls.language.english" })}
                     defaultValue={x.meta.title.en}
                   />
-                </TabPanel>
+                </Box>
               );
             })}
           </TabContext>
         </DialogContent>
         <DialogActions sx={{ pb: 6, pr: 6 }}>
           <Button variant="outlined" onClick={onClose}>
-            Cancel
+            {t({ id: "login.rename-dialog.cancel" })}
           </Button>
           <LoadingButton
             sx={{ minWidth: "auto" }}
@@ -308,7 +307,7 @@ const RenameDialog = ({
             color="primary"
             type="submit"
           >
-            OK
+            {t({ id: "login.rename-dialog.save" })}
           </LoadingButton>
         </DialogActions>
       </form>
@@ -337,6 +336,7 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
   const { invalidate: invalidateUserConfigs } = useUserConfigs();
 
   const removeConfigMut = useMutate(removeConfig);
+  const updateConfigMut = useMutate(updateConfig);
 
   const {
     isOpen: isRenameOpen,
@@ -345,7 +345,7 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
   } = useDisclosure();
 
   const actions = React.useMemo(() => {
-    const actions: ActionProps[] = [
+    const actions: (ActionProps | null)[] = [
       {
         type: "link",
         href: `/v/${config.key}`,
@@ -374,40 +374,34 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
         label: t({ id: "login.chart.share", message: "Share" }),
         iconName: "linkExternal",
       },
-      // {
-      //   type: "button",
-      //   label:
-      //     config.published_state === PUBLISHED_STATE.DRAFT
-      //       ? t({
-      //           id: "login.chart.actions.publish",
-      //           message: `Publish`,
-      //         })
-      //       : t({
-      //           id: "login.chart.actions.turn-into-draft",
-      //           message: "Turn into draft",
-      //         }),
-      //   iconName:
-      //     updateConfigMut.status === "fetching" ? "loading" : "linkExternal",
+      config.published_state === PUBLISHED_STATE.PUBLISHED
+        ? {
+            type: "button",
+            label: t({
+              id: "login.chart.actions.unpublish",
+              message: "Unpublish",
+            }),
+            iconName: (updateConfigMut.status === "fetching"
+              ? "loading"
+              : "unpublish") as ActionProps["iconName"],
 
-      //   onClick: async () => {
-      //     await updateConfigMut.mutate({
-      //       key: config.key,
-      //       user_id: userId,
-      //       data: {
-      //         ...config.data,
-      //         state: "PUBLISHING",
-      //       },
-      //       published_state:
-      //         config.published_state === PUBLISHED_STATE.DRAFT
-      //           ? PUBLISHED_STATE.PUBLISHED
-      //           : PUBLISHED_STATE.DRAFT,
-      //     });
-      //     invalidateUserConfigs();
-      //   },
-      //   onSuccess: () => {
-      //     invalidateUserConfigs();
-      //   },
-      // },
+            onClick: async () => {
+              await updateConfigMut.mutate({
+                key: config.key,
+                user_id: userId,
+                data: {
+                  ...config.data,
+                  state: "PUBLISHING",
+                },
+                published_state: PUBLISHED_STATE.DRAFT,
+              });
+              invalidateUserConfigs();
+            },
+            onSuccess: () => {
+              invalidateUserConfigs();
+            },
+          }
+        : null,
       {
         type: "button",
         label: t({ id: "login.chart.rename", message: "Rename" }),
@@ -440,18 +434,21 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
       },
     ];
 
-    return sortBy(actions, (x) => x.priority);
+    return sortBy(actions.filter(truthy), (x) => x.priority);
   }, [
+    config.data,
     config.key,
     config.published_state,
     invalidateUserConfigs,
     openRename,
     removeConfigMut,
+    updateConfigMut,
+    userId,
   ]);
 
   const chartTitle = React.useMemo(() => {
     const title = config.data.chartConfigs
-      .map((d) => d.meta.title[locale])
+      .map((d) => d.meta.title?.[locale] ?? false)
       .filter(truthy)
       .join(", ");
 

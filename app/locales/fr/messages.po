@@ -134,7 +134,7 @@ msgstr "Impossible d'enregistrer le brouillon"
 
 #: app/components/chart-selection-tabs.tsx
 msgid "button.save-draft.saved"
-msgstr "Brouillon enregistré"
+msgstr "Brouillon enregistré dans [Mes visualisations](/profile)"
 
 #: app/components/publish-actions.tsx
 msgid "button.share"
@@ -1197,12 +1197,12 @@ msgid "interactive.data.filters.show"
 msgstr "Afficher les filtres"
 
 #: app/login/components/profile-tables.tsx
-msgid "login.chart.actions.publish"
-msgstr "Veröffentlichen"
+#~ msgid "login.chart.actions.publish"
+#~ msgstr "Veröffentlichen"
 
 #: app/login/components/profile-tables.tsx
-msgid "login.chart.actions.turn-into-draft"
-msgstr "In Entwurf umwandeln"
+msgid "login.chart.actions.unpublish"
+msgstr "Dépublier"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.copy"
@@ -1254,20 +1254,24 @@ msgstr "Gardez à l'esprit que la suppression de cette visualisation affectera t
 #~ msgstr "Renommer la visualisation"
 
 #: app/login/components/profile-content-tabs.tsx
-#: app/login/components/profile-content-tabs.tsx
-#: app/login/components/profile-content-tabs.tsx
-#: app/login/components/profile-content-tabs.tsx
-#: app/login/components/profile-content-tabs.tsx
-msgid "login.profile.my-drafts"
-msgstr "Mes brouillons"
+msgid "login.profile.home"
+msgstr "Accueil"
 
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
+msgid "login.profile.my-drafts"
+msgstr "Mes visualisations en brouillon"
+
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
-msgid "login.profile.my-visualizations"
-msgstr "Mes visualisations"
+#: app/login/components/profile-content-tabs.tsx
+msgid "login.profile.my-published-visualizations"
+msgstr "Mes visualisations publiées"
+
+#: app/login/components/profile-content-tabs.tsx
+#~ msgid "login.profile.my-visualizations"
+#~ msgstr "Mes visualisations"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.my-visualizations.chart-actions"
@@ -1296,6 +1300,14 @@ msgstr "Ensemble de données"
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.my-visualizations.multiple-datasets"
 msgstr ""
+
+#: app/login/components/profile-tables.tsx
+msgid "login.rename-dialog.cancel"
+msgstr "Annuler"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.rename-dialog.save"
+msgstr "Sauver"
 
 #: app/components/header.tsx
 #: app/components/header.tsx

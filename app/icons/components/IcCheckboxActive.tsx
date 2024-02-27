@@ -1,5 +1,4 @@
 import * as React from "react";
-
 function SvgIcCheckboxActive(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
@@ -20,5 +19,4 @@ function SvgIcCheckboxActive(props: React.SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
-
 export default SvgIcCheckboxActive;

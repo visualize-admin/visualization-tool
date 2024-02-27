@@ -1,5 +1,4 @@
 import * as React from "react";
-
 function SvgIcSortDescending(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg width="1em" height="1em" viewBox="0 0 24 24" {...props}>
@@ -10,5 +9,4 @@ function SvgIcSortDescending(props: React.SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
-
 export default SvgIcSortDescending;

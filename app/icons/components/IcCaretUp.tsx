@@ -1,5 +1,4 @@
 import * as React from "react";
-
 function SvgIcCaretUp(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
@@ -16,5 +15,4 @@ function SvgIcCaretUp(props: React.SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
-
 export default SvgIcCaretUp;

@@ -108,6 +108,7 @@
     "react-error-boundary": "^3.1.3",
     "react-inspector": "^6.0.2",
     "react-map-gl": "^7.0.10",
+    "react-string-replace": "^1.1.1",
     "react-table": "^7.8.0",
     "react-virtual": "^2.3.1",
     "react-window": "^1.8.6",

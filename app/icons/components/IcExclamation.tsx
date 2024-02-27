@@ -1,5 +1,4 @@
 import * as React from "react";
-
 function SvgIcExclamation(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg width="1em" height="1em" xmlns="http://www.w3.org/2000/svg" {...props}>
@@ -11,6 +10,4 @@ function SvgIcExclamation(props: React.SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
-
 export default SvgIcExclamation;
-

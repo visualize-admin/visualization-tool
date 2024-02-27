@@ -134,7 +134,7 @@ msgstr "Impossibile salvare la bozza"
 
 #: app/components/chart-selection-tabs.tsx
 msgid "button.save-draft.saved"
-msgstr "Bozza salvata"
+msgstr "Bozza salvata nelle [visualizzazioni](/profile)"
 
 #: app/components/publish-actions.tsx
 msgid "button.share"
@@ -1197,12 +1197,12 @@ msgid "interactive.data.filters.show"
 msgstr "Mostra i filtri"
 
 #: app/login/components/profile-tables.tsx
-msgid "login.chart.actions.publish"
-msgstr "Pubblicare"
+#~ msgid "login.chart.actions.publish"
+#~ msgstr "Pubblicare"
 
 #: app/login/components/profile-tables.tsx
-msgid "login.chart.actions.turn-into-draft"
-msgstr "Trasforma in bozza"
+msgid "login.chart.actions.unpublish"
+msgstr "Annullare la pubblicazione"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.copy"
@@ -1254,7 +1254,9 @@ msgstr "Tenete presente che la rimozione di questa visualizzazione avrà effetto
 #~ msgstr ""
 
 #: app/login/components/profile-content-tabs.tsx
-#: app/login/components/profile-content-tabs.tsx
+msgid "login.profile.home"
+msgstr "Accoglienza"
+
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
@@ -1264,10 +1266,12 @@ msgstr "Le mie bozze"
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
+msgid "login.profile.my-published-visualizations"
+msgstr ""
+
 #: app/login/components/profile-content-tabs.tsx
-#: app/login/components/profile-content-tabs.tsx
-msgid "login.profile.my-visualizations"
-msgstr "Le mie visualizzazioni"
+#~ msgid "login.profile.my-visualizations"
+#~ msgstr "Le mie visualizzazioni"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.my-visualizations.chart-actions"
@@ -1296,6 +1300,14 @@ msgstr "Set di dati"
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.my-visualizations.multiple-datasets"
 msgstr ""
+
+#: app/login/components/profile-tables.tsx
+msgid "login.rename-dialog.cancel"
+msgstr "Annulla"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.rename-dialog.save"
+msgstr "Salva"
 
 #: app/components/header.tsx
 #: app/components/header.tsx

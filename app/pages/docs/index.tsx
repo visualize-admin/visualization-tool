@@ -197,6 +197,11 @@ const pages: ConfigPageOrGroup[] = [
         content: require("@/docs/tags.docs"),
       },
       {
+        path: "/components/tabs",
+        title: "Tabs",
+        content: require("@/docs/tabs.docs"),
+      },
+      {
         path: "/components/tooltips",
         title: "Tooltips",
         content: require("@/docs/tooltips.docs"),
