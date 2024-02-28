@@ -153,7 +153,7 @@ CONSTRUCT {
     schema:color ?color .
 } WHERE { 
   {
-    SELECT ?blankNode ?value WHERE {
+    SELECT ?value WHERE {
       <${datasetIri}> cube:observationConstraint/sh:property ?shapeProperty .
       ?shapeProperty sh:path <${dimensionIri}> .
       ?shapeProperty sh:in/rdf:rest* ?blankNode .
@@ -173,11 +173,9 @@ CONSTRUCT {
   }
   ${buildLocalizedSubQuery("value", "schema:name", "name", {
     locale,
-    fallbackToNonLocalized: true,
   })}
   ${buildLocalizedSubQuery("value", "schema:description", "description", {
     locale,
-    fallbackToNonLocalized: true,
   })}
   OPTIONAL { ?value schema:alternateName ?alternateName . }
   OPTIONAL { ?value schema:identifier ?identifier . }
