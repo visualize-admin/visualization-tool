@@ -135,8 +135,15 @@ type LoadDimensionValuesProps = {
 export async function loadDimensionValues(
   props: LoadDimensionValuesProps
 ): Promise<DimensionValue[]> {
-  const { datasetIri, dimensionIri, cube, sparqlClient, filters, locale } =
-    props;
+  const {
+    datasetIri,
+    dimensionIri,
+    cube,
+    sparqlClient,
+    filters,
+    locale,
+    cache,
+  } = props;
   const filterList = getFiltersList(filters, dimensionIri);
   const queryFilters = getQueryFilters(filterList, cube, dimensionIri);
   const query = `PREFIX cube: <https://cube.link/>
@@ -185,12 +192,17 @@ CONSTRUCT {
   OPTIONAL { ?value schema:color ?color . }
 }`;
 
-  const quads = await sparqlClient.query.construct(query, {
-    operation: "postUrlencoded",
-  });
-  const valuesQuads = quads.filter((q) => q.predicate.equals(ns.rdf.first));
-
-  return valuesQuads.map((qValue) => parseDimensionValue(qValue, quads));
+  return await executeWithCache(
+    sparqlClient,
+    query,
+    () => sparqlClient.query.construct(query, { operation: "postUrlencoded" }),
+    (quads) => {
+      return quads
+        .filter((q) => q.predicate.equals(ns.rdf.first))
+        .map((qValue) => parseDimensionValue(qValue, quads));
+    },
+    cache
+  );
 }
 
 const parseDimensionValue = (
