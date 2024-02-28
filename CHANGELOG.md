@@ -9,6 +9,8 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
+- Performance
+  - Switched to a cached LINDAS endpoint (PROD)
 - Features
   - Slightly increased initial map zoom level
   - Join a second dataset through temporal dimension (behind `flag__add-dataset` flag)

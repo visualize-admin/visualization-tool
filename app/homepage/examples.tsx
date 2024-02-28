@@ -38,7 +38,7 @@ export const Examples = ({
           dataSet: "https://environment.ld.admin.ch/foen/ubd003701/2",
           dataSource: {
             type: "sparql",
-            url: "https://lindas.admin.ch/query",
+            url: "https://lindas-cached.cluster.ldbar.ch/query",
           },
           meta: {
             title: {
@@ -143,7 +143,7 @@ export const Examples = ({
           dataSet: "https://culture.ld.admin.ch/sfa/StateAccounts_Office/4/",
           dataSource: {
             type: "sparql",
-            url: "https://lindas.admin.ch/query",
+            url: "https://lindas-cached.cluster.ldbar.ch/query",
           },
           meta: {
             title: {
