@@ -333,34 +333,6 @@ export const dataCubePreview: NonNullable<QueryResolvers["dataCubePreview"]> =
     });
   };
 
-export const dataCubeDimensions: NonNullable<DataCubeResolvers["dimensions"]> =
-  async ({ cube, locale }, { componentIris }, { setup }, info) => {
-    const { sparqlClient, cache } = await setup(info);
-    const dimensions = await getCubeDimensions({
-      cube,
-      locale,
-      sparqlClient,
-      componentIris,
-      cache,
-    });
-
-    return dimensions.filter((d) => !d.data.isMeasureDimension);
-  };
-
-export const dataCubeMeasures: NonNullable<DataCubeResolvers["measures"]> =
-  async ({ cube, locale }, { componentIris }, { setup }, info) => {
-    const { sparqlClient, cache } = await setup(info);
-    const dimensions = await getCubeDimensions({
-      cube,
-      locale,
-      sparqlClient,
-      componentIris,
-      cache,
-    });
-
-    return dimensions.filter((d) => d.data.isMeasureDimension);
-  };
-
 export const dataCubeDimensionByIri: NonNullable<
   DataCubeResolvers["dimensionByIri"]
 > = async ({ cube, locale }, { iri }, { setup }, info) => {

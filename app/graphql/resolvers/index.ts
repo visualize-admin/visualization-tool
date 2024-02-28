@@ -69,14 +69,6 @@ const DataCube: DataCubeResolvers = {
   datePublished: ({ data: { datePublished } }) => datePublished ?? null,
   themes: ({ data: { themes } }) => themes ?? [],
   creator: ({ data: { creator } }) => creator ?? null,
-  dimensions: async (parent, args, context, info) => {
-    const source = getSource(args.sourceType);
-    return source.dataCubeDimensions(parent, args, context, info);
-  },
-  measures: (parent, args, context, info) => {
-    const source = getSource(args.sourceType);
-    return source.dataCubeMeasures(parent, args, context, info);
-  },
   dimensionByIri: async (parent, args, context, info) => {
     const source = getSource(args.sourceType);
     return source.dataCubeDimensionByIri(parent, args, context, info);
