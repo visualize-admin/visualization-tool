@@ -22,6 +22,7 @@ import {
 } from "@/graphql/resolver-types";
 import { resolveDimensionType, resolveMeasureType } from "@/graphql/resolvers";
 import { defaultLocale } from "@/locales/locales";
+import { LightCube } from "@/rdf/light-cube";
 import { parseCube } from "@/rdf/parse";
 import {
   createCubeDimensionValuesLoader,
@@ -29,7 +30,6 @@ import {
   getCubeObservations,
   getLatestCube,
 } from "@/rdf/queries";
-import { getCubeMetadata } from "@/rdf/query-cube-metadata";
 import { getCubePreview } from "@/rdf/query-cube-preview";
 import { unversionObservation } from "@/rdf/query-dimension-values";
 import { queryHierarchy } from "@/rdf/query-hierarchies";
@@ -277,20 +277,13 @@ export const dataCubeComponents: NonNullable<
 
 export const dataCubeMetadata: NonNullable<QueryResolvers["dataCubeMetadata"]> =
   async (_, { locale, cubeFilter }, { setup }, info) => {
-    const { loaders, sparqlClient } = await setup(info);
+    const { sparqlClient } = await setup(info);
     const { iri, latest = true } = cubeFilter;
-    const rawCube = await loaders.cube.load(iri);
+    const cube = await new LightCube({ iri, locale, sparqlClient }).promote(
+      !!latest
+    );
 
-    if (!rawCube) {
-      throw new Error("Cube not found!");
-    }
-
-    const cube = latest ? await getLatestCube(rawCube) : rawCube;
-
-    return await getCubeMetadata(cube.term?.value!, {
-      locale,
-      sparqlClient,
-    });
+    return await cube.fetchMetadata();
   };
 
 export const dataCubeObservations: NonNullable<
