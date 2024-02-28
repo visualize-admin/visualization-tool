@@ -232,7 +232,9 @@ const DataFilter = (props: DataFilterProps) => {
   const filters = useChartConfigFilters(chartConfig);
   const chartLoadingState = useLoadingState();
   const updateDataFilter = useInteractiveFilters((d) => d.updateDataFilter);
-  const keys = Object.keys(interactiveFilters);
+  const otherKeys = Object.keys(interactiveFilters).filter(
+    (key) => key !== dimensionIri
+  );
   const [{ data, fetching }] = useDataCubesComponentsQuery({
     variables: {
       sourceType: dataSource.type,
@@ -242,7 +244,7 @@ const DataFilter = (props: DataFilterProps) => {
         {
           iri: cubeIri,
           componentIris: [dimensionIri],
-          filters: keys.length > 1 ? interactiveFilters : undefined,
+          filters: otherKeys.length > 0 ? interactiveFilters : undefined,
           loadValues: true,
         },
       ],
@@ -251,7 +253,7 @@ const DataFilter = (props: DataFilterProps) => {
       // If this is not present, we'll have outdated dimension
       // values after we change the filter order.
       // @ts-ignore
-      filterKeys: keys.join(", "),
+      filterKeys: otherKeys.join(", "),
     },
   });
 
