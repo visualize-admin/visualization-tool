@@ -225,17 +225,11 @@ export async function loadMaxDimensionValue(
   const filterList = getFiltersList(filters, dimensionIri);
   // The following query works both for numeric, date and ordinal dimensions
   const query = SELECT`?value`.WHERE`
-    <${datasetIri}> ${ns.cube.observationSet}/${
-    ns.cube.observation
-  } ?observation .
-    ?observation <${dimensionIri}> ?value .
-    OPTIONAL {
-      ?value <https://www.w3.org/TR/owl-time/hasEnd> ?hasEnd .
-    }
-    OPTIONAL {
-      ?value ${ns.schema.position} ?position .
-    }
-    ${getQueryFilters(filterList, cube, dimensionIri)}`
+<${datasetIri}> ${ns.cube.observationSet}/${ns.cube.observation} ?observation .
+?observation <${dimensionIri}> ?value .
+OPTIONAL { ?value <https://www.w3.org/TR/owl-time/hasEnd> ?hasEnd . }
+OPTIONAL { ?value ${ns.schema.position} ?position . }
+${getQueryFilters(filterList, cube, dimensionIri)}`
     .ORDER()
     .BY(RDF.variable("hasEnd"), true)
     .THEN.BY(RDF.variable("value"), true)
@@ -356,23 +350,18 @@ export const loadMinMaxDimensionValues = async ({
   cache: LRUCache | undefined;
 }) => {
   const query = SELECT`(MIN(?value) as ?minValue) (MAX(?value) as ?maxValue)`
-    .WHERE`
-    <${datasetIri}> ${ns.cube.observationSet}/${ns.cube.observation} ?observation .
-    ?observation <${dimensionIri}> ?value .
-    FILTER (
-      (STRLEN(STR(?value)) > 0) && (STR(?value) != "NaN")
-    )
-  `.build();
+    .WHERE`<${datasetIri}> ${ns.cube.observationSet}/${ns.cube.observation} ?observation .
+?observation <${dimensionIri}> ?value .
+FILTER ( (STRLEN(STR(?value)) > 0) && (STR(?value) != "NaN") )`.build();
 
   try {
-    const result = await executeWithCache(
+    return await executeWithCache(
       sparqlClient,
       query,
       () => sparqlClient.query.select(query, { operation: "postUrlencoded" }),
       parseMinMax,
       cache
     );
-    return result;
   } catch {
     console.warn(
       `Failed to fetch min max dimension values for ${datasetIri}, ${dimensionIri}.`
