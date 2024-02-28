@@ -362,14 +362,15 @@ export const loadMinMaxDimensionValues = async ({
     FILTER (
       (STRLEN(STR(?value)) > 0) && (STR(?value) != "NaN")
     )
-  `;
+  `.build();
 
   try {
     const result = await executeWithCache(
       sparqlClient,
       query,
-      cache,
-      parseMinMax
+      () => sparqlClient.query.select(query, { operation: "postUrlencoded" }),
+      parseMinMax,
+      cache
     );
     return result;
   } catch {

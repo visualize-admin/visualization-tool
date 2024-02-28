@@ -34,14 +34,16 @@ export default async function batchLoad<
 
   const results = await Promise.all(
     batched.map(async ([key, values]) => {
-      const query = buildQuery(values, key);
+      const query = buildQuery(values, key).build();
 
       try {
         return (await executeWithCache(
           sparqlClient,
           query,
-          cache,
-          (t) => t
+          () =>
+            sparqlClient.query.select(query, { operation: "postUrlencoded" }),
+          (t) => t,
+          cache
         )) as unknown as TReturn[];
       } catch (e) {
         console.log(
