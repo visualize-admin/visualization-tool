@@ -293,29 +293,6 @@ const filterObservations = (
   return observations;
 };
 
-// FIXME: should be a call to API (to be able to implement proper filtering)
-export const observations: NonNullable<DataCubeResolvers["observations"]> =
-  async ({ cube, locale }, { filters, limit }) => {
-    const rawObservations = (cube as any).observations as Observation[];
-    const allObservations = limit
-      ? rawObservations.slice(0, limit)
-      : rawObservations;
-    const observations = filterObservations(
-      allObservations,
-      filters as Filters | undefined
-    );
-
-    return {
-      cube,
-      locale,
-      data: {
-        query: "",
-        observations,
-        selectedFields: [],
-      },
-    };
-  };
-
 export const dataCubeObservations: NonNullable<
   QueryResolvers["dataCubeObservations"]
 > = async () => {

@@ -41,14 +41,6 @@ type DataCube {
   dateModified: String
   expires: String
   publicationStatus: DataCubePublicationStatus!
-  observations(
-    sourceType: String!
-    sourceUrl: String!
-    limit: Int
-    preview: Boolean
-    componentIris: [String!]
-    filters: Filters
-  ): ObservationsQuery!
   dimensions(
     sourceType: String!
     sourceUrl: String!

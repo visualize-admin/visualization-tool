@@ -56,21 +56,10 @@ export type DataCube = {
   dateModified?: Maybe<Scalars['String']>;
   expires?: Maybe<Scalars['String']>;
   publicationStatus: DataCubePublicationStatus;
-  observations: ObservationsQuery;
   dimensions: Array<Dimension>;
   dimensionByIri?: Maybe<Dimension>;
   measures: Array<Measure>;
   themes: Array<DataCubeTheme>;
-};
-
-
-export type DataCubeObservationsArgs = {
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
-  limit?: Maybe<Scalars['Int']>;
-  preview?: Maybe<Scalars['Boolean']>;
-  componentIris?: Maybe<Array<Scalars['String']>>;
-  filters?: Maybe<Scalars['Filters']>;
 };
 
 
@@ -669,7 +658,6 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 export type ResolversTypes = ResolversObject<{
   DataCube: ResolverTypeWrapper<ResolvedDataCube>;
   String: ResolverTypeWrapper<Scalars['String']>;
-  Int: ResolverTypeWrapper<Scalars['Int']>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   DataCubeComponentFilter: DataCubeComponentFilter;
   DataCubeComponents: ResolverTypeWrapper<Scalars['DataCubeComponents']>;
@@ -683,6 +671,7 @@ export type ResolversTypes = ResolversObject<{
   DataCubePublicationStatus: DataCubePublicationStatus;
   DataCubeTheme: ResolverTypeWrapper<DataCubeTheme>;
   Dimension: ResolverTypeWrapper<ResolvedDimension>;
+  Int: ResolverTypeWrapper<Scalars['Int']>;
   DimensionValue: ResolverTypeWrapper<Scalars['DimensionValue']>;
   FilterValue: ResolverTypeWrapper<Scalars['FilterValue']>;
   Filters: ResolverTypeWrapper<Scalars['Filters']>;
@@ -720,7 +709,6 @@ export type ResolversTypes = ResolversObject<{
 export type ResolversParentTypes = ResolversObject<{
   DataCube: ResolvedDataCube;
   String: Scalars['String'];
-  Int: Scalars['Int'];
   Boolean: Scalars['Boolean'];
   DataCubeComponentFilter: DataCubeComponentFilter;
   DataCubeComponents: Scalars['DataCubeComponents'];
@@ -733,6 +721,7 @@ export type ResolversParentTypes = ResolversObject<{
   DataCubePreviewFilter: DataCubePreviewFilter;
   DataCubeTheme: DataCubeTheme;
   Dimension: ResolvedDimension;
+  Int: Scalars['Int'];
   DimensionValue: Scalars['DimensionValue'];
   FilterValue: Scalars['FilterValue'];
   Filters: Scalars['Filters'];
@@ -779,7 +768,6 @@ export type DataCubeResolvers<ContextType = VisualizeGraphQLContext, ParentType 
   dateModified?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   expires?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   publicationStatus?: Resolver<ResolversTypes['DataCubePublicationStatus'], ParentType, ContextType>;
-  observations?: Resolver<ResolversTypes['ObservationsQuery'], ParentType, ContextType, RequireFields<DataCubeObservationsArgs, 'sourceType' | 'sourceUrl'>>;
   dimensions?: Resolver<Array<ResolversTypes['Dimension']>, ParentType, ContextType, RequireFields<DataCubeDimensionsArgs, 'sourceType' | 'sourceUrl'>>;
   dimensionByIri?: Resolver<Maybe<ResolversTypes['Dimension']>, ParentType, ContextType, RequireFields<DataCubeDimensionByIriArgs, 'iri' | 'sourceType' | 'sourceUrl'>>;
   measures?: Resolver<Array<ResolversTypes['Measure']>, ParentType, ContextType, RequireFields<DataCubeMeasuresArgs, 'sourceType' | 'sourceUrl'>>;

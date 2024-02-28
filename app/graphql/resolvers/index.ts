@@ -73,10 +73,6 @@ const DataCube: DataCubeResolvers = {
     const source = getSource(args.sourceType);
     return source.dataCubeDimensionByIri(parent, args, context, info);
   },
-  observations: async (parent, args, context, info) => {
-    const source = getSource(args.sourceType);
-    return source.observations(parent, args, context, info);
-  },
 };
 
 export const resolveDimensionType = (

@@ -356,36 +356,6 @@ export const dataCubeDimensionByIri: NonNullable<
   return dimension ?? null;
 };
 
-export const observations: NonNullable<DataCubeResolvers["observations"]> =
-  async (
-    { cube, locale },
-    { preview, limit, filters, componentIris },
-    { setup },
-    info
-  ) => {
-    const { sparqlClient, cache } = await setup(info);
-    const { query, observations } = await getCubeObservations({
-      cube,
-      locale,
-      sparqlClient,
-      filters,
-      preview,
-      limit,
-      componentIris,
-      cache,
-    });
-
-    return {
-      cube,
-      locale,
-      data: {
-        query,
-        observations,
-        selectedFields: [],
-      },
-    };
-  };
-
 const getDimensionValuesLoader = (
   sparqlClient: ParsingClient,
   loaders: Loaders,
