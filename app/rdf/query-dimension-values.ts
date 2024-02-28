@@ -225,10 +225,10 @@ export async function loadMaxDimensionValue(
   const filterList = getFiltersList(filters, dimensionIri);
   // The following query works both for numeric, date and ordinal dimensions
   const query = SELECT`?value`.WHERE`
-    ${datasetIri} ${ns.cube.observationSet}/${
+    <${datasetIri}> ${ns.cube.observationSet}/${
     ns.cube.observation
   } ?observation .
-    ?observation ${dimensionIri} ?value .
+    ?observation <${dimensionIri}> ?value .
     OPTIONAL {
       ?value <https://www.w3.org/TR/owl-time/hasEnd> ?hasEnd .
     }
@@ -357,8 +357,8 @@ export const loadMinMaxDimensionValues = async ({
 }) => {
   const query = SELECT`(MIN(?value) as ?minValue) (MAX(?value) as ?maxValue)`
     .WHERE`
-    ${datasetIri} ${ns.cube.observationSet}/${ns.cube.observation} ?observation .
-    ?observation ${dimensionIri} ?value .
+    <${datasetIri}> ${ns.cube.observationSet}/${ns.cube.observation} ?observation .
+    ?observation <${dimensionIri}> ?value .
     FILTER (
       (STRLEN(STR(?value)) > 0) && (STR(?value) != "NaN")
     )
