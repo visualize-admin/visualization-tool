@@ -15,10 +15,6 @@ import { ExtendedCube } from "@/rdf/extended-cube";
 import { TimingCallback, timed } from "@/utils/timed";
 
 import { createCubeDimensionValuesLoader } from "../rdf/queries";
-import {
-  createOrganizationLoader,
-  createThemeLoader,
-} from "../rdf/query-cube-metadata";
 import { createGeoCoordinatesLoader } from "../rdf/query-geo-coordinates";
 import { createGeoShapesLoader } from "../rdf/query-geo-shapes";
 
@@ -82,10 +78,6 @@ const createLoaders = async (
       {
         maxBatchSize: MAX_BATCH_SIZE * 0.5,
       }
-    ),
-    themes: new DataLoader(createThemeLoader({ locale, sparqlClient })),
-    organizations: new DataLoader(
-      createOrganizationLoader({ locale, sparqlClient })
     ),
   } as const;
 };
