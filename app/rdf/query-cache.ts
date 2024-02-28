@@ -4,22 +4,22 @@ import { LRUCache } from "typescript-lru-cache";
 
 type SparqlClient = StreamClient | ParsingClient;
 
-export const executeWithCache = async <T>(
+export const executeWithCache = async <Executed, Parsed>(
   sparqlClient: SparqlClient,
   query: string,
-  execute: () => Promise<any>,
-  parse: (v: any) => T,
+  execute: () => Promise<Executed>,
+  parse: (result: Executed) => Parsed,
   cache: LRUCache | undefined
 ) => {
   const key = `${sparqlClient.query.endpoint.endpointUrl} - ${query}`;
   const cached = cache?.get(key);
 
   if (cached) {
-    return cached as T;
+    return cached as Parsed;
   }
 
   const result = await execute();
-  const parsed = parse(result) as T;
+  const parsed = parse(result) as Parsed;
 
   if (cache) {
     cache.set(key, parsed);

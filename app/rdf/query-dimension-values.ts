@@ -4,7 +4,6 @@ import keyBy from "lodash/keyBy";
 import mapValues from "lodash/mapValues";
 import sortBy from "lodash/sortBy";
 import { CubeDimension } from "rdf-cube-view-query";
-import LiteralExt from "rdf-ext/lib/Literal";
 import { NamedNode, Quad, Term } from "rdf-js";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
 import { ResultRow } from "sparql-http-client/ResultParser";
@@ -249,14 +248,12 @@ ${getQueryFilters(filterList, cube, dimensionIri)}`
     .THEN.BY(RDF.variable("position"), true)
     .LIMIT(1).prologue`${pragmas}`.build();
 
-  console.log(query);
-
   try {
     return await executeWithCache(
       sparqlClient,
       query,
       () => sparqlClient.query.select(query, { operation: "postUrlencoded" }),
-      (result: ResultRow[]) => result.map((d) => d.value.value),
+      (result) => result.map((d) => d.value.value),
       cache
     );
   } catch {
@@ -344,9 +341,7 @@ ${formatFilterIntoSparqlFilter(value, dimension, versioned, i + j)}`;
   `;
 };
 
-type MinMaxResult = [{ minValue: LiteralExt; maxValue: LiteralExt }];
-
-const parseMinMax = (result: MinMaxResult) => {
+const parseMinMax = (result: ResultRow[]) => {
   const { minValue, maxValue } = result[0];
   const min = parseObservationValue({ value: minValue }) ?? 0;
   const max = parseObservationValue({ value: maxValue }) ?? 0;
@@ -368,13 +363,16 @@ export const loadMinMaxDimensionValues = async ({
   const query = SELECT`(MIN(?value) as ?minValue) (MAX(?value) as ?maxValue)`
     .WHERE`<${datasetIri}> ${ns.cube.observationSet}/${ns.cube.observation} ?observation .
 ?observation <${dimensionIri}> ?value .
-FILTER ( (STRLEN(STR(?value)) > 0) && (STR(?value) != "NaN") )`.build();
+FILTER ( (STRLEN(STR(?value)) > 0) && (STR(?value) != "NaN") )`;
 
   try {
     return await executeWithCache(
       sparqlClient,
-      query,
-      () => sparqlClient.query.select(query, { operation: "postUrlencoded" }),
+      query.build(),
+      () =>
+        query.execute(sparqlClient.query, {
+          operation: "postUrlencoded",
+        }),
       parseMinMax,
       cache
     );

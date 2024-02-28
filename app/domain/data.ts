@@ -1,4 +1,4 @@
-import { Literal, NamedNode, Term } from "rdf-js";
+import { Literal, Term } from "rdf-js";
 
 import { ComponentType } from "@/config-types";
 import {
@@ -11,7 +11,7 @@ import {
 } from "@/graphql/resolver-types";
 import { ResolvedDimension } from "@/graphql/shared-types";
 
-export type RawObservationValue = Literal | NamedNode;
+export type RawObservationValue = Term;
 
 export type RawObservation = Record<string, RawObservationValue>;
 
