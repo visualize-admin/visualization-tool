@@ -31,7 +31,11 @@ describe("getQueryFilters", () => {
   ];
 
   it("should include other dimensions in the returning part of the query", async () => {
-    const queryPart = getQueryFilters(filters, cube, undefined);
+    const queryPart = getQueryFilters(
+      filters,
+      cube,
+      "http://example.com/dimension2"
+    );
     expect(queryPart).toContain("<http://example.com/dimension1>");
   });
 });
