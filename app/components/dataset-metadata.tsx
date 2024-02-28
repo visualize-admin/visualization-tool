@@ -8,6 +8,7 @@ import {
   Typography,
   TypographyProps,
 } from "@mui/material";
+import sortBy from "lodash/sortBy";
 import NextLink from "next/link";
 import React, { ReactNode } from "react";
 
@@ -183,18 +184,19 @@ const DatasetTags = ({ cube }: { cube: DataCubeMetadata }) => {
             label={cube.creator.label}
           />
         )}
-        {cube.themes?.map(
-          (t) =>
-            t.iri &&
-            t.label && (
-              <DatasetMetadataTag
-                key={t.iri}
-                type="theme"
-                iri={t.iri}
-                label={t.label}
-              />
-            )
-        )}
+        {cube.themes &&
+          sortBy(cube.themes, (d) => d.label).map(
+            (t) =>
+              t.iri &&
+              t.label && (
+                <DatasetMetadataTag
+                  key={t.iri}
+                  type="theme"
+                  iri={t.iri}
+                  label={t.label}
+                />
+              )
+          )}
       </Stack>
     </>
   );
