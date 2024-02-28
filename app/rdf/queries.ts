@@ -308,6 +308,7 @@ export const getCubeDimensionValuesWithMetadata = async ({
     sparqlClient,
     filters,
     locale,
+    cache,
   });
 };
 
@@ -401,6 +402,7 @@ export const getCubeObservations = async ({
         filters: dbFilters,
         locale,
         sparqlClient,
+        cache,
       })
     : [];
 
@@ -599,12 +601,14 @@ const buildFilters = async ({
   filters,
   locale,
   sparqlClient,
+  cache,
 }: {
   cube: ExtendedCube;
   view: View;
   filters: Filters;
   locale: string;
   sparqlClient: ParsingClient;
+  cache: LRUCache | undefined;
 }): Promise<Filter[]> => {
   const lookupSource = LookupSource.fromSource(cube.source);
   lookupSource.queryPrefix = pragmas;
@@ -675,9 +679,10 @@ const buildFilters = async ({
               sparqlClient,
               filters,
               locale,
+              cache,
             });
 
-            return [filterDimension.filter.eq(toRDFValue(maxValue[0].value))];
+            return [filterDimension.filter.eq(toRDFValue(maxValue[0]))];
           }
 
           return [filterDimension.filter.eq(toRDFValue(`${filter.value}`))];

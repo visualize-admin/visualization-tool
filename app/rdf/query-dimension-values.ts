@@ -5,8 +5,9 @@ import mapValues from "lodash/mapValues";
 import sortBy from "lodash/sortBy";
 import { CubeDimension } from "rdf-cube-view-query";
 import LiteralExt from "rdf-ext/lib/Literal";
-import { Literal, NamedNode, Quad, Term } from "rdf-js";
+import { NamedNode, Quad, Term } from "rdf-js";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
+import { ResultRow } from "sparql-http-client/ResultParser";
 import { LRUCache } from "typescript-lru-cache";
 
 import { FilterValue, Filters } from "@/config-types";
@@ -122,6 +123,7 @@ type LoadDimensionValuesProps = {
   sparqlClient: ParsingClient;
   filters?: Filters;
   locale: string;
+  cache: LRUCache | undefined;
 };
 
 /**
@@ -218,10 +220,9 @@ const parseDimensionValue = (
  * Filters on other dimensions can be passed.
  *
  */
-export async function loadMaxDimensionValue(
-  props: LoadDimensionValuesProps
-): Promise<(Literal | NamedNode)[]> {
-  const { datasetIri, dimensionIri, cube, sparqlClient, filters } = props;
+export async function loadMaxDimensionValue(props: LoadDimensionValuesProps) {
+  const { datasetIri, dimensionIri, cube, sparqlClient, filters, cache } =
+    props;
   const filterList = getFiltersList(filters, dimensionIri);
   // The following query works both for numeric, date and ordinal dimensions
   const query = SELECT`?value`.WHERE`
@@ -234,18 +235,21 @@ ${getQueryFilters(filterList, cube, dimensionIri)}`
     .BY(RDF.variable("hasEnd"), true)
     .THEN.BY(RDF.variable("value"), true)
     .THEN.BY(RDF.variable("position"), true)
-    .LIMIT(1).prologue`${pragmas}`;
+    .LIMIT(1).prologue`${pragmas}`.build();
 
-  let result: { value: Literal | NamedNode }[] = [];
+  console.log(query);
 
   try {
-    result = (await query.execute(sparqlClient.query, {
-      operation: "postUrlencoded",
-    })) as unknown as { value: Literal | NamedNode }[];
+    return await executeWithCache(
+      sparqlClient,
+      query,
+      () => sparqlClient.query.select(query, { operation: "postUrlencoded" }),
+      (result: ResultRow[]) => result.map((d) => d.value.value),
+      cache
+    );
   } catch {
     console.warn(`Failed to fetch max dimension value for ${datasetIri}!`);
-  } finally {
-    return result.map((d) => d.value);
+    return [];
   }
 }
 
