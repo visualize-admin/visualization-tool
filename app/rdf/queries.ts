@@ -7,38 +7,36 @@ import { Literal, NamedNode } from "rdf-js";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
 import { LRUCache } from "typescript-lru-cache";
 
+import { FilterValueMulti, Filters } from "@/config-types";
 import { isDynamicMaxValue } from "@/configurator/components/field";
-import { PromiseValue, truthy } from "@/domain/types";
-import { createSource, pragmas } from "@/rdf/create-source";
-import { ExtendedCube } from "@/rdf/extended-cube";
-
-import { FilterValueMulti, Filters } from "../configurator";
 import {
   DimensionValue,
   Observation,
   ObservationValue,
   parseObservationValue,
   shouldLoadMinMaxValues,
-} from "../domain/data";
+} from "@/domain/data";
+import { PromiseValue, truthy } from "@/domain/types";
 import {
   ResolvedDimension,
   ResolvedObservationsQuery,
-} from "../graphql/shared-types";
-
-import * as ns from "./namespace";
+} from "@/graphql/shared-types";
+import { createSource, pragmas } from "@/rdf/create-source";
+import { ExtendedCube } from "@/rdf/extended-cube";
+import * as ns from "@/rdf/namespace";
 import {
   getQueryLocales,
   isCubePublished,
   parseCubeDimension,
   parseRelatedDimensions,
-} from "./parse";
+} from "@/rdf/parse";
 import {
   loadDimensionValues,
   loadMaxDimensionValue,
   loadMinMaxDimensionValues,
-} from "./query-dimension-values";
-import { loadUnversionedResources } from "./query-sameas";
-import { loadUnits } from "./query-unit-labels";
+} from "@/rdf/query-dimension-values";
+import { loadUnversionedResources } from "@/rdf/query-sameas";
+import { loadUnits } from "@/rdf/query-unit-labels";
 
 const DIMENSION_VALUE_UNDEFINED = ns.cube.Undefined.value;
 
@@ -50,7 +48,6 @@ export const getLatestCube = async (
   cube: ExtendedCube
 ): Promise<ExtendedCube> => {
   const source = cube.source;
-
   const versionHistory = cube.in(ns.schema.hasPart)?.term;
   const isPublished = isCubePublished(cube);
   const version = cube.out(ns.schema.version);
