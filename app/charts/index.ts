@@ -73,6 +73,7 @@ import {
   Measure,
   NumericalMeasure,
 } from "@/domain/data";
+import { truthy } from "@/domain/types";
 import {
   DEFAULT_CATEGORICAL_PALETTE_NAME,
   getDefaultCategoricalPaletteName,
@@ -139,12 +140,16 @@ export const chartTypesOrder: { [k in ChartType]: number } = {
  */
 const findPreferredDimension = (
   dimensions: Component[],
-  preferredType?: DimensionType
+  preferredTypes?: DimensionType[]
 ) => {
   const dim =
-    dimensions.find(
-      (d) => d.__typename === preferredType && d.isKeyDimension
-    ) ??
+    preferredTypes
+      ?.map((preferredType) =>
+        dimensions.find(
+          (d) => d.__typename === preferredType && d.isKeyDimension
+        )
+      )
+      .filter(truthy)[0] ??
     dimensions.find((d) => d.isKeyDimension) ??
     dimensions[0];
 
@@ -379,7 +384,7 @@ export const getInitialConfig = (
     case "column":
       const columnXComponentIri = findPreferredDimension(
         sortBy(dimensions, (d) => (isGeoDimension(d) ? 1 : -1)),
-        "TemporalDimension"
+        ["TemporalDimension", "TemporalOrdinalDimension"]
       ).iri;
 
       return {
