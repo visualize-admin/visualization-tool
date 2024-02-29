@@ -33,7 +33,6 @@ export const getCubePreview = async (
   iri: string,
   options: {
     locale: string;
-    latest: Boolean;
     sparqlClient: ParsingClient;
   }
 ): Promise<DataCubePreview> => {

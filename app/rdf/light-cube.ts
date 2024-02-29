@@ -5,6 +5,7 @@ import {
   BaseComponent,
   BaseDimension,
   DataCubeMetadata,
+  DataCubePreview,
   Dimension,
   Measure,
   TemporalDimension,
@@ -21,6 +22,7 @@ import {
   parseResolution,
 } from "@/rdf/parse";
 import { getCubeMetadata } from "@/rdf/query-cube-metadata";
+import { getCubePreview } from "@/rdf/query-cube-preview";
 import { buildLocalizedSubQuery } from "@/rdf/query-utils";
 
 type LightCubeOptions = {
@@ -36,6 +38,7 @@ export class LightCube {
   public iri: string;
   private locale: string;
   public metadata: DataCubeMetadata | undefined;
+  public preview: DataCubePreview | undefined;
   public dimensions: Dimension[] = [];
   public measures: Measure[] = [];
   private sparqlClient: ParsingClient;
@@ -89,6 +92,15 @@ LIMIT 1`;
     });
 
     return this.metadata;
+  }
+
+  public async fetchPreview() {
+    this.preview = await getCubePreview(this.iri, {
+      locale: this.locale,
+      sparqlClient: this.sparqlClient,
+    });
+
+    return this.preview;
   }
 
   public async fetchComponents() {
@@ -173,10 +185,9 @@ CONSTRUCT {
     const dimensions: Dimension[] = [];
     const measures: Measure[] = [];
     const qsDims = qs.filter(({ predicate: p }) => p.equals(ns.sh.path));
-
-    qsDims.map(({ subject: s, object: o }) => {
-      const dimIri = o.value;
-      const qsDim = sQs[s.value];
+    qsDims.map(({ subject, object }) => {
+      const dimIri = object.value;
+      const qsDim = sQs[subject.value];
       const pQsDim = groupBy(qsDim, (q) => q.predicate.value);
       const qLabel = pQsDim[ns.schema.name.value]?.[0];
       const qDesc = pQsDim[ns.schema.description.value]?.[0];

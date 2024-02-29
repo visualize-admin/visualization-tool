@@ -30,7 +30,6 @@ import {
   getCubeObservations,
   getLatestCube,
 } from "@/rdf/queries";
-import { getCubePreview } from "@/rdf/query-cube-preview";
 import { unversionObservation } from "@/rdf/query-dimension-values";
 import { queryHierarchy } from "@/rdf/query-hierarchies";
 import { SearchResult, searchCubes as _searchCubes } from "@/rdf/query-search";
@@ -324,13 +323,12 @@ export const dataCubeObservations: NonNullable<
 export const dataCubePreview: NonNullable<QueryResolvers["dataCubePreview"]> =
   async (_, { locale, cubeFilter }, { setup }, info) => {
     const { sparqlClient } = await setup(info);
-    const { iri, latest } = cubeFilter;
+    const { iri, latest = true } = cubeFilter;
+    const cube = await new LightCube({ iri, locale, sparqlClient }).init(
+      !!latest
+    );
 
-    return await getCubePreview(iri, {
-      locale,
-      latest: !!latest,
-      sparqlClient,
-    });
+    return await cube.fetchPreview();
   };
 
 export const dataCubeDimensionByIri: NonNullable<
