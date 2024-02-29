@@ -5,7 +5,7 @@ import {
   DataCubeMetadata,
   DataCubePreview,
 } from "@/domain/data";
-import { getCubeComponents } from "@/rdf/query-cube-components";
+import { getCubeComponentsMetadata } from "@/rdf/query-cube-components";
 import { getCubeMetadata } from "@/rdf/query-cube-metadata";
 import { getCubePreview } from "@/rdf/query-cube-preview";
 
@@ -86,8 +86,8 @@ LIMIT 1`;
     return this.preview;
   }
 
-  public async fetchComponents() {
-    this.components = await getCubeComponents(this.iri, {
+  public async fetchComponentsMetadata() {
+    this.components = await getCubeComponentsMetadata(this.iri, {
       locale: this.locale,
       sparqlClient: this.sparqlClient,
     });

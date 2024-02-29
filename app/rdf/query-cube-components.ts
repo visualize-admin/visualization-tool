@@ -22,7 +22,7 @@ import {
 } from "@/rdf/parse";
 import { buildLocalizedSubQuery } from "@/rdf/query-utils";
 
-export const getCubeComponents = async (
+export const getCubeComponentsMetadata = async (
   cubeIri: string,
   options: {
     locale: string;
