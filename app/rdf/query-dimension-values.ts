@@ -116,7 +116,6 @@ const getFilterOrder = (filter: FilterValue) => {
 };
 
 type LoadDimensionValuesProps = {
-  datasetIri: string;
   dimensionIri: string;
   cube: ExtendedCube;
   sparqlClient: ParsingClient;
@@ -132,17 +131,10 @@ type LoadDimensionValuesProps = {
  *
  */
 export async function loadDimensionValues(
+  cubeIri: string,
   props: LoadDimensionValuesProps
 ): Promise<DimensionValue[]> {
-  const {
-    datasetIri,
-    dimensionIri,
-    cube,
-    sparqlClient,
-    filters,
-    locale,
-    cache,
-  } = props;
+  const { dimensionIri, cube, sparqlClient, filters, locale, cache } = props;
   const filterList = getFiltersList(filters, dimensionIri);
   const queryFilters = getQueryFilters(filterList, cube, dimensionIri);
   const query = `PREFIX cube: <https://cube.link/>
@@ -165,7 +157,7 @@ CONSTRUCT {
       ? ""
       : `{
     SELECT ?value WHERE {
-      <${datasetIri}> cube:observationConstraint/sh:property ?dimension .
+      <${cubeIri}> cube:observationConstraint/sh:property ?dimension .
       ?dimension sh:path <${dimensionIri}> .
       ?dimension sh:in/rdf:rest* ?blankNode .
       ?blankNode rdf:first ?value .
@@ -174,10 +166,10 @@ CONSTRUCT {
   } {
     {
       SELECT DISTINCT ?value WHERE {
-        <${datasetIri}> cube:observationConstraint/sh:property ?dimension .
+        <${cubeIri}> cube:observationConstraint/sh:property ?dimension .
         ${queryFilters ? "" : `FILTER(NOT EXISTS{ ?dimension sh:in ?in . })`}
         ?dimension sh:path <${dimensionIri}> .
-        <${datasetIri}> cube:observationSet/cube:observation ?observation .
+        <${cubeIri}> cube:observationSet/cube:observation ?observation .
         ?observation <${dimensionIri}> ?value .
         ${queryFilters}
       }
@@ -235,13 +227,15 @@ const parseDimensionValue = (
  * Filters on other dimensions can be passed.
  *
  */
-export async function loadMaxDimensionValue(props: LoadDimensionValuesProps) {
-  const { datasetIri, dimensionIri, cube, sparqlClient, filters, cache } =
-    props;
+export async function loadMaxDimensionValue(
+  cubeIri: string,
+  props: LoadDimensionValuesProps
+) {
+  const { dimensionIri, cube, sparqlClient, filters, cache } = props;
   const filterList = getFiltersList(filters, dimensionIri);
   // The following query works both for numeric, date and ordinal dimensions
   const query = SELECT`?value`.WHERE`
-<${datasetIri}> ${ns.cube.observationSet}/${ns.cube.observation} ?observation .
+<${cubeIri}> ${ns.cube.observationSet}/${ns.cube.observation} ?observation .
 ?observation <${dimensionIri}> ?value .
 OPTIONAL { ?value <https://www.w3.org/TR/owl-time/hasEnd> ?hasEnd . }
 OPTIONAL { ?value ${ns.schema.position} ?position . }
@@ -261,7 +255,7 @@ ${getQueryFilters(filterList, cube, dimensionIri)}`
       cache
     );
   } catch {
-    console.warn(`Failed to fetch max dimension value for ${datasetIri}!`);
+    console.warn(`Failed to fetch max dimension value for ${cubeIri}!`);
     return [];
   }
 }

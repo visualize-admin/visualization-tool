@@ -298,8 +298,7 @@ export const getCubeDimensionValuesWithMetadata = async ({
   filters?: Filters;
   cache: LRUCache | undefined;
 }): Promise<DimensionValue[]> => {
-  return await loadDimensionValues({
-    datasetIri: cube.term?.value!,
+  return await loadDimensionValues(cube.term?.value!, {
     dimensionIri: dimension.path?.value!,
     cube,
     sparqlClient,
@@ -669,8 +668,7 @@ const buildFilters = async ({
       switch (filter.type) {
         case "single": {
           if (isDynamicMaxValue(filter.value)) {
-            const maxValue = await loadMaxDimensionValue({
-              datasetIri: cube.term?.value!,
+            const maxValue = await loadMaxDimensionValue(cube.term?.value!, {
               dimensionIri: iri,
               cube,
               sparqlClient,
