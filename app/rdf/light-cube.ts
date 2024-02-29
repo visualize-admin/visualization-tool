@@ -44,8 +44,8 @@ export class LightCube {
     this.sparqlClient = sparqlClient;
   }
 
-  /** Use to promote the cube to newest version. */
-  public async promote(latest: boolean) {
+  /** Use to potentially promote the cube to newest version. */
+  public async init(latest: boolean) {
     if (!latest) {
       return this;
     }

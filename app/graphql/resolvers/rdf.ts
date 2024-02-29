@@ -279,7 +279,7 @@ export const dataCubeMetadata: NonNullable<QueryResolvers["dataCubeMetadata"]> =
   async (_, { locale, cubeFilter }, { setup }, info) => {
     const { sparqlClient } = await setup(info);
     const { iri, latest = true } = cubeFilter;
-    const cube = await new LightCube({ iri, locale, sparqlClient }).promote(
+    const cube = await new LightCube({ iri, locale, sparqlClient }).init(
       !!latest
     );
 
