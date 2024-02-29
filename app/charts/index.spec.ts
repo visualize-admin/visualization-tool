@@ -1,5 +1,6 @@
 import { ColumnConfig, TableFields } from "@/configurator";
 import { Dimension, Measure } from "@/domain/data";
+import { TimeUnit } from "@/graphql/resolver-types";
 import { RDFCubeViewQueryMock } from "@/test/cube-view-query-mock";
 
 import bathingWaterData from "../test/__fixtures/data/DataCubeMetadataWithComponentValues-bathingWater.json";
@@ -12,6 +13,56 @@ import {
 } from "./index";
 
 RDFCubeViewQueryMock;
+
+const mockDimensions: Record<string, Dimension> = {
+  geoCoordinates: {
+    __typename: "GeoCoordinatesDimension",
+    cubeIri: "https://cube-iri",
+    isKeyDimension: true,
+    values: [],
+    iri: "geo-coordinates-dimension-iri",
+    isNumerical: false,
+    label: "Geo coordinates dimension",
+  },
+  ordinal: {
+    __typename: "OrdinalDimension",
+    cubeIri: "https://cube-iri",
+    isKeyDimension: true,
+    values: [],
+    iri: "ordinal-dimension-iri",
+    isNumerical: true,
+    label: "Ordinal dimension",
+  },
+  temporal: {
+    __typename: "TemporalDimension",
+    cubeIri: "https://cube-iri",
+    isKeyDimension: true,
+    values: [],
+    timeFormat: "%Y",
+    timeUnit: TimeUnit.Year,
+    iri: "temporal-dimension-iri",
+    isNumerical: true,
+    label: "Temporal dimension",
+  },
+  temporalOrdinal: {
+    __typename: "TemporalOrdinalDimension",
+    cubeIri: "https://cube-iri",
+    isKeyDimension: true,
+    values: [],
+    iri: "temporal-ordinal-dimension-iri",
+    isNumerical: true,
+    label: "Temporal ordinal dimension",
+  },
+  ordinal2: {
+    __typename: "OrdinalDimension",
+    cubeIri: "https://cube-iri",
+    isKeyDimension: true,
+    values: [],
+    iri: "ordinal-dimension-2-iri",
+    isNumerical: false,
+    label: "Ordinal dimension 2",
+  },
+};
 
 describe("initial config", () => {
   it("should create an initial table config with column order based on dimension order", () => {
@@ -38,6 +89,41 @@ describe("initial config", () => {
       ["https://environment.ld.admin.ch/foen/nfi/grid", 6],
       ["https://environment.ld.admin.ch/foen/nfi/evaluationType", 7],
     ]);
+  });
+
+  it("should create an initial column config having x axis correctly inferred (temporal ordinal)", () => {
+    const config = getInitialConfig({
+      chartType: "column",
+      iris: ["https://environment.ld.admin.ch/foen/nfi"],
+      dimensions: [
+        mockDimensions.geoCoordinates,
+        mockDimensions.ordinal,
+        mockDimensions.temporalOrdinal,
+        mockDimensions.ordinal2,
+      ],
+      measures: forestAreaData.data.dataCubeByIri.measures as any as Measure[],
+    }) as ColumnConfig;
+
+    expect(config.fields.x.componentIri).toEqual(
+      "temporal-ordinal-dimension-iri"
+    );
+  });
+
+  it("should create an initial column config having x axis correctly inferred (temporal > temporal ordinal)", () => {
+    const config = getInitialConfig({
+      chartType: "column",
+      iris: ["https://environment.ld.admin.ch/foen/nfi"],
+      dimensions: [
+        mockDimensions.geoCoordinates,
+        mockDimensions.ordinal,
+        mockDimensions.temporalOrdinal,
+        mockDimensions.temporal,
+        mockDimensions.ordinal2,
+      ],
+      measures: forestAreaData.data.dataCubeByIri.measures as any as Measure[],
+    }) as ColumnConfig;
+
+    expect(config.fields.x.componentIri).toEqual("temporal-dimension-iri");
   });
 });
 
