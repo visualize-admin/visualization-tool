@@ -29,6 +29,9 @@ type LightCubeOptions = {
   sparqlClient: ParsingClient;
 };
 
+/** `LightCube` is a specialized data fetching class containing methods
+ * for fetching _just enough_ data related to different aspects of a cube.
+ */
 export class LightCube {
   public iri: string;
   private locale: string;
