@@ -143,8 +143,8 @@ PREFIX sh: <http://www.w3.org/ns/shacl#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 
 CONSTRUCT {
-  [ rdf:first ?value ] .
-  ?value
+  [ rdf:first ?maybe_unversioned_value ] .
+  ?maybe_unversioned_value
     schema:name ?name ;
     schema:alternateName ?alternateName ;
     schema:description ?description ;
@@ -185,6 +185,8 @@ CONSTRUCT {
   OPTIONAL { ?value schema:identifier ?identifier . }
   OPTIONAL { ?value schema:position ?position . }
   OPTIONAL { ?value schema:color ?color . }
+  OPTIONAL { ?value schema:sameAs ?unversioned_value . }
+  BIND(COALESCE(?unversioned_value, ?value) AS ?maybe_unversioned_value)
 }`;
 
   return await executeWithCache(
