@@ -160,19 +160,23 @@ CONSTRUCT {
     schema:position ?position ;
     schema:color ?color .
 } WHERE { 
-  {
+  ${
+    queryFilters
+      ? ""
+      : `{
     SELECT ?value WHERE {
-      <${datasetIri}> cube:observationConstraint/sh:property ?shapeProperty .
-      ?shapeProperty sh:path <${dimensionIri}> .
-      ?shapeProperty sh:in/rdf:rest* ?blankNode .
+      <${datasetIri}> cube:observationConstraint/sh:property ?dimension .
+      ?dimension sh:path <${dimensionIri}> .
+      ?dimension sh:in/rdf:rest* ?blankNode .
       ?blankNode rdf:first ?value .
     }
-  } UNION {
+  } UNION`
+  } {
     {
       SELECT DISTINCT ?value WHERE {
-        <${datasetIri}> cube:observationConstraint/sh:property ?shapeProperty .
-        ?shapeProperty sh:path <${dimensionIri}> .
-        FILTER(NOT EXISTS{ ?shapeProperty sh:in ?in . })
+        <${datasetIri}> cube:observationConstraint/sh:property ?dimension .
+        ${queryFilters ? "" : `FILTER(NOT EXISTS{ ?dimension sh:in ?in . })`}
+        ?dimension sh:path <${dimensionIri}> .
         <${datasetIri}> cube:observationSet/cube:observation ?observation .
         ?observation <${dimensionIri}> ?value .
         ${queryFilters}
