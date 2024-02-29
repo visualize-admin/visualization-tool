@@ -3615,7 +3615,7 @@
     "@rdfjs/sink-map" "^2.0.0"
     rdfxml-streaming-parser "^2.3.0"
 
-"@rdfjs/namespace@^1.1.0":
+"@rdfjs/namespace@^1.0.0", "@rdfjs/namespace@^1.1.0":
   version "1.1.0"
   resolved "https://registry.npmjs.org/@rdfjs/namespace/-/namespace-1.1.0.tgz"
   integrity sha512-utO5rtaOKxk8B90qzaQ0N+J5WrCI28DtfAY/zExCmXE7cOfC5uRI/oMKbLaVEPj2P7uArekt/T4IPATtj7Tjug==
@@ -7081,6 +7081,14 @@ clownface-shacl-path@^2.1.0:
     "@rdfjs/term-set" "^2.0.1"
     "@tpluscode/rdf-ns-builders" ">=3.0.2"
     "@tpluscode/rdf-string" "^1.0.1"
+
+clownface@^1.5.1:
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/clownface/-/clownface-1.5.1.tgz#5471f462aa8a5945ad878305b832361214424759"
+  integrity sha512-Ko8N/UFsnhEGmPlyE1bUFhbRhVgDbxqlIjcqxtLysc4dWaY0A7iCdg3savhAxs7Lheb7FCygIyRh7ADYZWVIng==
+  dependencies:
+    "@rdfjs/data-model" "^1.1.0"
+    "@rdfjs/namespace" "^1.0.0"
 
 clownface@^2.0.1:
   version "2.0.1"
