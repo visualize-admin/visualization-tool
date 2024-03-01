@@ -348,7 +348,6 @@ export const SaveDraftButton = ({
       if (config?.user_id && loggedInId) {
         const updated = await updatePublishedStateMut.mutate({
           data: state,
-          user_id: loggedInId,
           published_state: PUBLISHED_STATE.DRAFT,
           key: config.key,
         });

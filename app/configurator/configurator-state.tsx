@@ -1904,7 +1904,6 @@ async function publishState(
         ? updateConfig({
             data: preparedConfig,
             key: dbConfig.key,
-            user_id: user.id,
             published_state: PUBLISHED_STATE.PUBLISHED,
           })
         : createConfig({

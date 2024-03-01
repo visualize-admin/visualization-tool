@@ -38,17 +38,29 @@ const ConfigController = controller({
 
   update: async ({ req, res }) => {
     const session = await getServerSession(req, res, nextAuthOptions);
-    const serverUserId = session?.user?.id;
-    const { key, user_id, data, published_state } = req.body;
+    const sessionUserId = session?.user?.id;
 
-    if (serverUserId !== user_id) {
-      throw new Error("Unauthorized!");
+    const { key, data, published_state } = req.body;
+    if (!sessionUserId) {
+      throw new Error(
+        "Could not update config: Unlogged users cannot update a chart"
+      );
+    }
+
+    const config = await getConfig(key);
+    if (!config) {
+      throw new Error("Could not update config: config not found");
+    }
+
+    if (config.user_id !== sessionUserId) {
+      throw new Error(
+        `Could not update config: config must be edited by its author (config user id: ${config?.user_id}, server user id: ${sessionUserId})`
+      );
     }
 
     return await updateConfig({
       key,
       data,
-      user_id,
       published_state,
     });
   },

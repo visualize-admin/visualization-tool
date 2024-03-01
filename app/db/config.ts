@@ -47,12 +47,10 @@ export const createConfig = async ({
 export const updateConfig = async ({
   key,
   data,
-  user_id,
   published_state,
 }: {
   key: string;
   data: Prisma.ConfigUpdateInput["data"];
-  user_id: User["id"];
   published_state: Prisma.ConfigUpdateInput["published_state"];
 }): Promise<{ key: string }> => {
   return await prisma.config.update({
@@ -62,7 +60,6 @@ export const updateConfig = async ({
     data: {
       key,
       data,
-      user_id,
       updated_at: new Date(),
       published_state: published_state,
     },

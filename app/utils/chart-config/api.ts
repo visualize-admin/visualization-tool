@@ -23,7 +23,6 @@ type CreateConfigOptions = {
 
 type UpdateConfigOptions = {
   key: string;
-  user_id: number;
   published_state?: PUBLISHED_STATE;
   data: ConfiguratorState;
 };
@@ -61,7 +60,7 @@ export const createConfig = async (options: CreateConfigOptions) => {
 };
 
 export const updateConfig = async (options: UpdateConfigOptions) => {
-  const { key, user_id, published_state } = options;
+  const { key, published_state } = options;
 
   return apiFetch<InferAPIResponse<typeof apiConfigUpdate, "POST">>(
     "/api/config-update",
@@ -69,7 +68,6 @@ export const updateConfig = async (options: UpdateConfigOptions) => {
       method: "POST",
       data: prepareForServer({
         key,
-        user_id,
         data: {
           key,
           ...options.data,
