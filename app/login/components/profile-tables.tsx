@@ -206,7 +206,6 @@ const RenameDialog = ({
 
       await updateConfigMut.mutate({
         key: config.key,
-        user_id: userId,
         data: {
           ...config.data,
           chartConfigs: config.data.chartConfigs.map((x, i) => ({
@@ -388,7 +387,6 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
             onClick: async () => {
               await updateConfigMut.mutate({
                 key: config.key,
-                user_id: userId,
                 data: {
                   ...config.data,
                   state: "PUBLISHING",
@@ -443,7 +441,6 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
     openRename,
     removeConfigMut,
     updateConfigMut,
-    userId,
   ]);
 
   const chartTitle = React.useMemo(() => {

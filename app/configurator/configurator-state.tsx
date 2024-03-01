@@ -1461,6 +1461,8 @@ export const initChartStateFromChartCopy = async (
   const config = await fetchChartConfig(fromChartId);
 
   if (config?.data) {
+    // Do not keep the previous chart key
+    delete config.data.key;
     return migrateConfiguratorState({
       ...config.data,
       state: "CONFIGURING_CHART",
@@ -1904,7 +1906,6 @@ async function publishState(
         ? updateConfig({
             data: preparedConfig,
             key: dbConfig.key,
-            user_id: user.id,
             published_state: PUBLISHED_STATE.PUBLISHED,
           })
         : createConfig({
