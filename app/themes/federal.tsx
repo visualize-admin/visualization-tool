@@ -1,5 +1,5 @@
 import { Fade, Grow } from "@mui/material";
-import { Breakpoint, createTheme, Theme } from "@mui/material/styles";
+import { Breakpoint, Theme, createTheme } from "@mui/material/styles";
 import merge from "lodash/merge";
 import omit from "lodash/omit";
 
@@ -402,6 +402,11 @@ theme.components = {
     styleOverrides: {
       root: {
         padding: "30px",
+        paddingBottom: "16px",
+
+        "&&": {
+          lineHeight: "1.5",
+        },
       },
     },
   },

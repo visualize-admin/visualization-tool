@@ -8,7 +8,6 @@ import {
   DialogContentText,
   DialogProps,
   DialogTitle,
-  Typography,
 } from "@mui/material";
 import React from "react";
 
@@ -36,14 +35,12 @@ const ConfirmationDialog = ({
       maxWidth="xs"
       {...props}
     >
-      <DialogTitle>
-        <Typography variant="h3">
-          {title ??
-            t({
-              id: "login.profile.chart.confirmation.default",
-              message: "Are you sure you want to perform this action?",
-            })}
-        </Typography>
+      <DialogTitle sx={{ typography: "h3" }}>
+        {title ??
+          t({
+            id: "login.profile.chart.confirmation.default",
+            message: "Are you sure you want to perform this action?",
+          })}
       </DialogTitle>
       {text && (
         <DialogContent>
