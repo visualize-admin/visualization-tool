@@ -629,6 +629,56 @@ export const applyNonTableDimensionToFilters = ({
   }
 };
 
+const getInitialConfigBasedOnCube = ({
+  dataCubesComponents,
+  cubeIris,
+  dataSource,
+}: {
+  cubeIris: string[];
+  dataCubesComponents: DataCubeComponents;
+  dataSource: DataSource;
+}): ConfiguratorState => {
+  const possibleChartTypes = getPossibleChartTypes({
+    dimensions: dataCubesComponents.dimensions,
+    measures: dataCubesComponents.measures,
+  });
+  const chartConfig = deriveFiltersFromFields(
+    getInitialConfig({
+      chartType: possibleChartTypes[0],
+      iris: cubeIris,
+      dimensions: dataCubesComponents.dimensions,
+      measures: dataCubesComponents.measures,
+    }),
+    dataCubesComponents.dimensions
+  );
+
+  return {
+    version: CONFIGURATOR_STATE_VERSION,
+    state: "CONFIGURING_CHART",
+    dataSource: dataSource,
+    layout: {
+      type: "tab",
+      meta: {
+        title: {
+          de: "",
+          en: "",
+          fr: "",
+          it: "",
+        },
+        description: {
+          de: "",
+          en: "",
+          fr: "",
+          it: "",
+        },
+      },
+      activeField: undefined,
+    },
+    chartConfigs: [chartConfig],
+    activeChartKey: chartConfig.key,
+  };
+};
+
 const transitionStepNext = (
   draft: ConfiguratorState,
   options: {
@@ -641,45 +691,11 @@ const transitionStepNext = (
   switch (draft.state) {
     case "SELECTING_DATASET":
       if (cubeIris) {
-        const possibleChartTypes = getPossibleChartTypes({
-          dimensions: dataCubesComponents.dimensions,
-          measures: dataCubesComponents.measures,
-        });
-        const chartConfig = deriveFiltersFromFields(
-          getInitialConfig({
-            chartType: possibleChartTypes[0],
-            iris: cubeIris,
-            dimensions: dataCubesComponents.dimensions,
-            measures: dataCubesComponents.measures,
-          }),
-          dataCubesComponents.dimensions
-        );
-
-        return {
-          version: CONFIGURATOR_STATE_VERSION,
-          state: "CONFIGURING_CHART",
+        return getInitialConfigBasedOnCube({
+          cubeIris,
+          dataCubesComponents,
           dataSource: draft.dataSource,
-          layout: {
-            type: "tab",
-            meta: {
-              title: {
-                de: "",
-                en: "",
-                fr: "",
-                it: "",
-              },
-              description: {
-                de: "",
-                en: "",
-                fr: "",
-                it: "",
-              },
-            },
-            activeField: undefined,
-          },
-          chartConfigs: [chartConfig],
-          activeChartKey: chartConfig.key,
-        };
+        });
       }
       break;
     case "CONFIGURING_CHART":
