@@ -173,36 +173,45 @@ export const createCubeDimensionValuesLoader =
     cache: LRUCache | undefined,
     filters?: Filters
   ) =>
-  async (dimensions: readonly ResolvedDimension[]) => {
+  async (resolvedDimensions: readonly ResolvedDimension[]) => {
     const result: DimensionValue[][] = [];
 
-    for (const dimension of dimensions) {
-      const dimensionValues = await getCubeDimensionValues({
-        sparqlClient,
-        rdimension: dimension,
-        filters,
-        cache,
-      });
+    for (const resolvedDimension of resolvedDimensions) {
+      const dimensionValues = await getCubeDimensionValues(
+        resolvedDimension.cube.term?.value!,
+        {
+          sparqlClient,
+          locale: resolvedDimension.locale,
+          resolvedDimension,
+          filters,
+          cache,
+        }
+      );
       result.push(dimensionValues);
     }
 
     return result;
   };
 
-export const getCubeDimensionValues = async ({
-  sparqlClient,
-  rdimension,
-  filters,
-  cache,
-}: {
-  sparqlClient: ParsingClient;
-  rdimension: ResolvedDimension;
-  filters?: Filters;
-  cache: LRUCache | undefined;
-}): Promise<DimensionValue[]> => {
-  const { dimension, cube, locale, data } = rdimension;
+export const getCubeDimensionValues = async (
+  _cubeIri: string,
+  {
+    sparqlClient,
+    locale,
+    resolvedDimension,
+    filters,
+    cache,
+  }: {
+    sparqlClient: ParsingClient;
+    locale: string;
+    resolvedDimension: ResolvedDimension;
+    filters?: Filters;
+    cache: LRUCache | undefined;
+  }
+): Promise<DimensionValue[]> => {
+  const { dimension, cube } = resolvedDimension;
 
-  if (data.dataKind !== "Time" && data.scaleType !== "Ordinal") {
+  if (shouldLoadMinMaxValues(resolvedDimension)) {
     if (
       typeof dimension.minInclusive !== "undefined" &&
       typeof dimension.maxInclusive !== "undefined"
@@ -244,9 +253,7 @@ export const getCubeDimensionValues = async ({
       // Move to next list item.
       listItemPointer = listItemPointer.out(ns.rdf.rest);
     }
-  }
 
-  if (shouldLoadMinMaxValues(rdimension)) {
     if (cube.term && dimension.path) {
       const result = await loadMinMaxDimensionValues({
         datasetIri: cube.term.value,

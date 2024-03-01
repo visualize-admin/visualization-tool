@@ -436,8 +436,11 @@ export const findRelatedErrorDimension = (
 };
 
 export const shouldLoadMinMaxValues = (dim: ResolvedDimension) => {
+  const {
+    data: { isNumerical, scaleType, dataKind },
+  } = dim;
   return (
-    (dim.data.isNumerical && dim.data.scaleType !== "Ordinal") ||
+    (isNumerical && scaleType !== "Ordinal" && dataKind !== "Time") ||
     isStandardErrorResolvedDimension(dim)
   );
 };
