@@ -113,12 +113,13 @@ describe("initChartStateFromChart", () => {
   it("should fetch work if existing chart is valid", async () => {
     setup({
       chartConfig: {
-        data: fakeVizFixture,
+        data: { ...fakeVizFixture, key: "abcde" },
       },
     });
     // @ts-ignore
     const { key, activeChartKey, chartConfigs, ...rest } =
       await initChartStateFromChartCopy("abcde");
+    expect(key).toBe(undefined);
     const { key: chartConfigKey, ...chartConfig } = chartConfigs[0];
     const {
       key: migratedKey,
