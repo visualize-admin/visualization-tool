@@ -38,7 +38,6 @@ import {
   DataCubeOrganization,
   DataCubeTheme,
   SearchCubeResultOrder,
-  SearchCubesQuery,
 } from "@/graphql/query-hooks";
 import {
   DataCubePublicationStatus,
@@ -744,10 +743,12 @@ export const DatasetResults = ({
   fetching,
   error,
   cubes,
+  rowActions,
 }: {
   fetching: boolean;
   error: any;
   cubes: SearchCubeResult[];
+  rowActions?: (r: PartialSearchCube) => React.ReactNode;
 }) => {
   if (fetching) {
     return (
@@ -784,6 +785,7 @@ export const DatasetResults = ({
           dataCube={cube}
           highlightedTitle={highlightedTitle}
           highlightedDescription={highlightedDescription}
+          rowActions={rowActions}
         />
       ))}
     </>
@@ -819,20 +821,22 @@ export const DateFormat = ({ date }: { date: string }) => {
   return <>{formatted}</>;
 };
 
+export type PartialSearchCube = Pick<
+  SearchCube,
+  | "iri"
+  | "publicationStatus"
+  | "title"
+  | "description"
+  | "datePublished"
+  | "themes"
+  | "creator"
+>;
 type ResultProps = {
-  dataCube: Pick<
-    SearchCubesQuery["searchCubes"][0]["cube"],
-    | "iri"
-    | "publicationStatus"
-    | "title"
-    | "description"
-    | "datePublished"
-    | "themes"
-    | "creator"
-  >;
+  dataCube: PartialSearchCube;
   highlightedTitle?: string | null;
   highlightedDescription?: string | null;
   showTags?: boolean;
+  rowActions?: (r: PartialSearchCube) => React.ReactNode;
 };
 
 export const DatasetResult = ({
@@ -840,6 +844,7 @@ export const DatasetResult = ({
   highlightedTitle,
   highlightedDescription,
   showTags,
+  rowActions,
 }: ResultProps) => {
   const {
     iri,
@@ -973,6 +978,7 @@ export const DatasetResult = ({
           </Link>
         ) : null}
       </Flex>
+      {rowActions?.(dataCube)}
     </MotionCard>
   );
 };

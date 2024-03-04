@@ -92,6 +92,7 @@ import {
 } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import SvgIcAdd from "@/icons/components/IcAdd";
+import SvgIcTrash from "@/icons/components/IcTrash";
 import { useLocale } from "@/locales/use-locale";
 import useEvent from "@/utils/use-event";
 
@@ -813,16 +814,13 @@ export const ChartConfigurator = ({
       {chartConfig.chartType !== "table" && (
         <InteractiveFiltersConfigurator state={state} />
       )}
-      <ChooseDatasetsControlSection state={state} />
+      <ChooseDatasetsControlSection />
     </>
   );
 };
 
-const ChooseDatasetsControlSection = ({
-  state,
-}: {
-  state: ConfiguratorStateConfiguringChart;
-}) => {
+const ChooseDatasetsControlSection = () => {
+  const [state, dispatch] = useConfiguratorState(isConfiguring);
   const locale = useLocale();
   const commonQueryVariables = {
     sourceType: state.dataSource.type,
@@ -839,7 +837,9 @@ const ChooseDatasetsControlSection = ({
   const [metadataQuery] = useDataCubesMetadataQuery({
     variables: {
       ...commonQueryVariables,
-      cubeFilters: cubes.map((cube) => ({ iri: cube.iri })),
+      cubeFilters: cubes.map((cube) => ({
+        iri: cube.iri,
+      })),
     },
   });
   const {
@@ -867,15 +867,39 @@ const ChooseDatasetsControlSection = ({
         >
           {metadataQuery.data?.dataCubesMetadata.map((x) => {
             return (
-              <div key={x.iri}>
-                <Link href={`/browse?dataset=${x.iri}`} passHref>
-                  <MuiLink color="primary" underline="none" variant="caption">
-                    Dataset
-                  </MuiLink>
-                </Link>
-                <br />
-                <Typography variant="caption">{x.title}</Typography>
-              </div>
+              <Box
+                display="flex"
+                alignItems="center"
+                justifyContent="space-between"
+                key={x.iri}
+              >
+                <div>
+                  <Link href={`/browse?dataset=${x.iri}`} passHref>
+                    <MuiLink
+                      color="primary"
+                      underline="none"
+                      variant="caption"
+                      component="span"
+                    >
+                      Dataset
+                    </MuiLink>
+                  </Link>
+                  <br />
+                  <Typography variant="caption">{x.title}</Typography>
+                </div>
+                <div>
+                  <IconButton
+                    onClick={() =>
+                      dispatch({
+                        type: "DATASET_REMOVE",
+                        value: { locale, iri: x.iri },
+                      })
+                    }
+                  >
+                    <SvgIcTrash />
+                  </IconButton>
+                </div>
+              </Box>
             );
           })}
         </Box>
