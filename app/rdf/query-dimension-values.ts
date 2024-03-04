@@ -130,7 +130,7 @@ type LoadDimensionValuesProps = {
  * Filters on other dimensions can be passed.
  *
  */
-export async function loadDimensionValues(
+export async function loadDimensionValuesWithMetadata(
   cubeIri: string,
   props: LoadDimensionValuesProps
 ): Promise<DimensionValue[]> {

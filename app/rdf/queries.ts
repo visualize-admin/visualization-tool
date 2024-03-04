@@ -31,7 +31,7 @@ import {
   parseRelatedDimensions,
 } from "@/rdf/parse";
 import {
-  loadDimensionValues,
+  loadDimensionValuesWithMetadata,
   loadMaxDimensionValue,
   loadMinMaxDimensionValues,
 } from "@/rdf/query-dimension-values";
@@ -305,7 +305,7 @@ export const getCubeDimensionValuesWithMetadata = async ({
   filters?: Filters;
   cache: LRUCache | undefined;
 }): Promise<DimensionValue[]> => {
-  return await loadDimensionValues(cube.term?.value!, {
+  return await loadDimensionValuesWithMetadata(cube.term?.value!, {
     dimensionIri: dimension.path?.value!,
     cube,
     sparqlClient,
