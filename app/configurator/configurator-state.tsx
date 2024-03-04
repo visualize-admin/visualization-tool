@@ -64,15 +64,7 @@ import {
   isMeasure,
 } from "@/domain/data";
 import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
-import { client } from "@/graphql/client";
-import { joinDimensions } from "@/graphql/hook-utils";
 import { executeDataCubesComponentsQuery } from "@/graphql/hooks";
-import {
-  DataCubeComponentFilter,
-  DataCubeComponentsDocument,
-  DataCubeComponentsQuery,
-  DataCubeComponentsQueryVariables,
-} from "@/graphql/query-hooks";
 import { Locale } from "@/locales/locales";
 import { useLocale } from "@/locales/use-locale";
 import { useUser } from "@/login/utils";
@@ -81,6 +73,7 @@ import {
   getDataSourceFromLocalStorage,
   useDataSourceStore,
 } from "@/stores/data-source";
+import { getCachedComponents } from "@/urql-cache";
 import {
   createConfig,
   fetchChartConfig,
@@ -93,6 +86,8 @@ import {
 import { createChartId } from "@/utils/create-chart-id";
 import { getRouterChartId } from "@/utils/router/helpers";
 import { unreachableError } from "@/utils/unreachable";
+
+import { getCachedComponents } from "../urql-cache";
 
 export type ConfiguratorStateAction =
   | {
@@ -113,6 +108,23 @@ export type ConfiguratorStateAction =
   | {
       type: "DATASOURCE_CHANGED";
       value: DataSource;
+    }
+  | {
+      type: "DATASET_ADD";
+      value: {
+        iri: string;
+        joinBy: {
+          left: string;
+          right: string;
+        };
+      };
+    }
+  | {
+      type: "DATASET_REMOVE";
+      value: {
+        iri: string;
+        locale: Locale;
+      };
     }
   | {
       type: "CHART_TYPE_CHANGED";
@@ -344,34 +356,6 @@ const EMPTY_STATE: ConfiguratorStateSelectingDataSet = {
   chartConfigs: undefined,
   layout: undefined,
   activeChartKey: undefined,
-};
-
-const getCachedComponents = (
-  draft: ConfiguratorStateConfiguringChart,
-  cubeFilters: DataCubeComponentFilter[],
-  locale: Locale
-): DataCubeComponents | undefined => {
-  const queries = cubeFilters.map((cubeFilter) => {
-    return client.readQuery<
-      DataCubeComponentsQuery,
-      DataCubeComponentsQueryVariables
-    >(DataCubeComponentsDocument, {
-      sourceType: draft.dataSource.type,
-      sourceUrl: draft.dataSource.url,
-      locale,
-      cubeFilter: {
-        iri: cubeFilter.iri,
-        componentIris: undefined,
-        joinBy: cubeFilter.joinBy,
-        loadValues: true,
-      },
-    })!;
-  });
-
-  return {
-    dimensions: joinDimensions(queries),
-    measures: queries.flatMap((q) => q.data?.dataCubeComponents.measures!),
-  };
 };
 
 export const getFilterValue = (
@@ -937,6 +921,7 @@ export const handleChartOptionChanged = (
       })),
       locale
     );
+
     const dimensions = dataCubesComponents?.dimensions ?? [];
     const measures = dataCubesComponents?.measures ?? [];
 
@@ -1068,7 +1053,7 @@ export const setRangeFilter = (
   }
 };
 
-const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
+export const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
   draft,
   action
 ) => {
@@ -1390,6 +1375,68 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
       return draft;
 
+    case "DATASET_ADD":
+      if (draft.state === "CONFIGURING_CHART") {
+        for (const chartConfig of draft.chartConfigs) {
+          chartConfig.cubes[0].joinBy = action.value.joinBy.left;
+          chartConfig.cubes.push({
+            iri: action.value.iri,
+            joinBy: action.value.joinBy.right,
+            filters: {},
+          });
+
+          // Need to go over fields, and replace any IRI part of the joinBy by "joinBy"
+          const fields = Object.values(chartConfig.fields);
+          while (fields.length > 0) {
+            const f = fields.pop();
+            for (const fieldName of [
+              "componentIri",
+              "leftComponentIri",
+              "rightComponentIri",
+            ]) {
+              if (
+                f[fieldName] === action.value.joinBy.left ||
+                f[fieldName] === action.value.joinBy.right
+              ) {
+                f[fieldName] = "joinBy";
+              }
+              if (f.color) {
+                fields.push(f.color);
+              }
+            }
+          }
+        }
+        return draft;
+      }
+      break;
+
+    case "DATASET_REMOVE":
+      if (draft.state === "CONFIGURING_CHART") {
+        const chartConfig = getChartConfig(draft);
+
+        const { locale } = action.value;
+        const removedCubeIri = action.value.iri;
+        const dataCubesComponents = getCachedComponents(
+          draft,
+          chartConfig.cubes
+            .filter((c) => c.iri !== removedCubeIri)
+            .map((cube) => ({
+              iri: cube.iri,
+              joinBy: cube.joinBy,
+            })),
+          locale
+        );
+
+        const result = getInitialConfigBasedOnCube({
+          dataCubesComponents,
+          dataSource: draft.dataSource,
+          cubeIris: chartConfig.cubes
+            .filter((x) => x.iri !== removedCubeIri)
+            .map((x) => x.iri),
+        });
+        return result;
+      }
+      break;
     case "CHART_CONFIG_REMOVE":
       if (draft.state === "CONFIGURING_CHART") {
         const index = draft.chartConfigs.findIndex(
