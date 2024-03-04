@@ -65,7 +65,7 @@ const makeUseQuery =
 
       executeQuery(options);
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [queryKey]);
+    }, [queryKey, options.pause]);
 
     return [result, executeQuery] as const;
   };
