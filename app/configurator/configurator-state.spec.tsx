@@ -28,6 +28,7 @@ import {
   initChartStateFromLocalStorage,
   moveFilterField,
   publishState,
+  reducer,
   setRangeFilter,
   updateColorMapping,
 } from "@/configurator/configurator-state";
@@ -36,12 +37,13 @@ import covid19ColumnChartConfig from "@/test/__fixtures/config/dev/chartConfig-c
 import covid19TableChartConfig from "@/test/__fixtures/config/dev/chartConfig-table-covid19.json";
 import { data as fakeVizFixture } from "@/test/__fixtures/config/prod/line-1.json";
 import covid19Metadata from "@/test/__fixtures/data/DataCubeMetadataWithComponentValues-covid19.json";
+import { getCachedComponents as getCachedComponentsOriginal } from "@/urql-cache";
+import { getCachedComponentsMock } from "@/urql-cache.mock";
 import * as api from "@/utils/chart-config/api";
 import {
   migrateChartConfig,
   migrateConfiguratorState,
 } from "@/utils/chart-config/versioning";
-
 const mockedApi = api as jest.Mocked<typeof api>;
 
 jest.mock("rdf-cube-view-query", () => ({
@@ -102,6 +104,18 @@ jest.mock("@/graphql/client", () => {
     },
   };
 });
+
+jest.mock("@/urql-cache", () => {
+  return {
+    getCachedComponents: jest.fn(),
+  };
+});
+
+type getCachedComponents = typeof getCachedComponentsOriginal;
+const getCachedComponents = getCachedComponentsOriginal as unknown as jest.Mock<
+  ReturnType<getCachedComponents>,
+  Parameters<getCachedComponents>
+>;
 
 afterEach(() => {
   jest.restoreAllMocks();
@@ -1228,5 +1242,81 @@ describe("publishing chart config", () => {
     expect(cb.mock.calls.map((c) => c[0])).toEqual(
       Array.from({ length: publishableChartKeys.length }, (_, i) => i + 1)
     );
+  });
+});
+
+describe("add dataset", () => {
+  const state = {
+    state: "CONFIGURING_CHART",
+    dataSource: {
+      type: "sparql",
+      url: "https://lindas.admin.ch",
+    },
+    chartConfigs: [
+      {
+        key: "abc",
+        cubes: [{ iri: "https://first-dataset" }],
+        fields: {
+          areaLayer: {
+            componentIri: "year-period-1",
+            color: {
+              type: "categorical",
+              componentIri: "year-period-1",
+              palette: "dimension",
+              colorMapping: {
+                red: "green",
+                green: "blue",
+                blue: "red",
+              },
+            },
+          },
+        },
+      },
+    ],
+    activeChartKey: "abc",
+  } as unknown as ConfiguratorStateConfiguringChart;
+
+  const addAction: ConfiguratorStateAction = {
+    type: "DATASET_ADD",
+    value: {
+      iri: "http://second-dataset",
+      joinBy: {
+        left: "year-period-1",
+        right: "year-period-2",
+      },
+    },
+  };
+
+  const removeAction: ConfiguratorStateAction = {
+    type: "DATASET_REMOVE",
+    value: {
+      locale: "de",
+      iri: "http://second-dataset",
+    },
+  };
+
+  it("should add/remove a cube and replace correctly joinBy to the first cube", () => {
+    const newState = reducer(state, addAction) as ConfiguratorStatePublishing;
+
+    const config = newState.chartConfigs[0] as MapConfig;
+
+    expect(config.fields["areaLayer"]?.componentIri).toEqual("joinBy");
+    expect(config.fields["areaLayer"]?.color.componentIri).toEqual("joinBy");
+    expect(config.cubes.length).toBe(2);
+  });
+
+  it("should correctly remove a cube", () => {
+    const newState = reducer(state, addAction) as ConfiguratorStatePublishing;
+
+    getCachedComponents.mockImplementation(() => {
+      return getCachedComponentsMock.electricyPricePerCantonDimensions;
+    });
+    const newState2 = reducer(
+      newState,
+      removeAction
+    ) as ConfiguratorStatePublishing;
+    const config = newState2.chartConfigs[0] as MapConfig;
+    expect(config.cubes.length).toBe(1);
+    expect(config.chartType).toEqual("column");
   });
 });
