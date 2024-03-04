@@ -36,14 +36,12 @@ export const joinDimensions = (
 
     if (!joinByDimension) {
       dimensions.push(...queryDimensions);
-
-      continue;
+    } else {
+      joinByDimensions.push(joinByDimension);
+      dimensions.push(
+        ...queryDimensions.filter((d) => d.iri !== joinByDimension.iri)
+      );
     }
-
-    joinByDimensions.push(joinByDimension);
-    dimensions.push(
-      ...queryDimensions.filter((d) => d.iri !== joinByDimension.iri)
-    );
   }
 
   if (joinByDimensions.length > 1) {
