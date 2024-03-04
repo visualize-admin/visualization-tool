@@ -888,16 +888,18 @@ const ChooseDatasetsControlSection = () => {
                   <Typography variant="caption">{x.title}</Typography>
                 </div>
                 <div>
-                  <IconButton
-                    onClick={() =>
-                      dispatch({
-                        type: "DATASET_REMOVE",
-                        value: { locale, iri: x.iri },
-                      })
-                    }
-                  >
-                    <SvgIcTrash />
-                  </IconButton>
+                  {cubes.length > 1 ? (
+                    <IconButton
+                      onClick={() =>
+                        dispatch({
+                          type: "DATASET_REMOVE",
+                          value: { locale, iri: x.iri },
+                        })
+                      }
+                    >
+                      <SvgIcTrash />
+                    </IconButton>
+                  ) : null}
                 </div>
               </Box>
             );
