@@ -156,19 +156,21 @@ CONSTRUCT {
     queryFilters
       ? ""
       : `{
-    SELECT ?value WHERE {
+    SELECT ?value ?dimensionVersion WHERE {
       <${cubeIri}> cube:observationConstraint/sh:property ?dimension .
       ?dimension sh:path <${dimensionIri}> .
       ?dimension sh:in/rdf:rest* ?blankNode .
+      OPTIONAL { ?dimension schema:version ?dimensionVersion . }
       ?blankNode rdf:first ?value .
     }
   } UNION`
   } {
     {
-      SELECT DISTINCT ?value WHERE {
+      SELECT DISTINCT ?value ?dimensionVersion WHERE {
         <${cubeIri}> cube:observationConstraint/sh:property ?dimension .
         ${queryFilters ? "" : `FILTER(NOT EXISTS{ ?dimension sh:in ?in . })`}
         ?dimension sh:path <${dimensionIri}> .
+        OPTIONAL { ?dimension schema:version ?dimensionVersion . }
         <${cubeIri}> cube:observationSet/cube:observation ?observation .
         ?observation <${dimensionIri}> ?value .
         ${queryFilters}
@@ -188,7 +190,7 @@ CONSTRUCT {
   OPTIONAL { ?value schema:position ?position . }
   OPTIONAL { ?value schema:color ?color . }
   OPTIONAL { ?value schema:sameAs ?unversioned_value . }
-  BIND(COALESCE(?unversioned_value, ?value) AS ?maybe_unversioned_value)
+  BIND(COALESCE(IF(?version, ?unversioned_value, ""), ?value) AS ?maybe_unversioned_value)
 }`;
 
   return await executeWithCache(
