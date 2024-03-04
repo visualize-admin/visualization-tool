@@ -181,7 +181,9 @@ CONSTRUCT {
   ${buildLocalizedSubQuery("value", "schema:description", "description", {
     locale,
   })}
-  OPTIONAL { ?value schema:alternateName ?alternateName . }
+  ${buildLocalizedSubQuery("value", "schema:alternateName", "alternateName", {
+    locale,
+  })}
   OPTIONAL { ?value schema:identifier ?identifier . }
   OPTIONAL { ?value schema:position ?position . }
   OPTIONAL { ?value schema:color ?color . }
@@ -216,6 +218,7 @@ const parseDimensionValue = (
   return {
     value,
     label: valueQuads[ns.schema.name.value]?.object.value ?? value,
+    alternateName: valueQuads[ns.schema.alternateName.value]?.object.value,
     description: valueQuads[ns.schema.description.value]?.object.value,
     identifier: valueQuads[ns.schema.identifier.value]?.object.value,
     position: position ? +position : undefined,
