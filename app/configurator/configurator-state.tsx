@@ -1629,34 +1629,24 @@ const ConfiguratorStateProviderInternal = (
           (async () => {
             try {
               const key = getRouterChartId(asPath);
+
               if (!key) {
                 return;
               }
-              switch (state.layout.type) {
-                case "singleURLs": {
-                  return publishState(
-                    user,
-                    key,
-                    state,
-                    async (result, i, total) => {
-                      if (i < total) {
-                        // Open new tab for each chart, except the first one
-                        return window.open(
-                          `/${locale}/v/${result.key}`,
-                          "_blank"
-                        );
-                      } else {
-                        await handlePublishSuccess(result.key, push);
-                      }
-                    }
-                  );
+
+              return publishState(
+                user,
+                key,
+                state,
+                async (result, i, total) => {
+                  if (state.layout.type === "singleURLs" && i < total) {
+                    // Open new tab for each chart, except the first one
+                    return window.open(`/${locale}/v/${result.key}`, "_blank");
+                  }
+
+                  await handlePublishSuccess(result.key, push);
                 }
-                default: {
-                  return publishState(user, key, state, async (result) => {
-                    await handlePublishSuccess(result.key, push);
-                  });
-                }
-              }
+              );
             } catch (e) {
               console.error(e);
               dispatch({ type: "PUBLISH_FAILED" });
