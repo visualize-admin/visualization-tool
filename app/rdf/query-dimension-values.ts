@@ -155,7 +155,7 @@ CONSTRUCT {
   ${
     queryFilters
       ? ""
-      : `{
+      : `{ #pragma evaluate on
     SELECT ?value ?dimensionVersion WHERE {
       <${cubeIri}> cube:observationConstraint/sh:property ?dimension .
       ?dimension sh:path <${dimensionIri}> .
@@ -165,7 +165,7 @@ CONSTRUCT {
     }
   } UNION`
   } {
-    {
+    { #pragma evaluate on
       SELECT DISTINCT ?value ?dimensionVersion WHERE {
         <${cubeIri}> cube:observationConstraint/sh:property ?dimension .
         ${queryFilters ? "" : `FILTER(NOT EXISTS{ ?dimension sh:in ?in . })`}
