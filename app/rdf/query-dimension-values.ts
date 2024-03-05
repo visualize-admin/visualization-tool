@@ -137,6 +137,13 @@ export async function loadDimensionValuesWithMetadata(
   const { dimensionIri, cube, sparqlClient, filters, locale, cache } = props;
   const filterList = getFiltersList(filters, dimensionIri);
   const queryFilters = getQueryFilters(filterList, cube, dimensionIri);
+  const dimension = cube.dimensions.find((d) => d.path?.value === dimensionIri);
+
+  if (!dimension) {
+    throw new Error(`Dimension not found: ${dimensionIri}`);
+  }
+
+  const isDimensionVersioned = dimensionIsVersioned(dimension);
   const query = `PREFIX cube: <https://cube.link/>
 PREFIX schema: <http://schema.org/>
 PREFIX sh: <http://www.w3.org/ns/shacl#>
@@ -156,21 +163,19 @@ CONSTRUCT {
     queryFilters
       ? ""
       : `{ #pragma evaluate on
-    SELECT ?value ?dimensionVersion WHERE {
+    SELECT ?value WHERE {
       <${cubeIri}> cube:observationConstraint/sh:property ?dimension .
       ?dimension sh:path <${dimensionIri}> .
       ?dimension sh:in/rdf:rest* ?blankNode .
-      OPTIONAL { ?dimension schema:version ?dimensionVersion . }
       ?blankNode rdf:first ?value .
     }
   } UNION`
   } {
     { #pragma evaluate on
-      SELECT DISTINCT ?value ?dimensionVersion WHERE {
+      SELECT DISTINCT ?value WHERE {
         <${cubeIri}> cube:observationConstraint/sh:property ?dimension .
         ${queryFilters ? "" : `FILTER(NOT EXISTS{ ?dimension sh:in ?in . })`}
         ?dimension sh:path <${dimensionIri}> .
-        OPTIONAL { ?dimension schema:version ?dimensionVersion . }
         <${cubeIri}> cube:observationSet/cube:observation ?observation .
         ?observation <${dimensionIri}> ?value .
         ${queryFilters}
@@ -189,8 +194,12 @@ CONSTRUCT {
   OPTIONAL { ?value schema:identifier ?identifier . }
   OPTIONAL { ?value schema:position ?position . }
   OPTIONAL { ?value schema:color ?color . }
-  OPTIONAL { ?value schema:sameAs ?unversioned_value . }
-  BIND(COALESCE(IF(?version, ?unversioned_value, ""), ?value) AS ?maybe_unversioned_value)
+  ${
+    isDimensionVersioned
+      ? `OPTIONAL { ?value schema:sameAs ?unversioned_value . }`
+      : ""
+  }
+  BIND(COALESCE(?unversioned_value, ?value) AS ?maybe_unversioned_value)
 }`;
 
   return await executeWithCache(
