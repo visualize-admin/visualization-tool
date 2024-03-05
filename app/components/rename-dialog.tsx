@@ -54,7 +54,6 @@ export const RenameDialog = ({
 
       await updateConfigMut.mutate({
         key: config.key,
-        user_id: userId,
         data: {
           ...config.data,
           chartConfigs: config.data.chartConfigs.map((x, i) => ({
