@@ -851,7 +851,7 @@ const DatasetsControlSection = () => {
   return (
     <ControlSection collapse>
       <SubsectionTitle titleId="controls-data" gutterBottom={false}>
-        <Trans id="controls.section.datasets.title">Datasets</Trans>{" "}
+        <Trans id="controls.section.datasets.title">Data Sources</Trans>{" "}
         <FiltersBadge sx={{ ml: "auto", mr: 4 }} />
       </SubsectionTitle>
       <ControlSectionContent
