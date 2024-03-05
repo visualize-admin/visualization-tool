@@ -1,23 +1,16 @@
 import groupBy from "lodash/groupBy";
-import uniqBy from "lodash/uniqBy";
-import rdf from "rdf-ext";
-import { NamedNode, Quad } from "rdf-js";
 import ParsingClient from "sparql-http-client/ParsingClient";
 
 import {
   BaseComponent,
   BaseDimension,
-  DataCubePreview,
+  DataCubeComponents,
   Dimension,
-  DimensionValue,
   Measure,
-  Observation,
   TemporalDimension,
 } from "@/domain/data";
-import { truthy } from "@/domain/types";
 import { resolveDimensionType, resolveMeasureType } from "@/graphql/resolvers";
-
-import * as ns from "./namespace";
+import * as ns from "@/rdf/namespace";
 import {
   getDataKind,
   getIsNumerical,
@@ -26,19 +19,18 @@ import {
   getTimeUnit,
   parseNumericalTerm,
   parseResolution,
-} from "./parse";
-import { buildLocalizedSubQuery } from "./query-utils";
+} from "@/rdf/parse";
+import { buildLocalizedSubQuery } from "@/rdf/query-utils";
 
-export const getCubePreview = async (
-  iri: string,
+export const getCubeComponentsMetadata = async (
+  cubeIri: string,
   options: {
     locale: string;
     sparqlClient: ParsingClient;
   }
-): Promise<DataCubePreview> => {
-  const { sparqlClient, locale } = options;
-  const qs = await sparqlClient.query.construct(
-    `PREFIX cube: <https://cube.link/>
+): Promise<DataCubeComponents> => {
+  const { locale, sparqlClient } = options;
+  const query = `PREFIX cube: <https://cube.link/>
 PREFIX meta: <https://cube.link/meta/>
 PREFIX qudt: <http://qudt.org/schema/qudt/>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -50,6 +42,7 @@ PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 
 CONSTRUCT {
   ?dimension sh:path ?dimensionIri .
+  ?dimension sh:datatype ?dimensionDataType .
   ?dimension rdf:type ?dimensionType .
   ?dimension qudt:scaleType ?dimensionScaleType .
   ?dimension qudt:unit ?dimensionUnit .
@@ -62,16 +55,14 @@ CONSTRUCT {
   ?dimensionDataKind time:unitType ?dimensionTimeUnitType .
   ?dimension schema:name ?dimensionLabel .
   ?dimension schema:description ?dimensionDescription .
-
-  ?observation ?observationPredicate ?observationValue .
-  ?observation ?observationPredicate ?observationLabel .
-  ?observationValue schema:position ?observationPosition .
 } WHERE {
-  VALUES ?cube { <${iri}> }
+  VALUES ?cube { <${cubeIri}> }
   FILTER(EXISTS { ?cube a cube:Cube . }) {}
   UNION {
     ?cube cube:observationConstraint/sh:property ?dimension .
     ?dimension sh:path ?dimensionIri .
+    OPTIONAL { ?dimension sh:datatype ?dimensionDataType . }
+    OPTIONAL { ?dimension sh:or/rdf:rest*/rdf:first/sh:datatype ?dimensionDataType . }
     OPTIONAL { ?dimension rdf:type ?dimensionType . }
     OPTIONAL { ?dimension qudt:scaleType ?dimensionScaleType . }
     OPTIONAL {
@@ -105,33 +96,10 @@ CONSTRUCT {
       { locale }
     )}
     FILTER(?dimensionIri != cube:observedBy && ?dimensionIri != rdf:type)
-  } UNION {
-    ?cube cube:observationConstraint/sh:property/sh:path ?observationPredicate .
-    { SELECT * WHERE {
-    { SELECT * WHERE {
-      ?cube cube:observationSet ?observationSet .
-      ?observationSet cube:observation ?observation .
-      FILTER(EXISTS { ?cube cube:observationConstraint/sh:property/sh:datatype cube:Undefined . } || NOT EXISTS { ?observation ?p ""^^cube:Undefined . })
-    } LIMIT 10 }
-      ?observation ?observationPredicate ?observationValue .
-      ${buildLocalizedSubQuery(
-        "observationValue",
-        "schema:name",
-        "observationLabel",
-        { locale }
-      )}
-      OPTIONAL { ?observationValue schema:position ?observationPosition . }
-      FILTER(?observationPredicate != cube:observedBy && ?observationPredicate != rdf:type)
-    }}
   }
-}`,
-    { operation: "postUrlencoded" }
-  );
+}`;
 
-  if (qs.length === 0) {
-    throw new Error(`No cube found for ${iri}!`);
-  }
-
+  const qs = await sparqlClient.query.construct(query);
   const sQs = groupBy(qs, (q) => q.subject.value);
   const spQs = Object.fromEntries(
     Object.entries(sQs).map(([k, v]) => {
@@ -142,93 +110,10 @@ CONSTRUCT {
 
   const dimensions: Dimension[] = [];
   const measures: Measure[] = [];
-  const observations: Observation[] = [];
   const qsDims = qs.filter(({ predicate: p }) => p.equals(ns.sh.path));
-  const dimMetadataByDimIri = qsDims.reduce((acc, dim) => {
-    acc[dim.object.value] = {
-      values: [],
-      dataType: rdf.namedNode(""),
-    };
-    return acc;
-  }, {} as Record<string, { values: DimensionValue[]; dataType: NamedNode }>);
-  // Only take quads that use dimension iris as predicates (observation values)
-  const qUniqueObservations = uniqBy(
-    qs.filter(
-      ({ subject: s, predicate: p }) =>
-        // Exclude situations where the subject is a blank node (e.g. dimension IRI
-        // is not unique, but something like ns.schema.name)
-        s.termType !== "BlankNode" && qsDims.some((q) => q.object.equals(p))
-    ),
-    ({ subject: s }) => s.value
-  );
-  qUniqueObservations.forEach(({ subject: s }) => {
-    const sqDimValues = uniqBy(
-      qsDims
-        .map((quad) => spQs[s.value]?.[quad.object.value])
-        .flat()
-        .filter(truthy),
-      (d) => d.predicate.value
-    );
-    const observation: Observation = {};
-    sqDimValues.forEach((quad) => {
-      const qDimIri = quad.predicate;
-      const dimIri = qDimIri.value;
-      const qDimValue = quad.object;
-      let qPosition: Quad | undefined;
-
-      if (!observation[dimIri]) {
-        // Retrieve the label of the observation value if it's a named node
-        if (qDimValue.termType === "NamedNode") {
-          const sIri = qs.find((q) => q.object.equals(quad.object));
-          const qLabel = qs.find(
-            ({ subject: s, predicate: p, object: o }) =>
-              s.equals(sIri?.subject) &&
-              p.equals(qDimIri) &&
-              o.termType === "Literal"
-          );
-
-          if (qLabel?.object.termType === "Literal") {
-            dimMetadataByDimIri[dimIri].dataType = qLabel.object.datatype;
-          }
-
-          if (sIri?.object.value) {
-            qPosition =
-              spQs[sIri.object.value]?.[ns.schema.position.value]?.[0];
-          }
-
-          observation[qDimIri.value] = qLabel?.object.value ?? qDimValue.value;
-        } else {
-          if (qDimValue.termType === "Literal") {
-            dimMetadataByDimIri[dimIri].dataType = qDimValue.datatype;
-          }
-
-          observation[qDimIri.value] = qDimValue.value;
-        }
-      }
-
-      const dimensionValue: DimensionValue = {
-        value: qDimValue.value,
-        label: `${observation[qDimIri.value]}`,
-        position: qPosition ? +qPosition.object.value : undefined,
-      };
-      dimMetadataByDimIri[dimIri].values.push(dimensionValue);
-    });
-
-    observations.push(observation);
-  });
-
-  for (const dimIri in dimMetadataByDimIri) {
-    dimMetadataByDimIri[dimIri].values = uniqBy(
-      dimMetadataByDimIri[dimIri].values,
-      (d) => d.value
-    ).sort((a, b) =>
-      (a.position ?? a.label) > (b.position ?? b.label) ? 1 : -1
-    );
-  }
-
-  qsDims.map(({ subject: s, object: o }) => {
-    const dimIri = o.value;
-    const qsDim = sQs[s.value];
+  qsDims.map(({ subject, object }) => {
+    const dimIri = object.value;
+    const qsDim = sQs[subject.value];
     const pQsDim = groupBy(qsDim, (q) => q.predicate.value);
     const qLabel = pQsDim[ns.schema.name.value]?.[0];
     const qDesc = pQsDim[ns.schema.description.value]?.[0];
@@ -236,7 +121,7 @@ CONSTRUCT {
     const qsType = pQsDim[ns.rdf.type.value];
     const qScaleType = pQsDim[ns.qudt.scaleType.value]?.[0];
     const scaleType = getScaleType(qScaleType?.object);
-    const dataType = dimMetadataByDimIri[dimIri].dataType;
+    const qDataType = qsDim.find((q) => q.predicate.equals(ns.sh.datatype));
     const qUnit = pQsDim[ns.qudt.unit.value]?.[0];
     const qUnitLabel = spQs[qUnit?.object.value]?.[ns.schema.name.value]?.[0];
     const qDataKind = pQsDim[ns.cube("meta/dataKind").value]?.[0];
@@ -256,7 +141,7 @@ CONSTRUCT {
     );
 
     const baseComponent: BaseComponent = {
-      cubeIri: iri,
+      cubeIri,
       iri: dimIri,
       label: qLabel?.object.value ?? "",
       description: qDesc?.object.value,
@@ -265,19 +150,20 @@ CONSTRUCT {
       order: parseNumericalTerm(qOrder?.object),
       isNumerical: false,
       isKeyDimension,
-      values: dimMetadataByDimIri[dimIri].values,
+      // FIX TYPE!
+      values: [],
     };
 
     if (isMeasureDimension) {
-      const isDecimal = dataType.equals(ns.xsd.decimal) ?? false;
+      const isDecimal = qDataType?.equals(ns.xsd.decimal) ?? false;
       const result: Measure = {
         ...baseComponent,
         __typename: resolveMeasureType(scaleType),
         isCurrency: qIsCurrency ? true : false,
         isDecimal,
         currencyExponent: parseNumericalTerm(qCurrencyExponent?.object),
-        resolution: parseResolution(dataType),
-        isNumerical: getIsNumerical(dataType),
+        resolution: parseResolution(qDataType?.object),
+        isNumerical: getIsNumerical(qDataType?.object),
       };
 
       measures.push(result);
@@ -292,7 +178,7 @@ CONSTRUCT {
       switch (dimensionType) {
         case "TemporalDimension": {
           const timeUnit = getTimeUnit(qTimeUnitType?.object);
-          const timeFormat = getTimeFormat(dataType);
+          const timeFormat = getTimeFormat(qDataType?.object);
 
           if (!timeFormat || !timeUnit) {
             throw new Error(
@@ -320,5 +206,5 @@ CONSTRUCT {
     }
   });
 
-  return { dimensions, measures, observations };
+  return { dimensions, measures };
 };

@@ -69,21 +69,9 @@ const DataCube: DataCubeResolvers = {
   datePublished: ({ data: { datePublished } }) => datePublished ?? null,
   themes: ({ data: { themes } }) => themes ?? [],
   creator: ({ data: { creator } }) => creator ?? null,
-  dimensions: async (parent, args, context, info) => {
-    const source = getSource(args.sourceType);
-    return source.dataCubeDimensions(parent, args, context, info);
-  },
-  measures: (parent, args, context, info) => {
-    const source = getSource(args.sourceType);
-    return source.dataCubeMeasures(parent, args, context, info);
-  },
   dimensionByIri: async (parent, args, context, info) => {
     const source = getSource(args.sourceType);
     return source.dataCubeDimensionByIri(parent, args, context, info);
-  },
-  observations: async (parent, args, context, info) => {
-    const source = getSource(args.sourceType);
-    return source.observations(parent, args, context, info);
   },
 };
 
@@ -163,29 +151,6 @@ export const resolvers: Resolvers = {
   RawObservation: makeJSONObjectResolver("RawObservation"),
   Query,
   DataCube,
-  DataCubeTheme: {
-    // Loads theme with dataloader if we need the label
-    label: async ({ iri, label }, _, { setup }, info) => {
-      if (!label) {
-        const { loaders } = await setup(info);
-        const resolvedTheme = await loaders.themes.load(iri);
-        return resolvedTheme?.label || "";
-      }
-
-      return label;
-    },
-  },
-  DataCubeOrganization: {
-    label: async ({ iri, label }, _, { setup }, info) => {
-      if (!label) {
-        const { loaders } = await setup(info);
-        const resolvedTheme = await loaders.organizations.load(iri);
-        return resolvedTheme?.label || "";
-      }
-
-      return label;
-    },
-  },
   ObservationsQuery: {
     data: async ({ data: { observations } }) => observations,
     sparqlEditorUrl: async (

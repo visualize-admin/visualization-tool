@@ -11,10 +11,14 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 - Fixes
   - Fixed an issue with fetching filter values that sometimes included values that couldn't be selected
+  - Theme tags and now correctly sorted in dataset preview page
 - Performance
+  - Consolidated loading of dimension values and their metadata inside one CONSTRUCT query, which should improve performance
   - Disabled loading of dimension values where applicable
   - Adjusted several places in the application to not send filters when fetching dimension values but rather use `sh:in` property of given dimension
   - Changed the behavior of loading dimension values to populate filters to not block the whole application, but rather be scoped to this part of the application
+  - Applied server-side caching to more queries
+  - Optimized performance of getting dataset preview and cube metadata by not fetching whole cube shape
 
 # [3.26.2] - 2024-02-23
 

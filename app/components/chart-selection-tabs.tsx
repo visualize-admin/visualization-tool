@@ -293,6 +293,7 @@ const NextStepButton = (props: React.PropsWithChildren<{}>) => {
         componentIris,
         filters: cube.filters,
         joinBy: cube.joinBy,
+        loadValues: true,
       })),
     },
   });

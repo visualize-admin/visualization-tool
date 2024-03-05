@@ -1,41 +1,37 @@
 import RDF from "@rdfjs/data-model";
-import { SELECT, sparql } from "@tpluscode/sparql-builder";
+import { SELECT } from "@tpluscode/sparql-builder";
 import keyBy from "lodash/keyBy";
 import mapValues from "lodash/mapValues";
 import sortBy from "lodash/sortBy";
 import { CubeDimension } from "rdf-cube-view-query";
-import LiteralExt from "rdf-ext/lib/Literal";
-import { Literal, NamedNode, Term } from "rdf-js";
+import { NamedNode, Quad, Term } from "rdf-js";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
+import { ResultRow } from "sparql-http-client/ResultParser";
 import { LRUCache } from "typescript-lru-cache";
 
+import { FilterValue, Filters } from "@/config-types";
 import { isDynamicMaxValue } from "@/configurator/components/field";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
-import { parseObservationValue } from "@/domain/data";
+import {
+  DimensionValue,
+  Observation,
+  parseObservationValue,
+} from "@/domain/data";
 import { pragmas } from "@/rdf/create-source";
 import { ExtendedCube } from "@/rdf/extended-cube";
 
-import { Filters } from "../configurator";
-
 import * as ns from "./namespace";
-import { cube as cubeNs } from "./namespace";
 import { parseDimensionDatatype } from "./parse";
 import { dimensionIsVersioned } from "./queries";
 import { executeWithCache } from "./query-cache";
-
-interface DimensionValue {
-  value: Literal | NamedNode<string>;
-}
+import { buildLocalizedSubQuery } from "./query-utils";
 
 /**
  * Formats a filter value into the right format, string literal
  * for dimensions with a datatype, and named node for shared
  * dimensions.
  */
-const formatFilterValue = (
-  value: string | number,
-  dataType?: NamedNode<string>
-) => {
+const formatFilterValue = (value: string | number, dataType?: NamedNode) => {
   if (!dataType) {
     return `<${value}>`;
   } else {
@@ -44,7 +40,7 @@ const formatFilterValue = (
 };
 
 const formatFilterIntoSparqlFilter = (
-  filter: Filters[string],
+  filter: FilterValue,
   dimension: CubeDimension,
   versioned: boolean,
   index: number
@@ -77,7 +73,7 @@ export async function unversionObservation({
   sparqlClient,
 }: {
   cube: ExtendedCube;
-  observation: Record<string, string | number | undefined | null>;
+  observation: Observation;
   sparqlClient: ParsingClient;
 }) {
   const dimensionsByPath = keyBy(
@@ -98,40 +94,34 @@ export async function unversionObservation({
     }
     ?versioned ${ns.schema.sameAs} ?unversioned.
   `.prologue`${pragmas}`;
-
   const result = (await query.execute(sparqlClient.query, {
     operation: "postUrlencoded",
-  })) as unknown as Array<{
-    versioned: NamedNode<string>;
-    unversioned: NamedNode<string>;
-  }>;
-
-  const unversionedIndex = result.reduce((prev, item) => {
-    prev[item.versioned.value] = item.unversioned.value;
-    return prev;
+  })) as { versioned: NamedNode; unversioned: NamedNode }[];
+  const unversionedIndex = result.reduce((acc, item) => {
+    acc[item.versioned.value] = item.unversioned.value;
+    return acc;
   }, {} as Record<string, string>);
 
-  return mapValues(observation, (v) => (v ? unversionedIndex[v] || v : v));
+  return mapValues(observation, (v) => (v ? unversionedIndex[v] ?? v : v));
 }
 
-const getFilterOrder = (filter: Filters[number]) => {
+const getFilterOrder = (filter: FilterValue) => {
   if (filter.type === "single") {
     // Heuristic to put non discriminant filter at the end
     // Seems like we could also do it based on the column order
-    return filter.value.toString().startsWith("https://ld.admin.ch")
-      ? Infinity
-      : 0;
-  } else {
-    return 0;
+    return `${filter.value}`.startsWith("https://ld.admin.ch") ? Infinity : 0;
   }
+
+  return 0;
 };
 
 type LoadDimensionValuesProps = {
-  datasetIri: Term | undefined;
-  dimension: CubeDimension;
+  dimensionIri: string;
   cube: ExtendedCube;
   sparqlClient: ParsingClient;
   filters?: Filters;
+  locale: string;
+  cache: LRUCache | undefined;
 };
 
 /**
@@ -140,34 +130,116 @@ type LoadDimensionValuesProps = {
  * Filters on other dimensions can be passed.
  *
  */
-export async function loadDimensionValues(
+export async function loadDimensionValuesWithMetadata(
+  cubeIri: string,
   props: LoadDimensionValuesProps
-): Promise<Array<Literal | NamedNode>> {
-  const { datasetIri, dimension, cube, sparqlClient, filters } = props;
-  const dimensionIri = dimension.path;
-  const filterList = filters
-    ? getFiltersList(filters, dimensionIri?.value)
-    : [];
+): Promise<DimensionValue[]> {
+  const { dimensionIri, cube, sparqlClient, filters, locale, cache } = props;
+  const filterList = getFiltersList(filters, dimensionIri);
+  const queryFilters = getQueryFilters(filterList, cube, dimensionIri);
+  const dimension = cube.dimensions.find((d) => d.path?.value === dimensionIri);
 
-  const query = SELECT.DISTINCT`?value`.WHERE`
-    ${datasetIri} ${cubeNs.observationSet} ?observationSet .
-    ?observationSet ${cubeNs.observation} ?observation .
-    ?observation ${dimensionIri} ?value .
-    ${getQueryFilters(filterList, cube, dimensionIri?.value)}
-  `.prologue`${pragmas}`;
-
-  let result: Array<DimensionValue> = [];
-
-  try {
-    result = (await query.execute(sparqlClient.query, {
-      operation: "postUrlencoded",
-    })) as unknown as Array<DimensionValue>;
-  } catch {
-    console.warn(`Failed to fetch dimension values for ${datasetIri}!`);
-  } finally {
-    return result.map((d) => d.value);
+  if (!dimension) {
+    throw new Error(`Dimension not found: ${dimensionIri}`);
   }
+
+  const isDimensionVersioned = dimensionIsVersioned(dimension);
+  const query = `PREFIX cube: <https://cube.link/>
+PREFIX schema: <http://schema.org/>
+PREFIX sh: <http://www.w3.org/ns/shacl#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+CONSTRUCT {
+  [ rdf:first ?maybe_unversioned_value ] .
+  ?maybe_unversioned_value
+    schema:name ?name ;
+    schema:alternateName ?alternateName ;
+    schema:description ?description ;
+    schema:identifier ?identifier ;
+    schema:position ?position ;
+    schema:color ?color .
+} WHERE { 
+  ${
+    queryFilters
+      ? ""
+      : `{ #pragma evaluate on
+    SELECT ?value WHERE {
+      <${cubeIri}> cube:observationConstraint/sh:property ?dimension .
+      ?dimension sh:path <${dimensionIri}> .
+      ?dimension sh:in/rdf:rest*/rdf:first ?value .
+    }
+  } UNION`
+  } {
+    { #pragma evaluate on
+      SELECT DISTINCT ?value WHERE {
+        ${
+          queryFilters
+            ? ""
+            : `
+        <${cubeIri}> cube:observationConstraint/sh:property ?dimension .
+        ?dimension sh:path <${dimensionIri}> .
+        FILTER(NOT EXISTS{ ?dimension sh:in ?in . })`
+        }
+        <${cubeIri}> cube:observationSet/cube:observation ?observation .
+        ?observation <${dimensionIri}> ?value .
+        ${queryFilters}
+      }
+    }
+  }
+  ${buildLocalizedSubQuery("value", "schema:name", "name", {
+    locale,
+  })}
+  ${buildLocalizedSubQuery("value", "schema:description", "description", {
+    locale,
+  })}
+  ${buildLocalizedSubQuery("value", "schema:alternateName", "alternateName", {
+    locale,
+  })}
+  OPTIONAL { ?value schema:identifier ?identifier . }
+  OPTIONAL { ?value schema:position ?position . }
+  OPTIONAL { ?value schema:color ?color . }
+  ${
+    isDimensionVersioned
+      ? `OPTIONAL { ?value schema:sameAs ?unversioned_value . }`
+      : ""
+  }
+  BIND(COALESCE(?unversioned_value, ?value) AS ?maybe_unversioned_value)
+}`;
+
+  return await executeWithCache(
+    sparqlClient,
+    query,
+    () => sparqlClient.query.construct(query, { operation: "postUrlencoded" }),
+    (quads) => {
+      return quads
+        .filter((q) => q.predicate.equals(ns.rdf.first))
+        .map((qValue) => parseDimensionValue(qValue, quads));
+    },
+    cache
+  );
 }
+
+const parseDimensionValue = (
+  valueQuad: Quad,
+  quads: Quad[]
+): DimensionValue => {
+  const value = valueQuad.object.value;
+  const valueQuads = keyBy(
+    quads.filter((q) => q.subject.equals(valueQuad.object)),
+    (d) => d.predicate.value
+  );
+  const position = valueQuads[ns.schema.position.value]?.object.value;
+
+  return {
+    value,
+    label: valueQuads[ns.schema.name.value]?.object.value ?? value,
+    alternateName: valueQuads[ns.schema.alternateName.value]?.object.value,
+    description: valueQuads[ns.schema.description.value]?.object.value,
+    identifier: valueQuads[ns.schema.identifier.value]?.object.value,
+    position: position ? +position : undefined,
+    color: valueQuads[ns.schema.color.value]?.object.value,
+  };
+};
 
 /**
  * Load max dimension value.
@@ -176,45 +248,43 @@ export async function loadDimensionValues(
  *
  */
 export async function loadMaxDimensionValue(
+  cubeIri: string,
   props: LoadDimensionValuesProps
-): Promise<Array<Literal | NamedNode>> {
-  const { datasetIri, dimension, cube, sparqlClient, filters } = props;
-  const dimensionIri = dimension.path;
-  const filterList = filters
-    ? getFiltersList(filters, dimensionIri?.value)
-    : [];
-
+) {
+  const { dimensionIri, cube, sparqlClient, filters, cache } = props;
+  const filterList = getFiltersList(filters, dimensionIri);
   // The following query works both for numeric, date and ordinal dimensions
   const query = SELECT`?value`.WHERE`
-    ${datasetIri} ${cubeNs.observationSet} ?observationSet .
-    ?observationSet ${cubeNs.observation} ?observation .
-    ?observation ${dimensionIri} ?value .
-    OPTIONAL {
-      ?value <https://www.w3.org/TR/owl-time/hasEnd> ?hasEnd .
-      ?value ${ns.schema.position} ?position .
-    }
-    ${getQueryFilters(filterList, cube, dimensionIri?.value)}
-  `
+<${cubeIri}> ${ns.cube.observationSet}/${ns.cube.observation} ?observation .
+?observation <${dimensionIri}> ?value .
+OPTIONAL { ?value <https://www.w3.org/TR/owl-time/hasEnd> ?hasEnd . }
+OPTIONAL { ?value ${ns.schema.position} ?position . }
+${getQueryFilters(filterList, cube, dimensionIri)}`
     .ORDER()
     .BY(RDF.variable("hasEnd"), true)
     .THEN.BY(RDF.variable("value"), true)
     .THEN.BY(RDF.variable("position"), true)
-    .LIMIT(1).prologue`${pragmas}`;
-
-  let result: Array<DimensionValue> = [];
+    .LIMIT(1).prologue`${pragmas}`.build();
 
   try {
-    result = (await query.execute(sparqlClient.query, {
-      operation: "postUrlencoded",
-    })) as unknown as Array<DimensionValue>;
+    return await executeWithCache(
+      sparqlClient,
+      query,
+      () => sparqlClient.query.select(query, { operation: "postUrlencoded" }),
+      (result) => result.map((d) => d.value.value),
+      cache
+    );
   } catch {
-    console.warn(`Failed to fetch max dimension value for ${datasetIri}!`);
-  } finally {
-    return result.map((d) => d.value);
+    console.warn(`Failed to fetch max dimension value for ${cubeIri}!`);
+    return [];
   }
 }
 
-const getFiltersList = (filters: Filters, dimensionIri: string | undefined) => {
+const getFiltersList = (filters: Filters | undefined, dimensionIri: string) => {
+  if (!filters) {
+    return [];
+  }
+
   const entries = Object.entries(filters);
   // Consider filters before the current filter to fetch the values for
   // the current filter
@@ -230,7 +300,7 @@ const getFiltersList = (filters: Filters, dimensionIri: string | undefined) => {
 export const getQueryFilters = (
   filtersList: ReturnType<typeof getFiltersList>,
   cube: ExtendedCube,
-  dimensionIri: string | undefined
+  dimensionIri: string
 ) => {
   if (filtersList.length === 0) {
     return "";
@@ -244,6 +314,7 @@ export const getQueryFilters = (
   const otherDimensionFilters = cube.dimensions
     .filter(
       (dim) =>
+        dim.path?.value !== dimensionIri &&
         !filterDimensionIris.includes(dim.path?.value ?? "") &&
         !dim.path?.equals(ns.cube.observedBy)
     )
@@ -271,11 +342,11 @@ export const getQueryFilters = (
 
     const versioned = dimension ? dimensionIsVersioned(dimension) : false;
 
-    return sparql`${
+    return `${
       versioned
-        ? sparql`?dimension${i + j} ${ns.schema.sameAs} ?dimension_unversioned${
-            i + j
-          } .`
+        ? `?dimension${i + j} <${
+            ns.schema.sameAs.value
+          }> ?dimension_unversioned${i + j} .`
         : ""
     }
 ?observation <${iri}> ?dimension${i + j} .
@@ -288,12 +359,11 @@ ${formatFilterIntoSparqlFilter(value, dimension, versioned, i + j)}`;
   `;
 };
 
-type MinMaxResult = [{ minValue: LiteralExt; maxValue: LiteralExt }];
-
-const parseMinMax = (result: MinMaxResult) => {
+const parseMinMax = (result: ResultRow[]) => {
   const { minValue, maxValue } = result[0];
   const min = parseObservationValue({ value: minValue }) ?? 0;
   const max = parseObservationValue({ value: maxValue }) ?? 0;
+
   return [min, max] as const;
 };
 
@@ -303,30 +373,27 @@ export const loadMinMaxDimensionValues = async ({
   sparqlClient,
   cache,
 }: {
-  datasetIri: Term;
+  datasetIri: string;
   dimensionIri: Term;
   sparqlClient: ParsingClient;
   cache: LRUCache | undefined;
 }) => {
   const query = SELECT`(MIN(?value) as ?minValue) (MAX(?value) as ?maxValue)`
-    .WHERE`
-    ${datasetIri} ${cubeNs.observationSet} ?observationSet .
-    ?observationSet ${cubeNs.observation} ?observation .
-    ?observation ${dimensionIri} ?value .
-
-    FILTER (
-      (STRLEN(STR(?value)) > 0) && (STR(?value) != "NaN")
-    )
-  `;
+    .WHERE`<${datasetIri}> ${ns.cube.observationSet}/${ns.cube.observation} ?observation .
+?observation <${dimensionIri}> ?value .
+FILTER ( (STRLEN(STR(?value)) > 0) && (STR(?value) != "NaN") )`;
 
   try {
-    const result = await executeWithCache(
+    return await executeWithCache(
       sparqlClient,
-      query,
-      cache,
-      parseMinMax
+      query.build(),
+      () =>
+        query.execute(sparqlClient.query, {
+          operation: "postUrlencoded",
+        }),
+      parseMinMax,
+      cache
     );
-    return result;
   } catch {
     console.warn(
       `Failed to fetch min max dimension values for ${datasetIri}, ${dimensionIri}.`

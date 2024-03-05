@@ -4979,7 +4979,7 @@
   dependencies:
     rdf-js "*"
 
-"@types/rdfjs__data-model@^2.0.10":
+"@types/rdfjs__data-model@^2.0.7":
   version "2.0.7"
   resolved "https://registry.yarnpkg.com/@types/rdfjs__data-model/-/rdfjs__data-model-2.0.7.tgz#50979f582651ee112d5eea0e064c8c2e67f42595"
   integrity sha512-ysEnLulluo12hQLPulSheQIFrU3J+cV0X46NGUFO+TVsMDO4oc25KdrGD+9UnVAlUZTKJO6YYKWbDCl7V/0ADA==

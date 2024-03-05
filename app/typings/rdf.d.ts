@@ -22,6 +22,7 @@ declare module "rdf-cube-view-query" {
   export type CubeOptions = NodeInit & {
     source?: Source;
     term?: Term;
+    queryPrefix?: string;
   };
 
   export class Cube extends Node {
@@ -145,6 +146,7 @@ declare module "rdf-cube-view-query" {
     async cubesQuery(options?: { filters: $FixMe }): string;
     client: ParsingClient;
     queryOperation?: "get" | "postUrlencoded" | "postDirect";
+    graph: Term;
   }
 
   export class LookupSource extends Source {

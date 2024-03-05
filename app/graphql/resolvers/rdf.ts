@@ -22,6 +22,7 @@ import {
 } from "@/graphql/resolver-types";
 import { resolveDimensionType, resolveMeasureType } from "@/graphql/resolvers";
 import { defaultLocale } from "@/locales/locales";
+import { LightCube } from "@/rdf/light-cube";
 import { parseCube } from "@/rdf/parse";
 import {
   createCubeDimensionValuesLoader,
@@ -29,8 +30,6 @@ import {
   getCubeObservations,
   getLatestCube,
 } from "@/rdf/queries";
-import { getCubeMetadata } from "@/rdf/query-cube-metadata";
-import { getCubePreview } from "@/rdf/query-cube-preview";
 import { unversionObservation } from "@/rdf/query-dimension-values";
 import { queryHierarchy } from "@/rdf/query-hierarchies";
 import { SearchResult, searchCubes as _searchCubes } from "@/rdf/query-search";
@@ -277,20 +276,13 @@ export const dataCubeComponents: NonNullable<
 
 export const dataCubeMetadata: NonNullable<QueryResolvers["dataCubeMetadata"]> =
   async (_, { locale, cubeFilter }, { setup }, info) => {
-    const { loaders, sparqlClient } = await setup(info);
+    const { sparqlClient } = await setup(info);
     const { iri, latest = true } = cubeFilter;
-    const rawCube = await loaders.cube.load(iri);
+    const cube = await new LightCube({ iri, locale, sparqlClient }).init(
+      !!latest
+    );
 
-    if (!rawCube) {
-      throw new Error("Cube not found!");
-    }
-
-    const cube = latest ? await getLatestCube(rawCube) : rawCube;
-
-    return await getCubeMetadata(cube.term?.value!, {
-      locale,
-      sparqlClient,
-    });
+    return await cube.fetchMetadata();
   };
 
 export const dataCubeObservations: NonNullable<
@@ -331,41 +323,12 @@ export const dataCubeObservations: NonNullable<
 export const dataCubePreview: NonNullable<QueryResolvers["dataCubePreview"]> =
   async (_, { locale, cubeFilter }, { setup }, info) => {
     const { sparqlClient } = await setup(info);
-    const { iri, latest } = cubeFilter;
+    const { iri, latest = true } = cubeFilter;
+    const cube = await new LightCube({ iri, locale, sparqlClient }).init(
+      !!latest
+    );
 
-    return await getCubePreview(iri, {
-      locale,
-      latest: !!latest,
-      sparqlClient,
-    });
-  };
-
-export const dataCubeDimensions: NonNullable<DataCubeResolvers["dimensions"]> =
-  async ({ cube, locale }, { componentIris }, { setup }, info) => {
-    const { sparqlClient, cache } = await setup(info);
-    const dimensions = await getCubeDimensions({
-      cube,
-      locale,
-      sparqlClient,
-      componentIris,
-      cache,
-    });
-
-    return dimensions.filter((d) => !d.data.isMeasureDimension);
-  };
-
-export const dataCubeMeasures: NonNullable<DataCubeResolvers["measures"]> =
-  async ({ cube, locale }, { componentIris }, { setup }, info) => {
-    const { sparqlClient, cache } = await setup(info);
-    const dimensions = await getCubeDimensions({
-      cube,
-      locale,
-      sparqlClient,
-      componentIris,
-      cache,
-    });
-
-    return dimensions.filter((d) => d.data.isMeasureDimension);
+    return await cube.fetchPreview();
   };
 
 export const dataCubeDimensionByIri: NonNullable<
@@ -390,36 +353,6 @@ export const dataCubeDimensionByIri: NonNullable<
   }
   return dimension ?? null;
 };
-
-export const observations: NonNullable<DataCubeResolvers["observations"]> =
-  async (
-    { cube, locale },
-    { preview, limit, filters, componentIris },
-    { setup },
-    info
-  ) => {
-    const { sparqlClient, cache } = await setup(info);
-    const { query, observations } = await getCubeObservations({
-      cube,
-      locale,
-      sparqlClient,
-      filters,
-      preview,
-      limit,
-      componentIris,
-      cache,
-    });
-
-    return {
-      cube,
-      locale,
-      data: {
-        query,
-        observations,
-        selectedFields: [],
-      },
-    };
-  };
 
 const getDimensionValuesLoader = (
   sparqlClient: ParsingClient,
@@ -449,7 +382,7 @@ const getDimensionValuesLoader = (
 };
 
 export const hierarchy: NonNullable<DimensionResolvers["hierarchy"]> = async (
-  rdimension,
+  resolvedDimension,
   _args,
   { setup },
   info
@@ -457,12 +390,12 @@ export const hierarchy: NonNullable<DimensionResolvers["hierarchy"]> = async (
   const { locale } = info.variableValues;
   const { sparqlClient, sparqlClientStream, cache } = await setup(info);
 
-  if (!rdimension.cube) {
+  if (!resolvedDimension.cube) {
     throw new Error("Could not find cube");
   }
 
   return await queryHierarchy(
-    rdimension,
+    resolvedDimension,
     locale,
     sparqlClient,
     sparqlClientStream,
@@ -472,20 +405,19 @@ export const hierarchy: NonNullable<DimensionResolvers["hierarchy"]> = async (
 
 export const dimensionValues: NonNullable<
   NonNullable<Resolvers["Dimension"]>["values"]
-> = async (parent, { filters, disableLoad }, { setup }, info) => {
+> = async (resolvedDimension, { filters, disableLoad }, { setup }, info) => {
   if (disableLoad) {
     return [];
   }
 
   const { loaders, sparqlClient, cache } = await setup(info);
-  // Different loader if we have filters or not
   const loader = getDimensionValuesLoader(
     sparqlClient,
     loaders,
     cache,
     filters
   );
-  const values: DimensionValue[] = await loader.load(parent);
+  const values: DimensionValue[] = await loader.load(resolvedDimension);
 
   return values.sort((a, b) =>
     ascending(

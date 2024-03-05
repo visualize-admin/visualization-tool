@@ -55,21 +55,10 @@ export type DataCube = {
   dateModified?: Maybe<Scalars['String']>;
   expires?: Maybe<Scalars['String']>;
   publicationStatus: DataCubePublicationStatus;
-  observations: ObservationsQuery;
   dimensions: Array<Dimension>;
   dimensionByIri?: Maybe<Dimension>;
   measures: Array<Measure>;
   themes: Array<DataCubeTheme>;
-};
-
-
-export type DataCubeObservationsArgs = {
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
-  limit?: Maybe<Scalars['Int']>;
-  preview?: Maybe<Scalars['Boolean']>;
-  componentIris?: Maybe<Array<Scalars['String']>>;
-  filters?: Maybe<Scalars['Filters']>;
 };
 
 
