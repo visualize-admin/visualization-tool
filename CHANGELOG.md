@@ -9,7 +9,8 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
-Nothing yet.
+- Fixes
+  - SingleURLs layout mode now correctly publishes charts
 
 # [3.26.3] - 2024-03-05
 
