@@ -1,4 +1,5 @@
-import { ColumnConfig } from "@/configurator";
+import { ColumnConfig, ScatterPlotConfig } from "@/configurator";
+import { DEFAULT_CATEGORICAL_PALETTE_NAME } from "@/palettes";
 
 import { defaultSegmentOnChange } from "./chart-config-ui-options";
 
@@ -26,5 +27,24 @@ describe("defaultSegmentOnChange", () => {
       selectedValues: [],
     });
     expect(filters).toEqual({ iri: { type: "single", value: "value" } });
+  });
+
+  it("should correctly modify segment", () => {
+    const chartConfig = { fields: {} } as any as ScatterPlotConfig;
+    defaultSegmentOnChange("iri", {
+      field: "segment",
+      chartConfig,
+      dimensions: [],
+      measures: [],
+      initializing: false,
+      selectedValues: [],
+    });
+    expect(Object.keys(chartConfig.fields)).toEqual(["segment"]);
+    expect(chartConfig.fields.segment).toEqual(
+      expect.objectContaining({
+        componentIri: "iri",
+        palette: DEFAULT_CATEGORICAL_PALETTE_NAME,
+      })
+    );
   });
 });
