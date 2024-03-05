@@ -80,6 +80,7 @@ import {
   Measure,
 } from "@/domain/data";
 import { truthy } from "@/domain/types";
+import { flag } from "@/flags";
 import {
   useDataCubesComponentsQuery,
   useDataCubesMetadataQuery,
@@ -814,12 +815,12 @@ export const ChartConfigurator = ({
       {chartConfig.chartType !== "table" && (
         <InteractiveFiltersConfigurator state={state} />
       )}
-      <ChooseDatasetsControlSection />
+      {flag("add-dataset") ? <DatasetsControlSection /> : null}
     </>
   );
 };
 
-const ChooseDatasetsControlSection = () => {
+const DatasetsControlSection = () => {
   const [state, dispatch] = useConfiguratorState(isConfiguring);
   const locale = useLocale();
   const commonQueryVariables = {
