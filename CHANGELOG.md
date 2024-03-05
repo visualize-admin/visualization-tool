@@ -9,6 +9,10 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
+Nothing yet.
+
+# [3.26.3] - 2024-03-05
+
 - Fixes
   - Fixed an issue with fetching filter values that sometimes included values that couldn't be selected
   - Theme tags and now correctly sorted in dataset preview page
