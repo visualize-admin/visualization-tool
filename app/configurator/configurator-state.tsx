@@ -1629,34 +1629,24 @@ const ConfiguratorStateProviderInternal = (
           (async () => {
             try {
               const key = getRouterChartId(asPath);
+
               if (!key) {
                 return;
               }
-              switch (state.layout.type) {
-                case "singleURLs": {
-                  return publishState(
-                    user,
-                    key,
-                    state,
-                    async (result, i, total) => {
-                      if (i < total) {
-                        // Open new tab for each chart, except the first one
-                        return window.open(
-                          `/${locale}/v/${result.key}`,
-                          "_blank"
-                        );
-                      } else {
-                        await handlePublishSuccess(result.key, push);
-                      }
-                    }
-                  );
+
+              return publishState(
+                user,
+                key,
+                state,
+                async (result, i, total) => {
+                  if (state.layout.type === "singleURLs" && i < total) {
+                    // Open new tab for each chart, except the first one
+                    return window.open(`/${locale}/v/${result.key}`, "_blank");
+                  }
+
+                  await handlePublishSuccess(result.key, push);
                 }
-                default: {
-                  return publishState(user, key, state, async (result) => {
-                    await handlePublishSuccess(result.key, push);
-                  });
-                }
-              }
+              );
             } catch (e) {
               console.error(e);
               dispatch({ type: "PUBLISH_FAILED" });
@@ -1851,12 +1841,12 @@ export type ConfiguratorStateWithChartConfigs =
   | ConfiguratorStatePublishing
   | ConfiguratorStatePublished;
 
-async function publishState(
+export async function publishState(
   user: ReturnType<typeof useUser>,
   key: string,
   state: Extract<ConfiguratorState, { state: "PUBLISHING" }>,
 
-  /** Will be called for all config that have been shared (multiple one in case of layout:singleURLs) */
+  /** Will be called for all configs that have been shared (multiple ones in case of layout:singleURLs) */
   onSaveConfig: (savedConfig: { key: string }, i: number, total: number) => void
 ) {
   switch (state.layout.type) {
@@ -1885,8 +1875,8 @@ async function publishState(
           data: preparedConfig,
           published_state: PUBLISHED_STATE.PUBLISHED,
         });
+        onSaveConfig(result, i + 1, reversedChartKeys.length);
 
-        onSaveConfig(result, i, reversedChartKeys.length);
         return result;
       });
     default:
