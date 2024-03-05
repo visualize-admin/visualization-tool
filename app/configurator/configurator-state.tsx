@@ -1841,7 +1841,7 @@ export type ConfiguratorStateWithChartConfigs =
   | ConfiguratorStatePublishing
   | ConfiguratorStatePublished;
 
-async function publishState(
+export async function publishState(
   user: ReturnType<typeof useUser>,
   key: string,
   state: Extract<ConfiguratorState, { state: "PUBLISHING" }>,

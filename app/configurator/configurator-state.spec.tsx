@@ -8,6 +8,7 @@ import {
   ColumnConfig,
   ComboLineDualConfig,
   ConfiguratorStateConfiguringChart,
+  ConfiguratorStatePublishing,
   DataSource,
   Filters,
   getChartConfig,
@@ -26,6 +27,7 @@ import {
   initChartStateFromCube,
   initChartStateFromLocalStorage,
   moveFilterField,
+  publishState,
   setRangeFilter,
   updateColorMapping,
 } from "@/configurator/configurator-state";
@@ -55,6 +57,7 @@ jest.mock("rdf-cube-view-query", () => ({
 }));
 
 jest.mock("@/utils/chart-config/api", () => ({
+  createConfig: jest.fn(),
   fetchChartConfig: jest.fn(),
 }));
 
@@ -1199,5 +1202,31 @@ describe("filtering", () => {
       { time2: { type: "range", from: "2010", to: "2014" } },
       { time3: { type: "range", from: "2010", to: "2014" } },
     ]);
+  });
+});
+
+describe("publishing chart config", () => {
+  it("should run correct number of times in singleURLs layout mode", async () => {
+    const key = "ABC";
+    const publishableChartKeys = ["A", "C"];
+    const state = {
+      state: "PUBLISHING",
+      key,
+      layout: {
+        type: "singleURLs",
+        publishableChartKeys,
+      },
+      chartConfigs: [
+        { key: "A", cubes: [] },
+        { key: "B", cubes: [] },
+        { key: "C", cubes: [] },
+      ],
+    } as any as ConfiguratorStatePublishing;
+
+    const cb = jest.fn();
+    await publishState({} as any, key, state, async (_, i) => cb(i));
+    expect(cb.mock.calls.map((c) => c[0])).toEqual(
+      Array.from({ length: publishableChartKeys.length }, (_, i) => i + 1)
+    );
   });
 });
