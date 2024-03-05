@@ -256,7 +256,6 @@ const useAddDataset = () => {
       currentComponents: DataCubeComponents;
       otherCube: PartialSearchCube;
     }) => {
-      debugger;
       const iri = otherCube.iri;
       setLoading(true);
       try {

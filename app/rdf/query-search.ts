@@ -243,7 +243,6 @@ export const searchCubes = async ({
     .THEN.BY`?description`.THEN.BY`?publisher`.THEN.BY`?creatorIri`.THEN
     .BY`?creatorLabel`.prologue`${pragmas}`.prologue`#pragma join.bind off`; // HOTFIX WRT Stardog v9.2.1 bug see https://control.vshn.net/tickets/sbar-1066
 
-  console.log(scoresQuery.build());
   const scoreResults = await scoresQuery.execute(sparqlClient.query, {
     operation: "postUrlencoded",
   });
