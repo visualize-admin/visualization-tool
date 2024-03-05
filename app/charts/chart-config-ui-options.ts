@@ -163,7 +163,7 @@ const onColorComponentIriChange: OnEncodingOptionChange<string, MapConfig> = (
   iri,
   { chartConfig, dimensions, measures, field }
 ) => {
-  const basePath = `fields.${field}`;
+  const basePath = `fields["${field}"]`;
   const components = [...dimensions, ...measures];
   let newField: ColorField = DEFAULT_FIXED_COLOR_FIELD;
   const component = components.find((d) => d.iri === iri);
