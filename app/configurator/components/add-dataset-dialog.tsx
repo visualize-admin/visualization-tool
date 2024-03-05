@@ -1,15 +1,20 @@
 import { t } from "@lingui/macro";
 import { LoadingButton } from "@mui/lab";
 import {
+  Box,
   Button,
   Dialog,
   DialogContent,
   DialogProps,
   DialogTitle,
+  IconButton,
+  IconButtonProps,
   InputAdornment,
   TextField,
   useEventCallback,
 } from "@mui/material";
+import { Theme } from "@mui/material/styles";
+import { makeStyles } from "@mui/styles";
 import { FormEvent, useMemo, useState } from "react";
 
 import { DatasetResults, PartialSearchCube } from "@/browser/dataset-browse";
@@ -27,8 +32,40 @@ import {
   SearchCubeResultOrder,
   useSearchCubesQuery,
 } from "@/graphql/query-hooks";
+import SvgIcRemove from "@/icons/components/IcRemove";
 import SvgIcSearch from "@/icons/components/IcSearch";
 import { useLocale } from "@/locales/use-locale";
+
+const DialogCloseButton = (props: IconButtonProps) => {
+  return (
+    <IconButton
+      {...props}
+      sx={{
+        position: "absolute",
+        top: "1.5rem",
+        right: "1.5rem",
+        ...props.sx,
+      }}
+      size="small"
+    >
+      <SvgIcRemove width={24} height={24} fontSize={24} />
+    </IconButton>
+  );
+};
+
+const useStyles = makeStyles((theme: Theme) => ({
+  datasetResult: {
+    cursor: "pointer",
+    "--addButtonBackground": theme.palette.primary.main,
+    "&:hover": {
+      "--addButtonBackground": theme.palette.primary.dark,
+    },
+  },
+  addButton: {
+    transition: "opacity 0.25s ease",
+    background: "var(--addButtonBackground)",
+  },
+}));
 
 export const DatasetDialog = ({
   state,
@@ -36,6 +73,7 @@ export const DatasetDialog = ({
 }: { state: ConfiguratorStateConfiguringChart } & DialogProps) => {
   const [query, setQuery] = useState("");
   const locale = useLocale();
+  const classes = useStyles();
 
   const commonQueryVariables = {
     sourceType: state.dataSource.type,
@@ -83,21 +121,26 @@ export const DatasetDialog = ({
     },
     pause: !cubesComponentQuery.data || relevantDimensions.length === 0,
   });
+
   const handleSubmit = (ev: FormEvent<HTMLFormElement>) => {
-    console.log("handle submit");
     ev.preventDefault();
     const formdata = Object.fromEntries(
       new FormData(ev.currentTarget).entries()
     );
     setQuery(formdata.search as string);
   };
-  const handleClose: DialogProps["onClose"] = useEventCallback((ev) => {
-    props.onClose?.(ev, "escapeKeyDown");
+
+  const handleClose: DialogProps["onClose"] = useEventCallback((ev, reason) => {
+    props.onClose?.(ev, reason);
     setQuery("");
   });
+  const currentComponents = cubesComponentQuery.data?.dataCubesComponents;
+
+  const { loading, addDataset } = useAddDataset();
+
   return (
     <Dialog {...props} onClose={handleClose} maxWidth="lg" fullWidth>
-      {query}
+      <DialogCloseButton onClick={(ev) => handleClose(ev, "escapeKeyDown")} />
       <DialogTitle sx={{ typography: "h2" }}>
         {t({
           id: "chart.datasets.add-dataset-dialog.title",
@@ -105,9 +148,18 @@ export const DatasetDialog = ({
         })}
       </DialogTitle>
       <DialogContent>
-        <form onSubmit={handleSubmit}>
+        <Box
+          display="flex"
+          alignItems="center"
+          component="form"
+          gap="0.25rem"
+          mb="1.5rem"
+          onSubmit={handleSubmit}
+        >
           <TextField
+            size="small"
             name="search"
+            sx={{ width: 400 }}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -117,27 +169,49 @@ export const DatasetDialog = ({
             }}
             placeholder={t({ id: "dataset.search.placeholder" })}
           />
-          <Button color="primary" variant="outlined" type="submit">
+          <Button
+            color="primary"
+            type="submit"
+            variant="contained"
+            size="small"
+          >
             {t({ id: "dataset.search.label" })}
           </Button>
-        </form>
+        </Box>
         <DatasetResults
           cubes={searchQuery.data?.searchCubes ?? []}
           fetching={searchQuery.fetching}
           error={searchQuery.error}
-          rowActions={(cube) => {
-            const currentComponents =
-              cubesComponentQuery.data?.dataCubesComponents;
-            if (!currentComponents) {
-              return null;
-            }
-            return (
-              <AddDatasetButton
-                currentComponents={currentComponents}
-                otherCube={cube}
-              />
-            );
-          }}
+          datasetResultProps={({ cube }) => ({
+            disableTitleLink: true,
+            className: classes.datasetResult,
+            onClick: () => {
+              if (!currentComponents) {
+                return null;
+              }
+              return addDataset({
+                currentComponents,
+                otherCube: cube,
+              });
+            },
+            rowActions: () => {
+              return (
+                <Box display="flex" justifyContent="flex-end">
+                  <LoadingButton
+                    loading={loading}
+                    size="small"
+                    variant="contained"
+                    className={classes.addButton}
+                  >
+                    {t({
+                      id: "dataset.search.add-dataset",
+                      message: "Add dataset",
+                    })}
+                  </LoadingButton>
+                </Box>
+              );
+            },
+          })}
         />
       </DialogContent>
     </Dialog>
@@ -169,60 +243,52 @@ const inferJoinBy = (
   };
 };
 
-const AddDatasetButton = ({
-  currentComponents,
-  otherCube,
-}: {
-  currentComponents: DataCubeComponents;
-  otherCube: PartialSearchCube;
-}) => {
+const useAddDataset = () => {
   const [loading, setLoading] = useState(false);
   const [state, dispatch] = useConfiguratorState(isConfiguring);
   const { type: sourceType, url: sourceUrl } = state.dataSource;
   const locale = useLocale();
-  const handleClick = async () => {
-    const iri = otherCube.iri;
-    setLoading(true);
-    try {
-      const componentQueryResult = await executeDataCubesComponentsQuery({
-        locale: locale,
-        sourceType,
-        sourceUrl,
-        cubeFilters: [{ iri }],
-      });
+  const addDataset = useEventCallback(
+    async ({
+      currentComponents,
+      otherCube,
+    }: {
+      currentComponents: DataCubeComponents;
+      otherCube: PartialSearchCube;
+    }) => {
+      debugger;
+      const iri = otherCube.iri;
+      setLoading(true);
+      try {
+        const componentQueryResult = await executeDataCubesComponentsQuery({
+          locale: locale,
+          sourceType,
+          sourceUrl,
+          cubeFilters: [{ iri }],
+        });
 
-      if (componentQueryResult.error || !componentQueryResult.data) {
-        throw new Error(
-          `Could not fetch cube to add: ${componentQueryResult.error}`
+        if (componentQueryResult.error || !componentQueryResult.data) {
+          throw new Error(
+            `Could not fetch cube to add: ${componentQueryResult.error}`
+          );
+        }
+
+        const joinBy = inferJoinBy(
+          currentComponents,
+          componentQueryResult.data.dataCubesComponents
         );
+        dispatch({
+          type: "DATASET_ADD",
+          value: {
+            iri,
+            joinBy: joinBy,
+          },
+        });
+      } finally {
+        setLoading(false);
       }
-
-      const joinBy = inferJoinBy(
-        currentComponents,
-        componentQueryResult.data.dataCubesComponents
-      );
-      dispatch({
-        type: "DATASET_ADD",
-        value: {
-          iri,
-          joinBy: joinBy,
-        },
-      });
-    } finally {
-      setLoading(false);
     }
-  };
-  return (
-    <LoadingButton
-      size="small"
-      variant="contained"
-      loading={loading}
-      onClick={handleClick}
-    >
-      {t({
-        id: "dataset.search.add-dataset",
-        message: "Add dataset",
-      })}
-    </LoadingButton>
   );
+
+  return { addDataset, loading };
 };

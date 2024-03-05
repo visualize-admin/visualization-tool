@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   ButtonBase,
+  CardProps,
   Link as MUILink,
   LinkProps as MUILinkProps,
   Stack,
@@ -18,7 +19,7 @@ import uniqBy from "lodash/uniqBy";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { stringify } from "qs";
-import React, { useMemo, useState } from "react";
+import React, { ComponentProps, useMemo, useState } from "react";
 
 import Flex, { FlexProps } from "@/components/flex";
 import { Checkbox, MinimalisticSelect, SearchField } from "@/components/form";
@@ -743,12 +744,16 @@ export const DatasetResults = ({
   fetching,
   error,
   cubes,
-  rowActions,
+  datasetResultProps,
 }: {
   fetching: boolean;
   error: any;
   cubes: SearchCubeResult[];
-  rowActions?: (r: PartialSearchCube) => React.ReactNode;
+  datasetResultProps?: ({
+    cube,
+  }: {
+    cube: SearchCube;
+  }) => Partial<DatasetResultProps>;
 }) => {
   if (fetching) {
     return (
@@ -785,7 +790,7 @@ export const DatasetResults = ({
           dataCube={cube}
           highlightedTitle={highlightedTitle}
           highlightedDescription={highlightedDescription}
-          rowActions={rowActions}
+          {...datasetResultProps?.({ cube })}
         />
       ))}
     </>
@@ -804,7 +809,7 @@ const useResultStyles = makeStyles((theme: Theme) => ({
     boxShadow: "none",
   },
 
-  title: {
+  titleClickable: {
     display: "inline-block",
     cursor: "pointer",
     "&:hover": {
@@ -837,6 +842,7 @@ type ResultProps = {
   highlightedDescription?: string | null;
   showTags?: boolean;
   rowActions?: (r: PartialSearchCube) => React.ReactNode;
+  disableTitleLink?: boolean;
 };
 
 export const DatasetResult = ({
@@ -845,7 +851,9 @@ export const DatasetResult = ({
   highlightedDescription,
   showTags,
   rowActions,
-}: ResultProps) => {
+  disableTitleLink,
+  ...cardProps
+}: ResultProps & CardProps) => {
   const {
     iri,
     publicationStatus,
@@ -858,7 +866,7 @@ export const DatasetResult = ({
   const isDraft = publicationStatus === DataCubePublicationStatus.Draft;
   const router = useRouter();
 
-  const handleClick = useEvent(() => {
+  const handleTitleClick = useEvent(() => {
     const browseParams = getBrowseParamsFromQuery(router.query);
     router.push(
       {
@@ -875,7 +883,12 @@ export const DatasetResult = ({
   const classes = useResultStyles();
 
   return (
-    <MotionCard {...smoothPresenceProps} elevation={1} className={classes.root}>
+    <MotionCard
+      elevation={1}
+      {...smoothPresenceProps}
+      {...cardProps}
+      className={`${classes.root} ${cardProps.className ?? ""}`}
+    >
       <Stack spacing={2} sx={{ mb: 6, alignItems: "flex-start" }}>
         <Flex
           sx={{
@@ -897,9 +910,9 @@ export const DatasetResult = ({
         <Typography
           component="div"
           variant="body1"
-          onClick={handleClick}
-          color="primary.main"
-          className={classes.title}
+          onClick={disableTitleLink ? undefined : handleTitleClick}
+          color={disableTitleLink ? "text.primary" : "primary.main"}
+          className={disableTitleLink ? "" : `${classes.titleClickable}`}
         >
           {highlightedTitle ? (
             <Box
@@ -982,6 +995,8 @@ export const DatasetResult = ({
     </MotionCard>
   );
 };
+
+export type DatasetResultProps = ComponentProps<typeof DatasetResult>;
 
 DatasetResult.defaultProps = {
   showTags: true,

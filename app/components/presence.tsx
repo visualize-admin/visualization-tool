@@ -2,7 +2,7 @@ import { Box, Card } from "@mui/material";
 import { Transition, motion } from "framer-motion";
 
 export const MotionBox = motion(Box);
-export const MotionCard = motion(Card);
+export const MotionCard = motion(Card) as typeof Card;
 
 export const DURATION = 0.4;
 
