@@ -166,8 +166,7 @@ CONSTRUCT {
     SELECT ?value WHERE {
       <${cubeIri}> cube:observationConstraint/sh:property ?dimension .
       ?dimension sh:path <${dimensionIri}> .
-      ?dimension sh:in/rdf:rest* ?blankNode .
-      ?blankNode rdf:first ?value .
+      ?dimension sh:in/rdf:rest*/rdf:first ?value .
     }
   } UNION`
   } {
@@ -178,6 +177,7 @@ CONSTRUCT {
             ? ""
             : `
         <${cubeIri}> cube:observationConstraint/sh:property ?dimension .
+        ?dimension sh:path <${dimensionIri}> .
         FILTER(NOT EXISTS{ ?dimension sh:in ?in . })`
         }
         <${cubeIri}> cube:observationSet/cube:observation ?observation .
