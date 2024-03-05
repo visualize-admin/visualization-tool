@@ -1856,7 +1856,7 @@ async function publishState(
   key: string,
   state: Extract<ConfiguratorState, { state: "PUBLISHING" }>,
 
-  /** Will be called for all config that have been shared (multiple one in case of layout:singleURLs) */
+  /** Will be called for all configs that have been shared (multiple ones in case of layout:singleURLs) */
   onSaveConfig: (savedConfig: { key: string }, i: number, total: number) => void
 ) {
   switch (state.layout.type) {
@@ -1885,8 +1885,8 @@ async function publishState(
           data: preparedConfig,
           published_state: PUBLISHED_STATE.PUBLISHED,
         });
+        onSaveConfig(result, i + 1, reversedChartKeys.length);
 
-        onSaveConfig(result, i, reversedChartKeys.length);
         return result;
       });
     default:
