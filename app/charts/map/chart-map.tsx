@@ -14,11 +14,6 @@ import { DataSource, MapConfig, useChartConfigFilters } from "@/config-types";
 import { TimeSlider } from "@/configurator/interactive-filters/time-slider";
 import { GeoShapes } from "@/domain/data";
 import {
-  useDataCubesComponentsQuery,
-  useDataCubesMetadataQuery,
-  useDataCubesObservationsQuery,
-} from "@/graphql/hooks";
-import {
   DataCubeObservationFilter,
   GeoCoordinates,
   useGeoCoordinatesByDimensionIriQuery,
@@ -42,54 +37,24 @@ export const ChartMapVisualization = ({
   const locale = useLocale();
   const areaDimensionIri = chartConfig.fields.areaLayer?.componentIri || "";
   const symbolDimensionIri = chartConfig.fields.symbolLayer?.componentIri || "";
-  const commonQueryVariables = {
-    sourceType: dataSource.type,
-    sourceUrl: dataSource.url,
-    locale,
-  };
-  const [metadataQuery] = useDataCubesMetadataQuery({
-    variables: {
-      ...commonQueryVariables,
-      cubeFilters: chartConfig.cubes.map((cube) => ({ iri: cube.iri })),
-    },
-  });
-  const [componentsQuery] = useDataCubesComponentsQuery({
-    variables: {
-      ...commonQueryVariables,
-      cubeFilters: chartConfig.cubes.map((cube) => ({
-        iri: cube.iri,
-        componentIris,
-        joinBy: cube.joinBy,
-        loadValues: true,
-      })),
-    },
-  });
-  const [observationsQuery] = useDataCubesObservationsQuery({
-    variables: {
-      ...commonQueryVariables,
-      cubeFilters: queryFilters ?? [],
-    },
-    pause: !queryFilters,
-  });
-  const { data: componentsData } = componentsQuery;
-  const { data: observationsData } = observationsQuery;
 
-  const dimensions = componentsData?.dataCubesComponents?.dimensions;
-  const measures = componentsData?.dataCubesComponents?.measures;
-  const observations = observationsData?.dataCubesObservations?.data;
-
-  const [{ data: fetchedGeoCoordinates, error: geoCoordinatesError }] =
-    useGeoCoordinatesByDimensionIriQuery({
-      variables: {
-        // FIXME: This assumes that there is only one cube.
-        dataCubeIri: chartConfig.cubes[0].iri,
-        sourceType: dataSource.type,
-        sourceUrl: dataSource.url,
-        dimensionIri: symbolDimensionIri,
-        locale,
-      },
-      pause: !symbolDimensionIri || symbolDimensionIri === "",
-    });
+  const [
+    {
+      data: fetchedGeoCoordinates,
+      error: geoCoordinatesError,
+      fetching: fetchingGeoocordinates,
+    },
+  ] = useGeoCoordinatesByDimensionIriQuery({
+    variables: {
+      // FIXME: This assumes that there is only one cube.
+      dataCubeIri: chartConfig.cubes[0].iri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      dimensionIri: symbolDimensionIri,
+      locale,
+    },
+    pause: !symbolDimensionIri || symbolDimensionIri === "",
+  });
 
   const coordinates =
     fetchedGeoCoordinates?.dataCubeByIri?.dimensionByIri?.__typename ===
@@ -98,18 +63,23 @@ export const ChartMapVisualization = ({
       : undefined;
 
   const geoShapesIri = areaDimensionIri || symbolDimensionIri;
-  const [{ data: fetchedGeoShapes, error: geoShapesError }] =
-    useGeoShapesByDimensionIriQuery({
-      variables: {
-        // FIXME: This assumes that there is only one cube.
-        dataCubeIri: chartConfig.cubes[0].iri,
-        sourceType: dataSource.type,
-        sourceUrl: dataSource.url,
-        dimensionIri: geoShapesIri,
-        locale,
-      },
-      pause: !geoShapesIri || geoShapesIri === "",
-    });
+  const [
+    {
+      data: fetchedGeoShapes,
+      error: geoShapesError,
+      fetching: fetchingGeoshapes,
+    },
+  ] = useGeoShapesByDimensionIriQuery({
+    variables: {
+      // FIXME: This assumes that there is only one cube.
+      dataCubeIri: chartConfig.cubes[0].iri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      dimensionIri: geoShapesIri,
+      locale,
+    },
+    pause: !geoShapesIri || geoShapesIri === "",
+  });
 
   const shapes =
     fetchedGeoShapes?.dataCubeByIri?.dimensionByIri?.__typename ===
@@ -127,14 +97,7 @@ export const ChartMapVisualization = ({
     // Raw map without any data layer.
     (areaDimensionIri === "" && symbolDimensionIri === "");
 
-  const observationsQueryResp = {
-    ...observationsQuery,
-    data:
-      measures && dimensions && observations && ready
-        ? observationsQuery.data
-        : undefined,
-    error: observationsQuery.error ?? geoCoordinatesError ?? geoShapesError,
-  };
+  const error = geoCoordinatesError ?? geoShapesError;
 
   const displayNoDataError =
     ready &&
@@ -149,6 +112,8 @@ export const ChartMapVisualization = ({
   ) : (
     <ChartDataWrapper
       dataSource={dataSource}
+      error={error}
+      fetching={fetchingGeoocordinates || fetchingGeoshapes}
       componentIris={componentIris}
       queryFilters={queryFilters}
       Component={ChartMap}

@@ -39,6 +39,9 @@ export const ChartDataWrapper = <
   componentIris,
   dataSource,
   queryFilters,
+
+  fetching: fetchingProp = false,
+  error: errorProp,
 }: {
   chartConfig: TChartConfig;
   Component: TChartComponent;
@@ -49,6 +52,12 @@ export const ChartDataWrapper = <
   componentIris?: string[];
   dataSource: DataSource;
   queryFilters?: DataCubeObservationFilter[];
+
+  fetching?: boolean;
+  /* Use this if extra data is loaded and the possible error must be shown by ChartDataWrapper*/
+
+  /* Use this if extra data is loaded and the possible error must be shown by ChartDataWrapper*/
+  error?: Error;
 }) => {
   const chartLoadingState = useLoadingState();
 
@@ -105,7 +114,10 @@ export const ChartDataWrapper = <
   const measures = componentsData?.dataCubesComponents.measures;
 
   const fetching =
-    fetchingMetadata || fetchingComponents || fetchingObservations;
+    fetchingProp ||
+    fetchingMetadata ||
+    fetchingComponents ||
+    fetchingObservations;
 
   React.useEffect(() => {
     chartLoadingState.set("data", fetching);
@@ -153,12 +165,18 @@ export const ChartDataWrapper = <
         ) : null}
       </Box>
     );
-  } else if (metadataError || componentsError || observationsError) {
+  } else if (
+    errorProp ||
+    metadataError ||
+    componentsError ||
+    observationsError
+  ) {
     return (
       <Flex sx={{ flexDirection: "column", gap: 3 }}>
         {metadataError && <Error message={metadataError.message} />}
         {componentsError && <Error message={componentsError.message} />}
         {observationsError && <Error message={observationsError.message} />}
+        {errorProp && <Error message={errorProp.message} />}
       </Flex>
     );
   } else {
