@@ -922,8 +922,12 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
               type: disableStacked(yMeasure) ? "grouped" : "stacked",
             };
           }
-          // Otherwise we are dealing with a segment field.
-        } else {
+          // Otherwise we are dealing with a segment field. We shouldn't take
+          // the segment from oldValue if the component has already been used as
+          // x axis.
+        } else if (
+          newChartConfig.fields.x.componentIri !== oldValue.componentIri
+        ) {
           const oldSegment = oldValue as Exclude<typeof oldValue, TableFields>;
           newSegment = {
             ...oldSegment,

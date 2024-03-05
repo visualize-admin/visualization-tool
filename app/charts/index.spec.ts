@@ -1,4 +1,4 @@
-import { ColumnConfig, TableFields } from "@/configurator";
+import { ColumnConfig, ScatterPlotConfig, TableFields } from "@/configurator";
 import { Dimension, Measure } from "@/domain/data";
 import { TimeUnit } from "@/graphql/resolver-types";
 import { RDFCubeViewQueryMock } from "@/test/cube-view-query-mock";
@@ -265,5 +265,143 @@ describe("chart type switch", () => {
     expect(
       newConfig.interactiveFiltersConfig?.dataFilters.componentIris
     ).toEqual([]);
+  });
+
+  it("should not carry over not-allowed segment", () => {
+    const oldChartConfig = {
+      key: "Mudrp4YuP8Ki",
+      version: "3.0.0",
+      meta: {
+        title: {
+          en: "",
+          de: "",
+          fr: "",
+          it: "",
+        },
+        description: {
+          en: "",
+          de: "",
+          fr: "",
+          it: "",
+        },
+      },
+      cubes: [
+        {
+          iri: "https://environment.ld.admin.ch/foen/ubd000502/4",
+          filters: {
+            "https://environment.ld.admin.ch/foen/ubd000502/gas": {
+              type: "single",
+              value: "https://ld.admin.ch/cube/dimension/testdimension/test1",
+            },
+            "https://environment.ld.admin.ch/foen/ubd000502/sektorid": {
+              type: "single",
+              value:
+                "https://environment.ld.admin.ch/vocabulary/ghg_emission_sectors_co2_ordinance/3",
+            },
+          },
+        },
+      ],
+      activeField: "segment",
+      chartType: "scatterplot",
+      interactiveFiltersConfig: {
+        legend: {
+          active: false,
+          componentIri: "",
+        },
+        timeRange: {
+          active: false,
+          componentIri: "https://environment.ld.admin.ch/foen/ubd000502/jahr",
+          presets: {
+            type: "range",
+            from: "",
+            to: "",
+          },
+        },
+        dataFilters: {
+          active: false,
+          componentIris: [],
+        },
+        calculation: {
+          active: false,
+          type: "identity",
+        },
+      },
+      fields: {
+        x: {
+          componentIri: "https://environment.ld.admin.ch/foen/ubd000502/werte",
+        },
+        y: {
+          componentIri:
+            "https://environment.ld.admin.ch/foen/ubd000502/werteNichtGerundet",
+        },
+        segment: {
+          componentIri: "https://environment.ld.admin.ch/foen/ubd000502/jahr",
+          palette: "category10",
+          sorting: {
+            sortingType: "byAuto",
+            sortingOrder: "asc",
+          },
+          colorMapping: {
+            "1990": "#1f77b4",
+            "1991": "#ff7f0e",
+            "1992": "#2ca02c",
+            "1993": "#d62728",
+            "1994": "#9467bd",
+            "1995": "#8c564b",
+            "1996": "#e377c2",
+            "1997": "#7f7f7f",
+            "1998": "#bcbd22",
+            "1999": "#17becf",
+            "2000": "#1f77b4",
+            "2001": "#ff7f0e",
+            "2002": "#2ca02c",
+            "2003": "#d62728",
+            "2004": "#9467bd",
+            "2005": "#8c564b",
+            "2006": "#e377c2",
+            "2007": "#7f7f7f",
+            "2008": "#bcbd22",
+            "2009": "#17becf",
+            "2010": "#1f77b4",
+            "2011": "#ff7f0e",
+            "2012": "#2ca02c",
+            "2013": "#d62728",
+            "2014": "#9467bd",
+            "2015": "#8c564b",
+            "2016": "#e377c2",
+            "2017": "#7f7f7f",
+            "2018": "#bcbd22",
+            "2019": "#17becf",
+            "2020": "#1f77b4",
+            "2021": "#ff7f0e",
+          },
+        },
+      },
+    } as any as ScatterPlotConfig;
+
+    const newChartConfig = getChartConfigAdjustedToChartType({
+      chartConfig: oldChartConfig,
+      newChartType: "column",
+      dimensions: [
+        { iri: "https://environment.ld.admin.ch/foen/ubd000502/jahr" },
+        { iri: "https://environment.ld.admin.ch/foen/ubd000502/gas" },
+        { iri: "https://environment.ld.admin.ch/foen/ubd000502/sektorid" },
+      ] as any as Dimension[],
+      measures: [
+        {
+          __typename: "NumericalMeasure",
+          iri: "https://environment.ld.admin.ch/foen/ubd000502/werte",
+        },
+        {
+          __typename: "NumericalMeasure",
+          iri: "https://environment.ld.admin.ch/foen/ubd000502/werteNichtGerundet",
+        },
+      ] as any as Measure[],
+    }) as ColumnConfig;
+
+    expect(newChartConfig.fields.segment).toBeUndefined();
+    expect(newChartConfig.fields.x.componentIri).not.toEqual(
+      oldChartConfig.fields.x.componentIri
+    );
   });
 });
