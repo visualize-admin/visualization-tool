@@ -173,9 +173,13 @@ CONSTRUCT {
   } {
     { #pragma evaluate on
       SELECT DISTINCT ?value WHERE {
+        ${
+          queryFilters
+            ? ""
+            : `
         <${cubeIri}> cube:observationConstraint/sh:property ?dimension .
-        ${queryFilters ? "" : `FILTER(NOT EXISTS{ ?dimension sh:in ?in . })`}
-        ?dimension sh:path <${dimensionIri}> .
+        FILTER(NOT EXISTS{ ?dimension sh:in ?in . })`
+        }
         <${cubeIri}> cube:observationSet/cube:observation ?observation .
         ?observation <${dimensionIri}> ?value .
         ${queryFilters}
