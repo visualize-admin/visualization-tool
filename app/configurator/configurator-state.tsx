@@ -1426,6 +1426,11 @@ export const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
             })),
           locale
         );
+        if (!dataCubesComponents) {
+          throw new Error(
+            "Error while removing dataset: Could not find cached dataCubesComponents"
+          );
+        }
 
         const result = getInitialConfigBasedOnCube({
           dataCubesComponents,
