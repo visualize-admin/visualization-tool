@@ -125,6 +125,24 @@ describe("initial config", () => {
 
     expect(config.fields.x.componentIri).toEqual("temporal-dimension-iri");
   });
+
+  it("should create an initial scatterplot config having segment correctly defined", () => {
+    const config = getInitialConfig({
+      chartType: "scatterplot",
+      iris: ["https://environment.ld.admin.ch/foen/nfi"],
+      dimensions: [
+        mockDimensions.geoCoordinates,
+        mockDimensions.ordinal,
+        mockDimensions.temporalOrdinal,
+        mockDimensions.temporal,
+        mockDimensions.ordinal2,
+      ],
+      measures: forestAreaData.data.dataCubeByIri.measures as any as Measure[],
+    }) as ColumnConfig;
+
+    expect(config.fields.segment).toBeDefined();
+    expect((config.fields as any).palette).toBeUndefined();
+  });
 });
 
 describe("possible chart types", () => {

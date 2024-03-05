@@ -495,12 +495,14 @@ export const getInitialConfig = (
           },
           ...(scatterplotSegmentComponent
             ? {
-                componentIri: scatterplotSegmentComponent.iri,
-                palette: scatterplotPalette,
-                colorMapping: mapValueIrisToColor({
+                segment: {
+                  componentIri: scatterplotSegmentComponent.iri,
                   palette: scatterplotPalette,
-                  dimensionValues: scatterplotSegmentComponent.values,
-                }),
+                  colorMapping: mapValueIrisToColor({
+                    palette: scatterplotPalette,
+                    dimensionValues: scatterplotSegmentComponent.values,
+                  }),
+                },
               }
             : {}),
         },
