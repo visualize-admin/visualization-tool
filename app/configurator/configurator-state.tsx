@@ -87,8 +87,6 @@ import { createChartId } from "@/utils/create-chart-id";
 import { getRouterChartId } from "@/utils/router/helpers";
 import { unreachableError } from "@/utils/unreachable";
 
-import { getCachedComponents } from "../urql-cache";
-
 export type ConfiguratorStateAction =
   | {
       type: "INITIALIZED";
