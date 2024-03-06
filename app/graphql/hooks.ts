@@ -216,7 +216,14 @@ export const executeDataCubesComponentsQuery = async (
   return {
     data: {
       dataCubesComponents: {
-        dimensions: joinDimensions(queries),
+        dimensions: joinDimensions(
+          queries
+            .filter((x) => x.data)
+            .map((q) => ({
+              dataCubeComponents: q.data?.dataCubeComponents!,
+              joinBy: q.operation.variables?.cubeFilter.joinBy!,
+            }))
+        ),
         measures: queries.flatMap((q) => q.data?.dataCubeComponents.measures!),
       },
     },

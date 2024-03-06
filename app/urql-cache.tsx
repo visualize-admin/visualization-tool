@@ -38,9 +38,15 @@ export const getCachedComponents = (
       })!;
     })
     .filter(truthy);
-
   return {
-    dimensions: joinDimensions(queries),
+    dimensions: joinDimensions(
+      queries
+        .filter((x) => x.data)
+        .map((x) => ({
+          dataCubeComponents: x.data?.dataCubeComponents!,
+          joinBy: x.operation.variables?.cubeFilter.joinBy,
+        }))
+    ),
     measures: queries.flatMap((q) => q.data?.dataCubeComponents.measures!),
   };
 };
