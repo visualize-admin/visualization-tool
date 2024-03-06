@@ -54,7 +54,7 @@
     "@visx/group": "^2.10.0",
     "@visx/text": "^2.12.2",
     "@visx/zoom": "^2.10.0",
-    "@zazuko/cube-hierarchy-query": "^2.2.1",
+    "@zazuko/cube-hierarchy-query": "^2.2.2",
     "@zazuko/env": "^2.0.6",
     "apollo-server-micro": "^3.0.0",
     "autosuggest-highlight": "^3.3.4",

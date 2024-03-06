@@ -2019,17 +2019,17 @@
   resolved "https://registry.yarnpkg.com/@humanwhocodes/object-schema/-/object-schema-1.2.1.tgz#b520529ec21d8e5945a1851dfd1c32e94e39ff45"
   integrity sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==
 
-"@hydrofoil/shape-to-query@^0.9.4":
-  version "0.9.4"
-  resolved "https://registry.yarnpkg.com/@hydrofoil/shape-to-query/-/shape-to-query-0.9.4.tgz#9e05093faec3586528a404475f03120dcafa9ae2"
-  integrity sha512-ViSh75GWsabtqJc6DkC1/9adJASibqmc4VSwkurr0N8gu/0/OOr0p8fvR/HmjZX8KJDcYcVq7tgdxj7m5kJpAg==
+"@hydrofoil/shape-to-query@^0.10.0":
+  version "0.10.0"
+  resolved "https://registry.yarnpkg.com/@hydrofoil/shape-to-query/-/shape-to-query-0.10.0.tgz#a5686113ae36dbfba38e35e47352897e5350c9dc"
+  integrity sha512-po4N7oSV4/EF/nZk6ufI40SCe9lVV36IIYXRi9xotUEx6IfAe4761ce/eP8AdXdHHBs67HrnR+KOWCGdmNMqNw==
   dependencies:
     "@tpluscode/rdf-ns-builders" ">=3.0.2"
     "@tpluscode/rdf-string" "^1.0.3"
     "@tpluscode/sparql-builder" "^1.1.0"
     "@vocabulary/dash" "^1.0.1"
     "@vocabulary/dash-sparql" "^1.0.1"
-    "@vocabulary/sh" "^1.0.1"
+    "@vocabulary/sh" "^1.1.3"
     "@zazuko/env" "^2.0.3"
     "@zazuko/prefixes" ">=2"
     clownface-shacl-path "^2.0.1"
@@ -5543,10 +5543,10 @@
   resolved "https://registry.yarnpkg.com/@vocabulary/dash/-/dash-1.0.2.tgz#9f84d2aa79d1edc35fc14a1451147ba54a3692ea"
   integrity sha512-XAnAuhdj7FxaK+c/hlSV17lh0mcTbiD9qMfUwCt/Japr/pcer0fAKPoLEhFjPLQLfDAv2Ud63DO7NC2JKZm2tA==
 
-"@vocabulary/sh@^1.0.1":
-  version "1.1.3"
-  resolved "https://registry.yarnpkg.com/@vocabulary/sh/-/sh-1.1.3.tgz#f5045a6cbf68ebe644f6f77c6b020bd725e627cb"
-  integrity sha512-ofUNi/TS8ppI4Z/PPPSpmkJ65jXLIdTv+T8pLrz8wYeTV8JHA4eQLErwLuawktKDKXVWdMR4L9boHa3Xi5IKGw==
+"@vocabulary/sh@^1.1.3":
+  version "1.1.4"
+  resolved "https://registry.yarnpkg.com/@vocabulary/sh/-/sh-1.1.4.tgz#55aa7efe732cb38cff43ab0e9315e443f65a8a9f"
+  integrity sha512-i8tNVIZHtusciU0oTAXVlD/vughLRIqHLt0c59099UiSiOHfRxE8iuiTHCWV9+a8RS/ftfZEyjDxHnmvjJgxBA==
 
 "@wry/context@^0.6.0":
   version "0.6.0"
@@ -5569,12 +5569,12 @@
   dependencies:
     tslib "^2.1.0"
 
-"@zazuko/cube-hierarchy-query@^2.2.1":
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/@zazuko/cube-hierarchy-query/-/cube-hierarchy-query-2.2.1.tgz#ad49bcb2e41c58e6978ace342a79cfc7a899d8d3"
-  integrity sha512-icojjZRs/Yxf/MnMvaN7+3rhXsD6838d0eoH46JDPKIHI2GglTtt58RLRvnvhMLTvPEY/+pcr5N2DekTYn7Emg==
+"@zazuko/cube-hierarchy-query@^2.2.2":
+  version "2.2.2"
+  resolved "https://registry.yarnpkg.com/@zazuko/cube-hierarchy-query/-/cube-hierarchy-query-2.2.2.tgz#bdd885e8bcc2c132979d5ea6d6d40ab32f7c6fb0"
+  integrity sha512-WN5C7AWwLandijMAFCt6uHmnZtdvI/AAEz9ATIL074gVXZ0MPeUvdjBROBcwsthzIcPwstqIW4ehQ9wyGGx4GA==
   dependencies:
-    "@hydrofoil/shape-to-query" "^0.9.4"
+    "@hydrofoil/shape-to-query" "^0.10.0"
     "@tpluscode/sparql-builder" "^1.1.0"
     "@types/sparql-http-client" "^2.2.8"
     "@zazuko/env" "^2.0.3"
