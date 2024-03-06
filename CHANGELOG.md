@@ -11,6 +11,7 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 - Fixes
   - SingleURLs layout mode now correctly publishes charts
+  - Redirecting to latest cube now works correctly for cases of trying to access old cube that didn't look like a versioned cube, but in fact was a versioned cube
 
 # [3.26.3] - 2024-03-05
 
