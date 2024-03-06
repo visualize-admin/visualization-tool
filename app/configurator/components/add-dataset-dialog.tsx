@@ -139,7 +139,15 @@ export const DatasetDialog = ({
   const { loading, addDataset } = useAddDataset();
 
   return (
-    <Dialog {...props} onClose={handleClose} maxWidth="lg" fullWidth>
+    <Dialog
+      {...props}
+      onClose={handleClose}
+      maxWidth="lg"
+      fullWidth
+      PaperProps={{
+        sx: { minHeight: "calc(100vh - calc(30px * 2))" },
+      }}
+    >
       <DialogCloseButton onClick={(ev) => handleClose(ev, "escapeKeyDown")} />
       <DialogTitle sx={{ typography: "h2" }}>
         {t({
