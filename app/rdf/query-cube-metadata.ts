@@ -1,13 +1,20 @@
+import RDF from "@rdfjs/data-model";
 import { SELECT } from "@tpluscode/sparql-builder";
 import { Literal, NamedNode } from "rdf-js";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
 
 import { DataCubeMetadata } from "@/domain/data";
-import { DataCubePublicationStatus } from "@/graphql/query-hooks";
-import { pragmas } from "@/rdf/create-source";
 import * as ns from "@/rdf/namespace";
-import { getLatestCubeIriQuery } from "@/rdf/query-latest-cube-iri";
-import { GROUP_SEPARATOR, buildLocalizedSubQuery } from "@/rdf/query-utils";
+
+import { cube, schema } from "../../app/rdf/namespace";
+import { DataCubePublicationStatus } from "../graphql/query-hooks";
+
+import { pragmas } from "./create-source";
+import {
+  GROUP_SEPARATOR,
+  buildLocalizedSubQuery,
+  makeVisualizeDatasetFilter,
+} from "./query-utils";
 
 type RawDataCubeMetadata = {
   iri: NamedNode;
@@ -157,14 +164,38 @@ export const getCubeMetadata = async (
   return parseRawMetadata(result);
 };
 
-export const queryLatestCube = async (
+export const queryLatestPublishedCubeFromUnversionedIri = async (
   sparqlClient: ParsingClient,
-  iri: string
-): Promise<string | undefined> => {
-  const query = getLatestCubeIriQuery(iri);
-  const results = await sparqlClient.query.select(query, {
+  unversionedIri: string
+) => {
+  const iri = RDF.variable("iri");
+  // Check if it is a versioned cube
+  const query = SELECT`${iri}`.WHERE`
+    <${unversionedIri}> ${schema.hasPart} ${iri}.
+    ${makeVisualizeDatasetFilter({ includeDrafts: true })}
+  `
+    .ORDER()
+    .BY(iri, true);
+  const results = await sparqlClient.query.select(query.build(), {
     operation: "postUrlencoded",
   });
-
-  return results[0]?.iri.value;
+  if (results.length !== 1) {
+    // Check if it is an unversioned cube
+    const query = SELECT`*`.WHERE`
+      <${unversionedIri}> ${cube.observationConstraint} ?shape.
+      ${makeVisualizeDatasetFilter({ includeDrafts: true })}
+    `;
+    const results = await sparqlClient.query.select(query.build(), {
+      operation: "postUrlencoded",
+    });
+    if (results.length === 0) {
+      return;
+    }
+    return {
+      iri: unversionedIri,
+    };
+  }
+  return {
+    iri: results[0].iri.value,
+  };
 };
