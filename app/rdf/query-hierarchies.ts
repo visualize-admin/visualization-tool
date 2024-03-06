@@ -132,6 +132,7 @@ export const queryHierarchy = async (
   const hierarchies = await Promise.all(
     hierarchyPointers.map(async (pointer) => {
       return {
+        // @ts-ignore
         nodes: await getHierarchy(pointer, {
           properties: [
             ns.schema.identifier,
