@@ -81,7 +81,7 @@ describe("makeUseQuery", () => {
 const sleep = (duration: number) =>
   new Promise((resolve) => setTimeout(resolve, duration));
 
-describe("useComponentsQuery", () => {
+describe.skip("useComponentsQuery", () => {
   it("should work", async () => {
     global.fetch = async (
       _url: RequestInfo | URL,

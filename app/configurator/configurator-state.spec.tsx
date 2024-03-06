@@ -66,41 +66,11 @@ jest.mock("@/utils/chart-config/api", () => ({
 jest.mock("@/graphql/client", () => {
   return {
     client: {
-      readQuery: () => {
-        return {
-          data: {
-            dataCubeByIri: {},
-            dataCubeComponents: {
-              dimensions: [
-                {
-                  __typename: "GeoShapesDimension",
-                  cubeIri: "mapDataset",
-                  iri: "newAreaLayerColorIri",
-                  values: [
-                    {
-                      value: "orange",
-                      label: "orange",
-                      color: "rgb(255, 153, 0)",
-                    },
-                  ],
-                },
-                {
-                  __typename: "GeoCoordinatesDimension",
-                  iri: "symbolLayerIri",
-                  values: [{ value: "x", label: "y" }],
-                },
-              ],
-              measures: [
-                {
-                  __typename: "NumericalMeasure",
-                  iri: "measure",
-                },
-              ],
-            },
-          },
-          operation: {},
-        };
-      },
+      readQuery: jest.fn().mockImplementation(() => ({
+        data: {
+          dataCubeComponents: getCachedComponentsMock.geoAndNumerical,
+        },
+      })),
     },
   };
 });
@@ -931,6 +901,9 @@ describe("colorMapping", () => {
   });
 
   it("should use dimension colors if present", () => {
+    getCachedComponents.mockImplementation(
+      () => getCachedComponentsMock.geoAndNumerical
+    );
     const state = {
       state: "CONFIGURING_CHART",
       dataSource: {
@@ -978,6 +951,9 @@ describe("colorMapping", () => {
 
 describe("handleChartFieldChanged", () => {
   it("should not reset symbol layer when it's being updated", () => {
+    getCachedComponents.mockImplementation(
+      () => getCachedComponentsMock.geoAndNumerical
+    );
     const state = {
       state: "CONFIGURING_CHART",
       dataSource: {

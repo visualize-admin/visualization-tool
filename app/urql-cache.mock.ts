@@ -1,10 +1,7 @@
 import { ScaleType } from "@/graphql/query-hooks";
 import { getCachedComponents } from "@/urql-cache";
 
-export const getCachedComponentsMock: Record<
-  string,
-  ReturnType<typeof getCachedComponents>
-> = {
+export const getCachedComponentsMock = {
   electricyPricePerCantonDimensions: {
     dimensions: [
       {
@@ -401,4 +398,46 @@ export const getCachedComponentsMock: Record<
       },
     ],
   },
-};
+  geoAndNumerical: {
+    dimensions: [
+      {
+        __typename: "GeoShapesDimension",
+        cubeIri: "mapDataset",
+        iri: "newAreaLayerColorIri",
+        label: "Geo shapes dimension",
+        isNumerical: false,
+        isKeyDimension: false,
+        values: [
+          {
+            value: "orange",
+            label: "orange",
+            color: "rgb(255, 153, 0)",
+          },
+        ],
+      },
+      {
+        __typename: "GeoCoordinatesDimension",
+        iri: "symbolLayerIri",
+        cubeIri: "mapDataset",
+        label: "Geo coordinates dimension",
+        isNumerical: false,
+        isKeyDimension: false,
+        values: [{ value: "x", label: "y" }],
+      },
+    ],
+    measures: [
+      {
+        __typename: "NumericalMeasure",
+        iri: "measure",
+        cubeIri: "mapDataset",
+        label: "Numerical dimension",
+        isNumerical: true,
+        isKeyDimension: false,
+        values: [],
+      },
+    ],
+  },
+} satisfies Record<
+string,
+ReturnType<typeof getCachedComponents>
+>;
