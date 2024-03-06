@@ -2,21 +2,13 @@ import { useRouter } from "next/router";
 import { useEffect, useRef } from "react";
 import ParsingClient from "sparql-http-client/ParsingClient";
 
+import { ConfiguratorState } from "@/config-types";
 import { useLocale } from "@/locales/use-locale";
-import { queryLatestPublishedCubeFromUnversionedIri } from "@/rdf/query-cube-metadata";
+import { queryLatestCube } from "@/rdf/query-cube-metadata";
 import { getErrorQueryParams } from "@/utils/flashes";
 import useEvent from "@/utils/use-event";
 
-import { ConfiguratorState } from "../config-types";
-
-/**
- * Heuristic to check if a dataset IRI is versioned.
- * Versioned iris look like https://blabla/<number/
- */
-const isDatasetIriVersioned = (iri: string) => {
-  return iri.match(/\/\d+\/?$/) !== null;
-};
-export const useRedirectToVersionedCube = ({
+export const useRedirectToLatestCube = ({
   datasetIri,
   dataSource,
 }: {
@@ -33,29 +25,14 @@ export const useRedirectToVersionedCube = ({
       return;
     }
 
-    if (
-      datasetIri &&
-      !Array.isArray(datasetIri) &&
-      !isDatasetIriVersioned(datasetIri)
-    ) {
-      const sparqlClient = new ParsingClient({
-        endpointUrl: dataSourceURL,
-      });
-      const resp = await queryLatestPublishedCubeFromUnversionedIri(
-        sparqlClient,
-        datasetIri
-      );
+    if (datasetIri && !Array.isArray(datasetIri)) {
+      hasRun.current = true;
 
-      if (resp) {
-        router.replace({
-          pathname: "/browse",
-          query: {
-            ...router.query,
-            ...(router.query.iri ? { iri: resp.iri } : { dataset: resp.iri }),
-          },
-        });
-      } else {
-        router.replace({
+      const sparqlClient = new ParsingClient({ endpointUrl: dataSourceURL });
+      const latestIri = await queryLatestCube(sparqlClient, datasetIri);
+
+      if (!latestIri) {
+        return router.replace({
           pathname: `/`,
           query: getErrorQueryParams("CANNOT_FIND_CUBE", {
             ...router.query,
@@ -63,7 +40,16 @@ export const useRedirectToVersionedCube = ({
           }),
         });
       }
-      hasRun.current = true;
+
+      if (datasetIri !== latestIri) {
+        return router.replace({
+          pathname: "/browse",
+          query: {
+            ...router.query,
+            ...(router.query.iri ? { iri: latestIri } : { dataset: latestIri }),
+          },
+        });
+      }
     }
   });
 
