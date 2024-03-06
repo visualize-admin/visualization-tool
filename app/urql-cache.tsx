@@ -1,4 +1,4 @@
-import { ConfiguratorStateConfiguringChart } from "@/config-types";
+import { DataSource } from "@/config-types";
 import { DataCubeComponents } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { client } from "@/graphql/client";
@@ -16,7 +16,7 @@ import { Locale } from "@/locales/locales";
  * Components are not joined in cache, but transformed here.
  */
 export const getCachedComponents = (
-  draft: ConfiguratorStateConfiguringChart,
+  dataSource: DataSource,
   cubeFilters: DataCubeComponentFilter[],
   locale: Locale
 ): DataCubeComponents | undefined => {
@@ -26,8 +26,8 @@ export const getCachedComponents = (
         DataCubeComponentsQuery,
         DataCubeComponentsQueryVariables
       >(DataCubeComponentsDocument, {
-        sourceType: draft.dataSource.type,
-        sourceUrl: draft.dataSource.url,
+        sourceType: dataSource.type,
+        sourceUrl: dataSource.url,
         locale,
         cubeFilter: {
           iri: cubeFilter.iri,

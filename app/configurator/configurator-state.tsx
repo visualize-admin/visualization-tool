@@ -855,7 +855,7 @@ export const handleChartFieldChanged = (
   } = action.value;
   const f = get(chartConfig.fields, field);
   const dataCubesComponents = getCachedComponents(
-    draft,
+    draft.dataSource,
     chartConfig.cubes.map((cube) => ({
       iri: cube.iri,
       joinBy: cube.joinBy,
@@ -912,7 +912,7 @@ export const handleChartOptionChanged = (
     const chartConfig = getChartConfig(draft);
     const updatePath = field === null ? path : `fields["${field}"].${path}`;
     const dataCubesComponents = getCachedComponents(
-      draft,
+      draft.dataSource,
       chartConfig.cubes.map((cube) => ({
         iri: cube.iri,
         joinBy: cube.joinBy,
@@ -1071,7 +1071,7 @@ export const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         const { locale, chartKey, chartType } = action.value;
         const chartConfig = getChartConfig(draft, chartKey);
         const dataCubesComponents = getCachedComponents(
-          draft,
+          draft.dataSource,
           chartConfig.cubes.map((cube) => ({
             iri: cube.iri,
             joinBy: cube.joinBy,
@@ -1117,7 +1117,7 @@ export const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         const chartConfig = getChartConfig(draft);
         delete (chartConfig.fields as GenericFields)[action.value.field];
         const dataCubesComponents = getCachedComponents(
-          draft,
+          draft.dataSource,
           chartConfig.cubes.map((cube) => ({
             iri: cube.iri,
             joinBy: cube.joinBy,
@@ -1352,7 +1352,7 @@ export const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       if (draft.state === "CONFIGURING_CHART") {
         const chartConfig = getChartConfig(draft);
         const dataCubesComponents = getCachedComponents(
-          draft,
+          draft.dataSource,
           chartConfig.cubes.map((cube) => ({
             iri: cube.iri,
             joinBy: cube.joinBy,
@@ -1415,7 +1415,7 @@ export const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         const { locale } = action.value;
         const removedCubeIri = action.value.iri;
         const dataCubesComponents = getCachedComponents(
-          draft,
+          draft.dataSource,
           chartConfig.cubes
             .filter((c) => c.iri !== removedCubeIri)
             .map((cube) => ({
