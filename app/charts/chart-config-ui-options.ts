@@ -252,6 +252,8 @@ export interface EncodingSpec<T extends ChartConfig = ChartConfig> {
   field: EncodingFieldType;
   optional: boolean;
   componentTypes: ComponentType[];
+  /** Used to find component iri inside the encoding. Particularly useful for fields that may contain several components. */
+  iriAttributes: string[];
   /** If true, won't use the ChartFieldOption component, but a custom one. Needs to be handled then in ChartOptionsSelector. */
   customComponent?: boolean;
   /** If false, using a dimension in this encoding will not prevent it to be used in an other encoding. Default: true */
@@ -367,6 +369,7 @@ export const ANIMATION_FIELD_SPEC: EncodingSpec<
 > = {
   field: "animation",
   optional: true,
+  iriAttributes: [],
   componentTypes: ["TemporalDimension", "TemporalOrdinalDimension"],
   filters: true,
   hide: true,
@@ -539,6 +542,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
     encodings: [
       {
         field: "y",
+        iriAttributes: ["componentIri"],
         optional: false,
         componentTypes: ["NumericalMeasure"],
         filters: false,
@@ -552,6 +556,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
       },
       {
         field: "x",
+        iriAttributes: ["componentIri"],
         optional: false,
         componentTypes: ["TemporalDimension"],
         filters: true,
@@ -559,6 +564,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
       {
         field: "segment",
         optional: true,
+        iriAttributes: ["componentIri"],
         componentTypes: SEGMENT_COMPONENT_TYPES,
         filters: true,
         sorting: AREA_SEGMENT_SORTING,
@@ -616,6 +622,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
       {
         field: "y",
         optional: false,
+        iriAttributes: ["componentIri"],
         componentTypes: ["NumericalMeasure"],
         filters: false,
         onChange: (iri, { chartConfig, measures }) => {
@@ -643,6 +650,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
       {
         field: "x",
         optional: false,
+        iriAttributes: ["componentIri"],
         componentTypes: [
           "TemporalDimension",
           "TemporalOrdinalDimension",
@@ -676,6 +684,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
       {
         field: "segment",
         optional: true,
+        iriAttributes: ["componentIri"],
         componentTypes: SEGMENT_COMPONENT_TYPES,
         filters: true,
         sorting: COLUMN_SEGMENT_SORTING,
@@ -761,18 +770,21 @@ const chartConfigOptionsUISpec: ChartSpecs = {
     chartType: "line",
     encodings: [
       {
+        iriAttributes: ["componentIri"],
         field: "y",
         optional: false,
         componentTypes: ["NumericalMeasure"],
         filters: false,
       },
       {
+        iriAttributes: ["componentIri"],
         field: "x",
         optional: false,
         componentTypes: ["TemporalDimension"],
         filters: true,
       },
       {
+        iriAttributes: ["componentIri"],
         field: "segment",
         optional: true,
         componentTypes: SEGMENT_COMPONENT_TYPES,
@@ -792,12 +804,14 @@ const chartConfigOptionsUISpec: ChartSpecs = {
     encodings: [
       // Should this even be an encoding when it's not mapped to a component?
       {
+        iriAttributes: ["componentIri"],
         field: "baseLayer",
         optional: true,
         componentTypes: [],
         filters: false,
       },
       {
+        iriAttributes: ["componentIri"],
         field: "areaLayer",
         optional: true,
         componentTypes: ["GeoShapesDimension"],
@@ -819,6 +833,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         },
       },
       {
+        iriAttributes: ["componentIri"],
         field: "symbolLayer",
         optional: true,
         componentTypes: ["GeoCoordinatesDimension", "GeoShapesDimension"],
@@ -855,12 +870,14 @@ const chartConfigOptionsUISpec: ChartSpecs = {
     chartType: "pie",
     encodings: [
       {
+        iriAttributes: ["componentIri"],
         field: "y",
         optional: false,
         componentTypes: ["NumericalMeasure"],
         filters: false,
       },
       {
+        iriAttributes: ["componentIri"],
         field: "segment",
         optional: false,
         componentTypes: SEGMENT_COMPONENT_TYPES,
@@ -880,18 +897,21 @@ const chartConfigOptionsUISpec: ChartSpecs = {
     chartType: "scatterplot",
     encodings: [
       {
+        iriAttributes: ["componentIri"],
         field: "x",
         optional: false,
         componentTypes: ["NumericalMeasure"],
         filters: false,
       },
       {
+        iriAttributes: ["componentIri"],
         field: "y",
         optional: false,
         componentTypes: ["NumericalMeasure"],
         filters: false,
       },
       {
+        iriAttributes: ["componentIri"],
         field: "segment",
         optional: true,
         componentTypes: SEGMENT_COMPONENT_TYPES,
@@ -916,6 +936,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
     chartType: "comboLineSingle",
     encodings: [
       {
+        iriAttributes: ["componentIris"],
         field: "y",
         optional: false,
         // TODO: maybe we should even create the components here?
@@ -938,6 +959,8 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         },
       },
       {
+        iriAttributes: ["componentIri"],
+
         field: "x",
         optional: false,
         componentTypes: ["TemporalDimension"],
@@ -951,6 +974,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
     encodings: [
       {
         field: "y",
+        iriAttributes: ["leftAxisComponentIri", "rightAxisComponentIri"],
         optional: false,
         customComponent: true,
         componentTypes: ["NumericalMeasure"],
@@ -983,6 +1007,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         },
       },
       {
+        iriAttributes: ["componentIri"],
         field: "x",
         optional: false,
         componentTypes: ["TemporalDimension"],
@@ -998,6 +1023,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         field: "y",
         optional: false,
         customComponent: true,
+        iriAttributes: ["lineComponentIri", "columnComponentIri"],
         componentTypes: ["NumericalMeasure"],
         filters: false,
         options: {
@@ -1053,6 +1079,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
       },
       {
         field: "x",
+        iriAttributes: ["componentIri"],
         optional: false,
         componentTypes: ["TemporalDimension"],
         filters: true,

@@ -78,7 +78,7 @@ export const InteractiveFiltersConfigurator = ({
           {/* Animation is technically a field, so we need to use an appropriate component. */}
           <ControlTabField
             chartConfig={chartConfig}
-            component={animationComponent}
+            fieldComponents={animationComponent ? [animationComponent] : []}
             value="animation"
             labelId={null}
             {...ANIMATION_FIELD_SPEC.getDisabledState?.(

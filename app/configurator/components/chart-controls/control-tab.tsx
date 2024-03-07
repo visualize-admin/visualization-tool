@@ -20,7 +20,7 @@ import useEvent from "@/utils/use-event";
 
 type ControlTabProps = {
   chartConfig: ChartConfig;
-  component?: Component;
+  fieldComponents?: Component[];
   value: string;
   onClick: (x: string) => void;
   labelId: string | null;
@@ -31,7 +31,7 @@ type ControlTabProps = {
 export const ControlTab = (props: ControlTabProps) => {
   const {
     chartConfig,
-    component,
+    fieldComponents,
     value,
     onClick,
     checked,
@@ -40,6 +40,8 @@ export const ControlTab = (props: ControlTabProps) => {
     warnMessage,
   } = props;
   const handleClick = useEvent(() => onClick(value));
+
+  const component = fieldComponents?.[0];
   const isActive = overrideChecked(chartConfig, value) ? true : !!component;
   const { upperLabel, mainLabel } = getLabels(
     chartConfig,
@@ -84,9 +86,10 @@ const getLabels = (
   switch (value) {
     case "y":
       if (isComboChartConfig(chartConfig)) {
+        console.log(chartConfig);
         return {
-          upperLabel: null,
-          mainLabel: getFieldLabel("y"),
+          upperLabel: getFieldLabel("y"),
+          mainLabel: null,
         };
       }
     default:
