@@ -119,18 +119,26 @@ export const comboChartTypes: ComboChartType[] = [
   ...comboDifferentUnitChartTypes,
 ];
 
-export const chartTypesOrder: { [k in ChartType]: number } = {
-  column: 0,
-  line: 1,
-  area: 2,
-  scatterplot: 3,
-  pie: 4,
-  map: 5,
-  table: 6,
-  comboLineSingle: 7,
-  comboLineDual: 8,
-  comboLineColumn: 9,
-};
+type ChartOrder = { [k in ChartType]: number };
+export function getChartTypeOrder({
+  cubeCount,
+}: {
+  cubeCount: number;
+}): ChartOrder {
+  const multiCubeBoost = cubeCount > 1 ? -100 : 0;
+  return {
+    column: 0,
+    line: 1,
+    area: 2,
+    scatterplot: 3,
+    pie: 4,
+    map: 5,
+    table: 6,
+    comboLineSingle: 7 + multiCubeBoost,
+    comboLineDual: 8 + multiCubeBoost,
+    comboLineColumn: 9 + multiCubeBoost,
+  };
+}
 
 /**
  * Finds the "best" dimension based on a preferred type (e.g. TemporalDimension) and Key Dimension
@@ -1903,10 +1911,12 @@ export const getPossibleChartTypes = ({
   dimensions,
   measures,
   allowedChartTypes,
+  cubeCount,
 }: {
   dimensions: Dimension[];
   measures: Measure[];
   allowedChartTypes?: ChartType[];
+  cubeCount: number;
 }): ChartType[] => {
   const numericalMeasures = measures.filter(isNumericalMeasure);
   const ordinalMeasures = measures.filter(isOrdinalMeasure);
@@ -1963,6 +1973,7 @@ export const getPossibleChartTypes = ({
     possibles.push("map");
   }
 
+  const chartTypesOrder = getChartTypeOrder({ cubeCount });
   return chartTypes
     .filter(
       (d) =>

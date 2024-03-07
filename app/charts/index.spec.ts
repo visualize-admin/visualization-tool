@@ -135,6 +135,7 @@ describe("possible chart types", () => {
         .dimensions as any as Dimension[],
       measures: bathingWaterData.data.dataCubeByIri
         .measures as any as Measure[],
+      cubeCount: 1,
     }).sort();
 
     expect(possibleChartTypes).toEqual(expectedChartTypes);
@@ -144,6 +145,7 @@ describe("possible chart types", () => {
     const possibleChartTypes = getPossibleChartTypes({
       dimensions: [],
       measures: [{ __typename: "NumericalMeasure" }] as any,
+      cubeCount: 1,
     });
 
     expect(possibleChartTypes).toEqual(["table"]);
@@ -153,6 +155,7 @@ describe("possible chart types", () => {
     const possibleChartTypes = getPossibleChartTypes({
       dimensions: [{ __typename: "GeoShapesDimension" }] as any,
       measures: [{ __typename: "NumericalMeasure" }] as any,
+      cubeCount: 1,
     }).sort();
 
     expect(possibleChartTypes).toEqual(["column", "map", "pie", "table"]);
@@ -165,6 +168,7 @@ describe("possible chart types", () => {
         { __typename: "NumericalMeasure", unit: "m" },
         { __typename: "NumericalMeasure", unit: "cm" },
       ] as any,
+      cubeCount: 1,
     });
 
     expect(possibleChartTypes).not.toContain("comboLineSingle");
