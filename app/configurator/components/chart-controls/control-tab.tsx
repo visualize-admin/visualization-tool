@@ -12,8 +12,8 @@ import {
 } from "@/configurator";
 import { getFieldLabel } from "@/configurator/components/field-i18n";
 import {
+  getDimensionLabel,
   getIconName,
-  getLabelFromDimension,
 } from "@/configurator/components/ui-helpers";
 import { Component } from "@/domain/data";
 import { Icon, IconName } from "@/icons";
@@ -50,7 +50,7 @@ export const ControlTab = (props: ControlTabProps) => {
     ? true
     : !!firstComponent;
 
-  const labels = components?.map((x) => getLabelFromDimension(x));
+  const labels = components?.map((x) => getDimensionLabel(x));
 
   const { upperLabel, mainLabel } = getLabels(
     chartConfig,

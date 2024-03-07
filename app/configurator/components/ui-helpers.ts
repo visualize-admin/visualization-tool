@@ -286,7 +286,7 @@ export const canUseAbbreviations = (d?: Component): boolean => {
   return !!d.values.find((d) => d.alternateName);
 };
 
-export const getLabelFromDimension = (dim: Component) => {
+export const getDimensionLabel = (dim: Component) => {
   if (dim.iri === "joinBy") {
     if (dim.__typename === "TemporalDimension") {
       switch (dim.timeUnit) {

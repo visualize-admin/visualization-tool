@@ -67,7 +67,7 @@ import {
 } from "@/configurator/components/filters";
 import {
   canUseAbbreviations,
-  getLabelFromDimension,
+  getDimensionLabel,
 } from "@/configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { TableColumnOptions } from "@/configurator/table/table-chart-options";
@@ -282,7 +282,7 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
       measures,
     }).map((d) => ({
       value: d.iri,
-      label: getLabelFromDimension(d),
+      label: getDimensionLabel(d),
       disabled:
         ((encoding.exclusive === undefined || encoding.exclusive === true) &&
           otherFieldsIris.includes(d.iri)) ||
