@@ -215,7 +215,7 @@ const mkScoresQuery = (
       })}
 
       ${filters?.map((df) => {
-        if (df.type === "Temporal") {
+        if (df.type !== SearchCubeFilterType.TemporalDimension) {
           return;
         }
 
