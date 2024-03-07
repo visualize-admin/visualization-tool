@@ -1,3 +1,4 @@
+import { t } from "@lingui/macro";
 import {
   ascending,
   CountableTimeInterval,
@@ -283,4 +284,29 @@ export const canUseAbbreviations = (d?: Component): boolean => {
   }
 
   return !!d.values.find((d) => d.alternateName);
+};
+
+export const getLabelFromDimension = (dim: Component) => {
+  if (dim.iri === "joinBy") {
+    if (dim.__typename === "TemporalDimension") {
+      switch (dim.timeUnit) {
+        case TimeUnit.Year:
+          return t({ id: `time-units.Year`, message: "Year" });
+        case TimeUnit.Month:
+          return t({ id: `time-units.Month`, message: "Month" });
+        case TimeUnit.Week:
+          return t({ id: `time-units.Week`, message: "Week" });
+        case TimeUnit.Day:
+          return t({ id: `time-units.Day`, message: "Day" });
+        case TimeUnit.Hour:
+          return t({ id: `time-units.Hour`, message: "Hour" });
+        case TimeUnit.Minute:
+          return t({ id: `time-units.Minute`, message: "Minute" });
+        case TimeUnit.Second:
+          return t({ id: `time-units.Second`, message: "Second" });
+      }
+      return t({ id: `time-units.${dim.timeUnit}` });
+    }
+  }
+  return dim.label;
 };

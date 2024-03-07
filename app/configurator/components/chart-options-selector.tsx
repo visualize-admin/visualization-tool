@@ -65,7 +65,10 @@ import {
   DimensionValuesMultiFilter,
   TimeFilter,
 } from "@/configurator/components/filters";
-import { canUseAbbreviations } from "@/configurator/components/ui-helpers";
+import {
+  canUseAbbreviations,
+  getLabelFromDimension,
+} from "@/configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { TableColumnOptions } from "@/configurator/table/table-chart-options";
 import {
@@ -279,7 +282,7 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
       measures,
     }).map((d) => ({
       value: d.iri,
-      label: d.label,
+      label: getLabelFromDimension(d),
       disabled:
         ((encoding.exclusive === undefined || encoding.exclusive === true) &&
           otherFieldsIris.includes(d.iri)) ||
