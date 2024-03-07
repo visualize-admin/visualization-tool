@@ -611,7 +611,7 @@ export const applyNonTableDimensionToFilters = ({
   }
 };
 
-const getInitialConfigBasedOnCube = ({
+const getInitialConfiguringConfigBasedOnCube = ({
   dataCubesComponents,
   cubeIris,
   dataSource,
@@ -673,7 +673,7 @@ const transitionStepNext = (
   switch (draft.state) {
     case "SELECTING_DATASET":
       if (cubeIris) {
-        return getInitialConfigBasedOnCube({
+        return getInitialConfiguringConfigBasedOnCube({
           cubeIris,
           dataCubesComponents,
           dataSource: draft.dataSource,
@@ -1430,7 +1430,7 @@ export const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
           );
         }
 
-        const result = getInitialConfigBasedOnCube({
+        const result = getInitialConfiguringConfigBasedOnCube({
           dataCubesComponents,
           dataSource: draft.dataSource,
           cubeIris: chartConfig.cubes
