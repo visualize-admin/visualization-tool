@@ -34,8 +34,7 @@ SELECT ?iri WHERE {
       ?versionHistory schema:hasPart ?iri .
       ?iri schema:version ?version .
       ?iri schema:creativeWorkStatus ?status .
-      ?oldIri schema:creativeWorkStatus ?oldStatus .
-      FILTER(NOT EXISTS { ?iri schema:expires ?expires . } && ?status IN (?oldStatus, <https://ld.admin.ch/vocabulary/CreativeWorkStatus/Published>))
+      FILTER(NOT EXISTS { ?iri schema:expires ?expires . } && ?status = <https://ld.admin.ch/vocabulary/CreativeWorkStatus/Published>)
     }
   }
 }
