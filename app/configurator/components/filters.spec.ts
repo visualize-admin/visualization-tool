@@ -7,6 +7,10 @@ import { getTimeFilterOptions } from "./filters";
 
 RDFCubeViewQueryMock;
 
+jest.mock("../../rdf/extended-cube", () => ({
+  ExtendedCube: jest.fn(),
+}));
+
 describe("TimeFilter", () => {
   const dimension = {
     timeFormat: "%Y",

@@ -58,6 +58,10 @@ jest.mock("rdf-cube-view-query", () => ({
   },
 }));
 
+jest.mock("../rdf/extended-cube", () => ({
+  ExtendedCube: jest.fn(),
+}));
+
 jest.mock("@/utils/chart-config/api", () => ({
   createConfig: jest.fn(),
   fetchChartConfig: jest.fn(),

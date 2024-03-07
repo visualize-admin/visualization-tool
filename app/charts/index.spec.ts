@@ -12,6 +12,10 @@ import {
   getPossibleChartTypes,
 } from "./index";
 
+jest.mock("../rdf/extended-cube", () => ({
+  ExtendedCube: jest.fn(),
+}));
+
 RDFCubeViewQueryMock;
 
 const mockDimensions: Record<string, Dimension> = {

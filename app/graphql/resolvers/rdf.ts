@@ -225,7 +225,7 @@ export const dataCubeComponents: NonNullable<
           scaleType,
           related
         );
-        const hierarchy = true // TODO: make this configurable
+        const hierarchy = loadValues
           ? await queryHierarchy(
               component,
               locale,

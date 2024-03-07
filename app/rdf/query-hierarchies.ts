@@ -133,7 +133,16 @@ export const queryHierarchy = async (
     hierarchyPointers.map(async (pointer) => {
       return {
         // @ts-ignore
-        nodes: await getHierarchy(pointer).execute(sparqlClientStream, rdf),
+        nodes: await getHierarchy(pointer, {
+          properties: [
+            ns.schema.identifier,
+            ns.schema.name,
+            ns.schema.description,
+            ns.schema.position,
+            ns.schema.alternateName,
+          ],
+          // @ts-ignore
+        }).execute(sparqlClientStream, rdf),
         hierarchyName: getName(pointer, locale),
       };
     })
