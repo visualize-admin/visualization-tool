@@ -1375,35 +1375,7 @@ export const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
     case "DATASET_ADD":
       if (draft.state === "CONFIGURING_CHART") {
-        for (const chartConfig of draft.chartConfigs) {
-          chartConfig.cubes[0].joinBy = action.value.joinBy.left;
-          chartConfig.cubes.push({
-            iri: action.value.iri,
-            joinBy: action.value.joinBy.right,
-            filters: {},
-          });
-
-          // Need to go over fields, and replace any IRI part of the joinBy by "joinBy"
-          const fields = Object.values(chartConfig.fields);
-          while (fields.length > 0) {
-            const f = fields.pop();
-            for (const fieldName of [
-              "componentIri",
-              "leftComponentIri",
-              "rightComponentIri",
-            ]) {
-              if (
-                f[fieldName] === action.value.joinBy.left ||
-                f[fieldName] === action.value.joinBy.right
-              ) {
-                f[fieldName] = "joinBy";
-              }
-              if (f.color) {
-                fields.push(f.color);
-              }
-            }
-          }
-        }
+        addDatasetInConfig(draft, action.value);
         return draft;
       }
       break;
@@ -1906,6 +1878,45 @@ export type ConfiguratorStateWithChartConfigs =
   | ConfiguratorStateLayouting
   | ConfiguratorStatePublishing
   | ConfiguratorStatePublished;
+
+export const addDatasetInConfig = function (
+  config: ConfiguratorStateConfiguringChart,
+  options: {
+    iri: string;
+    joinBy: {
+      left: string;
+      right: string;
+    };
+  }
+) {
+  const { iri, joinBy } = options;
+  for (const chartConfig of config.chartConfigs) {
+    chartConfig.cubes[0].joinBy = joinBy.left;
+    chartConfig.cubes.push({
+      iri: iri,
+      joinBy: joinBy.right,
+      filters: {},
+    });
+
+    // Need to go over fields, and replace any IRI part of the joinBy by "joinBy"
+    const fields = Object.values(chartConfig.fields);
+    while (fields.length > 0) {
+      const f = fields.pop();
+      for (const fieldName of [
+        "componentIri",
+        "leftAxisComponentIri",
+        "rightAxisComponentIri",
+      ]) {
+        if (f[fieldName] === joinBy.left || f[fieldName] === joinBy.right) {
+          f[fieldName] = "joinBy";
+        }
+        if (f.color) {
+          fields.push(f.color);
+        }
+      }
+    }
+  }
+};
 
 export async function publishState(
   user: ReturnType<typeof useUser>,
