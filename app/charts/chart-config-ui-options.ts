@@ -163,7 +163,7 @@ const onColorComponentIriChange: OnEncodingOptionChange<string, MapConfig> = (
   iri,
   { chartConfig, dimensions, measures, field }
 ) => {
-  const basePath = `fields.${field}`;
+  const basePath = `fields["${field}"]`;
   const components = [...dimensions, ...measures];
   let newField: ColorField = DEFAULT_FIXED_COLOR_FIELD;
   const component = components.find((d) => d.iri === iri);
@@ -476,10 +476,7 @@ export const defaultSegmentOnChange: OnEncodingChange<
   | ScatterPlotConfig
   | PieConfig
   | TableConfig
-> = (
-  iri,
-  { chartConfig, dimensions, measures, initializing, selectedValues }
-) => {
+> = (iri, { chartConfig, dimensions, measures, selectedValues }) => {
   const components = [...dimensions, ...measures];
   const component = components.find((d) => d.iri === iri);
   const palette = getDefaultCategoricalPaletteName(
@@ -493,19 +490,16 @@ export const defaultSegmentOnChange: OnEncodingChange<
     dimensionValues: component ? component.values : selectedValues,
   });
 
-  if (initializing) {
+  if (chartConfig.fields.segment && "palette" in chartConfig.fields.segment) {
+    chartConfig.fields.segment.componentIri = iri;
+    chartConfig.fields.segment.colorMapping = colorMapping;
+  } else {
     chartConfig.fields.segment = {
       componentIri: iri,
       palette,
       sorting: DEFAULT_SORTING,
       colorMapping,
     };
-  } else if (
-    chartConfig.fields.segment &&
-    "palette" in chartConfig.fields.segment
-  ) {
-    chartConfig.fields.segment.componentIri = iri;
-    chartConfig.fields.segment.colorMapping = colorMapping;
   }
 
   if (!selectedValues.length || !component) {

@@ -495,12 +495,14 @@ export const getInitialConfig = (
           },
           ...(scatterplotSegmentComponent
             ? {
-                componentIri: scatterplotSegmentComponent.iri,
-                palette: scatterplotPalette,
-                colorMapping: mapValueIrisToColor({
+                segment: {
+                  componentIri: scatterplotSegmentComponent.iri,
                   palette: scatterplotPalette,
-                  dimensionValues: scatterplotSegmentComponent.values,
-                }),
+                  colorMapping: mapValueIrisToColor({
+                    palette: scatterplotPalette,
+                    dimensionValues: scatterplotSegmentComponent.values,
+                  }),
+                },
               }
             : {}),
         },
@@ -920,8 +922,12 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
               type: disableStacked(yMeasure) ? "grouped" : "stacked",
             };
           }
-          // Otherwise we are dealing with a segment field.
-        } else {
+          // Otherwise we are dealing with a segment field. We shouldn't take
+          // the segment from oldValue if the component has already been used as
+          // x axis.
+        } else if (
+          newChartConfig.fields.x.componentIri !== oldValue.componentIri
+        ) {
           const oldSegment = oldValue as Exclude<typeof oldValue, TableFields>;
           newSegment = {
             ...oldSegment,

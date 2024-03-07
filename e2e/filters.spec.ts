@@ -18,6 +18,13 @@ describe("Filters", () => {
 
     await filters.locator("label").first().waitFor({ timeout: 30_000 });
 
+    const inputs = await filters.locator("input[name^=select-single-filter]");
+    const inputsCount = await inputs.count();
+
+    for (let i = 0; i < inputsCount; i++) {
+      await expect(inputs.nth(i)).not.toBeDisabled();
+    }
+
     const labels = filters.locator("label[for^=select-single-filter]");
 
     const texts = await labels.allTextContents();
