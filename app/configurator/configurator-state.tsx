@@ -1,5 +1,5 @@
 import { PUBLISHED_STATE } from "@prisma/client";
-import produce, { current } from "immer";
+import produce, { Draft, current } from "immer";
 import get from "lodash/get";
 import pickBy from "lodash/pickBy";
 import setWith from "lodash/setWith";
@@ -1052,7 +1052,7 @@ export const setRangeFilter = (
   }
 };
 
-export const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
+const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
   draft,
   action
 ) => {
@@ -1489,6 +1489,17 @@ export const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       throw unreachableError(action);
   }
 };
+
+/** Turn this on for the reducer to log state, action and result */
+const reducerLogging = false;
+const withLogging = <TState, TAction>(reducer: Reducer<TState, TAction>) => {
+  return (state: Draft<TState>, action: TAction) => {
+    const res = reducer(state, action);
+    console.log(state, action, res);
+    return res;
+  };
+};
+export const reducer = reducerLogging ? withLogging(reducer_) : reducer_;
 
 const ConfiguratorStateContext = createContext<
   [ConfiguratorState, Dispatch<ConfiguratorStateAction>] | undefined
