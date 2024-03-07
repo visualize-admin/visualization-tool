@@ -1076,7 +1076,7 @@ msgstr "{0, plural, zero {Keine Datensätze} one {# Datensatz} other {# Datensä
 
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.add-dataset"
-msgstr ""
+msgstr "Datensatz hinzufügen"
 
 #: app/browser/dataset-browse.tsx
 #: app/configurator/components/add-dataset-dialog.tsx
