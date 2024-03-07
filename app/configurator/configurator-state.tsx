@@ -45,6 +45,7 @@ import {
   enableLayouting,
   getChartConfig,
   getChartConfigFilters,
+  iriFields,
   isAreaConfig,
   isColorFieldInConfig,
   isTableConfig,
@@ -1914,11 +1915,7 @@ export const addDatasetInConfig = function (
     const fields = Object.values(chartConfig.fields);
     while (fields.length > 0) {
       const f = fields.pop();
-      for (const fieldName of [
-        "componentIri",
-        "leftAxisComponentIri",
-        "rightAxisComponentIri",
-      ]) {
+      for (const fieldName of iriFields) {
         if (f[fieldName] === joinBy.left || f[fieldName] === joinBy.right) {
           f[fieldName] = "joinBy";
         }
