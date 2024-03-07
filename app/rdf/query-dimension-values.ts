@@ -306,57 +306,39 @@ export const getQueryFilters = (
     return "";
   }
 
-  let i = 0;
-  const filterDimensionIris = filtersList.map(([iri]) => iri);
-  // Also include other dimensions to make sure we don't return values that could
-  // result in no observations. Inclusion of other dimensions is necessary to
-  // filter out unobserved values.
-  const otherDimensionFilters = cube.dimensions
-    .filter(
-      (dim) =>
-        dim.path?.value !== dimensionIri &&
-        !filterDimensionIris.includes(dim.path?.value ?? "") &&
-        !dim.path?.equals(ns.cube.observedBy)
-    )
-    .map((dim) => `?observation <${dim.path?.value}> ?dimension${i++} .`);
-  const filterDimensionFilters = filtersList.map(([iri, value], j) => {
-    const dimension = cube.dimensions.find((d) => d.path?.value === iri);
+  return filtersList
+    .map(([iri, value], i) => {
+      const dimension = cube.dimensions.find((d) => d.path?.value === iri);
 
-    // Ignore the current dimension
-    if (!dimension || dimensionIri === iri) {
-      return "";
-    }
+      // Ignore the current dimension
+      if (!dimension || dimensionIri === iri) {
+        return "";
+      }
 
-    // Ignore filters with no value or with the special value
-    if (
-      value.type === "single" &&
-      (value.value === FIELD_VALUE_NONE || isDynamicMaxValue(value.value))
-    ) {
-      return "";
-    }
+      // Ignore filters with no value or with the special value
+      if (
+        value.type === "single" &&
+        (value.value === FIELD_VALUE_NONE || isDynamicMaxValue(value.value))
+      ) {
+        return "";
+      }
 
-    // Ignore range filters for now
-    if (value.type === "range") {
-      return "";
-    }
+      // Ignore range filters for now
+      if (value.type === "range") {
+        return "";
+      }
 
-    const versioned = dimension ? dimensionIsVersioned(dimension) : false;
+      const versioned = dimension ? dimensionIsVersioned(dimension) : false;
 
-    return `${
-      versioned
-        ? `?dimension${i + j} <${
-            ns.schema.sameAs.value
-          }> ?dimension_unversioned${i + j} .`
-        : ""
-    }
-?observation <${iri}> ?dimension${i + j} .
-${formatFilterIntoSparqlFilter(value, dimension, versioned, i + j)}`;
-  });
-
-  return `
-    ${otherDimensionFilters.join("\n")}
-    ${filterDimensionFilters.join("\n")}
-  `;
+      return `${
+        versioned
+          ? `?dimension${i} <${ns.schema.sameAs.value}> ?dimension_unversioned${i} .`
+          : ""
+      }
+?observation <${iri}> ?dimension${i} .
+${formatFilterIntoSparqlFilter(value, dimension, versioned, i)}`;
+    })
+    .join("\n");
 };
 
 const parseMinMax = (result: ResultRow[]) => {
