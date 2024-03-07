@@ -91,7 +91,7 @@ export const ColorRampField = ({
     return { palettes, defaultPalette };
   }, []);
 
-  const currentPaletteName = get(chartConfig, `fields.${field}.${path}`) as
+  const currentPaletteName = get(chartConfig, `fields["${field}"].${path}`) as
     | DivergingPaletteType
     | SequentialPaletteType;
 

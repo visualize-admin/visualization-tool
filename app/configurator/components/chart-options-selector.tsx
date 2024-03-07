@@ -1172,12 +1172,12 @@ const ChartFieldMultiFilter = ({
 }) => {
   const colorComponentIri = get(
     chartConfig,
-    `fields.${field}.color.componentIri`
+    `fields["${field}"].color.componentIri`
   );
   const colorComponent = [...dimensions, ...measures].find(
     (d) => d.iri === colorComponentIri
   );
-  const colorType = get(chartConfig, `fields.${field}.color.type`) as
+  const colorType = get(chartConfig, `fields["${field}"].color.type`) as
     | ColorFieldType
     | undefined;
 
