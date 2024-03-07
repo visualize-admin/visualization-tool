@@ -690,15 +690,6 @@ const ComboLineColumnFields = t.type({
   }),
 });
 
-export const iriFields = [
-  "lineComponentIri",
-  "columnComponentIri",
-  "componentIri",
-  "leftAxisComponentIri",
-  "rightAxisComponentIri",
-  "measureIri",
-];
-
 export type ComboLineColumnFields = t.TypeOf<typeof ComboLineColumnFields>;
 
 const ComboLineColumnConfig = t.intersection([

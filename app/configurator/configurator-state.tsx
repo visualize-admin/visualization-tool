@@ -21,6 +21,7 @@ import {
   EncodingFieldType,
   getChartFieldChangeSideEffect,
   getChartFieldOptionChangeSideEffect,
+  getChartSpec,
 } from "@/charts/chart-config-ui-options";
 import {
   ChartConfig,
@@ -45,7 +46,6 @@ import {
   enableLayouting,
   getChartConfig,
   getChartConfigFilters,
-  iriFields,
   isAreaConfig,
   isColorFieldInConfig,
   isTableConfig,
@@ -1912,15 +1912,24 @@ export const addDatasetInConfig = function (
     });
 
     // Need to go over fields, and replace any IRI part of the joinBy by "joinBy"
-    const fields = Object.values(chartConfig.fields);
-    while (fields.length > 0) {
-      const f = fields.pop();
-      for (const fieldName of iriFields) {
-        if (f[fieldName] === joinBy.left || f[fieldName] === joinBy.right) {
-          f[fieldName] = "joinBy";
-        }
-        if (f.color) {
-          fields.push(f.color);
+    const { encodings } = getChartSpec(chartConfig);
+    const encodingAndFields = encodings.map(
+      (e) =>
+        [
+          e,
+          chartConfig.fields[e.field as keyof typeof chartConfig.fields] as any,
+        ] as const
+    );
+    for (const [encoding, field] of encodingAndFields) {
+      if (!field) {
+        continue;
+      }
+      for (const iriAttribute of encoding.iriAttributes) {
+        if (
+          field[iriAttribute] === joinBy.left ||
+          field[iriAttribute] === joinBy.right
+        ) {
+          field[iriAttribute] = "joinBy";
         }
       }
     }
