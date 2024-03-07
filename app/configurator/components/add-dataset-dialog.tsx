@@ -15,11 +15,14 @@ import {
 } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import { makeStyles } from "@mui/styles";
+import uniqBy from "lodash/uniqBy";
 import { FormEvent, useMemo, useState } from "react";
 
 import { DatasetResults, PartialSearchCube } from "@/browser/dataset-browse";
+import { getPossibleChartTypes } from "@/charts";
 import {
   ConfiguratorStateConfiguringChart,
+  addDatasetInConfig,
   isConfiguring,
   useConfiguratorState,
 } from "@/configurator";
@@ -284,11 +287,50 @@ const useAddDataset = () => {
           currentComponents,
           componentQueryResult.data.dataCubesComponents
         );
+
+        const addDatasetOptions = {
+          iri,
+          joinBy: joinBy,
+        };
+        const nextState = JSON.parse(
+          JSON.stringify(state)
+        ) as ConfiguratorStateConfiguringChart;
+        addDatasetInConfig(nextState, addDatasetOptions);
+
+        const allCubes = uniqBy(
+          nextState.chartConfigs.flatMap((x) => x.cubes),
+          (x) => x.iri
+        );
+        const res = await executeDataCubesComponentsQuery({
+          locale: locale,
+          sourceType,
+          sourceUrl,
+          cubeFilters: allCubes.map((cube) => ({
+            iri: cube.iri,
+            joinBy: cube.joinBy,
+            loadValues: true,
+          })),
+        });
+
+        if (res.error || !res.data) {
+          throw new Error("Could not fetch dimensions and measures");
+        }
         dispatch({
           type: "DATASET_ADD",
+          value: addDatasetOptions,
+        });
+        const { dimensions, measures } = res.data.dataCubesComponents;
+        const possibleType = getPossibleChartTypes({
+          dimensions: dimensions,
+          measures: measures,
+          cubeCount: allCubes.length,
+        });
+        dispatch({
+          type: "CHART_TYPE_CHANGED",
           value: {
-            iri,
-            joinBy: joinBy,
+            locale,
+            chartKey: state.activeChartKey,
+            chartType: possibleType[0],
           },
         });
       } finally {

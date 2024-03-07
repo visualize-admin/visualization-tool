@@ -623,6 +623,7 @@ const getInitialConfiguringConfigBasedOnCube = ({
   const possibleChartTypes = getPossibleChartTypes({
     dimensions: dataCubesComponents.dimensions,
     measures: dataCubesComponents.measures,
+    cubeCount: cubeIris.length,
   });
   const chartConfig = deriveFiltersFromFields(
     getInitialConfig({
