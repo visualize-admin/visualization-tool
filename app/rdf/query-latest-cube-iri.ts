@@ -7,6 +7,7 @@ PREFIX schema: <http://schema.org/>
 
 SELECT ?iri WHERE {
   {
+    # Versioned cube.
     SELECT ?iri WHERE {
       VALUES ?oldIri { <${cubeIri}> }
       ?versionHistory schema:hasPart ?oldIri .
@@ -17,11 +18,24 @@ SELECT ?iri WHERE {
       FILTER(NOT EXISTS { ?iri schema:expires ?expires . } && ?status IN (?oldStatus, <https://ld.admin.ch/vocabulary/CreativeWorkStatus/Published>))
     }
   } UNION {
-    SELECT ?iri WHERE {
-      VALUES ?iri { <${cubeIri}> }
-      ?iri cube:observationConstraint ?shape .
+    {
+      # Non-versioned cube.
+      SELECT ?iri WHERE {
+        VALUES ?iri { <${cubeIri}> }
+        ?iri cube:observationConstraint ?shape .
+        ?iri schema:creativeWorkStatus ?status .
+        FILTER(NOT EXISTS { ?iri schema:expires ?expires . } && ?status = <https://ld.admin.ch/vocabulary/CreativeWorkStatus/Published>)      
+      }
+    }
+  } UNION {
+    {
+      # Version history of a cube.
+      VALUES ?versionHistory { <${cubeIri}> }
+      ?versionHistory schema:hasPart ?iri .
+      ?iri schema:version ?version .
       ?iri schema:creativeWorkStatus ?status .
-      FILTER(NOT EXISTS { ?iri schema:expires ?expires . } && ?status = <https://ld.admin.ch/vocabulary/CreativeWorkStatus/Published>)      
+      ?oldIri schema:creativeWorkStatus ?oldStatus .
+      FILTER(NOT EXISTS { ?iri schema:expires ?expires . } && ?status IN (?oldStatus, <https://ld.admin.ch/vocabulary/CreativeWorkStatus/Published>))
     }
   }
 }
