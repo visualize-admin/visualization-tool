@@ -5,7 +5,7 @@ import ParsingClient from "sparql-http-client/ParsingClient";
 
 import { SearchCube } from "@/domain/data";
 import { truthy } from "@/domain/types";
-import { TimeUnit } from "@/graphql/query-hooks";
+import { SearchCubeFilterType, TimeUnit } from "@/graphql/query-hooks";
 import {
   DataCubePublicationStatus,
   SearchCubeFilter,
@@ -90,11 +90,12 @@ export const searchCubes = async ({
   const locale = _locale ?? defaultLocale;
   // Search cubeIris along with their score
   const themeValues =
-    filters?.filter((x) => x.type === "DataCubeTheme").map((v) => v.value) ??
-    [];
+    filters
+      ?.filter((x) => x.type === SearchCubeFilterType.DataCubeTheme)
+      .map((v) => v.value) ?? [];
   const creatorValues =
     filters
-      ?.filter((x) => x.type === "DataCubeOrganization")
+      ?.filter((x) => x.type === SearchCubeFilterType.DataCubeOrganization)
       .map((v) => v.value) ?? [];
 
   const scoresQuery = mkScoresQuery(

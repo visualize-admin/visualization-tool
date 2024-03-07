@@ -32,6 +32,7 @@ import {
   useDataCubesComponentsQuery,
 } from "@/graphql/hooks";
 import {
+  SearchCubeFilterType,
   SearchCubeResultOrder,
   useSearchCubesQuery,
 } from "@/graphql/query-hooks";
@@ -118,7 +119,12 @@ export const DatasetDialog = ({
       includeDrafts: false,
       filters: relevantDimensions.flatMap((rd) =>
         rd.__typename === "TemporalDimension"
-          ? [{ type: "TemporalDimension", value: rd.timeUnit }]
+          ? [
+              {
+                type: SearchCubeFilterType.TemporalDimension,
+                value: rd.timeUnit,
+              },
+            ]
           : []
       ),
     },
