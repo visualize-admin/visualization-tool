@@ -14,6 +14,7 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
   - Scatterplot is now correctly initialized with non-empty segment
   - Changes of segment dimension now correctly update chart config which prevents errors with copying published charts
   - Temporal segment is no longer carried over when switching from scatterplot to column chart if it was already used as X axis
+  - Currently selected locale is now persisted when using actions in user profile page (view chart, edit, open, share)
 
 # [3.26.3] - 2024-03-05
 
