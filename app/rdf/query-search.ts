@@ -97,7 +97,110 @@ export const searchCubes = async ({
       ?.filter((x) => x.type === "DataCubeOrganization")
       .map((v) => v.value) ?? [];
 
-  const scoresQuery = SELECT.DISTINCT`
+  const scoresQuery = mkScoresQuery(
+    locale,
+    filters,
+    creatorValues,
+    themeValues,
+    includeDrafts,
+    query
+  ); // HOTFIX WRT Stardog v9.2.1 bug see https://control.vshn.net/tickets/sbar-1066
+
+  console.log(scoresQuery.build());
+  const scoreResults = await scoresQuery.execute(sparqlClient.query, {
+    operation: "postUrlencoded",
+  });
+  const rawCubes = (scoreResults as RawSearchCube[])
+    // Filter out cubes without iri, happens due to grouping, when no cubes are found.
+    .filter((d) => d.iri)
+    .map(parseRawSearchCube);
+  const rawCubesByIri = group(rawCubes, (d) => d.iri);
+  const infoByCube = computeScores(rawCubes, { query });
+
+  const seenCubes = new Set<string>();
+  const cubes = rawCubes
+    .map((cube) => {
+      // Need to keep both published and draft cubes with the same iri.
+      const dedupIdentifier = cube.iri + cube.status;
+
+      if (seenCubes.has(dedupIdentifier)) {
+        return null;
+      }
+
+      seenCubes.add(dedupIdentifier);
+
+      const rawCubes = rawCubesByIri.get(cube.iri);
+
+      if (!rawCubes?.length) {
+        return null;
+      }
+
+      if (rawCubes.length > 1) {
+        console.warn(`Found multiple cubes with the same iri: ${cube.iri}`);
+      }
+
+      const rawCube = rawCubes[0];
+
+      const themeIris = rawCube.themeIris.split(GROUP_SEPARATOR);
+      const themeLabels = rawCube.themeLabels.split(GROUP_SEPARATOR);
+      const subthemeIris = rawCube.subthemeIris.split(GROUP_SEPARATOR);
+      const subthemeLabels = rawCube.subthemeLabels.split(GROUP_SEPARATOR);
+
+      const parsedCube: SearchCube = {
+        iri: rawCube.iri,
+        title: rawCube.title,
+        description: rawCube.description,
+        creator:
+          rawCube.creatorIri && rawCube.creatorLabel
+            ? { iri: rawCube.creatorIri, label: rawCube.creatorLabel }
+            : null,
+        publicationStatus: rawCube.status as DataCubePublicationStatus,
+        datePublished: rawCube.datePublished,
+        themes:
+          themeIris.length === themeLabels.length
+            ? themeIris.map((iri, i) => ({
+                iri,
+                label: themeLabels[i],
+              }))
+            : [],
+        subthemes:
+          subthemeIris.length === subthemeLabels.length
+            ? subthemeIris.map((iri, i) => ({
+                iri,
+                label: subthemeLabels[i],
+              }))
+            : [],
+      };
+
+      return parsedCube;
+    })
+    .filter(truthy);
+
+  return cubes
+    .sort((a, b) =>
+      descending(infoByCube[a.iri].score, infoByCube[b.iri].score)
+    )
+    .map((cube) => ({
+      cube,
+      highlightedTitle: query ? highlight(cube.title, query) : cube.title,
+      highlightedDescription:
+        query && cube.description
+          ? highlight(cube.description, query)
+          : cube.description,
+    }));
+};
+
+export type SearchResult = Awaited<ReturnType<typeof searchCubes>>[0];
+
+const mkScoresQuery = (
+  locale: string,
+  filters: SearchCubeFilter[] | null | undefined,
+  creatorValues: string[],
+  themeValues: string[],
+  includeDrafts: Boolean | null | undefined,
+  query: string | null | undefined
+) =>
+  SELECT.DISTINCT`
     ?iri ?title ?status ?datePublished ?description ?publisher ?creatorIri ?creatorLabel
     (GROUP_CONCAT(DISTINCT ?themeIri; SEPARATOR="${GROUP_SEPARATOR}") AS ?themeIris) (GROUP_CONCAT(DISTINCT ?themeLabel; SEPARATOR="${GROUP_SEPARATOR}") AS ?themeLabels)
     (GROUP_CONCAT(DISTINCT ?subthemeIri; SEPARATOR="${GROUP_SEPARATOR}") AS ?subthemeIris) (GROUP_CONCAT(DISTINCT ?subthemeLabel; SEPARATOR="${GROUP_SEPARATOR}") AS ?subthemeLabels)
@@ -122,9 +225,9 @@ export const searchCubes = async ({
         }
 
         return sparql`
-          ?cube ${ns.cube.observationConstraint} ?shape .
-          ?shape ${ns.sh.property} ?prop .
-          ?prop ${ns.cubeMeta.dataKind}/${ns.time.unitType} <${unitNode}>.`;
+        ?cube ${ns.cube.observationConstraint} ?shape .
+        ?shape ${ns.sh.property} ?prop .
+        ?prop ${ns.cubeMeta.dataKind}/${ns.time.unitType} <${unitNode}>.`;
       })}
 
       OPTIONAL { ?iri ${ns.dcterms.publisher} ?publisher . }
@@ -241,89 +344,4 @@ export const searchCubes = async ({
       }
   `.GROUP().BY`?iri`.THEN.BY`?title`.THEN.BY`?status`.THEN.BY`?datePublished`
     .THEN.BY`?description`.THEN.BY`?publisher`.THEN.BY`?creatorIri`.THEN
-    .BY`?creatorLabel`.prologue`${pragmas}`.prologue`#pragma join.bind off`; // HOTFIX WRT Stardog v9.2.1 bug see https://control.vshn.net/tickets/sbar-1066
-
-  const scoreResults = await scoresQuery.execute(sparqlClient.query, {
-    operation: "postUrlencoded",
-  });
-  const rawCubes = (scoreResults as RawSearchCube[])
-    // Filter out cubes without iri, happens due to grouping, when no cubes are found.
-    .filter((d) => d.iri)
-    .map(parseRawSearchCube);
-  const rawCubesByIri = group(rawCubes, (d) => d.iri);
-  const infoByCube = computeScores(rawCubes, { query });
-
-  const seenCubes = new Set<string>();
-  const cubes = rawCubes
-    .map((cube) => {
-      // Need to keep both published and draft cubes with the same iri.
-      const dedupIdentifier = cube.iri + cube.status;
-
-      if (seenCubes.has(dedupIdentifier)) {
-        return null;
-      }
-
-      seenCubes.add(dedupIdentifier);
-
-      const rawCubes = rawCubesByIri.get(cube.iri);
-
-      if (!rawCubes?.length) {
-        return null;
-      }
-
-      if (rawCubes.length > 1) {
-        console.warn(`Found multiple cubes with the same iri: ${cube.iri}`);
-      }
-
-      const rawCube = rawCubes[0];
-
-      const themeIris = rawCube.themeIris.split(GROUP_SEPARATOR);
-      const themeLabels = rawCube.themeLabels.split(GROUP_SEPARATOR);
-      const subthemeIris = rawCube.subthemeIris.split(GROUP_SEPARATOR);
-      const subthemeLabels = rawCube.subthemeLabels.split(GROUP_SEPARATOR);
-
-      const parsedCube: SearchCube = {
-        iri: rawCube.iri,
-        title: rawCube.title,
-        description: rawCube.description,
-        creator:
-          rawCube.creatorIri && rawCube.creatorLabel
-            ? { iri: rawCube.creatorIri, label: rawCube.creatorLabel }
-            : null,
-        publicationStatus: rawCube.status as DataCubePublicationStatus,
-        datePublished: rawCube.datePublished,
-        themes:
-          themeIris.length === themeLabels.length
-            ? themeIris.map((iri, i) => ({
-                iri,
-                label: themeLabels[i],
-              }))
-            : [],
-        subthemes:
-          subthemeIris.length === subthemeLabels.length
-            ? subthemeIris.map((iri, i) => ({
-                iri,
-                label: subthemeLabels[i],
-              }))
-            : [],
-      };
-
-      return parsedCube;
-    })
-    .filter(truthy);
-
-  return cubes
-    .sort((a, b) =>
-      descending(infoByCube[a.iri].score, infoByCube[b.iri].score)
-    )
-    .map((cube) => ({
-      cube,
-      highlightedTitle: query ? highlight(cube.title, query) : cube.title,
-      highlightedDescription:
-        query && cube.description
-          ? highlight(cube.description, query)
-          : cube.description,
-    }));
-};
-
-export type SearchResult = Awaited<ReturnType<typeof searchCubes>>[0];
+    .BY`?creatorLabel`.prologue`${pragmas}`.prologue`#pragma join.bind off`;
