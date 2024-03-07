@@ -17,10 +17,11 @@ import { truthy } from "@/domain/types";
 import { ScaleType } from "@/graphql/query-hooks";
 import { ExtendedCube } from "@/rdf/extended-cube";
 
-import { DataCubePublicationStatus, TimeUnit } from "../graphql/resolver-types";
+import { DataCubePublicationStatus } from "../graphql/resolver-types";
 import { ResolvedDataCube, ResolvedDimension } from "../graphql/shared-types";
 import { locales } from "../locales/locales";
 
+import { timeFormats, timeUnits } from "./mappings";
 import * as ns from "./namespace";
 import { hasHierarchy } from "./queries";
 
@@ -94,23 +95,6 @@ export const parseCube = ({
     },
   };
 };
-
-const timeUnits = new Map<string, TimeUnit>([
-  [ns.time.unitYear.value, TimeUnit.Year],
-  [ns.time.unitMonth.value, TimeUnit.Month],
-  [ns.time.unitWeek.value, TimeUnit.Week],
-  [ns.time.unitDay.value, TimeUnit.Day],
-  [ns.time.unitHour.value, TimeUnit.Hour],
-  [ns.time.unitMinute.value, TimeUnit.Minute],
-  [ns.time.unitSecond.value, TimeUnit.Second],
-]);
-
-const timeFormats = new Map<string, string>([
-  [ns.xsd.gYear.value, "%Y"],
-  [ns.xsd.gYearMonth.value, "%Y-%m"],
-  [ns.xsd.date.value, "%Y-%m-%d"],
-  [ns.xsd.dateTime.value, "%Y-%m-%dT%H:%M:%S"],
-]);
 
 export const getScaleType = (
   scaleTypeTerm: Term | undefined

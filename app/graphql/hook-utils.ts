@@ -4,7 +4,6 @@ import { OperationResult } from "urql";
 import { Dimension, Observation, ObservationValue } from "@/domain/data";
 import {
   DataCubeComponentsQuery,
-  DataCubeComponentsQueryVariables,
   DataCubeObservationsQuery,
   DataCubeObservationsQueryVariables,
   Exact,
@@ -16,34 +15,26 @@ export const JOIN_BY_DIMENSION_IRI = "joinBy";
  * a new joinBy dimension with values from all joinBy dimensions.
  */
 export const joinDimensions = (
-  queries: OperationResult<
-    DataCubeComponentsQuery,
-    Exact<DataCubeComponentsQueryVariables>
-  >[]
+  fetchedDataCubeComponents: {
+    dataCubeComponents: DataCubeComponentsQuery["dataCubeComponents"];
+    joinBy: string | undefined | null;
+  }[]
 ) => {
   const joinByDimensions: Dimension[] = [];
   const dimensions: Dimension[] = [];
 
-  for (const q of queries) {
-    if (!q.data?.dataCubeComponents) {
-      continue;
-    }
-
-    const { dimensions: queryDimensions } = q.data.dataCubeComponents;
-
-    const joinBy = q.operation.variables?.cubeFilter.joinBy;
+  for (const { dataCubeComponents, joinBy } of fetchedDataCubeComponents) {
+    const { dimensions: queryDimensions } = dataCubeComponents;
     const joinByDimension = queryDimensions.find((d) => d.iri === joinBy);
 
     if (!joinByDimension) {
       dimensions.push(...queryDimensions);
-
-      continue;
+    } else {
+      joinByDimensions.push(joinByDimension);
+      dimensions.push(
+        ...queryDimensions.filter((d) => d.iri !== joinByDimension.iri)
+      );
     }
-
-    joinByDimensions.push(joinByDimension);
-    dimensions.push(
-      ...queryDimensions.filter((d) => d.iri !== joinByDimension.iri)
-    );
   }
 
   if (joinByDimensions.length > 1) {

@@ -1,5 +1,5 @@
 import { PUBLISHED_STATE } from "@prisma/client";
-import produce, { current } from "immer";
+import produce, { Draft, current } from "immer";
 import get from "lodash/get";
 import pickBy from "lodash/pickBy";
 import setWith from "lodash/setWith";
@@ -64,15 +64,7 @@ import {
   isMeasure,
 } from "@/domain/data";
 import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
-import { client } from "@/graphql/client";
-import { joinDimensions } from "@/graphql/hook-utils";
 import { executeDataCubesComponentsQuery } from "@/graphql/hooks";
-import {
-  DataCubeComponentFilter,
-  DataCubeComponentsDocument,
-  DataCubeComponentsQuery,
-  DataCubeComponentsQueryVariables,
-} from "@/graphql/query-hooks";
 import { Locale } from "@/locales/locales";
 import { useLocale } from "@/locales/use-locale";
 import { useUser } from "@/login/utils";
@@ -81,6 +73,7 @@ import {
   getDataSourceFromLocalStorage,
   useDataSourceStore,
 } from "@/stores/data-source";
+import { getCachedComponents } from "@/urql-cache";
 import {
   createConfig,
   fetchChartConfig,
@@ -113,6 +106,23 @@ export type ConfiguratorStateAction =
   | {
       type: "DATASOURCE_CHANGED";
       value: DataSource;
+    }
+  | {
+      type: "DATASET_ADD";
+      value: {
+        iri: string;
+        joinBy: {
+          left: string;
+          right: string;
+        };
+      };
+    }
+  | {
+      type: "DATASET_REMOVE";
+      value: {
+        iri: string;
+        locale: Locale;
+      };
     }
   | {
       type: "CHART_TYPE_CHANGED";
@@ -344,34 +354,6 @@ const EMPTY_STATE: ConfiguratorStateSelectingDataSet = {
   chartConfigs: undefined,
   layout: undefined,
   activeChartKey: undefined,
-};
-
-const getCachedComponents = (
-  draft: ConfiguratorStateConfiguringChart,
-  cubeFilters: DataCubeComponentFilter[],
-  locale: Locale
-): DataCubeComponents | undefined => {
-  const queries = cubeFilters.map((cubeFilter) => {
-    return client.readQuery<
-      DataCubeComponentsQuery,
-      DataCubeComponentsQueryVariables
-    >(DataCubeComponentsDocument, {
-      sourceType: draft.dataSource.type,
-      sourceUrl: draft.dataSource.url,
-      locale,
-      cubeFilter: {
-        iri: cubeFilter.iri,
-        componentIris: undefined,
-        joinBy: cubeFilter.joinBy,
-        loadValues: true,
-      },
-    })!;
-  });
-
-  return {
-    dimensions: joinDimensions(queries),
-    measures: queries.flatMap((q) => q.data?.dataCubeComponents.measures!),
-  };
 };
 
 export const getFilterValue = (
@@ -629,6 +611,57 @@ export const applyNonTableDimensionToFilters = ({
   }
 };
 
+const getInitialConfiguringConfigBasedOnCube = ({
+  dataCubesComponents,
+  cubeIris,
+  dataSource,
+}: {
+  cubeIris: string[];
+  dataCubesComponents: DataCubeComponents;
+  dataSource: DataSource;
+}): ConfiguratorState => {
+  const possibleChartTypes = getPossibleChartTypes({
+    dimensions: dataCubesComponents.dimensions,
+    measures: dataCubesComponents.measures,
+    cubeCount: cubeIris.length,
+  });
+  const chartConfig = deriveFiltersFromFields(
+    getInitialConfig({
+      chartType: possibleChartTypes[0],
+      iris: cubeIris,
+      dimensions: dataCubesComponents.dimensions,
+      measures: dataCubesComponents.measures,
+    }),
+    dataCubesComponents.dimensions
+  );
+
+  return {
+    version: CONFIGURATOR_STATE_VERSION,
+    state: "CONFIGURING_CHART",
+    dataSource: dataSource,
+    layout: {
+      type: "tab",
+      meta: {
+        title: {
+          de: "",
+          en: "",
+          fr: "",
+          it: "",
+        },
+        description: {
+          de: "",
+          en: "",
+          fr: "",
+          it: "",
+        },
+      },
+      activeField: undefined,
+    },
+    chartConfigs: [chartConfig],
+    activeChartKey: chartConfig.key,
+  };
+};
+
 const transitionStepNext = (
   draft: ConfiguratorState,
   options: {
@@ -641,45 +674,11 @@ const transitionStepNext = (
   switch (draft.state) {
     case "SELECTING_DATASET":
       if (cubeIris) {
-        const possibleChartTypes = getPossibleChartTypes({
-          dimensions: dataCubesComponents.dimensions,
-          measures: dataCubesComponents.measures,
-        });
-        const chartConfig = deriveFiltersFromFields(
-          getInitialConfig({
-            chartType: possibleChartTypes[0],
-            iris: cubeIris,
-            dimensions: dataCubesComponents.dimensions,
-            measures: dataCubesComponents.measures,
-          }),
-          dataCubesComponents.dimensions
-        );
-
-        return {
-          version: CONFIGURATOR_STATE_VERSION,
-          state: "CONFIGURING_CHART",
+        return getInitialConfiguringConfigBasedOnCube({
+          cubeIris,
+          dataCubesComponents,
           dataSource: draft.dataSource,
-          layout: {
-            type: "tab",
-            meta: {
-              title: {
-                de: "",
-                en: "",
-                fr: "",
-                it: "",
-              },
-              description: {
-                de: "",
-                en: "",
-                fr: "",
-                it: "",
-              },
-            },
-            activeField: undefined,
-          },
-          chartConfigs: [chartConfig],
-          activeChartKey: chartConfig.key,
-        };
+        });
       }
       break;
     case "CONFIGURING_CHART":
@@ -857,7 +856,7 @@ export const handleChartFieldChanged = (
   } = action.value;
   const f = get(chartConfig.fields, field);
   const dataCubesComponents = getCachedComponents(
-    draft,
+    draft.dataSource,
     chartConfig.cubes.map((cube) => ({
       iri: cube.iri,
       joinBy: cube.joinBy,
@@ -914,13 +913,14 @@ export const handleChartOptionChanged = (
     const chartConfig = getChartConfig(draft);
     const updatePath = field === null ? path : `fields["${field}"].${path}`;
     const dataCubesComponents = getCachedComponents(
-      draft,
+      draft.dataSource,
       chartConfig.cubes.map((cube) => ({
         iri: cube.iri,
         joinBy: cube.joinBy,
       })),
       locale
     );
+
     const dimensions = dataCubesComponents?.dimensions ?? [];
     const measures = dataCubesComponents?.measures ?? [];
 
@@ -1052,7 +1052,7 @@ export const setRangeFilter = (
   }
 };
 
-const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
+const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
   draft,
   action
 ) => {
@@ -1072,7 +1072,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         const { locale, chartKey, chartType } = action.value;
         const chartConfig = getChartConfig(draft, chartKey);
         const dataCubesComponents = getCachedComponents(
-          draft,
+          draft.dataSource,
           chartConfig.cubes.map((cube) => ({
             iri: cube.iri,
             joinBy: cube.joinBy,
@@ -1118,7 +1118,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         const chartConfig = getChartConfig(draft);
         delete (chartConfig.fields as GenericFields)[action.value.field];
         const dataCubesComponents = getCachedComponents(
-          draft,
+          draft.dataSource,
           chartConfig.cubes.map((cube) => ({
             iri: cube.iri,
             joinBy: cube.joinBy,
@@ -1353,7 +1353,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       if (draft.state === "CONFIGURING_CHART") {
         const chartConfig = getChartConfig(draft);
         const dataCubesComponents = getCachedComponents(
-          draft,
+          draft.dataSource,
           chartConfig.cubes.map((cube) => ({
             iri: cube.iri,
             joinBy: cube.joinBy,
@@ -1374,6 +1374,45 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
       return draft;
 
+    case "DATASET_ADD":
+      if (draft.state === "CONFIGURING_CHART") {
+        addDatasetInConfig(draft, action.value);
+        return draft;
+      }
+      break;
+
+    case "DATASET_REMOVE":
+      if (draft.state === "CONFIGURING_CHART") {
+        const chartConfig = getChartConfig(draft);
+
+        const { locale } = action.value;
+        const removedCubeIri = action.value.iri;
+        const dataCubesComponents = getCachedComponents(
+          draft.dataSource,
+          chartConfig.cubes
+            .filter((c) => c.iri !== removedCubeIri)
+            .map((cube) => ({
+              iri: cube.iri,
+              joinBy: cube.joinBy,
+            })),
+          locale
+        );
+        if (!dataCubesComponents) {
+          throw new Error(
+            "Error while removing dataset: Could not find cached dataCubesComponents"
+          );
+        }
+
+        const result = getInitialConfiguringConfigBasedOnCube({
+          dataCubesComponents,
+          dataSource: draft.dataSource,
+          cubeIris: chartConfig.cubes
+            .filter((x) => x.iri !== removedCubeIri)
+            .map((x) => x.iri),
+        });
+        return result;
+      }
+      break;
     case "CHART_CONFIG_REMOVE":
       if (draft.state === "CONFIGURING_CHART") {
         const index = draft.chartConfigs.findIndex(
@@ -1450,6 +1489,17 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       throw unreachableError(action);
   }
 };
+
+/** Turn this on for the reducer to log state, action and result */
+const reducerLogging = false;
+const withLogging = <TState, TAction>(reducer: Reducer<TState, TAction>) => {
+  return (state: Draft<TState>, action: TAction) => {
+    const res = reducer(state, action);
+    console.log(state, action, res);
+    return res;
+  };
+};
+export const reducer = reducerLogging ? withLogging(reducer_) : reducer_;
 
 const ConfiguratorStateContext = createContext<
   [ConfiguratorState, Dispatch<ConfiguratorStateAction>] | undefined
@@ -1840,6 +1890,45 @@ export type ConfiguratorStateWithChartConfigs =
   | ConfiguratorStateLayouting
   | ConfiguratorStatePublishing
   | ConfiguratorStatePublished;
+
+export const addDatasetInConfig = function (
+  config: ConfiguratorStateConfiguringChart,
+  options: {
+    iri: string;
+    joinBy: {
+      left: string;
+      right: string;
+    };
+  }
+) {
+  const { iri, joinBy } = options;
+  for (const chartConfig of config.chartConfigs) {
+    chartConfig.cubes[0].joinBy = joinBy.left;
+    chartConfig.cubes.push({
+      iri: iri,
+      joinBy: joinBy.right,
+      filters: {},
+    });
+
+    // Need to go over fields, and replace any IRI part of the joinBy by "joinBy"
+    const fields = Object.values(chartConfig.fields);
+    while (fields.length > 0) {
+      const f = fields.pop();
+      for (const fieldName of [
+        "componentIri",
+        "leftAxisComponentIri",
+        "rightAxisComponentIri",
+      ]) {
+        if (f[fieldName] === joinBy.left || f[fieldName] === joinBy.right) {
+          f[fieldName] = "joinBy";
+        }
+        if (f.color) {
+          fields.push(f.color);
+        }
+      }
+    }
+  }
+};
 
 export async function publishState(
   user: ReturnType<typeof useUser>,

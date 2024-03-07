@@ -504,6 +504,21 @@ type TabsInnerProps = {
   onChartSwitch?: (key: string) => void;
 };
 
+/**
+ * The Tabs component clones its children adding extra properties, expecting that we use Tab components.
+ * Since we either use a Draggable or a div, we must not forward directly the properties.
+ * Forwarding the props directly to a DOM node would result in for example "textColor" not being a valid HTML prop.
+ */
+const PassthroughTab = ({
+  children,
+  value: _value,
+}: {
+  children: React.ReactNode;
+  value?: string;
+}) => {
+  return <>{children}</>;
+};
+
 const TabsInner = (props: TabsInnerProps) => {
   const {
     data,
@@ -553,54 +568,57 @@ const TabsInner = (props: TabsInnerProps) => {
                 sx={{ top: 1 }}
               >
                 {data.map((d, i) => (
-                  <Draggable key={d.key} draggableId={d.key} index={i}>
-                    {(provided, snapshot) => {
-                      const { style } = provided.draggableProps;
-                      // Limit the drag movement to the x-axis.
-                      const transform = style?.transform
-                        ? `${style.transform.split(",")[0]}, 0px)`
-                        : undefined;
-
-                      return (
-                        <VisualizeTab
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                          style={{ ...style, transform, opacity: 1 }}
-                          component="div"
-                          key={d.key}
-                          value={`${i}`}
-                          className={`${
-                            // We need to add the "selected" class ourselves since we are wrapping
-                            // the tabs by Draggable.
-                            i === activeTabIndex ? "Mui-selected" : ""
-                          }`}
-                          sx={{
-                            px: 0,
-                            minWidth: "fit-content",
-                          }}
-                          label={
-                            <TabContent
-                              iconName={getIconName(d.chartType)}
-                              chartKey={d.key}
-                              editable={editable}
-                              draggable={draggable}
-                              active={d.active}
-                              dragging={snapshot.isDragging}
-                              onEditClick={(e) => {
-                                onChartEdit?.(e, d.key);
-                              }}
-                              onSwitchClick={() => {
-                                onChartSwitch?.(d.key);
-                              }}
-                            />
-                          }
-                        />
-                      );
-                    }}
-                  </Draggable>
+                  <PassthroughTab key={d.key} value={`${i}`}>
+                    <Draggable draggableId={d.key} index={i}>
+                      {(provided, snapshot) => {
+                        const { style } = provided.draggableProps;
+                        // Limit the drag movement to the x-axis.
+                        const transform = style?.transform
+                          ? `${style.transform.split(",")[0]}, 0px)`
+                          : undefined;
+                        return (
+                          <VisualizeTab
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                            style={{ ...style, transform, opacity: 1 }}
+                            component="div"
+                            key={d.key}
+                            value={`${i}`}
+                            className={`${
+                              // We need to add the "selected" class ourselves since we are wrapping
+                              // the tabs by Draggable.
+                              i === activeTabIndex ? "Mui-selected" : ""
+                            }`}
+                            sx={{
+                              px: 0,
+                              minWidth: "fit-content",
+                            }}
+                            label={
+                              <TabContent
+                                iconName={getIconName(d.chartType)}
+                                chartKey={d.key}
+                                editable={editable}
+                                draggable={draggable}
+                                active={d.active}
+                                dragging={snapshot.isDragging}
+                                onEditClick={(e) => {
+                                  onChartEdit?.(e, d.key);
+                                }}
+                                onSwitchClick={() => {
+                                  onChartSwitch?.(d.key);
+                                }}
+                              />
+                            }
+                          />
+                        );
+                      }}
+                    </Draggable>
+                  </PassthroughTab>
                 ))}
-                <div style={{ opacity: 0 }}>{provided.placeholder}</div>
+                <PassthroughTab>
+                  <div style={{ opacity: 0 }}>{provided.placeholder}</div>
+                </PassthroughTab>
 
                 {addable && (
                   <VisualizeTab

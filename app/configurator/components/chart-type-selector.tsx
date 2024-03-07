@@ -11,7 +11,6 @@ import { makeStyles } from "@mui/styles";
 import React from "react";
 
 import {
-  chartTypes,
   comboChartTypes,
   getPossibleChartTypes,
   regularChartTypes,
@@ -84,8 +83,7 @@ export const ChartTypeSelector = (props: ChartTypeSelectorProps) => {
   const possibleChartTypes = getPossibleChartTypes({
     dimensions,
     measures,
-    allowedChartTypes:
-      chartConfig.cubes.length > 1 ? comboChartTypes : chartTypes,
+    cubeCount: chartConfig.cubes.length,
   });
 
   return (

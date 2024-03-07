@@ -1,15 +1,9 @@
 import { memo } from "react";
 
-import { ChartLoadingWrapper } from "@/charts/chart-loading-wrapper";
+import { ChartDataWrapper } from "@/charts/chart-data-wrapper";
 import { Table } from "@/charts/table/table";
 import { TableChart } from "@/charts/table/table-state";
 import { DataSource, TableConfig } from "@/configurator";
-import {
-  useDataCubesComponentsQuery,
-  useDataCubesMetadataQuery,
-  useDataCubesObservationsQuery,
-} from "@/graphql/hooks";
-import { useLocale } from "@/locales/use-locale";
 
 import { ChartProps } from "../shared/ChartProps";
 
@@ -22,45 +16,10 @@ export const ChartTableVisualization = ({
   componentIris: string[] | undefined;
   chartConfig: TableConfig;
 }) => {
-  const locale = useLocale();
-  const commonQueryVariables = {
-    sourceType: dataSource.type,
-    sourceUrl: dataSource.url,
-    locale,
-  };
-  const [metadataQuery] = useDataCubesMetadataQuery({
-    variables: {
-      ...commonQueryVariables,
-      cubeFilters: chartConfig.cubes.map((cube) => ({ iri: cube.iri })),
-    },
-  });
-  const [componentsQuery] = useDataCubesComponentsQuery({
-    variables: {
-      ...commonQueryVariables,
-      cubeFilters: chartConfig.cubes.map((cube) => ({
-        iri: cube.iri,
-        componentIris,
-        joinBy: cube.joinBy,
-        loadValues: true,
-      })),
-    },
-  });
-  const [observationsQuery] = useDataCubesObservationsQuery({
-    variables: {
-      ...commonQueryVariables,
-      cubeFilters: chartConfig.cubes.map((cube) => ({
-        iri: cube.iri,
-        componentIris,
-        filters: cube.filters,
-      })),
-    },
-  });
-
   return (
-    <ChartLoadingWrapper
-      metadataQuery={metadataQuery}
-      componentsQuery={componentsQuery}
-      observationsQuery={observationsQuery}
+    <ChartDataWrapper
+      dataSource={dataSource}
+      componentIris={componentIris}
       Component={ChartTable}
       chartConfig={chartConfig}
     />

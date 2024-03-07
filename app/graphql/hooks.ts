@@ -29,7 +29,7 @@ const useQueryKey = (options: object) => {
   }, [options]);
 };
 
-const makeUseQuery =
+export const makeUseQuery =
   <T extends { variables: object; pause?: boolean }, V>(
     executeQueryFn: (
       options: T["variables"],
@@ -42,17 +42,23 @@ const makeUseQuery =
   ) =>
   (options: T) => {
     const [result, setResult] = React.useState<{
-      data?: V;
+      data?: V | null;
+      queryKey: string | null;
       error?: Error;
       fetching: boolean;
-    }>({ fetching: !options.pause });
+    }>({ fetching: !options.pause, queryKey: null, data: null });
     const queryKey = useQueryKey(options);
     const executeQuery = React.useCallback(
       async (options: T) => {
         const result = await executeQueryFn(options.variables, () =>
-          setResult((prev) => ({ ...prev, fetching: true }))
+          setResult((prev) => ({
+            ...prev,
+            fetching: true,
+            data: prev.queryKey === queryKey ? prev.data : null,
+            queryKey,
+          }))
         );
-        setResult(result);
+        setResult({ ...result, queryKey });
       },
       // eslint-disable-next-line react-hooks/exhaustive-deps
       [queryKey]
@@ -65,9 +71,11 @@ const makeUseQuery =
 
       executeQuery(options);
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [queryKey]);
+    }, [queryKey, options.pause]);
 
-    return [result, executeQuery] as const;
+    const { data, ...rest } = result;
+    const res = { ...rest, data: result.queryKey === queryKey ? data : null };
+    return [res, executeQuery] as const;
   };
 
 type DataCubesMetadataOptions = {
@@ -128,7 +136,7 @@ export const useDataCubesMetadataQuery = makeUseQuery<
   DataCubesMetadataData
 >(executeDataCubesMetadataQuery);
 
-type DataCubesComponentsOptions = {
+export type DataCubesComponentsOptions = {
   variables: Omit<DataCubeComponentsQueryVariables, "cubeFilter"> & {
     cubeFilters: DataCubeComponentFilter[];
   };
@@ -154,7 +162,13 @@ export const executeDataCubesComponentsQuery = async (
 
   const queries = await Promise.all(
     cubeFilters.map((cubeFilter) => {
-      const cubeVariables = { locale, sourceType, sourceUrl, cubeFilter };
+      const cubeVariables = {
+        locale,
+        sourceType,
+        sourceUrl,
+        cubeFilter,
+      };
+
       const cached = client.readQuery<
         DataCubeComponentsQuery,
         DataCubeComponentsQueryVariables
@@ -202,7 +216,14 @@ export const executeDataCubesComponentsQuery = async (
   return {
     data: {
       dataCubesComponents: {
-        dimensions: joinDimensions(queries),
+        dimensions: joinDimensions(
+          queries
+            .filter((x) => x.data)
+            .map((q) => ({
+              dataCubeComponents: q.data?.dataCubeComponents!,
+              joinBy: q.operation.variables?.cubeFilter.joinBy!,
+            }))
+        ),
         measures: queries.flatMap((q) => q.data?.dataCubeComponents.measures!),
       },
     },
@@ -211,6 +232,7 @@ export const executeDataCubesComponentsQuery = async (
   };
 };
 
+/** Fetches components/dimensions along with the values */
 export const useDataCubesComponentsQuery = makeUseQuery<
   DataCubesComponentsOptions,
   DataCubesComponentsData

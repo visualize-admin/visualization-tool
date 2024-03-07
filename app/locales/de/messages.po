@@ -41,8 +41,8 @@ msgstr "Kein Ergebnis"
 msgid "annotation.add.description"
 msgstr "[ Ohne Beschreibung ]"
 
+#: app/components/rename-dialog.tsx
 #: app/configurator/components/annotators.tsx
-#: app/login/components/profile-tables.tsx
 #: app/login/components/profile-tables.tsx
 msgid "annotation.add.title"
 msgstr "[ Ohne Titel ]"
@@ -147,6 +147,14 @@ msgstr "Diese Visualisierung aktualisieren"
 #: app/components/chart-selection-tabs.tsx
 msgid "button.update.warning"
 msgstr "Denken Sie daran, dass sich die Aktualisierung dieser Visualisierung auf alle Stellen auswirkt, an denen sie bereits eingebettet ist!"
+
+#: app/configurator/components/chart-configurator.tsx
+msgid "chart.datasets.add"
+msgstr "Hinzufügen"
+
+#: app/configurator/components/add-dataset-dialog.tsx
+msgid "chart.datasets.add-dataset-dialog.title"
+msgstr "Wählen Sie einen Datensatz mit gemeinsamen Dimensionen aus"
 
 #: app/configurator/components/field-i18n.ts
 msgid "chart.map.layers.area"
@@ -520,23 +528,23 @@ msgstr "-"
 msgid "controls.imputation.type.zeros"
 msgstr "Nullen"
 
+#: app/components/rename-dialog.tsx
 #: app/configurator/components/field-i18n.ts
-#: app/login/components/profile-tables.tsx
 msgid "controls.language.english"
 msgstr "Englisch"
 
+#: app/components/rename-dialog.tsx
 #: app/configurator/components/field-i18n.ts
-#: app/login/components/profile-tables.tsx
 msgid "controls.language.french"
 msgstr "Französisch"
 
+#: app/components/rename-dialog.tsx
 #: app/configurator/components/field-i18n.ts
-#: app/login/components/profile-tables.tsx
 msgid "controls.language.german"
 msgstr "Deutsch"
 
+#: app/components/rename-dialog.tsx
 #: app/configurator/components/field-i18n.ts
-#: app/login/components/profile-tables.tsx
 msgid "controls.language.italian"
 msgstr "Italienisch"
 
@@ -689,6 +697,7 @@ msgid "controls.section.columnstyle"
 msgstr "Spaltenstil"
 
 #: app/components/chart-filters-list.tsx
+#: app/components/chart-filters-list.tsx
 #: app/configurator/components/chart-configurator.tsx
 msgid "controls.section.data.filters"
 msgstr "Filter"
@@ -701,6 +710,10 @@ msgstr "Keine Filter"
 #: app/configurator/components/chart-configurator.tsx
 msgid "controls.section.data.filters.possible-filters-error"
 msgstr "Beim Abrufen möglicher Filter ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut oder laden Sie die Seite neu."
+
+#: app/configurator/components/chart-configurator.tsx
+msgid "controls.section.datasets.title"
+msgstr "Datenquellen"
 
 #: app/configurator/components/annotators.tsx
 #: app/configurator/components/annotators.tsx
@@ -1061,11 +1074,17 @@ msgstr "Achtung, dieser Datensatz ist abgelaufen.<0/><1>Diese Grafik nicht für 
 msgid "dataset.results"
 msgstr "{0, plural, zero {Keine Datensätze} one {# Datensatz} other {# Datensätze}}"
 
+#: app/configurator/components/add-dataset-dialog.tsx
+msgid "dataset.search.add-dataset"
+msgstr ""
+
 #: app/browser/dataset-browse.tsx
+#: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.label"
 msgstr "Suchen"
 
 #: app/browser/dataset-browse.tsx
+#: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.placeholder"
 msgstr "Name, Organisation, Stichwort..."
 
@@ -1143,6 +1162,7 @@ msgstr "Daten-Ladefehler"
 msgid "hint.how.to.share"
 msgstr "Sie können diese Visualisierung teilen oder sie einbetten. Zudem können Sie eine neue Visualisierung erstellen oder die gezeigte Visualisierung kopieren."
 
+#: app/components/chart-filters-list.tsx
 #: app/components/form.tsx
 #: app/components/hint.tsx
 msgid "hint.loading.data"
@@ -1298,12 +1318,12 @@ msgid "login.profile.my-visualizations.multiple-datasets"
 msgstr ""
 
 #: app/login/components/profile-tables.tsx
-msgid "login.rename-dialog.cancel"
-msgstr "Abbrechen"
+#~ msgid "login.rename-dialog.cancel"
+#~ msgstr "Abbrechen"
 
 #: app/login/components/profile-tables.tsx
-msgid "login.rename-dialog.save"
-msgstr "Speichern"
+#~ msgid "login.rename-dialog.save"
+#~ msgstr "Speichern"
 
 #: app/components/header.tsx
 #: app/components/header.tsx
@@ -1334,11 +1354,11 @@ msgstr "Zur Tabellenansicht wechseln"
 msgid "no"
 msgstr "Nein"
 
-#: app/login/components/profile-tables.tsx
+#: app/components/rename-dialog.tsx
 msgid "profile.chart.rename-dialog.description"
 msgstr "Verbessern Sie die Klarheit des Diagramms mit einem klaren Titel. Ein guter Titel hilft Diagramminhalte verstehen."
 
-#: app/login/components/profile-tables.tsx
+#: app/components/rename-dialog.tsx
 msgid "profile.chart.rename-dialog.title"
 msgstr "Benennen Sie die Visualisierung um"
 

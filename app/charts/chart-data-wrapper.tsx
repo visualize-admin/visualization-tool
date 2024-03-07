@@ -2,9 +2,9 @@ import { Box } from "@mui/material";
 import keyBy from "lodash/keyBy";
 import React from "react";
 
-import { ChartProps } from "@/charts/shared/ChartProps";
 import { A11yTable } from "@/charts/shared/a11y-table";
 import { useLoadingState } from "@/charts/shared/chart-loading-state";
+import { ChartProps } from "@/charts/shared/ChartProps";
 import Flex from "@/components/flex";
 import {
   Loading,
@@ -12,38 +12,86 @@ import {
   LoadingOverlay,
   NoDataHint,
 } from "@/components/hint";
-import { ChartConfig } from "@/configurator";
+import { ChartConfig, DataSource } from "@/configurator";
 import {
   useDataCubesComponentsQuery,
   useDataCubesMetadataQuery,
   useDataCubesObservationsQuery,
 } from "@/graphql/hooks";
+import { DataCubeObservationFilter } from "@/graphql/query-hooks";
+import { useLocale } from "@/src";
 
 type ElementProps<RE> = RE extends React.ElementType<infer P> ? P : never;
 
-export const ChartLoadingWrapper = <
+/**
+ * Responsible for fetching the data for the chart.
+ * - Provides observations, dimensions and measures to the chart Component
+ * - Handles loading & error state
+ */
+export const ChartDataWrapper = <
   TChartConfig extends ChartConfig,
   TOtherProps,
   TChartComponent extends React.ElementType
 >({
-  metadataQuery,
-  componentsQuery,
-  observationsQuery,
   chartConfig,
   Component,
   ComponentProps,
+  componentIris,
+  dataSource,
+  queryFilters,
+
+  fetching: fetchingProp = false,
+  error: errorProp,
 }: {
-  metadataQuery: ReturnType<typeof useDataCubesMetadataQuery>[0];
-  componentsQuery: ReturnType<typeof useDataCubesComponentsQuery>[0];
-  observationsQuery: ReturnType<typeof useDataCubesObservationsQuery>[0];
   chartConfig: TChartConfig;
   Component: TChartComponent;
   ComponentProps?: Omit<
     ElementProps<TChartComponent>,
     keyof ChartProps<TChartConfig>
   >;
+  componentIris?: string[];
+  dataSource: DataSource;
+  queryFilters?: DataCubeObservationFilter[];
+
+  fetching?: boolean;
+  /* Use this if extra data is loaded and the possible error must be shown by ChartDataWrapper*/
+
+  /* Use this if extra data is loaded and the possible error must be shown by ChartDataWrapper*/
+  error?: Error;
 }) => {
   const chartLoadingState = useLoadingState();
+
+  const locale = useLocale();
+  const commonQueryVariables = {
+    sourceType: dataSource.type,
+    sourceUrl: dataSource.url,
+    locale,
+  };
+  const [metadataQuery] = useDataCubesMetadataQuery({
+    variables: {
+      ...commonQueryVariables,
+      cubeFilters: chartConfig.cubes.map((cube) => ({ iri: cube.iri })),
+    },
+  });
+  const [componentsQuery] = useDataCubesComponentsQuery({
+    variables: {
+      ...commonQueryVariables,
+      cubeFilters: chartConfig.cubes.map((cube) => ({
+        iri: cube.iri,
+        componentIris,
+        joinBy: cube.joinBy,
+        loadValues: true,
+      })),
+    },
+  });
+  const [observationsQuery] = useDataCubesObservationsQuery({
+    variables: {
+      ...commonQueryVariables,
+      cubeFilters: queryFilters ?? [],
+    },
+    pause: !queryFilters,
+  });
+
   const {
     data: metadataData,
     fetching: fetchingMetadata,
@@ -66,7 +114,10 @@ export const ChartLoadingWrapper = <
   const measures = componentsData?.dataCubesComponents.measures;
 
   const fetching =
-    fetchingMetadata || fetchingComponents || fetchingObservations;
+    fetchingProp ||
+    fetchingMetadata ||
+    fetchingComponents ||
+    fetchingObservations;
 
   React.useEffect(() => {
     chartLoadingState.set("data", fetching);
@@ -114,12 +165,18 @@ export const ChartLoadingWrapper = <
         ) : null}
       </Box>
     );
-  } else if (metadataError || componentsError || observationsError) {
+  } else if (
+    errorProp ||
+    metadataError ||
+    componentsError ||
+    observationsError
+  ) {
     return (
       <Flex sx={{ flexDirection: "column", gap: 3 }}>
         {metadataError && <Error message={metadataError.message} />}
         {componentsError && <Error message={componentsError.message} />}
         {observationsError && <Error message={observationsError.message} />}
+        {errorProp && <Error message={errorProp.message} />}
       </Flex>
     );
   } else {

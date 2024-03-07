@@ -63,7 +63,7 @@ const initFromSearchParams = (locationSearch: string) => {
   for (const [param, value] of Object.entries(params)) {
     if (param.startsWith(FLAG_PREFIX) && typeof value === "string") {
       try {
-        flag(param.substr(FLAG_PREFIX.length), JSON.parse(value));
+        flag(param.substring(FLAG_PREFIX.length), JSON.parse(value));
       } catch (e) {
         console.error(e);
       }

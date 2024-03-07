@@ -82,7 +82,7 @@ export const ProfileContentTabs = (props: ProfileContentTabsProps) => {
                 className={classes.tab}
                 label={t({
                   id: "login.profile.my-published-visualizations",
-                  message: "My Published Visualizations",
+                  message: "My published visualizations",
                 })}
                 value="published"
               />

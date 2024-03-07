@@ -1,6 +1,6 @@
 import React from "react";
 
-import { ChartLoadingWrapper } from "@/charts/chart-loading-wrapper";
+import { ChartDataWrapper } from "@/charts/chart-data-wrapper";
 import { InteractionColumns } from "@/charts/column/overlay-columns";
 import { AxisHeightLinearDual } from "@/charts/combo/axis-height-linear-dual";
 import { ComboLineColumn } from "@/charts/combo/combo-line-column";
@@ -12,13 +12,7 @@ import { HoverDotMultiple } from "@/charts/shared/interaction/hover-dots-multipl
 import { Ruler } from "@/charts/shared/interaction/ruler";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { ComboLineColumnConfig, DataSource } from "@/config-types";
-import {
-  useDataCubesComponentsQuery,
-  useDataCubesMetadataQuery,
-  useDataCubesObservationsQuery,
-} from "@/graphql/hooks";
 import { DataCubeObservationFilter } from "@/graphql/query-hooks";
-import { useLocale } from "@/locales/use-locale";
 
 import { ChartProps } from "../shared/ChartProps";
 
@@ -33,42 +27,11 @@ export const ChartComboLineColumnVisualization = (
   props: ChartComboLineColumnVisualizationProps
 ) => {
   const { dataSource, componentIris, chartConfig, queryFilters } = props;
-  const locale = useLocale();
-  const commonQueryVariables = {
-    sourceType: dataSource.type,
-    sourceUrl: dataSource.url,
-    locale,
-  };
-  const [metadataQuery] = useDataCubesMetadataQuery({
-    variables: {
-      ...commonQueryVariables,
-      cubeFilters: chartConfig.cubes.map((cube) => ({ iri: cube.iri })),
-    },
-  });
-  const [componentsQuery] = useDataCubesComponentsQuery({
-    variables: {
-      ...commonQueryVariables,
-      cubeFilters: chartConfig.cubes.map((cube) => ({
-        iri: cube.iri,
-        componentIris,
-        joinBy: cube.joinBy,
-        loadValues: true,
-      })),
-    },
-  });
-  const [observationsQuery] = useDataCubesObservationsQuery({
-    variables: {
-      ...commonQueryVariables,
-      cubeFilters: queryFilters ?? [],
-    },
-    pause: !queryFilters,
-  });
-
   return (
-    <ChartLoadingWrapper
-      metadataQuery={metadataQuery}
-      componentsQuery={componentsQuery}
-      observationsQuery={observationsQuery}
+    <ChartDataWrapper
+      dataSource={dataSource}
+      componentIris={componentIris}
+      queryFilters={queryFilters}
       chartConfig={chartConfig}
       Component={ChartComboLineColumn}
     />
