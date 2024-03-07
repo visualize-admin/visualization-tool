@@ -1293,6 +1293,9 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
               cube.filters[iri] = value;
             }
           }
+          if (oldCube.joinBy !== undefined) {
+            cube.joinBy = oldCube.joinBy;
+          }
         }
       });
     },
