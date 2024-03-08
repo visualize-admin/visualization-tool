@@ -467,10 +467,17 @@ export enum ScaleType {
 
 
 export type SearchCubeFilter = {
-  type: Scalars['String'];
+  type: SearchCubeFilterType;
   label?: Maybe<Scalars['String']>;
   value: Scalars['String'];
 };
+
+export enum SearchCubeFilterType {
+  TemporalDimension = 'TemporalDimension',
+  DataCubeTheme = 'DataCubeTheme',
+  DataCubeOrganization = 'DataCubeOrganization',
+  DataCubeAbout = 'DataCubeAbout'
+}
 
 export type SearchCubeResult = {
   __typename?: 'SearchCubeResult';
@@ -695,6 +702,7 @@ export type ResolversTypes = ResolversObject<{
   ScaleType: ScaleType;
   SearchCube: ResolverTypeWrapper<Scalars['SearchCube']>;
   SearchCubeFilter: SearchCubeFilter;
+  SearchCubeFilterType: SearchCubeFilterType;
   SearchCubeResult: ResolverTypeWrapper<SearchCubeResult>;
   SearchCubeResultOrder: SearchCubeResultOrder;
   StandardErrorDimension: ResolverTypeWrapper<ResolvedDimension>;

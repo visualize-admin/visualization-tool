@@ -2,6 +2,7 @@ import { PUBLISHED_STATE } from "@prisma/client";
 import produce, { Draft, current } from "immer";
 import get from "lodash/get";
 import pickBy from "lodash/pickBy";
+import set from "lodash/set";
 import setWith from "lodash/setWith";
 import sortBy from "lodash/sortBy";
 import unset from "lodash/unset";
@@ -21,6 +22,7 @@ import {
   EncodingFieldType,
   getChartFieldChangeSideEffect,
   getChartFieldOptionChangeSideEffect,
+  getChartSpec,
 } from "@/charts/chart-config-ui-options";
 import {
   ChartConfig,
@@ -1495,7 +1497,6 @@ const reducerLogging = false;
 const withLogging = <TState, TAction>(reducer: Reducer<TState, TAction>) => {
   return (state: Draft<TState>, action: TAction) => {
     const res = reducer(state, action);
-    console.log(state, action, res);
     return res;
   };
 };
@@ -1911,19 +1912,22 @@ export const addDatasetInConfig = function (
     });
 
     // Need to go over fields, and replace any IRI part of the joinBy by "joinBy"
-    const fields = Object.values(chartConfig.fields);
-    while (fields.length > 0) {
-      const f = fields.pop();
-      for (const fieldName of [
-        "componentIri",
-        "leftAxisComponentIri",
-        "rightAxisComponentIri",
-      ]) {
-        if (f[fieldName] === joinBy.left || f[fieldName] === joinBy.right) {
-          f[fieldName] = "joinBy";
-        }
-        if (f.color) {
-          fields.push(f.color);
+    const { encodings } = getChartSpec(chartConfig);
+    const encodingAndFields = encodings.map(
+      (e) =>
+        [
+          e,
+          chartConfig.fields[e.field as keyof typeof chartConfig.fields] as any,
+        ] as const
+    );
+    for (const [encoding, field] of encodingAndFields) {
+      if (!field) {
+        continue;
+      }
+      for (const iriAttribute of encoding.iriAttributes) {
+        const value = get(field, iriAttribute);
+        if (value === joinBy.left || value === joinBy.right) {
+          set(field, iriAttribute, "joinBy");
         }
       }
     }

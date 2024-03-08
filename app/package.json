@@ -187,6 +187,7 @@
     "babel-plugin-module-resolver": "^4.1.0",
     "jest": "^27.3.0",
     "playwright-testing-library": "^4.5.0",
+    "prettier": "^3.2.5",
     "ts-jest": "^27.0.7"
   }
 }

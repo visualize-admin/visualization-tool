@@ -72,6 +72,7 @@ export const ChartDataWrapper = <
       ...commonQueryVariables,
       cubeFilters: chartConfig.cubes.map((cube) => ({ iri: cube.iri })),
     },
+    keepPreviousData: true,
   });
   const [componentsQuery] = useDataCubesComponentsQuery({
     variables: {
@@ -83,6 +84,7 @@ export const ChartDataWrapper = <
         loadValues: true,
       })),
     },
+    keepPreviousData: true,
   });
   const [observationsQuery] = useDataCubesObservationsQuery({
     variables: {
@@ -90,6 +92,7 @@ export const ChartDataWrapper = <
       cubeFilters: observationQueryFilters ?? [],
     },
     pause: !observationQueryFilters,
+    keepPreviousData: true,
   });
 
   const {
