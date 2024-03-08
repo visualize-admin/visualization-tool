@@ -30,7 +30,13 @@ const useQueryKey = (options: object) => {
 };
 
 export const makeUseQuery =
-  <T extends { variables: object; pause?: boolean }, V>(
+  <
+    T extends {
+      variables: object;
+      pause?: boolean;
+    },
+    V,
+  >(
     executeQueryFn: (
       options: T["variables"],
       onFetching?: () => void
@@ -40,7 +46,7 @@ export const makeUseQuery =
       fetching: boolean;
     }>
   ) =>
-  (options: T) => {
+  (options: T & { keepPreviousData?: boolean }) => {
     const [result, setResult] = React.useState<{
       data?: V | null;
       queryKey: string | null;
@@ -48,13 +54,15 @@ export const makeUseQuery =
       fetching: boolean;
     }>({ fetching: !options.pause, queryKey: null, data: null });
     const queryKey = useQueryKey(options);
+    const { keepPreviousData } = options;
     const executeQuery = React.useCallback(
       async (options: T) => {
         const result = await executeQueryFn(options.variables, () =>
           setResult((prev) => ({
             ...prev,
             fetching: true,
-            data: prev.queryKey === queryKey ? prev.data : null,
+            data:
+              prev.queryKey === queryKey || keepPreviousData ? prev.data : null,
             queryKey,
           }))
         );
@@ -74,7 +82,11 @@ export const makeUseQuery =
     }, [queryKey, options.pause]);
 
     const { data, ...rest } = result;
-    const res = { ...rest, data: result.queryKey === queryKey ? data : null };
+    const res = {
+      ...rest,
+      data: result.queryKey === queryKey || keepPreviousData ? data : null,
+    };
+
     return [res, executeQuery] as const;
   };
 
@@ -111,10 +123,10 @@ export const executeDataCubesMetadataQuery = async (
       onFetching?.();
 
       return client
-        .query<DataCubeMetadataQuery, DataCubeMetadataQueryVariables>(
-          DataCubeMetadataDocument,
-          cubeVariables
-        )
+        .query<
+          DataCubeMetadataQuery,
+          DataCubeMetadataQueryVariables
+        >(DataCubeMetadataDocument, cubeVariables)
         .toPromise();
     })
   );
@@ -181,10 +193,10 @@ export const executeDataCubesComponentsQuery = async (
       onFetching?.();
 
       return client
-        .query<DataCubeComponentsQuery, DataCubeComponentsQueryVariables>(
-          DataCubeComponentsDocument,
-          cubeVariables
-        )
+        .query<
+          DataCubeComponentsQuery,
+          DataCubeComponentsQueryVariables
+        >(DataCubeComponentsDocument, cubeVariables)
         .toPromise();
     })
   );
@@ -277,10 +289,10 @@ export const executeDataCubesObservationsQuery = async (
       onFetching?.();
 
       return client
-        .query<DataCubeObservationsQuery, DataCubeObservationsQueryVariables>(
-          DataCubeObservationsDocument,
-          cubeVariables
-        )
+        .query<
+          DataCubeObservationsQuery,
+          DataCubeObservationsQueryVariables
+        >(DataCubeObservationsDocument, cubeVariables)
         .toPromise();
     })
   );

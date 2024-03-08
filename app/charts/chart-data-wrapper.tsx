@@ -31,7 +31,7 @@ type ElementProps<RE> = RE extends React.ElementType<infer P> ? P : never;
 export const ChartDataWrapper = <
   TChartConfig extends ChartConfig,
   TOtherProps,
-  TChartComponent extends React.ElementType
+  TChartComponent extends React.ElementType,
 >({
   chartConfig,
   Component,
