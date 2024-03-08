@@ -4,9 +4,11 @@ import {
   Autocomplete,
   Box,
   Button,
+  Divider,
   Drawer,
   IconButton,
   InputAdornment,
+  Stack,
   Tab,
   TextField,
   Theme,
@@ -18,14 +20,16 @@ import parse from "autosuggest-highlight/parse";
 import clsx from "clsx";
 import { AnimatePresence, Transition } from "framer-motion";
 import orderBy from "lodash/orderBy";
+import uniqBy from "lodash/uniqBy";
 import { useRouter } from "next/router";
 import React, { useMemo } from "react";
 import { createStore, useStore } from "zustand";
 import shallow from "zustand/shallow";
 
 import { DataSetMetadata } from "@/components/dataset-metadata";
+import { Error, Loading } from "@/components/hint";
 import { MotionBox } from "@/components/presence";
-import { BackButton, DataSource } from "@/configurator";
+import { BackButton, ChartConfig, DataSource } from "@/configurator";
 import { DRAWER_WIDTH } from "@/configurator/components/drawer";
 import { getDimensionLabel } from "@/configurator/components/ui-helpers";
 import {
@@ -35,9 +39,11 @@ import {
   TemporalDimension,
 } from "@/domain/data";
 import { useDimensionFormatters } from "@/formatters";
+import { useDataCubesMetadataQuery } from "@/graphql/hooks";
 import { Icon } from "@/icons";
 import SvgIcArrowRight from "@/icons/components/IcArrowRight";
 import SvgIcClose from "@/icons/components/IcClose";
+import { useLocale } from "@/locales/use-locale";
 import { useTransitionStore } from "@/stores/transition";
 import { useEmbedOptions } from "@/utils/embed";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
@@ -100,7 +106,7 @@ const useMetadataPanelStore: <T>(
   return useStore(store, selector, shallow);
 };
 
-const useMetadataPanelStoreActions = () => {
+export const useMetadataPanelStoreActions = () => {
   const store = React.useContext(MetadataPanelStoreContext);
 
   return useStore(store, (state) => state.actions);
@@ -266,7 +272,7 @@ export const OpenMetadataPanelWrapper = ({
 };
 
 type MetadataPanelProps = {
-  datasetIri: string;
+  chartConfigs: ChartConfig[];
   dataSource: DataSource;
   dimensions: Component[];
   container?: HTMLDivElement | null;
@@ -274,7 +280,7 @@ type MetadataPanelProps = {
 };
 
 export const MetadataPanel = (props: MetadataPanelProps) => {
-  const { datasetIri, dataSource, dimensions, container, top = 0 } = props;
+  const { dimensions, container, top = 0, chartConfigs, dataSource } = props;
   const router = useRouter();
   const drawerClasses = useDrawerStyles({ top });
   const otherClasses = useOtherStyles();
@@ -354,8 +360,8 @@ export const MetadataPanel = (props: MetadataPanelProps) => {
             {activeSection === "general" ? (
               <MotionBox key="general-tab" {...animationProps}>
                 <TabPanelGeneral
-                  datasetIri={datasetIri}
                   dataSource={dataSource}
+                  chartConfigs={chartConfigs}
                 />
               </MotionBox>
             ) : activeSection === "data" ? (
@@ -406,17 +412,47 @@ const Header = ({ onClose }: { onClose: () => void }) => {
 };
 
 const TabPanelGeneral = ({
-  datasetIri,
   dataSource,
+  chartConfigs,
 }: {
-  datasetIri: string;
   dataSource: DataSource;
+  chartConfigs: ChartConfig[];
 }) => {
   const classes = useOtherStyles();
+  const locale = useLocale();
 
+  const cubes = uniqBy(
+    chartConfigs.flatMap((x) => x.cubes).map((x) => ({ iri: x.iri })),
+    (x) => x.iri
+  );
+
+  const [{ data, fetching, error }] = useDataCubesMetadataQuery({
+    variables: {
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+      cubeFilters: cubes,
+    },
+  });
+  const cubesMetadata = data?.dataCubesMetadata;
+  if (!cubesMetadata) {
+    return null;
+  }
   return (
     <TabPanel className={classes.tabPanel} value="general">
-      <DataSetMetadata dataSetIri={datasetIri} dataSource={dataSource} />
+      {fetching ? <Loading /> : null}
+      {error ? (
+        <Error>{`${error instanceof Error ? error.message : error}`}</Error>
+      ) : null}
+      <Stack divider={<Divider />} gap="1.5rem">
+        {cubesMetadata?.map((cube) => (
+          <DataSetMetadata
+            key={cube.iri}
+            cube={cube}
+            showTitle={cubes.length > 1}
+          />
+        ))}
+      </Stack>
     </TabPanel>
   );
 };
@@ -486,7 +522,7 @@ const TabPanelData = ({ dimensions }: { dimensions: Component[] }) => {
                 const matches = match(option.label, inputValue, {
                   insideWords: true,
                 });
-                const parts = parse(option.label, matches);
+                const parts = parse(getDimensionLabel(option.value), matches);
 
                 return (
                   <li

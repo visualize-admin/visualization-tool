@@ -40,10 +40,10 @@ import { MetadataPanel } from "@/components/metadata-panel";
 import {
   ChartConfig,
   DataSource,
-  Layout,
   getChartConfig,
   hasChartConfigs,
   isConfiguring,
+  Layout,
   useConfiguratorState,
 } from "@/configurator";
 import { Description, Title } from "@/configurator/components/annotators";
@@ -445,9 +445,8 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
                         <Flex sx={{ alignItems: "center", gap: 2 }}>
                           {!disableMetadataPanel && (
                             <MetadataPanel
-                              // FIXME: adapt to design
-                              datasetIri={chartConfig.cubes[0].iri}
                               dataSource={dataSource}
+                              chartConfigs={[chartConfig]}
                               dimensions={allComponents}
                               top={96}
                             />

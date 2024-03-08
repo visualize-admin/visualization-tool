@@ -7,9 +7,9 @@ import {
   Typography,
 } from "@mui/material";
 import uniqBy from "lodash/uniqBy";
-import Link from "next/link";
 import { useMemo } from "react";
 
+import { useMetadataPanelStoreActions } from "@/components/metadata-panel";
 import useDisclosure from "@/components/use-disclosure";
 import {
   ControlSection,
@@ -36,6 +36,7 @@ export const DatasetsControlSection = () => {
     sourceUrl: state.dataSource.url,
     locale,
   };
+  const { setOpen, setActiveSection } = useMetadataPanelStoreActions();
   const cubes = useMemo(() => {
     const cubes = uniqBy(
       state.chartConfigs.flatMap((x) => x.cubes),
@@ -56,6 +57,12 @@ export const DatasetsControlSection = () => {
     open: openDatasetDialog,
     close: closeDatasetDialog,
   } = useDisclosure();
+
+  const handleDatasetClick = () => {
+    setOpen(true);
+    setActiveSection("general");
+  };
+
   return (
     <ControlSection collapse>
       <SubsectionTitle titleId="controls-data" gutterBottom={false}>
@@ -83,16 +90,16 @@ export const DatasetsControlSection = () => {
                 key={x.iri}
               >
                 <div>
-                  <Link href={`/browse?dataset=${x.iri}`} passHref>
-                    <MuiLink
-                      color="primary"
-                      underline="none"
-                      variant="caption"
-                      component="span"
-                    >
-                      Dataset
-                    </MuiLink>
-                  </Link>
+                  <MuiLink
+                    color="primary"
+                    underline="none"
+                    sx={{ cursor: "pointer" }}
+                    variant="caption"
+                    component="span"
+                    onClick={handleDatasetClick}
+                  >
+                    Dataset
+                  </MuiLink>
                   <br />
                   <Typography variant="caption">{x.title}</Typography>
                 </div>

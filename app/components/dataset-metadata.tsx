@@ -2,8 +2,8 @@ import { Trans } from "@lingui/macro";
 import {
   Box,
   Link,
-  LinkProps,
   Link as MUILink,
+  LinkProps,
   Stack,
   Typography,
   TypographyProps,
@@ -13,117 +13,122 @@ import NextLink from "next/link";
 import React, { ReactNode } from "react";
 
 import Tag from "@/components/tag";
-import { DataSource } from "@/config-types";
 import { DataCubeMetadata } from "@/domain/data";
 import { useFormatDate } from "@/formatters";
-import { useDataCubesMetadataQuery } from "@/graphql/hooks";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
 import { makeOpenDataLink } from "@/utils/opendata";
 
 export const DataSetMetadata = ({
-  dataSetIri,
-  dataSource,
+  cube,
+  showTitle,
 }: {
-  dataSetIri: string;
-  dataSource: DataSource;
+  cube: DataCubeMetadata;
+  showTitle: boolean;
 }) => {
   const locale = useLocale();
   const formatDate = useFormatDate();
-  const [{ data, fetching, error }] = useDataCubesMetadataQuery({
-    variables: {
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
-      cubeFilters: [{ iri: dataSetIri }],
-    },
-  });
-  // FIXME: adapt to design
-  const cube = data?.dataCubesMetadata[0];
+
   const openDataLink = cube ? makeOpenDataLink(locale, cube) : null;
-  if (fetching || error || !cube) {
-    // The error and loading are managed by the component
-    // displayed in the middle panel
-    return null;
-  }
 
   return (
     <div>
-      {cube.publisher && (
-        <>
+      {showTitle ? (
+        <Typography variant="h4" sx={{ mb: 3 }} color="grey.700">
+          {cube.title}
+        </Typography>
+      ) : null}
+
+      <Stack spacing={2}>
+        {cube.publisher && (
+          <div>
+            <DatasetMetadataTitle>
+              <Trans id="dataset.metadata.source">Source</Trans>
+            </DatasetMetadataTitle>
+            <DatasetMetadataBody>
+              <Box
+                component="span"
+                sx={{ "> a": { color: "grey.900" } }}
+                dangerouslySetInnerHTML={{
+                  __html: cube.publisher,
+                }}
+              />
+            </DatasetMetadataBody>
+          </div>
+        )}
+
+        <div>
           <DatasetMetadataTitle>
-            <Trans id="dataset.metadata.source">Source</Trans>
+            <Trans id="dataset.metadata.date.created">Date Created</Trans>
           </DatasetMetadataTitle>
           <DatasetMetadataBody>
-            <Box
-              component="span"
-              sx={{ "> a": { color: "grey.900" } }}
-              dangerouslySetInnerHTML={{
-                __html: cube.publisher,
-              }}
-            />
+            {cube.datePublished ? formatDate(cube.datePublished) ?? "–" : "–"}
           </DatasetMetadataBody>
-        </>
-      )}
+        </div>
 
-      <DatasetMetadataTitle>
-        <Trans id="dataset.metadata.date.created">Date Created</Trans>
-      </DatasetMetadataTitle>
-      <DatasetMetadataBody>
-        {cube.datePublished ? formatDate(cube.datePublished) ?? "–" : "–"}
-      </DatasetMetadataBody>
+        <div>
+          <DatasetMetadataTitle>
+            <Trans id="dataset.metadata.version">Version</Trans>
+          </DatasetMetadataTitle>
+          <DatasetMetadataBody>{cube.version ?? "–"}</DatasetMetadataBody>
+        </div>
 
-      <DatasetMetadataTitle>
-        <Trans id="dataset.metadata.version">Version</Trans>
-      </DatasetMetadataTitle>
-      <DatasetMetadataBody>{cube.version ?? "–"}</DatasetMetadataBody>
+        <div>
+          <DatasetMetadataTitle>
+            <Trans id="dataset.metadata.email">Contact points</Trans>
+          </DatasetMetadataTitle>
+          <DatasetMetadataBody>
+            {cube.contactPoint?.email && cube.contactPoint.name ? (
+              <DatasetMetadataLink
+                href={`mailto:${cube.contactPoint.email}`}
+                label={cube.contactPoint.name ?? cube.contactPoint.email}
+              />
+            ) : (
+              "–"
+            )}
+          </DatasetMetadataBody>
+        </div>
 
-      <DatasetMetadataTitle>
-        <Trans id="dataset.metadata.email">Contact points</Trans>
-      </DatasetMetadataTitle>
-      <DatasetMetadataBody>
-        {cube.contactPoint?.email && cube.contactPoint.name ? (
-          <DatasetMetadataLink
-            href={`mailto:${cube.contactPoint.email}`}
-            label={cube.contactPoint.name ?? cube.contactPoint.email}
-          />
-        ) : (
-          "–"
-        )}
-      </DatasetMetadataBody>
+        <div>
+          <DatasetMetadataTitle>
+            <Trans id="dataset.metadata.furtherinformation">
+              Further information
+            </Trans>
+          </DatasetMetadataTitle>
+          <DatasetMetadataBody>
+            {cube.landingPage ? (
+              <DatasetMetadataLink
+                href={cube.landingPage}
+                external
+                label={
+                  <Trans id="dataset.metadata.learnmore">
+                    Learn more about the dataset
+                  </Trans>
+                }
+              />
+            ) : (
+              "–"
+            )}
 
-      <DatasetMetadataTitle>
-        <Trans id="dataset.metadata.furtherinformation">
-          Further information
-        </Trans>
-      </DatasetMetadataTitle>
-      <DatasetMetadataBody sx={{ mb: 5 }}>
-        {cube.landingPage ? (
-          <DatasetMetadataLink
-            href={cube.landingPage}
-            external
-            label={
-              <Trans id="dataset.metadata.learnmore">
-                Learn more about the dataset
-              </Trans>
-            }
-          />
-        ) : (
-          "–"
-        )}
-
-        {openDataLink ? (
-          <>
-            <br />
-            <DatasetMetadataLink
-              external
-              label="OpenData.swiss"
-              href={openDataLink}
-            />
-          </>
-        ) : null}
-      </DatasetMetadataBody>
-      <DatasetTags cube={cube} />
+            {openDataLink ? (
+              <>
+                <br />
+                <DatasetMetadataLink
+                  external
+                  label="OpenData.swiss"
+                  href={openDataLink}
+                />
+              </>
+            ) : null}
+          </DatasetMetadataBody>
+        </div>
+        <Stack spacing={2}>
+          <DatasetMetadataTitle>
+            <Trans id="dataset-preview.keywords">Keywords</Trans>
+          </DatasetMetadataTitle>
+          <DatasetTags cube={cube} />
+        </Stack>
+      </Stack>
     </div>
   );
 };
@@ -141,7 +146,7 @@ const DatasetMetadataBody = ({
   children: ReactNode;
   sx?: TypographyProps["sx"];
 }) => (
-  <Typography variant="body2" sx={{ color: "grey.900", mb: 4, ...sx }}>
+  <Typography variant="body2" sx={{ color: "grey.900", ...sx }}>
     {children}
   </Typography>
 );
@@ -172,33 +177,28 @@ const DatasetMetadataLink = ({
 
 const DatasetTags = ({ cube }: { cube: DataCubeMetadata }) => {
   return (
-    <>
-      <DatasetMetadataTitle>
-        <Trans id="dataset-preview.keywords">Keywords</Trans>
-      </DatasetMetadataTitle>
-      <Stack spacing={1} direction="column" sx={{ mt: 3 }}>
-        {cube.creator?.iri && (
-          <DatasetMetadataTag
-            type="organization"
-            iri={cube.creator.iri}
-            label={cube.creator.label}
-          />
+    <Stack spacing={1} direction="column">
+      {cube.creator?.iri && (
+        <DatasetMetadataTag
+          type="organization"
+          iri={cube.creator.iri}
+          label={cube.creator.label}
+        />
+      )}
+      {cube.themes &&
+        sortBy(cube.themes, (d) => d.label).map(
+          (t) =>
+            t.iri &&
+            t.label && (
+              <DatasetMetadataTag
+                key={t.iri}
+                type="theme"
+                iri={t.iri}
+                label={t.label}
+              />
+            )
         )}
-        {cube.themes &&
-          sortBy(cube.themes, (d) => d.label).map(
-            (t) =>
-              t.iri &&
-              t.label && (
-                <DatasetMetadataTag
-                  key={t.iri}
-                  type="theme"
-                  iri={t.iri}
-                  label={t.label}
-                />
-              )
-          )}
-      </Stack>
-    </>
+    </Stack>
   );
 };
 

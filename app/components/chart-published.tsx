@@ -25,9 +25,9 @@ import { ChartWithFilters } from "@/components/chart-with-filters";
 import Flex from "@/components/flex";
 import { HintBlue, HintRed, HintYellow } from "@/components/hint";
 import {
+  createMetadataPanelStore,
   MetadataPanel,
   MetadataPanelStoreContext,
-  createMetadataPanelStore,
 } from "@/components/metadata-panel";
 import {
   ChartConfig,
@@ -316,9 +316,8 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
                 >
                   {meta.title[locale] && <Title text={meta.title[locale]} />}
                   <MetadataPanel
-                    // FIXME: adapt to design
-                    datasetIri={chartConfig.cubes[0].iri}
                     dataSource={dataSource}
+                    chartConfigs={[chartConfig]}
                     dimensions={allComponents}
                     container={rootRef.current}
                   />
