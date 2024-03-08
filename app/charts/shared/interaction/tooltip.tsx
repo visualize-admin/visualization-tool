@@ -51,6 +51,10 @@ const TooltipInner = ({ d, type }: { d: Observation; type: TooltipType }) => {
   const { xAnchor, yAnchor, placement, xValue, tooltipContent, datum, values } =
     getAnnotationInfo(d as any);
 
+  if (Number.isNaN(yAnchor)) {
+    return null;
+  }
+
   return (
     <TooltipBox x={xAnchor} y={yAnchor} placement={placement} margins={margins}>
       {tooltipContent ? (
