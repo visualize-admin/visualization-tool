@@ -19,7 +19,7 @@ import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
 import { makeOpenDataLink } from "@/utils/opendata";
 
-export const DataSetMetadata = ({
+export const DatasetMetadata = ({
   cube,
   showTitle,
 }: {

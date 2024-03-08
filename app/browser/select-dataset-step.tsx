@@ -17,7 +17,7 @@ import {
   SearchFilters,
 } from "@/browser/dataset-browse";
 import { DataSetPreview } from "@/browser/dataset-preview";
-import { DataSetMetadata } from "@/components/dataset-metadata";
+import { DatasetMetadata } from "@/components/dataset-metadata";
 import Flex from "@/components/flex";
 import { Footer } from "@/components/footer";
 import {
@@ -302,7 +302,7 @@ const SelectDatasetStepContent = () => {
                   </Button>
                 </NextLink>
                 <MotionBox sx={{ mt: 6 }} {...smoothPresenceProps}>
-                  <DataSetMetadataAdapter
+                  <DatasetMetadataSingleCubeAdapter
                     datasetIri={dataset}
                     dataSource={configState.dataSource}
                   />
@@ -409,7 +409,7 @@ const SelectDatasetStepContent = () => {
   );
 };
 
-const DataSetMetadataAdapter = ({
+const DatasetMetadataSingleCubeAdapter = ({
   dataSource,
   datasetIri,
 }: {
@@ -430,7 +430,7 @@ const DataSetMetadataAdapter = ({
   }
 
   return (
-    <DataSetMetadata cube={data.data.dataCubeMetadata} showTitle={false} />
+    <DatasetMetadata cube={data.data.dataCubeMetadata} showTitle={false} />
   );
 };
 

@@ -26,7 +26,7 @@ import React, { useMemo } from "react";
 import { createStore, useStore } from "zustand";
 import shallow from "zustand/shallow";
 
-import { DataSetMetadata } from "@/components/dataset-metadata";
+import { DatasetMetadata } from "@/components/dataset-metadata";
 import { Error, Loading } from "@/components/hint";
 import { MotionBox } from "@/components/presence";
 import { BackButton, ChartConfig, DataSource } from "@/configurator";
@@ -446,7 +446,7 @@ const TabPanelGeneral = ({
       ) : null}
       <Stack divider={<Divider />} gap="1.5rem">
         {cubesMetadata?.map((cube) => (
-          <DataSetMetadata
+          <DatasetMetadata
             key={cube.iri}
             cube={cube}
             showTitle={cubes.length > 1}
