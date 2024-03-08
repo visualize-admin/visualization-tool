@@ -1,4 +1,4 @@
-import { createDraft, current } from "immer";
+import produce, { createDraft, current } from "immer";
 import get from "lodash/get";
 
 import { getChartConfigAdjustedToChartType } from "@/charts";
@@ -7,6 +7,7 @@ import {
   ChartType,
   ColumnConfig,
   ComboLineDualConfig,
+  ConfiguratorState,
   ConfiguratorStateConfiguringChart,
   ConfiguratorStatePublishing,
   DataSource,
@@ -32,6 +33,7 @@ import {
   setRangeFilter,
   updateColorMapping,
 } from "@/configurator/configurator-state";
+import { configStateMock } from "@/configurator/configurator-state.mock";
 import { Component, Dimension, Measure, NominalDimension } from "@/domain/data";
 import covid19ColumnChartConfig from "@/test/__fixtures/config/dev/chartConfig-column-covid19.json";
 import covid19TableChartConfig from "@/test/__fixtures/config/dev/chartConfig-table-covid19.json";
@@ -855,37 +857,14 @@ describe("getFiltersByMappingStatus", () => {
 
 describe("colorMapping", () => {
   it("should correctly reset color mapping", () => {
-    const state = {
-      state: "CONFIGURING_CHART",
-      chartConfigs: [
-        {
-          key: "abc",
-          fields: {
-            areaLayer: {
-              componentIri: "areaLayerIri",
-              color: {
-                type: "categorical",
-                componentIri: "areaLayerColorIri",
-                palette: "dimension",
-                colorMapping: {
-                  red: "green",
-                  green: "blue",
-                  blue: "red",
-                },
-              },
-            },
-          },
-        },
-      ],
-      activeChartKey: "abc",
-    } as unknown as ConfiguratorStateConfiguringChart;
+    const state: ConfiguratorStateConfiguringChart = configStateMock.map;
 
     updateColorMapping(state, {
       type: "CHART_CONFIG_UPDATE_COLOR_MAPPING",
       value: {
         field: "areaLayer",
         colorConfigPath: "color",
-        dimensionIri: "areaLayerColorIri",
+        dimensionIri: "year-period-1",
         values: [
           { value: "red", label: "red", color: "red" },
           { value: "green", label: "green", color: "green" },
@@ -958,42 +937,7 @@ describe("handleChartFieldChanged", () => {
     getCachedComponents.mockImplementation(
       () => getCachedComponentsMock.geoAndNumerical
     );
-    const state = {
-      state: "CONFIGURING_CHART",
-      dataSource: {
-        type: "sparql",
-        url: "fakeUrl",
-      },
-      chartConfigs: [
-        {
-          key: "cba",
-          chartType: "map",
-          cubes: [
-            {
-              iri: "mapDataset",
-              filters: {},
-            },
-          ],
-          fields: {
-            symbolLayer: {
-              componentIri: "symbolLayerIri",
-              color: {
-                type: "categorical",
-                componentIri: "symbolLayerColorIri",
-                palette: "oranges",
-                colorMapping: {
-                  red: "green",
-                  green: "blue",
-                  blue: "red",
-                },
-              },
-            },
-          },
-          filters: {},
-        },
-      ],
-      activeChartKey: "cba",
-    } as unknown as ConfiguratorStateConfiguringChart;
+    const state = configStateMock.map;
 
     handleChartFieldChanged(state, {
       type: "CHART_FIELD_CHANGED",
@@ -1226,35 +1170,7 @@ describe("publishing chart config", () => {
 });
 
 describe("add dataset", () => {
-  const state = {
-    state: "CONFIGURING_CHART",
-    dataSource: {
-      type: "sparql",
-      url: "https://lindas.admin.ch",
-    },
-    chartConfigs: [
-      {
-        key: "abc",
-        cubes: [{ iri: "https://first-dataset" }],
-        fields: {
-          areaLayer: {
-            componentIri: "year-period-1",
-            color: {
-              type: "categorical",
-              componentIri: "year-period-1",
-              palette: "dimension",
-              colorMapping: {
-                red: "green",
-                green: "blue",
-                blue: "red",
-              },
-            },
-          },
-        },
-      },
-    ],
-    activeChartKey: "abc",
-  } as unknown as ConfiguratorStateConfiguringChart;
+  const state = configStateMock.map;
 
   const addAction: ConfiguratorStateAction = {
     type: "DATASET_ADD",
@@ -1275,8 +1191,16 @@ describe("add dataset", () => {
     },
   };
 
+  const runReducer = (
+    state: ConfiguratorState,
+    action: ConfiguratorStateAction
+  ) => produce(state, (state: ConfiguratorState) => reducer(state, action));
+
   it("should add/remove a cube and replace correctly joinBy to the first cube", () => {
-    const newState = reducer(state, addAction) as ConfiguratorStatePublishing;
+    const newState = runReducer(
+      state,
+      addAction
+    ) as ConfiguratorStatePublishing;
 
     const config = newState.chartConfigs[0] as MapConfig;
 
@@ -1286,12 +1210,15 @@ describe("add dataset", () => {
   });
 
   it("should correctly remove a cube", () => {
-    const newState = reducer(state, addAction) as ConfiguratorStatePublishing;
+    const newState = runReducer(
+      state,
+      addAction
+    ) as ConfiguratorStatePublishing;
 
     getCachedComponents.mockImplementation(() => {
       return getCachedComponentsMock.electricyPricePerCantonDimensions;
     });
-    const newState2 = reducer(
+    const newState2 = runReducer(
       newState,
       removeAction
     ) as ConfiguratorStatePublishing;

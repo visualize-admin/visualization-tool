@@ -104,7 +104,7 @@ const useStyles = makeStyles<Theme>((theme) => ({
 
 type ControlTabFieldProps = {
   chartConfig: ChartConfig;
-  component?: Component;
+  fieldComponents?: Component[];
   value: string;
   labelId: string | null;
   disabled?: boolean;
@@ -112,14 +112,20 @@ type ControlTabFieldProps = {
 };
 
 export const ControlTabField = (props: ControlTabFieldProps) => {
-  const { chartConfig, component, value, labelId, disabled, warnMessage } =
-    props;
+  const {
+    chartConfig,
+    fieldComponents,
+    value,
+    labelId,
+    disabled,
+    warnMessage,
+  } = props;
   const field = useActiveChartField({ value });
 
   return (
     <ControlTab
       chartConfig={chartConfig}
-      component={component}
+      fieldComponents={fieldComponents}
       value={`${field.value}`}
       labelId={labelId}
       checked={field.checked}

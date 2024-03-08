@@ -114,6 +114,7 @@ const DataFilterSelectGeneric = (props: DataFilterSelectGenericProps) => {
   const [state] = useConfiguratorState();
   const chartConfig = getChartConfig(state);
   const [{ data, fetching }] = useDataCubesComponentsQuery({
+    keepPreviousData: true,
     variables: {
       sourceType: state.dataSource.type,
       sourceUrl: state.dataSource.url,
@@ -354,8 +355,9 @@ const useFilterReorder = ({
 
   const [
     { data: componentsData, fetching: componentsFetching },
-    exectueComponentsQuery,
+    executeComponentsQuery,
   ] = useDataCubesComponentsQuery({
+    keepPreviousData: true,
     variables: {
       sourceType: state.dataSource.type,
       sourceUrl: state.dataSource.url,
@@ -365,7 +367,7 @@ const useFilterReorder = ({
   });
 
   useEffect(() => {
-    exectueComponentsQuery({
+    executeComponentsQuery({
       variables: {
         sourceType: state.dataSource.type,
         sourceUrl: state.dataSource.url,
@@ -375,7 +377,7 @@ const useFilterReorder = ({
     });
   }, [
     variables,
-    exectueComponentsQuery,
+    executeComponentsQuery,
     state.dataSource.type,
     state.dataSource.url,
     locale,
@@ -960,10 +962,14 @@ const ChartFields = (props: ChartFieldsProps) => {
       {getChartSpec(chartConfig)
         .encodings.filter((d) => !d.hide)
         .map((encoding) => {
-          const { field, getDisabledState } = encoding;
-          const component = components.find(
-            (d) => d.iri === (chartConfig.fields as any)[field]?.componentIri
-          );
+          const { field, getDisabledState, iriAttributes } = encoding;
+
+          const componentIris = iriAttributes
+            .map((x) => (chartConfig.fields as any)[field]?.[x])
+            .filter(truthy) as string[];
+          const fieldComponents = componentIris
+            .map((cIri) => components.find((d) => cIri === d.iri))
+            .filter(truthy);
           const baseLayer = isMapConfig(chartConfig) && field === "baseLayer";
 
           return baseLayer ? (
@@ -978,12 +984,12 @@ const ChartFields = (props: ChartFieldsProps) => {
             <ControlTabField
               key={field}
               chartConfig={chartConfig}
-              component={
+              fieldComponents={
                 isMapConfig(chartConfig) && field === "symbolLayer"
                   ? chartConfig.fields.symbolLayer
-                    ? component
+                    ? fieldComponents
                     : undefined
-                  : component
+                  : fieldComponents
               }
               value={field}
               labelId={`${chartConfig.chartType}.${field}`}

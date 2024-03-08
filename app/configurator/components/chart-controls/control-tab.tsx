@@ -11,7 +11,10 @@ import {
   overrideChecked,
 } from "@/configurator";
 import { getFieldLabel } from "@/configurator/components/field-i18n";
-import { getIconName } from "@/configurator/components/ui-helpers";
+import {
+  getDimensionLabel,
+  getIconName,
+} from "@/configurator/components/ui-helpers";
 import { Component } from "@/domain/data";
 import { Icon, IconName } from "@/icons";
 import SvgIcEdit from "@/icons/components/IcEdit";
@@ -20,7 +23,7 @@ import useEvent from "@/utils/use-event";
 
 type ControlTabProps = {
   chartConfig: ChartConfig;
-  component?: Component;
+  fieldComponents?: Component[];
   value: string;
   onClick: (x: string) => void;
   labelId: string | null;
@@ -31,7 +34,7 @@ type ControlTabProps = {
 export const ControlTab = (props: ControlTabProps) => {
   const {
     chartConfig,
-    component,
+    fieldComponents,
     value,
     onClick,
     checked,
@@ -40,12 +43,20 @@ export const ControlTab = (props: ControlTabProps) => {
     warnMessage,
   } = props;
   const handleClick = useEvent(() => onClick(value));
-  const isActive = overrideChecked(chartConfig, value) ? true : !!component;
+
+  const components = fieldComponents;
+  const firstComponent = components?.[0];
+  const isActive = overrideChecked(chartConfig, value)
+    ? true
+    : !!firstComponent;
+
+  const labels = components?.map((x) => getDimensionLabel(x));
+
   const { upperLabel, mainLabel } = getLabels(
     chartConfig,
     value,
     labelId,
-    component?.label
+    labels
   );
 
   return (
@@ -62,7 +73,9 @@ export const ControlTab = (props: ControlTabProps) => {
           mainLabel={mainLabel}
           isActive={isActive}
           checked={checked}
-          optional={overrideChecked(chartConfig, value) ? false : !component}
+          optional={
+            overrideChecked(chartConfig, value) ? false : !firstComponent
+          }
           rightIcon={
             <Flex gap={2}>
               {warnMessage && <WarnIconTooltip title={warnMessage} />}{" "}
@@ -79,20 +92,20 @@ const getLabels = (
   chartConfig: ChartConfig,
   value: string,
   labelId: string | null,
-  componentLabel: string | undefined
+  componentLabels: string[] | undefined
 ) => {
   switch (value) {
     case "y":
       if (isComboChartConfig(chartConfig)) {
         return {
-          upperLabel: null,
-          mainLabel: getFieldLabel("y"),
+          upperLabel: getFieldLabel("y"),
+          mainLabel: componentLabels?.join(", "),
         };
       }
     default:
       return {
         upperLabel: labelId ? getFieldLabel(labelId) : null,
-        mainLabel: componentLabel ?? (
+        mainLabel: componentLabels?.[0] ?? (
           <Trans id="controls.color.add">Add…</Trans>
         ),
       };

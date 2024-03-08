@@ -31,7 +31,7 @@ type ElementProps<RE> = RE extends React.ElementType<infer P> ? P : never;
 export const ChartDataWrapper = <
   TChartConfig extends ChartConfig,
   TOtherProps,
-  TChartComponent extends React.ElementType
+  TChartComponent extends React.ElementType,
 >({
   chartConfig,
   Component,
@@ -72,6 +72,7 @@ export const ChartDataWrapper = <
       ...commonQueryVariables,
       cubeFilters: chartConfig.cubes.map((cube) => ({ iri: cube.iri })),
     },
+    keepPreviousData: true,
   });
   const [componentsQuery] = useDataCubesComponentsQuery({
     variables: {
@@ -83,12 +84,14 @@ export const ChartDataWrapper = <
         loadValues: true,
       })),
     },
+    keepPreviousData: true,
   });
   const [observationsQuery] = useDataCubesObservationsQuery({
     variables: {
       ...commonQueryVariables,
       cubeFilters: queryFilters ?? [],
     },
+    keepPreviousData: true,
     pause: !queryFilters,
   });
 

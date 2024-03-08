@@ -1,4 +1,8 @@
-import { DataCubeOrganization, DataCubeTheme } from "@/graphql/query-hooks";
+import {
+  DataCubeOrganization,
+  DataCubeTheme,
+  SearchCubeFilterType,
+} from "@/graphql/query-hooks";
 import { BrowseParams } from "@/pages/browse";
 
 export type DataCubeAbout = {
@@ -18,7 +22,10 @@ export const getFiltersFromParams = (params: BrowseParams) => {
   ]) {
     if (t && i && (t === "theme" || t === "organization")) {
       filters.push({
-        __typename: t === "theme" ? "DataCubeTheme" : "DataCubeOrganization",
+        __typename:
+          t === "theme"
+            ? SearchCubeFilterType.DataCubeTheme
+            : SearchCubeFilterType.DataCubeOrganization,
         iri: i,
       });
     }
@@ -26,7 +33,7 @@ export const getFiltersFromParams = (params: BrowseParams) => {
 
   if (topic) {
     filters.push({
-      __typename: "DataCubeAbout",
+      __typename: SearchCubeFilterType.DataCubeAbout,
       iri: topic,
     });
   }

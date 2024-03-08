@@ -2,7 +2,10 @@ import rdf from "rdf-ext";
 import { NamedNode } from "rdf-js";
 
 import { truthy } from "@/domain/types";
-import { SearchCubeFilter } from "@/graphql/resolver-types";
+import {
+  SearchCubeFilter,
+  SearchCubeFilterType,
+} from "@/graphql/resolver-types";
 import { ExtendedCube } from "@/rdf/extended-cube";
 import * as ns from "@/rdf/namespace";
 
@@ -38,15 +41,19 @@ export const makeCubeFilters = ({
 }) => {
   const themeQueryFilter = makeInQueryFilter(
     ns.dcat.theme,
-    filters?.filter(isAttrEqual("type", "DataCubeTheme")) ?? []
+    filters?.filter(isAttrEqual("type", SearchCubeFilterType.DataCubeTheme)) ??
+      []
   );
   const orgQueryFilter = makeInQueryFilter(
     ns.dcterms.creator,
-    filters?.filter(isAttrEqual("type", "DataCubeOrganization")) ?? []
+    filters?.filter(
+      isAttrEqual("type", SearchCubeFilterType.DataCubeOrganization)
+    ) ?? []
   );
   const aboutQueryFilter = makeInQueryFilter(
     ns.schema.about,
-    filters?.filter(isAttrEqual("type", "DataCubeAbout")) ?? []
+    filters?.filter(isAttrEqual("type", SearchCubeFilterType.DataCubeAbout)) ??
+      []
   );
 
   const res = [

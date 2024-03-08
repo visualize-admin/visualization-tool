@@ -12,25 +12,29 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { KeyboardEventHandler, useEffect, useRef, useState } from "react";
 
-import { SearchCubeFilter, useSearchCubesQuery } from "@/graphql/query-hooks";
+import {
+  SearchCubeFilter,
+  SearchCubeFilterType,
+  useSearchCubesQuery,
+} from "@/graphql/query-hooks";
 import { RequestQueryMeta } from "@/graphql/query-meta";
 
 const territoryTheme = {
   name: "Territory theme",
-  type: "DataCubeTheme",
+  type: SearchCubeFilterType.DataCubeTheme,
   value: "https://register.ld.admin.ch/opendataswiss/category/territory",
 };
 
 const geographyTheme = {
   name: "Geography theme",
-  type: "DataCubeTheme",
+  type: SearchCubeFilterType.DataCubeTheme,
   value: "https://register.ld.admin.ch/opendataswiss/category/geography",
 };
 
 // @ts-ignore
 const bafuCreator = {
   name: "BAFU creator",
-  type: "DataCubeOrganization",
+  type: SearchCubeFilterType.DataCubeOrganization,
   value:
     "https://register.ld.admin.ch/opendataswiss/org/bundesamt-fur-umwelt-bafu",
 };
