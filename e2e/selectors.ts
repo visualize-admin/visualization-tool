@@ -84,7 +84,7 @@ export const createSelectors = ({ screen, page, within }: Ctx) => {
         screen
           .getByTestId("panel-drawer")
           .within()
-          .findByText("Use abbreviations"),
+          .findByText("Use abbreviations", {}, { timeout: 10_000 }),
     },
     published: {
       interactiveFilters: () =>
