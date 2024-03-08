@@ -878,7 +878,7 @@ describe("colorMapping", () => {
         },
       ],
       activeChartKey: "abc",
-    } as unknown as ConfiguratorStateConfiguringChart;
+    };
 
     updateColorMapping(state, {
       type: "CHART_CONFIG_UPDATE_COLOR_MAPPING",
@@ -1235,6 +1235,17 @@ describe("add dataset", () => {
     chartConfigs: [
       {
         key: "abc",
+        chartType: "map",
+        version: "3.1.0",
+        meta: {} as ConfiguratorStateConfiguringChart["chartConfigs"][0]["meta"],
+        interactiveFiltersConfig:
+          {} as ConfiguratorStateConfiguringChart["chartConfigs"][0]["interactiveFiltersConfig"],
+        baseLayer: {} as Extract<
+          ConfiguratorStateConfiguringChart["chartConfigs"][0],
+          { chartType: "map" }
+        >["baseLayer"],
+        activeField: "",
+
         cubes: [{ iri: "https://first-dataset" }],
         fields: {
           areaLayer: {

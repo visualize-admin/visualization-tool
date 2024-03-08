@@ -811,7 +811,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         filters: false,
       },
       {
-        iriAttributes: ["componentIri"],
+        iriAttributes: ["componentIri", "color.componentIri"],
         field: "areaLayer",
         optional: true,
         componentTypes: ["GeoShapesDimension"],
@@ -833,7 +833,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         },
       },
       {
-        iriAttributes: ["componentIri"],
+        iriAttributes: ["componentIri", "color.componentIri"],
         field: "symbolLayer",
         optional: true,
         componentTypes: ["GeoCoordinatesDimension", "GeoShapesDimension"],

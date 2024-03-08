@@ -2,6 +2,7 @@ import { PUBLISHED_STATE } from "@prisma/client";
 import produce, { Draft, current } from "immer";
 import get from "lodash/get";
 import pickBy from "lodash/pickBy";
+import set from "lodash/set";
 import setWith from "lodash/setWith";
 import sortBy from "lodash/sortBy";
 import unset from "lodash/unset";
@@ -1925,11 +1926,9 @@ export const addDatasetInConfig = function (
         continue;
       }
       for (const iriAttribute of encoding.iriAttributes) {
-        if (
-          field[iriAttribute] === joinBy.left ||
-          field[iriAttribute] === joinBy.right
-        ) {
-          field[iriAttribute] = "joinBy";
+        const value = get(field, iriAttribute);
+        if (value === joinBy.left || value === joinBy.right) {
+          set(field, iriAttribute, "joinBy");
         }
       }
     }
