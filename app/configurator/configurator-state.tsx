@@ -1,5 +1,5 @@
 import { PUBLISHED_STATE } from "@prisma/client";
-import produce, { Draft, current } from "immer";
+import produce, { current, Draft } from "immer";
 import get from "lodash/get";
 import pickBy from "lodash/pickBy";
 import set from "lodash/set";
@@ -7,7 +7,7 @@ import setWith from "lodash/setWith";
 import sortBy from "lodash/sortBy";
 import unset from "lodash/unset";
 import { NextRouter, useRouter } from "next/router";
-import { Dispatch, createContext, useContext, useEffect, useMemo } from "react";
+import { createContext, Dispatch, useContext, useEffect, useMemo } from "react";
 import { Reducer, useImmerReducer } from "use-immer";
 
 import {
@@ -36,20 +36,20 @@ import {
   ConfiguratorStatePublishing,
   ConfiguratorStateSelectingDataSet,
   DataSource,
-  FilterValue,
-  Filters,
-  GenericField,
-  GenericFields,
-  ImputationType,
-  InteractiveFiltersConfig,
-  Layout,
   decodeConfiguratorState,
   enableLayouting,
+  Filters,
+  FilterValue,
+  GenericField,
+  GenericFields,
   getChartConfig,
   getChartConfigFilters,
+  ImputationType,
+  InteractiveFiltersConfig,
   isAreaConfig,
   isColorFieldInConfig,
   isTableConfig,
+  Layout,
   makeMultiFilter,
 } from "@/config-types";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
@@ -61,9 +61,9 @@ import {
   DataCubeComponents,
   Dimension,
   DimensionValue,
-  ObservationValue,
   isGeoDimension,
   isMeasure,
+  ObservationValue,
 } from "@/domain/data";
 import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
 import { executeDataCubesComponentsQuery } from "@/graphql/hooks";
