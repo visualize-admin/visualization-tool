@@ -35,7 +35,7 @@ export const ChartAreasVisualization = ({
     <ChartDataWrapper
       dataSource={dataSource}
       componentIris={componentIris}
-      queryFilters={queryFilters}
+      observationQueryFilters={queryFilters}
       chartConfig={chartConfig}
       Component={ChartAreas}
     />

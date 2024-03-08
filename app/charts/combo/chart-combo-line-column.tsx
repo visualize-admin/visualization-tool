@@ -31,7 +31,7 @@ export const ChartComboLineColumnVisualization = (
     <ChartDataWrapper
       dataSource={dataSource}
       componentIris={componentIris}
-      queryFilters={queryFilters}
+      observationQueryFilters={queryFilters}
       chartConfig={chartConfig}
       Component={ChartComboLineColumn}
     />
