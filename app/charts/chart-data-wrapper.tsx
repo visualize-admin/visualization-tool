@@ -51,7 +51,7 @@ export const ChartDataWrapper = <
   >;
   componentIris?: string[];
   dataSource: DataSource;
-  observationQueryFilters?: DataCubeObservationFilter[];
+  observationQueryFilters: DataCubeObservationFilter[] | undefined;
 
   fetching?: boolean;
   /* Use this if extra data is loaded and the possible error must be shown by ChartDataWrapper*/
