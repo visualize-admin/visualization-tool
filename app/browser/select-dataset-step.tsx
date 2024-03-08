@@ -142,7 +142,7 @@ const prepareSearchQueryFilters = (filters: BrowseFilter[]) => {
           d.__typename !== SearchCubeFilterType.DataCubeAbout
       )
       .map((d) => {
-        const type: SearchCubeFilterType = SearchCubeFilterType[d.__typename];
+        const type = SearchCubeFilterType[d.__typename];
         return { type, label: d.label, value: d.iri };
       })
   );
