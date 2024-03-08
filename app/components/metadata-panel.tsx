@@ -19,6 +19,8 @@ import match from "autosuggest-highlight/match";
 import parse from "autosuggest-highlight/parse";
 import clsx from "clsx";
 import { AnimatePresence, Transition } from "framer-motion";
+import groupBy from "lodash/groupBy";
+import keyBy from "lodash/keyBy";
 import orderBy from "lodash/orderBy";
 import uniqBy from "lodash/uniqBy";
 import { useRouter } from "next/router";
@@ -366,7 +368,7 @@ export const MetadataPanel = (props: MetadataPanelProps) => {
               </MotionBox>
             ) : activeSection === "data" ? (
               <MotionBox key="data-tab" {...animationProps}>
-                <TabPanelData dimensions={dimensions} />
+                <TabPanelData dataSource={dataSource} dimensions={dimensions} />
               </MotionBox>
             ) : null}
           </AnimatePresence>
@@ -457,7 +459,13 @@ const TabPanelGeneral = ({
   );
 };
 
-const TabPanelData = ({ dimensions }: { dimensions: Component[] }) => {
+const TabPanelData = ({
+  dataSource,
+  dimensions,
+}: {
+  dataSource: DataSource;
+  dimensions: Component[];
+}) => {
   const classes = useOtherStyles();
   const selectedDimension = useMetadataPanelStore(
     (state) => state.selectedDimension
@@ -469,6 +477,37 @@ const TabPanelData = ({ dimensions }: { dimensions: Component[] }) => {
   const options = React.useMemo(() => {
     return dimensions.map((d) => ({ label: d.label, value: d }));
   }, [dimensions]);
+
+  const locale = useLocale();
+  const grouped = groupBy(
+    dimensions.flatMap((d): Component[] => {
+      if ("originalIris" in d) {
+        return (
+          d.originalIris?.map((o) => ({
+            ...d,
+            cubeIri: o.cubeIri,
+            iri: o.dimensionIri,
+          })) ?? []
+        );
+      } else {
+        return [d];
+      }
+    }),
+    (x) => x.cubeIri
+  );
+
+  const [metadataQuery] = useDataCubesMetadataQuery({
+    keepPreviousData: true,
+    variables: {
+      locale: locale,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      cubeFilters: Object.keys(grouped).map((iri) => ({ iri })),
+    },
+  });
+
+  const dataCubesMetadata = metadataQuery.data?.dataCubesMetadata;
+  const cubesByIri = keyBy(dataCubesMetadata, (x) => x.iri);
 
   return (
     <TabPanel className={classes.tabPanel} value="data">
@@ -546,9 +585,31 @@ const TabPanelData = ({ dimensions }: { dimensions: Component[] }) => {
               }}
               clearIcon={null}
             />
-            {dimensions.map((d) => (
-              <TabPanelDataDimension key={d.iri} dim={d} expanded={false} />
-            ))}
+            <Stack spacing={4} divider={<Divider />}>
+              {Object.entries(grouped).map(([iri, dimensions]) => {
+                if (!cubesByIri[iri]) {
+                  return null;
+                }
+                return (
+                  <div key={iri}>
+                    {dataCubesMetadata && dataCubesMetadata.length > 1 ? (
+                      <Typography variant="h4" sx={{ mb: 2 }} color="grey.700">
+                        {cubesByIri[iri].title}
+                      </Typography>
+                    ) : null}
+                    <Stack spacing={2}>
+                      {dimensions.map((d) => (
+                        <TabPanelDataDimension
+                          key={d.iri}
+                          dim={d}
+                          expanded={false}
+                        />
+                      ))}
+                    </Stack>
+                  </div>
+                );
+              })}
+            </Stack>
           </MotionBox>
         )}
       </AnimatePresence>
@@ -604,7 +665,7 @@ const TabPanelDataDimension = ({
       </Flex>
 
       <AnimatePresence>
-        {expanded && (
+        {expanded && dim.values.length > 0 && (
           <MotionBox
             key="dimension-values"
             className={classes.dimensionValues}
