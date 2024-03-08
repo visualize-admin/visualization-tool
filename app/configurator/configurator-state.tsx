@@ -1364,11 +1364,15 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         );
 
         if (dataCubesComponents) {
+          const newConfig = deriveFiltersFromFields(
+            action.value.chartConfig,
+            dataCubesComponents.dimensions
+          );
+          // newConfig.cubes = chartConfig.cubes;
           draft.chartConfigs.push(
-            deriveFiltersFromFields(
-              action.value.chartConfig,
-              dataCubesComponents.dimensions
-            )
+            produce(newConfig, (x) => {
+              x.cubes = chartConfig.cubes;
+            })
           );
           draft.activeChartKey = action.value.chartConfig.key;
         }
