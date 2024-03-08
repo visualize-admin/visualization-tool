@@ -145,7 +145,7 @@ export const DatasetDialog = ({
   });
   const currentComponents = cubesComponentQuery.data?.dataCubesComponents;
 
-  const { loading, addDataset } = useAddDataset();
+  const [{ fetching, otherIri }, { addDataset }] = useAddDataset();
 
   return (
     <Dialog
@@ -202,20 +202,21 @@ export const DatasetDialog = ({
           datasetResultProps={({ cube }) => ({
             disableTitleLink: true,
             className: classes.datasetResult,
-            onClick: () => {
+            onClick: async (ev) => {
               if (!currentComponents) {
                 return null;
               }
-              return addDataset({
+              await addDataset({
                 currentComponents,
                 otherCube: cube,
               });
+              handleClose(ev, "escapeKeyDown");
             },
             rowActions: () => {
               return (
                 <Box display="flex" justifyContent="flex-end">
                   <LoadingButton
-                    loading={loading}
+                    loading={fetching && otherIri === cube.iri}
                     size="small"
                     variant="contained"
                     className={classes.addButton}
@@ -261,7 +262,10 @@ const inferJoinBy = (
 };
 
 const useAddDataset = () => {
-  const [loading, setLoading] = useState(false);
+  const [hookState, setHookState] = useState({
+    fetching: false,
+    otherIri: null as null | string,
+  });
   const [state, dispatch] = useConfiguratorState(isConfiguring);
   const { type: sourceType, url: sourceUrl } = state.dataSource;
   const locale = useLocale();
@@ -274,7 +278,7 @@ const useAddDataset = () => {
       otherCube: PartialSearchCube;
     }) => {
       const iri = otherCube.iri;
-      setLoading(true);
+      setHookState((hs) => ({ ...hs, fetching: true, otherIri: iri }));
       try {
         const componentQueryResult = await executeDataCubesComponentsQuery({
           locale: locale,
@@ -340,10 +344,10 @@ const useAddDataset = () => {
           },
         });
       } finally {
-        setLoading(false);
+        setHookState((hs) => ({ ...hs, fetching: false, otherIri: null }));
       }
     }
   );
 
-  return { addDataset, loading };
+  return [hookState, { addDataset }] as const;
 };
