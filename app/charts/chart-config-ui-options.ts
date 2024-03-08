@@ -311,7 +311,7 @@ const SEGMENT_COMPONENT_TYPES: ComponentType[] = [
 ];
 
 const getDefaultSegmentSorting = <
-  T extends ChartConfig = ChartConfig
+  T extends ChartConfig = ChartConfig,
 >(): EncodingSortingOption<T>[] => [
   {
     sortingType: "byAuto",

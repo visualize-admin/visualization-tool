@@ -1497,7 +1497,6 @@ const reducerLogging = false;
 const withLogging = <TState, TAction>(reducer: Reducer<TState, TAction>) => {
   return (state: Draft<TState>, action: TAction) => {
     const res = reducer(state, action);
-    console.log(state, action, res);
     return res;
   };
 };
