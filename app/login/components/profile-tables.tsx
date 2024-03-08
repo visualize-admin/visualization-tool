@@ -199,7 +199,7 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
     const actions: (ActionProps | null)[] = [
       {
         type: "link",
-        href: `/v/${config.key}`,
+        href: `/${locale}/v/${config.key}`,
         label: t({ id: "login.chart.view", message: "View" }),
         iconName: "eye",
         priority:
@@ -207,13 +207,13 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
       },
       {
         type: "link",
-        href: `/create/new?copy=${config.key}`,
+        href: `/${locale}/create/new?copy=${config.key}`,
         label: t({ id: "login.chart.copy", message: "Copy" }),
         iconName: "copy",
       },
       {
         type: "link",
-        href: `/create/new?edit=${config.key}`,
+        href: `/${locale}/create/new?edit=${config.key}`,
         label: t({ id: "login.chart.edit", message: "Edit" }),
         iconName: "edit",
         priority:
@@ -221,7 +221,7 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
       },
       {
         type: "link",
-        href: `/v/${config.key}`,
+        href: `/${locale}/v/${config.key}`,
         label: t({ id: "login.chart.share", message: "Share" }),
         iconName: "linkExternal",
       },
@@ -286,6 +286,7 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
 
     return sortBy(actions.filter(truthy), (x) => x.priority);
   }, [
+    locale,
     config.data,
     config.key,
     config.published_state,
