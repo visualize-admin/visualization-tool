@@ -635,7 +635,7 @@ const TabPanelDataDimension = ({
           endIcon={<SvgIcArrowRight />}
           sx={{ p: 0 }}
         >
-          Show more
+          <Trans id="controls.metadata-panel.show-more">Show more</Trans>
         </Button>
       )}
     </div>
