@@ -1444,6 +1444,38 @@ msgstr "Show all"
 msgid "table.column.no"
 msgstr "Column {0}"
 
+#: app/configurator/components/ui-helpers.ts
+msgid "time-units."
+msgstr "time-units."
+
+#: app/configurator/components/ui-helpers.ts
+msgid "time-units.Day"
+msgstr "Day"
+
+#: app/configurator/components/ui-helpers.ts
+msgid "time-units.Hour"
+msgstr "Hour"
+
+#: app/configurator/components/ui-helpers.ts
+msgid "time-units.Minute"
+msgstr "Minute"
+
+#: app/configurator/components/ui-helpers.ts
+msgid "time-units.Month"
+msgstr "Month"
+
+#: app/configurator/components/ui-helpers.ts
+msgid "time-units.Second"
+msgstr "Second"
+
+#: app/configurator/components/ui-helpers.ts
+msgid "time-units.Week"
+msgstr "Week"
+
+#: app/configurator/components/ui-helpers.ts
+msgid "time-units.Year"
+msgstr "Year"
+
 #: app/components/chart-footnotes.tsx
 #: app/components/chart-footnotes.tsx
 #: app/components/chart-footnotes.tsx
