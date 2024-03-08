@@ -26,11 +26,13 @@ type ChartComboLineDualVisualizationProps = {
 export const ChartComboLineDualVisualization = (
   props: ChartComboLineDualVisualizationProps
 ) => {
+  const { dataSource, componentIris, chartConfig, queryFilters } = props;
   return (
     <ChartDataWrapper
-      chartConfig={props.chartConfig}
-      dataSource={props.dataSource}
-      queryFilters={props.queryFilters}
+      dataSource={dataSource}
+      componentIris={componentIris}
+      observationQueryFilters={queryFilters}
+      chartConfig={chartConfig}
       Component={ChartComboLineDual}
     />
   );

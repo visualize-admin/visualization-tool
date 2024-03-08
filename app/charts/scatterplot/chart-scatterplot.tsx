@@ -44,7 +44,7 @@ export const ChartScatterplotVisualization = ({
     <ChartDataWrapper
       dataSource={dataSource}
       componentIris={componentIris}
-      queryFilters={queryFilters}
+      observationQueryFilters={queryFilters}
       Component={ChartScatterplot}
       chartConfig={chartConfig}
     />

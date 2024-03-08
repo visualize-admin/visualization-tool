@@ -2,6 +2,7 @@ import RDF from "@rdfjs/data-model";
 import { SELECT } from "@tpluscode/sparql-builder";
 import keyBy from "lodash/keyBy";
 import mapValues from "lodash/mapValues";
+import pickBy from "lodash/pickBy";
 import sortBy from "lodash/sortBy";
 import { CubeDimension } from "rdf-cube-view-query";
 import { NamedNode, Quad, Term } from "rdf-js";
@@ -229,16 +230,24 @@ const parseDimensionValue = (
     (d) => d.predicate.value
   );
   const position = valueQuads[ns.schema.position.value]?.object.value;
-
-  return {
+  const parsedValue: DimensionValue = {
     value,
-    label: valueQuads[ns.schema.name.value]?.object.value ?? value,
+    label: parseMaybeUndefined(
+      value,
+      valueQuads[ns.schema.name.value]?.object.value
+    ),
     alternateName: valueQuads[ns.schema.alternateName.value]?.object.value,
     description: valueQuads[ns.schema.description.value]?.object.value,
     identifier: valueQuads[ns.schema.identifier.value]?.object.value,
     position: position ? +position : undefined,
     color: valueQuads[ns.schema.color.value]?.object.value,
   };
+
+  return pickBy(parsedValue, (v) => v !== undefined) as DimensionValue;
+};
+
+const parseMaybeUndefined = (value: string, fallbackValue: string) => {
+  return value === ns.cube.Undefined.value ? "-" : fallbackValue ?? value;
 };
 
 /**

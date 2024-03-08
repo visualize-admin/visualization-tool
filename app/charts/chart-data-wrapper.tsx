@@ -31,14 +31,14 @@ type ElementProps<RE> = RE extends React.ElementType<infer P> ? P : never;
 export const ChartDataWrapper = <
   TChartConfig extends ChartConfig,
   TOtherProps,
-  TChartComponent extends React.ElementType,
+  TChartComponent extends React.ElementType
 >({
   chartConfig,
   Component,
   ComponentProps,
   componentIris,
   dataSource,
-  queryFilters,
+  observationQueryFilters,
 
   fetching: fetchingProp = false,
   error: errorProp,
@@ -51,7 +51,7 @@ export const ChartDataWrapper = <
   >;
   componentIris?: string[];
   dataSource: DataSource;
-  queryFilters?: DataCubeObservationFilter[];
+  observationQueryFilters: DataCubeObservationFilter[] | undefined;
 
   fetching?: boolean;
   /* Use this if extra data is loaded and the possible error must be shown by ChartDataWrapper*/
@@ -89,10 +89,10 @@ export const ChartDataWrapper = <
   const [observationsQuery] = useDataCubesObservationsQuery({
     variables: {
       ...commonQueryVariables,
-      cubeFilters: queryFilters ?? [],
+      cubeFilters: observationQueryFilters ?? [],
     },
+    pause: !observationQueryFilters,
     keepPreviousData: true,
-    pause: !queryFilters,
   });
 
   const {
