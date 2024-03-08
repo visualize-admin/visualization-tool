@@ -46,6 +46,16 @@ declare module "rdf-cube-view-query" {
   }
 
   export class CubeDimension {
+    constructor({
+      term,
+      dataset,
+      graph,
+    }: {
+      term: Term;
+      dataset?: DatasetExt;
+      graph?: Term;
+    });
+    ptr: AnyPointer;
     path?: Term;
     datatype?: NamedNode;
     minExclusive?: Literal | NamedNode;
