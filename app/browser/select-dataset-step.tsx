@@ -29,6 +29,7 @@ import {
   navPresenceProps,
   smoothPresenceProps,
 } from "@/components/presence";
+import { useRedirectToLatestCube } from "@/components/use-redirect-to-latest-cube";
 import {
   PanelBodyWrapper,
   PanelLayout,
@@ -42,8 +43,6 @@ import {
 } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import { useConfiguratorState, useLocale } from "@/src";
-
-import { useRedirectToVersionedCube } from "../components/use-redirect-to-versioned-cube";
 
 import {
   BrowseStateProvider,
@@ -182,7 +181,7 @@ const SelectDatasetStepContent = () => {
     pause: !!dataset,
   });
 
-  useRedirectToVersionedCube({
+  useRedirectToLatestCube({
     dataSource: configState.dataSource,
     datasetIri: dataset,
   });

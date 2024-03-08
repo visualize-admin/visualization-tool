@@ -11,6 +11,7 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 - Fixes
   - SingleURLs layout mode now correctly publishes charts
+  - Redirecting to latest cube now works correctly for cases of trying to access old cube that didn't look like a versioned cube, but in fact was a versioned cube
   - Scatterplot is now correctly initialized with non-empty segment
   - Changes of segment dimension now correctly update chart config which prevents errors with copying published charts
   - Temporal segment is no longer carried over when switching from scatterplot to column chart if it was already used as X axis

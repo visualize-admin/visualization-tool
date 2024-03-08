@@ -8,6 +8,7 @@ import {
 import { getCubeComponentsMetadata } from "@/rdf/query-cube-components";
 import { getCubeMetadata } from "@/rdf/query-cube-metadata";
 import { getCubePreview } from "@/rdf/query-cube-preview";
+import { getLatestCubeIriQuery } from "@/rdf/query-latest-cube-iri";
 
 type LightCubeOptions = {
   iri: string;
@@ -39,21 +40,7 @@ export class LightCube {
       return this;
     }
 
-    const query = `PREFIX schema: <http://schema.org/>
-
-SELECT ?iri WHERE {
-  VALUES ?oldIri { <${this.iri}> }
-
-  ?versionHistory schema:hasPart ?oldIri .
-  ?versionHistory schema:hasPart ?iri .
-  ?iri schema:version ?version .
-  ?iri schema:creativeWorkStatus ?status .
-  ?oldIri schema:creativeWorkStatus ?oldStatus .
-  FILTER(NOT EXISTS { ?iri schema:expires ?expires . } && ?status IN (?oldStatus, <https://ld.admin.ch/vocabulary/CreativeWorkStatus/Published>))
-}
-ORDER BY DESC(?version)
-LIMIT 1`;
-
+    const query = getLatestCubeIriQuery(this.iri);
     const result = await this.sparqlClient.query.select(query);
     const latestIri = result[0]?.iri?.value;
 
