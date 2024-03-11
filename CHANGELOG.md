@@ -11,10 +11,12 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 - Fixes
   - SingleURLs layout mode now correctly publishes charts
+  - Redirecting to latest cube now works correctly for cases of trying to access old cube that didn't look like a versioned cube, but in fact was a versioned cube
   - Scatterplot is now correctly initialized with non-empty segment
   - Changes of segment dimension now correctly update chart config which prevents errors with copying published charts
   - Temporal segment is no longer carried over when switching from scatterplot to column chart if it was already used as X axis
   - Dimension data type is now parsed in case of two data types defined directly in dimension metadata
+  - Currently selected locale is now persisted when using actions in user profile page (view chart, edit, open, share)
 
 # [3.26.3] - 2024-03-05
 

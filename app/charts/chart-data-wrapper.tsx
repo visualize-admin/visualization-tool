@@ -38,7 +38,7 @@ export const ChartDataWrapper = <
   ComponentProps,
   componentIris,
   dataSource,
-  queryFilters,
+  observationQueryFilters,
 
   fetching: fetchingProp = false,
   error: errorProp,
@@ -51,7 +51,7 @@ export const ChartDataWrapper = <
   >;
   componentIris?: string[];
   dataSource: DataSource;
-  queryFilters?: DataCubeObservationFilter[];
+  observationQueryFilters: DataCubeObservationFilter[] | undefined;
 
   fetching?: boolean;
   /* Use this if extra data is loaded and the possible error must be shown by ChartDataWrapper*/
@@ -72,6 +72,7 @@ export const ChartDataWrapper = <
       ...commonQueryVariables,
       cubeFilters: chartConfig.cubes.map((cube) => ({ iri: cube.iri })),
     },
+    keepPreviousData: true,
   });
   const [componentsQuery] = useDataCubesComponentsQuery({
     variables: {
@@ -83,13 +84,15 @@ export const ChartDataWrapper = <
         loadValues: true,
       })),
     },
+    keepPreviousData: true,
   });
   const [observationsQuery] = useDataCubesObservationsQuery({
     variables: {
       ...commonQueryVariables,
-      cubeFilters: queryFilters ?? [],
+      cubeFilters: observationQueryFilters ?? [],
     },
-    pause: !queryFilters,
+    pause: !observationQueryFilters,
+    keepPreviousData: true,
   });
 
   const {

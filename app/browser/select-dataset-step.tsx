@@ -29,6 +29,7 @@ import {
   navPresenceProps,
   smoothPresenceProps,
 } from "@/components/presence";
+import { useRedirectToLatestCube } from "@/components/use-redirect-to-latest-cube";
 import {
   PanelBodyWrapper,
   PanelLayout,
@@ -37,12 +38,11 @@ import { truthy } from "@/domain/types";
 import {
   DataCubeOrganization,
   DataCubeTheme,
+  SearchCubeFilterType,
   useSearchCubesQuery,
 } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import { useConfiguratorState, useLocale } from "@/src";
-
-import { useRedirectToVersionedCube } from "../components/use-redirect-to-versioned-cube";
 
 import {
   BrowseStateProvider,
@@ -138,9 +138,12 @@ const prepareSearchQueryFilters = (filters: BrowseFilter[]) => {
       // Subthemes are filtered on client side.
       .filter(
         (d): d is Exclude<BrowseFilter, DataCubeAbout> =>
-          d.__typename !== "DataCubeAbout"
+          d.__typename !== SearchCubeFilterType.DataCubeAbout
       )
-      .map((d) => ({ type: d.__typename, label: d.label, value: d.iri }))
+      .map((d) => {
+        const type = SearchCubeFilterType[d.__typename];
+        return { type, label: d.label, value: d.iri };
+      })
   );
 };
 
@@ -178,7 +181,7 @@ const SelectDatasetStepContent = () => {
     pause: !!dataset,
   });
 
-  useRedirectToVersionedCube({
+  useRedirectToLatestCube({
     dataSource: configState.dataSource,
     datasetIri: dataset,
   });

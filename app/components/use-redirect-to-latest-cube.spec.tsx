@@ -1,12 +1,12 @@
 import { renderHook } from "@testing-library/react";
 import { NextRouter, useRouter } from "next/router";
 
+import { useRedirectToLatestCube } from "@/components/use-redirect-to-latest-cube";
 import { useLocale } from "@/locales/use-locale";
-import { queryLatestPublishedCubeFromUnversionedIri } from "@/rdf/query-cube-metadata";
+import { queryLatestCube } from "@/rdf/query-cube-metadata";
 
-import { useRedirectToVersionedCube } from "./use-redirect-to-versioned-cube";
 jest.mock("@/rdf/query-cube-metadata", () => ({
-  queryLatestPublishedCubeFromUnversionedIri: jest.fn(),
+  queryLatestCube: jest.fn(),
 }));
 
 jest.mock("next/router", () => ({
@@ -26,7 +26,7 @@ describe("use redirect to versioned cube", () => {
     datasetIri,
   }: {
     datasetIri: string;
-    versionedCube: undefined | { iri: string };
+    versionedCube: undefined | string;
   }) => {
     const router = {
       route: "",
@@ -45,15 +45,11 @@ describe("use redirect to versioned cube", () => {
     (useLocale as jest.MockedFunction<typeof useLocale>).mockReturnValue("de");
 
     (
-      queryLatestPublishedCubeFromUnversionedIri as jest.MockedFunction<
-        typeof queryLatestPublishedCubeFromUnversionedIri
-      >
-    ).mockImplementation(async () => {
-      return versionedCube;
-    });
+      queryLatestCube as jest.MockedFunction<typeof queryLatestCube>
+    ).mockImplementation(async () => versionedCube);
 
     renderHook(() =>
-      useRedirectToVersionedCube({
+      useRedirectToLatestCube({
         datasetIri,
         dataSource: {
           type: "sparql",
@@ -65,26 +61,14 @@ describe("use redirect to versioned cube", () => {
     // Wait for effects to have finished
     await sleep(1);
 
-    return {
-      router,
-    };
+    return { router };
   };
-
-  it("should not do anything if initial cube IRI seems to be versioned", async () => {
-    const { router } = await setup({
-      datasetIri:
-        "https://environment.ld.admin.ch/foen/nfi/49-19-None-None-44/cube/1",
-      versionedCube: { iri: "https://versioned-cube" },
-    });
-
-    expect(router.replace).not.toHaveBeenCalled();
-  });
 
   it("should redirect to versioned IRI if initial cube IRI does not seem to be versioned", async () => {
     const { router } = await setup({
       datasetIri:
         "https://environment.ld.admin.ch/foen/nfi/49-19-None-None-44/cube",
-      versionedCube: { iri: "https://versioned-cube" },
+      versionedCube: "https://versioned-cube",
     });
     expect(router.replace).toHaveBeenCalledWith({
       pathname: "/browse",
@@ -97,7 +81,7 @@ describe("use redirect to versioned cube", () => {
   it("should redirect to versioned IRI if initial cube IRI does not seem to be versioned 2", async () => {
     const { router } = await setup({
       datasetIri: "https://environment.ld.admin.ch/foen/ubd000501",
-      versionedCube: { iri: "https://versioned-cube2" },
+      versionedCube: "https://versioned-cube2",
     });
     expect(router.replace).toHaveBeenCalledWith({
       pathname: "/browse",

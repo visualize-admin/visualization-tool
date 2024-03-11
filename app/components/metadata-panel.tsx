@@ -27,6 +27,7 @@ import { DataSetMetadata } from "@/components/dataset-metadata";
 import { MotionBox } from "@/components/presence";
 import { BackButton, DataSource } from "@/configurator";
 import { DRAWER_WIDTH } from "@/configurator/components/drawer";
+import { getDimensionLabel } from "@/configurator/components/ui-helpers";
 import {
   Component,
   DimensionValue,
@@ -557,7 +558,7 @@ const TabPanelDataDimension = ({
             }}
           >
             <Typography variant="body2" fontWeight="bold" gutterBottom>
-              {dim.label}
+              {getDimensionLabel(dim)}
             </Typography>
           </Button>
           {description && (

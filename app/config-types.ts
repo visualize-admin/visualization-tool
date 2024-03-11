@@ -689,6 +689,7 @@ const ComboLineColumnFields = t.type({
     colorMapping: ColorMapping,
   }),
 });
+
 export type ComboLineColumnFields = t.TypeOf<typeof ComboLineColumnFields>;
 
 const ComboLineColumnConfig = t.intersection([

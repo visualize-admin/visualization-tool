@@ -54,6 +54,7 @@ describe("getDimensionValuesWithMetadata", () => {
       ns.schema.alternateName,
       rdf.literal("Alternate 1")
     ),
+    rdf.quad(rdf.blankNode(), ns.rdf.first, ns.cube.Undefined),
   ];
   const sparqlClient = {
     query: {
@@ -78,6 +79,10 @@ describe("getDimensionValuesWithMetadata", () => {
         label: "Value 1",
         description: "Description 1",
         alternateName: "Alternate 1",
+      },
+      {
+        value: ns.cube.Undefined.value,
+        label: "-",
       },
     ]);
   });

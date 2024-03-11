@@ -318,8 +318,15 @@ type DataCubeOrganization {
   label: String
 }
 
+enum SearchCubeFilterType {
+  TemporalDimension
+  DataCubeTheme
+  DataCubeOrganization
+  DataCubeAbout
+}
+
 input SearchCubeFilter {
-  type: String!
+  type: SearchCubeFilterType!
   label: String
   value: String!
 }
