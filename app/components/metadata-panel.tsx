@@ -41,7 +41,10 @@ import {
   TemporalDimension,
 } from "@/domain/data";
 import { useDimensionFormatters } from "@/formatters";
-import { useDataCubesMetadataQuery } from "@/graphql/hooks";
+import {
+  useDataCubesComponentsQuery,
+  useDataCubesMetadataQuery,
+} from "@/graphql/hooks";
 import { Icon } from "@/icons";
 import SvgIcArrowRight from "@/icons/components/IcArrowRight";
 import SvgIcClose from "@/icons/components/IcClose";
@@ -521,7 +524,11 @@ const TabPanelData = ({
               <Trans id="button.back">Back</Trans>
             </BackButton>
             <Box sx={{ mt: 4 }}>
-              <TabPanelDataDimension dim={selectedDimension} expanded={true} />
+              <TabPanelDataDimension
+                dim={selectedDimension}
+                expanded={true}
+                dataSource={dataSource}
+              />
             </Box>
           </MotionBox>
         ) : (
@@ -603,6 +610,7 @@ const TabPanelData = ({
                           key={d.iri}
                           dim={d}
                           expanded={false}
+                          dataSource={dataSource}
                         />
                       ))}
                     </Stack>
@@ -619,9 +627,11 @@ const TabPanelData = ({
 
 const TabPanelDataDimension = ({
   dim,
+  dataSource,
   expanded,
 }: {
   dim: Component;
+  dataSource: DataSource;
   expanded: boolean;
 }) => {
   const classes = useOtherStyles();
@@ -633,6 +643,30 @@ const TabPanelDataDimension = ({
 
     return dim.description;
   }, [dim.description, expanded]);
+
+  const locale = useLocale();
+  const [componentsQuery] = useDataCubesComponentsQuery({
+    pause: !expanded,
+    variables: {
+      cubeFilters: [
+        { iri: dim.cubeIri, loadValues: true, componentIris: [dim.iri] },
+      ],
+      locale,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+    },
+  });
+
+  const loadedDimension = useMemo(() => {
+    return [
+      ...(componentsQuery.data?.dataCubesComponents.dimensions ?? []),
+      ...(componentsQuery.data?.dataCubesComponents.measures ?? []),
+    ].find((d) => dim.iri === d.iri);
+  }, [
+    componentsQuery.data?.dataCubesComponents.dimensions,
+    componentsQuery.data?.dataCubesComponents.measures,
+    dim.iri,
+  ]);
 
   const handleClick = React.useCallback(() => {
     if (!expanded) {
@@ -665,7 +699,7 @@ const TabPanelDataDimension = ({
       </Flex>
 
       <AnimatePresence>
-        {expanded && dim.values.length > 0 && (
+        {expanded && loadedDimension && loadedDimension.values.length > 0 && (
           <MotionBox
             key="dimension-values"
             className={classes.dimensionValues}
@@ -682,7 +716,7 @@ const TabPanelDataDimension = ({
                 Available values
               </Trans>
             </Typography>
-            <DimensionValues dim={dim} />
+            <DimensionValues dim={loadedDimension} />
           </MotionBox>
         )}
       </AnimatePresence>
