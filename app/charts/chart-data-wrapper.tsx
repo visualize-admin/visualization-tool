@@ -41,7 +41,7 @@ export const ChartDataWrapper = <
   observationQueryFilters,
 
   fetching: fetchingProp = false,
-  error: errorProp,
+  error: propError,
 }: {
   chartConfig: TChartConfig;
   Component: TChartComponent;
@@ -122,7 +122,7 @@ export const ChartDataWrapper = <
     fetchingComponents ||
     fetchingObservations;
   const error =
-    errorProp || metadataError || componentsError || observationsError;
+    propError || metadataError || componentsError || observationsError;
 
   React.useEffect(() => {
     chartLoadingState.set("data", fetching);
@@ -183,7 +183,7 @@ export const ChartDataWrapper = <
         {metadataError && <Error message={metadataError.message} />}
         {componentsError && <Error message={componentsError.message} />}
         {observationsError && <Error message={observationsError.message} />}
-        {errorProp && <Error message={errorProp.message} />}
+        {propError && <Error message={propError.message} />}
       </Flex>
     );
   } else {
