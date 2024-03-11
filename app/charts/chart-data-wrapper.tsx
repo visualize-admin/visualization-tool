@@ -121,6 +121,8 @@ export const ChartDataWrapper = <
     fetchingMetadata ||
     fetchingComponents ||
     fetchingObservations;
+  const error =
+    errorProp || metadataError || componentsError || observationsError;
 
   React.useEffect(() => {
     chartLoadingState.set("data", fetching);
@@ -133,7 +135,14 @@ export const ChartDataWrapper = <
     };
   }, [dimensions, measures]);
 
-  if (metadata && dimensions && measures && observations) {
+  if (
+    metadata &&
+    dimensions &&
+    measures &&
+    observations &&
+    !fetching &&
+    !error
+  ) {
     // FIXME: adapt to design
     const title = metadata.map((d) => d.title).join(", ");
 
@@ -168,12 +177,7 @@ export const ChartDataWrapper = <
         ) : null}
       </Box>
     );
-  } else if (
-    errorProp ||
-    metadataError ||
-    componentsError ||
-    observationsError
-  ) {
+  } else if (error) {
     return (
       <Flex sx={{ flexDirection: "column", gap: 3 }}>
         {metadataError && <Error message={metadataError.message} />}
