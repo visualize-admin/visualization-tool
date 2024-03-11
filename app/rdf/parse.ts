@@ -11,7 +11,7 @@ import {
   timeYear,
 } from "d3";
 import { CubeDimension } from "rdf-cube-view-query";
-import { NamedNode, Term } from "rdf-js";
+import { Term } from "rdf-js";
 
 import { truthy } from "@/domain/types";
 import { ScaleType } from "@/graphql/query-hooks";
@@ -123,14 +123,14 @@ export const getDataKind = (term: Term | undefined) => {
 export const parseDimensionDatatype = (dim: CubeDimension) => {
   const isLiteral =
     dim.out(ns.sh.nodeKind).term?.equals(ns.sh.Literal) ?? false;
-  let dataType = dim.datatype;
+  let dataType = dim.datatype ?? dim.out(ns.sh.datatype).terms?.[0];
   let hasUndefinedValues = false;
 
   if (!dataType) {
     // Maybe it has multiple datatypes
     const dataTypes = [
       ...(dim.out(ns.sh.or).list() ?? dim.out(ns.sh.or).toArray()),
-    ].flatMap((d) => d.out(ns.sh.datatype).terms) as NamedNode[];
+    ].flatMap((d) => d.out(ns.sh.datatype).terms);
 
     hasUndefinedValues = dataTypes.some((d) => ns.cube.Undefined.equals(d));
 

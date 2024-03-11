@@ -32,7 +32,7 @@ import { buildLocalizedSubQuery } from "./query-utils";
  * for dimensions with a datatype, and named node for shared
  * dimensions.
  */
-const formatFilterValue = (value: string | number, dataType?: NamedNode) => {
+const formatFilterValue = (value: string | number, dataType?: Term) => {
   if (!dataType) {
     return `<${value}>`;
   } else {
