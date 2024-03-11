@@ -481,9 +481,9 @@ const TabPanelData = ({
   const locale = useLocale();
   const grouped = groupBy(
     dimensions.flatMap((d): Component[] => {
-      if ("originalIris" in d) {
+      if ("originalIris" in d && d.originalIris) {
         return (
-          d.originalIris?.map((o) => ({
+          d.originalIris.map((o) => ({
             ...d,
             cubeIri: o.cubeIri,
             iri: o.dimensionIri,
