@@ -240,9 +240,11 @@ export const MetadataPanel = (props: MetadataPanelProps) => {
 
   // Close and reset the metadata panel when route has changed.
   React.useEffect(() => {
-    setOpen(false);
-    reset();
-  }, [router.pathname, setOpen, reset]);
+    return router.events.on("hashChangeStart", () => {
+      setOpen(false);
+      reset();
+    });
+  }, [router.pathname, setOpen, reset, router.events]);
 
   const [embedOptions] = useEmbedOptions();
 
