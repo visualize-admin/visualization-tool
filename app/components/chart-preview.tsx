@@ -40,10 +40,10 @@ import { MetadataPanel } from "@/components/metadata-panel";
 import {
   ChartConfig,
   DataSource,
+  Layout,
   getChartConfig,
   hasChartConfigs,
   isConfiguring,
-  Layout,
   useConfiguratorState,
 } from "@/configurator";
 import { Description, Title } from "@/configurator/components/annotators";

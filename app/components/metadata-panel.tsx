@@ -21,7 +21,9 @@ import clsx from "clsx";
 import { AnimatePresence, Transition } from "framer-motion";
 import groupBy from "lodash/groupBy";
 import keyBy from "lodash/keyBy";
+import omit from "lodash/omit";
 import orderBy from "lodash/orderBy";
+import sortBy from "lodash/sortBy";
 import uniqBy from "lodash/uniqBy";
 import { useRouter } from "next/router";
 import React, { useMemo } from "react";
@@ -58,6 +60,7 @@ import { makeDimensionValueSorters } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
 
 import Flex from "./flex";
+import { JoinByChip } from "./JoinByChip";
 
 const useDrawerStyles = makeStyles<Theme, { top: number }>((theme) => {
   return {
@@ -144,6 +147,7 @@ const useOtherStyles = makeStyles<Theme>((theme) => {
       borderRadius: 3,
     },
     searchInputResult: {
+      justifyContent: "space-between",
       borderBottom: `1px solid ${theme.palette.grey[400]}`,
 
       "&:last-of-type": {
@@ -418,7 +422,33 @@ const TabPanelData = ({
   const [inputValue, setInputValue] = React.useState("");
 
   const options = React.useMemo(() => {
-    return dimensions.map((d) => ({ label: d.label, value: d }));
+    return dimensions.flatMap(
+      (
+        d
+      ): {
+        label: string;
+        value: Component;
+        isJoinByDimension: boolean;
+      }[] => {
+        if (
+          "isJoinByDimension" in d &&
+          d.isJoinByDimension &&
+          "originalIris" in d
+        ) {
+          return (d.originalIris ?? []).map((x) => ({
+            label: getDimensionLabel(d, x.cubeIri),
+            value: {
+              ...omit(d, "originalIris"),
+              cubeIri: x.cubeIri,
+              iri: x.dimensionIri,
+            } as Component,
+            isJoinByDimension: true,
+          }));
+        } else {
+          return [{ label: d.label, value: d, isJoinByDimension: false }];
+        }
+      }
+    );
   }, [dimensions]);
 
   const locale = useLocale();
@@ -452,6 +482,11 @@ const TabPanelData = ({
   const dataCubesMetadata = metadataQuery.data?.dataCubesMetadata;
   const cubesByIri = keyBy(dataCubesMetadata, (x) => x.iri);
 
+  const sortedOptions = useMemo(
+    () => sortBy(options, (x) => cubesByIri[x.value.cubeIri]?.title),
+    [options, cubesByIri]
+  );
+
   return (
     <TabPanel className={classes.tabPanel} value="data">
       <AnimatePresence mode="wait">
@@ -483,7 +518,8 @@ const TabPanelData = ({
               onChange={(_, v) => v && setSelectedDimension(v.value)}
               inputValue={inputValue}
               onInputChange={(_, v) => setInputValue(v.toLowerCase())}
-              options={options}
+              options={sortedOptions}
+              groupBy={(x) => cubesByIri[x.value.cubeIri]?.title ?? ""}
               ListboxProps={{ className: classes.searchInputResultList }}
               renderInput={(params) => (
                 <TextField
@@ -505,28 +541,35 @@ const TabPanelData = ({
                 />
               )}
               renderOption={(props, option, { inputValue }) => {
+                console.log(option);
                 const matches = match(option.label, inputValue, {
                   insideWords: true,
                 });
-                const parts = parse(getDimensionLabel(option.value), matches);
+                const parts = parse(option.label, matches);
 
                 return (
                   <li
                     {...props}
                     className={clsx(props.className, classes.searchInputResult)}
                   >
-                    <div>
-                      {parts.map(({ text, highlight }, i) => (
-                        <Typography
-                          key={i}
-                          variant="body2"
-                          component="span"
-                          style={{ fontWeight: highlight ? 700 : 400 }}
-                        >
-                          {text}
-                        </Typography>
-                      ))}
-                    </div>
+                    {parts.map(({ text, highlight }, i) => (
+                      <Typography
+                        key={i}
+                        variant="body2"
+                        component="span"
+                        flexGrow={1}
+                        style={{ fontWeight: highlight ? 700 : 400 }}
+                      >
+                        {text}
+                      </Typography>
+                    ))}
+                    {option.isJoinByDimension ? (
+                      <JoinByChip
+                        label={<Trans id="dimension.joined">Joined</Trans>}
+                      />
+                    ) : (
+                      ""
+                    )}
                   </li>
                 );
               }}
@@ -621,20 +664,28 @@ const TabPanelDataDimension = ({
     <div>
       <Flex sx={{ justifyContent: "space-between" }}>
         <div>
-          <Button
-            className={classes.dimensionButton}
-            variant="text"
-            size="small"
-            onClick={handleClick}
-            sx={{
-              ":hover": { color: !expanded ? "primary.main" : "grey.800" },
-              cursor: !expanded ? "pointer" : "default",
-            }}
-          >
-            <Typography variant="body2" fontWeight="bold" gutterBottom>
+          <Box display="flex" alignItems="center" gap={2}>
+            <Button
+              className={classes.dimensionButton}
+              variant="text"
+              size="small"
+              onClick={handleClick}
+              sx={{
+                lineHeight: 1,
+                minHeight: "auto",
+                padding: 0,
+                typography: "body2",
+                fontWeight: "bold",
+                ":hover": { color: !expanded ? "primary.main" : "grey.800" },
+                cursor: !expanded ? "pointer" : "default",
+              }}
+            >
               {getDimensionLabel(dim as Dimension, cubeIri)}
-            </Typography>
-          </Button>
+            </Button>
+            {"isJoinByDimension" in dim && dim.isJoinByDimension ? (
+              <JoinByChip label={<Trans id="dimension.joined">Joined</Trans>} />
+            ) : null}
+          </Box>
           {description && (
             <Typography variant="body2">{description}</Typography>
           )}
