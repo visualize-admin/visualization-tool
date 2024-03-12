@@ -17,19 +17,20 @@ import {
   SearchFilters,
 } from "@/browser/dataset-browse";
 import { DataSetPreview } from "@/browser/dataset-preview";
-import { DataSetMetadata } from "@/components/dataset-metadata";
+import { DatasetMetadata } from "@/components/dataset-metadata";
 import Flex from "@/components/flex";
 import { Footer } from "@/components/footer";
 import {
+  bannerPresenceProps,
   BANNER_HEIGHT,
   BANNER_MARGIN_TOP,
-  bannerPresenceProps,
   DURATION,
   MotionBox,
   navPresenceProps,
   smoothPresenceProps,
 } from "@/components/presence";
 import { useRedirectToLatestCube } from "@/components/use-redirect-to-latest-cube";
+import { DataSource } from "@/configurator";
 import {
   PanelBodyWrapper,
   PanelLayout,
@@ -39,6 +40,7 @@ import {
   DataCubeOrganization,
   DataCubeTheme,
   SearchCubeFilterType,
+  useDataCubeMetadataQuery,
   useSearchCubesQuery,
 } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
@@ -300,8 +302,8 @@ const SelectDatasetStepContent = () => {
                   </Button>
                 </NextLink>
                 <MotionBox sx={{ mt: 6 }} {...smoothPresenceProps}>
-                  <DataSetMetadata
-                    dataSetIri={dataset}
+                  <DatasetMetadataSingleCubeAdapter
+                    datasetIri={dataset}
                     dataSource={configState.dataSource}
                   />
                 </MotionBox>
@@ -407,6 +409,31 @@ const SelectDatasetStepContent = () => {
   );
 };
 
+const DatasetMetadataSingleCubeAdapter = ({
+  dataSource,
+  datasetIri,
+}: {
+  dataSource: DataSource;
+  datasetIri: string;
+}) => {
+  const locale = useLocale();
+  const [data] = useDataCubeMetadataQuery({
+    variables: {
+      cubeFilter: { iri: datasetIri },
+      locale: locale,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+    },
+  });
+  if (!data.data) {
+    return null;
+  }
+
+  return (
+    <DatasetMetadata cube={data.data.dataCubeMetadata} showTitle={false} />
+  );
+};
+
 const PageTitle = () => {
   const { search, filters } = useBrowseContext();
   return (
@@ -415,8 +442,8 @@ const PageTitle = () => {
         {search
           ? `"${search}"`
           : filters?.length > 0 && filters[0].__typename !== "DataCubeAbout"
-          ? filters[0].label
-          : t({ id: "browse.datasets.all-datasets" })}{" "}
+            ? filters[0].label
+            : t({ id: "browse.datasets.all-datasets" })}{" "}
         - visualize.admin.ch
       </title>
     </Head>

@@ -6,7 +6,7 @@ import { AppLayout } from "@/components/layout";
 import {
   createMetadataPanelStore,
   MetadataPanelStoreContext,
-} from "@/components/metadata-panel";
+} from "@/components/metadata-panel-store";
 import { Configurator, ConfiguratorStateProvider } from "@/configurator";
 
 type PageProps = {

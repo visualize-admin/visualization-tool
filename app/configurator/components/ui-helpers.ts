@@ -16,6 +16,7 @@ import {
   Component,
   Dimension,
   DimensionValue,
+  isJoinByComponent,
   Measure,
   Observation,
 } from "../../domain/data";
@@ -138,7 +139,7 @@ export const useErrorRange = (
           }
           return (error === null ? [v, v] : [v - error, v + error]) as [
             number,
-            number
+            number,
           ];
         }
       : null;
@@ -286,8 +287,19 @@ export const canUseAbbreviations = (d?: Component): boolean => {
   return !!d.values.find((d) => d.alternateName);
 };
 
-export const getDimensionLabel = (dim: Component) => {
-  if (dim.iri === "joinBy") {
+/**
+ * Returns label a dimension or a measure
+ * - Handles join by dimension
+ *   - Temporal dimensions will get labelled via their time unit
+ * - If you need the dimension label in the context of a cube, pass the cube iri
+ */
+export const getComponentLabel = (dim: Component, cube?: string) => {
+  if (isJoinByComponent(dim)) {
+    const original = cube && dim.originalIris.find((i) => i.cubeIri === cube);
+    if (original) {
+      return original.label;
+    }
+
     if (dim.__typename === "TemporalDimension") {
       switch (dim.timeUnit) {
         case TimeUnit.Year:
@@ -305,8 +317,8 @@ export const getDimensionLabel = (dim: Component) => {
         case TimeUnit.Second:
           return t({ id: `time-units.Second`, message: "Second" });
       }
-      return t({ id: `time-units.${dim.timeUnit}` });
     }
+    return dim.originalIris[0].label ?? "NO LABEL";
   }
   return dim.label;
 };

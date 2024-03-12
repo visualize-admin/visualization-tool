@@ -148,7 +148,7 @@ msgstr "Actualiser cette visualisation"
 msgid "button.update.warning"
 msgstr "Gardez à l'esprit que la mise à jour de cette visualisation affectera tous les endroits où elle est déjà intégrée !"
 
-#: app/configurator/components/chart-configurator.tsx
+#: app/configurator/components/dataset-control-section.tsx
 msgid "chart.datasets.add"
 msgstr "Ajouter"
 
@@ -593,6 +593,10 @@ msgstr "Données"
 msgid "controls.metadata-panel.section.general"
 msgstr "Général"
 
+#: app/components/metadata-panel.tsx
+msgid "controls.metadata-panel.show-more"
+msgstr "Détails"
+
 #: app/configurator/components/configurator.tsx
 msgid "controls.nav.back-to-configurator"
 msgstr "Retour à l'édition"
@@ -711,7 +715,7 @@ msgstr "Aucun filtre"
 msgid "controls.section.data.filters.possible-filters-error"
 msgstr "Une erreur s'est produite lors de la récupération des filtres possibles. Merci de réessayer plus tard ou d'actualiser la page."
 
-#: app/configurator/components/chart-configurator.tsx
+#: app/configurator/components/dataset-control-section.tsx
 msgid "controls.section.datasets.title"
 msgstr "Sources de données"
 
@@ -1100,6 +1104,11 @@ msgstr "Brouillon"
 msgid "datatable.showing.first.rows"
 msgstr "Seules les 10 premières lignes sont affichées"
 
+#: app/components/metadata-panel.tsx
+#: app/components/metadata-panel.tsx
+msgid "dimension.joined"
+msgstr "Jointe"
+
 #: app/utils/flashes.tsx
 msgid "flashes.couldnt-load-cube.title"
 msgstr "Impossible de charger le cube"
@@ -1445,10 +1454,6 @@ msgid "table.column.no"
 msgstr "Colonne {0}"
 
 #: app/configurator/components/ui-helpers.ts
-msgid "time-units."
-msgstr ""
-
-#: app/configurator/components/ui-helpers.ts
 msgid "time-units.Day"
 msgstr "Jour"
 
@@ -1474,7 +1479,7 @@ msgstr "Semaine"
 
 #: app/configurator/components/ui-helpers.ts
 msgid "time-units.Year"
-msgstr "Année
+msgstr "Année"
 
 #: app/components/chart-footnotes.tsx
 #: app/components/chart-footnotes.tsx

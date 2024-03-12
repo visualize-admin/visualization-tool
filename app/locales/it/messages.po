@@ -148,7 +148,7 @@ msgstr "Aggiornare questa visualizzazione"
 msgid "button.update.warning"
 msgstr "Tenete presente che l'aggiornamento di questa visualizzazione avrà effetto su tutti i luoghi in cui potrebbe essere già incorporata!"
 
-#: app/configurator/components/chart-configurator.tsx
+#: app/configurator/components/dataset-control-section.tsx
 msgid "chart.datasets.add"
 msgstr "Aggiungere"
 
@@ -593,6 +593,10 @@ msgstr "Dati"
 msgid "controls.metadata-panel.section.general"
 msgstr "Generale"
 
+#: app/components/metadata-panel.tsx
+msgid "controls.metadata-panel.show-more"
+msgstr "Mostra di più"
+
 #: app/configurator/components/configurator.tsx
 msgid "controls.nav.back-to-configurator"
 msgstr "Torniamo alla modifica"
@@ -711,7 +715,7 @@ msgstr "Nessun filtro"
 msgid "controls.section.data.filters.possible-filters-error"
 msgstr "Si è verificato un errore durante il recupero dei possibili filtri. Riprova più tardi o aggiorna la pagina."
 
-#: app/configurator/components/chart-configurator.tsx
+#: app/configurator/components/dataset-control-section.tsx
 msgid "controls.section.datasets.title"
 msgstr "Fonti di dati"
 
@@ -1100,6 +1104,11 @@ msgstr "Bozza"
 msgid "datatable.showing.first.rows"
 msgstr "Sono mostrate soltanto le prime 10 righe"
 
+#: app/components/metadata-panel.tsx
+#: app/components/metadata-panel.tsx
+msgid "dimension.joined"
+msgstr "Unita"
+
 #: app/utils/flashes.tsx
 msgid "flashes.couldnt-load-cube.title"
 msgstr "Impossibile caricare il cubo"
@@ -1445,10 +1454,6 @@ msgid "table.column.no"
 msgstr "Colonna {0}"
 
 #: app/configurator/components/ui-helpers.ts
-msgid "time-units."
-msgstr ""
-
-#: app/configurator/components/ui-helpers.ts
 msgid "time-units.Day"
 msgstr "Giorno"
 
@@ -1474,7 +1479,7 @@ msgstr "Settimana"
 
 #: app/configurator/components/ui-helpers.ts
 msgid "time-units.Year"
-msgstr "Anno
+msgstr "Anno"
 
 #: app/components/chart-footnotes.tsx
 #: app/components/chart-footnotes.tsx

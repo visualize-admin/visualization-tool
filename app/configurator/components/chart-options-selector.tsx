@@ -67,7 +67,7 @@ import {
 } from "@/configurator/components/filters";
 import {
   canUseAbbreviations,
-  getDimensionLabel,
+  getComponentLabel,
 } from "@/configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { TableColumnOptions } from "@/configurator/table/table-chart-options";
@@ -282,7 +282,7 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
       measures,
     }).map((d) => ({
       value: d.iri,
-      label: getDimensionLabel(d),
+      label: getComponentLabel(d),
       disabled:
         ((encoding.exclusive === undefined || encoding.exclusive === true) &&
           otherFieldsIris.includes(d.iri)) ||
@@ -610,9 +610,9 @@ const ChartComboLineSingleYField = (
         return !m.unit
           ? true
           : enableAll
-          ? false
-          : m.unit !== unit ||
-            (y.componentIris.includes(m.iri) && m.iri !== iri);
+            ? false
+            : m.unit !== unit ||
+              (y.componentIris.includes(m.iri) && m.iri !== iri);
       });
 
       if (allowNone) {

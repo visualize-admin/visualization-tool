@@ -148,7 +148,7 @@ msgstr "Update this visualization"
 msgid "button.update.warning"
 msgstr "Keep in mind that updating this visualization will affect all the places where it might be already embedded!"
 
-#: app/configurator/components/chart-configurator.tsx
+#: app/configurator/components/dataset-control-section.tsx
 msgid "chart.datasets.add"
 msgstr "Add dataset"
 
@@ -593,6 +593,10 @@ msgstr "Data"
 msgid "controls.metadata-panel.section.general"
 msgstr "General"
 
+#: app/components/metadata-panel.tsx
+msgid "controls.metadata-panel.show-more"
+msgstr "Show more"
+
 #: app/configurator/components/configurator.tsx
 msgid "controls.nav.back-to-configurator"
 msgstr "Back to editing"
@@ -711,7 +715,7 @@ msgstr "No filters"
 msgid "controls.section.data.filters.possible-filters-error"
 msgstr "An error happened while fetching possible filters, please retry later or reload the page."
 
-#: app/configurator/components/chart-configurator.tsx
+#: app/configurator/components/dataset-control-section.tsx
 msgid "controls.section.datasets.title"
 msgstr "Data Sources"
 
@@ -1100,6 +1104,11 @@ msgstr "Draft"
 msgid "datatable.showing.first.rows"
 msgstr "Showing first 10 rows"
 
+#: app/components/metadata-panel.tsx
+#: app/components/metadata-panel.tsx
+msgid "dimension.joined"
+msgstr "Joined"
+
 #: app/utils/flashes.tsx
 msgid "flashes.couldnt-load-cube.title"
 msgstr "Could not load cube"
@@ -1443,10 +1452,6 @@ msgstr "Show all"
 #: app/configurator/components/chart-controls/drag-and-drop-tab.tsx
 msgid "table.column.no"
 msgstr "Column {0}"
-
-#: app/configurator/components/ui-helpers.ts
-msgid "time-units."
-msgstr "time-units."
 
 #: app/configurator/components/ui-helpers.ts
 msgid "time-units.Day"

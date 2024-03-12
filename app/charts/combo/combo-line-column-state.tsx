@@ -32,6 +32,7 @@ import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { Observer } from "@/charts/shared/use-width";
 import { ComboLineColumnConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
+import { truthy } from "@/domain/types";
 import { useFormatFullDateAuto } from "@/formatters";
 import { TimeUnit } from "@/graphql/resolver-types";
 import { getTimeInterval } from "@/intervals";
@@ -155,36 +156,35 @@ const useComboLineColumnState = (
   const getAnnotationInfo = (d: Observation): TooltipInfo => {
     const x = getX(d);
     const xScaled = (xScale(x) as number) + xScale.bandwidth() * 0.5;
-
+    const values = [variables.y.left, variables.y.right]
+      .map(({ orientation, getY, label, chartType }) => {
+        const y = getY(d);
+        const yPos = yOrientationScales[orientation](y ?? 0);
+        if (!Number.isFinite(y) || y === null) {
+          return null;
+        }
+        return {
+          label,
+          value: `${y}`,
+          color: colors(label),
+          hide: y === null,
+          yPos,
+          symbol: chartType === "line" ? "line" : "square",
+        };
+      })
+      .filter(truthy);
+    const yAnchor = d3.mean(values.map((d) => d.yPos));
     return {
       datum: { label: "", value: "0", color: d3.schemeCategory10[0] },
       xAnchor: xScaled,
-      yAnchor:
-        [variables.y.left, variables.y.right]
-          .map(({ orientation, getY }) =>
-            yOrientationScales[orientation](getY(d) ?? 0)
-          )
-          .reduce((a, b) => a + b, 0) * 0.5,
+      yAnchor,
       xValue: timeFormatUnit(x, variables.xTimeUnit as TimeUnit),
       placement: getCenteredTooltipPlacement({
         chartWidth,
         xAnchor: xScaled,
         topAnchor: false,
       }),
-      values: [variables.y.left, variables.y.right].map(
-        ({ orientation, getY, label, chartType }) => {
-          const y = getY(d);
-
-          return {
-            label,
-            value: `${y}`,
-            color: colors(label),
-            hide: y === null,
-            yPos: yOrientationScales[orientation](y ?? 0),
-            symbol: chartType === "line" ? "line" : "square",
-          };
-        }
-      ),
+      values,
     } as TooltipInfo;
   };
 

@@ -10,7 +10,6 @@ import {
   IconButton,
   Menu,
   MenuItem,
-  Link as MuiLink,
   Switch,
   Theme,
   Tooltip,
@@ -21,8 +20,6 @@ import isEmpty from "lodash/isEmpty";
 import isEqual from "lodash/isEqual";
 import pickBy from "lodash/pickBy";
 import sortBy from "lodash/sortBy";
-import uniqBy from "lodash/uniqBy";
-import Link from "next/link";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   DragDropContext,
@@ -83,7 +80,6 @@ import { truthy } from "@/domain/types";
 import { flag } from "@/flags";
 import {
   useDataCubesComponentsQuery,
-  useDataCubesMetadataQuery,
   useDataCubesObservationsQuery,
 } from "@/graphql/hooks";
 import {
@@ -92,12 +88,10 @@ import {
   PossibleFiltersQueryVariables,
 } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
-import SvgIcAdd from "@/icons/components/IcAdd";
-import SvgIcTrash from "@/icons/components/IcTrash";
 import { useLocale } from "@/locales/use-locale";
 import useEvent from "@/utils/use-event";
 
-import { DatasetDialog } from "./add-dataset-dialog";
+import { DatasetsControlSection } from "./dataset-control-section";
 
 type DataFilterSelectGenericProps = {
   rawDimension: Dimension;
@@ -589,7 +583,7 @@ const InteractiveDataFilterCheckbox = ({
   );
 };
 
-const FiltersBadge = ({ sx }: { sx?: BadgeProps["sx"] }) => {
+export const FiltersBadge = ({ sx }: { sx?: BadgeProps["sx"] }) => {
   const ctx = useControlSectionContext();
   const [state] = useConfiguratorState(isConfiguring);
   const chartConfig = getChartConfig(state);
@@ -823,114 +817,6 @@ export const ChartConfigurator = ({
       )}
       {flag("add-dataset") ? <DatasetsControlSection /> : null}
     </>
-  );
-};
-
-const DatasetsControlSection = () => {
-  const [state, dispatch] = useConfiguratorState(isConfiguring);
-  const locale = useLocale();
-  const commonQueryVariables = {
-    sourceType: state.dataSource.type,
-    sourceUrl: state.dataSource.url,
-    locale,
-  };
-  const cubes = useMemo(() => {
-    const cubes = uniqBy(
-      state.chartConfigs.flatMap((x) => x.cubes),
-      (x) => x.iri
-    );
-    return cubes;
-  }, [state.chartConfigs]);
-  const [metadataQuery] = useDataCubesMetadataQuery({
-    variables: {
-      ...commonQueryVariables,
-      cubeFilters: cubes.map((cube) => ({
-        iri: cube.iri,
-      })),
-    },
-  });
-  const {
-    isOpen: isDatasetDialogOpen,
-    open: openDatasetDialog,
-    close: closeDatasetDialog,
-  } = useDisclosure();
-  return (
-    <ControlSection collapse>
-      <SubsectionTitle titleId="controls-data" gutterBottom={false}>
-        <Trans id="controls.section.datasets.title">Data Sources</Trans>{" "}
-        <FiltersBadge sx={{ ml: "auto", mr: 4 }} />
-      </SubsectionTitle>
-      <ControlSectionContent
-        aria-labelledby="controls-data"
-        data-testid="configurator-filters"
-      >
-        <Box
-          sx={{
-            gap: "0.5rem",
-            mb: "1rem",
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          {metadataQuery.data?.dataCubesMetadata.map((x) => {
-            return (
-              <Box
-                display="flex"
-                alignItems="center"
-                justifyContent="space-between"
-                key={x.iri}
-              >
-                <div>
-                  <Link href={`/browse?dataset=${x.iri}`} passHref>
-                    <MuiLink
-                      color="primary"
-                      underline="none"
-                      variant="caption"
-                      component="span"
-                    >
-                      Dataset
-                    </MuiLink>
-                  </Link>
-                  <br />
-                  <Typography variant="caption">{x.title}</Typography>
-                </div>
-                <div>
-                  {cubes.length > 1 ? (
-                    <IconButton
-                      onClick={() =>
-                        dispatch({
-                          type: "DATASET_REMOVE",
-                          value: { locale, iri: x.iri },
-                        })
-                      }
-                    >
-                      <SvgIcTrash />
-                    </IconButton>
-                  ) : null}
-                </div>
-              </Box>
-            );
-          })}
-        </Box>
-        <Box>
-          {cubes.length === 1 ? (
-            <Button
-              onClick={openDatasetDialog}
-              startIcon={<SvgIcAdd />}
-              variant="outlined"
-              size="small"
-            >
-              {t({ id: "chart.datasets.add", message: "Add dataset" })}
-            </Button>
-          ) : null}
-        </Box>
-        <DatasetDialog
-          state={state}
-          open={isDatasetDialogOpen}
-          onClose={closeDatasetDialog}
-        />
-      </ControlSectionContent>
-    </ControlSection>
   );
 };
 

@@ -1,5 +1,5 @@
 import { PUBLISHED_STATE } from "@prisma/client";
-import produce, { Draft, current } from "immer";
+import produce, { current, Draft } from "immer";
 import get from "lodash/get";
 import pickBy from "lodash/pickBy";
 import set from "lodash/set";
@@ -7,7 +7,7 @@ import setWith from "lodash/setWith";
 import sortBy from "lodash/sortBy";
 import unset from "lodash/unset";
 import { NextRouter, useRouter } from "next/router";
-import { Dispatch, createContext, useContext, useEffect, useMemo } from "react";
+import { createContext, Dispatch, useContext, useEffect, useMemo } from "react";
 import { Reducer, useImmerReducer } from "use-immer";
 
 import {
@@ -36,20 +36,20 @@ import {
   ConfiguratorStatePublishing,
   ConfiguratorStateSelectingDataSet,
   DataSource,
-  FilterValue,
-  Filters,
-  GenericField,
-  GenericFields,
-  ImputationType,
-  InteractiveFiltersConfig,
-  Layout,
   decodeConfiguratorState,
   enableLayouting,
+  Filters,
+  FilterValue,
+  GenericField,
+  GenericFields,
   getChartConfig,
   getChartConfigFilters,
+  ImputationType,
+  InteractiveFiltersConfig,
   isAreaConfig,
   isColorFieldInConfig,
   isTableConfig,
+  Layout,
   makeMultiFilter,
 } from "@/config-types";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
@@ -61,9 +61,9 @@ import {
   DataCubeComponents,
   Dimension,
   DimensionValue,
-  ObservationValue,
   isGeoDimension,
   isMeasure,
+  ObservationValue,
 } from "@/domain/data";
 import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
 import { executeDataCubesComponentsQuery } from "@/graphql/hooks";
@@ -621,7 +621,7 @@ const getInitialConfiguringConfigBasedOnCube = ({
   cubeIris: string[];
   dataCubesComponents: DataCubeComponents;
   dataSource: DataSource;
-}): ConfiguratorState => {
+}): ConfiguratorStateConfiguringChart => {
   const possibleChartTypes = getPossibleChartTypes({
     dimensions: dataCubesComponents.dimensions,
     measures: dataCubesComponents.measures,
@@ -1364,11 +1364,15 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         );
 
         if (dataCubesComponents) {
+          const newConfig = deriveFiltersFromFields(
+            action.value.chartConfig,
+            dataCubesComponents.dimensions
+          );
+          // newConfig.cubes = chartConfig.cubes;
           draft.chartConfigs.push(
-            deriveFiltersFromFields(
-              action.value.chartConfig,
-              dataCubesComponents.dimensions
-            )
+            produce(newConfig, (x) => {
+              x.cubes = chartConfig.cubes;
+            })
           );
           draft.activeChartKey = action.value.chartConfig.key;
         }
@@ -1389,14 +1393,17 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
         const { locale } = action.value;
         const removedCubeIri = action.value.iri;
+        const newCubes = chartConfig.cubes.filter(
+          (c) => c.iri !== removedCubeIri
+        );
         const dataCubesComponents = getCachedComponents(
           draft.dataSource,
-          chartConfig.cubes
-            .filter((c) => c.iri !== removedCubeIri)
-            .map((cube) => ({
-              iri: cube.iri,
-              joinBy: cube.joinBy,
-            })),
+          newCubes.map((cube) => ({
+            iri: cube.iri,
+
+            // Only keep joinBy while we have more than one cube
+            joinBy: newCubes.length > 1 ? cube.joinBy : undefined,
+          })),
           locale
         );
         if (!dataCubesComponents) {
@@ -1405,14 +1412,28 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
           );
         }
 
-        const result = getInitialConfiguringConfigBasedOnCube({
+        const initConfig = getInitialConfiguringConfigBasedOnCube({
           dataCubesComponents,
           dataSource: draft.dataSource,
           cubeIris: chartConfig.cubes
             .filter((x) => x.iri !== removedCubeIri)
             .map((x) => x.iri),
         });
-        return result;
+
+        const newConfig = {
+          ...initConfig.chartConfigs[0],
+          key: chartConfig.key,
+        } as ChartConfig;
+
+        const index = draft.chartConfigs.findIndex(
+          (d) => d.key === chartConfig.key
+        );
+        const withFilters = deriveFiltersFromFields(
+          newConfig,
+          dataCubesComponents.dimensions
+        );
+        draft.chartConfigs[index] = withFilters;
+        return draft;
       }
       break;
     case "CHART_CONFIG_REMOVE":
@@ -1494,7 +1515,9 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
 /** Turn this on for the reducer to log state, action and result */
 const reducerLogging = false;
-const withLogging = <TState, TAction>(reducer: Reducer<TState, TAction>) => {
+const withLogging = <TState, TAction extends { type: unknown }>(
+  reducer: Reducer<TState, TAction>
+) => {
   return (state: Draft<TState>, action: TAction) => {
     const res = reducer(state, action);
     return res;

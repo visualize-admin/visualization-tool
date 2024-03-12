@@ -148,7 +148,7 @@ msgstr "Diese Visualisierung aktualisieren"
 msgid "button.update.warning"
 msgstr "Denken Sie daran, dass sich die Aktualisierung dieser Visualisierung auf alle Stellen auswirkt, an denen sie bereits eingebettet ist!"
 
-#: app/configurator/components/chart-configurator.tsx
+#: app/configurator/components/dataset-control-section.tsx
 msgid "chart.datasets.add"
 msgstr "Hinzufügen"
 
@@ -593,6 +593,10 @@ msgstr "Daten"
 msgid "controls.metadata-panel.section.general"
 msgstr "Allgemeines"
 
+#: app/components/metadata-panel.tsx
+msgid "controls.metadata-panel.show-more"
+msgstr "Zeig mehr"
+
 #: app/configurator/components/configurator.tsx
 msgid "controls.nav.back-to-configurator"
 msgstr "Zurück zum Editieren"
@@ -711,7 +715,7 @@ msgstr "Keine Filter"
 msgid "controls.section.data.filters.possible-filters-error"
 msgstr "Beim Abrufen möglicher Filter ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut oder laden Sie die Seite neu."
 
-#: app/configurator/components/chart-configurator.tsx
+#: app/configurator/components/dataset-control-section.tsx
 msgid "controls.section.datasets.title"
 msgstr "Datenquellen"
 
@@ -1100,6 +1104,11 @@ msgstr "Entwurf"
 msgid "datatable.showing.first.rows"
 msgstr "Die ersten 10 Zeilen werden angezeigt"
 
+#: app/components/metadata-panel.tsx
+#: app/components/metadata-panel.tsx
+msgid "dimension.joined"
+msgstr "Verbunden"
+
 #: app/utils/flashes.tsx
 msgid "flashes.couldnt-load-cube.title"
 msgstr "Der Cube konnte nicht geladen werden"
@@ -1441,36 +1450,32 @@ msgid "table.column.no"
 msgstr "Spalte {0}"
 
 #: app/configurator/components/ui-helpers.ts
-msgid "time-units."
+msgid "time-units.Day"
 msgstr ""
 
 #: app/configurator/components/ui-helpers.ts
-msgstr "time-units.Day"
-msgstr "Tag"
+msgid "time-units.Hour"
+msgstr ""
 
 #: app/configurator/components/ui-helpers.ts
-msgstr "time-units.Hour"
-msgstr "Stunde"
+msgid "time-units.Minute"
+msgstr ""
 
 #: app/configurator/components/ui-helpers.ts
-msgstr "time-units.Minute"
-msgstr "Minute"
+msgid "time-units.Month"
+msgstr ""
 
 #: app/configurator/components/ui-helpers.ts
-msgstr "time-units.Month"
-msgstr "Monat"
+msgid "time-units.Second"
+msgstr ""
 
 #: app/configurator/components/ui-helpers.ts
-msgstr "time-units.Second"
-msgstr "Zweiter"
+msgid "time-units.Week"
+msgstr ""
 
 #: app/configurator/components/ui-helpers.ts
-msgstr "time-units.Week"
-msgstr "Woche"
-
-#: app/configurator/components/ui-helpers.ts
-msgstr "time-units.Year"
-msgstr "Jahr"
+msgid "time-units.Year"
+msgstr ""
 
 #: app/components/chart-footnotes.tsx
 #: app/components/chart-footnotes.tsx

@@ -445,9 +445,8 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
                         <Flex sx={{ alignItems: "center", gap: 2 }}>
                           {!disableMetadataPanel && (
                             <MetadataPanel
-                              // FIXME: adapt to design
-                              datasetIri={chartConfig.cubes[0].iri}
                               dataSource={dataSource}
+                              chartConfigs={[chartConfig]}
                               dimensions={allComponents}
                               top={96}
                             />

@@ -4,9 +4,11 @@ import {
   Autocomplete,
   Box,
   Button,
+  Divider,
   Drawer,
   IconButton,
   InputAdornment,
+  Stack,
   Tab,
   TextField,
   Theme,
@@ -17,98 +19,49 @@ import match from "autosuggest-highlight/match";
 import parse from "autosuggest-highlight/parse";
 import clsx from "clsx";
 import { AnimatePresence, Transition } from "framer-motion";
+import groupBy from "lodash/groupBy";
+import keyBy from "lodash/keyBy";
+import omit from "lodash/omit";
 import orderBy from "lodash/orderBy";
+import sortBy from "lodash/sortBy";
+import uniqBy from "lodash/uniqBy";
 import { useRouter } from "next/router";
 import React, { useMemo } from "react";
-import { createStore, useStore } from "zustand";
-import shallow from "zustand/shallow";
 
-import { DataSetMetadata } from "@/components/dataset-metadata";
+import { DatasetMetadata } from "@/components/dataset-metadata";
+import { Error, Loading } from "@/components/hint";
+import {
+  useMetadataPanelStore,
+  useMetadataPanelStoreActions,
+} from "@/components/metadata-panel-store";
 import { MotionBox } from "@/components/presence";
-import { BackButton, DataSource } from "@/configurator";
+import { BackButton, ChartConfig, DataSource } from "@/configurator";
 import { DRAWER_WIDTH } from "@/configurator/components/drawer";
-import { getDimensionLabel } from "@/configurator/components/ui-helpers";
+import { getComponentLabel } from "@/configurator/components/ui-helpers";
 import {
   Component,
+  Dimension,
   DimensionValue,
+  isJoinByComponent,
   isStandardErrorDimension,
   TemporalDimension,
 } from "@/domain/data";
 import { useDimensionFormatters } from "@/formatters";
+import {
+  useDataCubesComponentsQuery,
+  useDataCubesMetadataQuery,
+} from "@/graphql/hooks";
 import { Icon } from "@/icons";
 import SvgIcArrowRight from "@/icons/components/IcArrowRight";
 import SvgIcClose from "@/icons/components/IcClose";
+import { useLocale } from "@/locales/use-locale";
 import { useTransitionStore } from "@/stores/transition";
 import { useEmbedOptions } from "@/utils/embed";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
 
 import Flex from "./flex";
-
-type MetadataPanelSection = "general" | "data";
-
-type MetadataPanelState = {
-  open: boolean;
-  activeSection: MetadataPanelSection;
-  selectedDimension: Component | undefined;
-  actions: {
-    setOpen: (d: boolean) => void;
-    toggle: () => void;
-    setActiveSection: (d: MetadataPanelSection) => void;
-    setSelectedDimension: (d: Component) => void;
-    clearSelectedDimension: () => void;
-    openDimension: (d: Component) => void;
-    reset: () => void;
-  };
-};
-
-export const createMetadataPanelStore = () =>
-  createStore<MetadataPanelState>((set, get) => ({
-    open: false,
-    activeSection: "general",
-    selectedDimension: undefined,
-    actions: {
-      setOpen: (d: boolean) => {
-        set({ open: d });
-      },
-      toggle: () => {
-        set({ open: !get().open });
-      },
-      setActiveSection: (d: MetadataPanelSection) => {
-        set({ activeSection: d });
-      },
-      setSelectedDimension: (d: Component) => {
-        set({ selectedDimension: d });
-      },
-      clearSelectedDimension: () => {
-        set({ selectedDimension: undefined });
-      },
-      openDimension: (d: Component) => {
-        set({ open: true, activeSection: "data", selectedDimension: d });
-      },
-      reset: () => {
-        set({ activeSection: "general", selectedDimension: undefined });
-      },
-    },
-  }));
-
-const useMetadataPanelStore: <T>(
-  selector: (state: MetadataPanelState) => T
-) => T = (selector) => {
-  const store = React.useContext(MetadataPanelStoreContext);
-
-  return useStore(store, selector, shallow);
-};
-
-const useMetadataPanelStoreActions = () => {
-  const store = React.useContext(MetadataPanelStoreContext);
-
-  return useStore(store, (state) => state.actions);
-};
-
-const defaultStore = createMetadataPanelStore();
-
-export const MetadataPanelStoreContext = React.createContext(defaultStore);
+import { JoinByChip } from "./JoinByChip";
 
 const useDrawerStyles = makeStyles<Theme, { top: number }>((theme) => {
   return {
@@ -180,6 +133,7 @@ const useOtherStyles = makeStyles<Theme>((theme) => {
       marginTop: theme.spacing(3),
     },
     search: {
+      marginBottom: "0.25rem",
       "& .MuiAutocomplete-inputRoot": {
         padding: `0px ${theme.spacing(3)}`,
 
@@ -195,6 +149,7 @@ const useOtherStyles = makeStyles<Theme>((theme) => {
       borderRadius: 3,
     },
     searchInputResult: {
+      justifyContent: "space-between",
       borderBottom: `1px solid ${theme.palette.grey[400]}`,
 
       "&:last-of-type": {
@@ -266,7 +221,7 @@ export const OpenMetadataPanelWrapper = ({
 };
 
 type MetadataPanelProps = {
-  datasetIri: string;
+  chartConfigs: ChartConfig[];
   dataSource: DataSource;
   dimensions: Component[];
   container?: HTMLDivElement | null;
@@ -274,7 +229,7 @@ type MetadataPanelProps = {
 };
 
 export const MetadataPanel = (props: MetadataPanelProps) => {
-  const { datasetIri, dataSource, dimensions, container, top = 0 } = props;
+  const { dimensions, container, top = 0, chartConfigs, dataSource } = props;
   const router = useRouter();
   const drawerClasses = useDrawerStyles({ top });
   const otherClasses = useOtherStyles();
@@ -291,9 +246,13 @@ export const MetadataPanel = (props: MetadataPanelProps) => {
 
   // Close and reset the metadata panel when route has changed.
   React.useEffect(() => {
-    setOpen(false);
-    reset();
-  }, [router.pathname, setOpen, reset]);
+    const handleHashChange = () => {
+      setOpen(false);
+      reset();
+    };
+    router.events.on("hashChangeStart", handleHashChange);
+    return () => router.events.off("hashChangeStart", handleHashChange);
+  }, [setOpen, reset, router.events]);
 
   const [embedOptions] = useEmbedOptions();
 
@@ -354,13 +313,13 @@ export const MetadataPanel = (props: MetadataPanelProps) => {
             {activeSection === "general" ? (
               <MotionBox key="general-tab" {...animationProps}>
                 <TabPanelGeneral
-                  datasetIri={datasetIri}
                   dataSource={dataSource}
+                  chartConfigs={chartConfigs}
                 />
               </MotionBox>
             ) : activeSection === "data" ? (
               <MotionBox key="data-tab" {...animationProps}>
-                <TabPanelData dimensions={dimensions} />
+                <TabPanelData dataSource={dataSource} dimensions={dimensions} />
               </MotionBox>
             ) : null}
           </AnimatePresence>
@@ -406,22 +365,58 @@ const Header = ({ onClose }: { onClose: () => void }) => {
 };
 
 const TabPanelGeneral = ({
-  datasetIri,
   dataSource,
+  chartConfigs,
 }: {
-  datasetIri: string;
   dataSource: DataSource;
+  chartConfigs: ChartConfig[];
 }) => {
   const classes = useOtherStyles();
+  const locale = useLocale();
 
+  const cubes = uniqBy(
+    chartConfigs.flatMap((x) => x.cubes).map((x) => ({ iri: x.iri })),
+    (x) => x.iri
+  );
+
+  const [{ data, fetching, error }] = useDataCubesMetadataQuery({
+    variables: {
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+      cubeFilters: cubes,
+    },
+  });
+  const cubesMetadata = data?.dataCubesMetadata;
+  if (!cubesMetadata) {
+    return null;
+  }
   return (
     <TabPanel className={classes.tabPanel} value="general">
-      <DataSetMetadata dataSetIri={datasetIri} dataSource={dataSource} />
+      {fetching ? <Loading /> : null}
+      {error ? (
+        <Error>{`${error instanceof Error ? error.message : error}`}</Error>
+      ) : null}
+      <Stack divider={<Divider />} gap="1.5rem">
+        {cubesMetadata?.map((cube) => (
+          <DatasetMetadata
+            key={cube.iri}
+            cube={cube}
+            showTitle={cubes.length > 1}
+          />
+        ))}
+      </Stack>
     </TabPanel>
   );
 };
 
-const TabPanelData = ({ dimensions }: { dimensions: Component[] }) => {
+const TabPanelData = ({
+  dataSource,
+  dimensions,
+}: {
+  dataSource: DataSource;
+  dimensions: Component[];
+}) => {
   const classes = useOtherStyles();
   const selectedDimension = useMetadataPanelStore(
     (state) => state.selectedDimension
@@ -431,8 +426,66 @@ const TabPanelData = ({ dimensions }: { dimensions: Component[] }) => {
   const [inputValue, setInputValue] = React.useState("");
 
   const options = React.useMemo(() => {
-    return dimensions.map((d) => ({ label: d.label, value: d }));
+    return dimensions.flatMap(
+      (
+        d
+      ): {
+        label: string;
+        value: Component;
+        isJoinByDimension: boolean;
+      }[] => {
+        if (isJoinByComponent(d)) {
+          return (d.originalIris ?? []).map((x) => ({
+            label: getComponentLabel(d, x.cubeIri),
+            value: {
+              ...omit(d, "originalIris"),
+              cubeIri: x.cubeIri,
+              iri: x.dimensionIri,
+            } as Component,
+            isJoinByDimension: true,
+          }));
+        } else {
+          return [{ label: d.label, value: d, isJoinByDimension: false }];
+        }
+      }
+    );
   }, [dimensions]);
+
+  const locale = useLocale();
+  const grouped = groupBy(
+    dimensions.flatMap((d): Component[] => {
+      if ("originalIris" in d && d.originalIris) {
+        return (
+          d.originalIris.map((o) => ({
+            ...d,
+            cubeIri: o.cubeIri,
+            iri: o.dimensionIri,
+          })) ?? []
+        );
+      } else {
+        return [d];
+      }
+    }),
+    (x) => x.cubeIri
+  );
+
+  const [metadataQuery] = useDataCubesMetadataQuery({
+    keepPreviousData: true,
+    variables: {
+      locale: locale,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      cubeFilters: Object.keys(grouped).map((iri) => ({ iri })),
+    },
+  });
+
+  const dataCubesMetadata = metadataQuery.data?.dataCubesMetadata;
+  const cubesByIri = keyBy(dataCubesMetadata, (x) => x.iri);
+
+  const sortedOptions = useMemo(
+    () => sortBy(options, (x) => cubesByIri[x.value.cubeIri]?.title),
+    [options, cubesByIri]
+  );
 
   return (
     <TabPanel className={classes.tabPanel} value="data">
@@ -446,7 +499,11 @@ const TabPanelData = ({ dimensions }: { dimensions: Component[] }) => {
               <Trans id="button.back">Back</Trans>
             </BackButton>
             <Box sx={{ mt: 4 }}>
-              <TabPanelDataDimension dim={selectedDimension} expanded={true} />
+              <TabPanelDataDimension
+                dim={selectedDimension}
+                expanded={true}
+                dataSource={dataSource}
+              />
             </Box>
           </MotionBox>
         ) : (
@@ -461,7 +518,8 @@ const TabPanelData = ({ dimensions }: { dimensions: Component[] }) => {
               onChange={(_, v) => v && setSelectedDimension(v.value)}
               inputValue={inputValue}
               onInputChange={(_, v) => setInputValue(v.toLowerCase())}
-              options={options}
+              options={sortedOptions}
+              groupBy={(x) => cubesByIri[x.value.cubeIri]?.title ?? ""}
               ListboxProps={{ className: classes.searchInputResultList }}
               renderInput={(params) => (
                 <TextField
@@ -483,6 +541,7 @@ const TabPanelData = ({ dimensions }: { dimensions: Component[] }) => {
                 />
               )}
               renderOption={(props, option, { inputValue }) => {
+                console.log(option);
                 const matches = match(option.label, inputValue, {
                   insideWords: true,
                 });
@@ -493,26 +552,56 @@ const TabPanelData = ({ dimensions }: { dimensions: Component[] }) => {
                     {...props}
                     className={clsx(props.className, classes.searchInputResult)}
                   >
-                    <div>
-                      {parts.map(({ text, highlight }, i) => (
-                        <Typography
-                          key={i}
-                          variant="body2"
-                          component="span"
-                          style={{ fontWeight: highlight ? 700 : 400 }}
-                        >
-                          {text}
-                        </Typography>
-                      ))}
-                    </div>
+                    {parts.map(({ text, highlight }, i) => (
+                      <Typography
+                        key={i}
+                        variant="body2"
+                        component="span"
+                        flexGrow={1}
+                        style={{ fontWeight: highlight ? 700 : 400 }}
+                      >
+                        {text}
+                      </Typography>
+                    ))}
+                    {option.isJoinByDimension ? (
+                      <JoinByChip
+                        label={<Trans id="dimension.joined">Joined</Trans>}
+                      />
+                    ) : (
+                      ""
+                    )}
                   </li>
                 );
               }}
               clearIcon={null}
             />
-            {dimensions.map((d) => (
-              <TabPanelDataDimension key={d.iri} dim={d} expanded={false} />
-            ))}
+            <Stack spacing={4} divider={<Divider />}>
+              {Object.entries(grouped).map(([iri, dimensions]) => {
+                if (!cubesByIri[iri]) {
+                  return null;
+                }
+                return (
+                  <div key={iri}>
+                    {dataCubesMetadata && dataCubesMetadata.length > 1 ? (
+                      <Typography variant="h4" sx={{ mb: 2 }} color="grey.700">
+                        {cubesByIri[iri].title}
+                      </Typography>
+                    ) : null}
+                    <Stack spacing={2}>
+                      {dimensions.map((d) => (
+                        <TabPanelDataDimension
+                          key={d.iri}
+                          dim={d}
+                          cubeIri={iri}
+                          expanded={false}
+                          dataSource={dataSource}
+                        />
+                      ))}
+                    </Stack>
+                  </div>
+                );
+              })}
+            </Stack>
           </MotionBox>
         )}
       </AnimatePresence>
@@ -522,10 +611,14 @@ const TabPanelData = ({ dimensions }: { dimensions: Component[] }) => {
 
 const TabPanelDataDimension = ({
   dim,
+  dataSource,
   expanded,
+  cubeIri,
 }: {
   dim: Component;
+  dataSource: DataSource;
   expanded: boolean;
+  cubeIri?: string;
 }) => {
   const classes = useOtherStyles();
   const { setSelectedDimension } = useMetadataPanelStoreActions();
@@ -537,6 +630,30 @@ const TabPanelDataDimension = ({
     return dim.description;
   }, [dim.description, expanded]);
 
+  const locale = useLocale();
+  const [componentsQuery] = useDataCubesComponentsQuery({
+    pause: !expanded,
+    variables: {
+      cubeFilters: [
+        { iri: dim.cubeIri, loadValues: true, componentIris: [dim.iri] },
+      ],
+      locale,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+    },
+  });
+
+  const loadedDimension = useMemo(() => {
+    return [
+      ...(componentsQuery.data?.dataCubesComponents.dimensions ?? []),
+      ...(componentsQuery.data?.dataCubesComponents.measures ?? []),
+    ].find((d) => dim.iri === d.iri);
+  }, [
+    componentsQuery.data?.dataCubesComponents.dimensions,
+    componentsQuery.data?.dataCubesComponents.measures,
+    dim.iri,
+  ]);
+
   const handleClick = React.useCallback(() => {
     if (!expanded) {
       setSelectedDimension(dim);
@@ -547,20 +664,28 @@ const TabPanelDataDimension = ({
     <div>
       <Flex sx={{ justifyContent: "space-between" }}>
         <div>
-          <Button
-            className={classes.dimensionButton}
-            variant="text"
-            size="small"
-            onClick={handleClick}
-            sx={{
-              ":hover": { color: !expanded ? "primary.main" : "grey.800" },
-              cursor: !expanded ? "pointer" : "default",
-            }}
-          >
-            <Typography variant="body2" fontWeight="bold" gutterBottom>
-              {getDimensionLabel(dim)}
-            </Typography>
-          </Button>
+          <Box display="flex" alignItems="center" gap={2}>
+            <Button
+              className={classes.dimensionButton}
+              variant="text"
+              size="small"
+              onClick={handleClick}
+              sx={{
+                lineHeight: 1,
+                minHeight: "auto",
+                padding: 0,
+                typography: "body2",
+                fontWeight: "bold",
+                ":hover": { color: !expanded ? "primary.main" : "grey.800" },
+                cursor: !expanded ? "pointer" : "default",
+              }}
+            >
+              {getComponentLabel(dim as Dimension, cubeIri)}
+            </Button>
+            {isJoinByComponent(dim) ? (
+              <JoinByChip label={<Trans id="dimension.joined">Joined</Trans>} />
+            ) : null}
+          </Box>
           {description && (
             <Typography variant="body2">{description}</Typography>
           )}
@@ -568,7 +693,7 @@ const TabPanelDataDimension = ({
       </Flex>
 
       <AnimatePresence>
-        {expanded && (
+        {expanded && loadedDimension && loadedDimension.values.length > 0 && (
           <MotionBox
             key="dimension-values"
             className={classes.dimensionValues}
@@ -585,7 +710,7 @@ const TabPanelDataDimension = ({
                 Available values
               </Trans>
             </Typography>
-            <DimensionValues dim={dim} />
+            <DimensionValues dim={loadedDimension} />
           </MotionBox>
         )}
       </AnimatePresence>
@@ -599,7 +724,7 @@ const TabPanelDataDimension = ({
           endIcon={<SvgIcArrowRight />}
           sx={{ p: 0 }}
         >
-          Show more
+          <Trans id="controls.metadata-panel.show-more">Show more</Trans>
         </Button>
       )}
     </div>
