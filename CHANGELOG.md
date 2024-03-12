@@ -17,6 +17,7 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
   - Temporal segment is no longer carried over when switching from scatterplot to column chart if it was already used as X axis
   - Dimension data type is now parsed in case of two data types defined directly in dimension metadata
   - Currently selected locale is now persisted when using actions in user profile page (view chart, edit, open, share)
+  - Optional filters can be added again
 
 # [3.26.3] - 2024-03-05
 
