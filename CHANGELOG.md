@@ -9,6 +9,8 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
+- Features
+  - Slightly increased initial map zoom level
 - Fixes
   - SingleURLs layout mode now correctly publishes charts
   - Redirecting to latest cube now works correctly for cases of trying to access old cube that didn't look like a versioned cube, but in fact was a versioned cube
@@ -17,6 +19,7 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
   - Temporal segment is no longer carried over when switching from scatterplot to column chart if it was already used as X axis
   - Dimension data type is now parsed in case of two data types defined directly in dimension metadata
   - Currently selected locale is now persisted when using actions in user profile page (view chart, edit, open, share)
+  - Initial zoom map is now correctly (and consistently) applied again
 
 # [3.26.3] - 2024-03-05
 
