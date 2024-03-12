@@ -16,6 +16,7 @@ import {
   Component,
   Dimension,
   DimensionValue,
+  isJoinByComponent,
   Measure,
   Observation,
 } from "../../domain/data";
@@ -293,7 +294,7 @@ export const canUseAbbreviations = (d?: Component): boolean => {
  * - If you need the dimension label in the context of a cube, pass the cube iri
  */
 export const getComponentLabel = (dim: Component, cube?: string) => {
-  if ("isJoinByDimension" in dim && dim.isJoinByDimension) {
+  if (isJoinByComponent(dim)) {
     const original = cube && dim.originalIris.find((i) => i.cubeIri === cube);
     if (original) {
       return original.label;

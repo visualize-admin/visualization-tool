@@ -42,6 +42,7 @@ import {
   Component,
   Dimension,
   DimensionValue,
+  isJoinByComponent,
   isStandardErrorDimension,
   TemporalDimension,
 } from "@/domain/data";
@@ -433,11 +434,7 @@ const TabPanelData = ({
         value: Component;
         isJoinByDimension: boolean;
       }[] => {
-        if (
-          "isJoinByDimension" in d &&
-          d.isJoinByDimension &&
-          "originalIris" in d
-        ) {
+        if (isJoinByComponent(d)) {
           return (d.originalIris ?? []).map((x) => ({
             label: getComponentLabel(d, x.cubeIri),
             value: {
@@ -685,7 +682,7 @@ const TabPanelDataDimension = ({
             >
               {getComponentLabel(dim as Dimension, cubeIri)}
             </Button>
-            {"isJoinByDimension" in dim && dim.isJoinByDimension ? (
+            {isJoinByComponent(dim) ? (
               <JoinByChip label={<Trans id="dimension.joined">Joined</Trans>} />
             ) : null}
           </Box>

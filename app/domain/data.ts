@@ -122,6 +122,16 @@ export type BaseDimension = BaseComponent & {
       }
   );
 
+export const isJoinByComponent = (
+  d: Component
+): d is Extract<Component, { isJoinByDimension: true }> => {
+  return !!(
+    "isJoinByDimension" in d &&
+    d.isJoinByDimension &&
+    "originalIris" in d
+  );
+};
+
 export type Dimension =
   | NominalDimension
   | OrdinalDimension
