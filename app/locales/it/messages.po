@@ -1104,6 +1104,11 @@ msgstr "Bozza"
 msgid "datatable.showing.first.rows"
 msgstr "Sono mostrate soltanto le prime 10 righe"
 
+#: app/components/metadata-panel.tsx
+#: app/components/metadata-panel.tsx
+msgid "dimension.joined"
+msgstr "Unita"
+
 #: app/utils/flashes.tsx
 msgid "flashes.couldnt-load-cube.title"
 msgstr "Impossibile caricare il cubo"
@@ -1447,10 +1452,6 @@ msgstr "Mostra tutti"
 #: app/configurator/components/chart-controls/drag-and-drop-tab.tsx
 msgid "table.column.no"
 msgstr "Colonna {0}"
-
-#: app/configurator/components/ui-helpers.ts
-msgid "time-units."
-msgstr ""
 
 #: app/configurator/components/ui-helpers.ts
 msgid "time-units.Day"

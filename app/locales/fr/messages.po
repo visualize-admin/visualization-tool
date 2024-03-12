@@ -1104,6 +1104,11 @@ msgstr "Brouillon"
 msgid "datatable.showing.first.rows"
 msgstr "Seules les 10 premières lignes sont affichées"
 
+#: app/components/metadata-panel.tsx
+#: app/components/metadata-panel.tsx
+msgid "dimension.joined"
+msgstr "Jointe"
+
 #: app/utils/flashes.tsx
 msgid "flashes.couldnt-load-cube.title"
 msgstr "Impossible de charger le cube"
@@ -1447,10 +1452,6 @@ msgstr "Tout afficher"
 #: app/configurator/components/chart-controls/drag-and-drop-tab.tsx
 msgid "table.column.no"
 msgstr "Colonne {0}"
-
-#: app/configurator/components/ui-helpers.ts
-msgid "time-units."
-msgstr ""
 
 #: app/configurator/components/ui-helpers.ts
 msgid "time-units.Day"

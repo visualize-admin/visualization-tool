@@ -1104,6 +1104,11 @@ msgstr "Entwurf"
 msgid "datatable.showing.first.rows"
 msgstr "Die ersten 10 Zeilen werden angezeigt"
 
+#: app/components/metadata-panel.tsx
+#: app/components/metadata-panel.tsx
+msgid "dimension.joined"
+msgstr "Verbunden"
+
 #: app/utils/flashes.tsx
 msgid "flashes.couldnt-load-cube.title"
 msgstr "Der Cube konnte nicht geladen werden"
@@ -1443,10 +1448,6 @@ msgstr "Alle anzeigen"
 #: app/configurator/components/chart-controls/drag-and-drop-tab.tsx
 msgid "table.column.no"
 msgstr "Spalte {0}"
-
-#: app/configurator/components/ui-helpers.ts
-msgid "time-units."
-msgstr ""
 
 #: app/configurator/components/ui-helpers.ts
 msgid "time-units.Day"
