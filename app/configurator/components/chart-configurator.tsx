@@ -302,6 +302,26 @@ const useEnsurePossibleFilters = ({
   return { error, fetching };
 };
 
+export const getFilterReorderCubeFilters = (
+  chartConfig: ChartConfig,
+  { joinByIris }: { joinByIris: string[] }
+) => {
+  return chartConfig.cubes.map(({ iri, joinBy }) => {
+    const { unmappedFilters } = getFiltersByMappingStatus(chartConfig, {
+      cubeIri: iri,
+      joinByIris,
+    });
+
+    return {
+      iri,
+      filters:
+        Object.keys(unmappedFilters).length > 0 ? unmappedFilters : undefined,
+      joinBy,
+      loadValues: true,
+    };
+  });
+};
+
 const useFilterReorder = ({
   onAddDimensionFilter,
 }: {
@@ -319,24 +339,8 @@ const useFilterReorder = ({
   }, [chartConfig, joinByIris]);
 
   const variables = useMemo(() => {
-    const cubeFilters = chartConfig.cubes.map((cube) => {
-      const { unmappedFilters } = getFiltersByMappingStatus(chartConfig, {
-        cubeIri: cube.iri,
-        joinByIris,
-      });
-
-      return Object.keys(unmappedFilters).length > 0
-        ? {
-            iri: cube.iri,
-            filters: unmappedFilters,
-            joinBy: cube.joinBy,
-          }
-        : {
-            iri: cube.iri,
-            filters: undefined,
-            joinBy: cube.joinBy,
-            loadValues: true,
-          };
+    const cubeFilters = getFilterReorderCubeFilters(chartConfig, {
+      joinByIris,
     });
 
     // This is important for urql not to think that filters
