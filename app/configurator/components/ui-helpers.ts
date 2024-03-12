@@ -287,15 +287,14 @@ export const canUseAbbreviations = (d?: Component): boolean => {
 };
 
 /**
- * Returns label of the dimension
+ * Returns label a dimension or a measure
  * - Handles join by dimension
  *   - Temporal dimensions will get labelled via their time unit
  * - If you need the dimension label in the context of a cube, pass the cube iri
  */
-export const getDimensionLabel = (dim: Dimension, cube?: string) => {
+export const getComponentLabel = (dim: Component, cube?: string) => {
   if ("isJoinByDimension" in dim && dim.isJoinByDimension) {
     const original = cube && dim.originalIris.find((i) => i.cubeIri === cube);
-    console.log(cube, original);
     if (original) {
       return original.label;
     }

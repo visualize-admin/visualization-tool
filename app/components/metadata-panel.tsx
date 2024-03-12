@@ -37,7 +37,7 @@ import {
 import { MotionBox } from "@/components/presence";
 import { BackButton, ChartConfig, DataSource } from "@/configurator";
 import { DRAWER_WIDTH } from "@/configurator/components/drawer";
-import { getDimensionLabel } from "@/configurator/components/ui-helpers";
+import { getComponentLabel } from "@/configurator/components/ui-helpers";
 import {
   Component,
   Dimension,
@@ -437,7 +437,7 @@ const TabPanelData = ({
           "originalIris" in d
         ) {
           return (d.originalIris ?? []).map((x) => ({
-            label: getDimensionLabel(d, x.cubeIri),
+            label: getComponentLabel(d, x.cubeIri),
             value: {
               ...omit(d, "originalIris"),
               cubeIri: x.cubeIri,
@@ -681,7 +681,7 @@ const TabPanelDataDimension = ({
                 cursor: !expanded ? "pointer" : "default",
               }}
             >
-              {getDimensionLabel(dim as Dimension, cubeIri)}
+              {getComponentLabel(dim as Dimension, cubeIri)}
             </Button>
             {"isJoinByDimension" in dim && dim.isJoinByDimension ? (
               <JoinByChip label={<Trans id="dimension.joined">Joined</Trans>} />
