@@ -102,8 +102,6 @@ export const MapComponent = () => {
     featuresBBox,
   });
 
-  const currentBBox = React.useRef<BBox>();
-
   const lockedRef = React.useRef(locked);
   React.useEffect(() => {
     lockedRef.current = locked;
@@ -362,9 +360,8 @@ export const MapComponent = () => {
       return;
     }
 
-    const bbox = map.getBounds().toArray() as BBox;
-    currentBBox.current = bbox;
-    resizeAndFit(map, lockedBBox || bbox);
+    const bbox = lockedBBox ?? (map.getBounds().toArray() as BBox);
+    resizeAndFit(map, bbox);
   });
 
   const handleResize = useEvent((e: MapboxEvent) => {
@@ -402,8 +399,8 @@ export const MapComponent = () => {
           doubleClickZoom={!locked}
           dragRotate={false}
           touchZoomRotate={!locked}
-          onData={(ev) => {
-            if (ev.dataType === "source" && !ev.isSourceLoaded) {
+          onData={(e) => {
+            if (e.dataType === "source" && !e.isSourceLoaded) {
               setLoaded(false);
             }
           }}
@@ -416,7 +413,6 @@ export const MapComponent = () => {
           }}
           onLoad={(e) => {
             setMap(e.target as mapboxgl.Map);
-            currentBBox.current = e.target.getBounds().toArray() as BBox;
 
             /**
              * Redraw the map on load, when style data has been downloaded
@@ -426,16 +422,7 @@ export const MapComponent = () => {
              */
             redrawMap();
           }}
-          onMove={(e) => {
-            const userTriggered =
-              e.originalEvent && e.originalEvent.type !== "resize";
-
-            if (userTriggered) {
-              currentBBox.current = e.target.getBounds().toArray() as BBox;
-            }
-
-            onViewStateChange(e);
-          }}
+          onMove={onViewStateChange}
           onResize={handleResize}
           {...viewState}
         >

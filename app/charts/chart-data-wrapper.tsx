@@ -41,7 +41,7 @@ export const ChartDataWrapper = <
   observationQueryFilters,
 
   fetching: fetchingProp = false,
-  error: errorProp,
+  error: propError,
 }: {
   chartConfig: TChartConfig;
   Component: TChartComponent;
@@ -121,6 +121,8 @@ export const ChartDataWrapper = <
     fetchingMetadata ||
     fetchingComponents ||
     fetchingObservations;
+  const error =
+    propError || metadataError || componentsError || observationsError;
 
   React.useEffect(() => {
     chartLoadingState.set("data", fetching);
@@ -133,7 +135,22 @@ export const ChartDataWrapper = <
     };
   }, [dimensions, measures]);
 
-  if (metadata && dimensions && measures && observations) {
+  if (error) {
+    return (
+      <Flex sx={{ flexDirection: "column", gap: 3 }}>
+        {metadataError && <Error message={metadataError.message} />}
+        {componentsError && <Error message={componentsError.message} />}
+        {observationsError && <Error message={observationsError.message} />}
+        {propError && <Error message={propError.message} />}
+      </Flex>
+    );
+  } else if (fetching) {
+    return (
+      <Flex flexGrow={1} justifyContent="center" minHeight={300}>
+        <Loading />
+      </Flex>
+    );
+  } else if (metadata && dimensions && measures && observations) {
     // FIXME: adapt to design
     const title = metadata.map((d) => d.title).join(", ");
 
@@ -168,26 +185,8 @@ export const ChartDataWrapper = <
         ) : null}
       </Box>
     );
-  } else if (
-    errorProp ||
-    metadataError ||
-    componentsError ||
-    observationsError
-  ) {
-    return (
-      <Flex sx={{ flexDirection: "column", gap: 3 }}>
-        {metadataError && <Error message={metadataError.message} />}
-        {componentsError && <Error message={componentsError.message} />}
-        {observationsError && <Error message={observationsError.message} />}
-        {errorProp && <Error message={errorProp.message} />}
-      </Flex>
-    );
   } else {
-    return (
-      <Flex flexGrow={1} justifyContent="center" minHeight={300}>
-        <Loading />
-      </Flex>
-    );
+    return null;
   }
 };
 
