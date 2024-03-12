@@ -16,50 +16,53 @@
       },
       "description": { "de": "", "fr": "", "it": "", "en": "" }
     },
-    "chartConfig": {
-      "version": "1.2.1",
-      "chartType": "scatterplot",
-      "filters": {
-        "https://environment.ld.admin.ch/foen/palmer-penguins/species": {
-          "type": "single",
-          "value": "https://environment.ld.admin.ch/foen/palmer-penguins/species/Adelie"
+    "chartConfigs": [
+      {
+        "version": "1.2.1",
+        "chartType": "scatterplot",
+        "filters": {
+          "https://environment.ld.admin.ch/foen/palmer-penguins/species": {
+            "type": "single",
+            "value": "https://environment.ld.admin.ch/foen/palmer-penguins/species/Adelie"
+          },
+          "https://environment.ld.admin.ch/foen/palmer-penguins/sex": {
+            "type": "single",
+            "value": "female"
+          },
+          "https://environment.ld.admin.ch/foen/palmer-penguins/year": {
+            "type": "single",
+            "value": "2007"
+          }
         },
-        "https://environment.ld.admin.ch/foen/palmer-penguins/sex": {
-          "type": "single",
-          "value": "female"
+        "cubes": [],
+        "interactiveFiltersConfig": {
+          "legend": { "active": false, "componentIri": "" },
+          "timeRange": {
+            "active": false,
+            "componentIri": "",
+            "presets": { "type": "range", "from": "", "to": "" }
+          },
+          "dataFilters": { "active": false, "componentIris": [] }
         },
-        "https://environment.ld.admin.ch/foen/palmer-penguins/year": {
-          "type": "single",
-          "value": "2007"
-        }
-      },
-      "interactiveFiltersConfig": {
-        "legend": { "active": false, "componentIri": "" },
-        "timeRange": {
-          "active": false,
-          "componentIri": "",
-          "presets": { "type": "range", "from": "", "to": "" }
-        },
-        "dataFilters": { "active": false, "componentIris": [] }
-      },
-      "fields": {
-        "x": {
-          "componentIri": "https://environment.ld.admin.ch/foen/palmer-penguins/billlengthmm"
-        },
-        "y": {
-          "componentIri": "https://environment.ld.admin.ch/foen/palmer-penguins/billdepthmm"
-        },
-        "segment": {
-          "componentIri": "https://environment.ld.admin.ch/foen/palmer-penguins/islands",
-          "palette": "category10",
-          "colorMapping": {
-            "https://environment.ld.admin.ch/foen/palmer-penguins/islands/Biscoe": "#1f77b4",
-            "https://environment.ld.admin.ch/foen/palmer-penguins/islands/Dream": "#ff7f0e",
-            "https://environment.ld.admin.ch/foen/palmer-penguins/islands/Torgersen": "#2ca02c"
+        "fields": {
+          "x": {
+            "componentIri": "https://environment.ld.admin.ch/foen/palmer-penguins/billlengthmm"
+          },
+          "y": {
+            "componentIri": "https://environment.ld.admin.ch/foen/palmer-penguins/billdepthmm"
+          },
+          "segment": {
+            "componentIri": "https://environment.ld.admin.ch/foen/palmer-penguins/islands",
+            "palette": "category10",
+            "colorMapping": {
+              "https://environment.ld.admin.ch/foen/palmer-penguins/islands/Biscoe": "#1f77b4",
+              "https://environment.ld.admin.ch/foen/palmer-penguins/islands/Dream": "#ff7f0e",
+              "https://environment.ld.admin.ch/foen/palmer-penguins/islands/Torgersen": "#2ca02c"
+            }
           }
         }
       }
-    },
+    ],
     "activeField": "title"
   }
 }

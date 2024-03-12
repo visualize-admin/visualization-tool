@@ -1,21 +1,13 @@
 import { markdown } from "catalog";
 
 const Doc = () => markdown`
-> The components used in the User Interface are built upon [rebass](https://mui.com/), a library of React UI components.
+> The components used in the User Interface are built upon the Material-UI library. This library provides
+> a set of basic components that can be used to build complex interfaces.
 
-> All styles are defined in a \`theme\` file [that can be customized to a specific brand](/theming).
+> All styles are defined in the \`federal\` theme file that contain the "Federal" customizations for MUI.
 
-## How to use a component
-
-Basic components come with variants. For instance, a button can be styled as a "primary" button by defining this variant on the base Button component:
-
-~~~
-import { Button } from "@mui/material"
-
-<Button variant="primary">
-  Click me!
-</Button>
-~~~
+Components are developed with Storybook, a tool for developing UI components in isolation. The storybook
+is accessible [here](/storybook).
 `;
 
 export default Doc;
