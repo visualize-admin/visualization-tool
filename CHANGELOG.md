@@ -20,6 +20,7 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
   - Dimension data type is now parsed in case of two data types defined directly in dimension metadata
   - Currently selected locale is now persisted when using actions in user profile page (view chart, edit, open, share)
   - Initial zoom map is now correctly (and consistently) applied again
+  - Optional filters can be added again
 
 # [3.26.3] - 2024-03-05
 
