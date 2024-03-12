@@ -28,6 +28,7 @@ import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { Observer } from "@/charts/shared/use-width";
 import { ComboLineSingleConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
+import { truthy } from "@/domain/types";
 
 import { ChartProps } from "../shared/ChartProps";
 
@@ -116,23 +117,12 @@ const useComboLineSingleState = (
   const getAnnotationInfo = (d: Observation): TooltipInfo => {
     const x = getX(d);
     const xScaled = xScale(x);
-
-    return {
-      datum: { label: "", value: "0", color: d3.schemeCategory10[0] },
-      xAnchor: xScaled,
-      yAnchor: yScale(
-        variables.y.lines
-          .map(({ getY }) => getY(d) ?? 0)
-          .reduce((a, b) => a + b, 0) / variables.y.lines.length
-      ),
-      xValue: timeFormatUnit(x, xDimension.timeUnit),
-      placement: getCenteredTooltipPlacement({
-        chartWidth,
-        xAnchor: xScaled,
-        topAnchor: false,
-      }),
-      values: variables.y.lines.map(({ getY, label }) => {
+    const values = variables.y.lines
+      .map(({ getY, label }) => {
         const y = getY(d);
+        if (!Number.isFinite(y) || y === null) {
+          return null;
+        }
 
         return {
           label,
@@ -142,7 +132,21 @@ const useComboLineSingleState = (
           yPos: yScale(y ?? 0),
           symbol: "line",
         };
+      })
+      .filter(truthy);
+    const yAnchor = d3.mean(values.map((d) => d.yPos));
+
+    return {
+      datum: { label: "", value: "0", color: d3.schemeCategory10[0] },
+      xAnchor: xScaled,
+      yAnchor: yAnchor,
+      xValue: timeFormatUnit(x, xDimension.timeUnit),
+      placement: getCenteredTooltipPlacement({
+        chartWidth,
+        xAnchor: xScaled,
+        topAnchor: false,
       }),
+      values,
     } as TooltipInfo;
   };
 
