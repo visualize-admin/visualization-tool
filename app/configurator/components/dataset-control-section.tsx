@@ -9,7 +9,7 @@ import {
 import uniqBy from "lodash/uniqBy";
 import { useMemo } from "react";
 
-import { useMetadataPanelStoreActions } from "@/components/metadata-panel";
+import { useMetadataPanelStoreActions } from "@/components/metadata-panel-store";
 import useDisclosure from "@/components/use-disclosure";
 import {
   ControlSection,

@@ -25,11 +25,13 @@ import orderBy from "lodash/orderBy";
 import uniqBy from "lodash/uniqBy";
 import { useRouter } from "next/router";
 import React, { useMemo } from "react";
-import { createStore, useStore } from "zustand";
-import shallow from "zustand/shallow";
 
 import { DatasetMetadata } from "@/components/dataset-metadata";
 import { Error, Loading } from "@/components/hint";
+import {
+  useMetadataPanelStore,
+  useMetadataPanelStoreActions,
+} from "@/components/metadata-panel-store";
 import { MotionBox } from "@/components/presence";
 import { BackButton, ChartConfig, DataSource } from "@/configurator";
 import { DRAWER_WIDTH } from "@/configurator/components/drawer";
@@ -56,71 +58,6 @@ import { makeDimensionValueSorters } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
 
 import Flex from "./flex";
-
-type MetadataPanelSection = "general" | "data";
-
-type MetadataPanelState = {
-  open: boolean;
-  activeSection: MetadataPanelSection;
-  selectedDimension: Component | undefined;
-  actions: {
-    setOpen: (d: boolean) => void;
-    toggle: () => void;
-    setActiveSection: (d: MetadataPanelSection) => void;
-    setSelectedDimension: (d: Component) => void;
-    clearSelectedDimension: () => void;
-    openDimension: (d: Component) => void;
-    reset: () => void;
-  };
-};
-
-export const createMetadataPanelStore = () =>
-  createStore<MetadataPanelState>((set, get) => ({
-    open: false,
-    activeSection: "general",
-    selectedDimension: undefined,
-    actions: {
-      setOpen: (d: boolean) => {
-        set({ open: d });
-      },
-      toggle: () => {
-        set({ open: !get().open });
-      },
-      setActiveSection: (d: MetadataPanelSection) => {
-        set({ activeSection: d });
-      },
-      setSelectedDimension: (d: Component) => {
-        set({ selectedDimension: d });
-      },
-      clearSelectedDimension: () => {
-        set({ selectedDimension: undefined });
-      },
-      openDimension: (d: Component) => {
-        set({ open: true, activeSection: "data", selectedDimension: d });
-      },
-      reset: () => {
-        set({ activeSection: "general", selectedDimension: undefined });
-      },
-    },
-  }));
-
-const useMetadataPanelStore: <T>(
-  selector: (state: MetadataPanelState) => T
-) => T = (selector) => {
-  const store = React.useContext(MetadataPanelStoreContext);
-
-  return useStore(store, selector, shallow);
-};
-
-export const useMetadataPanelStoreActions = () => {
-  const store = React.useContext(MetadataPanelStoreContext);
-
-  return useStore(store, (state) => state.actions);
-};
-
-const defaultStore = createMetadataPanelStore();
-
-export const MetadataPanelStoreContext = React.createContext(defaultStore);
 
 const useDrawerStyles = makeStyles<Theme, { top: number }>((theme) => {
   return {

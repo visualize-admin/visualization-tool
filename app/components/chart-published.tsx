@@ -24,11 +24,11 @@ import {
 import { ChartWithFilters } from "@/components/chart-with-filters";
 import Flex from "@/components/flex";
 import { HintBlue, HintRed, HintYellow } from "@/components/hint";
+import { MetadataPanel } from "@/components/metadata-panel";
 import {
-  createMetadataPanelStore,
-  MetadataPanel,
   MetadataPanelStoreContext,
-} from "@/components/metadata-panel";
+  createMetadataPanelStore,
+} from "@/components/metadata-panel-store";
 import {
   ChartConfig,
   ConfiguratorStatePublished,
