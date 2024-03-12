@@ -132,6 +132,7 @@ const useOtherStyles = makeStyles<Theme>((theme) => {
       marginTop: theme.spacing(3),
     },
     search: {
+      marginBottom: "0.25rem",
       "& .MuiAutocomplete-inputRoot": {
         padding: `0px ${theme.spacing(3)}`,
 
