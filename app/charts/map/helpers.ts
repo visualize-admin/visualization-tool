@@ -105,7 +105,7 @@ export const useViewState = (props: ViewStateInitializationProps) => {
       getViewStateFromBounds({
         width,
         height,
-        padding: 1 / 3,
+        padding: 1 / 4,
         bbox: featuresBBox,
       }) ?? BASE_VIEW_STATE
     );
