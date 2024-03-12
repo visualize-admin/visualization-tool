@@ -135,14 +135,22 @@ export const ChartDataWrapper = <
     };
   }, [dimensions, measures]);
 
-  if (
-    metadata &&
-    dimensions &&
-    measures &&
-    observations &&
-    !fetching &&
-    !error
-  ) {
+  if (error) {
+    return (
+      <Flex sx={{ flexDirection: "column", gap: 3 }}>
+        {metadataError && <Error message={metadataError.message} />}
+        {componentsError && <Error message={componentsError.message} />}
+        {observationsError && <Error message={observationsError.message} />}
+        {propError && <Error message={propError.message} />}
+      </Flex>
+    );
+  } else if (fetching) {
+    return (
+      <Flex flexGrow={1} justifyContent="center" minHeight={300}>
+        <Loading />
+      </Flex>
+    );
+  } else if (metadata && dimensions && measures && observations) {
     // FIXME: adapt to design
     const title = metadata.map((d) => d.title).join(", ");
 
@@ -177,21 +185,8 @@ export const ChartDataWrapper = <
         ) : null}
       </Box>
     );
-  } else if (error) {
-    return (
-      <Flex sx={{ flexDirection: "column", gap: 3 }}>
-        {metadataError && <Error message={metadataError.message} />}
-        {componentsError && <Error message={componentsError.message} />}
-        {observationsError && <Error message={observationsError.message} />}
-        {propError && <Error message={propError.message} />}
-      </Flex>
-    );
   } else {
-    return (
-      <Flex flexGrow={1} justifyContent="center" minHeight={300}>
-        <Loading />
-      </Flex>
-    );
+    return null;
   }
 };
 
