@@ -138,7 +138,7 @@ export const useErrorRange = (
           }
           return (error === null ? [v, v] : [v - error, v + error]) as [
             number,
-            number
+            number,
           ];
         }
       : null;
@@ -286,8 +286,20 @@ export const canUseAbbreviations = (d?: Component): boolean => {
   return !!d.values.find((d) => d.alternateName);
 };
 
-export const getDimensionLabel = (dim: Component) => {
-  if (dim.iri === "joinBy") {
+/**
+ * Returns label of the dimension
+ * - Handles join by dimension
+ *   - Temporal dimensions will get labelled via their time unit
+ * - If you need the dimension label in the context of a cube, pass the cube iri
+ */
+export const getDimensionLabel = (dim: Dimension, cube?: string) => {
+  if ("isJoinByDimension" in dim && dim.isJoinByDimension) {
+    const original = cube && dim.originalIris.find((i) => i.cubeIri === cube);
+    console.log(cube, original);
+    if (original) {
+      return original.label;
+    }
+
     if (dim.__typename === "TemporalDimension") {
       switch (dim.timeUnit) {
         case TimeUnit.Year:

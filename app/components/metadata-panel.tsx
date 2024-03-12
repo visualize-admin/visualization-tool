@@ -36,6 +36,7 @@ import { DRAWER_WIDTH } from "@/configurator/components/drawer";
 import { getDimensionLabel } from "@/configurator/components/ui-helpers";
 import {
   Component,
+  Dimension,
   DimensionValue,
   isStandardErrorDimension,
   TemporalDimension,
@@ -609,6 +610,7 @@ const TabPanelData = ({
                         <TabPanelDataDimension
                           key={d.iri}
                           dim={d}
+                          cubeIri={iri}
                           expanded={false}
                           dataSource={dataSource}
                         />
@@ -629,10 +631,12 @@ const TabPanelDataDimension = ({
   dim,
   dataSource,
   expanded,
+  cubeIri,
 }: {
   dim: Component;
   dataSource: DataSource;
   expanded: boolean;
+  cubeIri?: string;
 }) => {
   const classes = useOtherStyles();
   const { setSelectedDimension } = useMetadataPanelStoreActions();
@@ -689,7 +693,7 @@ const TabPanelDataDimension = ({
             }}
           >
             <Typography variant="body2" fontWeight="bold" gutterBottom>
-              {getDimensionLabel(dim)}
+              {getDimensionLabel(dim as Dimension, cubeIri)}
             </Typography>
           </Button>
           {description && (

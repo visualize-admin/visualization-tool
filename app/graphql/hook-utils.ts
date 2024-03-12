@@ -57,6 +57,7 @@ export const joinDimensions = (
       originalIris: joinByDimensions.map((d) => ({
         cubeIri: d.cubeIri,
         dimensionIri: d.iri,
+        label: d.label,
       })),
     };
     dimensions.unshift(joinByDimension);
