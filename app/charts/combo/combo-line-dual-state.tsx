@@ -53,6 +53,8 @@ export type ComboLineDualState = CommonChartState &
     maxRightTickWidth: number;
   };
 
+const mean = (arr: number[]) => arr.reduce((a, b) => a + b, 0) / arr.length;
+
 const useComboLineDualState = (
   chartProps: ChartProps<ComboLineDualConfig> & { aspectRatio: number },
   variables: ComboLineDualStateVariables,
@@ -135,16 +137,19 @@ const useComboLineDualState = (
   const getAnnotationInfo = (d: Observation): TooltipInfo => {
     const x = getX(d);
     const xScaled = xScale(x);
+    const yAnchor = mean(
+      [variables.y.left, variables.y.right]
+        .map(({ orientation, getY }) =>
+          yOrientationScales[orientation](getY(d) ?? 0)
+        )
+        .filter((x) => Number.isFinite(x))
+    );
 
+    console.log(yAnchor);
     return {
       datum: { label: "", value: "0", color: d3.schemeCategory10[0] },
       xAnchor: xScaled,
-      yAnchor:
-        [variables.y.left, variables.y.right]
-          .map(({ orientation, getY }) =>
-            yOrientationScales[orientation](getY(d) ?? 0)
-          )
-          .reduce((a, b) => a + b, 0) * 0.5,
+      yAnchor: yAnchor,
       xValue: timeFormatUnit(x, xDimension.timeUnit),
       placement: getCenteredTooltipPlacement({
         chartWidth,
