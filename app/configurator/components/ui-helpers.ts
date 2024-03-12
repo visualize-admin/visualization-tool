@@ -316,8 +316,8 @@ export const getComponentLabel = (dim: Component, cube?: string) => {
         case TimeUnit.Second:
           return t({ id: `time-units.Second`, message: "Second" });
       }
-      return t({ id: `time-units.${dim.timeUnit}` });
     }
+    return dim.originalIris[0].label ?? "NO LABEL";
   }
   return dim.label;
 };

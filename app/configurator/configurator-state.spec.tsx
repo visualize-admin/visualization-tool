@@ -1216,7 +1216,7 @@ describe("add dataset", () => {
     ) as ConfiguratorStatePublishing;
 
     getCachedComponents.mockImplementation((_, cubes) => {
-      // Cubes join by need to be reset at the moment, will change
+      // TODO Cubes join by need to be reset at the moment, will change
       // when we have more than 2 cubes
       expect(cubes.map((x) => x.joinBy).every((x) => x === undefined)).toBe(
         true
