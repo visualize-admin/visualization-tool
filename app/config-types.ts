@@ -114,6 +114,15 @@ export type Filters = t.TypeOf<typeof Filters>;
 const SingleFilters = t.record(t.string, FilterValueSingle, "SingleFilters");
 export type SingleFilters = t.TypeOf<typeof SingleFilters>;
 
+export const isSingleFilters = (filters: Filters): filters is SingleFilters => {
+  return Object.values(filters).every(isFilterValueSingle);
+};
+export const extractSingleFilters = (filters: Filters): SingleFilters => {
+  return Object.fromEntries(
+    Object.entries(filters).filter(([, value]) => value.type === "single")
+  ) as SingleFilters;
+};
+
 // Meta
 const Title = t.type({
   de: t.string,
