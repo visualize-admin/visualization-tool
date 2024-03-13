@@ -3,6 +3,7 @@ scalar DimensionValue
 scalar FilterValue
 scalar RawObservation
 scalar Filters
+scalar SingleFilters
 scalar GeoShapes
 scalar ValueIdentifier
 scalar ValuePosition
@@ -410,7 +411,7 @@ type Query {
     iri: String!
     sourceType: String!
     sourceUrl: String!
-    filters: Filters!
+    filters: SingleFilters!
   ): [ObservationFilter!]!
   searchCubes(
     sourceType: String!

@@ -109,8 +109,10 @@ export type FilterValueType = FilterValue["type"];
 export type FilterValueMultiValues = FilterValueMulti["values"];
 
 const Filters = t.record(t.string, FilterValue, "Filters");
-
 export type Filters = t.TypeOf<typeof Filters>;
+
+const SingleFilters = t.record(t.string, FilterValueSingle, "SingleFilters");
+export type SingleFilters = t.TypeOf<typeof SingleFilters>;
 
 // Meta
 const Title = t.type({
@@ -904,7 +906,7 @@ export const isSegmentColorMappingInConfig = (
 // Chart Config Adjusters
 export type FieldAdjuster<
   NewChartConfigType extends ChartConfig,
-  OldValueType extends unknown
+  OldValueType extends unknown,
 > = (params: {
   oldValue: OldValueType;
   oldChartConfig: ChartConfig;
