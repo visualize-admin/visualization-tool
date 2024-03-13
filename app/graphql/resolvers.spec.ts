@@ -5,7 +5,6 @@ import { GraphQLResolveInfo } from "graphql";
 import { createSource as createSource_ } from "@/rdf/create-source";
 import { ExtendedCube as ExtendedCube_ } from "@/rdf/extended-cube";
 import { getCubeObservations as getCubeObservations_ } from "@/rdf/queries";
-import { unversionObservation as unversionObservation_ } from "@/rdf/query-dimension-values";
 
 import { createContext } from "./context";
 import { Query } from "./resolvers";
@@ -21,13 +20,6 @@ const ExtendedCube = ExtendedCube_ as unknown as jest.Mock<
   typeof ExtendedCube_
 >;
 
-const unversionObservation = unversionObservation_ as unknown as jest.Mock<
-  typeof unversionObservation_
->;
-
-jest.mock("../rdf/query-dimension-values", () => ({
-  unversionObservation: jest.fn(),
-}));
 jest.mock("../rdf/query-search", () => ({}));
 jest.mock("../rdf/queries", () => ({
   getCubeObservations: jest.fn(),
@@ -77,8 +69,6 @@ describe("possible filters", () => {
         };
       }
     });
-
-    unversionObservation.mockImplementation(({ observation }) => observation);
 
     // @ts-ignore
     createSource.mockImplementation(() => ({

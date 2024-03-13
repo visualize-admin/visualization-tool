@@ -3,7 +3,7 @@ import DataLoader from "dataloader";
 import ParsingClient from "sparql-http-client/ParsingClient";
 import { LRUCache } from "typescript-lru-cache";
 
-import { Filters } from "@/configurator";
+import { Filters } from "@/config-types";
 import {
   BaseComponent,
   BaseDimension,
@@ -30,8 +30,8 @@ import {
   getCubeObservations,
   getLatestCube,
 } from "@/rdf/queries";
-import { unversionObservation } from "@/rdf/query-dimension-values";
 import { queryHierarchy } from "@/rdf/query-hierarchies";
+import { getPossibleFilters } from "@/rdf/query-possible-filters";
 import { SearchResult, searchCubes as _searchCubes } from "@/rdf/query-search";
 import { getSparqlEditorUrl } from "@/rdf/sparql-utils";
 
@@ -103,50 +103,17 @@ export const dataCubeByIri: NonNullable<
 export const possibleFilters: NonNullable<
   QueryResolvers["possibleFilters"]
 > = async (_, { iri, filters }, { setup }, info) => {
-  const { sparqlClient, loaders, cache } = await setup(info);
+  const { sparqlClient, loaders } = await setup(info);
   const rawCube = await loaders.cube.load(iri);
   // Currently we always default to the latest cube.
   const cube = await getLatestCube(rawCube);
+  const cubeIri = cube.term?.value;
 
-  if (!cube) {
+  if (!cubeIri) {
     return [];
   }
 
-  await cube.fetchShape();
-
-  const nbFilters = Object.keys(filters).length;
-  for (let i = nbFilters; i > 0; i--) {
-    const queryFilters = Object.fromEntries(
-      Object.entries(filters).slice(0, i)
-    );
-    const { observations: obs } = await getCubeObservations({
-      cube,
-      locale: "en",
-      sparqlClient,
-      filters: queryFilters,
-      limit: 1,
-      raw: true,
-      cache,
-    });
-
-    if (obs.length === 0) {
-      continue;
-    }
-
-    const unversioned = await unversionObservation({
-      observation: obs[0],
-      cube,
-      sparqlClient,
-    });
-
-    return Object.keys(filters).map((f) => ({
-      iri: f,
-      type: "single",
-      value: unversioned[f],
-    }));
-  }
-
-  return [];
+  return getPossibleFilters(cubeIri, { filters, sparqlClient });
 };
 
 export const dataCubeComponents: NonNullable<
