@@ -7,14 +7,11 @@ import orderBy from "lodash/orderBy";
 import uniqBy from "lodash/uniqBy";
 import rdf from "rdf-ext";
 import { StreamClient } from "sparql-http-client";
-import { ParsingClient } from "sparql-http-client/ParsingClient";
-import { LRUCache } from "typescript-lru-cache";
 
 import { DimensionValue, HierarchyValue, parseTerm } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { ResolvedDimension } from "@/graphql/shared-types";
 import { ExtendedCube } from "@/rdf/extended-cube";
-import { getCubeDimensionValuesWithMetadata } from "@/rdf/queries";
 
 import * as ns from "./namespace";
 import {
@@ -100,40 +97,25 @@ const getDimensionHierarchies = async (
   return uniqBy(hierarchies, (hierarchy) => getName(hierarchy, locale));
 };
 
-export const queryHierarchy = async (
-  rdimension: ResolvedDimension,
-  locale: string,
-  sparqlClient: ParsingClient,
-  sparqlClientStream: StreamClient,
-  cache: LRUCache | undefined,
-  // If values are provided, we don't need to fetch them again
-  values?: DimensionValue[]
-): Promise<HierarchyValue[] | null> => {
+export const queryHierarchies = async (
+  resolvedDimension: ResolvedDimension,
+  options: { locale: string; sparqlClientStream: StreamClient }
+) => {
   const {
     cube,
     data: { iri },
-  } = rdimension;
-  const hierarchyPointers = await getDimensionHierarchies(cube, iri, locale);
+  } = resolvedDimension;
+  const { locale, sparqlClientStream } = options;
+  const pointers = await getDimensionHierarchies(cube, iri, locale);
 
-  if (hierarchyPointers.length === 0) {
+  if (pointers.length === 0) {
     return null;
   }
 
-  const dimensionValuesWithLabels =
-    values ??
-    (await getCubeDimensionValuesWithMetadata({
-      cube: rdimension.cube,
-      dimension: rdimension.dimension,
-      sparqlClient,
-      locale,
-      cache,
-    }));
-
-  const hierarchies = await Promise.all(
-    hierarchyPointers.map(async (pointer) => {
+  return await Promise.all(
+    pointers.map(async (ptr) => {
       return {
-        // @ts-ignore
-        nodes: await getHierarchy(pointer, {
+        nodes: await getHierarchy(ptr, {
           properties: [
             ns.schema.identifier,
             ns.schema.name,
@@ -143,19 +125,26 @@ export const queryHierarchy = async (
           ],
           // @ts-ignore
         }).execute(sparqlClientStream, rdf),
-        hierarchyName: getName(pointer, locale),
+        hierarchyName: getName(ptr, locale),
       };
     })
   );
+};
 
-  const dimensionValues = new Set(
-    dimensionValuesWithLabels.map((d) => `${d.value}`)
-  );
-
+export const parseHierarchy = (
+  hierarchies: NonNullable<Awaited<ReturnType<typeof queryHierarchies>>>,
+  options: {
+    dimensionIri: string;
+    locale: string;
+    dimensionValues: DimensionValue[];
+  }
+): HierarchyValue[] => {
+  const { dimensionIri, locale, dimensionValues } = options;
+  const rawValues = new Set(dimensionValues.map((d) => `${d.value}`));
   const trees = hierarchies.map(({ nodes, hierarchyName }) => {
     const tree: (HierarchyValue & {
       hierarchyName?: string;
-    })[] = toTree(nodes, iri, locale, (d) => dimensionValues.has(d));
+    })[] = toTree(nodes, dimensionIri, locale, (d) => rawValues.has(d));
 
     if (tree.length > 0) {
       // Augment hierarchy value with hierarchyName so that when regrouping
@@ -164,21 +153,19 @@ export const queryHierarchy = async (
     }
     return tree;
   });
-
   const tree = regroupTrees(trees);
-
   const treeValues = new Set(getOptionsFromTree(tree).map((d) => d.value));
   const prunedTree = mapTree(
-    pruneTree(tree, (node) => dimensionValues.has(node.value)),
-    (node) => ({ ...node, hasValue: dimensionValues.has(node.value) })
+    pruneTree(tree, (node) => rawValues.has(node.value)),
+    (node) => ({ ...node, hasValue: rawValues.has(node.value) })
   );
-  const additionalTreeValues: HierarchyValue[] = dimensionValuesWithLabels
+  const additionalTreeValues = dimensionValues
     .filter((d) => !treeValues.has(`${d.value}`))
     .map((d) => ({
       label: d.label || "ADDITIONAL",
       value: `${d.value}`,
       depth: -1,
-      dimensionIri: rdimension.data.iri,
+      dimensionIri,
       hasValue: true,
       position: -1,
       identifier: "",

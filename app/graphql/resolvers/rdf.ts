@@ -15,7 +15,6 @@ import {
 import { Loaders } from "@/graphql/context";
 import {
   DataCubeResolvers,
-  DimensionResolvers,
   QueryResolvers,
   Resolvers,
   SearchCubeResultOrder,
@@ -32,7 +31,7 @@ import {
   getLatestCube,
 } from "@/rdf/queries";
 import { unversionObservation } from "@/rdf/query-dimension-values";
-import { queryHierarchy } from "@/rdf/query-hierarchies";
+import { parseHierarchy, queryHierarchies } from "@/rdf/query-hierarchies";
 import { SearchResult, searchCubes as _searchCubes } from "@/rdf/query-search";
 import { getSparqlEditorUrl } from "@/rdf/sparql-utils";
 
@@ -227,18 +226,17 @@ export const dataCubeComponents: NonNullable<
           scaleType,
           related
         );
-        const hierarchy = loadValues
-          ? await queryHierarchy(
-              component,
-              locale,
-              sparqlClient,
-              sparqlClientStream,
-              cache,
-              // Only pass values if there are no filters, as we need to fetch
-              // the full, not filtered hierarchy.
-              filters ? undefined : values
-            )
+        const rawHierarchies = loadValues
+          ? await queryHierarchies(component, { locale, sparqlClientStream })
           : null;
+        const hierarchy = rawHierarchies
+          ? parseHierarchy(rawHierarchies, {
+              dimensionIri: data.iri,
+              locale,
+              dimensionValues: values,
+            })
+          : null;
+
         const baseDimension: BaseDimension = {
           ...baseComponent,
           hierarchy,
@@ -383,28 +381,6 @@ const getDimensionValuesLoader = (
   } else {
     return loaders.dimensionValues;
   }
-};
-
-export const hierarchy: NonNullable<DimensionResolvers["hierarchy"]> = async (
-  resolvedDimension,
-  _args,
-  { setup },
-  info
-) => {
-  const { locale } = info.variableValues;
-  const { sparqlClient, sparqlClientStream, cache } = await setup(info);
-
-  if (!resolvedDimension.cube) {
-    throw new Error("Could not find cube");
-  }
-
-  return await queryHierarchy(
-    resolvedDimension,
-    locale,
-    sparqlClient,
-    sparqlClientStream,
-    cache
-  );
 };
 
 export const dimensionValues: NonNullable<
