@@ -183,9 +183,17 @@ export const dataCubeComponents: NonNullable<
         cache,
         filters
       );
-      const values = loadValues
-        ? await dimensionValuesLoader.load(component)
-        : [];
+      const [values, rawHierarchies] = await Promise.all(
+        loadValues
+          ? [
+              dimensionValuesLoader.load(component),
+              queryHierarchies(component, {
+                locale,
+                sparqlClientStream,
+              }),
+            ]
+          : [[] as DimensionValue[], null]
+      );
       values.sort((a, b) =>
         ascending(
           a.position ?? a.value ?? undefined,
@@ -226,9 +234,6 @@ export const dataCubeComponents: NonNullable<
           scaleType,
           related
         );
-        const rawHierarchies = loadValues
-          ? await queryHierarchies(component, { locale, sparqlClientStream })
-          : null;
         const hierarchy = rawHierarchies
           ? parseHierarchy(rawHierarchies, {
               dimensionIri: data.iri,
