@@ -7,9 +7,11 @@ import StreamClient from "sparql-http-client";
 import ParsingClient from "sparql-http-client/ParsingClient";
 import { LRUCache } from "typescript-lru-cache";
 
+import { DimensionValue } from "@/domain/data";
 import { SPARQL_GEO_ENDPOINT } from "@/domain/env";
 import { Awaited } from "@/domain/types";
 import { Timings } from "@/gql-flamegraph/resolvers";
+import { ResolvedDimension } from "@/graphql/shared-types";
 import { createSource, pragmas } from "@/rdf/create-source";
 import { ExtendedCube } from "@/rdf/extended-cube";
 import { TimingCallback, timed } from "@/utils/timed";
@@ -68,7 +70,10 @@ const createLoaders = async (
         cacheKeyFn: (dim) => dim.dimension.path?.value,
       }
     ),
-    filteredDimensionValues: new Map<string, DataLoader<unknown, unknown>>(),
+    filteredDimensionValues: new Map<
+      string,
+      DataLoader<ResolvedDimension, DimensionValue[]>
+    >(),
     geoCoordinates: new DataLoader(
       createGeoCoordinatesLoader({ locale, sparqlClient }),
       { maxBatchSize: MAX_BATCH_SIZE * 0.5 }
