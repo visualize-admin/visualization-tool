@@ -3,6 +3,7 @@ import DataLoader from "dataloader";
 import ParsingClient from "sparql-http-client/ParsingClient";
 import { topology } from "topojson-server";
 import { LRUCache } from "typescript-lru-cache";
+import { parse as parseWKT } from "wellknown";
 
 import { Filters } from "@/configurator";
 import {
@@ -10,6 +11,7 @@ import {
   BaseDimension,
   Dimension,
   DimensionValue,
+  GeoFeature,
   GeoProperties,
   GeoShapes,
   Measure,
@@ -31,9 +33,12 @@ import {
   getLatestCube,
 } from "@/rdf/queries";
 import { unversionObservation } from "@/rdf/query-dimension-values";
+import { RawGeoShape } from "@/rdf/query-geo-shapes";
 import { queryHierarchy } from "@/rdf/query-hierarchies";
 import { SearchResult, searchCubes as _searchCubes } from "@/rdf/query-search";
 import { getSparqlEditorUrl } from "@/rdf/sparql-utils";
+
+import { ResolvedDimension } from "../shared-types";
 
 const sortResults = (
   results: SearchResult[],
@@ -86,12 +91,46 @@ export const searchCubes: NonNullable<QueryResolvers["searchCubes"]> = async (
 
 export const dataCubeDimensionGeoShapes: NonNullable<
   QueryResolvers["dataCubeDimensionGeoShapes"]
-> = async () => {
+> = async (_, { cubeIri, dimensionIri, locale }, { setup }, info) => {
+  const { loaders, sparqlClient, cache } = await setup(info);
+  const dimension = await getResolvedDimension(dimensionIri, {
+    cubeIri,
+    locale,
+    sparqlClient,
+    loaders,
+    cache,
+  });
+  const dimensionValuesLoader = getDimensionValuesLoader(
+    sparqlClient,
+    loaders,
+    cache
+  );
+  // FIXME: type fixed by other PR
+  const dimensionValues: DimensionValue[] =
+    await dimensionValuesLoader.load(dimension);
+  const values = dimensionValues.map((d) => `${d.value}`);
+  const shapes = await Promise.all(
+    values.map((d) => loaders.geoShapes.load(d))
+  );
+  const geoJSONFeatures = shapes
+    .filter(
+      (d): d is Exclude<RawGeoShape, "wktString"> & { wktString: string } =>
+        d.wktString !== undefined
+    )
+    .map((d) => ({
+      type: "Feature",
+      properties: {
+        iri: d.iri,
+        label: d.label,
+      },
+      geometry: parseWKT(d.wktString),
+    })) as GeoFeature[];
+
   return {
     topology: topology({
       shapes: {
         type: "FeatureCollection",
-        features: [],
+        features: geoJSONFeatures,
       } as GeoJSON.FeatureCollection<GeoJSON.Geometry, GeoProperties>,
     }) as GeoShapes["topology"],
   };
@@ -99,8 +138,54 @@ export const dataCubeDimensionGeoShapes: NonNullable<
 
 export const dataCubeDimensionGeoCoordinates: NonNullable<
   QueryResolvers["dataCubeDimensionGeoCoordinates"]
-> = async () => {
-  return [];
+> = async (_, { cubeIri, dimensionIri, locale }, { setup }, info) => {
+  const { loaders, sparqlClient, cache } = await setup(info);
+  const dimension = await getResolvedDimension(dimensionIri, {
+    cubeIri,
+    locale,
+    sparqlClient,
+    loaders,
+    cache,
+  });
+
+  return await loaders.geoCoordinates.load(dimension);
+};
+
+// TODO: could be refactored to not fetch the whole cube shape.
+const getResolvedDimension = async (
+  iri: string,
+  options: {
+    cubeIri: string;
+    locale: string;
+    sparqlClient: ParsingClient;
+    loaders: Loaders;
+    cache: LRUCache | undefined;
+  }
+): Promise<ResolvedDimension> => {
+  const { cubeIri, locale, sparqlClient, loaders, cache } = options;
+  const rawCube = await loaders.cube.load(cubeIri);
+
+  if (!rawCube) {
+    throw new Error(`Cube ${cubeIri} not found!`);
+  }
+
+  const cube = await getLatestCube(rawCube);
+  await cube.fetchShape();
+  const dimensions = await getCubeDimensions({
+    cube,
+    locale,
+    sparqlClient,
+    componentIris: [iri],
+    cache,
+  });
+
+  const dimension = dimensions.find((d) => iri === d.data.iri);
+
+  if (!dimension) {
+    throw new Error(`Dimension ${iri} not found!`);
+  }
+
+  return dimension;
 };
 
 export const possibleFilters: NonNullable<

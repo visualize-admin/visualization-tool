@@ -403,15 +403,17 @@ type Query {
     filters: [SearchCubeFilter!]
   ): [SearchCubeResult!]!
   dataCubeDimensionGeoShapes(
-    sourceType: String!
-    sourceUrl: String!
     cubeIri: String!
     dimensionIri: String!
+    sourceType: String!
+    sourceUrl: String!
+    locale: String!
   ): GeoShapes
   dataCubeDimensionGeoCoordinates(
-    sourceType: String!
-    sourceUrl: String!
     cubeIri: String!
     dimensionIri: String!
+    sourceType: String!
+    sourceUrl: String!
+    locale: String!
   ): GeoCoordinates
 }

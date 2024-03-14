@@ -435,18 +435,20 @@ export type QuerySearchCubesArgs = {
 
 
 export type QueryDataCubeDimensionGeoShapesArgs = {
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
   cubeIri: Scalars['String'];
   dimensionIri: Scalars['String'];
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
+  locale: Scalars['String'];
 };
 
 
 export type QueryDataCubeDimensionGeoCoordinatesArgs = {
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
   cubeIri: Scalars['String'];
   dimensionIri: Scalars['String'];
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
+  locale: Scalars['String'];
 };
 
 
@@ -663,6 +665,7 @@ export type DataCubeDimensionGeoShapesQueryVariables = Exact<{
   dimensionIri: Scalars['String'];
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
+  locale: Scalars['String'];
 }>;
 
 
@@ -673,6 +676,7 @@ export type DataCubeDimensionGeoCoordinatesQueryVariables = Exact<{
   dimensionIri: Scalars['String'];
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
+  locale: Scalars['String'];
 }>;
 
 
@@ -775,12 +779,13 @@ export function usePossibleFiltersQuery(options: Omit<Urql.UseQueryArgs<Possible
   return Urql.useQuery<PossibleFiltersQuery>({ query: PossibleFiltersDocument, ...options });
 };
 export const DataCubeDimensionGeoShapesDocument = gql`
-    query DataCubeDimensionGeoShapes($cubeIri: String!, $dimensionIri: String!, $sourceType: String!, $sourceUrl: String!) {
+    query DataCubeDimensionGeoShapes($cubeIri: String!, $dimensionIri: String!, $sourceType: String!, $sourceUrl: String!, $locale: String!) {
   dataCubeDimensionGeoShapes(
     cubeIri: $cubeIri
     dimensionIri: $dimensionIri
     sourceType: $sourceType
     sourceUrl: $sourceUrl
+    locale: $locale
   )
 }
     `;
@@ -789,12 +794,13 @@ export function useDataCubeDimensionGeoShapesQuery(options: Omit<Urql.UseQueryAr
   return Urql.useQuery<DataCubeDimensionGeoShapesQuery>({ query: DataCubeDimensionGeoShapesDocument, ...options });
 };
 export const DataCubeDimensionGeoCoordinatesDocument = gql`
-    query DataCubeDimensionGeoCoordinates($cubeIri: String!, $dimensionIri: String!, $sourceType: String!, $sourceUrl: String!) {
+    query DataCubeDimensionGeoCoordinates($cubeIri: String!, $dimensionIri: String!, $sourceType: String!, $sourceUrl: String!, $locale: String!) {
   dataCubeDimensionGeoCoordinates(
     cubeIri: $cubeIri
     dimensionIri: $dimensionIri
     sourceType: $sourceType
     sourceUrl: $sourceUrl
+    locale: $locale
   )
 }
     `;

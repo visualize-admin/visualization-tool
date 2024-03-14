@@ -436,18 +436,20 @@ export type QuerySearchCubesArgs = {
 
 
 export type QueryDataCubeDimensionGeoShapesArgs = {
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
   cubeIri: Scalars['String'];
   dimensionIri: Scalars['String'];
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
+  locale: Scalars['String'];
 };
 
 
 export type QueryDataCubeDimensionGeoCoordinatesArgs = {
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
   cubeIri: Scalars['String'];
   dimensionIri: Scalars['String'];
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
+  locale: Scalars['String'];
 };
 
 
@@ -978,8 +980,8 @@ export type QueryResolvers<ContextType = VisualizeGraphQLContext, ParentType ext
   dataCubePreview?: Resolver<ResolversTypes['DataCubePreview'], ParentType, ContextType, RequireFields<QueryDataCubePreviewArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'cubeFilter'>>;
   possibleFilters?: Resolver<Array<ResolversTypes['ObservationFilter']>, ParentType, ContextType, RequireFields<QueryPossibleFiltersArgs, 'iri' | 'sourceType' | 'sourceUrl' | 'filters'>>;
   searchCubes?: Resolver<Array<ResolversTypes['SearchCubeResult']>, ParentType, ContextType, RequireFields<QuerySearchCubesArgs, 'sourceType' | 'sourceUrl'>>;
-  dataCubeDimensionGeoShapes?: Resolver<Maybe<ResolversTypes['GeoShapes']>, ParentType, ContextType, RequireFields<QueryDataCubeDimensionGeoShapesArgs, 'sourceType' | 'sourceUrl' | 'cubeIri' | 'dimensionIri'>>;
-  dataCubeDimensionGeoCoordinates?: Resolver<Maybe<ResolversTypes['GeoCoordinates']>, ParentType, ContextType, RequireFields<QueryDataCubeDimensionGeoCoordinatesArgs, 'sourceType' | 'sourceUrl' | 'cubeIri' | 'dimensionIri'>>;
+  dataCubeDimensionGeoShapes?: Resolver<Maybe<ResolversTypes['GeoShapes']>, ParentType, ContextType, RequireFields<QueryDataCubeDimensionGeoShapesArgs, 'cubeIri' | 'dimensionIri' | 'sourceType' | 'sourceUrl' | 'locale'>>;
+  dataCubeDimensionGeoCoordinates?: Resolver<Maybe<ResolversTypes['GeoCoordinates']>, ParentType, ContextType, RequireFields<QueryDataCubeDimensionGeoCoordinatesArgs, 'cubeIri' | 'dimensionIri' | 'sourceType' | 'sourceUrl' | 'locale'>>;
 }>;
 
 export interface RawObservationScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['RawObservation'], any> {

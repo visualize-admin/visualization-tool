@@ -101,12 +101,14 @@ query DataCubeDimensionGeoShapes(
   $dimensionIri: String!
   $sourceType: String!
   $sourceUrl: String!
+  $locale: String!
 ) {
   dataCubeDimensionGeoShapes(
     cubeIri: $cubeIri
     dimensionIri: $dimensionIri
     sourceType: $sourceType
     sourceUrl: $sourceUrl
+    locale: $locale
   )
 }
 
@@ -115,11 +117,13 @@ query DataCubeDimensionGeoCoordinates(
   $dimensionIri: String!
   $sourceType: String!
   $sourceUrl: String!
+  $locale: String!
 ) {
   dataCubeDimensionGeoCoordinates(
     cubeIri: $cubeIri
     dimensionIri: $dimensionIri
     sourceType: $sourceType
     sourceUrl: $sourceUrl
+    locale: $locale
   )
 }

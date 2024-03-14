@@ -18,6 +18,7 @@ import {
   useDataCubeDimensionGeoCoordinatesQuery,
   useDataCubeDimensionGeoShapesQuery,
 } from "@/graphql/query-hooks";
+import { useLocale } from "@/locales/use-locale";
 
 import { ChartProps } from "../shared/ChartProps";
 
@@ -32,6 +33,7 @@ export const ChartMapVisualization = ({
   chartConfig: MapConfig;
   queryFilters?: DataCubeObservationFilter[];
 }) => {
+  const locale = useLocale();
   const areaDimensionIri = chartConfig.fields.areaLayer?.componentIri || "";
   const symbolDimensionIri = chartConfig.fields.symbolLayer?.componentIri || "";
 
@@ -48,6 +50,7 @@ export const ChartMapVisualization = ({
       dimensionIri: symbolDimensionIri,
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
+      locale,
     },
     pause: !symbolDimensionIri || symbolDimensionIri === "",
   });
@@ -68,6 +71,7 @@ export const ChartMapVisualization = ({
       dimensionIri: geoShapesIri,
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
+      locale,
     },
     pause: !geoShapesIri || geoShapesIri === "",
   });
