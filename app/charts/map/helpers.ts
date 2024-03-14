@@ -3,18 +3,11 @@ import { MapboxOverlay, MapboxOverlayProps } from "@deck.gl/mapbox/typed";
 import { extent, geoBounds } from "d3";
 import { useMemo, useState } from "react";
 import { ViewState, useControl } from "react-map-gl";
-import { feature as topojsonFeature } from "topojson-client";
+import { feature } from "topojson-client";
 
 import { BBox, Filters } from "@/config-types";
+import { AreaLayer, GeoShapes, Observation, SymbolLayer } from "@/domain/data";
 import useEvent from "@/utils/use-event";
-
-import {
-  AreaLayer,
-  GeoFeature,
-  GeoShapes,
-  Observation,
-  SymbolLayer,
-} from "../../domain/data";
 
 export type MinMaxZoomViewState = Pick<
   ViewState,
@@ -178,7 +171,7 @@ export const getBBox = (
   }
 };
 
-export const prepareTopojson = ({
+export const prepareFeatureCollection = ({
   dimensionIri,
   topology,
   filters,
@@ -193,38 +186,37 @@ export const prepareTopojson = ({
     ? filters.type === "single"
       ? [filters.value]
       : filters.type === "multi"
-      ? Object.keys(filters.values)
-      : undefined
+        ? Object.keys(filters.values)
+        : undefined
     : undefined;
 
-  const topojson = topojsonFeature(
+  const featureCollection = feature(
     topology,
     topology.objects.shapes
   ) as AreaLayer["shapes"];
 
   // Completely hide unselected shapes (so they don't affect the legend, etc)
   if (activeFiltersIris) {
-    topojson.features = topojson.features.filter((d) =>
-      activeFiltersIris.includes(d.properties.iri)
-    );
+    featureCollection.features = featureCollection.features.filter((d) => {
+      return activeFiltersIris.includes(d.properties.iri);
+    });
   }
 
-  topojson.features.forEach((d: GeoFeature) => {
+  featureCollection.features.forEach((f) => {
     const observation = observations.find((o) => {
       const iri = o[`${dimensionIri}/__iri__`];
       const label = o[dimensionIri];
 
-      if (iri) {
-        return iri === d.properties.iri;
-      } else {
-        return label === d.properties.label;
-      }
+      return iri ? iri === f.properties.iri : label === f.properties.label;
     });
 
-    d.properties = { ...d.properties, observation };
+    f.properties = {
+      ...f.properties,
+      observation,
+    };
   });
 
-  return topojson;
+  return featureCollection;
 };
 
 // Used to render DeckGL layers in synchronization with base map layers.

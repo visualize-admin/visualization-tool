@@ -4,7 +4,7 @@ import { topology } from "topojson-server";
 import { parse as parseWKT } from "wellknown";
 
 import { DimensionType, MeasureType } from "@/configurator";
-import { GeoFeature, GeoProperties, GeoShapes } from "@/domain/data";
+import { GeoProperties, GeoShapes } from "@/domain/data";
 import {
   DataCubeResolvers,
   QueryResolvers,
@@ -209,11 +209,11 @@ export const resolvers: Resolvers = {
     ...mkDimensionResolvers("GeoShapesDimension"),
     geoShapes: async (parent, _, { setup }, info) => {
       const { loaders } = await setup(info);
-      const dimValues = await loaders.dimensionValues.load(parent);
-      const dimIris = dimValues.map((d) => `${d.value}`) as string[];
-      const shapes = (await loaders.geoShapes.loadMany(
-        dimIris
-      )) as RawGeoShape[];
+      const values = await loaders.dimensionValues.load(parent);
+      const rawValues = values.map((d) => `${d.value}`);
+      const shapes = await Promise.all(
+        rawValues.map(async (d) => await loaders.geoShapes.load(d))
+      );
       const geoJSONFeatures = shapes
         .filter(
           (d): d is Exclude<RawGeoShape, "wktString"> & { wktString: string } =>
@@ -226,8 +226,9 @@ export const resolvers: Resolvers = {
             label: d.label,
           },
           geometry: parseWKT(d.wktString),
-        })) as GeoFeature[];
-      const resolved: GeoShapes = {
+        }));
+
+      return {
         topology: topology({
           shapes: {
             type: "FeatureCollection",
@@ -235,8 +236,6 @@ export const resolvers: Resolvers = {
           } as GeoJSON.FeatureCollection<GeoJSON.Geometry, GeoProperties>,
         }) as GeoShapes["topology"],
       };
-
-      return resolved;
     },
   },
   Measure: {

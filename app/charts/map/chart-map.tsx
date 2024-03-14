@@ -59,7 +59,8 @@ export const ChartMapVisualization = ({
   const coordinates =
     fetchedGeoCoordinates?.dataCubeByIri?.dimensionByIri?.__typename ===
     "GeoCoordinatesDimension"
-      ? fetchedGeoCoordinates.dataCubeByIri.dimensionByIri.geoCoordinates
+      ? fetchedGeoCoordinates.dataCubeByIri.dimensionByIri.geoCoordinates ??
+        undefined
       : undefined;
 
   const geoShapesIri = areaDimensionIri || symbolDimensionIri;
@@ -123,34 +124,32 @@ export const ChartMapVisualization = ({
   );
 };
 
-export const ChartMap = memo(
-  (
-    props: ChartProps<MapConfig> & {
-      shapes: GeoShapes | undefined;
-      coordinates: GeoCoordinates[] | undefined | null;
-    }
-  ) => {
-    const { chartConfig, dimensions } = props;
-    const { fields } = chartConfig;
-    const filters = useChartConfigFilters(chartConfig);
+export type ChartMapProps = ChartProps<MapConfig> & {
+  shapes: GeoShapes | undefined;
+  coordinates: GeoCoordinates[] | undefined;
+};
 
-    return (
-      <MapChart {...props}>
-        <ChartContainer>
-          <MapComponent />
-          <MapTooltip />
-        </ChartContainer>
-        <ChartControlsContainer sx={{ mt: 6 }}>
-          {fields.animation && (
-            <TimeSlider
-              filters={filters}
-              dimensions={dimensions}
-              {...fields.animation}
-            />
-          )}
-          <MapLegend chartConfig={chartConfig} />
-        </ChartControlsContainer>
-      </MapChart>
-    );
-  }
-);
+export const ChartMap = memo((props: ChartMapProps) => {
+  const { chartConfig, dimensions } = props;
+  const { fields } = chartConfig;
+  const filters = useChartConfigFilters(chartConfig);
+
+  return (
+    <MapChart {...props}>
+      <ChartContainer>
+        <MapComponent />
+        <MapTooltip />
+      </ChartContainer>
+      <ChartControlsContainer sx={{ mt: 6 }}>
+        {fields.animation && (
+          <TimeSlider
+            filters={filters}
+            dimensions={dimensions}
+            {...fields.animation}
+          />
+        )}
+        <MapLegend chartConfig={chartConfig} />
+      </ChartControlsContainer>
+    </MapChart>
+  );
+});

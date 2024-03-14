@@ -24,6 +24,7 @@ import mapValues from "lodash/mapValues";
 import { useMemo } from "react";
 import { ckmeans } from "simple-statistics";
 
+import { ChartMapProps } from "@/charts/map/chart-map";
 import { getBBox } from "@/charts/map/helpers";
 import {
   MapStateData,
@@ -45,7 +46,6 @@ import {
   CategoricalColorField,
   ColorScaleInterpolationType,
   FixedColorField,
-  MapConfig,
   MapSymbolLayer,
   NumericalColorField,
 } from "@/config-types";
@@ -58,7 +58,6 @@ import {
   Component,
   Dimension,
   GeoData,
-  GeoShapes,
   Measure,
   Observation,
   ObservationValue,
@@ -67,10 +66,7 @@ import {
 } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { formatNumberWithUnit, useFormatNumber } from "@/formatters";
-import { GeoCoordinates } from "@/graphql/query-hooks";
 import { getColorInterpolator } from "@/palettes";
-
-import { ChartProps } from "../shared/ChartProps";
 
 export type MapState = CommonChartState &
   MapStateVariables & {
@@ -106,10 +102,7 @@ export type MapState = CommonChartState &
   };
 
 const useMapState = (
-  chartProps: ChartProps<MapConfig> & {
-    shapes: GeoShapes | undefined;
-    coordinates: GeoCoordinates[] | undefined | null;
-  },
+  chartProps: ChartMapProps,
   variables: MapStateVariables,
   data: MapStateData
 ): MapState => {
@@ -569,7 +562,7 @@ const useLayerState = ({
   const dataDomain = useMemo(() => {
     return (extent(preparedData, (d) => getValue(d)) || [0, 100]) as [
       number,
-      number
+      number,
     ];
   }, [getValue, preparedData]);
 
@@ -598,14 +591,7 @@ const filterFeatureCollection = <TFeatureCollection extends FeatureCollection>(
   };
 };
 
-const MapChartProvider = (
-  props: React.PropsWithChildren<
-    ChartProps<MapConfig> & {
-      shapes: GeoShapes | undefined;
-      coordinates: GeoCoordinates[] | undefined | null;
-    }
-  >
-) => {
+const MapChartProvider = (props: React.PropsWithChildren<ChartMapProps>) => {
   const { children, ...chartProps } = props;
   const variables = useMapStateVariables(chartProps);
   const data = useMapStateData(chartProps, variables);
@@ -616,14 +602,7 @@ const MapChartProvider = (
   );
 };
 
-export const MapChart = (
-  props: React.PropsWithChildren<
-    ChartProps<MapConfig> & {
-      shapes: GeoShapes | undefined;
-      coordinates: GeoCoordinates[] | undefined | null;
-    }
-  >
-) => {
+export const MapChart = (props: React.PropsWithChildren<ChartMapProps>) => {
   const { children, ...rest } = props;
 
   return (
