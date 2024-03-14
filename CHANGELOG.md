@@ -9,6 +9,12 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
+- Performance
+  - Dimension values are now fetched in parallel in case of fetching for several dimensions at once
+  - Refactored shapes and coordinates fetching to not rely on resolver chains
+
+# [3.27.0] - 2024-03-12
+
 - Features
   - Slightly increased initial map zoom level
   - Join a second dataset through temporal dimension (behind `flag__add-dataset` flag)
