@@ -1,117 +1,81 @@
-import { IncomingMessage } from "http";
+import { SingleFilters } from "@/config-types";
+import { getQuery, getQueryFilters } from "@/rdf/query-possible-filters";
 
-import { GraphQLResolveInfo } from "graphql";
+describe("PossibleFilters", () => {
+  const runTest = (
+    cubeIri: string,
+    filters: SingleFilters,
+    versionedDimensionIris: string[],
+    expectedQuery: string
+  ) => {
+    const queryFilters = getQueryFilters(filters, versionedDimensionIris);
+    const query = getQuery(cubeIri, queryFilters);
+    expect(query).toEqual(expectedQuery);
+  };
 
-import { createSource as createSource_ } from "@/rdf/create-source";
-import { ExtendedCube as ExtendedCube_ } from "@/rdf/extended-cube";
-import { getCubeObservations as getCubeObservations_ } from "@/rdf/queries";
-
-import { createContext } from "./context";
-import { Query } from "./resolvers";
-
-const getCubeObservations = getCubeObservations_ as unknown as jest.Mock<
-  typeof getCubeObservations_
->;
-const createSource = createSource_ as unknown as jest.Mock<
-  typeof createSource_
->;
-
-const ExtendedCube = ExtendedCube_ as unknown as jest.Mock<
-  typeof ExtendedCube_
->;
-
-jest.mock("../rdf/query-search", () => ({}));
-jest.mock("../rdf/queries", () => ({
-  getCubeObservations: jest.fn(),
-  createCubeDimensionValuesLoader: () => async () => [],
-  getLatestCube: () => ({
-    fetchShape: () => ({}),
-  }),
-}));
-jest.mock("../rdf/create-source", () => ({
-  createSource: jest.fn(),
-}));
-jest.mock("../rdf/query-hierarchies", () => ({}));
-jest.mock("../rdf/parse", () => ({}));
-jest.mock("../rdf/extended-cube", () => ({
-  ExtendedCube: jest.fn(),
-}));
-
-jest.mock("@rdf-esm/data-model", () => ({}));
-jest.mock("@rdf-esm/term-map", () => ({}));
-jest.mock("@rdf-esm/namespace", () => ({}));
-jest.mock("@tpluscode/sparql-builder", () => ({}));
-jest.mock("@tpluscode/rdf-ns-builders", () => ({}));
-jest.mock("@tpluscode/rdf-string", () => ({}));
-
-describe("possible filters", () => {
-  beforeEach(() => {
-    getCubeObservations.mockReset();
-  });
-
-  it("should try to find an observation given possible filters, relaxing fitlers from the bottom", async () => {
-    // @ts-ignore
-    getCubeObservations.mockImplementation(async ({ filters }) => {
-      if (Object.keys(filters).length == 2) {
-        return {
-          query: "",
-          observations: [],
-        };
-      } else {
-        return {
-          query: "",
-          observations: [
-            {
-              "https://fake-dimension-iri-1": 1,
-              "https://fake-dimension-iri-2": 3,
-            },
-          ],
-        };
-      }
-    });
-
-    // @ts-ignore
-    createSource.mockImplementation(() => ({
-      cube: () => ({}),
-    }));
-    // @ts-ignore
-    ExtendedCube.mockImplementation(() => ({
-      fetchCube: () => ({}),
-      fetchShape: () => ({}),
-    }));
-
-    const res = await Query?.possibleFilters?.(
-      {},
+  it("should generate a correct SPARQL query without ordering", () =>
+    runTest(
+      "cube",
       {
-        iri: "https://fake-iri",
-        sourceType: "sparql",
-        sourceUrl: "https://fake-source.com/query",
-        filters: {
-          "https://fake-dimension-iri-1": { type: "single", value: 1 },
-          "https://fake-dimension-iri-2": { type: "single", value: 2 },
+        "dim1/2": {
+          type: "single",
+          value: "val1",
+        },
+        dim2: {
+          type: "single",
+          value: "val2",
         },
       },
-      createContext({ req: { headers: {} } as unknown as IncomingMessage }),
-      {
-        variableValues: {
-          locale: "en",
-          sourceUrl: "https://fake-source.com/query",
-        },
-      } as unknown as GraphQLResolveInfo
-    );
+      ["dim1/2"],
+      `PREFIX cube: <https://cube.link/>
+PREFIX schema: <http://schema.org/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 
-    expect(res).toEqual([
+SELECT ?dimension0_v ?dimension1 WHERE {
+  <cube> cube:observationSet/cube:observation ?observation .
+  ?observation <dim1/2> ?dimension0 .
+  ?dimension0 schema:sameAs ?dimension0_v .
+  ?observation <dim2> ?dimension1 .
+  VALUES ?dimension0_v { <val1> }
+  BIND(?dimension1 = <val2> AS ?d1)
+}
+
+LIMIT 1`
+    ));
+
+  it("should generate a correct SPARQL query with ordering", () =>
+    runTest(
+      "cube",
       {
-        iri: "https://fake-dimension-iri-1",
-        type: "single",
-        value: 1,
+        "dim1/2": {
+          type: "single",
+          value: "val1",
+        },
+        dim2: {
+          type: "single",
+          value: "val2",
+        },
+        dim3: {
+          type: "single",
+          value: "val3",
+        },
       },
-      {
-        iri: "https://fake-dimension-iri-2",
-        type: "single",
-        value: 3,
-      },
-    ]);
-    expect(getCubeObservations).toHaveBeenCalledTimes(2);
-  });
+      ["dim1/2"],
+      `PREFIX cube: <https://cube.link/>
+PREFIX schema: <http://schema.org/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+SELECT ?dimension0_v ?dimension1 ?dimension2 WHERE {
+  <cube> cube:observationSet/cube:observation ?observation .
+  ?observation <dim1/2> ?dimension0 .
+  ?dimension0 schema:sameAs ?dimension0_v .
+  ?observation <dim2> ?dimension1 .
+  ?observation <dim3> ?dimension2 .
+  VALUES ?dimension0_v { <val1> }
+  BIND(?dimension1 = <val2> AS ?d1)
+  BIND(?dimension2 = <val3> AS ?d2)
+}
+ORDER BY DESC(?d1) DESC(?d2)
+LIMIT 1`
+    ));
 });

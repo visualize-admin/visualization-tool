@@ -55,31 +55,31 @@ const getQueryDimension = (i: number, versioned: boolean) => {
   return `${DIMENSION}${i}${versioned ? "_v" : ""}`;
 };
 
-const getQuery = (cubeIri: string, queryFilters: QueryFilter[]) => {
+export const getQuery = (cubeIri: string, queryFilters: QueryFilter[]) => {
   return `PREFIX cube: <https://cube.link/>
 PREFIX schema: <http://schema.org/>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 
 SELECT ${queryFilters.map(({ i, versioned }) => `?${getQueryDimension(i, versioned)}`).join(" ")} WHERE {
   <${cubeIri}> cube:observationSet/cube:observation ?observation .
-  ${queryFilters
-    .map(
-      ({ i, iri, versioned }) => `?observation <${iri}> ?${DIMENSION}${i} .
-${versioned ? `?${getQueryDimension(i, false)} schema:sameAs ?${getQueryDimension(i, true)} .` : ""}`
-    )
-    .join("\n")}
-  ${queryFilters
-    .map(({ i, value, versioned }) => {
-      const queryDimension = getQueryDimension(i, versioned);
-      return i === 0
-        ? // A value for the first dimension must always be found, as it's a root
-          // filter.
-          `VALUES ?${queryDimension} { <${value}> }`
-        : // For other dimensions, we try to find their values, but fall back in
-          // case there is none.
-          `BIND(?${queryDimension} = <${value}> AS ?d${i})`;
-    })
-    .join("\n")}
+${queryFilters
+  .map(
+    ({ i, iri, versioned }) =>
+      `  ?observation <${iri}> ?${DIMENSION}${i} .${versioned ? `\n  ?${getQueryDimension(i, false)} schema:sameAs ?${getQueryDimension(i, true)} .` : ""}`
+  )
+  .join("\n")}
+${queryFilters
+  .map(({ i, value, versioned }) => {
+    const queryDimension = getQueryDimension(i, versioned);
+    return i === 0
+      ? // A value for the first dimension must always be found, as it's a root
+        // filter.
+        `  VALUES ?${queryDimension} { <${value}> }`
+      : // For other dimensions, we try to find their values, but fall back in
+        // case there is none.
+        `  BIND(?${queryDimension} = <${value}> AS ?d${i})`;
+  })
+  .join("\n")}
 }
 ${
   // Ordering by the dimensions is only necessary if there is more than one
@@ -106,7 +106,7 @@ type QueryFilter = {
   versioned: boolean;
 };
 
-const getQueryFilters = (
+export const getQueryFilters = (
   filters: SingleFilters,
   versionedDimensionIris: string[]
 ): QueryFilter[] => {
