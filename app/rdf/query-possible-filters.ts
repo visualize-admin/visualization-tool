@@ -81,12 +81,21 @@ ${versioned ? `?${getQueryDimension(i, false)} schema:sameAs ?${getQueryDimensio
     })
     .join("\n")}
 }
-ORDER BY ${
-    // Order by the boolean `d` variables, so that the first result is the one
-    // with the most matching dimensions, keeping the order of the dimensions
-    // in mind, to mirror the cascading behavior of the filters.
-    queryFilters.map(({ i }) => `DESC(?d${i})`).join(" ")
-  }
+${
+  // Ordering by the dimensions is only necessary if there is more than one
+  // `d` variable.
+  queryFilters.length > 2
+    ? `ORDER BY ${
+        // Order by the boolean `d` variables, so that the first result is the one
+        // with the most matching dimensions, keeping the order of the dimensions
+        // in mind, to mirror the cascading behavior of the filters.
+        queryFilters
+          .slice(1)
+          .map(({ i }) => `DESC(?d${i})`)
+          .join(" ")
+      }`
+    : ""
+}
 LIMIT 1`;
 };
 
