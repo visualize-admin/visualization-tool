@@ -209,7 +209,6 @@ export type AreaLayer = {
     GeoJSON.MultiPolygon | GeoJSON.Polygon,
     GeoProperties
   >;
-  mesh: GeoJSON.MultiLineString;
 };
 
 export type GeoPoint = {

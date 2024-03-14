@@ -1,7 +1,6 @@
 import { geoCentroid } from "d3";
 import keyBy from "lodash/keyBy";
 import React from "react";
-import { mesh } from "topojson-client";
 
 import { prepareTopojson } from "@/charts/map/helpers";
 import {
@@ -120,7 +119,6 @@ export const useMapStateData = (
 
     return {
       shapes: topojson,
-      mesh: mesh(topology, topology.objects.shapes),
     };
   }, [areaLayerDimension?.iri, shapes, filters, data.chartData]);
 
