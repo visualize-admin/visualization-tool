@@ -174,23 +174,18 @@ export const createCubeDimensionValuesLoader =
     filters?: Filters
   ) =>
   async (resolvedDimensions: readonly ResolvedDimension[]) => {
-    const result: DimensionValue[][] = [];
-
-    for (const resolvedDimension of resolvedDimensions) {
-      const dimensionValues = await getCubeDimensionValues(
-        resolvedDimension.cube.term?.value!,
-        {
+    return Promise.all(
+      resolvedDimensions.map(async (resolvedDimension) => {
+        const iri = resolvedDimension.data.iri;
+        return await getCubeDimensionValues(iri, {
           sparqlClient,
           locale: resolvedDimension.locale,
           resolvedDimension,
           filters,
           cache,
-        }
-      );
-      result.push(dimensionValues);
-    }
-
-    return result;
+        });
+      })
+    );
   };
 
 export const getCubeDimensionValues = async (
@@ -315,10 +310,9 @@ export const getCubeDimensionValuesWithMetadata = async ({
   });
 };
 
-type NonNullableValues<T, K extends keyof T> = Omit<T, K> &
-  {
-    [P in K]-?: NonNullable<T[P]>;
-  };
+type NonNullableValues<T, K extends keyof T> = Omit<T, K> & {
+  [P in K]-?: NonNullable<T[P]>;
+};
 
 type CubeDimensionWithPath = NonNullableValues<CubeDimension, "path">;
 
@@ -780,9 +774,9 @@ function parseObservation(
         ns.cube.Undefined.equals((obs[d.data.iri] as Literal)?.datatype)
           ? null
           : termType === "NamedNode" &&
-            ns.cube.Undefined.equals(obs[d.data.iri])
-          ? "–"
-          : obs[d.data.iri]?.value;
+              ns.cube.Undefined.equals(obs[d.data.iri])
+            ? "–"
+            : obs[d.data.iri]?.value;
 
       const rawValue = parseObservationValue({ value: obs[d.data.iri] });
       if (d.data.hasHierarchy) {
