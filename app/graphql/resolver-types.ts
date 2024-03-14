@@ -4,6 +4,8 @@ import { DataCubeObservations } from '../domain/data';
 import { DataCubePreview } from '../domain/data';
 import { DimensionValue } from '../domain/data';
 import { Filters } from '../configurator';
+import { GeoCoordinates } from '../domain/data';
+import { GeoShapes } from '../domain/data';
 import { HierarchyValue } from '../domain/data';
 import { Observation } from '../domain/data';
 import { RawObservation } from '../domain/data';
@@ -30,7 +32,8 @@ export type Scalars = {
   DimensionValue: DimensionValue;
   FilterValue: any;
   Filters: Filters;
-  GeoShapes: any;
+  GeoCoordinates: GeoCoordinates;
+  GeoShapes: GeoShapes;
   HierarchyValue: HierarchyValue;
   Observation: Observation;
   RawObservation: RawObservation;
@@ -165,13 +168,6 @@ export type DimensionHierarchyArgs = {
 
 
 
-export type GeoCoordinates = {
-  __typename?: 'GeoCoordinates';
-  iri: Scalars['String'];
-  label: Scalars['String'];
-  latitude: Scalars['Float'];
-  longitude: Scalars['Float'];
-};
 
 export type GeoCoordinatesDimension = Dimension & {
   __typename?: 'GeoCoordinatesDimension';
@@ -185,7 +181,6 @@ export type GeoCoordinatesDimension = Dimension & {
   isNumerical: Scalars['Boolean'];
   isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
-  geoCoordinates?: Maybe<Array<GeoCoordinates>>;
   related?: Maybe<Array<RelatedDimension>>;
   hierarchy?: Maybe<Array<Scalars['HierarchyValue']>>;
 };
@@ -217,7 +212,6 @@ export type GeoShapesDimension = Dimension & {
   isNumerical: Scalars['Boolean'];
   isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
-  geoShapes?: Maybe<Scalars['GeoShapes']>;
   related?: Maybe<Array<RelatedDimension>>;
   hierarchy?: Maybe<Array<Scalars['HierarchyValue']>>;
 };
@@ -383,9 +377,10 @@ export type Query = {
   dataCubeMetadata: Scalars['DataCubeMetadata'];
   dataCubeObservations: Scalars['DataCubeObservations'];
   dataCubePreview: Scalars['DataCubePreview'];
-  dataCubeByIri?: Maybe<DataCube>;
   possibleFilters: Array<ObservationFilter>;
   searchCubes: Array<SearchCubeResult>;
+  dataCubeDimensionGeoShapes?: Maybe<Scalars['GeoShapes']>;
+  dataCubeDimensionGeoCoordinates?: Maybe<Scalars['GeoCoordinates']>;
 };
 
 
@@ -421,18 +416,6 @@ export type QueryDataCubePreviewArgs = {
 };
 
 
-export type QueryDataCubeByIriArgs = {
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
-  locale?: Maybe<Scalars['String']>;
-  iri: Scalars['String'];
-  latest?: Maybe<Scalars['Boolean']>;
-  filters?: Maybe<Scalars['Filters']>;
-  componentIris?: Maybe<Array<Scalars['String']>>;
-  disableValuesLoad?: Maybe<Scalars['Boolean']>;
-};
-
-
 export type QueryPossibleFiltersArgs = {
   iri: Scalars['String'];
   sourceType: Scalars['String'];
@@ -449,6 +432,22 @@ export type QuerySearchCubesArgs = {
   order?: Maybe<SearchCubeResultOrder>;
   includeDrafts?: Maybe<Scalars['Boolean']>;
   filters?: Maybe<Array<SearchCubeFilter>>;
+};
+
+
+export type QueryDataCubeDimensionGeoShapesArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
+  cubeIri: Scalars['String'];
+  dimensionIri: Scalars['String'];
+};
+
+
+export type QueryDataCubeDimensionGeoCoordinatesArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
+  cubeIri: Scalars['String'];
+  dimensionIri: Scalars['String'];
 };
 
 
@@ -682,8 +681,7 @@ export type ResolversTypes = ResolversObject<{
   DimensionValue: ResolverTypeWrapper<Scalars['DimensionValue']>;
   FilterValue: ResolverTypeWrapper<Scalars['FilterValue']>;
   Filters: ResolverTypeWrapper<Scalars['Filters']>;
-  GeoCoordinates: ResolverTypeWrapper<GeoCoordinates>;
-  Float: ResolverTypeWrapper<Scalars['Float']>;
+  GeoCoordinates: ResolverTypeWrapper<Scalars['GeoCoordinates']>;
   GeoCoordinatesDimension: ResolverTypeWrapper<ResolvedDimension>;
   GeoShapes: ResolverTypeWrapper<Scalars['GeoShapes']>;
   GeoShapesDimension: ResolverTypeWrapper<ResolvedDimension>;
@@ -704,6 +702,7 @@ export type ResolversTypes = ResolversObject<{
   SearchCubeFilter: SearchCubeFilter;
   SearchCubeFilterType: SearchCubeFilterType;
   SearchCubeResult: ResolverTypeWrapper<SearchCubeResult>;
+  Float: ResolverTypeWrapper<Scalars['Float']>;
   SearchCubeResultOrder: SearchCubeResultOrder;
   StandardErrorDimension: ResolverTypeWrapper<ResolvedDimension>;
   TemporalDimension: ResolverTypeWrapper<ResolvedDimension>;
@@ -733,8 +732,7 @@ export type ResolversParentTypes = ResolversObject<{
   DimensionValue: Scalars['DimensionValue'];
   FilterValue: Scalars['FilterValue'];
   Filters: Scalars['Filters'];
-  GeoCoordinates: GeoCoordinates;
-  Float: Scalars['Float'];
+  GeoCoordinates: Scalars['GeoCoordinates'];
   GeoCoordinatesDimension: ResolvedDimension;
   GeoShapes: Scalars['GeoShapes'];
   GeoShapesDimension: ResolvedDimension;
@@ -753,6 +751,7 @@ export type ResolversParentTypes = ResolversObject<{
   SearchCube: Scalars['SearchCube'];
   SearchCubeFilter: SearchCubeFilter;
   SearchCubeResult: SearchCubeResult;
+  Float: Scalars['Float'];
   StandardErrorDimension: ResolvedDimension;
   TemporalDimension: ResolvedDimension;
   TemporalOrdinalDimension: ResolvedDimension;
@@ -839,13 +838,9 @@ export interface FiltersScalarConfig extends GraphQLScalarTypeConfig<ResolversTy
   name: 'Filters';
 }
 
-export type GeoCoordinatesResolvers<ContextType = VisualizeGraphQLContext, ParentType extends ResolversParentTypes['GeoCoordinates'] = ResolversParentTypes['GeoCoordinates']> = ResolversObject<{
-  iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  label?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  latitude?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
-  longitude?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
+export interface GeoCoordinatesScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['GeoCoordinates'], any> {
+  name: 'GeoCoordinates';
+}
 
 export type GeoCoordinatesDimensionResolvers<ContextType = VisualizeGraphQLContext, ParentType extends ResolversParentTypes['GeoCoordinatesDimension'] = ResolversParentTypes['GeoCoordinatesDimension']> = ResolversObject<{
   iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -858,7 +853,6 @@ export type GeoCoordinatesDimensionResolvers<ContextType = VisualizeGraphQLConte
   isNumerical?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   isKeyDimension?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType, RequireFields<GeoCoordinatesDimensionValuesArgs, 'sourceType' | 'sourceUrl'>>;
-  geoCoordinates?: Resolver<Maybe<Array<ResolversTypes['GeoCoordinates']>>, ParentType, ContextType>;
   related?: Resolver<Maybe<Array<ResolversTypes['RelatedDimension']>>, ParentType, ContextType>;
   hierarchy?: Resolver<Maybe<Array<ResolversTypes['HierarchyValue']>>, ParentType, ContextType, RequireFields<GeoCoordinatesDimensionHierarchyArgs, 'sourceType' | 'sourceUrl'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -879,7 +873,6 @@ export type GeoShapesDimensionResolvers<ContextType = VisualizeGraphQLContext, P
   isNumerical?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   isKeyDimension?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType, RequireFields<GeoShapesDimensionValuesArgs, 'sourceType' | 'sourceUrl'>>;
-  geoShapes?: Resolver<Maybe<ResolversTypes['GeoShapes']>, ParentType, ContextType>;
   related?: Resolver<Maybe<Array<ResolversTypes['RelatedDimension']>>, ParentType, ContextType>;
   hierarchy?: Resolver<Maybe<Array<ResolversTypes['HierarchyValue']>>, ParentType, ContextType, RequireFields<GeoShapesDimensionHierarchyArgs, 'sourceType' | 'sourceUrl'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -983,9 +976,10 @@ export type QueryResolvers<ContextType = VisualizeGraphQLContext, ParentType ext
   dataCubeMetadata?: Resolver<ResolversTypes['DataCubeMetadata'], ParentType, ContextType, RequireFields<QueryDataCubeMetadataArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'cubeFilter'>>;
   dataCubeObservations?: Resolver<ResolversTypes['DataCubeObservations'], ParentType, ContextType, RequireFields<QueryDataCubeObservationsArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'cubeFilter'>>;
   dataCubePreview?: Resolver<ResolversTypes['DataCubePreview'], ParentType, ContextType, RequireFields<QueryDataCubePreviewArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'cubeFilter'>>;
-  dataCubeByIri?: Resolver<Maybe<ResolversTypes['DataCube']>, ParentType, ContextType, RequireFields<QueryDataCubeByIriArgs, 'sourceType' | 'sourceUrl' | 'iri' | 'latest'>>;
   possibleFilters?: Resolver<Array<ResolversTypes['ObservationFilter']>, ParentType, ContextType, RequireFields<QueryPossibleFiltersArgs, 'iri' | 'sourceType' | 'sourceUrl' | 'filters'>>;
   searchCubes?: Resolver<Array<ResolversTypes['SearchCubeResult']>, ParentType, ContextType, RequireFields<QuerySearchCubesArgs, 'sourceType' | 'sourceUrl'>>;
+  dataCubeDimensionGeoShapes?: Resolver<Maybe<ResolversTypes['GeoShapes']>, ParentType, ContextType, RequireFields<QueryDataCubeDimensionGeoShapesArgs, 'sourceType' | 'sourceUrl' | 'cubeIri' | 'dimensionIri'>>;
+  dataCubeDimensionGeoCoordinates?: Resolver<Maybe<ResolversTypes['GeoCoordinates']>, ParentType, ContextType, RequireFields<QueryDataCubeDimensionGeoCoordinatesArgs, 'sourceType' | 'sourceUrl' | 'cubeIri' | 'dimensionIri'>>;
 }>;
 
 export interface RawObservationScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['RawObservation'], any> {
@@ -1080,7 +1074,7 @@ export type Resolvers<ContextType = VisualizeGraphQLContext> = ResolversObject<{
   DimensionValue?: GraphQLScalarType;
   FilterValue?: GraphQLScalarType;
   Filters?: GraphQLScalarType;
-  GeoCoordinates?: GeoCoordinatesResolvers<ContextType>;
+  GeoCoordinates?: GraphQLScalarType;
   GeoCoordinatesDimension?: GeoCoordinatesDimensionResolvers<ContextType>;
   GeoShapes?: GraphQLScalarType;
   GeoShapesDimension?: GeoShapesDimensionResolvers<ContextType>;

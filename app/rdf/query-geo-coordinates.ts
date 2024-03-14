@@ -1,26 +1,20 @@
 import { SELECT, sparql } from "@tpluscode/sparql-builder";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
 
+import { GeoCoordinates } from "@/domain/data";
+import { ResolvedDimension } from "@/graphql/shared-types";
 import { pragmas } from "@/rdf/create-source";
-
-import { ResolvedDimension } from "../graphql/shared-types";
-
-import * as ns from "./namespace";
-import { dimensionIsVersioned } from "./queries";
-
-export interface GeoCoordinates {
-  iri: string;
-  label: string;
-  latitude: number;
-  longitude: number;
-}
+import * as ns from "@/rdf/namespace";
+import { dimensionIsVersioned } from "@/rdf/queries";
 
 /**
  * Creates a GeoCoordinates loader.
  */
 export const createGeoCoordinatesLoader =
   ({ locale, sparqlClient }: { locale: string; sparqlClient: ParsingClient }) =>
-  async (dimensions: readonly ResolvedDimension[]) => {
+  async (
+    dimensions: readonly ResolvedDimension[]
+  ): Promise<GeoCoordinates[]> => {
     return Promise.all(
       dimensions.map(async (dimension) => {
         const isVersioned = dimensionIsVersioned(dimension.dimension);

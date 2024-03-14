@@ -3,10 +3,15 @@ scalar DimensionValue
 scalar FilterValue
 scalar RawObservation
 scalar Filters
-scalar GeoShapes
 scalar ValueIdentifier
 scalar ValuePosition
 scalar HierarchyValue
+scalar DataCubeComponents
+scalar DataCubeMetadata
+scalar DataCubeObservations
+scalar DataCubePreview
+scalar GeoShapes
+scalar GeoCoordinates
 
 type ObservationsQuery {
   data: [Observation!]!
@@ -86,13 +91,6 @@ interface Dimension {
   hierarchy(sourceType: String!, sourceUrl: String!): [HierarchyValue!]
 }
 
-type GeoCoordinates {
-  iri: String!
-  label: String!
-  latitude: Float!
-  longitude: Float!
-}
-
 type GeoCoordinatesDimension implements Dimension {
   iri: String!
   label: String!
@@ -109,7 +107,6 @@ type GeoCoordinatesDimension implements Dimension {
     filters: Filters
     disableLoad: Boolean
   ): [DimensionValue!]!
-  geoCoordinates: [GeoCoordinates!]
   related: [RelatedDimension!]
   hierarchy(sourceType: String!, sourceUrl: String!): [HierarchyValue!]
 }
@@ -136,7 +133,6 @@ type GeoShapesDimension implements Dimension {
     filters: Filters
     disableLoad: Boolean
   ): [DimensionValue!]!
-  geoShapes: GeoShapes
   related: [RelatedDimension!]
   hierarchy(sourceType: String!, sourceUrl: String!): [HierarchyValue!]
 }
@@ -364,11 +360,6 @@ input DataCubePreviewFilter {
   latest: Boolean
 }
 
-scalar DataCubeComponents
-scalar DataCubeMetadata
-scalar DataCubeObservations
-scalar DataCubePreview
-
 # The "Query" type is special: it lists all of the available queries that
 # clients can execute, along with the return type for each.
 type Query {
@@ -396,16 +387,6 @@ type Query {
     locale: String!
     cubeFilter: DataCubePreviewFilter!
   ): DataCubePreview!
-  dataCubeByIri(
-    sourceType: String!
-    sourceUrl: String!
-    locale: String
-    iri: String!
-    latest: Boolean = true
-    filters: Filters
-    componentIris: [String!]
-    disableValuesLoad: Boolean
-  ): DataCube
   possibleFilters(
     iri: String!
     sourceType: String!
@@ -421,4 +402,16 @@ type Query {
     includeDrafts: Boolean
     filters: [SearchCubeFilter!]
   ): [SearchCubeResult!]!
+  dataCubeDimensionGeoShapes(
+    sourceType: String!
+    sourceUrl: String!
+    cubeIri: String!
+    dimensionIri: String!
+  ): GeoShapes
+  dataCubeDimensionGeoCoordinates(
+    sourceType: String!
+    sourceUrl: String!
+    cubeIri: String!
+    dimensionIri: String!
+  ): GeoCoordinates
 }

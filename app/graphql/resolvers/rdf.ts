@@ -1,6 +1,7 @@
 import { ascending, descending } from "d3";
 import DataLoader from "dataloader";
 import ParsingClient from "sparql-http-client/ParsingClient";
+import { topology } from "topojson-server";
 import { LRUCache } from "typescript-lru-cache";
 
 import { Filters } from "@/configurator";
@@ -9,21 +10,20 @@ import {
   BaseDimension,
   Dimension,
   DimensionValue,
+  GeoProperties,
+  GeoShapes,
   Measure,
   TemporalDimension,
 } from "@/domain/data";
 import { Loaders } from "@/graphql/context";
 import {
-  DataCubeResolvers,
   DimensionResolvers,
   QueryResolvers,
   Resolvers,
   SearchCubeResultOrder,
 } from "@/graphql/resolver-types";
 import { resolveDimensionType, resolveMeasureType } from "@/graphql/resolvers";
-import { defaultLocale } from "@/locales/locales";
 import { LightCube } from "@/rdf/light-cube";
-import { parseCube } from "@/rdf/parse";
 import {
   createCubeDimensionValuesLoader,
   getCubeDimensions,
@@ -84,40 +84,23 @@ export const searchCubes: NonNullable<QueryResolvers["searchCubes"]> = async (
   return cubes;
 };
 
-export const dataCubeByIri: NonNullable<
-  QueryResolvers["dataCubeByIri"]
-> = async (_, { iri, locale, latest = true }, { setup }, info) => {
-  const { loaders } = await setup(info);
-  const rawCube = await loaders.cube.load(iri);
-
-  if (!rawCube) {
-    throw new Error("Cube not found");
-  }
-
-  const cube = latest ? await getLatestCube(rawCube) : rawCube;
-  await cube.fetchShape();
-
-  return parseCube({ cube, locale: locale ?? defaultLocale });
+export const dataCubeDimensionGeoShapes: NonNullable<
+  QueryResolvers["dataCubeDimensionGeoShapes"]
+> = async () => {
+  return {
+    topology: topology({
+      shapes: {
+        type: "FeatureCollection",
+        features: [],
+      } as GeoJSON.FeatureCollection<GeoJSON.Geometry, GeoProperties>,
+    }) as GeoShapes["topology"],
+  };
 };
 
-export const dataCubeDimensionByIri: NonNullable<
-  DataCubeResolvers["dimensionByIri"]
-> = async ({ cube, locale }, { iri }, { setup }, info) => {
-  const { sparqlClient, cache } = await setup(info);
-  const dimensions = await getCubeDimensions({
-    cube,
-    locale,
-    sparqlClient,
-    componentIris: [iri],
-    cache,
-  });
-  const dimension = dimensions.find((d) => iri === d.data.iri);
-
-  if (!dimension) {
-    throw new Error(`Cannot find dimension ${iri}`);
-  }
-
-  return dimension;
+export const dataCubeDimensionGeoCoordinates: NonNullable<
+  QueryResolvers["dataCubeDimensionGeoCoordinates"]
+> = async () => {
+  return [];
 };
 
 export const possibleFilters: NonNullable<

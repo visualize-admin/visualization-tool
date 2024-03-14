@@ -198,6 +198,15 @@ export type GeoShapes = {
   topology: TopoJSON.Topology<TopoJSON.Objects<GeoProperties>>;
 };
 
+type GeoCoordinate = {
+  iri: string;
+  label: string;
+  latitude: number;
+  longitude: number;
+};
+
+export type GeoCoordinates = GeoCoordinate[];
+
 export type GeoFeature = {
   type: "Feature";
   properties: GeoProperties;
