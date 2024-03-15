@@ -58,7 +58,6 @@ import {
   ControlTabField,
   DataFilterSelect,
   DataFilterTemporal,
-  isDynamicMaxValue,
   OnOffControlTabField,
 } from "@/configurator/components/field";
 import { canRenderDatePickerField } from "@/configurator/components/field-date-picker";
@@ -76,6 +75,7 @@ import {
   isTemporalDimension,
   Measure,
 } from "@/domain/data";
+import { isDynamicMaxValue } from "@/domain/max-value";
 import { truthy } from "@/domain/types";
 import { flag } from "@/flags";
 import {

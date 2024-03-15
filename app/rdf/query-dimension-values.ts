@@ -10,9 +10,9 @@ import { ResultRow } from "sparql-http-client/ResultParser";
 import { LRUCache } from "typescript-lru-cache";
 
 import { FilterValue, Filters } from "@/config-types";
-import { isDynamicMaxValue } from "@/configurator/components/field";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { DimensionValue, parseObservationValue } from "@/domain/data";
+import { isDynamicMaxValue } from "@/domain/max-value";
 import { pragmas } from "@/rdf/create-source";
 
 import * as ns from "./namespace";

@@ -5,7 +5,7 @@ RDFCubeViewQueryMock;
 import { NamedNode } from "rdf-js";
 
 import { SingleFilters } from "@/config-types";
-import { VISUALIZE_MAX_VALUE } from "@/configurator/components/field";
+import { VISUALIZE_MAX_VALUE } from "@/domain/max-value";
 import * as ns from "@/rdf/namespace";
 import { getCubeDimensions } from "@/rdf/queries";
 import {

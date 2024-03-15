@@ -4,7 +4,7 @@ import { ResultRow } from "sparql-http-client/ResultParser";
 import { LRUCache } from "typescript-lru-cache";
 
 import { SingleFilters } from "@/config-types";
-import { isDynamicMaxValue } from "@/configurator/components/field";
+import { isDynamicMaxValue } from "@/domain/max-value";
 import * as ns from "@/rdf/namespace";
 import { loadMaxDimensionValue } from "@/rdf/query-dimension-values";
 
