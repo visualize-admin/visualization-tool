@@ -24,36 +24,46 @@ const meta: Meta = {
 export default meta;
 
 export const ChartTypeSelector: Story = {
-  render: () => (
-    <Box display="flex" gap="1rem">
-      <IconButton
-        label="line"
-        name="Line"
-        value="Line"
-        checked
-        onClick={() => {}}
-      />
+  render: () => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [state, setState] = useState("Line");
+    return (
+      <Box display="flex" gap="1rem">
+        <IconButton
+          label="line"
+          name="Line"
+          value="Line"
+          checked={state === "Line"}
+          onClick={() => setState("Line")}
+        />
 
-      <IconButton
-        label="scatterplot"
-        name="Scatterplot"
-        value="Scatterplot"
-        checked
-        onClick={() => {}}
-      />
-    </Box>
-  ),
+        <IconButton
+          label="scatterplot"
+          name="Scatterplot"
+          value="Scatterplot"
+          checked={state === "Scatterplot"}
+          onClick={() => setState("Scatterplot")}
+        />
+      </Box>
+    );
+  },
 };
 
 export const OnOffControlTab: Story = {
-  render: () => (
-    <OnOffControlTabComponent
-      value="Test"
-      label={<span>Test</span>}
-      icon="settings"
-      onClick={() => {}}
-    />
-  ),
+  render: () => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [active, setActive] = useState(false);
+    return (
+      <OnOffControlTabComponent
+        value="Test"
+        label={<span>Test</span>}
+        icon="settings"
+        active={active}
+        checked={active}
+        onClick={() => setActive((a) => !a)}
+      />
+    );
+  },
 };
 
 const ControlSectionStory: Story = {
