@@ -91,10 +91,10 @@ ${queryFilters
     return i === 0
       ? // A value for the first dimension must always be found, as it's a root
         // filter.
-        `  VALUES ?${queryDimension} { ${isLiteral ? `"${value}"` : `<${value}>`} }`
+        `  VALUES ?${queryDimension} { ${getQueryValue(value, isLiteral)} }`
       : // For other dimensions, we try to find their values, but fall back in
         // case there is none.
-        `  BIND(?${queryDimension} = ${isLiteral ? `"${value}"` : `<${value}>`} AS ?d${i})`;
+        `  BIND(?${queryDimension} = ${getQueryValue(value, isLiteral)} AS ?d${i})`;
   })
   .join("\n")}
 }
@@ -129,6 +129,10 @@ const unversionDimension = (i: number) => {
 
 const stringifyDimension = (i: number, isVersioned: boolean) => {
   return `BIND(STR(?${getQueryDimension(i, isVersioned)}) AS ?${getQueryDimension(i, isVersioned, true)})`;
+};
+
+const getQueryValue = (value: string, isLiteral: boolean) => {
+  return isLiteral ? `"${value}"` : `<${value}>`;
 };
 
 type QueryFilter = {
