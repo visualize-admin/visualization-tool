@@ -1,7 +1,5 @@
 import { t, Trans } from "@lingui/macro";
 import {
-  Badge,
-  BadgeProps,
   Box,
   Button,
   CircularProgress,
@@ -43,7 +41,6 @@ import {
   getChartConfig,
   getChartConfigFilters,
   isMapConfig,
-  useChartConfigFilters,
 } from "@/configurator";
 import { ChartAnnotator } from "@/configurator/components/annotators";
 import {
@@ -51,7 +48,6 @@ import {
   ControlSectionContent,
   ControlSectionSkeleton,
   SubsectionTitle,
-  useControlSectionContext,
 } from "@/configurator/components/chart-controls/section";
 import { ChartTypeSelector } from "@/configurator/components/chart-type-selector";
 import {
@@ -92,6 +88,7 @@ import { useLocale } from "@/locales/use-locale";
 import useEvent from "@/utils/use-event";
 
 import { DatasetsControlSection } from "./dataset-control-section";
+import { FiltersBadge } from "./filters-badge";
 
 type DataFilterSelectGenericProps = {
   rawDimension: Dimension;
@@ -579,24 +576,6 @@ const InteractiveDataFilterCheckbox = ({
           </Typography>
         </Tooltip>
       }
-    />
-  );
-};
-
-export const FiltersBadge = ({ sx }: { sx?: BadgeProps["sx"] }) => {
-  const ctx = useControlSectionContext();
-  const [state] = useConfiguratorState(isConfiguring);
-  const chartConfig = getChartConfig(state);
-  const filters = useChartConfigFilters(chartConfig);
-
-  return (
-    <Badge
-      invisible={ctx.isOpen}
-      badgeContent={
-        Object.values(filters).filter((d) => d.type === "single").length
-      }
-      color="secondary"
-      sx={{ display: "block", ...sx }}
     />
   );
 };
