@@ -316,7 +316,7 @@ export const DataFilterSelect = ({
  * value is added to the dataset, it will be automatically used as default filter
  * value for published charts.
  */
-const VISUALIZE_MAX_VALUE = "VISUALIZE_MAX_VALUE";
+export const VISUALIZE_MAX_VALUE = "VISUALIZE_MAX_VALUE";
 
 /** Checks if a given filter value is supposed to be dynamiaclly pinned to max
  * value.

@@ -1,24 +1,34 @@
+import { CubeDimension } from "rdf-cube-view-query";
 import ParsingClient from "sparql-http-client/ParsingClient";
 import { ResultRow } from "sparql-http-client/ResultParser";
+import { LRUCache } from "typescript-lru-cache";
 
 import { SingleFilters } from "@/config-types";
+import { isDynamicMaxValue } from "@/configurator/components/field";
 import * as ns from "@/rdf/namespace";
+import { loadMaxDimensionValue } from "@/rdf/query-dimension-values";
 
 export const getPossibleFilters = async (
   cubeIri: string,
   options: {
     filters: SingleFilters;
     sparqlClient: ParsingClient;
+    cache?: LRUCache;
   }
 ) => {
-  const { filters, sparqlClient } = options;
+  const { filters, sparqlClient, cache } = options;
   const dimensionIris = Object.keys(filters);
   const dimensionsMetadata = await getDimensionsMetadata(
     cubeIri,
     dimensionIris,
     sparqlClient
   );
-  const queryFilters = getQueryFilters(filters, dimensionsMetadata);
+  const queryFilters = await getQueryFilters(filters, {
+    cubeIri,
+    dimensionsMetadata,
+    sparqlClient,
+    cache,
+  });
   const query = getQuery(cubeIri, queryFilters);
   const [observation] = await sparqlClient.query.select(query, {
     operation: "postUrlencoded",
@@ -129,20 +139,43 @@ type QueryFilter = {
   isLiteral: boolean;
 };
 
-export const getQueryFilters = (
+export const getQueryFilters = async (
   filters: SingleFilters,
-  dimensionsMetadata: DimensionMetadata[]
-): QueryFilter[] => {
-  return Object.entries(filters).map(([iri, value], i) => {
-    const metadata = dimensionsMetadata.find((d) => d.iri === iri);
-    return {
-      i,
-      iri,
-      value: `${value.value}`,
-      isVersioned: metadata?.isVersioned ?? false,
-      isLiteral: metadata?.isLiteral ?? false,
-    };
-  });
+  options: {
+    cubeIri: string;
+    dimensionsMetadata: DimensionMetadata[];
+    sparqlClient: ParsingClient;
+    cache?: LRUCache;
+  }
+): Promise<QueryFilter[]> => {
+  const { cubeIri, dimensionsMetadata, sparqlClient, cache } = options;
+
+  return Promise.all(
+    Object.entries(filters).map(async ([iri, { value }], i) => {
+      const metadata = dimensionsMetadata.find((d) => d.iri === iri);
+
+      return {
+        i,
+        iri,
+        value: isDynamicMaxValue(value)
+          ? (
+              await loadMaxDimensionValue(cubeIri, {
+                dimensionIri: iri,
+                cubeDimensions: Object.keys(filters).map((iri) => ({
+                  path: { value: iri },
+                })) as any as CubeDimension[],
+                filters,
+                sparqlClient,
+                locale: "en",
+                cache,
+              })
+            )[0]
+          : `${value}`,
+        isVersioned: metadata?.isVersioned ?? false,
+        isLiteral: metadata?.isLiteral ?? false,
+      };
+    })
+  );
 };
 
 const parsePossibleFilters = (

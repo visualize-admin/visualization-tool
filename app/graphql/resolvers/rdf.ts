@@ -190,7 +190,7 @@ const getResolvedDimension = async (
 export const possibleFilters: NonNullable<
   QueryResolvers["possibleFilters"]
 > = async (_, { iri, filters }, { setup }, info) => {
-  const { sparqlClient, loaders } = await setup(info);
+  const { sparqlClient, loaders, cache } = await setup(info);
   const rawCube = await loaders.cube.load(iri);
   // Currently we always default to the latest cube.
   const cube = await getLatestCube(rawCube);
@@ -200,7 +200,7 @@ export const possibleFilters: NonNullable<
     return [];
   }
 
-  return await getPossibleFilters(cubeIri, { filters, sparqlClient });
+  return await getPossibleFilters(cubeIri, { filters, sparqlClient, cache });
 };
 
 export const dataCubeComponents: NonNullable<
