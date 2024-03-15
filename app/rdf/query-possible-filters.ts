@@ -169,7 +169,6 @@ export const getQueryFilters = async (
               })) as any as CubeDimension[],
               filters,
               sparqlClient,
-              locale: "en",
               cache,
             })
           : `${value}`,

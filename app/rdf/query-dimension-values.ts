@@ -211,6 +211,8 @@ const parseMaybeUndefined = (value: string, fallbackValue: string) => {
   return value === ns.cube.Undefined.value ? "-" : fallbackValue ?? value;
 };
 
+type LoadMaxDimensionValuesProps = Omit<LoadDimensionValuesProps, "locale">;
+
 /**
  * Load max dimension value.
  *
@@ -219,7 +221,7 @@ const parseMaybeUndefined = (value: string, fallbackValue: string) => {
  */
 export async function loadMaxDimensionValue(
   cubeIri: string,
-  props: LoadDimensionValuesProps
+  props: LoadMaxDimensionValuesProps
 ): Promise<string> {
   const { dimensionIri, cubeDimensions, sparqlClient, filters, cache } = props;
   const filterList = getFiltersList(filters, dimensionIri);

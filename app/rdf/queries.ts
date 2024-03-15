@@ -676,7 +676,6 @@ const buildFilters = async ({
               cubeDimensions: cube.dimensions,
               sparqlClient,
               filters,
-              locale,
               cache,
             });
 
