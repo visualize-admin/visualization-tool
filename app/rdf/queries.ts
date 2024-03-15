@@ -680,7 +680,7 @@ const buildFilters = async ({
               cache,
             });
 
-            return [filterDimension.filter.eq(toRDFValue(maxValue[0]))];
+            return [filterDimension.filter.eq(toRDFValue(maxValue))];
           }
 
           return [filterDimension.filter.eq(toRDFValue(`${filter.value}`))];

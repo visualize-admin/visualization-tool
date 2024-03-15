@@ -220,7 +220,7 @@ const parseMaybeUndefined = (value: string, fallbackValue: string) => {
 export async function loadMaxDimensionValue(
   cubeIri: string,
   props: LoadDimensionValuesProps
-) {
+): Promise<string> {
   const { dimensionIri, cubeDimensions, sparqlClient, filters, cache } = props;
   const filterList = getFiltersList(filters, dimensionIri);
   // The following query works both for numeric, date and ordinal dimensions
@@ -241,12 +241,13 @@ ${getQueryFilters(filterList, cubeDimensions, dimensionIri)}`
       sparqlClient,
       query,
       () => sparqlClient.query.select(query, { operation: "postUrlencoded" }),
-      (result) => result.map((d) => d.value.value),
+      (result) => result[0].value.value,
       cache
     );
   } catch {
-    console.warn(`Failed to fetch max dimension value for ${cubeIri}!`);
-    return [];
+    throw new Error(
+      `Failed to fetch max dimension value for ${cubeIri}, ${dimensionIri}!`
+    );
   }
 }
 

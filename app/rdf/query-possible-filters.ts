@@ -158,18 +158,16 @@ export const getQueryFilters = async (
         i,
         iri,
         value: isDynamicMaxValue(value)
-          ? (
-              await loadMaxDimensionValue(cubeIri, {
-                dimensionIri: iri,
-                cubeDimensions: Object.keys(filters).map((iri) => ({
-                  path: { value: iri },
-                })) as any as CubeDimension[],
-                filters,
-                sparqlClient,
-                locale: "en",
-                cache,
-              })
-            )[0]
+          ? await loadMaxDimensionValue(cubeIri, {
+              dimensionIri: iri,
+              cubeDimensions: Object.keys(filters).map((iri) => ({
+                path: { value: iri },
+              })) as any as CubeDimension[],
+              filters,
+              sparqlClient,
+              locale: "en",
+              cache,
+            })
           : `${value}`,
         isVersioned: metadata?.isVersioned ?? false,
         isLiteral: metadata?.isLiteral ?? false,

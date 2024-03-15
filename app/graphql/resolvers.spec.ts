@@ -16,7 +16,7 @@ import {
 import mockChartConfig from "@/test/__fixtures/config/prod/column-traffic-pollution.json";
 
 jest.mock("@/rdf/query-dimension-values", () => ({
-  loadMaxDimensionValue: jest.fn().mockResolvedValue(["123"]),
+  loadMaxDimensionValue: jest.fn().mockResolvedValue("123"),
 }));
 
 const getCubeDimensionMock = (iri: string, order: string) => {
