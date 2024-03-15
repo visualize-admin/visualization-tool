@@ -11,6 +11,7 @@ import {
   DimensionValue,
   Measure,
   TemporalDimension,
+  isMeasure,
 } from "@/domain/data";
 import { Loaders } from "@/graphql/context";
 import {
@@ -138,11 +139,7 @@ export const dataCubeComponents: NonNullable<
     componentIris,
     cache,
   });
-
-  const dimensions: Dimension[] = [];
-  const measures: Measure[] = [];
-
-  await Promise.all(
+  const components = await Promise.all(
     rawComponents.map(async (component) => {
       const { data } = component;
       const dimensionValuesLoader = getDimensionValuesLoader(
@@ -185,7 +182,7 @@ export const dataCubeComponents: NonNullable<
       };
 
       if (data.isMeasureDimension) {
-        const result: Measure = {
+        const measure: Measure = {
           __typename: resolveMeasureType(component.data.scaleType),
           isCurrency: data.isCurrency,
           isDecimal: data.isDecimal,
@@ -193,8 +190,7 @@ export const dataCubeComponents: NonNullable<
           resolution: data.resolution,
           ...baseComponent,
         };
-
-        measures.push(result);
+        return measure;
       } else {
         const { dataKind, scaleType, related } = component.data;
         const dimensionType = resolveDimensionType(
@@ -229,22 +225,27 @@ export const dataCubeComponents: NonNullable<
               timeUnit: data.timeUnit,
               ...baseDimension,
             };
-            dimensions.push(dimension);
-            break;
+            return dimension;
           }
           default: {
             const dimension: Exclude<Dimension, TemporalDimension> = {
               __typename: dimensionType,
               ...baseDimension,
             };
-            dimensions.push(dimension);
+            return dimension;
           }
         }
       }
     })
   );
 
-  return { dimensions, measures };
+  const dimensions = components.filter((d) => !isMeasure(d)) as Dimension[];
+  const measures = components.filter(isMeasure);
+
+  return {
+    dimensions,
+    measures,
+  };
 };
 
 export const dataCubeMetadata: NonNullable<

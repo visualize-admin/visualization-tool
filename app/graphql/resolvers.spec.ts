@@ -1,6 +1,76 @@
+import { RDFCubeViewQueryMock } from "@/test/cube-view-query-mock";
+RDFCubeViewQueryMock;
+
+// eslint-disable-next-line import/order
+import { NamedNode } from "rdf-js";
+
 import { SingleFilters } from "@/config-types";
+import * as ns from "@/rdf/namespace";
+import { getCubeDimensions } from "@/rdf/queries";
 import { getQuery, getQueryFilters } from "@/rdf/query-possible-filters";
 import mockChartConfig from "@/test/__fixtures/config/prod/column-traffic-pollution.json";
+
+const getCubeDimensionMock = (iri: string, order: string) => {
+  return {
+    path: {
+      value: iri,
+    },
+    out: (p: NamedNode) => {
+      switch (p.value) {
+        case ns.sh.order.value: {
+          return {
+            term: {
+              value: order,
+            },
+          };
+        }
+        case ns.cube`meta/dimensionRelation`.value: {
+          return [];
+        }
+        default: {
+          return {
+            out: () => {
+              return {
+                value: undefined,
+                values: [],
+                term: undefined,
+                terms: [],
+                list() {
+                  return [];
+                },
+              };
+            },
+            value: undefined,
+            values: [],
+            term: undefined,
+            terms: [],
+            list() {
+              return [];
+            },
+          };
+        }
+      }
+    },
+  };
+};
+
+describe("DataCubeComponents", () => {
+  const fakeCube = {
+    dimensions: [
+      getCubeDimensionMock("dim1", "10"),
+      getCubeDimensionMock("dim2", "0"),
+    ],
+  } as any;
+  it("should return sorted components", async () => {
+    const dimensions = await getCubeDimensions({
+      cube: fakeCube,
+      locale: "en",
+      sparqlClient: {} as any,
+      cache: undefined,
+    });
+    expect(dimensions.map((d) => d.data.order)).toEqual([0, 10]);
+  });
+});
 
 describe("PossibleFilters", () => {
   const runTest = (
