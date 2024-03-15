@@ -44,11 +44,9 @@ export const createGeoShapesLoader =
     sparqlClient: ParsingClient;
     geoSparqlClient: ParsingClient;
   }) =>
-  async (dimensionIris?: readonly string[]): Promise<RawGeoShape[]> => {
-    if (dimensionIris) {
-      const queryableIris = dimensionIris.map((d) => `<${d}>`);
-
-      const labelsQuery = SELECT`?iri ?label`.WHERE`
+  async (dimensionIris: readonly string[]): Promise<RawGeoShape[]> => {
+    const queryableIris = dimensionIris.map((d) => `<${d}>`);
+    const labelsQuery = SELECT`?iri ?label`.WHERE`
         VALUES ?iri {
           ${queryableIris}
         }
@@ -62,110 +60,104 @@ export const createGeoShapesLoader =
           ?iri ${ns.schema.name} ?label .
         }`.prologue`${pragmas}`;
 
-      let rawLabels: RawLabel[] = [];
+    let rawLabels: RawLabel[] = [];
 
-      try {
-        rawLabels = (await labelsQuery.execute(sparqlClient.query, {
-          operation: "postUrlencoded",
-        })) as RawLabel[];
-      } catch (e) {
-        console.error(e);
-      }
+    try {
+      rawLabels = (await labelsQuery.execute(sparqlClient.query, {
+        operation: "postUrlencoded",
+      })) as RawLabel[];
+    } catch (e) {
+      console.error(e);
+    }
 
-      const groupedLabels = groupBy(
-        rawLabels.map((d) => {
-          return {
-            iri: d.iri.value,
-            label: d.label?.value ?? d.iri,
-          };
-        }),
-        (d) => d.iri
-      );
+    const groupedLabels = groupBy(
+      rawLabels.map((d) => {
+        return {
+          iri: d.iri.value,
+          label: d.label?.value ?? d.iri,
+        };
+      }),
+      (d) => d.iri
+    );
 
-      const geometriesQuery = SELECT`?iri ?geometry`.WHERE`
+    const geometriesQuery = SELECT`?iri ?geometry`.WHERE`
         VALUES ?iri {
           ${queryableIris}
         }
 
         ?iri ${ns.geo.hasGeometry} ?geometry .`.prologue`${pragmas}`;
 
-      let rawGeometries: RawGeometry[] = [];
-
-      try {
-        rawGeometries = (await geometriesQuery.execute(sparqlClient.query, {
-          operation: "postUrlencoded",
-        })) as RawGeometry[];
-      } catch (e) {
+    const rawGeometries = (await geometriesQuery
+      .execute(sparqlClient.query, {
+        operation: "postUrlencoded",
+      })
+      .catch((e) => {
         console.error(e);
-      }
+        return [];
+      })) as RawGeometry[];
 
-      const groupedGeometries = groupBy(
-        rawGeometries.map((d) => {
-          return {
-            iri: d.iri.value,
-            geometry: d.geometry.value,
-          };
-        }),
-        (d) => d.iri
-      );
+    const groupedGeometries = groupBy(
+      rawGeometries.map((d) => {
+        return {
+          iri: d.iri.value,
+          geometry: d.geometry.value,
+        };
+      }),
+      (d) => d.iri
+    );
 
-      const rawWktStrings: RawWktString[] = [];
-      const chunkedGeometries: RawGeometry[][] = [];
+    const rawWktStrings: RawWktString[] = [];
+    const chunkedGeometries: RawGeometry[][] = [];
 
-      for (let i = 0; i < rawGeometries.length; i += MAX_BATCH_SIZE * 0.5) {
-        chunkedGeometries.push(
-          rawGeometries.slice(i, i + MAX_BATCH_SIZE * 0.5)
-        );
-      }
+    for (let i = 0; i < rawGeometries.length; i += MAX_BATCH_SIZE * 0.5) {
+      chunkedGeometries.push(rawGeometries.slice(i, i + MAX_BATCH_SIZE * 0.5));
+    }
 
-      await Promise.all(
-        chunkedGeometries.map(async (geometries) => {
-          let fetched: RawWktString[] = [];
-          const wktStringsQuery = SELECT`?geometry ?wktString`.WHERE`
+    await Promise.all(
+      chunkedGeometries.map(async (geometries) => {
+        let fetched: RawWktString[] = [];
+        const wktStringsQuery = SELECT`?geometry ?wktString`.WHERE`
             VALUES ?geometry {
               ${geometries.map((d: any) => `<${d.geometry.value}>`)}
             }
       
             ?geometry ${ns.geo.asWKT} ?wktString .`.prologue`${pragmas}`;
 
-          try {
-            fetched = (await wktStringsQuery.execute(geoSparqlClient.query, {
-              operation: "postUrlencoded",
-            })) as RawWktString[];
-          } catch (e) {
-            console.error(e);
-          }
-
-          rawWktStrings.push(...fetched);
-        })
-      );
-
-      const groupedWktStrings = groupBy(
-        rawWktStrings.map((d) => {
-          return {
-            geometry: d.geometry.value,
-            wktString: d.wktString.value,
-          };
-        }),
-        (d) => d.geometry
-      );
-
-      return dimensionIris.map((iri) => {
-        let wktString: string | undefined;
-        // There might be iris without geometries.
-        const geometry = groupedGeometries[iri]?.[0]?.geometry;
-
-        if (geometry) {
-          wktString = groupedWktStrings[geometry]?.[0]?.wktString;
+        try {
+          fetched = (await wktStringsQuery.execute(geoSparqlClient.query, {
+            operation: "postUrlencoded",
+          })) as RawWktString[];
+        } catch (e) {
+          console.error(e);
         }
 
+        rawWktStrings.push(...fetched);
+      })
+    );
+
+    const groupedWktStrings = groupBy(
+      rawWktStrings.map((d) => {
         return {
-          iri,
-          label: groupedLabels[iri]?.[0]?.label ?? iri,
-          wktString,
+          geometry: d.geometry.value,
+          wktString: d.wktString.value,
         };
-      });
-    } else {
-      return [];
-    }
+      }),
+      (d) => d.geometry
+    );
+
+    return dimensionIris.map((iri) => {
+      let wktString: string | undefined;
+      // There might be iris without geometries.
+      const geometry = groupedGeometries[iri]?.[0]?.geometry;
+
+      if (geometry) {
+        wktString = groupedWktStrings[geometry]?.[0]?.wktString;
+      }
+
+      return {
+        iri,
+        label: groupedLabels[iri]?.[0]?.label ?? iri,
+        wktString,
+      };
+    });
   };

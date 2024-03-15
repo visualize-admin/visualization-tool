@@ -12,12 +12,11 @@ import {
 import { NoGeometriesHint } from "@/components/hint";
 import { DataSource, MapConfig, useChartConfigFilters } from "@/config-types";
 import { TimeSlider } from "@/configurator/interactive-filters/time-slider";
-import { GeoShapes } from "@/domain/data";
+import { GeoCoordinates, GeoShapes } from "@/domain/data";
 import {
   DataCubeObservationFilter,
-  GeoCoordinates,
-  useGeoCoordinatesByDimensionIriQuery,
-  useGeoShapesByDimensionIriQuery,
+  useDataCubeDimensionGeoCoordinatesQuery,
+  useDataCubeDimensionGeoShapesQuery,
 } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 
@@ -44,24 +43,20 @@ export const ChartMapVisualization = ({
       error: geoCoordinatesError,
       fetching: fetchingGeoocordinates,
     },
-  ] = useGeoCoordinatesByDimensionIriQuery({
+  ] = useDataCubeDimensionGeoCoordinatesQuery({
     variables: {
       // FIXME: This assumes that there is only one cube.
-      dataCubeIri: chartConfig.cubes[0].iri,
+      cubeIri: chartConfig.cubes[0].iri,
+      dimensionIri: symbolDimensionIri,
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
-      dimensionIri: symbolDimensionIri,
       locale,
     },
     pause: !symbolDimensionIri || symbolDimensionIri === "",
   });
 
   const coordinates =
-    fetchedGeoCoordinates?.dataCubeByIri?.dimensionByIri?.__typename ===
-    "GeoCoordinatesDimension"
-      ? fetchedGeoCoordinates.dataCubeByIri.dimensionByIri.geoCoordinates
-      : undefined;
-
+    fetchedGeoCoordinates?.dataCubeDimensionGeoCoordinates ?? undefined;
   const geoShapesIri = areaDimensionIri || symbolDimensionIri;
   const [
     {
@@ -69,23 +64,19 @@ export const ChartMapVisualization = ({
       error: geoShapesError,
       fetching: fetchingGeoshapes,
     },
-  ] = useGeoShapesByDimensionIriQuery({
+  ] = useDataCubeDimensionGeoShapesQuery({
     variables: {
       // FIXME: This assumes that there is only one cube.
-      dataCubeIri: chartConfig.cubes[0].iri,
+      cubeIri: chartConfig.cubes[0].iri,
+      dimensionIri: geoShapesIri,
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
-      dimensionIri: geoShapesIri,
       locale,
     },
     pause: !geoShapesIri || geoShapesIri === "",
   });
 
-  const shapes =
-    fetchedGeoShapes?.dataCubeByIri?.dimensionByIri?.__typename ===
-    "GeoShapesDimension"
-      ? (fetchedGeoShapes.dataCubeByIri.dimensionByIri.geoShapes as GeoShapes)
-      : undefined;
+  const shapes = fetchedGeoShapes?.dataCubeDimensionGeoShapes ?? undefined;
   const geometries: any[] | undefined = (
     shapes?.topology?.objects?.shapes as any
   )?.geometries;
@@ -123,34 +114,32 @@ export const ChartMapVisualization = ({
   );
 };
 
-export const ChartMap = memo(
-  (
-    props: ChartProps<MapConfig> & {
-      shapes: GeoShapes | undefined;
-      coordinates: GeoCoordinates[] | undefined | null;
-    }
-  ) => {
-    const { chartConfig, dimensions } = props;
-    const { fields } = chartConfig;
-    const filters = useChartConfigFilters(chartConfig);
+export type ChartMapProps = ChartProps<MapConfig> & {
+  shapes: GeoShapes | undefined;
+  coordinates: GeoCoordinates | undefined;
+};
 
-    return (
-      <MapChart {...props}>
-        <ChartContainer>
-          <MapComponent />
-          <MapTooltip />
-        </ChartContainer>
-        <ChartControlsContainer sx={{ mt: 6 }}>
-          {fields.animation && (
-            <TimeSlider
-              filters={filters}
-              dimensions={dimensions}
-              {...fields.animation}
-            />
-          )}
-          <MapLegend chartConfig={chartConfig} />
-        </ChartControlsContainer>
-      </MapChart>
-    );
-  }
-);
+export const ChartMap = memo((props: ChartMapProps) => {
+  const { chartConfig, dimensions } = props;
+  const { fields } = chartConfig;
+  const filters = useChartConfigFilters(chartConfig);
+
+  return (
+    <MapChart {...props}>
+      <ChartContainer>
+        <MapComponent />
+        <MapTooltip />
+      </ChartContainer>
+      <ChartControlsContainer sx={{ mt: 6 }}>
+        {fields.animation && (
+          <TimeSlider
+            filters={filters}
+            dimensions={dimensions}
+            {...fields.animation}
+          />
+        )}
+        <MapLegend chartConfig={chartConfig} />
+      </ChartControlsContainer>
+    </MapChart>
+  );
+});

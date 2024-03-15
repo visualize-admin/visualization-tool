@@ -4,6 +4,8 @@ import { DataCubeObservations } from '../domain/data';
 import { DataCubePreview } from '../domain/data';
 import { DimensionValue } from '../domain/data';
 import { Filters } from '../configurator';
+import { GeoCoordinates } from '../domain/data';
+import { GeoShapes } from '../domain/data';
 import { HierarchyValue } from '../domain/data';
 import { Observation } from '../domain/data';
 import { RawObservation } from '../domain/data';
@@ -30,7 +32,8 @@ export type Scalars = {
   DimensionValue: DimensionValue;
   FilterValue: any;
   Filters: Filters;
-  GeoShapes: any;
+  GeoCoordinates: GeoCoordinates;
+  GeoShapes: GeoShapes;
   HierarchyValue: HierarchyValue;
   Observation: Observation;
   RawObservation: RawObservation;
@@ -159,13 +162,6 @@ export type DimensionValuesArgs = {
 
 
 
-export type GeoCoordinates = {
-  __typename: 'GeoCoordinates';
-  iri: Scalars['String'];
-  label: Scalars['String'];
-  latitude: Scalars['Float'];
-  longitude: Scalars['Float'];
-};
 
 export type GeoCoordinatesDimension = Dimension & {
   __typename: 'GeoCoordinatesDimension';
@@ -179,7 +175,6 @@ export type GeoCoordinatesDimension = Dimension & {
   isNumerical: Scalars['Boolean'];
   isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
-  geoCoordinates?: Maybe<Array<GeoCoordinates>>;
   related?: Maybe<Array<RelatedDimension>>;
 };
 
@@ -204,7 +199,6 @@ export type GeoShapesDimension = Dimension & {
   isNumerical: Scalars['Boolean'];
   isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
-  geoShapes?: Maybe<Scalars['GeoShapes']>;
   related?: Maybe<Array<RelatedDimension>>;
 };
 
@@ -335,9 +329,10 @@ export type Query = {
   dataCubeMetadata: Scalars['DataCubeMetadata'];
   dataCubeObservations: Scalars['DataCubeObservations'];
   dataCubePreview: Scalars['DataCubePreview'];
-  dataCubeByIri?: Maybe<DataCube>;
   possibleFilters: Array<ObservationFilter>;
   searchCubes: Array<SearchCubeResult>;
+  dataCubeDimensionGeoShapes?: Maybe<Scalars['GeoShapes']>;
+  dataCubeDimensionGeoCoordinates?: Maybe<Scalars['GeoCoordinates']>;
 };
 
 
@@ -373,18 +368,6 @@ export type QueryDataCubePreviewArgs = {
 };
 
 
-export type QueryDataCubeByIriArgs = {
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
-  locale?: Maybe<Scalars['String']>;
-  iri: Scalars['String'];
-  latest?: Maybe<Scalars['Boolean']>;
-  filters?: Maybe<Scalars['Filters']>;
-  componentIris?: Maybe<Array<Scalars['String']>>;
-  disableValuesLoad?: Maybe<Scalars['Boolean']>;
-};
-
-
 export type QueryPossibleFiltersArgs = {
   iri: Scalars['String'];
   sourceType: Scalars['String'];
@@ -401,6 +384,24 @@ export type QuerySearchCubesArgs = {
   order?: Maybe<SearchCubeResultOrder>;
   includeDrafts?: Maybe<Scalars['Boolean']>;
   filters?: Maybe<Array<SearchCubeFilter>>;
+};
+
+
+export type QueryDataCubeDimensionGeoShapesArgs = {
+  cubeIri: Scalars['String'];
+  dimensionIri: Scalars['String'];
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
+  locale: Scalars['String'];
+};
+
+
+export type QueryDataCubeDimensionGeoCoordinatesArgs = {
+  cubeIri: Scalars['String'];
+  dimensionIri: Scalars['String'];
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
+  locale: Scalars['String'];
 };
 
 
@@ -582,30 +583,6 @@ export type SearchCubesQueryVariables = Exact<{
 
 export type SearchCubesQuery = { __typename: 'Query', searchCubes: Array<{ __typename: 'SearchCubeResult', highlightedTitle?: Maybe<string>, highlightedDescription?: Maybe<string>, cube: SearchCube }> };
 
-export type GeoCoordinatesByDimensionIriQueryVariables = Exact<{
-  dataCubeIri: Scalars['String'];
-  dimensionIri: Scalars['String'];
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
-  locale: Scalars['String'];
-  latest?: Maybe<Scalars['Boolean']>;
-}>;
-
-
-export type GeoCoordinatesByDimensionIriQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', dimensionByIri?: Maybe<{ __typename: 'GeoCoordinatesDimension', geoCoordinates?: Maybe<Array<{ __typename: 'GeoCoordinates', iri: string, label: string, latitude: number, longitude: number }>> } | { __typename: 'GeoShapesDimension' } | { __typename: 'NominalDimension' } | { __typename: 'NumericalMeasure' } | { __typename: 'OrdinalDimension' } | { __typename: 'OrdinalMeasure' } | { __typename: 'StandardErrorDimension' } | { __typename: 'TemporalDimension' } | { __typename: 'TemporalOrdinalDimension' }> }> };
-
-export type GeoShapesByDimensionIriQueryVariables = Exact<{
-  dataCubeIri: Scalars['String'];
-  dimensionIri: Scalars['String'];
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
-  locale: Scalars['String'];
-  latest?: Maybe<Scalars['Boolean']>;
-}>;
-
-
-export type GeoShapesByDimensionIriQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', dimensionByIri?: Maybe<{ __typename: 'GeoCoordinatesDimension' } | { __typename: 'GeoShapesDimension', geoShapes?: Maybe<any> } | { __typename: 'NominalDimension' } | { __typename: 'NumericalMeasure' } | { __typename: 'OrdinalDimension' } | { __typename: 'OrdinalMeasure' } | { __typename: 'StandardErrorDimension' } | { __typename: 'TemporalDimension' } | { __typename: 'TemporalOrdinalDimension' }> }> };
-
 export type PossibleFiltersQueryVariables = Exact<{
   iri: Scalars['String'];
   sourceType: Scalars['String'];
@@ -615,6 +592,28 @@ export type PossibleFiltersQueryVariables = Exact<{
 
 
 export type PossibleFiltersQuery = { __typename: 'Query', possibleFilters: Array<{ __typename: 'ObservationFilter', iri: string, type: string, value?: Maybe<any> }> };
+
+export type DataCubeDimensionGeoShapesQueryVariables = Exact<{
+  cubeIri: Scalars['String'];
+  dimensionIri: Scalars['String'];
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
+  locale: Scalars['String'];
+}>;
+
+
+export type DataCubeDimensionGeoShapesQuery = { __typename: 'Query', dataCubeDimensionGeoShapes?: Maybe<GeoShapes> };
+
+export type DataCubeDimensionGeoCoordinatesQueryVariables = Exact<{
+  cubeIri: Scalars['String'];
+  dimensionIri: Scalars['String'];
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
+  locale: Scalars['String'];
+}>;
+
+
+export type DataCubeDimensionGeoCoordinatesQuery = { __typename: 'Query', dataCubeDimensionGeoCoordinates?: Maybe<GeoCoordinates> };
 
 
 export const DataCubeComponentsDocument = gql`
@@ -694,61 +693,6 @@ export const SearchCubesDocument = gql`
 export function useSearchCubesQuery(options: Omit<Urql.UseQueryArgs<SearchCubesQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<SearchCubesQuery>({ query: SearchCubesDocument, ...options });
 };
-export const GeoCoordinatesByDimensionIriDocument = gql`
-    query GeoCoordinatesByDimensionIri($dataCubeIri: String!, $dimensionIri: String!, $sourceType: String!, $sourceUrl: String!, $locale: String!, $latest: Boolean) {
-  dataCubeByIri(
-    iri: $dataCubeIri
-    sourceType: $sourceType
-    sourceUrl: $sourceUrl
-    locale: $locale
-    latest: $latest
-  ) {
-    dimensionByIri(
-      iri: $dimensionIri
-      sourceType: $sourceType
-      sourceUrl: $sourceUrl
-    ) {
-      ... on GeoCoordinatesDimension {
-        geoCoordinates {
-          iri
-          label
-          latitude
-          longitude
-        }
-      }
-    }
-  }
-}
-    `;
-
-export function useGeoCoordinatesByDimensionIriQuery(options: Omit<Urql.UseQueryArgs<GeoCoordinatesByDimensionIriQueryVariables>, 'query'> = {}) {
-  return Urql.useQuery<GeoCoordinatesByDimensionIriQuery>({ query: GeoCoordinatesByDimensionIriDocument, ...options });
-};
-export const GeoShapesByDimensionIriDocument = gql`
-    query GeoShapesByDimensionIri($dataCubeIri: String!, $dimensionIri: String!, $sourceType: String!, $sourceUrl: String!, $locale: String!, $latest: Boolean) {
-  dataCubeByIri(
-    iri: $dataCubeIri
-    sourceType: $sourceType
-    sourceUrl: $sourceUrl
-    locale: $locale
-    latest: $latest
-  ) {
-    dimensionByIri(
-      iri: $dimensionIri
-      sourceType: $sourceType
-      sourceUrl: $sourceUrl
-    ) {
-      ... on GeoShapesDimension {
-        geoShapes
-      }
-    }
-  }
-}
-    `;
-
-export function useGeoShapesByDimensionIriQuery(options: Omit<Urql.UseQueryArgs<GeoShapesByDimensionIriQueryVariables>, 'query'> = {}) {
-  return Urql.useQuery<GeoShapesByDimensionIriQuery>({ query: GeoShapesByDimensionIriDocument, ...options });
-};
 export const PossibleFiltersDocument = gql`
     query PossibleFilters($iri: String!, $sourceType: String!, $sourceUrl: String!, $filters: SingleFilters!) {
   possibleFilters(
@@ -766,4 +710,34 @@ export const PossibleFiltersDocument = gql`
 
 export function usePossibleFiltersQuery(options: Omit<Urql.UseQueryArgs<PossibleFiltersQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<PossibleFiltersQuery>({ query: PossibleFiltersDocument, ...options });
+};
+export const DataCubeDimensionGeoShapesDocument = gql`
+    query DataCubeDimensionGeoShapes($cubeIri: String!, $dimensionIri: String!, $sourceType: String!, $sourceUrl: String!, $locale: String!) {
+  dataCubeDimensionGeoShapes(
+    cubeIri: $cubeIri
+    dimensionIri: $dimensionIri
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    locale: $locale
+  )
+}
+    `;
+
+export function useDataCubeDimensionGeoShapesQuery(options: Omit<Urql.UseQueryArgs<DataCubeDimensionGeoShapesQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<DataCubeDimensionGeoShapesQuery>({ query: DataCubeDimensionGeoShapesDocument, ...options });
+};
+export const DataCubeDimensionGeoCoordinatesDocument = gql`
+    query DataCubeDimensionGeoCoordinates($cubeIri: String!, $dimensionIri: String!, $sourceType: String!, $sourceUrl: String!, $locale: String!) {
+  dataCubeDimensionGeoCoordinates(
+    cubeIri: $cubeIri
+    dimensionIri: $dimensionIri
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    locale: $locale
+  )
+}
+    `;
+
+export function useDataCubeDimensionGeoCoordinatesQuery(options: Omit<Urql.UseQueryArgs<DataCubeDimensionGeoCoordinatesQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<DataCubeDimensionGeoCoordinatesQuery>({ query: DataCubeDimensionGeoCoordinatesDocument, ...options });
 };

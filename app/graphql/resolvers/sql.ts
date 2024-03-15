@@ -1,8 +1,14 @@
 import max from "lodash/max";
 import min from "lodash/min";
+import { topology } from "topojson-server";
 
 import { Filters } from "@/configurator";
-import { DimensionValue, Observation } from "@/domain/data";
+import {
+  DimensionValue,
+  GeoProperties,
+  GeoShapes,
+  Observation,
+} from "@/domain/data";
 import { SQL_ENDPOINT } from "@/domain/env";
 import {
   DataCubePublicationStatus,
@@ -135,15 +141,6 @@ export const dataCubeMetadata: NonNullable<
   return {} as any;
 };
 
-export const dataCubeByIri: NonNullable<
-  QueryResolvers["dataCubeByIri"]
-> = async (_, { iri }) => {
-  const result = await fetchSQL({ path: `cubes/${iri}` });
-  const cube = await result.json();
-
-  return parseSQLCube(cube);
-};
-
 export const possibleFilters: NonNullable<
   QueryResolvers["possibleFilters"]
 > = async (_, { iri, filters }) => {
@@ -190,18 +187,23 @@ export const dataCubeDimensions: NonNullable<
   );
 };
 
-export const dataCubeDimensionByIri: NonNullable<
-  DataCubeResolvers["dimensionByIri"]
-> = async ({ cube }, { iri }) => {
-  // FIXME: type of cube should be different for RDF and SQL.
-  const dimensions = cube.dimensions as unknown as SQLDimension[];
-  const dimension = dimensions.find((d) => d.iri === iri);
+export const dataCubeDimensionGeoShapes: NonNullable<
+  QueryResolvers["dataCubeDimensionGeoShapes"]
+> = async () => {
+  return {
+    topology: topology({
+      shapes: {
+        type: "FeatureCollection",
+        features: [],
+      } as GeoJSON.FeatureCollection<GeoJSON.Geometry, GeoProperties>,
+    }) as GeoShapes["topology"],
+  };
+};
 
-  if (dimension) {
-    return parseSQLDimension(cube as unknown as ResolvedDataCube, dimension);
-  }
-
-  return null;
+export const dataCubeDimensionGeoCoordinates: NonNullable<
+  QueryResolvers["dataCubeDimensionGeoCoordinates"]
+> = async () => {
+  return [];
 };
 
 // FIXME: should be a call to API (to be able to implement proper filtering)

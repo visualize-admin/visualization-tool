@@ -1,9 +1,9 @@
 import { geoCentroid } from "d3";
 import keyBy from "lodash/keyBy";
 import React from "react";
-import { mesh } from "topojson-client";
 
-import { prepareTopojson } from "@/charts/map/helpers";
+import { ChartMapProps } from "@/charts/map/chart-map";
+import { prepareFeatureCollection } from "@/charts/map/helpers";
 import {
   useDimensionWithAbbreviations,
   usePlottableData,
@@ -18,15 +18,12 @@ import {
 } from "@/charts/shared/chart-state";
 import { MapConfig, useChartConfigFilters } from "@/configurator";
 import {
-  Dimension,
   GeoData,
   GeoPoint,
-  GeoShapes,
   isGeoCoordinatesDimension,
   isGeoDimension,
   isGeoShapesDimension,
 } from "@/domain/data";
-import { GeoCoordinates } from "@/rdf/query-geo-coordinates";
 
 import { ChartProps } from "../shared/ChartProps";
 
@@ -84,11 +81,7 @@ export type MapStateData = ChartStateData & { features: GeoData };
 
 export const useMapStateData = (
   // FIXME: should we also have aspect ratio here? Consolidate this
-  // FIXME: share these chartProps types
-  chartProps: ChartProps<MapConfig> & {
-    shapes: GeoShapes | undefined;
-    coordinates: GeoCoordinates[] | undefined | null;
-  },
+  chartProps: ChartMapProps,
   variables: MapStateVariables
 ): MapStateData => {
   const { chartConfig, observations, shapes, coordinates } = chartProps;
@@ -106,31 +99,27 @@ export const useMapStateData = (
   });
 
   const areaLayer = React.useMemo(() => {
-    if (!(areaLayerDimension?.iri && shapes)) {
+    const iri = areaLayerDimension?.iri;
+
+    if (!(iri && shapes)) {
       return;
     }
 
     const { topology } = shapes;
-    const topojson = prepareTopojson({
-      dimensionIri: areaLayerDimension.iri,
+    const featureCollection = prepareFeatureCollection({
+      dimensionIri: iri,
       topology,
-      filters: filters[areaLayerDimension.iri],
+      filters: filters[iri],
       observations: data.chartData,
     });
 
     return {
-      shapes: topojson,
-      mesh: mesh(topology, topology.objects.shapes),
+      shapes: featureCollection,
     };
   }, [areaLayerDimension?.iri, shapes, filters, data.chartData]);
 
   const symbolLayer = React.useMemo(() => {
-    if (
-      isGeoCoordinatesDimension(
-        symbolLayerDimension as Dimension | undefined
-      ) &&
-      coordinates
-    ) {
+    if (isGeoCoordinatesDimension(symbolLayerDimension) && coordinates) {
       const points: GeoPoint[] = [];
       const coordsByLabel = keyBy(coordinates, (d) => d.label);
 
@@ -145,7 +134,7 @@ export const useMapStateData = (
           // This would make it possible to not re-create the layer on data change
           // and then, animate the colors.
           points.push({
-            coordinates: [longitude, latitude] as [number, number],
+            coordinates: [longitude, latitude],
             properties: {
               iri,
               label,
@@ -158,28 +147,24 @@ export const useMapStateData = (
       return {
         points,
       };
-    } else if (
-      isGeoShapesDimension(symbolLayerDimension as Dimension | undefined) &&
-      shapes
-    ) {
-      if (!symbolLayerDimension?.iri) {
-        return;
-      }
-
+    } else if (isGeoShapesDimension(symbolLayerDimension) && shapes) {
       const { topology } = shapes;
-      const topojson = prepareTopojson({
-        dimensionIri: symbolLayerDimension.iri,
+      const iri = symbolLayerDimension.iri;
+      const { features } = prepareFeatureCollection({
+        dimensionIri: iri,
         topology,
-        filters: filters[symbolLayerDimension.iri],
+        filters: filters[iri],
         observations: data.chartData,
       });
 
-      const points = topojson.features.map((d) => ({
+      const points = features.map((d) => ({
         ...d,
         coordinates: geoCentroid(d),
       }));
 
-      return { points };
+      return {
+        points,
+      };
     }
   }, [
     symbolLayerDimension,

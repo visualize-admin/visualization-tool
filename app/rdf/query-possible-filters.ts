@@ -1,23 +1,34 @@
+import { CubeDimension } from "rdf-cube-view-query";
 import ParsingClient from "sparql-http-client/ParsingClient";
 import { ResultRow } from "sparql-http-client/ResultParser";
+import { LRUCache } from "typescript-lru-cache";
 
 import { SingleFilters } from "@/config-types";
+import { isDynamicMaxValue } from "@/configurator/components/field";
+import * as ns from "@/rdf/namespace";
+import { loadMaxDimensionValue } from "@/rdf/query-dimension-values";
 
 export const getPossibleFilters = async (
   cubeIri: string,
   options: {
     filters: SingleFilters;
     sparqlClient: ParsingClient;
+    cache?: LRUCache;
   }
 ) => {
-  const { filters, sparqlClient } = options;
+  const { filters, sparqlClient, cache } = options;
   const dimensionIris = Object.keys(filters);
-  const versionedDimensionIris = await getVersionedDimensionIris(
+  const dimensionsMetadata = await getDimensionsMetadata(
     cubeIri,
     dimensionIris,
     sparqlClient
   );
-  const queryFilters = getQueryFilters(filters, versionedDimensionIris);
+  const queryFilters = await getQueryFilters(filters, {
+    cubeIri,
+    dimensionsMetadata,
+    sparqlClient,
+    cache,
+  });
   const query = getQuery(cubeIri, queryFilters);
   const [observation] = await sparqlClient.query.select(query, {
     operation: "postUrlencoded",
@@ -26,57 +37,64 @@ export const getPossibleFilters = async (
   return parsePossibleFilters(observation, queryFilters);
 };
 
-const getVersionedDimensionIris = async (
+export type DimensionMetadata = {
+  iri: string;
+  isVersioned: boolean;
+  isLiteral: boolean;
+};
+
+const getDimensionsMetadata = async (
   cubeIri: string,
   dimensionIris: string[],
   sparqlClient: ParsingClient
-) => {
+): Promise<DimensionMetadata[]> => {
   const DIMENSION_IRI = "dimensionIri";
+  const VERSION = "version";
+  const NODE_KIND = "nodeKind";
   const query = `PREFIX cube: <https://cube.link/>
 PREFIX schema: <http://schema.org/>
 PREFIX sh: <http://www.w3.org/ns/shacl#>
 
-SELECT ?${DIMENSION_IRI} WHERE {
+SELECT ?${DIMENSION_IRI} ?${VERSION} ?${NODE_KIND} WHERE {
   <${cubeIri}> cube:observationConstraint/sh:property ?dimension .
-  ?dimension sh:path ?dimensionIri .
-  ?dimension schema:version ?version .
+  ?dimension sh:path ?${DIMENSION_IRI} .
+  OPTIONAL { ?dimension schema:version ?${VERSION} . }
+  OPTIONAL { ?dimension sh:nodeKind ?${NODE_KIND} . }
   FILTER(?${DIMENSION_IRI} IN (${dimensionIris.map((iri) => `<${iri}>`).join(", ")}))
 }`;
   const results = await sparqlClient.query.select(query, {
     operation: "postUrlencoded",
   });
 
-  return results.map((result) => result[DIMENSION_IRI].value);
-};
-
-const DIMENSION = "dimension";
-
-const getQueryDimension = (i: number, versioned: boolean) => {
-  return `${DIMENSION}${i}${versioned ? "_v" : ""}`;
+  return results.map((result) => ({
+    iri: result[DIMENSION_IRI].value,
+    isVersioned: Boolean(result[VERSION]),
+    isLiteral: result[NODE_KIND]?.value === ns.sh.Literal.value,
+  }));
 };
 
 export const getQuery = (cubeIri: string, queryFilters: QueryFilter[]) => {
   return `PREFIX cube: <https://cube.link/>
 PREFIX schema: <http://schema.org/>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n
-SELECT ${queryFilters.map(({ i, versioned }) => `?${getQueryDimension(i, versioned)}`).join(" ")} WHERE {
+SELECT ${queryFilters.map(({ i, isVersioned }) => `?${getQueryDimension(i, isVersioned)}`).join(" ")} WHERE {
   <${cubeIri}> cube:observationSet/cube:observation ?observation .
 ${queryFilters
   .map(
-    ({ i, iri, versioned }) =>
-      `  ?observation <${iri}> ?${DIMENSION}${i} .${versioned ? `\n  ?${getQueryDimension(i, false)} schema:sameAs ?${getQueryDimension(i, true)} .` : ""}`
+    ({ i, iri, isVersioned, isLiteral }) =>
+      `  ?observation <${iri}> ?${getQueryDimension(i)} .${isVersioned ? `\n  ${unversionDimension(i)} .` : ""}${isLiteral ? `\n  ${stringifyDimension(i, isVersioned)}` : ""}`
   )
   .join("\n")}
 ${queryFilters
-  .map(({ i, value, versioned }) => {
-    const queryDimension = getQueryDimension(i, versioned);
+  .map(({ i, value, isVersioned, isLiteral }) => {
+    const queryDimension = getQueryDimension(i, isVersioned, isLiteral);
     return i === 0
       ? // A value for the first dimension must always be found, as it's a root
         // filter.
-        `  VALUES ?${queryDimension} { <${value}> }`
+        `  VALUES ?${queryDimension} { ${getQueryValue(value, isLiteral)} }`
       : // For other dimensions, we try to find their values, but fall back in
         // case there is none.
-        `  BIND(?${queryDimension} = <${value}> AS ?d${i})`;
+        `  BIND(?${queryDimension} = ${getQueryValue(value, isLiteral)} AS ?d${i})`;
   })
   .join("\n")}
 }
@@ -97,34 +115,77 @@ ${
 LIMIT 1`;
 };
 
+const getQueryDimension = (
+  i: number,
+  versioned?: boolean,
+  literal?: boolean
+) => {
+  return `dimension${i}${versioned ? "_v" : ""}${literal ? "_str" : ""}`;
+};
+
+const unversionDimension = (i: number) => {
+  return `?${getQueryDimension(i)} schema:sameAs ?${getQueryDimension(i, true)}`;
+};
+
+const stringifyDimension = (i: number, isVersioned: boolean) => {
+  return `BIND(STR(?${getQueryDimension(i, isVersioned)}) AS ?${getQueryDimension(i, isVersioned, true)})`;
+};
+
+const getQueryValue = (value: string, isLiteral: boolean) => {
+  return isLiteral ? `"${value}"` : `<${value}>`;
+};
+
 type QueryFilter = {
   i: number;
   iri: string;
   value: string;
-  versioned: boolean;
+  isVersioned: boolean;
+  isLiteral: boolean;
 };
 
-export const getQueryFilters = (
+export const getQueryFilters = async (
   filters: SingleFilters,
-  versionedDimensionIris: string[]
-): QueryFilter[] => {
-  return Object.entries(filters).map(([iri, value], i) => {
-    return {
-      i,
-      iri,
-      value: `${value.value}`,
-      versioned: versionedDimensionIris.includes(iri),
-    };
-  });
+  options: {
+    cubeIri: string;
+    dimensionsMetadata: DimensionMetadata[];
+    sparqlClient: ParsingClient;
+    cache?: LRUCache;
+  }
+): Promise<QueryFilter[]> => {
+  const { cubeIri, dimensionsMetadata, sparqlClient, cache } = options;
+
+  return Promise.all(
+    Object.entries(filters).map(async ([iri, { value }], i) => {
+      const metadata = dimensionsMetadata.find((d) => d.iri === iri);
+
+      return {
+        i,
+        iri,
+        value: isDynamicMaxValue(value)
+          ? await loadMaxDimensionValue(cubeIri, {
+              dimensionIri: iri,
+              cubeDimensions: Object.keys(filters).map((iri) => ({
+                path: { value: iri },
+              })) as any as CubeDimension[],
+              filters,
+              sparqlClient,
+              cache,
+            })
+          : `${value}`,
+        isVersioned: metadata?.isVersioned ?? false,
+        isLiteral: metadata?.isLiteral ?? false,
+      };
+    })
+  );
 };
 
 const parsePossibleFilters = (
   observation: ResultRow,
   queryFilters: QueryFilter[]
 ) => {
-  return queryFilters.map(({ i, iri, versioned }) => ({
+  return queryFilters.map(({ i, iri, isVersioned }) => ({
     type: "single",
     iri,
-    value: observation[getQueryDimension(i, versioned)].value,
+    value: observation[getQueryDimension(i, isVersioned)].value,
   }));
 };

@@ -176,23 +176,18 @@ export const createCubeDimensionValuesLoader =
     filters?: Filters
   ) =>
   async (resolvedDimensions: readonly ResolvedDimension[]) => {
-    const result: DimensionValue[][] = [];
-
-    for (const resolvedDimension of resolvedDimensions) {
-      const dimensionValues = await getCubeDimensionValues(
-        resolvedDimension.cube.term?.value!,
-        {
+    return Promise.all(
+      resolvedDimensions.map(async (resolvedDimension) => {
+        const iri = resolvedDimension.data.iri;
+        return await getCubeDimensionValues(iri, {
           sparqlClient,
           locale: resolvedDimension.locale,
           resolvedDimension,
           filters,
           cache,
-        }
-      );
-      result.push(dimensionValues);
-    }
-
-    return result;
+        });
+      })
+    );
   };
 
 export const getCubeDimensionValues = async (
@@ -309,7 +304,7 @@ export const getCubeDimensionValuesWithMetadata = async ({
 }): Promise<DimensionValue[]> => {
   return await loadDimensionValuesWithMetadata(cube.term?.value!, {
     dimensionIri: dimension.path?.value!,
-    cube,
+    cubeDimensions: cube.dimensions,
     sparqlClient,
     filters,
     locale,
@@ -678,14 +673,13 @@ const buildFilters = async ({
           if (isDynamicMaxValue(filter.value)) {
             const maxValue = await loadMaxDimensionValue(cube.term?.value!, {
               dimensionIri: iri,
-              cube,
+              cubeDimensions: cube.dimensions,
               sparqlClient,
               filters,
-              locale,
               cache,
             });
 
-            return [filterDimension.filter.eq(toRDFValue(maxValue[0]))];
+            return [filterDimension.filter.eq(toRDFValue(maxValue))];
           }
 
           return [filterDimension.filter.eq(toRDFValue(`${filter.value}`))];

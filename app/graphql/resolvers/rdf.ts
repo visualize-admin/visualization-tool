@@ -1,7 +1,9 @@
 import { ascending, descending } from "d3";
 import DataLoader from "dataloader";
 import ParsingClient from "sparql-http-client/ParsingClient";
+import { topology } from "topojson-server";
 import { LRUCache } from "typescript-lru-cache";
+import { parse as parseWKT } from "wellknown";
 
 import { Filters } from "@/config-types";
 import {
@@ -9,28 +11,29 @@ import {
   BaseDimension,
   Dimension,
   DimensionValue,
+  GeoFeature,
+  GeoProperties,
+  GeoShapes,
   Measure,
   TemporalDimension,
   isMeasure,
 } from "@/domain/data";
 import { Loaders } from "@/graphql/context";
 import {
-  DataCubeResolvers,
   QueryResolvers,
   Resolvers,
   SearchCubeResultOrder,
 } from "@/graphql/resolver-types";
 import { resolveDimensionType, resolveMeasureType } from "@/graphql/resolvers";
 import { ResolvedDimension } from "@/graphql/shared-types";
-import { defaultLocale } from "@/locales/locales";
 import { LightCube } from "@/rdf/light-cube";
-import { parseCube } from "@/rdf/parse";
 import {
   createCubeDimensionValuesLoader,
   getCubeDimensions,
   getCubeObservations,
   getLatestCube,
 } from "@/rdf/queries";
+import { RawGeoShape } from "@/rdf/query-geo-shapes";
 import { parseHierarchy, queryHierarchies } from "@/rdf/query-hierarchies";
 import { getPossibleFilters } from "@/rdf/query-possible-filters";
 import { SearchResult, searchCubes as _searchCubes } from "@/rdf/query-search";
@@ -85,26 +88,109 @@ export const searchCubes: NonNullable<QueryResolvers["searchCubes"]> = async (
   return cubes;
 };
 
-export const dataCubeByIri: NonNullable<
-  QueryResolvers["dataCubeByIri"]
-> = async (_, { iri, locale, latest = true }, { setup }, info) => {
-  const { loaders } = await setup(info);
-  const rawCube = await loaders.cube.load(iri);
+export const dataCubeDimensionGeoShapes: NonNullable<
+  QueryResolvers["dataCubeDimensionGeoShapes"]
+> = async (_, { cubeIri, dimensionIri, locale }, { setup }, info) => {
+  const { loaders, sparqlClient, cache } = await setup(info);
+  const dimension = await getResolvedDimension(dimensionIri, {
+    cubeIri,
+    locale,
+    sparqlClient,
+    loaders,
+    cache,
+  });
+  const dimensionValuesLoader = getDimensionValuesLoader(
+    sparqlClient,
+    loaders,
+    cache
+  );
+  // FIXME: type fixed by other PR
+  const dimensionValues: DimensionValue[] =
+    await dimensionValuesLoader.load(dimension);
+  const values = dimensionValues.map((d) => `${d.value}`);
+  const shapes = await Promise.all(
+    values.map((d) => loaders.geoShapes.load(d))
+  );
+  const geoJSONFeatures = shapes
+    .filter(
+      (d): d is Exclude<RawGeoShape, "wktString"> & { wktString: string } =>
+        d.wktString !== undefined
+    )
+    .map((d) => ({
+      type: "Feature",
+      properties: {
+        iri: d.iri,
+        label: d.label,
+      },
+      geometry: parseWKT(d.wktString),
+    })) as GeoFeature[];
+
+  return {
+    topology: topology({
+      shapes: {
+        type: "FeatureCollection",
+        features: geoJSONFeatures,
+      } as GeoJSON.FeatureCollection<GeoJSON.Geometry, GeoProperties>,
+    }) as GeoShapes["topology"],
+  };
+};
+
+export const dataCubeDimensionGeoCoordinates: NonNullable<
+  QueryResolvers["dataCubeDimensionGeoCoordinates"]
+> = async (_, { cubeIri, dimensionIri, locale }, { setup }, info) => {
+  const { loaders, sparqlClient, cache } = await setup(info);
+  const dimension = await getResolvedDimension(dimensionIri, {
+    cubeIri,
+    locale,
+    sparqlClient,
+    loaders,
+    cache,
+  });
+
+  return await loaders.geoCoordinates.load(dimension);
+};
+
+// TODO: could be refactored to not fetch the whole cube shape.
+const getResolvedDimension = async (
+  iri: string,
+  options: {
+    cubeIri: string;
+    locale: string;
+    sparqlClient: ParsingClient;
+    loaders: Loaders;
+    cache: LRUCache | undefined;
+  }
+): Promise<ResolvedDimension> => {
+  const { cubeIri, locale, sparqlClient, loaders, cache } = options;
+  const rawCube = await loaders.cube.load(cubeIri);
 
   if (!rawCube) {
-    throw new Error("Cube not found");
+    throw new Error(`Cube ${cubeIri} not found!`);
   }
 
-  const cube = latest ? await getLatestCube(rawCube) : rawCube;
+  const cube = await getLatestCube(rawCube);
   await cube.fetchShape();
+  const dimensions = await getCubeDimensions({
+    cube,
+    locale,
+    sparqlClient,
+    componentIris: [iri],
+    cache,
+  });
 
-  return parseCube({ cube, locale: locale ?? defaultLocale });
+  const dimension = dimensions.find((d) => iri === d.data.iri);
+
+  if (!dimension) {
+    throw new Error(`Dimension ${iri} not found!`);
+  }
+
+  return dimension;
 };
 
 export const possibleFilters: NonNullable<
   QueryResolvers["possibleFilters"]
 > = async (_, { iri, filters }, { setup }, info) => {
-  const { sparqlClient, loaders } = await setup(info);
+  const { sparqlClient, loaders, cache } = await setup(info);
   const rawCube = await loaders.cube.load(iri);
   // Currently we always default to the latest cube.
   const cube = await getLatestCube(rawCube);
@@ -114,7 +200,7 @@ export const possibleFilters: NonNullable<
     return [];
   }
 
-  return await getPossibleFilters(cubeIri, { filters, sparqlClient });
+  return await getPossibleFilters(cubeIri, { filters, sparqlClient, cache });
 };
 
 export const dataCubeComponents: NonNullable<
@@ -305,29 +391,6 @@ export const dataCubePreview: NonNullable<
   );
 
   return await cube.fetchPreview();
-};
-
-export const dataCubeDimensionByIri: NonNullable<
-  DataCubeResolvers["dimensionByIri"]
-> = async ({ cube, locale }, { iri }, { setup }, info) => {
-  const { sparqlClient, cache } = await setup(info);
-  const dimensions = await getCubeDimensions({
-    cube,
-    locale,
-    sparqlClient,
-    componentIris: [iri],
-    cache,
-  });
-  const dimension = dimensions.find((d) => iri === d.data.iri);
-  if (!dimension) {
-    console.warn(
-      `Available dimensions: \n  ${dimensions
-        .map((d) => `${d.data.name}: ${d.dimension.path}`)
-        .join("\n  ")}`
-    );
-    throw new Error(`Cannot find dimension ${iri}`);
-  }
-  return dimension ?? null;
 };
 
 const getDimensionValuesLoader = (

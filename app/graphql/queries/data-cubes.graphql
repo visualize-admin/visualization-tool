@@ -78,65 +78,6 @@ query SearchCubes(
   }
 }
 
-query GeoCoordinatesByDimensionIri(
-  $dataCubeIri: String!
-  $dimensionIri: String!
-  $sourceType: String!
-  $sourceUrl: String!
-  $locale: String!
-  $latest: Boolean
-) {
-  dataCubeByIri(
-    iri: $dataCubeIri
-    sourceType: $sourceType
-    sourceUrl: $sourceUrl
-    locale: $locale
-    latest: $latest
-  ) {
-    dimensionByIri(
-      iri: $dimensionIri
-      sourceType: $sourceType
-      sourceUrl: $sourceUrl
-    ) {
-      ... on GeoCoordinatesDimension {
-        geoCoordinates {
-          iri
-          label
-          latitude
-          longitude
-        }
-      }
-    }
-  }
-}
-
-query GeoShapesByDimensionIri(
-  $dataCubeIri: String!
-  $dimensionIri: String!
-  $sourceType: String!
-  $sourceUrl: String!
-  $locale: String!
-  $latest: Boolean
-) {
-  dataCubeByIri(
-    iri: $dataCubeIri
-    sourceType: $sourceType
-    sourceUrl: $sourceUrl
-    locale: $locale
-    latest: $latest
-  ) {
-    dimensionByIri(
-      iri: $dimensionIri
-      sourceType: $sourceType
-      sourceUrl: $sourceUrl
-    ) {
-      ... on GeoShapesDimension {
-        geoShapes
-      }
-    }
-  }
-}
-
 query PossibleFilters(
   $iri: String!
   $sourceType: String!
@@ -153,4 +94,36 @@ query PossibleFilters(
     type
     value
   }
+}
+
+query DataCubeDimensionGeoShapes(
+  $cubeIri: String!
+  $dimensionIri: String!
+  $sourceType: String!
+  $sourceUrl: String!
+  $locale: String!
+) {
+  dataCubeDimensionGeoShapes(
+    cubeIri: $cubeIri
+    dimensionIri: $dimensionIri
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    locale: $locale
+  )
+}
+
+query DataCubeDimensionGeoCoordinates(
+  $cubeIri: String!
+  $dimensionIri: String!
+  $sourceType: String!
+  $sourceUrl: String!
+  $locale: String!
+) {
+  dataCubeDimensionGeoCoordinates(
+    cubeIri: $cubeIri
+    dimensionIri: $dimensionIri
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    locale: $locale
+  )
 }

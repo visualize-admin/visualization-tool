@@ -1,10 +1,7 @@
 import { GraphQLScalarType } from "graphql";
 import { GraphQLJSONObject } from "graphql-type-json";
-import { topology } from "topojson-server";
-import { parse as parseWKT } from "wellknown";
 
 import { DimensionType, MeasureType } from "@/configurator";
-import { GeoFeature, GeoProperties, GeoShapes } from "@/domain/data";
 import {
   DataCubeResolvers,
   QueryResolvers,
@@ -14,7 +11,6 @@ import {
 import * as RDF from "@/graphql/resolvers/rdf";
 import * as SQL from "@/graphql/resolvers/sql";
 import { ResolvedDimension } from "@/graphql/shared-types";
-import { RawGeoShape } from "@/rdf/query-geo-shapes";
 import { getSparqlEditorUrl } from "@/rdf/sparql-utils";
 
 const getSource = (dataSourceType: string) => {
@@ -42,13 +38,22 @@ export const Query: QueryResolvers = {
     const source = getSource(args.sourceType);
     return await source.dataCubePreview(parent, args, context, info);
   },
-  dataCubeByIri: async (parent, args, context, info) => {
-    const source = getSource(args.sourceType);
-    return await source.dataCubeByIri(parent, args, context, info);
-  },
   possibleFilters: async (parent, args, context, info) => {
     const source = getSource(args.sourceType);
     return await source.possibleFilters(parent, args, context, info);
+  },
+  dataCubeDimensionGeoShapes: async (parent, args, context, info) => {
+    const source = getSource(args.sourceType);
+    return await source.dataCubeDimensionGeoShapes(parent, args, context, info);
+  },
+  dataCubeDimensionGeoCoordinates: async (parent, args, context, info) => {
+    const source = getSource(args.sourceType);
+    return await source.dataCubeDimensionGeoCoordinates(
+      parent,
+      args,
+      context,
+      info
+    );
   },
 };
 
@@ -69,10 +74,6 @@ const DataCube: DataCubeResolvers = {
   datePublished: ({ data: { datePublished } }) => datePublished ?? null,
   themes: ({ data: { themes } }) => themes ?? [],
   creator: ({ data: { creator } }) => creator ?? null,
-  dimensionByIri: async (parent, args, context, info) => {
-    const source = getSource(args.sourceType);
-    return source.dataCubeDimensionByIri(parent, args, context, info);
-  },
 };
 
 export const resolveDimensionType = (
@@ -196,44 +197,9 @@ export const resolvers: Resolvers = {
   },
   GeoCoordinatesDimension: {
     ...mkDimensionResolvers("GeoCoordinatesDimension"),
-    geoCoordinates: async (parent, _, { setup }, info) => {
-      const { loaders } = await setup(info);
-      return await loaders.geoCoordinates.load(parent);
-    },
   },
   GeoShapesDimension: {
     ...mkDimensionResolvers("GeoShapesDimension"),
-    geoShapes: async (parent, _, { setup }, info) => {
-      const { loaders } = await setup(info);
-      const dimValues = await loaders.dimensionValues.load(parent);
-      const dimIris = dimValues.map((d) => `${d.value}`) as string[];
-      const shapes = (await loaders.geoShapes.loadMany(
-        dimIris
-      )) as RawGeoShape[];
-      const geoJSONFeatures = shapes
-        .filter(
-          (d): d is Exclude<RawGeoShape, "wktString"> & { wktString: string } =>
-            d.wktString !== undefined
-        )
-        .map((d) => ({
-          type: "Feature",
-          properties: {
-            iri: d.iri,
-            label: d.label,
-          },
-          geometry: parseWKT(d.wktString),
-        })) as GeoFeature[];
-      const resolved: GeoShapes = {
-        topology: topology({
-          shapes: {
-            type: "FeatureCollection",
-            features: geoJSONFeatures,
-          } as GeoJSON.FeatureCollection<GeoJSON.Geometry, GeoProperties>,
-        }) as GeoShapes["topology"],
-      };
-
-      return resolved;
-    },
   },
   Measure: {
     __resolveType(dimension) {
