@@ -2,7 +2,6 @@ import type { StorybookConfig } from "@storybook/nextjs";
 import { dirname, join, resolve } from "path";
 
 // @ts-ignore
-import remarkGfm from "remark-gfm";
 
 /**
  * This function is used to resolve the absolute path of a package.
@@ -18,17 +17,6 @@ const config: StorybookConfig = {
     getAbsolutePath("@storybook/addon-links"),
     getAbsolutePath("@storybook/addon-essentials"),
     getAbsolutePath("@storybook/addon-interactions"),
-    {
-      name: "@storybook/addon-docs",
-      options: {
-        mdxPluginOptions: {
-          mdxCompileOptions: {
-            // Necessary to support tables
-            remarkPlugins: [remarkGfm],
-          },
-        },
-      },
-    },
   ],
   framework: {
     name: getAbsolutePath("@storybook/nextjs"),
