@@ -14,7 +14,6 @@ import { isDynamicMaxValue } from "@/configurator/components/field";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { DimensionValue, parseObservationValue } from "@/domain/data";
 import { pragmas } from "@/rdf/create-source";
-import { ExtendedCube } from "@/rdf/extended-cube";
 
 import * as ns from "./namespace";
 import { parseDimensionDatatype } from "./parse";
@@ -75,7 +74,7 @@ const getFilterOrder = (filter: FilterValue) => {
 
 type LoadDimensionValuesProps = {
   dimensionIri: string;
-  cube: ExtendedCube;
+  cubeDimensions: CubeDimension[];
   sparqlClient: ParsingClient;
   filters?: Filters;
   locale: string;
@@ -92,10 +91,15 @@ export async function loadDimensionValuesWithMetadata(
   cubeIri: string,
   props: LoadDimensionValuesProps
 ): Promise<DimensionValue[]> {
-  const { dimensionIri, cube, sparqlClient, filters, locale, cache } = props;
+  const { dimensionIri, cubeDimensions, sparqlClient, filters, locale, cache } =
+    props;
   const filterList = getFiltersList(filters, dimensionIri);
-  const queryFilters = getQueryFilters(filterList, cube, dimensionIri);
-  const dimension = cube.dimensions.find((d) => d.path?.value === dimensionIri);
+  const queryFilters = getQueryFilters(
+    filterList,
+    cubeDimensions,
+    dimensionIri
+  );
+  const dimension = cubeDimensions.find((d) => d.path?.value === dimensionIri);
 
   if (!dimension) {
     throw new Error(`Dimension not found: ${dimensionIri}`);
@@ -217,7 +221,7 @@ export async function loadMaxDimensionValue(
   cubeIri: string,
   props: LoadDimensionValuesProps
 ) {
-  const { dimensionIri, cube, sparqlClient, filters, cache } = props;
+  const { dimensionIri, cubeDimensions, sparqlClient, filters, cache } = props;
   const filterList = getFiltersList(filters, dimensionIri);
   // The following query works both for numeric, date and ordinal dimensions
   const query = SELECT`?value`.WHERE`
@@ -225,7 +229,7 @@ export async function loadMaxDimensionValue(
 ?observation <${dimensionIri}> ?value .
 OPTIONAL { ?value <https://www.w3.org/TR/owl-time/hasEnd> ?hasEnd . }
 OPTIONAL { ?value ${ns.schema.position} ?position . }
-${getQueryFilters(filterList, cube, dimensionIri)}`
+${getQueryFilters(filterList, cubeDimensions, dimensionIri)}`
     .ORDER()
     .BY(RDF.variable("hasEnd"), true)
     .THEN.BY(RDF.variable("value"), true)
@@ -265,7 +269,7 @@ const getFiltersList = (filters: Filters | undefined, dimensionIri: string) => {
 
 export const getQueryFilters = (
   filtersList: ReturnType<typeof getFiltersList>,
-  cube: ExtendedCube,
+  dimensions: CubeDimension[],
   dimensionIri: string
 ) => {
   if (filtersList.length === 0) {
@@ -274,7 +278,7 @@ export const getQueryFilters = (
 
   return filtersList
     .map(([iri, value], i) => {
-      const dimension = cube.dimensions.find((d) => d.path?.value === iri);
+      const dimension = dimensions.find((d) => d.path?.value === iri);
 
       // Ignore the current dimension
       if (!dimension || dimensionIri === iri) {

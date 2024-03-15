@@ -304,7 +304,7 @@ export const getCubeDimensionValuesWithMetadata = async ({
 }): Promise<DimensionValue[]> => {
   return await loadDimensionValuesWithMetadata(cube.term?.value!, {
     dimensionIri: dimension.path?.value!,
-    cube,
+    cubeDimensions: cube.dimensions,
     sparqlClient,
     filters,
     locale,
@@ -673,7 +673,7 @@ const buildFilters = async ({
           if (isDynamicMaxValue(filter.value)) {
             const maxValue = await loadMaxDimensionValue(cube.term?.value!, {
               dimensionIri: iri,
-              cube,
+              cubeDimensions: cube.dimensions,
               sparqlClient,
               filters,
               locale,
