@@ -58,8 +58,7 @@ const getQueryDimension = (i: number, versioned: boolean) => {
 export const getQuery = (cubeIri: string, queryFilters: QueryFilter[]) => {
   return `PREFIX cube: <https://cube.link/>
 PREFIX schema: <http://schema.org/>
-PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
-
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n
 SELECT ${queryFilters.map(({ i, versioned }) => `?${getQueryDimension(i, versioned)}`).join(" ")} WHERE {
   <${cubeIri}> cube:observationSet/cube:observation ?observation .
 ${queryFilters
