@@ -9,8 +9,13 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
+Nothing yet.
+
+# [3.27.1] - 2024-03-15
+
 - Performance
   - Hierarchies are now fetched in parallel with dimension values, rather than waiting for them to be fetched in advance
+  - Vastly optimized the `PossibleFilters` query
 - Maintenance
   - Increased the number of Playwright workers to 4
 
@@ -29,8 +34,6 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
   - Currently selected locale is now persisted when using actions in user profile page (view chart, edit, open, share)
   - Initial zoom map is now correctly (and consistently) applied again
   - Optional filters can be added again
-- Performance
-  - Vastly optimized the `PossibleFilters` query
 
 # [3.26.3] - 2024-03-05
 
