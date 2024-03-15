@@ -1,0 +1,30 @@
+import { Stack } from "@mui/material";
+import { Meta } from "@storybook/blocks";
+
+import * as HintStories from "./hint.stories";
+
+<Meta of={HintStories} />
+
+
+## How to use
+
+
+Hints are variants of the \`Box\` components. As a convenience, they are also available as components with semantic names.
+
+```jsx
+import { Box } from "@mui/material"
+
+<Box variant="error">
+  An error occurred!
+</Box>
+```
+
+is equivalent to
+
+```jsx
+import { Error } from "./components/hint"
+
+<Error>
+  An error occurred!
+</Error>
+```

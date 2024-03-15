@@ -8,7 +8,6 @@ import { ParsingClient } from "sparql-http-client/ParsingClient";
 import { LRUCache } from "typescript-lru-cache";
 
 import { FilterValueMulti, Filters } from "@/config-types";
-import { isDynamicMaxValue } from "@/configurator/components/field";
 import {
   DimensionValue,
   Observation,
@@ -16,6 +15,7 @@ import {
   parseObservationValue,
   shouldLoadMinMaxValues,
 } from "@/domain/data";
+import { isDynamicMaxValue } from "@/domain/max-value";
 import { PromiseValue, truthy } from "@/domain/types";
 import {
   ResolvedDimension,

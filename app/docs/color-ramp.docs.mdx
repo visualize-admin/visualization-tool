@@ -1,0 +1,35 @@
+import { Box } from "@mui/material";
+
+import { Canvas, Meta } from '@storybook/blocks';
+import * as ColorRampStories from "./color-ramp.stories";
+
+<Meta of={ColorRampStories} />
+
+> \<ColorRamp\> is able to display all values from a color interpolator (currently suited to the ones from D3).
+
+### Continuous
+
+<Canvas of={ColorRampStories.Continuous} />
+
+### Discrete
+
+<Canvas of={ColorRampStories.Discrete} />
+
+### Custom width and height
+
+<Canvas of={ColorRampStories.Custom} />
+
+
+### Disabled
+
+<Canvas of={ColorRampStories.Disabled} />
+
+## ColorRampField
+
+> \<ColorRampField\> is a custom select element which can be used to display and select several
+> palette categories. You need to use it inside of \<ConfiguratorStateProvider\> so it can access and
+> update the state.
+
+```
+<ColorRampField field={field} path={path} nbClass={nbClass} disabled={disabled} />
+```

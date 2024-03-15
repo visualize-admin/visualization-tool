@@ -1,0 +1,40 @@
+import { markdown, ReactSpecimen } from "catalog";
+import keyBy from "lodash/keyBy";
+
+import { Columns, ErrorWhiskers } from "@/charts/column/columns";
+import { ColumnChart } from "@/charts/column/columns-state";
+import { AxisHeightLinear } from "@/charts/shared/axis-height-linear";
+import {
+  AxisWidthBand,
+  AxisWidthBandDomain,
+} from "@/charts/shared/axis-width-band";
+import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
+import { Tooltip } from "@/charts/shared/interaction/tooltip";
+import { ColumnConfig } from "@/configurator";
+import { ConfiguratorStateProvider } from "@/configurator/configurator-state";
+import { Dimension, Measure } from "@/domain/data";
+import { InteractiveFiltersProvider } from "@/stores/interactive-filters";
+import {
+  CHART_CONFIG_VERSION,
+  CONFIGURATOR_STATE_VERSION,
+} from "@/utils/chart-config/versioning";
+import { columnDimensions, columnMeasures, columnObservations } from "./columns.mock";
+
+import { Canvas, Meta } from '@storybook/blocks';
+import * as ChartStories from './charts.stories';
+import * as LineStories from './lines.stories';
+
+<Meta of={ChartStories} />
+
+## Columns
+
+<Canvas of={ChartStories.Columns} />
+
+
+## Scatterplot
+
+<Canvas of={ChartStories.Scatterplot} />
+
+## Line
+
+<Canvas of={LineStories.Line} />

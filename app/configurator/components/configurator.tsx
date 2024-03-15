@@ -1,6 +1,6 @@
 import { Trans } from "@lingui/macro";
 import { SxProps, Typography } from "@mui/material";
-import Box from "@mui/material/Box";
+import { Box } from "@mui/material";
 import Button, { ButtonProps } from "@mui/material/Button";
 import { useRouter } from "next/router";
 import React from "react";

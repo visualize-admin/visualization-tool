@@ -1,0 +1,60 @@
+## Theming
+
+> Theme: definition of attributes that define the look-and-feel of an application. Most often this is the concrete application of corporate brand guidelines.
+
+Basic theming attributes:
+
+- Colors for User Interface elements
+- Fonts and typography
+- Logos and other brand assets
+
+Additional attributes:
+
+- Responsive CSS breakpoints
+- Spacing
+- Font sizes
+
+The technical implementation of the Visualization Tool is based on https://styled-system.com which in turn implements the concepts described in https://system-ui.com/theme. This ensures a flexible and interoperable theming approach which integrates well with the codebase.
+
+## Theming the Visualization Tool
+
+The Visualization Tool will initially only need to support one theme which implements the Federal brand guidelines.
+
+The code is structured in a way that will allow for future themes to be added with relatively low effort. More concretely, the theme definition files will be separated from functional code, so the theme can be chosen at instance configuration time and different (sub-)domains can have different themes.
+
+For example:
+
+- visualize.admin.ch → uses the `federal` theme
+- some-other-domain.ch → uses `dark` theme
+
+## Theming Charts
+
+By default, published charts will use the same theme as the Visualization Tool instance they were created with.
+
+There may be a need to apply a different theme (fonts, colors) to charts. For example, BAFU could have their own color palettes that adhere to BAFU brand guidelines.
+
+
+
+> Chart-specific theming will not be implemented in the initial version of the Visualization Tool.
+
+
+### Option 1: User-selectable theme during chart creation.
+
+- Advantage: Flexibility and control for users
+- Disadvantage: As there is no way to authenticate users, anyone could create charts with e.g. a BAFU theme
+
+### Option 2: Applying a specific theme based on where charts are embedded.
+
+For example: when a chart is embedded anywhere under the bafu.admin.ch domain, the BAFU theme will be applied automatically
+
+- Advantage: No misuse possible by unauthorized users
+- Disadvantage: No way to “see” the exact output during the chart creation process (unless there is a way to preview – but not select – the BAFU theme).
+- Disadvantage: No custom theme for the non-embedded stand-alone view of a chart.
+
+### Option 3: User-selectable individual theme attributes (NOT RECOMMENDED)
+
+For example: selection of a specific font and individual colors
+
+- Advantage: Complete freedom for users
+- Disadvantage: This amount of flexibility may be undesired because consistency and accessibility guidelines can’t be guaranteed.
+- Disadvantage: Tedious to apply for the user. Not easy to apply consistent branding to multiple charts.

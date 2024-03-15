@@ -1,0 +1,57 @@
+import { Canvas, Meta } from '@storybook/blocks'
+import { RulerContent } from '../charts/shared/interaction/ruler'
+import { TooltipBox } from '../charts/shared/interaction/tooltip-box'
+import { TooltipSingle } from '../charts/shared/interaction/tooltip-content'
+import * as TooltipStories from './tooltip.stories'
+import { ReactSpecimen } from './catalog'
+
+<Meta of={TooltipStories} />
+
+# Tooltips
+
+> Tooltips are used to display information on user interaction with a visualization. They can be placed along 2 axis, vertical and horizontal, to define the placement that fits the viewport best.
+
+### TooltipBox
+
+<Canvas of={TooltipStories.TooltipBox} />
+
+In practice, the placement of tooltips is automatically calculated in the chart state, according to the mouse position and the anchor data point, with the constraint that tooltips never overflow the chart viewport.
+
+The \`TooltipBox\` is only a container that defines the placement of the tooltip. Any component can be displayed within this container.
+
+### Tooltip Content
+
+There are two types of tooltips:
+- \`single\`: when there is only one data point to display, in a column chart or a single line chart for instance,
+- \`multiple\`: when several values must be displayed, in a stacked columns chart or an area chart for instance.
+
+<Canvas of={TooltipStories.TooltipContent} />
+
+
+# Ruler
+
+> A ruler is used to highlight multiple values aligned on the horizontal axis. Tooltip and highlight dots are optional.
+
+<Canvas of={TooltipStories.Ruler} />
+
+#### How to use
+
+```jsx
+<TooltipBox
+  x={100}
+  y={100}
+  placement={{
+    x: "left" | "center" | "right" ,
+    y: "top" | "middle" | "bottom"
+  }}
+  margins={{ top: 10, right: 10, bottom: 10, left: 10 }}
+>
+
+  <TooltipSingle
+    xValue="Jahr 2017"
+    segment="10'987'372"
+    yValue="Alpen"
+  />
+
+</TooltipBox>
+```

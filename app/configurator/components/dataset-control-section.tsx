@@ -26,7 +26,7 @@ import SvgIcTrash from "@/icons/components/IcTrash";
 import { useLocale } from "@/locales/use-locale";
 
 import { DatasetDialog } from "./add-dataset-dialog";
-import { FiltersBadge } from "./chart-configurator";
+import { FiltersBadge } from "./filters-badge";
 
 export const DatasetsControlSection = () => {
   const [state, dispatch] = useConfiguratorState(isConfiguring);

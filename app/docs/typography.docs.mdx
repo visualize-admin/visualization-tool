@@ -1,0 +1,28 @@
+import { Typography } from "@mui/material";
+import { markdown, TableSpecimen } from "catalog";
+import * as TypographyStories from "./typography.stories";
+import { Canvas, Meta } from '@storybook/blocks';
+
+<Meta of={TypographyStories} />
+
+
+> Text elements are based on MUI `<Typography />` component, with the variants described
+> in the table below.
+
+## Accessibility
+
+The variants only refer to styles, they don't generate HTML semantics. For accessibility, always make sure that the headings hierarchy is correct. You can use \`rebass\`'s \`as\` property to explicitly specify the tag to use.
+
+Example of a heading \`h1\` with the style \`heading1\`.
+
+```jsx
+import { Text } from "@mui/material"
+
+<Typography  variant="h1" component="h1" >
+ Heading 1
+</Typography>
+```
+
+## Variants
+
+<Canvas of={TypographyStories.Variants} />
