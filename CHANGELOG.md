@@ -11,6 +11,8 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 - Performance
   - Hierarchies are now fetched in parallel with dimension values, rather than waiting for them to be fetched in advance
+- Maintenance
+  - Increased the number of Playwright workers to 4
 
 # [3.27.0] - 2024-03-12
 
