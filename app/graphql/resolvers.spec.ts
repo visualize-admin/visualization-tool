@@ -110,7 +110,7 @@ SELECT ?dimension0_v ?dimension1 WHERE {
   VALUES ?dimension0_v { <val1> }
   BIND(?dimension1 = <val2> AS ?d1)
 }
-
+ORDER BY DESC(?d1)
 LIMIT 1`
     ));
 

@@ -81,9 +81,8 @@ ${queryFilters
   .join("\n")}
 }
 ${
-  // Ordering by the dimensions is only necessary if there is more than one
-  // `d` variable.
-  queryFilters.length > 2
+  // Ordering by the dimensions is only necessary if there at least one `d` variable.
+  queryFilters.length > 1
     ? `ORDER BY ${
         // Order by the boolean `d` variables, so that the first result is the one
         // with the most matching dimensions, keeping the order of the dimensions
