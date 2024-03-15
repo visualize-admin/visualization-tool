@@ -67,21 +67,22 @@ export const CheckboxStory = {
 export { CheckboxStory as Checkbox };
 
 const RadioStory = () => {
+  const [state, setState] = useState("Line");
   return (
     <Stack direction="column" gap={2}>
       <Radio
         label={"Scatterplot"}
         name={"Scatterplot"}
         value={"Scatterplot"}
-        checked={false}
-        onChange={() => {}}
+        checked={state === "Scatterplot"}
+        onChange={() => setState("Scatterplot")}
       />
       <Radio
-        label={"Scatterplot"}
-        name={"Scatterplot"}
-        value={"Scatterplot"}
-        checked={true}
-        onChange={() => {}}
+        label={"Line"}
+        name={"Line"}
+        value={"Line"}
+        checked={state === "Line"}
+        onChange={() => setState("Line")}
       />
     </Stack>
   );
