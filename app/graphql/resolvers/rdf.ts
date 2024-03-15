@@ -113,7 +113,7 @@ export const possibleFilters: NonNullable<
     return [];
   }
 
-  return getPossibleFilters(cubeIri, { filters, sparqlClient });
+  return await getPossibleFilters(cubeIri, { filters, sparqlClient });
 };
 
 export const dataCubeComponents: NonNullable<
