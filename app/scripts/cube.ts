@@ -22,6 +22,7 @@ import {
 
 config();
 
+// @ts-ignore
 global.fetch = fetch;
 
 type Args<T> = { client: Client; report: (x: any) => void } & T;
@@ -232,6 +233,7 @@ const main = async () => {
     : console.log;
   args.client = new Client({
     url: `http://localhost:3000${GRAPHQL_ENDPOINT}`,
+    // @ts-ignore
     fetch: fetch,
   });
   args.handler(args);
