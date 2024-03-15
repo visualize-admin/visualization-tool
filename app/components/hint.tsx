@@ -22,8 +22,7 @@ export const Error = ({ children }: { children: ReactNode }) => (
     sx={{
       justifyContent: "center",
       alignItems: "center",
-      color: "error",
-      borderColor: "error",
+      color: "error.main",
     }}
   >
     {children}

@@ -1,5 +1,3 @@
-import { Stack } from "@mui/material";
-
 import {
   ChartUnexpectedError,
   Error,
@@ -30,11 +28,16 @@ export const ErrorMessage = () => (
 
 export const SuccessMessage = () => <PublishSuccess />;
 
-export const SpecificErrors = () => (
-  <Stack spacing={2}>
-    <OnlyNegativeDataHint />
-    <ChartUnexpectedError />
-    <LoadingGeoDimensionsError />
-    <LoadingDataError message="The cube does not exist." />
-  </Stack>
+const OnlyNegativeDataHintStory = () => <OnlyNegativeDataHint />;
+const ChartUnexpectedErrorStory = () => <ChartUnexpectedError />;
+const LoadingGeoDimensionsErrorStory = () => <LoadingGeoDimensionsError />;
+const LoadingDataErrorStory = () => (
+  <LoadingDataError message="The cube does not exist." />
 );
+
+export {
+  ChartUnexpectedErrorStory as ChartUnexpectedError,
+  LoadingDataErrorStory as LoadingDataError,
+  LoadingGeoDimensionsErrorStory as LoadingGeoDimensionsError,
+  OnlyNegativeDataHintStory as OnlyNegativeDataHint,
+};
