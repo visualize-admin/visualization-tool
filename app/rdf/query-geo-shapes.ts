@@ -87,15 +87,14 @@ export const createGeoShapesLoader =
 
         ?iri ${ns.geo.hasGeometry} ?geometry .`.prologue`${pragmas}`;
 
-    let rawGeometries: RawGeometry[] = [];
-
-    try {
-      rawGeometries = (await geometriesQuery.execute(sparqlClient.query, {
+    const rawGeometries = (await geometriesQuery
+      .execute(sparqlClient.query, {
         operation: "postUrlencoded",
+      })
+      .catch((e) => {
+        console.error(e);
+        return [];
       })) as RawGeometry[];
-    } catch (e) {
-      console.error(e);
-    }
 
     const groupedGeometries = groupBy(
       rawGeometries.map((d) => {
