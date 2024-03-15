@@ -12,14 +12,14 @@ import { DimensionValue, HierarchyValue, parseTerm } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { ResolvedDimension } from "@/graphql/shared-types";
 import { ExtendedCube } from "@/rdf/extended-cube";
-
-import * as ns from "./namespace";
+import * as ns from "@/rdf/namespace";
 import {
   getOptionsFromTree,
   mapTree,
   pruneTree,
   regroupTrees,
-} from "./tree-utils";
+  sortHierarchy,
+} from "@/rdf/tree-utils";
 
 const getName = (pointer: AnyPointer, language: string) => {
   const name = pointer.out(ns.schema.name, { language })?.value;
@@ -172,5 +172,5 @@ export const parseHierarchy = (
       children: [],
     }));
 
-  return [...prunedTree, ...additionalTreeValues];
+  return sortHierarchy([...prunedTree, ...additionalTreeValues]);
 };

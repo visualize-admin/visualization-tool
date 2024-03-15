@@ -8,6 +8,7 @@ import { HierarchyValue } from '../domain/data';
 import { Observation } from '../domain/data';
 import { RawObservation } from '../domain/data';
 import { SearchCube } from '../domain/data';
+import { SingleFilters } from '../configurator';
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
 import { ResolvedDataCube, ResolvedObservationsQuery, ResolvedMeasure, ResolvedDimension } from './shared-types';
 import { VisualizeGraphQLContext } from './context';
@@ -35,6 +36,7 @@ export type Scalars = {
   Observation: Observation;
   RawObservation: RawObservation;
   SearchCube: SearchCube;
+  SingleFilters: SingleFilters;
   ValueIdentifier: any;
   ValuePosition: any;
 };
@@ -388,7 +390,7 @@ export type QueryPossibleFiltersArgs = {
   iri: Scalars['String'];
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
-  filters: Scalars['Filters'];
+  filters: Scalars['SingleFilters'];
 };
 
 
@@ -443,6 +445,7 @@ export enum SearchCubeResultOrder {
   TitleAsc = 'TITLE_ASC',
   CreatedDesc = 'CREATED_DESC'
 }
+
 
 export type StandardErrorDimension = Dimension & {
   __typename?: 'StandardErrorDimension';
@@ -635,6 +638,7 @@ export type ResolversTypes = ResolversObject<{
   SearchCubeFilterType: SearchCubeFilterType;
   SearchCubeResult: ResolverTypeWrapper<SearchCubeResult>;
   SearchCubeResultOrder: SearchCubeResultOrder;
+  SingleFilters: ResolverTypeWrapper<Scalars['SingleFilters']>;
   StandardErrorDimension: ResolverTypeWrapper<ResolvedDimension>;
   TemporalDimension: ResolverTypeWrapper<ResolvedDimension>;
   TemporalOrdinalDimension: ResolverTypeWrapper<ResolvedDimension>;
@@ -683,6 +687,7 @@ export type ResolversParentTypes = ResolversObject<{
   SearchCube: Scalars['SearchCube'];
   SearchCubeFilter: SearchCubeFilter;
   SearchCubeResult: SearchCubeResult;
+  SingleFilters: Scalars['SingleFilters'];
   StandardErrorDimension: ResolvedDimension;
   TemporalDimension: ResolvedDimension;
   TemporalOrdinalDimension: ResolvedDimension;
@@ -933,6 +938,10 @@ export type SearchCubeResultResolvers<ContextType = VisualizeGraphQLContext, Par
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export interface SingleFiltersScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['SingleFilters'], any> {
+  name: 'SingleFilters';
+}
+
 export type StandardErrorDimensionResolvers<ContextType = VisualizeGraphQLContext, ParentType extends ResolversParentTypes['StandardErrorDimension'] = ResolversParentTypes['StandardErrorDimension']> = ResolversObject<{
   iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   label?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -1018,6 +1027,7 @@ export type Resolvers<ContextType = VisualizeGraphQLContext> = ResolversObject<{
   RelatedDimension?: RelatedDimensionResolvers<ContextType>;
   SearchCube?: GraphQLScalarType;
   SearchCubeResult?: SearchCubeResultResolvers<ContextType>;
+  SingleFilters?: GraphQLScalarType;
   StandardErrorDimension?: StandardErrorDimensionResolvers<ContextType>;
   TemporalDimension?: TemporalDimensionResolvers<ContextType>;
   TemporalOrdinalDimension?: TemporalOrdinalDimensionResolvers<ContextType>;

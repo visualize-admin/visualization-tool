@@ -3,7 +3,7 @@ import DataLoader from "dataloader";
 import ParsingClient from "sparql-http-client/ParsingClient";
 import { LRUCache } from "typescript-lru-cache";
 
-import { Filters } from "@/configurator";
+import { Filters } from "@/config-types";
 import {
   BaseComponent,
   BaseDimension,
@@ -11,6 +11,7 @@ import {
   DimensionValue,
   Measure,
   TemporalDimension,
+  isMeasure,
 } from "@/domain/data";
 import { Loaders } from "@/graphql/context";
 import {
@@ -30,8 +31,8 @@ import {
   getCubeObservations,
   getLatestCube,
 } from "@/rdf/queries";
-import { unversionObservation } from "@/rdf/query-dimension-values";
 import { parseHierarchy, queryHierarchies } from "@/rdf/query-hierarchies";
+import { getPossibleFilters } from "@/rdf/query-possible-filters";
 import { SearchResult, searchCubes as _searchCubes } from "@/rdf/query-search";
 import { getSparqlEditorUrl } from "@/rdf/sparql-utils";
 
@@ -103,49 +104,17 @@ export const dataCubeByIri: NonNullable<
 export const possibleFilters: NonNullable<
   QueryResolvers["possibleFilters"]
 > = async (_, { iri, filters }, { setup }, info) => {
-  const { sparqlClient, loaders, cache } = await setup(info);
+  const { sparqlClient, loaders } = await setup(info);
   const rawCube = await loaders.cube.load(iri);
   // Currently we always default to the latest cube.
   const cube = await getLatestCube(rawCube);
-  await cube.fetchShape();
+  const cubeIri = cube.term?.value;
 
-  if (!cube) {
+  if (!cubeIri) {
     return [];
   }
 
-  const nbFilters = Object.keys(filters).length;
-  for (let i = nbFilters; i > 0; i--) {
-    const queryFilters = Object.fromEntries(
-      Object.entries(filters).slice(0, i)
-    );
-    const { observations: obs } = await getCubeObservations({
-      cube,
-      locale: "en",
-      sparqlClient,
-      filters: queryFilters,
-      limit: 1,
-      raw: true,
-      cache,
-    });
-
-    if (obs.length === 0) {
-      continue;
-    }
-
-    const unversioned = await unversionObservation({
-      observation: obs[0],
-      cube,
-      sparqlClient,
-    });
-
-    return Object.keys(filters).map((f) => ({
-      iri: f,
-      type: "single",
-      value: unversioned[f],
-    }));
-  }
-
-  return [];
+  return await getPossibleFilters(cubeIri, { filters, sparqlClient });
 };
 
 export const dataCubeComponents: NonNullable<
@@ -170,11 +139,7 @@ export const dataCubeComponents: NonNullable<
     componentIris,
     cache,
   });
-
-  const dimensions: Dimension[] = [];
-  const measures: Measure[] = [];
-
-  await Promise.all(
+  const components = await Promise.all(
     rawComponents.map(async (component) => {
       const { data } = component;
       const dimensionValuesLoader = getDimensionValuesLoader(
@@ -217,7 +182,7 @@ export const dataCubeComponents: NonNullable<
       };
 
       if (data.isMeasureDimension) {
-        const result: Measure = {
+        const measure: Measure = {
           __typename: resolveMeasureType(component.data.scaleType),
           isCurrency: data.isCurrency,
           isDecimal: data.isDecimal,
@@ -225,8 +190,7 @@ export const dataCubeComponents: NonNullable<
           resolution: data.resolution,
           ...baseComponent,
         };
-
-        measures.push(result);
+        return measure;
       } else {
         const { dataKind, scaleType, related } = component.data;
         const dimensionType = resolveDimensionType(
@@ -261,22 +225,27 @@ export const dataCubeComponents: NonNullable<
               timeUnit: data.timeUnit,
               ...baseDimension,
             };
-            dimensions.push(dimension);
-            break;
+            return dimension;
           }
           default: {
             const dimension: Exclude<Dimension, TemporalDimension> = {
               __typename: dimensionType,
               ...baseDimension,
             };
-            dimensions.push(dimension);
+            return dimension;
           }
         }
       }
     })
   );
 
-  return { dimensions, measures };
+  const dimensions = components.filter((d) => !isMeasure(d)) as Dimension[];
+  const measures = components.filter(isMeasure);
+
+  return {
+    dimensions,
+    measures,
+  };
 };
 
 export const dataCubeMetadata: NonNullable<

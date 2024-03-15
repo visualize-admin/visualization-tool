@@ -8,6 +8,7 @@ import { HierarchyValue } from '../domain/data';
 import { Observation } from '../domain/data';
 import { RawObservation } from '../domain/data';
 import { SearchCube } from '../domain/data';
+import { SingleFilters } from '../configurator';
 import gql from 'graphql-tag';
 import * as Urql from 'urql';
 export type Maybe<T> = T | null;
@@ -34,6 +35,7 @@ export type Scalars = {
   Observation: Observation;
   RawObservation: RawObservation;
   SearchCube: SearchCube;
+  SingleFilters: SingleFilters;
   ValueIdentifier: any;
   ValuePosition: any;
 };
@@ -387,7 +389,7 @@ export type QueryPossibleFiltersArgs = {
   iri: Scalars['String'];
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
-  filters: Scalars['Filters'];
+  filters: Scalars['SingleFilters'];
 };
 
 
@@ -442,6 +444,7 @@ export enum SearchCubeResultOrder {
   TitleAsc = 'TITLE_ASC',
   CreatedDesc = 'CREATED_DESC'
 }
+
 
 export type StandardErrorDimension = Dimension & {
   __typename: 'StandardErrorDimension';
@@ -607,7 +610,7 @@ export type PossibleFiltersQueryVariables = Exact<{
   iri: Scalars['String'];
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
-  filters: Scalars['Filters'];
+  filters: Scalars['SingleFilters'];
 }>;
 
 
@@ -747,7 +750,7 @@ export function useGeoShapesByDimensionIriQuery(options: Omit<Urql.UseQueryArgs<
   return Urql.useQuery<GeoShapesByDimensionIriQuery>({ query: GeoShapesByDimensionIriDocument, ...options });
 };
 export const PossibleFiltersDocument = gql`
-    query PossibleFilters($iri: String!, $sourceType: String!, $sourceUrl: String!, $filters: Filters!) {
+    query PossibleFilters($iri: String!, $sourceType: String!, $sourceUrl: String!, $filters: SingleFilters!) {
   possibleFilters(
     iri: $iri
     sourceType: $sourceType

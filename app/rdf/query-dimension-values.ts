@@ -1,11 +1,10 @@
 import RDF from "@rdfjs/data-model";
 import { SELECT } from "@tpluscode/sparql-builder";
 import keyBy from "lodash/keyBy";
-import mapValues from "lodash/mapValues";
 import pickBy from "lodash/pickBy";
 import sortBy from "lodash/sortBy";
 import { CubeDimension } from "rdf-cube-view-query";
-import { NamedNode, Quad, Term } from "rdf-js";
+import { Quad, Term } from "rdf-js";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
 import { ResultRow } from "sparql-http-client/ResultParser";
 import { LRUCache } from "typescript-lru-cache";
@@ -13,11 +12,7 @@ import { LRUCache } from "typescript-lru-cache";
 import { FilterValue, Filters } from "@/config-types";
 import { isDynamicMaxValue } from "@/configurator/components/field";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
-import {
-  DimensionValue,
-  Observation,
-  parseObservationValue,
-} from "@/domain/data";
+import { DimensionValue, parseObservationValue } from "@/domain/data";
 import { pragmas } from "@/rdf/create-source";
 import { ExtendedCube } from "@/rdf/extended-cube";
 
@@ -67,44 +62,6 @@ const formatFilterIntoSparqlFilter = (
     return "";
   }
 };
-
-export async function unversionObservation({
-  cube,
-  observation,
-  sparqlClient,
-}: {
-  cube: ExtendedCube;
-  observation: Observation;
-  sparqlClient: ParsingClient;
-}) {
-  const dimensionsByPath = keyBy(
-    cube.dimensions,
-    (x) => x.path?.value
-  ) as Record<string, CubeDimension>;
-  const versionedDimensions = Object.keys(observation).filter((x) => {
-    // Ignore the artificial __iri__ dimensions.
-    if (x.endsWith("/__iri__")) {
-      return false;
-    }
-
-    return dimensionIsVersioned(dimensionsByPath[x]);
-  });
-  const query = SELECT.DISTINCT`?versioned ?unversioned`.WHERE`
-    VALUES (?versioned) {
-      ${versionedDimensions.map((x) => `(<${observation[x]}>)\n`)}
-    }
-    ?versioned ${ns.schema.sameAs} ?unversioned.
-  `.prologue`${pragmas}`;
-  const result = (await query.execute(sparqlClient.query, {
-    operation: "postUrlencoded",
-  })) as { versioned: NamedNode; unversioned: NamedNode }[];
-  const unversionedIndex = result.reduce((acc, item) => {
-    acc[item.versioned.value] = item.unversioned.value;
-    return acc;
-  }, {} as Record<string, string>);
-
-  return mapValues(observation, (v) => (v ? unversionedIndex[v] ?? v : v));
-}
 
 const getFilterOrder = (filter: FilterValue) => {
   if (filter.type === "single") {

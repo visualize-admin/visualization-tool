@@ -38,6 +38,7 @@ import {
   DataSource,
   decodeConfiguratorState,
   enableLayouting,
+  extractSingleFilters,
   Filters,
   FilterValue,
   GenericField,
@@ -48,6 +49,7 @@ import {
   InteractiveFiltersConfig,
   isAreaConfig,
   isColorFieldInConfig,
+  isSingleFilters,
   isTableConfig,
   Layout,
   makeMultiFilter,
@@ -823,7 +825,15 @@ export const getFiltersByMappingStatus = (
   const mappedFilters = pickBy(filters, (_, iri) => iris.has(iri));
   const unmappedFilters = pickBy(filters, (_, iri) => !iris.has(iri));
 
-  return { mappedFilters, mappedFiltersIris: iris, unmappedFilters };
+  if (!isSingleFilters(unmappedFilters)) {
+    console.warn("Unmapped filters must be single filters!");
+  }
+
+  return {
+    mappedFilters,
+    mappedFiltersIris: iris,
+    unmappedFilters: extractSingleFilters(unmappedFilters),
+  };
 };
 
 export const getChartOptionField = (
