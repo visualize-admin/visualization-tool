@@ -15,12 +15,12 @@ import {
 import { Loaders } from "@/graphql/context";
 import {
   DataCubeResolvers,
-  DimensionResolvers,
   QueryResolvers,
   Resolvers,
   SearchCubeResultOrder,
 } from "@/graphql/resolver-types";
 import { resolveDimensionType, resolveMeasureType } from "@/graphql/resolvers";
+import { ResolvedDimension } from "@/graphql/shared-types";
 import { defaultLocale } from "@/locales/locales";
 import { LightCube } from "@/rdf/light-cube";
 import { parseCube } from "@/rdf/parse";
@@ -30,7 +30,7 @@ import {
   getCubeObservations,
   getLatestCube,
 } from "@/rdf/queries";
-import { queryHierarchy } from "@/rdf/query-hierarchies";
+import { parseHierarchy, queryHierarchies } from "@/rdf/query-hierarchies";
 import { getPossibleFilters } from "@/rdf/query-possible-filters";
 import { SearchResult, searchCubes as _searchCubes } from "@/rdf/query-search";
 import { getSparqlEditorUrl } from "@/rdf/sparql-utils";
@@ -151,9 +151,17 @@ export const dataCubeComponents: NonNullable<
         cache,
         filters
       );
-      const values: DimensionValue[] = loadValues
-        ? await dimensionValuesLoader.load(component)
-        : [];
+      const [values, rawHierarchies] = await Promise.all(
+        loadValues
+          ? [
+              dimensionValuesLoader.load(component),
+              queryHierarchies(component, {
+                locale,
+                sparqlClientStream,
+              }),
+            ]
+          : [[] as DimensionValue[], null]
+      );
       values.sort((a, b) =>
         ascending(
           a.position ?? a.value ?? undefined,
@@ -194,18 +202,14 @@ export const dataCubeComponents: NonNullable<
           scaleType,
           related
         );
-        const hierarchy = loadValues
-          ? await queryHierarchy(
-              component,
+        const hierarchy = rawHierarchies
+          ? parseHierarchy(rawHierarchies, {
+              dimensionIri: data.iri,
               locale,
-              sparqlClient,
-              sparqlClientStream,
-              cache,
-              // Only pass values if there are no filters, as we need to fetch
-              // the full, not filtered hierarchy.
-              filters ? undefined : values
-            )
+              dimensionValues: values,
+            })
           : null;
+
         const baseDimension: BaseDimension = {
           ...baseComponent,
           hierarchy,
@@ -330,7 +334,7 @@ const getDimensionValuesLoader = (
   loaders: Loaders,
   cache: LRUCache | undefined,
   filters?: Filters | null
-): DataLoader<any, any> => {
+): DataLoader<ResolvedDimension, DimensionValue[]> => {
   let loader: typeof loaders.dimensionValues | undefined;
 
   if (filters) {
@@ -352,28 +356,6 @@ const getDimensionValuesLoader = (
   }
 };
 
-export const hierarchy: NonNullable<DimensionResolvers["hierarchy"]> = async (
-  resolvedDimension,
-  _args,
-  { setup },
-  info
-) => {
-  const { locale } = info.variableValues;
-  const { sparqlClient, sparqlClientStream, cache } = await setup(info);
-
-  if (!resolvedDimension.cube) {
-    throw new Error("Could not find cube");
-  }
-
-  return await queryHierarchy(
-    resolvedDimension,
-    locale,
-    sparqlClient,
-    sparqlClientStream,
-    cache
-  );
-};
-
 export const dimensionValues: NonNullable<
   NonNullable<Resolvers["Dimension"]>["values"]
 > = async (resolvedDimension, { filters, disableLoad }, { setup }, info) => {
@@ -388,7 +370,7 @@ export const dimensionValues: NonNullable<
     cache,
     filters
   );
-  const values: DimensionValue[] = await loader.load(resolvedDimension);
+  const values = await loader.load(resolvedDimension);
 
   return values.sort((a, b) =>
     ascending(

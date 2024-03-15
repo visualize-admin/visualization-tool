@@ -9,6 +9,11 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
+- Performance
+  - Hierarchies are now fetched in parallel with dimension values, rather than waiting for them to be fetched in advance
+
+# [3.27.0] - 2024-03-12
+
 - Features
   - Slightly increased initial map zoom level
   - Join a second dataset through temporal dimension (behind `flag__add-dataset` flag)

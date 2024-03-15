@@ -124,10 +124,6 @@ const mkDimensionResolvers = (_: string): Resolvers["Dimension"] => ({
   isKeyDimension: ({ data: { isKeyDimension } }) => isKeyDimension,
   unit: ({ data: { unit } }) => unit ?? null,
   scaleType: ({ data: { scaleType } }) => scaleType ?? null,
-  hierarchy: async (parent, args, context, info) => {
-    const source = getSource(args.sourceType);
-    return await source.hierarchy(parent, args, context, info);
-  },
   values: async (parent, args, context, info) => {
     const source = getSource(args.sourceType);
     return await source.dimensionValues(parent, args, context, info);

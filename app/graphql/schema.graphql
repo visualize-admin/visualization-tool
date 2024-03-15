@@ -84,7 +84,6 @@ interface Dimension {
     disableLoad: Boolean
   ): [DimensionValue!]!
   related: [RelatedDimension!]
-  hierarchy(sourceType: String!, sourceUrl: String!): [HierarchyValue!]
 }
 
 type GeoCoordinates {
@@ -112,7 +111,6 @@ type GeoCoordinatesDimension implements Dimension {
   ): [DimensionValue!]!
   geoCoordinates: [GeoCoordinates!]
   related: [RelatedDimension!]
-  hierarchy(sourceType: String!, sourceUrl: String!): [HierarchyValue!]
 }
 
 type ObservationFilter {
@@ -139,7 +137,6 @@ type GeoShapesDimension implements Dimension {
   ): [DimensionValue!]!
   geoShapes: GeoShapes
   related: [RelatedDimension!]
-  hierarchy(sourceType: String!, sourceUrl: String!): [HierarchyValue!]
 }
 
 type NominalDimension implements Dimension {
@@ -159,7 +156,6 @@ type NominalDimension implements Dimension {
     disableLoad: Boolean
   ): [DimensionValue!]!
   related: [RelatedDimension!]
-  hierarchy(sourceType: String!, sourceUrl: String!): [HierarchyValue!]
 }
 
 type OrdinalDimension implements Dimension {
@@ -179,7 +175,6 @@ type OrdinalDimension implements Dimension {
     disableLoad: Boolean
   ): [DimensionValue!]!
   related: [RelatedDimension!]
-  hierarchy(sourceType: String!, sourceUrl: String!): [HierarchyValue!]
 }
 
 type StandardErrorDimension implements Dimension {
@@ -199,7 +194,6 @@ type StandardErrorDimension implements Dimension {
     disableLoad: Boolean
   ): [DimensionValue!]!
   related: [RelatedDimension!]
-  hierarchy(sourceType: String!, sourceUrl: String!): [HierarchyValue!]
 }
 
 enum TimeUnit {
@@ -231,7 +225,6 @@ type TemporalDimension implements Dimension {
     disableLoad: Boolean
   ): [DimensionValue!]!
   related: [RelatedDimension!]
-  hierarchy(sourceType: String!, sourceUrl: String!): [HierarchyValue!]
 }
 
 type TemporalOrdinalDimension implements Dimension {
@@ -251,7 +244,6 @@ type TemporalOrdinalDimension implements Dimension {
     disableLoad: Boolean
   ): [DimensionValue!]!
   related: [RelatedDimension!]
-  hierarchy(sourceType: String!, sourceUrl: String!): [HierarchyValue!]
 }
 
 union Measure = NumericalMeasure | OrdinalMeasure
@@ -277,7 +269,6 @@ type NumericalMeasure implements Dimension {
     disableLoad: Boolean
   ): [DimensionValue!]!
   related: [RelatedDimension!]
-  hierarchy(sourceType: String!, sourceUrl: String!): [HierarchyValue!]
 }
 
 type OrdinalMeasure implements Dimension {
@@ -297,7 +288,6 @@ type OrdinalMeasure implements Dimension {
     disableLoad: Boolean
   ): [DimensionValue!]!
   related: [RelatedDimension!]
-  hierarchy(sourceType: String!, sourceUrl: String!): [HierarchyValue!]
 }
 
 scalar SearchCube
