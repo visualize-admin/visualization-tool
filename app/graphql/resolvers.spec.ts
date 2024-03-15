@@ -7,7 +7,11 @@ import { NamedNode } from "rdf-js";
 import { SingleFilters } from "@/config-types";
 import * as ns from "@/rdf/namespace";
 import { getCubeDimensions } from "@/rdf/queries";
-import { getQuery, getQueryFilters } from "@/rdf/query-possible-filters";
+import {
+  DimensionMetadata,
+  getQuery,
+  getQueryFilters,
+} from "@/rdf/query-possible-filters";
 import mockChartConfig from "@/test/__fixtures/config/prod/column-traffic-pollution.json";
 
 const getCubeDimensionMock = (iri: string, order: string) => {
@@ -76,10 +80,10 @@ describe("PossibleFilters", () => {
   const runTest = (
     cubeIri: string,
     filters: SingleFilters,
-    versionedDimensionIris: string[],
+    dimensionsMetadata: DimensionMetadata[],
     expectedQuery: string
   ) => {
-    const queryFilters = getQueryFilters(filters, versionedDimensionIris);
+    const queryFilters = getQueryFilters(filters, dimensionsMetadata);
     const query = getQuery(cubeIri, queryFilters);
     expect(query).toEqual(expectedQuery);
   };
@@ -97,7 +101,18 @@ describe("PossibleFilters", () => {
           value: "val2",
         },
       },
-      ["dim1/2"],
+      [
+        {
+          iri: "dim1/2",
+          isVersioned: true,
+          isLiteral: false,
+        },
+        {
+          iri: "dim2",
+          isVersioned: false,
+          isLiteral: true,
+        },
+      ],
       `PREFIX cube: <https://cube.link/>
 PREFIX schema: <http://schema.org/>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
@@ -107,8 +122,9 @@ SELECT ?dimension0_v ?dimension1 WHERE {
   ?observation <dim1/2> ?dimension0 .
   ?dimension0 schema:sameAs ?dimension0_v .
   ?observation <dim2> ?dimension1 .
+  BIND(STR(?dimension1) AS ?dimension1_str)
   VALUES ?dimension0_v { <val1> }
-  BIND(?dimension1 = <val2> AS ?d1)
+  BIND(?dimension1_str = "val2" AS ?d1)
 }
 ORDER BY DESC(?d1)
 LIMIT 1`
@@ -131,7 +147,23 @@ LIMIT 1`
           value: "val3",
         },
       },
-      ["dim1/2"],
+      [
+        {
+          iri: "dim1/2",
+          isVersioned: true,
+          isLiteral: false,
+        },
+        {
+          iri: "dim2",
+          isVersioned: false,
+          isLiteral: true,
+        },
+        {
+          iri: "dim3",
+          isVersioned: false,
+          isLiteral: true,
+        },
+      ],
       `PREFIX cube: <https://cube.link/>
 PREFIX schema: <http://schema.org/>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
@@ -141,10 +173,12 @@ SELECT ?dimension0_v ?dimension1 ?dimension2 WHERE {
   ?observation <dim1/2> ?dimension0 .
   ?dimension0 schema:sameAs ?dimension0_v .
   ?observation <dim2> ?dimension1 .
+  BIND(STR(?dimension1) AS ?dimension1_str)
   ?observation <dim3> ?dimension2 .
+  BIND(STR(?dimension2) AS ?dimension2_str)
   VALUES ?dimension0_v { <val1> }
-  BIND(?dimension1 = <val2> AS ?d1)
-  BIND(?dimension2 = <val3> AS ?d2)
+  BIND(?dimension1_str = "val2" AS ?d1)
+  BIND(?dimension2_str = "val3" AS ?d2)
 }
 ORDER BY DESC(?d1) DESC(?d2)
 LIMIT 1`
@@ -155,7 +189,11 @@ LIMIT 1`
       mockChartConfig.data.dataSet,
       mockChartConfig.data.chartConfig.filters as SingleFilters,
       // assumption: the versioned dimension iris are the same as the keys of the filters
-      Object.keys(mockChartConfig.data.chartConfig.filters),
+      Object.keys(mockChartConfig.data.chartConfig.filters).map((iri) => ({
+        iri,
+        isVersioned: true,
+        isLiteral: false,
+      })),
       `PREFIX cube: <https://cube.link/>
 PREFIX schema: <http://schema.org/>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
