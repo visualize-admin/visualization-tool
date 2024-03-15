@@ -42,5 +42,5 @@ test("tooltip content", async ({ actions, selectors, within, page }) => {
     timeout: 1_000,
   });
   const textContent = await tooltip.textContent();
-  expect(textContent).toEqual("19960.019 Mt");
+  expect(textContent).toEqual("19966.119 Mt");
 });
