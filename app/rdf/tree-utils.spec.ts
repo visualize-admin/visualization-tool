@@ -1,8 +1,11 @@
 import { HierarchyValue } from "@/domain/data";
-
-import multipleRootHierarchy from "../test/__fixtures/data/multiple-root-hierarchy.json";
-
-import { mapTree, pruneTree, regroupTrees } from "./tree-utils";
+import {
+  findInHierarchy,
+  mapTree,
+  pruneTree,
+  regroupTrees,
+} from "@/rdf/tree-utils";
+import multipleRootHierarchy from "@/test/__fixtures/data/multiple-root-hierarchy.json";
 
 // Country > Canton > Municipality
 // Countries have no value
@@ -88,5 +91,34 @@ describe("multiple hierarchy handling", () => {
       "Switzerland - Protection Region - Economic Region",
       "Switzerland - Production Region - Economic Region",
     ]);
+  });
+
+  it("should select values starting from beginning of the tree", () => {
+    const expectedValue: HierarchyValue = {
+      depth: 0,
+      dimensionIri: "A",
+      value: "A",
+      hasValue: true,
+      label: "A",
+    };
+    const tree: HierarchyValue[] = [
+      expectedValue,
+      {
+        depth: 0,
+        dimensionIri: "B",
+        value: "B",
+        hasValue: true,
+        label: "B",
+      },
+      {
+        depth: 0,
+        dimensionIri: "C",
+        value: "C",
+        hasValue: true,
+        label: "C",
+      },
+    ];
+    const value = findInHierarchy(tree, (d) => d.hasValue);
+    expect(value).toEqual(expectedValue);
   });
 });

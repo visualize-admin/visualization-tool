@@ -13,6 +13,14 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
   - Dimension values are now fetched in parallel in case of fetching for several dimensions at once
   - Refactored shapes and coordinates fetching to not rely on resolver chains
 
+# [3.27.1] - 2024-03-15
+
+- Performance
+  - Hierarchies are now fetched in parallel with dimension values, rather than waiting for them to be fetched in advance
+  - Vastly optimized the `PossibleFilters` query
+- Maintenance
+  - Increased the number of Playwright workers to 4
+
 # [3.27.0] - 2024-03-12
 
 - Features

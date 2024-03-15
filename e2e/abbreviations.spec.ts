@@ -100,7 +100,15 @@ test("hierarchies: it should be possible to enable abbreviations for colors", as
     await selectors.chart.colorLegendItems()
   ).allInnerTexts();
 
-  expect(legendItems).toEqual(["CH4", "CO2", "N2O"]);
+  expect(legendItems).toEqual([
+    "CH4",
+    "CO2",
+    "N2O",
+    "HFC",
+    "NF3",
+    "PFC",
+    "SF6",
+  ]);
 });
 
 test("localized abbreviations", async ({ actions, selectors }) => {

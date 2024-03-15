@@ -13,7 +13,6 @@ import { SQL_ENDPOINT } from "@/domain/env";
 import {
   DataCubePublicationStatus,
   DataCubeResolvers,
-  DimensionResolvers,
   QueryResolvers,
   Resolvers,
   TimeUnit,
@@ -203,12 +202,6 @@ export const dataCubeDimensionGeoShapes: NonNullable<
 
 export const dataCubeDimensionGeoCoordinates: NonNullable<
   QueryResolvers["dataCubeDimensionGeoCoordinates"]
-> = async () => {
-  return [];
-};
-
-export const hierarchy: NonNullable<
-  DimensionResolvers["hierarchy"]
 > = async () => {
   return [];
 };

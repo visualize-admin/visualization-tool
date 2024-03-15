@@ -32,7 +32,7 @@ export type HierarchyValue = {
   dimensionIri: string;
   value: string;
   /** In other words, is selectable? */
-  hasValue: Boolean;
+  hasValue: boolean;
   label: string;
   alternateName?: string;
   position?: ObservationValue;

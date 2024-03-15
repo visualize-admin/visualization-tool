@@ -1,4 +1,4 @@
-import { descending, index } from "d3";
+import { ascending, descending, index } from "d3";
 import { Maybe } from "graphql-tools";
 import keyBy from "lodash/keyBy";
 import { CubeDimension, Filter, LookupSource, View } from "rdf-cube-view-query";
@@ -152,14 +152,16 @@ export const getCubeDimensions = async ({
       (d) => d.iri.value
     );
 
-    return dimensions.map((dim) => {
-      return parseCubeDimension({
-        dim,
-        cube,
-        locale,
-        units: dimensionUnitIndex,
-      });
-    });
+    return dimensions
+      .map((dim) => {
+        return parseCubeDimension({
+          dim,
+          cube,
+          locale,
+          units: dimensionUnitIndex,
+        });
+      })
+      .sort((a, b) => ascending(a.data.order, b.data.order));
   } catch (e) {
     console.error(e);
 

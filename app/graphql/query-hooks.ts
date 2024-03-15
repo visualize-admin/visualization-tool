@@ -10,6 +10,7 @@ import { HierarchyValue } from '../domain/data';
 import { Observation } from '../domain/data';
 import { RawObservation } from '../domain/data';
 import { SearchCube } from '../domain/data';
+import { SingleFilters } from '../configurator';
 import gql from 'graphql-tag';
 import * as Urql from 'urql';
 export type Maybe<T> = T | null;
@@ -37,6 +38,7 @@ export type Scalars = {
   Observation: Observation;
   RawObservation: RawObservation;
   SearchCube: SearchCube;
+  SingleFilters: SingleFilters;
   ValueIdentifier: any;
   ValuePosition: any;
 };
@@ -147,7 +149,6 @@ export type Dimension = {
   isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
   related?: Maybe<Array<RelatedDimension>>;
-  hierarchy?: Maybe<Array<Scalars['HierarchyValue']>>;
 };
 
 
@@ -156,12 +157,6 @@ export type DimensionValuesArgs = {
   sourceUrl: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
   disableLoad?: Maybe<Scalars['Boolean']>;
-};
-
-
-export type DimensionHierarchyArgs = {
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
 };
 
 
@@ -181,7 +176,6 @@ export type GeoCoordinatesDimension = Dimension & {
   isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
   related?: Maybe<Array<RelatedDimension>>;
-  hierarchy?: Maybe<Array<Scalars['HierarchyValue']>>;
 };
 
 
@@ -190,12 +184,6 @@ export type GeoCoordinatesDimensionValuesArgs = {
   sourceUrl: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
   disableLoad?: Maybe<Scalars['Boolean']>;
-};
-
-
-export type GeoCoordinatesDimensionHierarchyArgs = {
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
 };
 
 
@@ -212,7 +200,6 @@ export type GeoShapesDimension = Dimension & {
   isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
   related?: Maybe<Array<RelatedDimension>>;
-  hierarchy?: Maybe<Array<Scalars['HierarchyValue']>>;
 };
 
 
@@ -221,12 +208,6 @@ export type GeoShapesDimensionValuesArgs = {
   sourceUrl: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
   disableLoad?: Maybe<Scalars['Boolean']>;
-};
-
-
-export type GeoShapesDimensionHierarchyArgs = {
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
 };
 
 
@@ -245,7 +226,6 @@ export type NominalDimension = Dimension & {
   isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
   related?: Maybe<Array<RelatedDimension>>;
-  hierarchy?: Maybe<Array<Scalars['HierarchyValue']>>;
 };
 
 
@@ -254,12 +234,6 @@ export type NominalDimensionValuesArgs = {
   sourceUrl: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
   disableLoad?: Maybe<Scalars['Boolean']>;
-};
-
-
-export type NominalDimensionHierarchyArgs = {
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
 };
 
 export type NumericalMeasure = Dimension & {
@@ -279,7 +253,6 @@ export type NumericalMeasure = Dimension & {
   resolution?: Maybe<Scalars['Int']>;
   values: Array<Scalars['DimensionValue']>;
   related?: Maybe<Array<RelatedDimension>>;
-  hierarchy?: Maybe<Array<Scalars['HierarchyValue']>>;
 };
 
 
@@ -288,12 +261,6 @@ export type NumericalMeasureValuesArgs = {
   sourceUrl: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
   disableLoad?: Maybe<Scalars['Boolean']>;
-};
-
-
-export type NumericalMeasureHierarchyArgs = {
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
 };
 
 
@@ -323,7 +290,6 @@ export type OrdinalDimension = Dimension & {
   isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
   related?: Maybe<Array<RelatedDimension>>;
-  hierarchy?: Maybe<Array<Scalars['HierarchyValue']>>;
 };
 
 
@@ -332,12 +298,6 @@ export type OrdinalDimensionValuesArgs = {
   sourceUrl: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
   disableLoad?: Maybe<Scalars['Boolean']>;
-};
-
-
-export type OrdinalDimensionHierarchyArgs = {
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
 };
 
 export type OrdinalMeasure = Dimension & {
@@ -353,7 +313,6 @@ export type OrdinalMeasure = Dimension & {
   isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
   related?: Maybe<Array<RelatedDimension>>;
-  hierarchy?: Maybe<Array<Scalars['HierarchyValue']>>;
 };
 
 
@@ -362,12 +321,6 @@ export type OrdinalMeasureValuesArgs = {
   sourceUrl: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
   disableLoad?: Maybe<Scalars['Boolean']>;
-};
-
-
-export type OrdinalMeasureHierarchyArgs = {
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
 };
 
 export type Query = {
@@ -419,7 +372,7 @@ export type QueryPossibleFiltersArgs = {
   iri: Scalars['String'];
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
-  filters: Scalars['Filters'];
+  filters: Scalars['SingleFilters'];
 };
 
 
@@ -493,6 +446,7 @@ export enum SearchCubeResultOrder {
   CreatedDesc = 'CREATED_DESC'
 }
 
+
 export type StandardErrorDimension = Dimension & {
   __typename: 'StandardErrorDimension';
   iri: Scalars['String'];
@@ -506,7 +460,6 @@ export type StandardErrorDimension = Dimension & {
   isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
   related?: Maybe<Array<RelatedDimension>>;
-  hierarchy?: Maybe<Array<Scalars['HierarchyValue']>>;
 };
 
 
@@ -515,12 +468,6 @@ export type StandardErrorDimensionValuesArgs = {
   sourceUrl: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
   disableLoad?: Maybe<Scalars['Boolean']>;
-};
-
-
-export type StandardErrorDimensionHierarchyArgs = {
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
 };
 
 export type TemporalDimension = Dimension & {
@@ -538,7 +485,6 @@ export type TemporalDimension = Dimension & {
   isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
   related?: Maybe<Array<RelatedDimension>>;
-  hierarchy?: Maybe<Array<Scalars['HierarchyValue']>>;
 };
 
 
@@ -547,12 +493,6 @@ export type TemporalDimensionValuesArgs = {
   sourceUrl: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
   disableLoad?: Maybe<Scalars['Boolean']>;
-};
-
-
-export type TemporalDimensionHierarchyArgs = {
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
 };
 
 export type TemporalOrdinalDimension = Dimension & {
@@ -568,7 +508,6 @@ export type TemporalOrdinalDimension = Dimension & {
   isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
   related?: Maybe<Array<RelatedDimension>>;
-  hierarchy?: Maybe<Array<Scalars['HierarchyValue']>>;
 };
 
 
@@ -577,12 +516,6 @@ export type TemporalOrdinalDimensionValuesArgs = {
   sourceUrl: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
   disableLoad?: Maybe<Scalars['Boolean']>;
-};
-
-
-export type TemporalOrdinalDimensionHierarchyArgs = {
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
 };
 
 export enum TimeUnit {
@@ -654,7 +587,7 @@ export type PossibleFiltersQueryVariables = Exact<{
   iri: Scalars['String'];
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
-  filters: Scalars['Filters'];
+  filters: Scalars['SingleFilters'];
 }>;
 
 
@@ -761,7 +694,7 @@ export function useSearchCubesQuery(options: Omit<Urql.UseQueryArgs<SearchCubesQ
   return Urql.useQuery<SearchCubesQuery>({ query: SearchCubesDocument, ...options });
 };
 export const PossibleFiltersDocument = gql`
-    query PossibleFilters($iri: String!, $sourceType: String!, $sourceUrl: String!, $filters: Filters!) {
+    query PossibleFilters($iri: String!, $sourceType: String!, $sourceUrl: String!, $filters: SingleFilters!) {
   possibleFilters(
     iri: $iri
     sourceType: $sourceType

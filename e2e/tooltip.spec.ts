@@ -16,7 +16,7 @@ test("tooltip content", async ({ actions, selectors, within, page }) => {
   );
 
   await filterLocator
-    .getByRole("textbox", { name: "1. Greenhouse gas" })
+    .getByRole("textbox", { name: "2. Greenhouse gas" })
     .click();
 
   await selectors.mui
@@ -42,5 +42,5 @@ test("tooltip content", async ({ actions, selectors, within, page }) => {
     timeout: 1_000,
   });
   const textContent = await tooltip.textContent();
-  expect(textContent).toEqual("19960.019 Mt");
+  expect(textContent).toEqual("19966.119 Mt");
 });
