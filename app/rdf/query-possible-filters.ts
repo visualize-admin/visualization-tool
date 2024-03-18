@@ -1,4 +1,5 @@
 import { CubeDimension } from "rdf-cube-view-query";
+import { NamedNode } from "rdf-js";
 import ParsingClient from "sparql-http-client/ParsingClient";
 import { ResultRow } from "sparql-http-client/ResultParser";
 import { LRUCache } from "typescript-lru-cache";
@@ -157,6 +158,8 @@ export const getQueryFilters = async (
   return Promise.all(
     Object.entries(filters).map(async ([iri, { value }], i) => {
       const metadata = dimensionsMetadata.find((d) => d.iri === iri);
+      const isVersioned = metadata?.isVersioned ?? false;
+      const isLiteral = metadata?.isLiteral ?? false;
 
       return {
         i,
@@ -164,16 +167,46 @@ export const getQueryFilters = async (
         value: isDynamicMaxValue(value)
           ? await loadMaxDimensionValue(cubeIri, {
               dimensionIri: iri,
+              // TODO: refactor dimension parsing to avoid "mocking" the cubeDimensions
               cubeDimensions: Object.keys(filters).map((iri) => ({
                 path: { value: iri },
+                datatype: isLiteral ? { value: ns.xsd.string } : null,
+                out: (p: NamedNode) => {
+                  switch (p.value) {
+                    case ns.sh.nodeKind.value: {
+                      return isLiteral
+                        ? { value: ns.sh.Literal }
+                        : { value: ns.sh.IRI };
+                    }
+                    case ns.sh.or.value: {
+                      return {
+                        terms: [],
+                        list() {
+                          return [];
+                        },
+                        toArray() {
+                          return [];
+                        },
+                      };
+                    }
+                    case ns.sh.datatype.value: {
+                      return {
+                        terms: [],
+                      };
+                    }
+                    case ns.schema.version.value: {
+                      return isVersioned ? { value: true } : { value: false };
+                    }
+                  }
+                },
               })) as any as CubeDimension[],
               filters,
               sparqlClient,
               cache,
             })
           : `${value}`,
-        isVersioned: metadata?.isVersioned ?? false,
-        isLiteral: metadata?.isLiteral ?? false,
+        isVersioned,
+        isLiteral,
       };
     })
   );
