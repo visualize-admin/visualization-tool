@@ -200,7 +200,7 @@ const parseDimensionValue = (
     alternateName: valueQuads[ns.schema.alternateName.value]?.object.value,
     description: valueQuads[ns.schema.description.value]?.object.value,
     identifier: valueQuads[ns.schema.identifier.value]?.object.value,
-    position: position ? +position : undefined,
+    position: position ? (isNaN(+position) ? position : +position) : undefined,
     color: valueQuads[ns.schema.color.value]?.object.value,
   };
 

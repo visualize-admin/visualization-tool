@@ -21,7 +21,7 @@ export type DimensionValue = {
   value: string | number;
   label: string;
   description?: string;
-  position?: number;
+  position?: number | string;
   color?: string;
   identifier?: string | number;
   alternateName?: string;
