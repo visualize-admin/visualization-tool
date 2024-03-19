@@ -17,6 +17,7 @@ import {
   useDataCubesMetadataQuery,
   useDataCubesObservationsQuery,
 } from "@/graphql/hooks";
+import { DataCubeObservationFilter } from "@/graphql/query-hooks";
 import { Icon, getChartIcon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
 import { useEmbedOptions } from "@/utils/embed";
@@ -211,7 +212,7 @@ export const ChartFootnotes = ({
                     <DataDownloadMenu
                       dataSource={dataSource}
                       title={dataCubeMetadata.title}
-                      filters={filters}
+                      filters={getDataDownloadFilters(chartConfig, filters)}
                     />
                   ) : null}
                   {showTableSwitch !== false ? (
@@ -247,22 +248,23 @@ export const ChartFootnotes = ({
                       )}
                     </>
                   ) : null}
-                  {dataCubeMetadata.landingPage && showLandingPage !== false && (
-                    <Button
-                      variant="text"
-                      component="a"
-                      href={dataCubeMetadata.landingPage}
-                      target="_blank"
-                      color="primary"
-                      size="small"
-                      sx={{ p: 0, typography: "caption" }}
-                      startIcon={<Icon name="linkExternal" />}
-                    >
-                      <Trans id="dataset.metadata.learnmore">
-                        Learn more about the dataset
-                      </Trans>
-                    </Button>
-                  )}
+                  {dataCubeMetadata.landingPage &&
+                    showLandingPage !== false && (
+                      <Button
+                        variant="text"
+                        component="a"
+                        href={dataCubeMetadata.landingPage}
+                        target="_blank"
+                        color="primary"
+                        size="small"
+                        sx={{ p: 0, typography: "caption" }}
+                        startIcon={<Icon name="linkExternal" />}
+                      >
+                        <Trans id="dataset.metadata.learnmore">
+                          Learn more about the dataset
+                        </Trans>
+                      </Button>
+                    )}
                   {sparqlEditorUrl && showSparqlQuery !== false && (
                     <RunSparqlQuery
                       key={sparqlEditorUrl}
@@ -298,4 +300,11 @@ const LinkButton = (props: PropsWithChildren<{ href: string }>) => {
       {...props}
     />
   );
+};
+
+const getDataDownloadFilters = (
+  chartConfig: ChartConfig,
+  queryFilters?: DataCubeObservationFilter[]
+) => {
+  return queryFilters ?? chartConfig.cubes.map((cube) => ({ iri: cube.iri }));
 };

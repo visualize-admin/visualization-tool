@@ -90,7 +90,7 @@ export const DataDownloadStateProvider = ({
 };
 
 const FILE_FORMATS = ["csv", "xlsx"] as const;
-export type FileFormat = typeof FILE_FORMATS[number];
+export type FileFormat = (typeof FILE_FORMATS)[number];
 
 const makeColumnLabel = (dim: Component) => {
   return `${dim.label}${dim.unit ? ` (${dim.unit})` : ""}`;
@@ -178,7 +178,7 @@ export const DataDownloadMenu = memo(
     title,
   }: {
     dataSource: DataSource;
-    filters?: DataCubeObservationFilter[];
+    filters: DataCubeObservationFilter[];
     title: string;
   }) => {
     return (
@@ -200,7 +200,7 @@ const DataDownloadInnerMenu = ({
 }: {
   dataSource: DataSource;
   fileName: string;
-  filters?: DataCubeObservationFilter[];
+  filters: DataCubeObservationFilter[];
 }) => {
   const [state] = useDataDownloadState();
   const popupState = usePopupState({
@@ -238,7 +238,7 @@ const DataDownloadInnerMenu = ({
           sx: { width: 200, pt: 1, pb: 2 },
         }}
       >
-        {filters?.some((f) => f.filters) && (
+        {filters.some((f) => f.filters) && (
           <DataDownloadMenuSection
             dataSource={dataSource}
             subheader={
@@ -252,12 +252,9 @@ const DataDownloadInnerMenu = ({
           dataSource={dataSource}
           subheader={<Trans id="button.download.data.all">Full dataset</Trans>}
           fileName={`${fileName}-full`}
-          filters={filters?.map((d) => {
-            return {
-              iri: d.iri,
-              componentIris: d.componentIris,
-            };
-          })}
+          // We need to include every cube column in full dataset download (client's
+          // request), so we do not pass any filters here.
+          filters={filters.map((d) => ({ iri: d.iri }))}
         />
         {state.error && (
           <RawMenuItem>
