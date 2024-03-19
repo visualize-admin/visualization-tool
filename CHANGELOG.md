@@ -9,6 +9,10 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
+Nothing yet.
+
+# [3.27.2] - 2024-03-19
+
 - Performance
   - Dimension values are now fetched in parallel in case of fetching for several dimensions at once
   - Refactored shapes and coordinates fetching to not rely on resolver chains
