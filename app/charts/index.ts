@@ -393,7 +393,11 @@ export const getInitialConfig = (
     case "column":
       const columnXComponentIri = findPreferredDimension(
         sortBy(dimensions, (d) => (isGeoDimension(d) ? 1 : -1)),
-        ["TemporalDimension", "TemporalOrdinalDimension"]
+        [
+          "TemporalDimension",
+          "TemporalEntityDimension",
+          "TemporalOrdinalDimension",
+        ]
       ).iri;
 
       return {

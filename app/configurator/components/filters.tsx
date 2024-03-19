@@ -76,6 +76,7 @@ import {
   HierarchyValue,
   ObservationValue,
   TemporalDimension,
+  TemporalEntityDimension,
 } from "@/domain/data";
 import { useTimeFormatLocale, useTimeFormatUnit } from "@/formatters";
 import { Icon } from "@/icons";
@@ -583,8 +584,8 @@ const TreeAccordion = ({
             state === "SELECTED"
               ? "check"
               : state === "CHILDREN_SELECTED"
-              ? "indeterminate"
-              : "eye"
+                ? "indeterminate"
+                : "eye"
           }
           className={classes.optionCheck}
           style={{
@@ -654,8 +655,8 @@ const Tree = ({
         const state = selectedValues.map((d) => d.value).includes(value)
           ? "SELECTED"
           : areChildrenSelected({ children, selectedValues })
-          ? "CHILDREN_SELECTED"
-          : "NOT_SELECTED";
+            ? "CHILDREN_SELECTED"
+            : "NOT_SELECTED";
 
         return (
           <TreeAccordion
@@ -730,25 +731,28 @@ const DrawerContent = forwardRef<
       (d) => d.value
     );
 
-    const depthsMetadata = flatOptions.reduce((acc, d) => {
-      if (!acc[d.depth]) {
-        acc[d.depth] = { selectable: false, expandable: false };
-      }
+    const depthsMetadata = flatOptions.reduce(
+      (acc, d) => {
+        if (!acc[d.depth]) {
+          acc[d.depth] = { selectable: false, expandable: false };
+        }
 
-      if (acc[d.depth].selectable === false && d.hasValue) {
-        acc[d.depth].selectable = true;
-      }
+        if (acc[d.depth].selectable === false && d.hasValue) {
+          acc[d.depth].selectable = true;
+        }
 
-      if (
-        acc[d.depth].expandable === false &&
-        d.children &&
-        d.children.length > 0
-      ) {
-        acc[d.depth].expandable = true;
-      }
+        if (
+          acc[d.depth].expandable === false &&
+          d.children &&
+          d.children.length > 0
+        ) {
+          acc[d.depth].expandable = true;
+        }
 
-      return acc;
-    }, {} as Record<number, { selectable: boolean; expandable: boolean }>);
+        return acc;
+      },
+      {} as Record<number, { selectable: boolean; expandable: boolean }>
+    );
 
     const maxDepth = max(flatOptions, (d) => d.depth);
 
@@ -889,7 +893,7 @@ export const DimensionValuesMultiFilter = ({
 };
 
 type TimeFilterProps = {
-  dimension: TemporalDimension;
+  dimension: TemporalDimension | TemporalEntityDimension;
   disableInteractiveFilters?: boolean;
 };
 
@@ -1089,7 +1093,7 @@ export const TimeFilter = (props: TimeFilterProps) => {
 };
 
 type GetTimeFilterOptionsProps = {
-  dimension: TemporalDimension | null;
+  dimension: TemporalDimension | TemporalEntityDimension | null;
   formatLocale: ReturnType<typeof useTimeFormatLocale>;
   timeFormatUnit: ReturnType<typeof useTimeFormatUnit>;
 };
