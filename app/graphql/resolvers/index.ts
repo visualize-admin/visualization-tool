@@ -88,11 +88,11 @@ export const resolveDimensionType = (
   }
 
   if (dataKind === "Time") {
-    if (timeUnit) {
-      return "TemporalEntityDimension";
-    }
-
     if (scaleType === "Ordinal") {
+      if (timeUnit) {
+        return "TemporalEntityDimension";
+      }
+
       return "TemporalOrdinalDimension";
     }
 
