@@ -252,9 +252,7 @@ const DataDownloadInnerMenu = ({
           dataSource={dataSource}
           subheader={<Trans id="button.download.data.all">Full dataset</Trans>}
           fileName={`${fileName}-full`}
-          // We need to include every cube column in full dataset download (client's
-          // request), so we do not pass any filters here.
-          filters={filters.map((d) => ({ iri: d.iri }))}
+          filters={getFullDataDownloadFilters(filters)}
         />
         {state.error && (
           <RawMenuItem>
@@ -266,6 +264,15 @@ const DataDownloadInnerMenu = ({
       </HoverMenu>
     </>
   );
+};
+
+/** We need to include every cube column in full dataset download (client's
+ * request), so we do not pass any componentIris here
+ * */
+export const getFullDataDownloadFilters = (
+  filters: DataCubeObservationFilter[]
+) => {
+  return filters.map((d) => ({ iri: d.iri }));
 };
 
 const DataDownloadMenuSection = ({
