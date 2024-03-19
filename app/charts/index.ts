@@ -9,6 +9,7 @@ import {
   disableStacked,
   EncodingFieldType,
   PIE_SEGMENT_SORTING,
+  SEGMENT_COMPONENT_TYPES,
 } from "@/charts/chart-config-ui-options";
 import { DEFAULT_FIXED_COLOR_FIELD } from "@/charts/map/constants";
 import {
@@ -2035,12 +2036,7 @@ const convertTableFieldsToSegmentField = ({
 }): GenericSegmentField | undefined => {
   const groupedColumns = group(Object.values(fields), (d) => d.isGroup)
     .get(true)
-    // All the other dimension types can be used as a segment field.
-    ?.filter(
-      (d) =>
-        d.componentType !== "NumericalMeasure" &&
-        d.componentType !== "TemporalDimension"
-    )
+    ?.filter((d) => SEGMENT_COMPONENT_TYPES.includes(d.componentType))
     .sort((a, b) => a.index - b.index);
   const component = groupedColumns?.[0];
 

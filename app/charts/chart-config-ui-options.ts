@@ -301,7 +301,7 @@ interface ChartSpecs {
   comboLineColumn: ChartSpec<ComboLineColumnConfig>;
 }
 
-const SEGMENT_COMPONENT_TYPES: ComponentType[] = [
+export const SEGMENT_COMPONENT_TYPES: ComponentType[] = [
   "NominalDimension",
   "OrdinalDimension",
   "TemporalDimension",
