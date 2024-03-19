@@ -688,6 +688,7 @@ describe("retainChartConfigWhenSwitchingChartType", () => {
       },
     },
   ];
+  1;
 
   const segmentChecks: CheckType[] = [
     {
@@ -697,7 +698,7 @@ describe("retainChartConfigWhenSwitchingChartType", () => {
           {
             oldFieldGetterPath: [
               "fields",
-              "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/georegion",
+              "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/date",
               "componentIri",
             ],
             newFieldGetterPath: "fields.segment.componentIri",
@@ -733,7 +734,7 @@ describe("retainChartConfigWhenSwitchingChartType", () => {
             oldFieldGetterPath: "fields.segment.componentIri",
             newFieldGetterPath: [
               "fields",
-              "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/georegion",
+              "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/date",
               "componentIri",
             ],
             equal: true,
@@ -744,7 +745,7 @@ describe("retainChartConfigWhenSwitchingChartType", () => {
           {
             fieldGetterPath: [
               "fields",
-              "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/georegion",
+              "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/date",
               "isGroup",
             ],
             expectedValue: true,
