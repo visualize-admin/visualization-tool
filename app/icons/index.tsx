@@ -81,6 +81,7 @@ export const getDimensionIconName = (
     case "OrdinalMeasure":
       return "sort";
     case "TemporalDimension":
+    case "TemporalEntityDimension":
       return "pointInTime";
     default:
       const _exhaustiveCheck: never = dimensionType;

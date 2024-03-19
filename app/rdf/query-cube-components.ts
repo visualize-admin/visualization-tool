@@ -8,6 +8,7 @@ import {
   Dimension,
   Measure,
   TemporalDimension,
+  TemporalEntityDimension,
 } from "@/domain/data";
 import { resolveDimensionType, resolveMeasureType } from "@/graphql/resolvers";
 import * as ns from "@/rdf/namespace";
@@ -168,17 +169,19 @@ CONSTRUCT {
 
       measures.push(result);
     } else {
+      const timeUnit = getTimeUnit(qTimeUnitType?.object);
       const dimensionType = resolveDimensionType(
         getDataKind(qDataKindType?.object),
         scaleType,
+        timeUnit,
         []
       );
       const baseDimension: BaseDimension = baseComponent;
 
       switch (dimensionType) {
-        case "TemporalDimension": {
-          const timeUnit = getTimeUnit(qTimeUnitType?.object);
-          const timeFormat = getTimeFormat(qDataType?.object);
+        case "TemporalDimension":
+        case "TemporalEntityDimension": {
+          const timeFormat = getTimeFormat(qDataType?.object, timeUnit);
 
           if (!timeFormat || !timeUnit) {
             throw new Error(
@@ -186,7 +189,7 @@ CONSTRUCT {
             );
           }
 
-          const dimension: TemporalDimension = {
+          const dimension: TemporalDimension | TemporalEntityDimension = {
             ...baseDimension,
             __typename: dimensionType,
             timeFormat,
@@ -196,7 +199,10 @@ CONSTRUCT {
           break;
         }
         default: {
-          const dimension: Exclude<Dimension, TemporalDimension> = {
+          const dimension: Exclude<
+            Dimension,
+            TemporalDimension | TemporalEntityDimension
+          > = {
             ...baseDimension,
             __typename: dimensionType,
           };
@@ -206,5 +212,8 @@ CONSTRUCT {
     }
   });
 
-  return { dimensions, measures };
+  return {
+    dimensions,
+    measures,
+  };
 };

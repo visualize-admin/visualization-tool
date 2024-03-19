@@ -496,6 +496,31 @@ export type TemporalDimensionValuesArgs = {
   disableLoad?: Maybe<Scalars['Boolean']>;
 };
 
+export type TemporalEntityDimension = Dimension & {
+  __typename?: 'TemporalEntityDimension';
+  iri: Scalars['String'];
+  label: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
+  timeUnit: TimeUnit;
+  timeFormat: Scalars['String'];
+  unit?: Maybe<Scalars['String']>;
+  scaleType?: Maybe<ScaleType>;
+  dataType?: Maybe<Scalars['String']>;
+  order?: Maybe<Scalars['Int']>;
+  isNumerical: Scalars['Boolean'];
+  isKeyDimension: Scalars['Boolean'];
+  values: Array<Scalars['DimensionValue']>;
+  related?: Maybe<Array<RelatedDimension>>;
+};
+
+
+export type TemporalEntityDimensionValuesArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
+  filters?: Maybe<Scalars['Filters']>;
+  disableLoad?: Maybe<Scalars['Boolean']>;
+};
+
 export type TemporalOrdinalDimension = Dimension & {
   __typename?: 'TemporalOrdinalDimension';
   iri: Scalars['String'];
@@ -642,6 +667,7 @@ export type ResolversTypes = ResolversObject<{
   SingleFilters: ResolverTypeWrapper<Scalars['SingleFilters']>;
   StandardErrorDimension: ResolverTypeWrapper<ResolvedDimension>;
   TemporalDimension: ResolverTypeWrapper<ResolvedDimension>;
+  TemporalEntityDimension: ResolverTypeWrapper<TemporalEntityDimension>;
   TemporalOrdinalDimension: ResolverTypeWrapper<ResolvedDimension>;
   TimeUnit: TimeUnit;
   ValueIdentifier: ResolverTypeWrapper<Scalars['ValueIdentifier']>;
@@ -691,6 +717,7 @@ export type ResolversParentTypes = ResolversObject<{
   SingleFilters: Scalars['SingleFilters'];
   StandardErrorDimension: ResolvedDimension;
   TemporalDimension: ResolvedDimension;
+  TemporalEntityDimension: TemporalEntityDimension;
   TemporalOrdinalDimension: ResolvedDimension;
   ValueIdentifier: Scalars['ValueIdentifier'];
   ValuePosition: Scalars['ValuePosition'];
@@ -748,7 +775,7 @@ export type DataCubeThemeResolvers<ContextType = VisualizeGraphQLContext, Parent
 }>;
 
 export type DimensionResolvers<ContextType = VisualizeGraphQLContext, ParentType extends ResolversParentTypes['Dimension'] = ResolversParentTypes['Dimension']> = ResolversObject<{
-  __resolveType: TypeResolveFn<'GeoCoordinatesDimension' | 'GeoShapesDimension' | 'NominalDimension' | 'NumericalMeasure' | 'OrdinalDimension' | 'OrdinalMeasure' | 'StandardErrorDimension' | 'TemporalDimension' | 'TemporalOrdinalDimension', ParentType, ContextType>;
+  __resolveType: TypeResolveFn<'GeoCoordinatesDimension' | 'GeoShapesDimension' | 'NominalDimension' | 'NumericalMeasure' | 'OrdinalDimension' | 'OrdinalMeasure' | 'StandardErrorDimension' | 'TemporalDimension' | 'TemporalEntityDimension' | 'TemporalOrdinalDimension', ParentType, ContextType>;
   iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   label?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -970,6 +997,23 @@ export type TemporalDimensionResolvers<ContextType = VisualizeGraphQLContext, Pa
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type TemporalEntityDimensionResolvers<ContextType = VisualizeGraphQLContext, ParentType extends ResolversParentTypes['TemporalEntityDimension'] = ResolversParentTypes['TemporalEntityDimension']> = ResolversObject<{
+  iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  label?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  timeUnit?: Resolver<ResolversTypes['TimeUnit'], ParentType, ContextType>;
+  timeFormat?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  unit?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  scaleType?: Resolver<Maybe<ResolversTypes['ScaleType']>, ParentType, ContextType>;
+  dataType?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  order?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  isNumerical?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  isKeyDimension?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType, RequireFields<TemporalEntityDimensionValuesArgs, 'sourceType' | 'sourceUrl'>>;
+  related?: Resolver<Maybe<Array<ResolversTypes['RelatedDimension']>>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type TemporalOrdinalDimensionResolvers<ContextType = VisualizeGraphQLContext, ParentType extends ResolversParentTypes['TemporalOrdinalDimension'] = ResolversParentTypes['TemporalOrdinalDimension']> = ResolversObject<{
   iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   label?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -1026,6 +1070,7 @@ export type Resolvers<ContextType = VisualizeGraphQLContext> = ResolversObject<{
   SingleFilters?: GraphQLScalarType;
   StandardErrorDimension?: StandardErrorDimensionResolvers<ContextType>;
   TemporalDimension?: TemporalDimensionResolvers<ContextType>;
+  TemporalEntityDimension?: TemporalEntityDimensionResolvers<ContextType>;
   TemporalOrdinalDimension?: TemporalOrdinalDimensionResolvers<ContextType>;
   ValueIdentifier?: GraphQLScalarType;
   ValuePosition?: GraphQLScalarType;

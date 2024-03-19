@@ -136,10 +136,13 @@ export type Dimension =
   | NominalDimension
   | OrdinalDimension
   | TemporalDimension
+  | TemporalEntityDimension
   | TemporalOrdinalDimension
   | GeoCoordinatesDimension
   | GeoShapesDimension
   | StandardErrorDimension;
+
+export type DimensionType = Dimension["__typename"];
 
 export type NominalDimension = BaseDimension & {
   __typename: "NominalDimension";
@@ -151,6 +154,12 @@ export type OrdinalDimension = BaseDimension & {
 
 export type TemporalDimension = BaseDimension & {
   __typename: "TemporalDimension";
+  timeUnit: TimeUnit;
+  timeFormat: string;
+};
+
+export type TemporalEntityDimension = BaseDimension & {
+  __typename: "TemporalEntityDimension";
   timeUnit: TimeUnit;
   timeFormat: string;
 };

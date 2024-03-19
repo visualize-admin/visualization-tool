@@ -23,7 +23,6 @@ import {
   ComboLineColumnFields,
   ComboLineSingleFields,
   Cube,
-  DimensionType,
   FieldAdjuster,
   Filters,
   GenericFields,
@@ -59,6 +58,7 @@ import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import {
   Component,
   Dimension,
+  DimensionType,
   GeoCoordinatesDimension,
   GeoShapesDimension,
   getCategoricalDimensions,
@@ -1386,8 +1386,8 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
             ? oldChartConfig.fields.segment?.palette ??
               DEFAULT_CATEGORICAL_PALETTE_NAME
             : isComboChartConfig(oldChartConfig)
-            ? oldChartConfig.fields.y.palette
-            : DEFAULT_CATEGORICAL_PALETTE_NAME;
+              ? oldChartConfig.fields.y.palette
+              : DEFAULT_CATEGORICAL_PALETTE_NAME;
 
           return produce(newChartConfig, (draft) => {
             draft.fields.y = {
@@ -1483,8 +1483,8 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           ? oldChartConfig.fields.segment?.palette ??
             DEFAULT_CATEGORICAL_PALETTE_NAME
           : isComboChartConfig(oldChartConfig)
-          ? oldChartConfig.fields.y.palette
-          : DEFAULT_CATEGORICAL_PALETTE_NAME;
+            ? oldChartConfig.fields.y.palette
+            : DEFAULT_CATEGORICAL_PALETTE_NAME;
 
         return produce(newChartConfig, (draft) => {
           draft.fields.y = {
@@ -1577,8 +1577,8 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           ? oldChartConfig.fields.segment?.palette ??
             DEFAULT_CATEGORICAL_PALETTE_NAME
           : isComboChartConfig(oldChartConfig)
-          ? oldChartConfig.fields.y.palette
-          : DEFAULT_CATEGORICAL_PALETTE_NAME;
+            ? oldChartConfig.fields.y.palette
+            : DEFAULT_CATEGORICAL_PALETTE_NAME;
 
         return produce(newChartConfig, (draft) => {
           draft.fields.y = {
@@ -1602,7 +1602,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     interactiveFiltersConfig: interactiveFiltersAdjusters,
   },
 };
-type ChartConfigAdjusters = typeof chartConfigsAdjusters[ChartType];
+type ChartConfigAdjusters = (typeof chartConfigsAdjusters)[ChartType];
 
 // Needed to correctly retain chart options when switching to maps and tables.
 const chartConfigsPathOverrides: {
@@ -1893,7 +1893,7 @@ const chartConfigsPathOverrides: {
   },
 };
 type ChartConfigPathOverrides =
-  typeof chartConfigsPathOverrides[ChartType][ChartType];
+  (typeof chartConfigsPathOverrides)[ChartType][ChartType];
 
 const adjustSegmentSorting = ({
   segment,

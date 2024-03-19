@@ -495,6 +495,31 @@ export type TemporalDimensionValuesArgs = {
   disableLoad?: Maybe<Scalars['Boolean']>;
 };
 
+export type TemporalEntityDimension = Dimension & {
+  __typename: 'TemporalEntityDimension';
+  iri: Scalars['String'];
+  label: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
+  timeUnit: TimeUnit;
+  timeFormat: Scalars['String'];
+  unit?: Maybe<Scalars['String']>;
+  scaleType?: Maybe<ScaleType>;
+  dataType?: Maybe<Scalars['String']>;
+  order?: Maybe<Scalars['Int']>;
+  isNumerical: Scalars['Boolean'];
+  isKeyDimension: Scalars['Boolean'];
+  values: Array<Scalars['DimensionValue']>;
+  related?: Maybe<Array<RelatedDimension>>;
+};
+
+
+export type TemporalEntityDimensionValuesArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
+  filters?: Maybe<Scalars['Filters']>;
+  disableLoad?: Maybe<Scalars['Boolean']>;
+};
+
 export type TemporalOrdinalDimension = Dimension & {
   __typename: 'TemporalOrdinalDimension';
   iri: Scalars['String'];

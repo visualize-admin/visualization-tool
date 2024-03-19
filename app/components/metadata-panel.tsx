@@ -747,6 +747,7 @@ const DimensionValues = ({ dim }: { dim: Component }) => {
   switch (dim.__typename) {
     case "NominalDimension":
     case "OrdinalDimension":
+    case "TemporalEntityDimension":
     case "TemporalOrdinalDimension":
     case "OrdinalMeasure":
     case "GeoCoordinatesDimension":

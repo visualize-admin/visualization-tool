@@ -22,3 +22,13 @@ export const timeFormats = new Map<string, string>([
   [ns.xsd.date.value, "%Y-%m-%d"],
   [ns.xsd.dateTime.value, "%Y-%m-%dT%H:%M:%S"],
 ]);
+
+export const timeUnitFormats = new Map<TimeUnit, string>([
+  [TimeUnit.Year, "%Y"],
+  [TimeUnit.Month, "%Y-%m"],
+  [TimeUnit.Week, "%Y-%W"],
+  [TimeUnit.Day, "%Y-%m-%d"],
+  [TimeUnit.Hour, "%Y-%m-%dT%H"],
+  [TimeUnit.Minute, "%Y-%m-%dT%H:%M"],
+  [TimeUnit.Second, "%Y-%m-%dT%H:%M:%S"],
+]);

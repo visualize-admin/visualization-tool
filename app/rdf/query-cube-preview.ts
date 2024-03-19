@@ -13,6 +13,7 @@ import {
   Measure,
   Observation,
   TemporalDimension,
+  TemporalEntityDimension,
 } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { resolveDimensionType, resolveMeasureType } from "@/graphql/resolvers";
@@ -144,13 +145,16 @@ CONSTRUCT {
   const measures: Measure[] = [];
   const observations: Observation[] = [];
   const qsDims = qs.filter(({ predicate: p }) => p.equals(ns.sh.path));
-  const dimMetadataByDimIri = qsDims.reduce((acc, dim) => {
-    acc[dim.object.value] = {
-      values: [],
-      dataType: rdf.namedNode(""),
-    };
-    return acc;
-  }, {} as Record<string, { values: DimensionValue[]; dataType: NamedNode }>);
+  const dimMetadataByDimIri = qsDims.reduce(
+    (acc, dim) => {
+      acc[dim.object.value] = {
+        values: [],
+        dataType: rdf.namedNode(""),
+      };
+      return acc;
+    },
+    {} as Record<string, { values: DimensionValue[]; dataType: NamedNode }>
+  );
   // Only take quads that use dimension iris as predicates (observation values)
   const qUniqueObservations = uniqBy(
     qs.filter(
@@ -282,17 +286,19 @@ CONSTRUCT {
 
       measures.push(result);
     } else {
+      const timeUnit = getTimeUnit(qTimeUnitType?.object);
       const dimensionType = resolveDimensionType(
         getDataKind(qDataKindType?.object),
         scaleType,
+        timeUnit,
         []
       );
       const baseDimension: BaseDimension = baseComponent;
 
       switch (dimensionType) {
-        case "TemporalDimension": {
-          const timeUnit = getTimeUnit(qTimeUnitType?.object);
-          const timeFormat = getTimeFormat(dataType);
+        case "TemporalDimension":
+        case "TemporalEntityDimension": {
+          const timeFormat = getTimeFormat(dataType, timeUnit);
 
           if (!timeFormat || !timeUnit) {
             throw new Error(
@@ -300,7 +306,7 @@ CONSTRUCT {
             );
           }
 
-          const dimension: TemporalDimension = {
+          const dimension: TemporalDimension | TemporalEntityDimension = {
             ...baseDimension,
             __typename: dimensionType,
             timeFormat,
@@ -310,7 +316,10 @@ CONSTRUCT {
           break;
         }
         default: {
-          const dimension: Exclude<Dimension, TemporalDimension> = {
+          const dimension: Exclude<
+            Dimension,
+            TemporalDimension | TemporalEntityDimension
+          > = {
             ...baseDimension,
             __typename: dimensionType,
           };
@@ -320,5 +329,9 @@ CONSTRUCT {
     }
   });
 
-  return { dimensions, measures, observations };
+  return {
+    dimensions,
+    measures,
+    observations,
+  };
 };
