@@ -912,11 +912,8 @@ export const TimeFilter = (props: TimeFilterProps) => {
     [dispatch, dimension]
   );
 
-  const temporalDimension =
-    dimension?.__typename === "TemporalDimension" ? dimension : null;
-
-  const activeFilter = temporalDimension?.iri
-    ? getFilterValue(state, temporalDimension.iri)
+  const activeFilter = dimension?.iri
+    ? getFilterValue(state, dimension.iri)
     : null;
   const rangeActiveFilter =
     activeFilter?.type === "range" ? activeFilter : null;
@@ -941,11 +938,11 @@ export const TimeFilter = (props: TimeFilterProps) => {
 
   const { sortedOptions, sortedValues } = useMemo(() => {
     return getTimeFilterOptions({
-      dimension: temporalDimension,
+      dimension,
       formatLocale,
       timeFormatUnit,
     });
-  }, [temporalDimension, formatLocale, timeFormatUnit]);
+  }, [dimension, formatLocale, timeFormatUnit]);
 
   const getClosestDatesFromDateRange = React.useCallback(
     (from: Date, to: Date) => {
@@ -959,8 +956,8 @@ export const TimeFilter = (props: TimeFilterProps) => {
     [sortedOptions]
   );
 
-  if (temporalDimension && isConfiguring(state)) {
-    const { timeUnit, timeFormat } = temporalDimension;
+  if (isConfiguring(state)) {
+    const { timeUnit, timeFormat } = dimension;
     const timeInterval = getTimeInterval(timeUnit);
 
     const parse = formatLocale.parse(timeFormat);
