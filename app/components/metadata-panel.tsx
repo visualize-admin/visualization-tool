@@ -541,7 +541,6 @@ const TabPanelData = ({
                 />
               )}
               renderOption={(props, option, { inputValue }) => {
-                console.log(option);
                 const matches = match(option.label, inputValue, {
                   insideWords: true,
                 });
