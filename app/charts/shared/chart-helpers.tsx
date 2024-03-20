@@ -437,10 +437,10 @@ const getBaseWideData = ({
   ) => Array<{ [key: string]: number }>;
 }): Array<Observation> => {
   const wideData = [];
-  const sortedDataGroupedByXEntries = [...dataGroupedByX.entries()].sort();
+  const dataGroupedByXEntries = [...dataGroupedByX.entries()];
 
   for (let i = 0; i < dataGroupedByX.size; i++) {
-    const [k, v] = sortedDataGroupedByXEntries[i];
+    const [k, v] = dataGroupedByXEntries[i];
 
     const observation: Observation = Object.assign(
       {
