@@ -65,6 +65,7 @@ import {
   getCategoricalDimensions,
   getGeoDimensions,
   getTemporalDimensions,
+  getTemporalEntityDimensions,
   HierarchyValue,
   isGeoDimension,
   isGeoShapesDimension,
@@ -373,7 +374,10 @@ export const getInitialConfig = (
     };
   };
   const numericalMeasures = measures.filter(isNumericalMeasure);
-  const temporalDimensions = getTemporalDimensions(dimensions);
+  const temporalDimensions = [
+    ...getTemporalDimensions(dimensions),
+    ...getTemporalEntityDimensions(dimensions),
+  ];
 
   switch (chartType) {
     case "area":
@@ -1936,7 +1940,10 @@ export const getPossibleChartTypes = ({
   const ordinalMeasures = measures.filter(isOrdinalMeasure);
   const categoricalDimensions = getCategoricalDimensions(dimensions);
   const geoDimensions = getGeoDimensions(dimensions);
-  const temporalDimensions = getTemporalDimensions(dimensions);
+  const temporalDimensions = [
+    ...getTemporalDimensions(dimensions),
+    ...getTemporalEntityDimensions(dimensions),
+  ];
 
   const categoricalEnabled: RegularChartType[] = ["column", "pie"];
   const geoEnabled: RegularChartType[] = ["column", "map", "pie"];

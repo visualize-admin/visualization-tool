@@ -349,7 +349,10 @@ export const isOrdinalMeasure = (
 };
 
 export const getTemporalDimensions = (dimensions: Component[]) =>
-  dimensions.filter((d) => d.__typename === "TemporalDimension");
+  dimensions.filter(isTemporalDimension);
+
+export const getTemporalEntityDimensions = (dimensions: Component[]) =>
+  dimensions.filter(isTemporalEntityDimension);
 
 export const isCategoricalDimension = (
   d: Component
@@ -436,6 +439,12 @@ export const isTemporalDimension = (
   dimension?: Component | null
 ): dimension is TemporalDimension => {
   return dimension?.__typename === "TemporalDimension";
+};
+
+export const isTemporalEntityDimension = (
+  dimension?: Component | null
+): dimension is TemporalEntityDimension => {
+  return dimension?.__typename === "TemporalEntityDimension";
 };
 
 export const isTemporalOrdinalDimension = (
