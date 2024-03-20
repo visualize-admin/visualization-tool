@@ -47,6 +47,7 @@ import {
   isNumericalMeasure,
   isOrdinalMeasure,
   isTemporalDimension,
+  isTemporalEntityDimension,
   isTemporalOrdinalDimension,
 } from "@/domain/data";
 import { getDefaultCategoricalPaletteName, getPalette } from "@/palettes";
@@ -400,7 +401,11 @@ export const ANIMATION_FIELD_SPEC: EncodingSpec<
     warnMessage?: string;
   } => {
     const temporalDimensions = components.filter((d) => {
-      return isTemporalDimension(d) || isTemporalOrdinalDimension(d);
+      return (
+        isTemporalDimension(d) ||
+        isTemporalEntityDimension(d) ||
+        isTemporalOrdinalDimension(d)
+      );
     });
     const noTemporalDimensions = temporalDimensions.length === 0;
 

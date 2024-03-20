@@ -11,11 +11,11 @@ import { parseDate } from "@/configurator/components/ui-helpers";
 import {
   Dimension,
   isTemporalDimension,
+  isTemporalEntityDimension,
   isTemporalOrdinalDimension,
 } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { useTimeFormatUnit } from "@/formatters";
-import { TimeUnit } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import { useInteractiveFilters } from "@/stores/interactive-filters";
 import { Timeline, TimelineProps } from "@/utils/observables";
@@ -59,14 +59,16 @@ export const TimeSlider = (props: TimeSliderProps) => {
   const dimension = React.useMemo(() => {
     return dimensions.find((d) => d.iri === componentIri);
   }, [componentIri, dimensions]);
-  const hasTimeUnit = isTemporalDimension(dimension);
+  const temporal = isTemporalDimension(dimension);
+  const temporalEntity = isTemporalEntityDimension(dimension);
+  const temporalOrdinal = isTemporalOrdinalDimension(dimension);
 
-  if (!(hasTimeUnit || isTemporalOrdinalDimension(dimension))) {
+  if (!(temporal || temporalEntity || temporalOrdinal)) {
     throw new Error("You can only use TimeSlider with temporal dimensions!");
   }
 
   const timeFormatUnit = useTimeFormatUnit();
-  const timeUnit = hasTimeUnit ? dimension.timeUnit ?? TimeUnit.Day : undefined;
+  const timeUnit = "timeUnit" in dimension ? dimension.timeUnit : undefined;
 
   // No TimeSlider for tables.
   const chartState = useChartState() as NonNullable<
@@ -86,7 +88,7 @@ export const TimeSlider = (props: TimeSliderProps) => {
       )
     );
 
-    if (hasTimeUnit) {
+    if (temporal) {
       const msValues = uniqueValues.map((d) => parseDate(d).getTime());
       const formatValue = (d: number) => timeFormatUnit(new Date(d), timeUnit!);
 
@@ -115,10 +117,10 @@ export const TimeSlider = (props: TimeSliderProps) => {
       };
     }
   }, [
-    hasTimeUnit,
     animationType,
     animationDuration,
     chartState.allData,
+    temporal,
     dimension,
     timeFormatUnit,
     timeUnit,
