@@ -30,7 +30,14 @@ import {
 } from "@/configurator";
 import { parseDate } from "@/configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
-import { Component, Dimension, Measure, Observation } from "@/domain/data";
+import {
+  Component,
+  Dimension,
+  DimensionValue,
+  Measure,
+  Observation,
+  ObservationValue,
+} from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { JOIN_BY_DIMENSION_IRI } from "@/graphql/hook-utils";
 import { DataCubeObservationFilter } from "@/graphql/resolver-types";
@@ -184,8 +191,8 @@ export const extractChartConfigComponentIris = (chartConfig: ChartConfig) => {
     chartConfig.chartType === "map"
       ? getMapChartConfigAdditionalFields(chartConfig)
       : isComboChartConfig(chartConfig)
-      ? getComboChartConfigAdditionalFields(chartConfig)
-      : [];
+        ? getComboChartConfigAdditionalFields(chartConfig)
+        : [];
   const filterIris = getChartConfigFilterComponentIris(chartConfig);
   const IFKeys = IFConfig ? (Object.keys(IFConfig) as IFKey[]) : [];
   const IFIris: string[] = [];
@@ -284,13 +291,12 @@ export const useDimensionWithAbbreviations = (
 };
 
 export const makeUseParsedVariable =
-  <T extends unknown>(parser: (d: Observation[string]) => T) =>
+  <T extends unknown>(parser: (d: ObservationValue) => T) =>
   (key: string) => {
     return useCallback((d: Observation) => parser(d[key]), [key]);
   };
 
 // retrieving variables
-export const useNumericVariable = makeUseParsedVariable((x) => Number(x));
 export const useOptionalNumericVariable = makeUseParsedVariable((x) =>
   x !== null ? Number(x) : null
 );
@@ -300,6 +306,11 @@ export const useStringVariable = makeUseParsedVariable((x) =>
 export const useTemporalVariable = makeUseParsedVariable((x) =>
   parseDate(`${x}`)
 );
+export const useTemporalEntityVariable = (dimensionValues: DimensionValue[]) =>
+  makeUseParsedVariable((x) => {
+    const value = dimensionValues.find((d) => d.label === x);
+    return parseDate(`${value?.position}`);
+  });
 
 export const getSegment =
   (segmentKey: string | undefined) =>

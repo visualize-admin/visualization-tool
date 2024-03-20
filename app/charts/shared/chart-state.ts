@@ -20,6 +20,7 @@ import {
   useDimensionWithAbbreviations,
   useOptionalNumericVariable,
   useStringVariable,
+  useTemporalEntityVariable,
   useTemporalVariable,
 } from "@/charts/shared/chart-helpers";
 import { Bounds } from "@/charts/shared/use-width";
@@ -47,8 +48,10 @@ import {
   NumericalMeasure,
   Observation,
   ObservationValue,
+  TemporalEntityDimension,
   isNumericalMeasure,
   isTemporalDimension,
+  isTemporalEntityDimension,
 } from "@/domain/data";
 import { Has } from "@/domain/types";
 import { TemporalDimension, TimeUnit } from "@/graphql/resolver-types";
@@ -169,7 +172,7 @@ export const useBandXVariables = (
 };
 
 export type TemporalXVariables = {
-  xDimension: TemporalDimension;
+  xDimension: TemporalDimension | TemporalEntityDimension;
   getX: TemporalValueGetter;
   getXAsString: StringValueGetter;
 };
@@ -183,16 +186,22 @@ export const useTemporalXVariables = (
     throw Error(`No dimension <${x.componentIri}> in cube!`);
   }
 
-  if (!isTemporalDimension(xDimension)) {
+  if (
+    !isTemporalDimension(xDimension) &&
+    !isTemporalEntityDimension(xDimension)
+  ) {
     throw Error(`Dimension <${x.componentIri}> is not temporal!`);
   }
 
-  const getX = useTemporalVariable(x.componentIri);
+  const getXTemporal = useTemporalVariable(x.componentIri);
+  const getXTemporalEntity = useTemporalEntityVariable(
+    dimensionsByIri[x.componentIri].values
+  )(x.componentIri);
   const getXAsString = useStringVariable(x.componentIri);
 
   return {
     xDimension,
-    getX,
+    getX: isTemporalDimension(xDimension) ? getXTemporal : getXTemporalEntity,
     getXAsString,
   };
 };
