@@ -1,19 +1,6 @@
+import { defaultSegmentOnChange } from "@/charts/chart-config-ui-options";
 import { ColumnConfig, ScatterPlotConfig } from "@/configurator";
 import { DEFAULT_CATEGORICAL_PALETTE_NAME } from "@/palettes";
-
-import { defaultSegmentOnChange } from "./chart-config-ui-options";
-
-jest.mock("rdf-cube-view-query", () => ({
-  Node: class {
-    constructor() {}
-  },
-  Source: class {
-    constructor() {}
-  },
-  Cube: class {
-    constructor() {}
-  },
-}));
 
 jest.mock("../rdf/extended-cube", () => ({
   ExtendedCube: jest.fn(),

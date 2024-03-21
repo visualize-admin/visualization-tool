@@ -4,7 +4,6 @@ import ParsingClient from "sparql-http-client/ParsingClient";
 import * as ns from "./namespace";
 import { getCubePreview } from "./query-cube-preview";
 
-jest.mock("rdf-cube-view-query", () => ({}));
 jest.mock("./extended-cube", () => ({}));
 jest.mock("@zazuko/cube-hierarchy-query/index", () => ({}));
 

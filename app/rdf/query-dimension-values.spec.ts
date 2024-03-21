@@ -3,14 +3,12 @@ import rdf from "rdf-ext";
 import ParsingClient from "sparql-http-client/ParsingClient";
 
 import { FilterValue } from "@/config-types";
-
-import * as ns from "./namespace";
+import * as ns from "@/rdf/namespace";
 import {
   getQueryFilters,
   loadDimensionValuesWithMetadata,
-} from "./query-dimension-values";
+} from "@/rdf/query-dimension-values";
 
-jest.mock("rdf-cube-view-query", () => ({}));
 jest.mock("./extended-cube", () => ({}));
 jest.mock("@zazuko/cube-hierarchy-query/index", () => ({}));
 

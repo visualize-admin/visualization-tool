@@ -11,18 +11,6 @@ import map1Fixture from "@/test/__fixtures/config/int/map-nfi.json";
 import line1Fixture from "@/test/__fixtures/config/prod/line-1.json";
 import { migrateChartConfig } from "@/utils/chart-config/versioning";
 
-jest.mock("rdf-cube-view-query", () => ({
-  Node: class {
-    constructor() {}
-  },
-  Source: class {
-    constructor() {}
-  },
-  Cube: class {
-    constructor() {}
-  },
-}));
-
 jest.mock("../../rdf/extended-cube", () => ({
   ExtendedCube: jest.fn(),
 }));

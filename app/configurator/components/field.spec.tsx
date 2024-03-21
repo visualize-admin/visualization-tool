@@ -3,18 +3,6 @@ import { fireEvent, render } from "@testing-library/react";
 import { TimeInput } from "@/configurator/components/field";
 import { getD3TimeFormatLocale } from "@/locales/locales";
 
-jest.mock("rdf-cube-view-query", () => ({
-  Node: class {
-    constructor() {}
-  },
-  Source: class {
-    constructor() {}
-  },
-  Cube: class {
-    constructor() {}
-  },
-}));
-
 jest.mock("../../rdf/extended-cube", () => ({
   ExtendedCube: jest.fn(),
 }));
