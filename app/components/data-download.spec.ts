@@ -1,7 +1,3 @@
-import { RDFCubeViewQueryMock } from "@/test/cube-view-query-mock";
-RDFCubeViewQueryMock;
-
-// eslint-disable-next-line import/order
 import get from "lodash/get";
 
 import { getFullDataDownloadFilters } from "@/components/data-download";

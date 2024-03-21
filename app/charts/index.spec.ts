@@ -1,7 +1,6 @@
 import { ColumnConfig, ScatterPlotConfig, TableFields } from "@/configurator";
 import { Dimension, Measure } from "@/domain/data";
 import { TimeUnit } from "@/graphql/resolver-types";
-import { RDFCubeViewQueryMock } from "@/test/cube-view-query-mock";
 
 import bathingWaterData from "../test/__fixtures/data/DataCubeMetadataWithComponentValues-bathingWater.json";
 import forestAreaData from "../test/__fixtures/data/forest-area-by-production-region.json";
@@ -15,8 +14,6 @@ import {
 jest.mock("../rdf/extended-cube", () => ({
   ExtendedCube: jest.fn(),
 }));
-
-RDFCubeViewQueryMock;
 
 const mockDimensions: Record<string, Dimension> = {
   geoCoordinates: {

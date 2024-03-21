@@ -1,7 +1,3 @@
-import { RDFCubeViewQueryMock } from "@/test/cube-view-query-mock";
-RDFCubeViewQueryMock;
-
-// eslint-disable-next-line import/order
 import { NamedNode } from "rdf-js";
 
 import { SingleFilters } from "@/config-types";
