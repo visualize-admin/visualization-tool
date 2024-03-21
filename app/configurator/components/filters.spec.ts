@@ -10,6 +10,7 @@ jest.mock("../../rdf/extended-cube", () => ({
 
 describe("TimeFilter", () => {
   const dimension = {
+    __typename: "TemporalDimension",
     timeFormat: "%Y",
     timeUnit: TimeUnit.Year,
     values: [{ value: "2020" }, { value: "ABC" }],
