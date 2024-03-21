@@ -5,7 +5,6 @@ import * as ns from "./namespace";
 import { getCubePreview } from "./query-cube-preview";
 
 jest.mock("./extended-cube", () => ({}));
-jest.mock("@zazuko/cube-hierarchy-query/index", () => ({}));
 
 describe("dataset preview", () => {
   const dim = rdf.blankNode();

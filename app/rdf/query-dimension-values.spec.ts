@@ -10,7 +10,6 @@ import {
 } from "@/rdf/query-dimension-values";
 
 jest.mock("./extended-cube", () => ({}));
-jest.mock("@zazuko/cube-hierarchy-query/index", () => ({}));
 
 const cubeDimensions = [
   {
@@ -64,7 +63,10 @@ describe("getDimensionValuesWithMetadata", () => {
   it("should return the values of a dimension", async () => {
     const values = await loadDimensionValuesWithMetadata("", {
       cubeDimensions,
-      dimensionIri,
+      dimension: {
+        data: { iri: dimensionIri },
+        dimension: cubeDimensions[0],
+      } as any,
       sparqlClient,
       locale: "en",
       cache: undefined,
