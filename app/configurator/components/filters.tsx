@@ -74,6 +74,7 @@ import {
   Component,
   Dimension,
   HierarchyValue,
+  isTemporalDimension,
   ObservationValue,
   TemporalDimension,
   TemporalEntityDimension,
@@ -1102,6 +1103,7 @@ export const getTimeFilterOptions = (props: GetTimeFilterOptionsProps) => {
   const { dimension, formatLocale, timeFormatUnit } = props;
 
   if (dimension) {
+    const temporal = isTemporalDimension(dimension);
     const { timeFormat, timeUnit } = dimension;
     const parse = formatLocale.parse(timeFormat);
     const sortedOptions: {
@@ -1111,8 +1113,8 @@ export const getTimeFilterOptions = (props: GetTimeFilterOptionsProps) => {
     }[] = [];
     const sortedValues: ObservationValue[] = [];
 
-    for (const { value } of dimension.values) {
-      const date = parse(`${value}`);
+    for (const { value, position } of dimension.values) {
+      const date = temporal ? parse(`${value}`) : parse(`${position}`);
 
       if (date) {
         sortedOptions.push({
@@ -1120,7 +1122,11 @@ export const getTimeFilterOptions = (props: GetTimeFilterOptionsProps) => {
           label: timeFormatUnit(date, timeUnit),
           date,
         });
-        sortedValues.push(value);
+        if (temporal) {
+          sortedValues.push(value);
+        } else if (position !== undefined) {
+          sortedValues.push(position);
+        }
       }
     }
 

@@ -80,6 +80,7 @@ import {
   isNumericalMeasure,
   isStandardErrorDimension,
   isTemporalDimension,
+  isTemporalEntityDimension,
   Measure,
   Observation,
 } from "@/domain/data";
@@ -1200,7 +1201,9 @@ const ChartFieldMultiFilter = ({
           <Trans id="controls.section.filter">Filter</Trans>
         </legend>
         {/* For temporal-based segments, we want to treat values as nominal. */}
-        {isTemporalDimension(component) && field !== "segment" ? (
+        {(isTemporalDimension(component) ||
+          isTemporalEntityDimension(component)) &&
+        field !== "segment" ? (
           <TimeFilter
             dimension={component}
             disableInteractiveFilters={encoding.disableInteractiveFilters}
