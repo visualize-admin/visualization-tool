@@ -27,6 +27,8 @@ Bumped to a new major version to celebrate all the improvements and new features
 - Performance
   - Dimension values are now fetched in parallel in case of fetching for several dimensions at once
   - Refactored shapes and coordinates fetching to not rely on resolver chains
+- Maintenance
+  - Removed some unused dependencies
 
 # [3.27.1] - 2024-03-15
 
