@@ -303,8 +303,13 @@ export const getCubeDimensionValuesWithMetadata = async ({
   filters?: Filters;
   cache: LRUCache | undefined;
 }): Promise<DimensionValue[]> => {
+  const resolvedDimension = parseCubeDimension({
+    dim: dimension,
+    cube,
+    locale,
+  });
   return await loadDimensionValuesWithMetadata(cube.term?.value!, {
-    dimensionIri: dimension.path?.value!,
+    dimension: resolvedDimension,
     cubeDimensions: cube.dimensions,
     sparqlClient,
     filters,
@@ -645,14 +650,14 @@ const buildFilters = async ({
           })
         : dimension;
 
-      const parsedCubeDimension = parseCubeDimension({
+      const resolvedDimension = parseCubeDimension({
         dim: cubeDimension,
         cube,
         locale,
       });
 
       const { dataType, dataKind, scaleType, timeUnit, related } =
-        parsedCubeDimension.data;
+        resolvedDimension.data;
       const dimensionType = resolveDimensionType(
         dataKind,
         scaleType,
@@ -669,7 +674,7 @@ const buildFilters = async ({
       const dimensionHasHierarchy = hasHierarchy(cubeDimension);
       const toRDFValue = (d: string): NamedNode | Literal => {
         return dataType && !dimensionHasHierarchy
-          ? parsedCubeDimension.data.hasUndefinedValues &&
+          ? resolvedDimension.data.hasUndefinedValues &&
             d === DIMENSION_VALUE_UNDEFINED
             ? rdf.literal("", ns.cube.Undefined)
             : rdf.literal(d, dataType)
@@ -680,7 +685,7 @@ const buildFilters = async ({
         case "single": {
           if (isDynamicMaxValue(filter.value)) {
             const maxValue = await loadMaxDimensionValue(cube.term?.value!, {
-              dimensionIri: iri,
+              dimension: resolvedDimension,
               cubeDimensions: cube.dimensions,
               sparqlClient,
               filters,

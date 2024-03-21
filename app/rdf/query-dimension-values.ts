@@ -13,6 +13,7 @@ import { FilterValue, Filters } from "@/config-types";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { DimensionValue, parseObservationValue } from "@/domain/data";
 import { isDynamicMaxValue } from "@/domain/max-value";
+import { ResolvedDimension } from "@/graphql/shared-types";
 import { pragmas } from "@/rdf/create-source";
 
 import * as ns from "./namespace";
@@ -73,7 +74,7 @@ const getFilterOrder = (filter: FilterValue) => {
 };
 
 type LoadDimensionValuesProps = {
-  dimensionIri: string;
+  dimension: ResolvedDimension;
   cubeDimensions: CubeDimension[];
   sparqlClient: ParsingClient;
   filters?: Filters;
@@ -91,21 +92,21 @@ export async function loadDimensionValuesWithMetadata(
   cubeIri: string,
   props: LoadDimensionValuesProps
 ): Promise<DimensionValue[]> {
-  const { dimensionIri, cubeDimensions, sparqlClient, filters, locale, cache } =
+  const { dimension, cubeDimensions, sparqlClient, filters, locale, cache } =
     props;
+  const dimensionIri = dimension.data.iri;
   const filterList = getFiltersList(filters, dimensionIri);
   const queryFilters = getQueryFilters(
     filterList,
     cubeDimensions,
     dimensionIri
   );
-  const dimension = cubeDimensions.find((d) => d.path?.value === dimensionIri);
 
-  if (!dimension) {
+  if (!cubeDimensions.find((d) => d.path?.value === dimensionIri)) {
     throw new Error(`Dimension not found: ${dimensionIri}`);
   }
 
-  const isDimensionVersioned = dimensionIsVersioned(dimension);
+  const isDimensionVersioned = dimensionIsVersioned(dimension.dimension);
   const query = `PREFIX cube: <https://cube.link/>
 PREFIX schema: <http://schema.org/>
 PREFIX sh: <http://www.w3.org/ns/shacl#>
@@ -168,6 +169,10 @@ CONSTRUCT {
   BIND(COALESCE(?unversioned_value, ?value) AS ?maybe_unversioned_value)
 }`;
 
+  if (dimensionIri === "https://agriculture.ld.admin.ch/foag/dimension/date") {
+    console.log(query);
+  }
+
   return await executeWithCache(
     sparqlClient,
     query,
@@ -223,7 +228,8 @@ export async function loadMaxDimensionValue(
   cubeIri: string,
   props: LoadMaxDimensionValuesProps
 ): Promise<string> {
-  const { dimensionIri, cubeDimensions, sparqlClient, filters, cache } = props;
+  const { dimension, cubeDimensions, sparqlClient, filters, cache } = props;
+  const dimensionIri = dimension.data.iri;
   const filterList = getFiltersList(filters, dimensionIri);
   // The following query works both for numeric, date and ordinal dimensions
   const query = SELECT`?value`.WHERE`
