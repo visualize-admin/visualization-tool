@@ -1,11 +1,8 @@
 import { TemporalDimension } from "@/domain/data";
 import { TimeUnit } from "@/graphql/resolver-types";
 import { getD3TimeFormatLocale } from "@/locales/locales";
-import { RDFCubeViewQueryMock } from "@/test/cube-view-query-mock";
 
 import { getTimeFilterOptions } from "./filters";
-
-RDFCubeViewQueryMock;
 
 jest.mock("../../rdf/extended-cube", () => ({
   ExtendedCube: jest.fn(),

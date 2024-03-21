@@ -1,7 +1,3 @@
-// eslint-disable-next-line import/order
-import { RDFCubeViewQueryMock } from "@/test/cube-view-query-mock";
-RDFCubeViewQueryMock;
-
 import { ChartConfig } from "@/config-types";
 import { getFilterReorderCubeFilters } from "@/configurator/components/chart-configurator";
 

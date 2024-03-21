@@ -1,8 +1,3 @@
-// eslint-disable-next-line import/order
-import { RDFCubeViewQueryMock } from "@/test/cube-view-query-mock";
-RDFCubeViewQueryMock;
-
-// eslint-disable-next-line import/order
 import { render } from "@testing-library/react";
 
 import { ChartDataWrapper } from "@/charts/chart-data-wrapper";
