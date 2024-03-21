@@ -39,11 +39,13 @@ import {
 import { getFieldLabel } from "@/configurator/components/field-i18n";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import {
+  ANIMATION_ENABLED_COMPONENTS,
   Component,
   Dimension,
+  MULTI_FILTER_ENABLED_COMPONENTS,
   Measure,
   Observation,
-  canDimensionBeMultiFiltered,
+  SEGMENT_ENABLED_COMPONENTS,
   isNumericalMeasure,
   isOrdinalMeasure,
   isTemporalDimension,
@@ -179,7 +181,10 @@ const onColorComponentIriChange: OnEncodingOptionChange<string, MapConfig> = (
       `${basePath}.color.palette`
     );
 
-    if (canDimensionBeMultiFiltered(component) || isOrdinalMeasure(component)) {
+    if (
+      MULTI_FILTER_ENABLED_COMPONENTS.includes(component.__typename) ||
+      isOrdinalMeasure(component)
+    ) {
       const palette = getDefaultCategoricalPaletteName(component, colorPalette);
       newField = {
         type: "categorical",
@@ -302,16 +307,6 @@ interface ChartSpecs {
   comboLineColumn: ChartSpec<ComboLineColumnConfig>;
 }
 
-export const SEGMENT_COMPONENT_TYPES: ComponentType[] = [
-  "NominalDimension",
-  "OrdinalDimension",
-  "TemporalDimension",
-  "TemporalEntityDimension",
-  "TemporalOrdinalDimension",
-  "GeoCoordinatesDimension",
-  "GeoShapesDimension",
-];
-
 const getDefaultSegmentSorting = <
   T extends ChartConfig = ChartConfig,
 >(): EncodingSortingOption<T>[] => [
@@ -372,11 +367,7 @@ export const ANIMATION_FIELD_SPEC: EncodingSpec<
   field: "animation",
   optional: true,
   iriAttributes: [],
-  componentTypes: [
-    "TemporalDimension",
-    "TemporalEntityDimension",
-    "TemporalOrdinalDimension",
-  ],
+  componentTypes: ANIMATION_ENABLED_COMPONENTS,
   filters: true,
   hide: true,
   disableInteractiveFilters: true,
@@ -575,7 +566,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         field: "segment",
         optional: true,
         iriAttributes: ["componentIri"],
-        componentTypes: SEGMENT_COMPONENT_TYPES,
+        componentTypes: SEGMENT_ENABLED_COMPONENTS,
         filters: true,
         sorting: AREA_SEGMENT_SORTING,
         onChange: defaultSegmentOnChange,
@@ -696,7 +687,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         field: "segment",
         optional: true,
         iriAttributes: ["componentIri"],
-        componentTypes: SEGMENT_COMPONENT_TYPES,
+        componentTypes: SEGMENT_ENABLED_COMPONENTS,
         filters: true,
         sorting: COLUMN_SEGMENT_SORTING,
         onChange: (iri, options) => {
@@ -798,7 +789,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         iriAttributes: ["componentIri"],
         field: "segment",
         optional: true,
-        componentTypes: SEGMENT_COMPONENT_TYPES,
+        componentTypes: SEGMENT_ENABLED_COMPONENTS,
         filters: true,
         sorting: LINE_SEGMENT_SORTING,
         onChange: defaultSegmentOnChange,
@@ -891,7 +882,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         iriAttributes: ["componentIri"],
         field: "segment",
         optional: false,
-        componentTypes: SEGMENT_COMPONENT_TYPES,
+        componentTypes: SEGMENT_ENABLED_COMPONENTS,
         filters: true,
         sorting: PIE_SEGMENT_SORTING,
         onChange: defaultSegmentOnChange,
@@ -925,7 +916,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         iriAttributes: ["componentIri"],
         field: "segment",
         optional: true,
-        componentTypes: SEGMENT_COMPONENT_TYPES,
+        componentTypes: SEGMENT_ENABLED_COMPONENTS,
         filters: true,
         onChange: defaultSegmentOnChange,
         options: {

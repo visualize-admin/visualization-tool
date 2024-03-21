@@ -42,12 +42,10 @@ import {
   updateIsHidden,
 } from "@/configurator/table/table-config-state";
 import {
-  canDimensionBeMultiFiltered,
   Component,
   Dimension,
-  isMeasure,
+  isDimension,
   isNumericalMeasure,
-  isStandardErrorDimension,
   isTemporalDimension,
   Measure,
 } from "@/domain/data";
@@ -211,22 +209,22 @@ export const TableColumnOptions = ({
         },
       ]
     : isTemporalDimension(component)
-    ? [
-        {
-          value: "text",
-          label: t({ id: "columnStyle.text", message: `Text` }),
-        },
-      ]
-    : [
-        {
-          value: "text",
-          label: t({ id: "columnStyle.text", message: `Text` }),
-        },
-        {
-          value: "category",
-          label: t({ id: "columnStyle.categories", message: `Categories` }),
-        },
-      ];
+      ? [
+          {
+            value: "text",
+            label: t({ id: "columnStyle.text", message: `Text` }),
+          },
+        ]
+      : [
+          {
+            value: "text",
+            label: t({ id: "columnStyle.text", message: `Text` }),
+          },
+          {
+            value: "category",
+            label: t({ id: "columnStyle.categories", message: `Categories` }),
+          },
+        ];
 
   return (
     <div
@@ -330,29 +328,7 @@ export const TableColumnOptions = ({
           </ControlSectionContent>
         </ControlSection>
       )}
-      {canDimensionBeMultiFiltered(component) &&
-      !isStandardErrorDimension(component) ? (
-        <ControlSection collapse>
-          <SubsectionTitle disabled={!component} iconName="filter">
-            <Trans id="controls.section.filter">Filter</Trans>
-          </SubsectionTitle>
-          <ControlSectionContent component="fieldset">
-            <legend style={{ display: "none" }}>
-              <Trans id="controls.section.filter">Filter</Trans>
-            </legend>
-            {component.isKeyDimension && isHidden && !isGroup ? (
-              <DimensionValuesSingleFilter dimension={component} />
-            ) : isMeasure(component) ? null : (
-              <DimensionValuesMultiFilter
-                field={component.iri}
-                dimension={component}
-                colorComponent={component}
-                colorConfigPath="columnStyle"
-              />
-            )}
-          </ControlSectionContent>
-        </ControlSection>
-      ) : isTemporalDimension(component) ? (
+      {isTemporalDimension(component) ? (
         <ControlSection collapse>
           <SubsectionTitle disabled={!component} iconName="filter">
             <Trans id="controls.section.filter">Filter</Trans>
@@ -380,6 +356,27 @@ export const TableColumnOptions = ({
                 key={component.iri}
                 dimension={component}
                 disableInteractiveFilters
+              />
+            )}
+          </ControlSectionContent>
+        </ControlSection>
+      ) : isDimension(component) ? (
+        <ControlSection collapse>
+          <SubsectionTitle disabled={!component} iconName="filter">
+            <Trans id="controls.section.filter">Filter</Trans>
+          </SubsectionTitle>
+          <ControlSectionContent component="fieldset">
+            <legend style={{ display: "none" }}>
+              <Trans id="controls.section.filter">Filter</Trans>
+            </legend>
+            {component.isKeyDimension && isHidden && !isGroup ? (
+              <DimensionValuesSingleFilter dimension={component} />
+            ) : (
+              <DimensionValuesMultiFilter
+                field={component.iri}
+                dimension={component}
+                colorComponent={component}
+                colorConfigPath="columnStyle"
               />
             )}
           </ControlSectionContent>

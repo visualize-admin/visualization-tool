@@ -73,9 +73,9 @@ import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { TableColumnOptions } from "@/configurator/table/table-chart-options";
 import {
   Component,
+  CUSTOM_SORT_ENABLED_COMPONENTS,
   Dimension,
   getDimensionsByDimensionType,
-  isDimensionSortable,
   isMeasure,
   isNumericalMeasure,
   isStandardErrorDimension,
@@ -382,13 +382,15 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
       {field === "baseLayer" && (
         <ChartMapBaseLayerSettings chartConfig={chartConfig as MapConfig} />
       )}
-      {encoding.sorting && isDimensionSortable(component) && (
-        <ChartFieldSorting
-          chartConfig={chartConfig}
-          field={field}
-          encodingSortingOptions={encoding.sorting}
-        />
-      )}
+      {encoding.sorting &&
+        component &&
+        CUSTOM_SORT_ENABLED_COMPONENTS.includes(component.__typename) && (
+          <ChartFieldSorting
+            chartConfig={chartConfig}
+            field={field}
+            encodingSortingOptions={encoding.sorting}
+          />
+        )}
       {encoding.options?.size && component && (
         <ChartFieldSize
           field={field}

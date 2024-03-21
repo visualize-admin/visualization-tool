@@ -88,6 +88,103 @@ export type DataCubePreview = {
   observations: Observation[];
 };
 
+type ComponentRenderingConfig = {
+  enableAnimation: boolean;
+  enableCustomSort: boolean;
+  enableMultiFilter: boolean;
+  enableSegment: boolean;
+};
+
+const ComponentsRenderingConfig: {
+  [type in ComponentType]: ComponentRenderingConfig;
+} = {
+  NominalDimension: {
+    enableAnimation: false,
+    enableCustomSort: true,
+    enableMultiFilter: true,
+    enableSegment: true,
+  },
+  OrdinalDimension: {
+    enableAnimation: false,
+    enableCustomSort: false,
+    enableMultiFilter: true,
+    enableSegment: true,
+  },
+  TemporalDimension: {
+    enableAnimation: true,
+    enableCustomSort: false,
+    enableMultiFilter: false,
+    enableSegment: true,
+  },
+  TemporalEntityDimension: {
+    enableAnimation: true,
+    enableCustomSort: false,
+    // FIXME: should behave like TemporalDimension
+    enableMultiFilter: true,
+    enableSegment: true,
+  },
+  TemporalOrdinalDimension: {
+    enableAnimation: true,
+    enableCustomSort: false,
+    enableMultiFilter: true,
+    enableSegment: true,
+  },
+  GeoCoordinatesDimension: {
+    enableAnimation: false,
+    enableCustomSort: true,
+    enableMultiFilter: true,
+    enableSegment: true,
+  },
+  GeoShapesDimension: {
+    enableAnimation: false,
+    enableCustomSort: true,
+    enableMultiFilter: true,
+    enableSegment: true,
+  },
+  NumericalMeasure: {
+    enableAnimation: false,
+    enableCustomSort: false,
+    enableMultiFilter: false,
+    enableSegment: false,
+  },
+  OrdinalMeasure: {
+    enableAnimation: false,
+    enableCustomSort: false,
+    enableMultiFilter: false,
+    enableSegment: false,
+  },
+  StandardErrorDimension: {
+    enableAnimation: false,
+    enableCustomSort: false,
+    enableMultiFilter: false,
+    enableSegment: false,
+  },
+};
+
+export const ANIMATION_ENABLED_COMPONENTS = Object.entries(
+  ComponentsRenderingConfig
+)
+  .filter(([, config]) => config.enableAnimation)
+  .map(([type]) => type as ComponentType);
+
+export const CUSTOM_SORT_ENABLED_COMPONENTS = Object.entries(
+  ComponentsRenderingConfig
+)
+  .filter(([, config]) => config.enableCustomSort)
+  .map(([type]) => type as ComponentType);
+
+export const MULTI_FILTER_ENABLED_COMPONENTS = Object.entries(
+  ComponentsRenderingConfig
+)
+  .filter(([, config]) => config.enableMultiFilter)
+  .map(([type]) => type as ComponentType);
+
+export const SEGMENT_ENABLED_COMPONENTS = Object.entries(
+  ComponentsRenderingConfig
+)
+  .filter(([, config]) => config.enableSegment)
+  .map(([type]) => type as ComponentType);
+
 export type Component = Dimension | Measure;
 
 export type BaseComponent = {
@@ -330,6 +427,12 @@ export const parseObservationValue = ({
   return value.value;
 };
 
+export const isDimension = (
+  component?: Component | null
+): component is Dimension => {
+  return !isMeasure(component);
+};
+
 export const isMeasure = (
   component?: Component | null
 ): component is Measure => {
@@ -361,26 +464,6 @@ export const isCategoricalDimension = (
     isNominalDimension(d) ||
     isOrdinalDimension(d) ||
     isTemporalOrdinalDimension(d)
-  );
-};
-
-export const canDimensionBeMultiFiltered = (d: Component) => {
-  return (
-    isNominalDimension(d) ||
-    isOrdinalDimension(d) ||
-    isTemporalOrdinalDimension(d) ||
-    isGeoCoordinatesDimension(d) ||
-    isGeoShapesDimension(d)
-  );
-};
-
-export const isDimensionSortable = (
-  d?: Component
-): d is NominalDimension | GeoCoordinatesDimension | GeoShapesDimension => {
-  return (
-    isNominalDimension(d) ||
-    isGeoCoordinatesDimension(d) ||
-    isGeoShapesDimension(d)
   );
 };
 
