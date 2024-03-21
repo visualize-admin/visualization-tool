@@ -490,7 +490,7 @@ export const useGetIdentityY = (iri: string) => {
 };
 
 export const normalizeData = (
-  data: Observation[],
+  sortedData: Observation[],
   {
     yKey,
     getY,
@@ -501,7 +501,7 @@ export const normalizeData = (
     getTotalGroupValue: (d: Observation) => number;
   }
 ): Observation[] => {
-  return data.map((d) => {
+  return sortedData.map((d) => {
     const totalGroupValue = getTotalGroupValue(d);
     const y = getY(d);
 

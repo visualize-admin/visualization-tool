@@ -1,14 +1,11 @@
-import { InternMap } from "d3";
 import merge from "lodash/merge";
 
 import {
   extractChartConfigComponentIris,
-  getWideData,
   prepareQueryFilters,
 } from "@/charts/shared/chart-helpers";
 import { ChartType, Filters, InteractiveFiltersConfig } from "@/configurator";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
-import { Observation } from "@/domain/data";
 import { InteractiveFiltersState } from "@/stores/interactive-filters";
 import map1Fixture from "@/test/__fixtures/config/int/map-nfi.json";
 import line1Fixture from "@/test/__fixtures/config/prod/line-1.json";
@@ -137,28 +134,6 @@ describe("useQueryFilters", () => {
     );
 
     expect(queryFilters[col("3")]).toBeUndefined();
-  });
-});
-
-describe("getWideData", () => {
-  const exampleMap: InternMap<string, Observation[]> = new Map();
-  exampleMap.set("2021-01-02", [{ segment: "abc", value: 1 }]);
-  exampleMap.set("2015-03-03", [{ segment: "abc", value: 10 }]);
-  exampleMap.set("2028-12-12", [{ segment: "abc", value: 12 }]);
-
-  it("should return sorted data", () => {
-    const wideData = getWideData({
-      dataGroupedByX: exampleMap,
-      xKey: "date",
-      getY: (d: Observation) => Number(d["value"]),
-      getSegment: (d: Observation) => String(d["segment"]),
-    });
-
-    expect(wideData.map((d) => d["date"])).toEqual([
-      "2015-03-03",
-      "2021-01-02",
-      "2028-12-12",
-    ]);
   });
 });
 
