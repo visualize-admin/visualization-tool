@@ -917,9 +917,7 @@ export const TimeFilter = (props: TimeFilterProps) => {
     [dispatch, dimension]
   );
 
-  const activeFilter = dimension?.iri
-    ? getFilterValue(state, dimension.iri)
-    : null;
+  const activeFilter = getFilterValue(state, dimension.iri);
   const rangeActiveFilter =
     activeFilter?.type === "range" ? activeFilter : null;
 
@@ -995,7 +993,6 @@ export const TimeFilter = (props: TimeFilterProps) => {
         {!disableInteractiveFilters && (
           <InteractiveTimeRangeToggle sx={{ mb: 1 }} />
         )}
-
         <Box sx={{ display: "flex", gap: 1 }}>
           {rangeActiveFilter && (
             <>
@@ -1094,51 +1091,43 @@ export const TimeFilter = (props: TimeFilterProps) => {
 };
 
 type GetTimeFilterOptionsProps = {
-  dimension: TemporalDimension | TemporalEntityDimension | null;
+  dimension: TemporalDimension | TemporalEntityDimension;
   formatLocale: ReturnType<typeof useTimeFormatLocale>;
   timeFormatUnit: ReturnType<typeof useTimeFormatUnit>;
 };
 
 export const getTimeFilterOptions = (props: GetTimeFilterOptionsProps) => {
   const { dimension, formatLocale, timeFormatUnit } = props;
+  const temporal = isTemporalDimension(dimension);
+  const { timeFormat, timeUnit } = dimension;
+  const parse = formatLocale.parse(timeFormat);
+  const sortedOptions: {
+    value: ObservationValue;
+    label: string;
+    date: Date;
+  }[] = [];
+  const sortedValues: ObservationValue[] = [];
 
-  if (dimension) {
-    const temporal = isTemporalDimension(dimension);
-    const { timeFormat, timeUnit } = dimension;
-    const parse = formatLocale.parse(timeFormat);
-    const sortedOptions: {
-      value: ObservationValue;
-      label: string;
-      date: Date;
-    }[] = [];
-    const sortedValues: ObservationValue[] = [];
+  for (const { value, position } of dimension.values) {
+    const date = temporal ? parse(`${value}`) : parse(`${position}`);
 
-    for (const { value, position } of dimension.values) {
-      const date = temporal ? parse(`${value}`) : parse(`${position}`);
-
-      if (date) {
-        sortedOptions.push({
-          value,
-          label: timeFormatUnit(date, timeUnit),
-          date,
-        });
-        if (temporal) {
-          sortedValues.push(value);
-        } else if (position !== undefined) {
-          sortedValues.push(position);
-        }
+    if (date) {
+      sortedOptions.push({
+        value,
+        label: timeFormatUnit(date, timeUnit),
+        date,
+      });
+      if (temporal) {
+        sortedValues.push(value);
+      } else if (position !== undefined) {
+        sortedValues.push(position);
       }
     }
-
-    return {
-      sortedOptions,
-      sortedValues,
-    };
   }
 
   return {
-    sortedOptions: [],
-    sortedValues: [],
+    sortedOptions,
+    sortedValues,
   };
 };
 
