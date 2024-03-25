@@ -11,6 +11,8 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 - Fixes
   - Full data download now correctly includes all cube dimensions again
+- Performance
+  - The application now fires the `PossibleFilters` query as soon as a chart is initialized to always load filters that make sense, without initial reloading
 
 # [3.27.2] - 2024-03-19
 

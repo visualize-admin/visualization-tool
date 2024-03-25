@@ -406,7 +406,7 @@ export const getCachedComponentsMock = {
         iri: "newAreaLayerColorIri",
         label: "Geo shapes dimension",
         isNumerical: false,
-        isKeyDimension: false,
+        isKeyDimension: true,
         values: [
           {
             value: "orange",
@@ -421,8 +421,11 @@ export const getCachedComponentsMock = {
         cubeIri: "mapDataset",
         label: "Geo coordinates dimension",
         isNumerical: false,
-        isKeyDimension: false,
-        values: [{ value: "x", label: "y" }],
+        isKeyDimension: true,
+        values: [
+          { value: "x", label: "y" },
+          { value: "xPossible", label: "yPossible" },
+        ],
       },
     ],
     measures: [
@@ -437,7 +440,4 @@ export const getCachedComponentsMock = {
       },
     ],
   },
-} satisfies Record<
-string,
-ReturnType<typeof getCachedComponents>
->;
+} satisfies Record<string, ReturnType<typeof getCachedComponents>>;
