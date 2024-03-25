@@ -1,39 +1,52 @@
 {
   "main": {
-    "id": "e4d4a02e1501e745",
+    "id": "7e14745855140fad",
     "type": "split",
     "children": [
       {
-        "id": "e735466410afa531",
+        "id": "b8f060d57a64d3d8",
         "type": "tabs",
         "children": [
           {
-            "id": "f1e51425f1faed87",
+            "id": "f8c5f66bb26b66fb",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "dimensions/values/temporal entity.md",
-                "mode": "preview",
+                "file": "refactor ideas.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
+            "id": "4ca93474f04d4a41",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "performance bottlenecks.md",
+                "mode": "source",
                 "source": false
               }
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
   },
   "left": {
-    "id": "a178d05e3da232b0",
+    "id": "4c9f55499778daf8",
     "type": "split",
     "children": [
       {
-        "id": "3a7e996702cbd86f",
+        "id": "10e8bfebb4ccabfa",
         "type": "tabs",
         "children": [
           {
-            "id": "6704ef28bb3ea972",
+            "id": "20f2f239d676e7f1",
             "type": "leaf",
             "state": {
               "type": "file-explorer",
@@ -43,12 +56,12 @@
             }
           },
           {
-            "id": "876e6fa18111d312",
+            "id": "1351a6eb658f57a7",
             "type": "leaf",
             "state": {
               "type": "search",
               "state": {
-                "query": "tag:#visualize",
+                "query": "",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -58,7 +71,7 @@
             }
           },
           {
-            "id": "b89954eeac5b94e4",
+            "id": "2e24440e3081ad41",
             "type": "leaf",
             "state": {
               "type": "bookmarks",
@@ -72,20 +85,20 @@
     "width": 300
   },
   "right": {
-    "id": "9dc94f951245b7d1",
+    "id": "fe910c4504715f5a",
     "type": "split",
     "children": [
       {
-        "id": "ec828cb7f49990d4",
+        "id": "3bc67d4f0edeb4a6",
         "type": "tabs",
         "children": [
           {
-            "id": "441bc71901cb8006",
+            "id": "9b89ac6130cf0a2c",
             "type": "leaf",
             "state": {
               "type": "backlink",
               "state": {
-                "file": "dimensions/values/temporal entity.md",
+                "file": "performance bottlenecks.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -97,19 +110,19 @@
             }
           },
           {
-            "id": "ed6acdc6938608c6",
+            "id": "2ebb1972191229ea",
             "type": "leaf",
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "dimensions/values/temporal entity.md",
+                "file": "performance bottlenecks.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
             }
           },
           {
-            "id": "2b0678742ef715b8",
+            "id": "35627adc880b0b80",
             "type": "leaf",
             "state": {
               "type": "tag",
@@ -120,12 +133,12 @@
             }
           },
           {
-            "id": "11281f9d88a0f7ff",
+            "id": "b55f0284398e2510",
             "type": "leaf",
             "state": {
               "type": "outline",
               "state": {
-                "file": "dimensions/values/temporal entity.md"
+                "file": "performance bottlenecks.md"
               }
             }
           }
@@ -133,7 +146,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 300,
+    "collapsed": true
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -145,27 +159,18 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "f1e51425f1faed87",
+  "active": "4ca93474f04d4a41",
   "lastOpenFiles": [
-    "dimensions/values/schema > position.md",
+    "performance optimization ideas.md",
     "dimensions/values/dimension value.md",
-    "dimensions/values/temporal entity.md",
+    "performance bottlenecks.md",
+    "refactor ideas.md",
+    "home.md",
     "dimensions/TemporalEntityDimension.md",
     "dimensions/dimension.md",
+    "dimensions/values/schema > position.md",
+    "dimensions/values/temporal entity.md",
     "dimensions/values/time unit.md",
-    "refactor ideas.md",
-    "optimization ideas.md",
-    "home.md",
-    "dimensions",
-    "dimensions/values",
-    "visualize",
-    "Welcome.md",
-    "Untitled 2.canvas",
-    "2024-03-18.md",
-    "Test",
-    "Test/2024-03-18adsd.md",
-    "Untitled 1.canvas",
-    "Untitled.canvas",
-    "create a link.md"
+    "dimensions/values"
   ]
 }
