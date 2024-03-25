@@ -350,7 +350,7 @@ const INITIAL_STATE: ConfiguratorState = {
   dataSource: DEFAULT_DATA_SOURCE,
 };
 
-const EMPTY_STATE: ConfiguratorStateSelectingDataSet = {
+const SELECTING_DATASET_STATE: ConfiguratorStateSelectingDataSet = {
   ...INITIAL_STATE,
   version: CONFIGURATOR_STATE_VERSION,
   state: "SELECTING_DATASET",
@@ -1072,7 +1072,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
     case "INITIALIZED":
       // Never restore from an UNINITIALIZED state
       return action.value.state === "INITIAL"
-        ? getStateWithCurrentDataSource(EMPTY_STATE)
+        ? getStateWithCurrentDataSource(SELECTING_DATASET_STATE)
         : action.value;
     case "DATASOURCE_CHANGED":
       draft.dataSource = action.value;
@@ -1580,10 +1580,13 @@ export const initChartStateFromCube = async (
   });
 
   if (components?.dataCubesComponents) {
-    return transitionStepNext(getStateWithCurrentDataSource(EMPTY_STATE), {
+    return transitionStepNext(
+      getStateWithCurrentDataSource(SELECTING_DATASET_STATE),
+      {
       dataCubesComponents: components.dataCubesComponents,
       cubeIris: [cubeIri],
-    });
+      }
+    );
   }
 
   console.warn(`Could not fetch cube with iri ${cubeIri}!`);
