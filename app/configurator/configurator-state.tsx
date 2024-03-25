@@ -59,12 +59,10 @@ import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { toggleInteractiveFilterDataDimension } from "@/configurator/interactive-filters/interactive-filters-config-state";
 import { ParsedConfig } from "@/db/config";
 import {
-  Component,
   DataCubeComponents,
   Dimension,
   DimensionValue,
   isGeoDimension,
-  isMeasure,
   ObservationValue,
 } from "@/domain/data";
 import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
@@ -434,57 +432,47 @@ export const moveFilterField = produce(
 );
 
 export const deriveFiltersFromFields = produce(
-  (draft: ChartConfig, components: Component[]) => {
+  (draft: ChartConfig, dimensions: Dimension[]) => {
     if (draft.chartType === "table") {
       // As dimensions in tables behave differently than in other chart types,
       // they need to be handled in a different way.
       const hiddenFieldIris = getHiddenFieldIris(draft.fields);
       const groupedDimensionIris = getGroupedFieldIris(draft.fields);
-      const isHidden = (iri: string) => hiddenFieldIris.has(iri);
-      const isGrouped = (iri: string) => groupedDimensionIris.has(iri);
-
+      const isHidden = (dimension: Dimension) =>
+        hiddenFieldIris.has(dimension.iri);
+      const isGrouped = (dimension: Dimension) =>
+        groupedDimensionIris.has(dimension.iri);
       draft.cubes.forEach((cube) => {
-        const cubeComponents = components.filter(
-          (component) => component.cubeIri === cube.iri
+        const cubeDimensions = dimensions.filter(
+          (dimension) => dimension.cubeIri === cube.iri
         );
-
-        cubeComponents.forEach((component) => {
-          if (isMeasure(component)) {
-            return;
-          }
-
+        cubeDimensions.forEach((dimension) => {
           applyTableDimensionToFilters({
             filters: cube.filters,
-            dimension: component,
-            isHidden: isHidden(component.iri),
-            isGrouped: isGrouped(component.iri),
+            dimension,
+            isHidden: isHidden(dimension),
+            isGrouped: isGrouped(dimension),
           });
         });
       });
     } else {
       const fieldDimensionIris = getFieldComponentIris(draft.fields);
-      const isField = (iri: string) => fieldDimensionIris.has(iri);
-
+      const isField = (dimension: Dimension) =>
+        fieldDimensionIris.has(dimension.iri);
       draft.cubes.forEach((cube) => {
-        const cubeComponents = components.filter(
-          (component) => component.cubeIri === cube.iri
+        const cubeDimensions = dimensions.filter(
+          (dimension) => dimension.cubeIri === cube.iri
         );
-        // Apply hierarchical dimensions first
-        const sortedCubeComponents = sortBy(
-          cubeComponents,
+        const sortedCubeDimensions = sortBy(
+          cubeDimensions,
           (d) => (isGeoDimension(d) ? -1 : 1),
-          (d) => (isMeasure(d) ? 1 : d.hierarchy ? -1 : 1)
+          (d) => (d.hierarchy ? -1 : 1)
         );
-
-        sortedCubeComponents.forEach((component) => {
-          if (isMeasure(component)) {
-            return;
-          }
-
+        sortedCubeDimensions.forEach((dimension) => {
           applyNonTableDimensionToFilters({
             filters: cube.filters,
-            dimension: component,
-            isField: isField(component.iri),
+            dimension,
+            isField: isField(dimension),
           });
         });
       });
@@ -492,17 +480,13 @@ export const deriveFiltersFromFields = produce(
   }
 );
 
-export const applyTableDimensionToFilters = ({
-  filters,
-  dimension,
-  isHidden,
-  isGrouped,
-}: {
+export const applyTableDimensionToFilters = (props: {
   filters: Filters;
   dimension: Dimension;
   isHidden: boolean;
   isGrouped: boolean;
 }) => {
+  const { filters, dimension, isHidden, isGrouped } = props;
   const currentFilter = filters[dimension.iri];
   const shouldBecomeSingleFilter = isHidden && !isGrouped;
 
@@ -542,15 +526,12 @@ export const applyTableDimensionToFilters = ({
   }
 };
 
-export const applyNonTableDimensionToFilters = ({
-  filters,
-  dimension,
-  isField,
-}: {
+export const applyNonTableDimensionToFilters = (props: {
   filters: Filters;
   dimension: Dimension;
   isField: boolean;
 }) => {
+  const { filters, dimension, isField } = props;
   const currentFilter = filters[dimension.iri];
 
   if (currentFilter) {
@@ -615,34 +596,30 @@ export const applyNonTableDimensionToFilters = ({
   }
 };
 
-const getInitialConfiguringConfigBasedOnCube = ({
-  dataCubesComponents,
-  cubeIris,
-  dataSource,
-}: {
+const getInitialConfiguringConfigBasedOnCube = (props: {
   cubeIris: string[];
   dataCubesComponents: DataCubeComponents;
   dataSource: DataSource;
 }): ConfiguratorStateConfiguringChart => {
+  const { cubeIris, dataCubesComponents, dataSource } = props;
+  const { dimensions, measures } = dataCubesComponents;
   const possibleChartTypes = getPossibleChartTypes({
-    dimensions: dataCubesComponents.dimensions,
-    measures: dataCubesComponents.measures,
+    dimensions,
+    measures,
     cubeCount: cubeIris.length,
   });
-  const chartConfig = deriveFiltersFromFields(
-    getInitialConfig({
-      chartType: possibleChartTypes[0],
-      iris: cubeIris,
-      dimensions: dataCubesComponents.dimensions,
-      measures: dataCubesComponents.measures,
-    }),
-    dataCubesComponents.dimensions
-  );
+  const initialConfig = getInitialConfig({
+    chartType: possibleChartTypes[0],
+    iris: cubeIris,
+    dimensions,
+    measures,
+  });
+  const chartConfig = deriveFiltersFromFields(initialConfig, dimensions);
 
   return {
     version: CONFIGURATOR_STATE_VERSION,
     state: "CONFIGURING_CHART",
-    dataSource: dataSource,
+    dataSource,
     layout: {
       type: "tab",
       meta: {
@@ -735,7 +712,6 @@ const transitionStepPrevious = (
 ): ConfiguratorState => {
   const stepTo = to ?? getPreviousState(draft);
 
-  // Special case when we're already at INITIAL
   if (draft.state === "INITIAL" || draft.state === "SELECTING_DATASET") {
     return draft;
   }
@@ -1399,9 +1375,8 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
     case "DATASET_REMOVE":
       if (isConfiguring(draft)) {
-        const chartConfig = getChartConfig(draft);
-
         const { locale } = action.value;
+        const chartConfig = getChartConfig(draft);
         const removedCubeIri = action.value.iri;
         const newCubes = chartConfig.cubes.filter(
           (c) => c.iri !== removedCubeIri
@@ -1410,12 +1385,12 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
           draft.dataSource,
           newCubes.map((cube) => ({
             iri: cube.iri,
-
             // Only keep joinBy while we have more than one cube
             joinBy: newCubes.length > 1 ? cube.joinBy : undefined,
           })),
           locale
         );
+
         if (!dataCubesComponents) {
           throw new Error(
             "Error while removing dataset: Could not find cached dataCubesComponents"
@@ -1429,12 +1404,10 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
             .filter((x) => x.iri !== removedCubeIri)
             .map((x) => x.iri),
         });
-
         const newConfig = {
           ...initConfig.chartConfigs[0],
           key: chartConfig.key,
         } as ChartConfig;
-
         const index = draft.chartConfigs.findIndex(
           (d) => d.key === chartConfig.key
         );
@@ -1443,6 +1416,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
           dataCubesComponents.dimensions
         );
         draft.chartConfigs[index] = withFilters;
+
         return draft;
       }
       break;
@@ -1583,8 +1557,8 @@ export const initChartStateFromCube = async (
     return transitionStepNext(
       getStateWithCurrentDataSource(SELECTING_DATASET_STATE),
       {
-      dataCubesComponents: components.dataCubesComponents,
-      cubeIris: [cubeIri],
+        dataCubesComponents: components.dataCubesComponents,
+        cubeIris: [cubeIri],
       }
     );
   }

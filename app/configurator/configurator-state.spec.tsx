@@ -34,7 +34,7 @@ import {
   updateColorMapping,
 } from "@/configurator/configurator-state";
 import { configStateMock } from "@/configurator/configurator-state.mock";
-import { Component, Dimension, Measure, NominalDimension } from "@/domain/data";
+import { Dimension, Measure, NominalDimension } from "@/domain/data";
 import covid19ColumnChartConfig from "@/test/__fixtures/config/dev/chartConfig-column-covid19.json";
 import covid19TableChartConfig from "@/test/__fixtures/config/dev/chartConfig-table-covid19.json";
 import { data as fakeVizFixture } from "@/test/__fixtures/config/prod/line-1.json";
@@ -559,8 +559,7 @@ describe("retainChartConfigWhenSwitchingChartType", () => {
     );
     deriveFiltersFromFields(newConfig, [
       ...dataSetMetadata.dimensions,
-      ...dataSetMetadata.measures,
-    ] as any as Component[]);
+    ] as any as Dimension[]);
 
     return current(newConfig);
   };
