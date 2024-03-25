@@ -855,7 +855,7 @@ export const handleChartFieldChanged = (
   draft: ConfiguratorState,
   action: Extract<ConfiguratorStateAction, { type: "CHART_FIELD_CHANGED" }>
 ) => {
-  if (draft.state !== "CONFIGURING_CHART") {
+  if (!isConfiguring(draft)) {
     return draft;
   }
 
@@ -920,7 +920,7 @@ export const handleChartOptionChanged = (
   draft: ConfiguratorState,
   action: Extract<ConfiguratorStateAction, { type: "CHART_OPTION_CHANGED" }>
 ) => {
-  if (draft.state === "CONFIGURING_CHART") {
+  if (isConfiguring(draft)) {
     const { locale, path, field, value } = action.value;
     const chartConfig = getChartConfig(draft);
     const updatePath = field === null ? path : `fields["${field}"].${path}`;
@@ -962,7 +962,7 @@ export const updateColorMapping = (
     { type: "CHART_CONFIG_UPDATE_COLOR_MAPPING" }
   >
 ) => {
-  if (draft.state === "CONFIGURING_CHART") {
+  if (isConfiguring(draft)) {
     const { field, colorConfigPath, dimensionIri, values, random } =
       action.value;
     const chartConfig = getChartConfig(draft);
@@ -1014,7 +1014,7 @@ const handleInteractiveFilterChanged = (
     { type: "INTERACTIVE_FILTER_CHANGED" }
   >
 ) => {
-  if (draft.state === "CONFIGURING_CHART") {
+  if (isConfiguring(draft)) {
     const chartConfig = getChartConfig(draft);
     setWith(chartConfig, "interactiveFiltersConfig", action.value, Object);
   }
@@ -1080,7 +1080,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       return draft;
 
     case "CHART_TYPE_CHANGED":
-      if (draft.state === "CONFIGURING_CHART") {
+      if (isConfiguring(draft)) {
         const { locale, chartKey, chartType } = action.value;
         const chartConfig = getChartConfig(draft, chartKey);
         const dataCubesComponents = getCachedComponents(
@@ -1115,7 +1115,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       return draft;
 
     case "CHART_ACTIVE_FIELD_CHANGED":
-      if (draft.state === "CONFIGURING_CHART") {
+      if (isConfiguring(draft)) {
         const chartConfig = getChartConfig(draft);
         chartConfig.activeField = action.value;
       }
@@ -1126,7 +1126,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       return handleChartFieldChanged(draft, action);
 
     case "CHART_FIELD_DELETED":
-      if (draft.state === "CONFIGURING_CHART") {
+      if (isConfiguring(draft)) {
         const chartConfig = getChartConfig(draft);
         delete (chartConfig.fields as GenericFields)[action.value.field];
         const dataCubesComponents = getCachedComponents(
@@ -1159,7 +1159,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       return handleChartOptionChanged(draft, action);
 
     case "CHART_PALETTE_CHANGED":
-      if (draft.state === "CONFIGURING_CHART") {
+      if (isConfiguring(draft)) {
         const chartConfig = getChartConfig(draft);
         setWith(
           chartConfig,
@@ -1186,7 +1186,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       return draft;
 
     case "CHART_PALETTE_RESET":
-      if (draft.state === "CONFIGURING_CHART") {
+      if (isConfiguring(draft)) {
         const chartConfig = getChartConfig(draft);
         setWith(
           chartConfig,
@@ -1203,7 +1203,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       return draft;
 
     case "CHART_COLOR_CHANGED":
-      if (draft.state === "CONFIGURING_CHART") {
+      if (isConfiguring(draft)) {
         const chartConfig = getChartConfig(draft);
         setWith(
           chartConfig,
@@ -1219,7 +1219,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       return draft;
 
     case "CHART_ANNOTATION_CHANGED":
-      if (draft.state === "CONFIGURING_CHART") {
+      if (isConfiguring(draft)) {
         const chartConfig = getChartConfig(draft);
         setWith(
           chartConfig,
@@ -1235,7 +1235,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       return handleInteractiveFilterChanged(draft, action);
 
     case "CHART_CONFIG_REPLACED":
-      if (draft.state === "CONFIGURING_CHART") {
+      if (isConfiguring(draft)) {
         const chartConfig = getChartConfig(draft);
         const index = draft.chartConfigs.findIndex(
           (d) => d.key === chartConfig.key
@@ -1249,7 +1249,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       return draft;
 
     case "CHART_CONFIG_FILTER_SET_SINGLE":
-      if (draft.state === "CONFIGURING_CHART") {
+      if (isConfiguring(draft)) {
         const { cubeIri, dimensionIri, value } = action.value;
         const chartConfig = getChartConfig(draft);
         const cube = chartConfig.cubes.find((cube) => cube.iri === cubeIri);
@@ -1265,7 +1265,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       return draft;
 
     case "CHART_CONFIG_FILTER_REMOVE_SINGLE":
-      if (draft.state === "CONFIGURING_CHART") {
+      if (isConfiguring(draft)) {
         const { cubeIri, dimensionIri } = action.value;
         const chartConfig = getChartConfig(draft);
         const cube = chartConfig.cubes.find((cube) => cube.iri === cubeIri);
@@ -1287,7 +1287,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       return updateColorMapping(draft, action);
 
     case "CHART_CONFIG_FILTER_SET_MULTI":
-      if (draft.state === "CONFIGURING_CHART") {
+      if (isConfiguring(draft)) {
         const { cubeIri, dimensionIri, values } = action.value;
         const chartConfig = getChartConfig(draft);
         const cube = chartConfig.cubes.find((cube) => cube.iri === cubeIri);
@@ -1300,7 +1300,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       return draft;
 
     case "CHART_CONFIG_FILTER_RESET_RANGE":
-      if (draft.state === "CONFIGURING_CHART") {
+      if (isConfiguring(draft)) {
         const { cubeIri, dimensionIri } = action.value;
         const chartConfig = getChartConfig(draft);
         const cube = chartConfig.cubes.find((cube) => cube.iri === cubeIri);
@@ -1313,14 +1313,14 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       return draft;
 
     case "CHART_CONFIG_FILTER_SET_RANGE":
-      if (draft.state === "CONFIGURING_CHART") {
+      if (isConfiguring(draft)) {
         setRangeFilter(draft, action);
       }
 
       return draft;
 
     case "CHART_CONFIG_FILTERS_UPDATE":
-      if (draft.state === "CONFIGURING_CHART") {
+      if (isConfiguring(draft)) {
         const { cubeIri, filters } = action.value;
         const chartConfig = getChartConfig(draft);
         const cube = chartConfig.cubes.find((cube) => cube.iri === cubeIri);
@@ -1333,7 +1333,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       return draft;
 
     case "IMPUTATION_TYPE_CHANGED":
-      if (draft.state === "CONFIGURING_CHART") {
+      if (isConfiguring(draft)) {
         const chartConfig = getChartConfig(draft);
         if (isAreaConfig(chartConfig)) {
           chartConfig.fields.y.imputationType = action.value.type;
@@ -1362,7 +1362,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       return draft;
 
     case "CHART_CONFIG_ADD":
-      if (draft.state === "CONFIGURING_CHART") {
+      if (isConfiguring(draft)) {
         const chartConfig = getChartConfig(draft);
         const dataCubesComponents = getCachedComponents(
           draft.dataSource,
@@ -1391,14 +1391,14 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       return draft;
 
     case "DATASET_ADD":
-      if (draft.state === "CONFIGURING_CHART") {
+      if (isConfiguring(draft)) {
         addDatasetInConfig(draft, action.value);
         return draft;
       }
       break;
 
     case "DATASET_REMOVE":
-      if (draft.state === "CONFIGURING_CHART") {
+      if (isConfiguring(draft)) {
         const chartConfig = getChartConfig(draft);
 
         const { locale } = action.value;
@@ -1447,7 +1447,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       }
       break;
     case "CHART_CONFIG_REMOVE":
-      if (draft.state === "CONFIGURING_CHART") {
+      if (isConfiguring(draft)) {
         const index = draft.chartConfigs.findIndex(
           (d) => d.key === action.value.chartKey
         );
@@ -1462,7 +1462,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       return draft;
 
     case "CHART_CONFIG_REORDER":
-      if (draft.state === "CONFIGURING_CHART" || draft.state === "LAYOUTING") {
+      if (isConfiguring(draft) || draft.state === "LAYOUTING") {
         const { oldIndex, newIndex } = action.value;
         const [removed] = draft.chartConfigs.splice(oldIndex, 1);
         draft.chartConfigs.splice(newIndex, 0, removed);
@@ -1471,7 +1471,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       return draft;
 
     case "CHART_CONFIG_SWAP":
-      if (draft.state === "CONFIGURING_CHART" || draft.state === "LAYOUTING") {
+      if (isConfiguring(draft) || draft.state === "LAYOUTING") {
         const { oldIndex, newIndex } = action.value;
         const oldChartConfig = draft.chartConfigs[oldIndex];
         const newChartConfig = draft.chartConfigs[newIndex];
@@ -1483,7 +1483,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
     case "SWITCH_ACTIVE_CHART":
       if (
-        draft.state === "CONFIGURING_CHART" ||
+        isConfiguring(draft) ||
         draft.state === "LAYOUTING" ||
         draft.state === "PUBLISHED"
       ) {

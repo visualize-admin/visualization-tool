@@ -314,6 +314,7 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
   const { dataSource, chartKey, actionElementSlot, disableMetadataPanel } =
     props;
   const [state, dispatch] = useConfiguratorState();
+  const configuring = isConfiguring(state);
   const chartConfig = getChartConfig(state, chartKey);
   const locale = useLocale();
   const commonQueryVariables = {
@@ -418,21 +419,19 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
                       <Flex
                         sx={{
                           justifyContent:
-                            state.state === "CONFIGURING_CHART" ||
-                            chartConfig.meta.title[locale]
+                            configuring || chartConfig.meta.title[locale]
                               ? "space-between"
                               : "flex-end",
                           alignItems: "flex-start",
                           gap: 2,
                         }}
                       >
-                        {(state.state === "CONFIGURING_CHART" ||
-                          chartConfig.meta.title[locale]) && (
+                        {(configuring || chartConfig.meta.title[locale]) && (
                           <Title
                             text={chartConfig.meta.title[locale]}
                             lighterColor
                             onClick={
-                              state.state === "CONFIGURING_CHART"
+                              configuring
                                 ? () =>
                                     dispatch({
                                       type: "CHART_ACTIVE_FIELD_CHANGED",
@@ -454,13 +453,13 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
                           {actionElementSlot}
                         </Flex>
                       </Flex>
-                      {(state.state === "CONFIGURING_CHART" ||
+                      {(configuring ||
                         chartConfig.meta.description[locale]) && (
                         <Description
                           text={chartConfig.meta.description[locale]}
                           lighterColor
                           onClick={
-                            state.state === "CONFIGURING_CHART"
+                            configuring
                               ? () => {
                                   dispatch({
                                     type: "CHART_ACTIVE_FIELD_CHANGED",
