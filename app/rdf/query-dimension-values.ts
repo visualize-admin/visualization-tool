@@ -169,10 +169,6 @@ CONSTRUCT {
   BIND(COALESCE(?unversioned_value, ?value) AS ?maybe_unversioned_value)
 }`;
 
-  if (dimensionIri === "https://agriculture.ld.admin.ch/foag/dimension/date") {
-    console.log(query);
-  }
-
   return await executeWithCache(
     sparqlClient,
     query,

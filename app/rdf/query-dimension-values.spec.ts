@@ -64,7 +64,7 @@ describe("getDimensionValuesWithMetadata", () => {
     const values = await loadDimensionValuesWithMetadata("", {
       cubeDimensions,
       dimension: {
-        data: { iri: dimensionIri },
+        data: { iri: dimensionIri, related: [] },
         dimension: cubeDimensions[0],
       } as any,
       sparqlClient,

@@ -6,6 +6,7 @@ import { LRUCache } from "typescript-lru-cache";
 
 import { SingleFilters } from "@/config-types";
 import { isDynamicMaxValue } from "@/domain/max-value";
+import { ResolvedDimension } from "@/graphql/shared-types";
 import * as ns from "@/rdf/namespace";
 import { loadMaxDimensionValue } from "@/rdf/query-dimension-values";
 
@@ -166,7 +167,7 @@ export const getQueryFilters = async (
         iri,
         value: isDynamicMaxValue(value)
           ? await loadMaxDimensionValue(cubeIri, {
-              dimensionIri: iri,
+              dimension: { data: { iri } } as ResolvedDimension,
               // TODO: refactor dimension parsing to avoid "mocking" the cubeDimensions
               cubeDimensions: Object.keys(filters).map((iri) => ({
                 path: { value: iri },
