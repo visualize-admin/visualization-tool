@@ -9,6 +9,14 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
+Nothing yet.
+
+# [4.0.0] - 2024-03-26
+
+Bumped to a new major version to celebrate all the improvements and new features introduced since v3.0.0 🎉
+
+# [3.27.3] - 2024-03-22
+
 - Fixes
   - Full data download now correctly includes all cube dimensions again
 
