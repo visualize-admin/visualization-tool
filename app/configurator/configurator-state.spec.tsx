@@ -676,7 +676,6 @@ describe("retainChartConfigWhenSwitchingChartType", () => {
       },
     },
   ];
-  1;
 
   const segmentChecks: CheckType[] = [
     {
