@@ -541,7 +541,6 @@ const TabPanelData = ({
                 />
               )}
               renderOption={(props, option, { inputValue }) => {
-                console.log(option);
                 const matches = match(option.label, inputValue, {
                   insideWords: true,
                 });
@@ -747,6 +746,7 @@ const DimensionValues = ({ dim }: { dim: Component }) => {
   switch (dim.__typename) {
     case "NominalDimension":
     case "OrdinalDimension":
+    case "TemporalEntityDimension":
     case "TemporalOrdinalDimension":
     case "OrdinalMeasure":
     case "GeoCoordinatesDimension":

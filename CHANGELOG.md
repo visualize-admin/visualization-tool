@@ -9,9 +9,15 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
+- Features
+  - Enabled support for monthly and yearly temporal entities (through a new `TemporalEntityDimension`)
+- Fixes
+  - Fixes fetching of PossibleFilters when no components iris are passed (and stops execution completely if called when initializing a new chart from cube)
 - Performance
   - Switched to a cached LINDAS endpoint (PROD)
   - The application now fires the `PossibleFilters` query as soon as a chart is initialized to always load filters that make sense, without initial reloading
+- Maintenance
+  - Removed some unused dependencies
 
 # [4.0.0] - 2024-03-26
 

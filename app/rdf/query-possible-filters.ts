@@ -6,6 +6,7 @@ import { LRUCache } from "typescript-lru-cache";
 
 import { SingleFilters } from "@/config-types";
 import { isDynamicMaxValue } from "@/domain/max-value";
+import { ResolvedDimension } from "@/graphql/shared-types";
 import * as ns from "@/rdf/namespace";
 import { loadMaxDimensionValue } from "@/rdf/query-dimension-values";
 
@@ -61,7 +62,7 @@ SELECT ?${DIMENSION_IRI} ?${VERSION} ?${NODE_KIND} WHERE {
   ?dimension sh:path ?${DIMENSION_IRI} .
   OPTIONAL { ?dimension schema:version ?${VERSION} . }
   OPTIONAL { ?dimension sh:nodeKind ?${NODE_KIND} . }
-  FILTER(?${DIMENSION_IRI} IN (${dimensionIris.map((iri) => `<${iri}>`).join(", ")}))
+  ${dimensionIris.length > 0 ? `FILTER(?${DIMENSION_IRI} IN (${dimensionIris.map((iri) => `<${iri}>`).join(", ")}))` : ""}
 }`;
   const results = await sparqlClient.query.select(query, {
     operation: "postUrlencoded",
@@ -166,7 +167,7 @@ export const getQueryFilters = async (
         iri,
         value: isDynamicMaxValue(value)
           ? await loadMaxDimensionValue(cubeIri, {
-              dimensionIri: iri,
+              dimension: { data: { iri } } as ResolvedDimension,
               // TODO: refactor dimension parsing to avoid "mocking" the cubeDimensions
               cubeDimensions: Object.keys(filters).map((iri) => ({
                 path: { value: iri },

@@ -28,6 +28,7 @@ import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import {
   Component,
   Dimension,
+  DimensionValue,
   HierarchyValue,
   Measure,
   isMeasure,
@@ -40,7 +41,7 @@ import useEvent from "@/utils/use-event";
 export type Option = {
   value: string | $FixMe;
   label: string | $FixMe;
-  position?: number;
+  position?: DimensionValue["position"];
   isNoneValue?: boolean;
   disabled?: boolean;
 };

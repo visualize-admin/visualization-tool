@@ -6,9 +6,8 @@ import {
   isNumericalMeasure,
   isTemporalDimension,
 } from "@/domain/data";
-
-import { bfs } from "./bfs";
-import { uniqueMapBy } from "./uniqueMapBy";
+import { bfs } from "@/utils/bfs";
+import { uniqueMapBy } from "@/utils/uniqueMapBy";
 
 export const maybeInt = (value?: string | number): number | string => {
   if (value === undefined) {
@@ -163,21 +162,16 @@ export const makeDimensionValueSorters = (
   return sorters;
 };
 
-interface Value {
-  label: string;
-  position?: number;
-  identifier?: number | string;
-}
-
-export const valueComparator = (locale: string) => (a: Value, b: Value) => {
-  if (a.identifier !== undefined && b.identifier !== undefined) {
-    return a.identifier < b.identifier ? -1 : 1;
-  } else if (a.position !== undefined && b.position !== undefined) {
-    return a.position < b.position ? -1 : 1;
-  } else {
-    return a.label.localeCompare(b.label, locale);
-  }
-};
+export const valueComparator =
+  (locale: string) => (a: DimensionValue, b: DimensionValue) => {
+    if (a.identifier !== undefined && b.identifier !== undefined) {
+      return a.identifier < b.identifier ? -1 : 1;
+    } else if (a.position !== undefined && b.position !== undefined) {
+      return a.position < b.position ? -1 : 1;
+    } else {
+      return a.label.localeCompare(b.label, locale);
+    }
+  };
 
 export const getSortingOrders = (
   sorters: ((...args: any[]) => any)[],

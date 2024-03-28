@@ -14,16 +14,14 @@ import { CubeDimension } from "rdf-cube-view-query";
 import { Term } from "rdf-js";
 
 import { truthy } from "@/domain/types";
-import { ScaleType } from "@/graphql/query-hooks";
+import { ScaleType, TimeUnit } from "@/graphql/query-hooks";
+import { DataCubePublicationStatus } from "@/graphql/resolver-types";
+import { ResolvedDataCube, ResolvedDimension } from "@/graphql/shared-types";
+import { locales } from "@/locales/locales";
 import { ExtendedCube } from "@/rdf/extended-cube";
-
-import { DataCubePublicationStatus } from "../graphql/resolver-types";
-import { ResolvedDataCube, ResolvedDimension } from "../graphql/shared-types";
-import { locales } from "../locales/locales";
-
-import { timeFormats, timeUnits } from "./mappings";
-import * as ns from "./namespace";
-import { hasHierarchy } from "./queries";
+import { timeFormats, timeUnitFormats, timeUnits } from "@/rdf/mappings";
+import * as ns from "@/rdf/namespace";
+import { hasHierarchy } from "@/rdf/queries";
 
 export const getQueryLocales = (locale: string): string[] => [
   locale,
@@ -102,22 +100,22 @@ export const getScaleType = (
   return scaleTypeTerm?.equals(ns.qudt.NominalScale)
     ? ScaleType.Nominal
     : scaleTypeTerm?.equals(ns.qudt.OrdinalScale)
-    ? ScaleType.Ordinal
-    : scaleTypeTerm?.equals(ns.qudt.RatioScale)
-    ? ScaleType.Ratio
-    : scaleTypeTerm?.equals(ns.qudt.IntervalScale)
-    ? ScaleType.Interval
-    : undefined;
+      ? ScaleType.Ordinal
+      : scaleTypeTerm?.equals(ns.qudt.RatioScale)
+        ? ScaleType.Ratio
+        : scaleTypeTerm?.equals(ns.qudt.IntervalScale)
+          ? ScaleType.Interval
+          : undefined;
 };
 
 export const getDataKind = (term: Term | undefined) => {
   return term?.equals(ns.time.GeneralDateTimeDescription)
     ? "Time"
     : term?.equals(ns.schema.GeoCoordinates)
-    ? "GeoCoordinates"
-    : term?.equals(ns.schema.GeoShape)
-    ? "GeoShape"
-    : undefined;
+      ? "GeoCoordinates"
+      : term?.equals(ns.schema.GeoShape)
+        ? "GeoShape"
+        : undefined;
 };
 
 export const parseDimensionDatatype = (dim: CubeDimension) => {
@@ -197,6 +195,7 @@ export const parseCubeDimension = ({
     { iri: Term; label?: Term; isCurrency?: Term; currencyExponent?: Term }
   >;
 }): ResolvedDimension => {
+  const iri = dim.path?.value!;
   const outOpts = { language: getQueryLocales(locale) };
   const name = dim.out(ns.schema.name, outOpts).value ?? dim.path?.value!;
   const description = dim.out(ns.schema.description, outOpts).value;
@@ -225,14 +224,15 @@ export const parseCubeDimension = ({
   const unit = unitTerm ? units?.get(unitTerm.value) : undefined;
   const unitLabel = unit?.label?.value;
   const resolution = parseResolution(dataType);
+  const timeUnit = getTimeUnit(timeUnitTerm);
+  const timeFormat = getTimeFormat(dataType, timeUnit);
 
   return {
     cube,
     dimension: dim,
     locale,
-
     data: {
-      iri: dim.path?.value!,
+      iri,
       name,
       description,
       related,
@@ -252,8 +252,8 @@ export const parseCubeDimension = ({
         : undefined,
       order: parseNumericalTerm(dim.out(ns.sh.order).term),
       dataKind: getDataKind(dataKindTerm),
-      timeUnit: getTimeUnit(timeUnitTerm),
-      timeFormat: getTimeFormat(dataType),
+      timeUnit,
+      timeFormat,
       scaleType: getScaleType(dim.out(ns.qudt.scaleType).term),
     },
   };
@@ -267,8 +267,14 @@ export const getTimeUnit = (timeUnitTerm: Term | undefined) => {
   return timeUnits.get(timeUnitTerm?.value ?? "");
 };
 
-export const getTimeFormat = (dataTypeTerm: Term | undefined) => {
-  return timeFormats.get(dataTypeTerm?.value ?? "");
+export const getTimeFormat = (
+  dataTypeTerm: Term | undefined,
+  timeUnit: TimeUnit | undefined
+) => {
+  return (
+    timeFormats.get(dataTypeTerm?.value ?? "") ??
+    (timeUnit ? timeUnitFormats.get(timeUnit) : undefined)
+  );
 };
 
 export const parseResolution = (dataTypeTerm: Term | undefined) => {

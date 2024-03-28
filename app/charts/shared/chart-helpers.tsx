@@ -30,7 +30,15 @@ import {
 } from "@/configurator";
 import { parseDate } from "@/configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
-import { Component, Dimension, Measure, Observation } from "@/domain/data";
+import {
+  Component,
+  Dimension,
+  DimensionValue,
+  Measure,
+  Observation,
+  ObservationValue,
+  getTemporalEntityValue,
+} from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { JOIN_BY_DIMENSION_IRI } from "@/graphql/hook-utils";
 import { DataCubeObservationFilter } from "@/graphql/resolver-types";
@@ -184,8 +192,8 @@ export const extractChartConfigComponentIris = (chartConfig: ChartConfig) => {
     chartConfig.chartType === "map"
       ? getMapChartConfigAdditionalFields(chartConfig)
       : isComboChartConfig(chartConfig)
-      ? getComboChartConfigAdditionalFields(chartConfig)
-      : [];
+        ? getComboChartConfigAdditionalFields(chartConfig)
+        : [];
   const filterIris = getChartConfigFilterComponentIris(chartConfig);
   const IFKeys = IFConfig ? (Object.keys(IFConfig) as IFKey[]) : [];
   const IFIris: string[] = [];
@@ -284,13 +292,12 @@ export const useDimensionWithAbbreviations = (
 };
 
 export const makeUseParsedVariable =
-  <T extends unknown>(parser: (d: Observation[string]) => T) =>
+  <T extends unknown>(parser: (d: ObservationValue) => T) =>
   (key: string) => {
     return useCallback((d: Observation) => parser(d[key]), [key]);
   };
 
 // retrieving variables
-export const useNumericVariable = makeUseParsedVariable((x) => Number(x));
 export const useOptionalNumericVariable = makeUseParsedVariable((x) =>
   x !== null ? Number(x) : null
 );
@@ -300,6 +307,19 @@ export const useStringVariable = makeUseParsedVariable((x) =>
 export const useTemporalVariable = makeUseParsedVariable((x) =>
   parseDate(`${x}`)
 );
+export const useTemporalEntityVariable = (
+  dimensionValues: DimensionValue[]
+) => {
+  const indexedValues = new Map(dimensionValues.map((d) => [d.label, d]));
+  return makeUseParsedVariable((label) => {
+    const dimensionValue = indexedValues.get(`${label}`);
+    const value = dimensionValue
+      ? getTemporalEntityValue(dimensionValue)
+      : undefined;
+
+    return parseDate(`${value}`);
+  });
+};
 
 export const getSegment =
   (segmentKey: string | undefined) =>
@@ -437,10 +457,10 @@ const getBaseWideData = ({
   ) => Array<{ [key: string]: number }>;
 }): Array<Observation> => {
   const wideData = [];
-  const sortedDataGroupedByXEntries = [...dataGroupedByX.entries()].sort();
+  const dataGroupedByXEntries = [...dataGroupedByX.entries()];
 
   for (let i = 0; i < dataGroupedByX.size; i++) {
-    const [k, v] = sortedDataGroupedByXEntries[i];
+    const [k, v] = dataGroupedByXEntries[i];
 
     const observation: Observation = Object.assign(
       {
@@ -479,7 +499,7 @@ export const useGetIdentityY = (iri: string) => {
 };
 
 export const normalizeData = (
-  data: Observation[],
+  sortedData: Observation[],
   {
     yKey,
     getY,
@@ -490,7 +510,7 @@ export const normalizeData = (
     getTotalGroupValue: (d: Observation) => number;
   }
 ): Observation[] => {
-  return data.map((d) => {
+  return sortedData.map((d) => {
     const totalGroupValue = getTotalGroupValue(d);
     const y = getY(d);
 

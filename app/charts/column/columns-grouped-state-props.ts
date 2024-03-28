@@ -11,6 +11,7 @@ import {
   NumericalYVariables,
   RenderingVariables,
   SegmentVariables,
+  SortingVariables,
   useBandXVariables,
   useBaseVariables,
   useChartData,
@@ -19,17 +20,13 @@ import {
   useSegmentVariables,
 } from "@/charts/shared/chart-state";
 import { useRenderingKeyVariable } from "@/charts/shared/rendering-utils";
-import {
-  ColumnConfig,
-  ColumnFields,
-  useChartConfigFilters,
-} from "@/configurator";
-import { Observation } from "@/domain/data";
+import { ColumnConfig, useChartConfigFilters } from "@/configurator";
 import { sortByIndex } from "@/utils/array";
 
 import { ChartProps } from "../shared/ChartProps";
 
 export type ColumnsGroupedStateVariables = BaseVariables &
+  SortingVariables &
   BandXVariables &
   NumericalYVariables &
   NumericalYErrorVariables &
@@ -69,6 +66,32 @@ export const useColumnsGroupedStateVariables = (
     observations,
   });
 
+  const { getX } = bandXVariables;
+  const { getY } = numericalYVariables;
+  const sortData: ColumnsGroupedStateVariables["sortData"] = React.useCallback(
+    (data) => {
+      const { sortingOrder, sortingType } = x.sorting ?? {};
+      const order = [
+        ...rollup(
+          data,
+          (v) => sum(v, (d) => getY(d)),
+          (d) => getX(d)
+        ),
+      ]
+        .sort((a, b) => ascending(a[1], b[1]))
+        .map((d) => d[0]);
+
+      if (sortingType === "byDimensionLabel") {
+        return orderBy(data, getX, sortingOrder);
+      } else if (sortingType === "byMeasure") {
+        return sortByIndex({ data, order, getCategory: getX, sortingOrder });
+      } else {
+        return orderBy(data, getX, "asc");
+      }
+    },
+    [getX, getY, x.sorting]
+  );
+
   const getRenderingKey = useRenderingKeyVariable(
     dimensions,
     filters,
@@ -78,6 +101,7 @@ export const useColumnsGroupedStateVariables = (
 
   return {
     ...baseVariables,
+    sortData,
     ...bandXVariables,
     ...numericalYVariables,
     ...numericalYErrorVariables,
@@ -91,19 +115,14 @@ export const useColumnsGroupedStateData = (
   variables: ColumnsGroupedStateVariables
 ): ChartStateData => {
   const { chartConfig, observations } = chartProps;
-  const { fields } = chartConfig;
-  const { x } = fields;
-  const { getX, getXAsDate, getY, getSegmentAbbreviationOrLabel } = variables;
+  const { sortData, getXAsDate, getY, getSegmentAbbreviationOrLabel } =
+    variables;
   const plottableData = usePlottableData(observations, {
     getY,
   });
   const sortedPlottableData = React.useMemo(() => {
-    return sortData(plottableData, {
-      x,
-      getX,
-      getY,
-    });
-  }, [plottableData, x, getX, getY]);
+    return sortData(plottableData);
+  }, [sortData, plottableData]);
   const data = useChartData(sortedPlottableData, {
     chartConfig,
     getXAsDate,
@@ -114,34 +133,4 @@ export const useColumnsGroupedStateData = (
     ...data,
     allData: sortedPlottableData,
   };
-};
-
-const sortData = (
-  data: Observation[],
-  {
-    x,
-    getX,
-    getY,
-  }: {
-    x: ColumnFields["x"];
-  } & Pick<ColumnsGroupedStateVariables, "getX" | "getY">
-) => {
-  const { sortingOrder, sortingType } = x.sorting ?? {};
-  const order = [
-    ...rollup(
-      data,
-      (v) => sum(v, (d) => getY(d)),
-      (d) => getX(d)
-    ),
-  ]
-    .sort((a, b) => ascending(a[1], b[1]))
-    .map((d) => d[0]);
-
-  if (sortingType === "byDimensionLabel") {
-    return orderBy(data, getX, sortingOrder);
-  } else if (sortingType === "byMeasure") {
-    return sortByIndex({ data, order, getCategory: getX, sortingOrder });
-  } else {
-    return orderBy(data, getX, "asc");
-  }
 };

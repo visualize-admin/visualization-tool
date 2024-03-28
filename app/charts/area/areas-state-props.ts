@@ -8,6 +8,7 @@ import {
   ChartStateData,
   NumericalYVariables,
   SegmentVariables,
+  SortingVariables,
   TemporalXVariables,
   useBaseVariables,
   useChartData,
@@ -16,9 +17,9 @@ import {
   useTemporalXVariables,
 } from "@/charts/shared/chart-state";
 import { AreaConfig } from "@/config-types";
-import { Observation } from "@/domain/data";
 
 export type AreasStateVariables = BaseVariables &
+  SortingVariables &
   TemporalXVariables &
   NumericalYVariables &
   SegmentVariables;
@@ -42,8 +43,19 @@ export const useAreasStateVariables = (
     observations,
   });
 
+  const { getX } = temporalXVariables;
+  const sortData: AreasStateVariables["sortData"] = React.useCallback(
+    (data) => {
+      return [...data].sort((a, b) => {
+        return ascending(getX(a), getX(b));
+      });
+    },
+    [getX]
+  );
+
   return {
     ...baseVariables,
+    sortData,
     ...temporalXVariables,
     ...numericalYVariables,
     ...segmentVariables,
@@ -55,16 +67,14 @@ export const useAreasStateData = (
   variables: AreasStateVariables
 ): ChartStateData => {
   const { chartConfig, observations } = chartProps;
-  const { getX, getY, getSegmentAbbreviationOrLabel } = variables;
+  const { sortData, getX, getY, getSegmentAbbreviationOrLabel } = variables;
   const plottableData = usePlottableData(observations, {
     getX,
     getY,
   });
   const sortedPlottableData = React.useMemo(() => {
-    return sortData(plottableData, {
-      getX,
-    });
-  }, [plottableData, getX]);
+    return sortData(plottableData);
+  }, [sortData, plottableData]);
   const data = useChartData(sortedPlottableData, {
     chartConfig,
     getXAsDate: getX,
@@ -75,13 +85,4 @@ export const useAreasStateData = (
     ...data,
     allData: sortedPlottableData,
   };
-};
-
-const sortData = (
-  data: Observation[],
-  { getX }: Pick<AreasStateVariables, "getX">
-): Observation[] => {
-  return [...data].sort((a, b) => {
-    return ascending(getX(a), getX(b));
-  });
 };

@@ -9,6 +9,8 @@ import {
   ScaleType,
   TimeUnit,
 } from "@/graphql/resolver-types";
+// @ts-ignore
+import { resolveDimensionType } from "@/graphql/resolvers";
 import { ResolvedDimension } from "@/graphql/shared-types";
 
 export type RawObservationValue = Term;
@@ -21,7 +23,8 @@ export type DimensionValue = {
   value: string | number;
   label: string;
   description?: string;
-  position?: number;
+  /** String in case of {@link TemporalEntityDimension}. */
+  position?: number | string;
   color?: string;
   identifier?: string | number;
   alternateName?: string;
@@ -88,6 +91,103 @@ export type DataCubePreview = {
   observations: Observation[];
 };
 
+type ComponentRenderingConfig = {
+  enableAnimation: boolean;
+  enableCustomSort: boolean;
+  enableMultiFilter: boolean;
+  enableSegment: boolean;
+};
+
+const ComponentsRenderingConfig: {
+  [type in ComponentType]: ComponentRenderingConfig;
+} = {
+  NominalDimension: {
+    enableAnimation: false,
+    enableCustomSort: true,
+    enableMultiFilter: true,
+    enableSegment: true,
+  },
+  OrdinalDimension: {
+    enableAnimation: false,
+    enableCustomSort: false,
+    enableMultiFilter: true,
+    enableSegment: true,
+  },
+  TemporalDimension: {
+    enableAnimation: true,
+    enableCustomSort: false,
+    enableMultiFilter: false,
+    enableSegment: true,
+  },
+  TemporalEntityDimension: {
+    enableAnimation: true,
+    enableCustomSort: false,
+    // FIXME: should behave like TemporalDimension
+    enableMultiFilter: true,
+    enableSegment: true,
+  },
+  TemporalOrdinalDimension: {
+    enableAnimation: true,
+    enableCustomSort: false,
+    enableMultiFilter: true,
+    enableSegment: true,
+  },
+  GeoCoordinatesDimension: {
+    enableAnimation: false,
+    enableCustomSort: true,
+    enableMultiFilter: true,
+    enableSegment: true,
+  },
+  GeoShapesDimension: {
+    enableAnimation: false,
+    enableCustomSort: true,
+    enableMultiFilter: true,
+    enableSegment: true,
+  },
+  NumericalMeasure: {
+    enableAnimation: false,
+    enableCustomSort: false,
+    enableMultiFilter: false,
+    enableSegment: false,
+  },
+  OrdinalMeasure: {
+    enableAnimation: false,
+    enableCustomSort: false,
+    enableMultiFilter: false,
+    enableSegment: false,
+  },
+  StandardErrorDimension: {
+    enableAnimation: false,
+    enableCustomSort: false,
+    enableMultiFilter: false,
+    enableSegment: false,
+  },
+};
+
+export const ANIMATION_ENABLED_COMPONENTS = Object.entries(
+  ComponentsRenderingConfig
+)
+  .filter(([, config]) => config.enableAnimation)
+  .map(([type]) => type as ComponentType);
+
+export const CUSTOM_SORT_ENABLED_COMPONENTS = Object.entries(
+  ComponentsRenderingConfig
+)
+  .filter(([, config]) => config.enableCustomSort)
+  .map(([type]) => type as ComponentType);
+
+export const MULTI_FILTER_ENABLED_COMPONENTS = Object.entries(
+  ComponentsRenderingConfig
+)
+  .filter(([, config]) => config.enableMultiFilter)
+  .map(([type]) => type as ComponentType);
+
+export const SEGMENT_ENABLED_COMPONENTS = Object.entries(
+  ComponentsRenderingConfig
+)
+  .filter(([, config]) => config.enableSegment)
+  .map(([type]) => type as ComponentType);
+
 export type Component = Dimension | Measure;
 
 export type BaseComponent = {
@@ -136,10 +236,13 @@ export type Dimension =
   | NominalDimension
   | OrdinalDimension
   | TemporalDimension
+  | TemporalEntityDimension
   | TemporalOrdinalDimension
   | GeoCoordinatesDimension
   | GeoShapesDimension
   | StandardErrorDimension;
+
+export type DimensionType = Dimension["__typename"];
 
 export type NominalDimension = BaseDimension & {
   __typename: "NominalDimension";
@@ -153,6 +256,27 @@ export type TemporalDimension = BaseDimension & {
   __typename: "TemporalDimension";
   timeUnit: TimeUnit;
   timeFormat: string;
+};
+
+export type TemporalEntityDimension = BaseDimension & {
+  __typename: "TemporalEntityDimension";
+  timeUnit: TimeUnit;
+  timeFormat: string;
+};
+
+// TODO
+/** Currently, the formatted date for month- and year-based temporal entities
+ * is stored in the `position` field. This will be changed in the future, once
+ * there will be datasets with other temporal entity types.
+ *
+ * Also see Zulip conversation about having a unified way of accessing formatted
+ * temporal entity values.
+ *
+ * https://zulip.zazuko.com/#narrow/stream/40-bafu-ext/topic/temporal.20entity.20and.20schema.3AsameAs
+ * @see {resolveDimensionType}
+ */
+export const getTemporalEntityValue = (value: DimensionValue) => {
+  return value.position ?? value.value;
 };
 
 export type TemporalOrdinalDimension = BaseDimension & {
@@ -321,6 +445,12 @@ export const parseObservationValue = ({
   return value.value;
 };
 
+export const isDimension = (
+  component?: Component | null
+): component is Dimension => {
+  return !isMeasure(component);
+};
+
 export const isMeasure = (
   component?: Component | null
 ): component is Measure => {
@@ -339,9 +469,6 @@ export const isOrdinalMeasure = (
   return dimension?.__typename === "OrdinalMeasure";
 };
 
-export const getTemporalDimensions = (dimensions: Component[]) =>
-  dimensions.filter((d) => d.__typename === "TemporalDimension");
-
 export const isCategoricalDimension = (
   d: Component
 ): d is NominalDimension | OrdinalDimension | TemporalOrdinalDimension => {
@@ -349,26 +476,6 @@ export const isCategoricalDimension = (
     isNominalDimension(d) ||
     isOrdinalDimension(d) ||
     isTemporalOrdinalDimension(d)
-  );
-};
-
-export const canDimensionBeMultiFiltered = (d: Component) => {
-  return (
-    isNominalDimension(d) ||
-    isOrdinalDimension(d) ||
-    isTemporalOrdinalDimension(d) ||
-    isGeoCoordinatesDimension(d) ||
-    isGeoShapesDimension(d)
-  );
-};
-
-export const isDimensionSortable = (
-  d?: Component
-): d is NominalDimension | GeoCoordinatesDimension | GeoShapesDimension => {
-  return (
-    isNominalDimension(d) ||
-    isGeoCoordinatesDimension(d) ||
-    isGeoShapesDimension(d)
   );
 };
 
@@ -427,6 +534,12 @@ export const isTemporalDimension = (
   dimension?: Component | null
 ): dimension is TemporalDimension => {
   return dimension?.__typename === "TemporalDimension";
+};
+
+export const isTemporalEntityDimension = (
+  dimension?: Component | null
+): dimension is TemporalEntityDimension => {
+  return dimension?.__typename === "TemporalEntityDimension";
 };
 
 export const isTemporalOrdinalDimension = (

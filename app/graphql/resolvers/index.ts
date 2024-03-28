@@ -1,12 +1,14 @@
 import { GraphQLScalarType } from "graphql";
 import { GraphQLJSONObject } from "graphql-type-json";
 
-import { DimensionType, MeasureType } from "@/configurator";
+import { MeasureType } from "@/configurator";
+import { DimensionType } from "@/domain/data";
 import {
   DataCubeResolvers,
   QueryResolvers,
   Resolvers,
   ScaleType,
+  TimeUnit,
 } from "@/graphql/resolver-types";
 import * as RDF from "@/graphql/resolvers/rdf";
 import * as SQL from "@/graphql/resolvers/sql";
@@ -79,6 +81,7 @@ const DataCube: DataCubeResolvers = {
 export const resolveDimensionType = (
   dataKind: ResolvedDimension["data"]["dataKind"] | undefined,
   scaleType: ScaleType | undefined,
+  timeUnit: ResolvedDimension["data"]["timeUnit"] | undefined,
   related: ResolvedDimension["data"]["related"]
 ): DimensionType => {
   if (related.some((d) => d.type === "StandardError")) {
@@ -86,9 +89,21 @@ export const resolveDimensionType = (
   }
 
   if (dataKind === "Time") {
-    return scaleType === "Ordinal"
-      ? "TemporalOrdinalDimension"
-      : "TemporalDimension";
+    if (scaleType === "Ordinal") {
+      if (timeUnit) {
+        if (timeUnit === TimeUnit.Month || timeUnit === TimeUnit.Year) {
+          return "TemporalEntityDimension";
+        } else {
+          throw new Error(
+            `Unsupported time unit for TemporalEntityDimension: ${timeUnit}`
+          );
+        }
+      }
+
+      return "TemporalOrdinalDimension";
+    }
+
+    return "TemporalDimension";
   }
 
   if (dataKind === "GeoCoordinates") {
@@ -113,8 +128,8 @@ export const resolveMeasureType = (
 };
 
 const mkDimensionResolvers = (_: string): Resolvers["Dimension"] => ({
-  __resolveType({ data: { dataKind, scaleType, related } }) {
-    return resolveDimensionType(dataKind, scaleType, related);
+  __resolveType({ data: { dataKind, scaleType, timeUnit, related } }) {
+    return resolveDimensionType(dataKind, scaleType, timeUnit, related);
   },
   iri: ({ data: { iri } }) => iri,
   label: ({ data: { name } }) => name,
@@ -166,8 +181,8 @@ export const resolvers: Resolvers = {
     },
   },
   Dimension: {
-    __resolveType({ data: { dataKind, scaleType, related } }) {
-      return resolveDimensionType(dataKind, scaleType, related);
+    __resolveType({ data: { dataKind, scaleType, timeUnit, related } }) {
+      return resolveDimensionType(dataKind, scaleType, timeUnit, related);
     },
   },
   NominalDimension: {

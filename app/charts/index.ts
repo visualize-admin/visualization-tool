@@ -23,7 +23,6 @@ import {
   ComboLineColumnFields,
   ComboLineSingleFields,
   Cube,
-  DimensionType,
   FieldAdjuster,
   Filters,
   GenericFields,
@@ -59,19 +58,21 @@ import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import {
   Component,
   Dimension,
+  DimensionType,
   GeoCoordinatesDimension,
   GeoShapesDimension,
   getCategoricalDimensions,
   getGeoDimensions,
-  getTemporalDimensions,
   HierarchyValue,
   isGeoDimension,
   isGeoShapesDimension,
   isNumericalMeasure,
   isOrdinalMeasure,
   isTemporalDimension,
+  isTemporalEntityDimension,
   Measure,
   NumericalMeasure,
+  SEGMENT_ENABLED_COMPONENTS,
 } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import {
@@ -372,7 +373,9 @@ export const getInitialConfig = (
     };
   };
   const numericalMeasures = measures.filter(isNumericalMeasure);
-  const temporalDimensions = getTemporalDimensions(dimensions);
+  const temporalDimensions = dimensions.filter(
+    (d) => isTemporalDimension(d) || isTemporalEntityDimension(d)
+  );
 
   switch (chartType) {
     case "area":
@@ -392,7 +395,11 @@ export const getInitialConfig = (
     case "column":
       const columnXComponentIri = findPreferredDimension(
         sortBy(dimensions, (d) => (isGeoDimension(d) ? 1 : -1)),
-        ["TemporalDimension", "TemporalOrdinalDimension"]
+        [
+          "TemporalDimension",
+          "TemporalEntityDimension",
+          "TemporalOrdinalDimension",
+        ]
       ).iri;
 
       return {
@@ -1386,8 +1393,8 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
             ? oldChartConfig.fields.segment?.palette ??
               DEFAULT_CATEGORICAL_PALETTE_NAME
             : isComboChartConfig(oldChartConfig)
-            ? oldChartConfig.fields.y.palette
-            : DEFAULT_CATEGORICAL_PALETTE_NAME;
+              ? oldChartConfig.fields.y.palette
+              : DEFAULT_CATEGORICAL_PALETTE_NAME;
 
           return produce(newChartConfig, (draft) => {
             draft.fields.y = {
@@ -1483,8 +1490,8 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           ? oldChartConfig.fields.segment?.palette ??
             DEFAULT_CATEGORICAL_PALETTE_NAME
           : isComboChartConfig(oldChartConfig)
-          ? oldChartConfig.fields.y.palette
-          : DEFAULT_CATEGORICAL_PALETTE_NAME;
+            ? oldChartConfig.fields.y.palette
+            : DEFAULT_CATEGORICAL_PALETTE_NAME;
 
         return produce(newChartConfig, (draft) => {
           draft.fields.y = {
@@ -1577,8 +1584,8 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           ? oldChartConfig.fields.segment?.palette ??
             DEFAULT_CATEGORICAL_PALETTE_NAME
           : isComboChartConfig(oldChartConfig)
-          ? oldChartConfig.fields.y.palette
-          : DEFAULT_CATEGORICAL_PALETTE_NAME;
+            ? oldChartConfig.fields.y.palette
+            : DEFAULT_CATEGORICAL_PALETTE_NAME;
 
         return produce(newChartConfig, (draft) => {
           draft.fields.y = {
@@ -1602,7 +1609,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     interactiveFiltersConfig: interactiveFiltersAdjusters,
   },
 };
-type ChartConfigAdjusters = typeof chartConfigsAdjusters[ChartType];
+type ChartConfigAdjusters = (typeof chartConfigsAdjusters)[ChartType];
 
 // Needed to correctly retain chart options when switching to maps and tables.
 const chartConfigsPathOverrides: {
@@ -1893,7 +1900,7 @@ const chartConfigsPathOverrides: {
   },
 };
 type ChartConfigPathOverrides =
-  typeof chartConfigsPathOverrides[ChartType][ChartType];
+  (typeof chartConfigsPathOverrides)[ChartType][ChartType];
 
 const adjustSegmentSorting = ({
   segment,
@@ -1931,7 +1938,9 @@ export const getPossibleChartTypes = ({
   const ordinalMeasures = measures.filter(isOrdinalMeasure);
   const categoricalDimensions = getCategoricalDimensions(dimensions);
   const geoDimensions = getGeoDimensions(dimensions);
-  const temporalDimensions = getTemporalDimensions(dimensions);
+  const temporalDimensions = dimensions.filter(
+    (d) => isTemporalDimension(d) || isTemporalEntityDimension(d)
+  );
 
   const categoricalEnabled: RegularChartType[] = ["column", "pie"];
   const geoEnabled: RegularChartType[] = ["column", "map", "pie"];
@@ -2035,12 +2044,7 @@ const convertTableFieldsToSegmentField = ({
 }): GenericSegmentField | undefined => {
   const groupedColumns = group(Object.values(fields), (d) => d.isGroup)
     .get(true)
-    // All the other dimension types can be used as a segment field.
-    ?.filter(
-      (d) =>
-        d.componentType !== "NumericalMeasure" &&
-        d.componentType !== "TemporalDimension"
-    )
+    ?.filter((d) => SEGMENT_ENABLED_COMPONENTS.includes(d.componentType))
     .sort((a, b) => a.index - b.index);
   const component = groupedColumns?.[0];
 

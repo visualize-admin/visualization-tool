@@ -16,6 +16,7 @@ import {
   GeoShapes,
   Measure,
   TemporalDimension,
+  TemporalEntityDimension,
   isMeasure,
 } from "@/domain/data";
 import { Loaders } from "@/graphql/context";
@@ -278,10 +279,11 @@ export const dataCubeComponents: NonNullable<
         };
         return measure;
       } else {
-        const { dataKind, scaleType, related } = component.data;
+        const { dataKind, scaleType, timeUnit, related } = component.data;
         const dimensionType = resolveDimensionType(
           dataKind,
           scaleType,
+          timeUnit,
           related
         );
         const hierarchy = rawHierarchies
@@ -298,14 +300,15 @@ export const dataCubeComponents: NonNullable<
         };
 
         switch (dimensionType) {
-          case "TemporalDimension": {
+          case "TemporalDimension":
+          case "TemporalEntityDimension": {
             if (!data.timeFormat || !data.timeUnit) {
               throw new Error(
-                `Temporal dimension ${data.iri} is missing timeFormat or timeUnit!`
+                `${dimensionType} ${data.iri} is missing timeFormat or timeUnit!`
               );
             }
 
-            const dimension: TemporalDimension = {
+            const dimension: TemporalDimension | TemporalEntityDimension = {
               __typename: dimensionType,
               timeFormat: data.timeFormat,
               timeUnit: data.timeUnit,
@@ -314,7 +317,10 @@ export const dataCubeComponents: NonNullable<
             return dimension;
           }
           default: {
-            const dimension: Exclude<Dimension, TemporalDimension> = {
+            const dimension: Exclude<
+              Dimension,
+              TemporalDimension | TemporalEntityDimension
+            > = {
               __typename: dimensionType,
               ...baseDimension,
             };

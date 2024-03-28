@@ -16,6 +16,7 @@ import {
   Component,
   NumericalMeasure,
   TemporalDimension,
+  TemporalEntityDimension,
   isNumericalMeasure,
   isTemporalDimension,
 } from "@/domain/data";
@@ -91,7 +92,7 @@ export const useLocalFormatters = () => {
 };
 
 export const dateFormatterFromDimension = (
-  dim: TemporalDimension,
+  dim: TemporalDimension | TemporalEntityDimension,
   localFormatters: LocalDateFormatters,
   formatDateAuto: (d: Date | string | null) => string
 ) => {
@@ -222,14 +223,14 @@ export const getFormatFullDateAuto = (formatters: LocalDateFormatters) => {
       timeMinute(date) < date
         ? formatters.second
         : timeHour(date) < date
-        ? formatters.minute
-        : timeDay(date) < date
-        ? formatters.hour
-        : timeMonth(date) < date
-        ? formatters.day
-        : timeYear(date) < date
-        ? formatters.month
-        : formatters.year
+          ? formatters.minute
+          : timeDay(date) < date
+            ? formatters.hour
+            : timeMonth(date) < date
+              ? formatters.day
+              : timeYear(date) < date
+                ? formatters.month
+                : formatters.year
     )(date);
   };
 };
@@ -368,14 +369,14 @@ export const useFormatShortDateAuto = () => {
         timeMinute(date) < date
           ? formatSecond
           : timeHour(date) < date
-          ? formatMinute
-          : timeDay(date) < date
-          ? formatHour
-          : timeMonth(date) < date
-          ? formatDay
-          : timeYear(date) < date
-          ? formatMonth
-          : formatYear
+            ? formatMinute
+            : timeDay(date) < date
+              ? formatHour
+              : timeMonth(date) < date
+                ? formatDay
+                : timeYear(date) < date
+                  ? formatMonth
+                  : formatYear
       )(date);
     };
   }, [locale]);

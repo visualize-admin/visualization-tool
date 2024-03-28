@@ -104,3 +104,5 @@ jest.mock("rdf-cube-view-query", () => ({
     }
   },
 }));
+
+jest.mock("@zazuko/cube-hierarchy-query/index", () => ({}));

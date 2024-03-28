@@ -8,31 +8,18 @@
         "type": "tabs",
         "children": [
           {
-            "id": "f8c5f66bb26b66fb",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "refactor ideas.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
             "id": "4ca93474f04d4a41",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "dimensions/TemporalEntityDimension.md",
+                "file": "dimensions/values/temporal entity.md",
                 "mode": "source",
                 "source": false
               }
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -98,7 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "dimensions/TemporalEntityDimension.md",
+                "file": "dimensions/values/temporal entity.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -115,7 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "dimensions/TemporalEntityDimension.md",
+                "file": "dimensions/values/temporal entity.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -138,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "dimensions/TemporalEntityDimension.md"
+                "file": "dimensions/values/temporal entity.md"
               }
             }
           }
@@ -146,8 +133,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -161,11 +147,12 @@
   },
   "active": "4ca93474f04d4a41",
   "lastOpenFiles": [
-    "dimensions/dimension.md",
-    "dimensions/TemporalEntityDimension.md",
-    "dimensions/values/dimension value.md",
     "dimensions/values/schema > position.md",
+    "dimensions/values/dimension value.md",
     "dimensions/values/temporal entity.md",
+    "dimensions/values/schema > sameAs.md",
+    "dimensions/TemporalEntityDimension.md",
+    "dimensions/dimension.md",
     "dimensions/values/time unit.md",
     "home.md",
     "performance bottlenecks.md",

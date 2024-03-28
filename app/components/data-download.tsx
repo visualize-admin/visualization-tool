@@ -475,6 +475,7 @@ const getDimensionParsers = (
         case "GeoShapesDimension":
         case "NominalDimension":
         case "OrdinalDimension":
+        case "TemporalEntityDimension":
         case "TemporalOrdinalDimension":
           return [d.iri, (d) => d];
         case "NumericalMeasure":

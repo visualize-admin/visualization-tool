@@ -223,6 +223,27 @@ type TemporalDimension implements Dimension {
   related: [RelatedDimension!]
 }
 
+type TemporalEntityDimension implements Dimension {
+  iri: String!
+  label: String!
+  description: String
+  timeUnit: TimeUnit!
+  timeFormat: String!
+  unit: String
+  scaleType: ScaleType
+  dataType: String
+  order: Int
+  isNumerical: Boolean!
+  isKeyDimension: Boolean!
+  values(
+    sourceType: String!
+    sourceUrl: String!
+    filters: Filters
+    disableLoad: Boolean
+  ): [DimensionValue!]!
+  related: [RelatedDimension!]
+}
+
 type TemporalOrdinalDimension implements Dimension {
   iri: String!
   label: String!

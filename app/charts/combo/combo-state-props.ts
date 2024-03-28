@@ -11,7 +11,7 @@ export type BaseYGetter = {
   getY: (d: Observation) => number | null;
 };
 
-export const sortData = (
+export const sortComboData = (
   data: Observation[],
   { getX }: { getX: TemporalValueGetter }
 ): Observation[] => {

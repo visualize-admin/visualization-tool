@@ -73,9 +73,12 @@ import {
 import {
   Component,
   Dimension,
+  DimensionValue,
+  getTemporalEntityValue,
   HierarchyValue,
   ObservationValue,
   TemporalDimension,
+  TemporalEntityDimension,
 } from "@/domain/data";
 import { useTimeFormatLocale, useTimeFormatUnit } from "@/formatters";
 import { Icon } from "@/icons";
@@ -583,8 +586,8 @@ const TreeAccordion = ({
             state === "SELECTED"
               ? "check"
               : state === "CHILDREN_SELECTED"
-              ? "indeterminate"
-              : "eye"
+                ? "indeterminate"
+                : "eye"
           }
           className={classes.optionCheck}
           style={{
@@ -654,8 +657,8 @@ const Tree = ({
         const state = selectedValues.map((d) => d.value).includes(value)
           ? "SELECTED"
           : areChildrenSelected({ children, selectedValues })
-          ? "CHILDREN_SELECTED"
-          : "NOT_SELECTED";
+            ? "CHILDREN_SELECTED"
+            : "NOT_SELECTED";
 
         return (
           <TreeAccordion
@@ -730,25 +733,28 @@ const DrawerContent = forwardRef<
       (d) => d.value
     );
 
-    const depthsMetadata = flatOptions.reduce((acc, d) => {
-      if (!acc[d.depth]) {
-        acc[d.depth] = { selectable: false, expandable: false };
-      }
+    const depthsMetadata = flatOptions.reduce(
+      (acc, d) => {
+        if (!acc[d.depth]) {
+          acc[d.depth] = { selectable: false, expandable: false };
+        }
 
-      if (acc[d.depth].selectable === false && d.hasValue) {
-        acc[d.depth].selectable = true;
-      }
+        if (acc[d.depth].selectable === false && d.hasValue) {
+          acc[d.depth].selectable = true;
+        }
 
-      if (
-        acc[d.depth].expandable === false &&
-        d.children &&
-        d.children.length > 0
-      ) {
-        acc[d.depth].expandable = true;
-      }
+        if (
+          acc[d.depth].expandable === false &&
+          d.children &&
+          d.children.length > 0
+        ) {
+          acc[d.depth].expandable = true;
+        }
 
-      return acc;
-    }, {} as Record<number, { selectable: boolean; expandable: boolean }>);
+        return acc;
+      },
+      {} as Record<number, { selectable: boolean; expandable: boolean }>
+    );
 
     const maxDepth = max(flatOptions, (d) => d.depth);
 
@@ -889,7 +895,7 @@ export const DimensionValuesMultiFilter = ({
 };
 
 type TimeFilterProps = {
-  dimension: TemporalDimension;
+  dimension: TemporalDimension | TemporalEntityDimension;
   disableInteractiveFilters?: boolean;
 };
 
@@ -912,12 +918,7 @@ export const TimeFilter = (props: TimeFilterProps) => {
     [dispatch, dimension]
   );
 
-  const temporalDimension =
-    dimension?.__typename === "TemporalDimension" ? dimension : null;
-
-  const activeFilter = temporalDimension?.iri
-    ? getFilterValue(state, temporalDimension.iri)
-    : null;
+  const activeFilter = getFilterValue(state, dimension.iri);
   const rangeActiveFilter =
     activeFilter?.type === "range" ? activeFilter : null;
 
@@ -941,11 +942,11 @@ export const TimeFilter = (props: TimeFilterProps) => {
 
   const { sortedOptions, sortedValues } = useMemo(() => {
     return getTimeFilterOptions({
-      dimension: temporalDimension,
+      dimension,
       formatLocale,
       timeFormatUnit,
     });
-  }, [temporalDimension, formatLocale, timeFormatUnit]);
+  }, [dimension, formatLocale, timeFormatUnit]);
 
   const getClosestDatesFromDateRange = React.useCallback(
     (from: Date, to: Date) => {
@@ -959,8 +960,8 @@ export const TimeFilter = (props: TimeFilterProps) => {
     [sortedOptions]
   );
 
-  if (temporalDimension && isConfiguring(state)) {
-    const { timeUnit, timeFormat } = temporalDimension;
+  if (isConfiguring(state)) {
+    const { timeUnit, timeFormat } = dimension;
     const timeInterval = getTimeInterval(timeUnit);
 
     const parse = formatLocale.parse(timeFormat);
@@ -993,7 +994,6 @@ export const TimeFilter = (props: TimeFilterProps) => {
         {!disableInteractiveFilters && (
           <InteractiveTimeRangeToggle sx={{ mb: 1 }} />
         )}
-
         <Box sx={{ display: "flex", gap: 1 }}>
           {rangeActiveFilter && (
             <>
@@ -1092,46 +1092,52 @@ export const TimeFilter = (props: TimeFilterProps) => {
 };
 
 type GetTimeFilterOptionsProps = {
-  dimension: TemporalDimension | null;
+  dimension: TemporalDimension | TemporalEntityDimension;
   formatLocale: ReturnType<typeof useTimeFormatLocale>;
   timeFormatUnit: ReturnType<typeof useTimeFormatUnit>;
 };
 
 export const getTimeFilterOptions = (props: GetTimeFilterOptionsProps) => {
   const { dimension, formatLocale, timeFormatUnit } = props;
+  const { timeFormat, timeUnit } = dimension;
+  const parse = formatLocale.parse(timeFormat);
+  const sortedOptions: {
+    value: ObservationValue;
+    label: string;
+    date: Date;
+  }[] = [];
+  const sortedValues: ObservationValue[] = [];
 
-  if (dimension) {
-    const { timeFormat, timeUnit } = dimension;
-    const parse = formatLocale.parse(timeFormat);
-    const sortedOptions: {
-      value: ObservationValue;
-      label: string;
-      date: Date;
-    }[] = [];
-    const sortedValues: ObservationValue[] = [];
+  for (const dimensionValue of dimension.values) {
+    let value: DimensionValue["value"];
 
-    for (const { value } of dimension.values) {
-      const date = parse(`${value}`);
-
-      if (date) {
-        sortedOptions.push({
-          value,
-          label: timeFormatUnit(date, timeUnit),
-          date,
-        });
-        sortedValues.push(value);
-      }
+    switch (dimension.__typename) {
+      case "TemporalDimension":
+        value = dimensionValue.value;
+        break;
+      case "TemporalEntityDimension":
+        value = getTemporalEntityValue(dimensionValue);
+        break;
+      default:
+        const _exhaustiveCheck: never = dimension;
+        return _exhaustiveCheck;
     }
 
-    return {
-      sortedOptions,
-      sortedValues,
-    };
+    const date = parse(`${value}`);
+
+    if (date) {
+      sortedOptions.push({
+        value,
+        label: timeFormatUnit(date, timeUnit),
+        date,
+      });
+      sortedValues.push(value);
+    }
   }
 
   return {
-    sortedOptions: [],
-    sortedValues: [],
+    sortedOptions,
+    sortedValues,
   };
 };
 
