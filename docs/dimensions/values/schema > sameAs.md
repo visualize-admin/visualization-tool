@@ -1,0 +1,1 @@
+Used as a link between semantically equivalent IRIs.
