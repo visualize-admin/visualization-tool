@@ -23,6 +23,7 @@ export type DimensionValue = {
   value: string | number;
   label: string;
   description?: string;
+  /** String in case of {@link TemporalEntityDimension}. */
   position?: number | string;
   color?: string;
   identifier?: string | number;
