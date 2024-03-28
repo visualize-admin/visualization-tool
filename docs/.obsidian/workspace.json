@@ -1,0 +1,176 @@
+{
+  "main": {
+    "id": "7e14745855140fad",
+    "type": "split",
+    "children": [
+      {
+        "id": "b8f060d57a64d3d8",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "f8c5f66bb26b66fb",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "refactor ideas.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
+            "id": "4ca93474f04d4a41",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "dimensions/TemporalEntityDimension.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          }
+        ],
+        "currentTab": 1
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "4c9f55499778daf8",
+    "type": "split",
+    "children": [
+      {
+        "id": "10e8bfebb4ccabfa",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "20f2f239d676e7f1",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "1351a6eb658f57a7",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "2e24440e3081ad41",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {}
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "fe910c4504715f5a",
+    "type": "split",
+    "children": [
+      {
+        "id": "3bc67d4f0edeb4a6",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "9b89ac6130cf0a2c",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "dimensions/TemporalEntityDimension.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "2ebb1972191229ea",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "dimensions/TemporalEntityDimension.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "35627adc880b0b80",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true
+              }
+            }
+          },
+          {
+            "id": "b55f0284398e2510",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "dimensions/TemporalEntityDimension.md"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false
+    }
+  },
+  "active": "4ca93474f04d4a41",
+  "lastOpenFiles": [
+    "dimensions/dimension.md",
+    "dimensions/TemporalEntityDimension.md",
+    "dimensions/values/dimension value.md",
+    "dimensions/values/schema > position.md",
+    "dimensions/values/temporal entity.md",
+    "dimensions/values/time unit.md",
+    "home.md",
+    "performance bottlenecks.md",
+    "refactor ideas.md",
+    "performance optimization ideas.md",
+    "dimensions/values"
+  ]
+}

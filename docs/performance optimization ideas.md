@@ -1,0 +1,2 @@
+- [ ] Separate SPARQL editor url and observations fetching
+	- Currently we double-fetch the data when downloading CSV or XLSX in `ChartFootnotes` component (hook to get url + directly inside `DataDownloadMenu` component)
