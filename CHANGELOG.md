@@ -9,7 +9,8 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
-Nothing yet.
+- Performance
+  - Switched to a cached LINDAS endpoint (PROD)
 
 # [4.0.0] - 2024-03-26
 

@@ -4,7 +4,7 @@ import { WHITELISTED_DATA_SOURCES } from "../env";
 
 export const SOURCE_OPTIONS = [
   {
-    value: "sparql+https://lindas.admin.ch/query",
+    value: "sparql+https://lindas-cached.cluster.ldbar.ch/query",
     label: "Prod",
     position: 3,
     isTrusted: true,

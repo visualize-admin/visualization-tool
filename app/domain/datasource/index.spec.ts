@@ -32,7 +32,7 @@ const createRouter = ({ query }: { query: Record<string, string> }) => {
 
 jest.mock("../env", () => ({
   WHITELISTED_DATA_SOURCES: ["Test", "Prod", "Int"],
-  ENDPOINT: "sparql+https://lindas.admin.ch/query", // Default is Prod in tests
+  ENDPOINT: "sparql+https://lindas-cached.cluster.ldbar.ch/query", // Default is Prod in tests
 }));
 
 describe("datasource state hook", () => {
@@ -86,7 +86,7 @@ describe("datasource state hook", () => {
     });
     expect(getState()).toEqual({
       type: "sparql",
-      url: "https://lindas.admin.ch/query",
+      url: "https://lindas-cached.cluster.ldbar.ch/query",
     });
   });
 
@@ -120,7 +120,10 @@ describe("datasource state hook", () => {
       localStorageValue: "Test",
     });
     act(() => {
-      setState({ type: "sparql", url: "https://lindas.admin.ch/query" });
+      setState({
+        type: "sparql",
+        url: "https://lindas-cached.cluster.ldbar.ch/query",
+      });
     });
     expect(setURLParam).toHaveBeenCalledWith("dataSource", "Prod");
 
