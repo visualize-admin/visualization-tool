@@ -261,6 +261,20 @@ export type TemporalEntityDimension = BaseDimension & {
   timeFormat: string;
 };
 
+// TODO
+/** Currently, the formatted date for month- and year-based temporal entities
+ * is stored in the `position` field. This will be changed in the future, once
+ * there will be datasets with other temporal entity types.
+ *
+ * Also see Zulip conversation about having a unified way of accessing formatted
+ * temporal entity values.
+ *
+ * https://zulip.zazuko.com/#narrow/stream/40-bafu-ext/topic/temporal.20entity.20and.20schema.3AsameAs
+ */
+export const getTemporalEntityValue = (value: DimensionValue) => {
+  return value.position ?? value.value;
+};
+
 export type TemporalOrdinalDimension = BaseDimension & {
   __typename: "TemporalOrdinalDimension";
 };

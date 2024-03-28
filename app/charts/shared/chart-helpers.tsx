@@ -37,6 +37,7 @@ import {
   Measure,
   Observation,
   ObservationValue,
+  getTemporalEntityValue,
 } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { JOIN_BY_DIMENSION_IRI } from "@/graphql/hook-utils";
@@ -306,11 +307,19 @@ export const useStringVariable = makeUseParsedVariable((x) =>
 export const useTemporalVariable = makeUseParsedVariable((x) =>
   parseDate(`${x}`)
 );
-export const useTemporalEntityVariable = (dimensionValues: DimensionValue[]) =>
-  makeUseParsedVariable((x) => {
-    const value = dimensionValues.find((d) => d.label === x);
-    return parseDate(`${value?.position}`);
+export const useTemporalEntityVariable = (
+  dimensionValues: DimensionValue[]
+) => {
+  const indexedValues = new Map(dimensionValues.map((d) => [d.label, d]));
+  return makeUseParsedVariable((label) => {
+    const dimensionValue = indexedValues.get(`${label}`);
+    const value = dimensionValue
+      ? getTemporalEntityValue(dimensionValue)
+      : undefined;
+
+    return parseDate(`${value}`);
   });
+};
 
 export const getSegment =
   (segmentKey: string | undefined) =>
