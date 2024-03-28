@@ -9,6 +9,8 @@ import {
   ScaleType,
   TimeUnit,
 } from "@/graphql/resolver-types";
+// @ts-ignore
+import { resolveDimensionType } from "@/graphql/resolvers";
 import { ResolvedDimension } from "@/graphql/shared-types";
 
 export type RawObservationValue = Term;
@@ -270,6 +272,7 @@ export type TemporalEntityDimension = BaseDimension & {
  * temporal entity values.
  *
  * https://zulip.zazuko.com/#narrow/stream/40-bafu-ext/topic/temporal.20entity.20and.20schema.3AsameAs
+ * @see {resolveDimensionType}
  */
 export const getTemporalEntityValue = (value: DimensionValue) => {
   return value.position ?? value.value;

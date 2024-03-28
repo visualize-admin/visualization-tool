@@ -8,6 +8,7 @@ import {
   QueryResolvers,
   Resolvers,
   ScaleType,
+  TimeUnit,
 } from "@/graphql/resolver-types";
 import * as RDF from "@/graphql/resolvers/rdf";
 import * as SQL from "@/graphql/resolvers/sql";
@@ -90,7 +91,13 @@ export const resolveDimensionType = (
   if (dataKind === "Time") {
     if (scaleType === "Ordinal") {
       if (timeUnit) {
-        return "TemporalEntityDimension";
+        if (timeUnit === TimeUnit.Month || timeUnit === TimeUnit.Year) {
+          return "TemporalEntityDimension";
+        } else {
+          throw new Error(
+            `Unsupported time unit for TemporalEntityDimension: ${timeUnit}`
+          );
+        }
       }
 
       return "TemporalOrdinalDimension";
