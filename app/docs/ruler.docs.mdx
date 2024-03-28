@@ -1,0 +1,34 @@
+import { Canvas, Meta } from '@storybook/blocks'
+import { TooltipBox } from '../charts/shared/interaction/tooltip-box'
+import { TooltipSingle } from '../charts/shared/interaction/tooltip-content'
+import * as RulerStories from './ruler.stories'
+
+<Meta of={RulerStories} />
+
+# Ruler
+
+> A ruler is used to highlight multiple values aligned on the horizontal axis. Tooltip and highlight dots are optional.
+
+<Canvas of={RulerStories.Ruler} />
+
+#### How to use
+
+```jsx
+<TooltipBox
+  x={100}
+  y={100}
+  placement={{
+    x: "left" | "center" | "right" ,
+    y: "top" | "middle" | "bottom"
+  }}
+  margins={{ top: 10, right: 10, bottom: 10, left: 10 }}
+>
+
+  <TooltipSingle
+    xValue="Jahr 2017"
+    segment="10'987'372"
+    yValue="Alpen"
+  />
+
+</TooltipBox>
+```

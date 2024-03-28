@@ -1,25 +1,19 @@
 import RDF from "@rdfjs/data-model";
 import { SELECT } from "@tpluscode/sparql-builder";
 import keyBy from "lodash/keyBy";
-import mapValues from "lodash/mapValues";
 import pickBy from "lodash/pickBy";
 import sortBy from "lodash/sortBy";
 import { CubeDimension } from "rdf-cube-view-query";
-import { NamedNode, Quad, Term } from "rdf-js";
+import { Quad, Term } from "rdf-js";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
 import { ResultRow } from "sparql-http-client/ResultParser";
 import { LRUCache } from "typescript-lru-cache";
 
 import { FilterValue, Filters } from "@/config-types";
-import { isDynamicMaxValue } from "@/configurator/components/field";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
-import {
-  DimensionValue,
-  Observation,
-  parseObservationValue,
-} from "@/domain/data";
+import { DimensionValue, parseObservationValue } from "@/domain/data";
+import { isDynamicMaxValue } from "@/domain/max-value";
 import { pragmas } from "@/rdf/create-source";
-import { ExtendedCube } from "@/rdf/extended-cube";
 
 import * as ns from "./namespace";
 import { parseDimensionDatatype } from "./parse";
@@ -68,44 +62,6 @@ const formatFilterIntoSparqlFilter = (
   }
 };
 
-export async function unversionObservation({
-  cube,
-  observation,
-  sparqlClient,
-}: {
-  cube: ExtendedCube;
-  observation: Observation;
-  sparqlClient: ParsingClient;
-}) {
-  const dimensionsByPath = keyBy(
-    cube.dimensions,
-    (x) => x.path?.value
-  ) as Record<string, CubeDimension>;
-  const versionedDimensions = Object.keys(observation).filter((x) => {
-    // Ignore the artificial __iri__ dimensions.
-    if (x.endsWith("/__iri__")) {
-      return false;
-    }
-
-    return dimensionIsVersioned(dimensionsByPath[x]);
-  });
-  const query = SELECT.DISTINCT`?versioned ?unversioned`.WHERE`
-    VALUES (?versioned) {
-      ${versionedDimensions.map((x) => `(<${observation[x]}>)\n`)}
-    }
-    ?versioned ${ns.schema.sameAs} ?unversioned.
-  `.prologue`${pragmas}`;
-  const result = (await query.execute(sparqlClient.query, {
-    operation: "postUrlencoded",
-  })) as { versioned: NamedNode; unversioned: NamedNode }[];
-  const unversionedIndex = result.reduce((acc, item) => {
-    acc[item.versioned.value] = item.unversioned.value;
-    return acc;
-  }, {} as Record<string, string>);
-
-  return mapValues(observation, (v) => (v ? unversionedIndex[v] ?? v : v));
-}
-
 const getFilterOrder = (filter: FilterValue) => {
   if (filter.type === "single") {
     // Heuristic to put non discriminant filter at the end
@@ -118,7 +74,7 @@ const getFilterOrder = (filter: FilterValue) => {
 
 type LoadDimensionValuesProps = {
   dimensionIri: string;
-  cube: ExtendedCube;
+  cubeDimensions: CubeDimension[];
   sparqlClient: ParsingClient;
   filters?: Filters;
   locale: string;
@@ -135,10 +91,15 @@ export async function loadDimensionValuesWithMetadata(
   cubeIri: string,
   props: LoadDimensionValuesProps
 ): Promise<DimensionValue[]> {
-  const { dimensionIri, cube, sparqlClient, filters, locale, cache } = props;
+  const { dimensionIri, cubeDimensions, sparqlClient, filters, locale, cache } =
+    props;
   const filterList = getFiltersList(filters, dimensionIri);
-  const queryFilters = getQueryFilters(filterList, cube, dimensionIri);
-  const dimension = cube.dimensions.find((d) => d.path?.value === dimensionIri);
+  const queryFilters = getQueryFilters(
+    filterList,
+    cubeDimensions,
+    dimensionIri
+  );
+  const dimension = cubeDimensions.find((d) => d.path?.value === dimensionIri);
 
   if (!dimension) {
     throw new Error(`Dimension not found: ${dimensionIri}`);
@@ -250,6 +211,8 @@ const parseMaybeUndefined = (value: string, fallbackValue: string) => {
   return value === ns.cube.Undefined.value ? "-" : fallbackValue ?? value;
 };
 
+type LoadMaxDimensionValuesProps = Omit<LoadDimensionValuesProps, "locale">;
+
 /**
  * Load max dimension value.
  *
@@ -258,9 +221,9 @@ const parseMaybeUndefined = (value: string, fallbackValue: string) => {
  */
 export async function loadMaxDimensionValue(
   cubeIri: string,
-  props: LoadDimensionValuesProps
-) {
-  const { dimensionIri, cube, sparqlClient, filters, cache } = props;
+  props: LoadMaxDimensionValuesProps
+): Promise<string> {
+  const { dimensionIri, cubeDimensions, sparqlClient, filters, cache } = props;
   const filterList = getFiltersList(filters, dimensionIri);
   // The following query works both for numeric, date and ordinal dimensions
   const query = SELECT`?value`.WHERE`
@@ -268,7 +231,7 @@ export async function loadMaxDimensionValue(
 ?observation <${dimensionIri}> ?value .
 OPTIONAL { ?value <https://www.w3.org/TR/owl-time/hasEnd> ?hasEnd . }
 OPTIONAL { ?value ${ns.schema.position} ?position . }
-${getQueryFilters(filterList, cube, dimensionIri)}`
+${getQueryFilters(filterList, cubeDimensions, dimensionIri)}`
     .ORDER()
     .BY(RDF.variable("hasEnd"), true)
     .THEN.BY(RDF.variable("value"), true)
@@ -280,12 +243,13 @@ ${getQueryFilters(filterList, cube, dimensionIri)}`
       sparqlClient,
       query,
       () => sparqlClient.query.select(query, { operation: "postUrlencoded" }),
-      (result) => result.map((d) => d.value.value),
+      (result) => result[0].value.value,
       cache
     );
   } catch {
-    console.warn(`Failed to fetch max dimension value for ${cubeIri}!`);
-    return [];
+    throw new Error(
+      `Failed to fetch max dimension value for ${cubeIri}, ${dimensionIri}!`
+    );
   }
 }
 
@@ -308,7 +272,7 @@ const getFiltersList = (filters: Filters | undefined, dimensionIri: string) => {
 
 export const getQueryFilters = (
   filtersList: ReturnType<typeof getFiltersList>,
-  cube: ExtendedCube,
+  dimensions: CubeDimension[],
   dimensionIri: string
 ) => {
   if (filtersList.length === 0) {
@@ -317,7 +281,7 @@ export const getQueryFilters = (
 
   return filtersList
     .map(([iri, value], i) => {
-      const dimension = cube.dimensions.find((d) => d.path?.value === iri);
+      const dimension = dimensions.find((d) => d.path?.value === iri);
 
       // Ignore the current dimension
       if (!dimension || dimensionIri === iri) {

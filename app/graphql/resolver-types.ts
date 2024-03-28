@@ -4,10 +4,13 @@ import { DataCubeObservations } from '../domain/data';
 import { DataCubePreview } from '../domain/data';
 import { DimensionValue } from '../domain/data';
 import { Filters } from '../configurator';
+import { GeoCoordinates } from '../domain/data';
+import { GeoShapes } from '../domain/data';
 import { HierarchyValue } from '../domain/data';
 import { Observation } from '../domain/data';
 import { RawObservation } from '../domain/data';
 import { SearchCube } from '../domain/data';
+import { SingleFilters } from '../configurator';
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
 import { ResolvedDataCube, ResolvedObservationsQuery, ResolvedMeasure, ResolvedDimension } from './shared-types';
 import { VisualizeGraphQLContext } from './context';
@@ -30,11 +33,13 @@ export type Scalars = {
   DimensionValue: DimensionValue;
   FilterValue: any;
   Filters: Filters;
-  GeoShapes: any;
+  GeoCoordinates: GeoCoordinates;
+  GeoShapes: GeoShapes;
   HierarchyValue: HierarchyValue;
   Observation: Observation;
   RawObservation: RawObservation;
   SearchCube: SearchCube;
+  SingleFilters: SingleFilters;
   ValueIdentifier: any;
   ValuePosition: any;
 };
@@ -145,7 +150,6 @@ export type Dimension = {
   isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
   related?: Maybe<Array<RelatedDimension>>;
-  hierarchy?: Maybe<Array<Scalars['HierarchyValue']>>;
 };
 
 
@@ -157,21 +161,8 @@ export type DimensionValuesArgs = {
 };
 
 
-export type DimensionHierarchyArgs = {
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
-};
 
 
-
-
-export type GeoCoordinates = {
-  __typename?: 'GeoCoordinates';
-  iri: Scalars['String'];
-  label: Scalars['String'];
-  latitude: Scalars['Float'];
-  longitude: Scalars['Float'];
-};
 
 export type GeoCoordinatesDimension = Dimension & {
   __typename?: 'GeoCoordinatesDimension';
@@ -185,9 +176,7 @@ export type GeoCoordinatesDimension = Dimension & {
   isNumerical: Scalars['Boolean'];
   isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
-  geoCoordinates?: Maybe<Array<GeoCoordinates>>;
   related?: Maybe<Array<RelatedDimension>>;
-  hierarchy?: Maybe<Array<Scalars['HierarchyValue']>>;
 };
 
 
@@ -196,12 +185,6 @@ export type GeoCoordinatesDimensionValuesArgs = {
   sourceUrl: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
   disableLoad?: Maybe<Scalars['Boolean']>;
-};
-
-
-export type GeoCoordinatesDimensionHierarchyArgs = {
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
 };
 
 
@@ -217,9 +200,7 @@ export type GeoShapesDimension = Dimension & {
   isNumerical: Scalars['Boolean'];
   isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
-  geoShapes?: Maybe<Scalars['GeoShapes']>;
   related?: Maybe<Array<RelatedDimension>>;
-  hierarchy?: Maybe<Array<Scalars['HierarchyValue']>>;
 };
 
 
@@ -228,12 +209,6 @@ export type GeoShapesDimensionValuesArgs = {
   sourceUrl: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
   disableLoad?: Maybe<Scalars['Boolean']>;
-};
-
-
-export type GeoShapesDimensionHierarchyArgs = {
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
 };
 
 
@@ -252,7 +227,6 @@ export type NominalDimension = Dimension & {
   isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
   related?: Maybe<Array<RelatedDimension>>;
-  hierarchy?: Maybe<Array<Scalars['HierarchyValue']>>;
 };
 
 
@@ -261,12 +235,6 @@ export type NominalDimensionValuesArgs = {
   sourceUrl: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
   disableLoad?: Maybe<Scalars['Boolean']>;
-};
-
-
-export type NominalDimensionHierarchyArgs = {
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
 };
 
 export type NumericalMeasure = Dimension & {
@@ -286,7 +254,6 @@ export type NumericalMeasure = Dimension & {
   resolution?: Maybe<Scalars['Int']>;
   values: Array<Scalars['DimensionValue']>;
   related?: Maybe<Array<RelatedDimension>>;
-  hierarchy?: Maybe<Array<Scalars['HierarchyValue']>>;
 };
 
 
@@ -295,12 +262,6 @@ export type NumericalMeasureValuesArgs = {
   sourceUrl: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
   disableLoad?: Maybe<Scalars['Boolean']>;
-};
-
-
-export type NumericalMeasureHierarchyArgs = {
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
 };
 
 
@@ -330,7 +291,6 @@ export type OrdinalDimension = Dimension & {
   isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
   related?: Maybe<Array<RelatedDimension>>;
-  hierarchy?: Maybe<Array<Scalars['HierarchyValue']>>;
 };
 
 
@@ -339,12 +299,6 @@ export type OrdinalDimensionValuesArgs = {
   sourceUrl: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
   disableLoad?: Maybe<Scalars['Boolean']>;
-};
-
-
-export type OrdinalDimensionHierarchyArgs = {
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
 };
 
 export type OrdinalMeasure = Dimension & {
@@ -360,7 +314,6 @@ export type OrdinalMeasure = Dimension & {
   isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
   related?: Maybe<Array<RelatedDimension>>;
-  hierarchy?: Maybe<Array<Scalars['HierarchyValue']>>;
 };
 
 
@@ -371,21 +324,16 @@ export type OrdinalMeasureValuesArgs = {
   disableLoad?: Maybe<Scalars['Boolean']>;
 };
 
-
-export type OrdinalMeasureHierarchyArgs = {
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
-};
-
 export type Query = {
   __typename?: 'Query';
   dataCubeComponents: Scalars['DataCubeComponents'];
   dataCubeMetadata: Scalars['DataCubeMetadata'];
   dataCubeObservations: Scalars['DataCubeObservations'];
   dataCubePreview: Scalars['DataCubePreview'];
-  dataCubeByIri?: Maybe<DataCube>;
   possibleFilters: Array<ObservationFilter>;
   searchCubes: Array<SearchCubeResult>;
+  dataCubeDimensionGeoShapes?: Maybe<Scalars['GeoShapes']>;
+  dataCubeDimensionGeoCoordinates?: Maybe<Scalars['GeoCoordinates']>;
 };
 
 
@@ -421,23 +369,11 @@ export type QueryDataCubePreviewArgs = {
 };
 
 
-export type QueryDataCubeByIriArgs = {
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
-  locale?: Maybe<Scalars['String']>;
-  iri: Scalars['String'];
-  latest?: Maybe<Scalars['Boolean']>;
-  filters?: Maybe<Scalars['Filters']>;
-  componentIris?: Maybe<Array<Scalars['String']>>;
-  disableValuesLoad?: Maybe<Scalars['Boolean']>;
-};
-
-
 export type QueryPossibleFiltersArgs = {
   iri: Scalars['String'];
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
-  filters: Scalars['Filters'];
+  filters: Scalars['SingleFilters'];
 };
 
 
@@ -449,6 +385,24 @@ export type QuerySearchCubesArgs = {
   order?: Maybe<SearchCubeResultOrder>;
   includeDrafts?: Maybe<Scalars['Boolean']>;
   filters?: Maybe<Array<SearchCubeFilter>>;
+};
+
+
+export type QueryDataCubeDimensionGeoShapesArgs = {
+  cubeIri: Scalars['String'];
+  dimensionIri: Scalars['String'];
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
+  locale: Scalars['String'];
+};
+
+
+export type QueryDataCubeDimensionGeoCoordinatesArgs = {
+  cubeIri: Scalars['String'];
+  dimensionIri: Scalars['String'];
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
+  locale: Scalars['String'];
 };
 
 
@@ -493,6 +447,7 @@ export enum SearchCubeResultOrder {
   CreatedDesc = 'CREATED_DESC'
 }
 
+
 export type StandardErrorDimension = Dimension & {
   __typename?: 'StandardErrorDimension';
   iri: Scalars['String'];
@@ -506,7 +461,6 @@ export type StandardErrorDimension = Dimension & {
   isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
   related?: Maybe<Array<RelatedDimension>>;
-  hierarchy?: Maybe<Array<Scalars['HierarchyValue']>>;
 };
 
 
@@ -515,12 +469,6 @@ export type StandardErrorDimensionValuesArgs = {
   sourceUrl: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
   disableLoad?: Maybe<Scalars['Boolean']>;
-};
-
-
-export type StandardErrorDimensionHierarchyArgs = {
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
 };
 
 export type TemporalDimension = Dimension & {
@@ -538,7 +486,6 @@ export type TemporalDimension = Dimension & {
   isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
   related?: Maybe<Array<RelatedDimension>>;
-  hierarchy?: Maybe<Array<Scalars['HierarchyValue']>>;
 };
 
 
@@ -547,12 +494,6 @@ export type TemporalDimensionValuesArgs = {
   sourceUrl: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
   disableLoad?: Maybe<Scalars['Boolean']>;
-};
-
-
-export type TemporalDimensionHierarchyArgs = {
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
 };
 
 export type TemporalOrdinalDimension = Dimension & {
@@ -568,7 +509,6 @@ export type TemporalOrdinalDimension = Dimension & {
   isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
   related?: Maybe<Array<RelatedDimension>>;
-  hierarchy?: Maybe<Array<Scalars['HierarchyValue']>>;
 };
 
 
@@ -577,12 +517,6 @@ export type TemporalOrdinalDimensionValuesArgs = {
   sourceUrl: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
   disableLoad?: Maybe<Scalars['Boolean']>;
-};
-
-
-export type TemporalOrdinalDimensionHierarchyArgs = {
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
 };
 
 export enum TimeUnit {
@@ -682,8 +616,7 @@ export type ResolversTypes = ResolversObject<{
   DimensionValue: ResolverTypeWrapper<Scalars['DimensionValue']>;
   FilterValue: ResolverTypeWrapper<Scalars['FilterValue']>;
   Filters: ResolverTypeWrapper<Scalars['Filters']>;
-  GeoCoordinates: ResolverTypeWrapper<GeoCoordinates>;
-  Float: ResolverTypeWrapper<Scalars['Float']>;
+  GeoCoordinates: ResolverTypeWrapper<Scalars['GeoCoordinates']>;
   GeoCoordinatesDimension: ResolverTypeWrapper<ResolvedDimension>;
   GeoShapes: ResolverTypeWrapper<Scalars['GeoShapes']>;
   GeoShapesDimension: ResolverTypeWrapper<ResolvedDimension>;
@@ -704,7 +637,9 @@ export type ResolversTypes = ResolversObject<{
   SearchCubeFilter: SearchCubeFilter;
   SearchCubeFilterType: SearchCubeFilterType;
   SearchCubeResult: ResolverTypeWrapper<SearchCubeResult>;
+  Float: ResolverTypeWrapper<Scalars['Float']>;
   SearchCubeResultOrder: SearchCubeResultOrder;
+  SingleFilters: ResolverTypeWrapper<Scalars['SingleFilters']>;
   StandardErrorDimension: ResolverTypeWrapper<ResolvedDimension>;
   TemporalDimension: ResolverTypeWrapper<ResolvedDimension>;
   TemporalOrdinalDimension: ResolverTypeWrapper<ResolvedDimension>;
@@ -733,8 +668,7 @@ export type ResolversParentTypes = ResolversObject<{
   DimensionValue: Scalars['DimensionValue'];
   FilterValue: Scalars['FilterValue'];
   Filters: Scalars['Filters'];
-  GeoCoordinates: GeoCoordinates;
-  Float: Scalars['Float'];
+  GeoCoordinates: Scalars['GeoCoordinates'];
   GeoCoordinatesDimension: ResolvedDimension;
   GeoShapes: Scalars['GeoShapes'];
   GeoShapesDimension: ResolvedDimension;
@@ -753,6 +687,8 @@ export type ResolversParentTypes = ResolversObject<{
   SearchCube: Scalars['SearchCube'];
   SearchCubeFilter: SearchCubeFilter;
   SearchCubeResult: SearchCubeResult;
+  Float: Scalars['Float'];
+  SingleFilters: Scalars['SingleFilters'];
   StandardErrorDimension: ResolvedDimension;
   TemporalDimension: ResolvedDimension;
   TemporalOrdinalDimension: ResolvedDimension;
@@ -824,7 +760,6 @@ export type DimensionResolvers<ContextType = VisualizeGraphQLContext, ParentType
   isKeyDimension?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType, RequireFields<DimensionValuesArgs, 'sourceType' | 'sourceUrl'>>;
   related?: Resolver<Maybe<Array<ResolversTypes['RelatedDimension']>>, ParentType, ContextType>;
-  hierarchy?: Resolver<Maybe<Array<ResolversTypes['HierarchyValue']>>, ParentType, ContextType, RequireFields<DimensionHierarchyArgs, 'sourceType' | 'sourceUrl'>>;
 }>;
 
 export interface DimensionValueScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DimensionValue'], any> {
@@ -839,13 +774,9 @@ export interface FiltersScalarConfig extends GraphQLScalarTypeConfig<ResolversTy
   name: 'Filters';
 }
 
-export type GeoCoordinatesResolvers<ContextType = VisualizeGraphQLContext, ParentType extends ResolversParentTypes['GeoCoordinates'] = ResolversParentTypes['GeoCoordinates']> = ResolversObject<{
-  iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  label?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  latitude?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
-  longitude?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
+export interface GeoCoordinatesScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['GeoCoordinates'], any> {
+  name: 'GeoCoordinates';
+}
 
 export type GeoCoordinatesDimensionResolvers<ContextType = VisualizeGraphQLContext, ParentType extends ResolversParentTypes['GeoCoordinatesDimension'] = ResolversParentTypes['GeoCoordinatesDimension']> = ResolversObject<{
   iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -858,9 +789,7 @@ export type GeoCoordinatesDimensionResolvers<ContextType = VisualizeGraphQLConte
   isNumerical?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   isKeyDimension?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType, RequireFields<GeoCoordinatesDimensionValuesArgs, 'sourceType' | 'sourceUrl'>>;
-  geoCoordinates?: Resolver<Maybe<Array<ResolversTypes['GeoCoordinates']>>, ParentType, ContextType>;
   related?: Resolver<Maybe<Array<ResolversTypes['RelatedDimension']>>, ParentType, ContextType>;
-  hierarchy?: Resolver<Maybe<Array<ResolversTypes['HierarchyValue']>>, ParentType, ContextType, RequireFields<GeoCoordinatesDimensionHierarchyArgs, 'sourceType' | 'sourceUrl'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -879,9 +808,7 @@ export type GeoShapesDimensionResolvers<ContextType = VisualizeGraphQLContext, P
   isNumerical?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   isKeyDimension?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType, RequireFields<GeoShapesDimensionValuesArgs, 'sourceType' | 'sourceUrl'>>;
-  geoShapes?: Resolver<Maybe<ResolversTypes['GeoShapes']>, ParentType, ContextType>;
   related?: Resolver<Maybe<Array<ResolversTypes['RelatedDimension']>>, ParentType, ContextType>;
-  hierarchy?: Resolver<Maybe<Array<ResolversTypes['HierarchyValue']>>, ParentType, ContextType, RequireFields<GeoShapesDimensionHierarchyArgs, 'sourceType' | 'sourceUrl'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -905,7 +832,6 @@ export type NominalDimensionResolvers<ContextType = VisualizeGraphQLContext, Par
   isKeyDimension?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType, RequireFields<NominalDimensionValuesArgs, 'sourceType' | 'sourceUrl'>>;
   related?: Resolver<Maybe<Array<ResolversTypes['RelatedDimension']>>, ParentType, ContextType>;
-  hierarchy?: Resolver<Maybe<Array<ResolversTypes['HierarchyValue']>>, ParentType, ContextType, RequireFields<NominalDimensionHierarchyArgs, 'sourceType' | 'sourceUrl'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -925,7 +851,6 @@ export type NumericalMeasureResolvers<ContextType = VisualizeGraphQLContext, Par
   resolution?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType, RequireFields<NumericalMeasureValuesArgs, 'sourceType' | 'sourceUrl'>>;
   related?: Resolver<Maybe<Array<ResolversTypes['RelatedDimension']>>, ParentType, ContextType>;
-  hierarchy?: Resolver<Maybe<Array<ResolversTypes['HierarchyValue']>>, ParentType, ContextType, RequireFields<NumericalMeasureHierarchyArgs, 'sourceType' | 'sourceUrl'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -958,7 +883,6 @@ export type OrdinalDimensionResolvers<ContextType = VisualizeGraphQLContext, Par
   isKeyDimension?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType, RequireFields<OrdinalDimensionValuesArgs, 'sourceType' | 'sourceUrl'>>;
   related?: Resolver<Maybe<Array<ResolversTypes['RelatedDimension']>>, ParentType, ContextType>;
-  hierarchy?: Resolver<Maybe<Array<ResolversTypes['HierarchyValue']>>, ParentType, ContextType, RequireFields<OrdinalDimensionHierarchyArgs, 'sourceType' | 'sourceUrl'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -974,7 +898,6 @@ export type OrdinalMeasureResolvers<ContextType = VisualizeGraphQLContext, Paren
   isKeyDimension?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType, RequireFields<OrdinalMeasureValuesArgs, 'sourceType' | 'sourceUrl'>>;
   related?: Resolver<Maybe<Array<ResolversTypes['RelatedDimension']>>, ParentType, ContextType>;
-  hierarchy?: Resolver<Maybe<Array<ResolversTypes['HierarchyValue']>>, ParentType, ContextType, RequireFields<OrdinalMeasureHierarchyArgs, 'sourceType' | 'sourceUrl'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -983,9 +906,10 @@ export type QueryResolvers<ContextType = VisualizeGraphQLContext, ParentType ext
   dataCubeMetadata?: Resolver<ResolversTypes['DataCubeMetadata'], ParentType, ContextType, RequireFields<QueryDataCubeMetadataArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'cubeFilter'>>;
   dataCubeObservations?: Resolver<ResolversTypes['DataCubeObservations'], ParentType, ContextType, RequireFields<QueryDataCubeObservationsArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'cubeFilter'>>;
   dataCubePreview?: Resolver<ResolversTypes['DataCubePreview'], ParentType, ContextType, RequireFields<QueryDataCubePreviewArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'cubeFilter'>>;
-  dataCubeByIri?: Resolver<Maybe<ResolversTypes['DataCube']>, ParentType, ContextType, RequireFields<QueryDataCubeByIriArgs, 'sourceType' | 'sourceUrl' | 'iri' | 'latest'>>;
   possibleFilters?: Resolver<Array<ResolversTypes['ObservationFilter']>, ParentType, ContextType, RequireFields<QueryPossibleFiltersArgs, 'iri' | 'sourceType' | 'sourceUrl' | 'filters'>>;
   searchCubes?: Resolver<Array<ResolversTypes['SearchCubeResult']>, ParentType, ContextType, RequireFields<QuerySearchCubesArgs, 'sourceType' | 'sourceUrl'>>;
+  dataCubeDimensionGeoShapes?: Resolver<Maybe<ResolversTypes['GeoShapes']>, ParentType, ContextType, RequireFields<QueryDataCubeDimensionGeoShapesArgs, 'cubeIri' | 'dimensionIri' | 'sourceType' | 'sourceUrl' | 'locale'>>;
+  dataCubeDimensionGeoCoordinates?: Resolver<Maybe<ResolversTypes['GeoCoordinates']>, ParentType, ContextType, RequireFields<QueryDataCubeDimensionGeoCoordinatesArgs, 'cubeIri' | 'dimensionIri' | 'sourceType' | 'sourceUrl' | 'locale'>>;
 }>;
 
 export interface RawObservationScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['RawObservation'], any> {
@@ -1010,6 +934,10 @@ export type SearchCubeResultResolvers<ContextType = VisualizeGraphQLContext, Par
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export interface SingleFiltersScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['SingleFilters'], any> {
+  name: 'SingleFilters';
+}
+
 export type StandardErrorDimensionResolvers<ContextType = VisualizeGraphQLContext, ParentType extends ResolversParentTypes['StandardErrorDimension'] = ResolversParentTypes['StandardErrorDimension']> = ResolversObject<{
   iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   label?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -1022,7 +950,6 @@ export type StandardErrorDimensionResolvers<ContextType = VisualizeGraphQLContex
   isKeyDimension?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType, RequireFields<StandardErrorDimensionValuesArgs, 'sourceType' | 'sourceUrl'>>;
   related?: Resolver<Maybe<Array<ResolversTypes['RelatedDimension']>>, ParentType, ContextType>;
-  hierarchy?: Resolver<Maybe<Array<ResolversTypes['HierarchyValue']>>, ParentType, ContextType, RequireFields<StandardErrorDimensionHierarchyArgs, 'sourceType' | 'sourceUrl'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -1040,7 +967,6 @@ export type TemporalDimensionResolvers<ContextType = VisualizeGraphQLContext, Pa
   isKeyDimension?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType, RequireFields<TemporalDimensionValuesArgs, 'sourceType' | 'sourceUrl'>>;
   related?: Resolver<Maybe<Array<ResolversTypes['RelatedDimension']>>, ParentType, ContextType>;
-  hierarchy?: Resolver<Maybe<Array<ResolversTypes['HierarchyValue']>>, ParentType, ContextType, RequireFields<TemporalDimensionHierarchyArgs, 'sourceType' | 'sourceUrl'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -1056,7 +982,6 @@ export type TemporalOrdinalDimensionResolvers<ContextType = VisualizeGraphQLCont
   isKeyDimension?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType, RequireFields<TemporalOrdinalDimensionValuesArgs, 'sourceType' | 'sourceUrl'>>;
   related?: Resolver<Maybe<Array<ResolversTypes['RelatedDimension']>>, ParentType, ContextType>;
-  hierarchy?: Resolver<Maybe<Array<ResolversTypes['HierarchyValue']>>, ParentType, ContextType, RequireFields<TemporalOrdinalDimensionHierarchyArgs, 'sourceType' | 'sourceUrl'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -1080,7 +1005,7 @@ export type Resolvers<ContextType = VisualizeGraphQLContext> = ResolversObject<{
   DimensionValue?: GraphQLScalarType;
   FilterValue?: GraphQLScalarType;
   Filters?: GraphQLScalarType;
-  GeoCoordinates?: GeoCoordinatesResolvers<ContextType>;
+  GeoCoordinates?: GraphQLScalarType;
   GeoCoordinatesDimension?: GeoCoordinatesDimensionResolvers<ContextType>;
   GeoShapes?: GraphQLScalarType;
   GeoShapesDimension?: GeoShapesDimensionResolvers<ContextType>;
@@ -1098,6 +1023,7 @@ export type Resolvers<ContextType = VisualizeGraphQLContext> = ResolversObject<{
   RelatedDimension?: RelatedDimensionResolvers<ContextType>;
   SearchCube?: GraphQLScalarType;
   SearchCubeResult?: SearchCubeResultResolvers<ContextType>;
+  SingleFilters?: GraphQLScalarType;
   StandardErrorDimension?: StandardErrorDimensionResolvers<ContextType>;
   TemporalDimension?: TemporalDimensionResolvers<ContextType>;
   TemporalOrdinalDimension?: TemporalOrdinalDimensionResolvers<ContextType>;

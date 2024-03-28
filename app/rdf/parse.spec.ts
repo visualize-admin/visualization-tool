@@ -1,7 +1,3 @@
-// eslint-disable-next-line import/order
-import { RDFCubeViewQueryMock } from "@/test/cube-view-query-mock";
-RDFCubeViewQueryMock;
-
 import { CubeDimension } from "rdf-cube-view-query";
 import rdf from "rdf-ext";
 

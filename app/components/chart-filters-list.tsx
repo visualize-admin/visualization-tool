@@ -13,13 +13,13 @@ import {
   FilterValue,
   getAnimationField,
 } from "@/configurator";
-import { isDynamicMaxValue } from "@/configurator/components/field";
 import {
   Dimension,
   Measure,
   isTemporalDimension,
   isTemporalOrdinalDimension,
 } from "@/domain/data";
+import { isDynamicMaxValue } from "@/domain/max-value";
 import { useTimeFormatUnit } from "@/formatters";
 import { useDataCubesComponentsQuery } from "@/graphql/hooks";
 import { useLocale } from "@/locales/use-locale";

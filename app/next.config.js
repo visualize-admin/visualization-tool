@@ -101,6 +101,16 @@ module.exports = withPreconstruct(
 
         return config;
       },
+
+      async redirects() {
+        return [
+          {
+            source: "/storybook",
+            destination: "/storybook/index.html",
+            permanent: true,
+          },
+        ];
+      },
     })
   )
 );

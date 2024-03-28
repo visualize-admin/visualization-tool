@@ -76,9 +76,9 @@ export const visitHierarchy = (
   /** Will be run over all children. Return false to abort early */
   visitor: (node: HierarchyValue) => void | false
 ) => {
-  let q = [...tree];
+  const q = [...tree];
   while (q.length > 0) {
-    const node = q.pop()!;
+    const node = q.shift()!;
     const ret = visitor(node);
     if (ret === false) {
       break;

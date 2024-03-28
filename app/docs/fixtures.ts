@@ -475,55 +475,91 @@ export const tableObservations = [
   },
 ];
 
-export const tableMeasures = [
+export const tableMeasures: Measure[] = [
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/0",
     label: "Anzahl Betriebe",
     __typename: "NumericalMeasure",
+    cubeIri: "https://cube",
+    isNumerical: false,
+    isKeyDimension: false,
+    values: [],
   },
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/1",
     label: "Anzahl Waldeigentümer",
     __typename: "NumericalMeasure",
+    cubeIri: "https://cube",
+    isNumerical: false,
+    isKeyDimension: false,
+    values: [],
   },
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/2",
     label: "Gesamte Waldflächen (ha)",
     __typename: "NumericalMeasure",
+    cubeIri: "https://cube",
+    isNumerical: false,
+    isKeyDimension: false,
+    values: [],
   },
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/3",
     label: "Produktive Waldflächen (ha)",
     __typename: "NumericalMeasure",
+    cubeIri: "https://cube",
+    isNumerical: false,
+    isKeyDimension: false,
+    values: [],
   },
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/4",
     label: "Holzernte Total (m3)",
     __typename: "NumericalMeasure",
+    cubeIri: "https://cube",
+    isNumerical: false,
+    isKeyDimension: false,
+    values: [],
   },
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/5",
     label: "Stammholz (m3)",
     __typename: "NumericalMeasure",
+    cubeIri: "https://cube",
+    isNumerical: false,
+    isKeyDimension: false,
+    values: [],
   },
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/6",
     label: "Industrieholz (m3)",
     __typename: "NumericalMeasure",
+    cubeIri: "https://cube",
+    isNumerical: false,
+    isKeyDimension: false,
+    values: [],
   },
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/7",
     label: "Energieholz (m3)",
     __typename: "NumericalMeasure",
+    cubeIri: "https://cube",
+    isNumerical: false,
+    isKeyDimension: false,
+    values: [],
   },
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/8",
     label: "Übrige Sortimente (m3)",
     __typename: "NumericalMeasure",
+    cubeIri: "https://cube",
+    isNumerical: false,
+    isKeyDimension: false,
+    values: [],
   },
 ];
 
-export const tableDimensions = [
+export const tableDimensions: Dimension[] = [
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/0",
     label: "Jahr",
@@ -534,10 +570,18 @@ export const tableDimensions = [
       { value: "2018", label: "2018" },
     ],
     __typename: "TemporalDimension",
+    cubeIri: "https://cube",
+    isNumerical: false,
+    isKeyDimension: false,
+    timeUnit: TimeUnit.Year,
+    timeFormat: "%Y",
   },
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/1",
     label: "Forstzone",
+    cubeIri: "https://cube",
+    isNumerical: false,
+    isKeyDimension: false,
     values: [
       {
         value:
@@ -575,6 +619,9 @@ export const tableDimensions = [
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2",
     label: "Kanton",
+    cubeIri: "https://cube",
+    isNumerical: false,
+    isKeyDimension: false,
     values: [
       {
         value:
@@ -717,6 +764,9 @@ export const tableDimensions = [
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/3",
     label: "Grössenklasse",
+    cubeIri: "https://cube",
+    isNumerical: false,
+    isKeyDimension: false,
     values: [
       {
         value:
@@ -754,6 +804,9 @@ export const tableDimensions = [
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/4",
     label: "Steuerhoheit",
+    cubeIri: "https://cube",
+    isNumerical: false,
+    isKeyDimension: false,
     values: [
       {
         value:

@@ -1,4 +1,4 @@
-import { descending, index } from "d3";
+import { ascending, descending, index } from "d3";
 import { Maybe } from "graphql-tools";
 import keyBy from "lodash/keyBy";
 import { CubeDimension, Filter, LookupSource, View } from "rdf-cube-view-query";
@@ -8,7 +8,6 @@ import { ParsingClient } from "sparql-http-client/ParsingClient";
 import { LRUCache } from "typescript-lru-cache";
 
 import { FilterValueMulti, Filters } from "@/config-types";
-import { isDynamicMaxValue } from "@/configurator/components/field";
 import {
   DimensionValue,
   Observation,
@@ -16,6 +15,7 @@ import {
   parseObservationValue,
   shouldLoadMinMaxValues,
 } from "@/domain/data";
+import { isDynamicMaxValue } from "@/domain/max-value";
 import { PromiseValue, truthy } from "@/domain/types";
 import {
   ResolvedDimension,
@@ -152,14 +152,16 @@ export const getCubeDimensions = async ({
       (d) => d.iri.value
     );
 
-    return dimensions.map((dim) => {
-      return parseCubeDimension({
-        dim,
-        cube,
-        locale,
-        units: dimensionUnitIndex,
-      });
-    });
+    return dimensions
+      .map((dim) => {
+        return parseCubeDimension({
+          dim,
+          cube,
+          locale,
+          units: dimensionUnitIndex,
+        });
+      })
+      .sort((a, b) => ascending(a.data.order, b.data.order));
   } catch (e) {
     console.error(e);
 
@@ -174,23 +176,18 @@ export const createCubeDimensionValuesLoader =
     filters?: Filters
   ) =>
   async (resolvedDimensions: readonly ResolvedDimension[]) => {
-    const result: DimensionValue[][] = [];
-
-    for (const resolvedDimension of resolvedDimensions) {
-      const dimensionValues = await getCubeDimensionValues(
-        resolvedDimension.cube.term?.value!,
-        {
+    return Promise.all(
+      resolvedDimensions.map(async (resolvedDimension) => {
+        const iri = resolvedDimension.data.iri;
+        return await getCubeDimensionValues(iri, {
           sparqlClient,
           locale: resolvedDimension.locale,
           resolvedDimension,
           filters,
           cache,
-        }
-      );
-      result.push(dimensionValues);
-    }
-
-    return result;
+        });
+      })
+    );
   };
 
 export const getCubeDimensionValues = async (
@@ -307,7 +304,7 @@ export const getCubeDimensionValuesWithMetadata = async ({
 }): Promise<DimensionValue[]> => {
   return await loadDimensionValuesWithMetadata(cube.term?.value!, {
     dimensionIri: dimension.path?.value!,
-    cube,
+    cubeDimensions: cube.dimensions,
     sparqlClient,
     filters,
     locale,
@@ -315,10 +312,9 @@ export const getCubeDimensionValuesWithMetadata = async ({
   });
 };
 
-type NonNullableValues<T, K extends keyof T> = Omit<T, K> &
-  {
-    [P in K]-?: NonNullable<T[P]>;
-  };
+type NonNullableValues<T, K extends keyof T> = Omit<T, K> & {
+  [P in K]-?: NonNullable<T[P]>;
+};
 
 type CubeDimensionWithPath = NonNullableValues<CubeDimension, "path">;
 
@@ -677,14 +673,13 @@ const buildFilters = async ({
           if (isDynamicMaxValue(filter.value)) {
             const maxValue = await loadMaxDimensionValue(cube.term?.value!, {
               dimensionIri: iri,
-              cube,
+              cubeDimensions: cube.dimensions,
               sparqlClient,
               filters,
-              locale,
               cache,
             });
 
-            return [filterDimension.filter.eq(toRDFValue(maxValue[0]))];
+            return [filterDimension.filter.eq(toRDFValue(maxValue))];
           }
 
           return [filterDimension.filter.eq(toRDFValue(`${filter.value}`))];
@@ -780,9 +775,9 @@ function parseObservation(
         ns.cube.Undefined.equals((obs[d.data.iri] as Literal)?.datatype)
           ? null
           : termType === "NamedNode" &&
-            ns.cube.Undefined.equals(obs[d.data.iri])
-          ? "–"
-          : obs[d.data.iri]?.value;
+              ns.cube.Undefined.equals(obs[d.data.iri])
+            ? "–"
+            : obs[d.data.iri]?.value;
 
       const rawValue = parseObservationValue({ value: obs[d.data.iri] });
       if (d.data.hasHierarchy) {

@@ -32,7 +32,7 @@ export type HierarchyValue = {
   dimensionIri: string;
   value: string;
   /** In other words, is selectable? */
-  hasValue: Boolean;
+  hasValue: boolean;
   label: string;
   alternateName?: string;
   position?: ObservationValue;
@@ -198,6 +198,15 @@ export type GeoShapes = {
   topology: TopoJSON.Topology<TopoJSON.Objects<GeoProperties>>;
 };
 
+type GeoCoordinate = {
+  iri: string;
+  label: string;
+  latitude: number;
+  longitude: number;
+};
+
+export type GeoCoordinates = GeoCoordinate[];
+
 export type GeoFeature = {
   type: "Feature";
   properties: GeoProperties;
@@ -209,7 +218,6 @@ export type AreaLayer = {
     GeoJSON.MultiPolygon | GeoJSON.Polygon,
     GeoProperties
   >;
-  mesh: GeoJSON.MultiLineString;
 };
 
 export type GeoPoint = {

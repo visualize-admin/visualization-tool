@@ -33,6 +33,7 @@
           "value": "2007"
         }
       },
+      "cubes": [],
       "interactiveFiltersConfig": {
         "legend": { "active": false, "componentIri": "" },
         "timeRange": {

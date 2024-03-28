@@ -11,6 +11,32 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 - Performance
   - Switched to a cached LINDAS endpoint (PROD)
+
+# [4.0.0] - 2024-03-26
+
+Bumped to a new major version to celebrate all the improvements and new features introduced since v3.0.0 🎉
+
+# [3.27.3] - 2024-03-22
+
+- Fixes
+  - Full data download now correctly includes all cube dimensions again
+
+# [3.27.2] - 2024-03-19
+
+- Performance
+  - Dimension values are now fetched in parallel in case of fetching for several dimensions at once
+  - Refactored shapes and coordinates fetching to not rely on resolver chains
+
+# [3.27.1] - 2024-03-15
+
+- Performance
+  - Hierarchies are now fetched in parallel with dimension values, rather than waiting for them to be fetched in advance
+  - Vastly optimized the `PossibleFilters` query
+- Maintenance
+  - Increased the number of Playwright workers to 4
+
+# [3.27.0] - 2024-03-12
+
 - Features
   - Slightly increased initial map zoom level
   - Join a second dataset through temporal dimension (behind `flag__add-dataset` flag)

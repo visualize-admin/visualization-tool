@@ -9,7 +9,7 @@ const query = `query PossibleFilters(
   $iri: String!
   $sourceType: String!
   $sourceUrl: String!
-  $filters: Filters!
+  $filters: SingleFilters!
 ) {
   possibleFilters(
     iri: $iri

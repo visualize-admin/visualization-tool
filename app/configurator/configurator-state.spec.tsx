@@ -214,8 +214,8 @@ describe("applyDimensionToFilters", () => {
       {
         __typename: "HierarchyValue",
         dimensionIri: "nominalDimensionIri",
-        value: "brienz",
-        label: "Brienz",
+        value: "switzerland",
+        label: "Switzerland",
         depth: 0,
         hasValue: true,
         children: [],
@@ -223,8 +223,8 @@ describe("applyDimensionToFilters", () => {
       {
         __typename: "HierarchyValue",
         dimensionIri: "nominalDimensionIri",
-        value: "switzerland",
-        label: "Switzerland",
+        value: "brienz",
+        label: "Brienz",
         depth: -1,
         hasValue: true,
         children: [],

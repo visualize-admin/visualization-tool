@@ -1,0 +1,61 @@
+import { Canvas, Meta } from '@storybook/blocks';
+import * as ButtonStories from "./button.stories";
+
+> Buttons are used to trigger an event after a user interaction.
+
+Here are the variants defined in the theme:
+
+- \`primary\`
+- \`primary-small\`
+- \`secondary\`
+- \`success\`
+- \`inline\`
+- \`inline-bold\`
+- \`inverted\`
+
+<Meta of={ButtonStories} />
+
+## Primary button
+
+<Canvas story={ButtonStories.Primary} />
+
+## Secondary button
+
+<Canvas of={ButtonStories.SecondaryButton} />
+
+## Success button
+
+<Canvas of={ButtonStories.SuccessButton} />
+
+## Outline button
+
+<Canvas of={ButtonStories.OutlineButton} />
+
+## Inline button
+
+<Canvas of={ButtonStories.InlineButton} />
+
+## Bold inline button
+
+<Canvas of={ButtonStories.BoldInlineButton} />
+
+## Publish button
+
+<Canvas of={ButtonStories.PublishButton} />
+
+## Learn more button
+
+<Canvas of={ButtonStories.LearnMoreButton} />
+
+
+## How to use
+
+```jsx
+import { Button } from "@mui/material"
+import SvgIcChevronRight from "../icons/components/IcChevronRight";
+import SvgIcChevronLeft from "../icons/components/IcChevronLeft";
+
+<Button variant="primary">
+  Primary button
+</Button>
+``` */}

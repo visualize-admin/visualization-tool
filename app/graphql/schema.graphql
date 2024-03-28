@@ -3,10 +3,16 @@ scalar DimensionValue
 scalar FilterValue
 scalar RawObservation
 scalar Filters
-scalar GeoShapes
+scalar SingleFilters
 scalar ValueIdentifier
 scalar ValuePosition
 scalar HierarchyValue
+scalar DataCubeComponents
+scalar DataCubeMetadata
+scalar DataCubeObservations
+scalar DataCubePreview
+scalar GeoShapes
+scalar GeoCoordinates
 
 type ObservationsQuery {
   data: [Observation!]!
@@ -83,14 +89,6 @@ interface Dimension {
     disableLoad: Boolean
   ): [DimensionValue!]!
   related: [RelatedDimension!]
-  hierarchy(sourceType: String!, sourceUrl: String!): [HierarchyValue!]
-}
-
-type GeoCoordinates {
-  iri: String!
-  label: String!
-  latitude: Float!
-  longitude: Float!
 }
 
 type GeoCoordinatesDimension implements Dimension {
@@ -109,9 +107,7 @@ type GeoCoordinatesDimension implements Dimension {
     filters: Filters
     disableLoad: Boolean
   ): [DimensionValue!]!
-  geoCoordinates: [GeoCoordinates!]
   related: [RelatedDimension!]
-  hierarchy(sourceType: String!, sourceUrl: String!): [HierarchyValue!]
 }
 
 type ObservationFilter {
@@ -136,9 +132,7 @@ type GeoShapesDimension implements Dimension {
     filters: Filters
     disableLoad: Boolean
   ): [DimensionValue!]!
-  geoShapes: GeoShapes
   related: [RelatedDimension!]
-  hierarchy(sourceType: String!, sourceUrl: String!): [HierarchyValue!]
 }
 
 type NominalDimension implements Dimension {
@@ -158,7 +152,6 @@ type NominalDimension implements Dimension {
     disableLoad: Boolean
   ): [DimensionValue!]!
   related: [RelatedDimension!]
-  hierarchy(sourceType: String!, sourceUrl: String!): [HierarchyValue!]
 }
 
 type OrdinalDimension implements Dimension {
@@ -178,7 +171,6 @@ type OrdinalDimension implements Dimension {
     disableLoad: Boolean
   ): [DimensionValue!]!
   related: [RelatedDimension!]
-  hierarchy(sourceType: String!, sourceUrl: String!): [HierarchyValue!]
 }
 
 type StandardErrorDimension implements Dimension {
@@ -198,7 +190,6 @@ type StandardErrorDimension implements Dimension {
     disableLoad: Boolean
   ): [DimensionValue!]!
   related: [RelatedDimension!]
-  hierarchy(sourceType: String!, sourceUrl: String!): [HierarchyValue!]
 }
 
 enum TimeUnit {
@@ -230,7 +221,6 @@ type TemporalDimension implements Dimension {
     disableLoad: Boolean
   ): [DimensionValue!]!
   related: [RelatedDimension!]
-  hierarchy(sourceType: String!, sourceUrl: String!): [HierarchyValue!]
 }
 
 type TemporalOrdinalDimension implements Dimension {
@@ -250,7 +240,6 @@ type TemporalOrdinalDimension implements Dimension {
     disableLoad: Boolean
   ): [DimensionValue!]!
   related: [RelatedDimension!]
-  hierarchy(sourceType: String!, sourceUrl: String!): [HierarchyValue!]
 }
 
 union Measure = NumericalMeasure | OrdinalMeasure
@@ -276,7 +265,6 @@ type NumericalMeasure implements Dimension {
     disableLoad: Boolean
   ): [DimensionValue!]!
   related: [RelatedDimension!]
-  hierarchy(sourceType: String!, sourceUrl: String!): [HierarchyValue!]
 }
 
 type OrdinalMeasure implements Dimension {
@@ -296,7 +284,6 @@ type OrdinalMeasure implements Dimension {
     disableLoad: Boolean
   ): [DimensionValue!]!
   related: [RelatedDimension!]
-  hierarchy(sourceType: String!, sourceUrl: String!): [HierarchyValue!]
 }
 
 scalar SearchCube
@@ -364,11 +351,6 @@ input DataCubePreviewFilter {
   latest: Boolean
 }
 
-scalar DataCubeComponents
-scalar DataCubeMetadata
-scalar DataCubeObservations
-scalar DataCubePreview
-
 # The "Query" type is special: it lists all of the available queries that
 # clients can execute, along with the return type for each.
 type Query {
@@ -396,21 +378,11 @@ type Query {
     locale: String!
     cubeFilter: DataCubePreviewFilter!
   ): DataCubePreview!
-  dataCubeByIri(
-    sourceType: String!
-    sourceUrl: String!
-    locale: String
-    iri: String!
-    latest: Boolean = true
-    filters: Filters
-    componentIris: [String!]
-    disableValuesLoad: Boolean
-  ): DataCube
   possibleFilters(
     iri: String!
     sourceType: String!
     sourceUrl: String!
-    filters: Filters!
+    filters: SingleFilters!
   ): [ObservationFilter!]!
   searchCubes(
     sourceType: String!
@@ -421,4 +393,18 @@ type Query {
     includeDrafts: Boolean
     filters: [SearchCubeFilter!]
   ): [SearchCubeResult!]!
+  dataCubeDimensionGeoShapes(
+    cubeIri: String!
+    dimensionIri: String!
+    sourceType: String!
+    sourceUrl: String!
+    locale: String!
+  ): GeoShapes
+  dataCubeDimensionGeoCoordinates(
+    cubeIri: String!
+    dimensionIri: String!
+    sourceType: String!
+    sourceUrl: String!
+    locale: String!
+  ): GeoCoordinates
 }

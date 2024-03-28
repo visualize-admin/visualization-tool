@@ -1,9 +1,9 @@
+import { CubeDimension } from "rdf-cube-view-query";
 import rdf from "rdf-ext";
 import ParsingClient from "sparql-http-client/ParsingClient";
 
 import { FilterValue } from "@/config-types";
 
-import { ExtendedCube } from "./extended-cube";
 import * as ns from "./namespace";
 import {
   getQueryFilters,
@@ -14,25 +14,23 @@ jest.mock("rdf-cube-view-query", () => ({}));
 jest.mock("./extended-cube", () => ({}));
 jest.mock("@zazuko/cube-hierarchy-query/index", () => ({}));
 
-const cube = {
-  dimensions: [
-    {
-      path: rdf.namedNode("http://example.com/dimension1"),
-      out: (_: string) => {
-        return { list: () => [] };
-      },
+const cubeDimensions = [
+  {
+    path: rdf.namedNode("http://example.com/dimension1"),
+    out: (_: string) => {
+      return { list: () => [] };
     },
-    {
-      path: rdf.namedNode("http://example.com/dimension2"),
-      out: (_: string) => {
-        return { list: () => [] };
-      },
+  },
+  {
+    path: rdf.namedNode("http://example.com/dimension2"),
+    out: (_: string) => {
+      return { list: () => [] };
     },
-  ],
-} as any as ExtendedCube;
+  },
+] as any as CubeDimension[];
 
 describe("getDimensionValuesWithMetadata", () => {
-  const dimensionIri = cube.dimensions?.[0].path?.value!;
+  const dimensionIri = cubeDimensions[0].path?.value!;
   const quads = [
     rdf.quad(
       rdf.blankNode(),
@@ -66,8 +64,8 @@ describe("getDimensionValuesWithMetadata", () => {
   } as any as ParsingClient;
 
   it("should return the values of a dimension", async () => {
-    const values = await loadDimensionValuesWithMetadata(cube.term?.value!, {
-      cube,
+    const values = await loadDimensionValuesWithMetadata("", {
+      cubeDimensions,
       dimensionIri,
       sparqlClient,
       locale: "en",
@@ -96,7 +94,7 @@ describe("getQueryFilters", () => {
   it("should include other dimensions in the returning part of the query", async () => {
     const queryPart = getQueryFilters(
       filters,
-      cube,
+      cubeDimensions,
       "http://example.com/dimension2"
     );
     expect(queryPart).toContain("<http://example.com/dimension1>");

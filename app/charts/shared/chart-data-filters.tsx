@@ -17,6 +17,7 @@ import {
   DataSource,
   Filters,
   getFiltersByMappingStatus,
+  SingleFilters,
   useChartConfigFilters,
   useConfiguratorState,
 } from "@/configurator";
@@ -55,7 +56,7 @@ import useEvent from "@/utils/use-event";
 type PreparedFilter = {
   cubeIri: string;
   interactiveFilters: Filters;
-  unmappedQueryFilters: Filters;
+  unmappedQueryFilters: SingleFilters;
   mappedFilters: Filters;
 };
 
@@ -111,7 +112,9 @@ export const ChartDataFilters = (props: ChartDataFiltersProps) => {
       return {
         cubeIri: cube.iri,
         interactiveFilters: Object.fromEntries(interactiveFiltersArray),
-        unmappedQueryFilters: Object.fromEntries(unmappedQueryFiltersArray),
+        unmappedQueryFilters: Object.fromEntries(
+          unmappedQueryFiltersArray
+        ) as SingleFilters,
         mappedFilters,
       };
     });

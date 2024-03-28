@@ -19,3 +19,4 @@ __diff_output__
 e2e-screenshots
 playwright-report
 
+app/public/storybook

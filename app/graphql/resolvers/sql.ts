@@ -1,13 +1,18 @@
 import max from "lodash/max";
 import min from "lodash/min";
+import { topology } from "topojson-server";
 
 import { Filters } from "@/configurator";
-import { DimensionValue, Observation } from "@/domain/data";
+import {
+  DimensionValue,
+  GeoProperties,
+  GeoShapes,
+  Observation,
+} from "@/domain/data";
 import { SQL_ENDPOINT } from "@/domain/env";
 import {
   DataCubePublicationStatus,
   DataCubeResolvers,
-  DimensionResolvers,
   QueryResolvers,
   Resolvers,
   TimeUnit,
@@ -113,15 +118,16 @@ const parseSQLDimension = (
   };
 };
 
-export const searchCubes: NonNullable<QueryResolvers["searchCubes"]> =
-  async () => {
-    const result = await fetchSQL({ path: "cubes" });
-    const cubes = await result.json();
+export const searchCubes: NonNullable<
+  QueryResolvers["searchCubes"]
+> = async () => {
+  const result = await fetchSQL({ path: "cubes" });
+  const cubes = await result.json();
 
-    return cubes.map((d: SQLCube) => ({
-      dataCube: parseSQLCube(d),
-    }));
-  };
+  return cubes.map((d: SQLCube) => ({
+    dataCube: parseSQLCube(d),
+  }));
+};
 
 export const dataCubeComponents: NonNullable<
   QueryResolvers["dataCubeComponents"]
@@ -129,81 +135,76 @@ export const dataCubeComponents: NonNullable<
   return { dimensions: [], measures: [] };
 };
 
-export const dataCubeMetadata: NonNullable<QueryResolvers["dataCubeMetadata"]> =
-  async () => {
-    return {} as any;
-  };
-
-export const dataCubeByIri: NonNullable<QueryResolvers["dataCubeByIri"]> =
-  async (_, { iri }) => {
-    const result = await fetchSQL({ path: `cubes/${iri}` });
-    const cube = await result.json();
-
-    return parseSQLCube(cube);
-  };
-
-export const possibleFilters: NonNullable<QueryResolvers["possibleFilters"]> =
-  async (_, { iri, filters }) => {
-    // FIXME: there ideally would be an access to a parent cube
-    const result = await fetchSQL({
-      path: "cube_observations",
-      pathParams: { cube_iri: iri },
-    });
-    const allObservations: Observation[] = await result.json();
-    const nbFilters = Object.keys(filters).length;
-
-    for (let i = nbFilters; i > 0; i--) {
-      const queryFilters = Object.fromEntries(
-        Object.entries(filters).slice(0, i)
-      );
-      const observations = filterObservations(allObservations, queryFilters);
-
-      if (observations.length === 0) {
-        continue;
-      }
-
-      const result = Object.keys(filters).map((d) => ({
-        iri: d,
-        type: "single",
-        value: observations[0][d],
-      }));
-
-      return result;
-    }
-
-    return [];
-  };
-
-export const dataCubeDimensions: NonNullable<DataCubeResolvers["dimensions"]> =
-  async ({ cube }) => {
-    // FIXME: type of cube should be different for RDF and SQL.
-    const dimensions = cube.dimensions as unknown as SQLDimension[];
-    return (
-      dimensions
-        .filter((d) => d.type !== "Measure")
-        // FIXME: type of cube should be different for RDF and SQL.
-        .map((d) => parseSQLDimension(cube as unknown as ResolvedDataCube, d))
-    );
-  };
-
-export const dataCubeDimensionByIri: NonNullable<
-  DataCubeResolvers["dimensionByIri"]
-> = async ({ cube }, { iri }) => {
-  // FIXME: type of cube should be different for RDF and SQL.
-  const dimensions = cube.dimensions as unknown as SQLDimension[];
-  const dimension = dimensions.find((d) => d.iri === iri);
-
-  if (dimension) {
-    return parseSQLDimension(cube as unknown as ResolvedDataCube, dimension);
-  }
-
-  return null;
+export const dataCubeMetadata: NonNullable<
+  QueryResolvers["dataCubeMetadata"]
+> = async () => {
+  return {} as any;
 };
 
-export const hierarchy: NonNullable<DimensionResolvers["hierarchy"]> =
-  async () => {
-    return [];
+export const possibleFilters: NonNullable<
+  QueryResolvers["possibleFilters"]
+> = async (_, { iri, filters }) => {
+  // FIXME: there ideally would be an access to a parent cube
+  const result = await fetchSQL({
+    path: "cube_observations",
+    pathParams: { cube_iri: iri },
+  });
+  const allObservations: Observation[] = await result.json();
+  const nbFilters = Object.keys(filters).length;
+
+  for (let i = nbFilters; i > 0; i--) {
+    const queryFilters = Object.fromEntries(
+      Object.entries(filters).slice(0, i)
+    );
+    const observations = filterObservations(allObservations, queryFilters);
+
+    if (observations.length === 0) {
+      continue;
+    }
+
+    const result = Object.keys(filters).map((d) => ({
+      iri: d,
+      type: "single",
+      value: observations[0][d],
+    }));
+
+    return result;
+  }
+
+  return [];
+};
+
+export const dataCubeDimensions: NonNullable<
+  DataCubeResolvers["dimensions"]
+> = async ({ cube }) => {
+  // FIXME: type of cube should be different for RDF and SQL.
+  const dimensions = cube.dimensions as unknown as SQLDimension[];
+  return (
+    dimensions
+      .filter((d) => d.type !== "Measure")
+      // FIXME: type of cube should be different for RDF and SQL.
+      .map((d) => parseSQLDimension(cube as unknown as ResolvedDataCube, d))
+  );
+};
+
+export const dataCubeDimensionGeoShapes: NonNullable<
+  QueryResolvers["dataCubeDimensionGeoShapes"]
+> = async () => {
+  return {
+    topology: topology({
+      shapes: {
+        type: "FeatureCollection",
+        features: [],
+      } as GeoJSON.FeatureCollection<GeoJSON.Geometry, GeoProperties>,
+    }) as GeoShapes["topology"],
   };
+};
+
+export const dataCubeDimensionGeoCoordinates: NonNullable<
+  QueryResolvers["dataCubeDimensionGeoCoordinates"]
+> = async () => {
+  return [];
+};
 
 // FIXME: should be a call to API (to be able to implement proper filtering)
 export const dimensionValues: NonNullable<
@@ -234,17 +235,18 @@ export const dimensionValues: NonNullable<
   }
 };
 
-export const dataCubeMeasures: NonNullable<DataCubeResolvers["measures"]> =
-  async ({ cube }) => {
-    // FIXME: type of cube should be different for RDF and SQL.
-    const dimensions = cube.dimensions as unknown as SQLDimension[];
-    return (
-      dimensions
-        .filter((d) => d.type === "Measure")
-        // FIXME: type of cube should be different for RDF and SQL.
-        .map((d) => parseSQLDimension(cube as unknown as ResolvedDataCube, d))
-    );
-  };
+export const dataCubeMeasures: NonNullable<
+  DataCubeResolvers["measures"]
+> = async ({ cube }) => {
+  // FIXME: type of cube should be different for RDF and SQL.
+  const dimensions = cube.dimensions as unknown as SQLDimension[];
+  return (
+    dimensions
+      .filter((d) => d.type === "Measure")
+      // FIXME: type of cube should be different for RDF and SQL.
+      .map((d) => parseSQLDimension(cube as unknown as ResolvedDataCube, d))
+  );
+};
 
 const filterObservations = (
   allObservations: Observation[],
@@ -302,11 +304,12 @@ export const dataCubeObservations: NonNullable<
   };
 };
 
-export const dataCubePreview: NonNullable<QueryResolvers["dataCubePreview"]> =
-  async () => {
-    return {
-      dimensions: [],
-      measures: [],
-      observations: [],
-    };
+export const dataCubePreview: NonNullable<
+  QueryResolvers["dataCubePreview"]
+> = async () => {
+  return {
+    dimensions: [],
+    measures: [],
+    observations: [],
   };
+};
