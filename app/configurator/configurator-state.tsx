@@ -1590,6 +1590,7 @@ export const initChartStateFromCube = async (
   const { unmappedFilters } = getFiltersByMappingStatus(temporaryChartConfig, {
     cubeIri,
   });
+  const shouldFetchPossibleFilters = Object.keys(unmappedFilters).length > 0;
   const { data: possibleFilters } = await client
     .query<PossibleFiltersQuery, PossibleFiltersQueryVariables>(
       PossibleFiltersDocument,
@@ -1600,17 +1601,18 @@ export const initChartStateFromCube = async (
         filters: unmappedFilters,
         // @ts-ignore This is to make urql requery
         filterKey: Object.keys(unmappedFilters).join(", "),
-      }
+      },
+      { pause: !shouldFetchPossibleFilters }
     )
     .toPromise();
 
-  if (!possibleFilters?.possibleFilters) {
+  if (!possibleFilters?.possibleFilters && shouldFetchPossibleFilters) {
     throw new Error(`Could not fetch possible filters for ${cubeIri}!`);
   }
 
   const chartConfig = deriveFiltersFromFields(initialChartConfig, {
     dimensions,
-    possibleFilters: possibleFilters.possibleFilters,
+    possibleFilters: possibleFilters?.possibleFilters,
   });
 
   return transitionStepNext(

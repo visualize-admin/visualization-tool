@@ -62,7 +62,7 @@ SELECT ?${DIMENSION_IRI} ?${VERSION} ?${NODE_KIND} WHERE {
   ?dimension sh:path ?${DIMENSION_IRI} .
   OPTIONAL { ?dimension schema:version ?${VERSION} . }
   OPTIONAL { ?dimension sh:nodeKind ?${NODE_KIND} . }
-  FILTER(?${DIMENSION_IRI} IN (${dimensionIris.map((iri) => `<${iri}>`).join(", ")}))
+  ${dimensionIris.length > 0 ? `FILTER(?${DIMENSION_IRI} IN (${dimensionIris.map((iri) => `<${iri}>`).join(", ")}))` : ""}
 }`;
   const results = await sparqlClient.query.select(query, {
     operation: "postUrlencoded",
