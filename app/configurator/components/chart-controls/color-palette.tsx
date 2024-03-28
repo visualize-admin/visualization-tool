@@ -73,8 +73,8 @@ export const ColorPalette = ({
   const palettes = isNumericalMeasure(component)
     ? divergingSteppedPalettes
     : defaultPalette
-    ? [defaultPalette, ...categoricalPalettes]
-    : categoricalPalettes;
+      ? [defaultPalette, ...categoricalPalettes]
+      : categoricalPalettes;
 
   const currentPaletteName = get(
     chartConfig,
@@ -145,7 +145,7 @@ export const ColorPalette = ({
           </MenuItem>
         ))}
       </Select>
-      {component && state.state === "CONFIGURING_CHART" && (
+      {component && (
         <ColorPaletteControls
           field={field}
           component={component}

@@ -1,6 +1,5 @@
 import { Trans } from "@lingui/macro";
-import { SxProps, Typography } from "@mui/material";
-import { Box } from "@mui/material";
+import { Box, SxProps, Typography } from "@mui/material";
 import Button, { ButtonProps } from "@mui/material/Button";
 import { useRouter } from "next/router";
 import React from "react";
@@ -17,6 +16,7 @@ import { Loading } from "@/components/hint";
 import {
   ConfiguratorState,
   getChartConfig,
+  isConfiguring,
   useConfiguratorState,
 } from "@/configurator";
 import {
@@ -136,13 +136,14 @@ const BackToMainButton = (props: BackToMainButtonProps) => {
 
 const ConfigureChartStep = () => {
   const [state, dispatch] = useConfiguratorState();
+  const configuring = isConfiguring(state);
   const chartConfig = getChartConfig(state);
   const router = useRouter();
   const handleClosePanel = useEvent(() => {
     dispatch({ type: "CHART_ACTIVE_FIELD_CHANGED", value: undefined });
   });
   const handlePrevious = useEvent(() => {
-    if (state.state !== "CONFIGURING_CHART") {
+    if (!configuring) {
       return;
     }
 
@@ -160,7 +161,7 @@ const ConfigureChartStep = () => {
 
   useAssureCorrectDataSource("CONFIGURING_CHART");
 
-  if (state.state !== "CONFIGURING_CHART") {
+  if (!configuring) {
     return null;
   }
 

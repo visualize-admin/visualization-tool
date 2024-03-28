@@ -143,7 +143,8 @@ export const useChartFieldField = ({
   });
 
   let value: string | undefined;
-  if (state.state === "CONFIGURING_CHART") {
+
+  if (isConfiguring(state)) {
     const chartConfig = getChartConfig(state);
     value = getFieldComponentIri(chartConfig.fields, field) ?? FIELD_VALUE_NONE;
   }
@@ -185,7 +186,8 @@ export const useChartOptionSelectField = <V extends {} = string>(
   );
 
   let value: V | undefined;
-  if (state.state === "CONFIGURING_CHART") {
+
+  if (isConfiguring(state)) {
     value = get(
       getChartConfig(state),
       `fields["${field}"].${path}`,
@@ -233,10 +235,9 @@ export const useChartOptionSliderField = ({
     }
   });
 
-  const value =
-    state.state === "CONFIGURING_CHART"
-      ? +getChartOptionField(state, field, path)
-      : defaultValue;
+  const value = isConfiguring(state)
+    ? +getChartOptionField(state, field, path)
+    : defaultValue;
 
   return {
     name: path,
@@ -268,10 +269,7 @@ export const useChartOptionRadioField = <V extends string | number>(
       },
     });
   }, [dispatch, locale, field, path, value]);
-  const stateValue =
-    state.state === "CONFIGURING_CHART"
-      ? getChartOptionField(state, field, path)
-      : "";
+  const stateValue = getChartOptionField(state, field, path);
   const checked = stateValue ? stateValue === value : undefined;
 
   return {
@@ -308,10 +306,9 @@ export const useChartOptionBooleanField = ({
     },
     [locale, dispatch, path, field]
   );
-  const stateValue =
-    state.state === "CONFIGURING_CHART"
-      ? getChartOptionField(state, field, path, defaultValue)
-      : defaultValue;
+  const stateValue = isConfiguring(state)
+    ? getChartOptionField(state, field, path, defaultValue)
+    : defaultValue;
   const checked = stateValue ? stateValue : false;
 
   return {
@@ -401,7 +398,7 @@ export const useChartType = (
           chartConfig: getInitialConfig({
             chartType,
             iris: [
-              state.state === "CONFIGURING_CHART"
+              isConfiguring(state)
                 ? getChartConfig(state, state.activeChartKey).cubes[0].iri
                 : chartConfig.cubes[0].iri,
             ],
@@ -455,7 +452,7 @@ export const useSingleFilterSelect = ({
 
   let value = FIELD_VALUE_NONE;
 
-  if (state.state === "CONFIGURING_CHART") {
+  if (isConfiguring(state)) {
     const chartConfig = getChartConfig(state);
     const cube = chartConfig.cubes.find((cube) => cube.iri === cubeIri);
 
@@ -495,11 +492,9 @@ export const useSingleFilterField = ({
     [dispatch, cubeIri, dimensionIri]
   );
 
-  const stateValue =
-    state.state === "CONFIGURING_CHART"
-      ? get(getChartConfig(state), ["filters", dimensionIri, "value"], "")
-      : "";
-
+  const stateValue = isConfiguring(state)
+    ? get(getChartConfig(state), ["filters", dimensionIri, "value"], "")
+    : "";
   const checked = stateValue === value;
 
   return {
@@ -556,8 +551,8 @@ export const MultiFilterContextProvider = ({
       ? activeFilter.type === "single"
         ? [String(activeFilter.value)]
         : activeFilter.type === "multi"
-        ? Object.keys(activeFilter.values)
-        : []
+          ? Object.keys(activeFilter.values)
+          : []
       : allValues;
     return new Set(activeKeys);
   }, [activeFilter, allValues]);

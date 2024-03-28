@@ -20,6 +20,8 @@ Bumped to a new major version to celebrate all the improvements and new features
 
 - Fixes
   - Full data download now correctly includes all cube dimensions again
+- Performance
+  - The application now fires the `PossibleFilters` query as soon as a chart is initialized to always load filters that make sense, without initial reloading
 
 # [3.27.2] - 2024-03-19
 

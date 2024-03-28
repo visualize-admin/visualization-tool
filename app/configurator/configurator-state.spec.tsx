@@ -34,7 +34,8 @@ import {
   updateColorMapping,
 } from "@/configurator/configurator-state";
 import { configStateMock } from "@/configurator/configurator-state.mock";
-import { Component, Dimension, Measure, NominalDimension } from "@/domain/data";
+import { Dimension, Measure, NominalDimension } from "@/domain/data";
+import { ObservationFilter } from "@/graphql/query-hooks";
 import covid19ColumnChartConfig from "@/test/__fixtures/config/dev/chartConfig-column-covid19.json";
 import covid19TableChartConfig from "@/test/__fixtures/config/dev/chartConfig-table-covid19.json";
 import { data as fakeVizFixture } from "@/test/__fixtures/config/prod/line-1.json";
@@ -69,9 +70,25 @@ jest.mock("@/utils/chart-config/api", () => ({
   fetchChartConfig: jest.fn(),
 }));
 
+const possibleFilters: ObservationFilter[] = [
+  {
+    __typename: "ObservationFilter",
+    iri: "symbolLayerIri",
+    type: "single",
+    value: "xPossible",
+  },
+];
+
 jest.mock("@/graphql/client", () => {
   return {
     client: {
+      query: jest.fn().mockImplementation(() => ({
+        toPromise: jest.fn().mockResolvedValue({
+          data: {
+            possibleFilters,
+          },
+        }),
+      })),
       readQuery: jest.fn().mockImplementation(() => ({
         data: {
           dataCubeComponents: getCachedComponentsMock.geoAndNumerical,
@@ -169,11 +186,12 @@ describe("initChartFromLocalStorage", () => {
 });
 
 describe("initChartStateFromCube", () => {
+  const dataSource: DataSource = {
+    url: "https://example.com/api",
+    type: "sparql",
+  };
+
   it("should work init fields with existing dataset and go directly to 2nd step", async () => {
-    const dataSource: DataSource = {
-      url: "https://example.com/api",
-      type: "sparql",
-    };
     const res = await initChartStateFromCube(
       "https://environment.ld.admin.ch/foen/ubd0104/3/",
       dataSource,
@@ -184,6 +202,20 @@ describe("initChartStateFromCube", () => {
         state: "CONFIGURING_CHART",
       })
     );
+  });
+
+  it("should prefer possible filters if provided", async () => {
+    const res = (await initChartStateFromCube(
+      "mapDataset",
+      dataSource,
+      "en"
+    )) as ConfiguratorStateConfiguringChart;
+    expect(res.chartConfigs[0].cubes[0].filters).toEqual({
+      symbolLayerIri: {
+        type: "single",
+        value: "xPossible",
+      },
+    });
   });
 });
 
@@ -557,10 +589,9 @@ describe("retainChartConfigWhenSwitchingChartType", () => {
         measures: dataSetMetadata.measures as any as Measure[],
       })
     );
-    deriveFiltersFromFields(newConfig, [
-      ...dataSetMetadata.dimensions,
-      ...dataSetMetadata.measures,
-    ] as any as Component[]);
+    deriveFiltersFromFields(newConfig, {
+      dimensions: dataSetMetadata.dimensions as any as Dimension[],
+    });
 
     return current(newConfig);
   };
