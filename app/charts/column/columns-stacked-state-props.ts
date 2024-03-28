@@ -9,6 +9,7 @@ import {
   NumericalYVariables,
   RenderingVariables,
   SegmentVariables,
+  SortingVariables,
   useBandXVariables,
   useBaseVariables,
   useChartData,
@@ -16,17 +17,14 @@ import {
   useSegmentVariables,
 } from "@/charts/shared/chart-state";
 import { useRenderingKeyVariable } from "@/charts/shared/rendering-utils";
-import {
-  ColumnConfig,
-  ColumnFields,
-  useChartConfigFilters,
-} from "@/configurator";
+import { ColumnConfig, useChartConfigFilters } from "@/configurator";
 import { Observation } from "@/domain/data";
 import { sortByIndex } from "@/utils/array";
 
 import { ChartProps } from "../shared/ChartProps";
 
 export type ColumnsStackedStateVariables = BaseVariables &
+  SortingVariables<{ plottableDataWide: Observation[] }> &
   BandXVariables &
   NumericalYVariables &
   SegmentVariables &
@@ -59,6 +57,32 @@ export const useColumnsStackedStateVariables = (
     observations,
   });
 
+  const { getX } = bandXVariables;
+  const sortData: ColumnsStackedStateVariables["sortData"] = React.useCallback(
+    (data, { plottableDataWide }) => {
+      const { sortingOrder, sortingType } = x.sorting ?? {};
+      const xOrder = plottableDataWide
+        .sort((a, b) => ascending(a.total ?? undefined, b.total ?? undefined))
+        .map(getX);
+
+      if (sortingOrder === "desc" && sortingType === "byDimensionLabel") {
+        return [...data].sort((a, b) => descending(getX(a), getX(b)));
+      } else if (sortingOrder === "asc" && sortingType === "byDimensionLabel") {
+        return [...data].sort((a, b) => ascending(getX(a), getX(b)));
+      } else if (sortingType === "byMeasure") {
+        return sortByIndex({
+          data,
+          order: xOrder,
+          getCategory: getX,
+          sortingOrder,
+        });
+      } else {
+        return [...data].sort((a, b) => ascending(getX(a), getX(b)));
+      }
+    },
+    [getX, x.sorting]
+  );
+
   const getRenderingKey = useRenderingKeyVariable(
     dimensions,
     filters,
@@ -68,6 +92,7 @@ export const useColumnsStackedStateVariables = (
 
   return {
     ...baseVariables,
+    sortData,
     ...bandXVariables,
     ...numericalYVariables,
     ...segmentVariables,
@@ -86,8 +111,14 @@ export const useColumnsStackedStateData = (
   const { chartConfig, observations } = chartProps;
   const { fields } = chartConfig;
   const { x } = fields;
-  const { getX, getXAsDate, getY, getSegment, getSegmentAbbreviationOrLabel } =
-    variables;
+  const {
+    sortData,
+    getX,
+    getXAsDate,
+    getY,
+    getSegment,
+    getSegmentAbbreviationOrLabel,
+  } = variables;
   const plottableData = usePlottableData(observations, {
     getY,
   });
@@ -103,12 +134,10 @@ export const useColumnsStackedStateData = (
     return {
       sortedPlottableData: sortData(plottableData, {
         plottableDataWide,
-        x,
-        getX,
       }),
       plottableDataWide,
     };
-  }, [plottableData, x, getX, getY, getSegment]);
+  }, [plottableData, getX, x.componentIri, getY, getSegment, sortData]);
   const data = useChartData(sortedPlottableData, {
     chartConfig,
     getXAsDate,
@@ -120,36 +149,4 @@ export const useColumnsStackedStateData = (
     allData: sortedPlottableData,
     plottableDataWide,
   };
-};
-
-const sortData = (
-  data: Observation[],
-  {
-    plottableDataWide,
-    x,
-    getX,
-  }: {
-    x: ColumnFields["x"];
-  } & Pick<ColumnsStackedStateVariables, "getX"> &
-    Pick<ColumnsStackedStateData, "plottableDataWide">
-) => {
-  const { sortingOrder, sortingType } = x.sorting ?? {};
-  const xOrder = plottableDataWide
-    .sort((a, b) => ascending(a.total ?? undefined, b.total ?? undefined))
-    .map(getX);
-
-  if (sortingOrder === "desc" && sortingType === "byDimensionLabel") {
-    return [...data].sort((a, b) => descending(getX(a), getX(b)));
-  } else if (sortingOrder === "asc" && sortingType === "byDimensionLabel") {
-    return [...data].sort((a, b) => ascending(getX(a), getX(b)));
-  } else if (sortingType === "byMeasure") {
-    return sortByIndex({
-      data,
-      order: xOrder,
-      getCategory: getX,
-      sortingOrder,
-    });
-  } else {
-    return [...data].sort((a, b) => ascending(getX(a), getX(b)));
-  }
 };

@@ -1,6 +1,6 @@
 import React from "react";
 
-import { BaseYGetter, sortData } from "@/charts/combo/combo-state-props";
+import { BaseYGetter, sortComboData } from "@/charts/combo/combo-state-props";
 import {
   getLabelWithUnit,
   usePlottableData,
@@ -8,6 +8,7 @@ import {
 import {
   BaseVariables,
   ChartStateData,
+  SortingVariables,
   TemporalXVariables,
   useBaseVariables,
   useChartData,
@@ -25,6 +26,7 @@ type NumericalYComboLineDualVariables = {
 };
 
 export type ComboLineDualStateVariables = BaseVariables &
+  SortingVariables &
   TemporalXVariables &
   NumericalYComboLineDualVariables;
 
@@ -67,8 +69,19 @@ export const useComboLineDualStateVariables = (
     },
   };
 
+  const { getX } = temporalXVariables;
+  const sortData: ComboLineDualStateVariables["sortData"] = React.useCallback(
+    (data) => {
+      return sortComboData(data, {
+        getX,
+      });
+    },
+    [getX]
+  );
+
   return {
     ...baseVariables,
+    sortData,
     ...temporalXVariables,
     ...numericalYVariables,
   };
@@ -79,7 +92,7 @@ export const useComboLineDualStateData = (
   variables: ComboLineDualStateVariables
 ): ChartStateData => {
   const { chartConfig, observations } = chartProps;
-  const { getX, y } = variables;
+  const { sortData, getX, y } = variables;
   const plottableData = usePlottableData(observations, {
     getX,
     getY: (d) => {
@@ -93,10 +106,8 @@ export const useComboLineDualStateData = (
     },
   });
   const sortedPlottableData = React.useMemo(() => {
-    return sortData(plottableData, {
-      getX,
-    });
-  }, [plottableData, getX]);
+    return sortData(plottableData);
+  }, [sortData, plottableData]);
   const data = useChartData(sortedPlottableData, {
     chartConfig,
     getXAsDate: getX,

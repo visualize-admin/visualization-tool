@@ -112,6 +112,17 @@ export type RenderingVariables = {
   getRenderingKey: (d: Observation, segment?: string) => string;
 };
 
+/** Generally, each chart should use sorted data, according to its own needs.
+ * Usually it means sorting by X axis.
+ */
+export type SortingVariables<T = undefined> = T extends undefined
+  ? {
+      sortData: (data: Observation[]) => Observation[];
+    }
+  : {
+      sortData: (data: Observation[], options: T) => Observation[];
+    };
+
 export type BaseVariables = {
   interactiveFiltersConfig: InteractiveFiltersConfig;
 };

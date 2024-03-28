@@ -7,6 +7,7 @@ import {
   ChartStateData,
   NumericalYVariables,
   SegmentVariables,
+  SortingVariables,
   TemporalXVariables,
   useBaseVariables,
   useChartData,
@@ -15,11 +16,11 @@ import {
   useTemporalXVariables,
 } from "@/charts/shared/chart-state";
 import { LineConfig } from "@/configurator";
-import { Observation } from "@/domain/data";
 
 import { ChartProps } from "../shared/ChartProps";
 
 export type LinesStateVariables = BaseVariables &
+  SortingVariables &
   TemporalXVariables &
   NumericalYVariables &
   SegmentVariables;
@@ -43,8 +44,19 @@ export const useLinesStateVariables = (
     observations,
   });
 
+  const { getX } = temporalXVariables;
+  const sortData: LinesStateVariables["sortData"] = React.useCallback(
+    (data) => {
+      return [...data].sort((a, b) => {
+        return ascending(getX(a), getX(b));
+      });
+    },
+    [getX]
+  );
+
   return {
     ...baseVariables,
+    sortData,
     ...temporalXVariables,
     ...numericalYVariables,
     ...segmentVariables,
@@ -58,15 +70,13 @@ export const useLinesStateData = (
   variables: LinesStateVariables
 ): ChartStateData => {
   const { chartConfig, observations } = chartProps;
-  const { getX, getY, getSegmentAbbreviationOrLabel } = variables;
+  const { sortData, getX, getY, getSegmentAbbreviationOrLabel } = variables;
   const plottableData = usePlottableData(observations, {
     getY,
   });
   const sortedPlottableData = React.useMemo(() => {
-    return sortData(plottableData, {
-      getX,
-    });
-  }, [plottableData, getX]);
+    return sortData(plottableData);
+  }, [sortData, plottableData]);
   const data = useChartData(sortedPlottableData, {
     chartConfig,
     getXAsDate: getX,
@@ -77,14 +87,4 @@ export const useLinesStateData = (
     ...data,
     allData: sortedPlottableData,
   };
-};
-
-// TODO: same as Area chart. sortTemporalData?
-const sortData = (
-  data: Observation[],
-  { getX }: Pick<LinesStateVariables, "getX">
-): Observation[] => {
-  return [...data].sort((a, b) => {
-    return ascending(getX(a), getX(b));
-  });
 };

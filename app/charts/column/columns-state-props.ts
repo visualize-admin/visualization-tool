@@ -9,6 +9,7 @@ import {
   NumericalYErrorVariables,
   NumericalYVariables,
   RenderingVariables,
+  SortingVariables,
   useBandXVariables,
   useBaseVariables,
   useChartData,
@@ -16,16 +17,12 @@ import {
   useNumericalYVariables,
 } from "@/charts/shared/chart-state";
 import { useRenderingKeyVariable } from "@/charts/shared/rendering-utils";
-import {
-  ColumnConfig,
-  ColumnFields,
-  useChartConfigFilters,
-} from "@/configurator";
-import { Observation } from "@/domain/data";
+import { ColumnConfig, useChartConfigFilters } from "@/configurator";
 
 import { ChartProps } from "../shared/ChartProps";
 
 export type ColumnsStateVariables = BaseVariables &
+  SortingVariables &
   BandXVariables &
   NumericalYVariables &
   NumericalYErrorVariables &
@@ -60,6 +57,30 @@ export const useColumnsStateVariables = (
     measures,
   });
 
+  const { getX } = bandXVariables;
+  const { getY } = numericalYVariables;
+  const sortData: ColumnsStateVariables["sortData"] = React.useCallback(
+    (data) => {
+      const { sortingOrder, sortingType } = x.sorting ?? {};
+      if (sortingOrder === "desc" && sortingType === "byDimensionLabel") {
+        return [...data].sort((a, b) => descending(getX(a), getX(b)));
+      } else if (sortingOrder === "asc" && sortingType === "byDimensionLabel") {
+        return [...data].sort((a, b) => ascending(getX(a), getX(b)));
+      } else if (sortingOrder === "desc" && sortingType === "byMeasure") {
+        return [...data].sort((a, b) =>
+          descending(getY(a) ?? -1, getY(b) ?? -1)
+        );
+      } else if (sortingOrder === "asc" && sortingType === "byMeasure") {
+        return [...data].sort((a, b) =>
+          ascending(getY(a) ?? -1, getY(b) ?? -1)
+        );
+      } else {
+        return [...data].sort((a, b) => ascending(getX(a), getX(b)));
+      }
+    },
+    [getX, getY, x.sorting]
+  );
+
   const getRenderingKey = useRenderingKeyVariable(
     dimensions,
     filters,
@@ -69,6 +90,7 @@ export const useColumnsStateVariables = (
 
   return {
     ...baseVariables,
+    sortData,
     ...bandXVariables,
     ...numericalYVariables,
     ...numericalYErrorVariables,
@@ -81,19 +103,13 @@ export const useColumnsStateData = (
   variables: ColumnsStateVariables
 ): ChartStateData => {
   const { chartConfig, observations } = chartProps;
-  const { fields } = chartConfig;
-  const { x } = fields;
-  const { getX, getXAsDate, getY } = variables;
+  const { sortData, getXAsDate, getY } = variables;
   const plottableData = usePlottableData(observations, {
     getY,
   });
   const sortedPlottableData = React.useMemo(() => {
-    return sortData(plottableData, {
-      x,
-      getX,
-      getY,
-    });
-  }, [plottableData, x, getX, getY]);
+    return sortData(plottableData);
+  }, [sortData, plottableData]);
   const data = useChartData(sortedPlottableData, {
     chartConfig,
     getXAsDate,
@@ -103,28 +119,4 @@ export const useColumnsStateData = (
     ...data,
     allData: sortedPlottableData,
   };
-};
-
-const sortData = (
-  data: Observation[],
-  {
-    x,
-    getX,
-    getY,
-  }: {
-    x: ColumnFields["x"];
-  } & Pick<ColumnsStateVariables, "getX" | "getY">
-) => {
-  const { sortingOrder, sortingType } = x.sorting ?? {};
-  if (sortingOrder === "desc" && sortingType === "byDimensionLabel") {
-    return [...data].sort((a, b) => descending(getX(a), getX(b)));
-  } else if (sortingOrder === "asc" && sortingType === "byDimensionLabel") {
-    return [...data].sort((a, b) => ascending(getX(a), getX(b)));
-  } else if (sortingOrder === "desc" && sortingType === "byMeasure") {
-    return [...data].sort((a, b) => descending(getY(a) ?? -1, getY(b) ?? -1));
-  } else if (sortingOrder === "asc" && sortingType === "byMeasure") {
-    return [...data].sort((a, b) => ascending(getY(a) ?? -1, getY(b) ?? -1));
-  } else {
-    return [...data].sort((a, b) => ascending(getX(a), getX(b)));
-  }
 };
