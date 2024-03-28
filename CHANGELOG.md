@@ -9,9 +9,13 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
+- Features
+  - Enabled support for monthly and yearly temporal entities (through a new `TemporalEntityDimension`)
 - Performance
   - Switched to a cached LINDAS endpoint (PROD)
   - The application now fires the `PossibleFilters` query as soon as a chart is initialized to always load filters that make sense, without initial reloading
+- Maintenance
+  - Removed some unused dependencies
 
 # [4.0.0] - 2024-03-26
 
@@ -27,8 +31,6 @@ Bumped to a new major version to celebrate all the improvements and new features
 - Performance
   - Dimension values are now fetched in parallel in case of fetching for several dimensions at once
   - Refactored shapes and coordinates fetching to not rely on resolver chains
-- Maintenance
-  - Removed some unused dependencies
 
 # [3.27.1] - 2024-03-15
 
