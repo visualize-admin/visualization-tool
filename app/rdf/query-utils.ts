@@ -20,8 +20,7 @@ export const buildLocalizedSubQuery = (
     additionalFallbacks?: string[];
   }
 ) => {
-  // Include the empty locale as well.
-  const locales = getOrderedLocales(locale).concat("");
+  const locales = getQueryLocales(locale);
 
   return `${locales
     .map(
@@ -46,9 +45,8 @@ BIND(COALESCE(${locales.map((locale) => `?${o}_${locale}`).join(", ")}${
   }) AS ?${o})`;
 };
 
-const getOrderedLocales = (locale: string) => {
-  const rest = locales.filter((d) => d !== locale);
-  return [locale, ...rest];
+export const getQueryLocales = (locale: string) => {
+  return [locale, ...locales.filter((l) => l !== locale), ""];
 };
 
 export const makeVisualizeDatasetFilter = (options?: {
@@ -60,8 +58,8 @@ export const makeVisualizeDatasetFilter = (options?: {
 
   return sparql`
     ${cubeIriVar} ${
-    schema.workExample
-  } <https://ld.admin.ch/application/visualize> .
+      schema.workExample
+    } <https://ld.admin.ch/application/visualize> .
     ${
       includeDrafts
         ? ""

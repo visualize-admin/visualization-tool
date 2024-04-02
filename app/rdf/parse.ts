@@ -17,17 +17,11 @@ import { truthy } from "@/domain/types";
 import { ScaleType, TimeUnit } from "@/graphql/query-hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import { ResolvedDataCube, ResolvedDimension } from "@/graphql/shared-types";
-import { locales } from "@/locales/locales";
 import { ExtendedCube } from "@/rdf/extended-cube";
 import { timeFormats, timeUnitFormats, timeUnits } from "@/rdf/mappings";
 import * as ns from "@/rdf/namespace";
 import { hasHierarchy } from "@/rdf/queries";
-
-export const getQueryLocales = (locale: string): string[] => [
-  locale,
-  ...locales.filter((l) => l !== locale),
-  "",
-];
+import { getQueryLocales } from "@/rdf/query-utils";
 
 export const isCubePublished = (cube: ExtendedCube): boolean =>
   cube
