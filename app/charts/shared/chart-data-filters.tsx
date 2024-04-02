@@ -7,7 +7,10 @@ import { useClient } from "urql";
 
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import { useLoadingState } from "@/charts/shared/chart-loading-state";
-import { getPossibleFiltersQueryVariables } from "@/charts/shared/ensure-possible-filters";
+import {
+  getPossibleFiltersQueryVariables,
+  skipPossibleFiltersQuery,
+} from "@/charts/shared/ensure-possible-filters";
 import Flex from "@/components/flex";
 import { Select } from "@/components/form";
 import { Loading } from "@/components/hint";
@@ -51,7 +54,6 @@ import {
   useInteractiveFiltersRaw,
 } from "@/stores/interactive-filters";
 import { hierarchyToOptions } from "@/utils/hierarchy";
-import { orderedIsEqual } from "@/utils/ordered-is-equal";
 import useEvent from "@/utils/use-event";
 
 type PreparedFilter = {
@@ -583,9 +585,10 @@ const useEnsurePossibleInteractiveFilters = (
           filtersByCubeIri[cube.iri];
 
         if (
-          (lastFilters.current[cube.iri] &&
-            orderedIsEqual(lastFilters.current[cube.iri], unmappedFilters)) ||
-          isEmpty(unmappedFilters)
+          skipPossibleFiltersQuery(
+            lastFilters.current[cube.iri],
+            unmappedFilters
+          )
         ) {
           return;
         }

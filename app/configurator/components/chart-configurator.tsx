@@ -29,7 +29,10 @@ import { useClient } from "urql";
 
 import { getChartSpec } from "@/charts/chart-config-ui-options";
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
-import { getPossibleFiltersQueryVariables } from "@/charts/shared/ensure-possible-filters";
+import {
+  getPossibleFiltersQueryVariables,
+  skipPossibleFiltersQuery,
+} from "@/charts/shared/ensure-possible-filters";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import MoveDragButtons from "@/components/move-drag-buttons";
 import useDisclosure from "@/components/use-disclosure";
@@ -86,7 +89,6 @@ import {
 } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
-import { orderedIsEqual } from "@/utils/ordered-is-equal";
 import useEvent from "@/utils/use-event";
 
 import { DatasetsControlSection } from "./dataset-control-section";
@@ -201,9 +203,10 @@ const useEnsurePossibleFilters = ({
         );
 
         if (
-          (lastFilters.current[cube.iri] &&
-            orderedIsEqual(lastFilters.current[cube.iri], unmappedFilters)) ||
-          isEmpty(unmappedFilters)
+          skipPossibleFiltersQuery(
+            lastFilters.current[cube.iri],
+            unmappedFilters
+          )
         ) {
           return;
         }

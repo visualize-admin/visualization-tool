@@ -1,5 +1,8 @@
-import { DataSource, SingleFilters } from "@/config-types";
+import isEmpty from "lodash/isEmpty";
+
+import { DataSource, Filters, SingleFilters } from "@/config-types";
 import { PossibleFiltersQueryVariables } from "@/graphql/query-hooks";
+import { orderedIsEqual } from "@/utils/ordered-is-equal";
 
 /** Used to make urql re-query when order of filters changes. */
 const getPossibleFiltersQueryKey = (unmappedFilters: SingleFilters) => {
@@ -21,4 +24,14 @@ export const getPossibleFiltersQueryVariables = (props: {
     // @ts-ignore
     filterKey,
   };
+};
+
+export const skipPossibleFiltersQuery = (
+  oldFilters: Filters | undefined,
+  newFilters: SingleFilters
+) => {
+  return (
+    (oldFilters && orderedIsEqual(oldFilters, newFilters)) ||
+    isEmpty(newFilters)
+  );
 };
