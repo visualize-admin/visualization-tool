@@ -56,7 +56,7 @@ import useEvent from "@/utils/use-event";
 type PreparedFilter = {
   cubeIri: string;
   interactiveFilters: Filters;
-  unmappedQueryFilters: SingleFilters;
+  unmappedFilters: SingleFilters;
   mappedFilters: Filters;
 };
 
@@ -102,18 +102,18 @@ export const ChartDataFilters = (props: ChartDataFiltersProps) => {
       });
       const { unmappedFilters, mappedFilters } = filtersByMappingStatus;
       const unmappedKeys = Object.keys(unmappedFilters);
-      const unmappedQueryFiltersArray = Object.entries(
+      const unmappedFiltersArray = Object.entries(
         cubeQueryFilters.filters as Filters
       ).filter(([k]) => unmappedKeys.includes(k));
-      const interactiveFiltersArray = unmappedQueryFiltersArray.filter(([k]) =>
+      const interactiveFiltersArray = unmappedFiltersArray.filter(([k]) =>
         componentIris.includes(k)
       );
 
       return {
         cubeIri: cube.iri,
         interactiveFilters: Object.fromEntries(interactiveFiltersArray),
-        unmappedQueryFilters: Object.fromEntries(
-          unmappedQueryFiltersArray
+        unmappedFilters: Object.fromEntries(
+          unmappedFiltersArray
         ) as SingleFilters,
         mappedFilters,
       };
@@ -578,17 +578,18 @@ const useEnsurePossibleInteractiveFilters = (
       }
 
       chartConfig.cubes.forEach(async (cube) => {
-        const { unmappedQueryFilters, interactiveFilters, mappedFilters } =
+        const { mappedFilters, unmappedFilters, interactiveFilters } =
           filtersByCubeIri[cube.iri];
 
         if (
-          lastFilters.current[cube.iri] &&
-          orderedIsEqual(lastFilters.current[cube.iri], unmappedQueryFilters)
+          (lastFilters.current[cube.iri] &&
+            orderedIsEqual(lastFilters.current[cube.iri], unmappedFilters)) ||
+          isEmpty(unmappedFilters)
         ) {
           return;
         }
 
-        lastFilters.current[cube.iri] = unmappedQueryFilters;
+        lastFilters.current[cube.iri] = unmappedFilters;
         loadingState.set("possible-interactive-filters", true);
         const { data, error } = await client
           .query<PossibleFiltersQuery, PossibleFiltersQueryVariables>(
@@ -597,9 +598,9 @@ const useEnsurePossibleInteractiveFilters = (
               iri: cube.iri,
               sourceType: dataSource.type,
               sourceUrl: dataSource.url,
-              filters: unmappedQueryFilters,
+              filters: unmappedFilters,
               // @ts-ignore This is to make urql requery
-              filterKeys: Object.keys(unmappedQueryFilters).join(", "),
+              filterKeys: Object.keys(unmappedFilters).join(", "),
             }
           )
           .toPromise();

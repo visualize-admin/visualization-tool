@@ -206,8 +206,9 @@ const useEnsurePossibleFilters = ({
         );
 
         if (
-          lastFilters.current[cube.iri] &&
-          orderedIsEqual(lastFilters.current[cube.iri], unmappedFilters)
+          (lastFilters.current[cube.iri] &&
+            orderedIsEqual(lastFilters.current[cube.iri], unmappedFilters)) ||
+          isEmpty(unmappedFilters)
         ) {
           return;
         }
