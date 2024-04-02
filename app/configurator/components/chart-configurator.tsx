@@ -29,6 +29,7 @@ import { useClient } from "urql";
 
 import { getChartSpec } from "@/charts/chart-config-ui-options";
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
+import { getPossibleFiltersQueryKey } from "@/charts/shared/ensure-possible-filters";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import MoveDragButtons from "@/components/move-drag-buttons";
 import useDisclosure from "@/components/use-disclosure";
@@ -216,6 +217,7 @@ const useEnsurePossibleFilters = ({
         lastFilters.current[cube.iri] = unmappedFilters;
         setFetching(true);
 
+        const filterKey = getPossibleFiltersQueryKey(unmappedFilters);
         const { data, error } = await client
           .query<PossibleFiltersQuery, PossibleFiltersQueryVariables>(
             PossibleFiltersDocument,
@@ -224,8 +226,8 @@ const useEnsurePossibleFilters = ({
               sourceType: state.dataSource.type,
               sourceUrl: state.dataSource.url,
               filters: unmappedFilters,
-              // @ts-ignore This is to make urql requery
-              filterKey: Object.keys(unmappedFilters).join(", "),
+              // @ts-ignore
+              filterKey,
             }
           )
           .toPromise();

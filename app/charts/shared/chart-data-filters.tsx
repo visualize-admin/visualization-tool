@@ -7,6 +7,7 @@ import { useClient } from "urql";
 
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import { useLoadingState } from "@/charts/shared/chart-loading-state";
+import { getPossibleFiltersQueryKey } from "@/charts/shared/ensure-possible-filters";
 import Flex from "@/components/flex";
 import { Select } from "@/components/form";
 import { Loading } from "@/components/hint";
@@ -591,6 +592,8 @@ const useEnsurePossibleInteractiveFilters = (
 
         lastFilters.current[cube.iri] = unmappedFilters;
         loadingState.set("possible-interactive-filters", true);
+
+        const filterKey = getPossibleFiltersQueryKey(unmappedFilters);
         const { data, error } = await client
           .query<PossibleFiltersQuery, PossibleFiltersQueryVariables>(
             PossibleFiltersDocument,
@@ -599,8 +602,8 @@ const useEnsurePossibleInteractiveFilters = (
               sourceType: dataSource.type,
               sourceUrl: dataSource.url,
               filters: unmappedFilters,
-              // @ts-ignore This is to make urql requery
-              filterKeys: Object.keys(unmappedFilters).join(", "),
+              // @ts-ignore
+              filterKey,
             }
           )
           .toPromise();
