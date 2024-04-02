@@ -5,8 +5,8 @@ import { ParsingClient } from "sparql-http-client/ParsingClient";
 
 import { MAX_BATCH_SIZE } from "@/graphql/context";
 import { pragmas } from "@/rdf/create-source";
-
-import * as ns from "./namespace";
+import * as ns from "@/rdf/namespace";
+import { buildLocalizedSubQuery } from "@/rdf/query-utils";
 
 export interface RawGeoShape {
   iri: string;
@@ -46,24 +46,20 @@ export const createGeoShapesLoader =
   }) =>
   async (dimensionIris: readonly string[]): Promise<RawGeoShape[]> => {
     const queryableIris = dimensionIris.map((d) => `<${d}>`);
-    const labelsQuery = SELECT`?iri ?label`.WHERE`
-        VALUES ?iri {
-          ${queryableIris}
-        }
+    const labelsQuery = `PREFIX schema: <http://schema.org/>
 
-        OPTIONAL {
-          ?iri ${ns.schema.name} ?label .
-          FILTER(LANG(?label) = '${locale}')
-        }
-
-        OPTIONAL {
-          ?iri ${ns.schema.name} ?label .
-        }`.prologue`${pragmas}`;
+SELECT ?iri ?label WHERE {
+  VALUES ?iri { ${queryableIris.join("\n")} }
+  ${buildLocalizedSubQuery("iri", "schema:name", "label", {
+    locale,
+    fallbackToNonLocalized: true,
+  })}
+}`;
 
     let rawLabels: RawLabel[] = [];
 
     try {
-      rawLabels = (await labelsQuery.execute(sparqlClient.query, {
+      rawLabels = (await sparqlClient.query.select(labelsQuery, {
         operation: "postUrlencoded",
       })) as RawLabel[];
     } catch (e) {
@@ -84,8 +80,7 @@ export const createGeoShapesLoader =
         VALUES ?iri {
           ${queryableIris}
         }
-
-        ?iri ${ns.geo.hasGeometry} ?geometry .`.prologue`${pragmas}`;
+        ?iri ${ns.geo.hasGeometry} ?geometry .`;
 
     const rawGeometries = (await geometriesQuery
       .execute(sparqlClient.query, {

@@ -26,7 +26,6 @@ import { createSource, pragmas } from "@/rdf/create-source";
 import { ExtendedCube } from "@/rdf/extended-cube";
 import * as ns from "@/rdf/namespace";
 import {
-  getQueryLocales,
   isCubePublished,
   parseCubeDimension,
   parseRelatedDimensions,
@@ -38,6 +37,7 @@ import {
 } from "@/rdf/query-dimension-values";
 import { loadUnversionedResources } from "@/rdf/query-sameas";
 import { loadUnits } from "@/rdf/query-unit-labels";
+import { getQueryLocales } from "@/rdf/query-utils";
 
 const DIMENSION_VALUE_UNDEFINED = ns.cube.Undefined.value;
 
