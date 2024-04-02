@@ -34,7 +34,7 @@ import {
   getCubeObservations,
   getLatestCube,
 } from "@/rdf/queries";
-import { RawGeoShape } from "@/rdf/query-geo-shapes";
+import { GeoShape } from "@/rdf/query-geo-shapes";
 import { parseHierarchy, queryHierarchies } from "@/rdf/query-hierarchies";
 import { getPossibleFilters } from "@/rdf/query-possible-filters";
 import { SearchResult, searchCubes as _searchCubes } from "@/rdf/query-search";
@@ -112,7 +112,7 @@ export const dataCubeDimensionGeoShapes: NonNullable<
   );
   const geoJSONFeatures = shapes
     .filter(
-      (d): d is Exclude<RawGeoShape, "wktString"> & { wktString: string } =>
+      (d): d is Exclude<GeoShape, "wktString"> & { wktString: string } =>
         d.wktString !== undefined
     )
     .map((d) => ({

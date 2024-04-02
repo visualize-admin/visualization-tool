@@ -8,26 +8,11 @@ import {
   formatIriToQueryNode,
 } from "@/rdf/query-utils";
 
-export interface RawGeoShape {
+export interface GeoShape {
   iri: string;
   label: string;
   wktString?: string;
 }
-
-type RawLabel = {
-  iri: NamedNode;
-  label: NamedNode;
-};
-
-type RawGeometry = {
-  iri: NamedNode;
-  geometry: NamedNode;
-};
-
-type RawWktString = {
-  geometry: NamedNode;
-  wktString: NamedNode;
-};
 
 type GeoShapesLoaderProps = {
   locale: string;
@@ -42,94 +27,21 @@ type GeoShapesLoaderProps = {
  */
 export const createGeoShapesLoader = (props: GeoShapesLoaderProps) => {
   const { locale, sparqlClient, geoSparqlClient } = props;
-  return async (dimensionIris: readonly string[]): Promise<RawGeoShape[]> => {
+  return async (dimensionIris: readonly string[]): Promise<GeoShape[]> => {
     const dimensionIriQueryNodes = dimensionIris.map(formatIriToQueryNode);
-    const labelsQuery = `
-  PREFIX schema: <http://schema.org/>
-  SELECT ?iri ?label WHERE {
-    VALUES ?iri { ${dimensionIriQueryNodes.join("\n")} }
-    ${buildLocalizedSubQuery("iri", "schema:name", "label", {
+    const groupedLabels = await getGroupedLabels({
+      queryNodes: dimensionIriQueryNodes,
       locale,
-    })}
-  }`;
-    const rawLabels = (await sparqlClient.query
-      .select(labelsQuery, { operation: "postUrlencoded" })
-      .catch((e) => {
-        console.error(e);
-        return [];
-      })) as RawLabel[];
-    const groupedLabels = groupBy(
-      rawLabels.map((rawLabel) => {
-        const iri = rawLabel.iri.value;
-        return {
-          iri,
-          label: rawLabel.label?.value ?? iri,
-        };
-      }),
-      (d) => d.iri
-    );
-
-    const geometriesQuery = `
-  PREFIX geo: <http://www.opengis.net/ont/geosparql#>
-  SELECT ?iri ?geometry WHERE {
-    VALUES ?iri { ${dimensionIriQueryNodes.join("\n")} }
-    ?iri geo:hasGeometry ?geometry
-  }`;
-    const rawGeometries = (await sparqlClient.query
-      .select(geometriesQuery, { operation: "postUrlencoded" })
-      .catch((e) => {
-        console.error(e);
-        return [];
-      })) as RawGeometry[];
-    const groupedGeometries = groupBy(
-      rawGeometries.map((rawGeometry) => {
-        return {
-          iri: rawGeometry.iri.value,
-          geometry: rawGeometry.geometry.value,
-        };
-      }),
-      (d) => d.iri
-    );
-
-    const chunkedRawGeometries: RawGeometry[][] = [];
-
-    for (let i = 0; i < rawGeometries.length; i += MAX_BATCH_SIZE * 0.5) {
-      chunkedRawGeometries.push(
-        rawGeometries.slice(i, i + MAX_BATCH_SIZE * 0.5)
-      );
-    }
-
-    const rawWktStrings = (
-      await Promise.all(
-        chunkedRawGeometries.map(async (rawGeometries) => {
-          const rawGeometryQueryNodes = rawGeometries.map((rawGeometry) =>
-            formatIriToQueryNode(rawGeometry.geometry.value)
-          );
-          const query = `
-  PREFIX geo: <http://www.opengis.net/ont/geosparql#>
-  SELECT ?geometry ?wktString WHERE {
-    VALUES ?geometry { ${rawGeometryQueryNodes.join("\n")} }
-    ?geometry geo:asWKT ?wktString
-  }`;
-
-          return (await geoSparqlClient.query
-            .select(query, { operation: "postUrlencoded" })
-            .catch((e) => {
-              console.error(e);
-              return [];
-            })) as RawWktString[];
-        })
-      )
-    ).flat();
-    const groupedWktStrings = groupBy(
-      rawWktStrings.map((rawWktString) => {
-        return {
-          geometry: rawWktString.geometry.value,
-          wktString: rawWktString.wktString.value,
-        };
-      }),
-      (d) => d.geometry
-    );
+      sparqlClient,
+    });
+    const { geometries, groupedGeometries } = await getGeometries({
+      queryNodes: dimensionIriQueryNodes,
+      sparqlClient,
+    });
+    const groupedWktStrings = await getGroupedWktStrings({
+      geometries,
+      geoSparqlClient,
+    });
 
     return dimensionIris.map((dimensionIri) => {
       let wktString: string | undefined;
@@ -146,5 +58,152 @@ export const createGeoShapesLoader = (props: GeoShapesLoaderProps) => {
         wktString,
       };
     });
+  };
+};
+
+type RawLabel = {
+  iri: NamedNode;
+  label: NamedNode;
+};
+
+type GetLabelsProps = {
+  queryNodes: string[];
+  locale: string;
+  sparqlClient: ParsingClient;
+};
+
+const getGroupedLabels = async (props: GetLabelsProps) => {
+  const { queryNodes, locale, sparqlClient } = props;
+  const query = `
+PREFIX schema: <http://schema.org/>
+SELECT ?iri ?label WHERE {
+  VALUES ?iri { ${queryNodes.join("\n")} }
+  ${buildLocalizedSubQuery("iri", "schema:name", "label", {
+    locale,
+  })}
+}`;
+  const result = (await sparqlClient.query
+    .select(query, { operation: "postUrlencoded" })
+    .catch((e) => {
+      console.error(e);
+      return [];
+    })) as RawLabel[];
+
+  return groupBy(result.map(parseLabel), (d) => d.iri);
+};
+
+type Label = {
+  iri: string;
+  label: string;
+};
+
+const parseLabel = (rawLabel: RawLabel): Label => {
+  return {
+    iri: rawLabel.iri.value,
+    label: rawLabel.label?.value ?? rawLabel.iri.value,
+  };
+};
+
+type RawGeometry = {
+  iri: NamedNode;
+  geometry: NamedNode;
+};
+
+type GetGroupedGeometriesProps = {
+  queryNodes: string[];
+  sparqlClient: ParsingClient;
+};
+
+const getGeometries = async (props: GetGroupedGeometriesProps) => {
+  const { queryNodes, sparqlClient } = props;
+  const query = `
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+SELECT ?iri ?geometry WHERE {
+  VALUES ?iri { ${queryNodes.join("\n")} }
+  ?iri geo:hasGeometry ?geometry
+}`;
+  const result = (await sparqlClient.query
+    .select(query, { operation: "postUrlencoded" })
+    .catch((e) => {
+      console.error(e);
+      return [];
+    })) as RawGeometry[];
+  const parsed = result.map(parseGeometry);
+
+  return {
+    geometries: parsed,
+    groupedGeometries: groupBy(parsed, (d) => d.iri),
+  };
+};
+
+type Geometry = {
+  iri: string;
+  geometry: string;
+};
+
+const parseGeometry = (rawGeometry: RawGeometry): Geometry => {
+  return {
+    iri: rawGeometry.iri.value,
+    geometry: rawGeometry.geometry.value,
+  };
+};
+
+type GetGroupedWktStringsProps = {
+  geometries: Geometry[];
+  geoSparqlClient: ParsingClient;
+};
+
+const getGroupedWktStrings = async (props: GetGroupedWktStringsProps) => {
+  const { geometries, geoSparqlClient } = props;
+  const geometryChunks: Geometry[][] = [];
+
+  for (let i = 0; i < geometries.length; i += MAX_BATCH_SIZE * 0.5) {
+    geometryChunks.push(geometries.slice(i, i + MAX_BATCH_SIZE * 0.5));
+  }
+
+  const rawWktStrings = (
+    await Promise.all(
+      geometryChunks.map(async (geometries) => {
+        const iris = geometries.map(({ geometry }) => geometry);
+        const queryNodes = iris.map(formatIriToQueryNode);
+        return await getChunkWktStrings({ queryNodes, geoSparqlClient });
+      })
+    )
+  ).flat();
+
+  return groupBy(rawWktStrings.map(parseWktString), (d) => d.geometry);
+};
+
+type RawWktString = {
+  geometry: NamedNode;
+  wktString: NamedNode;
+};
+
+type GetChunkWktStringsProps = {
+  queryNodes: string[];
+  geoSparqlClient: ParsingClient;
+};
+
+const getChunkWktStrings = async (props: GetChunkWktStringsProps) => {
+  const { queryNodes, geoSparqlClient } = props;
+  const query = `
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+SELECT ?geometry ?wktString WHERE {
+  VALUES ?geometry { ${queryNodes.join("\n")} }
+  ?geometry geo:asWKT ?wktString
+}`;
+
+  return (await geoSparqlClient.query
+    .select(query, { operation: "postUrlencoded" })
+    .catch((e) => {
+      console.error(e);
+      return [];
+    })) as RawWktString[];
+};
+
+const parseWktString = (rawWktString: RawWktString) => {
+  return {
+    geometry: rawWktString.geometry.value,
+    wktString: rawWktString.wktString.value,
   };
 };
