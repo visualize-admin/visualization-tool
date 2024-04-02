@@ -20,6 +20,12 @@ export const getPossibleFilters = async (
 ) => {
   const { filters, sparqlClient, cache } = options;
   const dimensionIris = Object.keys(filters);
+
+  if (dimensionIris.length === 0) {
+    console.warn("No filters provided, returning empty possible filters.");
+    return [];
+  }
+
   const dimensionsMetadata = await getDimensionsMetadata(
     cubeIri,
     dimensionIris,

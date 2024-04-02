@@ -7,6 +7,10 @@ import { useClient } from "urql";
 
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import { useLoadingState } from "@/charts/shared/chart-loading-state";
+import {
+  getPossibleFiltersQueryVariables,
+  skipPossibleFiltersQuery,
+} from "@/charts/shared/ensure-possible-filters";
 import Flex from "@/components/flex";
 import { Select } from "@/components/form";
 import { Loading } from "@/components/hint";
@@ -21,7 +25,6 @@ import {
   useChartConfigFilters,
   useConfiguratorState,
 } from "@/configurator";
-import { orderedIsEqual } from "@/configurator/components/chart-configurator";
 import { FieldLabel, LoadingIndicator } from "@/configurator/components/field";
 import {
   canRenderDatePickerField,
@@ -56,7 +59,7 @@ import useEvent from "@/utils/use-event";
 type PreparedFilter = {
   cubeIri: string;
   interactiveFilters: Filters;
-  unmappedQueryFilters: SingleFilters;
+  unmappedFilters: SingleFilters;
   mappedFilters: Filters;
 };
 
@@ -102,18 +105,18 @@ export const ChartDataFilters = (props: ChartDataFiltersProps) => {
       });
       const { unmappedFilters, mappedFilters } = filtersByMappingStatus;
       const unmappedKeys = Object.keys(unmappedFilters);
-      const unmappedQueryFiltersArray = Object.entries(
+      const unmappedFiltersArray = Object.entries(
         cubeQueryFilters.filters as Filters
       ).filter(([k]) => unmappedKeys.includes(k));
-      const interactiveFiltersArray = unmappedQueryFiltersArray.filter(([k]) =>
+      const interactiveFiltersArray = unmappedFiltersArray.filter(([k]) =>
         componentIris.includes(k)
       );
 
       return {
         cubeIri: cube.iri,
         interactiveFilters: Object.fromEntries(interactiveFiltersArray),
-        unmappedQueryFilters: Object.fromEntries(
-          unmappedQueryFiltersArray
+        unmappedFilters: Object.fromEntries(
+          unmappedFiltersArray
         ) as SingleFilters,
         mappedFilters,
       };
@@ -578,30 +581,30 @@ const useEnsurePossibleInteractiveFilters = (
       }
 
       chartConfig.cubes.forEach(async (cube) => {
-        const { unmappedQueryFilters, interactiveFilters, mappedFilters } =
+        const { mappedFilters, unmappedFilters, interactiveFilters } =
           filtersByCubeIri[cube.iri];
 
         if (
-          lastFilters.current[cube.iri] &&
-          orderedIsEqual(lastFilters.current[cube.iri], unmappedQueryFilters)
+          skipPossibleFiltersQuery(
+            lastFilters.current[cube.iri],
+            unmappedFilters
+          )
         ) {
           return;
         }
 
-        lastFilters.current[cube.iri] = unmappedQueryFilters;
+        lastFilters.current[cube.iri] = unmappedFilters;
         loadingState.set("possible-interactive-filters", true);
+        const variables = getPossibleFiltersQueryVariables({
+          cubeIri: cube.iri,
+          dataSource,
+          unmappedFilters,
+        });
         const { data, error } = await client
-          .query<PossibleFiltersQuery, PossibleFiltersQueryVariables>(
-            PossibleFiltersDocument,
-            {
-              iri: cube.iri,
-              sourceType: dataSource.type,
-              sourceUrl: dataSource.url,
-              filters: unmappedQueryFilters,
-              // @ts-ignore This is to make urql requery
-              filterKeys: Object.keys(unmappedQueryFilters).join(", "),
-            }
-          )
+          .query<
+            PossibleFiltersQuery,
+            PossibleFiltersQueryVariables
+          >(PossibleFiltersDocument, variables)
           .toPromise();
 
         if (error || !data) {
@@ -666,8 +669,7 @@ const useEnsurePossibleInteractiveFilters = (
     dispatch,
     chartConfig.fields,
     chartConfig.cubes,
-    dataSource.type,
-    dataSource.url,
+    dataSource,
     setDataFilters,
     loadingState,
     IFRaw,

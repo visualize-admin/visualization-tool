@@ -29,6 +29,10 @@ import { useClient } from "urql";
 
 import { getChartSpec } from "@/charts/chart-config-ui-options";
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
+import {
+  getPossibleFiltersQueryVariables,
+  skipPossibleFiltersQuery,
+} from "@/charts/shared/ensure-possible-filters";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import MoveDragButtons from "@/components/move-drag-buttons";
 import useDisclosure from "@/components/use-disclosure";
@@ -171,13 +175,6 @@ const DataFilterSelectGeneric = (props: DataFilterSelectGenericProps) => {
   }
 };
 
-export const orderedIsEqual = (
-  obj1: Record<string, unknown>,
-  obj2: Record<string, unknown>
-) => {
-  return isEqual(Object.keys(obj1), Object.keys(obj2)) && isEqual(obj1, obj2);
-};
-
 /**
  * This runs every time the state changes and it ensures that the selected filters
  * return at least 1 observation. Otherwise filters are reloaded.
@@ -206,27 +203,26 @@ const useEnsurePossibleFilters = ({
         );
 
         if (
-          lastFilters.current[cube.iri] &&
-          orderedIsEqual(lastFilters.current[cube.iri], unmappedFilters)
+          skipPossibleFiltersQuery(
+            lastFilters.current[cube.iri],
+            unmappedFilters
+          )
         ) {
           return;
         }
 
         lastFilters.current[cube.iri] = unmappedFilters;
         setFetching(true);
-
+        const variables = getPossibleFiltersQueryVariables({
+          cubeIri: cube.iri,
+          dataSource: state.dataSource,
+          unmappedFilters,
+        });
         const { data, error } = await client
-          .query<PossibleFiltersQuery, PossibleFiltersQueryVariables>(
-            PossibleFiltersDocument,
-            {
-              iri: cube.iri,
-              sourceType: state.dataSource.type,
-              sourceUrl: state.dataSource.url,
-              filters: unmappedFilters,
-              // @ts-ignore This is to make urql requery
-              filterKey: Object.keys(unmappedFilters).join(", "),
-            }
-          )
+          .query<
+            PossibleFiltersQuery,
+            PossibleFiltersQueryVariables
+          >(PossibleFiltersDocument, variables)
           .toPromise();
 
         if (error || !data) {
@@ -285,8 +281,7 @@ const useEnsurePossibleFilters = ({
     dispatch,
     chartConfig,
     chartConfig.cubes,
-    state.dataSource.type,
-    state.dataSource.url,
+    state.dataSource,
     joinByIris,
   ]);
 
