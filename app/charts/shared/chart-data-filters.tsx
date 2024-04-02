@@ -7,7 +7,7 @@ import { useClient } from "urql";
 
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import { useLoadingState } from "@/charts/shared/chart-loading-state";
-import { getPossibleFiltersQueryKey } from "@/charts/shared/ensure-possible-filters";
+import { getPossibleFiltersQueryVariables } from "@/charts/shared/ensure-possible-filters";
 import Flex from "@/components/flex";
 import { Select } from "@/components/form";
 import { Loading } from "@/components/hint";
@@ -592,20 +592,16 @@ const useEnsurePossibleInteractiveFilters = (
 
         lastFilters.current[cube.iri] = unmappedFilters;
         loadingState.set("possible-interactive-filters", true);
-
-        const filterKey = getPossibleFiltersQueryKey(unmappedFilters);
+        const variables = getPossibleFiltersQueryVariables({
+          cubeIri: cube.iri,
+          dataSource,
+          unmappedFilters,
+        });
         const { data, error } = await client
-          .query<PossibleFiltersQuery, PossibleFiltersQueryVariables>(
-            PossibleFiltersDocument,
-            {
-              iri: cube.iri,
-              sourceType: dataSource.type,
-              sourceUrl: dataSource.url,
-              filters: unmappedFilters,
-              // @ts-ignore
-              filterKey,
-            }
-          )
+          .query<
+            PossibleFiltersQuery,
+            PossibleFiltersQueryVariables
+          >(PossibleFiltersDocument, variables)
           .toPromise();
 
         if (error || !data) {
@@ -670,8 +666,7 @@ const useEnsurePossibleInteractiveFilters = (
     dispatch,
     chartConfig.fields,
     chartConfig.cubes,
-    dataSource.type,
-    dataSource.url,
+    dataSource,
     setDataFilters,
     loadingState,
     IFRaw,

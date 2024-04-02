@@ -24,7 +24,7 @@ import {
   getChartFieldOptionChangeSideEffect,
   getChartSpec,
 } from "@/charts/chart-config-ui-options";
-import { getPossibleFiltersQueryKey } from "@/charts/shared/ensure-possible-filters";
+import { getPossibleFiltersQueryVariables } from "@/charts/shared/ensure-possible-filters";
 import {
   ChartConfig,
   ChartType,
@@ -1592,22 +1592,16 @@ export const initChartStateFromCube = async (
     cubeIri,
   });
   const shouldFetchPossibleFilters = Object.keys(unmappedFilters).length > 0;
-  const filterKey = getPossibleFiltersQueryKey(unmappedFilters);
+  const variables = getPossibleFiltersQueryVariables({
+    cubeIri,
+    dataSource,
+    unmappedFilters,
+  });
   const { data: possibleFilters } = await client
-    .query<PossibleFiltersQuery, PossibleFiltersQueryVariables>(
-      PossibleFiltersDocument,
-      {
-        iri: cubeIri,
-        sourceType: dataSource.type,
-        sourceUrl: dataSource.url,
-        filters: unmappedFilters,
-        // @ts-ignore
-        filterKey,
-      },
-      {
-        pause: !shouldFetchPossibleFilters,
-      }
-    )
+    .query<
+      PossibleFiltersQuery,
+      PossibleFiltersQueryVariables
+    >(PossibleFiltersDocument, variables, { pause: !shouldFetchPossibleFilters })
     .toPromise();
 
   if (!possibleFilters?.possibleFilters && shouldFetchPossibleFilters) {

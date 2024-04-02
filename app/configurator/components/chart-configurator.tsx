@@ -29,7 +29,7 @@ import { useClient } from "urql";
 
 import { getChartSpec } from "@/charts/chart-config-ui-options";
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
-import { getPossibleFiltersQueryKey } from "@/charts/shared/ensure-possible-filters";
+import { getPossibleFiltersQueryVariables } from "@/charts/shared/ensure-possible-filters";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import MoveDragButtons from "@/components/move-drag-buttons";
 import useDisclosure from "@/components/use-disclosure";
@@ -216,20 +216,16 @@ const useEnsurePossibleFilters = ({
 
         lastFilters.current[cube.iri] = unmappedFilters;
         setFetching(true);
-
-        const filterKey = getPossibleFiltersQueryKey(unmappedFilters);
+        const variables = getPossibleFiltersQueryVariables({
+          cubeIri: cube.iri,
+          dataSource: state.dataSource,
+          unmappedFilters,
+        });
         const { data, error } = await client
-          .query<PossibleFiltersQuery, PossibleFiltersQueryVariables>(
-            PossibleFiltersDocument,
-            {
-              iri: cube.iri,
-              sourceType: state.dataSource.type,
-              sourceUrl: state.dataSource.url,
-              filters: unmappedFilters,
-              // @ts-ignore
-              filterKey,
-            }
-          )
+          .query<
+            PossibleFiltersQuery,
+            PossibleFiltersQueryVariables
+          >(PossibleFiltersDocument, variables)
           .toPromise();
 
         if (error || !data) {
@@ -288,8 +284,7 @@ const useEnsurePossibleFilters = ({
     dispatch,
     chartConfig,
     chartConfig.cubes,
-    state.dataSource.type,
-    state.dataSource.url,
+    state.dataSource,
     joinByIris,
   ]);
 
