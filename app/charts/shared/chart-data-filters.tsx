@@ -22,7 +22,6 @@ import {
   useChartConfigFilters,
   useConfiguratorState,
 } from "@/configurator";
-import { orderedIsEqual } from "@/configurator/components/chart-configurator";
 import { FieldLabel, LoadingIndicator } from "@/configurator/components/field";
 import {
   canRenderDatePickerField,
@@ -52,6 +51,7 @@ import {
   useInteractiveFiltersRaw,
 } from "@/stores/interactive-filters";
 import { hierarchyToOptions } from "@/utils/hierarchy";
+import { orderedIsEqual } from "@/utils/ordered-is-equal";
 import useEvent from "@/utils/use-event";
 
 type PreparedFilter = {

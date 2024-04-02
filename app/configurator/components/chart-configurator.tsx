@@ -86,6 +86,7 @@ import {
 } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
+import { orderedIsEqual } from "@/utils/ordered-is-equal";
 import useEvent from "@/utils/use-event";
 
 import { DatasetsControlSection } from "./dataset-control-section";
@@ -170,13 +171,6 @@ const DataFilterSelectGeneric = (props: DataFilterSelectGenericProps) => {
       <DataFilterSelect {...sharedProps} hierarchy={dimension.hierarchy} />
     );
   }
-};
-
-export const orderedIsEqual = (
-  obj1: Record<string, unknown>,
-  obj2: Record<string, unknown>
-) => {
-  return isEqual(Object.keys(obj1), Object.keys(obj2)) && isEqual(obj1, obj2);
 };
 
 /**
