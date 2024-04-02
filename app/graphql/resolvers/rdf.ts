@@ -105,9 +105,7 @@ export const dataCubeDimensionGeoShapes: NonNullable<
     loaders,
     cache
   );
-  // FIXME: type fixed by other PR
-  const dimensionValues: DimensionValue[] =
-    await dimensionValuesLoader.load(dimension);
+  const dimensionValues = await dimensionValuesLoader.load(dimension);
   const values = dimensionValues.map((d) => `${d.value}`);
   const shapes = await Promise.all(
     values.map((d) => loaders.geoShapes.load(d))
