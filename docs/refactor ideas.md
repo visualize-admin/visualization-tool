@@ -1,2 +1,3 @@
 - [ ] Convert dimensions to classes or introduce new properties to their types to consolidate their behavior and characteristics, instead of having a lot of separated functions w/o real connection
 	- Context: when adding [[TemporalEntityDimension]], I needed to go through a lot of functions like `canDimensionBeMultiFiltered`, `isTemporalDimension`, `SEGMENT_COMPONENT_TYPES` etc. Having a dedicated class that would entail the same properties across dimensions would make it impossible to forget about such specifications.
+- [ ] Use [CSS subgrid](https://jsbin.com/sixicaz/2/edit?html,css,output) instead of JavaScript calculations to align charts in a dashboard
