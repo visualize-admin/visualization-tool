@@ -15,12 +15,14 @@ import { DimensionValue, parseObservationValue } from "@/domain/data";
 import { isDynamicMaxValue } from "@/domain/max-value";
 import { ResolvedDimension } from "@/graphql/shared-types";
 import { pragmas } from "@/rdf/create-source";
-
-import * as ns from "./namespace";
-import { parseDimensionDatatype } from "./parse";
-import { dimensionIsVersioned } from "./queries";
-import { executeWithCache } from "./query-cache";
-import { buildLocalizedSubQuery } from "./query-utils";
+import * as ns from "@/rdf/namespace";
+import { parseDimensionDatatype } from "@/rdf/parse";
+import { dimensionIsVersioned } from "@/rdf/queries";
+import { executeWithCache } from "@/rdf/query-cache";
+import {
+  buildLocalizedSubQuery,
+  formatIriToQueryNode,
+} from "@/rdf/query-utils";
 
 /**
  * Formats a filter value into the right format, string literal
@@ -29,7 +31,7 @@ import { buildLocalizedSubQuery } from "./query-utils";
  */
 const formatFilterValue = (value: string | number, dataType?: Term) => {
   if (!dataType) {
-    return `<${value}>`;
+    return formatIriToQueryNode(value as string);
   } else {
     return `"${value}"`;
   }
@@ -336,7 +338,7 @@ export const loadMinMaxDimensionValues = async ({
   cache: LRUCache | undefined;
 }) => {
   const query = SELECT`(MIN(?value) as ?minValue) (MAX(?value) as ?maxValue)`
-    .WHERE`<${datasetIri}> ${ns.cube.observationSet}/${ns.cube.observation} ?observation .
+    .WHERE`${formatIriToQueryNode(datasetIri)} ${ns.cube.observationSet}/${ns.cube.observation} ?observation .
 ?observation <${dimensionIri}> ?value .
 FILTER ( (STRLEN(STR(?value)) > 0) && (STR(?value) != "NaN") )`;
 

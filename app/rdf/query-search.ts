@@ -11,16 +11,16 @@ import {
   SearchCubeFilter,
 } from "@/graphql/resolver-types";
 import { defaultLocale } from "@/locales/locales";
+import { pragmas } from "@/rdf/create-source";
 import { unitsToNode } from "@/rdf/mappings";
 import * as ns from "@/rdf/namespace";
-
-import { pragmas } from "./create-source";
-import { computeScores, highlight } from "./query-search-score-utils";
+import { computeScores, highlight } from "@/rdf/query-search-score-utils";
 import {
   GROUP_SEPARATOR,
   buildLocalizedSubQuery,
+  formatIriToQueryNode,
   makeVisualizeDatasetFilter,
-} from "./query-utils";
+} from "@/rdf/query-utils";
 
 // Keep in sync with the query.
 type RawSearchCube = {
@@ -67,9 +67,7 @@ const makeInFilter = (name: string, values: string[]) => {
   return `
     ${
       values.length > 0
-        ? `FILTER (bound(?${name}) && ?${name} IN (${values.map(
-            (d) => `<${d}>`
-          )}))`
+        ? `FILTER (bound(?${name}) && ?${name} IN (${values.map(formatIriToQueryNode)}))`
         : ""
     }`;
 };
@@ -266,7 +264,7 @@ const mkScoresQuery = (
       ${
         themeValues.length
           ? sparql`
-      VALUES ?theme { ${themeValues.map((d) => `<${d}>`).join(" ")} }
+      VALUES ?theme { ${themeValues.map(formatIriToQueryNode).join(" ")} }
       ?iri ${ns.dcat.theme} ?theme .
       `
           : ""
