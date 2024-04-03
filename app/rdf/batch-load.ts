@@ -2,7 +2,7 @@ import {
   SparqlQuery,
   SparqlQueryExecutable,
 } from "@tpluscode/sparql-builder/lib";
-import { groups } from "d3";
+import { groups } from "d3-array";
 import { NamedNode, Term } from "rdf-js";
 import ParsingClient from "sparql-http-client/ParsingClient";
 import { LRUCache } from "typescript-lru-cache";
@@ -13,7 +13,7 @@ const BATCH_SIZE = 500;
 
 export default async function batchLoad<
   TReturn extends unknown,
-  TId extends Term | NamedNode = Term
+  TId extends Term | NamedNode = Term,
 >({
   ids,
   sparqlClient,

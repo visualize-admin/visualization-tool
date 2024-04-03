@@ -31,7 +31,7 @@ import {
   schemeSet2,
   schemeSet3,
   schemeTableau10,
-} from "d3";
+} from "d3-scale-chromatic";
 
 import { hasDimensionColors } from "./charts/shared/colors";
 import { DivergingPaletteType, SequentialPaletteType } from "./config-types";

@@ -1,5 +1,5 @@
 import { Box, BoxProps } from "@mui/material";
-import { select } from "d3";
+import { select } from "d3-selection";
 import React, { ReactNode } from "react";
 
 import { useChartState } from "@/charts/shared/chart-state";

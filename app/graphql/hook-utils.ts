@@ -1,4 +1,4 @@
-import { ascending } from "d3";
+import { ascending } from "d3-array";
 import { OperationResult } from "urql";
 
 import { Dimension, Observation, ObservationValue } from "@/domain/data";

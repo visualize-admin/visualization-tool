@@ -1,5 +1,5 @@
 import { SELECT, sparql } from "@tpluscode/sparql-builder";
-import { descending, group } from "d3";
+import { descending, group } from "d3-array";
 import { Literal, NamedNode } from "rdf-js";
 import ParsingClient from "sparql-http-client/ParsingClient";
 

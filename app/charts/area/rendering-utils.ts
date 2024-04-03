@@ -1,5 +1,5 @@
-import { Selection, select } from "d3";
 import { interpolatePath } from "d3-interpolate-path";
+import { Selection, select } from "d3-selection";
 
 import {
   RenderOptions,

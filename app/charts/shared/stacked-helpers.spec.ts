@@ -1,4 +1,4 @@
-import { NumberValue } from "d3";
+import { NumberValue } from "d3-scale";
 
 import {
   getStackedTooltipValueFormatter,

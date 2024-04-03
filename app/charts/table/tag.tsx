@@ -1,6 +1,5 @@
 import { Box } from "@mui/material";
-import { hcl } from "d3";
-import * as React from "react";
+import { hcl } from "d3-color";
 import { ReactNode } from "react";
 
 export const Tag = ({

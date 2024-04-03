@@ -1,4 +1,5 @@
-import { bisector, pointer } from "d3";
+import { bisector } from "d3-array";
+import { pointer } from "d3-selection";
 import { MouseEvent, memo, useRef } from "react";
 
 import { AreasState } from "@/charts/area/areas-state";

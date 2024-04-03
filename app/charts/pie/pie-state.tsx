@@ -1,14 +1,7 @@
-import {
-  arc,
-  ascending,
-  pie,
-  Pie,
-  PieArcDatum,
-  ScaleOrdinal,
-  scaleOrdinal,
-  schemeCategory10,
-  sum,
-} from "d3";
+import { ascending, sum } from "d3-array";
+import { ScaleOrdinal, scaleOrdinal } from "d3-scale";
+import { schemeCategory10 } from "d3-scale-chromatic";
+import { Pie, PieArcDatum, arc, pie } from "d3-shape";
 import orderBy from "lodash/orderBy";
 import { useMemo } from "react";
 
@@ -221,8 +214,8 @@ const usePieState = (
       yAnchor > chartHeight * 0.2
         ? "top"
         : yAnchor < chartHeight * 0.8
-        ? "bottom"
-        : "middle";
+          ? "bottom"
+          : "middle";
 
     return {
       xAnchor,

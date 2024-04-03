@@ -1,4 +1,6 @@
-import * as d3 from "d3";
+import { max, mean, min } from "d3-array";
+import { scaleBand, scaleLinear } from "d3-scale";
+import { schemeCategory10 } from "d3-scale-chromatic";
 import React from "react";
 
 import { PADDING_INNER, PADDING_OUTER } from "@/charts/column/constants";
@@ -94,8 +96,7 @@ const useComboLineColumnState = (
   const formatDate = useFormatFullDateAuto();
   const [xMin, xMax] = xScaleTime.domain() as [Date, Date];
   const xDomain = interval.range(xMin, xMax).concat(xMax).map(formatDate);
-  const xScale = d3
-    .scaleBand()
+  const xScale = scaleBand()
     .domain(xDomain)
     .paddingInner(PADDING_INNER)
     .paddingOuter(PADDING_OUTER);
@@ -117,9 +118,9 @@ const useComboLineColumnState = (
   );
   const [minLeftValue, maxLeftValue] = yScaleLeft.domain();
   const [minRightValue, maxRightValue] = yScaleRight.domain();
-  const minValue = d3.min([minLeftValue, minRightValue]) ?? 0;
-  const maxValue = d3.max([maxLeftValue, maxRightValue]) ?? 0;
-  const yScale = d3.scaleLinear().domain([minValue, maxValue]).nice();
+  const minValue = min([minLeftValue, minRightValue]) ?? 0;
+  const maxValue = max([maxLeftValue, maxRightValue]) ?? 0;
+  const yScale = scaleLinear().domain([minValue, maxValue]).nice();
   const yOrientationScales = {
     left: yScaleLeft,
     right: yScaleRight,
@@ -173,9 +174,9 @@ const useComboLineColumnState = (
         };
       })
       .filter(truthy);
-    const yAnchor = d3.mean(values.map((d) => d.yPos));
+    const yAnchor = mean(values.map((d) => d.yPos));
     return {
-      datum: { label: "", value: "0", color: d3.schemeCategory10[0] },
+      datum: { label: "", value: "0", color: schemeCategory10[0] },
       xAnchor: xScaled,
       yAnchor,
       xValue: timeFormatUnit(x, variables.xTimeUnit as TimeUnit),

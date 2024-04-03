@@ -1,4 +1,5 @@
-import { Delaunay, pointer } from "d3";
+import { Delaunay } from "d3-delaunay";
+import { pointer } from "d3-selection";
 import { MouseEvent as ReactMouseEvent, memo, useRef } from "react";
 
 import { AreasState } from "@/charts/area/areas-state";

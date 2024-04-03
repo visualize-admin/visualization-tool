@@ -1,4 +1,4 @@
-import { ScaleTime } from "d3";
+import { ScaleTime } from "d3-scale";
 import get from "lodash/get";
 import overEvery from "lodash/overEvery";
 import React from "react";

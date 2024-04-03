@@ -1,7 +1,7 @@
-import "d3"
+import "d3-array";
 // Augment wrong types
 
-declare module "d3" {
+declare module "d3-array" {
   /**
    * Equivalent to group, but returns nested arrays instead of nested maps.
    *

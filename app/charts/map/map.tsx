@@ -2,7 +2,7 @@ import { GeoJsonLayer, ScatterplotLayer } from "@deck.gl/layers/typed";
 import { supported } from "@mapbox/mapbox-gl-supported";
 import { Button, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { geoArea } from "d3";
+import { geoArea } from "d3-geo";
 import debounce from "lodash/debounce";
 import orderBy from "lodash/orderBy";
 import maplibreglraw from "maplibre-gl";

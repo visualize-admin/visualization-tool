@@ -1,4 +1,4 @@
-import { area } from "d3";
+import { area } from "d3-shape";
 import React from "react";
 
 import { AreasState } from "@/charts/area/areas-state";

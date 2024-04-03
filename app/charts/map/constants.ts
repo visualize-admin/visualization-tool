@@ -1,4 +1,4 @@
-import { schemeCategory10 } from "d3";
+import { schemeCategory10 } from "d3-scale-chromatic";
 
 import { FixedColorField } from "@/config-types";
 

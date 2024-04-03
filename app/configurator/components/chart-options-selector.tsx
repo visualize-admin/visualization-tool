@@ -1,6 +1,6 @@
 import { t, Trans } from "@lingui/macro";
 import { Box, Stack, Tooltip, Typography } from "@mui/material";
-import { groups } from "d3";
+import { groups } from "d3-array";
 import get from "lodash/get";
 import React, { useCallback, useEffect, useMemo } from "react";
 

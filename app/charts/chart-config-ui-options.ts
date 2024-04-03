@@ -1,5 +1,5 @@
 import { t } from "@lingui/macro";
-import { group } from "d3";
+import { group } from "d3-array";
 import get from "lodash/get";
 import setWith from "lodash/setWith";
 import unset from "lodash/unset";

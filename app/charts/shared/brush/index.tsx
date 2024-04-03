@@ -1,12 +1,7 @@
-import {
-  bisector,
-  brushX,
-  pointer,
-  pointers,
-  select,
-  Selection,
-  Transition,
-} from "d3";
+import { bisector } from "d3-array";
+import { brushX } from "d3-brush";
+import { Selection, pointer, pointers, select } from "d3-selection";
+import { Transition } from "d3-transition";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import type { AreasState } from "@/charts/area/areas-state";
@@ -250,8 +245,8 @@ export const BrushTime = () => {
                 overflowingLeft
                   ? [0, selectionExtent]
                   : overflowingRight
-                  ? [brushWidth - selectionExtent, brushWidth]
-                  : [x0, x1]
+                    ? [brushWidth - selectionExtent, brushWidth]
+                    : [x0, x1]
               );
             },
             { passive: true }

@@ -1,4 +1,4 @@
-import { ascending, descending, index } from "d3";
+import { ascending, descending, index } from "d3-array";
 import { Maybe } from "graphql-tools";
 import keyBy from "lodash/keyBy";
 import { CubeDimension, Filter, LookupSource, View } from "rdf-cube-view-query";

@@ -1,20 +1,19 @@
+import { extent, group, rollup, sum } from "d3-array";
 import {
-  extent,
-  group,
-  rollup,
-  scaleLinear,
   ScaleLinear,
   ScaleOrdinal,
-  scaleOrdinal,
   ScaleTime,
+  scaleLinear,
+  scaleOrdinal,
   scaleTime,
-  schemeCategory10,
+} from "d3-scale";
+import { schemeCategory10 } from "d3-scale-chromatic";
+import {
   stack,
   stackOrderAscending,
   stackOrderDescending,
   stackOrderReverse,
-  sum,
-} from "d3";
+} from "d3-shape";
 import orderBy from "lodash/orderBy";
 import React, { useCallback, useMemo } from "react";
 
@@ -223,8 +222,8 @@ const useAreasState = (
       segmentSortingType === "byTotalSize" && segmentSortingOrder === "asc"
         ? stackOrderAscending
         : segmentSortingType === "byTotalSize" && segmentSortingOrder === "desc"
-        ? stackOrderDescending
-        : stackOrderReverse;
+          ? stackOrderDescending
+          : stackOrderReverse;
     const stacked = stack()
       .order(stackOrder)
       .offset(stackOffsetDivergingPositiveZeros)
@@ -239,7 +238,7 @@ const useAreasState = (
     const xScale = scaleTime().domain(xDomain);
     const xScaleTimeRangeDomain = extent(timeRangeData, (d) => getX(d)) as [
       Date,
-      Date
+      Date,
     ];
     const xScaleTimeRange = scaleTime().domain(xScaleTimeRangeDomain);
     const colors = scaleOrdinal<string, string>();

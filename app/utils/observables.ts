@@ -1,4 +1,5 @@
-import { ascending, bisect, scaleLinear } from "d3";
+import { ascending, bisect } from "d3-array";
+import { scaleLinear } from "d3-scale";
 
 import { AnimationType } from "@/config-types";
 

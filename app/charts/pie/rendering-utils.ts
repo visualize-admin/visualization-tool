@@ -1,4 +1,7 @@
-import { PieArcDatum, Selection, Transition, interpolate } from "d3";
+import { interpolate } from "d3-interpolate";
+import { Selection } from "d3-selection";
+import { PieArcDatum } from "d3-shape";
+import { Transition } from "d3-transition";
 
 import {
   RenderOptions,

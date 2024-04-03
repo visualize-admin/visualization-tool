@@ -1,4 +1,4 @@
-import { arc, PieArcDatum } from "d3";
+import { arc, PieArcDatum } from "d3-shape";
 import React from "react";
 
 import { PieState } from "@/charts/pie/pie-state";

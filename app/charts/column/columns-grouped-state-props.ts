@@ -1,4 +1,4 @@
-import { ascending, rollup, sum } from "d3";
+import { ascending, rollup, sum } from "d3-array";
 import orderBy from "lodash/orderBy";
 import React from "react";
 

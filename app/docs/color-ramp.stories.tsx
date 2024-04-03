@@ -1,5 +1,5 @@
 import { Meta } from "@storybook/react";
-import { interpolateBrBG, interpolateOranges } from "d3";
+import { interpolateBrBG, interpolateOranges } from "d3-scale-chromatic";
 
 import { ColorRamp } from "@/configurator/components/chart-controls/color-ramp";
 

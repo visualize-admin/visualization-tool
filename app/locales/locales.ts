@@ -1,7 +1,11 @@
 // If translations get too big, we should load them dynamically. But for now it's fine.
 // Use the same number format in each language
 import { i18n } from "@lingui/core";
-import { formatLocale, FormatLocaleDefinition, FormatLocaleObject } from "d3";
+import {
+  formatLocale,
+  FormatLocaleDefinition,
+  FormatLocaleObject,
+} from "d3-format";
 import numberFormatCh from "d3-format/locale/de-CH.json";
 import {
   timeFormatLocale,
@@ -14,9 +18,9 @@ import timeFormatFr from "d3-time-format/locale/fr-FR.json";
 import timeFormatIt from "d3-time-format/locale/it-IT.json";
 import {
   de as pluralsDe,
+  en as pluralsEn,
   fr as pluralsFr,
   it as pluralsIt,
-  en as pluralsEn,
 } from "make-plural/plurals";
 
 import { messages as catalogDe } from "./de/messages";
@@ -29,7 +33,7 @@ export const defaultLocale = "de";
 // The order specified here will determine the fallback order when strings are not available in the preferred language
 export const locales = ["de", "fr", "it", "en"] as const;
 
-export type Locale = typeof locales[number];
+export type Locale = (typeof locales)[number];
 
 i18n.loadLocaleData({
   de: { plurals: pluralsDe },

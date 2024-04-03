@@ -1,16 +1,13 @@
+import { extent, group, max, min } from "d3-array";
 import {
-  extent,
-  group,
-  max,
-  min,
   ScaleLinear,
-  scaleLinear,
   ScaleOrdinal,
-  scaleOrdinal,
   ScaleTime,
+  scaleLinear,
+  scaleOrdinal,
   scaleTime,
-  schemeCategory10,
-} from "d3";
+} from "d3-scale";
+import { schemeCategory10 } from "d3-scale-chromatic";
 import orderBy from "lodash/orderBy";
 import { useMemo } from "react";
 

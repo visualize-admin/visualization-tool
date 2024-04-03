@@ -6,7 +6,7 @@ import {
   MenuItem,
   Typography,
 } from "@mui/material";
-import { ascending } from "d3";
+import { ascending } from "d3-array";
 import { Workbook } from "exceljs";
 import { saveAs } from "file-saver";
 import keyBy from "lodash/keyBy";

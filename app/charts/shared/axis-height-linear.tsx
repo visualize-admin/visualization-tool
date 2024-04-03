@@ -1,4 +1,5 @@
-import { axisLeft, axisRight, NumberValue, ScaleLinear } from "d3";
+import { axisLeft, axisRight } from "d3-axis";
+import { NumberValue, ScaleLinear } from "d3-scale";
 import React, { useEffect, useRef } from "react";
 
 import type { AreasState } from "@/charts/area/areas-state";

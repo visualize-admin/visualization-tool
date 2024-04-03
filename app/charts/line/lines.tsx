@@ -1,4 +1,4 @@
-import { line } from "d3";
+import { line } from "d3-shape";
 import { Fragment, memo } from "react";
 
 import { LinesState } from "@/charts/line/lines-state";

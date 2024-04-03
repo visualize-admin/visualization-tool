@@ -1,12 +1,8 @@
 import { Box, Typography } from "@mui/material";
-import {
-  CountableTimeInterval,
-  Selection,
-  brushX,
-  pointer,
-  scaleTime,
-  select,
-} from "d3";
+import { brushX } from "d3-brush";
+import { scaleTime } from "d3-scale";
+import { Selection, pointer, select } from "d3-selection";
+import { CountableTimeInterval } from "d3-time";
 import { useCallback, useEffect, useRef } from "react";
 
 import Flex from "@/components/flex";

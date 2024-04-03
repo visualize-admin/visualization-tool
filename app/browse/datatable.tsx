@@ -11,7 +11,7 @@ import {
   Tooltip,
   TooltipProps,
 } from "@mui/material";
-import { ascending, descending } from "d3";
+import { ascending, descending } from "d3-array";
 import { useMemo, useRef, useState } from "react";
 
 import {

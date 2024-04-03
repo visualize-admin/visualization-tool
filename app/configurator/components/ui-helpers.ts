@@ -1,30 +1,26 @@
 import { t } from "@lingui/macro";
-import {
-  ascending,
-  CountableTimeInterval,
-  scaleOrdinal,
-  TimeLocaleObject,
-  timeParse,
-} from "d3";
+import { ascending } from "d3-array";
+import { scaleOrdinal } from "d3-scale";
+import { CountableTimeInterval } from "d3-time";
+import { TimeLocaleObject, timeParse } from "d3-time-format";
 import { useMemo } from "react";
 
 import type { BaseChartProps } from "@/charts/shared/ChartProps";
-import { getTimeInterval } from "@/intervals";
-
-import { TableColumn, TableFields } from "../../config-types";
+import { TableColumn, TableFields } from "@/config-types";
 import {
   Component,
   Dimension,
   DimensionValue,
-  isJoinByComponent,
   Measure,
   Observation,
-} from "../../domain/data";
-import { TimeUnit } from "../../graphql/query-hooks";
-import { IconName } from "../../icons";
-import { getPalette } from "../../palettes";
+  isJoinByComponent,
+} from "@/domain/data";
+import { TimeUnit } from "@/graphql/query-hooks";
+import { IconName } from "@/icons";
+import { getTimeInterval } from "@/intervals";
+import { getPalette } from "@/palettes";
 
-// FIXME: We should cover more time format
+// FIXME: We should cover more time formats
 const parseSecond = timeParse("%Y-%m-%dT%H:%M:%S");
 const parseMinute = timeParse("%Y-%m-%dT%H:%M");
 const parseDay = timeParse("%Y-%m-%d");

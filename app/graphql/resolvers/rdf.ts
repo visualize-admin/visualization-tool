@@ -1,4 +1,4 @@
-import { ascending, descending } from "d3";
+import { ascending, descending } from "d3-array";
 import DataLoader from "dataloader";
 import ParsingClient from "sparql-http-client/ParsingClient";
 import { topology } from "topojson-server";

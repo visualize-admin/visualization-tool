@@ -1,4 +1,4 @@
-import { bisector } from "d3";
+import { bisector } from "d3-array";
 
 export function makeGetClosestDatesFromDateRange<T>(
   sortedData: T[],
@@ -39,7 +39,7 @@ export function makeGetClosestDatesFromDateRange<T>(
 
     return [getDate(startClosestDatum), getDate(endClosestDatum)] as [
       Date,
-      Date
+      Date,
     ];
   };
 }

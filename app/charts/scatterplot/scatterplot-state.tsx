@@ -1,12 +1,6 @@
-import {
-  max,
-  min,
-  ScaleLinear,
-  scaleLinear,
-  ScaleOrdinal,
-  scaleOrdinal,
-  schemeCategory10,
-} from "d3";
+import { max, min } from "d3-array";
+import { ScaleLinear, ScaleOrdinal, scaleLinear, scaleOrdinal } from "d3-scale";
+import { schemeCategory10 } from "d3-scale-chromatic";
 import orderBy from "lodash/orderBy";
 import { useMemo } from "react";
 
@@ -179,15 +173,15 @@ const useScatterplotState = (
       xAnchor < chartWidth * 0.33
         ? "right"
         : xAnchor > chartWidth * 0.66
-        ? "left"
-        : "center";
+          ? "left"
+          : "center";
 
     const yPlacement =
       yAnchor > chartHeight * 0.33
         ? "top"
         : yAnchor < chartHeight * 0.66
-        ? "bottom"
-        : "middle";
+          ? "bottom"
+          : "middle";
 
     return {
       xAnchor,

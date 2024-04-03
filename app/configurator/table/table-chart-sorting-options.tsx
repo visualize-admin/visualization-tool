@@ -7,7 +7,7 @@ import {
   Typography,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { ascending } from "d3";
+import { ascending } from "d3-array";
 import { ChangeEvent, useCallback } from "react";
 import {
   DragDropContext,

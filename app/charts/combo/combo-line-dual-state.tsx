@@ -1,4 +1,6 @@
-import * as d3 from "d3";
+import { max, mean, min } from "d3-array";
+import { scaleLinear } from "d3-scale";
+import { schemeCategory10 } from "d3-scale-chromatic";
 import React from "react";
 
 import {
@@ -98,9 +100,9 @@ const useComboLineDualState = (
 
   const [minLeftValue, maxLeftValue] = yScaleLeft.domain();
   const [minRightValue, maxRightValue] = yScaleRight.domain();
-  const minValue = d3.min([minLeftValue, minRightValue]) ?? 0;
-  const maxValue = d3.max([maxLeftValue, maxRightValue]) ?? 0;
-  const yScale = d3.scaleLinear().domain([minValue, maxValue]).nice();
+  const minValue = min([minLeftValue, minRightValue]) ?? 0;
+  const maxValue = max([maxLeftValue, maxRightValue]) ?? 0;
+  const yScale = scaleLinear().domain([minValue, maxValue]).nice();
   const yOrientationScales = {
     left: yScaleLeft,
     right: yScaleRight,
@@ -155,10 +157,10 @@ const useComboLineDualState = (
         };
       })
       .filter(truthy);
-    const yAnchor = d3.mean(values.map((d) => d.yPos));
+    const yAnchor = mean(values.map((d) => d.yPos));
 
     return {
-      datum: { label: "", value: "0", color: d3.schemeCategory10[0] },
+      datum: { label: "", value: "0", color: schemeCategory10[0] },
       xAnchor: xScaled,
       yAnchor: yAnchor,
       xValue: timeFormatUnit(x, xDimension.timeUnit),

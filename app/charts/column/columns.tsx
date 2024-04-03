@@ -1,4 +1,4 @@
-import { schemeCategory10 } from "d3";
+import { schemeCategory10 } from "d3-scale-chromatic";
 import React from "react";
 
 import { ColumnsState } from "@/charts/column/columns-state";
