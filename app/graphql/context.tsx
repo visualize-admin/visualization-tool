@@ -11,16 +11,14 @@ import { DimensionValue } from "@/domain/data";
 import { SPARQL_GEO_ENDPOINT } from "@/domain/env";
 import { Awaited } from "@/domain/types";
 import { Timings } from "@/gql-flamegraph/resolvers";
+import { RequestQueryMeta } from "@/graphql/query-meta";
 import { ResolvedDimension } from "@/graphql/shared-types";
 import { createSource, pragmas } from "@/rdf/create-source";
 import { ExtendedCube } from "@/rdf/extended-cube";
+import { createCubeDimensionValuesLoader } from "@/rdf/queries";
+import { createGeoCoordinatesLoader } from "@/rdf/query-geo-coordinates";
+import { createGeoShapesLoader } from "@/rdf/query-geo-shapes";
 import { TimingCallback, timed } from "@/utils/timed";
-
-import { createCubeDimensionValuesLoader } from "../rdf/queries";
-import { createGeoCoordinatesLoader } from "../rdf/query-geo-coordinates";
-import { createGeoShapesLoader } from "../rdf/query-geo-shapes";
-
-import { RequestQueryMeta } from "./query-meta";
 
 export const MAX_BATCH_SIZE = 500;
 
@@ -79,7 +77,7 @@ const createLoaders = async (
       { maxBatchSize: MAX_BATCH_SIZE * 0.5 }
     ),
     geoShapes: new DataLoader(
-      createGeoShapesLoader({ locale, sparqlClient, geoSparqlClient }),
+      createGeoShapesLoader({ sparqlClient, geoSparqlClient }),
       { maxBatchSize: MAX_BATCH_SIZE * 0.5 }
     ),
   } as const;

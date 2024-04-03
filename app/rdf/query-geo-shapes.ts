@@ -3,19 +3,14 @@ import { NamedNode } from "rdf-js";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
 
 import { MAX_BATCH_SIZE } from "@/graphql/context";
-import {
-  buildLocalizedSubQuery,
-  formatIriToQueryNode,
-} from "@/rdf/query-utils";
+import { formatIriToQueryNode } from "@/rdf/query-utils";
 
 export interface GeoShape {
   iri: string;
-  label: string;
   wktString?: string;
 }
 
 type GeoShapesLoaderProps = {
-  locale: string;
   sparqlClient: ParsingClient;
   geoSparqlClient: ParsingClient;
 };
@@ -26,14 +21,9 @@ type GeoShapesLoaderProps = {
  * @param dimensionIris IRIs of a GeoShape dimension's values
  */
 export const createGeoShapesLoader = (props: GeoShapesLoaderProps) => {
-  const { locale, sparqlClient, geoSparqlClient } = props;
+  const { sparqlClient, geoSparqlClient } = props;
   return async (dimensionIris: readonly string[]): Promise<GeoShape[]> => {
     const dimensionIriQueryNodes = dimensionIris.map(formatIriToQueryNode);
-    const labelsByDimensionIri = await getLabelsByDimensionIri({
-      queryNodes: dimensionIriQueryNodes,
-      locale,
-      sparqlClient,
-    });
     const { geometries, geometriesByDimensionIri } = await getGeometries({
       queryNodes: dimensionIriQueryNodes,
       sparqlClient,
@@ -47,57 +37,9 @@ export const createGeoShapesLoader = (props: GeoShapesLoaderProps) => {
       const geometry = geometriesByDimensionIri.get(dimensionIri);
       return {
         iri: dimensionIri,
-        label: labelsByDimensionIri.get(dimensionIri) ?? dimensionIri,
         wktString: geometry ? wktStringsByGeometry.get(geometry) : undefined,
       };
     });
-  };
-};
-
-type RawLabel = {
-  iri: NamedNode;
-  label: NamedNode;
-};
-
-type GetLabelsProps = {
-  queryNodes: string[];
-  locale: string;
-  sparqlClient: ParsingClient;
-};
-
-const getLabelsByDimensionIri = async (props: GetLabelsProps) => {
-  const { queryNodes, locale, sparqlClient } = props;
-  const query = `
-PREFIX schema: <http://schema.org/>
-SELECT ?iri ?label WHERE {
-  VALUES ?iri { ${queryNodes.join("\n")} }
-  ${buildLocalizedSubQuery("iri", "schema:name", "label", {
-    locale,
-  })}
-}`;
-  const result = (await sparqlClient.query
-    .select(query, { operation: "postUrlencoded" })
-    .catch((e) => {
-      console.error(e);
-      return [];
-    })) as RawLabel[];
-
-  return rollup(
-    result.map(parseLabel),
-    (v) => v[0].label,
-    (d) => d.iri
-  );
-};
-
-type Label = {
-  iri: string;
-  label?: string;
-};
-
-const parseLabel = (rawLabel: RawLabel): Label => {
-  return {
-    iri: rawLabel.iri.value,
-    label: rawLabel.label?.value ?? rawLabel.iri.value,
   };
 };
 

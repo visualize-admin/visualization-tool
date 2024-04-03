@@ -107,6 +107,7 @@ export const dataCubeDimensionGeoShapes: NonNullable<
   );
   const dimensionValues = await dimensionValuesLoader.load(dimension);
   const values = dimensionValues.map((d) => `${d.value}`);
+  const labelsByValue = new Map(dimensionValues.map((d) => [d.value, d.label]));
   const shapes = await Promise.all(
     values.map((d) => loaders.geoShapes.load(d))
   );
@@ -119,7 +120,7 @@ export const dataCubeDimensionGeoShapes: NonNullable<
       type: "Feature",
       properties: {
         iri: d.iri,
-        label: d.label,
+        label: labelsByValue.get(d.iri),
       },
       geometry: parseWKT(d.wktString),
     })) as GeoFeature[];
