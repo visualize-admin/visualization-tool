@@ -1,4 +1,4 @@
-import groupBy from "lodash/groupBy";
+import { rollup } from "d3-array";
 import { NamedNode } from "rdf-js";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
 
@@ -29,33 +29,26 @@ export const createGeoShapesLoader = (props: GeoShapesLoaderProps) => {
   const { locale, sparqlClient, geoSparqlClient } = props;
   return async (dimensionIris: readonly string[]): Promise<GeoShape[]> => {
     const dimensionIriQueryNodes = dimensionIris.map(formatIriToQueryNode);
-    const groupedLabels = await getGroupedLabels({
+    const labelsByDimensionIri = await getLabelsByDimensionIri({
       queryNodes: dimensionIriQueryNodes,
       locale,
       sparqlClient,
     });
-    const { geometries, groupedGeometries } = await getGeometries({
+    const { geometries, geometriesByDimensionIri } = await getGeometries({
       queryNodes: dimensionIriQueryNodes,
       sparqlClient,
     });
-    const groupedWktStrings = await getGroupedWktStrings({
+    const wktStringsByGeometry = await getWktStringsByGeometry({
       geometries,
       geoSparqlClient,
     });
 
     return dimensionIris.map((dimensionIri) => {
-      let wktString: string | undefined;
-      // There might be iris without geometries.
-      const geometry = groupedGeometries[dimensionIri]?.[0]?.geometry;
-
-      if (geometry) {
-        wktString = groupedWktStrings[geometry]?.[0]?.wktString;
-      }
-
+      const geometry = geometriesByDimensionIri.get(dimensionIri);
       return {
         iri: dimensionIri,
-        label: groupedLabels[dimensionIri]?.[0]?.label ?? dimensionIri,
-        wktString,
+        label: labelsByDimensionIri.get(dimensionIri) ?? dimensionIri,
+        wktString: geometry ? wktStringsByGeometry.get(geometry) : undefined,
       };
     });
   };
@@ -72,7 +65,7 @@ type GetLabelsProps = {
   sparqlClient: ParsingClient;
 };
 
-const getGroupedLabels = async (props: GetLabelsProps) => {
+const getLabelsByDimensionIri = async (props: GetLabelsProps) => {
   const { queryNodes, locale, sparqlClient } = props;
   const query = `
 PREFIX schema: <http://schema.org/>
@@ -89,12 +82,16 @@ SELECT ?iri ?label WHERE {
       return [];
     })) as RawLabel[];
 
-  return groupBy(result.map(parseLabel), (d) => d.iri);
+  return rollup(
+    result.map(parseLabel),
+    (v) => v[0].label,
+    (d) => d.iri
+  );
 };
 
 type Label = {
   iri: string;
-  label: string;
+  label?: string;
 };
 
 const parseLabel = (rawLabel: RawLabel): Label => {
@@ -132,7 +129,11 @@ SELECT ?iri ?geometry WHERE {
 
   return {
     geometries: parsed,
-    groupedGeometries: groupBy(parsed, (d) => d.iri),
+    geometriesByDimensionIri: rollup(
+      parsed,
+      (v) => v[0].geometry,
+      (d) => d.iri
+    ),
   };
 };
 
@@ -153,7 +154,7 @@ type GetGroupedWktStringsProps = {
   geoSparqlClient: ParsingClient;
 };
 
-const getGroupedWktStrings = async (props: GetGroupedWktStringsProps) => {
+const getWktStringsByGeometry = async (props: GetGroupedWktStringsProps) => {
   const { geometries, geoSparqlClient } = props;
   const geometryChunks: Geometry[][] = [];
 
@@ -171,7 +172,11 @@ const getGroupedWktStrings = async (props: GetGroupedWktStringsProps) => {
     )
   ).flat();
 
-  return groupBy(rawWktStrings.map(parseWktString), (d) => d.geometry);
+  return rollup(
+    rawWktStrings.map(parseWktString),
+    (v) => v[0].wktString,
+    (d) => d.geometry
+  );
 };
 
 type RawWktString = {
