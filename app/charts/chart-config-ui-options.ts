@@ -5,7 +5,11 @@ import setWith from "lodash/setWith";
 import unset from "lodash/unset";
 
 import { DEFAULT_SORTING, initializeMapLayerField } from "@/charts";
-import { DEFAULT_FIXED_COLOR_FIELD } from "@/charts/map/constants";
+import {
+  DEFAULT_FIXED_COLOR_FIELD,
+  getDefaultCategoricalColorField,
+  getDefaultNumericalColorField,
+} from "@/charts/map/constants";
 import {
   checkForMissingValuesInSegments,
   getSegment,
@@ -186,23 +190,16 @@ const onColorComponentIriChange: OnEncodingOptionChange<string, MapConfig> = (
       isOrdinalMeasure(component)
     ) {
       const palette = getDefaultCategoricalPaletteName(component, colorPalette);
-      newField = {
-        type: "categorical",
-        componentIri: iri,
+      newField = getDefaultCategoricalColorField({
+        iri,
         palette,
-        colorMapping: mapValueIrisToColor({
-          palette,
-          dimensionValues: component.values,
-        }),
-      };
+        dimensionValues: component.values,
+      });
     } else if (isNumericalMeasure(component)) {
-      newField = {
-        type: "numerical",
-        componentIri: iri,
-        palette: colorPalette ?? "oranges",
-        scaleType: "continuous",
-        interpolationType: "linear",
-      };
+      newField = getDefaultNumericalColorField({
+        iri,
+        colorPalette,
+      });
     }
 
     // Remove old filter.

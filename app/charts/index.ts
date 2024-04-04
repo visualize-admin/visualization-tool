@@ -10,7 +10,11 @@ import {
   EncodingFieldType,
   PIE_SEGMENT_SORTING,
 } from "@/charts/chart-config-ui-options";
-import { DEFAULT_FIXED_COLOR_FIELD } from "@/charts/map/constants";
+import {
+  DEFAULT_FIXED_COLOR_FIELD,
+  getDefaultCategoricalColorField,
+  getDefaultNumericalColorField,
+} from "@/charts/map/constants";
 import {
   AreaSegmentField,
   canBeNormalized,
@@ -292,22 +296,14 @@ export const getInitialAreaLayer = ({
   return {
     componentIri: component.iri,
     color: isNumericalMeasure(measure)
-      ? {
-          type: "numerical",
-          componentIri: measure.iri,
-          scaleType: "continuous",
-          interpolationType: "linear",
-          palette: "oranges",
-        }
-      : {
-          type: "categorical",
-          componentIri: measure.iri,
+      ? getDefaultNumericalColorField({
+          iri: measure.iri,
+        })
+      : getDefaultCategoricalColorField({
+          iri: measure.iri,
           palette,
-          colorMapping: mapValueIrisToColor({
-            palette,
-            dimensionValues: measure.values,
-          }),
-        },
+          dimensionValues: measure.values,
+        }),
   };
 };
 
