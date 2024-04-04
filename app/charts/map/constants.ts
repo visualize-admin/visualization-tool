@@ -11,6 +11,8 @@ import { DimensionValue } from "@/domain/data";
 
 export const DEFAULT_FIXED_COLOR_FIELD_OPACITY = 80;
 
+export const DEFAULT_OTHER_COLOR_FIELD_OPACITY = 100;
+
 export const DEFAULT_FIXED_COLOR_FIELD: FixedColorField = {
   type: "fixed",
   value: schemeCategory10[0],
@@ -33,6 +35,7 @@ export const getDefaultCategoricalColorField = ({
     palette,
     dimensionValues,
   }),
+  opacity: DEFAULT_OTHER_COLOR_FIELD_OPACITY,
 });
 
 export const getDefaultNumericalColorField = ({
@@ -47,6 +50,7 @@ export const getDefaultNumericalColorField = ({
   palette: colorPalette,
   scaleType: "continuous",
   interpolationType: "linear",
+  opacity: 100,
 });
 
 export const DEFAULT_COLOR = [222, 222, 222, 125];
