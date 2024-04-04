@@ -12,7 +12,6 @@ scalar DataCubeMetadata
 scalar DataCubeObservations
 scalar DataCubePreview
 scalar GeoShapes
-scalar GeoCoordinates
 
 type ObservationsQuery {
   data: [Observation!]!
@@ -421,11 +420,4 @@ type Query {
     sourceUrl: String!
     locale: String!
   ): GeoShapes
-  dataCubeDimensionGeoCoordinates(
-    cubeIri: String!
-    dimensionIri: String!
-    sourceType: String!
-    sourceUrl: String!
-    locale: String!
-  ): GeoCoordinates
 }

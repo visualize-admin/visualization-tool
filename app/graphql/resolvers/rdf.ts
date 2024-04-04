@@ -150,21 +150,6 @@ export const dataCubeDimensionGeoShapes: NonNullable<
   };
 };
 
-export const dataCubeDimensionGeoCoordinates: NonNullable<
-  QueryResolvers["dataCubeDimensionGeoCoordinates"]
-> = async (_, { cubeIri, dimensionIri, locale }, { setup }, info) => {
-  const { loaders, sparqlClient, cache } = await setup(info);
-  const dimension = await getResolvedDimension(dimensionIri, {
-    cubeIri,
-    locale,
-    sparqlClient,
-    loaders,
-    cache,
-  });
-
-  return await loaders.geoCoordinates.load(dimension);
-};
-
 // TODO: could be refactored to not fetch the whole cube shape.
 const getResolvedDimension = async (
   iri: string,

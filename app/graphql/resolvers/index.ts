@@ -48,15 +48,6 @@ export const Query: QueryResolvers = {
     const source = getSource(args.sourceType);
     return await source.dataCubeDimensionGeoShapes(parent, args, context, info);
   },
-  dataCubeDimensionGeoCoordinates: async (parent, args, context, info) => {
-    const source = getSource(args.sourceType);
-    return await source.dataCubeDimensionGeoCoordinates(
-      parent,
-      args,
-      context,
-      info
-    );
-  },
 };
 
 const DataCube: DataCubeResolvers = {

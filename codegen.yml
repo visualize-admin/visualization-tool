@@ -27,7 +27,6 @@ generates:
         DataCubeObservations: "../domain/data#DataCubeObservations"
         DataCubePreview: "../domain/data#DataCubePreview"
         GeoShapes: "../domain/data#GeoShapes"
-        GeoCoordinates: "../domain/data#GeoCoordinates"
   app/graphql/resolver-types.ts:
     plugins:
       - "typescript"
@@ -50,7 +49,6 @@ generates:
         DataCubeObservations: "../domain/data#DataCubeObservations"
         DataCubePreview: "../domain/data#DataCubePreview"
         GeoShapes: "../domain/data#GeoShapes"
-        GeoCoordinates: "../domain/data#GeoCoordinates"
       mappers:
         DataCube: "./shared-types#ResolvedDataCube"
         ObservationsQuery: "./shared-types#ResolvedObservationsQuery"

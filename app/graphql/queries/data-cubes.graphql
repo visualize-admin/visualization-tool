@@ -111,19 +111,3 @@ query DataCubeDimensionGeoShapes(
     locale: $locale
   )
 }
-
-query DataCubeDimensionGeoCoordinates(
-  $cubeIri: String!
-  $dimensionIri: String!
-  $sourceType: String!
-  $sourceUrl: String!
-  $locale: String!
-) {
-  dataCubeDimensionGeoCoordinates(
-    cubeIri: $cubeIri
-    dimensionIri: $dimensionIri
-    sourceType: $sourceType
-    sourceUrl: $sourceUrl
-    locale: $locale
-  )
-}

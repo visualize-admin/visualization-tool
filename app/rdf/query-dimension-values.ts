@@ -124,7 +124,9 @@ CONSTRUCT {
     schema:identifier ?identifier ;
     schema:position ?position ;
     schema:color ?color ;
-    geo:hasGeometry ?geometry .
+    geo:hasGeometry ?geometry ;
+    schema:latitude ?latitude ;
+    schema:longitude ?longitude .
 } WHERE { 
   ${
     queryFilters
@@ -166,6 +168,8 @@ CONSTRUCT {
   OPTIONAL { ?value schema:position ?position . }
   OPTIONAL { ?value schema:color ?color . }
   OPTIONAL { ?value geo:hasGeometry ?geometry . }
+  OPTIONAL { ?value schema:latitude ?latitude . }
+  OPTIONAL { ?value schema:longitude ?longitude . }
   ${
     isDimensionVersioned
       ? `OPTIONAL { ?value schema:sameAs ?unversioned_value . }`
@@ -197,6 +201,8 @@ const parseDimensionValue = (
     (d) => d.predicate.value
   );
   const position = valueQuads[ns.schema.position.value]?.object.value;
+  const latitude = valueQuads[ns.schema.latitude.value]?.object.value;
+  const longitude = valueQuads[ns.schema.longitude.value]?.object.value;
   const parsedValue: DimensionValue = {
     value,
     label: parseMaybeUndefined(
@@ -209,6 +215,8 @@ const parseDimensionValue = (
     position: position ? (isNaN(+position) ? position : +position) : undefined,
     color: valueQuads[ns.schema.color.value]?.object.value,
     geometry: valueQuads[ns.geo.hasGeometry.value]?.object.value,
+    latitude: latitude ? +latitude : undefined,
+    longitude: longitude ? +longitude : undefined,
   };
 
   return pickBy(parsedValue, (v) => v !== undefined) as DimensionValue;
