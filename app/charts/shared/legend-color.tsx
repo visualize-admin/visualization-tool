@@ -67,44 +67,58 @@ type ItemStyleProps = {
   usage: LegendItemUsage;
 };
 
-const useItemStyles = makeStyles<Theme, ItemStyleProps>((theme) => ({
-  legendItem: {
-    position: "relative",
-    justifyContent: "flex-start",
-    alignItems: "flex-start",
-    fontSize: ({ usage }) =>
-      ["legend", "colorPicker"].includes(usage)
-        ? theme.typography.body2.fontSize
-        : theme.typography.caption.fontSize,
-    fontWeight: theme.typography.fontWeightRegular,
-    color: theme.palette.grey[700],
+const useItemStyles = makeStyles<Theme, ItemStyleProps>((theme) => {
+  const getSizeAdjustConstant = (
+    symbol: LegendSymbol,
+    usage: LegendItemUsage
+  ) => {
+    if (usage === "colorPicker" || symbol === "circle") {
+      return 1.5;
+    }
 
-    "&::before": {
-      content: "''",
+    return 1;
+  };
+
+  return {
+    legendItem: {
       position: "relative",
-      display: "block",
-      width: ({ usage }) => (usage === "colorPicker" ? "0.75rem" : "0.5rem"),
-      height: ({ symbol, usage }: ItemStyleProps) =>
-        `calc(${["square", "circle"].includes(symbol) ? "0.5rem" : "2px"} * ${
-          usage === "colorPicker" ? 1.5 : 1
-        })`,
-      marginTop: ({ symbol, usage }: ItemStyleProps) =>
-        `calc(0.75rem - calc(${
-          ["square", "circle"].includes(symbol) ? "0.5rem" : "2px"
-        } * ${usage === "colorPicker" ? 1.5 : 1}) * 0.5)`,
-      marginRight: "0.5rem",
-      flexShrink: 0,
-      backgroundColor: ({ color }: ItemStyleProps) => color,
-      borderRadius: ({ symbol }: ItemStyleProps) =>
-        symbol === "circle" ? "50%" : 0,
-    },
-  },
+      justifyContent: "flex-start",
+      alignItems: "flex-start",
+      fontSize: ({ usage }) =>
+        ["legend", "colorPicker"].includes(usage)
+          ? theme.typography.body2.fontSize
+          : theme.typography.caption.fontSize,
+      fontWeight: theme.typography.fontWeightRegular,
+      color: theme.palette.grey[700],
 
-  legendCheckbox: {
-    marginBottom: () => "0.25rem",
-    marginRight: 0,
-  },
-}));
+      "&::before": {
+        content: "''",
+        position: "relative",
+        display: "block",
+        width: ({ symbol, usage }) =>
+          `calc(0.5rem * ${getSizeAdjustConstant(symbol, usage)})`,
+        height: ({ symbol, usage }: ItemStyleProps) =>
+          `calc(${["square", "circle"].includes(symbol) ? "0.5rem" : "2px"} * ${getSizeAdjustConstant(
+            symbol,
+            usage
+          )})`,
+        marginTop: ({ symbol, usage }) =>
+          `calc(0.75rem - calc(${
+            ["square", "circle"].includes(symbol) ? "0.5rem" : "2px"
+          } * ${getSizeAdjustConstant(symbol, usage)}) * 0.5)`,
+        marginRight: "0.4rem",
+        flexShrink: 0,
+        backgroundColor: ({ color }) => color,
+        borderRadius: ({ symbol }) => (symbol === "circle" ? "50%" : 0),
+      },
+    },
+
+    legendCheckbox: {
+      marginBottom: () => "0.25rem",
+      marginRight: 0,
+    },
+  };
+});
 
 const emptyObj = {};
 
