@@ -7,7 +7,7 @@ import {
   timeSecond,
   timeWeek,
   timeYear,
-} from "d3";
+} from "d3-time";
 
 import { TimeUnit } from "@/graphql/query-hooks";
 

@@ -1,4 +1,5 @@
-import * as d3 from "d3";
+import { mean } from "d3-array";
+import { schemeCategory10 } from "d3-scale-chromatic";
 import React from "react";
 
 import {
@@ -134,10 +135,10 @@ const useComboLineSingleState = (
         };
       })
       .filter(truthy);
-    const yAnchor = d3.mean(values.map((d) => d.yPos));
+    const yAnchor = mean(values.map((d) => d.yPos));
 
     return {
-      datum: { label: "", value: "0", color: d3.schemeCategory10[0] },
+      datum: { label: "", value: "0", color: schemeCategory10[0] },
       xAnchor: xScaled,
       yAnchor: yAnchor,
       xValue: timeFormatUnit(x, xDimension.timeUnit),

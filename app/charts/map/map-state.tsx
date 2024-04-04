@@ -1,3 +1,5 @@
+import { extent } from "d3-array";
+import { color as makeColor } from "d3-color";
 import {
   ScaleLinear,
   ScalePower,
@@ -5,14 +7,12 @@ import {
   ScaleQuantize,
   ScaleSequential,
   ScaleThreshold,
-  extent,
-  color as makeColor,
   scaleQuantile,
   scaleQuantize,
   scaleSequential,
   scaleSqrt,
   scaleThreshold,
-} from "d3";
+} from "d3-scale";
 import {
   Feature,
   FeatureCollection,

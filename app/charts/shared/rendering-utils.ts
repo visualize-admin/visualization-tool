@@ -1,4 +1,5 @@
-import { select, Selection, Transition } from "d3";
+import { select, Selection } from "d3-selection";
+import { Transition } from "d3-transition";
 import React from "react";
 
 import {
@@ -131,7 +132,7 @@ type MaybeTransitionOptions<S extends AnySelection, T extends AnyTransition> = {
 /** Use to conditionally call a transition if required. */
 export function maybeTransition<
   S extends AnySelection,
-  T extends AnyTransition
+  T extends AnyTransition,
 >(g: S, options: MaybeTransitionOptions<S, T>) {
   const { name, transition, s, t } = options;
 

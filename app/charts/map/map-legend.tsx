@@ -1,17 +1,16 @@
 import { Box, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import { range } from "d3-array";
+import { axisBottom } from "d3-axis";
 import {
   NumberValue,
   ScaleLinear,
   ScaleQuantile,
   ScaleQuantize,
   ScaleThreshold,
-  Selection,
-  axisBottom,
-  range,
   scaleLinear,
-  select,
-} from "d3";
+} from "d3-scale";
+import { Selection, select } from "d3-selection";
 import React, { useEffect, useMemo, useRef } from "react";
 
 import { MapState } from "@/charts/map/map-state";

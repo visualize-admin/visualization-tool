@@ -20,10 +20,10 @@ import {
 import { SOURCES_BY_LABEL } from "@/domain/datasource/constants";
 import { getRawCube } from "@/graphql/context";
 import { ResolvedDimension } from "@/graphql/shared-types";
+import * as ns from "@/rdf/namespace";
 import { getCubeDimensions as _getCubeDimensions } from "@/rdf/queries";
+import { formatIriToQueryNode } from "@/rdf/query-utils";
 import { fromStream } from "@/rdf/sparql-client";
-
-import * as ns from "../rdf/namespace";
 
 type CheckResult = {
   ok: boolean;
@@ -60,7 +60,7 @@ const describeCubes = async (
 ) => {
   return Promise.all(
     cubeIris.map(async (cubeIri) => {
-      const query = DESCRIBE`<${cubeIri}>`;
+      const query = DESCRIBE`${formatIriToQueryNode(cubeIri)}`;
       const stream = await query.execute(sparqlClientStream.query);
       const dataset = await fromStream(rdf.dataset(), stream);
       return clownface({ dataset });

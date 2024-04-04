@@ -20,7 +20,7 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { makeStyles } from "@mui/styles";
-import { ascending, groups, max } from "d3";
+import { ascending, groups, max } from "d3-array";
 import get from "lodash/get";
 import groupBy from "lodash/groupBy";
 import keyBy from "lodash/keyBy";

@@ -1,4 +1,5 @@
-import * as d3 from "d3";
+import { extent, groups, max, min, sum } from "d3-array";
+import { scaleLinear, scaleOrdinal, scaleTime } from "d3-scale";
 import React from "react";
 
 import { useWidth } from "@/charts/shared/use-width";
@@ -35,7 +36,7 @@ export const useCommonComboState = (options: UseCommonComboStateOptions) => {
   const timeFormatUnit = useTimeFormatUnit();
 
   const chartDataByX = React.useMemo(() => {
-    return d3.groups(chartData, getXAsString).sort();
+    return groups(chartData, getXAsString).sort();
   }, [chartData, getXAsString]);
 
   const chartWideData = React.useMemo(() => {
@@ -43,7 +44,7 @@ export const useCommonComboState = (options: UseCommonComboStateOptions) => {
 
     for (const [date, observations] of chartDataByX) {
       const total = computeTotal
-        ? d3.sum(observations, (o) => d3.sum(yGetters, (d) => d.getY(o)))
+        ? sum(observations, (o) => sum(yGetters, (d) => d.getY(o)))
         : 0;
       const observation = Object.assign(
         {
@@ -63,20 +64,20 @@ export const useCommonComboState = (options: UseCommonComboStateOptions) => {
   }, [computeTotal, chartDataByX, xKey, yGetters]);
 
   const xScaleTime = React.useMemo(() => {
-    const domain = d3.extent(chartData, getXAsDate) as [Date, Date];
-    return d3.scaleTime().domain(domain);
+    const domain = extent(chartData, getXAsDate) as [Date, Date];
+    return scaleTime().domain(domain);
   }, [chartData, getXAsDate]);
 
   const xScaleTimeRange = React.useMemo(() => {
-    const domain = d3.extent(timeRangeData, getXAsDate) as [Date, Date];
-    return d3.scaleTime().domain(domain);
+    const domain = extent(timeRangeData, getXAsDate) as [Date, Date];
+    return scaleTime().domain(domain);
   }, [getXAsDate, timeRangeData]);
 
   const colors = React.useMemo(() => {
     const domain = yGetters.map((d) => d.label);
     const range = yGetters.map((d) => d.color);
 
-    return d3.scaleOrdinal<string, string>().domain(domain).range(range);
+    return scaleOrdinal<string, string>().domain(domain).range(range);
   }, [yGetters]);
 
   return {
@@ -102,20 +103,19 @@ type UseLeftRightYScalesOptions = {
 export const useYScales = (options: UseLeftRightYScalesOptions) => {
   const { scalesData, paddingData, getY, startAtZero } = options;
   const getMinY = (o: Observation) => {
-    return Array.isArray(getY) ? d3.min(getY, (d) => d(o)) : getY(o);
+    return Array.isArray(getY) ? min(getY, (d) => d(o)) : getY(o);
   };
   const getMaxY = (o: Observation) => {
-    return Array.isArray(getY) ? d3.max(getY, (d) => d(o)) : getY(o);
+    return Array.isArray(getY) ? max(getY, (d) => d(o)) : getY(o);
   };
 
-  const minValue = startAtZero ? 0 : d3.min(scalesData, getMinY) ?? 0;
-  const maxValue = d3.max(scalesData, getMaxY) ?? 0;
-  const yScale = d3.scaleLinear().domain([minValue, maxValue]).nice();
+  const minValue = startAtZero ? 0 : min(scalesData, getMinY) ?? 0;
+  const maxValue = max(scalesData, getMaxY) ?? 0;
+  const yScale = scaleLinear().domain([minValue, maxValue]).nice();
 
-  const paddingMinValue = startAtZero ? 0 : d3.min(paddingData, getMinY) ?? 0;
-  const paddingMaxValue = d3.max(paddingData, getMaxY) ?? 0;
-  const paddingYScale = d3
-    .scaleLinear()
+  const paddingMinValue = startAtZero ? 0 : min(paddingData, getMinY) ?? 0;
+  const paddingMaxValue = max(paddingData, getMaxY) ?? 0;
+  const paddingYScale = scaleLinear()
     .domain([paddingMinValue, paddingMaxValue])
     .nice();
 

@@ -1,4 +1,4 @@
-import { color, RGBColor } from "d3";
+import { color, RGBColor } from "d3-color";
 
 import { Component } from "@/domain/data";
 

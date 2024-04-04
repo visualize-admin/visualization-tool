@@ -1,22 +1,21 @@
+import { extent, group, rollup, sum } from "d3-array";
 import {
-  extent,
-  group,
-  rollup,
-  scaleBand,
   ScaleBand,
-  scaleLinear,
   ScaleLinear,
   ScaleOrdinal,
+  scaleBand,
+  scaleLinear,
   scaleOrdinal,
   scaleTime,
-  schemeCategory10,
+} from "d3-scale";
+import { schemeCategory10 } from "d3-scale-chromatic";
+import {
   stack,
   stackOffsetDiverging,
   stackOrderAscending,
   stackOrderDescending,
   stackOrderReverse,
-  sum,
-} from "d3";
+} from "d3-shape";
 import orderBy from "lodash/orderBy";
 import React, { useCallback, useMemo } from "react";
 

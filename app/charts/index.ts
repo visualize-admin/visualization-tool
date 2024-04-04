@@ -1,4 +1,4 @@
-import { ascending, descending, group, rollup, rollups } from "d3";
+import { ascending, descending, group, rollup, rollups } from "d3-array";
 import produce from "immer";
 import get from "lodash/get";
 import sortBy from "lodash/sortBy";

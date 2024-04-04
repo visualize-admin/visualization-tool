@@ -1,4 +1,4 @@
-import { interpolate } from "d3";
+import { interpolate } from "d3-interpolate";
 
 import { ChartConfig, isAreaConfig } from "@/config-types";
 

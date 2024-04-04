@@ -1,6 +1,7 @@
 import { Box, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { ScaleLinear, hcl } from "d3";
+import { hcl } from "d3-color";
+import { ScaleLinear } from "d3-scale";
 import { Cell } from "react-table";
 
 import { BAR_CELL_PADDING } from "@/charts/table/constants";
@@ -101,8 +102,8 @@ export const CellDesktop = ({
             color: isNull
               ? textColor
               : hcl(hColorScale(cell.value)).l < 55
-              ? "#fff"
-              : "#000",
+                ? "#fff"
+                : "#000",
             backgroundColor: isNull ? "grey.100" : hColorScale(cell.value),
             fontWeight: textStyle,
           }}

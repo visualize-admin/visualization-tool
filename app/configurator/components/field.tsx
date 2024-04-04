@@ -8,7 +8,7 @@ import {
   Typography,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { TimeLocaleObject } from "d3";
+import { TimeLocaleObject } from "d3-time-format";
 import get from "lodash/get";
 import orderBy from "lodash/orderBy";
 import React, {

@@ -1,4 +1,4 @@
-import { axisBottom } from "d3";
+import { axisBottom } from "d3-axis";
 import { useEffect, useRef } from "react";
 
 import { AreasState } from "@/charts/area/areas-state";

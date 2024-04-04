@@ -15,12 +15,14 @@ import { DimensionValue, parseObservationValue } from "@/domain/data";
 import { isDynamicMaxValue } from "@/domain/max-value";
 import { ResolvedDimension } from "@/graphql/shared-types";
 import { pragmas } from "@/rdf/create-source";
-
-import * as ns from "./namespace";
-import { parseDimensionDatatype } from "./parse";
-import { dimensionIsVersioned } from "./queries";
-import { executeWithCache } from "./query-cache";
-import { buildLocalizedSubQuery } from "./query-utils";
+import * as ns from "@/rdf/namespace";
+import { parseDimensionDatatype } from "@/rdf/parse";
+import { dimensionIsVersioned } from "@/rdf/queries";
+import { executeWithCache } from "@/rdf/query-cache";
+import {
+  buildLocalizedSubQuery,
+  formatIriToQueryNode,
+} from "@/rdf/query-utils";
 
 /**
  * Formats a filter value into the right format, string literal
@@ -29,7 +31,7 @@ import { buildLocalizedSubQuery } from "./query-utils";
  */
 const formatFilterValue = (value: string | number, dataType?: Term) => {
   if (!dataType) {
-    return `<${value}>`;
+    return formatIriToQueryNode(value as string);
   } else {
     return `"${value}"`;
   }
@@ -108,6 +110,7 @@ export async function loadDimensionValuesWithMetadata(
 
   const isDimensionVersioned = dimensionIsVersioned(dimension.dimension);
   const query = `PREFIX cube: <https://cube.link/>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
 PREFIX schema: <http://schema.org/>
 PREFIX sh: <http://www.w3.org/ns/shacl#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -120,7 +123,10 @@ CONSTRUCT {
     schema:description ?description ;
     schema:identifier ?identifier ;
     schema:position ?position ;
-    schema:color ?color .
+    schema:color ?color ;
+    geo:hasGeometry ?geometry ;
+    schema:latitude ?latitude ;
+    schema:longitude ?longitude .
 } WHERE { 
   ${
     queryFilters
@@ -161,6 +167,9 @@ CONSTRUCT {
   OPTIONAL { ?value schema:identifier ?identifier . }
   OPTIONAL { ?value schema:position ?position . }
   OPTIONAL { ?value schema:color ?color . }
+  OPTIONAL { ?value geo:hasGeometry ?geometry . }
+  OPTIONAL { ?value schema:latitude ?latitude . }
+  OPTIONAL { ?value schema:longitude ?longitude . }
   ${
     isDimensionVersioned
       ? `OPTIONAL { ?value schema:sameAs ?unversioned_value . }`
@@ -192,6 +201,8 @@ const parseDimensionValue = (
     (d) => d.predicate.value
   );
   const position = valueQuads[ns.schema.position.value]?.object.value;
+  const latitude = valueQuads[ns.schema.latitude.value]?.object.value;
+  const longitude = valueQuads[ns.schema.longitude.value]?.object.value;
   const parsedValue: DimensionValue = {
     value,
     label: parseMaybeUndefined(
@@ -203,6 +214,9 @@ const parseDimensionValue = (
     identifier: valueQuads[ns.schema.identifier.value]?.object.value,
     position: position ? (isNaN(+position) ? position : +position) : undefined,
     color: valueQuads[ns.schema.color.value]?.object.value,
+    geometry: valueQuads[ns.geo.hasGeometry.value]?.object.value,
+    latitude: latitude ? +latitude : undefined,
+    longitude: longitude ? +longitude : undefined,
   };
 
   return pickBy(parsedValue, (v) => v !== undefined) as DimensionValue;
@@ -336,7 +350,7 @@ export const loadMinMaxDimensionValues = async ({
   cache: LRUCache | undefined;
 }) => {
   const query = SELECT`(MIN(?value) as ?minValue) (MAX(?value) as ?maxValue)`
-    .WHERE`<${datasetIri}> ${ns.cube.observationSet}/${ns.cube.observation} ?observation .
+    .WHERE`${formatIriToQueryNode(datasetIri)} ${ns.cube.observationSet}/${ns.cube.observation} ?observation .
 ?observation <${dimensionIri}> ?value .
 FILTER ( (STRLEN(STR(?value)) > 0) && (STR(?value) != "NaN") )`;
 

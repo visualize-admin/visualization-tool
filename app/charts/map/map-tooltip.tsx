@@ -1,5 +1,5 @@
 import { Box, Typography } from "@mui/material";
-import { hcl } from "d3";
+import { hcl } from "d3-color";
 import {
   Dispatch,
   ReactNode,

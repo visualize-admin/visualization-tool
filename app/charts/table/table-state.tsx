@@ -1,17 +1,14 @@
+import { ascending, extent, max, min } from "d3-array";
 import {
   ScaleDiverging,
   ScaleLinear,
   ScaleOrdinal,
   ScaleSequential,
-  ascending,
-  extent,
-  max,
-  min,
   scaleDiverging,
   scaleLinear,
   scaleOrdinal,
-  schemeCategory10,
-} from "d3";
+} from "d3-scale";
+import { schemeCategory10 } from "d3-scale-chromatic";
 import mapKeys from "lodash/mapKeys";
 import mapValues from "lodash/mapValues";
 import { useMemo } from "react";
@@ -167,8 +164,8 @@ const useTableState = (
             types[slugifiedKeys[i]] !== "NumericalMeasure"
               ? d[keys[i]]
               : d[keys[i]] !== null
-              ? +d[keys[i]]!
-              : null;
+                ? +d[keys[i]]!
+                : null;
         }
         return o;
       });

@@ -1,4 +1,5 @@
-import { NumberValue, ScaleLinear, group, scaleLinear, sum } from "d3";
+import { group, sum } from "d3-array";
+import { NumberValue, ScaleLinear, scaleLinear } from "d3-scale";
 
 import {
   NumericalValueGetter,

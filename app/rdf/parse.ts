@@ -1,15 +1,14 @@
 import {
   CountableTimeInterval,
   timeDay,
-  timeFormat,
   timeHour,
   timeMinute,
   timeMonth,
-  timeParse,
   timeSecond,
   timeWeek,
   timeYear,
-} from "d3";
+} from "d3-time";
+import { timeFormat, timeParse } from "d3-time-format";
 import { CubeDimension } from "rdf-cube-view-query";
 import { Term } from "rdf-js";
 

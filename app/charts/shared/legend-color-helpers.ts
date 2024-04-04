@@ -1,4 +1,4 @@
-import { ascending } from "d3";
+import { ascending } from "d3-array";
 
 import { HierarchyValue } from "@/domain/data";
 import { bfs } from "@/utils/bfs";

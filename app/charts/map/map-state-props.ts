@@ -1,4 +1,4 @@
-import { geoCentroid } from "d3";
+import { geoCentroid } from "d3-geo";
 import keyBy from "lodash/keyBy";
 import React from "react";
 

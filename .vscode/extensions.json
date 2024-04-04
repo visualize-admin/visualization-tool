@@ -6,7 +6,11 @@
   "recommendations": [
     "esbenp.prettier-vscode",
     "dbaeumer.vscode-eslint",
-    "unifiedjs.vscode-mdx"
+    "unifiedjs.vscode-mdx",
+    "streetsidesoftware.code-spell-checker",
+    "mquandalle.graphql",
+    "codeandstuff.package-json-upgrade",
+    "ambar.bundle-size"
   ],
   // List of extensions recommended by VS Code that should not be recommended for users of this workspace.
   "unwantedRecommendations": []

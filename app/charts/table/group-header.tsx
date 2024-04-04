@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import { hcl } from "d3";
+import { hcl } from "d3-color";
 import * as React from "react";
 import { Row } from "react-table";
 

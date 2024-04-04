@@ -1,4 +1,4 @@
-import { InternMap, sum } from "d3";
+import { InternMap, sum } from "d3-array";
 import omitBy from "lodash/omitBy";
 import uniq from "lodash/uniq";
 import React, { useCallback, useMemo } from "react";

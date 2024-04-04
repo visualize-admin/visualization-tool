@@ -1,4 +1,4 @@
-import { ascending, descending } from "d3";
+import { ascending, descending } from "d3-array";
 import DataLoader from "dataloader";
 import ParsingClient from "sparql-http-client/ParsingClient";
 import { topology } from "topojson-server";
@@ -11,7 +11,6 @@ import {
   BaseDimension,
   Dimension,
   DimensionValue,
-  GeoFeature,
   GeoProperties,
   GeoShapes,
   Measure,
@@ -19,6 +18,7 @@ import {
   TemporalEntityDimension,
   isMeasure,
 } from "@/domain/data";
+import { truthy } from "@/domain/types";
 import { Loaders } from "@/graphql/context";
 import {
   QueryResolvers,
@@ -34,7 +34,7 @@ import {
   getCubeObservations,
   getLatestCube,
 } from "@/rdf/queries";
-import { RawGeoShape } from "@/rdf/query-geo-shapes";
+import { GeoShape } from "@/rdf/query-geo-shapes";
 import { parseHierarchy, queryHierarchies } from "@/rdf/query-hierarchies";
 import { getPossibleFilters } from "@/rdf/query-possible-filters";
 import { SearchResult, searchCubes as _searchCubes } from "@/rdf/query-search";
@@ -105,26 +105,38 @@ export const dataCubeDimensionGeoShapes: NonNullable<
     loaders,
     cache
   );
-  // FIXME: type fixed by other PR
-  const dimensionValues: DimensionValue[] =
-    await dimensionValuesLoader.load(dimension);
-  const values = dimensionValues.map((d) => `${d.value}`);
-  const shapes = await Promise.all(
-    values.map((d) => loaders.geoShapes.load(d))
+  const dimensionValues = await dimensionValuesLoader.load(dimension);
+  const geometries = dimensionValues.map((d) => d.geometry).filter(truthy);
+
+  if (geometries.length === 0) {
+    throw new Error(`No geometries found for dimension ${dimensionIri}!`);
+  }
+
+  const dimensionValuesByGeometry = new Map(
+    dimensionValues.map((d) => [d.geometry, d.value])
   );
+  const dimensionValuesByValue = new Map(
+    dimensionValues.map((d) => [d.value, d.label])
+  );
+  const shapes = await loaders.geoShapes.loadMany(geometries);
   const geoJSONFeatures = shapes
     .filter(
-      (d): d is Exclude<RawGeoShape, "wktString"> & { wktString: string } =>
-        d.wktString !== undefined
+      (
+        shape
+      ): shape is Exclude<GeoShape, "wktString"> & { wktString: string } =>
+        !(shape instanceof Error) && shape.wktString !== undefined
     )
-    .map((d) => ({
-      type: "Feature",
-      properties: {
-        iri: d.iri,
-        label: d.label,
-      },
-      geometry: parseWKT(d.wktString),
-    })) as GeoFeature[];
+    .map((shape) => {
+      const value = dimensionValuesByGeometry.get(shape.geometryIri) as string;
+      return {
+        type: "Feature",
+        properties: {
+          iri: value,
+          label: dimensionValuesByValue.get(value),
+        },
+        geometry: parseWKT(shape.wktString),
+      };
+    });
 
   return {
     topology: topology({
@@ -134,21 +146,6 @@ export const dataCubeDimensionGeoShapes: NonNullable<
       } as GeoJSON.FeatureCollection<GeoJSON.Geometry, GeoProperties>,
     }) as GeoShapes["topology"],
   };
-};
-
-export const dataCubeDimensionGeoCoordinates: NonNullable<
-  QueryResolvers["dataCubeDimensionGeoCoordinates"]
-> = async (_, { cubeIri, dimensionIri, locale }, { setup }, info) => {
-  const { loaders, sparqlClient, cache } = await setup(info);
-  const dimension = await getResolvedDimension(dimensionIri, {
-    cubeIri,
-    locale,
-    sparqlClient,
-    loaders,
-    cache,
-  });
-
-  return await loaders.geoCoordinates.load(dimension);
 };
 
 // TODO: could be refactored to not fetch the whole cube shape.

@@ -1,4 +1,4 @@
-import { ascending, descending, group } from "d3";
+import { ascending, descending, group } from "d3-array";
 import React from "react";
 
 import { getWideData, usePlottableData } from "@/charts/shared/chart-helpers";

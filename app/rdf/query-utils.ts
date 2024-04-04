@@ -6,6 +6,10 @@ import { cube, schema } from "../../app/rdf/namespace";
 
 export const GROUP_SEPARATOR = "|||";
 
+export const formatIriToQueryNode = (iri: string) => {
+  return `<${iri}>`;
+};
+
 export const buildLocalizedSubQuery = (
   s: string,
   p: string,

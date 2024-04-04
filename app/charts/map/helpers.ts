@@ -1,6 +1,7 @@
 import { WebMercatorViewport } from "@deck.gl/core/typed";
 import { MapboxOverlay, MapboxOverlayProps } from "@deck.gl/mapbox/typed";
-import { extent, geoBounds } from "d3";
+import { extent } from "d3-array";
+import { geoBounds } from "d3-geo";
 import { useMemo, useState } from "react";
 import { ViewState, useControl } from "react-map-gl";
 import { feature } from "topojson-client";

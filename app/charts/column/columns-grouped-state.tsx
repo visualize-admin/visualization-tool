@@ -1,19 +1,14 @@
+import { extent, group, max, min, rollup, sum } from "d3-array";
 import {
-  extent,
-  group,
-  max,
-  min,
-  rollup,
-  scaleBand,
   ScaleBand,
   ScaleLinear,
-  scaleLinear,
   ScaleOrdinal,
+  scaleBand,
+  scaleLinear,
   scaleOrdinal,
   scaleTime,
-  schemeCategory10,
-  sum,
-} from "d3";
+} from "d3-scale";
+import { schemeCategory10 } from "d3-scale-chromatic";
 import orderBy from "lodash/orderBy";
 import { useMemo } from "react";
 

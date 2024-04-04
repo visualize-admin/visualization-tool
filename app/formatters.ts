@@ -1,13 +1,7 @@
-import {
-  NumberValue,
-  format,
-  timeDay,
-  timeHour,
-  timeMinute,
-  timeMonth,
-  timeParse,
-  timeYear,
-} from "d3";
+import { format } from "d3-format";
+import { NumberValue } from "d3-scale";
+import { timeDay, timeHour, timeMinute, timeMonth, timeYear } from "d3-time";
+import { timeParse } from "d3-time-format";
 import keyBy from "lodash/keyBy";
 import memoize from "lodash/memoize";
 import { useMemo } from "react";

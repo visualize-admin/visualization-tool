@@ -1,4 +1,4 @@
-import * as d3 from "d3";
+import { line } from "d3-shape";
 import React from "react";
 
 import {
@@ -93,8 +93,7 @@ const Lines = () => {
     y.left.chartType === "line"
       ? yOrientationScales.left
       : yOrientationScales.right;
-  const line = d3
-    .line<Observation>()
+  const pathGenerator = line<Observation>()
     // FIXME: add missing observations basing on the time interval, so we can
     // properly indicate the missing data.
     .defined((d) => {
@@ -106,7 +105,10 @@ const Lines = () => {
 
   return (
     <g transform={`translate(${bounds.margins.left} ${bounds.margins.top})`}>
-      <Line path={line(chartData) as string} color={colors(yLine.label)} />
+      <Line
+        path={pathGenerator(chartData) as string}
+        color={colors(yLine.label)}
+      />
     </g>
   );
 };

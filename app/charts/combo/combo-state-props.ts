@@ -1,4 +1,4 @@
-import { ascending } from "d3";
+import { ascending } from "d3-array";
 
 import { TemporalValueGetter } from "@/charts/shared/chart-state";
 import { Measure, Observation } from "@/domain/data";

@@ -28,6 +28,9 @@ export type DimensionValue = {
   color?: string;
   identifier?: string | number;
   alternateName?: string;
+  geometry?: string;
+  latitude?: number;
+  longitude?: number;
 };
 
 export type HierarchyValue = {
@@ -327,6 +330,19 @@ type GeoCoordinate = {
   label: string;
   latitude: number;
   longitude: number;
+};
+
+export const dimensionValuesToGeoCoordinates = (
+  values: DimensionValue[]
+): GeoCoordinates => {
+  return values
+    .filter((d) => d.latitude && d.longitude)
+    .map((d) => ({
+      iri: d.value as string,
+      label: d.label,
+      latitude: d.latitude!,
+      longitude: d.longitude!,
+    }));
 };
 
 export type GeoCoordinates = GeoCoordinate[];

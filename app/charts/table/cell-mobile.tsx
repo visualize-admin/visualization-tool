@@ -1,6 +1,6 @@
 import { Box, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { hcl } from "d3";
+import { hcl } from "d3-color";
 import { Cell, Row } from "react-table";
 
 import { useChartState } from "@/charts/shared/chart-state";
@@ -147,8 +147,8 @@ export const DDContent = ({
             color: isNull
               ? textColor
               : hcl(hColorScale(cell.value)).l < 55
-              ? "#fff"
-              : "#000",
+                ? "#fff"
+                : "#000",
             backgroundColor: isNull ? "grey.100" : hColorScale(cell.value),
             fontWeight: textStyle,
             px: 1,

@@ -1,4 +1,4 @@
-import { ascending } from "d3";
+import { ascending } from "d3-array";
 import React from "react";
 
 import { ChartProps } from "@/charts/shared/ChartProps";

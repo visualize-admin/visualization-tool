@@ -1,7 +1,7 @@
 import { Trans } from "@lingui/macro";
 import { Box, Button, Popover, styled, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { color as d3Color } from "d3";
+import { color as d3Color } from "d3-color";
 import { MouseEventHandler, useRef } from "react";
 
 import useDisclosure from "@/components/use-disclosure";

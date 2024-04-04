@@ -17,8 +17,10 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 - Performance
   - Switched to a cached LINDAS endpoint (PROD)
   - The application now fires the `PossibleFilters` query as soon as a chart is initialized to always load filters that make sense, without initial reloading
+  - Refactored geographical queries to be simpler and use fewer queries to get necessary information
 - Maintenance
   - Removed some unused dependencies
+  - Reduced bundle size by optimizing d3 imports
 
 # [4.0.0] - 2024-03-26
 
