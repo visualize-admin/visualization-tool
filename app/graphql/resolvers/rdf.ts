@@ -118,15 +118,13 @@ export const dataCubeDimensionGeoShapes: NonNullable<
   const dimensionValuesByValue = new Map(
     dimensionValues.map((d) => [d.value, d.label])
   );
-  const shapes = await Promise.all(
-    geometries.map((geometry) => loaders.geoShapes.load(geometry))
-  );
+  const shapes = await loaders.geoShapes.loadMany(geometries);
   const geoJSONFeatures = shapes
     .filter(
       (
         shape
       ): shape is Exclude<GeoShape, "wktString"> & { wktString: string } =>
-        shape.wktString !== undefined
+        !(shape instanceof Error) && shape.wktString !== undefined
     )
     .map((shape) => {
       const value = dimensionValuesByGeometry.get(shape.geometryIri) as string;
