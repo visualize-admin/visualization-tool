@@ -9,6 +9,18 @@ import maplibreglraw from "maplibre-gl";
 import React, { useState } from "react";
 import Map, { LngLatLike, MapboxEvent } from "react-map-gl";
 
+import "maplibre-gl/dist/maplibre-gl.css";
+
+import {
+  DEFAULT_COLOR,
+  FLY_TO_DURATION,
+  RESET_DURATION,
+} from "@/charts/map/constants";
+import { useMapStyle } from "@/charts/map/get-base-layer-style";
+import { DeckGLOverlay, useViewState } from "@/charts/map/helpers";
+import { MapState } from "@/charts/map/map-state";
+import { HoverObjectType, useMapTooltip } from "@/charts/map/map-tooltip";
+import { getMap, setMap } from "@/charts/map/ref";
 import { useChartState } from "@/charts/shared/chart-state";
 import { useInteraction } from "@/charts/shared/use-interaction";
 import { BBox } from "@/configurator";
@@ -16,15 +28,6 @@ import { GeoFeature, GeoPoint } from "@/domain/data";
 import { Icon, IconName } from "@/icons";
 import { useLocale } from "@/src";
 import useEvent from "@/utils/use-event";
-
-import "maplibre-gl/dist/maplibre-gl.css";
-
-import { DEFAULT_COLOR, FLY_TO_DURATION, RESET_DURATION } from "./constants";
-import { useMapStyle } from "./get-base-layer-style";
-import { DeckGLOverlay, useViewState } from "./helpers";
-import { MapState } from "./map-state";
-import { HoverObjectType, useMapTooltip } from "./map-tooltip";
-import { getMap, setMap } from "./ref";
 
 // supported was removed as of maplibre-gl v3.0.0, so we need to add it back
 const maplibregl = { ...maplibreglraw, supported };
