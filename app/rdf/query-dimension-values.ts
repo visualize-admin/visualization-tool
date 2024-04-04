@@ -110,6 +110,7 @@ export async function loadDimensionValuesWithMetadata(
 
   const isDimensionVersioned = dimensionIsVersioned(dimension.dimension);
   const query = `PREFIX cube: <https://cube.link/>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
 PREFIX schema: <http://schema.org/>
 PREFIX sh: <http://www.w3.org/ns/shacl#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -122,7 +123,8 @@ CONSTRUCT {
     schema:description ?description ;
     schema:identifier ?identifier ;
     schema:position ?position ;
-    schema:color ?color .
+    schema:color ?color ;
+    geo:hasGeometry ?geometry .
 } WHERE { 
   ${
     queryFilters
@@ -163,6 +165,7 @@ CONSTRUCT {
   OPTIONAL { ?value schema:identifier ?identifier . }
   OPTIONAL { ?value schema:position ?position . }
   OPTIONAL { ?value schema:color ?color . }
+  OPTIONAL { ?value geo:hasGeometry ?geometry . }
   ${
     isDimensionVersioned
       ? `OPTIONAL { ?value schema:sameAs ?unversioned_value . }`
@@ -205,6 +208,7 @@ const parseDimensionValue = (
     identifier: valueQuads[ns.schema.identifier.value]?.object.value,
     position: position ? (isNaN(+position) ? position : +position) : undefined,
     color: valueQuads[ns.schema.color.value]?.object.value,
+    geometry: valueQuads[ns.geo.hasGeometry.value]?.object.value,
   };
 
   return pickBy(parsedValue, (v) => v !== undefined) as DimensionValue;

@@ -11,7 +11,6 @@ import {
   BaseDimension,
   Dimension,
   DimensionValue,
-  GeoFeature,
   GeoProperties,
   GeoShapes,
   Measure,
@@ -19,6 +18,7 @@ import {
   TemporalEntityDimension,
   isMeasure,
 } from "@/domain/data";
+import { truthy } from "@/domain/types";
 import { Loaders } from "@/graphql/context";
 import {
   QueryResolvers,
@@ -106,24 +106,39 @@ export const dataCubeDimensionGeoShapes: NonNullable<
     cache
   );
   const dimensionValues = await dimensionValuesLoader.load(dimension);
-  const values = dimensionValues.map((d) => `${d.value}`);
-  const labelsByValue = new Map(dimensionValues.map((d) => [d.value, d.label]));
+  const geometries = dimensionValues.map((d) => d.geometry).filter(truthy);
+
+  if (geometries.length === 0) {
+    throw new Error(`No geometries found for dimension ${dimensionIri}!`);
+  }
+
+  const dimensionValuesByGeometry = new Map(
+    dimensionValues.map((d) => [d.geometry, d.value])
+  );
+  const dimensionValuesByValue = new Map(
+    dimensionValues.map((d) => [d.value, d.label])
+  );
   const shapes = await Promise.all(
-    values.map((d) => loaders.geoShapes.load(d))
+    geometries.map((geometry) => loaders.geoShapes.load(geometry))
   );
   const geoJSONFeatures = shapes
     .filter(
-      (d): d is Exclude<GeoShape, "wktString"> & { wktString: string } =>
-        d.wktString !== undefined
+      (
+        shape
+      ): shape is Exclude<GeoShape, "wktString"> & { wktString: string } =>
+        shape.wktString !== undefined
     )
-    .map((d) => ({
-      type: "Feature",
-      properties: {
-        iri: d.iri,
-        label: labelsByValue.get(d.iri),
-      },
-      geometry: parseWKT(d.wktString),
-    })) as GeoFeature[];
+    .map((shape) => {
+      const value = dimensionValuesByGeometry.get(shape.geometryIri) as string;
+      return {
+        type: "Feature",
+        properties: {
+          iri: value,
+          label: dimensionValuesByValue.get(value),
+        },
+        geometry: parseWKT(shape.wktString),
+      };
+    });
 
   return {
     topology: topology({

@@ -28,6 +28,7 @@ export type DimensionValue = {
   color?: string;
   identifier?: string | number;
   alternateName?: string;
+  geometry?: string;
 };
 
 export type HierarchyValue = {

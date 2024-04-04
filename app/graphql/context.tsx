@@ -76,10 +76,9 @@ const createLoaders = async (
       createGeoCoordinatesLoader({ locale, sparqlClient }),
       { maxBatchSize: MAX_BATCH_SIZE * 0.5 }
     ),
-    geoShapes: new DataLoader(
-      createGeoShapesLoader({ sparqlClient, geoSparqlClient }),
-      { maxBatchSize: MAX_BATCH_SIZE * 0.5 }
-    ),
+    geoShapes: new DataLoader(createGeoShapesLoader({ geoSparqlClient }), {
+      maxBatchSize: MAX_BATCH_SIZE * 0.5,
+    }),
   } as const;
 };
 
