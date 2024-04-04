@@ -108,7 +108,9 @@ export const ChartMapVisualization = ({
     (areaDimensionIri === "" ||
       (areaDimensionIri !== "" && geometries?.length === 0)) &&
     (symbolDimensionIri === "" ||
-      (symbolDimensionIri !== "" && coordinates?.length === 0)) &&
+      (symbolDimensionIri !== "" &&
+        geometries?.length === 0 &&
+        coordinates?.length === 0)) &&
     areaDimensionIri !== symbolDimensionIri;
 
   return displayNoDataError ? (
