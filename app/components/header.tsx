@@ -6,11 +6,10 @@ import { useRouter } from "next/router";
 
 import { DataSourceMenu } from "@/components/data-source-menu";
 import Flex from "@/components/flex";
+import { HEADER_HEIGHT } from "@/components/header-constants";
 import { LanguageMenu } from "@/components/language-menu";
 import { SOURCE_OPTIONS } from "@/domain/datasource/constants";
 import { LoginMenu } from "@/login/components/login-menu";
-
-export const HEADER_HEIGHT = 92;
 
 const useHeaderBorderStyles = makeStyles((theme: Theme) => ({
   root: {

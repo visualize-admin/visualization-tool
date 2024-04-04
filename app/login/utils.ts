@@ -2,7 +2,7 @@ import { Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { useSession } from "next-auth/react";
 
-import { HEADER_HEIGHT } from "@/components/header";
+import { HEADER_HEIGHT } from "@/components/header-constants";
 
 export const useRootStyles = makeStyles<Theme>((theme) => ({
   root: {
