@@ -22,6 +22,7 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
   - Refactored geographical queries to be simpler and use fewer queries to get necessary information
 - Style
   - Added black borders to map shapes, so overlaps are better visible
+  - Optimized the design of select elements and drag handles
 - Maintenance
   - Removed some unused dependencies
   - Reduced bundle size by optimizing d3 imports
