@@ -490,22 +490,27 @@ const DisabledMessageIcon = (props: DisabledMessageIconProps) => {
   );
 };
 
-export const MinimalisticSelect = ({
-  label,
-  id,
-  value,
-  options,
-  onChange,
-  smaller = false,
-  disabled,
-  ...props
-}: {
+type MinimalisticSelectProps = {
   id: string;
   options: Option[];
   label?: ReactNode;
   disabled?: boolean;
   smaller?: boolean;
-} & SelectProps) => (
+} & SelectProps;
+
+export const MinimalisticSelect = (props: MinimalisticSelectProps) => {
+  const {
+    label,
+    id,
+    value,
+    options,
+    onChange,
+    smaller = false,
+    disabled,
+    ...rest
+  } = props;
+
+  return (
   <Box sx={{ color: "grey.800" }}>
     {label && (
       <Label htmlFor={id} smaller>
@@ -520,6 +525,7 @@ export const MinimalisticSelect = ({
 
         backgroundColor: "transparent",
         p: 0,
+          pr: 2,
         pl: 1,
         mr: 1, // Fix for Chrome which cuts of the label otherwise
         ":focus": {
@@ -534,7 +540,19 @@ export const MinimalisticSelect = ({
       onChange={onChange}
       value={value}
       disabled={disabled}
+        IconComponent={(props) => (
+          <span
       {...props}
+            style={{
+              ...props.style,
+              right: 12,
+              transition: "transform 0.1s",
+            }}
+          >
+            <Icon name="chevronDown" size={16} />
+          </span>
+        )}
+        {...rest}
     >
       {options.map((opt) => (
         <MenuItem key={opt.value} value={opt.value || undefined}>
@@ -544,6 +562,7 @@ export const MinimalisticSelect = ({
     </MUISelect>
   </Box>
 );
+};
 
 export const Input = ({
   label,
