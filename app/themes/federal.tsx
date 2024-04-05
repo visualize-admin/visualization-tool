@@ -614,6 +614,24 @@ theme.components = {
     },
   },
   MuiSelect: {
+    defaultProps: {
+      IconComponent: (props) => (
+        <span
+          {...props}
+          style={{
+            ...props.style,
+            right: 12,
+            transition: "transform 0.1s",
+          }}
+        >
+          <Icon
+            name="chevronDown"
+            size={16}
+            style={{ transform: "scale(1.5)" }}
+          />
+        </span>
+      ),
+    },
     styleOverrides: {
       select: {
         display: "flex",
