@@ -4,7 +4,7 @@ import { makeStyles } from "@mui/styles";
 import { ReactNode } from "react";
 import { Draggable, Droppable } from "react-beautiful-dnd";
 
-import MoveDragButtons from "@/components/move-drag-buttons";
+import { MoveDragButton } from "@/components/move-drag-button";
 import { TableColumn } from "@/config-types";
 import { DraggableTab } from "@/configurator/components/chart-controls/control-tab";
 import {
@@ -49,7 +49,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-type Props = {
+type TabDropZoneProps = {
   id: string;
   title: ReactNode;
   items: TableColumn[];
@@ -57,20 +57,18 @@ type Props = {
   measures: Measure[];
   isDropDisabled?: boolean;
   emptyComponent?: React.ReactNode;
-  onUp: (idx: number) => void;
-  onDown: (idx: number) => void;
 };
-export const TabDropZone = ({
-  id,
-  items,
-  title,
-  dimensions,
-  measures,
-  isDropDisabled,
-  emptyComponent,
-  onUp,
-  onDown,
-}: Props) => {
+
+export const TabDropZone = (props: TabDropZoneProps) => {
+  const {
+    id,
+    title,
+    items,
+    dimensions,
+    measures,
+    isDropDisabled,
+    emptyComponent,
+  } = props;
   const classes = useStyles();
   const components = [...dimensions, ...measures];
 
@@ -123,21 +121,13 @@ export const TabDropZone = ({
                               disabled={isHidden}
                             />
                             <Box className={classes.dragButtons}>
-                              <MoveDragButtons
-                                moveUpButtonProps={{
-                                  title: t({ id: "Move filter up" }),
-                                }}
-                                moveDownButtonProps={{
-                                  title: t({ id: "Move filter down" }),
-                                }}
+                              <MoveDragButton
+                                className="buttons"
                                 dragButtonProps={{
                                   title: t({
                                     id: "Drag filters to reorganize",
                                   }),
                                 }}
-                                className="buttons"
-                                onClickUp={() => onUp(index)}
-                                onClickDown={() => onDown(index)}
                               />
                             </Box>
                           </Box>

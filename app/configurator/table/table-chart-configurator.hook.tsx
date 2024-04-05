@@ -78,28 +78,12 @@ export const useTableChartController = (
     []
   );
 
-  const handleMove = useCallback(
-    (delta: number, droppableId: string) => (curIndex: number) => {
-      const newIndex = curIndex + delta;
-      if (newIndex < 0) {
-        return;
-      }
-
-      handleDragEnd({
-        source: { droppableId, index: curIndex },
-        destination: { droppableId, index: newIndex },
-      });
-    },
-    [handleDragEnd]
-  );
-
   return {
     dimensions: components?.dataCubesComponents.dimensions,
     measures: components?.dataCubesComponents.measures,
     currentDraggableId,
     handleDragStart,
     handleDragEnd,
-    handleMove,
     chartConfig: {
       ...chartConfig,
       fields: chartConfig.fields as TableFields,
