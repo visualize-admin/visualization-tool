@@ -621,7 +621,7 @@ theme.components = {
           style={{
             ...props.style,
             right: 12,
-            transition: "transform 0.1s",
+            transition: "transform 0.15s ease",
           }}
         >
           <Icon

@@ -100,11 +100,18 @@ type DataFilterSelectGenericProps = {
   index: number;
   disabled?: boolean;
   onRemove: () => void;
+  sideControls?: React.ReactNode;
 };
 
 const DataFilterSelectGeneric = (props: DataFilterSelectGenericProps) => {
-  const { rawDimension, filterDimensionIris, index, disabled, onRemove } =
-    props;
+  const {
+    rawDimension,
+    filterDimensionIris,
+    index,
+    disabled,
+    onRemove,
+    sideControls,
+  } = props;
   const locale = useLocale();
   const [state] = useConfiguratorState();
   const chartConfig = getChartConfig(state);
@@ -151,6 +158,7 @@ const DataFilterSelectGeneric = (props: DataFilterSelectGenericProps) => {
       </OpenMetadataPanelWrapper>
     ),
     controls,
+    sideControls,
     id: `select-single-filter-${index}`,
     disabled: fetching || disabled,
     isOptional: !dimension.isKeyDimension,
@@ -706,15 +714,17 @@ export const ChartConfigurator = ({
                               onRemove={() =>
                                 handleRemoveDimensionFilter(dimension)
                               }
+                              sideControls={
+                                <MoveDragButton
+                                  className="buttons"
+                                  dragButtonProps={{
+                                    title: t({
+                                      id: "Drag filters to reorganize",
+                                    }),
+                                  }}
+                                />
+                              }
                             />
-                            <MoveDragButton
-                              className="buttons"
-                                dragButtonProps={{
-                                  title: t({
-                                    id: "Drag filters to reorganize",
-                                  }),
-                                }}
-                              />
                           </div>
                         )}
                       </Draggable>

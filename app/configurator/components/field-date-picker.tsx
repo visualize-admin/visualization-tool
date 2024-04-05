@@ -14,7 +14,8 @@ type DatePickerFieldProps = {
   onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
   disabled?: boolean;
   isDateDisabled: (date: Date) => boolean;
-  controls?: React.ReactNode;
+  topControls?: React.ReactNode;
+  sideControls?: React.ReactNode;
   timeUnit?: DatePickerTimeUnit;
   dateFormat?: (d: Date) => string;
 } & Omit<
@@ -30,7 +31,8 @@ export const DatePickerField = (props: DatePickerFieldProps) => {
     onChange,
     disabled,
     isDateDisabled,
-    controls,
+    topControls,
+    sideControls,
     timeUnit = TimeUnit.Day,
     dateFormat = timeFormat("%Y-%m-%d"),
     ...rest
@@ -61,48 +63,60 @@ export const DatePickerField = (props: DatePickerFieldProps) => {
         fontSize: "1rem",
       }}
     >
-      {label && name && (
-        <Label htmlFor={name} smaller sx={{ my: 1 }}>
-          {label}
-          {controls}
-        </Label>
-      )}
-      <DatePicker<Date>
-        {...rest}
-        {...dateLimitProps}
-        inputFormat={getInputFormat(timeUnit)}
-        views={getViews(timeUnit)}
-        value={value}
-        onAccept={handleChange}
-        // Need to pass onChange to avoid type error.
-        onChange={() => {}}
-        // We need to render the day picker ourselves to correctly highlight
-        // the selected day. It's broken in the MUI date picker.
-        renderDay={(day, _, dayPickerProps) => {
-          return (
-            <PickersDay
-              {...dayPickerProps}
-              selected={value.getTime() === day.getTime()}
-            />
-          );
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateAreas: `"topControls ." "datePicker sideControls"`,
+          gridTemplateColumns: "1fr auto",
+          columnGap: 2,
         }}
-        renderInput={(params) => (
-          <TextField
-            hiddenLabel
-            size="small"
-            {...params}
-            sx={{
-              ...params.sx,
-
-              "& input": {
-                minHeight: "23px",
-                typography: "body2",
-              },
-            }}
-          />
+      >
+        {label && name && (
+          <Label htmlFor={name} smaller sx={{ gridArea: "topControls" }}>
+            {label}
+            {topControls}
+          </Label>
         )}
-        disabled={disabled}
-      />
+        <Box sx={{ gridArea: "datePicker" }}>
+          <DatePicker<Date>
+            {...rest}
+            {...dateLimitProps}
+            inputFormat={getInputFormat(timeUnit)}
+            views={getViews(timeUnit)}
+            value={value}
+            onAccept={handleChange}
+            // Need to pass onChange to avoid type error.
+            onChange={() => {}}
+            // We need to render the day picker ourselves to correctly highlight
+            // the selected day. It's broken in the MUI date picker.
+            renderDay={(day, _, dayPickerProps) => {
+              return (
+                <PickersDay
+                  {...dayPickerProps}
+                  selected={value.getTime() === day.getTime()}
+                />
+              );
+            }}
+            renderInput={(params) => (
+              <TextField
+                hiddenLabel
+                size="small"
+                {...params}
+                sx={{
+                  ...params.sx,
+
+                  "& input": {
+                    minHeight: "23px",
+                    typography: "body2",
+                  },
+                }}
+              />
+            )}
+            disabled={disabled}
+          />
+        </Box>
+        <Box sx={{ gridArea: "sideControls", m: "auto" }}>{sideControls}</Box>
+      </Box>
     </Box>
   );
 };

@@ -306,33 +306,38 @@ type SelectOption = Option & {
   disabledMessage?: string;
 };
 
-export const Select = ({
-  label,
-  id,
-  value,
-  disabled,
-  options,
-  onChange,
-  sortOptions = true,
-  controls,
-  optionGroups,
-  open,
-  onClose,
-  onOpen,
-  loading,
-  hint,
-  sx,
-}: {
+type FormSelectProps = {
   id: string;
   options: SelectOption[];
   label?: ReactNode;
   disabled?: boolean;
   sortOptions?: boolean;
-  controls?: React.ReactNode;
+  topControls?: React.ReactNode;
+  sideControls?: React.ReactNode;
   optionGroups?: [OptionGroup, SelectOption[]][];
   loading?: boolean;
   hint?: string;
-} & SelectProps) => {
+} & SelectProps;
+
+export const Select = (props: FormSelectProps) => {
+  const {
+    label,
+    id,
+    value,
+    disabled,
+    options,
+    onChange,
+    sortOptions = true,
+    topControls,
+    sideControls,
+    optionGroups,
+    open,
+    onClose,
+    onOpen,
+    loading,
+    hint,
+    sx,
+  } = props;
   const locale = useLocale();
   const sortedOptions = useMemo(() => {
     if (optionGroups) {
@@ -357,10 +362,10 @@ export const Select = ({
           <Label
             htmlFor={id}
             smaller
-            sx={{ display: "flex", alignItems: "center", my: "6px" }}
+            sx={{ display: "flex", alignItems: "center", mt: 2 }}
           >
             {label}
-            {controls}
+            {topControls}
             {loading && (
               <CircularProgress
                 size={12}
@@ -373,90 +378,93 @@ export const Select = ({
             )}
           </Label>
         )}
-        <MUISelect
-          sx={{ width: "100%" }}
-          id={id}
-          name={id}
-          onChange={onChange}
-          value={value}
-          disabled={disabled}
-          open={open}
-          onOpen={onOpen}
-          onClose={onClose}
-          MenuProps={{
-            PaperProps: {
-              // @ts-ignore - It works
-              component: LoadingMenuPaper,
-            },
-          }}
-          renderValue={(value) => {
-            const selectedOption = sortedOptions.find(
-              (opt) => opt.value === value
-            );
+        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+          <MUISelect
+            sx={{ width: "100%" }}
+            id={id}
+            name={id}
+            onChange={onChange}
+            value={value}
+            disabled={disabled}
+            open={open}
+            onOpen={onOpen}
+            onClose={onClose}
+            MenuProps={{
+              PaperProps: {
+                // @ts-ignore - It works
+                component: LoadingMenuPaper,
+              },
+            }}
+            renderValue={(value) => {
+              const selectedOption = sortedOptions.find(
+                (opt) => opt.value === value
+              );
 
-            if (!selectedOption) {
-              return "";
-            }
+              if (!selectedOption) {
+                return "";
+              }
 
-            return (
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  width: "100%",
-                }}
-              >
-                <InputLabel
+              return (
+                <Box
                   sx={{
-                    typography: "body2",
-                    color: "secondary.active",
-                    pointerEvents: "none",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    width: "100%",
                   }}
                 >
-                  {selectedOption.label}
-                </InputLabel>
-                {hint && <DisabledMessageIcon message={hint} />}
-              </Box>
-            );
-          }}
-        >
-          {sortedOptions.map((opt) => {
-            if (!opt.value && opt.type !== "group") {
-              return null;
-            }
+                  <InputLabel
+                    sx={{
+                      typography: "body2",
+                      color: "secondary.active",
+                      pointerEvents: "none",
+                    }}
+                  >
+                    {selectedOption.label}
+                  </InputLabel>
+                  {hint && <DisabledMessageIcon message={hint} />}
+                </Box>
+              );
+            }}
+          >
+            {sortedOptions.map((opt) => {
+              if (!opt.value && opt.type !== "group") {
+                return null;
+              }
 
-            return opt.type === "group" ? (
-              opt.label && (
-                <ListSubheader key={opt.label}>{opt.label}</ListSubheader>
-              )
-            ) : (
-              <MenuItem
-                key={opt.value}
-                disabled={opt.disabled}
-                value={opt.value ?? undefined}
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  "&.Mui-disabled": {
-                    opacity: 1,
+              return opt.type === "group" ? (
+                opt.label && (
+                  <ListSubheader key={opt.label}>{opt.label}</ListSubheader>
+                )
+              ) : (
+                <MenuItem
+                  key={opt.value}
+                  disabled={opt.disabled}
+                  value={opt.value ?? undefined}
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    "&.Mui-disabled": {
+                      opacity: 1,
 
-                    "&:hover": {
-                      backgroundColor: "transparent",
+                      "&:hover": {
+                        backgroundColor: "transparent",
+                      },
                     },
-                  },
-                }}
-              >
-                <span style={{ opacity: opt.disabled ? 0.38 : 1 }}>
-                  {opt.label}
-                </span>
-                {opt.disabledMessage && (
-                  <DisabledMessageIcon message={opt.disabledMessage} />
-                )}
-              </MenuItem>
-            );
-          })}
-        </MUISelect>
+                  }}
+                >
+                  <span style={{ opacity: opt.disabled ? 0.38 : 1 }}>
+                    {opt.label}
+                  </span>
+                  {opt.disabledMessage && (
+                    <DisabledMessageIcon message={opt.disabledMessage} />
+                  )}
+                </MenuItem>
+              );
+            })}
+          </MUISelect>
+          {sideControls}
+        </Box>
       </Box>
     </LoadingMenuPaperContext.Provider>
   );
@@ -511,38 +519,38 @@ export const MinimalisticSelect = (props: MinimalisticSelectProps) => {
   } = props;
 
   return (
-  <Box sx={{ color: "grey.800" }}>
-    {label && (
-      <Label htmlFor={id} smaller>
-        {label}
-      </Label>
-    )}
-    <MUISelect
-      sx={{
-        borderColor: "transparent",
-        fontSize: smaller ? ["0.625rem", "0.75rem", "0.75rem"] : "inherit",
-        lineHeight: "normal !important",
+    <Box sx={{ color: "grey.800" }}>
+      {label && (
+        <Label htmlFor={id} smaller>
+          {label}
+        </Label>
+      )}
+      <MUISelect
+        sx={{
+          borderColor: "transparent",
+          fontSize: smaller ? ["0.625rem", "0.75rem", "0.75rem"] : "inherit",
+          lineHeight: "normal !important",
 
-        backgroundColor: "transparent",
-        p: 0,
+          backgroundColor: "transparent",
+          p: 0,
           pr: 2,
-        pl: 1,
-        mr: 1, // Fix for Chrome which cuts of the label otherwise
-        ":focus": {
-          outline: "none",
-          borderColor: "primary.main",
-        },
-      }}
-      size={smaller ? "small" : "medium"}
-      variant="standard"
-      id={id}
-      name={id}
-      onChange={onChange}
-      value={value}
-      disabled={disabled}
+          pl: 1,
+          mr: 1, // Fix for Chrome which cuts of the label otherwise
+          ":focus": {
+            outline: "none",
+            borderColor: "primary.main",
+          },
+        }}
+        size={smaller ? "small" : "medium"}
+        variant="standard"
+        id={id}
+        name={id}
+        onChange={onChange}
+        value={value}
+        disabled={disabled}
         IconComponent={(props) => (
           <span
-      {...props}
+            {...props}
             style={{
               ...props.style,
               right: 12,
@@ -553,15 +561,15 @@ export const MinimalisticSelect = (props: MinimalisticSelectProps) => {
           </span>
         )}
         {...rest}
-    >
-      {options.map((opt) => (
-        <MenuItem key={opt.value} value={opt.value || undefined}>
-          {opt.label}
-        </MenuItem>
-      ))}
-    </MUISelect>
-  </Box>
-);
+      >
+        {options.map((opt) => (
+          <MenuItem key={opt.value} value={opt.value || undefined}>
+            {opt.label}
+          </MenuItem>
+        ))}
+      </MUISelect>
+    </Box>
+  );
 };
 
 export const Input = ({

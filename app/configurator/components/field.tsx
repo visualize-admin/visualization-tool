@@ -93,6 +93,15 @@ const useStyles = makeStyles<Theme>((theme) => ({
   root: {
     display: "flex",
     gap: "0.25rem",
+    textAlign: "left",
+    paddingRight: theme.spacing(1),
+    WebkitLineClamp: 2,
+    WebkitBoxOrient: "vertical",
+    overflow: "hidden",
+    fontSize: "0.75rem",
+    marginBottom: theme.spacing(2),
+    color: theme.palette.text.secondary,
+    marginTop: theme.spacing(2),
   },
   loadingIndicator: {
     color: theme.palette.grey[700],
@@ -166,7 +175,8 @@ export const DataFilterSelect = ({
   id,
   disabled,
   isOptional,
-  controls,
+  topControls,
+  sideControls,
   hierarchy,
   onOpen,
   loading,
@@ -176,7 +186,8 @@ export const DataFilterSelect = ({
   id: string;
   disabled?: boolean;
   isOptional?: boolean;
-  controls?: React.ReactNode;
+  topControls?: React.ReactNode;
+  sideControls?: React.ReactNode;
   hierarchy?: HierarchyValue[] | null;
   onOpen?: () => void;
   loading?: boolean;
@@ -241,7 +252,8 @@ export const DataFilterSelect = ({
         onOpen={handleOpen}
         open={isOpen}
         disabled={disabled}
-        controls={controls}
+        topControls={topControls}
+        sideControls={sideControls}
         {...fieldProps}
       />
     );
@@ -254,61 +266,62 @@ export const DataFilterSelect = ({
   const maxValue = sortedValues[sortedValues.length - 1]?.value;
 
   return (
-    <Select
-      id={id}
-      label={
-        canUseMostRecentValue ? (
-          <Flex
-            sx={{
-              width: "100%",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <FieldLabel label={label} isOptional={isOptional} />
-            <FormGroup>
-              <FormControlLabel
-                control={
-                  <MUISwitch
-                    size="small"
-                    checked={usesMostRecentValue}
-                    onChange={() =>
-                      fieldProps.onChange({
-                        target: {
-                          value: usesMostRecentValue
-                            ? `${maxValue}`
-                            : VISUALIZE_MAX_VALUE,
-                        },
-                      })
-                    }
-                  />
-                }
-                label={
-                  <Typography variant="caption">
-                    <Trans id="controls.filter.use-most-recent">
-                      Use most recent
-                    </Trans>
-                  </Typography>
-                }
-                sx={{ mr: 0 }}
-              />
-            </FormGroup>
-          </Flex>
-        ) : (
+    <div>
+      {canUseMostRecentValue ? (
+        <Flex
+          sx={{
+            width: "100%",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
           <FieldLabel label={label} isOptional={isOptional} />
-        )
-      }
-      disabled={disabled || usesMostRecentValue}
-      options={allValues}
-      sortOptions={false}
-      controls={controls}
-      open={isOpen}
-      onClose={handleClose}
-      onOpen={handleOpen}
-      loading={loading}
-      {...fieldProps}
-      value={usesMostRecentValue ? maxValue : fieldProps.value}
-    />
+          <FormGroup>
+            <FormControlLabel
+              control={
+                <MUISwitch
+                  size="small"
+                  checked={usesMostRecentValue}
+                  onChange={() =>
+                    fieldProps.onChange({
+                      target: {
+                        value: usesMostRecentValue
+                          ? `${maxValue}`
+                          : VISUALIZE_MAX_VALUE,
+                      },
+                    })
+                  }
+                />
+              }
+              label={
+                <Typography variant="caption">
+                  <Trans id="controls.filter.use-most-recent">
+                    Use most recent
+                  </Trans>
+                </Typography>
+              }
+              sx={{ mr: 0 }}
+            />
+          </FormGroup>
+        </Flex>
+      ) : (
+        <FieldLabel label={label} isOptional={isOptional} />
+      )}
+      <Select
+        id={id}
+        disabled={disabled || usesMostRecentValue}
+        options={allValues}
+        sortOptions={false}
+        topControls={topControls}
+        sideControls={sideControls}
+        open={isOpen}
+        onClose={handleClose}
+        onOpen={handleOpen}
+        loading={loading}
+        {...fieldProps}
+        value={usesMostRecentValue ? maxValue : fieldProps.value}
+      />
+    </div>
   );
 };
 
@@ -317,11 +330,19 @@ type DataFilterTemporalProps = {
   timeUnit: DatePickerTimeUnit;
   disabled?: boolean;
   isOptional?: boolean;
-  controls?: React.ReactNode;
+  topControls?: React.ReactNode;
+  sideControls?: React.ReactNode;
 };
 
 export const DataFilterTemporal = (props: DataFilterTemporalProps) => {
-  const { dimension, timeUnit, disabled, isOptional, controls } = props;
+  const {
+    dimension,
+    timeUnit,
+    disabled,
+    isOptional,
+    topControls,
+    sideControls,
+  } = props;
   const { label: _label, values, timeFormat } = dimension;
   const formatLocale = useTimeFormatLocale();
   const formatDate = formatLocale.format(timeFormat);
@@ -428,7 +449,8 @@ export const DataFilterTemporal = (props: DataFilterTemporalProps) => {
       minDate={minDate}
       maxDate={maxDate}
       disabled={disabled || usesMostRecentDate}
-      controls={controls}
+      topControls={topControls}
+      sideControls={sideControls}
     />
   );
 };
@@ -443,7 +465,7 @@ export const DataFilterSelectTime = ({
   id,
   disabled,
   isOptional,
-  controls,
+  topControls,
 }: {
   dimension: Dimension;
   label: React.ReactNode;
@@ -454,7 +476,7 @@ export const DataFilterSelectTime = ({
   id: string;
   disabled?: boolean;
   isOptional?: boolean;
-  controls?: React.ReactNode;
+  topControls?: React.ReactNode;
 }) => {
   const fieldProps = useSingleFilterSelect({
     cubeIri: dimension.cubeIri,
@@ -514,7 +536,7 @@ export const DataFilterSelectTime = ({
         disabled={disabled}
         options={allOptions}
         sortOptions={false}
-        controls={controls}
+        topControls={topControls}
         {...fieldProps}
       />
     );
