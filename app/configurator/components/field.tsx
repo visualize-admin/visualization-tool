@@ -326,6 +326,7 @@ export const DataFilterSelect = ({
 };
 
 type DataFilterTemporalProps = {
+  label: React.ReactNode;
   dimension: TemporalDimension;
   timeUnit: DatePickerTimeUnit;
   disabled?: boolean;
@@ -336,6 +337,7 @@ type DataFilterTemporalProps = {
 
 export const DataFilterTemporal = (props: DataFilterTemporalProps) => {
   const {
+    label: _label,
     dimension,
     timeUnit,
     disabled,
@@ -343,7 +345,7 @@ export const DataFilterTemporal = (props: DataFilterTemporalProps) => {
     topControls,
     sideControls,
   } = props;
-  const { label: _label, values, timeFormat } = dimension;
+  const { values, timeFormat } = dimension;
   const formatLocale = useTimeFormatLocale();
   const formatDate = formatLocale.format(timeFormat);
   const parseDate = formatLocale.parse(timeFormat);
