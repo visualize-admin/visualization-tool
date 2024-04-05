@@ -37,7 +37,6 @@ test("it should be possible to enable abbreviations for colors & x field (column
 
   const xAxis = await selectors.chart.axisWidthBand();
   const ticks = (await xAxis.textContent()) as string;
-  // expect([ticks.slice(0, 2), ticks.slice(-2)]).toEqual(["ZH", "NE"]);
 
   await (await selectors.panels.drawer().within().findByText("Kanton")).click();
 
@@ -48,6 +47,7 @@ test("it should be possible to enable abbreviations for colors & x field (column
   await actions.drawer.close();
 
   await actions.editor.selectActiveField("Segmentation");
+  await selectors.edition.drawerLoaded();
 
   await (await selectors.panels.drawer().within().findByText("None")).click();
 
@@ -85,7 +85,7 @@ test("hierarchies: it should be possible to enable abbreviations for colors", as
   await (await selectors.panels.drawer().within().findByText("None")).click();
 
   await actions.mui.selectOption("Greenhouse gas");
-
+  await selectors.edition.drawerLoaded();
   const checkbox = await selectors.edition.useAbbreviationsCheckbox();
 
   await checkbox.click();
@@ -121,6 +121,7 @@ test("localized abbreviations", async ({ actions, selectors }) => {
   await actions.editor.changeChartType("Map");
   await actions.editor.selectActiveField("Warning region");
 
+  await selectors.edition.drawerLoaded();
   const checkbox = await selectors.edition.useAbbreviationsCheckbox();
 
   await checkbox.click();
