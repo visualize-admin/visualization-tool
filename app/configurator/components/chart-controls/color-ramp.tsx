@@ -26,45 +26,52 @@ import useEvent from "@/utils/use-event";
 
 type ColorRampProps = {
   colorInterpolator: (t: number) => string;
-  nbClass?: number;
+  nSteps?: number;
   width?: number;
   height?: number;
   disabled?: boolean;
   rx?: number;
 };
 
-export const ColorRamp = ({
-  colorInterpolator,
-  nbClass = 512,
-  width = 148,
-  height = 28,
-  disabled = false,
-  rx = 2,
-}: ColorRampProps) => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+export const ColorRamp = (props: ColorRampProps) => {
+  const {
+    colorInterpolator,
+    nSteps: _nSteps = 512,
+    width = 220,
+    height = 28,
+    disabled,
+    rx = 2,
+  } = props;
+  const ref = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    const context = canvas && canvas.getContext("2d");
+    const canvas = ref.current;
+    const ctx = canvas && canvas.getContext("2d");
 
-    if (canvas && context) {
-      context.clearRect(0, 0, width, height);
-      canvas.style.imageRendering = "-moz-crisp-edges";
-      canvas.style.imageRendering = "pixelated";
-      canvas.style.borderRadius = `${rx}px`;
-      canvas.style.opacity = disabled ? "0.5" : "1";
+    if (ctx) {
+      ctx.clearRect(0, 0, width, height);
+      const [stepWidth, nSteps] =
+        _nSteps > width ? [1, width] : [width / _nSteps, _nSteps];
 
-      const [widthPerClass, numberOfSteps] =
-        nbClass > width ? [1, width] : [width / nbClass, nbClass];
-
-      for (let i = 0; i < numberOfSteps; ++i) {
-        context.fillStyle = colorInterpolator(i / (numberOfSteps - 1));
-        context.fillRect(widthPerClass * i, 0, widthPerClass, height);
+      for (let i = 0; i < nSteps; ++i) {
+        ctx.fillStyle = colorInterpolator(i / (nSteps - 1));
+        ctx.fillRect(stepWidth * i, 0, stepWidth, height);
       }
     }
-  }, [colorInterpolator, nbClass, width, height, disabled, rx]);
+  }, [colorInterpolator, _nSteps, width, height, disabled, rx]);
 
-  return <canvas ref={canvasRef} width={width} height={height} />;
+  return (
+    <canvas
+      ref={ref}
+      width={width}
+      height={height}
+      style={{
+        borderRadius: `${rx}px`,
+        imageRendering: "pixelated",
+        opacity: disabled ? 0.5 : 1,
+      }}
+    />
+  );
 };
 
 type ColorRampFieldProps = Omit<ColorRampProps, "colorInterpolator"> & {
@@ -72,12 +79,8 @@ type ColorRampFieldProps = Omit<ColorRampProps, "colorInterpolator"> & {
   path: string;
 };
 
-export const ColorRampField = ({
-  field,
-  path,
-  disabled,
-  nbClass,
-}: ColorRampFieldProps) => {
+export const ColorRampField = (props: ColorRampFieldProps) => {
+  const { field, path, disabled, nSteps } = props;
   const locale = useLocale();
   const [state, dispatch] = useConfiguratorState(isConfiguring);
   const chartConfig = getChartConfig(state);
@@ -100,7 +103,7 @@ export const ColorRampField = ({
 
   const onSelectedItemChange: SelectProps<typeof currentPalette>["onChange"] =
     useEvent((ev) => {
-      const value = ev.target.value as typeof currentPalette["value"];
+      const value = ev.target.value as (typeof currentPalette)["value"];
       if (value) {
         dispatch({
           type: "CHART_OPTION_CHANGED",
@@ -127,49 +130,38 @@ export const ColorRampField = ({
           "& .MuiSelect-select": { height: "44px", width: "100%" },
         }}
         onChange={onSelectedItemChange}
-        renderValue={(value) => {
+        renderValue={({ interpolator }) => {
           return (
-            <Box mr={2}>
-              <ColorRamp
-                colorInterpolator={value.interpolator}
-                nbClass={nbClass}
-                disabled={disabled}
-                width={220}
-              />
-            </Box>
+            <ColorRamp
+              colorInterpolator={interpolator}
+              nSteps={nSteps}
+              disabled={disabled}
+            />
           );
         }}
       >
         <ListSubheader>
           <Trans id="controls.color.palette.sequential">Sequential</Trans>
         </ListSubheader>
-        {sequentialPalettes.map((d, i) => (
+        {sequentialPalettes.map(({ value, interpolator }, i) => (
           <MenuItem
             sx={{ flexDirection: "column", alignItems: "flex-start" }}
             key={`sequential-${i}`}
-            value={d.value}
+            value={value}
           >
-            <ColorRamp
-              colorInterpolator={d.interpolator}
-              nbClass={nbClass}
-              width={220}
-            />
+            <ColorRamp colorInterpolator={interpolator} nSteps={nSteps} />
           </MenuItem>
         ))}
         <ListSubheader>
           <Trans id="controls.color.palette.diverging">Diverging</Trans>
         </ListSubheader>
-        {divergingPalettes.map((d, i) => (
+        {divergingPalettes.map(({ value, interpolator }, i) => (
           <MenuItem
             sx={{ flexDirection: "column", alignItems: "flex-start" }}
             key={`diverging-${i}`}
-            value={d.value}
+            value={value}
           >
-            <ColorRamp
-              colorInterpolator={d.interpolator}
-              nbClass={nbClass}
-              width={220}
-            />
+            <ColorRamp colorInterpolator={interpolator} nSteps={nSteps} />
           </MenuItem>
         ))}
       </Select>

@@ -705,7 +705,7 @@ const ContinuousColorLegend = ({
           width={width - MARGIN.left - MARGIN.right}
           height={COLOR_RAMP_HEIGHT}
           colorInterpolator={getColorInterpolator(palette as any)}
-          nbClass={width - MARGIN.left - MARGIN.right}
+          nSteps={width - MARGIN.left - MARGIN.right}
           rx={0}
         />
       </foreignObject>
