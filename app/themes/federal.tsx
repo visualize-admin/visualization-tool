@@ -437,6 +437,9 @@ theme.components = {
   },
   MuiInputBase: {
     styleOverrides: {
+      root: {
+        backgroundColor: theme.palette.background.paper,
+      },
       input: {
         "&:focus": {
           backgroundColor: "transparent",
