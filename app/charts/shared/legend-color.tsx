@@ -200,6 +200,8 @@ export const LegendColor = memo(function LegendColor(props: LegendColorProps) {
   );
 });
 
+const removeOpacity = (rgb: number[]) => rgb.slice(0, 3);
+
 // TODO: add metadata to legend titles?
 export const MapLegendColor = memo(function LegendColor({
   component,
@@ -247,7 +249,7 @@ export const MapLegendColor = memo(function LegendColor({
       getColor={(v) => {
         const label = getLabel(v);
         const rgb = getColor({ [component.iri]: label });
-        return rgbArrayToHex(rgb);
+        return rgbArrayToHex(removeOpacity(rgb));
       }}
       getLabel={getLabel}
       symbol="circle"
