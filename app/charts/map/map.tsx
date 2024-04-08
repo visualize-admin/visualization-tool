@@ -223,7 +223,6 @@ export const MapComponent = () => {
     return new GeoJsonLayer({
       id: "areaLayer",
       beforeId: showBaseLayer ? "water_polygon" : undefined,
-      // @ts-ignore - FIXME: properly type data & getFillColor fields
       data: sortedShapes,
       pickable: true,
       parameters: {
@@ -249,6 +248,9 @@ export const MapComponent = () => {
         y: number;
         object?: GeoFeature;
       }) => onHover({ type: "area", x, y, object }),
+      updateTriggers: {
+        getFillColor,
+      },
     });
   }, [areaLayer?.colors, sortedShapes, onHover, showBaseLayer]);
 
@@ -342,6 +344,12 @@ export const MapComponent = () => {
         y: number;
         object?: GeoFeature;
       }) => onHover({ type: "symbol", x, y, object }),
+      updateTriggers: {
+        getFillColor,
+        getPosition,
+        getRadius,
+        onHover,
+      },
     });
   }, [
     areaLayer,
