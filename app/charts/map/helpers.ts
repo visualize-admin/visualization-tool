@@ -107,7 +107,7 @@ export const useViewState = (props: ViewStateInitializationProps) => {
 
   // Locked view state takes precedence, as it must have come from a locked mode.
   const [viewState, setViewState] = useState(
-    lockedViewState || defaultViewState
+    () => lockedViewState ?? defaultViewState
   );
   const onViewStateChange = useEvent(
     ({ viewState }: { viewState: ViewState }) => {

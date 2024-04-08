@@ -1,4 +1,4 @@
-import { memo } from "react";
+import React, { memo } from "react";
 
 import { ChartDataWrapper } from "@/charts/chart-data-wrapper";
 import { MapComponent } from "@/charts/map/map";
@@ -66,9 +66,11 @@ export const ChartMapVisualization = ({
 
   const geoCoordinatesDimensionValues =
     geoCoordinatesDimension?.dataCubesComponents.dimensions[0].values;
-  const coordinates = geoCoordinatesDimensionValues
-    ? dimensionValuesToGeoCoordinates(geoCoordinatesDimensionValues)
-    : undefined;
+  const coordinates = React.useMemo(() => {
+    return geoCoordinatesDimensionValues
+      ? dimensionValuesToGeoCoordinates(geoCoordinatesDimensionValues)
+      : undefined;
+  }, [geoCoordinatesDimensionValues]);
   const geoShapesIri = areaDimensionIri || symbolDimensionIri;
   const [
     {
