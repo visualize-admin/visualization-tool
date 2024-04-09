@@ -7,7 +7,13 @@ import { ViewState, useControl } from "react-map-gl";
 import { feature } from "topojson-client";
 
 import { BBox, Filters } from "@/config-types";
-import { AreaLayer, GeoShapes, Observation, SymbolLayer } from "@/domain/data";
+import {
+  AreaLayer,
+  GeoCoordinates,
+  GeoShapes,
+  Observation,
+  SymbolLayer,
+} from "@/domain/data";
 import useEvent from "@/utils/use-event";
 
 export type MinMaxZoomViewState = Pick<
@@ -232,3 +238,24 @@ export function DeckGLOverlay(
 
   return null;
 }
+
+type ShouldRenderMapProps = {
+  areaDimensionIri: string | undefined;
+  symbolDimensionIri: string | undefined;
+  geometries: any[] | undefined;
+  coordinates: GeoCoordinates | undefined;
+};
+
+export const shouldRenderMap = (props: ShouldRenderMapProps) => {
+  const { areaDimensionIri, symbolDimensionIri, geometries, coordinates } =
+    props;
+  const areaLayerPresent = !!(areaDimensionIri !== "" && geometries);
+  const symbolLayerPresent = !!(
+    symbolDimensionIri !== "" &&
+    (coordinates || geometries)
+  );
+  const rawMap =
+    !areaLayerPresent && !symbolLayerPresent && !!(geometries || coordinates);
+
+  return areaLayerPresent || symbolLayerPresent || rawMap;
+};
