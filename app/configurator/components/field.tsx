@@ -303,12 +303,12 @@ export const DataFilterSelect = ({
 };
 
 type MostRecentDateSwitchProps = {
-  label: React.ReactNode;
+  label?: React.ReactNode;
   checked: boolean;
   onChange: () => void;
 };
 
-const MostRecentDateSwitch = (props: MostRecentDateSwitchProps) => {
+export const MostRecentDateSwitch = (props: MostRecentDateSwitchProps) => {
   const { label, checked, onChange } = props;
   return (
     <Flex

@@ -8,7 +8,6 @@ import {
   ClickAwayListener,
   Divider,
   FormControlLabel,
-  FormControlLabelProps,
   IconButton,
   Input,
   InputAdornment,
@@ -58,6 +57,7 @@ import {
   DRAWER_WIDTH,
 } from "@/configurator/components/drawer";
 import {
+  MostRecentDateSwitch,
   MultiFilterFieldColorPicker,
   SingleFilterField,
 } from "@/configurator/components/field";
@@ -80,6 +80,7 @@ import {
   TemporalDimension,
   TemporalEntityDimension,
 } from "@/domain/data";
+import { isDynamicMaxValue, VISUALIZE_MAX_VALUE } from "@/domain/max-value";
 import { useTimeFormatLocale, useTimeFormatUnit } from "@/formatters";
 import { Icon } from "@/icons";
 import SvgIcCheck from "@/icons/components/IcCheck";
@@ -921,6 +922,9 @@ export const TimeFilter = (props: TimeFilterProps) => {
   const activeFilter = getFilterValue(state, dimension.iri);
   const rangeActiveFilter =
     activeFilter?.type === "range" ? activeFilter : null;
+  const usesMostRecentValue = rangeActiveFilter
+    ? isDynamicMaxValue(rangeActiveFilter.to)
+    : false;
 
   const onChangeFrom = useEvent(
     (e: SelectChangeEvent<unknown> | React.ChangeEvent<HTMLSelectElement>) => {
@@ -977,7 +981,7 @@ export const TimeFilter = (props: TimeFilterProps) => {
     const timeRange = rangeActiveFilter
       ? [
           parse(rangeActiveFilter.from) as Date,
-          parse(rangeActiveFilter.to) as Date,
+          usesMostRecentValue ? to : (parse(rangeActiveFilter.to) as Date),
         ]
       : [from, to];
 
@@ -1000,7 +1004,18 @@ export const TimeFilter = (props: TimeFilterProps) => {
     return (
       <Box>
         {!disableInteractiveFilters && <InteractiveTimeRangeToggle />}
-        <Box sx={{ display: "flex", gap: 1 }}>
+        {rangeActiveFilter && (
+          <MostRecentDateSwitch
+            checked={usesMostRecentValue}
+            onChange={() => {
+              setFilterRange([
+                rangeActiveFilter.from,
+                usesMostRecentValue ? formatDateValue(to) : VISUALIZE_MAX_VALUE,
+              ]);
+            }}
+          />
+        )}
+        <Box sx={{ display: "flex", gap: 1, "& > div": { width: "100%" } }}>
           {rangeActiveFilter ? (
             canRenderDatePickerField(timeUnit) ? (
               <>
@@ -1024,6 +1039,7 @@ export const TimeFilter = (props: TimeFilterProps) => {
                   name="time-range-end"
                   label={toLabel}
                   value={timeRange[1]}
+                  disabled={usesMostRecentValue}
                   onChange={onChangeTo}
                   isDateDisabled={(date) => {
                     return (
@@ -1064,6 +1080,7 @@ export const TimeFilter = (props: TimeFilterProps) => {
           timeRange={timeRange}
           timeInterval={timeInterval}
           timeUnit={timeUnit}
+          hideEndHandle={usesMostRecentValue}
           onChange={([from, to]) => {
             const [closestFrom, closestTo] = getClosestDatesFromDateRange(
               from,
@@ -1071,7 +1088,9 @@ export const TimeFilter = (props: TimeFilterProps) => {
             );
             setFilterRange([
               formatDateValue(closestFrom),
-              formatDateValue(closestTo),
+              usesMostRecentValue
+                ? VISUALIZE_MAX_VALUE
+                : formatDateValue(closestTo),
             ]);
           }}
         />

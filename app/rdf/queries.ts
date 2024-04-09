@@ -712,11 +712,20 @@ const buildFilters = async ({
         case "range": {
           const isTemporalEntityDimension =
             dimensionType === "TemporalEntityDimension";
+          const maxValue = isDynamicMaxValue(filter.to)
+            ? await loadMaxDimensionValue(cube.term?.value!, {
+                dimension: resolvedDimension,
+                cubeDimensions: cube.dimensions,
+                sparqlClient,
+                filters,
+                cache,
+              })
+            : filter.to;
 
           if (!isTemporalEntityDimension) {
             return [
               filterDimension.filter.gte(toRDFValue(filter.from)),
-              filterDimension.filter.lte(toRDFValue(filter.to)),
+              filterDimension.filter.lte(toRDFValue(maxValue)),
             ];
           }
 
@@ -732,7 +741,7 @@ const buildFilters = async ({
               rdf.literal(filter.from, ns.xsd.string)
             ),
             filterDimensionPosition.filter.lte(
-              rdf.literal(filter.to, ns.xsd.string)
+              rdf.literal(maxValue, ns.xsd.string)
             ),
           ];
         }
