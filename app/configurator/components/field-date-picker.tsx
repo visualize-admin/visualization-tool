@@ -6,6 +6,7 @@ import React from "react";
 
 import { Label } from "@/components/form";
 import { TimeUnit } from "@/graphql/resolver-types";
+import { Icon } from "@/icons";
 
 type DatePickerFieldProps = {
   name: string;
@@ -81,6 +82,9 @@ export const DatePickerField = (props: DatePickerFieldProps) => {
           <DatePicker<Date>
             {...rest}
             {...dateLimitProps}
+            components={{
+              OpenPickerIcon: (props) => <Icon name="calendar" {...props} />,
+            }}
             inputFormat={getInputFormat(timeUnit)}
             views={getViews(timeUnit)}
             value={value}

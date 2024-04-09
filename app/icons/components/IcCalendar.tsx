@@ -8,11 +8,10 @@ function SvgIcCalendar(props: React.SVGProps<SVGSVGElement>) {
       height="1em"
       {...props}
     >
-      <g fill="none" fillRule="evenodd">
-        <path d="M0 0h24v24H0z" />
+      <g fill="none" fillRule="evenodd" clipRule="evenodd">
         <path
           fill="currentColor"
-          d="M7.5 9h3v3h-3V9zM12 9h3v3h-3V9zm4.5 0h3v3h-3V9zM3 18h3v3H3v-3zm4.5 0h3v3h-3v-3zm4.5 0h3v3h-3v-3zm-4.5-4.5h3v3h-3v-3zm4.5 0h3v3h-3v-3zm4.5 0h3v3h-3v-3zM3 13.5h3v3H3v-3zM19.5 0v1.5h-3V0H6v1.5H3V0H0v24h22.5V0h-3zM21 22.5H1.5V6H21v16.5z"
+          d="M17 13V15H7V13H17ZM19 5C20.103 5 21 5.897 21 7V19C21 20.103 20.103 21 19 21H5C3.897 21 3 20.103 3 19V7C3 5.897 3.897 5 5 5H7V3H9V5H15V3H17V5H19ZM5 19H19.002L19.0006 11H5V19ZM5 9H19V7H5V9Z"
         />
       </g>
     </svg>
