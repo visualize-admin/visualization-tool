@@ -11,9 +11,9 @@ import { TimeUnit } from "@/graphql/query-hooks";
 import { useTheme } from "@/themes";
 import { useResizeObserver } from "@/utils/use-resize-observer";
 
-const HANDLE_SIZE = 20;
+const HANDLE_SIZE = 16;
 const HANDLE_OFFSET = HANDLE_SIZE / 8;
-const BRUSH_HEIGHT = 3;
+const BRUSH_HEIGHT = 1;
 const MARGIN = HANDLE_SIZE / 2;
 
 type EditorBrushProps = {
