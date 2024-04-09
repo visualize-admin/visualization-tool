@@ -1097,15 +1097,36 @@ export const TimeFilter = (props: TimeFilterProps) => {
           }}
         />
         {rangeActiveFilter && (
-          <MostRecentDateSwitch
-            checked={usesMostRecentValue}
-            onChange={() => {
-              setFilterRange([
-                rangeActiveFilter.from,
-                usesMostRecentValue ? formatDateValue(to) : VISUALIZE_MAX_VALUE,
-              ]);
-            }}
-          />
+          <Box
+            sx={{ display: "flex", gap: 1, alignItems: "center", mt: "12px" }}
+          >
+            <MostRecentDateSwitch
+              checked={usesMostRecentValue}
+              onChange={() => {
+                setFilterRange([
+                  rangeActiveFilter.from,
+                  usesMostRecentValue
+                    ? formatDateValue(to)
+                    : VISUALIZE_MAX_VALUE,
+                ]);
+              }}
+              noGutter
+            />
+            <Tooltip
+              enterDelay={600}
+              PopperProps={{ sx: { maxWidth: 160 } }}
+              title={
+                <Trans id="controls.filter.use-most-recent-explanation">
+                  When the publisher updates this dataset, a newest date will
+                  always be selected.
+                </Trans>
+              }
+            >
+              <Box sx={{ color: "primary.main" }}>
+                <Icon name="infoOutline" size={16} />
+              </Box>
+            </Tooltip>
+          </Box>
         )}
       </Box>
     );
