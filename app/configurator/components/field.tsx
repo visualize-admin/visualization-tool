@@ -268,42 +268,19 @@ export const DataFilterSelect = ({
   return (
     <div>
       {canUseMostRecentValue ? (
-        <Flex
-          sx={{
-            width: "100%",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <FieldLabel label={label} isOptional={isOptional} />
-          <FormGroup>
-            <FormControlLabel
-              control={
-                <MUISwitch
-                  size="small"
-                  checked={usesMostRecentValue}
-                  onChange={() =>
-                    fieldProps.onChange({
-                      target: {
-                        value: usesMostRecentValue
-                          ? `${maxValue}`
-                          : VISUALIZE_MAX_VALUE,
-                      },
-                    })
-                  }
-                />
-              }
-              label={
-                <Typography variant="caption">
-                  <Trans id="controls.filter.use-most-recent">
-                    Use most recent
-                  </Trans>
-                </Typography>
-              }
-              sx={{ mr: 0 }}
-            />
-          </FormGroup>
-        </Flex>
+        <MostRecentDateSwitch
+          label={label}
+          checked={usesMostRecentValue}
+          onChange={() =>
+            fieldProps.onChange({
+              target: {
+                value: usesMostRecentValue
+                  ? `${maxValue}`
+                  : VISUALIZE_MAX_VALUE,
+              },
+            })
+          }
+        />
       ) : (
         <FieldLabel label={label} isOptional={isOptional} />
       )}
@@ -322,6 +299,42 @@ export const DataFilterSelect = ({
         value={usesMostRecentValue ? maxValue : fieldProps.value}
       />
     </div>
+  );
+};
+
+type MostRecentDateSwitchProps = {
+  label: React.ReactNode;
+  checked: boolean;
+  onChange: () => void;
+};
+
+const MostRecentDateSwitch = (props: MostRecentDateSwitchProps) => {
+  const { label, checked, onChange } = props;
+  return (
+    <Flex
+      sx={{
+        width: "100%",
+        justifyContent: "space-between",
+        alignItems: "center",
+      }}
+    >
+      <FieldLabel label={label} />
+      <FormGroup>
+        <FormControlLabel
+          control={
+            <MUISwitch size="small" checked={checked} onChange={onChange} />
+          }
+          label={
+            <Typography variant="caption">
+              <Trans id="controls.filter.use-most-recent">
+                Use most recent
+              </Trans>
+            </Typography>
+          }
+          sx={{ mr: 0 }}
+        />
+      </FormGroup>
+    </Flex>
   );
 };
 
