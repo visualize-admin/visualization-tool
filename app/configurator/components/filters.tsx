@@ -984,9 +984,17 @@ export const TimeFilter = (props: TimeFilterProps) => {
     const fromOptions = sortedOptions.filter(({ date }) => {
       return date <= timeRange[1];
     });
-
     const toOptions = sortedOptions.filter(({ date }) => {
       return date >= timeRange[0];
+    });
+
+    const fromLabel = t({
+      id: "controls.filters.select.from",
+      message: "From",
+    });
+    const toLabel = t({
+      id: "controls.filters.select.to",
+      message: "To",
     });
 
     return (
@@ -995,15 +1003,12 @@ export const TimeFilter = (props: TimeFilterProps) => {
           <InteractiveTimeRangeToggle sx={{ mb: 1 }} />
         )}
         <Box sx={{ display: "flex", gap: 1 }}>
-          {rangeActiveFilter && (
-            <>
-              {canRenderDatePickerField(timeUnit) ? (
+          {rangeActiveFilter ? (
+            canRenderDatePickerField(timeUnit) ? (
+              <>
                 <DatePickerField
                   name="time-range-start"
-                  label={t({
-                    id: "controls.filters.select.from",
-                    message: "From",
-                  })}
+                  label={fromLabel}
                   value={timeRange[0]}
                   onChange={onChangeFrom}
                   isDateDisabled={(date) => {
@@ -1017,27 +1022,9 @@ export const TimeFilter = (props: TimeFilterProps) => {
                   minDate={from}
                   maxDate={to}
                 />
-              ) : (
-                <Select
-                  id="time-range-start"
-                  label={t({
-                    id: "controls.filters.select.from",
-                    message: "From",
-                  })}
-                  options={fromOptions}
-                  sortOptions={false}
-                  value={rangeActiveFilter.from}
-                  onChange={onChangeFrom}
-                />
-              )}
-
-              {canRenderDatePickerField(timeUnit) ? (
                 <DatePickerField
                   name="time-range-end"
-                  label={t({
-                    id: "controls.filters.select.to",
-                    message: "To",
-                  })}
+                  label={toLabel}
                   value={timeRange[1]}
                   onChange={onChangeTo}
                   isDateDisabled={(date) => {
@@ -1051,21 +1038,28 @@ export const TimeFilter = (props: TimeFilterProps) => {
                   minDate={from}
                   maxDate={to}
                 />
-              ) : (
+              </>
+            ) : (
+              <>
+                <Select
+                  id="time-range-start"
+                  label={fromLabel}
+                  options={fromOptions}
+                  sortOptions={false}
+                  value={rangeActiveFilter.from}
+                  onChange={onChangeFrom}
+                />
                 <Select
                   id="time-range-end"
-                  label={t({
-                    id: "controls.filters.select.to",
-                    message: "To",
-                  })}
+                  label={toLabel}
                   options={toOptions}
                   sortOptions={false}
                   value={rangeActiveFilter.to}
                   onChange={onChangeTo}
                 />
-              )}
-            </>
-          )}
+              </>
+            )
+          ) : null}
         </Box>
         <EditorBrush
           timeExtent={[from, to]}
@@ -1077,7 +1071,6 @@ export const TimeFilter = (props: TimeFilterProps) => {
               from,
               to
             );
-
             setFilterRange([
               formatDateValue(closestFrom),
               formatDateValue(closestTo),
