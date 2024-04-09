@@ -1004,63 +1004,71 @@ export const TimeFilter = (props: TimeFilterProps) => {
     return (
       <Box>
         {!disableInteractiveFilters && <InteractiveTimeRangeToggle />}
-        <Box sx={{ display: "flex", gap: 1, "& > div": { width: "100%" } }}>
+        <Box sx={{ display: "flex", gap: 1 }}>
           {rangeActiveFilter ? (
             canRenderDatePickerField(timeUnit) ? (
-              <>
-                <DatePickerField
-                  name="time-range-start"
-                  label={fromLabel}
-                  value={timeRange[0]}
-                  onChange={onChangeFrom}
-                  isDateDisabled={(date) => {
-                    return (
-                      date > timeRange[1] ||
-                      !sortedValues.includes(formatDateValue(date))
-                    );
-                  }}
-                  timeUnit={timeUnit}
-                  dateFormat={formatDateValue}
-                  minDate={from}
-                  maxDate={to}
-                />
-                <DatePickerField
-                  name="time-range-end"
-                  label={toLabel}
-                  value={timeRange[1]}
-                  disabled={usesMostRecentValue}
-                  onChange={onChangeTo}
-                  isDateDisabled={(date) => {
-                    return (
-                      date < timeRange[0] ||
-                      !sortedValues.includes(formatDateValue(date))
-                    );
-                  }}
-                  timeUnit={timeUnit}
-                  dateFormat={formatDateValue}
-                  minDate={from}
-                  maxDate={to}
-                />
-              </>
+              <FiltersContainer
+                left={
+                  <DatePickerField
+                    name="time-range-start"
+                    label={fromLabel}
+                    value={timeRange[0]}
+                    onChange={onChangeFrom}
+                    isDateDisabled={(date) => {
+                      return (
+                        date > timeRange[1] ||
+                        !sortedValues.includes(formatDateValue(date))
+                      );
+                    }}
+                    timeUnit={timeUnit}
+                    dateFormat={formatDateValue}
+                    minDate={from}
+                    maxDate={to}
+                  />
+                }
+                right={
+                  <DatePickerField
+                    name="time-range-end"
+                    label={toLabel}
+                    value={timeRange[1]}
+                    disabled={usesMostRecentValue}
+                    onChange={onChangeTo}
+                    isDateDisabled={(date) => {
+                      return (
+                        date < timeRange[0] ||
+                        !sortedValues.includes(formatDateValue(date))
+                      );
+                    }}
+                    timeUnit={timeUnit}
+                    dateFormat={formatDateValue}
+                    minDate={from}
+                    maxDate={to}
+                  />
+                }
+              />
             ) : (
-              <>
-                <Select
-                  id="time-range-start"
-                  label={fromLabel}
-                  options={fromOptions}
-                  sortOptions={false}
-                  value={rangeActiveFilter.from}
-                  onChange={onChangeFrom}
-                />
-                <Select
-                  id="time-range-end"
-                  label={toLabel}
-                  options={toOptions}
-                  sortOptions={false}
-                  value={rangeActiveFilter.to}
-                  onChange={onChangeTo}
-                />
-              </>
+              <FiltersContainer
+                left={
+                  <Select
+                    id="time-range-start"
+                    label={fromLabel}
+                    options={fromOptions}
+                    sortOptions={false}
+                    value={rangeActiveFilter.from}
+                    onChange={onChangeFrom}
+                  />
+                }
+                right={
+                  <Select
+                    id="time-range-end"
+                    label={toLabel}
+                    options={toOptions}
+                    sortOptions={false}
+                    value={rangeActiveFilter.to}
+                    onChange={onChangeTo}
+                  />
+                }
+              />
             )
           ) : null}
         </Box>
@@ -1099,6 +1107,31 @@ export const TimeFilter = (props: TimeFilterProps) => {
   } else {
     return <Loading />;
   }
+};
+
+type FiltersContainerProps = {
+  left: ReactNode;
+  right: ReactNode;
+};
+
+const FiltersContainer = (props: FiltersContainerProps) => {
+  const { left, right } = props;
+  return (
+    <Box
+      sx={{
+        display: "grid",
+        columnGap: "12px",
+        gridTemplateColumns: "1fr auto 1fr",
+        alignItems: "center",
+      }}
+    >
+      {left}
+      <Typography mt="1em" color="grey.700">
+        –
+      </Typography>
+      {right}
+    </Box>
+  );
 };
 
 type GetTimeFilterOptionsProps = {
