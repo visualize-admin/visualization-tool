@@ -999,9 +999,7 @@ export const TimeFilter = (props: TimeFilterProps) => {
 
     return (
       <Box>
-        {!disableInteractiveFilters && (
-          <InteractiveTimeRangeToggle sx={{ mb: 1 }} />
-        )}
+        {!disableInteractiveFilters && <InteractiveTimeRangeToggle />}
         <Box sx={{ display: "flex", gap: 1 }}>
           {rangeActiveFilter ? (
             canRenderDatePickerField(timeUnit) ? (
@@ -1134,17 +1132,14 @@ export const getTimeFilterOptions = (props: GetTimeFilterOptionsProps) => {
   };
 };
 
-const InteractiveTimeRangeToggle = (
-  props: Omit<FormControlLabelProps, "control" | "label">
-) => {
+const InteractiveTimeRangeToggle = () => {
   const { checked, toggle } = useInteractiveTimeRangeToggle();
-
   return (
     <FormControlLabel
       componentsProps={{
         typography: { variant: "caption", color: "text.secondary" },
       }}
-      {...props}
+      sx={{ mb: 1 }}
       control={<Switch checked={checked} onChange={() => toggle()} />}
       label={
         <Tooltip
