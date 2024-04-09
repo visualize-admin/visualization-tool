@@ -495,13 +495,10 @@ const useStyles = makeStyles<Theme, { fetching: boolean }>((theme) => ({
     display: "inline-block",
     marginLeft: 8,
   },
-  filtersContainer: {
-    "& > * + *": { marginTop: theme.spacing(3) },
-    marginBottom: 4,
-  },
   filterRow: {
     overflow: "hidden",
     width: "100%",
+    marginBottom: theme.spacing(5),
     "& .buttons": {
       transition: "color 0.125s ease, opacity 0.125s ease-out",
       opacity: 0.25,
@@ -513,10 +510,12 @@ const useStyles = makeStyles<Theme, { fetching: boolean }>((theme) => ({
     "& > *": {
       overflow: "hidden",
     },
+    "&:last-child": {
+      marginBottom: 0,
+    },
   },
   addDimensionContainer: {
-    marginTop: "1rem",
-    paddingLeft: theme.spacing(2),
+    marginTop: theme.spacing(5),
     "& .menu-button": {
       background: "transparent",
       border: 0,
@@ -526,7 +525,12 @@ const useStyles = makeStyles<Theme, { fetching: boolean }>((theme) => ({
   addDimensionButton: {
     display: "flex",
     minWidth: "auto",
+    minHeight: 32,
     justifyContent: "center",
+    paddingTop: theme.spacing(1),
+    paddingBottom: theme.spacing(1),
+    paddingLeft: theme.spacing(1),
+    paddingRight: theme.spacing(3),
   },
 }));
 
@@ -648,11 +652,7 @@ export const ChartConfigurator = ({
             <DragDropContext onDragEnd={handleDragEnd}>
               <Droppable droppableId="filters">
                 {(provided) => (
-                  <Box
-                    {...provided.droppableProps}
-                    className={classes.filtersContainer}
-                    ref={provided.innerRef}
-                  >
+                  <Box {...provided.droppableProps} ref={provided.innerRef}>
                     {filterDimensions.map((dimension, i) => (
                       <Draggable
                         isDragDisabled={fetching}
@@ -712,8 +712,8 @@ export const ChartConfigurator = ({
                   className={classes.addDimensionButton}
                   color="primary"
                 >
+                  <Icon name="add" size={24} />
                   <Trans>Add filter</Trans>
-                  <Icon name="add" height={18} />
                 </Button>
                 <Menu
                   anchorEl={filterMenuButtonRef.current}

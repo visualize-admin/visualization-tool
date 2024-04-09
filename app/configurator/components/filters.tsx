@@ -1004,7 +1004,11 @@ export const TimeFilter = (props: TimeFilterProps) => {
 
     return (
       <Box>
-        {!disableInteractiveFilters && <InteractiveTimeRangeToggle />}
+        {!disableInteractiveFilters && (
+          <div style={{ marginBottom: "12px" }}>
+            <InteractiveTimeRangeToggle />
+          </div>
+        )}
         <Box sx={{ display: "flex", gap: 1 }}>
           {rangeActiveFilter ? (
             canRenderDatePickerField(timeUnit) ? (

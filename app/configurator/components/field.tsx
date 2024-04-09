@@ -312,7 +312,7 @@ type MostRecentDateSwitchProps = {
 export const MostRecentDateSwitch = (props: MostRecentDateSwitchProps) => {
   const { label, checked, onChange } = props;
   return (
-    <Box sx={{ mt: 2 }}>
+    <Box sx={{ mt: "12px" }}>
       {label && <FieldLabel label={label} />}
       <FormGroup>
         <FormControlLabel
