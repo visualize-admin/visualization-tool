@@ -4,7 +4,6 @@ import {
   Button,
   CircularProgress,
   FormControlLabel,
-  FormControlLabelProps,
   IconButton,
   Menu,
   MenuItem,
@@ -531,18 +530,13 @@ const useStyles = makeStyles<Theme, { fetching: boolean }>((theme) => ({
   },
 }));
 
-const InteractiveDataFilterCheckbox = ({
-  value,
-  ...props
-}: { value: string } & Omit<FormControlLabelProps, "control" | "label">) => {
+const InteractiveDataFilterCheckbox = ({ value }: { value: string }) => {
   const { checked, toggle } = useInteractiveDataFilterToggle(value);
-
   return (
     <FormControlLabel
       componentsProps={{
         typography: { variant: "caption", color: "text.secondary" },
       }}
-      {...props}
       control={<Switch checked={checked} onChange={() => toggle()} />}
       label={
         <Tooltip
@@ -561,6 +555,7 @@ const InteractiveDataFilterCheckbox = ({
           </Typography>
         </Tooltip>
       }
+      sx={{ mb: 1 }}
     />
   );
 };
@@ -700,7 +695,6 @@ export const ChartConfigurator = ({
                             <div>
                               <InteractiveDataFilterCheckbox
                                 value={dimension.iri}
-                                sx={{ mb: 1 }}
                               />
                             </div>
                             <DataFilterSelectGeneric
