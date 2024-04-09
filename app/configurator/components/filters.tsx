@@ -70,6 +70,7 @@ import {
   useInteractiveFiltersToggle,
   useInteractiveTimeRangeToggle,
 } from "@/configurator/interactive-filters/interactive-filters-config-state";
+import { InteractiveFilterToggle } from "@/configurator/interactive-filters/interactive-filters-configurator";
 import {
   Component,
   Dimension,
@@ -1186,32 +1187,7 @@ export const getTimeFilterOptions = (props: GetTimeFilterOptionsProps) => {
 
 const InteractiveTimeRangeToggle = () => {
   const { checked, toggle } = useInteractiveTimeRangeToggle();
-  return (
-    <FormControlLabel
-      componentsProps={{
-        typography: { variant: "caption", color: "text.secondary" },
-      }}
-      sx={{ mb: "12px" }}
-      control={<Switch checked={checked} onChange={() => toggle()} />}
-      label={
-        <Tooltip
-          enterDelay={600}
-          arrow
-          title={
-            <span>
-              <Trans id="controls.filters.interactive.tooltip">
-                Allow users to change filters
-              </Trans>
-            </span>
-          }
-        >
-          <Typography variant="body2">
-            <Trans id="controls.filters.interactive.toggle">Interactive</Trans>
-          </Typography>
-        </Tooltip>
-      }
-    />
-  );
+  return <InteractiveFilterToggle checked={checked} toggle={toggle} />;
 };
 
 // This component is now only used in the Table Chart options.

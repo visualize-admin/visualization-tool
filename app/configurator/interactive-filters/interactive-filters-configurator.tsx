@@ -1,4 +1,5 @@
 import { Trans } from "@lingui/macro";
+import { FormControlLabel, Switch, Tooltip, Typography } from "@mui/material";
 
 import { getFieldComponentIri } from "@/charts";
 import { ANIMATION_FIELD_SPEC } from "@/charts/chart-config-ui-options";
@@ -108,4 +109,40 @@ export const InteractiveFiltersConfigurator = ({
       </ControlSection>
     );
   }
+};
+
+type InteractiveFilterToggleProps = {
+  checked: boolean | undefined;
+  toggle: () => void;
+};
+
+export const InteractiveFilterToggle = (
+  props: InteractiveFilterToggleProps
+) => {
+  const { checked, toggle } = props;
+  return (
+    <FormControlLabel
+      componentsProps={{
+        typography: { variant: "caption", color: "text.secondary" },
+      }}
+      control={<Switch checked={checked} onChange={() => toggle()} />}
+      label={
+        <Tooltip
+          enterDelay={600}
+          arrow
+          title={
+            <span>
+              <Trans id="controls.filters.interactive.tooltip">
+                Allow users to change filters
+              </Trans>
+            </span>
+          }
+        >
+          <Typography variant="body2">
+            <Trans id="controls.filters.interactive.toggle">Interactive</Trans>
+          </Typography>
+        </Tooltip>
+      }
+    />
+  );
 };

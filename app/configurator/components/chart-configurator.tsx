@@ -3,13 +3,10 @@ import {
   Box,
   Button,
   CircularProgress,
-  FormControlLabel,
   IconButton,
   Menu,
   MenuItem,
-  Switch,
   Theme,
-  Tooltip,
   Typography,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
@@ -67,7 +64,10 @@ import {
   useConfiguratorState,
 } from "@/configurator/configurator-state";
 import { useInteractiveDataFilterToggle } from "@/configurator/interactive-filters/interactive-filters-config-state";
-import { InteractiveFiltersConfigurator } from "@/configurator/interactive-filters/interactive-filters-configurator";
+import {
+  InteractiveFiltersConfigurator,
+  InteractiveFilterToggle,
+} from "@/configurator/interactive-filters/interactive-filters-configurator";
 import {
   Dimension,
   isStandardErrorDimension,
@@ -530,34 +530,9 @@ const useStyles = makeStyles<Theme, { fetching: boolean }>((theme) => ({
   },
 }));
 
-const InteractiveDataFilterCheckbox = ({ value }: { value: string }) => {
-  const { checked, toggle } = useInteractiveDataFilterToggle(value);
-  return (
-    <FormControlLabel
-      componentsProps={{
-        typography: { variant: "caption", color: "text.secondary" },
-      }}
-      control={<Switch checked={checked} onChange={() => toggle()} />}
-      label={
-        <Tooltip
-          enterDelay={600}
-          arrow
-          title={
-            <span>
-              <Trans id="controls.filters.interactive.tooltip">
-                Allow users to change filters
-              </Trans>
-            </span>
-          }
-        >
-          <Typography variant="caption">
-            <Trans id="controls.filters.interactive.toggle">Interactive</Trans>
-          </Typography>
-        </Tooltip>
-      }
-      sx={{ mb: 1 }}
-    />
-  );
+const InteractiveDataFilterToggle = ({ iri }: { iri: string }) => {
+  const { checked, toggle } = useInteractiveDataFilterToggle(iri);
+  return <InteractiveFilterToggle checked={checked} toggle={toggle} />;
 };
 
 export const ChartConfigurator = ({
@@ -693,8 +668,8 @@ export const ChartConfigurator = ({
                             {...provided.draggableProps}
                           >
                             <div>
-                              <InteractiveDataFilterCheckbox
-                                value={dimension.iri}
+                              <InteractiveDataFilterToggle
+                                iri={dimension.iri}
                               />
                             </div>
                             <DataFilterSelectGeneric
