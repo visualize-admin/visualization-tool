@@ -3,48 +3,13 @@ import { Box, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import React, {
-  Dispatch,
-  SetStateAction,
-  useContext,
-  useMemo,
-  useState,
-} from "react";
 
 import { DataSourceMenu } from "@/components/data-source-menu";
 import Flex from "@/components/flex";
+import { HEADER_HEIGHT } from "@/components/header-constants";
 import { LanguageMenu } from "@/components/language-menu";
 import { SOURCE_OPTIONS } from "@/domain/datasource/constants";
 import { LoginMenu } from "@/login/components/login-menu";
-
-const DEFAULT_HEADER_PROGRESS = 100;
-
-export const HEADER_HEIGHT = 92;
-
-export const useHeaderProgressContext = () => {
-  const [value, setValue] = useState(DEFAULT_HEADER_PROGRESS);
-  return useMemo(() => ({ value, setValue }), [value, setValue]);
-};
-
-export const useHeaderProgress = () => useContext(HeaderProgressContext);
-
-const HeaderProgressContext = React.createContext({
-  value: DEFAULT_HEADER_PROGRESS,
-  setValue: (() => undefined) as Dispatch<SetStateAction<number>>,
-});
-
-export const HeaderProgressProvider = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
-  const headerProgress = useHeaderProgressContext();
-  return (
-    <HeaderProgressContext.Provider value={headerProgress}>
-      {children}
-    </HeaderProgressContext.Provider>
-  );
-};
 
 const useHeaderBorderStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -57,19 +22,8 @@ const useHeaderBorderStyles = makeStyles((theme: Theme) => ({
 }));
 
 export const HeaderBorder = () => {
-  const { value: progress } = useHeaderProgress();
   const classes = useHeaderBorderStyles();
-  return (
-    <Box
-      className={classes.root}
-      sx={{
-        transform: `scaleX(${progress / 100})`,
-        transition:
-          progress === 0 ? "opacity 0.1s ease" : "transform 0.3s ease",
-        opacity: progress === 0 ? 0 : 1,
-      }}
-    />
-  );
+  return <Box className={classes.root} />;
 };
 
 const useHeaderStyles = makeStyles<Theme, { isConfiguring: boolean }>(

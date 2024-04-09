@@ -1,5 +1,6 @@
 import produce from "immer";
 
+import { DEFAULT_OTHER_COLOR_FIELD_OPACITY } from "@/charts/map/constants";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import { DEFAULT_CATEGORICAL_PALETTE_NAME } from "@/palettes";
 import { createChartId } from "@/utils/create-chart-id";
@@ -12,7 +13,7 @@ type Migration = {
   down: (config: any, migrationProps?: any) => any;
 };
 
-export const CHART_CONFIG_VERSION = "3.0.0";
+export const CHART_CONFIG_VERSION = "3.1.0";
 
 export const chartConfigMigrations: Migration[] = [
   {
@@ -682,8 +683,8 @@ export const chartConfigMigrations: Migration[] = [
                 draft.chartType === "comboLineSingle"
                   ? draft.fields.y.componentIris[0]
                   : draft.chartType === "comboLineDual"
-                  ? draft.fields.y.leftAxisComponentIri
-                  : draft.fields.y.lineComponentIri,
+                    ? draft.fields.y.leftAxisComponentIri
+                    : draft.fields.y.lineComponentIri,
             },
           };
         }
@@ -803,6 +804,51 @@ export const chartConfigMigrations: Migration[] = [
         draft.dataSet = draft.cubes[0].iri;
         draft.filters = draft.cubes[0].filters;
         delete draft.cubes;
+      });
+    },
+  },
+  {
+    from: "3.0.0",
+    to: "3.1.0",
+    description: `map {
+      color {
+        + opacity
+      }
+    }`,
+    up: (config) => {
+      const newConfig = { ...config, version: "3.1.0" };
+
+      return produce(newConfig, (draft: any) => {
+        if (draft.chartType === "map") {
+          if (draft.fields.areaLayer) {
+            draft.fields.areaLayer.color.opacity =
+              DEFAULT_OTHER_COLOR_FIELD_OPACITY;
+          }
+
+          if (draft.fields.symbolLayer) {
+            if (draft.fields.symbolLayer.color.type !== "fixed") {
+              draft.fields.symbolLayer.color.opacity =
+                DEFAULT_OTHER_COLOR_FIELD_OPACITY;
+            }
+          }
+        }
+      });
+    },
+    down: (config) => {
+      const newConfig = { ...config, version: "3.0.0" };
+
+      return produce(newConfig, (draft: any) => {
+        if (draft.chartType === "map") {
+          if (draft.fields.areaLayer) {
+            delete draft.fields.areaLayer.color.opacity;
+          }
+
+          if (draft.fields.symbolLayer) {
+            if (draft.fields.symbolLayer.color.type !== "fixed") {
+              delete draft.fields.symbolLayer.color.opacity;
+            }
+          }
+        }
       });
     },
   },

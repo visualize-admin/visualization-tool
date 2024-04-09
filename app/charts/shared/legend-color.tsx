@@ -67,44 +67,46 @@ type ItemStyleProps = {
   usage: LegendItemUsage;
 };
 
-const useItemStyles = makeStyles<Theme, ItemStyleProps>((theme) => ({
-  legendItem: {
-    position: "relative",
-    justifyContent: "flex-start",
-    alignItems: "flex-start",
-    fontSize: ({ usage }) =>
-      ["legend", "colorPicker"].includes(usage)
-        ? theme.typography.body2.fontSize
-        : theme.typography.caption.fontSize,
-    fontWeight: theme.typography.fontWeightRegular,
-    color: theme.palette.grey[700],
-
-    "&::before": {
-      content: "''",
+const useItemStyles = makeStyles<Theme, ItemStyleProps>((theme) => {
+  return {
+    legendItem: {
       position: "relative",
-      display: "block",
-      width: ({ usage }) => (usage === "colorPicker" ? "0.75rem" : "0.5rem"),
-      height: ({ symbol, usage }: ItemStyleProps) =>
-        `calc(${["square", "circle"].includes(symbol) ? "0.5rem" : "2px"} * ${
-          usage === "colorPicker" ? 1.5 : 1
-        })`,
-      marginTop: ({ symbol, usage }: ItemStyleProps) =>
-        `calc(0.75rem - calc(${
-          ["square", "circle"].includes(symbol) ? "0.5rem" : "2px"
-        } * ${usage === "colorPicker" ? 1.5 : 1}) * 0.5)`,
-      marginRight: "0.5rem",
-      flexShrink: 0,
-      backgroundColor: ({ color }: ItemStyleProps) => color,
-      borderRadius: ({ symbol }: ItemStyleProps) =>
-        symbol === "circle" ? "50%" : 0,
-    },
-  },
+      justifyContent: "flex-start",
+      alignItems: "flex-start",
+      fontSize: ({ usage }) =>
+        ["legend", "colorPicker"].includes(usage)
+          ? theme.typography.body2.fontSize
+          : theme.typography.caption.fontSize,
+      fontWeight: theme.typography.fontWeightRegular,
+      color: theme.palette.grey[700],
 
-  legendCheckbox: {
-    marginBottom: () => "0.25rem",
-    marginRight: 0,
-  },
-}));
+      "&::before": {
+        content: "''",
+        position: "relative",
+        display: "block",
+        width: `calc(0.5rem * var(--size-adjust, 1))`,
+        height: ({ symbol }) =>
+          `calc(${["square", "circle"].includes(symbol) ? "0.5rem" : "2px"} * var(--size-adjust, 1))`,
+        marginTop: ({ symbol }) =>
+          `calc(0.75rem - calc(${
+            ["square", "circle"].includes(symbol) ? "0.5rem" : "2px"
+          } * var(--size-adjust, 1)) * 0.5)`,
+        marginRight: "0.4rem",
+        flexShrink: 0,
+        backgroundColor: ({ color }) => color,
+        borderRadius: ({ symbol }) => (symbol === "circle" ? "50%" : 0),
+      },
+    },
+
+    legendCheckbox: {
+      marginBottom: () => "0.25rem",
+      marginRight: 0,
+    },
+    bigger: {
+      "--size-adjust": 1.5,
+    },
+  };
+});
 
 const emptyObj = {};
 
@@ -186,6 +188,8 @@ export const LegendColor = memo(function LegendColor(props: LegendColorProps) {
   );
 });
 
+const removeOpacity = (rgb: number[]) => rgb.slice(0, 3);
+
 // TODO: add metadata to legend titles?
 export const MapLegendColor = memo(function LegendColor({
   component,
@@ -233,7 +237,7 @@ export const MapLegendColor = memo(function LegendColor({
       getColor={(v) => {
         const label = getLabel(v);
         const rgb = getColor({ [component.iri]: label });
-        return rgbArrayToHex(rgb);
+        return rgbArrayToHex(removeOpacity(rgb));
       }}
       getLabel={getLabel}
       symbol="circle"
@@ -366,6 +370,7 @@ export const LegendItem = (props: LegendItemProps) => {
     usage = "legend",
   } = props;
   const classes = useItemStyles({ symbol, color, usage });
+  const shouldBeBigger = symbol === "circle" || usage === "colorPicker";
 
   return interactive && onToggle ? (
     <MaybeTooltip
@@ -387,12 +392,18 @@ export const LegendItem = (props: LegendItemProps) => {
           onChange={onToggle}
           key={item}
           color={color}
-          className={classes.legendCheckbox}
+          className={clsx(
+            classes.legendCheckbox,
+            shouldBeBigger && classes.bigger
+          )}
         />
       </div>
     </MaybeTooltip>
   ) : (
-    <Flex data-testid="legendItem" className={classes.legendItem}>
+    <Flex
+      data-testid="legendItem"
+      className={clsx(classes.legendItem, shouldBeBigger && classes.bigger)}
+    >
       {dimension ? (
         <OpenMetadataPanelWrapper dim={dimension}>
           {/* Account for the added space, to align the symbol and label. */}

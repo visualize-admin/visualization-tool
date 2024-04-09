@@ -480,18 +480,21 @@ export const useChartData = (
   ]);
 
   // interactive legend
-  const legend = interactiveFiltersConfig?.legend;
-  const legendItems = Object.keys(categories);
   const interactiveLegendFilters = React.useMemo(() => {
+    const legendItems = Object.keys(categories);
     const interactiveLegendFilter: ValuePredicate | null =
-      legend?.active && getSegmentAbbreviationOrLabel
+      interactiveFiltersConfig?.legend?.active && getSegmentAbbreviationOrLabel
         ? (d: Observation) => {
             return !legendItems.includes(getSegmentAbbreviationOrLabel(d));
           }
         : null;
 
     return interactiveLegendFilter ? [interactiveLegendFilter] : [];
-  }, [getSegmentAbbreviationOrLabel, legend?.active, legendItems]);
+  }, [
+    categories,
+    getSegmentAbbreviationOrLabel,
+    interactiveFiltersConfig?.legend?.active,
+  ]);
 
   const chartData = React.useMemo(() => {
     return observations.filter(

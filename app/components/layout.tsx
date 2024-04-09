@@ -2,20 +2,18 @@ import { ReactNode } from "react";
 
 import Flex from "@/components/flex";
 import { Footer } from "@/components/footer";
-import { Header, HeaderProgressProvider } from "@/components/header";
+import { Header } from "@/components/header";
 
 export const AppLayout = ({ children }: { children?: ReactNode }) => (
   <Flex sx={{ minHeight: "100vh", flexDirection: "column" }}>
-    <HeaderProgressProvider>
-      <Header pageType="app" contentId={undefined} />
-      <Flex
-        component="main"
-        role="main"
-        sx={{ flex: 1, flexDirection: "column" }}
-      >
-        {children}
-      </Flex>
-    </HeaderProgressProvider>
+    <Header pageType="app" contentId={undefined} />
+    <Flex
+      component="main"
+      role="main"
+      sx={{ flex: 1, flexDirection: "column" }}
+    >
+      {children}
+    </Flex>
   </Flex>
 );
 

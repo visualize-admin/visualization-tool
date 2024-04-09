@@ -1,7 +1,12 @@
+import { DEFAULT_OTHER_COLOR_FIELD_OPACITY } from "@/charts/map/constants";
 import {
   ConfiguratorState,
   ConfiguratorStateConfiguringChart,
 } from "@/configurator";
+import {
+  CHART_CONFIG_VERSION,
+  CONFIGURATOR_STATE_VERSION,
+} from "@/utils/chart-config/versioning";
 
 export const chartConfigMock = {
   columnCovid19: {
@@ -57,7 +62,7 @@ export const chartConfigMock = {
 export const configStateMock = {
   map: {
     state: "CONFIGURING_CHART",
-    version: "3.1.0",
+    version: CONFIGURATOR_STATE_VERSION,
     dataSource: { type: "sparql", url: "https://lindas.admin.ch" },
     layout: {
       activeField: "none",
@@ -69,7 +74,7 @@ export const configStateMock = {
       {
         key: "abc",
         chartType: "map",
-        version: "3.1.0",
+        version: CHART_CONFIG_VERSION,
         meta: {} as ConfiguratorStateConfiguringChart["chartConfigs"][0]["meta"],
         interactiveFiltersConfig:
           {} as ConfiguratorStateConfiguringChart["chartConfigs"][0]["interactiveFiltersConfig"],
@@ -92,6 +97,7 @@ export const configStateMock = {
                 green: "blue",
                 blue: "red",
               },
+              opacity: DEFAULT_OTHER_COLOR_FIELD_OPACITY,
             },
           },
         },

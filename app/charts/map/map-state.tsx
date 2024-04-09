@@ -1,5 +1,4 @@
 import { extent } from "d3-array";
-import { color as makeColor } from "d3-color";
 import {
   ScaleLinear,
   ScalePower,
@@ -335,14 +334,14 @@ const getCategoricalColors = (
     color.useAbbreviations ? (d) => d.alternateName ?? d.label : (d) => d.label
   );
   const domain: string[] = component.values.map((d) => `${d.value}`) || [];
-  const rgbColorMapping = mapValues(color.colorMapping, (d) =>
-    colorToRgbArray(d)
+  const rgbColorMapping = mapValues(color.colorMapping, (c) =>
+    colorToRgbArray(c, color.opacity * 2.55)
   );
   const getDimensionValue = (d: Observation) => {
     const abbreviationOrLabel = d[color.componentIri] as string;
 
     return (
-      valuesByAbbreviationOrLabel[abbreviationOrLabel] ||
+      valuesByAbbreviationOrLabel[abbreviationOrLabel] ??
       valuesByLabel[abbreviationOrLabel]
     );
   };
@@ -363,7 +362,6 @@ const getCategoricalColors = (
         },
     getColor: (d: Observation) => {
       const value = getDimensionValue(d);
-
       return rgbColorMapping[value.value];
     },
     useAbbreviations: color.useAbbreviations ?? false,
@@ -420,8 +418,7 @@ const getNumericalColors = (
       const c = colorScale(+d[color.componentIri]!);
 
       if (c) {
-        const rgb = makeColor(c)?.rgb();
-        return rgb ? [rgb.r, rgb.g, rgb.b] : [0, 0, 0];
+        return colorToRgbArray(c, color.opacity * 2.55);
       }
 
       return [0, 0, 0, 255 * 0.1];

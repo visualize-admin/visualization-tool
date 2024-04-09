@@ -548,6 +548,11 @@ const BBox = t.tuple([
 ]);
 export type BBox = t.TypeOf<typeof BBox>;
 
+const ColorFieldOpacity = t.type({
+  opacity: t.number,
+});
+export type ColorFieldOpacity = t.TypeOf<typeof ColorFieldOpacity>;
+
 const ColorFieldType = t.union([
   t.literal("fixed"),
   t.literal("categorical"),
@@ -555,11 +560,13 @@ const ColorFieldType = t.union([
 ]);
 export type ColorFieldType = t.TypeOf<typeof ColorFieldType>;
 
-const FixedColorField = t.type({
-  type: t.literal("fixed"),
-  value: t.string,
-  opacity: t.number,
-});
+const FixedColorField = t.intersection([
+  t.type({
+    type: t.literal("fixed"),
+    value: t.string,
+  }),
+  ColorFieldOpacity,
+]);
 export type FixedColorField = t.TypeOf<typeof FixedColorField>;
 
 const CategoricalColorField = t.intersection([
@@ -570,6 +577,7 @@ const CategoricalColorField = t.intersection([
     colorMapping: ColorMapping,
   }),
   t.partial({ useAbbreviations: t.boolean }),
+  ColorFieldOpacity,
 ]);
 
 export type CategoricalColorField = t.TypeOf<typeof CategoricalColorField>;
@@ -595,6 +603,7 @@ const NumericalColorField = t.intersection([
       nbClass: t.number,
     }),
   ]),
+  ColorFieldOpacity,
 ]);
 export type NumericalColorField = t.TypeOf<typeof NumericalColorField>;
 

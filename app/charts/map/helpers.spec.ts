@@ -4,6 +4,7 @@ import { BBox } from "@/config-types";
 
 import {
   BASE_VIEW_STATE,
+  shouldRenderMap,
   useViewState,
   ViewStateInitializationProps,
 } from "./helpers";
@@ -82,5 +83,58 @@ describe("useViewState", () => {
     expect(resultLocked.current.viewState).not.toEqual(
       result.current.viewState
     );
+  });
+});
+
+describe("shouldRenderMap", () => {
+  it("should work", () => {
+    expect(
+      shouldRenderMap({
+        areaDimensionIri: undefined,
+        symbolDimensionIri: undefined,
+        geometries: [],
+        coordinates: [{ iri: "", label: "", latitude: 0, longitude: 0 }],
+      })
+    ).toBe(true);
+    expect(
+      shouldRenderMap({
+        areaDimensionIri: undefined,
+        symbolDimensionIri: undefined,
+        geometries: undefined,
+        coordinates: undefined,
+      })
+    ).toBe(false);
+    expect(
+      shouldRenderMap({
+        areaDimensionIri: "ABC",
+        symbolDimensionIri: undefined,
+        geometries: undefined,
+        coordinates: undefined,
+      })
+    ).toBe(false);
+    expect(
+      shouldRenderMap({
+        areaDimensionIri: undefined,
+        symbolDimensionIri: "ABC",
+        geometries: undefined,
+        coordinates: undefined,
+      })
+    ).toBe(false);
+    expect(
+      shouldRenderMap({
+        areaDimensionIri: undefined,
+        symbolDimensionIri: "ABC",
+        geometries: undefined,
+        coordinates: [{ iri: "", label: "", latitude: 0, longitude: 0 }],
+      })
+    ).toBe(true);
+    expect(
+      shouldRenderMap({
+        areaDimensionIri: undefined,
+        symbolDimensionIri: "ABC",
+        geometries: [],
+        coordinates: undefined,
+      })
+    ).toBe(true);
   });
 });

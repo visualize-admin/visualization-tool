@@ -1,12 +1,57 @@
 import { schemeCategory10 } from "d3-scale-chromatic";
 
-import { FixedColorField } from "@/config-types";
+import {
+  CategoricalColorField,
+  FixedColorField,
+  NumericalColorField,
+  PaletteType,
+} from "@/config-types";
+import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
+import { DimensionValue } from "@/domain/data";
+
+export const DEFAULT_FIXED_COLOR_FIELD_OPACITY = 80;
+
+export const DEFAULT_OTHER_COLOR_FIELD_OPACITY = 100;
 
 export const DEFAULT_FIXED_COLOR_FIELD: FixedColorField = {
   type: "fixed",
   value: schemeCategory10[0],
-  opacity: 80,
+  opacity: DEFAULT_FIXED_COLOR_FIELD_OPACITY,
 };
+
+export const getDefaultCategoricalColorField = ({
+  iri,
+  palette,
+  dimensionValues,
+}: {
+  iri: string;
+  palette: string;
+  dimensionValues: DimensionValue[];
+}): CategoricalColorField => ({
+  type: "categorical",
+  componentIri: iri,
+  palette,
+  colorMapping: mapValueIrisToColor({
+    palette,
+    dimensionValues,
+  }),
+  opacity: DEFAULT_OTHER_COLOR_FIELD_OPACITY,
+});
+
+export const getDefaultNumericalColorField = ({
+  iri,
+  colorPalette = "oranges",
+}: {
+  iri: string;
+  colorPalette?: PaletteType;
+}): NumericalColorField => ({
+  type: "numerical",
+  componentIri: iri,
+  palette: colorPalette,
+  scaleType: "continuous",
+  interpolationType: "linear",
+  opacity: 100,
+});
 
 export const DEFAULT_COLOR = [222, 222, 222, 125];
 

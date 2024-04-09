@@ -197,9 +197,9 @@ const interpolatorByName = {
 const defaultInterpolator = interpolatorByName["oranges"];
 
 export const getColorInterpolator = (
-  palette?: SequentialPaletteType | DivergingPaletteType
+  palette: SequentialPaletteType | DivergingPaletteType
 ): ((t: number) => string) => {
-  const interpolator = interpolatorByName[palette!] ?? defaultInterpolator;
+  const interpolator = interpolatorByName[palette] ?? defaultInterpolator;
   // If the palette is sequential, we artificially clamp the value not to display too
   // white a value
   const isSequential = palette

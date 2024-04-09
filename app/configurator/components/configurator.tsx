@@ -11,7 +11,7 @@ import {
   PublishChartButton,
   SaveDraftButton,
 } from "@/components/chart-selection-tabs";
-import { HEADER_HEIGHT } from "@/components/header";
+import { HEADER_HEIGHT } from "@/components/header-constants";
 import { Loading } from "@/components/hint";
 import {
   ConfiguratorState,

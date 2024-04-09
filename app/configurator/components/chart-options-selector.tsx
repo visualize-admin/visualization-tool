@@ -13,6 +13,10 @@ import {
   EncodingSpec,
   getChartSpec,
 } from "@/charts/chart-config-ui-options";
+import {
+  DEFAULT_FIXED_COLOR_FIELD_OPACITY,
+  DEFAULT_OTHER_COLOR_FIELD_OPACITY,
+} from "@/charts/map/constants";
 import { getMap } from "@/charts/map/ref";
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import { LegendSymbol } from "@/charts/shared/legend-color";
@@ -1596,17 +1600,8 @@ const ChartFieldColorComponent = (props: ChartFieldColorComponentProps) => {
             />
           </Box>
         )}
-
-        {colorType === "fixed" ? (
-          <>
-            <ColorPickerField
-              label={t({
-                id: "controls.color.select",
-                message: "Select a color",
-              })}
-              field={field}
-              path="color.value"
-            />
+        {field === "symbolLayer" && (
+          <Box sx={{ mt: 1 }}>
             <ChartOptionSliderField
               field={field}
               path="color.opacity"
@@ -1617,7 +1612,24 @@ const ChartFieldColorComponent = (props: ChartFieldColorComponentProps) => {
               min={0}
               max={100}
               step={10}
-              defaultValue={80}
+              defaultValue={
+                colorType === "fixed"
+                  ? DEFAULT_FIXED_COLOR_FIELD_OPACITY
+                  : DEFAULT_OTHER_COLOR_FIELD_OPACITY
+              }
+            />
+          </Box>
+        )}
+
+        {colorType === "fixed" ? (
+          <>
+            <ColorPickerField
+              label={t({
+                id: "controls.color.select",
+                message: "Select a color",
+              })}
+              field={field}
+              path="color.value"
             />
           </>
         ) : colorType === "categorical" ? (
