@@ -1004,17 +1004,6 @@ export const TimeFilter = (props: TimeFilterProps) => {
     return (
       <Box>
         {!disableInteractiveFilters && <InteractiveTimeRangeToggle />}
-        {rangeActiveFilter && (
-          <MostRecentDateSwitch
-            checked={usesMostRecentValue}
-            onChange={() => {
-              setFilterRange([
-                rangeActiveFilter.from,
-                usesMostRecentValue ? formatDateValue(to) : VISUALIZE_MAX_VALUE,
-              ]);
-            }}
-          />
-        )}
         <Box sx={{ display: "flex", gap: 1, "& > div": { width: "100%" } }}>
           {rangeActiveFilter ? (
             canRenderDatePickerField(timeUnit) ? (
@@ -1094,6 +1083,17 @@ export const TimeFilter = (props: TimeFilterProps) => {
             ]);
           }}
         />
+        {rangeActiveFilter && (
+          <MostRecentDateSwitch
+            checked={usesMostRecentValue}
+            onChange={() => {
+              setFilterRange([
+                rangeActiveFilter.from,
+                usesMostRecentValue ? formatDateValue(to) : VISUALIZE_MAX_VALUE,
+              ]);
+            }}
+          />
+        )}
       </Box>
     );
   } else {

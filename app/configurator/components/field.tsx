@@ -1,5 +1,6 @@
 import { Trans, t } from "@lingui/macro";
 import {
+  Box,
   CircularProgress,
   FormControlLabel,
   FormGroup,
@@ -311,21 +312,13 @@ type MostRecentDateSwitchProps = {
 export const MostRecentDateSwitch = (props: MostRecentDateSwitchProps) => {
   const { label, checked, onChange } = props;
   return (
-    <Flex
-      sx={{
-        width: "100%",
-        justifyContent: "space-between",
-        alignItems: "center",
-      }}
-    >
-      <FieldLabel label={label} />
+    <Box sx={{ mt: 2 }}>
+      {label && <FieldLabel label={label} />}
       <FormGroup>
         <FormControlLabel
-          control={
-            <MUISwitch size="small" checked={checked} onChange={onChange} />
-          }
+          control={<MUISwitch checked={checked} onChange={onChange} />}
           label={
-            <Typography variant="caption">
+            <Typography variant="body2">
               <Trans id="controls.filter.use-most-recent">
                 Use most recent
               </Trans>
@@ -334,7 +327,7 @@ export const MostRecentDateSwitch = (props: MostRecentDateSwitchProps) => {
           sx={{ mr: 0 }}
         />
       </FormGroup>
-    </Flex>
+    </Box>
   );
 };
 
