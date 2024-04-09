@@ -1158,7 +1158,7 @@ const InteractiveTimeRangeToggle = () => {
       componentsProps={{
         typography: { variant: "caption", color: "text.secondary" },
       }}
-      sx={{ mb: 1 }}
+      sx={{ mb: "12px" }}
       control={<Switch checked={checked} onChange={() => toggle()} />}
       label={
         <Tooltip
