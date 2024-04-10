@@ -108,6 +108,7 @@ const DashboardPreview = (props: DashboardPreviewProps) => {
 
   return (
     <DndContext
+      autoScroll={{ layoutShiftCompensation: false }}
       collisionDetection={pointerWithin}
       onDragStart={(e) => {
         transition.setEnable(false);
