@@ -3,7 +3,6 @@ import { makeStyles } from "@mui/styles";
 import capitalize from "lodash/capitalize";
 import React from "react";
 
-import { AlignChartElementsProvider } from "@/components/chart-helpers";
 import { ChartSelectionTabs } from "@/components/chart-selection-tabs";
 import { ChartConfig, Layout } from "@/config-types";
 import { useTheme } from "@/themes";
@@ -128,22 +127,10 @@ export const ChartPanelLayoutTallRow = (
 
   switch (row.type) {
     case "wide":
-      return (
-        <AlignChartElementsProvider>
-          {row.renderChart(row.chartConfig)}
-        </AlignChartElementsProvider>
-      );
+      return row.renderChart(row.chartConfig);
     case "narrow":
       if (isMobile) {
-        return (
-          <>
-            {row.chartConfigs.map((chartConfig) => (
-              <AlignChartElementsProvider key={chartConfig.key}>
-                {row.renderChart(chartConfig)}
-              </AlignChartElementsProvider>
-            ))}
-          </>
-        );
+        return <>{row.chartConfigs.map(row.renderChart)}</>;
       }
 
       return (
@@ -157,9 +144,7 @@ export const ChartPanelLayoutTallRow = (
             gap: "16px",
           }}
         >
-          <AlignChartElementsProvider>
-            {row.chartConfigs.map(row.renderChart)}
-          </AlignChartElementsProvider>
+          {row.chartConfigs.map(row.renderChart)}
         </Box>
       );
   }

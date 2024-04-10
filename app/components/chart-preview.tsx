@@ -17,10 +17,6 @@ import { LoadingStateProvider } from "@/charts/shared/chart-loading-state";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
 import { ChartFootnotes } from "@/components/chart-footnotes";
 import {
-  useAlignChartElements,
-  useChartHeaderMarginBottom,
-} from "@/components/chart-helpers";
-import {
   ChartPanelLayoutTall,
   ChartPanelLayoutVertical,
   ChartWrapper,
@@ -189,13 +185,6 @@ type DndChartPreviewProps = ChartWrapperProps & {
 const DndChartPreview = (props: DndChartPreviewProps) => {
   const { children, chartKey, dataSource, ...rest } = props;
   const theme = useTheme();
-  const { reset: resetAlignChartElements } = useAlignChartElements();
-
-  // Reset max heights when the order of the charts changes.
-  React.useEffect(() => {
-    resetAlignChartElements();
-  }, [chartKey, resetAlignChartElements]);
-
   const {
     setActivatorNodeRef,
     setNodeRef: setDraggableNodeRef,
@@ -346,8 +335,6 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
     containerRef,
     containerHeight,
   } = useChartTablePreview();
-  const { headerRef, headerMarginBottom } = useChartHeaderMarginBottom();
-
   const handleToggleTableView = useEvent(() => setIsTablePreview((c) => !c));
   const dimensions = components?.dataCubesComponents.dimensions;
   const measures = components?.dataCubesComponents.measures;
@@ -409,77 +396,68 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
                   }}
                 >
                   <div style={{ height: "100%" }}>
-                    <div
-                      ref={headerRef}
-                      style={{
-                        marginBottom: `${headerMarginBottom}px`,
-                        transition: "margin-bottom 0.2s ease-in-out",
+                    <Flex
+                      sx={{
+                        justifyContent:
+                          configuring || chartConfig.meta.title[locale]
+                            ? "space-between"
+                            : "flex-end",
+                        alignItems: "flex-start",
+                        gap: 2,
                       }}
                     >
-                      <Flex
-                        sx={{
-                          justifyContent:
-                            configuring || chartConfig.meta.title[locale]
-                              ? "space-between"
-                              : "flex-end",
-                          alignItems: "flex-start",
-                          gap: 2,
-                        }}
-                      >
-                        {(configuring || chartConfig.meta.title[locale]) && (
-                          <Title
-                            text={chartConfig.meta.title[locale]}
-                            lighterColor
-                            onClick={
-                              configuring
-                                ? () =>
-                                    dispatch({
-                                      type: "CHART_ACTIVE_FIELD_CHANGED",
-                                      value: "title",
-                                    })
-                                : undefined
-                            }
-                          />
-                        )}
-                        <Flex sx={{ alignItems: "center", gap: 2 }}>
-                          {!disableMetadataPanel && (
-                            <MetadataPanel
-                              dataSource={dataSource}
-                              chartConfigs={[chartConfig]}
-                              dimensions={allComponents}
-                              top={96}
-                            />
-                          )}
-                          {actionElementSlot}
-                        </Flex>
-                      </Flex>
-                      {(configuring ||
-                        chartConfig.meta.description[locale]) && (
-                        <Description
-                          text={chartConfig.meta.description[locale]}
+                      {(configuring || chartConfig.meta.title[locale]) && (
+                        <Title
+                          text={chartConfig.meta.title[locale]}
                           lighterColor
                           onClick={
                             configuring
-                              ? () => {
+                              ? () =>
                                   dispatch({
                                     type: "CHART_ACTIVE_FIELD_CHANGED",
-                                    value: "description",
-                                  });
-                                }
+                                    value: "title",
+                                  })
                               : undefined
                           }
                         />
                       )}
-                      {chartConfig.interactiveFiltersConfig?.dataFilters
-                        .active && (
-                        <ChartDataFilters
-                          dataSource={dataSource}
-                          chartConfig={chartConfig}
-                          dimensions={dimensions}
-                          measures={measures}
-                        />
-                      )}
-                    </div>
+                      <Flex sx={{ alignItems: "center", gap: 2 }}>
+                        {!disableMetadataPanel && (
+                          <MetadataPanel
+                            dataSource={dataSource}
+                            chartConfigs={[chartConfig]}
+                            dimensions={allComponents}
+                            top={96}
+                          />
+                        )}
+                        {actionElementSlot}
+                      </Flex>
+                    </Flex>
+                    {(configuring || chartConfig.meta.description[locale]) && (
+                      <Description
+                        text={chartConfig.meta.description[locale]}
+                        lighterColor
+                        onClick={
+                          configuring
+                            ? () => {
+                                dispatch({
+                                  type: "CHART_ACTIVE_FIELD_CHANGED",
+                                  value: "description",
+                                });
+                              }
+                            : undefined
+                        }
+                      />
+                    )}
+                    {chartConfig.interactiveFiltersConfig?.dataFilters
+                      .active && (
+                      <ChartDataFilters
+                        dataSource={dataSource}
+                        chartConfig={chartConfig}
+                        dimensions={dimensions}
+                        measures={measures}
+                      />
+                    )}
                     <Box
                       ref={containerRef}
                       height={containerHeight.current}

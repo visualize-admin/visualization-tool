@@ -11,7 +11,6 @@ import { LoadingStateProvider } from "@/charts/shared/chart-loading-state";
 import { isUsingImputation } from "@/charts/shared/imputation";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
 import { ChartFootnotes } from "@/components/chart-footnotes";
-import { useChartHeaderMarginBottom } from "@/components/chart-helpers";
 import {
   ChartPanelLayoutTall,
   ChartPanelLayoutVertical,
@@ -180,11 +179,8 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
     containerHeight,
     computeContainerHeight,
   } = useChartTablePreview();
-  const { headerRef, headerMarginBottom } = useChartHeaderMarginBottom();
-
   const metadataPanelStore = useMemo(() => createMetadataPanelStore(), []);
   const metadataPanelOpen = useStore(metadataPanelStore, (state) => state.open);
-
   const shouldShrink = useMemo(() => {
     const rootWidth = rootRef.current?.getBoundingClientRect().width;
 
@@ -298,42 +294,34 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
           )}
           <LoadingStateProvider>
             <InteractiveFiltersProvider>
-              <div
-                ref={headerRef}
-                style={{
-                  marginBottom: `${headerMarginBottom}px`,
-                  transition: "margin-bottom 0.2s ease-in-out",
+              <Flex
+                sx={{
+                  justifyContent: meta.title[locale]
+                    ? "space-between"
+                    : "flex-end",
+                  alignItems: "center",
+                  gap: 2,
                 }}
               >
-                <Flex
-                  sx={{
-                    justifyContent: meta.title[locale]
-                      ? "space-between"
-                      : "flex-end",
-                    alignItems: "center",
-                    gap: 2,
-                  }}
-                >
-                  {meta.title[locale] && <Title text={meta.title[locale]} />}
-                  <MetadataPanel
-                    dataSource={dataSource}
-                    chartConfigs={[chartConfig]}
-                    dimensions={allComponents}
-                    container={rootRef.current}
-                  />
-                </Flex>
-                {meta.description[locale] && (
-                  <Description text={meta.description[locale]} />
-                )}
-                {chartConfig.interactiveFiltersConfig?.dataFilters.active && (
-                  <ChartDataFilters
-                    dataSource={dataSource}
-                    chartConfig={chartConfig}
-                    dimensions={dimensions}
-                    measures={measures}
-                  />
-                )}
-              </div>
+                {meta.title[locale] && <Title text={meta.title[locale]} />}
+                <MetadataPanel
+                  dataSource={dataSource}
+                  chartConfigs={[chartConfig]}
+                  dimensions={allComponents}
+                  container={rootRef.current}
+                />
+              </Flex>
+              {meta.description[locale] && (
+                <Description text={meta.description[locale]} />
+              )}
+              {chartConfig.interactiveFiltersConfig?.dataFilters.active && (
+                <ChartDataFilters
+                  dataSource={dataSource}
+                  chartConfig={chartConfig}
+                  dimensions={dimensions}
+                  measures={measures}
+                />
+              )}
               <Flex
                 flexDirection="column"
                 ref={containerRef}
