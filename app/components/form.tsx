@@ -378,9 +378,17 @@ export const Select = (props: FormSelectProps) => {
             )}
           </Label>
         )}
-        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: sideControls
+              ? "calc(100% - 2rem) 2rem"
+              : "100%",
+            alignItems: "center",
+            columnGap: 2,
+          }}
+        >
           <MUISelect
-            sx={{ width: "100%" }}
             id={id}
             name={id}
             onChange={onChange}
