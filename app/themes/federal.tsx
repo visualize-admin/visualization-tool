@@ -623,6 +623,8 @@ theme.components = {
           {...props}
           style={{
             ...props.style,
+            width: 16,
+            height: 16,
             right: 12,
             transition: "transform 0.15s ease",
           }}
