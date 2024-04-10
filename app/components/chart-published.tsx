@@ -21,6 +21,7 @@ import {
   useChartTablePreview,
 } from "@/components/chart-table-preview";
 import { ChartWithFilters } from "@/components/chart-with-filters";
+import { shouldShowDebugPanel } from "@/components/debug-panel";
 import Flex from "@/components/flex";
 import { HintBlue, HintRed, HintYellow } from "@/components/hint";
 import { MetadataPanel } from "@/components/metadata-panel";
@@ -143,10 +144,11 @@ export const ChartPublished = (props: ChartPublishedProps) => {
 const useStyles = makeStyles<Theme, { shrink: boolean }>((theme) => ({
   root: {
     position: "relative",
-    display: "flex",
-    flexGrow: 1,
-    flexDirection: "column",
-    padding: theme.spacing(5),
+    display: "grid",
+    gridTemplateRows: "subgrid",
+    gridRow: shouldShowDebugPanel() ? "span 6" : "span 5",
+    backgroundColor: theme.palette.background.paper,
+    padding: theme.spacing(6),
     paddingLeft: ({ shrink }) =>
       `calc(${theme.spacing(5)} + ${shrink ? DRAWER_WIDTH : 0}px)`,
     color: theme.palette.grey[800],
@@ -299,11 +301,16 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
                   justifyContent: meta.title[locale]
                     ? "space-between"
                     : "flex-end",
-                  alignItems: "center",
                   gap: 2,
                 }}
               >
-                {meta.title[locale] && <Title text={meta.title[locale]} />}
+                {meta.title[locale] ? (
+                  <Title text={meta.title[locale]} />
+                ) : (
+                  // We need to have a span here to keep the space between the
+                  // title and the chart (subgrid layout)
+                  <span />
+                )}
                 <MetadataPanel
                   dataSource={dataSource}
                   chartConfigs={[chartConfig]}
@@ -311,16 +318,24 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
                   container={rootRef.current}
                 />
               </Flex>
-              {meta.description[locale] && (
+              {meta.description[locale] ? (
                 <Description text={meta.description[locale]} />
+              ) : (
+                // We need to have a span here to keep the space between the
+                // title and the chart (subgrid layout)
+                <span />
               )}
-              {chartConfig.interactiveFiltersConfig?.dataFilters.active && (
+              {chartConfig.interactiveFiltersConfig?.dataFilters.active ? (
                 <ChartDataFilters
                   dataSource={dataSource}
                   chartConfig={chartConfig}
                   dimensions={dimensions}
                   measures={measures}
                 />
+              ) : (
+                // We need to have a span here to keep the space between the
+                // title and the chart (subgrid layout)
+                <span />
               )}
               <Flex
                 flexDirection="column"

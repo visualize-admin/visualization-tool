@@ -28,7 +28,7 @@ import {
   useChartTablePreview,
 } from "@/components/chart-table-preview";
 import { ChartWithFilters } from "@/components/chart-with-filters";
-import DebugPanel from "@/components/debug-panel";
+import DebugPanel, { shouldShowDebugPanel } from "@/components/debug-panel";
 import Flex from "@/components/flex";
 import { Checkbox } from "@/components/form";
 import { HintYellow } from "@/components/hint";
@@ -214,6 +214,7 @@ const DndChartPreview = (props: DndChartPreviewProps) => {
         ref={setRef}
         {...attributes}
         style={{
+          display: "contents",
           opacity: isDragging ? 0 : isOver ? 0.8 : 1,
           border: `2px solid ${
             isOver && !isDragging ? theme.palette.primary.main : "transparent"
@@ -350,13 +351,14 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
   }, [components?.dataCubesComponents]);
 
   return (
-    <Flex
+    <Box
       sx={{
-        flexDirection: "column",
-        flexGrow: 1,
+        display: "grid",
+        gridTemplateRows: "subgrid",
+        gridRow: shouldShowDebugPanel() ? "span 5" : "span 4",
+        backgroundColor: "background.paper",
         color: "grey.800",
         p: 6,
-        width: "100%",
       }}
     >
       <ChartErrorBoundary resetKeys={[state]}>
@@ -387,113 +389,108 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
             </Head>
             <LoadingStateProvider>
               <InteractiveFiltersProvider>
-                <Box
+                <Flex
                   sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "space-between",
-                    height: "100%",
+                    justifyContent:
+                      configuring || chartConfig.meta.title[locale]
+                        ? "space-between"
+                        : "flex-end",
+                    alignItems: "flex-start",
+                    gap: 2,
                   }}
                 >
-                  <div style={{ height: "100%" }}>
-                    <Flex
-                      sx={{
-                        justifyContent:
-                          configuring || chartConfig.meta.title[locale]
-                            ? "space-between"
-                            : "flex-end",
-                        alignItems: "flex-start",
-                        gap: 2,
-                      }}
-                    >
-                      {(configuring || chartConfig.meta.title[locale]) && (
-                        <Title
-                          text={chartConfig.meta.title[locale]}
-                          lighterColor
-                          onClick={
-                            configuring
-                              ? () =>
-                                  dispatch({
-                                    type: "CHART_ACTIVE_FIELD_CHANGED",
-                                    value: "title",
-                                  })
-                              : undefined
-                          }
-                        />
-                      )}
-                      <Flex sx={{ alignItems: "center", gap: 2 }}>
-                        {!disableMetadataPanel && (
-                          <MetadataPanel
-                            dataSource={dataSource}
-                            chartConfigs={[chartConfig]}
-                            dimensions={allComponents}
-                            top={96}
-                          />
-                        )}
-                        {actionElementSlot}
-                      </Flex>
-                    </Flex>
-                    {(configuring || chartConfig.meta.description[locale]) && (
-                      <Description
-                        text={chartConfig.meta.description[locale]}
-                        lighterColor
-                        onClick={
-                          configuring
-                            ? () => {
-                                dispatch({
-                                  type: "CHART_ACTIVE_FIELD_CHANGED",
-                                  value: "description",
-                                });
-                              }
-                            : undefined
-                        }
-                      />
-                    )}
-                    {chartConfig.interactiveFiltersConfig?.dataFilters
-                      .active && (
-                      <ChartDataFilters
+                  {configuring || chartConfig.meta.title[locale] ? (
+                    <Title
+                      text={chartConfig.meta.title[locale]}
+                      lighterColor
+                      onClick={
+                        configuring
+                          ? () =>
+                              dispatch({
+                                type: "CHART_ACTIVE_FIELD_CHANGED",
+                                value: "title",
+                              })
+                          : undefined
+                      }
+                    />
+                  ) : (
+                    // We need to have a span here to keep the space between the
+                    // title and the chart (subgrid layout)
+                    <span />
+                  )}
+                  <Flex sx={{ alignItems: "center", gap: 2 }}>
+                    {!disableMetadataPanel && (
+                      <MetadataPanel
                         dataSource={dataSource}
-                        chartConfig={chartConfig}
-                        dimensions={dimensions}
-                        measures={measures}
+                        chartConfigs={[chartConfig]}
+                        dimensions={allComponents}
+                        top={96}
                       />
                     )}
-                    <Box
-                      ref={containerRef}
-                      height={containerHeight.current}
-                      pt={4}
-                    >
-                      {isTablePreview ? (
-                        <DataSetTable
-                          dataSource={dataSource}
-                          chartConfig={chartConfig}
-                          sx={{ width: "100%", maxHeight: "100%" }}
-                        />
-                      ) : (
-                        <ChartWithFilters
-                          dataSource={dataSource}
-                          componentIris={componentIris}
-                          chartConfig={chartConfig}
-                          dimensions={dimensions}
-                          measures={measures}
-                        />
-                      )}
-                    </Box>
-                  </div>
-                  <ChartFootnotes
+                    {actionElementSlot}
+                  </Flex>
+                </Flex>
+                {configuring || chartConfig.meta.description[locale] ? (
+                  <Description
+                    text={chartConfig.meta.description[locale]}
+                    lighterColor
+                    onClick={
+                      configuring
+                        ? () => {
+                            dispatch({
+                              type: "CHART_ACTIVE_FIELD_CHANGED",
+                              value: "description",
+                            });
+                          }
+                        : undefined
+                    }
+                  />
+                ) : (
+                  // We need to have a span here to keep the space between the
+                  // title and the chart (subgrid layout)
+                  <span />
+                )}
+                {chartConfig.interactiveFiltersConfig?.dataFilters.active && (
+                  <ChartDataFilters
                     dataSource={dataSource}
                     chartConfig={chartConfig}
-                    onToggleTableView={handleToggleTableView}
                     dimensions={dimensions}
                     measures={measures}
                   />
-                </Box>
+                )}
+                <div
+                  ref={containerRef}
+                  style={{ height: containerHeight.current, paddingTop: 16 }}
+                >
+                  {isTablePreview ? (
+                    <DataSetTable
+                      dataSource={dataSource}
+                      chartConfig={chartConfig}
+                      sx={{ width: "100%", maxHeight: "100%" }}
+                    />
+                  ) : (
+                    <ChartWithFilters
+                      dataSource={dataSource}
+                      componentIris={componentIris}
+                      chartConfig={chartConfig}
+                      dimensions={dimensions}
+                      measures={measures}
+                    />
+                  )}
+                </div>
+                <ChartFootnotes
+                  dataSource={dataSource}
+                  chartConfig={chartConfig}
+                  onToggleTableView={handleToggleTableView}
+                  dimensions={dimensions}
+                  measures={measures}
+                />
                 <DebugPanel configurator interactiveFilters />
               </InteractiveFiltersProvider>
             </LoadingStateProvider>
           </>
         )}
       </ChartErrorBoundary>
-    </Flex>
+    </Box>
   );
 };

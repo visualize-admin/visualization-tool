@@ -13,8 +13,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     gap: theme.spacing(4),
   },
   chartWrapper: {
-    display: "flex",
-    flexDirection: "column",
+    display: "contents",
     backgroundColor: theme.palette.grey[100],
     border: "1px solid",
     borderColor: theme.palette.divider,
@@ -34,7 +33,7 @@ export const ChartWrapper = React.forwardRef<HTMLDivElement, ChartWrapperProps>(
     const { children, editing, layoutType, ...rest } = props;
     const classes = useStyles();
     return (
-      <Box ref={ref} {...rest}>
+      <Box ref={ref} {...rest} sx={{ ...rest.sx, display: "contents" }}>
         {(editing || layoutType === "tab") && <ChartSelectionTabs />}
         <Box
           className={classes.chartWrapper}
