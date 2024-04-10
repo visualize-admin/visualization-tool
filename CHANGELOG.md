@@ -9,6 +9,10 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
+Nothing yet.
+
+# [4.1.0] - 2024-04-10
+
 - Features
   - Enabled support for monthly and yearly temporal entities (through a new `TemporalEntityDimension`)
   - It's now possible to control the opacity of map symbols also in case of numerical or categorical colors
