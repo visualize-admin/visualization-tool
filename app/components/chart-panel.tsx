@@ -1,6 +1,5 @@
 import { Box, BoxProps, Theme, useMediaQuery } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import capitalize from "lodash/capitalize";
 import React from "react";
 
 import { ChartSelectionTabs } from "@/components/chart-selection-tabs";
@@ -8,12 +7,7 @@ import { ChartConfig, Layout } from "@/config-types";
 import { useTheme } from "@/themes";
 
 const useStyles = makeStyles((theme: Theme) => ({
-  panelLayoutVertical: {
-    display: "flex",
-    flexDirection: "column",
-    gap: theme.spacing(4),
-  },
-  panelLayoutTall: {
+  panelLayout: {
     display: "flex",
     flexDirection: "column",
     gap: theme.spacing(4),
@@ -39,7 +33,6 @@ export const ChartWrapper = React.forwardRef<HTMLDivElement, ChartWrapperProps>(
   (props, ref) => {
     const { children, editing, layoutType, ...rest } = props;
     const classes = useStyles();
-
     return (
       <Box ref={ref} {...rest}>
         {(editing || layoutType === "tab") && <ChartSelectionTabs />}
@@ -54,27 +47,12 @@ export const ChartWrapper = React.forwardRef<HTMLDivElement, ChartWrapperProps>(
   }
 );
 
-type ChartPanelLayoutProps = React.PropsWithChildren<{
-  type: Extract<Layout, { type: "dashboard" }>["layout"];
-}>;
+type ChartPanelLayoutProps = React.PropsWithChildren<{}>;
 
 export const ChartPanelLayout = (props: ChartPanelLayoutProps) => {
-  const { children, type } = props;
+  const { children } = props;
   const classes = useStyles();
-
-  return (
-    <div
-      className={
-        classes[
-          `panelLayout${
-            capitalize(type) as Capitalize<ChartPanelLayoutProps["type"]>
-          }`
-        ]
-      }
-    >
-      {children}
-    </div>
-  );
+  return <div className={classes.panelLayout}>{children}</div>;
 };
 
 type ChartPanelLayoutVerticalProps = {
@@ -86,12 +64,7 @@ export const ChartPanelLayoutVertical = (
   props: ChartPanelLayoutVerticalProps
 ) => {
   const { chartConfigs, renderChart } = props;
-
-  return (
-    <ChartPanelLayout type="tall">
-      {chartConfigs.map(renderChart)}
-    </ChartPanelLayout>
-  );
+  return <ChartPanelLayout>{chartConfigs.map(renderChart)}</ChartPanelLayout>;
 };
 
 type ChartPanelLayoutTallProps = {
@@ -106,7 +79,7 @@ export const ChartPanelLayoutTall = (props: ChartPanelLayoutTallProps) => {
   }, [chartConfigs, renderChart]);
 
   return (
-    <ChartPanelLayout type="tall">
+    <ChartPanelLayout>
       {rows.map((row, i) => (
         <ChartPanelLayoutTallRow key={i} row={row} />
       ))}
