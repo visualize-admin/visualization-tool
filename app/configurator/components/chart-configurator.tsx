@@ -1,4 +1,4 @@
-import { t, Trans } from "@lingui/macro";
+import { Trans } from "@lingui/macro";
 import {
   Box,
   Button,
@@ -71,9 +71,9 @@ import { useInteractiveDataFilterToggle } from "@/configurator/interactive-filte
 import { InteractiveFiltersConfigurator } from "@/configurator/interactive-filters/interactive-filters-configurator";
 import {
   Dimension,
+  Measure,
   isStandardErrorDimension,
   isTemporalDimension,
-  Measure,
 } from "@/domain/data";
 import { isDynamicMaxValue } from "@/domain/max-value";
 import { truthy } from "@/domain/types";
@@ -714,16 +714,7 @@ export const ChartConfigurator = ({
                               onRemove={() =>
                                 handleRemoveDimensionFilter(dimension)
                               }
-                              sideControls={
-                                <MoveDragButton
-                                  className="buttons"
-                                  dragButtonProps={{
-                                    title: t({
-                                      id: "Drag filters to reorganize",
-                                    }),
-                                  }}
-                                />
-                              }
+                              sideControls={<MoveDragButton />}
                             />
                           </div>
                         )}

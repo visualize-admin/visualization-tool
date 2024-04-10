@@ -1,4 +1,4 @@
-import { Trans, t } from "@lingui/macro";
+import { Trans } from "@lingui/macro";
 import { Box, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { ReactNode } from "react";
@@ -121,14 +121,7 @@ export const TabDropZone = (props: TabDropZoneProps) => {
                               disabled={isHidden}
                             />
                             <Box className={classes.dragButtons}>
-                              <MoveDragButton
-                                className="buttons"
-                                dragButtonProps={{
-                                  title: t({
-                                    id: "Drag filters to reorganize",
-                                  }),
-                                }}
-                              />
+                              <MoveDragButton />
                             </Box>
                           </Box>
                         );
