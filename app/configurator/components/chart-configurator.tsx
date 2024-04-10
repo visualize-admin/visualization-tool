@@ -1,4 +1,4 @@
-import { t, Trans } from "@lingui/macro";
+import { Trans } from "@lingui/macro";
 import {
   Box,
   Button,
@@ -34,7 +34,7 @@ import {
   skipPossibleFiltersQuery,
 } from "@/charts/shared/ensure-possible-filters";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
-import MoveDragButtons from "@/components/move-drag-buttons";
+import { MoveDragButton } from "@/components/move-drag-button";
 import useDisclosure from "@/components/use-disclosure";
 import {
   ChartConfig,
@@ -71,9 +71,9 @@ import { useInteractiveDataFilterToggle } from "@/configurator/interactive-filte
 import { InteractiveFiltersConfigurator } from "@/configurator/interactive-filters/interactive-filters-configurator";
 import {
   Dimension,
+  Measure,
   isStandardErrorDimension,
   isTemporalDimension,
-  Measure,
 } from "@/domain/data";
 import { isDynamicMaxValue } from "@/domain/max-value";
 import { truthy } from "@/domain/types";
@@ -100,11 +100,18 @@ type DataFilterSelectGenericProps = {
   index: number;
   disabled?: boolean;
   onRemove: () => void;
+  sideControls?: React.ReactNode;
 };
 
 const DataFilterSelectGeneric = (props: DataFilterSelectGenericProps) => {
-  const { rawDimension, filterDimensionIris, index, disabled, onRemove } =
-    props;
+  const {
+    rawDimension,
+    filterDimensionIris,
+    index,
+    disabled,
+    onRemove,
+    sideControls,
+  } = props;
   const locale = useLocale();
   const [state] = useConfiguratorState();
   const chartConfig = getChartConfig(state);
@@ -151,6 +158,7 @@ const DataFilterSelectGeneric = (props: DataFilterSelectGenericProps) => {
       </OpenMetadataPanelWrapper>
     ),
     controls,
+    sideControls,
     id: `select-single-filter-${index}`,
     disabled: fetching || disabled,
     isOptional: !dimension.isKeyDimension,
@@ -473,7 +481,6 @@ const useFilterReorder = ({
   return {
     handleRemoveDimensionFilter,
     handleAddDimensionFilter,
-    handleMove,
     handleDragEnd,
     fetching,
     dimensions,
@@ -494,36 +501,19 @@ const useStyles = makeStyles<Theme, { fetching: boolean }>((theme) => ({
     marginBottom: 4,
   },
   filterRow: {
-    display: "grid",
-    gridTemplateColumns: "auto min-content",
     overflow: "hidden",
     width: "100%",
-    gridColumnGap: theme.spacing(2),
-    gridTemplateRows: "min-content min-content",
-    gridTemplateAreas: '"description drag-button" "select drag-button"',
     "& .buttons": {
       transition: "color 0.125s ease, opacity 0.125s ease-out",
       opacity: 0.25,
       color: theme.palette.secondary.active,
     },
     "& .buttons:hover": {
-      // Type inheritance is broken when one level of nesting is added
-      opacity: ({ fetching }: { fetching: boolean }) =>
-        fetching ? undefined : 1,
+      opacity: ({ fetching }) => (fetching ? undefined : 1),
     },
     "& > *": {
       overflow: "hidden",
     },
-  },
-  dragButtons: {
-    gridArea: "drag-button",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "flex-end",
-    flexGrow: 0,
-    flexShrink: 0,
-    paddingBottom: 0,
   },
   addDimensionContainer: {
     marginTop: "1rem",
@@ -595,7 +585,6 @@ export const ChartConfigurator = ({
     measures,
     filterDimensions,
     addableDimensions,
-    handleMove,
   } = useFilterReorder({
     onAddDimensionFilter: () => closeFilterMenu(),
   });
@@ -725,26 +714,8 @@ export const ChartConfigurator = ({
                               onRemove={() =>
                                 handleRemoveDimensionFilter(dimension)
                               }
+                              sideControls={<MoveDragButton />}
                             />
-
-                            <Box className={classes.dragButtons}>
-                              <MoveDragButtons
-                                moveUpButtonProps={{
-                                  title: t({ id: "Move filter up" }),
-                                }}
-                                moveDownButtonProps={{
-                                  title: t({ id: "Move filter down" }),
-                                }}
-                                dragButtonProps={{
-                                  title: t({
-                                    id: "Drag filters to reorganize",
-                                  }),
-                                }}
-                                className="buttons"
-                                onClickUp={() => handleMove(dimension.iri, -1)}
-                                onClickDown={() => handleMove(dimension.iri, 1)}
-                              />
-                            </Box>
                           </div>
                         )}
                       </Draggable>

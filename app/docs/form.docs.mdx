@@ -1,11 +1,10 @@
 import { DatePicker, PickersDay } from "@mui/lab";
 import { TextField } from "@mui/material";
-import { Canvas, Meta } from '@storybook/blocks';
+import { Canvas, Meta } from "@storybook/blocks";
 import { useState } from "react";
 import { ReactSpecimen } from "./catalog";
 
-
-import * as FormStories from './form.stories';
+import * as FormStories from "./form.stories";
 
 > Form elements are used throughout the _Visualization Tool_ whenever user input is needed.
 
@@ -19,20 +18,13 @@ import * as FormStories from './form.stories';
 
 <Canvas of={FormStories.Checkbox} />
 
-
 ## Switch
 
-<Canvas of={FormStories.Switch} /> */}
-
-
+<Canvas of={FormStories.Switch} />
 
 ## Select
 
 <Canvas of={FormStories.Select} />
-
-
-
-
 
 ## MinimalisticSelect
 
@@ -40,29 +32,23 @@ Can take a smaller prop to make it smaller.
 
 <Canvas of={FormStories.MinimalisticSelect} />
 
-
-
 ## Input
 
 <Canvas of={FormStories.Input} />
-
 
 ## Search Field
 
 <Canvas of={FormStories.SearchField} />
 
-
 ## Date picker
 
 <Canvas of={FormStories.DatePicker} />
-
 
 ## Select tree
 
 <Canvas of={FormStories.SelectTree} />
 
 # For developers
-
 
 ### \<Field />
 
@@ -77,11 +63,9 @@ import { Field } from "../components/field";
   path={"height"}
   label="variable"
   value="http://..."
-/>
+/>;
 ```
-
 
 ### useField()
 
 This hook handles form events and dispatches an action to update the application state stored in local storage.
-

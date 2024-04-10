@@ -22,16 +22,6 @@ msgstr "Filter hinzufügen"
 msgid "Drag filters to reorganize"
 msgstr "Ziehen Sie die Filter per Drag & Drop, um sie neu zu organisieren"
 
-#: app/configurator/components/chart-configurator.tsx
-#: app/configurator/components/chart-controls/drag-and-drop-tab.tsx
-msgid "Move filter down"
-msgstr "Filter nach unten verschieben"
-
-#: app/configurator/components/chart-configurator.tsx
-#: app/configurator/components/chart-controls/drag-and-drop-tab.tsx
-msgid "Move filter up"
-msgstr "Filter nach oben verschieben"
-
 #: app/browser/dataset-browse.tsx
 #: app/components/select-tree.tsx
 msgid "No results"

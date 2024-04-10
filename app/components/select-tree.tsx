@@ -8,6 +8,7 @@ import MUITreeItem, {
 } from "@mui/lab/TreeItem";
 import TreeView, { TreeViewProps } from "@mui/lab/TreeView";
 import {
+  Box,
   Collapse,
   IconButton,
   OutlinedInput,
@@ -260,7 +261,8 @@ type NodeId = string;
 export type SelectTreeProps = {
   options: Tree;
   value: NodeId | undefined;
-  controls?: React.ReactNode;
+  topControls?: React.ReactNode;
+  sideControls?: React.ReactNode;
   onChange: (ev: { target: { value: NodeId } }) => void;
   disabled?: boolean;
   label?: React.ReactNode;
@@ -286,7 +288,8 @@ function SelectTree({
   value,
   onChange,
   disabled,
-  controls,
+  topControls,
+  sideControls,
   onOpen,
   onClose,
   open,
@@ -481,23 +484,33 @@ function SelectTree({
   return (
     <div>
       {label && (
-        <Label htmlFor={id!} smaller sx={{ my: "6px" }}>
-          {label} {controls}
+        <Label htmlFor={id!} smaller>
+          {label} {topControls}
         </Label>
       )}
-      <OutlinedInput
-        id={id}
-        name={id}
-        readOnly
-        value={value ? labelsByValue[value] : undefined}
-        disabled={disabled}
-        ref={inputRef}
-        size="small"
-        className={classes.input}
-        onClick={disabled ? undefined : handleOpen}
-        onKeyDown={handleKeyDown}
-        endAdornment={<Icon className={classes.icon} name="caretDown" />}
-      />
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateColumns: sideControls ? "calc(100% - 2rem) 2rem" : "100%",
+          alignItems: "center",
+          columnGap: 2,
+        }}
+      >
+        <OutlinedInput
+          id={id}
+          name={id}
+          readOnly
+          value={value ? labelsByValue[value] : undefined}
+          disabled={disabled}
+          ref={inputRef}
+          size="small"
+          className={classes.input}
+          onClick={disabled ? undefined : handleOpen}
+          onKeyDown={handleKeyDown}
+          endAdornment={<Icon className={classes.icon} name="chevronDown" />}
+        />
+        {sideControls}
+      </Box>
       <Popover
         anchorOrigin={{
           vertical: "bottom",

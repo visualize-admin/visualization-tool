@@ -408,8 +408,8 @@ export const Components: React.FC = () => {
           <Box my={1}>
             <Select size="small" defaultValue="Vanilla">
               <MenuItem value="Vanilla">Vanilla</MenuItem>
-              <MenuItem value="Vanilla">Chocolate</MenuItem>
-              <MenuItem value="Vanilla">Raspberry</MenuItem>
+              <MenuItem value="Chocolate">Chocolate</MenuItem>
+              <MenuItem value="Raspberry">Raspberry</MenuItem>
             </Select>
           </Box>
           <Autocomplete

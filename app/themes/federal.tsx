@@ -437,6 +437,9 @@ theme.components = {
   },
   MuiInputBase: {
     styleOverrides: {
+      root: {
+        backgroundColor: theme.palette.background.paper,
+      },
       input: {
         "&:focus": {
           backgroundColor: "transparent",
@@ -479,6 +482,10 @@ theme.components = {
         fontSize: theme.typography.body2.fontSize,
         lineHeight: theme.typography.body2.lineHeight,
         borderRadius: (theme.shape.borderRadius as number) * 1.5,
+
+        "& > .MuiOutlinedInput-input": {
+          paddingLeft: 12,
+        },
       },
     },
   },
@@ -614,6 +621,26 @@ theme.components = {
     },
   },
   MuiSelect: {
+    defaultProps: {
+      IconComponent: (props) => (
+        <span
+          {...props}
+          style={{
+            ...props.style,
+            width: 16,
+            height: 16,
+            right: 12,
+            transition: "transform 0.15s ease",
+          }}
+        >
+          <Icon
+            name="chevronDown"
+            size={16}
+            style={{ transform: "scale(1.5)" }}
+          />
+        </span>
+      ),
+    },
     styleOverrides: {
       select: {
         display: "flex",

@@ -1649,7 +1649,7 @@ const ChartFieldColorComponent = (props: ChartFieldColorComponentProps) => {
             <ColorRampField
               field={field}
               path="color.palette"
-              nbClass={nbClass}
+              nSteps={nbClass}
             />
             <FieldSetLegend
               legendTitle={t({

@@ -53,7 +53,6 @@ export const ChartConfiguratorTable = ({
     chartConfig,
     handleDragEnd,
     handleDragStart,
-    handleMove,
   } = useTableChartController(state);
 
   const fieldsArray = useOrderedTableColumns(chartConfig.fields);
@@ -126,8 +125,6 @@ export const ChartConfiguratorTable = ({
           items={groupFields}
           isDropDisabled={isGroupsDropDisabled}
           emptyComponent={<EmptyGroups />}
-          onUp={handleMove(-1, "groups")}
-          onDown={handleMove(1, "groups")}
         />
 
         <TabDropZone
@@ -136,8 +133,6 @@ export const ChartConfiguratorTable = ({
           dimensions={dimensions}
           measures={measures}
           items={columnFields}
-          onUp={handleMove(-1, "columns")}
-          onDown={handleMove(1, "columns")}
         />
       </DragDropContext>
     </>

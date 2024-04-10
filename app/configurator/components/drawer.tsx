@@ -12,7 +12,7 @@ export const ConfiguratorDrawer = styled(MuiDrawer)(({ theme }) => ({
     bottom: 0,
     width: DRAWER_WIDTH,
     height: "auto",
-    borderRight: `1px ${theme.palette.divider} solid`,
+    outline: `1px ${theme.palette.divider} solid`,
     boxShadow: "none",
   },
 }));
