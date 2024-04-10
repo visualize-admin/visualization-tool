@@ -482,6 +482,10 @@ theme.components = {
         fontSize: theme.typography.body2.fontSize,
         lineHeight: theme.typography.body2.lineHeight,
         borderRadius: (theme.shape.borderRadius as number) * 1.5,
+
+        "& > .MuiOutlinedInput-input": {
+          paddingLeft: 12,
+        },
       },
     },
   },
