@@ -1,23 +1,19 @@
-import { Box, BoxProps } from "@mui/material";
+import { t } from "@lingui/macro";
+import { Box } from "@mui/material";
 
 import { Icon } from "@/icons";
 
-type MoveDragButtonProps = {
-  className?: string;
-  dragButtonProps?: BoxProps;
-};
-
-export const MoveDragButton = (props: MoveDragButtonProps) => {
-  const { className, dragButtonProps } = props;
-
+export const MoveDragButton = () => {
   return (
     <Box
       display="flex"
       component="span"
       sx={{ cursor: "move" }}
-      {...dragButtonProps}
+      title={t({
+        id: "Drag filters to reorganize",
+      })}
     >
-      <Icon className={className} name="dragndrop" />
+      <Icon className="buttons" name="dragndrop" />
     </Box>
   );
 };

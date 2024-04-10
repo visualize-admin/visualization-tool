@@ -1,6 +1,7 @@
-import { memo } from "react";
+import React, { memo } from "react";
 
 import { ChartDataWrapper } from "@/charts/chart-data-wrapper";
+import { shouldRenderMap } from "@/charts/map/helpers";
 import { MapComponent } from "@/charts/map/map";
 import { MapLegend } from "@/charts/map/map-legend";
 import { MapChart } from "@/charts/map/map-state";
@@ -66,9 +67,11 @@ export const ChartMapVisualization = ({
 
   const geoCoordinatesDimensionValues =
     geoCoordinatesDimension?.dataCubesComponents.dimensions[0].values;
-  const coordinates = geoCoordinatesDimensionValues
-    ? dimensionValuesToGeoCoordinates(geoCoordinatesDimensionValues)
-    : undefined;
+  const coordinates = React.useMemo(() => {
+    return geoCoordinatesDimensionValues
+      ? dimensionValuesToGeoCoordinates(geoCoordinatesDimensionValues)
+      : undefined;
+  }, [geoCoordinatesDimensionValues]);
   const geoShapesIri = areaDimensionIri || symbolDimensionIri;
   const [
     {
@@ -93,13 +96,12 @@ export const ChartMapVisualization = ({
     shapes?.topology?.objects?.shapes as any
   )?.geometries;
 
-  const ready =
-    (areaDimensionIri !== "" && geometries) ||
-    (symbolDimensionIri !== "" && coordinates) ||
-    geometries ||
-    // Raw map without any data layer.
-    (areaDimensionIri === "" && symbolDimensionIri === "");
-
+  const ready = shouldRenderMap({
+    areaDimensionIri,
+    symbolDimensionIri,
+    geometries,
+    coordinates,
+  });
   const error = geoCoordinatesDimensionError || geoShapesError;
   const fetching = fetchingGeoCoordinatesDimension || fetchingGeoShapes;
 

@@ -1,6 +1,6 @@
 import { Box } from "@mui/material";
 
-import { Canvas, Meta } from '@storybook/blocks';
+import { Canvas, Meta } from "@storybook/blocks";
 import * as ColorRampStories from "./color-ramp.stories";
 
 <Meta of={ColorRampStories} />
@@ -19,7 +19,6 @@ import * as ColorRampStories from "./color-ramp.stories";
 
 <Canvas of={ColorRampStories.Custom} />
 
-
 ### Disabled
 
 <Canvas of={ColorRampStories.Disabled} />
@@ -31,5 +30,5 @@ import * as ColorRampStories from "./color-ramp.stories";
 > update the state.
 
 ```
-<ColorRampField field={field} path={path} nbClass={nbClass} disabled={disabled} />
+<ColorRampField field={field} path={path} nSteps={nSteps} disabled={disabled} />
 ```

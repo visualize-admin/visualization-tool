@@ -482,6 +482,10 @@ theme.components = {
         fontSize: theme.typography.body2.fontSize,
         lineHeight: theme.typography.body2.lineHeight,
         borderRadius: (theme.shape.borderRadius as number) * 1.5,
+
+        "& > .MuiOutlinedInput-input": {
+          paddingLeft: 12,
+        },
       },
     },
   },
@@ -623,6 +627,8 @@ theme.components = {
           {...props}
           style={{
             ...props.style,
+            width: 16,
+            height: 16,
             right: 12,
             transition: "transform 0.15s ease",
           }}

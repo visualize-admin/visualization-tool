@@ -68,17 +68,6 @@ type ItemStyleProps = {
 };
 
 const useItemStyles = makeStyles<Theme, ItemStyleProps>((theme) => {
-  const getSizeAdjustConstant = (
-    symbol: LegendSymbol,
-    usage: LegendItemUsage
-  ) => {
-    if (usage === "colorPicker" || symbol === "circle") {
-      return 1.5;
-    }
-
-    return 1;
-  };
-
   return {
     legendItem: {
       position: "relative",
@@ -95,17 +84,13 @@ const useItemStyles = makeStyles<Theme, ItemStyleProps>((theme) => {
         content: "''",
         position: "relative",
         display: "block",
-        width: ({ symbol, usage }) =>
-          `calc(0.5rem * ${getSizeAdjustConstant(symbol, usage)})`,
-        height: ({ symbol, usage }: ItemStyleProps) =>
-          `calc(${["square", "circle"].includes(symbol) ? "0.5rem" : "2px"} * ${getSizeAdjustConstant(
-            symbol,
-            usage
-          )})`,
-        marginTop: ({ symbol, usage }) =>
+        width: `calc(0.5rem * var(--size-adjust, 1))`,
+        height: ({ symbol }) =>
+          `calc(${["square", "circle"].includes(symbol) ? "0.5rem" : "2px"} * var(--size-adjust, 1))`,
+        marginTop: ({ symbol }) =>
           `calc(0.75rem - calc(${
             ["square", "circle"].includes(symbol) ? "0.5rem" : "2px"
-          } * ${getSizeAdjustConstant(symbol, usage)}) * 0.5)`,
+          } * var(--size-adjust, 1)) * 0.5)`,
         marginRight: "0.4rem",
         flexShrink: 0,
         backgroundColor: ({ color }) => color,
@@ -116,6 +101,9 @@ const useItemStyles = makeStyles<Theme, ItemStyleProps>((theme) => {
     legendCheckbox: {
       marginBottom: () => "0.25rem",
       marginRight: 0,
+    },
+    bigger: {
+      "--size-adjust": 1.5,
     },
   };
 });
@@ -200,6 +188,8 @@ export const LegendColor = memo(function LegendColor(props: LegendColorProps) {
   );
 });
 
+const removeOpacity = (rgb: number[]) => rgb.slice(0, 3);
+
 // TODO: add metadata to legend titles?
 export const MapLegendColor = memo(function LegendColor({
   component,
@@ -247,7 +237,7 @@ export const MapLegendColor = memo(function LegendColor({
       getColor={(v) => {
         const label = getLabel(v);
         const rgb = getColor({ [component.iri]: label });
-        return rgbArrayToHex(rgb);
+        return rgbArrayToHex(removeOpacity(rgb));
       }}
       getLabel={getLabel}
       symbol="circle"
@@ -380,6 +370,7 @@ export const LegendItem = (props: LegendItemProps) => {
     usage = "legend",
   } = props;
   const classes = useItemStyles({ symbol, color, usage });
+  const shouldBeBigger = symbol === "circle" || usage === "colorPicker";
 
   return interactive && onToggle ? (
     <MaybeTooltip
@@ -401,12 +392,18 @@ export const LegendItem = (props: LegendItemProps) => {
           onChange={onToggle}
           key={item}
           color={color}
-          className={classes.legendCheckbox}
+          className={clsx(
+            classes.legendCheckbox,
+            shouldBeBigger && classes.bigger
+          )}
         />
       </div>
     </MaybeTooltip>
   ) : (
-    <Flex data-testid="legendItem" className={classes.legendItem}>
+    <Flex
+      data-testid="legendItem"
+      className={clsx(classes.legendItem, shouldBeBigger && classes.bigger)}
+    >
       {dimension ? (
         <OpenMetadataPanelWrapper dim={dimension}>
           {/* Account for the added space, to align the symbol and label. */}
