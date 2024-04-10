@@ -9,14 +9,14 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
-Nothing yet.
+- Features
+  - Added support for using dynamic most recent date in temporal X axis
 
 # [4.1.0] - 2024-04-10
 
 - Features
   - Enabled support for monthly and yearly temporal entities (through a new `TemporalEntityDimension`)
   - It's now possible to control the opacity of map symbols also in case of numerical or categorical colors
-  - Added support for using dynamic most recent date in temporal X axis
 - Fixes
   - Fixed fetching of PossibleFilters when no components iris are passed (and stops execution completely if called when initializing a new chart from cube)
   - Fixed retrieving of shape labels when give shape misses label in currently selected locale
