@@ -33,6 +33,7 @@ import Flex from "@/components/flex";
 import { Checkbox } from "@/components/form";
 import { HintYellow } from "@/components/hint";
 import { MetadataPanel } from "@/components/metadata-panel";
+import { BANNER_MARGIN_TOP } from "@/components/presence";
 import {
   ChartConfig,
   DataSource,
@@ -424,7 +425,7 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
                         dataSource={dataSource}
                         chartConfigs={[chartConfig]}
                         dimensions={allComponents}
-                        top={96}
+                        top={BANNER_MARGIN_TOP}
                       />
                     )}
                     {actionElementSlot}

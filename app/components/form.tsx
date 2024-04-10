@@ -39,6 +39,7 @@ import React, {
 } from "react";
 
 import { useBrowseContext } from "@/browser/context";
+import { BANNER_MARGIN_TOP } from "@/components/presence";
 import VisuallyHidden from "@/components/visually-hidden";
 import {
   FieldProps,
@@ -268,7 +269,7 @@ const MenuPaper = styled(Paper, {
   // specZ: The maximum height of a simple menu should be one or more rows less than the view
   // height. This ensures a tapable area outside of the simple menu with which to dismiss
   // the menu.
-  maxHeight: "calc(100% - 96px)",
+  maxHeight: `calc(100% - ${BANNER_MARGIN_TOP}px)`,
   // Add iOS momentum scrolling for iOS < 13.0
   WebkitOverflowScrolling: "touch",
 });
