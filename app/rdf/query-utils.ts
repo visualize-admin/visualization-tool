@@ -28,10 +28,8 @@ export const buildLocalizedSubQuery = (
 
   return `${locales
     .map(
-      (locale) => `OPTIONAL {
-  ?${s} ${p} ?${o}_${locale} .
-  FILTER(LANG(?${o}_${locale}) = "${locale}")
-}`
+      (locale) =>
+        `OPTIONAL { ?${s} ${p} ?${o}_${locale} . FILTER(LANG(?${o}_${locale}) = "${locale}") }`
     )
     .join("\n")}${
     fallbackToNonLocalized
