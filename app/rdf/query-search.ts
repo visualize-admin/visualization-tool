@@ -89,7 +89,7 @@ const fanOutExclusiveFilters = (
   }
 
   const { exclusive = [], common = [] } = groupBy(filters, (f) => {
-    return f.type === SearchCubeFilterType.SharedDimension ||
+    return f.type === SearchCubeFilterType.SharedDimensions ||
       f.type === SearchCubeFilterType.TemporalDimension
       ? "exclusive"
       : "common";
@@ -247,7 +247,7 @@ const mkScoresQuery = (
   query: string | null | undefined
 ) => {
   const searchingSharedDimensions = filters?.some(
-    (f) => f.type === SearchCubeFilterType.SharedDimension
+    (f) => f.type === SearchCubeFilterType.SharedDimensions
   );
   return SELECT.DISTINCT`
     ?iri ?title ?status ?datePublished ?description ?publisher ?creatorIri ?creatorLabel
@@ -287,37 +287,18 @@ const mkScoresQuery = (
             ?iri ${ns.cube.observationConstraint} ?shape .
             ?shape ${ns.sh.property} ?prop .
             ?prop ${ns.cubeMeta.dataKind}/${ns.time.unitType} <${unitNode}>.`;
-        } else if (df.type === SearchCubeFilterType.SharedDimension) {
-          const sharedWith = df.value;
+        } else if (df.type === SearchCubeFilterType.SharedDimensions) {
+          const sharedDimensions = df.value.split(";");
           return sparql`
-              {
-                SELECT DISTINCT ?termsetIri WHERE {
-                  VALUES (?iri) {(<${sharedWith}>)}
-        
-                  ?iri ${ns.cube.observationConstraint}/sh:property ?dimension .
-                  ?dimension a ${ns.cube.KeyDimension} .
-                  ?dimension ${ns.sh.in}/${ns.rdf.first} ?value.
-                  ?value ${ns.schema.inDefinedTermSet} ?termsetIri .
-                  ?termsetIri a ${ns.cubeMeta["SharedDimension"]} .
-                }
-              }
-            `;
+            VALUES (?termsetIri) {${sharedDimensions.map((sd) => `(<${sd}>)`).join(" ")}}
+            ?iri a <https://cube.link/Cube> .
+            ?iri ${ns.cube.observationConstraint}/${ns.sh.property} ?dimension .
+            ?dimension a ${ns.cube.KeyDimension} .
+            ?dimension ${ns.sh.in}/${ns.rdf.first} ?value.
+            ?value ${ns.schema.inDefinedTermSet} ?termsetIri .
+            ${buildLocalizedSubQuery("termsetIri", "schema:name", "termsetLabel", { locale })}`;
         }
       })}
-
-      # Shared Dimension
-      ${
-        searchingSharedDimensions
-          ? sparql`?iri a <https://cube.link/Cube> .
-        ?iri ${ns.cube.observationConstraint}/${ns.sh.property} ?dimension .
-        ?dimension a ${ns.cube.KeyDimension} .
-        ?dimension ${ns.sh.in}/${ns.rdf.first} ?value.
-        ?value ${ns.schema.inDefinedTermSet} ?termsetIri .
-        ${buildLocalizedSubQuery("termsetIri", "schema:name", "termsetLabel", { locale })}
-        `
-          : ""
-      }
-
 
       # Publisher, creator status, datePublished
       OPTIONAL { ?iri ${ns.dcterms.publisher} ?publisher . }

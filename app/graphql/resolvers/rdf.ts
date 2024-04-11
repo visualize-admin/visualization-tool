@@ -337,6 +337,18 @@ export const dataCubeComponents: NonNullable<
   };
 };
 
+export const dataCubeTermsets: NonNullable<
+  QueryResolvers["dataCubeTermsets"]
+> = async (_, { locale, cubeFilter }, { setup }, info) => {
+  const { sparqlClient } = await setup(info);
+  const { iri, latest = true } = cubeFilter;
+  const cube = await new LightCube({ iri, locale, sparqlClient }).init(
+    !!latest
+  );
+
+  return await cube.fetchTermsets();
+};
+
 export const dataCubeMetadata: NonNullable<
   QueryResolvers["dataCubeMetadata"]
 > = async (_, { locale, cubeFilter }, { setup }, info) => {

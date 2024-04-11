@@ -26,6 +26,20 @@ query DataCubeMetadata(
   )
 }
 
+query DataCubeTermsets(
+  $sourceType: String!
+  $sourceUrl: String!
+  $locale: String!
+  $cubeFilter: DataCubeTermsetFilter!
+) {
+  dataCubeTermsets(
+    cubeFilter: $cubeFilter
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    locale: $locale
+  )
+}
+
 query DataCubeObservations(
   $sourceType: String!
   $sourceUrl: String!

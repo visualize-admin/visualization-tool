@@ -94,6 +94,11 @@ export type DataCubePreview = {
   observations: Observation[];
 };
 
+export type Termset = {
+  iri: string;
+  label: string;
+};
+
 type ComponentRenderingConfig = {
   enableAnimation: boolean;
   enableCustomSort: boolean;

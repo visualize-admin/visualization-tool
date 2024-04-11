@@ -11,6 +11,7 @@ scalar DataCubeComponents
 scalar DataCubeMetadata
 scalar DataCubeObservations
 scalar DataCubePreview
+scalar Termset
 scalar GeoShapes
 
 type ObservationsQuery {
@@ -330,7 +331,7 @@ enum SearchCubeFilterType {
   DataCubeTheme
   DataCubeOrganization
   DataCubeAbout
-  SharedDimension
+  SharedDimensions
 }
 
 input SearchCubeFilter {
@@ -343,6 +344,11 @@ enum SearchCubeResultOrder {
   SCORE
   TITLE_ASC
   CREATED_DESC
+}
+
+input DataCubeTermsetFilter {
+  iri: String!
+  latest: Boolean
 }
 
 input DataCubeComponentFilter {
@@ -381,6 +387,12 @@ type Query {
     locale: String!
     cubeFilter: DataCubeComponentFilter!
   ): DataCubeComponents!
+  dataCubeTermsets(
+    sourceType: String!
+    sourceUrl: String!
+    locale: String!
+    cubeFilter: DataCubeTermsetFilter!
+  ): [Termset!]!
   dataCubeMetadata(
     sourceType: String!
     sourceUrl: String!

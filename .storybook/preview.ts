@@ -1,6 +1,10 @@
 import type { Preview } from "@storybook/react";
 import type { IndexEntry } from "@storybook/types";
-import { AppContextDecorator, RouterDecorator } from "./decorators";
+import {
+  AppContextDecorator,
+  RouterDecorator,
+  UrqlDecorator,
+} from "./decorators";
 
 const preview: Preview = {
   // @ts-ignore
@@ -9,7 +13,7 @@ const preview: Preview = {
       basePath: "/profile",
     },
   },
-  decorators: [AppContextDecorator, RouterDecorator],
+  decorators: [AppContextDecorator, RouterDecorator, UrqlDecorator],
   options: {
     storySort: (a: IndexEntry, b: IndexEntry) =>
       a.id === b.id
