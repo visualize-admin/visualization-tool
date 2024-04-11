@@ -9,7 +9,8 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
-Nothing yet.
+- Maintenance
+  - Vastly reduced Docker image size (9.78GB -> 375MB (-96%)), which should make CI pipelines faster
 
 # [4.1.0] - 2024-04-10
 
