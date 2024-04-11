@@ -53,7 +53,7 @@ import { useLocale } from "@/locales/use-locale";
 import { InteractiveFiltersProvider } from "@/stores/interactive-filters";
 import { useTransitionStore } from "@/stores/transition";
 import { useTheme } from "@/themes";
-import { snapCornerToCursor } from "@/utils/dnd";
+import { createSnapCornerToCursor } from "@/utils/dnd";
 import useEvent from "@/utils/use-event";
 
 type ChartPreviewProps = {
@@ -78,6 +78,11 @@ export const ChartPreview = (props: ChartPreviewProps) => {
     </ChartTablePreviewProvider>
   );
 };
+
+const DRAG_OVERLAY_WIDTH = 400;
+const snapCornerToCursor = createSnapCornerToCursor({
+  xOffset: -DRAG_OVERLAY_WIDTH,
+});
 
 type DashboardPreviewProps = ChartPreviewProps & {
   layoutType: Extract<Layout, { type: "dashboard" }>["layout"];
@@ -158,7 +163,7 @@ const DashboardPreview = (props: DashboardPreviewProps) => {
           modifiers={[snapCornerToCursor]}
           style={{
             opacity: over ? 0.8 : 1,
-            width: "min(40vh, 400px)",
+            width: DRAG_OVERLAY_WIDTH,
             height: "fit-content",
             border: `2px solid ${
               over ? theme.palette.primary.main : "transparent"
@@ -216,12 +221,11 @@ const DndChartPreview = (props: DndChartPreviewProps) => {
         ref={setRef}
         {...attributes}
         style={{
-          display: "contents",
-          opacity: isDragging ? 0 : isOver ? 0.8 : 1,
-          border: `2px solid ${
+          display: active ? "flex" : "contents",
+          opacity: isDragging ? 0.2 : isOver ? 0.8 : 1,
+          outline: `2px solid ${
             isOver && !isDragging ? theme.palette.primary.main : "transparent"
           }`,
-          outline: "none",
           pointerEvents: active ? "none" : "auto",
         }}
       >
