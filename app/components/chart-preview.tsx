@@ -466,7 +466,11 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
                 )}
                 <div
                   ref={containerRef}
-                  style={{ height: containerHeight.current, paddingTop: 16 }}
+                  style={{
+                    minWidth: 0,
+                    height: containerHeight.current,
+                    paddingTop: 16,
+                  }}
                 >
                   {isTablePreview ? (
                     <DataSetTable

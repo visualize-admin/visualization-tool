@@ -152,7 +152,6 @@ const useStyles = makeStyles<Theme, { shrink: boolean }>((theme) => ({
     paddingLeft: ({ shrink }) =>
       `calc(${theme.spacing(5)} + ${shrink ? DRAWER_WIDTH : 0}px)`,
     color: theme.palette.grey[800],
-    overflowX: "auto",
     transition: "padding 0.25s ease",
   },
 }));
@@ -337,12 +336,13 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
                 // title and the chart (subgrid layout)
                 <span />
               )}
-              <Flex
-                flexDirection="column"
+              <div
                 ref={containerRef}
-                height={containerHeight.current}
-                flexGrow={1}
-                mt={4}
+                style={{
+                  minWidth: 0,
+                  height: containerHeight.current,
+                  marginTop: 16,
+                }}
               >
                 {isTablePreview ? (
                   <DataSetTable
@@ -359,7 +359,7 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
                     measures={measures}
                   />
                 )}
-              </Flex>
+              </div>
               <ChartFootnotes
                 dataSource={dataSource}
                 chartConfig={chartConfig}
