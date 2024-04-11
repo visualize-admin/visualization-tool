@@ -1,7 +1,8 @@
-FROM node:18-alpine
+# We are using multi-stage builds to reduce container size
+# and only ship what's actually required by the app to run.
+# https://docs.docker.com/get-started/09_image_best/#multi-stage-builds
 
-RUN mkdir -p /usr/src/app
-WORKDIR /usr/src/app
+FROM node:18-alpine AS base
 
 # build with 
 # docker build \
@@ -22,13 +23,18 @@ ARG KEYCLOAK_ISSUER
 ARG NEXTAUTH_SECRET
 ARG NEXTAUTH_URL
 
-# Build app
+FROM base AS deps
+WORKDIR /src
+
 COPY package.json yarn.lock ./
 COPY app/package.json ./app/
-RUN yarn install --frozen-lockfile
+RUN yarn install --frozen-lockfile --silent
+# Need to separately install Sentry CLI, see https://github.com/getsentry/sentry-javascript/issues/8511
+RUN yarn add @sentry/cli -W
 
 ENV NODE_ENV production
 ENV NODE_OPTIONS=--max_old_space_size=2048
+ENV NEXT_TELEMETRY_DISABLED 1
 ENV NEXT_PUBLIC_COMMIT=$COMMIT
 ENV NEXT_PUBLIC_BASE_VECTOR_TILE_URL=$VECTOR_TILE_URL
 ENV NEXT_PUBLIC_MAPTILER_STYLE_KEY=$MAPTILER_STYLE_KEY
@@ -39,13 +45,30 @@ ENV NEXTAUTH_SECRET=$NEXTAUTH_SECRET
 ENV NEXTAUTH_URL=$NEXTAUTH_URL
 ENV PORT 3000
 
-COPY ./ ./
+FROM base AS builder
+WORKDIR /src
+COPY --from=deps /src/node_modules ./node_modules
+COPY --from=deps /src/app/node_modules ./app/node_modules
+COPY . .
 
 RUN yarn prisma generate
 RUN yarn build
 
-# Install only prod dependencies and start app
-RUN yarn install --frozen-lockfile --production && yarn cache clean
-CMD npm start
+FROM base AS runner
+WORKDIR /src
+
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+COPY --from=builder /src/app/public ./app/public
+
+COPY --from=builder /src/app/.next/standalone ./
+COPY --from=builder /src/app/.next/static ./app/.next/static
+
+USER nextjs
 
 EXPOSE 3000
+
+ENV PORT 3000
+
+CMD HOSTNAME="0.0.0.0" node app/server.js
