@@ -30,13 +30,14 @@ console.log("Extra Certs", process.env.NODE_EXTRA_CA_CERTS);
 module.exports = withPreconstruct(
   withBundleAnalyzer(
     withMDX({
+      output: "standalone",
       i18n: {
         locales,
         defaultLocale,
       },
 
       headers: async () => {
-        let headers = [];
+        const headers = [];
 
         if (process.env.ALLOW_SEARCH_BOTS !== "true") {
           headers.push({
@@ -61,7 +62,7 @@ module.exports = withPreconstruct(
         ignoreDuringBuilds: true,
       },
 
-      webpack(config, { dev, isServer, defaultLoaders }) {
+      webpack(config, { dev }) {
         config.module.rules.push({
           test: /\.(graphql|gql)$/,
           exclude: /node_modules/,
