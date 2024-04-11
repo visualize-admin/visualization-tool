@@ -393,6 +393,10 @@ export type SearchCube = {
     iri: string;
     label: string;
   }[];
+  termsets: {
+    iri: string;
+    label: string;
+  }[];
 };
 
 const xmlSchema = "http://www.w3.org/2001/XMLSchema#";

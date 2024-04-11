@@ -330,6 +330,7 @@ enum SearchCubeFilterType {
   DataCubeTheme
   DataCubeOrganization
   DataCubeAbout
+  SharedDimension
 }
 
 input SearchCubeFilter {

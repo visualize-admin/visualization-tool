@@ -1,5 +1,6 @@
 import { SELECT, sparql } from "@tpluscode/sparql-builder";
 import { descending, group } from "d3-array";
+import groupBy from "lodash/groupBy";
 import { Literal, NamedNode } from "rdf-js";
 import ParsingClient from "sparql-http-client/ParsingClient";
 
@@ -36,6 +37,8 @@ type RawSearchCube = {
   themeLabels: Literal;
   subthemeIris: NamedNode;
   subthemeLabels: Literal;
+  termsetIris: NamedNode;
+  termsetLabels: Literal;
 };
 
 export type ParsedRawSearchCube = {
@@ -60,6 +63,8 @@ const parseRawSearchCube = (cube: RawSearchCube): ParsedRawSearchCube => {
     themeLabels: cube.themeLabels?.value,
     subthemeIris: cube.subthemeIris?.value,
     subthemeLabels: cube.subthemeLabels?.value,
+    termsetIris: cube.termsetIris?.value,
+    termsetLabels: cube.termsetLabels?.value,
   };
 };
 
@@ -70,6 +75,31 @@ const makeInFilter = (name: string, values: string[]) => {
         ? `FILTER (bound(?${name}) && ?${name} IN (${values.map(formatIriToQueryNode)}))`
         : ""
     }`;
+};
+
+/**
+ * SharedDimension and TemporalDimensions filters are exclusive and cannot be done together due
+ * to how the SPARQL query is done.
+ */
+const fanOutExclusiveFilters = (
+  filters: SearchCubeFilter[] | null | undefined
+): (SearchCubeFilter[] | null | undefined)[] => {
+  if (!filters) {
+    return [filters];
+  }
+
+  const { exclusive = [], common = [] } = groupBy(filters, (f) => {
+    return f.type === SearchCubeFilterType.SharedDimension ||
+      f.type === SearchCubeFilterType.TemporalDimension
+      ? "exclusive"
+      : "common";
+  });
+
+  if (!exclusive.length) {
+    return [common];
+  }
+
+  return exclusive.map((ef) => [ef, ...common]);
 };
 
 export const searchCubes = async ({
@@ -96,19 +126,28 @@ export const searchCubes = async ({
       ?.filter((x) => x.type === SearchCubeFilterType.DataCubeOrganization)
       .map((v) => v.value) ?? [];
 
-  const scoresQuery = mkScoresQuery(
-    locale,
-    filters,
-    creatorValues,
-    themeValues,
-    includeDrafts,
-    query
+  const exclusiveFilters = fanOutExclusiveFilters(filters);
+  const scoresQueries = exclusiveFilters.map((filters) =>
+    mkScoresQuery(
+      locale,
+      filters,
+      creatorValues,
+      themeValues,
+      includeDrafts,
+      query
+    )
   );
 
-  const scoreResults = await scoresQuery.execute(sparqlClient.query, {
-    operation: "postUrlencoded",
-  });
-  const rawCubes = (scoreResults as RawSearchCube[])
+  const scoreResults = await Promise.all(
+    scoresQueries.map((scoresQuery) =>
+      scoresQuery.execute(sparqlClient.query, {
+        operation: "postUrlencoded",
+      })
+    )
+  );
+
+  const rawCubes = (scoreResults as RawSearchCube[][])
+    .flatMap((d) => d)
     // Filter out cubes without iri, happens due to grouping, when no cubes are found.
     .filter((d) => d.iri)
     .map(parseRawSearchCube);
@@ -143,6 +182,8 @@ export const searchCubes = async ({
       const themeLabels = rawCube.themeLabels.split(GROUP_SEPARATOR);
       const subthemeIris = rawCube.subthemeIris.split(GROUP_SEPARATOR);
       const subthemeLabels = rawCube.subthemeLabels.split(GROUP_SEPARATOR);
+      const termsetIris = rawCube.termsetIris?.split(GROUP_SEPARATOR) ?? [];
+      const termsetLabels = rawCube.termsetLabels?.split(GROUP_SEPARATOR) ?? [];
 
       const parsedCube: SearchCube = {
         iri: rawCube.iri,
@@ -166,6 +207,13 @@ export const searchCubes = async ({
             ? subthemeIris.map((iri, i) => ({
                 iri,
                 label: subthemeLabels[i],
+              }))
+            : [],
+        termsets:
+          termsetIris.length === termsetLabels.length
+            ? termsetIris.map((iri, i) => ({
+                iri,
+                label: termsetLabels[i],
               }))
             : [],
       };
@@ -197,11 +245,27 @@ const mkScoresQuery = (
   themeValues: string[],
   includeDrafts: Boolean | null | undefined,
   query: string | null | undefined
-) =>
-  SELECT.DISTINCT`
+) => {
+  const searchingSharedDimensions = filters?.some(
+    (f) => f.type === SearchCubeFilterType.SharedDimension
+  );
+  return SELECT.DISTINCT`
     ?iri ?title ?status ?datePublished ?description ?publisher ?creatorIri ?creatorLabel
-    (GROUP_CONCAT(DISTINCT ?themeIri; SEPARATOR="${GROUP_SEPARATOR}") AS ?themeIris) (GROUP_CONCAT(DISTINCT ?themeLabel; SEPARATOR="${GROUP_SEPARATOR}") AS ?themeLabels)
-    (GROUP_CONCAT(DISTINCT ?subthemeIri; SEPARATOR="${GROUP_SEPARATOR}") AS ?subthemeIris) (GROUP_CONCAT(DISTINCT ?subthemeLabel; SEPARATOR="${GROUP_SEPARATOR}") AS ?subthemeLabels)
+
+    (GROUP_CONCAT(DISTINCT ?themeIri; SEPARATOR="${GROUP_SEPARATOR}") AS ?themeIris)
+    (GROUP_CONCAT(DISTINCT ?themeLabel; SEPARATOR="${GROUP_SEPARATOR}") AS ?themeLabels)
+    
+    (GROUP_CONCAT(DISTINCT ?subthemeIri; SEPARATOR="${GROUP_SEPARATOR}") AS ?subthemeIris)
+    (GROUP_CONCAT(DISTINCT ?subthemeLabel; SEPARATOR="${GROUP_SEPARATOR}") AS ?subthemeLabels)
+
+    ${
+      searchingSharedDimensions
+        ? `
+      (GROUP_CONCAT(DISTINCT ?termsetIri; SEPARATOR="${GROUP_SEPARATOR}") AS ?termsetIris)
+      (GROUP_CONCAT(DISTINCT ?termsetLabel; SEPARATOR="${GROUP_SEPARATOR}") AS ?termsetLabels)
+      `
+        : ""
+    }
     `.WHERE`
       ?iri a ${ns.cube.Cube} .
       ${buildLocalizedSubQuery("iri", "schema:name", "title", {
@@ -212,22 +276,50 @@ const mkScoresQuery = (
       })}
 
       ${filters?.map((df) => {
-        if (df.type !== SearchCubeFilterType.TemporalDimension) {
-          return;
-        }
+        if (df.type === SearchCubeFilterType.TemporalDimension) {
+          const value = df.value as TimeUnit;
+          const unitNode = unitsToNode.get(value);
+          if (!unitNode) {
+            throw new Error(`Invalid temporal unit used ${value}`);
+          }
 
-        const value = df.value as TimeUnit;
-        const unitNode = unitsToNode.get(value);
-        if (!unitNode) {
-          throw new Error(`Invalid temporal unit used ${value}`);
+          return sparql`
+            ?iri ${ns.cube.observationConstraint} ?shape .
+            ?shape ${ns.sh.property} ?prop .
+            ?prop ${ns.cubeMeta.dataKind}/${ns.time.unitType} <${unitNode}>.`;
+        } else if (df.type === SearchCubeFilterType.SharedDimension) {
+          const sharedWith = df.value;
+          return sparql`
+              {
+                SELECT DISTINCT ?termsetIri WHERE {
+                  VALUES (?iri) {(<${sharedWith}>)}
+        
+                  ?iri ${ns.cube.observationConstraint}/sh:property ?dimension .
+                  ?dimension a ${ns.cube.KeyDimension} .
+                  ?dimension ${ns.sh.in}/${ns.rdf.first} ?value.
+                  ?value ${ns.schema.inDefinedTermSet} ?termsetIri .
+                  ?termsetIri a ${ns.cubeMeta["SharedDimension"]} .
+                }
+              }
+            `;
         }
-
-        return sparql`
-        ?cube ${ns.cube.observationConstraint} ?shape .
-        ?shape ${ns.sh.property} ?prop .
-        ?prop ${ns.cubeMeta.dataKind}/${ns.time.unitType} <${unitNode}>.`;
       })}
 
+      # Shared Dimension
+      ${
+        searchingSharedDimensions
+          ? sparql`?iri a <https://cube.link/Cube> .
+        ?iri ${ns.cube.observationConstraint}/${ns.sh.property} ?dimension .
+        ?dimension a ${ns.cube.KeyDimension} .
+        ?dimension ${ns.sh.in}/${ns.rdf.first} ?value.
+        ?value ${ns.schema.inDefinedTermSet} ?termsetIri .
+        ${buildLocalizedSubQuery("termsetIri", "schema:name", "termsetLabel", { locale })}
+        `
+          : ""
+      }
+
+
+      # Publisher, creator status, datePublished
       OPTIONAL { ?iri ${ns.dcterms.publisher} ?publisher . }
       ?iri ${ns.schema.creativeWorkStatus} ?status .
       OPTIONAL { ?iri ${ns.schema.datePublished} ?datePublished . }
@@ -342,4 +434,5 @@ const mkScoresQuery = (
       }
   `.GROUP().BY`?iri`.THEN.BY`?title`.THEN.BY`?status`.THEN.BY`?datePublished`
     .THEN.BY`?description`.THEN.BY`?publisher`.THEN.BY`?creatorIri`.THEN
-    .BY`?creatorLabel`.prologue`${pragmas}`.prologue`#pragma join.bind off`; // HOTFIX WRT Stardog v9.2.1 bug see https://control.vshn.net/tickets/sbar-1066
+    .BY`?creatorLabel`.prologue`${pragmas}`.prologue`#pragma join.bind off`;
+}; // HOTFIX WRT Stardog v9.2.1 bug see https://control.vshn.net/tickets/sbar-1066

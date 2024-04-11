@@ -416,7 +416,8 @@ export enum SearchCubeFilterType {
   TemporalDimension = 'TemporalDimension',
   DataCubeTheme = 'DataCubeTheme',
   DataCubeOrganization = 'DataCubeOrganization',
-  DataCubeAbout = 'DataCubeAbout'
+  DataCubeAbout = 'DataCubeAbout',
+  SharedDimension = 'SharedDimension'
 }
 
 export type SearchCubeResult = {
