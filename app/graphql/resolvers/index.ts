@@ -32,6 +32,10 @@ export const Query: QueryResolvers = {
     const source = getSource(args.sourceType);
     return await source.dataCubeMetadata(parent, args, context, info);
   },
+  dataCubeTermsets: async (parent, args, context, info) => {
+    const source = getSource(args.sourceType);
+    return await source.dataCubeTermsets(parent, args, context, info);
+  },
   dataCubeObservations: async (parent, args, context, info) => {
     const source = getSource(args.sourceType);
     return await source.dataCubeObservations(parent, args, context, info);

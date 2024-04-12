@@ -94,6 +94,11 @@ export type DataCubePreview = {
   observations: Observation[];
 };
 
+export type Termset = {
+  iri: string;
+  label: string;
+};
+
 type ComponentRenderingConfig = {
   enableAnimation: boolean;
   enableCustomSort: boolean;
@@ -390,6 +395,10 @@ export type SearchCube = {
     label: string;
   }[];
   subthemes: {
+    iri: string;
+    label: string;
+  }[];
+  termsets: {
     iri: string;
     label: string;
   }[];

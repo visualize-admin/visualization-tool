@@ -835,6 +835,7 @@ export type PartialSearchCube = Pick<
   | "datePublished"
   | "themes"
   | "creator"
+  | "termsets"
 >;
 type ResultProps = {
   dataCube: PartialSearchCube;
@@ -843,6 +844,7 @@ type ResultProps = {
   showTags?: boolean;
   rowActions?: (r: PartialSearchCube) => React.ReactNode;
   disableTitleLink?: boolean;
+  showTermsets?: boolean;
 };
 
 export const DatasetResult = ({
@@ -852,6 +854,7 @@ export const DatasetResult = ({
   showTags,
   rowActions,
   disableTitleLink,
+  showTermsets,
   ...cardProps
 }: ResultProps & CardProps) => {
   const {
@@ -862,6 +865,7 @@ export const DatasetResult = ({
     themes,
     datePublished,
     creator,
+    termsets,
   } = dataCube;
   const isDraft = publicationStatus === DataCubePublicationStatus.Draft;
   const router = useRouter();
@@ -973,6 +977,14 @@ export const DatasetResult = ({
                 )
             )
           : null}
+        {showTermsets &&
+          sortBy(termsets, (t) => t.label).map((termset) => {
+            return (
+              <Tag key={termset.iri} type="termset">
+                {termset.label}
+              </Tag>
+            );
+          })}
         {creator?.label ? (
           <Link
             key={creator.iri}

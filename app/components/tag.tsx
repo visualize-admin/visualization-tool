@@ -1,7 +1,7 @@
 import { BoxProps, Typography, TypographyProps, styled } from "@mui/material";
 import React from "react";
 
-type TagType = "draft" | "theme" | "organization";
+type TagType = "draft" | "theme" | "organization" | "termset";
 
 const TagTypography = styled(Typography)(({ theme }) => ({
   borderRadius: (theme.shape.borderRadius as number) * 1.5,
@@ -36,7 +36,12 @@ const Tag = React.forwardRef<
       variant="caption"
       {...props}
       sx={{
-        backgroundColor: type === "theme" ? "success.light" : "primary.light",
+        backgroundColor:
+          type === "theme"
+            ? "success.light"
+            : type === "termset"
+              ? "warning.light"
+              : "primary.light",
         ...sx,
       }}
     >

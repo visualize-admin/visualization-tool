@@ -26,6 +26,7 @@ generates:
         DataCubeMetadata: "../domain/data#DataCubeMetadata"
         DataCubeObservations: "../domain/data#DataCubeObservations"
         DataCubePreview: "../domain/data#DataCubePreview"
+        Termset: "../domain/data#Termset"
         GeoShapes: "../domain/data#GeoShapes"
   app/graphql/resolver-types.ts:
     plugins:

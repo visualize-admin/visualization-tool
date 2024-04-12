@@ -38,6 +38,7 @@ export type Scalars = {
   RawObservation: RawObservation;
   SearchCube: SearchCube;
   SingleFilters: SingleFilters;
+  Termset: any;
   ValueIdentifier: any;
   ValuePosition: any;
 };
@@ -129,6 +130,11 @@ export enum DataCubePublicationStatus {
   Draft = 'DRAFT',
   Published = 'PUBLISHED'
 }
+
+export type DataCubeTermsetFilter = {
+  iri: Scalars['String'];
+  latest?: Maybe<Scalars['Boolean']>;
+};
 
 export type DataCubeTheme = {
   __typename?: 'DataCubeTheme';
@@ -324,6 +330,7 @@ export type OrdinalMeasureValuesArgs = {
 export type Query = {
   __typename?: 'Query';
   dataCubeComponents: Scalars['DataCubeComponents'];
+  dataCubeTermsets: Array<Scalars['Termset']>;
   dataCubeMetadata: Scalars['DataCubeMetadata'];
   dataCubeObservations: Scalars['DataCubeObservations'];
   dataCubePreview: Scalars['DataCubePreview'];
@@ -338,6 +345,14 @@ export type QueryDataCubeComponentsArgs = {
   sourceUrl: Scalars['String'];
   locale: Scalars['String'];
   cubeFilter: DataCubeComponentFilter;
+};
+
+
+export type QueryDataCubeTermsetsArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
+  locale: Scalars['String'];
+  cubeFilter: DataCubeTermsetFilter;
 };
 
 
@@ -417,7 +432,8 @@ export enum SearchCubeFilterType {
   TemporalDimension = 'TemporalDimension',
   DataCubeTheme = 'DataCubeTheme',
   DataCubeOrganization = 'DataCubeOrganization',
-  DataCubeAbout = 'DataCubeAbout'
+  DataCubeAbout = 'DataCubeAbout',
+  SharedDimensions = 'SharedDimensions'
 }
 
 export type SearchCubeResult = {
@@ -531,6 +547,7 @@ export type TemporalOrdinalDimensionValuesArgs = {
   disableLoad?: Maybe<Scalars['Boolean']>;
 };
 
+
 export enum TimeUnit {
   Year = 'Year',
   Month = 'Month',
@@ -622,6 +639,7 @@ export type ResolversTypes = ResolversObject<{
   DataCubePreview: ResolverTypeWrapper<Scalars['DataCubePreview']>;
   DataCubePreviewFilter: DataCubePreviewFilter;
   DataCubePublicationStatus: DataCubePublicationStatus;
+  DataCubeTermsetFilter: DataCubeTermsetFilter;
   DataCubeTheme: ResolverTypeWrapper<DataCubeTheme>;
   Dimension: ResolverTypeWrapper<ResolvedDimension>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
@@ -655,6 +673,7 @@ export type ResolversTypes = ResolversObject<{
   TemporalDimension: ResolverTypeWrapper<ResolvedDimension>;
   TemporalEntityDimension: ResolverTypeWrapper<TemporalEntityDimension>;
   TemporalOrdinalDimension: ResolverTypeWrapper<ResolvedDimension>;
+  Termset: ResolverTypeWrapper<Scalars['Termset']>;
   TimeUnit: TimeUnit;
   ValueIdentifier: ResolverTypeWrapper<Scalars['ValueIdentifier']>;
   ValuePosition: ResolverTypeWrapper<Scalars['ValuePosition']>;
@@ -674,6 +693,7 @@ export type ResolversParentTypes = ResolversObject<{
   DataCubeOrganization: DataCubeOrganization;
   DataCubePreview: Scalars['DataCubePreview'];
   DataCubePreviewFilter: DataCubePreviewFilter;
+  DataCubeTermsetFilter: DataCubeTermsetFilter;
   DataCubeTheme: DataCubeTheme;
   Dimension: ResolvedDimension;
   Int: Scalars['Int'];
@@ -704,6 +724,7 @@ export type ResolversParentTypes = ResolversObject<{
   TemporalDimension: ResolvedDimension;
   TemporalEntityDimension: TemporalEntityDimension;
   TemporalOrdinalDimension: ResolvedDimension;
+  Termset: Scalars['Termset'];
   ValueIdentifier: Scalars['ValueIdentifier'];
   ValuePosition: Scalars['ValuePosition'];
 }>;
@@ -911,6 +932,7 @@ export type OrdinalMeasureResolvers<ContextType = VisualizeGraphQLContext, Paren
 
 export type QueryResolvers<ContextType = VisualizeGraphQLContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   dataCubeComponents?: Resolver<ResolversTypes['DataCubeComponents'], ParentType, ContextType, RequireFields<QueryDataCubeComponentsArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'cubeFilter'>>;
+  dataCubeTermsets?: Resolver<Array<ResolversTypes['Termset']>, ParentType, ContextType, RequireFields<QueryDataCubeTermsetsArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'cubeFilter'>>;
   dataCubeMetadata?: Resolver<ResolversTypes['DataCubeMetadata'], ParentType, ContextType, RequireFields<QueryDataCubeMetadataArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'cubeFilter'>>;
   dataCubeObservations?: Resolver<ResolversTypes['DataCubeObservations'], ParentType, ContextType, RequireFields<QueryDataCubeObservationsArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'cubeFilter'>>;
   dataCubePreview?: Resolver<ResolversTypes['DataCubePreview'], ParentType, ContextType, RequireFields<QueryDataCubePreviewArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'cubeFilter'>>;
@@ -1009,6 +1031,10 @@ export type TemporalOrdinalDimensionResolvers<ContextType = VisualizeGraphQLCont
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export interface TermsetScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Termset'], any> {
+  name: 'Termset';
+}
+
 export interface ValueIdentifierScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['ValueIdentifier'], any> {
   name: 'ValueIdentifier';
 }
@@ -1051,6 +1077,7 @@ export type Resolvers<ContextType = VisualizeGraphQLContext> = ResolversObject<{
   TemporalDimension?: TemporalDimensionResolvers<ContextType>;
   TemporalEntityDimension?: TemporalEntityDimensionResolvers<ContextType>;
   TemporalOrdinalDimension?: TemporalOrdinalDimensionResolvers<ContextType>;
+  Termset?: GraphQLScalarType;
   ValueIdentifier?: GraphQLScalarType;
   ValuePosition?: GraphQLScalarType;
 }>;
