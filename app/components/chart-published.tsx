@@ -11,7 +11,6 @@ import { LoadingStateProvider } from "@/charts/shared/chart-loading-state";
 import { isUsingImputation } from "@/charts/shared/imputation";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
 import { ChartFootnotes } from "@/components/chart-footnotes";
-import { useChartHeaderMarginBottom } from "@/components/chart-helpers";
 import {
   ChartPanelLayoutTall,
   ChartPanelLayoutVertical,
@@ -22,6 +21,7 @@ import {
   useChartTablePreview,
 } from "@/components/chart-table-preview";
 import { ChartWithFilters } from "@/components/chart-with-filters";
+import { shouldShowDebugPanel } from "@/components/debug-panel";
 import Flex from "@/components/flex";
 import { HintBlue, HintRed, HintYellow } from "@/components/hint";
 import { MetadataPanel } from "@/components/metadata-panel";
@@ -144,14 +144,14 @@ export const ChartPublished = (props: ChartPublishedProps) => {
 const useStyles = makeStyles<Theme, { shrink: boolean }>((theme) => ({
   root: {
     position: "relative",
-    display: "flex",
-    flexGrow: 1,
-    flexDirection: "column",
-    padding: theme.spacing(5),
+    display: "grid",
+    gridTemplateRows: "subgrid",
+    gridRow: shouldShowDebugPanel() ? "span 6" : "span 5",
+    backgroundColor: theme.palette.background.paper,
+    padding: theme.spacing(6),
     paddingLeft: ({ shrink }) =>
       `calc(${theme.spacing(5)} + ${shrink ? DRAWER_WIDTH : 0}px)`,
     color: theme.palette.grey[800],
-    overflowX: "auto",
     transition: "padding 0.25s ease",
   },
 }));
@@ -180,11 +180,8 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
     containerHeight,
     computeContainerHeight,
   } = useChartTablePreview();
-  const { headerRef, headerMarginBottom } = useChartHeaderMarginBottom();
-
   const metadataPanelStore = useMemo(() => createMetadataPanelStore(), []);
   const metadataPanelOpen = useStore(metadataPanelStore, (state) => state.open);
-
   const shouldShrink = useMemo(() => {
     const rootWidth = rootRef.current?.getBoundingClientRect().width;
 
@@ -298,48 +295,54 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
           )}
           <LoadingStateProvider>
             <InteractiveFiltersProvider>
-              <div
-                ref={headerRef}
-                style={{
-                  marginBottom: `${headerMarginBottom}px`,
-                  transition: "margin-bottom 0.2s ease-in-out",
+              <Flex
+                sx={{
+                  justifyContent: meta.title[locale]
+                    ? "space-between"
+                    : "flex-end",
+                  gap: 2,
                 }}
               >
-                <Flex
-                  sx={{
-                    justifyContent: meta.title[locale]
-                      ? "space-between"
-                      : "flex-end",
-                    alignItems: "center",
-                    gap: 2,
-                  }}
-                >
-                  {meta.title[locale] && <Title text={meta.title[locale]} />}
-                  <MetadataPanel
-                    dataSource={dataSource}
-                    chartConfigs={[chartConfig]}
-                    dimensions={allComponents}
-                    container={rootRef.current}
-                  />
-                </Flex>
-                {meta.description[locale] && (
-                  <Description text={meta.description[locale]} />
+                {meta.title[locale] ? (
+                  <Title text={meta.title[locale]} />
+                ) : (
+                  // We need to have a span here to keep the space between the
+                  // title and the chart (subgrid layout)
+                  <span />
                 )}
-                {chartConfig.interactiveFiltersConfig?.dataFilters.active && (
-                  <ChartDataFilters
-                    dataSource={dataSource}
-                    chartConfig={chartConfig}
-                    dimensions={dimensions}
-                    measures={measures}
-                  />
-                )}
-              </div>
-              <Flex
-                flexDirection="column"
+                <MetadataPanel
+                  dataSource={dataSource}
+                  chartConfigs={[chartConfig]}
+                  dimensions={allComponents}
+                  container={rootRef.current}
+                />
+              </Flex>
+              {meta.description[locale] ? (
+                <Description text={meta.description[locale]} />
+              ) : (
+                // We need to have a span here to keep the space between the
+                // title and the chart (subgrid layout)
+                <span />
+              )}
+              {chartConfig.interactiveFiltersConfig?.dataFilters.active ? (
+                <ChartDataFilters
+                  dataSource={dataSource}
+                  chartConfig={chartConfig}
+                  dimensions={dimensions}
+                  measures={measures}
+                />
+              ) : (
+                // We need to have a span here to keep the space between the
+                // title and the chart (subgrid layout)
+                <span />
+              )}
+              <div
                 ref={containerRef}
-                height={containerHeight.current}
-                flexGrow={1}
-                mt={4}
+                style={{
+                  minWidth: 0,
+                  height: containerHeight.current,
+                  marginTop: 16,
+                }}
               >
                 {isTablePreview ? (
                   <DataSetTable
@@ -356,7 +359,7 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
                     measures={measures}
                   />
                 )}
-              </Flex>
+              </div>
               <ChartFootnotes
                 dataSource={dataSource}
                 chartConfig={chartConfig}

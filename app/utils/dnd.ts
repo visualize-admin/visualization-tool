@@ -1,26 +1,31 @@
 import { Modifier } from "@dnd-kit/core";
 import { getEventCoordinates } from "@dnd-kit/utilities";
 
-export const snapCornerToCursor: Modifier = ({
-  activatorEvent,
-  draggingNodeRect,
-  transform,
-}) => {
-  if (draggingNodeRect && activatorEvent) {
-    const activatorCoordinates = getEventCoordinates(activatorEvent);
+type SnapToCursorOptions = {
+  xOffset?: number;
+};
 
-    if (!activatorCoordinates) {
-      return transform;
+export const createSnapCornerToCursor = (
+  options: SnapToCursorOptions
+): Modifier => {
+  const { xOffset = 0 } = options;
+  return (props) => {
+    const { transform, activeNodeRect, activatorEvent } = props;
+
+    if (activatorEvent) {
+      const activatorCoordinates = getEventCoordinates(activatorEvent);
+
+      if (!activatorCoordinates || !activeNodeRect) {
+        return transform;
+      }
+
+      return {
+        ...transform,
+        x: transform.x + activeNodeRect.width + xOffset,
+        y: transform.y,
+      };
     }
 
-    const offsetX = activatorCoordinates.x - draggingNodeRect.left + 48;
-
-    return {
-      ...transform,
-      x: transform.x + offsetX - draggingNodeRect.width,
-      y: transform.y,
-    };
-  }
-
-  return transform;
+    return transform;
+  };
 };
