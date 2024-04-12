@@ -6,7 +6,13 @@ module.exports = {
     {
       path: "<rootDir>/app/locales/{locale}/messages",
       include: ["<rootDir>/app"],
-      exclude: ["**/node_modules/**", "**/.next/**"],
+      exclude: [
+        "**/node_modules/**",
+        "**/.next/**",
+        "**/.storybook/**",
+        "**/*.stories.{js,jsx,ts,tsx}",
+        "**/public/**",
+      ],
     },
   ],
   format: "po",

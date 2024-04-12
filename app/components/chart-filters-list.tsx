@@ -19,7 +19,7 @@ import {
   isTemporalDimension,
   isTemporalOrdinalDimension,
 } from "@/domain/data";
-import { isDynamicMaxValue } from "@/domain/max-value";
+import { isMostRecentValue } from "@/domain/most-recent-value";
 import { useTimeFormatUnit } from "@/formatters";
 import { useDataCubesComponentsQuery } from "@/graphql/hooks";
 import { useLocale } from "@/locales/use-locale";
@@ -82,7 +82,7 @@ export const ChartFiltersList = (props: ChartFiltersListProps) => {
           return [];
         }
 
-        const filterValue = isDynamicMaxValue(f.value)
+        const filterValue = isMostRecentValue(f.value)
           ? dimension.values[dimension.values.length - 1].value
           : f.value;
         const value = isTemporalDimension(dimension)

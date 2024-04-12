@@ -4,13 +4,13 @@ import { ObservationValue } from "@/domain/data";
  * value is added to the dataset, it will be automatically used as default filter
  * value for published charts.
  */
-export const VISUALIZE_MAX_VALUE = "VISUALIZE_MAX_VALUE";
+export const VISUALIZE_MOST_RECENT_VALUE = "VISUALIZE_MOST_RECENT_VALUE";
 
 /** Checks if a given filter value is supposed to be dynamiaclly pinned to max
  * value.
  */
-export const isDynamicMaxValue = (
+export const isMostRecentValue = (
   value: ObservationValue
-): value is "VISUALIZE_MAX_VALUE" => {
-  return value === VISUALIZE_MAX_VALUE;
+): value is "VISUALIZE_MOST_RECENT_VALUE" => {
+  return value === VISUALIZE_MOST_RECENT_VALUE;
 };

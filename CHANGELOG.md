@@ -9,7 +9,8 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
-Nothing yet.
+- Features
+  - Added support for using dynamic most recent date in temporal X axis
 
 # [4.1.0] - 2024-04-10
 
