@@ -15,6 +15,7 @@ import { makeStyles } from "@mui/styles";
 import React, { ReactNode } from "react";
 
 import Flex from "@/components/flex";
+import { MotionBox } from "@/components/presence";
 import { Icon, IconName } from "@/icons";
 
 export const Error = ({ children }: { children: ReactNode }) => (
@@ -139,11 +140,16 @@ export const Loading = ({ delayMs = 1000 }: { delayMs?: number }) => {
 
 export const LoadingOverlay = () => {
   const classes = useLoadingStyles();
-
   return (
-    <Box className={classes.overlay}>
+    <MotionBox
+      className={classes.overlay}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 0.5 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
+    >
       <Loading delayMs={0} />
-    </Box>
+    </MotionBox>
   );
 };
 
