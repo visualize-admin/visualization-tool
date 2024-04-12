@@ -1,7 +1,7 @@
 import { NamedNode } from "rdf-js";
 
 import { SingleFilters } from "@/config-types";
-import { VISUALIZE_MAX_VALUE } from "@/domain/max-value";
+import { VISUALIZE_MOST_RECENT_VALUE } from "@/domain/most-recent-value";
 import * as ns from "@/rdf/namespace";
 import { getCubeDimensions } from "@/rdf/queries";
 import {
@@ -195,7 +195,7 @@ LIMIT 1`
       {
         "dim1/2": {
           type: "single",
-          value: VISUALIZE_MAX_VALUE,
+          value: VISUALIZE_MOST_RECENT_VALUE,
         },
       },
       [

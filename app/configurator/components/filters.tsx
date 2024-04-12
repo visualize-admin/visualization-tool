@@ -81,7 +81,10 @@ import {
   TemporalDimension,
   TemporalEntityDimension,
 } from "@/domain/data";
-import { isDynamicMaxValue, VISUALIZE_MAX_VALUE } from "@/domain/max-value";
+import {
+  isMostRecentValue,
+  VISUALIZE_MOST_RECENT_VALUE,
+} from "@/domain/most-recent-value";
 import { useTimeFormatLocale, useTimeFormatUnit } from "@/formatters";
 import { Icon } from "@/icons";
 import SvgIcCheck from "@/icons/components/IcCheck";
@@ -924,7 +927,7 @@ export const TimeFilter = (props: TimeFilterProps) => {
   const rangeActiveFilter =
     activeFilter?.type === "range" ? activeFilter : null;
   const usesMostRecentValue = rangeActiveFilter
-    ? isDynamicMaxValue(rangeActiveFilter.to)
+    ? isMostRecentValue(rangeActiveFilter.to)
     : false;
 
   const onChangeFrom = useEvent(
@@ -1012,7 +1015,7 @@ export const TimeFilter = (props: TimeFilterProps) => {
         <Box sx={{ display: "flex", gap: 1 }}>
           {rangeActiveFilter ? (
             canRenderDatePickerField(timeUnit) ? (
-              <FiltersContainer
+              <LeftRightFormContainer
                 left={
                   <DatePickerField
                     name="time-range-start"
@@ -1052,7 +1055,7 @@ export const TimeFilter = (props: TimeFilterProps) => {
                 }
               />
             ) : (
-              <FiltersContainer
+              <LeftRightFormContainer
                 left={
                   <Select
                     id="time-range-start"
@@ -1091,7 +1094,7 @@ export const TimeFilter = (props: TimeFilterProps) => {
             setFilterRange([
               formatDateValue(closestFrom),
               usesMostRecentValue
-                ? VISUALIZE_MAX_VALUE
+                ? VISUALIZE_MOST_RECENT_VALUE
                 : formatDateValue(closestTo),
             ]);
           }}
@@ -1107,7 +1110,7 @@ export const TimeFilter = (props: TimeFilterProps) => {
                   rangeActiveFilter.from,
                   usesMostRecentValue
                     ? formatDateValue(to)
-                    : VISUALIZE_MAX_VALUE,
+                    : VISUALIZE_MOST_RECENT_VALUE,
                 ]);
               }}
               noGutter
@@ -1117,8 +1120,8 @@ export const TimeFilter = (props: TimeFilterProps) => {
               PopperProps={{ sx: { maxWidth: 160 } }}
               title={
                 <Trans id="controls.filter.use-most-recent-explanation">
-                  When the publisher updates this dataset, a newest date will
-                  always be selected.
+                  When the publisher updates this dataset, the most recent date
+                  will be selected by default.
                 </Trans>
               }
             >
@@ -1135,18 +1138,18 @@ export const TimeFilter = (props: TimeFilterProps) => {
   }
 };
 
-type FiltersContainerProps = {
+type LeftRightFormContainerProps = {
   left: ReactNode;
   right: ReactNode;
 };
 
-const FiltersContainer = (props: FiltersContainerProps) => {
+const LeftRightFormContainer = (props: LeftRightFormContainerProps) => {
   const { left, right } = props;
   return (
     <Box
       sx={{
         display: "grid",
-        columnGap: "12px",
+        columnGap: "0.75rem",
         gridTemplateColumns: "1fr auto 1fr",
         alignItems: "center",
       }}

@@ -82,7 +82,10 @@ import {
   TemporalDimension,
   isTemporalOrdinalDimension,
 } from "@/domain/data";
-import { VISUALIZE_MAX_VALUE, isDynamicMaxValue } from "@/domain/max-value";
+import {
+  VISUALIZE_MOST_RECENT_VALUE,
+  isMostRecentValue,
+} from "@/domain/most-recent-value";
 import { useTimeFormatLocale } from "@/formatters";
 import { TimeUnit } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
@@ -261,7 +264,7 @@ export const DataFilterSelect = ({
   }
 
   const canUseMostRecentValue = isTemporalOrdinalDimension(dimension);
-  const usesMostRecentValue = isDynamicMaxValue(fieldProps.value);
+  const usesMostRecentValue = isMostRecentValue(fieldProps.value);
   // Dimension values can be empty just before a filter is reloaded through
   // ensurePossibleFilters
   const maxValue = sortedValues[sortedValues.length - 1]?.value;
@@ -277,7 +280,7 @@ export const DataFilterSelect = ({
               target: {
                 value: usesMostRecentValue
                   ? `${maxValue}`
-                  : VISUALIZE_MAX_VALUE,
+                  : VISUALIZE_MOST_RECENT_VALUE,
               },
             })
           }
@@ -313,7 +316,7 @@ type MostRecentDateSwitchProps = {
 export const MostRecentDateSwitch = (props: MostRecentDateSwitchProps) => {
   const { label, checked, onChange, noGutter } = props;
   return (
-    <Box sx={{ mt: noGutter ? 0 : "12px" }}>
+    <Box sx={{ mt: noGutter ? 0 : "0.75rem" }}>
       {label && <FieldLabel label={label} />}
       <FormGroup>
         <FormControlLabel
@@ -360,7 +363,7 @@ export const DataFilterTemporal = (props: DataFilterTemporalProps) => {
     cubeIri: dimension.cubeIri,
     dimensionIri: dimension.iri,
   });
-  const usesMostRecentDate = isDynamicMaxValue(fieldProps.value);
+  const usesMostRecentDate = isMostRecentValue(fieldProps.value);
   const label = isOptional ? (
     <>
       {_label}{" "}
@@ -434,7 +437,7 @@ export const DataFilterTemporal = (props: DataFilterTemporalProps) => {
             target: {
               value: usesMostRecentDate
                 ? formatDate(maxDate)
-                : VISUALIZE_MAX_VALUE,
+                : VISUALIZE_MOST_RECENT_VALUE,
             },
           })
         }

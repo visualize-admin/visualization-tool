@@ -65,8 +65,8 @@ import {
 } from "@/configurator/configurator-state";
 import { useInteractiveDataFilterToggle } from "@/configurator/interactive-filters/interactive-filters-config-state";
 import {
-  InteractiveFiltersConfigurator,
   InteractiveFilterToggle,
+  InteractiveFiltersConfigurator,
 } from "@/configurator/interactive-filters/interactive-filters-configurator";
 import {
   Dimension,
@@ -74,7 +74,7 @@ import {
   isStandardErrorDimension,
   isTemporalDimension,
 } from "@/domain/data";
-import { isDynamicMaxValue } from "@/domain/max-value";
+import { isMostRecentValue } from "@/domain/most-recent-value";
 import { truthy } from "@/domain/types";
 import { flag } from "@/flags";
 import {
@@ -260,7 +260,7 @@ const useEnsurePossibleFilters = ({
         for (const [key, value] of Object.entries(oldFilters)) {
           if (
             value.type === "single" &&
-            isDynamicMaxValue(value.value) &&
+            isMostRecentValue(value.value) &&
             filters[key]
           ) {
             filters[key] = {

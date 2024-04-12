@@ -15,7 +15,7 @@ import {
   parseObservationValue,
   shouldLoadMinMaxValues,
 } from "@/domain/data";
-import { isDynamicMaxValue } from "@/domain/max-value";
+import { isMostRecentValue } from "@/domain/most-recent-value";
 import { PromiseValue, truthy } from "@/domain/types";
 import { resolveDimensionType } from "@/graphql/resolvers";
 import {
@@ -683,7 +683,7 @@ const buildFilters = async ({
 
       switch (filter.type) {
         case "single": {
-          if (isDynamicMaxValue(filter.value)) {
+          if (isMostRecentValue(filter.value)) {
             const maxValue = await loadMaxDimensionValue(cube.term?.value!, {
               dimension: resolvedDimension,
               cubeDimensions: cube.dimensions,
@@ -712,7 +712,7 @@ const buildFilters = async ({
         case "range": {
           const isTemporalEntityDimension =
             dimensionType === "TemporalEntityDimension";
-          const maxValue = isDynamicMaxValue(filter.to)
+          const maxValue = isMostRecentValue(filter.to)
             ? await loadMaxDimensionValue(cube.term?.value!, {
                 dimension: resolvedDimension,
                 cubeDimensions: cube.dimensions,
