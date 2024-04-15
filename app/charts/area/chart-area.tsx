@@ -18,6 +18,7 @@ import { InteractionHorizontal } from "@/charts/shared/overlay-horizontal";
 import { AreaConfig, DataSource } from "@/config-types";
 import { DataCubeObservationFilter } from "@/graphql/query-hooks";
 
+import { Banner } from "../../components/banner";
 import { ChartProps } from "../shared/ChartProps";
 
 export const ChartAreasVisualization = ({
@@ -48,6 +49,7 @@ export const ChartAreas = memo((props: ChartProps<AreaConfig>) => {
 
   return (
     <AreaChart aspectRatio={0.4} {...props}>
+      <Banner />
       <ChartContainer>
         <ChartSvg>
           <AxisTime /> <AxisHeightLinear />
