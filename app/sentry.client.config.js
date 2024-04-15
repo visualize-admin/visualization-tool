@@ -16,6 +16,9 @@ if (process.env.NODE_ENV !== "development") {
       // The ResizeObserver error is actually not problematic
       // @see https://forum.sentry.io/t/resizeobserver-loop-limit-exceeded/8402
       "ResizeObserver loop",
+      // Coming apparently from Outlook
+      // @see https://www.notion.so/interactivethings/Common-Sentry-Ignore-Rules-f0b1e94a6ac34ffd8d39b53498c48a45?pvs=4
+      "Non-Error promise rejection captured",
     ],
   });
 }
