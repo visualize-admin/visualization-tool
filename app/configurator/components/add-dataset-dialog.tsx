@@ -21,7 +21,6 @@ import {
   Typography,
   useEventCallback,
 } from "@mui/material";
-import { Theme } from "@mui/material/styles";
 import { makeStyles } from "@mui/styles";
 import keyBy from "lodash/keyBy";
 import uniq from "lodash/uniq";
@@ -75,7 +74,7 @@ const DialogCloseButton = (props: IconButtonProps) => {
   );
 };
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles(() => ({
   addButton: {
     transition: "opacity 0.25s ease",
   },
@@ -413,6 +412,7 @@ const useAddDataset = () => {
       currentComponents: DataCubeComponents;
       otherCube: PartialSearchCube;
     }) => {
+      currentTermsets;
       const iri = otherCube.iri;
       setHookState((hs) => ({ ...hs, fetching: true, otherIri: iri }));
       try {
