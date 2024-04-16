@@ -26,6 +26,7 @@ import keyBy from "lodash/keyBy";
 import uniq from "lodash/uniq";
 import uniqBy from "lodash/uniqBy";
 import { FormEvent, useEffect, useMemo, useState } from "react";
+import { useClient } from "urql";
 
 import { DatasetResults, PartialSearchCube } from "@/browser/dataset-browse";
 import { getPossibleChartTypes } from "@/charts";
@@ -410,6 +411,7 @@ const useAddDataset = () => {
   const [state, dispatch] = useConfiguratorState(isConfiguring);
   const { type: sourceType, url: sourceUrl } = state.dataSource;
   const locale = useLocale();
+  const client = useClient();
   const addDataset = useEventCallback(
     async ({
       currentTermsets,
@@ -424,12 +426,15 @@ const useAddDataset = () => {
       const iri = otherCube.iri;
       setHookState((hs) => ({ ...hs, fetching: true, otherIri: iri }));
       try {
-        const componentQueryResult = await executeDataCubesComponentsQuery({
-          locale: locale,
-          sourceType,
-          sourceUrl,
-          cubeFilters: [{ iri }],
-        });
+        const componentQueryResult = await executeDataCubesComponentsQuery(
+          client,
+          {
+            locale: locale,
+            sourceType,
+            sourceUrl,
+            cubeFilters: [{ iri }],
+          }
+        );
 
         if (componentQueryResult.error || !componentQueryResult.data) {
           throw new Error(
@@ -455,7 +460,7 @@ const useAddDataset = () => {
           nextState.chartConfigs.flatMap((x) => x.cubes),
           (x) => x.iri
         );
-        const res = await executeDataCubesComponentsQuery({
+        const res = await executeDataCubesComponentsQuery(client, {
           locale: locale,
           sourceType,
           sourceUrl,

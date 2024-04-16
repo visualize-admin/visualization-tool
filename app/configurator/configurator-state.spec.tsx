@@ -1,5 +1,6 @@
 import produce, { createDraft, current } from "immer";
 import get from "lodash/get";
+import { Client, ClientOptions } from "urql";
 
 import { getChartConfigAdjustedToChartType } from "@/charts";
 import {
@@ -68,23 +69,21 @@ const possibleFilters: ObservationFilter[] = [
   },
 ];
 
-jest.mock("@/graphql/client", () => {
-  return {
-    client: {
-      query: jest.fn().mockImplementation(() => ({
-        toPromise: jest.fn().mockResolvedValue({
-          data: {
-            possibleFilters,
-          },
-        }),
-      })),
-      readQuery: jest.fn().mockImplementation(() => ({
-        data: {
-          dataCubeComponents: getCachedComponentsMock.geoAndNumerical,
-        },
-      })),
+const clientOptions: ClientOptions = { url: "http://example.com" };
+const mockClient = new Client(clientOptions);
+Object.assign(mockClient, {
+  query: jest.fn().mockImplementation(() => ({
+    toPromise: jest.fn().mockResolvedValue({
+      data: {
+        possibleFilters,
+      },
+    }),
+  })),
+  readQuery: jest.fn().mockImplementation(() => ({
+    data: {
+      dataCubeComponents: getCachedComponentsMock.geoAndNumerical,
     },
-  };
+  })),
 });
 
 jest.mock("@/urql-cache", () => {
@@ -182,6 +181,7 @@ describe("initChartStateFromCube", () => {
 
   it("should work init fields with existing dataset and go directly to 2nd step", async () => {
     const res = await initChartStateFromCube(
+      mockClient,
       "https://environment.ld.admin.ch/foen/ubd0104/3/",
       dataSource,
       "en"
@@ -195,6 +195,7 @@ describe("initChartStateFromCube", () => {
 
   it("should prefer possible filters if provided", async () => {
     const res = (await initChartStateFromCube(
+      mockClient,
       "mapDataset",
       dataSource,
       "en"
