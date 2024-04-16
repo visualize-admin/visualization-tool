@@ -99,6 +99,12 @@ export type Termset = {
   label: string;
 };
 
+export type ComponentTermsets = {
+  iri: string;
+  label: string;
+  termsets: Termset[];
+};
+
 type ComponentRenderingConfig = {
   enableAnimation: boolean;
   enableCustomSort: boolean;

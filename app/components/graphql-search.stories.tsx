@@ -10,6 +10,7 @@ import {
   SelectChangeEvent,
   Stack,
   TextField,
+  Typography,
 } from "@mui/material";
 import { Meta } from "@storybook/react";
 import keyBy from "lodash/keyBy";
@@ -19,11 +20,12 @@ import { ObjectInspector } from "react-inspector";
 import { DatasetResult } from "@/browser/dataset-browse";
 import { Error } from "@/components/hint";
 import Tag from "@/components/tag";
-import { Termset } from "@/domain/data";
+import { ComponentTermsets } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import {
+  DataCubeComponentTermsetsQueryVariables,
   SearchCubeFilterType,
-  useDataCubeTermsetsQuery,
+  useDataCubeComponentTermsetsQuery,
   useSearchCubesQuery,
 } from "@/graphql/query-hooks";
 
@@ -31,14 +33,15 @@ export const Search = () => {
   const [inputValue, setInputValue] = useState<string>("");
   const [query, setQuery] = useState<string>("");
   const [cube, setCube] = useState<string>(
-    "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9"
+    "https://environment.ld.admin.ch/foen/nfi/nfi_C-1029/cube/2023-1"
   );
+
   const [temporalDimension, setTemporalDimension] = useState("-");
-  const [sharedDimensions, setSharedDimensions] = useState<
-    Termset["iri"][] | undefined
+  const [sharedComponents, setSharedComponents] = useState<
+    ComponentTermsets["iri"][] | undefined
   >(undefined);
 
-  const [cubeTermsetsResults] = useDataCubeTermsetsQuery({
+  const [cubeTermsetsResults] = useDataCubeComponentTermsetsQuery({
     variables: {
       locale: "en",
       sourceType: "sparql",
@@ -49,17 +52,26 @@ export const Search = () => {
     },
   });
 
+  const cubeSharedDimensionsByIri = keyBy(
+    cubeTermsetsResults.data?.dataCubeComponentTermsets ?? [],
+    (x) => x.iri
+  );
+
   const [searchCubesResult] = useSearchCubesQuery({
-    pause: !sharedDimensions || sharedDimensions.length === 0,
+    pause: !sharedComponents || sharedComponents.length === 0,
     variables: {
       locale: "en",
       sourceType: "sparql",
       sourceUrl: "https://lindas.admin.ch/query",
       filters: [
-        sharedDimensions
+        sharedComponents
           ? {
               type: SearchCubeFilterType.SharedDimensions,
-              value: sharedDimensions?.join(";"),
+              value: sharedComponents
+                .map((x) => cubeSharedDimensionsByIri[x])
+                .filter(truthy)
+                .flatMap((x) => x.termsets.map((x) => x.iri))
+                ?.join(";"),
             }
           : null,
         temporalDimension !== "-"
@@ -75,36 +87,42 @@ export const Search = () => {
   });
 
   const handleChangeSharedDimensions = (
-    ev: SelectChangeEvent<typeof sharedDimensions>
+    ev: SelectChangeEvent<typeof sharedComponents>
   ) => {
     const {
       target: { value },
     } = ev;
-    setSharedDimensions(
+    setSharedComponents(
       // On autofill we get a stringified value.
       typeof value === "string" ? value.split(",") : value
     );
   };
 
+  const handleChangeCube = (ev: SelectChangeEvent<string>) => {
+    setCube(ev.target.value);
+    setSharedComponents(undefined);
+  };
+
   useEffect(() => {
     if (
-      sharedDimensions === undefined &&
-      cubeTermsetsResults?.data?.dataCubeTermsets
+      sharedComponents === undefined &&
+      cubeTermsetsResults?.data?.dataCubeComponentTermsets &&
+      cube ===
+        (
+          cubeTermsetsResults.operation
+            ?.variables as DataCubeComponentTermsetsQueryVariables
+        ).cubeFilter?.iri
     ) {
-      setSharedDimensions(
-        cubeTermsetsResults?.data?.dataCubeTermsets.map((sd) => sd.iri)
+      setSharedComponents(
+        cubeTermsetsResults?.data?.dataCubeComponentTermsets.map((x) => x.iri)
       );
     }
-  }, [cubeTermsetsResults, sharedDimensions]);
-
-  const cubeSharedDimensionsByIri = keyBy(
-    cubeTermsetsResults.data?.dataCubeTermsets ?? [],
-    (x) => x.iri
-  );
+  }, [cubeTermsetsResults, cube, sharedComponents]);
 
   return (
     <div>
       <h2>Search results</h2>
+      {cube}
       <Stack gap={1} direction="column" alignItems="start">
         <FormControlLabel
           label="Query"
@@ -135,7 +153,7 @@ export const Search = () => {
             <Select
               size="small"
               native
-              onChange={(ev) => setCube(ev.target.value)}
+              onChange={handleChangeCube}
               value={cube}
             >
               <option value="https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9">
@@ -153,7 +171,7 @@ export const Search = () => {
         />
 
         <FormControlLabel
-          label="Termsets"
+          label="Join by"
           labelPlacement="start"
           control={
             <Stack gap={1} alignItems="center" direction="row">
@@ -161,33 +179,72 @@ export const Search = () => {
                 labelId="demo-multiple-chip-label"
                 id="demo-multiple-chip"
                 multiple
-                value={sharedDimensions ?? []}
+                value={sharedComponents ?? []}
                 onChange={handleChangeSharedDimensions}
-                input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
+                input={
+                  <OutlinedInput
+                    notched={false}
+                    id="select-multiple-chip"
+                    label="Chip"
+                  />
+                }
                 renderValue={(selected) =>
-                  selected.map((value) => (
-                    <Tag key={value} type="termset" sx={{ mr: 1 }}>
-                      {cubeSharedDimensionsByIri?.[value]?.label}
-                    </Tag>
-                  ))
+                  selected && selected.length
+                    ? selected.map((value) => (
+                        <Tag key={value} type="termset" sx={{ mr: 1 }}>
+                          {cubeSharedDimensionsByIri?.[value]?.label}
+                        </Tag>
+                      ))
+                    : "-"
                 }
               >
-                {(
-                  cubeTermsetsResults?.data?.dataCubeTermsets as Termset[]
-                )?.map((sd) => (
-                  <MenuItem
-                    key={sd.label}
-                    value={sd.iri}
-                    sx={{ gap: 2, alignItems: "start" }}
-                  >
-                    <Checkbox
-                      checked={
-                        sharedDimensions && sharedDimensions.includes(sd.iri)
-                      }
-                    />
-                    <ListItemText primary={sd.label} secondary={sd.iri} />
-                  </MenuItem>
-                ))}
+                {cubeTermsetsResults?.data?.dataCubeComponentTermsets?.map(
+                  (sd) => (
+                    <MenuItem
+                      key={sd.label}
+                      value={sd.iri}
+                      sx={{ gap: 2, alignItems: "start" }}
+                    >
+                      <Checkbox
+                        checked={
+                          sharedComponents && sharedComponents.includes(sd.iri)
+                        }
+                      />
+                      <ListItemText
+                        primary={sd.label}
+                        secondary={
+                          <>
+                            <Stack
+                              gap={1}
+                              width={400}
+                              flexDirection="row"
+                              flexWrap="wrap"
+                              alignItems="center"
+                            >
+                              <Typography
+                                variant="caption"
+                                component="div"
+                                mb={1}
+                              >
+                                Contains values from{" "}
+                              </Typography>
+                              {sd.termsets.map((t) => (
+                                <Tag
+                                  key={t.iri}
+                                  type="termset"
+                                  typography="caption"
+                                  sx={{ "&&": { fontSize: 10 } }}
+                                >
+                                  {t.label}
+                                </Tag>
+                              ))}
+                            </Stack>
+                          </>
+                        }
+                      />
+                    </MenuItem>
+                  )
+                )}
               </Select>
               {cubeTermsetsResults.fetching ? (
                 <CircularProgress size={12} />

@@ -26,13 +26,13 @@ query DataCubeMetadata(
   )
 }
 
-query DataCubeTermsets(
+query DataCubeComponentTermsets(
   $sourceType: String!
   $sourceUrl: String!
   $locale: String!
   $cubeFilter: DataCubeTermsetFilter!
 ) {
-  dataCubeTermsets(
+  dataCubeComponentTermsets(
     cubeFilter: $cubeFilter
     sourceType: $sourceType
     sourceUrl: $sourceUrl

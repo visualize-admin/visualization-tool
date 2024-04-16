@@ -1,3 +1,4 @@
+import { ComponentTermsets } from '../domain/data';
 import { DataCubeComponents } from '../domain/data';
 import { DataCubeMetadata } from '../domain/data';
 import { DataCubeObservations } from '../domain/data';
@@ -25,6 +26,7 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  ComponentTermsets: ComponentTermsets;
   DataCubeComponents: DataCubeComponents;
   DataCubeMetadata: DataCubeMetadata;
   DataCubeObservations: DataCubeObservations;
@@ -42,6 +44,7 @@ export type Scalars = {
   ValueIdentifier: any;
   ValuePosition: any;
 };
+
 
 export type DataCube = {
   __typename: 'DataCube';
@@ -330,7 +333,7 @@ export type OrdinalMeasureValuesArgs = {
 export type Query = {
   __typename: 'Query';
   dataCubeComponents: Scalars['DataCubeComponents'];
-  dataCubeTermsets: Array<Scalars['Termset']>;
+  dataCubeComponentTermsets: Array<Scalars['ComponentTermsets']>;
   dataCubeMetadata: Scalars['DataCubeMetadata'];
   dataCubeObservations: Scalars['DataCubeObservations'];
   dataCubePreview: Scalars['DataCubePreview'];
@@ -348,7 +351,7 @@ export type QueryDataCubeComponentsArgs = {
 };
 
 
-export type QueryDataCubeTermsetsArgs = {
+export type QueryDataCubeComponentTermsetsArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   locale: Scalars['String'];
@@ -580,7 +583,7 @@ export type DataCubeMetadataQueryVariables = Exact<{
 
 export type DataCubeMetadataQuery = { __typename: 'Query', dataCubeMetadata: DataCubeMetadata };
 
-export type DataCubeTermsetsQueryVariables = Exact<{
+export type DataCubeComponentTermsetsQueryVariables = Exact<{
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   locale: Scalars['String'];
@@ -588,7 +591,7 @@ export type DataCubeTermsetsQueryVariables = Exact<{
 }>;
 
 
-export type DataCubeTermsetsQuery = { __typename: 'Query', dataCubeTermsets: Array<Termset> };
+export type DataCubeComponentTermsetsQuery = { __typename: 'Query', dataCubeComponentTermsets: Array<ComponentTermsets> };
 
 export type DataCubeObservationsQueryVariables = Exact<{
   sourceType: Scalars['String'];
@@ -673,9 +676,9 @@ export const DataCubeMetadataDocument = gql`
 export function useDataCubeMetadataQuery(options: Omit<Urql.UseQueryArgs<DataCubeMetadataQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<DataCubeMetadataQuery>({ query: DataCubeMetadataDocument, ...options });
 };
-export const DataCubeTermsetsDocument = gql`
-    query DataCubeTermsets($sourceType: String!, $sourceUrl: String!, $locale: String!, $cubeFilter: DataCubeTermsetFilter!) {
-  dataCubeTermsets(
+export const DataCubeComponentTermsetsDocument = gql`
+    query DataCubeComponentTermsets($sourceType: String!, $sourceUrl: String!, $locale: String!, $cubeFilter: DataCubeTermsetFilter!) {
+  dataCubeComponentTermsets(
     cubeFilter: $cubeFilter
     sourceType: $sourceType
     sourceUrl: $sourceUrl
@@ -684,8 +687,8 @@ export const DataCubeTermsetsDocument = gql`
 }
     `;
 
-export function useDataCubeTermsetsQuery(options: Omit<Urql.UseQueryArgs<DataCubeTermsetsQueryVariables>, 'query'> = {}) {
-  return Urql.useQuery<DataCubeTermsetsQuery>({ query: DataCubeTermsetsDocument, ...options });
+export function useDataCubeComponentTermsetsQuery(options: Omit<Urql.UseQueryArgs<DataCubeComponentTermsetsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<DataCubeComponentTermsetsQuery>({ query: DataCubeComponentTermsetsDocument, ...options });
 };
 export const DataCubeObservationsDocument = gql`
     query DataCubeObservations($sourceType: String!, $sourceUrl: String!, $locale: String!, $cubeFilter: DataCubeObservationFilter!) {

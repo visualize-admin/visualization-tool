@@ -141,8 +141,8 @@ export const dataCubeMetadata: NonNullable<
   return {} as any;
 };
 
-export const dataCubeTermsets: NonNullable<
-  QueryResolvers["dataCubeTermsets"]
+export const dataCubeComponentTermsets: NonNullable<
+  QueryResolvers["dataCubeComponentTermsets"]
 > = async () => {
   return [];
 };
