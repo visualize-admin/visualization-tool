@@ -1,4 +1,5 @@
 import { Box } from "@mui/material";
+import { AnimatePresence } from "framer-motion";
 import keyBy from "lodash/keyBy";
 import React from "react";
 
@@ -31,19 +32,20 @@ type ElementProps<RE> = RE extends React.ElementType<infer P> ? P : never;
 export const ChartDataWrapper = <
   TChartConfig extends ChartConfig,
   TOtherProps,
-  TChartComponent extends React.ElementType
+  TChartComponent extends React.ElementType,
 >({
   chartConfig,
+  LoadingOverlayComponent = LoadingOverlay,
   Component,
   ComponentProps,
   componentIris,
   dataSource,
   observationQueryFilters,
-
   fetching: fetchingProp = false,
   error: propError,
 }: {
   chartConfig: TChartConfig;
+  LoadingOverlayComponent?: React.ElementType;
   Component: TChartComponent;
   ComponentProps?: Omit<
     ElementProps<TChartComponent>,
@@ -52,10 +54,7 @@ export const ChartDataWrapper = <
   componentIris?: string[];
   dataSource: DataSource;
   observationQueryFilters: DataCubeObservationFilter[] | undefined;
-
   fetching?: boolean;
-  /* Use this if extra data is loaded and the possible error must be shown by ChartDataWrapper*/
-
   /* Use this if extra data is loaded and the possible error must be shown by ChartDataWrapper*/
   error?: Error;
 }) => {
@@ -144,12 +143,11 @@ export const ChartDataWrapper = <
         {propError && <Error message={propError.message} />}
       </Flex>
     );
-  } else if (fetching) {
-    return (
-      <Flex flexGrow={1} justifyContent="center" minHeight={300}>
-        <Loading />
-      </Flex>
-    );
+  } else if (
+    fetching &&
+    (!metadata || !dimensions || !measures || !observations)
+  ) {
+    return <Loading />;
   } else if (metadata && dimensions && measures && observations) {
     // FIXME: adapt to design
     const title = metadata.map((d) => d.title).join(", ");
@@ -178,11 +176,13 @@ export const ChartDataWrapper = <
           ...ComponentProps,
         } as ChartProps<TChartConfig> & TOtherProps)}
 
-        {chartLoadingState.loading ? (
-          <LoadingOverlay />
-        ) : observations.length === 0 ? (
-          <NoDataHint />
-        ) : null}
+        <AnimatePresence>
+          {chartLoadingState.loading ? (
+            <LoadingOverlayComponent />
+          ) : observations.length === 0 ? (
+            <NoDataHint />
+          ) : null}
+        </AnimatePresence>
       </Box>
     );
   } else {
