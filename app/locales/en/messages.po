@@ -1074,7 +1074,7 @@ msgstr "Add dataset"
 #: app/browser/dataset-browse.tsx
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.label"
-msgstr "Search datasets"
+msgstr "Search"
 
 #: app/browser/dataset-browse.tsx
 #: app/configurator/components/add-dataset-dialog.tsx
