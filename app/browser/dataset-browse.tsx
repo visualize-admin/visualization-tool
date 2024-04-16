@@ -67,7 +67,7 @@ export const SearchDatasetInput = ({
 
   const searchLabel = t({
     id: "dataset.search.label",
-    message: "Search datasets",
+    message: "Search",
   });
 
   const placeholderLabel = t({
