@@ -15,19 +15,19 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 # [4.1.0] - 2024-04-10
 
 - Features
-  - Enabled support for monthly and yearly temporal entities (through a new `TemporalEntityDimension`)
+  - Added support for monthly and yearly temporal entities (via a new `TemporalEntityDimension')
   - It's now possible to control the opacity of map symbols also in case of numerical or categorical colors
 - Fixes
-  - Fixed fetching of PossibleFilters when no components iris are passed (and stops execution completely if called when initializing a new chart from cube)
-  - Fixed retrieving of shape labels when give shape misses label in currently selected locale
-  - Map chart is no longer showing an empty state when symbol layer is the only enabled layer and is based on geometries and not coordinates
-  - Fixed chart data caching so that chart state is persisted when changing some chart options (best visible in map chart, where interacting with chart options doesn't cause the map zoom to reset to default anymore)
+  - Fixed fetching of `PossibleFilters` when no component iris are passed (and stops execution completely if called when initializing a new chart from cube)
+  - Fixed retrieval of shape labels if the given shape does not have a label in the currently selected locale
+  - Map chart no longer shows empty state when symbol layer is the only enabled layer and is based on geometries, not coordinates
+  - Fixed chart data caching so that chart state is preserved when changing some options (best seen in the map chart, where interacting with options doesn't reset zoom to default anymore)
 - Performance
   - Switched to a cached LINDAS endpoint (PROD)
-  - The application now fires the `PossibleFilters` query as soon as a chart is initialized to always load filters that make sense, without initial reloading
-  - Refactored geographical queries to be simpler and use fewer queries to get necessary information
+  - The application now fires the `PossibleFilters` query as soon as a chart is initialized, to always load filters that make sense without initial reloading
+  - Refactored geographic queries to be simpler and use fewer queries to get the necessary information
 - Style
-  - Added black borders to map shapes, so overlaps are better visible
+  - Added black borders to map shapes to make overlaps more visible
   - Optimized the design of select elements and drag handles
 - Maintenance
   - Removed some unused dependencies
