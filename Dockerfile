@@ -74,4 +74,4 @@ EXPOSE 3000
 
 ENV PORT 3000
 
-CMD HOSTNAME="0.0.0.0" node app/server.js
+CMD ["npm", "run", "docker:start"]
