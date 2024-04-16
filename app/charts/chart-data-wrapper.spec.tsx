@@ -61,9 +61,9 @@ jest.mock("@/components/hint", () => ({
 
 describe("ChartDataWrapper", () => {
   it("should render the LoadingOverlay if prop is still being loaded", () => {
-    const Chart = jest.fn();
-    const LoadingOverlay = jest.fn();
-    render(
+    const Chart = () => <div>My chart</div>;
+    const LoadingOverlay = () => <div>Loading overlay</div>;
+    const root = render(
       <LoadingStateProvider>
         <ChartDataWrapper
           chartConfig={{ cubes: [] } as any as ChartConfig}
@@ -75,7 +75,11 @@ describe("ChartDataWrapper", () => {
         />
       </LoadingStateProvider>
     );
-    expect(Chart).toHaveBeenCalled();
-    expect(LoadingOverlay).toHaveBeenCalled();
+    expect(
+      root.getByText("My chart").innerHTML.includes("My chart")
+    ).toBeTruthy();
+    expect(
+      root.getByText("Loading overlay").innerHTML.includes("Loading overlay")
+    ).toBeTruthy();
   });
 });
