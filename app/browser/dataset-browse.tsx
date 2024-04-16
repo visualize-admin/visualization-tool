@@ -977,14 +977,7 @@ export const DatasetResult = ({
                 )
             )
           : null}
-        {showTermsets &&
-          sortBy(termsets, (t) => t.label).map((termset) => {
-            return (
-              <Tag key={termset.iri} type="termset">
-                {termset.label}
-              </Tag>
-            );
-          })}
+
         {creator?.label ? (
           <Link
             key={creator.iri}
@@ -1003,7 +996,27 @@ export const DatasetResult = ({
           </Link>
         ) : null}
       </Flex>
-      {rowActions?.(dataCube)}
+      <Flex alignItems="center" width="100%">
+        <Box flexGrow={1}>
+          {showTermsets && (
+            <Flex alignItems="center" mt={1}>
+              <Typography variant="body2" sx={{ mr: 1 }}>
+                <Trans id="dataset-result.shared-termsets">
+                  Shared dimensions:
+                </Trans>
+              </Typography>
+              {sortBy(termsets, (t) => t.label).map((termset) => {
+                return (
+                  <Tag key={termset.iri} type="termset">
+                    {termset.label}
+                  </Tag>
+                );
+              })}
+            </Flex>
+          )}
+        </Box>
+        <Box flexShrink={1}>{rowActions?.(dataCube)}</Box>
+      </Flex>
     </MotionCard>
   );
 };
