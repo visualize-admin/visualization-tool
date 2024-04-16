@@ -81,7 +81,7 @@ describe("makeUseQuery", () => {
 const sleep = (duration: number) =>
   new Promise((resolve) => setTimeout(resolve, duration));
 
-describe.skip("useComponentsQuery", () => {
+describe("useComponentsQuery - keepPreviousData: false", () => {
   it("should work", async () => {
     global.fetch = async (
       _url: RequestInfo | URL,
@@ -123,6 +123,7 @@ describe.skip("useComponentsQuery", () => {
         })
       );
     };
+
     await act(async () => {
       // Load for two cubes
       const hook = renderHook((props) => useDataCubesComponentsQuery(props), {
@@ -158,10 +159,12 @@ describe.skip("useComponentsQuery", () => {
               Object {
                 "cubeIri": undefined,
                 "dimensionIri": "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_energiewirkung/Jahr",
+                "label": undefined,
               },
               Object {
                 "cubeIri": undefined,
                 "dimensionIri": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
+                "label": undefined,
               },
             ],
             "values": Array [
@@ -182,6 +185,124 @@ describe.skip("useComponentsQuery", () => {
         variables: useDataCubesComponentsQueryVariables.oneCube,
       });
       expect(hook.result.current[0].data).toBe(null);
+      await hook.waitForNextUpdate();
+      expect(hook.result.current[0].data).toEqual({
+        dataCubesComponents: {
+          dimensions: [
+            { iri: "https://gebaude" },
+            {
+              iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_energiewirkung/Jahr",
+            },
+          ],
+          measures: [],
+        },
+      });
+    });
+  });
+});
+
+describe("useComponentsQuery - keepPreviousData: true", () => {
+  it("should work", async () => {
+    global.fetch = async (
+      _url: RequestInfo | URL,
+      options: RequestInit | undefined
+    ) => {
+      if (!options?.body) {
+        throw new Error("Must receive a body");
+      }
+
+      const reqBody = JSON.parse(options.body.toString());
+      const isGebaudeCube = reqBody.variables.cubeFilter.iri.includes(
+        "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_energiewirkung/6"
+      );
+      await sleep(1);
+      return new Response(
+        JSON.stringify({
+          data: {
+            dataCubeComponents: {
+              dimensions: isGebaudeCube
+                ? [
+                    {
+                      iri: "https://gebaude",
+                    },
+                    {
+                      iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_energiewirkung/Jahr",
+                    },
+                  ]
+                : [
+                    {
+                      iri: "https://eletrik",
+                    },
+                    {
+                      iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
+                    },
+                  ],
+              measures: [],
+            },
+          },
+        })
+      );
+    };
+
+    await act(async () => {
+      // Load for two cubes
+      const hook = renderHook((props) => useDataCubesComponentsQuery(props), {
+        initialProps: {
+          variables: useDataCubesComponentsQueryVariables.twoCubes,
+          keepPreviousData: true,
+        },
+      });
+
+      // At init, we are already fetching
+      expect(hook.result.current[0].fetching).toBe(true);
+      await hook.waitForNextUpdate();
+
+      // We have received the update
+      expect(hook.result.current[0].fetching).toBe(false);
+      const dimensions =
+        hook.result.current[0].data?.dataCubesComponents.dimensions;
+
+      // The joinBy dimensions have been fused
+      expect(dimensions && dimensions.length).toBe(3);
+
+      expect(dimensions).toMatchInlineSnapshot(`
+        Array [
+          Object {
+            "cubeIri": "joinBy",
+            "iri": "joinBy",
+            "isJoinByDimension": true,
+            "label": "joinBy",
+            "originalIris": Array [
+              Object {
+                "cubeIri": undefined,
+                "dimensionIri": "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_energiewirkung/Jahr",
+                "label": undefined,
+              },
+              Object {
+                "cubeIri": undefined,
+                "dimensionIri": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
+                "label": undefined,
+              },
+            ],
+            "values": Array [
+              undefined,
+              undefined,
+            ],
+          },
+          Object {
+            "iri": "https://gebaude",
+          },
+          Object {
+            "iri": "https://eletrik",
+          },
+        ]
+      `);
+
+      hook.rerender({
+        variables: useDataCubesComponentsQueryVariables.oneCube,
+        keepPreviousData: true,
+      });
+      expect(hook.result.current[0].data).toBeDefined();
       await hook.waitForNextUpdate();
       expect(hook.result.current[0].data).toEqual({
         dataCubesComponents: {

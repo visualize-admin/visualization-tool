@@ -141,6 +141,12 @@ export const dataCubeMetadata: NonNullable<
   return {} as any;
 };
 
+export const dataCubeTermsets: NonNullable<
+  QueryResolvers["dataCubeTermsets"]
+> = async () => {
+  return [];
+};
+
 export const possibleFilters: NonNullable<
   QueryResolvers["possibleFilters"]
 > = async (_, { iri, filters }) => {

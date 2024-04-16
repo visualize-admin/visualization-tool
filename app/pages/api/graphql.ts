@@ -12,7 +12,12 @@ import { resolvers } from "../../graphql/resolvers";
 import typeDefs from "../../graphql/schema.graphql";
 import { runMiddleware } from "../../utils/run-middleware";
 
-export const cors = configureCors();
+// Ability to load graphql responses from Storybook
+const corsOrigin = process.env.NODE_ENV === "production" ? undefined : "*";
+
+export const cors = configureCors({
+  origin: corsOrigin,
+});
 
 setupFlamegraph(resolvers);
 

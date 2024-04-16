@@ -69,7 +69,7 @@ export const DatePickerField = (props: DatePickerFieldProps) => {
           display: "grid",
           gridTemplateAreas: `"topControls ." "datePicker sideControls"`,
           gridTemplateColumns: "1fr auto",
-          columnGap: 2,
+          columnGap: sideControls ? 2 : 0,
         }}
       >
         {label && name && (

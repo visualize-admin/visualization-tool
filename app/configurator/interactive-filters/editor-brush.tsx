@@ -11,9 +11,9 @@ import { TimeUnit } from "@/graphql/query-hooks";
 import { useTheme } from "@/themes";
 import { useResizeObserver } from "@/utils/use-resize-observer";
 
-const HANDLE_SIZE = 20;
+const HANDLE_SIZE = 16;
 const HANDLE_OFFSET = HANDLE_SIZE / 8;
-const BRUSH_HEIGHT = 3;
+const BRUSH_HEIGHT = 1;
 const MARGIN = HANDLE_SIZE / 2;
 
 type EditorBrushProps = {
@@ -23,6 +23,7 @@ type EditorBrushProps = {
   timeUnit: TimeUnit;
   onChange: (extent: Date[]) => void;
   disabled?: boolean;
+  hideEndHandle?: boolean;
 };
 
 export const EditorBrush = (props: EditorBrushProps) => {
@@ -33,6 +34,7 @@ export const EditorBrush = (props: EditorBrushProps) => {
     timeUnit,
     onChange,
     disabled = false,
+    hideEndHandle = false,
   } = props;
   const [resizeRef, width] = useResizeObserver<HTMLDivElement>();
   const brushRef = useRef<SVGGElement>(null);
@@ -99,11 +101,21 @@ export const EditorBrush = (props: EditorBrushProps) => {
         .style("height", `${HANDLE_SIZE}px`)
         .attr("rx", `${HANDLE_SIZE}px`);
 
+      if (hideEndHandle) {
+        g.select(".handle--e").remove();
+      }
+
       g.call(brush);
     };
 
     mkBrush(g as Selection<SVGGElement, unknown, null, undefined>);
-  }, [brush, disabled, theme.palette.grey, theme.palette.primary.main]);
+  }, [
+    brush,
+    disabled,
+    hideEndHandle,
+    theme.palette.grey,
+    theme.palette.primary.main,
+  ]);
 
   // Set default selection to full extent
   const [fromPx, toPx] = timeRange.map(timeScale);

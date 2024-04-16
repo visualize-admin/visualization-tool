@@ -56,15 +56,18 @@ jest.mock("@/graphql/hooks", () => ({
 
 jest.mock("@/components/hint", () => ({
   Loading: jest.fn(() => null),
+  NoDataHint: jest.fn(() => null),
 }));
 
 describe("ChartDataWrapper", () => {
-  it("should not render the component if prop is still being loaded", () => {
-    const Chart = jest.fn();
-    render(
+  it("should render the LoadingOverlay if prop is still being loaded", () => {
+    const Chart = () => <div>My chart</div>;
+    const LoadingOverlay = () => <div>Loading overlay</div>;
+    const root = render(
       <LoadingStateProvider>
         <ChartDataWrapper
           chartConfig={{ cubes: [] } as any as ChartConfig}
+          LoadingOverlayComponent={LoadingOverlay}
           Component={Chart}
           dataSource={{ type: "sparql", url: "url" }}
           observationQueryFilters={[]}
@@ -72,6 +75,11 @@ describe("ChartDataWrapper", () => {
         />
       </LoadingStateProvider>
     );
-    expect(Chart).not.toHaveBeenCalled();
+    expect(
+      root.getByText("My chart").innerHTML.includes("My chart")
+    ).toBeTruthy();
+    expect(
+      root.getByText("Loading overlay").innerHTML.includes("Loading overlay")
+    ).toBeTruthy();
   });
 });

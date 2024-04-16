@@ -4,50 +4,33 @@ import React, { ReactNode } from "react";
 
 import { useChartState } from "@/charts/shared/chart-state";
 import { CalculationToggle } from "@/charts/shared/interactive-filter-calculation-toggle";
-import { useAlignChartElements } from "@/components/chart-helpers";
 import { useTransitionStore } from "@/stores/transition";
 
 export const ChartContainer = ({ children }: { children: ReactNode }) => {
   const ref = React.useRef<HTMLDivElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
-  const { bounds } = useChartState();
-  const { width, height } = bounds;
-  const alignChartElements = useAlignChartElements();
+  const {
+    bounds: { width, height },
+  } = useChartState();
 
   React.useEffect(() => {
     if (ref.current) {
-      // Initialize height on mount.
+      // Initialize height on mount
       if (!ref.current.style.height) {
         ref.current.style.height = `${height}px`;
       }
 
+      const sel = select(ref.current);
       (enableTransition
-        ? select(ref.current).transition().duration(transitionDuration)
-        : select(ref.current)
+        ? sel.transition().duration(transitionDuration)
+        : sel
       ).style("height", `${height}px`);
     }
   }, [height, enableTransition, transitionDuration]);
 
-  React.useEffect(() => {
-    if (height > alignChartElements.maxChartHeight) {
-      alignChartElements.setMaxChartHeight(height);
-    }
-  }, [height, alignChartElements]);
-
   return (
-    <div
-      ref={ref}
-      aria-hidden="true"
-      style={{
-        position: "relative",
-        width,
-        marginBottom: `${Math.max(
-          alignChartElements.maxChartHeight - height,
-          0
-        )}px`,
-      }}
-    >
+    <div ref={ref} aria-hidden="true" style={{ position: "relative", width }}>
       {children}
     </div>
   );
@@ -67,9 +50,10 @@ export const ChartSvg = ({ children }: { children: ReactNode }) => {
         ref.current.setAttribute("height", height.toString());
       }
 
+      const sel = select(ref.current);
       (enableTransition
-        ? select(ref.current).transition().duration(transitionDuration)
-        : select(ref.current)
+        ? sel.transition().duration(transitionDuration)
+        : sel
       ).attr("height", height);
     }
   }, [height, enableTransition, transitionDuration]);
@@ -96,7 +80,6 @@ export const ChartSvg = ({ children }: { children: ReactNode }) => {
 
 export const ChartControlsContainer = (props: BoxProps) => {
   const { sx, ...rest } = props;
-
   return (
     <Box
       sx={{

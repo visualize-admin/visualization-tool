@@ -9,8 +9,11 @@ import { i18n } from "../app/locales/locales";
 import { theme } from "../app/themes/federal";
 import AsyncLocalizationProvider from "../app/utils/l10n-provider";
 
+import { Decorator } from "@storybook/react";
+import { Client, Provider } from "urql";
+
 export const AppContextDecorator = (Story: NextPage) => (
-  <SessionProvider>
+  <SessionProvider refetchOnWindowFocus={false} refetchWhenOffline={false}>
     <AsyncLocalizationProvider locale="en">
       <I18nProvider i18n={i18n}>
         <CssBaseline />
@@ -34,5 +37,19 @@ export const RouterDecorator = (Story: NextPage) => {
     <>
       <Story />
     </>
+  );
+};
+
+const graphqlURL =
+  process.env.NODE_ENV === "production"
+    ? "/api/graphql"
+    : "http://localhost:3000/api/graphql";
+
+export const UrqlDecorator: Decorator = (Story) => {
+  const client = new Client({ url: graphqlURL });
+  return (
+    <Provider value={client}>
+      <Story />
+    </Provider>
   );
 };

@@ -1,27 +1,19 @@
 import { Box, BoxProps, Theme, useMediaQuery } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import capitalize from "lodash/capitalize";
 import React from "react";
 
-import { AlignChartElementsProvider } from "@/components/chart-helpers";
 import { ChartSelectionTabs } from "@/components/chart-selection-tabs";
 import { ChartConfig, Layout } from "@/config-types";
 import { useTheme } from "@/themes";
 
 const useStyles = makeStyles((theme: Theme) => ({
-  panelLayoutVertical: {
-    display: "flex",
-    flexDirection: "column",
-    gap: theme.spacing(4),
-  },
-  panelLayoutTall: {
+  panelLayout: {
     display: "flex",
     flexDirection: "column",
     gap: theme.spacing(4),
   },
   chartWrapper: {
-    display: "flex",
-    flexDirection: "column",
+    display: "contents",
     backgroundColor: theme.palette.grey[100],
     border: "1px solid",
     borderColor: theme.palette.divider,
@@ -40,9 +32,8 @@ export const ChartWrapper = React.forwardRef<HTMLDivElement, ChartWrapperProps>(
   (props, ref) => {
     const { children, editing, layoutType, ...rest } = props;
     const classes = useStyles();
-
     return (
-      <Box ref={ref} {...rest}>
+      <Box ref={ref} {...rest} sx={{ ...rest.sx, display: "contents" }}>
         {(editing || layoutType === "tab") && <ChartSelectionTabs />}
         <Box
           className={classes.chartWrapper}
@@ -55,27 +46,12 @@ export const ChartWrapper = React.forwardRef<HTMLDivElement, ChartWrapperProps>(
   }
 );
 
-type ChartPanelLayoutProps = React.PropsWithChildren<{
-  type: Extract<Layout, { type: "dashboard" }>["layout"];
-}>;
+type ChartPanelLayoutProps = React.PropsWithChildren<{}>;
 
 export const ChartPanelLayout = (props: ChartPanelLayoutProps) => {
-  const { children, type } = props;
+  const { children } = props;
   const classes = useStyles();
-
-  return (
-    <div
-      className={
-        classes[
-          `panelLayout${
-            capitalize(type) as Capitalize<ChartPanelLayoutProps["type"]>
-          }`
-        ]
-      }
-    >
-      {children}
-    </div>
-  );
+  return <div className={classes.panelLayout}>{children}</div>;
 };
 
 type ChartPanelLayoutVerticalProps = {
@@ -87,12 +63,7 @@ export const ChartPanelLayoutVertical = (
   props: ChartPanelLayoutVerticalProps
 ) => {
   const { chartConfigs, renderChart } = props;
-
-  return (
-    <ChartPanelLayout type="tall">
-      {chartConfigs.map(renderChart)}
-    </ChartPanelLayout>
-  );
+  return <ChartPanelLayout>{chartConfigs.map(renderChart)}</ChartPanelLayout>;
 };
 
 type ChartPanelLayoutTallProps = {
@@ -107,7 +78,7 @@ export const ChartPanelLayoutTall = (props: ChartPanelLayoutTallProps) => {
   }, [chartConfigs, renderChart]);
 
   return (
-    <ChartPanelLayout type="tall">
+    <ChartPanelLayout>
       {rows.map((row, i) => (
         <ChartPanelLayoutTallRow key={i} row={row} />
       ))}
@@ -128,22 +99,10 @@ export const ChartPanelLayoutTallRow = (
 
   switch (row.type) {
     case "wide":
-      return (
-        <AlignChartElementsProvider>
-          {row.renderChart(row.chartConfig)}
-        </AlignChartElementsProvider>
-      );
+      return row.renderChart(row.chartConfig);
     case "narrow":
       if (isMobile) {
-        return (
-          <>
-            {row.chartConfigs.map((chartConfig) => (
-              <AlignChartElementsProvider key={chartConfig.key}>
-                {row.renderChart(chartConfig)}
-              </AlignChartElementsProvider>
-            ))}
-          </>
-        );
+        return <>{row.chartConfigs.map(row.renderChart)}</>;
       }
 
       return (
@@ -157,9 +116,7 @@ export const ChartPanelLayoutTallRow = (
             gap: "16px",
           }}
         >
-          <AlignChartElementsProvider>
-            {row.chartConfigs.map(row.renderChart)}
-          </AlignChartElementsProvider>
+          {row.chartConfigs.map(row.renderChart)}
         </Box>
       );
   }

@@ -5,7 +5,7 @@ import { ResultRow } from "sparql-http-client/ResultParser";
 import { LRUCache } from "typescript-lru-cache";
 
 import { SingleFilters } from "@/config-types";
-import { isDynamicMaxValue } from "@/domain/max-value";
+import { isMostRecentValue } from "@/domain/most-recent-value";
 import { ResolvedDimension } from "@/graphql/shared-types";
 import * as ns from "@/rdf/namespace";
 import { loadMaxDimensionValue } from "@/rdf/query-dimension-values";
@@ -172,7 +172,7 @@ export const getQueryFilters = async (
       return {
         i,
         iri,
-        value: isDynamicMaxValue(value)
+        value: isMostRecentValue(value)
           ? await loadMaxDimensionValue(cubeIri, {
               dimension: { data: { iri } } as ResolvedDimension,
               // TODO: refactor dimension parsing to avoid "mocking" the cubeDimensions

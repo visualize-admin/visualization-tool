@@ -8,7 +8,6 @@ import {
   ClickAwayListener,
   Divider,
   FormControlLabel,
-  FormControlLabelProps,
   IconButton,
   Input,
   InputAdornment,
@@ -58,6 +57,7 @@ import {
   DRAWER_WIDTH,
 } from "@/configurator/components/drawer";
 import {
+  MostRecentDateSwitch,
   MultiFilterFieldColorPicker,
   SingleFilterField,
 } from "@/configurator/components/field";
@@ -70,6 +70,7 @@ import {
   useInteractiveFiltersToggle,
   useInteractiveTimeRangeToggle,
 } from "@/configurator/interactive-filters/interactive-filters-config-state";
+import { InteractiveFilterToggle } from "@/configurator/interactive-filters/interactive-filters-configurator";
 import {
   Component,
   Dimension,
@@ -80,6 +81,10 @@ import {
   TemporalDimension,
   TemporalEntityDimension,
 } from "@/domain/data";
+import {
+  isMostRecentValue,
+  VISUALIZE_MOST_RECENT_VALUE,
+} from "@/domain/most-recent-value";
 import { useTimeFormatLocale, useTimeFormatUnit } from "@/formatters";
 import { Icon } from "@/icons";
 import SvgIcCheck from "@/icons/components/IcCheck";
@@ -921,6 +926,9 @@ export const TimeFilter = (props: TimeFilterProps) => {
   const activeFilter = getFilterValue(state, dimension.iri);
   const rangeActiveFilter =
     activeFilter?.type === "range" ? activeFilter : null;
+  const usesMostRecentValue = rangeActiveFilter
+    ? isMostRecentValue(rangeActiveFilter.to)
+    : false;
 
   const onChangeFrom = useEvent(
     (e: SelectChangeEvent<unknown> | React.ChangeEvent<HTMLSelectElement>) => {
@@ -977,118 +985,182 @@ export const TimeFilter = (props: TimeFilterProps) => {
     const timeRange = rangeActiveFilter
       ? [
           parse(rangeActiveFilter.from) as Date,
-          parse(rangeActiveFilter.to) as Date,
+          usesMostRecentValue ? to : (parse(rangeActiveFilter.to) as Date),
         ]
       : [from, to];
 
     const fromOptions = sortedOptions.filter(({ date }) => {
       return date <= timeRange[1];
     });
-
     const toOptions = sortedOptions.filter(({ date }) => {
       return date >= timeRange[0];
+    });
+
+    const fromLabel = t({
+      id: "controls.filters.select.from",
+      message: "From",
+    });
+    const toLabel = t({
+      id: "controls.filters.select.to",
+      message: "To",
     });
 
     return (
       <Box>
         {!disableInteractiveFilters && (
-          <InteractiveTimeRangeToggle sx={{ mb: 1 }} />
+          <div style={{ marginBottom: "12px" }}>
+            <InteractiveTimeRangeToggle />
+          </div>
         )}
         <Box sx={{ display: "flex", gap: 1 }}>
-          {rangeActiveFilter && (
-            <>
-              {canRenderDatePickerField(timeUnit) ? (
-                <DatePickerField
-                  name="time-range-start"
-                  label={t({
-                    id: "controls.filters.select.from",
-                    message: "From",
-                  })}
-                  value={timeRange[0]}
-                  onChange={onChangeFrom}
-                  isDateDisabled={(date) => {
-                    return (
-                      date > timeRange[1] ||
-                      !sortedValues.includes(formatDateValue(date))
-                    );
-                  }}
-                  timeUnit={timeUnit}
-                  dateFormat={formatDateValue}
-                  minDate={from}
-                  maxDate={to}
-                />
-              ) : (
-                <Select
-                  id="time-range-start"
-                  label={t({
-                    id: "controls.filters.select.from",
-                    message: "From",
-                  })}
-                  options={fromOptions}
-                  sortOptions={false}
-                  value={rangeActiveFilter.from}
-                  onChange={onChangeFrom}
-                />
-              )}
-
-              {canRenderDatePickerField(timeUnit) ? (
-                <DatePickerField
-                  name="time-range-end"
-                  label={t({
-                    id: "controls.filters.select.to",
-                    message: "To",
-                  })}
-                  value={timeRange[1]}
-                  onChange={onChangeTo}
-                  isDateDisabled={(date) => {
-                    return (
-                      date < timeRange[0] ||
-                      !sortedValues.includes(formatDateValue(date))
-                    );
-                  }}
-                  timeUnit={timeUnit}
-                  dateFormat={formatDateValue}
-                  minDate={from}
-                  maxDate={to}
-                />
-              ) : (
-                <Select
-                  id="time-range-end"
-                  label={t({
-                    id: "controls.filters.select.to",
-                    message: "To",
-                  })}
-                  options={toOptions}
-                  sortOptions={false}
-                  value={rangeActiveFilter.to}
-                  onChange={onChangeTo}
-                />
-              )}
-            </>
-          )}
+          {rangeActiveFilter ? (
+            canRenderDatePickerField(timeUnit) ? (
+              <LeftRightFormContainer
+                left={
+                  <DatePickerField
+                    name="time-range-start"
+                    label={fromLabel}
+                    value={timeRange[0]}
+                    onChange={onChangeFrom}
+                    isDateDisabled={(date) => {
+                      return (
+                        date > timeRange[1] ||
+                        !sortedValues.includes(formatDateValue(date))
+                      );
+                    }}
+                    timeUnit={timeUnit}
+                    dateFormat={formatDateValue}
+                    minDate={from}
+                    maxDate={to}
+                  />
+                }
+                right={
+                  <DatePickerField
+                    name="time-range-end"
+                    label={toLabel}
+                    value={timeRange[1]}
+                    disabled={usesMostRecentValue}
+                    onChange={onChangeTo}
+                    isDateDisabled={(date) => {
+                      return (
+                        date < timeRange[0] ||
+                        !sortedValues.includes(formatDateValue(date))
+                      );
+                    }}
+                    timeUnit={timeUnit}
+                    dateFormat={formatDateValue}
+                    minDate={from}
+                    maxDate={to}
+                  />
+                }
+              />
+            ) : (
+              <LeftRightFormContainer
+                left={
+                  <Select
+                    id="time-range-start"
+                    label={fromLabel}
+                    options={fromOptions}
+                    sortOptions={false}
+                    value={rangeActiveFilter.from}
+                    onChange={onChangeFrom}
+                  />
+                }
+                right={
+                  <Select
+                    id="time-range-end"
+                    label={toLabel}
+                    options={toOptions}
+                    sortOptions={false}
+                    value={rangeActiveFilter.to}
+                    onChange={onChangeTo}
+                  />
+                }
+              />
+            )
+          ) : null}
         </Box>
         <EditorBrush
           timeExtent={[from, to]}
           timeRange={timeRange}
           timeInterval={timeInterval}
           timeUnit={timeUnit}
+          hideEndHandle={usesMostRecentValue}
           onChange={([from, to]) => {
             const [closestFrom, closestTo] = getClosestDatesFromDateRange(
               from,
               to
             );
-
             setFilterRange([
               formatDateValue(closestFrom),
-              formatDateValue(closestTo),
+              usesMostRecentValue
+                ? VISUALIZE_MOST_RECENT_VALUE
+                : formatDateValue(closestTo),
             ]);
           }}
         />
+        {rangeActiveFilter && (
+          <Box
+            sx={{ display: "flex", gap: 1, alignItems: "center", mt: "12px" }}
+          >
+            <MostRecentDateSwitch
+              checked={usesMostRecentValue}
+              onChange={() => {
+                setFilterRange([
+                  rangeActiveFilter.from,
+                  usesMostRecentValue
+                    ? formatDateValue(to)
+                    : VISUALIZE_MOST_RECENT_VALUE,
+                ]);
+              }}
+              noGutter
+            />
+            <Tooltip
+              enterDelay={600}
+              PopperProps={{ sx: { maxWidth: 160 } }}
+              title={
+                <Trans id="controls.filter.use-most-recent-explanation">
+                  When the publisher updates this dataset, the most recent date
+                  will be selected by default.
+                </Trans>
+              }
+            >
+              <Box sx={{ color: "primary.main" }}>
+                <Icon name="infoOutline" size={16} />
+              </Box>
+            </Tooltip>
+          </Box>
+        )}
       </Box>
     );
   } else {
     return <Loading />;
   }
+};
+
+type LeftRightFormContainerProps = {
+  left: ReactNode;
+  right: ReactNode;
+};
+
+const LeftRightFormContainer = (props: LeftRightFormContainerProps) => {
+  const { left, right } = props;
+  return (
+    <Box
+      sx={{
+        display: "grid",
+        columnGap: "0.75rem",
+        gridTemplateColumns: "1fr auto 1fr",
+        alignItems: "center",
+      }}
+    >
+      {left}
+      <Typography mt="1em" color="grey.700">
+        –
+      </Typography>
+      {right}
+    </Box>
+  );
 };
 
 type GetTimeFilterOptionsProps = {
@@ -1141,37 +1213,9 @@ export const getTimeFilterOptions = (props: GetTimeFilterOptionsProps) => {
   };
 };
 
-const InteractiveTimeRangeToggle = (
-  props: Omit<FormControlLabelProps, "control" | "label">
-) => {
+const InteractiveTimeRangeToggle = () => {
   const { checked, toggle } = useInteractiveTimeRangeToggle();
-
-  return (
-    <FormControlLabel
-      componentsProps={{
-        typography: { variant: "caption", color: "text.secondary" },
-      }}
-      {...props}
-      control={<Switch checked={checked} onChange={() => toggle()} />}
-      label={
-        <Tooltip
-          enterDelay={600}
-          arrow
-          title={
-            <span>
-              <Trans id="controls.filters.interactive.tooltip">
-                Allow users to change filters
-              </Trans>
-            </span>
-          }
-        >
-          <Typography variant="body2">
-            <Trans id="controls.filters.interactive.toggle">Interactive</Trans>
-          </Typography>
-        </Tooltip>
-      }
-    />
-  );
+  return <InteractiveFilterToggle checked={checked} toggle={toggle} />;
 };
 
 // This component is now only used in the Table Chart options.

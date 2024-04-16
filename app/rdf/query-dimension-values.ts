@@ -12,7 +12,7 @@ import { LRUCache } from "typescript-lru-cache";
 import { FilterValue, Filters } from "@/config-types";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { DimensionValue, parseObservationValue } from "@/domain/data";
-import { isDynamicMaxValue } from "@/domain/max-value";
+import { isMostRecentValue } from "@/domain/most-recent-value";
 import { ResolvedDimension } from "@/graphql/shared-types";
 import { pragmas } from "@/rdf/create-source";
 import * as ns from "@/rdf/namespace";
@@ -307,7 +307,7 @@ export const getQueryFilters = (
       // Ignore filters with no value or with the special value
       if (
         value.type === "single" &&
-        (value.value === FIELD_VALUE_NONE || isDynamicMaxValue(value.value))
+        (value.value === FIELD_VALUE_NONE || isMostRecentValue(value.value))
       ) {
         return "";
       }

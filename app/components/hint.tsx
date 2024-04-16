@@ -5,16 +5,18 @@ import {
   AlertTitle,
   Box,
   BoxProps,
-  keyframes,
   Link,
   Theme,
   Typography,
+  alpha,
+  keyframes,
   useTheme,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React, { ReactNode } from "react";
 
 import Flex from "@/components/flex";
+import { MotionBox } from "@/components/presence";
 import { Icon, IconName } from "@/icons";
 
 export const Error = ({ children }: { children: ReactNode }) => (
@@ -84,11 +86,9 @@ const useLoadingStyles = makeStyles((theme: Theme) => ({
     flexGrow: 1,
     padding: theme.spacing(2),
     opacity: 0,
-    color: theme.palette.secondary.main,
   },
   overlay: {
     position: "absolute",
-    backgroundColor: theme.palette.grey[100],
     top: 0,
     left: 0,
     width: "100%",
@@ -139,11 +139,26 @@ export const Loading = ({ delayMs = 1000 }: { delayMs?: number }) => {
 
 export const LoadingOverlay = () => {
   const classes = useLoadingStyles();
-
+  const theme = useTheme();
   return (
-    <Box className={classes.overlay}>
+    <MotionBox
+      className={classes.overlay}
+      initial={{
+        backgroundColor: alpha(theme.palette.grey[100], 0),
+        color: alpha(theme.palette.secondary.active!, 0),
+      }}
+      animate={{
+        backgroundColor: alpha(theme.palette.grey[100], 0.7),
+        color: theme.palette.text.primary,
+      }}
+      exit={{
+        backgroundColor: alpha(theme.palette.grey[100], 0),
+        color: alpha(theme.palette.secondary.active!, 0),
+      }}
+      transition={{ duration: 0.2 }}
+    >
       <Loading delayMs={0} />
-    </Box>
+    </MotionBox>
   );
 };
 

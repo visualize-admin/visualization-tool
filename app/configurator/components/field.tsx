@@ -1,5 +1,6 @@
 import { Trans, t } from "@lingui/macro";
 import {
+  Box,
   CircularProgress,
   FormControlLabel,
   FormGroup,
@@ -81,7 +82,10 @@ import {
   TemporalDimension,
   isTemporalOrdinalDimension,
 } from "@/domain/data";
-import { VISUALIZE_MAX_VALUE, isDynamicMaxValue } from "@/domain/max-value";
+import {
+  VISUALIZE_MOST_RECENT_VALUE,
+  isMostRecentValue,
+} from "@/domain/most-recent-value";
 import { useTimeFormatLocale } from "@/formatters";
 import { TimeUnit } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
@@ -260,7 +264,7 @@ export const DataFilterSelect = ({
   }
 
   const canUseMostRecentValue = isTemporalOrdinalDimension(dimension);
-  const usesMostRecentValue = isDynamicMaxValue(fieldProps.value);
+  const usesMostRecentValue = isMostRecentValue(fieldProps.value);
   // Dimension values can be empty just before a filter is reloaded through
   // ensurePossibleFilters
   const maxValue = sortedValues[sortedValues.length - 1]?.value;
@@ -268,42 +272,19 @@ export const DataFilterSelect = ({
   return (
     <div>
       {canUseMostRecentValue ? (
-        <Flex
-          sx={{
-            width: "100%",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <FieldLabel label={label} isOptional={isOptional} />
-          <FormGroup>
-            <FormControlLabel
-              control={
-                <MUISwitch
-                  size="small"
-                  checked={usesMostRecentValue}
-                  onChange={() =>
-                    fieldProps.onChange({
-                      target: {
-                        value: usesMostRecentValue
-                          ? `${maxValue}`
-                          : VISUALIZE_MAX_VALUE,
-                      },
-                    })
-                  }
-                />
-              }
-              label={
-                <Typography variant="caption">
-                  <Trans id="controls.filter.use-most-recent">
-                    Use most recent
-                  </Trans>
-                </Typography>
-              }
-              sx={{ mr: 0 }}
-            />
-          </FormGroup>
-        </Flex>
+        <MostRecentDateSwitch
+          label={label}
+          checked={usesMostRecentValue}
+          onChange={() =>
+            fieldProps.onChange({
+              target: {
+                value: usesMostRecentValue
+                  ? `${maxValue}`
+                  : VISUALIZE_MOST_RECENT_VALUE,
+              },
+            })
+          }
+        />
       ) : (
         <FieldLabel label={label} isOptional={isOptional} />
       )}
@@ -322,6 +303,35 @@ export const DataFilterSelect = ({
         value={usesMostRecentValue ? maxValue : fieldProps.value}
       />
     </div>
+  );
+};
+
+type MostRecentDateSwitchProps = {
+  label?: React.ReactNode;
+  checked: boolean;
+  onChange: () => void;
+  noGutter?: boolean;
+};
+
+export const MostRecentDateSwitch = (props: MostRecentDateSwitchProps) => {
+  const { label, checked, onChange, noGutter } = props;
+  return (
+    <Box sx={{ mt: noGutter ? 0 : "0.75rem" }}>
+      {label && <FieldLabel label={label} />}
+      <FormGroup>
+        <FormControlLabel
+          control={<MUISwitch checked={checked} onChange={onChange} />}
+          label={
+            <Typography variant="body2">
+              <Trans id="controls.filter.use-most-recent">
+                Use most recent
+              </Trans>
+            </Typography>
+          }
+          sx={{ mr: 0 }}
+        />
+      </FormGroup>
+    </Box>
   );
 };
 
@@ -353,7 +363,7 @@ export const DataFilterTemporal = (props: DataFilterTemporalProps) => {
     cubeIri: dimension.cubeIri,
     dimensionIri: dimension.iri,
   });
-  const usesMostRecentDate = isDynamicMaxValue(fieldProps.value);
+  const usesMostRecentDate = isMostRecentValue(fieldProps.value);
   const label = isOptional ? (
     <>
       {_label}{" "}
@@ -395,16 +405,10 @@ export const DataFilterTemporal = (props: DataFilterTemporalProps) => {
   );
 
   return (
-    <DatePickerField
-      name={`date-picker-${dimension.iri}`}
-      label={
-        <Flex
-          sx={{
-            width: "100%",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
+    <>
+      <DatePickerField
+        name={`date-picker-${dimension.iri}`}
+        label={
           <FieldLabel
             label={
               <OpenMetadataPanelWrapper dim={dimension}>
@@ -412,48 +416,33 @@ export const DataFilterTemporal = (props: DataFilterTemporalProps) => {
               </OpenMetadataPanelWrapper>
             }
           />
-          <FormGroup>
-            <FormControlLabel
-              control={
-                <MUISwitch
-                  size="small"
-                  checked={usesMostRecentDate}
-                  onChange={() =>
-                    fieldProps.onChange({
-                      target: {
-                        value: usesMostRecentDate
-                          ? formatDate(maxDate)
-                          : VISUALIZE_MAX_VALUE,
-                      },
-                    })
-                  }
-                />
-              }
-              label={
-                <Typography variant="caption">
-                  <Trans id="controls.filter.use-most-recent">
-                    Use most recent
-                  </Trans>
-                </Typography>
-              }
-              sx={{ mr: 0 }}
-            />
-          </FormGroup>
-        </Flex>
-      }
-      value={
-        usesMostRecentDate ? maxDate : (parseDate(fieldProps.value) as Date)
-      }
-      onChange={fieldProps.onChange}
-      isDateDisabled={isDateDisabled}
-      timeUnit={timeUnit}
-      dateFormat={formatDate}
-      minDate={minDate}
-      maxDate={maxDate}
-      disabled={disabled || usesMostRecentDate}
-      topControls={topControls}
-      sideControls={sideControls}
-    />
+        }
+        value={
+          usesMostRecentDate ? maxDate : (parseDate(fieldProps.value) as Date)
+        }
+        onChange={fieldProps.onChange}
+        isDateDisabled={isDateDisabled}
+        timeUnit={timeUnit}
+        dateFormat={formatDate}
+        minDate={minDate}
+        maxDate={maxDate}
+        disabled={disabled || usesMostRecentDate}
+        topControls={topControls}
+        sideControls={sideControls}
+      />
+      <MostRecentDateSwitch
+        checked={usesMostRecentDate}
+        onChange={() =>
+          fieldProps.onChange({
+            target: {
+              value: usesMostRecentDate
+                ? formatDate(maxDate)
+                : VISUALIZE_MOST_RECENT_VALUE,
+            },
+          })
+        }
+      />
+    </>
   );
 };
 

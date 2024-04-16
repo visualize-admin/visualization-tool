@@ -3,14 +3,10 @@ import {
   Box,
   Button,
   CircularProgress,
-  FormControlLabel,
-  FormControlLabelProps,
   IconButton,
   Menu,
   MenuItem,
-  Switch,
   Theme,
-  Tooltip,
   Typography,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
@@ -68,14 +64,17 @@ import {
   useConfiguratorState,
 } from "@/configurator/configurator-state";
 import { useInteractiveDataFilterToggle } from "@/configurator/interactive-filters/interactive-filters-config-state";
-import { InteractiveFiltersConfigurator } from "@/configurator/interactive-filters/interactive-filters-configurator";
+import {
+  InteractiveFilterToggle,
+  InteractiveFiltersConfigurator,
+} from "@/configurator/interactive-filters/interactive-filters-configurator";
 import {
   Dimension,
   Measure,
   isStandardErrorDimension,
   isTemporalDimension,
 } from "@/domain/data";
-import { isDynamicMaxValue } from "@/domain/max-value";
+import { isMostRecentValue } from "@/domain/most-recent-value";
 import { truthy } from "@/domain/types";
 import { flag } from "@/flags";
 import {
@@ -261,7 +260,7 @@ const useEnsurePossibleFilters = ({
         for (const [key, value] of Object.entries(oldFilters)) {
           if (
             value.type === "single" &&
-            isDynamicMaxValue(value.value) &&
+            isMostRecentValue(value.value) &&
             filters[key]
           ) {
             filters[key] = {
@@ -496,13 +495,10 @@ const useStyles = makeStyles<Theme, { fetching: boolean }>((theme) => ({
     display: "inline-block",
     marginLeft: 8,
   },
-  filtersContainer: {
-    "& > * + *": { marginTop: theme.spacing(3) },
-    marginBottom: 4,
-  },
   filterRow: {
     overflow: "hidden",
     width: "100%",
+    marginBottom: theme.spacing(5),
     "& .buttons": {
       transition: "color 0.125s ease, opacity 0.125s ease-out",
       opacity: 0.25,
@@ -514,10 +510,12 @@ const useStyles = makeStyles<Theme, { fetching: boolean }>((theme) => ({
     "& > *": {
       overflow: "hidden",
     },
+    "&:last-child": {
+      marginBottom: 0,
+    },
   },
   addDimensionContainer: {
-    marginTop: "1rem",
-    paddingLeft: theme.spacing(2),
+    marginTop: theme.spacing(5),
     "& .menu-button": {
       background: "transparent",
       border: 0,
@@ -527,42 +525,18 @@ const useStyles = makeStyles<Theme, { fetching: boolean }>((theme) => ({
   addDimensionButton: {
     display: "flex",
     minWidth: "auto",
+    minHeight: 32,
     justifyContent: "center",
+    paddingTop: theme.spacing(1),
+    paddingBottom: theme.spacing(1),
+    paddingLeft: theme.spacing(1),
+    paddingRight: theme.spacing(3),
   },
 }));
 
-const InteractiveDataFilterCheckbox = ({
-  value,
-  ...props
-}: { value: string } & Omit<FormControlLabelProps, "control" | "label">) => {
-  const { checked, toggle } = useInteractiveDataFilterToggle(value);
-
-  return (
-    <FormControlLabel
-      componentsProps={{
-        typography: { variant: "caption", color: "text.secondary" },
-      }}
-      {...props}
-      control={<Switch checked={checked} onChange={() => toggle()} />}
-      label={
-        <Tooltip
-          enterDelay={600}
-          arrow
-          title={
-            <span>
-              <Trans id="controls.filters.interactive.tooltip">
-                Allow users to change filters
-              </Trans>
-            </span>
-          }
-        >
-          <Typography variant="caption">
-            <Trans id="controls.filters.interactive.toggle">Interactive</Trans>
-          </Typography>
-        </Tooltip>
-      }
-    />
-  );
+const InteractiveDataFilterToggle = ({ iri }: { iri: string }) => {
+  const { checked, toggle } = useInteractiveDataFilterToggle(iri);
+  return <InteractiveFilterToggle checked={checked} toggle={toggle} />;
 };
 
 export const ChartConfigurator = ({
@@ -678,11 +652,7 @@ export const ChartConfigurator = ({
             <DragDropContext onDragEnd={handleDragEnd}>
               <Droppable droppableId="filters">
                 {(provided) => (
-                  <Box
-                    {...provided.droppableProps}
-                    className={classes.filtersContainer}
-                    ref={provided.innerRef}
-                  >
+                  <Box {...provided.droppableProps} ref={provided.innerRef}>
                     {filterDimensions.map((dimension, i) => (
                       <Draggable
                         isDragDisabled={fetching}
@@ -698,9 +668,8 @@ export const ChartConfigurator = ({
                             {...provided.draggableProps}
                           >
                             <div>
-                              <InteractiveDataFilterCheckbox
-                                value={dimension.iri}
-                                sx={{ mb: 1 }}
+                              <InteractiveDataFilterToggle
+                                iri={dimension.iri}
                               />
                             </div>
                             <DataFilterSelectGeneric
@@ -734,8 +703,8 @@ export const ChartConfigurator = ({
                   className={classes.addDimensionButton}
                   color="primary"
                 >
+                  <Icon name="add" size={24} />
                   <Trans>Add filter</Trans>
-                  <Icon name="add" height={18} />
                 </Button>
                 <Menu
                   anchorEl={filterMenuButtonRef.current}

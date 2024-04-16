@@ -8,10 +8,14 @@ import { DebugPanelProps } from "./DebugPanel";
 
 const LazyDebugPanel = dynamic(() => import("./DebugPanel"), { ssr: false });
 
-const DebugPanel = (props: DebugPanelProps) => {
-  const shouldShow = flag("debug") ?? process.env.NODE_ENV === "development";
+export const shouldShowDebugPanel = () => {
+  return flag("debug") ?? process.env.NODE_ENV === "development";
+};
 
-  if (!shouldShow) {
+const DebugPanel = (props: DebugPanelProps) => {
+  const show = shouldShowDebugPanel();
+
+  if (!show) {
     return null;
   }
 

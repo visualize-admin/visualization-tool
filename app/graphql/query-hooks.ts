@@ -10,6 +10,7 @@ import { Observation } from '../domain/data';
 import { RawObservation } from '../domain/data';
 import { SearchCube } from '../domain/data';
 import { SingleFilters } from '../configurator';
+import { Termset } from '../domain/data';
 import gql from 'graphql-tag';
 import * as Urql from 'urql';
 export type Maybe<T> = T | null;
@@ -37,6 +38,7 @@ export type Scalars = {
   RawObservation: RawObservation;
   SearchCube: SearchCube;
   SingleFilters: SingleFilters;
+  Termset: Termset;
   ValueIdentifier: any;
   ValuePosition: any;
 };
@@ -128,6 +130,11 @@ export enum DataCubePublicationStatus {
   Draft = 'DRAFT',
   Published = 'PUBLISHED'
 }
+
+export type DataCubeTermsetFilter = {
+  iri: Scalars['String'];
+  latest?: Maybe<Scalars['Boolean']>;
+};
 
 export type DataCubeTheme = {
   __typename: 'DataCubeTheme';
@@ -323,6 +330,7 @@ export type OrdinalMeasureValuesArgs = {
 export type Query = {
   __typename: 'Query';
   dataCubeComponents: Scalars['DataCubeComponents'];
+  dataCubeTermsets: Array<Scalars['Termset']>;
   dataCubeMetadata: Scalars['DataCubeMetadata'];
   dataCubeObservations: Scalars['DataCubeObservations'];
   dataCubePreview: Scalars['DataCubePreview'];
@@ -337,6 +345,14 @@ export type QueryDataCubeComponentsArgs = {
   sourceUrl: Scalars['String'];
   locale: Scalars['String'];
   cubeFilter: DataCubeComponentFilter;
+};
+
+
+export type QueryDataCubeTermsetsArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
+  locale: Scalars['String'];
+  cubeFilter: DataCubeTermsetFilter;
 };
 
 
@@ -416,7 +432,8 @@ export enum SearchCubeFilterType {
   TemporalDimension = 'TemporalDimension',
   DataCubeTheme = 'DataCubeTheme',
   DataCubeOrganization = 'DataCubeOrganization',
-  DataCubeAbout = 'DataCubeAbout'
+  DataCubeAbout = 'DataCubeAbout',
+  SharedDimensions = 'SharedDimensions'
 }
 
 export type SearchCubeResult = {
@@ -530,6 +547,7 @@ export type TemporalOrdinalDimensionValuesArgs = {
   disableLoad?: Maybe<Scalars['Boolean']>;
 };
 
+
 export enum TimeUnit {
   Year = 'Year',
   Month = 'Month',
@@ -561,6 +579,16 @@ export type DataCubeMetadataQueryVariables = Exact<{
 
 
 export type DataCubeMetadataQuery = { __typename: 'Query', dataCubeMetadata: DataCubeMetadata };
+
+export type DataCubeTermsetsQueryVariables = Exact<{
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
+  locale: Scalars['String'];
+  cubeFilter: DataCubeTermsetFilter;
+}>;
+
+
+export type DataCubeTermsetsQuery = { __typename: 'Query', dataCubeTermsets: Array<Termset> };
 
 export type DataCubeObservationsQueryVariables = Exact<{
   sourceType: Scalars['String'];
@@ -644,6 +672,20 @@ export const DataCubeMetadataDocument = gql`
 
 export function useDataCubeMetadataQuery(options: Omit<Urql.UseQueryArgs<DataCubeMetadataQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<DataCubeMetadataQuery>({ query: DataCubeMetadataDocument, ...options });
+};
+export const DataCubeTermsetsDocument = gql`
+    query DataCubeTermsets($sourceType: String!, $sourceUrl: String!, $locale: String!, $cubeFilter: DataCubeTermsetFilter!) {
+  dataCubeTermsets(
+    cubeFilter: $cubeFilter
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    locale: $locale
+  )
+}
+    `;
+
+export function useDataCubeTermsetsQuery(options: Omit<Urql.UseQueryArgs<DataCubeTermsetsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<DataCubeTermsetsQuery>({ query: DataCubeTermsetsDocument, ...options });
 };
 export const DataCubeObservationsDocument = gql`
     query DataCubeObservations($sourceType: String!, $sourceUrl: String!, $locale: String!, $cubeFilter: DataCubeObservationFilter!) {

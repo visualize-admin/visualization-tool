@@ -48,24 +48,28 @@ export const makeUseQuery =
   ) =>
   (options: T & { keepPreviousData?: boolean }) => {
     const [result, setResult] = React.useState<{
-      data?: V | null;
       queryKey: string | null;
+      data?: V | null;
       error?: Error;
       fetching: boolean;
     }>({ fetching: !options.pause, queryKey: null, data: null });
-    const queryKey = useQueryKey(options);
     const { keepPreviousData } = options;
+    const queryKey = useQueryKey(options);
     const executeQuery = React.useCallback(
       async (options: T) => {
-        const result = await executeQueryFn(options.variables, () =>
+        setResult((prev) => ({
+          ...prev,
+          fetching: false,
+          data:
+            prev.queryKey === queryKey || keepPreviousData ? prev.data : null,
+          queryKey,
+        }));
+        const result = await executeQueryFn(options.variables, () => {
           setResult((prev) => ({
             ...prev,
             fetching: true,
-            data:
-              prev.queryKey === queryKey || keepPreviousData ? prev.data : null,
-            queryKey,
-          }))
-        );
+          }));
+        });
         setResult({ ...result, queryKey });
       },
       // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -81,13 +85,7 @@ export const makeUseQuery =
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [queryKey, options.pause]);
 
-    const { data, ...rest } = result;
-    const res = {
-      ...rest,
-      data: result.queryKey === queryKey || keepPreviousData ? data : null,
-    };
-
-    return [res, executeQuery] as const;
+    return [result, executeQuery] as const;
   };
 
 type DataCubesMetadataOptions = {
