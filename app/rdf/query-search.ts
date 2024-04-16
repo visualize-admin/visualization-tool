@@ -415,5 +415,5 @@ const mkScoresQuery = (
       }
   `.GROUP().BY`?iri`.THEN.BY`?title`.THEN.BY`?status`.THEN.BY`?datePublished`
     .THEN.BY`?description`.THEN.BY`?publisher`.THEN.BY`?creatorIri`.THEN
-    .BY`?creatorLabel`.prologue`${pragmas}`.prologue`#pragma join.bind off`;
-}; // HOTFIX WRT Stardog v9.2.1 bug see https://control.vshn.net/tickets/sbar-1066
+    .BY`?creatorLabel`.prologue`${pragmas}`.prologue`#pragma join.bind off`; // HOTFIX WRT Stardog v9.2.1 bug see https://control.vshn.net/tickets/sbar-1066
+};
