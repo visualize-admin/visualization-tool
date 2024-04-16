@@ -109,6 +109,7 @@ export const DatasetDialog = ({
 
   // Getting cube dimensions, to find temporal dimensions
   const [cubesComponentQuery] = useDataCubesComponentsQuery({
+    pause: !props.open,
     variables: {
       ...commonQueryVariables,
       cubeFilters: relevantCubes.map((cube) => ({
@@ -120,6 +121,7 @@ export const DatasetDialog = ({
 
   // Getting cube termsets, to then search for cubes with at least one this termset
   const [cubeTermsetsResults] = useDataCubeComponentTermsetsQuery({
+    pause: !props.open,
     variables: {
       locale,
       sourceType: state.dataSource.type,
