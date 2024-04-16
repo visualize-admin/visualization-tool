@@ -579,6 +579,12 @@ export const isTemporalOrdinalDimension = (
   return dimension?.__typename === "TemporalOrdinalDimension";
 };
 
+export const isTemporalDimensionWithTimeUnit = (
+  dimension?: Component | null
+): dimension is Extract<Dimension, { timeUnit: any }> => {
+  return !!dimension && "timeUnit" in dimension;
+};
+
 export const isStandardErrorResolvedDimension = (dim: ResolvedDimension) => {
   return dim.data?.related.some((x) => x.type === "StandardError");
 };

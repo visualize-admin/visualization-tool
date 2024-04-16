@@ -39,7 +39,7 @@ import {
 import {
   DataCubeComponents,
   Termset,
-  isTemporalDimension,
+  isTemporalDimensionWithTimeUnit,
 } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import {
@@ -141,12 +141,14 @@ export const DatasetDialog = ({
   const relevantDimensions = useMemo(() => {
     return (
       cubesComponentQuery.data?.dataCubesComponents.dimensions.filter(
-        isTemporalDimension
+        isTemporalDimensionWithTimeUnit
       ) ?? []
     );
   }, [cubesComponentQuery.data?.dataCubesComponents.dimensions]);
 
-  const temporalDimension = relevantDimensions.find(isTemporalDimension);
+  const temporalDimension = relevantDimensions.find(
+    isTemporalDimensionWithTimeUnit
+  );
 
   const isSearchQueryPaused = !cubesComponentQuery.data;
   const [searchQuery] = useSearchCubesQuery({
@@ -375,8 +377,12 @@ const inferJoinBy = (
   leftComponents: DataCubeComponents,
   rightComponents: DataCubeComponents
 ) => {
-  const leftDim = leftComponents.dimensions.find(isTemporalDimension);
-  const rightDim = rightComponents.dimensions.find(isTemporalDimension);
+  const leftDim = leftComponents.dimensions.find(
+    isTemporalDimensionWithTimeUnit
+  );
+  const rightDim = rightComponents.dimensions.find(
+    isTemporalDimensionWithTimeUnit
+  );
   if (!leftDim?.iri || !rightDim?.iri) {
     throw new Error(
       `Could not find dimensions on which to join: ${JSON.stringify({
