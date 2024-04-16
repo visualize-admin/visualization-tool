@@ -2,7 +2,9 @@
 # and only ship what's actually required by the app to run.
 # https://docs.docker.com/get-started/09_image_best/#multi-stage-builds
 
-FROM node:18-alpine AS base
+FROM node:18-slim AS base
+# https://github.com/prisma/prisma/issues/16232
+RUN apt-get update && apt-get install -y openssl
 
 # build with 
 # docker build \
@@ -43,7 +45,8 @@ ENV KEYCLOAK_SECRET=$KEYCLOAK_SECRET
 ENV KEYCLOAK_ISSUER=$KEYCLOAK_ISSUER
 ENV NEXTAUTH_SECRET=$NEXTAUTH_SECRET
 ENV NEXTAUTH_URL=$NEXTAUTH_URL
-ENV PORT 3000
+# https://nextjs.org/docs/messages/sharp-missing-in-production
+ENV NEXT_SHARP_PATH "/node_modules/sharp"
 
 FROM base AS builder
 WORKDIR /src
