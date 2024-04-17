@@ -1,72 +1,21 @@
 import { sparql } from "@tpluscode/sparql-builder";
-import { descending, group } from "d3-array";
+import { descending } from "d3-array";
 import groupBy from "lodash/groupBy";
-import { Literal, NamedNode } from "rdf-js";
 import ParsingClient from "sparql-http-client/ParsingClient";
 
-import { SearchCube } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { SearchCubeFilterType, TimeUnit } from "@/graphql/query-hooks";
-import {
-  DataCubePublicationStatus,
-  SearchCubeFilter,
-} from "@/graphql/resolver-types";
+import { SearchCubeFilter } from "@/graphql/resolver-types";
 import { defaultLocale } from "@/locales/locales";
 import { pragmas } from "@/rdf/create-source";
 import { unitsToNode } from "@/rdf/mappings";
-import * as ns from "@/rdf/namespace";
+import { buildSearchCubes } from "@/rdf/parse-search-results";
 import { computeScores, highlight } from "@/rdf/query-search-score-utils";
 import {
-  GROUP_SEPARATOR,
   buildLocalizedSubQuery,
   formatIriToQueryNode,
   makeVisualizeDatasetFilter,
 } from "@/rdf/query-utils";
-
-// Keep in sync with the query.
-type RawSearchCube = {
-  iri: NamedNode;
-  title: Literal;
-  description: Literal;
-  status: NamedNode;
-  datePublished: Literal;
-  creatorIri: NamedNode;
-  creatorLabel: Literal;
-  publisher: NamedNode;
-  themeIris: NamedNode;
-  themeLabels: Literal;
-  subthemeIris: NamedNode;
-  subthemeLabels: Literal;
-  termsetIris: NamedNode;
-  termsetLabels: Literal;
-};
-
-export type ParsedRawSearchCube = {
-  [k in keyof RawSearchCube]: string;
-};
-
-const parseRawSearchCube = (cube: RawSearchCube): ParsedRawSearchCube => {
-  return {
-    iri: cube.iri.value,
-    title: cube.title.value,
-    description: cube.description?.value,
-    status:
-      cube.status.value ===
-      ns.adminVocabulary("CreativeWorkStatus/Published").value
-        ? DataCubePublicationStatus.Published
-        : DataCubePublicationStatus.Draft,
-    datePublished: cube.datePublished?.value,
-    creatorIri: cube.creatorIri?.value,
-    creatorLabel: cube.creatorLabel?.value,
-    publisher: cube.publisher?.value,
-    themeIris: cube.themeIris?.value,
-    themeLabels: cube.themeLabels?.value,
-    subthemeIris: cube.subthemeIris?.value,
-    subthemeLabels: cube.subthemeLabels?.value,
-    termsetIris: cube.termsetIris?.value,
-    termsetLabels: cube.termsetLabels?.value,
-  };
-};
 
 const makeInFilter = (name: string, values: string[]) => {
   return `
@@ -140,87 +89,21 @@ export const searchCubes = async ({
 
   const scoreResults = await Promise.all(
     scoresQueries.map((scoresQuery) =>
-      sparqlClient.query.select(scoresQuery, {
+      sparqlClient.query.construct(scoresQuery, {
         operation: "postUrlencoded",
       })
     )
   );
 
-  const rawCubes = (scoreResults as RawSearchCube[][])
+  const parsedCubes = scoreResults
+    .map((x) => buildSearchCubes(x))
     .flatMap((d) => d)
     // Filter out cubes without iri, happens due to grouping, when no cubes are found.
-    .filter((d) => d.iri)
-    .map(parseRawSearchCube);
-  const rawCubesByIri = group(rawCubes, (d) => d.iri);
-  const infoByCube = computeScores(rawCubes, { query });
+    .filter((d) => d.iri);
+  // const rawCubesByIri = group(rawCubes, (d) => d.iri);
+  const infoByCube = computeScores(parsedCubes, { query });
 
-  const seenCubes = new Set<string>();
-  const cubes = rawCubes
-    .map((cube) => {
-      // Need to keep both published and draft cubes with the same iri.
-      const dedupIdentifier = cube.iri + cube.status;
-
-      if (seenCubes.has(dedupIdentifier)) {
-        return null;
-      }
-
-      seenCubes.add(dedupIdentifier);
-
-      const rawCubes = rawCubesByIri.get(cube.iri);
-
-      if (!rawCubes?.length) {
-        return null;
-      }
-
-      if (rawCubes.length > 1) {
-        console.warn(`Found multiple cubes with the same iri: ${cube.iri}`);
-      }
-
-      const rawCube = rawCubes[0];
-
-      const themeIris = rawCube.themeIris.split(GROUP_SEPARATOR);
-      const themeLabels = rawCube.themeLabels.split(GROUP_SEPARATOR);
-      const subthemeIris = rawCube.subthemeIris.split(GROUP_SEPARATOR);
-      const subthemeLabels = rawCube.subthemeLabels.split(GROUP_SEPARATOR);
-      const termsetIris = rawCube.termsetIris?.split(GROUP_SEPARATOR) ?? [];
-      const termsetLabels = rawCube.termsetLabels?.split(GROUP_SEPARATOR) ?? [];
-
-      const parsedCube: SearchCube = {
-        iri: rawCube.iri,
-        title: rawCube.title,
-        description: rawCube.description,
-        creator:
-          rawCube.creatorIri && rawCube.creatorLabel
-            ? { iri: rawCube.creatorIri, label: rawCube.creatorLabel }
-            : null,
-        publicationStatus: rawCube.status as DataCubePublicationStatus,
-        datePublished: rawCube.datePublished,
-        themes:
-          themeIris.length === themeLabels.length
-            ? themeIris.map((iri, i) => ({
-                iri,
-                label: themeLabels[i],
-              }))
-            : [],
-        subthemes:
-          subthemeIris.length === subthemeLabels.length
-            ? subthemeIris.map((iri, i) => ({
-                iri,
-                label: subthemeLabels[i],
-              }))
-            : [],
-        termsets:
-          termsetIris.length === termsetLabels.length
-            ? termsetIris.map((iri, i) => ({
-                iri,
-                label: termsetLabels[i],
-              }))
-            : [],
-      };
-
-      return parsedCube;
-    })
-    .filter(truthy);
+  const cubes = parsedCubes.filter(truthy);
 
   return cubes
     .sort((a, b) =>
@@ -263,25 +146,31 @@ const mkScoresQuery = (
   PREFIX cubeMeta: <https://cube.link/meta/>
   PREFIX dcterms: <http://purl.org/dc/terms/>
   PREFIX dcat: <http://www.w3.org/ns/dcat#>
+  PREFIX visualize: <https://visualize.admin.ch>
 
-  SELECT DISTINCT
-    ?iri ?title ?status ?datePublished ?description ?publisher ?creatorIri ?creatorLabel
-
-    (GROUP_CONCAT(DISTINCT ?themeIri; SEPARATOR="${GROUP_SEPARATOR}") AS ?themeIris)
-    (GROUP_CONCAT(DISTINCT ?themeLabel; SEPARATOR="${GROUP_SEPARATOR}") AS ?themeLabels)
-    
-    (GROUP_CONCAT(DISTINCT ?subthemeIri; SEPARATOR="${GROUP_SEPARATOR}") AS ?subthemeIris)
-    (GROUP_CONCAT(DISTINCT ?subthemeLabel; SEPARATOR="${GROUP_SEPARATOR}") AS ?subthemeLabels)
-
-    ${
-      searchingSharedDimensions
-        ? `
-      (GROUP_CONCAT(DISTINCT ?termsetIri; SEPARATOR="${GROUP_SEPARATOR}") AS ?termsetIris)
-      (GROUP_CONCAT(DISTINCT ?termsetLabel; SEPARATOR="${GROUP_SEPARATOR}") AS ?termsetLabels)
-      `
-        : ""
-    }
-
+  CONSTRUCT {
+    ?iri a cube:Cube ;
+    schema:name ?title ;
+    schema:description ?description ;
+    dcat:theme ?themeIri;
+    schema:about ?subthemeIri;
+    dcterms:publisher ?publisher ;
+    schema:creator ?creatorIri ;
+    schema:workExample <https://ld.admin.ch/application/visualize> ;
+    schema:creativeWorkStatus <https://ld.admin.ch/vocabulary/CreativeWorkStatus/Published> ;
+    cube:observationConstraint ?shape .
+?dimension visualize:contains ?termsetIri .
+?termsetIri schema:name ?termsetLabel .
+?iri dcterms:publisher ?publisher ;
+    schema:creativeWorkStatus ?status ;
+    schema:datePublished ?datePublished .
+?creatorIri schema:inDefinedTermSet <https://register.ld.admin.ch/opendataswiss/org> ;
+           schema:name ?creatorLabel .
+?themeIri schema:inDefinedTermSet <https://register.ld.admin.ch/opendataswiss/category> ;
+         schema:name ?themeLabel .
+?subthemeIri schema:inDefinedTermSet ?subthemeTermset ;
+            schema:name ?subthemeLabel .
+  }
     WHERE {
       ?iri a cube:Cube .
       ${buildLocalizedSubQuery("iri", "schema:name", "title", {
@@ -426,5 +315,5 @@ const mkScoresQuery = (
           : ""
       }
     
-    } GROUP BY ?iri ?title ?status ?datePublished ?description ?publisher ?creatorIri ?creatorLabel`;
+    }`;
 };
