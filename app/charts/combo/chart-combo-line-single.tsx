@@ -50,7 +50,7 @@ export const ChartComboLineSingle = React.memo(
     const { interactiveFiltersConfig } = chartConfig;
 
     const getLegendItemDimension = React.useCallback(
-      (label) => {
+      (label: string) => {
         return measures.find((measure) => measure.label === label);
       },
       [measures]
