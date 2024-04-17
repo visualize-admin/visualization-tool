@@ -18,12 +18,13 @@ const ConfirmationDialog = ({
   onSuccess,
   onConfirm,
   ...props
-}: DialogProps & {
+}: Omit<DialogProps, "onClose"> & {
   title?: string;
   text?: string;
   onSuccess?: () => Promise<unknown> | void;
   onConfirm?: () => Promise<unknown> | void;
   onClick: () => Promise<unknown> | void;
+  onClose: NonNullable<DialogProps["onClose"]>;
 }) => {
   const [loading, setLoading] = React.useState(false);
 
@@ -31,7 +32,6 @@ const ConfirmationDialog = ({
     <Dialog
       // To prevent the click away listener from closing the dialog.
       onClick={(e) => e.stopPropagation()}
-      onClose={close}
       maxWidth="xs"
       {...props}
     >
@@ -55,7 +55,10 @@ const ConfirmationDialog = ({
           },
         }}
       >
-        <Button variant="text" onClick={close}>
+        <Button
+          variant="text"
+          onClick={() => props.onClose({}, "escapeKeyDown")}
+        >
           <Trans id="no">No</Trans>
         </Button>
         <Button
@@ -67,7 +70,7 @@ const ConfirmationDialog = ({
             await onClick();
             await new Promise((r) => setTimeout(r, 100));
 
-            props.onClose?.({}, "escapeKeyDown");
+            props.onClose({}, "escapeKeyDown");
             onSuccess?.();
           }}
         >
