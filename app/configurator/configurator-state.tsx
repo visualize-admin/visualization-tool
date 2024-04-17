@@ -64,6 +64,7 @@ import {
   Dimension,
   DimensionValue,
   isGeoDimension,
+  isJoinByComponent,
   ObservationValue,
 } from "@/domain/data";
 import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
@@ -368,7 +369,7 @@ const SELECTING_DATASET_STATE: ConfiguratorStateSelectingDataSet = {
 
 export const getFilterValue = (
   state: ConfiguratorState,
-  dimensionIri: string
+  dimension: Dimension
 ): FilterValue | undefined => {
   if (state.state === "INITIAL" || state.state === "SELECTING_DATASET") {
     return;
@@ -377,7 +378,10 @@ export const getFilterValue = (
   const chartConfig = getChartConfig(state);
   const filters = getChartConfigFilters(chartConfig.cubes);
 
-  return filters[dimensionIri];
+  return isJoinByComponent(dimension)
+    ? // As filters are mirrored between the cubes, we can just pick the first one.
+      filters[dimension.originalIris[0].dimensionIri]
+    : filters[dimension.iri];
 };
 
 export const moveFilterField = produce(

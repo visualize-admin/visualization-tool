@@ -21,6 +21,7 @@ import {
   ConfiguratorStateAction,
   deriveFiltersFromFields,
   getFiltersByMappingStatus,
+  getFilterValue,
   getLocalStorageKey,
   handleChartFieldChanged,
   handleChartOptionChanged,
@@ -1249,5 +1250,42 @@ describe("add dataset", () => {
     const config = newState2.chartConfigs[0] as MapConfig;
     expect(config.cubes.length).toBe(1);
     expect(config.chartType).toEqual("column");
+  });
+});
+
+describe("getFilterValue", () => {
+  const f = {
+    type: "range",
+    from: "2010",
+    to: "2014",
+  };
+  const state = {
+    state: "CONFIGURING_CHART",
+    chartConfigs: [
+      {
+        cubes: [
+          {
+            iri: "foo",
+            filters: {
+              first: f,
+            },
+          },
+          {
+            iri: "bar",
+            filters: {
+              second: f,
+            },
+          },
+        ],
+      },
+    ],
+  } as any as ConfiguratorState;
+  const dimension = {
+    isJoinByDimension: true,
+    originalIris: [{ dimensionIri: "first" }, { dimensionIri: "second" }],
+  } as any as Dimension;
+
+  it("should correctly retrieve filters for joinBy dimension", () => {
+    expect(getFilterValue(state, dimension)).toEqual(f);
   });
 });
