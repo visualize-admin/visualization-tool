@@ -63,18 +63,16 @@ WORKDIR /src
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-COPY --from=builder /src/app/public ./app/public
-
-COPY --from=builder /src/app/.next/standalone ./
-COPY --from=builder /src/app/.next/static ./app/.next/static
-# Need to have access to the prisma to run migrations
-RUN npm install -g prisma
-COPY --from=builder /src/app/prisma/schema.prisma ./schema.prisma
-
 USER nextjs
+
+COPY --from=builder /src/app/public ./app/public
+COPY --from=builder --chown=nextjs:nodejs /src/app/.next/standalone ./
+# Need to have access to the Prisma schema to run migrations
+COPY --from=builder --chown=nextjs:nodejs /src/app/prisma/schema.prisma ./schema.prisma
+# Due to some complex dependencies of Prisma, we need to copy the node_modules from the deps stage
+COPY --from=deps --chown=nextjs:nodejs /src/node_modules ./node_modules
+# COPY --from=deps --chown=nextjs:nodejs /src/app/node_modules ./app/node_modules
 
 EXPOSE 3000
 
-ENV PORT 3000
-
-CMD ["npm", "run", "docker:start"]
+CMD npm run docker:start
