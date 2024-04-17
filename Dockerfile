@@ -77,4 +77,3 @@ EXPOSE 3000
 
 CMD npm run docker:start
 
-# ...
