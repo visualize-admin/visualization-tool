@@ -1,4 +1,4 @@
-import { SELECT, sparql } from "@tpluscode/sparql-builder";
+import { sparql } from "@tpluscode/sparql-builder";
 import { descending, group } from "d3-array";
 import groupBy from "lodash/groupBy";
 import { Literal, NamedNode } from "rdf-js";
@@ -140,7 +140,7 @@ export const searchCubes = async ({
 
   const scoreResults = await Promise.all(
     scoresQueries.map((scoresQuery) =>
-      scoresQuery.execute(sparqlClient.query, {
+      sparqlClient.query.select(scoresQuery, {
         operation: "postUrlencoded",
       })
     )
@@ -249,7 +249,22 @@ const mkScoresQuery = (
   const searchingSharedDimensions = filters?.some(
     (f) => f.type === SearchCubeFilterType.SharedDimensions
   );
-  return SELECT.DISTINCT`
+
+  // HOTFIX WRT Stardog v9.2.1 bug see https://control.vshn.net/tickets/sbar-1066
+  return `
+  ${pragmas}
+  #pragma join.bind off
+
+  PREFIX meta: <https://cube.link/meta/>
+  PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+  PREFIX schema: <http://schema.org/>
+  PREFIX sh: <http://www.w3.org/ns/shacl#>
+  PREFIX cube: <https://cube.link/>
+  PREFIX cubeMeta: <https://cube.link/meta/>
+  PREFIX dcterms: <http://purl.org/dc/terms/>
+  PREFIX dcat: <http://www.w3.org/ns/dcat#>
+
+  SELECT DISTINCT
     ?iri ?title ?status ?datePublished ?description ?publisher ?creatorIri ?creatorLabel
 
     (GROUP_CONCAT(DISTINCT ?themeIri; SEPARATOR="${GROUP_SEPARATOR}") AS ?themeIris)
@@ -266,8 +281,9 @@ const mkScoresQuery = (
       `
         : ""
     }
-    `.WHERE`
-      ?iri a ${ns.cube.Cube} .
+
+    WHERE {
+      ?iri a cube:Cube .
       ${buildLocalizedSubQuery("iri", "schema:name", "title", {
         locale,
       })}
@@ -284,34 +300,32 @@ const mkScoresQuery = (
           }
 
           return sparql`
-            ?iri ${ns.cube.observationConstraint} ?shape .
-            ?shape ${ns.sh.property} ?prop .
-            ?prop ${ns.cubeMeta.dataKind}/${ns.time.unitType} <${unitNode}>.`;
+            ?iri cube:observationConstraint ?shape .
+            ?shape sh:property ?prop .
+            ?prop cubeMeta:dataKind/time:unitType <${unitNode}>.`;
         } else if (df.type === SearchCubeFilterType.SharedDimensions) {
           const sharedDimensions = df.value.split(";");
-          return sparql`
+          return `
             VALUES (?termsetIri) {${sharedDimensions.map((sd) => `(<${sd}>)`).join(" ")}}
-            ?iri a <https://cube.link/Cube> .
-            ?iri ${ns.cube.observationConstraint}/${ns.sh.property} ?dimension .
-            ?dimension a ${ns.cube.KeyDimension} .
-            ?dimension ${ns.sh.in}/${ns.rdf.first} ?value.
-            ?value ${ns.schema.inDefinedTermSet} ?termsetIri .
+            ?iri a cube:Cube .
+            ?iri cube:observationConstraint/sh:property ?dimension .
+            ?dimension a cube:KeyDimension .
+            ?dimension sh:in/rdf:first ?value.
+            ?value schema:inDefinedTermSet ?termsetIri .
             ${buildLocalizedSubQuery("termsetIri", "schema:name", "termsetLabel", { locale })}`;
         }
       })}
 
       # Publisher, creator status, datePublished
-      OPTIONAL { ?iri ${ns.dcterms.publisher} ?publisher . }
-      ?iri ${ns.schema.creativeWorkStatus} ?status .
-      OPTIONAL { ?iri ${ns.schema.datePublished} ?datePublished . }
+      OPTIONAL { ?iri dcterms:publisher ?publisher . }
+      ?iri schema:creativeWorkStatus ?status .
+      OPTIONAL { ?iri schema:datePublished ?datePublished . }
 
       OPTIONAL {
-        ?iri ${ns.dcterms.creator} ?creatorIri .
+        ?iri dcterms:creator ?creatorIri .
         GRAPH <https://lindas.admin.ch/sfa/opendataswiss> {
-          ?creatorIri a ${ns.schema.Organization} ;
-            ${
-              ns.schema.inDefinedTermSet
-            } <https://register.ld.admin.ch/opendataswiss/org> .
+          ?creatorIri a schema:Organization ;
+            schema:inDefinedTermSet <https://register.ld.admin.ch/opendataswiss/org> .
             ${buildLocalizedSubQuery(
               "creatorIri",
               "schema:name",
@@ -323,12 +337,10 @@ const mkScoresQuery = (
       ${creatorValues.length ? makeInFilter("creatorIri", creatorValues) : ""}
 
       OPTIONAL {
-        ?iri ${ns.dcat.theme} ?themeIri .
+        ?iri dcat:theme ?themeIri .
         GRAPH <https://lindas.admin.ch/sfa/opendataswiss> {
-          ?themeIri a ${ns.schema.DefinedTerm} ;
-          ${
-            ns.schema.inDefinedTermSet
-          } <https://register.ld.admin.ch/opendataswiss/category> .
+          ?themeIri a schema:DefinedTerm ;
+          schema:inDefinedTermSet <https://register.ld.admin.ch/opendataswiss/category> .
           ${buildLocalizedSubQuery("themeIri", "schema:name", "themeLabel", {
             locale,
           })}
@@ -336,9 +348,9 @@ const mkScoresQuery = (
       }
       ${
         themeValues.length
-          ? sparql`
+          ? `
       VALUES ?theme { ${themeValues.map(formatIriToQueryNode).join(" ")} }
-      ?iri ${ns.dcat.theme} ?theme .
+      ?iri dcat:theme ?theme .
       `
           : ""
       }
@@ -352,10 +364,10 @@ const mkScoresQuery = (
            : ""
        }
       OPTIONAL {
-        ?iri ${ns.schema.about} ?subthemeIri .
+        ?iri schema:about ?subthemeIri .
         GRAPH ?subthemeGraph {
-          ?subthemeIri a ${ns.schema.DefinedTerm} ;
-          ${ns.schema.inDefinedTermSet} ?subthemeTermset .
+          ?subthemeIri a schema:DefinedTerm ;
+          schema:inDefinedTermSet ?subthemeTermset .
           ${buildLocalizedSubQuery(
             "subthemeIri",
             "schema:name",
@@ -368,7 +380,7 @@ const mkScoresQuery = (
       ${makeVisualizeDatasetFilter({
         includeDrafts: !!includeDrafts,
         cubeIriVar: "?iri",
-      })}
+      }).toString()}
 
       ${
         query
@@ -413,7 +425,6 @@ const mkScoresQuery = (
       )`
           : ""
       }
-  `.GROUP().BY`?iri`.THEN.BY`?title`.THEN.BY`?status`.THEN.BY`?datePublished`
-    .THEN.BY`?description`.THEN.BY`?publisher`.THEN.BY`?creatorIri`.THEN
-    .BY`?creatorLabel`.prologue`${pragmas}`.prologue`#pragma join.bind off`; // HOTFIX WRT Stardog v9.2.1 bug see https://control.vshn.net/tickets/sbar-1066
+    
+    } GROUP BY ?iri ?title ?status ?datePublished ?description ?publisher ?creatorIri ?creatorLabel`;
 };

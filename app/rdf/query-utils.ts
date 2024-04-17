@@ -1,8 +1,4 @@
-import { sparql } from "@tpluscode/sparql-builder";
-
 import { locales } from "@/locales/locales";
-
-import { cube, schema } from "../../app/rdf/namespace";
 
 export const GROUP_SEPARATOR = "|||";
 
@@ -58,15 +54,13 @@ export const makeVisualizeDatasetFilter = (options?: {
   const cubeIriVar = options?.cubeIriVar ?? "?iri";
   const includeDrafts = options?.includeDrafts ?? false;
 
-  return sparql`
-    ${cubeIriVar} ${
-      schema.workExample
-    } <https://ld.admin.ch/application/visualize> .
+  return `
+    ${cubeIriVar} schema:workExample <https://ld.admin.ch/application/visualize> .
     ${
       includeDrafts
         ? ""
-        : sparql`${cubeIriVar} ${schema.creativeWorkStatus} <https://ld.admin.ch/vocabulary/CreativeWorkStatus/Published> .`
+        : `${cubeIriVar} schema:creativeWorkStatus <https://ld.admin.ch/vocabulary/CreativeWorkStatus/Published> .`
     }
-    ${cubeIriVar} ${cube.observationConstraint} ?shape .
-    FILTER NOT EXISTS { ${cubeIriVar} ${schema.expires} ?expiryDate }`;
+    ${cubeIriVar} cube:observationConstraint ?shape .
+    FILTER NOT EXISTS { ${cubeIriVar} schema:expires ?expiryDate }`;
 };
