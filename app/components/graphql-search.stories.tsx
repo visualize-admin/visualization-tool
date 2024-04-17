@@ -278,7 +278,11 @@ export const Search = () => {
       ) : null}
 
       {searchCubesResult?.data?.searchCubes.map((item) => (
-        <DatasetResult key={item.cube.iri} dataCube={item.cube} showTermsets />
+        <DatasetResult
+          key={item.cube.iri}
+          dataCube={item.cube}
+          showDimensions
+        />
       ))}
     </div>
   );

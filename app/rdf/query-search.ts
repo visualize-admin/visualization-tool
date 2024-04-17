@@ -129,10 +129,6 @@ const mkScoresQuery = (
   includeDrafts: Boolean | null | undefined,
   query: string | null | undefined
 ) => {
-  const searchingSharedDimensions = filters?.some(
-    (f) => f.type === SearchCubeFilterType.SharedDimensions
-  );
-
   // HOTFIX WRT Stardog v9.2.1 bug see https://control.vshn.net/tickets/sbar-1066
   return `
   ${pragmas}
@@ -146,30 +142,31 @@ const mkScoresQuery = (
   PREFIX cubeMeta: <https://cube.link/meta/>
   PREFIX dcterms: <http://purl.org/dc/terms/>
   PREFIX dcat: <http://www.w3.org/ns/dcat#>
-  PREFIX visualize: <https://visualize.admin.ch>
+  PREFIX visualize: <https://visualize.admin.ch/>
+  PREFIX time: <http://www.w3.org/2006/time#>
 
   CONSTRUCT {
     ?iri a cube:Cube ;
-    schema:name ?title ;
-    schema:description ?description ;
-    dcat:theme ?themeIri;
-    schema:about ?subthemeIri;
-    dcterms:publisher ?publisher ;
-    schema:creator ?creatorIri ;
-    schema:workExample <https://ld.admin.ch/application/visualize> ;
-    schema:creativeWorkStatus <https://ld.admin.ch/vocabulary/CreativeWorkStatus/Published> ;
-    cube:observationConstraint ?shape .
-?dimension visualize:contains ?termsetIri .
-?termsetIri schema:name ?termsetLabel .
-?iri dcterms:publisher ?publisher ;
-    schema:creativeWorkStatus ?status ;
-    schema:datePublished ?datePublished .
-?creatorIri schema:inDefinedTermSet <https://register.ld.admin.ch/opendataswiss/org> ;
-           schema:name ?creatorLabel .
-?themeIri schema:inDefinedTermSet <https://register.ld.admin.ch/opendataswiss/category> ;
-         schema:name ?themeLabel .
-?subthemeIri schema:inDefinedTermSet ?subthemeTermset ;
-            schema:name ?subthemeLabel .
+      cube:observationConstraint ?shape;
+      dcat:theme ?themeIri;
+      dcterms:publisher ?publisher ;
+      schema:about ?subthemeIri;
+      schema:creativeWorkStatus ?status ;
+      schema:creativeWorkStatus <https://ld.admin.ch/vocabulary/CreativeWorkStatus/Published> ;
+      schema:creator ?creatorIri ;
+      schema:datePublished ?datePublished;
+      schema:description ?description ;
+      schema:name ?title ;
+      schema:workExample <https://ld.admin.ch/application/visualize> ;
+      visualize:contains ?dimensionIri.
+
+      ?dimensionIri visualize:contains ?termsetIri .
+      ?dimensionIri schema:name ?dimensionLabel .
+      ?termsetIri schema:name ?termsetLabel .
+      ?creatorIri schema:name ?creatorLabel .
+      ?themeIri schema:name ?themeLabel .
+      ?subthemeIri schema:inDefinedTermSet ?subthemeTermset ;
+                  schema:name ?subthemeLabel .
   }
     WHERE {
       ?iri a cube:Cube .
@@ -200,6 +197,16 @@ const mkScoresQuery = (
             ?iri cube:observationConstraint/sh:property ?dimension .
             ?dimension a cube:KeyDimension .
             ?dimension sh:in/rdf:first ?value.
+            ?dimension sh:path ?dimensionIri .
+            ${buildLocalizedSubQuery(
+              "dimension",
+              "schema:name",
+              "dimensionLabel",
+              {
+                locale,
+              }
+            )}
+      
             ?value schema:inDefinedTermSet ?termsetIri .
             ${buildLocalizedSubQuery("termsetIri", "schema:name", "termsetLabel", { locale })}`;
         }

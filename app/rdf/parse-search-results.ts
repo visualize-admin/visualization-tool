@@ -5,7 +5,9 @@ import { SearchCube } from "@/domain/data";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import * as ns from "@/rdf/namespace";
 
-function buildSearchCubes(quads: Quad[]): SearchCube[] {
+function buildSearchCubes(
+  quads: Pick<Quad, "predicate" | "object" | "subject">[]
+): SearchCube[] {
   const byPredicateAndObject = group(
     quads,
     (x) => x.predicate.value,
@@ -29,6 +31,7 @@ function buildSearchCubes(quads: Quad[]): SearchCube[] {
     if (cubeQuads) {
       const themeQuads = cubeQuads.get(ns.dcat.theme.value);
       const subthemesQuads = cubeQuads.get(ns.schema.about.value);
+      const dimensions = cubeQuads.get("https://visualize.admin.ch/contains");
       const creatorIri = cubeQuads.get(ns.schema.creator.value)?.[0]?.object
         .value;
       const publicationStatus = cubeQuads.get(
@@ -77,7 +80,24 @@ function buildSearchCubes(quads: Quad[]): SearchCube[] {
                   ?.get(ns.schema.name.value)?.[0].object.value ?? "",
             };
           }) ?? [],
-        termsets: [],
+        dimensions: dimensions?.map((x) => {
+          const dim = bySubjectAndPredicate.get(x.object.value);
+          return {
+            iri: x.object.value,
+            label: dim?.get(ns.schema.name.value)?.[0].object.value ?? "",
+            termsets: dim
+              ?.get("https://visualize.admin.ch/contains")
+              ?.map((x) => {
+                return {
+                  iri: x.object.value,
+                  label:
+                    bySubjectAndPredicate
+                      .get(x.object.value)
+                      ?.get(ns.schema.name.value)?.[0].object.value ?? "",
+                };
+              }),
+          };
+        }),
       };
 
       searchCubes.push(cubeSearchCube);

@@ -404,9 +404,13 @@ export type SearchCube = {
     iri: string;
     label: string;
   }[];
-  termsets: {
+  dimensions?: {
     iri: string;
     label: string;
+    termsets?: {
+      iri: string;
+      label: string;
+    }[];
   }[];
 };
 

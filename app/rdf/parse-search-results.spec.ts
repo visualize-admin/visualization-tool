@@ -2,6 +2,7 @@ import * as fs from "fs";
 import path from "path";
 
 import { csvParse } from "d3-dsv";
+import { Quad } from "rdf-js";
 
 import { buildSearchCubes } from "./parse-search-results";
 
@@ -21,7 +22,7 @@ describe("parse-search-results", () => {
         subject: { value: row.subject! },
         predicate: { value: row.predicate! },
         object: { value: row.object! },
-      };
+      } as Quad;
     });
 
     // Build search cubes using the buildSearchCubes function
@@ -31,76 +32,121 @@ describe("parse-search-results", () => {
       Array [
         Object {
           "creator": Object {
-            "iri": "https://register.ld.admin.ch/opendataswiss/org/elcom",
-            "label": "Federal Electricity Commission ElCom",
+            "iri": "https://register.ld.admin.ch/opendataswiss/org/bundesamt-fur-energie-bfe",
+            "label": "Swiss Federal Office of Energy SFOE",
           },
-          "datePublished": "2021-01-01",
-          "description": "Median electricity tariff per region & consumption profiles",
-          "iri": "https://energy.ld.admin.ch/elcom/electricityprice-canton",
-          "publicationStatus": "PUBLISHED",
-          "subthemes": Array [],
-          "termsets": Array [],
-          "themes": Array [
+          "datePublished": "2022-08-16",
+          "description": "Seit 2014 werden Photovoltaikanlagen mit einer Einmalvergütung (EIV) gefördert. Dabei wird abhängig von der Leistung, der Anlagenkategorie und dem Inbetriebnahmedatum ein einmaliger Beitrag an die Anlagenbetreiber ausbezahlt. Hier finden Sie pro Kanton und Auszahlungsjahr einen Überblick über die Anzahl geförderter EIV-Anlagen, die installierte Leistung in Kilowatt (kW) sowie den ausbezahlten EIV-Förderbeitrag. Die dargestellten Daten entsprechen nicht vollständig der offiziellen Statistik der erneuerbaren Energien durch das BFE. Da der Abbau der Wartelisten zeitverzögert stattfindet, können Abweichungen entstehen.",
+          "dimensions": Array [
             Object {
-              "iri": "https://register.ld.admin.ch/opendataswiss/category/prices",
-              "label": "Prices",
-            },
-            Object {
-              "iri": "https://register.ld.admin.ch/opendataswiss/category/energy",
-              "label": "Energy",
-            },
-            Object {
-              "iri": "https://register.ld.admin.ch/opendataswiss/category/national-economy",
-              "label": "National economy",
+              "iri": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton",
+              "label": "Kanton",
+              "termsets": Array [
+                Object {
+                  "iri": "https://ld.admin.ch/dimension/canton",
+                  "label": "Cantons",
+                },
+              ],
             },
           ],
-          "title": "Median electricity tariff per canton",
-        },
-        Object {
-          "creator": Object {
-            "iri": "https://register.ld.admin.ch/opendataswiss/org/elcom",
-            "label": "Federal Electricity Commission ElCom",
-          },
-          "datePublished": "2021-01-01",
-          "description": "Median electricity tariff for Switzerland by consumption profiles",
-          "iri": "https://energy.ld.admin.ch/elcom/electricityprice-swiss",
+          "iri": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9",
           "publicationStatus": "PUBLISHED",
           "subthemes": Array [],
-          "termsets": Array [],
           "themes": Array [
             Object {
               "iri": "https://register.ld.admin.ch/opendataswiss/category/national-economy",
               "label": "National economy",
             },
             Object {
-              "iri": "https://register.ld.admin.ch/opendataswiss/category/prices",
-              "label": "Prices",
-            },
-            Object {
               "iri": "https://register.ld.admin.ch/opendataswiss/category/energy",
               "label": "Energy",
             },
           ],
-          "title": "Median electricity tariff for Switzerland",
+          "title": "Einmalvergütung für Photovoltaikanlagen",
         },
         Object {
           "creator": Object {
             "iri": "https://register.ld.admin.ch/opendataswiss/org/bundesamt-fur-energie-bfe",
             "label": "Swiss Federal Office of Energy SFOE",
           },
-          "datePublished": "2022-02-01",
-          "description": "Der Datensatz enthält die Ergebnisse der fünf Hauptszenarien, die im Rahmen des Projekts EP2050+ erstellt wurden. Die Ergebnisse zeigen Pfade einer Weiter-wie-bisher Entwicklung auf, die einem Fortbestehen aktueller Rahmenbedingungen beruht, sowie mehrer ZERO-Szenarien, in denen auf unterschiedlichen Pfaden das Ziel erreicht wird, im Jahr 2045 netto treibhausgasneutral zu sein. Dargestellt sind die modellierten Jahreswerte der Energieverbräuche und der damit einhergehenden Treibhausgasemissionen. In den zugrundeliegenden Energiemodellen, werden diese Grössen nach den drei Dimensionen Sektor/Branche, Verwendungszweck/Anwendung und Energieträger(-gruppe) aufgeschlüsselt. Der hier veröffentlichte Datensatz entspricht nicht der feinsten Auflösungsstufe, sondern stellt die Grössen nach zwei Dimensionen aufgeschlüsselt dar, die vom Benutzer spezifizert werden können. Die folgenden sieben Darstellungsformen für Energieverbrauch/ THG-Emissionen sind möglich: * Darstellung nach Sektor und Branche * Darstellung nach Sektor und Verwendungszweck * Darstellung nach Sektor und Energieträger * Darstellung nach Verwendungszweckgruppe und Verwendungszweck * Darstellung nach Verwendungszweckgruppe und Energieträger * Darstellung nach Energieträgergruppe und Energieträger * Darstellung nach Energieträgergruppe und Verwendungszweck. Eine Auflistung der jeweiligen Ausprägungen der verschiedenen Dimensionen ist im File ogd56_catalog.csv gegeben. Die Daten sind in der Konvention angegeben, dass Energieverbräuche, -exporte und THG-Emissionen mit einem positiven Vorzeichen versehen sind, die Erzeugung eines Energieträgers, dessen Import oder die Abscheidung von Emissionen sind mit einem negative Vorzeichen versehen.",
-          "iri": "https://energy.ld.admin.ch/sfoe/bfe_ogd56_energieperspektiven2050/4",
+          "datePublished": "2023-09-12",
+          "description": "Anhaltende CO2-Wirkungen je Massnahmenbereich (Haustechnik, Wärmedämmung, Systemsanierung, Neubau, Zentrale Wärmeversorgung, Indirekte Massnahmen), seit Start des Gebäudeprogramms (berechnet auf Basis des HFM 2015)",
+          "dimensions": Array [
+            Object {
+              "iri": "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_co2wirkung/region",
+              "label": "Region",
+              "termsets": Array [
+                Object {
+                  "iri": "https://ld.admin.ch/dimension/country",
+                  "label": "Countries",
+                },
+              ],
+            },
+          ],
+          "iri": "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_co2wirkung/4",
           "publicationStatus": "PUBLISHED",
           "subthemes": Array [],
-          "termsets": Array [],
           "themes": Array [
             Object {
               "iri": "https://register.ld.admin.ch/opendataswiss/category/energy",
               "label": "Energy",
             },
+            Object {
+              "iri": "https://register.ld.admin.ch/opendataswiss/category/construction",
+              "label": "Construction and housing",
+            },
+            Object {
+              "iri": "https://register.ld.admin.ch/opendataswiss/category/statistical-basis",
+              "label": "Statistical basis",
+            },
+            Object {
+              "iri": "https://register.ld.admin.ch/opendataswiss/category/population",
+              "label": "Population",
+            },
           ],
-          "title": "Modellergebnisse EP2050+: Szenario ZERO Basis, KKW-Laufzeit 50 Jahre, ausgeglichene Jahresbilanz",
+          "title": "Gebäudeprogramm - CO2-Wirkungen je Massnahmenbereich",
+        },
+        Object {
+          "creator": Object {
+            "iri": "https://register.ld.admin.ch/opendataswiss/org/bundesamt-fur-energie-bfe",
+            "label": "Swiss Federal Office of Energy SFOE",
+          },
+          "datePublished": "2023-09-12",
+          "description": "Anzahl Gesuche mit Auszahlungen im jeweiligen Jahr, Gebäudeprogramm ab 2017 (nur direkte Massnahmen)",
+          "dimensions": Array [
+            Object {
+              "iri": "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_anzahl_gesuche/region",
+              "label": "Kanton",
+              "termsets": Array [
+                Object {
+                  "iri": "https://ld.admin.ch/dimension/canton",
+                  "label": "Cantons",
+                },
+              ],
+            },
+          ],
+          "iri": "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_anzahl_gesuche/15",
+          "publicationStatus": "PUBLISHED",
+          "subthemes": Array [],
+          "themes": Array [
+            Object {
+              "iri": "https://register.ld.admin.ch/opendataswiss/category/energy",
+              "label": "Energy",
+            },
+            Object {
+              "iri": "https://register.ld.admin.ch/opendataswiss/category/construction",
+              "label": "Construction and housing",
+            },
+            Object {
+              "iri": "https://register.ld.admin.ch/opendataswiss/category/population",
+              "label": "Population",
+            },
+            Object {
+              "iri": "https://register.ld.admin.ch/opendataswiss/category/statistical-basis",
+              "label": "Statistical basis",
+            },
+          ],
+          "title": "Gebäudeprogramm - Anzahl unterstützter Gesuche",
         },
       ]
     `);

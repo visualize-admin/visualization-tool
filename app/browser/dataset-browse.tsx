@@ -8,6 +8,7 @@ import {
   LinkProps as MUILinkProps,
   Stack,
   Theme,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
@@ -835,7 +836,7 @@ export type PartialSearchCube = Pick<
   | "datePublished"
   | "themes"
   | "creator"
-  | "termsets"
+  | "dimensions"
 >;
 type ResultProps = {
   dataCube: PartialSearchCube;
@@ -844,7 +845,7 @@ type ResultProps = {
   showTags?: boolean;
   rowActions?: (r: PartialSearchCube) => React.ReactNode;
   disableTitleLink?: boolean;
-  showTermsets?: boolean;
+  showDimensions?: boolean;
 };
 
 export const DatasetResult = ({
@@ -854,7 +855,7 @@ export const DatasetResult = ({
   showTags,
   rowActions,
   disableTitleLink,
-  showTermsets,
+  showDimensions,
   ...cardProps
 }: ResultProps & CardProps) => {
   const {
@@ -865,7 +866,7 @@ export const DatasetResult = ({
     themes,
     datePublished,
     creator,
-    termsets,
+    dimensions,
   } = dataCube;
   const isDraft = publicationStatus === DataCubePublicationStatus.Draft;
   const router = useRouter();
@@ -998,18 +999,42 @@ export const DatasetResult = ({
       </Flex>
       <Flex alignItems="center" width="100%">
         <Box flexGrow={1}>
-          {showTermsets && (
+          {showDimensions && (
             <Flex alignItems="center" mt={1}>
               <Typography variant="body2" sx={{ mr: 1 }}>
                 <Trans id="dataset-result.shared-termsets">
                   Shared dimensions:
                 </Trans>
               </Typography>
-              {sortBy(termsets, (t) => t.label).map((termset) => {
+              {sortBy(dimensions, (t) => t.label).map((dimension) => {
                 return (
-                  <Tag key={termset.iri} type="termset">
-                    {termset.label}
-                  </Tag>
+                  <Tooltip
+                    key={dimension.iri}
+                    title={
+                      <>
+                        <Typography variant="body2">
+                          Contains values from{" "}
+                          <Stack gap={1} flexDirection="column" mt={1}>
+                            {dimension.termsets?.map((termset) => {
+                              return (
+                                <Tag
+                                  key={termset.iri}
+                                  type="termset"
+                                  sx={{ flexShrink: 0 }}
+                                >
+                                  {termset.label}
+                                </Tag>
+                              );
+                            })}
+                          </Stack>
+                        </Typography>
+                      </>
+                    }
+                  >
+                    <Tag sx={{ cursor: "pointer" }} type="termset">
+                      {dimension.label}
+                    </Tag>
+                  </Tooltip>
                 );
               })}
             </Flex>
