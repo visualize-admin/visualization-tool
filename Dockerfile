@@ -67,6 +67,9 @@ COPY --from=builder /src/app/public ./app/public
 
 COPY --from=builder /src/app/.next/standalone ./
 COPY --from=builder /src/app/.next/static ./app/.next/static
+# Need to have access to the prisma to run migrations
+RUN npm install -g prisma
+COPY --from=builder /src/app/prisma/schema.prisma ./schema.prisma
 
 USER nextjs
 
