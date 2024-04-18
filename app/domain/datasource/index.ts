@@ -16,7 +16,7 @@ import {
 export const parseDataSource = (stringifiedSource: string): DataSource => {
   const [type, url] = stringifiedSource.split("+") as [
     DataSource["type"],
-    string
+    string,
   ];
 
   return { type, url };
