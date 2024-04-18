@@ -8,8 +8,10 @@ import {
   TableCell,
   TableHead,
   TableRow,
+  Theme,
   alpha,
 } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import { Meta } from "@storybook/react";
 import { scaleOrdinal } from "d3-scale";
 import { schemeTableau10 } from "d3-scale-chromatic";
@@ -24,13 +26,11 @@ import {
   useDataCubesObservationsQuery,
 } from "@/graphql/hooks";
 
-const combinations: [
-  {
-    id: number;
-    name: string;
-    cubes: ChartConfig["cubes"];
-  },
-] = [
+const combinations: {
+  id: number;
+  name: string;
+  cubes: ChartConfig["cubes"];
+}[] = [
   {
     id: 1,
     name: "Photovoltaik + Hydropowerplants",
@@ -63,10 +63,32 @@ const combinations: [
       },
     ],
   },
+  {
+    id: 2,
+    name: "Photovoltaik + Photovoltaik GEB",
+    cubes: [
+      {
+        iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/14",
+        filters: {},
+        joinBy:
+          "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton",
+      },
+      {
+        iri: "https://energy.ld.admin.ch/sfoe/OGD84GebTest/1",
+        joinBy: "https://energy.ld.admin.ch/sfoe/OGD84GebTest/Kanton",
+        filters: {},
+      },
+    ],
+  },
 ];
-
+const useStyles = makeStyles((theme: Theme) => ({
+  row: {
+    borderBottom: "1px solid",
+    borderBottomColor: theme.palette.divider,
+  },
+}));
 export const JoinBy = () => {
-  const [combination, setCombination] = useState(() => combinations[0]);
+  const [combination, setCombination] = useState(() => combinations[1]);
   const commonQueryVariables = {
     locale: "en",
     sourceType: "sparql",
@@ -112,6 +134,8 @@ export const JoinBy = () => {
     });
 
   const colorScale = useMemo(() => scaleOrdinal(schemeTableau10), []);
+
+  const classes = useStyles();
   if (fetchingObservations || fetchingComponents) {
     return <CircularProgress />;
   }
@@ -162,7 +186,7 @@ export const JoinBy = () => {
           </TableHead>
           <TableBody>
             {observations.map((row, index) => (
-              <TableRow key={index}>
+              <TableRow key={index} className={classes.tableRow}>
                 {tableHead.map((key) => (
                   <td key={key}>{row[key]}</td>
                 ))}
