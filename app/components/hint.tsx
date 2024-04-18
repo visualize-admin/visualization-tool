@@ -148,7 +148,7 @@ export const LoadingOverlay = () => {
         color: alpha(theme.palette.secondary.active!, 0),
       }}
       animate={{
-        backgroundColor: alpha(theme.palette.grey[100], 0.7),
+        backgroundColor: alpha(theme.palette.grey[100], 0.3),
         color: theme.palette.text.primary,
       }}
       exit={{
@@ -157,7 +157,7 @@ export const LoadingOverlay = () => {
       }}
       transition={{ duration: 0.2 }}
     >
-      <Loading delayMs={0} />
+      <Loading delayMs={500} />
     </MotionBox>
   );
 };

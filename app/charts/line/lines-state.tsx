@@ -31,7 +31,7 @@ import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import { getCenteredTooltipPlacement } from "@/charts/shared/interaction/tooltip-box";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
-import { Observer, useWidth } from "@/charts/shared/use-width";
+import { useWidth } from "@/charts/shared/use-width";
 import { LineConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
 import {
@@ -311,10 +311,8 @@ export const LineChart = (
   >
 ) => {
   return (
-    <Observer>
-      <InteractionProvider>
-        <LineChartProvider {...props} />
-      </InteractionProvider>
-    </Observer>
+    <InteractionProvider>
+      <LineChartProvider {...props} />
+    </InteractionProvider>
   );
 };

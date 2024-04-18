@@ -13,6 +13,8 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
   - Added support for using dynamic most recent date in temporal X axis
 - Fixes
   - Temporal dimension X axis filtering in case of being a join by dimension
+  - Sidebar content no longer gets unmounted when data is being re-fetched (e.g. when interacting with time slider in temporal X axes)
+  - Reduced content layout shift when changing chart type
 - Style
   - Introduced smaller UI improvements in the options panel
 

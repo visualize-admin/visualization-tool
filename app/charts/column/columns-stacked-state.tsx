@@ -48,7 +48,7 @@ import {
 } from "@/charts/shared/stacked-helpers";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
-import { Observer, useWidth } from "@/charts/shared/use-width";
+import { useWidth } from "@/charts/shared/use-width";
 import { ColumnConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
 import { useFormatNumber } from "@/formatters";
@@ -514,10 +514,8 @@ export const StackedColumnsChart = (
   >
 ) => {
   return (
-    <Observer>
-      <InteractionProvider>
-        <StackedColumnsChartProvider {...props} />
-      </InteractionProvider>
-    </Observer>
+    <InteractionProvider>
+      <StackedColumnsChartProvider {...props} />
+    </InteractionProvider>
   );
 };

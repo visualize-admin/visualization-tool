@@ -36,7 +36,7 @@ import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import { getCenteredTooltipPlacement } from "@/charts/shared/interaction/tooltip-box";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
-import { Observer, useWidth } from "@/charts/shared/use-width";
+import { useWidth } from "@/charts/shared/use-width";
 import { ColumnConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
 import { formatNumberWithUnit, useFormatNumber } from "@/formatters";
@@ -454,10 +454,8 @@ export const GroupedColumnChart = (
   >
 ) => {
   return (
-    <Observer>
-      <InteractionProvider>
-        <GroupedColumnChartProvider {...props} />
-      </InteractionProvider>
-    </Observer>
+    <InteractionProvider>
+      <GroupedColumnChartProvider {...props} />
+    </InteractionProvider>
   );
 };

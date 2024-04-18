@@ -23,7 +23,7 @@ import {
   ChartStateData,
   CommonChartState,
 } from "@/charts/shared/chart-state";
-import { Observer, useWidth } from "@/charts/shared/use-width";
+import { useWidth } from "@/charts/shared/use-width";
 import { BAR_CELL_PADDING, TABLE_HEIGHT } from "@/charts/table/constants";
 import {
   TableStateVariables,
@@ -417,9 +417,5 @@ const TableChartProvider = (
 export const TableChart = (
   props: React.PropsWithChildren<ChartProps<TableConfig>>
 ) => {
-  return (
-    <Observer>
-      <TableChartProvider {...props} />
-    </Observer>
-  );
+  return <TableChartProvider {...props} />;
 };

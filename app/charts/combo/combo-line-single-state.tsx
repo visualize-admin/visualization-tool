@@ -26,7 +26,6 @@ import {
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import { getCenteredTooltipPlacement } from "@/charts/shared/interaction/tooltip-box";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
-import { Observer } from "@/charts/shared/use-width";
 import { ComboLineSingleConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
 import { truthy } from "@/domain/types";
@@ -190,10 +189,8 @@ export const ComboLineSingleChart = (
   >
 ) => {
   return (
-    <Observer>
-      <InteractionProvider>
-        <ComboLineSingleChartProvider {...props} />
-      </InteractionProvider>
-    </Observer>
+    <InteractionProvider>
+      <ComboLineSingleChartProvider {...props} />
+    </InteractionProvider>
   );
 };

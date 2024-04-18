@@ -39,7 +39,7 @@ import {
 import { ChartContext, CommonChartState } from "@/charts/shared/chart-state";
 import { colorToRgbArray } from "@/charts/shared/colors";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
-import { Observer, useWidth } from "@/charts/shared/use-width";
+import { useWidth } from "@/charts/shared/use-width";
 import {
   BBox,
   CategoricalColorField,
@@ -603,12 +603,10 @@ export const MapChart = (props: React.PropsWithChildren<ChartMapProps>) => {
   const { children, ...rest } = props;
 
   return (
-    <Observer>
-      <InteractionProvider>
-        <MapChartProvider {...rest}>
-          <MapTooltipProvider>{children}</MapTooltipProvider>
-        </MapChartProvider>
-      </InteractionProvider>
-    </Observer>
+    <InteractionProvider>
+      <MapChartProvider {...rest}>
+        <MapTooltipProvider>{children}</MapTooltipProvider>
+      </MapChartProvider>
+    </InteractionProvider>
   );
 };

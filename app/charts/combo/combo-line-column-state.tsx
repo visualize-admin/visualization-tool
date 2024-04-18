@@ -31,7 +31,6 @@ import { getCenteredTooltipPlacement } from "@/charts/shared/interaction/tooltip
 import { getTickNumber } from "@/charts/shared/ticks";
 import { TICK_FONT_SIZE } from "@/charts/shared/use-chart-theme";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
-import { Observer } from "@/charts/shared/use-width";
 import { ComboLineColumnConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
 import { truthy } from "@/domain/types";
@@ -231,10 +230,8 @@ export const ComboLineColumnChart = (
   >
 ) => {
   return (
-    <Observer>
-      <InteractionProvider>
-        <ComboLineColumnChartProvider {...props} />
-      </InteractionProvider>
-    </Observer>
+    <InteractionProvider>
+      <ComboLineColumnChartProvider {...props} />
+    </InteractionProvider>
   );
 };

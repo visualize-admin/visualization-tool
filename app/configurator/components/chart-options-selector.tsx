@@ -117,6 +117,7 @@ export const ChartOptionsSelector = ({
           loadValues: true,
         })),
       },
+      keepPreviousData: true,
     });
   const dimensions = componentsData?.dataCubesComponents.dimensions;
   const measures = componentsData?.dataCubesComponents.measures;
@@ -125,16 +126,19 @@ export const ChartOptionsSelector = ({
     dimensions,
     measures,
   });
-  const [{ data: observationsData }] = useDataCubesObservationsQuery({
-    variables: {
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
-      cubeFilters: queryFilters ?? [],
-    },
-    pause: fetchingComponents || !queryFilters,
-  });
+  const [{ data: observationsData, fetching: fetchingObservations }] =
+    useDataCubesObservationsQuery({
+      variables: {
+        sourceType: dataSource.type,
+        sourceUrl: dataSource.url,
+        locale,
+        cubeFilters: queryFilters ?? [],
+      },
+      pause: fetchingComponents || !queryFilters,
+      keepPreviousData: true,
+    });
   const observations = observationsData?.dataCubesObservations?.data;
+  const fetching = fetchingComponents || fetchingObservations;
 
   return dimensions && measures && observations ? (
     <Box
@@ -142,6 +146,9 @@ export const ChartOptionsSelector = ({
         // we need these overflow parameters to allow iOS scrolling
         overflowX: "hidden",
         overflowY: "auto",
+        pointerEvents: fetching ? "none" : "auto",
+        opacity: fetching ? 0.7 : 1,
+        transition: "opacity 0.2s",
       }}
     >
       {activeField ? (

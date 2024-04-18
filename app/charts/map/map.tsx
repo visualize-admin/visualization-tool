@@ -17,7 +17,11 @@ import {
   RESET_DURATION,
 } from "@/charts/map/constants";
 import { useMapStyle } from "@/charts/map/get-base-layer-style";
-import { DeckGLOverlay, useViewState } from "@/charts/map/helpers";
+import {
+  BASE_VIEW_STATE,
+  DeckGLOverlay,
+  useViewState,
+} from "@/charts/map/helpers";
 import { MapState } from "@/charts/map/map-state";
 import { HoverObjectType, useMapTooltip } from "@/charts/map/map-tooltip";
 import { getMap, setMap } from "@/charts/map/ref";
@@ -134,7 +138,7 @@ export const MapComponent = () => {
   const zoomIn = useEvent(() => {
     const newViewState = {
       center: [viewState.longitude, viewState.latitude] as LngLatLike,
-      zoom: Math.min(viewState.zoom + 1, viewState.maxZoom),
+      zoom: Math.min(viewState.zoom + 1, BASE_VIEW_STATE.maxZoom),
       duration: FLY_TO_DURATION,
       essential: true,
     };
@@ -144,7 +148,7 @@ export const MapComponent = () => {
   const zoomOut = useEvent(() => {
     const newViewState = {
       center: [viewState.longitude, viewState.latitude] as LngLatLike,
-      zoom: Math.max(viewState.zoom - 1, viewState.minZoom),
+      zoom: Math.max(viewState.zoom - 1, BASE_VIEW_STATE.minZoom),
       duration: FLY_TO_DURATION,
       essential: true,
     };
@@ -425,7 +429,6 @@ export const MapComponent = () => {
           }}
           onLoad={(e) => {
             setMap(e.target as mapboxgl.Map);
-
             /**
              * Redraw the map on load, when style data has been downloaded
              * to solve an offset problem between the viz layer and the base layer
