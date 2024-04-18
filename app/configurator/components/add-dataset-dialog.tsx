@@ -392,17 +392,7 @@ export const DatasetDialog = ({
             disableTitleLink: true,
             showDimensions: true,
             showTags: true,
-            onClick: async (ev) => {
-              if (!currentComponents) {
-                return null;
-              }
-              await addDataset({
-                selectedDimensions: searchDimensionsSelected ?? [],
-                currentComponents,
-                otherCube: cube,
-              });
-              handleClose(ev, "escapeKeyDown");
-            },
+
             rowActions: () => {
               return (
                 <Box display="flex" justifyContent="flex-end">
@@ -411,6 +401,17 @@ export const DatasetDialog = ({
                     size="small"
                     variant="outlined"
                     className={classes.addButton}
+                    onClick={async (ev) => {
+                      if (!currentComponents) {
+                        return null;
+                      }
+                      await addDataset({
+                        selectedDimensions: searchDimensionsSelected ?? [],
+                        currentComponents,
+                        otherCube: cube,
+                      });
+                      handleClose(ev, "escapeKeyDown");
+                    }}
                   >
                     {t({
                       id: "dataset.search.add-dataset",
