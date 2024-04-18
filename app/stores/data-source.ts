@@ -101,7 +101,7 @@ export const dataSourceStoreMiddleware =
     };
 
     // No need to unsubscribe, as store is created once and needs to update
-    // URL continously.
+    // URL continuously.
     router.events.on("routeChangeComplete", callback);
 
     // Initialize with correct url.
