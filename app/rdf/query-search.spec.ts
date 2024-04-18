@@ -10,11 +10,22 @@ jest.mock("@tpluscode/sparql-builder", () => ({}));
 
 describe("compute scores", () => {
   const cubes = [
-    { iri: "a", title: "national" },
-    { iri: "b", title: "national", description: "economy" },
-    { iri: "c", creator: { label: "national" } },
-    { iri: "d", creator: { label: "" } },
-    { iri: "e", title: "National Economy of Switzerland" },
+    { iri: "a", title: "national", themes: [], subthemes: [] },
+    {
+      iri: "b",
+      title: "national",
+      description: "economy",
+      themes: [],
+      subthemes: [],
+    },
+    { iri: "c", creator: { label: "national" }, themes: [], subthemes: [] },
+    { iri: "d", creator: { label: "" }, themes: [], subthemes: [] },
+    {
+      iri: "e",
+      title: "National Economy of Switzerland",
+      themes: [],
+      subthemes: [],
+    },
   ] as unknown as SearchCube[];
 
   it("should compute weighted score per cube from score rows", () => {
