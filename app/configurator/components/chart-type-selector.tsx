@@ -188,7 +188,7 @@ const ChartTypeSelectorMenu = (props: ChartTypeSelectorMenuProps) => {
         }}
       >
         {title}
-        {titleHint && <WarnIconTooltip title={titleHint} />}
+        {titleHint && <InfoIconTooltip title={titleHint} />}
       </Typography>
       <Box
         data-testid={testId}
@@ -221,11 +221,11 @@ const useWarnIconStyles = makeStyles<Theme>((theme) => ({
   },
 }));
 
-type WarnIconTooltipProps = {
+type InfoIconTooltipProps = {
   title: NonNullable<React.ReactNode>;
 };
 
-const WarnIconTooltip = (props: WarnIconTooltipProps) => {
+const InfoIconTooltip = (props: InfoIconTooltipProps) => {
   const { title } = props;
   const iconStyles = useWarnIconStyles();
 
@@ -243,12 +243,7 @@ const WarnIconTooltip = (props: WarnIconTooltipProps) => {
       }}
     >
       <Typography>
-        <Icon
-          name="exclamation"
-          size={16}
-          viewBox="0, 0, 18, 18"
-          className={iconStyles.icon}
-        />
+        <Icon name="infoOutline" size={16} className={iconStyles.icon} />
       </Typography>
     </Tooltip>
   );
