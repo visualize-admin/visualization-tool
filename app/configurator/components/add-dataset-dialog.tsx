@@ -142,10 +142,6 @@ export const DatasetDialog = ({
       },
     },
   });
-  const cubeDimensionsByIri = keyBy(
-    cubeComponentTermsets.data?.dataCubeComponentTermsets,
-    (x) => x.iri
-  );
 
   const searchDimensionOptions: SearchOptions[] = useMemo(() => {
     const temporalDimensions =
@@ -243,6 +239,7 @@ export const DatasetDialog = ({
   const handleClose: DialogProps["onClose"] = useEventCallback((ev, reason) => {
     props.onClose?.(ev, reason);
     setQuery("");
+    setSearchDimensionsSelected(undefined);
   });
 
   const handleChangeSearchDimensions = (ev: SelectChangeEvent<string[]>) => {
@@ -259,17 +256,20 @@ export const DatasetDialog = ({
     );
   };
 
-  const uniqueTermsets = useMemo(() => {
-    return uniq(
-      cubeComponentTermsets.data?.dataCubeComponentTermsets.map((sd) => sd.iri)
-    );
-  }, [cubeComponentTermsets.data?.dataCubeComponentTermsets]);
-
   useEffect(() => {
-    if (searchDimensionsSelected === undefined && uniqueTermsets) {
-      setSearchDimensionsSelected(uniqueTermsets.map((sd) => sd));
+    if (
+      searchDimensionsSelected === undefined &&
+      cubeComponentTermsets.data &&
+      cubesComponentQuery.data
+    ) {
+      setSearchDimensionsSelected(searchDimensionOptions);
     }
-  }, [cubeComponentTermsets, searchDimensionsSelected, uniqueTermsets]);
+  }, [
+    cubeComponentTermsets,
+    cubesComponentQuery.data,
+    searchDimensionOptions,
+    searchDimensionsSelected,
+  ]);
 
   const searchCubes = useMemo(() => {
     const relevantCubeIris = relevantCubes.map((d) => d.iri);
@@ -386,7 +386,11 @@ export const DatasetDialog = ({
         </Box>
         <DatasetResults
           cubes={searchCubes ?? []}
-          fetching={searchQuery.fetching}
+          fetching={
+            searchQuery.fetching ||
+            cubeComponentTermsets.fetching ||
+            cubesComponentQuery.fetching
+          }
           error={searchQuery.error}
           datasetResultProps={({ cube }) => ({
             disableTitleLink: true,
@@ -455,8 +459,7 @@ const inferJoinBy = (
     })
     .filter((x): x is { left: string; right: string } => !!(x.left && x.right));
 
-  console.log({ possibleJoinBys });
-  // Right now, we only support one join by dimension
+  // TODO Right now, we only support one join by dimension
   return possibleJoinBys[0];
 };
 
