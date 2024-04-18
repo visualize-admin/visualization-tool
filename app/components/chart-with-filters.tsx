@@ -165,7 +165,8 @@ export const ChartWithFilters = React.forwardRef<
   useSyncInteractiveFilters(props.chartConfig);
 
   return (
-    <div ref={ref}>
+    // Minimum aspect ratio for any chart (0.4)
+    <div ref={ref} style={{ width: "100%", aspectRatio: "5 / 2" }}>
       <GenericChart {...props} />
     </div>
   );
