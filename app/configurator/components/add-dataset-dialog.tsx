@@ -104,10 +104,6 @@ export const DatasetDialog = ({
 
   const relevantCubes = activeChartConfig.cubes.slice(0, 1);
 
-  const [sharedTermsets, setSharedTermsets] = useState<
-    Termset["iri"][] | undefined
-  >(undefined);
-
   // Getting cube dimensions, to find temporal dimensions
   const [cubesComponentQuery] = useDataCubesComponentsQuery({
     pause: !props.open,
@@ -121,7 +117,7 @@ export const DatasetDialog = ({
   });
 
   // Getting cube termsets, to then search for cubes with at least one this termset
-  const [cubeTermsetsResults] = useDataCubeComponentTermsetsQuery({
+  const [cubeComponentTermsets] = useDataCubeComponentTermsetsQuery({
     pause: !props.open,
     variables: {
       locale,
@@ -132,23 +128,60 @@ export const DatasetDialog = ({
       },
     },
   });
-  const cubeTermsetsByIri = keyBy(
-    cubeTermsetsResults.data?.dataCubeComponentTermsets.flatMap(
-      (x) => x.termsets
-    ) ?? [],
+  const cubeDimensionsByIri = keyBy(
+    cubeComponentTermsets.data?.dataCubeComponentTermsets,
     (x) => x.iri
   );
 
-  const relevantDimensions = useMemo(() => {
-    return (
+  const searchDimensionOptions = useMemo(() => {
+    const temporalDimensions =
       cubesComponentQuery.data?.dataCubesComponents.dimensions.filter(
         isTemporalDimensionWithTimeUnit
-      ) ?? []
-    );
-  }, [cubesComponentQuery.data?.dataCubesComponents.dimensions]);
+      ) ?? [];
+    const sharedDimensions =
+      cubeComponentTermsets.data?.dataCubeComponentTermsets ?? [];
+    return [
+      ...temporalDimensions.map((x) => {
+        return {
+          type: "temporal" as const,
+          iri: x.iri,
+          label: x.label,
+          timeUnit: x.timeUnit,
+        };
+      }),
+      ...sharedDimensions.map((x) => {
+        return {
+          type: "shared" as const,
+          iri: x.iri,
+          label: x.label,
+          termsets: x.termsets,
+        };
+      }),
+    ];
+  }, [
+    cubeComponentTermsets.data?.dataCubeComponentTermsets,
+    cubesComponentQuery.data?.dataCubesComponents.dimensions,
+  ]);
 
-  const temporalDimension = relevantDimensions.find(
-    isTemporalDimensionWithTimeUnit
+  const searchDimensionOptionsByIri = keyBy(
+    searchDimensionOptions,
+    (x) => x.iri
+  );
+
+  const [searchDimensionsSelected, setSearchDimensionsSelected] = useState<
+    typeof searchDimensionOptions | undefined
+  >(undefined);
+
+  const selectedSharedDimensions = searchDimensionsSelected?.filter(
+    (x): x is Extract<(typeof searchDimensionOptions)[0], { type: "shared" }> =>
+      x.type === "shared"
+  );
+
+  const selectedTemporalDimension = (searchDimensionsSelected ?? []).find(
+    (
+      x
+    ): x is Extract<(typeof searchDimensionOptions)[0], { type: "temporal" }> =>
+      x.type === "temporal"
   );
 
   const isSearchQueryPaused = !cubesComponentQuery.data;
@@ -161,16 +194,20 @@ export const DatasetDialog = ({
       order: SearchCubeResultOrder.Score,
       includeDrafts: false,
       filters: [
-        temporalDimension
+        selectedTemporalDimension
           ? {
               type: SearchCubeFilterType.TemporalDimension,
-              value: temporalDimension.timeUnit,
+              value: selectedTemporalDimension.timeUnit,
             }
           : null,
-        sharedTermsets
+        selectedSharedDimensions && selectedSharedDimensions.length > 0
           ? {
               type: SearchCubeFilterType.SharedDimensions,
-              value: sharedTermsets.join(";"),
+              value: uniq(
+                selectedSharedDimensions.flatMap((x) =>
+                  x.termsets.map((x) => x.iri)
+                )
+              ).join(";"),
             }
           : null,
       ].filter(truthy),
@@ -194,29 +231,31 @@ export const DatasetDialog = ({
     setQuery("");
   });
 
-  const handleChangeSharedDimensions = (
-    ev: SelectChangeEvent<typeof sharedTermsets>
-  ) => {
+  const handleChangeSearchDimensions = (ev: SelectChangeEvent<string[]>) => {
     const {
       target: { value },
     } = ev;
-    setSharedTermsets(
+    setSearchDimensionsSelected(
       // On autofill we get a stringified value.
-      typeof value === "string" ? value.split(",") : value
+      (typeof value === "string" ? value.split(",") : value)
+        ?.map((x) => {
+          return searchDimensionOptionsByIri[x];
+        })
+        .filter(truthy)
     );
   };
 
   const uniqueTermsets = useMemo(() => {
     return uniq(
-      cubeTermsetsResults.data?.dataCubeComponentTermsets.map((sd) => sd.iri)
+      cubeComponentTermsets.data?.dataCubeComponentTermsets.map((sd) => sd.iri)
     );
-  }, [cubeTermsetsResults.data?.dataCubeComponentTermsets]);
+  }, [cubeComponentTermsets.data?.dataCubeComponentTermsets]);
 
   useEffect(() => {
-    if (sharedTermsets === undefined && uniqueTermsets) {
-      setSharedTermsets(uniqueTermsets.map((sd) => sd));
+    if (searchDimensionsSelected === undefined && uniqueTermsets) {
+      setSearchDimensionsSelected(uniqueTermsets.map((sd) => sd));
     }
-  }, [cubeTermsetsResults, sharedTermsets, uniqueTermsets]);
+  }, [cubeComponentTermsets, searchDimensionsSelected, uniqueTermsets]);
 
   const searchCubes = useMemo(() => {
     const relevantCubeIris = relevantCubes.map((d) => d.iri);
@@ -275,8 +314,8 @@ export const DatasetDialog = ({
           />
           <Select
             multiple
-            value={sharedTermsets ?? []}
-            onChange={handleChangeSharedDimensions}
+            value={(searchDimensionsSelected ?? []).map((x) => x.iri)}
+            onChange={handleChangeSearchDimensions}
             input={
               <OutlinedInput
                 notched={false}
@@ -291,39 +330,41 @@ export const DatasetDialog = ({
             }
             sx={{ minWidth: 300 }}
             renderValue={(selected) =>
-              cubeTermsetsResults.fetching ? (
+              cubeComponentTermsets.fetching ? (
                 <CircularProgress size={12} />
               ) : selected.length === 0 ? (
                 <Typography variant="body2">Nothing selected</Typography>
               ) : (
-                selected.map((value, i) =>
-                  i < 2 ? (
-                    <Tag key={value} type="termset" sx={{ mr: 1 }}>
-                      {cubeTermsetsByIri?.[value]?.label}
+                selected.map((iri, i) => {
+                  const value = searchDimensionOptionsByIri[iri];
+                  return i < 2 ? (
+                    <Tag key={value.iri} type="termset" sx={{ mr: 1 }}>
+                      {value.label}
                     </Tag>
                   ) : i === 2 ? (
-                    <Tag key={value} type="termset" sx={{ mr: 1 }}>
+                    <Tag key="more" type="termset" sx={{ mr: 1 }}>
                       {selected.length - 2} more
                     </Tag>
-                  ) : null
-                )
+                  ) : null;
+                })
               )
             }
           >
-            {cubeTermsetsResults?.data?.dataCubeComponentTermsets
-              .flatMap((x) => x.termsets)
-              ?.map((sd) => (
-                <MenuItem
-                  key={sd.label}
-                  value={sd.iri}
-                  sx={{ gap: 2, alignItems: "start" }}
-                >
-                  <Checkbox
-                    checked={sharedTermsets && sharedTermsets.includes(sd.iri)}
-                  />
-                  <ListItemText primary={sd.label} />
-                </MenuItem>
-              ))}
+            {searchDimensionOptions.map((sd) => (
+              <MenuItem
+                key={sd.label}
+                value={sd.iri}
+                sx={{ gap: 2, alignItems: "start" }}
+              >
+                <Checkbox
+                  checked={
+                    searchDimensionsSelected &&
+                    !!searchDimensionsSelected.find((x) => x.iri === sd.iri)
+                  }
+                />
+                <ListItemText primary={sd.label} />
+              </MenuItem>
+            ))}
           </Select>
           <Button color="primary" type="submit" variant="contained">
             {t({ id: "dataset.search.label" })}
@@ -342,8 +383,8 @@ export const DatasetDialog = ({
                 return null;
               }
               await addDataset({
-                currentTermsets: (sharedTermsets ?? []).map(
-                  (iri) => cubeTermsetsByIri[iri]
+                currentTermsets: (searchDimensionsSelected ?? []).map(
+                  (iri) => cubeDimensionsByIri[iri]
                 ),
                 currentComponents,
                 otherCube: cube,
