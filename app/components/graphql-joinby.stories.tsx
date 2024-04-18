@@ -69,14 +69,76 @@ const combinations: {
     cubes: [
       {
         iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/14",
-        filters: {},
+        filters: {
+          "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr":
+            {
+              type: "single",
+              value: "2020",
+            },
+        },
         joinBy:
           "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton",
       },
       {
         iri: "https://energy.ld.admin.ch/sfoe/OGD84GebTest/1",
         joinBy: "https://energy.ld.admin.ch/sfoe/OGD84GebTest/Kanton",
-        filters: {},
+        filters: {
+          "https://energy.ld.admin.ch/sfoe/OGD84GebTest/Jahr": {
+            type: "single",
+            value: "2020",
+          },
+        },
+      },
+    ],
+  },
+  {
+    id: 3,
+    name: "NFI Cube + Electrical consumption",
+    cubes: [
+      {
+        iri: "https://environment.ld.admin.ch/foen/nfi/nfi_T-changes/cube/2024-1",
+        filters: {
+          "https://environment.ld.admin.ch/foen/nfi/classificationUnit": {
+            type: "single",
+            value:
+              "https://environment.ld.admin.ch/foen/nfi/ClassificationUnit/Total",
+          },
+          "https://environment.ld.admin.ch/foen/nfi/unitOfEvaluation": {
+            type: "single",
+            value:
+              "https://environment.ld.admin.ch/foen/nfi/UnitOfEvaluation/2382",
+          },
+          "https://environment.ld.admin.ch/foen/nfi/grid": {
+            type: "single",
+            value: "https://environment.ld.admin.ch/foen/nfi/Grid/410",
+          },
+          "https://environment.ld.admin.ch/foen/nfi/evaluationType": {
+            type: "single",
+            value: "https://environment.ld.admin.ch/foen/nfi/EvaluationType/3",
+          },
+        },
+        joinBy: "https://environment.ld.admin.ch/foen/nfi/unitOfReference",
+      },
+      {
+        iri: "https://energy.ld.admin.ch/elcom/electricityprice-canton",
+        joinBy:
+          "https://energy.ld.admin.ch/elcom/electricityprice/dimension/canton",
+        filters: {
+          "https://energy.ld.admin.ch/elcom/electricityprice/dimension/category":
+            {
+              type: "single",
+              value:
+                "https://energy.ld.admin.ch/elcom/electricityprice/category/C1",
+            },
+          "https://energy.ld.admin.ch/elcom/electricityprice/dimension/period":
+            { type: "single", value: "2011" },
+          "https://energy.ld.admin.ch/elcom/electricityprice/dimension/product":
+            {
+              type: "single",
+              value:
+                "https://energy.ld.admin.ch/elcom/electricityprice/product/standard",
+            },
+        },
       },
     ],
   },
@@ -186,7 +248,7 @@ export const JoinBy = () => {
           </TableHead>
           <TableBody>
             {observations.map((row, index) => (
-              <TableRow key={index} className={classes.tableRow}>
+              <TableRow key={index} className={classes.row}>
                 {tableHead.map((key) => (
                   <td key={key}>{row[key]}</td>
                 ))}
