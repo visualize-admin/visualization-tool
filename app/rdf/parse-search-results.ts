@@ -85,9 +85,8 @@ function buildSearchCubes(
           return {
             iri: x.object.value,
             label: dim?.get(ns.schema.name.value)?.[0].object.value ?? "",
-            termsets: dim
-              ?.get("https://visualize.admin.ch/contains")
-              ?.map((x) => {
+            termsets:
+              dim?.get("https://visualize.admin.ch/contains")?.map((x) => {
                 return {
                   iri: x.object.value,
                   label:
@@ -95,7 +94,7 @@ function buildSearchCubes(
                       .get(x.object.value)
                       ?.get(ns.schema.name.value)?.[0].object.value ?? "",
                 };
-              }),
+              }) ?? [],
           };
         }),
       };

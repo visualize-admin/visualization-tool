@@ -20,7 +20,7 @@ export const fields = {
   },
   publisher: {
     weight: 1,
-    fn: (d: SearchCube) => "",
+    fn: () => "",
   },
   themeLabels: {
     weight: 1,
