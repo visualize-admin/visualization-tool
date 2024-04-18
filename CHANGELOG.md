@@ -13,6 +13,8 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
   - Added support for using dynamic most recent date in temporal X axis
 - Maintenance
   - Vastly reduced Docker image size (9.78GB -> 520MB (-95%)), which should make CI pipelines faster
+- Style
+  - Introduced smaller UI improvements in the options panel
 
 # [4.1.0] - 2024-04-10
 
