@@ -3,6 +3,7 @@ import { descending } from "d3-array";
 import groupBy from "lodash/groupBy";
 import ParsingClient from "sparql-http-client/ParsingClient";
 
+import { SearchCube } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { SearchCubeFilterType, TimeUnit } from "@/graphql/query-hooks";
 import { SearchCubeFilter } from "@/graphql/resolver-types";
@@ -95,12 +96,19 @@ export const searchCubes = async ({
     )
   );
 
-  const parsedCubes = scoreResults
-    .map((x) => buildSearchCubes(x))
-    .flatMap((d) => d)
-    // Filter out cubes without iri, happens due to grouping, when no cubes are found.
-    .filter((d) => d.iri);
-  // const rawCubesByIri = group(rawCubes, (d) => d.iri);
+  const parsedCubes = Object.values(
+    scoreResults
+      .map((x) => buildSearchCubes(x))
+      .flatMap((d) => d)
+      .reduce(
+        (acc, d) => {
+          acc[d.iri] = Object.assign(acc[d.iri] || {}, d);
+          return acc;
+        },
+        {} as Record<string, SearchCube>
+      )
+  );
+
   const infoByCube = computeScores(parsedCubes, { query });
 
   const cubes = parsedCubes.filter(truthy);

@@ -335,7 +335,7 @@ export const DatasetDialog = ({
           error={searchQuery.error}
           datasetResultProps={({ cube }) => ({
             disableTitleLink: true,
-            showTermsets: true,
+            showDimensions: true,
             showTags: true,
             onClick: async (ev) => {
               if (!currentComponents) {
