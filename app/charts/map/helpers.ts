@@ -2,7 +2,7 @@ import { WebMercatorViewport } from "@deck.gl/core/typed";
 import { MapboxOverlay, MapboxOverlayProps } from "@deck.gl/mapbox/typed";
 import { extent } from "d3-array";
 import { geoBounds } from "d3-geo";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ViewState, useControl } from "react-map-gl";
 import { feature } from "topojson-client";
 
@@ -120,6 +120,11 @@ export const useViewState = (props: ViewStateInitializationProps) => {
       setViewState((oldViewState) => ({ ...oldViewState, ...viewState }));
     }
   );
+
+  // Update view state when locked or default view state changes.
+  useEffect(() => {
+    setViewState(lockedViewState ?? defaultViewState);
+  }, [lockedViewState, defaultViewState]);
 
   return { defaultViewState, viewState, onViewStateChange };
 };
