@@ -81,6 +81,20 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
+type SearchOptions =
+  | {
+      type: "temporal";
+      iri: string;
+      label: string;
+      timeUnit: string;
+    }
+  | {
+      type: "shared";
+      iri: string;
+      label: string;
+      termsets: Termset[];
+    };
+
 export const DatasetDialog = ({
   state,
   ...props
@@ -133,7 +147,7 @@ export const DatasetDialog = ({
     (x) => x.iri
   );
 
-  const searchDimensionOptions = useMemo(() => {
+  const searchDimensionOptions: SearchOptions[] = useMemo(() => {
     const temporalDimensions =
       cubesComponentQuery.data?.dataCubesComponents.dimensions.filter(
         isTemporalDimensionWithTimeUnit
@@ -383,9 +397,7 @@ export const DatasetDialog = ({
                 return null;
               }
               await addDataset({
-                currentTermsets: (searchDimensionsSelected ?? []).map(
-                  (iri) => cubeDimensionsByIri[iri]
-                ),
+                selectedDimensions: searchDimensionsSelected ?? [],
                 currentComponents,
                 otherCube: cube,
               });
@@ -416,28 +428,35 @@ export const DatasetDialog = ({
 };
 
 const inferJoinBy = (
-  leftComponents: DataCubeComponents,
-  rightComponents: DataCubeComponents
+  leftOptions: SearchOptions[],
+  rightComponents: DataCubeComponents,
+  rightCube: PartialSearchCube
 ) => {
-  const leftDim = leftComponents.dimensions.find(
-    isTemporalDimensionWithTimeUnit
-  );
-  const rightDim = rightComponents.dimensions.find(
-    isTemporalDimensionWithTimeUnit
-  );
-  if (!leftDim?.iri || !rightDim?.iri) {
-    throw new Error(
-      `Could not find dimensions on which to join: ${JSON.stringify({
-        leftDim,
-        rightDim,
-      })}`
-    );
-  }
+  const possibleJoinBys = leftOptions
+    .map((o) => {
+      if (o.type === "temporal") {
+        return {
+          left: o.iri,
+          right: rightComponents.dimensions.find(
+            (d) =>
+              isTemporalDimensionWithTimeUnit(d) && d.timeUnit === o.timeUnit
+          )?.iri,
+        };
+      } else {
+        return {
+          left: o.iri,
+          right: rightCube?.dimensions?.find((d) =>
+            d.termsets.some((t) => o.termsets.map((t) => t.iri).includes(t.iri))
+          )?.iri,
+        };
+      }
+      // For every selected dimension, we need to find the corresponding dimension on the other cube
+    })
+    .filter((x): x is { left: string; right: string } => !!(x.left && x.right));
 
-  return {
-    left: leftDim.iri,
-    right: rightDim.iri,
-  };
+  console.log({ possibleJoinBys });
+  // Right now, we only support one join by dimension
+  return possibleJoinBys[0];
 };
 
 /**
@@ -455,18 +474,18 @@ const useAddDataset = () => {
   const client = useClient();
   const addDataset = useEventCallback(
     async ({
-      currentTermsets,
-      currentComponents,
+      selectedDimensions,
       otherCube,
     }: {
-      currentTermsets: Termset[];
+      selectedDimensions: SearchOptions[];
       currentComponents: DataCubeComponents;
       otherCube: PartialSearchCube;
     }) => {
-      currentTermsets;
       const iri = otherCube.iri;
       setHookState((hs) => ({ ...hs, fetching: true, otherIri: iri }));
       try {
+        // TODO Should be removed as we should be able to have the information directly
+        // from the search result.
         const componentQueryResult = await executeDataCubesComponentsQuery(
           client,
           {
@@ -484,8 +503,9 @@ const useAddDataset = () => {
         }
 
         const joinBy = inferJoinBy(
-          currentComponents,
-          componentQueryResult.data.dataCubesComponents
+          selectedDimensions,
+          componentQueryResult.data.dataCubesComponents,
+          otherCube
         );
 
         const addDatasetOptions = {
