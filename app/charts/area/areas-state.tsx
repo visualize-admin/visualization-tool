@@ -46,7 +46,7 @@ import {
 } from "@/charts/shared/stacked-helpers";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
-import { Observer, useWidth } from "@/charts/shared/use-width";
+import { useWidth } from "@/charts/shared/use-width";
 import { AreaConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
 import { useFormatNumber, useTimeFormatUnit } from "@/formatters";
@@ -454,10 +454,8 @@ export const AreaChart = (
   >
 ) => {
   return (
-    <Observer>
-      <InteractionProvider>
-        <AreaChartProvider {...props} />
-      </InteractionProvider>
-    </Observer>
+    <InteractionProvider>
+      <AreaChartProvider {...props} />
+    </InteractionProvider>
   );
 };

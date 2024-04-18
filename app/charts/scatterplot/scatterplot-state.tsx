@@ -21,7 +21,7 @@ import {
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import { TooltipScatterplot } from "@/charts/shared/interaction/tooltip-content";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
-import { Observer, useWidth } from "@/charts/shared/use-width";
+import { useWidth } from "@/charts/shared/use-width";
 import { ScatterPlotConfig, SortingField } from "@/configurator";
 import { Observation } from "@/domain/data";
 import { useFormatNumber } from "@/formatters";
@@ -240,10 +240,8 @@ export const ScatterplotChart = (
   >
 ) => {
   return (
-    <Observer>
-      <InteractionProvider>
-        <ScatterplotChartProvider {...props} />
-      </InteractionProvider>
-    </Observer>
+    <InteractionProvider>
+      <ScatterplotChartProvider {...props} />
+    </InteractionProvider>
   );
 };

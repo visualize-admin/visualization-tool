@@ -3,6 +3,7 @@ import React from "react";
 
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import useSyncInteractiveFilters from "@/charts/shared/use-sync-interactive-filters";
+import { Observer } from "@/charts/shared/use-width";
 import { ChartConfig, DataSource } from "@/configurator";
 import { Dimension, Measure } from "@/domain/data";
 
@@ -167,7 +168,9 @@ export const ChartWithFilters = React.forwardRef<
   return (
     // Minimum aspect ratio for any chart (0.4)
     <div ref={ref} style={{ width: "100%", aspectRatio: "5 / 2" }}>
-      <GenericChart {...props} />
+      <Observer>
+        <GenericChart {...props} />
+      </Observer>
     </div>
   );
 });

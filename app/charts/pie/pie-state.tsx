@@ -19,7 +19,7 @@ import {
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
-import { Observer, useWidth } from "@/charts/shared/use-width";
+import { useWidth } from "@/charts/shared/use-width";
 import { PieConfig } from "@/configurator";
 import { Dimension, Observation } from "@/domain/data";
 import { formatNumberWithUnit, useFormatNumber } from "@/formatters";
@@ -282,10 +282,8 @@ export const PieChart = (
   >
 ) => {
   return (
-    <Observer>
-      <InteractionProvider>
-        <PieChartProvider {...props} />
-      </InteractionProvider>
-    </Observer>
+    <InteractionProvider>
+      <PieChartProvider {...props} />
+    </InteractionProvider>
   );
 };
