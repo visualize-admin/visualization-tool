@@ -14,6 +14,9 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 - Fixes
   - Temporal dimension X axis filtering in case of being a join by dimension
   - Sidebar content no longer gets unmounted when data is being re-fetched (e.g. when interacting with time slider in temporal X axes)
+  - Reduced content layout shift when changing chart type
+- Style
+  - Introduced smaller UI improvements in the options panel
 
 # [4.1.0] - 2024-04-10
 
