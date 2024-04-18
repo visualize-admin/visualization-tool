@@ -115,7 +115,6 @@ export const ChartTypeSelector = (props: ChartTypeSelectorProps) => {
           </Hint>
         ) : (
           <Flex sx={{ flexDirection: "column", gap: 3 }}>
-            <Divider />
             <ChartTypeSelectorMenu
               type={type}
               title={t({
@@ -128,7 +127,7 @@ export const ChartTypeSelector = (props: ChartTypeSelectorProps) => {
               onClick={onClick}
               testId="chart-type-selector-regular"
             />
-            <Divider />
+            <Divider sx={{ borderColor: "muted.main", mx: 2 }} />
             <ChartTypeSelectorMenu
               type={type}
               title={t({
