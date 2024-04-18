@@ -7,7 +7,8 @@ import {
   useDroppable,
 } from "@dnd-kit/core";
 import { Trans } from "@lingui/macro";
-import { Box } from "@mui/material";
+import { Box, Theme } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import Head from "next/head";
 import React from "react";
 
@@ -300,6 +301,19 @@ const SingleURLsPreview = (props: SingleURLsPreviewProps) => {
   );
 };
 
+const useStyles = makeStyles<Theme>((theme) => ({
+  root: {
+    display: "grid",
+    gridTemplateRows: "subgrid",
+    gridRow: shouldShowDebugPanel() ? "span 5" : "span 4",
+    backgroundColor: theme.palette.background.paper,
+    color: theme.palette.grey[800],
+    padding: theme.spacing(6),
+    border: "1px solid",
+    borderColor: theme.palette.divider,
+  },
+}));
+
 type ChartPreviewInnerProps = ChartPreviewProps & {
   chartKey?: string | null;
   actionElementSlot?: React.ReactNode;
@@ -313,6 +327,7 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
   const configuring = isConfiguring(state);
   const chartConfig = getChartConfig(state, chartKey);
   const locale = useLocale();
+  const classes = useStyles();
   const commonQueryVariables = {
     sourceType: dataSource.type,
     sourceUrl: dataSource.url,
@@ -357,16 +372,7 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
   }, [components?.dataCubesComponents]);
 
   return (
-    <Box
-      sx={{
-        display: "grid",
-        gridTemplateRows: "subgrid",
-        gridRow: shouldShowDebugPanel() ? "span 5" : "span 4",
-        backgroundColor: "background.paper",
-        color: "grey.800",
-        p: 6,
-      }}
-    >
+    <Box className={classes.root}>
       <ChartErrorBoundary resetKeys={[state]}>
         {/* FIXME: adapt to design */}
         {metadata?.dataCubesMetadata.some(

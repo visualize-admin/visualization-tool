@@ -148,6 +148,8 @@ const useStyles = makeStyles<Theme, { shrink: boolean }>((theme) => ({
     gridTemplateRows: "subgrid",
     gridRow: shouldShowDebugPanel() ? "span 6" : "span 5",
     backgroundColor: theme.palette.background.paper,
+    border: "1px solid",
+    borderColor: theme.palette.divider,
     padding: theme.spacing(6),
     paddingLeft: ({ shrink }) =>
       `calc(${theme.spacing(5)} + ${shrink ? DRAWER_WIDTH : 0}px)`,

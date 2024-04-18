@@ -923,7 +923,7 @@ export const TimeFilter = (props: TimeFilterProps) => {
     [dispatch, dimension]
   );
 
-  const activeFilter = getFilterValue(state, dimension.iri);
+  const activeFilter = getFilterValue(state, dimension);
   const rangeActiveFilter =
     activeFilter?.type === "range" ? activeFilter : null;
   const usesMostRecentValue = rangeActiveFilter
