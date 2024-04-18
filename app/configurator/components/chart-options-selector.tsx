@@ -348,7 +348,6 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
                 components={allComponents}
               />
             )}
-
             {encoding.options?.useAbbreviations && (
               <Box mt={3}>
                 <ChartFieldAbbreviations
@@ -444,7 +443,6 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
         dimensions={dimensions}
         measures={measures}
       />
-
       {fieldDimension &&
         field === "animation" &&
         isAnimationInConfig(chartConfig) &&
@@ -1165,21 +1163,18 @@ const ChartFieldAnimation = ({ field }: { field: AnimationField }) => {
   );
 };
 
-const ChartFieldMultiFilter = ({
-  chartConfig,
-  component,
-  encoding,
-  field,
-  dimensions,
-  measures,
-}: {
+type ChartFieldMultiFilterProps = {
   chartConfig: ChartConfig;
   component: Component | undefined;
   encoding: EncodingSpec;
-  field: string;
+  field: EncodingFieldType;
   dimensions: Dimension[];
   measures: Measure[];
-}) => {
+};
+
+const ChartFieldMultiFilter = (props: ChartFieldMultiFilterProps) => {
+  const { chartConfig, component, encoding, field, dimensions, measures } =
+    props;
   const colorComponentIri = get(
     chartConfig,
     `fields["${field}"].color.componentIri`

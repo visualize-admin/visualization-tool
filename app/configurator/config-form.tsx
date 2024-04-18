@@ -543,7 +543,7 @@ export const MultiFilterContextProvider = ({
   getValueColor: (value: string) => string;
 }) => {
   const [state] = useConfiguratorState();
-  const activeFilter = getFilterValue(state, dimension.iri);
+  const activeFilter = getFilterValue(state, dimension);
   const allValues = useMemo(() => {
     return dimension.values.map((d) => `${d.value}`) ?? [];
   }, [dimension.values]);

@@ -14,9 +14,6 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   chartWrapper: {
     display: "contents",
-    backgroundColor: theme.palette.grey[100],
-    border: "1px solid",
-    borderColor: theme.palette.divider,
     overflow: "hidden",
     width: "auto",
     height: "100%",
