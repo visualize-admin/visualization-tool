@@ -407,6 +407,7 @@ export type SearchCube = {
   dimensions?: {
     iri: string;
     label: string;
+    timeUnit?: string;
     termsets: {
       iri: string;
       label: string;

@@ -4,6 +4,9 @@ import path from "path";
 import { csvParse } from "d3-dsv";
 import { Quad } from "rdf-js";
 
+import { SearchCube } from "@/domain/data";
+import { mergeSearchCubes } from "@/rdf/query-search";
+
 import { buildSearchCubes } from "./parse-search-results";
 
 const parseCSV = async (filepath: string) => {
@@ -28,7 +31,7 @@ const parseCSV = async (filepath: string) => {
 describe("parse-search-results", () => {
   it("should build search cubes from CSV (shared dimension query)", async () => {
     const data = await parseCSV(
-      path.join(__dirname, "./query-search-results.mock.csv")
+      path.join(__dirname, "./query-search-results-shared-dimensions.mock.csv")
     );
     // Build search cubes using the buildSearchCubes function
     const searchCubes = buildSearchCubes(data);
@@ -52,9 +55,10 @@ describe("parse-search-results", () => {
                   "label": "Cantons",
                 },
               ],
+              "timeUnit": "",
             },
           ],
-          "iri": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9",
+          "iri": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/14",
           "publicationStatus": "PUBLISHED",
           "subthemes": Array [],
           "themes": Array [
@@ -86,6 +90,7 @@ describe("parse-search-results", () => {
                   "label": "Countries",
                 },
               ],
+              "timeUnit": "",
             },
           ],
           "iri": "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_co2wirkung/4",
@@ -128,6 +133,7 @@ describe("parse-search-results", () => {
                   "label": "Cantons",
                 },
               ],
+              "timeUnit": "",
             },
           ],
           "iri": "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_anzahl_gesuche/15",
@@ -178,6 +184,7 @@ describe("parse-search-results", () => {
               "iri": "https://energy.ld.admin.ch/sfoe/OGD84GebTest/Jahr",
               "label": "",
               "termsets": Array [],
+              "timeUnit": "http://www.w3.org/2006/time#unitYear",
             },
           ],
           "iri": "https://energy.ld.admin.ch/sfoe/OGD84GebTest/1",
@@ -215,6 +222,7 @@ describe("parse-search-results", () => {
               "iri": "https://energy.ld.admin.ch/sfoe/bfe_ogd40_wasta/YearOfStatistic",
               "label": "",
               "termsets": Array [],
+              "timeUnit": "http://www.w3.org/2006/time#unitYear",
             },
           ],
           "iri": "https://energy.ld.admin.ch/sfoe/bfe_ogd40_wasta/7",
@@ -285,6 +293,7 @@ describe("parse-search-results", () => {
               "iri": "https://environment.ld.admin.ch/foen/BAFU_LuChem_EMIS_pollutants_KCA_all_years/year",
               "label": "",
               "termsets": Array [],
+              "timeUnit": "http://www.w3.org/2006/time#unitYear",
             },
           ],
           "iri": "https://environment.ld.admin.ch/foen/BAFU_LuChem_EMIS_pollutants_KCA_all_years/7",
@@ -306,4 +315,34 @@ describe("parse-search-results", () => {
       ]
     `);
   });
+});
+
+it("should merge search cubes together", async () => {
+  const cubesShared = buildSearchCubes(
+    await parseCSV(
+      path.join(__dirname, "./query-search-results-shared-dimensions.mock.csv")
+    )
+  );
+  const cubesTemporal = buildSearchCubes(
+    await parseCSV(
+      path.join(__dirname, "./query-search-results-temporal.mock.csv")
+    )
+  );
+  const searchCubes = Object.values(
+    [...cubesShared, ...cubesTemporal].reduce(
+      (acc, d) => {
+        acc[d.iri] = mergeSearchCubes(acc[d.iri], d);
+        return acc;
+      },
+      {} as Record<string, SearchCube>
+    )
+  );
+  const cubeWithTemporalAndShared = searchCubes.some((cube) => {
+    const temporal = cube.dimensions?.find((dimension) => dimension.timeUnit);
+    const shared = cube.dimensions?.find(
+      (dimension) => dimension.termsets.length
+    );
+    return temporal && shared;
+  });
+  expect(cubeWithTemporalAndShared).toBe(true);
 });
