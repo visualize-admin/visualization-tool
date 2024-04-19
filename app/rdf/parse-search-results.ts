@@ -31,7 +31,9 @@ function buildSearchCubes(
     if (cubeQuads) {
       const themeQuads = cubeQuads.get(ns.dcat.theme.value);
       const subthemesQuads = cubeQuads.get(ns.schema.about.value);
-      const dimensions = cubeQuads.get("https://visualize.admin.ch/contains");
+      const dimensions = cubeQuads.get(
+        "https://visualize.admin.ch/hasDimension"
+      );
       const creatorIri = cubeQuads.get(ns.schema.creator.value)?.[0]?.object
         .value;
       const publicationStatus = cubeQuads.get(
@@ -86,7 +88,7 @@ function buildSearchCubes(
             iri: x.object.value,
             label: dim?.get(ns.schema.name.value)?.[0].object.value ?? "",
             termsets:
-              dim?.get("https://visualize.admin.ch/contains")?.map((x) => {
+              dim?.get("https://visualize.admin.ch/hasTermset")?.map((x) => {
                 return {
                   iri: x.object.value,
                   label:

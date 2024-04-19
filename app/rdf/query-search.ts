@@ -166,9 +166,9 @@ const mkScoresQuery = (
       schema:description ?description ;
       schema:name ?title ;
       schema:workExample <https://ld.admin.ch/application/visualize> ;
-      visualize:contains ?dimensionIri.
+      visualize:hasDimension ?dimensionIri.
 
-      ?dimensionIri visualize:contains ?termsetIri .
+      ?dimensionIri visualize:hasTermset ?termsetIri .
       ?dimensionIri schema:name ?dimensionLabel .
       ?termsetIri schema:name ?termsetLabel .
       ?creatorIri schema:name ?creatorLabel .
