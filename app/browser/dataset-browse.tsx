@@ -1018,7 +1018,7 @@ export const DatasetResult = ({
                               Contains values from
                             </Trans>
                             <Stack gap={1} flexDirection="row" mt={1}>
-                              {dimension.termsets?.map((termset) => {
+                              {dimension.termsets.map((termset) => {
                                 return (
                                   <Tag
                                     key={termset.iri}

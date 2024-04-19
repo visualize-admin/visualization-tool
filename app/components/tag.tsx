@@ -1,7 +1,7 @@
 import { BoxProps, Typography, TypographyProps, styled } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import { makeStyles } from "@mui/styles";
-import cx from "classnames";
+import clsx from "clsx";
 import React from "react";
 
 type TagType = "draft" | "theme" | "organization" | "termset" | "dimension";
@@ -56,7 +56,7 @@ const Tag = React.forwardRef<
       ref={ref}
       variant="caption"
       {...props}
-      className={cx(props.className, classes[`${type}Type` as const])}
+      className={clsx(props.className, classes[`${type}Type` as const])}
       sx={sx}
     >
       {children}

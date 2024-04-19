@@ -147,9 +147,9 @@ const mkScoresQuery = (
   includeDrafts: Boolean | null | undefined,
   query: string | null | undefined
 ) => {
-  // HOTFIX WRT Stardog v9.2.1 bug see https://control.vshn.net/tickets/sbar-1066
   return `
   ${pragmas}
+  # HOTFIX WRT Stardog v9.2.1 bug see https://control.vshn.net/tickets/sbar-1066
   #pragma join.bind off
 
   PREFIX meta: <https://cube.link/meta/>
@@ -165,18 +165,18 @@ const mkScoresQuery = (
 
   CONSTRUCT {
     ?iri a cube:Cube ;
-      cube:observationConstraint ?shape;
-      dcat:theme ?themeIri;
-      dcterms:publisher ?publisher ;
-      schema:about ?subthemeIri;
-      schema:creativeWorkStatus ?status ;
-      schema:creativeWorkStatus <https://ld.admin.ch/vocabulary/CreativeWorkStatus/Published> ;
-      schema:creator ?creatorIri ;
-      schema:datePublished ?datePublished;
-      schema:description ?description ;
-      schema:name ?title ;
-      schema:workExample <https://ld.admin.ch/application/visualize> ;
-      visualize:hasDimension ?dimensionIri.
+         cube:observationConstraint ?shape;
+         dcat:theme ?themeIri;
+         dcterms:publisher ?publisher ;
+         schema:about ?subthemeIri;
+         schema:creativeWorkStatus ?status ;
+         schema:creativeWorkStatus <https://ld.admin.ch/vocabulary/CreativeWorkStatus/Published> ;
+         schema:creator ?creatorIri ;
+         schema:datePublished ?datePublished;
+         schema:description ?description ;
+         schema:name ?title ;
+         schema:workExample <https://ld.admin.ch/application/visualize> ;
+         visualize:hasDimension ?dimensionIri.
 
       ?dimensionIri visualize:hasTermset ?termsetIri .
       ?dimensionIri visualize:hasTimeUnit ?unitType .
