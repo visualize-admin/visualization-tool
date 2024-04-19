@@ -12,16 +12,17 @@ import {
   ConfiguratorStatePublishing,
   DataSource,
   Filters,
-  getChartConfig,
   MapConfig,
+  getChartConfig,
 } from "@/config-types";
+import { getNewChartConfig } from "@/configurator/config-form";
 import {
+  ConfiguratorStateAction,
   applyNonTableDimensionToFilters,
   applyTableDimensionToFilters,
-  ConfiguratorStateAction,
   deriveFiltersFromFields,
-  getFiltersByMappingStatus,
   getFilterValue,
+  getFiltersByMappingStatus,
   getLocalStorageKey,
   handleChartFieldChanged,
   handleChartOptionChanged,
@@ -34,7 +35,11 @@ import {
   setRangeFilter,
   updateColorMapping,
 } from "@/configurator/configurator-state";
-import { configStateMock } from "@/configurator/configurator-state.mock";
+import {
+  configStateMock,
+  groupedColumnChartDimensions,
+  groupedColumnChartMeasures,
+} from "@/configurator/configurator-state.mock";
 import { Dimension, Measure, NominalDimension } from "@/domain/data";
 import { ObservationFilter } from "@/graphql/query-hooks";
 import covid19ColumnChartConfig from "@/test/__fixtures/config/dev/chartConfig-column-covid19.json";
@@ -1250,6 +1255,45 @@ describe("add dataset", () => {
     const config = newState2.chartConfigs[0] as MapConfig;
     expect(config.cubes.length).toBe(1);
     expect(config.chartType).toEqual("column");
+  });
+});
+
+describe("add chart", () => {
+  const state = configStateMock.groupedColumnChart;
+  const action: ConfiguratorStateAction = {
+    type: "CHART_CONFIG_ADD",
+    value: {
+      chartConfig: getNewChartConfig({
+        chartType: "line",
+        chartConfig: state.chartConfigs[0],
+        state,
+        dimensions: groupedColumnChartDimensions,
+        measures: groupedColumnChartMeasures,
+      }),
+      locale: "en",
+    },
+  };
+
+  const runReducer = (
+    state: ConfiguratorState,
+    action: ConfiguratorStateAction
+  ) => produce(state, (state: ConfiguratorState) => reducer(state, action));
+
+  it("should correctly derive filters for a new chart", () => {
+    getCachedComponents.mockImplementation(() => {
+      return {
+        dimensions: groupedColumnChartDimensions,
+        measures: groupedColumnChartMeasures,
+      };
+    });
+    const newState = runReducer(
+      state,
+      action
+    ) as ConfiguratorStateConfiguringChart;
+    const config = newState.chartConfigs[1];
+    expect(Object.keys(config.cubes[0].filters)).toEqual([
+      "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton",
+    ]);
   });
 });
 

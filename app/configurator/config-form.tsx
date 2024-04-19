@@ -13,6 +13,7 @@ import { EncodingFieldType } from "@/charts/chart-config-ui-options";
 import {
   ChartConfig,
   ChartType,
+  ConfiguratorState,
   Filters,
   getChartConfig,
   isComboChartConfig,
@@ -370,6 +371,31 @@ export const useActiveLayoutField = (
 };
 
 // Specific ------------------------------------------------------------------
+export const getNewChartConfig = ({
+  chartType,
+  chartConfig,
+  state,
+  dimensions,
+  measures,
+}: {
+  chartType: ChartType;
+  chartConfig: ChartConfig;
+  state: ConfiguratorState;
+  dimensions: Dimension[];
+  measures: Measure[];
+}) => {
+  return getInitialConfig({
+    chartType,
+    iris: [
+      isConfiguring(state)
+        ? getChartConfig(state, state.activeChartKey).cubes[0].iri
+        : chartConfig.cubes[0].iri,
+    ],
+    dimensions,
+    measures,
+  });
+};
+
 export const useChartType = (
   chartKey: string,
   type: "add" | "edit" = "edit",
@@ -396,13 +422,10 @@ export const useChartType = (
       dispatch({
         type: "CHART_CONFIG_ADD",
         value: {
-          chartConfig: getInitialConfig({
+          chartConfig: getNewChartConfig({
             chartType,
-            iris: [
-              isConfiguring(state)
-                ? getChartConfig(state, state.activeChartKey).cubes[0].iri
-                : chartConfig.cubes[0].iri,
-            ],
+            chartConfig,
+            state,
             dimensions,
             measures,
           }),

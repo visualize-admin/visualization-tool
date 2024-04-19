@@ -62,7 +62,7 @@ export const ChartTypeSelector = (props: ChartTypeSelectorProps) => {
     measures
   );
 
-  const onClick = React.useCallback(
+  const handleClick = React.useCallback(
     (e: React.SyntheticEvent<HTMLButtonElement, Event>) => {
       const newChartType = e.currentTarget.value as ChartType;
 
@@ -124,7 +124,7 @@ export const ChartTypeSelector = (props: ChartTypeSelectorProps) => {
               chartType={chartType}
               chartTypes={regularChartTypes}
               possibleChartTypes={possibleChartTypes}
-              onClick={onClick}
+              onClick={handleClick}
               testId="chart-type-selector-regular"
             />
             <Divider sx={{ borderColor: "muted.main", mx: 2 }} />
@@ -142,7 +142,7 @@ export const ChartTypeSelector = (props: ChartTypeSelectorProps) => {
               chartType={chartType}
               chartTypes={comboChartTypes}
               possibleChartTypes={possibleChartTypes}
-              onClick={onClick}
+              onClick={handleClick}
               testId="chart-type-selector-combo"
             />
           </Flex>

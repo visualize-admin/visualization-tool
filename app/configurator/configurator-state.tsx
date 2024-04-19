@@ -1359,15 +1359,11 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         );
 
         if (dataCubesComponents) {
-          const newConfig = deriveFiltersFromFields(action.value.chartConfig, {
-            dimensions: dataCubesComponents.dimensions,
-          });
-          // newConfig.cubes = chartConfig.cubes;
-          draft.chartConfigs.push(
-            produce(newConfig, (x) => {
-              x.cubes = chartConfig.cubes;
-            })
+          const newConfig = deriveFiltersFromFields(
+            { ...action.value.chartConfig, cubes: chartConfig.cubes },
+            { dimensions: dataCubesComponents.dimensions }
           );
+          draft.chartConfigs.push(newConfig);
           draft.activeChartKey = action.value.chartConfig.key;
         }
       }
