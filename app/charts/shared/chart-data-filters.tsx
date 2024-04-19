@@ -252,6 +252,7 @@ const DataFilter = (props: DataFilterProps) => {
       // @ts-ignore
       filterKeys: otherKeys.join(", "),
     },
+    keepPreviousData: true,
   });
 
   const dimension = data?.dataCubesComponents.dimensions[0];
