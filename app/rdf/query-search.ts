@@ -169,6 +169,8 @@ const mkScoresQuery = (
       visualize:hasDimension ?dimensionIri.
 
       ?dimensionIri visualize:hasTermset ?termsetIri .
+      ?dimensionIri visualize:hasTimeUnit ?unitType .
+
       ?dimensionIri schema:name ?dimensionLabel .
       ?termsetIri schema:name ?termsetLabel .
       ?creatorIri schema:name ?creatorLabel .
@@ -196,7 +198,8 @@ const mkScoresQuery = (
           return sparql`
             ?iri cube:observationConstraint ?shape .
             ?shape sh:property ?prop .
-            ?prop cubeMeta:dataKind/time:unitType <${unitNode}>.`;
+            ?dimension cubeMeta:dataKind/time:unitType ?unitType.
+            ?dimension cubeMeta:dataKind/time:unitType <${unitNode}>.`;
         } else if (df.type === SearchCubeFilterType.SharedDimensions) {
           const sharedDimensions = df.value.split(";");
           return `
