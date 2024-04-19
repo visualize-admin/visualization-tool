@@ -326,7 +326,6 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
                 <ChartDataFilters
                   dataSource={dataSource}
                   chartConfig={chartConfig}
-                  dimensions={dimensions}
                 />
               ) : (
                 // We need to have a span here to keep the space between the
@@ -352,8 +351,6 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
                     dataSource={dataSource}
                     componentIris={componentIris}
                     chartConfig={chartConfig}
-                    dimensions={dimensions}
-                    measures={measures}
                   />
                 )}
               </div>

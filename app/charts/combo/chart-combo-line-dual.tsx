@@ -20,7 +20,7 @@ type ChartComboLineDualVisualizationProps = {
   dataSource: DataSource;
   componentIris: string[] | undefined;
   chartConfig: ComboLineDualConfig;
-  queryFilters?: DataCubeObservationFilter[];
+  queryFilters: DataCubeObservationFilter[];
 };
 
 export const ChartComboLineDualVisualization = (

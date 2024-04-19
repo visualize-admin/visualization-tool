@@ -43,7 +43,7 @@ export const ChartColumnsVisualization = ({
   dataSource: DataSource;
   componentIris: string[] | undefined;
   chartConfig: ColumnConfig;
-  queryFilters?: DataCubeObservationFilter[];
+  queryFilters: DataCubeObservationFilter[];
 }) => {
   return (
     <ChartDataWrapper

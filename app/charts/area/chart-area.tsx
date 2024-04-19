@@ -28,7 +28,7 @@ export const ChartAreasVisualization = ({
 }: {
   dataSource: DataSource;
   chartConfig: AreaConfig;
-  queryFilters?: DataCubeObservationFilter[];
+  queryFilters: DataCubeObservationFilter[];
   componentIris: string[] | undefined;
 }) => {
   return (

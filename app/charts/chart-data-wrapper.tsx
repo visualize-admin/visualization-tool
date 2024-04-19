@@ -53,7 +53,7 @@ export const ChartDataWrapper = <
   >;
   componentIris?: string[];
   dataSource: DataSource;
-  observationQueryFilters: DataCubeObservationFilter[] | undefined;
+  observationQueryFilters: DataCubeObservationFilter[];
   fetching?: boolean;
   /* Use this if extra data is loaded and the possible error must be shown by ChartDataWrapper*/
   error?: Error;
@@ -88,9 +88,8 @@ export const ChartDataWrapper = <
   const [observationsQuery] = useDataCubesObservationsQuery({
     variables: {
       ...commonQueryVariables,
-      cubeFilters: observationQueryFilters ?? [],
+      cubeFilters: observationQueryFilters,
     },
-    pause: !observationQueryFilters,
     keepPreviousData: true,
   });
 

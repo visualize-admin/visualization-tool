@@ -75,30 +75,17 @@ export const prepareQueryFilters = (
 
 export const useQueryFilters = ({
   chartConfig,
-  dimensions,
   allowNoneValues,
   componentIris,
 }: {
   chartConfig: ChartConfig;
-  dimensions?: Dimension[];
   allowNoneValues?: boolean;
   componentIris?: string[];
-}): DataCubeObservationFilter[] | undefined => {
-  const allDataFilters = useInteractiveFilters((d) => d.dataFilters);
-
+}): DataCubeObservationFilter[] => {
+  const dataFilters = useInteractiveFilters((d) => d.dataFilters);
   return React.useMemo(() => {
-    if (!dimensions) {
-      return;
-    }
-
     return chartConfig.cubes.map((cube) => {
       const filters = getChartConfigFilters(chartConfig.cubes, cube.iri);
-      const dataFilters = Object.fromEntries(
-        Object.entries(allDataFilters).filter(([k]) =>
-          dimensions.find((d) => d.iri === k)
-        )
-      );
-
       return {
         iri: cube.iri,
         componentIris,
@@ -116,9 +103,8 @@ export const useQueryFilters = ({
     chartConfig.cubes,
     chartConfig.chartType,
     chartConfig.interactiveFiltersConfig,
-    allDataFilters,
+    dataFilters,
     allowNoneValues,
-    dimensions,
     componentIris,
   ]);
 };

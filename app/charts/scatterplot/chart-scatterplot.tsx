@@ -38,7 +38,7 @@ export const ChartScatterplotVisualization = ({
   dataSource: DataSource;
   componentIris: string[] | undefined;
   chartConfig: ScatterPlotConfig;
-  queryFilters?: DataCubeObservationFilter[];
+  queryFilters: DataCubeObservationFilter[];
 }) => {
   return (
     <ChartDataWrapper
@@ -55,7 +55,6 @@ export const ChartScatterplot = memo((props: ChartProps<ScatterPlotConfig>) => {
   const { chartConfig, dimensions } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
   const filters = useChartConfigFilters(chartConfig);
-
   return (
     <ScatterplotChart aspectRatio={0.4} {...props}>
       <ChartContainer>

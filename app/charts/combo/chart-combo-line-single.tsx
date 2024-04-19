@@ -25,14 +25,13 @@ type ChartComboLineSingleVisualizationProps = {
   dataSource: DataSource;
   componentIris: string[] | undefined;
   chartConfig: ComboLineSingleConfig;
-  queryFilters?: DataCubeObservationFilter[];
+  queryFilters: DataCubeObservationFilter[];
 };
 
 export const ChartComboLineSingleVisualization = (
   props: ChartComboLineSingleVisualizationProps
 ) => {
   const { dataSource, componentIris, chartConfig, queryFilters } = props;
-
   return (
     <ChartDataWrapper
       dataSource={dataSource}
@@ -48,7 +47,6 @@ export const ChartComboLineSingle = React.memo(
   (props: ChartProps<ComboLineSingleConfig>) => {
     const { chartConfig, measures } = props;
     const { interactiveFiltersConfig } = chartConfig;
-
     const getLegendItemDimension = React.useCallback(
       (label: string) => {
         return measures.find((measure) => measure.label === label);

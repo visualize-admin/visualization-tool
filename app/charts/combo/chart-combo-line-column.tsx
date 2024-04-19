@@ -20,7 +20,7 @@ type ChartComboLineColumnVisualizationProps = {
   dataSource: DataSource;
   componentIris: string[] | undefined;
   chartConfig: ComboLineColumnConfig;
-  queryFilters?: DataCubeObservationFilter[];
+  queryFilters: DataCubeObservationFilter[];
 };
 
 export const ChartComboLineColumnVisualization = (

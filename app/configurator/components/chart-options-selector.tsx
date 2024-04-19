@@ -121,19 +121,16 @@ export const ChartOptionsSelector = ({
     });
   const dimensions = componentsData?.dataCubesComponents.dimensions;
   const measures = componentsData?.dataCubesComponents.measures;
-  const queryFilters = useQueryFilters({
-    chartConfig,
-    dimensions,
-  });
+  const queryFilters = useQueryFilters({ chartConfig });
   const [{ data: observationsData, fetching: fetchingObservations }] =
     useDataCubesObservationsQuery({
       variables: {
         sourceType: dataSource.type,
         sourceUrl: dataSource.url,
         locale,
-        cubeFilters: queryFilters ?? [],
+        cubeFilters: queryFilters,
       },
-      pause: fetchingComponents || !queryFilters,
+      pause: fetchingComponents,
       keepPreviousData: true,
     });
   const observations = observationsData?.dataCubesObservations?.data;

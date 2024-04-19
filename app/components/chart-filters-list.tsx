@@ -36,9 +36,8 @@ export const ChartFiltersList = (props: ChartFiltersListProps) => {
   const timeFormatUnit = useTimeFormatUnit();
   const timeSlider = useInteractiveFilters((d) => d.timeSlider);
   const animationField = getAnimationField(chartConfig);
-  const filters = useQueryFilters({
+  const queryFilters = useQueryFilters({
     chartConfig,
-    dimensions,
     componentIris: extractChartConfigComponentIris(chartConfig),
   });
   // TODO: Refactor to somehow access current filter labels instead of fetching them again
@@ -47,23 +46,21 @@ export const ChartFiltersList = (props: ChartFiltersListProps) => {
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
-      cubeFilters:
-        filters?.map((filter) => ({
-          iri: filter.iri,
-          componentIris: filter.componentIris,
-          filters: filter.filters,
-          joinBy: filter.joinBy,
-          loadValues: true,
-        })) ?? [],
+      cubeFilters: queryFilters.map((filter) => ({
+        iri: filter.iri,
+        componentIris: filter.componentIris,
+        filters: filter.filters,
+        joinBy: filter.joinBy,
+        loadValues: true,
+      })),
     },
-    pause: !filters,
   });
   const allFilters = React.useMemo(() => {
-    if (!data?.dataCubesComponents || !filters || !dimensions) {
+    if (!data?.dataCubesComponents || !dimensions) {
       return [];
     }
 
-    return filters.flatMap((filter) => {
+    return queryFilters.flatMap((filter) => {
       const namedFilters = Object.entries<FilterValue>(
         filter.filters ?? {}
       ).flatMap(([iri, f]) => {
@@ -133,7 +130,7 @@ export const ChartFiltersList = (props: ChartFiltersListProps) => {
   }, [
     data?.dataCubesComponents,
     dimensions,
-    filters,
+    queryFilters,
     animationField,
     timeFormatUnit,
     timeSlider.value,

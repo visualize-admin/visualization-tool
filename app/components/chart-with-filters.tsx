@@ -5,7 +5,6 @@ import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import useSyncInteractiveFilters from "@/charts/shared/use-sync-interactive-filters";
 import { Observer } from "@/charts/shared/use-width";
 import { ChartConfig, DataSource } from "@/configurator";
-import { Dimension, Measure } from "@/domain/data";
 
 const ChartAreasVisualization = dynamic(
   import("@/charts/area/chart-area").then(
@@ -72,16 +71,11 @@ type GenericChartProps = {
   dataSource: DataSource;
   componentIris: string[] | undefined;
   chartConfig: ChartConfig;
-  dimensions?: Dimension[];
 };
 
 const GenericChart = (props: GenericChartProps) => {
-  const { dataSource, componentIris, chartConfig, dimensions } = props;
-  const queryFilters = useQueryFilters({
-    chartConfig,
-    dimensions,
-    componentIris,
-  });
+  const { dataSource, componentIris, chartConfig } = props;
+  const queryFilters = useQueryFilters({ chartConfig, componentIris });
   const commonProps = {
     dataSource,
     queryFilters,
@@ -152,8 +146,6 @@ type ChartWithFiltersProps = {
   dataSource: DataSource;
   componentIris: string[] | undefined;
   chartConfig: ChartConfig;
-  dimensions?: Dimension[];
-  measures?: Measure[];
 };
 
 export const ChartWithFilters = React.forwardRef<

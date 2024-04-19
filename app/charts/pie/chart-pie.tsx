@@ -26,7 +26,7 @@ export const ChartPieVisualization = ({
   dataSource: DataSource;
   componentIris: string[] | undefined;
   chartConfig: PieConfig;
-  queryFilters?: DataCubeObservationFilter[];
+  queryFilters: DataCubeObservationFilter[];
 }) => {
   return (
     <ChartDataWrapper

@@ -30,7 +30,7 @@ export const ChartLinesVisualization = ({
   dataSource: DataSource;
   componentIris: string[] | undefined;
   chartConfig: LineConfig;
-  queryFilters?: DataCubeObservationFilter[];
+  queryFilters: DataCubeObservationFilter[];
 }) => {
   return (
     <ChartDataWrapper

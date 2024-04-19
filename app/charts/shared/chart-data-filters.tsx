@@ -65,18 +65,16 @@ type PreparedFilter = {
 type ChartDataFiltersProps = {
   dataSource: DataSource;
   chartConfig: ChartConfig;
-  dimensions?: Dimension[];
 };
 
 export const ChartDataFilters = (props: ChartDataFiltersProps) => {
-  const { dataSource, chartConfig, dimensions } = props;
+  const { dataSource, chartConfig } = props;
   const { loading } = useLoadingState();
   const dataFilters = useInteractiveFilters((d) => d.dataFilters);
   const componentIris = chartConfig.interactiveFiltersConfig?.dataFilters
     .componentIris as string[];
   const queryFilters = useQueryFilters({
     chartConfig,
-    dimensions,
     allowNoneValues: true,
     componentIris,
   });
@@ -89,10 +87,6 @@ export const ChartDataFilters = (props: ChartDataFiltersProps) => {
   }, [componentIris.length]);
 
   const preparedFilters: PreparedFilter[] | undefined = React.useMemo(() => {
-    if (!queryFilters) {
-      return;
-    }
-
     return chartConfig.cubes.map((cube) => {
       const cubeQueryFilters = queryFilters.find(
         (d) => d.iri === cube.iri

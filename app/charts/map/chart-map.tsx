@@ -36,12 +36,11 @@ export const ChartMapVisualization = ({
   dataSource: DataSource;
   componentIris: string[] | undefined;
   chartConfig: MapConfig;
-  queryFilters?: DataCubeObservationFilter[];
+  queryFilters: DataCubeObservationFilter[];
 }) => {
   const locale = useLocale();
   const areaDimensionIri = chartConfig.fields.areaLayer?.componentIri || "";
   const symbolDimensionIri = chartConfig.fields.symbolLayer?.componentIri || "";
-
   const [
     {
       data: geoCoordinatesDimension,
@@ -140,7 +139,6 @@ export const ChartMap = memo((props: ChartMapProps) => {
   const { chartConfig, dimensions } = props;
   const { fields } = chartConfig;
   const filters = useChartConfigFilters(chartConfig);
-
   return (
     <MapChart {...props}>
       <ChartContainer>
