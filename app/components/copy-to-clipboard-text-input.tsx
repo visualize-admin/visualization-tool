@@ -4,7 +4,7 @@ import { makeStyles } from "@mui/styles";
 import * as clipboard from "clipboard-polyfill/text";
 import { MouseEvent as ReactMouseEvent, ReactNode, useState } from "react";
 
-import Flex, { FlexProps } from "@/components/flex";
+import Flex from "@/components/flex";
 import { Icon } from "@/icons";
 
 const useActionTooltipStyles = makeStyles((theme: Theme) => ({
@@ -99,15 +99,11 @@ export const ActionTooltip = ({ children }: { children: ReactNode }) => {
   return <div className={classes.actionTooltip}>{children}</div>;
 };
 
-export const CopyToClipboardTextInput = ({
-  content,
-  ...flexProps
-}: { content: string } & FlexProps) => {
+export const CopyToClipboardTextInput = ({ content }: { content: string }) => {
   const [showTooltip, toggleTooltip] = useState(false);
   const [tooltipContent, updateTooltipContent] = useState(
     <Trans id="button.hint.click.to.copy">click to copy</Trans>
   );
-
   const handleMouseLeave = () => {
     toggleTooltip(false);
     updateTooltipContent(
@@ -122,15 +118,10 @@ export const CopyToClipboardTextInput = ({
     clipboard.writeText(content);
   };
   const classes = useCopyToClipboardTextInputStyles();
-  return (
-    <Flex sx={{ alignItems: "stretch", height: 48 }} {...flexProps}>
-      <Input
-        className={classes.input}
-        type="text"
-        value={content}
-        readOnly={true}
-      ></Input>
 
+  return (
+    <Flex sx={{ alignItems: "stretch", height: 48, mt: 1, mb: 2 }}>
+      <Input className={classes.input} type="text" value={content} readOnly />
       <Button
         variant="text"
         onMouseOver={() => toggleTooltip(true)}
@@ -142,7 +133,6 @@ export const CopyToClipboardTextInput = ({
         className={classes.button}
       >
         <Icon name="copy" size={16} />
-
         {showTooltip && <ActionTooltip>{tooltipContent}</ActionTooltip>}
       </Button>
     </Flex>
