@@ -363,7 +363,7 @@ export const Select = (props: FormSelectProps) => {
           <Label
             htmlFor={id}
             smaller
-            sx={{ display: "flex", alignItems: "center", mt: 2 }}
+            sx={{ display: "flex", alignItems: "center" }}
           >
             {label}
             {topControls}
