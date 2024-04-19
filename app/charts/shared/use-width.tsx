@@ -23,8 +23,7 @@ export const Observer = ({ children }: { children: ReactNode }) => {
   const [resizeRef, width] = useResizeObserver<HTMLDivElement>();
 
   return (
-    <div ref={resizeRef}>
-      {width > 1 ? (
+    <div ref={ref} style={{ display: "flex", minHeight: "100%" }}>
         <ChartObserverContext.Provider value={width}>
           {children}
         </ChartObserverContext.Provider>
