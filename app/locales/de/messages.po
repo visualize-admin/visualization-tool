@@ -17,8 +17,7 @@ msgstr ""
 msgid "Add filter"
 msgstr "Filter hinzufügen"
 
-#: app/configurator/components/chart-configurator.tsx
-#: app/configurator/components/chart-controls/drag-and-drop-tab.tsx
+#: app/components/move-drag-button.tsx
 msgid "Drag filters to reorganize"
 msgstr "Ziehen Sie die Filter per Drag & Drop, um sie neu zu organisieren"
 
@@ -141,6 +140,10 @@ msgstr "Denken Sie daran, dass sich die Aktualisierung dieser Visualisierung auf
 #: app/configurator/components/dataset-control-section.tsx
 msgid "chart.datasets.add"
 msgstr "Hinzufügen"
+
+#: app/configurator/components/add-dataset-dialog.tsx
+msgid "chart.datasets.add-dataset-dialog.description"
+msgstr "Sie können nur Datensätze kombinieren, die Dimensionen mit derselben Einheit und Auflösung teilen. Standardmäßig werden Dimensionen ausgewählt, die zum aktuellen Diagramm passen."
 
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "chart.datasets.add-dataset-dialog.title"
@@ -1000,6 +1003,14 @@ msgstr "Zurück zu den Datensätzen"
 msgid "dataset-preview.keywords"
 msgstr "Schlüsselwörter"
 
+#: app/browser/dataset-browse.tsx
+msgid "dataset-result.dimension-termset-contains"
+msgstr "Enthält Wert von"
+
+#: app/browser/dataset-browse.tsx
+msgid "dataset-result.shared-dimensions"
+msgstr "Geteilte Dimensionen"
+
 #: app/components/chart-footnotes.tsx
 msgid "dataset.footnotes.dataset"
 msgstr "Datensatz"
@@ -1440,31 +1451,31 @@ msgstr "Spalte {0}"
 
 #: app/configurator/components/ui-helpers.ts
 msgid "time-units.Day"
-msgstr ""
+msgstr "Tag"
 
 #: app/configurator/components/ui-helpers.ts
 msgid "time-units.Hour"
-msgstr ""
+msgstr "Stunde"
 
 #: app/configurator/components/ui-helpers.ts
 msgid "time-units.Minute"
-msgstr ""
+msgstr "Minute"
 
 #: app/configurator/components/ui-helpers.ts
 msgid "time-units.Month"
-msgstr ""
+msgstr "Monat"
 
 #: app/configurator/components/ui-helpers.ts
 msgid "time-units.Second"
-msgstr ""
+msgstr "Sekunde"
 
 #: app/configurator/components/ui-helpers.ts
 msgid "time-units.Week"
-msgstr ""
+msgstr "Woche"
 
 #: app/configurator/components/ui-helpers.ts
 msgid "time-units.Year"
-msgstr ""
+msgstr "Jahr"
 
 #: app/components/chart-footnotes.tsx
 #: app/components/chart-footnotes.tsx

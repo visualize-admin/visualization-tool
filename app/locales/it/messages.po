@@ -17,8 +17,7 @@ msgstr ""
 msgid "Add filter"
 msgstr "Aggiungi filtro"
 
-#: app/configurator/components/chart-configurator.tsx
-#: app/configurator/components/chart-controls/drag-and-drop-tab.tsx
+#: app/components/move-drag-button.tsx
 msgid "Drag filters to reorganize"
 msgstr "Trascina i filtri per riorganizzarli"
 
@@ -141,6 +140,10 @@ msgstr "Tenete presente che l'aggiornamento di questa visualizzazione avrà effe
 #: app/configurator/components/dataset-control-section.tsx
 msgid "chart.datasets.add"
 msgstr "Aggiungere"
+
+#: app/configurator/components/add-dataset-dialog.tsx
+msgid "chart.datasets.add-dataset-dialog.description"
+msgstr "Puoi combinare solo set di dati che condividono dimensioni con la stessa unità e risoluzione. Per impostazione predefinita, vengono selezionate le dimensioni corrispondenti al grafico attuale."
 
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "chart.datasets.add-dataset-dialog.title"
@@ -999,6 +1002,14 @@ msgstr "Torna ai set di dati"
 #: app/components/dataset-metadata.tsx
 msgid "dataset-preview.keywords"
 msgstr "Parole chiave"
+
+#: app/browser/dataset-browse.tsx
+msgid "dataset-result.dimension-termset-contains"
+msgstr "Contiene valore da"
+
+#: app/browser/dataset-browse.tsx
+msgid "dataset-result.shared-dimensions"
+msgstr "Dimensioni condivise"
 
 #: app/components/chart-footnotes.tsx
 msgid "dataset.footnotes.dataset"
