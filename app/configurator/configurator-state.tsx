@@ -1367,7 +1367,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
             },
             { dimensions: dataCubesComponents.dimensions }
           );
-          draft.chartConfigs.push(produce(newConfig, (x) => x));
+          draft.chartConfigs.push(newConfig);
           draft.activeChartKey = action.value.chartConfig.key;
         }
       }
