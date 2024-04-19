@@ -1,10 +1,17 @@
+import { renderHook } from "@testing-library/react";
 import merge from "lodash/merge";
 
 import {
   extractChartConfigComponentIris,
-  prepareQueryFilters,
+  prepareCubeQueryFilters,
+  useQueryFilters,
 } from "@/charts/shared/chart-helpers";
-import { ChartType, Filters, InteractiveFiltersConfig } from "@/configurator";
+import {
+  ChartConfig,
+  ChartType,
+  Filters,
+  InteractiveFiltersConfig,
+} from "@/configurator";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { InteractiveFiltersState } from "@/stores/interactive-filters";
 import map1Fixture from "@/test/__fixtures/config/int/map-nfi.json";
@@ -13,6 +20,14 @@ import { migrateChartConfig } from "@/utils/chart-config/versioning";
 
 jest.mock("../../rdf/extended-cube", () => ({
   ExtendedCube: jest.fn(),
+}));
+
+jest.mock("@/stores/interactive-filters", () => ({
+  useInteractiveFilters: jest.fn(() => ({
+    A_1: { type: "single", value: "A_1_1" },
+    A_2: { type: "single", value: "A_2_1" },
+    B_1: { type: "single", value: "B_1_1" },
+  })),
 }));
 
 const makeCubeNsGetters = (cubeIri: string) => ({
@@ -72,7 +87,7 @@ const commonInteractiveFiltersState: InteractiveFiltersState = {
 
 describe("useQueryFilters", () => {
   it("should not merge interactive filters state if interactive filters are disabled at publish time", () => {
-    const queryFilters = prepareQueryFilters(
+    const queryFilters = prepareCubeQueryFilters(
       line1Fixture.data.chartConfig.chartType as ChartType,
       line1Fixture.data.chartConfig.filters as Filters,
       commonInteractiveFiltersConfig,
@@ -85,7 +100,7 @@ describe("useQueryFilters", () => {
   });
 
   it("should merge interactive filters state if interactive filters are active at publish time", () => {
-    const queryFilters = prepareQueryFilters(
+    const queryFilters = prepareCubeQueryFilters(
       line1Fixture.data.chartConfig.chartType as ChartType,
       line1Fixture.data.chartConfig.filters as Filters,
       merge({}, commonInteractiveFiltersConfig, {
@@ -103,7 +118,7 @@ describe("useQueryFilters", () => {
   });
 
   it("should omit none values since they should not be passed to graphql layer", () => {
-    const queryFilters = prepareQueryFilters(
+    const queryFilters = prepareCubeQueryFilters(
       line1Fixture.data.chartConfig.chartType as ChartType,
       line1Fixture.data.chartConfig.filters as Filters,
       merge({}, commonInteractiveFiltersConfig, {
@@ -122,6 +137,59 @@ describe("useQueryFilters", () => {
     );
 
     expect(queryFilters[col("3")]).toBeUndefined();
+  });
+
+  it("should scope interactive filters to cube filters", () => {
+    const chartConfig = {
+      chartType: "line",
+      interactiveFiltersConfig: {
+        dataFilters: {
+          active: true,
+        },
+      },
+      cubes: [
+        {
+          iri: "A",
+          filters: {
+            A_1: { type: "single", value: "A_1_5" },
+            A_2: { type: "single", value: "A_2_3" },
+          },
+        },
+        {
+          iri: "B",
+          filters: {
+            B_1: { type: "single", value: "B_1_1" },
+          },
+        },
+      ],
+    } as any as ChartConfig;
+    const { result: queryFilters } = renderHook<
+      ReturnType<typeof useQueryFilters>,
+      Parameters<typeof useQueryFilters>[0]
+    >(
+      (props: Parameters<typeof useQueryFilters>[0]) => useQueryFilters(props),
+      {
+        initialProps: { chartConfig },
+      }
+    );
+
+    expect(queryFilters.current).toEqual([
+      {
+        iri: "A",
+        componentIris: undefined,
+        filters: {
+          A_1: { type: "single", value: "A_1_1" },
+          A_2: { type: "single", value: "A_2_1" },
+        },
+        joinBy: undefined,
+      },
+      {
+        iri: "B",
+        componentIris: undefined,
+        filters: { B_1: { type: "single", value: "B_1_1" } },
+        joinBy: undefined,
+      },
+    ]);
   });
 });
 

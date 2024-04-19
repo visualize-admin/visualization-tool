@@ -361,15 +361,12 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
   const dimensions = components?.dataCubesComponents.dimensions;
   const measures = components?.dataCubesComponents.measures;
   const allComponents = React.useMemo(() => {
-    if (!components?.dataCubesComponents) {
+    if (!dimensions || !measures) {
       return [];
     }
 
-    return [
-      ...components.dataCubesComponents.dimensions,
-      ...components.dataCubesComponents.measures,
-    ];
-  }, [components?.dataCubesComponents]);
+    return [...dimensions, ...measures];
+  }, [dimensions, measures]);
 
   return (
     <Box className={classes.root}>
@@ -466,8 +463,6 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
                   <ChartDataFilters
                     dataSource={dataSource}
                     chartConfig={chartConfig}
-                    dimensions={dimensions}
-                    measures={measures}
                   />
                 )}
                 <div
@@ -489,8 +484,6 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
                       dataSource={dataSource}
                       componentIris={componentIris}
                       chartConfig={chartConfig}
-                      dimensions={dimensions}
-                      measures={measures}
                     />
                   )}
                 </div>
@@ -499,7 +492,6 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
                   chartConfig={chartConfig}
                   onToggleTableView={handleToggleTableView}
                   dimensions={dimensions}
-                  measures={measures}
                 />
                 <DebugPanel configurator interactiveFilters />
               </InteractiveFiltersProvider>

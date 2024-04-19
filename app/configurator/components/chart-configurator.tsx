@@ -744,20 +744,15 @@ type ChartFieldsProps = {
 const ChartFields = (props: ChartFieldsProps) => {
   const { dataSource, chartConfig, dimensions, measures } = props;
   const components = [...(dimensions ?? []), ...(measures ?? [])];
-  const queryFilters = useQueryFilters({
-    chartConfig,
-    dimensions,
-    measures,
-  });
+  const queryFilters = useQueryFilters({ chartConfig });
   const locale = useLocale();
   const [{ data: observationsData }] = useDataCubesObservationsQuery({
     variables: {
       locale,
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
-      cubeFilters: queryFilters ?? [],
+      cubeFilters: queryFilters,
     },
-    pause: !queryFilters,
   });
   const observations = observationsData?.dataCubesObservations?.data ?? [];
 
@@ -767,7 +762,6 @@ const ChartFields = (props: ChartFieldsProps) => {
         .encodings.filter((d) => !d.hide)
         .map((encoding) => {
           const { field, getDisabledState, iriAttributes } = encoding;
-
           const componentIris = iriAttributes
             .map((x) => (chartConfig.fields as any)[field]?.[x])
             .filter(truthy) as string[];

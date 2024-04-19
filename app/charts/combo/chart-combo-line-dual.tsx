@@ -11,31 +11,14 @@ import { HoverDotMultiple } from "@/charts/shared/interaction/hover-dots-multipl
 import { Ruler } from "@/charts/shared/interaction/ruler";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { InteractionHorizontal } from "@/charts/shared/overlay-horizontal";
-import { ComboLineDualConfig, DataSource } from "@/config-types";
-import { DataCubeObservationFilter } from "@/graphql/query-hooks";
+import { ComboLineDualConfig } from "@/config-types";
 
-import { ChartProps } from "../shared/ChartProps";
-
-type ChartComboLineDualVisualizationProps = {
-  dataSource: DataSource;
-  componentIris: string[] | undefined;
-  chartConfig: ComboLineDualConfig;
-  queryFilters?: DataCubeObservationFilter[];
-};
+import { ChartProps, VisualizationProps } from "../shared/ChartProps";
 
 export const ChartComboLineDualVisualization = (
-  props: ChartComboLineDualVisualizationProps
+  props: VisualizationProps<ComboLineDualConfig>
 ) => {
-  const { dataSource, componentIris, chartConfig, queryFilters } = props;
-  return (
-    <ChartDataWrapper
-      dataSource={dataSource}
-      componentIris={componentIris}
-      observationQueryFilters={queryFilters}
-      chartConfig={chartConfig}
-      Component={ChartComboLineDual}
-    />
-  );
+  return <ChartDataWrapper {...props} Component={ChartComboLineDual} />;
 };
 
 export const ChartComboLineDual = React.memo(

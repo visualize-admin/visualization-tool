@@ -269,18 +269,13 @@ export const DataSetTable = ({
       ...componentsData.dataCubesComponents.measures,
     ]);
   }, [componentsData?.dataCubesComponents]);
-  const queryFilters = useQueryFilters({
-    chartConfig,
-    dimensions: componentsData?.dataCubesComponents?.dimensions,
-    measures: componentsData?.dataCubesComponents?.measures,
-    componentIris,
-  });
+  const queryFilters = useQueryFilters({ chartConfig, componentIris });
   const [{ data: observationsData }] = useDataCubesObservationsQuery({
     variables: {
       ...commonQueryVariables,
-      cubeFilters: queryFilters ?? [],
+      cubeFilters: queryFilters,
     },
-    pause: fetchingComponents || !queryFilters,
+    pause: fetchingComponents,
   });
 
   return metadataData?.dataCubesMetadata &&

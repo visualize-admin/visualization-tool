@@ -24,36 +24,15 @@ import {
 } from "@/charts/shared/containers";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
-import {
-  ColumnConfig,
-  DataSource,
-  useChartConfigFilters,
-} from "@/config-types";
+import { ColumnConfig, useChartConfigFilters } from "@/config-types";
 import { TimeSlider } from "@/configurator/interactive-filters/time-slider";
-import { DataCubeObservationFilter } from "@/graphql/query-hooks";
 
-import { ChartProps } from "../shared/ChartProps";
+import { ChartProps, VisualizationProps } from "../shared/ChartProps";
 
-export const ChartColumnsVisualization = ({
-  dataSource,
-  componentIris,
-  chartConfig,
-  queryFilters,
-}: {
-  dataSource: DataSource;
-  componentIris: string[] | undefined;
-  chartConfig: ColumnConfig;
-  queryFilters?: DataCubeObservationFilter[];
-}) => {
-  return (
-    <ChartDataWrapper
-      dataSource={dataSource}
-      componentIris={componentIris}
-      observationQueryFilters={queryFilters}
-      chartConfig={chartConfig}
-      Component={ChartColumns}
-    />
-  );
+export const ChartColumnsVisualization = (
+  props: VisualizationProps<ColumnConfig>
+) => {
+  return <ChartDataWrapper {...props} Component={ChartColumns} />;
 };
 
 export const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {

@@ -11,13 +11,12 @@ import { ChartFiltersList } from "@/components/chart-filters-list";
 import { useChartTablePreview } from "@/components/chart-table-preview";
 import { DataDownloadMenu, RunSparqlQuery } from "@/components/data-download";
 import { ChartConfig, DataSource } from "@/configurator";
-import { Dimension, Measure } from "@/domain/data";
+import { Dimension } from "@/domain/data";
 import { useTimeFormatLocale } from "@/formatters";
 import {
   useDataCubesMetadataQuery,
   useDataCubesObservationsQuery,
 } from "@/graphql/hooks";
-import { DataCubeObservationFilter } from "@/graphql/query-hooks";
 import { Icon, getChartIcon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
 import { useEmbedOptions } from "@/utils/embed";
@@ -47,7 +46,6 @@ export const ChartFootnotes = ({
   dataSource,
   chartConfig,
   dimensions,
-  measures,
   configKey,
   onToggleTableView,
   visualizeLinkText,
@@ -55,7 +53,6 @@ export const ChartFootnotes = ({
   dataSource: DataSource;
   chartConfig: ChartConfig;
   dimensions?: Dimension[];
-  measures?: Measure[];
   configKey?: string;
   onToggleTableView: () => void;
   visualizeLinkText?: JSX.Element;
@@ -65,6 +62,7 @@ export const ChartFootnotes = ({
   const [shareUrl, setShareUrl] = useState("");
   const { state: isTablePreview, setStateRaw: setIsTablePreview } =
     useChartTablePreview();
+
   // Reset back to chart view when switching chart type.
   useEffect(() => {
     setIsTablePreview(false);
@@ -74,10 +72,8 @@ export const ChartFootnotes = ({
     setShareUrl(`${window.location.origin}/${locale}/v/${configKey}`);
   }, [configKey, locale]);
 
-  const filters = useQueryFilters({
+  const queryFilters = useQueryFilters({
     chartConfig,
-    dimensions,
-    measures,
     componentIris: extractChartConfigComponentIris(chartConfig),
   });
   const commonQueryVariables = {
@@ -94,9 +90,8 @@ export const ChartFootnotes = ({
   const [{ data: downloadData }] = useDataCubesObservationsQuery({
     variables: {
       ...commonQueryVariables,
-      cubeFilters: filters ?? [],
+      cubeFilters: queryFilters,
     },
-    pause: !filters,
   });
   const sparqlEditorUrls =
     downloadData?.dataCubesObservations?.sparqlEditorUrls;
@@ -119,7 +114,6 @@ export const ChartFootnotes = ({
         dataSource={dataSource}
         chartConfig={chartConfig}
         dimensions={dimensions}
-        measures={measures}
       />
       {data?.dataCubesMetadata
         ? data.dataCubesMetadata.map((dataCubeMetadata) => {
@@ -212,7 +206,7 @@ export const ChartFootnotes = ({
                     <DataDownloadMenu
                       dataSource={dataSource}
                       title={dataCubeMetadata.title}
-                      filters={getDataDownloadFilters(chartConfig, filters)}
+                      filters={queryFilters}
                     />
                   ) : null}
                   {showTableSwitch !== false ? (
@@ -300,11 +294,4 @@ const LinkButton = (props: PropsWithChildren<{ href: string }>) => {
       {...props}
     />
   );
-};
-
-const getDataDownloadFilters = (
-  chartConfig: ChartConfig,
-  queryFilters?: DataCubeObservationFilter[]
-) => {
-  return queryFilters ?? chartConfig.cubes.map((cube) => ({ iri: cube.iri }));
 };

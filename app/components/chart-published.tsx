@@ -174,7 +174,6 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
   } = props;
   const { meta } = chartConfig;
   const rootRef = useRef<HTMLDivElement>(null);
-
   const {
     state: isTablePreview,
     setState: setIsTablePreview,
@@ -182,6 +181,8 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
     containerHeight,
     computeContainerHeight,
   } = useChartTablePreview();
+  const handleToggleTableView = useEvent(() => setIsTablePreview((c) => !c));
+  const [{ showDownload }] = useEmbedOptions();
   const metadataPanelStore = useMemo(() => createMetadataPanelStore(), []);
   const metadataPanelOpen = useStore(metadataPanelStore, (state) => state.open);
   const shouldShrink = useMemo(() => {
@@ -212,7 +213,7 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
     sourceUrl: dataSource.url,
     locale,
   };
-  const [{ data: metadata }] = useDataCubesMetadataQuery({
+  const [{ data: metadataData }] = useDataCubesMetadataQuery({
     variables: {
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
@@ -220,8 +221,9 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
       cubeFilters: chartConfig.cubes.map((cube) => ({ iri: cube.iri })),
     },
   });
+  const metadata = metadataData?.dataCubesMetadata;
   const componentIris = extractChartConfigsComponentIris(state.chartConfigs);
-  const [{ data: components }] = useDataCubesComponentsQuery({
+  const [{ data: componentsData }] = useDataCubesComponentsQuery({
     variables: {
       ...commonQueryVariables,
       cubeFilters: chartConfig.cubes.map((cube) => ({
@@ -231,28 +233,22 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
       })),
     },
   });
-  const handleToggleTableView = useEvent(() => setIsTablePreview((c) => !c));
-
-  const dimensions = components?.dataCubesComponents.dimensions;
-  const measures = components?.dataCubesComponents.measures;
+  const components = componentsData?.dataCubesComponents;
+  const dimensions = components?.dimensions;
+  const measures = components?.measures;
   const allComponents = useMemo(() => {
-    if (!components?.dataCubesComponents) {
+    if (!dimensions || !measures) {
       return [];
     }
 
-    return [
-      ...components.dataCubesComponents.dimensions,
-      ...components.dataCubesComponents.measures,
-    ];
-  }, [components?.dataCubesComponents]);
-
-  const [{ showDownload }] = useEmbedOptions();
+    return [...dimensions, ...measures];
+  }, [dimensions, measures]);
 
   return (
     <MetadataPanelStoreContext.Provider value={metadataPanelStore}>
       <Box className={classes.root} ref={rootRef}>
         <ChartErrorBoundary resetKeys={[chartConfig]}>
-          {metadata?.dataCubesMetadata.some(
+          {metadata?.some(
             (d) => d.publicationStatus === DataCubePublicationStatus.Draft
           ) && (
             <Box sx={{ mb: 4 }}>
@@ -265,7 +261,7 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
               </HintRed>
             </Box>
           )}
-          {metadata?.dataCubesMetadata.some((d) => d.expires) && (
+          {metadata?.some((d) => d.expires) && (
             <Box sx={{ mb: 4 }}>
               <HintRed iconName="datasetError" iconSize={64}>
                 <Trans id="dataset.publicationStatus.expires.warning">
@@ -330,8 +326,6 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
                 <ChartDataFilters
                   dataSource={dataSource}
                   chartConfig={chartConfig}
-                  dimensions={dimensions}
-                  measures={measures}
                 />
               ) : (
                 // We need to have a span here to keep the space between the
@@ -357,8 +351,6 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
                     dataSource={dataSource}
                     componentIris={componentIris}
                     chartConfig={chartConfig}
-                    dimensions={dimensions}
-                    measures={measures}
                   />
                 )}
               </div>
@@ -366,7 +358,6 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
                 dataSource={dataSource}
                 chartConfig={chartConfig}
                 dimensions={dimensions}
-                measures={measures}
                 configKey={configKey}
                 onToggleTableView={handleToggleTableView}
                 visualizeLinkText={

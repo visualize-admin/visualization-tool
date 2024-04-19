@@ -8,7 +8,7 @@ const meta: Meta = {
 export default meta;
 
 const PublishActionsStory = () => {
-  return <PublishActions configKey="123456789" />;
+  return <PublishActions configKey="123456789" locale="en" />;
 };
 
 export { PublishActionsStory as PublishActions };

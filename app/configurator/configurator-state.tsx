@@ -1863,17 +1863,12 @@ type ConfiguratorStateProviderProps = React.PropsWithChildren<{
 export const ConfiguratorStateProvider = (
   props: ConfiguratorStateProviderProps
 ) => {
-  const { chartId, initialState, allowDefaultRedirect, children } = props;
-  // Ensure that the state is reset by using the `chartId` as `key`
   return (
     <ConfiguratorStateProviderInternal
-      key={chartId}
-      chartId={chartId}
-      initialState={initialState}
-      allowDefaultRedirect={allowDefaultRedirect}
-    >
-      {children}
-    </ConfiguratorStateProviderInternal>
+      // Ensure that the state is reset by using the `chartId` as `key`
+      key={props.chartId}
+      {...props}
+    />
   );
 };
 

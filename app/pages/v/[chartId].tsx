@@ -16,7 +16,7 @@ import ErrorPage from "next/error";
 import Head from "next/head";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 import { ChartPublished } from "@/components/chart-published";
 import { PublishSuccess } from "@/components/hint";
@@ -83,7 +83,7 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
   const classes = useStyles();
 
   // Keep initial value of publishSuccess
-  const [publishSuccess] = useState(() => !!query.publishSuccess);
+  const [publishSuccess] = React.useState(() => !!query.publishSuccess);
   const { status, config } = deserializeProps(props);
 
   const session = useSession();
@@ -110,8 +110,7 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
   }, [props]);
   const chartConfig = state ? getChartConfig(state) : undefined;
 
-  const { dataSource, setDataSource } = useDataSourceStore();
-  useEffect(
+  React.useEffect(
     function removePublishSuccessFromURL() {
       // Remove publishSuccess from URL so that when reloading of sharing the link
       // to someone, there is no publishSuccess mention
@@ -122,7 +121,8 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
     [query.publishSuccess, replace]
   );
 
-  useEffect(
+  const { dataSource, setDataSource } = useDataSourceStore();
+  React.useEffect(
     function setCorrectDataSource() {
       if (
         props.status === "found" &&
@@ -130,7 +130,6 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
       ) {
         setDataSource(props.config.data.dataSource);
       }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     },
     [dataSource.url, setDataSource, props]
   );
@@ -154,11 +153,10 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
           property="og:description"
           content={state.layout.meta.description[locale]}
         />
-        {/* og:url is set in _app.tsx */}
       </Head>
       <ContentLayout>
         <Box className={classes.actionBar}>
-          <PublishActions configKey={key} sx={{ m: 0 }} />
+          <PublishActions configKey={key} locale={locale} />
         </Box>
         <Box
           px={[2, 4]}

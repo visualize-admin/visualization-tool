@@ -15,7 +15,6 @@ import {
 } from "@/configurator";
 import {
   Dimension,
-  Measure,
   isTemporalDimension,
   isTemporalOrdinalDimension,
 } from "@/domain/data";
@@ -29,19 +28,16 @@ type ChartFiltersListProps = {
   dataSource: DataSource;
   chartConfig: ChartConfig;
   dimensions?: Dimension[];
-  measures?: Measure[];
 };
 
 export const ChartFiltersList = (props: ChartFiltersListProps) => {
-  const { dataSource, chartConfig, dimensions, measures } = props;
+  const { dataSource, chartConfig, dimensions } = props;
   const locale = useLocale();
   const timeFormatUnit = useTimeFormatUnit();
   const timeSlider = useInteractiveFilters((d) => d.timeSlider);
   const animationField = getAnimationField(chartConfig);
-  const filters = useQueryFilters({
+  const queryFilters = useQueryFilters({
     chartConfig,
-    dimensions,
-    measures,
     componentIris: extractChartConfigComponentIris(chartConfig),
   });
   // TODO: Refactor to somehow access current filter labels instead of fetching them again
@@ -50,23 +46,21 @@ export const ChartFiltersList = (props: ChartFiltersListProps) => {
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
-      cubeFilters:
-        filters?.map((filter) => ({
-          iri: filter.iri,
-          componentIris: filter.componentIris,
-          filters: filter.filters,
-          joinBy: filter.joinBy,
-          loadValues: true,
-        })) ?? [],
+      cubeFilters: queryFilters.map((filter) => ({
+        iri: filter.iri,
+        componentIris: filter.componentIris,
+        filters: filter.filters,
+        joinBy: filter.joinBy,
+        loadValues: true,
+      })),
     },
-    pause: !filters,
   });
   const allFilters = React.useMemo(() => {
-    if (!data?.dataCubesComponents || !filters || !dimensions || !measures) {
+    if (!data?.dataCubesComponents || !dimensions) {
       return [];
     }
 
-    return filters.flatMap((filter) => {
+    return queryFilters.flatMap((filter) => {
       const namedFilters = Object.entries<FilterValue>(
         filter.filters ?? {}
       ).flatMap(([iri, f]) => {
@@ -136,8 +130,7 @@ export const ChartFiltersList = (props: ChartFiltersListProps) => {
   }, [
     data?.dataCubesComponents,
     dimensions,
-    measures,
-    filters,
+    queryFilters,
     animationField,
     timeFormatUnit,
     timeSlider.value,

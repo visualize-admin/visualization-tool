@@ -34,7 +34,6 @@ import {
   Component,
   Dimension,
   DimensionValue,
-  Measure,
   Observation,
   ObservationValue,
   getTemporalEntityValue,
@@ -51,17 +50,17 @@ import {
 // - merges publisher data filters and interactive data filters (user-defined),
 //   if applicable
 // - removes none values since they should not be sent as part of the GraphQL query
-export const prepareQueryFilters = (
+export const prepareCubeQueryFilters = (
   chartType: ChartType,
-  filters: Filters,
+  cubeFilters: Filters,
   interactiveFiltersConfig: InteractiveFiltersConfig,
-  dataFilters: InteractiveFiltersState["dataFilters"],
+  cubeDataFilters: InteractiveFiltersState["dataFilters"],
   allowNoneValues = false
 ): Filters => {
-  const queryFilters = { ...filters };
+  const queryFilters = { ...cubeFilters };
 
   if (chartType !== "table" && interactiveFiltersConfig?.dataFilters.active) {
-    for (const [k, v] of Object.entries(dataFilters)) {
+    for (const [k, v] of Object.entries(cubeDataFilters)) {
       queryFilters[k] = v;
     }
   }
@@ -76,40 +75,36 @@ export const prepareQueryFilters = (
 
 export const useQueryFilters = ({
   chartConfig,
-  dimensions,
-  measures,
   allowNoneValues,
   componentIris,
 }: {
   chartConfig: ChartConfig;
-  dimensions?: Dimension[];
-  measures?: Measure[];
   allowNoneValues?: boolean;
   componentIris?: string[];
-}): DataCubeObservationFilter[] | undefined => {
-  const allDataFilters = useInteractiveFilters((d) => d.dataFilters);
-
+}): DataCubeObservationFilter[] => {
+  const allInteractiveDataFilters = useInteractiveFilters((d) => d.dataFilters);
   return React.useMemo(() => {
-    if (!dimensions || !measures) {
-      return;
-    }
-
     return chartConfig.cubes.map((cube) => {
-      const filters = getChartConfigFilters(chartConfig.cubes, cube.iri);
-      const dataFilters = Object.fromEntries(
-        Object.entries(allDataFilters).filter(([k]) =>
-          dimensions.find((d) => d.iri === k)
+      const cubeFilters = getChartConfigFilters(chartConfig.cubes, cube.iri);
+      const cubeFiltersKeys = Object.keys(cubeFilters);
+      // TODO: Currently, in case of two dimensions with the same IRI, the last one wins.
+      // This is a bigger issue we should address in the future, probably by keeping
+      // track of interactive data filters per cube.
+      // Only include data filters that are part of the chart config.
+      const cubeDataInteractiveFilters = Object.fromEntries(
+        Object.entries(allInteractiveDataFilters).filter(([key]) =>
+          cubeFiltersKeys.includes(key)
         )
       );
 
       return {
         iri: cube.iri,
         componentIris,
-        filters: prepareQueryFilters(
+        filters: prepareCubeQueryFilters(
           chartConfig.chartType,
-          filters,
+          cubeFilters,
           chartConfig.interactiveFiltersConfig,
-          dataFilters,
+          cubeDataInteractiveFilters,
           allowNoneValues
         ),
         joinBy: cube.joinBy,
@@ -119,10 +114,8 @@ export const useQueryFilters = ({
     chartConfig.cubes,
     chartConfig.chartType,
     chartConfig.interactiveFiltersConfig,
-    allDataFilters,
+    allInteractiveDataFilters,
     allowNoneValues,
-    dimensions,
-    measures,
     componentIris,
   ]);
 };

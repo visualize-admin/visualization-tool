@@ -15,31 +15,14 @@ import { Ruler } from "@/charts/shared/interaction/ruler";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
 import { InteractionHorizontal } from "@/charts/shared/overlay-horizontal";
-import { AreaConfig, DataSource } from "@/config-types";
-import { DataCubeObservationFilter } from "@/graphql/query-hooks";
+import { AreaConfig } from "@/config-types";
 
-import { ChartProps } from "../shared/ChartProps";
+import { ChartProps, VisualizationProps } from "../shared/ChartProps";
 
-export const ChartAreasVisualization = ({
-  dataSource,
-  chartConfig,
-  queryFilters,
-  componentIris,
-}: {
-  dataSource: DataSource;
-  chartConfig: AreaConfig;
-  queryFilters?: DataCubeObservationFilter[];
-  componentIris: string[] | undefined;
-}) => {
-  return (
-    <ChartDataWrapper
-      dataSource={dataSource}
-      componentIris={componentIris}
-      observationQueryFilters={queryFilters}
-      chartConfig={chartConfig}
-      Component={ChartAreas}
-    />
-  );
+export const ChartAreasVisualization = (
+  props: VisualizationProps<AreaConfig>
+) => {
+  return <ChartDataWrapper {...props} Component={ChartAreas} />;
 };
 
 export const ChartAreas = memo((props: ChartProps<AreaConfig>) => {
