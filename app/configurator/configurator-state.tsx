@@ -1360,10 +1360,14 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
         if (dataCubesComponents) {
           const newConfig = deriveFiltersFromFields(
-            { ...action.value.chartConfig, cubes: chartConfig.cubes },
+            {
+              ...action.value.chartConfig,
+              // Need to finalize the cubes draft to avoid revoked proxy errors
+              cubes: current(chartConfig.cubes),
+            },
             { dimensions: dataCubesComponents.dimensions }
           );
-          draft.chartConfigs.push(newConfig);
+          draft.chartConfigs.push(produce(newConfig, (x) => x));
           draft.activeChartKey = action.value.chartConfig.key;
         }
       }
