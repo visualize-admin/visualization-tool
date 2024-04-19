@@ -2,6 +2,7 @@ import React, { createContext, ReactNode, useContext } from "react";
 
 import { useTransitionStore } from "@/stores/transition";
 import { useResizeObserver } from "@/utils/use-resize-observer";
+import { useTimedPrevious } from "@/utils/use-timed-previous";
 
 export type Margins = {
   top: number;
@@ -22,19 +23,14 @@ const INITIAL_WIDTH = 1;
 
 export const Observer = ({ children }: { children: ReactNode }) => {
   const [ref, width] = useResizeObserver<HTMLDivElement>();
+  const prev = useTimedPrevious(width, 500);
+  const isResizing = prev !== width;
   const setEnableTransition = useTransitionStore((state) => state.setEnable);
 
-  // Disable transitions during resize, so we don't have a "laggy" feeling
-  React.useEffect(() => {
-    setEnableTransition(false);
-    const timeout = setTimeout(() => {
-      setEnableTransition(true);
-    }, 500);
-
-    return () => {
-      clearTimeout(timeout);
-    };
-  }, [width, setEnableTransition]);
+  React.useEffect(
+    () => setEnableTransition(!isResizing),
+    [isResizing, setEnableTransition]
+  );
 
   return (
     <div ref={ref} style={{ display: "flex", minHeight: "100%" }}>
