@@ -22,10 +22,15 @@ export const ChartContainer = ({ children }: { children: ReactNode }) => {
       }
 
       const sel = select(ref.current);
-      (enableTransition
-        ? sel.transition().duration(transitionDuration)
-        : sel
-      ).style("height", `${height}px`);
+
+      if (enableTransition) {
+        sel
+          .transition()
+          .duration(transitionDuration)
+          .style("height", `${height}px`);
+      } else {
+        sel.style("height", `${height}px`);
+      }
     }
   }, [height, enableTransition, transitionDuration]);
 
