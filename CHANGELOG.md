@@ -16,6 +16,7 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
   - Sidebar content no longer gets unmounted when data is being re-fetched (e.g. when interacting with time slider in temporal X axes)
   - Reduced content layout shift when changing chart type
   - Filters are now correctly applied when adding a new chart
+  - Charts now resize immediately to remove a "laggy" feeling caused by calling transitions multiple times
 - Style
   - Introduced smaller UI improvements in the options panel
 - Performance
