@@ -4,7 +4,7 @@ import { makeStyles } from "@mui/styles";
 import cx from "classnames";
 import React from "react";
 
-type TagType = "draft" | "theme" | "organization" | "termset";
+type TagType = "draft" | "theme" | "organization" | "termset" | "dimension";
 
 const TagTypography = styled(Typography)(({ theme }) => ({
   borderRadius: (theme.shape.borderRadius as number) * 1.5,
@@ -24,6 +24,9 @@ const TagTypography = styled(Typography)(({ theme }) => ({
 const useStyles = makeStyles((theme: Theme) => ({
   themeType: {
     backgroundColor: theme.palette.success.light,
+  },
+  dimensionType: {
+    backgroundColor: theme.palette.warning.light,
   },
   termsetType: {
     border: "1px solid",

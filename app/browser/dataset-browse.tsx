@@ -8,7 +8,6 @@ import {
   LinkProps as MUILinkProps,
   Stack,
   Theme,
-  Tooltip,
   Typography,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
@@ -49,6 +48,7 @@ import SvgIcCategories from "@/icons/components/IcCategories";
 import SvgIcClose from "@/icons/components/IcClose";
 import SvgIcOrganisations from "@/icons/components/IcOrganisations";
 import isAttrEqual from "@/utils/is-attr-equal";
+import { MaybeTooltip } from "@/utils/maybe-tooltip";
 import useEvent from "@/utils/use-event";
 
 import {
@@ -1000,41 +1000,45 @@ export const DatasetResult = ({
       <Flex alignItems="center" width="100%">
         <Box flexGrow={1}>
           {showDimensions && (
-            <Flex alignItems="center" mt={1}>
+            <Flex alignItems="center" mt={1} flexWrap="wrap" gap="0.25rem">
               <Typography variant="body2" sx={{ mr: 1 }}>
-                <Trans id="dataset-result.shared-termsets">
+                <Trans id="dataset-result.shared-dimensions">
                   Shared dimensions:
                 </Trans>
               </Typography>
               {sortBy(dimensions, (t) => t.label).map((dimension) => {
                 return (
-                  <Tooltip
+                  <MaybeTooltip
                     key={dimension.iri}
                     title={
-                      <>
-                        <Typography variant="body2">
-                          Contains values from{" "}
-                          <Stack gap={1} flexDirection="column" mt={1}>
-                            {dimension.termsets?.map((termset) => {
-                              return (
-                                <Tag
-                                  key={termset.iri}
-                                  type="termset"
-                                  sx={{ flexShrink: 0 }}
-                                >
-                                  {termset.label}
-                                </Tag>
-                              );
-                            })}
-                          </Stack>
-                        </Typography>
-                      </>
+                      dimension.termsets.length > 0 ? (
+                        <>
+                          <Typography variant="body2">
+                            <Trans id="dataset-result.dimension-termset-contains">
+                              Contains values from
+                            </Trans>
+                            <Stack gap={1} flexDirection="row" mt={1}>
+                              {dimension.termsets?.map((termset) => {
+                                return (
+                                  <Tag
+                                    key={termset.iri}
+                                    type="termset"
+                                    sx={{ flexShrink: 0 }}
+                                  >
+                                    {termset.label}
+                                  </Tag>
+                                );
+                              })}
+                            </Stack>
+                          </Typography>
+                        </>
+                      ) : undefined
                     }
                   >
-                    <Tag sx={{ cursor: "pointer" }} type="termset">
+                    <Tag sx={{ cursor: "default" }} type="dimension">
                       {dimension.label}
                     </Tag>
-                  </Tooltip>
+                  </MaybeTooltip>
                 );
               })}
             </Flex>

@@ -344,7 +344,7 @@ export const DatasetDialog = ({
             }
             sx={{ minWidth: 300 }}
             renderValue={(selected) =>
-              cubeComponentTermsets.fetching ? (
+              cubeComponentTermsets.fetching || cubesComponentQuery.fetching ? (
                 <CircularProgress size={12} />
               ) : selected.length === 0 ? (
                 <Typography variant="body2">Nothing selected</Typography>
@@ -352,11 +352,11 @@ export const DatasetDialog = ({
                 selected.map((iri, i) => {
                   const value = searchDimensionOptionsByIri[iri];
                   return i < 2 ? (
-                    <Tag key={value.iri} type="termset" sx={{ mr: 1 }}>
+                    <Tag key={value.iri} type="dimension" sx={{ mr: 1 }}>
                       {value.label}
                     </Tag>
                   ) : i === 2 ? (
-                    <Tag key="more" type="termset" sx={{ mr: 1 }}>
+                    <Tag key="more" type="dimension" sx={{ mr: 1 }}>
                       {selected.length - 2} more
                     </Tag>
                   ) : null;
@@ -376,7 +376,20 @@ export const DatasetDialog = ({
                     !!searchDimensionsSelected.find((x) => x.iri === sd.iri)
                   }
                 />
-                <ListItemText primary={sd.label} />
+                <ListItemText
+                  primary={sd.label}
+                  secondary={
+                    sd.type === "temporal" ? (
+                      <Tag type="termset">{sd.timeUnit}</Tag>
+                    ) : (
+                      sd.termsets.map((t) => (
+                        <Tag key={t.iri} type="termset">
+                          {t.label}
+                        </Tag>
+                      ))
+                    )
+                  }
+                />
               </MenuItem>
             ))}
           </Select>

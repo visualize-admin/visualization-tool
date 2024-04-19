@@ -5,6 +5,12 @@ import { SearchCube } from "@/domain/data";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import * as ns from "@/rdf/namespace";
 
+const visualizePredicates = {
+  hasDimension: "https://visualize.admin.ch/hasDimension",
+  hasTermset: "https://visualize.admin.ch/hasTermset",
+  hasTimeUnit: "https://visualize.admin.ch/hasTimeUnit",
+};
+
 function buildSearchCubes(
   quads: Pick<Quad, "predicate" | "object" | "subject">[]
 ): SearchCube[] {
@@ -31,9 +37,7 @@ function buildSearchCubes(
     if (cubeQuads) {
       const themeQuads = cubeQuads.get(ns.dcat.theme.value);
       const subthemesQuads = cubeQuads.get(ns.schema.about.value);
-      const dimensions = cubeQuads.get(
-        "https://visualize.admin.ch/hasDimension"
-      );
+      const dimensions = cubeQuads.get(visualizePredicates.hasDimension);
       const creatorIri = cubeQuads.get(ns.schema.creator.value)?.[0]?.object
         .value;
       const publicationStatus = cubeQuads.get(
@@ -87,8 +91,10 @@ function buildSearchCubes(
           return {
             iri: x.object.value,
             label: dim?.get(ns.schema.name.value)?.[0].object.value ?? "",
+            timeUnit:
+              dim?.get(visualizePredicates.hasTimeUnit)?.[0].object.value ?? "",
             termsets:
-              dim?.get("https://visualize.admin.ch/hasTermset")?.map((x) => {
+              dim?.get(visualizePredicates.hasTermset)?.map((x) => {
                 return {
                   iri: x.object.value,
                   label:

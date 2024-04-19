@@ -1,4 +1,3 @@
-import { sparql } from "@tpluscode/sparql-builder";
 import { descending } from "d3-array";
 import groupBy from "lodash/groupBy";
 import ParsingClient from "sparql-http-client/ParsingClient";
@@ -52,6 +51,17 @@ const fanOutExclusiveFilters = (
   return exclusive.map((ef) => [ef, ...common]);
 };
 
+export const mergeSearchCubes = (
+  a: SearchCube | undefined,
+  b: SearchCube
+): SearchCube => {
+  return {
+    ...a,
+    ...b,
+    dimensions: [...(a?.dimensions ?? []), ...(b.dimensions ?? [])],
+  };
+};
+
 export const searchCubes = async ({
   query,
   locale: _locale,
@@ -102,7 +112,7 @@ export const searchCubes = async ({
       .flatMap((d) => d)
       .reduce(
         (acc, d) => {
-          acc[d.iri] = Object.assign(acc[d.iri] || {}, d);
+          acc[d.iri] = mergeSearchCubes(acc[d.iri], d);
           return acc;
         },
         {} as Record<string, SearchCube>
@@ -195,11 +205,21 @@ const mkScoresQuery = (
             throw new Error(`Invalid temporal unit used ${value}`);
           }
 
-          return sparql`
+          return `
             ?iri cube:observationConstraint ?shape .
-            ?shape sh:property ?prop .
+            ?shape sh:property ?dimension .
+            ?dimension sh:path ?dimensionIri.
             ?dimension cubeMeta:dataKind/time:unitType ?unitType.
-            ?dimension cubeMeta:dataKind/time:unitType <${unitNode}>.`;
+            ?dimension cubeMeta:dataKind/time:unitType <${unitNode}>.
+            ${buildLocalizedSubQuery(
+              "dimension",
+              "schema:name",
+              "dimensionLabel",
+              {
+                locale,
+              }
+            )}
+          `;
         } else if (df.type === SearchCubeFilterType.SharedDimensions) {
           const sharedDimensions = df.value.split(";");
           return `
