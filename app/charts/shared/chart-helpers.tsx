@@ -54,10 +54,19 @@ export const prepareQueryFilters = (
   chartType: ChartType,
   filters: Filters,
   interactiveFiltersConfig: InteractiveFiltersConfig,
-  dataFilters: InteractiveFiltersState["dataFilters"],
+  allDataFilters: InteractiveFiltersState["dataFilters"],
   allowNoneValues = false
 ): Filters => {
   const queryFilters = { ...filters };
+  // Only include data filters that are part of the chart config.
+  // TODO: Currently, in case of two dimensions with the same IRI, the last one wins.
+  // This is a bigger issue we should address in the future, probably by keeping
+  // track of interactive data filters per cube.
+  const dataFilters = Object.fromEntries(
+    Object.entries(allDataFilters).filter(([key]) =>
+      Object.keys(filters).includes(key)
+    )
+  );
 
   if (chartType !== "table" && interactiveFiltersConfig?.dataFilters.active) {
     for (const [k, v] of Object.entries(dataFilters)) {
@@ -82,7 +91,7 @@ export const useQueryFilters = ({
   allowNoneValues?: boolean;
   componentIris?: string[];
 }): DataCubeObservationFilter[] => {
-  const dataFilters = useInteractiveFilters((d) => d.dataFilters);
+  const allDataFilters = useInteractiveFilters((d) => d.dataFilters);
   return React.useMemo(() => {
     return chartConfig.cubes.map((cube) => {
       const filters = getChartConfigFilters(chartConfig.cubes, cube.iri);
@@ -93,7 +102,7 @@ export const useQueryFilters = ({
           chartConfig.chartType,
           filters,
           chartConfig.interactiveFiltersConfig,
-          dataFilters,
+          allDataFilters,
           allowNoneValues
         ),
         joinBy: cube.joinBy,
@@ -103,7 +112,7 @@ export const useQueryFilters = ({
     chartConfig.cubes,
     chartConfig.chartType,
     chartConfig.interactiveFiltersConfig,
-    dataFilters,
+    allDataFilters,
     allowNoneValues,
     componentIris,
   ]);

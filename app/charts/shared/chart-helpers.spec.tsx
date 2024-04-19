@@ -123,6 +123,29 @@ describe("useQueryFilters", () => {
 
     expect(queryFilters[col("3")]).toBeUndefined();
   });
+
+  it("should scope interactive filters to cube filters", () => {
+    const allDataFilters = {
+      A_1: { type: "single", value: "A_1_1" },
+      A_2: { type: "single", value: "A_2_1" },
+      B_1: { type: "single", value: "B_1_1" },
+    } as InteractiveFiltersState["dataFilters"];
+    const queryFilters = prepareQueryFilters(
+      "area",
+      {
+        A_1: { type: "single", value: "A_1_3" },
+        A_2: { type: "single", value: "A_2_5" },
+      },
+      {
+        dataFilters: { active: true, componentIris: ["A_1", "A_2", "B_1"] },
+      } as InteractiveFiltersConfig,
+      allDataFilters
+    );
+    expect(queryFilters).toEqual({
+      A_1: { type: "single", value: "A_1_1" },
+      A_2: { type: "single", value: "A_2_1" },
+    });
+  });
 });
 
 describe("getChartConfigComponentIris", () => {
