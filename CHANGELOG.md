@@ -18,6 +18,8 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
   - Filters are now correctly applied when adding a new chart
 - Style
   - Introduced smaller UI improvements in the options panel
+- Performance
+  - DataCubesObservations query no longer waits for DataCubesComponents query to finish in order to start executing
 
 # [4.1.0] - 2024-04-10
 
