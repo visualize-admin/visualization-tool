@@ -29,25 +29,51 @@ import {
   useSearchCubesQuery,
 } from "@/graphql/query-hooks";
 
+const options = [
+  {
+    id: "0",
+    cubeIri: "https://environment.ld.admin.ch/foen/nfi/nfi_C-1029/cube/2023-1",
+    sourceType: "sparql",
+    sourceUrl: "https://lindas.admin.ch/query",
+    label: "NFI Topics by stage of stand development",
+  },
+  {
+    id: "1",
+    cubeIri:
+      "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9",
+    sourceType: "sparql",
+    sourceUrl: "https://lindas.admin.ch/query",
+    label: "Einmalvergütung für Photovoltaikanlagen",
+  },
+  {
+    id: "2",
+    cubeIri:
+      '"https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_auszahlungen/8',
+    sourceType: "sparql",
+    sourceUrl: "https://lindas.admin.ch/query",
+    label:
+      "Gebäudeprogramm - Auszahlungen nach Massnahmenbereich und Berichtsjahr",
+  },
+];
+
 export const Search = () => {
   const [inputValue, setInputValue] = useState<string>("");
   const [query, setQuery] = useState<string>("");
-  const [cube, setCube] = useState<string>(
-    "https://environment.ld.admin.ch/foen/nfi/nfi_C-1029/cube/2023-1"
-  );
+  const [optionId, setOptionId] = useState<string>("0");
 
   const [temporalDimension, setTemporalDimension] = useState("-");
   const [sharedComponents, setSharedComponents] = useState<
     ComponentTermsets["iri"][] | undefined
   >(undefined);
 
+  const chosenOption = options.find((x) => x.id === optionId)!;
   const [cubeTermsetsResults] = useDataCubeComponentTermsetsQuery({
     variables: {
       locale: "en",
-      sourceType: "sparql",
-      sourceUrl: "https://lindas.admin.ch/query",
+      sourceType: chosenOption.sourceType,
+      sourceUrl: chosenOption.sourceUrl,
       cubeFilter: {
-        iri: cube,
+        iri: chosenOption.cubeIri,
       },
     },
   });
@@ -62,7 +88,7 @@ export const Search = () => {
     variables: {
       locale: "en",
       sourceType: "sparql",
-      sourceUrl: "https://lindas.admin.ch/query",
+      sourceUrl: "https://int.lindas.admin.ch/query",
       filters: [
         sharedComponents
           ? {
@@ -99,7 +125,7 @@ export const Search = () => {
   };
 
   const handleChangeCube = (ev: SelectChangeEvent<string>) => {
-    setCube(ev.target.value);
+    setOptionId(ev.target.value);
     setSharedComponents(undefined);
   };
 
@@ -107,7 +133,7 @@ export const Search = () => {
     if (
       sharedComponents === undefined &&
       cubeTermsetsResults?.data?.dataCubeComponentTermsets &&
-      cube ===
+      chosenOption.cubeIri ===
         (
           cubeTermsetsResults.operation
             ?.variables as DataCubeComponentTermsetsQueryVariables
@@ -117,12 +143,12 @@ export const Search = () => {
         cubeTermsetsResults?.data?.dataCubeComponentTermsets.map((x) => x.iri)
       );
     }
-  }, [cubeTermsetsResults, cube, sharedComponents]);
+  }, [cubeTermsetsResults, sharedComponents, chosenOption.cubeIri]);
 
   return (
     <div>
       <h2>Search results</h2>
-      {cube}
+      {chosenOption.cubeIri}
       <Stack gap={1} direction="column" alignItems="start">
         <FormControlLabel
           label="Query"
@@ -154,18 +180,13 @@ export const Search = () => {
               size="small"
               native
               onChange={handleChangeCube}
-              value={cube}
+              value={optionId ?? "0"}
             >
-              <option value="https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9">
-                Einmalvergütung für Photovoltaikanlagen
-              </option>
-              <option value="https://environment.ld.admin.ch/foen/nfi/nfi_C-1029/cube/2023-1">
-                NFI Topics by stage of stand development
-              </option>
-              <option value="https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_auszahlungen/8">
-                Gebäudeprogramm - Auszahlungen nach Massnahmenbereich und
-                Berichtsjahr
-              </option>
+              {options.map((option) => (
+                <option key={option.id} value={option.id}>
+                  {option.label}
+                </option>
+              ))}
             </Select>
           }
         />
