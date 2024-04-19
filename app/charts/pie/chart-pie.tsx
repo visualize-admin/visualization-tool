@@ -11,32 +11,13 @@ import {
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
 import { OnlyNegativeDataHint } from "@/components/hint";
-import { DataSource, PieConfig, useChartConfigFilters } from "@/config-types";
+import { PieConfig, useChartConfigFilters } from "@/config-types";
 import { TimeSlider } from "@/configurator/interactive-filters/time-slider";
-import { DataCubeObservationFilter } from "@/graphql/query-hooks";
 
-import { ChartProps } from "../shared/ChartProps";
+import { ChartProps, VisualizationProps } from "../shared/ChartProps";
 
-export const ChartPieVisualization = ({
-  dataSource,
-  componentIris,
-  chartConfig,
-  queryFilters,
-}: {
-  dataSource: DataSource;
-  componentIris: string[] | undefined;
-  chartConfig: PieConfig;
-  queryFilters: DataCubeObservationFilter[];
-}) => {
-  return (
-    <ChartDataWrapper
-      dataSource={dataSource}
-      componentIris={componentIris}
-      observationQueryFilters={queryFilters}
-      chartConfig={chartConfig}
-      Component={ChartPie}
-    />
-  );
+export const ChartPieVisualization = (props: VisualizationProps<PieConfig>) => {
+  return <ChartDataWrapper {...props} Component={ChartPie} />;
 };
 
 export const ChartPie = memo((props: ChartProps<PieConfig>) => {

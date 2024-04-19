@@ -75,10 +75,13 @@ type GenericChartProps = {
 
 const GenericChart = (props: GenericChartProps) => {
   const { dataSource, componentIris, chartConfig } = props;
-  const queryFilters = useQueryFilters({ chartConfig, componentIris });
+  const observationQueryFilters = useQueryFilters({
+    chartConfig,
+    componentIris,
+  });
   const commonProps = {
     dataSource,
-    queryFilters,
+    observationQueryFilters,
     componentIris,
   };
 

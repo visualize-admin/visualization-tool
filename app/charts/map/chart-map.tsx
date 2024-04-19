@@ -11,7 +11,7 @@ import {
   ChartControlsContainer,
 } from "@/charts/shared/containers";
 import { NoGeometriesHint } from "@/components/hint";
-import { DataSource, MapConfig, useChartConfigFilters } from "@/config-types";
+import { MapConfig, useChartConfigFilters } from "@/config-types";
 import { TimeSlider } from "@/configurator/interactive-filters/time-slider";
 import {
   GeoCoordinates,
@@ -19,25 +19,13 @@ import {
   dimensionValuesToGeoCoordinates,
 } from "@/domain/data";
 import { useDataCubesComponentsQuery } from "@/graphql/hooks";
-import {
-  DataCubeObservationFilter,
-  useDataCubeDimensionGeoShapesQuery,
-} from "@/graphql/query-hooks";
+import { useDataCubeDimensionGeoShapesQuery } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 
-import { ChartProps } from "../shared/ChartProps";
+import { ChartProps, VisualizationProps } from "../shared/ChartProps";
 
-export const ChartMapVisualization = ({
-  dataSource,
-  componentIris,
-  chartConfig,
-  queryFilters,
-}: {
-  dataSource: DataSource;
-  componentIris: string[] | undefined;
-  chartConfig: MapConfig;
-  queryFilters: DataCubeObservationFilter[];
-}) => {
+export const ChartMapVisualization = (props: VisualizationProps<MapConfig>) => {
+  const { dataSource, chartConfig } = props;
   const locale = useLocale();
   const areaDimensionIri = chartConfig.fields.areaLayer?.componentIri || "";
   const symbolDimensionIri = chartConfig.fields.symbolLayer?.componentIri || "";
@@ -118,14 +106,11 @@ export const ChartMapVisualization = ({
     <NoGeometriesHint />
   ) : (
     <ChartDataWrapper
-      dataSource={dataSource}
+      {...props}
       error={error}
       fetching={fetching}
-      componentIris={componentIris}
-      observationQueryFilters={queryFilters}
       Component={ChartMap}
       ComponentProps={{ shapes, coordinates }}
-      chartConfig={chartConfig}
     />
   );
 };

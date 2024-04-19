@@ -16,31 +16,14 @@ import { Ruler } from "@/charts/shared/interaction/ruler";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
 import { InteractionHorizontal } from "@/charts/shared/overlay-horizontal";
-import { DataSource, LineConfig } from "@/config-types";
-import { DataCubeObservationFilter } from "@/graphql/query-hooks";
+import { LineConfig } from "@/config-types";
 
-import { ChartProps } from "../shared/ChartProps";
+import { ChartProps, VisualizationProps } from "../shared/ChartProps";
 
-export const ChartLinesVisualization = ({
-  dataSource,
-  componentIris,
-  chartConfig,
-  queryFilters,
-}: {
-  dataSource: DataSource;
-  componentIris: string[] | undefined;
-  chartConfig: LineConfig;
-  queryFilters: DataCubeObservationFilter[];
-}) => {
-  return (
-    <ChartDataWrapper
-      dataSource={dataSource}
-      componentIris={componentIris}
-      observationQueryFilters={queryFilters}
-      chartConfig={chartConfig}
-      Component={ChartLines}
-    />
-  );
+export const ChartLinesVisualization = (
+  props: VisualizationProps<LineConfig>
+) => {
+  return <ChartDataWrapper {...props} Component={ChartLines} />;
 };
 
 export const ChartLines = memo((props: ChartProps<LineConfig>) => {

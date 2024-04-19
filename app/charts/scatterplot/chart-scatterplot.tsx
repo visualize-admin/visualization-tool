@@ -19,36 +19,15 @@ import {
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
 import { InteractionVoronoi } from "@/charts/shared/overlay-voronoi";
-import {
-  DataSource,
-  ScatterPlotConfig,
-  useChartConfigFilters,
-} from "@/config-types";
+import { ScatterPlotConfig, useChartConfigFilters } from "@/config-types";
 import { TimeSlider } from "@/configurator/interactive-filters/time-slider";
-import { DataCubeObservationFilter } from "@/graphql/query-hooks";
 
-import { ChartProps } from "../shared/ChartProps";
+import { ChartProps, VisualizationProps } from "../shared/ChartProps";
 
-export const ChartScatterplotVisualization = ({
-  dataSource,
-  componentIris,
-  chartConfig,
-  queryFilters,
-}: {
-  dataSource: DataSource;
-  componentIris: string[] | undefined;
-  chartConfig: ScatterPlotConfig;
-  queryFilters: DataCubeObservationFilter[];
-}) => {
-  return (
-    <ChartDataWrapper
-      dataSource={dataSource}
-      componentIris={componentIris}
-      observationQueryFilters={queryFilters}
-      Component={ChartScatterplot}
-      chartConfig={chartConfig}
-    />
-  );
+export const ChartScatterplotVisualization = (
+  props: VisualizationProps<ScatterPlotConfig>
+) => {
+  return <ChartDataWrapper {...props} Component={ChartScatterplot} />;
 };
 
 export const ChartScatterplot = memo((props: ChartProps<ScatterPlotConfig>) => {

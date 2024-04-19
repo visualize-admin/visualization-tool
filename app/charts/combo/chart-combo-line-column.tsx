@@ -11,31 +11,14 @@ import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
 import { HoverDotMultiple } from "@/charts/shared/interaction/hover-dots-multiple";
 import { Ruler } from "@/charts/shared/interaction/ruler";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
-import { ComboLineColumnConfig, DataSource } from "@/config-types";
-import { DataCubeObservationFilter } from "@/graphql/query-hooks";
+import { ComboLineColumnConfig } from "@/config-types";
 
-import { ChartProps } from "../shared/ChartProps";
-
-type ChartComboLineColumnVisualizationProps = {
-  dataSource: DataSource;
-  componentIris: string[] | undefined;
-  chartConfig: ComboLineColumnConfig;
-  queryFilters: DataCubeObservationFilter[];
-};
+import { ChartProps, VisualizationProps } from "../shared/ChartProps";
 
 export const ChartComboLineColumnVisualization = (
-  props: ChartComboLineColumnVisualizationProps
+  props: VisualizationProps<ComboLineColumnConfig>
 ) => {
-  const { dataSource, componentIris, chartConfig, queryFilters } = props;
-  return (
-    <ChartDataWrapper
-      dataSource={dataSource}
-      componentIris={componentIris}
-      observationQueryFilters={queryFilters}
-      chartConfig={chartConfig}
-      Component={ChartComboLineColumn}
-    />
-  );
+  return <ChartDataWrapper {...props} Component={ChartComboLineColumn} />;
 };
 
 export const ChartComboLineColumn = React.memo(

@@ -3,30 +3,23 @@ import { memo } from "react";
 import { ChartDataWrapper } from "@/charts/chart-data-wrapper";
 import { Table } from "@/charts/table/table";
 import { TableChart } from "@/charts/table/table-state";
-import { DataSource, TableConfig } from "@/configurator";
+import { TableConfig } from "@/configurator";
 
-import { ChartProps } from "../shared/ChartProps";
+import { ChartProps, VisualizationProps } from "../shared/ChartProps";
 
-export const ChartTableVisualization = ({
-  dataSource,
-  componentIris,
-  chartConfig,
-}: {
-  dataSource: DataSource;
-  componentIris: string[] | undefined;
-  chartConfig: TableConfig;
-}) => {
+export const ChartTableVisualization = (
+  props: Omit<VisualizationProps<TableConfig>, "observationQueryFilters">
+) => {
+  const { chartConfig, componentIris } = props;
   return (
     <ChartDataWrapper
-      dataSource={dataSource}
-      componentIris={componentIris}
-      Component={ChartTable}
-      chartConfig={chartConfig}
+      {...props}
       observationQueryFilters={chartConfig.cubes.map((cube) => ({
         iri: cube.iri,
         componentIris,
         filters: cube.filters,
       }))}
+      Component={ChartTable}
     />
   );
 };
