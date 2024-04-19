@@ -467,7 +467,6 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
                     dataSource={dataSource}
                     chartConfig={chartConfig}
                     dimensions={dimensions}
-                    measures={measures}
                   />
                 )}
                 <div
@@ -499,7 +498,6 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
                   chartConfig={chartConfig}
                   onToggleTableView={handleToggleTableView}
                   dimensions={dimensions}
-                  measures={measures}
                 />
                 <DebugPanel configurator interactiveFilters />
               </InteractiveFiltersProvider>

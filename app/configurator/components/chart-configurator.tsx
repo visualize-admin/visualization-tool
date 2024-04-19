@@ -747,7 +747,6 @@ const ChartFields = (props: ChartFieldsProps) => {
   const queryFilters = useQueryFilters({
     chartConfig,
     dimensions,
-    measures,
   });
   const locale = useLocale();
   const [{ data: observationsData }] = useDataCubesObservationsQuery({
@@ -767,7 +766,6 @@ const ChartFields = (props: ChartFieldsProps) => {
         .encodings.filter((d) => !d.hide)
         .map((encoding) => {
           const { field, getDisabledState, iriAttributes } = encoding;
-
           const componentIris = iriAttributes
             .map((x) => (chartConfig.fields as any)[field]?.[x])
             .filter(truthy) as string[];

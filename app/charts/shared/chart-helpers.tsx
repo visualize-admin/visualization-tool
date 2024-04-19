@@ -34,7 +34,6 @@ import {
   Component,
   Dimension,
   DimensionValue,
-  Measure,
   Observation,
   ObservationValue,
   getTemporalEntityValue,
@@ -77,20 +76,18 @@ export const prepareQueryFilters = (
 export const useQueryFilters = ({
   chartConfig,
   dimensions,
-  measures,
   allowNoneValues,
   componentIris,
 }: {
   chartConfig: ChartConfig;
   dimensions?: Dimension[];
-  measures?: Measure[];
   allowNoneValues?: boolean;
   componentIris?: string[];
 }): DataCubeObservationFilter[] | undefined => {
   const allDataFilters = useInteractiveFilters((d) => d.dataFilters);
 
   return React.useMemo(() => {
-    if (!dimensions || !measures) {
+    if (!dimensions) {
       return;
     }
 
@@ -122,7 +119,6 @@ export const useQueryFilters = ({
     allDataFilters,
     allowNoneValues,
     dimensions,
-    measures,
     componentIris,
   ]);
 };

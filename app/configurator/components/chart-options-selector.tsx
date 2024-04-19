@@ -124,7 +124,6 @@ export const ChartOptionsSelector = ({
   const queryFilters = useQueryFilters({
     chartConfig,
     dimensions,
-    measures,
   });
   const [{ data: observationsData, fetching: fetchingObservations }] =
     useDataCubesObservationsQuery({

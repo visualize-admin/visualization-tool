@@ -15,7 +15,6 @@ import {
 } from "@/configurator";
 import {
   Dimension,
-  Measure,
   isTemporalDimension,
   isTemporalOrdinalDimension,
 } from "@/domain/data";
@@ -29,11 +28,10 @@ type ChartFiltersListProps = {
   dataSource: DataSource;
   chartConfig: ChartConfig;
   dimensions?: Dimension[];
-  measures?: Measure[];
 };
 
 export const ChartFiltersList = (props: ChartFiltersListProps) => {
-  const { dataSource, chartConfig, dimensions, measures } = props;
+  const { dataSource, chartConfig, dimensions } = props;
   const locale = useLocale();
   const timeFormatUnit = useTimeFormatUnit();
   const timeSlider = useInteractiveFilters((d) => d.timeSlider);
@@ -41,7 +39,6 @@ export const ChartFiltersList = (props: ChartFiltersListProps) => {
   const filters = useQueryFilters({
     chartConfig,
     dimensions,
-    measures,
     componentIris: extractChartConfigComponentIris(chartConfig),
   });
   // TODO: Refactor to somehow access current filter labels instead of fetching them again
@@ -62,7 +59,7 @@ export const ChartFiltersList = (props: ChartFiltersListProps) => {
     pause: !filters,
   });
   const allFilters = React.useMemo(() => {
-    if (!data?.dataCubesComponents || !filters || !dimensions || !measures) {
+    if (!data?.dataCubesComponents || !filters || !dimensions) {
       return [];
     }
 
@@ -136,7 +133,6 @@ export const ChartFiltersList = (props: ChartFiltersListProps) => {
   }, [
     data?.dataCubesComponents,
     dimensions,
-    measures,
     filters,
     animationField,
     timeFormatUnit,

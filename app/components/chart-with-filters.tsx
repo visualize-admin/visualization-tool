@@ -73,16 +73,13 @@ type GenericChartProps = {
   componentIris: string[] | undefined;
   chartConfig: ChartConfig;
   dimensions?: Dimension[];
-  measures?: Measure[];
 };
 
 const GenericChart = (props: GenericChartProps) => {
-  const { dataSource, componentIris, chartConfig, dimensions, measures } =
-    props;
+  const { dataSource, componentIris, chartConfig, dimensions } = props;
   const queryFilters = useQueryFilters({
     chartConfig,
     dimensions,
-    measures,
     componentIris,
   });
   const commonProps = {

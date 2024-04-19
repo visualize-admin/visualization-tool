@@ -327,7 +327,6 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
                   dataSource={dataSource}
                   chartConfig={chartConfig}
                   dimensions={dimensions}
-                  measures={measures}
                 />
               ) : (
                 // We need to have a span here to keep the space between the
@@ -362,7 +361,6 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
                 dataSource={dataSource}
                 chartConfig={chartConfig}
                 dimensions={dimensions}
-                measures={measures}
                 configKey={configKey}
                 onToggleTableView={handleToggleTableView}
                 visualizeLinkText={
