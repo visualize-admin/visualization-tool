@@ -141,10 +141,10 @@ const inferJoinBy = (
     .filter((x): x is { left: string; right: string } => !!(x.left && x.right));
 
   // TODO Right now, we only support one join by dimension
-  return possibleJoinBys[0];
+  return possibleJoinBys;
 };
 
-export type JoinBy = ReturnType<typeof inferJoinBy>;
+export type JoinBy = ReturnType<typeof inferJoinBy>[0];
 
 export const PreviewDataTable: React.FC<{
   dataSource: DataSource;
@@ -241,6 +241,7 @@ export const PreviewDataTable: React.FC<{
     otherCubeComponents?.dimensions,
     otherCubeComponents?.measures,
   ]);
+
   return (
     <>
       <DialogContent sx={{ overflowX: "hidden" }}>
@@ -461,6 +462,7 @@ export const DatasetDialog = ({
     props.onClose?.(ev, reason);
     setQuery("");
     setSearchDimensionsSelected(undefined);
+    setOtherCube(undefined);
   });
 
   const handleChangeSearchDimensions = (ev: SelectChangeEvent<string[]>) => {
@@ -506,7 +508,7 @@ export const DatasetDialog = ({
     if (!otherCube) {
       return undefined;
     }
-    return inferJoinBy(searchDimensionsSelected ?? [], otherCube);
+    return inferJoinBy(searchDimensionsSelected ?? [], otherCube)[0];
   }, [otherCube, searchDimensionsSelected]);
   const [otherCubeComponents] = useDataCubesComponentsQuery({
     variables: {
@@ -517,6 +519,16 @@ export const DatasetDialog = ({
   });
   const [{ fetching, otherIri }, { addDataset }] = useAddDataset();
 
+  const handleClickOtherCube = (otherCube: PartialSearchCube) => {
+    const joinedBy = inferJoinBy(searchDimensionsSelected ?? [], otherCube);
+    if (joinedBy.length !== 1) {
+      alert(
+        "For now, merging cubes only supports one join by dimension. Please select only one dimension to join by."
+      );
+    } else {
+      setOtherCube(otherCube);
+    }
+  };
   return (
     <Dialog
       {...props}
@@ -673,7 +685,7 @@ export const DatasetDialog = ({
                         size="small"
                         variant="outlined"
                         className={classes.addButton}
-                        onClick={() => setOtherCube(cube)}
+                        onClick={() => handleClickOtherCube(cube)}
                       >
                         {t({
                           id: "dataset.search.add-dataset",
