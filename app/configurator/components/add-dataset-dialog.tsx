@@ -95,6 +95,49 @@ type SearchOptions =
       termsets: Termset[];
     };
 
+const inferJoinBy = (
+  leftOptions: SearchOptions[],
+  rightCube: PartialSearchCube
+) => {
+  const possibleJoinBys = leftOptions
+    .map((leftOption) => {
+      const type = leftOption.type;
+      // For every selected dimension, we need to find the corresponding dimension on the other cube
+      switch (type) {
+        case "temporal":
+          return {
+            left: leftOption.iri,
+            right: rightCube?.dimensions?.find(
+              (d) =>
+                // TODO Find out why this is necessary
+                d.timeUnit ===
+                `http://www.w3.org/2006/time#unit${leftOption.timeUnit}`
+            )?.iri,
+          };
+        case "shared":
+          return {
+            left: leftOption.iri,
+            right: rightCube?.dimensions?.find((d) =>
+              d.termsets.some((t) =>
+                leftOption.termsets.map((t) => t.iri).includes(t.iri)
+              )
+            )?.iri,
+          };
+        default:
+          return exhaustiveCheck(
+            type,
+            `Unknown search cube join by dimension ${type}`
+          );
+      }
+    })
+    .filter((x): x is { left: string; right: string } => !!(x.left && x.right));
+
+  // TODO Right now, we only support one join by dimension
+  return possibleJoinBys[0];
+};
+
+export type JoinBy = ReturnType<typeof inferJoinBy>;
+
 export const DatasetDialog = ({
   state,
   ...props
@@ -443,48 +486,6 @@ export const DatasetDialog = ({
       </DialogContent>
     </Dialog>
   );
-};
-
-const inferJoinBy = (
-  leftOptions: SearchOptions[],
-  rightComponents: DataCubeComponents,
-  rightCube: PartialSearchCube
-) => {
-  const possibleJoinBys = leftOptions
-    .map((leftOption) => {
-      const type = leftOption.type;
-      // For every selected dimension, we need to find the corresponding dimension on the other cube
-      switch (type) {
-        case "temporal":
-          return {
-            left: leftOption.iri,
-            right: rightCube?.dimensions?.find(
-              (d) =>
-                // TODO Find out why this is necessary
-                d.timeUnit ===
-                `http://www.w3.org/2006/time#unit${leftOption.timeUnit}`
-            )?.iri,
-          };
-        case "shared":
-          return {
-            left: leftOption.iri,
-            right: rightCube?.dimensions?.find((d) =>
-              d.termsets.some((t) =>
-                leftOption.termsets.map((t) => t.iri).includes(t.iri)
-              )
-            )?.iri,
-          };
-        default:
-          return exhaustiveCheck(
-            type,
-            `Unknown search cube join by dimension ${type}`
-          );
-      }
-    })
-    .filter((x): x is { left: string; right: string } => !!(x.left && x.right));
-
-  // TODO Right now, we only support one join by dimension
-  return possibleJoinBys[0];
 };
 
 /**
