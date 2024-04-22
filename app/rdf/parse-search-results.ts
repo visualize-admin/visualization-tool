@@ -6,9 +6,9 @@ import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import * as ns from "@/rdf/namespace";
 
 const visualizePredicates = {
-  hasDimension: "https://visualize.admin.ch/hasDimension",
-  hasTermset: "https://visualize.admin.ch/hasTermset",
-  hasTimeUnit: "https://visualize.admin.ch/hasTimeUnit",
+  hasDimension: ns.visualizeAdmin`hasDimension`.value,
+  hasTermset: ns.visualizeAdmin`hasTermset`.value,
+  hasTimeUnit: ns.visualizeAdmin`hasTimeUnit`.value,
 };
 
 function buildSearchCubes(
