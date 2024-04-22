@@ -401,23 +401,38 @@ export const DatasetDialog = ({
     (x) => x.iri
   );
 
-  const [searchDimensionsSelected, setSearchDimensionsSelected] = useState<
+  const [selectedSearchDimensions, setSelectedSearchDimensions] = useState<
     typeof searchDimensionOptions | undefined
   >(undefined);
 
-  const selectedSharedDimensions = searchDimensionsSelected?.filter(
+  const handleChangeSearchDimensions = (ev: SelectChangeEvent<string[]>) => {
+    const {
+      target: { value },
+    } = ev;
+    setSelectedSearchDimensions(
+      // On autofill we get a stringified value.
+      (typeof value === "string" ? value.split(",") : value)
+        ?.map((x) => {
+          return searchDimensionOptionsByIri[x];
+        })
+        .filter(truthy)
+    );
+  };
+
+  const selectedSharedDimensions = selectedSearchDimensions?.filter(
     (x): x is Extract<(typeof searchDimensionOptions)[0], { type: "shared" }> =>
       x.type === "shared"
   );
 
-  const selectedTemporalDimension = (searchDimensionsSelected ?? []).find(
+  const selectedTemporalDimension = (selectedSearchDimensions ?? []).find(
     (
       x
     ): x is Extract<(typeof searchDimensionOptions)[0], { type: "temporal" }> =>
       x.type === "temporal"
   );
 
-  const isSearchQueryPaused = !cubesComponentQuery.data;
+  const isSearchQueryPaused =
+    !cubesComponentQuery.data || !selectedSearchDimensions;
   const [searchQuery] = useSearchCubesQuery({
     variables: {
       sourceType: state.dataSource.type,
@@ -461,37 +476,23 @@ export const DatasetDialog = ({
   const handleClose: DialogProps["onClose"] = useEventCallback((ev, reason) => {
     props.onClose?.(ev, reason);
     setQuery("");
-    setSearchDimensionsSelected(undefined);
+    setSelectedSearchDimensions(undefined);
     setOtherCube(undefined);
   });
 
-  const handleChangeSearchDimensions = (ev: SelectChangeEvent<string[]>) => {
-    const {
-      target: { value },
-    } = ev;
-    setSearchDimensionsSelected(
-      // On autofill we get a stringified value.
-      (typeof value === "string" ? value.split(",") : value)
-        ?.map((x) => {
-          return searchDimensionOptionsByIri[x];
-        })
-        .filter(truthy)
-    );
-  };
-
   useEffect(() => {
     if (
-      searchDimensionsSelected === undefined &&
+      selectedSearchDimensions === undefined &&
       cubeComponentTermsets.data &&
       cubesComponentQuery.data
     ) {
-      setSearchDimensionsSelected(searchDimensionOptions);
+      setSelectedSearchDimensions(searchDimensionOptions);
     }
   }, [
     cubeComponentTermsets,
     cubesComponentQuery.data,
     searchDimensionOptions,
-    searchDimensionsSelected,
+    selectedSearchDimensions,
   ]);
 
   const searchCubes = useMemo(() => {
@@ -508,8 +509,9 @@ export const DatasetDialog = ({
     if (!otherCube) {
       return undefined;
     }
-    return inferJoinBy(searchDimensionsSelected ?? [], otherCube)[0];
-  }, [otherCube, searchDimensionsSelected]);
+    return inferJoinBy(selectedSearchDimensions ?? [], otherCube)[0];
+  }, [otherCube, selectedSearchDimensions]);
+
   const [otherCubeComponents] = useDataCubesComponentsQuery({
     variables: {
       ...commonQueryVariables,
@@ -520,7 +522,7 @@ export const DatasetDialog = ({
   const [{ fetching, otherIri }, { addDataset }] = useAddDataset();
 
   const handleClickOtherCube = (otherCube: PartialSearchCube) => {
-    const joinedBy = inferJoinBy(searchDimensionsSelected ?? [], otherCube);
+    const joinedBy = inferJoinBy(selectedSearchDimensions ?? [], otherCube);
     if (joinedBy.length !== 1) {
       alert(
         "For now, merging cubes only supports one join by dimension. Please select only one dimension to join by."
@@ -588,7 +590,7 @@ export const DatasetDialog = ({
               />
               <Select
                 multiple
-                value={(searchDimensionsSelected ?? []).map((x) => x.iri)}
+                value={(selectedSearchDimensions ?? []).map((x) => x.iri)}
                 onChange={handleChangeSearchDimensions}
                 input={
                   <OutlinedInput
@@ -639,8 +641,8 @@ export const DatasetDialog = ({
                   >
                     <Checkbox
                       checked={
-                        searchDimensionsSelected &&
-                        !!searchDimensionsSelected.find((x) => x.iri === sd.iri)
+                        selectedSearchDimensions &&
+                        !!selectedSearchDimensions.find((x) => x.iri === sd.iri)
                       }
                     />
                     <ListItemText
@@ -720,7 +722,7 @@ export const DatasetDialog = ({
             handleClose({}, "escapeKeyDown");
           }}
           onClickBack={() => setOtherCube(undefined)}
-          searchDimensionsSelected={searchDimensionsSelected ?? []}
+          searchDimensionsSelected={selectedSearchDimensions ?? []}
         />
       ) : null}
     </Dialog>
