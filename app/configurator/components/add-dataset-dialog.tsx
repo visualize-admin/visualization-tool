@@ -451,24 +451,35 @@ const inferJoinBy = (
   rightCube: PartialSearchCube
 ) => {
   const possibleJoinBys = leftOptions
-    .map((o) => {
-      if (o.type === "temporal") {
-        return {
-          left: o.iri,
-          right: rightComponents.dimensions.find(
-            (d) =>
-              isTemporalDimensionWithTimeUnit(d) && d.timeUnit === o.timeUnit
-          )?.iri,
-        };
-      } else {
-        return {
-          left: o.iri,
-          right: rightCube?.dimensions?.find((d) =>
-            d.termsets.some((t) => o.termsets.map((t) => t.iri).includes(t.iri))
-          )?.iri,
-        };
-      }
+    .map((leftOption) => {
+      const type = leftOption.type;
       // For every selected dimension, we need to find the corresponding dimension on the other cube
+      switch (type) {
+        case "temporal":
+          return {
+            left: leftOption.iri,
+            right: rightCube?.dimensions?.find(
+              (d) =>
+                // TODO Find out why this is necessary
+                d.timeUnit ===
+                `http://www.w3.org/2006/time#unit${leftOption.timeUnit}`
+            )?.iri,
+          };
+        case "shared":
+          return {
+            left: leftOption.iri,
+            right: rightCube?.dimensions?.find((d) =>
+              d.termsets.some((t) =>
+                leftOption.termsets.map((t) => t.iri).includes(t.iri)
+              )
+            )?.iri,
+          };
+        default:
+          return exhaustiveCheck(
+            type,
+            `Unknown search cube join by dimension ${type}`
+          );
+      }
     })
     .filter((x): x is { left: string; right: string } => !!(x.left && x.right));
 
