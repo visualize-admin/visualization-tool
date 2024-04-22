@@ -29,9 +29,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     backgroundColor: theme.palette.warning.light,
   },
   termsetType: {
-    border: "1px solid",
-    borderColor: theme.palette.warning.light,
-    backgroundColor: "white",
+    backgroundColor: theme.palette.grey[200],
   },
   organizationType: {
     backgroundColor: theme.palette.primary.light,

@@ -16,6 +16,7 @@ import {
   ListItemText,
   MenuItem,
   OutlinedInput,
+  Paper,
   Select,
   SelectChangeEvent,
   Table,
@@ -26,10 +27,14 @@ import {
   TextField,
   Typography,
   dialogActionsClasses,
+  dialogClasses,
   dialogContentClasses,
+  dialogTitleClasses,
   useEventCallback,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import clsx from "clsx";
+import { motion } from "framer-motion";
 import keyBy from "lodash/keyBy";
 import uniq from "lodash/uniq";
 import uniqBy from "lodash/uniqBy";
@@ -86,6 +91,24 @@ const DialogCloseButton = (props: IconButtonProps) => {
 const useStyles = makeStyles(() => ({
   addButton: {
     transition: "opacity 0.25s ease",
+  },
+  dialog: {
+    "--dialog-padding": "60px",
+    [`& .${dialogTitleClasses.root}`]: {
+      padding: "var(--dialog-padding)",
+      paddingBottom: 0,
+    },
+    [`& .${dialogContentClasses.root}`]: {
+      padding: "var(--dialog-padding)",
+      paddingTop: "2rem",
+    },
+    [`& .${dialogActionsClasses.root}`]: {
+      padding: "var(--dialog-padding)",
+      paddingTop: 0,
+    },
+    [`& .${dialogClasses.paper}`]: {
+      minHeight: "calc(100vh - calc(30px * 2))",
+    },
   },
 }));
 
@@ -318,6 +341,8 @@ export const PreviewDataTable: React.FC<{
   );
 };
 
+const MotionPaper = motion(Paper);
+
 export const DatasetDialog = ({
   state,
   ...props
@@ -432,7 +457,7 @@ export const DatasetDialog = ({
   );
 
   const isSearchQueryPaused =
-    !cubesComponentQuery.data || !selectedSearchDimensions;
+    !cubesComponentQuery.data || !selectedSearchDimensions?.length;
   const [searchQuery] = useSearchCubesQuery({
     variables: {
       sourceType: state.dataSource.type,
@@ -531,24 +556,14 @@ export const DatasetDialog = ({
       setOtherCube(otherCube);
     }
   };
+
   return (
     <Dialog
       {...props}
       onClose={handleClose}
       maxWidth="lg"
-      fullWidth={!otherCube}
-      sx={{
-        [`& .${dialogContentClasses.root}`]: {
-          padding: "60px",
-        },
-        [`& .${dialogActionsClasses.root}`]: {
-          padding: "60px",
-          paddingTop: 0,
-        },
-      }}
-      PaperProps={{
-        sx: { minHeight: otherCube ? "auto" : "calc(100vh - calc(30px * 2))" },
-      }}
+      fullWidth
+      className={clsx(classes.dialog, props.className)}
     >
       <DialogCloseButton onClick={(ev) => handleClose(ev, "escapeKeyDown")} />
       {otherCube ? null : (
@@ -646,16 +661,25 @@ export const DatasetDialog = ({
                       }
                     />
                     <ListItemText
-                      primary={sd.label}
+                      primary={<Tag type="dimension">{sd.label}</Tag>}
                       secondary={
                         sd.type === "temporal" ? (
                           <Tag type="termset">{sd.timeUnit}</Tag>
                         ) : (
-                          sd.termsets.map((t) => (
-                            <Tag key={t.iri} type="termset">
-                              {t.label}
-                            </Tag>
-                          ))
+                          <>
+                            <Typography
+                              variant="caption"
+                              color="grey.600"
+                              mr={2}
+                            >
+                              <Trans id="dataset-result.dimension-termset-contains" />
+                            </Typography>
+                            {sd.termsets.map((t) => (
+                              <Tag key={t.iri} type="termset">
+                                {t.label}
+                              </Tag>
+                            ))}
+                          </>
                         )
                       }
                     />
@@ -666,39 +690,48 @@ export const DatasetDialog = ({
                 {t({ id: "dataset.search.label" })}
               </Button>
             </Box>
-            <DatasetResults
-              cubes={searchCubes ?? []}
-              fetching={
-                searchQuery.fetching ||
-                cubeComponentTermsets.fetching ||
-                cubesComponentQuery.fetching
-              }
-              error={searchQuery.error}
-              datasetResultProps={({ cube }) => ({
-                disableTitleLink: true,
-                showDimensions: true,
-                showTags: true,
 
-                rowActions: () => {
-                  return (
-                    <Box display="flex" justifyContent="flex-end">
-                      <LoadingButton
-                        loading={fetching && otherIri === cube.iri}
-                        size="small"
-                        variant="outlined"
-                        className={classes.addButton}
-                        onClick={() => handleClickOtherCube(cube)}
-                      >
-                        {t({
-                          id: "dataset.search.add-dataset",
-                          message: "Add dataset",
-                        })}
-                      </LoadingButton>
-                    </Box>
-                  );
-                },
-              })}
-            />
+            {selectedSearchDimensions?.length === 0 ? (
+              <Typography variant="body1">
+                <Trans id="dataset.search.at-least-one-compatible-dimension-selected">
+                  At least one compatible dimension must be selected.
+                </Trans>
+              </Typography>
+            ) : (
+              <DatasetResults
+                cubes={searchCubes ?? []}
+                fetching={
+                  searchQuery.fetching ||
+                  cubeComponentTermsets.fetching ||
+                  cubesComponentQuery.fetching
+                }
+                error={searchQuery.error}
+                datasetResultProps={({ cube }) => ({
+                  disableTitleLink: true,
+                  showDimensions: true,
+                  showTags: true,
+
+                  rowActions: () => {
+                    return (
+                      <Box display="flex" justifyContent="flex-end">
+                        <LoadingButton
+                          loading={fetching && otherIri === cube.iri}
+                          size="small"
+                          variant="outlined"
+                          className={classes.addButton}
+                          onClick={() => handleClickOtherCube(cube)}
+                        >
+                          {t({
+                            id: "dataset.search.add-dataset",
+                            message: "Add dataset",
+                          })}
+                        </LoadingButton>
+                      </Box>
+                    );
+                  },
+                })}
+              />
+            )}
           </DialogContent>
         </>
       )}
