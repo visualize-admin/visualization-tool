@@ -196,8 +196,9 @@ export const PreviewDataTable: React.FC<{
   fetchingComponents,
 }) => {
   const locale = useLocale();
+  const isQueryPaused = !otherCubeComponents || !currentComponents;
   const [observations] = useDataCubesObservationsQuery({
-    pause: !otherCubeComponents || !currentComponents,
+    pause: isQueryPaused,
     variables: {
       locale,
       sourceType: dataSource.type,
