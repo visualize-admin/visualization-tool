@@ -7,8 +7,7 @@ import {
   useDroppable,
 } from "@dnd-kit/core";
 import { Trans } from "@lingui/macro";
-import { Box, Theme } from "@mui/material";
-import { makeStyles } from "@mui/styles";
+import { Box } from "@mui/material";
 import Head from "next/head";
 import React from "react";
 
@@ -28,8 +27,9 @@ import {
   ChartTablePreviewProvider,
   useChartTablePreview,
 } from "@/components/chart-table-preview";
+import { useChartStyles } from "@/components/chart-utils";
 import { ChartWithFilters } from "@/components/chart-with-filters";
-import DebugPanel, { shouldShowDebugPanel } from "@/components/debug-panel";
+import DebugPanel from "@/components/debug-panel";
 import Flex from "@/components/flex";
 import { Checkbox } from "@/components/form";
 import { HintYellow } from "@/components/hint";
@@ -301,19 +301,6 @@ const SingleURLsPreview = (props: SingleURLsPreviewProps) => {
   );
 };
 
-const useStyles = makeStyles<Theme>((theme) => ({
-  root: {
-    display: "grid",
-    gridTemplateRows: "subgrid",
-    gridRow: shouldShowDebugPanel() ? "span 6" : "span 5",
-    padding: theme.spacing(6),
-    backgroundColor: theme.palette.background.paper,
-    border: "1px solid",
-    borderColor: theme.palette.divider,
-    color: theme.palette.grey[800],
-  },
-}));
-
 type ChartPreviewInnerProps = ChartPreviewProps & {
   chartKey?: string | null;
   actionElementSlot?: React.ReactNode;
@@ -327,7 +314,7 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
   const configuring = isConfiguring(state);
   const chartConfig = getChartConfig(state, chartKey);
   const locale = useLocale();
-  const classes = useStyles();
+  const chartClasses = useChartStyles();
   const commonQueryVariables = {
     sourceType: dataSource.type,
     sourceUrl: dataSource.url,
@@ -369,7 +356,7 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
   }, [dimensions, measures]);
 
   return (
-    <Box className={classes.root}>
+    <Box className={chartClasses.root}>
       <ChartErrorBoundary resetKeys={[state]}>
         {/* FIXME: adapt to design */}
         {metadata?.dataCubesMetadata.some(
