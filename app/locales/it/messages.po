@@ -1092,6 +1092,14 @@ msgstr "Cerca"
 msgid "dataset.search.placeholder"
 msgstr "Nome, organizzazione, parola chiave..."
 
+#: app/configurator/components/add-dataset-dialog.tsx
+msgid "dataset.search.search-options.more-2-options-selected"
+msgstr "altre {0}"
+
+#: app/configurator/components/add-dataset-dialog.tsx
+msgid "dataset.search.search-options.no-options-selected"
+msgstr "Nessuna opzione selezionata"
+
 #: app/browser/dataset-browse.tsx
 msgid "dataset.sortby"
 msgstr "Ordina per"
