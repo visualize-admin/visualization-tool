@@ -165,27 +165,28 @@ const mkScoresQuery = (
 
   CONSTRUCT {
     ?iri a cube:Cube ;
-         cube:observationConstraint ?shape;
-         dcat:theme ?themeIri;
-         dcterms:publisher ?publisher ;
-         schema:about ?subthemeIri;
-         schema:creativeWorkStatus ?status ;
-         schema:creativeWorkStatus <https://ld.admin.ch/vocabulary/CreativeWorkStatus/Published> ;
-         schema:creator ?creatorIri ;
-         schema:datePublished ?datePublished;
-         schema:description ?description ;
-         schema:name ?title ;
-         schema:workExample <https://ld.admin.ch/application/visualize> ;
-         visualize:hasDimension ?dimensionIri.
+      cube:observationConstraint ?shape;
+      dcat:theme ?themeIri;
+      dcterms:publisher ?publisher ;
+      schema:about ?subthemeIri;
+      schema:creativeWorkStatus ?status ;
+      schema:creativeWorkStatus <https://ld.admin.ch/vocabulary/CreativeWorkStatus/Published> ;
+      schema:creator ?creatorIri ;
+      schema:datePublished ?datePublished;
+      schema:description ?description ;
+      schema:name ?title ;
+      schema:workExample <https://ld.admin.ch/application/visualize> ;
+      visualize:hasDimension ?dimensionIri.
 
-      ?dimensionIri visualize:hasTermset ?termsetIri .
-      ?dimensionIri visualize:hasTimeUnit ?unitType .
-
-      ?dimensionIri schema:name ?dimensionLabel .
-      ?termsetIri schema:name ?termsetLabel .
-      ?creatorIri schema:name ?creatorLabel .
-      ?themeIri schema:name ?themeLabel .
-      ?subthemeIri schema:inDefinedTermSet ?subthemeTermset ;
+    ?dimensionIri
+      visualize:hasTermset ?termsetIri ;
+      visualize:hasTimeUnit ?unitType ;
+      schema:name ?dimensionLabel .
+      
+    ?termsetIri schema:name ?termsetLabel .
+    ?creatorIri schema:name ?creatorLabel .
+    ?themeIri schema:name ?themeLabel .
+    ?subthemeIri schema:inDefinedTermSet ?subthemeTermset ;
                   schema:name ?subthemeLabel .
   }
     WHERE {
@@ -208,9 +209,11 @@ const mkScoresQuery = (
           return `
             ?iri cube:observationConstraint ?shape .
             ?shape sh:property ?dimension .
-            ?dimension sh:path ?dimensionIri.
-            ?dimension cubeMeta:dataKind/time:unitType ?unitType.
-            ?dimension cubeMeta:dataKind/time:unitType <${unitNode}>.
+            ?dimension
+              sh:path ?dimensionIri ;
+              cubeMeta:dataKind/time:unitType ?unitType ;
+              cubeMeta:dataKind/time:unitType <${unitNode}>.
+
             ${buildLocalizedSubQuery(
               "dimension",
               "schema:name",
