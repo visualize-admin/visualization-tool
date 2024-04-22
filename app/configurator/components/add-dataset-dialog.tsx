@@ -16,7 +16,6 @@ import {
   ListItemText,
   MenuItem,
   OutlinedInput,
-  Paper,
   Select,
   SelectChangeEvent,
   Table,
@@ -34,7 +33,6 @@ import {
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
-import { motion } from "framer-motion";
 import keyBy from "lodash/keyBy";
 import uniq from "lodash/uniq";
 import uniqBy from "lodash/uniqBy";
@@ -341,8 +339,6 @@ export const PreviewDataTable: React.FC<{
     </>
   );
 };
-
-const MotionPaper = motion(Paper);
 
 export const DatasetDialog = ({
   state,
