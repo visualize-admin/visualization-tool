@@ -61,8 +61,13 @@ msgid "browse.datasets.description"
 msgstr "Esplora i set di dati forniti dal LINDAS Linked Data Service filtrando per categorie o organizzazioni oppure cercando direttamente per parole chiave specifiche. Clicca su un set di dati per vedere informazioni più dettagliate e iniziare a creare le tue visualizzazioni."
 
 #: app/components/metadata-panel.tsx
+#: app/configurator/components/add-dataset-dialog.tsx
 msgid "button.back"
 msgstr "Torna indietro"
+
+#: app/configurator/components/add-dataset-dialog.tsx
+msgid "button.confirm"
+msgstr "Confermare"
 
 #: app/pages/v/[chartId].tsx
 msgid "button.copy.visualization"
@@ -1091,6 +1096,14 @@ msgstr "Cerca"
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.placeholder"
 msgstr "Nome, organizzazione, parola chiave..."
+
+#: app/configurator/components/add-dataset-dialog.tsx
+msgid "dataset.search.preview.description"
+msgstr "Examinez l’aperçu des données des nouvelles dimensions disponibles puis continuez à modifier la visualisation."
+
+#: app/configurator/components/add-dataset-dialog.tsx
+msgid "dataset.search.preview.title"
+msgstr "Preview della tabella dei dati"
 
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.search-options.more-2-options-selected"

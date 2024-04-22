@@ -64,6 +64,10 @@ msgstr "Explorez les jeux de données liés fournis par LINDAS, en filtrant par 
 msgid "button.back"
 msgstr "Précédent"
 
+#: app/configurator/components/add-dataset-dialog.tsx
+msgid "button.confirm"
+msgstr "Confirmer"
+
 #: app/pages/v/[chartId].tsx
 msgid "button.copy.visualization"
 msgstr "Copier et éditer cette visualisation"
@@ -1091,6 +1095,14 @@ msgstr "Chercher"
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.placeholder"
 msgstr "Nom, organisation, mots clés..."
+
+#: app/configurator/components/add-dataset-dialog.tsx
+msgid "dataset.search.preview.description"
+msgstr "Examinez l’aperçu des données des nouvelles dimensions disponibles puis continuez à modifier la visualisation."
+
+#: app/configurator/components/add-dataset-dialog.tsx
+msgid "dataset.search.preview.title"
+msgstr "Aperçu des données"
 
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.search-options.more-2-options-selected"
