@@ -305,12 +305,12 @@ const useStyles = makeStyles<Theme>((theme) => ({
   root: {
     display: "grid",
     gridTemplateRows: "subgrid",
-    gridRow: shouldShowDebugPanel() ? "span 5" : "span 4",
-    backgroundColor: theme.palette.background.paper,
-    color: theme.palette.grey[800],
+    gridRow: shouldShowDebugPanel() ? "span 6" : "span 5",
     padding: theme.spacing(6),
+    backgroundColor: theme.palette.background.paper,
     border: "1px solid",
     borderColor: theme.palette.divider,
+    color: theme.palette.grey[800],
   },
 }));
 
@@ -459,11 +459,15 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
                   // title and the chart (subgrid layout)
                   <span />
                 )}
-                {chartConfig.interactiveFiltersConfig?.dataFilters.active && (
+                {chartConfig.interactiveFiltersConfig?.dataFilters.active ? (
                   <ChartDataFilters
                     dataSource={dataSource}
                     chartConfig={chartConfig}
                   />
+                ) : (
+                  // We need to have a span here to keep the space between the
+                  // description and the chart (subgrid layout)
+                  <span />
                 )}
                 <div
                   ref={containerRef}
