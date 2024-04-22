@@ -30,10 +30,12 @@ const combinations: {
   id: number;
   name: string;
   cubes: ChartConfig["cubes"];
+  sourceUrl: string;
 }[] = [
   {
     id: 1,
     name: "Photovoltaik + Hydropowerplants",
+    sourceUrl: "https://int.lindas.admin.ch/query",
     cubes: [
       {
         iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/14",
@@ -66,6 +68,7 @@ const combinations: {
   {
     id: 2,
     name: "Photovoltaik + Photovoltaik GEB",
+    sourceUrl: "https://int.lindas.admin.ch/query",
     cubes: [
       {
         iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/14",
@@ -94,6 +97,7 @@ const combinations: {
   {
     id: 3,
     name: "NFI Cube + Electrical consumption",
+    sourceUrl: "https://int.lindas.admin.ch/query",
     cubes: [
       {
         iri: "https://environment.ld.admin.ch/foen/nfi/nfi_T-changes/cube/2024-1",
@@ -142,6 +146,24 @@ const combinations: {
       },
     ],
   },
+  {
+    id: 4,
+    name: "NFI Change + Photovoltaik",
+    sourceUrl: "https://lindas.admin.ch/query",
+    cubes: [
+      {
+        iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9",
+        joinBy:
+          "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton",
+        filters: {},
+      },
+      {
+        iri: "https://environment.ld.admin.ch/foen/nfi/nfi_T-changes/cube/2024-1",
+        joinBy: "https://environment.ld.admin.ch/foen/nfi/unitOfReference",
+        filters: {},
+      },
+    ],
+  },
 ];
 const useStyles = makeStyles((theme: Theme) => ({
   row: {
@@ -154,7 +176,7 @@ export const JoinBy = () => {
   const commonQueryVariables = {
     locale: "en",
     sourceType: "sparql",
-    sourceUrl: "https://int.lindas.admin.ch/query",
+    sourceUrl: combination.sourceUrl,
   };
 
   const [{ data: componentsData, fetching: fetchingComponents }] =
@@ -221,7 +243,7 @@ export const JoinBy = () => {
         >
           {combinations.map((combination) => (
             <MenuItem key={combination.id} value={combination.id}>
-              {combination.name}
+              {combination.name} <small>({combination.sourceUrl})</small>
             </MenuItem>
           ))}
         </Select>
