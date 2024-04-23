@@ -9,8 +9,13 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
+Nothing yet.
+
+# [4.2.0] - 2024-04-23
+
 - Features
   - Added support for using dynamic most recent date in temporal X axis
+  - Introduced merging of cubes by non-temporal dimensions and updated modal to choose dataset to merge (behind a flag\_\_add-dataset=true)
 - Fixes
   - Temporal dimension X axis filtering in case of being a join by dimension
   - Sidebar content no longer gets unmounted when data is being re-fetched (e.g. when interacting with time slider in temporal X axes)
