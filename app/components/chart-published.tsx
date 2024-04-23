@@ -1,6 +1,7 @@
 import { Trans } from "@lingui/macro";
 import { Box, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import clsx from "clsx";
 import React, { useEffect, useMemo, useRef } from "react";
 import { useStore } from "zustand";
 
@@ -20,8 +21,8 @@ import {
   ChartTablePreviewProvider,
   useChartTablePreview,
 } from "@/components/chart-table-preview";
+import { useChartStyles } from "@/components/chart-utils";
 import { ChartWithFilters } from "@/components/chart-with-filters";
-import { shouldShowDebugPanel } from "@/components/debug-panel";
 import Flex from "@/components/flex";
 import { HintBlue, HintRed, HintYellow } from "@/components/hint";
 import { MetadataPanel } from "@/components/metadata-panel";
@@ -141,22 +142,17 @@ export const ChartPublished = (props: ChartPublishedProps) => {
   );
 };
 
-const useStyles = makeStyles<Theme, { shrink: boolean }>((theme) => ({
-  root: {
-    position: "relative",
-    display: "grid",
-    gridTemplateRows: "subgrid",
-    gridRow: shouldShowDebugPanel() ? "span 6" : "span 5",
-    backgroundColor: theme.palette.background.paper,
-    border: "1px solid",
-    borderColor: theme.palette.divider,
-    padding: theme.spacing(6),
-    paddingLeft: ({ shrink }) =>
-      `calc(${theme.spacing(5)} + ${shrink ? DRAWER_WIDTH : 0}px)`,
-    color: theme.palette.grey[800],
-    transition: "padding 0.25s ease",
-  },
-}));
+const usePublishedChartStyles = makeStyles<Theme, { shrink: boolean }>(
+  (theme) => ({
+    root: {
+      // Needed for the metadata panel to be contained inside the root.
+      position: "relative",
+      paddingLeft: ({ shrink }) =>
+        `calc(${theme.spacing(5)} + ${shrink ? DRAWER_WIDTH : 0}px)`,
+      transition: "padding 0.25s ease",
+    },
+  })
+);
 
 type ChartPublishInnerProps = {
   dataSource: DataSource | undefined;
@@ -203,7 +199,8 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
     return () => unsubscribe();
   });
 
-  const classes = useStyles({
+  const chartClasses = useChartStyles();
+  const publishedChartClasses = usePublishedChartStyles({
     shrink: shouldShrink,
   });
   const locale = useLocale();
@@ -246,7 +243,10 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
 
   return (
     <MetadataPanelStoreContext.Provider value={metadataPanelStore}>
-      <Box className={classes.root} ref={rootRef}>
+      <Box
+        className={clsx(chartClasses.root, publishedChartClasses.root)}
+        ref={rootRef}
+      >
         <ChartErrorBoundary resetKeys={[chartConfig]}>
           {metadata?.some(
             (d) => d.publicationStatus === DataCubePublicationStatus.Draft
@@ -329,7 +329,7 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
                 />
               ) : (
                 // We need to have a span here to keep the space between the
-                // title and the chart (subgrid layout)
+                // description and the chart (subgrid layout)
                 <span />
               )}
               <div

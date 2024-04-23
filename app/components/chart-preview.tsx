@@ -7,8 +7,7 @@ import {
   useDroppable,
 } from "@dnd-kit/core";
 import { Trans } from "@lingui/macro";
-import { Box, Theme } from "@mui/material";
-import { makeStyles } from "@mui/styles";
+import { Box } from "@mui/material";
 import Head from "next/head";
 import React from "react";
 
@@ -28,8 +27,9 @@ import {
   ChartTablePreviewProvider,
   useChartTablePreview,
 } from "@/components/chart-table-preview";
+import { useChartStyles } from "@/components/chart-utils";
 import { ChartWithFilters } from "@/components/chart-with-filters";
-import DebugPanel, { shouldShowDebugPanel } from "@/components/debug-panel";
+import DebugPanel from "@/components/debug-panel";
 import Flex from "@/components/flex";
 import { Checkbox } from "@/components/form";
 import { HintYellow } from "@/components/hint";
@@ -301,19 +301,6 @@ const SingleURLsPreview = (props: SingleURLsPreviewProps) => {
   );
 };
 
-const useStyles = makeStyles<Theme>((theme) => ({
-  root: {
-    display: "grid",
-    gridTemplateRows: "subgrid",
-    gridRow: shouldShowDebugPanel() ? "span 5" : "span 4",
-    backgroundColor: theme.palette.background.paper,
-    color: theme.palette.grey[800],
-    padding: theme.spacing(6),
-    border: "1px solid",
-    borderColor: theme.palette.divider,
-  },
-}));
-
 type ChartPreviewInnerProps = ChartPreviewProps & {
   chartKey?: string | null;
   actionElementSlot?: React.ReactNode;
@@ -327,7 +314,7 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
   const configuring = isConfiguring(state);
   const chartConfig = getChartConfig(state, chartKey);
   const locale = useLocale();
-  const classes = useStyles();
+  const chartClasses = useChartStyles();
   const commonQueryVariables = {
     sourceType: dataSource.type,
     sourceUrl: dataSource.url,
@@ -369,7 +356,7 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
   }, [dimensions, measures]);
 
   return (
-    <Box className={classes.root}>
+    <Box className={chartClasses.root}>
       <ChartErrorBoundary resetKeys={[state]}>
         {/* FIXME: adapt to design */}
         {metadata?.dataCubesMetadata.some(
@@ -459,11 +446,15 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
                   // title and the chart (subgrid layout)
                   <span />
                 )}
-                {chartConfig.interactiveFiltersConfig?.dataFilters.active && (
+                {chartConfig.interactiveFiltersConfig?.dataFilters.active ? (
                   <ChartDataFilters
                     dataSource={dataSource}
                     chartConfig={chartConfig}
                   />
+                ) : (
+                  // We need to have a span here to keep the space between the
+                  // description and the chart (subgrid layout)
+                  <span />
                 )}
                 <div
                   ref={containerRef}
