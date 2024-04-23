@@ -1,4 +1,5 @@
 import React from "react";
+import { Client, useClient } from "urql";
 
 import {
   DataCubeComponents,
@@ -6,7 +7,6 @@ import {
   DataCubesObservations,
 } from "@/domain/data";
 
-import { client } from "./client";
 import { joinDimensions, mergeObservations } from "./hook-utils";
 import {
   DataCubeComponentFilter,
@@ -38,6 +38,7 @@ export const makeUseQuery =
     V,
   >(
     executeQueryFn: (
+      client: Client,
       options: T["variables"],
       onFetching?: () => void
     ) => Promise<{
@@ -47,6 +48,7 @@ export const makeUseQuery =
     }>
   ) =>
   (options: T & { keepPreviousData?: boolean }) => {
+    const client = useClient();
     const [result, setResult] = React.useState<{
       queryKey: string | null;
       data?: V | null;
@@ -64,7 +66,7 @@ export const makeUseQuery =
             prev.queryKey === queryKey || keepPreviousData ? prev.data : null,
           queryKey,
         }));
-        const result = await executeQueryFn(options.variables, () => {
+        const result = await executeQueryFn(client, options.variables, () => {
           setResult((prev) => ({
             ...prev,
             fetching: true,
@@ -100,6 +102,7 @@ type DataCubesMetadataData = {
 };
 
 export const executeDataCubesMetadataQuery = async (
+  client: Client,
   variables: DataCubesMetadataOptions["variables"],
   /** Callback triggered when data fetching starts (cache miss). */
   onFetching?: () => void
@@ -158,6 +161,7 @@ type DataCubesComponentsData = {
 };
 
 export const executeDataCubesComponentsQuery = async (
+  client: Client,
   variables: DataCubesComponentsOptions["variables"],
   /** Callback triggered when data fetching starts (cache miss). */
   onFetching?: () => void
@@ -260,6 +264,7 @@ type DataCubesObservationsData = {
 };
 
 export const executeDataCubesObservationsQuery = async (
+  client: Client,
   variables: DataCubesObservationsOptions["variables"],
   /** Callback triggered when data fetching starts (cache miss). */
   onFetching?: () => void

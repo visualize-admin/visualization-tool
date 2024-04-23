@@ -1,5 +1,7 @@
 import { act, render, waitFor } from "@testing-library/react";
 import { renderHook } from "@testing-library/react-hooks";
+import { useMemo } from "react";
+import { Client, Provider } from "urql";
 
 import { useDataCubesComponentsQueryVariables } from "@/graphql/hooks.mock";
 import { Response } from "@/test/utils";
@@ -21,7 +23,12 @@ describe("makeUseQuery", () => {
 
   const TestComponent = ({ variables }: { variables: any }) => {
     const [result] = useMockQuery({ variables });
-    return <div data-testid="result">{result.data ?? "loading"}</div>;
+    const client = useMemo(() => new Client({ url: "http://example.com" }), []);
+    return (
+      <Provider value={client}>
+        <div data-testid="result">{result.data ?? "loading"}</div>
+      </Provider>
+    );
   };
 
   it("should return eventually the result of the executeQuery callback", async () => {

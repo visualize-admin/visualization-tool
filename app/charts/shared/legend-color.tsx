@@ -374,13 +374,15 @@ export const LegendItem = (props: LegendItemProps) => {
 
   return interactive && onToggle ? (
     <MaybeTooltip
-      text={
-        disabled
-          ? t({
+      title={
+        disabled ? (
+          <Typography variant="body2">
+            {t({
               id: "controls.filters.interactive.color.min-1-filter",
               message: "At least one filter must be selected.",
-            })
-          : undefined
+            })}
+          </Typography>
+        ) : undefined
       }
     >
       <div>

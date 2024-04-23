@@ -99,6 +99,12 @@ export type Termset = {
   label: string;
 };
 
+export type ComponentTermsets = {
+  iri: string;
+  label: string;
+  termsets: Termset[];
+};
+
 type ComponentRenderingConfig = {
   enableAnimation: boolean;
   enableCustomSort: boolean;
@@ -398,9 +404,14 @@ export type SearchCube = {
     iri: string;
     label: string;
   }[];
-  termsets: {
+  dimensions?: {
     iri: string;
     label: string;
+    timeUnit?: string;
+    termsets: {
+      iri: string;
+      label: string;
+    }[];
   }[];
 };
 
@@ -571,6 +582,12 @@ export const isTemporalOrdinalDimension = (
   dimension?: Component | null
 ): dimension is TemporalOrdinalDimension => {
   return dimension?.__typename === "TemporalOrdinalDimension";
+};
+
+export const isTemporalDimensionWithTimeUnit = (
+  dimension?: Component | null
+): dimension is Extract<Dimension, { timeUnit: any }> => {
+  return !!dimension && "timeUnit" in dimension;
 };
 
 export const isStandardErrorResolvedDimension = (dim: ResolvedDimension) => {

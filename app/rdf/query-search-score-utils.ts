@@ -1,19 +1,37 @@
-import { ParsedRawSearchCube } from "./query-search";
+import { SearchCube } from "@/domain/data";
 
 export const parseFloatZeroed = (s: string) => {
   const n = parseFloat(s);
   return Number.isNaN(n) ? 0 : n;
 };
 
-export const weights = {
-  title: 5,
-  description: 2,
-  creatorLabel: 1,
-  publisher: 1,
-  themeLabels: 1,
-  subthemeLabels: 1,
+export const fields = {
+  title: {
+    weight: 5,
+    fn: (d: SearchCube) => d.title,
+  },
+  description: {
+    weight: 2,
+    fn: (d: SearchCube) => d.description,
+  },
+  creatorLabel: {
+    weight: 1,
+    fn: (d: SearchCube) => d.creator?.label ?? "",
+  },
+  publisher: {
+    weight: 1,
+    fn: () => "",
+  },
+  themeLabels: {
+    weight: 1,
+    fn: (d: SearchCube) => d.themes.map((d) => d.label).join(" "),
+  },
+  subthemeLabels: {
+    weight: 1,
+    fn: (d: SearchCube) => d.subthemes.map((d) => d.label).join(" "),
+  },
 };
-export const exactMatchPoints = weights.title * 2;
+export const exactMatchPoints = fields.title.weight * 2;
 
 const isStopword = (d: string) => {
   return d.length < 3 && d.toLowerCase() === d;
@@ -23,7 +41,7 @@ const isStopword = (d: string) => {
  * From a list of cube rows containing weighted fields
  */
 export const computeScores = (
-  cubes: ParsedRawSearchCube[],
+  cubes: SearchCube[],
   { query }: { query?: string | null }
 ) => {
   const infoPerCube: Record<string, { score: number }> = {};
@@ -33,11 +51,11 @@ export const computeScores = (
       // If a cube has been found, it has at least a score of 1.
       let score = 1;
 
-      for (const [field, weight] of Object.entries(weights) as [
-        keyof typeof weights,
-        number
+      for (const [_field, { weight, fn }] of Object.entries(fields) as [
+        keyof typeof fields,
+        { weight: number; fn: (cube: SearchCube) => string },
       ][]) {
-        const value = cube[field]?.toLowerCase();
+        const value = fn(cube)?.toLowerCase();
 
         if (!value) {
           continue;

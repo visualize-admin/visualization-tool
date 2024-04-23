@@ -17,8 +17,7 @@ msgstr ""
 msgid "Add filter"
 msgstr "Ajouter un filtre"
 
-#: app/configurator/components/chart-configurator.tsx
-#: app/configurator/components/chart-controls/drag-and-drop-tab.tsx
+#: app/components/move-drag-button.tsx
 msgid "Drag filters to reorganize"
 msgstr "Faites glisser les filtres pour les réorganiser"
 
@@ -64,6 +63,10 @@ msgstr "Explorez les jeux de données liés fournis par LINDAS, en filtrant par 
 #: app/components/metadata-panel.tsx
 msgid "button.back"
 msgstr "Précédent"
+
+#: app/configurator/components/add-dataset-dialog.tsx
+msgid "button.confirm"
+msgstr "Confirmer"
 
 #: app/pages/v/[chartId].tsx
 msgid "button.copy.visualization"
@@ -141,6 +144,10 @@ msgstr "Gardez à l'esprit que la mise à jour de cette visualisation affectera 
 #: app/configurator/components/dataset-control-section.tsx
 msgid "chart.datasets.add"
 msgstr "Ajouter"
+
+#: app/configurator/components/add-dataset-dialog.tsx
+msgid "chart.datasets.add-dataset-dialog.description"
+msgstr "Vous ne pouvez combiner que des ensembles de données qui partagent des dimensions avec la même unité et résolution. Par défaut, les dimensions correspondant au graphique actuel sont sélectionnées."
 
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "chart.datasets.add-dataset-dialog.title"
@@ -1000,6 +1007,14 @@ msgstr "Revenir aux jeux de données"
 msgid "dataset-preview.keywords"
 msgstr "Mots clés"
 
+#: app/browser/dataset-browse.tsx
+msgid "dataset-result.dimension-termset-contains"
+msgstr "Contient des valeurs de"
+
+#: app/browser/dataset-browse.tsx
+msgid "dataset-result.shared-dimensions"
+msgstr "Dimensions partagées"
+
 #: app/components/chart-footnotes.tsx
 msgid "dataset.footnotes.dataset"
 msgstr "Jeu de données"
@@ -1080,6 +1095,22 @@ msgstr "Chercher"
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.placeholder"
 msgstr "Nom, organisation, mots clés..."
+
+#: app/configurator/components/add-dataset-dialog.tsx
+msgid "dataset.search.preview.description"
+msgstr "Examinez l’aperçu des données des nouvelles dimensions disponibles puis continuez à modifier la visualisation."
+
+#: app/configurator/components/add-dataset-dialog.tsx
+msgid "dataset.search.preview.title"
+msgstr "Aperçu des données"
+
+#: app/configurator/components/add-dataset-dialog.tsx
+msgid "dataset.search.search-options.more-2-options-selected"
+msgstr "{0} autres"
+
+#: app/configurator/components/add-dataset-dialog.tsx
+msgid "dataset.search.search-options.no-options-selected"
+msgstr "Aucune option sélectionnée"
 
 #: app/browser/dataset-browse.tsx
 msgid "dataset.sortby"

@@ -27,6 +27,7 @@ generates:
         DataCubeObservations: "../domain/data#DataCubeObservations"
         DataCubePreview: "../domain/data#DataCubePreview"
         Termset: "../domain/data#Termset"
+        ComponentTermsets: "../domain/data#ComponentTermsets"
         GeoShapes: "../domain/data#GeoShapes"
   app/graphql/resolver-types.ts:
     plugins:
@@ -49,6 +50,8 @@ generates:
         DataCubeMetadata: "../domain/data#DataCubeMetadata"
         DataCubeObservations: "../domain/data#DataCubeObservations"
         DataCubePreview: "../domain/data#DataCubePreview"
+        Termset: "../domain/data#Termset"
+        ComponentTermsets: "../domain/data#ComponentTermsets"
         GeoShapes: "../domain/data#GeoShapes"
       mappers:
         DataCube: "./shared-types#ResolvedDataCube"

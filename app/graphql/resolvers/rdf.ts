@@ -337,8 +337,8 @@ export const dataCubeComponents: NonNullable<
   };
 };
 
-export const dataCubeTermsets: NonNullable<
-  QueryResolvers["dataCubeTermsets"]
+export const dataCubeComponentTermsets: NonNullable<
+  QueryResolvers["dataCubeComponentTermsets"]
 > = async (_, { locale, cubeFilter }, { setup }, info) => {
   const { sparqlClient } = await setup(info);
   const { iri, latest = true } = cubeFilter;
@@ -346,7 +346,7 @@ export const dataCubeTermsets: NonNullable<
     !!latest
   );
 
-  return await cube.fetchTermsets();
+  return await cube.fetchComponentTermsets();
 };
 
 export const dataCubeMetadata: NonNullable<

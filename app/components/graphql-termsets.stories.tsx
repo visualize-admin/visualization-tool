@@ -3,18 +3,19 @@ import {
   FormControlLabel,
   Select,
   Stack,
+  Typography,
 } from "@mui/material";
 import { Meta } from "@storybook/react";
 import { useState } from "react";
 
 import Tag from "@/components/tag";
-import { useDataCubeTermsetsQuery } from "@/graphql/query-hooks";
+import { useDataCubeComponentTermsetsQuery } from "@/graphql/query-hooks";
 
 export const Termsets = () => {
   const [cube, setCube] = useState<string>(
     "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9"
   );
-  const [result] = useDataCubeTermsetsQuery({
+  const [result] = useDataCubeComponentTermsetsQuery({
     variables: {
       locale: "en",
       sourceType: "sparql",
@@ -62,12 +63,24 @@ export const Termsets = () => {
 
       {result.error ? <div>Error: {result.error.message}</div> : null}
 
-      <Stack mt={2} gap={2} direction="row">
-        {data?.dataCubeTermsets?.map((termset) => (
-          <Tag key={termset.iri} type="termset">
-            {termset.label}
-          </Tag>
-        ))}
+      <Stack mt={2} gap={2} direction="column">
+        {data?.dataCubeComponentTermsets?.map((componentTermsets) => {
+          return (
+            <Stack gap={1} direction="column" key={componentTermsets.iri}>
+              <Typography variant="body2">{componentTermsets.label}</Typography>
+              <Typography variant="caption">{componentTermsets.iri}</Typography>
+              <Stack gap={1} direction="row">
+                {componentTermsets.termsets.map((termset) => {
+                  return (
+                    <Tag key={termset.iri} type="termset">
+                      {termset.label}
+                    </Tag>
+                  );
+                })}
+              </Stack>
+            </Stack>
+          );
+        })}
       </Stack>
     </div>
   );

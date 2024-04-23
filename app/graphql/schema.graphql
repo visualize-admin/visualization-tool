@@ -12,6 +12,7 @@ scalar DataCubeMetadata
 scalar DataCubeObservations
 scalar DataCubePreview
 scalar Termset
+scalar ComponentTermsets
 scalar GeoShapes
 
 type ObservationsQuery {
@@ -387,12 +388,12 @@ type Query {
     locale: String!
     cubeFilter: DataCubeComponentFilter!
   ): DataCubeComponents!
-  dataCubeTermsets(
+  dataCubeComponentTermsets(
     sourceType: String!
     sourceUrl: String!
     locale: String!
     cubeFilter: DataCubeTermsetFilter!
-  ): [Termset!]!
+  ): [ComponentTermsets!]!
   dataCubeMetadata(
     sourceType: String!
     sourceUrl: String!

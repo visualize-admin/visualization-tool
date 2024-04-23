@@ -1,7 +1,10 @@
 import { BoxProps, Typography, TypographyProps, styled } from "@mui/material";
+import { Theme } from "@mui/material/styles";
+import { makeStyles } from "@mui/styles";
+import clsx from "clsx";
 import React from "react";
 
-type TagType = "draft" | "theme" | "organization" | "termset";
+type TagType = "draft" | "theme" | "organization" | "termset" | "dimension";
 
 const TagTypography = styled(Typography)(({ theme }) => ({
   borderRadius: (theme.shape.borderRadius as number) * 1.5,
@@ -18,6 +21,22 @@ const TagTypography = styled(Typography)(({ theme }) => ({
   },
 }));
 
+const useStyles = makeStyles((theme: Theme) => ({
+  themeType: {
+    backgroundColor: theme.palette.success.light,
+  },
+  dimensionType: {
+    backgroundColor: theme.palette.warning.light,
+  },
+  termsetType: {
+    backgroundColor: theme.palette.grey[200],
+  },
+  organizationType: {
+    backgroundColor: theme.palette.primary.light,
+  },
+  draftType: {},
+}));
+
 const Tag = React.forwardRef<
   unknown,
   {
@@ -27,23 +46,16 @@ const Tag = React.forwardRef<
       component?: BoxProps["component"];
     }
 >(({ children, type, ...props }, ref) => {
+  const classes = useStyles();
   const { sx } = props;
-
   return (
     <TagTypography
       // @ts-ignore
       ref={ref}
       variant="caption"
       {...props}
-      sx={{
-        backgroundColor:
-          type === "theme"
-            ? "success.light"
-            : type === "termset"
-              ? "warning.light"
-              : "primary.light",
-        ...sx,
-      }}
+      className={clsx(props.className, classes[`${type}Type` as const])}
+      sx={sx}
     >
       {children}
     </TagTypography>

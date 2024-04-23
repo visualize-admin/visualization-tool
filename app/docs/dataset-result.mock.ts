@@ -18,5 +18,5 @@ export const waldDatacubeResult: PartialSearchCube = {
   description: "Comptes des exploitations forestières en francs, dès 2015",
   datePublished: "2020-10-10",
   publicationStatus: DataCubePublicationStatus.Published,
-  termsets: [],
+  dimensions: [],
 };

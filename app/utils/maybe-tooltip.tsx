@@ -1,14 +1,14 @@
-import { Tooltip, Typography } from "@mui/material";
+import { Tooltip } from "@mui/material";
 
 export const MaybeTooltip = ({
-  text,
+  title,
   children,
 }: {
-  text?: string;
+  title?: JSX.Element;
   children: JSX.Element;
 }) => {
-  return text ? (
-    <Tooltip arrow title={<Typography variant="body2">{text}</Typography>}>
+  return title ? (
+    <Tooltip arrow title={title}>
       {children}
     </Tooltip>
   ) : (

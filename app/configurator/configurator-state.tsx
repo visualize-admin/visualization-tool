@@ -8,6 +8,7 @@ import sortBy from "lodash/sortBy";
 import unset from "lodash/unset";
 import { NextRouter, useRouter } from "next/router";
 import { createContext, Dispatch, useContext, useEffect, useMemo } from "react";
+import { Client, useClient } from "urql";
 import { Reducer, useImmerReducer } from "use-immer";
 
 import {
@@ -68,7 +69,6 @@ import {
   ObservationValue,
 } from "@/domain/data";
 import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
-import { client } from "@/graphql/client";
 import { executeDataCubesComponentsQuery } from "@/graphql/hooks";
 import {
   ObservationFilter,
@@ -1562,11 +1562,12 @@ export const initChartStateFromChartEdit = async (
 };
 
 export const initChartStateFromCube = async (
+  client: Client,
   cubeIri: string,
   dataSource: DataSource,
   locale: string
 ): Promise<ConfiguratorState | undefined> => {
-  const { data: components } = await executeDataCubesComponentsQuery({
+  const { data: components } = await executeDataCubesComponentsQuery(client, {
     sourceType: dataSource.type,
     sourceUrl: dataSource.url,
     locale,
@@ -1683,6 +1684,7 @@ const ConfiguratorStateProviderInternal = (
   const [state, dispatch] = stateAndDispatch;
   const { asPath, push, replace, query } = useRouter();
   const user = useUser();
+  const client = useClient();
 
   // Initialize state on page load.
   useEffect(() => {
@@ -1698,6 +1700,7 @@ const ConfiguratorStateProviderInternal = (
             newChartState = await initChartStateFromChartEdit(query.edit);
           } else if (query.cube && typeof query.cube === "string") {
             newChartState = await initChartStateFromCube(
+              client,
               query.cube,
               dataSource,
               locale

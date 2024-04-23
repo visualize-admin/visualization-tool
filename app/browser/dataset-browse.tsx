@@ -48,6 +48,7 @@ import SvgIcCategories from "@/icons/components/IcCategories";
 import SvgIcClose from "@/icons/components/IcClose";
 import SvgIcOrganisations from "@/icons/components/IcOrganisations";
 import isAttrEqual from "@/utils/is-attr-equal";
+import { MaybeTooltip } from "@/utils/maybe-tooltip";
 import useEvent from "@/utils/use-event";
 
 import {
@@ -67,7 +68,7 @@ export const SearchDatasetInput = ({
 
   const searchLabel = t({
     id: "dataset.search.label",
-    message: "Search datasets",
+    message: "Search",
   });
 
   const placeholderLabel = t({
@@ -835,7 +836,7 @@ export type PartialSearchCube = Pick<
   | "datePublished"
   | "themes"
   | "creator"
-  | "termsets"
+  | "dimensions"
 >;
 type ResultProps = {
   dataCube: PartialSearchCube;
@@ -844,7 +845,7 @@ type ResultProps = {
   showTags?: boolean;
   rowActions?: (r: PartialSearchCube) => React.ReactNode;
   disableTitleLink?: boolean;
-  showTermsets?: boolean;
+  showDimensions?: boolean;
 };
 
 export const DatasetResult = ({
@@ -854,7 +855,7 @@ export const DatasetResult = ({
   showTags,
   rowActions,
   disableTitleLink,
-  showTermsets,
+  showDimensions,
   ...cardProps
 }: ResultProps & CardProps) => {
   const {
@@ -865,7 +866,7 @@ export const DatasetResult = ({
     themes,
     datePublished,
     creator,
-    termsets,
+    dimensions,
   } = dataCube;
   const isDraft = publicationStatus === DataCubePublicationStatus.Draft;
   const router = useRouter();
@@ -977,14 +978,7 @@ export const DatasetResult = ({
                 )
             )
           : null}
-        {showTermsets &&
-          sortBy(termsets, (t) => t.label).map((termset) => {
-            return (
-              <Tag key={termset.iri} type="termset">
-                {termset.label}
-              </Tag>
-            );
-          })}
+
         {creator?.label ? (
           <Link
             key={creator.iri}
@@ -1003,7 +997,55 @@ export const DatasetResult = ({
           </Link>
         ) : null}
       </Flex>
-      {rowActions?.(dataCube)}
+      <Flex alignItems="center" width="100%">
+        <Box flexGrow={1}>
+          {showDimensions && (
+            <Flex alignItems="center" mt={1} flexWrap="wrap" gap="0.25rem">
+              <Typography variant="body2" sx={{ mr: 1 }}>
+                <Trans id="dataset-result.shared-dimensions">
+                  Shared dimensions:
+                </Trans>
+              </Typography>
+              {sortBy(dimensions, (t) => t.label).map((dimension) => {
+                return (
+                  <MaybeTooltip
+                    key={dimension.iri}
+                    title={
+                      dimension.termsets.length > 0 ? (
+                        <>
+                          <Typography variant="body2">
+                            <Trans id="dataset-result.dimension-termset-contains">
+                              Contains values from
+                            </Trans>
+                            <Stack gap={1} flexDirection="row" mt={1}>
+                              {dimension.termsets.map((termset) => {
+                                return (
+                                  <Tag
+                                    key={termset.iri}
+                                    type="termset"
+                                    sx={{ flexShrink: 0 }}
+                                  >
+                                    {termset.label}
+                                  </Tag>
+                                );
+                              })}
+                            </Stack>
+                          </Typography>
+                        </>
+                      ) : undefined
+                    }
+                  >
+                    <Tag sx={{ cursor: "default" }} type="dimension">
+                      {dimension.label}
+                    </Tag>
+                  </MaybeTooltip>
+                );
+              })}
+            </Flex>
+          )}
+        </Box>
+        <Box flexShrink={1}>{rowActions?.(dataCube)}</Box>
+      </Flex>
     </MotionCard>
   );
 };

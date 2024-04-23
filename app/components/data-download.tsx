@@ -26,6 +26,7 @@ import {
   useContext,
   useState,
 } from "react";
+import { useClient } from "urql";
 
 import { getSortedColumns } from "@/browse/datatable";
 import Flex from "@/components/flex";
@@ -321,6 +322,7 @@ const DownloadMenuItem = ({
 }) => {
   const locale = useLocale();
   const i18n = useI18n();
+  const client = useClient();
   const [state, dispatch] = useDataDownloadState();
   const download = useCallback(
     async (
@@ -392,13 +394,13 @@ const DownloadMenuItem = ({
 
         try {
           const [componentsResult, observationsResult] = await Promise.all([
-            executeDataCubesComponentsQuery({
+            executeDataCubesComponentsQuery(client, {
               sourceType: dataSource.type,
               sourceUrl: dataSource.url,
               locale,
               cubeFilters: filters,
             }),
-            executeDataCubesObservationsQuery({
+            executeDataCubesObservationsQuery(client, {
               sourceType: dataSource.type,
               sourceUrl: dataSource.url,
               locale,

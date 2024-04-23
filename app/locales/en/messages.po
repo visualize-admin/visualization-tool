@@ -17,8 +17,7 @@ msgstr ""
 msgid "Add filter"
 msgstr "Add filter"
 
-#: app/configurator/components/chart-configurator.tsx
-#: app/configurator/components/chart-controls/drag-and-drop-tab.tsx
+#: app/components/move-drag-button.tsx
 msgid "Drag filters to reorganize"
 msgstr "Drag filters to reorganize"
 
@@ -62,8 +61,13 @@ msgid "browse.datasets.description"
 msgstr "Explore datasets provided by the LINDAS Linked Data Service by either filtering by categories or organisations or search directly for specific keywords. Click on a dataset to see more detailed information and start creating your own visualizations."
 
 #: app/components/metadata-panel.tsx
+#: app/configurator/components/add-dataset-dialog.tsx
 msgid "button.back"
 msgstr "Back"
+
+#: app/configurator/components/add-dataset-dialog.tsx
+msgid "button.confirm"
+msgstr "Confirm"
 
 #: app/pages/v/[chartId].tsx
 msgid "button.copy.visualization"
@@ -141,6 +145,10 @@ msgstr "Keep in mind that updating this visualization will affect all the places
 #: app/configurator/components/dataset-control-section.tsx
 msgid "chart.datasets.add"
 msgstr "Add dataset"
+
+#: app/configurator/components/add-dataset-dialog.tsx
+msgid "chart.datasets.add-dataset-dialog.description"
+msgstr "You can only combine datasets that share dimensions with the same unit and resolution. By default, dimensions matching the current chart are selected."
 
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "chart.datasets.add-dataset-dialog.title"
@@ -1000,6 +1008,14 @@ msgstr "Back to the datasets"
 msgid "dataset-preview.keywords"
 msgstr "Keywords"
 
+#: app/browser/dataset-browse.tsx
+msgid "dataset-result.dimension-termset-contains"
+msgstr "Contains values from"
+
+#: app/browser/dataset-browse.tsx
+msgid "dataset-result.shared-dimensions"
+msgstr "Shared dimensions:"
+
 #: app/components/chart-footnotes.tsx
 msgid "dataset.footnotes.dataset"
 msgstr "Dataset"
@@ -1074,12 +1090,28 @@ msgstr "Add dataset"
 #: app/browser/dataset-browse.tsx
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.label"
-msgstr "Search datasets"
+msgstr "Search"
 
 #: app/browser/dataset-browse.tsx
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.placeholder"
 msgstr "Name, organization, keyword..."
+
+#: app/configurator/components/add-dataset-dialog.tsx
+msgid "dataset.search.preview.description"
+msgstr "Review data preview of new available dimensions and continue to edit visualization."
+
+#: app/configurator/components/add-dataset-dialog.tsx
+msgid "dataset.search.preview.title"
+msgstr "Preview data table"
+
+#: app/configurator/components/add-dataset-dialog.tsx
+msgid "dataset.search.search-options.more-2-options-selected"
+msgstr "{0} more"
+
+#: app/configurator/components/add-dataset-dialog.tsx
+msgid "dataset.search.search-options.no-options-selected"
+msgstr "dataset.search.search-options.no-options-selected"
 
 #: app/browser/dataset-browse.tsx
 msgid "dataset.sortby"

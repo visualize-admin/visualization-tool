@@ -98,7 +98,13 @@ export const Radio = ({
     : "grey.500";
 
   return (
-    <MaybeTooltip text={warnMessage}>
+    <MaybeTooltip
+      title={
+        warnMessage ? (
+          <Typography variant="body2">{warnMessage}</Typography>
+        ) : undefined
+      }
+    >
       <FormControlLabel
         label={label || "-"}
         htmlFor={`${name}-${value}`}

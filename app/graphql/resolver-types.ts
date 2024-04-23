@@ -1,3 +1,4 @@
+import { ComponentTermsets } from '../domain/data';
 import { DataCubeComponents } from '../domain/data';
 import { DataCubeMetadata } from '../domain/data';
 import { DataCubeObservations } from '../domain/data';
@@ -10,6 +11,7 @@ import { Observation } from '../domain/data';
 import { RawObservation } from '../domain/data';
 import { SearchCube } from '../domain/data';
 import { SingleFilters } from '../configurator';
+import { Termset } from '../domain/data';
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
 import { ResolvedDataCube, ResolvedObservationsQuery, ResolvedMeasure, ResolvedDimension } from './shared-types';
 import { VisualizeGraphQLContext } from './context';
@@ -25,6 +27,7 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  ComponentTermsets: ComponentTermsets;
   DataCubeComponents: DataCubeComponents;
   DataCubeMetadata: DataCubeMetadata;
   DataCubeObservations: DataCubeObservations;
@@ -38,10 +41,11 @@ export type Scalars = {
   RawObservation: RawObservation;
   SearchCube: SearchCube;
   SingleFilters: SingleFilters;
-  Termset: any;
+  Termset: Termset;
   ValueIdentifier: any;
   ValuePosition: any;
 };
+
 
 export type DataCube = {
   __typename?: 'DataCube';
@@ -330,7 +334,7 @@ export type OrdinalMeasureValuesArgs = {
 export type Query = {
   __typename?: 'Query';
   dataCubeComponents: Scalars['DataCubeComponents'];
-  dataCubeTermsets: Array<Scalars['Termset']>;
+  dataCubeComponentTermsets: Array<Scalars['ComponentTermsets']>;
   dataCubeMetadata: Scalars['DataCubeMetadata'];
   dataCubeObservations: Scalars['DataCubeObservations'];
   dataCubePreview: Scalars['DataCubePreview'];
@@ -348,7 +352,7 @@ export type QueryDataCubeComponentsArgs = {
 };
 
 
-export type QueryDataCubeTermsetsArgs = {
+export type QueryDataCubeComponentTermsetsArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   locale: Scalars['String'];
@@ -626,6 +630,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
+  ComponentTermsets: ResolverTypeWrapper<Scalars['ComponentTermsets']>;
   DataCube: ResolverTypeWrapper<ResolvedDataCube>;
   String: ResolverTypeWrapper<Scalars['String']>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
@@ -681,6 +686,7 @@ export type ResolversTypes = ResolversObject<{
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
+  ComponentTermsets: Scalars['ComponentTermsets'];
   DataCube: ResolvedDataCube;
   String: Scalars['String'];
   Boolean: Scalars['Boolean'];
@@ -728,6 +734,10 @@ export type ResolversParentTypes = ResolversObject<{
   ValueIdentifier: Scalars['ValueIdentifier'];
   ValuePosition: Scalars['ValuePosition'];
 }>;
+
+export interface ComponentTermsetsScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['ComponentTermsets'], any> {
+  name: 'ComponentTermsets';
+}
 
 export type DataCubeResolvers<ContextType = VisualizeGraphQLContext, ParentType extends ResolversParentTypes['DataCube'] = ResolversParentTypes['DataCube']> = ResolversObject<{
   iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -932,7 +942,7 @@ export type OrdinalMeasureResolvers<ContextType = VisualizeGraphQLContext, Paren
 
 export type QueryResolvers<ContextType = VisualizeGraphQLContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   dataCubeComponents?: Resolver<ResolversTypes['DataCubeComponents'], ParentType, ContextType, RequireFields<QueryDataCubeComponentsArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'cubeFilter'>>;
-  dataCubeTermsets?: Resolver<Array<ResolversTypes['Termset']>, ParentType, ContextType, RequireFields<QueryDataCubeTermsetsArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'cubeFilter'>>;
+  dataCubeComponentTermsets?: Resolver<Array<ResolversTypes['ComponentTermsets']>, ParentType, ContextType, RequireFields<QueryDataCubeComponentTermsetsArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'cubeFilter'>>;
   dataCubeMetadata?: Resolver<ResolversTypes['DataCubeMetadata'], ParentType, ContextType, RequireFields<QueryDataCubeMetadataArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'cubeFilter'>>;
   dataCubeObservations?: Resolver<ResolversTypes['DataCubeObservations'], ParentType, ContextType, RequireFields<QueryDataCubeObservationsArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'cubeFilter'>>;
   dataCubePreview?: Resolver<ResolversTypes['DataCubePreview'], ParentType, ContextType, RequireFields<QueryDataCubePreviewArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'cubeFilter'>>;
@@ -1044,6 +1054,7 @@ export interface ValuePositionScalarConfig extends GraphQLScalarTypeConfig<Resol
 }
 
 export type Resolvers<ContextType = VisualizeGraphQLContext> = ResolversObject<{
+  ComponentTermsets?: GraphQLScalarType;
   DataCube?: DataCubeResolvers<ContextType>;
   DataCubeComponents?: GraphQLScalarType;
   DataCubeMetadata?: GraphQLScalarType;
