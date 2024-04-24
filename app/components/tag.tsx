@@ -16,9 +16,6 @@ const TagTypography = styled(Typography)(({ theme }) => ({
   width: "fit-content",
   color: "grey.700",
   transition: "box-shadow ease 0.125s",
-  "&:hover": {
-    boxShadow: theme.shadows[2],
-  },
 }));
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -35,6 +32,11 @@ const useStyles = makeStyles((theme: Theme) => ({
     backgroundColor: theme.palette.primary.light,
   },
   draftType: {},
+  clickable: {
+    "&:hover": {
+      boxShadow: theme.shadows[2],
+    },
+  },
 }));
 
 const Tag = React.forwardRef<
@@ -54,7 +56,11 @@ const Tag = React.forwardRef<
       ref={ref}
       variant="caption"
       {...props}
-      className={clsx(props.className, classes[`${type}Type` as const])}
+      className={clsx(
+        props.className,
+        classes[`${type}Type` as const],
+        props.onClick ? classes.clickable : null
+      )}
       sx={sx}
     >
       {children}
