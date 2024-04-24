@@ -1,3 +1,5 @@
+import ParsingClient from "sparql-http-client/ParsingClient";
+
 /** Creates SPARQL query to fetch latest cube iri.
  * Works for both versioned and unversioned cubes.
  */
@@ -44,4 +46,16 @@ SELECT ?iri WHERE {
   }
 }
 LIMIT 1`;
+};
+
+export const queryLatestCubeIri = async (
+  sparqlClient: ParsingClient,
+  iri: string
+): Promise<string | undefined> => {
+  const query = getLatestCubeIriQuery(iri);
+  const results = await sparqlClient.query.select(query, {
+    operation: "postUrlencoded",
+  });
+
+  return results[0]?.iri.value;
 };

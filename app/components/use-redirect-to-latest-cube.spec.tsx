@@ -3,9 +3,9 @@ import { NextRouter, useRouter } from "next/router";
 
 import { useRedirectToLatestCube } from "@/components/use-redirect-to-latest-cube";
 import { useLocale } from "@/locales/use-locale";
-import { queryLatestCubeIri } from "@/rdf/query-cube-metadata";
+import { queryLatestCubeIri } from "@/rdf/query-latest-cube-iri";
 
-jest.mock("@/rdf/query-cube-metadata", () => ({
+jest.mock("@/rdf/query-latest-cube-iri", () => ({
   queryLatestCubeIri: jest.fn(),
 }));
 

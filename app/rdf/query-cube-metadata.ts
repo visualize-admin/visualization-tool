@@ -6,7 +6,6 @@ import { DataCubeMetadata } from "@/domain/data";
 import { DataCubePublicationStatus } from "@/graphql/query-hooks";
 import { pragmas } from "@/rdf/create-source";
 import * as ns from "@/rdf/namespace";
-import { getLatestCubeIriQuery } from "@/rdf/query-latest-cube-iri";
 import { GROUP_SEPARATOR, buildLocalizedSubQuery } from "@/rdf/query-utils";
 
 type RawDataCubeMetadata = {
@@ -155,16 +154,4 @@ export const getCubeMetadata = async (
   const result = results[0];
 
   return parseRawMetadata(result);
-};
-
-export const queryLatestCubeIri = async (
-  sparqlClient: ParsingClient,
-  iri: string
-): Promise<string | undefined> => {
-  const query = getLatestCubeIriQuery(iri);
-  const results = await sparqlClient.query.select(query, {
-    operation: "postUrlencoded",
-  });
-
-  return results[0]?.iri.value;
 };

@@ -4,7 +4,7 @@ import ParsingClient from "sparql-http-client/ParsingClient";
 
 import { ConfiguratorState } from "@/config-types";
 import { useLocale } from "@/locales/use-locale";
-import { queryLatestCubeIri } from "@/rdf/query-cube-metadata";
+import { queryLatestCubeIri } from "@/rdf/query-latest-cube-iri";
 import { getErrorQueryParams } from "@/utils/flashes";
 import useEvent from "@/utils/use-event";
 

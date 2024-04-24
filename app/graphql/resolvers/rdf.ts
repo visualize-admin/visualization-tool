@@ -34,9 +34,9 @@ import {
   getCubeObservations,
   getLatestCube,
 } from "@/rdf/queries";
-import { queryLatestCubeIri } from "@/rdf/query-cube-metadata";
 import { GeoShape } from "@/rdf/query-geo-shapes";
 import { parseHierarchy, queryHierarchies } from "@/rdf/query-hierarchies";
+import { queryLatestCubeIri } from "@/rdf/query-latest-cube-iri";
 import { getPossibleFilters } from "@/rdf/query-possible-filters";
 import { SearchResult, searchCubes as _searchCubes } from "@/rdf/query-search";
 import { getSparqlEditorUrl } from "@/rdf/sparql-utils";
