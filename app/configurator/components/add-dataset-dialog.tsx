@@ -49,6 +49,7 @@ import {
   isConfiguring,
   useConfiguratorState,
 } from "@/configurator";
+import { BetaTag } from "@/configurator/components/beta-tag";
 import { Termset, isTemporalDimensionWithTimeUnit } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import {
@@ -570,6 +571,11 @@ export const DatasetDialog = ({
               id: "chart.datasets.add-dataset-dialog.title",
               message: "Select dataset with shared dimensions",
             })}
+            <BetaTag
+              tagProps={{
+                sx: { ml: 2, position: "relative", top: "-1rem" },
+              }}
+            />
           </DialogTitle>
           <DialogContent>
             <Typography variant="body1" mb="2rem">

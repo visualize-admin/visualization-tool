@@ -36,6 +36,10 @@ msgstr "[ No Description ]"
 msgid "annotation.add.title"
 msgstr "[ No Title ]"
 
+#: app/configurator/components/beta-tag.tsx
+msgid "beta-tag.tooltip"
+msgstr "This feature is currently under development, you may encounter bugs and performance problems."
+
 #: app/browser/dataset-browse.tsx
 msgid "browse-panel.organizations"
 msgstr "Organizations"
@@ -1009,6 +1013,7 @@ msgid "dataset-preview.keywords"
 msgstr "Keywords"
 
 #: app/browser/dataset-browse.tsx
+#: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset-result.dimension-termset-contains"
 msgstr "Contains values from"
 
