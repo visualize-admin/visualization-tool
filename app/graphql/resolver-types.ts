@@ -333,6 +333,7 @@ export type OrdinalMeasureValuesArgs = {
 
 export type Query = {
   __typename?: 'Query';
+  dataCubeLatestIri: Scalars['String'];
   dataCubeComponents: Scalars['DataCubeComponents'];
   dataCubeComponentTermsets: Array<Scalars['ComponentTermsets']>;
   dataCubeMetadata: Scalars['DataCubeMetadata'];
@@ -341,6 +342,13 @@ export type Query = {
   possibleFilters: Array<ObservationFilter>;
   searchCubes: Array<SearchCubeResult>;
   dataCubeDimensionGeoShapes?: Maybe<Scalars['GeoShapes']>;
+};
+
+
+export type QueryDataCubeLatestIriArgs = {
+  iri: Scalars['String'];
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
 };
 
 
@@ -941,6 +949,7 @@ export type OrdinalMeasureResolvers<ContextType = VisualizeGraphQLContext, Paren
 }>;
 
 export type QueryResolvers<ContextType = VisualizeGraphQLContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
+  dataCubeLatestIri?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<QueryDataCubeLatestIriArgs, 'iri' | 'sourceType' | 'sourceUrl'>>;
   dataCubeComponents?: Resolver<ResolversTypes['DataCubeComponents'], ParentType, ContextType, RequireFields<QueryDataCubeComponentsArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'cubeFilter'>>;
   dataCubeComponentTermsets?: Resolver<Array<ResolversTypes['ComponentTermsets']>, ParentType, ContextType, RequireFields<QueryDataCubeComponentTermsetsArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'cubeFilter'>>;
   dataCubeMetadata?: Resolver<ResolversTypes['DataCubeMetadata'], ParentType, ContextType, RequireFields<QueryDataCubeMetadataArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'cubeFilter'>>;

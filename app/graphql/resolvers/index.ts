@@ -20,9 +20,9 @@ const getSource = (dataSourceType: string) => {
 };
 
 export const Query: QueryResolvers = {
-  searchCubes: async (parent, args, context, info) => {
+  dataCubeLatestIri: async (parent, args, context, info) => {
     const source = getSource(args.sourceType);
-    return await source.searchCubes(parent, args, context, info);
+    return await source.dataCubeLatestIri(parent, args, context, info);
   },
   dataCubeComponents: async (parent, args, context, info) => {
     const source = getSource(args.sourceType);
@@ -47,6 +47,10 @@ export const Query: QueryResolvers = {
   possibleFilters: async (parent, args, context, info) => {
     const source = getSource(args.sourceType);
     return await source.possibleFilters(parent, args, context, info);
+  },
+  searchCubes: async (parent, args, context, info) => {
+    const source = getSource(args.sourceType);
+    return await source.searchCubes(parent, args, context, info);
   },
   dataCubeDimensionGeoShapes: async (parent, args, context, info) => {
     const source = getSource(args.sourceType);

@@ -118,6 +118,12 @@ const parseSQLDimension = (
   };
 };
 
+export const dataCubeLatestIri: NonNullable<
+  QueryResolvers["dataCubeLatestIri"]
+> = async () => {
+  return "";
+};
+
 export const searchCubes: NonNullable<
   QueryResolvers["searchCubes"]
 > = async () => {

@@ -6,7 +6,7 @@ import { useLocale } from "@/locales/use-locale";
 import { queryLatestCubeIri } from "@/rdf/query-cube-metadata";
 
 jest.mock("@/rdf/query-cube-metadata", () => ({
-  queryLatestCube: jest.fn(),
+  queryLatestCubeIri: jest.fn(),
 }));
 
 jest.mock("next/router", () => ({

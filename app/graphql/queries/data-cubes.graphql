@@ -1,3 +1,11 @@
+query DataCubeLatestIri(
+  $iri: String!
+  $sourceType: String!
+  $sourceUrl: String!
+) {
+  dataCubeLatestIri(iri: $iri, sourceType: $sourceType, sourceUrl: $sourceUrl)
+}
+
 query DataCubeComponents(
   $sourceType: String!
   $sourceUrl: String!

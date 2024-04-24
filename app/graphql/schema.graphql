@@ -382,6 +382,11 @@ input DataCubePreviewFilter {
 # The "Query" type is special: it lists all of the available queries that
 # clients can execute, along with the return type for each.
 type Query {
+  dataCubeLatestIri(
+    iri: String!
+    sourceType: String!
+    sourceUrl: String!
+  ): String!
   dataCubeComponents(
     sourceType: String!
     sourceUrl: String!

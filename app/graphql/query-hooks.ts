@@ -332,6 +332,7 @@ export type OrdinalMeasureValuesArgs = {
 
 export type Query = {
   __typename: 'Query';
+  dataCubeLatestIri: Scalars['String'];
   dataCubeComponents: Scalars['DataCubeComponents'];
   dataCubeComponentTermsets: Array<Scalars['ComponentTermsets']>;
   dataCubeMetadata: Scalars['DataCubeMetadata'];
@@ -340,6 +341,13 @@ export type Query = {
   possibleFilters: Array<ObservationFilter>;
   searchCubes: Array<SearchCubeResult>;
   dataCubeDimensionGeoShapes?: Maybe<Scalars['GeoShapes']>;
+};
+
+
+export type QueryDataCubeLatestIriArgs = {
+  iri: Scalars['String'];
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
 };
 
 
@@ -563,6 +571,15 @@ export enum TimeUnit {
 
 
 
+export type DataCubeLatestIriQueryVariables = Exact<{
+  iri: Scalars['String'];
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
+}>;
+
+
+export type DataCubeLatestIriQuery = { __typename: 'Query', dataCubeLatestIri: string };
+
 export type DataCubeComponentsQueryVariables = Exact<{
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
@@ -648,6 +665,15 @@ export type DataCubeDimensionGeoShapesQueryVariables = Exact<{
 export type DataCubeDimensionGeoShapesQuery = { __typename: 'Query', dataCubeDimensionGeoShapes?: Maybe<GeoShapes> };
 
 
+export const DataCubeLatestIriDocument = gql`
+    query DataCubeLatestIri($iri: String!, $sourceType: String!, $sourceUrl: String!) {
+  dataCubeLatestIri(iri: $iri, sourceType: $sourceType, sourceUrl: $sourceUrl)
+}
+    `;
+
+export function useDataCubeLatestIriQuery(options: Omit<Urql.UseQueryArgs<DataCubeLatestIriQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<DataCubeLatestIriQuery>({ query: DataCubeLatestIriDocument, ...options });
+};
 export const DataCubeComponentsDocument = gql`
     query DataCubeComponents($sourceType: String!, $sourceUrl: String!, $locale: String!, $cubeFilter: DataCubeComponentFilter!) {
   dataCubeComponents(
