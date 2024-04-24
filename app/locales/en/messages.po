@@ -1111,6 +1111,10 @@ msgid "dataset.search.preview.description"
 msgstr "Review data preview of new available dimensions and continue to edit visualization."
 
 #: app/configurator/components/add-dataset-dialog.tsx
+msgid "dataset.search.preview.dimensions-shown"
+msgstr "{0} shown"
+
+#: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.preview.title"
 msgstr "Preview data table"
 
