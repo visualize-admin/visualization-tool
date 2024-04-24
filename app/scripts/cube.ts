@@ -32,7 +32,6 @@ type CubeQueryOptions = {
   sourceType: DataSource["type"];
   sourceUrl: string;
   locale: string;
-  latest?: boolean;
 };
 
 const showCubeInfo = async ({
@@ -41,7 +40,6 @@ const showCubeInfo = async ({
   sourceType,
   sourceUrl,
   locale,
-  latest,
   report,
 }: Args<CubeQueryOptions>) => {
   const res = await client
@@ -51,7 +49,7 @@ const showCubeInfo = async ({
         sourceType,
         sourceUrl,
         locale,
-        cubeFilter: { iri, latest },
+        cubeFilter: { iri },
       }
     )
     .toPromise();
@@ -61,12 +59,6 @@ const showCubeInfo = async ({
   }
 
   const cube = res.data?.dataCubeMetadata;
-
-  if (cube?.iri !== iri) {
-    console.warn(
-      "warn: Cube has been resolved to its latest version, pass --no-latest if you want the exact version"
-    );
-  }
   report(cube);
 };
 
@@ -76,7 +68,6 @@ const showCubeComponents = async ({
   sourceType,
   sourceUrl,
   locale,
-  latest,
   report,
 }: Args<CubeQueryOptions>) => {
   const res = await client
@@ -86,7 +77,7 @@ const showCubeComponents = async ({
         sourceType,
         sourceUrl,
         locale,
-        cubeFilter: { iri, latest },
+        cubeFilter: { iri },
       }
     )
     .toPromise();
@@ -104,7 +95,6 @@ const previewCube = async ({
   sourceType,
   sourceUrl,
   locale,
-  latest,
   report,
 }: Args<CubeQueryOptions>) => {
   const { data: info, error } = await client
@@ -114,7 +104,7 @@ const previewCube = async ({
         sourceType,
         sourceUrl,
         locale,
-        cubeFilter: { iri, latest },
+        cubeFilter: { iri },
       }
     )
     .toPromise();
@@ -134,7 +124,7 @@ const previewCube = async ({
         sourceType,
         sourceUrl,
         locale,
-        cubeFilter: { iri, latest },
+        cubeFilter: { iri },
       }
     )
     .toPromise();
@@ -178,48 +168,20 @@ const main = async () => {
     defaultValue: false,
   };
 
-  const noLatestArg = {
-    help: "Resolves the cube to the latest version",
-    argument: ["--no-latest"],
-    action: "storeFalse",
-    dest: "latest",
-  };
-
   const commands = {
     info: {
       description: "Get info on the datacube",
-      arguments: [
-        iriArg,
-        sourceTypeArg,
-        sourceUrlArg,
-        localeArg,
-        jsonArg,
-        noLatestArg,
-      ],
+      arguments: [iriArg, sourceTypeArg, sourceUrlArg, localeArg, jsonArg],
       handler: showCubeInfo,
     },
     preview: {
       description: "Preview observations on the datacube",
-      arguments: [
-        iriArg,
-        sourceTypeArg,
-        sourceUrlArg,
-        localeArg,
-        jsonArg,
-        noLatestArg,
-      ],
+      arguments: [iriArg, sourceTypeArg, sourceUrlArg, localeArg, jsonArg],
       handler: previewCube,
     },
     components: {
       description: "Show cube components",
-      arguments: [
-        iriArg,
-        sourceTypeArg,
-        sourceUrlArg,
-        localeArg,
-        jsonArg,
-        noLatestArg,
-      ],
+      arguments: [iriArg, sourceTypeArg, sourceUrlArg, localeArg, jsonArg],
       handler: showCubeComponents,
     },
   };

@@ -11,7 +11,6 @@ import {
   getCubeComponentTermsets,
   getCubeTermsets,
 } from "@/rdf/query-cube-termsets";
-import { getLatestCubeIriQuery } from "@/rdf/query-latest-cube-iri";
 
 type LightCubeOptions = {
   iri: string;
@@ -35,27 +34,6 @@ export class LightCube {
     this.iri = iri;
     this.locale = locale;
     this.sparqlClient = sparqlClient;
-  }
-
-  /** Use to potentially promote the cube to newest version. */
-  public async init(latest: boolean) {
-    if (!latest) {
-      return this;
-    }
-
-    const query = getLatestCubeIriQuery(this.iri);
-    const result = await this.sparqlClient.query.select(query);
-    const latestIri = result[0]?.iri?.value;
-
-    if (latestIri && latestIri !== this.iri) {
-      return new LightCube({
-        iri: latestIri,
-        locale: this.locale,
-        sparqlClient: this.sparqlClient,
-      });
-    }
-
-    return this;
   }
 
   public async fetchMetadata() {

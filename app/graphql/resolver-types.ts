@@ -95,7 +95,6 @@ export type DataCubeMeasuresArgs = {
 
 export type DataCubeComponentFilter = {
   iri: Scalars['String'];
-  latest?: Maybe<Scalars['Boolean']>;
   filters?: Maybe<Scalars['Filters']>;
   componentIris?: Maybe<Array<Scalars['String']>>;
   joinBy?: Maybe<Scalars['String']>;
@@ -106,12 +105,10 @@ export type DataCubeComponentFilter = {
 
 export type DataCubeMetadataFilter = {
   iri: Scalars['String'];
-  latest?: Maybe<Scalars['Boolean']>;
 };
 
 export type DataCubeObservationFilter = {
   iri: Scalars['String'];
-  latest?: Maybe<Scalars['Boolean']>;
   filters?: Maybe<Scalars['Filters']>;
   componentIris?: Maybe<Array<Scalars['String']>>;
   joinBy?: Maybe<Scalars['String']>;
@@ -127,7 +124,6 @@ export type DataCubeOrganization = {
 
 export type DataCubePreviewFilter = {
   iri: Scalars['String'];
-  latest?: Maybe<Scalars['Boolean']>;
 };
 
 export enum DataCubePublicationStatus {
@@ -137,7 +133,6 @@ export enum DataCubePublicationStatus {
 
 export type DataCubeTermsetFilter = {
   iri: Scalars['String'];
-  latest?: Maybe<Scalars['Boolean']>;
 };
 
 export type DataCubeTheme = {

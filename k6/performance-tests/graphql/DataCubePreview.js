@@ -32,7 +32,6 @@ const variables = {
   sourceUrl: "https://lindas.admin.ch/query",
   cubeFilter: {
     iri: cubeIri,
-    latest: false,
   },
 };
 
