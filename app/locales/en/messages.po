@@ -1087,6 +1087,10 @@ msgstr "{0, plural, zero {No datasets} one {# dataset} other {# datasets}}"
 msgid "dataset.search.add-dataset"
 msgstr "Add dataset"
 
+#: app/configurator/components/add-dataset-dialog.tsx
+msgid "dataset.search.at-least-one-compatible-dimension-selected"
+msgstr "At least one compatible dimension must be selected."
+
 #: app/browser/dataset-browse.tsx
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.label"

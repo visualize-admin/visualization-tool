@@ -1086,6 +1086,10 @@ msgstr "{0, plural, zero {Aucun jeu de données} one {# jeu de données} other {
 msgid "dataset.search.add-dataset"
 msgstr "Ajouter la source"
 
+#: app/configurator/components/add-dataset-dialog.tsx
+msgid "dataset.search.at-least-one-compatible-dimension-selected"
+msgstr "Au moins une dimension compatible doit être sélectionnée."
+
 #: app/browser/dataset-browse.tsx
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.label"
