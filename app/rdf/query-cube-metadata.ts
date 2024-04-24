@@ -157,7 +157,7 @@ export const getCubeMetadata = async (
   return parseRawMetadata(result);
 };
 
-export const queryLatestCube = async (
+export const queryLatestCubeIri = async (
   sparqlClient: ParsingClient,
   iri: string
 ): Promise<string | undefined> => {
