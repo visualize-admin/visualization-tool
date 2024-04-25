@@ -1410,17 +1410,17 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         }
 
         const { dimensions, measures } = dataCubesComponents;
-        const cubePublishIris = chartConfig.cubes
+        const iris = chartConfig.cubes
           .filter((c) => c.iri !== removedCubeIri)
-          .map((c) => c.iri);
+          .map(({ iri, publishIri }) => ({ iri, publishIri }));
         const possibleChartTypes = getPossibleChartTypes({
           dimensions,
           measures,
-          cubeCount: cubePublishIris.length,
+          cubeCount: iris.length,
         });
         const initialConfig = getInitialConfig({
           chartType: possibleChartTypes[0],
-          publishIris: cubePublishIris,
+          iris,
           dimensions,
           measures,
         });
@@ -1606,7 +1606,7 @@ export const initChartStateFromCube = async (
   });
   const initialChartConfig = getInitialConfig({
     chartType: possibleChartTypes[0],
-    publishIris: [cubePublishIri],
+    iris: [{ iri: cubeIri, publishIri: cubePublishIri }],
     dimensions,
     measures,
   });

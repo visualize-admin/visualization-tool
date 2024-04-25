@@ -338,7 +338,7 @@ export const META: Meta = {
 
 type GetInitialConfigOptions = {
   key?: string;
-  publishIris: string[];
+  iris: { iri: string; publishIri: string }[];
   chartType: ChartType;
   dimensions: Dimension[];
   measures: Measure[];
@@ -347,7 +347,7 @@ type GetInitialConfigOptions = {
 export const getInitialConfig = (
   options: GetInitialConfigOptions
 ): ChartConfig => {
-  const { key, publishIris, chartType, dimensions, measures } = options;
+  const { key, iris, chartType, dimensions, measures } = options;
   const getGenericConfigProps = (
     filters?: Filters
   ): {
@@ -364,8 +364,8 @@ export const getInitialConfig = (
       // Technically, we should scope filters per cube; but as we only set initial
       // filters for area charts, and we can only have multi-cubes for combo charts,
       // we can ignore the filters scoping for now.
-      cubes: publishIris.map((publishIri) => ({
-        iri: publishIri,
+      cubes: iris.map(({ iri, publishIri }) => ({
+        iri,
         publishIri,
         filters: filters ?? {},
       })),
@@ -688,7 +688,10 @@ export const getChartConfigAdjustedToChartType = ({
   const initialConfig = getInitialConfig({
     key: chartConfig.key,
     chartType: newChartType,
-    publishIris: chartConfig.cubes.map((d) => d.publishIri),
+    iris: chartConfig.cubes.map(({ iri, publishIri }) => ({
+      iri,
+      publishIri,
+    })),
     dimensions,
     measures,
   });

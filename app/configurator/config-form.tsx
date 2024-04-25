@@ -384,13 +384,13 @@ export const getNewChartConfig = ({
   dimensions: Dimension[];
   measures: Measure[];
 }) => {
+  const cube = isConfiguring(state)
+    ? getChartConfig(state, state.activeChartKey).cubes[0]
+    : chartConfig.cubes[0];
+
   return getInitialConfig({
     chartType,
-    publishIris: [
-      isConfiguring(state)
-        ? getChartConfig(state, state.activeChartKey).cubes[0].publishIri
-        : chartConfig.cubes[0].publishIri,
-    ],
+    iris: [{ iri: cube.iri, publishIri: cube.publishIri }],
     dimensions,
     measures,
   });
