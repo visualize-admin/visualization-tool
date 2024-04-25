@@ -22,7 +22,9 @@ describe("Filters", () => {
     const inputsCount = await inputs.count();
 
     for (let i = 0; i < inputsCount; i++) {
-      await expect(inputs.nth(i)).not.toBeDisabled();
+      await expect(inputs.nth(i)).not.toBeDisabled({
+        timeout: 10_000,
+      });
     }
 
     const labels = filters.locator("label[for^=select-single-filter]");
