@@ -111,17 +111,21 @@ describe("useComponentsQuery - keepPreviousData: false", () => {
                 ? [
                     {
                       iri: "https://gebaude",
+                      label: "Gebaude",
                     },
                     {
                       iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_energiewirkung/Jahr",
+                      label: "Year",
                     },
                   ]
                 : [
                     {
                       iri: "https://eletrik",
+                      label: "Electrik",
                     },
                     {
                       iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
+                      label: "Year",
                     },
                   ],
               measures: [],
@@ -161,26 +165,28 @@ describe("useComponentsQuery - keepPreviousData: false", () => {
             "cubeIri": "joinBy",
             "iri": "joinBy__0",
             "isJoinByDimension": true,
-            "label": "joinBy__0",
+            "label": "Year",
             "originalIris": Array [
               Object {
                 "cubeIri": undefined,
                 "dimensionIri": "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_energiewirkung/Jahr",
-                "label": undefined,
+                "label": "Year",
               },
               Object {
                 "cubeIri": undefined,
                 "dimensionIri": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
-                "label": undefined,
+                "label": "Year",
               },
             ],
             "values": Array [],
           },
           Object {
             "iri": "https://gebaude",
+            "label": "Gebaude",
           },
           Object {
             "iri": "https://eletrik",
+            "label": "Electrik",
           },
         ]
       `);
@@ -193,9 +199,10 @@ describe("useComponentsQuery - keepPreviousData: false", () => {
       expect(hook.result.current[0].data).toEqual({
         dataCubesComponents: {
           dimensions: [
-            { iri: "https://gebaude" },
+            { iri: "https://gebaude", label: "Gebaude" },
             {
               iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_energiewirkung/Jahr",
+              label: "Year",
             },
           ],
           measures: [],
@@ -275,26 +282,28 @@ describe("useComponentsQuery - keepPreviousData: true", () => {
             "cubeIri": "joinBy",
             "iri": "joinBy__0",
             "isJoinByDimension": true,
-            "label": "joinBy__0",
+            "label": "Year",
             "originalIris": Array [
               Object {
                 "cubeIri": undefined,
                 "dimensionIri": "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_energiewirkung/Jahr",
-                "label": undefined,
+                "label": "Year",
               },
               Object {
                 "cubeIri": undefined,
                 "dimensionIri": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
-                "label": undefined,
+                "label": "Year",
               },
             ],
             "values": Array [],
           },
           Object {
             "iri": "https://gebaude",
+            "label": "Gebaude",
           },
           Object {
             "iri": "https://eletrik",
+            "label": "Electrik",
           },
         ]
       `);
@@ -308,9 +317,10 @@ describe("useComponentsQuery - keepPreviousData: true", () => {
       expect(hook.result.current[0].data).toEqual({
         dataCubesComponents: {
           dimensions: [
-            { iri: "https://gebaude" },
+            { iri: "https://gebaude", label: "Gebaude" },
             {
               iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_energiewirkung/Jahr",
+              label: "Year",
             },
           ],
           measures: [],

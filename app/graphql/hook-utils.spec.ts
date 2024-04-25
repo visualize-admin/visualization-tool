@@ -264,7 +264,7 @@ describe("joinDimensions", () => {
           "cubeIri": "joinBy",
           "iri": "joinBy__0",
           "isJoinByDimension": true,
-          "label": "joinBy__0",
+          "label": "Year",
           "originalIris": Array [
             Object {
               "cubeIri": "population",
@@ -283,7 +283,7 @@ describe("joinDimensions", () => {
           "cubeIri": "joinBy",
           "iri": "joinBy__1",
           "isJoinByDimension": true,
-          "label": "joinBy__1",
+          "label": "Canton",
           "originalIris": Array [
             Object {
               "cubeIri": "population",

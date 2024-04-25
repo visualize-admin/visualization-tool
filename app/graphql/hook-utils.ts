@@ -1,6 +1,7 @@
 import { ascending } from "d3-array";
 import groupBy from "lodash/groupBy";
 import omit from "lodash/omit";
+import uniq from "lodash/uniq";
 import uniqBy from "lodash/uniqBy";
 import { OperationResult } from "urql";
 
@@ -67,7 +68,7 @@ export const joinDimensions = (
         // Non-relevant, as we rely on the originalIris property.
         cubeIri: JOIN_BY_CUBE_IRI,
         // FIXME: adapt to design
-        label: `${JOIN_BY_DIMENSION_IRI}__${index}`,
+        label: uniq(joinedDimensions.map((d) => d.label)).join(", "),
         isJoinByDimension: true,
         originalIris: joinedDimensions.map((d) => ({
           cubeIri: d.cubeIri,

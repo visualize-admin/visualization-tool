@@ -540,9 +540,7 @@ export const PreviewDataTable = ({
                           >
                             {isJoinByComponent(column) ? (
                               <>
-                                {uniq(
-                                  column.originalIris.map((x) => x.label)
-                                ).join(", ")}{" "}
+                                {column.label}{" "}
                                 <Tag type="dimension" sx={{ ml: 1 }}>
                                   Joined
                                 </Tag>
