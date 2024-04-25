@@ -812,7 +812,6 @@ export const DatasetDialog = ({
         "For now, merging cubes only supports one join by dimension. Please select only one dimension to join by."
       );
     } else {
-      console.log("Setting other cube to otherCube", otherCube.iri);
       setOtherCube(otherCube);
     }
   };
