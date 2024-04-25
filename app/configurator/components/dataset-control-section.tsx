@@ -11,6 +11,7 @@ import { useMemo } from "react";
 
 import { useMetadataPanelStoreActions } from "@/components/metadata-panel-store";
 import useDisclosure from "@/components/use-disclosure";
+import { BetaTag } from "@/configurator/components/beta-tag";
 import {
   ControlSection,
   ControlSectionContent,
@@ -67,6 +68,14 @@ export const DatasetsControlSection = () => {
     <ControlSection collapse>
       <SubsectionTitle titleId="controls-data" gutterBottom={false}>
         <Trans id="controls.section.datasets.title">Data Sources</Trans>{" "}
+        <BetaTag
+          tagProps={{
+            sx: {
+              ml: 2,
+              fontWeight: "normal",
+            },
+          }}
+        />
         <FiltersBadge sx={{ ml: "auto", mr: 4 }} />
       </SubsectionTitle>
       <ControlSectionContent

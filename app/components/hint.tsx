@@ -25,6 +25,8 @@ export const Error = ({ children }: { children: ReactNode }) => (
       justifyContent: "center",
       alignItems: "center",
       color: "error.main",
+      width: "100%",
+      flexWrap: "wrap",
     }}
   >
     {children}

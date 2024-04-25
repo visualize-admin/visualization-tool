@@ -78,7 +78,6 @@ describe("viewing a dataset with only ordinal measures", () => {
 
     expect(dimensionLabels).toEqual([
       "None",
-      "Active since",
       "Canton",
       "Danger ratings",
       "Warning region",

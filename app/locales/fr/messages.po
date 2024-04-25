@@ -36,6 +36,10 @@ msgstr "[ Pas de description ]"
 msgid "annotation.add.title"
 msgstr "[ Pas de titre ]"
 
+#: app/configurator/components/beta-tag.tsx
+msgid "beta-tag.tooltip"
+msgstr "Cette fonctionnalité est actuellement en cours de développement, vous pouvez rencontrer des bugs et des problèmes de performances."
+
 #: app/browser/dataset-browse.tsx
 msgid "browse-panel.organizations"
 msgstr "Organisations"
@@ -61,6 +65,7 @@ msgid "browse.datasets.description"
 msgstr "Explorez les jeux de données liés fournis par LINDAS, en filtrant par catégories ou organisations, ou en recherchant par mots-clés. Cliquez sur un ensemble de données pour afficher des informations plus détaillées et commencer à créer vos propres visualisations. "
 
 #: app/components/metadata-panel.tsx
+#: app/configurator/components/add-dataset-dialog.tsx
 msgid "button.back"
 msgstr "Précédent"
 
@@ -1008,6 +1013,7 @@ msgid "dataset-preview.keywords"
 msgstr "Mots clés"
 
 #: app/browser/dataset-browse.tsx
+#: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset-result.dimension-termset-contains"
 msgstr "Contient des valeurs de"
 
@@ -1086,6 +1092,10 @@ msgstr "{0, plural, zero {Aucun jeu de données} one {# jeu de données} other {
 msgid "dataset.search.add-dataset"
 msgstr "Ajouter la source"
 
+#: app/configurator/components/add-dataset-dialog.tsx
+msgid "dataset.search.at-least-one-compatible-dimension-selected"
+msgstr "Au moins une dimension compatible doit être sélectionnée."
+
 #: app/browser/dataset-browse.tsx
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.label"
@@ -1099,6 +1109,10 @@ msgstr "Nom, organisation, mots clés..."
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.preview.description"
 msgstr "Examinez l’aperçu des données des nouvelles dimensions disponibles puis continuez à modifier la visualisation."
+
+#: app/configurator/components/add-dataset-dialog.tsx
+msgid "dataset.search.preview.dimensions-shown"
+msgstr "{0} affichée(s) "
 
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.preview.title"

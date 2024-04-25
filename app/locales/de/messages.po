@@ -36,6 +36,10 @@ msgstr "[ Ohne Beschreibung ]"
 msgid "annotation.add.title"
 msgstr "[ Ohne Titel ]"
 
+#: app/configurator/components/beta-tag.tsx
+msgid "beta-tag.tooltip"
+msgstr "Diese Funktion befindet sich derzeit in der Entwicklung. Möglicherweise treten Fehler auf und Leistungsprobleme."
+
 #: app/browser/dataset-browse.tsx
 msgid "browse-panel.organizations"
 msgstr "Organisationen"
@@ -1009,6 +1013,7 @@ msgid "dataset-preview.keywords"
 msgstr "Schlüsselwörter"
 
 #: app/browser/dataset-browse.tsx
+#: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset-result.dimension-termset-contains"
 msgstr "Enthält Wert von"
 
@@ -1087,6 +1092,10 @@ msgstr "{0, plural, zero {Keine Datensätze} one {# Datensatz} other {# Datensä
 msgid "dataset.search.add-dataset"
 msgstr "Datensatz hinzufügen"
 
+#: app/configurator/components/add-dataset-dialog.tsx
+msgid "dataset.search.at-least-one-compatible-dimension-selected"
+msgstr "Es muss mindestens eine kompatible Dimension ausgewählt werden."
+
 #: app/browser/dataset-browse.tsx
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.label"
@@ -1100,6 +1109,10 @@ msgstr "Name, Organisation, Stichwort..."
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.preview.description"
 msgstr "Überprüfen Sie die Datenvorschau der neuen verfügbaren Dimensionen und bearbeiten Sie die Visualisierung weiter."
+
+#: app/configurator/components/add-dataset-dialog.tsx
+msgid "dataset.search.preview.dimensions-shown"
+msgstr "{0} dargestellt"
 
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.preview.title"

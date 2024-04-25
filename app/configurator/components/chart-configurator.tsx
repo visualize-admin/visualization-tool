@@ -76,7 +76,6 @@ import {
 } from "@/domain/data";
 import { isMostRecentValue } from "@/domain/most-recent-value";
 import { truthy } from "@/domain/types";
-import { flag } from "@/flags";
 import {
   useDataCubesComponentsQuery,
   useDataCubesObservationsQuery,
@@ -729,7 +728,7 @@ export const ChartConfigurator = ({
       {chartConfig.chartType !== "table" && (
         <InteractiveFiltersConfigurator state={state} />
       )}
-      {flag("add-dataset") ? <DatasetsControlSection /> : null}
+      <DatasetsControlSection />
     </>
   );
 };

@@ -11,6 +11,12 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 Nothing yet.
 
+## [4.3.0] - 2024-04-25
+
+- Features
+  - Added preview when joining two cubes
+  - Removed flag for add-dataset, in favor of beta label
+
 # [4.2.0] - 2024-04-23
 
 - Features
