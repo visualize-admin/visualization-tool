@@ -4,10 +4,10 @@
 
 import { Config, Prisma, PUBLISHED_STATE, User } from "@prisma/client";
 
-import { ChartConfig, ConfiguratorStatePublished } from "@/configurator";
+import { ChartConfig, ConfiguratorStatePublished } from "@/config-types";
+import prisma from "@/db/client";
+import { upgradeConfiguratorStateServerSide } from "@/utils/chart-config/upgrade-cube";
 import { migrateConfiguratorState } from "@/utils/chart-config/versioning";
-
-import prisma from "./client";
 
 /**
  * Store data in the DB.
@@ -88,6 +88,7 @@ const migrateCubeIri = (iri: string): string => {
   return iri;
 };
 
+/** Ensure that filters are ordered by position */
 const ensureFiltersOrder = (chartConfig: ChartConfig) => {
   return {
     ...chartConfig,
@@ -109,24 +110,37 @@ const ensureFiltersOrder = (chartConfig: ChartConfig) => {
   };
 };
 
-const parseDbConfig = (d: Config) => {
-  const data = d.data as ConfiguratorStatePublished;
-  const migratedData = migrateConfiguratorState(data);
+/** Ensure that cube iris are migrated */
+const ensureMigratedCubeIris = (chartConfig: ChartConfig) => {
+  return {
+    ...chartConfig,
+    cubes: chartConfig.cubes.map((cube) => ({
+      ...cube,
+      iri: migrateCubeIri(cube.iri),
+    })),
+  };
+};
 
+const parseDbConfig = (d: Config) => {
+  const data = d.data;
+  const state = migrateConfiguratorState(data) as ConfiguratorStatePublished;
   return {
     ...d,
     data: {
-      ...migratedData,
-      chartConfigs: migratedData.chartConfigs
+      ...state,
+      chartConfigs: state.chartConfigs
         .map(ensureFiltersOrder)
-        .map((chartConfig: ChartConfig) => ({
-          ...chartConfig,
-          cubes: chartConfig.cubes.map((cube) => ({
-            ...cube,
-            iri: migrateCubeIri(cube.iri),
-          })),
-        })),
-    } as ConfiguratorStatePublished,
+        .map(ensureMigratedCubeIris),
+    },
+  };
+};
+
+const upgradeDbConfig = async (d: ReturnType<typeof parseDbConfig>) => {
+  return {
+    ...d,
+    data: await upgradeConfiguratorStateServerSide(d.data, {
+      dataSource: d.data.dataSource,
+    }),
   };
 };
 
@@ -146,7 +160,8 @@ export const getConfig = async (key: string) => {
     return;
   }
 
-  return parseDbConfig(config);
+  const dbConfig = parseDbConfig(config);
+  return await upgradeDbConfig(dbConfig);
 };
 
 /**
@@ -154,7 +169,8 @@ export const getConfig = async (key: string) => {
  */
 export const getAllConfigs = async () => {
   const configs = await prisma.config.findMany();
-  return configs.map((c) => parseDbConfig(c));
+  const parsedConfigs = configs.map(parseDbConfig);
+  return await Promise.all(parsedConfigs.map(upgradeDbConfig));
 };
 
 /**
@@ -169,8 +185,8 @@ export const getUserConfigs = async (userId: number) => {
       created_at: "desc",
     },
   });
-
-  return configs.map((c) => parseDbConfig(c));
+  const parsedConfigs = configs.map(parseDbConfig);
+  return await Promise.all(parsedConfigs.map(upgradeDbConfig));
 };
 
 export type ParsedConfig = ReturnType<typeof parseDbConfig>;

@@ -17,6 +17,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import { useClient } from "urql";
 import { useDebounce } from "use-debounce";
 
 import { extractChartConfigComponentIris } from "@/charts/shared/chart-helpers";
@@ -333,6 +334,7 @@ export const SaveDraftButton = ({
 }) => {
   const { data: config, invalidate: invalidateConfig } = useUserConfig(chartId);
   const session = useSession();
+  const client = useClient();
 
   const [state, dispatch] = useConfiguratorState();
 
@@ -367,10 +369,12 @@ export const SaveDraftButton = ({
           published_state: PUBLISHED_STATE.DRAFT,
         });
         if (saved) {
-          const config = await initChartStateFromChartEdit(saved.key);
+          const config = await initChartStateFromChartEdit(client, saved.key);
+
           if (!config) {
             return;
           }
+
           dispatch({ type: "INITIALIZED", value: config });
           saveChartLocally(saved.key, config);
           replace(`/create/${saved.key}`, undefined, {

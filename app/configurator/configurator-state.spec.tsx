@@ -121,7 +121,7 @@ describe("initChartStateFromChart", () => {
     });
     // @ts-ignore
     const { key, activeChartKey, chartConfigs, ...rest } =
-      await initChartStateFromChartCopy("abcde");
+      await initChartStateFromChartCopy(mockClient, "abcde");
     expect(key).toBe(undefined);
     const { key: chartConfigKey, ...chartConfig } = chartConfigs[0];
     const {
@@ -129,7 +129,9 @@ describe("initChartStateFromChart", () => {
       activeChartKey: migratedActiveChartKey,
       chartConfigs: migratedChartsConfigs,
       ...migratedRest
-    } = migrateConfiguratorState(fakeVizFixture);
+    } = migrateConfiguratorState(
+      fakeVizFixture
+    ) as ConfiguratorStateConfiguringChart;
     const { key: migratedChartConfigKey, ...migratedChartConfig } =
       migratedChartsConfigs[0];
 
@@ -148,7 +150,7 @@ describe("initChartStateFromChart", () => {
         isBadState: true,
       },
     });
-    const state = await initChartStateFromChartCopy("abcde");
+    const state = await initChartStateFromChartCopy(mockClient, "abcde");
     expect(state).toEqual(undefined);
   });
 });
@@ -163,7 +165,7 @@ describe("initChartFromLocalStorage", () => {
         ...fakeVizFixture,
       })
     );
-    const state = await initChartStateFromLocalStorage("viz1234");
+    const state = await initChartStateFromLocalStorage(mockClient, "viz1234");
     expect(state).not.toBeUndefined();
   });
 
@@ -172,7 +174,7 @@ describe("initChartFromLocalStorage", () => {
     jest.spyOn(console, "error").mockImplementation(() => {});
 
     localStorage.setItem(getLocalStorageKey("viz1234"), "abcde");
-    const state = await initChartStateFromLocalStorage("viz1234");
+    const state = await initChartStateFromLocalStorage(mockClient, "viz1234");
     expect(state).toBeUndefined();
     expect(localStorage.getItem(getLocalStorageKey("viz1234"))).toBe(null);
   });
