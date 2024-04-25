@@ -198,15 +198,16 @@ const mkScoresQuery = (
         locale,
       })}
 
-      ${filters?.map((df) => {
-        if (df.type === SearchCubeFilterType.TemporalDimension) {
-          const value = df.value as TimeUnit;
-          const unitNode = unitsToNode.get(value);
-          if (!unitNode) {
-            throw new Error(`Invalid temporal unit used ${value}`);
-          }
+      ${filters
+        ?.map((df) => {
+          if (df.type === SearchCubeFilterType.TemporalDimension) {
+            const value = df.value as TimeUnit;
+            const unitNode = unitsToNode.get(value);
+            if (!unitNode) {
+              throw new Error(`Invalid temporal unit used ${value}`);
+            }
 
-          return `
+            return `
             ?iri cube:observationConstraint ?shape .
             ?shape sh:property ?dimension .
             ?dimension
@@ -223,9 +224,9 @@ const mkScoresQuery = (
               }
             )}
           `;
-        } else if (df.type === SearchCubeFilterType.SharedDimensions) {
-          const sharedDimensions = df.value.split(";");
-          return `
+          } else if (df.type === SearchCubeFilterType.SharedDimensions) {
+            const sharedDimensions = df.value.split(";");
+            return `
             VALUES (?termsetIri) {${sharedDimensions.map((sd) => `(<${sd}>)`).join(" ")}}
             ?iri a cube:Cube .
             ?iri cube:observationConstraint/sh:property ?dimension .
@@ -243,8 +244,10 @@ const mkScoresQuery = (
       
             ?value schema:inDefinedTermSet ?termsetIri .
             ${buildLocalizedSubQuery("termsetIri", "schema:name", "termsetLabel", { locale })}`;
-        }
-      })}
+          }
+        })
+        .filter(truthy)
+        .join("\n")}
 
       # Publisher, creator status, datePublished
       OPTIONAL { ?iri dcterms:publisher ?publisher . }
