@@ -34,6 +34,7 @@ export const chartConfig: ColumnConfig = {
   cubes: [
     {
       iri: "",
+      publishIri: "",
       filters: {},
     },
   ],

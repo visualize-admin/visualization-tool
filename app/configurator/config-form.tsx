@@ -386,10 +386,10 @@ export const getNewChartConfig = ({
 }) => {
   return getInitialConfig({
     chartType,
-    iris: [
+    publishIris: [
       isConfiguring(state)
-        ? getChartConfig(state, state.activeChartKey).cubes[0].iri
-        : chartConfig.cubes[0].iri,
+        ? getChartConfig(state, state.activeChartKey).cubes[0].publishIri
+        : chartConfig.cubes[0].publishIri,
     ],
     dimensions,
     measures,

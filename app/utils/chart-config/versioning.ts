@@ -1,6 +1,7 @@
 import produce from "immer";
 
 import { DEFAULT_OTHER_COLOR_FIELD_OPACITY } from "@/charts/map/constants";
+import { ChartConfig, ConfiguratorState } from "@/config-types";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import { DEFAULT_CATEGORICAL_PALETTE_NAME } from "@/palettes";
 import { createChartId } from "@/utils/create-chart-id";
@@ -13,7 +14,7 @@ type Migration = {
   down: (config: any, migrationProps?: any) => any;
 };
 
-export const CHART_CONFIG_VERSION = "3.1.0";
+export const CHART_CONFIG_VERSION = "3.2.0";
 
 export const chartConfigMigrations: Migration[] = [
   {
@@ -852,16 +853,45 @@ export const chartConfigMigrations: Migration[] = [
       });
     },
   },
+  {
+    description: `ALL {
+      + cubes {
+        + publishIri
+      }
+    }`,
+    from: "3.1.0",
+    to: "3.2.0",
+    up: (config) => {
+      const newConfig = { ...config, version: "3.2.0" };
+
+      return produce(newConfig, (draft: any) => {
+        draft.cubes = draft.cubes.map((cube: any) => ({
+          ...cube,
+          publishIri: cube.iri,
+        }));
+      });
+    },
+    down: (config) => {
+      const newConfig = { ...config, version: "3.1.0" };
+
+      return produce(newConfig, (draft: any) => {
+        draft.cubes = draft.cubes.map((cube: any) => {
+          const { publishIri, ...rest } = cube;
+          return rest;
+        });
+      });
+    },
+  },
 ];
 
 export const migrateChartConfig = makeMigrate<ChartConfig>(
   chartConfigMigrations,
   {
-  defaultToVersion: CHART_CONFIG_VERSION,
+    defaultToVersion: CHART_CONFIG_VERSION,
   }
 );
 
-export const CONFIGURATOR_STATE_VERSION = "3.1.0";
+export const CONFIGURATOR_STATE_VERSION = "3.2.0";
 
 export const configuratorStateMigrations: Migration[] = [
   {
@@ -1038,6 +1068,45 @@ export const configuratorStateMigrations: Migration[] = [
           },
         };
         delete draft.layout;
+      });
+    },
+  },
+  {
+    description: "ALL (bump ChartConfig version)",
+    from: "3.1.0",
+    to: "3.2.0",
+    up: (config) => {
+      const newConfig = { ...config, version: "3.2.0" };
+
+      return produce(newConfig, (draft: any) => {
+        const chartConfigs: any[] = [];
+
+        for (const chartConfig of draft.chartConfigs) {
+          const migratedChartConfig = migrateChartConfig(chartConfig, {
+            migrationProps: draft,
+            toVersion: "3.2.0",
+          });
+          chartConfigs.push(migratedChartConfig);
+        }
+
+        draft.chartConfigs = chartConfigs;
+      });
+    },
+    down: (config) => {
+      const newConfig = { ...config, version: "3.1.0" };
+
+      return produce(newConfig, (draft: any) => {
+        const chartConfigs: any[] = [];
+
+        for (const chartConfig of draft.chartConfigs) {
+          const migratedChartConfig = migrateChartConfig(chartConfig, {
+            migrationProps: draft,
+            toVersion: "3.1.0",
+          });
+          chartConfigs.push(migratedChartConfig);
+        }
+
+        draft.chartConfigs = chartConfigs;
       });
     },
   },

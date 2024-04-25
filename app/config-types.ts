@@ -255,7 +255,10 @@ export type SortingField = t.TypeOf<typeof SortingField>;
 
 const Cube = t.intersection([
   t.type({
+    /** The IRI of the cube, used for querying */
     iri: t.string,
+    /** The IRI of the cube used when first published */
+    publishIri: t.string,
     filters: Filters,
   }),
   t.partial({

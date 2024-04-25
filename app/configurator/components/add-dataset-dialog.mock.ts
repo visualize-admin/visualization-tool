@@ -47,6 +47,8 @@ export const photovoltaikChartStateMock: ConfiguratorStateConfiguringChart = {
       cubes: [
         {
           iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/14",
+          publishIri:
+            "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/14",
           filters: {
             "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton":
               {

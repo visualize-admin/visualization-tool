@@ -85,7 +85,13 @@ export const configStateMock = {
           { chartType: "map" }
         >["baseLayer"],
         activeField: "",
-        cubes: [{ iri: "https://first-dataset", filters: {} }],
+        cubes: [
+          {
+            iri: "https://first-dataset",
+            publishIri: "https://first-dataset",
+            filters: {},
+          },
+        ],
         fields: {
           areaLayer: {
             componentIri: "year-period-1",
@@ -152,6 +158,8 @@ export const configStateMock = {
         cubes: [
           {
             iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/2",
+            publishIri:
+              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/2",
             filters: {},
           },
         ],

@@ -69,7 +69,7 @@ describe("initial config", () => {
   it("should create an initial table config with column order based on dimension order", () => {
     const config = getInitialConfig({
       chartType: "table",
-      iris: ["https://environment.ld.admin.ch/foen/nfi"],
+      publishIris: ["https://environment.ld.admin.ch/foen/nfi"],
       dimensions: forestAreaData.data.dataCubeByIri
         .dimensions as any as Dimension[],
       measures: forestAreaData.data.dataCubeByIri.measures as any as Measure[],
@@ -95,7 +95,7 @@ describe("initial config", () => {
   it("should create an initial column config having x axis correctly inferred (temporal ordinal)", () => {
     const config = getInitialConfig({
       chartType: "column",
-      iris: ["https://environment.ld.admin.ch/foen/nfi"],
+      publishIris: ["https://environment.ld.admin.ch/foen/nfi"],
       dimensions: [
         mockDimensions.geoCoordinates,
         mockDimensions.ordinal,
@@ -113,7 +113,7 @@ describe("initial config", () => {
   it("should create an initial column config having x axis correctly inferred (temporal > temporal ordinal)", () => {
     const config = getInitialConfig({
       chartType: "column",
-      iris: ["https://environment.ld.admin.ch/foen/nfi"],
+      publishIris: ["https://environment.ld.admin.ch/foen/nfi"],
       dimensions: [
         mockDimensions.geoCoordinates,
         mockDimensions.ordinal,
@@ -130,7 +130,7 @@ describe("initial config", () => {
   it("should create an initial scatterplot config having segment correctly defined", () => {
     const config = getInitialConfig({
       chartType: "scatterplot",
-      iris: ["https://environment.ld.admin.ch/foen/nfi"],
+      publishIris: ["https://environment.ld.admin.ch/foen/nfi"],
       dimensions: [
         mockDimensions.geoCoordinates,
         mockDimensions.ordinal,
@@ -203,6 +203,7 @@ describe("chart type switch", () => {
       cubes: [
         {
           iri: "https://environment.ld.admin.ch/foen/ubd0104",
+          publishIri: "https://environment.ld.admin.ch/foen/ubd0104",
           filters: {},
         },
       ],

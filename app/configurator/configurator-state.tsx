@@ -1406,17 +1406,17 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         }
 
         const { dimensions, measures } = dataCubesComponents;
-        const cubeIris = chartConfig.cubes
+        const cubePublishIris = chartConfig.cubes
           .filter((c) => c.iri !== removedCubeIri)
           .map((c) => c.iri);
         const possibleChartTypes = getPossibleChartTypes({
           dimensions,
           measures,
-          cubeCount: cubeIris.length,
+          cubeCount: cubePublishIris.length,
         });
         const initialConfig = getInitialConfig({
           chartType: possibleChartTypes[0],
-          iris: cubeIris,
+          publishIris: cubePublishIris,
           dimensions,
           measures,
         });
@@ -1563,7 +1563,7 @@ export const initChartStateFromChartEdit = async (
 
 export const initChartStateFromCube = async (
   client: Client,
-  cubeIri: string,
+  cubePublishIri: string,
   dataSource: DataSource,
   locale: string
 ): Promise<ConfiguratorState | undefined> => {
@@ -1571,7 +1571,7 @@ export const initChartStateFromCube = async (
     sourceType: dataSource.type,
     sourceUrl: dataSource.url,
     locale,
-    cubeFilters: [{ iri: cubeIri, loadValues: true }],
+    cubeFilters: [{ iri: cubePublishIri, loadValues: true }],
   });
 
   if (!components?.dataCubesComponents) {
@@ -1586,7 +1586,7 @@ export const initChartStateFromCube = async (
   });
   const initialChartConfig = getInitialConfig({
     chartType: possibleChartTypes[0],
-    iris: [cubeIri],
+    publishIris: [cubePublishIri],
     dimensions,
     measures,
   });
