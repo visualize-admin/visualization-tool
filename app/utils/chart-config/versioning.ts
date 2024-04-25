@@ -854,9 +854,12 @@ export const chartConfigMigrations: Migration[] = [
   },
 ];
 
-export const migrateChartConfig = makeMigrate(chartConfigMigrations, {
+export const migrateChartConfig = makeMigrate<ChartConfig>(
+  chartConfigMigrations,
+  {
   defaultToVersion: CHART_CONFIG_VERSION,
-});
+  }
+);
 
 export const CONFIGURATOR_STATE_VERSION = "3.1.0";
 
@@ -1040,14 +1043,14 @@ export const configuratorStateMigrations: Migration[] = [
   },
 ];
 
-export const migrateConfiguratorState = makeMigrate(
+export const migrateConfiguratorState = makeMigrate<ConfiguratorState>(
   configuratorStateMigrations,
   {
     defaultToVersion: CONFIGURATOR_STATE_VERSION,
   }
 );
 
-function makeMigrate(
+function makeMigrate<V>(
   migrations: Migration[],
   options: { defaultToVersion: string }
 ) {
@@ -1060,7 +1063,7 @@ function makeMigrate(
       toVersion?: string;
       migrationProps?: any;
     } = {}
-  ) => {
+  ): V => {
     const {
       fromVersion,
       toVersion = defaultToVersion,
