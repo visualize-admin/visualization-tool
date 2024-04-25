@@ -42,6 +42,7 @@ export const nextAuthOptions = {
       return token;
     },
   },
+  debug: true,
 } as NextAuthOptions;
 
 export default async function auth(req: NextApiRequest, res: NextApiResponse) {
