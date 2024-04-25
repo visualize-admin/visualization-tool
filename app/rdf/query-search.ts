@@ -266,8 +266,8 @@ const mkScoresQuery = (
               { locale }
             )}
         }
+        ${creatorValues.length ? makeInFilter("creatorIri", creatorValues) : ""}
       }
-      ${creatorValues.length ? makeInFilter("creatorIri", creatorValues) : ""}
 
       OPTIONAL {
         ?iri dcat:theme ?themeIri .
