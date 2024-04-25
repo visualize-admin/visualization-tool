@@ -2,7 +2,7 @@ import NextAuth, { NextAuthOptions } from "next-auth";
 import KeycloakProvider from "next-auth/providers/keycloak";
 
 import { ensureUserFromSub } from "@/db/user";
-import { KEYCLOAK_ID, KEYCLOAK_SECRET, KEYCLOAK_ISSUER } from "@/domain/env";
+import { KEYCLOAK_ID, KEYCLOAK_ISSUER, KEYCLOAK_SECRET } from "@/domain/env";
 import { truthy } from "@/domain/types";
 
 import type { NextApiRequest, NextApiResponse } from "next";
@@ -13,6 +13,11 @@ const providers = [
         clientId: KEYCLOAK_ID as string,
         clientSecret: KEYCLOAK_SECRET as string,
         issuer: KEYCLOAK_ISSUER as string,
+        authorization: {
+          params: {
+            scope: "openid",
+          },
+        },
       })
     : null,
 ].filter(truthy);
