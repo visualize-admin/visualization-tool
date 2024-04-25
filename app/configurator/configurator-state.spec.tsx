@@ -1205,8 +1205,8 @@ describe("add dataset", () => {
     value: {
       iri: "http://second-dataset",
       joinBy: {
-        left: "year-period-1",
-        right: "year-period-2",
+        left: ["year-period-1"],
+        right: ["year-period-2"],
       },
     },
   };
@@ -1232,8 +1232,8 @@ describe("add dataset", () => {
 
     const config = newState.chartConfigs[0] as MapConfig;
 
-    expect(config.fields["areaLayer"]?.componentIri).toEqual("joinBy");
-    expect(config.fields["areaLayer"]?.color.componentIri).toEqual("joinBy");
+    expect(config.fields["areaLayer"]?.componentIri).toEqual("joinBy__0");
+    expect(config.fields["areaLayer"]?.color.componentIri).toEqual("joinBy__0");
     expect(config.cubes.length).toBe(2);
   });
 

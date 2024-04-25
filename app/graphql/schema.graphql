@@ -355,7 +355,7 @@ input DataCubeComponentFilter {
   iri: String!
   filters: Filters
   componentIris: [String!]
-  joinBy: String
+  joinBy: [String!]
   loadValues: Boolean
 }
 
@@ -367,7 +367,7 @@ input DataCubeObservationFilter {
   iri: String!
   filters: Filters
   componentIris: [String!]
-  joinBy: String
+  joinBy: [String!]
 }
 
 input DataCubePreviewFilter {

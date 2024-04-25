@@ -69,6 +69,7 @@ import {
   ObservationValue,
 } from "@/domain/data";
 import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
+import { joinByDimensionId } from "@/graphql/hook-utils";
 import { executeDataCubesComponentsQuery } from "@/graphql/hooks";
 import {
   ObservationFilter,
@@ -127,8 +128,8 @@ export type ConfiguratorStateAction =
       value: {
         iri: string;
         joinBy: {
-          left: string;
-          right: string;
+          left: string[];
+          right: string[];
         };
       };
     }
@@ -1988,8 +1989,8 @@ export const addDatasetInConfig = function (
   options: {
     iri: string;
     joinBy: {
-      left: string;
-      right: string;
+      left: string[];
+      right: string[];
     };
   }
 ) {
@@ -2018,8 +2019,9 @@ export const addDatasetInConfig = function (
       }
       for (const iriAttribute of encoding.iriAttributes) {
         const value = get(field, iriAttribute);
-        if (value === joinBy.left || value === joinBy.right) {
-          set(field, iriAttribute, "joinBy");
+        const index = joinBy.left.indexOf(value) ?? joinBy.right.indexOf(value);
+        if (index > -1) {
+          set(field, iriAttribute, joinByDimensionId(index));
         }
       }
     }

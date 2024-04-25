@@ -159,9 +159,9 @@ describe("useComponentsQuery - keepPreviousData: false", () => {
         Array [
           Object {
             "cubeIri": "joinBy",
-            "iri": "joinBy",
+            "iri": "joinBy__0",
             "isJoinByDimension": true,
-            "label": "joinBy",
+            "label": "joinBy__0",
             "originalIris": Array [
               Object {
                 "cubeIri": undefined,
@@ -174,10 +174,7 @@ describe("useComponentsQuery - keepPreviousData: false", () => {
                 "label": undefined,
               },
             ],
-            "values": Array [
-              undefined,
-              undefined,
-            ],
+            "values": Array [],
           },
           Object {
             "iri": "https://gebaude",
@@ -276,9 +273,9 @@ describe("useComponentsQuery - keepPreviousData: true", () => {
         Array [
           Object {
             "cubeIri": "joinBy",
-            "iri": "joinBy",
+            "iri": "joinBy__0",
             "isJoinByDimension": true,
-            "label": "joinBy",
+            "label": "joinBy__0",
             "originalIris": Array [
               Object {
                 "cubeIri": undefined,
@@ -291,10 +288,7 @@ describe("useComponentsQuery - keepPreviousData: true", () => {
                 "label": undefined,
               },
             ],
-            "values": Array [
-              undefined,
-              undefined,
-            ],
+            "values": Array [],
           },
           Object {
             "iri": "https://gebaude",

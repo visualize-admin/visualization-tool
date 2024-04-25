@@ -262,7 +262,7 @@ const Cube = t.intersection([
     filters: Filters,
   }),
   t.partial({
-    joinBy: t.string,
+    joinBy: t.array(t.string),
   }),
 ]);
 export type Cube = t.TypeOf<typeof Cube>;
