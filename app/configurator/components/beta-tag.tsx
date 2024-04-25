@@ -1,4 +1,4 @@
-import { Trans } from "@lingui/react";
+import { t } from "@lingui/macro";
 import { Tooltip } from "@mui/material";
 import { ComponentProps } from "react";
 
@@ -11,12 +11,11 @@ export const BetaTag = ({
 }) => {
   return (
     <Tooltip
-      title={
-        <Trans id="beta-tag.tooltip">
-          This feature is currently under development, you may encounter bugs
-          and performance problems.
-        </Trans>
-      }
+      title={t({
+        id: "beta-tag.tooltip",
+        message:
+          "This feature is currently under development, you may encounter bugs and performance problems.",
+      })}
     >
       <Tag type="dimension" {...tagProps}>
         Beta

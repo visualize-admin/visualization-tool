@@ -4,6 +4,7 @@ import {
   Box,
   Button,
   Checkbox,
+  Chip,
   CircularProgress,
   Dialog,
   DialogActions,
@@ -14,10 +15,12 @@ import {
   IconButtonProps,
   InputAdornment,
   ListItemText,
+  Menu,
   MenuItem,
   OutlinedInput,
   Select,
   SelectChangeEvent,
+  Stack,
   Table,
   TableBody,
   TableCell,
@@ -33,15 +36,18 @@ import {
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
+import groupBy from "lodash/groupBy";
 import keyBy from "lodash/keyBy";
 import uniq from "lodash/uniq";
 import uniqBy from "lodash/uniqBy";
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { useClient } from "urql";
 
 import { DatasetResults, PartialSearchCube } from "@/browser/dataset-browse";
 import { getPossibleChartTypes } from "@/charts";
+import { Error as ErrorHint, Loading } from "@/components/hint";
 import Tag from "@/components/tag";
+import useDisclosure from "@/components/use-disclosure";
 import {
   ConfiguratorStateConfiguringChart,
   DataSource,
@@ -50,20 +56,30 @@ import {
   useConfiguratorState,
 } from "@/configurator";
 import { BetaTag } from "@/configurator/components/beta-tag";
-import { Termset, isTemporalDimensionWithTimeUnit } from "@/domain/data";
+import {
+  Dimension,
+  Measure,
+  Termset,
+  isStandardErrorDimension,
+  isTemporalDimensionWithTimeUnit,
+} from "@/domain/data";
 import { truthy } from "@/domain/types";
 import {
   executeDataCubesComponentsQuery,
   useDataCubesComponentsQuery,
+  useDataCubesMetadataQuery,
   useDataCubesObservationsQuery,
 } from "@/graphql/hooks";
 import {
   DataCubeComponentsQuery,
+  DataCubeComponentsQueryVariables,
   SearchCubeFilterType,
   SearchCubeResultOrder,
   useDataCubeComponentTermsetsQuery,
+  useDataCubeComponentsQuery,
   useSearchCubesQuery,
 } from "@/graphql/query-hooks";
+import SvgIcClose from "@/icons/components/IcClose";
 import SvgIcFilter from "@/icons/components/IcFilter";
 import SvgIcRemove from "@/icons/components/IcRemove";
 import SvgIcSearch from "@/icons/components/IcSearch";
@@ -168,8 +184,23 @@ const inferJoinBy = (
 
 export type JoinBy = ReturnType<typeof inferJoinBy>[0];
 
-export const PreviewDataTable: React.FC<{
+/** Makes a unique identifier for a column */
+const columnId = (col: { iri: string; cubeIri: string }) =>
+  `${col.cubeIri}/${col.iri}`;
+
+export const PreviewDataTable = ({
+  existingCubes,
+  otherCube,
+  dataSource,
+  currentComponents,
+  inferredJoinBy,
+  otherCubeComponents,
+  onClickBack,
+  onConfirm,
+  fetchingComponents,
+}: {
   dataSource: DataSource;
+  existingCubes: { iri: string }[];
   currentComponents:
     | DataCubeComponentsQuery["dataCubeComponents"]
     | undefined
@@ -184,15 +215,6 @@ export const PreviewDataTable: React.FC<{
   onClickBack: () => void;
   onConfirm: () => void;
   fetchingComponents: boolean;
-}> = ({
-  otherCube,
-  dataSource,
-  currentComponents,
-  inferredJoinBy,
-  otherCubeComponents,
-  onClickBack,
-  onConfirm,
-  fetchingComponents,
 }) => {
   const locale = useLocale();
   const isQueryPaused = !otherCubeComponents || !currentComponents;
@@ -214,12 +236,38 @@ export const PreviewDataTable: React.FC<{
       ],
     },
   });
+  const [currentCubes] = useDataCubesMetadataQuery({
+    variables: {
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale: locale,
+      cubeFilters: existingCubes.map((cube) => ({ iri: cube.iri })),
+    },
+  });
+
+  const isFetching =
+    fetchingComponents || observations.fetching || currentCubes.fetching;
+
+  const currentCubesByIri = useMemo(
+    () => keyBy(currentCubes.data?.dataCubesMetadata, (x) => x.iri),
+    [currentCubes.data?.dataCubesMetadata]
+  );
 
   const allColumns = useMemo(() => {
-    const currentDimensions = currentComponents?.dimensions ?? [];
-    const currentMeasures = currentComponents?.measures ?? [];
-    const otherDimensions = otherCubeComponents?.dimensions ?? [];
-    const otherMeasures = otherCubeComponents?.measures ?? [];
+    const shouldIncludeColumnInPreview = (d: Dimension | Measure) =>
+      !isStandardErrorDimension(d);
+    const currentDimensions = (currentComponents?.dimensions ?? []).filter(
+      (x) => shouldIncludeColumnInPreview(x)
+    );
+    const currentMeasures = (currentComponents?.measures ?? []).filter((x) =>
+      shouldIncludeColumnInPreview(x)
+    );
+    const otherDimensions = (otherCubeComponents?.dimensions ?? []).filter(
+      (x) => shouldIncludeColumnInPreview(x)
+    );
+    const otherMeasures = (otherCubeComponents?.measures ?? []).filter((x) =>
+      shouldIncludeColumnInPreview(x)
+    );
 
     const toColumn = (d: any) => ({
       label: d.label,
@@ -245,11 +293,11 @@ export const PreviewDataTable: React.FC<{
         cubeIri: "joinBy",
         label: (
           <>
-            {joinedColumns
-              .map((x) => {
+            {uniq(
+              joinedColumns.map((x) => {
                 return x.label;
               })
-              .join(" / ")}
+            ).join(" / ")}
           </>
         ),
       },
@@ -265,19 +313,217 @@ export const PreviewDataTable: React.FC<{
     otherCubeComponents?.measures,
   ]);
 
+  const dimensionMenuItemsGroups = useMemo(() => {
+    const allColumnsByCube = groupBy(allColumns, (c) => c.cubeIri);
+    return [...existingCubes.map((x) => x.iri), otherCube.iri].map(
+      (cubeIri) => {
+        return {
+          cubeIri,
+          groupName: currentCubesByIri[cubeIri]?.title ?? otherCube.title,
+          items: allColumnsByCube[cubeIri] ?? [],
+        };
+      }
+    );
+  }, [
+    allColumns,
+    currentCubesByIri,
+    existingCubes,
+    otherCube.iri,
+    otherCube.title,
+  ]);
+
+  const [selectedColumnsRaw, setSelectedColumns] = useState<
+    undefined | string[]
+  >(undefined);
+  useEffect(() => {
+    if (
+      otherCubeComponents?.dimensions &&
+      otherCubeComponents.measures &&
+      selectedColumnsRaw === undefined
+    ) {
+      setSelectedColumns(allColumns.map((x) => columnId(x)));
+    }
+  }, [
+    allColumns,
+    otherCubeComponents?.dimensions,
+    otherCubeComponents?.measures,
+    selectedColumnsRaw,
+  ]);
+  const selectedColumns = useMemo(
+    () => selectedColumnsRaw ?? [],
+    [selectedColumnsRaw]
+  );
+
+  const selectedColumnsByIri = useMemo(
+    () => Object.fromEntries(selectedColumns.map((x) => [x, true])),
+    [selectedColumns]
+  );
+  const chipRef = useRef<HTMLDivElement>(null);
+  const {
+    isOpen: isDimensionMenuOpen,
+    close: closeDimensionMenu,
+    open: openDimensionMenu,
+  } = useDisclosure();
+
+  const handleClickDimensionMenuItem = (ev: React.MouseEvent<HTMLElement>) => {
+    const columnId = ev.currentTarget.getAttribute("data-column-id");
+    if (!columnId) {
+      return;
+    }
+    setSelectedColumns((prev_) => {
+      const prev = prev_ ?? [];
+      return selectedColumnsByIri[columnId]
+        ? prev.filter((x) => x !== columnId)
+        : [...prev, columnId];
+    });
+  };
+
+  const handleClickSelectAllFromCube = (cubeIri: string) => {
+    setSelectedColumns((prev_) => {
+      const prev = prev_ ?? [];
+      return uniq(
+        prev.concat(
+          allColumns
+            .filter((column) => column.cubeIri === cubeIri)
+            .map((column) => columnId(column))
+        )
+      );
+    });
+  };
+
+  const handleClickUnselectAllFromCube = (cubeIri: string) => {
+    setSelectedColumns((prev_) => {
+      const prev = prev_ ?? [];
+      const toRemove = new Set(
+        allColumns
+          .filter((column) => column.cubeIri === cubeIri)
+          .map((column) => columnId(column))
+      );
+      return uniq(prev.filter((x) => !toRemove.has(x)));
+    });
+  };
+
   return (
     <>
-      <DialogContent sx={{ overflowX: "hidden" }}>
-        <Typography variant="h2" mb="1rem">
+      <DialogContent
+        sx={{
+          overflowX: "hidden",
+          display: "flex",
+          flexDirection: "column",
+          gap: "1rem",
+        }}
+      >
+        <Typography variant="h2">
           <Trans id="dataset.search.preview.title">Preview data table</Trans>
         </Typography>
-        <Typography variant="body1" mb="2rem">
+        <Typography variant="body1">
           <Trans id="dataset.search.preview.description">
             Review data preview of new available dimensions and continue to edit
             visualization.
           </Trans>
         </Typography>
-        {fetchingComponents ? <CircularProgress size={12} /> : null}
+        <Stack direction="row" spacing={3}>
+          <Stack direction="column" spacing={1}>
+            <Typography variant="caption">Cubes</Typography>
+            <Stack direction="row" spacing={1}>
+              <Chip
+                variant="outlined"
+                label={currentCubes.data?.dataCubesMetadata[0].title}
+              />
+              <Chip variant="outlined" label={otherCube.title} />
+            </Stack>
+          </Stack>
+          {isFetching ? null : (
+            <Stack direction="column" spacing={1}>
+              <Typography variant="caption">Dimensions</Typography>
+              <Stack direction="column" spacing={1}>
+                <Chip
+                  sx={{ alignSelf: "flex-start" }}
+                  ref={chipRef}
+                  label={
+                    <Trans id="dataset.search.preview.dimensions-shown">
+                      {selectedColumns.length} shown
+                    </Trans>
+                  }
+                  onClick={() => openDimensionMenu()}
+                />
+              </Stack>
+            </Stack>
+          )}
+        </Stack>
+
+        <Menu
+          open={isDimensionMenuOpen}
+          anchorEl={chipRef.current}
+          onClose={closeDimensionMenu}
+          PaperProps={{ sx: { maxHeight: 500, overflow: "hidden" } }}
+        >
+          <IconButton
+            onClick={closeDimensionMenu}
+            size="small"
+            sx={{ position: "absolute", top: "1rem", right: "1rem", zIndex: 1 }}
+          >
+            <SvgIcClose />
+          </IconButton>
+          <Box sx={{ overflowY: "auto", maxHeight: 500 }}>
+            {dimensionMenuItemsGroups.map((group) => {
+              return (
+                <>
+                  <Typography ml={4} my={2} variant="h5">
+                    {group.groupName}{" "}
+                    <Button
+                      size="small"
+                      variant="text"
+                      onClick={() =>
+                        handleClickSelectAllFromCube(group.cubeIri)
+                      }
+                    >
+                      Select all
+                    </Button>{" "}
+                    -{" "}
+                    <Button
+                      size="small"
+                      variant="text"
+                      onClick={() =>
+                        handleClickUnselectAllFromCube(group.cubeIri)
+                      }
+                    >
+                      Unselect all
+                    </Button>
+                  </Typography>
+                  {group.items.map((column) => (
+                    <MenuItem
+                      key={column.iri}
+                      value={column.iri}
+                      sx={{ gap: 2, display: "flex" }}
+                      data-column-id={columnId(column)}
+                      onClick={handleClickDimensionMenuItem}
+                    >
+                      <Checkbox
+                        checked={!!selectedColumnsByIri[columnId(column)]}
+                      />
+                      {column.label}
+                      {column.cubeIri === otherCube.iri && (
+                        <Tag type="theme" sx={{ ml: 1 }}>
+                          New
+                        </Tag>
+                      )}
+                    </MenuItem>
+                  ))}
+                </>
+              );
+            })}
+          </Box>
+        </Menu>
+        {isFetching ? <Loading delayMs={0} /> : null}
+        {observations.error ? (
+          <ErrorHint>
+            <Box component="details" sx={{ width: "100%" }}>
+              <summary>{observations.error.name}</summary>
+              {observations.error.message}
+            </Box>
+          </ErrorHint>
+        ) : null}
         {otherCubeComponents ? (
           <>
             {observations.data?.dataCubesObservations ? (
@@ -290,38 +536,42 @@ export const PreviewDataTable: React.FC<{
                 <Table>
                   <TableHead>
                     <TableRow>
-                      {allColumns.map((column) => (
-                        <TableCell
-                          key={column.iri}
-                          sx={{ width: 300, whiteSpace: "nowrap" }}
-                        >
-                          {column.label}
-                          {column.cubeIri === otherCube.iri && (
-                            <Tag type="theme" sx={{ ml: 1 }}>
-                              New
-                            </Tag>
-                          )}
-                          {column.iri === "joinBy" && (
-                            <Tag type="dimension" sx={{ ml: 1 }}>
-                              Joined
-                            </Tag>
-                          )}
-                        </TableCell>
-                      ))}
+                      {allColumns.map((column) =>
+                        !!selectedColumnsByIri[columnId(column)] ? (
+                          <TableCell
+                            key={column.iri}
+                            sx={{ minWidth: 200, maxWidth: 300 }}
+                          >
+                            {column.label}
+                            {column.cubeIri === otherCube.iri && (
+                              <Tag type="theme" sx={{ ml: 1 }}>
+                                New
+                              </Tag>
+                            )}
+                            {column.iri === "joinBy" && (
+                              <Tag type="dimension" sx={{ ml: 1 }}>
+                                Joined
+                              </Tag>
+                            )}
+                          </TableCell>
+                        ) : null
+                      )}
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {observations.data.dataCubesObservations.data.map(
-                      (observation, index) => (
+                    {observations.data.dataCubesObservations.data
+                      .slice(0, 8)
+                      .map((observation, index) => (
                         <TableRow key={index}>
-                          {allColumns.map((column) => (
-                            <TableCell key={column.iri}>
-                              {observation[column.iri]}
-                            </TableCell>
-                          ))}
+                          {allColumns.map((column) =>
+                            !!selectedColumnsByIri[columnId(column)] ? (
+                              <TableCell key={column.iri}>
+                                {observation[column.iri]}
+                              </TableCell>
+                            ) : null
+                          )}
                         </TableRow>
-                      )
-                    )}
+                      ))}
                   </TableBody>
                 </Table>
               </Box>
@@ -535,13 +785,24 @@ export const DatasetDialog = ({
     return inferJoinBy(selectedSearchDimensions ?? [], otherCube)[0];
   }, [otherCube, selectedSearchDimensions]);
 
-  const [otherCubeComponents] = useDataCubesComponentsQuery({
+  const [otherCubeComponentsQuery] = useDataCubeComponentsQuery({
     variables: {
       ...commonQueryVariables,
-      cubeFilters: otherCube ? [{ iri: otherCube.iri }] : [],
+      cubeFilter: { iri: otherCube ? otherCube.iri : "" },
     },
     pause: !otherCube,
   });
+  // We need to check for this otherwise otherCubeComponents will hold the previous data, even if
+  // we change otherCube
+  const otherCubeQueryCubeIri = (
+    otherCubeComponentsQuery?.operation
+      ?.variables as DataCubeComponentsQueryVariables
+  )?.cubeFilter.iri;
+  const otherCubeComponents =
+    otherCubeQueryCubeIri === otherCube?.iri
+      ? otherCubeComponentsQuery.data?.dataCubeComponents
+      : undefined;
+
   const [{ fetching, otherIri }, { addDataset }] = useAddDataset();
 
   const handleClickOtherCube = (otherCube: PartialSearchCube) => {
@@ -610,11 +871,20 @@ export const DatasetDialog = ({
                 multiple
                 value={(selectedSearchDimensions ?? []).map((x) => x.iri)}
                 onChange={handleChangeSearchDimensions}
+                MenuProps={{
+                  PaperProps: {
+                    style: {
+                      width: 300,
+                      marginTop: "0.5rem",
+                      marginLeft: "-1rem",
+                    },
+                  },
+                }}
                 input={
                   <OutlinedInput
                     notched={false}
                     startAdornment={
-                      <InputAdornment position="start">
+                      <InputAdornment position="start" sx={{ mr: 0 }}>
                         <SvgIcFilter />
                       </InputAdornment>
                     }
@@ -669,7 +939,9 @@ export const DatasetDialog = ({
                         sd.type === "temporal" ? (
                           <Tag type="termset">{sd.timeUnit}</Tag>
                         ) : (
-                          <>
+                          <Box
+                            sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}
+                          >
                             <Typography
                               variant="caption"
                               color="grey.600"
@@ -682,7 +954,7 @@ export const DatasetDialog = ({
                                 {t.label}
                               </Tag>
                             ))}
-                          </>
+                          </Box>
                         )
                       }
                     />
@@ -740,12 +1012,14 @@ export const DatasetDialog = ({
       )}
       {otherCube && inferredJoinBy ? (
         <PreviewDataTable
+          key={otherCube.iri}
           dataSource={state.dataSource}
           currentComponents={currentComponents}
           inferredJoinBy={inferredJoinBy}
+          existingCubes={relevantCubes}
           otherCube={otherCube}
-          otherCubeComponents={otherCubeComponents?.data?.dataCubesComponents}
-          fetchingComponents={!!otherCubeComponents?.fetching}
+          otherCubeComponents={otherCubeComponents}
+          fetchingComponents={!!otherCubeComponentsQuery?.fetching}
           onConfirm={async () => {
             if (!currentComponents || !otherCube || !inferredJoinBy) {
               return null;

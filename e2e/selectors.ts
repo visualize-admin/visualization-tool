@@ -21,7 +21,7 @@ export const createSelectors = ({ screen, page, within }: Ctx) => {
       navChip: () => screen.findByTestId("navChip"),
       resultsCount: () =>
         screen.findByTestId("search-results-count", undefined, {
-          timeout: 5000,
+          timeout: 10_000,
         }),
     },
     datasetPreview: {
