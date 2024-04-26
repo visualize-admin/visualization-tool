@@ -69,7 +69,11 @@ import {
   ObservationValue,
 } from "@/domain/data";
 import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
-import { joinByDimensionId } from "@/graphql/hook-utils";
+import {
+  getOriginalDimension,
+  JOIN_BY_CUBE_IRI,
+  joinByDimensionId,
+} from "@/graphql/hook-utils";
 import { executeDataCubesComponentsQuery } from "@/graphql/hooks";
 import {
   ObservationFilter,
@@ -495,7 +499,9 @@ export const deriveFiltersFromFields = produce(
         fieldDimensionIris.has(dimension.iri);
       draft.cubes.forEach((cube) => {
         const cubeDimensions = dimensions.filter(
-          (dimension) => dimension.cubeIri === cube.iri
+          (dimension) =>
+            dimension.cubeIri === cube.iri ||
+            dimension.cubeIri === JOIN_BY_CUBE_IRI
         );
         const sortedCubeDimensions = sortBy(
           cubeDimensions,
@@ -505,7 +511,9 @@ export const deriveFiltersFromFields = produce(
         sortedCubeDimensions.forEach((dimension) => {
           applyNonTableDimensionToFilters({
             filters: cube.filters,
-            dimension,
+            dimension: isJoinByComponent(dimension)
+              ? getOriginalDimension(dimension, cube)
+              : dimension,
             isField: isField(dimension),
             possibleFilter: possibleFilters?.find(
               (f) => f.iri === dimension.iri

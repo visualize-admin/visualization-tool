@@ -5,16 +5,36 @@ import uniq from "lodash/uniq";
 import uniqBy from "lodash/uniqBy";
 import { OperationResult } from "urql";
 
-import { Dimension, Observation, ObservationValue } from "@/domain/data";
+import { Cube } from "@/config-types";
+import {
+  Dimension,
+  JoinByComponent,
+  Observation,
+  ObservationValue,
+  isJoinByComponent,
+} from "@/domain/data";
 import {
   DataCubeComponentsQuery,
   DataCubeObservationsQuery,
   DataCubeObservationsQueryVariables,
   Exact,
 } from "@/graphql/query-hooks";
+import { assert } from "@/utils/assert";
 
 export const JOIN_BY_DIMENSION_IRI = "joinBy";
 export const JOIN_BY_CUBE_IRI = "joinBy";
+
+export const getOriginalDimension = (dim: JoinByComponent, cube: Cube) => {
+  assert(isJoinByComponent(dim), "Dimension should be a join by at this point");
+  const originalIri = dim.originalIris.find(
+    (o) => o.cubeIri === cube.iri
+  )?.dimensionIri;
+  assert(!!originalIri, "Original iri should have been found");
+  return {
+    ...dim,
+    iri: originalIri,
+  };
+};
 
 /** Use to exclude joinBy dimensions when fetching dimensions, and create
  * a new joinBy dimension with values from all joinBy dimensions.
@@ -86,9 +106,18 @@ export const joinDimensions = (
 type JoinByKey = string;
 
 const keyJoiner = "$/$/$/";
+const joinByPrefix = `joinBy__`;
 
-export const joinByDimensionId = (index: number) => `joinBy__${index}`;
+export const joinByDimensionId = (index: number) => `${joinByPrefix}${index}`;
+export const isJoinById = (iri: string) => iri.startsWith(joinByPrefix);
 
+export const getResolvedJoinByIri = (cube: Cube, joinById: string) => {
+  if (!cube.joinBy) {
+    return;
+  }
+  const index = Number(joinById.slice(joinByPrefix.length));
+  return cube.joinBy[index];
+};
 /**
  * Use to merge observations coming from several DataCubesObservationQueries.
  *
