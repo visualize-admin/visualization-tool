@@ -2,9 +2,19 @@
  * Server side methods to connect to the database
  */
 
-import { Config, Prisma, PUBLISHED_STATE, User } from "@prisma/client";
+import {
+  PUBLISHED_STATE,
+  Prisma,
+  Config as PrismaConfig,
+  User,
+} from "@prisma/client";
 
-import { ChartConfig, ConfiguratorStatePublished } from "@/config-types";
+import {
+  ChartConfig,
+  Config,
+  ConfiguratorState,
+  ConfiguratorStatePublished,
+} from "@/config-types";
 import prisma from "@/db/client";
 import { upgradeConfiguratorStateServerSide } from "@/utils/chart-config/upgrade-cube";
 import { migrateConfiguratorState } from "@/utils/chart-config/versioning";
@@ -121,7 +131,7 @@ const ensureMigratedCubeIris = (chartConfig: ChartConfig) => {
   };
 };
 
-const parseDbConfig = (d: Config) => {
+const parseDbConfig = (d: PrismaConfig) => {
   const data = d.data;
   const state = migrateConfiguratorState(data) as ConfiguratorStatePublished;
   return {
@@ -135,13 +145,15 @@ const parseDbConfig = (d: Config) => {
   };
 };
 
-const upgradeDbConfig = async (d: ReturnType<typeof parseDbConfig>) => {
+const upgradeDbConfig = async (config: PrismaConfig) => {
+  const state = config.data as Config;
+  const dataSource = state.dataSource;
   return {
-    ...d,
-    data: await upgradeConfiguratorStateServerSide(d.data, {
-      dataSource: d.data.dataSource,
+    ...config,
+    data: await upgradeConfiguratorStateServerSide(state as ConfiguratorState, {
+      dataSource,
     }),
-  };
+  } as ReturnType<typeof parseDbConfig>;
 };
 
 /**
