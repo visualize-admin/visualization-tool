@@ -1975,16 +1975,13 @@ export const isPublished = (
 export const hasChartConfigs = (
   s: ConfiguratorState
 ): s is ConfiguratorStateWithChartConfigs => {
-  return (
-    isConfiguring(s) || isLayouting(s) || isPublishing(s) || isPublished(s)
-  );
+  return "chartConfigs" in s;
 };
 
-export type ConfiguratorStateWithChartConfigs =
-  | ConfiguratorStateConfiguringChart
-  | ConfiguratorStateLayouting
-  | ConfiguratorStatePublishing
-  | ConfiguratorStatePublished;
+export type ConfiguratorStateWithChartConfigs = Extract<
+  ConfiguratorState,
+  { chartConfigs: ChartConfig[] }
+>;
 
 export const addDatasetInConfig = function (
   config: ConfiguratorStateConfiguringChart,
