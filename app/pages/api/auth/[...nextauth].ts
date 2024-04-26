@@ -18,6 +18,7 @@ const providers = [
             scope: "openid",
           },
         },
+        idToken: false,
       })
     : null,
 ].filter(truthy);
