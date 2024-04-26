@@ -154,17 +154,21 @@ const useTableState = (
     function replaceKeys() {
       // Only read keys once
       const keys = Object.keys(chartData[0]);
+      const lkey = keys.length;
       const slugifiedKeys = keys.map(getSlugifiedIri);
 
       return chartData.map((d, index) => {
         const o = { id: index } as $IntentionalAny;
         // This is run often, so let's optimize it
-        for (let i = 0; i < keys.length; i++) {
-          o[slugifiedKeys[i]] =
-            types[slugifiedKeys[i]] !== "NumericalMeasure"
-              ? d[keys[i]]
-              : d[keys[i]] !== null
-                ? +d[keys[i]]!
+        for (let i = 0; i < lkey; i++) {
+          const ski = slugifiedKeys[i];
+          const ki = keys[i];
+          const v = d[ki];
+          o[ski] =
+            types[ski] !== "NumericalMeasure"
+              ? v
+              : v !== null && v !== undefined
+                ? +v!
                 : null;
         }
         return o;
