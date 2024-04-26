@@ -12,6 +12,7 @@ import {
   SubsectionTitle,
 } from "@/configurator/components/chart-controls/section";
 import { ChartTypeSelector } from "@/configurator/components/chart-type-selector";
+import { DatasetsControlSection } from "@/configurator/components/dataset-control-section";
 import { ChartAnnotatorTabField } from "@/configurator/components/field";
 
 import { useOrderedTableColumns } from "../components/ui-helpers";
@@ -135,6 +136,7 @@ export const ChartConfiguratorTable = ({
           items={columnFields}
         />
       </DragDropContext>
+      <DatasetsControlSection />
     </>
   );
 };
