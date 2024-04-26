@@ -19,6 +19,7 @@ import {
   isComboChartConfig,
 } from "@/config-types";
 import {
+  GetConfiguratorStateAction,
   getChartOptionField,
   getFilterValue,
   isConfiguring,
@@ -444,13 +445,9 @@ export const useChartType = (
 };
 
 // Used in the configurator filters
-export const useSingleFilterSelect = ({
-  cubeIri,
-  dimensionIri,
-}: {
-  cubeIri: string;
-  dimensionIri: string;
-}) => {
+export const useSingleFilterSelect = (
+  filters: GetConfiguratorStateAction<"CHART_CONFIG_FILTER_SET_SINGLE">["value"]["filters"]
+) => {
   const [state, dispatch] = useConfiguratorState();
   const onChange = useCallback<
     (
@@ -463,25 +460,27 @@ export const useSingleFilterSelect = ({
       dispatch({
         type: "CHART_CONFIG_FILTER_SET_SINGLE",
         value: {
-          cubeIri,
-          dimensionIri,
+          filters,
           value: (e.target.value === ""
             ? FIELD_VALUE_NONE
             : e.target.value) as string,
         },
       });
     },
-    [cubeIri, dimensionIri, dispatch]
+    [dispatch, filters]
   );
 
   let value = FIELD_VALUE_NONE;
 
   if (isConfiguring(state)) {
     const chartConfig = getChartConfig(state);
-    const cube = chartConfig.cubes.find((cube) => cube.iri === cubeIri);
+    for (const filter of filters) {
+      const { cubeIri, dimensionIri } = filter;
+      const cube = chartConfig.cubes.find((cube) => cube.iri === cubeIri);
 
-    if (cube) {
-      value = get(cube, ["filters", dimensionIri, "value"], FIELD_VALUE_NONE);
+      if (cube) {
+        value = get(cube, ["filters", dimensionIri, "value"], FIELD_VALUE_NONE);
+      }
     }
   }
 
@@ -493,13 +492,11 @@ export const useSingleFilterSelect = ({
 
 // Used in the Table Chart options
 export const useSingleFilterField = ({
-  cubeIri,
-  dimensionIri,
+  filters,
   value,
 }: {
-  cubeIri: string;
+  filters: GetConfiguratorStateAction<"CHART_CONFIG_FILTER_SET_SINGLE">["value"]["filters"];
   value: string;
-  dimensionIri: string;
 }): FieldProps => {
   const [state, dispatch] = useConfiguratorState();
   const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
@@ -507,15 +504,16 @@ export const useSingleFilterField = ({
       dispatch({
         type: "CHART_CONFIG_FILTER_SET_SINGLE",
         value: {
-          cubeIri,
-          dimensionIri,
+          filters: filters,
           value: e.currentTarget.value,
         },
       });
     },
-    [dispatch, cubeIri, dimensionIri]
+    [dispatch, filters]
   );
 
+  // TODO Fix
+  const dimensionIri = filters[0].dimensionIri;
   const stateValue = isConfiguring(state)
     ? get(getChartConfig(state), ["filters", dimensionIri, "value"], "")
     : "";

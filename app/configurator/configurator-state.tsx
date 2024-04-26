@@ -231,8 +231,10 @@ export type ConfiguratorStateAction =
   | {
       type: "CHART_CONFIG_FILTER_SET_SINGLE";
       value: {
-        cubeIri: string;
-        dimensionIri: string;
+        filters: {
+          cubeIri: string;
+          dimensionIri: string;
+        }[];
         value: string;
       };
     }
@@ -342,6 +344,10 @@ export type ConfiguratorStateAction =
         value: string;
       };
     };
+
+export type GetConfiguratorStateAction<
+  T extends ConfiguratorStateAction["type"],
+> = Extract<ConfiguratorStateAction, { type: T }>;
 
 const LOCALSTORAGE_PREFIX = "vizualize-configurator-state";
 export const getLocalStorageKey = (chartId: string) =>
@@ -813,7 +819,7 @@ export const getFiltersByMappingStatus = (
     ...nonGenericFieldValues,
     ...(joinByIris ?? []),
   ]);
-  const filters = getChartConfigFilters(chartConfig.cubes, cubeIri);
+  const filters = getChartConfigFilters(chartConfig.cubes, { cubeIri });
   const mappedFilters = pickBy(filters, (_, iri) => iris.has(iri));
   const unmappedFilters = pickBy(filters, (_, iri) => !iris.has(iri));
 
@@ -1242,15 +1248,28 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
     case "CHART_CONFIG_FILTER_SET_SINGLE":
       if (isConfiguring(draft)) {
-        const { cubeIri, dimensionIri, value } = action.value;
+        const { filters, value } = action.value;
         const chartConfig = getChartConfig(draft);
-        const cube = chartConfig.cubes.find((cube) => cube.iri === cubeIri);
 
-        if (cube) {
-          cube.filters[dimensionIri] = {
-            type: "single",
-            value,
-          };
+        /*
+         * We are getting a list of filters, since setting a single filter in the UI
+         * in the case of joined dimensions, sets multiple filters inside the chart
+         * configuration.
+         */
+        for (const filter of filters) {
+          const { cubeIri, dimensionIri } = filter;
+          const cube = chartConfig.cubes.find((cube) => cube.iri === cubeIri);
+
+          if (cube) {
+            cube.filters[dimensionIri] = {
+              type: "single",
+              value,
+            };
+          } else {
+            console.warn(
+              `Could not set filter, no cube in chat config was found with iri ${cubeIri}`
+            );
+          }
         }
       }
 

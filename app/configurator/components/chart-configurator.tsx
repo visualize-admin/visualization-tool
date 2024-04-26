@@ -55,6 +55,7 @@ import {
   DataFilterSelect,
   DataFilterTemporal,
   OnOffControlTabField,
+  dimensionToFieldProps,
 } from "@/configurator/components/field";
 import { canRenderDatePickerField } from "@/configurator/components/field-date-picker";
 import {
@@ -252,7 +253,9 @@ const useEnsurePossibleFilters = ({
           mappedFilters
         );
 
-        const oldFilters = getChartConfigFilters(chartConfig.cubes, cube.iri);
+        const oldFilters = getChartConfigFilters(chartConfig.cubes, {
+          cubeIri: cube.iri,
+        });
 
         // Replace resolved values with potential dynamic max values to not
         // override the dynamic max value with the resolved value
@@ -322,7 +325,7 @@ const useFilterReorder = ({
   const [state, dispatch] = useConfiguratorState(isConfiguring);
   const chartConfig = getChartConfig(state);
   const locale = useLocale();
-  const filters = getChartConfigFilters(chartConfig.cubes);
+  const filters = getChartConfigFilters(chartConfig.cubes, { joined: true });
   const joinByIris = React.useMemo(() => {
     return chartConfig.cubes.flatMap((cube) => cube.joinBy).filter(truthy);
   }, [chartConfig.cubes]);
@@ -416,8 +419,7 @@ const useFilterReorder = ({
     dispatch({
       type: "CHART_CONFIG_FILTER_SET_SINGLE",
       value: {
-        cubeIri: dimension.cubeIri,
-        dimensionIri: dimension.iri,
+        filters: dimensionToFieldProps(dimension),
         value: `${filterValue.value}`,
       },
     });

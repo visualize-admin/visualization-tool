@@ -85,7 +85,9 @@ export const useQueryFilters = ({
   const allInteractiveDataFilters = useInteractiveFilters((d) => d.dataFilters);
   return React.useMemo(() => {
     return chartConfig.cubes.map((cube) => {
-      const cubeFilters = getChartConfigFilters(chartConfig.cubes, cube.iri);
+      const cubeFilters = getChartConfigFilters(chartConfig.cubes, {
+        cubeIri: cube.iri,
+      });
       const cubeFiltersKeys = Object.keys(cubeFilters);
       // TODO: Currently, in case of two dimensions with the same IRI, the last one wins.
       // This is a bigger issue we should address in the future, probably by keeping

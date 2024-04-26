@@ -57,6 +57,7 @@ import {
   DRAWER_WIDTH,
 } from "@/configurator/components/drawer";
 import {
+  dimensionToFieldProps,
   MostRecentDateSwitch,
   MultiFilterFieldColorPicker,
   SingleFilterField,
@@ -1237,8 +1238,7 @@ export const DimensionValuesSingleFilter = ({
         return (
           <SingleFilterField
             key={dv.value}
-            cubeIri={dimension.cubeIri}
-            dimensionIri={dimension.iri}
+            filters={dimensionToFieldProps(dimension)}
             label={dv.label}
             value={`${dv.value}`}
           />
