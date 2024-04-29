@@ -70,6 +70,6 @@ export const makeCubeFilters = ({
     aboutQueryFilter,
   ].filter(truthy);
 
-  debugger;
+  
   return res;
 };

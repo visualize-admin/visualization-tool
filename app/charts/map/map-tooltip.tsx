@@ -135,7 +135,7 @@ export const MapTooltip = () => {
 
         if (colors.type === "fixed") {
           preparedColors = {
-            type: "fixed" as "fixed",
+            type: "fixed" as const,
             color,
             textColor,
             sameAsValue: false,
@@ -143,7 +143,7 @@ export const MapTooltip = () => {
           };
         } else if (colors.type === "categorical") {
           preparedColors = {
-            type: "categorical" as "categorical",
+            type: "categorical" as const,
             component: colors.component,
             value: colors.getValue(obs),
             error: null,

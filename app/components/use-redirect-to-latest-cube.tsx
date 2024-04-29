@@ -56,7 +56,7 @@ export const useRedirectToLatestCube = ({
   useEffect(() => {
     if (dataSource.type !== "sparql") {
       console.error(
-        `Cannot redirect to unversioned IRI if dataSource.type !== "sparql", here it\'s ${dataSource.type}`
+        `Cannot redirect to unversioned IRI if dataSource.type !== "sparql", here it's ${dataSource.type}`
       );
       return;
     }

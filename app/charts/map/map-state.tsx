@@ -317,7 +317,7 @@ const getNumericalColorScale = ({
 
 const getFixedColors = (color: FixedColorField) => {
   const c = colorToRgbArray(color.value, color.opacity * 2.55);
-  return { type: "fixed" as "fixed", getColor: (_: Observation) => c };
+  return { type: "fixed" as const, getColor: (_: Observation) => c };
 };
 
 const getCategoricalColors = (

@@ -14,7 +14,7 @@ jest.mock("next/router", () => {
 
 describe("use route state", () => {
   const prodSource = {
-    type: "sparql" as "sparql",
+    type: "sparql" as const,
     url: "https://lindas.admin.ch/query",
   };
 
