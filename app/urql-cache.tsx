@@ -2,7 +2,7 @@ import { DataSource } from "@/config-types";
 import { DataCubeComponents } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { client } from "@/graphql/client";
-import { joinDimensions } from "@/graphql/hook-utils";
+import { joinDimensions } from "@/graphql/join";
 import {
   DataCubeComponentFilter,
   DataCubeComponentsDocument,

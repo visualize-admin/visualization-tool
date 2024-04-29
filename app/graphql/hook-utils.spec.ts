@@ -1,7 +1,7 @@
 import { OperationResult } from "urql";
 
 import { Dimension } from "@/domain/data";
-import { joinDimensions, mergeObservations } from "@/graphql/hook-utils";
+import { joinDimensions, mergeObservations } from "@/graphql/join";
 import {
   DataCubeObservationsQuery,
   DataCubeObservationsQueryVariables,

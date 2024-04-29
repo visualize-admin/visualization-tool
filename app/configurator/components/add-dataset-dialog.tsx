@@ -65,13 +65,13 @@ import {
   isTemporalDimensionWithTimeUnit,
 } from "@/domain/data";
 import { truthy } from "@/domain/types";
-import { joinDimensions } from "@/graphql/hook-utils";
 import {
   executeDataCubesComponentsQuery,
   useDataCubesComponentsQuery,
   useDataCubesMetadataQuery,
   useDataCubesObservationsQuery,
 } from "@/graphql/hooks";
+import { joinDimensions } from "@/graphql/join";
 import {
   DataCubeComponentsQuery,
   DataCubeComponentsQueryVariables,

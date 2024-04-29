@@ -18,8 +18,8 @@ import {
   GeoShapes,
   dimensionValuesToGeoCoordinates,
 } from "@/domain/data";
-import { getResolvedJoinByIri, isJoinById } from "@/graphql/hook-utils";
 import { useDataCubesComponentsQuery } from "@/graphql/hooks";
+import { getResolvedJoinByIri, isJoinById } from "@/graphql/join";
 import { useDataCubeDimensionGeoShapesQuery } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 

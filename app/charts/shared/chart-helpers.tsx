@@ -39,7 +39,7 @@ import {
   getTemporalEntityValue,
 } from "@/domain/data";
 import { truthy } from "@/domain/types";
-import { JOIN_BY_DIMENSION_IRI } from "@/graphql/hook-utils";
+import { JOIN_BY_DIMENSION_IRI } from "@/graphql/join";
 import { DataCubeObservationFilter } from "@/graphql/resolver-types";
 import {
   InteractiveFiltersState,

@@ -69,12 +69,12 @@ import {
   ObservationValue,
 } from "@/domain/data";
 import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
+import { executeDataCubesComponentsQuery } from "@/graphql/hooks";
 import {
   getOriginalDimension,
   JOIN_BY_CUBE_IRI,
   joinByDimensionId,
-} from "@/graphql/hook-utils";
-import { executeDataCubesComponentsQuery } from "@/graphql/hooks";
+} from "@/graphql/join";
 import {
   ObservationFilter,
   PossibleFiltersDocument,

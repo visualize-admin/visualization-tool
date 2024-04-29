@@ -7,7 +7,7 @@ import {
   DataCubesObservations,
 } from "@/domain/data";
 
-import { joinDimensions, mergeObservations } from "./hook-utils";
+import { joinDimensions, mergeObservations } from "./join";
 import {
   DataCubeComponentFilter,
   DataCubeComponentsDocument,
