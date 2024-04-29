@@ -180,14 +180,16 @@ const inferJoinBy = (
     })
     .filter((x): x is { left: string; right: string } => !!(x.left && x.right));
 
-  // TODO Right now, we only support one join by dimension
-  return possibleJoinBys.reduce(
+  return possibleJoinBys.reduce<{
+    left: string[];
+    right: string[];
+  }>(
     (acc, item) => {
       acc.left.push(item.left);
       acc.right.push(item.right);
       return acc;
     },
-    { left: [] as string[], right: [] as string[] }
+    { left: [], right: [] }
   );
 };
 
