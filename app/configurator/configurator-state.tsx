@@ -91,6 +91,10 @@ import {
   updateConfig,
 } from "@/utils/chart-config/api";
 import {
+  upgradeConfiguratorState,
+  upgradeCubePublishIri,
+} from "@/utils/chart-config/upgrade-cube";
+import {
   CONFIGURATOR_STATE_VERSION,
   migrateConfiguratorState,
 } from "@/utils/chart-config/versioning";
@@ -1406,17 +1410,17 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         }
 
         const { dimensions, measures } = dataCubesComponents;
-        const cubeIris = chartConfig.cubes
+        const iris = chartConfig.cubes
           .filter((c) => c.iri !== removedCubeIri)
-          .map((c) => c.iri);
+          .map(({ iri, publishIri }) => ({ iri, publishIri }));
         const possibleChartTypes = getPossibleChartTypes({
           dimensions,
           measures,
-          cubeCount: cubeIris.length,
+          cubeCount: iris.length,
         });
         const initialConfig = getInitialConfig({
           chartType: possibleChartTypes[0],
-          iris: cubeIris,
+          iris,
           dimensions,
           measures,
         });
@@ -1534,6 +1538,7 @@ const ConfiguratorStateContext = createContext<
 >(undefined);
 
 export const initChartStateFromChartCopy = async (
+  client: Client,
   fromChartId: string
 ): Promise<ConfiguratorStateConfiguringChart | undefined> => {
   const config = await fetchChartConfig(fromChartId);
@@ -1541,32 +1546,47 @@ export const initChartStateFromChartCopy = async (
   if (config?.data) {
     // Do not keep the previous chart key
     delete config.data.key;
-    return migrateConfiguratorState({
+    const state = migrateConfiguratorState({
       ...config.data,
       state: "CONFIGURING_CHART",
+    }) as ConfiguratorStateConfiguringChart;
+    return await upgradeConfiguratorState(state, {
+      client,
+      dataSource: state.dataSource,
     });
   }
 };
 
 export const initChartStateFromChartEdit = async (
+  client: Client,
   fromChartId: string
 ): Promise<ConfiguratorStateConfiguringChart | undefined> => {
   const config = await fetchChartConfig(fromChartId);
 
   if (config?.data) {
-    return migrateConfiguratorState({
+    const state = migrateConfiguratorState({
       ...config.data,
       state: "CONFIGURING_CHART",
+    }) as ConfiguratorStateConfiguringChart;
+    return await upgradeConfiguratorState(state, {
+      client,
+      dataSource: state.dataSource,
     });
   }
 };
 
 export const initChartStateFromCube = async (
   client: Client,
-  cubeIri: string,
+  cubePublishIri: string,
   dataSource: DataSource,
   locale: string
 ): Promise<ConfiguratorState | undefined> => {
+  // Technically we already have most recent iri assured by useRedirectToLatestCube, but
+  // just to be extra sure, we fetch it again here.
+  const cubeIri = await upgradeCubePublishIri(cubePublishIri, {
+    client,
+    dataSource,
+  });
   const { data: components } = await executeDataCubesComponentsQuery(client, {
     sourceType: dataSource.type,
     sourceUrl: dataSource.url,
@@ -1586,7 +1606,7 @@ export const initChartStateFromCube = async (
   });
   const initialChartConfig = getInitialConfig({
     chartType: possibleChartTypes[0],
-    iris: [cubeIri],
+    iris: [{ iri: cubeIri, publishIri: cubePublishIri }],
     dimensions,
     measures,
   });
@@ -1629,6 +1649,7 @@ export const initChartStateFromCube = async (
  * If state is invalid, it is removed from localStorage.
  */
 export const initChartStateFromLocalStorage = async (
+  client: Client,
   chartId: string
 ): Promise<ConfiguratorState | undefined> => {
   const storedState = window.localStorage.getItem(getLocalStorageKey(chartId));
@@ -1637,23 +1658,25 @@ export const initChartStateFromLocalStorage = async (
     return;
   }
 
-  let parsedState;
+  let state: ConfiguratorState | undefined;
   try {
-    const rawParsedState = JSON.parse(storedState);
-    const migratedState = migrateConfiguratorState(rawParsedState);
-    parsedState = decodeConfiguratorState(migratedState);
+    const rawState = JSON.parse(storedState);
+    const migratedState = migrateConfiguratorState(rawState);
+    state = decodeConfiguratorState(migratedState);
   } catch (e) {
     console.error("Error while parsing stored state", e);
-    // Ignore errors since we are returning undefined and removing bad state from localStorage
   }
 
-  if (parsedState) {
-    return parsedState;
+  if (state) {
+    return upgradeConfiguratorState(state, {
+      client,
+      dataSource: state.dataSource,
+    });
   }
 
   console.warn(
     "Attempted to restore invalid state. Removing from localStorage.",
-    parsedState
+    state
   );
   window.localStorage.removeItem(getLocalStorageKey(chartId));
 };
@@ -1695,9 +1718,15 @@ const ConfiguratorStateProviderInternal = (
 
         if (chartId === "new") {
           if (query.copy && typeof query.copy === "string") {
-            newChartState = await initChartStateFromChartCopy(query.copy);
+            newChartState = await initChartStateFromChartCopy(
+              client,
+              query.copy
+            );
           } else if (query.edit && typeof query.edit === "string") {
-            newChartState = await initChartStateFromChartEdit(query.edit);
+            newChartState = await initChartStateFromChartEdit(
+              client,
+              query.edit
+            );
           } else if (query.cube && typeof query.cube === "string") {
             newChartState = await initChartStateFromCube(
               client,
@@ -1707,7 +1736,7 @@ const ConfiguratorStateProviderInternal = (
             );
           }
         } else if (chartId !== "published") {
-          newChartState = await initChartStateFromLocalStorage(chartId);
+          newChartState = await initChartStateFromLocalStorage(client, chartId);
           if (!newChartState && allowDefaultRedirect) {
             replace(`/create/new`);
           }
@@ -1946,16 +1975,13 @@ export const isPublished = (
 export const hasChartConfigs = (
   s: ConfiguratorState
 ): s is ConfiguratorStateWithChartConfigs => {
-  return (
-    isConfiguring(s) || isLayouting(s) || isPublishing(s) || isPublished(s)
-  );
+  return "chartConfigs" in s;
 };
 
-export type ConfiguratorStateWithChartConfigs =
-  | ConfiguratorStateConfiguringChart
-  | ConfiguratorStateLayouting
-  | ConfiguratorStatePublishing
-  | ConfiguratorStatePublished;
+export type ConfiguratorStateWithChartConfigs = Extract<
+  ConfiguratorState,
+  { chartConfigs: ChartConfig[] }
+>;
 
 export const addDatasetInConfig = function (
   config: ConfiguratorStateConfiguringChart,
@@ -1972,6 +1998,7 @@ export const addDatasetInConfig = function (
     chartConfig.cubes[0].joinBy = joinBy.left;
     chartConfig.cubes.push({
       iri: iri,
+      publishIri: iri,
       joinBy: joinBy.right,
       filters: {},
     });

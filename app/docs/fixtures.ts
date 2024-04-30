@@ -47,6 +47,7 @@ export const states: ConfiguratorState[] = [
         cubes: [
           {
             iri: "",
+            publishIri: "",
             filters: {},
           },
         ],
@@ -882,6 +883,7 @@ export const tableConfig: TableConfig = {
   cubes: [
     {
       iri: "",
+      publishIri: "",
       filters: {},
     },
   ],

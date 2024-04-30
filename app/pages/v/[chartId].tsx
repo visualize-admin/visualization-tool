@@ -9,7 +9,7 @@ import {
   Typography,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { Config, PUBLISHED_STATE } from "@prisma/client";
+import { Config as PrismaConfig, PUBLISHED_STATE } from "@prisma/client";
 import { GetServerSideProps } from "next";
 import { useSession } from "next-auth/react";
 import ErrorPage from "next/error";
@@ -22,12 +22,8 @@ import { ChartPublished } from "@/components/chart-published";
 import { PublishSuccess } from "@/components/hint";
 import { ContentLayout } from "@/components/layout";
 import { PublishActions } from "@/components/publish-actions";
-import {
-  Config as ChartConfig,
-  ConfiguratorStateProvider,
-  ConfiguratorStatePublished,
-  getChartConfig,
-} from "@/configurator";
+import { ConfiguratorStatePublished, getChartConfig } from "@/config-types";
+import { ConfiguratorStateProvider } from "@/configurator/configurator-state";
 import { getConfig } from "@/db/config";
 import { deserializeProps, Serialized, serializeProps } from "@/db/serialize";
 import { useLocale } from "@/locales/use-locale";
@@ -41,8 +37,8 @@ type PageProps =
     }
   | {
       status: "found";
-      config: Omit<Config, "data"> & {
-        data: ChartConfig;
+      config: Omit<PrismaConfig, "data"> & {
+        data: Omit<ConfiguratorStatePublished, "activeField" | "state">;
       };
     };
 
@@ -93,13 +89,15 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
     config.user_id === session.data?.user.id;
 
   const { key, state } = React.useMemo(() => {
-    if (props.status === "found") {
+    if (status === "found") {
+      const state = {
+        state: "PUBLISHED",
+        ...config.data,
+      } as ConfiguratorStatePublished;
+
       return {
-        key: props.config.key,
-        state: {
-          state: "PUBLISHED",
-          ...props.config.data,
-        } as ConfiguratorStatePublished,
+        key: config.key,
+        state,
       };
     }
 
@@ -107,7 +105,7 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
       key: "",
       state: undefined,
     };
-  }, [props]);
+  }, [config?.data, config?.key, status]);
   const chartConfig = state ? getChartConfig(state) : undefined;
 
   React.useEffect(
@@ -124,14 +122,11 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
   const { dataSource, setDataSource } = useDataSourceStore();
   React.useEffect(
     function setCorrectDataSource() {
-      if (
-        props.status === "found" &&
-        props.config.data.dataSource.url !== dataSource.url
-      ) {
-        setDataSource(props.config.data.dataSource);
+      if (status === "found" && config.data.dataSource.url !== dataSource.url) {
+        setDataSource(config.data.dataSource);
       }
     },
-    [dataSource.url, setDataSource, props]
+    [config?.data.dataSource, dataSource.url, setDataSource, status]
   );
 
   if (

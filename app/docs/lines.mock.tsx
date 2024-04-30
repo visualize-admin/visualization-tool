@@ -83,6 +83,7 @@ export const chartConfig: LineConfig = {
   cubes: [
     {
       iri: "",
+      publishIri: "",
       filters: {},
     },
   ],

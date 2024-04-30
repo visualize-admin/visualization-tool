@@ -22,7 +22,6 @@ export const Termsets = () => {
       sourceUrl: "https://lindas.admin.ch/query",
       cubeFilter: {
         iri: cube,
-        latest: true,
       },
     },
   });

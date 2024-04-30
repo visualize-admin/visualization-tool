@@ -76,6 +76,7 @@ export const chartConfig: ScatterPlotConfig = {
   cubes: [
     {
       iri: "",
+      publishIri: "",
       filters: {},
     },
   ],

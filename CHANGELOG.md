@@ -9,7 +9,8 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
-Nothing yet.
+- Performance
+  - Cube upgrade is done only once at client side, instead of being re-fetched in every server-side query
 
 ## [4.3.0] - 2024-04-25
 

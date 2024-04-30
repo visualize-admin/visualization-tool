@@ -32,13 +32,20 @@ import {
   createCubeDimensionValuesLoader,
   getCubeDimensions,
   getCubeObservations,
-  getLatestCube,
 } from "@/rdf/queries";
 import { GeoShape } from "@/rdf/query-geo-shapes";
 import { parseHierarchy, queryHierarchies } from "@/rdf/query-hierarchies";
+import { queryLatestCubeIri } from "@/rdf/query-latest-cube-iri";
 import { getPossibleFilters } from "@/rdf/query-possible-filters";
 import { SearchResult, searchCubes as _searchCubes } from "@/rdf/query-search";
 import { getSparqlEditorUrl } from "@/rdf/sparql-utils";
+
+export const dataCubeLatestIri: NonNullable<
+  QueryResolvers["dataCubeLatestIri"]
+> = async (_, { iri }, { setup }, info) => {
+  const { sparqlClient } = await setup(info);
+  return (await queryLatestCubeIri(sparqlClient, iri)) ?? iri;
+};
 
 const sortResults = (
   results: SearchResult[],
@@ -160,13 +167,12 @@ const getResolvedDimension = async (
   }
 ): Promise<ResolvedDimension> => {
   const { cubeIri, locale, sparqlClient, loaders, cache } = options;
-  const rawCube = await loaders.cube.load(cubeIri);
+  const cube = await loaders.cube.load(cubeIri);
 
-  if (!rawCube) {
+  if (!cube) {
     throw new Error(`Cube ${cubeIri} not found!`);
   }
 
-  const cube = await getLatestCube(rawCube);
   await cube.fetchShape();
   const dimensions = await getCubeDimensions({
     cube,
@@ -189,9 +195,7 @@ export const possibleFilters: NonNullable<
   QueryResolvers["possibleFilters"]
 > = async (_, { iri, filters }, { setup }, info) => {
   const { sparqlClient, loaders, cache } = await setup(info);
-  const rawCube = await loaders.cube.load(iri);
-  // Currently we always default to the latest cube.
-  const cube = await getLatestCube(rawCube);
+  const cube = await loaders.cube.load(iri);
   const cubeIri = cube.term?.value;
 
   if (!cubeIri) {
@@ -206,16 +210,14 @@ export const dataCubeComponents: NonNullable<
 > = async (_, { locale, cubeFilter }, { setup }, info) => {
   const { loaders, sparqlClient, sparqlClientStream, cache } =
     await setup(info);
-  const { iri, latest = true, componentIris, filters, loadValues } = cubeFilter;
-  const rawCube = await loaders.cube.load(iri);
+  const { iri, componentIris, filters, loadValues } = cubeFilter;
+  const cube = await loaders.cube.load(iri);
 
-  if (!rawCube) {
+  if (!cube) {
     throw new Error(`Cube ${iri} not found!`);
   }
 
-  const cube = latest ? await getLatestCube(rawCube) : rawCube;
   await cube.fetchShape();
-
   const rawComponents = await getCubeDimensions({
     cube,
     locale,
@@ -341,11 +343,8 @@ export const dataCubeComponentTermsets: NonNullable<
   QueryResolvers["dataCubeComponentTermsets"]
 > = async (_, { locale, cubeFilter }, { setup }, info) => {
   const { sparqlClient } = await setup(info);
-  const { iri, latest = true } = cubeFilter;
-  const cube = await new LightCube({ iri, locale, sparqlClient }).init(
-    !!latest
-  );
-
+  const { iri } = cubeFilter;
+  const cube = new LightCube({ iri, locale, sparqlClient });
   return await cube.fetchComponentTermsets();
 };
 
@@ -353,11 +352,8 @@ export const dataCubeMetadata: NonNullable<
   QueryResolvers["dataCubeMetadata"]
 > = async (_, { locale, cubeFilter }, { setup }, info) => {
   const { sparqlClient } = await setup(info);
-  const { iri, latest = true } = cubeFilter;
-  const cube = await new LightCube({ iri, locale, sparqlClient }).init(
-    !!latest
-  );
-
+  const { iri } = cubeFilter;
+  const cube = new LightCube({ iri, locale, sparqlClient });
   return await cube.fetchMetadata();
 };
 
@@ -365,16 +361,14 @@ export const dataCubeObservations: NonNullable<
   QueryResolvers["dataCubeObservations"]
 > = async (_, { locale, cubeFilter }, { setup }, info) => {
   const { loaders, sparqlClient, cache } = await setup(info);
-  const { iri, latest = true, filters, componentIris } = cubeFilter;
-  const rawCube = await loaders.cube.load(iri);
+  const { iri, filters, componentIris } = cubeFilter;
+  const cube = await loaders.cube.load(iri);
 
-  if (!rawCube) {
+  if (!cube) {
     throw new Error("Cube not found!");
   }
 
-  const cube = latest ? await getLatestCube(rawCube) : rawCube;
   await cube.fetchShape();
-
   const { query, observations } = await getCubeObservations({
     cube,
     locale,
@@ -400,11 +394,8 @@ export const dataCubePreview: NonNullable<
   QueryResolvers["dataCubePreview"]
 > = async (_, { locale, cubeFilter }, { setup }, info) => {
   const { sparqlClient } = await setup(info);
-  const { iri, latest = true } = cubeFilter;
-  const cube = await new LightCube({ iri, locale, sparqlClient }).init(
-    !!latest
-  );
-
+  const { iri } = cubeFilter;
+  const cube = new LightCube({ iri, locale, sparqlClient });
   return await cube.fetchPreview();
 };
 

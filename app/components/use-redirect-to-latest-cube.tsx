@@ -4,7 +4,7 @@ import ParsingClient from "sparql-http-client/ParsingClient";
 
 import { ConfiguratorState } from "@/config-types";
 import { useLocale } from "@/locales/use-locale";
-import { queryLatestCube } from "@/rdf/query-cube-metadata";
+import { queryLatestCubeIri } from "@/rdf/query-latest-cube-iri";
 import { getErrorQueryParams } from "@/utils/flashes";
 import useEvent from "@/utils/use-event";
 
@@ -29,7 +29,7 @@ export const useRedirectToLatestCube = ({
       hasRun.current = true;
 
       const sparqlClient = new ParsingClient({ endpointUrl: dataSourceURL });
-      const latestIri = await queryLatestCube(sparqlClient, datasetIri);
+      const latestIri = await queryLatestCubeIri(sparqlClient, datasetIri);
 
       if (!latestIri) {
         return router.replace({

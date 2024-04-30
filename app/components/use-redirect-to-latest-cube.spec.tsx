@@ -3,10 +3,10 @@ import { NextRouter, useRouter } from "next/router";
 
 import { useRedirectToLatestCube } from "@/components/use-redirect-to-latest-cube";
 import { useLocale } from "@/locales/use-locale";
-import { queryLatestCube } from "@/rdf/query-cube-metadata";
+import { queryLatestCubeIri } from "@/rdf/query-latest-cube-iri";
 
-jest.mock("@/rdf/query-cube-metadata", () => ({
-  queryLatestCube: jest.fn(),
+jest.mock("@/rdf/query-latest-cube-iri", () => ({
+  queryLatestCubeIri: jest.fn(),
 }));
 
 jest.mock("next/router", () => ({
@@ -45,7 +45,7 @@ describe("use redirect to versioned cube", () => {
     (useLocale as jest.MockedFunction<typeof useLocale>).mockReturnValue("de");
 
     (
-      queryLatestCube as jest.MockedFunction<typeof queryLatestCube>
+      queryLatestCubeIri as jest.MockedFunction<typeof queryLatestCubeIri>
     ).mockImplementation(async () => versionedCube);
 
     renderHook(() =>

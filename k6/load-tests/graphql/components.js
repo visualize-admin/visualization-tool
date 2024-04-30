@@ -9,7 +9,6 @@ const query = `query Components(
   $sourceType: String!
   $sourceUrl: String!
   $locale: String!
-  $latest: Boolean
   $filters: Filters
   $componentIris: [String!]
 ) {
@@ -18,7 +17,6 @@ const query = `query Components(
     sourceType: $sourceType
     sourceUrl: $sourceUrl
     locale: $locale
-    latest: $latest
   ) {
     dimensions(
       sourceType: $sourceType

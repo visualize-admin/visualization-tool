@@ -11,7 +11,6 @@ const query = `query DataCubeObservations(
   $locale: String!
   $componentIris: [String!]
   $filters: Filters
-  $latest: Boolean
   $limit: Int
 ) {
   dataCubeByIri(
@@ -19,7 +18,6 @@ const query = `query DataCubeObservations(
     sourceType: $sourceType
     sourceUrl: $sourceUrl
     locale: $locale
-    latest: $latest
   ) {
     observations(
       sourceType: $sourceType

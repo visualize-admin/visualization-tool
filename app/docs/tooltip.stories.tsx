@@ -86,6 +86,7 @@ const TooltipBoxStory = () => (
           cubes: [
             {
               iri: "",
+              publishIri: "",
               filters: {},
             },
           ],
@@ -246,6 +247,7 @@ const TooltipContentStory = {
           cubes: [
             {
               iri: "",
+              publishIri: "",
               filters: {},
             },
           ],
@@ -316,6 +318,7 @@ export const TooltipContentStory2 = {
           cubes: [
             {
               iri: "",
+              publishIri: "",
               filters: {},
             },
           ],
