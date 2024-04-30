@@ -1,13 +1,9 @@
 import { CubeDimension } from "rdf-cube-view-query";
 
+import { DataCubeMetadata, Observation } from "@/domain/data";
+import { RelatedDimension } from "@/graphql/query-hooks";
+import { ScaleType, TimeUnit } from "@/graphql/resolver-types";
 import { ExtendedCube } from "@/rdf/extended-cube";
-
-import { DataCubeMetadata, Observation } from "../domain/data";
-
-import { RelatedDimension } from "./query-hooks";
-import { ScaleType, TimeUnit } from "./resolver-types";
-
-/** Types shared by graphql-codegen and resolver code */
 
 export type ResolvedDataCube = {
   cube: ExtendedCube;
@@ -44,12 +40,9 @@ export type ResolvedDimension = {
   };
 };
 
-export type ResolvedMeasure = ResolvedDimension;
-
 export type ResolvedObservationsQuery = {
   cube: ExtendedCube;
   locale: string;
-
   data: {
     query: string;
     observations: Observation[];
