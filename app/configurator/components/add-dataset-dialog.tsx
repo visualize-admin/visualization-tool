@@ -4,7 +4,6 @@ import {
   Box,
   Button,
   Checkbox,
-  Chip,
   CircularProgress,
   Dialog,
   DialogActions,
@@ -15,7 +14,7 @@ import {
   IconButtonProps,
   InputAdornment,
   ListItemText,
-  Menu,
+  ListSubheader,
   MenuItem,
   OutlinedInput,
   Select,
@@ -27,13 +26,16 @@ import {
   TableHead,
   TableRow,
   TextField,
+  Tooltip,
   Typography,
+  TypographyProps,
   dialogActionsClasses,
   dialogClasses,
   dialogContentClasses,
   dialogTitleClasses,
   useEventCallback,
 } from "@mui/material";
+import { Theme } from "@mui/material/styles";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 import groupBy from "lodash/groupBy";
@@ -81,7 +83,6 @@ import {
   useDataCubeComponentsQuery,
   useSearchCubesQuery,
 } from "@/graphql/query-hooks";
-import SvgIcClose from "@/icons/components/IcClose";
 import SvgIcFilter from "@/icons/components/IcFilter";
 import SvgIcRemove from "@/icons/components/IcRemove";
 import SvgIcSearch from "@/icons/components/IcSearch";
@@ -105,7 +106,7 @@ const DialogCloseButton = (props: IconButtonProps) => {
   );
 };
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme: Theme) => ({
   addButton: {
     transition: "opacity 0.25s ease",
   },
@@ -127,7 +128,24 @@ const useStyles = makeStyles(() => ({
       minHeight: "calc(100vh - calc(30px * 2))",
     },
   },
+  newAnnotation: {
+    color: theme.palette.success.main,
+  },
 }));
+
+const NewAnnotation = (props: TypographyProps) => {
+  const classes = useStyles();
+  return (
+    <Typography
+      className={clsx(classes.newAnnotation, props.className)}
+      lineHeight={1}
+      variant="caption"
+      {...props}
+    >
+      <Trans id="dataset.search.preview.new-dimension">New</Trans>
+    </Typography>
+  );
+};
 
 export type SearchOptions =
   | {
@@ -420,55 +438,54 @@ export const PreviewDataTable = ({
             visualization.
           </Trans>
         </Typography>
-        <Stack direction="row" spacing={3}>
+        <div>
+          <Typography variant="h6" mb={1}>
+            <Trans id="dataset.search.preview.datasets">Datasets</Trans>
+          </Typography>
           <Stack direction="column" spacing={1}>
-            <Typography variant="caption">Cubes</Typography>
-            <Stack direction="row" spacing={1}>
-              <Chip
-                variant="outlined"
-                label={currentCubes.data?.dataCubesMetadata[0].title}
-              />
-              <Chip variant="outlined" label={otherCube.title} />
-            </Stack>
+            <Typography variant="caption">
+              {currentCubes.data?.dataCubesMetadata[0].title}
+            </Typography>
+            <div>
+              <NewAnnotation />
+              <br />
+              <Typography variant="caption" mt={-1} component="div">
+                {otherCube.title}
+              </Typography>
+            </div>
           </Stack>
-          {isFetching ? null : (
-            <Stack direction="column" spacing={1}>
-              <Typography variant="caption">Dimensions</Typography>
-              <Stack direction="column" spacing={1}>
-                <Chip
-                  sx={{ alignSelf: "flex-start" }}
-                  ref={chipRef}
-                  label={
-                    <Trans id="dataset.search.preview.dimensions-shown">
-                      {selectedColumns.length} shown
-                    </Trans>
-                  }
-                  onClick={() => openDimensionMenu()}
-                />
-              </Stack>
-            </Stack>
-          )}
-        </Stack>
-
-        <Menu
-          open={isDimensionMenuOpen}
-          anchorEl={chipRef.current}
-          onClose={closeDimensionMenu}
-          PaperProps={{ sx: { maxHeight: 500, overflow: "hidden" } }}
-        >
-          <IconButton
-            onClick={closeDimensionMenu}
-            size="small"
-            sx={{ position: "absolute", top: "1rem", right: "1rem", zIndex: 1 }}
-          >
-            <SvgIcClose />
-          </IconButton>
-          <Box sx={{ overflowY: "auto", maxHeight: 500 }}>
-            {dimensionMenuItemsGroups.map((group) => {
+        </div>
+        <div>
+          <Typography variant="h6" mb={1}>
+            <Trans id="dataset.search.preview.dimensions">Dimensions</Trans>
+          </Typography>
+          <Select
+            sx={{ minWidth: 300 }}
+            onClose={closeDimensionMenu}
+            value={Object.keys(selectedColumnsByIri)}
+            renderValue={() => {
               return (
-                <>
-                  <Typography ml={4} my={2} variant="h5">
-                    {group.groupName}{" "}
+                <Typography sx={{ alignSelf: "flex-start" }}>
+                  <Trans id="dataset.search.preview.dimensions-shown">
+                    Dimensions: {selectedColumns.length} shown
+                  </Trans>
+                </Typography>
+              );
+            }}
+          >
+            {dimensionMenuItemsGroups.flatMap((group) => {
+              return [
+                <ListSubheader
+                  key={group.groupName}
+                  sx={{
+                    alignItems: "center",
+                    display: "flex",
+                    gap: "0.5rem",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  {group.groupName}
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
                     <Button
                       size="small"
                       variant="text"
@@ -488,31 +505,27 @@ export const PreviewDataTable = ({
                     >
                       Unselect all
                     </Button>
-                  </Typography>
-                  {group.items.map((column) => (
-                    <MenuItem
-                      key={column.iri}
-                      value={column.iri}
-                      sx={{ gap: 2, display: "flex" }}
-                      data-column-id={columnId(column)}
-                      onClick={handleClickDimensionMenuItem}
-                    >
-                      <Checkbox
-                        checked={!!selectedColumnsByIri[columnId(column)]}
-                      />
-                      {column.label}
-                      {column.cubeIri === otherCube.iri && (
-                        <Tag type="theme" sx={{ ml: 1 }}>
-                          New
-                        </Tag>
-                      )}
-                    </MenuItem>
-                  ))}
-                </>
-              );
+                  </Box>
+                </ListSubheader>,
+                ...group.items.map((column) => (
+                  <MenuItem
+                    key={column.iri}
+                    value={column.iri}
+                    sx={{ gap: 2, display: "flex" }}
+                    data-column-id={columnId(column)}
+                    onClick={handleClickDimensionMenuItem}
+                  >
+                    <Checkbox
+                      checked={!!selectedColumnsByIri[columnId(column)]}
+                    />
+                    {column.label}
+                    {column.cubeIri === otherCube.iri && <NewAnnotation />}
+                  </MenuItem>
+                )),
+              ];
             })}
-          </Box>
-        </Menu>
+          </Select>
+        </div>
         {isFetching ? <Loading delayMs={0} /> : null}
         {observations.error ? (
           <ErrorHint>
@@ -540,21 +553,28 @@ export const PreviewDataTable = ({
                             key={column.iri}
                             sx={{ minWidth: 200, maxWidth: 300 }}
                           >
+                            {column.cubeIri === otherCube.iri && (
+                              <NewAnnotation />
+                            )}
                             {isJoinByComponent(column) ? (
                               <>
-                                {column.label}{" "}
-                                <Tag type="dimension" sx={{ ml: 1 }}>
-                                  Joined
-                                </Tag>
+                                <Tooltip
+                                  arrow
+                                  title={
+                                    <>
+                                      {column.originalIris
+                                        .map((o) => o.description)
+                                        .join(", ")}
+                                    </>
+                                  }
+                                  placement="right"
+                                >
+                                  <Tag type="dimension">Joined</Tag>
+                                </Tooltip>
                               </>
-                            ) : (
-                              column.label
-                            )}
-                            {column.cubeIri === otherCube.iri && (
-                              <Tag type="theme" sx={{ ml: 1 }}>
-                                New
-                              </Tag>
-                            )}
+                            ) : null}
+                            <br />
+                            {column.label}
                           </TableCell>
                         ) : null
                       )}
