@@ -54,8 +54,9 @@ export const useDataCubesComponentsQueryVariables: Record<
                 "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_energiewirkung/ogd18_catalog/Haustechnik",
             },
         },
-        joinBy:
+        joinBy: [
           "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_energiewirkung/Jahr",
+        ],
         loadValues: true,
       },
       {
@@ -67,8 +68,9 @@ export const useDataCubesComponentsQueryVariables: Record<
           "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_energiewirkung/region",
         ],
         filters: {},
-        joinBy:
+        joinBy: [
           "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
+        ],
         loadValues: true,
       },
     ],

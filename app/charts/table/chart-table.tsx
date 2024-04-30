@@ -18,6 +18,7 @@ export const ChartTableVisualization = (
         iri: cube.iri,
         componentIris,
         filters: cube.filters,
+        joinBy: cube.joinBy,
       }))}
       Component={ChartTable}
     />

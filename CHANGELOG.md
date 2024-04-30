@@ -9,6 +9,8 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
+- Features
+  - Ability to merge two cubes on multiple columns (for example on year and canton)
 - Performance
   - Cube upgrade is done only once at client side, instead of being re-fetched in every server-side query
 

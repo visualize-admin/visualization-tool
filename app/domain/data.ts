@@ -228,6 +228,7 @@ export type BaseDimension = BaseComponent & {
           cubeIri: string;
           dimensionIri: string;
           label: string;
+          description: string;
         }[];
       }
     | {
@@ -236,9 +237,9 @@ export type BaseDimension = BaseComponent & {
       }
   );
 
-export const isJoinByComponent = (
-  d: Component
-): d is Extract<Component, { isJoinByDimension: true }> => {
+export type JoinByComponent = Extract<Component, { isJoinByDimension: true }>;
+
+export const isJoinByComponent = (d: Component): d is JoinByComponent => {
   return !!(
     "isJoinByDimension" in d &&
     d.isJoinByDimension &&

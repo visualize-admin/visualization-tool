@@ -37,7 +37,9 @@ import {
   updateColorMapping,
 } from "@/configurator/configurator-state";
 import {
+  configJoinedCubes,
   configStateMock,
+  dimensionsJoinedCubes,
   groupedColumnChartDimensions,
   groupedColumnChartMeasures,
 } from "@/configurator/configurator-state.mock";
@@ -54,6 +56,7 @@ import {
   migrateChartConfig,
   migrateConfiguratorState,
 } from "@/utils/chart-config/versioning";
+
 const mockedApi = api as jest.Mocked<typeof api>;
 
 jest.mock("../rdf/extended-cube", () => ({
@@ -287,6 +290,7 @@ describe("applyDimensionToFilters", () => {
         filters: initialFilters,
         dimension: keyDimension,
         isField: true,
+        cubeIri: "https://environment.ld.admin.ch/foen/ubd0104",
       });
 
       expect(initialFilters).toEqual(expectedFilters);
@@ -310,6 +314,7 @@ describe("applyDimensionToFilters", () => {
         filters: initialFilters,
         dimension: keyDimension,
         isField: false,
+        cubeIri: "https://environment.ld.admin.ch/foen/ubd0104",
       });
 
       expect(initialFilters).toEqual(expectedFilters);
@@ -323,6 +328,7 @@ describe("applyDimensionToFilters", () => {
         filters: initialFilters,
         dimension: optionalDimension,
         isField: true,
+        cubeIri: "https://environment.ld.admin.ch/foen/ubd0104",
       });
 
       expect(initialFilters).toEqual(expectedFilters);
@@ -341,6 +347,7 @@ describe("applyDimensionToFilters", () => {
         filters: initialFilters,
         dimension: keyDimensionWithHierarchy,
         isField: false,
+        cubeIri: "https://environment.ld.admin.ch/foen/ubd0104",
       });
 
       expect(initialFilters).toEqual(expectedFilters);
@@ -367,6 +374,7 @@ describe("applyDimensionToFilters", () => {
         filters: initialFilters,
         dimension: keyDimensionWithHierarchy,
         isField: false,
+        cubeIri: "https://environment.ld.admin.ch/foen/ubd0104",
       });
 
       expect(initialFilters).toEqual(expectedFilters);
@@ -388,6 +396,7 @@ describe("applyDimensionToFilters", () => {
         dimension: keyDimension,
         isHidden: true,
         isGrouped: false,
+        cubeIri: "https://environment.ld.admin.ch/foen/ubd0104",
       });
 
       expect(initialFilters).toEqual(expectedFilters);
@@ -412,6 +421,7 @@ describe("applyDimensionToFilters", () => {
         dimension: optionalDimension,
         isHidden: true,
         isGrouped: false,
+        cubeIri: "https://environment.ld.admin.ch/foen/ubd0104",
       });
 
       expect(initialFilters).toEqual(expectedFilters);
@@ -437,6 +447,7 @@ describe("applyDimensionToFilters", () => {
         dimension: keyDimension,
         isHidden: true,
         isGrouped: false,
+        cubeIri: "https://environment.ld.admin.ch/foen/ubd0104",
       });
 
       expect(initialFilters).toEqual(expectedFilters);
@@ -461,6 +472,7 @@ describe("applyDimensionToFilters", () => {
         dimension: keyDimension,
         isHidden: false,
         isGrouped: true,
+        cubeIri: "https://environment.ld.admin.ch/foen/ubd0104",
       });
 
       expect(initialFilters).toEqual(expectedFilters);
@@ -811,6 +823,147 @@ describe("retainChartConfigWhenSwitchingChartType", () => {
       }),
       segmentChecks
     );
+  });
+});
+
+describe("deriveFiltersFromFields", () => {
+  it("should apply missing filters, even in the case of join by dimensions, in case of non table chart", () => {
+    const state = configJoinedCubes.pie!;
+    const dimensions = dimensionsJoinedCubes;
+
+    const derived = deriveFiltersFromFields(state, {
+      dimensions: dimensions as Dimension[],
+    });
+    expect(derived).toMatchInlineSnapshot(`
+      Object {
+        "activeField": undefined,
+        "chartType": "pie",
+        "cubes": Array [
+          Object {
+            "filters": Object {
+              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr": Object {
+                "type": "single",
+                "value": "2011",
+              },
+              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton": Object {
+                "type": "single",
+                "value": "https://ld.admin.ch/canton/1",
+              },
+            },
+            "iri": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9",
+            "joinBy": Array [
+              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
+              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton",
+            ],
+            "publishIri": "https://energy.ld.admin.ch/elcom/electricityprice-canton",
+          },
+          Object {
+            "filters": Object {
+              "https://energy.ld.admin.ch/elcom/electricityprice/dimension/canton": Object {
+                "type": "single",
+                "value": "https://ld.admin.ch/canton/1",
+              },
+              "https://energy.ld.admin.ch/elcom/electricityprice/dimension/period": Object {
+                "type": "single",
+                "value": "2011",
+              },
+              "https://energy.ld.admin.ch/elcom/electricityprice/dimension/product": Object {
+                "type": "single",
+                "value": "https://energy.ld.admin.ch/elcom/electricityprice/product/cheapest",
+              },
+            },
+            "iri": "https://energy.ld.admin.ch/elcom/electricityprice-canton",
+            "joinBy": Array [
+              "https://energy.ld.admin.ch/elcom/electricityprice/dimension/period",
+              "https://energy.ld.admin.ch/elcom/electricityprice/dimension/canton",
+            ],
+            "publishIri": "https://energy.ld.admin.ch/elcom/electricityprice-canton",
+          },
+        ],
+        "fields": Object {
+          "segment": Object {
+            "colorMapping": Object {
+              "https://energy.ld.admin.ch/elcom/electricityprice/category/C1": "#1f77b4",
+              "https://energy.ld.admin.ch/elcom/electricityprice/category/C2": "#ff7f0e",
+              "https://energy.ld.admin.ch/elcom/electricityprice/category/C3": "#2ca02c",
+              "https://energy.ld.admin.ch/elcom/electricityprice/category/C4": "#d62728",
+              "https://energy.ld.admin.ch/elcom/electricityprice/category/C5": "#9467bd",
+              "https://energy.ld.admin.ch/elcom/electricityprice/category/C6": "#8c564b",
+              "https://energy.ld.admin.ch/elcom/electricityprice/category/C7": "#e377c2",
+              "https://energy.ld.admin.ch/elcom/electricityprice/category/H1": "#7f7f7f",
+              "https://energy.ld.admin.ch/elcom/electricityprice/category/H2": "#bcbd22",
+              "https://energy.ld.admin.ch/elcom/electricityprice/category/H3": "#17becf",
+              "https://energy.ld.admin.ch/elcom/electricityprice/category/H4": "#1f77b4",
+              "https://energy.ld.admin.ch/elcom/electricityprice/category/H5": "#ff7f0e",
+              "https://energy.ld.admin.ch/elcom/electricityprice/category/H6": "#2ca02c",
+              "https://energy.ld.admin.ch/elcom/electricityprice/category/H7": "#d62728",
+              "https://energy.ld.admin.ch/elcom/electricityprice/category/H8": "#9467bd",
+            },
+            "componentIri": "https://energy.ld.admin.ch/elcom/electricityprice/dimension/category",
+            "palette": "category10",
+            "sorting": Object {
+              "sortingOrder": "asc",
+              "sortingType": "byMeasure",
+            },
+          },
+          "y": Object {
+            "componentIri": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/AnzahlAnlagen",
+          },
+        },
+        "interactiveFiltersConfig": Object {
+          "calculation": Object {
+            "active": false,
+            "type": "identity",
+          },
+          "dataFilters": Object {
+            "active": false,
+            "componentIris": Array [],
+          },
+          "legend": Object {
+            "active": false,
+            "componentIri": "",
+          },
+          "timeRange": Object {
+            "active": false,
+            "componentIri": "",
+            "presets": Object {
+              "from": "",
+              "to": "",
+              "type": "range",
+            },
+          },
+        },
+        "key": "ydBHrv26xvUg",
+        "meta": Object {
+          "description": Object {
+            "de": "",
+            "en": "",
+            "fr": "",
+            "it": "",
+          },
+          "title": Object {
+            "de": "",
+            "en": "",
+            "fr": "",
+            "it": "",
+          },
+        },
+        "version": "3.1.0",
+      }
+    `);
+  });
+
+  it("should remove filters in case of table", () => {
+    const state = configJoinedCubes.table!;
+    const derived = deriveFiltersFromFields(state, {
+      dimensions: dimensionsJoinedCubes,
+    });
+    expect(derived.cubes.map((c) => c.filters)).toMatchInlineSnapshot(`
+      Array [
+        Object {},
+        Object {},
+      ]
+    `);
   });
 });
 
@@ -1205,8 +1358,8 @@ describe("add dataset", () => {
     value: {
       iri: "http://second-dataset",
       joinBy: {
-        left: "year-period-1",
-        right: "year-period-2",
+        left: ["year-period-1"],
+        right: ["year-period-2"],
       },
     },
   };
@@ -1232,8 +1385,8 @@ describe("add dataset", () => {
 
     const config = newState.chartConfigs[0] as MapConfig;
 
-    expect(config.fields["areaLayer"]?.componentIri).toEqual("joinBy");
-    expect(config.fields["areaLayer"]?.color.componentIri).toEqual("joinBy");
+    expect(config.fields["areaLayer"]?.componentIri).toEqual("joinBy__0");
+    expect(config.fields["areaLayer"]?.color.componentIri).toEqual("joinBy__0");
     expect(config.cubes.length).toBe(2);
   });
 

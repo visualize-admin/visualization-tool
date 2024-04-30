@@ -39,7 +39,7 @@ import {
   getTemporalEntityValue,
 } from "@/domain/data";
 import { truthy } from "@/domain/types";
-import { JOIN_BY_DIMENSION_IRI } from "@/graphql/hook-utils";
+import { getOriginalIris, isJoinById } from "@/graphql/join";
 import { DataCubeObservationFilter } from "@/graphql/resolver-types";
 import {
   InteractiveFiltersState,
@@ -85,7 +85,9 @@ export const useQueryFilters = ({
   const allInteractiveDataFilters = useInteractiveFilters((d) => d.dataFilters);
   return React.useMemo(() => {
     return chartConfig.cubes.map((cube) => {
-      const cubeFilters = getChartConfigFilters(chartConfig.cubes, cube.iri);
+      const cubeFilters = getChartConfigFilters(chartConfig.cubes, {
+        cubeIri: cube.iri,
+      });
       const cubeFiltersKeys = Object.keys(cubeFilters);
       // TODO: Currently, in case of two dimensions with the same IRI, the last one wins.
       // This is a bigger issue we should address in the future, probably by keeping
@@ -124,7 +126,7 @@ type IFKey = keyof NonNullable<InteractiveFiltersConfig>;
 
 export const getChartConfigFilterComponentIris = ({ cubes }: ChartConfig) => {
   return Object.keys(getChartConfigFilters(cubes)).filter(
-    (d) => d !== JOIN_BY_DIMENSION_IRI
+    (d) => !isJoinById(d)
   );
 };
 
@@ -220,7 +222,10 @@ export const extractChartConfigComponentIris = (chartConfig: ChartConfig) => {
         Boolean
       )
     )
-      .filter((d) => d !== JOIN_BY_DIMENSION_IRI)
+      .flatMap((iri) =>
+        isJoinById(iri) ? getOriginalIris(iri, chartConfig) : [iri]
+      )
+      .filter((iri) => !isJoinById(iri))
       // Important so the order is consistent when querying.
       .sort()
   );

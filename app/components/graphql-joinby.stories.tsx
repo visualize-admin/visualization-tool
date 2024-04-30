@@ -45,14 +45,16 @@ const combinations: {
           "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton":
             { type: "single", value: "https://ld.admin.ch/canton/1" },
         },
-        joinBy:
+        joinBy: [
           "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
+        ],
       },
       {
         iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd40_wasta/7",
         publishIri: "https://energy.ld.admin.ch/sfoe/bfe_ogd40_wasta/7",
-        joinBy:
+        joinBy: [
           "https://energy.ld.admin.ch/sfoe/bfe_ogd40_wasta/YearOfStatistic",
+        ],
         filters: {
           "http://purl.org/dc/terms/identifier": {
             type: "single",
@@ -84,13 +86,14 @@ const combinations: {
               value: "2020",
             },
         },
-        joinBy:
+        joinBy: [
           "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton",
+        ],
       },
       {
         iri: "https://energy.ld.admin.ch/sfoe/OGD84GebTest/1",
+        joinBy: ["https://energy.ld.admin.ch/sfoe/OGD84GebTest/Kanton"],
         publishIri: "https://energy.ld.admin.ch/sfoe/OGD84GebTest/1",
-        joinBy: "https://energy.ld.admin.ch/sfoe/OGD84GebTest/Kanton",
         filters: {
           "https://energy.ld.admin.ch/sfoe/OGD84GebTest/Jahr": {
             type: "single",
@@ -129,13 +132,14 @@ const combinations: {
             value: "https://environment.ld.admin.ch/foen/nfi/EvaluationType/3",
           },
         },
-        joinBy: "https://environment.ld.admin.ch/foen/nfi/unitOfReference",
+        joinBy: ["https://environment.ld.admin.ch/foen/nfi/unitOfReference"],
       },
       {
         iri: "https://energy.ld.admin.ch/elcom/electricityprice-canton",
         publishIri: "https://energy.ld.admin.ch/elcom/electricityprice-canton",
-        joinBy:
+        joinBy: [
           "https://energy.ld.admin.ch/elcom/electricityprice/dimension/canton",
+        ],
         filters: {
           "https://energy.ld.admin.ch/elcom/electricityprice/dimension/category":
             {
@@ -164,15 +168,16 @@ const combinations: {
         iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9",
         publishIri:
           "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9",
-        joinBy:
+        joinBy: [
           "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton",
+        ],
         filters: {},
       },
       {
         iri: "https://environment.ld.admin.ch/foen/nfi/nfi_T-changes/cube/2024-1",
+        joinBy: ["https://environment.ld.admin.ch/foen/nfi/unitOfReference"],
         publishIri:
           "https://environment.ld.admin.ch/foen/nfi/nfi_T-changes/cube/2024-1",
-        joinBy: "https://environment.ld.admin.ch/foen/nfi/unitOfReference",
         filters: {},
       },
     ],

@@ -1,5 +1,6 @@
 import { DEFAULT_OTHER_COLOR_FIELD_OPACITY } from "@/charts/map/constants";
 import {
+  ChartConfig,
   ConfiguratorState,
   ConfiguratorStateConfiguringChart,
 } from "@/configurator";
@@ -1121,5 +1122,785 @@ export const groupedColumnChartMeasures: Measure[] = [
       { value: "991739.2", label: "991739.2" },
     ],
     related: [],
+  },
+];
+
+/**
+ * Configs merging Photovoltaik and Median Electricity Consumption
+ */
+export const configJoinedCubes: Partial<
+  Record<ChartConfig["chartType"], ChartConfig>
+> = {
+  table: {
+    key: "NF9PKwRtOaOI",
+    version: "3.1.0",
+    activeField: undefined,
+    interactiveFiltersConfig: undefined,
+    meta: {
+      title: { en: "", de: "", fr: "", it: "" },
+      description: { en: "", de: "", fr: "", it: "" },
+    },
+    cubes: [
+      {
+        iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9",
+        publishIri:
+          "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9",
+        filters: {
+          "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr":
+            { type: "single", value: "2020" },
+        },
+        joinBy: [
+          "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
+          "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton",
+        ],
+      },
+      {
+        iri: "https://energy.ld.admin.ch/elcom/electricityprice-canton",
+        publishIri: "https://energy.ld.admin.ch/elcom/electricityprice-canton",
+        filters: {
+          "https://energy.ld.admin.ch/elcom/electricityprice/dimension/period":
+            {
+              type: "single",
+              value: "2020",
+            },
+          "https://energy.ld.admin.ch/elcom/electricityprice/dimension/category":
+            {
+              type: "single",
+              value:
+                "https://energy.ld.admin.ch/elcom/electricityprice/category/C1",
+            },
+          "https://energy.ld.admin.ch/elcom/electricityprice/dimension/product":
+            {
+              type: "single",
+              value:
+                "https://energy.ld.admin.ch/elcom/electricityprice/product/cheapest",
+            },
+        },
+        joinBy: [
+          "https://energy.ld.admin.ch/elcom/electricityprice/dimension/period",
+          "https://energy.ld.admin.ch/elcom/electricityprice/dimension/canton",
+        ],
+      },
+    ],
+    chartType: "table",
+    settings: { showSearch: true, showAllRows: false },
+    sorting: [],
+    fields: {
+      joinBy__0: {
+        componentIri: "joinBy__0",
+        componentType: "TemporalDimension",
+        index: 0,
+        isGroup: false,
+        isHidden: false,
+        columnStyle: {
+          textStyle: "regular",
+          type: "text",
+          textColor: "#000",
+          columnColor: "#fff",
+        },
+      },
+      joinBy__1: {
+        componentIri: "joinBy__1",
+        componentType: "GeoShapesDimension",
+        index: 1,
+        isGroup: false,
+        isHidden: false,
+        columnStyle: {
+          textStyle: "regular",
+          type: "text",
+          textColor: "#000",
+          columnColor: "#fff",
+        },
+      },
+      "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/AnzahlAnlagen":
+        {
+          componentIri:
+            "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/AnzahlAnlagen",
+          componentType: "NumericalMeasure",
+          index: 2,
+          isGroup: false,
+          isHidden: false,
+          columnStyle: {
+            textStyle: "regular",
+            type: "text",
+            textColor: "#000",
+            columnColor: "#fff",
+          },
+        },
+      "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/InstallierteLeistungkW":
+        {
+          componentIri:
+            "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/InstallierteLeistungkW",
+          componentType: "NumericalMeasure",
+          index: 3,
+          isGroup: false,
+          isHidden: false,
+          columnStyle: {
+            textStyle: "regular",
+            type: "text",
+            textColor: "#000",
+            columnColor: "#fff",
+          },
+        },
+      "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/VerguetungCHF":
+        {
+          componentIri:
+            "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/VerguetungCHF",
+          componentType: "NumericalMeasure",
+          index: 4,
+          isGroup: false,
+          isHidden: false,
+          columnStyle: {
+            textStyle: "regular",
+            type: "text",
+            textColor: "#000",
+            columnColor: "#fff",
+          },
+        },
+      "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/AnzahlAnlagenPro100000Einwohner":
+        {
+          componentIri:
+            "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/AnzahlAnlagenPro100000Einwohner",
+          componentType: "NumericalMeasure",
+          index: 5,
+          isGroup: false,
+          isHidden: false,
+          columnStyle: {
+            textStyle: "regular",
+            type: "text",
+            textColor: "#000",
+            columnColor: "#fff",
+          },
+        },
+      "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/InstallierteLeistungkWPro100000Einwohner":
+        {
+          componentIri:
+            "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/InstallierteLeistungkWPro100000Einwohner",
+          componentType: "NumericalMeasure",
+          index: 6,
+          isGroup: false,
+          isHidden: false,
+          columnStyle: {
+            textStyle: "regular",
+            type: "text",
+            textColor: "#000",
+            columnColor: "#fff",
+          },
+        },
+      "https://energy.ld.admin.ch/elcom/electricityprice/dimension/category": {
+        componentIri:
+          "https://energy.ld.admin.ch/elcom/electricityprice/dimension/category",
+        componentType: "NominalDimension",
+        index: 7,
+        isGroup: false,
+        isHidden: false,
+        columnStyle: {
+          textStyle: "regular",
+          type: "text",
+          textColor: "#000",
+          columnColor: "#fff",
+        },
+      },
+      "https://energy.ld.admin.ch/elcom/electricityprice/dimension/product": {
+        componentIri:
+          "https://energy.ld.admin.ch/elcom/electricityprice/dimension/product",
+        componentType: "NominalDimension",
+        index: 8,
+        isGroup: false,
+        isHidden: false,
+        columnStyle: {
+          textStyle: "regular",
+          type: "text",
+          textColor: "#000",
+          columnColor: "#fff",
+        },
+      },
+      "https://energy.ld.admin.ch/elcom/electricityprice/dimension/total": {
+        componentIri:
+          "https://energy.ld.admin.ch/elcom/electricityprice/dimension/total",
+        componentType: "NumericalMeasure",
+        index: 9,
+        isGroup: false,
+        isHidden: false,
+        columnStyle: {
+          textStyle: "regular",
+          type: "text",
+          textColor: "#000",
+          columnColor: "#fff",
+        },
+      },
+      "https://energy.ld.admin.ch/elcom/electricityprice/dimension/gridusage": {
+        componentIri:
+          "https://energy.ld.admin.ch/elcom/electricityprice/dimension/gridusage",
+        componentType: "NumericalMeasure",
+        index: 10,
+        isGroup: false,
+        isHidden: false,
+        columnStyle: {
+          textStyle: "regular",
+          type: "text",
+          textColor: "#000",
+          columnColor: "#fff",
+        },
+      },
+      "https://energy.ld.admin.ch/elcom/electricityprice/dimension/energy": {
+        componentIri:
+          "https://energy.ld.admin.ch/elcom/electricityprice/dimension/energy",
+        componentType: "NumericalMeasure",
+        index: 11,
+        isGroup: false,
+        isHidden: false,
+        columnStyle: {
+          textStyle: "regular",
+          type: "text",
+          textColor: "#000",
+          columnColor: "#fff",
+        },
+      },
+      "https://energy.ld.admin.ch/elcom/electricityprice/dimension/charge": {
+        componentIri:
+          "https://energy.ld.admin.ch/elcom/electricityprice/dimension/charge",
+        componentType: "NumericalMeasure",
+        index: 12,
+        isGroup: false,
+        isHidden: false,
+        columnStyle: {
+          textStyle: "regular",
+          type: "text",
+          textColor: "#000",
+          columnColor: "#fff",
+        },
+      },
+      "https://energy.ld.admin.ch/elcom/electricityprice/dimension/aidfee": {
+        componentIri:
+          "https://energy.ld.admin.ch/elcom/electricityprice/dimension/aidfee",
+        componentType: "NumericalMeasure",
+        index: 13,
+        isGroup: false,
+        isHidden: false,
+        columnStyle: {
+          textStyle: "regular",
+          type: "text",
+          textColor: "#000",
+          columnColor: "#fff",
+        },
+      },
+    },
+  },
+  pie: {
+    activeField: undefined,
+    key: "ydBHrv26xvUg",
+    version: "3.1.0",
+    meta: {
+      title: { en: "", de: "", fr: "", it: "" },
+      description: { en: "", de: "", fr: "", it: "" },
+    },
+    cubes: [
+      {
+        iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9",
+        publishIri: "https://energy.ld.admin.ch/elcom/electricityprice-canton",
+        filters: {},
+        joinBy: [
+          "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
+          "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton",
+        ],
+      },
+      {
+        iri: "https://energy.ld.admin.ch/elcom/electricityprice-canton",
+        publishIri: "https://energy.ld.admin.ch/elcom/electricityprice-canton",
+        filters: {
+          "https://energy.ld.admin.ch/elcom/electricityprice/dimension/category":
+            {
+              type: "single",
+              value:
+                "https://energy.ld.admin.ch/elcom/electricityprice/category/C1",
+            },
+          "https://energy.ld.admin.ch/elcom/electricityprice/dimension/product":
+            {
+              type: "single",
+              value:
+                "https://energy.ld.admin.ch/elcom/electricityprice/product/cheapest",
+            },
+        },
+        joinBy: [
+          "https://energy.ld.admin.ch/elcom/electricityprice/dimension/period",
+          "https://energy.ld.admin.ch/elcom/electricityprice/dimension/canton",
+        ],
+      },
+    ],
+    chartType: "pie",
+    interactiveFiltersConfig: {
+      legend: { active: false, componentIri: "" },
+      timeRange: {
+        active: false,
+        componentIri: "",
+        presets: { type: "range", from: "", to: "" },
+      },
+      dataFilters: { active: false, componentIris: [] },
+      calculation: { active: false, type: "identity" },
+    },
+    fields: {
+      y: {
+        componentIri:
+          "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/AnzahlAnlagen",
+      },
+      segment: {
+        componentIri:
+          "https://energy.ld.admin.ch/elcom/electricityprice/dimension/category",
+        palette: "category10",
+        sorting: { sortingType: "byMeasure", sortingOrder: "asc" },
+        colorMapping: {
+          "https://energy.ld.admin.ch/elcom/electricityprice/category/C1":
+            "#1f77b4",
+          "https://energy.ld.admin.ch/elcom/electricityprice/category/C2":
+            "#ff7f0e",
+          "https://energy.ld.admin.ch/elcom/electricityprice/category/C3":
+            "#2ca02c",
+          "https://energy.ld.admin.ch/elcom/electricityprice/category/C4":
+            "#d62728",
+          "https://energy.ld.admin.ch/elcom/electricityprice/category/C5":
+            "#9467bd",
+          "https://energy.ld.admin.ch/elcom/electricityprice/category/C6":
+            "#8c564b",
+          "https://energy.ld.admin.ch/elcom/electricityprice/category/C7":
+            "#e377c2",
+          "https://energy.ld.admin.ch/elcom/electricityprice/category/H1":
+            "#7f7f7f",
+          "https://energy.ld.admin.ch/elcom/electricityprice/category/H2":
+            "#bcbd22",
+          "https://energy.ld.admin.ch/elcom/electricityprice/category/H3":
+            "#17becf",
+          "https://energy.ld.admin.ch/elcom/electricityprice/category/H4":
+            "#1f77b4",
+          "https://energy.ld.admin.ch/elcom/electricityprice/category/H5":
+            "#ff7f0e",
+          "https://energy.ld.admin.ch/elcom/electricityprice/category/H6":
+            "#2ca02c",
+          "https://energy.ld.admin.ch/elcom/electricityprice/category/H7":
+            "#d62728",
+          "https://energy.ld.admin.ch/elcom/electricityprice/category/H8":
+            "#9467bd",
+        },
+      },
+    },
+  },
+};
+
+export const dimensionsJoinedCubes: Dimension[] = [
+  {
+    __typename: "TemporalDimension",
+    timeFormat: "%Y",
+    timeUnit: TimeUnit.Year,
+    cubeIri: "joinBy",
+    iri: "joinBy__0",
+    label: "Jahr der Vergütung, Period",
+    description: "Jahr, in welchem die EIV ausbezahlt wurde",
+    unit: "yr",
+    scaleType: ScaleType.Interval,
+    dataType: "http://www.w3.org/2001/XMLSchema#gYear",
+    order: 1,
+    isNumerical: false,
+    isKeyDimension: true,
+    values: [
+      { value: "2011", label: "2011" },
+      { value: "2012", label: "2012" },
+      { value: "2013", label: "2013" },
+      { value: "2014", label: "2014" },
+      { value: "2015", label: "2015" },
+      { value: "2016", label: "2016" },
+      { value: "2017", label: "2017" },
+      { value: "2018", label: "2018" },
+      { value: "2019", label: "2019" },
+      { value: "2020", label: "2020" },
+      { value: "2021", label: "2021" },
+      { value: "2022", label: "2022" },
+      { value: "2023", label: "2023" },
+      { value: "2024", label: "2024" },
+    ],
+    related: [],
+    hierarchy: null,
+    isJoinByDimension: true,
+    originalIris: [
+      {
+        cubeIri:
+          "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9",
+        dimensionIri:
+          "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
+        label: "Jahr der Vergütung",
+        description: "Beschreibung Jahr der Vergütung",
+      },
+      {
+        cubeIri: "https://energy.ld.admin.ch/elcom/electricityprice-canton",
+        dimensionIri:
+          "https://energy.ld.admin.ch/elcom/electricityprice/dimension/period",
+        label: "Period",
+        description: "Description Period",
+      },
+    ],
+  },
+  {
+    __typename: "GeoShapesDimension",
+    cubeIri: "joinBy",
+    iri: "joinBy__1",
+    label: "Kanton, Canton",
+    description: "Kanton, in welchem die geförderten Anlagen stehen",
+    scaleType: ScaleType.Nominal,
+    order: 2,
+    isNumerical: false,
+    isKeyDimension: true,
+    values: [
+      {
+        value: "https://ld.admin.ch/canton/1",
+        label: "Zurich",
+        alternateName: "ZH",
+        identifier: "1",
+        geometry:
+          "https://geo.ld.admin.ch/boundaries/canton/geometry-g1/1:2023",
+      },
+      {
+        value: "https://ld.admin.ch/canton/10",
+        label: "Fribourg",
+        alternateName: "FR",
+        identifier: "10",
+        geometry:
+          "https://geo.ld.admin.ch/boundaries/canton/geometry-g1/10:2023",
+      },
+      {
+        value: "https://ld.admin.ch/canton/11",
+        label: "Solothurn",
+        alternateName: "SO",
+        identifier: "11",
+        geometry:
+          "https://geo.ld.admin.ch/boundaries/canton/geometry-g1/11:2023",
+      },
+      {
+        value: "https://ld.admin.ch/canton/12",
+        label: "Basel Stadt",
+        alternateName: "BS",
+        identifier: "12",
+        geometry:
+          "https://geo.ld.admin.ch/boundaries/canton/geometry-g1/12:2023",
+      },
+      {
+        value: "https://ld.admin.ch/canton/13",
+        label: "Basel Landschaft",
+        alternateName: "BL",
+        identifier: "13",
+        geometry:
+          "https://geo.ld.admin.ch/boundaries/canton/geometry-g1/13:2023",
+      },
+      {
+        value: "https://ld.admin.ch/canton/14",
+        label: "Schaffhausen",
+        alternateName: "SH",
+        identifier: "14",
+        geometry:
+          "https://geo.ld.admin.ch/boundaries/canton/geometry-g1/14:2023",
+      },
+      {
+        value: "https://ld.admin.ch/canton/15",
+        label: "Appenzell Ausserrhoden",
+        alternateName: "AR",
+        identifier: "15",
+        geometry:
+          "https://geo.ld.admin.ch/boundaries/canton/geometry-g1/15:2023",
+      },
+      {
+        value: "https://ld.admin.ch/canton/16",
+        label: "Appenzell Innerrhoden",
+        alternateName: "AI",
+        identifier: "16",
+        geometry:
+          "https://geo.ld.admin.ch/boundaries/canton/geometry-g1/16:2023",
+      },
+      {
+        value: "https://ld.admin.ch/canton/17",
+        label: "St Gallen",
+        alternateName: "SG",
+        identifier: "17",
+        geometry:
+          "https://geo.ld.admin.ch/boundaries/canton/geometry-g1/17:2023",
+      },
+      {
+        value: "https://ld.admin.ch/canton/18",
+        label: "Grisons",
+        alternateName: "GR",
+        identifier: "18",
+        geometry:
+          "https://geo.ld.admin.ch/boundaries/canton/geometry-g1/18:2023",
+      },
+      {
+        value: "https://ld.admin.ch/canton/19",
+        label: "Aargau",
+        alternateName: "AG",
+        identifier: "19",
+        geometry:
+          "https://geo.ld.admin.ch/boundaries/canton/geometry-g1/19:2023",
+      },
+      {
+        value: "https://ld.admin.ch/canton/2",
+        label: "Bern",
+        alternateName: "BE",
+        identifier: "2",
+        geometry:
+          "https://geo.ld.admin.ch/boundaries/canton/geometry-g1/2:2023",
+      },
+      {
+        value: "https://ld.admin.ch/canton/20",
+        label: "Thurgau",
+        alternateName: "TG",
+        identifier: "20",
+        geometry:
+          "https://geo.ld.admin.ch/boundaries/canton/geometry-g1/20:2023",
+      },
+      {
+        value: "https://ld.admin.ch/canton/21",
+        label: "Ticino",
+        alternateName: "TI",
+        identifier: "21",
+        geometry:
+          "https://geo.ld.admin.ch/boundaries/canton/geometry-g1/21:2023",
+      },
+      {
+        value: "https://ld.admin.ch/canton/22",
+        label: "Vaud",
+        alternateName: "VD",
+        identifier: "22",
+        geometry:
+          "https://geo.ld.admin.ch/boundaries/canton/geometry-g1/22:2023",
+      },
+      {
+        value: "https://ld.admin.ch/canton/23",
+        label: "Valais",
+        alternateName: "VS",
+        identifier: "23",
+        geometry:
+          "https://geo.ld.admin.ch/boundaries/canton/geometry-g1/23:2023",
+      },
+      {
+        value: "https://ld.admin.ch/canton/24",
+        label: "Neuchâtel",
+        alternateName: "NE",
+        identifier: "24",
+        geometry:
+          "https://geo.ld.admin.ch/boundaries/canton/geometry-g1/24:2023",
+      },
+      {
+        value: "https://ld.admin.ch/canton/25",
+        label: "Geneva",
+        alternateName: "GE",
+        identifier: "25",
+        geometry:
+          "https://geo.ld.admin.ch/boundaries/canton/geometry-g1/25:2023",
+      },
+      {
+        value: "https://ld.admin.ch/canton/26",
+        label: "Jura",
+        alternateName: "JU",
+        identifier: "26",
+        geometry:
+          "https://geo.ld.admin.ch/boundaries/canton/geometry-g1/26:2023",
+      },
+      {
+        value: "https://ld.admin.ch/canton/3",
+        label: "Lucerne",
+        alternateName: "LU",
+        identifier: "3",
+        geometry:
+          "https://geo.ld.admin.ch/boundaries/canton/geometry-g1/3:2023",
+      },
+      {
+        value: "https://ld.admin.ch/canton/4",
+        label: "Uri",
+        alternateName: "UR",
+        identifier: "4",
+        geometry:
+          "https://geo.ld.admin.ch/boundaries/canton/geometry-g1/4:2023",
+      },
+      {
+        value: "https://ld.admin.ch/canton/5",
+        label: "Schwyz",
+        alternateName: "SZ",
+        identifier: "5",
+        geometry:
+          "https://geo.ld.admin.ch/boundaries/canton/geometry-g1/5:2023",
+      },
+      {
+        value: "https://ld.admin.ch/canton/6",
+        label: "Obwalden",
+        alternateName: "OW",
+        identifier: "6",
+        geometry:
+          "https://geo.ld.admin.ch/boundaries/canton/geometry-g1/6:2023",
+      },
+      {
+        value: "https://ld.admin.ch/canton/7",
+        label: "Nidwalden",
+        alternateName: "NW",
+        identifier: "7",
+        geometry:
+          "https://geo.ld.admin.ch/boundaries/canton/geometry-g1/7:2023",
+      },
+      {
+        value: "https://ld.admin.ch/canton/8",
+        label: "Glarus",
+        alternateName: "GL",
+        identifier: "8",
+        geometry:
+          "https://geo.ld.admin.ch/boundaries/canton/geometry-g1/8:2023",
+      },
+      {
+        value: "https://ld.admin.ch/canton/9",
+        label: "Zug",
+        alternateName: "ZG",
+        identifier: "9",
+        geometry:
+          "https://geo.ld.admin.ch/boundaries/canton/geometry-g1/9:2023",
+      },
+    ],
+    related: [],
+    hierarchy: null,
+    isJoinByDimension: true,
+    originalIris: [
+      {
+        cubeIri:
+          "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9",
+        dimensionIri:
+          "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton",
+        label: "Kanton",
+        description: "Description Kanton",
+      },
+      {
+        cubeIri: "https://energy.ld.admin.ch/elcom/electricityprice-canton",
+        dimensionIri:
+          "https://energy.ld.admin.ch/elcom/electricityprice/dimension/canton",
+        label: "Canton",
+        description: "Description Canton",
+      },
+    ],
+  },
+  {
+    __typename: "NominalDimension",
+    cubeIri: "https://energy.ld.admin.ch/elcom/electricityprice-canton",
+    iri: "https://energy.ld.admin.ch/elcom/electricityprice/dimension/category",
+    label: "Consumption profiles of typical households",
+    scaleType: ScaleType.Nominal,
+    isNumerical: false,
+    isKeyDimension: true,
+    values: [
+      {
+        value: "https://energy.ld.admin.ch/elcom/electricityprice/category/C1",
+        label: "C1",
+        description:
+          "8'000 kWh/Jahr: Kleinstbetrieb' max. beanspruchte Leistung: 8 kW",
+      },
+      {
+        value: "https://energy.ld.admin.ch/elcom/electricityprice/category/C2",
+        label: "C2",
+        description:
+          "30'000 kWh/Jahr: Kleinbetrieb' max. beanspruchte Leistung: 15 kW",
+      },
+      {
+        value: "https://energy.ld.admin.ch/elcom/electricityprice/category/C3",
+        label: "C3",
+        description:
+          "150'000 kWh/Jahr: Mittlerer Betrieb' max. beanspruchte Leistung: 50 kW",
+      },
+      {
+        value: "https://energy.ld.admin.ch/elcom/electricityprice/category/C4",
+        label: "C4",
+        description:
+          "500'000 kWh/Jahr: Grosser Betrieb ' max. beanspruchte Leistung: 150 kW' Niederspannung",
+      },
+      {
+        value: "https://energy.ld.admin.ch/elcom/electricityprice/category/C5",
+        label: "C5",
+        description:
+          "500'000 kWh/Jahr: Grosser Betrieb' max. beanspruchte Leistung: 150 kW' Mittelspannung' eigene Transformatorenstation",
+      },
+      {
+        value: "https://energy.ld.admin.ch/elcom/electricityprice/category/C6",
+        label: "C6",
+        description:
+          "1'500'000 kWh/Jahr: Grosser Betrieb' max. beanspruchte Leistung: 400 kW' Mittelspannung' eigene Transformatorenstation",
+      },
+      {
+        value: "https://energy.ld.admin.ch/elcom/electricityprice/category/C7",
+        label: "C7",
+        description:
+          "7'500'000 kWh/Jahr: Grosser Betrieb' max. beanspruchte Leistung: 1'630 kW' Mittelspannung' eigene Transformatorenstation",
+      },
+      {
+        value: "https://energy.ld.admin.ch/elcom/electricityprice/category/H1",
+        label: "H1",
+        description: "1'600 kWh/Jahr: 2-Zimmerwohnung mit Elektroherd",
+      },
+      {
+        value: "https://energy.ld.admin.ch/elcom/electricityprice/category/H2",
+        label: "H2",
+        description: "2'500 kWh/Jahr: 4-Zimmerwohnung mit Elektroherd",
+      },
+      {
+        value: "https://energy.ld.admin.ch/elcom/electricityprice/category/H3",
+        label: "H3",
+        description:
+          "4'500 kWh/Jahr: 4-Zimmerwohnung mit Elektroherd und Elektroboiler",
+      },
+      {
+        value: "https://energy.ld.admin.ch/elcom/electricityprice/category/H4",
+        label: "H4",
+        description:
+          "4'500 kWh/Jahr: 5-Zimmerwohnung mit Elektroherd und Tumbler (ohne Elektroboiler)",
+      },
+      {
+        value: "https://energy.ld.admin.ch/elcom/electricityprice/category/H5",
+        label: "H5",
+        description:
+          "7'500 kWh/Jahr: 5-Zimmer-Einfamilienhaus mit Elektroherd' Elektroboiler und Tumbler",
+      },
+      {
+        value: "https://energy.ld.admin.ch/elcom/electricityprice/category/H6",
+        label: "H6",
+        description:
+          "25'000 kWh/Jahr: 5-Zimmer-Einfamilienhaus mit Elektroherd' Elektroboiler' Tumbler und mit elektrischer Widerstandsheizung",
+      },
+      {
+        value: "https://energy.ld.admin.ch/elcom/electricityprice/category/H7",
+        label: "H7",
+        description:
+          "13'000 kWh/Jahr: 5-Zimmer-Einfamilienhaus mit Elektroherd' Elektroboiler' Tumbler' Wärmepumpe 5 kW zur Beheizung",
+      },
+      {
+        value: "https://energy.ld.admin.ch/elcom/electricityprice/category/H8",
+        label: "H8",
+        description:
+          "7'500 kWh/Jahr: Grosse' hoch elektrifizierte Eigentumswohnung",
+      },
+    ],
+    related: [],
+    hierarchy: null,
+  },
+  {
+    __typename: "NominalDimension",
+    cubeIri: "https://energy.ld.admin.ch/elcom/electricityprice-canton",
+    iri: "https://energy.ld.admin.ch/elcom/electricityprice/dimension/product",
+    label: "Product",
+    scaleType: ScaleType.Nominal,
+    isNumerical: false,
+    isKeyDimension: true,
+    values: [
+      {
+        value:
+          "https://energy.ld.admin.ch/elcom/electricityprice/product/cheapest",
+        label: "Cheapest product",
+      },
+      {
+        value:
+          "https://energy.ld.admin.ch/elcom/electricityprice/product/standard",
+        label: "Standard product",
+      },
+    ],
+    related: [],
+    hierarchy: null,
   },
 ];

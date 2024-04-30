@@ -154,7 +154,7 @@ export const ChartDataWrapper = <
     return (
       <Box
         data-chart-loaded={!chartLoadingState.loading}
-        sx={{ position: "relative" }}
+        sx={{ position: "relative", width: "100%" }}
       >
         {observations.length > 0 && (
           <A11yTable

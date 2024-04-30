@@ -6,8 +6,9 @@ import {
   DataCubeMetadata,
   DataCubesObservations,
 } from "@/domain/data";
+import { assert } from "@/utils/assert";
 
-import { joinDimensions, mergeObservations } from "./hook-utils";
+import { joinDimensions, mergeObservations } from "./join";
 import {
   DataCubeComponentFilter,
   DataCubeComponentsDocument,
@@ -214,33 +215,44 @@ export const executeDataCubesComponentsQuery = async (
     };
   }
 
-  if (queries.length === 1) {
-    return {
-      data: {
-        dataCubesComponents: {
-          dimensions: queries[0].data?.dataCubeComponents.dimensions!,
-          measures: queries[0].data?.dataCubeComponents.measures!,
-        },
-      },
-      error,
-      fetching,
-    };
-  }
+  const { dimensions: firstDimensions = [], measures: firstMeasures = [] } =
+    queries[0].data?.dataCubeComponents || {};
+  assert(firstDimensions !== undefined, "Undefined dimensions");
+  assert(firstMeasures !== undefined, "Undefined measures");
 
   return {
-    data: {
-      dataCubesComponents: {
-        dimensions: joinDimensions(
-          queries
-            .filter((x) => x.data)
-            .map((q) => ({
-              dataCubeComponents: q.data?.dataCubeComponents!,
-              joinBy: q.operation.variables?.cubeFilter.joinBy!,
-            }))
-        ),
-        measures: queries.flatMap((q) => q.data?.dataCubeComponents.measures!),
-      },
-    },
+    data:
+      queries.length === 1
+        ? {
+            dataCubesComponents: {
+              dimensions: firstDimensions,
+              measures: firstMeasures,
+            },
+          }
+        : {
+            dataCubesComponents: {
+              dimensions: joinDimensions(
+                queries.map((q) => {
+                  const dataCubeComponents = q.data?.dataCubeComponents;
+                  const joinBy = q.operation.variables?.cubeFilter.joinBy;
+                  assert(
+                    dataCubeComponents !== undefined,
+                    "Undefined dataCubeComponents"
+                  );
+                  assert(joinBy, "Undefined joinBy");
+                  return {
+                    dataCubeComponents,
+                    joinBy,
+                  };
+                })
+              ),
+              measures: queries.flatMap((q) => {
+                const measures = q.data?.dataCubeComponents.measures;
+                assert(measures !== undefined, "Undefined measures");
+                return measures;
+              }),
+            },
+          },
     error,
     fetching,
   };

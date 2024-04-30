@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, useMemo } from "react";
 
 import { ChartDataWrapper } from "@/charts/chart-data-wrapper";
 import { shouldRenderMap } from "@/charts/map/helpers";
@@ -19,6 +19,7 @@ import {
   dimensionValuesToGeoCoordinates,
 } from "@/domain/data";
 import { useDataCubesComponentsQuery } from "@/graphql/hooks";
+import { getResolvedJoinByIri, isJoinById } from "@/graphql/join";
 import { useDataCubeDimensionGeoShapesQuery } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 
@@ -27,6 +28,7 @@ import { ChartProps, VisualizationProps } from "../shared/ChartProps";
 export const ChartMapVisualization = (props: VisualizationProps<MapConfig>) => {
   const { dataSource, chartConfig } = props;
   const locale = useLocale();
+
   const areaDimensionIri = chartConfig.fields.areaLayer?.componentIri || "";
   const symbolDimensionIri = chartConfig.fields.symbolLayer?.componentIri || "";
   const [
@@ -59,7 +61,13 @@ export const ChartMapVisualization = (props: VisualizationProps<MapConfig>) => {
       ? dimensionValuesToGeoCoordinates(geoCoordinatesDimensionValues)
       : undefined;
   }, [geoCoordinatesDimensionValues]);
-  const geoShapesIri = areaDimensionIri || symbolDimensionIri;
+  const geoShapesIri = useMemo(() => {
+    const iri = areaDimensionIri || symbolDimensionIri;
+    return isJoinById(iri)
+      ? getResolvedJoinByIri(chartConfig.cubes[0], iri)
+      : iri;
+  }, [areaDimensionIri, chartConfig.cubes, symbolDimensionIri]);
+
   const [
     {
       data: fetchedGeoShapes,
@@ -70,7 +78,7 @@ export const ChartMapVisualization = (props: VisualizationProps<MapConfig>) => {
     variables: {
       // FIXME: This assumes that there is only one cube.
       cubeIri: chartConfig.cubes[0].iri,
-      dimensionIri: geoShapesIri,
+      dimensionIri: geoShapesIri!,
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,

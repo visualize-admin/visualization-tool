@@ -1,6 +1,6 @@
 {
   "extends": "next",
-  "plugins": ["import", "visualize-admin"],
+  "plugins": ["import", "visualize-admin", "jest"],
   "rules": {
     "no-restricted-imports": [
       "error",
@@ -14,6 +14,7 @@
       }
     ],
     "react/display-name": "off",
+    "jest/no-focused-tests": "error",
     "visualize-admin/no-large-sx": "error",
     "visualize-admin/make-styles": "error",
     "@next/next/no-html-link-for-pages": ["error", "app/pages/"],

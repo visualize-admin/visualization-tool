@@ -12,6 +12,7 @@ import { makeStyles } from "@mui/styles";
 import { TimeLocaleObject } from "d3-time-format";
 import get from "lodash/get";
 import orderBy from "lodash/orderBy";
+import pick from "lodash/pick";
 import React, {
   ChangeEvent,
   ReactNode,
@@ -80,6 +81,7 @@ import {
   Dimension,
   HierarchyValue,
   TemporalDimension,
+  isJoinByComponent,
   isTemporalOrdinalDimension,
 } from "@/domain/data";
 import {
@@ -196,10 +198,7 @@ export const DataFilterSelect = ({
   onOpen?: () => void;
   loading?: boolean;
 }) => {
-  const fieldProps = useSingleFilterSelect({
-    cubeIri: dimension.cubeIri,
-    dimensionIri: dimension.iri,
-  });
+  const fieldProps = useSingleFilterSelect(dimensionToFieldProps(dimension));
   const noneLabel = t({
     id: "controls.dimensionvalue.none",
     message: `No Filter`,
@@ -345,6 +344,17 @@ type DataFilterTemporalProps = {
   sideControls?: React.ReactNode;
 };
 
+export const dimensionToFieldProps = (dim: Component) => {
+  return isJoinByComponent(dim)
+    ? dim.originalIris.map((o) => pick(o, ["cubeIri", "dimensionIri"]))
+    : [
+        {
+          dimensionIri: dim.iri,
+          cubeIri: dim.cubeIri,
+        },
+      ];
+};
+
 export const DataFilterTemporal = (props: DataFilterTemporalProps) => {
   const {
     label: _label,
@@ -359,10 +369,7 @@ export const DataFilterTemporal = (props: DataFilterTemporalProps) => {
   const formatLocale = useTimeFormatLocale();
   const formatDate = formatLocale.format(timeFormat);
   const parseDate = formatLocale.parse(timeFormat);
-  const fieldProps = useSingleFilterSelect({
-    cubeIri: dimension.cubeIri,
-    dimensionIri: dimension.iri,
-  });
+  const fieldProps = useSingleFilterSelect(dimensionToFieldProps(dimension));
   const usesMostRecentDate = isMostRecentValue(fieldProps.value);
   const label = isOptional ? (
     <>
@@ -469,10 +476,7 @@ export const DataFilterSelectTime = ({
   isOptional?: boolean;
   topControls?: React.ReactNode;
 }) => {
-  const fieldProps = useSingleFilterSelect({
-    cubeIri: dimension.cubeIri,
-    dimensionIri: dimension.iri,
-  });
+  const fieldProps = useSingleFilterSelect(dimensionToFieldProps(dimension));
   const formatLocale = useTimeFormatLocale();
   const noneLabel = t({
     id: "controls.dimensionvalue.none",
@@ -770,19 +774,17 @@ export const MultiFilterFieldColorPicker = ({
 };
 
 export const SingleFilterField = ({
-  cubeIri,
-  dimensionIri,
+  filters,
   label,
   value,
   disabled,
 }: {
-  cubeIri: string;
-  dimensionIri: string;
+  filters: { cubeIri: string; dimensionIri: string }[];
   label: string;
   value: string;
   disabled?: boolean;
 }) => {
-  const field = useSingleFilterField({ cubeIri, dimensionIri, value });
+  const field = useSingleFilterField({ filters, value });
   return <Radio label={label} disabled={disabled} {...field} />;
 };
 

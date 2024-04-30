@@ -50,7 +50,7 @@ export type DataCubeComponentFilter = {
   iri: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
   componentIris?: Maybe<Array<Scalars['String']>>;
-  joinBy?: Maybe<Scalars['String']>;
+  joinBy?: Maybe<Array<Scalars['String']>>;
   loadValues?: Maybe<Scalars['Boolean']>;
 };
 
@@ -64,7 +64,7 @@ export type DataCubeObservationFilter = {
   iri: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
   componentIris?: Maybe<Array<Scalars['String']>>;
-  joinBy?: Maybe<Scalars['String']>;
+  joinBy?: Maybe<Array<Scalars['String']>>;
 };
 
 

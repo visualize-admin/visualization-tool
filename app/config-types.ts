@@ -5,6 +5,7 @@ import * as t from "io-ts";
 import React from "react";
 
 import { Dimension, Measure, ObservationValue } from "@/domain/data";
+import { mkJoinById } from "@/graphql/join";
 
 const DimensionType = t.union([
   t.literal("NominalDimension"),
@@ -262,7 +263,7 @@ const Cube = t.intersection([
     filters: Filters,
   }),
   t.partial({
-    joinBy: t.string,
+    joinBy: t.array(t.string),
   }),
 ]);
 export type Cube = t.TypeOf<typeof Cube>;
@@ -1290,22 +1291,54 @@ export const getChartConfig = (
   return chartConfigs.find((d) => d.key === key) ?? chartConfigs[0];
 };
 
+/**
+ * Get all filters from cubes and returns an object containing all values.
+ */
 export const getChartConfigFilters = (
   cubes: Cube[],
-  cubeIri?: string
+  {
+    cubeIri,
+    joined,
+  }: {
+    /** If passed, only filters for a particular cube will be considered */
+    cubeIri?: string;
+    /**
+     * If true, filters for joined dimensions will be deduped. Useful in contexts where filters
+     * for multiple join dimensions should be considered unique (for example, in the left data filters).
+     */
+    joined?: boolean;
+  } = {}
 ): Filters => {
-  return cubes
-    .filter((d) => (cubeIri ? d.iri === cubeIri : true))
-    .reduce((acc, cube) => {
-      return { ...acc, ...cube.filters };
-    }, {});
+  const relevantCubes = cubes.filter((c) =>
+    cubeIri ? c.iri === cubeIri : true
+  );
+  const dimIriToJoinId = joined
+    ? Object.fromEntries(
+        relevantCubes.flatMap((x) =>
+          (x.joinBy ?? []).map(
+            (iri, index) => [iri, mkJoinById(index)] as const
+          )
+        )
+      )
+    : {};
+  return Object.fromEntries(
+    relevantCubes.flatMap((c) =>
+      Object.entries(c.filters).map(([iri, value]) => [
+        dimIriToJoinId[iri] ?? iri,
+        value,
+      ])
+    )
+  );
 };
 
 export const useChartConfigFilters = (
   chartConfig: ChartConfig,
-  cubeIri?: string
+  options?: Parameters<typeof getChartConfigFilters>[1]
 ): Filters => {
   return React.useMemo(() => {
-    return getChartConfigFilters(chartConfig.cubes, cubeIri);
-  }, [chartConfig.cubes, cubeIri]);
+    return getChartConfigFilters(chartConfig.cubes, {
+      cubeIri: options?.cubeIri,
+      joined: options?.joined,
+    });
+  }, [chartConfig.cubes, options?.cubeIri, options?.joined]);
 };

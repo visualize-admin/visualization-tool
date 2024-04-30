@@ -254,6 +254,7 @@ const mkScoresQuery = (
       ?iri schema:creativeWorkStatus ?status .
       OPTIONAL { ?iri schema:datePublished ?datePublished . }
 
+      ${creatorValues.length ? makeInFilter("creatorIri", creatorValues) : ""}
       OPTIONAL {
         ?iri dcterms:creator ?creatorIri .
         GRAPH <https://lindas.admin.ch/sfa/opendataswiss> {
@@ -266,7 +267,6 @@ const mkScoresQuery = (
               { locale }
             )}
         }
-        ${creatorValues.length ? makeInFilter("creatorIri", creatorValues) : ""}
       }
 
       OPTIONAL {

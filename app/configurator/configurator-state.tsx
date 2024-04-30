@@ -71,6 +71,11 @@ import {
 import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
 import { executeDataCubesComponentsQuery } from "@/graphql/hooks";
 import {
+  getOriginalDimension,
+  JOIN_BY_CUBE_IRI,
+  mkJoinById,
+} from "@/graphql/join";
+import {
   ObservationFilter,
   PossibleFiltersDocument,
   PossibleFiltersQuery,
@@ -85,6 +90,7 @@ import {
   useDataSourceStore,
 } from "@/stores/data-source";
 import { getCachedComponents } from "@/urql-cache";
+import { assert } from "@/utils/assert";
 import {
   createConfig,
   fetchChartConfig,
@@ -127,8 +133,8 @@ export type ConfiguratorStateAction =
       value: {
         iri: string;
         joinBy: {
-          left: string;
-          right: string;
+          left: string[];
+          right: string[];
         };
       };
     }
@@ -230,8 +236,10 @@ export type ConfiguratorStateAction =
   | {
       type: "CHART_CONFIG_FILTER_SET_SINGLE";
       value: {
-        cubeIri: string;
-        dimensionIri: string;
+        filters: {
+          cubeIri: string;
+          dimensionIri: string;
+        }[];
         value: string;
       };
     }
@@ -342,6 +350,10 @@ export type ConfiguratorStateAction =
       };
     };
 
+export type GetConfiguratorStateAction<
+  T extends ConfiguratorStateAction["type"],
+> = Extract<ConfiguratorStateAction, { type: T }>;
+
 const LOCALSTORAGE_PREFIX = "vizualize-configurator-state";
 export const getLocalStorageKey = (chartId: string) =>
   `${LOCALSTORAGE_PREFIX}:${chartId}`;
@@ -447,15 +459,27 @@ export const moveFilterField = produce(
   }
 );
 
+/**
+ * Is responsible for inferring filters when changing chart type, or when
+ * changing some chart fields. Makes sure that we are always showing the
+ * non-"duplicated" data (with the correct filters for key dimensions).
+ */
 export const deriveFiltersFromFields = produce(
   (
     draft: ChartConfig,
     options: {
+      /** Possibly joined dimensions */
       dimensions: Dimension[];
       possibleFilters?: ObservationFilter[];
     }
   ) => {
     const { dimensions, possibleFilters } = options;
+
+    const getCubeDimensions = (dimensions: Dimension[], cubeIri: string) => {
+      return dimensions.filter(
+        (d) => d.cubeIri === cubeIri || d.cubeIri === JOIN_BY_CUBE_IRI
+      );
+    };
 
     if (draft.chartType === "table") {
       // As dimensions in tables behave differently than in other chart types,
@@ -467,11 +491,10 @@ export const deriveFiltersFromFields = produce(
       const isGrouped = (dimension: Dimension) =>
         groupedDimensionIris.has(dimension.iri);
       draft.cubes.forEach((cube) => {
-        const cubeDimensions = dimensions.filter(
-          (dimension) => dimension.cubeIri === cube.iri
-        );
+        const cubeDimensions = getCubeDimensions(dimensions, cube.iri);
         cubeDimensions.forEach((dimension) => {
           applyTableDimensionToFilters({
+            cubeIri: cube.iri,
             filters: cube.filters,
             dimension,
             isHidden: isHidden(dimension),
@@ -487,9 +510,7 @@ export const deriveFiltersFromFields = produce(
       const isField = (dimension: Dimension) =>
         fieldDimensionIris.has(dimension.iri);
       draft.cubes.forEach((cube) => {
-        const cubeDimensions = dimensions.filter(
-          (dimension) => dimension.cubeIri === cube.iri
-        );
+        const cubeDimensions = getCubeDimensions(dimensions, cube.iri);
         const sortedCubeDimensions = sortBy(
           cubeDimensions,
           (d) => (isGeoDimension(d) ? -1 : 1),
@@ -497,8 +518,11 @@ export const deriveFiltersFromFields = produce(
         );
         sortedCubeDimensions.forEach((dimension) => {
           applyNonTableDimensionToFilters({
+            cubeIri: cube.iri,
             filters: cube.filters,
-            dimension,
+            dimension: isJoinByComponent(dimension)
+              ? getOriginalDimension(dimension, cube)
+              : dimension,
             isField: isField(dimension),
             possibleFilter: possibleFilters?.find(
               (f) => f.iri === dimension.iri
@@ -511,26 +535,32 @@ export const deriveFiltersFromFields = produce(
 );
 
 export const applyTableDimensionToFilters = (props: {
+  cubeIri: string;
   filters: Filters;
   dimension: Dimension;
   isHidden: boolean;
   isGrouped: boolean;
   possibleFilter?: ObservationFilter;
 }) => {
-  const { filters, dimension, isHidden, isGrouped, possibleFilter } = props;
-  const currentFilter = filters[dimension.iri];
+  const { filters, dimension, isHidden, isGrouped, possibleFilter, cubeIri } =
+    props;
+  const originalIri = isJoinByComponent(dimension)
+    ? dimension.originalIris.find((c) => c.cubeIri === cubeIri)?.dimensionIri
+    : dimension.iri;
+  assert(originalIri !== undefined, "Dimension should have an IRI");
+  const currentFilter = filters[originalIri];
   const shouldBecomeSingleFilter = isHidden && !isGrouped;
 
   if (currentFilter) {
     switch (currentFilter.type) {
       case "single":
         if (!shouldBecomeSingleFilter) {
-          delete filters[dimension.iri];
+          delete filters[originalIri];
         }
         break;
       case "multi":
         if (shouldBecomeSingleFilter && dimension.isKeyDimension) {
-          filters[dimension.iri] = {
+          filters[originalIri] = {
             type: "single",
             value:
               Object.keys(currentFilter.values)[0] ?? dimension.values[0].value,
@@ -539,7 +569,7 @@ export const applyTableDimensionToFilters = (props: {
         break;
       case "range":
         if (shouldBecomeSingleFilter) {
-          filters[dimension.iri] = {
+          filters[originalIri] = {
             type: "single",
             value: currentFilter.from,
           };
@@ -550,28 +580,35 @@ export const applyTableDimensionToFilters = (props: {
         return _exhaustiveCheck;
     }
   } else if (shouldBecomeSingleFilter && dimension.isKeyDimension) {
-    filters[dimension.iri] = {
+    filters[originalIri] = {
       type: "single",
+      // TODO, possibly in case of join by dimensions, we could get a value that is not part
+      // of of the full range of values
       value: possibleFilter?.value ?? dimension.values[0].value,
     };
   }
 };
 
 export const applyNonTableDimensionToFilters = (props: {
+  cubeIri: string;
   filters: Filters;
   dimension: Dimension;
   isField: boolean;
   possibleFilter?: ObservationFilter;
 }) => {
-  const { filters, dimension, isField, possibleFilter } = props;
-  const currentFilter = filters[dimension.iri];
+  const { filters, dimension, isField, possibleFilter, cubeIri } = props;
+  const originalIri = isJoinByComponent(dimension)
+    ? dimension.originalIris.find((c) => c.cubeIri === cubeIri)?.dimensionIri
+    : dimension.iri;
+  assert(originalIri !== undefined, "Dimension should have an IRI");
+  const currentFilter = filters[originalIri];
 
   if (currentFilter) {
     switch (currentFilter.type) {
       case "single":
         if (isField) {
           // When a dimension is either x, y or segment, we want to clear the filter.
-          delete filters[dimension.iri];
+          delete filters[originalIri];
         }
         break;
       // Multi-filters are not allowed in the left panel.
@@ -583,7 +620,7 @@ export const applyNonTableDimensionToFilters = (props: {
           const filterValue = hierarchyTopMost
             ? hierarchyTopMost.value
             : Object.keys(currentFilter.values)[0] ?? dimension.values[0].value;
-          filters[dimension.iri] = {
+          filters[originalIri] = {
             type: "single",
             value: filterValue,
           };
@@ -592,7 +629,7 @@ export const applyNonTableDimensionToFilters = (props: {
       case "range":
         if (!isField) {
           // Range-filters are not allowed in the left panel.
-          filters[dimension.iri] = {
+          filters[originalIri] = {
             type: "single",
             value: currentFilter.from,
           };
@@ -602,11 +639,7 @@ export const applyNonTableDimensionToFilters = (props: {
         const _exhaustiveCheck: never = currentFilter;
         return _exhaustiveCheck;
     }
-  } else if (
-    !isField &&
-    dimension.isKeyDimension &&
-    !dimension.isJoinByDimension
-  ) {
+  } else if (!isField && dimension.isKeyDimension) {
     // If this scenario appears, it means that current filter is undefined -
     // which means it must be converted to a single-filter (if it's a keyDimension,
     // otherwise a 'No filter' option should be selected by default).
@@ -812,7 +845,7 @@ export const getFiltersByMappingStatus = (
     ...nonGenericFieldValues,
     ...(joinByIris ?? []),
   ]);
-  const filters = getChartConfigFilters(chartConfig.cubes, cubeIri);
+  const filters = getChartConfigFilters(chartConfig.cubes, { cubeIri });
   const mappedFilters = pickBy(filters, (_, iri) => iris.has(iri));
   const unmappedFilters = pickBy(filters, (_, iri) => !iris.has(iri));
 
@@ -1241,15 +1274,28 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
     case "CHART_CONFIG_FILTER_SET_SINGLE":
       if (isConfiguring(draft)) {
-        const { cubeIri, dimensionIri, value } = action.value;
+        const { filters, value } = action.value;
         const chartConfig = getChartConfig(draft);
-        const cube = chartConfig.cubes.find((cube) => cube.iri === cubeIri);
 
-        if (cube) {
-          cube.filters[dimensionIri] = {
-            type: "single",
-            value,
-          };
+        /*
+         * We are getting a list of filters, since setting a single filter in the UI
+         * in the case of joined dimensions, sets multiple filters inside the chart
+         * configuration.
+         */
+        for (const filter of filters) {
+          const { cubeIri, dimensionIri } = filter;
+          const cube = chartConfig.cubes.find((cube) => cube.iri === cubeIri);
+
+          if (cube) {
+            cube.filters[dimensionIri] = {
+              type: "single",
+              value,
+            };
+          } else {
+            console.warn(
+              `Could not set filter, no cube in chat config was found with iri ${cubeIri}`
+            );
+          }
         }
       }
 
@@ -1988,8 +2034,8 @@ export const addDatasetInConfig = function (
   options: {
     iri: string;
     joinBy: {
-      left: string;
-      right: string;
+      left: string[];
+      right: string[];
     };
   }
 ) {
@@ -2018,8 +2064,9 @@ export const addDatasetInConfig = function (
       }
       for (const iriAttribute of encoding.iriAttributes) {
         const value = get(field, iriAttribute);
-        if (value === joinBy.left || value === joinBy.right) {
-          set(field, iriAttribute, "joinBy");
+        const index = joinBy.left.indexOf(value) ?? joinBy.right.indexOf(value);
+        if (index > -1) {
+          set(field, iriAttribute, mkJoinById(index));
         }
       }
     }
