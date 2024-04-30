@@ -108,7 +108,6 @@ export async function loadDimensionValuesWithMetadata(
     throw new Error(`Dimension not found: ${dimensionIri}`);
   }
 
-  const isDimensionVersioned = dimensionIsVersioned(dimension.dimension);
   const query = `PREFIX cube: <https://cube.link/>
 PREFIX geo: <http://www.opengis.net/ont/geosparql#>
 PREFIX schema: <http://schema.org/>
@@ -116,8 +115,8 @@ PREFIX sh: <http://www.w3.org/ns/shacl#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 
 CONSTRUCT {
-  ?dimensionIri rdf:first ?maybe_unversioned_value .
-  ?maybe_unversioned_value
+  ?dimensionIri rdf:first ?value .
+  ?value
     schema:name ?name ;
     schema:alternateName ?alternateName ;
     schema:description ?description ;
@@ -136,7 +135,12 @@ CONSTRUCT {
       VALUES ?dimensionIri { <${dimensionIri}> }
       <${cubeIri}> cube:observationConstraint/sh:property ?dimension .
       ?dimension sh:path ?dimensionIri .
-      ?dimension sh:in/rdf:rest*/rdf:first ?value .
+      ?dimension sh:in/rdf:rest*/rdf:first ?maybeVersionedValue .
+      OPTIONAL {
+        ?dimension schema:version ?version .
+        ?maybeVersionedValue schema:sameAs ?maybeUnversionedValue .
+      }
+      BIND(COALESCE(?maybeUnversionedValue, ?maybeVersionedValue) as ?value)
     }
   } UNION`
   } {
@@ -152,7 +156,12 @@ CONSTRUCT {
         FILTER(NOT EXISTS{ ?dimension sh:in ?in . })`
         }
         <${cubeIri}> cube:observationSet/cube:observation ?observation .
-        ?observation ?dimensionIri ?value .
+        ?observation ?dimensionIri ?maybeVersionedValue .
+        OPTIONAL {
+          ?dimension schema:version ?version .
+          ?maybeVersionedValue schema:sameAs ?maybeUnversionedValue .
+        }
+        BIND(COALESCE(?maybeUnversionedValue, ?maybeVersionedValue) as ?value)
         ${queryFilters}
       }
     }
@@ -172,12 +181,6 @@ CONSTRUCT {
   OPTIONAL { ?value geo:hasGeometry ?geometry . }
   OPTIONAL { ?value schema:latitude ?latitude . }
   OPTIONAL { ?value schema:longitude ?longitude . }
-  ${
-    isDimensionVersioned
-      ? `OPTIONAL { ?value schema:sameAs ?unversioned_value . }`
-      : ""
-  }
-  BIND(COALESCE(?unversioned_value, ?value) AS ?maybe_unversioned_value)
 }`;
 
   return await executeWithCache(
