@@ -206,69 +206,12 @@ export const getCubeDimensionValues = async ({
   const { dimension, cube } = resolvedDimension;
 
   if (shouldLoadMinMaxValues(resolvedDimension)) {
-    if (
-      typeof dimension.minInclusive !== "undefined" &&
-      typeof dimension.maxInclusive !== "undefined"
-    ) {
-      const min = parseObservationValue({ value: dimension.minInclusive }) ?? 0;
-      const max = parseObservationValue({ value: dimension.maxInclusive }) ?? 0;
-
-      return [
-        { value: min, label: `${min}` },
-        { value: max, label: `${max}` },
-      ];
-    }
-
-    // Try to get min/max values from a list of values.
-    let listItemPointer = dimension.out(ns.sh.or);
-
-    while (
-      listItemPointer.out(ns.rdf.rest).value &&
-      // Only try until we reach the end of the list.
-      !listItemPointer.out(ns.rdf.rest).term?.equals(ns.rdf.nil)
-    ) {
-      const item = listItemPointer.out(ns.rdf.first);
-      const itemMin = item.out(ns.sh.minInclusive);
-      const itemMax = item.out(ns.sh.maxInclusive);
-
-      if (
-        typeof itemMin.value !== "undefined" &&
-        typeof itemMax.value !== "undefined"
-      ) {
-        const min = +itemMin.value;
-        const max = +itemMax.value;
-
-        return [
-          { value: min, label: `${min}` },
-          { value: max, label: `${max}` },
-        ];
-      }
-
-      // Move to next list item.
-      listItemPointer = listItemPointer.out(ns.rdf.rest);
-    }
-
-    if (cube.term && dimension.path) {
-      const result = await loadMinMaxDimensionValues({
-        datasetIri: cube.term.value,
-        dimensionIri: dimension.path,
-        sparqlClient,
-        cache,
-      });
-
-      if (result) {
-        const [min, max] = result;
-
-        return [
-          { value: min, label: `${min}` },
-          { value: max, label: `${max}` },
-        ];
-      }
-
-      return [];
-    }
-
-    return [];
+    return await getCubeDimensionMinMaxValues({
+      dimension,
+      cube,
+      sparqlClient,
+      cache,
+    });
   }
 
   return await getCubeDimensionValuesWithMetadata({
@@ -279,6 +222,81 @@ export const getCubeDimensionValues = async ({
     filters,
     cache,
   });
+};
+
+const getCubeDimensionMinMaxValues = async ({
+  dimension,
+  cube,
+  sparqlClient,
+  cache,
+}: {
+  dimension: ResolvedDimension["dimension"];
+  cube: ResolvedDimension["cube"];
+  sparqlClient: ParsingClient;
+  cache: LRUCache | undefined;
+}) => {
+  const { minInclusive, maxInclusive } = dimension;
+
+  if (
+    typeof minInclusive !== "undefined" &&
+    typeof maxInclusive !== "undefined"
+  ) {
+    const min = parseObservationValue({ value: minInclusive }) ?? 0;
+    const max = parseObservationValue({ value: maxInclusive }) ?? 0;
+
+    return [
+      { value: min, label: `${min}` },
+      { value: max, label: `${max}` },
+    ];
+  }
+
+  // Try to get min/max values from a list of values.
+  let listItemPointer = dimension.out(ns.sh.or);
+
+  while (
+    listItemPointer.out(ns.rdf.rest).value &&
+    // Only try until we reach the end of the list.
+    !listItemPointer.out(ns.rdf.rest).term?.equals(ns.rdf.nil)
+  ) {
+    const item = listItemPointer.out(ns.rdf.first);
+    const itemMin = item.out(ns.sh.minInclusive);
+    const itemMax = item.out(ns.sh.maxInclusive);
+
+    if (
+      typeof itemMin.value !== "undefined" &&
+      typeof itemMax.value !== "undefined"
+    ) {
+      const min = +itemMin.value;
+      const max = +itemMax.value;
+
+      return [
+        { value: min, label: `${min}` },
+        { value: max, label: `${max}` },
+      ];
+    }
+    listItemPointer = listItemPointer.out(ns.rdf.rest);
+  }
+
+  if (cube.term && dimension.path) {
+    const result = await loadMinMaxDimensionValues({
+      datasetIri: cube.term.value,
+      dimensionIri: dimension.path,
+      sparqlClient,
+      cache,
+    });
+
+    if (result) {
+      const [min, max] = result;
+      return [
+        { value: min, label: `${min}` },
+        { value: max, label: `${max}` },
+      ];
+    }
+
+    return [];
+  }
+
+  return [];
 };
 
 export const dimensionIsVersioned = (dimension: CubeDimension) =>
