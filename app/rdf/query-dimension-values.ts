@@ -13,7 +13,6 @@ import { FilterValue, Filters } from "@/config-types";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { DimensionValue, parseObservationValue } from "@/domain/data";
 import { isMostRecentValue } from "@/domain/most-recent-value";
-import { ResolvedDimension } from "@/graphql/shared-types";
 import { pragmas } from "@/rdf/create-source";
 import * as ns from "@/rdf/namespace";
 import { parseDimensionDatatype } from "@/rdf/parse";
@@ -76,7 +75,7 @@ const getFilterOrder = (filter: FilterValue) => {
 };
 
 type LoadDimensionValuesProps = {
-  dimension: ResolvedDimension;
+  dimensionIri: string;
   cubeDimensions: CubeDimension[];
   sparqlClient: ParsingClient;
   filters?: Filters;
@@ -94,9 +93,8 @@ export async function loadDimensionValuesWithMetadata(
   cubeIri: string,
   props: LoadDimensionValuesProps
 ): Promise<DimensionValue[]> {
-  const { dimension, cubeDimensions, sparqlClient, filters, locale, cache } =
+  const { dimensionIri, cubeDimensions, sparqlClient, filters, locale, cache } =
     props;
-  const dimensionIri = dimension.data.iri;
   const filterList = getFiltersList(filters, dimensionIri);
   const queryFilters = getQueryFilters(
     filterList,
@@ -243,8 +241,7 @@ export async function loadMaxDimensionValue(
   cubeIri: string,
   props: LoadMaxDimensionValuesProps
 ): Promise<string> {
-  const { dimension, cubeDimensions, sparqlClient, filters, cache } = props;
-  const dimensionIri = dimension.data.iri;
+  const { dimensionIri, cubeDimensions, sparqlClient, filters, cache } = props;
   const filterList = getFiltersList(filters, dimensionIri);
   // The following query works both for numeric, date and ordinal dimensions
   const query = SELECT`?value`.WHERE`

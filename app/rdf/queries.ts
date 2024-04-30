@@ -309,7 +309,7 @@ export const getCubeDimensionValuesWithMetadata = async ({
     locale,
   });
   return await loadDimensionValuesWithMetadata(cube.term?.value!, {
-    dimension: resolvedDimension,
+    dimensionIri: resolvedDimension.data.iri,
     cubeDimensions: cube.dimensions,
     sparqlClient,
     filters,
@@ -685,7 +685,7 @@ const buildFilters = async ({
         case "single": {
           if (isMostRecentValue(filter.value)) {
             const maxValue = await loadMaxDimensionValue(cube.term?.value!, {
-              dimension: resolvedDimension,
+              dimensionIri: resolvedDimension.data.iri,
               cubeDimensions: cube.dimensions,
               sparqlClient,
               filters,
@@ -714,7 +714,7 @@ const buildFilters = async ({
             dimensionType === "TemporalEntityDimension";
           const maxValue = isMostRecentValue(filter.to)
             ? await loadMaxDimensionValue(cube.term?.value!, {
-                dimension: resolvedDimension,
+                dimensionIri: resolvedDimension.data.iri,
                 cubeDimensions: cube.dimensions,
                 sparqlClient,
                 filters,
