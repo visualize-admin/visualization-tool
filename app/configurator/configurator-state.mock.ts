@@ -1143,6 +1143,8 @@ export const configJoinedCubes: Partial<
     cubes: [
       {
         iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9",
+        publishIri:
+          "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9",
         filters: {
           "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr":
             { type: "single", value: "2020" },
@@ -1154,6 +1156,7 @@ export const configJoinedCubes: Partial<
       },
       {
         iri: "https://energy.ld.admin.ch/elcom/electricityprice-canton",
+        publishIri: "https://energy.ld.admin.ch/elcom/electricityprice-canton",
         filters: {
           "https://energy.ld.admin.ch/elcom/electricityprice/dimension/period":
             {
@@ -1395,6 +1398,7 @@ export const configJoinedCubes: Partial<
     cubes: [
       {
         iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9",
+        publishIri: "https://energy.ld.admin.ch/elcom/electricityprice-canton",
         filters: {},
         joinBy: [
           "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
@@ -1403,6 +1407,7 @@ export const configJoinedCubes: Partial<
       },
       {
         iri: "https://energy.ld.admin.ch/elcom/electricityprice-canton",
+        publishIri: "https://energy.ld.admin.ch/elcom/electricityprice-canton",
         filters: {
           "https://energy.ld.admin.ch/elcom/electricityprice/dimension/category":
             {

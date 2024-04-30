@@ -6,6 +6,7 @@ describe("getChartConfigFilters", () => {
       [
         {
           iri: "cube1",
+          publishIri: "cube1",
           joinBy: ["dimension1"],
           filters: {
             dimension1: { type: "single", value: "value1" },
@@ -14,6 +15,7 @@ describe("getChartConfigFilters", () => {
         },
         {
           iri: "cube2",
+          publishIri: "cube2",
           joinBy: ["dimension3"],
           filters: {
             dimension3: { type: "single", value: "value1" },
@@ -38,6 +40,7 @@ describe("getChartConfigFilters", () => {
       [
         {
           iri: "cube1",
+          publishIri: "cube1",
           joinBy: [],
           filters: {
             dimension1: { type: "single", value: "value1" },
@@ -46,6 +49,7 @@ describe("getChartConfigFilters", () => {
         },
         {
           iri: "cube2",
+          publishIri: "cube2",
           joinBy: [],
           filters: {
             dimension3: { type: "single", value: "value3" },
@@ -71,6 +75,7 @@ describe("getChartConfigFilters", () => {
       [
         {
           iri: "cube1",
+          publishIri: "cube1",
           joinBy: ["dimension1", "dimension2"],
           filters: {
             dimension1: { type: "single", value: "value1" },
@@ -79,6 +84,7 @@ describe("getChartConfigFilters", () => {
         },
         {
           iri: "cube2",
+          publishIri: "cube2",
           joinBy: ["dimension3", "dimension4"],
           filters: {
             dimension3: { type: "single", value: "value1" },
@@ -101,6 +107,7 @@ describe("getChartConfigFilters", () => {
     const result = getChartConfigFilters([
       {
         iri: "cube1",
+        publishIri: "cube1",
         joinBy: ["dimension1", "dimension2"],
         filters: {
           dimension1: { type: "single", value: "value1" },
@@ -109,6 +116,7 @@ describe("getChartConfigFilters", () => {
       },
       {
         iri: "cube2",
+        publishIri: "cube2",
         joinBy: ["dimension3", "dimension4"],
         filters: {
           dimension3: { type: "single", value: "value1" },
