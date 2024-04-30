@@ -21,7 +21,7 @@ import {
 } from "@/graphql/query-hooks";
 import { assert } from "@/utils/assert";
 
-export const JOIN_BY_DIMENSION_IRI = "joinBy";
+const JOIN_BY_DIMENSION_IRI = "joinBy";
 export const JOIN_BY_CUBE_IRI = "joinBy";
 
 export const getOriginalDimension = (dim: JoinByComponent, cube: Cube) => {
@@ -34,6 +34,10 @@ export const getOriginalDimension = (dim: JoinByComponent, cube: Cube) => {
     ...dim,
     iri: originalIri,
   };
+};
+
+export const isJoinByIri = (iri: string) => {
+  return iri.startsWith(JOIN_BY_DIMENSION_IRI);
 };
 
 /** Use to exclude joinBy dimensions when fetching dimensions, and create

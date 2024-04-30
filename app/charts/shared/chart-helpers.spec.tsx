@@ -14,6 +14,7 @@ import {
 } from "@/configurator";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { InteractiveFiltersState } from "@/stores/interactive-filters";
+import dualLine1Fixture from "@/test/__fixtures/config/dev/chartConfig-photovoltaik-und-gebaudeprogramm.json";
 import map1Fixture from "@/test/__fixtures/config/int/map-nfi.json";
 import line1Fixture from "@/test/__fixtures/config/prod/line-1.json";
 import { migrateChartConfig } from "@/utils/chart-config/versioning";
@@ -230,5 +231,17 @@ describe("getChartConfigComponentIris", () => {
       "https://environment.ld.admin.ch/foen/nfi/unitOfEvaluation",
       "https://environment.ld.admin.ch/foen/nfi/unitOfReference",
     ]);
+  });
+
+  it("should return correct componentIris for dual line chart (join by)", () => {
+    const componentIris = extractChartConfigComponentIris(
+      dualLine1Fixture as unknown as ChartConfig
+    );
+    expect(
+      componentIris.includes(
+        "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr"
+      )
+    ).toBe(true);
+    expect(componentIris.includes("joinBy__0")).toBe(false);
   });
 });

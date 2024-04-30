@@ -39,7 +39,7 @@ import {
   getTemporalEntityValue,
 } from "@/domain/data";
 import { truthy } from "@/domain/types";
-import { JOIN_BY_DIMENSION_IRI } from "@/graphql/join";
+import { isJoinByIri } from "@/graphql/join";
 import { DataCubeObservationFilter } from "@/graphql/resolver-types";
 import {
   InteractiveFiltersState,
@@ -126,7 +126,7 @@ type IFKey = keyof NonNullable<InteractiveFiltersConfig>;
 
 export const getChartConfigFilterComponentIris = ({ cubes }: ChartConfig) => {
   return Object.keys(getChartConfigFilters(cubes)).filter(
-    (d) => d !== JOIN_BY_DIMENSION_IRI
+    (d) => !isJoinByIri(d)
   );
 };
 
@@ -222,7 +222,7 @@ export const extractChartConfigComponentIris = (chartConfig: ChartConfig) => {
         Boolean
       )
     )
-      .filter((d) => d !== JOIN_BY_DIMENSION_IRI)
+      .filter((d) => !isJoinByIri(d))
       // Important so the order is consistent when querying.
       .sort()
   );
