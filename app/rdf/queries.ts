@@ -179,8 +179,7 @@ export const createCubeDimensionValuesLoader =
   async (resolvedDimensions: readonly ResolvedDimension[]) => {
     return Promise.all(
       resolvedDimensions.map(async (resolvedDimension) => {
-        const iri = resolvedDimension.data.iri;
-        return await getCubeDimensionValues(iri, {
+        return await getCubeDimensionValues({
           sparqlClient,
           locale: resolvedDimension.locale,
           resolvedDimension,
@@ -191,22 +190,19 @@ export const createCubeDimensionValuesLoader =
     );
   };
 
-export const getCubeDimensionValues = async (
-  _cubeIri: string,
-  {
-    sparqlClient,
-    locale,
-    resolvedDimension,
-    filters,
-    cache,
-  }: {
-    sparqlClient: ParsingClient;
-    locale: string;
-    resolvedDimension: ResolvedDimension;
-    filters?: Filters;
-    cache: LRUCache | undefined;
-  }
-): Promise<DimensionValue[]> => {
+export const getCubeDimensionValues = async ({
+  sparqlClient,
+  locale,
+  resolvedDimension,
+  filters,
+  cache,
+}: {
+  sparqlClient: ParsingClient;
+  locale: string;
+  resolvedDimension: ResolvedDimension;
+  filters?: Filters;
+  cache: LRUCache | undefined;
+}): Promise<DimensionValue[]> => {
   const { dimension, cube } = resolvedDimension;
 
   if (shouldLoadMinMaxValues(resolvedDimension)) {
