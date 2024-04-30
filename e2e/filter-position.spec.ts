@@ -43,6 +43,5 @@ test("Filters should be sorted by position", async ({ selectors, actions }) => {
     "Endangered",
     "Critically endangered",
     "Regionally extinct",
-    "Extinct in the world",
   ]);
 });
