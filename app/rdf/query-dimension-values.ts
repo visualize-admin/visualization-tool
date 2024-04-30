@@ -133,8 +133,9 @@ CONSTRUCT {
       ? ""
       : `{ #pragma evaluate on
     SELECT ?value WHERE {
+      VALUES ?dimensionIri { <${dimensionIri}> }
       <${cubeIri}> cube:observationConstraint/sh:property ?dimension .
-      ?dimension sh:path <${dimensionIri}> .
+      ?dimension sh:path ?dimensionIri .
       ?dimension sh:in/rdf:rest*/rdf:first ?value .
     }
   } UNION`
@@ -145,12 +146,13 @@ CONSTRUCT {
           queryFilters
             ? ""
             : `
+        VALUES ?dimensionIri { <${dimensionIri}> }
         <${cubeIri}> cube:observationConstraint/sh:property ?dimension .
-        ?dimension sh:path <${dimensionIri}> .
+        ?dimension sh:path ?dimensionIri .
         FILTER(NOT EXISTS{ ?dimension sh:in ?in . })`
         }
         <${cubeIri}> cube:observationSet/cube:observation ?observation .
-        ?observation <${dimensionIri}> ?value .
+        ?observation ?dimensionIri ?value .
         ${queryFilters}
       }
     }
