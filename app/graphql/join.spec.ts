@@ -10,6 +10,11 @@ import {
   TimeUnit,
 } from "@/graphql/query-hooks";
 
+type ObservationsQuery = OperationResult<
+  DataCubeObservationsQuery,
+  Exact<DataCubeObservationsQueryVariables>
+>[];
+
 describe("mergeObservations", () => {
   it("should merge observations with a single join by", () => {
     const queries = [
@@ -68,10 +73,7 @@ describe("mergeObservations", () => {
           },
         },
       },
-    ] as any as OperationResult<
-      DataCubeObservationsQuery,
-      Exact<DataCubeObservationsQueryVariables>
-    >[];
+    ] as unknown as ObservationsQuery;
 
     const result = mergeObservations(queries);
 

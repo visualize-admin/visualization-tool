@@ -39,7 +39,7 @@ import {
   getTemporalEntityValue,
 } from "@/domain/data";
 import { truthy } from "@/domain/types";
-import { isJoinByIri } from "@/graphql/join";
+import { getOriginalIris, isJoinByIri } from "@/graphql/join";
 import { DataCubeObservationFilter } from "@/graphql/resolver-types";
 import {
   InteractiveFiltersState,
@@ -222,7 +222,10 @@ export const extractChartConfigComponentIris = (chartConfig: ChartConfig) => {
         Boolean
       )
     )
-      .filter((d) => !isJoinByIri(d))
+      .flatMap((iri) =>
+        isJoinByIri(iri) ? getOriginalIris(iri, chartConfig) : [iri]
+      )
+      .filter((iri) => !isJoinByIri(iri))
       // Important so the order is consistent when querying.
       .sort()
   );

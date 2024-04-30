@@ -5,7 +5,7 @@ import uniq from "lodash/uniq";
 import uniqBy from "lodash/uniqBy";
 import { OperationResult } from "urql";
 
-import { Cube } from "@/config-types";
+import { ChartConfig, Cube } from "@/config-types";
 import {
   Dimension,
   JoinByComponent,
@@ -114,12 +114,24 @@ const joinByPrefix = `joinBy__`;
 
 export const joinByDimensionId = (index: number) => `${joinByPrefix}${index}`;
 export const isJoinById = (iri: string) => iri.startsWith(joinByPrefix);
+const getJoinByIdIndex = (joinById: string) => {
+  return Number(joinById.slice(joinByPrefix.length));
+};
+
+export const getOriginalIris = (joinById: string, chartConfig: ChartConfig) => {
+  const index = getJoinByIdIndex(joinById);
+  return chartConfig.cubes.map((x) => {
+    const joinBy = x.joinBy;
+    assert(joinBy !== undefined, "Found joinBy iri and cube has no join by");
+    return joinBy[index];
+  });
+};
 
 export const getResolvedJoinByIri = (cube: Cube, joinById: string) => {
   if (!cube.joinBy) {
     return;
   }
-  const index = Number(joinById.slice(joinByPrefix.length));
+  const index = getJoinByIdIndex(joinById);
   return cube.joinBy[index];
 };
 /**
