@@ -80,7 +80,7 @@ export const DatasetsControlSection = () => {
       </SubsectionTitle>
       <ControlSectionContent
         aria-labelledby="controls-data"
-        data-testid="configurator-filters"
+        data-testid="configurator-datasets"
       >
         <Box
           sx={{
