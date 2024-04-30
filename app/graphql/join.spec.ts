@@ -200,7 +200,7 @@ describe("mergeObservations", () => {
 });
 
 describe("joinDimensions", () => {
-  it("should join dimensions correctly", () => {
+  it("should join dimensions (editor mode, all dimensions fetched)", () => {
     const fetchedDataCubeComponents = [
       {
         dataCubeComponents: {
