@@ -116,7 +116,7 @@ PREFIX sh: <http://www.w3.org/ns/shacl#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 
 CONSTRUCT {
-  [ rdf:first ?maybe_unversioned_value ] .
+  ?dimensionIri rdf:first ?maybe_unversioned_value .
   ?maybe_unversioned_value
     schema:name ?name ;
     schema:alternateName ?alternateName ;
@@ -132,7 +132,7 @@ CONSTRUCT {
     queryFilters
       ? ""
       : `{ #pragma evaluate on
-    SELECT ?value WHERE {
+    SELECT ?dimensionIri ?value WHERE {
       VALUES ?dimensionIri { <${dimensionIri}> }
       <${cubeIri}> cube:observationConstraint/sh:property ?dimension .
       ?dimension sh:path ?dimensionIri .
@@ -141,7 +141,7 @@ CONSTRUCT {
   } UNION`
   } {
     { #pragma evaluate on
-      SELECT DISTINCT ?value WHERE {
+      SELECT DISTINCT ?dimensionIri ?value WHERE {
         ${
           queryFilters
             ? ""
