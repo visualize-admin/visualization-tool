@@ -1,0 +1,62 @@
+{
+  "key": "I9KvAcIimui6",
+  "meta": {
+    "title": { "de": "", "en": "", "fr": "", "it": "" },
+    "description": { "de": "", "en": "", "fr": "", "it": "" }
+  },
+  "cubes": [
+    {
+      "iri": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9",
+      "joinBy": [
+        "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr"
+      ],
+      "filters": {
+        "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton": {
+          "type": "single",
+          "value": "https://ld.admin.ch/canton/1"
+        }
+      }
+    },
+    {
+      "iri": "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_co2wirkung/4",
+      "joinBy": [
+        "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_co2wirkung/Jahr"
+      ],
+      "filters": {
+        "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_co2wirkung/region": {
+          "type": "single",
+          "value": "https://ld.admin.ch/country/CHE"
+        },
+        "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_co2wirkung/massnahmenbereich": {
+          "type": "single",
+          "value": "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_co2wirkung/ogd18_catalog/Haustechnik"
+        }
+      }
+    }
+  ],
+  "fields": {
+    "x": { "componentIri": "joinBy__0" },
+    "y": {
+      "palette": "category10",
+      "colorMapping": {
+        "http://schema.org/amount": "#ff7f0e",
+        "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/AnzahlAnlagen": "#1f77b4"
+      },
+      "leftAxisComponentIri": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/AnzahlAnlagen",
+      "rightAxisComponentIri": "http://schema.org/amount"
+    }
+  },
+  "version": "3.1.0",
+  "chartType": "comboLineDual",
+  "activeField": "y",
+  "interactiveFiltersConfig": {
+    "legend": { "active": false, "componentIri": "" },
+    "timeRange": {
+      "active": false,
+      "presets": { "to": "", "from": "", "type": "range" },
+      "componentIri": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr"
+    },
+    "calculation": { "type": "identity", "active": false },
+    "dataFilters": { "active": false, "componentIris": [] }
+  }
+}

@@ -71,7 +71,7 @@ export const joinDimensions = (
     );
   }
 
-  if (joinByDimensions.length > 1) {
+  if (joinByDimensions.length >= 1) {
     for (const [index, joinedDimensions] of Object.entries(
       groupBy(joinByDimensions, (d) => d.joinByIndex)
     ).reverse()) {

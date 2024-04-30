@@ -227,21 +227,19 @@ export const executeDataCubesComponentsQuery = async (
         : {
             dataCubesComponents: {
               dimensions: joinDimensions(
-                queries
-                  .filter((x) => x.data)
-                  .map((q) => {
-                    const dataCubeComponents = q.data?.dataCubeComponents;
-                    const joinBy = q.operation.variables?.cubeFilter.joinBy;
-                    assert(
-                      dataCubeComponents !== undefined,
-                      "Undefined dataCubeComponents"
-                    );
-                    assert(joinBy, "Undefined joinBy");
-                    return {
-                      dataCubeComponents,
-                      joinBy,
-                    };
-                  })
+                queries.map((q) => {
+                  const dataCubeComponents = q.data?.dataCubeComponents;
+                  const joinBy = q.operation.variables?.cubeFilter.joinBy;
+                  assert(
+                    dataCubeComponents !== undefined,
+                    "Undefined dataCubeComponents"
+                  );
+                  assert(joinBy, "Undefined joinBy");
+                  return {
+                    dataCubeComponents,
+                    joinBy,
+                  };
+                })
               ),
               measures: queries.flatMap(
                 (q) => q.data?.dataCubeComponents.measures!
