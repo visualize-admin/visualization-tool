@@ -42,14 +42,13 @@ import groupBy from "lodash/groupBy";
 import keyBy from "lodash/keyBy";
 import uniq from "lodash/uniq";
 import uniqBy from "lodash/uniqBy";
-import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import { useClient } from "urql";
 
 import { DatasetResults, PartialSearchCube } from "@/browser/dataset-browse";
 import { getPossibleChartTypes } from "@/charts";
 import { Error as ErrorHint, Loading } from "@/components/hint";
 import Tag from "@/components/tag";
-import useDisclosure from "@/components/use-disclosure";
 import {
   ConfiguratorStateConfiguringChart,
   DataSource,
@@ -374,12 +373,6 @@ export const PreviewDataTable = ({
     () => Object.fromEntries(selectedColumns.map((x) => [x, true])),
     [selectedColumns]
   );
-  const chipRef = useRef<HTMLDivElement>(null);
-  const {
-    isOpen: isDimensionMenuOpen,
-    close: closeDimensionMenu,
-    open: openDimensionMenu,
-  } = useDisclosure();
 
   const handleClickDimensionMenuItem = (ev: React.MouseEvent<HTMLElement>) => {
     const columnId = ev.currentTarget.getAttribute("data-column-id");
@@ -461,7 +454,6 @@ export const PreviewDataTable = ({
           </Typography>
           <Select
             sx={{ minWidth: 300 }}
-            onClose={closeDimensionMenu}
             value={Object.keys(selectedColumnsByIri)}
             renderValue={() => {
               return (

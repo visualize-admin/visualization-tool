@@ -37,7 +37,10 @@ import {
 import { MotionBox } from "@/components/presence";
 import { BackButton, ChartConfig, DataSource } from "@/configurator";
 import { DRAWER_WIDTH } from "@/configurator/components/drawer";
-import { getComponentLabel } from "@/configurator/components/ui-helpers";
+import {
+  getComponentDescription,
+  getComponentLabel,
+} from "@/configurator/components/ui-helpers";
 import {
   Component,
   Dimension,
@@ -621,13 +624,18 @@ const TabPanelDataDimension = ({
 }) => {
   const classes = useOtherStyles();
   const { setSelectedDimension } = useMetadataPanelStoreActions();
+  const label = React.useMemo(() => {
+    return getComponentLabel(dim as Dimension, cubeIri);
+  }, [cubeIri, dim]);
   const description = React.useMemo(() => {
-    if (!expanded && dim.description && dim.description.length > 180) {
-      return `${dim.description.slice(0, 180)}…`;
+    const description = getComponentDescription(dim, cubeIri);
+
+    if (!expanded && description && description.length > 180) {
+      return `${description.slice(0, 180)}…`;
     }
 
-    return dim.description;
-  }, [dim.description, expanded]);
+    return description;
+  }, [cubeIri, dim, expanded]);
 
   const locale = useLocale();
   const [componentsQuery] = useDataCubesComponentsQuery({
@@ -679,7 +687,7 @@ const TabPanelDataDimension = ({
                 cursor: !expanded ? "pointer" : "default",
               }}
             >
-              {getComponentLabel(dim as Dimension, cubeIri)}
+              {label}
             </Button>
             {isJoinByComponent(dim) ? (
               <JoinByChip label={<Trans id="dimension.joined">Joined</Trans>} />

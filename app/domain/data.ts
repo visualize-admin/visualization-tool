@@ -228,6 +228,7 @@ export type BaseDimension = BaseComponent & {
           cubeIri: string;
           dimensionIri: string;
           label: string;
+          description: string;
         }[];
       }
     | {

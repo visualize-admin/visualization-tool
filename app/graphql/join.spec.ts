@@ -272,11 +272,13 @@ describe("joinDimensions", () => {
           "originalIris": Array [
             Object {
               "cubeIri": "population",
+              "description": "",
               "dimensionIri": "year",
               "label": "Year",
             },
             Object {
               "cubeIri": "elec",
+              "description": "",
               "dimensionIri": "YEAR",
               "label": "Year",
             },
@@ -291,11 +293,13 @@ describe("joinDimensions", () => {
           "originalIris": Array [
             Object {
               "cubeIri": "population",
+              "description": "",
               "dimensionIri": "canton",
               "label": "Canton",
             },
             Object {
               "cubeIri": "elec",
+              "description": "",
               "dimensionIri": "CANTON",
               "label": "Canton",
             },

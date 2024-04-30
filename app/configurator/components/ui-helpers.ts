@@ -289,9 +289,10 @@ export const canUseAbbreviations = (d?: Component): boolean => {
  *   - Temporal dimensions will get labelled via their time unit
  * - If you need the dimension label in the context of a cube, pass the cube iri
  */
-export const getComponentLabel = (dim: Component, cube?: string) => {
+export const getComponentLabel = (dim: Component, cubeIri?: string) => {
   if (isJoinByComponent(dim)) {
-    const original = cube && dim.originalIris.find((i) => i.cubeIri === cube);
+    const original =
+      cubeIri && dim.originalIris.find((i) => i.cubeIri === cubeIri);
     if (original) {
       return original.label;
     }
@@ -317,4 +318,20 @@ export const getComponentLabel = (dim: Component, cube?: string) => {
     return dim.originalIris[0].label ?? "NO LABEL";
   }
   return dim.label;
+};
+
+/**
+ * Returns component description, handling correctly join by dimension
+ */
+export const getComponentDescription = (dim: Component, cubeIri?: string) => {
+  if (isJoinByComponent(dim)) {
+    const original =
+      cubeIri && dim.originalIris.find((i) => i.cubeIri === cubeIri);
+    if (original) {
+      return original.description;
+    }
+    return dim.originalIris[0].description ?? "";
+  } else {
+    return dim.description;
+  }
 };

@@ -169,11 +169,13 @@ describe("useComponentsQuery - keepPreviousData: false", () => {
             "originalIris": Array [
               Object {
                 "cubeIri": undefined,
+                "description": "",
                 "dimensionIri": "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_energiewirkung/Jahr",
                 "label": "Year",
               },
               Object {
                 "cubeIri": undefined,
+                "description": "",
                 "dimensionIri": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
                 "label": "Year",
               },
@@ -286,11 +288,13 @@ describe("useComponentsQuery - keepPreviousData: true", () => {
             "originalIris": Array [
               Object {
                 "cubeIri": undefined,
+                "description": "",
                 "dimensionIri": "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_energiewirkung/Jahr",
                 "label": "Year",
               },
               Object {
                 "cubeIri": undefined,
+                "description": "",
                 "dimensionIri": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
                 "label": "Year",
               },

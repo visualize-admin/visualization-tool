@@ -103,6 +103,7 @@ export const joinDimensions = (
           cubeIri: d.cubeIri,
           dimensionIri: d.iri,
           label: d.label,
+          description: d.description ?? "",
         })),
       };
       dimensions.unshift(joinByDimension);

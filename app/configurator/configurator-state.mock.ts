@@ -1527,12 +1527,14 @@ export const dimensionsJoinedCubes: Dimension[] = [
         dimensionIri:
           "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
         label: "Jahr der Vergütung",
+        description: "Beschreibung Jahr der Vergütung",
       },
       {
         cubeIri: "https://energy.ld.admin.ch/elcom/electricityprice-canton",
         dimensionIri:
           "https://energy.ld.admin.ch/elcom/electricityprice/dimension/period",
         label: "Period",
+        description: "Description Period",
       },
     ],
   },
@@ -1766,12 +1768,14 @@ export const dimensionsJoinedCubes: Dimension[] = [
         dimensionIri:
           "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton",
         label: "Kanton",
+        description: "Description Kanton",
       },
       {
         cubeIri: "https://energy.ld.admin.ch/elcom/electricityprice-canton",
         dimensionIri:
           "https://energy.ld.admin.ch/elcom/electricityprice/dimension/canton",
         label: "Canton",
+        description: "Description Canton",
       },
     ],
   },
