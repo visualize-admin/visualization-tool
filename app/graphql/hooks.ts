@@ -215,13 +215,18 @@ export const executeDataCubesComponentsQuery = async (
     };
   }
 
+  const { dimensions: firstDimensions = [], measures: firstMeasures = [] } =
+    queries[0].data?.dataCubeComponents || {};
+  assert(firstDimensions !== undefined, "Undefined dimensions");
+  assert(firstMeasures !== undefined, "Undefined measures");
+
   return {
     data:
       queries.length === 1
         ? {
             dataCubesComponents: {
-              dimensions: queries[0].data?.dataCubeComponents.dimensions!,
-              measures: queries[0].data?.dataCubeComponents.measures!,
+              dimensions: firstDimensions,
+              measures: firstMeasures,
             },
           }
         : {
@@ -241,9 +246,11 @@ export const executeDataCubesComponentsQuery = async (
                   };
                 })
               ),
-              measures: queries.flatMap(
-                (q) => q.data?.dataCubeComponents.measures!
-              ),
+              measures: queries.flatMap((q) => {
+                const measures = q.data?.dataCubeComponents.measures;
+                assert(measures !== undefined, "Undefined measures");
+                return measures;
+              }),
             },
           },
     error,
