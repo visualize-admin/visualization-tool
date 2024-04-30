@@ -86,13 +86,13 @@ import {
   isTemporalDimension,
   isTemporalEntityDimension,
   Measure,
+  NumericalMeasure,
   Observation,
 } from "@/domain/data";
 import {
   useDataCubesComponentsQuery,
   useDataCubesObservationsQuery,
 } from "@/graphql/hooks";
-import { NumericalMeasure } from "@/graphql/resolver-types";
 import SvgIcExclamation from "@/icons/components/IcExclamation";
 import { useLocale } from "@/locales/use-locale";
 

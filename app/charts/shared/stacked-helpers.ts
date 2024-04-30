@@ -5,9 +5,8 @@ import {
   NumericalValueGetter,
   StringValueGetter,
 } from "@/charts/shared/chart-state";
-import { Observation } from "@/domain/data";
+import { NumericalMeasure, Observation } from "@/domain/data";
 import { formatNumberWithUnit } from "@/formatters";
-import { NumericalMeasure } from "@/graphql/resolver-types";
 
 const NORMALIZED_Y_DOMAIN = [0, 100];
 

@@ -48,13 +48,14 @@ import {
   NumericalMeasure,
   Observation,
   ObservationValue,
+  TemporalDimension,
   TemporalEntityDimension,
   isNumericalMeasure,
   isTemporalDimension,
   isTemporalEntityDimension,
 } from "@/domain/data";
 import { Has } from "@/domain/types";
-import { TemporalDimension, TimeUnit } from "@/graphql/resolver-types";
+import { TimeUnit } from "@/graphql/resolver-types";
 import { useInteractiveFilters } from "@/stores/interactive-filters";
 
 export type ChartState =
