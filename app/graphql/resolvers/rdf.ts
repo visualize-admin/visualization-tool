@@ -22,7 +22,6 @@ import { truthy } from "@/domain/types";
 import { Loaders } from "@/graphql/context";
 import {
   QueryResolvers,
-  Resolvers,
   SearchCubeResultOrder,
 } from "@/graphql/resolver-types";
 import { resolveDimensionType, resolveMeasureType } from "@/graphql/resolvers";
@@ -424,28 +423,4 @@ const getDimensionValuesLoader = (
   } else {
     return loaders.dimensionValues;
   }
-};
-
-export const dimensionValues: NonNullable<
-  NonNullable<Resolvers["Dimension"]>["values"]
-> = async (resolvedDimension, { filters, disableLoad }, { setup }, info) => {
-  if (disableLoad) {
-    return [];
-  }
-
-  const { loaders, sparqlClient, cache } = await setup(info);
-  const loader = getDimensionValuesLoader(
-    sparqlClient,
-    loaders,
-    cache,
-    filters
-  );
-  const values = await loader.load(resolvedDimension);
-
-  return values.sort((a, b) =>
-    ascending(
-      a.position ?? a.value ?? undefined,
-      b.position ?? b.value ?? undefined
-    )
-  );
 };

@@ -177,139 +177,133 @@ export const createCubeDimensionValuesLoader =
     filters?: Filters
   ) =>
   async (resolvedDimensions: readonly ResolvedDimension[]) => {
-    return Promise.all(
-      resolvedDimensions.map(async (resolvedDimension) => {
-        const iri = resolvedDimension.data.iri;
-        return await getCubeDimensionValues(iri, {
-          sparqlClient,
-          locale: resolvedDimension.locale,
-          resolvedDimension,
-          filters,
-          cache,
-        });
-      })
-    );
+    return await getCubeDimensionsValues(resolvedDimensions, {
+      sparqlClient,
+      filters,
+      cache,
+    });
   };
 
-export const getCubeDimensionValues = async (
-  _cubeIri: string,
+const getCubeDimensionsValues = async (
+  resolvedDimensions: readonly ResolvedDimension[],
   {
     sparqlClient,
-    locale,
-    resolvedDimension,
     filters,
     cache,
   }: {
     sparqlClient: ParsingClient;
-    locale: string;
-    resolvedDimension: ResolvedDimension;
     filters?: Filters;
     cache: LRUCache | undefined;
   }
-): Promise<DimensionValue[]> => {
-  const { dimension, cube } = resolvedDimension;
+) => {
+  return await Promise.all(
+    resolvedDimensions.map(async (resolvedDimension) => {
+      if (shouldLoadMinMaxValues(resolvedDimension)) {
+        return await getMinMaxDimensionValues(resolvedDimension, {
+          sparqlClient,
+          cache,
+        });
+      } else {
+        return await getRegularDimensionValues(resolvedDimension, {
+          sparqlClient,
+          filters,
+          cache,
+        });
+      }
+    })
+  );
+};
 
-  if (shouldLoadMinMaxValues(resolvedDimension)) {
+const getMinMaxDimensionValues = async (
+  resolvedDimension: ResolvedDimension,
+  {
+    sparqlClient,
+    cache,
+  }: {
+    sparqlClient: ParsingClient;
+    cache: LRUCache | undefined;
+  }
+) => {
+  const { dimension, cube } = resolvedDimension;
+  const { minInclusive, maxInclusive } = dimension;
+
+  if (
+    typeof minInclusive !== "undefined" &&
+    typeof maxInclusive !== "undefined"
+  ) {
+    const min = parseObservationValue({ value: minInclusive }) ?? 0;
+    const max = parseObservationValue({ value: maxInclusive }) ?? 0;
+
+    return [
+      { value: min, label: `${min}` },
+      { value: max, label: `${max}` },
+    ];
+  }
+
+  // Try to get min/max values from a list of values.
+  let listItemPointer = dimension.out(ns.sh.or);
+
+  while (
+    listItemPointer.out(ns.rdf.rest).value &&
+    // Only try until we reach the end of the list.
+    !listItemPointer.out(ns.rdf.rest).term?.equals(ns.rdf.nil)
+  ) {
+    const item = listItemPointer.out(ns.rdf.first);
+    const itemMin = item.out(ns.sh.minInclusive);
+    const itemMax = item.out(ns.sh.maxInclusive);
+
     if (
-      typeof dimension.minInclusive !== "undefined" &&
-      typeof dimension.maxInclusive !== "undefined"
+      typeof itemMin.value !== "undefined" &&
+      typeof itemMax.value !== "undefined"
     ) {
-      const min = parseObservationValue({ value: dimension.minInclusive }) ?? 0;
-      const max = parseObservationValue({ value: dimension.maxInclusive }) ?? 0;
+      const min = +itemMin.value;
+      const max = +itemMax.value;
 
       return [
         { value: min, label: `${min}` },
         { value: max, label: `${max}` },
       ];
     }
+    listItemPointer = listItemPointer.out(ns.rdf.rest);
+  }
 
-    // Try to get min/max values from a list of values.
-    let listItemPointer = dimension.out(ns.sh.or);
+  if (cube.term && dimension.path) {
+    const result = await loadMinMaxDimensionValues({
+      datasetIri: cube.term.value,
+      dimensionIri: dimension.path,
+      sparqlClient,
+      cache,
+    });
 
-    while (
-      listItemPointer.out(ns.rdf.rest).value &&
-      // Only try until we reach the end of the list.
-      !listItemPointer.out(ns.rdf.rest).term?.equals(ns.rdf.nil)
-    ) {
-      const item = listItemPointer.out(ns.rdf.first);
-      const itemMin = item.out(ns.sh.minInclusive);
-      const itemMax = item.out(ns.sh.maxInclusive);
-
-      if (
-        typeof itemMin.value !== "undefined" &&
-        typeof itemMax.value !== "undefined"
-      ) {
-        const min = +itemMin.value;
-        const max = +itemMax.value;
-
-        return [
-          { value: min, label: `${min}` },
-          { value: max, label: `${max}` },
-        ];
-      }
-
-      // Move to next list item.
-      listItemPointer = listItemPointer.out(ns.rdf.rest);
-    }
-
-    if (cube.term && dimension.path) {
-      const result = await loadMinMaxDimensionValues({
-        datasetIri: cube.term.value,
-        dimensionIri: dimension.path,
-        sparqlClient,
-        cache,
-      });
-
-      if (result) {
-        const [min, max] = result;
-
-        return [
-          { value: min, label: `${min}` },
-          { value: max, label: `${max}` },
-        ];
-      }
-
-      return [];
+    if (result) {
+      const [min, max] = result;
+      return [
+        { value: min, label: `${min}` },
+        { value: max, label: `${max}` },
+      ];
     }
 
     return [];
   }
 
-  return await getCubeDimensionValuesWithMetadata({
-    dimension,
-    cube,
-    sparqlClient,
-    locale,
-    filters,
-    cache,
-  });
+  return [];
 };
 
-export const dimensionIsVersioned = (dimension: CubeDimension) =>
-  dimension.out(ns.schema.version)?.value ? true : false;
-
-export const getCubeDimensionValuesWithMetadata = async ({
-  dimension,
-  cube,
-  sparqlClient,
-  locale,
-  filters,
-  cache,
-}: {
-  dimension: CubeDimension;
-  cube: ExtendedCube;
-  sparqlClient: ParsingClient;
-  locale: string;
-  filters?: Filters;
-  cache: LRUCache | undefined;
-}): Promise<DimensionValue[]> => {
-  const resolvedDimension = parseCubeDimension({
-    dim: dimension,
-    cube,
-    locale,
-  });
+const getRegularDimensionValues = async (
+  resolvedDimension: ResolvedDimension,
+  {
+    sparqlClient,
+    filters,
+    cache,
+  }: {
+    sparqlClient: ParsingClient;
+    filters?: Filters;
+    cache: LRUCache | undefined;
+  }
+): Promise<DimensionValue[]> => {
+  const { cube, data, locale } = resolvedDimension;
   return await loadDimensionValuesWithMetadata(cube.term?.value!, {
-    dimension: resolvedDimension,
+    dimensionIri: data.iri,
     cubeDimensions: cube.dimensions,
     sparqlClient,
     filters,
@@ -333,6 +327,9 @@ const isObservationDimension = (
       dim.path.value ?? ""
     )
   );
+
+export const dimensionIsVersioned = (dimension: CubeDimension) =>
+  !!dimension.out(ns.schema.version)?.value;
 
 export const getCubeObservations = async ({
   cube,
@@ -685,7 +682,7 @@ const buildFilters = async ({
         case "single": {
           if (isMostRecentValue(filter.value)) {
             const maxValue = await loadMaxDimensionValue(cube.term?.value!, {
-              dimension: resolvedDimension,
+              dimensionIri: resolvedDimension.data.iri,
               cubeDimensions: cube.dimensions,
               sparqlClient,
               filters,
@@ -714,7 +711,7 @@ const buildFilters = async ({
             dimensionType === "TemporalEntityDimension";
           const maxValue = isMostRecentValue(filter.to)
             ? await loadMaxDimensionValue(cube.term?.value!, {
-                dimension: resolvedDimension,
+                dimensionIri: resolvedDimension.data.iri,
                 cubeDimensions: cube.dimensions,
                 sparqlClient,
                 filters,

@@ -17,12 +17,11 @@ import { Inspector } from "react-inspector";
 import { Column, useExpanded, useSortBy, useTable } from "react-table";
 
 import { Loading } from "@/components/hint";
-import { Dimension, HierarchyValue } from "@/domain/data";
+import { Dimension, HierarchyValue, Measure } from "@/domain/data";
 import {
   useDataCubesComponentsQuery,
   useDataCubesObservationsQuery,
 } from "@/graphql/hooks";
-import { Measure } from "@/graphql/query-hooks";
 import { visitHierarchy } from "@/rdf/tree-utils";
 import useEvent from "@/utils/use-event";
 
@@ -155,7 +154,7 @@ const Bar = ({ percent }: { percent: number }) => {
   );
 };
 
-const PivotTable = ({ dataset }: { dataset: typeof datasets[string] }) => {
+const PivotTable = ({ dataset }: { dataset: (typeof datasets)[string] }) => {
   const [activeMeasures, setActiveMeasures] = useState<
     Record<Measure["iri"], boolean>
   >({});

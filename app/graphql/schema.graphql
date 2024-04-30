@@ -15,11 +15,6 @@ scalar Termset
 scalar ComponentTermsets
 scalar GeoShapes
 
-type ObservationsQuery {
-  data: [Observation!]!
-  sparqlEditorUrl: String
-}
-
 enum DataCubePublicationStatus {
   DRAFT
   PUBLISHED
@@ -32,165 +27,15 @@ enum ScaleType {
   Ratio
 }
 
-type DataCube {
-  iri: String!
-  identifier: String
-  title: String!
-  version: String
-  contactName: String
-  contactEmail: String
-  creator: DataCubeOrganization
-  landingPage: String
-  workExamples: [String]
-  publisher: String
-  description: String
-  datePublished: String
-  dateModified: String
-  expires: String
-  publicationStatus: DataCubePublicationStatus!
-  dimensions(
-    sourceType: String!
-    sourceUrl: String!
-    componentIris: [String!]
-    disableValuesLoad: Boolean
-  ): [Dimension!]!
-  dimensionByIri(
-    iri: String!
-    sourceType: String!
-    sourceUrl: String!
-  ): Dimension
-  measures(
-    sourceType: String!
-    sourceUrl: String!
-    componentIris: [String!]
-    disableValuesLoad: Boolean
-  ): [Measure!]!
-  themes: [DataCubeTheme!]!
-}
-
 type RelatedDimension {
   type: String!
   iri: String!
-}
-
-interface Dimension {
-  iri: String!
-  label: String!
-  description: String
-  unit: String
-  scaleType: ScaleType
-  dataType: String
-  order: Int
-  isNumerical: Boolean!
-  isKeyDimension: Boolean!
-  values(
-    sourceType: String!
-    sourceUrl: String!
-    filters: Filters
-    disableLoad: Boolean
-  ): [DimensionValue!]!
-  related: [RelatedDimension!]
-}
-
-type GeoCoordinatesDimension implements Dimension {
-  iri: String!
-  label: String!
-  description: String
-  unit: String
-  scaleType: ScaleType
-  dataType: String
-  order: Int
-  isNumerical: Boolean!
-  isKeyDimension: Boolean!
-  values(
-    sourceType: String!
-    sourceUrl: String!
-    filters: Filters
-    disableLoad: Boolean
-  ): [DimensionValue!]!
-  related: [RelatedDimension!]
 }
 
 type ObservationFilter {
   type: String!
   value: FilterValue
   iri: String!
-}
-
-type GeoShapesDimension implements Dimension {
-  iri: String!
-  label: String!
-  description: String
-  unit: String
-  scaleType: ScaleType
-  dataType: String
-  order: Int
-  isNumerical: Boolean!
-  isKeyDimension: Boolean!
-  values(
-    sourceType: String!
-    sourceUrl: String!
-    filters: Filters
-    disableLoad: Boolean
-  ): [DimensionValue!]!
-  related: [RelatedDimension!]
-}
-
-type NominalDimension implements Dimension {
-  iri: String!
-  label: String!
-  description: String
-  unit: String
-  scaleType: ScaleType
-  dataType: String
-  order: Int
-  isNumerical: Boolean!
-  isKeyDimension: Boolean!
-  values(
-    sourceType: String!
-    sourceUrl: String!
-    filters: Filters
-    disableLoad: Boolean
-  ): [DimensionValue!]!
-  related: [RelatedDimension!]
-}
-
-type OrdinalDimension implements Dimension {
-  iri: String!
-  label: String!
-  description: String
-  unit: String
-  scaleType: ScaleType
-  dataType: String
-  order: Int
-  isNumerical: Boolean!
-  isKeyDimension: Boolean!
-  values(
-    sourceType: String!
-    sourceUrl: String!
-    filters: Filters
-    disableLoad: Boolean
-  ): [DimensionValue!]!
-  related: [RelatedDimension!]
-}
-
-type StandardErrorDimension implements Dimension {
-  iri: String!
-  label: String!
-  description: String
-  unit: String
-  scaleType: ScaleType
-  dataType: String
-  order: Int
-  isNumerical: Boolean!
-  isKeyDimension: Boolean!
-  values(
-    sourceType: String!
-    sourceUrl: String!
-    filters: Filters
-    disableLoad: Boolean
-  ): [DimensionValue!]!
-  related: [RelatedDimension!]
 }
 
 enum TimeUnit {
@@ -201,111 +46,6 @@ enum TimeUnit {
   Hour
   Minute
   Second
-}
-
-type TemporalDimension implements Dimension {
-  iri: String!
-  label: String!
-  description: String
-  timeUnit: TimeUnit!
-  timeFormat: String!
-  unit: String
-  scaleType: ScaleType
-  dataType: String
-  order: Int
-  isNumerical: Boolean!
-  isKeyDimension: Boolean!
-  values(
-    sourceType: String!
-    sourceUrl: String!
-    filters: Filters
-    disableLoad: Boolean
-  ): [DimensionValue!]!
-  related: [RelatedDimension!]
-}
-
-type TemporalEntityDimension implements Dimension {
-  iri: String!
-  label: String!
-  description: String
-  timeUnit: TimeUnit!
-  timeFormat: String!
-  unit: String
-  scaleType: ScaleType
-  dataType: String
-  order: Int
-  isNumerical: Boolean!
-  isKeyDimension: Boolean!
-  values(
-    sourceType: String!
-    sourceUrl: String!
-    filters: Filters
-    disableLoad: Boolean
-  ): [DimensionValue!]!
-  related: [RelatedDimension!]
-}
-
-type TemporalOrdinalDimension implements Dimension {
-  iri: String!
-  label: String!
-  description: String
-  unit: String
-  scaleType: ScaleType
-  dataType: String
-  order: Int
-  isNumerical: Boolean!
-  isKeyDimension: Boolean!
-  values(
-    sourceType: String!
-    sourceUrl: String!
-    filters: Filters
-    disableLoad: Boolean
-  ): [DimensionValue!]!
-  related: [RelatedDimension!]
-}
-
-union Measure = NumericalMeasure | OrdinalMeasure
-
-type NumericalMeasure implements Dimension {
-  iri: String!
-  label: String!
-  description: String
-  unit: String
-  scaleType: ScaleType
-  dataType: String
-  order: Int
-  isNumerical: Boolean!
-  isKeyDimension: Boolean!
-  isCurrency: Boolean
-  isDecimal: Boolean
-  currencyExponent: Int
-  resolution: Int
-  values(
-    sourceType: String!
-    sourceUrl: String!
-    filters: Filters
-    disableLoad: Boolean
-  ): [DimensionValue!]!
-  related: [RelatedDimension!]
-}
-
-type OrdinalMeasure implements Dimension {
-  iri: String!
-  label: String!
-  description: String
-  unit: String
-  scaleType: ScaleType
-  dataType: String
-  order: Int
-  isNumerical: Boolean!
-  isKeyDimension: Boolean!
-  values(
-    sourceType: String!
-    sourceUrl: String!
-    filters: Filters
-    disableLoad: Boolean
-  ): [DimensionValue!]!
-  related: [RelatedDimension!]
 }
 
 scalar SearchCube

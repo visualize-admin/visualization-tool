@@ -6,7 +6,6 @@ import { LRUCache } from "typescript-lru-cache";
 
 import { SingleFilters } from "@/config-types";
 import { isMostRecentValue } from "@/domain/most-recent-value";
-import { ResolvedDimension } from "@/graphql/shared-types";
 import * as ns from "@/rdf/namespace";
 import { loadMaxDimensionValue } from "@/rdf/query-dimension-values";
 import { formatIriToQueryNode } from "@/rdf/query-utils";
@@ -174,7 +173,7 @@ export const getQueryFilters = async (
         iri,
         value: isMostRecentValue(value)
           ? await loadMaxDimensionValue(cubeIri, {
-              dimension: { data: { iri } } as ResolvedDimension,
+              dimensionIri: iri,
               // TODO: refactor dimension parsing to avoid "mocking" the cubeDimensions
               cubeDimensions: Object.keys(filters).map((iri) => ({
                 path: { value: iri },

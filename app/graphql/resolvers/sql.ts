@@ -1,23 +1,13 @@
-import max from "lodash/max";
-import min from "lodash/min";
 import { topology } from "topojson-server";
 
 import { Filters } from "@/configurator";
-import {
-  DimensionValue,
-  GeoProperties,
-  GeoShapes,
-  Observation,
-} from "@/domain/data";
+import { GeoProperties, GeoShapes, Observation } from "@/domain/data";
 import { SQL_ENDPOINT } from "@/domain/env";
 import {
   DataCubePublicationStatus,
-  DataCubeResolvers,
   QueryResolvers,
-  Resolvers,
-  TimeUnit,
 } from "@/graphql/resolver-types";
-import { ResolvedDataCube, ResolvedDimension } from "@/graphql/shared-types";
+import { ResolvedDataCube } from "@/graphql/shared-types";
 
 const fetchSQL = ({
   path,
@@ -72,48 +62,6 @@ const parseSQLCube = (cube: SQLCube): ResolvedDataCube => {
       description,
       publicationStatus: DataCubePublicationStatus.Published,
       identifier: "",
-    },
-  };
-};
-
-const parseSQLDimension = (
-  cube: ResolvedDataCube,
-  dimension: SQLDimension
-): ResolvedDimension => {
-  const { iri, name, type, unit } = dimension;
-  const isMeasure = type === "Measure";
-  const isTemporal = type === "Temporal";
-
-  return {
-    // FIXME: type of cube should be different for RDF and SQL.
-    cube: cube as any,
-    // FIXME: type of dimension should be different for RDF and SQL.
-    dimension: dimension as any,
-    // FIXME: handle locale properly
-    locale: "en",
-    data: {
-      iri,
-      name,
-      isLiteral: true,
-
-      // FIXME: Handle currencies in SQL resolvers
-      isCurrency: false,
-      // FIXME: Handle isDecimal in SQL resolvers
-      isDecimal: false,
-      currencyExponent: 0,
-      // FIXME: not only measures can be numerical
-      isNumerical: isMeasure,
-      isKeyDimension: true,
-      isMeasureDimension: isMeasure,
-      hasUndefinedValues: false,
-      unit,
-      dataType: undefined,
-      dataKind: isTemporal ? "Time" : undefined,
-      related: [],
-      // FIXME: add appropriate fields in the database
-      timeUnit: isTemporal ? TimeUnit.Year : undefined,
-      timeFormat: isTemporal ? "%Y" : undefined,
-      scaleType: undefined,
     },
   };
 };
@@ -186,19 +134,6 @@ export const possibleFilters: NonNullable<
   return [];
 };
 
-export const dataCubeDimensions: NonNullable<
-  DataCubeResolvers["dimensions"]
-> = async ({ cube }) => {
-  // FIXME: type of cube should be different for RDF and SQL.
-  const dimensions = cube.dimensions as unknown as SQLDimension[];
-  return (
-    dimensions
-      .filter((d) => d.type !== "Measure")
-      // FIXME: type of cube should be different for RDF and SQL.
-      .map((d) => parseSQLDimension(cube as unknown as ResolvedDataCube, d))
-  );
-};
-
 export const dataCubeDimensionGeoShapes: NonNullable<
   QueryResolvers["dataCubeDimensionGeoShapes"]
 > = async () => {
@@ -216,48 +151,6 @@ export const dataCubeDimensionGeoCoordinates: NonNullable<
   QueryResolvers["dataCubeDimensionGeoCoordinates"]
 > = async () => {
   return [];
-};
-
-// FIXME: should be a call to API (to be able to implement proper filtering)
-export const dimensionValues: NonNullable<
-  NonNullable<Resolvers["Dimension"]>["values"]
-> = async ({ cube, data: { iri, dataKind, isNumerical } }, { filters }) => {
-  const reversedFiltersEntries = Object.entries(filters || {}).reverse();
-  const keys = reversedFiltersEntries.map((d) => d[0]);
-  const index = keys.indexOf(iri);
-  // Filter by filters below a given filter (left panel).
-  const slicedFilters = Object.fromEntries(
-    reversedFiltersEntries.slice(index + 1, reversedFiltersEntries.length)
-  );
-
-  // FIXME: type of cube should be different for RDF and SQL.
-  const observations = filterObservations(
-    (cube as any).observations,
-    slicedFilters as Filters | undefined
-  );
-  const values = Array.from(new Set(observations.map((d) => d[iri])));
-
-  if (dataKind === "Time" || isNumerical) {
-    return [
-      { label: min(values), value: min(values) },
-      { label: max(values), value: max(values) },
-    ] as DimensionValue[];
-  } else {
-    return values.map((d) => ({ label: d, value: d })) as DimensionValue[];
-  }
-};
-
-export const dataCubeMeasures: NonNullable<
-  DataCubeResolvers["measures"]
-> = async ({ cube }) => {
-  // FIXME: type of cube should be different for RDF and SQL.
-  const dimensions = cube.dimensions as unknown as SQLDimension[];
-  return (
-    dimensions
-      .filter((d) => d.type === "Measure")
-      // FIXME: type of cube should be different for RDF and SQL.
-      .map((d) => parseSQLDimension(cube as unknown as ResolvedDataCube, d))
-  );
 };
 
 const filterObservations = (
