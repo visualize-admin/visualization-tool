@@ -73,7 +73,7 @@ import { executeDataCubesComponentsQuery } from "@/graphql/hooks";
 import {
   getOriginalDimension,
   JOIN_BY_CUBE_IRI,
-  joinByDimensionId,
+  mkJoinById,
 } from "@/graphql/join";
 import {
   ObservationFilter,
@@ -2066,7 +2066,7 @@ export const addDatasetInConfig = function (
         const value = get(field, iriAttribute);
         const index = joinBy.left.indexOf(value) ?? joinBy.right.indexOf(value);
         if (index > -1) {
-          set(field, iriAttribute, joinByDimensionId(index));
+          set(field, iriAttribute, mkJoinById(index));
         }
       }
     }

@@ -13,6 +13,7 @@ import {
   InteractiveFiltersConfig,
 } from "@/configurator";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
+import { mkJoinById } from "@/graphql/join";
 import { InteractiveFiltersState } from "@/stores/interactive-filters";
 import dualLine1Fixture from "@/test/__fixtures/config/dev/chartConfig-photovoltaik-und-gebaudeprogramm.json";
 import map1Fixture from "@/test/__fixtures/config/int/map-nfi.json";
@@ -242,6 +243,6 @@ describe("getChartConfigComponentIris", () => {
         "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr"
       )
     ).toBe(true);
-    expect(componentIris.includes("joinBy__0")).toBe(false);
+    expect(componentIris.includes(mkJoinById(0))).toBe(false);
   });
 });

@@ -21,8 +21,17 @@ import {
 } from "@/graphql/query-hooks";
 import { assert } from "@/utils/assert";
 
-const JOIN_BY_DIMENSION_IRI = "joinBy";
 export const JOIN_BY_CUBE_IRI = "joinBy";
+
+const keyJoiner = "$/$/$/";
+const joinByPrefix = `joinBy__`;
+
+export const mkJoinById = (index: number) => `${joinByPrefix}${index}`;
+export const isJoinById = (iri: string) => iri.startsWith(joinByPrefix);
+
+const getJoinByIdIndex = (joinById: string) => {
+  return Number(joinById.slice(joinByPrefix.length));
+};
 
 export const getOriginalDimension = (dim: JoinByComponent, cube: Cube) => {
   assert(isJoinByComponent(dim), "Dimension should be a join by at this point");
@@ -34,10 +43,6 @@ export const getOriginalDimension = (dim: JoinByComponent, cube: Cube) => {
     ...dim,
     iri: originalIri,
   };
-};
-
-export const isJoinByIri = (iri: string) => {
-  return iri.startsWith(JOIN_BY_DIMENSION_IRI);
 };
 
 /** Use to exclude joinBy dimensions when fetching dimensions, and create
@@ -88,7 +93,7 @@ export const joinDimensions = (
             ),
           (x) => x.value
         ),
-        iri: `${JOIN_BY_DIMENSION_IRI}__${index}`,
+        iri: mkJoinById(Number(index)),
         // Non-relevant, as we rely on the originalIris property.
         cubeIri: JOIN_BY_CUBE_IRI,
         // FIXME: adapt to design
@@ -107,17 +112,6 @@ export const joinDimensions = (
   return dimensions;
 };
 
-type JoinByKey = string;
-
-const keyJoiner = "$/$/$/";
-const joinByPrefix = `joinBy__`;
-
-export const joinByDimensionId = (index: number) => `${joinByPrefix}${index}`;
-export const isJoinById = (iri: string) => iri.startsWith(joinByPrefix);
-const getJoinByIdIndex = (joinById: string) => {
-  return Number(joinById.slice(joinByPrefix.length));
-};
-
 export const getOriginalIris = (joinById: string, chartConfig: ChartConfig) => {
   const index = getJoinByIdIndex(joinById);
   return chartConfig.cubes.map((x) => {
@@ -134,6 +128,9 @@ export const getResolvedJoinByIri = (cube: Cube, joinById: string) => {
   const index = getJoinByIdIndex(joinById);
   return cube.joinBy[index];
 };
+
+type JoinByKey = string;
+
 /**
  * Use to merge observations coming from several DataCubesObservationQueries.
  *
@@ -170,7 +167,7 @@ export const mergeObservations = (
 
       for (let i = 0; i < joinBy.length; i++) {
         if (o[joinBy[i]] !== undefined) {
-          om[joinByDimensionId(i) as keyof typeof om] = o[joinBy[i]];
+          om[mkJoinById(i) as keyof typeof om] = o[joinBy[i]];
         }
       }
       const existing: Observation | undefined = acc[key];

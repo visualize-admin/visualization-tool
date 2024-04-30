@@ -5,7 +5,7 @@ import * as t from "io-ts";
 import React from "react";
 
 import { Dimension, Measure, ObservationValue } from "@/domain/data";
-import { joinByDimensionId } from "@/graphql/join";
+import { mkJoinById } from "@/graphql/join";
 
 const DimensionType = t.union([
   t.literal("NominalDimension"),
@@ -1316,7 +1316,7 @@ export const getChartConfigFilters = (
     ? Object.fromEntries(
         relevantCubes.flatMap((x) =>
           (x.joinBy ?? []).map(
-            (iri, index) => [iri, joinByDimensionId(index)] as const
+            (iri, index) => [iri, mkJoinById(index)] as const
           )
         )
       )
