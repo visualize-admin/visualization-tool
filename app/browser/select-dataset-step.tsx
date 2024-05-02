@@ -143,10 +143,7 @@ const prepareSearchQueryFilters = (filters: BrowseFilter[]) => {
           d.__typename !== SearchCubeFilterType.DataCubeAbout
       )
       .map((d) => {
-        const type =
-          d.__typename === "Termset"
-            ? SearchCubeFilterType.Termset
-            : SearchCubeFilterType[d.__typename];
+        const type = SearchCubeFilterType[d.__typename];
         return {
           type,
           label: d.label,

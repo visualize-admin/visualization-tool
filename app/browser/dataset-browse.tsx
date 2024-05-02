@@ -311,7 +311,6 @@ const encodeFilter = (filter: BrowseFilter) => {
       case "Termset":
         return "termset";
       default:
-        // eslint-disable-next-line
         const check: never = __typename;
         throw new Error('Unknown filter type "' + check + '"');
     }
