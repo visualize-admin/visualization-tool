@@ -3,7 +3,7 @@ import { Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 import orderBy from "lodash/orderBy";
-import { memo, useMemo } from "react";
+import React from "react";
 
 import { ColorsChartState, useChartState } from "@/charts/shared/chart-state";
 import { rgbArrayToHex } from "@/charts/shared/colors";
@@ -163,7 +163,9 @@ type LegendColorProps = {
   interactive?: boolean;
 };
 
-export const LegendColor = memo(function LegendColor(props: LegendColorProps) {
+export const LegendColor = React.memo(function LegendColor(
+  props: LegendColorProps
+) {
   const {
     chartConfig,
     segmentDimension,
@@ -190,41 +192,35 @@ export const LegendColor = memo(function LegendColor(props: LegendColorProps) {
 
 const removeOpacity = (rgb: number[]) => rgb.slice(0, 3);
 
-// TODO: add metadata to legend titles?
-export const MapLegendColor = memo(function LegendColor({
-  component,
-  getColor,
-  useAbbreviations,
-  chartConfig,
-}: {
+type MapLegendColorProps = {
   component: Component;
   getColor: (d: Observation) => number[];
   useAbbreviations: boolean;
   chartConfig: MapConfig;
-}) {
+};
+
+export const MapLegendColor = React.memo(function LegendColor(
+  props: MapLegendColorProps
+) {
+  const { component, getColor, useAbbreviations, chartConfig } = props;
   const filters = useChartConfigFilters(chartConfig);
-  const componentFilter = filters[component.iri];
+  const dimensionFilter = filters[component.iri];
   const sortedValues = useMemo(() => {
     const sorters = makeDimensionValueSorters(component, {
-      sorting: {
-        sortingType: "byAuto",
-        sortingOrder: "asc",
-      },
-      dimensionFilter: componentFilter,
+      sorting: { sortingType: "byAuto", sortingOrder: "asc" },
+      dimensionFilter,
     });
     return orderBy(
       component.values,
-      sorters.map((s) => (dv) => s(dv.label))
-    ) as typeof component.values;
-  }, [component, componentFilter]);
-  const getLabel = useAbbreviations
-    ? (d: string) => {
+      sorters.map((s) => (d) => s(d.label))
+    );
+  }, [component, dimensionFilter]);
+  const getLabel: (d: string) => string = useAbbreviations
+    ? (d) => {
         const v = component.values.find((v) => v.value === d);
         return (v?.alternateName || v?.label) as string;
       }
-    : (d: string) => {
-        return component.values.find((v) => v.value === d)?.label as string;
-      };
+    : (d) => component.values.find((v) => v.value === d)?.label as string;
   const groups = useLegendGroups({
     chartConfig,
     title: component.label,
