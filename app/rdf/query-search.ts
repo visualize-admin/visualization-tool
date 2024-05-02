@@ -38,7 +38,7 @@ const fanOutExclusiveFilters = (
   }
 
   const { exclusive = [], common = [] } = groupBy(filters, (f) => {
-    return f.type === SearchCubeFilterType.SharedDimensions ||
+    return f.type === SearchCubeFilterType.Termset ||
       f.type === SearchCubeFilterType.TemporalDimension
       ? "exclusive"
       : "common";
@@ -224,7 +224,7 @@ const mkScoresQuery = (
               }
             )}
           `;
-          } else if (df.type === SearchCubeFilterType.SharedDimensions) {
+          } else if (df.type === SearchCubeFilterType.Termset) {
             const sharedDimensions = df.value.split(";");
             return `
             VALUES (?termsetIri) {${sharedDimensions.map((sd) => `(<${sd}>)`).join(" ")}}

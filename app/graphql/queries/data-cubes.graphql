@@ -133,3 +133,10 @@ query DataCubeDimensionGeoShapes(
     locale: $locale
   )
 }
+
+query SearchPage($sourceType: String!, $sourceUrl: String!, $locale: String!) {
+  allTermsets(sourceType: $sourceType, sourceUrl: $sourceUrl, locale: $locale) {
+    count
+    termset
+  }
+}

@@ -72,7 +72,7 @@ enum SearchCubeFilterType {
   DataCubeTheme
   DataCubeOrganization
   DataCubeAbout
-  SharedDimensions
+  Termset
 }
 
 input SearchCubeFilter {
@@ -112,6 +112,11 @@ input DataCubeObservationFilter {
 
 input DataCubePreviewFilter {
   iri: String!
+}
+
+type TermsetCount {
+  termset: Termset!
+  count: Int!
 }
 
 # The "Query" type is special: it lists all of the available queries that
@@ -174,4 +179,10 @@ type Query {
     sourceUrl: String!
     locale: String!
   ): GeoShapes
+  allTermsets(
+    sourceType: String!
+    sourceUrl: String!
+    locale: String!
+    includeDrafts: Boolean
+  ): [TermsetCount!]!
 }

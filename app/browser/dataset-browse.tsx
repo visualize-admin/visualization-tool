@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { AnimatePresence, Reorder } from "framer-motion";
+import keyBy from "lodash/keyBy";
 import orderBy from "lodash/orderBy";
 import pickBy from "lodash/pickBy";
 import sortBy from "lodash/sortBy";
@@ -32,13 +33,14 @@ import {
 } from "@/components/presence";
 import Tag from "@/components/tag";
 import useDisclosure from "@/components/use-disclosure";
-import { SearchCube } from "@/domain/data";
+import { SearchCube, Termset } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { useFormatDate } from "@/formatters";
 import {
   DataCubeOrganization,
   DataCubeTheme,
   SearchCubeResultOrder,
+  TermsetCount,
 } from "@/graphql/query-hooks";
 import {
   DataCubePublicationStatus,
@@ -47,7 +49,6 @@ import {
 import SvgIcCategories from "@/icons/components/IcCategories";
 import SvgIcClose from "@/icons/components/IcClose";
 import SvgIcOrganisations from "@/icons/components/IcOrganisations";
-import isAttrEqual from "@/utils/is-attr-equal";
 import { MaybeTooltip } from "@/utils/maybe-tooltip";
 import useEvent from "@/utils/use-event";
 
@@ -210,7 +211,16 @@ export const SearchDatasetControls = ({
   );
 };
 
-const defaultNavItemTheme = {
+type NavItemTheme = {
+  activeBg: string;
+  activeTextColor: string;
+  textColor: string;
+  countColor: string;
+  countBg: string;
+  closeColor?: string;
+};
+
+const defaultNavItemTheme: NavItemTheme = {
   activeTextColor: "white",
   activeBg: "primary.main",
   textColor: "text.primary",
@@ -218,7 +228,7 @@ const defaultNavItemTheme = {
   countBg: "grey.300",
 };
 
-const themeNavItemTheme = {
+const themeNavItemTheme: NavItemTheme = {
   activeBg: "category.main",
   activeTextColor: "white",
   textColor: "text.primary",
@@ -226,12 +236,21 @@ const themeNavItemTheme = {
   countBg: "category.light",
 };
 
-const organizationNavItemTheme = {
+const organizationNavItemTheme: NavItemTheme = {
   activeBg: "organization.main",
   activeTextColor: "white",
   textColor: "text.primary",
   countColor: "organization.main",
   countBg: "organization.light",
+};
+
+const termsetNavItemTheme: NavItemTheme = {
+  activeBg: "warning.light",
+  activeTextColor: "text.primary",
+  textColor: "text.primary",
+  countColor: "warning.main",
+  countBg: "warning.light",
+  closeColor: "warning.main",
 };
 
 const useStyles = makeStyles(() => ({
@@ -290,9 +309,22 @@ const NavChip = ({
 
 const encodeFilter = (filter: BrowseFilter) => {
   const { iri, __typename } = filter;
-  return `${
-    __typename === "DataCubeTheme" ? "theme" : "organization"
-  }/${encodeURIComponent(iri)}`;
+  const folder = (() => {
+    switch (__typename) {
+      case "DataCubeTheme":
+        return "theme";
+      case "DataCubeOrganization":
+        return "organization";
+      case "DataCubeAbout":
+        throw new Error("Should not happen");
+      case "Termset":
+        return "termset";
+      default:
+        const check: never = __typename;
+        throw new Error('Unknown filter type "' + check + '"');
+    }
+  })();
+  return `${folder}/${encodeURIComponent(iri)}`;
 };
 
 const NavItem = ({
@@ -369,7 +401,10 @@ const NavItem = ({
         className={classes.removeFilterButton}
         sx={{
           backgroundColor: level === 1 ? theme.activeBg : "transparent",
-          color: level === 1 ? theme.activeTextColor : theme.activeBg,
+          color:
+            level === 1
+              ? theme.closeColor ?? theme.activeTextColor
+              : theme.activeBg,
         }}
       >
         <SvgIcClose width={24} height={24} />
@@ -508,10 +543,10 @@ const NavSection = ({
 }: {
   label: React.ReactNode;
   icon: React.ReactNode;
-  items: (DataCubeTheme | DataCubeOrganization)[];
+  items: (DataCubeTheme | DataCubeOrganization | Termset)[];
   theme: { backgroundColor: string; borderColor: string };
-  navItemTheme: typeof themeNavItemTheme;
-  currentFilter?: DataCubeTheme | DataCubeOrganization | null;
+  navItemTheme: NavItemTheme;
+  currentFilter?: DataCubeTheme | DataCubeOrganization | Termset;
   filters: BrowseFilter[];
   counts: Record<string, number>;
   extra?: React.ReactNode;
@@ -592,14 +627,60 @@ const NavSection = ({
   );
 };
 
+const TermsetNavSection = ({
+  currentFilter,
+  termsetCounts,
+}: {
+  currentFilter: Termset | undefined;
+  termsetCounts: { termset: Termset; count: number }[];
+}) => {
+  const { counts, termsets } = useMemo(() => {
+    const termsets = termsetCounts.map((x) => x.termset) ?? [];
+    const counts = Object.fromEntries(
+      termsetCounts.map((x) => [x.termset.iri, x.count])
+    );
+    return {
+      counts,
+      termsets,
+    };
+  }, [termsetCounts]);
+
+  return (
+    <NavSection
+      key="orgs"
+      items={termsets}
+      theme={{
+        backgroundColor: "warning.light",
+        borderColor: "warning.main",
+      }}
+      navItemTheme={termsetNavItemTheme}
+      currentFilter={currentFilter}
+      icon={<SvgIcOrganisations width={20} height={20} />}
+      label={<Trans id="browse-panel.termsets">Concepts</Trans>}
+      filters={[]}
+      counts={counts}
+    />
+  );
+};
+
+const navOrder: Record<BrowseFilter["__typename"], number> = {
+  DataCubeTheme: 1,
+  DataCubeOrganization: 2,
+  Termset: 3,
+  // Not used in the nav
+  DataCubeAbout: 4,
+};
+
 export const SearchFilters = ({
   cubes,
   themes,
   orgs,
+  termsets: termsetCounts,
 }: {
   cubes: SearchCubeResult[];
   themes: DataCubeTheme[];
   orgs: DataCubeOrganization[];
+  termsets: TermsetCount[];
 }) => {
   const { filters } = useBrowseContext();
   const counts = useMemo(() => {
@@ -622,10 +703,17 @@ export const SearchFilters = ({
     return result;
   }, [cubes]);
 
-  const themeFilter = filters.find(isAttrEqual("__typename", "DataCubeTheme"));
-  const orgFilter = filters.find(
-    isAttrEqual("__typename", "DataCubeOrganization")
-  );
+  const {
+    DataCubeTheme: themeFilter,
+    DataCubeOrganization: orgFilter,
+    Termset: termsetFilter,
+  } = useMemo(() => {
+    return keyBy(filters, (f) => f.__typename) as {
+      DataCubeTheme?: DataCubeTheme;
+      DataCubeOrganization?: DataCubeOrganization;
+      Termset?: Termset;
+    };
+  }, [filters]);
 
   const displayedThemes = themes.filter((theme) => {
     if (!theme.label) {
@@ -715,6 +803,25 @@ export const SearchFilters = ({
       />
     ) : null;
 
+  const termsetNav =
+    termsetCounts.length === 0 ? null : (
+      <TermsetNavSection
+        termsetCounts={termsetCounts ?? []}
+        currentFilter={termsetFilter}
+      />
+    );
+  const navs = sortBy(
+    [
+      { element: themeNav, __typename: "DataCubeTheme" },
+      { element: orgNav, __typename: "DataCubeOrganization" },
+      { element: termsetNav, __typename: "Termset" },
+    ],
+    (x) =>
+      x.__typename === filters[0]?.__typename
+        ? 0
+        : navOrder[x.__typename as keyof typeof navOrder]
+  );
+
   return (
     <Flex
       key={filters.length}
@@ -725,17 +832,9 @@ export const SearchFilters = ({
           bug as they get picked by parent AnimatePresence. Probably related to
           https://github.com/framer/motion/issues/1619. */}
       <AnimatePresence>
-        {filters[0]?.__typename === "DataCubeOrganization" ? (
-          <Flex sx={{ flexDirection: "column", gap: 5, width: "100%" }}>
-            {orgNav}
-            {themeNav}
-          </Flex>
-        ) : (
-          <Flex sx={{ flexDirection: "column", gap: 5, width: "100%" }}>
-            {themeNav}
-            {orgNav}
-          </Flex>
-        )}
+        <Flex sx={{ flexDirection: "column", gap: 5, width: "100%" }}>
+          {navs.map((x) => x.element)}
+        </Flex>
       </AnimatePresence>
     </Flex>
   );

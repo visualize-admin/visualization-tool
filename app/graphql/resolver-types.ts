@@ -118,6 +118,7 @@ export type Query = {
   possibleFilters: Array<ObservationFilter>;
   searchCubes: Array<SearchCubeResult>;
   dataCubeDimensionGeoShapes?: Maybe<Scalars['GeoShapes']>;
+  allTermsets: Array<TermsetCount>;
 };
 
 
@@ -196,6 +197,14 @@ export type QueryDataCubeDimensionGeoShapesArgs = {
 };
 
 
+export type QueryAllTermsetsArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
+  locale: Scalars['String'];
+  includeDrafts?: Maybe<Scalars['Boolean']>;
+};
+
+
 export type RelatedDimension = {
   __typename?: 'RelatedDimension';
   type: Scalars['String'];
@@ -221,7 +230,7 @@ export enum SearchCubeFilterType {
   DataCubeTheme = 'DataCubeTheme',
   DataCubeOrganization = 'DataCubeOrganization',
   DataCubeAbout = 'DataCubeAbout',
-  SharedDimensions = 'SharedDimensions'
+  Termset = 'Termset'
 }
 
 export type SearchCubeResult = {
@@ -239,6 +248,12 @@ export enum SearchCubeResultOrder {
 }
 
 
+
+export type TermsetCount = {
+  __typename?: 'TermsetCount';
+  termset: Scalars['Termset'];
+  count: Scalars['Int'];
+};
 
 export enum TimeUnit {
   Year = 'Year',
@@ -352,6 +367,8 @@ export type ResolversTypes = ResolversObject<{
   SearchCubeResultOrder: SearchCubeResultOrder;
   SingleFilters: ResolverTypeWrapper<Scalars['SingleFilters']>;
   Termset: ResolverTypeWrapper<Scalars['Termset']>;
+  TermsetCount: ResolverTypeWrapper<TermsetCount>;
+  Int: ResolverTypeWrapper<Scalars['Int']>;
   TimeUnit: TimeUnit;
   ValueIdentifier: ResolverTypeWrapper<Scalars['ValueIdentifier']>;
   ValuePosition: ResolverTypeWrapper<Scalars['ValuePosition']>;
@@ -389,6 +406,8 @@ export type ResolversParentTypes = ResolversObject<{
   Float: Scalars['Float'];
   SingleFilters: Scalars['SingleFilters'];
   Termset: Scalars['Termset'];
+  TermsetCount: TermsetCount;
+  Int: Scalars['Int'];
   ValueIdentifier: Scalars['ValueIdentifier'];
   ValuePosition: Scalars['ValuePosition'];
 }>;
@@ -466,6 +485,7 @@ export type QueryResolvers<ContextType = VisualizeGraphQLContext, ParentType ext
   possibleFilters?: Resolver<Array<ResolversTypes['ObservationFilter']>, ParentType, ContextType, RequireFields<QueryPossibleFiltersArgs, 'iri' | 'sourceType' | 'sourceUrl' | 'filters'>>;
   searchCubes?: Resolver<Array<ResolversTypes['SearchCubeResult']>, ParentType, ContextType, RequireFields<QuerySearchCubesArgs, 'sourceType' | 'sourceUrl'>>;
   dataCubeDimensionGeoShapes?: Resolver<Maybe<ResolversTypes['GeoShapes']>, ParentType, ContextType, RequireFields<QueryDataCubeDimensionGeoShapesArgs, 'cubeIri' | 'dimensionIri' | 'sourceType' | 'sourceUrl' | 'locale'>>;
+  allTermsets?: Resolver<Array<ResolversTypes['TermsetCount']>, ParentType, ContextType, RequireFields<QueryAllTermsetsArgs, 'sourceType' | 'sourceUrl' | 'locale'>>;
 }>;
 
 export interface RawObservationScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['RawObservation'], any> {
@@ -498,6 +518,12 @@ export interface TermsetScalarConfig extends GraphQLScalarTypeConfig<ResolversTy
   name: 'Termset';
 }
 
+export type TermsetCountResolvers<ContextType = VisualizeGraphQLContext, ParentType extends ResolversParentTypes['TermsetCount'] = ResolversParentTypes['TermsetCount']> = ResolversObject<{
+  termset?: Resolver<ResolversTypes['Termset'], ParentType, ContextType>;
+  count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export interface ValueIdentifierScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['ValueIdentifier'], any> {
   name: 'ValueIdentifier';
 }
@@ -528,6 +554,7 @@ export type Resolvers<ContextType = VisualizeGraphQLContext> = ResolversObject<{
   SearchCubeResult?: SearchCubeResultResolvers<ContextType>;
   SingleFilters?: GraphQLScalarType;
   Termset?: GraphQLScalarType;
+  TermsetCount?: TermsetCountResolvers<ContextType>;
   ValueIdentifier?: GraphQLScalarType;
   ValuePosition?: GraphQLScalarType;
 }>;
