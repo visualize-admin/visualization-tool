@@ -1,4 +1,4 @@
-import { t, Trans } from "@lingui/macro";
+import { Trans } from "@lingui/macro";
 import { Box, Button, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { AnimatePresence } from "framer-motion";
@@ -8,7 +8,6 @@ import Head from "next/head";
 import NextLink from "next/link";
 import { Router, useRouter } from "next/router";
 import React, { useMemo } from "react";
-import { match } from "ts-pattern";
 import { useDebounce } from "use-debounce";
 
 import {
@@ -25,9 +24,9 @@ import { Footer } from "@/components/footer";
 import {
   BANNER_HEIGHT,
   BANNER_MARGIN_TOP,
-  bannerPresenceProps,
   DURATION,
   MotionBox,
+  bannerPresenceProps,
   navPresenceProps,
   smoothPresenceProps,
 } from "@/components/presence";
@@ -194,7 +193,7 @@ const SelectDatasetStepContent = () => {
     datasetIri: dataset,
   });
 
-  const { allCubes, cubes } = React.useMemo(() => {
+  const { allCubes, cubes } = useMemo(() => {
     if ((data && data.searchCubes.length === 0) || !data) {
       return {
         allCubes: [],
@@ -223,7 +222,7 @@ const SelectDatasetStepContent = () => {
     };
   }, [data, filters]);
 
-  const themes: DataCubeTheme[] = React.useMemo(() => {
+  const themes: DataCubeTheme[] = useMemo(() => {
     return sortBy(
       uniqBy(
         cubes
@@ -235,7 +234,7 @@ const SelectDatasetStepContent = () => {
     );
   }, [cubes]);
 
-  const orgs: DataCubeOrganization[] = React.useMemo(() => {
+  const orgs: DataCubeOrganization[] = useMemo(() => {
     return sortBy(
       uniqBy(
         cubes
@@ -250,7 +249,39 @@ const SelectDatasetStepContent = () => {
   }, [cubes]);
 
   const searchPageData = useSearchPageData();
-  const termsets = searchPageData.data?.allTermsets ?? [];
+  const termsets = useMemo(
+    () => searchPageData.data?.allTermsets ?? [],
+    [searchPageData.data?.allTermsets]
+  );
+
+  const pageTitle = useMemo(() => {
+    return queryFilters
+      .map((d) => {
+        const searchList = (() => {
+          const type = d.type;
+          switch (type) {
+            case SearchCubeFilterType.DataCubeTheme:
+              return orgs;
+            case SearchCubeFilterType.DataCubeOrganization:
+              return themes;
+            case SearchCubeFilterType.Termset:
+              return termsets.map((x) => x.termset);
+            case SearchCubeFilterType.DataCubeAbout:
+              return [];
+            case SearchCubeFilterType.TemporalDimension:
+              return [];
+            default:
+              const check: never = type;
+              throw new Error(`Invalid search cube filter type ${check}`);
+          }
+        })();
+        const item = (searchList as { iri: string; label?: string }[]).find(
+          ({ iri }) => iri === d.value
+        );
+        return (item ?? d).label;
+      })
+      .join(", ");
+  }, [orgs, queryFilters, termsets, themes]);
 
   if (configState.state !== "SELECTING_DATASET") {
     return null;
@@ -371,37 +402,17 @@ const SelectDatasetStepContent = () => {
                         },
                       }}
                     >
+                      <Head>
+                        <title key="title">
+                          {pageTitle}- visualize.admin.ch
+                        </title>
+                      </Head>
                       <Typography
                         key="filters"
                         className={classes.filters}
                         variant="h1"
                       >
-                        {queryFilters
-                          .map((d) => {
-                            const searchList = match(d.type)
-                              .with(
-                                SearchCubeFilterType.DataCubeTheme,
-                                () => orgs
-                              )
-                              .with(
-                                SearchCubeFilterType.DataCubeOrganization,
-                                () => themes
-                              )
-                              .with(SearchCubeFilterType.Termset, () =>
-                                termsets.map((x) => x.termset)
-                              )
-                              .with(
-                                SearchCubeFilterType.DataCubeAbout,
-                                () => []
-                              )
-                              .exhaustive();
-                            d.type === "DataCubeTheme" ? themes : orgs;
-                            const item = (
-                              searchList as { iri: string; label?: string }[]
-                            ).find(({ iri }) => iri === d.value);
-                            return (item ?? d).label;
-                          })
-                          .join(", ")}
+                        {pageTitle}
                       </Typography>
                     </MotionBox>
                   )}
@@ -464,26 +475,9 @@ const DatasetMetadataSingleCubeAdapter = ({
   );
 };
 
-const PageTitle = () => {
-  const { search, filters } = useBrowseContext();
-  return (
-    <Head>
-      <title key="title">
-        {search
-          ? `"${search}"`
-          : filters?.length > 0 && filters[0].__typename !== "DataCubeAbout"
-            ? filters[0].label
-            : t({ id: "browse.datasets.all-datasets" })}{" "}
-        - visualize.admin.ch
-      </title>
-    </Head>
-  );
-};
-
 export const SelectDatasetStep = () => {
   return (
     <BrowseStateProvider>
-      <PageTitle />
       <SelectDatasetStepContent />
     </BrowseStateProvider>
   );

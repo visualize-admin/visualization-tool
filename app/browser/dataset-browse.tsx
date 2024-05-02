@@ -644,7 +644,6 @@ const TermsetNavSection = ({
       currentFilter={currentFilter}
       icon={<SvgIcOrganisations width={20} height={20} />}
       label={<Trans id="browse-panel.termsets">Concepts</Trans>}
-      extra={null}
       filters={[]}
       counts={counts}
     />
