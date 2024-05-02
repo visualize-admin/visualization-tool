@@ -617,23 +617,12 @@ const NavSection = ({
 
 const TermsetNavSection = ({
   currentFilter,
+  termsetCounts,
 }: {
   currentFilter: Termset | undefined;
+  termsetCounts: { termset: Termset; count: number }[];
 }) => {
-  const locale = useLocale();
-  const [configState] = useConfiguratorState();
-  const { dataSource } = configState;
-
-  const [searchPageQuery] = useSearchPageQuery({
-    variables: {
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
-    },
-  });
-
   const { counts, termsets } = useMemo(() => {
-    const termsetCounts = searchPageQuery.data?.allTermsets ?? [];
     const termsets = termsetCounts.map((x) => x.termset) ?? [];
     const counts = Object.fromEntries(
       termsetCounts.map((x) => [x.termset.iri, x.count])
@@ -642,11 +631,7 @@ const TermsetNavSection = ({
       counts,
       termsets,
     };
-  }, [searchPageQuery.data?.allTermsets]);
-
-  if (searchPageQuery.fetching) {
-    return null;
-  }
+  }, [termsetCounts]);
 
   return (
     <NavSection
@@ -679,10 +664,12 @@ export const SearchFilters = ({
   cubes,
   themes,
   orgs,
+  termsets: termsetCounts,
 }: {
   cubes: SearchCubeResult[];
   themes: DataCubeTheme[];
   orgs: DataCubeOrganization[];
+  termsets: TermsetCount[];
 }) => {
   const { filters } = useBrowseContext();
   const counts = useMemo(() => {
@@ -805,8 +792,13 @@ export const SearchFilters = ({
       />
     ) : null;
 
-  const termsetNav = <TermsetNavSection currentFilter={termsetFilter} />;
-
+  const termsetNav =
+    termsetCounts.length === 0 ? null : (
+      <TermsetNavSection
+        termsetCounts={termsetCounts ?? []}
+        currentFilter={termsetFilter}
+      />
+    );
   const navs = sortBy(
     [
       { element: themeNav, __typename: "DataCubeTheme" },

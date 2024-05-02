@@ -8,6 +8,7 @@ import Head from "next/head";
 import NextLink from "next/link";
 import { Router, useRouter } from "next/router";
 import React, { useMemo } from "react";
+import { match } from "ts-pattern";
 import { useDebounce } from "use-debounce";
 
 import {
@@ -17,6 +18,7 @@ import {
   SearchFilters,
 } from "@/browser/dataset-browse";
 import { DataSetPreview } from "@/browser/dataset-preview";
+import { useSearchPageData } from "@/browser/search-page-data";
 import { DatasetMetadata } from "@/components/dataset-metadata";
 import Flex from "@/components/flex";
 import { Footer } from "@/components/footer";
@@ -247,6 +249,9 @@ const SelectDatasetStepContent = () => {
     );
   }, [cubes]);
 
+  const searchPageData = useSearchPageData();
+  const termsets = searchPageData.data?.allTermsets ?? [];
+
   if (configState.state !== "SELECTING_DATASET") {
     return null;
   }
@@ -314,7 +319,12 @@ const SelectDatasetStepContent = () => {
               </MotionBox>
             ) : (
               <MotionBox key="search-filters" {...navPresenceProps}>
-                <SearchFilters cubes={allCubes} themes={themes} orgs={orgs} />
+                <SearchFilters
+                  cubes={allCubes}
+                  themes={themes}
+                  orgs={orgs}
+                  termsets={termsets}
+                />
               </MotionBox>
             )}
           </AnimatePresence>
@@ -368,8 +378,24 @@ const SelectDatasetStepContent = () => {
                       >
                         {queryFilters
                           .map((d) => {
-                            const searchList =
-                              d.type === "DataCubeTheme" ? themes : orgs;
+                            const searchList = match(d.type)
+                              .with(
+                                SearchCubeFilterType.DataCubeTheme,
+                                () => orgs
+                              )
+                              .with(
+                                SearchCubeFilterType.DataCubeOrganization,
+                                () => themes
+                              )
+                              .with(SearchCubeFilterType.Termset, () =>
+                                termsets.map((x) => x.termset)
+                              )
+                              .with(
+                                SearchCubeFilterType.DataCubeAbout,
+                                () => []
+                              )
+                              .exhaustive();
+                            d.type === "DataCubeTheme" ? themes : orgs;
                             const item = (
                               searchList as { iri: string; label?: string }[]
                             ).find(({ iri }) => iri === d.value);
