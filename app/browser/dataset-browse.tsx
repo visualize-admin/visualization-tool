@@ -40,7 +40,7 @@ import {
   DataCubeOrganization,
   DataCubeTheme,
   SearchCubeResultOrder,
-  useSearchPageQuery,
+  TermsetCount,
 } from "@/graphql/query-hooks";
 import {
   DataCubePublicationStatus,
@@ -49,7 +49,6 @@ import {
 import SvgIcCategories from "@/icons/components/IcCategories";
 import SvgIcClose from "@/icons/components/IcClose";
 import SvgIcOrganisations from "@/icons/components/IcOrganisations";
-import { useConfiguratorState, useLocale } from "@/src";
 import { MaybeTooltip } from "@/utils/maybe-tooltip";
 import useEvent from "@/utils/use-event";
 
@@ -237,8 +236,8 @@ const organizationNavItemTheme = {
 };
 
 const termsetNavItemTheme = {
-  activeBg: "warning.main",
-  activeTextColor: "white",
+  activeBg: "warning.light",
+  activeTextColor: "text.primary",
   textColor: "text.primary",
   countColor: "warning.main",
   countBg: "warning.light",
@@ -644,7 +643,7 @@ const TermsetNavSection = ({
       navItemTheme={termsetNavItemTheme}
       currentFilter={currentFilter}
       icon={<SvgIcOrganisations width={20} height={20} />}
-      label={<Trans id="browse-panel.termsets">Termsets</Trans>}
+      label={<Trans id="browse-panel.termsets">Concepts</Trans>}
       extra={null}
       filters={[]}
       counts={counts}
