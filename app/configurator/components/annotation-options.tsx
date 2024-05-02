@@ -1,4 +1,5 @@
-import { Box } from "@mui/material";
+import { Trans } from "@lingui/macro";
+import { Box, Button, Typography } from "@mui/material";
 import { useEffect, useRef } from "react";
 
 import { Meta, getChartConfig } from "@/config-types";
@@ -17,11 +18,11 @@ import { MetaInputField } from "@/configurator/components/field";
 import { getFieldLabel } from "@/configurator/components/field-i18n";
 import { locales } from "@/locales/locales";
 import { useLocale } from "@/locales/use-locale";
+import useEvent from "@/utils/use-event";
 
 export const ChartAnnotationsSelector = () => {
   const [state] = useConfiguratorState(isConfiguring);
   const chartConfig = getChartConfig(state);
-
   return (
     <AnnotationOptions
       type="chart"
@@ -50,11 +51,21 @@ type AnnotationOptionsProps = {
 
 const AnnotationOptions = (props: AnnotationOptionsProps) => {
   const { type, activeField, meta } = props;
+  const [_, dispatch] = useConfiguratorState();
   const locale = useLocale();
   // Reorder locales so the input field for
   // the current locale is on top
   const orderedLocales = [locale, ...locales.filter((l) => l !== locale)];
   const panelRef = useRef<HTMLDivElement>(null);
+  const handleClosePanel = useEvent(() => {
+    dispatch({
+      type:
+        type === "chart"
+          ? "CHART_ACTIVE_FIELD_CHANGED"
+          : "LAYOUT_ACTIVE_FIELD_CHANGED",
+      value: undefined,
+    });
+  });
 
   useEffect(() => {
     if (panelRef?.current) {
@@ -92,6 +103,14 @@ const AnnotationOptions = (props: AnnotationOptionsProps) => {
               />
             </Box>
           ))}
+          <Button
+            onClick={handleClosePanel}
+            sx={{ alignSelf: "flex-end", minHeight: 32, mt: 3, px: 5 }}
+          >
+            <Typography component="span">
+              <Trans id="save"> Save</Trans>
+            </Typography>
+          </Button>
         </ControlSectionContent>
       </ControlSection>
     </Box>
