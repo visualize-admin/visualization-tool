@@ -153,6 +153,7 @@ CONSTRUCT {
         ?dimension sh:path ?dimensionIri .
         FILTER(NOT EXISTS{ ?dimension sh:in ?in . })`
         }
+        ${queryFilters ? `VALUES ?dimensionIri { <${dimensionIri}> }` : ""}
         <${cubeIri}> cube:observationSet/cube:observation ?observation .
         ?observation ?dimensionIri ?maybeVersionedValue .
         OPTIONAL {
