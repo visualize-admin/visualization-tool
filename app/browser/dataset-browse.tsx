@@ -211,7 +211,16 @@ export const SearchDatasetControls = ({
   );
 };
 
-const defaultNavItemTheme = {
+type NavItemTheme = {
+  activeBg: string;
+  activeTextColor: string;
+  textColor: string;
+  countColor: string;
+  countBg: string;
+  closeColor?: string;
+};
+
+const defaultNavItemTheme: NavItemTheme = {
   activeTextColor: "white",
   activeBg: "primary.main",
   textColor: "text.primary",
@@ -219,7 +228,7 @@ const defaultNavItemTheme = {
   countBg: "grey.300",
 };
 
-const themeNavItemTheme = {
+const themeNavItemTheme: NavItemTheme = {
   activeBg: "category.main",
   activeTextColor: "white",
   textColor: "text.primary",
@@ -227,7 +236,7 @@ const themeNavItemTheme = {
   countBg: "category.light",
 };
 
-const organizationNavItemTheme = {
+const organizationNavItemTheme: NavItemTheme = {
   activeBg: "organization.main",
   activeTextColor: "white",
   textColor: "text.primary",
@@ -235,12 +244,13 @@ const organizationNavItemTheme = {
   countBg: "organization.light",
 };
 
-const termsetNavItemTheme = {
+const termsetNavItemTheme: NavItemTheme = {
   activeBg: "warning.light",
   activeTextColor: "text.primary",
   textColor: "text.primary",
   countColor: "warning.main",
   countBg: "warning.light",
+  closeColor: "warning.main",
 };
 
 const useStyles = makeStyles(() => ({
@@ -391,7 +401,10 @@ const NavItem = ({
         className={classes.removeFilterButton}
         sx={{
           backgroundColor: level === 1 ? theme.activeBg : "transparent",
-          color: level === 1 ? theme.activeTextColor : theme.activeBg,
+          color:
+            level === 1
+              ? theme.closeColor ?? theme.activeTextColor
+              : theme.activeBg,
         }}
       >
         <SvgIcClose width={24} height={24} />
@@ -532,7 +545,7 @@ const NavSection = ({
   icon: React.ReactNode;
   items: (DataCubeTheme | DataCubeOrganization | Termset)[];
   theme: { backgroundColor: string; borderColor: string };
-  navItemTheme: typeof themeNavItemTheme;
+  navItemTheme: NavItemTheme;
   currentFilter?: DataCubeTheme | DataCubeOrganization | Termset;
   filters: BrowseFilter[];
   counts: Record<string, number>;
