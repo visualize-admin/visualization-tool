@@ -196,20 +196,63 @@ const getCubeDimensionsValues = async (
     cache: LRUCache | undefined;
   }
 ) => {
+  const { minMaxDimensions, regularDimensions } = resolvedDimensions.reduce<{
+    minMaxDimensions: ResolvedDimension[];
+    regularDimensions: ResolvedDimension[];
+  }>(
+    (acc, dimension) => {
+      if (shouldLoadMinMaxValues(dimension)) {
+        acc.minMaxDimensions.push(dimension);
+      } else {
+        acc.regularDimensions.push(dimension);
+      }
+
+      return acc;
+    },
+    { minMaxDimensions: [], regularDimensions: [] }
+  );
+
+  const result = await Promise.all([
+    getMinMaxDimensionsValues(minMaxDimensions, {
+      sparqlClient,
+      cache,
+    }),
+    getRegularDimensionsValues(regularDimensions, {
+      sparqlClient,
+      filters,
+      cache,
+    }),
+  ]);
+
+  return result
+    .flat()
+    .sort(
+      (a, b) =>
+        resolvedDimensions.indexOf(a.resolvedDimension) -
+        resolvedDimensions.indexOf(b.resolvedDimension)
+    )
+    .map(({ values }) => values);
+};
+
+const getMinMaxDimensionsValues = async (
+  resolvedDimensions: ResolvedDimension[],
+  {
+    sparqlClient,
+    cache,
+  }: {
+    sparqlClient: ParsingClient;
+    cache: LRUCache | undefined;
+  }
+) => {
   return await Promise.all(
     resolvedDimensions.map(async (resolvedDimension) => {
-      if (shouldLoadMinMaxValues(resolvedDimension)) {
-        return await getMinMaxDimensionValues(resolvedDimension, {
+      return {
+        resolvedDimension,
+        values: await getMinMaxDimensionValues(resolvedDimension, {
           sparqlClient,
           cache,
-        });
-      } else {
-        return await getRegularDimensionValues(resolvedDimension, {
-          sparqlClient,
-          filters,
-          cache,
-        });
-      }
+        }),
+      };
     })
   );
 };
@@ -287,6 +330,32 @@ const getMinMaxDimensionValues = async (
   }
 
   return [];
+};
+
+const getRegularDimensionsValues = async (
+  resolvedDimensions: ResolvedDimension[],
+  {
+    sparqlClient,
+    filters,
+    cache,
+  }: {
+    sparqlClient: ParsingClient;
+    filters?: Filters;
+    cache: LRUCache | undefined;
+  }
+) => {
+  return await Promise.all(
+    resolvedDimensions.map(async (resolvedDimension) => {
+      return {
+        resolvedDimension,
+        values: await getRegularDimensionValues(resolvedDimension, {
+          sparqlClient,
+          filters,
+          cache,
+        }),
+      };
+    })
+  );
 };
 
 const getRegularDimensionValues = async (
