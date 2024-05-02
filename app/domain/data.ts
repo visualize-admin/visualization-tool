@@ -97,6 +97,7 @@ export type DataCubePreview = {
 export type Termset = {
   iri: string;
   label: string;
+  __typename: "Termset";
 };
 
 export type ComponentTermsets = {

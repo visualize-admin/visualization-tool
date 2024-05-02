@@ -2,13 +2,17 @@ import groupBy from "lodash/groupBy";
 import ParsingClient from "sparql-http-client/ParsingClient";
 
 import { ComponentTermsets, Termset } from "@/domain/data";
-import { buildLocalizedSubQuery } from "@/rdf/query-utils";
+import {
+  buildLocalizedSubQuery,
+  makeVisualizeDatasetFilter,
+} from "@/rdf/query-utils";
 
 export const queryAllTermsets = async (options: {
   locale: string;
   sparqlClient: ParsingClient;
+  includeDrafts?: boolean;
 }): Promise<{ termset: Termset; count: number }[]> => {
-  const { sparqlClient, locale } = options;
+  const { sparqlClient, locale, includeDrafts } = options;
   const qs = await sparqlClient.query.select(
     `PREFIX cube: <https://cube.link/>
 PREFIX meta: <https://cube.link/meta/>
@@ -23,12 +27,19 @@ SELECT DISTINCT (COUNT(distinct ?iri) as ?count) ?termsetIri ?termsetLabel WHERE
     ?value schema:inDefinedTermSet ?termsetIri .
     ?termsetIri a meta:SharedDimension .
     ${buildLocalizedSubQuery("termsetIri", "schema:name", "termsetLabel", { locale })}
+
+    ${makeVisualizeDatasetFilter({
+      includeDrafts: !!includeDrafts,
+      cubeIriVar: "?iri",
+    }).toString()}
+
   }      GROUP BY ?termsetIri ?termsetLabel`
   );
 
   return qs.map((result) => ({
     count: Number(result.count.value),
     termset: {
+      __typename: "Termset",
       iri: result.termsetIri.value,
       label: result.termsetLabel.value,
     },
@@ -77,6 +88,10 @@ SELECT DISTINCT ?dimensionIri ?dimensionLabel ?termsetIri ?termsetLabel WHERE {
   return grouped.map(([dimensionIri, termsets]) => ({
     iri: dimensionIri,
     label: termsets[0].dimensionLabel,
-    termsets: termsets.map(({ iri, label }) => ({ iri, label })),
+    termsets: termsets.map(({ iri, label }) => ({
+      iri,
+      label,
+      __typename: "Termset",
+    })),
   }));
 };

@@ -72,7 +72,7 @@ enum SearchCubeFilterType {
   DataCubeTheme
   DataCubeOrganization
   DataCubeAbout
-  SharedDimensions
+  Termset
 }
 
 input SearchCubeFilter {
@@ -183,5 +183,6 @@ type Query {
     sourceType: String!
     sourceUrl: String!
     locale: String!
+    includeDrafts: Boolean
   ): [TermsetCount!]!
 }

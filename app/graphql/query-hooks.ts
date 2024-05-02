@@ -201,6 +201,7 @@ export type QueryAllTermsetsArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   locale: Scalars['String'];
+  includeDrafts?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -229,7 +230,7 @@ export enum SearchCubeFilterType {
   DataCubeTheme = 'DataCubeTheme',
   DataCubeOrganization = 'DataCubeOrganization',
   DataCubeAbout = 'DataCubeAbout',
-  SharedDimensions = 'SharedDimensions'
+  Termset = 'Termset'
 }
 
 export type SearchCubeResult = {

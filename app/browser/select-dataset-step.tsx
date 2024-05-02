@@ -21,9 +21,9 @@ import { DatasetMetadata } from "@/components/dataset-metadata";
 import Flex from "@/components/flex";
 import { Footer } from "@/components/footer";
 import {
-  bannerPresenceProps,
   BANNER_HEIGHT,
   BANNER_MARGIN_TOP,
+  bannerPresenceProps,
   DURATION,
   MotionBox,
   navPresenceProps,
@@ -143,8 +143,15 @@ const prepareSearchQueryFilters = (filters: BrowseFilter[]) => {
           d.__typename !== SearchCubeFilterType.DataCubeAbout
       )
       .map((d) => {
-        const type = SearchCubeFilterType[d.__typename];
-        return { type, label: d.label, value: d.iri };
+        const type =
+          d.__typename === "Termset"
+            ? SearchCubeFilterType.Termset
+            : SearchCubeFilterType[d.__typename];
+        return {
+          type,
+          label: d.label,
+          value: d.iri,
+        };
       })
   );
 };

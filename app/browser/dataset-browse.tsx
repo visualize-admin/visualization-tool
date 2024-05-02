@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { AnimatePresence, Reorder } from "framer-motion";
+import keyBy from "lodash/keyBy";
 import orderBy from "lodash/orderBy";
 import pickBy from "lodash/pickBy";
 import sortBy from "lodash/sortBy";
@@ -32,13 +33,14 @@ import {
 } from "@/components/presence";
 import Tag from "@/components/tag";
 import useDisclosure from "@/components/use-disclosure";
-import { SearchCube } from "@/domain/data";
+import { SearchCube, Termset } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { useFormatDate } from "@/formatters";
 import {
   DataCubeOrganization,
   DataCubeTheme,
   SearchCubeResultOrder,
+  useSearchPageQuery,
 } from "@/graphql/query-hooks";
 import {
   DataCubePublicationStatus,
@@ -47,7 +49,7 @@ import {
 import SvgIcCategories from "@/icons/components/IcCategories";
 import SvgIcClose from "@/icons/components/IcClose";
 import SvgIcOrganisations from "@/icons/components/IcOrganisations";
-import isAttrEqual from "@/utils/is-attr-equal";
+import { useConfiguratorState, useLocale } from "@/src";
 import { MaybeTooltip } from "@/utils/maybe-tooltip";
 import useEvent from "@/utils/use-event";
 
@@ -234,6 +236,14 @@ const organizationNavItemTheme = {
   countBg: "organization.light",
 };
 
+const termsetNavItemTheme = {
+  activeBg: "warning.main",
+  activeTextColor: "white",
+  textColor: "text.primary",
+  countColor: "warning.main",
+  countBg: "warning.light",
+};
+
 const useStyles = makeStyles(() => ({
   navChip: {
     minWidth: 32,
@@ -290,9 +300,23 @@ const NavChip = ({
 
 const encodeFilter = (filter: BrowseFilter) => {
   const { iri, __typename } = filter;
-  return `${
-    __typename === "DataCubeTheme" ? "theme" : "organization"
-  }/${encodeURIComponent(iri)}`;
+  const folder = (() => {
+    switch (__typename) {
+      case "DataCubeTheme":
+        return "theme";
+      case "DataCubeOrganization":
+        return "organization";
+      case "DataCubeAbout":
+        throw new Error("Should not happen");
+      case "Termset":
+        return "termset";
+      default:
+        // eslint-disable-next-line
+        const check: never = __typename;
+        throw new Error('Unknown filter type "' + check + '"');
+    }
+  })();
+  return `${folder}/${encodeURIComponent(iri)}`;
 };
 
 const NavItem = ({
@@ -508,10 +532,10 @@ const NavSection = ({
 }: {
   label: React.ReactNode;
   icon: React.ReactNode;
-  items: (DataCubeTheme | DataCubeOrganization)[];
+  items: (DataCubeTheme | DataCubeOrganization | Termset)[];
   theme: { backgroundColor: string; borderColor: string };
   navItemTheme: typeof themeNavItemTheme;
-  currentFilter?: DataCubeTheme | DataCubeOrganization | null;
+  currentFilter?: DataCubeTheme | DataCubeOrganization | Termset;
   filters: BrowseFilter[];
   counts: Record<string, number>;
   extra?: React.ReactNode;
@@ -592,6 +616,66 @@ const NavSection = ({
   );
 };
 
+const TermsetNavSection = ({
+  currentFilter,
+}: {
+  currentFilter: Termset | undefined;
+}) => {
+  const locale = useLocale();
+  const [configState] = useConfiguratorState();
+  const { dataSource } = configState;
+
+  const [searchPageQuery] = useSearchPageQuery({
+    variables: {
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+    },
+  });
+
+  const { counts, termsets } = useMemo(() => {
+    const termsetCounts = searchPageQuery.data?.allTermsets ?? [];
+    const termsets = termsetCounts.map((x) => x.termset) ?? [];
+    const counts = Object.fromEntries(
+      termsetCounts.map((x) => [x.termset.iri, x.count])
+    );
+    return {
+      counts,
+      termsets,
+    };
+  }, [searchPageQuery.data?.allTermsets]);
+
+  if (searchPageQuery.fetching) {
+    return null;
+  }
+
+  return (
+    <NavSection
+      key="orgs"
+      items={termsets}
+      theme={{
+        backgroundColor: "warning.light",
+        borderColor: "warning.main",
+      }}
+      navItemTheme={termsetNavItemTheme}
+      currentFilter={currentFilter}
+      icon={<SvgIcOrganisations width={20} height={20} />}
+      label={<Trans id="browse-panel.termsets">Termsets</Trans>}
+      extra={null}
+      filters={[]}
+      counts={counts}
+    />
+  );
+};
+
+const navOrder: Record<BrowseFilter["__typename"], number> = {
+  DataCubeTheme: 1,
+  DataCubeOrganization: 2,
+  Termset: 3,
+  // Not used in the nav
+  DataCubeAbout: 4,
+};
+
 export const SearchFilters = ({
   cubes,
   themes,
@@ -622,10 +706,17 @@ export const SearchFilters = ({
     return result;
   }, [cubes]);
 
-  const themeFilter = filters.find(isAttrEqual("__typename", "DataCubeTheme"));
-  const orgFilter = filters.find(
-    isAttrEqual("__typename", "DataCubeOrganization")
-  );
+  const {
+    DataCubeTheme: themeFilter,
+    DataCubeOrganization: orgFilter,
+    Termset: termsetFilter,
+  } = useMemo(() => {
+    return keyBy(filters, (f) => f.__typename) as {
+      DataCubeTheme?: DataCubeTheme;
+      DataCubeOrganization?: DataCubeOrganization;
+      Termset?: Termset;
+    };
+  }, [filters]);
 
   const displayedThemes = themes.filter((theme) => {
     if (!theme.label) {
@@ -715,6 +806,20 @@ export const SearchFilters = ({
       />
     ) : null;
 
+  const termsetNav = <TermsetNavSection currentFilter={termsetFilter} />;
+
+  const navs = sortBy(
+    [
+      { element: themeNav, __typename: "DataCubeTheme" },
+      { element: orgNav, __typename: "DataCubeOrganization" },
+      { element: termsetNav, __typename: "Termset" },
+    ],
+    (x) =>
+      x.__typename === filters[0]?.__typename
+        ? 0
+        : navOrder[x.__typename as keyof typeof navOrder]
+  );
+
   return (
     <Flex
       key={filters.length}
@@ -725,17 +830,9 @@ export const SearchFilters = ({
           bug as they get picked by parent AnimatePresence. Probably related to
           https://github.com/framer/motion/issues/1619. */}
       <AnimatePresence>
-        {filters[0]?.__typename === "DataCubeOrganization" ? (
-          <Flex sx={{ flexDirection: "column", gap: 5, width: "100%" }}>
-            {orgNav}
-            {themeNav}
-          </Flex>
-        ) : (
-          <Flex sx={{ flexDirection: "column", gap: 5, width: "100%" }}>
-            {themeNav}
-            {orgNav}
-          </Flex>
-        )}
+        <Flex sx={{ flexDirection: "column", gap: 5, width: "100%" }}>
+          {navs.map((x) => x.element)}
+        </Flex>
       </AnimatePresence>
     </Flex>
   );

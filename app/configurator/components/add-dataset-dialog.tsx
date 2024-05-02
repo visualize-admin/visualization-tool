@@ -741,7 +741,7 @@ export const DatasetDialog = ({
           : null,
         selectedSharedDimensions && selectedSharedDimensions.length > 0
           ? {
-              type: SearchCubeFilterType.SharedDimensions,
+              type: SearchCubeFilterType.Termset,
               value: uniq(
                 selectedSharedDimensions.flatMap((x) =>
                   x.termsets.map((x) => x.iri)
