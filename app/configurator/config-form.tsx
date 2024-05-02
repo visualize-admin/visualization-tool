@@ -457,15 +457,24 @@ export const useSingleFilterSelect = (
     ) => void
   >(
     (e) => {
-      dispatch({
-        type: "CHART_CONFIG_FILTER_SET_SINGLE",
-        value: {
-          filters,
-          value: (e.target.value === ""
-            ? FIELD_VALUE_NONE
-            : e.target.value) as string,
-        },
-      });
+      const value = e.target.value as string;
+
+      if (value === FIELD_VALUE_NONE) {
+        dispatch({
+          type: "CHART_CONFIG_FILTER_REMOVE_SINGLE",
+          value: {
+            filters,
+          },
+        });
+      } else {
+        dispatch({
+          type: "CHART_CONFIG_FILTER_SET_SINGLE",
+          value: {
+            filters,
+            value: value === "" ? FIELD_VALUE_NONE : value,
+          },
+        });
+      }
     },
     [dispatch, filters]
   );

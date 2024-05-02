@@ -429,8 +429,7 @@ const useFilterReorder = ({
     dispatch({
       type: "CHART_CONFIG_FILTER_REMOVE_SINGLE",
       value: {
-        cubeIri: dimension.cubeIri,
-        dimensionIri: dimension.iri,
+        filters: dimensionToFieldProps(dimension),
       },
     });
   });
