@@ -114,6 +114,11 @@ input DataCubePreviewFilter {
   iri: String!
 }
 
+type TermsetCount {
+  termset: Termset!
+  count: Int!
+}
+
 # The "Query" type is special: it lists all of the available queries that
 # clients can execute, along with the return type for each.
 type Query {
@@ -174,4 +179,9 @@ type Query {
     sourceUrl: String!
     locale: String!
   ): GeoShapes
+  allTermsets(
+    sourceType: String!
+    sourceUrl: String!
+    locale: String!
+  ): [TermsetCount!]!
 }
