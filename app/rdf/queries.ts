@@ -9,7 +9,6 @@ import { LRUCache } from "typescript-lru-cache";
 
 import { FilterValueMulti, Filters } from "@/config-types";
 import {
-  DimensionValue,
   Observation,
   ObservationValue,
   parseObservationValue,
@@ -31,7 +30,7 @@ import {
   parseRelatedDimensions,
 } from "@/rdf/parse";
 import {
-  loadDimensionValuesWithMetadata,
+  loadDimensionsValuesWithMetadata,
   loadMaxDimensionValue,
   loadMinMaxDimensionValues,
 } from "@/rdf/query-dimension-values";
@@ -196,6 +195,7 @@ const getCubeDimensionsValues = async (
     cache: LRUCache | undefined;
   }
 ) => {
+  const dimensionIris = resolvedDimensions.map((d) => d.data.iri);
   const { minMaxDimensions, regularDimensions } = resolvedDimensions.reduce<{
     minMaxDimensions: ResolvedDimension[];
     regularDimensions: ResolvedDimension[];
@@ -228,8 +228,8 @@ const getCubeDimensionsValues = async (
     .flat()
     .sort(
       (a, b) =>
-        resolvedDimensions.indexOf(a.resolvedDimension) -
-        resolvedDimensions.indexOf(b.resolvedDimension)
+        dimensionIris.indexOf(a.dimensionIri) -
+        dimensionIris.indexOf(b.dimensionIri)
     )
     .map(({ values }) => values);
 };
@@ -247,7 +247,7 @@ const getMinMaxDimensionsValues = async (
   return await Promise.all(
     resolvedDimensions.map(async (resolvedDimension) => {
       return {
-        resolvedDimension,
+        dimensionIri: resolvedDimension.data.iri,
         values: await getMinMaxDimensionValues(resolvedDimension, {
           sparqlClient,
           cache,
@@ -344,35 +344,11 @@ const getRegularDimensionsValues = async (
     cache: LRUCache | undefined;
   }
 ) => {
-  return await Promise.all(
-    resolvedDimensions.map(async (resolvedDimension) => {
-      return {
-        resolvedDimension,
-        values: await getRegularDimensionValues(resolvedDimension, {
-          sparqlClient,
-          filters,
-          cache,
-        }),
-      };
-    })
-  );
-};
-
-const getRegularDimensionValues = async (
-  resolvedDimension: ResolvedDimension,
-  {
-    sparqlClient,
-    filters,
-    cache,
-  }: {
-    sparqlClient: ParsingClient;
-    filters?: Filters;
-    cache: LRUCache | undefined;
-  }
-): Promise<DimensionValue[]> => {
-  const { cube, data, locale } = resolvedDimension;
-  return await loadDimensionValuesWithMetadata(cube.term?.value!, {
-    dimensionIri: data.iri,
+  // `cube` and `locale` are the same for all dimensions
+  const { cube, locale } = resolvedDimensions[0];
+  const cubeIri = cube.term?.value!;
+  return await loadDimensionsValuesWithMetadata(cubeIri, {
+    dimensionIris: resolvedDimensions.map((d) => d.data.iri),
     cubeDimensions: cube.dimensions,
     sparqlClient,
     filters,
