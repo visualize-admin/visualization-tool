@@ -1,5 +1,5 @@
 import { ascending, descending, group } from "d3-array";
-import React from "react";
+import { useCallback, useMemo } from "react";
 
 import { getWideData, usePlottableData } from "@/charts/shared/chart-helpers";
 import {
@@ -58,7 +58,7 @@ export const useColumnsStackedStateVariables = (
   });
 
   const { getX } = bandXVariables;
-  const sortData: ColumnsStackedStateVariables["sortData"] = React.useCallback(
+  const sortData: ColumnsStackedStateVariables["sortData"] = useCallback(
     (data, { plottableDataWide }) => {
       const { sortingOrder, sortingType } = x.sorting ?? {};
       const xOrder = plottableDataWide
@@ -122,7 +122,7 @@ export const useColumnsStackedStateData = (
   const plottableData = usePlottableData(observations, {
     getY,
   });
-  const { sortedPlottableData, plottableDataWide } = React.useMemo(() => {
+  const { sortedPlottableData, plottableDataWide } = useMemo(() => {
     const plottableDataByX = group(plottableData, getX);
     const plottableDataWide = getWideData({
       dataGroupedByX: plottableDataByX,

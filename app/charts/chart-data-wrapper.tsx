@@ -1,7 +1,7 @@
 import { Box } from "@mui/material";
 import { AnimatePresence } from "framer-motion";
 import keyBy from "lodash/keyBy";
-import React from "react";
+import React, { useMemo, useEffect, createElement } from "react";
 
 import { A11yTable } from "@/charts/shared/a11y-table";
 import { useLoadingState } from "@/charts/shared/chart-loading-state";
@@ -122,11 +122,11 @@ export const ChartDataWrapper = <
   const error =
     propError || metadataError || componentsError || observationsError;
 
-  React.useEffect(() => {
+  useEffect(() => {
     chartLoadingState.set("data", fetching);
   }, [chartLoadingState, fetching]);
 
-  const { dimensionsByIri, measuresByIri } = React.useMemo(() => {
+  const { dimensionsByIri, measuresByIri } = useMemo(() => {
     return {
       dimensionsByIri: keyBy(dimensions ?? [], (d) => d.iri),
       measuresByIri: keyBy(measures ?? [], (d) => d.iri),
@@ -165,7 +165,7 @@ export const ChartDataWrapper = <
           />
         )}
 
-        {React.createElement(Component, {
+        {createElement(Component, {
           observations,
           dimensions,
           dimensionsByIri,

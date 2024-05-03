@@ -1,20 +1,20 @@
 import { Box, BoxProps } from "@mui/material";
 import { select } from "d3-selection";
-import React, { ReactNode } from "react";
+import React, { ReactNode, useEffect, useRef } from "react";
 
 import { useChartState } from "@/charts/shared/chart-state";
 import { CalculationToggle } from "@/charts/shared/interactive-filter-calculation-toggle";
 import { useTransitionStore } from "@/stores/transition";
 
 export const ChartContainer = ({ children }: { children: ReactNode }) => {
-  const ref = React.useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
   const {
     bounds: { width, height },
   } = useChartState();
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (ref.current) {
       // Initialize height on mount
       if (!ref.current.style.height) {
@@ -42,13 +42,13 @@ export const ChartContainer = ({ children }: { children: ReactNode }) => {
 };
 
 export const ChartSvg = ({ children }: { children: ReactNode }) => {
-  const ref = React.useRef<SVGSVGElement>(null);
+  const ref = useRef<SVGSVGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
   const { bounds, interactiveFiltersConfig } = useChartState();
   const { width, height, margins } = bounds;
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (ref.current) {
       // Initialize height on mount.
       if (!ref.current.getAttribute("height")) {

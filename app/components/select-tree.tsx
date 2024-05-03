@@ -22,8 +22,14 @@ import {
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
-import * as React from "react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  forwardRef,
+} from "react";
 
 import { Label } from "@/components/form";
 import { HierarchyValue } from "@/domain/data";
@@ -131,7 +137,7 @@ const useCustomTreeItemStyles = makeStyles<
   },
 }));
 
-const TreeItemContent = React.forwardRef<
+const TreeItemContent = forwardRef<
   unknown,
   {
     classes: Record<TreeItemContentClassKey, string>;
@@ -301,13 +307,13 @@ function SelectTree({
   const classes = useStyles({ disabled, open });
   const [filteredOptions, setFilteredOptions] = useState<Tree>([]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setFilteredOptions(options);
   }, [options]);
 
-  const parentsRef = React.useRef({} as Record<NodeId, NodeId>);
-  const menuRef = React.useRef<PopoverActions>(null);
-  const inputRef = React.useRef<HTMLDivElement>();
+  const parentsRef = useRef({} as Record<NodeId, NodeId>);
+  const menuRef = useRef<PopoverActions>(null);
+  const inputRef = useRef<HTMLDivElement>();
 
   const defaultExpanded = useMemo(() => {
     if (!value && options.length > 0) {

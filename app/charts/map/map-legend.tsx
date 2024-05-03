@@ -405,7 +405,7 @@ const useLegendWithRotatedAxisLabelsHeight = (
   }
 ) => {
   const { formatNumber, legendFontSize } = options;
-  const maxLabelHeight = React.useMemo(() => {
+  const maxLabelHeight = useMemo(() => {
     return getMaxRotatedAxisLabelHeight(values, {
       formatNumber,
       legendFontSize,

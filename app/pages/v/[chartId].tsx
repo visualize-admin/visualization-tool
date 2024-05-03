@@ -16,7 +16,7 @@ import ErrorPage from "next/error";
 import Head from "next/head";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useState, useMemo, useEffect } from "react";
 
 import { ChartPublished } from "@/components/chart-published";
 import { PublishSuccess } from "@/components/hint";
@@ -79,7 +79,7 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
   const classes = useStyles();
 
   // Keep initial value of publishSuccess
-  const [publishSuccess] = React.useState(() => !!query.publishSuccess);
+  const [publishSuccess] = useState(() => !!query.publishSuccess);
   const { status, config } = deserializeProps(props);
 
   const session = useSession();
@@ -88,7 +88,7 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
     config.user_id &&
     config.user_id === session.data?.user.id;
 
-  const { key, state } = React.useMemo(() => {
+  const { key, state } = useMemo(() => {
     if (status === "found") {
       const state = {
         state: "PUBLISHED",
@@ -108,7 +108,7 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
   }, [config?.data, config?.key, status]);
   const chartConfig = state ? getChartConfig(state) : undefined;
 
-  React.useEffect(
+  useEffect(
     function removePublishSuccessFromURL() {
       // Remove publishSuccess from URL so that when reloading of sharing the link
       // to someone, there is no publishSuccess mention
@@ -120,7 +120,7 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
   );
 
   const { dataSource, setDataSource } = useDataSourceStore();
-  React.useEffect(
+  useEffect(
     function setCorrectDataSource() {
       if (status === "found" && config.data.dataSource.url !== dataSource.url) {
         setDataSource(config.data.dataSource);

@@ -1,5 +1,5 @@
 import { ascending } from "d3-array";
-import React from "react";
+import { useCallback, useMemo } from "react";
 
 import { usePlottableData } from "@/charts/shared/chart-helpers";
 import {
@@ -45,7 +45,7 @@ export const useLinesStateVariables = (
   });
 
   const { getX } = temporalXVariables;
-  const sortData: LinesStateVariables["sortData"] = React.useCallback(
+  const sortData: LinesStateVariables["sortData"] = useCallback(
     (data) => {
       return [...data].sort((a, b) => {
         return ascending(getX(a), getX(b));
@@ -74,7 +74,7 @@ export const useLinesStateData = (
   const plottableData = usePlottableData(observations, {
     getY,
   });
-  const sortedPlottableData = React.useMemo(() => {
+  const sortedPlottableData = useMemo(() => {
     return sortData(plottableData);
   }, [sortData, plottableData]);
   const data = useChartData(sortedPlottableData, {

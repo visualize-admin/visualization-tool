@@ -15,7 +15,13 @@ import { PUBLISHED_STATE } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  forwardRef,
+} from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { useClient } from "urql";
 import { useDebounce } from "use-debounce";
@@ -66,12 +72,12 @@ const TABS_STATE: TabsState = {
   activeChartKey: "",
 };
 
-const TabsStateContext = React.createContext<
+const TabsStateContext = createContext<
   [TabsState, React.Dispatch<TabsState>] | undefined
 >(undefined);
 
 export const useTabsState = () => {
-  const ctx = React.useContext(TabsStateContext);
+  const ctx = useContext(TabsStateContext);
 
   if (ctx === undefined) {
     throw Error(
@@ -84,7 +90,7 @@ export const useTabsState = () => {
 
 const TabsStateProvider = (props: React.PropsWithChildren<{}>) => {
   const { children } = props;
-  const [state, dispatch] = React.useState<TabsState>(TABS_STATE);
+  const [state, dispatch] = useState<TabsState>(TABS_STATE);
 
   return (
     <TabsStateContext.Provider value={[state, dispatch]}>
@@ -134,8 +140,9 @@ const TabsEditable = (props: TabsEditableProps) => {
   const isConfiguringChart = isConfiguring(state);
   const locale = useLocale();
   const [tabsState, setTabsState] = useTabsState();
-  const [popoverAnchorEl, setPopoverAnchorEl] =
-    React.useState<HTMLElement | null>(null);
+  const [popoverAnchorEl, setPopoverAnchorEl] = useState<HTMLElement | null>(
+    null
+  );
 
   const handleClose = useEvent(() => {
     setPopoverAnchorEl(null);
@@ -146,7 +153,7 @@ const TabsEditable = (props: TabsEditableProps) => {
     });
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     handleClose();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.activeChartKey]);
@@ -752,7 +759,7 @@ type DragHandleProps = BoxProps & {
   dragging?: boolean;
 };
 
-export const DragHandle = React.forwardRef<HTMLDivElement, DragHandleProps>(
+export const DragHandle = forwardRef<HTMLDivElement, DragHandleProps>(
   (props, ref) => {
     const { dragging, ...rest } = props;
     const classes = useIconStyles({ active: false, dragging });

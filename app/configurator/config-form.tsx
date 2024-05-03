@@ -6,6 +6,7 @@ import React, {
   useCallback,
   useContext,
   useMemo,
+  createContext,
 } from "react";
 
 import { getFieldComponentIri, getInitialConfig } from "@/charts";
@@ -539,7 +540,7 @@ export const isMultiFilterFieldChecked = (
   return fieldChecked || !filter;
 };
 
-const MultiFilterContext = React.createContext({
+const MultiFilterContext = createContext({
   activeKeys: new Set() as Set<string>,
   allValues: [] as string[],
   cubeIri: "",

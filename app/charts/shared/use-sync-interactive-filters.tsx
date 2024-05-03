@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import { useEffect, useMemo } from "react";
 
 import {
   ChartConfig,
@@ -104,7 +104,7 @@ const useSyncInteractiveFilters = (chartConfig: ChartConfig) => {
   // Calculation
   const calculationActive = interactiveFiltersConfig?.calculation.active;
   const calculationType = interactiveFiltersConfig?.calculation.type;
-  React.useEffect(() => {
+  useEffect(() => {
     if (calculationType) {
       setCalculationType(calculationType);
     }

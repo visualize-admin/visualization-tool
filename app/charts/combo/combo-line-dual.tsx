@@ -1,5 +1,5 @@
 import { line } from "d3-shape";
-import React from "react";
+import React, { memo } from "react";
 
 import { ComboLineDualState } from "@/charts/combo/combo-line-dual-state";
 import { useChartState } from "@/charts/shared/chart-state";
@@ -37,7 +37,7 @@ type LineProps = {
   color: string;
 };
 
-const Line = React.memo(function Line(props: LineProps) {
+const Line = memo(function Line(props: LineProps) {
   const { path, color } = props;
 
   return <path d={path} stroke={color} fill="none" />;

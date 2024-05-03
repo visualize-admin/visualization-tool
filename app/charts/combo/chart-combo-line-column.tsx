@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 
 import { ChartDataWrapper } from "@/charts/chart-data-wrapper";
 import { InteractionColumns } from "@/charts/column/overlay-columns";
@@ -21,7 +21,7 @@ export const ChartComboLineColumnVisualization = (
   return <ChartDataWrapper {...props} Component={ChartComboLineColumn} />;
 };
 
-export const ChartComboLineColumn = React.memo(
+export const ChartComboLineColumn = memo(
   (props: ChartProps<ComboLineColumnConfig>) => {
     const { chartConfig } = props;
     const { interactiveFiltersConfig } = chartConfig;

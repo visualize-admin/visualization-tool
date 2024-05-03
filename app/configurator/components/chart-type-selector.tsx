@@ -8,7 +8,7 @@ import {
   Typography,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import React from "react";
+import React, { useCallback } from "react";
 
 import {
   comboChartTypes,
@@ -62,7 +62,7 @@ export const ChartTypeSelector = (props: ChartTypeSelectorProps) => {
     measures
   );
 
-  const handleClick = React.useCallback(
+  const handleClick = useCallback(
     (e: React.SyntheticEvent<HTMLButtonElement, Event>) => {
       const newChartType = e.currentTarget.value as ChartType;
 

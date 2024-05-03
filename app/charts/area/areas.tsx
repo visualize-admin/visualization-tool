@@ -1,5 +1,5 @@
 import { area } from "d3-shape";
-import React from "react";
+import React, { useMemo, useEffect, useRef } from "react";
 
 import { AreasState } from "@/charts/area/areas-state";
 import { RenderAreaDatum, renderAreas } from "@/charts/area/rendering-utils";
@@ -11,7 +11,7 @@ export const Areas = () => {
   const { bounds, getX, xScale, yScale, colors, series } =
     useChartState() as AreasState;
   const { margins } = bounds;
-  const ref = React.useRef<SVGGElement>(null);
+  const ref = useRef<SVGGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
   const areaGenerator = area<$FixMe>()
@@ -19,7 +19,7 @@ export const Areas = () => {
     .x((d) => xScale(getX(d.data)))
     .y0((d) => yScale(d[0]))
     .y1((d) => yScale(d[1]));
-  const renderData: RenderAreaDatum[] = React.useMemo(() => {
+  const renderData: RenderAreaDatum[] = useMemo(() => {
     return series.map((d) => {
       return {
         key: `${d.key}`,
@@ -37,7 +37,7 @@ export const Areas = () => {
     });
   }, [series, areaGenerator, colors]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (ref.current) {
       renderContainer(ref.current, {
         id: "areas",

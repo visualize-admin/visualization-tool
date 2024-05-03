@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo, useEffect, useRef } from "react";
 
 import { StackedColumnsState } from "@/charts/column/columns-stacked-state";
 import {
@@ -10,7 +10,7 @@ import { renderContainer } from "@/charts/shared/rendering-utils";
 import { useTransitionStore } from "@/stores/transition";
 
 export const ColumnsStacked = () => {
-  const ref = React.useRef<SVGGElement>(null);
+  const ref = useRef<SVGGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
   const { bounds, getX, xScale, yScale, colors, series, getRenderingKey } =
@@ -18,7 +18,7 @@ export const ColumnsStacked = () => {
   const { margins } = bounds;
   const bandwidth = xScale.bandwidth();
   const y0 = yScale(0);
-  const renderData: RenderColumnDatum[] = React.useMemo(() => {
+  const renderData: RenderColumnDatum[] = useMemo(() => {
     return series.flatMap((d) => {
       const color = colors(d.key);
 
@@ -37,7 +37,7 @@ export const ColumnsStacked = () => {
     });
   }, [bandwidth, colors, getX, series, xScale, yScale, getRenderingKey]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (ref.current) {
       renderContainer(ref.current, {
         id: "columns-stacked",

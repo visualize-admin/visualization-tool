@@ -1,4 +1,4 @@
-import React from "react";
+import React, { createContext, useContext, useMemo } from "react";
 import { useSyncExternalStore } from "use-sync-external-store/shim";
 
 import { Observable } from "@/utils/observables";
@@ -34,9 +34,7 @@ export class LoadingState extends Observable {
   }
 }
 
-const LoadingStateContext = React.createContext<LoadingState | undefined>(
-  undefined
-);
+const LoadingStateContext = createContext<LoadingState | undefined>(undefined);
 
 /** Used to consolidate loading state across different components.
  *
@@ -45,7 +43,7 @@ const LoadingStateContext = React.createContext<LoadingState | undefined>(
  * being fetched.
  */
 export const useLoadingState = () => {
-  const ctx = React.useContext(LoadingStateContext);
+  const ctx = useContext(LoadingStateContext);
 
   if (!ctx) {
     throw new Error(
@@ -59,6 +57,6 @@ export const useLoadingState = () => {
 };
 
 export const LoadingStateProvider = (props: React.PropsWithChildren<{}>) => {
-  const loadingState = React.useMemo(() => new LoadingState(), []);
+  const loadingState = useMemo(() => new LoadingState(), []);
   return <LoadingStateContext.Provider value={loadingState} {...props} />;
 };

@@ -1,7 +1,7 @@
 import { InternMap, sum } from "d3-array";
 import omitBy from "lodash/omitBy";
 import uniq from "lodash/uniq";
-import React, { useCallback, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 
 import { useMaybeAbbreviations } from "@/charts/shared/abbreviations";
 import {
@@ -83,7 +83,7 @@ export const useQueryFilters = ({
   componentIris?: string[];
 }): DataCubeObservationFilter[] => {
   const allInteractiveDataFilters = useInteractiveFilters((d) => d.dataFilters);
-  return React.useMemo(() => {
+  return useMemo(() => {
     return chartConfig.cubes.map((cube) => {
       const cubeFilters = getChartConfigFilters(chartConfig.cubes, {
         cubeIri: cube.iri,
@@ -488,7 +488,7 @@ const getBaseWideData = ({
 
 const getIdentityIri = (iri: string) => `${iri}/__identity__`;
 export const useGetIdentityY = (iri: string) => {
-  return React.useCallback(
+  return useCallback(
     (d: Observation) => {
       return (d[getIdentityIri(iri)] as number | null) ?? null;
     },

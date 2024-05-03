@@ -1,6 +1,6 @@
 import { Box, Button, IconButton, Link, MenuItem, styled } from "@mui/material";
 import NextLink from "next/link";
-import React from "react";
+import React, { useRef } from "react";
 
 import ConfirmationDialog from "@/components/confirmation-dialog";
 import useDisclosure from "@/components/use-disclosure";
@@ -134,7 +134,7 @@ export const Action = (props: ActionProps & { as: "menuitem" | "button" }) => {
 
 export const RowActions = (props: ActionsProps) => {
   const { actions } = props;
-  const buttonRef = React.useRef<HTMLButtonElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
   const menuDisclosure = useDisclosure();
   const { isOpen, open, close } = menuDisclosure;
 

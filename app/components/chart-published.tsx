@@ -2,7 +2,7 @@ import { Trans } from "@lingui/macro";
 import { Box, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useEffect, useMemo, useRef, useCallback } from "react";
 import { useStore } from "zustand";
 
 import { DataSetTable } from "@/browse/datatable";
@@ -63,7 +63,7 @@ export const ChartPublished = (props: ChartPublishedProps) => {
   const [state] = useConfiguratorState(isPublished);
   const { dataSource } = state;
   const locale = useLocale();
-  const renderChart = React.useCallback(
+  const renderChart = useCallback(
     (chartConfig: ChartConfig) => (
       <ChartTablePreviewProvider key={chartConfig.key}>
         <ChartWrapper key={chartConfig.key} layoutType={state.layout.type}>

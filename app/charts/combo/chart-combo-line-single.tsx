@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo, useCallback } from "react";
 
 import { ChartDataWrapper } from "@/charts/chart-data-wrapper";
 import { ComboLineSingle } from "@/charts/combo/combo-line-single";
@@ -26,11 +26,11 @@ export const ChartComboLineSingleVisualization = (
   return <ChartDataWrapper {...props} Component={ChartComboLineSingle} />;
 };
 
-export const ChartComboLineSingle = React.memo(
+export const ChartComboLineSingle = memo(
   (props: ChartProps<ComboLineSingleConfig>) => {
     const { chartConfig, measures } = props;
     const { interactiveFiltersConfig } = chartConfig;
-    const getLegendItemDimension = React.useCallback(
+    const getLegendItemDimension = useCallback(
       (label: string) => {
         return measures.find((measure) => measure.label === label);
       },

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 import { ComboLineColumnState } from "@/charts/combo/combo-line-column-state";
 import { ComboLineDualState } from "@/charts/combo/combo-line-dual-state";
@@ -23,7 +23,7 @@ export const AxisHeightLinearDual = (props: AxisHeightLinearDualProps) => {
   const { orientation = "left" } = props;
   const leftAligned = orientation === "left";
   const { gridColor, labelColor, axisLabelFontSize } = useChartTheme();
-  const [ref, setRef] = React.useState<SVGGElement | null>(null);
+  const [ref, setRef] = useState<SVGGElement | null>(null);
   const { y, yOrientationScales, colors, bounds, maxRightTickWidth } =
     useChartState() as ComboLineDualState | ComboLineColumnState;
   const yScale = yOrientationScales[orientation];

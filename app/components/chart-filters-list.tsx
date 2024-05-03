@@ -1,6 +1,6 @@
 import { Trans } from "@lingui/macro";
 import { Box, Typography } from "@mui/material";
-import React, { Fragment } from "react";
+import React, { Fragment, useMemo } from "react";
 
 import {
   extractChartConfigComponentIris,
@@ -55,7 +55,7 @@ export const ChartFiltersList = (props: ChartFiltersListProps) => {
       })),
     },
   });
-  const allFilters = React.useMemo(() => {
+  const allFilters = useMemo(() => {
     if (!data?.dataCubesComponents || !dimensions) {
       return [];
     }

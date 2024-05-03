@@ -580,11 +580,11 @@ const ChartComboLineSingleYField = (
   const { fields } = chartConfig;
   const { y } = fields;
 
-  const numericalMeasures = React.useMemo(() => {
+  const numericalMeasures = useMemo(() => {
     return measures.filter(isNumericalMeasure);
   }, [measures]);
 
-  const unit = React.useMemo(() => {
+  const unit = useMemo(() => {
     const uniqueUnits = Array.from(
       new Set(
         y.componentIris.map((iri) => {
@@ -603,7 +603,7 @@ const ChartComboLineSingleYField = (
     return uniqueUnits[0];
   }, [numericalMeasures, y.componentIris]);
 
-  const getOptionGroups = React.useCallback(
+  const getOptionGroups = useCallback(
     (
       iri: string | null,
       {
@@ -644,17 +644,16 @@ const ChartComboLineSingleYField = (
     [numericalMeasures, y.componentIris, unit]
   );
 
-  const { addNewMeasureOptions, showAddNewMeasureButton } =
-    React.useMemo(() => {
-      const addNewMeasureOptions = getOptionGroups(null, { allowNone: true });
+  const { addNewMeasureOptions, showAddNewMeasureButton } = useMemo(() => {
+    const addNewMeasureOptions = getOptionGroups(null, { allowNone: true });
 
-      return {
-        addNewMeasureOptions,
-        showAddNewMeasureButton:
-          addNewMeasureOptions.flatMap(([_, v]) => v).filter((d) => !d.disabled)
-            .length > 1,
-      };
-    }, [getOptionGroups]);
+    return {
+      addNewMeasureOptions,
+      showAddNewMeasureButton:
+        addNewMeasureOptions.flatMap(([_, v]) => v).filter((d) => !d.disabled)
+          .length > 1,
+    };
+  }, [getOptionGroups]);
 
   return (
     <>
@@ -767,11 +766,11 @@ const ChartComboLineDualYField = (
   const { fields } = chartConfig;
   const { y } = fields;
 
-  const numericalMeasures = React.useMemo(() => {
+  const numericalMeasures = useMemo(() => {
     return measures.filter(isNumericalMeasure);
   }, [measures]);
 
-  const { leftAxisMeasure, rightAxisMeasure } = React.useMemo(() => {
+  const { leftAxisMeasure, rightAxisMeasure } = useMemo(() => {
     const leftAxisMeasure = numericalMeasures.find(
       (m) => m.iri === y.leftAxisComponentIri
     ) as Measure;
@@ -789,7 +788,7 @@ const ChartComboLineDualYField = (
     throw new Error("ChartComboYField can only be used with dual-unit charts!");
   }
 
-  const getOptionGroups = React.useCallback(
+  const getOptionGroups = useCallback(
     (orientation: "left" | "right") => {
       return getComboOptionGroups(numericalMeasures, (m) => {
         return orientation === "left"
@@ -882,11 +881,11 @@ const ChartComboLineColumnYField = (
   const { fields } = chartConfig;
   const { y } = fields;
 
-  const numericalMeasures = React.useMemo(() => {
+  const numericalMeasures = useMemo(() => {
     return measures.filter(isNumericalMeasure);
   }, [measures]);
 
-  const { lineMeasure, columnMeasure } = React.useMemo(() => {
+  const { lineMeasure, columnMeasure } = useMemo(() => {
     const lineMeasure = numericalMeasures.find(
       (m) => m.iri === y.lineComponentIri
     ) as Measure;
@@ -904,7 +903,7 @@ const ChartComboLineColumnYField = (
     throw new Error("ChartComboYField can only be used with dual-unit charts!");
   }
 
-  const getOptionGroups = React.useCallback(
+  const getOptionGroups = useCallback(
     (type: "line" | "column") => {
       return getComboOptionGroups(numericalMeasures, (m) => {
         return type === "line"

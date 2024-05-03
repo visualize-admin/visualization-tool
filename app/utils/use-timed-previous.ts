@@ -1,8 +1,8 @@
-import React from "react";
+import { useEffect, useState } from "react";
 
 export const useTimedPrevious = <T>(value: T, duration: number): T => {
-  const [previousValue, setPreviousValue] = React.useState<T>(value);
-  React.useEffect(() => {
+  const [previousValue, setPreviousValue] = useState<T>(value);
+  useEffect(() => {
     const timeoutId = setTimeout(() => {
       setPreviousValue(value);
     }, duration);

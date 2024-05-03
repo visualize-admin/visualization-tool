@@ -1,4 +1,4 @@
-import React, { createContext, ReactNode, useContext } from "react";
+import React, { createContext, ReactNode, useContext, useEffect } from "react";
 
 import { useTransitionStore } from "@/stores/transition";
 import { useResizeObserver } from "@/utils/use-resize-observer";
@@ -27,7 +27,7 @@ export const Observer = ({ children }: { children: ReactNode }) => {
   const isResizing = prev !== width;
   const setEnableTransition = useTransitionStore((state) => state.setEnable);
 
-  React.useEffect(
+  useEffect(
     () => setEnableTransition(!isResizing),
     [isResizing, setEnableTransition]
   );

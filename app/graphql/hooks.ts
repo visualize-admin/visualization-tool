@@ -1,4 +1,4 @@
-import React from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Client, useClient } from "urql";
 
 import {
@@ -25,7 +25,7 @@ import {
 } from "./query-hooks";
 
 const useQueryKey = (options: object) => {
-  return React.useMemo(() => {
+  return useMemo(() => {
     return JSON.stringify(options);
   }, [options]);
 };
@@ -50,7 +50,7 @@ export const makeUseQuery =
   ) =>
   (options: T & { keepPreviousData?: boolean }) => {
     const client = useClient();
-    const [result, setResult] = React.useState<{
+    const [result, setResult] = useState<{
       queryKey: string | null;
       data?: V | null;
       error?: Error;
@@ -58,7 +58,7 @@ export const makeUseQuery =
     }>({ fetching: !options.pause, queryKey: null, data: null });
     const { keepPreviousData } = options;
     const queryKey = useQueryKey(options);
-    const executeQuery = React.useCallback(
+    const executeQuery = useCallback(
       async (options: T) => {
         setResult((prev) => ({
           ...prev,
@@ -79,7 +79,7 @@ export const makeUseQuery =
       [queryKey]
     );
 
-    React.useEffect(() => {
+    useEffect(() => {
       if (options.pause) {
         return;
       }

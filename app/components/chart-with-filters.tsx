@@ -1,5 +1,5 @@
 import dynamic from "next/dynamic";
-import React from "react";
+import React, { forwardRef } from "react";
 
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import useSyncInteractiveFilters from "@/charts/shared/use-sync-interactive-filters";
@@ -151,7 +151,7 @@ type ChartWithFiltersProps = {
   chartConfig: ChartConfig;
 };
 
-export const ChartWithFilters = React.forwardRef<
+export const ChartWithFilters = forwardRef<
   HTMLDivElement,
   ChartWithFiltersProps
 >((props, ref) => {

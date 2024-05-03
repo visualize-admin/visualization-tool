@@ -766,7 +766,7 @@ export const SearchFilters = ({
       />
     ) : null;
 
-  const subthemes = React.useMemo(() => {
+  const subthemes = useMemo(() => {
     return sortBy(
       uniqBy(
         cubes.flatMap((d) => d.cube.subthemes),

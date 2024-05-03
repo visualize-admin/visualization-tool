@@ -2,7 +2,7 @@ import { t, Trans } from "@lingui/macro";
 import { Box, Button, SelectChangeEvent, Typography } from "@mui/material";
 import isEmpty from "lodash/isEmpty";
 import isEqual from "lodash/isEqual";
-import * as React from "react";
+import React, { useMemo, useState, useEffect, useRef } from "react";
 import { useClient } from "urql";
 
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
@@ -78,15 +78,15 @@ export const ChartDataFilters = (props: ChartDataFiltersProps) => {
     allowNoneValues: true,
     componentIris,
   });
-  const [filtersVisible, setFiltersVisible] = React.useState(false);
+  const [filtersVisible, setFiltersVisible] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (componentIris.length === 0) {
       setFiltersVisible(false);
     }
   }, [componentIris.length]);
 
-  const preparedFilters: PreparedFilter[] | undefined = React.useMemo(() => {
+  const preparedFilters: PreparedFilter[] | undefined = useMemo(() => {
     return chartConfig.cubes.map((cube) => {
       const cubeQueryFilters = queryFilters.find(
         (d) => d.iri === cube.iri
@@ -272,7 +272,7 @@ const DataFilter = (props: DataFilterProps) => {
   const dataFilterValue = dimension ? dataFilters[dimension.iri]?.value : null;
   const value = dataFilterValue ?? configFilterValue ?? FIELD_VALUE_NONE;
 
-  React.useEffect(() => {
+  useEffect(() => {
     const values = dimension?.values.map((d) => d.value) ?? [];
 
     // We only want to disable loading state when the filter is actually valid.
@@ -354,7 +354,7 @@ const DataFilterGenericDimension = (props: DataFilterGenericDimensionProps) => {
     message: "No Filter",
   });
   const options = propOptions ?? dimension.values;
-  const allOptions = React.useMemo(() => {
+  const allOptions = useMemo(() => {
     return isKeyDimension
       ? options
       : [
@@ -404,7 +404,7 @@ const DataFilterHierarchyDimension = (
     id: "controls.dimensionvalue.none",
     message: `No Filter`,
   });
-  const options = React.useMemo(() => {
+  const options = useMemo(() => {
     const opts = (
       hierarchy
         ? hierarchyToOptions(
@@ -472,7 +472,7 @@ const DataFilterTemporalDimension = ({
     id: "controls.dimensionvalue.none",
     message: "No Filter",
   });
-  const { minDate, maxDate, options, optionValues } = React.useMemo(() => {
+  const { minDate, maxDate, options, optionValues } = useMemo(() => {
     if (values.length) {
       const options = values.map((d) => {
         return {
@@ -554,19 +554,19 @@ const useEnsurePossibleInteractiveFilters = (
   const { dataSource, chartConfig, preparedFilters } = props;
   const [, dispatch] = useConfiguratorState();
   const loadingState = useLoadingState();
-  const [error, setError] = React.useState<Error>();
-  const lastFilters = React.useRef<Record<string, Filters>>({});
+  const [error, setError] = useState<Error>();
+  const lastFilters = useRef<Record<string, Filters>>({});
   const client = useClient();
   const IFRaw = useInteractiveFiltersRaw();
   const setDataFilters = useInteractiveFilters((d) => d.setDataFilters);
-  const filtersByCubeIri = React.useMemo(() => {
+  const filtersByCubeIri = useMemo(() => {
     return preparedFilters?.reduce<Record<string, PreparedFilter>>((acc, d) => {
       acc[d.cubeIri] = d;
       return acc;
     }, {});
   }, [preparedFilters]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const run = async () => {
       if (!filtersByCubeIri) {
         return;

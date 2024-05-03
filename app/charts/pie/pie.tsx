@@ -1,5 +1,5 @@
 import { arc, PieArcDatum } from "d3-shape";
-import React from "react";
+import React, { useMemo, useEffect, useRef } from "react";
 
 import { PieState } from "@/charts/pie/pie-state";
 import { RenderDatum, renderPies } from "@/charts/pie/rendering-utils";
@@ -17,7 +17,7 @@ export const Pie = () => {
   const transitionDuration = useTransitionStore((state) => state.duration);
   const { width, height, chartWidth, chartHeight } = bounds;
   const [, dispatch] = useInteraction();
-  const ref = React.useRef<SVGGElement>(null);
+  const ref = useRef<SVGGElement>(null);
 
   const maxSide = Math.min(chartWidth, chartHeight) / 2;
 
@@ -28,7 +28,7 @@ export const Pie = () => {
   const yTranslate = height / 2;
 
   const arcs = getPieData(chartData);
-  const renderData: RenderDatum[] = React.useMemo(() => {
+  const renderData: RenderDatum[] = useMemo(() => {
     return arcs.map((arcDatum) => {
       return {
         key: getRenderingKey(arcDatum.data),
@@ -61,7 +61,7 @@ export const Pie = () => {
     });
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (ref.current && renderData) {
       renderContainer(ref.current, {
         id: "pies",

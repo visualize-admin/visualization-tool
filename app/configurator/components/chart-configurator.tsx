@@ -197,7 +197,7 @@ const useEnsurePossibleFilters = ({
   const [error, setError] = useState<Error>();
   const lastFilters = useRef<Record<string, Filters>>({});
   const client = useClient();
-  const joinByIris = React.useMemo(() => {
+  const joinByIris = useMemo(() => {
     return chartConfig.cubes.flatMap((cube) => cube.joinBy).filter(truthy);
   }, [chartConfig.cubes]);
 
@@ -326,7 +326,7 @@ const useFilterReorder = ({
   const chartConfig = getChartConfig(state);
   const locale = useLocale();
   const filters = getChartConfigFilters(chartConfig.cubes, { joined: true });
-  const joinByIris = React.useMemo(() => {
+  const joinByIris = useMemo(() => {
     return chartConfig.cubes.flatMap((cube) => cube.joinBy).filter(truthy);
   }, [chartConfig.cubes]);
   const { mappedFiltersIris } = useMemo(() => {

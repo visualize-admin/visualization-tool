@@ -957,7 +957,7 @@ export const TimeFilter = (props: TimeFilterProps) => {
     });
   }, [dimension, formatLocale, timeFormatUnit]);
 
-  const getClosestDatesFromDateRange = React.useCallback(
+  const getClosestDatesFromDateRange = useCallback(
     (from: Date, to: Date) => {
       const getClosestDatesFromDateRange = makeGetClosestDatesFromDateRange(
         sortedOptions,

@@ -1,6 +1,6 @@
 import { LocalizationProvider } from "@mui/lab";
 import DateAdapter from "@mui/lab/AdapterDateFns";
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 import { Locale } from "@/locales/locales";
 
@@ -12,9 +12,9 @@ const AsyncLocalizationProvider = (
   props: React.PropsWithChildren<AsyncLocalizationProviderProps>
 ) => {
   const { locale, children } = props;
-  const [dateFnsLocale, setDateFnsLocale] = React.useState<object>();
+  const [dateFnsLocale, setDateFnsLocale] = useState<object>();
 
-  React.useEffect(() => {
+  useEffect(() => {
     const run = async () => {
       switch (locale) {
         case "en": {

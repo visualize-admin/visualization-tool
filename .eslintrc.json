@@ -20,13 +20,18 @@
     "@next/next/no-html-link-for-pages": ["error", "app/pages/"],
     "deprecate/member-expression": [
       "error",
-      { "name": "React.useMemo", "use": "named import" },
-      { "name": "React.memo", "use": "named import" },
-      { "name": "React.useState", "use": "named import" },
-      { "name": "React.useEffect", "use": "named import" },
-      { "name": "React.useReducer", "use": "named import" },
-      { "name": "React.use", "use": "named import" },
-      { "name": "React.useMemo", "use": "named import" }
+      { "name": "useMemo", "use": "named import" },
+      { "name": "useState", "use": "named import" },
+      { "name": "useContext", "use": "named import" },
+      { "name": "useEffect", "use": "named import" },
+      { "name": "createContext", "use": "named import" },
+      { "name": "useReducer", "use": "named import" },
+      { "name": "memo", "use": "named import" },
+      { "name": "forwardRef", "use": "named import" },
+      { "name": "useRef", "use": "named import" },
+      { "name": "useCallback", "use": "named import" },
+      { "name": "useImperativeHandle", "use": "named import" },
+      { "name": "createElement", "use": "named import" }
     ],
     "import/order": [
       2,

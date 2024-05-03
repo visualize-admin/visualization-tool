@@ -1,6 +1,12 @@
 import { Box, Button, Typography } from "@mui/material";
 import orderBy from "lodash/orderBy";
-import React, { ChangeEvent } from "react";
+import React, {
+  ChangeEvent,
+  createContext,
+  useContext,
+  useMemo,
+  useEffect,
+} from "react";
 import { useSyncExternalStore } from "use-sync-external-store/shim";
 
 import { ChartState, useChartState } from "@/charts/shared/chart-state";
@@ -25,10 +31,10 @@ import {
 } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
 
-const TimelineContext = React.createContext<Timeline | undefined>(undefined);
+const TimelineContext = createContext<Timeline | undefined>(undefined);
 
 const useTimeline = () => {
-  const timeline = React.useContext(TimelineContext);
+  const timeline = useContext(TimelineContext);
 
   if (!timeline) {
     throw new Error(
@@ -56,7 +62,7 @@ export const TimeSlider = (props: TimeSliderProps) => {
     dimensions,
   } = props;
 
-  const dimension = React.useMemo(() => {
+  const dimension = useMemo(() => {
     return dimensions.find((d) => d.iri === componentIri);
   }, [componentIri, dimensions]);
   const temporal = isTemporalDimension(dimension);
@@ -75,7 +81,7 @@ export const TimeSlider = (props: TimeSliderProps) => {
     Exclude<ChartState, TableChartState>
   >;
   const dimensionFilter = filters[dimension.iri];
-  const timelineProps: TimelineProps = React.useMemo(() => {
+  const timelineProps: TimelineProps = useMemo(() => {
     const commonProps = {
       animationType,
       msDuration: animationDuration * 1000,
@@ -127,7 +133,7 @@ export const TimeSlider = (props: TimeSliderProps) => {
     dimensionFilter,
   ]);
 
-  const timeline = React.useMemo(() => {
+  const timeline = useMemo(() => {
     return new Timeline(timelineProps);
   }, [timelineProps]);
 
@@ -201,7 +207,7 @@ const Slider = () => {
   const timeSlider = useInteractiveFilters((d) => d.timeSlider);
   const setTimeSlider = useInteractiveFilters((d) => d.setTimeSlider);
 
-  const marks = React.useMemo(() => {
+  const marks = useMemo(() => {
     return timeline.domain.map((d) => ({ value: d })) ?? [];
   }, [timeline.domain]);
 
@@ -213,7 +219,7 @@ const Slider = () => {
     timeline.stop();
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (timeline.type !== timeSlider.type) {
       setTimeSlider({
         type: timeline.type,

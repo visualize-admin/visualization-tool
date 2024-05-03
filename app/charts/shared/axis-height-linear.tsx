@@ -1,6 +1,6 @@
 import { axisLeft, axisRight } from "d3-axis";
 import { NumberValue, ScaleLinear } from "d3-scale";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 
 import type { AreasState } from "@/charts/area/areas-state";
 import type { GroupedColumnsState } from "@/charts/column/columns-grouped-state";
@@ -26,7 +26,7 @@ export const TICK_PADDING = 6;
 
 export const AxisHeightLinear = () => {
   const { gridColor, labelColor, axisLabelFontSize } = useChartTheme();
-  const [ref, setRef] = React.useState<SVGGElement | null>(null);
+  const [ref, setRef] = useState<SVGGElement | null>(null);
   const state = useChartState() as
     | AreasState
     | ColumnsState
@@ -104,14 +104,14 @@ export const useRenderAxisHeightLinear = (
   const calculationType = useInteractiveFilters((d) => d.calculation.type);
   const normalized = calculationType === "percent";
   const ticks = getTickNumber(height);
-  const tickFormat = React.useCallback(
+  const tickFormat = useCallback(
     (d: NumberValue) => {
       return normalized ? `${formatNumber(d)}%` : formatNumber(d);
     },
     [formatNumber, normalized]
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!container) {
       return;
     }

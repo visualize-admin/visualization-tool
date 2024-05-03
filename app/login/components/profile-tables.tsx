@@ -18,7 +18,7 @@ import {
 import { PUBLISHED_STATE } from "@prisma/client";
 import sortBy from "lodash/sortBy";
 import NextLink from "next/link";
-import React from "react";
+import React, { useMemo } from "react";
 
 import useDisclosure from "@/components/use-disclosure";
 import { ParsedConfig } from "@/db/config";
@@ -195,7 +195,7 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
     close: closeRename,
   } = useDisclosure();
 
-  const actions = React.useMemo(() => {
+  const actions = useMemo(() => {
     const actions: (ActionProps | null)[] = [
       {
         type: "link",
@@ -296,7 +296,7 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
     updateConfigMut,
   ]);
 
-  const chartTitle = React.useMemo(() => {
+  const chartTitle = useMemo(() => {
     const title = config.data.chartConfigs
       .map((d) => d.meta.title?.[locale] ?? false)
       .filter(truthy)

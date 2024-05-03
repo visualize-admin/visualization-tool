@@ -195,7 +195,7 @@ const useColumnsStackedState = (
     return group(chartData, getX);
   }, [chartData, getX, sumsByX, getY, yMeasure.iri, normalize]);
 
-  const chartWideData = React.useMemo(() => {
+  const chartWideData = useMemo(() => {
     return getWideData({
       dataGroupedByX: chartDataGroupedByX,
       xKey,
@@ -305,7 +305,7 @@ const useColumnsStackedState = (
   ]);
 
   const animationIri = fields.animation?.componentIri;
-  const getAnimation = React.useCallback(
+  const getAnimation = useCallback(
     (d: Observation) => {
       return animationIri ? (d[animationIri] as string) : "";
     },

@@ -1,6 +1,6 @@
 import { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
-import * as React from "react";
+import React, { useMemo } from "react";
 
 import { AppLayout } from "@/components/layout";
 import {
@@ -27,7 +27,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
 };
 
 const ChartConfiguratorPage: NextPage<PageProps> = ({ chartId }) => {
-  const metadataPanelStore = React.useMemo(() => {
+  const metadataPanelStore = useMemo(() => {
     return createMetadataPanelStore();
   }, []);
 

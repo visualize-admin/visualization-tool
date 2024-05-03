@@ -1,5 +1,5 @@
 import { ascending } from "d3-array";
-import React from "react";
+import { useCallback, useMemo } from "react";
 
 import { ChartProps } from "@/charts/shared/ChartProps";
 import { usePlottableData } from "@/charts/shared/chart-helpers";
@@ -44,7 +44,7 @@ export const useAreasStateVariables = (
   });
 
   const { getX } = temporalXVariables;
-  const sortData: AreasStateVariables["sortData"] = React.useCallback(
+  const sortData: AreasStateVariables["sortData"] = useCallback(
     (data) => {
       return [...data].sort((a, b) => {
         return ascending(getX(a), getX(b));
@@ -72,7 +72,7 @@ export const useAreasStateData = (
     getX,
     getY,
   });
-  const sortedPlottableData = React.useMemo(() => {
+  const sortedPlottableData = useMemo(() => {
     return sortData(plottableData);
   }, [sortData, plottableData]);
   const data = useChartData(sortedPlottableData, {

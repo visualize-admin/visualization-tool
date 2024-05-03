@@ -26,7 +26,7 @@ import orderBy from "lodash/orderBy";
 import sortBy from "lodash/sortBy";
 import uniqBy from "lodash/uniqBy";
 import { useRouter } from "next/router";
-import React, { useMemo } from "react";
+import React, { useMemo, useState, useEffect, useCallback } from "react";
 
 import { DatasetMetadata } from "@/components/dataset-metadata";
 import { Error, Loading } from "@/components/hint";
@@ -248,7 +248,7 @@ export const MetadataPanel = (props: MetadataPanelProps) => {
   });
 
   // Close and reset the metadata panel when route has changed.
-  React.useEffect(() => {
+  useEffect(() => {
     const handleHashChange = () => {
       setOpen(false);
       reset();
@@ -426,9 +426,9 @@ const TabPanelData = ({
   );
   const { setSelectedDimension, clearSelectedDimension } =
     useMetadataPanelStoreActions();
-  const [inputValue, setInputValue] = React.useState("");
+  const [inputValue, setInputValue] = useState("");
 
-  const options = React.useMemo(() => {
+  const options = useMemo(() => {
     return dimensions.flatMap(
       (
         d
@@ -624,10 +624,10 @@ const TabPanelDataDimension = ({
 }) => {
   const classes = useOtherStyles();
   const { setSelectedDimension } = useMetadataPanelStoreActions();
-  const label = React.useMemo(() => {
+  const label = useMemo(() => {
     return getComponentLabel(dim as Dimension, cubeIri);
   }, [cubeIri, dim]);
-  const description = React.useMemo(() => {
+  const description = useMemo(() => {
     const description = getComponentDescription(dim, cubeIri);
 
     if (!expanded && description && description.length > 180) {
@@ -661,7 +661,7 @@ const TabPanelDataDimension = ({
     dim.iri,
   ]);
 
-  const handleClick = React.useCallback(() => {
+  const handleClick = useCallback(() => {
     if (!expanded) {
       setSelectedDimension(dim);
     }

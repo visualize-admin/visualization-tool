@@ -1,4 +1,4 @@
-import React from "react";
+import { createContext, useContext } from "react";
 import { createStore, useStore } from "zustand";
 import shallow from "zustand/shallow";
 
@@ -54,17 +54,17 @@ export const createMetadataPanelStore = () =>
 export const useMetadataPanelStore: <T>(
   selector: (state: MetadataPanelState) => T
 ) => T = (selector) => {
-  const store = React.useContext(MetadataPanelStoreContext);
+  const store = useContext(MetadataPanelStoreContext);
 
   return useStore(store, selector, shallow);
 };
 
 export const useMetadataPanelStoreActions = () => {
-  const store = React.useContext(MetadataPanelStoreContext);
+  const store = useContext(MetadataPanelStoreContext);
 
   return useStore(store, (state) => state.actions);
 };
 
 const defaultStore = createMetadataPanelStore();
 
-export const MetadataPanelStoreContext = React.createContext(defaultStore);
+export const MetadataPanelStoreContext = createContext(defaultStore);

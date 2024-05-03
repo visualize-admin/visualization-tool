@@ -1,5 +1,5 @@
 import { schemeCategory10 } from "d3-scale-chromatic";
-import React from "react";
+import React, { useMemo, useEffect, useRef } from "react";
 
 import {
   RenderDatum,
@@ -24,10 +24,10 @@ export const Scatterplot = () => {
     getRenderingKey,
   } = useChartState() as ScatterplotState;
   const { margins } = bounds;
-  const ref = React.useRef<SVGGElement>(null);
+  const ref = useRef<SVGGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
-  const renderData: RenderDatum[] = React.useMemo(() => {
+  const renderData: RenderDatum[] = useMemo(() => {
     return chartData.map((d) => {
       return {
         key: getRenderingKey(d),
@@ -48,7 +48,7 @@ export const Scatterplot = () => {
     getRenderingKey,
   ]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (ref.current && renderData) {
       renderContainer(ref.current, {
         id: "scatterplot",
