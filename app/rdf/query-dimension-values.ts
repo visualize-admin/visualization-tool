@@ -116,18 +116,43 @@ export async function loadDimensionsValuesWithMetadata(
         VALUES ?dimensionIri { <${dimensionIri}> }
         <${cubeIri}> cube:observationConstraint/sh:property ?dimension .
         ?dimension sh:path ?dimensionIri .
-        ?dimension sh:in/rdf:rest*/rdf:first ?maybeVersionedValue .
-        OPTIONAL {
-          ?dimension schema:version ?version .
-          ?maybeVersionedValue schema:sameAs ?maybeUnversionedValue .
-        }
-        BIND(COALESCE(?maybeUnversionedValue, ?maybeVersionedValue) as ?value)
+        ?dimension schema:version ?version .
+        ?dimension sh:in/rdf:rest*/rdf:first/schema:sameAs ?value .
+      }
+    } UNION {
+      SELECT ?dimensionIri ?value WHERE {
+        VALUES ?dimensionIri { <${dimensionIri}> }
+        <${cubeIri}> cube:observationConstraint/sh:property ?dimension .
+        ?dimension sh:path ?dimensionIri .
+        FILTER NOT EXISTS { ?dimension schema:version ?version . }
+        ?dimension sh:in/rdf:rest*/rdf:first ?value .
       }
     } UNION`
     } {
       { #pragma evaluate on
         SELECT DISTINCT ?dimensionIri ?value WHERE {
-          FILTER(?dimension NOT IN (rdf:type, cube:observedBy))
+          ${
+            queryFilters
+              ? `<${cubeIri}> cube:observationConstraint/sh:property ?dimension .
+              ?dimension sh:path ?dimensionIri .
+              ?dimension schema:version ?version .
+              FILTER(?dimensionIri NOT IN (rdf:type, cube:observedBy))`
+              : `
+          VALUES ?dimensionIri { <${dimensionIri}> }
+          <${cubeIri}> cube:observationConstraint/sh:property ?dimension .
+          ?dimension sh:path ?dimensionIri .
+          ?dimension schema:version ?version .
+          FILTER(NOT EXISTS{ ?dimension sh:in ?in . })`
+          }
+          <${cubeIri}> cube:observationSet/cube:observation ?observation .
+          ?observation ?dimensionIri ?versionedValue .
+          ?versionedValue schema:sameAs ?value .
+          ${queryFilters}
+        }
+      }
+    } UNION {
+      { #pragma evaluate on
+        SELECT DISTINCT ?dimensionIri ?value WHERE {
           ${
             queryFilters
               ? `<${cubeIri}> cube:observationConstraint/sh:property ?dimension .
@@ -140,12 +165,8 @@ export async function loadDimensionsValuesWithMetadata(
           FILTER(NOT EXISTS{ ?dimension sh:in ?in . })`
           }
           <${cubeIri}> cube:observationSet/cube:observation ?observation .
-          ?observation ?dimensionIri ?maybeVersionedValue .
-          OPTIONAL {
-            ?dimension schema:version ?version .
-            ?maybeVersionedValue schema:sameAs ?maybeUnversionedValue .
-          }
-          BIND(COALESCE(?maybeUnversionedValue, ?maybeVersionedValue) as ?value)
+          ?observation ?dimensionIri ?value .
+          FILTER NOT EXISTS { ?value schema:version ?version . }
           ${queryFilters}
         }
       }
