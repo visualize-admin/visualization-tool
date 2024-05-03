@@ -1,6 +1,6 @@
 {
   "extends": "next",
-  "plugins": ["import", "visualize-admin", "jest"],
+  "plugins": ["import", "visualize-admin", "jest", "deprecate"],
   "rules": {
     "no-restricted-imports": [
       "error",
@@ -18,6 +18,16 @@
     "visualize-admin/no-large-sx": "error",
     "visualize-admin/make-styles": "error",
     "@next/next/no-html-link-for-pages": ["error", "app/pages/"],
+    "deprecate/member-expression": [
+      "error",
+      { "name": "React.useMemo", "use": "named import" },
+      { "name": "React.memo", "use": "named import" },
+      { "name": "React.useState", "use": "named import" },
+      { "name": "React.useEffect", "use": "named import" },
+      { "name": "React.useReducer", "use": "named import" },
+      { "name": "React.use", "use": "named import" },
+      { "name": "React.useMemo", "use": "named import" }
+    ],
     "import/order": [
       2,
       {

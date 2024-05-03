@@ -171,6 +171,7 @@
     "@types/wellknown": "^0.5.1",
     "babel-core": "^7.0.0-bridge.0",
     "babel-plugin-module-resolver": "^4.1.0",
+    "eslint-plugin-deprecate": "^0.8.4",
     "eslint-plugin-jest": "^28.3.0",
     "jest": "^27.3.0",
     "playwright-testing-library": "^4.5.0",
