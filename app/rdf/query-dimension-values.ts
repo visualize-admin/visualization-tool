@@ -102,10 +102,15 @@ export async function loadDimensionValuesWithMetadata(
     dimensionIri
   );
 
-  if (!cubeDimensions.find((d) => d.path?.value === dimensionIri)) {
+  const cubeDimension = cubeDimensions.find(
+    (d) => d.path?.value === dimensionIri
+  );
+
+  if (!cubeDimension) {
     throw new Error(`Dimension not found: ${dimensionIri}`);
   }
 
+  const isDimensionVersioned = dimensionIsVersioned(cubeDimension);
   const query = `PREFIX cube: <https://cube.link/>
 PREFIX geo: <http://www.opengis.net/ont/geosparql#>
 PREFIX schema: <http://schema.org/>
@@ -113,8 +118,8 @@ PREFIX sh: <http://www.w3.org/ns/shacl#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 
 CONSTRUCT {
-  ?dimensionIri rdf:first ?value .
-  ?value
+  ?dimensionIri rdf:first ?maybe_unversioned_value .
+  ?maybe_unversioned_value
     schema:name ?name ;
     schema:alternateName ?alternateName ;
     schema:description ?description ;
@@ -133,12 +138,7 @@ CONSTRUCT {
       VALUES ?dimensionIri { <${dimensionIri}> }
       <${cubeIri}> cube:observationConstraint/sh:property ?dimension .
       ?dimension sh:path ?dimensionIri .
-      ?dimension sh:in/rdf:rest*/rdf:first ?maybeVersionedValue .
-      OPTIONAL {
-        ?dimension schema:version ?version .
-        ?maybeVersionedValue schema:sameAs ?maybeUnversionedValue .
-      }
-      BIND(COALESCE(?maybeUnversionedValue, ?maybeVersionedValue) as ?value)
+      ?dimension sh:in/rdf:rest*/rdf:first ?value .
     }
   } UNION`
   } {
@@ -155,16 +155,12 @@ CONSTRUCT {
         }
         ${queryFilters ? `VALUES ?dimensionIri { <${dimensionIri}> }` : ""}
         <${cubeIri}> cube:observationSet/cube:observation ?observation .
-        ?observation ?dimensionIri ?maybeVersionedValue .
-        OPTIONAL {
-          ?dimension schema:version ?version .
-          ?maybeVersionedValue schema:sameAs ?maybeUnversionedValue .
-        }
-        BIND(COALESCE(?maybeUnversionedValue, ?maybeVersionedValue) as ?value)
+        ?observation ?dimensionIri ?value .
         ${queryFilters}
       }
     }
   }
+  # Metadata is only attached to versioned values
   ${buildLocalizedSubQuery("value", "schema:name", "name", {
     locale,
   })}
@@ -180,6 +176,12 @@ CONSTRUCT {
   OPTIONAL { ?value geo:hasGeometry ?geometry . }
   OPTIONAL { ?value schema:latitude ?latitude . }
   OPTIONAL { ?value schema:longitude ?longitude . }
+  ${
+    isDimensionVersioned
+      ? `OPTIONAL { ?value schema:sameAs ?unversioned_value . }`
+      : ""
+  }
+  BIND(COALESCE(?unversioned_value, ?value) AS ?maybe_unversioned_value)
 }`;
 
   return await executeWithCache(
