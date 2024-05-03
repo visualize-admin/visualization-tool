@@ -73,7 +73,13 @@ const makeAxis = (
     .attr("text-anchor", "start");
 };
 
-export const MapLegend = ({ chartConfig }: { chartConfig: MapConfig }) => {
+export const MapLegend = ({
+  chartConfig,
+  observations,
+}: {
+  chartConfig: MapConfig;
+  observations: Observation[];
+}) => {
   const { areaLayer, symbolLayer } = useChartState() as MapState;
   const showAreaLegend =
     areaLayer &&
@@ -202,6 +208,7 @@ export const MapLegend = ({ chartConfig }: { chartConfig: MapConfig }) => {
           component={areaLayer.colors.component}
           getColor={areaLayer.colors.getColor}
           useAbbreviations={areaLayer.colors.useAbbreviations}
+          observations={observations}
         />
       )}
 
@@ -213,6 +220,7 @@ export const MapLegend = ({ chartConfig }: { chartConfig: MapConfig }) => {
             component={symbolLayer.colors.component}
             getColor={symbolLayer.colors.getColor}
             useAbbreviations={symbolLayer.colors.useAbbreviations}
+            observations={observations}
           />
         )}
     </Box>

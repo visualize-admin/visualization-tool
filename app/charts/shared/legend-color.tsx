@@ -3,7 +3,7 @@ import { Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 import orderBy from "lodash/orderBy";
-import { memo, useMemo } from "react";
+import { memo, useCallback, useMemo } from "react";
 
 import { ColorsChartState, useChartState } from "@/charts/shared/chart-state";
 import { rgbArrayToHex } from "@/charts/shared/colors";
@@ -19,7 +19,14 @@ import {
   useChartConfigFilters,
   useReadOnlyConfiguratorState,
 } from "@/configurator";
-import { Component, Dimension, Measure, Observation } from "@/domain/data";
+import {
+  Component,
+  Dimension,
+  Measure,
+  Observation,
+  isOrdinalDimension,
+  isOrdinalMeasure,
+} from "@/domain/data";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import { useInteractiveFilters } from "@/stores/interactive-filters";
 import { interlace } from "@/utils/interlace";
@@ -190,45 +197,57 @@ export const LegendColor = memo(function LegendColor(props: LegendColorProps) {
 
 const removeOpacity = (rgb: number[]) => rgb.slice(0, 3);
 
-// TODO: add metadata to legend titles?
-export const MapLegendColor = memo(function LegendColor({
-  component,
-  getColor,
-  useAbbreviations,
-  chartConfig,
-}: {
+type MapLegendColorProps = {
   component: Component;
   getColor: (d: Observation) => number[];
   useAbbreviations: boolean;
   chartConfig: MapConfig;
-}) {
+  observations: Observation[];
+};
+
+export const MapLegendColor = memo(function LegendColor(
+  props: MapLegendColorProps
+) {
+  const { component, getColor, useAbbreviations, chartConfig, observations } =
+    props;
   const filters = useChartConfigFilters(chartConfig);
-  const componentFilter = filters[component.iri];
+  const dimensionFilter = filters[component.iri];
   const sortedValues = useMemo(() => {
     const sorters = makeDimensionValueSorters(component, {
-      sorting: {
-        sortingType: "byAuto",
-        sortingOrder: "asc",
-      },
-      dimensionFilter: componentFilter,
+      sorting: { sortingType: "byAuto", sortingOrder: "asc" },
+      dimensionFilter,
     });
     return orderBy(
       component.values,
-      sorters.map((s) => (dv) => s(dv.label))
-    ) as typeof component.values;
-  }, [component, componentFilter]);
-  const getLabel = useAbbreviations
-    ? (d: string) => {
+      sorters.map((s) => (d) => s(d.label))
+    );
+  }, [component, dimensionFilter]);
+  const getLabel = useCallback(
+    (d: string) => {
+      if (useAbbreviations) {
         const v = component.values.find((v) => v.value === d);
         return (v?.alternateName || v?.label) as string;
-      }
-    : (d: string) => {
+      } else {
         return component.values.find((v) => v.value === d)?.label as string;
-      };
+      }
+    },
+    [component, useAbbreviations]
+  );
+  const legendValues = useMemo(() => {
+    const observationLabels = new Set(
+      observations.map((o) => o[component.iri])
+    );
+    const sortedStringValues = sortedValues.map((d) => `${d.value}`);
+    // If the component is a measure or an ordinal dimension, we want to show all
+    // values for comparison purposes
+    return isOrdinalDimension(component) || isOrdinalMeasure(component)
+      ? sortedStringValues
+      : sortedStringValues.filter((v) => observationLabels.has(getLabel(v)));
+  }, [observations, sortedValues, component, getLabel]);
   const groups = useLegendGroups({
     chartConfig,
     title: component.label,
-    values: sortedValues.map((d) => `${d.value}`),
+    values: legendValues,
   });
 
   return (
@@ -270,7 +289,6 @@ const LegendColorContent = (props: LegendColorContentProps) => {
   const categories = useInteractiveFilters((d) => d.categories);
   const addCategory = useInteractiveFilters((d) => d.addCategory);
   const removeCategory = useInteractiveFilters((d) => d.removeCategory);
-
   const activeInteractiveFilters = useMemo(() => {
     return new Set(Object.keys(categories));
   }, [categories]);

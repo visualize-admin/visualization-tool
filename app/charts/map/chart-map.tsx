@@ -129,7 +129,7 @@ export type ChartMapProps = ChartProps<MapConfig> & {
 };
 
 export const ChartMap = memo((props: ChartMapProps) => {
-  const { chartConfig, dimensions } = props;
+  const { chartConfig, dimensions, observations } = props;
   const { fields } = chartConfig;
   const filters = useChartConfigFilters(chartConfig);
   return (
@@ -146,7 +146,7 @@ export const ChartMap = memo((props: ChartMapProps) => {
             {...fields.animation}
           />
         )}
-        <MapLegend chartConfig={chartConfig} />
+        <MapLegend chartConfig={chartConfig} observations={observations} />
       </ChartControlsContainer>
     </MapChart>
   );
