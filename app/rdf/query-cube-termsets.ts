@@ -36,6 +36,7 @@ SELECT DISTINCT ?termsetIri ?termsetLabel WHERE {
   return qs.map((result) => ({
     iri: result.termsetIri.value,
     label: result.termsetLabel.value,
+    __typename: "Termset",
   }));
 };
 
@@ -81,6 +82,10 @@ SELECT DISTINCT ?dimensionIri ?dimensionLabel ?termsetIri ?termsetLabel WHERE {
   return grouped.map(([dimensionIri, termsets]) => ({
     iri: dimensionIri,
     label: termsets[0].dimensionLabel,
-    termsets: termsets.map(({ iri, label }) => ({ iri, label })),
+    termsets: termsets.map(({ iri, label }) => ({
+      iri,
+      label,
+      __typename: "Termset",
+    })),
   }));
 };

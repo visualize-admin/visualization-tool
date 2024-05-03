@@ -118,6 +118,7 @@ export type Query = {
   possibleFilters: Array<ObservationFilter>;
   searchCubes: Array<SearchCubeResult>;
   dataCubeDimensionGeoShapes?: Maybe<Scalars['GeoShapes']>;
+  allTermsets: Array<TermsetCount>;
 };
 
 
@@ -196,6 +197,14 @@ export type QueryDataCubeDimensionGeoShapesArgs = {
 };
 
 
+export type QueryAllTermsetsArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
+  locale: Scalars['String'];
+  includeDrafts?: Maybe<Scalars['Boolean']>;
+};
+
+
 export type RelatedDimension = {
   __typename: 'RelatedDimension';
   type: Scalars['String'];
@@ -221,7 +230,7 @@ export enum SearchCubeFilterType {
   DataCubeTheme = 'DataCubeTheme',
   DataCubeOrganization = 'DataCubeOrganization',
   DataCubeAbout = 'DataCubeAbout',
-  SharedDimensions = 'SharedDimensions'
+  Termset = 'Termset'
 }
 
 export type SearchCubeResult = {
@@ -239,6 +248,12 @@ export enum SearchCubeResultOrder {
 }
 
 
+
+export type TermsetCount = {
+  __typename: 'TermsetCount';
+  termset: Scalars['Termset'];
+  count: Scalars['Int'];
+};
 
 export enum TimeUnit {
   Year = 'Year',
@@ -344,6 +359,15 @@ export type DataCubeDimensionGeoShapesQueryVariables = Exact<{
 
 
 export type DataCubeDimensionGeoShapesQuery = { __typename: 'Query', dataCubeDimensionGeoShapes?: Maybe<GeoShapes> };
+
+export type SearchPageQueryVariables = Exact<{
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
+  locale: Scalars['String'];
+}>;
+
+
+export type SearchPageQuery = { __typename: 'Query', allTermsets: Array<{ __typename: 'TermsetCount', count: number, termset: Termset }> };
 
 
 export const DataCubeLatestIriDocument = gql`
@@ -478,4 +502,16 @@ export const DataCubeDimensionGeoShapesDocument = gql`
 
 export function useDataCubeDimensionGeoShapesQuery(options: Omit<Urql.UseQueryArgs<DataCubeDimensionGeoShapesQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<DataCubeDimensionGeoShapesQuery>({ query: DataCubeDimensionGeoShapesDocument, ...options });
+};
+export const SearchPageDocument = gql`
+    query SearchPage($sourceType: String!, $sourceUrl: String!, $locale: String!) {
+  allTermsets(sourceType: $sourceType, sourceUrl: $sourceUrl, locale: $locale) {
+    count
+    termset
+  }
+}
+    `;
+
+export function useSearchPageQuery(options: Omit<Urql.UseQueryArgs<SearchPageQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<SearchPageQuery>({ query: SearchPageDocument, ...options });
 };

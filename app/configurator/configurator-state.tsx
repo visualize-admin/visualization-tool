@@ -246,8 +246,10 @@ export type ConfiguratorStateAction =
   | {
       type: "CHART_CONFIG_FILTER_REMOVE_SINGLE";
       value: {
-        cubeIri: string;
-        dimensionIri: string;
+        filters: {
+          cubeIri: string;
+          dimensionIri: string;
+        }[];
       };
     }
   | {
@@ -1303,18 +1305,22 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
     case "CHART_CONFIG_FILTER_REMOVE_SINGLE":
       if (isConfiguring(draft)) {
-        const { cubeIri, dimensionIri } = action.value;
+        const { filters } = action.value;
         const chartConfig = getChartConfig(draft);
-        const cube = chartConfig.cubes.find((cube) => cube.iri === cubeIri);
 
-        if (cube) {
-          delete cube.filters[dimensionIri];
-          const newIFConfig = toggleInteractiveFilterDataDimension(
-            chartConfig.interactiveFiltersConfig,
-            dimensionIri,
-            false
-          );
-          chartConfig.interactiveFiltersConfig = newIFConfig;
+        for (const filter of filters) {
+          const { cubeIri, dimensionIri } = filter;
+          const cube = chartConfig.cubes.find((cube) => cube.iri === cubeIri);
+
+          if (cube) {
+            delete cube.filters[dimensionIri];
+            const newIFConfig = toggleInteractiveFilterDataDimension(
+              chartConfig.interactiveFiltersConfig,
+              dimensionIri,
+              false
+            );
+            chartConfig.interactiveFiltersConfig = newIFConfig;
+          }
         }
       }
 

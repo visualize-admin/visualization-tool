@@ -1,3 +1,4 @@
+import { Termset } from "@/domain/data";
 import {
   DataCubeOrganization,
   DataCubeTheme,
@@ -10,7 +11,12 @@ export type DataCubeAbout = {
   iri: string;
 };
 
-export type BrowseFilter = DataCubeTheme | DataCubeOrganization | DataCubeAbout;
+export type BrowseFilter =
+  | DataCubeTheme
+  | DataCubeOrganization
+  | DataCubeAbout
+  | (Omit<Termset, "label"> & { label?: string });
+
 /** Builds the state search filters from query params */
 
 export const getFiltersFromParams = (params: BrowseParams) => {
@@ -20,12 +26,19 @@ export const getFiltersFromParams = (params: BrowseParams) => {
     [type, iri],
     [subtype, subiri],
   ]) {
-    if (t && i && (t === "theme" || t === "organization")) {
+    if (t && i && (t === "theme" || t === "organization" || t === "termset")) {
+      const __typename = (() => {
+        switch (t) {
+          case "theme":
+            return SearchCubeFilterType.DataCubeTheme;
+          case "organization":
+            return SearchCubeFilterType.DataCubeOrganization;
+          case "termset":
+            return SearchCubeFilterType.Termset;
+        }
+      })();
       filters.push({
-        __typename:
-          t === "theme"
-            ? SearchCubeFilterType.DataCubeTheme
-            : SearchCubeFilterType.DataCubeOrganization,
+        __typename,
         iri: i,
       });
     }

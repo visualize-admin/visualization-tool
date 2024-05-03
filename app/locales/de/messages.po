@@ -45,6 +45,10 @@ msgid "browse-panel.organizations"
 msgstr "Organisationen"
 
 #: app/browser/dataset-browse.tsx
+msgid "browse-panel.termsets"
+msgstr "Konzepte"
+
+#: app/browser/dataset-browse.tsx
 msgid "browse-panel.themes"
 msgstr "Kategorien"
 
@@ -1107,12 +1111,24 @@ msgid "dataset.search.placeholder"
 msgstr "Name, Organisation, Stichwort..."
 
 #: app/configurator/components/add-dataset-dialog.tsx
+msgid "dataset.search.preview.datasets"
+msgstr "Datensätze"
+
+#: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.preview.description"
 msgstr "Überprüfen Sie die Datenvorschau der neuen verfügbaren Dimensionen und bearbeiten Sie die Visualisierung weiter."
 
 #: app/configurator/components/add-dataset-dialog.tsx
+msgid "dataset.search.preview.dimensions"
+msgstr "Dimensionen"
+
+#: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.preview.dimensions-shown"
 msgstr "{0} dargestellt"
+
+#: app/configurator/components/add-dataset-dialog.tsx
+msgid "dataset.search.preview.new-dimension"
+msgstr "Neue"
 
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.preview.title"

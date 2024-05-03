@@ -92,7 +92,7 @@ export const Search = () => {
       filters: [
         sharedComponents
           ? {
-              type: SearchCubeFilterType.SharedDimensions,
+              type: SearchCubeFilterType.Termset,
               value: sharedComponents
                 .map((x) => cubeSharedDimensionsByIri[x])
                 .filter(truthy)

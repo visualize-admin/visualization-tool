@@ -37,6 +37,7 @@ import { parseHierarchy, queryHierarchies } from "@/rdf/query-hierarchies";
 import { queryLatestCubeIri } from "@/rdf/query-latest-cube-iri";
 import { getPossibleFilters } from "@/rdf/query-possible-filters";
 import { SearchResult, searchCubes as _searchCubes } from "@/rdf/query-search";
+import { queryAllTermsets } from "@/rdf/query-termsets";
 import { getSparqlEditorUrl } from "@/rdf/sparql-utils";
 
 export const dataCubeLatestIri: NonNullable<
@@ -423,4 +424,14 @@ const getDimensionValuesLoader = (
   } else {
     return loaders.dimensionValues;
   }
+};
+
+export const allTermsets: NonNullable<QueryResolvers["allTermsets"]> = async (
+  _,
+  { locale },
+  { setup },
+  info
+) => {
+  const { sparqlClient } = await setup(info);
+  return await queryAllTermsets({ locale, sparqlClient });
 };
