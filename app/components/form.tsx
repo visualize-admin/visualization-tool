@@ -36,6 +36,7 @@ import React, {
   useCallback,
   useContext,
   useMemo,
+  createContext,
 } from "react";
 
 import { useBrowseContext } from "@/browser/context";
@@ -280,9 +281,7 @@ const MenuPaper = styled(Paper, {
   WebkitOverflowScrolling: "touch",
 });
 
-const LoadingMenuPaperContext = React.createContext(
-  false as boolean | undefined
-);
+const LoadingMenuPaperContext = createContext(false as boolean | undefined);
 
 /**
  * Shows a loading indicator when hierarchy is loading

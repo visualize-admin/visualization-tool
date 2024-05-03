@@ -1,4 +1,4 @@
-import React from "react";
+import { useCallback, useMemo } from "react";
 
 import { BaseYGetter, sortComboData } from "@/charts/combo/combo-state-props";
 import {
@@ -70,7 +70,7 @@ export const useComboLineDualStateVariables = (
   };
 
   const { getX } = temporalXVariables;
-  const sortData: ComboLineDualStateVariables["sortData"] = React.useCallback(
+  const sortData: ComboLineDualStateVariables["sortData"] = useCallback(
     (data) => {
       return sortComboData(data, {
         getX,
@@ -105,7 +105,7 @@ export const useComboLineDualStateData = (
       }
     },
   });
-  const sortedPlottableData = React.useMemo(() => {
+  const sortedPlottableData = useMemo(() => {
     return sortData(plottableData);
   }, [sortData, plottableData]);
   const data = useChartData(sortedPlottableData, {

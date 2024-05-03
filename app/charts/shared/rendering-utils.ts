@@ -1,6 +1,6 @@
 import { select, Selection } from "d3-selection";
 import { Transition } from "d3-transition";
-import React from "react";
+import { useCallback, useMemo } from "react";
 
 import {
   AnimationField,
@@ -23,7 +23,7 @@ export const useRenderingKeyVariable = (
   interactiveFiltersConfig: InteractiveFiltersConfig,
   animationField: AnimationField | undefined
 ) => {
-  const filterableDimensionKeys = React.useMemo(() => {
+  const filterableDimensionKeys = useMemo(() => {
     // Remove single filters from the rendering key, as we want to be able
     // to animate them.
     const keysToRemove = Object.entries(filters)
@@ -56,7 +56,7 @@ export const useRenderingKeyVariable = (
    * This is useful for stacked charts, where we can't easily
    * access the segment value from the data.
    */
-  const getRenderingKey = React.useCallback(
+  const getRenderingKey = useCallback(
     (d: Observation, segment: string = "") => {
       return filterableDimensionKeys
         .map((key) => d[key])

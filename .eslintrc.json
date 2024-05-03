@@ -1,6 +1,6 @@
 {
   "extends": "next",
-  "plugins": ["import", "visualize-admin", "jest"],
+  "plugins": ["import", "visualize-admin", "jest", "deprecate"],
   "rules": {
     "no-restricted-imports": [
       "error",
@@ -18,6 +18,21 @@
     "visualize-admin/no-large-sx": "error",
     "visualize-admin/make-styles": "error",
     "@next/next/no-html-link-for-pages": ["error", "app/pages/"],
+    "deprecate/member-expression": [
+      "error",
+      { "name": "useMemo", "use": "named import" },
+      { "name": "useState", "use": "named import" },
+      { "name": "useContext", "use": "named import" },
+      { "name": "useEffect", "use": "named import" },
+      { "name": "createContext", "use": "named import" },
+      { "name": "useReducer", "use": "named import" },
+      { "name": "memo", "use": "named import" },
+      { "name": "forwardRef", "use": "named import" },
+      { "name": "useRef", "use": "named import" },
+      { "name": "useCallback", "use": "named import" },
+      { "name": "useImperativeHandle", "use": "named import" },
+      { "name": "createElement", "use": "named import" }
+    ],
     "import/order": [
       2,
       {

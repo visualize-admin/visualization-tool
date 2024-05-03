@@ -2,7 +2,7 @@ import { DatePicker, DatePickerProps, PickersDay } from "@mui/lab";
 import { DatePickerView } from "@mui/lab/DatePicker/shared";
 import { Box, TextField } from "@mui/material";
 import { timeFormat } from "d3-time-format";
-import React from "react";
+import React, { useCallback } from "react";
 
 import { Label } from "@/components/form";
 import { TimeUnit } from "@/graphql/resolver-types";
@@ -38,7 +38,7 @@ export const DatePickerField = (props: DatePickerFieldProps) => {
     dateFormat = timeFormat("%Y-%m-%d"),
     ...rest
   } = props;
-  const handleChange = React.useCallback(
+  const handleChange = useCallback(
     (date: Date | null) => {
       if (!date || isDateDisabled(date)) {
         return;

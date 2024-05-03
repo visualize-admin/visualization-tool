@@ -2,7 +2,7 @@ import { BoxProps, Typography, TypographyProps, styled } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
-import React from "react";
+import React, { forwardRef } from "react";
 
 type TagType = "draft" | "theme" | "organization" | "termset" | "dimension";
 
@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-const Tag = React.forwardRef<
+const Tag = forwardRef<
   unknown,
   {
     children: React.ReactNode;

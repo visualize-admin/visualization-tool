@@ -198,7 +198,7 @@ const useAreasState = (
     return group(chartData, getXAsString);
   }, [chartData, getXAsString, sumsByX, getY, yMeasure.iri, normalize]);
 
-  const chartWideData = React.useMemo(() => {
+  const chartWideData = useMemo(() => {
     return getWideData({
       dataGroupedByX: chartDataGroupedByX,
       xKey,

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 
 import { ChartDataWrapper } from "@/charts/chart-data-wrapper";
 import { AxisHeightLinearDual } from "@/charts/combo/axis-height-linear-dual";
@@ -21,7 +21,7 @@ export const ChartComboLineDualVisualization = (
   return <ChartDataWrapper {...props} Component={ChartComboLineDual} />;
 };
 
-export const ChartComboLineDual = React.memo(
+export const ChartComboLineDual = memo(
   (props: ChartProps<ComboLineDualConfig>) => {
     const { chartConfig } = props;
     const { interactiveFiltersConfig } = chartConfig;

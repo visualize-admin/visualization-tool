@@ -1,4 +1,4 @@
-import React from "react";
+import React, { createContext, useState, useContext } from "react";
 import create, { StoreApi, UseBoundStore } from "zustand";
 
 import { CalculationType, FilterValueSingle } from "@/configurator";
@@ -126,7 +126,7 @@ const createInteractiveFiltersStore = () =>
     };
   });
 
-const InteractiveFiltersContext = React.createContext<
+const InteractiveFiltersContext = createContext<
   | [UseBoundStore<StoreApi<State>>, UseBoundStoreWithSelector<StoreApi<State>>]
   | undefined
 >(undefined);
@@ -134,7 +134,7 @@ const InteractiveFiltersContext = React.createContext<
 export const InteractiveFiltersProvider = ({
   children,
 }: React.PropsWithChildren<{}>) => {
-  const [state] = React.useState<
+  const [state] = useState<
     [UseBoundStore<StoreApi<State>>, UseBoundStoreWithSelector<StoreApi<State>>]
   >(() => {
     const store = createInteractiveFiltersStore();
@@ -151,7 +151,7 @@ export const InteractiveFiltersProvider = ({
 export const useInteractiveFilters = <T extends unknown>(
   selector: (state: ExtractState<StoreApi<State>>) => T
 ) => {
-  const ctx = React.useContext(InteractiveFiltersContext);
+  const ctx = useContext(InteractiveFiltersContext);
 
   if (!ctx) {
     throw new Error(
@@ -165,7 +165,7 @@ export const useInteractiveFilters = <T extends unknown>(
 };
 
 export const useInteractiveFiltersRaw = () => {
-  const ctx = React.useContext(InteractiveFiltersContext);
+  const ctx = useContext(InteractiveFiltersContext);
 
   if (!ctx) {
     throw new Error(

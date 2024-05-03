@@ -5,7 +5,14 @@ import pick from "lodash/pick";
 import pickBy from "lodash/pickBy";
 import Link from "next/link";
 import { Router, useRouter } from "next/router";
-import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  createContext,
+} from "react";
 
 import { SearchCubeResultOrder } from "@/graphql/query-hooks";
 import { BrowseParams } from "@/pages/browse";
@@ -195,7 +202,7 @@ export const useBrowseState = () => {
 };
 
 export type BrowseState = ReturnType<typeof useBrowseState>;
-const BrowseContext = React.createContext<BrowseState | undefined>(undefined);
+const BrowseContext = createContext<BrowseState | undefined>(undefined);
 /**
  * Provides browse context to children below
  * Responsible for connecting the router to the browsing state

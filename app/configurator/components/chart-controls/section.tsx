@@ -18,6 +18,7 @@ import React, {
   useContext,
   useEffect,
   useMemo,
+  createContext,
 } from "react";
 
 import { Icon, IconName } from "@/icons";
@@ -91,7 +92,7 @@ const useSectionTitleStyles = makeStyles<Theme, SectionTitleStylesProps>(
   })
 );
 
-const ControlSectionContext = React.createContext({
+const ControlSectionContext = createContext({
   open: () => {},
   isOpen: false,
   close: () => {},

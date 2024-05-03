@@ -1,5 +1,5 @@
 import { schemeCategory10 } from "d3-scale-chromatic";
-import React from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 import { ColumnsState } from "@/charts/column/columns-state";
 import {
@@ -26,10 +26,10 @@ export const ErrorWhiskers = () => {
     bounds,
   } = useChartState() as ColumnsState;
   const { margins } = bounds;
-  const ref = React.useRef<SVGGElement>(null);
+  const ref = useRef<SVGGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
-  const renderData: RenderWhiskerDatum[] = React.useMemo(() => {
+  const renderData: RenderWhiskerDatum[] = useMemo(() => {
     if (!getYErrorRange || !showYStandardError) {
       return [];
     }
@@ -58,7 +58,7 @@ export const ErrorWhiskers = () => {
     yScale,
   ]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (ref.current) {
       renderContainer(ref.current, {
         id: "columns-error-whiskers",
@@ -83,12 +83,12 @@ export const Columns = () => {
     useChartState() as ColumnsState;
   const theme = useTheme();
   const { margins } = bounds;
-  const ref = React.useRef<SVGGElement>(null);
+  const ref = useRef<SVGGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
   const bandwidth = xScale.bandwidth();
   const y0 = yScale(0);
-  const renderData: RenderColumnDatum[] = React.useMemo(() => {
+  const renderData: RenderColumnDatum[] = useMemo(() => {
     const getColor = (d: number) => {
       return d <= 0 ? theme.palette.secondary.main : schemeCategory10[0];
     };
@@ -124,7 +124,7 @@ export const Columns = () => {
     getRenderingKey,
   ]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (ref.current) {
       renderContainer(ref.current, {
         id: "columns",

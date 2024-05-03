@@ -1,4 +1,4 @@
-import React from "react";
+import { useCallback, useMemo } from "react";
 
 import { Observation } from "@/domain/data";
 
@@ -45,7 +45,7 @@ export const useObservationLabels = (
   getLabel: (d: Observation) => string,
   componentIri?: string
 ) => {
-  const getIri = React.useCallback(
+  const getIri = useCallback(
     (d: Observation) => {
       const iri = d[`${componentIri}/__iri__`] as string | undefined;
       return iri;
@@ -53,7 +53,7 @@ export const useObservationLabels = (
     [componentIri]
   );
 
-  const lookup = React.useMemo(() => {
+  const lookup = useMemo(() => {
     const lookup = new Map<string, string>();
     data.forEach((d) => {
       const iri = getIri(d);
@@ -64,14 +64,14 @@ export const useObservationLabels = (
     return lookup;
   }, [data, getIri, getLabel]);
 
-  const getValue = React.useCallback(
+  const getValue = useCallback(
     (d: Observation) => {
       return getIri(d) ?? getLabel(d);
     },
     [getIri, getLabel]
   );
 
-  const getLookupLabel = React.useCallback(
+  const getLookupLabel = useCallback(
     (d: string) => {
       return lookup.get(d) ?? d;
     },

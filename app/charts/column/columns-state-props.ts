@@ -1,5 +1,5 @@
 import { ascending, descending } from "d3-array";
-import React from "react";
+import { useCallback, useMemo } from "react";
 
 import { usePlottableData } from "@/charts/shared/chart-helpers";
 import {
@@ -59,7 +59,7 @@ export const useColumnsStateVariables = (
 
   const { getX } = bandXVariables;
   const { getY } = numericalYVariables;
-  const sortData: ColumnsStateVariables["sortData"] = React.useCallback(
+  const sortData: ColumnsStateVariables["sortData"] = useCallback(
     (data) => {
       const { sortingOrder, sortingType } = x.sorting ?? {};
       if (sortingOrder === "desc" && sortingType === "byDimensionLabel") {
@@ -107,7 +107,7 @@ export const useColumnsStateData = (
   const plottableData = usePlottableData(observations, {
     getY,
   });
-  const sortedPlottableData = React.useMemo(() => {
+  const sortedPlottableData = useMemo(() => {
     return sortData(plottableData);
   }, [sortData, plottableData]);
   const data = useChartData(sortedPlottableData, {

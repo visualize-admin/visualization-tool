@@ -1,6 +1,6 @@
 import { Box, BoxProps, Theme, useMediaQuery } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import React from "react";
+import React, { useMemo, forwardRef } from "react";
 
 import { ChartSelectionTabs } from "@/components/chart-selection-tabs";
 import { ChartConfig, Layout } from "@/config-types";
@@ -25,7 +25,7 @@ export type ChartWrapperProps = BoxProps & {
   layoutType?: Layout["type"];
 };
 
-export const ChartWrapper = React.forwardRef<HTMLDivElement, ChartWrapperProps>(
+export const ChartWrapper = forwardRef<HTMLDivElement, ChartWrapperProps>(
   (props, ref) => {
     const { children, editing, layoutType, ...rest } = props;
     const classes = useStyles();
@@ -70,7 +70,7 @@ type ChartPanelLayoutTallProps = {
 
 export const ChartPanelLayoutTall = (props: ChartPanelLayoutTallProps) => {
   const { chartConfigs, renderChart } = props;
-  const rows = React.useMemo(() => {
+  const rows = useMemo(() => {
     return getChartPanelLayoutTallRows(chartConfigs, renderChart);
   }, [chartConfigs, renderChart]);
 

@@ -56,7 +56,7 @@ export const ChartMapVisualization = (props: VisualizationProps<MapConfig>) => {
 
   const geoCoordinatesDimensionValues =
     geoCoordinatesDimension?.dataCubesComponents.dimensions[0].values;
-  const coordinates = React.useMemo(() => {
+  const coordinates = useMemo(() => {
     return geoCoordinatesDimensionValues
       ? dimensionValuesToGeoCoordinates(geoCoordinatesDimensionValues)
       : undefined;

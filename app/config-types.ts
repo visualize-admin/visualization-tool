@@ -2,7 +2,7 @@
 import { fold } from "fp-ts/lib/Either";
 import { pipe } from "fp-ts/lib/function";
 import * as t from "io-ts";
-import React from "react";
+import { useMemo } from "react";
 
 import { Dimension, Measure, ObservationValue } from "@/domain/data";
 import { mkJoinById } from "@/graphql/join";
@@ -1335,7 +1335,7 @@ export const useChartConfigFilters = (
   chartConfig: ChartConfig,
   options?: Parameters<typeof getChartConfigFilters>[1]
 ): Filters => {
-  return React.useMemo(() => {
+  return useMemo(() => {
     return getChartConfigFilters(chartConfig.cubes, {
       cubeIri: options?.cubeIri,
       joined: options?.joined,

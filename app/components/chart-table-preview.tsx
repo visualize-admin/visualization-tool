@@ -1,4 +1,16 @@
-import React, { Dispatch, ReactNode, RefObject, SetStateAction } from "react";
+import React, {
+  Dispatch,
+  ReactNode,
+  RefObject,
+  SetStateAction,
+  createContext,
+  useContext,
+  useState,
+  useMemo,
+  useEffect,
+  useRef,
+  useCallback,
+} from "react";
 
 import { hasChartConfigs, useConfiguratorState } from "@/configurator";
 
@@ -11,7 +23,7 @@ type Context = {
   computeContainerHeight: () => void;
 };
 
-const ChartTablePreviewContext = React.createContext<Context>({
+const ChartTablePreviewContext = createContext<Context>({
   state: false,
   setState: () => {},
   setStateRaw: () => {},
@@ -21,7 +33,7 @@ const ChartTablePreviewContext = React.createContext<Context>({
 });
 
 export const useChartTablePreview = () => {
-  const ctx = React.useContext(ChartTablePreviewContext);
+  const ctx = useContext(ChartTablePreviewContext);
 
   if (ctx === undefined) {
     throw Error(
@@ -43,9 +55,9 @@ export const ChartTablePreviewProvider = ({
   children: ReactNode;
 }) => {
   const [configuratorState] = useConfiguratorState(hasChartConfigs);
-  const [state, setStateRaw] = React.useState<boolean>(false);
-  const containerHeight = React.useRef("auto" as "auto" | number);
-  const containerRef = React.useRef<HTMLDivElement>(null);
+  const [state, setStateRaw] = useState<boolean>(false);
+  const containerHeight = useRef("auto" as "auto" | number);
+  const containerRef = useRef<HTMLDivElement>(null);
   const computeContainerHeight = () => {
     if (!containerRef.current) {
       return;
@@ -54,7 +66,7 @@ export const ChartTablePreviewProvider = ({
     const bcr = containerRef.current.getBoundingClientRect();
     containerHeight.current = bcr.height;
   };
-  const setState = React.useCallback(
+  const setState = useCallback(
     (v) => {
       computeContainerHeight();
 
@@ -63,11 +75,11 @@ export const ChartTablePreviewProvider = ({
     [setStateRaw]
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     containerHeight.current = "auto";
   }, [configuratorState.activeChartKey]);
 
-  const ctx = React.useMemo(() => {
+  const ctx = useMemo(() => {
     return {
       state,
       setState,

@@ -6,7 +6,7 @@ import { geoArea } from "d3-geo";
 import debounce from "lodash/debounce";
 import orderBy from "lodash/orderBy";
 import maplibreglraw from "maplibre-gl";
-import React, { useState } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
 import Map, { LngLatLike, MapboxEvent } from "react-map-gl";
 
 import "maplibre-gl/dist/maplibre-gl.css";
@@ -109,8 +109,8 @@ export const MapComponent = () => {
     featuresBBox,
   });
 
-  const lockedRef = React.useRef(locked);
-  React.useEffect(() => {
+  const lockedRef = useRef(locked);
+  useEffect(() => {
     lockedRef.current = locked;
   }, [locked]);
 
@@ -130,7 +130,7 @@ export const MapComponent = () => {
   });
 
   // Reset the view when default view changes (new features appeared on the map).
-  React.useEffect(() => {
+  useEffect(() => {
     reset();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [defaultViewState]);
@@ -191,7 +191,7 @@ export const MapComponent = () => {
     }
   );
 
-  const sortedShapes = React.useMemo(() => {
+  const sortedShapes = useMemo(() => {
     // Sort for smaller shapes to be over larger ones, to be able to use tooltip
     const sortedFeatures = orderBy(
       features.areaLayer?.shapes?.features,
@@ -205,7 +205,7 @@ export const MapComponent = () => {
     };
   }, [features.areaLayer?.shapes]);
 
-  const geoJsonLayer = React.useMemo(() => {
+  const geoJsonLayer = useMemo(() => {
     if (!areaLayer?.colors) {
       return;
     }
@@ -258,7 +258,7 @@ export const MapComponent = () => {
     });
   }, [areaLayer?.colors, sortedShapes, onHover, showBaseLayer]);
 
-  const hoverLayer = React.useMemo(() => {
+  const hoverLayer = useMemo(() => {
     if (!interaction.visible || !sortedShapes || !areaLayer) {
       return;
     }
@@ -295,7 +295,7 @@ export const MapComponent = () => {
     }
   }, [areaLayer, interaction.d, interaction.visible, sortedShapes]);
 
-  const scatterplotLayer = React.useMemo(() => {
+  const scatterplotLayer = useMemo(() => {
     if (!symbolLayer) {
       return;
     }

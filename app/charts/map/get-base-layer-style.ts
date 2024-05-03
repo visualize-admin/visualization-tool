@@ -1,5 +1,5 @@
 import merge from "lodash/merge";
-import React from "react";
+import { useMemo } from "react";
 import { MapboxStyle } from "react-map-gl";
 
 import { BASE_VECTOR_TILE_URL, MAPTILER_STYLE_KEY } from "@/domain/env";
@@ -7,7 +7,7 @@ import { BASE_VECTOR_TILE_URL, MAPTILER_STYLE_KEY } from "@/domain/env";
 import { Locale } from "../../locales/locales";
 
 import greyStyleBase from "./grey.json";
-import { hasLayout, replaceStyleTokens, mapLayers } from "./style-helpers";
+import { hasLayout, mapLayers, replaceStyleTokens } from "./style-helpers";
 
 const tokens = {
   "{key}": MAPTILER_STYLE_KEY,
@@ -81,7 +81,7 @@ export const useMapStyle = ({
   showBaseLayer: boolean;
   showLabels: boolean;
 }): MapboxStyle => {
-  const style = React.useMemo(() => {
+  const style = useMemo(() => {
     if (showBaseLayer) {
       return getBaseLayerStyle({ locale, showLabels });
     } else {

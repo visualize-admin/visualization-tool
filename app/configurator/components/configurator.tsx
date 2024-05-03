@@ -2,7 +2,7 @@ import { Trans } from "@lingui/macro";
 import { Box, SxProps, Typography } from "@mui/material";
 import Button, { ButtonProps } from "@mui/material/Button";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useEffect } from "react";
 
 import { SelectDatasetStep } from "@/browser/select-dataset-step";
 import { META } from "@/charts";
@@ -95,7 +95,7 @@ const useAssureCorrectDataSource = (stateGuard: ConfiguratorState["state"]) => {
   const [state] = useConfiguratorState();
   const { dataSource, setDataSource } = useDataSourceStore();
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (state.state !== stateGuard) {
       return;
     }

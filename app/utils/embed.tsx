@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import React, { useContext, useMemo } from "react";
+import React, { useContext, useMemo, createContext } from "react";
 
 import useEvent from "@/utils/use-event";
 
@@ -14,7 +14,7 @@ export type EmbedOptions = {
   showMetadata?: boolean;
 };
 
-const EmbedOptionsContext = React.createContext([
+const EmbedOptionsContext = createContext([
   {} as EmbedOptions,
   (() => undefined) as (n: Partial<EmbedOptions>) => void,
 ] as const);

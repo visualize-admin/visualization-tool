@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo, useEffect, useRef } from "react";
 
 import { GroupedColumnsState } from "@/charts/column/columns-grouped-state";
 import {
@@ -25,10 +25,10 @@ export const ErrorWhiskers = () => {
     showYStandardError,
   } = useChartState() as GroupedColumnsState;
   const { margins } = bounds;
-  const ref = React.useRef<SVGGElement>(null);
+  const ref = useRef<SVGGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
-  const renderData: RenderWhiskerDatum[] = React.useMemo(() => {
+  const renderData: RenderWhiskerDatum[] = useMemo(() => {
     if (!getYErrorRange || !showYStandardError) {
       return [];
     }
@@ -62,7 +62,7 @@ export const ErrorWhiskers = () => {
     yScale,
   ]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (ref.current) {
       renderContainer(ref.current, {
         id: "columns-grouped-error-whiskers",
@@ -94,13 +94,13 @@ export const ColumnsGrouped = () => {
     grouped,
     getRenderingKey,
   } = useChartState() as GroupedColumnsState;
-  const ref = React.useRef<SVGGElement>(null);
+  const ref = useRef<SVGGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
   const { margins } = bounds;
   const bandwidth = xScaleIn.bandwidth();
   const y0 = yScale(0);
-  const renderData: RenderColumnDatum[] = React.useMemo(() => {
+  const renderData: RenderColumnDatum[] = useMemo(() => {
     return grouped.flatMap(([segment, observations]) => {
       return observations.map((d) => {
         const key = getRenderingKey(d, getSegment(d));
@@ -130,7 +130,7 @@ export const ColumnsGrouped = () => {
     getRenderingKey,
   ]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (ref.current) {
       renderContainer(ref.current, {
         id: "columns-grouped",

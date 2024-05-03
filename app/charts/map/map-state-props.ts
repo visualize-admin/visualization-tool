@@ -1,6 +1,6 @@
 import { geoCentroid } from "d3-geo";
 import keyBy from "lodash/keyBy";
-import React from "react";
+import { useMemo } from "react";
 
 import { ChartMapProps } from "@/charts/map/chart-map";
 import { prepareFeatureCollection } from "@/charts/map/helpers";
@@ -98,7 +98,7 @@ export const useMapStateData = (
     chartConfig,
   });
 
-  const areaLayer = React.useMemo(() => {
+  const areaLayer = useMemo(() => {
     const iri = areaLayerDimension?.iri;
 
     if (!(iri && shapes)) {
@@ -118,7 +118,7 @@ export const useMapStateData = (
     };
   }, [areaLayerDimension?.iri, shapes, filters, data.chartData]);
 
-  const symbolLayer = React.useMemo(() => {
+  const symbolLayer = useMemo(() => {
     if (isGeoCoordinatesDimension(symbolLayerDimension) && coordinates) {
       const points: GeoPoint[] = [];
       const coordsByLabel = keyBy(coordinates, (d) => d.label);

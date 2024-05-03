@@ -1,7 +1,7 @@
 import { Box, BoxProps } from "@mui/material";
-import React from "react";
+import React, { forwardRef } from "react";
 
-const Flex = React.forwardRef((props: BoxProps, ref) => {
+const Flex = forwardRef((props: BoxProps, ref) => {
   return <Box ref={ref} display="flex" {...props} />;
 });
 

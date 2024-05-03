@@ -9,7 +9,7 @@ import {
   DialogProps,
   DialogTitle,
 } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 
 const ConfirmationDialog = ({
   title,
@@ -26,7 +26,7 @@ const ConfirmationDialog = ({
   onClick: () => Promise<unknown> | void;
   onClose: NonNullable<DialogProps["onClose"]>;
 }) => {
-  const [loading, setLoading] = React.useState(false);
+  const [loading, setLoading] = useState(false);
 
   return (
     <Dialog

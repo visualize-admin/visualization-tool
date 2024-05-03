@@ -1,4 +1,4 @@
-import React from "react";
+import { useCallback, useMemo } from "react";
 
 import { DimensionValue, Observation, ObservationValue } from "@/domain/data";
 
@@ -67,7 +67,7 @@ export const useMaybeAbbreviations = ({
   dimensionValues: DimensionValue[] | undefined;
 }) => {
   const { valueLookup, labelLookup, abbreviationOrLabelLookup } =
-    React.useMemo(() => {
+    useMemo(() => {
       const values = dimensionValues ?? [];
 
       const valueLookup = new Map<
@@ -95,7 +95,7 @@ export const useMaybeAbbreviations = ({
       };
     }, [dimensionValues, useAbbreviations]);
 
-  const getAbbreviationOrLabelByValue = React.useCallback(
+  const getAbbreviationOrLabelByValue = useCallback(
     (d: Observation) => {
       if (!dimensionIri) {
         return "";

@@ -1,7 +1,7 @@
 import { ScaleTime } from "d3-scale";
 import get from "lodash/get";
 import overEvery from "lodash/overEvery";
-import React from "react";
+import { createContext, useContext, useMemo } from "react";
 
 import { AreasState } from "@/charts/area/areas-state";
 import { GroupedColumnsState } from "@/charts/column/columns-grouped-state";
@@ -82,10 +82,10 @@ export type CommonChartState = {
 };
 
 export type ColorsChartState = Has<ChartState, "colors">;
-export const ChartContext = React.createContext<ChartState>(undefined);
+export const ChartContext = createContext<ChartState>(undefined);
 
 export const useChartState = () => {
-  const ctx = React.useContext(ChartContext);
+  const ctx = useContext(ChartContext);
   if (ctx === undefined) {
     throw Error(
       "You need to wrap your component in <ChartContext.Provider /> to useChartState()"
@@ -415,7 +415,7 @@ export const useChartData = (
   const timeRangeToTime = interactiveTimeRange?.presets.to
     ? parseDate(interactiveTimeRange?.presets.to).getTime()
     : undefined;
-  const timeRangeFilters = React.useMemo(() => {
+  const timeRangeFilters = useMemo(() => {
     const timeRangeFilter: ValuePredicate | null =
       timeRangeFromTime && timeRangeToTime
         ? (d: Observation) => {
@@ -430,7 +430,7 @@ export const useChartData = (
   // interactive time range
   const interactiveFromTime = timeRange.from?.getTime();
   const interactiveToTime = timeRange.to?.getTime();
-  const interactiveTimeRangeFilters = React.useMemo(() => {
+  const interactiveTimeRangeFilters = useMemo(() => {
     const interactiveTimeRangeFilter: ValuePredicate | null =
       getXAsDate &&
       interactiveFromTime &&
@@ -456,7 +456,7 @@ export const useChartData = (
   const animationComponentIri = animationField?.componentIri ?? "";
   const getAnimationDate = useTemporalVariable(animationComponentIri);
   const getAnimationOrdinalDate = useStringVariable(animationComponentIri);
-  const interactiveTimeSliderFilters = React.useMemo(() => {
+  const interactiveTimeSliderFilters = useMemo(() => {
     const interactiveTimeSliderFilter: ValuePredicate | null =
       animationField?.componentIri && timeSlider.value
         ? (d: Observation) => {
@@ -481,7 +481,7 @@ export const useChartData = (
   ]);
 
   // interactive legend
-  const interactiveLegendFilters = React.useMemo(() => {
+  const interactiveLegendFilters = useMemo(() => {
     const legendItems = Object.keys(categories);
     const interactiveLegendFilter: ValuePredicate | null =
       interactiveFiltersConfig?.legend?.active && getSegmentAbbreviationOrLabel
@@ -497,7 +497,7 @@ export const useChartData = (
     interactiveFiltersConfig?.legend?.active,
   ]);
 
-  const chartData = React.useMemo(() => {
+  const chartData = useMemo(() => {
     return observations.filter(
       overEvery([
         ...interactiveLegendFilters,
@@ -512,7 +512,7 @@ export const useChartData = (
     interactiveTimeSliderFilters,
   ]);
 
-  const scalesData = React.useMemo(() => {
+  const scalesData = useMemo(() => {
     if (dynamicScales) {
       return chartData;
     } else {
@@ -528,15 +528,15 @@ export const useChartData = (
     interactiveTimeRangeFilters,
   ]);
 
-  const segmentData = React.useMemo(() => {
+  const segmentData = useMemo(() => {
     return observations.filter(overEvery(interactiveTimeRangeFilters));
   }, [observations, interactiveTimeRangeFilters]);
 
-  const timeRangeData = React.useMemo(() => {
+  const timeRangeData = useMemo(() => {
     return observations.filter(overEvery(timeRangeFilters));
   }, [observations, timeRangeFilters]);
 
-  const paddingData = React.useMemo(() => {
+  const paddingData = useMemo(() => {
     if (dynamicScales) {
       return chartData;
     } else {

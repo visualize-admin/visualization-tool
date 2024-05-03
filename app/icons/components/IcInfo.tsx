@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 function SvgIcInfo(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg

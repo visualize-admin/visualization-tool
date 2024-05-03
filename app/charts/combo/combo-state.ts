@@ -1,6 +1,6 @@
 import { extent, groups, max, min, sum } from "d3-array";
 import { scaleLinear, scaleOrdinal, scaleTime } from "d3-scale";
-import React from "react";
+import { useMemo } from "react";
 
 import { useWidth } from "@/charts/shared/use-width";
 import { Observation } from "@/domain/data";
@@ -35,11 +35,11 @@ export const useCommonComboState = (options: UseCommonComboStateOptions) => {
   const formatNumber = useFormatNumber({ decimals: "auto" });
   const timeFormatUnit = useTimeFormatUnit();
 
-  const chartDataByX = React.useMemo(() => {
+  const chartDataByX = useMemo(() => {
     return groups(chartData, getXAsString).sort();
   }, [chartData, getXAsString]);
 
-  const chartWideData = React.useMemo(() => {
+  const chartWideData = useMemo(() => {
     const chartWideData: Observation[] = [];
 
     for (const [date, observations] of chartDataByX) {
@@ -63,17 +63,17 @@ export const useCommonComboState = (options: UseCommonComboStateOptions) => {
     return chartWideData;
   }, [computeTotal, chartDataByX, xKey, yGetters]);
 
-  const xScaleTime = React.useMemo(() => {
+  const xScaleTime = useMemo(() => {
     const domain = extent(chartData, getXAsDate) as [Date, Date];
     return scaleTime().domain(domain);
   }, [chartData, getXAsDate]);
 
-  const xScaleTimeRange = React.useMemo(() => {
+  const xScaleTimeRange = useMemo(() => {
     const domain = extent(timeRangeData, getXAsDate) as [Date, Date];
     return scaleTime().domain(domain);
   }, [getXAsDate, timeRangeData]);
 
-  const colors = React.useMemo(() => {
+  const colors = useMemo(() => {
     const domain = yGetters.map((d) => d.label);
     const range = yGetters.map((d) => d.color);
 

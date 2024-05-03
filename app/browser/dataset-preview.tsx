@@ -3,7 +3,7 @@ import { Box, Button, Paper, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import Head from "next/head";
 import Link from "next/link";
-import * as React from "react";
+import { useEffect } from "react";
 
 import { DataSetPreviewTable } from "@/browse/datatable";
 import { useFootnotesStyles } from "@/components/chart-footnotes";
@@ -110,7 +110,7 @@ export const DataSetPreview = ({
     descriptionPresent: !!metadata?.dataCubeMetadata.description,
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     window.scrollTo({ top: 0 });
   }, []);
 

@@ -1,7 +1,7 @@
 import { Box, TableSortLabel, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
-import React, { useMemo, useContext } from "react";
+import React, { useMemo, useContext, createContext } from "react";
 import { HeaderGroup } from "react-table";
 
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
@@ -19,7 +19,7 @@ type TableContentProps = {
   customSortCount: number;
   totalColumnsWidth: number;
 };
-const TableContentContext = React.createContext<TableContentProps | undefined>(
+const TableContentContext = createContext<TableContentProps | undefined>(
   undefined
 );
 

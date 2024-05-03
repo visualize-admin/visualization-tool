@@ -13,7 +13,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import React, { ReactNode } from "react";
+import React, { ReactNode, useState, useEffect } from "react";
 
 import Flex from "@/components/flex";
 import { MotionBox } from "@/components/presence";
@@ -101,10 +101,10 @@ const useLoadingStyles = makeStyles((theme: Theme) => ({
 type LoadingHintVariant = "regular" | "long";
 
 export const Loading = ({ delayMs = 1000 }: { delayMs?: number }) => {
-  const [variant, setVariant] = React.useState<LoadingHintVariant>("regular");
+  const [variant, setVariant] = useState<LoadingHintVariant>("regular");
   const classes = useLoadingStyles();
 
-  React.useEffect(() => {
+  useEffect(() => {
     const timeout = setTimeout(() => {
       setVariant("long");
     }, 7500);

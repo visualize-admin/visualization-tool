@@ -1,8 +1,8 @@
 import { Box } from "@mui/material";
-import React from "react";
+import React, { useEffect } from "react";
 
 const Page = () => {
-  React.useEffect(() => {
+  useEffect(() => {
     const iframe = document.getElementById("chart") as HTMLIFrameElement;
     iframe.onload = () => {
       const iframeWindow = iframe?.contentWindow as Window | undefined;

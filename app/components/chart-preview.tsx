@@ -9,7 +9,7 @@ import {
 import { Trans } from "@lingui/macro";
 import { Box } from "@mui/material";
 import Head from "next/head";
-import React from "react";
+import React, { useState, useMemo, useCallback } from "react";
 
 import { DataSetTable } from "@/browse/datatable";
 import { ChartDataFilters } from "@/charts/shared/chart-data-filters";
@@ -95,12 +95,10 @@ const DashboardPreview = (props: DashboardPreviewProps) => {
   const [state, dispatch] = useConfiguratorState(hasChartConfigs);
   const theme = useTheme();
   const transition = useTransitionStore();
-  const [isDragging, setIsDragging] = React.useState(false);
-  const [activeChartKey, setActiveChartKey] = React.useState<string | null>(
-    null
-  );
-  const [over, setOver] = React.useState<Over | null>(null);
-  const renderChart = React.useCallback(
+  const [isDragging, setIsDragging] = useState(false);
+  const [activeChartKey, setActiveChartKey] = useState<string | null>(null);
+  const [over, setOver] = useState<Over | null>(null);
+  const renderChart = useCallback(
     (chartConfig: ChartConfig) => (
       <DndChartPreview
         chartKey={chartConfig.key}
@@ -207,7 +205,7 @@ const DndChartPreview = (props: DndChartPreviewProps) => {
     active,
   } = useDroppable({ id: chartKey });
 
-  const setRef = React.useCallback(
+  const setRef = useCallback(
     (node: HTMLElement | null) => {
       setDraggableNodeRef(node);
       setDroppableNodeRef(node);
@@ -253,7 +251,7 @@ type SingleURLsPreviewProps = ChartPreviewProps & {
 const SingleURLsPreview = (props: SingleURLsPreviewProps) => {
   const { dataSource, layout } = props;
   const [state, dispatch] = useConfiguratorState(hasChartConfigs);
-  const renderChart = React.useCallback(
+  const renderChart = useCallback(
     (chartConfig: ChartConfig) => {
       const checked = layout.publishableChartKeys.includes(chartConfig.key);
       const { publishableChartKeys: keys } = layout;
@@ -347,7 +345,7 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
   const handleToggleTableView = useEvent(() => setIsTablePreview((c) => !c));
   const dimensions = components?.dataCubesComponents.dimensions;
   const measures = components?.dataCubesComponents.measures;
-  const allComponents = React.useMemo(() => {
+  const allComponents = useMemo(() => {
     if (!dimensions || !measures) {
       return [];
     }

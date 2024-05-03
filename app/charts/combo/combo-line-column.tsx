@@ -1,5 +1,5 @@
 import { line } from "d3-shape";
-import React from "react";
+import React, { useMemo, useEffect, memo, useRef } from "react";
 
 import {
   RenderColumnDatum,
@@ -23,7 +23,7 @@ const Columns = () => {
     getRenderingKey,
   } = useChartState() as ComboLineColumnState;
   const { margins } = bounds;
-  const ref = React.useRef<SVGGElement>(null);
+  const ref = useRef<SVGGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
   const bandwidth = xScale.bandwidth();
@@ -33,7 +33,7 @@ const Columns = () => {
       ? yOrientationScales.left
       : yOrientationScales.right;
   const y0 = yScale(0);
-  const renderData: RenderColumnDatum[] = React.useMemo(() => {
+  const renderData: RenderColumnDatum[] = useMemo(() => {
     return chartData.map((d) => {
       const key = getRenderingKey(d);
       const xScaled = xScale(getX(d)) as number;
@@ -64,7 +64,7 @@ const Columns = () => {
     bandwidth,
   ]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (ref.current) {
       renderContainer(ref.current, {
         id: "columns",
@@ -118,7 +118,7 @@ type LineProps = {
   color: string;
 };
 
-const Line = React.memo(function Line(props: LineProps) {
+const Line = memo(function Line(props: LineProps) {
   const { path, color } = props;
 
   return <path d={path} stroke={color} strokeWidth={4} fill="none" />;

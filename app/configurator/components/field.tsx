@@ -381,7 +381,7 @@ export const DataFilterTemporal = (props: DataFilterTemporalProps) => {
   ) : (
     _label
   );
-  const { minDate, maxDate, optionValues } = React.useMemo(() => {
+  const { minDate, maxDate, optionValues } = useMemo(() => {
     if (values.length) {
       const options = values.map((d) => {
         return {
@@ -404,7 +404,7 @@ export const DataFilterTemporal = (props: DataFilterTemporalProps) => {
       };
     }
   }, [values, parseDate]);
-  const isDateDisabled = React.useCallback(
+  const isDateDisabled = useCallback(
     (date: Date) => {
       return !optionValues.includes(formatDate(date));
     },
