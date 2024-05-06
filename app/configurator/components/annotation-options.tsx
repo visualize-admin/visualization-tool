@@ -1,4 +1,3 @@
-import { Trans } from "@lingui/macro";
 import { Box, Button, Typography } from "@mui/material";
 import { useEffect, useRef } from "react";
 
@@ -108,9 +107,7 @@ const AnnotationOptions = (props: AnnotationOptionsProps) => {
             onClick={handleClosePanel}
             sx={{ alignSelf: "flex-end", mt: 3, px: 5 }}
           >
-            <Typography component="span">
-              <Trans id="save">Save</Trans>
-            </Typography>
+            <Typography component="span">Ok</Typography>
           </Button>
         </ControlSectionContent>
       </ControlSection>
