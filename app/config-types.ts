@@ -1153,6 +1153,7 @@ const Layout = t.intersection([
 ]);
 export type Layout = t.TypeOf<typeof Layout>;
 export type LayoutType = Layout["type"];
+export type LayoutDashboard = Extract<Layout, { type: "dashboard" }>;
 
 const Config = t.intersection([
   t.type(

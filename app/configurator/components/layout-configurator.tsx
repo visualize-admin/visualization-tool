@@ -2,7 +2,7 @@ import { Trans } from "@lingui/macro";
 import { Box } from "@mui/material";
 import capitalize from "lodash/capitalize";
 
-import { Layout } from "@/config-types";
+import { LayoutDashboard } from "@/config-types";
 import { LayoutAnnotator } from "@/configurator/components/annotators";
 import {
   ControlSection,
@@ -63,8 +63,8 @@ const LayoutLayoutConfigurator = () => {
 };
 
 type LayoutButtonProps = {
-  type: "vertical" | "tall";
-  layout: Extract<Layout, { type: "dashboard" }>;
+  type: LayoutDashboard["layout"];
+  layout: LayoutDashboard;
 };
 
 const LayoutButton = (props: LayoutButtonProps) => {
