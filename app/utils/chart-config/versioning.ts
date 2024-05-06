@@ -3,6 +3,7 @@ import produce from "immer";
 import { DEFAULT_OTHER_COLOR_FIELD_OPACITY } from "@/charts/map/constants";
 import { ChartConfig, ConfiguratorState } from "@/config-types";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
+import { PROD_DATA_SOURCE_URL } from "@/domain/datasource/constants";
 import { DEFAULT_CATEGORICAL_PALETTE_NAME } from "@/palettes";
 import { createChartId } from "@/utils/create-chart-id";
 
@@ -891,7 +892,7 @@ export const migrateChartConfig = makeMigrate<ChartConfig>(
   }
 );
 
-export const CONFIGURATOR_STATE_VERSION = "3.2.0";
+export const CONFIGURATOR_STATE_VERSION = "3.2.1";
 
 export const configuratorStateMigrations: Migration[] = [
   {
@@ -1108,6 +1109,27 @@ export const configuratorStateMigrations: Migration[] = [
 
         draft.chartConfigs = chartConfigs;
       });
+    },
+  },
+  {
+    description: "ALL (add dataSource in case it's missing)",
+    from: "3.2.0",
+    to: "3.2.1",
+    up: (config) => {
+      const newConfig = { ...config, version: "3.2.1" };
+
+      return produce(newConfig, (draft: any) => {
+        if (!draft.dataSource) {
+          draft.dataSource = {
+            type: "sparql",
+            url: PROD_DATA_SOURCE_URL,
+          };
+        }
+      });
+    },
+    down: (config) => {
+      const newConfig = { ...config, version: "3.2.0" };
+      return newConfig;
     },
   },
 ];
