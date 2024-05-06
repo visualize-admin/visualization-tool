@@ -3,7 +3,10 @@ import produce from "immer";
 import { DEFAULT_OTHER_COLOR_FIELD_OPACITY } from "@/charts/map/constants";
 import { ChartConfig, ConfiguratorState } from "@/config-types";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
-import { PROD_DATA_SOURCE_URL } from "@/domain/datasource/constants";
+import {
+  LEGACY_PROD_DATA_SOURCE_URL,
+  PROD_DATA_SOURCE_URL,
+} from "@/domain/datasource/constants";
 import { DEFAULT_CATEGORICAL_PALETTE_NAME } from "@/palettes";
 import { createChartId } from "@/utils/create-chart-id";
 
@@ -1124,6 +1127,8 @@ export const configuratorStateMigrations: Migration[] = [
             type: "sparql",
             url: PROD_DATA_SOURCE_URL,
           };
+        } else if (draft.dataSource.url === LEGACY_PROD_DATA_SOURCE_URL) {
+          draft.dataSource.url = PROD_DATA_SOURCE_URL;
         }
       });
     },

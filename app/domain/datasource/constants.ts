@@ -2,6 +2,8 @@ import keyBy from "lodash/keyBy";
 
 import { WHITELISTED_DATA_SOURCES } from "../env";
 
+export const LEGACY_PROD_DATA_SOURCE_URL = "https://lindas.admin.ch/query";
+
 export const PROD_DATA_SOURCE_URL =
   "https://lindas-cached.cluster.ldbar.ch/query";
 
