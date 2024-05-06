@@ -112,25 +112,27 @@ export async function loadDimensionsValuesWithMetadata(
       queryFilters
         ? ""
         : `{ #pragma evaluate on
-      SELECT ?dimensionIri ?value WHERE {
+      SELECT ?dimensionIri ?versionedValue ?unversionedValue WHERE {
         VALUES ?dimensionIri { <${dimensionIri}> }
         <${cubeIri}> cube:observationConstraint/sh:property ?dimension .
         ?dimension sh:path ?dimensionIri .
         ?dimension schema:version ?version .
-        ?dimension sh:in/rdf:rest*/rdf:first/schema:sameAs ?value .
+        ?dimension sh:in/rdf:rest*/rdf:first ?versionedValue .
+        ?versionedValue schema:sameAs ?unversionedValue .
       }
     } UNION {
-      SELECT ?dimensionIri ?value WHERE {
+      SELECT ?dimensionIri ?versionedValue ?unversionedValue WHERE {
         VALUES ?dimensionIri { <${dimensionIri}> }
         <${cubeIri}> cube:observationConstraint/sh:property ?dimension .
         ?dimension sh:path ?dimensionIri .
         FILTER NOT EXISTS { ?dimension schema:version ?version . }
-        ?dimension sh:in/rdf:rest*/rdf:first ?value .
+        ?dimension sh:in/rdf:rest*/rdf:first ?versionedValue .
+        BIND(?versionedValue as ?unversionedValue)
       }
     } UNION`
     } {
       { #pragma evaluate on
-        SELECT DISTINCT ?dimensionIri ?value WHERE {
+        SELECT DISTINCT ?dimensionIri ?versionedValue ?unversionedValue WHERE {
           ${
             queryFilters
               ? `<${cubeIri}> cube:observationConstraint/sh:property ?dimension .
@@ -146,13 +148,13 @@ export async function loadDimensionsValuesWithMetadata(
           }
           <${cubeIri}> cube:observationSet/cube:observation ?observation .
           ?observation ?dimensionIri ?versionedValue .
-          ?versionedValue schema:sameAs ?value .
+          ?versionedValue schema:sameAs ?unversionedValue .
           ${queryFilters}
         }
       }
     } UNION {
       { #pragma evaluate on
-        SELECT DISTINCT ?dimensionIri ?value WHERE {
+        SELECT DISTINCT ?dimensionIri ?versionedValue ?unversionedValue WHERE {
           ${
             queryFilters
               ? `<${cubeIri}> cube:observationConstraint/sh:property ?dimension .
@@ -165,8 +167,9 @@ export async function loadDimensionsValuesWithMetadata(
           FILTER(NOT EXISTS{ ?dimension sh:in ?in . })`
           }
           <${cubeIri}> cube:observationSet/cube:observation ?observation .
-          ?observation ?dimensionIri ?value .
-          FILTER NOT EXISTS { ?value schema:version ?version . }
+          ?observation ?dimensionIri ?versionedValue .
+          FILTER NOT EXISTS { ?dimension schema:version ?version . }
+          BIND(?versionedValue as ?unversionedValue)
           ${queryFilters}
         }
       }
@@ -180,8 +183,8 @@ PREFIX sh: <http://www.w3.org/ns/shacl#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 
 CONSTRUCT {
-  ?dimensionIri rdf:first ?value .
-  ?value
+  ?dimensionIri rdf:first ?unversionedValue .
+  ?unversionedValue
     schema:name ?name ;
     schema:alternateName ?alternateName ;
     schema:description ?description ;
@@ -193,21 +196,31 @@ CONSTRUCT {
     schema:longitude ?longitude .
 } WHERE {
   ${dimensionQueries.join("\nUNION ")}
-  ${buildLocalizedSubQuery("value", "schema:name", "name", {
+  ${buildLocalizedSubQuery("versionedValue", "schema:name", "name", {
     locale,
   })}
-  ${buildLocalizedSubQuery("value", "schema:description", "description", {
-    locale,
-  })}
-  ${buildLocalizedSubQuery("value", "schema:alternateName", "alternateName", {
-    locale,
-  })}
-  OPTIONAL { ?value schema:identifier ?identifier . }
-  OPTIONAL { ?value schema:position ?position . }
-  OPTIONAL { ?value schema:color ?color . }
-  OPTIONAL { ?value geo:hasGeometry ?geometry . }
-  OPTIONAL { ?value schema:latitude ?latitude . }
-  OPTIONAL { ?value schema:longitude ?longitude . }
+  ${buildLocalizedSubQuery(
+    "versionedValue",
+    "schema:description",
+    "description",
+    {
+      locale,
+    }
+  )}
+  ${buildLocalizedSubQuery(
+    "versionedValue",
+    "schema:alternateName",
+    "alternateName",
+    {
+      locale,
+    }
+  )}
+  OPTIONAL { ?versionedValue schema:identifier ?identifier . }
+  OPTIONAL { ?versionedValue schema:position ?position . }
+  OPTIONAL { ?versionedValue schema:color ?color . }
+  OPTIONAL { ?versionedValue geo:hasGeometry ?geometry . }
+  OPTIONAL { ?versionedValue schema:latitude ?latitude . }
+  OPTIONAL { ?versionedValue schema:longitude ?longitude . }
 }`;
 
   return await executeWithCache(
