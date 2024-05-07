@@ -16,14 +16,14 @@ const providers = [
         clientSecret: KEYCLOAK_SECRET,
         wellKnown: `${KEYCLOAK_ISSUER}/.well-known/openid-configuration`,
         authorization: {
-          url: `${KEYCLOAK_ISSUER}/adfs/oauth2/authorize`,
+          url: `${KEYCLOAK_ISSUER}/protocol/openid-connect/auth`,
           params: {
             scope: "openid",
           },
         },
         issuer: KEYCLOAK_ISSUER,
-        token: `${KEYCLOAK_ISSUER}/adfs/oauth2/token`,
-        userInfo: `${KEYCLOAK_ISSUER}/adfs/userinfo`,
+        token: `${KEYCLOAK_ISSUER}/protocol/openid-connect/token`,
+        userInfo: `${KEYCLOAK_ISSUER}/protocol/openid-connect/userinfo`,
         checks: ["pkce", "state"],
         profile(profile: any) {
           return {
