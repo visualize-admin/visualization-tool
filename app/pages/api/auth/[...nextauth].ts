@@ -1,5 +1,4 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
-import KeycloakProvider from "next-auth/providers/keycloak";
 
 import { ensureUserFromSub } from "@/db/user";
 import { KEYCLOAK_ID, KEYCLOAK_ISSUER, KEYCLOAK_SECRET } from "@/domain/env";
@@ -8,18 +7,30 @@ import { truthy } from "@/domain/types";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 const providers = [
-  KEYCLOAK_ID && KEYCLOAK_SECRET
-    ? KeycloakProvider({
-        clientId: KEYCLOAK_ID as string,
-        clientSecret: KEYCLOAK_SECRET as string,
-        issuer: KEYCLOAK_ISSUER as string,
+  KEYCLOAK_ID && KEYCLOAK_SECRET && KEYCLOAK_ISSUER
+    ? {
+        id: "adfs",
+        name: "adfs",
+        type: "oicd",
+        clientId: KEYCLOAK_ID,
+        clientSecret: KEYCLOAK_SECRET,
+        wellKnown: `${KEYCLOAK_ISSUER}/.well-known/openid-configuration`,
         authorization: {
+          url: `${KEYCLOAK_ISSUER}/adfs/oauth2/authorize`,
           params: {
             scope: "openid",
           },
         },
-        idToken: false,
-      })
+        issuer: KEYCLOAK_ISSUER,
+        token: `${KEYCLOAK_ISSUER}/adfs/oauth2/token`,
+        userInfo: `${KEYCLOAK_ISSUER}/adfs/userinfo`,
+        checks: ["pkce", "state"],
+        profile(profile: any) {
+          return {
+            id: profile.sub,
+          };
+        },
+      }
     : null,
 ].filter(truthy);
 
