@@ -14,7 +14,7 @@ const providers = [
         type: "oidc",
         clientId: KEYCLOAK_ID,
         clientSecret: KEYCLOAK_SECRET,
-        wellKnown: `${KEYCLOAK_ISSUER}/.well-known/openid-configuration`,
+        wellKnown: KEYCLOAK_ISSUER,
         authorization: {
           url: `${KEYCLOAK_ISSUER}/protocol/openid-connect/auth`,
           params: {
