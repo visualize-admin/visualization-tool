@@ -9,7 +9,7 @@ import {
 import { Trans } from "@lingui/macro";
 import { Box } from "@mui/material";
 import Head from "next/head";
-import React, { useState, useMemo, useCallback } from "react";
+import { ReactNode, useCallback, useMemo, useState } from "react";
 
 import { DataSetTable } from "@/browse/datatable";
 import { ChartDataFilters } from "@/charts/shared/chart-data-filters";
@@ -301,7 +301,7 @@ const SingleURLsPreview = (props: SingleURLsPreviewProps) => {
 
 type ChartPreviewInnerProps = ChartPreviewProps & {
   chartKey?: string | null;
-  actionElementSlot?: React.ReactNode;
+  actionElementSlot?: ReactNode;
   disableMetadataPanel?: boolean;
 };
 
@@ -356,20 +356,21 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
   return (
     <Box className={chartClasses.root}>
       <ChartErrorBoundary resetKeys={[state]}>
-        {/* FIXME: adapt to design */}
-        {metadata?.dataCubesMetadata.some(
-          (d) => d.publicationStatus === DataCubePublicationStatus.Draft
-        ) && (
-          <Box sx={{ mb: 4 }}>
-            <HintYellow iconName="datasetError" iconSize={64}>
-              <Trans id="dataset.publicationStatus.draft.warning">
-                Careful, this dataset is only a draft.
-                <br />
-                <strong>Don&apos;t use for reporting!</strong>
-              </Trans>
-            </HintYellow>
-          </Box>
-        )}
+        <div>
+          {metadata?.dataCubesMetadata.some(
+            (d) => d.publicationStatus === DataCubePublicationStatus.Draft
+          ) && (
+            <Box sx={{ mb: 4 }}>
+              <HintYellow iconName="datasetError" iconSize={64}>
+                <Trans id="dataset.publicationStatus.draft.warning">
+                  Careful, this dataset is only a draft.
+                  <br />
+                  <strong>Don&apos;t use for reporting!</strong>
+                </Trans>
+              </HintYellow>
+            </Box>
+          )}
+        </div>
         {hasChartConfigs(state) && (
           <>
             <Head>

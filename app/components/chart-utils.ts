@@ -8,7 +8,7 @@ export const useChartStyles = makeStyles<Theme>((theme) => ({
   root: {
     display: "grid",
     gridTemplateRows: "subgrid",
-    gridRow: shouldShowDebugPanel() ? "span 6" : "span 5",
+    gridRow: shouldShowDebugPanel() ? "span 7" : "span 6",
     padding: theme.spacing(6),
     backgroundColor: theme.palette.background.paper,
     border: "1px solid",
