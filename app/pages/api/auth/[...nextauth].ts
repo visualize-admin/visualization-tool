@@ -11,7 +11,7 @@ const providers = [
     ? {
         id: "adfs",
         name: "adfs",
-        type: "oicd",
+        type: "oidc",
         clientId: KEYCLOAK_ID,
         clientSecret: KEYCLOAK_SECRET,
         wellKnown: `${KEYCLOAK_ISSUER}/.well-known`,
