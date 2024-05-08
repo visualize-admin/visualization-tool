@@ -12,6 +12,7 @@ import {
   TooltipSingle,
 } from "@/charts/shared/interaction/tooltip-content";
 import Flex from "@/components/flex";
+import { InfoIconTooltip as InfoIconTooltipComponent } from "@/components/info-icon-tooltip";
 import {
   dimensions,
   fields,
@@ -217,6 +218,9 @@ const TooltipBoxStory = () => (
 );
 
 export { TooltipBoxStory as TooltipBox };
+export { TooltipContentStory as TooltipContent };
+export { TooltipContentStory2 as TooltipContent2 };
+export { RulerStory as Ruler };
 
 const TooltipContentStory = {
   render: () => (
@@ -286,8 +290,6 @@ const TooltipContentStory = {
     </InteractiveFiltersProvider>
   ),
 };
-
-export { TooltipContentStory as TooltipContent };
 
 export const TooltipContentStory2 = {
   render: () => (
@@ -361,8 +363,6 @@ export const TooltipContentStory2 = {
   ),
 };
 
-export { TooltipContentStory2 as TooltipContent2 };
-
 const RulerStory = {
   render: () => {
     return (
@@ -405,4 +405,6 @@ const RulerStory = {
   },
 };
 
-export { RulerStory as Ruler };
+export const InfoIconTooltip = () => {
+  return <InfoIconTooltipComponent title="Additional information" />;
+};

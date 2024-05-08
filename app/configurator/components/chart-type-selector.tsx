@@ -1,13 +1,5 @@
-import { Trans, t } from "@lingui/macro";
-import {
-  Box,
-  BoxProps,
-  Divider,
-  Theme,
-  Tooltip,
-  Typography,
-} from "@mui/material";
-import { makeStyles } from "@mui/styles";
+import { t, Trans } from "@lingui/macro";
+import { Box, BoxProps, Divider, Typography } from "@mui/material";
 import React, { useCallback } from "react";
 
 import {
@@ -27,8 +19,9 @@ import { IconButton } from "@/configurator/components/icon-button";
 import { useChartType } from "@/configurator/config-form";
 import { ConfiguratorStateWithChartConfigs } from "@/configurator/configurator-state";
 import { useDataCubesComponentsQuery } from "@/graphql/hooks";
-import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
+
+import { InfoIconTooltip } from "../../components/info-icon-tooltip";
 
 type ChartTypeSelectorProps = {
   state: Exclude<ConfiguratorStateWithChartConfigs, ConfiguratorStatePublished>;
@@ -211,40 +204,5 @@ const ChartTypeSelectorMenu = (props: ChartTypeSelectorMenuProps) => {
         ))}
       </Box>
     </Flex>
-  );
-};
-
-const useWarnIconStyles = makeStyles<Theme>((theme) => ({
-  icon: {
-    color: theme.palette.primary.main,
-    pointerEvents: "auto",
-  },
-}));
-
-type InfoIconTooltipProps = {
-  title: NonNullable<React.ReactNode>;
-};
-
-const InfoIconTooltip = (props: InfoIconTooltipProps) => {
-  const { title } = props;
-  const iconStyles = useWarnIconStyles();
-
-  return (
-    <Tooltip
-      arrow
-      placement="top"
-      title={
-        <Typography variant="caption" color="secondary">
-          {title}
-        </Typography>
-      }
-      componentsProps={{
-        tooltip: { sx: { width: 180, px: 2, py: 1, lineHeight: "18px" } },
-      }}
-    >
-      <Typography>
-        <Icon name="infoOutline" size={16} className={iconStyles.icon} />
-      </Typography>
-    </Tooltip>
   );
 };
