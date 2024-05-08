@@ -1100,6 +1100,14 @@ msgstr "Aggiungi set di dati"
 msgid "dataset.search.at-least-one-compatible-dimension-selected"
 msgstr "È necessario selezionare almeno una dimensione compatibile."
 
+#: app/configurator/components/add-dataset-dialog.tsx
+msgid "dataset.search.caution.acknowledge"
+msgstr "Capito, procederò con cautela."
+
+#: app/configurator/components/add-dataset-dialog.tsx
+msgid "dataset.search.caution.body"
+msgstr "Il collegamento di diversi set di dati comporta rischi quali incoerenze dei dati, problemi di scalabilità e correlazioni impreviste. Assicurati di utilizzare per unire i set di dati solo quando sei sicuro che i dati debbano essere uniti insieme."
+
 #: app/browser/dataset-browse.tsx
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.label"

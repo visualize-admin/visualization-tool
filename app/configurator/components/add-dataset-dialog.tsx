@@ -1,18 +1,27 @@
-import { Trans, t } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
 import { LoadingButton } from "@mui/lab";
 import {
+  Alert,
+  AlertProps,
   Box,
   Button,
   Checkbox,
   CircularProgress,
+  Collapse,
   Dialog,
   DialogActions,
+  dialogActionsClasses,
+  dialogClasses,
   DialogContent,
+  dialogContentClasses,
   DialogProps,
   DialogTitle,
+  dialogTitleClasses,
+  Grow,
   IconButton,
   IconButtonProps,
   InputAdornment,
+  Link,
   ListItemText,
   ListSubheader,
   MenuItem,
@@ -29,10 +38,6 @@ import {
   Tooltip,
   Typography,
   TypographyProps,
-  dialogActionsClasses,
-  dialogClasses,
-  dialogContentClasses,
-  dialogTitleClasses,
   useEventCallback,
 } from "@mui/material";
 import { Theme } from "@mui/material/styles";
@@ -42,7 +47,7 @@ import groupBy from "lodash/groupBy";
 import keyBy from "lodash/keyBy";
 import uniq from "lodash/uniq";
 import uniqBy from "lodash/uniqBy";
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { useClient } from "urql";
 
 import { DatasetResults, PartialSearchCube } from "@/browser/dataset-browse";
@@ -50,20 +55,20 @@ import { getPossibleChartTypes } from "@/charts";
 import { Error as ErrorHint, Loading } from "@/components/hint";
 import Tag from "@/components/tag";
 import {
+  addDatasetInConfig,
   ConfiguratorStateConfiguringChart,
   DataSource,
-  addDatasetInConfig,
   isConfiguring,
   useConfiguratorState,
 } from "@/configurator";
 import { BetaTag } from "@/configurator/components/beta-tag";
 import {
   Dimension,
-  Measure,
-  Termset,
   isJoinByComponent,
   isStandardErrorDimension,
   isTemporalDimensionWithTimeUnit,
+  Measure,
+  Termset,
 } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import {
@@ -78,15 +83,17 @@ import {
   DataCubeComponentsQueryVariables,
   SearchCubeFilterType,
   SearchCubeResultOrder,
-  useDataCubeComponentTermsetsQuery,
   useDataCubeComponentsQuery,
+  useDataCubeComponentTermsetsQuery,
   useSearchCubesQuery,
 } from "@/graphql/query-hooks";
 import SvgIcFilter from "@/icons/components/IcFilter";
+import SvgIcInfo from "@/icons/components/IcInfo";
 import SvgIcRemove from "@/icons/components/IcRemove";
 import SvgIcSearch from "@/icons/components/IcSearch";
 import { useLocale } from "@/locales/use-locale";
 import { exhaustiveCheck } from "@/utils/exhaustiveCheck";
+import useLocalState from "@/utils/use-local-state";
 
 const DialogCloseButton = (props: IconButtonProps) => {
   return (
@@ -127,6 +134,14 @@ const useStyles = makeStyles((theme: Theme) => ({
       minHeight: "calc(100vh - calc(30px * 2))",
     },
   },
+  dialogCloseArea: {
+    position: "absolute",
+    top: "1rem",
+    right: "1rem",
+    display: "flex",
+    gap: "0.5rem",
+    alignItems: "center",
+  },
   newAnnotation: {
     color: theme.palette.success.main,
   },
@@ -153,6 +168,54 @@ const NewAnnotation = (props: TypographyProps) => {
     >
       <Trans id="dataset.search.preview.new-dimension">New</Trans>
     </Typography>
+  );
+};
+
+const useCautionAlert = () => {
+  const [isOpen, setIsOpen] = useLocalState<boolean>(
+    "add-dataset-caution-alert",
+    true
+  );
+
+  return {
+    isOpen,
+    open: useCallback(() => setIsOpen(true), [setIsOpen]),
+    close: useCallback(() => setIsOpen(false), [setIsOpen]),
+  };
+};
+
+export const CautionAlert = ({
+  onConfirm,
+  ...props
+}: { onConfirm: () => void } & AlertProps) => {
+  return (
+    <Alert
+      {...props}
+      icon={<SvgIcInfo />}
+      severity="info"
+      sx={{ ...props.sx, typography: "body3", color: "text.primary" }}
+    >
+      <Trans id="dataset.search.caution.body">
+        The linking of different datasets carries risks such as data
+        inconsistencies, scalability issues, and unexpected correlations. Be
+        sure to use to merge datasets only when you are confident that data
+        should be merge together.
+      </Trans>
+      <Box sx={{ mt: 1 }}>
+        <Link
+          color="primary"
+          onClick={(ev) => {
+            ev.preventDefault();
+            onConfirm();
+          }}
+          href="#"
+        >
+          <Trans id="dataset.search.caution.acknowledge">
+            Understood, I&apos;ll proceed cautiously.
+          </Trans>
+        </Link>
+      </Box>
+    </Alert>
   );
 };
 
@@ -837,6 +900,8 @@ export const DatasetDialog = ({
     setOtherCube(otherCube);
   };
 
+  const { isOpen, open, close } = useCautionAlert();
+
   return (
     <Dialog
       {...props}
@@ -845,7 +910,17 @@ export const DatasetDialog = ({
       fullWidth
       className={clsx(classes.dialog, props.className)}
     >
-      <DialogCloseButton onClick={(ev) => handleClose(ev, "escapeKeyDown")} />
+      <Box className={classes.dialogCloseArea}>
+        <Grow in={!isOpen}>
+          <IconButton color="primary" onClick={() => open()}>
+            <SvgIcInfo />
+          </IconButton>
+        </Grow>
+        <DialogCloseButton
+          onClick={(ev) => handleClose(ev, "escapeKeyDown")}
+          sx={{ position: "static" }}
+        />
+      </Box>
       {otherCube ? null : (
         <>
           <DialogTitle sx={{ typography: "h2" }}>
@@ -860,6 +935,10 @@ export const DatasetDialog = ({
             />
           </DialogTitle>
           <DialogContent>
+            <Collapse in={isOpen}>
+              <CautionAlert sx={{ mb: 4 }} onConfirm={() => close()} />
+            </Collapse>
+
             <Typography variant="body1" mb="2rem">
               <Trans id="chart.datasets.add-dataset-dialog.description">
                 You can only combine datasets that share dimensions with the

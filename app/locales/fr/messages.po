@@ -1100,6 +1100,14 @@ msgstr "Ajouter la source"
 msgid "dataset.search.at-least-one-compatible-dimension-selected"
 msgstr "Au moins une dimension compatible doit être sélectionnée."
 
+#: app/configurator/components/add-dataset-dialog.tsx
+msgid "dataset.search.caution.acknowledge"
+msgstr "Compris, je vais procéder avec prudence."
+
+#: app/configurator/components/add-dataset-dialog.tsx
+msgid "dataset.search.caution.body"
+msgstr "La liaison de différents ensembles de données comporte des risques tels que des incohérences de données, des problèmes d'évolutivité et des corrélations inattendues. Assurez-vous d'utiliser pour fusionner des ensembles de données uniquement lorsque vous êtes sûr que les données doivent être fusionnées."
+
 #: app/browser/dataset-browse.tsx
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.label"
