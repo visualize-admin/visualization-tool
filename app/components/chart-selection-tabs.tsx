@@ -39,6 +39,7 @@ import {
   useConfiguratorState,
 } from "@/configurator";
 import { ChartTypeSelector } from "@/configurator/components/chart-type-selector";
+import FromNewDatasetUI from "@/configurator/components/FromNewDatasetUI";
 import { getIconName } from "@/configurator/components/ui-helpers";
 import { useUserConfig } from "@/domain/user-configs";
 import { useDataCubesComponentsQuery } from "@/graphql/hooks";
@@ -183,6 +184,7 @@ const TabsEditable = (props: TabsEditableProps) => {
         }}
       />
 
+      <FromNewDatasetUI />
       <Popover
         id="chart-selection-popover"
         open={tabsState.popoverOpen}
@@ -194,12 +196,14 @@ const TabsEditable = (props: TabsEditableProps) => {
         onClose={handleClose}
       >
         {tabsState.popoverType === "add" ? (
-          <ChartTypeSelector
-            state={state}
-            type="add"
-            chartKey={tabsState.activeChartKey ?? chartConfig.key}
-            sx={{ width: 320, px: 3, pb: 3 }}
-          />
+          <>
+            <ChartTypeSelector
+              state={state}
+              type="add"
+              chartKey={tabsState.activeChartKey ?? chartConfig.key}
+              sx={{ width: 320, px: 3, pb: 3 }}
+            />
+          </>
         ) : (
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2, p: 4 }}>
             <Button
