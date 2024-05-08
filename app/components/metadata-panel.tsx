@@ -26,7 +26,7 @@ import orderBy from "lodash/orderBy";
 import sortBy from "lodash/sortBy";
 import uniqBy from "lodash/uniqBy";
 import { useRouter } from "next/router";
-import React, { useMemo, useState, useEffect, useCallback } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 import { DatasetMetadata } from "@/components/dataset-metadata";
 import { Error, Loading } from "@/components/hint";
@@ -638,6 +638,23 @@ const TabPanelDataDimension = ({
   }, [cubeIri, dim, expanded]);
 
   const locale = useLocale();
+  const cubesIri = useMemo(() => {
+    return isJoinByComponent(dim)
+      ? dim.originalIris?.map((x) => x.cubeIri)
+      : [dim.cubeIri];
+  }, [dim]);
+  const [cubesQuery] = useDataCubesMetadataQuery({
+    variables: {
+      locale,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      cubeFilters: cubesIri.map((iri) => ({ iri })),
+    },
+  });
+  const cubesByIri = useMemo(
+    () => keyBy(cubesQuery.data?.dataCubesMetadata, (x) => x.iri),
+    [cubesQuery.data?.dataCubesMetadata]
+  );
   const [componentsQuery] = useDataCubesComponentsQuery({
     pause: !expanded,
     variables: {
@@ -707,6 +724,22 @@ const TabPanelDataDimension = ({
             component={Flex}
             {...animationProps}
           >
+            {isJoinByComponent(dim) ? (
+              <div>
+                <Typography variant="h5" gutterBottom>
+                  Joined with
+                </Typography>
+                {dim.originalIris?.map((x) =>
+                  x.cubeIri === loadedDimension.cubeIri ? null : (
+                    <div key={x.cubeIri}>
+                      <Typography variant="body2">
+                        {x.label} ({cubesByIri[x.cubeIri]?.title} )
+                      </Typography>
+                    </div>
+                  )
+                )}
+              </div>
+            ) : null}
             <Typography
               sx={{ mt: 2, color: "grey.800" }}
               variant="body2"
