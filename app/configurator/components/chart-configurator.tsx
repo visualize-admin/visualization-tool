@@ -452,30 +452,44 @@ const useFilterReorder = ({
     state,
   });
   const fetching = possibleFiltersFetching || componentsFetching;
-
-  const { filterDimensions, addableDimensions } = useMemo(() => {
-    const keysOrder = Object.fromEntries(
-      Object.keys(filters).map((k, i) => [k, i])
-    );
-    const filterDimensions = sortBy(
-      dimensions?.filter(
+  const { filterDimensions, addableDimensions, missingDimensions } =
+    useMemo(() => {
+      const keysOrder = Object.fromEntries(
+        Object.keys(filters).map((k, i) => [k, i])
+      );
+      const filterDimensions = sortBy(
+        dimensions?.filter(
+          (dim) =>
+            !mappedFiltersIris.has(dim.iri) && keysOrder[dim.iri] !== undefined
+        ) ?? [],
+        [(x) => keysOrder[x.iri] ?? Infinity]
+      );
+      const addableDimensions = dimensions?.filter(
         (dim) =>
-          !mappedFiltersIris.has(dim.iri) && keysOrder[dim.iri] !== undefined
-      ) || [],
-      [(x) => keysOrder[x.iri] ?? Infinity]
-    );
-    const addableDimensions = dimensions?.filter(
-      (dim) =>
-        !mappedFiltersIris.has(dim.iri) &&
-        keysOrder[dim.iri] === undefined &&
-        !isStandardErrorDimension(dim)
-    );
+          !mappedFiltersIris.has(dim.iri) &&
+          keysOrder[dim.iri] === undefined &&
+          !isStandardErrorDimension(dim)
+      );
+      const missingDimensions = dimensions?.filter(
+        (d) => d.isKeyDimension && addableDimensions?.includes(d)
+      );
 
-    return {
-      filterDimensions,
-      addableDimensions,
-    };
-  }, [dimensions, filters, mappedFiltersIris]);
+      return {
+        filterDimensions,
+        addableDimensions,
+        missingDimensions,
+      };
+    }, [dimensions, filters, mappedFiltersIris]);
+
+  // Technically it's possible to have a key dimension that is not in the filters
+  // and not mapped. This could be achieved for example by manually modifying the
+  // localStorage state and removing a filter. This is a safety net to ensure that
+  // the relevant key dimensions are always in the filters.
+  useEffect(() => {
+    if (missingDimensions && missingDimensions.length > 0) {
+      missingDimensions.forEach(handleAddDimensionFilter);
+    }
+  }, [missingDimensions]);
 
   return {
     handleRemoveDimensionFilter,
