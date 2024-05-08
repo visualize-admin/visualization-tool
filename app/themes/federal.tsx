@@ -1,5 +1,5 @@
-import { Fade, Grow } from "@mui/material";
-import { Breakpoint, Theme, createTheme } from "@mui/material/styles";
+import { alertClasses, Fade, Grow } from "@mui/material";
+import { Breakpoint, createTheme, Theme } from "@mui/material/styles";
 import merge from "lodash/merge";
 import omit from "lodash/omit";
 
@@ -188,10 +188,10 @@ const makeStandardAlertVariant = ({
   "&": {
     backgroundColor: theme.palette[severity].light,
   },
-  "& > .MuiAlert-message": {
-    color: theme.palette[severity].main,
+  [`& > .${alertClasses.message}`]: {
+    color: theme.palette.text.primary,
   },
-  "& > .MuiAlert-icon": {
+  [`& > .${alertClasses.icon}`]: {
     color: theme.palette[severity].main,
   },
 });
