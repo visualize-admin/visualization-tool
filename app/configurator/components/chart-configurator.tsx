@@ -489,7 +489,7 @@ const useFilterReorder = ({
     if (missingDimensions && missingDimensions.length > 0) {
       missingDimensions.forEach(handleAddDimensionFilter);
     }
-  }, [missingDimensions, handleAddDimensionFilter]);
+  }, [missingDimensions]);
 
   return {
     handleRemoveDimensionFilter,
