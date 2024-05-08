@@ -172,10 +172,7 @@ const NewAnnotation = (props: TypographyProps) => {
 };
 
 const useCautionAlert = () => {
-  const [isOpen, setIsOpen] = useLocalState<boolean>(
-    "add-dataset-caution-alert",
-    true
-  );
+  const [isOpen, setIsOpen] = useLocalState("add-dataset-caution-alert", true);
 
   return {
     isOpen,
@@ -199,7 +196,7 @@ export const CautionAlert = ({
         The linking of different datasets carries risks such as data
         inconsistencies, scalability issues, and unexpected correlations. Be
         sure to use to merge datasets only when you are confident that data
-        should be merge together.
+        should be merged together.
       </Trans>
       <Box sx={{ mt: 1 }}>
         <Link

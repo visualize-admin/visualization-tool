@@ -30,6 +30,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 import { DatasetMetadata } from "@/components/dataset-metadata";
 import { Error, Loading } from "@/components/hint";
+import { InfoIconTooltip } from "@/components/info-icon-tooltip";
 import {
   useMetadataPanelStore,
   useMetadataPanelStoreActions,
@@ -37,7 +38,6 @@ import {
 import { MotionBox } from "@/components/presence";
 import { BackButton, ChartConfig, DataSource } from "@/configurator";
 import { DRAWER_WIDTH } from "@/configurator/components/drawer";
-import { InfoIconTooltip } from "@/configurator/components/info-icon-tooltip";
 import {
   getComponentDescription,
   getComponentLabel,
@@ -641,7 +641,7 @@ const TabPanelDataDimension = ({
   const locale = useLocale();
   const cubesIri = useMemo(() => {
     return isJoinByComponent(dim)
-      ? dim.originalIris?.map((x) => x.cubeIri)
+      ? dim.originalIris.map((x) => x.cubeIri)
       : [dim.cubeIri];
   }, [dim]);
   const [cubesQuery] = useDataCubesMetadataQuery({
@@ -742,7 +742,7 @@ const TabPanelDataDimension = ({
                 <Typography variant="h5" gutterBottom>
                   Joined with
                 </Typography>
-                {dim.originalIris?.map((x) =>
+                {dim.originalIris.map((x) =>
                   x.cubeIri === loadedDimension.cubeIri ? null : (
                     <div key={x.cubeIri}>
                       <Typography variant="body2">

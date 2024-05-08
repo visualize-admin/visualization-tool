@@ -1,6 +1,5 @@
 import { t, Trans } from "@lingui/macro";
-import { Box, BoxProps, Divider, Theme, Typography } from "@mui/material";
-import { makeStyles } from "@mui/styles";
+import { Box, BoxProps, Divider, Typography } from "@mui/material";
 import React, { useCallback } from "react";
 
 import {
@@ -22,7 +21,7 @@ import { ConfiguratorStateWithChartConfigs } from "@/configurator/configurator-s
 import { useDataCubesComponentsQuery } from "@/graphql/hooks";
 import { useLocale } from "@/locales/use-locale";
 
-import { InfoIconTooltip } from "./info-icon-tooltip";
+import { InfoIconTooltip } from "../../components/info-icon-tooltip";
 
 type ChartTypeSelectorProps = {
   state: Exclude<ConfiguratorStateWithChartConfigs, ConfiguratorStatePublished>;
@@ -207,10 +206,3 @@ const ChartTypeSelectorMenu = (props: ChartTypeSelectorMenuProps) => {
     </Flex>
   );
 };
-
-export const useWarnIconStyles = makeStyles<Theme>((theme) => ({
-  icon: {
-    color: theme.palette.primary.main,
-    pointerEvents: "auto",
-  },
-}));

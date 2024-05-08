@@ -4,14 +4,16 @@ import React from "react";
 
 import { Icon } from "@/icons";
 
-import { useWarnIconStyles } from "./chart-type-selector";
-
 type InfoIconTooltipProps = {
   title: NonNullable<React.ReactNode>;
 };
 
 const useStyles = makeStyles((theme: Theme) => ({
   tooltip: { width: 180, padding: theme.spacing(1, 2), lineHeight: "18px" },
+  icon: {
+    color: theme.palette.primary.main,
+    pointerEvents: "auto",
+  },
 }));
 
 export const InfoIconTooltip = (
@@ -19,7 +21,6 @@ export const InfoIconTooltip = (
 ) => {
   const classes = useStyles();
   const { title, componentsProps, ...rest } = props;
-  const iconStyles = useWarnIconStyles();
 
   return (
     <Tooltip
@@ -37,7 +38,7 @@ export const InfoIconTooltip = (
       {...rest}
     >
       <Typography>
-        <Icon name="infoOutline" size={16} className={iconStyles.icon} />
+        <Icon name="infoOutline" size={16} className={classes.icon} />
       </Typography>
     </Tooltip>
   );
