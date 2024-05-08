@@ -37,6 +37,7 @@ import {
 import { MotionBox } from "@/components/presence";
 import { BackButton, ChartConfig, DataSource } from "@/configurator";
 import { DRAWER_WIDTH } from "@/configurator/components/drawer";
+import { InfoIconTooltip } from "@/configurator/components/info-icon-tooltip";
 import {
   getComponentDescription,
   getComponentLabel,
@@ -707,7 +708,19 @@ const TabPanelDataDimension = ({
               {label}
             </Button>
             {isJoinByComponent(dim) ? (
-              <JoinByChip label={<Trans id="dimension.joined">Joined</Trans>} />
+              <>
+                <JoinByChip
+                  label={<Trans id="dimension.joined">Joined</Trans>}
+                />
+                <InfoIconTooltip
+                  title={
+                    <Trans id="dimension.joined-info-icon">
+                      Joined dimensions integrate data from multiple datasets
+                    </Trans>
+                  }
+                  placement="top-end"
+                />
+              </>
             ) : null}
           </Box>
           {description && (
