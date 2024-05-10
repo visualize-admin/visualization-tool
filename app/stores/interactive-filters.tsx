@@ -125,19 +125,21 @@ const interactiveFiltersStoreCreator: StateCreator<State> = (set) => {
   };
 };
 
+type InteractiveFiltersContextValue = [
+  UseBoundStore<StoreApi<State>>["getState"],
+  UseBoundStoreWithSelector<StoreApi<State>>,
+];
+
 const InteractiveFiltersContext = createContext<
-  | [UseBoundStore<StoreApi<State>>, UseBoundStoreWithSelector<StoreApi<State>>]
-  | undefined
+  InteractiveFiltersContextValue | undefined
 >(undefined);
 
 export const InteractiveFiltersProvider = ({
   children,
 }: React.PropsWithChildren<{}>) => {
-  const [state] = useState<
-    [UseBoundStore<StoreApi<State>>, UseBoundStoreWithSelector<StoreApi<State>>]
-  >(() => {
+  const [state] = useState<InteractiveFiltersContextValue>(() => {
     const store = create(interactiveFiltersStoreCreator);
-    return [store, createBoundUseStoreWithSelector(store)];
+    return [store.getState, createBoundUseStoreWithSelector(store)];
   });
 
   return (
@@ -163,7 +165,7 @@ export const useInteractiveFilters = <T extends unknown>(
   return useStore(selector);
 };
 
-export const useInteractiveFiltersRaw = () => {
+export const useInteractiveFiltersGetState = () => {
   const ctx = useContext(InteractiveFiltersContext);
 
   if (!ctx) {
@@ -172,7 +174,7 @@ export const useInteractiveFiltersRaw = () => {
     );
   }
 
-  const [store] = ctx;
+  const [getState] = ctx;
 
-  return store;
+  return getState;
 };

@@ -25,11 +25,11 @@ import { useDataCubesComponentsQuery } from "@/graphql/hooks";
 import { Icon } from "@/icons";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import { useLocale } from "@/src";
-import { useInteractiveFiltersRaw } from "@/stores/interactive-filters";
+import { useInteractiveFiltersGetState } from "@/stores/interactive-filters";
 import useEvent from "@/utils/use-event";
 
 const DebugInteractiveFilters = () => {
-  const IFState = useInteractiveFiltersRaw();
+  const getInteractiveFiltersState = useInteractiveFiltersGetState();
 
   return (
     <>
@@ -37,7 +37,11 @@ const DebugInteractiveFilters = () => {
         Interactive Filters State
       </Typography>
       <Box sx={{ p: 5 }}>
-        <Inspector expandLevel={3} data={IFState} table={false} />
+        <Inspector
+          expandLevel={3}
+          data={getInteractiveFiltersState}
+          table={false}
+        />
       </Box>
     </>
   );

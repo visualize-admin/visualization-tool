@@ -2,7 +2,7 @@ import { t, Trans } from "@lingui/macro";
 import { Box, Button, SelectChangeEvent, Typography } from "@mui/material";
 import isEmpty from "lodash/isEmpty";
 import isEqual from "lodash/isEqual";
-import React, { useMemo, useState, useEffect, useRef } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useClient } from "urql";
 
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
@@ -50,7 +50,7 @@ import { useLocale } from "@/locales/use-locale";
 import {
   DataFilters,
   useInteractiveFilters,
-  useInteractiveFiltersRaw,
+  useInteractiveFiltersGetState,
 } from "@/stores/interactive-filters";
 import { hierarchyToOptions } from "@/utils/hierarchy";
 import useEvent from "@/utils/use-event";
@@ -557,7 +557,7 @@ const useEnsurePossibleInteractiveFilters = (
   const [error, setError] = useState<Error>();
   const lastFilters = useRef<Record<string, Filters>>({});
   const client = useClient();
-  const IFRaw = useInteractiveFiltersRaw();
+  const getInteractiveFiltersState = useInteractiveFiltersGetState();
   const setDataFilters = useInteractiveFilters((d) => d.setDataFilters);
   const filtersByCubeIri = useMemo(() => {
     return preparedFilters?.reduce<Record<string, PreparedFilter>>((acc, d) => {
@@ -633,7 +633,7 @@ const useEnsurePossibleInteractiveFilters = (
 
         // We need to get the values dynamically, as they can get updated by
         // useSyncInteractiveFilters and this callback runs with old value.
-        const dataFilters = { ...IFRaw.getState().dataFilters };
+        const dataFilters = { ...getInteractiveFiltersState().dataFilters };
         const filtersToUpdate = Object.fromEntries(
           Object.entries(filters).filter(
             ([k, v]) => k in dataFilters && v.type === "single"
@@ -664,8 +664,8 @@ const useEnsurePossibleInteractiveFilters = (
     dataSource,
     setDataFilters,
     loadingState,
-    IFRaw,
     filtersByCubeIri,
+    getInteractiveFiltersState,
   ]);
 
   return { error };
