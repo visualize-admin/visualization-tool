@@ -1,5 +1,5 @@
-import React, { createContext, useState, useContext } from "react";
-import create, { StoreApi, UseBoundStore } from "zustand";
+import React, { createContext, useContext, useState } from "react";
+import create, { StateCreator, StoreApi, UseBoundStore } from "zustand";
 
 import { CalculationType, FilterValueSingle } from "@/configurator";
 import {
@@ -53,78 +53,77 @@ export type InteractiveFiltersStateActions = {
 
 type State = InteractiveFiltersState & InteractiveFiltersStateActions;
 
-const createInteractiveFiltersStore = () =>
-  create<State>((set) => {
-    return {
-      categories: {},
-      addCategory: (category: string) => {
-        set((state) => ({
-          categories: { ...state.categories, [category]: true },
-        }));
-      },
-      removeCategory: (category: string) => {
-        set((state) => {
-          delete state.categories[category];
-          return { categories: { ...state.categories } };
-        });
-      },
-      resetCategories: () => {
-        set({
-          categories: {},
-        });
-      },
-      timeRange: {
-        from: undefined,
-        to: undefined,
-      },
-      setTimeRange: (from: Date, to: Date) => {
-        set({
-          timeRange: { from, to },
-        });
-      },
-      timeSlider: {
-        type: "interval",
-        value: undefined,
-      },
-      setTimeSlider: ({ type, value }: TimeSlider) => {
-        set({
-          timeSlider: { type, value } as TimeSlider,
-        });
-      },
-      resetTimeSlider: () => {
-        set((state) => ({
-          timeSlider: { ...state.timeSlider, value: undefined },
-        }));
-      },
-      dataFilters: {},
-      setDataFilters: (dataFilters: DataFilters) => {
-        set({ dataFilters });
-      },
-      updateDataFilter: (
-        dimensionIri: string,
-        dimensionValueIri: FilterValueSingle["value"]
-      ) => {
-        set((state) => ({
-          dataFilters: {
-            ...state.dataFilters,
-            [dimensionIri]: {
-              type: "single",
-              value: dimensionValueIri,
-            },
+const interactiveFiltersStoreCreator: StateCreator<State> = (set) => {
+  return {
+    categories: {},
+    addCategory: (category: string) => {
+      set((state) => ({
+        categories: { ...state.categories, [category]: true },
+      }));
+    },
+    removeCategory: (category: string) => {
+      set((state) => {
+        delete state.categories[category];
+        return { categories: { ...state.categories } };
+      });
+    },
+    resetCategories: () => {
+      set({
+        categories: {},
+      });
+    },
+    timeRange: {
+      from: undefined,
+      to: undefined,
+    },
+    setTimeRange: (from: Date, to: Date) => {
+      set({
+        timeRange: { from, to },
+      });
+    },
+    timeSlider: {
+      type: "interval",
+      value: undefined,
+    },
+    setTimeSlider: ({ type, value }: TimeSlider) => {
+      set({
+        timeSlider: { type, value } as TimeSlider,
+      });
+    },
+    resetTimeSlider: () => {
+      set((state) => ({
+        timeSlider: { ...state.timeSlider, value: undefined },
+      }));
+    },
+    dataFilters: {},
+    setDataFilters: (dataFilters: DataFilters) => {
+      set({ dataFilters });
+    },
+    updateDataFilter: (
+      dimensionIri: string,
+      dimensionValueIri: FilterValueSingle["value"]
+    ) => {
+      set((state) => ({
+        dataFilters: {
+          ...state.dataFilters,
+          [dimensionIri]: {
+            type: "single",
+            value: dimensionValueIri,
           },
-        }));
-      },
-      resetDataFilters: () => {
-        set({ dataFilters: {} });
-      },
-      calculation: {
-        type: undefined,
-      },
-      setCalculationType: (calculationType: CalculationType) => {
-        set({ calculation: { type: calculationType } });
-      },
-    };
-  });
+        },
+      }));
+    },
+    resetDataFilters: () => {
+      set({ dataFilters: {} });
+    },
+    calculation: {
+      type: undefined,
+    },
+    setCalculationType: (calculationType: CalculationType) => {
+      set({ calculation: { type: calculationType } });
+    },
+  };
+};
 
 const InteractiveFiltersContext = createContext<
   | [UseBoundStore<StoreApi<State>>, UseBoundStoreWithSelector<StoreApi<State>>]
@@ -137,7 +136,7 @@ export const InteractiveFiltersProvider = ({
   const [state] = useState<
     [UseBoundStore<StoreApi<State>>, UseBoundStoreWithSelector<StoreApi<State>>]
   >(() => {
-    const store = createInteractiveFiltersStore();
+    const store = create(interactiveFiltersStoreCreator);
     return [store, createBoundUseStoreWithSelector(store)];
   });
 
