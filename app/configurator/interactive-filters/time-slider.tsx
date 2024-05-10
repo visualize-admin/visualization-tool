@@ -1,11 +1,13 @@
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, Typography, sliderClasses } from "@mui/material";
+import { makeStyles } from "@mui/styles";
+import clsx from "clsx";
 import orderBy from "lodash/orderBy";
-import React, {
+import {
   ChangeEvent,
   createContext,
   useContext,
-  useMemo,
   useEffect,
+  useMemo,
 } from "react";
 import { useSyncExternalStore } from "use-sync-external-store/shim";
 
@@ -202,10 +204,36 @@ const PlayButton = () => {
   );
 };
 
+const useStyles = makeStyles<{ playing: boolean }>(() => ({
+  root: {
+    width: "100%",
+
+    [`& .${sliderClasses.root}`]: {
+      height: "6px",
+
+      [`& .${sliderClasses.thumb}`]: {
+        width: "16px",
+        height: "16px",
+      },
+    },
+  },
+
+  playing: {
+    [`& .${sliderClasses.thumb}`]: {
+      transition: "none",
+    },
+
+    [`& .${sliderClasses.track}`]: {
+      transition: "none",
+    },
+  },
+}));
+
 const Slider = () => {
   const timeline = useTimeline();
   const timeSlider = useInteractiveFilters((d) => d.timeSlider);
   const setTimeSlider = useInteractiveFilters((d) => d.setTimeSlider);
+  const classes = useStyles();
 
   const marks = useMemo(() => {
     return timeline.domain.map((d) => ({ value: d })) ?? [];
@@ -269,28 +297,7 @@ const Slider = () => {
       onClick={onClick}
       valueLabelDisplay="on"
       valueLabelFormat={timeline.formattedValue}
-      sx={{
-        width: "100%",
-
-        "& .MuiSlider-root": {
-          height: "6px",
-
-          "& .MuiSlider-thumb": {
-            width: "16px",
-            height: "16px",
-            // Disable transitions when playing, otherwise it appears to be laggy.
-            ...(timeline.playing && {
-              transition: "none",
-            }),
-          },
-
-          ...(timeline.playing && {
-            "& .MuiSlider-track": {
-              transition: "none",
-            },
-          }),
-        },
-      }}
+      className={clsx(classes.root, timeline.playing && classes.playing)}
     />
   );
 };
