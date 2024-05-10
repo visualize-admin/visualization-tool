@@ -136,7 +136,10 @@ type InteractiveFiltersContextValue = [
 ];
 
 const InteractiveFiltersContext = createContext<
-  Record<ChartConfig["key"], InteractiveFiltersContextValue> | undefined
+  | {
+      stores: Record<ChartConfig["key"], InteractiveFiltersContextValue>;
+    }
+  | undefined
 >(undefined);
 
 /**
@@ -150,7 +153,8 @@ export const InteractiveFiltersProvider = ({
 }>) => {
   const storeRefs = useRef<Record<ChartConfig["key"], StoreApi<State>>>({});
 
-  const contextValues = useMemo<
+
+  const stores = useMemo<
     Record<ChartConfig["key"], InteractiveFiltersContextValue>
   >(() => {
     return Object.fromEntries(
@@ -167,8 +171,10 @@ export const InteractiveFiltersProvider = ({
     );
   }, [chartConfigs]);
 
+  const ctxValue = useMemo(() => ({ stores }), [stores]);
+
   return (
-    <InteractiveFiltersContext.Provider value={contextValues}>
+    <InteractiveFiltersContext.Provider value={ctxValue}>
       {children}
     </InteractiveFiltersContext.Provider>
   );
@@ -208,11 +214,7 @@ export const useChartInteractiveFilters = <T extends unknown>(
     "useInteractiveFilters must be called inside a InteractiveFiltersChartContext.Provider!"
   );
 
-  if (!ctx[key]) {
-    debugger;
-  }
-
-  const [, useStore] = ctx[key];
+  const [, useStore] = ctx.stores[key];
 
   return useStore(selector);
 };
@@ -230,11 +232,7 @@ export const useInteractiveFiltersGetState = () => {
     "useInteractiveFilters must be called inside a InteractiveFiltersChartContext.Provider!"
   );
 
-  if (!ctx[key]) {
-    debugger;
-  }
-
-  const [getState] = ctx[key];
+  const [getState] = ctx.stores[key];
 
   return getState;
 };
