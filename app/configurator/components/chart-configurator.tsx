@@ -88,6 +88,7 @@ import {
 } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
+import { InteractiveFiltersChartProvider } from "@/stores/interactive-filters";
 import useEvent from "@/utils/use-event";
 
 import { DatasetsControlSection } from "./dataset-control-section";
@@ -594,7 +595,7 @@ export const ChartConfigurator = ({
   }
 
   return (
-    <>
+    <InteractiveFiltersChartProvider chartConfigKey={chartConfig.key}>
       <ControlSection collapse>
         <SubsectionTitle titleId="controls-design" gutterBottom={false}>
           <Trans id="controls.select.chart.type">Chart Type</Trans>
@@ -744,7 +745,7 @@ export const ChartConfigurator = ({
         <InteractiveFiltersConfigurator state={state} />
       )}
       <DatasetsControlSection />
-    </>
+    </InteractiveFiltersChartProvider>
   );
 };
 

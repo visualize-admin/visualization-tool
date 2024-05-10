@@ -1,3 +1,4 @@
+import groupBy from "lodash/groupBy";
 import React, { createContext, useContext, useMemo, useRef } from "react";
 import create, { StateCreator, StoreApi, UseBoundStore } from "zustand";
 
@@ -5,6 +6,7 @@ import {
   CalculationType,
   ChartConfig,
   FilterValueSingle,
+  InteractiveFiltersConfig,
 } from "@/configurator";
 import {
   ExtractState,
@@ -56,7 +58,7 @@ export type InteractiveFiltersStateActions = {
   setCalculationType: (calculationType: CalculationType) => void;
 };
 
-type State = InteractiveFiltersState & InteractiveFiltersStateActions;
+export type State = InteractiveFiltersState & InteractiveFiltersStateActions;
 
 const interactiveFiltersStoreCreator: StateCreator<State> = (set) => {
   return {
@@ -133,14 +135,68 @@ const interactiveFiltersStoreCreator: StateCreator<State> = (set) => {
 type InteractiveFiltersContextValue = [
   UseBoundStore<StoreApi<State>>["getState"],
   UseBoundStoreWithSelector<StoreApi<State>>,
+  StoreApi<State>,
 ];
 
+type SharedFilters = {
+  type: "timeRange" | "dataFilters";
+  value?: NonNullable<InteractiveFiltersConfig>["timeRange"];
+  iri: string;
+}[];
 const InteractiveFiltersContext = createContext<
   | {
       stores: Record<ChartConfig["key"], InteractiveFiltersContextValue>;
+      sharedFilters: SharedFilters;
     }
   | undefined
 >(undefined);
+
+export const getSharedFilters = (
+  chartConfigs: ChartConfig[]
+): SharedFilters => {
+  const allActiveFilters = chartConfigs.flatMap((c) => {
+    const interactiveFiltersConfig = c.interactiveFiltersConfig;
+    if (!interactiveFiltersConfig) {
+      return [];
+    }
+    const { timeRange, dataFilters, legend } = interactiveFiltersConfig;
+    return [
+      { type: "timeRange" as const, value: timeRange },
+      // ...dataFilters.componentIris.map((ci) => ({
+      //   type: "dataFilters" as const,
+      //   value: {
+      //     ...dataFilters,
+      //     componentIri: ci,
+      //   },
+      // })),
+      // { type: "legend" as const, value: legend },
+    ].filter((x) => x.value.active);
+  });
+
+  const sharedFilters = Object.entries(
+    // TODO implement recognizing shared filters across joined by dimensions
+    groupBy(allActiveFilters, (x) => `${x.type} - ${x.value.componentIri}`)
+  ).filter(([iri, filters]) => filters.length > 1);
+
+  return sharedFilters.map(([iri, filters]) => ({
+    iri: filters[0].value.componentIri,
+    type: filters[0].type,
+    value: (() => {
+      const type = filters[0].type;
+      switch (type) {
+        case "timeRange":
+          return filters[0].value;
+        // case "legend":
+        //   return filters[0].value;
+        // case "dataFilters":
+        //   return filters[0].value;
+        default:
+          const _exhaustiveCheck: never = type;
+          throw new Error(`Unhandled type: ${_exhaustiveCheck}`);
+      }
+    })(),
+  }));
+};
 
 /**
  * Creates and provide all the interactive filters stores for the given chartConfigs.
@@ -153,6 +209,9 @@ export const InteractiveFiltersProvider = ({
 }>) => {
   const storeRefs = useRef<Record<ChartConfig["key"], StoreApi<State>>>({});
 
+  const sharedFilters = useMemo(() => {
+    return getSharedFilters(chartConfigs);
+  }, [chartConfigs]);
 
   const stores = useMemo<
     Record<ChartConfig["key"], InteractiveFiltersContextValue>
@@ -165,13 +224,17 @@ export const InteractiveFiltersProvider = ({
         const ctxValue: InteractiveFiltersContextValue = [
           store.getState,
           createBoundUseStoreWithSelector(store),
+          store,
         ];
         return [chartConfig.key, ctxValue];
       })
     );
   }, [chartConfigs]);
 
-  const ctxValue = useMemo(() => ({ stores }), [stores]);
+  const ctxValue = useMemo(
+    () => ({ stores, sharedFilters }),
+    [stores, sharedFilters]
+  );
 
   return (
     <InteractiveFiltersContext.Provider value={ctxValue}>
@@ -235,4 +298,15 @@ export const useInteractiveFiltersGetState = () => {
   const [getState] = ctx.stores[key];
 
   return getState;
+};
+
+export const useDashboardInteractiveFilters = () => {
+  const ctx = useContext(InteractiveFiltersContext);
+
+  assert(
+    ctx,
+    "useInteractiveFilters must be called inside a InteractiveFiltersContext.Provider!"
+  );
+
+  return ctx;
 };
