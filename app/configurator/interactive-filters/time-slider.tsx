@@ -25,7 +25,7 @@ import {
 import { truthy } from "@/domain/types";
 import { useTimeFormatUnit } from "@/formatters";
 import { Icon } from "@/icons";
-import { useInteractiveFilters } from "@/stores/interactive-filters";
+import { useChartInteractiveFilters } from "@/stores/interactive-filters";
 import { Timeline, TimelineProps } from "@/utils/observables";
 import {
   getSortingOrders,
@@ -231,8 +231,8 @@ const useStyles = makeStyles<{ playing: boolean }>(() => ({
 
 const Slider = () => {
   const timeline = useTimeline();
-  const timeSlider = useInteractiveFilters((d) => d.timeSlider);
-  const setTimeSlider = useInteractiveFilters((d) => d.setTimeSlider);
+  const timeSlider = useChartInteractiveFilters((d) => d.timeSlider);
+  const setTimeSlider = useChartInteractiveFilters((d) => d.setTimeSlider);
   const classes = useStyles();
 
   const marks = useMemo(() => {

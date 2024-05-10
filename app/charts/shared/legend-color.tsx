@@ -28,7 +28,7 @@ import {
   isOrdinalMeasure,
 } from "@/domain/data";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
-import { useInteractiveFilters } from "@/stores/interactive-filters";
+import { useChartInteractiveFilters } from "@/stores/interactive-filters";
 import { interlace } from "@/utils/interlace";
 import { MaybeTooltip } from "@/utils/maybe-tooltip";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
@@ -286,9 +286,9 @@ const LegendColorContent = (props: LegendColorContentProps) => {
     numberOfOptions,
   } = props;
   const classes = useStyles();
-  const categories = useInteractiveFilters((d) => d.categories);
-  const addCategory = useInteractiveFilters((d) => d.addCategory);
-  const removeCategory = useInteractiveFilters((d) => d.removeCategory);
+  const categories = useChartInteractiveFilters((d) => d.categories);
+  const addCategory = useChartInteractiveFilters((d) => d.addCategory);
+  const removeCategory = useChartInteractiveFilters((d) => d.removeCategory);
   const activeInteractiveFilters = useMemo(() => {
     return new Set(Object.keys(categories));
   }, [categories]);

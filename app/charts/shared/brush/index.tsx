@@ -14,7 +14,7 @@ import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { Observation } from "@/domain/data";
 import { useFormatFullDateAuto } from "@/formatters";
 import {
-  useInteractiveFilters,
+  useChartInteractiveFilters,
   useInteractiveFiltersGetState,
 } from "@/stores/interactive-filters";
 import { useTransitionStore } from "@/stores/transition";
@@ -27,8 +27,8 @@ export const HEIGHT = HANDLE_HEIGHT + BRUSH_HEIGHT;
 
 export const BrushTime = () => {
   const ref = useRef<SVGGElement>(null);
-  const timeRange = useInteractiveFilters((d) => d.timeRange);
-  const setTimeRange = useInteractiveFilters((d) => d.setTimeRange);
+  const timeRange = useChartInteractiveFilters((d) => d.timeRange);
+  const setTimeRange = useChartInteractiveFilters((d) => d.setTimeRange);
   const getInteractiveFiltersState = useInteractiveFiltersGetState();
   const setEnableTransition = useTransitionStore((d) => d.setEnable);
   const formatDateAuto = useFormatFullDateAuto();

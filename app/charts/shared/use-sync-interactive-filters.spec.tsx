@@ -5,7 +5,7 @@ import useSyncInteractiveFilters from "@/charts/shared/use-sync-interactive-filt
 import { ChartConfig, InteractiveFiltersConfig } from "@/config-types";
 import {
   InteractiveFiltersProvider,
-  useInteractiveFilters,
+  useChartInteractiveFilters,
 } from "@/stores/interactive-filters";
 import fixture from "@/test/__fixtures/config/dev/4YL1p4QTFQS4.json";
 import { migrateChartConfig } from "@/utils/chart-config/versioning";
@@ -55,7 +55,7 @@ const setup = ({
   modifiedChartConfig: ChartConfig;
 }) => {
   const Component = () => {
-    const IFState = useInteractiveFilters((d) => ({
+    const IFState = useChartInteractiveFilters((d) => ({
       categories: d.categories,
       timeRange: d.timeRange,
       timeSlider: d.timeSlider,

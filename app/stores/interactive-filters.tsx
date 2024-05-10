@@ -1,12 +1,17 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useMemo, useRef } from "react";
 import create, { StateCreator, StoreApi, UseBoundStore } from "zustand";
 
-import { CalculationType, FilterValueSingle } from "@/configurator";
+import {
+  CalculationType,
+  ChartConfig,
+  FilterValueSingle,
+} from "@/configurator";
 import {
   ExtractState,
   UseBoundStoreWithSelector,
   createBoundUseStoreWithSelector,
 } from "@/stores/utils";
+import { assert } from "@/utils/assert";
 
 export type InteractiveFiltersState = {
   categories: {
@@ -131,50 +136,105 @@ type InteractiveFiltersContextValue = [
 ];
 
 const InteractiveFiltersContext = createContext<
-  InteractiveFiltersContextValue | undefined
+  Record<ChartConfig["key"], InteractiveFiltersContextValue> | undefined
 >(undefined);
 
+/**
+ * Creates and provide all the interactive filters stores for the given chartConfigs.
+ */
 export const InteractiveFiltersProvider = ({
   children,
-}: React.PropsWithChildren<{}>) => {
-  const [state] = useState<InteractiveFiltersContextValue>(() => {
-    const store = create(interactiveFiltersStoreCreator);
-    return [store.getState, createBoundUseStoreWithSelector(store)];
-  });
+  chartConfigs,
+}: React.PropsWithChildren<{
+  chartConfigs: ChartConfig[];
+}>) => {
+  const storeRefs = useRef<Record<ChartConfig["key"], StoreApi<State>>>({});
+
+  const contextValues = useMemo<
+    Record<ChartConfig["key"], InteractiveFiltersContextValue>
+  >(() => {
+    return Object.fromEntries(
+      chartConfigs.map((chartConfig) => {
+        const store =
+          storeRefs.current[chartConfig.key] ??
+          create(interactiveFiltersStoreCreator);
+        const ctxValue: InteractiveFiltersContextValue = [
+          store.getState,
+          createBoundUseStoreWithSelector(store),
+        ];
+        return [chartConfig.key, ctxValue];
+      })
+    );
+  }, [chartConfigs]);
 
   return (
-    <InteractiveFiltersContext.Provider value={state}>
+    <InteractiveFiltersContext.Provider value={contextValues}>
       {children}
     </InteractiveFiltersContext.Provider>
   );
 };
 
-export const useInteractiveFilters = <T extends unknown>(
+/**
+ * Provides the chartConfig key to children, so that they know which interactive filters
+ * store they should use.
+ */
+const InteractiveFiltersChartContext = React.createContext<
+  ChartConfig["key"] | null
+>(null);
+
+export const InteractiveFiltersChartProvider = ({
+  chartConfigKey,
+  children,
+}: React.PropsWithChildren<{ chartConfigKey: ChartConfig["key"] }>) => {
+  return (
+    <InteractiveFiltersChartContext.Provider value={chartConfigKey}>
+      {children}
+    </InteractiveFiltersChartContext.Provider>
+  );
+};
+
+export const useChartInteractiveFilters = <T extends unknown>(
   selector: (state: ExtractState<StoreApi<State>>) => T
 ) => {
   const ctx = useContext(InteractiveFiltersContext);
+  const key = useContext(InteractiveFiltersChartContext);
 
-  if (!ctx) {
-    throw new Error(
-      "useInteractiveFilters must be called inside a InteractiveFiltersContext.Provider!"
-    );
+  assert(
+    ctx,
+    "useInteractiveFilters must be called inside a InteractiveFiltersContext.Provider!"
+  );
+  assert(
+    key,
+    "useInteractiveFilters must be called inside a InteractiveFiltersChartContext.Provider!"
+  );
+
+  if (!ctx[key]) {
+    debugger;
   }
 
-  const [, useStore] = ctx;
+  const [, useStore] = ctx[key];
 
   return useStore(selector);
 };
 
 export const useInteractiveFiltersGetState = () => {
   const ctx = useContext(InteractiveFiltersContext);
+  const key = useContext(InteractiveFiltersChartContext);
 
-  if (!ctx) {
-    throw new Error(
-      "useInteractiveFiltersRaw must be called inside a InteractiveFiltersContext.Provider!"
-    );
+  assert(
+    ctx,
+    "useInteractiveFilters must be called inside a InteractiveFiltersContext.Provider!"
+  );
+  assert(
+    key,
+    "useInteractiveFilters must be called inside a InteractiveFiltersChartContext.Provider!"
+  );
+
+  if (!ctx[key]) {
+    debugger;
   }
 
-  const [getState] = ctx;
+  const [getState] = ctx[key];
 
   return getState;
 };

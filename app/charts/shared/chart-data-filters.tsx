@@ -49,7 +49,7 @@ import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
 import {
   DataFilters,
-  useInteractiveFilters,
+  useChartInteractiveFilters,
   useInteractiveFiltersGetState,
 } from "@/stores/interactive-filters";
 import { hierarchyToOptions } from "@/utils/hierarchy";
@@ -70,7 +70,7 @@ type ChartDataFiltersProps = {
 export const ChartDataFilters = (props: ChartDataFiltersProps) => {
   const { dataSource, chartConfig } = props;
   const { loading } = useLoadingState();
-  const dataFilters = useInteractiveFilters((d) => d.dataFilters);
+  const dataFilters = useChartInteractiveFilters((d) => d.dataFilters);
   const componentIris = chartConfig.interactiveFiltersConfig?.dataFilters
     .componentIris as string[];
   const queryFilters = useQueryFilters({
@@ -228,7 +228,9 @@ const DataFilter = (props: DataFilterProps) => {
   const locale = useLocale();
   const filters = useChartConfigFilters(chartConfig);
   const chartLoadingState = useLoadingState();
-  const updateDataFilter = useInteractiveFilters((d) => d.updateDataFilter);
+  const updateDataFilter = useChartInteractiveFilters(
+    (d) => d.updateDataFilter
+  );
   const otherKeys = Object.keys(interactiveFilters).filter(
     (key) => key !== dimensionIri
   );
@@ -558,7 +560,7 @@ const useEnsurePossibleInteractiveFilters = (
   const lastFilters = useRef<Record<string, Filters>>({});
   const client = useClient();
   const getInteractiveFiltersState = useInteractiveFiltersGetState();
-  const setDataFilters = useInteractiveFilters((d) => d.setDataFilters);
+  const setDataFilters = useChartInteractiveFilters((d) => d.setDataFilters);
   const filtersByCubeIri = useMemo(() => {
     return preparedFilters?.reduce<Record<string, PreparedFilter>>((acc, d) => {
       acc[d.cubeIri] = d;

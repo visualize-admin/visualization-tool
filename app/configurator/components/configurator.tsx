@@ -166,7 +166,7 @@ const ConfigureChartStep = () => {
   }
 
   return (
-    <InteractiveFiltersProvider>
+    <InteractiveFiltersProvider chartConfigs={state.chartConfigs}>
       <PanelLayout type="LM">
         <PanelBodyWrapper
           type="L"
