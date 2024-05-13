@@ -26,13 +26,22 @@ const providers = [
     id: "adfs",
     name: "adfs",
     type: "oidc",
-    wellKnown: KEYCLOAK_ISSUER,
+    wellKnown: `${KEYCLOAK_ISSUER}/.well-known/openid-configuration`,
     clientId: KEYCLOAK_ID,
     clientSecret: KEYCLOAK_SECRET,
-    checks: ["pkce", "state"],
+    authorization: {
+      url: `${KEYCLOAK_ISSUER}/protocol/openid-connect/auth`,
+      params: {
+        scope: "openid",
+      },
+    },
+    issuer: KEYCLOAK_ISSUER,
+    token: `${KEYCLOAK_ISSUER}/protocol/openid-connect/token`,
+    userinfo: `${KEYCLOAK_ISSUER}/protocol/openid-connect/userinfo`,
     profile(profile: any) {
       return {
         id: profile.sub,
+        upn: profile.upn,
       };
     },
   },
