@@ -1,8 +1,9 @@
+import NextAuth, { NextAuthOptions } from "next-auth";
+import KeycloakProvider from "next-auth/providers/keycloak";
+
 import { ensureUserFromSub } from "@/db/user";
 import { KEYCLOAK_ID, KEYCLOAK_ISSUER, KEYCLOAK_SECRET } from "@/domain/env";
 import { truthy } from "@/domain/types";
-import NextAuth, { NextAuthOptions } from "next-auth";
-import KeycloakProvider from "next-auth/providers/keycloak";
 
 import type { NextApiRequest, NextApiResponse } from "next";
 
