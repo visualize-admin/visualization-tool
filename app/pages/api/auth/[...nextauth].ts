@@ -1,5 +1,4 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
-import KeycloakProvider from "next-auth/providers/keycloak";
 
 import { ensureUserFromSub } from "@/db/user";
 import { KEYCLOAK_ID, KEYCLOAK_ISSUER, KEYCLOAK_SECRET } from "@/domain/env";
@@ -9,42 +8,30 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 const providers = [
   KEYCLOAK_ID && KEYCLOAK_SECRET && KEYCLOAK_ISSUER
-    ? KeycloakProvider({
-        clientId: KEYCLOAK_ID as string,
-        clientSecret: KEYCLOAK_SECRET as string,
-        issuer: KEYCLOAK_ISSUER as string,
+    ? {
+        id: "adfs",
+        name: "adfs",
+        type: "oidc",
+        wellKnown: `${KEYCLOAK_ISSUER}/.well-known/openid-configuration`,
+        clientId: KEYCLOAK_ID,
+        clientSecret: KEYCLOAK_SECRET,
         authorization: {
+          url: `${KEYCLOAK_ISSUER}/protocol/openid-connect/auth`,
           params: {
             scope: "openid",
           },
         },
-        idToken: false,
-      })
+        issuer: KEYCLOAK_ISSUER,
+        token: `${KEYCLOAK_ISSUER}/protocol/openid-connect/token`,
+        userinfo: `${KEYCLOAK_ISSUER}/protocol/openid-connect/userinfo`,
+        profile(profile: any) {
+          return {
+            id: profile.sub,
+            upn: profile.upn,
+          };
+        },
+      }
     : null,
-  // Custom OIDC provider
-  {
-    id: "adfs",
-    name: "adfs",
-    type: "oidc",
-    wellKnown: `${KEYCLOAK_ISSUER}/.well-known/openid-configuration`,
-    clientId: KEYCLOAK_ID,
-    clientSecret: KEYCLOAK_SECRET,
-    authorization: {
-      url: `${KEYCLOAK_ISSUER}/protocol/openid-connect/auth`,
-      params: {
-        scope: "openid",
-      },
-    },
-    issuer: KEYCLOAK_ISSUER,
-    token: `${KEYCLOAK_ISSUER}/protocol/openid-connect/token`,
-    userinfo: `${KEYCLOAK_ISSUER}/protocol/openid-connect/userinfo`,
-    profile(profile: any) {
-      return {
-        id: profile.sub,
-        upn: profile.upn,
-      };
-    },
-  },
 ].filter(truthy);
 
 export const nextAuthOptions = {
