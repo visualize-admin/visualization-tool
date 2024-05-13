@@ -425,6 +425,7 @@ const SelectDatasetStepContent = () => {
                   fetching={fetching}
                   error={error}
                   cubes={cubes}
+                  datasetResultProps={() => ({ showDimensions: true })}
                 />
               </MotionBox>
             )}

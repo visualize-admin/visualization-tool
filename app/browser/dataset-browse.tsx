@@ -218,6 +218,8 @@ type NavItemTheme = {
   countColor: string;
   countBg: string;
   closeColor?: string;
+  iconColor?: string;
+  showAllColor?: string;
 };
 
 const defaultNavItemTheme: NavItemTheme = {
@@ -245,12 +247,14 @@ const organizationNavItemTheme: NavItemTheme = {
 };
 
 const termsetNavItemTheme: NavItemTheme = {
-  activeBg: "warning.light",
-  activeTextColor: "text.primary",
-  textColor: "text.primary",
-  countColor: "warning.main",
-  countBg: "warning.light",
-  closeColor: "warning.main",
+  activeBg: "grey.300",
+  activeTextColor: "grey.900",
+  textColor: "grey.700",
+  countColor: "grey.200",
+  countBg: "grey.600",
+  closeColor: "grey.700",
+  showAllColor: "grey.600",
+  iconColor: "grey.700",
 };
 
 const useStyles = makeStyles(() => ({
@@ -562,7 +566,11 @@ const NavSection = ({
   return (
     <div>
       <NavSectionTitle theme={theme} sx={{ mb: "block" }}>
-        <Box component="span" color={navItemTheme.countColor} mr={2}>
+        <Box
+          component="span"
+          color={navItemTheme.iconColor ?? navItemTheme.countColor}
+          mr={2}
+        >
           {icon}
         </Box>
         <Typography variant="body2" sx={{ fontWeight: "bold" }}>
@@ -609,8 +617,10 @@ const NavSection = ({
               <Button
                 variant="text"
                 sx={{
-                  color: navItemTheme.countColor,
-                  "&:hover": { color: navItemTheme.countColor },
+                  color: navItemTheme.showAllColor ?? navItemTheme.countColor,
+                  "&:hover": {
+                    color: navItemTheme.showAllColor ?? navItemTheme.countColor,
+                  },
                   fontWeight: "bold",
                 }}
                 color="inherit"
@@ -650,8 +660,8 @@ const TermsetNavSection = ({
       key="orgs"
       items={termsets}
       theme={{
-        backgroundColor: "warning.light",
-        borderColor: "warning.main",
+        backgroundColor: "grey.300",
+        borderColor: "grey.800",
       }}
       navItemTheme={termsetNavItemTheme}
       currentFilter={currentFilter}
@@ -1098,50 +1108,52 @@ export const DatasetResult = ({
       </Flex>
       <Flex alignItems="center" width="100%">
         <Box flexGrow={1}>
-          {showDimensions && (
-            <Flex alignItems="center" mt={1} flexWrap="wrap" gap="0.25rem">
-              <Typography variant="body2" sx={{ mr: 1 }}>
-                <Trans id="dataset-result.shared-dimensions">
-                  Shared dimensions:
-                </Trans>
-              </Typography>
-              {sortBy(dimensions, (t) => t.label).map((dimension) => {
-                return (
-                  <MaybeTooltip
-                    key={dimension.iri}
-                    title={
-                      dimension.termsets.length > 0 ? (
-                        <>
-                          <Typography variant="body2">
-                            <Trans id="dataset-result.dimension-termset-contains">
-                              Contains values from
-                            </Trans>
-                            <Stack gap={1} flexDirection="row" mt={1}>
-                              {dimension.termsets.map((termset) => {
-                                return (
-                                  <Tag
-                                    key={termset.iri}
-                                    type="termset"
-                                    sx={{ flexShrink: 0 }}
-                                  >
-                                    {termset.label}
-                                  </Tag>
-                                );
-                              })}
-                            </Stack>
-                          </Typography>
-                        </>
-                      ) : undefined
-                    }
-                  >
-                    <Tag sx={{ cursor: "default" }} type="dimension">
-                      {dimension.label}
-                    </Tag>
-                  </MaybeTooltip>
-                );
-              })}
-            </Flex>
-          )}
+          {showDimensions &&
+            dimensions?.length !== undefined &&
+            dimensions.length > 0 && (
+              <Flex alignItems="center" mt={1} flexWrap="wrap" gap="0.25rem">
+                <Typography variant="body2" sx={{ mr: 1 }}>
+                  <Trans id="dataset-result.shared-dimensions">
+                    Shared dimensions:
+                  </Trans>
+                </Typography>
+                {sortBy(dimensions, (t) => t.label).map((dimension) => {
+                  return (
+                    <MaybeTooltip
+                      key={dimension.iri}
+                      title={
+                        dimension.termsets.length > 0 ? (
+                          <>
+                            <Typography variant="body2">
+                              <Trans id="dataset-result.dimension-termset-contains">
+                                Contains values from
+                              </Trans>
+                              <Stack gap={1} flexDirection="row" mt={1}>
+                                {dimension.termsets.map((termset) => {
+                                  return (
+                                    <Tag
+                                      key={termset.iri}
+                                      type="termset"
+                                      sx={{ flexShrink: 0 }}
+                                    >
+                                      {termset.label}
+                                    </Tag>
+                                  );
+                                })}
+                              </Stack>
+                            </Typography>
+                          </>
+                        ) : undefined
+                      }
+                    >
+                      <Tag sx={{ cursor: "default" }} type="dimension">
+                        {dimension.label}
+                      </Tag>
+                    </MaybeTooltip>
+                  );
+                })}
+              </Flex>
+            )}
         </Box>
         <Box flexShrink={1}>{rowActions?.(dataCube)}</Box>
       </Flex>
