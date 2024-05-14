@@ -1,7 +1,6 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 
 import ADFS from "@/auth-providers/adfs";
-
 import { ensureUserFromSub } from "@/db/user";
 import { KEYCLOAK_ID, KEYCLOAK_ISSUER, KEYCLOAK_SECRET } from "@/domain/env";
 import { truthy } from "@/domain/types";
