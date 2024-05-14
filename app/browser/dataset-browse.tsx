@@ -651,7 +651,7 @@ const TermsetNavSection = ({
     );
     return {
       counts,
-      termsets,
+      termsets: sortBy(termsets, (t) => t.label),
     };
   }, [termsetCounts]);
 
