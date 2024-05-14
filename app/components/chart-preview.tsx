@@ -9,7 +9,7 @@ import {
 import { Trans } from "@lingui/macro";
 import { Box } from "@mui/material";
 import Head from "next/head";
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 
 import { DataSetTable } from "@/browse/datatable";
 import { ChartDataFilters } from "@/charts/shared/chart-data-filters";
@@ -51,9 +51,7 @@ import {
 } from "@/graphql/hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import { useLocale } from "@/locales/use-locale";
-import {
-  InteractiveFiltersChartProvider,
-} from "@/stores/interactive-filters";
+import { InteractiveFiltersChartProvider } from "@/stores/interactive-filters";
 import { useTransitionStore } from "@/stores/transition";
 import { useTheme } from "@/themes";
 import { createSnapCornerToCursor } from "@/utils/dnd";
@@ -484,7 +482,10 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
                   onToggleTableView={handleToggleTableView}
                   dimensions={dimensions}
                 />
-                <DebugPanel configurator interactiveFilters />
+                {/* Wrap in div for subgrid layout */}
+                <div>
+                  <DebugPanel configurator interactiveFilters />
+                </div>
               </InteractiveFiltersChartProvider>
             </LoadingStateProvider>
           </>
