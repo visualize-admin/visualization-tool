@@ -40,7 +40,7 @@ export default function ADFS<P extends ADFSProfile>(
     authorization: {
       url: options.authorizeUrl,
       params: {
-        scope: "openid profile email",
+        scope: "openid",
       },
     },
 
