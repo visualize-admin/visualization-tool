@@ -16,6 +16,7 @@ import { Observation } from "@/domain/data";
 import { useFormatFullDateAuto } from "@/formatters";
 import {
   useChartInteractiveFilters,
+  useDashboardInteractiveFilters,
   useInteractiveFiltersGetState,
 } from "@/stores/interactive-filters";
 import { useTransitionStore } from "@/stores/transition";
@@ -29,6 +30,8 @@ export const HEIGHT = HANDLE_HEIGHT + BRUSH_HEIGHT;
 export const BrushTime = () => {
   const ref = useRef<SVGGElement>(null);
   const timeRange = useChartInteractiveFilters((d) => d.timeRange);
+  const dashboardFilters = useDashboardInteractiveFilters();
+
   const setTimeRange = useChartInteractiveFilters((d) => d.setTimeRange);
   const getInteractiveFiltersState = useInteractiveFiltersGetState();
   const setEnableTransition = useTransitionStore((d) => d.setEnable);
@@ -332,6 +335,13 @@ export const BrushTime = () => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [brushWidth]);
+
+  // BrushTime is hidden if we found a shared timeRange filter
+  // TODO Only hide it if the dashboard timeRange filter matches the component iri
+  // of the chart interactive filter
+  if (dashboardFilters.sharedFilters.find((x) => x.type === "timeRange")) {
+    return null;
+  }
 
   return fullData.length ? (
     <g

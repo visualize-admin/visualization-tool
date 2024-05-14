@@ -25,7 +25,10 @@ import {
 import { truthy } from "@/domain/types";
 import { useTimeFormatUnit } from "@/formatters";
 import { Icon } from "@/icons";
-import { useChartInteractiveFilters } from "@/stores/interactive-filters";
+import {
+  useChartInteractiveFilters,
+  useDashboardInteractiveFilters,
+} from "@/stores/interactive-filters";
 import { Timeline, TimelineProps } from "@/utils/observables";
 import {
   getSortingOrders,
@@ -70,6 +73,8 @@ export const TimeSlider = (props: TimeSliderProps) => {
   const temporal = isTemporalDimension(dimension);
   const temporalEntity = isTemporalEntityDimension(dimension);
   const temporalOrdinal = isTemporalOrdinalDimension(dimension);
+
+  const dashboardFilters = useDashboardInteractiveFilters();
 
   if (!(temporal || temporalEntity || temporalOrdinal)) {
     throw new Error("You can only use TimeSlider with temporal dimensions!");
@@ -138,6 +143,10 @@ export const TimeSlider = (props: TimeSliderProps) => {
   const timeline = useMemo(() => {
     return new Timeline(timelineProps);
   }, [timelineProps]);
+
+  if (dashboardFilters.sharedFilters.find((x) => x.iri === componentIri)) {
+    return null;
+  }
 
   return (
     <TimelineContext.Provider value={timeline}>
