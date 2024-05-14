@@ -270,11 +270,11 @@ export const useChartInteractiveFilters = <T extends unknown>(
 
   assert(
     ctx,
-    "useInteractiveFilters must be called inside a InteractiveFiltersContext.Provider!"
+    `ctx=${ctx}. useChartInteractiveFilters must be called inside a InteractiveFiltersChartProvider.`
   );
   assert(
     key,
-    "useInteractiveFilters must be called inside a InteractiveFiltersChartContext.Provider!"
+    `key=${key}. useChartInteractiveFilters must be called inside a InteractiveFiltersChartProvider.`
   );
 
   const [, useStore] = ctx.stores[key];
