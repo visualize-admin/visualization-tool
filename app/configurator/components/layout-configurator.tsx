@@ -1,5 +1,5 @@
 import { Trans } from "@lingui/macro";
-import { Box } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import capitalize from "lodash/capitalize";
 import omit from "lodash/omit";
 
@@ -22,6 +22,7 @@ export const LayoutConfigurator = () => {
     <>
       <LayoutAnnotator />
       <LayoutLayoutConfigurator />
+      <LayoutSharedFiltersConfigurator />
     </>
   );
 };
@@ -58,6 +59,49 @@ const LayoutLayoutConfigurator = () => {
               <LayoutButton type="canvas" layout={layout} />
             </Box>
           </ControlSectionContent>
+        </ControlSection>
+      );
+    default:
+      return null;
+  }
+};
+
+const LayoutSharedFiltersConfigurator = () => {
+  const [state] = useConfiguratorState(isLayouting);
+  const { layout } = state;
+
+  switch (layout.type) {
+    case "dashboard":
+      return (
+        <ControlSection
+          role="tablist"
+          aria-labelledby="controls-design"
+          collapse
+        >
+          <SubsectionTitle
+            titleId="controls-design"
+            disabled={false}
+            gutterBottom={false}
+          >
+            <Trans id="controls.section.shared-filters">Shared filters</Trans>
+          </SubsectionTitle>
+          <Stack gap="0.5rem" px="1rem">
+            <Typography variant="body2">To be done</Typography>
+            <Box
+              sx={{
+                height: "2rem",
+                backgroundColor: "grey.200",
+                borderRadius: "0.25rem",
+              }}
+            />
+            <Box
+              sx={{
+                height: "2rem",
+                backgroundColor: "grey.200",
+                borderRadius: "0.25rem",
+              }}
+            />
+          </Stack>
         </ControlSection>
       );
     default:
