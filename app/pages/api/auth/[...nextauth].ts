@@ -45,6 +45,7 @@ const providers = [
 //   },
 // }
 
+
 export const nextAuthOptions = {
   providers,
   callbacks: {
