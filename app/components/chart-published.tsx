@@ -2,7 +2,7 @@ import { Trans } from "@lingui/macro";
 import { Box, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
-import React, { useEffect, useMemo, useRef, useCallback } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useStore } from "zustand";
 
 import { DataSetTable } from "@/browse/datatable";
@@ -50,7 +50,10 @@ import {
 } from "@/graphql/hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import { useLocale } from "@/locales/use-locale";
-import { InteractiveFiltersProvider } from "@/stores/interactive-filters";
+import {
+  InteractiveFiltersChartProvider,
+  InteractiveFiltersProvider,
+} from "@/stores/interactive-filters";
 import { useEmbedOptions } from "@/utils/embed";
 import useEvent from "@/utils/use-event";
 
@@ -79,66 +82,70 @@ export const ChartPublished = (props: ChartPublishedProps) => {
     [configKey, dataSource, state]
   );
 
-  return state.layout.type === "dashboard" ? (
-    <>
-      <Box
-        sx={{
-          mb:
-            state.layout.meta.title[locale] ||
-            state.layout.meta.description[locale]
-              ? 4
-              : 0,
-        }}
-      >
-        {state.layout.meta.title[locale] && (
-          <Title text={state.layout.meta.title[locale]} />
-        )}
-        {state.layout.meta.description[locale] && (
-          <Description text={state.layout.meta.description[locale]} />
-        )}
-      </Box>
-      {state.layout.layout === "tall" ? (
-        <ChartPanelLayoutTall
-          chartConfigs={state.chartConfigs}
-          renderChart={renderChart}
-        />
+  return (
+    <InteractiveFiltersProvider chartConfigs={state.chartConfigs}>
+      {state.layout.type === "dashboard" ? (
+        <>
+          <Box
+            sx={{
+              mb:
+                state.layout.meta.title[locale] ||
+                state.layout.meta.description[locale]
+                  ? 4
+                  : 0,
+            }}
+          >
+            {state.layout.meta.title[locale] && (
+              <Title text={state.layout.meta.title[locale]} />
+            )}
+            {state.layout.meta.description[locale] && (
+              <Description text={state.layout.meta.description[locale]} />
+            )}
+          </Box>
+          {state.layout.layout === "tall" ? (
+            <ChartPanelLayoutTall
+              chartConfigs={state.chartConfigs}
+              renderChart={renderChart}
+            />
+          ) : (
+            <ChartPanelLayoutVertical
+              chartConfigs={state.chartConfigs}
+              renderChart={renderChart}
+            />
+          )}
+        </>
       ) : (
-        <ChartPanelLayoutVertical
-          chartConfigs={state.chartConfigs}
-          renderChart={renderChart}
-        />
+        <>
+          <Flex
+            sx={{
+              flexDirection: "column",
+              mb:
+                state.layout.meta.title[locale] ||
+                state.layout.meta.description[locale]
+                  ? 4
+                  : 0,
+            }}
+          >
+            {state.layout.meta.title[locale] && (
+              <Title text={state.layout.meta.title[locale]} />
+            )}
+            {state.layout.meta.description[locale] && (
+              <Description text={state.layout.meta.description[locale]} />
+            )}
+          </Flex>
+          <ChartTablePreviewProvider>
+            <ChartWrapper layoutType={state.layout.type}>
+              <ChartPublishedInner
+                dataSource={dataSource}
+                state={state}
+                chartConfig={getChartConfig(state)}
+                configKey={configKey}
+              />
+            </ChartWrapper>
+          </ChartTablePreviewProvider>
+        </>
       )}
-    </>
-  ) : (
-    <>
-      <Flex
-        sx={{
-          flexDirection: "column",
-          mb:
-            state.layout.meta.title[locale] ||
-            state.layout.meta.description[locale]
-              ? 4
-              : 0,
-        }}
-      >
-        {state.layout.meta.title[locale] && (
-          <Title text={state.layout.meta.title[locale]} />
-        )}
-        {state.layout.meta.description[locale] && (
-          <Description text={state.layout.meta.description[locale]} />
-        )}
-      </Flex>
-      <ChartTablePreviewProvider>
-        <ChartWrapper layoutType={state.layout.type}>
-          <ChartPublishedInner
-            dataSource={dataSource}
-            state={state}
-            chartConfig={getChartConfig(state)}
-            configKey={configKey}
-          />
-        </ChartWrapper>
-      </ChartTablePreviewProvider>
-    </>
+    </InteractiveFiltersProvider>
   );
 };
 
@@ -292,7 +299,7 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
             </Box>
           )}
           <LoadingStateProvider>
-            <InteractiveFiltersProvider>
+            <InteractiveFiltersChartProvider chartConfigKey={chartConfig.key}>
               <Flex
                 sx={{
                   justifyContent: meta.title[locale]
@@ -368,7 +375,7 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
                   ) : undefined
                 }
               />
-            </InteractiveFiltersProvider>
+            </InteractiveFiltersChartProvider>
           </LoadingStateProvider>
         </ChartErrorBoundary>
       </Box>

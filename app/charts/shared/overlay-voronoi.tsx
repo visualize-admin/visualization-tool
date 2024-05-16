@@ -8,6 +8,8 @@ import { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
 import { useChartState } from "@/charts/shared/chart-state";
 import { useInteraction } from "@/charts/shared/use-interaction";
 
+const atLeastZero = (n: number) => (n < 0 ? 0 : n);
+
 export const InteractionVoronoi = memo(function InteractionVoronoi({
   debug,
 }: {
@@ -26,7 +28,13 @@ export const InteractionVoronoi = memo(function InteractionVoronoi({
     (d) => xScale(getX(d) ?? NaN),
     (d) => yScale(getY(d) ?? NaN)
   );
-  const voronoi = delaunay.voronoi([0, 0, chartWidth, chartHeight]);
+
+  const voronoi = delaunay.voronoi([
+    0,
+    0,
+    atLeastZero(chartWidth),
+    atLeastZero(chartHeight),
+  ]);
 
   const findLocation = (e: ReactMouseEvent) => {
     const [x, y] = pointer(e, ref.current!);

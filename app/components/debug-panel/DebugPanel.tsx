@@ -6,9 +6,12 @@ import {
   Box,
   Button,
   CircularProgress,
+  paperClasses,
   Stack,
+  Theme,
   Typography,
 } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import { useState } from "react";
 import { Inspector } from "react-inspector";
 
@@ -20,12 +23,13 @@ import {
 import { dataSourceToSparqlEditorUrl } from "@/domain/datasource";
 import { useDataCubesComponentsQuery } from "@/graphql/hooks";
 import { Icon } from "@/icons";
+import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import { useLocale } from "@/src";
-import { useInteractiveFiltersRaw } from "@/stores/interactive-filters";
+import { useInteractiveFiltersGetState } from "@/stores/interactive-filters";
 import useEvent from "@/utils/use-event";
 
 const DebugInteractiveFilters = () => {
-  const IFState = useInteractiveFiltersRaw();
+  const getInteractiveFiltersState = useInteractiveFiltersGetState();
 
   return (
     <>
@@ -33,7 +37,11 @@ const DebugInteractiveFilters = () => {
         Interactive Filters State
       </Typography>
       <Box sx={{ p: 5 }}>
-        <Inspector expandLevel={3} data={IFState} table={false} />
+        <Inspector
+          expandLevel={3}
+          data={getInteractiveFiltersState}
+          table={false}
+        />
       </Box>
     </>
   );
@@ -169,32 +177,46 @@ export type DebugPanelProps = {
   interactiveFilters?: Boolean;
 };
 
+const useStyles = makeStyles((theme: Theme) => ({
+  debugPanel: {
+    margin: -theme.spacing(5),
+    marginTop: theme.spacing(5),
+    backgroundColor: theme.palette.background.default,
+    borderTopStyle: "solid",
+    borderColor: theme.palette.divider,
+    borderWidth: 1,
+
+    [`&.${paperClasses.root}`]: {
+      boxShadow: "none",
+    },
+  },
+  debugTitle: {
+    color: theme.palette.warning.main,
+  },
+}));
+
 const DebugPanel = (props: DebugPanelProps) => {
   const { configurator = false, interactiveFilters = false } = props;
+  const classes = useStyles();
 
   return (
-    <Box
-      sx={{
-        mt: 5,
-        ml: -5,
-        mr: -5,
-        mb: -5,
-        backgroundColor: "background.main",
-        borderTopStyle: "solid",
-        borderColor: "divider",
-        borderWidth: 1,
-      }}
-    >
-      <Typography
-        component="h3"
-        variant="h3"
-        sx={{ p: 5, color: "warning.main" }}
+    <Accordion disableGutters className={classes.debugPanel} square>
+      <AccordionSummary
+        expandIcon={
+          <Box p={2}>
+            <SvgIcChevronRight width="2em" height="2em" fontSize={"0.5em"} />
+          </Box>
+        }
       >
-        🚧 Debug Panel 🚧
-      </Typography>
-      {configurator ? <DebugConfigurator /> : null}
-      {interactiveFilters ? <DebugInteractiveFilters /> : null}
-    </Box>
+        <Typography component="h3" variant="h5" className={classes.debugTitle}>
+          🚧 Debug Panel 🚧
+        </Typography>
+      </AccordionSummary>
+      <AccordionDetails>
+        {configurator ? <DebugConfigurator /> : null}
+        {interactiveFilters ? <DebugInteractiveFilters /> : null}
+      </AccordionDetails>
+    </Accordion>
   );
 };
 

@@ -43,7 +43,7 @@ import { getOriginalIris, isJoinById } from "@/graphql/join";
 import { DataCubeObservationFilter } from "@/graphql/resolver-types";
 import {
   InteractiveFiltersState,
-  useInteractiveFilters,
+  useChartInteractiveFilters,
 } from "@/stores/interactive-filters";
 
 // Prepare filters used in data query:
@@ -82,7 +82,9 @@ export const useQueryFilters = ({
   allowNoneValues?: boolean;
   componentIris?: string[];
 }): DataCubeObservationFilter[] => {
-  const allInteractiveDataFilters = useInteractiveFilters((d) => d.dataFilters);
+  const allInteractiveDataFilters = useChartInteractiveFilters(
+    (d) => d.dataFilters
+  );
   return useMemo(() => {
     return chartConfig.cubes.map((cube) => {
       const cubeFilters = getChartConfigFilters(chartConfig.cubes, {

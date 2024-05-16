@@ -51,7 +51,9 @@ import {
 } from "@/graphql/hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import { useLocale } from "@/locales/use-locale";
-import { InteractiveFiltersProvider } from "@/stores/interactive-filters";
+import {
+  InteractiveFiltersChartProvider,
+} from "@/stores/interactive-filters";
 import { useTransitionStore } from "@/stores/transition";
 import { useTheme } from "@/themes";
 import { createSnapCornerToCursor } from "@/utils/dnd";
@@ -382,7 +384,7 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
               </title>
             </Head>
             <LoadingStateProvider>
-              <InteractiveFiltersProvider>
+              <InteractiveFiltersChartProvider chartConfigKey={chartConfig.key}>
                 <Flex
                   sx={{
                     justifyContent:
@@ -483,7 +485,7 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
                   dimensions={dimensions}
                 />
                 <DebugPanel configurator interactiveFilters />
-              </InteractiveFiltersProvider>
+              </InteractiveFiltersChartProvider>
             </LoadingStateProvider>
           </>
         )}

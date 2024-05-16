@@ -14,8 +14,8 @@ import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { Observation } from "@/domain/data";
 import { useFormatFullDateAuto } from "@/formatters";
 import {
-  useInteractiveFilters,
-  useInteractiveFiltersRaw,
+  useChartInteractiveFilters,
+  useInteractiveFiltersGetState,
 } from "@/stores/interactive-filters";
 import { useTransitionStore } from "@/stores/transition";
 import { getTextWidth } from "@/utils/get-text-width";
@@ -27,9 +27,9 @@ export const HEIGHT = HANDLE_HEIGHT + BRUSH_HEIGHT;
 
 export const BrushTime = () => {
   const ref = useRef<SVGGElement>(null);
-  const timeRange = useInteractiveFilters((d) => d.timeRange);
-  const setTimeRange = useInteractiveFilters((d) => d.setTimeRange);
-  const IFStateRaw = useInteractiveFiltersRaw();
+  const timeRange = useChartInteractiveFilters((d) => d.timeRange);
+  const setTimeRange = useChartInteractiveFilters((d) => d.setTimeRange);
+  const getInteractiveFiltersState = useInteractiveFiltersGetState();
   const setEnableTransition = useTransitionStore((d) => d.setEnable);
   const formatDateAuto = useFormatFullDateAuto();
   const [brushedIsEnded, updateBrushEndedStatus] = useState(true);
@@ -109,7 +109,7 @@ export const BrushTime = () => {
       // and the local state accessed here is not up to date. This leads to
       // making a dispatch on each brush move, which makes the animations laggy
       // and generally shouldn't happen.
-      const { from, to } = IFStateRaw.getState().timeRange;
+      const { from, to } = getInteractiveFiltersState().timeRange;
 
       if (
         from?.getTime() !== newFrom.getTime() ||

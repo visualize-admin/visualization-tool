@@ -250,8 +250,8 @@ const termsetNavItemTheme: NavItemTheme = {
   activeBg: "grey.300",
   activeTextColor: "grey.900",
   textColor: "grey.700",
-  countColor: "grey.200",
-  countBg: "grey.600",
+  countColor: "grey.800",
+  countBg: "grey.300",
   closeColor: "grey.700",
   showAllColor: "grey.600",
   iconColor: "grey.700",
@@ -651,7 +651,7 @@ const TermsetNavSection = ({
     );
     return {
       counts,
-      termsets,
+      termsets: sortBy(termsets, (t) => t.label),
     };
   }, [termsetCounts]);
 

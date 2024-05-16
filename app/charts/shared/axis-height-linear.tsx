@@ -1,6 +1,6 @@
 import { axisLeft, axisRight } from "d3-axis";
 import { NumberValue, ScaleLinear } from "d3-scale";
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import type { AreasState } from "@/charts/area/areas-state";
 import type { GroupedColumnsState } from "@/charts/column/columns-grouped-state";
@@ -18,7 +18,7 @@ import { getTickNumber } from "@/charts/shared/ticks";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { useFormatNumber } from "@/formatters";
-import { useInteractiveFilters } from "@/stores/interactive-filters";
+import { useChartInteractiveFilters } from "@/stores/interactive-filters";
 import { useTransitionStore } from "@/stores/transition";
 import { getTextWidth } from "@/utils/get-text-width";
 
@@ -101,7 +101,7 @@ export const useRenderAxisHeightLinear = (
   const transitionDuration = useTransitionStore((state) => state.duration);
   const { labelFontSize, fontFamily } = useChartTheme();
   const formatNumber = useFormatNumber({ decimals: "auto" });
-  const calculationType = useInteractiveFilters((d) => d.calculation.type);
+  const calculationType = useChartInteractiveFilters((d) => d.calculation.type);
   const normalized = calculationType === "percent";
   const ticks = getTickNumber(height);
   const tickFormat = useCallback(

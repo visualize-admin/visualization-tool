@@ -56,7 +56,7 @@ import {
 } from "@/domain/data";
 import { Has } from "@/domain/types";
 import { TimeUnit } from "@/graphql/resolver-types";
-import { useInteractiveFilters } from "@/stores/interactive-filters";
+import { useChartInteractiveFilters } from "@/stores/interactive-filters";
 
 export type ChartState =
   | AreasState
@@ -400,9 +400,9 @@ export const useChartData = (
   }
 ): Omit<ChartStateData, "allData"> => {
   const { interactiveFiltersConfig } = chartConfig;
-  const categories = useInteractiveFilters((d) => d.categories);
-  const timeRange = useInteractiveFilters((d) => d.timeRange);
-  const timeSlider = useInteractiveFilters((d) => d.timeSlider);
+  const categories = useChartInteractiveFilters((d) => d.categories);
+  const timeRange = useChartInteractiveFilters((d) => d.timeRange);
+  const timeSlider = useChartInteractiveFilters((d) => d.timeSlider);
 
   // time range
   const timeRangeFilterComponentIri =

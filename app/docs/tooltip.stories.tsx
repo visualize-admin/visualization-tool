@@ -20,7 +20,7 @@ import {
   measures,
   observations,
 } from "@/docs/fixtures";
-import { InteractiveFiltersProvider } from "@/stores/interactive-filters";
+import { InteractiveFiltersChartProvider } from "@/stores/interactive-filters";
 import { CHART_CONFIG_VERSION } from "@/utils/chart-config/versioning";
 
 import { ReactSpecimen } from "./catalog";
@@ -60,7 +60,7 @@ const TooltipContent = ({ children }: { children: ReactNode }) => (
 
 const TooltipBoxStory = () => (
   <ReactSpecimen>
-    <InteractiveFiltersProvider>
+    <InteractiveFiltersChartProvider chartConfigKey="column-chart">
       <ColumnChart
         observations={observations}
         measures={measures}
@@ -213,18 +213,20 @@ const TooltipBoxStory = () => (
           </div>
         </Flex>
       </ColumnChart>
-    </InteractiveFiltersProvider>
+    </InteractiveFiltersChartProvider>
   </ReactSpecimen>
 );
 
-export { TooltipBoxStory as TooltipBox };
-export { TooltipContentStory as TooltipContent };
-export { TooltipContentStory2 as TooltipContent2 };
-export { RulerStory as Ruler };
+export {
+  RulerStory as Ruler,
+  TooltipBoxStory as TooltipBox,
+  TooltipContentStory as TooltipContent,
+  TooltipContentStory2 as TooltipContent2,
+};
 
 const TooltipContentStory = {
   render: () => (
-    <InteractiveFiltersProvider>
+    <InteractiveFiltersChartProvider chartConfigKey="column-chart">
       <ColumnChart
         observations={observations}
         measures={measures}
@@ -287,13 +289,13 @@ const TooltipContentStory = {
           </TooltipBox>
         </div>
       </ColumnChart>
-    </InteractiveFiltersProvider>
+    </InteractiveFiltersChartProvider>
   ),
 };
 
 export const TooltipContentStory2 = {
   render: () => (
-    <InteractiveFiltersProvider>
+    <InteractiveFiltersChartProvider chartConfigKey="column-chart">
       <ColumnChart
         observations={observations}
         measures={measures}
@@ -359,7 +361,7 @@ export const TooltipContentStory2 = {
           </TooltipBox>
         </div>
       </ColumnChart>
-    </InteractiveFiltersProvider>
+    </InteractiveFiltersChartProvider>
   ),
 };
 

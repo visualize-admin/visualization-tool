@@ -1,4 +1,4 @@
-import { alertClasses, Fade, Grow } from "@mui/material";
+import { alertClasses, Fade, Grow, sliderClasses } from "@mui/material";
 import { Breakpoint, createTheme, Theme } from "@mui/material/styles";
 import merge from "lodash/merge";
 import omit from "lodash/omit";
@@ -668,10 +668,10 @@ theme.components = {
       root: {
         height: 3,
 
-        "& .MuiSlider-rail": {
+        [`& .${sliderClasses.rail}`]: {
           backgroundColor: theme.palette.grey[300],
         },
-        "& .MuiSlider-thumb": {
+        [`& .${sliderClasses.thumb}`]: {
           width: 20,
           height: 20,
 
@@ -682,19 +682,19 @@ theme.components = {
             display: "none",
           },
         },
-        "& .MuiSlider-valueLabel": {
+        [`& .${sliderClasses.valueLabel}`]: {
           background: theme.palette.background.paper,
           color: theme.palette.primary.main,
 
           boxShadow: "0 0 30px 0 rgba(0, 0, 0, 0.34)",
         },
-        "& .MuiSlider-mark": {
+        [`& .${sliderClasses.mark}`]: {
           width: 4,
           height: 4,
           borderRadius: "50%",
           background: theme.palette.grey[600],
 
-          "&.MuiSlider-markActive": {
+          [`&.${sliderClasses.markActive}`]: {
             background: "#66AFE9",
           },
         },
