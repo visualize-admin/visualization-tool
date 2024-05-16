@@ -1141,7 +1141,11 @@ const Layout = t.intersection([
     }),
     t.type({
       type: t.literal("dashboard"),
-      layout: t.union([t.literal("vertical"), t.literal("tall")]),
+      layout: t.union([
+        t.literal("vertical"),
+        t.literal("tall"),
+        t.literal("tiles"),
+      ]),
       meta: Meta,
     }),
     t.type({

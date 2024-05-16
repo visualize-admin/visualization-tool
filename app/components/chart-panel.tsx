@@ -3,6 +3,7 @@ import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 import React, { HTMLProps, forwardRef } from "react";
 
+import ChartPanelLayoutGrid from "@/components/chart-panel-layout-grid";
 import { ChartPanelLayoutTall } from "@/components/chart-panel-layout-tall";
 import { ChartPanelLayoutVertical } from "@/components/chart-panel-layout-vertical";
 import { ChartSelectionTabs } from "@/components/chart-selection-tabs";
@@ -14,7 +15,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     flexDirection: "column",
     gap: theme.spacing(4),
   },
-  chartWrapper: {
+  chartWrapperInner: {
     display: "contents",
     overflow: "hidden",
     width: "auto",
@@ -32,10 +33,10 @@ export const ChartWrapper = forwardRef<HTMLDivElement, ChartWrapperProps>(
     const { children, editing, layoutType, ...rest } = props;
     const classes = useStyles();
     return (
-      <Box ref={ref} {...rest} sx={{ ...rest.sx, display: "contents" }}>
+      <Box ref={ref} {...rest}>
         {(editing || layoutType === "tab") && <ChartSelectionTabs />}
         <Box
-          className={classes.chartWrapper}
+          className={classes.chartWrapperInner}
           sx={{ minHeight: [150, 300, 500] }}
         >
           {children}
@@ -52,7 +53,7 @@ type ChartPanelLayoutProps = React.PropsWithChildren<{
 }> &
   HTMLProps<HTMLDivElement>;
 
-type ChartPanelLayoutTypeProps = {
+export type ChartPanelLayoutTypeProps = {
   chartConfigs: ChartConfig[];
   renderChart: (chartConfig: ChartConfig) => JSX.Element;
 };
@@ -63,6 +64,7 @@ const Wrappers: Record<
 > = {
   vertical: ChartPanelLayoutVertical,
   tall: ChartPanelLayoutTall,
+  tiles: ChartPanelLayoutGrid,
 };
 
 export const ChartPanelLayout = (props: ChartPanelLayoutProps) => {

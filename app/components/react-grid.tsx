@@ -4,12 +4,7 @@ import clsx from "clsx";
 import map from "lodash/map";
 import mapValues from "lodash/mapValues";
 import range from "lodash/range";
-import {
-  ComponentProps,
-  useEffect,
-  useMemo,
-  useState
-} from "react";
+import { ComponentProps, useEffect, useMemo, useState } from "react";
 import { Layout, Responsive, WidthProvider } from "react-grid-layout";
 import { match } from "ts-pattern";
 
@@ -17,10 +12,6 @@ const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
 export type ResizeHandle = NonNullable<Layout["resizeHandles"]>[number];
 export type GridLayout = "horizontal" | "vertical" | "wide" | "tall";
-
-
-
-const ResponsiveGridLayout = WidthProvider(Responsive);
 
 export const availableHandles: ResizeHandle[] = [
   "s",
@@ -41,7 +32,7 @@ const MIN_H = 2;
 const MAX_W = 4;
 
 const COLS = { lg: 4, md: 2, sm: 1, xs: 1, xxs: 1 };
-const ROW_HEIGHT = 300;
+const ROW_HEIGHT = 500;
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -170,7 +161,7 @@ const useStyles = makeStyles((theme: Theme) => ({
       transform: "rotate(45deg)",
     },
     "& .react-grid-item:not(.react-grid-placeholder)": {
-      background: theme.palette.background.paper,
+      background: "#eee",
       border: theme.palette.divider,
       boxShadow: theme.shadows[1],
     },
@@ -228,7 +219,7 @@ export const ChartGridLayout = (props: ChartGridLayoutProps) => {
 
   const classes = useStyles();
   return (
-    <ResponsiveGridLayout
+    <ResponsiveReactGridLayout
       {...props}
       layouts={enhancedLayouts}
       className={clsx(classes.root, props.className)}
@@ -240,22 +231,22 @@ export const ChartGridLayout = (props: ChartGridLayoutProps) => {
       preventCollision={false}
     >
       {children}
-    </ResponsiveGridLayout>
+    </ResponsiveReactGridLayout>
   );
 };
 
 export const generateLayout = function ({
-  resizeHandles,
   count,
   maxWidth = MAX_W,
   maxHeight = MAX_H,
   layout,
+  resizeHandles,
 }: {
-  resizeHandles: ResizeHandle[];
   count: number;
   maxWidth?: number;
   maxHeight?: number;
-  layout: "horizontal" | "vertical" | "wide" | "tall";
+  layout: "horizontal" | "vertical" | "wide" | "tall" | "tiles";
+  resizeHandles?: ResizeHandle[];
 }) {
   return map(range(0, count), (_item, i) => {
     return match(layout)
@@ -288,6 +279,16 @@ export const generateLayout = function ({
           y: i === 0 ? 0 : h * (i - 1),
           w: maxWidth / 2,
           h: i === 0 ? maxHeight : h,
+          i: i.toString(),
+          resizeHandles,
+        };
+      })
+      .with("tiles", () => {
+        return {
+          x: i % 3,
+          y: Math.floor(i / 3),
+          w: 4,
+          h: 4,
           i: i.toString(),
           resizeHandles,
         };

@@ -53,6 +53,7 @@ const LayoutLayoutConfigurator = () => {
             >
               <LayoutButton type="tall" layout={layout} />
               <LayoutButton type="vertical" layout={layout} />
+              <LayoutButton type="tiles" layout={layout} />
             </Box>
           </ControlSectionContent>
         </ControlSection>

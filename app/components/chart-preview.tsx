@@ -9,7 +9,7 @@ import {
 import { Trans } from "@lingui/macro";
 import { Box } from "@mui/material";
 import Head from "next/head";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { forwardRef, useCallback, useMemo, useState } from "react";
 
 import { DataSetTable } from "@/browse/datatable";
 import { ChartDataFilters } from "@/charts/shared/chart-data-filters";
@@ -98,16 +98,36 @@ const DashboardPreview = (props: DashboardPreviewProps) => {
   const [activeChartKey, setActiveChartKey] = useState<string | null>(null);
   const [over, setOver] = useState<Over | null>(null);
   const renderChart = useCallback(
-    (chartConfig: ChartConfig) => (
-      <DndChartPreview
-        chartKey={chartConfig.key}
-        dataSource={dataSource}
-        layoutType={state.layout.type}
-        editing={editing}
-      />
-    ),
-    [dataSource, editing, state.layout]
+    (chartConfig: ChartConfig) => {
+      return layoutType === "tiles" ? (
+        <ReactGridChartPreview
+          key={chartConfig.key}
+          chartKey={chartConfig.key}
+          dataSource={dataSource}
+          layoutType={state.layout.type}
+          editing={editing}
+        />
+      ) : (
+        <DndChartPreview
+          chartKey={chartConfig.key}
+          dataSource={dataSource}
+          layoutType={state.layout.type}
+          editing={editing}
+        />
+      );
+    },
+    [dataSource, editing, layoutType, state.layout.type]
   );
+
+  if (layoutType === "tiles") {
+    return (
+      <ChartPanelLayout
+        chartConfigs={state.chartConfigs}
+        renderChart={renderChart}
+        layoutType={layoutType}
+      />
+    );
+  }
 
   return (
     <DndContext
@@ -180,6 +200,25 @@ type DndChartPreviewProps = ChartWrapperProps & {
   chartKey: string;
   dataSource: DataSource;
 };
+
+type ReactGridChartPreviewProps = ChartWrapperProps & {
+  chartKey: string;
+  dataSource: DataSource;
+};
+
+const ReactGridChartPreview = forwardRef<
+  HTMLDivElement,
+  ReactGridChartPreviewProps
+>((props, ref) => {
+  const { children, chartKey, dataSource, ...rest } = props;
+  return (
+    <ChartTablePreviewProvider>
+      <ChartWrapper {...rest} ref={ref}>
+        <ChartPreviewInner dataSource={dataSource} chartKey={chartKey} />
+      </ChartWrapper>
+    </ChartTablePreviewProvider>
+  );
+});
 
 const DndChartPreview = (props: DndChartPreviewProps) => {
   const { children, chartKey, dataSource, ...rest } = props;
