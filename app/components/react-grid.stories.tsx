@@ -81,7 +81,7 @@ export const Example = () => {
           control={
             <Checkbox
               checked={allowResize}
-              onChange={(ev, value) => setAllowResize(value)}
+              onChange={(_ev, value) => setAllowResize(value)}
             />
           }
         ></FormControlLabel>
