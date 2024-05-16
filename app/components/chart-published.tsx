@@ -295,85 +295,83 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
             </Box>
           )}
           <LoadingStateProvider>
-            <InteractiveFiltersProvider chartConfigs={state.chartConfigs}>
-              <InteractiveFiltersChartProvider chartConfigKey={chartConfig.key}>
-                <Flex
-                  sx={{
-                    justifyContent: meta.title[locale]
-                      ? "space-between"
-                      : "flex-end",
-                    gap: 2,
-                  }}
-                >
-                  {meta.title[locale] ? (
-                    <Title text={meta.title[locale]} />
-                  ) : (
-                    // We need to have a span here to keep the space between the
-                    // title and the chart (subgrid layout)
-                    <span />
-                  )}
-                  <MetadataPanel
-                    dataSource={dataSource}
-                    chartConfigs={[chartConfig]}
-                    dimensions={allComponents}
-                    container={rootRef.current}
-                  />
-                </Flex>
-                {meta.description[locale] ? (
-                  <Description text={meta.description[locale]} />
+            <InteractiveFiltersChartProvider chartConfigKey={chartConfig.key}>
+              <Flex
+                sx={{
+                  justifyContent: meta.title[locale]
+                    ? "space-between"
+                    : "flex-end",
+                  gap: 2,
+                }}
+              >
+                {meta.title[locale] ? (
+                  <Title text={meta.title[locale]} />
                 ) : (
                   // We need to have a span here to keep the space between the
                   // title and the chart (subgrid layout)
                   <span />
                 )}
-                {chartConfig.interactiveFiltersConfig?.dataFilters.active ? (
-                  <ChartDataFilters
+                <MetadataPanel
+                  dataSource={dataSource}
+                  chartConfigs={[chartConfig]}
+                  dimensions={allComponents}
+                  container={rootRef.current}
+                />
+              </Flex>
+              {meta.description[locale] ? (
+                <Description text={meta.description[locale]} />
+              ) : (
+                // We need to have a span here to keep the space between the
+                // title and the chart (subgrid layout)
+                <span />
+              )}
+              {chartConfig.interactiveFiltersConfig?.dataFilters.active ? (
+                <ChartDataFilters
+                  dataSource={dataSource}
+                  chartConfig={chartConfig}
+                />
+              ) : (
+                // We need to have a span here to keep the space between the
+                // description and the chart (subgrid layout)
+                <span />
+              )}
+              <div
+                ref={containerRef}
+                style={{
+                  minWidth: 0,
+                  height: containerHeight.current,
+                  marginTop: 16,
+                }}
+              >
+                {isTablePreview ? (
+                  <DataSetTable
+                    sx={{ maxHeight: "100%" }}
                     dataSource={dataSource}
                     chartConfig={chartConfig}
                   />
                 ) : (
-                  // We need to have a span here to keep the space between the
-                  // description and the chart (subgrid layout)
-                  <span />
+                  <ChartWithFilters
+                    dataSource={dataSource}
+                    componentIris={componentIris}
+                    chartConfig={chartConfig}
+                  />
                 )}
-                <div
-                  ref={containerRef}
-                  style={{
-                    minWidth: 0,
-                    height: containerHeight.current,
-                    marginTop: 16,
-                  }}
-                >
-                  {isTablePreview ? (
-                    <DataSetTable
-                      sx={{ maxHeight: "100%" }}
-                      dataSource={dataSource}
-                      chartConfig={chartConfig}
-                    />
-                  ) : (
-                    <ChartWithFilters
-                      dataSource={dataSource}
-                      componentIris={componentIris}
-                      chartConfig={chartConfig}
-                    />
-                  )}
-                </div>
-                <ChartFootnotes
-                  dataSource={dataSource}
-                  chartConfig={chartConfig}
-                  dimensions={dimensions}
-                  configKey={configKey}
-                  onToggleTableView={handleToggleTableView}
-                  visualizeLinkText={
-                    showDownload === false ? (
-                      <Trans id="metadata.link.created.with.visualize.alternate">
-                        visualize.admin.ch
-                      </Trans>
-                    ) : undefined
-                  }
-                />
-              </InteractiveFiltersChartProvider>
-            </InteractiveFiltersProvider>
+              </div>
+              <ChartFootnotes
+                dataSource={dataSource}
+                chartConfig={chartConfig}
+                dimensions={dimensions}
+                configKey={configKey}
+                onToggleTableView={handleToggleTableView}
+                visualizeLinkText={
+                  showDownload === false ? (
+                    <Trans id="metadata.link.created.with.visualize.alternate">
+                      visualize.admin.ch
+                    </Trans>
+                  ) : undefined
+                }
+              />
+            </InteractiveFiltersChartProvider>
           </LoadingStateProvider>
         </ChartErrorBoundary>
       </Box>
