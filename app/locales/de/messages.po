@@ -579,7 +579,7 @@ msgstr "Kacheln"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.layout.vertical"
-msgstr "Hoch"
+msgstr "Vertikal"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.measure"
