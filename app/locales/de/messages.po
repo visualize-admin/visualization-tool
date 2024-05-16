@@ -571,11 +571,15 @@ msgstr "Tab Layout"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.layout.tall"
-msgstr ""
+msgstr "Hoch"
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.layout.tiles"
+msgstr "Kacheln"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.layout.vertical"
-msgstr ""
+msgstr "Vertikal"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.measure"

@@ -42,7 +42,8 @@
     "core-js": "^3.15.1",
     "next": "^13.5.2",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "ts-jest": "^29.1.2"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
@@ -84,7 +85,7 @@
     "rollup-plugin-terser": "^7.0.2",
     "start-server-and-test": "^1.11.4",
     "storybook": "^7.6.17",
-    "typescript": "^4.9.3"
+    "typescript": "4"
   },
   "workspaces": [
     ".",

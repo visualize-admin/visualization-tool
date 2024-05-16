@@ -73,6 +73,7 @@ import { default as LayoutDashboard } from "@/icons/components/IcLayoutDashboard
 import { default as LayoutSingleURLs } from "@/icons/components/IcLayoutSingleURLs";
 import { default as LayoutTab } from "@/icons/components/IcLayoutTab";
 import { default as LayoutTall } from "@/icons/components/IcLayoutTall";
+import { default as LayoutTiles } from "@/icons/components/IcLayoutTiles";
 import { default as LayoutVertical } from "@/icons/components/IcLayoutVertical";
 import { default as LeftAligned } from "@/icons/components/IcLeftAligned";
 import { default as Link } from "@/icons/components/IcLink";
@@ -223,6 +224,7 @@ export const Icons = {
   layoutSingleURLs: LayoutSingleURLs,
   layoutTall: LayoutTall,
   layoutTab: LayoutTab,
+  layoutTiles: LayoutTiles,
   layoutVertical: LayoutVertical,
   leftAligned: LeftAligned,
   linkExternal: LinkExternal,

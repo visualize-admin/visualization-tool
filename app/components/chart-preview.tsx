@@ -9,7 +9,7 @@ import {
 import { Trans } from "@lingui/macro";
 import { Box } from "@mui/material";
 import Head from "next/head";
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 
 import { DataSetTable } from "@/browse/datatable";
 import { ChartDataFilters } from "@/charts/shared/chart-data-filters";
@@ -17,8 +17,7 @@ import { LoadingStateProvider } from "@/charts/shared/chart-loading-state";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
 import { ChartFootnotes } from "@/components/chart-footnotes";
 import {
-  ChartPanelLayoutTall,
-  ChartPanelLayoutVertical,
+  ChartPanelLayout,
   ChartWrapper,
   ChartWrapperProps,
 } from "@/components/chart-panel";
@@ -51,9 +50,7 @@ import {
 } from "@/graphql/hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import { useLocale } from "@/locales/use-locale";
-import {
-  InteractiveFiltersChartProvider,
-} from "@/stores/interactive-filters";
+import { InteractiveFiltersChartProvider } from "@/stores/interactive-filters";
 import { useTransitionStore } from "@/stores/transition";
 import { useTheme } from "@/themes";
 import { createSnapCornerToCursor } from "@/utils/dnd";
@@ -147,17 +144,11 @@ const DashboardPreview = (props: DashboardPreviewProps) => {
         });
       }}
     >
-      {layoutType === "tall" ? (
-        <ChartPanelLayoutTall
-          chartConfigs={state.chartConfigs}
-          renderChart={renderChart}
-        />
-      ) : (
-        <ChartPanelLayoutVertical
-          chartConfigs={state.chartConfigs}
-          renderChart={renderChart}
-        />
-      )}
+      <ChartPanelLayout
+        chartConfigs={state.chartConfigs}
+        renderChart={renderChart}
+        layoutType={layoutType}
+      />
       {isDragging && (
         <DragOverlay
           zIndex={1000}
@@ -294,7 +285,8 @@ const SingleURLsPreview = (props: SingleURLsPreviewProps) => {
   );
 
   return (
-    <ChartPanelLayoutVertical
+    <ChartPanelLayout
+      layoutType="vertical"
       chartConfigs={state.chartConfigs}
       renderChart={renderChart}
     />
@@ -484,7 +476,10 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
                   onToggleTableView={handleToggleTableView}
                   dimensions={dimensions}
                 />
-                <DebugPanel configurator interactiveFilters />
+                {/* Wrap in div for subgrid layout */}
+                <div>
+                  <DebugPanel configurator interactiveFilters />
+                </div>
               </InteractiveFiltersChartProvider>
             </LoadingStateProvider>
           </>

@@ -12,11 +12,7 @@ import { LoadingStateProvider } from "@/charts/shared/chart-loading-state";
 import { isUsingImputation } from "@/charts/shared/imputation";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
 import { ChartFootnotes } from "@/components/chart-footnotes";
-import {
-  ChartPanelLayoutTall,
-  ChartPanelLayoutVertical,
-  ChartWrapper,
-} from "@/components/chart-panel";
+import { ChartPanelLayout, ChartWrapper } from "@/components/chart-panel";
 import {
   ChartTablePreviewProvider,
   useChartTablePreview,
@@ -102,17 +98,11 @@ export const ChartPublished = (props: ChartPublishedProps) => {
               <Description text={state.layout.meta.description[locale]} />
             )}
           </Box>
-          {state.layout.layout === "tall" ? (
-            <ChartPanelLayoutTall
-              chartConfigs={state.chartConfigs}
-              renderChart={renderChart}
-            />
-          ) : (
-            <ChartPanelLayoutVertical
-              chartConfigs={state.chartConfigs}
-              renderChart={renderChart}
-            />
-          )}
+          <ChartPanelLayout
+            layoutType={state.layout.layout}
+            chartConfigs={state.chartConfigs}
+            renderChart={renderChart}
+          />
         </>
       ) : (
         <>
