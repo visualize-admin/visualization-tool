@@ -6,10 +6,9 @@ import mapValues from "lodash/mapValues";
 import range from "lodash/range";
 import {
   ComponentProps,
-  useCallback,
   useEffect,
   useMemo,
-  useState,
+  useState
 } from "react";
 import { Layout, Responsive, WidthProvider } from "react-grid-layout";
 import { match } from "ts-pattern";
@@ -19,11 +18,7 @@ const ResponsiveReactGridLayout = WidthProvider(Responsive);
 export type ResizeHandle = NonNullable<Layout["resizeHandles"]>[number];
 export type GridLayout = "horizontal" | "vertical" | "wide" | "tall";
 
-type Props = {
-  className: string;
-  onLayoutChange: Function;
-  resize?: boolean;
-} & ComponentProps<typeof ResponsiveReactGridLayout>;
+
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -205,7 +200,13 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-export const ChartGridLayout = (props: Props) => {
+type ChartGridLayoutProps = {
+  className: string;
+  onLayoutChange: Function;
+  resize?: boolean;
+} & ComponentProps<typeof ResponsiveReactGridLayout>;
+
+export const ChartGridLayout = (props: ChartGridLayoutProps) => {
   const { children, layouts, resize } = props;
   const [mounted, setMounted] = useState(false);
 
