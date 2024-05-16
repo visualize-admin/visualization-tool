@@ -191,7 +191,7 @@ export const getSharedFilters = (
 };
 
 /**
- * Creates and provide all the interactive filters stores for the given chartConfigs.
+ * Creates and provides all the interactive filters stores for the given chartConfigs.
  */
 export const InteractiveFiltersProvider = ({
   children,
