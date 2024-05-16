@@ -82,65 +82,69 @@ export const ChartPublished = (props: ChartPublishedProps) => {
     [configKey, dataSource, state]
   );
 
-  return state.layout.type === "dashboard" ? (
+  return (
     <InteractiveFiltersProvider chartConfigs={state.chartConfigs}>
-      <Box
-        sx={{
-          mb:
-            state.layout.meta.title[locale] ||
-            state.layout.meta.description[locale]
-              ? 4
-              : 0,
-        }}
-      >
-        {state.layout.meta.title[locale] && (
-          <Title text={state.layout.meta.title[locale]} />
-        )}
-        {state.layout.meta.description[locale] && (
-          <Description text={state.layout.meta.description[locale]} />
-        )}
-      </Box>
-      {state.layout.layout === "tall" ? (
-        <ChartPanelLayoutTall
-          chartConfigs={state.chartConfigs}
-          renderChart={renderChart}
-        />
+      {state.layout.type === "dashboard" ? (
+        <>
+          <Box
+            sx={{
+              mb:
+                state.layout.meta.title[locale] ||
+                state.layout.meta.description[locale]
+                  ? 4
+                  : 0,
+            }}
+          >
+            {state.layout.meta.title[locale] && (
+              <Title text={state.layout.meta.title[locale]} />
+            )}
+            {state.layout.meta.description[locale] && (
+              <Description text={state.layout.meta.description[locale]} />
+            )}
+          </Box>
+          {state.layout.layout === "tall" ? (
+            <ChartPanelLayoutTall
+              chartConfigs={state.chartConfigs}
+              renderChart={renderChart}
+            />
+          ) : (
+            <ChartPanelLayoutVertical
+              chartConfigs={state.chartConfigs}
+              renderChart={renderChart}
+            />
+          )}
+        </>
       ) : (
-        <ChartPanelLayoutVertical
-          chartConfigs={state.chartConfigs}
-          renderChart={renderChart}
-        />
+        <>
+          <Flex
+            sx={{
+              flexDirection: "column",
+              mb:
+                state.layout.meta.title[locale] ||
+                state.layout.meta.description[locale]
+                  ? 4
+                  : 0,
+            }}
+          >
+            {state.layout.meta.title[locale] && (
+              <Title text={state.layout.meta.title[locale]} />
+            )}
+            {state.layout.meta.description[locale] && (
+              <Description text={state.layout.meta.description[locale]} />
+            )}
+          </Flex>
+          <ChartTablePreviewProvider>
+            <ChartWrapper layoutType={state.layout.type}>
+              <ChartPublishedInner
+                dataSource={dataSource}
+                state={state}
+                chartConfig={getChartConfig(state)}
+                configKey={configKey}
+              />
+            </ChartWrapper>
+          </ChartTablePreviewProvider>
+        </>
       )}
-    </InteractiveFiltersProvider>
-  ) : (
-    <InteractiveFiltersProvider chartConfigs={state.chartConfigs}>
-      <Flex
-        sx={{
-          flexDirection: "column",
-          mb:
-            state.layout.meta.title[locale] ||
-            state.layout.meta.description[locale]
-              ? 4
-              : 0,
-        }}
-      >
-        {state.layout.meta.title[locale] && (
-          <Title text={state.layout.meta.title[locale]} />
-        )}
-        {state.layout.meta.description[locale] && (
-          <Description text={state.layout.meta.description[locale]} />
-        )}
-      </Flex>
-      <ChartTablePreviewProvider>
-        <ChartWrapper layoutType={state.layout.type}>
-          <ChartPublishedInner
-            dataSource={dataSource}
-            state={state}
-            chartConfig={getChartConfig(state)}
-            configKey={configKey}
-          />
-        </ChartWrapper>
-      </ChartTablePreviewProvider>
     </InteractiveFiltersProvider>
   );
 };
