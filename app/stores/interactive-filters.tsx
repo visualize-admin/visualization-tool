@@ -151,6 +151,9 @@ const InteractiveFiltersContext = createContext<
   | undefined
 >(undefined);
 
+/**
+ * Returns filters that are shared across multiple charts.
+ */
 export const getSharedFilters = (
   chartConfigs: ChartConfig[]
 ): SharedFilters => {
@@ -159,26 +162,19 @@ export const getSharedFilters = (
     if (!interactiveFiltersConfig) {
       return [];
     }
-    const { timeRange, dataFilters, legend } = interactiveFiltersConfig;
-    return [
-      { type: "timeRange" as const, value: timeRange },
-      // ...dataFilters.componentIris.map((ci) => ({
-      //   type: "dataFilters" as const,
-      //   value: {
-      //     ...dataFilters,
-      //     componentIri: ci,
-      //   },
-      // })),
-      // { type: "legend" as const, value: legend },
-    ].filter((x) => x.value.active);
+
+    const { timeRange } = interactiveFiltersConfig;
+    return [{ type: "timeRange" as const, value: timeRange }].filter(
+      (x) => x.value.active
+    );
   });
 
   const sharedFilters = Object.entries(
     // TODO implement recognizing shared filters across joined by dimensions
     groupBy(allActiveFilters, (x) => `${x.type} - ${x.value.componentIri}`)
-  ).filter(([iri, filters]) => filters.length > 1);
+  ).filter(([_iri, filters]) => filters.length > 1);
 
-  return sharedFilters.map(([iri, filters]) => ({
+  return sharedFilters.map(([_iri, filters]) => ({
     iri: filters[0].value.componentIri,
     type: filters[0].type,
     value: (() => {
@@ -186,10 +182,6 @@ export const getSharedFilters = (
       switch (type) {
         case "timeRange":
           return filters[0].value;
-        // case "legend":
-        //   return filters[0].value;
-        // case "dataFilters":
-        //   return filters[0].value;
         default:
           const _exhaustiveCheck: never = type;
           throw new Error(`Unhandled type: ${_exhaustiveCheck}`);

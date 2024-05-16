@@ -4,6 +4,7 @@ import { useState } from "react";
 import useSyncInteractiveFilters from "@/charts/shared/use-sync-interactive-filters";
 import { ChartConfig, InteractiveFiltersConfig } from "@/config-types";
 import {
+  InteractiveFiltersChartProvider,
   InteractiveFiltersProvider,
   useChartInteractiveFilters,
 } from "@/stores/interactive-filters";
@@ -78,8 +79,10 @@ const setup = ({
     );
   };
   const root = render(
-    <InteractiveFiltersProvider>
-      <Component />
+    <InteractiveFiltersProvider chartConfigs={[chartConfig]}>
+      <InteractiveFiltersChartProvider chartConfigKey={chartConfig.key}>
+        <Component />
+      </InteractiveFiltersChartProvider>
     </InteractiveFiltersProvider>
   );
   const getIFState = () =>
