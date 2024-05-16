@@ -147,7 +147,6 @@ import { default as Word } from "@/icons/components/IcWord";
 import { default as XAxis } from "@/icons/components/IcXAxis";
 import { default as YAxis } from "@/icons/components/IcYAxis";
 import { default as ZoomIn } from "@/icons/components/IcZoomIn";
-import { default as LayoutTiles } from "./IcLayoutTiles";
 
 export const Icons = {
   add: Add,
