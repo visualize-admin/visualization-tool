@@ -17,8 +17,7 @@ import { LoadingStateProvider } from "@/charts/shared/chart-loading-state";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
 import { ChartFootnotes } from "@/components/chart-footnotes";
 import {
-  ChartPanelLayoutTall,
-  ChartPanelLayoutVertical,
+  ChartPanelLayout,
   ChartWrapper,
   ChartWrapperProps,
 } from "@/components/chart-panel";
@@ -145,17 +144,11 @@ const DashboardPreview = (props: DashboardPreviewProps) => {
         });
       }}
     >
-      {layoutType === "tall" ? (
-        <ChartPanelLayoutTall
-          chartConfigs={state.chartConfigs}
-          renderChart={renderChart}
-        />
-      ) : (
-        <ChartPanelLayoutVertical
-          chartConfigs={state.chartConfigs}
-          renderChart={renderChart}
-        />
-      )}
+      <ChartPanelLayout
+        chartConfigs={state.chartConfigs}
+        renderChart={renderChart}
+        layoutType={layoutType}
+      />
       {isDragging && (
         <DragOverlay
           zIndex={1000}
@@ -292,7 +285,8 @@ const SingleURLsPreview = (props: SingleURLsPreviewProps) => {
   );
 
   return (
-    <ChartPanelLayoutVertical
+    <ChartPanelLayout
+      layoutType="vertical"
       chartConfigs={state.chartConfigs}
       renderChart={renderChart}
     />
