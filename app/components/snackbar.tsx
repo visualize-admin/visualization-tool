@@ -1,15 +1,11 @@
 import { styled } from "@mui/material";
-import { success } from "io-ts";
 import {
   MaterialDesignContent,
   SnackbarProvider as NotistackSnackbarProvider,
 } from "notistack";
 
 import SvgIcChecked from "@/icons/components/IcChecked";
-import SvgIcWarning from "@/icons/components/IcWarning";
 import SvgIcInfo from "@/icons/components/IcInfo";
-import SvgIcRemove from "@/icons/components/IcRemove";
-import SvgIcClose from "@/icons/components/IcClose";
 import SvgIcClear from "@/icons/components/IcClear";
 
 const StyledMaterialDesignContent = styled(MaterialDesignContent)(

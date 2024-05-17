@@ -50,7 +50,6 @@ import uniq from "lodash/uniq";
 import uniqBy from "lodash/uniqBy";
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { useClient } from "urql";
-import sortBy from "lodash/sortBy";
 import maxBy from "lodash/maxBy";
 
 import { DatasetResults, PartialSearchCube } from "@/browser/dataset-browse";
