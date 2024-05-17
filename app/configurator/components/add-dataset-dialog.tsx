@@ -94,6 +94,7 @@ import SvgIcSearch from "@/icons/components/IcSearch";
 import { useLocale } from "@/locales/use-locale";
 import { exhaustiveCheck } from "@/utils/exhaustiveCheck";
 import useLocalState from "@/utils/use-local-state";
+import { useEventEmitter } from "@/utils/eventEmitter";
 
 const DialogCloseButton = (props: IconButtonProps) => {
   return (
@@ -899,6 +900,23 @@ export const DatasetDialog = ({
 
   const { isOpen, open, close } = useCautionAlert();
 
+  const ee = useEventEmitter();
+  const handleConfirm = useEventCallback(async () => {
+    if (!currentComponents || !otherCube || !inferredJoinBy) {
+      return null;
+    }
+
+    await addDataset({
+      joinBy: inferredJoinBy,
+      otherCube: otherCube,
+    });
+    handleClose({}, "escapeKeyDown");
+
+    setTimeout(() => {
+      ee.emit("dataset-added", { datasetIri: otherCube.iri });
+    }, 100);
+  });
+
   return (
     <Dialog
       {...props}
@@ -1122,17 +1140,7 @@ export const DatasetDialog = ({
           otherCubeComponents={otherCubeComponents}
           fetchingComponents={!!otherCubeComponentsQuery?.fetching}
           addingDataset={addingDataset}
-          onConfirm={async () => {
-            if (!currentComponents || !otherCube || !inferredJoinBy) {
-              return null;
-            }
-
-            await addDataset({
-              joinBy: inferredJoinBy,
-              otherCube: otherCube,
-            });
-            handleClose({}, "escapeKeyDown");
-          }}
+          onConfirm={handleConfirm}
           onClickBack={() => setOtherCube(undefined)}
           searchDimensionsSelected={selectedSearchDimensions ?? []}
         />
