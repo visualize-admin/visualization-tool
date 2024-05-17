@@ -25,9 +25,62 @@ import { useDataCubesMetadataQuery } from "@/graphql/hooks";
 import SvgIcAdd from "@/icons/components/IcAdd";
 import SvgIcTrash from "@/icons/components/IcTrash";
 import { useLocale } from "@/locales/use-locale";
+import { ChartConfig } from "@/configurator";
+import { DataCubeMetadata } from "@/domain/data";
 
 import { DatasetDialog } from "./add-dataset-dialog";
 import { FiltersBadge } from "./filters-badge";
+
+const DatasetRow = ({
+  canRemove,
+  handleDatasetClick,
+  cube,
+}: {
+  canRemove: boolean;
+  handleDatasetClick: () => void;
+  cube: DataCubeMetadata;
+}) => {
+  const locale = useLocale();
+  const [, dispatch] = useConfiguratorState(isConfiguring);
+
+  return (
+    <Box
+      display="flex"
+      alignItems="center"
+      justifyContent="space-between"
+      key={cube.iri}
+    >
+      <div>
+        <MuiLink
+          color="primary"
+          underline="none"
+          sx={{ cursor: "pointer" }}
+          variant="caption"
+          component="span"
+          onClick={handleDatasetClick}
+        >
+          Dataset
+        </MuiLink>
+        <br />
+        <Typography variant="caption">{cube.title}</Typography>
+      </div>
+      <div>
+        {canRemove ? (
+          <IconButton
+            onClick={() =>
+              dispatch({
+                type: "DATASET_REMOVE",
+                value: { locale, iri: cube.iri },
+              })
+            }
+          >
+            <SvgIcTrash />
+          </IconButton>
+        ) : null}
+      </div>
+    </Box>
+  );
+};
 
 export const DatasetsControlSection = () => {
   const [state, dispatch] = useConfiguratorState(isConfiguring);
@@ -92,41 +145,12 @@ export const DatasetsControlSection = () => {
         >
           {metadataQuery.data?.dataCubesMetadata.map((x) => {
             return (
-              <Box
-                display="flex"
-                alignItems="center"
-                justifyContent="space-between"
+              <DatasetRow
                 key={x.iri}
-              >
-                <div>
-                  <MuiLink
-                    color="primary"
-                    underline="none"
-                    sx={{ cursor: "pointer" }}
-                    variant="caption"
-                    component="span"
-                    onClick={handleDatasetClick}
-                  >
-                    Dataset
-                  </MuiLink>
-                  <br />
-                  <Typography variant="caption">{x.title}</Typography>
-                </div>
-                <div>
-                  {cubes.length > 1 ? (
-                    <IconButton
-                      onClick={() =>
-                        dispatch({
-                          type: "DATASET_REMOVE",
-                          value: { locale, iri: x.iri },
-                        })
-                      }
-                    >
-                      <SvgIcTrash />
-                    </IconButton>
-                  ) : null}
-                </div>
-              </Box>
+                handleDatasetClick={handleDatasetClick}
+                canRemove={cubes.length > 1}
+                cube={x}
+              />
             );
           })}
         </Box>
