@@ -26,6 +26,7 @@ import {
   ListSubheader,
   MenuItem,
   OutlinedInput,
+  paperClasses,
   Select,
   SelectChangeEvent,
   Stack,
@@ -157,6 +158,14 @@ const useStyles = makeStyles((theme: Theme) => ({
     alignItems: "center",
     gap: 1,
     paddingTop: theme.spacing(1),
+  },
+  previewSelect: {
+    width: 302,
+  },
+  previewSelectPaper: {
+    [`& .${paperClasses.root}`]: {
+      marginTop: "0.25rem",
+    },
   },
 }));
 
@@ -321,6 +330,8 @@ export const PreviewDataTable = ({
 }) => {
   const locale = useLocale();
   const isQueryPaused = !otherCubeComponents || !currentComponents;
+
+  const classes = useStyles();
 
   const cubeFilters = [
     {
@@ -557,7 +568,14 @@ export const PreviewDataTable = ({
             <Trans id="dataset.search.preview.dimensions">Dimensions</Trans>
           </Typography>
           <Select
-            sx={{ minWidth: 300 }}
+            multiple
+            className={classes.previewSelect}
+            MenuProps={{
+              className: classes.previewSelectPaper,
+              transformOrigin: { vertical: "top", horizontal: "left" },
+              anchorOrigin: { vertical: "bottom", horizontal: "left" },
+              anchorReference: "anchorEl",
+            }}
             value={Object.keys(selectedColumnsByIri)}
             renderValue={() => {
               return (
@@ -578,10 +596,19 @@ export const PreviewDataTable = ({
                     display: "flex",
                     gap: "0.5rem",
                     justifyContent: "space-between",
+                    "&:not(&:first-child)": {
+                      marginTop: "0.5rem",
+                    },
                   }}
                 >
                   {group.groupName}
-                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      "& button": { whiteSpace: "nowrap" },
+                    }}
+                  >
                     <Button
                       size="small"
                       variant="text"
