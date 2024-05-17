@@ -1,6 +1,6 @@
 // @ts-ignore We use StrictEventEmitter to type EventEmitter
 import EventEmitter from "microee";
-import { useContext, useEffect, createContext } from "react";
+import { createContext, useContext, useEffect } from "react";
 import StrictEventEmitter from "strict-event-emitter-types";
 
 /**
@@ -33,7 +33,7 @@ export type EventEmitterHandler<T extends keyof Events> = (
   ev: Events[T]
 ) => void;
 
-export const useEventEmitter = <T extends keyof Events, S>(
+export const useEventEmitter = <T extends keyof Events>(
   event?: T,
   callback?: EventEmitterHandler<T>
 ) => {
