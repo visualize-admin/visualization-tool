@@ -81,23 +81,16 @@ const DatasetRow = ({
   const [, dispatch] = useConfiguratorState(isConfiguring);
   const [flash, setFlash] = useState(false);
 
-  const ee = useEventEmitter();
-  useEffect(() => {
-    const handle: EventEmitterHandler<"dataset-added"> = (ev) => {
-      if (ev.datasetIri === cube.iri) {
-        ref.current?.scrollIntoView({ behavior: "smooth" });
-        setTimeout(() => {
-          setFlash(true);
-        }, 300);
-        setTimeout(() => {
-          setFlash(false);
-        }, 5000);
-      }
-    };
-    ee.on("dataset-added", handle);
-    return () => {
-      ee.removeListener("dataset-added", handle);
-    };
+  useEventEmitter("dataset-added", (ev) => {
+    if (ev.datasetIri === cube.iri) {
+      ref.current?.scrollIntoView({ behavior: "smooth" });
+      setTimeout(() => {
+        setFlash(true);
+      }, 300);
+      setTimeout(() => {
+        setFlash(false);
+      }, 5000);
+    }
   });
   return (
     <MaybeTooltip
