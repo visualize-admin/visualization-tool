@@ -391,12 +391,32 @@ export const PreviewDataTable = ({
       },
     ]);
 
-    return [...joinedColumns, ...currentMeasures, ...otherMeasures];
+    const {
+      join: joinedJoinDimensions = [],
+      other: joinedOtherDimensions = [],
+      current: joinedCurrentDimensions = [],
+    } = groupBy(joinedColumns, (d) => {
+      const isJoinBy = isJoinByComponent(d);
+      return isJoinBy
+        ? "join"
+        : d.cubeIri === otherCube.iri
+          ? "other"
+          : "current";
+    });
+
+    return [
+      ...joinedJoinDimensions,
+      ...joinedOtherDimensions,
+      ...otherMeasures,
+      ...joinedCurrentDimensions,
+      ...currentMeasures,
+    ];
   }, [
     currentComponents?.dimensions,
     currentComponents?.measures,
     inferredJoinBy.left,
     inferredJoinBy.right,
+    otherCube.iri,
     otherCubeComponents?.dimensions,
     otherCubeComponents?.measures,
   ]);
