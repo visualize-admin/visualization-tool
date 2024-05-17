@@ -1136,7 +1136,7 @@ msgstr "Dimensionen"
 
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.preview.dimensions-shown"
-msgstr "{0} dargestellt"
+msgstr "{0} angezeigt in dieser Ansicht"
 
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.preview.new-dimension"
