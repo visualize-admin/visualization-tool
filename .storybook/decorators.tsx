@@ -4,13 +4,14 @@ import { NextPage } from "next";
 import { SessionProvider } from "next-auth/react";
 import Router from "next/router";
 import * as React from "react";
+import { Decorator } from "@storybook/react";
+import { Client, Provider } from "urql";
 
 import { i18n } from "../app/locales/locales";
 import { theme } from "../app/themes/federal";
 import AsyncLocalizationProvider from "../app/utils/l10n-provider";
+import { SnackbarProvider } from "../app/components/snackbar";
 
-import { Decorator } from "@storybook/react";
-import { Client, Provider } from "urql";
 
 export const AppContextDecorator = (Story: NextPage) => (
   <SessionProvider refetchOnWindowFocus={false} refetchWhenOffline={false}>
@@ -18,7 +19,9 @@ export const AppContextDecorator = (Story: NextPage) => (
       <I18nProvider i18n={i18n}>
         <CssBaseline />
         <ThemeProvider theme={theme}>
-          <Story />
+          <SnackbarProvider>
+            <Story />
+          </SnackbarProvider>
         </ThemeProvider>
       </I18nProvider>
     </AsyncLocalizationProvider>
