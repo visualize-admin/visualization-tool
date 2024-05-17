@@ -7,11 +7,11 @@ import {
   tooltipClasses,
   Typography,
 } from "@mui/material";
-import uniqBy from "lodash/uniqBy";
-import { useEffect, useMemo, useRef, useState } from "react";
 import { Theme } from "@mui/material/styles";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
+import uniqBy from "lodash/uniqBy";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { useMetadataPanelStoreActions } from "@/components/metadata-panel-store";
 import useDisclosure from "@/components/use-disclosure";
@@ -25,14 +25,14 @@ import {
   isConfiguring,
   useConfiguratorState,
 } from "@/configurator/configurator-state";
+import { DataCubeMetadata } from "@/domain/data";
 import { useDataCubesMetadataQuery } from "@/graphql/hooks";
 import SvgIcAdd from "@/icons/components/IcAdd";
+import SvgIcChecked from "@/icons/components/IcChecked";
 import SvgIcTrash from "@/icons/components/IcTrash";
 import { useLocale } from "@/locales/use-locale";
-import { DataCubeMetadata } from "@/domain/data";
-import { EventEmitterHandler, useEventEmitter } from "@/utils/eventEmitter";
+import { useEventEmitter } from "@/utils/eventEmitter";
 import { MaybeTooltip } from "@/utils/maybe-tooltip";
-import SvgIcChecked from "@/icons/components/IcChecked";
 
 import { DatasetDialog } from "./add-dataset-dialog";
 import { FiltersBadge } from "./filters-badge";
@@ -47,7 +47,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     alignItems: "center",
     justifyContent: "space-between",
   },
-  flash: {
+  added: {
     transition: "border-left-color 0.25s ease",
     borderLeftColor: theme.palette.success.light,
   },
@@ -70,28 +70,27 @@ const DatasetRow = ({
   canRemove,
   handleDatasetClick,
   cube,
+  added,
+  onRemoveAdded,
 }: {
   canRemove: boolean;
   handleDatasetClick: () => void;
   cube: DataCubeMetadata;
+  /** When the dataset has been added just not */
+  added?: boolean;
+  onRemoveAdded?: () => void;
 }) => {
   const ref = useRef<HTMLDivElement>(null);
   const locale = useLocale();
   const classes = useStyles();
   const [, dispatch] = useConfiguratorState(isConfiguring);
-  const [flash, setFlash] = useState(false);
 
-  useEventEmitter("dataset-added", (ev) => {
-    if (ev.datasetIri === cube.iri) {
+  useEffect(() => {
+    if (added && ref.current) {
       ref.current?.scrollIntoView({ behavior: "smooth" });
-      setTimeout(() => {
-        setFlash(true);
-      }, 300);
-      setTimeout(() => {
-        setFlash(false);
-      }, 5000);
     }
   });
+
   return (
     <MaybeTooltip
       title={
@@ -107,17 +106,17 @@ const DatasetRow = ({
         </Box>
       }
       tooltipProps={{
-        open: flash,
+        open: added,
         placement: "right",
         PopperProps: {
-          onClick: () => setFlash(false),
+          onClick: () => onRemoveAdded?.(),
           className: classes.tooltipPopper,
         },
       }}
     >
       <div
         ref={ref}
-        className={clsx(classes.row, { [classes.flash]: flash })}
+        className={clsx(classes.row, { [classes.added]: added })}
         key={cube.iri}
       >
         <div>
@@ -183,6 +182,16 @@ export const DatasetsControlSection = () => {
     close: closeDatasetDialog,
   } = useDisclosure();
 
+  const [addedIri, setAddedIri] = useState<string | null>(null);
+  useEventEmitter("dataset-added", (ev) => {
+    setTimeout(() => {
+      setAddedIri(ev.datasetIri);
+    }, 300);
+    setTimeout(() => {
+      setAddedIri(null);
+    }, 5000);
+  });
+
   const handleDatasetClick = () => {
     setOpen(true);
     setActiveSection("general");
@@ -220,6 +229,7 @@ export const DatasetsControlSection = () => {
                 key={x.iri}
                 handleDatasetClick={handleDatasetClick}
                 canRemove={cubes.length > 1}
+                added={addedIri === x.iri}
                 cube={x}
               />
             );
