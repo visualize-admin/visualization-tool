@@ -91,12 +91,12 @@ const useStyles = makeStyles((theme: Theme) => ({
     "& .react-grid-item.react-grid-placeholder.placeholder-resizing": {
       transition: "none",
     },
-    "& .react-grid-item > .react-resizable-handle": {
+    "& .react-grid-item .react-resizable-handle": {
       position: "absolute",
       width: "20px",
       height: "20px",
     },
-    "& .react-grid-item > .react-resizable-handle::after": {
+    "& .react-grid-item .react-resizable-handle::after": {
       content: '""',
       position: "absolute",
       right: "3px",
@@ -106,57 +106,57 @@ const useStyles = makeStyles((theme: Theme) => ({
       borderRight: "2px solid rgba(0, 0, 0, 0.4)",
       borderBottom: "2px solid rgba(0, 0, 0, 0.4)",
     },
-    "& .react-resizable-hide > .react-resizable-handle": {
+    "& .react-resizable-hide .react-resizable-handle": {
       display: "none",
     },
-    "& .react-grid-item > .react-resizable-handle.react-resizable-handle-sw": {
+    "& .react-grid-item .react-resizable-handle.react-resizable-handle-sw": {
       bottom: "0",
       left: "0",
       cursor: "sw-resize",
       transform: "rotate(90deg)",
     },
-    "& .react-grid-item > .react-resizable-handle.react-resizable-handle-se": {
+    "& .react-grid-item .react-resizable-handle.react-resizable-handle-se": {
       bottom: "0",
       right: "0",
       cursor: "se-resize",
     },
-    "& .react-grid-item > .react-resizable-handle.react-resizable-handle-nw": {
+    "& .react-grid-item .react-resizable-handle.react-resizable-handle-nw": {
       top: "0",
       left: "0",
       cursor: "nw-resize",
       transform: "rotate(180deg)",
     },
-    "& .react-grid-item > .react-resizable-handle.react-resizable-handle-ne": {
+    "& .react-grid-item .react-resizable-handle.react-resizable-handle-ne": {
       top: "0",
       right: "0",
       cursor: "ne-resize",
       transform: "rotate(270deg)",
     },
-    "& .react-grid-item > .react-resizable-handle.react-resizable-handle-w, & .react-grid-item > .react-resizable-handle.react-resizable-handle-e":
+    "& .react-grid-item .react-resizable-handle.react-resizable-handle-w, & .react-grid-item .react-resizable-handle.react-resizable-handle-e":
       {
         top: "50%",
         marginTop: "-10px",
         cursor: "ew-resize",
       },
-    "& .react-grid-item > .react-resizable-handle.react-resizable-handle-w": {
+    "& .react-grid-item .react-resizable-handle.react-resizable-handle-w": {
       left: "0",
       transform: "rotate(135deg)",
     },
-    "& .react-grid-item > .react-resizable-handle.react-resizable-handle-e": {
+    "& .react-grid-item .react-resizable-handle.react-resizable-handle-e": {
       right: "0",
       transform: "rotate(315deg)",
     },
-    "& .react-grid-item > .react-resizable-handle.react-resizable-handle-n, & .react-grid-item > .react-resizable-handle.react-resizable-handle-s":
+    "& .react-grid-item .react-resizable-handle.react-resizable-handle-n, & .react-grid-item .react-resizable-handle.react-resizable-handle-s":
       {
         left: "50%",
         marginLeft: "-10px",
         cursor: "ns-resize",
       },
-    "& .react-grid-item > .react-resizable-handle.react-resizable-handle-n": {
+    "& .react-grid-item .react-resizable-handle.react-resizable-handle-n": {
       top: "0",
       transform: "rotate(225deg)",
     },
-    "& .react-grid-item > .react-resizable-handle.react-resizable-handle-s": {
+    "& .react-grid-item .react-resizable-handle.react-resizable-handle-s": {
       bottom: "0",
       transform: "rotate(45deg)",
     },

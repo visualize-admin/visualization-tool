@@ -214,7 +214,9 @@ const ReactGridChartPreview = forwardRef<
   return (
     <ChartTablePreviewProvider>
       <ChartWrapper {...rest} ref={ref}>
-        <ChartPreviewInner dataSource={dataSource} chartKey={chartKey} />
+        <ChartPreviewInner dataSource={dataSource} chartKey={chartKey}>
+          {children}
+        </ChartPreviewInner>
       </ChartWrapper>
     </ChartTablePreviewProvider>
   );
@@ -336,6 +338,7 @@ type ChartPreviewInnerProps = ChartPreviewProps & {
   chartKey?: string | null;
   actionElementSlot?: React.ReactNode;
   disableMetadataPanel?: boolean;
+  children?: React.ReactNode;
 };
 
 export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
@@ -388,6 +391,7 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
 
   return (
     <Box className={chartClasses.root}>
+      {props.children}
       <ChartErrorBoundary resetKeys={[state]}>
         {/* FIXME: adapt to design */}
         {metadata?.dataCubesMetadata.some(
