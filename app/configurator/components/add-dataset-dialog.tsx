@@ -49,6 +49,8 @@ import uniq from "lodash/uniq";
 import uniqBy from "lodash/uniqBy";
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { useClient } from "urql";
+import sortBy from "lodash/sortBy";
+import maxBy from "lodash/maxBy";
 
 import { DatasetResults, PartialSearchCube } from "@/browser/dataset-browse";
 import { getPossibleChartTypes } from "@/charts";
@@ -483,6 +485,15 @@ export const PreviewDataTable = ({
     });
   };
 
+  const previewObservations = useMemo(() => {
+    const data = observations.data?.dataCubesObservations.data ?? [];
+    const bestObservation = maxBy(data, (obs) => {
+      return allColumns.reduce((acc, dim) => acc + (obs[dim.iri] ? 1 : 0), 0);
+    });
+    const index = bestObservation ? data.indexOf(bestObservation) : 0;
+    return data.slice(index, index + 8);
+  }, [allColumns, observations.data?.dataCubesObservations.data]);
+
   return (
     <>
       <DialogContent
@@ -646,19 +657,17 @@ export const PreviewDataTable = ({
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {observations.data.dataCubesObservations.data
-                      .slice(0, 8)
-                      .map((observation, index) => (
-                        <TableRow key={index}>
-                          {allColumns.map((column) =>
-                            !!selectedColumnsByIri[columnId(column)] ? (
-                              <TableCell key={column.iri}>
-                                {observation[column.iri]}
-                              </TableCell>
-                            ) : null
-                          )}
-                        </TableRow>
-                      ))}
+                    {previewObservations.map((observation, index) => (
+                      <TableRow key={index}>
+                        {allColumns.map((column) =>
+                          !!selectedColumnsByIri[columnId(column)] ? (
+                            <TableCell key={column.iri}>
+                              {observation[column.iri]}
+                            </TableCell>
+                          ) : null
+                        )}
+                      </TableRow>
+                    ))}
                   </TableBody>
                 </Table>
               </Box>
