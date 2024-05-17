@@ -26,6 +26,7 @@ import { default as ChartMultiLine } from "@/icons/components/IcChartMultiLine";
 import { default as ChartPie } from "@/icons/components/IcChartPie";
 import { default as ChartScatterplot } from "@/icons/components/IcChartScatterplot";
 import { default as Check } from "@/icons/components/IcCheck";
+import { default as Checked } from "@/icons/components/IcChecked";
 import { default as CheckboxActive } from "@/icons/components/IcCheckboxActive";
 import { default as CheckboxDefault } from "@/icons/components/IcCheckboxDefault";
 import { default as CheckboxIndeterminate } from "@/icons/components/IcCheckboxIndeterminate";
@@ -177,6 +178,7 @@ export const Icons = {
   chartPie: ChartPie,
   chartScatterplot: ChartScatterplot,
   check: Check,
+  checked: Checked,
   checkboxActive: CheckboxActive,
   checkboxDefault: CheckboxDefault,
   checkboxIndeterminate: CheckboxIndeterminate,

@@ -26,6 +26,7 @@ import {
   ListSubheader,
   MenuItem,
   OutlinedInput,
+  paperClasses,
   Select,
   SelectChangeEvent,
   Stack,
@@ -45,6 +46,7 @@ import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 import groupBy from "lodash/groupBy";
 import keyBy from "lodash/keyBy";
+import maxBy from "lodash/maxBy";
 import uniq from "lodash/uniq";
 import uniqBy from "lodash/uniqBy";
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
@@ -92,6 +94,7 @@ import SvgIcInfo from "@/icons/components/IcInfo";
 import SvgIcRemove from "@/icons/components/IcRemove";
 import SvgIcSearch from "@/icons/components/IcSearch";
 import { useLocale } from "@/locales/use-locale";
+import { useEventEmitter } from "@/utils/eventEmitter";
 import { exhaustiveCheck } from "@/utils/exhaustiveCheck";
 import useLocalState from "@/utils/use-local-state";
 
@@ -154,6 +157,14 @@ const useStyles = makeStyles((theme: Theme) => ({
     alignItems: "center",
     gap: 1,
     paddingTop: theme.spacing(1),
+  },
+  previewSelect: {
+    width: 302,
+  },
+  previewSelectPaper: {
+    [`& .${paperClasses.root}`]: {
+      marginTop: "0.25rem",
+    },
   },
 }));
 
@@ -319,6 +330,8 @@ export const PreviewDataTable = ({
   const locale = useLocale();
   const isQueryPaused = !otherCubeComponents || !currentComponents;
 
+  const classes = useStyles();
+
   const cubeFilters = [
     {
       iri: currentComponents!.dimensions?.[0].cubeIri,
@@ -388,12 +401,32 @@ export const PreviewDataTable = ({
       },
     ]);
 
-    return [...joinedColumns, ...currentMeasures, ...otherMeasures];
+    const {
+      join: joinedJoinDimensions = [],
+      other: joinedOtherDimensions = [],
+      current: joinedCurrentDimensions = [],
+    } = groupBy(joinedColumns, (d) => {
+      const isJoinBy = isJoinByComponent(d);
+      return isJoinBy
+        ? "join"
+        : d.cubeIri === otherCube.iri
+          ? "other"
+          : "current";
+    });
+
+    return [
+      ...joinedJoinDimensions,
+      ...joinedOtherDimensions,
+      ...otherMeasures,
+      ...joinedCurrentDimensions,
+      ...currentMeasures,
+    ];
   }, [
     currentComponents?.dimensions,
     currentComponents?.measures,
     inferredJoinBy.left,
     inferredJoinBy.right,
+    otherCube.iri,
     otherCubeComponents?.dimensions,
     otherCubeComponents?.measures,
   ]);
@@ -482,6 +515,18 @@ export const PreviewDataTable = ({
     });
   };
 
+  const previewObservations = useMemo(() => {
+    const data = observations.data?.dataCubesObservations.data ?? [];
+    const bestObservation = maxBy(data, (obs) => {
+      return allColumns.reduce((acc, dim) => acc + (obs[dim.iri] ? 1 : 0), 0);
+    });
+
+    const amount = 8;
+    const index = bestObservation ? data.indexOf(bestObservation) : 0;
+    const clampedIndex = Math.max(0, Math.min(index, data.length - amount));
+    return data.slice(clampedIndex, clampedIndex + amount);
+  }, [allColumns, observations.data?.dataCubesObservations.data]);
+
   return (
     <>
       <DialogContent
@@ -493,11 +538,13 @@ export const PreviewDataTable = ({
         }}
       >
         <Typography variant="h2">
-          <Trans id="dataset.search.preview.title">Preview data table</Trans>
+          <Trans id="dataset.search.preview.title">
+            Review available dimensions
+          </Trans>
         </Typography>
         <Typography variant="body1">
           <Trans id="dataset.search.preview.description">
-            Review data preview of new available dimensions and continue to edit
+            Review all available dimensions before continuing to edit your
             visualization.
           </Trans>
         </Typography>
@@ -523,7 +570,14 @@ export const PreviewDataTable = ({
             <Trans id="dataset.search.preview.dimensions">Dimensions</Trans>
           </Typography>
           <Select
-            sx={{ minWidth: 300 }}
+            multiple
+            className={classes.previewSelect}
+            MenuProps={{
+              className: classes.previewSelectPaper,
+              transformOrigin: { vertical: "top", horizontal: "left" },
+              anchorOrigin: { vertical: "bottom", horizontal: "left" },
+              anchorReference: "anchorEl",
+            }}
             value={Object.keys(selectedColumnsByIri)}
             renderValue={() => {
               return (
@@ -544,10 +598,19 @@ export const PreviewDataTable = ({
                     display: "flex",
                     gap: "0.5rem",
                     justifyContent: "space-between",
+                    "&:not(&:first-child)": {
+                      marginTop: "0.5rem",
+                    },
                   }}
                 >
                   {group.groupName}
-                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      "& button": { whiteSpace: "nowrap" },
+                    }}
+                  >
                     <Button
                       size="small"
                       variant="text"
@@ -636,26 +699,24 @@ export const PreviewDataTable = ({
                               </>
                             ) : null}
                             <br />
-                            {column.label}
+                            <Typography variant="h5">{column.label}</Typography>
                           </TableCell>
                         ) : null
                       )}
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {observations.data.dataCubesObservations.data
-                      .slice(0, 8)
-                      .map((observation, index) => (
-                        <TableRow key={index}>
-                          {allColumns.map((column) =>
-                            !!selectedColumnsByIri[columnId(column)] ? (
-                              <TableCell key={column.iri}>
-                                {observation[column.iri]}
-                              </TableCell>
-                            ) : null
-                          )}
-                        </TableRow>
-                      ))}
+                    {previewObservations.map((observation, index) => (
+                      <TableRow key={index}>
+                        {allColumns.map((column) =>
+                          !!selectedColumnsByIri[columnId(column)] ? (
+                            <TableCell key={column.iri}>
+                              {observation[column.iri]}
+                            </TableCell>
+                          ) : null
+                        )}
+                      </TableRow>
+                    ))}
                   </TableBody>
                 </Table>
               </Box>
@@ -899,6 +960,23 @@ export const DatasetDialog = ({
 
   const { isOpen, open, close } = useCautionAlert();
 
+  const ee = useEventEmitter();
+  const handleConfirm = useEventCallback(async () => {
+    if (!currentComponents || !otherCube || !inferredJoinBy) {
+      return null;
+    }
+
+    await addDataset({
+      joinBy: inferredJoinBy,
+      otherCube: otherCube,
+    });
+    handleClose({}, "escapeKeyDown");
+
+    setTimeout(() => {
+      ee.emit("dataset-added", { datasetIri: otherCube.iri });
+    }, 100);
+  });
+
   return (
     <Dialog
       {...props}
@@ -1122,17 +1200,7 @@ export const DatasetDialog = ({
           otherCubeComponents={otherCubeComponents}
           fetchingComponents={!!otherCubeComponentsQuery?.fetching}
           addingDataset={addingDataset}
-          onConfirm={async () => {
-            if (!currentComponents || !otherCube || !inferredJoinBy) {
-              return null;
-            }
-
-            await addDataset({
-              joinBy: inferredJoinBy,
-              otherCube: otherCube,
-            });
-            handleClose({}, "escapeKeyDown");
-          }}
+          onConfirm={handleConfirm}
           onClickBack={() => setOtherCube(undefined)}
           searchDimensionsSelected={selectedSearchDimensions ?? []}
         />

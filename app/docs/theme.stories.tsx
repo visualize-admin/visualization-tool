@@ -32,6 +32,7 @@ import {
 import { BoxProps } from "@mui/system";
 import { Meta } from "@storybook/react";
 import { ComponentProps, useState } from "react";
+import { useSnackbar } from "notistack";
 
 import { DialogCloseButton } from "../components/dialog-close-button";
 import useDisclosure from "../components/use-disclosure";
@@ -448,8 +449,40 @@ export const Components: React.FC = () => {
             <MenuItem>Edit</MenuItem>
           </Menu>
         </StorybookSection>
+        <StorybookSection>
+          <StorybookSectionTitle>Snackbars</StorybookSectionTitle>
+          <SnackbarExample />
+        </StorybookSection>
       </Box>
     </>
+  );
+};
+
+const SnackbarExample = () => {
+  const { enqueueSnackbar } = useSnackbar();
+  const renderButton = (variant: NonNullable<AlertProps["severity"]>) => {
+    const formatted = `${variant[0].toUpperCase()}${variant?.substring(1)}`;
+    return (
+      <Button
+        color={variant}
+        onClick={() =>
+          enqueueSnackbar({
+            variant: variant,
+            message: `${formatted} message`,
+          })
+        }
+      >
+        {formatted}
+      </Button>
+    );
+  };
+  return (
+    <Stack gap="1rem" direction="row">
+      {renderButton("success")}
+      {renderButton("info")}
+      {renderButton("warning")}
+      {renderButton("error")}
+    </Stack>
   );
 };
 
