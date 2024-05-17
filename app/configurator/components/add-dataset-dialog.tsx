@@ -494,11 +494,13 @@ export const PreviewDataTable = ({
         }}
       >
         <Typography variant="h2">
-          <Trans id="dataset.search.preview.title">Preview data table</Trans>
+          <Trans id="dataset.search.preview.title">
+            Review available dimensions
+          </Trans>
         </Typography>
         <Typography variant="body1">
           <Trans id="dataset.search.preview.description">
-            Review data preview of new available dimensions and continue to edit
+            Review all available dimensions before continuing to edit your
             visualization.
           </Trans>
         </Typography>

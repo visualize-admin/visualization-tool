@@ -1128,7 +1128,7 @@ msgstr "Set di dati"
 
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.preview.description"
-msgstr "Examinez l’aperçu des données des nouvelles dimensions disponibles puis continuez à modifier la visualisation."
+msgstr "Esamina tutte le dimensioni disponibili prima di continuare a modificare la visualizzazione."
 
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.preview.dimensions"
@@ -1144,7 +1144,7 @@ msgstr "Nuovo"
 
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.preview.title"
-msgstr "Preview della tabella dei dati"
+msgstr "Esamina le dimensioni disponibili"
 
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.search-options.more-2-options-selected"
