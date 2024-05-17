@@ -46,11 +46,11 @@ import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 import groupBy from "lodash/groupBy";
 import keyBy from "lodash/keyBy";
+import maxBy from "lodash/maxBy";
 import uniq from "lodash/uniq";
 import uniqBy from "lodash/uniqBy";
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { useClient } from "urql";
-import maxBy from "lodash/maxBy";
 
 import { DatasetResults, PartialSearchCube } from "@/browser/dataset-browse";
 import { getPossibleChartTypes } from "@/charts";
@@ -94,9 +94,9 @@ import SvgIcInfo from "@/icons/components/IcInfo";
 import SvgIcRemove from "@/icons/components/IcRemove";
 import SvgIcSearch from "@/icons/components/IcSearch";
 import { useLocale } from "@/locales/use-locale";
+import { useEventEmitter } from "@/utils/eventEmitter";
 import { exhaustiveCheck } from "@/utils/exhaustiveCheck";
 import useLocalState from "@/utils/use-local-state";
-import { useEventEmitter } from "@/utils/eventEmitter";
 
 const DialogCloseButton = (props: IconButtonProps) => {
   return (
@@ -520,8 +520,11 @@ export const PreviewDataTable = ({
     const bestObservation = maxBy(data, (obs) => {
       return allColumns.reduce((acc, dim) => acc + (obs[dim.iri] ? 1 : 0), 0);
     });
+
+    const amount = 8;
     const index = bestObservation ? data.indexOf(bestObservation) : 0;
-    return data.slice(index, index + 8);
+    const clampedIndex = Math.max(0, Math.min(index, data.length - amount));
+    return data.slice(clampedIndex, clampedIndex + amount);
   }, [allColumns, observations.data?.dataCubesObservations.data]);
 
   return (
