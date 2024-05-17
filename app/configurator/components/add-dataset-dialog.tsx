@@ -650,7 +650,7 @@ export const PreviewDataTable = ({
                               </>
                             ) : null}
                             <br />
-                            {column.label}
+                            <Typography variant="h5">{column.label}</Typography>
                           </TableCell>
                         ) : null
                       )}
