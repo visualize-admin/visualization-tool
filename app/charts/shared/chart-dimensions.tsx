@@ -23,7 +23,6 @@ type ComputeChartPaddingProps = {
 const computeChartPadding = (props: ComputeChartPaddingProps) => {
   const {
     yScale,
-    width,
     height,
     interactiveFiltersConfig,
     animationPresent,
