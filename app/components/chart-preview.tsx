@@ -521,7 +521,7 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
                   dimensions={dimensions}
                 />
                 {/* Wrap in div for subgrid layout */}
-                <div>
+                <div className="debug-panel">
                   <DebugPanel configurator interactiveFilters />
                 </div>
               </InteractiveFiltersChartProvider>

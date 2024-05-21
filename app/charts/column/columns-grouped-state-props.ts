@@ -34,7 +34,7 @@ export type ColumnsGroupedStateVariables = BaseVariables &
   RenderingVariables;
 
 export const useColumnsGroupedStateVariables = (
-  props: ChartProps<ColumnConfig> & { aspectRatio: number }
+  props: ChartProps<ColumnConfig>
 ): ColumnsGroupedStateVariables => {
   const {
     chartConfig,
@@ -111,7 +111,7 @@ export const useColumnsGroupedStateVariables = (
 };
 
 export const useColumnsGroupedStateData = (
-  chartProps: ChartProps<ColumnConfig> & { aspectRatio: number },
+  chartProps: ChartProps<ColumnConfig>,
   variables: ColumnsGroupedStateVariables
 ): ChartStateData => {
   const { chartConfig, observations } = chartProps;

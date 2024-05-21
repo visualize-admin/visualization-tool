@@ -162,7 +162,7 @@ export const ChartWithFilters = forwardRef<
     <div
       className="chart-with-filters"
       ref={ref}
-      style={{ width: "100%", height: "100%" }}
+      style={{ width: "100%", flexGrow: 1 }}
     >
       <Observer>
         <GenericChart {...props} />

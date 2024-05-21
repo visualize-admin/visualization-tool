@@ -31,7 +31,7 @@ export type ColumnsStackedStateVariables = BaseVariables &
   RenderingVariables;
 
 export const useColumnsStackedStateVariables = (
-  props: ChartProps<ColumnConfig> & { aspectRatio: number }
+  props: ChartProps<ColumnConfig>
 ): ColumnsStackedStateVariables => {
   const {
     chartConfig,
@@ -105,7 +105,7 @@ export type ColumnsStackedStateData = ChartStateData & {
 };
 
 export const useColumnsStackedStateData = (
-  chartProps: ChartProps<ColumnConfig> & { aspectRatio: number },
+  chartProps: ChartProps<ColumnConfig>,
   variables: ColumnsStackedStateVariables
 ): ColumnsStackedStateData => {
   const { chartConfig, observations } = chartProps;
