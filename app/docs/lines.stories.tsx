@@ -57,7 +57,6 @@ const LineChartStory = () => (
           measures={measures}
           measuresByIri={keyBy(measures, (d) => d.iri)}
           chartConfig={chartConfig}
-          aspectRatio={0.4}
         >
           <ChartContainer>
             <ChartSvg>

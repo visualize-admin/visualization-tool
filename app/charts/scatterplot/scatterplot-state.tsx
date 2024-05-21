@@ -21,7 +21,7 @@ import {
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import { TooltipScatterplot } from "@/charts/shared/interaction/tooltip-content";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
-import { useWidth } from "@/charts/shared/use-width";
+import { useHeight, useWidth } from "@/charts/shared/use-width";
 import { ScatterPlotConfig, SortingField } from "@/configurator";
 import { Observation } from "@/domain/data";
 import { useFormatNumber } from "@/formatters";
@@ -45,11 +45,11 @@ export type ScatterplotState = CommonChartState &
   };
 
 const useScatterplotState = (
-  chartProps: ChartProps<ScatterPlotConfig> & { aspectRatio: number },
+  chartProps: ChartProps<ScatterPlotConfig>,
   variables: ScatterplotStateVariables,
   data: ChartStateData
 ): ScatterplotState => {
-  const { chartConfig, aspectRatio } = chartProps;
+  const { chartConfig } = chartProps;
   const {
     getX,
     xAxisLabel,
@@ -65,6 +65,7 @@ const useScatterplotState = (
   const { fields, interactiveFiltersConfig } = chartConfig;
 
   const width = useWidth();
+  const height = useHeight();
   const formatNumber = useFormatNumber({ decimals: "auto" });
 
   const segmentsByValue = useMemo(() => {
@@ -145,7 +146,7 @@ const useScatterplotState = (
   const { left, bottom } = useChartPadding({
     yScale: paddingYScale,
     width,
-    aspectRatio,
+    height,
     interactiveFiltersConfig,
     animationPresent: !!fields.animation,
     formatNumber,
@@ -156,7 +157,7 @@ const useScatterplotState = (
     bottom,
     left,
   };
-  const bounds = getChartBounds(width, margins, aspectRatio);
+  const bounds = getChartBounds(width, margins, height);
   const { chartWidth, chartHeight } = bounds;
 
   xScale.range([0, chartWidth]);
@@ -220,9 +221,7 @@ const useScatterplotState = (
 };
 
 const ScatterplotChartProvider = (
-  props: React.PropsWithChildren<
-    ChartProps<ScatterPlotConfig> & { aspectRatio: number }
-  >
+  props: React.PropsWithChildren<ChartProps<ScatterPlotConfig>>
 ) => {
   const { children, ...chartProps } = props;
   const variables = useScatterplotStateVariables(chartProps);
@@ -235,9 +234,7 @@ const ScatterplotChartProvider = (
 };
 
 export const ScatterplotChart = (
-  props: React.PropsWithChildren<
-    ChartProps<ScatterPlotConfig> & { aspectRatio: number }
-  >
+  props: React.PropsWithChildren<ChartProps<ScatterPlotConfig>>
 ) => {
   return (
     <InteractionProvider>

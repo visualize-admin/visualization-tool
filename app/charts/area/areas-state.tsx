@@ -46,7 +46,7 @@ import {
 } from "@/charts/shared/stacked-helpers";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
-import { useWidth } from "@/charts/shared/use-width";
+import { useHeight, useWidth } from "@/charts/shared/use-width";
 import { AreaConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
 import { useFormatNumber, useTimeFormatUnit } from "@/formatters";
@@ -75,11 +75,11 @@ export type AreasState = CommonChartState &
   };
 
 const useAreasState = (
-  chartProps: ChartProps<AreaConfig> & { aspectRatio: number },
+  chartProps: ChartProps<AreaConfig>,
   variables: AreasStateVariables,
   data: ChartStateData
 ): AreasState => {
-  const { chartConfig, aspectRatio } = chartProps;
+  const { chartConfig } = chartProps;
   const {
     xDimension,
     getX,
@@ -104,6 +104,7 @@ const useAreasState = (
   const { fields, interactiveFiltersConfig } = chartConfig;
 
   const width = useWidth();
+  const height = useHeight();
   const formatNumber = useFormatNumber({ decimals: "auto" });
   const formatters = useChartFormatters(chartProps);
   const timeFormatUnit = useTimeFormatUnit();
@@ -325,7 +326,7 @@ const useAreasState = (
   const { left, bottom } = useChartPadding({
     yScale: paddingYScale,
     width,
-    aspectRatio,
+    height,
     interactiveFiltersConfig,
     formatNumber,
     normalize,
@@ -336,7 +337,7 @@ const useAreasState = (
     bottom,
     left,
   };
-  const bounds = getChartBounds(width, margins, aspectRatio);
+  const bounds = getChartBounds(width, margins, height);
   const { chartWidth, chartHeight } = bounds;
 
   /** Adjust scales according to dimensions */
@@ -434,9 +435,7 @@ const useAreasState = (
 };
 
 const AreaChartProvider = (
-  props: React.PropsWithChildren<
-    ChartProps<AreaConfig> & { aspectRatio: number }
-  >
+  props: React.PropsWithChildren<ChartProps<AreaConfig>>
 ) => {
   const { children, ...chartProps } = props;
   const variables = useAreasStateVariables(chartProps);
@@ -449,9 +448,7 @@ const AreaChartProvider = (
 };
 
 export const AreaChart = (
-  props: React.PropsWithChildren<
-    ChartProps<AreaConfig> & { aspectRatio: number }
-  >
+  props: React.PropsWithChildren<ChartProps<AreaConfig>>
 ) => {
   return (
     <InteractionProvider>

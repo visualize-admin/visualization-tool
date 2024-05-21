@@ -105,7 +105,6 @@ const TooltipBoxStory = () => (
           },
           activeField: undefined,
         }}
-        aspectRatio={0.4}
       >
         <Flex>
           <div style={{ width: 200, height: 150, position: "relative" }}>
@@ -271,7 +270,6 @@ const TooltipContentStory = {
           },
           activeField: undefined,
         }}
-        aspectRatio={0.4}
       >
         <div style={{ width: 200, height: 150, position: "relative" }}>
           <Dot />
@@ -340,7 +338,6 @@ export const TooltipContentStory2 = {
           },
           activeField: undefined,
         }}
-        aspectRatio={0.4}
       >
         <div style={{ width: 200, height: 150, position: "relative" }}>
           <Dot />

@@ -1,4 +1,4 @@
-import React, { memo, useCallback } from "react";
+import { memo, useCallback } from "react";
 
 import { ChartDataWrapper } from "@/charts/chart-data-wrapper";
 import { ComboLineSingle } from "@/charts/combo/combo-line-single";
@@ -38,7 +38,7 @@ export const ChartComboLineSingle = memo(
     );
 
     return (
-      <ComboLineSingleChart aspectRatio={0.4} {...props}>
+      <ComboLineSingleChart {...props}>
         <ChartContainer>
           <ChartSvg>
             <AxisHeightLinear /> <AxisTime /> <AxisTimeDomain />

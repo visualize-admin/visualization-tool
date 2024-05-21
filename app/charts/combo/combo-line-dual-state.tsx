@@ -56,17 +56,18 @@ export type ComboLineDualState = CommonChartState &
   };
 
 const useComboLineDualState = (
-  chartProps: ChartProps<ComboLineDualConfig> & { aspectRatio: number },
+  chartProps: ChartProps<ComboLineDualConfig>,
   variables: ComboLineDualStateVariables,
   data: ChartStateData
 ): ComboLineDualState => {
-  const { chartConfig, aspectRatio } = chartProps;
+  const { chartConfig } = chartProps;
   const { xDimension, getX, getXAsString } = variables;
   const { chartData, scalesData, timeRangeData, paddingData, allData } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
   const xKey = fields.x.componentIri;
   const {
     width,
+    height,
     formatNumber,
     timeFormatUnit,
     chartWideData,
@@ -111,13 +112,11 @@ const useComboLineDualState = (
   const { left, bottom } = useChartPadding({
     yScale: paddingLeftYScale,
     width,
-    aspectRatio,
+    height,
     interactiveFiltersConfig,
     formatNumber,
   });
-  const fakeRightTicks = paddingRightYScale.ticks(
-    getTickNumber(width * aspectRatio)
-  );
+  const fakeRightTicks = paddingRightYScale.ticks(getTickNumber(height));
   const maxRightTickWidth = Math.max(
     ...fakeRightTicks.map(
       (d) =>
@@ -127,7 +126,7 @@ const useComboLineDualState = (
   );
   const right = Math.max(maxRightTickWidth, 40);
   const margins = getMargins({ left, right, bottom });
-  const bounds = getChartBounds(width, margins, aspectRatio);
+  const bounds = getChartBounds(width, margins, height);
   const { chartWidth, chartHeight } = bounds;
   const xScales = [xScale, xScaleTimeRange];
   const yScales = [yScale, yScaleLeft, yScaleRight];
@@ -192,9 +191,7 @@ const useComboLineDualState = (
 };
 
 const ComboLineDualChartProvider = (
-  props: React.PropsWithChildren<
-    ChartProps<ComboLineDualConfig> & { aspectRatio: number }
-  >
+  props: React.PropsWithChildren<ChartProps<ComboLineDualConfig>>
 ) => {
   const { children, ...chartProps } = props;
   const variables = useComboLineDualStateVariables(chartProps);
@@ -207,9 +204,7 @@ const ComboLineDualChartProvider = (
 };
 
 export const ComboLineDualChart = (
-  props: React.PropsWithChildren<
-    ChartProps<ComboLineDualConfig> & { aspectRatio: number }
-  >
+  props: React.PropsWithChildren<ChartProps<ComboLineDualConfig>>
 ) => {
   return (
     <InteractionProvider>

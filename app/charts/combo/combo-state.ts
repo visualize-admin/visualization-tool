@@ -2,7 +2,7 @@ import { extent, groups, max, min, sum } from "d3-array";
 import { scaleLinear, scaleOrdinal, scaleTime } from "d3-scale";
 import { useMemo } from "react";
 
-import { useWidth } from "@/charts/shared/use-width";
+import { useHeight, useWidth } from "@/charts/shared/use-width";
 import { Observation } from "@/domain/data";
 import { useFormatNumber, useTimeFormatUnit } from "@/formatters";
 
@@ -32,6 +32,7 @@ export const useCommonComboState = (options: UseCommonComboStateOptions) => {
   } = options;
 
   const width = useWidth();
+  const height = useHeight();
   const formatNumber = useFormatNumber({ decimals: "auto" });
   const timeFormatUnit = useTimeFormatUnit();
 
@@ -82,6 +83,7 @@ export const useCommonComboState = (options: UseCommonComboStateOptions) => {
 
   return {
     width,
+    height,
     formatNumber,
     timeFormatUnit,
     chartWideData,

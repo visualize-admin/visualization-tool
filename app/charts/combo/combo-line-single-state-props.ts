@@ -27,7 +27,7 @@ export type ComboLineSingleStateVariables = BaseVariables &
   NumericalYComboLineSingleVariables;
 
 export const useComboLineSingleStateVariables = (
-  props: ChartProps<ComboLineSingleConfig> & { aspectRatio: number }
+  props: ChartProps<ComboLineSingleConfig>
 ): ComboLineSingleStateVariables => {
   const { chartConfig, dimensionsByIri, measuresByIri } = props;
   const { fields } = chartConfig;
@@ -71,7 +71,7 @@ export const useComboLineSingleStateVariables = (
 };
 
 export const useComboLineSingleStateData = (
-  chartProps: ChartProps<ComboLineSingleConfig> & { aspectRatio: number },
+  chartProps: ChartProps<ComboLineSingleConfig>,
   variables: ComboLineSingleStateVariables
 ): ChartStateData => {
   const { chartConfig, observations } = chartProps;

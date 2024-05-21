@@ -79,7 +79,6 @@ const ColumnsStory = {
             dimensions={columnDimensions}
             dimensionsByIri={keyBy(columnDimensions, (d: Dimension) => d.iri)}
             chartConfig={chartConfig}
-            aspectRatio={0.4}
           >
             <ChartContainer>
               <ChartSvg>
@@ -129,7 +128,6 @@ const ScatterplotStory = {
             measures={scatterplotMeasures}
             measuresByIri={keyBy(scatterplotMeasures, (d) => d.iri)}
             chartConfig={scatterplotChartConfig}
-            aspectRatio={1}
           >
             <ChartContainer>
               <ChartSvg>

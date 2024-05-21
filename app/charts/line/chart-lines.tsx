@@ -31,7 +31,7 @@ export const ChartLines = memo((props: ChartProps<LineConfig>) => {
   const { fields, interactiveFiltersConfig } = chartConfig;
 
   return (
-    <LineChart aspectRatio={0.4} {...props}>
+    <LineChart {...props}>
       <ChartContainer>
         <ChartSvg>
           <AxisHeightLinear /> <AxisTime /> <AxisTimeDomain />
