@@ -12,7 +12,7 @@ import { getTextWidth } from "@/utils/get-text-width";
 type ComputeChartPaddingProps = {
   yScale: d3.ScaleLinear<number, number>;
   width: number;
-  aspectRatio: number;
+  height: number;
   interactiveFiltersConfig: ChartConfig["interactiveFiltersConfig"];
   animationPresent?: boolean;
   formatNumber: (n: number) => string;
@@ -24,19 +24,20 @@ const computeChartPadding = (props: ComputeChartPaddingProps) => {
   const {
     yScale,
     width,
-    aspectRatio,
+    height,
     interactiveFiltersConfig,
     animationPresent,
     formatNumber,
     bandDomain,
     normalize,
   } = props;
+
   // Fake ticks to compute maximum tick length as
   // we need to take into account n between [0, 1] where numbers
   // with decimals have greater text length than the extremes.
   // Width * aspectRatio is taken as an approximation of chartHeight
   // since we do not have access to chartHeight yet.
-  const fakeTicks = yScale.ticks(getTickNumber(width * aspectRatio));
+  const fakeTicks = yScale.ticks(getTickNumber(width * height));
   const minLeftTickWidth =
     !!interactiveFiltersConfig?.calculation.active || normalize
       ? getTextWidth("100%", { fontSize: TICK_FONT_SIZE }) + TICK_PADDING
@@ -68,7 +69,7 @@ export const useChartPadding = (props: ComputeChartPaddingProps) => {
   const {
     yScale,
     width,
-    aspectRatio,
+    height,
     interactiveFiltersConfig,
     animationPresent,
     formatNumber,
@@ -80,7 +81,7 @@ export const useChartPadding = (props: ComputeChartPaddingProps) => {
     return computeChartPadding({
       yScale,
       width,
-      aspectRatio,
+      height,
       interactiveFiltersConfig,
       animationPresent,
       formatNumber,
@@ -90,7 +91,7 @@ export const useChartPadding = (props: ComputeChartPaddingProps) => {
   }, [
     yScale,
     width,
-    aspectRatio,
+    height,
     interactiveFiltersConfig,
     animationPresent,
     formatNumber,
@@ -102,16 +103,17 @@ export const useChartPadding = (props: ComputeChartPaddingProps) => {
 export const getChartBounds = (
   width: number,
   margins: Margins,
-  aspectRatio: number
+  height: number
 ): Bounds => {
   const { left, top, right, bottom } = margins;
 
   const chartWidth = width - left - right;
-  const chartHeight = chartWidth * aspectRatio;
+  const chartHeight = height - top - bottom;
 
   return {
     width,
     height: chartHeight + top + bottom,
+    aspectRatio: chartHeight / chartWidth,
     margins,
     chartWidth,
     chartHeight,

@@ -1,5 +1,5 @@
 import dynamic from "next/dynamic";
-import React, { forwardRef } from "react";
+import { forwardRef } from "react";
 
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import useSyncInteractiveFilters from "@/charts/shared/use-sync-interactive-filters";
@@ -159,7 +159,11 @@ export const ChartWithFilters = forwardRef<
 
   return (
     // Minimum aspect ratio for any chart (0.4)
-    <div ref={ref} style={{ width: "100%", aspectRatio: "5 / 2" }}>
+    <div
+      className="chart-with-filters"
+      ref={ref}
+      style={{ width: "100%", height: "100%" }}
+    >
       <Observer>
         <GenericChart {...props} />
       </Observer>

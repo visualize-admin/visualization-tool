@@ -23,6 +23,7 @@ export type Bounds = {
   margins: Margins;
   chartWidth: number;
   chartHeight: number;
+  aspectRatio: number;
 };
 
 const INITIAL_WIDTH = 1;
@@ -42,7 +43,10 @@ export const Observer = ({ children }: { children: ReactNode }) => {
   const size = useMemo(() => ({ width, height }), [width, height]);
 
   return (
-    <div ref={ref} style={{ display: "flex", minHeight: "100%" }}>
+    <div
+      ref={ref}
+      style={{ display: "flex", minHeight: "100%", outline: "1px solid red" }}
+    >
       <ChartObserverContext.Provider value={size}>
         {children}
       </ChartObserverContext.Provider>

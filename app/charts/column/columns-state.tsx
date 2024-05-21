@@ -29,7 +29,7 @@ import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import { getCenteredTooltipPlacement } from "@/charts/shared/interaction/tooltip-box";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
-import { useWidth } from "@/charts/shared/use-width";
+import { useHeight, useWidth } from "@/charts/shared/use-width";
 import { ColumnConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
 import {
@@ -55,11 +55,11 @@ export type ColumnsState = CommonChartState &
   };
 
 const useColumnsState = (
-  chartProps: ChartProps<ColumnConfig> & { aspectRatio: number },
+  chartProps: ChartProps<ColumnConfig>,
   variables: ColumnsStateVariables,
   data: ChartStateData
 ): ColumnsState => {
-  const { aspectRatio, chartConfig } = chartProps;
+  const { chartConfig } = chartProps;
   const {
     xDimension,
     getX,
@@ -78,6 +78,7 @@ const useColumnsState = (
   const { fields, interactiveFiltersConfig } = chartConfig;
 
   const width = useWidth();
+  const height = useHeight();
   const formatNumber = useFormatNumber({ decimals: "auto" });
   const formatters = useChartFormatters(chartProps);
   const timeFormatUnit = useTimeFormatUnit();
@@ -190,7 +191,7 @@ const useColumnsState = (
   const { left, bottom } = useChartPadding({
     yScale: paddingYScale,
     width,
-    aspectRatio,
+    height,
     interactiveFiltersConfig,
     animationPresent: !!fields.animation,
     formatNumber,
@@ -202,7 +203,8 @@ const useColumnsState = (
     bottom,
     left,
   };
-  const bounds = getChartBounds(width, margins, aspectRatio);
+
+  const bounds = getChartBounds(width, margins, height);
   const { chartWidth, chartHeight } = bounds;
 
   xScale.range([0, chartWidth]);
@@ -267,9 +269,7 @@ const useColumnsState = (
 };
 
 const ColumnChartProvider = (
-  props: React.PropsWithChildren<
-    ChartProps<ColumnConfig> & { aspectRatio: number }
-  >
+  props: React.PropsWithChildren<ChartProps<ColumnConfig>>
 ) => {
   const { children, ...chartProps } = props;
   const variables = useColumnsStateVariables(chartProps);
@@ -282,9 +282,7 @@ const ColumnChartProvider = (
 };
 
 export const ColumnChart = (
-  props: React.PropsWithChildren<
-    ChartProps<ColumnConfig> & { aspectRatio: number }
-  >
+  props: React.PropsWithChildren<ChartProps<ColumnConfig>>
 ) => {
   return (
     <InteractionProvider>

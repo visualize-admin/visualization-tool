@@ -29,7 +29,7 @@ export type ColumnsStateVariables = BaseVariables &
   RenderingVariables;
 
 export const useColumnsStateVariables = (
-  props: ChartProps<ColumnConfig> & { aspectRatio: number }
+  props: ChartProps<ColumnConfig>
 ): ColumnsStateVariables => {
   const {
     chartConfig,
@@ -99,7 +99,7 @@ export const useColumnsStateVariables = (
 };
 
 export const useColumnsStateData = (
-  chartProps: ChartProps<ColumnConfig> & { aspectRatio: number },
+  chartProps: ChartProps<ColumnConfig>,
   variables: ColumnsStateVariables
 ): ChartStateData => {
   const { chartConfig, observations } = chartProps;

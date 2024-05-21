@@ -497,6 +497,7 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
                     minWidth: 0,
                     height: containerHeight.current,
                     paddingTop: 16,
+                    flexGrow: 1,
                   }}
                 >
                   {isTablePreview ? (
