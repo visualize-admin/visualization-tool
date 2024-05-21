@@ -1,41 +1,63 @@
 import { Box, BoxProps } from "@mui/material";
+import { makeStyles } from "@mui/styles";
+import clsx from "clsx";
 import { select } from "d3-selection";
-import React, { ReactNode, useEffect, useRef } from "react";
+import { ReactNode, useEffect, useRef } from "react";
 
 import { useChartState } from "@/charts/shared/chart-state";
 import { CalculationToggle } from "@/charts/shared/interactive-filter-calculation-toggle";
+import { useObserverRef } from "@/charts/shared/use-width";
+import { chartPanelLayoutGridClasses } from "@/components/chart-panel-layout-grid";
+import { ChartConfig } from "@/configurator";
 import { useTransitionStore } from "@/stores/transition";
 
-export const ChartContainer = ({ children }: { children: ReactNode }) => {
-  const ref = useRef<HTMLDivElement>(null);
-  const enableTransition = useTransitionStore((state) => state.enable);
-  const transitionDuration = useTransitionStore((state) => state.duration);
-  const {
-    bounds: { width, height },
-  } = useChartState();
+const useStyles = makeStyles<
+  {},
+  {},
+  ChartConfig["chartType"] | "chartContainer"
+>(() => ({
+  chartContainer: {
+    position: "relative",
+    width: "100%",
+    overflow: "hidden",
+    flexGrow: 1,
+    aspectRatio: "5 / 2",
 
-  useEffect(() => {
-    if (ref.current) {
-      // Initialize height on mount
-      if (!ref.current.style.height) {
-        ref.current.style.height = `${height}px`;
-      }
+    [`.${chartPanelLayoutGridClasses.root} &`]: {
+      aspectRatio: "auto",
+    },
+  },
 
-      const sel = select(ref.current);
+  // Chart type specific styles, if we need for example to set a specific aspect-ratio
+  // for a specific chart type
+  area: {},
+  column: {},
+  comboLineColumn: {},
+  comboLineDual: {},
+  comboLineSingle: {},
+  line: {},
+  map: {},
+  pie: {},
+  scatterplot: {},
+  table: {},
+}));
 
-      if (enableTransition) {
-        sel
-          .transition()
-          .duration(transitionDuration)
-          .style("height", `${height}px`);
-      } else {
-        sel.style("height", `${height}px`);
-      }
-    }
-  }, [height, enableTransition, transitionDuration]);
+export const ChartContainer = ({
+  children,
+  type,
+}: {
+  children: ReactNode;
+  type: ChartConfig["chartType"];
+}) => {
+  const ref = useObserverRef();
+  const classes = useStyles();
 
   return (
-    <div ref={ref} aria-hidden="true" style={{ position: "relative", width }}>
+    <div
+      ref={ref}
+      aria-hidden="true"
+      className={clsx(classes.chartContainer, classes[type])}
+    >
       {children}
     </div>
   );

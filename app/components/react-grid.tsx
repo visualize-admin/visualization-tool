@@ -4,12 +4,7 @@ import clsx from "clsx";
 import map from "lodash/map";
 import mapValues from "lodash/mapValues";
 import range from "lodash/range";
-import {
-  ComponentProps,
-  useEffect,
-  useMemo,
-  useState
-} from "react";
+import { ComponentProps, useEffect, useMemo, useState } from "react";
 import { Layout, Responsive, WidthProvider } from "react-grid-layout";
 import { match } from "ts-pattern";
 
@@ -17,10 +12,6 @@ const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
 export type ResizeHandle = NonNullable<Layout["resizeHandles"]>[number];
 export type GridLayout = "horizontal" | "vertical" | "wide" | "tall";
-
-
-
-const ResponsiveGridLayout = WidthProvider(Responsive);
 
 export const availableHandles: ResizeHandle[] = [
   "s",
@@ -34,14 +25,15 @@ export const availableHandles: ResizeHandle[] = [
 ];
 
 /** In grid unit */
-const MAX_H = 4;
-const MIN_H = 2;
+const MAX_H = 10;
+const INITIAL_H = 7;
+const MIN_H = 5;
 
 /** In grid unit */
 const MAX_W = 4;
 
 const COLS = { lg: 4, md: 2, sm: 1, xs: 1, xxs: 1 };
-const ROW_HEIGHT = 300;
+const ROW_HEIGHT = 100;
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -100,12 +92,12 @@ const useStyles = makeStyles((theme: Theme) => ({
     "& .react-grid-item.react-grid-placeholder.placeholder-resizing": {
       transition: "none",
     },
-    "& .react-grid-item > .react-resizable-handle": {
+    "& .react-grid-item .react-resizable-handle": {
       position: "absolute",
       width: "20px",
       height: "20px",
     },
-    "& .react-grid-item > .react-resizable-handle::after": {
+    "& .react-grid-item .react-resizable-handle::after": {
       content: '""',
       position: "absolute",
       right: "3px",
@@ -115,62 +107,62 @@ const useStyles = makeStyles((theme: Theme) => ({
       borderRight: "2px solid rgba(0, 0, 0, 0.4)",
       borderBottom: "2px solid rgba(0, 0, 0, 0.4)",
     },
-    "& .react-resizable-hide > .react-resizable-handle": {
+    "& .react-resizable-hide .react-resizable-handle": {
       display: "none",
     },
-    "& .react-grid-item > .react-resizable-handle.react-resizable-handle-sw": {
+    "& .react-grid-item .react-resizable-handle.react-resizable-handle-sw": {
       bottom: "0",
       left: "0",
       cursor: "sw-resize",
       transform: "rotate(90deg)",
     },
-    "& .react-grid-item > .react-resizable-handle.react-resizable-handle-se": {
+    "& .react-grid-item .react-resizable-handle.react-resizable-handle-se": {
       bottom: "0",
       right: "0",
       cursor: "se-resize",
     },
-    "& .react-grid-item > .react-resizable-handle.react-resizable-handle-nw": {
+    "& .react-grid-item .react-resizable-handle.react-resizable-handle-nw": {
       top: "0",
       left: "0",
       cursor: "nw-resize",
       transform: "rotate(180deg)",
     },
-    "& .react-grid-item > .react-resizable-handle.react-resizable-handle-ne": {
+    "& .react-grid-item .react-resizable-handle.react-resizable-handle-ne": {
       top: "0",
       right: "0",
       cursor: "ne-resize",
       transform: "rotate(270deg)",
     },
-    "& .react-grid-item > .react-resizable-handle.react-resizable-handle-w, & .react-grid-item > .react-resizable-handle.react-resizable-handle-e":
+    "& .react-grid-item .react-resizable-handle.react-resizable-handle-w, & .react-grid-item .react-resizable-handle.react-resizable-handle-e":
       {
         top: "50%",
         marginTop: "-10px",
         cursor: "ew-resize",
       },
-    "& .react-grid-item > .react-resizable-handle.react-resizable-handle-w": {
+    "& .react-grid-item .react-resizable-handle.react-resizable-handle-w": {
       left: "0",
       transform: "rotate(135deg)",
     },
-    "& .react-grid-item > .react-resizable-handle.react-resizable-handle-e": {
+    "& .react-grid-item .react-resizable-handle.react-resizable-handle-e": {
       right: "0",
       transform: "rotate(315deg)",
     },
-    "& .react-grid-item > .react-resizable-handle.react-resizable-handle-n, & .react-grid-item > .react-resizable-handle.react-resizable-handle-s":
+    "& .react-grid-item .react-resizable-handle.react-resizable-handle-n, & .react-grid-item .react-resizable-handle.react-resizable-handle-s":
       {
         left: "50%",
         marginLeft: "-10px",
         cursor: "ns-resize",
       },
-    "& .react-grid-item > .react-resizable-handle.react-resizable-handle-n": {
+    "& .react-grid-item .react-resizable-handle.react-resizable-handle-n": {
       top: "0",
       transform: "rotate(225deg)",
     },
-    "& .react-grid-item > .react-resizable-handle.react-resizable-handle-s": {
+    "& .react-grid-item .react-resizable-handle.react-resizable-handle-s": {
       bottom: "0",
       transform: "rotate(45deg)",
     },
     "& .react-grid-item:not(.react-grid-placeholder)": {
-      background: theme.palette.background.paper,
+      background: "#eee",
       border: theme.palette.divider,
       boxShadow: theme.shadows[1],
     },
@@ -228,7 +220,7 @@ export const ChartGridLayout = (props: ChartGridLayoutProps) => {
 
   const classes = useStyles();
   return (
-    <ResponsiveGridLayout
+    <ResponsiveReactGridLayout
       {...props}
       layouts={enhancedLayouts}
       className={clsx(classes.root, props.className)}
@@ -240,22 +232,22 @@ export const ChartGridLayout = (props: ChartGridLayoutProps) => {
       preventCollision={false}
     >
       {children}
-    </ResponsiveGridLayout>
+    </ResponsiveReactGridLayout>
   );
 };
 
 export const generateLayout = function ({
-  resizeHandles,
   count,
   maxWidth = MAX_W,
   maxHeight = MAX_H,
   layout,
+  resizeHandles,
 }: {
-  resizeHandles: ResizeHandle[];
   count: number;
   maxWidth?: number;
   maxHeight?: number;
-  layout: "horizontal" | "vertical" | "wide" | "tall";
+  layout: "horizontal" | "vertical" | "wide" | "tall" | "tiles";
+  resizeHandles?: ResizeHandle[];
 }) {
   return map(range(0, count), (_item, i) => {
     return match(layout)
@@ -290,6 +282,16 @@ export const generateLayout = function ({
           h: i === 0 ? maxHeight : h,
           i: i.toString(),
           resizeHandles,
+        };
+      })
+      .with("tiles", () => {
+        return {
+          x: ((i % 2) * MAX_W) / 2,
+          y: Math.floor(i / 2) * INITIAL_H,
+          w: MAX_W / 2,
+          h: INITIAL_H,
+          i: i.toString(),
+          resizeHandles: [],
         };
       })
       .with("wide", () => {

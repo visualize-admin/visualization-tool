@@ -25,7 +25,7 @@ export type AreasStateVariables = BaseVariables &
   SegmentVariables;
 
 export const useAreasStateVariables = (
-  props: ChartProps<AreaConfig> & { aspectRatio: number }
+  props: ChartProps<AreaConfig>
 ): AreasStateVariables => {
   const { chartConfig, observations, dimensionsByIri, measuresByIri } = props;
   const { fields } = chartConfig;
@@ -63,7 +63,7 @@ export const useAreasStateVariables = (
 };
 
 export const useAreasStateData = (
-  chartProps: ChartProps<AreaConfig> & { aspectRatio: number },
+  chartProps: ChartProps<AreaConfig>,
   variables: AreasStateVariables
 ): ChartStateData => {
   const { chartConfig, observations } = chartProps;

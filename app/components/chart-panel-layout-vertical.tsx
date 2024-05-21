@@ -1,13 +1,6 @@
-import { ChartConfig } from "@/config-types";
+import { ChartPanelLayoutTypeProps } from "@/components/chart-panel";
 
-type ChartPanelLayoutVerticalProps = {
-  chartConfigs: ChartConfig[];
-  renderChart: (chartConfig: ChartConfig) => JSX.Element;
-};
-
-export const ChartPanelLayoutVertical = (
-  props: ChartPanelLayoutVerticalProps
-) => {
+export const ChartPanelLayoutVertical = (props: ChartPanelLayoutTypeProps) => {
   const { chartConfigs, renderChart } = props;
   return <>{chartConfigs.map(renderChart)}</>;
 };

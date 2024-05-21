@@ -129,9 +129,12 @@ const useTableState = (
   };
   const chartWidth = width - margins.left - margins.right; // We probably don't need this
   const chartHeight = Math.min(TABLE_HEIGHT, chartData.length * rowHeight);
+
+  const height = chartHeight + margins.top + margins.bottom;
   const bounds = {
     width,
-    height: chartHeight + margins.top + margins.bottom,
+    height,
+    aspectRatio: height / width,
     margins,
     chartWidth,
     chartHeight,

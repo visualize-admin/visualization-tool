@@ -9,7 +9,7 @@ import {
 import { Trans } from "@lingui/macro";
 import { Box } from "@mui/material";
 import Head from "next/head";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { forwardRef, useCallback, useMemo, useState } from "react";
 
 import { DataSetTable } from "@/browse/datatable";
 import { ChartDataFilters } from "@/charts/shared/chart-data-filters";
@@ -21,7 +21,7 @@ import {
   ChartWrapper,
   ChartWrapperProps,
 } from "@/components/chart-panel";
-import { DragHandle } from "@/components/chart-selection-tabs";
+import { chartPanelLayoutGridClasses } from "@/components/chart-panel-layout-grid";
 import {
   ChartTablePreviewProvider,
   useChartTablePreview,
@@ -29,6 +29,7 @@ import {
 import { useChartStyles } from "@/components/chart-utils";
 import { ChartWithFilters } from "@/components/chart-with-filters";
 import DebugPanel from "@/components/debug-panel";
+import { DragHandle } from "@/components/drag-handle";
 import Flex from "@/components/flex";
 import { Checkbox } from "@/components/form";
 import { HintYellow } from "@/components/hint";
@@ -98,16 +99,36 @@ const DashboardPreview = (props: DashboardPreviewProps) => {
   const [activeChartKey, setActiveChartKey] = useState<string | null>(null);
   const [over, setOver] = useState<Over | null>(null);
   const renderChart = useCallback(
-    (chartConfig: ChartConfig) => (
-      <DndChartPreview
-        chartKey={chartConfig.key}
-        dataSource={dataSource}
-        layoutType={state.layout.type}
-        editing={editing}
-      />
-    ),
-    [dataSource, editing, state.layout]
+    (chartConfig: ChartConfig) => {
+      return layoutType === "tiles" ? (
+        <ReactGridChartPreview
+          key={chartConfig.key}
+          chartKey={chartConfig.key}
+          dataSource={dataSource}
+          layoutType={state.layout.type}
+          editing={editing}
+        />
+      ) : (
+        <DndChartPreview
+          chartKey={chartConfig.key}
+          dataSource={dataSource}
+          layoutType={state.layout.type}
+          editing={editing}
+        />
+      );
+    },
+    [dataSource, editing, layoutType, state.layout.type]
   );
+
+  if (layoutType === "tiles") {
+    return (
+      <ChartPanelLayout
+        chartConfigs={state.chartConfigs}
+        renderChart={renderChart}
+        layoutType={layoutType}
+      />
+    );
+  }
 
   return (
     <DndContext
@@ -180,6 +201,36 @@ type DndChartPreviewProps = ChartWrapperProps & {
   chartKey: string;
   dataSource: DataSource;
 };
+
+type ReactGridChartPreviewProps = ChartWrapperProps & {
+  chartKey: string;
+  dataSource: DataSource;
+};
+
+const ReactGridChartPreview = forwardRef<
+  HTMLDivElement,
+  ReactGridChartPreviewProps
+>((props, ref) => {
+  const { children, chartKey, dataSource, ...rest } = props;
+  return (
+    <ChartTablePreviewProvider>
+      <ChartWrapper {...rest} ref={ref}>
+        <ChartPreviewInner
+          dataSource={dataSource}
+          chartKey={chartKey}
+          actionElementSlot={
+            <DragHandle
+              dragging
+              className={chartPanelLayoutGridClasses.dragHandle}
+            />
+          }
+        >
+          {children}
+        </ChartPreviewInner>
+      </ChartWrapper>
+    </ChartTablePreviewProvider>
+  );
+});
 
 const DndChartPreview = (props: DndChartPreviewProps) => {
   const { children, chartKey, dataSource, ...rest } = props;
@@ -297,6 +348,7 @@ type ChartPreviewInnerProps = ChartPreviewProps & {
   chartKey?: string | null;
   actionElementSlot?: React.ReactNode;
   disableMetadataPanel?: boolean;
+  children?: React.ReactNode;
 };
 
 export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
@@ -349,6 +401,7 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
 
   return (
     <Box className={chartClasses.root}>
+      {props.children}
       <ChartErrorBoundary resetKeys={[state]}>
         {/* FIXME: adapt to design */}
         {metadata?.dataCubesMetadata.some(
@@ -454,6 +507,7 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
                     minWidth: 0,
                     height: containerHeight.current,
                     paddingTop: 16,
+                    flexGrow: 1,
                   }}
                 >
                   {isTablePreview ? (
@@ -477,7 +531,7 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
                   dimensions={dimensions}
                 />
                 {/* Wrap in div for subgrid layout */}
-                <div>
+                <div className="debug-panel">
                   <DebugPanel configurator interactiveFilters />
                 </div>
               </InteractiveFiltersChartProvider>

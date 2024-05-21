@@ -43,8 +43,8 @@ export const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
   return (
     <>
       {fields.segment?.componentIri && fields.segment.type === "stacked" ? (
-        <StackedColumnsChart aspectRatio={0.4} {...props}>
-          <ChartContainer>
+        <StackedColumnsChart {...props}>
+          <ChartContainer type="column">
             <ChartSvg>
               <AxisHeightLinear /> <AxisWidthBand />
               <ColumnsStacked /> <AxisWidthBandDomain />
@@ -71,8 +71,8 @@ export const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
           </ChartControlsContainer>
         </StackedColumnsChart>
       ) : fields.segment?.componentIri && fields.segment.type === "grouped" ? (
-        <GroupedColumnChart aspectRatio={0.4} {...props}>
-          <ChartContainer>
+        <GroupedColumnChart {...props}>
+          <ChartContainer type="column">
             <ChartSvg>
               <AxisHeightLinear />
               <AxisWidthBand />
@@ -102,8 +102,8 @@ export const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
           </ChartControlsContainer>
         </GroupedColumnChart>
       ) : (
-        <ColumnChart aspectRatio={0.4} {...props}>
-          <ChartContainer>
+        <ColumnChart {...props}>
+          <ChartContainer type="column">
             <ChartSvg>
               <AxisHeightLinear />
               <AxisWidthBand />

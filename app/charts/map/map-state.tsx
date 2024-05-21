@@ -185,9 +185,11 @@ const useMapState = (
     symbolLayer?.componentIri !== undefined &&
     areaLayer.componentIri === symbolLayer.componentIri;
 
+  const height = width * 0.5;
   const bounds = {
     width,
-    height: width * 0.5,
+    height,
+    aspectRatio: height / width,
     margins: {
       top: 0,
       right: 0,

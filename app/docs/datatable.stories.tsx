@@ -33,7 +33,7 @@ const DataTableStory: StoryObj = {
             measuresByIri={keyBy(tableMeasures, (d) => d.iri)}
             chartConfig={tableConfig}
           >
-            <ChartContainer>
+            <ChartContainer type="table">
               <Table />
             </ChartContainer>
           </TableChart>

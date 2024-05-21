@@ -1130,24 +1130,52 @@ const DataSource = t.type({
 });
 export type DataSource = t.TypeOf<typeof DataSource>;
 
+const ResizeHandle = t.keyof({
+  s: null,
+  w: null,
+  e: null,
+  n: null,
+  sw: null,
+  nw: null,
+  se: null,
+  ne: null,
+});
+
+const ReactGridLayoutType = t.type({
+  w: t.number,
+  h: t.number,
+  x: t.number,
+  y: t.number,
+  i: t.string,
+  resizeHandles: t.union([t.array(ResizeHandle), t.undefined]),
+});
+
+export const ReactGridLayoutsType = t.record(
+  t.string,
+  t.array(ReactGridLayoutType)
+);
+
 const Layout = t.intersection([
   t.type({
     activeField: t.union([t.undefined, t.string]),
+    meta: Meta,
   }),
   t.union([
     t.type({
       type: t.literal("tab"),
-      meta: Meta,
     }),
     t.type({
       type: t.literal("dashboard"),
       layout: t.union([t.literal("vertical"), t.literal("tall")]),
-      meta: Meta,
+    }),
+    t.type({
+      type: t.literal("dashboard"),
+      layout: t.literal("tiles"),
+      layouts: ReactGridLayoutsType,
     }),
     t.type({
       type: t.literal("singleURLs"),
       publishableChartKeys: t.array(t.string),
-      meta: Meta,
     }),
   ]),
 ]);

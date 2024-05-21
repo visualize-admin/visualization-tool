@@ -35,8 +35,8 @@ export const ChartScatterplot = memo((props: ChartProps<ScatterPlotConfig>) => {
   const { fields, interactiveFiltersConfig } = chartConfig;
   const filters = useChartConfigFilters(chartConfig);
   return (
-    <ScatterplotChart aspectRatio={0.4} {...props}>
-      <ChartContainer>
+    <ScatterplotChart {...props}>
+      <ChartContainer type="scatterplot">
         <ChartSvg>
           <AxisWidthLinear />
           <AxisHeightLinear />

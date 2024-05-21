@@ -1,7 +1,7 @@
-import { Box } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import { AnimatePresence } from "framer-motion";
 import keyBy from "lodash/keyBy";
-import React, { useMemo, useEffect, createElement } from "react";
+import React, { createElement, useEffect, useMemo } from "react";
 
 import { A11yTable } from "@/charts/shared/a11y-table";
 import { useLoadingState } from "@/charts/shared/chart-loading-state";
@@ -23,6 +23,16 @@ import { DataCubeObservationFilter } from "@/graphql/query-hooks";
 import { useLocale } from "@/src";
 
 type ElementProps<RE> = RE extends React.ElementType<infer P> ? P : never;
+
+const useStyles = makeStyles(() => ({
+  dataWrapper: {
+    position: "relative",
+    width: "100%",
+    height: "100%",
+    display: "flex",
+    flexDirection: "column",
+  },
+}));
 
 /**
  * Responsible for fetching the data for the chart.
@@ -59,6 +69,7 @@ export const ChartDataWrapper = <
   error?: Error;
 }) => {
   const chartLoadingState = useLoadingState();
+  const classes = useStyles();
 
   const locale = useLocale();
   const commonQueryVariables = {
@@ -152,9 +163,9 @@ export const ChartDataWrapper = <
     const title = metadata.map((d) => d.title).join(", ");
 
     return (
-      <Box
+      <div
+        className={classes.dataWrapper}
         data-chart-loaded={!chartLoadingState.loading}
-        sx={{ position: "relative", width: "100%" }}
       >
         {observations.length > 0 && (
           <A11yTable
@@ -182,7 +193,7 @@ export const ChartDataWrapper = <
             <NoDataHint />
           ) : null}
         </AnimatePresence>
-      </Box>
+      </div>
     );
   } else {
     return null;

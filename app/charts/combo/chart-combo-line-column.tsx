@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import { memo } from "react";
 
 import { ChartDataWrapper } from "@/charts/chart-data-wrapper";
 import { InteractionColumns } from "@/charts/column/overlay-columns";
@@ -27,8 +27,8 @@ export const ChartComboLineColumn = memo(
     const { interactiveFiltersConfig } = chartConfig;
 
     return (
-      <ComboLineColumnChart aspectRatio={0.4} {...props}>
-        <ChartContainer>
+      <ComboLineColumnChart {...props}>
+        <ChartContainer type="comboLineColumn">
           <ChartSvg>
             <AxisHeightLinearDual orientation="left" />
             <AxisHeightLinearDual orientation="right" />
