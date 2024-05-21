@@ -1,4 +1,3 @@
-import { Theme } from "@mui/material/styles";
 import { makeStyles } from "@mui/styles";
 import { AnimatePresence } from "framer-motion";
 import keyBy from "lodash/keyBy";
@@ -25,7 +24,7 @@ import { useLocale } from "@/src";
 
 type ElementProps<RE> = RE extends React.ElementType<infer P> ? P : never;
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles(() => ({
   dataWrapper: {
     position: "relative",
     width: "100%",
