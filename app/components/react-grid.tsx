@@ -25,14 +25,14 @@ export const availableHandles: ResizeHandle[] = [
 ];
 
 /** In grid unit */
-const MAX_H = 4;
-const MIN_H = 2;
+const MAX_H = 10;
+const MIN_H = 5;
 
 /** In grid unit */
 const MAX_W = 4;
 
 const COLS = { lg: 4, md: 2, sm: 1, xs: 1, xxs: 1 };
-const ROW_HEIGHT = 500;
+const ROW_HEIGHT = 100;
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
