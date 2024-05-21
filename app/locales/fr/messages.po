@@ -1122,6 +1122,10 @@ msgstr "Chercher"
 msgid "dataset.search.placeholder"
 msgstr "Nom, organisation, mots clés..."
 
+#: app/configurator/components/dataset-control-section.tsx
+msgid "dataset.search.preview.added-dataset"
+msgstr "Nouvel ensemble de données ajouté. Vous pouvez maintenant utiliser ses données dans le(s) graphique(s)."
+
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.preview.datasets"
 msgstr "Ensemble de données"
