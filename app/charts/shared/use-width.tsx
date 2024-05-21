@@ -31,10 +31,9 @@ export const Observer = ({ children }: { children: ReactNode }) => {
   const prev = useTimedPrevious(width, 500);
   const isResizing = prev !== width;
   const setEnableTransition = useTransitionStore((state) => state.setEnable);
-  useEffect(
-    () => setEnableTransition(!isResizing),
-    [isResizing, setEnableTransition]
-  );
+  useEffect(() => {
+    setEnableTransition(!isResizing);
+  }, [isResizing, setEnableTransition]);
 
   const size = useMemo(
     () => ({
@@ -79,7 +78,7 @@ export const useHeight = () => {
 
   if (ctx === undefined) {
     throw Error(
-      "You need to wrap your component in <ChartObserverContextProvider /> to useWidth()"
+      "You need to wrap your component in <ChartObserverContextProvider /> to useHeight()"
     );
   }
 
@@ -91,7 +90,7 @@ export const useObserverRef = () => {
 
   if (ctx === undefined) {
     throw Error(
-      "You need to wrap your component in <ChartObserverContextProvider /> to useWidth()"
+      "You need to wrap your component in <ChartObserverContextProvider /> to useObserverRef()"
     );
   }
 

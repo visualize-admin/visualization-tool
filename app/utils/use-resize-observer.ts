@@ -1,12 +1,12 @@
 import { ResizeObserver } from "@juggle/resize-observer";
 import { useEventCallback } from "@mui/material";
+import throttle from "lodash/throttle";
 import { useEffect, useRef, useState } from "react";
 
 export const useResizeObserver = <T extends Element>() => {
   const roRef = useRef<ResizeObserver>();
   const elRef = useRef<T>();
-  const [width, changeWidth] = useState(1);
-  const [height, changeHeight] = useState(1);
+  const [size, changeSize] = useState({ width: 1, height: 1 });
 
   const handleRef = useEventCallback((node: T) => {
     if (!node) {
@@ -15,7 +15,7 @@ export const useResizeObserver = <T extends Element>() => {
     elRef.current = node;
 
     if (!roRef.current) {
-      roRef.current = new ResizeObserver((entries) => {
+      const resizeHandler = throttle((entries: ResizeObserverEntry[]) => {
         // Since we only observe the one element, we don't need to loop over the
         // array
         if (!entries.length) {
@@ -29,15 +29,17 @@ export const useResizeObserver = <T extends Element>() => {
 
         // Prevent flickering when scrollbars appear and triggers another resize
         // by only resizing when difference to current measurement is above a certain threshold
-        changeWidth((width) =>
-          Math.abs(newWidth - width) > 16 && newWidth > 0 ? newWidth : width
+        changeSize((size) =>
+          (Math.abs(newHeight - size.height) > 16 && newHeight > 0) ||
+          (Math.abs(newWidth - size.width) > 16 && newWidth > 0)
+            ? {
+                height: newHeight,
+                width: newWidth,
+              }
+            : size
         );
-        changeHeight((height) =>
-          Math.abs(newHeight - height) > 16 && newHeight > 0
-            ? newHeight
-            : height
-        );
-      });
+      }, 16);
+      roRef.current = new ResizeObserver(resizeHandler);
     }
 
     roRef.current.observe(elRef.current);
@@ -53,5 +55,5 @@ export const useResizeObserver = <T extends Element>() => {
     };
   }, [handleRef]);
 
-  return [handleRef, width, height] as const;
+  return [handleRef, size.width, size.height] as const;
 };
