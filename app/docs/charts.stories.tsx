@@ -80,7 +80,7 @@ const ColumnsStory = {
             dimensionsByIri={keyBy(columnDimensions, (d: Dimension) => d.iri)}
             chartConfig={chartConfig}
           >
-            <ChartContainer>
+            <ChartContainer type="column">
               <ChartSvg>
                 <AxisHeightLinear />
                 <AxisWidthBand />
@@ -129,7 +129,7 @@ const ScatterplotStory = {
             measuresByIri={keyBy(scatterplotMeasures, (d) => d.iri)}
             chartConfig={scatterplotChartConfig}
           >
-            <ChartContainer>
+            <ChartContainer type="scatterplot">
               <ChartSvg>
                 <AxisWidthLinear />
                 <AxisHeightLinear />

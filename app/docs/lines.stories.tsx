@@ -58,7 +58,7 @@ const LineChartStory = () => (
           measuresByIri={keyBy(measures, (d) => d.iri)}
           chartConfig={chartConfig}
         >
-          <ChartContainer>
+          <ChartContainer type="line">
             <ChartSvg>
               <BrushTime />
               <AxisHeightLinear /> <AxisTime /> <AxisTimeDomain />

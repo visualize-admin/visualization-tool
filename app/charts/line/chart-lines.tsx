@@ -32,7 +32,7 @@ export const ChartLines = memo((props: ChartProps<LineConfig>) => {
 
   return (
     <LineChart {...props}>
-      <ChartContainer>
+      <ChartContainer type="line">
         <ChartSvg>
           <AxisHeightLinear /> <AxisTime /> <AxisTimeDomain />
           <Lines />

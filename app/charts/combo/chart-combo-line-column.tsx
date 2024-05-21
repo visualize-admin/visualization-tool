@@ -28,7 +28,7 @@ export const ChartComboLineColumn = memo(
 
     return (
       <ComboLineColumnChart {...props}>
-        <ChartContainer>
+        <ChartContainer type="comboLineColumn">
           <ChartSvg>
             <AxisHeightLinearDual orientation="left" />
             <AxisHeightLinearDual orientation="right" />

@@ -39,7 +39,7 @@ export const ChartComboLineSingle = memo(
 
     return (
       <ComboLineSingleChart {...props}>
-        <ChartContainer>
+        <ChartContainer type="comboLineSingle">
           <ChartSvg>
             <AxisHeightLinear /> <AxisTime /> <AxisTimeDomain />
             <ComboLineSingle />

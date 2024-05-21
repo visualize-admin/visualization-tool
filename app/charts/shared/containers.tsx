@@ -1,5 +1,6 @@
 import { Box, BoxProps } from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import clsx from "clsx";
 import { select } from "d3-selection";
 import { ReactNode, useEffect, useRef } from "react";
 
@@ -7,9 +8,14 @@ import { useChartState } from "@/charts/shared/chart-state";
 import { CalculationToggle } from "@/charts/shared/interactive-filter-calculation-toggle";
 import { useObserverRef } from "@/charts/shared/use-width";
 import { chartPanelLayoutGridClasses } from "@/components/chart-panel-layout-grid";
+import { ChartConfig } from "@/configurator";
 import { useTransitionStore } from "@/stores/transition";
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles<
+  {},
+  {},
+  ChartConfig["chartType"] | "chartContainer"
+>(() => ({
   chartContainer: {
     position: "relative",
     width: "100%",
@@ -21,14 +27,37 @@ const useStyles = makeStyles(() => ({
       aspectRatio: "auto",
     },
   },
+
+  // Chart type specific styles, if we need for example to set a specific aspect-ratio
+  // for a specific chart type
+  area: {},
+  column: {},
+  comboLineColumn: {},
+  comboLineDual: {},
+  comboLineSingle: {},
+  line: {},
+  map: {},
+  pie: {},
+  scatterplot: {},
+  table: {},
 }));
 
-export const ChartContainer = ({ children }: { children: ReactNode }) => {
+export const ChartContainer = ({
+  children,
+  type,
+}: {
+  children: ReactNode;
+  type: ChartConfig["chartType"];
+}) => {
   const ref = useObserverRef();
   const classes = useStyles();
 
   return (
-    <div ref={ref} aria-hidden="true" className={classes.chartContainer}>
+    <div
+      ref={ref}
+      aria-hidden="true"
+      className={clsx(classes.chartContainer, classes[type])}
+    >
       {children}
     </div>
   );

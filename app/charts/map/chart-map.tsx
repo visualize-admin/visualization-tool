@@ -1,4 +1,4 @@
-import React, { memo, useMemo } from "react";
+import { memo, useMemo } from "react";
 
 import { ChartDataWrapper } from "@/charts/chart-data-wrapper";
 import { shouldRenderMap } from "@/charts/map/helpers";
@@ -134,7 +134,7 @@ export const ChartMap = memo((props: ChartMapProps) => {
   const filters = useChartConfigFilters(chartConfig);
   return (
     <MapChart {...props}>
-      <ChartContainer>
+      <ChartContainer type="map">
         <MapComponent />
         <MapTooltip />
       </ChartContainer>
