@@ -6,9 +6,10 @@ import { Layouts } from "react-grid-layout";
 import { ObjectInspector } from "react-inspector";
 
 import { ChartPanelLayoutTypeProps } from "@/components/chart-panel";
-import ChartGridLayout, { generateLayout } from "@/components/react-grid";
+import ChartGridLayout from "@/components/react-grid";
 import { ReactGridLayoutsType, isLayouting } from "@/configurator";
 import { useConfiguratorState } from "@/src";
+import { assert } from "@/utils/assert";
 
 export const chartPanelLayoutGridClasses = {
   root: "chart-panel-grid-layout",
@@ -18,26 +19,20 @@ const ChartPanelLayoutGrid = (props: ChartPanelLayoutTypeProps) => {
   const { chartConfigs } = props;
   const [config, dispatch] = useConfiguratorState(isLayouting);
   const [layouts, setLayouts] = useState<Layouts>(() => {
-    if (
-      config.layout.type === "dashboard" &&
-      config.layout.layout === "tiles"
-    ) {
-      return config.layout.layouts;
-    }
-    return {
-      lg: generateLayout({
-        count: props.chartConfigs.length,
-        layout: "tiles",
-      }),
-    };
+    assert(
+      config.layout.type === "dashboard" && config.layout.layout === "tiles",
+      "ChartPanelLayoutGrid should be rendered only for dashboard layout with tiles"
+    );
+
+    return config.layout.layouts;
   });
 
   const handleChangeLayouts = (layouts: Layouts) => {
     const layout = config.layout;
-    if (layout.type !== "dashboard" || layout.layout !== "tiles") {
-      // Should not happen
-      return;
-    }
+    assert(
+      layout.type === "dashboard" && layout.layout === "tiles",
+      "ChartPanelLayoutGrid should be rendered only for dashboard layout with tiles"
+    );
 
     const parsedLayouts = pipe(
       ReactGridLayoutsType.decode(layouts),

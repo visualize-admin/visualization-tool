@@ -1147,9 +1147,6 @@ const ReactGridLayoutType = t.type({
   x: t.number,
   y: t.number,
   i: t.string,
-  maxW: t.union([t.number, t.undefined]),
-  minH: t.union([t.number, t.undefined]),
-  maxH: t.union([t.number, t.undefined]),
   resizeHandles: t.union([t.array(ResizeHandle), t.undefined]),
 });
 

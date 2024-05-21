@@ -26,6 +26,7 @@ export const availableHandles: ResizeHandle[] = [
 
 /** In grid unit */
 const MAX_H = 10;
+const INITIAL_H = 7;
 const MIN_H = 5;
 
 /** In grid unit */
@@ -285,12 +286,12 @@ export const generateLayout = function ({
       })
       .with("tiles", () => {
         return {
-          x: i % 3,
-          y: Math.floor(i / 3),
-          w: 4,
-          h: 4,
+          x: ((i % 2) * MAX_W) / 2,
+          y: Math.floor(i / 2) * INITIAL_H,
+          w: MAX_W / 2,
+          h: INITIAL_H,
           i: i.toString(),
-          resizeHandles,
+          resizeHandles: [],
         };
       })
       .with("wide", () => {
