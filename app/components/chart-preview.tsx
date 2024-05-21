@@ -21,6 +21,7 @@ import {
   ChartWrapper,
   ChartWrapperProps,
 } from "@/components/chart-panel";
+import { chartPanelLayoutGridClasses } from "@/components/chart-panel-layout-grid";
 import {
   ChartTablePreviewProvider,
   useChartTablePreview,
@@ -214,7 +215,16 @@ const ReactGridChartPreview = forwardRef<
   return (
     <ChartTablePreviewProvider>
       <ChartWrapper {...rest} ref={ref}>
-        <ChartPreviewInner dataSource={dataSource} chartKey={chartKey}>
+        <ChartPreviewInner
+          dataSource={dataSource}
+          chartKey={chartKey}
+          actionElementSlot={
+            <DragHandle
+              dragging
+              className={chartPanelLayoutGridClasses.dragHandle}
+            />
+          }
+        >
           {children}
         </ChartPreviewInner>
       </ChartWrapper>

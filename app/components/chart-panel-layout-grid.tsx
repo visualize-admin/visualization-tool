@@ -13,6 +13,7 @@ import { assert } from "@/utils/assert";
 
 export const chartPanelLayoutGridClasses = {
   root: "chart-panel-grid-layout",
+  dragHandle: "chart-panel-grid-layout-drag-handle",
 };
 
 const decodeLayouts = (layouts: Layouts) => {
@@ -70,6 +71,7 @@ const ChartPanelLayoutGrid = (props: ChartPanelLayoutTypeProps) => {
         className={clsx("layout", chartPanelLayoutGridClasses.root)}
         layouts={layouts}
         resize
+        draggableHandle={`.${chartPanelLayoutGridClasses.dragHandle}`}
         onLayoutChange={(_l, allLayouts) => handleChangeLayouts(allLayouts)}
       >
         {chartConfigs.map((chartConfig) => props.renderChart(chartConfig))}
