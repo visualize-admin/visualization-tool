@@ -35,7 +35,7 @@ const computeChartPadding = (props: ComputeChartPaddingProps) => {
   // Fake ticks to compute maximum tick length as
   // we need to take into account n between [0, 1] where numbers
   // with decimals have greater text length than the extremes.
-  const fakeTicks = yScale.ticks(getTickNumber(width * height));
+  const fakeTicks = yScale.ticks(getTickNumber(height));
   const minLeftTickWidth =
     !!interactiveFiltersConfig?.calculation.active || normalize
       ? getTextWidth("100%", { fontSize: TICK_FONT_SIZE }) + TICK_PADDING
