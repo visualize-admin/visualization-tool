@@ -27,9 +27,6 @@ export type Bounds = {
   aspectRatio: number;
 };
 
-const INITIAL_WIDTH = 1;
-const INITIAL_HEIGHT = 1;
-
 const useStyles = makeStyles(() => ({
   chartObserver: {
     display: "flex",
@@ -59,10 +56,14 @@ export const Observer = ({ children }: { children: ReactNode }) => {
   );
 };
 
-const ChartObserverContext = createContext({
-  width: INITIAL_WIDTH,
-  height: INITIAL_HEIGHT,
-});
+const ChartObserverContext = createContext(
+  undefined as
+    | undefined
+    | {
+        width: number;
+        height: number;
+      }
+);
 
 export const useWidth = () => {
   const ctx = useContext(ChartObserverContext);
