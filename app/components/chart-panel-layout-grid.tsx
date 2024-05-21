@@ -15,6 +15,21 @@ export const chartPanelLayoutGridClasses = {
   root: "chart-panel-grid-layout",
 };
 
+const decodeLayouts = (layouts: Layouts) => {
+  return pipe(
+    ReactGridLayoutsType.decode(layouts),
+    fold(
+      (err) => {
+        console.error("Error while decoding react-grid-layout", err);
+        return undefined;
+      },
+      (d) => {
+        return d;
+      }
+    )
+  );
+};
+
 const ChartPanelLayoutGrid = (props: ChartPanelLayoutTypeProps) => {
   const { chartConfigs } = props;
   const [config, dispatch] = useConfiguratorState(isLayouting);
@@ -34,18 +49,7 @@ const ChartPanelLayoutGrid = (props: ChartPanelLayoutTypeProps) => {
       "ChartPanelLayoutGrid should be rendered only for dashboard layout with tiles"
     );
 
-    const parsedLayouts = pipe(
-      ReactGridLayoutsType.decode(layouts),
-      fold(
-        (err) => {
-          console.error("Error while decoding react-grid-layout", err);
-          return undefined;
-        },
-        (d) => {
-          return d;
-        }
-      )
-    );
+    const parsedLayouts = decodeLayouts(layouts);
     if (!parsedLayouts) {
       return;
     }
