@@ -1,4 +1,5 @@
 import { Box, BoxProps } from "@mui/material";
+import clsx from "clsx";
 import { forwardRef } from "react";
 
 import { Icon } from "@/icons";
@@ -18,7 +19,7 @@ export const DragHandle = forwardRef<HTMLDivElement, DragHandleProps>(
       <Box
         ref={ref}
         {...rest}
-        className={classes.dragIconWrapper}
+        className={clsx(classes.dragIconWrapper, props.className)}
         sx={{
           color: dragging ? "secondary.active" : "secondary.disabled",
         }}
