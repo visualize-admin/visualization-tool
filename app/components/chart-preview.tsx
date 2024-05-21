@@ -21,7 +21,6 @@ import {
   ChartWrapper,
   ChartWrapperProps,
 } from "@/components/chart-panel";
-import { DragHandle } from "@/components/chart-selection-tabs";
 import {
   ChartTablePreviewProvider,
   useChartTablePreview,
@@ -29,6 +28,7 @@ import {
 import { useChartStyles } from "@/components/chart-utils";
 import { ChartWithFilters } from "@/components/chart-with-filters";
 import DebugPanel from "@/components/debug-panel";
+import { DragHandle } from "@/components/drag-handle";
 import Flex from "@/components/flex";
 import { Checkbox } from "@/components/form";
 import { HintYellow } from "@/components/hint";
