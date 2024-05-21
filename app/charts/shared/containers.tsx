@@ -1,4 +1,5 @@
 import { Box, BoxProps } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import { select } from "d3-selection";
 import { ReactNode, useEffect, useRef } from "react";
 
@@ -6,23 +7,21 @@ import { useChartState } from "@/charts/shared/chart-state";
 import { CalculationToggle } from "@/charts/shared/interactive-filter-calculation-toggle";
 import { useTransitionStore } from "@/stores/transition";
 
+const useStyles = makeStyles(() => ({
+  chartContainer: {
+    position: "relative",
+    width: "100%",
+    overflow: "hidden",
+    flexGrow: 1,
+  },
+}));
+
 export const ChartContainer = ({ children }: { children: ReactNode }) => {
   const ref = useRef<HTMLDivElement>(null);
+  const classes = useStyles();
 
   return (
-    <div
-      ref={ref}
-      aria-hidden="true"
-      className="chart-container"
-      style={{
-        position: "relative",
-        width: "100%",
-        height: "100%",
-        overflow: "hidden",
-        minHeight: 250,
-        aspectRatio: "5 / 2",
-      }}
-    >
+    <div ref={ref} aria-hidden="true" className={classes.chartContainer}>
       {children}
     </div>
   );

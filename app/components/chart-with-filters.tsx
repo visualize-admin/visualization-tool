@@ -1,3 +1,4 @@
+import { makeStyles } from "@mui/styles";
 import dynamic from "next/dynamic";
 import { forwardRef } from "react";
 
@@ -151,19 +152,22 @@ type ChartWithFiltersProps = {
   chartConfig: ChartConfig;
 };
 
+const useStyles = makeStyles(() => ({
+  chartWithFilters: {
+    width: "100%",
+    height: "100%",
+  },
+}));
+
 export const ChartWithFilters = forwardRef<
   HTMLDivElement,
   ChartWithFiltersProps
 >((props, ref) => {
   useSyncInteractiveFilters(props.chartConfig);
+  const classes = useStyles();
 
   return (
-    // Minimum aspect ratio for any chart (0.4)
-    <div
-      className="chart-with-filters"
-      ref={ref}
-      style={{ width: "100%", flexGrow: 1 }}
-    >
+    <div className={classes.chartWithFilters} ref={ref}>
       <Observer>
         <GenericChart {...props} />
       </Observer>

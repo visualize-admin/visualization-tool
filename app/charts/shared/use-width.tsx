@@ -1,3 +1,4 @@
+import { makeStyles } from "@mui/styles";
 import {
   createContext,
   ReactNode,
@@ -29,12 +30,19 @@ export type Bounds = {
 const INITIAL_WIDTH = 1;
 const INITIAL_HEIGHT = 1;
 
+const useStyles = makeStyles(() => ({
+  chartObserver: {
+    display: "flex",
+    minHeight: "100%",
+  },
+}));
+
 export const Observer = ({ children }: { children: ReactNode }) => {
   const [ref, width, height] = useResizeObserver<HTMLDivElement>();
   const prev = useTimedPrevious(width, 500);
   const isResizing = prev !== width;
   const setEnableTransition = useTransitionStore((state) => state.setEnable);
-
+  const classes = useStyles();
   useEffect(
     () => setEnableTransition(!isResizing),
     [isResizing, setEnableTransition]
@@ -43,10 +51,7 @@ export const Observer = ({ children }: { children: ReactNode }) => {
   const size = useMemo(() => ({ width, height }), [width, height]);
 
   return (
-    <div
-      ref={ref}
-      style={{ display: "flex", minHeight: "100%", outline: "1px solid red" }}
-    >
+    <div ref={ref} className={classes.chartObserver}>
       <ChartObserverContext.Provider value={size}>
         {children}
       </ChartObserverContext.Provider>
