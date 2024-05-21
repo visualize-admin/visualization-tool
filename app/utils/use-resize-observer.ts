@@ -1,5 +1,6 @@
 import { ResizeObserver } from "@juggle/resize-observer";
-import { useEffect, useState, useRef } from "react";
+import { useEventCallback } from "@mui/material";
+import { useEffect, useRef, useState } from "react";
 
 export const useResizeObserver = <T extends Element>() => {
   const roRef = useRef<ResizeObserver>();
@@ -7,7 +8,7 @@ export const useResizeObserver = <T extends Element>() => {
   const [width, changeWidth] = useState(1);
   const [height, changeHeight] = useState(1);
 
-  const handleRef = (node: T) => {
+  const handleRef = useEventCallback((node: T) => {
     if (!node) {
       return;
     }
@@ -29,23 +30,28 @@ export const useResizeObserver = <T extends Element>() => {
         // Prevent flickering when scrollbars appear and triggers another resize
         // by only resizing when difference to current measurement is above a certain threshold
         changeWidth((width) =>
-          Math.abs(newWidth - width) > 16 ? newWidth : width
+          Math.abs(newWidth - width) > 16 && newWidth > 0 ? newWidth : width
         );
         changeHeight((height) =>
-          Math.abs(newHeight - height) > 16 ? newHeight : height
+          Math.abs(newHeight - height) > 16 && newHeight > 0
+            ? newHeight
+            : height
         );
       });
     }
 
     roRef.current.observe(elRef.current);
-  };
+  });
 
   useEffect(() => {
+    if (elRef.current) {
+      handleRef(elRef.current);
+    }
     return () => {
       roRef.current?.disconnect();
       roRef.current = undefined;
     };
-  }, []);
+  }, [handleRef]);
 
   return [handleRef, width, height] as const;
 };

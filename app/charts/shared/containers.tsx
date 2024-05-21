@@ -5,6 +5,8 @@ import { ReactNode, useEffect, useRef } from "react";
 
 import { useChartState } from "@/charts/shared/chart-state";
 import { CalculationToggle } from "@/charts/shared/interactive-filter-calculation-toggle";
+import { useObserverRef } from "@/charts/shared/use-width";
+import { chartPanelLayoutGridClasses } from "@/components/chart-panel-layout-grid";
 import { useTransitionStore } from "@/stores/transition";
 
 const useStyles = makeStyles(() => ({
@@ -13,11 +15,16 @@ const useStyles = makeStyles(() => ({
     width: "100%",
     overflow: "hidden",
     flexGrow: 1,
+    aspectRatio: "5 / 2",
+
+    [`.${chartPanelLayoutGridClasses.root} &`]: {
+      aspectRatio: "auto",
+    },
   },
 }));
 
 export const ChartContainer = ({ children }: { children: ReactNode }) => {
-  const ref = useRef<HTMLDivElement>(null);
+  const ref = useObserverRef();
   const classes = useStyles();
 
   return (

@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import { fold } from "fp-ts/lib/Either";
 import { pipe } from "fp-ts/lib/function";
 import { useState } from "react";
@@ -8,6 +9,10 @@ import { ChartPanelLayoutTypeProps } from "@/components/chart-panel";
 import ChartGridLayout, { generateLayout } from "@/components/react-grid";
 import { ReactGridLayoutsType, isLayouting } from "@/configurator";
 import { useConfiguratorState } from "@/src";
+
+export const chartPanelLayoutGridClasses = {
+  root: "chart-panel-grid-layout",
+};
 
 const ChartPanelLayoutGrid = (props: ChartPanelLayoutTypeProps) => {
   const { chartConfigs } = props;
@@ -63,7 +68,7 @@ const ChartPanelLayoutGrid = (props: ChartPanelLayoutTypeProps) => {
   return (
     <>
       <ChartGridLayout
-        className={"layout"}
+        className={clsx("layout", chartPanelLayoutGridClasses.root)}
         layouts={layouts}
         resize
         onLayoutChange={(_l, allLayouts) => handleChangeLayouts(allLayouts)}

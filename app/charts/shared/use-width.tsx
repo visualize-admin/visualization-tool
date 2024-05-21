@@ -1,4 +1,3 @@
-import { makeStyles } from "@mui/styles";
 import {
   createContext,
   ReactNode,
@@ -27,32 +26,29 @@ export type Bounds = {
   aspectRatio: number;
 };
 
-const useStyles = makeStyles(() => ({
-  chartObserver: {
-    display: "flex",
-    minHeight: "100%",
-  },
-}));
-
 export const Observer = ({ children }: { children: ReactNode }) => {
   const [ref, width, height] = useResizeObserver<HTMLDivElement>();
   const prev = useTimedPrevious(width, 500);
   const isResizing = prev !== width;
   const setEnableTransition = useTransitionStore((state) => state.setEnable);
-  const classes = useStyles();
   useEffect(
     () => setEnableTransition(!isResizing),
     [isResizing, setEnableTransition]
   );
 
-  const size = useMemo(() => ({ width, height }), [width, height]);
+  const size = useMemo(
+    () => ({
+      width,
+      height,
+      ref,
+    }),
+    [width, height, ref]
+  );
 
   return (
-    <div ref={ref} className={classes.chartObserver}>
-      <ChartObserverContext.Provider value={size}>
-        {children}
-      </ChartObserverContext.Provider>
-    </div>
+    <ChartObserverContext.Provider value={size}>
+      {children}
+    </ChartObserverContext.Provider>
   );
 };
 
@@ -62,6 +58,7 @@ const ChartObserverContext = createContext(
     | {
         width: number;
         height: number;
+        ref: (node: HTMLDivElement) => void;
       }
 );
 
@@ -87,4 +84,16 @@ export const useHeight = () => {
   }
 
   return ctx.height;
+};
+
+export const useObserverRef = () => {
+  const ctx = useContext(ChartObserverContext);
+
+  if (ctx === undefined) {
+    throw Error(
+      "You need to wrap your component in <ChartObserverContextProvider /> to useWidth()"
+    );
+  }
+
+  return ctx.ref;
 };
