@@ -7,7 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 You can also check the [release page](https://github.com/visualize-admin/visualization-tool/releases)
 
-## Unreleased
+## [4.5.0] - 2024-05-21
+
+- Features
+  - Improvements to add dataset workflow (columns, text, toasts when adding a dataset)
+- Development
+  - Preparation for dashboards
+
+## [4.4.0] - 2024-05-08
 
 - Features
   - Ability to merge two cubes on multiple columns (for example on year and canton)
