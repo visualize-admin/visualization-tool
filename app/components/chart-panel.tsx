@@ -91,7 +91,10 @@ export const ChartPanelLayout = (props: ChartPanelLayoutProps) => {
   const Wrapper = Wrappers[props.layoutType];
   return (
     <div className={clsx(classes.panelLayout, className)} {...rest}>
-      {/* We want to completely remount this component if chartConfigs change,  */}
+      {/**
+       * TODO: Should be shown only in Dashboard layout, not in separate URLs
+       *  We want to completely remount this component if chartConfigs change,
+       */}
       <DashboardInteractiveFilters
         key={chartConfigs.map((x) => x.key).join(",")}
         chartConfigs={chartConfigs}
