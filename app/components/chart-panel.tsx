@@ -9,6 +9,7 @@ import ChartPanelLayoutCanvas, {
 import { ChartPanelLayoutTall } from "@/components/chart-panel-layout-tall";
 import { ChartPanelLayoutVertical } from "@/components/chart-panel-layout-vertical";
 import { ChartSelectionTabs } from "@/components/chart-selection-tabs";
+import { DashboardInteractiveFilters } from "@/components/DashboardInteractiveFilters";
 import { ChartConfig, Layout, LayoutDashboard } from "@/config-types";
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -90,6 +91,11 @@ export const ChartPanelLayout = (props: ChartPanelLayoutProps) => {
   const Wrapper = Wrappers[props.layoutType];
   return (
     <div className={clsx(classes.panelLayout, className)} {...rest}>
+      {/* We want to completely remount this component if chartConfigs change,  */}
+      <DashboardInteractiveFilters
+        key={chartConfigs.map((x) => x.key).join(",")}
+        chartConfigs={chartConfigs}
+      />
       <Wrapper chartConfigs={chartConfigs} renderChart={renderChart} />
     </div>
   );
