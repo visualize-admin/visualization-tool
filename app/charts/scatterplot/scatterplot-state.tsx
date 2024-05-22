@@ -21,7 +21,7 @@ import {
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import { TooltipScatterplot } from "@/charts/shared/interaction/tooltip-content";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
-import { useHeight, useWidth } from "@/charts/shared/use-width";
+import { useSize } from "@/charts/shared/use-width";
 import { ScatterPlotConfig, SortingField } from "@/configurator";
 import { Observation } from "@/domain/data";
 import { useFormatNumber } from "@/formatters";
@@ -64,8 +64,7 @@ const useScatterplotState = (
   const { chartData, scalesData, segmentData, paddingData, allData } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
 
-  const width = useWidth();
-  const height = useHeight();
+  const { width, height } = useSize();
   const formatNumber = useFormatNumber({ decimals: "auto" });
 
   const segmentsByValue = useMemo(() => {

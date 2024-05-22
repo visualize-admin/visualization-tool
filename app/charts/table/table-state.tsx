@@ -23,7 +23,7 @@ import {
   ChartStateData,
   CommonChartState,
 } from "@/charts/shared/chart-state";
-import { useWidth } from "@/charts/shared/use-width";
+import { useSize } from "@/charts/shared/use-width";
 import { BAR_CELL_PADDING, TABLE_HEIGHT } from "@/charts/table/constants";
 import {
   TableStateVariables,
@@ -120,7 +120,7 @@ const useTableState = (
   const rowHeight = hasBar ? 56 : 40;
 
   // Dimensions
-  const width = useWidth();
+  const { width } = useSize();
   const margins = {
     top: 10,
     right: 10,

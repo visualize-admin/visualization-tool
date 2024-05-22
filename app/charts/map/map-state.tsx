@@ -39,7 +39,7 @@ import {
 import { ChartContext, CommonChartState } from "@/charts/shared/chart-state";
 import { colorToRgbArray } from "@/charts/shared/colors";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
-import { useWidth } from "@/charts/shared/use-width";
+import { useSize } from "@/charts/shared/use-width";
 import {
   BBox,
   CategoricalColorField,
@@ -105,7 +105,7 @@ const useMapState = (
   variables: MapStateVariables,
   data: MapStateData
 ): MapState => {
-  const width = useWidth();
+  const { width } = useSize();
   const { chartConfig, measures, dimensions } = chartProps;
   const { chartData, scalesData, allData, features } = data;
   const { fields, baseLayer } = chartConfig;

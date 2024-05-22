@@ -48,7 +48,7 @@ import {
 } from "@/charts/shared/stacked-helpers";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
-import { useHeight, useWidth } from "@/charts/shared/use-width";
+import { useSize } from "@/charts/shared/use-width";
 import { ColumnConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
 import { useFormatNumber } from "@/formatters";
@@ -111,8 +111,7 @@ const useColumnsStackedState = (
   } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
 
-  const width = useWidth();
-  const height = useHeight();
+  const { width, height } = useSize();
   const formatNumber = useFormatNumber({ decimals: "auto" });
   const formatters = useChartFormatters(chartProps);
   const calculationType = useChartInteractiveFilters((d) => d.calculation.type);

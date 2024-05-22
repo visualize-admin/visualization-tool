@@ -19,7 +19,7 @@ import {
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
-import { useHeight, useWidth } from "@/charts/shared/use-width";
+import { useSize } from "@/charts/shared/use-width";
 import { PieConfig } from "@/configurator";
 import { Dimension, Observation } from "@/domain/data";
 import { formatNumberWithUnit, useFormatNumber } from "@/formatters";
@@ -60,8 +60,7 @@ const usePieState = (
   const { chartData, segmentData, allData } = data;
   const { fields } = chartConfig;
 
-  const width = useWidth();
-  const height = useHeight();
+  const { width, height } = useSize();
   const formatNumber = useFormatNumber();
   const formatters = useChartFormatters(chartProps);
 

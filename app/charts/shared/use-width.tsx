@@ -61,28 +61,16 @@ const ChartObserverContext = createContext(
       }
 );
 
-export const useWidth = () => {
+export const useSize = () => {
   const ctx = useContext(ChartObserverContext);
 
   if (ctx === undefined) {
     throw Error(
-      "You need to wrap your component in <ChartObserverContextProvider /> to useWidth()"
+      "You need to wrap your component in <ChartObserverContextProvider /> to useSize()"
     );
   }
 
-  return ctx.width;
-};
-
-export const useHeight = () => {
-  const ctx = useContext(ChartObserverContext);
-
-  if (ctx === undefined) {
-    throw Error(
-      "You need to wrap your component in <ChartObserverContextProvider /> to useHeight()"
-    );
-  }
-
-  return ctx.height;
+  return { width: ctx.width, height: ctx.height };
 };
 
 export const useObserverRef = () => {

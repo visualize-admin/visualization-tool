@@ -31,7 +31,7 @@ import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import { getCenteredTooltipPlacement } from "@/charts/shared/interaction/tooltip-box";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
-import { useHeight, useWidth } from "@/charts/shared/use-width";
+import { useSize } from "@/charts/shared/use-width";
 import { LineConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
 import {
@@ -91,8 +91,7 @@ const useLinesState = (
   } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
 
-  const width = useWidth();
-  const height = useHeight();
+  const { width, height } = useSize();
   const formatNumber = useFormatNumber({ decimals: "auto" });
   const timeFormatUnit = useTimeFormatUnit();
   const formatters = useChartFormatters(chartProps);
