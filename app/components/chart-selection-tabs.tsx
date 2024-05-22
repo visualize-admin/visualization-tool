@@ -7,6 +7,7 @@ import {
   Popover,
   Theme,
   Tooltip,
+  Typography,
   useEventCallback,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
@@ -38,8 +39,8 @@ import {
   saveChartLocally,
   useConfiguratorState,
 } from "@/configurator";
+import { useSearchDatasetPanelStore } from "@/configurator/components/add-new-dataset-panel";
 import { ChartTypeSelector } from "@/configurator/components/chart-type-selector";
-import FromNewDatasetUI from "@/configurator/components/FromNewDatasetUI";
 import { getIconName } from "@/configurator/components/ui-helpers";
 import { useUserConfig } from "@/domain/user-configs";
 import { useDataCubesComponentsQuery } from "@/graphql/hooks";
@@ -153,6 +154,8 @@ const TabsEditable = (props: TabsEditableProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.activeChartKey]);
 
+  const { open: openAddDatasetPanel } = useSearchDatasetPanelStore();
+
   return (
     <>
       <TabsInner
@@ -184,7 +187,6 @@ const TabsEditable = (props: TabsEditableProps) => {
         }}
       />
 
-      <FromNewDatasetUI />
       <Popover
         id="chart-selection-popover"
         open={tabsState.popoverOpen}
@@ -203,6 +205,17 @@ const TabsEditable = (props: TabsEditableProps) => {
               chartKey={tabsState.activeChartKey ?? chartConfig.key}
               sx={{ width: 320, px: 3, pb: 3 }}
             />
+            <Typography variant="body2">
+              From new dataset
+              <Button
+                onClick={() => {
+                  setTabsState({ ...tabsState, popoverOpen: false });
+                  openAddDatasetPanel();
+                }}
+              >
+                From new dataset
+              </Button>
+            </Typography>
           </>
         ) : (
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2, p: 4 }}>

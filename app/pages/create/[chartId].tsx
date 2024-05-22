@@ -1,6 +1,6 @@
 import { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 
 import { AppLayout } from "@/components/layout";
 import {
@@ -8,6 +8,7 @@ import {
   MetadataPanelStoreContext,
 } from "@/components/metadata-panel-store";
 import { Configurator, ConfiguratorStateProvider } from "@/configurator";
+import { AddNewDatasetPanel } from "@/configurator/components/add-new-dataset-panel";
 
 type PageProps = {
   locale: string;
@@ -41,6 +42,7 @@ const ChartConfiguratorPage: NextPage<PageProps> = ({ chartId }) => {
         <ConfiguratorStateProvider chartId={chartId}>
           <MetadataPanelStoreContext.Provider value={metadataPanelStore}>
             <Configurator />
+            <AddNewDatasetPanel />
           </MetadataPanelStoreContext.Provider>
         </ConfiguratorStateProvider>
       </AppLayout>
