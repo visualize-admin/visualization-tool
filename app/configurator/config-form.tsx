@@ -3,10 +3,10 @@ import get from "lodash/get";
 import React, {
   ChangeEvent,
   InputHTMLAttributes,
+  createContext,
   useCallback,
   useContext,
   useMemo,
-  createContext,
 } from "react";
 
 import { getFieldComponentIri, getInitialConfig } from "@/charts";
@@ -398,19 +398,19 @@ export const getNewChartConfig = ({
   });
 };
 
-export const useChartType = (
+export const useAddOrEditChartType = (
   chartKey: string,
   type: "add" | "edit" = "edit",
   dimensions: Dimension[],
   measures: Measure[]
 ): {
   value: ChartType;
-  onChange: (chartType: ChartType) => void;
+  addOrEditChartType: (chartType: ChartType) => void;
 } => {
   const locale = useLocale();
   const [state, dispatch] = useConfiguratorState();
   const chartConfig = getChartConfig(state, chartKey);
-  const onChange = useEvent((chartType: ChartType) => {
+  const addOrEditChartType = useEvent((chartType: ChartType) => {
     if (type === "edit") {
       dispatch({
         type: "CHART_TYPE_CHANGED",
@@ -440,7 +440,7 @@ export const useChartType = (
   const value = get(chartConfig, "chartType");
 
   return {
-    onChange,
+    addOrEditChartType,
     value,
   };
 };

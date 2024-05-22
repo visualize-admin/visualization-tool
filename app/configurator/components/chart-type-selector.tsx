@@ -16,7 +16,7 @@ import {
 } from "@/config-types";
 import { ControlSectionSkeleton } from "@/configurator/components/chart-controls/section";
 import { IconButton } from "@/configurator/components/icon-button";
-import { useChartType } from "@/configurator/config-form";
+import { useAddOrEditChartType } from "@/configurator/config-form";
 import { ConfiguratorStateWithChartConfigs } from "@/configurator/configurator-state";
 import { useDataCubesComponentsQuery } from "@/graphql/hooks";
 import { useLocale } from "@/locales/use-locale";
@@ -48,7 +48,7 @@ export const ChartTypeSelector = (props: ChartTypeSelectorProps) => {
   });
   const dimensions = data?.dataCubesComponents?.dimensions ?? [];
   const measures = data?.dataCubesComponents?.measures ?? [];
-  const { value: chartType, onChange: onChangeChartType } = useChartType(
+  const { value: chartType, addOrEditChartType } = useAddOrEditChartType(
     chartKey,
     type,
     dimensions,
@@ -63,10 +63,10 @@ export const ChartTypeSelector = (props: ChartTypeSelectorProps) => {
       // only in edit mode; we should be able to add any possible chart type
       // in add mode.
       if (type === "edit" ? newChartType !== chartType : true) {
-        onChangeChartType(newChartType);
+        addOrEditChartType(newChartType);
       }
     },
-    [chartType, onChangeChartType, type]
+    [chartType, addOrEditChartType, type]
   );
 
   if (!data?.dataCubesComponents) {
