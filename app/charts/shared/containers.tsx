@@ -22,6 +22,7 @@ const useStyles = makeStyles<
     overflow: "hidden",
     flexGrow: 1,
     aspectRatio: "5 / 2",
+    minHeight: 300,
 
     [`.${chartPanelLayoutGridClasses.root} &`]: {
       aspectRatio: "auto",
