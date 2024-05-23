@@ -21,6 +21,8 @@ import { analyticsPageView } from "@/utils/googleAnalytics";
 import AsyncLocalizationProvider from "@/utils/l10n-provider";
 import "@/utils/nprogress.css";
 import { useNProgress } from "@/utils/use-nprogress";
+import { EventEmitterProvider } from "@/utils/eventEmitter";
+import { SnackbarProvider } from "@/components/snackbar";
 
 const GQLDebugPanel = dynamic(() => import("@/gql-flamegraph/devtool"), {
   ssr: false,
@@ -87,12 +89,16 @@ export default function App({
           <I18nProvider i18n={i18n}>
             <GraphqlProvider>
               <ThemeProvider theme={federalTheme.theme}>
-                <CssBaseline />
-                <Flashes />
-                {shouldShowGQLDebug ? <GQLDebugPanel /> : null}
-                <AsyncLocalizationProvider locale={locale}>
-                  <Component {...pageProps} />
-                </AsyncLocalizationProvider>
+                <EventEmitterProvider>
+                  <SnackbarProvider>
+                    <CssBaseline />
+                    <Flashes />
+                    {shouldShowGQLDebug ? <GQLDebugPanel /> : null}
+                    <AsyncLocalizationProvider locale={locale}>
+                      <Component {...pageProps} />
+                    </AsyncLocalizationProvider>
+                  </SnackbarProvider>
+                </EventEmitterProvider>
               </ThemeProvider>
             </GraphqlProvider>
           </I18nProvider>

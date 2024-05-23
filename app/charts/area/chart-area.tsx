@@ -30,8 +30,8 @@ export const ChartAreas = memo((props: ChartProps<AreaConfig>) => {
   const { fields, interactiveFiltersConfig } = chartConfig;
 
   return (
-    <AreaChart aspectRatio={0.4} {...props}>
-      <ChartContainer>
+    <AreaChart {...props}>
+      <ChartContainer type="area">
         <ChartSvg>
           <AxisTime /> <AxisHeightLinear />
           <Areas /> <AxisTimeDomain />

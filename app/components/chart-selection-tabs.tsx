@@ -2,7 +2,6 @@ import { t, Trans } from "@lingui/macro";
 import { TabContext } from "@mui/lab";
 import {
   Box,
-  BoxProps,
   Button,
   Grow,
   Popover,
@@ -15,13 +14,7 @@ import { PUBLISHED_STATE } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  forwardRef,
-} from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { useClient } from "urql";
 import { useDebounce } from "use-debounce";
@@ -58,6 +51,7 @@ import { replaceLinks } from "@/utils/ui-strings";
 import useEvent from "@/utils/use-event";
 import { useMutate } from "@/utils/use-fetch-data";
 
+import { DragHandle } from "./drag-handle";
 import { useLocalSnack } from "./use-local-snack";
 
 type TabsState = {
@@ -662,7 +656,7 @@ const TabsInner = (props: TabsInnerProps) => {
   );
 };
 
-const useIconStyles = makeStyles<
+export const useIconStyles = makeStyles<
   Theme,
   { active: boolean | undefined; dragging: boolean | undefined }
 >(({ palette, spacing }) => ({
@@ -754,27 +748,3 @@ const TabContent = (props: TabContentProps) => {
     </Flex>
   );
 };
-
-type DragHandleProps = BoxProps & {
-  dragging?: boolean;
-};
-
-export const DragHandle = forwardRef<HTMLDivElement, DragHandleProps>(
-  (props, ref) => {
-    const { dragging, ...rest } = props;
-    const classes = useIconStyles({ active: false, dragging });
-
-    return (
-      <Box
-        ref={ref}
-        {...rest}
-        className={classes.dragIconWrapper}
-        sx={{
-          color: dragging ? "secondary.active" : "secondary.disabled",
-        }}
-      >
-        <Icon name="dragndrop" />
-      </Box>
-    );
-  }
-);

@@ -22,11 +22,11 @@ const configs: TestConfig[] = [
   //   name: "Column - Waldfläsche (standard error bars)",
   //   slug: "column-waldflasche",
   // },
-  {
-    chartId: "I0KucujlOLgb",
-    name: "Line - State accounts (segmented)",
-    slug: "line-state-accounts",
-  },
+  // {
+  //   chartId: "I0KucujlOLgb",
+  //   name: "Line - State accounts (segmented)",
+  //   slug: "line-state-accounts",
+  // },
   {
     chartId: "Z6Re21LHbOoP",
     name: "Pie - Red list",

@@ -61,8 +61,8 @@ msgid "browse.dataset.create-visualization"
 msgstr "Iniziare una visualizzazione"
 
 #: app/browser/select-dataset-step.tsx
-msgid "browse.datasets.all-datasets"
-msgstr "Tutti i set di dati"
+#~ msgid "browse.datasets.all-datasets"
+#~ msgstr "Tutti i set di dati"
 
 #: app/browser/select-dataset-step.tsx
 msgid "browse.datasets.description"
@@ -571,11 +571,15 @@ msgstr "Tab Layout"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.layout.tall"
-msgstr ""
+msgstr "Alto"
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.layout.tiles"
+msgstr "Riquadri"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.layout.vertical"
-msgstr ""
+msgstr "Verticale"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.measure"
@@ -1100,6 +1104,14 @@ msgstr "Aggiungi set di dati"
 msgid "dataset.search.at-least-one-compatible-dimension-selected"
 msgstr "È necessario selezionare almeno una dimensione compatibile."
 
+#: app/configurator/components/add-dataset-dialog.tsx
+msgid "dataset.search.caution.acknowledge"
+msgstr "Capito, procederò con cautela."
+
+#: app/configurator/components/add-dataset-dialog.tsx
+msgid "dataset.search.caution.body"
+msgstr "Il collegamento di diversi set di dati comporta rischi quali incoerenze dei dati, problemi di scalabilità e correlazioni impreviste. Assicurati di utilizzare per unire i set di dati solo quando sei sicuro che i dati debbano essere uniti insieme."
+
 #: app/browser/dataset-browse.tsx
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.label"
@@ -1110,13 +1122,17 @@ msgstr "Cerca"
 msgid "dataset.search.placeholder"
 msgstr "Nome, organizzazione, parola chiave..."
 
+#: app/configurator/components/dataset-control-section.tsx
+msgid "dataset.search.preview.added-dataset"
+msgstr "Nuovo set di dati aggiunto. Ora puoi utilizzare i suoi dati nei grafici."
+
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.preview.datasets"
 msgstr "Set di dati"
 
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.preview.description"
-msgstr "Examinez l’aperçu des données des nouvelles dimensions disponibles puis continuez à modifier la visualisation."
+msgstr "Esamina tutte le dimensioni disponibili prima di continuare a modificare la visualizzazione."
 
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.preview.dimensions"
@@ -1124,7 +1140,7 @@ msgstr "Dimensioni"
 
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.preview.dimensions-shown"
-msgstr "{0} mostrate"
+msgstr "{0} mostrate in questa vista"
 
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.preview.new-dimension"
@@ -1132,7 +1148,7 @@ msgstr "Nuovo"
 
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.preview.title"
-msgstr "Preview della tabella dei dati"
+msgstr "Esamina le dimensioni disponibili"
 
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.search-options.more-2-options-selected"
@@ -1158,6 +1174,10 @@ msgstr "Sono mostrate soltanto le prime 10 righe"
 #: app/components/metadata-panel.tsx
 msgid "dimension.joined"
 msgstr "Unita"
+
+#: app/components/metadata-panel.tsx
+msgid "dimension.joined-info-icon"
+msgstr "Le dimensioni unite integrano i dati provenienti da più set di dati"
 
 #: app/utils/flashes.tsx
 msgid "flashes.couldnt-load-cube.title"

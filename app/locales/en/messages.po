@@ -61,8 +61,8 @@ msgid "browse.dataset.create-visualization"
 msgstr "Start a visualization"
 
 #: app/browser/select-dataset-step.tsx
-msgid "browse.datasets.all-datasets"
-msgstr "All datasets"
+#~ msgid "browse.datasets.all-datasets"
+#~ msgstr "All datasets"
 
 #: app/browser/select-dataset-step.tsx
 msgid "browse.datasets.description"
@@ -572,6 +572,10 @@ msgstr "Tab Layout"
 #: app/configurator/components/field-i18n.ts
 msgid "controls.layout.tall"
 msgstr "Tall"
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.layout.tiles"
+msgstr "Tiles"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.layout.vertical"
@@ -1100,6 +1104,14 @@ msgstr "Add dataset"
 msgid "dataset.search.at-least-one-compatible-dimension-selected"
 msgstr "At least one compatible dimension must be selected."
 
+#: app/configurator/components/add-dataset-dialog.tsx
+msgid "dataset.search.caution.acknowledge"
+msgstr "Understood, I'll proceed cautiously."
+
+#: app/configurator/components/add-dataset-dialog.tsx
+msgid "dataset.search.caution.body"
+msgstr "The linking of different datasets carries risks such as data inconsistencies, scalability issues, and unexpected correlations. Be sure to use to merge datasets only when you are confident that data should be merged together."
+
 #: app/browser/dataset-browse.tsx
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.label"
@@ -1109,6 +1121,10 @@ msgstr "Search"
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.placeholder"
 msgstr "Name, organization, keyword..."
+
+#: app/configurator/components/dataset-control-section.tsx
+msgid "dataset.search.preview.added-dataset"
+msgstr "New dataset added. You can now use its data in the chart(s)."
 
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.preview.datasets"
@@ -1124,7 +1140,7 @@ msgstr "Dimensions"
 
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.preview.dimensions-shown"
-msgstr "{0} shown"
+msgstr "{0} shown in this view"
 
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.preview.new-dimension"
@@ -1158,6 +1174,10 @@ msgstr "Showing first 10 rows"
 #: app/components/metadata-panel.tsx
 msgid "dimension.joined"
 msgstr "Joined"
+
+#: app/components/metadata-panel.tsx
+msgid "dimension.joined-info-icon"
+msgstr "Joined dimensions integrate data from multiple datasets"
 
 #: app/utils/flashes.tsx
 msgid "flashes.couldnt-load-cube.title"

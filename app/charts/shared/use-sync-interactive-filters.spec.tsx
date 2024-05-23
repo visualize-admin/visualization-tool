@@ -4,8 +4,9 @@ import { useState } from "react";
 import useSyncInteractiveFilters from "@/charts/shared/use-sync-interactive-filters";
 import { ChartConfig, InteractiveFiltersConfig } from "@/config-types";
 import {
+  InteractiveFiltersChartProvider,
   InteractiveFiltersProvider,
-  useInteractiveFilters,
+  useChartInteractiveFilters,
 } from "@/stores/interactive-filters";
 import fixture from "@/test/__fixtures/config/dev/4YL1p4QTFQS4.json";
 import { migrateChartConfig } from "@/utils/chart-config/versioning";
@@ -55,7 +56,7 @@ const setup = ({
   modifiedChartConfig: ChartConfig;
 }) => {
   const Component = () => {
-    const IFState = useInteractiveFilters((d) => ({
+    const IFState = useChartInteractiveFilters((d) => ({
       categories: d.categories,
       timeRange: d.timeRange,
       timeSlider: d.timeSlider,
@@ -78,8 +79,10 @@ const setup = ({
     );
   };
   const root = render(
-    <InteractiveFiltersProvider>
-      <Component />
+    <InteractiveFiltersProvider chartConfigs={[chartConfig]}>
+      <InteractiveFiltersChartProvider chartConfigKey={chartConfig.key}>
+        <Component />
+      </InteractiveFiltersChartProvider>
     </InteractiveFiltersProvider>
   );
   const getIFState = () =>

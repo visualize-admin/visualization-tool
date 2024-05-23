@@ -1,6 +1,6 @@
 import { Trans } from "@lingui/macro";
 import { Box, Typography } from "@mui/material";
-import React, { Fragment, useMemo } from "react";
+import { Fragment, useMemo } from "react";
 
 import {
   extractChartConfigComponentIris,
@@ -22,7 +22,7 @@ import { isMostRecentValue } from "@/domain/most-recent-value";
 import { useTimeFormatUnit } from "@/formatters";
 import { useDataCubesComponentsQuery } from "@/graphql/hooks";
 import { useLocale } from "@/locales/use-locale";
-import { useInteractiveFilters } from "@/stores/interactive-filters";
+import { useChartInteractiveFilters } from "@/stores/interactive-filters";
 
 type ChartFiltersListProps = {
   dataSource: DataSource;
@@ -34,7 +34,7 @@ export const ChartFiltersList = (props: ChartFiltersListProps) => {
   const { dataSource, chartConfig, dimensions } = props;
   const locale = useLocale();
   const timeFormatUnit = useTimeFormatUnit();
-  const timeSlider = useInteractiveFilters((d) => d.timeSlider);
+  const timeSlider = useChartInteractiveFilters((d) => d.timeSlider);
   const animationField = getAnimationField(chartConfig);
   const queryFilters = useQueryFilters({
     chartConfig,

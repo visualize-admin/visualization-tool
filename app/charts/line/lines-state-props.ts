@@ -26,7 +26,7 @@ export type LinesStateVariables = BaseVariables &
   SegmentVariables;
 
 export const useLinesStateVariables = (
-  props: ChartProps<LineConfig> & { aspectRatio: number }
+  props: ChartProps<LineConfig>
 ): LinesStateVariables => {
   const { chartConfig, observations, dimensionsByIri, measuresByIri } = props;
   const { fields } = chartConfig;
@@ -66,7 +66,7 @@ export const useLinesStateVariables = (
 // TODO: same as Area chart, useTemporalXData, except for plottable data deps.
 // Check if getX shouldn't be included here.
 export const useLinesStateData = (
-  chartProps: ChartProps<LineConfig> & { aspectRatio: number },
+  chartProps: ChartProps<LineConfig>,
   variables: LinesStateVariables
 ): ChartStateData => {
   const { chartConfig, observations } = chartProps;

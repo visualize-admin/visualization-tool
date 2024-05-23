@@ -1,22 +1,32 @@
-import { Trans, t } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
 import { LoadingButton } from "@mui/lab";
 import {
+  Alert,
+  AlertProps,
   Box,
   Button,
   Checkbox,
   CircularProgress,
+  Collapse,
   Dialog,
   DialogActions,
+  dialogActionsClasses,
+  dialogClasses,
   DialogContent,
+  dialogContentClasses,
   DialogProps,
   DialogTitle,
+  dialogTitleClasses,
+  Grow,
   IconButton,
   IconButtonProps,
   InputAdornment,
+  Link,
   ListItemText,
   ListSubheader,
   MenuItem,
   OutlinedInput,
+  paperClasses,
   Select,
   SelectChangeEvent,
   Stack,
@@ -29,10 +39,6 @@ import {
   Tooltip,
   Typography,
   TypographyProps,
-  dialogActionsClasses,
-  dialogClasses,
-  dialogContentClasses,
-  dialogTitleClasses,
   useEventCallback,
 } from "@mui/material";
 import { Theme } from "@mui/material/styles";
@@ -40,9 +46,10 @@ import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 import groupBy from "lodash/groupBy";
 import keyBy from "lodash/keyBy";
+import maxBy from "lodash/maxBy";
 import uniq from "lodash/uniq";
 import uniqBy from "lodash/uniqBy";
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { useClient } from "urql";
 
 import { DatasetResults, PartialSearchCube } from "@/browser/dataset-browse";
@@ -50,20 +57,20 @@ import { getPossibleChartTypes } from "@/charts";
 import { Error as ErrorHint, Loading } from "@/components/hint";
 import Tag from "@/components/tag";
 import {
+  addDatasetInConfig,
   ConfiguratorStateConfiguringChart,
   DataSource,
-  addDatasetInConfig,
   isConfiguring,
   useConfiguratorState,
 } from "@/configurator";
 import { BetaTag } from "@/configurator/components/beta-tag";
 import {
   Dimension,
-  Measure,
-  Termset,
   isJoinByComponent,
   isStandardErrorDimension,
   isTemporalDimensionWithTimeUnit,
+  Measure,
+  Termset,
 } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import {
@@ -78,15 +85,18 @@ import {
   DataCubeComponentsQueryVariables,
   SearchCubeFilterType,
   SearchCubeResultOrder,
-  useDataCubeComponentTermsetsQuery,
   useDataCubeComponentsQuery,
+  useDataCubeComponentTermsetsQuery,
   useSearchCubesQuery,
 } from "@/graphql/query-hooks";
 import SvgIcFilter from "@/icons/components/IcFilter";
+import SvgIcInfo from "@/icons/components/IcInfo";
 import SvgIcRemove from "@/icons/components/IcRemove";
 import SvgIcSearch from "@/icons/components/IcSearch";
 import { useLocale } from "@/locales/use-locale";
+import { useEventEmitter } from "@/utils/eventEmitter";
 import { exhaustiveCheck } from "@/utils/exhaustiveCheck";
+import useLocalState from "@/utils/use-local-state";
 
 const DialogCloseButton = (props: IconButtonProps) => {
   return (
@@ -127,8 +137,34 @@ const useStyles = makeStyles((theme: Theme) => ({
       minHeight: "calc(100vh - calc(30px * 2))",
     },
   },
+  dialogCloseArea: {
+    position: "absolute",
+    top: "1rem",
+    right: "1rem",
+    display: "flex",
+    gap: "0.5rem",
+    alignItems: "center",
+  },
   newAnnotation: {
     color: theme.palette.success.main,
+  },
+  listTag: {
+    whiteSpace: "break-spaces",
+  },
+  listItemSecondary: {
+    display: "flex",
+    flexWrap: "wrap",
+    alignItems: "center",
+    gap: 1,
+    paddingTop: theme.spacing(1),
+  },
+  previewSelect: {
+    width: 302,
+  },
+  previewSelectPaper: {
+    [`& .${paperClasses.root}`]: {
+      marginTop: "0.25rem",
+    },
   },
 }));
 
@@ -143,6 +179,51 @@ const NewAnnotation = (props: TypographyProps) => {
     >
       <Trans id="dataset.search.preview.new-dimension">New</Trans>
     </Typography>
+  );
+};
+
+const useCautionAlert = () => {
+  const [isOpen, setIsOpen] = useLocalState("add-dataset-caution-alert", true);
+
+  return {
+    isOpen,
+    open: useCallback(() => setIsOpen(true), [setIsOpen]),
+    close: useCallback(() => setIsOpen(false), [setIsOpen]),
+  };
+};
+
+export const CautionAlert = ({
+  onConfirm,
+  ...props
+}: { onConfirm: () => void } & AlertProps) => {
+  return (
+    <Alert
+      {...props}
+      icon={<SvgIcInfo />}
+      severity="info"
+      sx={{ ...props.sx, typography: "body3", color: "text.primary" }}
+    >
+      <Trans id="dataset.search.caution.body">
+        The linking of different datasets carries risks such as data
+        inconsistencies, scalability issues, and unexpected correlations. Be
+        sure to use to merge datasets only when you are confident that data
+        should be merged together.
+      </Trans>
+      <Box sx={{ mt: 1 }}>
+        <Link
+          color="primary"
+          onClick={(ev) => {
+            ev.preventDefault();
+            onConfirm();
+          }}
+          href="#"
+        >
+          <Trans id="dataset.search.caution.acknowledge">
+            Understood, I&apos;ll proceed cautiously.
+          </Trans>
+        </Link>
+      </Box>
+    </Alert>
   );
 };
 
@@ -249,6 +330,8 @@ export const PreviewDataTable = ({
   const locale = useLocale();
   const isQueryPaused = !otherCubeComponents || !currentComponents;
 
+  const classes = useStyles();
+
   const cubeFilters = [
     {
       iri: currentComponents!.dimensions?.[0].cubeIri,
@@ -318,12 +401,32 @@ export const PreviewDataTable = ({
       },
     ]);
 
-    return [...joinedColumns, ...currentMeasures, ...otherMeasures];
+    const {
+      join: joinedJoinDimensions = [],
+      other: joinedOtherDimensions = [],
+      current: joinedCurrentDimensions = [],
+    } = groupBy(joinedColumns, (d) => {
+      const isJoinBy = isJoinByComponent(d);
+      return isJoinBy
+        ? "join"
+        : d.cubeIri === otherCube.iri
+          ? "other"
+          : "current";
+    });
+
+    return [
+      ...joinedJoinDimensions,
+      ...joinedOtherDimensions,
+      ...otherMeasures,
+      ...joinedCurrentDimensions,
+      ...currentMeasures,
+    ];
   }, [
     currentComponents?.dimensions,
     currentComponents?.measures,
     inferredJoinBy.left,
     inferredJoinBy.right,
+    otherCube.iri,
     otherCubeComponents?.dimensions,
     otherCubeComponents?.measures,
   ]);
@@ -412,6 +515,18 @@ export const PreviewDataTable = ({
     });
   };
 
+  const previewObservations = useMemo(() => {
+    const data = observations.data?.dataCubesObservations.data ?? [];
+    const bestObservation = maxBy(data, (obs) => {
+      return allColumns.reduce((acc, dim) => acc + (obs[dim.iri] ? 1 : 0), 0);
+    });
+
+    const amount = 8;
+    const index = bestObservation ? data.indexOf(bestObservation) : 0;
+    const clampedIndex = Math.max(0, Math.min(index, data.length - amount));
+    return data.slice(clampedIndex, clampedIndex + amount);
+  }, [allColumns, observations.data?.dataCubesObservations.data]);
+
   return (
     <>
       <DialogContent
@@ -423,11 +538,13 @@ export const PreviewDataTable = ({
         }}
       >
         <Typography variant="h2">
-          <Trans id="dataset.search.preview.title">Preview data table</Trans>
+          <Trans id="dataset.search.preview.title">
+            Review available dimensions
+          </Trans>
         </Typography>
         <Typography variant="body1">
           <Trans id="dataset.search.preview.description">
-            Review data preview of new available dimensions and continue to edit
+            Review all available dimensions before continuing to edit your
             visualization.
           </Trans>
         </Typography>
@@ -453,7 +570,14 @@ export const PreviewDataTable = ({
             <Trans id="dataset.search.preview.dimensions">Dimensions</Trans>
           </Typography>
           <Select
-            sx={{ minWidth: 300 }}
+            multiple
+            className={classes.previewSelect}
+            MenuProps={{
+              className: classes.previewSelectPaper,
+              transformOrigin: { vertical: "top", horizontal: "left" },
+              anchorOrigin: { vertical: "bottom", horizontal: "left" },
+              anchorReference: "anchorEl",
+            }}
             value={Object.keys(selectedColumnsByIri)}
             renderValue={() => {
               return (
@@ -474,10 +598,19 @@ export const PreviewDataTable = ({
                     display: "flex",
                     gap: "0.5rem",
                     justifyContent: "space-between",
+                    "&:not(&:first-child)": {
+                      marginTop: "0.5rem",
+                    },
                   }}
                 >
                   {group.groupName}
-                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      "& button": { whiteSpace: "nowrap" },
+                    }}
+                  >
                     <Button
                       size="small"
                       variant="text"
@@ -566,26 +699,24 @@ export const PreviewDataTable = ({
                               </>
                             ) : null}
                             <br />
-                            {column.label}
+                            <Typography variant="h5">{column.label}</Typography>
                           </TableCell>
                         ) : null
                       )}
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {observations.data.dataCubesObservations.data
-                      .slice(0, 8)
-                      .map((observation, index) => (
-                        <TableRow key={index}>
-                          {allColumns.map((column) =>
-                            !!selectedColumnsByIri[columnId(column)] ? (
-                              <TableCell key={column.iri}>
-                                {observation[column.iri]}
-                              </TableCell>
-                            ) : null
-                          )}
-                        </TableRow>
-                      ))}
+                    {previewObservations.map((observation, index) => (
+                      <TableRow key={index}>
+                        {allColumns.map((column) =>
+                          !!selectedColumnsByIri[columnId(column)] ? (
+                            <TableCell key={column.iri}>
+                              {observation[column.iri]}
+                            </TableCell>
+                          ) : null
+                        )}
+                      </TableRow>
+                    ))}
                   </TableBody>
                 </Table>
               </Box>
@@ -827,6 +958,25 @@ export const DatasetDialog = ({
     setOtherCube(otherCube);
   };
 
+  const { isOpen, open, close } = useCautionAlert();
+
+  const ee = useEventEmitter();
+  const handleConfirm = useEventCallback(async () => {
+    if (!currentComponents || !otherCube || !inferredJoinBy) {
+      return null;
+    }
+
+    await addDataset({
+      joinBy: inferredJoinBy,
+      otherCube: otherCube,
+    });
+    handleClose({}, "escapeKeyDown");
+
+    setTimeout(() => {
+      ee.emit("dataset-added", { datasetIri: otherCube.iri });
+    }, 100);
+  });
+
   return (
     <Dialog
       {...props}
@@ -835,7 +985,17 @@ export const DatasetDialog = ({
       fullWidth
       className={clsx(classes.dialog, props.className)}
     >
-      <DialogCloseButton onClick={(ev) => handleClose(ev, "escapeKeyDown")} />
+      <Box className={classes.dialogCloseArea}>
+        <Grow in={!isOpen}>
+          <IconButton color="primary" onClick={() => open()}>
+            <SvgIcInfo />
+          </IconButton>
+        </Grow>
+        <DialogCloseButton
+          onClick={(ev) => handleClose(ev, "escapeKeyDown")}
+          sx={{ position: "static" }}
+        />
+      </Box>
       {otherCube ? null : (
         <>
           <DialogTitle sx={{ typography: "h2" }}>
@@ -850,6 +1010,10 @@ export const DatasetDialog = ({
             />
           </DialogTitle>
           <DialogContent>
+            <Collapse in={isOpen}>
+              <CautionAlert sx={{ mb: 4 }} onConfirm={() => close()} />
+            </Collapse>
+
             <Typography variant="body1" mb="2rem">
               <Trans id="chart.datasets.add-dataset-dialog.description">
                 You can only combine datasets that share dimensions with the
@@ -946,26 +1110,31 @@ export const DatasetDialog = ({
                     />
                     <ListItemText
                       primary={<Tag type="dimension">{sd.label}</Tag>}
+                      classes={{ secondary: classes.listItemSecondary }}
                       secondary={
                         sd.type === "temporal" ? (
                           <Tag type="termset">{sd.timeUnit}</Tag>
                         ) : (
-                          <Box
-                            sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}
-                          >
+                          <>
                             <Typography
                               variant="caption"
                               color="grey.600"
                               mr={2}
+                              gutterBottom
+                              component="div"
                             >
                               <Trans id="dataset-result.dimension-termset-contains" />
                             </Typography>
                             {sd.termsets.map((t) => (
-                              <Tag key={t.iri} type="termset">
+                              <Tag
+                                key={t.iri}
+                                type="termset"
+                                className={classes.listTag}
+                              >
                                 {t.label}
                               </Tag>
                             ))}
-                          </Box>
+                          </>
                         )
                       }
                     />
@@ -1031,17 +1200,7 @@ export const DatasetDialog = ({
           otherCubeComponents={otherCubeComponents}
           fetchingComponents={!!otherCubeComponentsQuery?.fetching}
           addingDataset={addingDataset}
-          onConfirm={async () => {
-            if (!currentComponents || !otherCube || !inferredJoinBy) {
-              return null;
-            }
-
-            await addDataset({
-              joinBy: inferredJoinBy,
-              otherCube: otherCube,
-            });
-            handleClose({}, "escapeKeyDown");
-          }}
+          onConfirm={handleConfirm}
           onClickBack={() => setOtherCube(undefined)}
           searchDimensionsSelected={selectedSearchDimensions ?? []}
         />

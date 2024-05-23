@@ -36,7 +36,7 @@ import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import { getCenteredTooltipPlacement } from "@/charts/shared/interaction/tooltip-box";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
-import { useWidth } from "@/charts/shared/use-width";
+import { useSize } from "@/charts/shared/use-width";
 import { ColumnConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
 import { formatNumberWithUnit, useFormatNumber } from "@/formatters";
@@ -65,11 +65,11 @@ export type GroupedColumnsState = CommonChartState &
   };
 
 const useColumnsGroupedState = (
-  chartProps: ChartProps<ColumnConfig> & { aspectRatio: number },
+  chartProps: ChartProps<ColumnConfig>,
   variables: ColumnsGroupedStateVariables,
   data: ChartStateData
 ): GroupedColumnsState => {
-  const { aspectRatio, chartConfig } = chartProps;
+  const { chartConfig } = chartProps;
   const {
     xDimension,
     getX,
@@ -98,7 +98,7 @@ const useColumnsGroupedState = (
   } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
 
-  const width = useWidth();
+  const { width, height } = useSize();
   const formatNumber = useFormatNumber({ decimals: "auto" });
   const formatters = useChartFormatters(chartProps);
 
@@ -331,7 +331,7 @@ const useColumnsGroupedState = (
   const { left, bottom } = useChartPadding({
     yScale: paddingYScale,
     width,
-    aspectRatio,
+    height,
     interactiveFiltersConfig,
     animationPresent: !!fields.animation,
     formatNumber,
@@ -343,7 +343,7 @@ const useColumnsGroupedState = (
     bottom,
     left,
   };
-  const bounds = getChartBounds(width, margins, aspectRatio);
+  const bounds = getChartBounds(width, margins, height);
   const { chartWidth, chartHeight } = bounds;
 
   // Adjust of scales based on chart dimensions
@@ -434,9 +434,7 @@ const useColumnsGroupedState = (
 };
 
 const GroupedColumnChartProvider = (
-  props: React.PropsWithChildren<
-    ChartProps<ColumnConfig> & { aspectRatio: number }
-  >
+  props: React.PropsWithChildren<ChartProps<ColumnConfig>>
 ) => {
   const { children, ...chartProps } = props;
   const variables = useColumnsGroupedStateVariables(chartProps);
@@ -449,9 +447,7 @@ const GroupedColumnChartProvider = (
 };
 
 export const GroupedColumnChart = (
-  props: React.PropsWithChildren<
-    ChartProps<ColumnConfig> & { aspectRatio: number }
-  >
+  props: React.PropsWithChildren<ChartProps<ColumnConfig>>
 ) => {
   return (
     <InteractionProvider>

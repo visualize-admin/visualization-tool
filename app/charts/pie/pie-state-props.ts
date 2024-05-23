@@ -21,7 +21,7 @@ export type PieStateVariables = BaseVariables &
   RenderingVariables;
 
 export const usePieStateVariables = (
-  props: ChartProps<PieConfig> & { aspectRatio: number }
+  props: ChartProps<PieConfig>
 ): PieStateVariables => {
   const {
     chartConfig,
@@ -59,7 +59,7 @@ export const usePieStateVariables = (
 };
 
 export const usePieStateData = (
-  chartProps: ChartProps<PieConfig> & { aspectRatio: number },
+  chartProps: ChartProps<PieConfig>,
   variables: PieStateVariables
 ): ChartStateData => {
   const { chartConfig, observations } = chartProps;

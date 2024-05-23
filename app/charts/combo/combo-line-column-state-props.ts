@@ -39,7 +39,7 @@ export type ComboLineColumnStateVariables = BaseVariables &
   RenderingVariables;
 
 export const useComboLineColumnStateVariables = (
-  props: ChartProps<ComboLineColumnConfig> & { aspectRatio: number }
+  props: ChartProps<ComboLineColumnConfig>
 ): ComboLineColumnStateVariables => {
   const {
     chartConfig,
@@ -127,7 +127,7 @@ export const useComboLineColumnStateVariables = (
 };
 
 export const useComboLineColumnStateData = (
-  chartProps: ChartProps<ComboLineColumnConfig> & { aspectRatio: number },
+  chartProps: ChartProps<ComboLineColumnConfig>,
   variables: ComboLineColumnStateVariables
 ): ChartStateData => {
   const { chartConfig, observations } = chartProps;

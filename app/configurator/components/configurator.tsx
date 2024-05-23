@@ -42,7 +42,10 @@ import { ChartConfiguratorTable } from "@/configurator/table/table-chart-configu
 import SvgIcChevronLeft from "@/icons/components/IcChevronLeft";
 import { useLocale } from "@/locales/use-locale";
 import { useDataSourceStore } from "@/stores/data-source";
-import { InteractiveFiltersProvider } from "@/stores/interactive-filters";
+import {
+  InteractiveFiltersChartProvider,
+  InteractiveFiltersProvider,
+} from "@/stores/interactive-filters";
 import { getRouterChartId } from "@/utils/router/helpers";
 import useEvent from "@/utils/use-event";
 
@@ -166,7 +169,7 @@ const ConfigureChartStep = () => {
   }
 
   return (
-    <InteractiveFiltersProvider>
+    <InteractiveFiltersChartProvider chartConfigKey={chartConfig.key}>
       <PanelLayout type="LM">
         <PanelBodyWrapper
           type="L"
@@ -207,7 +210,7 @@ const ConfigureChartStep = () => {
           </div>
         </ConfiguratorDrawer>
       </PanelLayout>
-    </InteractiveFiltersProvider>
+    </InteractiveFiltersChartProvider>
   );
 };
 
@@ -438,20 +441,22 @@ export const Configurator = () => {
   const { pathname } = useRouter();
   // Local state, the dataset preview doesn't need to be persistent.
   // FIXME: for a11y, "updateDataSetPreviewIri" should also move focus to "Weiter" button (?)
-  const [{ state }] = useConfiguratorState();
+  const [configuratorState] = useConfiguratorState();
   const isLoadingConfigureChartStep =
-    state === "INITIAL" && pathname === "/create/[chartId]";
+    configuratorState.state === "INITIAL" && pathname === "/create/[chartId]";
 
   return isLoadingConfigureChartStep ? (
     <LoadingConfigureChartStep />
-  ) : state === "SELECTING_DATASET" ? (
+  ) : configuratorState.state === "SELECTING_DATASET" ? (
     <SelectDatasetStep />
-  ) : (
-    <>
-      {state === "CONFIGURING_CHART" && <ConfigureChartStep />}
-      {state === "LAYOUTING" && <LayoutingStep />}
-      {state === "PUBLISHING" && <PublishStep />}
-    </>
+  ) : configuratorState.state === "INITIAL" ? null : (
+    <InteractiveFiltersProvider chartConfigs={configuratorState.chartConfigs}>
+      {configuratorState.state === "CONFIGURING_CHART" && (
+        <ConfigureChartStep />
+      )}
+      {configuratorState.state === "LAYOUTING" && <LayoutingStep />}
+      {configuratorState.state === "PUBLISHING" && <PublishStep />}
+    </InteractiveFiltersProvider>
   );
 };
 

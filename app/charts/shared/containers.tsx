@@ -1,41 +1,71 @@
 import { Box, BoxProps } from "@mui/material";
+import { makeStyles } from "@mui/styles";
+import clsx from "clsx";
 import { select } from "d3-selection";
-import React, { ReactNode, useEffect, useRef } from "react";
+import { ReactNode, useEffect, useRef } from "react";
 
 import { useChartState } from "@/charts/shared/chart-state";
 import { CalculationToggle } from "@/charts/shared/interactive-filter-calculation-toggle";
+import { useObserverRef } from "@/charts/shared/use-width";
+import { chartPanelLayoutGridClasses } from "@/components/chart-panel-layout-grid";
+import { ChartConfig } from "@/configurator";
 import { useTransitionStore } from "@/stores/transition";
 
-export const ChartContainer = ({ children }: { children: ReactNode }) => {
-  const ref = useRef<HTMLDivElement>(null);
-  const enableTransition = useTransitionStore((state) => state.enable);
-  const transitionDuration = useTransitionStore((state) => state.duration);
-  const {
-    bounds: { width, height },
-  } = useChartState();
+const useStyles = makeStyles<
+  {},
+  {},
+  ChartConfig["chartType"] | "chartContainer"
+>(() => ({
+  chartContainer: {
+    position: "relative",
+    width: "100%",
+    overflow: "hidden",
+    flexGrow: 1,
 
-  useEffect(() => {
-    if (ref.current) {
-      // Initialize height on mount
-      if (!ref.current.style.height) {
-        ref.current.style.height = `${height}px`;
-      }
+    // TODO The aspect ratio is currently set for the whole chart instead of
+    // affecting only the plot area. Only the plot area should be affected
+    // otherwise long y-axis ticks squash vertically a chart.
+    // To remedy, the aspectRatio should be provided via context so that
+    // the chart state function can get it and apply it to the plot area.
+    // The ReactGridChartPreview component should also disable this behavior.
+    aspectRatio: "5 / 2",
+    minHeight: 300,
 
-      const sel = select(ref.current);
+    [`.${chartPanelLayoutGridClasses.root} &`]: {
+      aspectRatio: "auto",
+    },
+  },
 
-      if (enableTransition) {
-        sel
-          .transition()
-          .duration(transitionDuration)
-          .style("height", `${height}px`);
-      } else {
-        sel.style("height", `${height}px`);
-      }
-    }
-  }, [height, enableTransition, transitionDuration]);
+  // Chart type specific styles, if we need for example to set a specific aspect-ratio
+  // for a specific chart type
+  area: {},
+  column: {},
+  comboLineColumn: {},
+  comboLineDual: {},
+  comboLineSingle: {},
+  line: {},
+  map: {},
+  pie: {},
+  scatterplot: {},
+  table: {},
+}));
+
+export const ChartContainer = ({
+  children,
+  type,
+}: {
+  children: ReactNode;
+  type: ChartConfig["chartType"];
+}) => {
+  const ref = useObserverRef();
+  const classes = useStyles();
 
   return (
-    <div ref={ref} aria-hidden="true" style={{ position: "relative", width }}>
+    <div
+      ref={ref}
+      aria-hidden="true"
+      className={clsx(classes.chartContainer, classes[type])}
+    >
       {children}
     </div>
   );

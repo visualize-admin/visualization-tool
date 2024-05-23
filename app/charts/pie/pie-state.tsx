@@ -19,7 +19,7 @@ import {
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
-import { useWidth } from "@/charts/shared/use-width";
+import { useSize } from "@/charts/shared/use-width";
 import { PieConfig } from "@/configurator";
 import { Dimension, Observation } from "@/domain/data";
 import { formatNumberWithUnit, useFormatNumber } from "@/formatters";
@@ -41,11 +41,11 @@ export type PieState = CommonChartState &
   };
 
 const usePieState = (
-  chartProps: ChartProps<PieConfig> & { aspectRatio: number },
+  chartProps: ChartProps<PieConfig>,
   variables: PieStateVariables,
   data: ChartStateData
 ): PieState => {
-  const { chartConfig, aspectRatio } = chartProps;
+  const { chartConfig } = chartProps;
   const {
     yMeasure,
     getY,
@@ -60,7 +60,7 @@ const usePieState = (
   const { chartData, segmentData, allData } = data;
   const { fields } = chartConfig;
 
-  const width = useWidth();
+  const { width, height } = useSize();
   const formatNumber = useFormatNumber();
   const formatters = useChartFormatters(chartProps);
 
@@ -147,7 +147,7 @@ const usePieState = (
     bottom: 40,
     left: 40,
   };
-  const bounds = getChartBounds(width, margins, aspectRatio);
+  const bounds = getChartBounds(width, margins, height);
   const { chartWidth, chartHeight } = bounds;
 
   // Pie values
@@ -262,9 +262,7 @@ const usePieState = (
 };
 
 const PieChartProvider = (
-  props: React.PropsWithChildren<
-    ChartProps<PieConfig> & { aspectRatio: number }
-  >
+  props: React.PropsWithChildren<ChartProps<PieConfig>>
 ) => {
   const { children, ...chartProps } = props;
   const variables = usePieStateVariables(chartProps);
@@ -277,9 +275,7 @@ const PieChartProvider = (
 };
 
 export const PieChart = (
-  props: React.PropsWithChildren<
-    ChartProps<PieConfig> & { aspectRatio: number }
-  >
+  props: React.PropsWithChildren<ChartProps<PieConfig>>
 ) => {
   return (
     <InteractionProvider>

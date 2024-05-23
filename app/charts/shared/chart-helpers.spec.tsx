@@ -25,7 +25,7 @@ jest.mock("../../rdf/extended-cube", () => ({
 }));
 
 jest.mock("@/stores/interactive-filters", () => ({
-  useInteractiveFilters: jest.fn(() => ({
+  useChartInteractiveFilters: jest.fn(() => ({
     A_1: { type: "single", value: "A_1_1" },
     A_2: { type: "single", value: "A_2_1" },
     B_1: { type: "single", value: "B_1_1" },

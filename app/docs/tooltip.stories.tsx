@@ -12,6 +12,7 @@ import {
   TooltipSingle,
 } from "@/charts/shared/interaction/tooltip-content";
 import Flex from "@/components/flex";
+import { InfoIconTooltip as InfoIconTooltipComponent } from "@/components/info-icon-tooltip";
 import {
   dimensions,
   fields,
@@ -19,7 +20,7 @@ import {
   measures,
   observations,
 } from "@/docs/fixtures";
-import { InteractiveFiltersProvider } from "@/stores/interactive-filters";
+import { InteractiveFiltersChartProvider } from "@/stores/interactive-filters";
 import { CHART_CONFIG_VERSION } from "@/utils/chart-config/versioning";
 
 import { ReactSpecimen } from "./catalog";
@@ -59,7 +60,7 @@ const TooltipContent = ({ children }: { children: ReactNode }) => (
 
 const TooltipBoxStory = () => (
   <ReactSpecimen>
-    <InteractiveFiltersProvider>
+    <InteractiveFiltersChartProvider chartConfigKey="column-chart">
       <ColumnChart
         observations={observations}
         measures={measures}
@@ -104,7 +105,6 @@ const TooltipBoxStory = () => (
           },
           activeField: undefined,
         }}
-        aspectRatio={0.4}
       >
         <Flex>
           <div style={{ width: 200, height: 150, position: "relative" }}>
@@ -212,15 +212,20 @@ const TooltipBoxStory = () => (
           </div>
         </Flex>
       </ColumnChart>
-    </InteractiveFiltersProvider>
+    </InteractiveFiltersChartProvider>
   </ReactSpecimen>
 );
 
-export { TooltipBoxStory as TooltipBox };
+export {
+  RulerStory as Ruler,
+  TooltipBoxStory as TooltipBox,
+  TooltipContentStory as TooltipContent,
+  TooltipContentStory2 as TooltipContent2,
+};
 
 const TooltipContentStory = {
   render: () => (
-    <InteractiveFiltersProvider>
+    <InteractiveFiltersChartProvider chartConfigKey="column-chart">
       <ColumnChart
         observations={observations}
         measures={measures}
@@ -265,7 +270,6 @@ const TooltipContentStory = {
           },
           activeField: undefined,
         }}
-        aspectRatio={0.4}
       >
         <div style={{ width: 200, height: 150, position: "relative" }}>
           <Dot />
@@ -283,15 +287,13 @@ const TooltipContentStory = {
           </TooltipBox>
         </div>
       </ColumnChart>
-    </InteractiveFiltersProvider>
+    </InteractiveFiltersChartProvider>
   ),
 };
 
-export { TooltipContentStory as TooltipContent };
-
 export const TooltipContentStory2 = {
   render: () => (
-    <InteractiveFiltersProvider>
+    <InteractiveFiltersChartProvider chartConfigKey="column-chart">
       <ColumnChart
         observations={observations}
         measures={measures}
@@ -336,7 +338,6 @@ export const TooltipContentStory2 = {
           },
           activeField: undefined,
         }}
-        aspectRatio={0.4}
       >
         <div style={{ width: 200, height: 150, position: "relative" }}>
           <Dot />
@@ -357,11 +358,9 @@ export const TooltipContentStory2 = {
           </TooltipBox>
         </div>
       </ColumnChart>
-    </InteractiveFiltersProvider>
+    </InteractiveFiltersChartProvider>
   ),
 };
-
-export { TooltipContentStory2 as TooltipContent2 };
 
 const RulerStory = {
   render: () => {
@@ -405,4 +404,6 @@ const RulerStory = {
   },
 };
 
-export { RulerStory as Ruler };
+export const InfoIconTooltip = () => {
+  return <InfoIconTooltipComponent title="Additional information" />;
+};

@@ -23,7 +23,10 @@ import { LegendColor } from "@/charts/shared/legend-color";
 import { InteractionVoronoi } from "@/charts/shared/overlay-voronoi";
 import { ConfiguratorStateProvider } from "@/configurator/configurator-state";
 import { Dimension, Measure } from "@/domain/data";
-import { InteractiveFiltersProvider } from "@/stores/interactive-filters";
+import {
+  InteractiveFiltersChartProvider,
+  InteractiveFiltersProvider,
+} from "@/stores/interactive-filters";
 import { CONFIGURATOR_STATE_VERSION } from "@/utils/chart-config/versioning";
 
 import {
@@ -67,27 +70,28 @@ const ColumnsStory = {
         activeChartKey: "scatterplot",
       }}
     >
-      <InteractiveFiltersProvider>
-        <ColumnChart
-          observations={columnObservations}
-          measures={columnMeasures}
-          measuresByIri={keyBy(columnMeasures, (d: Measure) => d.iri)}
-          dimensions={columnDimensions}
-          dimensionsByIri={keyBy(columnDimensions, (d: Dimension) => d.iri)}
-          chartConfig={chartConfig}
-          aspectRatio={0.4}
-        >
-          <ChartContainer>
-            <ChartSvg>
-              <AxisHeightLinear />
-              <AxisWidthBand />
-              <AxisWidthBandDomain />
-              <Columns />
-              <ErrorWhiskers />
-            </ChartSvg>
-            <Tooltip type="single" />
-          </ChartContainer>
-        </ColumnChart>
+      <InteractiveFiltersProvider chartConfigs={[chartConfig]}>
+        <InteractiveFiltersChartProvider chartConfigKey={chartConfig.key}>
+          <ColumnChart
+            observations={columnObservations}
+            measures={columnMeasures}
+            measuresByIri={keyBy(columnMeasures, (d: Measure) => d.iri)}
+            dimensions={columnDimensions}
+            dimensionsByIri={keyBy(columnDimensions, (d: Dimension) => d.iri)}
+            chartConfig={chartConfig}
+          >
+            <ChartContainer type="column">
+              <ChartSvg>
+                <AxisHeightLinear />
+                <AxisWidthBand />
+                <AxisWidthBandDomain />
+                <Columns />
+                <ErrorWhiskers />
+              </ChartSvg>
+              <Tooltip type="single" />
+            </ChartContainer>
+          </ColumnChart>
+        </InteractiveFiltersChartProvider>
       </InteractiveFiltersProvider>
     </ConfiguratorStateProvider>
   ),
@@ -115,35 +119,36 @@ const ScatterplotStory = {
         activeChartKey: "scatterplot",
       }}
     >
-      <InteractiveFiltersProvider>
-        <ScatterplotChart
-          observations={scatterplotObservations}
-          dimensions={scatterplotDimensions}
-          dimensionsByIri={keyBy(scatterplotDimensions, (d) => d.iri)}
-          measures={scatterplotMeasures}
-          measuresByIri={keyBy(scatterplotMeasures, (d) => d.iri)}
-          chartConfig={scatterplotChartConfig}
-          aspectRatio={1}
-        >
-          <ChartContainer>
-            <ChartSvg>
-              <AxisWidthLinear />
-              <AxisHeightLinear />
-              <AxisWidthLinearDomain />
-              <AxisHeightLinearDomain />
-              <Scatterplot />
-              <InteractionVoronoi />
-            </ChartSvg>
-            <Tooltip type="single" />
-          </ChartContainer>
-          {scatterplotFields.segment && (
-            <LegendColor
-              chartConfig={chartConfig}
-              symbol="square"
-              interactive
-            />
-          )}
-        </ScatterplotChart>
+      <InteractiveFiltersProvider chartConfigs={[chartConfig]}>
+        <InteractiveFiltersChartProvider chartConfigKey={chartConfig.key}>
+          <ScatterplotChart
+            observations={scatterplotObservations}
+            dimensions={scatterplotDimensions}
+            dimensionsByIri={keyBy(scatterplotDimensions, (d) => d.iri)}
+            measures={scatterplotMeasures}
+            measuresByIri={keyBy(scatterplotMeasures, (d) => d.iri)}
+            chartConfig={scatterplotChartConfig}
+          >
+            <ChartContainer type="scatterplot">
+              <ChartSvg>
+                <AxisWidthLinear />
+                <AxisHeightLinear />
+                <AxisWidthLinearDomain />
+                <AxisHeightLinearDomain />
+                <Scatterplot />
+                <InteractionVoronoi />
+              </ChartSvg>
+              <Tooltip type="single" />
+            </ChartContainer>
+            {scatterplotFields.segment && (
+              <LegendColor
+                chartConfig={chartConfig}
+                symbol="square"
+                interactive
+              />
+            )}
+          </ScatterplotChart>
+        </InteractiveFiltersChartProvider>
       </InteractiveFiltersProvider>
     </ConfiguratorStateProvider>
   ),

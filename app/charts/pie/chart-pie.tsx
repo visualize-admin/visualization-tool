@@ -33,8 +33,8 @@ export const ChartPie = memo((props: ChartProps<PieConfig>) => {
   }
 
   return (
-    <PieChart aspectRatio={0.4} {...props}>
-      <ChartContainer>
+    <PieChart {...props}>
+      <ChartContainer type="pie">
         <ChartSvg>
           <Pie />
         </ChartSvg>

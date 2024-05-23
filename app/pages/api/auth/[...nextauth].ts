@@ -1,5 +1,6 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 
+import ADFS from "@/auth-providers/adfs";
 import { ensureUserFromSub } from "@/db/user";
 import { KEYCLOAK_ID, KEYCLOAK_ISSUER, KEYCLOAK_SECRET } from "@/domain/env";
 import { truthy } from "@/domain/types";
@@ -8,31 +9,41 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 const providers = [
   KEYCLOAK_ID && KEYCLOAK_SECRET && KEYCLOAK_ISSUER
-    ? {
-        id: "adfs",
-        name: "adfs",
-        type: "oicd",
+    ? ADFS({
+        wellKnown: `${KEYCLOAK_ISSUER}/.well-known/openid-configuration`,
         clientId: KEYCLOAK_ID,
         clientSecret: KEYCLOAK_SECRET,
-        wellKnown: `${KEYCLOAK_ISSUER}/.well-known/openid-configuration`,
-        authorization: {
-          url: `${KEYCLOAK_ISSUER}/adfs/oauth2/authorize`,
-          params: {
-            scope: "openid",
-          },
-        },
+        authorizeUrl: `${KEYCLOAK_ISSUER}/protocol/openid-connect/auth`,
         issuer: KEYCLOAK_ISSUER,
-        token: `${KEYCLOAK_ISSUER}/adfs/oauth2/token`,
-        userInfo: `${KEYCLOAK_ISSUER}/adfs/userinfo`,
-        checks: ["pkce", "state"],
-        profile(profile: any) {
-          return {
-            id: profile.sub,
-          };
-        },
-      }
+        token: `${KEYCLOAK_ISSUER}/protocol/openid-connect/token`,
+        userinfo: `${KEYCLOAK_ISSUER}/protocol/openid-connect/userinfo`,
+      })
     : null,
 ].filter(truthy);
+
+// {
+//   id: "adfs",
+//   name: "adfs",
+//   type: "oidc",
+//   wellKnown: `${KEYCLOAK_ISSUER}/.well-known/openid-configuration`,
+//   clientId: KEYCLOAK_ID,
+//   clientSecret: KEYCLOAK_SECRET,
+//   authorization: {
+//     url: `${KEYCLOAK_ISSUER}/protocol/openid-connect/auth`,
+//     params: {
+//       scope: "openid",
+//     },
+//   },
+//   issuer: KEYCLOAK_ISSUER,
+//   token: `${KEYCLOAK_ISSUER}/protocol/openid-connect/token`,
+//   userinfo: `${KEYCLOAK_ISSUER}/protocol/openid-connect/userinfo`,
+//   profile(profile: any) {
+//     return {
+//       id: profile.sub,
+//       upn: profile.upn,
+//     };
+//   },
+// }
 
 export const nextAuthOptions = {
   providers,

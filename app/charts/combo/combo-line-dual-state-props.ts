@@ -31,7 +31,7 @@ export type ComboLineDualStateVariables = BaseVariables &
   NumericalYComboLineDualVariables;
 
 export const useComboLineDualStateVariables = (
-  props: ChartProps<ComboLineDualConfig> & { aspectRatio: number }
+  props: ChartProps<ComboLineDualConfig>
 ): ComboLineDualStateVariables => {
   const { chartConfig, dimensionsByIri, measuresByIri } = props;
   const { fields } = chartConfig;
@@ -88,7 +88,7 @@ export const useComboLineDualStateVariables = (
 };
 
 export const useComboLineDualStateData = (
-  chartProps: ChartProps<ComboLineDualConfig> & { aspectRatio: number },
+  chartProps: ChartProps<ComboLineDualConfig>,
   variables: ComboLineDualStateVariables
 ): ChartStateData => {
   const { chartConfig, observations } = chartProps;

@@ -47,11 +47,11 @@ export type ComboLineSingleState = CommonChartState &
   };
 
 const useComboLineSingleState = (
-  chartProps: ChartProps<ComboLineSingleConfig> & { aspectRatio: number },
+  chartProps: ChartProps<ComboLineSingleConfig>,
   variables: ComboLineSingleStateVariables,
   data: ChartStateData
 ): ComboLineSingleState => {
-  const { chartConfig, aspectRatio, measuresByIri } = chartProps;
+  const { chartConfig, measuresByIri } = chartProps;
   const { xDimension, getX, getXAsString } = variables;
   const { chartData, scalesData, timeRangeData, paddingData, allData } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
@@ -75,6 +75,7 @@ const useComboLineSingleState = (
   const xKey = fields.x.componentIri;
   const {
     width,
+    height,
     formatNumber,
     timeFormatUnit,
     chartWideData,
@@ -102,12 +103,12 @@ const useComboLineSingleState = (
   const { left, bottom } = useChartPadding({
     yScale: paddingYScale,
     width,
-    aspectRatio,
+    height,
     interactiveFiltersConfig,
     formatNumber,
   });
   const margins = getMargins({ left, bottom });
-  const bounds = getChartBounds(width, margins, aspectRatio);
+  const bounds = getChartBounds(width, margins, height);
   const { chartWidth, chartHeight } = bounds;
   const xScales = [xScale, xScaleTimeRange];
   const yScales = [yScale];
@@ -169,9 +170,7 @@ const useComboLineSingleState = (
 };
 
 const ComboLineSingleChartProvider = (
-  props: React.PropsWithChildren<
-    ChartProps<ComboLineSingleConfig> & { aspectRatio: number }
-  >
+  props: React.PropsWithChildren<ChartProps<ComboLineSingleConfig>>
 ) => {
   const { children, ...chartProps } = props;
   const variables = useComboLineSingleStateVariables(chartProps);
@@ -184,9 +183,7 @@ const ComboLineSingleChartProvider = (
 };
 
 export const ComboLineSingleChart = (
-  props: React.PropsWithChildren<
-    ChartProps<ComboLineSingleConfig> & { aspectRatio: number }
-  >
+  props: React.PropsWithChildren<ChartProps<ComboLineSingleConfig>>
 ) => {
   return (
     <InteractionProvider>

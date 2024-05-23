@@ -1,4 +1,10 @@
-import React, { createContext, ReactNode, useContext, useEffect } from "react";
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useMemo,
+} from "react";
 
 import { useTransitionStore } from "@/stores/transition";
 import { useResizeObserver } from "@/utils/use-resize-observer";
@@ -17,40 +23,64 @@ export type Bounds = {
   margins: Margins;
   chartWidth: number;
   chartHeight: number;
+  aspectRatio: number;
 };
 
-const INITIAL_WIDTH = 1;
-
 export const Observer = ({ children }: { children: ReactNode }) => {
-  const [ref, width] = useResizeObserver<HTMLDivElement>();
+  const [ref, width, height] = useResizeObserver<HTMLDivElement>();
   const prev = useTimedPrevious(width, 500);
   const isResizing = prev !== width;
   const setEnableTransition = useTransitionStore((state) => state.setEnable);
+  useEffect(() => {
+    setEnableTransition(!isResizing);
+  }, [isResizing, setEnableTransition]);
 
-  useEffect(
-    () => setEnableTransition(!isResizing),
-    [isResizing, setEnableTransition]
+  const size = useMemo(
+    () => ({
+      width,
+      height,
+      ref,
+    }),
+    [width, height, ref]
   );
 
   return (
-    <div ref={ref} style={{ display: "flex", minHeight: "100%" }}>
-      <ChartObserverContext.Provider value={width}>
-        {children}
-      </ChartObserverContext.Provider>
-    </div>
+    <ChartObserverContext.Provider value={size}>
+      {children}
+    </ChartObserverContext.Provider>
   );
 };
 
-const ChartObserverContext = createContext(INITIAL_WIDTH);
+const ChartObserverContext = createContext(
+  undefined as
+    | undefined
+    | {
+        width: number;
+        height: number;
+        ref: (node: HTMLDivElement) => void;
+      }
+);
 
-export const useWidth = () => {
+export const useSize = () => {
   const ctx = useContext(ChartObserverContext);
 
   if (ctx === undefined) {
     throw Error(
-      "You need to wrap your component in <ChartObserverContextProvider /> to useWidth()"
+      "You need to wrap your component in <ChartObserverContextProvider /> to useSize()"
     );
   }
 
-  return ctx;
+  return { width: ctx.width, height: ctx.height };
+};
+
+export const useObserverRef = () => {
+  const ctx = useContext(ChartObserverContext);
+
+  if (ctx === undefined) {
+    throw Error(
+      "You need to wrap your component in <ChartObserverContextProvider /> to useObserverRef()"
+    );
+  }
+
+  return ctx.ref;
 };

@@ -11,7 +11,7 @@ import {
   scaleLinear,
 } from "d3-scale";
 import { Selection, select } from "d3-selection";
-import React, { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 import { MapState } from "@/charts/map/map-state";
 import { useChartState } from "@/charts/shared/chart-state";
@@ -19,7 +19,7 @@ import { rgbArrayToHex } from "@/charts/shared/colors";
 import { MapLegendColor } from "@/charts/shared/legend-color";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { useInteraction } from "@/charts/shared/use-interaction";
-import { useWidth } from "@/charts/shared/use-width";
+import { useSize } from "@/charts/shared/use-width";
 import Flex from "@/components/flex";
 import { MapConfig } from "@/configurator";
 import { ColorRamp } from "@/configurator/components/chart-controls/color-ramp";
@@ -35,7 +35,7 @@ const COLOR_RAMP_HEIGHT = 10;
 const MARGIN = { top: 6, right: 4, bottom: 0, left: 4 };
 const AXIS_TICK_ROTATE_ANGLE = 45;
 
-const useLegendWidth = () => Math.min(useWidth(), MAX_WIDTH);
+const useLegendWidth = () => Math.min(useSize().width, MAX_WIDTH);
 
 const makeAxis = (
   g: Selection<SVGGElement, unknown, null, undefined>,

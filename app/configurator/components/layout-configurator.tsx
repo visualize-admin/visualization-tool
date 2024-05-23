@@ -1,8 +1,10 @@
 import { Trans } from "@lingui/macro";
 import { Box } from "@mui/material";
 import capitalize from "lodash/capitalize";
+import omit from "lodash/omit";
 
-import { Layout } from "@/config-types";
+import { generateLayout } from "@/components/react-grid";
+import { ChartConfig, LayoutDashboard } from "@/config-types";
 import { LayoutAnnotator } from "@/configurator/components/annotators";
 import {
   ControlSection,
@@ -53,6 +55,7 @@ const LayoutLayoutConfigurator = () => {
             >
               <LayoutButton type="tall" layout={layout} />
               <LayoutButton type="vertical" layout={layout} />
+              <LayoutButton type="tiles" layout={layout} />
             </Box>
           </ControlSectionContent>
         </ControlSection>
@@ -63,13 +66,44 @@ const LayoutLayoutConfigurator = () => {
 };
 
 type LayoutButtonProps = {
-  type: "vertical" | "tall";
-  layout: Extract<Layout, { type: "dashboard" }>;
+  type: LayoutDashboard["layout"];
+  layout: LayoutDashboard;
+};
+
+const migrateLayout = (
+  layout: LayoutDashboard,
+  newLayoutType: LayoutDashboard["layout"],
+  chartConfigs: ChartConfig[]
+): LayoutDashboard => {
+  if (newLayoutType === "tiles") {
+    const generated = generateLayout({
+      count: chartConfigs.length,
+      layout: "tiles",
+    });
+    return {
+      ...layout,
+      layout: newLayoutType,
+      layouts: {
+        lg: generated.map((l, i) => ({
+          ...l,
+
+          // We must pay attention to correctly change the i value to
+          // chart config key, as it is used to identify the layout
+          i: chartConfigs[i].key,
+        })),
+      },
+    };
+  } else {
+    return {
+      ...omit(layout, "layouts"),
+      layout: newLayoutType,
+    };
+  }
 };
 
 const LayoutButton = (props: LayoutButtonProps) => {
   const { type, layout } = props;
-  const [_, dispatch] = useConfiguratorState(isLayouting);
+  const [config, dispatch] = useConfiguratorState(isLayouting);
 
   return (
     <IconButton
@@ -78,10 +112,7 @@ const LayoutButton = (props: LayoutButtonProps) => {
       onClick={() => {
         dispatch({
           type: "LAYOUT_CHANGED",
-          value: {
-            ...layout,
-            layout: type,
-          },
+          value: migrateLayout(layout, type, config.chartConfigs),
         });
       }}
     />

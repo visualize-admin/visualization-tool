@@ -10,7 +10,10 @@ import {
   tableMeasures,
   tableObservations,
 } from "@/docs/fixtures";
-import { InteractiveFiltersProvider } from "@/stores/interactive-filters";
+import {
+  InteractiveFiltersChartProvider,
+  InteractiveFiltersProvider,
+} from "@/stores/interactive-filters";
 
 const meta: Meta = {
   title: "Charts / Charts / Data Table",
@@ -20,19 +23,21 @@ export default meta;
 const DataTableStory: StoryObj = {
   render: () => {
     return (
-      <InteractiveFiltersProvider>
-        <TableChart
-          observations={tableObservations}
-          dimensions={tableDimensions}
-          dimensionsByIri={keyBy(tableDimensions, (d) => d.iri)}
-          measures={tableMeasures}
-          measuresByIri={keyBy(tableMeasures, (d) => d.iri)}
-          chartConfig={tableConfig}
-        >
-          <ChartContainer>
-            <Table />
-          </ChartContainer>
-        </TableChart>
+      <InteractiveFiltersProvider chartConfigs={[tableConfig]}>
+        <InteractiveFiltersChartProvider chartConfigKey={tableConfig.key}>
+          <TableChart
+            observations={tableObservations}
+            dimensions={tableDimensions}
+            dimensionsByIri={keyBy(tableDimensions, (d) => d.iri)}
+            measures={tableMeasures}
+            measuresByIri={keyBy(tableMeasures, (d) => d.iri)}
+            chartConfig={tableConfig}
+          >
+            <ChartContainer type="table">
+              <Table />
+            </ChartContainer>
+          </TableChart>
+        </InteractiveFiltersChartProvider>
       </InteractiveFiltersProvider>
     );
   },

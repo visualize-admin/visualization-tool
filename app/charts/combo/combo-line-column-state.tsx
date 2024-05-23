@@ -62,17 +62,18 @@ export type ComboLineColumnState = CommonChartState &
   };
 
 const useComboLineColumnState = (
-  chartProps: ChartProps<ComboLineColumnConfig> & { aspectRatio: number },
+  chartProps: ChartProps<ComboLineColumnConfig>,
   variables: ComboLineColumnStateVariables,
   data: ChartStateData
 ): ComboLineColumnState => {
-  const { chartConfig, aspectRatio } = chartProps;
+  const { chartConfig } = chartProps;
   const { getX, getXAsDate } = variables;
   const { chartData, scalesData, timeRangeData, paddingData, allData } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
   const xKey = fields.x.componentIri;
   const {
     width,
+    height,
     formatNumber,
     timeFormatUnit,
     chartWideData,
@@ -129,14 +130,12 @@ const useComboLineColumnState = (
   const { left, bottom } = useChartPadding({
     yScale: paddingLeftYScale,
     width,
-    aspectRatio,
+    height,
     interactiveFiltersConfig,
     formatNumber,
     bandDomain: xDomain,
   });
-  const fakeRightTicks = paddingRightYScale.ticks(
-    getTickNumber(width * aspectRatio)
-  );
+  const fakeRightTicks = paddingRightYScale.ticks(getTickNumber(height));
   const maxRightTickWidth = Math.max(
     ...fakeRightTicks.map(
       (d) =>
@@ -146,7 +145,7 @@ const useComboLineColumnState = (
   );
   const right = Math.max(maxRightTickWidth, 40);
   const margins = getMargins({ left, right, bottom });
-  const bounds = getChartBounds(width, margins, aspectRatio);
+  const bounds = getChartBounds(width, margins, height);
   const { chartWidth, chartHeight } = bounds;
   const xScales = [xScale, xScaleTime, xScaleTimeRange];
   const yScales = [yScale, yScaleLeft, yScaleRight];
@@ -210,9 +209,7 @@ const useComboLineColumnState = (
 };
 
 const ComboLineColumnChartProvider = (
-  props: React.PropsWithChildren<
-    ChartProps<ComboLineColumnConfig> & { aspectRatio: number }
-  >
+  props: React.PropsWithChildren<ChartProps<ComboLineColumnConfig>>
 ) => {
   const { children, ...chartProps } = props;
   const variables = useComboLineColumnStateVariables(chartProps);
@@ -225,9 +222,7 @@ const ComboLineColumnChartProvider = (
 };
 
 export const ComboLineColumnChart = (
-  props: React.PropsWithChildren<
-    ChartProps<ComboLineColumnConfig> & { aspectRatio: number }
-  >
+  props: React.PropsWithChildren<ChartProps<ComboLineColumnConfig>>
 ) => {
   return (
     <InteractionProvider>

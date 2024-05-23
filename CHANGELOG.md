@@ -7,12 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 You can also check the [release page](https://github.com/visualize-admin/visualization-tool/releases)
 
-## Unreleased
+## [4.5.0] - 2024-05-21
+
+- Features
+  - Improvements to add dataset workflow (columns, text, toasts when adding a dataset)
+- Development
+  - Preparation for dashboards
+
+## [4.4.0] - 2024-05-08
 
 - Features
   - Ability to merge two cubes on multiple columns (for example on year and canton)
   - Ability to search via "concepts"
   - Color legend in maps now only displays values that are actually present in the data (except for ordinal components)
+- Fixes
+  - Data source if now added for legacy charts (defaults to PROD)
+  - Charts created with non-cached data source are now correctly migrated to cached one
 - Performance
   - Cube upgrade is done only once at client side, instead of being re-fetched in every server-side query
 

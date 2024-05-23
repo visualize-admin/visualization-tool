@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import { memo } from "react";
 
 import { ChartDataWrapper } from "@/charts/chart-data-wrapper";
 import { AxisHeightLinearDual } from "@/charts/combo/axis-height-linear-dual";
@@ -27,8 +27,8 @@ export const ChartComboLineDual = memo(
     const { interactiveFiltersConfig } = chartConfig;
 
     return (
-      <ComboLineDualChart aspectRatio={0.4} {...props}>
-        <ChartContainer>
+      <ComboLineDualChart {...props}>
+        <ChartContainer type="comboLineDual">
           <ChartSvg>
             <AxisHeightLinearDual orientation="left" />
             <AxisHeightLinearDual orientation="right" /> <AxisTime />

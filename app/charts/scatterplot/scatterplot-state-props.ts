@@ -24,7 +24,7 @@ export type ScatterplotStateVariables = BaseVariables &
   RenderingVariables;
 
 export const useScatterplotStateVariables = (
-  props: ChartProps<ScatterPlotConfig> & { aspectRatio: number }
+  props: ChartProps<ScatterPlotConfig>
 ): ScatterplotStateVariables => {
   const {
     chartConfig,
@@ -66,7 +66,7 @@ export const useScatterplotStateVariables = (
 };
 
 export const useScatterplotStateData = (
-  chartProps: ChartProps<ScatterPlotConfig> & { aspectRatio: number },
+  chartProps: ChartProps<ScatterPlotConfig>,
   variables: ScatterplotStateVariables
 ): ChartStateData => {
   const { chartConfig, observations } = chartProps;
