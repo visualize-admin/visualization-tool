@@ -3,15 +3,17 @@ import { ThemeProvider } from "@mui/material";
 import create, { useStore } from "zustand";
 
 import { ChartPublished } from "@/components/chart-published";
-import { ConfiguratorStatePublishing } from "@/config-types";
+import { ConfiguratorStatePublished } from "@/config-types";
 import { GraphqlProvider } from "@/graphql/GraphqlProvider";
 import { Locale, i18n } from "@/locales/locales";
 import { LocaleProvider } from "@/locales/use-locale";
+import { ConfiguratorStateProvider } from "@/src";
 import * as federalTheme from "@/themes/federal";
+import { migrateConfiguratorState } from "@/utils/chart-config/versioning";
 
 const chartStateStore = create<{
-  state: ConfiguratorStatePublishing | null;
-  setState: (state: ConfiguratorStatePublishing) => void;
+  state: ConfiguratorStatePublished | null;
+  setState: (state: ConfiguratorStatePublished) => void;
 }>((set) => ({
   state: null,
   setState: (state) => set({ state }),
@@ -20,7 +22,13 @@ const chartStateStore = create<{
 if (typeof window !== "undefined") {
   window.addEventListener("message", (event) => {
     if (event.data.state === "CONFIGURING_CHART") {
-      chartStateStore.setState({ state: event.data });
+      chartStateStore.setState({
+        state: {
+          ...migrateConfiguratorState(event.data),
+          // Force state published for <ChartPublished /> to work correctly
+          state: "PUBLISHED",
+        } as ConfiguratorStatePublished,
+      });
     }
   });
 }
@@ -36,7 +44,9 @@ export default function Preview() {
       <I18nProvider i18n={i18n}>
         <GraphqlProvider>
           <ThemeProvider theme={federalTheme.theme}>
-            <ChartPublished configKey="preview" {...state} />
+            <ConfiguratorStateProvider chartId="published" initialState={state}>
+              <ChartPublished configKey="preview" {...state} />
+            </ConfiguratorStateProvider>
           </ThemeProvider>
         </GraphqlProvider>
       </I18nProvider>
