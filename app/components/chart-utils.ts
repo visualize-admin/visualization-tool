@@ -9,7 +9,7 @@ export const useChartStyles = makeStyles<Theme>((theme) => ({
     display: "grid",
     gridTemplateRows: "subgrid",
     /** Should stay in sync with the number of rows contained in a chart */
-    gridRow: "span 6",
+    gridRow: "span 7",
     height: "100%",
     padding: theme.spacing(6),
     backgroundColor: theme.palette.background.paper,

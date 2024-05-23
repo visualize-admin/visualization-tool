@@ -245,49 +245,51 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
         ref={rootRef}
       >
         <ChartErrorBoundary resetKeys={[chartConfig]}>
-          {metadata?.some(
-            (d) => d.publicationStatus === DataCubePublicationStatus.Draft
-          ) && (
-            <Box sx={{ mb: 4 }}>
-              <HintRed iconName="datasetError" iconSize={64}>
-                <Trans id="dataset.publicationStatus.draft.warning">
-                  Careful, this dataset is only a draft.
-                  <br />
-                  <strong>Don&apos;t use for reporting!</strong>
-                </Trans>
-              </HintRed>
-            </Box>
-          )}
-          {metadata?.some((d) => d.expires) && (
-            <Box sx={{ mb: 4 }}>
-              <HintRed iconName="datasetError" iconSize={64}>
-                <Trans id="dataset.publicationStatus.expires.warning">
-                  Careful, the data for this chart has expired.
-                  <br />
-                  <strong>Don&apos;t use for reporting!</strong>
-                </Trans>
-              </HintRed>
-            </Box>
-          )}
-          {!isTrustedDataSource && (
-            <Box sx={{ mb: 4 }}>
-              <HintYellow iconName="hintWarning">
-                <Trans id="data.source.notTrusted">
-                  This chart is not using a trusted data source.
-                </Trans>
-              </HintYellow>
-            </Box>
-          )}
-          {isUsingImputation(chartConfig) && (
-            <Box sx={{ mb: 4 }}>
-              <HintBlue iconName="hintWarning">
-                <Trans id="dataset.hasImputedValues">
-                  Some data in this dataset is missing and has been interpolated
-                  to fill the gaps.
-                </Trans>
-              </HintBlue>
-            </Box>
-          )}
+          <div>
+            {metadata?.some(
+              (d) => d.publicationStatus === DataCubePublicationStatus.Draft
+            ) && (
+              <Box sx={{ mb: 4 }}>
+                <HintRed iconName="datasetError" iconSize={64}>
+                  <Trans id="dataset.publicationStatus.draft.warning">
+                    Careful, this dataset is only a draft.
+                    <br />
+                    <strong>Don&apos;t use for reporting!</strong>
+                  </Trans>
+                </HintRed>
+              </Box>
+            )}
+            {metadata?.some((d) => d.expires) && (
+              <Box sx={{ mb: 4 }}>
+                <HintRed iconName="datasetError" iconSize={64}>
+                  <Trans id="dataset.publicationStatus.expires.warning">
+                    Careful, the data for this chart has expired.
+                    <br />
+                    <strong>Don&apos;t use for reporting!</strong>
+                  </Trans>
+                </HintRed>
+              </Box>
+            )}
+            {!isTrustedDataSource && (
+              <Box sx={{ mb: 4 }}>
+                <HintYellow iconName="hintWarning">
+                  <Trans id="data.source.notTrusted">
+                    This chart is not using a trusted data source.
+                  </Trans>
+                </HintYellow>
+              </Box>
+            )}
+            {isUsingImputation(chartConfig) && (
+              <Box sx={{ mb: 4 }}>
+                <HintBlue iconName="hintWarning">
+                  <Trans id="dataset.hasImputedValues">
+                    Some data in this dataset is missing and has been
+                    interpolated to fill the gaps.
+                  </Trans>
+                </HintBlue>
+              </Box>
+            )}
+          </div>
           <LoadingStateProvider>
             <InteractiveFiltersChartProvider chartConfigKey={chartConfig.key}>
               <Flex
