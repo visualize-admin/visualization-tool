@@ -2,12 +2,15 @@ import { I18nProvider } from "@lingui/react";
 import { ThemeProvider } from "@mui/material";
 import configureCors from "cors";
 import { GetServerSideProps } from "next";
+import { useState } from "react";
 
 import { ChartPublished } from "@/components/chart-published";
 import { GraphqlProvider } from "@/graphql/GraphqlProvider";
 import { Locale, i18n } from "@/locales/locales";
 import { LocaleProvider } from "@/locales/use-locale";
+import { ConfiguratorStateProvider } from "@/src";
 import * as federalTheme from "@/themes/federal";
+import { migrateConfiguratorState } from "@/utils/chart-config/versioning";
 import { runMiddleware } from "@/utils/run-middleware";
 
 const cors = configureCors();
@@ -46,13 +49,21 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
 export default function Preview(props: any) {
   const locale: Locale = "en";
   i18n.activate(locale);
+  const [migrated] = useState(() =>
+    migrateConfiguratorState({ ...props, state: "PUBLISHED" })
+  );
 
   return (
     <LocaleProvider value={locale}>
       <I18nProvider i18n={i18n}>
         <GraphqlProvider>
           <ThemeProvider theme={federalTheme.theme}>
-            <ChartPublished configKey="preview" {...props} />
+            <ConfiguratorStateProvider
+              chartId="published"
+              initialState={migrated}
+            >
+              <ChartPublished configKey="preview" {...props} />
+            </ConfiguratorStateProvider>
           </ThemeProvider>
         </GraphqlProvider>
       </I18nProvider>
