@@ -156,20 +156,31 @@ export const DataSetPreview = ({
           <Typography className={classes.title} component="div" variant="h1">
             {dataCubeMetadata.title}
           </Typography>
-          <Link
-            href={`/create/new?cube=${
-              dataCubeMetadata.iri
-            }&dataSource=${sourceToLabel(dataSource)}`}
-            onClick={(ev) => onClickCreate?.(ev, dataSetIri)}
-            passHref
-            legacyBehavior
-          >
-            <Button className={classes.createChartButton} component="a">
+          {onClickCreate ? (
+            <Button
+              onClick={(ev) => onClickCreate?.(ev, dataSetIri)}
+              className={classes.createChartButton}
+              component="a"
+            >
               <Trans id="browse.dataset.create-visualization">
                 Create visualization from dataset
               </Trans>
             </Button>
-          </Link>
+          ) : (
+            <Link
+              href={`/create/new?cube=${
+                dataCubeMetadata.iri
+              }&dataSource=${sourceToLabel(dataSource)}`}
+              passHref
+              legacyBehavior
+            >
+              <Button className={classes.createChartButton} component="a">
+                <Trans id="browse.dataset.create-visualization">
+                  Create visualization from dataset
+                </Trans>
+              </Button>
+            </Link>
+          )}
         </Flex>
         <Paper className={classes.paper} elevation={5}>
           {dataCubeMetadata.description && (
