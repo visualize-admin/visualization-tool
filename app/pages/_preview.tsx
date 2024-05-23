@@ -1,5 +1,7 @@
 import { Box } from "@mui/material";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
+
+import { migrateConfiguratorState } from "@/utils/chart-config/versioning";
 
 const Page = () => {
   useEffect(() => {
@@ -30,7 +32,7 @@ const Page = () => {
 
 export default Page;
 
-const chartState = {
+const chartState = migrateConfiguratorState({
   state: "CONFIGURING_CHART",
   dataSet:
     "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/2",
@@ -69,4 +71,4 @@ const chartState = {
       },
     },
   },
-};
+});
