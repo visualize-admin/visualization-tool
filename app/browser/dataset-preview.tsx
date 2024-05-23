@@ -3,7 +3,7 @@ import { Box, Button, Paper, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import Head from "next/head";
 import Link from "next/link";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 
 import { DataSetPreviewTable } from "@/browse/datatable";
 import { useFootnotesStyles } from "@/components/chart-footnotes";
@@ -89,9 +89,18 @@ export interface Preview {
 export const DataSetPreview = ({
   dataSetIri,
   dataSource,
+  onClickCreate,
 }: {
   dataSetIri: string;
   dataSource: DataSource;
+  onClickDataset?: (
+    ev: React.MouseEvent<HTMLAnchorElement>,
+    datasetIri: string
+  ) => void;
+  onClickCreate?: (
+    ev: React.MouseEvent<HTMLAnchorElement>,
+    datasetIri: string
+  ) => void;
 }) => {
   const footnotesClasses = useFootnotesStyles({ useMarginTop: false });
   const locale = useLocale();
@@ -151,6 +160,7 @@ export const DataSetPreview = ({
             href={`/create/new?cube=${
               dataCubeMetadata.iri
             }&dataSource=${sourceToLabel(dataSource)}`}
+            onClick={(ev) => onClickCreate?.(ev, dataSetIri)}
             passHref
             legacyBehavior
           >
@@ -211,3 +221,5 @@ export const DataSetPreview = ({
     );
   }
 };
+
+export type DataSetPreviewProps = React.ComponentProps<typeof DataSetPreview>;

@@ -31,12 +31,13 @@ import {
 import { useId } from "@reach/auto-id";
 import flatten from "lodash/flatten";
 import React, {
+  ComponentProps,
   ReactNode,
+  createContext,
   forwardRef,
   useCallback,
   useContext,
   useMemo,
-  createContext,
 } from "react";
 
 import { useBrowseContext } from "@/browser/context";
@@ -628,6 +629,7 @@ export const SearchField = ({
   sx,
   inputRef,
   InputProps,
+  className,
 }: {
   id: string;
   label?: string | ReactNode;
@@ -636,6 +638,7 @@ export const SearchField = ({
   placeholder?: string;
   InputProps?: InputProps;
   inputRef?: React.RefObject<HTMLInputElement>;
+  className?: BoxProps["className"];
   sx?: BoxProps["sx"];
 } & FieldProps) => {
   const { search } = useBrowseContext();
@@ -653,6 +656,7 @@ export const SearchField = ({
   return (
     <Box
       sx={{ color: "grey.700", fontSize: "1rem", position: "relative", ...sx }}
+      className={className}
     >
       {label && id && (
         <label htmlFor={id}>
@@ -692,6 +696,8 @@ export const SearchField = ({
     </Box>
   );
 };
+
+export type SearchFieldProps = ComponentProps<typeof SearchField>;
 
 export const FieldSetLegend = ({
   legendTitle,

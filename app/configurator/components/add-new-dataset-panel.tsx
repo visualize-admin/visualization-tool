@@ -1,4 +1,5 @@
-import { Box, Drawer, Typography } from "@mui/material";
+import { Box, Drawer } from "@mui/material";
+import { useState } from "react";
 import createStore from "zustand";
 
 import { SelectDatasetStep } from "@/browser/select-dataset-step";
@@ -25,16 +26,37 @@ export const useSearchDatasetPanelStore = createStore<{
 
 export const AddNewDatasetPanel = () => {
   const { isOpen, close } = useSearchDatasetPanelStore();
+  const [dataSetIri, setDataSetIri] = useState("");
   return (
     <Drawer anchor="right" open={isOpen} variant="temporary" onClose={close}>
-      <Typography variant="h3" sx={{ mt: 2, px: 6 }}>
-        Choose a new dataset
-      </Typography>
       <DialogCloseButton onClick={() => close()} />
-      <Box width="90vw">
-        <Box sx={{ mt: "-5rem" }}></Box>
+      <Box maxWidth="1400px">
+        <Box></Box>
         <ConfiguratorStateProvider chartId="new" allowDefaultRedirect={false}>
-          <SelectDatasetStep />
+          <SelectDatasetStep
+            variant="drawer"
+            dataset={dataSetIri}
+            onClickBackLink={(ev) => {
+              ev.preventDefault();
+              setDataSetIri("");
+            }}
+            datasetResultsProps={{
+              datasetResultProps: () => ({
+                showDimensions: true,
+                onClickTitle: (ev, datasetIri) => {
+                  ev.preventDefault();
+                  setDataSetIri(datasetIri);
+                },
+              }),
+            }}
+            datasetPreviewProps={{
+              dataSetIri,
+              onClickCreate: (ev, datasetIri) => {
+                ev.preventDefault();
+                alert("Create new dataset" + datasetIri);
+              },
+            }}
+          />
         </ConfiguratorStateProvider>
       </Box>
     </Drawer>

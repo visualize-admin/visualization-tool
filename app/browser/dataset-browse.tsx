@@ -11,6 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import clsx from "clsx";
 import { AnimatePresence, Reorder } from "framer-motion";
 import keyBy from "lodash/keyBy";
 import orderBy from "lodash/orderBy";
@@ -23,7 +24,12 @@ import { stringify } from "qs";
 import React, { ComponentProps, useMemo, useState } from "react";
 
 import Flex, { FlexProps } from "@/components/flex";
-import { Checkbox, MinimalisticSelect, SearchField } from "@/components/form";
+import {
+  Checkbox,
+  MinimalisticSelect,
+  SearchField,
+  SearchFieldProps,
+} from "@/components/form";
 import { Loading, LoadingDataError } from "@/components/hint";
 import {
   accordionPresenceProps,
@@ -59,11 +65,51 @@ import {
 } from "./context";
 import { BrowseFilter } from "./filters";
 
+const useStyles = makeStyles(() => ({
+  navChip: {
+    minWidth: 32,
+    height: 24,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 2,
+  },
+  removeFilterButton: {
+    minWidth: 16,
+    minHeight: 16,
+    height: "auto",
+    alignItems: "center",
+    display: "flex",
+    width: "auto",
+    padding: 0,
+    borderRadius: 2,
+    marginRight: 2,
+    "&:hover": {
+      background: "rgba(0, 0, 0, 0.25)",
+    },
+  },
+  navItem: {
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: 6,
+    borderRadius: 2,
+    width: "100%",
+    display: "flex",
+    transition: "background 0.1s ease",
+  },
+  searchInput: {
+    width: "100%",
+    maxWidth: 350,
+  },
+}));
+
 export const SearchDatasetInput = ({
   browseState,
+  searchFieldProps,
 }: {
   browseState: BrowseState;
+  searchFieldProps?: Partial<SearchFieldProps>;
 }) => {
+  const classes = useStyles();
   const [_, setShowDraftCheckbox] = useState<boolean>(false);
   const { inputRef, search, onSubmitSearch, onReset } = browseState;
 
@@ -106,7 +152,8 @@ export const SearchDatasetInput = ({
           onFocus: () => setShowDraftCheckbox(true),
         }}
         placeholder={placeholderLabel}
-        sx={{ width: "100%", maxWidth: 350 }}
+        {...searchFieldProps}
+        className={clsx(classes.searchInput, searchFieldProps?.className)}
       />
       <Button sx={{ px: 6 }} onClick={handleClick}>
         <Trans id="select.controls.filters.search">Search</Trans>
@@ -256,39 +303,6 @@ const termsetNavItemTheme: NavItemTheme = {
   showAllColor: "grey.600",
   iconColor: "grey.700",
 };
-
-const useStyles = makeStyles(() => ({
-  navChip: {
-    minWidth: 32,
-    height: 24,
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 2,
-  },
-  removeFilterButton: {
-    minWidth: 16,
-    minHeight: 16,
-    height: "auto",
-    alignItems: "center",
-    display: "flex",
-    width: "auto",
-    padding: 0,
-    borderRadius: 2,
-    marginRight: 2,
-    "&:hover": {
-      background: "rgba(0, 0, 0, 0.25)",
-    },
-  },
-  navItem: {
-    justifyContent: "space-between",
-    alignItems: "center",
-    gap: 6,
-    borderRadius: 2,
-    width: "100%",
-    display: "flex",
-    transition: "background 0.1s ease",
-  },
-}));
 
 const NavChip = ({
   children,
@@ -907,6 +921,8 @@ export const DatasetResults = ({
   );
 };
 
+export type DatasetResultsProps = React.ComponentProps<typeof DatasetResults>;
+
 const useResultStyles = makeStyles((theme: Theme) => ({
   root: {
     position: "relative",
@@ -955,6 +971,7 @@ type ResultProps = {
   rowActions?: (r: PartialSearchCube) => React.ReactNode;
   disableTitleLink?: boolean;
   showDimensions?: boolean;
+  onClickTitle?: (ev: React.MouseEvent<HTMLDivElement>, iri: string) => void;
 };
 
 export const DatasetResult = ({
@@ -965,6 +982,7 @@ export const DatasetResult = ({
   rowActions,
   disableTitleLink,
   showDimensions,
+  onClickTitle,
   ...cardProps
 }: ResultProps & CardProps) => {
   const {
@@ -980,7 +998,12 @@ export const DatasetResult = ({
   const isDraft = publicationStatus === DataCubePublicationStatus.Draft;
   const router = useRouter();
 
-  const handleTitleClick = useEvent(() => {
+  const handleTitleClick = useEvent((ev: React.MouseEvent<HTMLDivElement>) => {
+    onClickTitle?.(ev, iri);
+    if (ev.defaultPrevented) {
+      return;
+    }
+
     const browseParams = getBrowseParamsFromQuery(router.query);
     router.push(
       {
