@@ -10,8 +10,8 @@ import { Trans } from "@lingui/macro";
 import { Box } from "@mui/material";
 import Head from "next/head";
 import React, {
-  ReactNode,
   forwardRef,
+  ReactNode,
   useCallback,
   useMemo,
   useState,
@@ -44,10 +44,10 @@ import { BANNER_MARGIN_TOP } from "@/components/presence";
 import {
   ChartConfig,
   DataSource,
-  Layout,
   getChartConfig,
   hasChartConfigs,
   isConfiguring,
+  Layout,
   useConfiguratorState,
 } from "@/configurator";
 import { Description, Title } from "@/configurator/components/annotators";
@@ -78,7 +78,10 @@ export const ChartPreview = (props: ChartPreviewProps) => {
   ) : layout.type === "singleURLs" ? (
     <SingleURLsPreview dataSource={dataSource} layout={layout} />
   ) : (
-    <ChartTablePreviewProvider>
+    // Important to keep the key here to force re-rendering of the chart when
+    // we switch tabs in the configurator, otherwise we end up with the wrong
+    // data in the downstream hooks (useDataCubesMetadataQuery, etc.)
+    <ChartTablePreviewProvider key={state.activeChartKey}>
       <ChartWrapper editing={editing} layoutType={layout.type}>
         <ChartPreviewInner dataSource={dataSource} />
       </ChartWrapper>
