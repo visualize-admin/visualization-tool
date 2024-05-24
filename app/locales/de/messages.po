@@ -57,6 +57,7 @@ msgid "browse.dataset.all"
 msgstr "Alle Datensätze durchsuchen"
 
 #: app/browser/dataset-preview.tsx
+#: app/browser/dataset-preview.tsx
 msgid "browse.dataset.create-visualization"
 msgstr "Visualisierung von diesem Datensatz erstellen"
 
@@ -150,6 +151,18 @@ msgstr "Diese Visualisierung aktualisieren"
 msgid "button.update.warning"
 msgstr "Denken Sie daran, dass sich die Aktualisierung dieser Visualisierung auf alle Stellen auswirkt, an denen sie bereits eingebettet ist!"
 
+#: app/components/chart-selection-tabs.tsx
+msgid "chart-selection-tabs.add-chart-different-dataset.button"
+msgstr "Wählen Sie einen anderen Datensatz"
+
+#: app/components/chart-selection-tabs.tsx
+msgid "chart-selection-tabs.add-chart-different-dataset.caption"
+msgstr "Fügen Sie ein Diagramm basierend auf einem anderen Datensatz hinzu"
+
+#: app/components/chart-selection-tabs.tsx
+msgid "chart-selection-tabs.add-chart-same-dataset.caption"
+msgstr "Fügen Sie ein Diagramm basierend auf demselben Datensatz hinzu"
+
 #: app/configurator/components/dataset-control-section.tsx
 msgid "chart.datasets.add"
 msgstr "Hinzufügen"
@@ -161,6 +174,10 @@ msgstr "Sie können nur Datensätze kombinieren, die Dimensionen mit derselben E
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "chart.datasets.add-dataset-dialog.title"
 msgstr "Wählen Sie einen Datensatz mit gemeinsamen Dimensionen aus"
+
+#: app/browser/select-dataset-step.tsx
+msgid "chart.datasets.add-dataset-drawer.title"
+msgstr "Datensatz auswählen"
 
 #: app/configurator/components/field-i18n.ts
 msgid "chart.map.layers.area"

@@ -57,6 +57,7 @@ msgid "browse.dataset.all"
 msgstr "Browse all datasets"
 
 #: app/browser/dataset-preview.tsx
+#: app/browser/dataset-preview.tsx
 msgid "browse.dataset.create-visualization"
 msgstr "Start a visualization"
 
@@ -150,6 +151,18 @@ msgstr "Update this visualization"
 msgid "button.update.warning"
 msgstr "Keep in mind that updating this visualization will affect all the places where it might be already embedded!"
 
+#: app/components/chart-selection-tabs.tsx
+msgid "chart-selection-tabs.add-chart-different-dataset.button"
+msgstr "Choose another dataset"
+
+#: app/components/chart-selection-tabs.tsx
+msgid "chart-selection-tabs.add-chart-different-dataset.caption"
+msgstr "Add chart based on a different dataset"
+
+#: app/components/chart-selection-tabs.tsx
+msgid "chart-selection-tabs.add-chart-same-dataset.caption"
+msgstr "Add chart based on the same dataset"
+
 #: app/configurator/components/dataset-control-section.tsx
 msgid "chart.datasets.add"
 msgstr "Add dataset"
@@ -161,6 +174,10 @@ msgstr "You can only combine datasets that share dimensions with the same unit a
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "chart.datasets.add-dataset-dialog.title"
 msgstr "Select dataset with shared dimensions"
+
+#: app/browser/select-dataset-step.tsx
+msgid "chart.datasets.add-dataset-drawer.title"
+msgstr "Select dataset"
 
 #: app/configurator/components/field-i18n.ts
 msgid "chart.map.layers.area"
