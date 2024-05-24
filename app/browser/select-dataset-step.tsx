@@ -49,6 +49,7 @@ import { Icon } from "@/icons";
 import { useConfiguratorState, useLocale } from "@/src";
 
 import {
+  BrowseStateProvider,
   BrowseStateURLSyncedProvider,
   buildURLFromBrowseState,
   useBrowseContext,
@@ -538,5 +539,15 @@ export const SelectDatasetStep = (
     <BrowseStateURLSyncedProvider>
       <SelectDatasetStepContent {...props} />
     </BrowseStateURLSyncedProvider>
+  );
+};
+
+export const SelectDatasetStepDrawer = (
+  props: React.ComponentProps<typeof SelectDatasetStepContent>
+) => {
+  return (
+    <BrowseStateProvider>
+      <SelectDatasetStepContent {...props} />
+    </BrowseStateProvider>
   );
 };
