@@ -211,21 +211,21 @@ const makeUseBrowseState =
     );
   };
 
-export const useBrowseState = makeUseBrowseState(useQueryParamsState);
+export const useBrowseStateSavedToURL = makeUseBrowseState(useQueryParamsState);
 
-export type BrowseState = ReturnType<typeof useBrowseState>;
+export type BrowseState = ReturnType<typeof useBrowseStateSavedToURL>;
 const BrowseContext = createContext<BrowseState | undefined>(undefined);
 
 /**
  * Provides browse context to children below
  * Responsible for connecting the router to the browsing state
  */
-export const BrowseStateProvider = ({
+export const BrowseStateURLSyncedProvider = ({
   children,
 }: {
   children: React.ReactNode;
 }) => {
-  const browseState = useBrowseState();
+  const browseState = useBrowseStateSavedToURL();
   return (
     <BrowseContext.Provider value={browseState}>
       {children}
