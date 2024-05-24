@@ -1,5 +1,5 @@
 import { PUBLISHED_STATE } from "@prisma/client";
-import produce, { current, Draft } from "immer";
+import produce, { createDraft, current, Draft } from "immer";
 import get from "lodash/get";
 import pickBy from "lodash/pickBy";
 import set from "lodash/set";
@@ -307,6 +307,13 @@ export type ConfiguratorStateAction =
     }
   | {
       type: "CHART_CONFIG_ADD";
+      value: {
+        chartConfig: ChartConfig;
+        locale: Locale;
+      };
+    }
+  | {
+      type: "CHART_CONFIG_ADD_NEW_DATASET";
       value: {
         chartConfig: ChartConfig;
         locale: Locale;
@@ -1404,7 +1411,8 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
     case "CHART_CONFIG_ADD":
       if (isConfiguring(draft)) {
-        const chartConfig = getChartConfig(draft);
+        const chartConfig =
+          createDraft(action.value.chartConfig) ?? getChartConfig(draft);
         const dataCubesComponents = getCachedComponents(
           draft.dataSource,
           chartConfig.cubes.map((cube) => ({
@@ -1415,11 +1423,12 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         );
 
         if (dataCubesComponents) {
+          const cubes = current(chartConfig.cubes);
           const newConfig = deriveFiltersFromFields(
             {
               ...action.value.chartConfig,
               // Need to finalize the cubes draft to avoid revoked proxy errors
-              cubes: current(chartConfig.cubes),
+              cubes,
             },
             { dimensions: dataCubesComponents.dimensions }
           );
@@ -1428,6 +1437,13 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         }
       }
 
+      return draft;
+
+    case "CHART_CONFIG_ADD_NEW_DATASET":
+      if (isConfiguring(draft)) {
+        draft.chartConfigs.push(action.value.chartConfig);
+        draft.activeChartKey = action.value.chartConfig.key;
+      }
       return draft;
 
     case "DATASET_ADD":
@@ -1639,6 +1655,7 @@ export const initChartStateFromCube = async (
     client,
     dataSource,
   });
+
   const { data: components } = await executeDataCubesComponentsQuery(client, {
     sourceType: dataSource.type,
     sourceUrl: dataSource.url,

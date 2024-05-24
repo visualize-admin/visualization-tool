@@ -1,4 +1,4 @@
-import { Box, Drawer } from "@mui/material";
+import { Box, Drawer, useEventCallback } from "@mui/material";
 import { useState } from "react";
 import { useClient } from "urql";
 import createStore from "zustand";
@@ -32,15 +32,15 @@ export const useSearchDatasetPanelStore = createStore<{
   },
 }));
 
-export const AddNewDatasetPanel = () => {
-  const { isOpen, close } = useSearchDatasetPanelStore();
-  const [dataSetIri, setDataSetIri] = useState("");
-  const [state, dispatch] = useConfiguratorState();
+/**
+ * Inits a new chart state based on a new dataset and adds it to the configurator state
+ */
+export const useAddChartConfigBasedOnNewDataset = () => {
+  const [, dispatch] = useConfiguratorState();
   const locale = useLocale();
   const client = useClient();
   const { dataSource } = useDataSourceStore();
-
-  const handleAddNewDataset = async (datasetIri: string) => {
+  const handleAddNewDataset = useEventCallback(async (datasetIri: string) => {
     const chartState = await initChartStateFromCube(
       client,
       datasetIri,
@@ -56,14 +56,28 @@ export const AddNewDatasetPanel = () => {
       chartState?.state === "CONFIGURING_CHART",
       "After init, chart state should be in CONFIGURING_CHART state"
     );
+
     dispatch({
-      type: "CHART_CONFIG_ADD",
+      type: "CHART_CONFIG_ADD_NEW_DATASET",
       value: {
         chartConfig: chartState.chartConfigs[0],
         locale,
       },
     });
-  };
+  });
+  return handleAddNewDataset;
+};
+
+/**
+ * Used when adding a new chart based on a new dataset
+ * Shows the dataset search, but overrides its default behavior to
+ * keep the state as a local state instead of inside the URL
+ */
+export const AddNewDatasetPanel = () => {
+  const { isOpen, close } = useSearchDatasetPanelStore();
+  const [dataSetIri, setDataSetIri] = useState("");
+  const handleAddNewDataset = useAddChartConfigBasedOnNewDataset();
+
   return (
     <Drawer
       anchor="right"
