@@ -3,15 +3,16 @@ import { ParsedUrlQuery } from "querystring";
 import mapValues from "lodash/mapValues";
 import pick from "lodash/pick";
 import pickBy from "lodash/pickBy";
+import { Url } from "next/dist/shared/lib/router/router";
 import Link from "next/link";
 import { Router, useRouter } from "next/router";
 import React, {
+  createContext,
   useContext,
   useEffect,
   useMemo,
   useRef,
   useState,
-  createContext,
 } from "react";
 
 import { SearchCubeResultOrder } from "@/graphql/query-hooks";
@@ -20,7 +21,9 @@ import useEvent from "@/utils/use-event";
 
 import { getFiltersFromParams } from "./filters";
 
-export const getBrowseParamsFromQuery = (query: Router["query"]) => {
+export const getBrowseParamsFromQuery = (
+  query: Router["query"]
+): BrowseParams => {
   const rawValues = mapValues(
     pick(query, [
       "type",
@@ -75,16 +78,18 @@ export const buildURLFromBrowseState = (browseState: BrowseParams) => {
 };
 const extractParamFromPath = (path: string, param: string) =>
   path.match(new RegExp(`[&?]${param}=(.*?)(&|$)`));
-const useQueryParamsState = <T extends object>(
-  initialState: T,
-  {
-    serialize,
-    parse,
-  }: {
-    serialize: (s: T) => Parameters<typeof router.replace>[0];
-    parse: (s: ParsedUrlQuery) => T;
-  }
-) => {
+
+type BrowseParamsCodec = {
+  parse: (query: ParsedUrlQuery) => BrowseParams;
+  serialize: (browseState: BrowseParams) => Url;
+};
+
+const urlCodec: BrowseParamsCodec = {
+  parse: getBrowseParamsFromQuery,
+  serialize: buildURLFromBrowseState,
+};
+
+const useQueryParamsState = <T extends object>(initialState: T) => {
   const router = useRouter();
 
   const [state, rawSetState] = useState(() => {
@@ -101,19 +106,19 @@ const useQueryParamsState = <T extends object>(
       query.dataset = dataset[0];
     }
 
-    return query ? parse(query) : initialState;
+    return query ? urlCodec.parse(query) : initialState;
   });
 
   useEffect(() => {
     if (router.isReady) {
-      rawSetState(parse(router.query));
+      rawSetState(urlCodec.parse(router.query));
     }
-  }, [parse, router.isReady, router.query]);
+  }, [urlCodec.parse, router.isReady, router.query]);
 
   const setState = useEvent((stateUpdate: T) => {
     rawSetState((curState) => {
       const newState = { ...curState, ...stateUpdate } as T;
-      router.replace(serialize(newState), undefined, {
+      router.replace(urlCodec.serialize(newState), undefined, {
         shallow: true,
       });
       return newState;
@@ -122,92 +127,99 @@ const useQueryParamsState = <T extends object>(
   return [state, setState] as const;
 };
 
-export const useBrowseState = () => {
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [browseParams, setParams] = useQueryParamsState(
-    {},
-    {
-      parse: getBrowseParamsFromQuery,
-      serialize: buildURLFromBrowseState,
-    }
-  );
-  const {
-    search,
-    type,
-    order,
-    iri,
-    includeDrafts,
-    dataset: paramDataset,
-  } = browseParams;
-
-  // Support /browse?dataset=<iri> and legacy /browse/dataset/<iri>
-  const dataset = type === "dataset" ? iri : paramDataset;
-  const filters = getFiltersFromParams(browseParams);
-
-  const setSearch = useEvent((v: string) => setParams({ search: v }));
-  const setIncludeDrafts = useEvent((v: boolean) =>
-    setParams({ includeDrafts: v })
-  );
-  const setOrder = useEvent((v: SearchCubeResultOrder) =>
-    setParams({ order: v })
-  );
-  const setDataset = useEvent((v: string) => setParams({ dataset: v }));
-
-  const previousOrderRef = useRef<SearchCubeResultOrder>(
-    SearchCubeResultOrder.Score
-  );
-
-  return useMemo(
-    () => ({
-      inputRef,
-      includeDrafts: !!includeDrafts,
-      setIncludeDrafts,
-      onReset: () => {
-        setParams({ search: "", order: SearchCubeResultOrder.CreatedDesc });
-      },
-      onSubmitSearch: (newSearch: string) => {
-        setParams({
-          search: newSearch,
-          order:
-            newSearch === ""
-              ? SearchCubeResultOrder.CreatedDesc
-              : previousOrderRef.current,
-        });
-      },
-      search,
-      order,
-      onSetOrder: (order: SearchCubeResultOrder) => {
-        previousOrderRef.current = order;
-        setOrder(order);
-      },
-      setSearch,
-      setOrder,
-      dataset,
-      setDataset,
-      filters,
-    }),
-    [
-      includeDrafts,
-      setIncludeDrafts,
-      search,
-      order,
-      setSearch,
-      setOrder,
-      dataset,
-      setDataset,
-      filters,
-      setParams,
-    ]
-  );
+export const noopCodec: BrowseParamsCodec = {
+  parse: () => ({}),
+  serialize: () => "",
 };
+
+const makeUseBrowseState =
+  (
+    useParamsHook: (
+      initialState: BrowseParams
+    ) => readonly [BrowseParams, (state: BrowseParams) => void]
+  ) =>
+  () => {
+    const inputRef = useRef<HTMLInputElement>(null);
+    const [browseParams, setParams] = useParamsHook({});
+    const {
+      search,
+      type,
+      order,
+      iri,
+      includeDrafts,
+      dataset: paramDataset,
+    } = browseParams;
+
+    // Support /browse?dataset=<iri> and legacy /browse/dataset/<iri>
+    const dataset = type === "dataset" ? iri : paramDataset;
+    const filters = getFiltersFromParams(browseParams);
+
+    const setSearch = useEvent((v: string) => setParams({ search: v }));
+    const setIncludeDrafts = useEvent((v: boolean) =>
+      setParams({ includeDrafts: v })
+    );
+    const setOrder = useEvent((v: SearchCubeResultOrder) =>
+      setParams({ order: v })
+    );
+    const setDataset = useEvent((v: string) => setParams({ dataset: v }));
+
+    const previousOrderRef = useRef<SearchCubeResultOrder>(
+      SearchCubeResultOrder.Score
+    );
+
+    return useMemo(
+      () => ({
+        inputRef,
+        includeDrafts: !!includeDrafts,
+        setIncludeDrafts,
+        onReset: () => {
+          setParams({ search: "", order: SearchCubeResultOrder.CreatedDesc });
+        },
+        onSubmitSearch: (newSearch: string) => {
+          setParams({
+            search: newSearch,
+            order:
+              newSearch === ""
+                ? SearchCubeResultOrder.CreatedDesc
+                : previousOrderRef.current,
+          });
+        },
+        search,
+        order,
+        onSetOrder: (order: SearchCubeResultOrder) => {
+          previousOrderRef.current = order;
+          setOrder(order);
+        },
+        setSearch,
+        setOrder,
+        dataset,
+        setDataset,
+        filters,
+      }),
+      [
+        includeDrafts,
+        setIncludeDrafts,
+        search,
+        order,
+        setSearch,
+        setOrder,
+        dataset,
+        setDataset,
+        filters,
+        setParams,
+      ]
+    );
+  };
+
+export const useBrowseState = makeUseBrowseState(useQueryParamsState);
 
 export type BrowseState = ReturnType<typeof useBrowseState>;
 const BrowseContext = createContext<BrowseState | undefined>(undefined);
+
 /**
  * Provides browse context to children below
  * Responsible for connecting the router to the browsing state
  */
-
 export const BrowseStateProvider = ({
   children,
 }: {
