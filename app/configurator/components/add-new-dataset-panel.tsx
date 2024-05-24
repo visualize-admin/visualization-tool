@@ -28,10 +28,21 @@ export const AddNewDatasetPanel = () => {
   const { isOpen, close } = useSearchDatasetPanelStore();
   const [dataSetIri, setDataSetIri] = useState("");
   return (
-    <Drawer anchor="right" open={isOpen} variant="temporary" onClose={close}>
+    <Drawer
+      anchor="right"
+      open={isOpen}
+      variant="temporary"
+      onClose={close}
+      PaperProps={{
+        sx: {
+          width: "1400px",
+          maxWidth: "100%",
+        },
+      }}
+    >
       <DialogCloseButton onClick={() => close()} />
-      <Box maxWidth="1400px">
-        <Box></Box>
+
+      <Box>
         <ConfiguratorStateProvider chartId="new" allowDefaultRedirect={false}>
           <SelectDatasetStep
             variant="drawer"
