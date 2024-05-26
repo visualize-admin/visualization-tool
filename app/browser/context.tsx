@@ -8,6 +8,8 @@ import Link from "next/link";
 import { Router, useRouter } from "next/router";
 import React, {
   createContext,
+  Dispatch,
+  SetStateAction,
   useContext,
   useEffect,
   useMemo,
@@ -89,7 +91,7 @@ const urlCodec: BrowseParamsCodec = {
   serialize: buildURLFromBrowseState,
 };
 
-const useQueryParamsState = <T extends object>(initialState: T) => {
+const useQueryParamsState = (initialState: BrowseParams) => {
   const router = useRouter();
 
   const [state, rawSetState] = useState(() => {
@@ -115,15 +117,24 @@ const useQueryParamsState = <T extends object>(initialState: T) => {
     }
   }, [urlCodec.parse, router.isReady, router.query]);
 
-  const setState = useEvent((stateUpdate: T) => {
-    rawSetState((curState) => {
-      const newState = { ...curState, ...stateUpdate } as T;
-      router.replace(urlCodec.serialize(newState), undefined, {
-        shallow: true,
+  const setState = useEvent(
+    (
+      stateUpdate: BrowseParams | ((prevState: BrowseParams) => BrowseParams)
+    ) => {
+      rawSetState((curState) => {
+        const newState = {
+          ...curState,
+          ...(stateUpdate instanceof Function
+            ? stateUpdate(curState)
+            : stateUpdate),
+        } as BrowseParams;
+        router.replace(urlCodec.serialize(newState), undefined, {
+          shallow: true,
+        });
+        return newState;
       });
-      return newState;
-    });
-  });
+    }
+  );
   return [state, setState] as const;
 };
 
@@ -136,7 +147,7 @@ const makeUseBrowseState =
   (
     useParamsHook: (
       initialState: BrowseParams
-    ) => readonly [BrowseParams, (state: BrowseParams) => void]
+    ) => readonly [BrowseParams, Dispatch<SetStateAction<BrowseParams>>]
   ) =>
   () => {
     const inputRef = useRef<HTMLInputElement>(null);
