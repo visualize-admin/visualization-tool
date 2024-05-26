@@ -76,7 +76,7 @@ export const useAddChartConfigBasedOnNewDataset = () => {
 export const AddNewDatasetPanel = () => {
   const { isOpen, close } = useSearchDatasetPanelStore();
   const [dataSetIri, setDataSetIri] = useState("");
-  const handleAddNewDataset = useAddChartConfigBasedOnNewDataset();
+  const addNewDataset = useAddChartConfigBasedOnNewDataset();
 
   return (
     <Drawer
@@ -113,9 +113,10 @@ export const AddNewDatasetPanel = () => {
             }}
             datasetPreviewProps={{
               dataSetIri,
-              onClickCreate: (ev, datasetIri) => {
+              onClickCreate: async (ev, datasetIri) => {
                 ev.preventDefault();
-                handleAddNewDataset(datasetIri);
+                await addNewDataset(datasetIri);
+                close();
               },
             }}
           />
