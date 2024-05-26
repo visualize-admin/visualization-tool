@@ -65,7 +65,7 @@ import {
 } from "./context";
 import { BrowseFilter } from "./filters";
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles<Theme>(() => ({
   navChip: {
     minWidth: 32,
     height: 24,
@@ -73,7 +73,32 @@ const useStyles = makeStyles(() => ({
     alignItems: "center",
     borderRadius: 2,
   },
-  removeFilterButton: {
+
+  searchInput: {
+    width: "100%",
+    maxWidth: 350,
+  },
+}));
+
+const useNavItemStyles = makeStyles<
+  Theme,
+  { level: number; navItemTheme: NavItemTheme }
+>((theme) => ({
+  navItem: {
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: 6,
+    borderRadius: 2,
+    width: "100%",
+    display: "flex",
+    transition: "background 0.1s ease",
+  },
+  link: {
+    cursor: "pointer",
+    flexGrow: 1,
+    padding: theme.spacing(1, 0),
+  },
+  removeFilterButton: ({ level, navItemTheme }) => ({
     minWidth: 16,
     minHeight: 16,
     height: "auto",
@@ -86,20 +111,13 @@ const useStyles = makeStyles(() => ({
     "&:hover": {
       background: "rgba(0, 0, 0, 0.25)",
     },
-  },
-  navItem: {
-    justifyContent: "space-between",
-    alignItems: "center",
-    gap: 6,
-    borderRadius: 2,
-    width: "100%",
-    display: "flex",
-    transition: "background 0.1s ease",
-  },
-  searchInput: {
-    width: "100%",
-    maxWidth: 350,
-  },
+
+    backgroundColor: level === 1 ? navItemTheme.activeBg : "transparent",
+    color:
+      level === 1
+        ? navItemTheme.closeColor ?? navItemTheme.activeTextColor
+        : navItemTheme.activeBg,
+  }),
 }));
 
 export const SearchDatasetInput = ({
@@ -410,19 +428,11 @@ const NavItem = ({
       .join("/")}?${extraURLParams}`;
   }, [includeDrafts, search, filters, next.iri]);
 
-  const classes = useStyles();
-
   const removeFilterButton = (
     <Link href={removeFilterPath} passHref legacyBehavior>
       <ButtonBase
         component="a"
         className={classes.removeFilterButton}
-        sx={{
-          backgroundColor: level === 1 ? theme.activeBg : "transparent",
-          color:
-            level === 1
-              ? theme.closeColor ?? theme.activeTextColor
-              : theme.activeBg,
         }}
       >
         <SvgIcClose width={24} height={24} />
@@ -467,7 +477,7 @@ const NavItem = ({
         <>
           <Link href={path} passHref legacyBehavior>
             <MUILink
-              sx={{ flexGrow: 1, py: 1 }}
+              className={classes.link}
               underline="none"
               variant="body2"
             >
