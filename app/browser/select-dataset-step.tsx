@@ -409,7 +409,7 @@ const SelectDatasetStepContent = ({
               <MotionBox key="filters" {...navPresenceProps}>
                 <AnimatePresence>
                   {variant === "drawer" ? (
-                    <Box mb="2rem" mt="0.125rem">
+                    <Box mb="2rem" mt="0.125rem" key="select-dataset">
                       <Typography variant="h2">
                         <Trans id="chart.datasets.add-dataset-drawer.title">
                           Select dataset
@@ -429,6 +429,7 @@ const SelectDatasetStepContent = ({
                   ) : null}
                   {queryFilters.length > 0 && (
                     <MotionBox
+                      key="query-filters"
                       {...{
                         initial: {
                           transform: "translateY(-16px)",
