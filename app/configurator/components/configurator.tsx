@@ -4,7 +4,7 @@ import Button, { ButtonProps } from "@mui/material/Button";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 
-import { SelectDatasetStep } from "@/browser/select-dataset-step";
+import { SelectDatasetStepPage } from "@/browser/select-dataset-step";
 import { META } from "@/charts";
 import { ChartPreview } from "@/components/chart-preview";
 import {
@@ -448,7 +448,7 @@ export const Configurator = () => {
   return isLoadingConfigureChartStep ? (
     <LoadingConfigureChartStep />
   ) : configuratorState.state === "SELECTING_DATASET" ? (
-    <SelectDatasetStep />
+    <SelectDatasetStepPage />
   ) : configuratorState.state === "INITIAL" ? null : (
     <InteractiveFiltersProvider chartConfigs={configuratorState.chartConfigs}>
       {configuratorState.state === "CONFIGURING_CHART" && (

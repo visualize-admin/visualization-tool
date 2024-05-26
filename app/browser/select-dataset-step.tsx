@@ -532,7 +532,7 @@ const DatasetMetadataSingleCubeAdapter = ({
   );
 };
 
-export const SelectDatasetStep = (
+export const SelectDatasetStepPage = (
   props: React.ComponentProps<typeof SelectDatasetStepContent>
 ) => {
   return (
