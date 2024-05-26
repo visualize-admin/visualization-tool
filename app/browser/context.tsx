@@ -21,7 +21,11 @@ import { SearchCubeResultOrder } from "@/graphql/query-hooks";
 import { BrowseParams } from "@/pages/browse";
 import useEvent from "@/utils/use-event";
 
-import { getFiltersFromParams } from "./filters";
+import {
+  BrowseFilter,
+  getFiltersFromParams,
+  getParamsFromFilters,
+} from "./filters";
 
 export const getBrowseParamsFromQuery = (
   query: Router["query"]
@@ -115,7 +119,7 @@ const useQueryParamsState = (initialState: BrowseParams) => {
     if (router.isReady) {
       rawSetState(urlCodec.parse(router.query));
     }
-  }, [urlCodec.parse, router.isReady, router.query]);
+  }, [router.isReady, router.query]);
 
   const setState = useEvent(
     (
@@ -206,6 +210,11 @@ const makeUseBrowseState =
         dataset,
         setDataset,
         filters,
+        setFilters: (filters: BrowseFilter[]) =>
+          setParams((params) => ({
+            ...params,
+            ...getParamsFromFilters(filters),
+          })),
       }),
       [
         includeDrafts,

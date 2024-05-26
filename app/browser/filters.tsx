@@ -53,3 +53,31 @@ export const getFiltersFromParams = (params: BrowseParams) => {
 
   return filters;
 };
+
+export const getParamsFromFilters = (filters: BrowseFilter[]) => {
+  const params: BrowseParams = {
+    type: undefined,
+    subtype: undefined,
+    iri: undefined,
+    subiri: undefined,
+    topic: undefined,
+  };
+  let i = 0;
+  for (const filter of filters) {
+    const typeAttr = i === 0 ? "type" : ("subtype" as const);
+    const iriAttr = i === 0 ? "iri" : ("subiri" as const);
+    if (filter.__typename === SearchCubeFilterType.DataCubeTheme) {
+      params[typeAttr] = "theme";
+      params[iriAttr] = filter.iri;
+    } else if (
+      filter.__typename === SearchCubeFilterType.DataCubeOrganization
+    ) {
+      params[typeAttr] = "organization";
+      params[iriAttr] = filter.iri;
+    } else if (filter.__typename === SearchCubeFilterType.DataCubeAbout) {
+      params.topic = filter.iri;
+    }
+    i++;
+  }
+  return params;
+};

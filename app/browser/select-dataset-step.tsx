@@ -386,6 +386,7 @@ const SelectDatasetStepContent = ({
                   themes={themes}
                   orgs={orgs}
                   termsets={termsets}
+                  disableNavLinks
                 />
               </MotionBox>
             )}
