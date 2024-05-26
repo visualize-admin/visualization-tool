@@ -532,6 +532,10 @@ const DatasetMetadataSingleCubeAdapter = ({
   );
 };
 
+/**
+ * This is the select dataset step component for use directly in a page.
+ * It uses the URL to sync the state.
+ */
 export const SelectDatasetStepPage = (
   props: React.ComponentProps<typeof SelectDatasetStepContent>
 ) => {
@@ -542,6 +546,10 @@ export const SelectDatasetStepPage = (
   );
 };
 
+/**
+ * This is the select dataset step component for use in a drawer, where the state is not
+ * synced with the URL.
+ */
 export const SelectDatasetStepDrawer = (
   props: React.ComponentProps<typeof SelectDatasetStepContent>
 ) => {
