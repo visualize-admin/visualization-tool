@@ -198,10 +198,19 @@ const TabsEditable = (props: TabsEditableProps) => {
           vertical: "bottom",
         }}
         onClose={handleClose}
+        PaperProps={{
+          sx: {
+            py: "1rem",
+          },
+        }}
       >
         {tabsState.popoverType === "add" ? (
           <>
-            <Stack divider={<Divider />} gap="0.5rem" direction="column">
+            <Stack
+              divider={<Divider sx={{ mx: "1.5rem" }} />}
+              gap="0.5rem"
+              direction="column"
+            >
               <Stack direction="column" gap="0.5rem" m="1rem">
                 <Typography
                   variant="body2"
@@ -217,11 +226,12 @@ const TabsEditable = (props: TabsEditableProps) => {
                   state={state}
                   type="add"
                   showHelp={false}
+                  showComparisonCharts={false}
                   chartKey={tabsState.activeChartKey ?? chartConfig.key}
                   sx={{ width: 320, px: 3, pb: 3 }}
                 />
               </Stack>
-              <Stack direction="column" gap="0.5rem" m="1rem">
+              <Stack direction="column" gap="0.5rem" mx="1.5rem" my="1rem">
                 <Typography
                   variant="body2"
                   color="text.secondary"
@@ -241,7 +251,7 @@ const TabsEditable = (props: TabsEditableProps) => {
                   }}
                 >
                   <Trans id="chart-selection-tabs.add-chart-different-dataset.button">
-                    Choose another dataset
+                    Select dataset
                   </Trans>
                 </Button>
               </Stack>

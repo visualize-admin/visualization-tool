@@ -27,11 +27,19 @@ type ChartTypeSelectorProps = {
   state: Exclude<ConfiguratorStateWithChartConfigs, ConfiguratorStatePublished>;
   type?: "add" | "edit";
   showHelp?: boolean;
+  showComparisonCharts?: boolean;
   chartKey: string;
 } & BoxProps;
 
 export const ChartTypeSelector = (props: ChartTypeSelectorProps) => {
-  const { state, type = "edit", showHelp, chartKey, ...rest } = props;
+  const {
+    state,
+    type = "edit",
+    showHelp,
+    showComparisonCharts = true,
+    chartKey,
+    ...rest
+  } = props;
   const locale = useLocale();
   const chartConfig = getChartConfig(state);
   const [{ data }] = useDataCubesComponentsQuery({
@@ -120,24 +128,28 @@ export const ChartTypeSelector = (props: ChartTypeSelectorProps) => {
               onClick={handleClick}
               testId="chart-type-selector-regular"
             />
-            <Divider sx={{ borderColor: "muted.main", mx: 2 }} />
-            <ChartTypeSelectorMenu
-              type={type}
-              title={t({
-                id: "controls.chart.category.combo",
-                message: "Comparison",
-              })}
-              titleHint={t({
-                id: "controls.chart.category.combo.hint",
-                message:
-                  "Comparison chart types combine several measures in a chart, helping to visualize their relationships or correlations, even when they have different units or scales.",
-              })}
-              chartType={chartType}
-              chartTypes={comboChartTypes}
-              possibleChartTypes={possibleChartTypes}
-              onClick={handleClick}
-              testId="chart-type-selector-combo"
-            />
+            {showComparisonCharts ? (
+              <>
+                <Divider sx={{ borderColor: "muted.main", mx: 2 }} />
+                <ChartTypeSelectorMenu
+                  type={type}
+                  title={t({
+                    id: "controls.chart.category.combo",
+                    message: "Comparison",
+                  })}
+                  titleHint={t({
+                    id: "controls.chart.category.combo.hint",
+                    message:
+                      "Comparison chart types combine several measures in a chart, helping to visualize their relationships or correlations, even when they have different units or scales.",
+                  })}
+                  chartType={chartType}
+                  chartTypes={comboChartTypes}
+                  possibleChartTypes={possibleChartTypes}
+                  onClick={handleClick}
+                  testId="chart-type-selector-combo"
+                />
+              </>
+            ) : null}
           </Flex>
         )}
       </div>
