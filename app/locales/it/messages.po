@@ -153,7 +153,7 @@ msgstr "Tenete presente che l'aggiornamento di questa visualizzazione avrà effe
 
 #: app/components/chart-selection-tabs.tsx
 msgid "chart-selection-tabs.add-chart-different-dataset.button"
-msgstr "Scegli un altro set di dati"
+msgstr "Seleziona il set di dati"
 
 #: app/components/chart-selection-tabs.tsx
 msgid "chart-selection-tabs.add-chart-different-dataset.caption"

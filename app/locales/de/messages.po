@@ -153,7 +153,7 @@ msgstr "Denken Sie daran, dass sich die Aktualisierung dieser Visualisierung auf
 
 #: app/components/chart-selection-tabs.tsx
 msgid "chart-selection-tabs.add-chart-different-dataset.button"
-msgstr "Wählen Sie einen anderen Datensatz"
+msgstr "Datensatz auswählen"
 
 #: app/components/chart-selection-tabs.tsx
 msgid "chart-selection-tabs.add-chart-different-dataset.caption"

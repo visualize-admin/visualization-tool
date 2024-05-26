@@ -153,7 +153,7 @@ msgstr "Keep in mind that updating this visualization will affect all the places
 
 #: app/components/chart-selection-tabs.tsx
 msgid "chart-selection-tabs.add-chart-different-dataset.button"
-msgstr "Choose another dataset"
+msgstr "Select dataset"
 
 #: app/components/chart-selection-tabs.tsx
 msgid "chart-selection-tabs.add-chart-different-dataset.caption"
