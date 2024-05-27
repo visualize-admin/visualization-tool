@@ -33,6 +33,7 @@ const useStyles = makeStyles<
 
     [`.${chartPanelLayoutGridClasses.root} &`]: {
       aspectRatio: "auto",
+      minHeight: 0,
     },
   },
 
