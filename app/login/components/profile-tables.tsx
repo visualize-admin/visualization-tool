@@ -20,6 +20,9 @@ import sortBy from "lodash/sortBy";
 import NextLink from "next/link";
 import React, { useMemo } from "react";
 
+import { MenuActionProps } from "@/components/menu-action-item";
+import { RenameDialog } from "@/components/rename-dialog";
+import { RowActions } from "@/components/row-actions";
 import useDisclosure from "@/components/use-disclosure";
 import { ParsedConfig } from "@/db/config";
 import { sourceToLabel } from "@/domain/datasource";
@@ -30,9 +33,6 @@ import { useRootStyles } from "@/login/utils";
 import { useLocale } from "@/src";
 import { removeConfig, updateConfig } from "@/utils/chart-config/api";
 import { useMutate } from "@/utils/use-fetch-data";
-
-import { RenameDialog } from "../../components/rename-dialog";
-import { ActionProps, RowActions } from "../../components/row-actions";
 
 const PREVIEW_LIMIT = 3;
 
@@ -196,7 +196,7 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
   } = useDisclosure();
 
   const actions = useMemo(() => {
-    const actions: (ActionProps | null)[] = [
+    const actions: (MenuActionProps | null)[] = [
       {
         type: "link",
         href: `/${locale}/v/${config.key}`,
@@ -234,7 +234,7 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
             }),
             iconName: (updateConfigMut.status === "fetching"
               ? "loading"
-              : "unpublish") as ActionProps["iconName"],
+              : "unpublish") as MenuActionProps["iconName"],
 
             onClick: async () => {
               await updateConfigMut.mutate({
