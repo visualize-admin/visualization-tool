@@ -35,7 +35,7 @@ export default function ADFS<P extends ADFSProfile>(
 ): OAuthConfig<P> {
   return {
     id: "adfs",
-    name: "ADFS (SSO)",
+    name: "eIAM (ADFS)",
     type: "oauth",
     authorization: {
       url: options.authorizeUrl,

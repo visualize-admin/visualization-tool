@@ -17,6 +17,7 @@ const providers = [
         issuer: KEYCLOAK_ISSUER,
         token: `${KEYCLOAK_ISSUER}/protocol/openid-connect/token`,
         userinfo: `${KEYCLOAK_ISSUER}/protocol/openid-connect/userinfo`,
+        checks: ["pkce", "state"],
       })
     : null,
 ].filter(truthy);
@@ -53,6 +54,9 @@ export const nextAuthOptions = {
      * on the session.
      */
     session: async ({ session, token }) => {
+      console.log("Session:", session);
+      console.log("Token:", token);
+
       if (session.user && token.sub) {
         session.user.sub = token.sub;
         const user = await ensureUserFromSub(token.sub, token.name);
