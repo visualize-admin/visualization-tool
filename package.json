@@ -3,9 +3,12 @@
   "version": "4.5.1",
   "repository": {
     "type": "git",
-    "url": "https://github.com/visualize-admin/visualization-tool.git"
+    "url": "git+https://github.com/visualize-admin/visualization-tool.git"
   },
-  "author": "Federal Office for the Environment FOEN <visualize@bafu.admin.ch>",
+  "author": {
+    "name": "Federal Office for the Environment FOEN",
+    "email": "visualize@bafu.admin.ch"
+  },
   "license": "BSD-3-Clause",
   "private": true,
   "scripts": {
@@ -34,7 +37,8 @@
     "dev:circular-deps": "madge --warning --extensions js,jsx,ts,tsx -b ./app -c ./app/pages/ --ts-config ./app/tsconfig.json | bun scripts/circular-deps-analysis.ts -",
     "github:codegen": "node k6/performance-tests/generate-github-actions.mjs",
     "storybook": "storybook dev -p 6006",
-    "storybook:build": "storybook build -o app/public/storybook"
+    "storybook:build": "storybook build -o app/public/storybook",
+    "chromatic": "npx chromatic --build-script-name storybook:build -o app/public/storybook"
   },
   "dependencies": {
     "@babel/runtime": "^7.11.2",
@@ -69,6 +73,7 @@
     "argparse": "^2.0.1",
     "babel-core": "^7.0.0-bridge.0",
     "babel-plugin-macros": "^3.0.0",
+    "chromatic": "^11.4.0",
     "eslint": "^7.29.0",
     "eslint-config-next": "^12.0.0",
     "eslint-plugin-storybook": "^0.8.0",
@@ -103,5 +108,9 @@
   "resolutions": {
     "@babel/core": "^7.14.6",
     "@babel/parser": "^7.14.6"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/visualize-admin/visualization-tool/issues"
+  },
+  "homepage": "https://github.com/visualize-admin/visualization-tool#readme"
 }
