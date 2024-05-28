@@ -448,7 +448,7 @@ export const Configurator = () => {
   return isLoadingConfigureChartStep ? (
     <LoadingConfigureChartStep />
   ) : configuratorState.state === "SELECTING_DATASET" ? (
-    <SelectDatasetStep />
+    <SelectDatasetStep variant="page" />
   ) : configuratorState.state === "INITIAL" ? null : (
     <InteractiveFiltersProvider chartConfigs={configuratorState.chartConfigs}>
       {configuratorState.state === "CONFIGURING_CHART" && (

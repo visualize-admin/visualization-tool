@@ -3,7 +3,7 @@ import { Box, Button, Paper, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import Head from "next/head";
 import Link from "next/link";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 
 import { DataSetPreviewTable } from "@/browse/datatable";
 import { useFootnotesStyles } from "@/components/chart-footnotes";
@@ -89,9 +89,14 @@ export interface Preview {
 export const DataSetPreview = ({
   dataSetIri,
   dataSource,
+  onCreateChartFromDataset,
 }: {
   dataSetIri: string;
   dataSource: DataSource;
+  onCreateChartFromDataset?: (
+    ev: React.MouseEvent<HTMLAnchorElement>,
+    datasetIri: string
+  ) => void;
 }) => {
   const footnotesClasses = useFootnotesStyles({ useMarginTop: false });
   const locale = useLocale();
@@ -147,19 +152,31 @@ export const DataSetPreview = ({
           <Typography className={classes.title} component="div" variant="h1">
             {dataCubeMetadata.title}
           </Typography>
-          <Link
-            href={`/create/new?cube=${
-              dataCubeMetadata.iri
-            }&dataSource=${sourceToLabel(dataSource)}`}
-            passHref
-            legacyBehavior
-          >
-            <Button className={classes.createChartButton} component="a">
+          {onCreateChartFromDataset ? (
+            <Button
+              onClick={(ev) => onCreateChartFromDataset?.(ev, dataSetIri)}
+              className={classes.createChartButton}
+              component="a"
+            >
               <Trans id="browse.dataset.create-visualization">
                 Create visualization from dataset
               </Trans>
             </Button>
-          </Link>
+          ) : (
+            <Link
+              href={`/create/new?cube=${
+                dataCubeMetadata.iri
+              }&dataSource=${sourceToLabel(dataSource)}`}
+              passHref
+              legacyBehavior
+            >
+              <Button className={classes.createChartButton} component="a">
+                <Trans id="browse.dataset.create-visualization">
+                  Create visualization from dataset
+                </Trans>
+              </Button>
+            </Link>
+          )}
         </Flex>
         <Paper className={classes.paper} elevation={5}>
           {dataCubeMetadata.description && (
@@ -211,3 +228,5 @@ export const DataSetPreview = ({
     );
   }
 };
+
+export type DataSetPreviewProps = React.ComponentProps<typeof DataSetPreview>;

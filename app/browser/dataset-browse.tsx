@@ -11,6 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import clsx from "clsx";
 import { AnimatePresence, Reorder } from "framer-motion";
 import keyBy from "lodash/keyBy";
 import orderBy from "lodash/orderBy";
@@ -23,8 +24,14 @@ import { stringify } from "qs";
 import React, { ComponentProps, useMemo, useState } from "react";
 
 import Flex, { FlexProps } from "@/components/flex";
-import { Checkbox, MinimalisticSelect, SearchField } from "@/components/form";
+import {
+  Checkbox,
+  MinimalisticSelect,
+  SearchField,
+  SearchFieldProps,
+} from "@/components/form";
 import { Loading, LoadingDataError } from "@/components/hint";
+import MaybeLink from "@/components/maybe-link";
 import {
   accordionPresenceProps,
   MotionBox,
@@ -59,11 +66,69 @@ import {
 } from "./context";
 import { BrowseFilter } from "./filters";
 
+const useStyles = makeStyles<Theme>(() => ({
+  navChip: {
+    minWidth: 32,
+    height: 24,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 2,
+  },
+
+  searchInput: {
+    width: "100%",
+    maxWidth: 350,
+  },
+}));
+
+const useNavItemStyles = makeStyles<
+  Theme,
+  { level: number; navItemTheme: NavItemTheme }
+>((theme) => ({
+  navItem: {
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: 6,
+    borderRadius: 2,
+    width: "100%",
+    display: "flex",
+    transition: "background 0.1s ease",
+  },
+  link: {
+    cursor: "pointer",
+    flexGrow: 1,
+    padding: theme.spacing(1, 0),
+  },
+  removeFilterButton: ({ level, navItemTheme }) => ({
+    minWidth: 16,
+    minHeight: 16,
+    height: "auto",
+    alignItems: "center",
+    display: "flex",
+    width: "auto",
+    padding: 0,
+    borderRadius: 2,
+    marginRight: 2,
+    "&:hover": {
+      background: "rgba(0, 0, 0, 0.25)",
+    },
+
+    backgroundColor: level === 1 ? navItemTheme.activeBg : "transparent",
+    color:
+      level === 1
+        ? navItemTheme.closeColor ?? navItemTheme.activeTextColor
+        : navItemTheme.activeBg,
+  }),
+}));
+
 export const SearchDatasetInput = ({
   browseState,
+  searchFieldProps,
 }: {
   browseState: BrowseState;
+  searchFieldProps?: Partial<SearchFieldProps>;
 }) => {
+  const classes = useStyles();
   const [_, setShowDraftCheckbox] = useState<boolean>(false);
   const { inputRef, search, onSubmitSearch, onReset } = browseState;
 
@@ -106,7 +171,8 @@ export const SearchDatasetInput = ({
           onFocus: () => setShowDraftCheckbox(true),
         }}
         placeholder={placeholderLabel}
-        sx={{ width: "100%", maxWidth: 350 }}
+        {...searchFieldProps}
+        className={clsx(classes.searchInput, searchFieldProps?.className)}
       />
       <Button sx={{ px: 6 }} onClick={handleClick}>
         <Trans id="select.controls.filters.search">Search</Trans>
@@ -257,39 +323,6 @@ const termsetNavItemTheme: NavItemTheme = {
   iconColor: "grey.700",
 };
 
-const useStyles = makeStyles(() => ({
-  navChip: {
-    minWidth: 32,
-    height: 24,
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 2,
-  },
-  removeFilterButton: {
-    minWidth: 16,
-    minHeight: 16,
-    height: "auto",
-    alignItems: "center",
-    display: "flex",
-    width: "auto",
-    padding: 0,
-    borderRadius: 2,
-    marginRight: 2,
-    "&:hover": {
-      background: "rgba(0, 0, 0, 0.25)",
-    },
-  },
-  navItem: {
-    justifyContent: "space-between",
-    alignItems: "center",
-    gap: 6,
-    borderRadius: 2,
-    width: "100%",
-    display: "flex",
-    transition: "background 0.1s ease",
-  },
-}));
-
 const NavChip = ({
   children,
   color,
@@ -339,6 +372,7 @@ const NavItem = ({
   active,
   theme = defaultNavItemTheme,
   level = 1,
+  disableLink,
 }: {
   children: React.ReactNode;
   filters: BrowseFilter[];
@@ -348,10 +382,12 @@ const NavItem = ({
   theme: typeof defaultNavItemTheme;
   /** Level is there to differentiate between organizations and organization subtopics */
   level?: number;
+  disableLink?: boolean;
 } & MUILinkProps) => {
-  const { includeDrafts, search } = useBrowseContext();
+  const { includeDrafts, search, setFilters } = useBrowseContext();
+  const classes = useNavItemStyles({ level, navItemTheme: theme });
 
-  const path = useMemo(() => {
+  const [newFiltersAdd, path] = useMemo(() => {
     const extraURLParams = stringify(
       pickBy(
         {
@@ -372,12 +408,13 @@ const NavItem = ({
       newFilters.push(next);
     }
 
-    return `/browse/${newFilters
-      .map(encodeFilter)
-      .join("/")}?${extraURLParams}`;
+    return [
+      newFilters,
+      `/browse/${newFilters.map(encodeFilter).join("/")}?${extraURLParams}`,
+    ] as const;
   }, [includeDrafts, search, level, next, filters]);
 
-  const removeFilterPath = useMemo(() => {
+  const [newFiltersRemove, removeFilterPath] = useMemo(() => {
     const extraURLParams = stringify(
       pickBy(
         {
@@ -391,29 +428,29 @@ const NavItem = ({
       (f) => f.__typename !== "DataCubeAbout" && f.iri !== next.iri
     );
 
-    return `/browse/${newFilters
-      .map(encodeFilter)
-      .join("/")}?${extraURLParams}`;
+    return [
+      newFilters,
+      `/browse/${newFilters.map(encodeFilter).join("/")}?${extraURLParams}`,
+    ] as const;
   }, [includeDrafts, search, filters, next.iri]);
 
-  const classes = useStyles();
-
   const removeFilterButton = (
-    <Link href={removeFilterPath} passHref legacyBehavior>
+    <MaybeLink
+      href={removeFilterPath}
+      passHref
+      legacyBehavior
+      disabled={!!disableLink}
+    >
       <ButtonBase
-        component="a"
         className={classes.removeFilterButton}
-        sx={{
-          backgroundColor: level === 1 ? theme.activeBg : "transparent",
-          color:
-            level === 1
-              ? theme.closeColor ?? theme.activeTextColor
-              : theme.activeBg,
+        onClick={(ev) => {
+          ev.preventDefault();
+          setFilters(newFiltersRemove);
         }}
       >
         <SvgIcClose width={24} height={24} />
       </ButtonBase>
-    </Link>
+    </MaybeLink>
   );
 
   const countChip =
@@ -451,15 +488,25 @@ const NavItem = ({
         </>
       ) : (
         <>
-          <Link href={path} passHref legacyBehavior>
+          <MaybeLink
+            href={path}
+            passHref
+            legacyBehavior
+            disabled={!!disableLink}
+          >
             <MUILink
-              sx={{ flexGrow: 1, py: 1 }}
+              className={classes.link}
+              href={path}
               underline="none"
               variant="body2"
+              onClick={(ev) => {
+                ev.preventDefault();
+                setFilters(newFiltersAdd);
+              }}
             >
               {children}
             </MUILink>
-          </Link>
+          </MaybeLink>
           {countChip}
         </>
       )}
@@ -544,6 +591,7 @@ const NavSection = ({
   filters,
   counts,
   extra,
+  disableLinks,
 }: {
   label: React.ReactNode;
   icon: React.ReactNode;
@@ -554,6 +602,7 @@ const NavSection = ({
   filters: BrowseFilter[];
   counts: Record<string, number>;
   extra?: React.ReactNode;
+  disableLinks?: boolean;
 }) => {
   const topItems = useMemo(() => {
     return sortBy(
@@ -592,6 +641,7 @@ const NavSection = ({
                 next={item}
                 count={counts[item.iri]}
                 theme={navItemTheme}
+                disableLink={disableLinks}
               >
                 {item.label}
               </NavItem>
@@ -686,11 +736,13 @@ export const SearchFilters = ({
   themes,
   orgs,
   termsets: termsetCounts,
+  disableNavLinks = false,
 }: {
   cubes: SearchCubeResult[];
   themes: DataCubeTheme[];
   orgs: DataCubeOrganization[];
   termsets: TermsetCount[];
+  disableNavLinks?: boolean;
 }) => {
   const { filters } = useBrowseContext();
   const counts = useMemo(() => {
@@ -773,6 +825,7 @@ export const SearchFilters = ({
         icon={<SvgIcCategories width={20} height={20} />}
         label={<Trans id="browse-panel.themes">Themes</Trans>}
         extra={null}
+        disableLinks={disableNavLinks}
       />
     ) : null;
 
@@ -810,6 +863,7 @@ export const SearchFilters = ({
             />
           ) : null
         }
+        disableLinks={disableNavLinks}
       />
     ) : null;
 
@@ -907,6 +961,8 @@ export const DatasetResults = ({
   );
 };
 
+export type DatasetResultsProps = React.ComponentProps<typeof DatasetResults>;
+
 const useResultStyles = makeStyles((theme: Theme) => ({
   root: {
     position: "relative",
@@ -955,6 +1011,7 @@ type ResultProps = {
   rowActions?: (r: PartialSearchCube) => React.ReactNode;
   disableTitleLink?: boolean;
   showDimensions?: boolean;
+  onClickTitle?: (ev: React.MouseEvent<HTMLDivElement>, iri: string) => void;
 };
 
 export const DatasetResult = ({
@@ -965,6 +1022,7 @@ export const DatasetResult = ({
   rowActions,
   disableTitleLink,
   showDimensions,
+  onClickTitle,
   ...cardProps
 }: ResultProps & CardProps) => {
   const {
@@ -980,7 +1038,12 @@ export const DatasetResult = ({
   const isDraft = publicationStatus === DataCubePublicationStatus.Draft;
   const router = useRouter();
 
-  const handleTitleClick = useEvent(() => {
+  const handleTitleClick = useEvent((ev: React.MouseEvent<HTMLDivElement>) => {
+    onClickTitle?.(ev, iri);
+    if (ev.defaultPrevented) {
+      return;
+    }
+
     const browseParams = getBrowseParamsFromQuery(router.query);
     router.push(
       {

@@ -162,13 +162,13 @@ const SearchFieldStory = {
     return (
       <Stack direction="row" gap={2}>
         <div>
-          <BrowseStateProvider>
+          <BrowseStateProvider syncWithUrl>
             <SearchField id="search-ex-1" label="Title einfügen" />
           </BrowseStateProvider>
         </div>
 
         <div>
-          <BrowseStateProvider>
+          <BrowseStateProvider syncWithUrl>
             <SearchField
               id="search-ex-2"
               label="Tier"

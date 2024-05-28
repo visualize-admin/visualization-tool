@@ -12,11 +12,12 @@ import { useDebounce } from "use-debounce";
 
 import {
   DatasetResults,
+  DatasetResultsProps,
   SearchDatasetControls,
   SearchDatasetInput,
   SearchFilters,
 } from "@/browser/dataset-browse";
-import { DataSetPreview } from "@/browser/dataset-preview";
+import { DataSetPreview, DataSetPreviewProps } from "@/browser/dataset-preview";
 import { useSearchPageData } from "@/browser/search-page-data";
 import { DatasetMetadata } from "@/components/dataset-metadata";
 import Flex from "@/components/flex";
@@ -62,12 +63,19 @@ const softJSONParse = (v: string) => {
   }
 };
 
-const useStyles = makeStyles<Theme, { datasetPresent: boolean }>((theme) => ({
+const useStyles = makeStyles<
+  Theme,
+  {
+    datasetPresent: boolean;
+    variant: NonNullable<SelectDatasetStepContentProps["variant"]>;
+  }
+>((theme) => ({
   panelLayout: {
     maxWidth: 1400,
     margin: "auto",
     position: "static",
-    marginTop: ({ datasetPresent }) => (datasetPresent ? 96 : 0),
+    marginTop: ({ datasetPresent, variant }) =>
+      datasetPresent && variant !== "drawer" ? 96 : 0,
     height: "auto",
     transition: "margin-top 0.5s ease",
   },
@@ -154,18 +162,39 @@ const prepareSearchQueryFilters = (filters: BrowseFilter[]) => {
   );
 };
 
-const SelectDatasetStepContent = () => {
+type SelectDatasetStepContentProps = {
+  datasetPreviewProps?: Partial<DataSetPreviewProps>;
+  datasetResultsProps?: Partial<DatasetResultsProps>;
+  onClickBackLink?: (ev: React.MouseEvent<HTMLButtonElement>) => void;
+  dataset?: string | undefined;
+  variant?: "page" | "drawer";
+};
+
+const SelectDatasetStepContent = ({
+  datasetPreviewProps,
+  datasetResultsProps,
+  dataset: propsDataset,
+  onClickBackLink,
+  variant = "page",
+}: SelectDatasetStepContentProps) => {
   const locale = useLocale();
   const [configState] = useConfiguratorState();
 
   const browseState = useBrowseContext();
-  const { search, order, includeDrafts, filters, dataset } = browseState;
+  const {
+    search,
+    order,
+    includeDrafts,
+    filters,
+    dataset: browseStateDataset,
+  } = browseState;
+  const dataset = propsDataset ?? browseStateDataset;
 
   const [debouncedQuery] = useDebounce(search, 500, {
     leading: true,
   });
   const router = useRouter();
-  const classes = useStyles({ datasetPresent: !!dataset });
+  const classes = useStyles({ datasetPresent: !!dataset, variant });
   const backLink = useMemo(() => {
     return formatBackLink(router.query);
   }, [router.query]);
@@ -290,7 +319,7 @@ const SelectDatasetStepContent = () => {
   return (
     <Box>
       <AnimatePresence>
-        {!dataset && (
+        {!dataset && variant === "page" && (
           <MotionBox key="banner" {...bannerPresenceProps}>
             <Box
               component="section"
@@ -335,6 +364,7 @@ const SelectDatasetStepContent = () => {
                     variant="contained"
                     color="secondary"
                     startIcon={<Icon name="chevronLeft" size={12} />}
+                    onClick={onClickBackLink}
                   >
                     <Trans id="dataset-preview.back-to-results">
                       Back to the list
@@ -355,6 +385,7 @@ const SelectDatasetStepContent = () => {
                   themes={themes}
                   orgs={orgs}
                   termsets={termsets}
+                  disableNavLinks
                 />
               </MotionBox>
             )}
@@ -371,13 +402,34 @@ const SelectDatasetStepContent = () => {
                 <DataSetPreview
                   dataSetIri={dataset}
                   dataSource={configState.dataSource}
+                  {...datasetPreviewProps}
                 />
               </MotionBox>
             ) : (
               <MotionBox key="filters" {...navPresenceProps}>
                 <AnimatePresence>
+                  {variant === "drawer" ? (
+                    <Box mb="2rem" mt="0.125rem" key="select-dataset">
+                      <Typography variant="h2">
+                        <Trans id="chart.datasets.add-dataset-drawer.title">
+                          Select dataset
+                        </Trans>
+                      </Typography>
+                      <SearchDatasetInput
+                        browseState={browseState}
+                        searchFieldProps={{
+                          sx: {
+                            "&&": {
+                              maxWidth: "unset",
+                            },
+                          },
+                        }}
+                      />
+                    </Box>
+                  ) : null}
                   {queryFilters.length > 0 && (
                     <MotionBox
+                      key="query-filters"
                       {...{
                         initial: {
                           transform: "translateY(-16px)",
@@ -425,31 +477,40 @@ const SelectDatasetStepContent = () => {
                   fetching={fetching}
                   error={error}
                   cubes={cubes}
-                  datasetResultProps={() => ({ showDimensions: true })}
+                  datasetResultProps={() => ({
+                    showDimensions: true,
+                  })}
+                  {...datasetResultsProps}
                 />
               </MotionBox>
             )}
           </AnimatePresence>
         </PanelBodyWrapper>
       </PanelLayout>
-      <Box
-        sx={{
-          borderTop: "2px solid rgba(0,0,0,0.05)",
-          mt: 8,
-        }}
-      >
-        <Footer
+      {variant == "page" ? (
+        <Box
           sx={{
-            borderTopWidth: 0,
-            ml: "auto",
-            mr: "auto",
-            width: "100%",
+            borderTop: "2px solid rgba(0,0,0,0.05)",
+            mt: 8,
           }}
-        />
-      </Box>
+        >
+          <Footer
+            sx={{
+              borderTopWidth: 0,
+              ml: "auto",
+              mr: "auto",
+              width: "100%",
+            }}
+          />
+        </Box>
+      ) : null}
     </Box>
   );
 };
+
+type SelectDatasetStepProps = React.ComponentProps<
+  typeof SelectDatasetStepContent
+>;
 
 const DatasetMetadataSingleCubeAdapter = ({
   dataSource,
@@ -476,10 +537,24 @@ const DatasetMetadataSingleCubeAdapter = ({
   );
 };
 
-export const SelectDatasetStep = () => {
+/**
+ * This is the select dataset step component for use directly in a page.
+ * It uses the URL to sync the state.
+ */
+export const SelectDatasetStep = (
+  props: Omit<SelectDatasetStepProps, "variant"> & {
+    /**
+     * Is passed to the content component. At this level, it controls which whether the
+     * browsing state is synced with the URL or not.
+     * At the SelectDatasetStepContent level, it tweaks UI elements.
+     * /!\ It should not change during the lifetime of the component.
+     */
+    variant: "page" | "drawer";
+  }
+) => {
   return (
-    <BrowseStateProvider>
-      <SelectDatasetStepContent />
+    <BrowseStateProvider syncWithUrl={props.variant === "page"}>
+      <SelectDatasetStepContent {...props} variant={props.variant} />
     </BrowseStateProvider>
   );
 };

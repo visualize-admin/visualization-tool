@@ -3,10 +3,13 @@ import { TabContext } from "@mui/lab";
 import {
   Box,
   Button,
+  Divider,
   Grow,
   Popover,
+  Stack,
   Theme,
   Tooltip,
+  Typography,
   useEventCallback,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
@@ -38,6 +41,7 @@ import {
   saveChartLocally,
   useConfiguratorState,
 } from "@/configurator";
+import { useSearchDatasetPanelStore } from "@/configurator/components/add-new-dataset-panel";
 import { ChartTypeSelector } from "@/configurator/components/chart-type-selector";
 import { getIconName } from "@/configurator/components/ui-helpers";
 import { useUserConfig } from "@/domain/user-configs";
@@ -152,6 +156,8 @@ const TabsEditable = (props: TabsEditableProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.activeChartKey]);
 
+  const { open: openAddDatasetPanel } = useSearchDatasetPanelStore();
+
   return (
     <>
       <TabsInner
@@ -192,14 +198,65 @@ const TabsEditable = (props: TabsEditableProps) => {
           vertical: "bottom",
         }}
         onClose={handleClose}
+        PaperProps={{
+          sx: {
+            py: "1rem",
+          },
+        }}
       >
         {tabsState.popoverType === "add" ? (
-          <ChartTypeSelector
-            state={state}
-            type="add"
-            chartKey={tabsState.activeChartKey ?? chartConfig.key}
-            sx={{ width: 320, px: 3, pb: 3 }}
-          />
+          <>
+            <Stack
+              divider={<Divider sx={{ mx: "1.5rem" }} />}
+              gap="0.5rem"
+              direction="column"
+            >
+              <Stack direction="column" gap="0.5rem" m="1rem">
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  textAlign="center"
+                  gutterBottom
+                >
+                  <Trans id="chart-selection-tabs.add-chart-same-dataset.caption">
+                    Add chart based on the same dataset
+                  </Trans>
+                </Typography>
+                <ChartTypeSelector
+                  state={state}
+                  type="add"
+                  showHelp={false}
+                  showComparisonCharts={false}
+                  chartKey={tabsState.activeChartKey ?? chartConfig.key}
+                  sx={{ width: 320, px: 3, pb: 3 }}
+                />
+              </Stack>
+              <Stack direction="column" gap="0.5rem" mx="1.5rem" my="1rem">
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  textAlign="center"
+                  gutterBottom
+                >
+                  <Trans id="chart-selection-tabs.add-chart-different-dataset.caption">
+                    Add chart based on a different dataset
+                  </Trans>
+                </Typography>
+                <Button
+                  fullWidth
+                  sx={{ justifyContent: "center" }}
+                  onClick={() => {
+                    setTabsState({ ...tabsState, popoverOpen: false });
+                    openAddDatasetPanel();
+                  }}
+                >
+                  <Trans id="chart-selection-tabs.add-chart-different-dataset.button">
+                    Select dataset
+                  </Trans>
+                </Button>
+              </Stack>
+            </Stack>
+          </>
         ) : (
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2, p: 4 }}>
             <Button

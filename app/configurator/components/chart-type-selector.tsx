@@ -16,7 +16,7 @@ import {
 } from "@/config-types";
 import { ControlSectionSkeleton } from "@/configurator/components/chart-controls/section";
 import { IconButton } from "@/configurator/components/icon-button";
-import { useChartType } from "@/configurator/config-form";
+import { useAddOrEditChartType } from "@/configurator/config-form";
 import { ConfiguratorStateWithChartConfigs } from "@/configurator/configurator-state";
 import { useDataCubesComponentsQuery } from "@/graphql/hooks";
 import { useLocale } from "@/locales/use-locale";
@@ -27,11 +27,19 @@ type ChartTypeSelectorProps = {
   state: Exclude<ConfiguratorStateWithChartConfigs, ConfiguratorStatePublished>;
   type?: "add" | "edit";
   showHelp?: boolean;
+  showComparisonCharts?: boolean;
   chartKey: string;
 } & BoxProps;
 
 export const ChartTypeSelector = (props: ChartTypeSelectorProps) => {
-  const { state, type = "edit", showHelp, chartKey, ...rest } = props;
+  const {
+    state,
+    type = "edit",
+    showHelp,
+    showComparisonCharts = true,
+    chartKey,
+    ...rest
+  } = props;
   const locale = useLocale();
   const chartConfig = getChartConfig(state);
   const [{ data }] = useDataCubesComponentsQuery({
@@ -48,7 +56,7 @@ export const ChartTypeSelector = (props: ChartTypeSelectorProps) => {
   });
   const dimensions = data?.dataCubesComponents?.dimensions ?? [];
   const measures = data?.dataCubesComponents?.measures ?? [];
-  const { value: chartType, onChange: onChangeChartType } = useChartType(
+  const { value: chartType, addOrEditChartType } = useAddOrEditChartType(
     chartKey,
     type,
     dimensions,
@@ -63,10 +71,10 @@ export const ChartTypeSelector = (props: ChartTypeSelectorProps) => {
       // only in edit mode; we should be able to add any possible chart type
       // in add mode.
       if (type === "edit" ? newChartType !== chartType : true) {
-        onChangeChartType(newChartType);
+        addOrEditChartType(newChartType);
       }
     },
-    [chartType, onChangeChartType, type]
+    [chartType, addOrEditChartType, type]
   );
 
   if (!data?.dataCubesComponents) {
@@ -120,24 +128,28 @@ export const ChartTypeSelector = (props: ChartTypeSelectorProps) => {
               onClick={handleClick}
               testId="chart-type-selector-regular"
             />
-            <Divider sx={{ borderColor: "muted.main", mx: 2 }} />
-            <ChartTypeSelectorMenu
-              type={type}
-              title={t({
-                id: "controls.chart.category.combo",
-                message: "Comparison",
-              })}
-              titleHint={t({
-                id: "controls.chart.category.combo.hint",
-                message:
-                  "Comparison chart types combine several measures in a chart, helping to visualize their relationships or correlations, even when they have different units or scales.",
-              })}
-              chartType={chartType}
-              chartTypes={comboChartTypes}
-              possibleChartTypes={possibleChartTypes}
-              onClick={handleClick}
-              testId="chart-type-selector-combo"
-            />
+            {showComparisonCharts ? (
+              <>
+                <Divider sx={{ borderColor: "muted.main", mx: 2 }} />
+                <ChartTypeSelectorMenu
+                  type={type}
+                  title={t({
+                    id: "controls.chart.category.combo",
+                    message: "Comparison",
+                  })}
+                  titleHint={t({
+                    id: "controls.chart.category.combo.hint",
+                    message:
+                      "Comparison chart types combine several measures in a chart, helping to visualize their relationships or correlations, even when they have different units or scales.",
+                  })}
+                  chartType={chartType}
+                  chartTypes={comboChartTypes}
+                  possibleChartTypes={possibleChartTypes}
+                  onClick={handleClick}
+                  testId="chart-type-selector-combo"
+                />
+              </>
+            ) : null}
           </Flex>
         )}
       </div>

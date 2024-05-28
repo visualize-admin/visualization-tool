@@ -19,7 +19,7 @@ export function DatasetBrowser() {
   return (
     <AppLayout>
       <ConfiguratorStateProvider chartId="new" allowDefaultRedirect={false}>
-        <SelectDatasetStep />
+        <SelectDatasetStep variant="page" />
       </ConfiguratorStateProvider>
     </AppLayout>
   );

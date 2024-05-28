@@ -162,12 +162,12 @@ export const DatasetsControlSection = () => {
   };
   const { setOpen, setActiveSection } = useMetadataPanelStoreActions();
   const cubes = useMemo(() => {
-    const cubes = uniqBy(
-      state.chartConfigs.flatMap((x) => x.cubes),
-      (x) => x.iri
+    const activeChartConfig = state.chartConfigs.find(
+      (x) => x.key === state.activeChartKey
     );
+    const cubes = uniqBy(activeChartConfig?.cubes ?? [], (x) => x.iri);
     return cubes;
-  }, [state.chartConfigs]);
+  }, [state.activeChartKey, state.chartConfigs]);
   const [metadataQuery] = useDataCubesMetadataQuery({
     variables: {
       ...commonQueryVariables,
