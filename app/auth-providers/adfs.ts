@@ -46,7 +46,6 @@ export default function ADFS<P extends ADFSProfile>(
 
     idToken: true,
 
-    // @ts-ignore
     async profile(profile: P, tokens) {
       // Usually the user only has one role, which is a string.
       let role = profile.role;
@@ -59,7 +58,7 @@ export default function ADFS<P extends ADFSProfile>(
         if (opRole != undefined) {
           role = opRole;
         }
-        // Otherwise, take the first occurance in the list.
+        // Otherwise, take the first occurence in the list.
         else {
           role = profile.role[0];
         }
@@ -70,7 +69,6 @@ export default function ADFS<P extends ADFSProfile>(
         name: profile.unique_name,
         email: profile.email,
         role: role,
-
         idToken: tokens.id_token,
       };
     },
