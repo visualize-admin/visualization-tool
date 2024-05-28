@@ -66,7 +66,7 @@ export default function ADFS<P extends ADFSProfile>(
 
       return {
         id: profile.sub,
-        name: profile.unique_name,
+        name: `${profile.given_name} ${profile.family_name}`,
         email: profile.email,
         role: role,
         idToken: tokens.id_token,
