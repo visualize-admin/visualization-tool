@@ -7,14 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 You can also check the [release page](https://github.com/visualize-admin/visualization-tool/releases)
 
-## [4.5.0] - 2024-05-21
+# [4.5.0] - 2024-05-21
 
 - Features
   - Improvements to add dataset workflow (columns, text, toasts when adding a dataset)
 - Development
   - Preparation for dashboards
 
-## [4.4.0] - 2024-05-08
+# [4.4.0] - 2024-05-08
 
 - Features
   - Ability to merge two cubes on multiple columns (for example on year and canton)
@@ -26,7 +26,7 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 - Performance
   - Cube upgrade is done only once at client side, instead of being re-fetched in every server-side query
 
-## [4.3.0] - 2024-04-25
+# [4.3.0] - 2024-04-25
 
 - Features
   - Added preview when joining two cubes
