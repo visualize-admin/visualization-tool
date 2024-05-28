@@ -34,7 +34,6 @@ export const RowActions = (props: ActionsProps) => {
         anchorEl={buttonRef.current}
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
         transformOrigin={{ horizontal: "center", vertical: "top" }}
-        sx={{}}
       >
         {rest.map((props, i) => (
           <MenuActionItem

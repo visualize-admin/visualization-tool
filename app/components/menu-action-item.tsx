@@ -16,7 +16,7 @@ export const StyledMenuItem = styled(MenuItem)(({ theme, color }) => ({
 })) as typeof MenuItem;
 
 export type MenuActionProps = {
-  label: string;
+  label: string | NonNullable<React.ReactNode>;
   iconName: IconName;
   priority?: number;
   stayOpen?: boolean;
@@ -59,7 +59,7 @@ export const MenuActionItem = (
     color = "primary",
   }: {
     icon: IconName;
-    label: string;
+    label: string | NonNullable<React.ReactNode>;
     color?: MenuActionProps["color"];
   }) => {
     const handleClick = () => {

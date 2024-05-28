@@ -20,9 +20,6 @@ export const DragHandle = forwardRef<HTMLDivElement, DragHandleProps>(
         ref={ref}
         {...rest}
         className={clsx(classes.dragIconWrapper, props.className)}
-        sx={{
-          color: dragging ? "secondary.active" : "secondary.disabled",
-        }}
       >
         <Icon name="dragndrop" />
       </Box>

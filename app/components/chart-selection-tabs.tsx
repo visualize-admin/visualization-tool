@@ -742,8 +742,7 @@ export const useIconStyles = makeStyles<
   dragIconWrapper: {
     width: 24,
     height: 24,
-    color: (d) =>
-      d.dragging ? palette.secondary.active : palette.secondary.disabled,
+    color: palette.grey[500],
     cursor: "grab",
 
     "&:hover": {
