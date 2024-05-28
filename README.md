@@ -56,11 +56,17 @@ Once the application's set up, you can start the development server with
 
 ```sh
 yarn dev
+yarn dev:ssl # If you are working with the login process
 ```
+
+> ℹ️ When using the authentication, you need to use https otherwise you'll experience an SSL
+> error when the authentication provider redirects you back to the app after login. You
+> can either remove the trailing s in the URL after the redirection, or use the `yarn dev:ssl`
+> command to use HTTPs for the development server.
 
 > 👉 In [Visual Studio Code](https://code.visualstudio.com/), you also can run the **default build task** (CMD-SHIFT-B) to start the dev server, database server, and TypeScript checker (you'll need [Nix](https://nixos.org) for that to work).
 
-To run the application with debugging enabled through vscode, make sure the dev server is running and the click the "Run and Debug" button in the sidebar (CMD-SHIFT-D). Then select the "Launch Chrome" configuration. This will open a new Chrome window with the dev tools open. You can now set breakpoints in the code and they will be hit.
+To run the application with debugging enabled through VSCode, make sure the dev server is running and the click the "Run and Debug" button in the sidebar (CMD-SHIFT-D). Then select the "Launch Chrome" configuration. This will open a new Chrome window with the dev tools open. You can now set breakpoints in the code and they will be hit.
 
 ### Postgres database
 
@@ -102,7 +108,7 @@ New versions of `package.json` are built on GitLab CI into a separate image that
 yarn version
 ```
 
-This will prompt for a new version. The `postversion` script will automatically try to push the created version tag to the origin repo.
+This will prompt for a new version. The `postversion` script will automatically try to push the created version tag to the origin repository.
 
 ## Deployment
 
