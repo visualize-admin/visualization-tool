@@ -22,7 +22,7 @@ export const LoginMenu = () => {
           variant="text"
           color="primary"
           size="small"
-          onClick={() => signIn("keycloak")}
+          onClick={() => signIn("adfs")}
         >
           Sign in
         </Button>
