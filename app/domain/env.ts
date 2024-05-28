@@ -50,9 +50,9 @@ export const GA_TRACKING_ID =
  */
 
 export const DATABASE_URL = process.env.DATABASE_URL;
-export const KEYCLOAK_ID = process.env.KEYCLOAK_ID;
-export const KEYCLOAK_SECRET = process.env.KEYCLOAK_SECRET;
-export const KEYCLOAK_ISSUER = process.env.KEYCLOAK_ISSUER;
+export const ADFS_ID = process.env.ADFS_ID;
+export const ADFS_SECRET = process.env.ADFS_SECRET;
+export const ADFS_ISSUER = process.env.ADFS_ISSUER;
 
 /**
  * Variables set at **BUILD TIME** through `NEXT_PUBLIC_*` variables. Available on the client and server.
