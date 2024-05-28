@@ -93,7 +93,7 @@ const urlCodec: BrowseParamsCodec = {
   serialize: buildURLFromBrowseState,
 };
 
-const useQueryParamsState = (initialState: BrowseParams) => {
+const useBrowseParamsStateWithUrlSync = (initialState: BrowseParams) => {
   const router = useRouter();
 
   const [state, rawSetState] = useState(() => {
@@ -140,9 +140,14 @@ const useQueryParamsState = (initialState: BrowseParams) => {
   return [state, setState] as const;
 };
 
+/**
+ * Creates a hook that provides the current browse state and actions to update it.
+ *
+ * It will persist/recover this state from the URL if `syncWithUrl` is true.
+ */
 const createUseBrowseState = ({ syncWithUrl }: { syncWithUrl: boolean }) => {
   const useParamsHook = syncWithUrl
-    ? useQueryParamsState
+    ? useBrowseParamsStateWithUrlSync
     : useState<BrowseParams>;
   return () => {
     const inputRef = useRef<HTMLInputElement>(null);
