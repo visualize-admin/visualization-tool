@@ -18,33 +18,12 @@ const providers = [
         token: `${KEYCLOAK_ISSUER}/protocol/openid-connect/token`,
         userinfo: `${KEYCLOAK_ISSUER}/protocol/openid-connect/userinfo`,
         checks: ["pkce", "state"],
+        client: {
+          token_endpoint_auth_method: "none",
+        },
       })
     : null,
 ].filter(truthy);
-
-// {
-//   id: "adfs",
-//   name: "adfs",
-//   type: "oidc",
-//   wellKnown: `${KEYCLOAK_ISSUER}/.well-known/openid-configuration`,
-//   clientId: KEYCLOAK_ID,
-//   clientSecret: KEYCLOAK_SECRET,
-//   authorization: {
-//     url: `${KEYCLOAK_ISSUER}/protocol/openid-connect/auth`,
-//     params: {
-//       scope: "openid",
-//     },
-//   },
-//   issuer: KEYCLOAK_ISSUER,
-//   token: `${KEYCLOAK_ISSUER}/protocol/openid-connect/token`,
-//   userinfo: `${KEYCLOAK_ISSUER}/protocol/openid-connect/userinfo`,
-//   profile(profile: any) {
-//     return {
-//       id: profile.sub,
-//       upn: profile.upn,
-//     };
-//   },
-// }
 
 export const nextAuthOptions = {
   providers,
