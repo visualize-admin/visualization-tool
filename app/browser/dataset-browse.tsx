@@ -442,11 +442,9 @@ const NavItem = ({
       disabled={!!disableLink}
     >
       <ButtonBase
-        component="a"
         className={classes.removeFilterButton}
         onClick={(ev) => {
           ev.preventDefault();
-          console.log(newFiltersRemove);
           setFilters(newFiltersRemove);
         }}
       >
