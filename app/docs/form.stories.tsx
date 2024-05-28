@@ -3,7 +3,7 @@ import { DatePicker, PickersDay } from "@mui/lab";
 import { Stack, TextField } from "@mui/material";
 import { useState } from "react";
 
-import { BrowseStateURLSyncedProvider } from "@/browser/context";
+import { BrowseStateProvider } from "@/browser/context";
 import {
   Checkbox,
   Input,
@@ -162,13 +162,13 @@ const SearchFieldStory = {
     return (
       <Stack direction="row" gap={2}>
         <div>
-          <BrowseStateURLSyncedProvider>
+          <BrowseStateProvider syncWithUrl>
             <SearchField id="search-ex-1" label="Title einfügen" />
-          </BrowseStateURLSyncedProvider>
+          </BrowseStateProvider>
         </div>
 
         <div>
-          <BrowseStateURLSyncedProvider>
+          <BrowseStateProvider syncWithUrl>
             <SearchField
               id="search-ex-2"
               label="Tier"
@@ -177,7 +177,7 @@ const SearchFieldStory = {
                 onReset: () => alert("reset search"),
               }}
             />
-          </BrowseStateURLSyncedProvider>
+          </BrowseStateProvider>
         </div>
       </Stack>
     );

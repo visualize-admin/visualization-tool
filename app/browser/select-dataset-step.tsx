@@ -50,7 +50,6 @@ import { useConfiguratorState, useLocale } from "@/src";
 
 import {
   BrowseStateProvider,
-  BrowseStateURLSyncedProvider,
   buildURLFromBrowseState,
   useBrowseContext,
 } from "./context";
@@ -509,6 +508,10 @@ const SelectDatasetStepContent = ({
   );
 };
 
+type SelectDatasetStepProps = React.ComponentProps<
+  typeof SelectDatasetStepContent
+>;
+
 const DatasetMetadataSingleCubeAdapter = ({
   dataSource,
   datasetIri,
@@ -539,15 +542,19 @@ const DatasetMetadataSingleCubeAdapter = ({
  * It uses the URL to sync the state.
  */
 export const SelectDatasetStep = (
-  props: React.ComponentProps<typeof SelectDatasetStepContent>
+  props: Omit<SelectDatasetStepProps, "variant"> & {
+    /**
+     * Is passed to the content component. At this level, it controls which whether the
+     * browsing state is synced with the URL or not.
+     * At the SelectDatasetStepContent level, it tweaks UI elements.
+     * /!\ It should not change during the lifetime of the component.
+     */
+    variant: "page" | "drawer";
+  }
 ) => {
-  const Provider =
-    props.variant === "page"
-      ? BrowseStateURLSyncedProvider
-      : BrowseStateProvider;
   return (
-    <Provider>
+    <BrowseStateProvider syncWithUrl={props.variant === "page"}>
       <SelectDatasetStepContent {...props} variant={props.variant} />
-    </Provider>
+    </BrowseStateProvider>
   );
 };

@@ -7,9 +7,9 @@ import { Url } from "next/dist/shared/lib/router/router";
 import Link from "next/link";
 import { Router, useRouter } from "next/router";
 import React, {
-  createContext,
   Dispatch,
   SetStateAction,
+  createContext,
   useContext,
   useEffect,
   useMemo,
@@ -231,29 +231,8 @@ const makeUseBrowseState =
     );
   };
 
-export const useBrowseState = makeUseBrowseState(useState);
-
-export const useBrowseStateSavedToURL = makeUseBrowseState(useQueryParamsState);
-
-export type BrowseState = ReturnType<typeof useBrowseStateSavedToURL>;
+export type BrowseState = ReturnType<ReturnType<typeof makeUseBrowseState>>;
 const BrowseContext = createContext<BrowseState | undefined>(undefined);
-
-/**
- * Provides browse context to children below
- * Responsible for connecting the router to the browsing state
- */
-export const BrowseStateURLSyncedProvider = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
-  const browseState = useBrowseStateSavedToURL();
-  return (
-    <BrowseContext.Provider value={browseState}>
-      {children}
-    </BrowseContext.Provider>
-  );
-};
 
 /**
  * Provides browse context to children below
@@ -261,9 +240,18 @@ export const BrowseStateURLSyncedProvider = ({
  */
 export const BrowseStateProvider = ({
   children,
+  syncWithUrl,
 }: {
   children: React.ReactNode;
+  syncWithUrl: boolean;
 }) => {
+  // Use useState here to make sure that the hook is only created once. /!\ It will
+  // not change if syncWithUrl changes
+  const [useBrowseState] = useState(() => {
+    return syncWithUrl
+      ? makeUseBrowseState(useQueryParamsState)
+      : makeUseBrowseState(useState);
+  });
   const browseState = useBrowseState();
   return (
     <BrowseContext.Provider value={browseState}>
