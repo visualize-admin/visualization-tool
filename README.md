@@ -241,40 +241,12 @@ After the HAR file has been recorded, use [har-to-k6](https://k6.io/docs/test-au
 
 ## Authentication
 
-Authentication by eIAM through a Keycloak instance.
+Authentication is provided by the Swiss federal government's eIAM through ADFS.
 We use Next-auth to integrate our application with Keycloak.
 See https://next-auth.js.org/providers/keycloak for documentation.
 
 ### Locally
 
-The easiest way is to run Keycloak via Docker.
-
-```
-docker run -p 8080:8080 -e KEYCLOAK_ADMIN=admin -e KEYCLOAK_ADMIN_PASSWORD=admin quay.io/keycloak/keycloak:19.0.3 start-dev
-```
-
-⚠️ After creating the container via the above command, if you stop it, restart the container via the docker UI so that you re-use the
-same storage, otherwise you'll have to reconfigure Keycloak.
-
-To configure Keycloak:
-
-- Access the [Keycloak admin][keycloak-admin] (login, password: "admin", "admin")
-- Create client application
-  - Via import: [Keycloak][keycloak-admin] > Clients > Import client
-    - Use the exported client `keycloak-visualize-client-dev.json`
-  - Manually: [Keycloak][keycloak-admin] > Clients > Create client
-    - id: "visualize"
-    - Choose OpenIDConnect
-    - In next slide, toggle "Client Authentication" on
-    - Configure redirect URI on client
-      - Root URL: `http://localhost:3000`
-      - Redirect URI: `/api/auth/callback/keycloak`
-- Create a user
-  - Set a password to the user (in Credentials tab)
-- Set environment variables in `.env.local`
-  - KEYCLOAK_ID: "visualize"
-  - KEYCLOAK_SECRET: From [Keycloak][keycloak-admin] > Clients > visualize > Credentials > Client secret
-  - KEYCLOAK_ISSUER: http://localhost:8080/realms/master
-  - NEXTAUTH_SECRET: Any string, can be "secret" locally
-
-[keycloak-admin]: http://localhost:8080/admin/master/console/#/
+You can use the ref eIAM. ADFS environment variables should be configured in your
+`.env.local` file. You'll find those secret variables in our shared 1Password in
+the "Visualize.admin .env.local" entry.

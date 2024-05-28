@@ -21,9 +21,9 @@ docker build \
     --build-arg COMMIT=$CI_COMMIT_SHA \
     --build-arg MAPTILER_STYLE_KEY=$MAPTILER_STYLE_KEY \
     --build-arg VECTOR_TILE_URL=$VECTOR_TILE_URL \
-    --build-arg KEYCLOAK_ID=$KEYCLOAK_ID \
-    --build-arg KEYCLOAK_SECRET=$KEYCLOAK_SECRET \
-    --build-arg KEYCLOAK_ISSUER=$KEYCLOAK_ISSUER \
+    --build-arg ADFS_ID=$ADFS_ID \
+    --build-arg ADFS_SECRET=$ADFS_SECRET \
+    --build-arg ADFS_ISSUER=$ADFS_ISSUER \
     --build-arg NEXTAUTH_SECRET=$NEXTAUTH_SECRET \
     --build-arg NEXTAUTH_URL=$NEXTAUTH_URL \
     $(echo $DOCKER_IMAGE_TAGS | tr ' ' '\n' | xargs -n 1 -I {} echo "-t {}" ) .
