@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useClient } from "urql";
 import createStore from "zustand";
 
-import { SelectDatasetStepDrawer } from "@/browser/select-dataset-step";
+import { SelectDatasetStep } from "@/browser/select-dataset-step";
 import { DialogCloseButton } from "@/components/dialog-close-button";
 import {
   ConfiguratorStateProvider,
@@ -95,7 +95,7 @@ export const AddNewDatasetPanel = () => {
 
       <Box>
         <ConfiguratorStateProvider chartId="new" allowDefaultRedirect={false}>
-          <SelectDatasetStepDrawer
+          <SelectDatasetStep
             variant="drawer"
             dataset={dataSetIri}
             onClickBackLink={(ev) => {

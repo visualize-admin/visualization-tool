@@ -1,4 +1,4 @@
-import { SelectDatasetStepPage } from "@/browser/select-dataset-step";
+import { SelectDatasetStep } from "@/browser/select-dataset-step";
 import { AppLayout } from "@/components/layout";
 import { ConfiguratorStateProvider } from "@/configurator/configurator-state";
 import { SearchCubeResultOrder } from "@/graphql/query-hooks";
@@ -19,7 +19,7 @@ export function DatasetBrowser() {
   return (
     <AppLayout>
       <ConfiguratorStateProvider chartId="new" allowDefaultRedirect={false}>
-        <SelectDatasetStepPage />
+        <SelectDatasetStep variant="page" />
       </ConfiguratorStateProvider>
     </AppLayout>
   );

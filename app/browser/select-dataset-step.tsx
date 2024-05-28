@@ -23,11 +23,11 @@ import { DatasetMetadata } from "@/components/dataset-metadata";
 import Flex from "@/components/flex";
 import { Footer } from "@/components/footer";
 import {
-  bannerPresenceProps,
   BANNER_HEIGHT,
   BANNER_MARGIN_TOP,
   DURATION,
   MotionBox,
+  bannerPresenceProps,
   navPresenceProps,
   smoothPresenceProps,
 } from "@/components/presence";
@@ -538,26 +538,16 @@ const DatasetMetadataSingleCubeAdapter = ({
  * This is the select dataset step component for use directly in a page.
  * It uses the URL to sync the state.
  */
-export const SelectDatasetStepPage = (
+export const SelectDatasetStep = (
   props: React.ComponentProps<typeof SelectDatasetStepContent>
 ) => {
+  const Provider =
+    props.variant === "page"
+      ? BrowseStateURLSyncedProvider
+      : BrowseStateProvider;
   return (
-    <BrowseStateURLSyncedProvider>
-      <SelectDatasetStepContent {...props} />
-    </BrowseStateURLSyncedProvider>
-  );
-};
-
-/**
- * This is the select dataset step component for use in a drawer, where the state is not
- * synced with the URL.
- */
-export const SelectDatasetStepDrawer = (
-  props: React.ComponentProps<typeof SelectDatasetStepContent>
-) => {
-  return (
-    <BrowseStateProvider>
-      <SelectDatasetStepContent {...props} />
-    </BrowseStateProvider>
+    <Provider>
+      <SelectDatasetStepContent {...props} variant={props.variant} />
+    </Provider>
   );
 };
