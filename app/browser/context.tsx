@@ -7,8 +7,6 @@ import { Url } from "next/dist/shared/lib/router/router";
 import Link from "next/link";
 import { Router, useRouter } from "next/router";
 import React, {
-  Dispatch,
-  SetStateAction,
   createContext,
   useContext,
   useEffect,
@@ -142,13 +140,11 @@ const useQueryParamsState = (initialState: BrowseParams) => {
   return [state, setState] as const;
 };
 
-const makeUseBrowseState =
-  (
-    useParamsHook: (
-      initialState: BrowseParams
-    ) => readonly [BrowseParams, Dispatch<SetStateAction<BrowseParams>>]
-  ) =>
-  () => {
+const createUseBrowseState = ({ syncWithUrl }: { syncWithUrl: boolean }) => {
+  const useParamsHook = syncWithUrl
+    ? useQueryParamsState
+    : useState<BrowseParams>;
+  return () => {
     const inputRef = useRef<HTMLInputElement>(null);
     const [browseParams, setParams] = useParamsHook({});
     const {
@@ -225,9 +221,19 @@ const makeUseBrowseState =
       ]
     );
   };
+};
 
-export type BrowseState = ReturnType<ReturnType<typeof makeUseBrowseState>>;
+export type BrowseState = ReturnType<ReturnType<typeof createUseBrowseState>>;
 const BrowseContext = createContext<BrowseState | undefined>(undefined);
+
+const useBrowseState = ({ syncWithUrl }: { syncWithUrl: boolean }) => {
+  // Use useState here to make sure that the hook is only created once.
+  // /!\ It will not react if syncWithUrl changes
+  const [useBrowseStateHook] = useState(() =>
+    createUseBrowseState({ syncWithUrl })
+  );
+  return useBrowseStateHook();
+};
 
 /**
  * Provides browse context to children below
@@ -240,14 +246,7 @@ export const BrowseStateProvider = ({
   children: React.ReactNode;
   syncWithUrl: boolean;
 }) => {
-  // Use useState here to make sure that the hook is only created once. /!\ It will
-  // not change if syncWithUrl changes
-  const [useBrowseState] = useState(() => {
-    return syncWithUrl
-      ? makeUseBrowseState(useQueryParamsState)
-      : makeUseBrowseState(useState);
-  });
-  const browseState = useBrowseState();
+  const browseState = useBrowseState({ syncWithUrl });
   return (
     <BrowseContext.Provider value={browseState}>
       {children}
