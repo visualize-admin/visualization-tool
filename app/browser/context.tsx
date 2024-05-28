@@ -144,6 +144,9 @@ const useBrowseParamsStateWithUrlSync = (initialState: BrowseParams) => {
  * Creates a hook that provides the current browse state and actions to update it.
  *
  * It will persist/recover this state from the URL if `syncWithUrl` is true.
+ *
+ * TODO: Might be a good idea to use a zustand store, where the persistency is controlled
+ * via syncWithUrl. It would be a bit more explicit and easier to understand.
  */
 const createUseBrowseState = ({ syncWithUrl }: { syncWithUrl: boolean }) => {
   const useParamsHook = syncWithUrl
