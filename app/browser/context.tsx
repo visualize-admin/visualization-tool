@@ -142,11 +142,6 @@ const useQueryParamsState = (initialState: BrowseParams) => {
   return [state, setState] as const;
 };
 
-export const noopCodec: BrowseParamsCodec = {
-  parse: () => ({}),
-  serialize: () => "",
-};
-
 const makeUseBrowseState =
   (
     useParamsHook: (
