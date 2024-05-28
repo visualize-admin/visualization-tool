@@ -89,15 +89,11 @@ export interface Preview {
 export const DataSetPreview = ({
   dataSetIri,
   dataSource,
-  onClickCreate,
+  onCreateChartFromDataset,
 }: {
   dataSetIri: string;
   dataSource: DataSource;
-  onClickDataset?: (
-    ev: React.MouseEvent<HTMLAnchorElement>,
-    datasetIri: string
-  ) => void;
-  onClickCreate?: (
+  onCreateChartFromDataset?: (
     ev: React.MouseEvent<HTMLAnchorElement>,
     datasetIri: string
   ) => void;
@@ -156,9 +152,9 @@ export const DataSetPreview = ({
           <Typography className={classes.title} component="div" variant="h1">
             {dataCubeMetadata.title}
           </Typography>
-          {onClickCreate ? (
+          {onCreateChartFromDataset ? (
             <Button
-              onClick={(ev) => onClickCreate?.(ev, dataSetIri)}
+              onClick={(ev) => onCreateChartFromDataset?.(ev, dataSetIri)}
               className={classes.createChartButton}
               component="a"
             >

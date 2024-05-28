@@ -113,7 +113,7 @@ export const AddNewDatasetPanel = () => {
             }}
             datasetPreviewProps={{
               dataSetIri,
-              onClickCreate: async (ev, datasetIri) => {
+              onCreateChartFromDataset: async (ev, datasetIri) => {
                 ev.preventDefault();
                 await addNewDataset(datasetIri);
                 close();
