@@ -1,0 +1,11 @@
+{
+  "apiUrl": "https://accent.interactivethings.io",
+  "files": [
+    {
+      "namePattern": "file",
+      "format": "gettext",
+      "source": "app/locales/en/messages.po",
+      "target": "app/locales/%slug%/%document_path%.po"
+    }
+  ]
+}
