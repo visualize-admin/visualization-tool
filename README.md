@@ -242,8 +242,7 @@ After the HAR file has been recorded, use [har-to-k6](https://k6.io/docs/test-au
 ## Authentication
 
 Authentication is provided by the Swiss federal government's eIAM through ADFS.
-We use Next-auth to integrate our application with Keycloak.
-See https://next-auth.js.org/providers/keycloak for documentation.
+We use Next-auth to integrate our application with it, through a [custom Provider](app/auth-providers/adfs.ts).
 
 ### Locally
 
