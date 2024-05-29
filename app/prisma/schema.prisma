@@ -32,6 +32,10 @@ model User {
   id     Int      @id @default(autoincrement())
   sub    String?  @unique @db.VarChar(64)
   name   String?  @db.VarChar(100)
+  last_login DateTime? @db.Timestamp(6)
+  created_at DateTime @default(now()) @db.Timestamp(6)
+  updated_at DateTime @default(now()) @db.Timestamp(6)
+
   Config Config[] @relation()
 
   @@map("users")
