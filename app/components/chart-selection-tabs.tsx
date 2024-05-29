@@ -189,75 +189,91 @@ const TabsEditable = (props: TabsEditableProps) => {
         }}
       />
 
-      <Popover
-        id="chart-selection-popover"
-        open={tabsState.popoverOpen}
-        anchorEl={popoverAnchorEl}
-        anchorOrigin={{
-          horizontal: "left",
-          vertical: "bottom",
-        }}
-        onClose={handleClose}
-        PaperProps={{
-          sx: {
-            py: "1rem",
-          },
-        }}
-      >
-        {tabsState.popoverType === "add" ? (
-          <>
-            <Stack
-              divider={<Divider sx={{ mx: "1.5rem" }} />}
-              gap="0.5rem"
-              direction="column"
-            >
-              <Stack direction="column" gap="0.5rem" m="1rem">
-                <Typography
-                  variant="body2"
-                  color="text.secondary"
-                  textAlign="center"
-                  gutterBottom
-                >
-                  <Trans id="chart-selection-tabs.add-chart-same-dataset.caption">
-                    Add chart based on the same dataset
-                  </Trans>
-                </Typography>
-                <ChartTypeSelector
-                  state={state}
-                  type="add"
-                  showHelp={false}
-                  showComparisonCharts={false}
-                  chartKey={tabsState.activeChartKey ?? chartConfig.key}
-                  sx={{ width: 320, px: 3, pb: 3 }}
-                />
-              </Stack>
-              <Stack direction="column" gap="0.5rem" mx="1.5rem" my="1rem">
-                <Typography
-                  variant="body2"
-                  color="text.secondary"
-                  textAlign="center"
-                  gutterBottom
-                >
-                  <Trans id="chart-selection-tabs.add-chart-different-dataset.caption">
-                    Add chart based on a different dataset
-                  </Trans>
-                </Typography>
-                <Button
-                  fullWidth
-                  sx={{ justifyContent: "center" }}
-                  onClick={() => {
-                    setTabsState({ ...tabsState, popoverOpen: false });
-                    openAddDatasetPanel();
-                  }}
-                >
-                  <Trans id="chart-selection-tabs.add-chart-different-dataset.button">
-                    Select dataset
-                  </Trans>
-                </Button>
-              </Stack>
+      {tabsState.popoverType === "add" ? (
+        <Popover
+          id="chart-selection-popover"
+          open={tabsState.popoverOpen}
+          anchorEl={popoverAnchorEl}
+          anchorOrigin={{
+            horizontal: "left",
+            vertical: "bottom",
+          }}
+          onClose={handleClose}
+          PaperProps={{
+            sx: {
+              py: "1rem",
+            },
+          }}
+        >
+          <Stack
+            divider={<Divider sx={{ mx: "1.5rem" }} />}
+            gap="0.5rem"
+            direction="column"
+          >
+            <Stack direction="column" gap="0.5rem" m="1rem">
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                textAlign="center"
+                gutterBottom
+              >
+                <Trans id="chart-selection-tabs.add-chart-same-dataset.caption">
+                  Add chart based on the same dataset
+                </Trans>
+              </Typography>
+              <ChartTypeSelector
+                state={state}
+                type="add"
+                showHelp={false}
+                showComparisonCharts={false}
+                chartKey={tabsState.activeChartKey ?? chartConfig.key}
+                sx={{ width: 320, px: 3, pb: 3 }}
+              />
             </Stack>
-          </>
-        ) : (
+            <Stack direction="column" gap="0.5rem" mx="1.5rem" my="1rem">
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                textAlign="center"
+                gutterBottom
+              >
+                <Trans id="chart-selection-tabs.add-chart-different-dataset.caption">
+                  Add chart based on a different dataset
+                </Trans>
+              </Typography>
+              <Button
+                fullWidth
+                sx={{ justifyContent: "center" }}
+                onClick={() => {
+                  setTabsState({ ...tabsState, popoverOpen: false });
+                  openAddDatasetPanel();
+                }}
+              >
+                <Trans id="chart-selection-tabs.add-chart-different-dataset.button">
+                  Select dataset
+                </Trans>
+              </Button>
+            </Stack>
+          </Stack>
+        </Popover>
+      ) : null}
+
+      {tabsState.popoverType === "edit" ? (
+        <Popover
+          id="chart-selection-popover"
+          open={tabsState.popoverOpen}
+          anchorEl={popoverAnchorEl}
+          anchorOrigin={{
+            horizontal: "left",
+            vertical: "bottom",
+          }}
+          onClose={handleClose}
+          PaperProps={{
+            sx: {
+              py: "1rem",
+            },
+          }}
+        >
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2, p: 4 }}>
             <Button
               onClick={() => {
@@ -300,8 +316,8 @@ const TabsEditable = (props: TabsEditableProps) => {
               </Button>
             )}
           </Box>
-        )}
-      </Popover>
+        </Popover>
+      ) : null}
     </>
   );
 };
@@ -664,7 +680,7 @@ const TabsInner = (props: TabsInnerProps) => {
                                 draggable={draggable}
                                 active={d.active}
                                 dragging={snapshot.isDragging}
-                                onEditClick={(e) => {
+                                onChevronDownClick={(e) => {
                                   onChartEdit?.(e, d.key);
                                 }}
                                 onSwitchClick={() => {
@@ -758,7 +774,7 @@ type TabContentProps = {
   draggable?: boolean;
   active?: boolean;
   dragging?: boolean;
-  onEditClick?: (
+  onChevronDownClick?: (
     e: React.MouseEvent<HTMLElement>,
     activeChartKey: string
   ) => void;
@@ -773,7 +789,7 @@ const TabContent = (props: TabContentProps) => {
     draggable,
     active,
     dragging,
-    onEditClick,
+    onChevronDownClick,
     onSwitchClick,
   } = props;
   const classes = useIconStyles({ active, dragging });
@@ -792,7 +808,7 @@ const TabContent = (props: TabContentProps) => {
         <Button
           variant="text"
           onClick={(e) => {
-            onEditClick?.(e, chartKey);
+            onChevronDownClick?.(e, chartKey);
           }}
           className={classes.editIconWrapper}
         >
