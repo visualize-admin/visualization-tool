@@ -29,13 +29,13 @@ const decodeLayouts = (layouts: Layouts) => {
   );
 };
 
-const ChartPanelLayoutGrid = (props: ChartPanelLayoutTypeProps) => {
+const ChartPanelLayoutCanvas = (props: ChartPanelLayoutTypeProps) => {
   const { chartConfigs } = props;
   const [config, dispatch] = useConfiguratorState(isLayouting);
   const [layouts, setLayouts] = useState<Layouts>(() => {
     assert(
-      config.layout.type === "dashboard" && config.layout.layout === "tiles",
-      "ChartPanelLayoutGrid should be rendered only for dashboard layout with tiles"
+      config.layout.type === "dashboard" && config.layout.layout === "canvas",
+      "ChartPanelLayoutGrid should be rendered only for dashboard layout with canvas"
     );
 
     return config.layout.layouts;
@@ -44,8 +44,8 @@ const ChartPanelLayoutGrid = (props: ChartPanelLayoutTypeProps) => {
   const handleChangeLayouts = (layouts: Layouts) => {
     const layout = config.layout;
     assert(
-      layout.type === "dashboard" && layout.layout === "tiles",
-      "ChartPanelLayoutGrid should be rendered only for dashboard layout with tiles"
+      layout.type === "dashboard" && layout.layout === "canvas",
+      "ChartPanelLayoutGrid should be rendered only for dashboard layout with canvas"
     );
 
     const parsedLayouts = decodeLayouts(layouts);
@@ -76,4 +76,4 @@ const ChartPanelLayoutGrid = (props: ChartPanelLayoutTypeProps) => {
   );
 };
 
-export default ChartPanelLayoutGrid;
+export default ChartPanelLayoutCanvas;

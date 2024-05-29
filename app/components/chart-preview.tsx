@@ -109,7 +109,7 @@ const DashboardPreview = (props: DashboardPreviewProps) => {
   const [over, setOver] = useState<Over | null>(null);
   const renderChart = useCallback(
     (chartConfig: ChartConfig) => {
-      return layoutType === "tiles" ? (
+      return layoutType === "canvas" ? (
         <ReactGridChartPreview
           key={chartConfig.key}
           chartKey={chartConfig.key}
@@ -129,7 +129,7 @@ const DashboardPreview = (props: DashboardPreviewProps) => {
     [dataSource, editing, layoutType, state.layout.type]
   );
 
-  if (layoutType === "tiles") {
+  if (layoutType === "canvas") {
     return (
       <ChartPanelLayout
         chartConfigs={state.chartConfigs}

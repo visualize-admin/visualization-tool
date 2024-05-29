@@ -3,7 +3,7 @@ import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 import React, { forwardRef, HTMLProps } from "react";
 
-import ChartPanelLayoutGrid, {
+import ChartPanelLayoutCanvas, {
   chartPanelLayoutGridClasses,
 } from "@/components/chart-panel-layout-grid";
 import { ChartPanelLayoutTall } from "@/components/chart-panel-layout-tall";
@@ -77,7 +77,7 @@ const Wrappers: Record<
 > = {
   vertical: ChartPanelLayoutVertical,
   tall: ChartPanelLayoutTall,
-  tiles: ChartPanelLayoutGrid,
+  canvas: ChartPanelLayoutCanvas,
 };
 
 export const ChartPanelLayout = (props: ChartPanelLayoutProps) => {

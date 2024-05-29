@@ -591,8 +591,8 @@ msgid "controls.layout.tall"
 msgstr "Hoch"
 
 #: app/configurator/components/field-i18n.ts
-msgid "controls.layout.tiles"
-msgstr "Kacheln"
+msgid "controls.layout.canvas"
+msgstr "Freies Layout"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.layout.vertical"

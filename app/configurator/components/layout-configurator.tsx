@@ -55,7 +55,7 @@ const LayoutLayoutConfigurator = () => {
             >
               <LayoutButton type="tall" layout={layout} />
               <LayoutButton type="vertical" layout={layout} />
-              <LayoutButton type="tiles" layout={layout} />
+              <LayoutButton type="canvas" layout={layout} />
             </Box>
           </ControlSectionContent>
         </ControlSection>
@@ -75,7 +75,7 @@ const migrateLayout = (
   newLayoutType: LayoutDashboard["layout"],
   chartConfigs: ChartConfig[]
 ): LayoutDashboard => {
-  if (newLayoutType === "tiles") {
+  if (newLayoutType === "canvas") {
     const generated = generateLayout({
       count: chartConfigs.length,
       layout: "tiles",
