@@ -177,7 +177,6 @@ const TabsEditable = (props: TabsEditableProps) => {
         }}
         onChartEdit={(e, key) => {
           setPopoverAnchorEl(e.currentTarget);
-          console.log("e", e.currentTarget);
           setTabsState({
             popoverOpen: true,
             popoverType: "edit",
