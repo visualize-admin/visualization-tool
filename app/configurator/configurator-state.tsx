@@ -1519,7 +1519,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       }
       break;
     case "CHART_CONFIG_REMOVE":
-      if (isConfiguring(draft) || isLayouting(draft) || isPublishing(draft)) {
+      if (isConfiguring(draft) || isLayouting(draft)) {
         const index = draft.chartConfigs.findIndex(
           (d) => d.key === action.value.chartKey
         );
