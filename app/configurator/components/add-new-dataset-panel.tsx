@@ -80,10 +80,10 @@ export const AddNewDatasetPanel = () => {
 
   const handleClose = useEventCallback(() => {
     close();
-    setTimeout(() => {
-      // Give time to the drawer to close before resetting the dataset IRI
-      setDataSetIri("");
-    }, 500);
+  });
+
+  const handleExited = useEventCallback(() => {
+    setDataSetIri("");
   });
 
   return (
@@ -92,6 +92,9 @@ export const AddNewDatasetPanel = () => {
       open={isOpen}
       variant="temporary"
       onClose={handleClose}
+      SlideProps={{
+        onExited: handleExited,
+      }}
       PaperProps={{
         sx: {
           width: "1400px",
