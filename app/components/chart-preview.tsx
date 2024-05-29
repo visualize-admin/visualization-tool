@@ -235,6 +235,7 @@ const ChartPreviewChartMoreButton = ({ chartKey }: { chartKey: string }) => {
           as="menuitem"
           onClick={() => {
             dispatch({ type: "CONFIGURE_CHART", value: { chartKey } });
+            handleClose();
           }}
           iconName="edit"
           label={<Trans id="chat-preview.title">Edit</Trans>}
@@ -255,6 +256,7 @@ const ChartPreviewChartMoreButton = ({ chartKey }: { chartKey: string }) => {
             })}
             onClick={() => {
               dispatch({ type: "CHART_CONFIG_REMOVE", value: { chartKey } });
+              handleClose();
             }}
             iconName="trash"
             label={<Trans id="chat-preview.title">Delete</Trans>}
@@ -383,24 +385,27 @@ const SingleURLsPreview = (props: SingleURLsPreviewProps) => {
               dataSource={dataSource}
               chartKey={chartConfig.key}
               actionElementSlot={
-                <Checkbox
-                  checked={checked}
-                  disabled={keys.length === 1 && checked}
-                  onChange={() => {
-                    dispatch({
-                      type: "LAYOUT_CHANGED",
-                      value: {
-                        ...layout,
-                        publishableChartKeys: checked
-                          ? keys.filter((k) => k !== key)
-                          : state.chartConfigs
-                              .map((c) => c.key)
-                              .filter((k) => keys.includes(k) || k === key),
-                      },
-                    });
-                  }}
-                  label=""
-                />
+                <>
+                  <ChartPreviewChartMoreButton chartKey={key} />
+                  <Checkbox
+                    checked={checked}
+                    disabled={keys.length === 1 && checked}
+                    onChange={() => {
+                      dispatch({
+                        type: "LAYOUT_CHANGED",
+                        value: {
+                          ...layout,
+                          publishableChartKeys: checked
+                            ? keys.filter((k) => k !== key)
+                            : state.chartConfigs
+                                .map((c) => c.key)
+                                .filter((k) => keys.includes(k) || k === key),
+                        },
+                      });
+                    }}
+                    label=""
+                  />
+                </>
               }
             />
           </ChartWrapper>
