@@ -1,9 +1,11 @@
 import { Box, BoxProps, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
-import React, { HTMLProps, forwardRef } from "react";
+import React, { forwardRef, HTMLProps } from "react";
 
-import ChartPanelLayoutGrid from "@/components/chart-panel-layout-grid";
+import ChartPanelLayoutGrid, {
+  chartPanelLayoutGridClasses,
+} from "@/components/chart-panel-layout-grid";
 import { ChartPanelLayoutTall } from "@/components/chart-panel-layout-tall";
 import { ChartPanelLayoutVertical } from "@/components/chart-panel-layout-vertical";
 import { ChartSelectionTabs } from "@/components/chart-selection-tabs";
@@ -14,6 +16,17 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: "flex",
     flexDirection: "column",
     gap: theme.spacing(4),
+  },
+  chartWrapper: {
+    [`.${chartPanelLayoutGridClasses.root} &`]: {
+      transition: theme.transitions.create(["box-shadow"], {
+        duration: theme.transitions.duration.shortest,
+      }),
+    },
+    [`.${chartPanelLayoutGridClasses.root} &:has(.${chartPanelLayoutGridClasses.dragHandle}:hover)`]:
+      {
+        boxShadow: theme.shadows[6],
+      },
   },
   chartWrapperInner: {
     display: "contents",
@@ -33,7 +46,7 @@ export const ChartWrapper = forwardRef<HTMLDivElement, ChartWrapperProps>(
     const { children, editing, layoutType, ...rest } = props;
     const classes = useStyles();
     return (
-      <Box ref={ref} {...rest}>
+      <Box ref={ref} {...rest} className={classes.chartWrapper}>
         {(editing || layoutType === "tab") && <ChartSelectionTabs />}
         <Box
           className={classes.chartWrapperInner}
