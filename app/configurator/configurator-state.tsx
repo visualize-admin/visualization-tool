@@ -1596,10 +1596,9 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
     case "CONFIGURE_CHART":
       const newDraft = transitionStepPrevious(draft, "CONFIGURING_CHART");
-      Object.assign(draft, newDraft);
-      assert(isConfiguring(draft), "Should be configuring after edit");
-      draft.activeChartKey = action.value.chartKey;
-      return draft;
+      assert(isConfiguring(newDraft), "Should be configuring after edit");
+      newDraft.activeChartKey = action.value.chartKey;
+      return newDraft;
 
     default:
       throw unreachableError(action);
