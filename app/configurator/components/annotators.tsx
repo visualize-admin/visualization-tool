@@ -152,7 +152,7 @@ export const LayoutAnnotator = () => {
       role="tablist"
       aria-labelledby="controls-design"
       collapse
-      defaultExpanded={false}
+      defaultExpanded
     >
       <SubsectionTitle
         titleId="controls-design"
