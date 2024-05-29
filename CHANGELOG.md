@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 You can also check the [release page](https://github.com/visualize-admin/visualization-tool/releases)
 
+# Unreleased
+
+- Features
+  - Add the "Free canvas" layout, allowing users to freely resize and move charts for dashboards
+  - Ability to start a chart from another dataset than the current one
+  
+# [4.5.1] - 2024-05-21
+
+- Fixes
+  - If there is an error on a chart contained in a dashboard, the layout is not be broken
+
 # [4.5.0] - 2024-05-21
 
 - Features
