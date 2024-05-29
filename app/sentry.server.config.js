@@ -14,7 +14,7 @@ if (process.env.NODE_ENV !== "development") {
     tracesSampleRate: 0.1,
     instrumenter: {
       patch: (mod, path, logger) => {
-        // Ignore auth calls to prevent 405 Keycloak errors.
+        // Ignore auth calls to prevent 405 authentication errors.
         if (path?.includes("auth")) {
           return null;
         }

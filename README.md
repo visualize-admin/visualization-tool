@@ -56,11 +56,17 @@ Once the application's set up, you can start the development server with
 
 ```sh
 yarn dev
+yarn dev:ssl # If you are working with the login process
 ```
+
+> ℹ️ When using the authentication, you need to use https otherwise you'll experience an SSL
+> error when the authentication provider redirects you back to the app after login. You
+> can either remove the trailing s in the URL after the redirection, or use the `yarn dev:ssl`
+> command to use HTTPs for the development server.
 
 > 👉 In [Visual Studio Code](https://code.visualstudio.com/), you also can run the **default build task** (CMD-SHIFT-B) to start the dev server, database server, and TypeScript checker (you'll need [Nix](https://nixos.org) for that to work).
 
-To run the application with debugging enabled through vscode, make sure the dev server is running and the click the "Run and Debug" button in the sidebar (CMD-SHIFT-D). Then select the "Launch Chrome" configuration. This will open a new Chrome window with the dev tools open. You can now set breakpoints in the code and they will be hit.
+To run the application with debugging enabled through VSCode, make sure the dev server is running and the click the "Run and Debug" button in the sidebar (CMD-SHIFT-D). Then select the "Launch Chrome" configuration. This will open a new Chrome window with the dev tools open. You can now set breakpoints in the code and they will be hit.
 
 ### Postgres database
 
@@ -102,7 +108,7 @@ New versions of `package.json` are built on GitLab CI into a separate image that
 yarn version
 ```
 
-This will prompt for a new version. The `postversion` script will automatically try to push the created version tag to the origin repo.
+This will prompt for a new version. The `postversion` script will automatically try to push the created version tag to the origin repository.
 
 ## Deployment
 
@@ -235,40 +241,11 @@ After the HAR file has been recorded, use [har-to-k6](https://k6.io/docs/test-au
 
 ## Authentication
 
-Authentication by eIAM through a Keycloak instance.
-We use Next-auth to integrate our application with Keycloak.
-See https://next-auth.js.org/providers/keycloak for documentation.
+Authentication is provided by the Swiss federal government's eIAM through ADFS.
+We use Next-auth to integrate our application with it, through a [custom Provider](app/auth-providers/adfs.ts).
 
 ### Locally
 
-The easiest way is to run Keycloak via Docker.
-
-```
-docker run -p 8080:8080 -e KEYCLOAK_ADMIN=admin -e KEYCLOAK_ADMIN_PASSWORD=admin quay.io/keycloak/keycloak:19.0.3 start-dev
-```
-
-⚠️ After creating the container via the above command, if you stop it, restart the container via the docker UI so that you re-use the
-same storage, otherwise you'll have to reconfigure Keycloak.
-
-To configure Keycloak:
-
-- Access the [Keycloak admin][keycloak-admin] (login, password: "admin", "admin")
-- Create client application
-  - Via import: [Keycloak][keycloak-admin] > Clients > Import client
-    - Use the exported client `keycloak-visualize-client-dev.json`
-  - Manually: [Keycloak][keycloak-admin] > Clients > Create client
-    - id: "visualize"
-    - Choose OpenIDConnect
-    - In next slide, toggle "Client Authentication" on
-    - Configure redirect URI on client
-      - Root URL: `http://localhost:3000`
-      - Redirect URI: `/api/auth/callback/keycloak`
-- Create a user
-  - Set a password to the user (in Credentials tab)
-- Set environment variables in `.env.local`
-  - KEYCLOAK_ID: "visualize"
-  - KEYCLOAK_SECRET: From [Keycloak][keycloak-admin] > Clients > visualize > Credentials > Client secret
-  - KEYCLOAK_ISSUER: http://localhost:8080/realms/master
-  - NEXTAUTH_SECRET: Any string, can be "secret" locally
-
-[keycloak-admin]: http://localhost:8080/admin/master/console/#/
+You can use the ref eIAM. ADFS environment variables should be configured in your
+`.env.local` file. You'll find those secret variables in our shared 1Password in
+the "Visualize.admin .env.local" entry.

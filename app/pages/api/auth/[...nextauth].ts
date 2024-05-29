@@ -2,21 +2,21 @@ import NextAuth, { NextAuthOptions } from "next-auth";
 
 import ADFS from "@/auth-providers/adfs";
 import { ensureUserFromSub } from "@/db/user";
-import { KEYCLOAK_ID, KEYCLOAK_ISSUER, KEYCLOAK_SECRET } from "@/domain/env";
+import { ADFS_ID, ADFS_ISSUER, ADFS_SECRET } from "@/domain/env";
 import { truthy } from "@/domain/types";
 
 import type { NextApiRequest, NextApiResponse } from "next";
 
 const providers = [
-  KEYCLOAK_ID && KEYCLOAK_SECRET && KEYCLOAK_ISSUER
+  ADFS_ID && ADFS_SECRET && ADFS_ISSUER
     ? ADFS({
-        wellKnown: `${KEYCLOAK_ISSUER}/.well-known/openid-configuration`,
-        clientId: KEYCLOAK_ID,
-        clientSecret: KEYCLOAK_SECRET,
-        authorizeUrl: `${KEYCLOAK_ISSUER}/protocol/openid-connect/auth`,
-        issuer: KEYCLOAK_ISSUER,
-        token: `${KEYCLOAK_ISSUER}/protocol/openid-connect/token`,
-        userinfo: `${KEYCLOAK_ISSUER}/protocol/openid-connect/userinfo`,
+        wellKnown: `${ADFS_ISSUER}/.well-known/openid-configuration`,
+        clientId: ADFS_ID,
+        clientSecret: ADFS_SECRET,
+        authorizeUrl: `${ADFS_ISSUER}/protocol/openid-connect/auth`,
+        issuer: ADFS_ISSUER,
+        token: `${ADFS_ISSUER}/protocol/openid-connect/token`,
+        userinfo: `${ADFS_ISSUER}/protocol/openid-connect/userinfo`,
         checks: ["pkce", "state"],
         client: {
           token_endpoint_auth_method: "none",
@@ -33,9 +33,6 @@ export const nextAuthOptions = {
      * on the session.
      */
     session: async ({ session, token }) => {
-      console.log("Session:", session);
-      console.log("Token:", token);
-
       if (session.user && token.sub) {
         session.user.sub = token.sub;
         const user = await ensureUserFromSub(token.sub, token.name);
