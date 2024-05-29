@@ -23,7 +23,9 @@ import { useClient } from "urql";
 import { useDebounce } from "use-debounce";
 
 import { extractChartConfigComponentIris } from "@/charts/shared/chart-helpers";
+import { ArrowMenu } from "@/components/arrow-menu";
 import Flex from "@/components/flex";
+import { MenuActionItem } from "@/components/menu-action-item";
 import { VisualizeTab, VisualizeTabList } from "@/components/tabs";
 import {
   ChartConfig,
@@ -175,6 +177,7 @@ const TabsEditable = (props: TabsEditableProps) => {
         }}
         onChartEdit={(e, key) => {
           setPopoverAnchorEl(e.currentTarget);
+          console.log("e", e.currentTarget);
           setTabsState({
             popoverOpen: true,
             popoverType: "edit",
@@ -259,64 +262,76 @@ const TabsEditable = (props: TabsEditableProps) => {
       ) : null}
 
       {tabsState.popoverType === "edit" ? (
-        <Popover
+        <ArrowMenu
           id="chart-selection-popover"
           open={tabsState.popoverOpen}
           anchorEl={popoverAnchorEl}
           anchorOrigin={{
-            horizontal: "left",
+            horizontal: "center",
             vertical: "bottom",
           }}
-          onClose={handleClose}
-          PaperProps={{
-            sx: {
-              py: "1rem",
-            },
+          transformOrigin={{
+            horizontal: "center",
+            vertical: "top",
           }}
+          onClose={handleClose}
         >
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 2, p: 4 }}>
-            <Button
+          <MenuActionItem
+            type="button"
+            as="menuitem"
+            onClick={() => {
+              dispatch({
+                type: "CHART_CONFIG_ADD",
+                value: {
+                  chartConfig: {
+                    ...getChartConfig(state, tabsState.activeChartKey),
+                    key: createChartId(),
+                  },
+                  locale,
+                },
+              });
+              handleClose();
+            }}
+            iconName="duplicate"
+            label={
+              <Trans id="controls.duplicate.visualization">
+                Duplicate this visualization
+              </Trans>
+            }
+          />
+
+          {state.chartConfigs.length > 1 && (
+            <MenuActionItem
+              as="menuitem"
+              type="button"
+              iconName="trash"
+              label={
+                <Trans id="controls.remove.visualization">
+                  Remove this visualization
+                </Trans>
+              }
+              color="error"
+              requireConfirmation
+              confirmationTitle={t({
+                id: "chat-preview.delete.title",
+                message: "Delete chart?",
+              })}
+              confirmationText={t({
+                id: "chat-preview.delete.confirmation",
+                message: "Are you sure you want to delete this chart?",
+              })}
               onClick={() => {
                 dispatch({
-                  type: "CHART_CONFIG_ADD",
+                  type: "CHART_CONFIG_REMOVE",
                   value: {
-                    chartConfig: {
-                      ...getChartConfig(state, tabsState.activeChartKey),
-                      key: createChartId(),
-                    },
-                    locale,
+                    chartKey: tabsState.activeChartKey,
                   },
                 });
                 handleClose();
               }}
-              sx={{ justifyContent: "center" }}
-            >
-              <Trans id="controls.duplicate.visualization">
-                Duplicate this visualization
-              </Trans>
-            </Button>
-
-            {state.chartConfigs.length > 1 && (
-              <Button
-                color="error"
-                onClick={() => {
-                  dispatch({
-                    type: "CHART_CONFIG_REMOVE",
-                    value: {
-                      chartKey: tabsState.activeChartKey,
-                    },
-                  });
-                  handleClose();
-                }}
-                sx={{ justifyContent: "center" }}
-              >
-                <Trans id="controls.remove.visualization">
-                  Remove this visualization
-                </Trans>
-              </Button>
-            )}
-          </Box>
-        </Popover>
+            />
+          )}
+        </ArrowMenu>
       ) : null}
     </>
   );

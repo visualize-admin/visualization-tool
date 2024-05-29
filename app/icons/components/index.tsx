@@ -50,6 +50,7 @@ import { default as Download } from "@/icons/components/IcDownload";
 import { default as Drag } from "@/icons/components/IcDrag";
 import { default as DragHandle } from "@/icons/components/IcDragHandle";
 import { default as Dragndrop } from "@/icons/components/IcDragndrop";
+import { default as Duplicate } from "@/icons/components/IcDuplicate";
 import { default as Edit } from "@/icons/components/IcEdit";
 import { default as Embed } from "@/icons/components/IcEmbed";
 import { default as Excel } from "@/icons/components/IcExcel";
@@ -203,6 +204,7 @@ export const Icons = {
   dragHandle: DragHandle,
   drag: Drag,
   dragndrop: Dragndrop,
+  duplicate: Duplicate,
   edit: Edit,
   embed: Embed,
   excel: Excel,
