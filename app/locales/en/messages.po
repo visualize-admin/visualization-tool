@@ -151,6 +151,22 @@ msgstr "Update this visualization"
 msgid "button.update.warning"
 msgstr "Keep in mind that updating this visualization will affect all the places where it might be already embedded!"
 
+#: app/components/chart-preview.tsx
+msgid "chart-controls.delete"
+msgstr "Delete"
+
+#: app/components/chart-preview.tsx
+msgid "chart-controls.delete.confirmation"
+msgstr "Are you sure you want to delete this chart?"
+
+#: app/components/chart-preview.tsx
+msgid "chart-controls.delete.title"
+msgstr "Delete chart?"
+
+#: app/components/chart-preview.tsx
+msgid "chart-controls.edit"
+msgstr "Edit"
+
 #: app/components/chart-selection-tabs.tsx
 msgid "chart-selection-tabs.add-chart-different-dataset.button"
 msgstr "Select dataset"
@@ -212,6 +228,14 @@ msgstr "Compact view"
 #: app/charts/table/table.tsx
 msgid "chart.table.number.of.lines"
 msgstr "Total number of lines:"
+
+#: app/components/chart-selection-tabs.tsx
+msgid "chat-preview.delete.confirmation"
+msgstr "Are you sure you want to delete this chart?"
+
+#: app/components/chart-selection-tabs.tsx
+msgid "chat-preview.delete.title"
+msgstr "Delete chart?"
 
 #: app/configurator/table/table-chart-options.tsx
 msgid "columnStyle.bar"
@@ -571,6 +595,10 @@ msgid "controls.language.italian"
 msgstr "Italian"
 
 #: app/configurator/components/field-i18n.ts
+msgid "controls.layout.canvas"
+msgstr "Free canvas"
+
+#: app/configurator/components/field-i18n.ts
 msgid "controls.layout.dashboard"
 msgstr "Dashboard"
 
@@ -589,10 +617,6 @@ msgstr "Tab Layout"
 #: app/configurator/components/field-i18n.ts
 msgid "controls.layout.tall"
 msgstr "Tall"
-
-#: app/configurator/components/field-i18n.ts
-msgid "controls.layout.tiles"
-msgstr "Tiles"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.layout.vertical"

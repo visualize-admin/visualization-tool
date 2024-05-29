@@ -6,8 +6,8 @@ import {
   useDraggable,
   useDroppable,
 } from "@dnd-kit/core";
-import { Trans } from "@lingui/macro";
-import { Box } from "@mui/material";
+import { t, Trans } from "@lingui/macro";
+import { Box, IconButton, useEventCallback } from "@mui/material";
 import Head from "next/head";
 import React, {
   forwardRef,
@@ -20,6 +20,7 @@ import React, {
 import { DataSetTable } from "@/browse/datatable";
 import { ChartDataFilters } from "@/charts/shared/chart-data-filters";
 import { LoadingStateProvider } from "@/charts/shared/chart-loading-state";
+import { ArrowMenu } from "@/components/arrow-menu";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
 import { ChartFootnotes } from "@/components/chart-footnotes";
 import {
@@ -35,10 +36,11 @@ import {
 import { useChartStyles } from "@/components/chart-utils";
 import { ChartWithFilters } from "@/components/chart-with-filters";
 import DebugPanel from "@/components/debug-panel";
-import { DragHandle } from "@/components/drag-handle";
+import { DragHandle, DragHandleProps } from "@/components/drag-handle";
 import Flex from "@/components/flex";
 import { Checkbox } from "@/components/form";
 import { HintYellow } from "@/components/hint";
+import { MenuActionItem } from "@/components/menu-action-item";
 import { MetadataPanel } from "@/components/metadata-panel";
 import { BANNER_MARGIN_TOP } from "@/components/presence";
 import {
@@ -56,6 +58,7 @@ import {
   useDataCubesMetadataQuery,
 } from "@/graphql/hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
+import SvgIcMore from "@/icons/components/IcMore";
 import { useLocale } from "@/locales/use-locale";
 import { InteractiveFiltersChartProvider } from "@/stores/interactive-filters";
 import { useTransitionStore } from "@/stores/transition";
@@ -109,7 +112,7 @@ const DashboardPreview = (props: DashboardPreviewProps) => {
   const [over, setOver] = useState<Over | null>(null);
   const renderChart = useCallback(
     (chartConfig: ChartConfig) => {
-      return layoutType === "tiles" ? (
+      return layoutType === "canvas" ? (
         <ReactGridChartPreview
           key={chartConfig.key}
           chartKey={chartConfig.key}
@@ -129,7 +132,7 @@ const DashboardPreview = (props: DashboardPreviewProps) => {
     [dataSource, editing, layoutType, state.layout.type]
   );
 
-  if (layoutType === "tiles") {
+  if (layoutType === "canvas") {
     return (
       <ChartPanelLayout
         chartConfigs={state.chartConfigs}
@@ -206,19 +209,86 @@ const DashboardPreview = (props: DashboardPreviewProps) => {
   );
 };
 
-type DndChartPreviewProps = ChartWrapperProps & {
+type CommonChartPreviewProps = ChartWrapperProps & {
   chartKey: string;
   dataSource: DataSource;
 };
 
-type ReactGridChartPreviewProps = ChartWrapperProps & {
+const ChartPreviewChartMoreButton = ({ chartKey }: { chartKey: string }) => {
+  const [anchor, setAnchor] = useState<HTMLElement | null>(null);
+  const handleClose = useEventCallback(() => setAnchor(null));
+  const [state, dispatch] = useConfiguratorState(hasChartConfigs);
+  return (
+    <>
+      <IconButton onClick={(ev) => setAnchor(ev.currentTarget)}>
+        <SvgIcMore />
+      </IconButton>
+      <ArrowMenu
+        open={!!anchor}
+        anchorEl={anchor}
+        onClose={handleClose}
+        anchorOrigin={{ horizontal: "center", vertical: "bottom" }}
+        transformOrigin={{ horizontal: "center", vertical: "top" }}
+      >
+        <MenuActionItem
+          type="button"
+          as="menuitem"
+          onClick={() => {
+            dispatch({ type: "CONFIGURE_CHART", value: { chartKey } });
+            handleClose();
+          }}
+          iconName="edit"
+          label={<Trans id="chart-controls.edit">Edit</Trans>}
+        />
+        {state.chartConfigs.length > 1 ? (
+          <MenuActionItem
+            type="button"
+            as="menuitem"
+            color="error"
+            requireConfirmation
+            confirmationTitle={t({
+              id: "chart-controls.delete.title",
+              message: "Delete chart?",
+            })}
+            confirmationText={t({
+              id: "chart-controls.delete.confirmation",
+              message: "Are you sure you want to delete this chart?",
+            })}
+            onClick={() => {
+              dispatch({ type: "CHART_CONFIG_REMOVE", value: { chartKey } });
+              handleClose();
+            }}
+            iconName="trash"
+            label={<Trans id="chart-controls.delete">Delete</Trans>}
+          />
+        ) : null}
+      </ArrowMenu>
+    </>
+  );
+};
+
+const ChartTopRightControls = ({
+  chartKey,
+  dragHandleProps,
+}: {
   chartKey: string;
-  dataSource: DataSource;
+  dragHandleProps?: DragHandleProps;
+}) => {
+  return (
+    <>
+      <ChartPreviewChartMoreButton chartKey={chartKey} />
+      <DragHandle
+        dragging
+        className={chartPanelLayoutGridClasses.dragHandle}
+        {...dragHandleProps}
+      />
+    </>
+  );
 };
 
 const ReactGridChartPreview = forwardRef<
   HTMLDivElement,
-  ReactGridChartPreviewProps
+  CommonChartPreviewProps
 >((props, ref) => {
   const { children, chartKey, dataSource, ...rest } = props;
   return (
@@ -227,12 +297,7 @@ const ReactGridChartPreview = forwardRef<
         <ChartPreviewInner
           dataSource={dataSource}
           chartKey={chartKey}
-          actionElementSlot={
-            <DragHandle
-              dragging
-              className={chartPanelLayoutGridClasses.dragHandle}
-            />
-          }
+          actionElementSlot={<ChartTopRightControls chartKey={chartKey} />}
         >
           {children}
         </ChartPreviewInner>
@@ -241,7 +306,7 @@ const ReactGridChartPreview = forwardRef<
   );
 });
 
-const DndChartPreview = (props: DndChartPreviewProps) => {
+const DndChartPreview = (props: CommonChartPreviewProps) => {
   const { children, chartKey, dataSource, ...rest } = props;
   const theme = useTheme();
   const {
@@ -285,10 +350,13 @@ const DndChartPreview = (props: DndChartPreviewProps) => {
           dataSource={dataSource}
           chartKey={chartKey}
           actionElementSlot={
-            <DragHandle
-              {...listeners}
-              ref={setActivatorNodeRef}
-              dragging={isDragging}
+            <ChartTopRightControls
+              chartKey={chartKey}
+              dragHandleProps={{
+                ...listeners,
+                ref: setActivatorNodeRef,
+                dragging: isDragging,
+              }}
             />
           }
         />
@@ -317,24 +385,27 @@ const SingleURLsPreview = (props: SingleURLsPreviewProps) => {
               dataSource={dataSource}
               chartKey={chartConfig.key}
               actionElementSlot={
-                <Checkbox
-                  checked={checked}
-                  disabled={keys.length === 1 && checked}
-                  onChange={() => {
-                    dispatch({
-                      type: "LAYOUT_CHANGED",
-                      value: {
-                        ...layout,
-                        publishableChartKeys: checked
-                          ? keys.filter((k) => k !== key)
-                          : state.chartConfigs
-                              .map((c) => c.key)
-                              .filter((k) => keys.includes(k) || k === key),
-                      },
-                    });
-                  }}
-                  label=""
-                />
+                <>
+                  <ChartPreviewChartMoreButton chartKey={key} />
+                  <Checkbox
+                    checked={checked}
+                    disabled={keys.length === 1 && checked}
+                    onChange={() => {
+                      dispatch({
+                        type: "LAYOUT_CHANGED",
+                        value: {
+                          ...layout,
+                          publishableChartKeys: checked
+                            ? keys.filter((k) => k !== key)
+                            : state.chartConfigs
+                                .map((c) => c.key)
+                                .filter((k) => keys.includes(k) || k === key),
+                        },
+                      });
+                    }}
+                    label=""
+                  />
+                </>
               }
             />
           </ChartWrapper>

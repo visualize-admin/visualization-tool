@@ -23,7 +23,9 @@ import { useClient } from "urql";
 import { useDebounce } from "use-debounce";
 
 import { extractChartConfigComponentIris } from "@/charts/shared/chart-helpers";
+import { ArrowMenu } from "@/components/arrow-menu";
 import Flex from "@/components/flex";
+import { MenuActionItem } from "@/components/menu-action-item";
 import { VisualizeTab, VisualizeTabList } from "@/components/tabs";
 import {
   ChartConfig,
@@ -189,119 +191,147 @@ const TabsEditable = (props: TabsEditableProps) => {
         }}
       />
 
-      <Popover
-        id="chart-selection-popover"
-        open={tabsState.popoverOpen}
-        anchorEl={popoverAnchorEl}
-        anchorOrigin={{
-          horizontal: "left",
-          vertical: "bottom",
-        }}
-        onClose={handleClose}
-        PaperProps={{
-          sx: {
-            py: "1rem",
-          },
-        }}
-      >
-        {tabsState.popoverType === "add" ? (
-          <>
-            <Stack
-              divider={<Divider sx={{ mx: "1.5rem" }} />}
-              gap="0.5rem"
-              direction="column"
-            >
-              <Stack direction="column" gap="0.5rem" m="1rem">
-                <Typography
-                  variant="body2"
-                  color="text.secondary"
-                  textAlign="center"
-                  gutterBottom
-                >
-                  <Trans id="chart-selection-tabs.add-chart-same-dataset.caption">
-                    Add chart based on the same dataset
-                  </Trans>
-                </Typography>
-                <ChartTypeSelector
-                  state={state}
-                  type="add"
-                  showHelp={false}
-                  showComparisonCharts={false}
-                  chartKey={tabsState.activeChartKey ?? chartConfig.key}
-                  sx={{ width: 320, px: 3, pb: 3 }}
-                />
-              </Stack>
-              <Stack direction="column" gap="0.5rem" mx="1.5rem" my="1rem">
-                <Typography
-                  variant="body2"
-                  color="text.secondary"
-                  textAlign="center"
-                  gutterBottom
-                >
-                  <Trans id="chart-selection-tabs.add-chart-different-dataset.caption">
-                    Add chart based on a different dataset
-                  </Trans>
-                </Typography>
-                <Button
-                  fullWidth
-                  sx={{ justifyContent: "center" }}
-                  onClick={() => {
-                    setTabsState({ ...tabsState, popoverOpen: false });
-                    openAddDatasetPanel();
-                  }}
-                >
-                  <Trans id="chart-selection-tabs.add-chart-different-dataset.button">
-                    Select dataset
-                  </Trans>
-                </Button>
-              </Stack>
+      {tabsState.popoverType === "add" ? (
+        <Popover
+          id="chart-selection-popover"
+          open={tabsState.popoverOpen}
+          anchorEl={popoverAnchorEl}
+          anchorOrigin={{
+            horizontal: "left",
+            vertical: "bottom",
+          }}
+          onClose={handleClose}
+          PaperProps={{
+            sx: {
+              py: "1rem",
+            },
+          }}
+        >
+          <Stack
+            divider={<Divider sx={{ mx: "1.5rem" }} />}
+            gap="0.5rem"
+            direction="column"
+          >
+            <Stack direction="column" gap="0.5rem" m="1rem">
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                textAlign="center"
+                gutterBottom
+              >
+                <Trans id="chart-selection-tabs.add-chart-same-dataset.caption">
+                  Add chart based on the same dataset
+                </Trans>
+              </Typography>
+              <ChartTypeSelector
+                state={state}
+                type="add"
+                showHelp={false}
+                showComparisonCharts={false}
+                chartKey={tabsState.activeChartKey ?? chartConfig.key}
+                sx={{ width: 320, px: 3, pb: 3 }}
+              />
             </Stack>
-          </>
-        ) : (
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 2, p: 4 }}>
-            <Button
+            <Stack direction="column" gap="0.5rem" mx="1.5rem" my="1rem">
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                textAlign="center"
+                gutterBottom
+              >
+                <Trans id="chart-selection-tabs.add-chart-different-dataset.caption">
+                  Add chart based on a different dataset
+                </Trans>
+              </Typography>
+              <Button
+                fullWidth
+                sx={{ justifyContent: "center" }}
+                onClick={() => {
+                  setTabsState({ ...tabsState, popoverOpen: false });
+                  openAddDatasetPanel();
+                }}
+              >
+                <Trans id="chart-selection-tabs.add-chart-different-dataset.button">
+                  Select dataset
+                </Trans>
+              </Button>
+            </Stack>
+          </Stack>
+        </Popover>
+      ) : null}
+
+      {tabsState.popoverType === "edit" ? (
+        <ArrowMenu
+          id="chart-selection-popover"
+          open={tabsState.popoverOpen}
+          anchorEl={popoverAnchorEl}
+          anchorOrigin={{
+            horizontal: "center",
+            vertical: "bottom",
+          }}
+          transformOrigin={{
+            horizontal: "center",
+            vertical: "top",
+          }}
+          onClose={handleClose}
+        >
+          <MenuActionItem
+            type="button"
+            as="menuitem"
+            onClick={() => {
+              dispatch({
+                type: "CHART_CONFIG_ADD",
+                value: {
+                  chartConfig: {
+                    ...getChartConfig(state, tabsState.activeChartKey),
+                    key: createChartId(),
+                  },
+                  locale,
+                },
+              });
+              handleClose();
+            }}
+            iconName="duplicate"
+            label={
+              <Trans id="controls.duplicate.visualization">
+                Duplicate this visualization
+              </Trans>
+            }
+          />
+
+          {state.chartConfigs.length > 1 && (
+            <MenuActionItem
+              as="menuitem"
+              type="button"
+              iconName="trash"
+              label={
+                <Trans id="controls.remove.visualization">
+                  Remove this visualization
+                </Trans>
+              }
+              color="error"
+              requireConfirmation
+              confirmationTitle={t({
+                id: "chat-preview.delete.title",
+                message: "Delete chart?",
+              })}
+              confirmationText={t({
+                id: "chat-preview.delete.confirmation",
+                message: "Are you sure you want to delete this chart?",
+              })}
               onClick={() => {
                 dispatch({
-                  type: "CHART_CONFIG_ADD",
+                  type: "CHART_CONFIG_REMOVE",
                   value: {
-                    chartConfig: {
-                      ...getChartConfig(state, tabsState.activeChartKey),
-                      key: createChartId(),
-                    },
-                    locale,
+                    chartKey: tabsState.activeChartKey,
                   },
                 });
                 handleClose();
               }}
-              sx={{ justifyContent: "center" }}
-            >
-              <Trans id="controls.duplicate.visualization">
-                Duplicate this visualization
-              </Trans>
-            </Button>
-
-            {state.chartConfigs.length > 1 && (
-              <Button
-                color="error"
-                onClick={() => {
-                  dispatch({
-                    type: "CHART_CONFIG_REMOVE",
-                    value: {
-                      chartKey: tabsState.activeChartKey,
-                    },
-                  });
-                  handleClose();
-                }}
-                sx={{ justifyContent: "center" }}
-              >
-                <Trans id="controls.remove.visualization">
-                  Remove this visualization
-                </Trans>
-              </Button>
-            )}
-          </Box>
-        )}
-      </Popover>
+            />
+          )}
+        </ArrowMenu>
+      ) : null}
     </>
   );
 };
@@ -664,7 +694,7 @@ const TabsInner = (props: TabsInnerProps) => {
                                 draggable={draggable}
                                 active={d.active}
                                 dragging={snapshot.isDragging}
-                                onEditClick={(e) => {
+                                onChevronDownClick={(e) => {
                                   onChartEdit?.(e, d.key);
                                 }}
                                 onSwitchClick={() => {
@@ -742,8 +772,7 @@ export const useIconStyles = makeStyles<
   dragIconWrapper: {
     width: 24,
     height: 24,
-    color: (d) =>
-      d.dragging ? palette.secondary.active : palette.secondary.disabled,
+    color: palette.grey[500],
     cursor: "grab",
 
     "&:hover": {
@@ -759,7 +788,7 @@ type TabContentProps = {
   draggable?: boolean;
   active?: boolean;
   dragging?: boolean;
-  onEditClick?: (
+  onChevronDownClick?: (
     e: React.MouseEvent<HTMLElement>,
     activeChartKey: string
   ) => void;
@@ -774,7 +803,7 @@ const TabContent = (props: TabContentProps) => {
     draggable,
     active,
     dragging,
-    onEditClick,
+    onChevronDownClick,
     onSwitchClick,
   } = props;
   const classes = useIconStyles({ active, dragging });
@@ -793,7 +822,7 @@ const TabContent = (props: TabContentProps) => {
         <Button
           variant="text"
           onClick={(e) => {
-            onEditClick?.(e, chartKey);
+            onChevronDownClick?.(e, chartKey);
           }}
           className={classes.editIconWrapper}
         >

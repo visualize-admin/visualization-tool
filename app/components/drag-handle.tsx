@@ -1,12 +1,13 @@
 import { Box, BoxProps } from "@mui/material";
 import clsx from "clsx";
-import { forwardRef } from "react";
+import { forwardRef, Ref } from "react";
 
 import { Icon } from "@/icons";
 
 import { useIconStyles } from "./chart-selection-tabs";
 
-type DragHandleProps = BoxProps & {
+export type DragHandleProps = Omit<BoxProps, "ref"> & {
+  ref?: Ref<HTMLDivElement>;
   dragging?: boolean;
 };
 
@@ -20,9 +21,6 @@ export const DragHandle = forwardRef<HTMLDivElement, DragHandleProps>(
         ref={ref}
         {...rest}
         className={clsx(classes.dragIconWrapper, props.className)}
-        sx={{
-          color: dragging ? "secondary.active" : "secondary.disabled",
-        }}
       >
         <Icon name="dragndrop" />
       </Box>

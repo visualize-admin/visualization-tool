@@ -1170,7 +1170,7 @@ const Layout = t.intersection([
     }),
     t.type({
       type: t.literal("dashboard"),
-      layout: t.literal("tiles"),
+      layout: t.literal("canvas"),
       layouts: ReactGridLayoutsType,
     }),
     t.type({

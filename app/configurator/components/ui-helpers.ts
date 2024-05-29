@@ -11,9 +11,9 @@ import {
   Component,
   Dimension,
   DimensionValue,
+  isJoinByComponent,
   Measure,
   Observation,
-  isJoinByComponent,
 } from "@/domain/data";
 import { TimeUnit } from "@/graphql/query-hooks";
 import { IconName } from "@/icons";
@@ -216,8 +216,8 @@ export const getIconName = (name: string): IconName => {
       return "layoutTall";
     case "layoutVertical":
       return "layoutVertical";
-    case "layoutTiles":
-      return "layoutTiles";
+    case "layoutCanvas":
+      return "layoutCanvas";
 
     default:
       return "table";

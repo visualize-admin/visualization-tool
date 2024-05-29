@@ -357,6 +357,12 @@ export type ConfiguratorStateAction =
         path: string | string[];
         value: string;
       };
+    }
+  | {
+      type: "CONFIGURE_CHART";
+      value: {
+        chartKey: string;
+      };
     };
 
 export type GetConfiguratorStateAction<
@@ -1513,7 +1519,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       }
       break;
     case "CHART_CONFIG_REMOVE":
-      if (isConfiguring(draft)) {
+      if (isConfiguring(draft) || isLayouting(draft)) {
         const index = draft.chartConfigs.findIndex(
           (d) => d.key === action.value.chartKey
         );
@@ -1523,6 +1529,11 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         if (removedKey === draft.activeChartKey) {
           draft.activeChartKey = draft.chartConfigs[Math.max(index - 1, 0)].key;
         }
+      } else {
+        console.warn(
+          "Ignoring CHART_CONFIG_REMOVE as state is incompatible with action"
+        );
+        console.log(current(draft));
       }
 
       return draft;
@@ -1581,8 +1592,13 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
           Object
         );
       }
-
       return draft;
+
+    case "CONFIGURE_CHART":
+      const newDraft = transitionStepPrevious(draft, "CONFIGURING_CHART");
+      assert(isConfiguring(newDraft), "Should be configuring after edit");
+      newDraft.activeChartKey = action.value.chartKey;
+      return newDraft;
 
     default:
       throw unreachableError(action);

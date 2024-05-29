@@ -198,7 +198,7 @@ export const DatasetsControlSection = () => {
   };
 
   return (
-    <ControlSection collapse>
+    <ControlSection collapse defaultExpanded={false}>
       <SubsectionTitle titleId="controls-data" gutterBottom={false}>
         <Trans id="controls.section.datasets.title">Data Sources</Trans>{" "}
         <BetaTag

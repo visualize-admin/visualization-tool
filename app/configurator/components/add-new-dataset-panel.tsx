@@ -78,12 +78,23 @@ export const AddNewDatasetPanel = () => {
   const [dataSetIri, setDataSetIri] = useState("");
   const addNewDataset = useAddChartConfigBasedOnNewDataset();
 
+  const handleClose = useEventCallback(() => {
+    close();
+  });
+
+  const handleExited = useEventCallback(() => {
+    setDataSetIri("");
+  });
+
   return (
     <Drawer
       anchor="right"
       open={isOpen}
       variant="temporary"
-      onClose={close}
+      onClose={handleClose}
+      SlideProps={{
+        onExited: handleExited,
+      }}
       PaperProps={{
         sx: {
           width: "1400px",
@@ -91,7 +102,7 @@ export const AddNewDatasetPanel = () => {
         },
       }}
     >
-      <DialogCloseButton onClick={() => close()} />
+      <DialogCloseButton onClick={() => handleClose()} />
 
       <Box>
         <ConfiguratorStateProvider chartId="new" allowDefaultRedirect={false}>

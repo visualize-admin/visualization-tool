@@ -26,10 +26,10 @@ import { default as ChartMultiLine } from "@/icons/components/IcChartMultiLine";
 import { default as ChartPie } from "@/icons/components/IcChartPie";
 import { default as ChartScatterplot } from "@/icons/components/IcChartScatterplot";
 import { default as Check } from "@/icons/components/IcCheck";
-import { default as Checked } from "@/icons/components/IcChecked";
 import { default as CheckboxActive } from "@/icons/components/IcCheckboxActive";
 import { default as CheckboxDefault } from "@/icons/components/IcCheckboxDefault";
 import { default as CheckboxIndeterminate } from "@/icons/components/IcCheckboxIndeterminate";
+import { default as Checked } from "@/icons/components/IcChecked";
 import { default as ChevronDown } from "@/icons/components/IcChevronDown";
 import { default as ChevronLeft } from "@/icons/components/IcChevronLeft";
 import { default as ChevronRight } from "@/icons/components/IcChevronRight";
@@ -50,6 +50,7 @@ import { default as Download } from "@/icons/components/IcDownload";
 import { default as Drag } from "@/icons/components/IcDrag";
 import { default as DragHandle } from "@/icons/components/IcDragHandle";
 import { default as Dragndrop } from "@/icons/components/IcDragndrop";
+import { default as Duplicate } from "@/icons/components/IcDuplicate";
 import { default as Edit } from "@/icons/components/IcEdit";
 import { default as Embed } from "@/icons/components/IcEmbed";
 import { default as Excel } from "@/icons/components/IcExcel";
@@ -70,6 +71,7 @@ import { default as Indeterminate } from "@/icons/components/IcIndeterminate";
 import { default as Info } from "@/icons/components/IcInfo";
 import { default as InfoOutline } from "@/icons/components/IcInfoOutline";
 import { default as Laptop } from "@/icons/components/IcLaptop";
+import { default as LayoutCanvas } from "@/icons/components/IcLayoutCanvas";
 import { default as LayoutDashboard } from "@/icons/components/IcLayoutDashboard";
 import { default as LayoutSingleURLs } from "@/icons/components/IcLayoutSingleURLs";
 import { default as LayoutTab } from "@/icons/components/IcLayoutTab";
@@ -202,6 +204,7 @@ export const Icons = {
   dragHandle: DragHandle,
   drag: Drag,
   dragndrop: Dragndrop,
+  duplicate: Duplicate,
   edit: Edit,
   embed: Embed,
   excel: Excel,
@@ -222,6 +225,7 @@ export const Icons = {
   info: Info,
   infoOutline: InfoOutline,
   laptop: Laptop,
+  layoutCanvas: LayoutCanvas,
   layoutDashboard: LayoutDashboard,
   layoutSingleURLs: LayoutSingleURLs,
   layoutTall: LayoutTall,
