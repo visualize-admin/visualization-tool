@@ -238,7 +238,7 @@ const ChartPreviewChartMoreButton = ({ chartKey }: { chartKey: string }) => {
             handleClose();
           }}
           iconName="edit"
-          label={<Trans id="chat-preview.title">Edit</Trans>}
+          label={<Trans id="chart-controls.edit">Edit</Trans>}
         />
         {state.chartConfigs.length > 1 ? (
           <MenuActionItem
@@ -247,11 +247,11 @@ const ChartPreviewChartMoreButton = ({ chartKey }: { chartKey: string }) => {
             color="error"
             requireConfirmation
             confirmationTitle={t({
-              id: "chat-preview.delete.title",
+              id: "chart-controls.delete.title",
               message: "Delete chart?",
             })}
             confirmationText={t({
-              id: "chat-preview.delete.confirmation",
+              id: "chart-controls.delete.confirmation",
               message: "Are you sure you want to delete this chart?",
             })}
             onClick={() => {
@@ -259,7 +259,7 @@ const ChartPreviewChartMoreButton = ({ chartKey }: { chartKey: string }) => {
               handleClose();
             }}
             iconName="trash"
-            label={<Trans id="chat-preview.title">Delete</Trans>}
+            label={<Trans id="chart-controls.delete">Delete</Trans>}
           />
         ) : null}
       </ArrowMenu>
