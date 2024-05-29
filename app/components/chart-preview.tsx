@@ -36,7 +36,7 @@ import {
 import { useChartStyles } from "@/components/chart-utils";
 import { ChartWithFilters } from "@/components/chart-with-filters";
 import DebugPanel from "@/components/debug-panel";
-import { DragHandle } from "@/components/drag-handle";
+import { DragHandle, DragHandleProps } from "@/components/drag-handle";
 import Flex from "@/components/flex";
 import { Checkbox } from "@/components/form";
 import { HintYellow } from "@/components/hint";
@@ -49,7 +49,6 @@ import {
   getChartConfig,
   hasChartConfigs,
   isConfiguring,
-  isLayouting,
   Layout,
   useConfiguratorState,
 } from "@/configurator";
@@ -218,7 +217,7 @@ type CommonChartPreviewProps = ChartWrapperProps & {
 const ChartPreviewChartMoreButton = ({ chartKey }: { chartKey: string }) => {
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
   const handleClose = useEventCallback(() => setAnchor(null));
-  const [state, dispatch] = useConfiguratorState(isLayouting);
+  const [state, dispatch] = useConfiguratorState(hasChartConfigs);
   return (
     <>
       <IconButton onClick={(ev) => setAnchor(ev.currentTarget)}>
@@ -266,14 +265,20 @@ const ChartPreviewChartMoreButton = ({ chartKey }: { chartKey: string }) => {
   );
 };
 
-const ChartTopRightControls = ({ chartKey }: { chartKey: string }) => {
+const ChartTopRightControls = ({
+  chartKey,
+  dragHandleProps,
+}: {
+  chartKey: string;
+  dragHandleProps?: DragHandleProps;
+}) => {
   return (
     <>
       <ChartPreviewChartMoreButton chartKey={chartKey} />
       <DragHandle
         dragging
         className={chartPanelLayoutGridClasses.dragHandle}
-        sx={{ color: "red" }}
+        {...dragHandleProps}
       />
     </>
   );
@@ -343,10 +348,13 @@ const DndChartPreview = (props: CommonChartPreviewProps) => {
           dataSource={dataSource}
           chartKey={chartKey}
           actionElementSlot={
-            <DragHandle
-              {...listeners}
-              ref={setActivatorNodeRef}
-              dragging={isDragging}
+            <ChartTopRightControls
+              chartKey={chartKey}
+              dragHandleProps={{
+                ...listeners,
+                ref: setActivatorNodeRef,
+                dragging: isDragging,
+              }}
             />
           }
         />

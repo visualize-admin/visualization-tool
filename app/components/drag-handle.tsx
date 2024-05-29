@@ -1,12 +1,13 @@
 import { Box, BoxProps } from "@mui/material";
 import clsx from "clsx";
-import { forwardRef } from "react";
+import { forwardRef, Ref } from "react";
 
 import { Icon } from "@/icons";
 
 import { useIconStyles } from "./chart-selection-tabs";
 
-type DragHandleProps = BoxProps & {
+export type DragHandleProps = Omit<BoxProps, "ref"> & {
+  ref?: Ref<HTMLDivElement>;
   dragging?: boolean;
 };
 
