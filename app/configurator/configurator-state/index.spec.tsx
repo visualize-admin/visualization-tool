@@ -18,24 +18,18 @@ import {
 } from "@/config-types";
 import { getNewChartConfig } from "@/configurator/config-form";
 import {
-  applyNonTableDimensionToFilters,
-  applyTableDimensionToFilters,
-  ConfiguratorStateAction,
-  deriveFiltersFromFields,
   getFiltersByMappingStatus,
   getFilterValue,
-  getLocalStorageKey,
-  handleChartFieldChanged,
-  handleChartOptionChanged,
+  moveFilterField,
+} from "@/configurator/configurator-state";
+import { ConfiguratorStateAction } from "@/configurator/configurator-state/actions";
+import { publishState } from "@/configurator/configurator-state/context";
+import {
   initChartStateFromChartCopy,
   initChartStateFromCube,
   initChartStateFromLocalStorage,
-  moveFilterField,
-  publishState,
-  reducer,
-  setRangeFilter,
-  updateColorMapping,
-} from "@/configurator/configurator-state";
+} from "@/configurator/configurator-state/init";
+import { getLocalStorageKey } from "@/configurator/configurator-state/localstorage";
 import {
   configJoinedCubes,
   configStateMock,
@@ -43,6 +37,16 @@ import {
   groupedColumnChartDimensions,
   groupedColumnChartMeasures,
 } from "@/configurator/configurator-state/mocks";
+import {
+  applyNonTableDimensionToFilters,
+  applyTableDimensionToFilters,
+  deriveFiltersFromFields,
+  handleChartFieldChanged,
+  handleChartOptionChanged,
+  reducer,
+  setRangeFilter,
+  updateColorMapping,
+} from "@/configurator/configurator-state/reducer";
 import { Dimension, Measure, NominalDimension } from "@/domain/data";
 import { ObservationFilter } from "@/graphql/query-hooks";
 import covid19ColumnChartConfig from "@/test/__fixtures/config/dev/chartConfig-column-covid19.json";
