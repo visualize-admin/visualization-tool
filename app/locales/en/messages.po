@@ -62,10 +62,6 @@ msgid "browse.dataset.create-visualization"
 msgstr "Start a visualization"
 
 #: app/browser/select-dataset-step.tsx
-#~ msgid "browse.datasets.all-datasets"
-#~ msgstr "All datasets"
-
-#: app/browser/select-dataset-step.tsx
 msgid "browse.datasets.description"
 msgstr "Explore datasets provided by the LINDAS Linked Data Service by either filtering by categories or organisations or search directly for specific keywords. Click on a dataset to see more detailed information and start creating your own visualizations."
 
@@ -220,10 +216,6 @@ msgstr "Symbols"
 #: app/charts/table/table.tsx
 msgid "chart.published.toggle.mobile.view"
 msgstr "Compact view"
-
-#: app/login/components/profile-tables.tsx
-#~ msgid "chart.rename"
-#~ msgstr "Rename"
 
 #: app/charts/table/table.tsx
 msgid "chart.table.number.of.lines"
@@ -1337,10 +1329,6 @@ msgid "interactive.data.filters.show"
 msgstr "Show Filters"
 
 #: app/login/components/profile-tables.tsx
-#~ msgid "login.chart.actions.publish"
-#~ msgstr "Publish"
-
-#: app/login/components/profile-tables.tsx
 msgid "login.chart.actions.unpublish"
 msgstr "Unpublish"
 
@@ -1389,10 +1377,6 @@ msgstr "Are you sure you want to perform this action?"
 msgid "login.profile.chart.delete.warning"
 msgstr "Keep in mind that removing this visualization will affect all the places where it might be already embedded!"
 
-#: app/login/components/profile-tables.tsx
-#~ msgid "login.profile.chart.rename-dialog.title"
-#~ msgstr "Enhance chart clarity with a clear title; a good title helps understanding chart content."
-
 #: app/login/components/profile-content-tabs.tsx
 msgid "login.profile.home"
 msgstr "Home"
@@ -1409,10 +1393,6 @@ msgstr "My draft visualisations"
 msgid "login.profile.my-published-visualizations"
 msgstr "My published visualizations"
 
-#: app/login/components/profile-content-tabs.tsx
-#~ msgid "login.profile.my-visualizations"
-#~ msgstr "My visualizations"
-
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.my-visualizations.chart-actions"
 msgstr "Actions"
@@ -1420,10 +1400,6 @@ msgstr "Actions"
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.my-visualizations.chart-name"
 msgstr "Name"
-
-#: app/login/components/profile-tables.tsx
-#~ msgid "login.profile.my-visualizations.chart-published-date"
-#~ msgstr "Published"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.my-visualizations.chart-type"
@@ -1440,14 +1416,6 @@ msgstr "Dataset"
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.my-visualizations.multiple-datasets"
 msgstr "Multiple datasets"
-
-#: app/login/components/profile-tables.tsx
-#~ msgid "login.rename-dialog.cancel"
-#~ msgstr "Cancel"
-
-#: app/login/components/profile-tables.tsx
-#~ msgid "login.rename-dialog.save"
-#~ msgstr "Save"
 
 #: app/components/header.tsx
 #: app/components/header.tsx
