@@ -1,10 +1,26 @@
-import { Slider, sliderClasses } from "@mui/material";
+import { Slider, sliderClasses, useEventCallback } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import { makeStyles } from "@mui/styles";
-import { useState } from "react";
+import uniqBy from "lodash/uniqBy";
+import { useEffect, useMemo, useState } from "react";
 
-import { ChartConfig } from "@/configurator";
-import { useDashboardInteractiveFilters } from "@/stores/interactive-filters";
+import {
+  InteractiveFiltersTimeRange,
+  isLayouting,
+  useConfiguratorState,
+} from "@/configurator";
+import {
+  timeUnitToFormatter,
+  timeUnitToParser,
+} from "@/configurator/components/ui-helpers";
+import { isTemporalDimension } from "@/domain/data";
+import { useDataCubesComponentsQuery } from "@/graphql/hooks";
+import { DataCubeComponentFilter, TimeUnit } from "@/graphql/query-hooks";
+import { useLocale } from "@/src";
+import {
+  SharedFilter,
+  useDashboardInteractiveFilters,
+} from "@/stores/interactive-filters";
 import { assert } from "@/utils/assert";
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -21,67 +37,191 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-export const DashboardInteractiveFilters = ({
-  chartConfigs,
-}: {
-  chartConfigs: ChartConfig[];
-}) => {
+const valueToTimeRange = (value: number[]) => {
+  const from = new Date(value[0] * 1000);
+  const to = new Date(value[1] * 1000);
+  if (!from || !to) {
+    return;
+  }
+  return {
+    type: "range",
+    from: from,
+    to: to,
+  };
+};
+
+const presetToTimeRange = (
+  presets: InteractiveFiltersTimeRange["presets"],
+  timeUnit: TimeUnit
+) => {
+  if (!timeUnit) {
+    return;
+  }
+  const parser = timeUnitToParser[timeUnit];
+  return [
+    toUnixSeconds(parser(presets.from)),
+    toUnixSeconds(parser(presets.to)),
+  ];
+};
+
+const toUnixSeconds = (x: Date | null) => {
+  if (x) {
+    return +x / 1000;
+  }
+  return 0;
+};
+
+const DashboardTimeRangeSlider = ({ filter }: { filter: SharedFilter }) => {
   const classes = useStyles();
+
   const dashboardInteractiveFilters = useDashboardInteractiveFilters();
-  const [timeRange, setTimeRange] = useState(() => {
-    return dashboardInteractiveFilters.sharedFilters.find(
-      (x) => x.type === "timeRange"
-    )?.value?.presets;
+
+  const [state] = useConfiguratorState(isLayouting);
+  const source = state.dataSource;
+  const locale = useLocale();
+
+  const cubeFilters = useMemo(() => {
+    return uniqBy(
+      state.chartConfigs.flatMap((chartConfig) =>
+        chartConfig.cubes.map((x: DataCubeComponentFilter) => ({
+          iri: x.iri,
+          componentIris: [filter.iri],
+        }))
+      ),
+      (x) => x.iri
+    );
+  }, [filter.iri, state.chartConfigs]);
+
+  const [data] = useDataCubesComponentsQuery({
+    variables: {
+      sourceUrl: source.url,
+      sourceType: source.type,
+      cubeFilters,
+      locale,
+    },
   });
 
-  const handleChangeSlider = (
-    componentIri: string,
-    value: number | number[]
-  ) => {
-    assert(Array.isArray(value), "Value should be an array of two numbers");
-    if (!componentIri) {
-      return;
+  const timeUnit = useMemo(() => {
+    const dim = data?.data?.dataCubesComponents?.dimensions?.[0];
+    return isTemporalDimension(dim) ? dim.timeUnit : undefined;
+  }, [data?.data?.dataCubesComponents?.dimensions]);
+
+  const value = filter.value;
+  assert(
+    value,
+    "Filter value should be defined when time range filter is rendered"
+  );
+
+  // In Unix timestamp
+  const [timeRange, setTimeRange] = useState(() =>
+    timeUnit ? presetToTimeRange(value.presets, timeUnit) : undefined
+  );
+
+  useEffect(
+    function initTimeRangeAfterDataFetch() {
+      if (timeRange || !timeUnit) {
+        return;
+      }
+      setTimeRange(presetToTimeRange(value.presets, timeUnit));
+    },
+    [timeRange, timeUnit, value.presets]
+  );
+
+  const { min, max } = useMemo(() => {
+    if (!timeUnit || !value.presets) {
+      return { min: 0, max: 0 };
     }
-    for (const [_getState, _useStore, store] of Object.values(
-      dashboardInteractiveFilters.stores
-    )) {
-      store.setState(() => {
-        return {
-          timeRange: {
-            // TODO infer from the values
-            from: new Date(value[0], 0, 1),
-            to: new Date(value[1], 11, 31),
-          },
-        };
-      });
-      setTimeRange({
-        type: "range",
-        from: `${value[0]}`,
-        to: `${value[1]}`,
-      });
+    const parser = timeUnitToParser[timeUnit];
+    return {
+      min: toUnixSeconds(parser(value.presets.from)),
+      max: toUnixSeconds(parser(value.presets.to)),
+    };
+  }, [timeUnit, value.presets]);
+
+  const step = stepFromTimeUnit(timeUnit);
+
+  const valueLabelFormat = useEventCallback((value: number) => {
+    if (!timeUnit) {
+      return "";
     }
-  };
+    const d = new Date(value * 1000);
+    return timeUnitToFormatter[timeUnit](d);
+  });
+
+  const handleChangeSlider = useEventCallback(
+    (componentIri: string, value: number | number[]) => {
+      assert(Array.isArray(value), "Value should be an array of two numbers");
+      if (!componentIri || !timeUnit) {
+        return;
+      }
+      const newTimeRange = valueToTimeRange(value);
+      if (!newTimeRange) {
+        return;
+      }
+      for (const [_getState, _useStore, store] of Object.values(
+        dashboardInteractiveFilters.stores
+      )) {
+        store.setState({
+          timeRange: newTimeRange,
+        });
+        setTimeRange([value[0], value[1]]);
+      }
+    }
+  );
+
+  if (!filter.value || !timeRange) {
+    return null;
+  }
+
+  return (
+    <Slider
+      className={classes.slider}
+      key={filter.iri}
+      onChange={(_ev, value) => handleChangeSlider(filter.iri, value)}
+      min={min}
+      max={max}
+      valueLabelFormat={valueLabelFormat}
+      step={step}
+      valueLabelDisplay="on"
+      value={timeRange}
+      marks
+    />
+  );
+};
+
+export const DashboardInteractiveFilters = () => {
+  const dashboardInteractiveFilters = useDashboardInteractiveFilters();
 
   return (
     <>
       {dashboardInteractiveFilters.sharedFilters.map((filter) => {
-        if (filter.type !== "timeRange" || !filter.value || !timeRange) {
+        if (filter.type !== "timeRange" || !filter.value) {
           return null;
         }
 
-        return (
-          <Slider
-            className={classes.slider}
-            key={filter.iri}
-            onChange={(_ev, value) => handleChangeSlider(filter.iri, value)}
-            min={Number(filter.value.presets.from)}
-            max={Number(filter.value.presets.to)}
-            valueLabelDisplay="on"
-            value={[Number(timeRange.from), Number(timeRange.to)]}
-            marks
-          />
-        );
+        return <DashboardTimeRangeSlider key={filter.iri} filter={filter} />;
       })}
     </>
   );
 };
+function stepFromTimeUnit(timeUnit: TimeUnit | undefined) {
+  if (!timeUnit) {
+    return 0;
+  }
+  switch (timeUnit) {
+    case "Year":
+      return 1 * 60 * 60 * 24 * 365;
+    case "Month":
+      return 1 * 60 * 60 * 24 * 30;
+    case "Week":
+      return 1 * 60 * 60 * 24 * 7;
+    case "Day":
+      return 1 * 60 * 60 * 24;
+    case "Hour":
+      return 1 * 60 * 60;
+    case "Minute":
+      return 1 * 60;
+    case "Second":
+      return 1;
+  }
+}

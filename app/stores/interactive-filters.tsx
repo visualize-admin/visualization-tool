@@ -9,9 +9,9 @@ import {
   InteractiveFiltersConfig,
 } from "@/configurator";
 import {
+  createBoundUseStoreWithSelector,
   ExtractState,
   UseBoundStoreWithSelector,
-  createBoundUseStoreWithSelector,
 } from "@/stores/utils";
 import { assert } from "@/utils/assert";
 
@@ -138,11 +138,14 @@ type InteractiveFiltersContextValue = [
   StoreApi<State>,
 ];
 
-type SharedFilters = {
+export type SharedFilter = {
   type: "timeRange" | "dataFilters";
   value?: NonNullable<InteractiveFiltersConfig>["timeRange"];
   iri: string;
-}[];
+};
+
+type SharedFilters = SharedFilter[];
+
 const InteractiveFiltersContext = createContext<
   | {
       stores: Record<ChartConfig["key"], InteractiveFiltersContextValue>;

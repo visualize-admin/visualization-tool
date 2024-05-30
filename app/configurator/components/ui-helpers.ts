@@ -2,7 +2,7 @@ import { t } from "@lingui/macro";
 import { ascending } from "d3-array";
 import { scaleOrdinal } from "d3-scale";
 import { CountableTimeInterval } from "d3-time";
-import { TimeLocaleObject, timeParse } from "d3-time-format";
+import { timeFormat, TimeLocaleObject, timeParse } from "d3-time-format";
 import { useMemo } from "react";
 
 import type { BaseChartProps } from "@/charts/shared/ChartProps";
@@ -27,6 +27,12 @@ const parseDay = timeParse("%Y-%m-%d");
 const parseMonth = timeParse("%Y-%m");
 const parseYear = timeParse("%Y");
 
+const formatSecond = timeFormat("%Y-%m-%dT%H:%M:%S");
+const formatMinute = timeFormat("%Y-%m-%dT%H:%M");
+const formatDay = timeFormat("%Y-%m-%d");
+const formatMonth = timeFormat("%Y-%m");
+const formatYear = timeFormat("%Y");
+
 export const parseDate = (dateStr: string): Date =>
   parseSecond(dateStr) ??
   parseMinute(dateStr) ??
@@ -35,6 +41,29 @@ export const parseDate = (dateStr: string): Date =>
   parseYear(dateStr) ??
   // This should probably not happen
   new Date(dateStr);
+
+export const timeUnitToParser: Record<
+  TimeUnit,
+  (dateStr: string) => Date | null
+> = {
+  Year: parseYear,
+  Month: parseMonth,
+  Week: parseDay,
+  Day: parseDay,
+  Hour: parseMinute,
+  Minute: parseMinute,
+  Second: parseSecond,
+};
+
+export const timeUnitToFormatter: Record<TimeUnit, (date: Date) => string> = {
+  Year: formatYear,
+  Month: formatMonth,
+  Week: formatDay,
+  Day: formatDay,
+  Hour: formatMinute,
+  Minute: formatMinute,
+  Second: formatSecond,
+};
 
 export const mkNumber = (x: $IntentionalAny): number => +x;
 
