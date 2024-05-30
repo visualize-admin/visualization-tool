@@ -13,17 +13,17 @@ import {
   ConfiguratorStatePublishing,
   DataSource,
   Filters,
-  MapConfig,
   getChartConfig,
+  MapConfig,
 } from "@/config-types";
 import { getNewChartConfig } from "@/configurator/config-form";
 import {
-  ConfiguratorStateAction,
   applyNonTableDimensionToFilters,
   applyTableDimensionToFilters,
+  ConfiguratorStateAction,
   deriveFiltersFromFields,
-  getFilterValue,
   getFiltersByMappingStatus,
+  getFilterValue,
   getLocalStorageKey,
   handleChartFieldChanged,
   handleChartOptionChanged,
@@ -42,7 +42,7 @@ import {
   dimensionsJoinedCubes,
   groupedColumnChartDimensions,
   groupedColumnChartMeasures,
-} from "@/configurator/configurator-state.mock";
+} from "@/configurator/configurator-state/mocks";
 import { Dimension, Measure, NominalDimension } from "@/domain/data";
 import { ObservationFilter } from "@/graphql/query-hooks";
 import covid19ColumnChartConfig from "@/test/__fixtures/config/dev/chartConfig-column-covid19.json";

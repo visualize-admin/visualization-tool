@@ -1214,7 +1214,7 @@ const Config = t.intersection([
       layout: Layout,
       chartConfigs: t.array(ChartConfig),
       activeChartKey: t.string,
-      dashboardFilters: DashboardFiltersConfig,
+      dashboardFilters: t.union([DashboardFiltersConfig, t.undefined]),
     },
     "Config"
   ),
