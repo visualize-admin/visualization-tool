@@ -12,11 +12,17 @@ import { makeGetClosestDatesFromDateRange } from "@/charts/shared/brush/utils";
 import type { ChartWithInteractiveXTimeRangeState } from "@/charts/shared/chart-state";
 import { useChartState } from "@/charts/shared/chart-state";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
+import {
+  ColumnConfig,
+  ComboLineColumnConfig,
+  ComboLineDualConfig,
+  ComboLineSingleConfig,
+  LineConfig,
+} from "@/configurator";
 import { Observation } from "@/domain/data";
 import { useFormatFullDateAuto } from "@/formatters";
 import {
   useChartInteractiveFilters,
-  useDashboardInteractiveFilters,
   useInteractiveFiltersGetState,
 } from "@/stores/interactive-filters";
 import { useTransitionStore } from "@/stores/transition";
@@ -27,11 +33,23 @@ export const HANDLE_HEIGHT = 14;
 export const BRUSH_HEIGHT = 3;
 export const HEIGHT = HANDLE_HEIGHT + BRUSH_HEIGHT;
 
+export const shouldShowBrush = (
+  interactiveFiltersConfig:
+    | (
+        | LineConfig
+        | ComboLineSingleConfig
+        | ComboLineDualConfig
+        | ComboLineColumnConfig
+        | ColumnConfig
+      )["interactiveFiltersConfig"]
+    | undefined
+) => {
+  return interactiveFiltersConfig?.timeRange?.active;
+};
+
 export const BrushTime = () => {
   const ref = useRef<SVGGElement>(null);
   const timeRange = useChartInteractiveFilters((d) => d.timeRange);
-  const dashboardFilters = useDashboardInteractiveFilters();
-
   const setTimeRange = useChartInteractiveFilters((d) => d.setTimeRange);
   const getInteractiveFiltersState = useInteractiveFiltersGetState();
   const setEnableTransition = useTransitionStore((d) => d.setEnable);
@@ -335,13 +353,6 @@ export const BrushTime = () => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [brushWidth]);
-
-  // BrushTime is hidden if we found a shared timeRange filter
-  // TODO Only hide it if the dashboard timeRange filter matches the component iri
-  // of the chart interactive filter
-  if (dashboardFilters.sharedFilters.find((x) => x.type === "timeRange")) {
-    return null;
-  }
 
   return fullData.length ? (
     <g

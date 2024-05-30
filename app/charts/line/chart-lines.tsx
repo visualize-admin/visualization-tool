@@ -5,7 +5,7 @@ import { Lines } from "@/charts/line/lines";
 import { LineChart } from "@/charts/line/lines-state";
 import { AxisHeightLinear } from "@/charts/shared/axis-height-linear";
 import { AxisTime, AxisTimeDomain } from "@/charts/shared/axis-width-time";
-import { BrushTime } from "@/charts/shared/brush";
+import { BrushTime, shouldShowBrush } from "@/charts/shared/brush";
 import {
   ChartContainer,
   ChartControlsContainer,
@@ -37,7 +37,7 @@ export const ChartLines = memo((props: ChartProps<LineConfig>) => {
           <AxisHeightLinear /> <AxisTime /> <AxisTimeDomain />
           <Lines />
           <InteractionHorizontal />
-          {interactiveFiltersConfig?.timeRange.active && <BrushTime />}
+          {shouldShowBrush(interactiveFiltersConfig) && <BrushTime />}
         </ChartSvg>
 
         <Ruler />

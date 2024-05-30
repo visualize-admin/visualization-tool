@@ -16,7 +16,7 @@ import {
   AxisWidthBand,
   AxisWidthBandDomain,
 } from "@/charts/shared/axis-width-band";
-import { BrushTime } from "@/charts/shared/brush";
+import { BrushTime, shouldShowBrush } from "@/charts/shared/brush";
 import {
   ChartContainer,
   ChartControlsContainer,
@@ -40,6 +40,8 @@ export const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
   const { fields, interactiveFiltersConfig } = chartConfig;
   const filters = useChartConfigFilters(chartConfig);
 
+  const showTimeBrush = shouldShowBrush(interactiveFiltersConfig);
+
   return (
     <>
       {fields.segment?.componentIri && fields.segment.type === "stacked" ? (
@@ -49,7 +51,7 @@ export const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
               <AxisHeightLinear /> <AxisWidthBand />
               <ColumnsStacked /> <AxisWidthBandDomain />
               <InteractionColumns />
-              {interactiveFiltersConfig?.timeRange.active && <BrushTime />}
+              {showTimeBrush && <BrushTime />}
             </ChartSvg>
             <Tooltip type="multiple" />
           </ChartContainer>
@@ -80,7 +82,7 @@ export const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
               <ErrorWhiskersGrouped />
               <AxisWidthBandDomain />
               <InteractionColumns />
-              {interactiveFiltersConfig?.timeRange.active && <BrushTime />}
+              {showTimeBrush && <BrushTime />}
             </ChartSvg>
             <Tooltip type="multiple" />
           </ChartContainer>
@@ -111,7 +113,7 @@ export const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
               <ErrorWhiskers />
               <AxisWidthBandDomain />
               <InteractionColumns />
-              {interactiveFiltersConfig?.timeRange.active && <BrushTime />}
+              {showTimeBrush && <BrushTime />}
             </ChartSvg>
             <Tooltip type="single" />
           </ChartContainer>
