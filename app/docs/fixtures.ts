@@ -88,6 +88,9 @@ export const states: ConfiguratorState[] = [
       },
     ],
     activeChartKey: "column",
+    dashboardFilters: {
+      filters: [],
+    },
   },
 ];
 

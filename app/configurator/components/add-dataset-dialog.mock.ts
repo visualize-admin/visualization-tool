@@ -100,4 +100,7 @@ export const photovoltaikChartStateMock: ConfiguratorStateConfiguringChart = {
     },
   ],
   activeChartKey: "8-5RW138pTDA",
+  dashboardFilters: {
+    filters: [],
+  },
 };

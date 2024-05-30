@@ -1137,6 +1137,26 @@ export const configuratorStateMigrations: Migration[] = [
       return newConfig;
     },
   },
+  {
+    description: "ALL (add dashboardFilters)",
+    from: "3.2.1",
+    to: "3.3.0",
+    up: (config) => {
+      const newConfig = {
+        ...config,
+        version: "3.3.0",
+        dashboardFilters: {
+          filters: [],
+        },
+      };
+      return newConfig;
+    },
+    down: (config) => {
+      const newConfig = { ...config, version: "3.2.1" };
+      delete newConfig.dashboardFilters;
+      return newConfig;
+    },
+  },
 ];
 
 export const migrateConfiguratorState = makeMigrate<ConfiguratorState>(

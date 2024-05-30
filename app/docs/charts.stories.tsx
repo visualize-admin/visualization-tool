@@ -68,6 +68,7 @@ const ColumnsStory = {
         },
         chartConfigs: [chartConfig],
         activeChartKey: "scatterplot",
+        dashboardFilters: { filters: [] },
       }}
     >
       <InteractiveFiltersProvider chartConfigs={[chartConfig]}>
@@ -117,6 +118,7 @@ const ScatterplotStory = {
         },
         chartConfigs: [chartConfig],
         activeChartKey: "scatterplot",
+        dashboardFilters: { filters: [] },
       }}
     >
       <InteractiveFiltersProvider chartConfigs={[chartConfig]}>
