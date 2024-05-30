@@ -60,7 +60,7 @@ export const RenameDialog = ({
             ...x,
             meta: {
               ...x.meta,
-              title: formData[i],
+              title: formData[i] ?? x.meta.title,
             },
           })),
         },
@@ -95,8 +95,13 @@ export const RenameDialog = ({
                     value={`${i}`}
                     label={
                       <span>
-                        {x.meta.title[locale] !== ""
-                          ? x.meta.title[locale]
+                        {/*
+                         * Optional chaining operator due to a wrong saving & no way to repair the database,
+                         * can be removed. Once we have deployed and the problematic chart has been saved
+                         * again, we can remove the optional chaining.
+                         */}
+                        {x.meta.title?.[locale] !== ""
+                          ? x.meta.title?.[locale]
                           : t({ id: "annotation.add.title" })}
                       </span>
                     }
