@@ -1,4 +1,4 @@
-import { Trans, t } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
 import {
   Box,
   CircularProgress,
@@ -56,8 +56,8 @@ import {
   getTimeIntervalWithProps,
 } from "@/configurator/components/ui-helpers";
 import {
-  Option,
   isMultiFilterFieldChecked,
+  Option,
   useActiveChartField,
   useActiveLayoutField,
   useChartFieldField,
@@ -80,13 +80,13 @@ import {
   Component,
   Dimension,
   HierarchyValue,
-  TemporalDimension,
   isJoinByComponent,
   isTemporalOrdinalDimension,
+  TemporalDimension,
 } from "@/domain/data";
 import {
-  VISUALIZE_MOST_RECENT_VALUE,
   isMostRecentValue,
+  VISUALIZE_MOST_RECENT_VALUE,
 } from "@/domain/most-recent-value";
 import { useTimeFormatLocale } from "@/formatters";
 import { TimeUnit } from "@/graphql/query-hooks";

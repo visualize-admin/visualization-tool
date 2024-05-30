@@ -99,6 +99,7 @@ const ColumnsStory = {
 };
 
 export { ColumnsStory as Columns };
+export { ScatterplotStory as Scatterplot };
 
 const ScatterplotStory = {
   render: () => (
@@ -155,5 +156,3 @@ const ScatterplotStory = {
     </ConfiguratorStateProvider>
   ),
 };
-
-export { ScatterplotStory as Scatterplot };

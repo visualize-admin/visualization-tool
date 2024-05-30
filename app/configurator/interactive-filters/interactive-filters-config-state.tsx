@@ -2,7 +2,7 @@ import produce from "immer";
 import get from "lodash/get";
 import { ChangeEvent, useCallback } from "react";
 
-import { InteractiveFiltersConfig, getChartConfig } from "@/config-types";
+import { getChartConfig, InteractiveFiltersConfig } from "@/config-types";
 import {
   isConfiguring,
   useConfiguratorState,
