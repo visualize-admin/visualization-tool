@@ -11,7 +11,7 @@ msgstr ""
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
-"Plural-Forms: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
 #: app/configurator/components/chart-configurator.tsx
 msgid "Add filter"
@@ -60,10 +60,6 @@ msgstr "Sfoglia tutti i set di dati"
 #: app/browser/dataset-preview.tsx
 msgid "browse.dataset.create-visualization"
 msgstr "Iniziare una visualizzazione"
-
-#: app/browser/select-dataset-step.tsx
-#~ msgid "browse.datasets.all-datasets"
-#~ msgstr "Tutti i set di dati"
 
 #: app/browser/select-dataset-step.tsx
 msgid "browse.datasets.description"
@@ -221,14 +217,11 @@ msgstr "Simboli"
 msgid "chart.published.toggle.mobile.view"
 msgstr "Vista compatta"
 
-#: app/login/components/profile-tables.tsx
-#~ msgid "chart.rename"
-#~ msgstr "Rinominare"
-
 #: app/charts/table/table.tsx
 msgid "chart.table.number.of.lines"
 msgstr "Numero totale di linee:"
 
+#: app/components/chart-selection-tabs.tsx
 msgid "chat-preview.delete.confirmation"
 msgstr "Sei sicuro di voler eliminare questo grafico?"
 
@@ -1336,10 +1329,6 @@ msgid "interactive.data.filters.show"
 msgstr "Mostra i filtri"
 
 #: app/login/components/profile-tables.tsx
-#~ msgid "login.chart.actions.publish"
-#~ msgstr "Pubblicare"
-
-#: app/login/components/profile-tables.tsx
 msgid "login.chart.actions.unpublish"
 msgstr "Annullare la pubblicazione"
 
@@ -1388,10 +1377,6 @@ msgstr "Siete sicuri di voler eseguire questa azione?"
 msgid "login.profile.chart.delete.warning"
 msgstr "Tenete presente che la rimozione di questa visualizzazione avrà effetto su tutti i luoghi in cui potrebbe essere già incorporata!"
 
-#: app/login/components/profile-tables.tsx
-#~ msgid "login.profile.chart.rename-dialog.title"
-#~ msgstr ""
-
 #: app/login/components/profile-content-tabs.tsx
 msgid "login.profile.home"
 msgstr "Accoglienza"
@@ -1408,10 +1393,6 @@ msgstr "Le mie bozze"
 msgid "login.profile.my-published-visualizations"
 msgstr ""
 
-#: app/login/components/profile-content-tabs.tsx
-#~ msgid "login.profile.my-visualizations"
-#~ msgstr "Le mie visualizzazioni"
-
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.my-visualizations.chart-actions"
 msgstr "Azioni"
@@ -1419,10 +1400,6 @@ msgstr "Azioni"
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.my-visualizations.chart-name"
 msgstr "Nome"
-
-#: app/login/components/profile-tables.tsx
-#~ msgid "login.profile.my-visualizations.chart-published-date"
-#~ msgstr "Pubblicato"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.my-visualizations.chart-type"
@@ -1439,14 +1416,6 @@ msgstr "Set di dati"
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.my-visualizations.multiple-datasets"
 msgstr ""
-
-#: app/login/components/profile-tables.tsx
-#~ msgid "login.rename-dialog.cancel"
-#~ msgstr "Annulla"
-
-#: app/login/components/profile-tables.tsx
-#~ msgid "login.rename-dialog.save"
-#~ msgstr "Salva"
 
 #: app/components/header.tsx
 #: app/components/header.tsx

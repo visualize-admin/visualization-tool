@@ -14,17 +14,19 @@
   - 4.1. [Heroku](#Heroku)
   - 4.2. [Abraxas](#Abraxas)
   - 4.3. [Docker (anywhere)](#Dockeranywhere)
-- 5. [E2E tests](#E2Etests)
-- 6. [GraphQL performance tests](#GraphQLperformancetests)
-  - 6.1. [Automation](#Automation)
-  - 6.2. [How to add or modify the tests](#Howtoaddormodifythetests)
-- 7. [Load tests](#Loadtests)
-  - 7.1. [Automation](#Automation-1)
-  - 7.2. [Local setup](#Localsetup)
-  - 7.3. [Running the tests locally](#Runningthetestslocally)
-  - 7.4. [Recording the tests using Playwright](#RecordingthetestsusingPlaywright)
-- 8. [Authentication](#Authentication)
-  - 8.1. [Locally](#Locally)
+- 5. [Developing GitHub Actions](#DevelopingGitHubActions)
+- 6. [E2E tests](#E2Etests)
+- 7. [GraphQL performance tests](#GraphQLperformancetests)
+  - 7.1. [Automation](#Automation)
+  - 7.2. [How to add or modify the tests](#Howtoaddormodifythetests)
+- 8. [Load tests](#Loadtests)
+  - 8.1. [Automation](#Automation-1)
+  - 8.2. [Local setup](#Localsetup)
+  - 8.3. [Running the tests locally](#Runningthetestslocally)
+  - 8.4. [Recording the tests using Playwright](#RecordingthetestsusingPlaywright)
+- 9. [Authentication](#Authentication)
+  - 9.1. [Locally](#Locally)
+- 10. [Translations](#Translations)
 
 <!-- vscode-markdown-toc-config
 	numbering=true
@@ -32,15 +34,15 @@
 	/vscode-markdown-toc-config -->
 <!-- /vscode-markdown-toc -->
 
-## Documentation
+## 1. <a name='Documentation'></a>Documentation
 
 A public documentation is available at https://visualize.admin.ch/docs/.
 
-## Development Environment
+## 2. <a name='DevelopmentEnvironment'></a>Development Environment
 
 To start the development environment, you need a Docker runtime, e.g. [Docker Desktop](https://www.docker.com/products/docker-desktop) and [Nix](https://nixos.org).
 
-### Setting up the dev environment
+### 2.1. <a name='Settingupthedevenvironment'></a>Setting up the dev environment
 
 1. Make sure that Docker is running
 2. Start the Postgres database with `docker-compose up`
@@ -50,7 +52,7 @@ To start the development environment, you need a Docker runtime, e.g. [Docker De
 yarn setup:dev
 ```
 
-### Dev server
+### 2.2. <a name='Devserver'></a>Dev server
 
 Once the application's set up, you can start the development server with
 
@@ -68,7 +70,7 @@ yarn dev:ssl # If you are working with the login process
 
 To run the application with debugging enabled through VSCode, make sure the dev server is running and the click the "Run and Debug" button in the sidebar (CMD-SHIFT-D). Then select the "Launch Chrome" configuration. This will open a new Chrome window with the dev tools open. You can now set breakpoints in the code and they will be hit.
 
-### Postgres database
+### 2.3. <a name='Postgresdatabase'></a>Postgres database
 
 If the database server is not running, run:
 
@@ -76,7 +78,7 @@ If the database server is not running, run:
 docker-compose up
 ```
 
-### Building the Embed script `/dist/embed.js`
+### 2.4. <a name='BuildingtheEmbedscriptdistembed.js'></a>Building the Embed script `/dist/embed.js`
 
 Currently, the embed script is not automatically built when the dev server starts.
 
@@ -88,7 +90,7 @@ yarn dev:rollup
 
 > Currently, this only bundles and initializes [iframe-resizer](https://github.com/davidjbradshaw/iframe-resizer) but could be used to render charts without iframes (using [custom elements](https://developers.google.com/web/fundamentals/web-components/customelements) or render to a generic DOM element) in the future.
 
-#### Database migrations
+#### 2.4.1. <a name='Databasemigrations'></a>Database migrations
 
 Database migrations are run automatically when a production build of the app starts. In _development_, you'll have to run them manually:
 
@@ -112,7 +114,7 @@ After merging the branch, you can delete the environment variables scoped to the
 
 [visualization-tool-postgres-dev](https://vercel.com/ixt/visualization-tool/stores/postgres/store_dV3rog1asOXO3BfC/data)
 
-## Versioning
+## 3. <a name='Versioning'></a>Versioning
 
 New versions of `package.json` are built on GitLab CI into a separate image that will be deployed to the integration env.
 
@@ -122,9 +124,9 @@ yarn version
 
 This will prompt for a new version. The `postversion` script will automatically try to push the created version tag to the origin repository.
 
-## Deployment
+## 4. <a name='Deployment'></a>Deployment
 
-### Heroku
+### 4.1. <a name='Heroku'></a>Heroku
 
 If a Heroku app is set up (as Git remote `heroku`), deploy with
 
@@ -136,7 +138,7 @@ Build instructions are defined in `heroku.yml`.
 
 For details, see https://devcenter.heroku.com/articles/build-docker-images-heroku-yml
 
-### Abraxas
+### 4.2. <a name='Abraxas'></a>Abraxas
 
 With your Abraxas credentials ...
 
@@ -157,7 +159,7 @@ Useful commands to use:
 - `sudo /usr/local/bin/docker-compose pull web` -> Pull latest web image manually (should not be needed much)
 - etc. (remember to use `sudo` for all Docker commands)
 
-### Docker (anywhere)
+### 4.3. <a name='Dockeranywhere'></a>Docker (anywhere)
 
 To pull the latest image from the GitLab registry, run:
 
@@ -186,45 +188,45 @@ services:
       - "5432:5432"
 ```
 
-## Developing GitHub Actions
+## 5. <a name='DevelopingGitHubActions'></a>Developing GitHub Actions
 
 Several checks are run on different types of events that happen within the repository, including E2E or GraphQL performance tests. In order to be able to build and test the actions locally, we use [act](https://github.com/nektos/act), with example mocked event payloads defined in [this folder](https://github.com/visualize-admin/visualization-tool/tree/main/act).
 
 After [installing](https://nektosact.com/installation/index.html) the library, you can run a given action like e.g. `act deployment_status -W ".github/workflows/performance-tests-pr.yml" -e act/deployment_status.json`, modifying the event payload or adding a new one as needed.
 
-## E2E tests
+## 6. <a name='E2Etests'></a>E2E tests
 
 Playwright is run on every successful deployment of a branch. Screenshots are made with Percy and sent directly to their cloud service for diffing.
 
 A special [test page](http://localhost:3000/en/__test) shows all the charts that are screenshotted.
 Those charts configurations are kept in the repository.
 
-## GraphQL performance tests
+## 7. <a name='GraphQLperformancetests'></a>GraphQL performance tests
 
 The project uses a combination of [k6](https://k6.io) and [Grafana](https://grafana.com) with [Prometheus](https://k6.io/docs/results-output/real-time/prometheus-remote-write/) for GraphQL performance testing.
 
-### Automation
+### 7.1. <a name='Automation'></a>Automation
 
 To ensure constant monitoring of the performance of selected GraphQL queries, the performance tests are run [once an hour](https://github.com/visualize-admin/visualization-tool/blob/main/.github/workflows/performance-tests.yml) against each environment of the application. The results are then sent to the governmental Grafana dashboards.
 
-### How to add or modify the tests
+### 7.2. <a name='Howtoaddormodifythetests'></a>How to add or modify the tests
 
 To add or modify the performance tests, go to the [k6/performance-tests](https://github.com/visualize-admin/visualization-tool/tree/main/k6/performance-tests) folder. The GitHub Action is generated by running the `yarn run github:codegen` command; be sure to run it after modifying the [generate-github-action.js](`https://github.com/visualize-admin/visualization-tool/blob/main/k6/performance-tests/generate-github-action.js`) file.
 
-## Load tests
+## 8. <a name='Loadtests'></a>Load tests
 
 The project uses [k6](https://k6.io) for load testing.
 
-### Automation
+### 8.1. <a name='Automation-1'></a>Automation
 
 There is a [dedicated GitHub Action](https://github.com/visualize-admin/visualization-tool/actions/workflows/manual-load-test.yml) that runs the API load tests against selected environment.
 You can investigate the results by going to Actions section in GitHub and checking the summary results. They are also visible in the cloud (k6.io), if you enable the cloud option.
 
-### Local setup
+### 8.2. <a name='Localsetup'></a>Local setup
 
 In order to run the tests locally, follow the [documentation](https://k6.io/docs/get-started/installation/) to install `k6` on your machine.
 
-### Running the tests locally
+### 8.3. <a name='Runningthetestslocally'></a>Running the tests locally
 
 You might want to run the script locally, for example to be able to bypass the cloud limitations of k6 (e.g. max number of VUs bigger than 50). To run a given load test, simply run
 
@@ -237,7 +239,7 @@ by directly modifying the `options` object inside a given script and running `ya
 
 For the GraphQL tests, you'll also need to pass `--env ENV=(test|int|prod)` flag to point to the proper environment and `--env ENABLE_GQL_SERVER_SIDE_CACHE=(true | false)` to control whether to use GQL server-side caching.
 
-### Recording the tests using Playwright
+### 8.4. <a name='RecordingthetestsusingPlaywright'></a>Recording the tests using Playwright
 
 While some tests are written manually, other tests come from HAR recordings that span a broad set of actions.
 In order to record a HAR file and convert it into k6 script, use the `testAndSaveHar` inside `e2e/har-utils.ts` file.
@@ -251,13 +253,27 @@ After the HAR file has been recorded, use [har-to-k6](https://k6.io/docs/test-au
 
 > ⚠️ You might want to remove requests to Google afterwards manually, to remove false-positives of blocked requests.
 
-## Authentication
+## 9. <a name='Authentication'></a>Authentication
 
 Authentication is provided by the Swiss federal government's eIAM through ADFS.
 We use Next-auth to integrate our application with it, through a [custom Provider](app/auth-providers/adfs.ts).
 
-### Locally
+### 9.1. <a name='Locally'></a>Locally
 
 You can use the ref eIAM. ADFS environment variables should be configured in your
 `.env.local` file. You'll find those secret variables in our shared 1Password in
 the "Visualize.admin .env.local" entry.
+
+## 10. <a name='Translations'></a>Translations
+
+Translations are managed via [Accent](https://accent.interactivethings.io). Right now, you need to
+manually pull and push the translations. The process goes:
+
+1. Edit components, add `<Trans />` and `t()`
+2. Run `yarn locales:extract` to write the `en/messages.po`
+3. Run `yarn locales:push --dry-run` to review what will be pushed to Accent
+4. Run `yarn locales:push` to push the new translations to Accent
+5. Edit the new messages in Accent web UI `yarn locales:browse`
+6. Run `yarn locales:pull` to get the messages.po for all translated languages
+
+In the future, we might want to integrate further Accent so that it opens pull requests.
