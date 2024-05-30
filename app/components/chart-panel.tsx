@@ -97,7 +97,6 @@ export const ChartPanelLayout = (props: ChartPanelLayoutProps) => {
        */}
       <DashboardInteractiveFilters
         key={chartConfigs.map((x) => x.key).join(",")}
-        chartConfigs={chartConfigs}
       />
       <Wrapper chartConfigs={chartConfigs} renderChart={renderChart} />
     </div>
