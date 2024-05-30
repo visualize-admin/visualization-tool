@@ -5,8 +5,11 @@ import create, { StateCreator, StoreApi, UseBoundStore } from "zustand";
 import {
   CalculationType,
   ChartConfig,
+  ConfiguratorStateWithChartConfigs,
   FilterValueSingle,
+  hasChartConfigs,
   InteractiveFiltersConfig,
+  useConfiguratorState,
 } from "@/configurator";
 import {
   createBoundUseStoreWithSelector,
@@ -158,8 +161,24 @@ const InteractiveFiltersContext = createContext<
  * Returns filters that are shared across multiple charts.
  */
 export const getSharedFilters = (
-  chartConfigs: ChartConfig[]
+  state: ConfiguratorStateWithChartConfigs
 ): SharedFilters => {
+  const chartConfigs = state.chartConfigs;
+
+  // We show shared filters only when the chart is not being configured
+  if (state.state === "CONFIGURING_CHART") {
+    return [];
+  }
+
+  // Shared filters are only relevant for dashboard layout
+  if (state.layout.type !== "dashboard") {
+    return [];
+  }
+
+  if (chartConfigs.length < 2) {
+    return [];
+  }
+
   const allActiveFilters = chartConfigs.flatMap((c) => {
     const interactiveFiltersConfig = c.interactiveFiltersConfig;
     if (!interactiveFiltersConfig) {
@@ -202,11 +221,10 @@ export const InteractiveFiltersProvider = ({
 }: React.PropsWithChildren<{
   chartConfigs: ChartConfig[];
 }>) => {
+  const [state] = useConfiguratorState(hasChartConfigs);
   const storeRefs = useRef<Record<ChartConfig["key"], StoreApi<State>>>({});
 
-  const sharedFilters = useMemo(() => {
-    return getSharedFilters(chartConfigs);
-  }, [chartConfigs]);
+  const sharedFilters = useMemo(() => getSharedFilters(state), [state]);
 
   const stores = useMemo<
     Record<ChartConfig["key"], InteractiveFiltersContextValue>

@@ -22,6 +22,7 @@ import {
 import { Observation } from "@/domain/data";
 import { useFormatFullDateAuto } from "@/formatters";
 import {
+  SharedFilter,
   useChartInteractiveFilters,
   useInteractiveFiltersGetState,
 } from "@/stores/interactive-filters";
@@ -42,9 +43,15 @@ export const shouldShowBrush = (
         | ComboLineColumnConfig
         | ColumnConfig
       )["interactiveFiltersConfig"]
-    | undefined
+    | undefined,
+  sharedFilters: SharedFilter[] | undefined
 ) => {
-  return interactiveFiltersConfig?.timeRange?.active;
+  const chartTimeRange = interactiveFiltersConfig?.timeRange;
+  const charTimeRangeIri = chartTimeRange?.componentIri;
+  return (
+    chartTimeRange?.active &&
+    !sharedFilters?.find((x) => x.iri === charTimeRangeIri)
+  );
 };
 
 export const BrushTime = () => {

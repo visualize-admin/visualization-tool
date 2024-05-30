@@ -17,6 +17,7 @@ import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
 import { InteractionHorizontal } from "@/charts/shared/overlay-horizontal";
 import { ComboLineSingleConfig } from "@/config-types";
+import { useDashboardInteractiveFilters } from "@/stores/interactive-filters";
 
 import { ChartProps, VisualizationProps } from "../shared/ChartProps";
 
@@ -30,6 +31,8 @@ export const ChartComboLineSingle = memo(
   (props: ChartProps<ComboLineSingleConfig>) => {
     const { chartConfig, measures } = props;
     const { interactiveFiltersConfig } = chartConfig;
+    const { sharedFilters } = useDashboardInteractiveFilters();
+
     const getLegendItemDimension = useCallback(
       (label: string) => {
         return measures.find((measure) => measure.label === label);
@@ -44,7 +47,9 @@ export const ChartComboLineSingle = memo(
             <AxisHeightLinear /> <AxisTime /> <AxisTimeDomain />
             <ComboLineSingle />
             <InteractionHorizontal />
-            {shouldShowBrush(interactiveFiltersConfig) && <BrushTime />}
+            {shouldShowBrush(interactiveFiltersConfig, sharedFilters) && (
+              <BrushTime />
+            )}
           </ChartSvg>
           <HoverDotMultiple />
           <Ruler />

@@ -26,6 +26,7 @@ import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
 import { ColumnConfig, useChartConfigFilters } from "@/config-types";
 import { TimeSlider } from "@/configurator/interactive-filters/time-slider";
+import { useDashboardInteractiveFilters } from "@/stores/interactive-filters";
 
 import { ChartProps, VisualizationProps } from "../shared/ChartProps";
 
@@ -39,8 +40,12 @@ export const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
   const { chartConfig, dimensions } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
   const filters = useChartConfigFilters(chartConfig);
+  const { sharedFilters } = useDashboardInteractiveFilters();
 
-  const showTimeBrush = shouldShowBrush(interactiveFiltersConfig);
+  const showTimeBrush = shouldShowBrush(
+    interactiveFiltersConfig,
+    sharedFilters
+  );
 
   return (
     <>

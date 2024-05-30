@@ -17,6 +17,7 @@ import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
 import { InteractionHorizontal } from "@/charts/shared/overlay-horizontal";
 import { LineConfig } from "@/config-types";
+import { useDashboardInteractiveFilters } from "@/stores/interactive-filters";
 
 import { ChartProps, VisualizationProps } from "../shared/ChartProps";
 
@@ -29,6 +30,7 @@ export const ChartLinesVisualization = (
 export const ChartLines = memo((props: ChartProps<LineConfig>) => {
   const { chartConfig } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
+  const { sharedFilters } = useDashboardInteractiveFilters();
 
   return (
     <LineChart {...props}>
@@ -37,7 +39,9 @@ export const ChartLines = memo((props: ChartProps<LineConfig>) => {
           <AxisHeightLinear /> <AxisTime /> <AxisTimeDomain />
           <Lines />
           <InteractionHorizontal />
-          {shouldShowBrush(interactiveFiltersConfig) && <BrushTime />}
+          {shouldShowBrush(interactiveFiltersConfig, sharedFilters) && (
+            <BrushTime />
+          )}
         </ChartSvg>
 
         <Ruler />
