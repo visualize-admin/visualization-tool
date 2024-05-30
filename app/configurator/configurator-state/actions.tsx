@@ -3,6 +3,7 @@ import {
   ChartConfig,
   ChartType,
   ConfiguratorState,
+  DashboardFiltersConfig,
   DataSource,
   Filters,
   ImputationType,
@@ -267,4 +268,12 @@ export type ConfiguratorStateAction =
       value: {
         chartKey: string;
       };
+    }
+  | {
+      type: "DASHBOARD_FILTER_ADD";
+      value: DashboardFiltersConfig["filters"][number];
+    }
+  | {
+      type: "DASHBOARD_FILTER_REMOVE";
+      value: DashboardFiltersConfig["filters"][number]["componentIri"];
     };

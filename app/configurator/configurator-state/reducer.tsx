@@ -1048,13 +1048,34 @@ export const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       newDraft.activeChartKey = action.value.chartKey;
       return newDraft;
 
+    case "DASHBOARD_FILTER_ADD":
+      if (isLayouting(draft)) {
+        setWith(
+          draft,
+          "dashboardFilters.filters",
+          [...(draft.dashboardFilters?.filters ?? []), action.value],
+          Object
+        );
+      }
+
+      return draft;
+
+    case "DASHBOARD_FILTER_REMOVE":
+      if (isLayouting(draft)) {
+        const newFilters = draft.dashboardFilters?.filters.filter(
+          (f) => f.componentIri !== action.value
+        );
+        setWith(draft, "dashboardFilters.filters", newFilters, Object);
+      }
+      return draft;
+
     default:
       throw unreachableError(action);
   }
 };
 
 /** Turn this on for the reducer to log state, action and result */
-const reducerLogging = false;
+const reducerLogging = true;
 const withLogging = <TState, TAction extends { type: unknown }>(
   reducer: Reducer<TState, TAction>
 ) => {

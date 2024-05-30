@@ -1,4 +1,9 @@
-import { Slider, sliderClasses, useEventCallback } from "@mui/material";
+import {
+  Collapse,
+  Slider,
+  sliderClasses,
+  useEventCallback,
+} from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import { makeStyles } from "@mui/styles";
 import uniqBy from "lodash/uniqBy";
@@ -22,6 +27,8 @@ import {
   useDashboardInteractiveFilters,
 } from "@/stores/interactive-filters";
 import { assert } from "@/utils/assert";
+
+import { useTimeout } from "../hooks/use-timeout";
 
 const useStyles = makeStyles((theme: Theme) => ({
   slider: {
@@ -71,7 +78,13 @@ const toUnixSeconds = (x: Date | null) => {
   return 0;
 };
 
-const DashboardTimeRangeSlider = ({ filter }: { filter: SharedFilter }) => {
+const DashboardTimeRangeSlider = ({
+  filter,
+  mounted,
+}: {
+  filter: SharedFilter;
+  mounted: boolean;
+}) => {
   const classes = useStyles();
 
   const dashboardInteractiveFilters = useDashboardInteractiveFilters();
@@ -169,6 +182,8 @@ const DashboardTimeRangeSlider = ({ filter }: { filter: SharedFilter }) => {
     }
   );
 
+  const mountedForSomeTime = useTimeout(500, mounted);
+
   if (!filter.value || !timeRange) {
     return null;
   }
@@ -182,7 +197,7 @@ const DashboardTimeRangeSlider = ({ filter }: { filter: SharedFilter }) => {
       max={max}
       valueLabelFormat={valueLabelFormat}
       step={step}
-      valueLabelDisplay="on"
+      valueLabelDisplay={mountedForSomeTime ? "on" : "off"}
       value={timeRange}
       marks
     />
@@ -199,7 +214,16 @@ export const DashboardInteractiveFilters = () => {
           return null;
         }
 
-        return <DashboardTimeRangeSlider key={filter.iri} filter={filter} />;
+        return (
+          <Collapse in={filter.value.active} key={filter.iri}>
+            <div>
+              <DashboardTimeRangeSlider
+                filter={filter}
+                mounted={filter.value.active}
+              />
+            </div>
+          </Collapse>
+        );
       })}
     </>
   );

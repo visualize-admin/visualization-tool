@@ -1,7 +1,18 @@
 import { Trans } from "@lingui/macro";
-import { Box, Stack, Typography } from "@mui/material";
+import {
+  Box,
+  FormControlLabel,
+  Stack,
+  Switch,
+  SwitchProps,
+  Typography,
+  useEventCallback,
+} from "@mui/material";
 import capitalize from "lodash/capitalize";
+import keyBy from "lodash/keyBy";
 import omit from "lodash/omit";
+import uniqBy from "lodash/uniqBy";
+import { useMemo } from "react";
 
 import { generateLayout } from "@/components/react-grid";
 import { ChartConfig, LayoutDashboard } from "@/config-types";
@@ -16,6 +27,9 @@ import {
   isLayouting,
   useConfiguratorState,
 } from "@/configurator/configurator-state";
+import { useDataCubesComponentsQuery } from "@/graphql/hooks";
+import { useLocale } from "@/src";
+import { useDashboardInteractiveFilters } from "@/stores/interactive-filters";
 
 export const LayoutConfigurator = () => {
   return (
@@ -67,8 +81,58 @@ const LayoutLayoutConfigurator = () => {
 };
 
 const LayoutSharedFiltersConfigurator = () => {
-  const [state] = useConfiguratorState(isLayouting);
+  const [state, dispatch] = useConfiguratorState(isLayouting);
   const { layout } = state;
+  const { sharedFilters } = useDashboardInteractiveFilters();
+  const locale = useLocale();
+  const cubeFilters = useMemo(() => {
+    return uniqBy(
+      state.chartConfigs.flatMap((config) =>
+        config.cubes.map((x) => ({
+          iri: x.iri,
+        }))
+      ),
+      "iri"
+    );
+  }, [state.chartConfigs]);
+  const [data] = useDataCubesComponentsQuery({
+    variables: {
+      sourceType: state.dataSource.type,
+      sourceUrl: state.dataSource.url,
+      locale: locale,
+      cubeFilters: cubeFilters,
+    },
+  });
+  const dimensionsByIri = useMemo(() => {
+    return keyBy(data.data?.dataCubesComponents.dimensions, (x) => x.iri);
+  }, [data.data?.dataCubesComponents.dimensions]);
+  const handleToggle: SwitchProps["onChange"] = useEventCallback(
+    (event, checked) => {
+      const componentIri = event.currentTarget.dataset.componentIri;
+      if (!componentIri) return;
+      if (checked) {
+        dispatch({
+          type: "DASHBOARD_FILTER_ADD",
+          value: {
+            type: "timeRange",
+            active: true,
+            presets: {
+              type: "range",
+              // TODO Ignored at this point, is computed by the getSharedFilters helper
+              from: "0000-01-01",
+              to: "0000-12-31",
+            },
+            componentIri: componentIri,
+          },
+        });
+      } else {
+        dispatch({
+          type: "DASHBOARD_FILTER_REMOVE",
+          value: componentIri,
+        });
+      }
+    }
+  );
 
   switch (layout.type) {
     case "dashboard":
@@ -86,21 +150,43 @@ const LayoutSharedFiltersConfigurator = () => {
             <Trans id="controls.section.shared-filters">Shared filters</Trans>
           </SubsectionTitle>
           <Stack gap="0.5rem" px="1rem">
-            <Typography variant="body2">To be done</Typography>
-            <Box
-              sx={{
-                height: "2rem",
-                backgroundColor: "grey.200",
-                borderRadius: "0.25rem",
-              }}
-            />
-            <Box
-              sx={{
-                height: "2rem",
-                backgroundColor: "grey.200",
-                borderRadius: "0.25rem",
-              }}
-            />
+            {sharedFilters.map((filter) => {
+              return (
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="space-between"
+                  width="100%"
+                  key={filter.iri}
+                >
+                  <Typography variant="body2" flexGrow={1}>
+                    {dimensionsByIri[filter.iri]?.label || filter.iri}
+                  </Typography>
+                  <FormControlLabel
+                    sx={{ mr: 0 }}
+                    labelPlacement="start"
+                    disableTypography
+                    label={
+                      <Typography variant="body2">
+                        <Trans id="controls.section.shared-filters.shared-switch">
+                          Shared
+                        </Trans>
+                      </Typography>
+                    }
+                    control={
+                      <Switch
+                        checked={filter.value?.active ?? false}
+                        onChange={handleToggle}
+                        inputProps={{
+                          // @ts-ignore
+                          "data-component-iri": filter.iri,
+                        }}
+                      />
+                    }
+                  />
+                </Box>
+              );
+            })}
           </Stack>
         </ControlSection>
       );

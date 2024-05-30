@@ -203,7 +203,12 @@ export const getSharedFilters = (
       const type = filters[0].type;
       switch (type) {
         case "timeRange":
-          return filters[0].value;
+          return {
+            ...filters[0].value,
+            active: !!state.dashboardFilters?.filters.find(
+              (x) => x.componentIri === filters[0].value.componentIri
+            ),
+          };
         default:
           const _exhaustiveCheck: never = type;
           throw new Error(`Unhandled type: ${_exhaustiveCheck}`);
