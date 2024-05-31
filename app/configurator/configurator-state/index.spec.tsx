@@ -63,7 +63,7 @@ import {
 
 const mockedApi = api as jest.Mocked<typeof api>;
 
-jest.mock("../rdf/extended-cube", () => ({
+jest.mock("@/rdf/extended-cube", () => ({
   ExtendedCube: jest.fn(),
 }));
 
