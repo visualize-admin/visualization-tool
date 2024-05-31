@@ -46,7 +46,11 @@ export const ChartWrapper = forwardRef<HTMLDivElement, ChartWrapperProps>(
     const { children, editing, layoutType, ...rest } = props;
     const classes = useStyles();
     return (
-      <Box ref={ref} {...rest} className={classes.chartWrapper}>
+      <Box
+        ref={ref}
+        {...rest}
+        className={clsx(classes.chartWrapper, props.className)}
+      >
         {(editing || layoutType === "tab") && <ChartSelectionTabs />}
         <Box
           className={classes.chartWrapperInner}
