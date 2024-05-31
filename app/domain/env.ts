@@ -60,7 +60,9 @@ export const ADFS_ISSUER = process.env.ADFS_ISSUER;
 
 export const BUILD_VERSION = process.env.NEXT_PUBLIC_VERSION;
 export const BUILD_COMMIT = process.env.NEXT_PUBLIC_COMMIT;
-export const BUILD_GITHUB_REPO = process.env.NEXT_PUBLIC_GITHUB_REPO;
+export const BUILD_GITHUB_REPO = (
+  process.env.NEXT_PUBLIC_GITHUB_REPO || ""
+).replace(/^git\+https/, "https"); // Don't use git+https for the link, need to check with Abraxas
 export const BASE_VECTOR_TILE_URL =
   process.env.NEXT_PUBLIC_BASE_VECTOR_TILE_URL ?? "";
 export const MAPTILER_STYLE_KEY =
