@@ -35,9 +35,7 @@ export const BrushTime = () => {
   const formatDateAuto = useFormatFullDateAuto();
   const [brushedIsEnded, updateBrushEndedStatus] = useState(true);
   const [selectionExtent, setSelectionExtent] = useState(0);
-  console.log({ timeRange });
   const updateSelectionExtent = (selection: [number, number] | undefined) => {
-    console.log("Update selection extent");
     if (selection) {
       setSelectionExtent(selection[1] - selection[0]);
     } else {
@@ -119,7 +117,6 @@ export const BrushTime = () => {
           from?.getTime() !== newFrom.getTime() ||
           to?.getTime() !== newTo.getTime()
         ) {
-          console.log("brushed, settting time range");
           setTimeRange(newFrom, newTo);
         }
       }
@@ -141,8 +138,7 @@ export const BrushTime = () => {
     })
     .on("brush", brushed)
     .on("end", function (e) {
-      console.log("end");
-      // updateSelectionExtent(e.selection);
+      updateSelectionExtent(e.selection);
 
       // Happens when snapping to actual values.
       if (!e.sourceEvent) {
