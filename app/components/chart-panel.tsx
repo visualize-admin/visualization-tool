@@ -86,9 +86,16 @@ const Wrappers: Record<
 };
 
 export const ChartPanelLayout = (props: ChartPanelLayoutProps) => {
-  const { children, renderChart, chartConfigs, className, ...rest } = props;
+  const {
+    children,
+    renderChart,
+    chartConfigs,
+    className,
+    layoutType,
+    ...rest
+  } = props;
   const classes = useStyles();
-  const Wrapper = Wrappers[props.layoutType];
+  const Wrapper = Wrappers[layoutType];
   return (
     <div className={clsx(classes.panelLayout, className)} {...rest}>
       {/**

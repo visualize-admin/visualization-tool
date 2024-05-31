@@ -122,6 +122,7 @@ const DashboardPreview = (props: DashboardPreviewProps) => {
         />
       ) : (
         <DndChartPreview
+          key={chartConfig.key}
           chartKey={chartConfig.key}
           dataSource={dataSource}
           layoutType={state.layout.type}
