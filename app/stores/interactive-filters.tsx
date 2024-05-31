@@ -142,13 +142,9 @@ type InteractiveFiltersContextValue = [
   StoreApi<State>,
 ];
 
-export type SharedFilter =
-  | ({
-      type: "timeRange";
-    } & NonNullable<InteractiveFiltersConfig>["timeRange"])
-  | ({
-      type: "dataFilters";
-    } & NonNullable<InteractiveFiltersConfig>["dataFilters"]);
+export type SharedFilter = {
+  type: "timeRange";
+} & NonNullable<InteractiveFiltersConfig>["timeRange"];
 
 export type PotentialSharedFilter = Pick<SharedFilter, "type" | "componentIri">;
 
