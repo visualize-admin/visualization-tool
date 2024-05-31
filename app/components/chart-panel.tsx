@@ -11,6 +11,8 @@ import { ChartPanelLayoutVertical } from "@/components/chart-panel-layout-vertic
 import { ChartSelectionTabs } from "@/components/chart-selection-tabs";
 import { DashboardInteractiveFilters } from "@/components/DashboardInteractiveFilters";
 import { ChartConfig, Layout, LayoutDashboard } from "@/config-types";
+import { hasChartConfigs } from "@/configurator";
+import { useConfiguratorState } from "@/src";
 
 const useStyles = makeStyles((theme: Theme) => ({
   panelLayout: {
@@ -96,15 +98,14 @@ export const ChartPanelLayout = (props: ChartPanelLayoutProps) => {
   } = props;
   const classes = useStyles();
   const Wrapper = Wrappers[layoutType];
+  const [state] = useConfiguratorState(hasChartConfigs);
   return (
     <div className={clsx(classes.panelLayout, className)} {...rest}>
-      {/**
-       * TODO: Should be shown only in Dashboard layout, not in separate URLs
-       *  We want to completely remount this component if chartConfigs change,
-       */}
-      <DashboardInteractiveFilters
-        key={chartConfigs.map((x) => x.key).join(",")}
-      />
+      {state.layout.type === "dashboard" ? (
+        <DashboardInteractiveFilters
+          key={chartConfigs.map((x) => x.key).join(",")}
+        />
+      ) : null}
       <Wrapper chartConfigs={chartConfigs} renderChart={renderChart} />
     </div>
   );
