@@ -26,6 +26,7 @@ import {
   useConfiguratorState,
 } from "@/configurator/configurator-state";
 import { DataCubeMetadata } from "@/domain/data";
+import { useFlag } from "@/flags";
 import { useDataCubesMetadataQuery } from "@/graphql/hooks";
 import SvgIcAdd from "@/icons/components/IcAdd";
 import SvgIcChecked from "@/icons/components/IcChecked";
@@ -196,6 +197,11 @@ export const DatasetsControlSection = () => {
     setOpen(true);
     setActiveSection("general");
   };
+
+  const isShown = useFlag("cubeMerge.enabled");
+  if (!isShown) {
+    return null;
+  }
 
   return (
     <ControlSection collapse>
