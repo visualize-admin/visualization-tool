@@ -17,6 +17,7 @@ jobs:
           node-version: 18.x
           cache: yarn
       - run: yarn install
+      - run: yarn lingui compile
       - run: yarn chromatic
         env:
           CHROMATIC_PROJECT_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
