@@ -9,7 +9,7 @@ import ChartPanelLayoutCanvas, {
 import { ChartPanelLayoutTall } from "@/components/chart-panel-layout-tall";
 import { ChartPanelLayoutVertical } from "@/components/chart-panel-layout-vertical";
 import { ChartSelectionTabs } from "@/components/chart-selection-tabs";
-import { DashboardInteractiveFilters } from "@/components/DashboardInteractiveFilters";
+import { DashboardInteractiveFilters } from "@/components/dashboard-interactive-filters";
 import { ChartConfig, Layout, LayoutDashboard } from "@/config-types";
 import { hasChartConfigs } from "@/configurator";
 import { useConfiguratorState } from "@/src";
