@@ -618,7 +618,7 @@ export const PreviewDataTable = ({
                         handleClickSelectAllFromCube(group.cubeIri)
                       }
                     >
-                      Select all
+                      <Trans id="controls.filter.select.all">Select all</Trans>
                     </Button>{" "}
                     -{" "}
                     <Button
@@ -628,7 +628,9 @@ export const PreviewDataTable = ({
                         handleClickUnselectAllFromCube(group.cubeIri)
                       }
                     >
-                      Unselect all
+                      <Trans id="controls.filter.select.none">
+                        Select none
+                      </Trans>
                     </Button>
                   </Box>
                 </ListSubheader>,
