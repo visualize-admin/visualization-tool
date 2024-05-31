@@ -10,8 +10,8 @@ function SvgIcLayoutTall(props: React.SVGProps<SVGSVGElement>) {
       {...props}
     >
       <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
+        fillRule="evenodd"
+        clipRule="evenodd"
         d="M2 2H22V12H2V2ZM13 14H22V22H13V14ZM11 14H2V22H11V14Z"
         fill="currentColor"
       />

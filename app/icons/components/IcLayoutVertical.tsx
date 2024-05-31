@@ -10,8 +10,8 @@ function SvgIcLayoutVertical(props: React.SVGProps<SVGSVGElement>) {
       {...props}
     >
       <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
+        fillRule="evenodd"
+        clipRule="evenodd"
         d="M2 2H22V8H2V2ZM2 9H22V15H2V9ZM22 16H2V22H22V16Z"
         fill="currentColor"
       />
