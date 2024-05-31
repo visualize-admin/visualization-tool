@@ -895,7 +895,7 @@ export const migrateChartConfig = makeMigrate<ChartConfig>(
   }
 );
 
-export const CONFIGURATOR_STATE_VERSION = "3.2.1";
+export const CONFIGURATOR_STATE_VERSION = "3.3.0";
 
 export const configuratorStateMigrations: Migration[] = [
   {
