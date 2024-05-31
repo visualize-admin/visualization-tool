@@ -2,6 +2,7 @@ import produce, { createDraft, current, Draft } from "immer";
 import get from "lodash/get";
 import setWith from "lodash/setWith";
 import sortBy from "lodash/sortBy";
+import uniqBy from "lodash/uniqBy";
 import unset from "lodash/unset";
 import { Reducer } from "use-immer";
 
@@ -1053,7 +1054,10 @@ export const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         setWith(
           draft,
           "dashboardFilters.filters",
-          [...(draft.dashboardFilters?.filters ?? []), action.value],
+          uniqBy(
+            [...(draft.dashboardFilters?.filters ?? []), action.value],
+            (x) => x.componentIri
+          ),
           Object
         );
       }

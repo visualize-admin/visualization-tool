@@ -23,13 +23,17 @@ import {
   SubsectionTitle,
 } from "@/configurator/components/chart-controls/section";
 import { IconButton } from "@/configurator/components/icon-button";
+import { timeUnitToFormatter } from "@/configurator/components/ui-helpers";
 import {
   isLayouting,
   useConfiguratorState,
 } from "@/configurator/configurator-state";
+import { isTemporalDimension } from "@/domain/data";
+import { useTimeFormatLocale, useTimeFormatUnit } from "@/formatters";
 import { useDataCubesComponentsQuery } from "@/graphql/hooks";
 import { useLocale } from "@/src";
 import { useDashboardInteractiveFilters } from "@/stores/interactive-filters";
+import { getTimeFilterOptions } from "@/utils/time-filter-options";
 
 export const LayoutConfigurator = () => {
   return (
@@ -83,13 +87,16 @@ const LayoutLayoutConfigurator = () => {
 const LayoutSharedFiltersConfigurator = () => {
   const [state, dispatch] = useConfiguratorState(isLayouting);
   const { layout } = state;
-  const { sharedFilters } = useDashboardInteractiveFilters();
+  const { sharedFilters, potentialSharedFilters } =
+    useDashboardInteractiveFilters();
   const locale = useLocale();
   const cubeFilters = useMemo(() => {
     return uniqBy(
       state.chartConfigs.flatMap((config) =>
         config.cubes.map((x) => ({
           iri: x.iri,
+          joinBy: x.joinBy,
+          loadValues: true,
         }))
       ),
       "iri"
@@ -103,14 +110,42 @@ const LayoutSharedFiltersConfigurator = () => {
       cubeFilters: cubeFilters,
     },
   });
+
   const dimensionsByIri = useMemo(() => {
     return keyBy(data.data?.dataCubesComponents.dimensions, (x) => x.iri);
   }, [data.data?.dataCubesComponents.dimensions]);
+
+  const sharedFiltersByIri = useMemo(() => {
+    return keyBy(sharedFilters, (x) => x.componentIri);
+  }, [sharedFilters]);
+
+  const formatLocale = useTimeFormatLocale();
+  const timeFormatUnit = useTimeFormatUnit();
+
   const handleToggle: SwitchProps["onChange"] = useEventCallback(
     (event, checked) => {
       const componentIri = event.currentTarget.dataset.componentIri;
-      if (!componentIri) return;
+      const dimension = componentIri
+        ? dimensionsByIri[componentIri]
+        : undefined;
+
+      if (!componentIri || !dimension || !isTemporalDimension(dimension))
+        return;
       if (checked) {
+        const options = getTimeFilterOptions({
+          dimension: dimension,
+          formatLocale,
+          timeFormatUnit,
+        });
+
+        const from = options.sortedOptions[0].date;
+        const to = options.sortedOptions.at(-1)?.date;
+        const dateFormatter = timeUnitToFormatter[dimension.timeUnit];
+
+        if (!from || !to) {
+          return;
+        }
+
         dispatch({
           type: "DASHBOARD_FILTER_ADD",
           value: {
@@ -118,9 +153,8 @@ const LayoutSharedFiltersConfigurator = () => {
             active: true,
             presets: {
               type: "range",
-              // TODO Ignored at this point, is computed by the getSharedFilters helper
-              from: "0000-01-01",
-              to: "0000-12-31",
+              from: dateFormatter(from),
+              to: dateFormatter(to),
             },
             componentIri: componentIri,
           },
@@ -150,17 +184,28 @@ const LayoutSharedFiltersConfigurator = () => {
             <Trans id="controls.section.shared-filters">Shared filters</Trans>
           </SubsectionTitle>
           <Stack gap="0.5rem" px="1rem">
-            {sharedFilters.map((filter) => {
+            {potentialSharedFilters.map((filter) => {
+              const dimension = dimensionsByIri[filter.componentIri];
+              const sharedFilter = sharedFiltersByIri[filter.componentIri];
+              console.log(
+                dimension,
+                sharedFilter,
+                filter.componentIri,
+                sharedFiltersByIri
+              );
+              if (!dimension || !isTemporalDimension(dimension)) {
+                return null;
+              }
               return (
                 <Box
                   display="flex"
                   alignItems="center"
                   justifyContent="space-between"
                   width="100%"
-                  key={filter.iri}
+                  key={filter.componentIri}
                 >
                   <Typography variant="body2" flexGrow={1}>
-                    {dimensionsByIri[filter.iri]?.label || filter.iri}
+                    {dimension.label || filter.componentIri}
                   </Typography>
                   <FormControlLabel
                     sx={{ mr: 0 }}
@@ -175,11 +220,11 @@ const LayoutSharedFiltersConfigurator = () => {
                     }
                     control={
                       <Switch
-                        checked={filter.value?.active ?? false}
+                        checked={!!sharedFilter ?? false}
                         onChange={handleToggle}
                         inputProps={{
-                          // @ts-ignore
-                          "data-component-iri": filter.iri,
+                          // @ts-expect-error ts(2322) - data-component-iri is not considered a valid attribute, while it is
+                          "data-component-iri": filter.componentIri,
                         }}
                       />
                     }

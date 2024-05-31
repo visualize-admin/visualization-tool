@@ -48,10 +48,11 @@ export const shouldShowBrush = (
 ) => {
   const chartTimeRange = interactiveFiltersConfig?.timeRange;
   const chartTimeRangeIri = chartTimeRange?.componentIri;
-  const sharedFilter = sharedFilters?.find((x) => x.iri === chartTimeRangeIri);
+  const sharedFilter = sharedFilters?.find(
+    (x) => x.type === "timeRange" && x.componentIri === chartTimeRangeIri
+  );
   return (
-    (chartTimeRange?.active && !sharedFilter) ||
-    sharedFilter?.value?.active == false
+    (chartTimeRange?.active && !sharedFilter) || sharedFilter?.active == false
   );
 };
 

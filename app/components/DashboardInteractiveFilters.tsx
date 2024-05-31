@@ -10,8 +10,8 @@ import uniqBy from "lodash/uniqBy";
 import { useEffect, useMemo, useState } from "react";
 
 import {
+  hasChartConfigs,
   InteractiveFiltersTimeRange,
-  isLayouting,
   useConfiguratorState,
 } from "@/configurator";
 import {
@@ -82,14 +82,14 @@ const DashboardTimeRangeSlider = ({
   filter,
   mounted,
 }: {
-  filter: SharedFilter;
+  filter: Extract<SharedFilter, { type: "timeRange" }>;
   mounted: boolean;
 }) => {
   const classes = useStyles();
 
   const dashboardInteractiveFilters = useDashboardInteractiveFilters();
 
-  const [state] = useConfiguratorState(isLayouting);
+  const [state] = useConfiguratorState(hasChartConfigs);
   const source = state.dataSource;
   const locale = useLocale();
 
@@ -98,12 +98,12 @@ const DashboardTimeRangeSlider = ({
       state.chartConfigs.flatMap((chartConfig) =>
         chartConfig.cubes.map((x: DataCubeComponentFilter) => ({
           iri: x.iri,
-          componentIris: [filter.iri],
+          componentIris: [filter.componentIri],
         }))
       ),
       (x) => x.iri
     );
-  }, [filter.iri, state.chartConfigs]);
+  }, [filter.componentIri, state.chartConfigs]);
 
   const [data] = useDataCubesComponentsQuery({
     variables: {
@@ -119,15 +119,15 @@ const DashboardTimeRangeSlider = ({
     return isTemporalDimension(dim) ? dim.timeUnit : undefined;
   }, [data?.data?.dataCubesComponents?.dimensions]);
 
-  const value = filter.value;
+  const presets = filter.presets;
   assert(
-    value,
-    "Filter value should be defined when time range filter is rendered"
+    presets,
+    "Filter presets should be defined when time range filter is rendered"
   );
 
   // In Unix timestamp
   const [timeRange, setTimeRange] = useState(() =>
-    timeUnit ? presetToTimeRange(value.presets, timeUnit) : undefined
+    timeUnit ? presetToTimeRange(presets, timeUnit) : undefined
   );
 
   useEffect(
@@ -135,21 +135,21 @@ const DashboardTimeRangeSlider = ({
       if (timeRange || !timeUnit) {
         return;
       }
-      setTimeRange(presetToTimeRange(value.presets, timeUnit));
+      setTimeRange(presetToTimeRange(presets, timeUnit));
     },
-    [timeRange, timeUnit, value.presets]
+    [timeRange, timeUnit, presets]
   );
 
   const { min, max } = useMemo(() => {
-    if (!timeUnit || !value.presets) {
+    if (!timeUnit || !presets) {
       return { min: 0, max: 0 };
     }
     const parser = timeUnitToParser[timeUnit];
     return {
-      min: toUnixSeconds(parser(value.presets.from)),
-      max: toUnixSeconds(parser(value.presets.to)),
+      min: toUnixSeconds(parser(presets.from)),
+      max: toUnixSeconds(parser(presets.to)),
     };
-  }, [timeUnit, value.presets]);
+  }, [timeUnit, presets]);
 
   const step = stepFromTimeUnit(timeUnit);
 
@@ -184,15 +184,15 @@ const DashboardTimeRangeSlider = ({
 
   const mountedForSomeTime = useTimeout(500, mounted);
 
-  if (!filter.value || !timeRange) {
+  if (!filter || !timeRange || filter.type !== "timeRange") {
     return null;
   }
 
   return (
     <Slider
       className={classes.slider}
-      key={filter.iri}
-      onChange={(_ev, value) => handleChangeSlider(filter.iri, value)}
+      key={filter.componentIri}
+      onChange={(_ev, value) => handleChangeSlider(filter.componentIri, value)}
       min={min}
       max={max}
       valueLabelFormat={valueLabelFormat}
@@ -210,16 +210,16 @@ export const DashboardInteractiveFilters = () => {
   return (
     <>
       {dashboardInteractiveFilters.sharedFilters.map((filter) => {
-        if (filter.type !== "timeRange" || !filter.value) {
+        if (filter.type !== "timeRange" || !filter.active) {
           return null;
         }
 
         return (
-          <Collapse in={filter.value.active} key={filter.iri}>
+          <Collapse in={filter.active} key={filter.componentIri}>
             <div>
               <DashboardTimeRangeSlider
                 filter={filter}
-                mounted={filter.value.active}
+                mounted={filter.active}
               />
             </div>
           </Collapse>

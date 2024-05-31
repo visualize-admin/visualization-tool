@@ -1,4 +1,4 @@
-import { Box, Button, Typography, sliderClasses } from "@mui/material";
+import { Box, Button, sliderClasses, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 import orderBy from "lodash/orderBy";
@@ -144,7 +144,9 @@ export const TimeSlider = (props: TimeSliderProps) => {
     return new Timeline(timelineProps);
   }, [timelineProps]);
 
-  if (dashboardFilters.sharedFilters.find((x) => x.iri === componentIri)) {
+  if (
+    dashboardFilters.sharedFilters.find((x) => x.componentIri === componentIri)
+  ) {
     return null;
   }
 

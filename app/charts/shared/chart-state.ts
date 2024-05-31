@@ -14,7 +14,6 @@ import { LinesState } from "@/charts/line/lines-state";
 import { MapState } from "@/charts/map/map-state";
 import { PieState } from "@/charts/pie/pie-state";
 import { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
-import { DimensionsByIri, MeasuresByIri } from "@/charts/shared/ChartProps";
 import {
   getLabelWithUnit,
   useDimensionWithAbbreviations,
@@ -23,14 +22,15 @@ import {
   useTemporalEntityVariable,
   useTemporalVariable,
 } from "@/charts/shared/chart-helpers";
+import { DimensionsByIri, MeasuresByIri } from "@/charts/shared/ChartProps";
 import { Bounds } from "@/charts/shared/use-width";
 import { TableChartState } from "@/charts/table/table-state";
 import {
   ChartConfig,
   ChartType,
   GenericField,
-  InteractiveFiltersConfig,
   getAnimationField,
+  InteractiveFiltersConfig,
 } from "@/configurator";
 import {
   parseDate,
@@ -44,19 +44,22 @@ import {
   DimensionValue,
   GeoCoordinatesDimension,
   GeoShapesDimension,
+  isNumericalMeasure,
+  isTemporalDimension,
+  isTemporalEntityDimension,
   Measure,
   NumericalMeasure,
   Observation,
   ObservationValue,
   TemporalDimension,
   TemporalEntityDimension,
-  isNumericalMeasure,
-  isTemporalDimension,
-  isTemporalEntityDimension,
 } from "@/domain/data";
 import { Has } from "@/domain/types";
 import { TimeUnit } from "@/graphql/resolver-types";
-import { useChartInteractiveFilters } from "@/stores/interactive-filters";
+import {
+  useChartInteractiveFilters,
+  useDashboardInteractiveFilters,
+} from "@/stores/interactive-filters";
 
 export type ChartState =
   | AreasState
@@ -430,12 +433,21 @@ export const useChartData = (
   // interactive time range
   const interactiveFromTime = timeRange.from?.getTime();
   const interactiveToTime = timeRange.to?.getTime();
+  const dashboardFilters = useDashboardInteractiveFilters();
   const interactiveTimeRangeFilters = useMemo(() => {
+    const isDashboardFilterActive = !!dashboardFilters.sharedFilters.find(
+      (f) => {
+        if (f.type !== "timeRange") {
+          return false;
+        }
+        return f.componentIri === interactiveTimeRange?.componentIri;
+      }
+    );
     const interactiveTimeRangeFilter: ValuePredicate | null =
       getXAsDate &&
       interactiveFromTime &&
       interactiveToTime &&
-      interactiveTimeRange?.active
+      (interactiveTimeRange?.active || isDashboardFilterActive)
         ? (d: Observation) => {
             const time = getXAsDate(d).getTime();
             return time >= interactiveFromTime && time <= interactiveToTime;
@@ -444,10 +456,12 @@ export const useChartData = (
 
     return interactiveTimeRangeFilter ? [interactiveTimeRangeFilter] : [];
   }, [
+    dashboardFilters.sharedFilters,
     getXAsDate,
     interactiveFromTime,
     interactiveToTime,
-    interactiveTimeRange,
+    interactiveTimeRange?.active,
+    interactiveTimeRange?.componentIri,
   ]);
 
   // interactive time slider

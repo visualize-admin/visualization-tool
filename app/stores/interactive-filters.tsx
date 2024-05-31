@@ -2,15 +2,16 @@ import groupBy from "lodash/groupBy";
 import React, { createContext, useContext, useMemo, useRef } from "react";
 import create, { StateCreator, StoreApi, UseBoundStore } from "zustand";
 
+import { getChartSpec } from "@/charts/chart-config-ui-options";
 import {
   CalculationType,
   ChartConfig,
-  ConfiguratorStateWithChartConfigs,
   FilterValueSingle,
   hasChartConfigs,
   InteractiveFiltersConfig,
   useConfiguratorState,
 } from "@/configurator";
+import { truthy } from "@/domain/types";
 import {
   createBoundUseStoreWithSelector,
   ExtractState,
@@ -141,18 +142,21 @@ type InteractiveFiltersContextValue = [
   StoreApi<State>,
 ];
 
-export type SharedFilter = {
-  type: "timeRange" | "dataFilters";
-  value?: NonNullable<InteractiveFiltersConfig>["timeRange"];
-  iri: string;
-};
+export type SharedFilter =
+  | ({
+      type: "timeRange";
+    } & NonNullable<InteractiveFiltersConfig>["timeRange"])
+  | ({
+      type: "dataFilters";
+    } & NonNullable<InteractiveFiltersConfig>["dataFilters"]);
 
-type SharedFilters = SharedFilter[];
+export type PotentialSharedFilter = Pick<SharedFilter, "type" | "componentIri">;
 
 const InteractiveFiltersContext = createContext<
   | {
       stores: Record<ChartConfig["key"], InteractiveFiltersContextValue>;
-      sharedFilters: SharedFilters;
+      potentialSharedFilters: PotentialSharedFilter[];
+      sharedFilters: SharedFilter[];
     }
   | undefined
 >(undefined);
@@ -160,61 +164,40 @@ const InteractiveFiltersContext = createContext<
 /**
  * Returns filters that are shared across multiple charts.
  */
-export const getSharedFilters = (
-  state: ConfiguratorStateWithChartConfigs
-): SharedFilters => {
-  const chartConfigs = state.chartConfigs;
-
-  // We show shared filters only when the chart is not being configured
-  if (state.state === "CONFIGURING_CHART") {
-    return [];
-  }
-
-  // Shared filters are only relevant for dashboard layout
-  if (state.layout.type !== "dashboard") {
-    return [];
-  }
-
-  if (chartConfigs.length < 2) {
-    return [];
-  }
-
-  const allActiveFilters = chartConfigs.flatMap((c) => {
-    const interactiveFiltersConfig = c.interactiveFiltersConfig;
-    if (!interactiveFiltersConfig) {
-      return [];
-    }
-
-    const { timeRange } = interactiveFiltersConfig;
-    return [{ type: "timeRange" as const, value: timeRange }].filter(
-      (x) => x.value.active
+export const getPotentialSharedFilters = (
+  chartConfigs: ChartConfig[]
+): PotentialSharedFilter[] => {
+  const temporalDimensions = chartConfigs.flatMap((c) => {
+    const chartSpec = getChartSpec(c);
+    const temporalEncodings = chartSpec.encodings.filter((x) =>
+      x.componentTypes.some((x) => x === "TemporalDimension")
     );
+    const chartTemporalDimensions = temporalEncodings
+      .map((x) => {
+        // @ts-ignore
+        const field = x.field in c.fields ? c.fields[x.field] : undefined;
+        if (field && "componentIri" in field) {
+          return {
+            componentIri: field.componentIri as string,
+            chartKey: c.key,
+          };
+        }
+      })
+      .filter(truthy);
+
+    return chartTemporalDimensions;
   });
 
-  const sharedFilters = Object.entries(
-    // TODO implement recognizing shared filters across joined by dimensions
-    groupBy(allActiveFilters, (x) => `${x.type} - ${x.value.componentIri}`)
-  ).filter(([_iri, filters]) => filters.length > 1);
+  const sharedTemporalDimensions = Object.values(
+    groupBy(temporalDimensions, (x) => x.componentIri)
+  ).filter((x) => x.length > 1);
 
-  return sharedFilters.map(([_iri, filters]) => ({
-    iri: filters[0].value.componentIri,
-    type: filters[0].type,
-    value: (() => {
-      const type = filters[0].type;
-      switch (type) {
-        case "timeRange":
-          return {
-            ...filters[0].value,
-            active: !!state.dashboardFilters?.filters.find(
-              (x) => x.componentIri === filters[0].value.componentIri
-            ),
-          };
-        default:
-          const _exhaustiveCheck: never = type;
-          throw new Error(`Unhandled type: ${_exhaustiveCheck}`);
-      }
-    })(),
-  }));
+  return sharedTemporalDimensions.map((x) => {
+    return {
+      type: "timeRange",
+      componentIri: x[0].componentIri,
+    };
+  });
 };
 
 /**
@@ -229,7 +212,9 @@ export const InteractiveFiltersProvider = ({
   const [state] = useConfiguratorState(hasChartConfigs);
   const storeRefs = useRef<Record<ChartConfig["key"], StoreApi<State>>>({});
 
-  const sharedFilters = useMemo(() => getSharedFilters(state), [state]);
+  const potentialSharedFilters = useMemo(() => {
+    return getPotentialSharedFilters(chartConfigs);
+  }, [chartConfigs]);
 
   const stores = useMemo<
     Record<ChartConfig["key"], InteractiveFiltersContextValue>
@@ -249,9 +234,15 @@ export const InteractiveFiltersProvider = ({
     );
   }, [chartConfigs]);
 
+  const sharedFilters = state.dashboardFilters?.filters;
+
   const ctxValue = useMemo(
-    () => ({ stores, sharedFilters }),
-    [stores, sharedFilters]
+    () => ({
+      stores,
+      potentialSharedFilters,
+      sharedFilters: sharedFilters ?? [],
+    }),
+    [stores, potentialSharedFilters, sharedFilters]
   );
 
   return (

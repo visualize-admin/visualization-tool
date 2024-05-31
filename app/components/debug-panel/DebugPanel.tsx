@@ -39,7 +39,7 @@ const DebugInteractiveFilters = () => {
       <Box sx={{ p: 5 }}>
         <Inspector
           expandLevel={3}
-          data={getInteractiveFiltersState}
+          data={getInteractiveFiltersState()}
           table={false}
         />
       </Box>

@@ -2,7 +2,7 @@ import { TemporalDimension } from "@/domain/data";
 import { TimeUnit } from "@/graphql/resolver-types";
 import { getD3TimeFormatLocale } from "@/locales/locales";
 
-import { getTimeFilterOptions } from "./filters";
+import { getTimeFilterOptions } from "../../utils/time-filter-options";
 
 jest.mock("../../rdf/extended-cube", () => ({
   ExtendedCube: jest.fn(),
