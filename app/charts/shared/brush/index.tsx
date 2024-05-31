@@ -1,6 +1,7 @@
+import { useEventCallback } from "@mui/material";
 import { bisector } from "d3-array";
 import { brushX } from "d3-brush";
-import { Selection, pointer, pointers, select } from "d3-selection";
+import { pointer, pointers, select, Selection } from "d3-selection";
 import { Transition } from "d3-transition";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
@@ -34,7 +35,9 @@ export const BrushTime = () => {
   const formatDateAuto = useFormatFullDateAuto();
   const [brushedIsEnded, updateBrushEndedStatus] = useState(true);
   const [selectionExtent, setSelectionExtent] = useState(0);
+  console.log({ timeRange });
   const updateSelectionExtent = (selection: [number, number] | undefined) => {
+    console.log("Update selection extent");
     if (selection) {
       setSelectionExtent(selection[1] - selection[0]);
     } else {
@@ -95,30 +98,33 @@ export const BrushTime = () => {
     }
   }, [from, getClosestObservationFromRangeDates, to, brushWidthScale]);
 
-  const brushed = ({ selection }: { selection: [number, number] }) => {
-    updateBrushEndedStatus(false);
+  const brushed = useEventCallback(
+    ({ selection }: { selection: [number, number] }) => {
+      updateBrushEndedStatus(false);
 
-    if (selection) {
-      const [xStart, xEnd] = selection.map((s) => brushWidthScale.invert(s));
-      const [newFrom, newTo] = getClosestObservationFromRangeDates([
-        xStart,
-        xEnd,
-      ]);
+      if (selection) {
+        const [xStart, xEnd] = selection.map((s) => brushWidthScale.invert(s));
+        const [newFrom, newTo] = getClosestObservationFromRangeDates([
+          xStart,
+          xEnd,
+        ]);
 
-      // Need to use current state as the function is not updated during brushing
-      // and the local state accessed here is not up to date. This leads to
-      // making a dispatch on each brush move, which makes the animations laggy
-      // and generally shouldn't happen.
-      const { from, to } = getInteractiveFiltersState().timeRange;
+        // Need to use current state as the function is not updated during brushing
+        // and the local state accessed here is not up to date. This leads to
+        // making a dispatch on each brush move, which makes the animations laggy
+        // and generally shouldn't happen.
+        const { from, to } = getInteractiveFiltersState().timeRange;
 
-      if (
-        from?.getTime() !== newFrom.getTime() ||
-        to?.getTime() !== newTo.getTime()
-      ) {
-        setTimeRange(newFrom, newTo);
+        if (
+          from?.getTime() !== newFrom.getTime() ||
+          to?.getTime() !== newTo.getTime()
+        ) {
+          console.log("brushed, settting time range");
+          setTimeRange(newFrom, newTo);
+        }
       }
     }
-  };
+  );
 
   // Creates a 1-dimensional brush
   const brush = brushX()
@@ -135,7 +141,8 @@ export const BrushTime = () => {
     })
     .on("brush", brushed)
     .on("end", function (e) {
-      updateSelectionExtent(e.selection);
+      console.log("end");
+      // updateSelectionExtent(e.selection);
 
       // Happens when snapping to actual values.
       if (!e.sourceEvent) {
