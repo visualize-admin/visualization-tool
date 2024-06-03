@@ -22,48 +22,36 @@ import { getTimeInterval } from "@/intervals";
 import { getPalette } from "@/palettes";
 
 // FIXME: We should cover more time formats
-const parseSecond = timeParse("%Y-%m-%dT%H:%M:%S");
-const parseMinute = timeParse("%Y-%m-%dT%H:%M");
-const parseDay = timeParse("%Y-%m-%d");
-const parseMonth = timeParse("%Y-%m");
-const parseYear = timeParse("%Y");
-
-const formatSecond = timeFormat("%Y-%m-%dT%H:%M:%S");
-const formatMinute = timeFormat("%Y-%m-%dT%H:%M");
-const formatDay = timeFormat("%Y-%m-%d");
-const formatMonth = timeFormat("%Y-%m");
-const formatYear = timeFormat("%Y");
-
-export const parseDate = (dateStr: string): Date =>
-  parseSecond(dateStr) ??
-  parseMinute(dateStr) ??
-  parseDay(dateStr) ??
-  parseMonth(dateStr) ??
-  parseYear(dateStr) ??
-  // This should probably not happen
-  new Date(dateStr);
-
 export const timeUnitToParser: Record<
   TimeUnit,
   (dateStr: string) => Date | null
 > = {
-  Year: parseYear,
-  Month: parseMonth,
-  Week: parseDay,
-  Day: parseDay,
-  Hour: parseMinute,
-  Minute: parseMinute,
-  Second: parseSecond,
+  Second: timeParse("%Y-%m-%dT%H:%M:%S"),
+  Hour: timeParse("%Y-%m-%dT%H:%M"), // same as minute
+  Minute: timeParse("%Y-%m-%dT%H:%M"),
+  Week: timeParse("%Y-%m-%d"), // same as day
+  Day: timeParse("%Y-%m-%d"),
+  Month: timeParse("%Y-%m"),
+  Year: timeParse("%Y"),
 };
 
+export const parseDate = (dateStr: string): Date =>
+  timeUnitToParser.Second(dateStr) ??
+  timeUnitToParser.Minute(dateStr) ??
+  timeUnitToParser.Day(dateStr) ??
+  timeUnitToParser.Month(dateStr) ??
+  timeUnitToParser.Year(dateStr) ??
+  // This should probably not happen
+  new Date(dateStr);
+
 export const timeUnitToFormatter: Record<TimeUnit, (date: Date) => string> = {
-  Year: formatYear,
-  Month: formatMonth,
-  Week: formatDay,
-  Day: formatDay,
-  Hour: formatMinute,
-  Minute: formatMinute,
-  Second: formatSecond,
+  Year: timeFormat("%Y"),
+  Month: timeFormat("%Y-%m"),
+  Week: timeFormat("%Y-%m-%d"),
+  Day: timeFormat("%Y-%m-%d"),
+  Hour: timeFormat("%Y-%m-%dT%H:%M"),
+  Minute: timeFormat("%Y-%m-%dT%H:%M"),
+  Second: timeFormat("%Y-%m-%dT%H:%M:%S"),
 };
 
 export const mkNumber = (x: $IntentionalAny): number => +x;
