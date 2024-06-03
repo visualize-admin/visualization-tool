@@ -163,19 +163,22 @@ const InteractiveFiltersContext = createContext<
 export const getPotentialSharedFilters = (
   chartConfigs: ChartConfig[]
 ): PotentialSharedFilter[] => {
-  const temporalDimensions = chartConfigs.flatMap((c) => {
-    const chartSpec = getChartSpec(c);
+  const temporalDimensions = chartConfigs.flatMap((config) => {
+    const chartSpec = getChartSpec(config);
     const temporalEncodings = chartSpec.encodings.filter((x) =>
       x.componentTypes.some((x) => x === "TemporalDimension")
     );
     const chartTemporalDimensions = temporalEncodings
-      .map((x) => {
-        // @ts-ignore
-        const field = x.field in c.fields ? c.fields[x.field] : undefined;
+      .map((encoding) => {
+        const field =
+          encoding.field in config.fields
+            ? // @ts-expect-error ts(7053) - Not possible to narrow down here, but we check for undefined below
+              config.fields[encoding.field]
+            : undefined;
         if (field && "componentIri" in field) {
           return {
             componentIri: field.componentIri as string,
-            chartKey: c.key,
+            chartKey: config.key,
           };
         }
       })
