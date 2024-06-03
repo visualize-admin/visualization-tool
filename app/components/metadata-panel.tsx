@@ -71,15 +71,15 @@ const useDrawerStyles = makeStyles<Theme, { top: number }>((theme) => {
   return {
     root: {
       position: "static",
-
       "& > .MuiPaper-root": {
-        top: ({ top }: { top: number }) => top,
+        top: ({ top }) => top,
         bottom: 0,
-        width: DRAWER_WIDTH,
+        width: "100%",
+        maxWidth: DRAWER_WIDTH,
         height: "auto",
         paddingLeft: theme.spacing(4),
         paddingRight: theme.spacing(4),
-        borderRight: `1px ${theme.palette.divider} solid`,
+        borderRight: `1px solid ${theme.palette.divider}`,
         boxShadow: "none",
       },
     },
