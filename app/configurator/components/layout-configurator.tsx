@@ -233,7 +233,7 @@ const LayoutSharedFiltersConfigurator = () => {
                       }
                       control={
                         <Switch
-                          checked={!!sharedFilter ?? false}
+                          checked={!!sharedFilter}
                           onChange={handleToggle}
                           inputProps={{
                             // @ts-expect-error ts(2322) - data-component-iri is not considered a valid attribute, while it is
@@ -381,7 +381,6 @@ const SharedFilterOptionsTimeRange = ({
             dateFormat={formatDate}
             minDate={minDate}
             maxDate={maxDate}
-            disabled={false}
             label={t({ id: "controls.filters.select.from", message: "From" })}
           />
         ) : (

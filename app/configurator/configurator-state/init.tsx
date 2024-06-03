@@ -99,11 +99,11 @@ export const initChartStateFromCube = async (
     { chartConfig }
   );
 };
+
 /**
  * Tries to parse state from localStorage.
  * If state is invalid, it is removed from localStorage.
  */
-
 export const initChartStateFromLocalStorage = async (
   client: Client,
   chartId: string

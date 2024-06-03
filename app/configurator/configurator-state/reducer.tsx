@@ -1093,7 +1093,7 @@ export const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 };
 
 /** Turn this on for the reducer to log state, action and result */
-const reducerLogging = true;
+const reducerLogging = false;
 const withLogging = <TState, TAction extends { type: unknown }>(
   reducer: Reducer<TState, TAction>
 ) => {
