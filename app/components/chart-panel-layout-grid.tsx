@@ -5,7 +5,7 @@ import { Layouts } from "react-grid-layout";
 
 import { ChartPanelLayoutTypeProps } from "@/components/chart-panel";
 import ChartGridLayout from "@/components/react-grid";
-import { isLayouting, ReactGridLayoutsType } from "@/configurator";
+import { hasChartConfigs, ReactGridLayoutsType } from "@/configurator";
 import { useConfiguratorState } from "@/src";
 import { assert } from "@/utils/assert";
 
@@ -31,7 +31,7 @@ const decodeLayouts = (layouts: Layouts) => {
 
 const ChartPanelLayoutCanvas = (props: ChartPanelLayoutTypeProps) => {
   const { chartConfigs } = props;
-  const [config, dispatch] = useConfiguratorState(isLayouting);
+  const [config, dispatch] = useConfiguratorState(hasChartConfigs);
   const [layouts, setLayouts] = useState<Layouts>(() => {
     assert(
       config.layout.type === "dashboard" && config.layout.layout === "canvas",
@@ -67,7 +67,7 @@ const ChartPanelLayoutCanvas = (props: ChartPanelLayoutTypeProps) => {
     <ChartGridLayout
       className={chartPanelLayoutGridClasses.root}
       layouts={layouts}
-      resize
+      resize={config.state === "LAYOUTING"}
       draggableHandle={`.${chartPanelLayoutGridClasses.dragHandle}`}
       onLayoutChange={(_l, allLayouts) => handleChangeLayouts(allLayouts)}
     >
