@@ -71,15 +71,15 @@ const useDrawerStyles = makeStyles<Theme, { top: number }>((theme) => {
   return {
     root: {
       position: "static",
-
       "& > .MuiPaper-root": {
-        top: ({ top }: { top: number }) => top,
+        top: ({ top }) => top,
         bottom: 0,
-        width: DRAWER_WIDTH,
+        width: "100%",
+        maxWidth: DRAWER_WIDTH,
         height: "auto",
         paddingLeft: theme.spacing(4),
         paddingRight: theme.spacing(4),
-        borderRight: `1px ${theme.palette.divider} solid`,
+        borderRight: `1px solid ${theme.palette.divider}`,
         boxShadow: "none",
       },
     },
@@ -89,7 +89,7 @@ const useDrawerStyles = makeStyles<Theme, { top: number }>((theme) => {
 const useOtherStyles = makeStyles<Theme>((theme) => {
   return {
     toggleButton: {
-      alignSelf: "flex-start",
+      padding: 0,
     },
     header: {
       display: "flex",
@@ -267,7 +267,6 @@ export const MetadataPanel = (props: MetadataPanelProps) => {
   return (
     <>
       <ToggleButton onClick={handleToggle} />
-
       <Drawer
         data-testid="panel-metadata"
         className={drawerClasses.root}
@@ -335,13 +334,12 @@ export const MetadataPanel = (props: MetadataPanelProps) => {
 
 const ToggleButton = ({ onClick }: { onClick: () => void }) => {
   const classes = useOtherStyles();
-
   return (
     <Button
       data-testid="panel-metadata-toggle"
       className={classes.toggleButton}
-      variant="contained"
-      color="secondary"
+      variant="text"
+      color="primary"
       size="small"
       onClick={onClick}
     >
@@ -354,13 +352,11 @@ const ToggleButton = ({ onClick }: { onClick: () => void }) => {
 
 const Header = ({ onClose }: { onClose: () => void }) => {
   const classes = useOtherStyles();
-
   return (
     <div className={classes.header}>
       <Typography variant="body2" fontWeight="bold">
         <Trans id="controls.metadata-panel.metadata">Metadata</Trans>
       </Typography>
-
       <IconButton size="small" onClick={onClose}>
         <SvgIcClose />
       </IconButton>

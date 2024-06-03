@@ -40,7 +40,6 @@ import {
 import { useTimeFormatLocale } from "@/formatters";
 import { useDataCubesComponentsQuery } from "@/graphql/hooks";
 import {
-  DataCubeObservationFilter,
   PossibleFiltersDocument,
   PossibleFiltersQuery,
   PossibleFiltersQueryVariables,
@@ -52,6 +51,7 @@ import {
   useChartInteractiveFilters,
   useInteractiveFiltersGetState,
 } from "@/stores/interactive-filters";
+import { assert } from "@/utils/assert";
 import { hierarchyToOptions } from "@/utils/hierarchy";
 import useEvent from "@/utils/use-event";
 
@@ -62,64 +62,72 @@ type PreparedFilter = {
   mappedFilters: Filters;
 };
 
-type ChartDataFiltersProps = {
+export const useChartDataFiltersState = ({
+  dataSource,
+  chartConfig,
+}: {
   dataSource: DataSource;
   chartConfig: ChartConfig;
-};
-
-export const ChartDataFilters = (props: ChartDataFiltersProps) => {
-  const { dataSource, chartConfig } = props;
+}) => {
+  const componentIris =
+    chartConfig.interactiveFiltersConfig?.dataFilters.componentIris;
+  assert(componentIris, "Data filters are not enabled for this chart.");
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    if (componentIris.length === 0) {
+      setOpen(false);
+    }
+  }, [componentIris.length]);
   const { loading } = useLoadingState();
-  const dataFilters = useChartInteractiveFilters((d) => d.dataFilters);
-  const componentIris = chartConfig.interactiveFiltersConfig?.dataFilters
-    .componentIris as string[];
   const queryFilters = useQueryFilters({
     chartConfig,
     allowNoneValues: true,
     componentIris,
   });
-  const [filtersVisible, setFiltersVisible] = useState(false);
-
-  useEffect(() => {
-    if (componentIris.length === 0) {
-      setFiltersVisible(false);
-    }
-  }, [componentIris.length]);
-
-  const preparedFilters: PreparedFilter[] | undefined = useMemo(() => {
+  const preparedFilters = useMemo(() => {
     return chartConfig.cubes.map((cube) => {
-      const cubeQueryFilters = queryFilters.find(
-        (d) => d.iri === cube.iri
-      ) as DataCubeObservationFilter;
+      const cubeQueryFilters = queryFilters.find((d) => d.iri === cube.iri);
+      assert(cubeQueryFilters, "Cube query filters not found.");
       const filtersByMappingStatus = getFiltersByMappingStatus(chartConfig, {
         cubeIri: cube.iri,
       });
       const { unmappedFilters, mappedFilters } = filtersByMappingStatus;
       const unmappedKeys = Object.keys(unmappedFilters);
-      const unmappedFiltersArray = Object.entries(
+      const unmappedEntries = Object.entries(
         cubeQueryFilters.filters as Filters
       ).filter(([k]) => unmappedKeys.includes(k));
-      const interactiveFiltersArray = unmappedFiltersArray.filter(([k]) =>
+      const interactiveFiltersList = unmappedEntries.filter(([k]) =>
         componentIris.includes(k)
       );
-
       return {
         cubeIri: cube.iri,
-        interactiveFilters: Object.fromEntries(interactiveFiltersArray),
-        unmappedFilters: Object.fromEntries(
-          unmappedFiltersArray
-        ) as SingleFilters,
+        interactiveFilters: Object.fromEntries(interactiveFiltersList),
+        unmappedFilters: Object.fromEntries(unmappedEntries) as SingleFilters,
         mappedFilters,
       };
     });
   }, [chartConfig, componentIris, queryFilters]);
-
   const { error } = useEnsurePossibleInteractiveFilters({
     dataSource,
     chartConfig,
     preparedFilters,
   });
+  return {
+    open,
+    setOpen,
+    dataSource,
+    chartConfig,
+    loading,
+    error,
+    preparedFilters,
+    componentIris,
+  };
+};
 
+export const ChartDataFiltersToggle = (
+  props: ReturnType<typeof useChartDataFiltersState>
+) => {
+  const { open, setOpen, loading, error, componentIris } = props;
   return error ? (
     <Typography variant="body2" color="error">
       <Trans id="controls.section.data.filters.possible-filters-error">
@@ -128,10 +136,9 @@ export const ChartDataFilters = (props: ChartDataFiltersProps) => {
       </Trans>
     </Typography>
   ) : (
-    <Flex sx={{ flexDirection: "column", mt: 4 }}>
+    <Flex sx={{ flexDirection: "column", width: "100%" }}>
       <Flex
         sx={{
-          justifyContent: "flex-end",
           alignItems: "flex-start",
           gap: 3,
           minHeight: 20,
@@ -140,72 +147,99 @@ export const ChartDataFilters = (props: ChartDataFiltersProps) => {
         {componentIris.length > 0 && (
           <Button
             variant="text"
+            color="primary"
+            size="small"
             endIcon={
               <Icon
                 name="add"
                 size={16}
                 style={{
-                  transform: filtersVisible ? "rotate(45deg)" : "rotate(0deg)",
+                  transform: open ? "rotate(45deg)" : "rotate(0deg)",
                   transition: "transform 0.2s ease-in-out",
                 }}
               />
             }
             sx={{
               display: "flex",
-              fontSize: ["0.75rem", "0.75rem", "0.75rem"],
               alignItems: "center",
               minWidth: "fit-content",
               minHeight: 0,
+              ml: -2,
               px: 2,
               py: 1,
             }}
-            onClick={() => setFiltersVisible(!filtersVisible)}
+            onClick={() => setOpen(!open)}
           >
             {loading && (
               <span style={{ marginTop: "0.1rem", marginRight: "0.5rem" }}>
                 <LoadingIndicator />
               </span>
             )}
-            {filtersVisible ? (
-              <Trans id="interactive.data.filters.hide">Hide Filters</Trans>
-            ) : (
-              <Trans id="interactive.data.filters.show">Show Filters</Trans>
-            )}
+            <Typography variant="body2">
+              {open ? (
+                <Trans id="interactive.data.filters.hide">Hide Filters</Trans>
+              ) : (
+                <Trans id="interactive.data.filters.show">Show Filters</Trans>
+              )}
+            </Typography>
           </Button>
         )}
       </Flex>
-
-      {componentIris.length > 0 && (
-        <Box
-          data-testid="published-chart-interactive-filters"
-          sx={{
-            display: filtersVisible ? "grid" : "none",
-            columnGap: 3,
-            rowGap: 2,
-            gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
-          }}
-        >
-          {preparedFilters?.map(({ cubeIri, interactiveFilters }) =>
-            Object.keys(interactiveFilters).map((dimensionIri) => (
-              <DataFilter
-                key={dimensionIri}
-                cubeIri={cubeIri}
-                dimensionIri={dimensionIri}
-                dataSource={dataSource}
-                chartConfig={chartConfig}
-                dataFilters={dataFilters}
-                interactiveFilters={interactiveFilters}
-                disabled={loading}
-              />
-            ))
-          )}
-        </Box>
-      )}
     </Flex>
   );
 };
 
-type DataFilterProps = {
+export const ChartDataFiltersList = (
+  props: ReturnType<typeof useChartDataFiltersState>
+) => {
+  const {
+    open,
+    dataSource,
+    chartConfig,
+    loading,
+    preparedFilters,
+    componentIris,
+  } = props;
+  const dataFilters = useChartInteractiveFilters((d) => d.dataFilters);
+  return componentIris.length > 0 ? (
+    <Box
+      data-testid="published-chart-interactive-filters"
+      sx={{
+        display: open ? "grid" : "none",
+        columnGap: 3,
+        rowGap: 2,
+        gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+      }}
+    >
+      {preparedFilters.map(({ cubeIri, interactiveFilters }) => {
+        return Object.keys(interactiveFilters).map((dimensionIri) => {
+          return (
+            <DataFilter
+              key={dimensionIri}
+              cubeIri={cubeIri}
+              dimensionIri={dimensionIri}
+              dataSource={dataSource}
+              chartConfig={chartConfig}
+              dataFilters={dataFilters}
+              interactiveFilters={interactiveFilters}
+              disabled={loading}
+            />
+          );
+        });
+      })}
+    </Box>
+  ) : null;
+};
+
+const DataFilter = ({
+  cubeIri,
+  dimensionIri,
+  dataSource,
+  chartConfig,
+  dataFilters,
+  interactiveFilters,
+  disabled,
+}: {
   cubeIri: string;
   dimensionIri: string;
   dataSource: DataSource;
@@ -213,18 +247,7 @@ type DataFilterProps = {
   dataFilters: DataFilters;
   interactiveFilters: Filters;
   disabled: boolean;
-};
-
-const DataFilter = (props: DataFilterProps) => {
-  const {
-    cubeIri,
-    dimensionIri,
-    dataSource,
-    chartConfig,
-    dataFilters,
-    interactiveFilters,
-    disabled,
-  } = props;
+}) => {
   const locale = useLocale();
   const filters = useChartConfigFilters(chartConfig);
   const chartLoadingState = useLoadingState();
