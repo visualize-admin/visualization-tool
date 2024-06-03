@@ -849,7 +849,7 @@ export const ColorPickerField = ({
 export const LoadingIndicator = () => {
   const classes = useStyles();
 
-  return <CircularProgress size={12} className={classes.loadingIndicator} />;
+  return <CircularProgress size={16} className={classes.loadingIndicator} />;
 };
 
 export const FieldLabel = ({
