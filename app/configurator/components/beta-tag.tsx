@@ -11,6 +11,7 @@ export const BetaTag = ({
 }) => {
   return (
     <Tooltip
+      arrow
       title={t({
         id: "beta-tag.tooltip",
         message:
