@@ -89,10 +89,6 @@ const useDrawerStyles = makeStyles<Theme, { top: number }>((theme) => {
 const useOtherStyles = makeStyles<Theme>((theme) => {
   return {
     toggleButton: {
-      position: "absolute",
-      right: 0,
-      top: "-0.15rem",
-      height: "fit-content",
       padding: 0,
     },
     header: {

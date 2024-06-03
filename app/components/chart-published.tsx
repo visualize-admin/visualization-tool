@@ -6,14 +6,13 @@ import { forwardRef, useCallback, useEffect, useMemo, useRef } from "react";
 import { useStore } from "zustand";
 
 import { DataSetTable } from "@/browse/datatable";
-import { ChartDataFilters } from "@/charts/shared/chart-data-filters";
 import { extractChartConfigsComponentIris } from "@/charts/shared/chart-helpers";
 import { LoadingStateProvider } from "@/charts/shared/chart-loading-state";
 import { isUsingImputation } from "@/charts/shared/imputation";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
 import { ChartFootnotes } from "@/components/chart-footnotes";
 import { ChartPanelLayout, ChartWrapper } from "@/components/chart-panel";
-import { ChartFiltersMetadataWrapper } from "@/components/chart-shared";
+import { ChartControls } from "@/components/chart-shared";
 import {
   ChartTablePreviewProvider,
   useChartTablePreview,
@@ -22,7 +21,6 @@ import { useChartStyles } from "@/components/chart-utils";
 import { ChartWithFilters } from "@/components/chart-with-filters";
 import Flex from "@/components/flex";
 import { HintBlue, HintRed, HintYellow } from "@/components/hint";
-import { MetadataPanel } from "@/components/metadata-panel";
 import {
   MetadataPanelStoreContext,
   createMetadataPanelStore,
@@ -351,24 +349,15 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
                 // title and the chart (subgrid layout)
                 <span />
               )}
-              <ChartFiltersMetadataWrapper
-                filters={
-                  chartConfig.interactiveFiltersConfig?.dataFilters.active && (
-                    <ChartDataFilters
-                      dataSource={dataSource}
-                      chartConfig={chartConfig}
-                    />
-                  )
-                }
-                metadataPanel={
-                  <MetadataPanel
-                    dataSource={dataSource}
-                    chartConfigs={[chartConfig]}
-                    dimensions={allComponents}
-                    container={rootRef.current}
-                  />
-                }
+              <ChartControls
+                dataSource={dataSource}
+                chartConfig={chartConfig}
+                metadataPanelProps={{
+                  dimensions: allComponents,
+                  container: rootRef.current,
+                }}
               />
+
               <div
                 ref={containerRef}
                 style={{

@@ -18,7 +18,6 @@ import React, {
 } from "react";
 
 import { DataSetTable } from "@/browse/datatable";
-import { ChartDataFilters } from "@/charts/shared/chart-data-filters";
 import { LoadingStateProvider } from "@/charts/shared/chart-loading-state";
 import { ArrowMenu } from "@/components/arrow-menu";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
@@ -29,7 +28,7 @@ import {
   ChartWrapperProps,
 } from "@/components/chart-panel";
 import { chartPanelLayoutGridClasses } from "@/components/chart-panel-layout-grid";
-import { ChartFiltersMetadataWrapper } from "@/components/chart-shared";
+import { ChartControls } from "@/components/chart-shared";
 import {
   ChartTablePreviewProvider,
   useChartTablePreview,
@@ -42,7 +41,6 @@ import Flex from "@/components/flex";
 import { Checkbox } from "@/components/form";
 import { HintYellow } from "@/components/hint";
 import { MenuActionItem } from "@/components/menu-action-item";
-import { MetadataPanel } from "@/components/metadata-panel";
 import { BANNER_MARGIN_TOP } from "@/components/presence";
 import {
   ChartConfig,
@@ -428,13 +426,11 @@ const SingleURLsPreview = (props: SingleURLsPreviewProps) => {
 type ChartPreviewInnerProps = ChartPreviewProps & {
   chartKey?: string | null;
   actionElementSlot?: ReactNode;
-  disableMetadataPanel?: boolean;
   children?: React.ReactNode;
 };
 
 export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
-  const { dataSource, chartKey, actionElementSlot, disableMetadataPanel } =
-    props;
+  const { dataSource, chartKey, actionElementSlot } = props;
   const [state, dispatch] = useConfiguratorState();
   const configuring = isConfiguring(state);
   const chartConfig = getChartConfig(state, chartKey);
@@ -563,26 +559,13 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
                   // title and the chart (subgrid layout)
                   <span />
                 )}
-                <ChartFiltersMetadataWrapper
-                  filters={
-                    chartConfig.interactiveFiltersConfig?.dataFilters
-                      .active && (
-                      <ChartDataFilters
-                        dataSource={dataSource}
-                        chartConfig={chartConfig}
-                      />
-                    )
-                  }
-                  metadataPanel={
-                    !disableMetadataPanel && (
-                      <MetadataPanel
-                        dataSource={dataSource}
-                        chartConfigs={[chartConfig]}
-                        dimensions={allComponents}
-                        top={BANNER_MARGIN_TOP}
-                      />
-                    )
-                  }
+                <ChartControls
+                  dataSource={dataSource}
+                  chartConfig={chartConfig}
+                  metadataPanelProps={{
+                    dimensions: allComponents,
+                    top: BANNER_MARGIN_TOP,
+                  }}
                 />
                 <div
                   ref={containerRef}

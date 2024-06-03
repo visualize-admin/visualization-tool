@@ -1,18 +1,54 @@
 import { Box } from "@mui/material";
-import { ReactNode } from "react";
+import { ComponentProps } from "react";
 
-export const ChartFiltersMetadataWrapper = ({
-  filters,
-  metadataPanel,
+import { ChartDataFilters } from "@/charts/shared/chart-data-filters";
+import { MetadataPanel } from "@/components/metadata-panel";
+import { ChartConfig, DataSource } from "@/configurator";
+
+export const ChartControls = ({
+  dataSource,
+  chartConfig,
+  metadataPanelProps,
 }: {
-  filters?: ReactNode;
-  metadataPanel?: ReactNode;
+  dataSource: DataSource;
+  chartConfig: ChartConfig;
+  metadataPanelProps: Omit<
+    ComponentProps<typeof MetadataPanel>,
+    "dataSource" | "chartConfigs"
+  >;
 }) => {
+  const disableFilters =
+    !chartConfig.interactiveFiltersConfig?.dataFilters.active;
   return (
-    <Box sx={{ position: "relative", mt: 4 }}>
-      {/* As metadata is absolutely positioned, we need to give the container some height so it's correctly aligned. */}
-      {filters ? filters : <div style={{ height: 28 }} />}
-      {metadataPanel}
+    <Box
+      sx={{
+        display: "grid",
+        gridTemplateAreas: `
+    "filtersToggle metadataToggle"
+    "filtersList filtersList"`,
+      }}
+    >
+      <Box sx={{ gridArea: "filtersToggle" }}>
+        {!disableFilters && (
+          <ChartDataFilters dataSource={dataSource} chartConfig={chartConfig} />
+        )}
+      </Box>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "flex-end",
+          gridArea: "metadataToggle",
+        }}
+      >
+        <MetadataPanel
+          dataSource={dataSource}
+          chartConfigs={[chartConfig]}
+          {...metadataPanelProps}
+        />
+      </Box>
+      <Box sx={{ gridArea: "filtersList" }}>
+        <Box></Box>
+      </Box>
     </Box>
   );
 };
