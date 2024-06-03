@@ -2,8 +2,8 @@ import { SelectChangeEvent, SelectProps } from "@mui/material";
 import get from "lodash/get";
 import React, {
   ChangeEvent,
-  createContext,
   InputHTMLAttributes,
+  createContext,
   useCallback,
   useContext,
   useMemo,
@@ -20,8 +20,8 @@ import {
   isComboChartConfig,
 } from "@/config-types";
 import {
-  getChartOptionField,
   GetConfiguratorStateAction,
+  getChartOptionField,
   getFilterValue,
   isConfiguring,
   isLayouting,
@@ -33,8 +33,8 @@ import {
   Dimension,
   DimensionValue,
   HierarchyValue,
-  isMeasure,
   Measure,
+  isMeasure,
 } from "@/domain/data";
 import { useLocale } from "@/locales/use-locale";
 import { bfs } from "@/utils/bfs";
@@ -386,13 +386,17 @@ export const getNewChartConfig = ({
   dimensions: Dimension[];
   measures: Measure[];
 }) => {
-  const cube = isConfiguring(state)
-    ? getChartConfig(state, state.activeChartKey).cubes[0]
-    : chartConfig.cubes[0];
+  const cubes = isConfiguring(state)
+    ? getChartConfig(state, state.activeChartKey).cubes
+    : chartConfig.cubes;
 
   return getInitialConfig({
     chartType,
-    iris: [{ iri: cube.iri, publishIri: cube.publishIri }],
+    iris: cubes.map((cube) => ({
+      iri: cube.iri,
+      publishIri: cube.publishIri,
+      joinBy: cube.joinBy,
+    })),
     dimensions,
     measures,
   });
