@@ -40,7 +40,6 @@ import {
 import { useTimeFormatLocale } from "@/formatters";
 import { useDataCubesComponentsQuery } from "@/graphql/hooks";
 import {
-  DataCubeObservationFilter,
   PossibleFiltersDocument,
   PossibleFiltersQuery,
   PossibleFiltersQueryVariables,
@@ -52,6 +51,7 @@ import {
   useChartInteractiveFilters,
   useInteractiveFiltersGetState,
 } from "@/stores/interactive-filters";
+import { assert } from "@/utils/assert";
 import { hierarchyToOptions } from "@/utils/hierarchy";
 import useEvent from "@/utils/use-event";
 
@@ -69,8 +69,9 @@ export const useChartDataFiltersState = ({
   dataSource: DataSource;
   chartConfig: ChartConfig;
 }) => {
-  const componentIris = chartConfig.interactiveFiltersConfig?.dataFilters
-    .componentIris as string[];
+  const componentIris =
+    chartConfig.interactiveFiltersConfig?.dataFilters.componentIris;
+  assert(componentIris, "Data filters are not enabled for this chart.");
   const [open, setOpen] = useState(false);
   useEffect(() => {
     if (componentIris.length === 0) {
@@ -83,29 +84,25 @@ export const useChartDataFiltersState = ({
     allowNoneValues: true,
     componentIris,
   });
-  const preparedFilters: PreparedFilter[] | undefined = useMemo(() => {
+  const preparedFilters = useMemo(() => {
     return chartConfig.cubes.map((cube) => {
-      const cubeQueryFilters = queryFilters.find(
-        (d) => d.iri === cube.iri
-      ) as DataCubeObservationFilter;
+      const cubeQueryFilters = queryFilters.find((d) => d.iri === cube.iri);
+      assert(cubeQueryFilters, "Cube query filters not found.");
       const filtersByMappingStatus = getFiltersByMappingStatus(chartConfig, {
         cubeIri: cube.iri,
       });
       const { unmappedFilters, mappedFilters } = filtersByMappingStatus;
       const unmappedKeys = Object.keys(unmappedFilters);
-      const unmappedFiltersArray = Object.entries(
+      const unmappedEntries = Object.entries(
         cubeQueryFilters.filters as Filters
       ).filter(([k]) => unmappedKeys.includes(k));
-      const interactiveFiltersArray = unmappedFiltersArray.filter(([k]) =>
+      const interactiveFiltersList = unmappedEntries.filter(([k]) =>
         componentIris.includes(k)
       );
-
       return {
         cubeIri: cube.iri,
-        interactiveFilters: Object.fromEntries(interactiveFiltersArray),
-        unmappedFilters: Object.fromEntries(
-          unmappedFiltersArray
-        ) as SingleFilters,
+        interactiveFilters: Object.fromEntries(interactiveFiltersList),
+        unmappedFilters: Object.fromEntries(unmappedEntries) as SingleFilters,
         mappedFilters,
       };
     });
@@ -214,25 +211,35 @@ export const ChartDataFiltersList = (
         gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
       }}
     >
-      {preparedFilters?.map(({ cubeIri, interactiveFilters }) =>
-        Object.keys(interactiveFilters).map((dimensionIri) => (
-          <DataFilter
-            key={dimensionIri}
-            cubeIri={cubeIri}
-            dimensionIri={dimensionIri}
-            dataSource={dataSource}
-            chartConfig={chartConfig}
-            dataFilters={dataFilters}
-            interactiveFilters={interactiveFilters}
-            disabled={loading}
-          />
-        ))
-      )}
+      {preparedFilters.map(({ cubeIri, interactiveFilters }) => {
+        return Object.keys(interactiveFilters).map((dimensionIri) => {
+          return (
+            <DataFilter
+              key={dimensionIri}
+              cubeIri={cubeIri}
+              dimensionIri={dimensionIri}
+              dataSource={dataSource}
+              chartConfig={chartConfig}
+              dataFilters={dataFilters}
+              interactiveFilters={interactiveFilters}
+              disabled={loading}
+            />
+          );
+        });
+      })}
     </Box>
   ) : null;
 };
 
-type DataFilterProps = {
+const DataFilter = ({
+  cubeIri,
+  dimensionIri,
+  dataSource,
+  chartConfig,
+  dataFilters,
+  interactiveFilters,
+  disabled,
+}: {
   cubeIri: string;
   dimensionIri: string;
   dataSource: DataSource;
@@ -240,18 +247,7 @@ type DataFilterProps = {
   dataFilters: DataFilters;
   interactiveFilters: Filters;
   disabled: boolean;
-};
-
-const DataFilter = (props: DataFilterProps) => {
-  const {
-    cubeIri,
-    dimensionIri,
-    dataSource,
-    chartConfig,
-    dataFilters,
-    interactiveFilters,
-    disabled,
-  } = props;
+}) => {
   const locale = useLocale();
   const filters = useChartConfigFilters(chartConfig);
   const chartLoadingState = useLoadingState();
