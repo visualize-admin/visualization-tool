@@ -101,6 +101,7 @@ export const ChartPanelLayout = (props: ChartPanelLayoutProps) => {
   const [state] = useConfiguratorState(hasChartConfigs);
   return (
     <div className={clsx(classes.panelLayout, className)} {...rest}>
+      {/** We want to completely remount this component if chartConfigs change */}
       {state.layout.type === "dashboard" ? (
         <DashboardInteractiveFilters
           key={chartConfigs.map((x) => x.key).join(",")}
