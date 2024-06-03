@@ -62,28 +62,27 @@ type PreparedFilter = {
   mappedFilters: Filters;
 };
 
-type ChartDataFiltersProps = {
+export const useChartDataFiltersState = ({
+  dataSource,
+  chartConfig,
+}: {
   dataSource: DataSource;
   chartConfig: ChartConfig;
-};
-
-export const ChartDataFilters = (props: ChartDataFiltersProps) => {
-  const { dataSource, chartConfig } = props;
-  const { loading } = useLoadingState();
-  const dataFilters = useChartInteractiveFilters((d) => d.dataFilters);
+}) => {
   const componentIris = chartConfig.interactiveFiltersConfig?.dataFilters
     .componentIris as string[];
-  const queryFilters = useQueryFilters({
-    chartConfig,
-    allowNoneValues: true,
-    componentIris,
-  });
   const [open, setOpen] = useState(false);
   useEffect(() => {
     if (componentIris.length === 0) {
       setOpen(false);
     }
   }, [componentIris.length]);
+  const { loading } = useLoadingState();
+  const queryFilters = useQueryFilters({
+    chartConfig,
+    allowNoneValues: true,
+    componentIris,
+  });
   const preparedFilters: PreparedFilter[] | undefined = useMemo(() => {
     return chartConfig.cubes.map((cube) => {
       const cubeQueryFilters = queryFilters.find(
@@ -116,7 +115,22 @@ export const ChartDataFilters = (props: ChartDataFiltersProps) => {
     chartConfig,
     preparedFilters,
   });
+  return {
+    open,
+    setOpen,
+    dataSource,
+    chartConfig,
+    loading,
+    error,
+    preparedFilters,
+    componentIris,
+  };
+};
 
+export const ChartDataFiltersToggle = (
+  props: ReturnType<typeof useChartDataFiltersState>
+) => {
+  const { open, setOpen, loading, error, componentIris } = props;
   return error ? (
     <Typography variant="body2" color="error">
       <Trans id="controls.section.data.filters.possible-filters-error">
@@ -174,34 +188,48 @@ export const ChartDataFilters = (props: ChartDataFiltersProps) => {
           </Button>
         )}
       </Flex>
-      {componentIris.length > 0 && (
-        <Box
-          data-testid="published-chart-interactive-filters"
-          sx={{
-            display: open ? "grid" : "none",
-            columnGap: 3,
-            rowGap: 2,
-            gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
-          }}
-        >
-          {preparedFilters?.map(({ cubeIri, interactiveFilters }) =>
-            Object.keys(interactiveFilters).map((dimensionIri) => (
-              <DataFilter
-                key={dimensionIri}
-                cubeIri={cubeIri}
-                dimensionIri={dimensionIri}
-                dataSource={dataSource}
-                chartConfig={chartConfig}
-                dataFilters={dataFilters}
-                interactiveFilters={interactiveFilters}
-                disabled={loading}
-              />
-            ))
-          )}
-        </Box>
-      )}
     </Flex>
   );
+};
+
+export const ChartDataFiltersList = (
+  props: ReturnType<typeof useChartDataFiltersState>
+) => {
+  const {
+    open,
+    dataSource,
+    chartConfig,
+    loading,
+    preparedFilters,
+    componentIris,
+  } = props;
+  const dataFilters = useChartInteractiveFilters((d) => d.dataFilters);
+  return componentIris.length > 0 ? (
+    <Box
+      data-testid="published-chart-interactive-filters"
+      sx={{
+        display: open ? "grid" : "none",
+        columnGap: 3,
+        rowGap: 2,
+        gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+      }}
+    >
+      {preparedFilters?.map(({ cubeIri, interactiveFilters }) =>
+        Object.keys(interactiveFilters).map((dimensionIri) => (
+          <DataFilter
+            key={dimensionIri}
+            cubeIri={cubeIri}
+            dimensionIri={dimensionIri}
+            dataSource={dataSource}
+            chartConfig={chartConfig}
+            dataFilters={dataFilters}
+            interactiveFilters={interactiveFilters}
+            disabled={loading}
+          />
+        ))
+      )}
+    </Box>
+  ) : null;
 };
 
 type DataFilterProps = {

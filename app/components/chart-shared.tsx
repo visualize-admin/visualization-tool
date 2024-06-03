@@ -1,7 +1,11 @@
 import { Box } from "@mui/material";
 import { ComponentProps } from "react";
 
-import { ChartDataFilters } from "@/charts/shared/chart-data-filters";
+import {
+  ChartDataFiltersList,
+  ChartDataFiltersToggle,
+  useChartDataFiltersState,
+} from "@/charts/shared/chart-data-filters";
 import { MetadataPanel } from "@/components/metadata-panel";
 import { ChartConfig, DataSource } from "@/configurator";
 
@@ -19,6 +23,10 @@ export const ChartControls = ({
 }) => {
   const disableFilters =
     !chartConfig.interactiveFiltersConfig?.dataFilters.active;
+  const chartFiltersState = useChartDataFiltersState({
+    dataSource,
+    chartConfig,
+  });
   return (
     <Box
       sx={{
@@ -29,9 +37,7 @@ export const ChartControls = ({
       }}
     >
       <Box sx={{ gridArea: "filtersToggle" }}>
-        {!disableFilters && (
-          <ChartDataFilters dataSource={dataSource} chartConfig={chartConfig} />
-        )}
+        {!disableFilters && <ChartDataFiltersToggle {...chartFiltersState} />}
       </Box>
       <Box
         sx={{
@@ -47,7 +53,7 @@ export const ChartControls = ({
         />
       </Box>
       <Box sx={{ gridArea: "filtersList" }}>
-        <Box></Box>
+        {!disableFilters && <ChartDataFiltersList {...chartFiltersState} />}
       </Box>
     </Box>
   );
