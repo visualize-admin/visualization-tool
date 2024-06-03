@@ -67,7 +67,7 @@ const ChartPanelLayoutCanvas = (props: ChartPanelLayoutTypeProps) => {
     <ChartGridLayout
       className={chartPanelLayoutGridClasses.root}
       layouts={layouts}
-      resize
+      resize={config.state === "LAYOUTING"}
       draggableHandle={`.${chartPanelLayoutGridClasses.dragHandle}`}
       onLayoutChange={(_l, allLayouts) => handleChangeLayouts(allLayouts)}
     >

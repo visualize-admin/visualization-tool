@@ -2,7 +2,7 @@ import { Trans } from "@lingui/macro";
 import { Box, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { forwardRef, useCallback, useEffect, useMemo, useRef } from "react";
 import { useStore } from "zustand";
 
 import { DataSetTable } from "@/browse/datatable";
@@ -57,6 +57,34 @@ type ChartPublishedProps = {
   configKey?: string;
 };
 
+type ChartPublishedIndividualChartProps = ChartPublishInnerProps;
+
+const ChartPublishedIndividualChart = forwardRef<
+  HTMLDivElement,
+  ChartPublishedIndividualChartProps
+>(({ dataSource, state, chartConfig, configKey, children, ...rest }, ref) => {
+  return (
+    <ChartTablePreviewProvider key={chartConfig.key}>
+      <ChartWrapper
+        key={chartConfig.key}
+        layoutType={state.layout.type}
+        ref={ref}
+        {...rest}
+      >
+        <ChartPublishedInner
+          key={chartConfig.key}
+          dataSource={dataSource}
+          state={state}
+          chartConfig={chartConfig}
+          configKey={configKey}
+        >
+          {children}
+        </ChartPublishedInner>
+      </ChartWrapper>
+    </ChartTablePreviewProvider>
+  );
+});
+
 export const ChartPublished = (props: ChartPublishedProps) => {
   const { configKey } = props;
   const [state] = useConfiguratorState(isPublished);
@@ -64,16 +92,13 @@ export const ChartPublished = (props: ChartPublishedProps) => {
   const locale = useLocale();
   const renderChart = useCallback(
     (chartConfig: ChartConfig) => (
-      <ChartTablePreviewProvider key={chartConfig.key}>
-        <ChartWrapper key={chartConfig.key} layoutType={state.layout.type}>
-          <ChartPublishedInner
-            dataSource={dataSource}
-            state={state}
-            chartConfig={chartConfig}
-            configKey={configKey}
-          />
-        </ChartWrapper>
-      </ChartTablePreviewProvider>
+      <ChartPublishedIndividualChart
+        key={chartConfig.key}
+        dataSource={dataSource}
+        state={state}
+        chartConfig={chartConfig}
+        configKey={configKey}
+      />
     ),
     [configKey, dataSource, state]
   );
@@ -98,6 +123,7 @@ export const ChartPublished = (props: ChartPublishedProps) => {
               <Description text={state.layout.meta.description[locale]} />
             )}
           </Box>
+
           <ChartPanelLayout
             layoutType={state.layout.layout}
             chartConfigs={state.chartConfigs}
@@ -156,6 +182,8 @@ type ChartPublishInnerProps = {
   state: ConfiguratorStatePublished;
   chartConfig: ChartConfig;
   configKey: string | undefined;
+  className?: string;
+  children?: React.ReactNode;
 };
 
 const ChartPublishedInner = (props: ChartPublishInnerProps) => {
@@ -164,6 +192,8 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
     state,
     chartConfig,
     configKey,
+    className,
+    children,
   } = props;
   const { meta } = chartConfig;
   const rootRef = useRef<HTMLDivElement>(null);
@@ -241,9 +271,14 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
   return (
     <MetadataPanelStoreContext.Provider value={metadataPanelStore}>
       <Box
-        className={clsx(chartClasses.root, publishedChartClasses.root)}
+        className={clsx(
+          chartClasses.root,
+          publishedChartClasses.root,
+          className
+        )}
         ref={rootRef}
       >
+        {children}
         <ChartErrorBoundary resetKeys={[chartConfig]}>
           <div>
             {metadata?.some(
@@ -334,9 +369,11 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
               <div
                 ref={containerRef}
                 style={{
+                  // TODO before merging, Align with chart-preview
                   minWidth: 0,
                   height: containerHeight.current,
                   marginTop: 16,
+                  flexGrow: 1,
                 }}
               >
                 {isTablePreview ? (
