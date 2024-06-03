@@ -341,7 +341,7 @@ const DataFilter = (props: DataFilterProps) => {
   );
 };
 
-type DataFilterGenericDimensionProps = {
+export type DataFilterGenericDimensionProps = {
   dimension: Dimension;
   value: string;
   onChange: (e: SelectChangeEvent<unknown>) => void;
@@ -349,7 +349,9 @@ type DataFilterGenericDimensionProps = {
   disabled: boolean;
 };
 
-const DataFilterGenericDimension = (props: DataFilterGenericDimensionProps) => {
+export const DataFilterGenericDimension = (
+  props: DataFilterGenericDimensionProps
+) => {
   const { dimension, value, onChange, options: propOptions, disabled } = props;
   const { label, isKeyDimension } = dimension;
   const noneLabel = t({
@@ -466,7 +468,7 @@ const DataFilterTemporalDimension = ({
   ) => void;
   disabled: boolean;
 }) => {
-  const { label, values, timeUnit, timeFormat } = dimension;
+  const { label, timeUnit, timeFormat } = dimension;
   const formatLocale = useTimeFormatLocale();
   const formatDate = formatLocale.format(timeFormat);
   const parseDate = formatLocale.parse(timeFormat);

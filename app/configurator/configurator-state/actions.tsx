@@ -276,4 +276,8 @@ export type ConfiguratorStateAction =
   | {
       type: "DASHBOARD_FILTER_REMOVE";
       value: DashboardFiltersConfig["filters"][number]["componentIri"];
+    }
+  | {
+      type: "DASHBOARD_FILTER_UPDATE";
+      value: DashboardFiltersConfig["filters"][number];
     };

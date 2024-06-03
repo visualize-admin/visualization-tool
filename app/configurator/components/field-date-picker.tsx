@@ -8,7 +8,7 @@ import { Label } from "@/components/form";
 import { TimeUnit } from "@/graphql/resolver-types";
 import { Icon } from "@/icons";
 
-type DatePickerFieldProps = {
+export type DatePickerFieldProps = {
   name: string;
   label?: React.ReactNode;
   value: Date;

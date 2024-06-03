@@ -1064,6 +1064,20 @@ export const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
       return draft;
 
+    case "DASHBOARD_FILTER_UPDATE":
+      if (isLayouting(draft)) {
+        const idx = draft.dashboardFilters?.filters.findIndex(
+          (f) => f.componentIri === action.value.componentIri
+        );
+
+        if (idx !== undefined && idx > -1) {
+          const newFilters = [...(draft.dashboardFilters?.filters ?? [])];
+          newFilters.splice(idx, 1, action.value);
+          setWith(draft, "dashboardFilters.filters", newFilters, Object);
+        }
+      }
+      return draft;
+
     case "DASHBOARD_FILTER_REMOVE":
       if (isLayouting(draft)) {
         const newFilters = draft.dashboardFilters?.filters.filter(
