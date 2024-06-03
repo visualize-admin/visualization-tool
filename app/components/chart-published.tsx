@@ -13,6 +13,7 @@ import { isUsingImputation } from "@/charts/shared/imputation";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
 import { ChartFootnotes } from "@/components/chart-footnotes";
 import { ChartPanelLayout, ChartWrapper } from "@/components/chart-panel";
+import { ChartFiltersMetadataWrapper } from "@/components/chart-shared";
 import {
   ChartTablePreviewProvider,
   useChartTablePreview,
@@ -342,12 +343,6 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
                   // title and the chart (subgrid layout)
                   <span />
                 )}
-                <MetadataPanel
-                  dataSource={dataSource}
-                  chartConfigs={[chartConfig]}
-                  dimensions={allComponents}
-                  container={rootRef.current}
-                />
               </Flex>
               {meta.description[locale] ? (
                 <Description text={meta.description[locale]} />
@@ -356,16 +351,24 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
                 // title and the chart (subgrid layout)
                 <span />
               )}
-              {chartConfig.interactiveFiltersConfig?.dataFilters.active ? (
-                <ChartDataFilters
-                  dataSource={dataSource}
-                  chartConfig={chartConfig}
-                />
-              ) : (
-                // We need to have a span here to keep the space between the
-                // description and the chart (subgrid layout)
-                <span />
-              )}
+              <ChartFiltersMetadataWrapper
+                filters={
+                  chartConfig.interactiveFiltersConfig?.dataFilters.active && (
+                    <ChartDataFilters
+                      dataSource={dataSource}
+                      chartConfig={chartConfig}
+                    />
+                  )
+                }
+                metadataPanel={
+                  <MetadataPanel
+                    dataSource={dataSource}
+                    chartConfigs={[chartConfig]}
+                    dimensions={allComponents}
+                    container={rootRef.current}
+                  />
+                }
+              />
               <div
                 ref={containerRef}
                 style={{

@@ -89,7 +89,11 @@ const useDrawerStyles = makeStyles<Theme, { top: number }>((theme) => {
 const useOtherStyles = makeStyles<Theme>((theme) => {
   return {
     toggleButton: {
-      alignSelf: "flex-start",
+      position: "absolute",
+      right: 0,
+      top: "-0.15rem",
+      height: "fit-content",
+      padding: 0,
     },
     header: {
       display: "flex",
@@ -267,7 +271,6 @@ export const MetadataPanel = (props: MetadataPanelProps) => {
   return (
     <>
       <ToggleButton onClick={handleToggle} />
-
       <Drawer
         data-testid="panel-metadata"
         className={drawerClasses.root}
@@ -335,13 +338,12 @@ export const MetadataPanel = (props: MetadataPanelProps) => {
 
 const ToggleButton = ({ onClick }: { onClick: () => void }) => {
   const classes = useOtherStyles();
-
   return (
     <Button
       data-testid="panel-metadata-toggle"
       className={classes.toggleButton}
-      variant="contained"
-      color="secondary"
+      variant="text"
+      color="primary"
       size="small"
       onClick={onClick}
     >
@@ -354,13 +356,11 @@ const ToggleButton = ({ onClick }: { onClick: () => void }) => {
 
 const Header = ({ onClose }: { onClose: () => void }) => {
   const classes = useOtherStyles();
-
   return (
     <div className={classes.header}>
       <Typography variant="body2" fontWeight="bold">
         <Trans id="controls.metadata-panel.metadata">Metadata</Trans>
       </Typography>
-
       <IconButton size="small" onClick={onClose}>
         <SvgIcClose />
       </IconButton>

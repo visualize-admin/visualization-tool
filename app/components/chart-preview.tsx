@@ -6,12 +6,12 @@ import {
   useDraggable,
   useDroppable,
 } from "@dnd-kit/core";
-import { t, Trans } from "@lingui/macro";
+import { Trans, t } from "@lingui/macro";
 import { Box, IconButton, useEventCallback } from "@mui/material";
 import Head from "next/head";
 import React, {
-  forwardRef,
   ReactNode,
+  forwardRef,
   useCallback,
   useMemo,
   useState,
@@ -29,6 +29,7 @@ import {
   ChartWrapperProps,
 } from "@/components/chart-panel";
 import { chartPanelLayoutGridClasses } from "@/components/chart-panel-layout-grid";
+import { ChartFiltersMetadataWrapper } from "@/components/chart-shared";
 import {
   ChartTablePreviewProvider,
   useChartTablePreview,
@@ -46,10 +47,10 @@ import { BANNER_MARGIN_TOP } from "@/components/presence";
 import {
   ChartConfig,
   DataSource,
+  Layout,
   getChartConfig,
   hasChartConfigs,
   isConfiguring,
-  Layout,
   useConfiguratorState,
 } from "@/configurator";
 import { Description, Title } from "@/configurator/components/annotators";
@@ -540,17 +541,7 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
                     // title and the chart (subgrid layout)
                     <span />
                   )}
-                  <Flex sx={{ alignItems: "center", gap: 2 }}>
-                    {!disableMetadataPanel && (
-                      <MetadataPanel
-                        dataSource={dataSource}
-                        chartConfigs={[chartConfig]}
-                        dimensions={allComponents}
-                        top={BANNER_MARGIN_TOP}
-                      />
-                    )}
-                    {actionElementSlot}
-                  </Flex>
+                  {actionElementSlot}
                 </Flex>
                 {configuring || chartConfig.meta.description[locale] ? (
                   <Description
@@ -572,16 +563,27 @@ export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
                   // title and the chart (subgrid layout)
                   <span />
                 )}
-                {chartConfig.interactiveFiltersConfig?.dataFilters.active ? (
-                  <ChartDataFilters
-                    dataSource={dataSource}
-                    chartConfig={chartConfig}
-                  />
-                ) : (
-                  // We need to have a span here to keep the space between the
-                  // description and the chart (subgrid layout)
-                  <span />
-                )}
+                <ChartFiltersMetadataWrapper
+                  filters={
+                    chartConfig.interactiveFiltersConfig?.dataFilters
+                      .active && (
+                      <ChartDataFilters
+                        dataSource={dataSource}
+                        chartConfig={chartConfig}
+                      />
+                    )
+                  }
+                  metadataPanel={
+                    !disableMetadataPanel && (
+                      <MetadataPanel
+                        dataSource={dataSource}
+                        chartConfigs={[chartConfig]}
+                        dimensions={allComponents}
+                        top={BANNER_MARGIN_TOP}
+                      />
+                    )
+                  }
+                />
                 <div
                   ref={containerRef}
                   style={{

@@ -128,10 +128,9 @@ export const ChartDataFilters = (props: ChartDataFiltersProps) => {
       </Trans>
     </Typography>
   ) : (
-    <Flex sx={{ flexDirection: "column", mt: 4 }}>
+    <Flex sx={{ flexDirection: "column", width: "100%" }}>
       <Flex
         sx={{
-          justifyContent: "flex-end",
           alignItems: "flex-start",
           gap: 3,
           minHeight: 20,
@@ -140,6 +139,8 @@ export const ChartDataFilters = (props: ChartDataFiltersProps) => {
         {componentIris.length > 0 && (
           <Button
             variant="text"
+            color="primary"
+            size="small"
             endIcon={
               <Icon
                 name="add"
@@ -152,10 +153,10 @@ export const ChartDataFilters = (props: ChartDataFiltersProps) => {
             }
             sx={{
               display: "flex",
-              fontSize: ["0.75rem", "0.75rem", "0.75rem"],
               alignItems: "center",
               minWidth: "fit-content",
               minHeight: 0,
+              ml: -2,
               px: 2,
               py: 1,
             }}
@@ -166,11 +167,13 @@ export const ChartDataFilters = (props: ChartDataFiltersProps) => {
                 <LoadingIndicator />
               </span>
             )}
-            {filtersVisible ? (
-              <Trans id="interactive.data.filters.hide">Hide Filters</Trans>
-            ) : (
-              <Trans id="interactive.data.filters.show">Show Filters</Trans>
-            )}
+            <Typography variant="body2">
+              {filtersVisible ? (
+                <Trans id="interactive.data.filters.hide">Hide Filters</Trans>
+              ) : (
+                <Trans id="interactive.data.filters.show">Show Filters</Trans>
+              )}
+            </Typography>
           </Button>
         )}
       </Flex>
