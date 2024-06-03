@@ -1,8 +1,14 @@
 import { fireEvent, render } from "@testing-library/react";
 import { useState } from "react";
+import { Client, Provider } from "urql";
 
 import useSyncInteractiveFilters from "@/charts/shared/use-sync-interactive-filters";
-import { ChartConfig, InteractiveFiltersConfig } from "@/config-types";
+import {
+  ChartConfig,
+  ConfiguratorStateConfiguringChart,
+  InteractiveFiltersConfig,
+} from "@/config-types";
+import { ConfiguratorStateProvider } from "@/src";
 import {
   InteractiveFiltersChartProvider,
   InteractiveFiltersProvider,
@@ -10,6 +16,37 @@ import {
 } from "@/stores/interactive-filters";
 import fixture from "@/test/__fixtures/config/dev/4YL1p4QTFQS4.json";
 import { migrateChartConfig } from "@/utils/chart-config/versioning";
+
+jest.mock("next/router", () => {
+  const mockRouter = {
+    events: {
+      on: () => {},
+      off: () => {},
+    },
+    ready: () => Promise.resolve(),
+    query: "",
+    replace: () => undefined,
+  };
+  return Object.assign(mockRouter, {
+    default: mockRouter,
+    useRouter: jest.fn().mockImplementation(() => mockRouter),
+  });
+});
+
+jest.mock("next-auth/react", () => {
+  const originalModule = jest.requireActual("next-auth/react");
+  const mockSession = {
+    expires: new Date(Date.now() + 2 * 86400).toISOString(),
+    user: { username: "Test" },
+  };
+  return {
+    __esModule: true,
+    ...originalModule,
+    useSession: jest.fn(() => {
+      return { data: mockSession, status: "authenticated" }; // return type is [] in v3 but changed to {} in v4
+    }),
+  };
+});
 
 const interactiveFiltersConfig: InteractiveFiltersConfig = {
   legend: {
@@ -78,12 +115,25 @@ const setup = ({
       </div>
     );
   };
+
+  const configState = {
+    chartConfigs: [chartConfig],
+  } as unknown as ConfiguratorStateConfiguringChart;
+
+  const mockClient = new Client({
+    url: "http://localhost",
+  });
+
   const root = render(
-    <InteractiveFiltersProvider chartConfigs={[chartConfig]}>
-      <InteractiveFiltersChartProvider chartConfigKey={chartConfig.key}>
-        <Component />
-      </InteractiveFiltersChartProvider>
-    </InteractiveFiltersProvider>
+    <Provider value={mockClient}>
+      <ConfiguratorStateProvider chartId="published" initialState={configState}>
+        <InteractiveFiltersProvider chartConfigs={configState.chartConfigs}>
+          <InteractiveFiltersChartProvider chartConfigKey={chartConfig.key}>
+            <Component />
+          </InteractiveFiltersChartProvider>
+        </InteractiveFiltersProvider>
+      </ConfiguratorStateProvider>
+    </Provider>
   );
   const getIFState = () =>
     JSON.parse(root.getByTestId("ifstate-dump").innerHTML);
