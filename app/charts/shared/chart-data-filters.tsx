@@ -78,14 +78,12 @@ export const ChartDataFilters = (props: ChartDataFiltersProps) => {
     allowNoneValues: true,
     componentIris,
   });
-  const [filtersVisible, setFiltersVisible] = useState(false);
-
+  const [open, setOpen] = useState(false);
   useEffect(() => {
     if (componentIris.length === 0) {
-      setFiltersVisible(false);
+      setOpen(false);
     }
   }, [componentIris.length]);
-
   const preparedFilters: PreparedFilter[] | undefined = useMemo(() => {
     return chartConfig.cubes.map((cube) => {
       const cubeQueryFilters = queryFilters.find(
@@ -113,7 +111,6 @@ export const ChartDataFilters = (props: ChartDataFiltersProps) => {
       };
     });
   }, [chartConfig, componentIris, queryFilters]);
-
   const { error } = useEnsurePossibleInteractiveFilters({
     dataSource,
     chartConfig,
@@ -146,7 +143,7 @@ export const ChartDataFilters = (props: ChartDataFiltersProps) => {
                 name="add"
                 size={16}
                 style={{
-                  transform: filtersVisible ? "rotate(45deg)" : "rotate(0deg)",
+                  transform: open ? "rotate(45deg)" : "rotate(0deg)",
                   transition: "transform 0.2s ease-in-out",
                 }}
               />
@@ -160,7 +157,7 @@ export const ChartDataFilters = (props: ChartDataFiltersProps) => {
               px: 2,
               py: 1,
             }}
-            onClick={() => setFiltersVisible(!filtersVisible)}
+            onClick={() => setOpen(!open)}
           >
             {loading && (
               <span style={{ marginTop: "0.1rem", marginRight: "0.5rem" }}>
@@ -168,7 +165,7 @@ export const ChartDataFilters = (props: ChartDataFiltersProps) => {
               </span>
             )}
             <Typography variant="body2">
-              {filtersVisible ? (
+              {open ? (
                 <Trans id="interactive.data.filters.hide">Hide Filters</Trans>
               ) : (
                 <Trans id="interactive.data.filters.show">Show Filters</Trans>
@@ -177,12 +174,11 @@ export const ChartDataFilters = (props: ChartDataFiltersProps) => {
           </Button>
         )}
       </Flex>
-
       {componentIris.length > 0 && (
         <Box
           data-testid="published-chart-interactive-filters"
           sx={{
-            display: filtersVisible ? "grid" : "none",
+            display: open ? "grid" : "none",
             columnGap: 3,
             rowGap: 2,
             gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
