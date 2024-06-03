@@ -7,6 +7,7 @@ import { useMemo } from "react";
 
 import type { BaseChartProps } from "@/charts/shared/ChartProps";
 import { TableColumn, TableFields } from "@/config-types";
+import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import {
   Component,
   Dimension,
@@ -364,5 +365,51 @@ export const getComponentDescription = (dim: Component, cubeIri?: string) => {
     return dim.originalIris[0].description ?? "";
   } else {
     return dim.description;
+  }
+};
+
+export const extractDataPickerOptionsFromDimension = ({
+  dimension,
+  parseDate,
+}: {
+  dimension: Dimension;
+  parseDate: (dateStr: string) => Date | null;
+}) => {
+  const { isKeyDimension, label, values } = dimension;
+
+  const noneLabel = "None";
+
+  if (values.length) {
+    const options = values.map((d) => {
+      return {
+        label: `${d.value}`,
+        value: `${d.value}`,
+      };
+    });
+
+    return {
+      minDate: parseDate(values[0].value as string) as Date,
+      maxDate: parseDate(values[values.length - 1].value as string) as Date,
+      options: isKeyDimension
+        ? options
+        : [
+            {
+              value: FIELD_VALUE_NONE,
+              label: noneLabel,
+              isNoneValue: true,
+            },
+            ...options,
+          ],
+      optionValues: options.map((d) => d.value),
+      label,
+    };
+  } else {
+    return {
+      minDate: new Date(),
+      maxDate: new Date(),
+      options: [],
+      optionValues: [],
+      label,
+    };
   }
 };
