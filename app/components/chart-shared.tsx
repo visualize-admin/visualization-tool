@@ -21,8 +21,7 @@ export const ChartControls = ({
     "dataSource" | "chartConfigs"
   >;
 }) => {
-  const disableFilters =
-    !chartConfig.interactiveFiltersConfig?.dataFilters.active;
+  const showFilters = chartConfig.interactiveFiltersConfig?.dataFilters.active;
   const chartFiltersState = useChartDataFiltersState({
     dataSource,
     chartConfig,
@@ -37,7 +36,7 @@ export const ChartControls = ({
       }}
     >
       <Box sx={{ gridArea: "filtersToggle" }}>
-        {!disableFilters && <ChartDataFiltersToggle {...chartFiltersState} />}
+        {showFilters && <ChartDataFiltersToggle {...chartFiltersState} />}
       </Box>
       <Box
         sx={{
@@ -53,7 +52,7 @@ export const ChartControls = ({
         />
       </Box>
       <Box sx={{ gridArea: "filtersList" }}>
-        {!disableFilters && <ChartDataFiltersList {...chartFiltersState} />}
+        {showFilters && <ChartDataFiltersList {...chartFiltersState} />}
       </Box>
     </Box>
   );
