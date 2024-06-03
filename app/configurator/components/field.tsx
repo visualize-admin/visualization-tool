@@ -15,6 +15,7 @@ import orderBy from "lodash/orderBy";
 import pick from "lodash/pick";
 import React, {
   ChangeEvent,
+  ComponentProps,
   ReactNode,
   useCallback,
   useMemo,
@@ -1096,13 +1097,14 @@ export const ChartOptionSwitchField = ({
   path,
   defaultValue = false,
   disabled = false,
+  ...props
 }: {
   label: React.ComponentProps<typeof FormControlLabel>["label"];
   field: EncodingFieldType | null;
   path: string;
   defaultValue?: boolean;
   disabled?: boolean;
-}) => {
+} & ComponentProps<typeof Switch>) => {
   const fieldProps = useChartOptionBooleanField({
     field,
     path,
@@ -1114,6 +1116,7 @@ export const ChartOptionSwitchField = ({
       disabled={disabled}
       label={label}
       {...fieldProps}
+      {...props}
       checked={fieldProps.checked ?? defaultValue}
     />
   );
