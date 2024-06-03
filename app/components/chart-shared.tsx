@@ -33,6 +33,7 @@ export const ChartControls = ({
         gridTemplateAreas: `
     "filtersToggle metadataToggle"
     "filtersList filtersList"`,
+        mt: 4,
       }}
     >
       <Box sx={{ gridArea: "filtersToggle" }}>
