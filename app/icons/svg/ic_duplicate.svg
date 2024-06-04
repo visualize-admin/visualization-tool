@@ -1,6 +1,14 @@
 <svg width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path fill-rule="evenodd" clip-rule="evenodd" d="M21 17h-3v-2h1V5H9v1H7V3h14v14Z"
-        fill="currentColor" />
-    <path fill-rule="evenodd" clip-rule="evenodd"
-        d="M16 21H3V8h13v13Zm-1.857-1.857V9.857H4.857v9.286h9.286Z" fill="currentColor" />
+  <path
+    fill-rule="evenodd"
+    clip-rule="evenodd"
+    d="M21 17h-3v-2h1V5H9v1H7V3h14v14Z"
+    fill="currentColor"
+  />
+  <path
+    fill-rule="evenodd"
+    clip-rule="evenodd"
+    d="M16 21H3V8h13v13Zm-1.857-1.857V9.857H4.857v9.286h9.286Z"
+    fill="currentColor"
+  />
 </svg>
