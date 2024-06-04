@@ -209,11 +209,12 @@ const createUseBrowseState = ({ syncWithUrl }: { syncWithUrl: boolean }) => {
         dataset,
         setDataset,
         filters,
-        setFilters: (filters: BrowseFilter[]) =>
+        setFilters: (filters: BrowseFilter[]) => {
           setParams((params) => ({
             ...params,
             ...getParamsFromFilters(filters),
-          })),
+          }));
+        },
       }),
       [
         includeDrafts,
