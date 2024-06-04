@@ -14,6 +14,7 @@ import { LinesState } from "@/charts/line/lines-state";
 import { MapState } from "@/charts/map/map-state";
 import { PieState } from "@/charts/pie/pie-state";
 import { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
+import { DimensionsByIri, MeasuresByIri } from "@/charts/shared/ChartProps";
 import {
   getLabelWithUnit,
   useDimensionWithAbbreviations,
@@ -22,15 +23,14 @@ import {
   useTemporalEntityVariable,
   useTemporalVariable,
 } from "@/charts/shared/chart-helpers";
-import { DimensionsByIri, MeasuresByIri } from "@/charts/shared/ChartProps";
 import { Bounds } from "@/charts/shared/use-width";
 import { TableChartState } from "@/charts/table/table-state";
 import {
   ChartConfig,
   ChartType,
   GenericField,
-  getAnimationField,
   InteractiveFiltersConfig,
+  getAnimationField,
 } from "@/configurator";
 import {
   parseDate,
@@ -44,17 +44,18 @@ import {
   DimensionValue,
   GeoCoordinatesDimension,
   GeoShapesDimension,
-  isNumericalMeasure,
-  isTemporalDimension,
-  isTemporalEntityDimension,
   Measure,
   NumericalMeasure,
   Observation,
   ObservationValue,
   TemporalDimension,
   TemporalEntityDimension,
+  isNumericalMeasure,
+  isTemporalDimension,
+  isTemporalEntityDimension,
 } from "@/domain/data";
 import { Has } from "@/domain/types";
+import { getOriginalIris, isJoinById } from "@/graphql/join";
 import { TimeUnit } from "@/graphql/resolver-types";
 import {
   useChartInteractiveFilters,
@@ -437,10 +438,15 @@ export const useChartData = (
   const interactiveTimeRangeFilters = useMemo(() => {
     const isDashboardFilterActive = !!dashboardFilters.sharedFilters.find(
       (f) => {
-        if (f.type !== "timeRange") {
+        const timeRangeFilterIri = interactiveTimeRange?.componentIri;
+        if (f.type !== "timeRange" || !timeRangeFilterIri) {
           return false;
         }
-        return f.componentIri === interactiveTimeRange?.componentIri;
+        return isJoinById(timeRangeFilterIri)
+          ? getOriginalIris(timeRangeFilterIri, chartConfig).includes(
+              f.componentIri
+            )
+          : f.componentIri === timeRangeFilterIri;
       }
     );
     const interactiveTimeRangeFilter: ValuePredicate | null =
@@ -462,6 +468,7 @@ export const useChartData = (
     interactiveToTime,
     interactiveTimeRange?.active,
     interactiveTimeRange?.componentIri,
+    chartConfig,
   ]);
 
   // interactive time slider
