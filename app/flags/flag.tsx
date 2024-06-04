@@ -74,10 +74,29 @@ const initFromSearchParams = (locationSearch: string) => {
   }
 };
 
+const isVercelPreviewHost = (host: string) => {
+  return !!/visualization\-tool.*ixt1\.vercel\.app/.exec(host);
+};
+
+const initFromHost = (host: string) => {
+  if (
+    host.includes("localhost") ||
+    host.includes("test.visualize.admin.ch") ||
+    isVercelPreviewHost(host)
+  ) {
+    flag("configurator.add-dataset.new", true);
+    flag("configurator.add-dataset.shared", true);
+    flag("layoutor.dashboard.free-canvas", true);
+    flag("layoutor.dashboard.shared-filters", true);
+    flag("search.termsets", true);
+  }
+};
+
 if (isRunningInBrowser()) {
   // @ts-ignore
   window.flag = flag;
   initFromSearchParams(window.location.search);
+  initFromHost(window.location.host);
 }
 
 export { flag };
