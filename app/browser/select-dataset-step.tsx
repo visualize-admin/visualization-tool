@@ -11,6 +11,11 @@ import React, { useMemo } from "react";
 import { useDebounce } from "use-debounce";
 
 import {
+  BrowseStateProvider,
+  buildURLFromBrowseState,
+  useBrowseContext,
+} from "@/browser/context";
+import {
   DatasetResults,
   DatasetResultsProps,
   SearchDatasetControls,
@@ -18,6 +23,7 @@ import {
   SearchFilters,
 } from "@/browser/dataset-browse";
 import { DataSetPreview, DataSetPreviewProps } from "@/browser/dataset-preview";
+import { BrowseFilter, DataCubeAbout } from "@/browser/filters";
 import { useSearchPageData } from "@/browser/search-page-data";
 import { DatasetMetadata } from "@/components/dataset-metadata";
 import Flex from "@/components/flex";
@@ -48,13 +54,6 @@ import {
 import { Icon } from "@/icons";
 import { useConfiguratorState, useLocale } from "@/src";
 
-import {
-  BrowseStateProvider,
-  buildURLFromBrowseState,
-  useBrowseContext,
-} from "./context";
-import { BrowseFilter, DataCubeAbout } from "./filters";
-
 const softJSONParse = (v: string) => {
   try {
     return JSON.parse(v);
@@ -75,20 +74,18 @@ const useStyles = makeStyles<
     margin: "auto",
     position: "static",
     marginTop: ({ datasetPresent, variant }) =>
-      datasetPresent && variant !== "drawer" ? 96 : 0,
+      datasetPresent && variant !== "drawer" ? BANNER_MARGIN_TOP : 0,
     height: "auto",
     transition: "margin-top 0.5s ease",
   },
   panelLeft: {
     // To prevent weird look when dataset metadata is loading
-    minHeight: "calc(100vh - 96px)",
+    minHeight: `calc(100vh - ${BANNER_MARGIN_TOP}px)`,
     backgroundColor: "transparent",
     paddingTop: ({ datasetPresent }) =>
       datasetPresent ? 48 : theme.spacing(5),
     boxShadow: "none",
-    borderRightColor: theme.palette.grey[300],
-    borderRightStyle: "solid",
-    borderRightWidth: 1,
+    borderRight: `1px solid ${theme.palette.grey[300]}`,
     transition: "padding-top 0.5s ease",
   },
   panelMiddle: {
