@@ -200,57 +200,59 @@ const LayoutSharedFiltersConfigurator = () => {
           >
             <Trans id="controls.section.shared-filters">Shared filters</Trans>
           </SubsectionTitle>
-          <Stack gap="0.5rem" px="1rem">
-            {potentialSharedFilters.map((filter) => {
-              const dimension = dimensionsByIri[filter.componentIri];
-              const sharedFilter = sharedFiltersByIri[filter.componentIri];
+          <ControlSectionContent>
+            <Stack gap="0.5rem">
+              {potentialSharedFilters.map((filter) => {
+                const dimension = dimensionsByIri[filter.componentIri];
+                const sharedFilter = sharedFiltersByIri[filter.componentIri];
 
-              if (!dimension || !isTemporalDimension(dimension)) {
-                return null;
-              }
-              return (
-                <>
-                  <Box
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="space-between"
-                    width="100%"
-                    key={filter.componentIri}
-                  >
-                    <Typography variant="body2" flexGrow={1}>
-                      {dimension.label || filter.componentIri}
-                    </Typography>
-                    <FormControlLabel
-                      sx={{ mr: 0 }}
-                      labelPlacement="start"
-                      disableTypography
-                      label={
-                        <Typography variant="body2">
-                          <Trans id="controls.section.shared-filters.shared-switch">
-                            Shared
-                          </Trans>
-                        </Typography>
-                      }
-                      control={
-                        <Switch
-                          checked={!!sharedFilter}
-                          onChange={handleToggle}
-                          inputProps={{
-                            // @ts-expect-error ts(2322) - data-component-iri is not considered a valid attribute, while it is
-                            "data-component-iri": filter.componentIri,
-                          }}
-                        />
-                      }
+                if (!dimension || !isTemporalDimension(dimension)) {
+                  return null;
+                }
+                return (
+                  <>
+                    <Box
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="space-between"
+                      width="100%"
+                      key={filter.componentIri}
+                    >
+                      <Typography variant="body2" flexGrow={1}>
+                        {dimension.label || filter.componentIri}
+                      </Typography>
+                      <FormControlLabel
+                        sx={{ mr: 0 }}
+                        labelPlacement="start"
+                        disableTypography
+                        label={
+                          <Typography variant="body2">
+                            <Trans id="controls.section.shared-filters.shared-switch">
+                              Shared
+                            </Trans>
+                          </Typography>
+                        }
+                        control={
+                          <Switch
+                            checked={!!sharedFilter}
+                            onChange={handleToggle}
+                            inputProps={{
+                              // @ts-expect-error ts(2322) - data-component-iri is not considered a valid attribute, while it is
+                              "data-component-iri": filter.componentIri,
+                            }}
+                          />
+                        }
+                      />
+                    </Box>
+                    <SharedFilterOptions
+                      sharedFilter={sharedFilter}
+                      dimension={dimension}
                     />
-                  </Box>
-                  <SharedFilterOptions
-                    sharedFilter={sharedFilter}
-                    dimension={dimension}
-                  />
-                </>
-              );
-            })}
-          </Stack>
+                  </>
+                );
+              })}
+            </Stack>
+          </ControlSectionContent>
         </ControlSection>
       );
     default:
