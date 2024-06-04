@@ -193,7 +193,10 @@ const createUseBrowseState = ({ syncWithUrl }: { syncWithUrl: boolean }) => {
           setParams((prev) => ({
             ...prev,
             search: "",
-            order: SearchCubeResultOrder.CreatedDesc,
+            order:
+              previousOrderRef.current === SearchCubeResultOrder.Score
+                ? SearchCubeResultOrder.CreatedDesc
+                : previousOrderRef.current,
           }));
         },
         onSubmitSearch: (newSearch: string) => {
