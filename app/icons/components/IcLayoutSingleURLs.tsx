@@ -11,7 +11,7 @@ function SvgIcLayoutSingleURLs(props: React.SVGProps<SVGSVGElement>) {
     >
       <path
         fill="currentColor"
-        fill-rule="evenodd"
+        fillRule="evenodd"
         d="M21.9994 17.9824V4H4.9375V5L21.1068 4.99937V17.9824H21.9994ZM19.9994 6V19.9824H19.1068V6.99937L2.9375 7V6H19.9994ZM2 7.98438H18V20.9844H2V7.98438Z"
       />
     </svg>

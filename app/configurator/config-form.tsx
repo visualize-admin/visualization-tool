@@ -386,13 +386,17 @@ export const getNewChartConfig = ({
   dimensions: Dimension[];
   measures: Measure[];
 }) => {
-  const cube = isConfiguring(state)
-    ? getChartConfig(state, state.activeChartKey).cubes[0]
-    : chartConfig.cubes[0];
+  const cubes = isConfiguring(state)
+    ? getChartConfig(state, state.activeChartKey).cubes
+    : chartConfig.cubes;
 
   return getInitialConfig({
     chartType,
-    iris: [{ iri: cube.iri, publishIri: cube.publishIri }],
+    iris: cubes.map((cube) => ({
+      iri: cube.iri,
+      publishIri: cube.publishIri,
+      joinBy: cube.joinBy,
+    })),
     dimensions,
     measures,
   });

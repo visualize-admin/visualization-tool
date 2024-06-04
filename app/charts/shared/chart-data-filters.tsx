@@ -30,6 +30,7 @@ import {
   canRenderDatePickerField,
   DatePickerField,
 } from "@/configurator/components/field-date-picker";
+import { extractDataPickerOptionsFromDimension } from "@/configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import {
   Dimension,
@@ -363,7 +364,7 @@ const DataFilter = ({
   );
 };
 
-type DataFilterGenericDimensionProps = {
+export type DataFilterGenericDimensionProps = {
   dimension: Dimension;
   value: string;
   onChange: (e: SelectChangeEvent<unknown>) => void;
@@ -371,7 +372,9 @@ type DataFilterGenericDimensionProps = {
   disabled: boolean;
 };
 
-const DataFilterGenericDimension = (props: DataFilterGenericDimensionProps) => {
+export const DataFilterGenericDimension = (
+  props: DataFilterGenericDimensionProps
+) => {
   const { dimension, value, onChange, options: propOptions, disabled } = props;
   const { label, isKeyDimension } = dimension;
   const noneLabel = t({
@@ -488,48 +491,17 @@ const DataFilterTemporalDimension = ({
   ) => void;
   disabled: boolean;
 }) => {
-  const { isKeyDimension, label, values, timeUnit, timeFormat } = dimension;
+  const { label, timeUnit, timeFormat } = dimension;
   const formatLocale = useTimeFormatLocale();
   const formatDate = formatLocale.format(timeFormat);
   const parseDate = formatLocale.parse(timeFormat);
 
-  const noneLabel = t({
-    id: "controls.dimensionvalue.none",
-    message: "No Filter",
-  });
   const { minDate, maxDate, options, optionValues } = useMemo(() => {
-    if (values.length) {
-      const options = values.map((d) => {
-        return {
-          label: `${d.value}`,
-          value: `${d.value}`,
-        };
-      });
-
-      return {
-        minDate: parseDate(values[0].value as string) as Date,
-        maxDate: parseDate(values[values.length - 1].value as string) as Date,
-        options: isKeyDimension
-          ? options
-          : [
-              {
-                value: FIELD_VALUE_NONE,
-                label: noneLabel,
-                isNoneValue: true,
-              },
-              ...options,
-            ],
-        optionValues: options.map((d) => d.value),
-      };
-    } else {
-      return {
-        minDate: new Date(),
-        maxDate: new Date(),
-        options: [],
-        optionValues: [],
-      };
-    }
-  }, [isKeyDimension, noneLabel, values, parseDate]);
+    return extractDataPickerOptionsFromDimension({
+      dimension,
+      parseDate,
+    });
+  }, [dimension, parseDate]);
 
   return canRenderDatePickerField(timeUnit) ? (
     <DatePickerField

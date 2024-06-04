@@ -5,7 +5,7 @@ import { ComboLineSingle } from "@/charts/combo/combo-line-single";
 import { ComboLineSingleChart } from "@/charts/combo/combo-line-single-state";
 import { AxisHeightLinear } from "@/charts/shared/axis-height-linear";
 import { AxisTime, AxisTimeDomain } from "@/charts/shared/axis-width-time";
-import { BrushTime } from "@/charts/shared/brush";
+import { BrushTime, shouldShowBrush } from "@/charts/shared/brush";
 import {
   ChartContainer,
   ChartControlsContainer,
@@ -17,6 +17,7 @@ import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
 import { InteractionHorizontal } from "@/charts/shared/overlay-horizontal";
 import { ComboLineSingleConfig } from "@/config-types";
+import { useDashboardInteractiveFilters } from "@/stores/interactive-filters";
 
 import { ChartProps, VisualizationProps } from "../shared/ChartProps";
 
@@ -30,6 +31,8 @@ export const ChartComboLineSingle = memo(
   (props: ChartProps<ComboLineSingleConfig>) => {
     const { chartConfig, measures } = props;
     const { interactiveFiltersConfig } = chartConfig;
+    const { sharedFilters } = useDashboardInteractiveFilters();
+
     const getLegendItemDimension = useCallback(
       (label: string) => {
         return measures.find((measure) => measure.label === label);
@@ -44,7 +47,9 @@ export const ChartComboLineSingle = memo(
             <AxisHeightLinear /> <AxisTime /> <AxisTimeDomain />
             <ComboLineSingle />
             <InteractionHorizontal />
-            {interactiveFiltersConfig?.timeRange.active && <BrushTime />}
+            {shouldShowBrush(interactiveFiltersConfig, sharedFilters) && (
+              <BrushTime />
+            )}
           </ChartSvg>
           <HoverDotMultiple />
           <Ruler />

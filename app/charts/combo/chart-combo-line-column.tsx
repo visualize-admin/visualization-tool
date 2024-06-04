@@ -6,12 +6,13 @@ import { AxisHeightLinearDual } from "@/charts/combo/axis-height-linear-dual";
 import { ComboLineColumn } from "@/charts/combo/combo-line-column";
 import { ComboLineColumnChart } from "@/charts/combo/combo-line-column-state";
 import { AxisWidthBand } from "@/charts/shared/axis-width-band";
-import { BrushTime } from "@/charts/shared/brush";
+import { BrushTime, shouldShowBrush } from "@/charts/shared/brush";
 import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
 import { HoverDotMultiple } from "@/charts/shared/interaction/hover-dots-multiple";
 import { Ruler } from "@/charts/shared/interaction/ruler";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { ComboLineColumnConfig } from "@/config-types";
+import { useDashboardInteractiveFilters } from "@/stores/interactive-filters";
 
 import { ChartProps, VisualizationProps } from "../shared/ChartProps";
 
@@ -25,6 +26,7 @@ export const ChartComboLineColumn = memo(
   (props: ChartProps<ComboLineColumnConfig>) => {
     const { chartConfig } = props;
     const { interactiveFiltersConfig } = chartConfig;
+    const { sharedFilters } = useDashboardInteractiveFilters();
 
     return (
       <ComboLineColumnChart {...props}>
@@ -35,7 +37,9 @@ export const ChartComboLineColumn = memo(
             <AxisWidthBand />
             <ComboLineColumn />
             <InteractionColumns />
-            {interactiveFiltersConfig?.timeRange.active && <BrushTime />}
+            {shouldShowBrush(interactiveFiltersConfig, sharedFilters) && (
+              <BrushTime />
+            )}
           </ChartSvg>
           <HoverDotMultiple />
           <Ruler rotate />

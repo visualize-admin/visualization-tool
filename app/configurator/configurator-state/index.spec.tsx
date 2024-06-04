@@ -13,36 +13,40 @@ import {
   ConfiguratorStatePublishing,
   DataSource,
   Filters,
-  MapConfig,
   getChartConfig,
+  MapConfig,
 } from "@/config-types";
 import { getNewChartConfig } from "@/configurator/config-form";
 import {
-  ConfiguratorStateAction,
-  applyNonTableDimensionToFilters,
-  applyTableDimensionToFilters,
-  deriveFiltersFromFields,
-  getFilterValue,
   getFiltersByMappingStatus,
-  getLocalStorageKey,
-  handleChartFieldChanged,
-  handleChartOptionChanged,
+  getFilterValue,
+  moveFilterField,
+} from "@/configurator/configurator-state";
+import { ConfiguratorStateAction } from "@/configurator/configurator-state/actions";
+import { publishState } from "@/configurator/configurator-state/context";
+import {
   initChartStateFromChartCopy,
   initChartStateFromCube,
   initChartStateFromLocalStorage,
-  moveFilterField,
-  publishState,
-  reducer,
-  setRangeFilter,
-  updateColorMapping,
-} from "@/configurator/configurator-state";
+} from "@/configurator/configurator-state/init";
+import { getLocalStorageKey } from "@/configurator/configurator-state/localstorage";
 import {
   configJoinedCubes,
   configStateMock,
   dimensionsJoinedCubes,
   groupedColumnChartDimensions,
   groupedColumnChartMeasures,
-} from "@/configurator/configurator-state.mock";
+} from "@/configurator/configurator-state/mocks";
+import {
+  applyNonTableDimensionToFilters,
+  applyTableDimensionToFilters,
+  deriveFiltersFromFields,
+  handleChartFieldChanged,
+  handleChartOptionChanged,
+  reducer,
+  setRangeFilter,
+  updateColorMapping,
+} from "@/configurator/configurator-state/reducer";
 import { Dimension, Measure, NominalDimension } from "@/domain/data";
 import { ObservationFilter } from "@/graphql/query-hooks";
 import covid19ColumnChartConfig from "@/test/__fixtures/config/dev/chartConfig-column-covid19.json";
@@ -59,7 +63,7 @@ import {
 
 const mockedApi = api as jest.Mocked<typeof api>;
 
-jest.mock("../rdf/extended-cube", () => ({
+jest.mock("@/rdf/extended-cube", () => ({
   ExtendedCube: jest.fn(),
 }));
 

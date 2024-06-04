@@ -75,10 +75,7 @@ import { InteractiveFilterToggle } from "@/configurator/interactive-filters/inte
 import {
   Component,
   Dimension,
-  DimensionValue,
-  getTemporalEntityValue,
   HierarchyValue,
-  ObservationValue,
   TemporalDimension,
   TemporalEntityDimension,
 } from "@/domain/data";
@@ -105,6 +102,7 @@ import useEvent from "@/utils/use-event";
 
 import { GenericSegmentField } from "../../config-types";
 import { interlace } from "../../utils/interlace";
+import { getTimeFilterOptions } from "../../utils/time-filter-options";
 
 const useStyles = makeStyles((theme: Theme) => {
   return {
@@ -1162,56 +1160,6 @@ const LeftRightFormContainer = (props: LeftRightFormContainerProps) => {
       {right}
     </Box>
   );
-};
-
-type GetTimeFilterOptionsProps = {
-  dimension: TemporalDimension | TemporalEntityDimension;
-  formatLocale: ReturnType<typeof useTimeFormatLocale>;
-  timeFormatUnit: ReturnType<typeof useTimeFormatUnit>;
-};
-
-export const getTimeFilterOptions = (props: GetTimeFilterOptionsProps) => {
-  const { dimension, formatLocale, timeFormatUnit } = props;
-  const { timeFormat, timeUnit } = dimension;
-  const parse = formatLocale.parse(timeFormat);
-  const sortedOptions: {
-    value: ObservationValue;
-    label: string;
-    date: Date;
-  }[] = [];
-  const sortedValues: ObservationValue[] = [];
-
-  for (const dimensionValue of dimension.values) {
-    let value: DimensionValue["value"];
-
-    switch (dimension.__typename) {
-      case "TemporalDimension":
-        value = dimensionValue.value;
-        break;
-      case "TemporalEntityDimension":
-        value = getTemporalEntityValue(dimensionValue);
-        break;
-      default:
-        const _exhaustiveCheck: never = dimension;
-        return _exhaustiveCheck;
-    }
-
-    const date = parse(`${value}`);
-
-    if (date) {
-      sortedOptions.push({
-        value,
-        label: timeFormatUnit(date, timeUnit),
-        date,
-      });
-      sortedValues.push(value);
-    }
-  }
-
-  return {
-    sortedOptions,
-    sortedValues,
-  };
 };
 
 const InteractiveTimeRangeToggle = () => {

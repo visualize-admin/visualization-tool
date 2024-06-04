@@ -112,6 +112,9 @@ export const configStateMock = {
       },
     ],
     activeChartKey: "abc",
+    dashboardFilters: {
+      filters: [],
+    },
   },
   groupedColumnChart: {
     version: "3.1.0",
@@ -245,6 +248,9 @@ export const configStateMock = {
       },
     ],
     activeChartKey: "2of7iJAjccuj",
+    dashboardFilters: {
+      filters: [],
+    },
   },
 } satisfies Record<string, ConfiguratorState>;
 

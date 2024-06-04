@@ -55,8 +55,12 @@ import {
   isTemporalEntityDimension,
 } from "@/domain/data";
 import { Has } from "@/domain/types";
+import { getOriginalIris, isJoinById } from "@/graphql/join";
 import { TimeUnit } from "@/graphql/resolver-types";
-import { useChartInteractiveFilters } from "@/stores/interactive-filters";
+import {
+  useChartInteractiveFilters,
+  useDashboardInteractiveFilters,
+} from "@/stores/interactive-filters";
 
 export type ChartState =
   | AreasState
@@ -430,12 +434,26 @@ export const useChartData = (
   // interactive time range
   const interactiveFromTime = timeRange.from?.getTime();
   const interactiveToTime = timeRange.to?.getTime();
+  const dashboardFilters = useDashboardInteractiveFilters();
   const interactiveTimeRangeFilters = useMemo(() => {
+    const isDashboardFilterActive = !!dashboardFilters.sharedFilters.find(
+      (f) => {
+        const timeRangeFilterIri = interactiveTimeRange?.componentIri;
+        if (f.type !== "timeRange" || !timeRangeFilterIri) {
+          return false;
+        }
+        return isJoinById(timeRangeFilterIri)
+          ? getOriginalIris(timeRangeFilterIri, chartConfig).includes(
+              f.componentIri
+            )
+          : f.componentIri === timeRangeFilterIri;
+      }
+    );
     const interactiveTimeRangeFilter: ValuePredicate | null =
       getXAsDate &&
       interactiveFromTime &&
       interactiveToTime &&
-      interactiveTimeRange?.active
+      (interactiveTimeRange?.active || isDashboardFilterActive)
         ? (d: Observation) => {
             const time = getXAsDate(d).getTime();
             return time >= interactiveFromTime && time <= interactiveToTime;
@@ -444,10 +462,13 @@ export const useChartData = (
 
     return interactiveTimeRangeFilter ? [interactiveTimeRangeFilter] : [];
   }, [
+    dashboardFilters.sharedFilters,
     getXAsDate,
     interactiveFromTime,
     interactiveToTime,
-    interactiveTimeRange,
+    interactiveTimeRange?.active,
+    interactiveTimeRange?.componentIri,
+    chartConfig,
   ]);
 
   // interactive time slider

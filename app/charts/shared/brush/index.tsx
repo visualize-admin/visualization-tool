@@ -12,9 +12,17 @@ import { makeGetClosestDatesFromDateRange } from "@/charts/shared/brush/utils";
 import type { ChartWithInteractiveXTimeRangeState } from "@/charts/shared/chart-state";
 import { useChartState } from "@/charts/shared/chart-state";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
+import {
+  ColumnConfig,
+  ComboLineColumnConfig,
+  ComboLineDualConfig,
+  ComboLineSingleConfig,
+  LineConfig,
+} from "@/configurator";
 import { Observation } from "@/domain/data";
 import { useFormatFullDateAuto } from "@/formatters";
 import {
+  SharedFilter,
   useChartInteractiveFilters,
   useInteractiveFiltersGetState,
 } from "@/stores/interactive-filters";
@@ -25,6 +33,28 @@ import { getTextWidth } from "@/utils/get-text-width";
 export const HANDLE_HEIGHT = 14;
 export const BRUSH_HEIGHT = 3;
 export const HEIGHT = HANDLE_HEIGHT + BRUSH_HEIGHT;
+
+export const shouldShowBrush = (
+  interactiveFiltersConfig:
+    | (
+        | LineConfig
+        | ComboLineSingleConfig
+        | ComboLineDualConfig
+        | ComboLineColumnConfig
+        | ColumnConfig
+      )["interactiveFiltersConfig"]
+    | undefined,
+  sharedFilters: SharedFilter[] | undefined
+) => {
+  const chartTimeRange = interactiveFiltersConfig?.timeRange;
+  const chartTimeRangeIri = chartTimeRange?.componentIri;
+  const sharedFilter = sharedFilters?.find(
+    (x) => x.type === "timeRange" && x.componentIri === chartTimeRangeIri
+  );
+  return (
+    (chartTimeRange?.active && !sharedFilter) || sharedFilter?.active == false
+  );
+};
 
 export const BrushTime = () => {
   const ref = useRef<SVGGElement>(null);

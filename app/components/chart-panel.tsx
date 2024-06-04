@@ -9,7 +9,10 @@ import ChartPanelLayoutCanvas, {
 import { ChartPanelLayoutTall } from "@/components/chart-panel-layout-tall";
 import { ChartPanelLayoutVertical } from "@/components/chart-panel-layout-vertical";
 import { ChartSelectionTabs } from "@/components/chart-selection-tabs";
+import { DashboardInteractiveFilters } from "@/components/dashboard-interactive-filters";
 import { ChartConfig, Layout, LayoutDashboard } from "@/config-types";
+import { hasChartConfigs } from "@/configurator";
+import { useConfiguratorState } from "@/src";
 
 const useStyles = makeStyles((theme: Theme) => ({
   panelLayout: {
@@ -85,11 +88,25 @@ const Wrappers: Record<
 };
 
 export const ChartPanelLayout = (props: ChartPanelLayoutProps) => {
-  const { children, renderChart, chartConfigs, className, ...rest } = props;
+  const {
+    children,
+    renderChart,
+    chartConfigs,
+    className,
+    layoutType,
+    ...rest
+  } = props;
   const classes = useStyles();
-  const Wrapper = Wrappers[props.layoutType];
+  const Wrapper = Wrappers[layoutType];
+  const [state] = useConfiguratorState(hasChartConfigs);
   return (
     <div className={clsx(classes.panelLayout, className)} {...rest}>
+      {/** We want to completely remount this component if chartConfigs change */}
+      {state.layout.type === "dashboard" ? (
+        <DashboardInteractiveFilters
+          key={chartConfigs.map((x) => x.key).join(",")}
+        />
+      ) : null}
       <Wrapper chartConfigs={chartConfigs} renderChart={renderChart} />
     </div>
   );

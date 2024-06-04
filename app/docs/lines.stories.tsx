@@ -46,6 +46,7 @@ const LineChartStory = () => (
       },
       chartConfigs: [chartConfig],
       activeChartKey: "line",
+      dashboardFilters: { filters: [] },
     }}
   >
     <InteractiveFiltersProvider chartConfigs={[chartConfig]}>

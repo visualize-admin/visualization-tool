@@ -2,16 +2,21 @@ import groupBy from "lodash/groupBy";
 import React, { createContext, useContext, useMemo, useRef } from "react";
 import create, { StateCreator, StoreApi, UseBoundStore } from "zustand";
 
+import { getChartSpec } from "@/charts/chart-config-ui-options";
 import {
   CalculationType,
   ChartConfig,
   FilterValueSingle,
+  hasChartConfigs,
   InteractiveFiltersConfig,
+  useConfiguratorState,
 } from "@/configurator";
+import { truthy } from "@/domain/types";
+import { getOriginalIris, isJoinById } from "@/graphql/join";
 import {
+  createBoundUseStoreWithSelector,
   ExtractState,
   UseBoundStoreWithSelector,
-  createBoundUseStoreWithSelector,
 } from "@/stores/utils";
 import { assert } from "@/utils/assert";
 
@@ -138,15 +143,17 @@ type InteractiveFiltersContextValue = [
   StoreApi<State>,
 ];
 
-type SharedFilters = {
-  type: "timeRange" | "dataFilters";
-  value?: NonNullable<InteractiveFiltersConfig>["timeRange"];
-  iri: string;
-}[];
+export type SharedFilter = {
+  type: "timeRange";
+} & NonNullable<InteractiveFiltersConfig>["timeRange"];
+
+export type PotentialSharedFilter = Pick<SharedFilter, "type" | "componentIri">;
+
 const InteractiveFiltersContext = createContext<
   | {
       stores: Record<ChartConfig["key"], InteractiveFiltersContextValue>;
-      sharedFilters: SharedFilters;
+      potentialSharedFilters: PotentialSharedFilter[];
+      sharedFilters: SharedFilter[];
     }
   | undefined
 >(undefined);
@@ -154,40 +161,46 @@ const InteractiveFiltersContext = createContext<
 /**
  * Returns filters that are shared across multiple charts.
  */
-export const getSharedFilters = (
+export const getPotentialSharedFilters = (
   chartConfigs: ChartConfig[]
-): SharedFilters => {
-  const allActiveFilters = chartConfigs.flatMap((c) => {
-    const interactiveFiltersConfig = c.interactiveFiltersConfig;
-    if (!interactiveFiltersConfig) {
-      return [];
-    }
-
-    const { timeRange } = interactiveFiltersConfig;
-    return [{ type: "timeRange" as const, value: timeRange }].filter(
-      (x) => x.value.active
+): PotentialSharedFilter[] => {
+  const temporalDimensions = chartConfigs.flatMap((config) => {
+    const chartSpec = getChartSpec(config);
+    const temporalEncodings = chartSpec.encodings.filter((x) =>
+      x.componentTypes.some((x) => x === "TemporalDimension")
     );
+    const chartTemporalDimensions = temporalEncodings
+      .map((encoding) => {
+        const field =
+          encoding.field in config.fields
+            ? // @ts-expect-error ts(7053) - Not possible to narrow down here, but we check for undefined below
+              config.fields[encoding.field]
+            : undefined;
+        if (field && "componentIri" in field) {
+          return {
+            /** Unjoined dimension */
+            componentIri: isJoinById(field.componentIri as string)
+              ? getOriginalIris(field.componentIri, config)[0]
+              : field.componentIri,
+            chartKey: config.key,
+          };
+        }
+      })
+      .filter(truthy);
+
+    return chartTemporalDimensions;
   });
 
-  const sharedFilters = Object.entries(
-    // TODO implement recognizing shared filters across joined by dimensions
-    groupBy(allActiveFilters, (x) => `${x.type} - ${x.value.componentIri}`)
-  ).filter(([_iri, filters]) => filters.length > 1);
+  const sharedTemporalDimensions = Object.values(
+    groupBy(temporalDimensions, (x) => x.componentIri)
+  ).filter((x) => x.length > 1);
 
-  return sharedFilters.map(([_iri, filters]) => ({
-    iri: filters[0].value.componentIri,
-    type: filters[0].type,
-    value: (() => {
-      const type = filters[0].type;
-      switch (type) {
-        case "timeRange":
-          return filters[0].value;
-        default:
-          const _exhaustiveCheck: never = type;
-          throw new Error(`Unhandled type: ${_exhaustiveCheck}`);
-      }
-    })(),
-  }));
+  return sharedTemporalDimensions.map((x) => {
+    return {
+      type: "timeRange",
+      componentIri: x[0].componentIri,
+    };
+  });
 };
 
 /**
@@ -199,10 +212,11 @@ export const InteractiveFiltersProvider = ({
 }: React.PropsWithChildren<{
   chartConfigs: ChartConfig[];
 }>) => {
+  const [state] = useConfiguratorState(hasChartConfigs);
   const storeRefs = useRef<Record<ChartConfig["key"], StoreApi<State>>>({});
 
-  const sharedFilters = useMemo(() => {
-    return getSharedFilters(chartConfigs);
+  const potentialSharedFilters = useMemo(() => {
+    return getPotentialSharedFilters(chartConfigs);
   }, [chartConfigs]);
 
   const stores = useMemo<
@@ -223,9 +237,15 @@ export const InteractiveFiltersProvider = ({
     );
   }, [chartConfigs]);
 
+  const sharedFilters = state.dashboardFilters?.filters;
+
   const ctxValue = useMemo(
-    () => ({ stores, sharedFilters }),
-    [stores, sharedFilters]
+    () => ({
+      stores,
+      potentialSharedFilters,
+      sharedFilters: sharedFilters ?? [],
+    }),
+    [stores, potentialSharedFilters, sharedFilters]
   );
 
   return (

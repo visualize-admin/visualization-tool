@@ -16,7 +16,7 @@ import {
   AxisWidthBand,
   AxisWidthBandDomain,
 } from "@/charts/shared/axis-width-band";
-import { BrushTime } from "@/charts/shared/brush";
+import { BrushTime, shouldShowBrush } from "@/charts/shared/brush";
 import {
   ChartContainer,
   ChartControlsContainer,
@@ -26,6 +26,7 @@ import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
 import { ColumnConfig, useChartConfigFilters } from "@/config-types";
 import { TimeSlider } from "@/configurator/interactive-filters/time-slider";
+import { useDashboardInteractiveFilters } from "@/stores/interactive-filters";
 
 import { ChartProps, VisualizationProps } from "../shared/ChartProps";
 
@@ -39,6 +40,12 @@ export const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
   const { chartConfig, dimensions } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
   const filters = useChartConfigFilters(chartConfig);
+  const { sharedFilters } = useDashboardInteractiveFilters();
+
+  const showTimeBrush = shouldShowBrush(
+    interactiveFiltersConfig,
+    sharedFilters
+  );
 
   return (
     <>
@@ -49,7 +56,7 @@ export const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
               <AxisHeightLinear /> <AxisWidthBand />
               <ColumnsStacked /> <AxisWidthBandDomain />
               <InteractionColumns />
-              {interactiveFiltersConfig?.timeRange.active && <BrushTime />}
+              {showTimeBrush && <BrushTime />}
             </ChartSvg>
             <Tooltip type="multiple" />
           </ChartContainer>
@@ -80,7 +87,7 @@ export const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
               <ErrorWhiskersGrouped />
               <AxisWidthBandDomain />
               <InteractionColumns />
-              {interactiveFiltersConfig?.timeRange.active && <BrushTime />}
+              {showTimeBrush && <BrushTime />}
             </ChartSvg>
             <Tooltip type="multiple" />
           </ChartContainer>
@@ -111,7 +118,7 @@ export const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
               <ErrorWhiskers />
               <AxisWidthBandDomain />
               <InteractionColumns />
-              {interactiveFiltersConfig?.timeRange.active && <BrushTime />}
+              {showTimeBrush && <BrushTime />}
             </ChartSvg>
             <Tooltip type="single" />
           </ChartContainer>

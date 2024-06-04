@@ -108,7 +108,6 @@ const DialogCloseButton = (props: IconButtonProps) => {
         right: "1.5rem",
         ...props.sx,
       }}
-      size="small"
     >
       <SvgIcRemove width={24} height={24} fontSize={24} />
     </IconButton>
@@ -988,11 +987,13 @@ export const DatasetDialog = ({
       className={clsx(classes.dialog, props.className)}
     >
       <Box className={classes.dialogCloseArea}>
-        <Grow in={!isOpen}>
-          <IconButton color="primary" onClick={() => open()}>
-            <SvgIcInfo />
-          </IconButton>
-        </Grow>
+        {otherCube ? null : (
+          <Grow in={!isOpen}>
+            <IconButton color="primary" onClick={() => open()}>
+              <SvgIcInfo />
+            </IconButton>
+          </Grow>
+        )}
         <DialogCloseButton
           onClick={(ev) => handleClose(ev, "escapeKeyDown")}
           sx={{ position: "static" }}

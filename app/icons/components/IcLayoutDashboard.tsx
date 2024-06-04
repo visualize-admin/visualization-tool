@@ -11,7 +11,7 @@ function SvgIcLayoutDashboard(props: React.SVGProps<SVGSVGElement>) {
     >
       <path
         fill="currentColor"
-        fill-rule="evenodd"
+        fillRule="evenodd"
         d="M11 2H2V14H11V2ZM22 2H13V8H22V2ZM13 10H22V22H13V10ZM11 16H2V22H11V16Z"
       />
     </svg>

@@ -1183,6 +1183,29 @@ export type Layout = t.TypeOf<typeof Layout>;
 export type LayoutType = Layout["type"];
 export type LayoutDashboard = Extract<Layout, { type: "dashboard" }>;
 
+const DashboardFilterTimeRange = t.type({
+  type: t.literal("timeRange"),
+  active: t.boolean,
+  componentIri: t.string,
+  presets: t.type({
+    type: t.literal("range"),
+    from: t.string,
+    to: t.string,
+  }),
+});
+
+export type DashboardFilterTimeRange = t.TypeOf<
+  typeof DashboardFilterTimeRange
+>;
+
+const DashboardFilter = DashboardFilterTimeRange; // Will be replaced by an union later
+export type DashboardFilter = t.TypeOf<typeof DashboardFilter>;
+
+const DashboardFiltersConfig = t.type({
+  filters: t.array(DashboardFilter),
+});
+export type DashboardFiltersConfig = t.TypeOf<typeof DashboardFiltersConfig>;
+
 const Config = t.intersection([
   t.type(
     {
@@ -1191,6 +1214,7 @@ const Config = t.intersection([
       layout: Layout,
       chartConfigs: t.array(ChartConfig),
       activeChartKey: t.string,
+      dashboardFilters: t.union([DashboardFiltersConfig, t.undefined]),
     },
     "Config"
   ),
