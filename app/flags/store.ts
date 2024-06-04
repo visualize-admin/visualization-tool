@@ -3,7 +3,18 @@ import mitt, { Emitter } from "mitt";
 import lsAdapter from "./ls-adapter";
 
 export type FlagValue = any;
-export type FlagName = string;
+
+export type FlagName =
+  /** Whether we can search by termsets */
+  | "search.termsets"
+  /** Whether we can add dataset from shared dimensions */
+  | "configurator.add-dataset.shared"
+  /** Whether we can add a new dataset */
+  | "configurator.add-dataset.new"
+  /** Whether we can use the free canvas dashboard layout */
+  | "layoutor.dashboard.free-canvas"
+  /** Whether we can use shared filters on dashboard layout */
+  | "layoutor.dashboard.shared-filters";
 
 type Events = { change: string };
 /**
@@ -51,7 +62,7 @@ class FlagStore {
     return this.store[name];
   }
 
-  set(name: string, value: FlagValue) {
+  set(name: FlagName, value: FlagValue) {
     if (this.longtermStore) {
       this.longtermStore.setItem(name, value);
     }
@@ -59,7 +70,7 @@ class FlagStore {
     this.ee.emit("change", name);
   }
 
-  remove(name: string) {
+  remove(name: FlagName) {
     delete this.store[name];
     if (this.longtermStore) {
       this.longtermStore.removeItem(name);

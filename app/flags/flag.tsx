@@ -28,7 +28,7 @@ export const listFlags = () => {
 
 /** Resets all the flags */
 export const resetFlags = () => {
-  listFlags().forEach((name) => store.remove(name));
+  listFlags().forEach((name) => store.remove(name as FlagName));
 };
 
 /**
@@ -63,7 +63,10 @@ const initFromSearchParams = (locationSearch: string) => {
   for (const [param, value] of Object.entries(params)) {
     if (param.startsWith(FLAG_PREFIX) && typeof value === "string") {
       try {
-        flag(param.substring(FLAG_PREFIX.length), JSON.parse(value));
+        flag(
+          param.substring(FLAG_PREFIX.length) as FlagName,
+          JSON.parse(value)
+        );
       } catch (e) {
         console.error(e);
       }
