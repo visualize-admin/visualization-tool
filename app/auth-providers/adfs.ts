@@ -58,7 +58,7 @@ export default function ADFS<P extends ADFSProfile>(
         if (opRole != undefined) {
           role = opRole;
         }
-        // Otherwise, take the first occurence in the list.
+        // Otherwise, take the first occurrence in the list.
         else {
           role = profile.role[0];
         }
