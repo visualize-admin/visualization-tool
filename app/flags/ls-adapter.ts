@@ -1,4 +1,4 @@
-import { FlagName, FlagValue } from "./store";
+import { FlagName, FlagValue } from "./types";
 
 export const prefix = "flag__";
 export const getKey = (name: FlagName) => prefix + name;

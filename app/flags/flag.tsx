@@ -2,7 +2,8 @@ import qs from "qs";
 
 import { isRunningInBrowser } from "@/utils/is-running-in-browser";
 
-import FlagStore, { FlagName, FlagValue } from "./store";
+import FlagStore from "./store";
+import { FlagName, FlagValue } from "./types";
 
 const FLAG_PREFIX = "flag__";
 

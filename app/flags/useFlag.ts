@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 
-import { FlagName } from "@/flags/store";
-
 import { flag } from "./flag";
+import { FlagName } from "./types";
 
 export default function useFlag(name: FlagName) {
   const [flagValue, setFlag] = useState(() => flag(name));
