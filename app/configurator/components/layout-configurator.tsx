@@ -55,7 +55,7 @@ import {
 import { getTimeFilterOptions } from "@/utils/time-filter-options";
 
 export const LayoutConfigurator = () => {
-  const sharedFiltersFlag = useFlag("layoutor.dashboard.shared-filters");
+  const sharedFiltersFlag = useFlag("layouter.dashboard.shared-filters");
   return (
     <>
       <LayoutAnnotator />
@@ -69,7 +69,7 @@ const LayoutLayoutConfigurator = () => {
   const [state] = useConfiguratorState(isLayouting);
   const { layout } = state;
 
-  const freeCanvasFlag = useFlag("layoutor.dashboard.free-canvas");
+  const freeCanvasFlag = useFlag("layouter.dashboard.free-canvas");
 
   switch (layout.type) {
     case "dashboard":

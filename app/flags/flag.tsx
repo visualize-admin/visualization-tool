@@ -86,8 +86,8 @@ const initFromHost = (host: string) => {
   ) {
     flag("configurator.add-dataset.new", true);
     flag("configurator.add-dataset.shared", true);
-    flag("layoutor.dashboard.free-canvas", true);
-    flag("layoutor.dashboard.shared-filters", true);
+    flag("layouter.dashboard.free-canvas", true);
+    flag("layouter.dashboard.shared-filters", true);
     flag("search.termsets", true);
   }
 };

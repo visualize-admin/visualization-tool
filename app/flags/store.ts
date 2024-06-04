@@ -12,9 +12,9 @@ export type FlagName =
   /** Whether we can add a new dataset */
   | "configurator.add-dataset.new"
   /** Whether we can use the free canvas dashboard layout */
-  | "layoutor.dashboard.free-canvas"
+  | "layouter.dashboard.free-canvas"
   /** Whether we can use shared filters on dashboard layout */
-  | "layoutor.dashboard.shared-filters";
+  | "layouter.dashboard.shared-filters";
 
 type Events = { change: string };
 /**
