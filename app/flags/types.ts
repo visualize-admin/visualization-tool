@@ -1,6 +1,8 @@
 export type FlagValue = any;
 
 export type FlagName =
+  /** Whether debug UI like the configurator debug panel is shown */
+  | "debug"
   /** Whether we can search by termsets */
   | "search.termsets"
   /** Whether we can add dataset from shared dimensions */
