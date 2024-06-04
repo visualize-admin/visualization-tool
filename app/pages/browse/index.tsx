@@ -4,8 +4,8 @@ import { ConfiguratorStateProvider } from "@/configurator/configurator-state";
 import { SearchCubeResultOrder } from "@/graphql/query-hooks";
 
 export type BrowseParams = {
-  type?: "theme" | "organization" | "dataset";
-  subtype?: "theme" | "organization";
+  type?: "theme" | "organization" | "dataset" | "termset";
+  subtype?: "theme" | "organization" | "termset";
   iri?: string;
   subiri?: string;
   topic?: string;

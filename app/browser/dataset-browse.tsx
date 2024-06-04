@@ -690,9 +690,11 @@ const NavSection = ({
 const TermsetNavSection = ({
   currentFilter,
   termsetCounts,
+  disableLinks,
 }: {
   currentFilter: Termset | undefined;
   termsetCounts: { termset: Termset; count: number }[];
+  disableLinks: boolean;
 }) => {
   const { counts, termsets } = useMemo(() => {
     const termsets = termsetCounts.map((x) => x.termset) ?? [];
@@ -719,6 +721,7 @@ const TermsetNavSection = ({
       label={<Trans id="browse-panel.termsets">Concepts</Trans>}
       filters={[]}
       counts={counts}
+      disableLinks={disableLinks}
     />
   );
 };
@@ -872,6 +875,7 @@ export const SearchFilters = ({
       <TermsetNavSection
         termsetCounts={termsetCounts ?? []}
         currentFilter={termsetFilter}
+        disableLinks={disableNavLinks}
       />
     );
   const navs = sortBy(

@@ -66,16 +66,25 @@ export const getParamsFromFilters = (filters: BrowseFilter[]) => {
   for (const filter of filters) {
     const typeAttr = i === 0 ? "type" : ("subtype" as const);
     const iriAttr = i === 0 ? "iri" : ("subiri" as const);
-    if (filter.__typename === SearchCubeFilterType.DataCubeTheme) {
-      params[typeAttr] = "theme";
-      params[iriAttr] = filter.iri;
-    } else if (
-      filter.__typename === SearchCubeFilterType.DataCubeOrganization
-    ) {
-      params[typeAttr] = "organization";
-      params[iriAttr] = filter.iri;
-    } else if (filter.__typename === SearchCubeFilterType.DataCubeAbout) {
-      params.topic = filter.iri;
+    switch (filter.__typename) {
+      case "DataCubeTheme":
+        params[typeAttr] = "theme";
+        params[iriAttr] = filter.iri;
+        break;
+      case "DataCubeOrganization":
+        params[typeAttr] = "organization";
+        params[iriAttr] = filter.iri;
+        break;
+      case "DataCubeAbout":
+        params.topic = filter.iri;
+        break;
+      case "Termset":
+        params[typeAttr] = "termset";
+        params[iriAttr] = filter.iri;
+        break;
+      default:
+        const _exhaustiveCheck: never = filter;
+        return _exhaustiveCheck;
     }
     i++;
   }
