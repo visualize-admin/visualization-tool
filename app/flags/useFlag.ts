@@ -30,5 +30,5 @@ export function useFlags() {
       flag.store.removeListener("change", handleChange);
     };
   }, [setFlags]);
-  return flags;
+  return flags as FlagName[];
 }
