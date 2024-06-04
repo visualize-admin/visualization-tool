@@ -125,7 +125,6 @@ const useBrowseParamsStateWithUrlSync = (initialState: BrowseParams) => {
     ) => {
       rawSetState((curState) => {
         const newState = {
-          ...curState,
           ...(stateUpdate instanceof Function
             ? stateUpdate(curState)
             : stateUpdate),
@@ -168,14 +167,18 @@ const createUseBrowseState = ({ syncWithUrl }: { syncWithUrl: boolean }) => {
     const dataset = type === "dataset" ? iri : paramDataset;
     const filters = getFiltersFromParams(browseParams);
 
-    const setSearch = useEvent((v: string) => setParams({ search: v }));
+    const setSearch = useEvent((v: string) =>
+      setParams((prev) => ({ ...prev, search: v }))
+    );
     const setIncludeDrafts = useEvent((v: boolean) =>
-      setParams({ includeDrafts: v })
+      setParams((prev) => ({ ...prev, includeDrafts: v }))
     );
     const setOrder = useEvent((v: SearchCubeResultOrder) =>
-      setParams({ order: v })
+      setParams((prev) => ({ ...prev, order: v }))
     );
-    const setDataset = useEvent((v: string) => setParams({ dataset: v }));
+    const setDataset = useEvent((v: string) =>
+      setParams((prev) => ({ ...prev, dataset: v }))
+    );
 
     const previousOrderRef = useRef<SearchCubeResultOrder>(
       SearchCubeResultOrder.Score
@@ -187,16 +190,24 @@ const createUseBrowseState = ({ syncWithUrl }: { syncWithUrl: boolean }) => {
         includeDrafts: !!includeDrafts,
         setIncludeDrafts,
         onReset: () => {
-          setParams({ search: "", order: SearchCubeResultOrder.CreatedDesc });
+          setParams((prev) => ({
+            ...prev,
+            search: "",
+            order:
+              previousOrderRef.current === SearchCubeResultOrder.Score
+                ? SearchCubeResultOrder.CreatedDesc
+                : previousOrderRef.current,
+          }));
         },
         onSubmitSearch: (newSearch: string) => {
-          setParams({
+          setParams((prev) => ({
+            ...prev,
             search: newSearch,
             order:
               newSearch === ""
                 ? SearchCubeResultOrder.CreatedDesc
                 : previousOrderRef.current,
-          });
+          }));
         },
         search,
         order,
@@ -210,8 +221,8 @@ const createUseBrowseState = ({ syncWithUrl }: { syncWithUrl: boolean }) => {
         setDataset,
         filters,
         setFilters: (filters: BrowseFilter[]) => {
-          setParams((params) => ({
-            ...params,
+          setParams((prev) => ({
+            ...prev,
             ...getParamsFromFilters(filters),
           }));
         },
