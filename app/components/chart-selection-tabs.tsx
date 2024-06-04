@@ -47,6 +47,7 @@ import { useSearchDatasetPanelStore } from "@/configurator/components/add-new-da
 import { ChartTypeSelector } from "@/configurator/components/chart-type-selector";
 import { getIconName } from "@/configurator/components/ui-helpers";
 import { useUserConfig } from "@/domain/user-configs";
+import { useFlag } from "@/flags";
 import { useDataCubesComponentsQuery } from "@/graphql/hooks";
 import { Icon, IconName } from "@/icons";
 import { useLocale } from "@/src";
@@ -160,6 +161,8 @@ const TabsEditable = (props: TabsEditableProps) => {
 
   const { open: openAddDatasetPanel } = useSearchDatasetPanelStore();
 
+  const addNewDatasetFlag = useFlag("configurator.add-dataset.new");
+
   return (
     <>
       <TabsInner
@@ -213,16 +216,18 @@ const TabsEditable = (props: TabsEditableProps) => {
             direction="column"
           >
             <Stack direction="column" gap="0.5rem" m="1rem">
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                textAlign="center"
-                gutterBottom
-              >
-                <Trans id="chart-selection-tabs.add-chart-same-dataset.caption">
-                  Add chart based on the same dataset
-                </Trans>
-              </Typography>
+              {addNewDatasetFlag ? (
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  textAlign="center"
+                  gutterBottom
+                >
+                  <Trans id="chart-selection-tabs.add-chart-same-dataset.caption">
+                    Add chart based on the same dataset
+                  </Trans>
+                </Typography>
+              ) : null}
               <ChartTypeSelector
                 state={state}
                 type="add"
@@ -232,30 +237,32 @@ const TabsEditable = (props: TabsEditableProps) => {
                 sx={{ width: 320, px: 3, pb: 3 }}
               />
             </Stack>
-            <Stack direction="column" gap="0.5rem" mx="1.5rem" my="1rem">
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                textAlign="center"
-                gutterBottom
-              >
-                <Trans id="chart-selection-tabs.add-chart-different-dataset.caption">
-                  Add chart based on a different dataset
-                </Trans>
-              </Typography>
-              <Button
-                fullWidth
-                sx={{ justifyContent: "center" }}
-                onClick={() => {
-                  setTabsState({ ...tabsState, popoverOpen: false });
-                  openAddDatasetPanel();
-                }}
-              >
-                <Trans id="chart-selection-tabs.add-chart-different-dataset.button">
-                  Select dataset
-                </Trans>
-              </Button>
-            </Stack>
+            {addNewDatasetFlag ? (
+              <Stack direction="column" gap="0.5rem" mx="1.5rem" my="1rem">
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  textAlign="center"
+                  gutterBottom
+                >
+                  <Trans id="chart-selection-tabs.add-chart-different-dataset.caption">
+                    Add chart based on a different dataset
+                  </Trans>
+                </Typography>
+                <Button
+                  fullWidth
+                  sx={{ justifyContent: "center" }}
+                  onClick={() => {
+                    setTabsState({ ...tabsState, popoverOpen: false });
+                    openAddDatasetPanel();
+                  }}
+                >
+                  <Trans id="chart-selection-tabs.add-chart-different-dataset.button">
+                    Select dataset
+                  </Trans>
+                </Button>
+              </Stack>
+            ) : null}
           </Stack>
         </Popover>
       ) : null}

@@ -44,6 +44,7 @@ import {
   isJoinByComponent,
   isTemporalDimension,
 } from "@/domain/data";
+import { useFlag } from "@/flags";
 import { useTimeFormatLocale, useTimeFormatUnit } from "@/formatters";
 import { useDataCubesComponentsQuery } from "@/graphql/hooks";
 import { useLocale } from "@/src";
@@ -54,11 +55,12 @@ import {
 import { getTimeFilterOptions } from "@/utils/time-filter-options";
 
 export const LayoutConfigurator = () => {
+  const sharedFiltersFlag = useFlag("layoutor.dashboard.shared-filters");
   return (
     <>
       <LayoutAnnotator />
       <LayoutLayoutConfigurator />
-      <LayoutSharedFiltersConfigurator />
+      {sharedFiltersFlag ? <LayoutSharedFiltersConfigurator /> : null}
     </>
   );
 };
@@ -66,6 +68,8 @@ export const LayoutConfigurator = () => {
 const LayoutLayoutConfigurator = () => {
   const [state] = useConfiguratorState(isLayouting);
   const { layout } = state;
+
+  const freeCanvasFlag = useFlag("layoutor.dashboard.free-canvas");
 
   switch (layout.type) {
     case "dashboard":
@@ -92,7 +96,9 @@ const LayoutLayoutConfigurator = () => {
             >
               <LayoutButton type="tall" layout={layout} />
               <LayoutButton type="vertical" layout={layout} />
-              <LayoutButton type="canvas" layout={layout} />
+              {freeCanvasFlag ? (
+                <LayoutButton type="canvas" layout={layout} />
+              ) : null}
             </Box>
           </ControlSectionContent>
         </ControlSection>
