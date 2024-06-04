@@ -1,8 +1,12 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import { flag } from "./flag";
 
-export default function useFlag(name: string) {
+type Flag =
+  /** Whether we can search by termsets */
+  "search.termsets";
+
+export default function useFlag(name: Flag) {
   const [flagValue, setFlag] = useState(() => flag(name));
   useEffect(() => {
     const handleChange = (changed: string) => {
