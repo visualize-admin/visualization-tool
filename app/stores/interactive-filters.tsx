@@ -12,6 +12,7 @@ import {
   useConfiguratorState,
 } from "@/configurator";
 import { truthy } from "@/domain/types";
+import { getOriginalIris, isJoinById } from "@/graphql/join";
 import {
   createBoundUseStoreWithSelector,
   ExtractState,
@@ -177,7 +178,10 @@ export const getPotentialSharedFilters = (
             : undefined;
         if (field && "componentIri" in field) {
           return {
-            componentIri: field.componentIri as string,
+            /** Unjoined dimension */
+            componentIri: isJoinById(field.componentIri as string)
+              ? getOriginalIris(field.componentIri, config)[0]
+              : field.componentIri,
             chartKey: config.key,
           };
         }

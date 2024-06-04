@@ -185,7 +185,7 @@ const DashboardTimeRangeSlider = ({
 
   const mountedForSomeTime = useTimeout(500, mounted);
 
-  if (!filter || !timeRange || filter.type !== "timeRange") {
+  if (!filter || !timeRange || filter.type !== "timeRange" || !filter.active) {
     return null;
   }
 

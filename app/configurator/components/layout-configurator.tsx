@@ -41,6 +41,7 @@ import {
 import {
   Dimension,
   TemporalDimension,
+  isJoinByComponent,
   isTemporalDimension,
 } from "@/domain/data";
 import { useTimeFormatLocale, useTimeFormatUnit } from "@/formatters";
@@ -129,7 +130,16 @@ const LayoutSharedFiltersConfigurator = () => {
   });
 
   const dimensionsByIri = useMemo(() => {
-    return keyBy(data.data?.dataCubesComponents.dimensions, (x) => x.iri);
+    const res: Record<string, Dimension> = {};
+    for (const dim of data.data?.dataCubesComponents.dimensions ?? []) {
+      res[dim.iri] = dim;
+      if (isJoinByComponent(dim)) {
+        for (const o of dim.originalIris) {
+          res[o.dimensionIri] = dim;
+        }
+      }
+    }
+    return res;
   }, [data.data?.dataCubesComponents.dimensions]);
 
   const sharedFiltersByIri = useMemo(() => {
