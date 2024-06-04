@@ -99,6 +99,7 @@ const DashboardTimeRangeSlider = ({
         chartConfig.cubes.map((x: DataCubeComponentFilter) => ({
           iri: x.iri,
           componentIris: [filter.componentIri],
+          joinBy: x.joinBy,
         }))
       ),
       (x) => x.iri
