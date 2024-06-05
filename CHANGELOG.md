@@ -11,7 +11,7 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 Nothing yet.
 
-# [4.5.3] - 2024-06-05
+# [4.6.0] - 2024-06-05
 
 - Features
   - :flag: :new: Add the "Free canvas" layout, allowing users to freely resize and move charts for dashboards
