@@ -28,6 +28,7 @@ import {
 } from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import { getCenteredTooltipPlacement } from "@/charts/shared/interaction/tooltip-box";
+import { shouldStartAtZero } from "@/charts/shared/scales";
 import { getTickNumber } from "@/charts/shared/ticks";
 import { TICK_FONT_SIZE } from "@/charts/shared/use-chart-theme";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
@@ -106,14 +107,18 @@ const useComboLineColumnState = (
     scalesData,
     paddingData,
     getY: variables.y.left.getY,
-    startAtZero: variables.y.left.chartType === "column",
+    startAtZero:
+      variables.y.left.chartType === "column" ||
+      shouldStartAtZero(variables.y.left.dimension.scaleType),
   });
   const { yScale: yScaleRight, paddingYScale: paddingRightYScale } = useYScales(
     {
       scalesData,
       paddingData,
       getY: variables.y.right.getY,
-      startAtZero: variables.y.right.chartType === "column",
+      startAtZero:
+        variables.y.right.chartType === "column" ||
+        shouldStartAtZero(variables.y.right.dimension.scaleType),
     }
   );
   const [minLeftValue, maxLeftValue] = yScaleLeft.domain();

@@ -20,6 +20,7 @@ import {
 } from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import { TooltipScatterplot } from "@/charts/shared/interaction/tooltip-content";
+import { getMaybeDynamicMinYScaleValue } from "@/charts/shared/scales";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useSize } from "@/charts/shared/use-width";
 import { ScatterPlotConfig, SortingField } from "@/configurator";
@@ -53,6 +54,7 @@ const useScatterplotState = (
   const {
     getX,
     xAxisLabel,
+    yMeasure,
     getY,
     yAxisLabel,
     segmentDimension,
@@ -78,12 +80,18 @@ const useScatterplotState = (
   const xDomain = [xMinValue, xMaxValue];
   const xScale = scaleLinear().domain(xDomain).nice();
 
-  const yMinValue = Math.min(min(scalesData, (d) => getY(d)) ?? 0, 0);
+  const yMinValue = getMaybeDynamicMinYScaleValue(
+    yMeasure.scaleType,
+    min(scalesData, getY)
+  );
   const yMaxValue = max(scalesData, getY) ?? 0;
   const yDomain = [yMinValue, yMaxValue];
   const yScale = scaleLinear().domain(yDomain).nice();
 
-  const paddingYMinValue = Math.min(min(paddingData, (d) => getY(d)) ?? 0, 0);
+  const paddingYMinValue = getMaybeDynamicMinYScaleValue(
+    yMeasure.scaleType,
+    min(paddingData, getY)
+  );
   const paddingYMaxValue = max(paddingData, getY) ?? 0;
   const paddingYScale = scaleLinear()
     .domain([paddingYMinValue, paddingYMaxValue])
