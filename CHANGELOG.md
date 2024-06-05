@@ -9,7 +9,8 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 # Unreleased
 
-Nothing yet.
+- Fix
+  - Use bounded cache for Apollo Server, removing vulnerability from DDOS attacks
 
 # [4.6.0] - 2024-06-05
 
