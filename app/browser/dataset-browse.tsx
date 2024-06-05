@@ -710,7 +710,6 @@ const TermsetNavSection = ({
 
   return (
     <NavSection
-      key="orgs"
       items={termsets}
       theme={{
         backgroundColor: "grey.300",
@@ -875,6 +874,7 @@ export const SearchFilters = ({
   const termsetNav =
     termsetCounts.length === 0 || !termsetFlag ? null : (
       <TermsetNavSection
+        key="termsets"
         termsetCounts={termsetCounts ?? []}
         currentFilter={termsetFilter}
         disableLinks={disableNavLinks}
