@@ -1,7 +1,10 @@
-import { FlagName, FlagValue } from "./store";
+import { FlagName, FlagValue } from "./types";
 
 export const prefix = "flag__";
-export const getKey = (name: FlagName) => prefix + name;
+
+type FlagNameOrString = FlagName | (string & {});
+
+export const getKey = (name: FlagNameOrString) => prefix + name;
 
 const listFlagLocalStorage = () => {
   return Object.keys(localStorage)
@@ -14,7 +17,7 @@ const listFlagLocalStorage = () => {
  *
  * @param  {String} flag
  */
-const getItem = (flag: FlagName) => {
+const getItem = (flag: FlagNameOrString) => {
   const val = localStorage.getItem(getKey(flag));
   const parsed = val ? JSON.parse(val) : val;
   return parsed;
@@ -26,7 +29,7 @@ const getItem = (flag: FlagName) => {
  * @param  {String} flag
  * @param  {String} value
  */
-const setItem = (flag: FlagName, value: FlagValue) => {
+const setItem = (flag: FlagNameOrString, value: FlagValue) => {
   const str = JSON.stringify(value);
   return localStorage.setItem(getKey(flag), str);
 };
@@ -36,7 +39,7 @@ const setItem = (flag: FlagName, value: FlagValue) => {
  *
  * @param  {String} flag
  */
-const removeItem = (flag: FlagName) => {
+const removeItem = (flag: FlagNameOrString) => {
   return localStorage.removeItem(getKey(flag));
 };
 

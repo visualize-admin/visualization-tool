@@ -1,9 +1,7 @@
 import mitt, { Emitter } from "mitt";
 
 import lsAdapter from "./ls-adapter";
-
-export type FlagValue = any;
-export type FlagName = string;
+import { FlagName, FlagValue } from "./types";
 
 type Events = { change: string };
 /**
@@ -51,7 +49,7 @@ class FlagStore {
     return this.store[name];
   }
 
-  set(name: string, value: FlagValue) {
+  set(name: FlagName, value: FlagValue) {
     if (this.longtermStore) {
       this.longtermStore.setItem(name, value);
     }
@@ -59,7 +57,7 @@ class FlagStore {
     this.ee.emit("change", name);
   }
 
-  remove(name: string) {
+  remove(name: FlagName) {
     delete this.store[name];
     if (this.longtermStore) {
       this.longtermStore.removeItem(name);

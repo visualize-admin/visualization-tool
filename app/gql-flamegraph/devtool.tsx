@@ -33,6 +33,7 @@ import { pipe, tap } from "wonka";
 
 import useDisclosure from "@/components/use-disclosure";
 import { flag, useFlag, useFlags } from "@/flags";
+import { FlagName } from "@/flags/types";
 import { RequestQueryMeta } from "@/graphql/query-meta";
 import useEvent from "@/utils/use-event";
 
@@ -543,7 +544,7 @@ const FlagSwitch = ({
   flagName,
   onChange,
   ...props
-}: { flagName: string; onChange?: (value: Boolean) => void } & Omit<
+}: { flagName: FlagName; onChange?: (value: Boolean) => void } & Omit<
   SwitchProps,
   "onChange"
 >) => {

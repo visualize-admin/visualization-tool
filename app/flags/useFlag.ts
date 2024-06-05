@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import { flag } from "./flag";
+import { FlagName } from "./types";
 
-export default function useFlag(name: string) {
+export default function useFlag(name: FlagName) {
   const [flagValue, setFlag] = useState(() => flag(name));
   useEffect(() => {
     const handleChange = (changed: string) => {
@@ -29,5 +30,5 @@ export function useFlags() {
       flag.store.removeListener("change", handleChange);
     };
   }, [setFlags]);
-  return flags;
+  return flags as FlagName[];
 }

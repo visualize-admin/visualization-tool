@@ -2,7 +2,7 @@ import { t, Trans } from "@lingui/macro";
 import { Box, Stack, Tooltip, Typography } from "@mui/material";
 import { groups } from "d3-array";
 import get from "lodash/get";
-import React, { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 
 import { DEFAULT_SORTING, getFieldComponentIri } from "@/charts";
 import {
@@ -93,7 +93,7 @@ import {
   useDataCubesComponentsQuery,
   useDataCubesObservationsQuery,
 } from "@/graphql/hooks";
-import SvgIcExclamation from "@/icons/components/IcExclamation";
+import SvgIcInfoOutline from "@/icons/components/IcInfoOutline";
 import { useLocale } from "@/locales/use-locale";
 
 export const ChartOptionsSelector = ({
@@ -1097,19 +1097,13 @@ const ChartFieldAnimation = ({ field }: { field: AnimationField }) => {
                       })}
                     >
                       <Typography sx={{ color: "primary.main" }}>
-                        <SvgIcExclamation
-                          style={{
-                            transform: "scale(0.8)",
-                            width: 18,
-                            height: 18,
-                          }}
-                        />
+                        <SvgIcInfoOutline width={16} height={16} />
                       </Typography>
                     </Tooltip>
                   </Box>
                 }
               />
-              <Flex sx={{ justifyContent: "flex-start" }}>
+              <Flex justifyContent="flex-start">
                 <ChartOptionRadioField
                   label={t({
                     id: "controls.section.animation.type.continuous",
@@ -1130,8 +1124,9 @@ const ChartFieldAnimation = ({ field }: { field: AnimationField }) => {
                 />
               </Flex>
             </Box>
-            <Box sx={{ display: "flex", alignItems: "center", mt: 5 }}>
+            <Box display="flex" alignItems="center" mt={5} gap="0.5rem">
               <ChartOptionSwitchField
+                sx={{ mr: 0 }}
                 label={t({
                   id: "controls.section.animation.dynamic-scaling",
                   message: "Dynamic Scaling",
@@ -1147,14 +1142,8 @@ const ChartFieldAnimation = ({ field }: { field: AnimationField }) => {
                     "Enable dynamic scaling to adjust the chart's scale based on the data range, ensuring optimal visualization.",
                 })}
               >
-                <Typography sx={{ ml: "-12px", color: "primary.main" }}>
-                  <SvgIcExclamation
-                    style={{
-                      transform: "scale(0.8)",
-                      width: 18,
-                      height: 18,
-                    }}
-                  />
+                <Typography color="primary.main">
+                  <SvgIcInfoOutline width={16} height={16} />
                 </Typography>
               </Tooltip>
             </Box>
