@@ -1,4 +1,5 @@
 import produce, { createDraft, current, Draft } from "immer";
+import { WritableDraft } from "immer/dist/internal";
 import get from "lodash/get";
 import setWith from "lodash/setWith";
 import sortBy from "lodash/sortBy";
