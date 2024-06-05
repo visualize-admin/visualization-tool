@@ -10,8 +10,8 @@ import {
   ConfiguratorStateConfiguringChart,
   ConfiguratorStatePublishing,
   Filters,
-  MapConfig,
   getChartConfig,
+  MapConfig,
 } from "@/config-types";
 import { getNewChartConfig } from "@/configurator/config-form";
 import { ConfiguratorStateAction } from "@/configurator/configurator-state/actions";
@@ -39,6 +39,19 @@ import covid19Metadata from "@/test/__fixtures/data/DataCubeMetadataWithComponen
 import { getCachedComponents as getCachedComponentsOriginal } from "@/urql-cache";
 import { getCachedComponentsMock } from "@/urql-cache.mock";
 import { migrateChartConfig } from "@/utils/chart-config/versioning";
+
+const pristineConfigStateMock = JSON.parse(JSON.stringify(configStateMock));
+
+afterEach(() => {
+  // Ensures that tests are not dirtying the configStateMock
+  try {
+    expect(configStateMock).toEqual(pristineConfigStateMock);
+  } catch (e) {
+    throw new Error(
+      "One of the tests is dirtying the configStateMock. Please ensure that the configStateMock is not modified in the tests by using produce from immer."
+    );
+  }
+});
 
 jest.mock("@/rdf/extended-cube", () => ({
   ExtendedCube: jest.fn(),
@@ -578,17 +591,19 @@ describe("handleChartFieldChanged", () => {
     );
     const state = configStateMock.map;
 
-    handleChartFieldChanged(state, {
-      type: "CHART_FIELD_CHANGED",
-      value: {
-        locale: "en",
-        field: "symbolLayer",
-        componentIri: "symbolLayerIri",
-      },
-    });
+    const newState = produce(state, (state: ConfiguratorState) =>
+      handleChartFieldChanged(state, {
+        type: "CHART_FIELD_CHANGED",
+        value: {
+          locale: "en",
+          field: "symbolLayer",
+          componentIri: "symbolLayerIri",
+        },
+      })
+    );
 
     expect(
-      (state.chartConfigs[0] as any).fields.symbolLayer.color
+      (newState.chartConfigs[0] as any).fields.symbolLayer.color
     ).toBeDefined();
   });
 });
@@ -597,23 +612,25 @@ describe("colorMapping", () => {
   it("should correctly reset color mapping", () => {
     const state: ConfiguratorStateConfiguringChart = configStateMock.map;
 
-    updateColorMapping(state, {
-      type: "CHART_CONFIG_UPDATE_COLOR_MAPPING",
-      value: {
-        field: "areaLayer",
-        colorConfigPath: "color",
-        dimensionIri: "year-period-1",
-        values: [
-          { value: "red", label: "red", color: "red" },
-          { value: "green", label: "green", color: "green" },
-          { value: "blue", label: "blue", color: "blue" },
-        ],
-        random: false,
-      },
-    });
+    const newState = produce(state, (state: ConfiguratorState) =>
+      updateColorMapping(state, {
+        type: "CHART_CONFIG_UPDATE_COLOR_MAPPING",
+        value: {
+          field: "areaLayer",
+          colorConfigPath: "color",
+          dimensionIri: "year-period-1",
+          values: [
+            { value: "red", label: "red", color: "red" },
+            { value: "green", label: "green", color: "green" },
+            { value: "blue", label: "blue", color: "blue" },
+          ],
+          random: false,
+        },
+      })
+    );
 
     expect(
-      (getChartConfig(state).fields as any).areaLayer.color.colorMapping
+      (getChartConfig(newState).fields as any).areaLayer.color.colorMapping
     ).toEqual({
       red: "red",
       green: "green",
