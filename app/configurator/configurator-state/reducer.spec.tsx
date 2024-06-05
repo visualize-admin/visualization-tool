@@ -26,6 +26,7 @@ import {
   applyNonTableDimensionToFilters,
   applyTableDimensionToFilters,
   deriveFiltersFromFields,
+  ensureDashboardLayoutAreCorrect,
   handleChartFieldChanged,
   handleChartOptionChanged,
   reducer,
@@ -38,6 +39,7 @@ import covid19TableChartConfig from "@/test/__fixtures/config/dev/chartConfig-ta
 import covid19Metadata from "@/test/__fixtures/data/DataCubeMetadataWithComponentValues-covid19.json";
 import { getCachedComponents as getCachedComponentsOriginal } from "@/urql-cache";
 import { getCachedComponentsMock } from "@/urql-cache.mock";
+import { assert } from "@/utils/assert";
 import { migrateChartConfig } from "@/utils/chart-config/versioning";
 
 const pristineConfigStateMock = JSON.parse(JSON.stringify(configStateMock));
@@ -1117,4 +1119,29 @@ describe("handleChartOptionChanged", () => {
       "areaLayerColorIri"
     );
   });
+});
+
+describe("ensureDashboardLayoutAreCorrect", () => {
+  const state = configStateMock.map;
+  const newState = produce(state, (state: ConfiguratorState) => {
+    assert(
+      state.state === "CONFIGURING_CHART",
+      "State should be CONFIGURING_CHART"
+    );
+    state.layout.type = "dashboard";
+    assert(
+      state.layout.type === "dashboard",
+      "Layout type should be dashboard"
+    );
+    state.layout.layout = "canvas";
+    assert(state.layout.layout === "canvas", "Layout type should be canvas");
+    state.layout.layouts = { lg: [] };
+    state.chartConfigs.push({
+      ...state.chartConfigs[0],
+      key: "newKey",
+    });
+    ensureDashboardLayoutAreCorrect(state);
+    return state;
+  });
+  expect((newState as any).layout.layouts.lg.length).toBe(2);
 });
