@@ -9,9 +9,15 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 # Unreleased
 
+Nothing yet.
+
+# [4.5.3] - 2024-06-05
+
 - Features
-  - Add the "Free canvas" layout, allowing users to freely resize and move charts for dashboards
-  - Ability to start a chart from another dataset than the current one
+  - :flag: :new: Add the "Free canvas" layout, allowing users to freely resize and move charts for dashboards
+  - :flag: :new: Ability to start a chart from another dataset than the current one
+  - :flag: Search via concepts is behind a flag
+  - :flag: Merging of cubes is behind a flag
 - Style
   - Improved the styles of metadata panel and interactive filters toggle buttons
 
