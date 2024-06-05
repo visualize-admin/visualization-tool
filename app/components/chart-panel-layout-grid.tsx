@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import { fold } from "fp-ts/lib/Either";
 import { pipe } from "fp-ts/lib/function";
 import { useState } from "react";
@@ -65,7 +66,7 @@ const ChartPanelLayoutCanvas = (props: ChartPanelLayoutTypeProps) => {
 
   return (
     <ChartGridLayout
-      className={chartPanelLayoutGridClasses.root}
+      className={clsx(chartPanelLayoutGridClasses.root, props.className)}
       layouts={layouts}
       resize={config.state === "LAYOUTING"}
       draggableHandle={`.${chartPanelLayoutGridClasses.dragHandle}`}
