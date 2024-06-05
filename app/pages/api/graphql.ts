@@ -41,6 +41,7 @@ const server = new ApolloServer({
     return response;
   },
   context: createContext,
+  cache: "bounded",
   introspection: true,
   plugins:
     process.env.NODE_ENV === "production"
