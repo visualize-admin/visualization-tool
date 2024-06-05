@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 import { StackedColumnsState } from "@/charts/column/columns-stacked-state";
 import {
@@ -30,7 +30,7 @@ export const ColumnsStacked = () => {
           x: xScale(getX(observation)) as number,
           y: yScale(segment[1]),
           width: bandwidth,
-          height: yScale(segment[0]) - yScale(segment[1]),
+          height: Math.max(0, yScale(segment[0]) - yScale(segment[1])),
           color,
         };
       });

@@ -1,5 +1,5 @@
 import { line } from "d3-shape";
-import React, { useMemo, useEffect, memo, useRef } from "react";
+import { memo, useEffect, useMemo, useRef } from "react";
 
 import {
   RenderColumnDatum,
@@ -40,7 +40,7 @@ const Columns = () => {
       const y = yColumn.getY(d) ?? NaN;
       const yScaled = yScale(y);
       const yRender = yScale(Math.max(y, 0));
-      const height = Math.abs(yScaled - y0);
+      const height = Math.max(0, Math.abs(yScaled - y0));
       const color = colors(yColumn.label);
 
       return {

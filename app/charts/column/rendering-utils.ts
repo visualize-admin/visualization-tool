@@ -103,7 +103,7 @@ export const renderWhiskers = (
               .attr("x", (d) => d.x + d.width / 2 - 1)
               .attr("y", (d) => d.y2)
               .attr("width", 2)
-              .attr("height", (d) => d.y1 - d.y2)
+              .attr("height", (d) => Math.max(0, d.y1 - d.y2))
               .attr("fill", "black")
               .attr("stroke", "none")
           )
@@ -141,7 +141,7 @@ export const renderWhiskers = (
                   .select(".middle")
                   .attr("x", (d) => d.x + d.width / 2 - 1)
                   .attr("y", (d) => d.y2)
-                  .attr("height", (d) => d.y1 - d.y2)
+                  .attr("height", (d) => Math.max(0, d.y1 - d.y2))
               )
               .call((g) =>
                 g

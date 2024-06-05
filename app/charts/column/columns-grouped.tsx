@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 import { GroupedColumnsState } from "@/charts/column/columns-grouped-state";
 import {
@@ -39,15 +39,15 @@ export const ErrorWhiskers = () => {
         observations.map((d) => {
           const x0 = xScaleIn(getSegment(d)) as number;
           const bandwidth = xScaleIn.bandwidth();
-          const barwidth = Math.min(bandwidth, 15);
+          const barWidth = Math.min(bandwidth, 15);
           const [y1, y2] = getYErrorRange(d);
 
           return {
             key: `${segment}-${getSegment(d)}`,
-            x: (xScale(segment) as number) + x0 + bandwidth / 2 - barwidth / 2,
+            x: (xScale(segment) as number) + x0 + bandwidth / 2 - barWidth / 2,
             y1: yScale(y1),
             y2: yScale(y2),
-            width: barwidth,
+            width: barWidth,
           };
         })
       );
@@ -112,7 +112,7 @@ export const ColumnsGrouped = () => {
           x: (xScale(segment) as number) + (xScaleIn(x) as number),
           y: yScale(Math.max(y, 0)),
           width: bandwidth,
-          height: Math.abs(yScale(y) - y0),
+          height: Math.max(0, Math.abs(yScale(y) - y0)),
           color: colors(x),
         };
       });

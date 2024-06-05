@@ -37,15 +37,15 @@ export const ErrorWhiskers = () => {
     return chartData.filter(filterWithoutErrors(getYError)).map((d, i) => {
       const x0 = xScale(getX(d)) as number;
       const bandwidth = xScale.bandwidth();
-      const barwidth = Math.min(bandwidth, 15);
+      const barWidth = Math.min(bandwidth, 15);
       const [y1, y2] = getYErrorRange(d);
 
       return {
         key: `${i}`,
-        x: x0 + bandwidth / 2 - barwidth / 2,
+        x: x0 + bandwidth / 2 - barWidth / 2,
         y1: yScale(y1),
         y2: yScale(y2),
-        width: barwidth,
+        width: barWidth,
       };
     });
   }, [
@@ -100,7 +100,7 @@ export const Columns = () => {
       const y = yRaw === null || isNaN(yRaw) ? 0 : yRaw;
       const yScaled = yScale(y);
       const yRender = yScale(Math.max(y, 0));
-      const height = Math.abs(yScaled - y0);
+      const height = Math.max(0, Math.abs(yScaled - y0));
       const color = getColor(y);
 
       return {

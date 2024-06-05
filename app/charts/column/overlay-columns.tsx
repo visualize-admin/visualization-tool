@@ -31,7 +31,7 @@ export const InteractionColumns = () => {
           x={xScaleInteraction(getX(d)) as number}
           y={0}
           width={xScaleInteraction.bandwidth()}
-          height={chartHeight}
+          height={Math.max(0, chartHeight)}
           fill="hotpink"
           fillOpacity={0}
           stroke="none"
