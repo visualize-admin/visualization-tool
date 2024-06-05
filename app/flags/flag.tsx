@@ -80,16 +80,21 @@ const isVercelPreviewHost = (host: string) => {
 };
 
 const initFromHost = (host: string) => {
+  const setDefaultFlag = (name: FlagName, value: FlagValue) => {
+    if (flag(name) === undefined) {
+      flag(name, value);
+    }
+  };
   if (
     host.includes("localhost") ||
     host.includes("test.visualize.admin.ch") ||
     isVercelPreviewHost(host)
   ) {
-    flag("configurator.add-dataset.new", true);
-    flag("configurator.add-dataset.shared", true);
-    flag("layouter.dashboard.free-canvas", true);
-    flag("layouter.dashboard.shared-filters", true);
-    flag("search.termsets", true);
+    setDefaultFlag("configurator.add-dataset.new", true);
+    setDefaultFlag("configurator.add-dataset.shared", true);
+    setDefaultFlag("layouter.dashboard.free-canvas", true);
+    setDefaultFlag("layouter.dashboard.shared-filters", true);
+    setDefaultFlag("search.termsets", true);
   }
 };
 
