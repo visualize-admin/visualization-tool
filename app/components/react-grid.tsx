@@ -204,13 +204,17 @@ export const ChartGridLayout = (props: ChartGridLayoutProps) => {
 
   const enhancedLayouts = useMemo(() => {
     return mapValues(layouts, (layouts) => {
-      return layouts.map((x) => ({
-        ...x,
-        minH: MIN_H,
-        maxH: MAX_H,
-        maxW: MAX_W,
-        resizeHandles: resize ? availableHandles : [],
-      }));
+      return layouts.map((x) => {
+        return {
+          ...x,
+          minH: MIN_H,
+          maxH: MAX_H,
+          h: Math.min(MAX_H, Math.max(MIN_H, x.h)),
+          maxW: MAX_W,
+          w: Math.min(MAX_W, x.w),
+          resizeHandles: resize ? availableHandles : [],
+        };
+      });
     });
   }, [layouts, resize]);
 
