@@ -4,6 +4,7 @@ import { scaleOrdinal } from "d3-scale";
 import { CountableTimeInterval } from "d3-time";
 import { timeFormat, TimeLocaleObject, timeParse } from "d3-time-format";
 import { useMemo } from "react";
+import { match } from "ts-pattern";
 
 import type { BaseChartProps } from "@/charts/shared/ChartProps";
 import { TableColumn, TableFields } from "@/config-types";
@@ -16,6 +17,8 @@ import {
   isTemporalDimension,
   Measure,
   Observation,
+  TemporalDimension,
+  TemporalEntityDimension,
 } from "@/domain/data";
 import { TimeUnit } from "@/graphql/query-hooks";
 import { IconName } from "@/icons";
@@ -361,7 +364,7 @@ export const extractDataPickerOptionsFromDimension = ({
   dimension,
   parseDate,
 }: {
-  dimension: Dimension;
+  dimension: TemporalDimension | TemporalEntityDimension;
   parseDate: (dateStr: string) => Date | null;
 }) => {
   const { isKeyDimension, label, values } = dimension;
@@ -375,19 +378,26 @@ export const extractDataPickerOptionsFromDimension = ({
           values[0].position as string,
           values[values.length - 1].position as string,
         ];
-    const options = isTemporalDimension(dimension)
-      ? values.map((d) => {
+    const dimensionType = dimension.__typename;
+    const options = match(dimensionType)
+      .with("TemporalDimension", () => {
+        return values.map((d) => {
+          const stringifiedValue = `${d.value}`;
           return {
-            label: `${d.value}`,
-            value: `${d.value}`,
+            label: stringifiedValue,
+            value: stringifiedValue,
           };
-        })
-      : values.map((d) => {
+        });
+      })
+      .with("TemporalEntityDimension", () => {
+        return values.map((d) => {
           return {
             label: `${d.label}`,
             value: `${d.position}`,
           };
         });
+      })
+      .exhaustive();
 
     return {
       minDate: parseDate(minValue) as Date,
