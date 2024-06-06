@@ -287,9 +287,9 @@ const SelectDatasetStepContent = ({
           const type = d.type;
           switch (type) {
             case SearchCubeFilterType.DataCubeTheme:
-              return orgs;
-            case SearchCubeFilterType.DataCubeOrganization:
               return themes;
+            case SearchCubeFilterType.DataCubeOrganization:
+              return orgs;
             case SearchCubeFilterType.Termset:
               return termsets.map((x) => x.termset);
             case SearchCubeFilterType.DataCubeAbout:
