@@ -493,7 +493,6 @@ export const updateColorMapping = (
       }
     }
 
-    console.log({ colorMapping, path: path.concat("colorMapping") });
     if (colorMapping) {
       setWith(chartConfig, path.concat("colorMapping"), colorMapping, Object);
     }
@@ -1102,7 +1101,7 @@ export const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 };
 
 /** Turn this on for the reducer to log state, action and result */
-const reducerLogging = true;
+const reducerLogging: false = false;
 const withLogging = <TState, TAction extends { type: unknown }>(
   reducer: Reducer<TState, TAction>
 ) => {
