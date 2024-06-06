@@ -1194,7 +1194,7 @@ msgstr "New"
 
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.preview.title"
-msgstr "Preview data table"
+msgstr "Review available dimensions"
 
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.search-options.more-2-options-selected"

@@ -9,11 +9,21 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 # Unreleased
 
-- Features
-  - Add the "Free canvas" layout, allowing users to freely resize and move charts for dashboards
-  - Ability to start a chart from another dataset than the current one
 - Fixes
   - Whiskers should now display correctly at the initial render
+
+# [4.6.1] - 2024-06-05
+
+- Fix
+  - Use bounded cache for Apollo Server, removing vulnerability from DDOS attacks
+
+# [4.6.0] - 2024-06-05
+
+- Features
+  - :flag: :new: Add the "Free canvas" layout, allowing users to freely resize and move charts for dashboards
+  - :flag: :new: Ability to start a chart from another dataset than the current one
+  - :flag: Search via concepts is behind a flag
+  - :flag: Merging of cubes is behind a flag
 - Style
   - Improved the styles of metadata panel and interactive filters toggle buttons
 
