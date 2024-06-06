@@ -200,7 +200,7 @@ const DashboardTimeRangeSlider = ({
       step={step}
       valueLabelDisplay={mountedForSomeTime ? "on" : "off"}
       value={timeRange}
-      marks
+      marks={(max - min) / (step ?? 1) < 50}
     />
   );
 };
