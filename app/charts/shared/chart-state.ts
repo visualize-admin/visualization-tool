@@ -176,6 +176,9 @@ export const useBandXVariables = (
   });
 
   const getXAsDate = useTemporalVariable(x.componentIri);
+  const getXTemporalEntity = useTemporalEntityVariable(
+    dimensionsByIri[x.componentIri].values
+  )(x.componentIri);
 
   return {
     xDimension,
@@ -183,7 +186,9 @@ export const useBandXVariables = (
     getXLabel,
     getXAbbreviationOrLabel,
     xTimeUnit,
-    getXAsDate,
+    getXAsDate: isTemporalDimension(xDimension)
+      ? getXAsDate
+      : getXTemporalEntity,
   };
 };
 
