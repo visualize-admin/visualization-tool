@@ -20,7 +20,7 @@ test("it should be possible to query dimension values from versioned dimension c
   await page.goto("/");
   const pageUrl = page.url().split("?")[0]; // remove query params
   const client = createClient({ url: pageUrl + "/api/graphql" });
-  const { data } = await client
+  const { data, error } = await client
     .query<DataCubeComponentsQuery, DataCubeComponentsQueryVariables>(
       DataCubeComponentsDocument,
       {
@@ -31,9 +31,13 @@ test("it should be possible to query dimension values from versioned dimension c
       }
     )
     .toPromise();
-  const identifiers = data.dataCubeComponents.dimensions
-    .find((d) => d.iri === versionedDimensionIri)
-    .values.map((v) => v.identifier);
+
+  expect(error).toBe(undefined);
+  const identifiers = (
+    data?.dataCubeComponents?.dimensions?.find(
+      (d) => d.iri === versionedDimensionIri
+    )?.values ?? []
+  ).map((v) => v.identifier);
 
   expect(
     identifiers.length,
