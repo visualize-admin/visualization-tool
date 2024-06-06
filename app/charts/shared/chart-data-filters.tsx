@@ -72,13 +72,12 @@ export const useChartDataFiltersState = ({
 }) => {
   const componentIris =
     chartConfig.interactiveFiltersConfig?.dataFilters.componentIris;
-  assert(componentIris, "Data filters are not enabled for this chart.");
   const [open, setOpen] = useState(false);
   useEffect(() => {
-    if (componentIris.length === 0) {
+    if (componentIris?.length === 0) {
       setOpen(false);
     }
-  }, [componentIris.length]);
+  }, [componentIris?.length]);
   const { loading } = useLoadingState();
   const queryFilters = useQueryFilters({
     chartConfig,
@@ -98,7 +97,7 @@ export const useChartDataFiltersState = ({
         cubeQueryFilters.filters as Filters
       ).filter(([k]) => unmappedKeys.includes(k));
       const interactiveFiltersList = unmappedEntries.filter(([k]) =>
-        componentIris.includes(k)
+        componentIris?.includes(k)
       );
       return {
         cubeIri: cube.iri,
@@ -145,7 +144,7 @@ export const ChartDataFiltersToggle = (
           minHeight: 20,
         }}
       >
-        {componentIris.length > 0 && (
+        {componentIris && componentIris.length > 0 && (
           <Button
             variant="text"
             color="primary"
@@ -202,7 +201,7 @@ export const ChartDataFiltersList = (
     componentIris,
   } = props;
   const dataFilters = useChartInteractiveFilters((d) => d.dataFilters);
-  return componentIris.length > 0 ? (
+  return componentIris && componentIris.length > 0 ? (
     <Box
       data-testid="published-chart-interactive-filters"
       sx={{
