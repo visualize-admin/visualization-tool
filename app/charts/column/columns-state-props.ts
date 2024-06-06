@@ -6,6 +6,7 @@ import {
   BandXVariables,
   BaseVariables,
   ChartStateData,
+  InteractiveFiltersVariables,
   NumericalYErrorVariables,
   NumericalYVariables,
   RenderingVariables,
@@ -13,6 +14,7 @@ import {
   useBandXVariables,
   useBaseVariables,
   useChartData,
+  useInteractiveFiltersVariables,
   useNumericalYErrorVariables,
   useNumericalYVariables,
 } from "@/charts/shared/chart-state";
@@ -26,7 +28,8 @@ export type ColumnsStateVariables = BaseVariables &
   BandXVariables &
   NumericalYVariables &
   NumericalYErrorVariables &
-  RenderingVariables;
+  RenderingVariables &
+  InteractiveFiltersVariables;
 
 export const useColumnsStateVariables = (
   props: ChartProps<ColumnConfig>
@@ -56,6 +59,10 @@ export const useColumnsStateVariables = (
     dimensions,
     measures,
   });
+  const interactiveFiltersVariables = useInteractiveFiltersVariables(
+    interactiveFiltersConfig,
+    { dimensionsByIri }
+  );
 
   const { getX } = bandXVariables;
   const { getY } = numericalYVariables;
@@ -94,6 +101,7 @@ export const useColumnsStateVariables = (
     ...bandXVariables,
     ...numericalYVariables,
     ...numericalYErrorVariables,
+    ...interactiveFiltersVariables,
     getRenderingKey,
   };
 };
@@ -103,7 +111,7 @@ export const useColumnsStateData = (
   variables: ColumnsStateVariables
 ): ChartStateData => {
   const { chartConfig, observations } = chartProps;
-  const { sortData, getXAsDate, getY } = variables;
+  const { sortData, getXAsDate, getY, getTimeRangeDate } = variables;
   const plottableData = usePlottableData(observations, {
     getY,
   });
@@ -113,6 +121,7 @@ export const useColumnsStateData = (
   const data = useChartData(sortedPlottableData, {
     chartConfig,
     getXAsDate,
+    getTimeRangeDate,
   });
 
   return {

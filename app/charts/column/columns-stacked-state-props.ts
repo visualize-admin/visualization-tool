@@ -6,6 +6,7 @@ import {
   BandXVariables,
   BaseVariables,
   ChartStateData,
+  InteractiveFiltersVariables,
   NumericalYVariables,
   RenderingVariables,
   SegmentVariables,
@@ -13,6 +14,7 @@ import {
   useBandXVariables,
   useBaseVariables,
   useChartData,
+  useInteractiveFiltersVariables,
   useNumericalYVariables,
   useSegmentVariables,
 } from "@/charts/shared/chart-state";
@@ -28,7 +30,8 @@ export type ColumnsStackedStateVariables = BaseVariables &
   BandXVariables &
   NumericalYVariables &
   SegmentVariables &
-  RenderingVariables;
+  RenderingVariables &
+  InteractiveFiltersVariables;
 
 export const useColumnsStackedStateVariables = (
   props: ChartProps<ColumnConfig>
@@ -56,6 +59,10 @@ export const useColumnsStackedStateVariables = (
     dimensionsByIri,
     observations,
   });
+  const interactiveFiltersVariables = useInteractiveFiltersVariables(
+    interactiveFiltersConfig,
+    { dimensionsByIri }
+  );
 
   const { getX } = bandXVariables;
   const sortData: ColumnsStackedStateVariables["sortData"] = useCallback(
@@ -96,6 +103,7 @@ export const useColumnsStackedStateVariables = (
     ...bandXVariables,
     ...numericalYVariables,
     ...segmentVariables,
+    ...interactiveFiltersVariables,
     getRenderingKey,
   };
 };
@@ -118,6 +126,7 @@ export const useColumnsStackedStateData = (
     getY,
     getSegment,
     getSegmentAbbreviationOrLabel,
+    getTimeRangeDate,
   } = variables;
   const plottableData = usePlottableData(observations, {
     getY,
@@ -142,6 +151,7 @@ export const useColumnsStackedStateData = (
     chartConfig,
     getXAsDate,
     getSegmentAbbreviationOrLabel,
+    getTimeRangeDate,
   });
 
   return {

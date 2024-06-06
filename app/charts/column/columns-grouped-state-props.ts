@@ -7,6 +7,7 @@ import {
   BandXVariables,
   BaseVariables,
   ChartStateData,
+  InteractiveFiltersVariables,
   NumericalYErrorVariables,
   NumericalYVariables,
   RenderingVariables,
@@ -15,6 +16,7 @@ import {
   useBandXVariables,
   useBaseVariables,
   useChartData,
+  useInteractiveFiltersVariables,
   useNumericalYErrorVariables,
   useNumericalYVariables,
   useSegmentVariables,
@@ -31,7 +33,8 @@ export type ColumnsGroupedStateVariables = BaseVariables &
   NumericalYVariables &
   NumericalYErrorVariables &
   SegmentVariables &
-  RenderingVariables;
+  RenderingVariables &
+  InteractiveFiltersVariables;
 
 export const useColumnsGroupedStateVariables = (
   props: ChartProps<ColumnConfig>
@@ -65,6 +68,10 @@ export const useColumnsGroupedStateVariables = (
     dimensionsByIri,
     observations,
   });
+  const interactiveFiltersVariables = useInteractiveFiltersVariables(
+    interactiveFiltersConfig,
+    { dimensionsByIri }
+  );
 
   const { getX } = bandXVariables;
   const { getY } = numericalYVariables;
@@ -106,6 +113,7 @@ export const useColumnsGroupedStateVariables = (
     ...numericalYVariables,
     ...numericalYErrorVariables,
     ...segmentVariables,
+    ...interactiveFiltersVariables,
     getRenderingKey,
   };
 };
@@ -115,8 +123,13 @@ export const useColumnsGroupedStateData = (
   variables: ColumnsGroupedStateVariables
 ): ChartStateData => {
   const { chartConfig, observations } = chartProps;
-  const { sortData, getXAsDate, getY, getSegmentAbbreviationOrLabel } =
-    variables;
+  const {
+    sortData,
+    getXAsDate,
+    getY,
+    getSegmentAbbreviationOrLabel,
+    getTimeRangeDate,
+  } = variables;
   const plottableData = usePlottableData(observations, {
     getY,
   });
@@ -127,6 +140,7 @@ export const useColumnsGroupedStateData = (
     chartConfig,
     getXAsDate,
     getSegmentAbbreviationOrLabel,
+    getTimeRangeDate,
   });
 
   return {

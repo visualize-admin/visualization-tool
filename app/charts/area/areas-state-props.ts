@@ -6,12 +6,14 @@ import { usePlottableData } from "@/charts/shared/chart-helpers";
 import {
   BaseVariables,
   ChartStateData,
+  InteractiveFiltersVariables,
   NumericalYVariables,
   SegmentVariables,
   SortingVariables,
   TemporalXVariables,
   useBaseVariables,
   useChartData,
+  useInteractiveFiltersVariables,
   useNumericalYVariables,
   useSegmentVariables,
   useTemporalXVariables,
@@ -22,7 +24,8 @@ export type AreasStateVariables = BaseVariables &
   SortingVariables &
   TemporalXVariables &
   NumericalYVariables &
-  SegmentVariables;
+  SegmentVariables &
+  InteractiveFiltersVariables;
 
 export const useAreasStateVariables = (
   props: ChartProps<AreaConfig>
@@ -42,6 +45,10 @@ export const useAreasStateVariables = (
     dimensionsByIri,
     observations,
   });
+  const interactiveFiltersVariables = useInteractiveFiltersVariables(
+    chartConfig.interactiveFiltersConfig,
+    { dimensionsByIri }
+  );
 
   const { getX } = temporalXVariables;
   const sortData: AreasStateVariables["sortData"] = useCallback(
@@ -59,6 +66,7 @@ export const useAreasStateVariables = (
     ...temporalXVariables,
     ...numericalYVariables,
     ...segmentVariables,
+    ...interactiveFiltersVariables,
   };
 };
 
@@ -67,7 +75,13 @@ export const useAreasStateData = (
   variables: AreasStateVariables
 ): ChartStateData => {
   const { chartConfig, observations } = chartProps;
-  const { sortData, getX, getY, getSegmentAbbreviationOrLabel } = variables;
+  const {
+    sortData,
+    getX,
+    getY,
+    getSegmentAbbreviationOrLabel,
+    getTimeRangeDate,
+  } = variables;
   const plottableData = usePlottableData(observations, {
     getX,
     getY,
@@ -79,6 +93,7 @@ export const useAreasStateData = (
     chartConfig,
     getXAsDate: getX,
     getSegmentAbbreviationOrLabel,
+    getTimeRangeDate,
   });
 
   return {

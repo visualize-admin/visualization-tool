@@ -10,12 +10,14 @@ import {
   BandXVariables,
   BaseVariables,
   ChartStateData,
+  InteractiveFiltersVariables,
   RenderingVariables,
   SortingVariables,
   shouldUseDynamicMinScaleValue,
   useBandXVariables,
   useBaseVariables,
   useChartData,
+  useInteractiveFiltersVariables,
 } from "@/charts/shared/chart-state";
 import { useRenderingKeyVariable } from "@/charts/shared/rendering-utils";
 import { ComboLineColumnConfig, useChartConfigFilters } from "@/configurator";
@@ -38,7 +40,8 @@ export type ComboLineColumnStateVariables = BaseVariables &
   SortingVariables &
   BandXVariables &
   NumericalYComboLineColumnVariables &
-  RenderingVariables;
+  RenderingVariables &
+  InteractiveFiltersVariables;
 
 export const useComboLineColumnStateVariables = (
   props: ChartProps<ComboLineColumnConfig>
@@ -59,6 +62,10 @@ export const useComboLineColumnStateVariables = (
     dimensionsByIri,
     observations,
   });
+  const interactiveFiltersVariables = useInteractiveFiltersVariables(
+    chartConfig.interactiveFiltersConfig,
+    { dimensionsByIri }
+  );
 
   const lineIri = chartConfig.fields.y.lineComponentIri;
   const lineAxisOrientation = chartConfig.fields.y.lineAxisOrientation;
@@ -135,6 +142,7 @@ export const useComboLineColumnStateVariables = (
     sortData,
     ...bandXVariables,
     ...numericalYVariables,
+    ...interactiveFiltersVariables,
     getRenderingKey,
   };
 };
@@ -144,7 +152,7 @@ export const useComboLineColumnStateData = (
   variables: ComboLineColumnStateVariables
 ): ChartStateData => {
   const { chartConfig, observations } = chartProps;
-  const { sortData, getX, getXAsDate, y } = variables;
+  const { sortData, getX, getXAsDate, y, getTimeRangeDate } = variables;
   const plottableData = usePlottableData(observations, {
     getX,
     getY: (d) => {
@@ -163,6 +171,7 @@ export const useComboLineColumnStateData = (
   const data = useChartData(sortedPlottableData, {
     chartConfig,
     getXAsDate,
+    getTimeRangeDate,
   });
 
   return {

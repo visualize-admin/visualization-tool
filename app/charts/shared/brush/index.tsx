@@ -105,7 +105,6 @@ export const BrushTime = () => {
     () => brushWidthScale.domain().map((d) => d.getTime()),
     [brushWidthScale]
   );
-
   const getClosestObservationFromRangeDates = useCallback(
     ([from, to]: [Date, Date]): [Date, Date] => {
       const getClosestDatesFromDateRange = makeGetClosestDatesFromDateRange(

@@ -407,6 +407,28 @@ export const useSegmentVariables = (
   };
 };
 
+export type InteractiveFiltersVariables = {
+  getTimeRangeDate: (d: Observation) => Date;
+};
+
+export const useInteractiveFiltersVariables = (
+  interactiveFiltersConfig: ChartConfig["interactiveFiltersConfig"],
+  { dimensionsByIri }: { dimensionsByIri: DimensionsByIri }
+): InteractiveFiltersVariables => {
+  const iri = interactiveFiltersConfig?.timeRange.componentIri ?? "";
+  const dimension = dimensionsByIri[iri];
+  const getTimeRangeDate = useTemporalVariable(iri);
+  const getTimeRangeEntityDate = useTemporalEntityVariable(
+    dimension?.values ?? []
+  )(iri);
+
+  return {
+    getTimeRangeDate: isTemporalDimension(dimension)
+      ? getTimeRangeDate
+      : getTimeRangeEntityDate,
+  };
+};
+
 export type AreaLayerVariables = {
   areaLayerDimension: GeoShapesDimension | undefined;
 };
@@ -451,10 +473,12 @@ export const useChartData = (
     chartConfig,
     getXAsDate,
     getSegmentAbbreviationOrLabel,
+    getTimeRangeDate,
   }: {
     chartConfig: ChartConfig;
     getXAsDate?: (d: Observation) => Date;
     getSegmentAbbreviationOrLabel?: (d: Observation) => string;
+    getTimeRangeDate?: (d: Observation) => Date;
   }
 ): Omit<ChartStateData, "allData"> => {
   const { interactiveFiltersConfig } = chartConfig;
@@ -463,10 +487,7 @@ export const useChartData = (
   const timeSlider = useChartInteractiveFilters((d) => d.timeSlider);
 
   // time range
-  const timeRangeFilterComponentIri =
-    interactiveFiltersConfig?.timeRange.componentIri ?? "";
   const interactiveTimeRange = interactiveFiltersConfig?.timeRange;
-  const getTimeRangeTime = useTemporalVariable(timeRangeFilterComponentIri);
   const timeRangeFromTime = interactiveTimeRange?.presets.from
     ? parseDate(interactiveTimeRange?.presets.from).getTime()
     : undefined;
@@ -475,15 +496,15 @@ export const useChartData = (
     : undefined;
   const timeRangeFilters = useMemo(() => {
     const timeRangeFilter: ValuePredicate | null =
-      timeRangeFromTime && timeRangeToTime
+      getTimeRangeDate && timeRangeFromTime && timeRangeToTime
         ? (d: Observation) => {
-            const time = getTimeRangeTime(d).getTime();
+            const time = getTimeRangeDate(d).getTime();
             return time >= timeRangeFromTime && time <= timeRangeToTime;
           }
         : null;
 
     return timeRangeFilter ? [timeRangeFilter] : [];
-  }, [timeRangeFromTime, timeRangeToTime, getTimeRangeTime]);
+  }, [timeRangeFromTime, timeRangeToTime, getTimeRangeDate]);
 
   // interactive time range
   const interactiveFromTime = timeRange.from?.getTime();
