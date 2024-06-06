@@ -9,7 +9,10 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 # Unreleased
 
-Nothing yet.
+- Features
+  - Added TemporalEntityDimension support for global dashboard filters
+- Fixes
+  - Fixed using a time range brush in column charts when X dimension is a TemporalEntityDimension
 
 # [4.6.1] - 2024-06-05
 
