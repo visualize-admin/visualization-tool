@@ -9,7 +9,8 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 # Unreleased
 
-Nothing yet.
+- Fixes
+  - Whiskers should now display correctly at the initial render
 
 # [4.6.1] - 2024-06-05
 

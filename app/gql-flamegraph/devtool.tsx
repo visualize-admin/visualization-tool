@@ -87,6 +87,8 @@ const flatten = (timings: Timings) => {
 
 const byStart = (a: FlatTiming, b: FlatTiming) => (a.start < b.start ? -1 : 1);
 
+const BAR_HEIGHT = 15;
+
 /**
  * Shows a SVG flamegraph for resolver field timings recorded on the
  * server
@@ -114,8 +116,6 @@ const Flamegraph = ({
     }));
   }, [timings]);
 
-  const barHeight = 15;
-
   return (
     <Box
       sx={{
@@ -123,14 +123,14 @@ const Flamegraph = ({
         "& svg text": { fontSize: "10px" },
       }}
     >
-      <svg width={900} height={50 + rects.length * barHeight}>
+      <svg width={900} height={50 + rects.length * BAR_HEIGHT}>
         <g>
           {rects.map((r, i) => (
-            <Group left={r.x0} top={i * barHeight} key={i}>
+            <Group left={r.x0} top={i * BAR_HEIGHT} key={i}>
               <rect
                 x={0}
                 y={0}
-                height={barHeight}
+                height={BAR_HEIGHT}
                 width={r.x1 - r.x0}
                 fill="#ccc"
               />

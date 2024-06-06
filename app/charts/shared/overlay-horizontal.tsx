@@ -88,7 +88,7 @@ export const InteractionHorizontal = memo(function InteractionHorizontal() {
       <rect
         fillOpacity={0}
         width={chartWidth}
-        height={chartHeight}
+        height={Math.max(0, chartHeight)}
         onMouseOut={hideTooltip}
         onMouseOver={findDatum}
         onMouseMove={findDatum}
