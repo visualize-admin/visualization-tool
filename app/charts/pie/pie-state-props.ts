@@ -35,7 +35,7 @@ export const usePieStateVariables = (
   const filters = useChartConfigFilters(chartConfig);
 
   const baseVariables = useBaseVariables(chartConfig);
-  const numericalYVariables = useNumericalYVariables(y, {
+  const numericalYVariables = useNumericalYVariables("pie", y, {
     measuresByIri,
   });
   const segmentVariables = useSegmentVariables(segment, {

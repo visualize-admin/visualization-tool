@@ -1,4 +1,4 @@
-import { extent, group, max, min } from "d3-array";
+import { extent, group, max } from "d3-array";
 import {
   ScaleLinear,
   ScaleOrdinal,
@@ -29,7 +29,6 @@ import {
 } from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import { getCenteredTooltipPlacement } from "@/charts/shared/interaction/tooltip-box";
-import { getMaybeDynamicMinYScaleValue } from "@/charts/shared/scales";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useSize } from "@/charts/shared/use-width";
@@ -76,6 +75,7 @@ const useLinesState = (
     getXAsString,
     yMeasure,
     getY,
+    getMinY,
     segmentDimension,
     segmentsByAbbreviationOrLabel,
     getSegment,
@@ -133,18 +133,12 @@ const useLinesState = (
   const xScaleTimeRange = scaleTime().domain(xScaleTimeRangeDomain);
 
   // y
-  const minValue = getMaybeDynamicMinYScaleValue(
-    yMeasure.scaleType,
-    min(scalesData, getY)
-  );
+  const minValue = getMinY(scalesData, getY);
   const maxValue = max(scalesData, getY) ?? 0;
   const yDomain = [minValue, maxValue];
   const yScale = scaleLinear().domain(yDomain).nice();
 
-  const paddingMinValue = getMaybeDynamicMinYScaleValue(
-    yMeasure.scaleType,
-    min(paddingData, getY)
-  );
+  const paddingMinValue = getMinY(paddingData, getY);
   const paddingMaxValue = max(paddingData, getY) ?? 0;
   const paddingYScale = scaleLinear()
     .domain([paddingMinValue, paddingMaxValue])

@@ -1,4 +1,4 @@
-import { extent, group, max, min, rollup, sum } from "d3-array";
+import { extent, group, max, rollup, sum } from "d3-array";
 import {
   ScaleBand,
   ScaleLinear,
@@ -78,6 +78,7 @@ const useColumnsGroupedState = (
     getXLabel,
     yMeasure,
     getY,
+    getMinY,
     showYStandardError,
     yErrorMeasure,
     getYError,
@@ -238,11 +239,8 @@ const useColumnsGroupedState = (
     const xScaleTimeRange = scaleTime().domain(xScaleTimeRangeDomain);
 
     // y
-    const minValue = Math.min(
-      min(scalesData, (d) =>
-        getYErrorRange ? getYErrorRange(d)[0] : getY(d)
-      ) ?? 0,
-      0
+    const minValue = getMinY(scalesData, (d) =>
+      getYErrorRange ? getYErrorRange(d)[0] : getY(d)
     );
     const maxValue = Math.max(
       max(scalesData, (d) =>
@@ -252,11 +250,8 @@ const useColumnsGroupedState = (
     );
     const yScale = scaleLinear().domain([minValue, maxValue]).nice();
 
-    const minPaddingValue = Math.min(
-      min(paddingData, (d) =>
-        getYErrorRange ? getYErrorRange(d)[0] : getY(d)
-      ) ?? 0,
-      0
+    const minPaddingValue = getMinY(paddingData, (d) =>
+      getYErrorRange ? getYErrorRange(d)[0] : getY(d)
     );
     const maxPaddingValue = Math.max(
       max(paddingData, (d) =>
@@ -298,6 +293,7 @@ const useColumnsGroupedState = (
     getXAsDate,
     getYErrorRange,
     getY,
+    getMinY,
   ]);
 
   // Group

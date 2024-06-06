@@ -98,23 +98,27 @@ type UseLeftRightYScalesOptions = {
   getY:
     | ((d: Observation) => number | null)
     | ((d: Observation) => number | null)[];
-  startAtZero?: boolean;
+  getMinY:
+    | ((data: Observation[]) => number)
+    | ((data: Observation[]) => number)[];
 };
 
 export const useYScales = (options: UseLeftRightYScalesOptions) => {
-  const { scalesData, paddingData, getY, startAtZero } = options;
-  const getMinY = (o: Observation) => {
-    return Array.isArray(getY) ? min(getY, (d) => d(o)) : getY(o);
+  const { scalesData, paddingData, getY, getMinY: _getMinY } = options;
+  const getMinY = (data: Observation[]) => {
+    return Array.isArray(_getMinY)
+      ? min(_getMinY.map((gmy) => gmy(data))) ?? 0
+      : _getMinY(data);
   };
   const getMaxY = (o: Observation) => {
     return Array.isArray(getY) ? max(getY, (d) => d(o)) : getY(o);
   };
 
-  const minValue = startAtZero ? 0 : min(scalesData, getMinY) ?? 0;
+  const minValue = getMinY(scalesData);
   const maxValue = max(scalesData, getMaxY) ?? 0;
   const yScale = scaleLinear().domain([minValue, maxValue]).nice();
 
-  const paddingMinValue = startAtZero ? 0 : min(paddingData, getMinY) ?? 0;
+  const paddingMinValue = getMinY(paddingData);
   const paddingMaxValue = max(paddingData, getMaxY) ?? 0;
   const paddingYScale = scaleLinear()
     .domain([paddingMinValue, paddingMaxValue])

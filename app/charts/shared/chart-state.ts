@@ -1,7 +1,8 @@
+import { min } from "d3-array";
 import { ScaleTime } from "d3-scale";
 import get from "lodash/get";
 import overEvery from "lodash/overEvery";
-import { createContext, useContext, useMemo } from "react";
+import { createContext, useCallback, useContext, useMemo } from "react";
 
 import { AreasState } from "@/charts/area/areas-state";
 import { GroupedColumnsState } from "@/charts/column/columns-grouped-state";
@@ -56,7 +57,7 @@ import {
 } from "@/domain/data";
 import { Has } from "@/domain/types";
 import { getOriginalIris, isJoinById } from "@/graphql/join";
-import { TimeUnit } from "@/graphql/resolver-types";
+import { ScaleType, TimeUnit } from "@/graphql/resolver-types";
 import {
   useChartInteractiveFilters,
   useDashboardInteractiveFilters,
@@ -222,13 +223,21 @@ export const useTemporalXVariables = (
   };
 };
 
+export const shouldUseDynamicMinScaleValue = (scaleType?: ScaleType) => {
+  return scaleType === ScaleType.Interval;
+};
+
 export type NumericalXVariables = {
   xMeasure: NumericalMeasure;
   getX: NumericalValueGetter;
   xAxisLabel: string;
+  /** Depending on xMeasure's scale type, it can either be 0 or dynamically
+   * based on available data. */
+  getMinX: (data: Observation[], getX: NumericalValueGetter) => number;
 };
 
 export const useNumericalXVariables = (
+  chartType: "scatterplot",
   x: GenericField,
   { measuresByIri }: { measuresByIri: MeasuresByIri }
 ): NumericalXVariables => {
@@ -243,11 +252,26 @@ export const useNumericalXVariables = (
 
   const getX = useOptionalNumericVariable(x.componentIri);
   const xAxisLabel = getLabelWithUnit(xMeasure);
+  const getMinX = useCallback(
+    (data: Observation[], _getX: NumericalValueGetter) => {
+      switch (chartType) {
+        case "scatterplot":
+          return shouldUseDynamicMinScaleValue(xMeasure.scaleType)
+            ? min(data, _getX) ?? 0
+            : Math.min(0, min(data, _getX) ?? 0);
+        default:
+          const _exhaustiveCheck: never = chartType;
+          return _exhaustiveCheck;
+      }
+    },
+    [chartType, xMeasure.scaleType]
+  );
 
   return {
     xMeasure,
     getX,
     xAxisLabel,
+    getMinX,
   };
 };
 
@@ -255,9 +279,14 @@ export type NumericalYVariables = {
   yMeasure: NumericalMeasure;
   getY: NumericalValueGetter;
   yAxisLabel: string;
+  /** Depending on yMeasure's scale type, it can either be 0 or dynamically
+   * based on available data. */
+  getMinY: (data: Observation[], getY: NumericalValueGetter) => number;
 };
 
 export const useNumericalYVariables = (
+  // Combo charts have their own logic for y scales.
+  chartType: "area" | "column" | "line" | "pie" | "scatterplot",
   y: GenericField,
   { measuresByIri }: { measuresByIri: MeasuresByIri }
 ): NumericalYVariables => {
@@ -272,11 +301,31 @@ export const useNumericalYVariables = (
 
   const getY = useOptionalNumericVariable(y.componentIri);
   const yAxisLabel = getLabelWithUnit(yMeasure);
+  const getMinY = useCallback(
+    (data: Observation[], _getY: NumericalValueGetter) => {
+      switch (chartType) {
+        case "area":
+        case "column":
+        case "pie":
+          return Math.min(0, min(data, _getY) ?? 0);
+        case "line":
+        case "scatterplot":
+          return shouldUseDynamicMinScaleValue(yMeasure.scaleType)
+            ? min(data, _getY) ?? 0
+            : Math.min(0, min(data, _getY) ?? 0);
+        default:
+          const _exhaustiveCheck: never = chartType;
+          return _exhaustiveCheck;
+      }
+    },
+    [chartType, yMeasure.scaleType]
+  );
 
   return {
     yMeasure,
     getY,
     yAxisLabel,
+    getMinY,
   };
 };
 

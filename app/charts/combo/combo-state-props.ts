@@ -9,6 +9,7 @@ export type BaseYGetter = {
   label: string;
   color: string;
   getY: (d: Observation) => number | null;
+  getMinY: (data: Observation[]) => number;
 };
 
 export const sortComboData = (

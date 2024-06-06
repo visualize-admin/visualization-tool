@@ -38,10 +38,10 @@ export const useScatterplotStateVariables = (
   const filters = useChartConfigFilters(chartConfig);
 
   const baseVariables = useBaseVariables(chartConfig);
-  const numericalXVariables = useNumericalXVariables(x, {
+  const numericalXVariables = useNumericalXVariables("scatterplot", x, {
     measuresByIri,
   });
-  const numericalYVariables = useNumericalYVariables(y, {
+  const numericalYVariables = useNumericalYVariables("scatterplot", y, {
     measuresByIri,
   });
   const segmentVariables = useSegmentVariables(segment, {

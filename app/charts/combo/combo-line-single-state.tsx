@@ -25,7 +25,6 @@ import {
 } from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import { getCenteredTooltipPlacement } from "@/charts/shared/interaction/tooltip-box";
-import { shouldStartAtZero } from "@/charts/shared/scales";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { ComboLineSingleConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
@@ -98,9 +97,7 @@ const useComboLineSingleState = (
     scalesData,
     paddingData,
     getY: variables.y.lines.map((d) => d.getY),
-    startAtZero: variables.y.lines.some((d) =>
-      shouldStartAtZero(d.dimension.scaleType)
-    ),
+    getMinY: variables.y.lines.map((d) => d.getMinY),
   });
 
   // Dimensions

@@ -35,7 +35,7 @@ export const useAreasStateVariables = (
   const temporalXVariables = useTemporalXVariables(x, {
     dimensionsByIri,
   });
-  const numericalYVariables = useNumericalYVariables(y, {
+  const numericalYVariables = useNumericalYVariables("area", y, {
     measuresByIri,
   });
   const segmentVariables = useSegmentVariables(segment, {
