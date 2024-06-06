@@ -9,7 +9,10 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 # Unreleased
 
+- Features
+  - Added TemporalEntityDimension support for global dashboard filters
 - Fixes
+  - Fixed using a time range brush in column charts when X dimension is a TemporalEntityDimension
   - Whiskers should now display correctly at the initial render
 
 # [4.6.1] - 2024-06-05

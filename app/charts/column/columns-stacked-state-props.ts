@@ -6,6 +6,7 @@ import {
   BandXVariables,
   BaseVariables,
   ChartStateData,
+  InteractiveFiltersVariables,
   NumericalYVariables,
   RenderingVariables,
   SegmentVariables,
@@ -13,12 +14,13 @@ import {
   useBandXVariables,
   useBaseVariables,
   useChartData,
+  useInteractiveFiltersVariables,
   useNumericalYVariables,
   useSegmentVariables,
 } from "@/charts/shared/chart-state";
 import { useRenderingKeyVariable } from "@/charts/shared/rendering-utils";
 import { ColumnConfig, useChartConfigFilters } from "@/configurator";
-import { Observation } from "@/domain/data";
+import { Observation, isTemporalEntityDimension } from "@/domain/data";
 import { sortByIndex } from "@/utils/array";
 
 import { ChartProps } from "../shared/ChartProps";
@@ -28,7 +30,8 @@ export type ColumnsStackedStateVariables = BaseVariables &
   BandXVariables &
   NumericalYVariables &
   SegmentVariables &
-  RenderingVariables;
+  RenderingVariables &
+  InteractiveFiltersVariables;
 
 export const useColumnsStackedStateVariables = (
   props: ChartProps<ColumnConfig>
@@ -42,6 +45,7 @@ export const useColumnsStackedStateVariables = (
   } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
   const { x, y, segment, animation } = fields;
+  const xDimension = dimensionsByIri[x.componentIri];
   const filters = useChartConfigFilters(chartConfig);
 
   const baseVariables = useBaseVariables(chartConfig);
@@ -56,31 +60,38 @@ export const useColumnsStackedStateVariables = (
     dimensionsByIri,
     observations,
   });
+  const interactiveFiltersVariables = useInteractiveFiltersVariables(
+    interactiveFiltersConfig,
+    { dimensionsByIri }
+  );
 
-  const { getX } = bandXVariables;
+  const { getX, getXAsDate } = bandXVariables;
   const sortData: ColumnsStackedStateVariables["sortData"] = useCallback(
     (data, { plottableDataWide }) => {
       const { sortingOrder, sortingType } = x.sorting ?? {};
+      const xGetter = isTemporalEntityDimension(xDimension)
+        ? (d: Observation) => getXAsDate(d).getTime().toString()
+        : getX;
       const xOrder = plottableDataWide
         .sort((a, b) => ascending(a.total ?? undefined, b.total ?? undefined))
-        .map(getX);
+        .map(xGetter);
 
       if (sortingOrder === "desc" && sortingType === "byDimensionLabel") {
-        return [...data].sort((a, b) => descending(getX(a), getX(b)));
+        return [...data].sort((a, b) => descending(xGetter(a), xGetter(b)));
       } else if (sortingOrder === "asc" && sortingType === "byDimensionLabel") {
-        return [...data].sort((a, b) => ascending(getX(a), getX(b)));
+        return [...data].sort((a, b) => ascending(xGetter(a), xGetter(b)));
       } else if (sortingType === "byMeasure") {
         return sortByIndex({
           data,
           order: xOrder,
-          getCategory: getX,
+          getCategory: xGetter,
           sortingOrder,
         });
       } else {
-        return [...data].sort((a, b) => ascending(getX(a), getX(b)));
+        return [...data].sort((a, b) => ascending(xGetter(a), xGetter(b)));
       }
     },
-    [getX, x.sorting]
+    [getX, getXAsDate, x.sorting, xDimension]
   );
 
   const getRenderingKey = useRenderingKeyVariable(
@@ -96,6 +107,7 @@ export const useColumnsStackedStateVariables = (
     ...bandXVariables,
     ...numericalYVariables,
     ...segmentVariables,
+    ...interactiveFiltersVariables,
     getRenderingKey,
   };
 };
@@ -118,6 +130,7 @@ export const useColumnsStackedStateData = (
     getY,
     getSegment,
     getSegmentAbbreviationOrLabel,
+    getTimeRangeDate,
   } = variables;
   const plottableData = usePlottableData(observations, {
     getY,
@@ -142,6 +155,7 @@ export const useColumnsStackedStateData = (
     chartConfig,
     getXAsDate,
     getSegmentAbbreviationOrLabel,
+    getTimeRangeDate,
   });
 
   return {

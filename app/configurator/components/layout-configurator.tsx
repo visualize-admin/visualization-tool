@@ -41,8 +41,9 @@ import {
 import {
   Dimension,
   TemporalDimension,
+  TemporalEntityDimension,
+  canDimensionBeTimeFiltered,
   isJoinByComponent,
-  isTemporalDimension,
 } from "@/domain/data";
 import { useFlag } from "@/flags";
 import { useTimeFormatLocale, useTimeFormatUnit } from "@/formatters";
@@ -162,8 +163,14 @@ const LayoutSharedFiltersConfigurator = () => {
         ? dimensionsByIri[componentIri]
         : undefined;
 
-      if (!componentIri || !dimension || !isTemporalDimension(dimension))
+      if (
+        !componentIri ||
+        !dimension ||
+        !canDimensionBeTimeFiltered(dimension)
+      ) {
         return;
+      }
+
       if (checked) {
         const options = getTimeFilterOptions({
           dimension: dimension,
@@ -222,7 +229,7 @@ const LayoutSharedFiltersConfigurator = () => {
                 const dimension = dimensionsByIri[filter.componentIri];
                 const sharedFilter = sharedFiltersByIri[filter.componentIri];
 
-                if (!dimension || !isTemporalDimension(dimension)) {
+                if (!dimension || !canDimensionBeTimeFiltered(dimension)) {
                   return null;
                 }
                 return (
@@ -290,8 +297,9 @@ const SharedFilterOptions = ({
   if (sharedFilter.type !== "timeRange") {
     return null;
   }
+
   if (
-    !isTemporalDimension(dimension) ||
+    !canDimensionBeTimeFiltered(dimension) ||
     !canRenderDatePickerField(dimension.timeUnit)
   ) {
     return null;
@@ -310,7 +318,7 @@ const SharedFilterOptionsTimeRange = ({
   dimension,
 }: {
   sharedFilter: SharedFilter;
-  dimension: TemporalDimension;
+  dimension: TemporalDimension | TemporalEntityDimension;
 }) => {
   const { timeUnit, timeFormat } = dimension;
   const formatLocale = useTimeFormatLocale();
@@ -325,7 +333,7 @@ const SharedFilterOptionsTimeRange = ({
     });
   }, [dimension, parseDate]);
 
-  const handleChangeFromDate: DatePickerFieldProps["onChange"] = (ev) =>
+  const handleChangeFromDate: DatePickerFieldProps["onChange"] = (ev) => {
     dispatch({
       type: "DASHBOARD_FILTER_UPDATE",
       value: {
@@ -336,6 +344,7 @@ const SharedFilterOptionsTimeRange = ({
         },
       },
     });
+  };
 
   const handleChangeFromGeneric: DataFilterGenericDimensionProps["onChange"] = (
     ev

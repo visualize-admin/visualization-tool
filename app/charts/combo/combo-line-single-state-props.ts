@@ -5,11 +5,13 @@ import { BaseYGetter, sortComboData } from "@/charts/combo/combo-state-props";
 import {
   BaseVariables,
   ChartStateData,
+  InteractiveFiltersVariables,
   SortingVariables,
   TemporalXVariables,
   shouldUseDynamicMinScaleValue,
   useBaseVariables,
   useChartData,
+  useInteractiveFiltersVariables,
   useTemporalXVariables,
 } from "@/charts/shared/chart-state";
 import { ComboLineSingleConfig } from "@/configurator";
@@ -26,7 +28,8 @@ type NumericalYComboLineSingleVariables = {
 export type ComboLineSingleStateVariables = BaseVariables &
   SortingVariables &
   TemporalXVariables &
-  NumericalYComboLineSingleVariables;
+  NumericalYComboLineSingleVariables &
+  InteractiveFiltersVariables;
 
 export const useComboLineSingleStateVariables = (
   props: ChartProps<ComboLineSingleConfig>
@@ -39,6 +42,10 @@ export const useComboLineSingleStateVariables = (
   const temporalXVariables = useTemporalXVariables(x, {
     dimensionsByIri,
   });
+  const interactiveFiltersVariables = useInteractiveFiltersVariables(
+    chartConfig.interactiveFiltersConfig,
+    { dimensionsByIri }
+  );
 
   const numericalYVariables: NumericalYComboLineSingleVariables = {
     y: {
@@ -74,6 +81,7 @@ export const useComboLineSingleStateVariables = (
     sortData,
     ...temporalXVariables,
     ...numericalYVariables,
+    ...interactiveFiltersVariables,
   };
 };
 
@@ -82,7 +90,7 @@ export const useComboLineSingleStateData = (
   variables: ComboLineSingleStateVariables
 ): ChartStateData => {
   const { chartConfig, observations } = chartProps;
-  const { sortData, getX, y } = variables;
+  const { sortData, getX, y, getTimeRangeDate } = variables;
   const plottableData = usePlottableData(observations, {
     getX,
     getY: (d) => {
@@ -101,6 +109,7 @@ export const useComboLineSingleStateData = (
   const data = useChartData(sortedPlottableData, {
     chartConfig,
     getXAsDate: getX,
+    getTimeRangeDate,
   });
 
   return {

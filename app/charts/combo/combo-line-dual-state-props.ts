@@ -9,11 +9,13 @@ import {
 import {
   BaseVariables,
   ChartStateData,
+  InteractiveFiltersVariables,
   SortingVariables,
   TemporalXVariables,
   shouldUseDynamicMinScaleValue,
   useBaseVariables,
   useChartData,
+  useInteractiveFiltersVariables,
   useTemporalXVariables,
 } from "@/charts/shared/chart-state";
 import { ComboLineDualConfig } from "@/configurator";
@@ -30,7 +32,8 @@ type NumericalYComboLineDualVariables = {
 export type ComboLineDualStateVariables = BaseVariables &
   SortingVariables &
   TemporalXVariables &
-  NumericalYComboLineDualVariables;
+  NumericalYComboLineDualVariables &
+  InteractiveFiltersVariables;
 
 export const useComboLineDualStateVariables = (
   props: ChartProps<ComboLineDualConfig>
@@ -43,6 +46,10 @@ export const useComboLineDualStateVariables = (
   const temporalXVariables = useTemporalXVariables(x, {
     dimensionsByIri,
   });
+  const interactiveFiltersVariables = useInteractiveFiltersVariables(
+    chartConfig.interactiveFiltersConfig,
+    { dimensionsByIri }
+  );
 
   const leftIri = chartConfig.fields.y.leftAxisComponentIri;
   const rightIri = chartConfig.fields.y.rightAxisComponentIri;
@@ -102,6 +109,7 @@ export const useComboLineDualStateVariables = (
     sortData,
     ...temporalXVariables,
     ...numericalYVariables,
+    ...interactiveFiltersVariables,
   };
 };
 
@@ -110,7 +118,7 @@ export const useComboLineDualStateData = (
   variables: ComboLineDualStateVariables
 ): ChartStateData => {
   const { chartConfig, observations } = chartProps;
-  const { sortData, getX, y } = variables;
+  const { sortData, getX, y, getTimeRangeDate } = variables;
   const plottableData = usePlottableData(observations, {
     getX,
     getY: (d) => {
@@ -129,6 +137,7 @@ export const useComboLineDualStateData = (
   const data = useChartData(sortedPlottableData, {
     chartConfig,
     getXAsDate: getX,
+    getTimeRangeDate,
   });
 
   return {

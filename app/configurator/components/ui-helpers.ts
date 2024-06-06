@@ -4,6 +4,7 @@ import { scaleOrdinal } from "d3-scale";
 import { CountableTimeInterval } from "d3-time";
 import { timeFormat, TimeLocaleObject, timeParse } from "d3-time-format";
 import { useMemo } from "react";
+import { match } from "ts-pattern";
 
 import type { BaseChartProps } from "@/charts/shared/ChartProps";
 import { TableColumn, TableFields } from "@/config-types";
@@ -13,8 +14,11 @@ import {
   Dimension,
   DimensionValue,
   isJoinByComponent,
+  isTemporalDimension,
   Measure,
   Observation,
+  TemporalDimension,
+  TemporalEntityDimension,
 } from "@/domain/data";
 import { TimeUnit } from "@/graphql/query-hooks";
 import { IconName } from "@/icons";
@@ -360,7 +364,7 @@ export const extractDataPickerOptionsFromDimension = ({
   dimension,
   parseDate,
 }: {
-  dimension: Dimension;
+  dimension: TemporalDimension | TemporalEntityDimension;
   parseDate: (dateStr: string) => Date | null;
 }) => {
   const { isKeyDimension, label, values } = dimension;
@@ -368,16 +372,36 @@ export const extractDataPickerOptionsFromDimension = ({
   const noneLabel = "None";
 
   if (values.length) {
-    const options = values.map((d) => {
-      return {
-        label: `${d.value}`,
-        value: `${d.value}`,
-      };
-    });
+    const [minValue, maxValue] = isTemporalDimension(dimension)
+      ? [values[0].value as string, values[values.length - 1].value as string]
+      : [
+          values[0].position as string,
+          values[values.length - 1].position as string,
+        ];
+    const dimensionType = dimension.__typename;
+    const options = match(dimensionType)
+      .with("TemporalDimension", () => {
+        return values.map((d) => {
+          const stringifiedValue = `${d.value}`;
+          return {
+            label: stringifiedValue,
+            value: stringifiedValue,
+          };
+        });
+      })
+      .with("TemporalEntityDimension", () => {
+        return values.map((d) => {
+          return {
+            label: `${d.label}`,
+            value: `${d.position}`,
+          };
+        });
+      })
+      .exhaustive();
 
     return {
-      minDate: parseDate(values[0].value as string) as Date,
-      maxDate: parseDate(values[values.length - 1].value as string) as Date,
+      minDate: parseDate(minValue) as Date,
+      maxDate: parseDate(maxValue) as Date,
       options: isKeyDimension
         ? options
         : [
