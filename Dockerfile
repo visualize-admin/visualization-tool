@@ -41,15 +41,18 @@ COPY app/package.json ./app/
 RUN yarn install --frozen-lockfile
 
 ENV NODE_ENV production
-ENV NODE_OPTIONS=--max_old_space_size=2048
+
+# Build-time vars, will be inlined into the app
 ENV NEXT_PUBLIC_COMMIT=$COMMIT
 ENV NEXT_PUBLIC_BASE_VECTOR_TILE_URL=$VECTOR_TILE_URL
 ENV NEXT_PUBLIC_MAPTILER_STYLE_KEY=$MAPTILER_STYLE_KEY
+
 ENV ADFS_ID=$ADFS_ID
 ENV ADFS_SECRET=$ADFS_SECRET
 ENV ADFS_ISSUER=$ADFS_ISSUER
 ENV NEXTAUTH_SECRET=$NEXTAUTH_SECRET
 ENV NEXTAUTH_URL=$NEXTAUTH_URL
+
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV STORYBOOK_DISABLE_TELEMETRY=1
 # ENV SENTRY_DSN=$SENTRY_DSN
@@ -72,7 +75,11 @@ RUN yarn install --frozen-lockfile --production && yarn cache clean
 FROM base AS runner
 WORKDIR /usr/src/app
 
-# Next app builds standalone output
+# Leaving this here for future reference
+# https://nodejs.org/docs/latest-v18.x/api/cli.html#--max-old-space-sizesize-in-megabytes
+#ENV NODE_OPTIONS=--max_old_space_size=2048
+
+# Copy Next app standalone output
 # https://nextjs.org/docs/pages/api-reference/next-config-js/output
 COPY --from=deps --chown=node:node /usr/src/app/app/.next/standalone ./
 COPY --from=deps --chown=node:node /usr/src/app/app/.next/static ./app/.next/static
@@ -91,5 +98,5 @@ USER node
 
 EXPOSE 3000
 
-# Instead of just running npm start, handle signals (SIGINT/SIGTERM) properly
+# Instead of running npm start; handle signals (SIGINT/SIGTERM) properly
 CMD ["node", "app/server.cjs"]
