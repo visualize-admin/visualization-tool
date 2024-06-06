@@ -42,9 +42,8 @@ import {
   Dimension,
   TemporalDimension,
   TemporalEntityDimension,
+  canDimensionBeTimeFiltered,
   isJoinByComponent,
-  isTemporalDimension,
-  isTemporalEntityDimension,
 } from "@/domain/data";
 import { useFlag } from "@/flags";
 import { useTimeFormatLocale, useTimeFormatUnit } from "@/formatters";
@@ -167,9 +166,7 @@ const LayoutSharedFiltersConfigurator = () => {
       if (
         !componentIri ||
         !dimension ||
-        !(
-          isTemporalDimension(dimension) || isTemporalEntityDimension(dimension)
-        )
+        !canDimensionBeTimeFiltered(dimension)
       ) {
         return;
       }
@@ -232,13 +229,7 @@ const LayoutSharedFiltersConfigurator = () => {
                 const dimension = dimensionsByIri[filter.componentIri];
                 const sharedFilter = sharedFiltersByIri[filter.componentIri];
 
-                if (
-                  !dimension ||
-                  !(
-                    isTemporalDimension(dimension) ||
-                    isTemporalEntityDimension(dimension)
-                  )
-                ) {
+                if (!dimension || !canDimensionBeTimeFiltered(dimension)) {
                   return null;
                 }
                 return (
@@ -308,7 +299,7 @@ const SharedFilterOptions = ({
   }
 
   if (
-    !(isTemporalDimension(dimension) || isTemporalEntityDimension(dimension)) ||
+    !canDimensionBeTimeFiltered(dimension) ||
     !canRenderDatePickerField(dimension.timeUnit)
   ) {
     return null;

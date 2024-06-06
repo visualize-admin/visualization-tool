@@ -580,6 +580,12 @@ export const isTemporalEntityDimension = (
   return dimension?.__typename === "TemporalEntityDimension";
 };
 
+export const canDimensionBeTimeFiltered = (
+  dimension?: Component | null
+): dimension is TemporalDimension | TemporalEntityDimension => {
+  return isTemporalDimension(dimension) || isTemporalEntityDimension(dimension);
+};
+
 export const isTemporalOrdinalDimension = (
   dimension?: Component | null
 ): dimension is TemporalOrdinalDimension => {
