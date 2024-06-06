@@ -1,5 +1,7 @@
 import produce, { createDraft, current, Draft } from "immer";
+import { WritableDraft } from "immer/dist/internal";
 import get from "lodash/get";
+import isEqual from "lodash/isEqual";
 import setWith from "lodash/setWith";
 import sortBy from "lodash/sortBy";
 import uniqBy from "lodash/uniqBy";
@@ -18,6 +20,7 @@ import {
   getChartFieldChangeSideEffect,
   getChartFieldOptionChangeSideEffect,
 } from "@/charts/chart-config-ui-options";
+import { COLS, MIN_H } from "@/components/react-grid";
 import {
   ChartConfig,
   ColorMapping,
@@ -53,6 +56,7 @@ import {
   addDatasetInConfig,
   getPreviousState,
   getStateWithCurrentDataSource,
+  hasChartConfigs,
   isConfiguring,
   isLayouting,
 } from "./index";
@@ -890,6 +894,8 @@ export const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
           draft.chartConfigs.push(newConfig);
           draft.activeChartKey = action.value.chartConfig.key;
         }
+
+        ensureDashboardLayoutAreCorrect(draft);
       }
 
       return draft;
@@ -984,6 +990,8 @@ export const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         );
         console.log(current(draft));
       }
+
+      ensureDashboardLayoutAreCorrect(draft);
 
       return draft;
 
@@ -1093,13 +1101,68 @@ export const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 };
 
 /** Turn this on for the reducer to log state, action and result */
-const reducerLogging = false;
+const reducerLogging: false = false;
 const withLogging = <TState, TAction extends { type: unknown }>(
   reducer: Reducer<TState, TAction>
 ) => {
   return (state: Draft<TState>, action: TAction) => {
     const res = reducer(state, action);
+    console.log(`Action: ${action.type}`, action, res);
     return res;
   };
 };
 export const reducer = reducerLogging ? withLogging(reducer_) : reducer_;
+
+export function ensureDashboardLayoutAreCorrect(
+  draft: WritableDraft<ConfiguratorState>
+) {
+  if (
+    hasChartConfigs(draft) &&
+    draft.layout.type === "dashboard" &&
+    draft.layout.layout === "canvas"
+  ) {
+    const chartConfigKeys = draft.chartConfigs.map((c) => c.key).sort();
+
+    const canvasLayouts = draft.layout.layouts["lg"];
+    const layoutConfigKeys = canvasLayouts.map((c) => c.i).sort();
+
+    if (!isEqual(chartConfigKeys, layoutConfigKeys)) {
+      // remove charts that are no longer in the chartConfigs
+      draft.layout.layouts["lg"] = canvasLayouts.filter((c) =>
+        chartConfigKeys.includes(c.i)
+      );
+
+      // add new charts
+      const newConfigs = draft.chartConfigs.filter(
+        (x) => !layoutConfigKeys.includes(x.key)
+      );
+
+      let curX =
+        (Math.max(...canvasLayouts.map((c) => c.x + c.w)) ?? 0) % COLS.lg;
+      let curY = Math.max(...canvasLayouts.map((c) => c.y + c.h)) ?? 0;
+
+      for (const chartConfig of newConfigs) {
+        let chartX = curX;
+        let chartY = curY;
+        let chartW = 2;
+        let chartH = MIN_H;
+        canvasLayouts.push({
+          i: chartConfig.key,
+          x: chartX,
+          y: chartY,
+          w: chartW,
+          h: chartH,
+          // Is initialized later
+          resizeHandles: [],
+        });
+        curX += chartW;
+        if (curX > COLS.lg) {
+          curX = 0;
+          curY += chartH;
+        }
+      }
+    }
+
+    draft.layout.layouts["lg"] = canvasLayouts;
+  }
+}

@@ -53,6 +53,7 @@ import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { useClient } from "urql";
 
 import { DatasetResults, PartialSearchCube } from "@/browser/dataset-browse";
+import { FirstTenRowsCaption } from "@/browser/dataset-preview";
 import { getPossibleChartTypes } from "@/charts";
 import { Error as ErrorHint, Loading } from "@/components/hint";
 import Tag from "@/components/tag";
@@ -666,60 +667,72 @@ export const PreviewDataTable = ({
             {observations.data?.dataCubesObservations ? (
               <Box
                 sx={{
-                  width: "100%",
-                  overflowX: "scroll",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "flex-end",
+                  gap: 2,
                 }}
               >
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      {allColumns.map((column) =>
-                        !!selectedColumnsByIri[columnId(column)] ? (
-                          <TableCell
-                            key={column.iri}
-                            sx={{ minWidth: 200, maxWidth: 300 }}
-                          >
-                            {column.cubeIri === otherCube.iri && (
-                              <NewAnnotation />
-                            )}
-                            {isJoinByComponent(column) ? (
-                              <>
-                                <Tooltip
-                                  arrow
-                                  title={
-                                    <>
-                                      {column.originalIris
-                                        .map((o) => o.description)
-                                        .join(", ")}
-                                    </>
-                                  }
-                                  placement="right"
-                                >
-                                  <Tag type="dimension">Joined</Tag>
-                                </Tooltip>
-                              </>
-                            ) : null}
-                            <br />
-                            <Typography variant="h5">{column.label}</Typography>
-                          </TableCell>
-                        ) : null
-                      )}
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {previewObservations.map((observation, index) => (
-                      <TableRow key={index}>
+                <Box
+                  sx={{
+                    width: "100%",
+                    overflowX: "scroll",
+                  }}
+                >
+                  <Table>
+                    <TableHead>
+                      <TableRow>
                         {allColumns.map((column) =>
                           !!selectedColumnsByIri[columnId(column)] ? (
-                            <TableCell key={column.iri}>
-                              {observation[column.iri]}
+                            <TableCell
+                              key={column.iri}
+                              sx={{ minWidth: 200, maxWidth: 300 }}
+                            >
+                              {column.cubeIri === otherCube.iri && (
+                                <NewAnnotation />
+                              )}
+                              {isJoinByComponent(column) ? (
+                                <>
+                                  <Tooltip
+                                    arrow
+                                    title={
+                                      <>
+                                        {column.originalIris
+                                          .map((o) => o.description)
+                                          .join(", ")}
+                                      </>
+                                    }
+                                    placement="right"
+                                  >
+                                    <Tag type="dimension">Joined</Tag>
+                                  </Tooltip>
+                                </>
+                              ) : null}
+                              <br />
+                              <Typography variant="h5">
+                                {column.label}
+                              </Typography>
                             </TableCell>
                           ) : null
                         )}
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                    </TableHead>
+                    <TableBody>
+                      {previewObservations.map((observation, index) => (
+                        <TableRow key={index}>
+                          {allColumns.map((column) =>
+                            !!selectedColumnsByIri[columnId(column)] ? (
+                              <TableCell key={column.iri}>
+                                {observation[column.iri]}
+                              </TableCell>
+                            ) : null
+                          )}
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </Box>
+                <FirstTenRowsCaption />
               </Box>
             ) : null}
           </>

@@ -89,12 +89,14 @@ const useComboLineDualState = (
     scalesData,
     paddingData,
     getY: variables.y.left.getY,
+    getMinY: variables.y.left.getMinY,
   });
   const { yScale: yScaleRight, paddingYScale: paddingRightYScale } = useYScales(
     {
       scalesData,
       paddingData,
       getY: variables.y.right.getY,
+      getMinY: variables.y.right.getMinY,
     }
   );
 

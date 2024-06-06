@@ -1,7 +1,7 @@
 import { Box, BoxProps, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
-import React, { HTMLProps, forwardRef } from "react";
+import React, { forwardRef, HTMLProps } from "react";
 
 import ChartPanelLayoutCanvas, {
   chartPanelLayoutGridClasses,
@@ -76,6 +76,7 @@ type ChartPanelLayoutProps = React.PropsWithChildren<{
 export type ChartPanelLayoutTypeProps = {
   chartConfigs: ChartConfig[];
   renderChart: (chartConfig: ChartConfig) => JSX.Element;
+  className?: string;
 };
 
 const Wrappers: Record<

@@ -1,3 +1,4 @@
+import { min } from "d3-array";
 import { useCallback, useMemo } from "react";
 
 import { BaseYGetter, sortComboData } from "@/charts/combo/combo-state-props";
@@ -6,6 +7,7 @@ import {
   ChartStateData,
   SortingVariables,
   TemporalXVariables,
+  shouldUseDynamicMinScaleValue,
   useBaseVariables,
   useChartData,
   useTemporalXVariables,
@@ -45,8 +47,13 @@ export const useComboLineSingleStateVariables = (
         iri,
         label: measuresByIri[iri].label,
         color: fields.y.colorMapping[iri],
-        getY: (d) => {
-          return d[iri] !== null ? Number(d[iri]) : null;
+        getY: (d) => (d[iri] !== null ? Number(d[iri]) : null),
+        getMinY: (data) => {
+          const minY =
+            min(data, (d) => (d[iri] !== null ? Number(d[iri]) : null)) ?? 0;
+          return shouldUseDynamicMinScaleValue(measuresByIri[iri].scaleType)
+            ? minY
+            : Math.min(0, minY);
         },
       })),
     },

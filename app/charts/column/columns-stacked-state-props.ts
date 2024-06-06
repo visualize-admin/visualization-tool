@@ -49,7 +49,7 @@ export const useColumnsStackedStateVariables = (
     dimensionsByIri,
     observations,
   });
-  const numericalYVariables = useNumericalYVariables(y, {
+  const numericalYVariables = useNumericalYVariables("column", y, {
     measuresByIri,
   });
   const segmentVariables = useSegmentVariables(segment, {

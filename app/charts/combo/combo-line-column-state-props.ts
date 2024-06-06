@@ -1,3 +1,4 @@
+import { min } from "d3-array";
 import { useCallback, useMemo } from "react";
 
 import { BaseYGetter, sortComboData } from "@/charts/combo/combo-state-props";
@@ -11,6 +12,7 @@ import {
   ChartStateData,
   RenderingVariables,
   SortingVariables,
+  shouldUseDynamicMinScaleValue,
   useBandXVariables,
   useBaseVariables,
   useChartData,
@@ -69,8 +71,14 @@ export const useComboLineColumnStateVariables = (
     iri: lineIri,
     label: getLabelWithUnit(measuresByIri[lineIri]),
     color: fields.y.colorMapping[lineIri],
-    getY: (d) => {
-      return d[lineIri] !== null ? Number(d[lineIri]) : null;
+    getY: (d) => (d[lineIri] !== null ? Number(d[lineIri]) : null),
+    getMinY: (data) => {
+      const minY =
+        min(data, (d) => (d[lineIri] !== null ? Number(d[lineIri]) : null)) ??
+        0;
+      return shouldUseDynamicMinScaleValue(measuresByIri[lineIri].scaleType)
+        ? minY
+        : Math.min(0, minY);
     },
   };
   const columnYGetter: YGetter = {
@@ -80,8 +88,13 @@ export const useComboLineColumnStateVariables = (
     iri: columnIri,
     label: getLabelWithUnit(measuresByIri[columnIri]),
     color: fields.y.colorMapping[columnIri],
-    getY: (d) => {
-      return d[columnIri] !== null ? Number(d[columnIri]) : null;
+    getY: (d) => (d[columnIri] !== null ? Number(d[columnIri]) : null),
+    getMinY: (data) => {
+      const minY =
+        min(data, (d) =>
+          d[columnIri] !== null ? Number(d[columnIri]) : null
+        ) ?? 0;
+      return Math.min(0, minY);
     },
   };
 

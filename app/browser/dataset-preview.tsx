@@ -205,15 +205,7 @@ export const DataSetPreview = ({
                 filters={[variables.cubeFilter]}
               />
             </Flex>
-            <Typography
-              className={classes.numberOfRows}
-              variant="body2"
-              sx={{ fontWeight: "light" }}
-            >
-              <Trans id="datatable.showing.first.rows">
-                Showing first 10 rows
-              </Trans>
-            </Typography>
+            <FirstTenRowsCaption />
           </Flex>
         </Paper>
       </Flex>
@@ -230,3 +222,11 @@ export const DataSetPreview = ({
 };
 
 export type DataSetPreviewProps = React.ComponentProps<typeof DataSetPreview>;
+
+export const FirstTenRowsCaption = () => {
+  return (
+    <Typography variant="body2" sx={{ fontWeight: "light" }}>
+      <Trans id="datatable.showing.first.rows">Showing first 10 rows</Trans>
+    </Typography>
+  );
+};

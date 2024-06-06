@@ -6,12 +6,13 @@ import {
   useDraggable,
   useDroppable,
 } from "@dnd-kit/core";
-import { Trans, t } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
 import { Box, IconButton, useEventCallback } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import Head from "next/head";
 import React, {
-  ReactNode,
   forwardRef,
+  ReactNode,
   useCallback,
   useMemo,
   useState,
@@ -45,10 +46,10 @@ import { BANNER_MARGIN_TOP } from "@/components/presence";
 import {
   ChartConfig,
   DataSource,
-  Layout,
   getChartConfig,
   hasChartConfigs,
   isConfiguring,
+  Layout,
   useConfiguratorState,
 } from "@/configurator";
 import { Description, Title } from "@/configurator/components/annotators";
@@ -101,6 +102,14 @@ type DashboardPreviewProps = ChartPreviewProps & {
   editing?: boolean;
 };
 
+const useStyles = makeStyles(() => ({
+  canvasChartPanelLayout: {
+    // Provide some space at the bottom of the canvas layout to make it possible
+    // to resize vertically the last charts
+    marginBottom: "10rem",
+  },
+}));
+
 const DashboardPreview = (props: DashboardPreviewProps) => {
   const { dataSource, layoutType, editing } = props;
   const [state, dispatch] = useConfiguratorState(hasChartConfigs);
@@ -109,6 +118,7 @@ const DashboardPreview = (props: DashboardPreviewProps) => {
   const [isDragging, setIsDragging] = useState(false);
   const [activeChartKey, setActiveChartKey] = useState<string | null>(null);
   const [over, setOver] = useState<Over | null>(null);
+  const classes = useStyles();
   const renderChart = useCallback(
     (chartConfig: ChartConfig) => {
       return layoutType === "canvas" ? (
@@ -138,6 +148,7 @@ const DashboardPreview = (props: DashboardPreviewProps) => {
         chartConfigs={state.chartConfigs}
         renderChart={renderChart}
         layoutType={layoutType}
+        className={classes.canvasChartPanelLayout}
       />
     );
   }

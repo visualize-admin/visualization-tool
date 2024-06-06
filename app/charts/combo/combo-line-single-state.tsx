@@ -97,6 +97,7 @@ const useComboLineSingleState = (
     scalesData,
     paddingData,
     getY: variables.y.lines.map((d) => d.getY),
+    getMinY: variables.y.lines.map((d) => d.getMinY),
   });
 
   // Dimensions

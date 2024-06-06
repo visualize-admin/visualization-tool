@@ -1,4 +1,4 @@
-import { max, min } from "d3-array";
+import { max } from "d3-array";
 import { ScaleLinear, ScaleOrdinal, scaleLinear, scaleOrdinal } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
 import orderBy from "lodash/orderBy";
@@ -52,8 +52,10 @@ const useScatterplotState = (
   const { chartConfig } = chartProps;
   const {
     getX,
+    getMinX,
     xAxisLabel,
     getY,
+    getMinY,
     yAxisLabel,
     segmentDimension,
     segmentsByAbbreviationOrLabel,
@@ -73,17 +75,17 @@ const useScatterplotState = (
     return new Map(values.map((d) => [d.value, d]));
   }, [segmentDimension?.values]);
 
-  const xMinValue = Math.min(min(scalesData, (d) => getX(d)) ?? 0, 0);
+  const xMinValue = getMinX(scalesData, getX);
   const xMaxValue = max(scalesData, (d) => getX(d)) ?? 0;
   const xDomain = [xMinValue, xMaxValue];
   const xScale = scaleLinear().domain(xDomain).nice();
 
-  const yMinValue = Math.min(min(scalesData, (d) => getY(d)) ?? 0, 0);
+  const yMinValue = getMinY(scalesData, getY);
   const yMaxValue = max(scalesData, getY) ?? 0;
   const yDomain = [yMinValue, yMaxValue];
   const yScale = scaleLinear().domain(yDomain).nice();
 
-  const paddingYMinValue = Math.min(min(paddingData, (d) => getY(d)) ?? 0, 0);
+  const paddingYMinValue = getMinY(paddingData, getY);
   const paddingYMaxValue = max(paddingData, getY) ?? 0;
   const paddingYScale = scaleLinear()
     .domain([paddingYMinValue, paddingYMaxValue])

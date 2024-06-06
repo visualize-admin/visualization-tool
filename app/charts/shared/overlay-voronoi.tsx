@@ -76,7 +76,7 @@ export const InteractionVoronoi = memo(function InteractionVoronoi({
       <rect
         fillOpacity={0}
         width={chartWidth}
-        height={chartHeight}
+        height={Math.max(0, chartHeight)}
         onMouseOut={hideTooltip}
         onMouseOver={findLocation}
         onMouseMove={findLocation}
