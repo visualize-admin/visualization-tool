@@ -1,4 +1,4 @@
-import { extent, max, min, rollup, sum } from "d3-array";
+import { extent, max, rollup, sum } from "d3-array";
 import {
   ScaleBand,
   ScaleLinear,
@@ -69,6 +69,7 @@ const useColumnsState = (
     xTimeUnit,
     yMeasure,
     getY,
+    getMinY,
     showYStandardError,
     yErrorMeasure,
     getYError,
@@ -133,11 +134,8 @@ const useColumnsState = (
 
     const xScaleTimeRange = scaleTime().domain(xScaleTimeRangeDomain);
 
-    const minValue = Math.min(
-      min(scalesData, (d) =>
-        getYErrorRange ? getYErrorRange(d)[0] : getY(d)
-      ) ?? 0,
-      0
+    const minValue = getMinY(scalesData, (d) =>
+      getYErrorRange ? getYErrorRange(d)[0] : getY(d)
     );
     const maxValue = Math.max(
       max(scalesData, (d) =>
@@ -147,11 +145,8 @@ const useColumnsState = (
     );
     const yScale = scaleLinear().domain([minValue, maxValue]).nice();
 
-    const paddingMinValue = Math.min(
-      min(paddingData, (d) =>
-        getYErrorRange ? getYErrorRange(d)[0] : getY(d)
-      ) ?? 0,
-      0
+    const paddingMinValue = getMinY(paddingData, (d) =>
+      getYErrorRange ? getYErrorRange(d)[0] : getY(d)
     );
     const paddingMaxValue = Math.max(
       max(paddingData, (d) =>
@@ -185,6 +180,7 @@ const useColumnsState = (
     xDimension,
     chartConfig.cubes,
     sumsByX,
+    getMinY,
   ]);
 
   const { left, bottom } = useChartPadding({

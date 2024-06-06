@@ -106,14 +106,14 @@ const useComboLineColumnState = (
     scalesData,
     paddingData,
     getY: variables.y.left.getY,
-    startAtZero: variables.y.left.chartType === "column",
+    getMinY: variables.y.left.getMinY,
   });
   const { yScale: yScaleRight, paddingYScale: paddingRightYScale } = useYScales(
     {
       scalesData,
       paddingData,
       getY: variables.y.right.getY,
-      startAtZero: variables.y.right.chartType === "column",
+      getMinY: variables.y.right.getMinY,
     }
   );
   const [minLeftValue, maxLeftValue] = yScaleLeft.domain();

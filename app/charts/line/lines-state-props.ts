@@ -36,7 +36,7 @@ export const useLinesStateVariables = (
   const temporalXVariables = useTemporalXVariables(x, {
     dimensionsByIri,
   });
-  const numericalYVariables = useNumericalYVariables(y, {
+  const numericalYVariables = useNumericalYVariables("line", y, {
     measuresByIri,
   });
   const segmentVariables = useSegmentVariables(segment, {

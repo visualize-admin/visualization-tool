@@ -1,3 +1,4 @@
+import { min } from "d3-array";
 import { useCallback, useMemo } from "react";
 
 import { BaseYGetter, sortComboData } from "@/charts/combo/combo-state-props";
@@ -10,6 +11,7 @@ import {
   ChartStateData,
   SortingVariables,
   TemporalXVariables,
+  shouldUseDynamicMinScaleValue,
   useBaseVariables,
   useChartData,
   useTemporalXVariables,
@@ -52,8 +54,15 @@ export const useComboLineDualStateVariables = (
         iri: leftIri,
         label: getLabelWithUnit(measuresByIri[leftIri]),
         color: fields.y.colorMapping[leftIri],
-        getY: (d) => {
-          return d[leftIri] !== null ? Number(d[leftIri]) : null;
+        getY: (d) => (d[leftIri] !== null ? Number(d[leftIri]) : null),
+        getMinY: (data) => {
+          const minY =
+            min(data, (d) =>
+              d[leftIri] !== null ? Number(d[leftIri]) : null
+            ) ?? 0;
+          return shouldUseDynamicMinScaleValue(measuresByIri[leftIri].scaleType)
+            ? minY
+            : Math.min(0, minY);
         },
       },
       right: {
@@ -62,8 +71,17 @@ export const useComboLineDualStateVariables = (
         iri: rightIri,
         label: getLabelWithUnit(measuresByIri[rightIri]),
         color: fields.y.colorMapping[rightIri],
-        getY: (d) => {
-          return d[rightIri] !== null ? Number(d[rightIri]) : null;
+        getY: (d) => (d[rightIri] !== null ? Number(d[rightIri]) : null),
+        getMinY: (data) => {
+          const minY =
+            min(data, (d) =>
+              d[rightIri] !== null ? Number(d[rightIri]) : null
+            ) ?? 0;
+          return shouldUseDynamicMinScaleValue(
+            measuresByIri[rightIri].scaleType
+          )
+            ? minY
+            : Math.min(0, minY);
         },
       },
     },

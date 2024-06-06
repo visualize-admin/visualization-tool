@@ -1,4 +1,4 @@
-import { extent, group, max, min } from "d3-array";
+import { extent, group, max } from "d3-array";
 import {
   ScaleLinear,
   ScaleOrdinal,
@@ -75,6 +75,7 @@ const useLinesState = (
     getXAsString,
     yMeasure,
     getY,
+    getMinY,
     segmentDimension,
     segmentsByAbbreviationOrLabel,
     getSegment,
@@ -132,12 +133,12 @@ const useLinesState = (
   const xScaleTimeRange = scaleTime().domain(xScaleTimeRangeDomain);
 
   // y
-  const minValue = Math.min(min(scalesData, getY) ?? 0, 0);
+  const minValue = getMinY(scalesData, getY);
   const maxValue = max(scalesData, getY) ?? 0;
   const yDomain = [minValue, maxValue];
   const yScale = scaleLinear().domain(yDomain).nice();
 
-  const paddingMinValue = Math.min(min(paddingData, getY) ?? 0, 0);
+  const paddingMinValue = getMinY(paddingData, getY);
   const paddingMaxValue = max(paddingData, getY) ?? 0;
   const paddingYScale = scaleLinear()
     .domain([paddingMinValue, paddingMaxValue])
