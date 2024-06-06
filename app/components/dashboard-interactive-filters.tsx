@@ -18,7 +18,7 @@ import {
   timeUnitToFormatter,
   timeUnitToParser,
 } from "@/configurator/components/ui-helpers";
-import { isTemporalDimension } from "@/domain/data";
+import { isTemporalDimension, isTemporalEntityDimension } from "@/domain/data";
 import { useDataCubesComponentsQuery } from "@/graphql/hooks";
 import { DataCubeComponentFilter, TimeUnit } from "@/graphql/query-hooks";
 import { useLocale } from "@/src";
@@ -117,7 +117,9 @@ const DashboardTimeRangeSlider = ({
 
   const timeUnit = useMemo(() => {
     const dim = data?.data?.dataCubesComponents?.dimensions?.[0];
-    return isTemporalDimension(dim) ? dim.timeUnit : undefined;
+    return isTemporalDimension(dim) || isTemporalEntityDimension(dim)
+      ? dim.timeUnit
+      : undefined;
   }, [data?.data?.dataCubesComponents?.dimensions]);
 
   const presets = filter.presets;
@@ -229,10 +231,12 @@ export const DashboardInteractiveFilters = () => {
     </>
   );
 };
+
 function stepFromTimeUnit(timeUnit: TimeUnit | undefined) {
   if (!timeUnit) {
     return 0;
   }
+
   switch (timeUnit) {
     case "Year":
       return 1 * 60 * 60 * 24 * 365;

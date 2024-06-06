@@ -13,6 +13,7 @@ import {
   Dimension,
   DimensionValue,
   isJoinByComponent,
+  isTemporalDimension,
   Measure,
   Observation,
 } from "@/domain/data";
@@ -368,16 +369,29 @@ export const extractDataPickerOptionsFromDimension = ({
   const noneLabel = "None";
 
   if (values.length) {
-    const options = values.map((d) => {
-      return {
-        label: `${d.value}`,
-        value: `${d.value}`,
-      };
-    });
+    const [minValue, maxValue] = isTemporalDimension(dimension)
+      ? [values[0].value as string, values[values.length - 1].value as string]
+      : [
+          values[0].position as string,
+          values[values.length - 1].position as string,
+        ];
+    const options = isTemporalDimension(dimension)
+      ? values.map((d) => {
+          return {
+            label: `${d.value}`,
+            value: `${d.value}`,
+          };
+        })
+      : values.map((d) => {
+          return {
+            label: `${d.label}`,
+            value: `${d.position}`,
+          };
+        });
 
     return {
-      minDate: parseDate(values[0].value as string) as Date,
-      maxDate: parseDate(values[values.length - 1].value as string) as Date,
+      minDate: parseDate(minValue) as Date,
+      maxDate: parseDate(maxValue) as Date,
       options: isKeyDimension
         ? options
         : [

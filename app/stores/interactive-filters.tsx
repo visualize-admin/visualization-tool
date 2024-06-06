@@ -167,7 +167,9 @@ export const getPotentialSharedFilters = (
   const temporalDimensions = chartConfigs.flatMap((config) => {
     const chartSpec = getChartSpec(config);
     const temporalEncodings = chartSpec.encodings.filter((x) =>
-      x.componentTypes.some((x) => x === "TemporalDimension")
+      x.componentTypes.some(
+        (x) => x === "TemporalDimension" || x === "TemporalEntityDimension"
+      )
     );
     const chartTemporalDimensions = temporalEncodings
       .map((encoding) => {
