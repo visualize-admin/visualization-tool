@@ -114,7 +114,7 @@ test("hierarchies: it should be possible to enable abbreviations for colors", as
 test("localized abbreviations", async ({ actions, selectors }) => {
   await actions.chart.createFrom(
     "https://environment.ld.admin.ch/foen/gefahren-waldbrand-praeventionsmassnahmen-kantone/1",
-    "Int"
+    "Prod"
   );
 
   await selectors.edition.drawerLoaded();
