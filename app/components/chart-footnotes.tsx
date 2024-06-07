@@ -19,6 +19,7 @@ import {
 } from "@/graphql/hooks";
 import { Icon, getChartIcon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
+import { assert } from "@/utils/assert";
 import { useEmbedOptions } from "@/utils/embed";
 import { makeOpenDataLink } from "@/utils/opendata";
 
@@ -121,9 +122,10 @@ export const ChartFootnotes = ({
             const sparqlEditorUrl = sparqlEditorUrls?.find(
               (d) => d.cubeIri === dataCubeMetadata.iri
             )?.url;
-            const cubeQueryFilters = queryFilters.filter(
+            const cubeQueryFilters = queryFilters.find(
               (f) => f.iri === dataCubeMetadata.iri
             );
+            assert(cubeQueryFilters, "Cube query filters not found");
 
             return (
               <Box key={dataCubeMetadata.iri} sx={{ mt: 2 }}>

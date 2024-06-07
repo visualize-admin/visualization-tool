@@ -202,7 +202,7 @@ export const DataSetPreview = ({
               <DataDownloadMenu
                 dataSource={dataSource}
                 title={dataCubeMetadata.title}
-                filters={[variables.cubeFilter]}
+                filters={variables.cubeFilter}
               />
             </Flex>
             <FirstTenRowsCaption />
