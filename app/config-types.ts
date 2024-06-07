@@ -1260,8 +1260,10 @@ export type ConfiguratorStateConfiguringChart = t.TypeOf<
   typeof ConfiguratorStateConfiguringChart
 >;
 
+export const CONFIGURATOR_STATE_LAYOUTING = "LAYOUTING";
+
 const ConfiguratorStateLayouting = t.intersection([
-  t.type({ state: t.literal("LAYOUTING") }),
+  t.type({ state: t.literal(CONFIGURATOR_STATE_LAYOUTING) }),
   Config,
 ]);
 export type ConfiguratorStateLayouting = t.TypeOf<

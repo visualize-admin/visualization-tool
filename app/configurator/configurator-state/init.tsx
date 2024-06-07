@@ -159,18 +159,19 @@ export const initChartStateFromChartCopy = async (
 
 export const initChartStateFromChartEdit = async (
   client: Client,
-  fromChartId: string
+  fromChartId: string,
+  state?: string
 ): Promise<ConfiguratorStateConfiguringChart | undefined> => {
   const config = await fetchChartConfig(fromChartId);
 
   if (config?.data) {
-    const state = migrateConfiguratorState({
+    const configState = migrateConfiguratorState({
       ...config.data,
-      state: "CONFIGURING_CHART",
+      state: state ?? "CONFIGURING_CHART",
     }) as ConfiguratorStateConfiguringChart;
-    return await upgradeConfiguratorState(state, {
+    return await upgradeConfiguratorState(configState, {
       client,
-      dataSource: state.dataSource,
+      dataSource: configState.dataSource,
     });
   }
 };
