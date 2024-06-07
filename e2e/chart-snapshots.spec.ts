@@ -26,12 +26,9 @@ for (let [viewportName, viewportSize] of Object.entries(viewports)) {
     test(`Chart Snapshots ${slug} ${env} ${viewportName}`, async ({
       page,
       selectors,
+      replayFromHAR
     }) => {
-      if (process.env.E2E_HAR !== "false") {
-        await page.routeFromHAR(`./e2e/har/chart-snapshots/${slug}.zip`, {
-          notFound: "fallback",
-        });
-      }
+      replayFromHAR()
       await page.setViewportSize(viewportSize);
       await page.goto(
         `/en/__test/${env}/${slug}?dataSource=Int&${harReplayGraphqlEndpointQueryParam}`
