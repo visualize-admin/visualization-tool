@@ -1,7 +1,7 @@
 import { Box, BoxProps, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
-import React, { forwardRef, HTMLProps } from "react";
+import React, { HTMLProps, forwardRef } from "react";
 
 import ChartPanelLayoutCanvas, {
   chartPanelLayoutGridClasses,
@@ -52,7 +52,7 @@ export const ChartWrapper = forwardRef<HTMLDivElement, ChartWrapperProps>(
       <Box
         ref={ref}
         {...rest}
-        className={clsx(classes.chartWrapper, props.className)}
+        className={clsx(classes.chartWrapper, props.className, "chart-wrapper")}
       >
         {(editing || layoutType === "tab") && <ChartSelectionTabs />}
         <Box

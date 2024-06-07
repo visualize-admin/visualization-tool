@@ -6,13 +6,21 @@ import {
   useDraggable,
   useDroppable,
 } from "@dnd-kit/core";
-import { t, Trans } from "@lingui/macro";
-import { Box, IconButton, useEventCallback } from "@mui/material";
+import { Trans, t } from "@lingui/macro";
+import {
+  Box,
+  IconButton,
+  Theme,
+  ToggleButton,
+  ToggleButtonGroup,
+  useEventCallback,
+} from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import clsx from "clsx";
 import Head from "next/head";
 import React, {
-  forwardRef,
   ReactNode,
+  forwardRef,
   useCallback,
   useMemo,
   useState,
@@ -46,10 +54,10 @@ import { BANNER_MARGIN_TOP } from "@/components/presence";
 import {
   ChartConfig,
   DataSource,
+  Layout,
   getChartConfig,
   hasChartConfigs,
   isConfiguring,
-  Layout,
   useConfiguratorState,
 } from "@/configurator";
 import { Description, Title } from "@/configurator/components/annotators";
@@ -102,11 +110,24 @@ type DashboardPreviewProps = ChartPreviewProps & {
   editing?: boolean;
 };
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles<Theme, { scale: number }>((theme) => ({
   canvasChartPanelLayout: {
     // Provide some space at the bottom of the canvas layout to make it possible
     // to resize vertically the last charts
     marginBottom: "10rem",
+    transform: ({ scale }) => `scale(${scale})`,
+    transformOrigin: "top",
+    transition: "transform 0.3s ease-in-out",
+  },
+
+  scaled: {
+    [`& .chart-wrapper:hover`]: {
+      outline: `4px solid ${theme.palette.primary.main}`,
+      cursor: "pointer",
+    },
+    [`& .chart-wrapper:hover *`]: {
+      pointerEvents: "none",
+    },
   },
 }));
 
@@ -118,7 +139,6 @@ const DashboardPreview = (props: DashboardPreviewProps) => {
   const [isDragging, setIsDragging] = useState(false);
   const [activeChartKey, setActiveChartKey] = useState<string | null>(null);
   const [over, setOver] = useState<Over | null>(null);
-  const classes = useStyles();
   const renderChart = useCallback(
     (chartConfig: ChartConfig) => {
       return layoutType === "canvas" ? (
@@ -142,14 +162,40 @@ const DashboardPreview = (props: DashboardPreviewProps) => {
     [dataSource, editing, layoutType, state.layout.type]
   );
 
+  const [scale, setScale] = useState(1);
+  const classes = useStyles({ scale });
+
   if (layoutType === "canvas") {
     return (
-      <ChartPanelLayout
-        chartConfigs={state.chartConfigs}
-        renderChart={renderChart}
-        layoutType={layoutType}
-        className={classes.canvasChartPanelLayout}
-      />
+      <>
+        <ToggleButtonGroup
+          value={scale}
+          exclusive
+          onChange={(_, value) => setScale(value as number)}
+          color="primary"
+          sx={{
+            position: "absolute",
+            top: "8rem",
+            right: "2rem",
+            zIndex: 1000,
+            textTransform: "none",
+          }}
+        >
+          <ToggleButton value={0.25}>0.25x</ToggleButton>
+          <ToggleButton value={0.5}>0.5x</ToggleButton>
+          <ToggleButton value={1}>1x</ToggleButton>
+        </ToggleButtonGroup>
+
+        <ChartPanelLayout
+          chartConfigs={state.chartConfigs}
+          renderChart={renderChart}
+          layoutType={layoutType}
+          className={clsx(
+            classes.canvasChartPanelLayout,
+            scale !== 1 ? classes.scaled : null
+          )}
+        />
+      </>
     );
   }
 
