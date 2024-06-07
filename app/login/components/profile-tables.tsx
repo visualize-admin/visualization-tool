@@ -24,6 +24,7 @@ import { MenuActionProps } from "@/components/menu-action-item";
 import { RenameDialog } from "@/components/rename-dialog";
 import { RowActions } from "@/components/row-actions";
 import useDisclosure from "@/components/use-disclosure";
+import { CONFIGURATOR_STATE_LAYOUTING } from "@/config-types";
 import { ParsedConfig } from "@/db/config";
 import { sourceToLabel } from "@/domain/datasource";
 import { truthy } from "@/domain/types";
@@ -213,7 +214,7 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
       },
       {
         type: "link",
-        href: `/${locale}/create/new?edit=${config.key}`,
+        href: `/${locale}/create/new?edit=${config.key}${config.data.chartConfigs.length > 1 ? `&state=${CONFIGURATOR_STATE_LAYOUTING}` : ""}`,
         label: t({ id: "login.chart.edit", message: "Edit" }),
         iconName: "edit",
         priority:

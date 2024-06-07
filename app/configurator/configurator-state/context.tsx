@@ -1,6 +1,6 @@
 import { PUBLISHED_STATE } from "@prisma/client";
 import { NextRouter, useRouter } from "next/router";
-import { createContext, Dispatch, useContext, useEffect, useMemo } from "react";
+import { Dispatch, createContext, useContext, useEffect, useMemo } from "react";
 import { useClient } from "urql";
 import { useImmerReducer } from "use-immer";
 
@@ -271,7 +271,8 @@ export const ConfiguratorStateProviderInternal = (
           } else if (query.edit && typeof query.edit === "string") {
             newChartState = await initChartStateFromChartEdit(
               client,
-              query.edit
+              query.edit,
+              typeof query.state === "string" ? query.state : undefined
             );
           } else if (query.cube && typeof query.cube === "string") {
             newChartState = await initChartStateFromCube(
