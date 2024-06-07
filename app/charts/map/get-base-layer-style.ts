@@ -16,7 +16,7 @@ const tokens = {
 
 const greyStyle = replaceStyleTokens(greyStyleBase as MapboxStyle, tokens);
 
-export const emptyStyle = {
+const emptyStyle = {
   version: 8,
   name: "Empty",
   metadata: {

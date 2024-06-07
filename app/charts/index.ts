@@ -89,7 +89,7 @@ import { createChartId } from "@/utils/create-chart-id";
 import { isMultiHierarchyNode } from "@/utils/hierarchy";
 import { unreachableError } from "@/utils/unreachable";
 
-export const chartTypes: ChartType[] = [
+const chartTypes: ChartType[] = [
   "column",
   "line",
   "area",
@@ -112,7 +112,7 @@ export const regularChartTypes: RegularChartType[] = [
   "map",
 ];
 
-export const comboDifferentUnitChartTypes: ComboChartType[] = [
+const comboDifferentUnitChartTypes: ComboChartType[] = [
   "comboLineDual",
   "comboLineColumn",
 ];
@@ -125,11 +125,7 @@ export const comboChartTypes: ComboChartType[] = [
 ];
 
 type ChartOrder = { [k in ChartType]: number };
-export function getChartTypeOrder({
-  cubeCount,
-}: {
-  cubeCount: number;
-}): ChartOrder {
+function getChartTypeOrder({ cubeCount }: { cubeCount: number }): ChartOrder {
   const multiCubeBoost = cubeCount > 1 ? -100 : 0;
   return {
     column: 0,
@@ -284,7 +280,7 @@ export const initializeMapLayerField = ({
   }
 };
 
-export const getInitialAreaLayer = ({
+const getInitialAreaLayer = ({
   component,
   measure,
 }: {
@@ -307,7 +303,7 @@ export const getInitialAreaLayer = ({
   };
 };
 
-export const getInitialSymbolLayer = ({
+const getInitialSymbolLayer = ({
   component,
   measure,
 }: {

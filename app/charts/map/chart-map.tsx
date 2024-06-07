@@ -128,7 +128,7 @@ export type ChartMapProps = ChartProps<MapConfig> & {
   coordinates: GeoCoordinates | undefined;
 };
 
-export const ChartMap = memo((props: ChartMapProps) => {
+const ChartMap = memo((props: ChartMapProps) => {
   const { chartConfig, dimensions, observations } = props;
   const { fields } = chartConfig;
   const filters = useChartConfigFilters(chartConfig);

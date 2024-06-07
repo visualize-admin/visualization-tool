@@ -317,7 +317,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 // Generic component
-export const ControlTabButton = ({
+const ControlTabButton = ({
   disabled,
   checked,
   value,
@@ -348,7 +348,7 @@ export const ControlTabButton = ({
   );
 };
 
-export const ControlTabButtonInner = ({
+const ControlTabButtonInner = ({
   iconName,
   upperLabel,
   mainLabel,

@@ -515,7 +515,7 @@ const NavItem = ({
   );
 };
 
-export const Subthemes = ({
+const Subthemes = ({
   subthemes,
   filters,
   counts,
@@ -556,7 +556,7 @@ type NavSectionTitleTheme = {
   borderColor: string;
 };
 
-export const NavSectionTitle = ({
+const NavSectionTitle = ({
   children,
   theme,
   ...flexProps
@@ -990,7 +990,7 @@ const useResultStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-export const DateFormat = ({ date }: { date: string }) => {
+const DateFormat = ({ date }: { date: string }) => {
   const formatter = useFormatDate();
   const formatted = useMemo(() => {
     return formatter(date);

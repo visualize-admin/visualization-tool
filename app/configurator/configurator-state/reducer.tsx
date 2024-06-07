@@ -556,7 +556,7 @@ export const setRangeFilter = (
     };
   }
 };
-export const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
+const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
   draft,
   action
 ) => {

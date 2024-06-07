@@ -1,21 +1,9 @@
-import {
-  CountableTimeInterval,
-  timeDay,
-  timeHour,
-  timeMinute,
-  timeMonth,
-  timeSecond,
-  timeWeek,
-  timeYear,
-} from "d3-time";
-import { timeFormat, timeParse } from "d3-time-format";
 import { CubeDimension } from "rdf-cube-view-query";
 import { Term } from "rdf-js";
 
 import { truthy } from "@/domain/types";
 import { ScaleType, TimeUnit } from "@/graphql/query-hooks";
-import { DataCubePublicationStatus } from "@/graphql/resolver-types";
-import { ResolvedDataCube, ResolvedDimension } from "@/graphql/shared-types";
+import { ResolvedDimension } from "@/graphql/shared-types";
 import { ExtendedCube } from "@/rdf/extended-cube";
 import { timeFormats, timeUnitFormats, timeUnits } from "@/rdf/mappings";
 import * as ns from "@/rdf/namespace";
@@ -31,60 +19,6 @@ export const isCubePublished = (cube: ExtendedCube): boolean =>
 
 export const parseVersionHistory = (cube: ExtendedCube) => {
   return cube.in(ns.schema.hasPart)?.value;
-};
-
-export const parseIri = (cube: ExtendedCube) => {
-  return cube.term?.value ?? "[NO IRI]";
-};
-
-/**
- * Parses a cube coming from rdf-cube-view-query into a simple javascript object
- *
- * @see https://github.com/zazuko/cube-creator/blob/master/apis/core/bootstrap/shapes/dataset.ts for current list of cube metadata
- */
-export const parseCube = ({
-  cube,
-  locale,
-}: {
-  cube: ExtendedCube;
-  locale: string;
-}): ResolvedDataCube => {
-  const outOpts = { language: getQueryLocales(locale) };
-  const creatorIri = cube.out(ns.dcterms.creator).value;
-  return {
-    cube,
-    locale,
-    data: {
-      iri: parseIri(cube),
-      identifier: cube.out(ns.dcterms.identifier)?.value ?? "[NO IDENTIFIER]",
-      title: cube.out(ns.schema.name, outOpts)?.value ?? "[NO TITLE]",
-      description: cube.out(ns.schema.description, outOpts)?.value ?? "",
-      version: cube.out(ns.schema.version)?.value,
-      publicationStatus: isCubePublished(cube)
-        ? DataCubePublicationStatus.Published
-        : DataCubePublicationStatus.Draft,
-      datePublished: cube.out(ns.schema.datePublished)?.value,
-      dateModified: cube.out(ns.schema.dateModified)?.value,
-      themes: cube
-        .out(ns.dcat.theme)
-        ?.values.filter(truthy)
-        .map((t) => ({ iri: t })),
-      creator: creatorIri
-        ? {
-            iri: creatorIri,
-          }
-        : undefined,
-      versionHistory: parseVersionHistory(cube),
-      contactPoint: {
-        name: cube.out(ns.dcat.contactPoint)?.out(ns.vcard.fn)?.value,
-        email: cube.out(ns.dcat.contactPoint)?.out(ns.vcard.hasEmail)?.value,
-      },
-      publisher: cube.out(ns.dcterms.publisher)?.value,
-      landingPage: cube.out(ns.dcat.landingPage)?.value,
-      expires: cube.out(ns.schema.expires)?.value,
-      workExamples: cube.out(ns.schema.workExample)?.values,
-    },
-  };
 };
 
 export const getScaleType = (
@@ -286,60 +220,4 @@ export const getIsNumerical = (dataTypeTerm: Term | undefined) => {
     dataTypeTerm?.equals(ns.xsd.decimal) ||
     false
   );
-};
-
-const timeIntervals = new Map<string, CountableTimeInterval>([
-  [ns.time.unitYear.value, timeYear],
-  [ns.time.unitMonth.value, timeMonth],
-  [ns.time.unitWeek.value, timeWeek],
-  [ns.time.unitDay.value, timeDay],
-  [ns.time.unitHour.value, timeHour],
-  [ns.time.unitMinute.value, timeMinute],
-  [ns.time.unitSecond.value, timeSecond],
-]);
-
-const timeFormatters = new Map<string, (d: Date) => string>([
-  [ns.xsd.gYear.value, timeFormat("%Y")],
-  [ns.xsd.date.value, timeFormat("%Y-%m-%d")],
-  [ns.xsd.dateTime.value, timeFormat("%Y-%m-%dT%H:%M:%S")],
-]);
-
-const timeParsers = new Map<string, (d: string) => Date | null>([
-  [ns.xsd.gYear.value, timeParse("%Y")],
-  [ns.xsd.date.value, timeParse("%Y-%m-%d")],
-  [ns.xsd.dateTime.value, timeParse("%Y-%m-%dT%H:%M:%S")],
-]);
-
-export const interpolateTimeValues = ({
-  dataType,
-  timeUnit,
-  min,
-  max,
-}: {
-  dataType: string;
-  timeUnit: string;
-  min: string;
-  max: string;
-}) => {
-  const format = timeFormatters.get(dataType);
-  const parse = timeParsers.get(dataType);
-
-  if (!format || !parse) {
-    console.warn(`No time parser/formatter found for dataType <${dataType}>`);
-    return [];
-  }
-
-  const minDate = parse(min);
-  const maxDate = parse(max);
-  const interval = timeIntervals.get(timeUnit);
-
-  if (!minDate || !maxDate || !interval) {
-    console.warn(
-      `Couldn't parse dates ${min} or ${max}, or no interval found for timeUnit <${timeUnit}>`
-    );
-
-    return [];
-  }
-
-  return [...interval.range(minDate, maxDate), maxDate].map(format);
 };

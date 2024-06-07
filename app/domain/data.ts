@@ -418,7 +418,7 @@ export type SearchCube = {
 };
 
 const xmlSchema = "http://www.w3.org/2001/XMLSchema#";
-export const parseRDFLiteral = <T = ObservationValue>(value: Literal): T => {
+const parseRDFLiteral = <T = ObservationValue>(value: Literal): T => {
   const v = value.value;
   const dt = value.datatype.value.replace(xmlSchema, "");
   switch (dt) {
@@ -507,7 +507,7 @@ export const isOrdinalMeasure = (
   return dimension?.__typename === "OrdinalMeasure";
 };
 
-export const isCategoricalDimension = (
+const isCategoricalDimension = (
   d: Component
 ): d is NominalDimension | OrdinalDimension | TemporalOrdinalDimension => {
   return (
@@ -536,7 +536,7 @@ export const getDimensionsByDimensionType = ({
     dimensionTypes.includes(component.__typename)
   );
 
-export const isNominalDimension = (
+const isNominalDimension = (
   dimension?: Component | null
 ): dimension is NominalDimension => {
   return dimension?.__typename === "NominalDimension";
@@ -598,7 +598,7 @@ export const isTemporalDimensionWithTimeUnit = (
   return !!dimension && "timeUnit" in dimension;
 };
 
-export const isStandardErrorResolvedDimension = (dim: ResolvedDimension) => {
+const isStandardErrorResolvedDimension = (dim: ResolvedDimension) => {
   return dim.data?.related.some((x) => x.type === "StandardError");
 };
 

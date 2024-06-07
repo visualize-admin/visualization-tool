@@ -3,7 +3,7 @@ import ParsingClient from "sparql-http-client/ParsingClient";
 /** Creates SPARQL query to fetch latest cube iri.
  * Works for both versioned and unversioned cubes.
  */
-export const getLatestCubeIriQuery = (cubeIri: string) => {
+const getLatestCubeIriQuery = (cubeIri: string) => {
   return `PREFIX cube: <https://cube.link/>
 PREFIX schema: <http://schema.org/>
 

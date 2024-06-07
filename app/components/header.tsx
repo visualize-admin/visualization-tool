@@ -21,7 +21,7 @@ const useHeaderBorderStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-export const HeaderBorder = () => {
+const HeaderBorder = () => {
   const classes = useHeaderBorderStyles();
   return <Box className={classes.root} />;
 };

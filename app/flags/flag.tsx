@@ -23,12 +23,12 @@ const flag = function flag(...args: [FlagName] | [FlagName, FlagValue]) {
 };
 
 /** List all flags from the store */
-export const listFlags = () => {
+const listFlags = () => {
   return store.keys().sort();
 };
 
 /** Resets all the flags */
-export const resetFlags = () => {
+const resetFlags = () => {
   listFlags().forEach((name) => store.remove(name as FlagName));
 };
 
@@ -39,7 +39,7 @@ export const resetFlags = () => {
  *
  * @param {Record<string, boolean>} flagsToEnable
  */
-export const enable = (flagsToEnable: FlagName[]) => {
+const enable = (flagsToEnable: FlagName[]) => {
   const flagNameToValue = Object.entries(flagsToEnable);
 
   if (!flagNameToValue) {

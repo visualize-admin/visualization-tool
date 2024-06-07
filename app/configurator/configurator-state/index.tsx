@@ -69,9 +69,7 @@ export const getPreviousState = (
 };
 // FIXME: should by handled better, as color is a subfield and not actual field.
 // Side effects in ui encodings?
-export const getNonGenericFieldValues = (
-  chartConfig: ChartConfig
-): string[] => {
+const getNonGenericFieldValues = (chartConfig: ChartConfig): string[] => {
   const iris: string[] = [];
 
   if (isColorFieldInConfig(chartConfig)) {

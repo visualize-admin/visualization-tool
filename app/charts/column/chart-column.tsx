@@ -36,7 +36,7 @@ export const ChartColumnsVisualization = (
   return <ChartDataWrapper {...props} Component={ChartColumns} />;
 };
 
-export const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
+const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
   const { chartConfig, dimensions } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
   const filters = useChartConfigFilters(chartConfig);

@@ -44,7 +44,7 @@ export const BASE_VIEW_STATE: MinMaxZoomViewState = {
  * @param chartDimensions Chart's dimensions needed to correctly initialize view state
  * in locked mode.
  */
-export const getViewStateFromBounds = ({
+const getViewStateFromBounds = ({
   width,
   height,
   bbox,

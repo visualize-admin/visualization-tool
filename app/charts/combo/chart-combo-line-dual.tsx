@@ -22,30 +22,28 @@ export const ChartComboLineDualVisualization = (
   return <ChartDataWrapper {...props} Component={ChartComboLineDual} />;
 };
 
-export const ChartComboLineDual = memo(
-  (props: ChartProps<ComboLineDualConfig>) => {
-    const { chartConfig } = props;
-    const { interactiveFiltersConfig } = chartConfig;
-    const { sharedFilters } = useDashboardInteractiveFilters();
+const ChartComboLineDual = memo((props: ChartProps<ComboLineDualConfig>) => {
+  const { chartConfig } = props;
+  const { interactiveFiltersConfig } = chartConfig;
+  const { sharedFilters } = useDashboardInteractiveFilters();
 
-    return (
-      <ComboLineDualChart {...props}>
-        <ChartContainer type="comboLineDual">
-          <ChartSvg>
-            <AxisHeightLinearDual orientation="left" />
-            <AxisHeightLinearDual orientation="right" /> <AxisTime />
-            <AxisTimeDomain />
-            <ComboLineDual />
-            <InteractionHorizontal />
-            {shouldShowBrush(interactiveFiltersConfig, sharedFilters) && (
-              <BrushTime />
-            )}
-          </ChartSvg>
-          <HoverDotMultiple />
-          <Ruler />
-          <Tooltip type="multiple" />
-        </ChartContainer>
-      </ComboLineDualChart>
-    );
-  }
-);
+  return (
+    <ComboLineDualChart {...props}>
+      <ChartContainer type="comboLineDual">
+        <ChartSvg>
+          <AxisHeightLinearDual orientation="left" />
+          <AxisHeightLinearDual orientation="right" /> <AxisTime />
+          <AxisTimeDomain />
+          <ComboLineDual />
+          <InteractionHorizontal />
+          {shouldShowBrush(interactiveFiltersConfig, sharedFilters) && (
+            <BrushTime />
+          )}
+        </ChartSvg>
+        <HoverDotMultiple />
+        <Ruler />
+        <Tooltip type="multiple" />
+      </ChartContainer>
+    </ComboLineDualChart>
+  );
+});

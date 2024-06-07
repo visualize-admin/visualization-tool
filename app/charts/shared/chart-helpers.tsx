@@ -126,7 +126,7 @@ export const useQueryFilters = ({
 
 type IFKey = keyof NonNullable<InteractiveFiltersConfig>;
 
-export const getChartConfigFilterComponentIris = ({ cubes }: ChartConfig) => {
+const getChartConfigFilterComponentIris = ({ cubes }: ChartConfig) => {
   return Object.keys(getChartConfigFilters(cubes)).filter(
     (d) => !isJoinById(d)
   );
@@ -291,7 +291,7 @@ export const useDimensionWithAbbreviations = (
   };
 };
 
-export const makeUseParsedVariable =
+const makeUseParsedVariable =
   <T extends unknown>(parser: (d: ObservationValue) => T) =>
   (key: string) => {
     return useCallback((d: Observation) => parser(d[key]), [key]);
@@ -325,15 +325,6 @@ export const getSegment =
   (segmentKey: string | undefined) =>
   (d: Observation): string =>
     segmentKey ? `${d[segmentKey]}` : "segment";
-
-export const useSegment = (
-  segmentKey: string | undefined
-): ((d: Observation) => string) => {
-  return useCallback(
-    (d: Observation) => getSegment(segmentKey)(d),
-    [segmentKey]
-  );
-};
 
 // Stacking helpers.
 // Modified from d3 source code to treat 0s as positive values and stack them correctly

@@ -52,8 +52,6 @@ export const pruneTree = <T extends { children?: T[] | null }>(
   return filterTreeHelper(tree, isUsed);
 };
 
-type Value = string;
-
 /** Sorts the tree by default chain of sorters (position -> identifier -> label). */
 export const sortHierarchy = (tree: HierarchyValue[]): HierarchyValue[] => {
   const sortedTree = orderBy(
@@ -106,20 +104,6 @@ export const findInHierarchy = (
     }
   });
   return res;
-};
-
-export const makeTreeFromValues = (
-  values: Value[],
-  dimensionIri: string,
-  { depth = 0 }
-) => {
-  return values.map((x) => ({
-    value: x,
-    label: "",
-    dimensionIri,
-    depth,
-    children: [],
-  }));
 };
 
 export const getOptionsFromTree = (tree: HierarchyValue[]) => {

@@ -6,7 +6,7 @@ import React, { useMemo, useState } from "react";
 
 import { Icon } from "@/icons";
 
-export const flashes = {
+const flashes = {
   CANNOT_FIND_CUBE: "CANNOT_FIND_CUBE",
 } as const;
 

@@ -192,7 +192,7 @@ const useCautionAlert = () => {
   };
 };
 
-export const CautionAlert = ({
+const CautionAlert = ({
   onConfirm,
   ...props
 }: { onConfirm: () => void } & AlertProps) => {
@@ -297,7 +297,7 @@ export type JoinBy = ReturnType<typeof inferJoinBy>;
 const columnId = (col: { iri: string; cubeIri: string }) =>
   `${col.cubeIri}/${col.iri}`;
 
-export const PreviewDataTable = ({
+const PreviewDataTable = ({
   existingCubes,
   otherCube,
   dataSource,

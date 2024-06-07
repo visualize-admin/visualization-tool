@@ -2,7 +2,7 @@ import { DataSource } from "@/config-types";
 
 import { parseDataSource, stringifyDataSource } from ".";
 
-export const retrieveStringifiedDataSourceFromLocalStorage = () => {
+const retrieveStringifiedDataSourceFromLocalStorage = () => {
   return localStorage.getItem("dataSource");
 };
 

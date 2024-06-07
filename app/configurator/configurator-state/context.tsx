@@ -31,7 +31,7 @@ import {
 import { createChartId } from "@/utils/create-chart-id";
 import { getRouterChartId } from "@/utils/router/helpers";
 
-export const ConfiguratorStateContext = createContext<
+const ConfiguratorStateContext = createContext<
   [ConfiguratorState, Dispatch<ConfiguratorStateAction>] | undefined
 >(undefined);
 
@@ -235,7 +235,7 @@ const allSequential = async <TInput, TOutput>(
   return res;
 };
 
-export const ConfiguratorStateProviderInternal = (
+const ConfiguratorStateProviderInternal = (
   props: ConfiguratorStateProviderProps
 ) => {
   const {

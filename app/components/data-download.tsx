@@ -62,7 +62,7 @@ const DataDownloadStateContext = createContext<
   [DataDownloadState, Dispatch<DataDownloadState>] | undefined
 >(undefined);
 
-export const useDataDownloadState = () => {
+const useDataDownloadState = () => {
   const ctx = useContext(DataDownloadStateContext);
 
   if (ctx === undefined) {
@@ -74,11 +74,7 @@ export const useDataDownloadState = () => {
   return ctx;
 };
 
-export const DataDownloadStateProvider = ({
-  children,
-}: {
-  children: ReactNode;
-}) => {
+const DataDownloadStateProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useState<DataDownloadState>({
     isDownloading: false,
   });

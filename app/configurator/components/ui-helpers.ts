@@ -246,7 +246,7 @@ export const getIconName = (name: string): IconName => {
   }
 };
 
-export const randomComparator = () => (Math.random() > 0.5 ? 1 : -1);
+const randomComparator = () => (Math.random() > 0.5 ? 1 : -1);
 
 export const mapValueIrisToColor = ({
   palette,

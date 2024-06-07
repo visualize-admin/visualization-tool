@@ -22,7 +22,7 @@ export const ChartComboLineColumnVisualization = (
   return <ChartDataWrapper {...props} Component={ChartComboLineColumn} />;
 };
 
-export const ChartComboLineColumn = memo(
+const ChartComboLineColumn = memo(
   (props: ChartProps<ComboLineColumnConfig>) => {
     const { chartConfig } = props;
     const { interactiveFiltersConfig } = chartConfig;

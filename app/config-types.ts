@@ -18,26 +18,12 @@ const DimensionType = t.union([
   t.literal("StandardErrorDimension"),
 ]);
 export type DimensionType = t.TypeOf<typeof DimensionType>;
-export const dimensionTypes: DimensionType[] = [
-  "NominalDimension",
-  "OrdinalDimension",
-  "TemporalDimension",
-  "TemporalEntityDimension",
-  "TemporalOrdinalDimension",
-  "GeoCoordinatesDimension",
-  "GeoShapesDimension",
-  "StandardErrorDimension",
-];
 
 const MeasureType = t.union([
   t.literal("NumericalMeasure"),
   t.literal("OrdinalMeasure"),
 ]);
 export type MeasureType = t.TypeOf<typeof MeasureType>;
-export const measureTypes: MeasureType[] = [
-  "NumericalMeasure",
-  "OrdinalMeasure",
-];
 
 const ComponentType = t.union([DimensionType, MeasureType]);
 export type ComponentType = t.TypeOf<typeof ComponentType>;
@@ -80,7 +66,7 @@ const FilterValueSingle = t.intersection([
 ]);
 export type FilterValueSingle = t.TypeOf<typeof FilterValueSingle>;
 
-export const isFilterValueSingle = (
+const isFilterValueSingle = (
   filterValue: FilterValue
 ): filterValue is FilterValueSingle => {
   return filterValue.type === "single";
@@ -778,20 +764,6 @@ export type ChartType = ChartConfig["chartType"];
 export type RegularChartType = RegularChartConfig["chartType"];
 export type ComboChartType = ComboChartConfig["chartType"];
 
-export const isRegularChartConfig = (
-  chartConfig: ChartConfig
-): chartConfig is RegularChartConfig => {
-  return (
-    isAreaConfig(chartConfig) ||
-    isColumnConfig(chartConfig) ||
-    isLineConfig(chartConfig) ||
-    isMapConfig(chartConfig) ||
-    isPieConfig(chartConfig) ||
-    isScatterPlotConfig(chartConfig) ||
-    isTableConfig(chartConfig)
-  );
-};
-
 export const isComboChartConfig = (
   chartConfig: ChartConfig
 ): chartConfig is ComboChartConfig => {
@@ -912,19 +884,6 @@ export const isColorFieldInConfig = (
   chartConfig: ChartConfig
 ): chartConfig is MapConfig => {
   return isMapConfig(chartConfig);
-};
-
-export const isSegmentColorMappingInConfig = (
-  chartConfig: ChartConfig
-): chartConfig is
-  | AreaConfig
-  | ColumnConfig
-  | LineConfig
-  | PieConfig
-  | ScatterPlotConfig => {
-  return ["area", "column", "line", "pie", "scatterplot"].includes(
-    chartConfig.chartType
-  );
 };
 
 // Chart Config Adjusters
@@ -1222,14 +1181,6 @@ const Config = t.intersection([
 ]);
 
 export type Config = t.TypeOf<typeof Config>;
-
-export const isValidConfig = (config: unknown): config is Config => {
-  return Config.is(config);
-};
-
-export const decodeConfig = (config: unknown) => {
-  return Config.decode(config);
-};
 
 const ConfiguratorStateInitial = t.type({
   state: t.literal("INITIAL"),

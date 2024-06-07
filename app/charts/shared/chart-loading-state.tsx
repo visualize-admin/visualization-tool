@@ -3,7 +3,7 @@ import { useSyncExternalStore } from "use-sync-external-store/shim";
 
 import { Observable } from "@/utils/observables";
 
-export class LoadingState extends Observable {
+class LoadingState extends Observable {
   public loading: boolean = false;
   private map: Record<string, boolean> = {};
 

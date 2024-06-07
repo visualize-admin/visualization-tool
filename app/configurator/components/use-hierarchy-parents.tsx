@@ -1,12 +1,11 @@
 import { groups } from "d3-array";
-import { useMemo } from "react";
 
-import { Dimension, HierarchyValue } from "@/domain/data";
+import { HierarchyValue } from "@/domain/data";
 import { bfs } from "@/utils/bfs";
 
 export type HierarchyParents = [
   HierarchyValue[],
-  { node: HierarchyValue; parents: HierarchyValue[] }[]
+  { node: HierarchyValue; parents: HierarchyValue[] }[],
 ][];
 
 export const groupByParents = (hierarchy: HierarchyValue[]) => {
@@ -17,28 +16,6 @@ export const groupByParents = (hierarchy: HierarchyValue[]) => {
   }));
 
   return groups(allHierarchyValues, (v) => v.parents);
-};
-
-const useHierarchyParents = ({
-  dimension,
-}: {
-  dimension: Dimension;
-}): HierarchyParents | undefined => {
-  return useMemo(() => {
-    if (!dimension.hierarchy) {
-      return;
-    }
-
-    const values = dimension.values;
-    const valueSet = new Set(values.map((v) => v.value));
-    const valueGroups = groupByParents(dimension.hierarchy);
-
-    return valueGroups
-      .map(([parents, nodes]) => {
-        return [parents, nodes.filter((n) => valueSet.has(n.node.value))];
-      })
-      .filter((x) => x[1].length > 0) as HierarchyParents;
-  }, [dimension]);
 };
 
 /**
@@ -64,5 +41,3 @@ export const hierarchyToGraphviz = (hierarchy: HierarchyValue[]) => {
     }
   `;
 };
-
-export default useHierarchyParents;

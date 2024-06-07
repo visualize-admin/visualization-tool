@@ -11,57 +11,6 @@ import {
   CONFIGURATOR_STATE_VERSION,
 } from "@/utils/chart-config/versioning";
 
-export const chartConfigMock = {
-  columnCovid19: {
-    version: "1.2.1",
-    chartType: "column",
-    filters: {
-      "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/georegion": {
-        type: "single",
-        value: "https://ld.admin.ch/canton/1",
-      },
-      "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/type": {
-        type: "single",
-        value:
-          "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/type/COVID19AtLeastOneDosePersons",
-      },
-    },
-    interactiveFiltersConfig: {
-      legend: {
-        active: false,
-        componentIri: "",
-      },
-      timeRange: {
-        active: false,
-        componentIri: "",
-        presets: {
-          type: "range",
-          from: "",
-          to: "",
-        },
-      },
-      dataFilters: {
-        active: false,
-        componentIris: [],
-      },
-    },
-    fields: {
-      x: {
-        componentIri:
-          "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/date",
-        sorting: {
-          sortingType: "byDimensionLabel",
-          sortingOrder: "asc",
-        },
-      },
-      y: {
-        componentIri:
-          "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/entries",
-      },
-    },
-  },
-};
-
 export const configStateMock = {
   map: {
     state: "CONFIGURING_CHART",

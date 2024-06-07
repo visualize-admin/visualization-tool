@@ -11,8 +11,8 @@ import ReactDOM from "react-dom";
 
 import { Margins } from "@/charts/shared/use-width";
 
-export const TRIANGLE_SIZE = 8;
-export const TOOLTIP_OFFSET = 4;
+const TRIANGLE_SIZE = 8;
+const TOOLTIP_OFFSET = 4;
 
 export type Xplacement = "left" | "center" | "right";
 export type Yplacement = "top" | "middle" | "bottom";
@@ -197,8 +197,8 @@ const mxYOffset = (yAnchor: number, p: TooltipPlacement) =>
   p.y === "top"
     ? yAnchor - TRIANGLE_SIZE - TOOLTIP_OFFSET
     : p.y === "bottom"
-    ? yAnchor + TRIANGLE_SIZE + TOOLTIP_OFFSET
-    : yAnchor;
+      ? yAnchor + TRIANGLE_SIZE + TOOLTIP_OFFSET
+      : yAnchor;
 
 // tooltip translation
 const mkTranslation = (p: TooltipPlacement) =>
@@ -213,8 +213,8 @@ const mkXTranslation = (xP: Xplacement, yP: Yplacement): Xtranslation => {
     return xP === "left"
       ? `calc(-100% - ${TRIANGLE_SIZE + TOOLTIP_OFFSET}px)`
       : xP === "center"
-      ? "-50%"
-      : `${TRIANGLE_SIZE + TOOLTIP_OFFSET}px`;
+        ? "-50%"
+        : `${TRIANGLE_SIZE + TOOLTIP_OFFSET}px`;
   }
 };
 const mkYTranslation = (yP: Yplacement): YTranslation =>

@@ -371,9 +371,7 @@ export type DataFilterGenericDimensionProps = {
   disabled: boolean;
 };
 
-export const DataFilterGenericDimension = (
-  props: DataFilterGenericDimensionProps
-) => {
+const DataFilterGenericDimension = (props: DataFilterGenericDimensionProps) => {
   const { dimension, value, onChange, options: propOptions, disabled } = props;
   const { label, isKeyDimension } = dimension;
   const noneLabel = t({

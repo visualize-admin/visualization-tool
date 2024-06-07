@@ -130,7 +130,7 @@ const useStyles = makeStyles<
   },
 }));
 
-export const formatBackLink = (
+const formatBackLink = (
   query: Router["query"]
 ): React.ComponentProps<typeof NextLink>["href"] => {
   const backParameters = softJSONParse(query.previous as string);

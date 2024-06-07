@@ -79,9 +79,8 @@ export const getFormattersForLocale = memoize((locale) => {
   };
 });
 
-export const useLocalFormatters = () => {
+const useLocalFormatters = () => {
   const locale = useLocale();
-
   return getFormattersForLocale(locale);
 };
 
@@ -140,7 +139,7 @@ const decimalFormatter = (dim: NumericalMeasure, formatNumber: Formatter) => {
   };
 };
 
-export const getDimensionFormatters = ({
+const getDimensionFormatters = ({
   components,
   formatNumber,
   formatDateAuto,
@@ -306,7 +305,7 @@ export const useTimeFormatUnit = () => {
   return formatter;
 };
 
-export const getFormatNumber = (props?: { decimals: number | "auto" }) => {
+const getFormatNumber = (props?: { decimals: number | "auto" }) => {
   const { decimals = 2 } = props ?? {};
   const { format } = getD3FormatLocale();
   // Only valid for up to 6 decimals!
@@ -376,13 +375,6 @@ export const useFormatShortDateAuto = () => {
   }, [locale]);
 
   return formatter;
-};
-
-export const formatError = (
-  error: [number, number],
-  formatNumber: (n: number) => string
-) => {
-  return `[${formatNumber(error[0])}, ${formatNumber(error[1])}]`;
 };
 
 export const formatNumberWithUnit = (

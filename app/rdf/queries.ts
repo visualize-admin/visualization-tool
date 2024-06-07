@@ -1,4 +1,4 @@
-import { ascending, descending, index } from "d3-array";
+import { ascending, index } from "d3-array";
 import { Maybe } from "graphql-tools";
 import keyBy from "lodash/keyBy";
 import { CubeDimension, Filter, LookupSource, View } from "rdf-cube-view-query";
@@ -25,11 +25,7 @@ import {
 import { createSource, pragmas } from "@/rdf/create-source";
 import { ExtendedCube } from "@/rdf/extended-cube";
 import * as ns from "@/rdf/namespace";
-import {
-  isCubePublished,
-  parseCubeDimension,
-  parseRelatedDimensions,
-} from "@/rdf/parse";
+import { parseCubeDimension, parseRelatedDimensions } from "@/rdf/parse";
 import {
   loadDimensionValuesWithMetadata,
   loadMaxDimensionValue,
@@ -44,67 +40,6 @@ const DIMENSION_VALUE_UNDEFINED = ns.cube.Undefined.value;
 /** Adds a suffix to an iri to mark its label */
 const labelDimensionIri = (iri: string) => `${iri}/__label__`;
 const iriDimensionIri = (iri: string) => `${iri}/__iri__`;
-
-export const getLatestCube = async (
-  cube: ExtendedCube
-): Promise<ExtendedCube> => {
-  const source = cube.source;
-  const versionHistory = cube.in(ns.schema.hasPart)?.term;
-  const isPublished = isCubePublished(cube);
-  const version = cube.out(ns.schema.version);
-  const isExpired = cube.out(ns.schema.expires)?.value !== undefined;
-
-  // If it's not expired, don't even try to look for newer versions
-  if (!isExpired) {
-    return cube;
-  }
-
-  const filters = [
-    // Only cubes from the same version history
-    ExtendedCube.filter.isPartOf(versionHistory),
-    // With a higher version number
-    ExtendedCube.filter.version.gt(version),
-    // If the original cube is published, only select cubes that are also published
-    ExtendedCube.filter.status(
-      isPublished
-        ? [ns.adminVocabulary("CreativeWorkStatus/Published")]
-        : [
-            ns.adminVocabulary("CreativeWorkStatus/Draft"),
-            ns.adminVocabulary("CreativeWorkStatus/Published"),
-          ]
-    ),
-  ];
-
-  const rows = await source.client.query.select(source.cubesQuery({ filters }));
-  const newerCubes = await Promise.all(
-    rows.map(async (row) => {
-      const cube = new ExtendedCube({
-        parent: source,
-        term: row.cube,
-        source,
-      });
-      await cube.fetchCube();
-
-      return cube;
-    })
-  );
-
-  if (newerCubes.length > 0) {
-    newerCubes.sort((a, b) =>
-      descending(
-        +a.out(ns.schema.version)?.value!,
-        +b.out(ns.schema.version)?.value!
-      )
-    );
-
-    // If there's a newer cube that's published, it's preferred over drafts
-    // (this only applies if the original cube was in draft status anyway)
-    return newerCubes.find((cube) => isCubePublished(cube)) ?? newerCubes[0];
-  }
-
-  // If there are no newer cubes, return the original one
-  return cube;
-};
 
 const getDimensionUnits = (d: CubeDimension) => {
   // Keeping qudt:unit format for backwards compatibility.
@@ -591,9 +526,7 @@ const unversionServerFilters = async (
 // );
 
 export const hasHierarchy = (dim: CubeDimension) => {
-  return (
-    dim.out(ns.cubeMeta.inHierarchy).values.length > 0
-  );
+  return dim.out(ns.cubeMeta.inHierarchy).values.length > 0;
 };
 
 const buildFilters = async ({
