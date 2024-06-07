@@ -102,7 +102,7 @@ type DataCubesMetadataData = {
   dataCubesMetadata: DataCubeMetadata[];
 };
 
-export const executeDataCubesMetadataQuery = async (
+const executeDataCubesMetadataQuery = async (
   client: Client,
   variables: DataCubesMetadataOptions["variables"],
   /** Callback triggered when data fetching starts (cache miss). */

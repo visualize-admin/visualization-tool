@@ -27,7 +27,7 @@ export const ChartComboLineSingleVisualization = (
   return <ChartDataWrapper {...props} Component={ChartComboLineSingle} />;
 };
 
-export const ChartComboLineSingle = memo(
+const ChartComboLineSingle = memo(
   (props: ChartProps<ComboLineSingleConfig>) => {
     const { chartConfig, measures } = props;
     const { interactiveFiltersConfig } = chartConfig;

@@ -35,7 +35,7 @@ export const useSearchDatasetPanelStore = createStore<{
 /**
  * Inits a new chart state based on a new dataset and adds it to the configurator state
  */
-export const useAddChartConfigBasedOnNewDataset = () => {
+const useAddChartConfigBasedOnNewDataset = () => {
   const [, dispatch] = useConfiguratorState();
   const locale = useLocale();
   const client = useClient();

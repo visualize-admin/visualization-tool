@@ -161,7 +161,7 @@ const InteractiveFiltersContext = createContext<
 /**
  * Returns filters that are shared across multiple charts.
  */
-export const getPotentialSharedFilters = (
+const getPotentialSharedFilters = (
   chartConfigs: ChartConfig[]
 ): PotentialSharedFilter[] => {
   const temporalDimensions = chartConfigs.flatMap((config) => {

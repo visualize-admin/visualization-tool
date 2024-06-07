@@ -1,10 +1,5 @@
 import { SearchCube } from "@/domain/data";
 
-export const parseFloatZeroed = (s: string) => {
-  const n = parseFloat(s);
-  return Number.isNaN(n) ? 0 : n;
-};
-
 export const fields = {
   title: {
     weight: 5,

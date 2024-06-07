@@ -2,37 +2,6 @@ import { useCallback, useMemo } from "react";
 
 import { Observation } from "@/domain/data";
 
-export const getObservationLabels = (
-  data: Observation[],
-  getLabel: (d: Observation) => string,
-  componentIri?: string
-) => {
-  const getIri = (d: Observation) => {
-    const iri = d[`${componentIri}/__iri__`] as string | undefined;
-    return iri;
-  };
-
-  const lookup = new Map<string, string>();
-  data.forEach((d) => {
-    const iri = getIri(d);
-    const label = getLabel(d);
-    lookup.set(iri ?? label, label);
-  });
-
-  const getValue = (d: Observation) => {
-    return getIri(d) ?? getLabel(d);
-  };
-
-  const getLookupLabel = (d: string) => {
-    return lookup.get(d) ?? d;
-  };
-
-  return {
-    getValue,
-    getLabel: getLookupLabel,
-  };
-};
-
 /** Use this hook to be able to retrieve observation values and labels,
  * where the value is the iri if present, otherwise the label.
  *

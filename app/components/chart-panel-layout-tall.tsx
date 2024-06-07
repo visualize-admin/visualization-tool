@@ -27,9 +27,7 @@ type ChartPanelLayoutTallRowProps = {
   row: ChartPanelLayoutTallRow;
 };
 
-export const ChartPanelLayoutTallRow = (
-  props: ChartPanelLayoutTallRowProps
-) => {
+const ChartPanelLayoutTallRow = (props: ChartPanelLayoutTallRowProps) => {
   const { row } = props;
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));

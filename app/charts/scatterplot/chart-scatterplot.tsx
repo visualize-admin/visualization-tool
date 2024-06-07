@@ -30,7 +30,7 @@ export const ChartScatterplotVisualization = (
   return <ChartDataWrapper {...props} Component={ChartScatterplot} />;
 };
 
-export const ChartScatterplot = memo((props: ChartProps<ScatterPlotConfig>) => {
+const ChartScatterplot = memo((props: ChartProps<ScatterPlotConfig>) => {
   const { chartConfig, dimensions } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
   const filters = useChartConfigFilters(chartConfig);

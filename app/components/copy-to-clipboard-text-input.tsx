@@ -44,7 +44,7 @@ const useActionTooltipStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-export const useCopyToClipboardTextInputStyles = makeStyles((theme: Theme) => ({
+const useCopyToClipboardTextInputStyles = makeStyles((theme: Theme) => ({
   input: {
     color: theme.palette.grey[700],
     padding: `${theme.spacing(0)} ${theme.spacing(2)}`,
@@ -94,7 +94,7 @@ export const useCopyToClipboardTextInputStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-export const ActionTooltip = ({ children }: { children: ReactNode }) => {
+const ActionTooltip = ({ children }: { children: ReactNode }) => {
   const classes = useActionTooltipStyles();
   return <div className={classes.actionTooltip}>{children}</div>;
 };

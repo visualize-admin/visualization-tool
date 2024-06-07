@@ -20,7 +20,7 @@ export const ChartPieVisualization = (props: VisualizationProps<PieConfig>) => {
   return <ChartDataWrapper {...props} Component={ChartPie} />;
 };
 
-export const ChartPie = memo((props: ChartProps<PieConfig>) => {
+const ChartPie = memo((props: ChartProps<PieConfig>) => {
   const { chartConfig, observations, dimensions } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
   const somePositive = observations.some(

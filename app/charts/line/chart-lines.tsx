@@ -27,7 +27,7 @@ export const ChartLinesVisualization = (
   return <ChartDataWrapper {...props} Component={ChartLines} />;
 };
 
-export const ChartLines = memo((props: ChartProps<LineConfig>) => {
+const ChartLines = memo((props: ChartProps<LineConfig>) => {
   const { chartConfig } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
   const { sharedFilters } = useDashboardInteractiveFilters();

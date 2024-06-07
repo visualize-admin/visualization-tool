@@ -2,10 +2,10 @@ import { useCallback } from "react";
 
 import { ParsedConfig } from "@/db/config";
 import { fetchChartConfig, fetchChartConfigs } from "@/utils/chart-config/api";
-import { useFetchData, UseFetchDataOptions } from "@/utils/use-fetch-data";
+import { UseFetchDataOptions, useFetchData } from "@/utils/use-fetch-data";
 
 export const userConfigsKey = ["userConfigs"];
-export const userConfigKey = (t: string) => ["userConfigs", t];
+const userConfigKey = (t: string) => ["userConfigs", t];
 
 export const useUserConfigs = (options?: UseFetchDataOptions<ParsedConfig[]>) =>
   useFetchData(userConfigsKey, fetchChartConfigs, options);

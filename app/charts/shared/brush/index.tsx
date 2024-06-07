@@ -30,9 +30,9 @@ import { useTransitionStore } from "@/stores/transition";
 import { getTextWidth } from "@/utils/get-text-width";
 
 // Brush constants
-export const HANDLE_HEIGHT = 14;
-export const BRUSH_HEIGHT = 3;
-export const HEIGHT = HANDLE_HEIGHT + BRUSH_HEIGHT;
+const HANDLE_HEIGHT = 14;
+const BRUSH_HEIGHT = 3;
+const HEIGHT = HANDLE_HEIGHT + BRUSH_HEIGHT;
 
 export const shouldShowBrush = (
   interactiveFiltersConfig:

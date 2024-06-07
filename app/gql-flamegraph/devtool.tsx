@@ -466,7 +466,7 @@ function GqlDebug({ controller }: { controller: GraphqlOperationsController }) {
  * Used to communicate between urql and the flamegraph
  * component
  */
-export const urqlEE = mitt<{
+const urqlEE = mitt<{
   "urql-received-operation": Operation<any, any>;
   "urql-received-result": VisualizeOperationResult<any, any>;
 }>();

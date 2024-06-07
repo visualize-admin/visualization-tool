@@ -25,7 +25,7 @@ export const ChartAreasVisualization = (
   return <ChartDataWrapper {...props} Component={ChartAreas} />;
 };
 
-export const ChartAreas = memo((props: ChartProps<AreaConfig>) => {
+const ChartAreas = memo((props: ChartProps<AreaConfig>) => {
   const { chartConfig } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
 

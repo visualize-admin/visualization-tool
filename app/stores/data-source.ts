@@ -49,7 +49,7 @@ const saveToURL = (dataSource: DataSource) => {
  * URL (stored as label: Prod, Int, Test); if it's not here, tries with
  * localStorage (also stored as label), otherwise uses a default data source.
  */
-export const dataSourceStoreMiddleware =
+const dataSourceStoreMiddleware =
   (config: StateCreator<DataSourceStore>, router: SingletonRouter) =>
   (
     set: StoreApi<DataSourceStore>["setState"],

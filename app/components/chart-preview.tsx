@@ -6,13 +6,13 @@ import {
   useDraggable,
   useDroppable,
 } from "@dnd-kit/core";
-import { t, Trans } from "@lingui/macro";
+import { Trans, t } from "@lingui/macro";
 import { Box, IconButton, useEventCallback } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import Head from "next/head";
 import React, {
-  forwardRef,
   ReactNode,
+  forwardRef,
   useCallback,
   useMemo,
   useState,
@@ -46,10 +46,10 @@ import { BANNER_MARGIN_TOP } from "@/components/presence";
 import {
   ChartConfig,
   DataSource,
+  Layout,
   getChartConfig,
   hasChartConfigs,
   isConfiguring,
-  Layout,
   useConfiguratorState,
 } from "@/configurator";
 import { Description, Title } from "@/configurator/components/annotators";
@@ -441,7 +441,7 @@ type ChartPreviewInnerProps = ChartPreviewProps & {
   children?: React.ReactNode;
 };
 
-export const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
+const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
   const { dataSource, chartKey, actionElementSlot } = props;
   const [state, dispatch] = useConfiguratorState();
   const configuring = isConfiguring(state);

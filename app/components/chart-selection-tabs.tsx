@@ -77,7 +77,7 @@ const TabsStateContext = createContext<
   [TabsState, React.Dispatch<TabsState>] | undefined
 >(undefined);
 
-export const useTabsState = () => {
+const useTabsState = () => {
   const ctx = useContext(TabsStateContext);
 
   if (ctx === undefined) {
@@ -414,7 +414,7 @@ const NextStepButton = (props: React.PropsWithChildren<{}>) => {
   );
 };
 
-export const LayoutChartButton = () => {
+const LayoutChartButton = () => {
   return (
     <NextStepButton>
       <Trans id="button.layout">Proceed to layout options</Trans>

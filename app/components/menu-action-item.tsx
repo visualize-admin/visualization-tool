@@ -5,7 +5,7 @@ import ConfirmationDialog from "@/components/confirmation-dialog";
 import useDisclosure from "@/components/use-disclosure";
 import { Icon, IconName } from "@/icons";
 
-export const StyledMenuItem = styled(MenuItem)(({ theme, color }) => ({
+const StyledMenuItem = styled(MenuItem)(({ theme, color }) => ({
   display: "flex",
   alignItems: "center",
   gap: theme.spacing(2),

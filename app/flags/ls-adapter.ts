@@ -1,10 +1,10 @@
 import { FlagName, FlagValue } from "./types";
 
-export const prefix = "flag__";
+const prefix = "flag__";
 
 type FlagNameOrString = FlagName | (string & {});
 
-export const getKey = (name: FlagNameOrString) => prefix + name;
+const getKey = (name: FlagNameOrString) => prefix + name;
 
 const listFlagLocalStorage = () => {
   return Object.keys(localStorage)

@@ -63,7 +63,7 @@ const TriggeredPopover = (props: TriggeredPopoverProps) => {
   );
 };
 
-export const Embed = ({ configKey, locale }: PublishActionProps) => {
+const Embed = ({ configKey, locale }: PublishActionProps) => {
   const [embedIframeUrl, setEmbedIframeUrl] = useState("");
   const [embedAEMUrl, setEmbedAEMUrl] = useState("");
   const [embedOptions, setEmbedOptions] = useEmbedOptions();
@@ -220,7 +220,7 @@ export const Embed = ({ configKey, locale }: PublishActionProps) => {
   );
 };
 
-export const Share = ({ configKey, locale }: PublishActionProps) => {
+const Share = ({ configKey, locale }: PublishActionProps) => {
   const [shareUrl, setShareUrl] = useState("");
   const i18n = useI18n();
 

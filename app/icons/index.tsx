@@ -1,6 +1,6 @@
 import { ComponentProps } from "react";
 
-import { ChartType, ComponentType } from "@/config-types";
+import { ChartType } from "@/config-types";
 import { IconName, Icons } from "@/icons/components";
 
 export { Icons } from "./components";
@@ -59,32 +59,6 @@ export const getChartIcon = (chartType: ChartType): IconName => {
       return "chartColumnLine";
     default:
       const _exhaustiveCheck: never = chartType;
-      return _exhaustiveCheck;
-  }
-};
-
-export const getDimensionIconName = (
-  dimensionType: ComponentType
-): IconName => {
-  switch (dimensionType) {
-    case "GeoCoordinatesDimension":
-    case "GeoShapesDimension":
-      return "geographical";
-    case "NominalDimension":
-      return "chartPie";
-    case "NumericalMeasure":
-    case "StandardErrorDimension":
-      return "numerical";
-    case "OrdinalDimension":
-    case "TemporalOrdinalDimension":
-      return "sort";
-    case "OrdinalMeasure":
-      return "sort";
-    case "TemporalDimension":
-    case "TemporalEntityDimension":
-      return "pointInTime";
-    default:
-      const _exhaustiveCheck: never = dimensionType;
       return _exhaustiveCheck;
   }
 };

@@ -21,12 +21,6 @@ import { useLocale } from "@/locales/use-locale";
 
 export type InteractiveFilterType = "legend" | "timeRange" | "dataFilters";
 
-export const isInteractiveFilterType = (
-  field: string | undefined
-): field is InteractiveFilterType => {
-  return ["legend", "timeRange", "dataFilters"].includes(field ?? "");
-};
-
 export const InteractiveFiltersConfigurator = ({
   state,
 }: {

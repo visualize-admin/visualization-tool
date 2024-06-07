@@ -13,20 +13,11 @@ import {
   interpolateRdYlGn,
   interpolateReds,
   schemeAccent,
-  schemeBlues,
-  schemeBrBG,
   schemeCategory10,
   schemeDark2,
-  schemeGreens,
-  schemeGreys,
-  schemeOranges,
   schemePaired,
   schemePastel1,
   schemePastel2,
-  schemePiYG,
-  schemePuOr,
-  schemePurples,
-  schemeReds,
   schemeSet1,
   schemeSet2,
   schemeSet3,
@@ -119,40 +110,6 @@ export const categoricalPalettes: Array<CategoricalPalette> = [
 
 export const DEFAULT_CATEGORICAL_PALETTE_NAME = categoricalPalettes[0].value;
 
-export const getSingleHueSequentialPalette = ({
-  nbClass = 5,
-  palette,
-}: {
-  nbClass: number;
-  palette?: DivergingPaletteType | SequentialPaletteType;
-}): ReadonlyArray<string> => {
-  switch (palette) {
-    case "BrBG":
-      return schemeBrBG[nbClass];
-    case "PRGn":
-      return schemePiYG[nbClass];
-    case "PiYG":
-      return schemePiYG[nbClass];
-    case "PuOr":
-      return schemePuOr[nbClass];
-    case "blues":
-      return schemeBlues[nbClass];
-    case "greens":
-      return schemeGreens[nbClass];
-    case "greys":
-      return schemeGreys[nbClass];
-    case "oranges":
-      return schemeOranges[nbClass];
-    case "purples":
-      return schemePurples[nbClass];
-    case "reds":
-      return schemeReds[nbClass];
-
-    default:
-      return schemeOranges[nbClass];
-  }
-};
-
 export type Palette<T> = {
   label: string;
   value: T;
@@ -231,9 +188,3 @@ export const sequentialPalettes = sequentialPaletteKeys.map((d) => ({
   value: d,
   interpolator: getColorInterpolator(d),
 })) as Palette<SequentialPaletteType>[];
-
-export const sequentialSteppedPalettes = sequentialPaletteKeys.map((d) => ({
-  label: d,
-  value: d,
-  colors: steppedPaletteSteps.map((s) => getColorInterpolator(d)(s)),
-})) as SteppedPalette<SequentialPaletteType>[];

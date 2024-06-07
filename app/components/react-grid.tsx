@@ -30,7 +30,7 @@ const INITIAL_H = 7;
 export const MIN_H = 5;
 
 /** In grid unit */
-export const MAX_W = 4;
+const MAX_W = 4;
 
 export const COLS = { lg: 4, md: 2, sm: 1, xs: 1, xxs: 1 };
 const ROW_HEIGHT = 100;

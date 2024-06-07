@@ -5,7 +5,7 @@ type AnyLayer = MapboxStyle["layers"][number];
 
 // @TODO Find a way to make those guards generic
 type HasUrl<T> = T extends { url?: string | undefined } ? T : never;
-export function hasUrl(obj: AnySourceData): obj is HasUrl<AnySourceData> {
+function hasUrl(obj: AnySourceData): obj is HasUrl<AnySourceData> {
   return Object.prototype.hasOwnProperty.call(obj, "url");
 }
 
@@ -14,7 +14,7 @@ export function hasLayout(obj: AnyLayer): obj is HasLayout<AnySourceData> {
   return Object.prototype.hasOwnProperty.call(obj, "layout");
 }
 
-export const replaceStringTokens = (
+const replaceStringTokens = (
   s: string | undefined,
   tokens: Record<string, string>
 ) => {
