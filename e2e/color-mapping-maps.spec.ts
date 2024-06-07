@@ -1,6 +1,7 @@
 import { loadChartInLocalStorage } from "./charts-utils";
 import { setup } from "./common";
 import forestFireDanger from "./fixtures/forest-fire-danger-chart-config.json";
+import { harReplayGraphqlEndpointQueryParam } from "./har-utils";
 
 const { test, expect } = setup();
 
@@ -9,11 +10,13 @@ test("should be possible to de-select options from color component in maps", asy
   within,
   actions,
   selectors,
+  replayFromHAR
 }) => {
+  replayFromHAR()
   const key = "color-mapping-maps.spec";
   const config = forestFireDanger;
   await loadChartInLocalStorage(page, key, config);
-  page.goto(`/en/create/${key}`);
+  page.goto(`/en/create/${key}?${harReplayGraphqlEndpointQueryParam}`);
   await selectors.edition.drawerLoaded();
 
   await selectors.chart.loaded();
