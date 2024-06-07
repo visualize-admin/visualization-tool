@@ -36,7 +36,7 @@ export const createActions = ({
       urlParams?: string;
     }) => {
       await page.goto(
-        `en/browse?dataset=${encodeURIComponent(
+        `/en/browse?dataset=${encodeURIComponent(
           iri
         )}&dataSource=${dataSource}${urlParams}`
       );
@@ -62,7 +62,7 @@ export const createActions = ({
       createURLParams?: string;
     }) => {
       await page.goto(
-        `en/create/new?cube=${encodeURIComponent(
+        `/en/create/new?cube=${encodeURIComponent(
           iri
         )}&dataSource=${dataSource}${createURLParams ?? ""}`
       );
