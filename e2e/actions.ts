@@ -6,9 +6,10 @@ type ActionTestContext = TestContext & { selectors: Selectors };
 const selectActiveEditorField =
   ({ selectors, within }: ActionTestContext) =>
   async (field: string) => {
-    const fieldLocator = await within(
-      selectors.edition.controlSectionBySubtitle("Chart Options")
-    ).findByText(field);
+    const chartOptions =
+      selectors.edition.controlSectionBySubtitle("Chart Options");
+    chartOptions.scrollIntoViewIfNeeded();
+    const fieldLocator = await within(chartOptions).findByText(field);
     await fieldLocator.click();
     await selectors.panels
       .drawer()
