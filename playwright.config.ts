@@ -50,6 +50,11 @@ const config: PlaywrightTestConfig = {
     {
       name: "chromium",
       use: {
+        // Necessary for letting the browser perform requests to the localhost:3000 API that is mocked
+        // through Playwright HAR replay
+        launchOptions: {
+          args: ["--disable-web-security"],
+        },
         ...devices["Desktop Chrome"],
       },
     },
