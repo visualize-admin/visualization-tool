@@ -24,3 +24,19 @@ export const FiltersBadge = ({ sx }: { sx?: BadgeProps["sx"] }) => {
     />
   );
 };
+
+export const DatasetsBadge = ({ sx }: { sx?: BadgeProps["sx"] }) => {
+  const ctx = useControlSectionContext();
+  const [state] = useConfiguratorState(isConfiguring);
+  const chartConfig = getChartConfig(state);
+  const datasetsCount = chartConfig.cubes.length;
+
+  return (
+    <Badge
+      invisible={ctx.isOpen}
+      badgeContent={datasetsCount}
+      color="secondary"
+      sx={{ display: "block", ...sx }}
+    />
+  );
+};

@@ -15,6 +15,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 import { useMetadataPanelStoreActions } from "@/components/metadata-panel-store";
 import useDisclosure from "@/components/use-disclosure";
+import { DatasetDialog } from "@/configurator/components/add-dataset-dialog";
+import { DatasetsBadge } from "@/configurator/components/badges";
 import { BetaTag } from "@/configurator/components/beta-tag";
 import {
   ControlSection,
@@ -34,9 +36,6 @@ import SvgIcTrash from "@/icons/components/IcTrash";
 import { useLocale } from "@/locales/use-locale";
 import { useEventEmitter } from "@/utils/eventEmitter";
 import { MaybeTooltip } from "@/utils/maybe-tooltip";
-
-import { DatasetDialog } from "./add-dataset-dialog";
-import { FiltersBadge } from "./filters-badge";
 
 const useStyles = makeStyles((theme: Theme) => ({
   row: {
@@ -215,7 +214,7 @@ export const DatasetsControlSection = () => {
             },
           }}
         />
-        <FiltersBadge sx={{ ml: "auto", mr: 4 }} />
+        <DatasetsBadge sx={{ ml: "auto", mr: 4 }} />
       </SubsectionTitle>
       <ControlSectionContent
         aria-labelledby="controls-data"
