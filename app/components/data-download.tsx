@@ -179,7 +179,7 @@ export const DataDownloadMenu = memo(
     title,
   }: {
     dataSource: DataSource;
-    filters: DataCubeObservationFilter[];
+    filters: DataCubeObservationFilter;
     title: string;
   }) => {
     return (
@@ -201,7 +201,7 @@ const DataDownloadInnerMenu = ({
 }: {
   dataSource: DataSource;
   fileName: string;
-  filters: DataCubeObservationFilter[];
+  filters: DataCubeObservationFilter;
 }) => {
   const [state] = useDataDownloadState();
   const popupState = usePopupState({
@@ -239,7 +239,7 @@ const DataDownloadInnerMenu = ({
           sx: { width: 200, pt: 1, pb: 2 },
         }}
       >
-        {filters.some((f) => f.filters) && (
+        {filters.filters && (
           <DataDownloadMenuSection
             dataSource={dataSource}
             subheader={
@@ -271,9 +271,9 @@ const DataDownloadInnerMenu = ({
  * request), so we do not pass any componentIris here
  * */
 export const getFullDataDownloadFilters = (
-  filters: DataCubeObservationFilter[]
+  filters: DataCubeObservationFilter
 ) => {
-  return filters.map((d) => ({ iri: d.iri }));
+  return { iri: filters.iri };
 };
 
 const DataDownloadMenuSection = ({
@@ -285,7 +285,7 @@ const DataDownloadMenuSection = ({
   dataSource: DataSource;
   subheader: ReactNode;
   fileName: string;
-  filters?: DataCubeObservationFilter[];
+  filters?: DataCubeObservationFilter;
 }) => {
   return (
     <>
@@ -318,7 +318,7 @@ const DownloadMenuItem = ({
   dataSource: DataSource;
   fileName: string;
   fileFormat: FileFormat;
-  filters?: DataCubeObservationFilter[];
+  filters?: DataCubeObservationFilter;
 }) => {
   const locale = useLocale();
   const i18n = useI18n();
@@ -398,13 +398,13 @@ const DownloadMenuItem = ({
               sourceType: dataSource.type,
               sourceUrl: dataSource.url,
               locale,
-              cubeFilters: filters,
+              cubeFilters: [filters],
             }),
             executeDataCubesObservationsQuery(client, {
               sourceType: dataSource.type,
               sourceUrl: dataSource.url,
               locale,
-              cubeFilters: filters,
+              cubeFilters: [filters],
             }),
           ]);
 
