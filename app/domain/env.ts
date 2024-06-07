@@ -51,7 +51,6 @@ export const GA_TRACKING_ID =
 
 export const DATABASE_URL = process.env.DATABASE_URL;
 export const ADFS_ID = process.env.ADFS_ID;
-export const ADFS_SECRET = process.env.ADFS_SECRET;
 export const ADFS_ISSUER = process.env.ADFS_ISSUER;
 
 /**
