@@ -37,6 +37,7 @@ const setup = (contextOptions?: PlaywrightTestOptions["contextOptions"]) => {
         if (process.env.E2E_HAR !== "false") {
           await page.routeFromHAR(`./e2e/har/${name}.zip`, {
             url: /api\/graphql/,
+            notFound: "abort",
             ...routeFromHAROptions
           });
         }
