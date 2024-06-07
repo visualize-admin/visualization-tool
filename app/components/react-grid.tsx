@@ -232,7 +232,15 @@ export const ChartGridLayout = (props: ChartGridLayoutProps) => {
       rowHeight={ROW_HEIGHT}
       measureBeforeMount={false}
       useCSSTransforms={mounted}
-      compactType="vertical"
+      /**
+       * /!\ We use a custom version of the react-grid-layout that supports a "wrap" behavior for the horizontal
+       * layout.
+       * See package.json for the custom version.
+       * See https://github.com/react-grid-layout/react-grid-layout/issues/1100#issuecomment-2016958721 more details
+       * and the original issue.
+       * TODO: Make our own fork
+       */
+      compactType="horizontal"
       preventCollision={false}
     >
       {children}
