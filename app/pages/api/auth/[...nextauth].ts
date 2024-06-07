@@ -2,17 +2,17 @@ import NextAuth, { NextAuthOptions } from "next-auth";
 
 import ADFS from "@/auth-providers/adfs";
 import { ensureUserFromSub } from "@/db/user";
-import { ADFS_ID, ADFS_ISSUER, ADFS_SECRET } from "@/domain/env";
+import { ADFS_ID, ADFS_ISSUER } from "@/domain/env";
 import { truthy } from "@/domain/types";
 
 import type { NextApiRequest, NextApiResponse } from "next";
 
 const providers = [
-  ADFS_ID && ADFS_SECRET && ADFS_ISSUER
+  ADFS_ID && ADFS_ISSUER
     ? ADFS({
         wellKnown: `${ADFS_ISSUER}/.well-known/openid-configuration`,
         clientId: ADFS_ID,
-        clientSecret: ADFS_SECRET,
+        clientSecret: "", // PKCE does not require a client secret
         authorizeUrl: `${ADFS_ISSUER}/protocol/openid-connect/auth`,
         issuer: ADFS_ISSUER,
         token: `${ADFS_ISSUER}/protocol/openid-connect/token`,
