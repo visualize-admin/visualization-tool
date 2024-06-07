@@ -11,7 +11,9 @@ describe("viewing a dataset with only ordinal measures", () => {
   test("should retrieve dimension values properly", async ({
     selectors,
     actions,
+    replayFromHAR,
   }) => {
+    replayFromHAR();
     await actions.datasetPreview.load({
       iri: config.dataSet,
       dataSource: "Int",
@@ -24,7 +26,9 @@ describe("viewing a dataset with only ordinal measures", () => {
   test("should be possible to only select table & map", async ({
     page,
     selectors,
+    replayFromHAR,
   }) => {
+    replayFromHAR();
     await loadChartInLocalStorage(page, key, config);
     page.goto(`/en/create/${key}`);
 
@@ -44,7 +48,9 @@ describe("viewing a dataset with only ordinal measures", () => {
     selectors,
     actions,
     within,
+    replayFromHAR,
   }) => {
+    replayFromHAR();
     await loadChartInLocalStorage(page, key, config);
     page.goto(`/en/create/${key}`);
 
