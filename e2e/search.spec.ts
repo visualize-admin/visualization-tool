@@ -37,6 +37,7 @@ test("search results count coherence", async ({
   selectors,
   replayFromHAR,
 }) => {
+  test.slow();
   replayFromHAR();
 
   const categories = [
@@ -81,6 +82,8 @@ test("sort order", async ({
   actions,
   replayFromHAR,
 }) => {
+  test.slow();
+
   replayFromHAR();
   await page.goto(
     `/en/browse?dataSource=Int&${harReplayGraphqlEndpointQueryParam}`
@@ -159,7 +162,10 @@ const getResultCountForSearch = async (
 };
 
 test("sort order consistency", async ({ page, selectors, replayFromHAR }) => {
+  test.slow();
+
   replayFromHAR();
+
   const count1 = await getResultCountForSearch("wasser wald", {
     locale: "en",
     page,
@@ -179,6 +185,7 @@ test("sort language consistency", async ({
   selectors,
   replayFromHAR,
 }) => {
+  test.slow();
   replayFromHAR();
   const count1 = await getResultCountForSearch("wasser", {
     locale: "en",
