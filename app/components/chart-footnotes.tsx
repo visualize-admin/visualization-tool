@@ -121,6 +121,9 @@ export const ChartFootnotes = ({
             const sparqlEditorUrl = sparqlEditorUrls?.find(
               (d) => d.cubeIri === dataCubeMetadata.iri
             )?.url;
+            const cubeQueryFilters = queryFilters.filter(
+              (f) => f.iri === dataCubeMetadata.iri
+            );
 
             return (
               <Box key={dataCubeMetadata.iri} sx={{ mt: 2 }}>
@@ -206,7 +209,7 @@ export const ChartFootnotes = ({
                     <DataDownloadMenu
                       dataSource={dataSource}
                       title={dataCubeMetadata.title}
-                      filters={queryFilters}
+                      filters={cubeQueryFilters}
                     />
                   ) : null}
                   {showTableSwitch !== false ? (
