@@ -1,7 +1,12 @@
 import { makeStyles } from "@mui/styles";
 import { AnimatePresence } from "framer-motion";
 import keyBy from "lodash/keyBy";
-import React, { createElement, useEffect, useMemo } from "react";
+import React, {
+  ComponentProps,
+  createElement,
+  useEffect,
+  useMemo,
+} from "react";
 
 import { A11yTable } from "@/charts/shared/a11y-table";
 import { useLoadingState } from "@/charts/shared/chart-loading-state";
@@ -39,7 +44,7 @@ const useStyles = makeStyles(() => ({
  * - Provides observations, dimensions and measures to the chart Component
  * - Handles loading & error state
  */
-export const ChartDataWrapper = <
+const ChartDataWrapperInner = <
   TChartConfig extends ChartConfig,
   TOtherProps,
   TChartComponent extends React.ElementType,
@@ -198,6 +203,23 @@ export const ChartDataWrapper = <
   } else {
     return null;
   }
+};
+
+/**
+ * Makes sure the ChartDataWrapper is re-rendered when the cube iris and/or joinBy change.
+ * This ensures that data hooks do not keep stale data.
+ */
+export const ChartDataWrapper = (
+  props: ComponentProps<typeof ChartDataWrapperInner>
+) => {
+  const key = useMemo(
+    () =>
+      props.chartConfig.cubes
+        .map((c) => `${c.iri}${c.joinBy ? `:${c.joinBy}` : ""}`)
+        .join(" / "),
+    [props.chartConfig.cubes]
+  );
+  return <ChartDataWrapperInner key={key} {...props} />;
 };
 
 const Error = ({ message }: { message: string }) => {
