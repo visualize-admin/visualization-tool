@@ -26,9 +26,19 @@ export const createActions = ({
     clear: async () => await screen.getByTestId("clearSearch").click(),
   },
   datasetPreview: {
-    load: async (iri: string, dataSource: "Int" | "Prod") => {
+    load: async ({
+      iri,
+      dataSource,
+      urlParams,
+    }: {
+      iri: string;
+      dataSource: "Int" | "Prod";
+      urlParams?: string;
+    }) => {
       await page.goto(
-        `en/browse?dataset=${encodeURIComponent(iri)}&dataSource=${dataSource}`
+        `en/browse?dataset=${encodeURIComponent(
+          iri
+        )}&dataSource=${dataSource}${urlParams}`
       );
 
       await selectors.datasetPreview.loaded();

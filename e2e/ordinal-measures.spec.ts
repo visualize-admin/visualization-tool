@@ -12,7 +12,10 @@ describe("viewing a dataset with only ordinal measures", () => {
     selectors,
     actions,
   }) => {
-    await actions.datasetPreview.load(config.dataSet, "Int");
+    await actions.datasetPreview.load({
+      iri: config.dataSet,
+      dataSource: "Int",
+    });
     const cells = await selectors.datasetPreview.cells();
     const texts = await cells.allInnerTexts();
     expect(texts).not.toContain("NaN");
