@@ -1,4 +1,4 @@
-import produce, { createDraft, current, Draft } from "immer";
+import produce, { createDraft, current, Draft, isDraft } from "immer";
 import { WritableDraft } from "immer/dist/internal";
 import get from "lodash/get";
 import isEqual from "lodash/isEqual";
@@ -1107,7 +1107,11 @@ const withLogging = <TState, TAction extends { type: unknown }>(
 ) => {
   return (state: Draft<TState>, action: TAction) => {
     const res = reducer(state, action);
-    console.log(`Action: ${action.type}`, action, res);
+    console.log(
+      `Action: ${action.type}`,
+      action,
+      isDraft(state) ? current(state) : state
+    );
     return res;
   };
 };
