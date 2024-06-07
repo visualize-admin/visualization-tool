@@ -54,8 +54,8 @@ import {
   ControlTabField,
   DataFilterSelect,
   DataFilterTemporal,
-  dimensionToFieldProps,
   OnOffControlTabField,
+  dimensionToFieldProps,
 } from "@/configurator/components/field";
 import { canRenderDatePickerField } from "@/configurator/components/field-date-picker";
 import {
@@ -66,14 +66,14 @@ import {
 } from "@/configurator/configurator-state";
 import { useInteractiveDataFilterToggle } from "@/configurator/interactive-filters/interactive-filters-config-state";
 import {
-  InteractiveFiltersConfigurator,
   InteractiveFilterToggle,
+  InteractiveFiltersConfigurator,
 } from "@/configurator/interactive-filters/interactive-filters-configurator";
 import {
   Dimension,
+  Measure,
   isStandardErrorDimension,
   isTemporalDimension,
-  Measure,
 } from "@/domain/data";
 import { isMostRecentValue } from "@/domain/most-recent-value";
 import { truthy } from "@/domain/types";
@@ -91,8 +91,8 @@ import { useLocale } from "@/locales/use-locale";
 import { InteractiveFiltersChartProvider } from "@/stores/interactive-filters";
 import useEvent from "@/utils/use-event";
 
+import { FiltersBadge } from "./badges";
 import { DatasetsControlSection } from "./dataset-control-section";
-import { FiltersBadge } from "./filters-badge";
 
 type DataFilterSelectGenericProps = {
   rawDimension: Dimension;
