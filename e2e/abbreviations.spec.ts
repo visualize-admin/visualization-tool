@@ -1,16 +1,25 @@
 import { setup, sleep } from "./common";
+import { harReplayGraphqlEndpointQueryParam } from "./har-utils";
 
 const { test, expect } = setup();
 
 test("it should be possible to enable abbreviations for colors & x field (column)", async ({
   actions,
   selectors,
+  page,
 }) => {
+  if (process.env.E2E_HAR !== "false") {
+    await page.routeFromHAR(`./e2e/har/abbreviations/1.zip`, {
+      notFound: "fallback",
+    });
+  }
+
   test.slow();
 
   await actions.chart.createFrom({
     iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/6",
     dataSource: "Prod",
+    createURLParams: harReplayGraphqlEndpointQueryParam,
   });
 
   await selectors.edition.drawerLoaded();
@@ -73,10 +82,18 @@ test("it should be possible to enable abbreviations for colors & x field (column
 test("hierarchies: it should be possible to enable abbreviations for colors", async ({
   actions,
   selectors,
+  page,
 }) => {
+  if (process.env.E2E_HAR !== "false") {
+    await page.routeFromHAR(`./e2e/har/abbreviations/2.zip`, {
+      notFound: "fallback",
+    });
+  }
+
   await actions.chart.createFrom({
     iri: "https://environment.ld.admin.ch/foen/ubd000502/4",
     dataSource: "Prod",
+    createURLParams: harReplayGraphqlEndpointQueryParam,
   });
 
   await selectors.edition.drawerLoaded();
@@ -111,10 +128,17 @@ test("hierarchies: it should be possible to enable abbreviations for colors", as
   ]);
 });
 
-test("localized abbreviations", async ({ actions, selectors }) => {
+test("localized abbreviations", async ({ actions, selectors, page }) => {
+  if (process.env.E2E_HAR !== "false") {
+    await page.routeFromHAR(`./e2e/har/abbreviations/3.zip`, {
+      notFound: "fallback",
+    });
+  }
+
   await actions.chart.createFrom({
     iri: "https://environment.ld.admin.ch/foen/gefahren-waldbrand-praeventionsmassnahmen-kantone/1",
     dataSource: "Prod",
+    createURLParams: harReplayGraphqlEndpointQueryParam,
   });
 
   await selectors.edition.drawerLoaded();
