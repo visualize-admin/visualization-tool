@@ -1,6 +1,7 @@
 import { loadChartInLocalStorage } from "./charts-utils";
 import { setup, sleep } from "./common";
 import forestFireDanger from "./fixtures/forest-fire-danger-chart-config.json";
+import { harReplayGraphqlEndpointQueryParam } from "./har-utils";
 
 const { test, describe, expect } = setup();
 
@@ -17,6 +18,7 @@ describe("viewing a dataset with only ordinal measures", () => {
     await actions.datasetPreview.load({
       iri: config.dataSet,
       dataSource: "Int",
+      urlParams: harReplayGraphqlEndpointQueryParam,
     });
     const cells = await selectors.datasetPreview.cells();
     const texts = await cells.allInnerTexts();
@@ -30,7 +32,7 @@ describe("viewing a dataset with only ordinal measures", () => {
   }) => {
     replayFromHAR();
     await loadChartInLocalStorage(page, key, config);
-    page.goto(`/en/create/${key}`);
+    page.goto(`/en/create/${key}?${harReplayGraphqlEndpointQueryParam}`);
 
     await selectors.chart.loaded();
     await selectors.edition.drawerLoaded();
@@ -52,7 +54,7 @@ describe("viewing a dataset with only ordinal measures", () => {
   }) => {
     replayFromHAR();
     await loadChartInLocalStorage(page, key, config);
-    page.goto(`/en/create/${key}`);
+    page.goto(`/en/create/${key}?${harReplayGraphqlEndpointQueryParam}`);
 
     await selectors.chart.loaded();
     await selectors.edition.drawerLoaded();

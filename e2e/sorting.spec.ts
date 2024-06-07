@@ -17,14 +17,11 @@ test.skip("Segment sorting", async ({
   within,
   screen,
   page,
+  replayFromHAR,
 }) => {
   test.setTimeout(60_000);
 
-  if (process.env.E2E_HAR !== "false") {
-    await page.routeFromHAR("./e2e/har/sorting.zip", {
-      notFound: "fallback",
-    });
-  }
+  replayFromHAR();
 
   await actions.chart.createFrom({
     iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/13",
@@ -89,7 +86,10 @@ test("Segment sorting with hierarchy", async ({
   selectors,
   screen,
   within,
+  replayFromHAR,
 }) => {
+  replayFromHAR();
+
   await actions.chart.createFrom({
     iri: "https://environment.ld.admin.ch/foen/nfi/nfi_C-1029/cube/2023-1",
     dataSource: "Prod",
@@ -166,7 +166,12 @@ const uniqueWithoutSorting = <T>(arr: T[]) => {
   return res;
 };
 
-test("Map legend preview table sorting", async ({ actions, selectors }) => {
+test("Map legend preview table sorting", async ({
+  actions,
+  selectors,
+  replayFromHAR,
+}) => {
+  replayFromHAR();
   await actions.chart.createFrom({
     iri: "https://environment.ld.admin.ch/foen/gefahren-waldbrand-warnung/1",
     dataSource: "Int",
@@ -190,11 +195,13 @@ test("Map legend preview table sorting", async ({ actions, selectors }) => {
 test("Sorting with values with same label as other values in the tree", async ({
   selectors,
   page,
+  replayFromHAR,
 }) => {
+  replayFromHAR();
   const key = "sorting-hierarchy-values-same-label.spec";
   const config = hierarchyTest13;
   await loadChartInLocalStorage(page, key, config);
-  page.goto(`/en/create/${key}`);
+  page.goto(`/en/create/${key}?${harReplayGraphqlEndpointQueryParam}`);
   await selectors.chart.loaded({ timeout: 30_000 });
 
   const texts = await Promise.all(
