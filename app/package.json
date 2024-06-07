@@ -144,7 +144,7 @@
     "@percy/cli": "^1.26.1",
     "@percy/playwright": "^1.0.4",
     "@playwright-testing-library/test": "^4.5.0",
-    "@playwright/test": "^1.32.1",
+    "@playwright/test": "^1.44.1",
     "@svgr/cli": "^5.5.0",
     "@testing-library/react": "^14.1.2",
     "@types/autosuggest-highlight": "^3.2.0",
