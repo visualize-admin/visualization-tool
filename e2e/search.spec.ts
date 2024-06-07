@@ -16,7 +16,7 @@ test("should be possible to open a search URL, and search state should be recove
   selectors,
   replayFromHAR,
 }) => {
-  replayFromHAR();
+  await replayFromHAR();
 
   await page.goto(
     `/en/browse?includeDrafts=true&order=SCORE&search=category&dataSource=Int&${harReplayGraphqlEndpointQueryParam}`
@@ -38,7 +38,7 @@ test("search results count coherence", async ({
   replayFromHAR,
 }) => {
   test.slow();
-  replayFromHAR();
+  await replayFromHAR();
 
   const categories = [
     "Administration",
@@ -84,7 +84,7 @@ test("sort order", async ({
 }) => {
   test.slow();
 
-  replayFromHAR();
+  await replayFromHAR();
   await page.goto(
     `/en/browse?dataSource=Int&${harReplayGraphqlEndpointQueryParam}`
   );
@@ -164,7 +164,7 @@ const getResultCountForSearch = async (
 test("sort order consistency", async ({ page, selectors, replayFromHAR }) => {
   test.slow();
 
-  replayFromHAR();
+  await replayFromHAR();
 
   const count1 = await getResultCountForSearch("wasser wald", {
     locale: "en",
@@ -186,7 +186,7 @@ test("sort language consistency", async ({
   replayFromHAR,
 }) => {
   test.slow();
-  replayFromHAR();
+  await replayFromHAR();
   const count1 = await getResultCountForSearch("wasser", {
     locale: "en",
     page,
@@ -239,7 +239,7 @@ test("sort language consistency", async ({
 });
 
 test("no results", async ({ page, replayFromHAR }) => {
-  replayFromHAR();
+  await replayFromHAR();
   await page.goto("/en/browse?dataSource=Int&search=foo");
   await page.locator(`:text("No results")`).waitFor({ timeout: 10_000 });
 });

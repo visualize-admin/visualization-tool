@@ -12,11 +12,11 @@ test("should be possible to de-select options from color component in maps", asy
   selectors,
   replayFromHAR
 }) => {
-  replayFromHAR()
+  await replayFromHAR()
   const key = "color-mapping-maps.spec";
   const config = forestFireDanger;
   await loadChartInLocalStorage(page, key, config);
-  page.goto(`/en/create/${key}?${harReplayGraphqlEndpointQueryParam}`);
+  await page.goto(`/en/create/${key}?${harReplayGraphqlEndpointQueryParam}`);
   await selectors.edition.drawerLoaded();
 
   await selectors.chart.loaded();

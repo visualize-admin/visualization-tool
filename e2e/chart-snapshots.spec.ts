@@ -28,7 +28,7 @@ for (let [viewportName, viewportSize] of Object.entries(viewports)) {
       selectors,
       replayFromHAR
     }) => {
-      replayFromHAR()
+      await replayFromHAR()
       await page.setViewportSize(viewportSize);
       await page.goto(
         `/en/__test/${env}/${slug}?dataSource=Int&${harReplayGraphqlEndpointQueryParam}`

@@ -8,7 +8,7 @@ test("it should be possible to enable abbreviations for colors & x field (column
   selectors,
   replayFromHAR,
 }) => {
-  replayFromHAR();
+  await replayFromHAR();
 
   test.slow();
 
@@ -80,7 +80,7 @@ test("hierarchies: it should be possible to enable abbreviations for colors", as
   selectors,
   replayFromHAR,
 }) => {
-  replayFromHAR();
+  await replayFromHAR();
 
   await actions.chart.createFrom({
     iri: "https://environment.ld.admin.ch/foen/ubd000502/4",
@@ -125,7 +125,7 @@ test("localized abbreviations", async ({
   selectors,
   replayFromHAR,
 }) => {
-  replayFromHAR();
+  await replayFromHAR();
 
   await actions.chart.createFrom({
     iri: "https://environment.ld.admin.ch/foen/gefahren-waldbrand-praeventionsmassnahmen-kantone/1",

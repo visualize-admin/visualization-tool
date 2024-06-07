@@ -21,7 +21,7 @@ test.skip("Segment sorting", async ({
 }) => {
   test.setTimeout(60_000);
 
-  replayFromHAR();
+  await replayFromHAR();
 
   await actions.chart.createFrom({
     iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/13",
@@ -88,7 +88,7 @@ test("Segment sorting with hierarchy", async ({
   within,
   replayFromHAR,
 }) => {
-  replayFromHAR();
+  await replayFromHAR();
 
   await actions.chart.createFrom({
     iri: "https://environment.ld.admin.ch/foen/nfi/nfi_C-1029/cube/2023-1",
@@ -171,7 +171,7 @@ test("Map legend preview table sorting", async ({
   selectors,
   replayFromHAR,
 }) => {
-  replayFromHAR();
+  await replayFromHAR();
   await actions.chart.createFrom({
     iri: "https://environment.ld.admin.ch/foen/gefahren-waldbrand-warnung/1",
     dataSource: "Int",
@@ -197,7 +197,7 @@ test("Sorting with values with same label as other values in the tree", async ({
   page,
   replayFromHAR,
 }) => {
-  replayFromHAR();
+  await replayFromHAR();
   const key = "sorting-hierarchy-values-same-label.spec";
   const config = hierarchyTest13;
   await loadChartInLocalStorage(page, key, config);

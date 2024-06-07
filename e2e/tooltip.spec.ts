@@ -9,7 +9,7 @@ test("tooltip content", async ({
   page,
   replayFromHAR,
 }) => {
-  replayFromHAR({
+  await replayFromHAR({
     update: true,
   });
   await actions.chart.createFrom({

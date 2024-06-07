@@ -14,7 +14,7 @@ describe("viewing a dataset with only ordinal measures", () => {
     actions,
     replayFromHAR,
   }) => {
-    replayFromHAR();
+    await replayFromHAR();
     await actions.datasetPreview.load({
       iri: config.dataSet,
       dataSource: "Int",
@@ -30,7 +30,7 @@ describe("viewing a dataset with only ordinal measures", () => {
     selectors,
     replayFromHAR,
   }) => {
-    replayFromHAR();
+    await replayFromHAR();
     await loadChartInLocalStorage(page, key, config);
     page.goto(`/en/create/${key}?${harReplayGraphqlEndpointQueryParam}`);
 
@@ -52,7 +52,7 @@ describe("viewing a dataset with only ordinal measures", () => {
     within,
     replayFromHAR,
   }) => {
-    replayFromHAR();
+    await replayFromHAR();
     await loadChartInLocalStorage(page, key, config);
     page.goto(`/en/create/${key}?${harReplayGraphqlEndpointQueryParam}`);
 
