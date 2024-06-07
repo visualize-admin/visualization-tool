@@ -152,7 +152,9 @@ const getResultCountForSearch = async (
   }: { page: Page; selectors: Selectors; locale: string }
 ) => {
   await page.goto(
-    `/${locale}/browse?search=${encodeURIComponent(search)}&dataSource=Prod`
+    `/${locale}/browse?search=${encodeURIComponent(
+      search
+    )}&dataSource=Prod&${harReplayGraphqlEndpointQueryParam}`
   );
   const resultCount = await selectors.search.resultsCount();
   const count = (await resultCount.textContent())?.split(" ")[0];
@@ -240,6 +242,8 @@ test("sort language consistency", async ({
 
 test("no results", async ({ page, replayFromHAR }) => {
   await replayFromHAR();
-  await page.goto("/en/browse?dataSource=Int&search=foo");
+  await page.goto(
+    `/en/browse?dataSource=Int&search=foo&${harReplayGraphqlEndpointQueryParam}`
+  );
   await page.locator(`:text("No results")`).waitFor({ timeout: 10_000 });
 });
