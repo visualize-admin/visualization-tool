@@ -9,9 +9,8 @@ const { test, expect } = setup();
  * - For each type of chart, changes the sorting between Name and Automatic
  * - Checks that the legend item order is coherent.
  */
-test
 // FIX: works without Browser, some bug with Browser closed error
-.skip("Segment sorting", async ({
+test.skip("Segment sorting", async ({
   selectors,
   actions,
   within,
@@ -26,10 +25,12 @@ test
     });
   }
 
-  await actions.chart.createFrom(
-    "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/13",
-    "Int"
   );
+
+  await actions.chart.createFrom({
+    iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/13",
+    dataSource: "Int",
+  });
 
   for (const chartType of ["Columns", "Pie"] as const) {
     await selectors.edition.drawerLoaded();
@@ -89,18 +90,17 @@ test("Segment sorting with hierarchy", async ({
   screen,
   within,
 }) => {
-  await actions.chart.createFrom(
-    "https://environment.ld.admin.ch/foen/nfi/nfi_C-1029/cube/2023-1",
-    "Prod"
-  );
+  await actions.chart.createFrom({
+    iri: "https://environment.ld.admin.ch/foen/nfi/nfi_C-1029/cube/2023-1",
+    dataSource: "Prod",
+  });
 
   await selectors.edition.drawerLoaded();
   await actions.editor.selectActiveField("Segmentation");
 
   await sleep(3_000);
 
-  const colorSection =
-    selectors.edition.controlSectionByTitle("Segmentation");
+  const colorSection = selectors.edition.controlSectionByTitle("Segmentation");
   await within(colorSection).getByText("None").click();
 
   await actions.mui.selectOption("Region");
@@ -166,10 +166,11 @@ const uniqueWithoutSorting = <T>(arr: T[]) => {
 };
 
 test("Map legend preview table sorting", async ({ actions, selectors }) => {
-  await actions.chart.createFrom(
-    "https://environment.ld.admin.ch/foen/gefahren-waldbrand-warnung/1",
-    "Int"
-  );
+  await actions.chart.createFrom({
+    iri: "https://environment.ld.admin.ch/foen/gefahren-waldbrand-warnung/1",
+    dataSource: "Int",
+    createURLParams: harReplayGraphqlEndpointQueryParam,
+  });
   await selectors.edition.drawerLoaded();
 
   await actions.editor.changeChartType("Map");

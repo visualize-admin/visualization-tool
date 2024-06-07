@@ -8,10 +8,10 @@ test("it should be possible to enable abbreviations for colors & x field (column
 }) => {
   test.slow();
 
-  await actions.chart.createFrom(
-    "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/6",
-    "Prod"
-  );
+  await actions.chart.createFrom({
+    iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/6",
+    dataSource: "Prod",
+  });
 
   await selectors.edition.drawerLoaded();
   await actions.editor.selectActiveField("Horizontal Axis");
@@ -74,10 +74,10 @@ test("hierarchies: it should be possible to enable abbreviations for colors", as
   actions,
   selectors,
 }) => {
-  await actions.chart.createFrom(
-    "https://environment.ld.admin.ch/foen/ubd000502/4",
-    "Prod"
-  );
+  await actions.chart.createFrom({
+    iri: "https://environment.ld.admin.ch/foen/ubd000502/4",
+    dataSource: "Prod",
+  });
 
   await selectors.edition.drawerLoaded();
   await actions.editor.selectActiveField("Segmentation");
@@ -112,10 +112,10 @@ test("hierarchies: it should be possible to enable abbreviations for colors", as
 });
 
 test("localized abbreviations", async ({ actions, selectors }) => {
-  await actions.chart.createFrom(
-    "https://environment.ld.admin.ch/foen/gefahren-waldbrand-praeventionsmassnahmen-kantone/1",
-    "Prod"
-  );
+  await actions.chart.createFrom({
+    iri: "https://environment.ld.admin.ch/foen/gefahren-waldbrand-praeventionsmassnahmen-kantone/1",
+    dataSource: "Prod",
+  });
 
   await selectors.edition.drawerLoaded();
   await actions.editor.changeChartType("Map");

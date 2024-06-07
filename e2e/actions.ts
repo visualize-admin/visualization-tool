@@ -40,13 +40,21 @@ export const createActions = ({
     },
   },
   chart: {
-    createFrom: async (
-      iri: string,
-      dataSource: "Int" | "Prod",
-      chartLoadedOptions?: Parameters<typeof selectors.chart.loaded>[0]
-    ) => {
+    createFrom: async ({
+      iri,
+      dataSource,
+      chartLoadedOptions,
+      createURLParams,
+    }: {
+      iri: string;
+      dataSource: "Int" | "Prod";
+      chartLoadedOptions?: Parameters<typeof selectors.chart.loaded>[0];
+      createURLParams?: string;
+    }) => {
       await page.goto(
-        `en/create/new?cube=${encodeURIComponent(iri)}&dataSource=${dataSource}`
+        `en/create/new?cube=${encodeURIComponent(
+          iri
+        )}&dataSource=${dataSource}${createURLParams ?? ""}`
       );
 
       await selectors.chart.loaded(chartLoadedOptions);
