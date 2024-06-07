@@ -38,7 +38,7 @@ export const createActions = ({
       await page.goto(
         `/en/browse?dataset=${encodeURIComponent(
           iri
-        )}&dataSource=${dataSource}${urlParams}`
+        )}&dataSource=${dataSource}&${urlParams}`
       );
 
       await selectors.datasetPreview.loaded();
@@ -64,7 +64,7 @@ export const createActions = ({
       await page.goto(
         `/en/create/new?cube=${encodeURIComponent(
           iri
-        )}&dataSource=${dataSource}${createURLParams ?? ""}`
+        )}&dataSource=${dataSource}&${createURLParams ?? ""}`
       );
 
       await selectors.chart.loaded(chartLoadedOptions);
