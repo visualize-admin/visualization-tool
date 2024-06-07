@@ -6,13 +6,9 @@ const { test, expect } = setup();
 test("it should be possible to enable abbreviations for colors & x field (column)", async ({
   actions,
   selectors,
-  page,
+  replayFromHAR,
 }) => {
-  if (process.env.E2E_HAR !== "false") {
-    await page.routeFromHAR(`./e2e/har/abbreviations/1.zip`, {
-      notFound: "fallback",
-    });
-  }
+  replayFromHAR();
 
   test.slow();
 
@@ -82,13 +78,9 @@ test("it should be possible to enable abbreviations for colors & x field (column
 test("hierarchies: it should be possible to enable abbreviations for colors", async ({
   actions,
   selectors,
-  page,
+  replayFromHAR,
 }) => {
-  if (process.env.E2E_HAR !== "false") {
-    await page.routeFromHAR(`./e2e/har/abbreviations/2.zip`, {
-      notFound: "fallback",
-    });
-  }
+  replayFromHAR();
 
   await actions.chart.createFrom({
     iri: "https://environment.ld.admin.ch/foen/ubd000502/4",
@@ -128,12 +120,12 @@ test("hierarchies: it should be possible to enable abbreviations for colors", as
   ]);
 });
 
-test("localized abbreviations", async ({ actions, selectors, page }) => {
-  if (process.env.E2E_HAR !== "false") {
-    await page.routeFromHAR(`./e2e/har/abbreviations/3.zip`, {
-      notFound: "fallback",
-    });
-  }
+test("localized abbreviations", async ({
+  actions,
+  selectors,
+  replayFromHAR,
+}) => {
+  replayFromHAR();
 
   await actions.chart.createFrom({
     iri: "https://environment.ld.admin.ch/foen/gefahren-waldbrand-praeventionsmassnahmen-kantone/1",
