@@ -18,7 +18,7 @@ type Migration = {
   down: (config: any, migrationProps?: any) => any;
 };
 
-export const CHART_CONFIG_VERSION = "3.2.0";
+export const CHART_CONFIG_VERSION = "3.3.0";
 
 export const chartConfigMigrations: Migration[] = [
   {
@@ -861,6 +861,7 @@ export const chartConfigMigrations: Migration[] = [
     description: `ALL {
       + cubes {
         + publishIri
+        +- joinBy (string) -> joinBy (string[])
       }
     }`,
     from: "3.1.0",
@@ -886,6 +887,41 @@ export const chartConfigMigrations: Migration[] = [
       });
     },
   },
+  {
+    description: `ALL {
+      + cubes {
+        +- joinBy (string) -> joinBy (string[])
+      }
+    }`,
+    from: "3.2.0",
+    to: "3.3.0",
+    up: (config) => {
+      const newConfig = { ...config, version: "3.3.0" };
+
+      return produce(newConfig, (draft: any) => {
+        draft.cubes = draft.cubes.map((cube: any) => {
+          if (typeof cube.joinBy === "string") {
+            cube.joinBy = [cube.joinBy];
+          }
+
+          return cube;
+        });
+      });
+    },
+    down: (config) => {
+      const newConfig = { ...config, version: "3.2.0" };
+
+      return produce(newConfig, (draft: any) => {
+        draft.cubes = draft.cubes.map((cube: any) => {
+          if (cube.joinBy) {
+            cube.joinBy = cube.joinBy[0];
+          }
+
+          return cube;
+        });
+      });
+    },
+  },
 ];
 
 export const migrateChartConfig = makeMigrate<ChartConfig>(
@@ -895,7 +931,7 @@ export const migrateChartConfig = makeMigrate<ChartConfig>(
   }
 );
 
-export const CONFIGURATOR_STATE_VERSION = "3.3.0";
+export const CONFIGURATOR_STATE_VERSION = "3.4.0";
 
 export const configuratorStateMigrations: Migration[] = [
   {
@@ -1155,6 +1191,45 @@ export const configuratorStateMigrations: Migration[] = [
       const newConfig = { ...config, version: "3.2.1" };
       delete newConfig.dashboardFilters;
       return newConfig;
+    },
+  },
+  {
+    description: "ALL (bump ChartConfig version)",
+    from: "3.3.0",
+    to: "3.4.0",
+    up: (config) => {
+      const newConfig = { ...config, version: "3.4.0" };
+
+      return produce(newConfig, (draft: any) => {
+        const chartConfigs: any[] = [];
+
+        for (const chartConfig of draft.chartConfigs) {
+          const migratedChartConfig = migrateChartConfig(chartConfig, {
+            migrationProps: draft,
+            toVersion: "3.3.0",
+          });
+          chartConfigs.push(migratedChartConfig);
+        }
+
+        draft.chartConfigs = chartConfigs;
+      });
+    },
+    down: (config) => {
+      const newConfig = { ...config, version: "3.3.0" };
+
+      return produce(newConfig, (draft: any) => {
+        const chartConfigs: any[] = [];
+
+        for (const chartConfig of draft.chartConfigs) {
+          const migratedChartConfig = migrateChartConfig(chartConfig, {
+            migrationProps: draft,
+            toVersion: "3.2.0",
+          });
+          chartConfigs.push(migratedChartConfig);
+        }
+
+        draft.chartConfigs = chartConfigs;
+      });
     },
   },
 ];
