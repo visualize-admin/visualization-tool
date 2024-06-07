@@ -1,6 +1,7 @@
 import { loadChartInLocalStorage } from "./charts-utils";
 import { setup, sleep } from "./common";
 import hierarchyTest13 from "./fixtures/hierarchy-test-13-municipality-population.json";
+import { harReplayGraphqlEndpointQueryParam } from "./har-utils";
 
 const { test, expect } = setup();
 
@@ -25,11 +26,10 @@ test.skip("Segment sorting", async ({
     });
   }
 
-  );
-
   await actions.chart.createFrom({
     iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/13",
     dataSource: "Int",
+    createURLParams: harReplayGraphqlEndpointQueryParam,
   });
 
   for (const chartType of ["Columns", "Pie"] as const) {
@@ -93,6 +93,7 @@ test("Segment sorting with hierarchy", async ({
   await actions.chart.createFrom({
     iri: "https://environment.ld.admin.ch/foen/nfi/nfi_C-1029/cube/2023-1",
     dataSource: "Prod",
+    createURLParams: harReplayGraphqlEndpointQueryParam,
   });
 
   await selectors.edition.drawerLoaded();

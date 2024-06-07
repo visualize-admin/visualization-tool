@@ -3,6 +3,7 @@ import percySnapshot from "@percy/playwright";
 import intConfigs from "../app/test/__fixtures/config/int/configs";
 
 import { setup, sleep } from "./common";
+import { harReplayGraphqlEndpointQueryParam } from "./har-utils";
 
 const { test } = setup();
 
@@ -32,7 +33,9 @@ for (let [viewportName, viewportSize] of Object.entries(viewports)) {
         });
       }
       await page.setViewportSize(viewportSize);
-      await page.goto(`/en/__test/${env}/${slug}?dataSource=Int`);
+      await page.goto(
+        `/en/__test/${env}/${slug}?dataSource=Int&${harReplayGraphqlEndpointQueryParam}`
+      );
       await selectors.chart.loaded();
 
       await sleep(2_000);
