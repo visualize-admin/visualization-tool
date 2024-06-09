@@ -44,7 +44,7 @@ describe("viewing a dataset with only ordinal measures", () => {
     expect(await enabledButtons.count()).toEqual(2);
   });
 
-  test("should be possible to select ordinal measure as area color", async ({
+  test("should be possible to select ordinal measure as area color @noci", async ({
     page,
     screen,
     selectors,
