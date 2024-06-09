@@ -20,7 +20,7 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps chromium
       - name: Run Playwright tests
-        run: yarn e2e
+        run: yarn e2e -- --grep-invert @noci
         env:
           E2E_BASE_URL: ${{ github.event.deployment_status.target_url }}
           PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}

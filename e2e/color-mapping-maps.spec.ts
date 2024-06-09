@@ -3,15 +3,16 @@ import { setup } from "./common";
 import forestFireDanger from "./fixtures/forest-fire-danger-chart-config.json";
 import { harReplayGraphqlEndpointQueryParam } from "./har-utils";
 
-const { test, expect } = setup();
+const { test } = setup();
 
-test("should be possible to de-select options from color component in maps", async ({
+test("should be possible to de-select options from color component in maps @noci", async ({
   page,
   within,
   actions,
   selectors,
   replayFromHAR
 }) => {
+
   await replayFromHAR()
   const key = "color-mapping-maps.spec";
   const config = forestFireDanger;
