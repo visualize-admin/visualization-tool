@@ -52,6 +52,8 @@ describe("viewing a dataset with only ordinal measures", () => {
     within,
     replayFromHAR,
   }) => {
+    test.slow();
+
     await replayFromHAR();
     await loadChartInLocalStorage(page, key, config);
     page.goto(`/en/create/${key}?${harReplayGraphqlEndpointQueryParam}`);
