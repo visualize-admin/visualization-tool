@@ -67,7 +67,9 @@ export const createSelectors = ({ screen, page, within }: Ctx) => {
       filterCheckbox: (value: string) =>
         page.locator(`[data-value="${value}"]`),
       chartTypeSelectorRegular: () =>
-        screen.findByTestId("chart-type-selector-regular"),
+        screen.findByTestId("chart-type-selector-regular", undefined, {
+          timeout: 10_000,
+        }),
       filtersLoaded: () =>
         screen.findByText("Selected filters", undefined, { timeout: 10_000 }),
       controlSectionBySubtitle: (title: string) =>

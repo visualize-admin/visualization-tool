@@ -166,7 +166,7 @@ const uniqueWithoutSorting = <T>(arr: T[]) => {
   return res;
 };
 
-test("Map legend preview table sorting @noci", async ({
+test("Map legend preview table sorting", async ({
   actions,
   selectors,
   replayFromHAR,
