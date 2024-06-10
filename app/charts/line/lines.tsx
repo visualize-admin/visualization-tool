@@ -1,9 +1,79 @@
 import { line } from "d3-shape";
-import { Fragment, memo } from "react";
+import { Fragment, memo, useEffect, useMemo, useRef } from "react";
 
+import {
+  RenderWhiskerDatum,
+  filterWithoutErrors,
+  renderWhiskers,
+} from "@/charts/column/rendering-utils";
 import { LinesState } from "@/charts/line/lines-state";
 import { useChartState } from "@/charts/shared/chart-state";
+import { renderContainer } from "@/charts/shared/rendering-utils";
 import { Observation } from "@/domain/data";
+import { useTransitionStore } from "@/stores/transition";
+
+export const ErrorWhiskers = () => {
+  const {
+    getX,
+    getYError,
+    getYErrorRange,
+    chartData,
+    yScale,
+    xScale,
+    showYStandardError,
+    bounds,
+  } = useChartState() as LinesState;
+  const { margins } = bounds;
+  const ref = useRef<SVGGElement>(null);
+  const enableTransition = useTransitionStore((state) => state.enable);
+  const transitionDuration = useTransitionStore((state) => state.duration);
+  const renderData: RenderWhiskerDatum[] = useMemo(() => {
+    if (!getYErrorRange || !showYStandardError) {
+      return [];
+    }
+
+    return chartData.filter(filterWithoutErrors(getYError)).map((d, i) => {
+      const x0 = xScale(getX(d)) as number;
+      const barWidth = 15;
+      const [y1, y2] = getYErrorRange(d);
+
+      return {
+        key: `${i}`,
+        x: x0 - barWidth / 2,
+        y1: yScale(y1),
+        y2: yScale(y2),
+        width: barWidth,
+      };
+    });
+  }, [
+    chartData,
+    getX,
+    getYError,
+    getYErrorRange,
+    showYStandardError,
+    xScale,
+    yScale,
+  ]);
+
+  useEffect(() => {
+    if (ref.current) {
+      renderContainer(ref.current, {
+        id: "lines-error-whiskers",
+        transform: `translate(${margins.left} ${margins.top})`,
+        transition: { enable: enableTransition, duration: transitionDuration },
+        render: (g, opts) => renderWhiskers(g, renderData, opts),
+      });
+    }
+  }, [
+    enableTransition,
+    margins.left,
+    margins.top,
+    renderData,
+    transitionDuration,
+  ]);
+
+  return <g ref={ref} />;
+};
 
 export const Lines = () => {
   const { getX, xScale, getY, yScale, grouped, colors, bounds } =
