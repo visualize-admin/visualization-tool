@@ -7,6 +7,7 @@ import {
   Grow,
   Popover,
   Stack,
+  tabClasses,
   Theme,
   Tooltip,
   Typography,
@@ -14,6 +15,7 @@ import {
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { PUBLISHED_STATE } from "@prisma/client";
+import clsx from "clsx";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -50,7 +52,7 @@ import { useUserConfig } from "@/domain/user-configs";
 import { useFlag } from "@/flags";
 import { useDataCubesComponentsQuery } from "@/graphql/hooks";
 import { Icon, IconName } from "@/icons";
-import { useLocale } from "@/src";
+import { defaultLocale, useLocale } from "@/locales";
 import { createConfig, updateConfig } from "@/utils/chart-config/api";
 import { createChartId } from "@/utils/create-chart-id";
 import { getRouterChartId } from "@/utils/router/helpers";
@@ -104,6 +106,7 @@ export const ChartSelectionTabs = () => {
   const [state] = useConfiguratorState(hasChartConfigs);
   const editable =
     isConfiguring(state) || isLayouting(state) || isPublishing(state);
+  const locale = useLocale();
 
   if (!editable && state.chartConfigs.length === 1) {
     return null;
@@ -115,6 +118,12 @@ export const ChartSelectionTabs = () => {
       key: d.key,
       chartType: d.chartType,
       active: d.key === chartConfig.key,
+      label:
+        d.meta.title[locale] !== ""
+          ? d.meta.title[locale]
+          : d.meta.title[defaultLocale] !== ""
+            ? d.meta.title[defaultLocale]
+            : t({ id: "annotation.add.title" }),
     };
   });
 
@@ -347,6 +356,7 @@ type TabDatum = {
   key: string;
   chartType: ChartType;
   active: boolean;
+  label: string;
 };
 
 type TabsFixedProps = {
@@ -618,7 +628,67 @@ const PassthroughTab = ({
   return <>{children}</>;
 };
 
+const useTabsInnerStyles = makeStyles<Theme>((theme) => ({
+  root: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 1,
+  },
+  tab: {
+    zIndex: 1,
+    maxWidth: "auto",
+    "&:first-child": {
+      // We need to add a negative margin to the first tab so that its left margin
+      // goes "under" the border of the tab list.
+      marginLeft: -1,
+    },
+  },
+  // :last-child does not work when the tabs are not scrollable
+  // MUI seems to add an empty element at the end, thus we cannot use :last-child
+  lastTab: {
+    // We need to add a negative margin to the last tab so that its right margin
+    // goes "under" the border of the tab list.
+    marginRight: -1,
+  },
+  tabList: {
+    top: 1,
+    border: "1px solid",
+    borderColor: theme.palette.divider,
+    borderTop: 0,
+    borderBottom: 0,
+    position: "relative",
+    "--bg": theme.palette.background.paper,
+    "--cut-off-width": "1rem",
+
+    [`& .${tabClasses.root}`]: {
+      maxWidth: "max-content",
+    },
+
+    "&:before, &:after": {
+      top: 1,
+      content: '""',
+      bottom: 1,
+      position: "absolute",
+      width: "var(--cut-off-width)",
+      zIndex: 10,
+    },
+    "&:before": {
+      borderBottom: 0,
+      left: 0,
+      right: "auto",
+      backgroundImage: "linear-gradient(to left, transparent, var(--bg))",
+    },
+    "&:after": {
+      left: "auto",
+      right: 0,
+      backgroundImage: "linear-gradient(to right, transparent, var(--bg))",
+    },
+  },
+}));
+
 const TabsInner = (props: TabsInnerProps) => {
+  const classes = useTabsInnerStyles();
   const {
     data,
     addable,
@@ -636,14 +706,7 @@ const TabsInner = (props: TabsInnerProps) => {
   const activeTabIndex = data.findIndex((x) => x.active);
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        alignItems: "flex-start",
-        justifyContent: "space-between",
-        gap: 5,
-      }}
-    >
+    <div className={classes.root}>
       <TabContext value={`${activeTabIndex}`}>
         <DragDropContext
           onDragEnd={(d) => {
@@ -664,7 +727,7 @@ const TabsInner = (props: TabsInnerProps) => {
                 ref={provided.innerRef}
                 variant="scrollable"
                 scrollButtons={false}
-                sx={{ top: 1 }}
+                className={classes.tabList}
               >
                 {data.map((d, i) => (
                   <PassthroughTab key={d.key} value={`${i}`}>
@@ -684,14 +747,18 @@ const TabsInner = (props: TabsInnerProps) => {
                             component="div"
                             key={d.key}
                             value={`${i}`}
-                            className={`${
+                            className={clsx(
+                              classes.tab,
                               // We need to add the "selected" class ourselves since we are wrapping
                               // the tabs by Draggable.
-                              i === activeTabIndex ? "Mui-selected" : ""
-                            }`}
+                              i === activeTabIndex ? "Mui-selected" : "",
+                              i === data.length - 1 ? classes.lastTab : ""
+                            )}
                             sx={{
                               px: 0,
-                              minWidth: "fit-content",
+                              flexShrink: 1,
+                              minWidth: 180,
+                              flexBasis: "100%",
                             }}
                             label={
                               <TabContent
@@ -700,6 +767,7 @@ const TabsInner = (props: TabsInnerProps) => {
                                 editable={editable}
                                 draggable={draggable}
                                 active={d.active}
+                                label={d.label}
                                 dragging={snapshot.isDragging}
                                 onChevronDownClick={(e) => {
                                   onChartEdit?.(e, d.key);
@@ -718,25 +786,32 @@ const TabsInner = (props: TabsInnerProps) => {
                 <PassthroughTab>
                   <div style={{ opacity: 0 }}>{provided.placeholder}</div>
                 </PassthroughTab>
-
-                {addable && (
-                  <VisualizeTab
-                    component="div"
-                    sx={{
-                      px: 0,
-                      minWidth: "fit-content",
-                    }}
-                    onClick={onChartAdd}
-                    label={<TabContent iconName="add" chartKey="" />}
-                  />
-                )}
               </VisualizeTabList>
             )}
           </Droppable>
         </DragDropContext>
       </TabContext>
 
-      <Box gap="0.5rem" display="flex">
+      {addable && (
+        <VisualizeTab
+          component="div"
+          className={classes.tab}
+          sx={{
+            px: 0,
+            pt: "2px",
+            top: 1,
+            margin: "0 1rem",
+            height: "100%",
+            border: "1px solid",
+            borderColor: "divider",
+            minWidth: "fit-content",
+          }}
+          onClick={onChartAdd}
+          label={<TabContent iconName="add" chartKey="" />}
+        />
+      )}
+      <Box flexGrow={1} />
+      <Box gap="0.5rem" display="flex" flexShrink={0}>
         {isConfiguring(state) ? <SaveDraftButton chartId={chartId} /> : null}
         {editable &&
           isConfiguring(state) &&
@@ -746,7 +821,7 @@ const TabsInner = (props: TabsInnerProps) => {
             <PublishChartButton chartId={chartId} />
           ))}
       </Box>
-    </Box>
+    </div>
   );
 };
 
@@ -755,11 +830,44 @@ export const useIconStyles = makeStyles<
   { active: boolean | undefined; dragging: boolean | undefined }
 >(({ palette, spacing }) => ({
   root: {
+    "--bg": palette.background.paper,
+    backgroundColor: "var(--bg)",
     alignItems: "center",
     padding: spacing(2),
     borderTopLeftRadius: spacing(1),
     borderTopRightRadius: spacing(1),
     cursor: "default",
+    textTransform: "none",
+    width: "100%",
+    justifyContent: "stretch",
+  },
+  label: {
+    flexShrink: 1,
+    flexGrow: 1,
+    marginLeft: "-0.5rem",
+    color: "inherit",
+    flexWrap: "nowrap",
+    whiteSpace: "nowrap",
+    minWidth: 0,
+    overflow: "hidden",
+    minHeight: "100%",
+    position: "relative",
+    display: "flex",
+    cursor: "pointer",
+    alignItems: "center",
+    marginRight: "0.15rem",
+
+    "&:after": {
+      content: '" "',
+      position: "absolute",
+      right: 0,
+      top: 0,
+      bottom: 0,
+      height: "auto",
+      width: "10px",
+      backgroundImage:
+        "linear-gradient(to right, rgba(255, 255, 255, 0), var(--bg))",
+    },
   },
   chartIconWrapper: {
     minWidth: "fit-content",
@@ -795,6 +903,7 @@ type TabContentProps = {
   draggable?: boolean;
   active?: boolean;
   dragging?: boolean;
+  label?: string;
   onChevronDownClick?: (
     e: React.MouseEvent<HTMLElement>,
     activeChartKey: string
@@ -809,6 +918,7 @@ const TabContent = (props: TabContentProps) => {
     editable,
     draggable,
     active,
+    label,
     dragging,
     onChevronDownClick,
     onSwitchClick,
@@ -825,6 +935,16 @@ const TabContent = (props: TabContentProps) => {
         <Icon name={iconName} />
       </Button>
 
+      {label ? (
+        <Button
+          variant="text"
+          color="primary"
+          className={classes.label}
+          onClick={onSwitchClick}
+        >
+          {label}
+        </Button>
+      ) : null}
       {editable && (
         <Button
           variant="text"
