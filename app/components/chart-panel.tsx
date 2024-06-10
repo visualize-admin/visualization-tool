@@ -1,7 +1,7 @@
 import { Box, BoxProps, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
-import React, { forwardRef, HTMLProps } from "react";
+import React, { HTMLProps, forwardRef } from "react";
 
 import ChartPanelLayoutCanvas, {
   chartPanelLayoutGridClasses,
