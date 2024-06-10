@@ -19,7 +19,7 @@ import { rgbArrayToHex } from "@/charts/shared/colors";
 import { MapLegendColor } from "@/charts/shared/legend-color";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { useInteraction } from "@/charts/shared/use-interaction";
-import { useSize } from "@/charts/shared/use-width";
+import { useSize } from "@/charts/shared/use-size";
 import Flex from "@/components/flex";
 import { MapConfig } from "@/configurator";
 import { ColorRamp } from "@/configurator/components/chart-controls/color-ramp";

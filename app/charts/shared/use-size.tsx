@@ -26,10 +26,13 @@ export type Bounds = {
   aspectRatio: number;
 };
 
+const RESIZE_DELAY = 500;
+
 export const Observer = ({ children }: { children: ReactNode }) => {
   const [ref, width, height] = useResizeObserver<HTMLDivElement>();
-  const prev = useTimedPrevious(width, 500);
-  const isResizing = prev !== width;
+  const prevWidth = useTimedPrevious(width, RESIZE_DELAY);
+  const prevHeight = useTimedPrevious(height, RESIZE_DELAY);
+  const isResizing = prevWidth !== width || prevHeight !== height;
   const setEnableTransition = useTransitionStore((state) => state.setEnable);
   useEffect(() => {
     setEnableTransition(!isResizing);

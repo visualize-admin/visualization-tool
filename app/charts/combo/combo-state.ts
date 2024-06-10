@@ -2,7 +2,7 @@ import { extent, groups, max, min, sum } from "d3-array";
 import { scaleLinear, scaleOrdinal, scaleTime } from "d3-scale";
 import { useMemo } from "react";
 
-import { useSize } from "@/charts/shared/use-width";
+import { useSize } from "@/charts/shared/use-size";
 import { Observation } from "@/domain/data";
 import { useFormatNumber, useTimeFormatUnit } from "@/formatters";
 

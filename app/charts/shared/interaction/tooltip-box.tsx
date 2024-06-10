@@ -9,7 +9,7 @@ import React, {
 } from "react";
 import ReactDOM from "react-dom";
 
-import { Margins } from "@/charts/shared/use-width";
+import { Margins } from "@/charts/shared/use-size";
 
 const TRIANGLE_SIZE = 8;
 const TOOLTIP_OFFSET = 4;

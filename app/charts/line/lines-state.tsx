@@ -31,7 +31,7 @@ import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import { getCenteredTooltipPlacement } from "@/charts/shared/interaction/tooltip-box";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
-import { useSize } from "@/charts/shared/use-width";
+import { useSize } from "@/charts/shared/use-size";
 import { LineConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
 import {

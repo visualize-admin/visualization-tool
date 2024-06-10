@@ -6,7 +6,7 @@ import { ReactNode, useEffect, useRef } from "react";
 
 import { useChartState } from "@/charts/shared/chart-state";
 import { CalculationToggle } from "@/charts/shared/interactive-filter-calculation-toggle";
-import { useObserverRef } from "@/charts/shared/use-width";
+import { useObserverRef } from "@/charts/shared/use-size";
 import { chartPanelLayoutGridClasses } from "@/components/chart-panel-layout-grid";
 import { ChartConfig } from "@/configurator";
 import { useTransitionStore } from "@/stores/transition";

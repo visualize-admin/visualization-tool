@@ -39,7 +39,7 @@ import {
 import { ChartContext, CommonChartState } from "@/charts/shared/chart-state";
 import { colorToRgbArray } from "@/charts/shared/colors";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
-import { useSize } from "@/charts/shared/use-width";
+import { useSize } from "@/charts/shared/use-size";
 import {
   BBox,
   CategoricalColorField,
