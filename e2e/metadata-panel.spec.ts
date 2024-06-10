@@ -6,10 +6,10 @@ test("it should be possible to open a metadata panel by clicking on elements in 
   actions,
   selectors,
 }) => {
-  await actions.chart.createFrom(
-    "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/6",
-    "Prod"
-  );
+  await actions.chart.createFrom({
+    iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/6",
+    dataSource: "Prod",
+  });
 
   const checkKantonDescription = async () => {
     const kantonDimensionDescription = await selectors.panels

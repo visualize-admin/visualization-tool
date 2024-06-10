@@ -14,4 +14,6 @@ export type FlagName =
   /** Whether we can use shared filters on dashboard layout */
   | "layouter.dashboard.shared-filters"
   /** Whether server side cache is disabled */
-  | "server-side-cache.disable";
+  | "server-side-cache.disable"
+  /** The GraphQL endpoint, is used for testing purposes */
+  | "graphql.endpoint";

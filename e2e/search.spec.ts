@@ -2,6 +2,7 @@ import { within } from "@playwright-testing-library/test";
 import { Locator, Page } from "@playwright/test";
 
 import { setup } from "./common";
+import { harReplayGraphqlEndpointQueryParam } from "./har-utils";
 import { Selectors } from "./selectors";
 
 const { test, expect } = setup();
@@ -13,11 +14,12 @@ const getSelectValue = async (locator: Locator) => {
 test("should be possible to open a search URL, and search state should be recovered", async ({
   page,
   selectors,
+  replayFromHAR,
 }) => {
-  test.slow();
+  await replayFromHAR();
 
   await page.goto(
-    `/en/browse?includeDrafts=true&order=SCORE&search=category&dataSource=Int`
+    `/en/browse?includeDrafts=true&order=SCORE&search=category&dataSource=Int&${harReplayGraphqlEndpointQueryParam}`
   );
   await selectors.search.resultsCount();
 
@@ -30,8 +32,13 @@ test("should be possible to open a search URL, and search state should be recove
   );
 });
 
-test("search results count coherence", async ({ page, selectors }) => {
+test("search results count coherence", async ({
+  page,
+  selectors,
+  replayFromHAR,
+}) => {
   test.slow();
+  await replayFromHAR();
 
   const categories = [
     "Administration",
@@ -47,7 +54,9 @@ test("search results count coherence", async ({ page, selectors }) => {
   ];
 
   for (const t of [...categories, ...themes]) {
-    await page.goto("/en/browse?dataSource=Int");
+    await page.goto(
+      `/en/browse?dataSource=Int&${harReplayGraphqlEndpointQueryParam}`
+    );
     await selectors.search.resultsCount();
 
     const panelLeft = await selectors.panels.left();
@@ -66,8 +75,19 @@ test("search results count coherence", async ({ page, selectors }) => {
   }
 });
 
-test("sort order", async ({ page, selectors, screen, actions }) => {
-  await page.goto("/en/browse?dataSource=Int");
+test("sort order", async ({
+  page,
+  selectors,
+  screen,
+  actions,
+  replayFromHAR,
+}) => {
+  test.slow();
+
+  await replayFromHAR();
+  await page.goto(
+    `/en/browse?dataSource=Int&${harReplayGraphqlEndpointQueryParam}`
+  );
   const resultCount = await selectors.search.resultsCount();
   const text = await resultCount.textContent();
   // Custom MUI select element; uses an input element under the hood
@@ -132,7 +152,9 @@ const getResultCountForSearch = async (
   }: { page: Page; selectors: Selectors; locale: string }
 ) => {
   await page.goto(
-    `/${locale}/browse?search=${encodeURIComponent(search)}&dataSource=Prod`
+    `/${locale}/browse?search=${encodeURIComponent(
+      search
+    )}&dataSource=Prod&${harReplayGraphqlEndpointQueryParam}`
   );
   const resultCount = await selectors.search.resultsCount();
   const count = (await resultCount.textContent())?.split(" ")[0];
@@ -141,7 +163,11 @@ const getResultCountForSearch = async (
   return count;
 };
 
-test("sort order consistency", async ({ page, selectors }) => {
+test("sort order consistency", async ({ page, selectors, replayFromHAR }) => {
+  test.slow();
+
+  await replayFromHAR();
+
   const count1 = await getResultCountForSearch("wasser wald", {
     locale: "en",
     page,
@@ -156,7 +182,13 @@ test("sort order consistency", async ({ page, selectors }) => {
   expect(count1).toEqual(count2);
 });
 
-test("sort language consistency", async ({ page, selectors }) => {
+test("sort language consistency", async ({
+  page,
+  selectors,
+  replayFromHAR,
+}) => {
+  test.slow();
+  await replayFromHAR();
   const count1 = await getResultCountForSearch("wasser", {
     locale: "en",
     page,
@@ -208,7 +240,10 @@ test("sort language consistency", async ({ page, selectors }) => {
   expect(count5).toEqual(count8);
 });
 
-test("no results", async ({ page }) => {
-  await page.goto("/en/browse?dataSource=Int&search=foo");
+test("no results", async ({ page, replayFromHAR }) => {
+  await replayFromHAR();
+  await page.goto(
+    `/en/browse?dataSource=Int&search=foo&${harReplayGraphqlEndpointQueryParam}`
+  );
   await page.locator(`:text("No results")`).waitFor({ timeout: 10_000 });
 });

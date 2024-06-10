@@ -1,17 +1,22 @@
 import { setup, sleep } from "./common";
+import { harReplayGraphqlEndpointQueryParam } from "./har-utils";
 
 const { test, expect } = setup();
 
 test("it should be possible to enable abbreviations for colors & x field (column)", async ({
   actions,
   selectors,
+  replayFromHAR,
 }) => {
+  await replayFromHAR();
+
   test.slow();
 
-  await actions.chart.createFrom(
-    "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/6",
-    "Prod"
-  );
+  await actions.chart.createFrom({
+    iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/6",
+    dataSource: "Prod",
+    createURLParams: harReplayGraphqlEndpointQueryParam,
+  });
 
   await selectors.edition.drawerLoaded();
   await actions.editor.selectActiveField("Horizontal Axis");
@@ -73,11 +78,15 @@ test("it should be possible to enable abbreviations for colors & x field (column
 test("hierarchies: it should be possible to enable abbreviations for colors", async ({
   actions,
   selectors,
+  replayFromHAR,
 }) => {
-  await actions.chart.createFrom(
-    "https://environment.ld.admin.ch/foen/ubd000502/4",
-    "Prod"
-  );
+  await replayFromHAR();
+
+  await actions.chart.createFrom({
+    iri: "https://environment.ld.admin.ch/foen/ubd000502/4",
+    dataSource: "Prod",
+    createURLParams: harReplayGraphqlEndpointQueryParam,
+  });
 
   await selectors.edition.drawerLoaded();
   await actions.editor.selectActiveField("Segmentation");
@@ -111,11 +120,18 @@ test("hierarchies: it should be possible to enable abbreviations for colors", as
   ]);
 });
 
-test("localized abbreviations", async ({ actions, selectors }) => {
-  await actions.chart.createFrom(
-    "https://environment.ld.admin.ch/foen/gefahren-waldbrand-praeventionsmassnahmen-kantone/1",
-    "Int"
-  );
+test("localized abbreviations @noci", async ({
+  actions,
+  selectors,
+  replayFromHAR,
+}) => {
+  await replayFromHAR();
+
+  await actions.chart.createFrom({
+    iri: "https://environment.ld.admin.ch/foen/gefahren-waldbrand-praeventionsmassnahmen-kantone/1",
+    dataSource: "Prod",
+    createURLParams: harReplayGraphqlEndpointQueryParam,
+  });
 
   await selectors.edition.drawerLoaded();
   await actions.editor.changeChartType("Map");

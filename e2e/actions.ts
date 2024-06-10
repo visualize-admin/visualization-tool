@@ -6,9 +6,10 @@ type ActionTestContext = TestContext & { selectors: Selectors };
 const selectActiveEditorField =
   ({ selectors, within }: ActionTestContext) =>
   async (field: string) => {
-    const fieldLocator = await within(
-      selectors.edition.controlSectionBySubtitle("Chart Options")
-    ).findByText(field);
+    const chartOptions =
+      selectors.edition.controlSectionBySubtitle("Chart Options");
+    chartOptions.scrollIntoViewIfNeeded();
+    const fieldLocator = await within(chartOptions).findByText(field);
     await fieldLocator.click();
     await selectors.panels
       .drawer()
@@ -26,9 +27,19 @@ export const createActions = ({
     clear: async () => await screen.getByTestId("clearSearch").click(),
   },
   datasetPreview: {
-    load: async (iri: string, dataSource: "Int" | "Prod") => {
+    load: async ({
+      iri,
+      dataSource,
+      urlParams,
+    }: {
+      iri: string;
+      dataSource: "Int" | "Prod";
+      urlParams?: string;
+    }) => {
       await page.goto(
-        `en/browse?dataset=${encodeURIComponent(iri)}&dataSource=${dataSource}`
+        `/en/browse?dataset=${encodeURIComponent(
+          iri
+        )}&dataSource=${dataSource}&${urlParams}`
       );
 
       await selectors.datasetPreview.loaded();
@@ -40,13 +51,21 @@ export const createActions = ({
     },
   },
   chart: {
-    createFrom: async (
-      iri: string,
-      dataSource: "Int" | "Prod",
-      chartLoadedOptions?: Parameters<typeof selectors.chart.loaded>[0]
-    ) => {
+    createFrom: async ({
+      iri,
+      dataSource,
+      chartLoadedOptions,
+      createURLParams,
+    }: {
+      iri: string;
+      dataSource: "Int" | "Prod";
+      chartLoadedOptions?: Parameters<typeof selectors.chart.loaded>[0];
+      createURLParams?: string;
+    }) => {
       await page.goto(
-        `en/create/new?cube=${encodeURIComponent(iri)}&dataSource=${dataSource}`
+        `/en/create/new?cube=${encodeURIComponent(
+          iri
+        )}&dataSource=${dataSource}&${createURLParams ?? ""}`
       );
 
       await selectors.chart.loaded(chartLoadedOptions);

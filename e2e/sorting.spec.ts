@@ -1,6 +1,7 @@
 import { loadChartInLocalStorage } from "./charts-utils";
 import { setup, sleep } from "./common";
 import hierarchyTest13 from "./fixtures/hierarchy-test-13-municipality-population.json";
+import { harReplayGraphqlEndpointQueryParam } from "./har-utils";
 
 const { test, expect } = setup();
 
@@ -9,27 +10,24 @@ const { test, expect } = setup();
  * - For each type of chart, changes the sorting between Name and Automatic
  * - Checks that the legend item order is coherent.
  */
-test
 // FIX: works without Browser, some bug with Browser closed error
-.skip("Segment sorting", async ({
+test.skip("Segment sorting", async ({
   selectors,
   actions,
   within,
   screen,
   page,
+  replayFromHAR,
 }) => {
   test.setTimeout(60_000);
 
-  if (process.env.E2E_HAR !== "false") {
-    await page.routeFromHAR("./e2e/har/sorting.zip", {
-      notFound: "fallback",
-    });
-  }
+  await replayFromHAR();
 
-  await actions.chart.createFrom(
-    "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/13",
-    "Int"
-  );
+  await actions.chart.createFrom({
+    iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/13",
+    dataSource: "Int",
+    createURLParams: harReplayGraphqlEndpointQueryParam,
+  });
 
   for (const chartType of ["Columns", "Pie"] as const) {
     await selectors.edition.drawerLoaded();
@@ -88,19 +86,22 @@ test("Segment sorting with hierarchy", async ({
   selectors,
   screen,
   within,
+  replayFromHAR,
 }) => {
-  await actions.chart.createFrom(
-    "https://environment.ld.admin.ch/foen/nfi/nfi_C-1029/cube/2023-1",
-    "Prod"
-  );
+  await replayFromHAR();
+
+  await actions.chart.createFrom({
+    iri: "https://environment.ld.admin.ch/foen/nfi/nfi_C-1029/cube/2023-1",
+    dataSource: "Prod",
+    createURLParams: harReplayGraphqlEndpointQueryParam,
+  });
 
   await selectors.edition.drawerLoaded();
   await actions.editor.selectActiveField("Segmentation");
 
   await sleep(3_000);
 
-  const colorSection =
-    selectors.edition.controlSectionByTitle("Segmentation");
+  const colorSection = selectors.edition.controlSectionByTitle("Segmentation");
   await within(colorSection).getByText("None").click();
 
   await actions.mui.selectOption("Region");
@@ -165,11 +166,17 @@ const uniqueWithoutSorting = <T>(arr: T[]) => {
   return res;
 };
 
-test("Map legend preview table sorting", async ({ actions, selectors }) => {
-  await actions.chart.createFrom(
-    "https://environment.ld.admin.ch/foen/gefahren-waldbrand-warnung/1",
-    "Int"
-  );
+test("Map legend preview table sorting @noci", async ({
+  actions,
+  selectors,
+  replayFromHAR,
+}) => {
+  await replayFromHAR();
+  await actions.chart.createFrom({
+    iri: "https://environment.ld.admin.ch/foen/gefahren-waldbrand-warnung/1",
+    dataSource: "Int",
+    createURLParams: harReplayGraphqlEndpointQueryParam,
+  });
   await selectors.edition.drawerLoaded();
 
   await actions.editor.changeChartType("Map");
@@ -188,11 +195,13 @@ test("Map legend preview table sorting", async ({ actions, selectors }) => {
 test("Sorting with values with same label as other values in the tree", async ({
   selectors,
   page,
+  replayFromHAR,
 }) => {
+  await replayFromHAR();
   const key = "sorting-hierarchy-values-same-label.spec";
   const config = hierarchyTest13;
   await loadChartInLocalStorage(page, key, config);
-  page.goto(`/en/create/${key}`);
+  page.goto(`/en/create/${key}?${harReplayGraphqlEndpointQueryParam}`);
   await selectors.chart.loaded({ timeout: 30_000 });
 
   const texts = await Promise.all(

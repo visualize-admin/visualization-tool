@@ -1,6 +1,7 @@
 import { loadChartInLocalStorage } from "./charts-utils";
 import { setup, sleep } from "./common";
 import forestFireDanger from "./fixtures/forest-fire-danger-chart-config.json";
+import { harReplayGraphqlEndpointQueryParam } from "./har-utils";
 
 const { test, describe, expect } = setup();
 
@@ -11,8 +12,14 @@ describe("viewing a dataset with only ordinal measures", () => {
   test("should retrieve dimension values properly", async ({
     selectors,
     actions,
+    replayFromHAR,
   }) => {
-    await actions.datasetPreview.load(config.dataSet, "Int");
+    await replayFromHAR();
+    await actions.datasetPreview.load({
+      iri: config.dataSet,
+      dataSource: "Int",
+      urlParams: harReplayGraphqlEndpointQueryParam,
+    });
     const cells = await selectors.datasetPreview.cells();
     const texts = await cells.allInnerTexts();
     expect(texts).not.toContain("NaN");
@@ -21,9 +28,11 @@ describe("viewing a dataset with only ordinal measures", () => {
   test("should be possible to only select table & map", async ({
     page,
     selectors,
+    replayFromHAR,
   }) => {
+    await replayFromHAR();
     await loadChartInLocalStorage(page, key, config);
-    page.goto(`/en/create/${key}`);
+    page.goto(`/en/create/${key}?${harReplayGraphqlEndpointQueryParam}`);
 
     await selectors.chart.loaded();
     await selectors.edition.drawerLoaded();
@@ -35,15 +44,19 @@ describe("viewing a dataset with only ordinal measures", () => {
     expect(await enabledButtons.count()).toEqual(2);
   });
 
-  test("should be possible to select ordinal measure as area color", async ({
+  test("should be possible to select ordinal measure as area color @noci", async ({
     page,
     screen,
     selectors,
     actions,
     within,
+    replayFromHAR,
   }) => {
+    test.slow();
+
+    await replayFromHAR();
     await loadChartInLocalStorage(page, key, config);
-    page.goto(`/en/create/${key}`);
+    page.goto(`/en/create/${key}?${harReplayGraphqlEndpointQueryParam}`);
 
     await selectors.chart.loaded();
     await selectors.edition.drawerLoaded();

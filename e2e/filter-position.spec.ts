@@ -3,10 +3,10 @@ import { setup } from "./common";
 const { test, expect } = setup();
 
 test("Filters should be sorted by position", async ({ selectors, actions }) => {
-  await actions.chart.createFrom(
-    "https://environment.ld.admin.ch/foen/ubd003001/14",
-    "Int"
-  );
+  await actions.chart.createFrom({
+    iri: "https://environment.ld.admin.ch/foen/ubd003001/14",
+    dataSource: "Int",
+  });
 
   await selectors.edition.drawerLoaded();
 

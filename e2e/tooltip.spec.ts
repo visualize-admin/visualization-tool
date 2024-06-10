@@ -2,12 +2,20 @@ import { setup, sleep } from "./common";
 
 const { test, expect } = setup();
 
-test("tooltip content", async ({ actions, selectors, within, page }) => {
-  test.slow();
-  await actions.chart.createFrom(
-    "https://environment.ld.admin.ch/foen/ubd000502/4",
-    "Prod"
-  );
+test("tooltip content", async ({
+  actions,
+  selectors,
+  within,
+  page,
+  replayFromHAR,
+}) => {
+  await replayFromHAR({
+    update: true,
+  });
+  await actions.chart.createFrom({
+    iri: "https://environment.ld.admin.ch/foen/ubd000502/4",
+    dataSource: "Prod",
+  });
 
   await selectors.edition.drawerLoaded();
 
