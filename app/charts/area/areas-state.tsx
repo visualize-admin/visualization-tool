@@ -46,7 +46,7 @@ import {
 } from "@/charts/shared/stacked-helpers";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
-import { useSize } from "@/charts/shared/use-width";
+import { useSize } from "@/charts/shared/use-size";
 import { AreaConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
 import { useFormatNumber, useTimeFormatUnit } from "@/formatters";

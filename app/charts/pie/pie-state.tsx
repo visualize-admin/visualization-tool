@@ -19,7 +19,7 @@ import {
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
-import { useSize } from "@/charts/shared/use-width";
+import { useSize } from "@/charts/shared/use-size";
 import { PieConfig } from "@/configurator";
 import { Dimension, Observation } from "@/domain/data";
 import { formatNumberWithUnit, useFormatNumber } from "@/formatters";

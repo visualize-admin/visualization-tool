@@ -3,8 +3,8 @@ import dynamic from "next/dynamic";
 import { forwardRef } from "react";
 
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
+import { Observer } from "@/charts/shared/use-size";
 import useSyncInteractiveFilters from "@/charts/shared/use-sync-interactive-filters";
-import { Observer } from "@/charts/shared/use-width";
 import { ChartConfig, DataSource } from "@/configurator";
 
 const ChartAreasVisualization = dynamic(

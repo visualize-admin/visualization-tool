@@ -11,7 +11,7 @@ import {
   TooltipValue,
 } from "@/charts/shared/interaction/tooltip";
 import { useInteraction } from "@/charts/shared/use-interaction";
-import { Margins } from "@/charts/shared/use-width";
+import { Margins } from "@/charts/shared/use-size";
 import { Observation } from "@/domain/data";
 
 type RulerProps = {

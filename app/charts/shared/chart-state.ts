@@ -24,7 +24,7 @@ import {
   useTemporalEntityVariable,
   useTemporalVariable,
 } from "@/charts/shared/chart-helpers";
-import { Bounds } from "@/charts/shared/use-width";
+import { Bounds } from "@/charts/shared/use-size";
 import { TableChartState } from "@/charts/table/table-state";
 import {
   ChartConfig,

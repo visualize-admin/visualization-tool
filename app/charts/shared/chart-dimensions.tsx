@@ -5,7 +5,7 @@ import { TICK_PADDING } from "@/charts/shared/axis-height-linear";
 import { BRUSH_BOTTOM_SPACE } from "@/charts/shared/brush/constants";
 import { getTickNumber } from "@/charts/shared/ticks";
 import { TICK_FONT_SIZE } from "@/charts/shared/use-chart-theme";
-import { Bounds, Margins } from "@/charts/shared/use-width";
+import { Bounds, Margins } from "@/charts/shared/use-size";
 import { ChartConfig } from "@/configurator";
 import { getTextWidth } from "@/utils/get-text-width";
 
