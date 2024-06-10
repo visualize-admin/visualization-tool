@@ -7,6 +7,7 @@ import {
   Grow,
   Popover,
   Stack,
+  tabClasses,
   Theme,
   Tooltip,
   Typography,
@@ -636,12 +637,19 @@ const useTabsInnerStyles = makeStyles<Theme>((theme) => ({
   },
   tab: {
     zIndex: 1,
+    maxWidth: "auto",
     "&:first-child": {
+      // We need to add a negative margin to the first tab so that its left margin
+      // goes "under" the border of the tab list.
       marginLeft: -1,
     },
-    "&:last-child": {
-      marginRight: -1,
-    },
+  },
+  // :last-child does not work when the tabs are not scrollable
+  // MUI seems to add an empty element at the end, thus we cannot use :last-child
+  lastTab: {
+    // We need to add a negative margin to the last tab so that its right margin
+    // goes "under" the border of the tab list.
+    marginRight: -1,
   },
   tabList: {
     top: 1,
@@ -652,13 +660,18 @@ const useTabsInnerStyles = makeStyles<Theme>((theme) => ({
     position: "relative",
     "--bg": theme.palette.background.paper,
     "--cut-off-width": "1rem",
+
+    [`& .${tabClasses.root}`]: {
+      maxWidth: "max-content",
+    },
+
     "&:before, &:after": {
       top: 1,
       content: '""',
       bottom: 1,
       position: "absolute",
       width: "var(--cut-off-width)",
-      zIndex: 1,
+      zIndex: 10,
     },
     "&:before": {
       borderBottom: 0,
@@ -738,7 +751,8 @@ const TabsInner = (props: TabsInnerProps) => {
                               classes.tab,
                               // We need to add the "selected" class ourselves since we are wrapping
                               // the tabs by Draggable.
-                              i === activeTabIndex ? "Mui-selected" : ""
+                              i === activeTabIndex ? "Mui-selected" : "",
+                              i === data.length - 1 ? classes.lastTab : ""
                             )}
                             sx={{
                               px: 0,
@@ -796,6 +810,7 @@ const TabsInner = (props: TabsInnerProps) => {
           label={<TabContent iconName="add" chartKey="" />}
         />
       )}
+      <Box flexGrow={1} />
       <Box gap="0.5rem" display="flex" flexShrink={0}>
         {isConfiguring(state) ? <SaveDraftButton chartId={chartId} /> : null}
         {editable &&
