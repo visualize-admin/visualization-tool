@@ -28,8 +28,9 @@ export type Bounds = {
 
 export const Observer = ({ children }: { children: ReactNode }) => {
   const [ref, width, height] = useResizeObserver<HTMLDivElement>();
-  const prev = useTimedPrevious(width, 500);
-  const isResizing = prev !== width;
+  const prevWidth = useTimedPrevious(width, 500);
+  const prevHeight = useTimedPrevious(height, 500);
+  const isResizing = prevWidth !== width || prevHeight !== height;
   const setEnableTransition = useTransitionStore((state) => state.setEnable);
   useEffect(() => {
     setEnableTransition(!isResizing);
