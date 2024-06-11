@@ -936,14 +936,16 @@ const TabContent = (props: TabContentProps) => {
       </Button>
 
       {label ? (
-        <Button
-          variant="text"
-          color="primary"
-          className={classes.label}
-          onClick={onSwitchClick}
-        >
-          {label}
-        </Button>
+        <Tooltip title={label} enterDelay={750}>
+          <Button
+            variant="text"
+            color="primary"
+            className={classes.label}
+            onClick={onSwitchClick}
+          >
+            {label}
+          </Button>
+        </Tooltip>
       ) : null}
       {editable && (
         <Button
