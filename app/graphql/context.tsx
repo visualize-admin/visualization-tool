@@ -11,6 +11,7 @@ import { DimensionValue } from "@/domain/data";
 import { SPARQL_GEO_ENDPOINT } from "@/domain/env";
 import { Awaited } from "@/domain/types";
 import { Timings } from "@/gql-flamegraph/resolvers";
+import { getCachedSparqlUrl } from "@/graphql/caching-utils";
 import { RequestQueryMeta } from "@/graphql/query-meta";
 import { ResolvedDimension } from "@/graphql/shared-types";
 import { createSource, pragmas } from "@/rdf/create-source";
@@ -182,19 +183,34 @@ const createContextContent = async ({
     }
   );
 };
-
 export const createContext = ({ req }: { req: IncomingMessage }) => {
   const debug = isDebugMode(req);
-  let setupping: ReturnType<typeof createContextContent>;
+  let settingUp: ReturnType<typeof createContextContent>;
 
   const ctx = {
     debug,
     // Stores meta information on queries that have been made during the request
     queries: [] as RequestQueryMeta[],
     timings: undefined as Timings | undefined,
-    setup: async ({ variableValues: { sourceUrl } }: GraphQLResolveInfo) => {
-      setupping = setupping || createContextContent({ sourceUrl, ctx, req });
-      return await setupping;
+    setup: async ({ variableValues }: GraphQLResolveInfo) => {
+      const {
+        // We expect `sourceUrl` to always be there
+        sourceUrl,
+        // `cubeFilter` is only there for cube-based queries. Keep in sync
+        // with schema.graphql file
+        cubeFilter,
+      } = variableValues;
+      settingUp =
+        settingUp ||
+        createContextContent({
+          sourceUrl: getCachedSparqlUrl({
+            endpointUrl: sourceUrl,
+            cubeIri: cubeFilter?.iri,
+          }),
+          ctx,
+          req,
+        });
+      return await settingUp;
     },
   };
 

@@ -3,6 +3,7 @@ import { useEffect, useRef } from "react";
 import ParsingClient from "sparql-http-client/ParsingClient";
 
 import { ConfiguratorState } from "@/config-types";
+import { getCachedSparqlUrl } from "@/graphql/caching-utils";
 import { useLocale } from "@/locales/use-locale";
 import { queryLatestCubeIri } from "@/rdf/query-latest-cube-iri";
 import { getErrorQueryParams } from "@/utils/flashes";
@@ -20,7 +21,7 @@ export const useRedirectToLatestCube = ({
   const hasRun = useRef(false);
 
   const handleLoad = useEvent(async () => {
-    const { url: dataSourceURL } = dataSource;
+    const { url } = dataSource;
     if (hasRun.current) {
       return;
     }
@@ -28,7 +29,12 @@ export const useRedirectToLatestCube = ({
     if (datasetIri && !Array.isArray(datasetIri)) {
       hasRun.current = true;
 
-      const sparqlClient = new ParsingClient({ endpointUrl: dataSourceURL });
+      const sparqlClient = new ParsingClient({
+        endpointUrl: getCachedSparqlUrl({
+          endpointUrl: url,
+          cubeIri: datasetIri,
+        }),
+      });
       const latestIri = await queryLatestCubeIri(sparqlClient, datasetIri);
 
       if (!latestIri) {

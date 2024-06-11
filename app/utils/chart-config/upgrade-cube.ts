@@ -3,6 +3,7 @@ import { Client } from "urql";
 
 import { ConfiguratorState, DataSource } from "@/config-types";
 import { hasChartConfigs } from "@/configurator";
+import { getCachedSparqlUrl } from "@/graphql/caching-utils";
 import {
   DataCubeLatestIriDocument,
   DataCubeLatestIriQuery,
@@ -68,7 +69,12 @@ const upgradeCubePublishIriServerSide = async (
   }
 ) => {
   const { dataSource } = options;
-  const client = new ParsingClient({ endpointUrl: dataSource.url });
+  const client = new ParsingClient({
+    endpointUrl: getCachedSparqlUrl({
+      endpointUrl: dataSource.url,
+      cubeIri: publishIri,
+    }),
+  });
   const iri = await queryLatestCubeIri(client, publishIri);
   return iri ?? publishIri;
 };
