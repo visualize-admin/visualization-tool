@@ -32,6 +32,7 @@ const setup = (contextOptions?: PlaywrightTestOptions["contextOptions"]) => {
       ) => {
         const name = `${testInfo.titlePath
           .map((x) => x.replace(/\.spec\.ts$/, ""))
+          .map((x) => x.replace(/@[^\s]+$/, ""))
           .map(slugify)
           .join(" > ")} ${index++}`;
         if (process.env.E2E_HAR !== "false") {

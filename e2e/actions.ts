@@ -8,8 +8,12 @@ const selectActiveEditorField =
   async (field: string) => {
     const chartOptions =
       selectors.edition.controlSectionBySubtitle("Chart Options");
-    chartOptions.scrollIntoViewIfNeeded();
-    const fieldLocator = await within(chartOptions).findByText(field);
+    await chartOptions.scrollIntoViewIfNeeded();
+    const fieldLocator = await within(chartOptions).findByText(
+      field,
+      undefined,
+      { timeout: 3000 }
+    );
     await fieldLocator.click();
     await selectors.panels
       .drawer()
