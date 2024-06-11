@@ -1,12 +1,15 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Client, useClient } from "urql";
 
+import { ConfiguratorState, hasChartConfigs } from "@/configurator";
 import {
   DataCubeComponents,
   DataCubeMetadata,
   DataCubesObservations,
 } from "@/domain/data";
+import { useLocale } from "@/locales";
 import { assert } from "@/utils/assert";
+import { useFetchData } from "@/utils/use-fetch-data";
 
 import { joinDimensions, mergeObservations } from "./join";
 import {
@@ -349,3 +352,51 @@ export const useDataCubesObservationsQuery = makeUseQuery<
   DataCubesObservationsOptions,
   DataCubesObservationsData
 >(executeDataCubesObservationsQuery);
+
+/**
+ * Fetches all cubes components in one go. Is useful in contexts where we deal
+ * with all the cubes at once, for example the shared dashboard filters.
+ */
+export const useAllCubesComponents = (state: ConfiguratorState) => {
+  const { dataSource } = state;
+  assert(hasChartConfigs(state), "Expected state with chart configs");
+
+  const locale = useLocale();
+  const client = useClient();
+  return useFetchData({
+    queryFn: async () => {
+      const cubeFilters = state.chartConfigs.map((config) =>
+        config.cubes.map((x) => ({
+          iri: x.iri,
+          joinBy: x.joinBy,
+          loadValues: true,
+        }))
+      );
+      const dataCubesComponents = await Promise.all(
+        cubeFilters.map((cf) => {
+          return executeDataCubesComponentsQuery(client, {
+            cubeFilters: cf,
+            locale,
+            sourceType: dataSource.type,
+            sourceUrl: dataSource.url,
+          }).then((x) => x.data);
+        })
+      );
+      return {
+        dataCubesComponents: {
+          dimensions: dataCubesComponents.flatMap(
+            (x) => x?.dataCubesComponents.dimensions ?? []
+          ),
+          measures: dataCubesComponents.flatMap(
+            (x) => x?.dataCubesComponents.measures ?? []
+          ),
+        },
+      };
+    },
+    queryKey: [
+      "data-cubes-components",
+      locale,
+      JSON.stringify(state.chartConfigs.map((x) => x.cubes)),
+    ],
+  });
+};

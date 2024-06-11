@@ -1,4 +1,4 @@
-import { Trans, t } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
 import {
   Box,
   FormControlLabel,
@@ -11,7 +11,6 @@ import {
 import capitalize from "lodash/capitalize";
 import keyBy from "lodash/keyBy";
 import omit from "lodash/omit";
-import uniqBy from "lodash/uniqBy";
 import { useMemo } from "react";
 
 import { DataFilterGenericDimensionProps } from "@/charts/shared/chart-data-filters";
@@ -25,9 +24,9 @@ import {
   SubsectionTitle,
 } from "@/configurator/components/chart-controls/section";
 import {
+  canRenderDatePickerField,
   DatePickerField,
   DatePickerFieldProps,
-  canRenderDatePickerField,
 } from "@/configurator/components/field-date-picker";
 import { IconButton } from "@/configurator/components/icon-button";
 import {
@@ -39,16 +38,15 @@ import {
   useConfiguratorState,
 } from "@/configurator/configurator-state";
 import {
+  canDimensionBeTimeFiltered,
   Dimension,
+  isJoinByComponent,
   TemporalDimension,
   TemporalEntityDimension,
-  canDimensionBeTimeFiltered,
-  isJoinByComponent,
 } from "@/domain/data";
 import { useFlag } from "@/flags";
 import { useTimeFormatLocale, useTimeFormatUnit } from "@/formatters";
-import { useDataCubesComponentsQuery } from "@/graphql/hooks";
-import { useLocale } from "@/src";
+import { useAllCubesComponents } from "@/graphql/hooks";
 import {
   SharedFilter,
   useDashboardInteractiveFilters,
@@ -114,31 +112,12 @@ const LayoutSharedFiltersConfigurator = () => {
   const { layout } = state;
   const { sharedFilters, potentialSharedFilters } =
     useDashboardInteractiveFilters();
-  const locale = useLocale();
-  const cubeFilters = useMemo(() => {
-    return uniqBy(
-      state.chartConfigs.flatMap((config) =>
-        config.cubes.map((x) => ({
-          iri: x.iri,
-          joinBy: x.joinBy,
-          loadValues: true,
-        }))
-      ),
-      "iri"
-    );
-  }, [state.chartConfigs]);
-  const [data] = useDataCubesComponentsQuery({
-    variables: {
-      sourceType: state.dataSource.type,
-      sourceUrl: state.dataSource.url,
-      locale: locale,
-      cubeFilters: cubeFilters,
-    },
-  });
+
+  const { data } = useAllCubesComponents(state);
 
   const dimensionsByIri = useMemo(() => {
     const res: Record<string, Dimension> = {};
-    for (const dim of data.data?.dataCubesComponents.dimensions ?? []) {
+    for (const dim of data?.dataCubesComponents.dimensions ?? []) {
       res[dim.iri] = dim;
       if (isJoinByComponent(dim)) {
         for (const o of dim.originalIris) {
@@ -147,7 +126,7 @@ const LayoutSharedFiltersConfigurator = () => {
       }
     }
     return res;
-  }, [data.data?.dataCubesComponents.dimensions]);
+  }, [data?.dataCubesComponents.dimensions]);
 
   const sharedFiltersByIri = useMemo(() => {
     return keyBy(sharedFilters, (x) => x.componentIri);
