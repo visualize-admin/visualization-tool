@@ -9,6 +9,7 @@ import {
 } from "@/domain/data";
 import { useLocale } from "@/locales";
 import { assert } from "@/utils/assert";
+import { allDeduped } from "@/utils/promises";
 import { useFetchData } from "@/utils/use-fetch-data";
 
 import { joinDimensions, mergeObservations } from "./join";
@@ -372,16 +373,21 @@ export const useAllCubesComponents = (state: ConfiguratorState) => {
           loadValues: true,
         }))
       );
-      const dataCubesComponents = await Promise.all(
-        cubeFilters.map((cf) => {
-          return executeDataCubesComponentsQuery(client, {
+
+      // Execute all the promises in parallel, while deduping on the cubeFilters value
+      // so that a single query is executed for each unique cubeFilters value.
+      const dataCubesComponents = await allDeduped({
+        items: cubeFilters,
+        promiser: (cf) =>
+          executeDataCubesComponentsQuery(client, {
             cubeFilters: cf,
             locale,
             sourceType: dataSource.type,
             sourceUrl: dataSource.url,
-          }).then((x) => x.data);
-        })
-      );
+          }).then((x) => x.data),
+        key: (cf) => JSON.stringify(cf),
+      });
+
       return {
         dataCubesComponents: {
           dimensions: dataCubesComponents.flatMap(
