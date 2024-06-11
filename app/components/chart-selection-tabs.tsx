@@ -48,6 +48,7 @@ import {
 import { useSearchDatasetPanelStore } from "@/configurator/components/add-new-dataset-panel";
 import { ChartTypeSelector } from "@/configurator/components/chart-type-selector";
 import { getIconName } from "@/configurator/components/ui-helpers";
+import { Dimension, Measure } from "@/domain/data";
 import { useUserConfig } from "@/domain/user-configs";
 import { useFlag } from "@/flags";
 import { useDataCubesComponentsQuery } from "@/graphql/hooks";
@@ -56,6 +57,7 @@ import { defaultLocale, useLocale } from "@/locales";
 import { createConfig, updateConfig } from "@/utils/chart-config/api";
 import { createChartId } from "@/utils/create-chart-id";
 import { getRouterChartId } from "@/utils/router/helpers";
+import { generateChartTitle } from "@/utils/title";
 import { replaceLinks } from "@/utils/ui-strings";
 import useEvent from "@/utils/use-event";
 import { useMutate } from "@/utils/use-fetch-data";
@@ -102,7 +104,11 @@ const TabsStateProvider = (props: React.PropsWithChildren<{}>) => {
   );
 };
 
-export const ChartSelectionTabs = () => {
+export const ChartSelectionTabs = ({
+  dimensionsByIri,
+}: {
+  dimensionsByIri: Record<string, Dimension | Measure>;
+}) => {
   const [state] = useConfiguratorState(hasChartConfigs);
   const editable =
     isConfiguring(state) || isLayouting(state) || isPublishing(state);
@@ -123,7 +129,7 @@ export const ChartSelectionTabs = () => {
           ? d.meta.title[locale]
           : d.meta.title[defaultLocale] !== ""
             ? d.meta.title[defaultLocale]
-            : t({ id: "annotation.add.title" }),
+            : generateChartTitle(d, dimensionsByIri),
     };
   });
 

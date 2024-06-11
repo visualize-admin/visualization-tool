@@ -1,7 +1,8 @@
 import { Box, BoxProps, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
-import React, { HTMLProps, forwardRef } from "react";
+import keyBy from "lodash/keyBy";
+import React, { forwardRef, HTMLProps, useMemo } from "react";
 
 import ChartPanelLayoutCanvas, {
   chartPanelLayoutGridClasses,
@@ -12,7 +13,8 @@ import { ChartSelectionTabs } from "@/components/chart-selection-tabs";
 import { DashboardInteractiveFilters } from "@/components/dashboard-interactive-filters";
 import { ChartConfig, Layout, LayoutDashboard } from "@/config-types";
 import { hasChartConfigs } from "@/configurator";
-import { useConfiguratorState } from "@/src";
+import { useDataCubesComponentsQuery } from "@/graphql/hooks";
+import { useConfiguratorState, useLocale } from "@/src";
 
 const useStyles = makeStyles((theme: Theme) => ({
   panelLayout: {
@@ -48,13 +50,50 @@ export const ChartWrapper = forwardRef<HTMLDivElement, ChartWrapperProps>(
   (props, ref) => {
     const { children, editing, layoutType, ...rest } = props;
     const classes = useStyles();
+    const [state] = useConfiguratorState(hasChartConfigs);
+    const dataSource = state.dataSource;
+    const locale = useLocale();
+    const commonQueryVariables = {
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+    };
+
+    const componentIris = undefined;
+    const chartConfig = state.chartConfigs.find(
+      (x) => x.key === state.activeChartKey
+    );
+    const [{ data: components }] = useDataCubesComponentsQuery({
+      variables: {
+        ...commonQueryVariables,
+        cubeFilters:
+          chartConfig?.cubes.map((cube) => ({
+            iri: cube.iri,
+            componentIris,
+            filters: cube.filters,
+            joinBy: cube.joinBy,
+          })) ?? [],
+      },
+    });
+    const dimensionsByIri = useMemo(() => {
+      return keyBy(
+        [
+          ...(components?.dataCubesComponents.dimensions ?? []),
+          ...(components?.dataCubesComponents.measures ?? []),
+        ],
+        (x) => x.iri
+      );
+    }, [components?.dataCubesComponents]);
+
     return (
       <Box
         ref={ref}
         {...rest}
         className={clsx(classes.chartWrapper, props.className)}
       >
-        {(editing || layoutType === "tab") && <ChartSelectionTabs />}
+        {(editing || layoutType === "tab") && (
+          <ChartSelectionTabs dimensionsByIri={dimensionsByIri} />
+        )}
         <Box
           className={classes.chartWrapperInner}
           sx={{ minHeight: [150, 300, 500] }}
