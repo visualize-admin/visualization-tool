@@ -3,10 +3,12 @@ import { useEventCallback } from "@mui/material";
 import throttle from "lodash/throttle";
 import { useEffect, useRef, useState } from "react";
 
+export const INIT_SIZE = 1;
+
 export const useResizeObserver = <T extends Element>() => {
   const roRef = useRef<ResizeObserver>();
   const elRef = useRef<T>();
-  const [size, changeSize] = useState({ width: 1, height: 1 });
+  const [size, changeSize] = useState({ width: INIT_SIZE, height: INIT_SIZE });
 
   const handleRef = useEventCallback((node: T) => {
     if (!node) {

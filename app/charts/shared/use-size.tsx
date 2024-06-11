@@ -7,7 +7,7 @@ import {
 } from "react";
 
 import { useTransitionStore } from "@/stores/transition";
-import { useResizeObserver } from "@/utils/use-resize-observer";
+import { INIT_SIZE, useResizeObserver } from "@/utils/use-resize-observer";
 import { useTimedPrevious } from "@/utils/use-timed-previous";
 
 export type Margins = {
@@ -32,7 +32,10 @@ export const Observer = ({ children }: { children: ReactNode }) => {
   const [ref, width, height] = useResizeObserver<HTMLDivElement>();
   const prevWidth = useTimedPrevious(width, RESIZE_DELAY);
   const prevHeight = useTimedPrevious(height, RESIZE_DELAY);
-  const isResizing = prevWidth !== width || prevHeight !== height;
+  const isResizing =
+    prevWidth !== width ||
+    prevHeight !== height ||
+    (width === INIT_SIZE && height === INIT_SIZE);
   const setEnableTransition = useTransitionStore((state) => state.setEnable);
   useEffect(() => {
     setEnableTransition(!isResizing);
