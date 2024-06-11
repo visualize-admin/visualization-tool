@@ -466,7 +466,6 @@ const migrateLayout = (
       layouts: {
         lg: generated.map((l, i) => ({
           ...l,
-
           // We must pay attention to correctly change the i value to
           // chart config key, as it is used to identify the layout
           i: chartConfigs[i].key,

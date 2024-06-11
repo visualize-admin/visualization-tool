@@ -1148,7 +1148,7 @@ export function ensureDashboardLayoutAreCorrect(
       for (const chartConfig of newConfigs) {
         let chartX = curX;
         let chartY = curY;
-        let chartW = 2;
+        let chartW = 1;
         let chartH = MIN_H;
         canvasLayouts.push({
           i: chartConfig.key,

@@ -290,9 +290,9 @@ export const generateLayout = function ({
       })
       .with("tiles", () => {
         return {
-          x: ((i % 2) * MAX_W) / 2,
+          x: ((i % 4) * MAX_W) / 4,
           y: Math.floor(i / 2) * INITIAL_H,
-          w: MAX_W / 2,
+          w: MAX_W / 4,
           h: INITIAL_H,
           i: i.toString(),
           resizeHandles: [],
