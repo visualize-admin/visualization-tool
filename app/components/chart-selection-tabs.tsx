@@ -123,7 +123,7 @@ export const ChartSelectionTabs = () => {
           ? d.meta.title[locale]
           : d.meta.title[defaultLocale] !== ""
             ? d.meta.title[defaultLocale]
-            : t({ id: "annotation.add.title" }),
+            : undefined,
     };
   });
 
@@ -356,7 +356,7 @@ type TabDatum = {
   key: string;
   chartType: ChartType;
   active: boolean;
-  label: string;
+  label?: string | undefined;
 };
 
 type TabsFixedProps = {
@@ -757,7 +757,7 @@ const TabsInner = (props: TabsInnerProps) => {
                             sx={{
                               px: 0,
                               flexShrink: 1,
-                              minWidth: 180,
+                              minWidth: d.label ? 180 : 0,
                               flexBasis: "100%",
                             }}
                             label={
