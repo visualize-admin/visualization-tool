@@ -209,6 +209,7 @@ const LayoutSharedFiltersConfigurator = () => {
   );
 
   switch (layout.type) {
+    case "tab":
     case "dashboard":
       return (
         <ControlSection

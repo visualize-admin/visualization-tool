@@ -19,6 +19,7 @@ import {
 } from "@/components/chart-table-preview";
 import { useChartStyles } from "@/components/chart-utils";
 import { ChartWithFilters } from "@/components/chart-with-filters";
+import { DashboardInteractiveFilters } from "@/components/dashboard-interactive-filters";
 import Flex from "@/components/flex";
 import { HintBlue, HintRed, HintYellow } from "@/components/hint";
 import {
@@ -149,6 +150,7 @@ export const ChartPublished = (props: ChartPublishedProps) => {
             )}
           </Flex>
           <ChartTablePreviewProvider>
+            <DashboardInteractiveFilters />
             <ChartWrapper layoutType={state.layout.type}>
               <ChartPublishedInner
                 dataSource={dataSource}

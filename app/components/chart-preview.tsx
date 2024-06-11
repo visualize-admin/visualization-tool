@@ -36,6 +36,7 @@ import {
 } from "@/components/chart-table-preview";
 import { useChartStyles } from "@/components/chart-utils";
 import { ChartWithFilters } from "@/components/chart-with-filters";
+import { DashboardInteractiveFilters } from "@/components/dashboard-interactive-filters";
 import DebugPanel from "@/components/debug-panel";
 import { DragHandle, DragHandleProps } from "@/components/drag-handle";
 import Flex from "@/components/flex";
@@ -85,6 +86,11 @@ export const ChartPreview = (props: ChartPreviewProps) => {
     // we switch tabs in the configurator, otherwise we end up with the wrong
     // data in the downstream hooks (useDataCubesMetadataQuery, etc.)
     <ChartTablePreviewProvider key={state.activeChartKey}>
+      {state.state !== "CONFIGURING_CHART" ? (
+        <DashboardInteractiveFilters
+          key={state.chartConfigs.map((x) => x.key).join(",")}
+        />
+      ) : null}
       <ChartWrapper editing={editing} layoutType={layout.type}>
         <ChartPreviewInner dataSource={dataSource} />
       </ChartWrapper>
