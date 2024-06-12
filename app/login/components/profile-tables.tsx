@@ -65,6 +65,7 @@ type ProfileVisualizationsTableProps = {
 };
 
 const StyledTable = styled(Table)(({ theme }) => ({
+  tableLayout: "fixed",
   [`& .${tableRowClasses.root}`]: {
     verticalAlign: "middle",
     height: 56,
@@ -95,7 +96,7 @@ export const ProfileVisualizationsTable = (
                 },
               }}
             >
-              <TableRow sx={{}}>
+              <TableRow>
                 <TableCell>
                   <Trans id="login.profile.my-visualizations.chart-type">
                     Type
