@@ -9,7 +9,7 @@
   - 2.3. [Postgres database](#Postgresdatabase)
   - 2.4.
     [Building the Embed script `/dist/embed.js`](#BuildingtheEmbedscriptdistembed.js)
-    - 2.4.1. [Database migrations](#Databasemigrations)
+  - 2.5. [Database migrations](#Databasemigrations)
 - 3. [Versioning](#Versioning)
 - 4. [Deployment](#Deployment)
   - 4.1. [Heroku](#Heroku)
@@ -108,7 +108,7 @@ yarn dev:rollup
 > [custom elements](https://developers.google.com/web/fundamentals/web-components/customelements)
 > or render to a generic DOM element) in the future.
 
-#### 2.4.1. <a name='Databasemigrations'></a>Database migrations
+### 2.5. <a name='Databasemigrations'></a>Database migrations
 
 Database migrations are run automatically when a production build of the app
 starts. In _development_, you'll have to run them manually:
