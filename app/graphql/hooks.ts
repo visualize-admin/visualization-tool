@@ -39,8 +39,12 @@ export const makeUseQuery =
       pause?: boolean;
     },
     V,
-  >(
-    executeQueryFn: (
+  >({
+    fetch,
+    check,
+  }: {
+    check?: (variables: T["variables"]) => void;
+    fetch: (
       client: Client,
       options: T["variables"],
       onFetching?: () => void
@@ -48,8 +52,8 @@ export const makeUseQuery =
       data?: V;
       error?: Error;
       fetching: boolean;
-    }>
-  ) =>
+    }>;
+  }) =>
   (options: T & { keepPreviousData?: boolean }) => {
     const client = useClient();
     const [result, setResult] = useState<{
@@ -60,6 +64,10 @@ export const makeUseQuery =
     }>({ fetching: !options.pause, queryKey: null, data: null });
     const { keepPreviousData } = options;
     const queryKey = useQueryKey(options);
+
+    if (!options.pause && check) {
+      check(options.variables);
+    }
     const executeQuery = useCallback(
       async (options: T) => {
         setResult((prev) => ({
@@ -69,7 +77,10 @@ export const makeUseQuery =
             prev.queryKey === queryKey || keepPreviousData ? prev.data : null,
           queryKey,
         }));
-        const result = await executeQueryFn(client, options.variables, () => {
+        if (check) {
+          check(options.variables);
+        }
+        const result = await fetch(client, options.variables, () => {
           setResult((prev) => ({
             ...prev,
             fetching: true,
@@ -104,7 +115,7 @@ type DataCubesMetadataData = {
   dataCubesMetadata: DataCubeMetadata[];
 };
 
-const executeDataCubesMetadataQuery = async (
+export const executeDataCubesMetadataQuery = async (
   client: Client,
   variables: DataCubesMetadataOptions["variables"],
   /** Callback triggered when data fetching starts (cache miss). */
@@ -150,7 +161,9 @@ const executeDataCubesMetadataQuery = async (
 export const useDataCubesMetadataQuery = makeUseQuery<
   DataCubesMetadataOptions,
   DataCubesMetadataData
->(executeDataCubesMetadataQuery);
+>({
+  fetch: executeDataCubesMetadataQuery,
+});
 
 export type DataCubesComponentsOptions = {
   variables: Omit<DataCubeComponentsQueryVariables, "cubeFilter"> & {
@@ -172,6 +185,7 @@ export const executeDataCubesComponentsQuery = async (
   const { locale, sourceType, sourceUrl, cubeFilters } = variables;
 
   if (cubeFilters.length > 1 && !cubeFilters.every((f) => f.joinBy)) {
+    console.log({ cubeFilters });
     throw new Error(
       "When fetching data from multiple cubes, all cube filters must have joinBy property set."
     );
@@ -264,7 +278,19 @@ export const executeDataCubesComponentsQuery = async (
 export const useDataCubesComponentsQuery = makeUseQuery<
   DataCubesComponentsOptions,
   DataCubesComponentsData
->(executeDataCubesComponentsQuery);
+>({
+  check: (variables: DataCubesComponentsOptions["variables"]) => {
+    const { cubeFilters } = variables;
+    if (cubeFilters.length > 1 && !cubeFilters.every((f) => f.joinBy)) {
+      console.log({ cubeFilters });
+      throw new Error(
+        "When fetching data from multiple cubes, all cube filters must have joinBy property set."
+      );
+    }
+  },
+
+  fetch: executeDataCubesComponentsQuery,
+});
 
 type DataCubesObservationsOptions = {
   variables: Omit<DataCubeComponentsQueryVariables, "cubeFilter"> & {
@@ -284,12 +310,6 @@ export const executeDataCubesObservationsQuery = async (
   onFetching?: () => void
 ) => {
   const { locale, sourceType, sourceUrl, cubeFilters } = variables;
-
-  if (cubeFilters.length > 1 && !cubeFilters.every((f) => f.joinBy)) {
-    throw new Error(
-      "When fetching data from multiple cubes, all cube filters must have joinBy property set."
-    );
-  }
 
   const queries = await Promise.all(
     cubeFilters.map((cubeFilter) => {
@@ -350,7 +370,18 @@ export const executeDataCubesObservationsQuery = async (
 export const useDataCubesObservationsQuery = makeUseQuery<
   DataCubesObservationsOptions,
   DataCubesObservationsData
->(executeDataCubesObservationsQuery);
+>({
+  check: (variables) => {
+    const { cubeFilters } = variables;
+
+    if (cubeFilters.length > 1 && !cubeFilters.every((f) => f.joinBy)) {
+      throw new Error(
+        "When fetching data from multiple cubes, all cube filters must have joinBy property set."
+      );
+    }
+  },
+  fetch: executeDataCubesObservationsQuery,
+});
 
 type FetchAllUsedCubeComponentsOptions = {
   state: ConfiguratorState;
@@ -412,4 +443,6 @@ export const useConfigsCubeComponents = makeUseQuery<
     pause?: boolean | undefined;
   },
   Awaited<ReturnType<typeof executeFetchAllUsedCubeComponents>>["data"]
->(executeFetchAllUsedCubeComponents);
+>({
+  fetch: executeFetchAllUsedCubeComponents,
+});
