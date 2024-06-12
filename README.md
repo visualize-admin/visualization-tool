@@ -126,12 +126,14 @@ For detailed instructions, please refer to the
 [postgres-migrations](https://github.com/thomwright/postgres-migrations)
 documentation.
 
-> [!WARNING] On Vercel environments like "preview" and "production",
-> "production", database migrations are executed. Since all environments are
-> sharing the same database, it means that a database migration executing on 1
-> database could be disruptive to other preview deployments. For example adding
-> a column to the schema would be disruptive, since other preview deployments
-> would try to remove it (since the column is not yet in the schema).
+> [!WARNING]
+>
+> On Vercel environments like "preview" and "production", "production", database
+> migrations are executed. Since all environments are sharing the same database,
+> it means that a database migration executing on 1 database could be disruptive
+> to other preview deployments. For example adding a column to the schema would
+> be disruptive, since other preview deployments would try to remove it (since
+> the column is not yet in the schema).
 >
 > To prevent any problems on preview deployments, we have a second database that
 > is special for development and that must be used if you are working on a
