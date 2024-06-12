@@ -213,7 +213,7 @@ const LayoutSharedFiltersConfigurator = () => {
                   return null;
                 }
                 return (
-                  <>
+                  <Fragment key={filter.componentIri}>
                     <Box
                       display="flex"
                       alignItems="center"
@@ -251,7 +251,7 @@ const LayoutSharedFiltersConfigurator = () => {
                       sharedFilter={sharedFilter}
                       dimension={dimension}
                     />
-                  </>
+                  </Fragment>
                 );
               })}
             </Stack>
