@@ -6,7 +6,6 @@ import {
 } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import { makeStyles } from "@mui/styles";
-import uniqBy from "lodash/uniqBy";
 import { useEffect, useMemo, useState } from "react";
 
 import {
@@ -19,8 +18,8 @@ import {
   timeUnitToParser,
 } from "@/configurator/components/ui-helpers";
 import { canDimensionBeTimeFiltered } from "@/domain/data";
-import { useDataCubesComponentsQuery } from "@/graphql/hooks";
-import { DataCubeComponentFilter, TimeUnit } from "@/graphql/query-hooks";
+import { useConfigsCubeComponents } from "@/graphql/hooks";
+import { TimeUnit } from "@/graphql/query-hooks";
 import { useLocale } from "@/src";
 import {
   SharedFilter,
@@ -90,35 +89,21 @@ const DashboardTimeRangeSlider = ({
   const dashboardInteractiveFilters = useDashboardInteractiveFilters();
 
   const [state] = useConfiguratorState(hasChartConfigs);
-  const source = state.dataSource;
   const locale = useLocale();
 
-  const cubeFilters = useMemo(() => {
-    return uniqBy(
-      state.chartConfigs.flatMap((chartConfig) =>
-        chartConfig.cubes.map((x: DataCubeComponentFilter) => ({
-          iri: x.iri,
-          componentIris: [filter.componentIri],
-          joinBy: x.joinBy,
-        }))
-      ),
-      (x) => x.iri
-    );
-  }, [filter.componentIri, state.chartConfigs]);
-
-  const [data] = useDataCubesComponentsQuery({
+  const [data] = useConfigsCubeComponents({
     variables: {
-      sourceUrl: source.url,
-      sourceType: source.type,
-      cubeFilters,
+      state,
       locale,
     },
   });
 
   const timeUnit = useMemo(() => {
-    const dim = data?.data?.dataCubesComponents?.dimensions?.[0];
+    const dim = data?.data?.dataCubesComponents?.dimensions?.find(
+      (d) => d.iri === filter.componentIri
+    );
     return canDimensionBeTimeFiltered(dim) ? dim.timeUnit : undefined;
-  }, [data?.data?.dataCubesComponents?.dimensions]);
+  }, [data?.data?.dataCubesComponents?.dimensions, filter.componentIri]);
 
   const presets = filter.presets;
   assert(
