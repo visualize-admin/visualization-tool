@@ -190,6 +190,14 @@ const LayoutSharedFiltersConfigurator = () => {
   switch (layout.type) {
     case "tab":
     case "dashboard":
+      const shownFilters = potentialSharedFilters.filter((filter) => {
+        const dimension = dimensionsByIri[filter.componentIri];
+        return dimension && canDimensionBeTimeFiltered(dimension);
+      });
+
+      if (!shownFilters.length) {
+        return null;
+      }
       return (
         <ControlSection
           role="tablist"
@@ -205,13 +213,9 @@ const LayoutSharedFiltersConfigurator = () => {
           </SubsectionTitle>
           <ControlSectionContent>
             <Stack gap="0.5rem">
-              {potentialSharedFilters.map((filter) => {
+              {shownFilters.map((filter) => {
                 const dimension = dimensionsByIri[filter.componentIri];
                 const sharedFilter = sharedFiltersByIri[filter.componentIri];
-
-                if (!dimension || !canDimensionBeTimeFiltered(dimension)) {
-                  return null;
-                }
                 return (
                   <Fragment key={filter.componentIri}>
                     <Box
