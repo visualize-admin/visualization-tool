@@ -11,7 +11,7 @@ import {
 import capitalize from "lodash/capitalize";
 import keyBy from "lodash/keyBy";
 import omit from "lodash/omit";
-import { useMemo } from "react";
+import { Fragment, useMemo } from "react";
 
 import { DataFilterGenericDimensionProps } from "@/charts/shared/chart-data-filters";
 import { Select } from "@/components/form";
@@ -46,7 +46,8 @@ import {
 } from "@/domain/data";
 import { useFlag } from "@/flags";
 import { useTimeFormatLocale, useTimeFormatUnit } from "@/formatters";
-import { useAllCubesComponents } from "@/graphql/hooks";
+import { useConfigsCubeComponents } from "@/graphql/hooks";
+import { useLocale } from "@/src";
 import {
   SharedFilter,
   useDashboardInteractiveFilters,
@@ -113,7 +114,13 @@ const LayoutSharedFiltersConfigurator = () => {
   const { sharedFilters, potentialSharedFilters } =
     useDashboardInteractiveFilters();
 
-  const { data } = useAllCubesComponents(state);
+  const locale = useLocale();
+  const [{ data }] = useConfigsCubeComponents({
+    variables: {
+      state,
+      locale: locale,
+    },
+  });
 
   const dimensionsByIri = useMemo(() => {
     const res: Record<string, Dimension> = {};

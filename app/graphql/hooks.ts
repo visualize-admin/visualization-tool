@@ -7,10 +7,8 @@ import {
   DataCubeMetadata,
   DataCubesObservations,
 } from "@/domain/data";
-import { useLocale } from "@/locales";
+import { Locale } from "@/locales/locales";
 import { assert } from "@/utils/assert";
-import { allDeduped } from "@/utils/promises";
-import { useFetchData } from "@/utils/use-fetch-data";
 
 import { joinDimensions, mergeObservations } from "./join";
 import {
@@ -354,55 +352,64 @@ export const useDataCubesObservationsQuery = makeUseQuery<
   DataCubesObservationsData
 >(executeDataCubesObservationsQuery);
 
+type FetchAllUsedCubeComponentsOptions = {
+  state: ConfiguratorState;
+  locale: Locale;
+};
 /**
  * Fetches all cubes components in one go. Is useful in contexts where we deal
  * with all the cubes at once, for example the shared dashboard filters.
  */
-export const useAllCubesComponents = (state: ConfiguratorState) => {
+export const executeFetchAllUsedCubeComponents = async (
+  client: Client,
+  variables: FetchAllUsedCubeComponentsOptions
+) => {
+  const { state, locale } = variables;
   const { dataSource } = state;
   assert(hasChartConfigs(state), "Expected state with chart configs");
 
-  const locale = useLocale();
-  const client = useClient();
-  return useFetchData({
-    queryFn: async () => {
-      const cubeFilters = state.chartConfigs.map((config) =>
-        config.cubes.map((x) => ({
-          iri: x.iri,
-          joinBy: x.joinBy,
-          loadValues: true,
-        }))
-      );
+  const cubeFilters: DataCubeComponentFilter[][] = state.chartConfigs.map(
+    (config) => {
+      return config.cubes.map((x) => ({
+        iri: x.iri,
+        joinBy: x.joinBy,
+        loadValues: true,
+      }));
+    }
+  );
 
-      // Execute all the promises in parallel, while deduping on the cubeFilters value
-      // so that a single query is executed for each unique cubeFilters value.
-      const dataCubesComponents = await allDeduped({
-        items: cubeFilters,
-        promiser: (cf) =>
-          executeDataCubesComponentsQuery(client, {
-            cubeFilters: cf,
-            locale,
-            sourceType: dataSource.type,
-            sourceUrl: dataSource.url,
-          }).then((x) => x.data),
-        key: (cf) => JSON.stringify(cf),
-      });
+  // executeDataCubesComponentsQuery dedupes queries through urql cache
+  const dataCubesComponents = await Promise.all(
+    cubeFilters.map((cf) =>
+      executeDataCubesComponentsQuery(client, {
+        cubeFilters: cf,
+        locale,
+        sourceType: dataSource.type,
+        sourceUrl: dataSource.url,
+      })
+    )
+  );
 
-      return {
-        dataCubesComponents: {
-          dimensions: dataCubesComponents.flatMap(
-            (x) => x?.dataCubesComponents.dimensions ?? []
-          ),
-          measures: dataCubesComponents.flatMap(
-            (x) => x?.dataCubesComponents.measures ?? []
-          ),
-        },
-      };
+  return {
+    error: dataCubesComponents.find((x) => x.error)?.error,
+    fetching: dataCubesComponents.some((x) => x.fetching),
+    data: {
+      dataCubesComponents: {
+        dimensions: dataCubesComponents.flatMap(
+          (x) => x?.data?.dataCubesComponents.dimensions ?? []
+        ),
+        measures: dataCubesComponents.flatMap(
+          (x) => x?.data?.dataCubesComponents.measures ?? []
+        ),
+      },
     },
-    queryKey: [
-      "data-cubes-components",
-      locale,
-      JSON.stringify(state.chartConfigs.map((x) => x.cubes)),
-    ],
-  });
+  };
 };
+
+export const useConfigsCubeComponents = makeUseQuery<
+  {
+    variables: FetchAllUsedCubeComponentsOptions;
+    pause?: boolean | undefined;
+  },
+  Awaited<ReturnType<typeof executeFetchAllUsedCubeComponents>>["data"]
+>(executeFetchAllUsedCubeComponents);
