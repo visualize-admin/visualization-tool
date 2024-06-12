@@ -36,3 +36,4 @@ export const SOURCE_OPTIONS = [
 
 export const SOURCES_BY_LABEL = keyBy(SOURCE_OPTIONS, (d) => d.label);
 export const SOURCES_BY_VALUE = keyBy(SOURCE_OPTIONS, (d) => d.value);
+export const SOURCES_BY_URL = keyBy(SOURCE_OPTIONS, (d) => d.url);

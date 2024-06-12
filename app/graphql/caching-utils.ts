@@ -1,4 +1,4 @@
-import { SOURCE_OPTIONS } from "@/domain/datasource/constants";
+import { SOURCES_BY_URL } from "@/domain/datasource/constants";
 
 /** As Lindas supports caching requests per given id, we can utilize this function
  * to query endpoint that will cache the results per given cube iri.
@@ -16,11 +16,7 @@ export const getMaybeCachedSparqlUrl = ({
   endpointUrl: string;
   cubeIri: string | undefined;
 }) => {
-  if (
-    SOURCE_OPTIONS.find((source) => source.url === endpointUrl)
-      ?.supportsCachingPerCubeIri &&
-    cubeIri
-  ) {
+  if (SOURCES_BY_URL[endpointUrl]?.supportsCachingPerCubeIri && cubeIri) {
     return `${endpointUrl}/${cubeIri}`;
   }
 
