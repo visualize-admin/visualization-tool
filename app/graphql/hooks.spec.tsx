@@ -15,7 +15,9 @@ describe("makeUseQuery", () => {
     });
   });
 
-  const useMockQuery = makeUseQuery(mockQuery);
+  const useMockQuery = makeUseQuery({
+    fetch: mockQuery,
+  });
 
   afterEach(() => {
     mockQuery.mockClear();

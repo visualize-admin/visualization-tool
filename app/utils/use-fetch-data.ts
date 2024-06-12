@@ -82,11 +82,15 @@ const useCacheKey = (cache: QueryCache, queryKey: QueryKey) => {
  * Two useFetchData on the same queryKey will result in only 1 queryFn called. Both useFetchData
  * will share the same cache and data.
  */
-export const useFetchData = <TData>(
-  queryKey: any[],
-  queryFn: () => Promise<TData>,
-  options: Partial<UseFetchDataOptions<TData>> = {}
-) => {
+export const useFetchData = <TData>({
+  queryKey,
+  queryFn,
+  options = {},
+}: {
+  queryKey: any[];
+  queryFn: () => Promise<TData>;
+  options?: Partial<UseFetchDataOptions<TData>>;
+}) => {
   const { enable = true, defaultData } = options;
 
   const cached = cache.get(queryKey) as QueryCacheValue<TData>;
