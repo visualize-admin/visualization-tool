@@ -13,6 +13,11 @@ import { Awaited } from "@/domain/types";
 import { Timings } from "@/gql-flamegraph/resolvers";
 import { getCachedSparqlUrl } from "@/graphql/caching-utils";
 import { RequestQueryMeta } from "@/graphql/query-meta";
+import {
+  QueryResolvers,
+  Resolver,
+  ResolversObject,
+} from "@/graphql/resolver-types";
 import { ResolvedDimension } from "@/graphql/shared-types";
 import { createSource, pragmas } from "@/rdf/create-source";
 import { ExtendedCube } from "@/rdf/extended-cube";
@@ -183,6 +188,13 @@ const createContextContent = async ({
     }
   );
 };
+
+type ExtractResolversObject<O> = O extends ResolversObject<infer S> ? S : never;
+type Resolvers = ExtractResolversObject<QueryResolvers>;
+type ExtractResolver<O> =
+  O extends Resolver<any, any, any, infer S> ? S : never;
+type VariableValues = ExtractResolver<Resolvers[keyof Resolvers]>;
+
 export const createContext = ({ req }: { req: IncomingMessage }) => {
   const debug = isDebugMode(req);
   let settingUp: ReturnType<typeof createContextContent>;
@@ -192,20 +204,18 @@ export const createContext = ({ req }: { req: IncomingMessage }) => {
     // Stores meta information on queries that have been made during the request
     queries: [] as RequestQueryMeta[],
     timings: undefined as Timings | undefined,
-    setup: async ({ variableValues }: GraphQLResolveInfo) => {
-      const {
-        // We expect `sourceUrl` to always be there
-        sourceUrl,
-        // `cubeFilter` is only there for cube-based queries. Keep in sync
-        // with schema.graphql file
-        cubeFilter,
-      } = variableValues;
+    setup: async (props: GraphQLResolveInfo) => {
+      const variableValues = props.variableValues as VariableValues;
+      const { sourceUrl } = variableValues;
       settingUp =
         settingUp ||
         createContextContent({
           sourceUrl: getCachedSparqlUrl({
             endpointUrl: sourceUrl,
-            cubeIri: cubeFilter?.iri,
+            cubeIri:
+              "cubeFilter" in variableValues
+                ? variableValues.cubeFilter.iri
+                : undefined,
           }),
           ctx,
           req,
