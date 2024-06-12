@@ -65,6 +65,7 @@ type ProfileVisualizationsTableProps = {
 };
 
 const StyledTable = styled(Table)(({ theme }) => ({
+  tableLayout: "fixed",
   [`& .${tableRowClasses.root}`]: {
     verticalAlign: "middle",
     height: 56,
@@ -95,7 +96,7 @@ export const ProfileVisualizationsTable = (
                 },
               }}
             >
-              <TableRow sx={{}}>
+              <TableRow>
                 <TableCell>
                   <Trans id="login.profile.my-visualizations.chart-type">
                     Type
@@ -298,15 +299,17 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
   ]);
 
   const chartTitle = useMemo(() => {
-    const title = config.data.chartConfigs
-      .map((d) => d.meta.title?.[locale] ?? false)
-      .filter(truthy)
-      .join(", ");
+    const title =
+      config.data.layout.meta.title?.[locale] ??
+      config.data.chartConfigs
+        .map((d) => d.meta.title?.[locale] ?? false)
+        .filter(truthy)
+        .join(", ");
 
     return title
       ? title
       : t({ id: "annotation.add.title", message: "[ No Title ]" });
-  }, [config.data.chartConfigs, locale]);
+  }, [config.data.chartConfigs, config.data.layout.meta.title, locale]);
 
   return (
     <TableRow>
@@ -318,7 +321,7 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
       <TableCell width="30%">
         <NextLink href={`/v/${config.key}`} passHref legacyBehavior>
           <Link color="primary">
-            <Typography variant="body2" noWrap>
+            <Typography variant="body2" noWrap title={chartTitle}>
               {chartTitle}
             </Typography>
           </Link>
