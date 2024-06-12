@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 import ParsingClient from "sparql-http-client/ParsingClient";
 
 import { ConfiguratorState } from "@/config-types";
-import { getCachedSparqlUrl } from "@/graphql/caching-utils";
+import { getMaybeCachedSparqlUrl } from "@/graphql/caching-utils";
 import { useLocale } from "@/locales/use-locale";
 import { queryLatestCubeIri } from "@/rdf/query-latest-cube-iri";
 import { getErrorQueryParams } from "@/utils/flashes";
@@ -30,7 +30,7 @@ export const useRedirectToLatestCube = ({
       hasRun.current = true;
 
       const sparqlClient = new ParsingClient({
-        endpointUrl: getCachedSparqlUrl({
+        endpointUrl: getMaybeCachedSparqlUrl({
           endpointUrl: url,
           cubeIri: datasetIri,
         }),

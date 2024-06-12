@@ -9,22 +9,28 @@ export const PROD_DATA_SOURCE_URL =
 
 export const SOURCE_OPTIONS = [
   {
-    value: "sparql+https://lindas-cached.cluster.ldbar.ch/query",
+    value: `sparql+${PROD_DATA_SOURCE_URL}`,
     label: "Prod",
+    url: PROD_DATA_SOURCE_URL,
     position: 3,
     isTrusted: true,
+    supportsCachingPerCubeIri: true,
   },
   {
     value: "sparql+https://int.lindas.admin.ch/query",
     label: "Int",
+    url: "https://int.lindas.admin.ch/query",
     position: 2,
     isTrusted: false,
+    supportsCachingPerCubeIri: false,
   },
   {
     value: "sparql+https://test.lindas.admin.ch/query",
     label: "Test",
+    url: "https://test.lindas.admin.ch/query",
     position: 1,
     isTrusted: false,
+    supportsCachingPerCubeIri: false,
   },
 ].filter((d) => WHITELISTED_DATA_SOURCES.includes(d.label));
 

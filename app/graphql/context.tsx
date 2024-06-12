@@ -11,7 +11,7 @@ import { DimensionValue } from "@/domain/data";
 import { SPARQL_GEO_ENDPOINT } from "@/domain/env";
 import { Awaited } from "@/domain/types";
 import { Timings } from "@/gql-flamegraph/resolvers";
-import { getCachedSparqlUrl } from "@/graphql/caching-utils";
+import { getMaybeCachedSparqlUrl } from "@/graphql/caching-utils";
 import { RequestQueryMeta } from "@/graphql/query-meta";
 import {
   QueryResolvers,
@@ -210,7 +210,7 @@ export const createContext = ({ req }: { req: IncomingMessage }) => {
       settingUp =
         settingUp ||
         createContextContent({
-          sourceUrl: getCachedSparqlUrl({
+          sourceUrl: getMaybeCachedSparqlUrl({
             endpointUrl: sourceUrl,
             cubeIri:
               "cubeFilter" in variableValues
