@@ -179,8 +179,17 @@ export const getConfig = async (key: string) => {
 /**
  * Get all keys from DB.
  */
-export const getAllConfigs = async () => {
-  const configs = await prisma.config.findMany();
+export const getAllConfigs = async ({
+  limit,
+}: {
+  limit?: number;
+} = {}) => {
+  const configs = await prisma.config.findMany({
+    orderBy: {
+      created_at: "desc",
+    },
+    take: limit,
+  });
   const parsedConfigs = configs.map(parseDbConfig);
   return await Promise.all(parsedConfigs.map(upgradeDbConfig));
 };
