@@ -177,7 +177,7 @@ export const getConfig = async (key: string) => {
 };
 
 /**
- * Get all keys from DB.
+ * Get all configs from DB.
  */
 export const getAllConfigs = async ({
   limit,
@@ -192,6 +192,29 @@ export const getAllConfigs = async ({
   });
   const parsedConfigs = configs.map(parseDbConfig);
   return await Promise.all(parsedConfigs.map(upgradeDbConfig));
+};
+
+/**
+ * Get all configs metadata from DB.
+ */
+export const getAllConfigsMetadata = async ({
+  limit,
+}: {
+  limit?: number;
+} = {}) => {
+  return await prisma.config.findMany({
+    select: {
+      key: true,
+      created_at: true,
+      updated_at: true,
+      published_state: true,
+      user_id: true,
+    },
+    orderBy: {
+      created_at: "desc",
+    },
+    take: limit,
+  });
 };
 
 /**

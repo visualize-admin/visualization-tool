@@ -12,7 +12,7 @@ test("it should preload most recent charts @noci", async ({
   selectors,
 }) => {
   const fetchedConfigs = await fetch(
-    "https://visualize.admin.ch/api/config/all?limit=25"
+    "https://visualize.admin.ch/api/config/all-metadata?limit=25"
   ).then((res) => res.json());
   const keys = fetchedConfigs.map((config) => config.key);
 
