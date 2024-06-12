@@ -126,22 +126,23 @@ For detailed instructions, please refer to the
 [postgres-migrations](https://github.com/thomwright/postgres-migrations)
 documentation.
 
-⚠️ On Vercel environments like "preview" and "production", "production" build
-are started which means that database migrations are executed. Since all
-environments are sharing the same database, it means that a database migration
-executing on 1 database could be disruptive to other preview deployments. For
-example adding a column to the schema would be disruptive, since other preview
-deployments would try to remove it (since the column is not yet in the schema).
-To prevent any problems on preview deployments, we have a second database that
-is special for development and that must be used if you are working on a branch
-that brings in database changes. You can configure this in the Vercel
-environment variables by copy-pasting the environment variables found in the
-[visualization-tool-postgres-dev][] storage (see `.env.local` tab), and copy
-paste them as
-[environment variables](https://vercel.com/ixt/visualization-tool/settings/environment-variables)
-in the visualisation-project. Take care of scoping the new environment variables
-to the preview branch you are working on. After merging the branch, you can
-delete the environment variables scoped to the branch.
+> [!WARNING] On Vercel environments like "preview" and "production",
+> "production", database migrations are executed. Since all environments are
+> sharing the same database, it means that a database migration executing on 1
+> database could be disruptive to other preview deployments. For example adding
+> a column to the schema would be disruptive, since other preview deployments
+> would try to remove it (since the column is not yet in the schema).
+>
+> To prevent any problems on preview deployments, we have a second database that
+> is special for development and that must be used if you are working on a
+> branch that brings in database changes. You can configure this in the Vercel
+> environment variables by copy-pasting the environment variables found in the
+> [visualization-tool-postgres-dev](<(https://vercel.com/ixt/visualization-tool/stores/postgres/store_dV3rog1asOXO3BfC/data)>)
+> storage (see `.env.local` tab), and copy paste them as
+> [environment variables](https://vercel.com/ixt/visualization-tool/settings/environment-variables)
+> in the visualisation-project. Take care of scoping the new environment
+> variables to the preview branch you are working on. After merging the branch,
+> you can delete the environment variables scoped to the branch.
 
 [visualization-tool-postgres-dev](https://vercel.com/ixt/visualization-tool/stores/postgres/store_dV3rog1asOXO3BfC/data)
 
