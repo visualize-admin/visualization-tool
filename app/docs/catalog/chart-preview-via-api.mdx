@@ -26,15 +26,19 @@
   }
 `}</style>
 
-While usually you'll want to publish your chart, sometimes you might want to simply preview it, without going through the publishing process.
-This could be especially helpful to programatically generate charts based on many different configuration options.
-Visualize offers a way to preview charts without publishing them, by using a custom API.
+While usually you'll want to publish your chart, sometimes you might want to
+simply preview it, without going through the publishing process. This could be
+especially helpful to programatically generate charts based on many different
+configuration options. Visualize offers a way to preview charts without
+publishing them, by using a custom API.
 
 ## iframe
 
-**Demo**: Visit <a href="/_preview" target="_blank">`/_preview`</a> to see a page with an iframe containing a chart preview.
+**Demo**: Visit <a href="/_preview" target="_blank">`/_preview`</a> to see a
+page with an iframe containing a chart preview.
 
-This method works by pointing an iframe to the `/preview` page, and posting a message with the chart state to the iframe window on load.
+This method works by pointing an iframe to the `/preview` page, and posting a
+message with the chart state to the iframe window on load.
 
 <CodeSpecimen
   lang="js"
@@ -51,12 +55,16 @@ iframe.onload = () => {
 
 ## POST request
 
-**Demo**: Visit <a href="/_preview_post" target="_blank">`/_preview_post`</a> to see a page with two buttons that open a new page with a chart preview after clicking.
+**Demo**: Visit <a href="/_preview_post" target="_blank">`/_preview_post`</a> to
+see a page with two buttons that open a new page with a chart preview after
+clicking.
 
-This method works by sending a POST request to `/preview_post` page with chart state when clicking on a form button.
-The `/preview_post` page retrieves the content of a request in `getServerSideProps` and renders a preview of a chart.
+This method works by sending a POST request to `/preview_post` page with chart
+state when clicking on a form button. The `/preview_post` page retrieves the
+content of a request in `getServerSideProps` and renders a preview of a chart.
 
-It's important to only use one input inside a form (as we split the string by `=`).
+It's important to only use one input inside a form (as we split the string by
+`=`).
 
 <CodeSpecimen
   lang="css"
@@ -73,8 +81,10 @@ It's important to only use one input inside a form (as we split the string by `=
 
 ### Chart config schema
 
-As the application constantly evolves, the chart config schema might change.
-You can find the latest version of the schema in the [config-types.ts](https://github.com/visualize-admin/visualization-tool/blob/main/app/config-types.ts) file.
+As the application constantly evolves, the chart config schema might change. You
+can find the latest version of the schema in the
+[config-types.ts](https://github.com/visualize-admin/visualization-tool/blob/main/app/config-types.ts)
+file.
 
 An example chart config is shown below.
 
@@ -155,6 +165,8 @@ An example chart config is shown below.
 }`}
 />
 
-Note that it's encouraged to visit the Visualize application with &flag\_\_debug=true added to the URL to enable
-the debug mode, which will show the chart config directly below the chart that is being edited. It also enables
-the "Dump to console" button, which will log the chart config to the browser console, for easier re-use.
+Note that it's encouraged to visit the Visualize application with
+&flag\_\_debug=true added to the URL to enable the debug mode, which will show
+the chart config directly below the chart that is being edited. It also enables
+the "Dump to console" button, which will log the chart config to the browser
+console, for easier re-use.
