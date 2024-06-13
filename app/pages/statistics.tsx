@@ -9,43 +9,47 @@ import { ComponentProps, useMemo } from "react";
 
 import { AppLayout } from "@/components/layout";
 import { BANNER_MARGIN_TOP } from "@/components/presence";
-import { getAllConfigsMetadata } from "@/db/config";
+import prisma from "@/db/client";
 import { Serialized, deserializeProps, serializeProps } from "@/db/serialize";
 import { useFlag } from "@/flags";
 
 type PageProps = {
-  configsMetadata: Awaited<ReturnType<typeof getAllConfigsMetadata>>;
+  countByDay: { day: Date; count: number }[];
 };
 
 export const getServerSideProps: GetServerSideProps<PageProps> = async () => {
   return {
     props: serializeProps({
-      configsMetadata: (await getAllConfigsMetadata()).sort((a, b) => {
-        return b.created_at.getTime() - a.created_at.getTime();
-      }),
+      countByDay: await prisma.$queryRaw`
+SELECT
+  DATE_TRUNC('day', created_at) AS day,
+  COUNT(*) AS count
+FROM
+  config
+GROUP BY
+  DATE_TRUNC('day', created_at)
+ORDER BY
+  day DESC;`.then((rows) =>
+        (rows as { day: Date; count: BigInt }[]).map((row) => ({
+          ...row,
+          // superjson conversion breaks when we use BigInt
+          count: Number(row.count),
+        }))
+      ),
     }),
   };
 };
 
 const Statistics = (props: Serialized<PageProps>) => {
-  const { configsMetadata } = deserializeProps(props);
-  const countByDate = useMemo(
-    () => getCountByDate(configsMetadata),
-    [configsMetadata]
-  );
-  const total = sum(countByDate, (d) => d[1].count) ?? 0;
-  const averageChartCountPerMonth = Math.round(total / countByDate.length);
-  const now = Date.now();
-  const nowDate = new Date(now);
-  const lastMonthDailyAverage =
-    configsMetadata.filter(({ created_at: date }) => {
-      return date > new Date(now - 30 * DAYS_IN_MS) && date <= nowDate;
-    }).length / 30;
-  const previousThreeMonthsDailyAverage =
-    configsMetadata.filter(({ created_at: date }) => {
-      return date > new Date(now - 90 * DAYS_IN_MS) && date <= nowDate;
-    }).length / 90;
-
+  const { countByDay } = deserializeProps(props);
+  const { countByYearMonth, total } = useMemo(() => {
+    return {
+      countByYearMonth: groupByYearMonth(countByDay),
+      total: sum(countByDay, (d) => d.count) ?? 0,
+    };
+  }, [countByDay]);
+  const trend = useMemo(() => getTrend(countByDay), [countByDay]);
+  const averageChartCountPerMonth = Math.round(total / countByYearMonth.length);
   return (
     <AppLayout>
       <Box
@@ -61,15 +65,8 @@ const Statistics = (props: Serialized<PageProps>) => {
         <CreatedChartsCard
           title={`Visualize users created ${total} charts in total`}
           subtitle={`${total ? ` It's around ${averageChartCountPerMonth} chart${averageChartCountPerMonth > 1 ? "s" : ""} per month on average.` : ""}`}
-          data={countByDate}
-          trend={{
-            direction:
-              lastMonthDailyAverage > previousThreeMonthsDailyAverage
-                ? "up"
-                : "down",
-            lastMonthDailyAverage,
-            previousThreeMonthsDailyAverage,
-          }}
+          data={countByYearMonth}
+          trend={trend}
         />
       </Box>
     </AppLayout>
@@ -83,17 +80,15 @@ const DAYS_IN_MS = 24 * 60 * 60 * 1000;
 const formatShortMonth = timeFormat("%b");
 const formatYearMonth = timeFormat("%Y-%m");
 
-const getCountByDate = (
-  configsMetadata: Awaited<ReturnType<typeof getAllConfigsMetadata>>
-) => {
+const groupByYearMonth = (countByDay: PageProps["countByDay"]) => {
   const countByDate = rollups(
-    configsMetadata,
+    countByDay,
     (v) => ({
-      count: v.length,
-      date: v[0].created_at,
-      monthStr: formatShortMonth(v[0].created_at),
+      count: sum(v, (d) => d.count),
+      date: v[0].day,
+      monthStr: formatShortMonth(v[0].day),
     }),
-    (d) => formatYearMonth(d.created_at)
+    (d) => formatYearMonth(d.day)
   ).reverse();
   const allYearMonthStrings = uniq(
     countByDate.map(([yearMonthStr]) => yearMonthStr)
@@ -116,6 +111,31 @@ const getCountByDate = (
   return countByDate;
 };
 
+const getTrend = (
+  data: PageProps["countByDay"]
+): {
+  direction: "up" | "down";
+  lastMonthDailyAverage: number;
+  previousThreeMonthsDailyAverage: number;
+} => {
+  const now = Date.now();
+  const nowDate = new Date(now);
+  const lastMonthDailyAverage =
+    data.filter(({ day }) => {
+      return day > new Date(now - 30 * DAYS_IN_MS) && day <= nowDate;
+    }).length / 30;
+  const previousThreeMonthsDailyAverage =
+    data.filter(({ day }) => {
+      return day > new Date(now - 90 * DAYS_IN_MS) && day <= nowDate;
+    }).length / 90;
+  return {
+    direction:
+      lastMonthDailyAverage > previousThreeMonthsDailyAverage ? "up" : "down",
+    lastMonthDailyAverage,
+    previousThreeMonthsDailyAverage,
+  };
+};
+
 const CreatedChartsCard = ({
   title,
   subtitle,
@@ -125,11 +145,7 @@ const CreatedChartsCard = ({
   title: string;
   subtitle: string;
   data: [string, { count: number; date: Date; monthStr: string }][];
-  trend: {
-    direction: "up" | "down";
-    lastMonthDailyAverage: number;
-    previousThreeMonthsDailyAverage: number;
-  };
+  trend: ReturnType<typeof getTrend>;
 }) => {
   const maxCount = max(data, ([, { count }]) => count) ?? 1;
   return (
