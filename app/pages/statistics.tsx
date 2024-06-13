@@ -1,6 +1,7 @@
 /* eslint-disable visualize-admin/no-large-sx */
 import { Box, Card, Tooltip, Typography } from "@mui/material";
 import { max, rollups, sum } from "d3-array";
+import { formatLocale } from "d3-format";
 import { timeFormat } from "d3-time-format";
 import { motion } from "framer-motion";
 import uniq from "lodash/uniq";
@@ -175,17 +176,19 @@ const Statistics = (props: Serialized<PageProps>) => {
           <StatsCard
             {...charts}
             title={(total) =>
-              `Visualize users created ${total} charts in total`
+              `Visualize users created ${formatInteger(total)} charts in total`
             }
             subtitle={(total, avgMonthlyCount) =>
-              `${total ? ` It's around ${avgMonthlyCount} chart${avgMonthlyCount > 1 ? "s" : ""} per month on average.` : ""}`
+              `${total ? ` It's around ${formatInteger(avgMonthlyCount)} chart${avgMonthlyCount > 1 ? "s" : ""} per month on average.` : ""}`
             }
           />
           <StatsCard
             {...views}
-            title={(total) => `Charts were viewed ${total} times in total`}
+            title={(total) =>
+              `Charts were viewed ${formatInteger(total)} times in total`
+            }
             subtitle={(total, avgMonthlyCount) =>
-              `${total ? ` It's around ${avgMonthlyCount} view${avgMonthlyCount > 1 ? "s" : ""} per month on average.` : ""}`
+              `${total ? ` It's around ${formatInteger(avgMonthlyCount)} view${avgMonthlyCount > 1 ? "s" : ""} per month on average.` : ""}`
             }
           />
         </Box>
@@ -398,7 +401,7 @@ const Bar = ({
           textAlign: "end",
         }}
       >
-        <Typography variant="caption">{count}</Typography>
+        <Typography variant="caption">{formatInteger(count)}</Typography>
       </Box>
       <Box
         sx={{
@@ -477,3 +480,12 @@ const StatsCard = (
     />
   );
 };
+
+const formatInteger = formatLocale({
+  decimal: ".",
+  thousands: "\u00a0",
+  grouping: [3],
+  currency: ["", "\u00a0 CHF"],
+  minus: "\u2212",
+  percent: "%",
+}).format(",d");
