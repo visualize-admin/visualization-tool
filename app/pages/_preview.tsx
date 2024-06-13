@@ -1,9 +1,11 @@
 import { Box } from "@mui/material";
 import { useEffect } from "react";
 
+import { useLocale } from "@/locales/use-locale";
 import { migrateConfiguratorState } from "@/utils/chart-config/versioning";
 
 const Page = () => {
+  const locale = useLocale();
   useEffect(() => {
     const iframe = document.getElementById("chart") as HTMLIFrameElement;
     iframe.onload = () => {
@@ -19,7 +21,7 @@ const Page = () => {
     <Box sx={{ display: "flex", flexDirection: "column", gap: 6, p: 6 }}>
       <iframe
         id="chart"
-        src="/preview"
+        src={`/${locale}/preview`}
         style={{
           width: 450,
           height: 750,
