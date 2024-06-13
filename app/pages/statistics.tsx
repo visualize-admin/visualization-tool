@@ -2,6 +2,7 @@
 import { Box, Card, Tooltip, Typography } from "@mui/material";
 import { max, rollups, sum } from "d3-array";
 import { timeFormat } from "d3-time-format";
+import { motion } from "framer-motion";
 import uniq from "lodash/uniq";
 import { GetServerSideProps } from "next";
 import { ComponentProps, useMemo } from "react";
@@ -10,7 +11,7 @@ import { AppLayout } from "@/components/layout";
 import { BANNER_MARGIN_TOP } from "@/components/presence";
 import { getAllConfigsMetadata } from "@/db/config";
 import { Serialized, deserializeProps, serializeProps } from "@/db/serialize";
-import { flag } from "@/flags";
+import { useFlag } from "@/flags";
 
 type PageProps = {
   configsMetadata: Awaited<ReturnType<typeof getAllConfigsMetadata>>;
@@ -254,6 +255,7 @@ const Bar = ({
   dateStr: string;
   maxCount: number;
 }) => {
+  const easterEgg = useFlag("easter-eggs");
   return (
     <>
       <Box
@@ -288,15 +290,36 @@ const Bar = ({
         }}
       >
         {count > 0 ? (
-          <Box
-            sx={{
-              width: `${(count / maxCount) * 100}%`,
-              height: "100%",
-              backgroundColor: "primary.main",
-            }}
-          />
-        ) : flag("easter-eggs") ? (
-          "🥓🥓🥓"
+          !easterEgg ? (
+            <Box
+              sx={{
+                width: `${(count / maxCount) * 100}%`,
+                height: "100%",
+                backgroundColor: "primary.main",
+              }}
+            />
+          ) : (
+            <>
+              {Array(Math.ceil((count / maxCount) * 40))
+                .fill(0)
+                .map((x, i) => {
+                  return (
+                    <motion.div
+                      key={i}
+                      style={{ display: "inline-block" }}
+                      initial={{ scale: 0, opacity: 0 }}
+                      animate={{
+                        opacity: 1,
+                        scale: 1,
+                        transition: { delay: i * 0.03 },
+                      }}
+                    >
+                      🥓
+                    </motion.div>
+                  );
+                })}
+            </>
+          )
         ) : null}
       </Box>
     </>
