@@ -324,7 +324,7 @@ const Bar = ({
             <>
               {Array(Math.ceil((count / maxCount) * 40))
                 .fill(0)
-                .map((x, i) => {
+                .map((_, i) => {
                   return (
                     <motion.div
                       key={i}
