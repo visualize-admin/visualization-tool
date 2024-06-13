@@ -24,8 +24,13 @@ import { ContentLayout } from "@/components/layout";
 import { PublishActions } from "@/components/publish-actions";
 import { ConfiguratorStatePublished, getChartConfig } from "@/config-types";
 import { ConfiguratorStateProvider } from "@/configurator/configurator-state";
-import { getConfig, increaseConfigViewCount } from "@/db/config";
+import {
+  getConfig,
+  getConfigViewCount,
+  increaseConfigViewCount,
+} from "@/db/config";
 import { deserializeProps, Serialized, serializeProps } from "@/db/serialize";
+import SvgIcEye from "@/icons/components/IcEye";
 import { useLocale } from "@/locales/use-locale";
 import { useDataSourceStore } from "@/stores/data-source";
 import { EmbedOptionsProvider } from "@/utils/embed";
@@ -34,12 +39,14 @@ type PageProps =
   | {
       status: "notfound";
       config: null;
+      viewCount: null;
     }
   | {
       status: "found";
       config: Omit<PrismaConfig, "data"> & {
         data: Omit<ConfiguratorStatePublished, "activeField" | "state">;
       };
+      viewCount: number;
     };
 
 export const getServerSideProps: GetServerSideProps<PageProps> = async ({
@@ -50,24 +57,27 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
 
   if (config && config.data) {
     await increaseConfigViewCount(config.key);
+    const viewCount = await getConfigViewCount(config.key);
     return {
       props: serializeProps({
         status: "found",
         config,
+        viewCount,
       }),
     };
   }
 
   res.statusCode = 404;
 
-  return { props: { status: "notfound", config: null } };
+  return { props: { status: "notfound", config: null, viewCount: null } };
 };
 
 const useStyles = makeStyles((theme: Theme) => ({
   actionBar: {
     backgroundColor: "white",
     padding: `${theme.spacing(3)} 2.25rem`,
-    justifyContent: "flex-end",
+    justifyContent: "space-between",
+    alignItems: "center",
     display: "flex",
     width: "100%",
     borderBottom: "1px solid",
@@ -75,6 +85,14 @@ const useStyles = makeStyles((theme: Theme) => ({
     [theme.breakpoints.down("md")]: {
       padding: `${theme.spacing(3)} 0.75rem`,
     },
+  },
+  viewCount: {
+    display: "flex",
+    alignItems: "center",
+    "& svg": {
+      marginRight: theme.spacing(1),
+    },
+    color: theme.palette.text.secondary,
   },
 }));
 
@@ -85,7 +103,7 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
 
   // Keep initial value of publishSuccess
   const [publishSuccess] = useState(() => !!query.publishSuccess);
-  const { status, config } = deserializeProps(props);
+  const { status, config, viewCount } = deserializeProps(props);
 
   const session = useSession();
   const canEdit =
@@ -156,6 +174,13 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
       </Head>
       <ContentLayout>
         <Box className={classes.actionBar}>
+          {viewCount ? (
+            <Typography className={classes.viewCount} variant="caption">
+              <SvgIcEye /> {viewCount}
+            </Typography>
+          ) : (
+            <span />
+          )}
           <PublishActions configKey={key} locale={locale} />
         </Box>
         <Box
