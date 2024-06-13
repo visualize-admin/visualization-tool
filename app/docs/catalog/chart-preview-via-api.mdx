@@ -53,6 +53,21 @@ iframe.onload = () => {
 `}
 />
 
+### Controlling the language
+
+You can set the desired language for the chart preview by adding a /de, /fr, /it
+or /en part to the iframe URL, like so:
+
+```html
+<iframe
+  id="chart"
+  src="https://visualize.admin.ch/it/preview"
+  width="100%"
+  height="500"
+  frameborder="0"
+/>
+```
+
 ## POST request
 
 **Demo**: Visit <a href="/_preview_post" target="_blank">`/_preview_post`</a> to
@@ -79,7 +94,23 @@ It's important to only use one input inside a form (as we split the string by
 </form>`}
 />
 
-### Chart config schema
+### Controlling the language
+
+You can set the desired language for the chart preview by adding a /de, /fr, /it
+or /en part to the form action parameter, like so:
+
+```html
+<form method="post" action="/it/preview_post" target="_blank">
+  <input
+    type="hidden"
+    name="chartState"
+    value="{JSON.stringify(photovoltaikanlagenState)}"
+  />
+  <input type="submit" value="☀️ Preview a Photovoltaikanlagen chart" />
+</form>
+```
+
+## Chart config schema
 
 As the application constantly evolves, the chart config schema might change. You
 can find the latest version of the schema in the
