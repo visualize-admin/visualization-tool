@@ -15,41 +15,84 @@ import { useFlag } from "@/flags";
 
 type PageProps = {
   countByDay: { day: Date; count: number }[];
+  trendAverages: {
+    lastMonthDailyAverage: number;
+    previousThreeMonthsDailyAverage: number;
+  };
 };
 
 export const getServerSideProps: GetServerSideProps<PageProps> = async () => {
+  const [countByDay, trendAverages] = await Promise.all([
+    prisma.$queryRaw`
+      SELECT
+        DATE_TRUNC('day', created_at) AS day,
+        COUNT(*) AS count
+      FROM
+        config
+      GROUP BY
+        DATE_TRUNC('day', created_at)
+      ORDER BY
+        day DESC;`.then((rows) =>
+      (rows as { day: Date; count: BigInt }[]).map((row) => ({
+        ...row,
+        // superjson conversion breaks when we use default BigInt
+        count: Number(row.count),
+      }))
+    ),
+    prisma.$queryRaw`
+    WITH
+    last_month_daily_average AS (
+        SELECT COUNT(*) / 30.0 AS daily_average
+        FROM config
+        WHERE
+            created_at > CURRENT_DATE - INTERVAL '30 days'
+            AND created_at <= CURRENT_DATE
+    ),
+    last_three_months_daily_average AS (
+        SELECT COUNT(*) / 90.0 AS daily_average
+        FROM config
+        WHERE
+            created_at > CURRENT_DATE - INTERVAL '90 days'
+            AND created_at <= CURRENT_DATE
+    )
+    SELECT
+      (SELECT daily_average FROM last_month_daily_average) AS last_month_daily_average,
+      (SELECT daily_average FROM last_three_months_daily_average) AS previous_three_months_daily_average;
+    `.then((rows) => {
+      const row = (
+        rows as {
+          last_month_daily_average: number;
+          previous_three_months_daily_average: number;
+        }[]
+      )[0];
+      return {
+        // superjson conversion breaks when we use default BigInt
+        lastMonthDailyAverage: Number(row.last_month_daily_average),
+        previousThreeMonthsDailyAverage: Number(
+          row.previous_three_months_daily_average
+        ),
+      };
+    }),
+  ]);
   return {
     props: serializeProps({
-      countByDay: await prisma.$queryRaw`
-SELECT
-  DATE_TRUNC('day', created_at) AS day,
-  COUNT(*) AS count
-FROM
-  config
-GROUP BY
-  DATE_TRUNC('day', created_at)
-ORDER BY
-  day DESC;`.then((rows) =>
-        (rows as { day: Date; count: BigInt }[]).map((row) => ({
-          ...row,
-          // superjson conversion breaks when we use BigInt
-          count: Number(row.count),
-        }))
-      ),
+      countByDay,
+      trendAverages,
     }),
   };
 };
 
 const Statistics = (props: Serialized<PageProps>) => {
-  const { countByDay } = deserializeProps(props);
+  const { countByDay, trendAverages } = deserializeProps(props);
   const { countByYearMonth, total } = useMemo(() => {
     return {
       countByYearMonth: groupByYearMonth(countByDay),
       total: sum(countByDay, (d) => d.count) ?? 0,
     };
   }, [countByDay]);
-  const trend = useMemo(() => getTrend(countByDay), [countByDay]);
   const averageChartCountPerMonth = Math.round(total / countByYearMonth.length);
+  const { lastMonthDailyAverage, previousThreeMonthsDailyAverage } =
+    trendAverages;
   return (
     <AppLayout>
       <Box
@@ -66,7 +109,14 @@ const Statistics = (props: Serialized<PageProps>) => {
           title={`Visualize users created ${total} charts in total`}
           subtitle={`${total ? ` It's around ${averageChartCountPerMonth} chart${averageChartCountPerMonth > 1 ? "s" : ""} per month on average.` : ""}`}
           data={countByYearMonth}
-          trend={trend}
+          trend={{
+            direction:
+              lastMonthDailyAverage > previousThreeMonthsDailyAverage
+                ? "up"
+                : "down",
+            lastMonthDailyAverage,
+            previousThreeMonthsDailyAverage,
+          }}
         />
       </Box>
     </AppLayout>
@@ -74,8 +124,6 @@ const Statistics = (props: Serialized<PageProps>) => {
 };
 
 export default Statistics;
-
-const DAYS_IN_MS = 24 * 60 * 60 * 1000;
 
 const formatShortMonth = timeFormat("%b");
 const formatYearMonth = timeFormat("%Y-%m");
@@ -111,37 +159,6 @@ const groupByYearMonth = (countByDay: PageProps["countByDay"]) => {
   return countByDate;
 };
 
-const getTrend = (
-  data: PageProps["countByDay"]
-): {
-  direction: "up" | "down";
-  lastMonthDailyAverage: number;
-  previousThreeMonthsDailyAverage: number;
-} => {
-  const now = Date.now();
-  const nowDate = new Date(now);
-  const lastMonthDailyAverage =
-    sum(
-      data.filter(({ day }) => {
-        return day > new Date(now - 30 * DAYS_IN_MS) && day <= nowDate;
-      }),
-      (v) => v.count
-    ) / 30;
-  const previousThreeMonthsDailyAverage =
-    sum(
-      data.filter(({ day }) => {
-        return day > new Date(now - 90 * DAYS_IN_MS) && day <= nowDate;
-      }),
-      (v) => v.count
-    ) / 90;
-  return {
-    direction:
-      lastMonthDailyAverage > previousThreeMonthsDailyAverage ? "up" : "down",
-    lastMonthDailyAverage,
-    previousThreeMonthsDailyAverage,
-  };
-};
-
 const CreatedChartsCard = ({
   title,
   subtitle,
@@ -151,7 +168,11 @@ const CreatedChartsCard = ({
   title: string;
   subtitle: string;
   data: [string, { count: number; date: Date; monthStr: string }][];
-  trend: ReturnType<typeof getTrend>;
+  trend: {
+    direction: "up" | "down";
+    lastMonthDailyAverage: number;
+    previousThreeMonthsDailyAverage: number;
+  };
 }) => {
   const maxCount = max(data, ([, { count }]) => count) ?? 1;
   return (
