@@ -251,6 +251,7 @@ const CreatedChartsCard = ({
         </Box>
         <Box
           sx={{
+            zIndex: 1,
             position: "sticky",
             top: 0,
             width: "100%",
