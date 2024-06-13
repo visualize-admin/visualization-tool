@@ -121,13 +121,19 @@ const getTrend = (
   const now = Date.now();
   const nowDate = new Date(now);
   const lastMonthDailyAverage =
-    data.filter(({ day }) => {
-      return day > new Date(now - 30 * DAYS_IN_MS) && day <= nowDate;
-    }).length / 30;
+    sum(
+      data.filter(({ day }) => {
+        return day > new Date(now - 30 * DAYS_IN_MS) && day <= nowDate;
+      }),
+      (v) => v.count
+    ) / 30;
   const previousThreeMonthsDailyAverage =
-    data.filter(({ day }) => {
-      return day > new Date(now - 90 * DAYS_IN_MS) && day <= nowDate;
-    }).length / 90;
+    sum(
+      data.filter(({ day }) => {
+        return day > new Date(now - 90 * DAYS_IN_MS) && day <= nowDate;
+      }),
+      (v) => v.count
+    ) / 90;
   return {
     direction:
       lastMonthDailyAverage > previousThreeMonthsDailyAverage ? "up" : "down",
