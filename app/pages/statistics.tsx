@@ -139,6 +139,7 @@ const groupByYearMonth = (
   );
   const start = countByDate[0][1].date;
   const end = countByDate[countByDate.length - 1][1].date;
+  if (start.getTime() !== end.getTime()) {
   for (let date = start; date <= end; date.setMonth(date.getMonth() + 1)) {
     if (!allYearMonthStrings.includes(formatYearMonth(date))) {
       countByDate.push([
@@ -149,6 +150,7 @@ const groupByYearMonth = (
           monthStr: formatShortMonth(date),
         },
       ]);
+      }
     }
   }
   countByDate.sort(([a], [b]) => b.localeCompare(a));
