@@ -23,8 +23,8 @@ import { DashboardInteractiveFilters } from "@/components/dashboard-interactive-
 import Flex from "@/components/flex";
 import { HintBlue, HintRed, HintYellow } from "@/components/hint";
 import {
-  MetadataPanelStoreContext,
   createMetadataPanelStore,
+  MetadataPanelStoreContext,
 } from "@/components/metadata-panel-store";
 import {
   ChartConfig,
@@ -187,7 +187,7 @@ type ChartPublishInnerProps = {
   children?: React.ReactNode;
 };
 
-const ChartPublishedInner = (props: ChartPublishInnerProps) => {
+const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
   const {
     dataSource = DEFAULT_DATA_SOURCE,
     state,
@@ -405,3 +405,9 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
     </MetadataPanelStoreContext.Provider>
   );
 };
+
+const ChartPublishedInner = (props: ChartPublishInnerProps) => (
+  // Enforce re-mounting of the component when the chart config changes
+  // to ensure we do not use any out of date data.
+  <ChartPublishedInnerImpl {...props} key={props.chartConfig.key} />
+);
