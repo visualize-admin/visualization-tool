@@ -177,7 +177,7 @@ export const getConfig = async (key: string) => {
 };
 
 /**
- * Get all keys from DB.
+ * Get all configs from DB.
  */
 export const getAllConfigs = async () => {
   const configs = await prisma.config.findMany();

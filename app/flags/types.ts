@@ -16,4 +16,6 @@ export type FlagName =
   /** Whether server side cache is disabled */
   | "server-side-cache.disable"
   /** The GraphQL endpoint, is used for testing purposes */
-  | "graphql.endpoint";
+  | "graphql.endpoint"
+  /** Use at your own risk */
+  | "easter-eggs";
