@@ -23,10 +23,16 @@ type StatProps = {
 
 type PageProps = {
   charts: StatProps;
+  views: StatProps;
 };
 
 export const getServerSideProps: GetServerSideProps<PageProps> = async () => {
-  const [chartCountByDay, chartTrendAverages] = await Promise.all([
+  const [
+    chartCountByDay,
+    chartTrendAverages,
+    viewCountByDay,
+    viewTrendAverages,
+  ] = await Promise.all([
     prisma.$queryRaw`
       SELECT
         DATE_TRUNC('day', created_at) AS day,
@@ -49,15 +55,67 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async () => {
         SELECT COUNT(*) / 30.0 AS daily_average
         FROM config
         WHERE
-            created_at > CURRENT_DATE - INTERVAL '30 days'
-            AND created_at <= CURRENT_DATE
+          created_at > CURRENT_DATE - INTERVAL '30 days'
+          AND created_at <= CURRENT_DATE
     ),
     last_three_months_daily_average AS (
         SELECT COUNT(*) / 90.0 AS daily_average
         FROM config
         WHERE
-            created_at > CURRENT_DATE - INTERVAL '90 days'
-            AND created_at <= CURRENT_DATE
+          created_at > CURRENT_DATE - INTERVAL '90 days'
+          AND created_at <= CURRENT_DATE
+    )
+    SELECT
+      (SELECT daily_average FROM last_month_daily_average) AS last_month_daily_average,
+      (SELECT daily_average FROM last_three_months_daily_average) AS previous_three_months_daily_average;
+    `.then((rows) => {
+      const row = (
+        rows as {
+          last_month_daily_average: number;
+          previous_three_months_daily_average: number;
+        }[]
+      )[0];
+      return {
+        // superjson conversion breaks when we use default BigInt
+        lastMonthDailyAverage: Number(row.last_month_daily_average),
+        previousThreeMonthsDailyAverage: Number(
+          row.previous_three_months_daily_average
+        ),
+      };
+    }),
+    // Unfortunately we can't abstract this out to a function because of the way Prisma works
+    // see https://www.prisma.io/docs/orm/prisma-client/queries/raw-database-access/raw-queries#considerations
+    prisma.$queryRaw`
+      SELECT
+        DATE_TRUNC('day', viewed_at) AS day,
+        COUNT(*) AS count
+      FROM
+        view
+      GROUP BY
+        DATE_TRUNC('day', viewed_at)
+      ORDER BY
+        day DESC;`.then((rows) =>
+      (rows as { day: Date; count: BigInt }[]).map((row) => ({
+        ...row,
+        // superjson conversion breaks when we use default BigInt
+        count: Number(row.count),
+      }))
+    ),
+    prisma.$queryRaw`
+    WITH
+    last_month_daily_average AS (
+        SELECT COUNT(*) / 30.0 AS daily_average
+        FROM view
+        WHERE
+          viewed_at > CURRENT_DATE - INTERVAL '30 days'
+          AND viewed_at <= CURRENT_DATE
+    ),
+    last_three_months_daily_average AS (
+        SELECT COUNT(*) / 90.0 AS daily_average
+        FROM view
+        WHERE
+          viewed_at > CURRENT_DATE - INTERVAL '90 days'
+          AND viewed_at <= CURRENT_DATE
     )
     SELECT
       (SELECT daily_average FROM last_month_daily_average) AS last_month_daily_average,
@@ -84,12 +142,16 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async () => {
         countByDay: chartCountByDay,
         trendAverages: chartTrendAverages,
       },
+      views: {
+        countByDay: viewCountByDay,
+        trendAverages: viewTrendAverages,
+      },
     }),
   };
 };
 
 const Statistics = (props: Serialized<PageProps>) => {
-  const { charts } = deserializeProps(props);
+  const { charts, views } = deserializeProps(props);
   return (
     <AppLayout>
       <Box
@@ -110,7 +172,22 @@ const Statistics = (props: Serialized<PageProps>) => {
             my: [4, 6],
           }}
         >
-          <CreatedChartsStatsCard {...charts} />
+          <StatsCard
+            {...charts}
+            title={(total) =>
+              `Visualize users created ${total} charts in total`
+            }
+            subtitle={(total, avgMonthlyCount) =>
+              `${total ? ` It's around ${avgMonthlyCount} chart${avgMonthlyCount > 1 ? "s" : ""} per month on average.` : ""}`
+            }
+          />
+          <StatsCard
+            {...views}
+            title={(total) => `Charts were viewed ${total} times in total`}
+            subtitle={(total, avgMonthlyCount) =>
+              `${total ? ` It's around ${avgMonthlyCount} view${avgMonthlyCount > 1 ? "s" : ""} per month on average.` : ""}`
+            }
+          />
         </Box>
       </Box>
     </AppLayout>
@@ -140,16 +217,16 @@ const groupByYearMonth = (
   const start = countByDate[0][1].date;
   const end = countByDate[countByDate.length - 1][1].date;
   if (start.getTime() !== end.getTime()) {
-  for (let date = start; date <= end; date.setMonth(date.getMonth() + 1)) {
-    if (!allYearMonthStrings.includes(formatYearMonth(date))) {
-      countByDate.push([
-        formatYearMonth(date),
-        {
-          count: 0,
-          date,
-          monthStr: formatShortMonth(date),
-        },
-      ]);
+    for (let date = start; date <= end; date.setMonth(date.getMonth() + 1)) {
+      if (!allYearMonthStrings.includes(formatYearMonth(date))) {
+        countByDate.push([
+          formatYearMonth(date),
+          {
+            count: 0,
+            date,
+            monthStr: formatShortMonth(date),
+          },
+        ]);
       }
     }
   }
@@ -157,7 +234,7 @@ const groupByYearMonth = (
   return countByDate;
 };
 
-const StatsCard = ({
+const BaseStatsCard = ({
   title,
   subtitle,
   data,
@@ -293,7 +370,7 @@ const Bar = ({
   monthStr,
   count,
   maxCount,
-}: ComponentProps<typeof StatsCard>["data"][number][1] & {
+}: ComponentProps<typeof BaseStatsCard>["data"][number][1] & {
   dateStr: string;
   maxCount: number;
 }) => {
@@ -368,22 +445,26 @@ const Bar = ({
   );
 };
 
-const CreatedChartsStatsCard = (props: PageProps["charts"]) => {
-  const { countByDay, trendAverages } = props;
+const StatsCard = (
+  props: PageProps["charts"] & {
+    title: (total: number) => string;
+    subtitle: (total: number, avgMonthlyCount: number) => string;
+  }
+) => {
+  const { title, subtitle, countByDay, trendAverages } = props;
   const { countByYearMonth, total } = useMemo(() => {
     return {
       countByYearMonth: groupByYearMonth(countByDay),
       total: sum(countByDay, (d) => d.count) ?? 0,
     };
   }, [countByDay]);
-  const averageChartCountPerMonth = Math.round(total / countByYearMonth.length);
+  const avgMonthlyCount = Math.round(total / countByYearMonth.length);
   const { lastMonthDailyAverage, previousThreeMonthsDailyAverage } =
     trendAverages;
-
   return (
-    <StatsCard
-      title={`Visualize users created ${total} charts in total`}
-      subtitle={`${total ? ` It's around ${averageChartCountPerMonth} chart${averageChartCountPerMonth > 1 ? "s" : ""} per month on average.` : ""}`}
+    <BaseStatsCard
+      title={title(total)}
+      subtitle={subtitle(total, avgMonthlyCount)}
       data={countByYearMonth}
       trend={{
         direction:
