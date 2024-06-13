@@ -186,6 +186,17 @@ export const getAllConfigs = async () => {
 };
 
 /**
+ * Increase the view count of a config.
+ */
+export const increaseConfigViewCount = async (configKey: string) => {
+  await prisma.view.create({
+    data: {
+      config_key: configKey,
+    },
+  });
+};
+
+/**
  * Get config from a user.
  */
 export const getUserConfigs = async (userId: number) => {

@@ -8,7 +8,7 @@ import {
   ConfiguratorStateProvider,
   ConfiguratorStatePublished,
 } from "@/configurator";
-import { getConfig } from "@/db/config";
+import { getConfig, increaseConfigViewCount } from "@/db/config";
 import { serializeProps } from "@/db/serialize";
 import { EmbedOptionsProvider } from "@/utils/embed";
 
@@ -30,6 +30,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
   const config = await getConfig(query.chartId as string);
 
   if (config?.data) {
+    await increaseConfigViewCount(config.key);
     return {
       props: serializeProps({
         status: "found",
