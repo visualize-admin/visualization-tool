@@ -4,6 +4,7 @@ import lsAdapter from "./ls-adapter";
 import { FlagName, FlagValue } from "./types";
 
 type Events = { change: string };
+
 /**
  * In memory key value storage.
  *
