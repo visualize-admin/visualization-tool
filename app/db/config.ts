@@ -186,26 +186,6 @@ export const getAllConfigs = async () => {
 };
 
 /**
- * Get all configs metadata from DB.
- */
-export const getAllConfigsMetadata = async ({
-  limit,
-}: {
-  limit?: number;
-} = {}) => {
-  return await prisma.config.findMany({
-    select: {
-      key: true,
-      created_at: true,
-      updated_at: true,
-      published_state: true,
-      user_id: true,
-    },
-    take: limit,
-  });
-};
-
-/**
  * Get config from a user.
  */
 export const getUserConfigs = async (userId: number) => {
