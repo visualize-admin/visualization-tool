@@ -173,24 +173,28 @@ const Statistics = (props: Serialized<PageProps>) => {
             my: [4, 6],
           }}
         >
-          <StatsCard
-            {...charts}
-            title={(total) =>
-              `Visualize users created ${formatInteger(total)} charts in total`
-            }
-            subtitle={(total, avgMonthlyCount) =>
-              `${total ? ` It's around ${formatInteger(avgMonthlyCount)} chart${avgMonthlyCount > 1 ? "s" : ""} per month on average.` : ""}`
-            }
-          />
-          <StatsCard
-            {...views}
-            title={(total) =>
-              `Charts were viewed ${formatInteger(total)} times in total`
-            }
-            subtitle={(total, avgMonthlyCount) =>
-              `${total ? ` It's around ${formatInteger(avgMonthlyCount)} view${avgMonthlyCount > 1 ? "s" : ""} per month on average.` : ""}`
-            }
-          />
+          {charts.countByDay.length > 0 && (
+            <StatsCard
+              {...charts}
+              title={(total) =>
+                `Visualize users created ${formatInteger(total)} charts in total`
+              }
+              subtitle={(total, avgMonthlyCount) =>
+                `${total ? ` It's around ${formatInteger(avgMonthlyCount)} chart${avgMonthlyCount > 1 ? "s" : ""} per month on average.` : ""}`
+              }
+            />
+          )}
+          {views.countByDay.length > 0 && (
+            <StatsCard
+              {...views}
+              title={(total) =>
+                `Charts were viewed ${formatInteger(total)} times in total`
+              }
+              subtitle={(total, avgMonthlyCount) =>
+                `${total ? ` It's around ${formatInteger(avgMonthlyCount)} view${avgMonthlyCount > 1 ? "s" : ""} per month on average.` : ""}`
+              }
+            />
+          )}
         </Box>
       </Box>
     </AppLayout>
