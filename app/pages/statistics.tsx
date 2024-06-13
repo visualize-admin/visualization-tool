@@ -13,7 +13,7 @@ import prisma from "@/db/client";
 import { Serialized, deserializeProps, serializeProps } from "@/db/serialize";
 import { useFlag } from "@/flags";
 
-type PageProps = {
+type StatProps = {
   countByDay: { day: Date; count: number }[];
   trendAverages: {
     lastMonthDailyAverage: number;
@@ -21,8 +21,12 @@ type PageProps = {
   };
 };
 
+type PageProps = {
+  charts: StatProps;
+};
+
 export const getServerSideProps: GetServerSideProps<PageProps> = async () => {
-  const [countByDay, trendAverages] = await Promise.all([
+  const [chartCountByDay, chartTrendAverages] = await Promise.all([
     prisma.$queryRaw`
       SELECT
         DATE_TRUNC('day', created_at) AS day,
@@ -76,48 +80,38 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async () => {
   ]);
   return {
     props: serializeProps({
-      countByDay,
-      trendAverages,
+      charts: {
+        countByDay: chartCountByDay,
+        trendAverages: chartTrendAverages,
+      },
     }),
   };
 };
 
 const Statistics = (props: Serialized<PageProps>) => {
-  const { countByDay, trendAverages } = deserializeProps(props);
-  const { countByYearMonth, total } = useMemo(() => {
-    return {
-      countByYearMonth: groupByYearMonth(countByDay),
-      total: sum(countByDay, (d) => d.count) ?? 0,
-    };
-  }, [countByDay]);
-  const averageChartCountPerMonth = Math.round(total / countByYearMonth.length);
-  const { lastMonthDailyAverage, previousThreeMonthsDailyAverage } =
-    trendAverages;
+  const { charts } = deserializeProps(props);
   return (
     <AppLayout>
       <Box
         sx={{
           width: "100%",
-          maxWidth: 840,
+          maxWidth: 1400,
           mx: "auto",
           my: `${BANNER_MARGIN_TOP + 36}px`,
           px: 4,
         }}
       >
         <h1 style={{ margin: 0 }}>Statistics</h1>
-        <CreatedChartsCard
-          title={`Visualize users created ${total} charts in total`}
-          subtitle={`${total ? ` It's around ${averageChartCountPerMonth} chart${averageChartCountPerMonth > 1 ? "s" : ""} per month on average.` : ""}`}
-          data={countByYearMonth}
-          trend={{
-            direction:
-              lastMonthDailyAverage > previousThreeMonthsDailyAverage
-                ? "up"
-                : "down",
-            lastMonthDailyAverage,
-            previousThreeMonthsDailyAverage,
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: ["column", "column", "row"],
+            gap: 2,
+            my: [4, 6],
           }}
-        />
+        >
+          <CreatedChartsStatsCard {...charts} />
+        </Box>
       </Box>
     </AppLayout>
   );
@@ -128,7 +122,9 @@ export default Statistics;
 const formatShortMonth = timeFormat("%b");
 const formatYearMonth = timeFormat("%Y-%m");
 
-const groupByYearMonth = (countByDay: PageProps["countByDay"]) => {
+const groupByYearMonth = (
+  countByDay: PageProps[keyof PageProps]["countByDay"]
+) => {
   const countByDate = rollups(
     countByDay,
     (v) => ({
@@ -159,7 +155,7 @@ const groupByYearMonth = (countByDay: PageProps["countByDay"]) => {
   return countByDate;
 };
 
-const CreatedChartsCard = ({
+const StatsCard = ({
   title,
   subtitle,
   data,
@@ -178,7 +174,7 @@ const CreatedChartsCard = ({
   return (
     <Card
       sx={{
-        my: 6,
+        width: "100%",
         pt: 4,
         boxShadow: 2,
         borderRadius: 4,
@@ -295,7 +291,7 @@ const Bar = ({
   monthStr,
   count,
   maxCount,
-}: ComponentProps<typeof CreatedChartsCard>["data"][number][1] & {
+}: ComponentProps<typeof StatsCard>["data"][number][1] & {
   dateStr: string;
   maxCount: number;
 }) => {
@@ -367,5 +363,34 @@ const Bar = ({
         ) : null}
       </Box>
     </>
+  );
+};
+
+const CreatedChartsStatsCard = (props: PageProps["charts"]) => {
+  const { countByDay, trendAverages } = props;
+  const { countByYearMonth, total } = useMemo(() => {
+    return {
+      countByYearMonth: groupByYearMonth(countByDay),
+      total: sum(countByDay, (d) => d.count) ?? 0,
+    };
+  }, [countByDay]);
+  const averageChartCountPerMonth = Math.round(total / countByYearMonth.length);
+  const { lastMonthDailyAverage, previousThreeMonthsDailyAverage } =
+    trendAverages;
+
+  return (
+    <StatsCard
+      title={`Visualize users created ${total} charts in total`}
+      subtitle={`${total ? ` It's around ${averageChartCountPerMonth} chart${averageChartCountPerMonth > 1 ? "s" : ""} per month on average.` : ""}`}
+      data={countByYearMonth}
+      trend={{
+        direction:
+          lastMonthDailyAverage > previousThreeMonthsDailyAverage
+            ? "up"
+            : "down",
+        lastMonthDailyAverage,
+        previousThreeMonthsDailyAverage,
+      }}
+    />
   );
 };
