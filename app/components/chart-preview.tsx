@@ -6,13 +6,13 @@ import {
   useDraggable,
   useDroppable,
 } from "@dnd-kit/core";
-import { t, Trans } from "@lingui/macro";
+import { Trans, t } from "@lingui/macro";
 import { Box, IconButton, useEventCallback } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import Head from "next/head";
 import React, {
-  forwardRef,
   ReactNode,
+  forwardRef,
   useCallback,
   useMemo,
   useState,
@@ -47,10 +47,10 @@ import { BANNER_MARGIN_TOP } from "@/components/presence";
 import {
   ChartConfig,
   DataSource,
+  Layout,
   getChartConfig,
   hasChartConfigs,
   isConfiguring,
-  Layout,
   useConfiguratorState,
 } from "@/configurator";
 import { Description, Title } from "@/configurator/components/annotators";
@@ -239,7 +239,10 @@ const ChartPreviewChartMoreButton = ({ chartKey }: { chartKey: string }) => {
   const [state, dispatch] = useConfiguratorState(hasChartConfigs);
   return (
     <>
-      <IconButton onClick={(ev) => setAnchor(ev.currentTarget)}>
+      <IconButton
+        onClick={(ev) => setAnchor(ev.currentTarget)}
+        sx={{ mt: "-0.5rem" }}
+      >
         <SvgIcMore />
       </IconButton>
       <ArrowMenu
