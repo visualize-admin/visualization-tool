@@ -116,16 +116,6 @@ const DashboardTimeRangeSlider = ({
     timeUnit ? presetToTimeRange(presets, timeUnit) : undefined
   );
 
-  useEffect(
-    function initTimeRangeAfterDataFetch() {
-      if (timeRange || !timeUnit) {
-        return;
-      }
-      setTimeRange(presetToTimeRange(presets, timeUnit));
-    },
-    [timeRange, timeUnit, presets]
-  );
-
   const { min, max } = useMemo(() => {
     if (!timeUnit || !presets) {
       return { min: 0, max: 0 };
@@ -166,6 +156,21 @@ const DashboardTimeRangeSlider = ({
         setTimeRange([value[0], value[1]]);
       }
     }
+  );
+
+  useEffect(
+    function initTimeRangeAfterDataFetch() {
+      if (timeRange || !timeUnit) {
+        return;
+      }
+
+      const parser = timeUnitToParser[timeUnit];
+      handleChangeSlider(filter.componentIri, [
+        toUnixSeconds(parser(presets.from)),
+        toUnixSeconds(parser(presets.to)),
+      ]);
+    },
+    [timeRange, timeUnit, presets, handleChangeSlider, filter.componentIri]
   );
 
   const mountedForSomeTime = useTimeout(500, mounted);
