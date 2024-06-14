@@ -137,10 +137,10 @@ export async function loadDimensionsValuesWithMetadata(
             SELECT ?observation WHERE {
               ${
                 queryFilters
-                  ? `<${cubeIri}> cube:observationConstraint/sh:property ?dimension .
+                  ? `VALUES ?dimensionIri { <${dimensionIri}> }
+                  <${cubeIri}> cube:observationConstraint/sh:property ?dimension .
                   ?dimension sh:path ?dimensionIri .
-                  ?dimension schema:version ?version .
-                  FILTER(?dimensionIri NOT IN (rdf:type, cube:observedBy))`
+                  ?dimension schema:version ?version .`
                   : `VALUES ?dimensionIri { <${dimensionIri}> }
                   <${cubeIri}> cube:observationConstraint/sh:property ?dimension .
                   ?dimension sh:path ?dimensionIri .
@@ -153,9 +153,9 @@ export async function loadDimensionsValuesWithMetadata(
           }
           ${
             queryFilters
-              ? `<${cubeIri}> cube:observationConstraint/sh:property ?dimension .
-              ?dimension sh:path ?dimensionIri .
-              FILTER(?dimensionIri NOT IN (rdf:type, cube:observedBy))`
+              ? `VALUES ?dimensionIri { <${dimensionIri}> }
+              <${cubeIri}> cube:observationConstraint/sh:property ?dimension .
+              ?dimension sh:path ?dimensionIri .`
               : `VALUES ?dimensionIri { <${dimensionIri}> }`
           }
           ?observation ?dimensionIri ?versionedValue .
@@ -169,10 +169,10 @@ export async function loadDimensionsValuesWithMetadata(
             SELECT ?observation WHERE {
               ${
                 queryFilters
-                  ? `<${cubeIri}> cube:observationConstraint/sh:property ?dimension .
+                  ? `VALUES ?dimensionIri { <${dimensionIri}> }
+                  <${cubeIri}> cube:observationConstraint/sh:property ?dimension .
                   ?dimension sh:path ?dimensionIri .
-                  FILTER NOT EXISTS { ?dimension schema:version ?version . }
-                  FILTER(?dimensionIri NOT IN (rdf:type, cube:observedBy))`
+                  FILTER NOT EXISTS { ?dimension schema:version ?version . }`
                   : `VALUES ?dimensionIri { <${dimensionIri}> }
                   <${cubeIri}> cube:observationConstraint/sh:property ?dimension .
                   ?dimension sh:path ?dimensionIri .
@@ -185,9 +185,9 @@ export async function loadDimensionsValuesWithMetadata(
           }
           ${
             queryFilters
-              ? `<${cubeIri}> cube:observationConstraint/sh:property ?dimension .
-              ?dimension sh:path ?dimensionIri .
-              FILTER(?dimensionIri NOT IN (rdf:type, cube:observedBy))`
+              ? `VALUES ?dimensionIri { <${dimensionIri}> }
+              <${cubeIri}> cube:observationConstraint/sh:property ?dimension .
+              ?dimension sh:path ?dimensionIri .`
               : `VALUES ?dimensionIri { <${dimensionIri}> }`
           }
           ?observation ?dimensionIri ?versionedValue .
