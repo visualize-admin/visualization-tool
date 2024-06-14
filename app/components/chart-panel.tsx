@@ -52,7 +52,7 @@ export const ChartWrapper = forwardRef<HTMLDivElement, ChartWrapperProps>(
       <Box
         ref={ref}
         {...rest}
-        className={clsx(classes.chartWrapper, props.className)}
+        className={clsx(classes.chartWrapper, props.className, "chart-wrapper")}
       >
         {(editing || layoutType === "tab") && <ChartSelectionTabs />}
         <Box
