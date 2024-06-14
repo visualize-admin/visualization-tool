@@ -474,7 +474,11 @@ export const SaveDraftButton = ({
           published_state: PUBLISHED_STATE.DRAFT,
         });
         if (saved) {
-          const config = await initChartStateFromChartEdit(client, saved.key);
+          const config = await initChartStateFromChartEdit(
+            client,
+            saved.key,
+            state.state
+          );
 
           if (!config) {
             return;
