@@ -12,7 +12,7 @@ You can also check the
 # Unreleased
 
 - Features
-  - Added TemporalEntityDimension support for global dashboard filters
+  - Added `TemporalEntityDimension` support for global dashboard filters
   - Added support for setting chart language when using preview via API mode
   - Y scale will now start at 0 for interval scale measures in appropriate chart
     types
@@ -21,16 +21,16 @@ You can also check the
   - Free canvas layout is now initialized with up to 4 charts per row, up from 2
   - Saved dashboards now use dashboard title, instead of concatenating chart
     titles
-  - Added a new Statistics page that shows the number and trends related to
+  - Added a new Statistics page that shows the numbers and trends related to
     created charts. You can access it via `/statistics` route
-  - :flag: :new: Added a easter-eggs flag that allows you to enable easter eggs
-    in the application
+  - :flag: :new: Added an `easter-eggs` flag that allows you to enable easter
+    eggs in the application
 - Fixes
   - Fixed using a time range brush in column charts when X dimension is a
-    TemporalEntityDimension
-  - Whiskers should now display correctly at the initial render
+    `TemporalEntityDimension`
+  - Error whiskers now display correctly at the initial render
   - Charts won't animate anymore on initial render to prevent not-so-great
-    animations (e.g. columns flying in from the top)
+    animations in some cases (e.g. bars flying in from the top)
   - When resizing a chart vertically in free canvas layout, the animation is not
     laggy anymore
   - It's possible to download full dataset again for charts based on merged
@@ -39,7 +39,7 @@ You can also check the
   - It's now possible to close the dataset selection modal when creating a new
     chart in smaller browser windows
   - Saving a new dashboard when in layouting step as a logged-in user will not
-    redirect to the editor anymore
+    redirect to the editing step anymore
 - Style
   - Global dashboard time slider won't show marks if there's more than 50 of
     them
