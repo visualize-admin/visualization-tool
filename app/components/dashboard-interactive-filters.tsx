@@ -192,16 +192,14 @@ const DashboardTimeRangeSlider = ({
 
 export const DashboardInteractiveFilters = () => {
   const dashboardInteractiveFilters = useDashboardInteractiveFilters();
-
   return (
     <>
       {dashboardInteractiveFilters.sharedFilters.map((filter) => {
         if (filter.type !== "timeRange" || !filter.active) {
           return null;
         }
-
         return (
-          <Collapse in={filter.active} key={filter.componentIri}>
+          <Collapse key={filter.componentIri} in={filter.active}>
             <div>
               <DashboardTimeRangeSlider
                 filter={filter}
@@ -220,20 +218,26 @@ function stepFromTimeUnit(timeUnit: TimeUnit | undefined) {
     return 0;
   }
 
+  // We need to use precise values for time units, as otherwise the slider
+  // will not work correctly (there was no gap between last and second last value
+  // for the slider in year resolution)
+  const yearInSeconds =
+    (new Date(1, 0, 1).getTime() - new Date(0, 0, 0).getTime()) / 1000;
+
   switch (timeUnit) {
     case "Year":
-      return 1 * 60 * 60 * 24 * 365;
+      return yearInSeconds;
     case "Month":
-      return 1 * 60 * 60 * 24 * 30;
+      return yearInSeconds / 12;
     case "Week":
-      return 1 * 60 * 60 * 24 * 7;
+      return yearInSeconds / 52;
     case "Day":
-      return 1 * 60 * 60 * 24;
+      return yearInSeconds / 365;
     case "Hour":
-      return 1 * 60 * 60;
+      return yearInSeconds / 365 / 24;
     case "Minute":
-      return 1 * 60;
+      return yearInSeconds / 365 / 24 / 60;
     case "Second":
-      return 1;
+      return yearInSeconds / 365 / 24 / 60 / 60;
   }
 }
