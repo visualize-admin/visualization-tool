@@ -75,7 +75,10 @@ const useLinesState = (
     getXAsString,
     yMeasure,
     getY,
+    showYStandardError,
+    getYError,
     getYErrorRange,
+    yErrorMeasure,
     getMinY,
     segmentDimension,
     segmentsByAbbreviationOrLabel,
@@ -257,6 +260,14 @@ const useLinesState = (
         yMeasure.unit
       );
 
+    const getError = (d: Observation) => {
+      if (!showYStandardError || !getYError || getYError(d) === null) {
+        return;
+      }
+
+      return `${getYError(d)}${yErrorMeasure?.unit ?? ""}`;
+    };
+
     return {
       xAnchor,
       yAnchor,
@@ -269,6 +280,7 @@ const useLinesState = (
       datum: {
         label: fields.segment && getSegmentAbbreviationOrLabel(datum),
         value: yValueFormatter(getY(datum)),
+        error: getError(datum),
         color: colors(getSegment(datum)) as string,
       },
       values: sortedTooltipValues.map((td) => ({
