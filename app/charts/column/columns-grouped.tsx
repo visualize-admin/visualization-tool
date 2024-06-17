@@ -26,18 +26,16 @@ export const ErrorWhiskers = () => {
     grouped,
     showYStandardError,
   } = useChartState() as GroupedColumnsState;
-  const { margins } = bounds;
+  const { margins, width, height } = bounds;
   const ref = useRef<SVGGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
-  // As xScale object is not re-created when its domain or range changes, we use this
-  // trick to force the re-rendering of the whiskers when the xScale changes.
-  const bandwidth = xScaleIn.bandwidth();
   const renderData: RenderWhiskerDatum[] = useMemo(() => {
     if (!getYErrorRange || !showYStandardError) {
       return [];
     }
 
+    const bandwidth = xScaleIn.bandwidth();
     return grouped
       .filter((d) => d[1].some(filterWithoutErrors(getYError)))
       .flatMap(([segment, observations]) =>
@@ -54,6 +52,7 @@ export const ErrorWhiskers = () => {
           } as RenderWhiskerDatum;
         })
       );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     getSegment,
     getYErrorRange,
@@ -63,7 +62,8 @@ export const ErrorWhiskers = () => {
     xScale,
     xScaleIn,
     yScale,
-    bandwidth,
+    width,
+    height,
   ]);
 
   useEffect(() => {
