@@ -91,7 +91,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async () => {
         DATE_TRUNC('day', viewed_at) AS day,
         COUNT(*) AS count
       FROM
-        view
+        config_view
       GROUP BY
         DATE_TRUNC('day', viewed_at)
       ORDER BY
@@ -106,14 +106,14 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async () => {
     WITH
     last_month_daily_average AS (
         SELECT COUNT(*) / 30.0 AS daily_average
-        FROM view
+        FROM config_view
         WHERE
           viewed_at > CURRENT_DATE - INTERVAL '30 days'
           AND viewed_at <= CURRENT_DATE
     ),
     last_three_months_daily_average AS (
         SELECT COUNT(*) / 90.0 AS daily_average
-        FROM view
+        FROM config_view
         WHERE
           viewed_at > CURRENT_DATE - INTERVAL '90 days'
           AND viewed_at <= CURRENT_DATE
