@@ -683,10 +683,6 @@ msgstr "Skalierungstyp"
 msgid "controls.search.clear"
 msgstr "Suche zurücksetzen"
 
-#: app/configurator/components/chart-options-selector.tsx
-msgid "controls.section.additional-information"
-msgstr "Zusätzliche Informationen"
-
 #: app/charts/chart-config-ui-options.ts
 msgid "controls.section.animation.disabled-by-sorting"
 msgstr "Die Animation ist bei der Sortierung nach Gesamtgröße deaktiviert."
@@ -815,6 +811,10 @@ msgstr "Geteilt"
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.show-standard-error"
 msgstr "Standardfehler anzeigen"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.show-standard-error.explanation"
+msgstr "Zeigen Sie Unsicherheiten, die sich von Datenpunkten ausbreiten, um Standardfehler darzustellen."
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.sorting"

@@ -6,6 +6,7 @@ import {
   BaseVariables,
   ChartStateData,
   InteractiveFiltersVariables,
+  NumericalYErrorVariables,
   NumericalYVariables,
   SegmentVariables,
   SortingVariables,
@@ -13,6 +14,7 @@ import {
   useBaseVariables,
   useChartData,
   useInteractiveFiltersVariables,
+  useNumericalYErrorVariables,
   useNumericalYVariables,
   useSegmentVariables,
   useTemporalXVariables,
@@ -25,13 +27,21 @@ export type LinesStateVariables = BaseVariables &
   SortingVariables &
   TemporalXVariables &
   NumericalYVariables &
+  NumericalYErrorVariables &
   SegmentVariables &
   InteractiveFiltersVariables;
 
 export const useLinesStateVariables = (
   props: ChartProps<LineConfig>
 ): LinesStateVariables => {
-  const { chartConfig, observations, dimensionsByIri, measuresByIri } = props;
+  const {
+    chartConfig,
+    observations,
+    dimensions,
+    dimensionsByIri,
+    measures,
+    measuresByIri,
+  } = props;
   const { fields } = chartConfig;
   const { x, y, segment } = fields;
 
@@ -41,6 +51,11 @@ export const useLinesStateVariables = (
   });
   const numericalYVariables = useNumericalYVariables("line", y, {
     measuresByIri,
+  });
+  const numericalYErrorVariables = useNumericalYErrorVariables(y, {
+    numericalYVariables,
+    dimensions,
+    measures,
   });
   const segmentVariables = useSegmentVariables(segment, {
     dimensionsByIri,
@@ -66,6 +81,7 @@ export const useLinesStateVariables = (
     sortData,
     ...temporalXVariables,
     ...numericalYVariables,
+    ...numericalYErrorVariables,
     ...segmentVariables,
     ...interactiveFiltersVariables,
   };

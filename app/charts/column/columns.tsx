@@ -3,14 +3,16 @@ import { useEffect, useMemo, useRef } from "react";
 
 import { ColumnsState } from "@/charts/column/columns-state";
 import {
-  filterWithoutErrors,
   RenderColumnDatum,
   renderColumns,
-  RenderWhiskerDatum,
-  renderWhiskers,
 } from "@/charts/column/rendering-utils";
 import { useChartState } from "@/charts/shared/chart-state";
-import { renderContainer } from "@/charts/shared/rendering-utils";
+import {
+  RenderWhiskerDatum,
+  filterWithoutErrors,
+  renderContainer,
+  renderWhiskers,
+} from "@/charts/shared/rendering-utils";
 import { useTransitionStore } from "@/stores/transition";
 import { useTheme } from "@/themes";
 
@@ -25,31 +27,29 @@ export const ErrorWhiskers = () => {
     showYStandardError,
     bounds,
   } = useChartState() as ColumnsState;
-  const { margins } = bounds;
+  const { margins, width, height } = bounds;
   const ref = useRef<SVGGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
-  // As xScale object is not re-created when its domain or range changes, we use this
-  // trick to force the re-rendering of the whiskers when the xScale changes.
-  const bandwidth = xScale.bandwidth();
   const renderData: RenderWhiskerDatum[] = useMemo(() => {
     if (!getYErrorRange || !showYStandardError) {
       return [];
     }
 
+    const bandwidth = xScale.bandwidth();
     return chartData.filter(filterWithoutErrors(getYError)).map((d, i) => {
       const x0 = xScale(getX(d)) as number;
       const barWidth = Math.min(bandwidth, 15);
       const [y1, y2] = getYErrorRange(d);
-
       return {
         key: `${i}`,
         x: x0 + bandwidth / 2 - barWidth / 2,
         y1: yScale(y1),
         y2: yScale(y2),
         width: barWidth,
-      };
+      } as RenderWhiskerDatum;
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     chartData,
     getX,
@@ -58,7 +58,8 @@ export const ErrorWhiskers = () => {
     showYStandardError,
     xScale,
     yScale,
-    bandwidth,
+    width,
+    height,
   ]);
 
   useEffect(() => {

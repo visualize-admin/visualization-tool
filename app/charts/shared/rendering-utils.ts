@@ -11,6 +11,7 @@ import {
   Component,
   isStandardErrorDimension,
   Observation,
+  ObservationValue,
 } from "@/domain/data";
 import { TransitionStore } from "@/stores/transition";
 
@@ -148,3 +149,131 @@ export function maybeTransition<
 
 type AnySelection = Selection<any, any, any, any>;
 type AnyTransition = Transition<any, any, any, any>;
+
+const ERROR_WHISKER_SIZE = 1;
+const ERROR_WHISKER_MIDDLE_CIRCLE_RADIUS = 3.5;
+
+export type RenderWhiskerDatum = {
+  key: string;
+  x: number;
+  y1: number;
+  y2: number;
+  width: number;
+  fill?: string;
+  renderMiddleCircle?: boolean;
+};
+
+export const renderWhiskers = (
+  g: Selection<SVGGElement, null, SVGGElement, unknown>,
+  data: RenderWhiskerDatum[],
+  options: RenderOptions
+) => {
+  const { transition } = options;
+
+  g.selectAll<SVGGElement, RenderWhiskerDatum>("g")
+    .data(data, (d) => d.key)
+    .join(
+      (enter) =>
+        enter
+          .append("g")
+          .attr("opacity", 0)
+          .call((g) =>
+            g
+              .append("rect")
+              .attr("class", "top")
+              .attr("x", (d) => d.x)
+              .attr("y", (d) => d.y2)
+              .attr("width", (d) => d.width)
+              .attr("height", ERROR_WHISKER_SIZE)
+              .attr("fill", (d) => d.fill ?? "black")
+              .attr("stroke", "none")
+          )
+          .call((g) =>
+            g
+              .append("rect")
+              .attr("class", "middle")
+              .attr("x", (d) => d.x + (d.width - ERROR_WHISKER_SIZE) / 2)
+              .attr("y", (d) => d.y2)
+              .attr("width", ERROR_WHISKER_SIZE)
+              .attr("height", (d) => Math.max(0, d.y1 - d.y2))
+              .attr("fill", (d) => d.fill ?? "black")
+              .attr("stroke", "none")
+          )
+          .call((g) =>
+            g
+              .append("rect")
+              .attr("class", "bottom")
+              .attr("x", (d) => d.x)
+              .attr("y", (d) => d.y1)
+              .attr("width", (d) => d.width)
+              .attr("height", ERROR_WHISKER_SIZE)
+              .attr("fill", (d) => d.fill ?? "black")
+              .attr("stroke", "none")
+          )
+          .call((g) =>
+            g
+              .filter((d) => d.renderMiddleCircle ?? false)
+              .append("circle")
+              .attr("class", "middle-circle")
+              .attr("cx", (d) => d.x + d.width / 2)
+              .attr("cy", (d) => (d.y1 + d.y2) / 2)
+              .attr("r", ERROR_WHISKER_MIDDLE_CIRCLE_RADIUS)
+              .attr("fill", (d) => d.fill ?? "black")
+              .attr("stroke", "none")
+          )
+          .call((enter) =>
+            maybeTransition(enter, {
+              s: (g) => g.attr("opacity", 1),
+              transition,
+            })
+          ),
+      (update) =>
+        maybeTransition(update, {
+          s: (g) =>
+            g
+              .attr("opacity", 1)
+              .call((g) =>
+                g
+                  .select(".top")
+                  .attr("x", (d) => d.x)
+                  .attr("y", (d) => d.y2)
+                  .attr("width", (d) => d.width)
+              )
+              .call((g) =>
+                g
+                  .select(".middle")
+                  .attr("x", (d) => d.x + (d.width - ERROR_WHISKER_SIZE) / 2)
+                  .attr("y", (d) => d.y2)
+                  .attr("height", (d) => Math.max(0, d.y1 - d.y2))
+              )
+              .call((g) =>
+                g
+                  .select(".bottom")
+                  .attr("x", (d) => d.x)
+                  .attr("y", (d) => d.y1)
+                  .attr("width", (d) => d.width)
+              )
+              .call((g) =>
+                g
+                  .select(".middle-circle")
+                  .attr("cx", (d) => d.x + d.width / 2)
+                  .attr("cy", (d) => (d.y1 + d.y2) / 2)
+                  .attr("r", ERROR_WHISKER_MIDDLE_CIRCLE_RADIUS)
+                  .attr("fill", (d) => d.fill ?? "black")
+                  .attr("stroke", "none")
+              ),
+          transition,
+        }),
+      (exit) =>
+        maybeTransition(exit, {
+          transition,
+          s: (g) => g.attr("opacity", 0).remove(),
+        })
+    );
+};
+
+export const filterWithoutErrors = (
+  getError: ((d: Observation) => ObservationValue) | null
+) => {
+  return (d: Observation): boolean => !!getError?.(d);
+};

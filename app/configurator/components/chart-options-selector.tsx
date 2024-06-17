@@ -351,13 +351,50 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
                 components={allComponents}
               />
             )}
+            {encoding.options?.showStandardError && hasStandardError && (
+              <Box
+                sx={{
+                  display: "flex",
+                  gap: 1,
+                  alignItems: "center",
+                  mt: 3,
+                }}
+              >
+                <ChartOptionSwitchField
+                  path="showStandardError"
+                  field={encoding.field}
+                  defaultValue={true}
+                  label={t({ id: "controls.section.show-standard-error" })}
+                  sx={{ marginRight: 0 }}
+                />
+                <Tooltip
+                  enterDelay={600}
+                  PopperProps={{ sx: { maxWidth: 160 } }}
+                  title={
+                    <Trans id="controls.section.show-standard-error.explanation">
+                      Show uncertainties extending from data points to represent
+                      standard errors
+                    </Trans>
+                  }
+                >
+                  <Box sx={{ color: "primary.main" }}>
+                    <SvgIcInfoOutline width={16} height={16} />
+                  </Box>
+                </Tooltip>
+              </Box>
+            )}
             {encoding.options?.useAbbreviations && (
-              <Box mt={3}>
+              <ControlSectionContent
+                component="fieldset"
+                gap="none"
+                mt={3}
+                px="small"
+              >
                 <ChartFieldAbbreviations
                   field={field}
                   dimension={fieldDimension}
                 />
-              </Box>
+              </ControlSectionContent>
             )}
           </ControlSectionContent>
         </ControlSection>
@@ -420,23 +457,6 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
             encoding.options.colorComponent.enableUseAbbreviations
           }
         />
-      )}
-      {encoding.options?.showStandardError && hasStandardError && (
-        <ControlSection collapse>
-          <SubsectionTitle iconName="eye">
-            <Trans id="controls.section.additional-information">
-              Show additional information
-            </Trans>
-          </SubsectionTitle>
-          <ControlSectionContent component="fieldset" gap="none" sx={{ mt: 2 }}>
-            <ChartOptionCheckboxField
-              path="showStandardError"
-              field={encoding.field}
-              defaultValue={true}
-              label={t({ id: "controls.section.show-standard-error" })}
-            />
-          </ControlSectionContent>
-        </ControlSection>
       )}
       <ChartFieldMultiFilter
         chartConfig={chartConfig}
