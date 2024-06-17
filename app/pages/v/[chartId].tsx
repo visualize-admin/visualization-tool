@@ -24,7 +24,7 @@ import { ContentLayout } from "@/components/layout";
 import { PublishActions } from "@/components/publish-actions";
 import { ConfiguratorStatePublished, getChartConfig } from "@/config-types";
 import { ConfiguratorStateProvider } from "@/configurator/configurator-state";
-import { getConfig } from "@/db/config";
+import { getConfig, increaseConfigViewCount } from "@/db/config";
 import { deserializeProps, Serialized, serializeProps } from "@/db/serialize";
 import { useLocale } from "@/locales/use-locale";
 import { useDataSourceStore } from "@/stores/data-source";
@@ -49,13 +49,18 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
   const config = await getConfig(query.chartId as string);
 
   if (config && config.data) {
-    // TODO validate configuration
-    return { props: serializeProps({ status: "found", config }) };
+    await increaseConfigViewCount(config.key);
+    return {
+      props: serializeProps({
+        status: "found",
+        config,
+      }),
+    };
   }
 
   res.statusCode = 404;
 
-  return { props: { status: "notfound", config: null } };
+  return { props: { status: "notfound", config: null, viewCount: null } };
 };
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -63,6 +68,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     backgroundColor: "white",
     padding: `${theme.spacing(3)} 2.25rem`,
     justifyContent: "flex-end",
+    alignItems: "center",
     display: "flex",
     width: "100%",
     borderBottom: "1px solid",
@@ -70,6 +76,14 @@ const useStyles = makeStyles((theme: Theme) => ({
     [theme.breakpoints.down("md")]: {
       padding: `${theme.spacing(3)} 0.75rem`,
     },
+  },
+  viewCount: {
+    display: "flex",
+    alignItems: "center",
+    "& svg": {
+      marginRight: theme.spacing(1),
+    },
+    color: theme.palette.text.secondary,
   },
 }));
 
