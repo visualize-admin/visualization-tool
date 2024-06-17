@@ -45,14 +45,13 @@ export const ErrorWhiskers = () => {
           const x0 = xScaleIn(getSegment(d)) as number;
           const barWidth = Math.min(bandwidth, 15);
           const [y1, y2] = getYErrorRange(d);
-
           return {
             key: `${segment}-${getSegment(d)}`,
             x: (xScale(segment) as number) + x0 + bandwidth / 2 - barWidth / 2,
             y1: yScale(y1),
             y2: yScale(y2),
             width: barWidth,
-          };
+          } as RenderWhiskerDatum;
         })
       );
   }, [

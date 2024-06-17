@@ -150,6 +150,9 @@ export function maybeTransition<
 type AnySelection = Selection<any, any, any, any>;
 type AnyTransition = Transition<any, any, any, any>;
 
+const ERROR_WHISKER_SIZE = 1;
+const ERROR_WHISKER_MIDDLE_CIRCLE_RADIUS = 3.5;
+
 export type RenderWhiskerDatum = {
   key: string;
   x: number;
@@ -157,6 +160,7 @@ export type RenderWhiskerDatum = {
   y2: number;
   width: number;
   fill?: string;
+  renderMiddleCircle?: boolean;
 };
 
 export const renderWhiskers = (
@@ -180,7 +184,7 @@ export const renderWhiskers = (
               .attr("x", (d) => d.x)
               .attr("y", (d) => d.y2)
               .attr("width", (d) => d.width)
-              .attr("height", 2)
+              .attr("height", ERROR_WHISKER_SIZE)
               .attr("fill", (d) => d.fill ?? "black")
               .attr("stroke", "none")
           )
@@ -188,9 +192,9 @@ export const renderWhiskers = (
             g
               .append("rect")
               .attr("class", "middle")
-              .attr("x", (d) => d.x + d.width / 2 - 1)
+              .attr("x", (d) => d.x + (d.width - ERROR_WHISKER_SIZE) / 2)
               .attr("y", (d) => d.y2)
-              .attr("width", 2)
+              .attr("width", ERROR_WHISKER_SIZE)
               .attr("height", (d) => Math.max(0, d.y1 - d.y2))
               .attr("fill", (d) => d.fill ?? "black")
               .attr("stroke", "none")
@@ -202,7 +206,18 @@ export const renderWhiskers = (
               .attr("x", (d) => d.x)
               .attr("y", (d) => d.y1)
               .attr("width", (d) => d.width)
-              .attr("height", 2)
+              .attr("height", ERROR_WHISKER_SIZE)
+              .attr("fill", (d) => d.fill ?? "black")
+              .attr("stroke", "none")
+          )
+          .call((g) =>
+            g
+              .filter((d) => d.renderMiddleCircle ?? false)
+              .append("circle")
+              .attr("class", "middle-circle")
+              .attr("cx", (d) => d.x + d.width / 2)
+              .attr("cy", (d) => (d.y1 + d.y2) / 2)
+              .attr("r", ERROR_WHISKER_MIDDLE_CIRCLE_RADIUS)
               .attr("fill", (d) => d.fill ?? "black")
               .attr("stroke", "none")
           )
@@ -227,7 +242,7 @@ export const renderWhiskers = (
               .call((g) =>
                 g
                   .select(".middle")
-                  .attr("x", (d) => d.x + d.width / 2 - 1)
+                  .attr("x", (d) => d.x + (d.width - ERROR_WHISKER_SIZE) / 2)
                   .attr("y", (d) => d.y2)
                   .attr("height", (d) => Math.max(0, d.y1 - d.y2))
               )
@@ -237,6 +252,15 @@ export const renderWhiskers = (
                   .attr("x", (d) => d.x)
                   .attr("y", (d) => d.y1)
                   .attr("width", (d) => d.width)
+              )
+              .call((g) =>
+                g
+                  .select(".middle-circle")
+                  .attr("cx", (d) => d.x + d.width / 2)
+                  .attr("cy", (d) => (d.y1 + d.y2) / 2)
+                  .attr("r", ERROR_WHISKER_MIDDLE_CIRCLE_RADIUS)
+                  .attr("fill", (d) => d.fill ?? "black")
+                  .attr("stroke", "none")
               ),
           transition,
         }),

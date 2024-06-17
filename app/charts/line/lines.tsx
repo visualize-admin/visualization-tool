@@ -38,7 +38,6 @@ export const ErrorWhiskers = () => {
       const x0 = xScale(getX(d)) as number;
       const barWidth = 15;
       const [y1, y2] = getYErrorRange(d);
-
       return {
         key: `${i}`,
         x: x0 - barWidth / 2,
@@ -46,7 +45,8 @@ export const ErrorWhiskers = () => {
         y2: yScale(y2),
         width: barWidth,
         fill: theme.palette.primary.main,
-      };
+        renderMiddleCircle: true,
+      } as RenderWhiskerDatum;
     });
   }, [
     chartData,
