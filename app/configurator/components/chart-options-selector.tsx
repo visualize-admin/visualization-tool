@@ -351,13 +351,33 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
                 components={allComponents}
               />
             )}
+            {encoding.options?.showStandardError && hasStandardError && (
+              <ControlSectionContent
+                component="fieldset"
+                gap="none"
+                mt={3}
+                px="small"
+              >
+                <ChartOptionSwitchField
+                  path="showStandardError"
+                  field={encoding.field}
+                  defaultValue={true}
+                  label={t({ id: "controls.section.show-standard-error" })}
+                />
+              </ControlSectionContent>
+            )}
             {encoding.options?.useAbbreviations && (
-              <Box mt={3}>
+              <ControlSectionContent
+                component="fieldset"
+                gap="none"
+                mt={3}
+                px="small"
+              >
                 <ChartFieldAbbreviations
                   field={field}
                   dimension={fieldDimension}
                 />
-              </Box>
+              </ControlSectionContent>
             )}
           </ControlSectionContent>
         </ControlSection>
@@ -420,23 +440,6 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
             encoding.options.colorComponent.enableUseAbbreviations
           }
         />
-      )}
-      {encoding.options?.showStandardError && hasStandardError && (
-        <ControlSection collapse>
-          <SubsectionTitle iconName="eye">
-            <Trans id="controls.section.additional-information">
-              Show additional information
-            </Trans>
-          </SubsectionTitle>
-          <ControlSectionContent component="fieldset" gap="none" sx={{ mt: 2 }}>
-            <ChartOptionCheckboxField
-              path="showStandardError"
-              field={encoding.field}
-              defaultValue={true}
-              label={t({ id: "controls.section.show-standard-error" })}
-            />
-          </ControlSectionContent>
-        </ControlSection>
       )}
       <ChartFieldMultiFilter
         chartConfig={chartConfig}
