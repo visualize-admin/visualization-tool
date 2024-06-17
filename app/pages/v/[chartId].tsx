@@ -127,7 +127,9 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
       // Remove publishSuccess from URL so that when reloading of sharing the link
       // to someone, there is no publishSuccess mention
       if (query.publishSuccess) {
-        replace({ pathname: window.location.pathname });
+        replace({ pathname: window.location.pathname }, undefined, {
+          shallow: true,
+        });
       }
     },
     [query.publishSuccess, replace]
