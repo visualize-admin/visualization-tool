@@ -1,3 +1,4 @@
+import { useTheme } from "@mui/material";
 import { line } from "d3-shape";
 import { Fragment, memo, useEffect, useMemo, useRef } from "react";
 
@@ -13,6 +14,7 @@ import { Observation } from "@/domain/data";
 import { useTransitionStore } from "@/stores/transition";
 
 export const ErrorWhiskers = () => {
+  const theme = useTheme();
   const {
     getX,
     getYError,
@@ -43,6 +45,7 @@ export const ErrorWhiskers = () => {
         y1: yScale(y1),
         y2: yScale(y2),
         width: barWidth,
+        fill: theme.palette.primary.main,
       };
     });
   }, [
@@ -51,6 +54,7 @@ export const ErrorWhiskers = () => {
     getYError,
     getYErrorRange,
     showYStandardError,
+    theme.palette.primary.main,
     xScale,
     yScale,
   ]);

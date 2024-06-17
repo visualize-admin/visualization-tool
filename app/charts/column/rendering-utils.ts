@@ -69,6 +69,7 @@ export type RenderWhiskerDatum = {
   y1: number;
   y2: number;
   width: number;
+  fill?: string;
 };
 
 export const renderWhiskers = (
@@ -93,7 +94,7 @@ export const renderWhiskers = (
               .attr("y", (d) => d.y2)
               .attr("width", (d) => d.width)
               .attr("height", 2)
-              .attr("fill", "black")
+              .attr("fill", (d) => d.fill ?? "black")
               .attr("stroke", "none")
           )
           .call((g) =>
@@ -104,7 +105,7 @@ export const renderWhiskers = (
               .attr("y", (d) => d.y2)
               .attr("width", 2)
               .attr("height", (d) => Math.max(0, d.y1 - d.y2))
-              .attr("fill", "black")
+              .attr("fill", (d) => d.fill ?? "black")
               .attr("stroke", "none")
           )
           .call((g) =>
@@ -115,7 +116,7 @@ export const renderWhiskers = (
               .attr("y", (d) => d.y1)
               .attr("width", (d) => d.width)
               .attr("height", 2)
-              .attr("fill", "black")
+              .attr("fill", (d) => d.fill ?? "black")
               .attr("stroke", "none")
           )
           .call((enter) =>
