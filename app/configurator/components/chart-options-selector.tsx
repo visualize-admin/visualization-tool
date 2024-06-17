@@ -352,19 +352,36 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
               />
             )}
             {encoding.options?.showStandardError && hasStandardError && (
-              <ControlSectionContent
-                component="fieldset"
-                gap="none"
-                mt={3}
-                px="small"
+              <Box
+                sx={{
+                  display: "flex",
+                  gap: 1,
+                  alignItems: "center",
+                  mt: 3,
+                }}
               >
                 <ChartOptionSwitchField
                   path="showStandardError"
                   field={encoding.field}
                   defaultValue={true}
                   label={t({ id: "controls.section.show-standard-error" })}
+                  sx={{ marginRight: 0 }}
                 />
-              </ControlSectionContent>
+                <Tooltip
+                  enterDelay={600}
+                  PopperProps={{ sx: { maxWidth: 160 } }}
+                  title={
+                    <Trans id="controls.section.show-standard-error.explanation">
+                      Show uncertainties extending from data points to represent
+                      standard errors
+                    </Trans>
+                  }
+                >
+                  <Box sx={{ color: "primary.main" }}>
+                    <SvgIcInfoOutline width={16} height={16} />
+                  </Box>
+                </Tooltip>
+              </Box>
             )}
             {encoding.options?.useAbbreviations && (
               <ControlSectionContent

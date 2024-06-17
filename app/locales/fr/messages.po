@@ -683,10 +683,6 @@ msgstr "Type d'échelle"
 msgid "controls.search.clear"
 msgstr "Effacer la recherche"
 
-#: app/configurator/components/chart-options-selector.tsx
-msgid "controls.section.additional-information"
-msgstr "Informations supplémentaires"
-
 #: app/charts/chart-config-ui-options.ts
 msgid "controls.section.animation.disabled-by-sorting"
 msgstr "L'animation est désactivée lors du tri par taille totale."
@@ -815,6 +811,10 @@ msgstr "Partagé"
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.show-standard-error"
 msgstr "Afficher l'erreur type"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.show-standard-error.explanation"
+msgstr "Montrer les incertitudes qui s'étendent à partir des points de données pour représenter les erreurs standard"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.sorting"

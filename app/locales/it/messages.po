@@ -683,10 +683,6 @@ msgstr "Tipo di scala"
 msgid "controls.search.clear"
 msgstr "Cancella la ricerca"
 
-#: app/configurator/components/chart-options-selector.tsx
-msgid "controls.section.additional-information"
-msgstr "Informazioni aggiuntive"
-
 #: app/charts/chart-config-ui-options.ts
 msgid "controls.section.animation.disabled-by-sorting"
 msgstr "L'animazione è disattivata quando l'ordinamento avviene per dimensione totale."
@@ -815,6 +811,10 @@ msgstr "Condiviso"
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.show-standard-error"
 msgstr "Mostra l'errore standard"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.show-standard-error.explanation"
+msgstr "Mostrare le incertezze che si estendono dai punti di dati per rappresentare gli errori standard."
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.sorting"
