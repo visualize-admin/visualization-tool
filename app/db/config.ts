@@ -207,7 +207,7 @@ export const getConfigViewCount = async (configKey: string) => {
  * Increase the view count of a config.
  */
 export const increaseConfigViewCount = async (configKey: string) => {
-  await prisma.view.create({
+  await prisma.configView.create({
     data: {
       config_key: configKey,
     },

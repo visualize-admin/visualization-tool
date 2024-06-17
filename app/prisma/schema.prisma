@@ -23,7 +23,7 @@ model Config {
   user    User? @relation(fields: [user_id], references: [id])
   user_id Int?
 
-  views View[]
+  views ConfigView[]
 
   published_state PUBLISHED_STATE @default(PUBLISHED)
 
@@ -39,14 +39,14 @@ model User {
   @@map("users")
 }
 
-model View {
+model ConfigView {
   id        Int      @id @default(autoincrement())
   viewed_at DateTime @default(now()) @db.Timestamp(6)
 
   config    Config @relation(fields: [config_key], references: [key])
   config_key String
 
-  @@map("view")
+  @@map("config_view")
 }
 
 model OldMigrations {
