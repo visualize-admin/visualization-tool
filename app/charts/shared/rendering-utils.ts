@@ -251,5 +251,5 @@ export const renderWhiskers = (
 export const filterWithoutErrors = (
   getError: ((d: Observation) => ObservationValue) | null
 ) => {
-  return (d: Observation): boolean => !getError?.(d);
+  return (d: Observation): boolean => !!getError?.(d);
 };
