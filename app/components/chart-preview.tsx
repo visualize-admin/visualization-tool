@@ -239,10 +239,7 @@ const ChartPreviewChartMoreButton = ({ chartKey }: { chartKey: string }) => {
   const [state, dispatch] = useConfiguratorState(hasChartConfigs);
   return (
     <>
-      <IconButton
-        onClick={(ev) => setAnchor(ev.currentTarget)}
-        sx={{ mt: "-0.5rem" }}
-      >
+      <IconButton onClick={(ev) => setAnchor(ev.currentTarget)}>
         <SvgIcMore />
       </IconButton>
       <ArrowMenu
@@ -297,14 +294,14 @@ const ChartTopRightControls = ({
   dragHandleProps?: DragHandleProps;
 }) => {
   return (
-    <>
+    <Box sx={{ display: "flex", alignItems: "center", gap: 2, mt: "-0.5rem" }}>
       <ChartPreviewChartMoreButton chartKey={chartKey} />
       <DragHandle
         dragging
         className={chartPanelLayoutGridClasses.dragHandle}
         {...dragHandleProps}
       />
-    </>
+    </Box>
   );
 };
 
