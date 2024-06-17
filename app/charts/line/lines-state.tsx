@@ -75,6 +75,7 @@ const useLinesState = (
     getXAsString,
     yMeasure,
     getY,
+    getYErrorRange,
     getMinY,
     segmentDimension,
     segmentsByAbbreviationOrLabel,
@@ -133,13 +134,22 @@ const useLinesState = (
   const xScaleTimeRange = scaleTime().domain(xScaleTimeRangeDomain);
 
   // y
-  const minValue = getMinY(scalesData, getY);
-  const maxValue = max(scalesData, getY) ?? 0;
+  const minValue = getMinY(scalesData, (d) =>
+    getYErrorRange ? getYErrorRange(d)[0] : getY(d)
+  );
+  const maxValue =
+    max(scalesData, (d) => (getYErrorRange ? getYErrorRange(d)[1] : getY(d))) ??
+    0;
   const yDomain = [minValue, maxValue];
   const yScale = scaleLinear().domain(yDomain).nice();
 
-  const paddingMinValue = getMinY(paddingData, getY);
-  const paddingMaxValue = max(paddingData, getY) ?? 0;
+  const paddingMinValue = getMinY(paddingData, (d) =>
+    getYErrorRange ? getYErrorRange(d)[0] : getY(d)
+  );
+  const paddingMaxValue =
+    max(paddingData, (d) =>
+      getYErrorRange ? getYErrorRange(d)[1] : getY(d)
+    ) ?? 0;
   const paddingYScale = scaleLinear()
     .domain([paddingMinValue, paddingMaxValue])
     .nice();
