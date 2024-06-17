@@ -3,14 +3,16 @@ import { useEffect, useMemo, useRef } from "react";
 
 import { ColumnsState } from "@/charts/column/columns-state";
 import {
-  filterWithoutErrors,
   RenderColumnDatum,
   renderColumns,
-  RenderWhiskerDatum,
-  renderWhiskers,
 } from "@/charts/column/rendering-utils";
 import { useChartState } from "@/charts/shared/chart-state";
-import { renderContainer } from "@/charts/shared/rendering-utils";
+import {
+  RenderWhiskerDatum,
+  filterWithoutErrors,
+  renderContainer,
+  renderWhiskers,
+} from "@/charts/shared/rendering-utils";
 import { useTransitionStore } from "@/stores/transition";
 import { useTheme } from "@/themes";
 

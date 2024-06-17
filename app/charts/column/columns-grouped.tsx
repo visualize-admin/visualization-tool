@@ -3,13 +3,15 @@ import { useEffect, useMemo, useRef } from "react";
 import { GroupedColumnsState } from "@/charts/column/columns-grouped-state";
 import {
   RenderColumnDatum,
-  RenderWhiskerDatum,
-  filterWithoutErrors,
   renderColumns,
-  renderWhiskers,
 } from "@/charts/column/rendering-utils";
 import { useChartState } from "@/charts/shared/chart-state";
-import { renderContainer } from "@/charts/shared/rendering-utils";
+import {
+  RenderWhiskerDatum,
+  filterWithoutErrors,
+  renderContainer,
+  renderWhiskers,
+} from "@/charts/shared/rendering-utils";
 import { useTransitionStore } from "@/stores/transition";
 
 export const ErrorWhiskers = () => {

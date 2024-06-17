@@ -2,14 +2,14 @@ import { useTheme } from "@mui/material";
 import { line } from "d3-shape";
 import { Fragment, memo, useEffect, useMemo, useRef } from "react";
 
+import { LinesState } from "@/charts/line/lines-state";
+import { useChartState } from "@/charts/shared/chart-state";
 import {
   RenderWhiskerDatum,
   filterWithoutErrors,
+  renderContainer,
   renderWhiskers,
-} from "@/charts/column/rendering-utils";
-import { LinesState } from "@/charts/line/lines-state";
-import { useChartState } from "@/charts/shared/chart-state";
-import { renderContainer } from "@/charts/shared/rendering-utils";
+} from "@/charts/shared/rendering-utils";
 import { Observation } from "@/domain/data";
 import { useTransitionStore } from "@/stores/transition";
 
