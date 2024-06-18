@@ -202,7 +202,7 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
       {
         type: "link",
         href: `/${locale}/v/${config.key}`,
-        label: t({ id: "login.chart.view", message: "View" }),
+        label: t({ id: "login.chart.view", message: "Preview" }),
         iconName: "eye",
         priority:
           config.published_state === PUBLISHED_STATE.PUBLISHED ? 0 : undefined,
