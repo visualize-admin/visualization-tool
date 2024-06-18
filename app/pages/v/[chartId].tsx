@@ -166,9 +166,11 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
         />
       </Head>
       <ContentLayout>
-        <Box className={classes.actionBar}>
-          <PublishActions configKey={key} locale={locale} />
-        </Box>
+        {config.published_state === PUBLISHED_STATE.PUBLISHED && (
+          <Box className={classes.actionBar}>
+            <PublishActions configKey={key} locale={locale} />
+          </Box>
+        )}
         <Box
           px={[2, 4]}
           sx={{ backgroundColor: "muted.main" }}
