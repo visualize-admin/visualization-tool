@@ -202,7 +202,7 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
       {
         type: "link",
         href: `/${locale}/v/${config.key}`,
-        label: t({ id: "login.chart.view", message: "View" }),
+        label: t({ id: "login.chart.view", message: "Preview" }),
         iconName: "eye",
         priority:
           config.published_state === PUBLISHED_STATE.PUBLISHED ? 0 : undefined,
@@ -319,13 +319,9 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
         </Typography>
       </TableCell>
       <TableCell width="30%">
-        <NextLink href={`/v/${config.key}`} passHref legacyBehavior>
-          <Link color="primary">
-            <Typography variant="body2" noWrap title={chartTitle}>
-              {chartTitle}
-            </Typography>
-          </Link>
-        </NextLink>
+        <Typography variant="body2" noWrap title={chartTitle}>
+          {chartTitle}
+        </Typography>
       </TableCell>
       <TableCell width="30%">
         {fetching ? (
