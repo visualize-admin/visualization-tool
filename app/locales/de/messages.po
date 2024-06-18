@@ -1372,6 +1372,10 @@ msgstr "Teilen"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.view"
+msgstr ""
+
+#: app/login/components/profile-tables.tsx
+msgid "login.chart.view"
 msgstr "Vorschau"
 
 #: app/login/components/profile-tables.tsx
