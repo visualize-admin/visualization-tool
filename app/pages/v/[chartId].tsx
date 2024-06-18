@@ -196,7 +196,6 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
                 <Alert
                   severity="warning"
                   sx={{
-                    maxWidth: 600,
                     margin: "auto",
                     flexDirection: "row",
                     alignItems: "center",
