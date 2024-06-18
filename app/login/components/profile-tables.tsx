@@ -319,13 +319,9 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
         </Typography>
       </TableCell>
       <TableCell width="30%">
-        <NextLink href={`/v/${config.key}`} passHref legacyBehavior>
-          <Link color="primary">
-            <Typography variant="body2" noWrap title={chartTitle}>
-              {chartTitle}
-            </Typography>
-          </Link>
-        </NextLink>
+        <Typography variant="body2" noWrap title={chartTitle}>
+          {chartTitle}
+        </Typography>
       </TableCell>
       <TableCell width="30%">
         {fetching ? (
