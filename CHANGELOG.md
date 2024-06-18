@@ -23,12 +23,15 @@ You can also check the
     titles
   - Added a new Statistics page that shows the numbers and trends related to
     created charts. You can access it via `/statistics` route
+  - Standard error whiskers are now supported in line charts
+  - Optimized the user profile page and preview of a draft chart
   - :flag: :new: Added an `easter-eggs` flag that allows you to enable easter
     eggs in the application
 - Fixes
   - Fixed using a time range brush in column charts when X dimension is a
     `TemporalEntityDimension`
-  - Error whiskers now display correctly at the initial render
+  - Error whiskers now display correctly at the initial render and when resizing
+    the charts vertically in free canvas layout
   - Charts won't animate anymore on initial render to prevent not-so-great
     animations in some cases (e.g. bars flying in from the top)
   - When resizing a chart vertically in free canvas layout, the animation is not
