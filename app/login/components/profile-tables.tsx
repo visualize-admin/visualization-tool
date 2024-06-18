@@ -315,7 +315,7 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
     <TableRow>
       <TableCell width="10%">
         <Typography variant="body2">
-          {config.data.chartConfigs.length > 1 ? "multi" : "single"}
+          {config.data.chartConfigs.length > 1 ? "dashboard" : "single"}
         </Typography>
       </TableCell>
       <TableCell width="30%">
