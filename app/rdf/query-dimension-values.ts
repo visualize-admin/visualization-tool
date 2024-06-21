@@ -74,6 +74,198 @@ const getFilterOrder = (filter: FilterValue) => {
   return 0;
 };
 
+type LoadDimensionsValuesProps = {
+  dimensionIris: string[];
+  cubeDimensions: CubeDimension[];
+  sparqlClient: ParsingClient;
+  filters?: Filters;
+  locale: string;
+  cache: LRUCache | undefined;
+};
+
+export async function loadDimensionsValuesWithMetadata(
+  cubeIri: string,
+  props: LoadDimensionsValuesProps
+) {
+  const {
+    dimensionIris,
+    cubeDimensions,
+    sparqlClient,
+    filters,
+    locale,
+    cache,
+  } = props;
+
+  const dimensionQueries = dimensionIris.map((dimensionIri) => {
+    const filterList = getFiltersList(filters, dimensionIri);
+    const queryFilters = getQueryFilters(
+      filterList,
+      cubeDimensions,
+      dimensionIri
+    );
+
+    if (!cubeDimensions.find((d) => d.path?.value === dimensionIri)) {
+      throw new Error(`Dimension not found: ${dimensionIri}`);
+    }
+
+    return `${
+      queryFilters
+        ? ""
+        : `{ #pragma evaluate on
+      SELECT ?dimensionIri ?versionedValue ?unversionedValue WHERE {
+        VALUES ?dimensionIri { <${dimensionIri}> }
+        <${cubeIri}> cube:observationConstraint/sh:property ?dimension .
+        ?dimension sh:path ?dimensionIri .
+        ?dimension schema:version ?version .
+        ?dimension sh:in/rdf:rest*/rdf:first ?versionedValue .
+        ?versionedValue schema:sameAs ?unversionedValue .
+      }
+    } UNION {
+      SELECT ?dimensionIri ?versionedValue ?unversionedValue WHERE {
+        VALUES ?dimensionIri { <${dimensionIri}> }
+        <${cubeIri}> cube:observationConstraint/sh:property ?dimension .
+        ?dimension sh:path ?dimensionIri .
+        FILTER NOT EXISTS { ?dimension schema:version ?version . }
+        ?dimension sh:in/rdf:rest*/rdf:first ?versionedValue .
+        BIND(?versionedValue as ?unversionedValue)
+      }
+    } UNION`
+    } {
+      {
+        SELECT DISTINCT ?dimensionIri ?versionedValue ?unversionedValue WHERE {
+          { #pragma evaluate on
+            SELECT ?observation WHERE {
+              ${
+                queryFilters
+                  ? `VALUES ?dimensionIri { <${dimensionIri}> }
+                  <${cubeIri}> cube:observationConstraint/sh:property ?dimension .
+                  ?dimension sh:path ?dimensionIri .
+                  ?dimension schema:version ?version .`
+                  : `VALUES ?dimensionIri { <${dimensionIri}> }
+                  <${cubeIri}> cube:observationConstraint/sh:property ?dimension .
+                  ?dimension sh:path ?dimensionIri .
+                  ?dimension schema:version ?version .
+                  FILTER NOT EXISTS { ?dimension sh:in ?in . }`
+              }
+              <${cubeIri}> cube:observationSet/cube:observation ?observation .
+              ${queryFilters}
+            }
+          }
+          ${
+            queryFilters
+              ? `VALUES ?dimensionIri { <${dimensionIri}> }
+              <${cubeIri}> cube:observationConstraint/sh:property ?dimension .
+              ?dimension sh:path ?dimensionIri .`
+              : `VALUES ?dimensionIri { <${dimensionIri}> }`
+          }
+          ?observation ?dimensionIri ?versionedValue .
+          ?versionedValue schema:sameAs ?unversionedValue .
+        }
+      }
+    } UNION {
+      {
+        SELECT DISTINCT ?dimensionIri ?versionedValue ?unversionedValue WHERE {
+          { #pragma evaluate on
+            SELECT ?observation WHERE {
+              ${
+                queryFilters
+                  ? `VALUES ?dimensionIri { <${dimensionIri}> }
+                  <${cubeIri}> cube:observationConstraint/sh:property ?dimension .
+                  ?dimension sh:path ?dimensionIri .
+                  FILTER NOT EXISTS { ?dimension schema:version ?version . }`
+                  : `VALUES ?dimensionIri { <${dimensionIri}> }
+                  <${cubeIri}> cube:observationConstraint/sh:property ?dimension .
+                  ?dimension sh:path ?dimensionIri .
+                  FILTER NOT EXISTS { ?dimension schema:version ?version . }
+                  FILTER NOT EXISTS { ?dimension sh:in ?in . }`
+              }
+              <${cubeIri}> cube:observationSet/cube:observation ?observation .
+              ${queryFilters}
+            }
+          }
+          ${
+            queryFilters
+              ? `VALUES ?dimensionIri { <${dimensionIri}> }
+              <${cubeIri}> cube:observationConstraint/sh:property ?dimension .
+              ?dimension sh:path ?dimensionIri .`
+              : `VALUES ?dimensionIri { <${dimensionIri}> }`
+          }
+          ?observation ?dimensionIri ?versionedValue .
+          BIND(?versionedValue as ?unversionedValue)
+        }
+      }
+    }`;
+  });
+
+  const query = `PREFIX cube: <https://cube.link/>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX schema: <http://schema.org/>
+PREFIX sh: <http://www.w3.org/ns/shacl#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+CONSTRUCT {
+  ?dimensionIri rdf:first ?unversionedValue .
+  ?unversionedValue
+    schema:name ?name ;
+    schema:alternateName ?alternateName ;
+    schema:description ?description ;
+    schema:identifier ?identifier ;
+    schema:position ?position ;
+    schema:color ?color ;
+    geo:hasGeometry ?geometry ;
+    schema:latitude ?latitude ;
+    schema:longitude ?longitude .
+} WHERE {
+  ${dimensionQueries.join("\nUNION ")}
+  ${buildLocalizedSubQuery("versionedValue", "schema:name", "name", {
+    locale,
+  })}
+  ${buildLocalizedSubQuery(
+    "versionedValue",
+    "schema:description",
+    "description",
+    {
+      locale,
+    }
+  )}
+  ${buildLocalizedSubQuery(
+    "versionedValue",
+    "schema:alternateName",
+    "alternateName",
+    {
+      locale,
+    }
+  )}
+  OPTIONAL { ?versionedValue schema:identifier ?identifier . }
+  OPTIONAL { ?versionedValue schema:position ?position . }
+  OPTIONAL { ?versionedValue schema:color ?color . }
+  OPTIONAL { ?versionedValue geo:hasGeometry ?geometry . }
+  OPTIONAL { ?versionedValue schema:latitude ?latitude . }
+  OPTIONAL { ?versionedValue schema:longitude ?longitude . }
+}`;
+
+  return await executeWithCache(
+    sparqlClient,
+    query,
+    () => sparqlClient.query.construct(query, { operation: "postUrlencoded" }),
+    (quads) => {
+      const result: { [dimensionIri: string]: DimensionValue[] } =
+        Object.fromEntries(dimensionIris.map((iri) => [iri, []]));
+
+      for (const q of quads.filter((q) => q.predicate.equals(ns.rdf.first))) {
+        const dimensionIri = q.subject.value;
+        result[dimensionIri]?.push(parseDimensionValue(q, quads));
+      }
+
+      return Object.entries(result).map(([dimensionIri, values]) => ({
+        dimensionIri,
+        values,
+      }));
+    },
+    cache
+  );
+}
+
 type LoadDimensionValuesProps = {
   dimensionIri: string;
   cubeDimensions: CubeDimension[];
@@ -89,10 +281,10 @@ type LoadDimensionValuesProps = {
  * Filters on other dimensions can be passed.
  *
  */
-export async function loadDimensionValuesWithMetadata(
+export const loadDimensionValuesWithMetadata = async (
   cubeIri: string,
   props: LoadDimensionValuesProps
-): Promise<DimensionValue[]> {
+): Promise<DimensionValue[]> => {
   const { dimensionIri, cubeDimensions, sparqlClient, filters, locale, cache } =
     props;
   const filterList = getFiltersList(filters, dimensionIri);
@@ -195,7 +387,7 @@ CONSTRUCT {
     },
     cache
   );
-}
+};
 
 const parseDimensionValue = (
   valueQuad: Quad,

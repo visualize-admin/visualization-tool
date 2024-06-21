@@ -9,7 +9,6 @@ import { LRUCache } from "typescript-lru-cache";
 
 import { FilterValueMulti, Filters } from "@/config-types";
 import {
-  DimensionValue,
   Observation,
   ObservationValue,
   parseObservationValue,
@@ -27,7 +26,7 @@ import { ExtendedCube } from "@/rdf/extended-cube";
 import * as ns from "@/rdf/namespace";
 import { parseCubeDimension, parseRelatedDimensions } from "@/rdf/parse";
 import {
-  loadDimensionValuesWithMetadata,
+  loadDimensionsValuesWithMetadata,
   loadMaxDimensionValue,
   loadMinMaxDimensionValues,
 } from "@/rdf/query-dimension-values";
@@ -131,20 +130,64 @@ const getCubeDimensionsValues = async (
     cache: LRUCache | undefined;
   }
 ) => {
+  const dimensionIris = resolvedDimensions.map((d) => d.data.iri);
+  const { minMaxDimensions, regularDimensions } = resolvedDimensions.reduce<{
+    minMaxDimensions: ResolvedDimension[];
+    regularDimensions: ResolvedDimension[];
+  }>(
+    (acc, dimension) => {
+      if (shouldLoadMinMaxValues(dimension)) {
+        acc.minMaxDimensions.push(dimension);
+      } else {
+        acc.regularDimensions.push(dimension);
+      }
+
+      return acc;
+    },
+    { minMaxDimensions: [], regularDimensions: [] }
+  );
+
+  const result = await Promise.all([
+    getMinMaxDimensionsValues(minMaxDimensions, {
+      sparqlClient,
+      cache,
+    }),
+    getRegularDimensionsValues(regularDimensions, {
+      sparqlClient,
+      filters,
+      cache,
+    }),
+  ]);
+
+  return result
+    .flat()
+    .sort(
+      (a, b) =>
+        dimensionIris.indexOf(a.dimensionIri) -
+        dimensionIris.indexOf(b.dimensionIri)
+    )
+    .map(({ values }) => values);
+};
+
+const getMinMaxDimensionsValues = async (
+  resolvedDimensions: ResolvedDimension[],
+  {
+    sparqlClient,
+    cache,
+  }: {
+    sparqlClient: ParsingClient;
+    cache: LRUCache | undefined;
+  }
+) => {
   return await Promise.all(
     resolvedDimensions.map(async (resolvedDimension) => {
-      if (shouldLoadMinMaxValues(resolvedDimension)) {
-        return await getMinMaxDimensionValues(resolvedDimension, {
+      return {
+        dimensionIri: resolvedDimension.data.iri,
+        values: await getMinMaxDimensionValues(resolvedDimension, {
           sparqlClient,
           cache,
-        });
-      } else {
-        return await getRegularDimensionValues(resolvedDimension, {
-          sparqlClient,
-          filters,
-          cache,
-        });
-      }
+        }),
+      };
     })
   );
 };
@@ -224,8 +267,8 @@ const getMinMaxDimensionValues = async (
   return [];
 };
 
-const getRegularDimensionValues = async (
-  resolvedDimension: ResolvedDimension,
+const getRegularDimensionsValues = async (
+  resolvedDimensions: ResolvedDimension[],
   {
     sparqlClient,
     filters,
@@ -235,10 +278,12 @@ const getRegularDimensionValues = async (
     filters?: Filters;
     cache: LRUCache | undefined;
   }
-): Promise<DimensionValue[]> => {
-  const { cube, data, locale } = resolvedDimension;
-  return await loadDimensionValuesWithMetadata(cube.term?.value!, {
-    dimensionIri: data.iri,
+) => {
+  // `cube` and `locale` are the same for all dimensions
+  const { cube, locale } = resolvedDimensions[0];
+  const cubeIri = cube.term?.value!;
+  return await loadDimensionsValuesWithMetadata(cubeIri, {
+    dimensionIris: resolvedDimensions.map((d) => d.data.iri),
     cubeDimensions: cube.dimensions,
     sparqlClient,
     filters,
