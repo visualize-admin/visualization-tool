@@ -611,8 +611,7 @@ const NavSection = ({
       (item) => item.label
     );
   }, [counts, items]);
-  const { isOpen, open, close } = useDisclosure();
-
+  const { isOpen, open, close } = useDisclosure(!!currentFilter);
   return (
     <div>
       <NavSectionTitle theme={theme} sx={{ mb: "block" }}>
