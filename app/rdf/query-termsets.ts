@@ -49,24 +49,15 @@ export const getCubeTermsets = async (
 ): Promise<Termset[]> => {
   const { sparqlClient, locale } = options;
   const qs = await sparqlClient.query.select(
-    `PREFIX cube: <https://cube.link/>
-PREFIX meta: <https://cube.link/meta/>
-PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+    `PREFIX meta: <https://cube.link/meta/>
 PREFIX schema: <http://schema.org/>
-PREFIX sh: <http://www.w3.org/ns/shacl#>
 
 SELECT DISTINCT ?termsetIri ?termsetLabel WHERE {
-    VALUES (?iri) {(<${iri}>)}
-
-    ?iri cube:observationConstraint/sh:property ?dimension .
-    ?dimension a cube:KeyDimension .
-    ?dimension sh:in/rdf:rest*/rdf:first ?value.
-    ?value schema:inDefinedTermSet ?termsetIri .
-    ?termsetIri a meta:SharedDimension .
-
+  VALUES (?cubeIri) {(<${iri}>)}
+  ?termsetIri meta:isUsedIn ?cubeIri .
     ${buildLocalizedSubQuery("termsetIri", "schema:name", "termsetLabel", { locale })}
-    
-}`
+}`,
+    { operation: "postUrlencoded" }
   );
 
   return qs.map((result) => ({
