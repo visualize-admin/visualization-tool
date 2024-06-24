@@ -75,7 +75,10 @@ export const ChartMoreButton = ({ chartKey }: { chartKey: string }) => {
   const [state, dispatch] = useConfiguratorState(hasChartConfigs);
   return (
     <>
-      <IconButton onClick={(ev) => setAnchor(ev.currentTarget)}>
+      <IconButton
+        onClick={(ev) => setAnchor(ev.currentTarget)}
+        sx={{ height: "fit-content" }}
+      >
         <SvgIcMore />
       </IconButton>
       <ArrowMenu
