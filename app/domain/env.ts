@@ -45,6 +45,9 @@ export const GRAPHQL_ENDPOINT =
 export const GA_TRACKING_ID =
   clientEnv?.GA_TRACKING_ID ?? process.env.GA_TRACKING_ID;
 
+export const ADFS_PROFILE_URL =
+  clientEnv?.ADFS_PROFILE_URL ?? process.env.ADFS_PROFILE_URL;
+
 /**
  * Server-side-only **RUNTIME** variables (not exposed through window)
  */

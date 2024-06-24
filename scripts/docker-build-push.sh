@@ -23,6 +23,7 @@ docker build \
     --build-arg VECTOR_TILE_URL=$VECTOR_TILE_URL \
     --build-arg ADFS_ID=$ADFS_ID \
     --build-arg ADFS_ISSUER=$ADFS_ISSUER \
+    --build-arg ADFS_PROFILE_URL=$ADFS_PROFILE_URL \
     --build-arg NEXTAUTH_SECRET=$NEXTAUTH_SECRET \
     --build-arg NEXTAUTH_URL=$NEXTAUTH_URL \
     $(echo $DOCKER_IMAGE_TAGS | tr ' ' '\n' | xargs -n 1 -I {} echo "-t {}" ) .
