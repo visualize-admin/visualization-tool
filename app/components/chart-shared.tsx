@@ -93,45 +93,50 @@ export const ChartMoreButton = ({ chartKey }: { chartKey: string }) => {
         transformOrigin={{ horizontal: "center", vertical: "top" }}
       >
         {isPublished(state) ? null : (
-          <DuplicateChartMenuActionItem
-            chartKey={chartKey}
-            onSuccess={handleClose}
-          />
+          <>
+            <DuplicateChartMenuActionItem
+              chartKey={chartKey}
+              onSuccess={handleClose}
+            />
+            {isConfiguring(state) ? null : (
+              <MenuActionItem
+                type="button"
+                as="menuitem"
+                onClick={() => {
+                  dispatch({ type: "CONFIGURE_CHART", value: { chartKey } });
+                  handleClose();
+                }}
+                iconName="edit"
+                label={<Trans id="chart-controls.edit">Edit</Trans>}
+              />
+            )}
+            {state.chartConfigs.length > 1 ? (
+              <MenuActionItem
+                type="button"
+                as="menuitem"
+                color="error"
+                requireConfirmation
+                confirmationTitle={t({
+                  id: "chart-controls.delete.title",
+                  message: "Delete chart?",
+                })}
+                confirmationText={t({
+                  id: "chart-controls.delete.confirmation",
+                  message: "Are you sure you want to delete this chart?",
+                })}
+                onClick={() => {
+                  dispatch({
+                    type: "CHART_CONFIG_REMOVE",
+                    value: { chartKey },
+                  });
+                  handleClose();
+                }}
+                iconName="trash"
+                label={<Trans id="chart-controls.delete">Delete</Trans>}
+              />
+            ) : null}
+          </>
         )}
-        {isPublished(state) || isConfiguring(state) ? null : (
-          <MenuActionItem
-            type="button"
-            as="menuitem"
-            onClick={() => {
-              dispatch({ type: "CONFIGURE_CHART", value: { chartKey } });
-              handleClose();
-            }}
-            iconName="edit"
-            label={<Trans id="chart-controls.edit">Edit</Trans>}
-          />
-        )}
-        {isPublished(state) ? null : state.chartConfigs.length > 1 ? (
-          <MenuActionItem
-            type="button"
-            as="menuitem"
-            color="error"
-            requireConfirmation
-            confirmationTitle={t({
-              id: "chart-controls.delete.title",
-              message: "Delete chart?",
-            })}
-            confirmationText={t({
-              id: "chart-controls.delete.confirmation",
-              message: "Are you sure you want to delete this chart?",
-            })}
-            onClick={() => {
-              dispatch({ type: "CHART_CONFIG_REMOVE", value: { chartKey } });
-              handleClose();
-            }}
-            iconName="trash"
-            label={<Trans id="chart-controls.delete">Delete</Trans>}
-          />
-        ) : null}
       </ArrowMenu>
     </>
   );
