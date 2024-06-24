@@ -170,7 +170,6 @@ const mkScoresQuery = (
       dcterms:publisher ?publisher ;
       schema:about ?subthemeIri;
       schema:creativeWorkStatus ?status ;
-      schema:creativeWorkStatus <https://ld.admin.ch/vocabulary/CreativeWorkStatus/Published> ;
       schema:creator ?creatorIri ;
       schema:datePublished ?datePublished;
       schema:description ?description ;
