@@ -92,10 +92,12 @@ export const ChartMoreButton = ({ chartKey }: { chartKey: string }) => {
         anchorOrigin={{ horizontal: "center", vertical: "bottom" }}
         transformOrigin={{ horizontal: "center", vertical: "top" }}
       >
-        <DuplicateChartMenuActionItem
-          chartKey={chartKey}
-          onSuccess={handleClose}
-        />
+        {isPublished(state) ? null : (
+          <DuplicateChartMenuActionItem
+            chartKey={chartKey}
+            onSuccess={handleClose}
+          />
+        )}
         {isPublished(state) || isConfiguring(state) ? null : (
           <MenuActionItem
             type="button"
