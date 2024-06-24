@@ -38,7 +38,7 @@ import { useChartStyles } from "@/components/chart-utils";
 import { ChartWithFilters } from "@/components/chart-with-filters";
 import { DashboardInteractiveFilters } from "@/components/dashboard-interactive-filters";
 import DebugPanel from "@/components/debug-panel";
-import { DragHandle, DragHandleProps } from "@/components/drag-handle";
+import { DragHandle } from "@/components/drag-handle";
 import Flex from "@/components/flex";
 import { Checkbox } from "@/components/form";
 import { HintYellow } from "@/components/hint";
@@ -233,7 +233,7 @@ type CommonChartPreviewProps = ChartWrapperProps & {
   dataSource: DataSource;
 };
 
-const ChartPreviewChartMoreButton = ({ chartKey }: { chartKey: string }) => {
+const ChartMoreButton = ({ chartKey }: { chartKey: string }) => {
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
   const handleClose = useEventCallback(() => setAnchor(null));
   const [state, dispatch] = useConfiguratorState(hasChartConfigs);
@@ -249,16 +249,18 @@ const ChartPreviewChartMoreButton = ({ chartKey }: { chartKey: string }) => {
         anchorOrigin={{ horizontal: "center", vertical: "bottom" }}
         transformOrigin={{ horizontal: "center", vertical: "top" }}
       >
-        <MenuActionItem
-          type="button"
-          as="menuitem"
-          onClick={() => {
-            dispatch({ type: "CONFIGURE_CHART", value: { chartKey } });
-            handleClose();
-          }}
-          iconName="edit"
-          label={<Trans id="chart-controls.edit">Edit</Trans>}
-        />
+        {isConfiguring(state) ? null : (
+          <MenuActionItem
+            type="button"
+            as="menuitem"
+            onClick={() => {
+              dispatch({ type: "CONFIGURE_CHART", value: { chartKey } });
+              handleClose();
+            }}
+            iconName="edit"
+            label={<Trans id="chart-controls.edit">Edit</Trans>}
+          />
+        )}
         {state.chartConfigs.length > 1 ? (
           <MenuActionItem
             type="button"
@@ -286,25 +288,6 @@ const ChartPreviewChartMoreButton = ({ chartKey }: { chartKey: string }) => {
   );
 };
 
-const ChartTopRightControls = ({
-  chartKey,
-  dragHandleProps,
-}: {
-  chartKey: string;
-  dragHandleProps?: DragHandleProps;
-}) => {
-  return (
-    <Box sx={{ display: "flex", alignItems: "center", gap: 2, mt: "-0.5rem" }}>
-      <ChartPreviewChartMoreButton chartKey={chartKey} />
-      <DragHandle
-        dragging
-        className={chartPanelLayoutGridClasses.dragHandle}
-        {...dragHandleProps}
-      />
-    </Box>
-  );
-};
-
 const ReactGridChartPreview = forwardRef<
   HTMLDivElement,
   CommonChartPreviewProps
@@ -316,7 +299,12 @@ const ReactGridChartPreview = forwardRef<
         <ChartPreviewInner
           dataSource={dataSource}
           chartKey={chartKey}
-          actionElementSlot={<ChartTopRightControls chartKey={chartKey} />}
+          actionElementSlot={
+            <DragHandle
+              className={chartPanelLayoutGridClasses.dragHandle}
+              dragging
+            />
+          }
         >
           {children}
         </ChartPreviewInner>
@@ -369,13 +357,11 @@ const DndChartPreview = (props: CommonChartPreviewProps) => {
           dataSource={dataSource}
           chartKey={chartKey}
           actionElementSlot={
-            <ChartTopRightControls
-              chartKey={chartKey}
-              dragHandleProps={{
-                ...listeners,
-                ref: setActivatorNodeRef,
-                dragging: isDragging,
-              }}
+            <DragHandle
+              ref={setActivatorNodeRef}
+              className={chartPanelLayoutGridClasses.dragHandle}
+              dragging={isDragging}
+              {...listeners}
             />
           }
         />
@@ -404,27 +390,24 @@ const SingleURLsPreview = (props: SingleURLsPreviewProps) => {
               dataSource={dataSource}
               chartKey={chartConfig.key}
               actionElementSlot={
-                <>
-                  <ChartPreviewChartMoreButton chartKey={key} />
-                  <Checkbox
-                    checked={checked}
-                    disabled={keys.length === 1 && checked}
-                    onChange={() => {
-                      dispatch({
-                        type: "LAYOUT_CHANGED",
-                        value: {
-                          ...layout,
-                          publishableChartKeys: checked
-                            ? keys.filter((k) => k !== key)
-                            : state.chartConfigs
-                                .map((c) => c.key)
-                                .filter((k) => keys.includes(k) || k === key),
-                        },
-                      });
-                    }}
-                    label=""
-                  />
-                </>
+                <Checkbox
+                  checked={checked}
+                  disabled={keys.length === 1 && checked}
+                  onChange={() => {
+                    dispatch({
+                      type: "LAYOUT_CHANGED",
+                      value: {
+                        ...layout,
+                        publishableChartKeys: checked
+                          ? keys.filter((k) => k !== key)
+                          : state.chartConfigs
+                              .map((c) => c.key)
+                              .filter((k) => keys.includes(k) || k === key),
+                      },
+                    });
+                  }}
+                  label=""
+                />
               }
             />
           </ChartWrapper>
@@ -557,7 +540,17 @@ const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
                     // title and the chart (subgrid layout)
                     <span />
                   )}
-                  {actionElementSlot}
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 2,
+                      mt: "-0.5rem",
+                    }}
+                  >
+                    <ChartMoreButton chartKey={chartConfig.key} />
+                    {actionElementSlot}
+                  </Box>
                 </Flex>
                 {configuring || chartConfig.meta.description[locale] ? (
                   <Description
