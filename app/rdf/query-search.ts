@@ -292,22 +292,24 @@ const mkScoresQuery = (
          creatorValues.includes(
            "https://register.ld.admin.ch/opendataswiss/org/bundesamt-fur-umwelt-bafu"
          )
-           ? "VALUES (?subthemeGraph ?subthemeTermset) { (<https://lindas.admin.ch/foen/themes> <https://register.ld.admin.ch/foen/theme>) }"
-           : ""
-       }
+           ? `
       OPTIONAL {
         ?iri schema:about ?subthemeIri .
+        VALUES (?subthemeGraph ?subthemeTermset) { (<https://lindas.admin.ch/foen/themes> <https://register.ld.admin.ch/foen/theme>) }
         GRAPH ?subthemeGraph {
           ?subthemeIri a schema:DefinedTerm ;
           schema:inDefinedTermSet ?subthemeTermset .
-          ${buildLocalizedSubQuery(
-            "subthemeIri",
-            "schema:name",
-            "subthemeLabel",
-            { locale }
-          )}
         }
-      }
+        ${buildLocalizedSubQuery(
+          "subthemeIri",
+          "schema:name",
+          "subthemeLabel",
+          { locale }
+        )}
+      } 
+      `
+           : ""
+       }
 
       ${makeVisualizeDatasetFilter({
         includeDrafts: !!includeDrafts,
