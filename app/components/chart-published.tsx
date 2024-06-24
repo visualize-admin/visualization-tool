@@ -12,7 +12,7 @@ import { isUsingImputation } from "@/charts/shared/imputation";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
 import { ChartFootnotes } from "@/components/chart-footnotes";
 import { ChartPanelLayout, ChartWrapper } from "@/components/chart-panel";
-import { ChartControls } from "@/components/chart-shared";
+import { ChartControls, ChartMoreButton } from "@/components/chart-shared";
 import {
   ChartTablePreviewProvider,
   useChartTablePreview,
@@ -23,8 +23,8 @@ import { DashboardInteractiveFilters } from "@/components/dashboard-interactive-
 import Flex from "@/components/flex";
 import { HintBlue, HintRed, HintYellow } from "@/components/hint";
 import {
-  createMetadataPanelStore,
   MetadataPanelStoreContext,
+  createMetadataPanelStore,
 } from "@/components/metadata-panel-store";
 import {
   ChartConfig,
@@ -343,6 +343,7 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
                   // title and the chart (subgrid layout)
                   <span />
                 )}
+                <ChartMoreButton chartKey={chartConfig.key} />
               </Flex>
               {meta.description[locale] ? (
                 <Description text={meta.description[locale]} />

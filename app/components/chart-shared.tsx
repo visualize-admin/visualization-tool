@@ -15,6 +15,7 @@ import {
   DataSource,
   hasChartConfigs,
   isConfiguring,
+  isPublished,
   useConfiguratorState,
 } from "@/configurator";
 import SvgIcMore from "@/icons/components/IcMore";
@@ -88,7 +89,7 @@ export const ChartMoreButton = ({ chartKey }: { chartKey: string }) => {
         anchorOrigin={{ horizontal: "center", vertical: "bottom" }}
         transformOrigin={{ horizontal: "center", vertical: "top" }}
       >
-        {isConfiguring(state) ? null : (
+        {isPublished(state) || isConfiguring(state) ? null : (
           <MenuActionItem
             type="button"
             as="menuitem"
@@ -100,7 +101,7 @@ export const ChartMoreButton = ({ chartKey }: { chartKey: string }) => {
             label={<Trans id="chart-controls.edit">Edit</Trans>}
           />
         )}
-        {state.chartConfigs.length > 1 ? (
+        {isPublished(state) ? null : state.chartConfigs.length > 1 ? (
           <MenuActionItem
             type="button"
             as="menuitem"
