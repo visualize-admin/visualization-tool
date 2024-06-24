@@ -93,7 +93,7 @@ export const ChartMoreButton = ({ chartKey }: { chartKey: string }) => {
         transformOrigin={{ horizontal: "center", vertical: "top" }}
       >
         {isPublished(state) ? null : (
-          <>
+          <div>
             <DuplicateChartMenuActionItem
               chartKey={chartKey}
               onSuccess={handleClose}
@@ -135,7 +135,7 @@ export const ChartMoreButton = ({ chartKey }: { chartKey: string }) => {
                 label={<Trans id="chart-controls.delete">Delete</Trans>}
               />
             ) : null}
-          </>
+          </div>
         )}
       </ArrowMenu>
     </>
