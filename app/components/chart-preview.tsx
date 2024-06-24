@@ -79,7 +79,7 @@ export const ChartPreview = (props: ChartPreviewProps) => {
 
   return layout.type === "dashboard" && !editing ? (
     <DashboardPreview dataSource={dataSource} layoutType={layout.layout} />
-  ) : layout.type === "singleURLs" ? (
+  ) : layout.type === "singleURLs" && !editing ? (
     <SingleURLsPreview dataSource={dataSource} layout={layout} />
   ) : (
     // Important to keep the key here to force re-rendering of the chart when
