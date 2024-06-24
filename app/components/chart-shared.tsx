@@ -13,12 +13,15 @@ import { MetadataPanel } from "@/components/metadata-panel";
 import {
   ChartConfig,
   DataSource,
+  getChartConfig,
   hasChartConfigs,
   isConfiguring,
   isPublished,
   useConfiguratorState,
 } from "@/configurator";
 import SvgIcMore from "@/icons/components/IcMore";
+import { useLocale } from "@/src";
+import { createChartId } from "@/utils/create-chart-id";
 
 export const ChartControls = ({
   dataSource,
@@ -89,6 +92,10 @@ export const ChartMoreButton = ({ chartKey }: { chartKey: string }) => {
         anchorOrigin={{ horizontal: "center", vertical: "bottom" }}
         transformOrigin={{ horizontal: "center", vertical: "top" }}
       >
+        <DuplicateChartMenuActionItem
+          chartKey={chartKey}
+          onSuccess={handleClose}
+        />
         {isPublished(state) || isConfiguring(state) ? null : (
           <MenuActionItem
             type="button"
@@ -125,5 +132,37 @@ export const ChartMoreButton = ({ chartKey }: { chartKey: string }) => {
         ) : null}
       </ArrowMenu>
     </>
+  );
+};
+
+export const DuplicateChartMenuActionItem = ({
+  chartKey,
+  onSuccess,
+}: {
+  chartKey: string;
+  onSuccess: () => void;
+}) => {
+  const locale = useLocale();
+  const [state, dispatch] = useConfiguratorState(hasChartConfigs);
+  return (
+    <MenuActionItem
+      type="button"
+      as="menuitem"
+      onClick={() => {
+        dispatch({
+          type: "CHART_CONFIG_ADD",
+          value: {
+            chartConfig: {
+              ...getChartConfig(state, chartKey),
+              key: createChartId(),
+            },
+            locale,
+          },
+        });
+        onSuccess();
+      }}
+      iconName="duplicate"
+      label={<Trans id="chart-controls.duplicate">Duplicate</Trans>}
+    />
   );
 };

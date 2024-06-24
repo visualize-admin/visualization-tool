@@ -147,19 +147,25 @@ msgstr "Actualiser cette visualisation"
 msgid "button.update.warning"
 msgstr "Gardez à l'esprit que la mise à jour de cette visualisation affectera tous les endroits où elle est déjà intégrée !"
 
-#: app/components/chart-preview.tsx
+#: app/components/chart-selection-tabs.tsx
+#: app/components/chart-shared.tsx
 msgid "chart-controls.delete"
 msgstr "Supprimer"
 
-#: app/components/chart-preview.tsx
+#: app/components/chart-shared.tsx
 msgid "chart-controls.delete.confirmation"
 msgstr "Êtes-vous sûr de vouloir supprimer ce graphique ?"
 
-#: app/components/chart-preview.tsx
+#: app/components/chart-shared.tsx
 msgid "chart-controls.delete.title"
 msgstr "Supprimer le graphique ?"
 
-#: app/components/chart-preview.tsx
+#: app/components/chart-selection-tabs.tsx
+#: app/components/chart-shared.tsx
+msgid "chart-controls.duplicate"
+msgstr "Dupliquer"
+
+#: app/components/chart-shared.tsx
 msgid "chart-controls.edit"
 msgstr "Modifier"
 
@@ -479,10 +485,6 @@ msgstr "Description"
 msgid "controls.dimensionvalue.none"
 msgstr "Aucune filtre"
 
-#: app/components/chart-selection-tabs.tsx
-msgid "controls.duplicate.visualization"
-msgstr "Dupliquer cette visualisation"
-
 #: app/configurator/components/filters.tsx
 msgid "controls.filter.nb-elements"
 msgstr "{0} sur {1}"
@@ -670,10 +672,6 @@ msgstr "Actif"
 #: app/configurator/components/chart-controls/control-tab.tsx
 msgid "controls.option.isNotActive"
 msgstr "Inactif"
-
-#: app/components/chart-selection-tabs.tsx
-msgid "controls.remove.visualization"
-msgstr "Supprimer cette visualisation"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.scale.type"
@@ -1363,6 +1361,10 @@ msgid "login.chart.edit"
 msgstr "Editer"
 
 #: app/login/components/profile-tables.tsx
+msgid "login.chart.preview"
+msgstr "Aperçu"
+
+#: app/login/components/profile-tables.tsx
 msgid "login.chart.rename"
 msgstr "Renommer"
 
@@ -1373,10 +1375,6 @@ msgstr "Partager"
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.view"
 msgstr "Voir"
-
-#: app/login/components/profile-tables.tsx
-msgid "login.chart.preview"
-msgstr "Aperçu"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.create-chart"

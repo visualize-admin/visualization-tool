@@ -147,19 +147,25 @@ msgstr "Diese Visualisierung aktualisieren"
 msgid "button.update.warning"
 msgstr "Denken Sie daran, dass sich die Aktualisierung dieser Visualisierung auf alle Stellen auswirkt, an denen sie bereits eingebettet ist!"
 
-#: app/components/chart-preview.tsx
+#: app/components/chart-selection-tabs.tsx
+#: app/components/chart-shared.tsx
 msgid "chart-controls.delete"
 msgstr "Löschen"
 
-#: app/components/chart-preview.tsx
+#: app/components/chart-shared.tsx
 msgid "chart-controls.delete.confirmation"
 msgstr "Sind Sie sicher, dass Sie dieses Diagramm löschen möchten?"
 
-#: app/components/chart-preview.tsx
+#: app/components/chart-shared.tsx
 msgid "chart-controls.delete.title"
 msgstr "Diagramm löschen?"
 
-#: app/components/chart-preview.tsx
+#: app/components/chart-selection-tabs.tsx
+#: app/components/chart-shared.tsx
+msgid "chart-controls.duplicate"
+msgstr "Duplikat"
+
+#: app/components/chart-shared.tsx
 msgid "chart-controls.edit"
 msgstr "Bearbeiten"
 
@@ -479,10 +485,6 @@ msgstr "Beschreibung hinzufügen"
 msgid "controls.dimensionvalue.none"
 msgstr "Kein Filter"
 
-#: app/components/chart-selection-tabs.tsx
-msgid "controls.duplicate.visualization"
-msgstr "Duplizieren Sie diese Visualisierung"
-
 #: app/configurator/components/filters.tsx
 msgid "controls.filter.nb-elements"
 msgstr "{0} von {1}"
@@ -670,10 +672,6 @@ msgstr "Ein"
 #: app/configurator/components/chart-controls/control-tab.tsx
 msgid "controls.option.isNotActive"
 msgstr "Aus"
-
-#: app/components/chart-selection-tabs.tsx
-msgid "controls.remove.visualization"
-msgstr "Diese Visualisierung entfernen"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.scale.type"
@@ -1363,16 +1361,16 @@ msgid "login.chart.edit"
 msgstr "Bearbeiten"
 
 #: app/login/components/profile-tables.tsx
+msgid "login.chart.preview"
+msgstr ""
+
+#: app/login/components/profile-tables.tsx
 msgid "login.chart.rename"
 msgstr ""
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.share"
 msgstr "Teilen"
-
-#: app/login/components/profile-tables.tsx
-msgid "login.chart.view"
-msgstr ""
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.view"

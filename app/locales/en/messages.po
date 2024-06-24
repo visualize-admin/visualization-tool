@@ -147,19 +147,25 @@ msgstr "Update this visualization"
 msgid "button.update.warning"
 msgstr "Keep in mind that updating this visualization will affect all the places where it might be already embedded!"
 
-#: app/components/chart-preview.tsx
+#: app/components/chart-selection-tabs.tsx
+#: app/components/chart-shared.tsx
 msgid "chart-controls.delete"
 msgstr "Delete"
 
-#: app/components/chart-preview.tsx
+#: app/components/chart-shared.tsx
 msgid "chart-controls.delete.confirmation"
 msgstr "Are you sure you want to delete this chart?"
 
-#: app/components/chart-preview.tsx
+#: app/components/chart-shared.tsx
 msgid "chart-controls.delete.title"
 msgstr "Delete chart?"
 
-#: app/components/chart-preview.tsx
+#: app/components/chart-selection-tabs.tsx
+#: app/components/chart-shared.tsx
+msgid "chart-controls.duplicate"
+msgstr "Duplicate"
+
+#: app/components/chart-shared.tsx
 msgid "chart-controls.edit"
 msgstr "Edit"
 
@@ -479,10 +485,6 @@ msgstr "Description"
 msgid "controls.dimensionvalue.none"
 msgstr "No Filter"
 
-#: app/components/chart-selection-tabs.tsx
-msgid "controls.duplicate.visualization"
-msgstr "Duplicate this visualization"
-
 #: app/configurator/components/filters.tsx
 msgid "controls.filter.nb-elements"
 msgstr "{0} of {1}"
@@ -670,10 +672,6 @@ msgstr "On"
 #: app/configurator/components/chart-controls/control-tab.tsx
 msgid "controls.option.isNotActive"
 msgstr "Off"
-
-#: app/components/chart-selection-tabs.tsx
-msgid "controls.remove.visualization"
-msgstr "Remove this visualization"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.scale.type"
@@ -1363,6 +1361,10 @@ msgid "login.chart.edit"
 msgstr "Edit"
 
 #: app/login/components/profile-tables.tsx
+msgid "login.chart.preview"
+msgstr "Preview"
+
+#: app/login/components/profile-tables.tsx
 msgid "login.chart.rename"
 msgstr "Rename"
 
@@ -1373,10 +1375,6 @@ msgstr "Share"
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.view"
 msgstr "View"
-
-#: app/login/components/profile-tables.tsx
-msgid "login.chart.preview"
-msgstr "Preview"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.create-chart"
