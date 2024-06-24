@@ -39,7 +39,7 @@ export const ProfileHeader = (props: { user: User }) => {
           <Button
             className={classes.button}
             component="a"
-            href={`${ADFS_PROFILE_URL}?returnUrl=${encodeURIComponent(window.location.href)}`}
+            href={ADFS_PROFILE_URL}
             variant="text"
             color="primary"
             size="small"
