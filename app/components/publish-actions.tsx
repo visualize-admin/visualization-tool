@@ -70,19 +70,17 @@ const Embed = ({ configKey, locale }: PublishActionProps) => {
   const handleChange: RadioGroupProps["onChange"] = (_ev, value) => {
     if (value === "minimal") {
       setEmbedOptions({
-        showDownload: false,
         showMetadata: false,
         showDatePublished: false,
       });
     } else {
       setEmbedOptions({
-        showDownload: true,
         showMetadata: true,
         showDatePublished: true,
       });
     }
   };
-  const isMinimal = embedOptions.showDownload === false;
+  const isMinimal = embedOptions.showDatePublished === false;
   const iFrameHeight = isMinimal ? "560px" : "640px";
 
   useEffect(() => {

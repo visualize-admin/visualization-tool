@@ -8,7 +8,6 @@ import {
   useQueryFilters,
 } from "@/charts/shared/chart-helpers";
 import { ChartFiltersList } from "@/components/chart-filters-list";
-import { DataDownloadMenu } from "@/components/data-download";
 import { ChartConfig, DataSource } from "@/configurator";
 import { Dimension } from "@/domain/data";
 import { useTimeFormatLocale } from "@/formatters";
@@ -73,7 +72,7 @@ export const ChartFootnotes = ({
     },
   });
   const formatLocale = useTimeFormatLocale();
-  const [{ showDownload, showDatePublished }] = useEmbedOptions();
+  const [{ showDatePublished }] = useEmbedOptions();
 
   return (
     <div>
@@ -111,13 +110,6 @@ export const ChartFootnotes = ({
                 ) : null}
 
                 <Box className={classes.actions}>
-                  {showDownload !== false ? (
-                    <DataDownloadMenu
-                      dataSource={dataSource}
-                      title={dataCubeMetadata.title}
-                      filters={cubeQueryFilters}
-                    />
-                  ) : null}
                   {configKey && shareUrl && !visualizeLinkText && (
                     <LinkButton href={shareUrl}>
                       <Trans id="metadata.link.created.with.visualize">

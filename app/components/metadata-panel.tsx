@@ -69,6 +69,7 @@ import SvgIcArrowRight from "@/icons/components/IcArrowRight";
 import SvgIcClose from "@/icons/components/IcClose";
 import { useLocale } from "@/locales/use-locale";
 import { useTransitionStore } from "@/stores/transition";
+import { assert } from "@/utils/assert";
 import { useEmbedOptions } from "@/utils/embed";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
@@ -417,18 +418,23 @@ const CubesPanel = ({
         <Error>{`${error instanceof Error ? error.message : error}`}</Error>
       ) : null}
       <Stack divider={<Divider />} gap="1.5rem">
-        {cubesMetadata?.map((cube) => (
-          <DatasetMetadata
-            key={cube.iri}
-            cube={cube}
-            showTitle={cubes.length > 1}
-            sparqlEditorUrl={
-              cubesObservations?.sparqlEditorUrls?.find(
-                (x) => x.cubeIri === cube.iri
-              )?.url
-            }
-          />
-        ))}
+        {cubesMetadata?.map((cube) => {
+          const sparqlEditorUrl = cubesObservations?.sparqlEditorUrls?.find(
+            (x) => x.cubeIri === cube.iri
+          )?.url;
+          const cubeQueryFilters = queryFilters.find((f) => f.iri === cube.iri);
+          assert(cubeQueryFilters, "Cube query filters not found");
+          return (
+            <DatasetMetadata
+              key={cube.iri}
+              cube={cube}
+              showTitle={cubes.length > 1}
+              sparqlEditorUrl={sparqlEditorUrl}
+              dataSource={dataSource}
+              queryFilters={cubeQueryFilters}
+            />
+          );
+        })}
       </Stack>
     </TabPanel>
   );

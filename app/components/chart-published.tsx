@@ -202,7 +202,7 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
   const rootRef = useRef<HTMLDivElement>(null);
   const { isTable, containerRef, containerHeight, computeContainerHeight } =
     useChartTablePreview();
-  const [{ showDownload }] = useEmbedOptions();
+  const [{ showDatePublished }] = useEmbedOptions();
   const metadataPanelStore = useMemo(() => createMetadataPanelStore(), []);
   const metadataPanelOpen = useStore(metadataPanelStore, (state) => state.open);
   const shouldShrink = useMemo(() => {
@@ -387,7 +387,7 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
                 dimensions={dimensions}
                 configKey={configKey}
                 visualizeLinkText={
-                  showDownload === false ? (
+                  showDatePublished === false ? (
                     <Trans id="metadata.link.created.with.visualize.alternate">
                       visualize.admin.ch
                     </Trans>

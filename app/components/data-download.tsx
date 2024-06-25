@@ -47,7 +47,7 @@ import {
   executeDataCubesObservationsQuery,
 } from "@/graphql/hooks";
 import { DataCubeObservationFilter } from "@/graphql/query-hooks";
-import { Icon } from "@/icons";
+import SvgIcDownload from "@/icons/components/IcDownload";
 import { Locale } from "@/locales/locales";
 import { useLocale } from "@/src";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
@@ -204,23 +204,23 @@ const DataDownloadInnerMenu = ({
     variant: "popover",
     popupId: "dataDownloadMenu",
   });
-
   return (
     <>
       <Button
-        component="a"
         variant="text"
         color="primary"
         size="small"
         startIcon={
-          state.isDownloading ? <CircularProgress /> : <Icon name="download" />
+          state.isDownloading ? (
+            <CircularProgress size={16} />
+          ) : (
+            <SvgIcDownload width={16} />
+          )
         }
         {...bindHover(popupState)}
-        sx={{ p: 0, ml: "2px" }}
+        sx={{ minHeight: 0, p: 0, ml: "2px" }}
       >
-        <Typography variant="caption">
-          <Trans id="button.download.data">Download data</Trans>
-        </Typography>
+        <Trans id="button.download.data">Download data</Trans>
       </Button>
       <HoverMenu
         {...bindMenu(popupState)}

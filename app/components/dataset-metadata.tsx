@@ -12,7 +12,10 @@ import sortBy from "lodash/sortBy";
 import NextLink from "next/link";
 import React, { ReactNode } from "react";
 
+import { useQueryFilters } from "@/charts/shared/chart-helpers";
+import { DataDownloadMenu } from "@/components/data-download";
 import Tag from "@/components/tag";
+import { DataSource } from "@/configurator";
 import { DataCubeMetadata } from "@/domain/data";
 import { useFormatDate } from "@/formatters";
 import { Icon } from "@/icons";
@@ -23,10 +26,14 @@ export const DatasetMetadata = ({
   cube,
   showTitle,
   sparqlEditorUrl,
+  dataSource,
+  queryFilters,
 }: {
   cube: DataCubeMetadata;
   showTitle: boolean;
   sparqlEditorUrl?: string;
+  dataSource: DataSource;
+  queryFilters: ReturnType<typeof useQueryFilters>[number];
 }) => {
   const locale = useLocale();
   const formatDate = useFormatDate();
@@ -107,6 +114,11 @@ export const DatasetMetadata = ({
             {sparqlEditorUrl ? (
               <DatasetSparqlQuery url={sparqlEditorUrl} />
             ) : null}
+            <DataDownloadMenu
+              dataSource={dataSource}
+              title={cube.title}
+              filters={queryFilters}
+            />
             {openDataLink ? (
               <DatasetMetadataLink
                 external
