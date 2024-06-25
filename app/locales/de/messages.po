@@ -639,7 +639,7 @@ msgstr "Verfügbare Werte"
 #: app/components/metadata-panel.tsx
 #: app/components/metadata-panel.tsx
 msgid "controls.metadata-panel.metadata"
-msgstr "Metadata"
+msgstr "Details"
 
 #: app/components/metadata-panel.tsx
 msgid "controls.metadata-panel.section.data"
@@ -1081,10 +1081,6 @@ msgid "dataset-result.shared-dimensions"
 msgstr "Geteilte Dimensionen"
 
 #: app/components/chart-footnotes.tsx
-msgid "dataset.footnotes.dataset"
-msgstr "Datensatz"
-
-#: app/components/chart-footnotes.tsx
 msgid "dataset.footnotes.updated"
 msgstr "Neuestes Update"
 
@@ -1452,10 +1448,6 @@ msgstr "Erstellt mit visualize.admin.ch"
 msgid "metadata.link.created.with.visualize.alternate"
 msgstr "visualize.admin.ch"
 
-#: app/components/chart-footnotes.tsx
-msgid "metadata.source"
-msgstr "Quelle"
-
 #: app/components/confirmation-dialog.tsx
 msgid "no"
 msgstr "Nein"
@@ -1574,8 +1566,6 @@ msgstr "Woche"
 msgid "time-units.Year"
 msgstr "Jahr"
 
-#: app/components/chart-footnotes.tsx
-#: app/components/chart-footnotes.tsx
 #: app/components/chart-footnotes.tsx
 msgid "typography.colon"
 msgstr ": "

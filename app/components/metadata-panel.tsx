@@ -351,7 +351,7 @@ const ToggleButton = ({ onClick }: { onClick: () => void }) => {
       onClick={onClick}
     >
       <Typography variant="body2">
-        <Trans id="controls.metadata-panel.metadata">Metadata</Trans>
+        <Trans id="controls.metadata-panel.metadata">Details</Trans>
       </Typography>
     </Button>
   );
@@ -362,7 +362,7 @@ const Header = ({ onClose }: { onClose: () => void }) => {
   return (
     <div className={classes.header}>
       <Typography variant="body2" fontWeight="bold">
-        <Trans id="controls.metadata-panel.metadata">Metadata</Trans>
+        <Trans id="controls.metadata-panel.metadata">Details</Trans>
       </Typography>
       <IconButton size="small" onClick={onClose}>
         <SvgIcClose />
