@@ -120,7 +120,7 @@ export async function loadDimensionsValuesWithMetadata(
         ?dimension sh:in/rdf:rest*/rdf:first ?versionedValue .
         ?versionedValue schema:sameAs ?unversionedValue .
       }
-    } UNION {
+    } UNION { #pragma evaluate on
       SELECT ?dimensionIri ?versionedValue ?unversionedValue WHERE {
         VALUES ?dimensionIri { <${dimensionIri}> }
         <${cubeIri}> cube:observationConstraint/sh:property ?dimension .
