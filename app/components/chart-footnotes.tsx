@@ -1,7 +1,6 @@
 import { Trans } from "@lingui/macro";
-import { Box, Button, Theme, Typography } from "@mui/material";
+import { Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { PropsWithChildren, useEffect, useState } from "react";
 
 import { ChartFiltersList } from "@/components/chart-filters-list";
 import { ChartConfig, DataSource } from "@/configurator";
@@ -34,21 +33,12 @@ export const ChartFootnotes = ({
   dataSource,
   chartConfig,
   dimensions,
-  configKey,
-  visualizeLinkText,
 }: {
   dataSource: DataSource;
   chartConfig: ChartConfig;
   dimensions?: Dimension[];
-  configKey?: string;
-  visualizeLinkText?: JSX.Element;
 }) => {
-  const classes = useFootnotesStyles({ useMarginTop: true });
   const locale = useLocale();
-  const [shareUrl, setShareUrl] = useState("");
-  useEffect(() => {
-    setShareUrl(`${window.location.origin}/${locale}/v/${configKey}`);
-  }, [configKey, locale]);
   const [{ data }] = useDataCubesMetadataQuery({
     variables: {
       sourceType: dataSource.type,
@@ -78,30 +68,6 @@ export const ChartFootnotes = ({
           {formatLocale.format("%d.%m.%Y %H:%M")(new Date(latestUpdateDate))}
         </Typography>
       ) : null}
-      <Box className={classes.actions}>
-        {configKey && shareUrl && !visualizeLinkText && (
-          <LinkButton href={shareUrl}>
-            <Trans id="metadata.link.created.with.visualize">
-              Created with visualize.admin.ch
-            </Trans>
-          </LinkButton>
-        )}
-      </Box>
     </div>
-  );
-};
-
-const LinkButton = (props: PropsWithChildren<{ href: string }>) => {
-  return (
-    <Button
-      component="a"
-      variant="text"
-      color="primary"
-      size="small"
-      sx={{ p: 0, typography: "caption", verticalAlign: "unset" }}
-      target="_blank"
-      rel="noopener noreferrer"
-      {...props}
-    />
   );
 };

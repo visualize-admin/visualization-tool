@@ -97,7 +97,13 @@ export const ChartControls = ({
   );
 };
 
-export const ChartMoreButton = ({ chartKey }: { chartKey: string }) => {
+export const ChartMoreButton = ({
+  configKey,
+  chartKey,
+}: {
+  configKey?: string;
+  chartKey: string;
+}) => {
   const [state, dispatch] = useConfiguratorState(hasChartConfigs);
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
   const handleClose = useEventCallback(() => setAnchor(null));
@@ -131,6 +137,9 @@ export const ChartMoreButton = ({ chartKey }: { chartKey: string }) => {
                 chartType={chartConfig.chartType}
                 onSuccess={handleClose}
               />
+            ) : null}
+            {configKey ? (
+              <ShareChartMenuActionItem configKey={configKey} />
             ) : null}
           </div>
         ) : (
@@ -186,6 +195,25 @@ export const ChartMoreButton = ({ chartKey }: { chartKey: string }) => {
         )}
       </ArrowMenu>
     </>
+  );
+};
+
+const ShareChartMenuActionItem = ({ configKey }: { configKey: string }) => {
+  const locale = useLocale();
+  const [shareUrl, setShareUrl] = useState("");
+  useEffect(() => {
+    setShareUrl(`${window.location.origin}/${locale}/v/${configKey}`);
+  }, [configKey, locale]);
+  return (
+    <MenuActionItem
+      type="link"
+      as="menuitem"
+      href={shareUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      iconName="linkExternal"
+      label={<Trans id="button.share">Share</Trans>}
+    />
   );
 };
 

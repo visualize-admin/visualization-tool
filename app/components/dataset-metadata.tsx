@@ -33,7 +33,7 @@ export const DatasetMetadata = ({
   showTitle: boolean;
   sparqlEditorUrl?: string;
   dataSource: DataSource;
-  queryFilters: ReturnType<typeof useQueryFilters>[number];
+  queryFilters?: ReturnType<typeof useQueryFilters>[number];
 }) => {
   const locale = useLocale();
   const formatDate = useFormatDate();
@@ -114,11 +114,13 @@ export const DatasetMetadata = ({
             {sparqlEditorUrl ? (
               <DatasetSparqlQuery url={sparqlEditorUrl} />
             ) : null}
-            <DataDownloadMenu
-              dataSource={dataSource}
-              title={cube.title}
-              filters={queryFilters}
-            />
+            {queryFilters ? (
+              <DataDownloadMenu
+                dataSource={dataSource}
+                title={cube.title}
+                filters={queryFilters}
+              />
+            ) : null}
             {openDataLink ? (
               <DatasetMetadataLink
                 external

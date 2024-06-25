@@ -7,12 +7,13 @@ import { Icon, IconName } from "@/icons";
 
 const StyledMenuItem = styled(MenuItem)(({ theme, color }) => ({
   display: "flex",
-  alignItems: "center",
+  alignItems: "flex-start",
   gap: theme.spacing(2),
   color:
     color === "primary" || color === "error"
       ? theme.palette[color].main
       : theme.palette.primary.main,
+  whiteSpace: "normal",
 })) as typeof MenuItem;
 
 export type MenuActionProps = {
@@ -26,6 +27,8 @@ export type MenuActionProps = {
   | {
       type: "link";
       href: string;
+      target?: string;
+      rel?: string;
     }
   | {
       type: "button";
@@ -78,6 +81,8 @@ export const MenuActionItem = (
           }
         : {
             href: props.href,
+            target: props.target,
+            rel: props.rel,
           };
     if (props.as === "button") {
       return (
@@ -98,7 +103,7 @@ export const MenuActionItem = (
           component={props.type === "link" ? Link : "div"}
           {...forwardedProps}
         >
-          <Icon size={16} name={icon} />
+          <Icon size={16} name={icon} style={{ marginTop: "0.25rem" }} />
           {label}
         </StyledMenuItem>
       );

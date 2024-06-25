@@ -53,7 +53,6 @@ import {
   InteractiveFiltersChartProvider,
   InteractiveFiltersProvider,
 } from "@/stores/interactive-filters";
-import { useEmbedOptions } from "@/utils/embed";
 
 type ChartPublishedProps = {
   configKey?: string;
@@ -202,7 +201,6 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
   const rootRef = useRef<HTMLDivElement>(null);
   const { isTable, containerRef, containerHeight, computeContainerHeight } =
     useChartTablePreview();
-  const [{ showDatePublished }] = useEmbedOptions();
   const metadataPanelStore = useMemo(() => createMetadataPanelStore(), []);
   const metadataPanelOpen = useStore(metadataPanelStore, (state) => state.open);
   const shouldShrink = useMemo(() => {
@@ -339,7 +337,10 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
                   // title and the chart (subgrid layout)
                   <span />
                 )}
-                <ChartMoreButton chartKey={chartConfig.key} />
+                <ChartMoreButton
+                  configKey={configKey}
+                  chartKey={chartConfig.key}
+                />
               </Flex>
               {meta.description[locale] ? (
                 <Description text={meta.description[locale]} />
@@ -385,14 +386,6 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
                 dataSource={dataSource}
                 chartConfig={chartConfig}
                 dimensions={dimensions}
-                configKey={configKey}
-                visualizeLinkText={
-                  showDatePublished === false ? (
-                    <Trans id="metadata.link.created.with.visualize.alternate">
-                      visualize.admin.ch
-                    </Trans>
-                  ) : undefined
-                }
               />
             </InteractiveFiltersChartProvider>
           </LoadingStateProvider>
