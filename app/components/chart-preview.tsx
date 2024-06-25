@@ -28,12 +28,15 @@ import {
   ChartWrapperProps,
 } from "@/components/chart-panel";
 import { chartPanelLayoutGridClasses } from "@/components/chart-panel-layout-grid";
-import { ChartControls, ChartMoreButton } from "@/components/chart-shared";
+import {
+  ChartControls,
+  ChartMoreButton,
+  useChartStyles,
+} from "@/components/chart-shared";
 import {
   ChartTablePreviewProvider,
   useChartTablePreview,
 } from "@/components/chart-table-preview";
-import { useChartStyles } from "@/components/chart-utils";
 import { ChartWithFilters } from "@/components/chart-with-filters";
 import { DashboardInteractiveFilters } from "@/components/dashboard-interactive-filters";
 import DebugPanel from "@/components/debug-panel";

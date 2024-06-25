@@ -12,12 +12,15 @@ import { isUsingImputation } from "@/charts/shared/imputation";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
 import { ChartFootnotes } from "@/components/chart-footnotes";
 import { ChartPanelLayout, ChartWrapper } from "@/components/chart-panel";
-import { ChartControls, ChartMoreButton } from "@/components/chart-shared";
+import {
+  ChartControls,
+  ChartMoreButton,
+  useChartStyles,
+} from "@/components/chart-shared";
 import {
   ChartTablePreviewProvider,
   useChartTablePreview,
 } from "@/components/chart-table-preview";
-import { useChartStyles } from "@/components/chart-utils";
 import { ChartWithFilters } from "@/components/chart-with-filters";
 import { DashboardInteractiveFilters } from "@/components/dashboard-interactive-filters";
 import Flex from "@/components/flex";

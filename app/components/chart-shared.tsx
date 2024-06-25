@@ -1,5 +1,6 @@
 import { Trans, t } from "@lingui/macro";
-import { Box, IconButton, useEventCallback } from "@mui/material";
+import { Box, IconButton, Theme, useEventCallback } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import { ComponentProps, useEffect, useState } from "react";
 
 import {
@@ -8,6 +9,7 @@ import {
   useChartDataFiltersState,
 } from "@/charts/shared/chart-data-filters";
 import { ArrowMenu } from "@/components/arrow-menu";
+import { chartPanelLayoutGridClasses } from "@/components/chart-panel-layout-grid";
 import { useChartTablePreview } from "@/components/chart-table-preview";
 import { MenuActionItem } from "@/components/menu-action-item";
 import { MetadataPanel } from "@/components/metadata-panel";
@@ -24,6 +26,26 @@ import { getChartIcon } from "@/icons";
 import SvgIcMore from "@/icons/components/IcMore";
 import { useLocale } from "@/src";
 import { createChartId } from "@/utils/create-chart-id";
+
+/** Generic styles shared between `ChartPreview` and `ChartPublished`. */
+export const useChartStyles = makeStyles<Theme>((theme) => ({
+  root: {
+    display: "grid",
+    gridTemplateRows: "subgrid",
+    /** Should stay in sync with the number of rows contained in a chart */
+    gridRow: "span 7",
+    height: "100%",
+    padding: theme.spacing(6),
+    backgroundColor: theme.palette.background.paper,
+    border: "1px solid",
+    borderColor: theme.palette.divider,
+    color: theme.palette.grey[800],
+    [`.${chartPanelLayoutGridClasses.root} &`]: {
+      display: "flex",
+      flexDirection: "column",
+    },
+  },
+}));
 
 export const ChartControls = ({
   dataSource,
