@@ -2,8 +2,8 @@ import { Trans } from "@lingui/macro";
 import {
   Box,
   Link,
-  Link as MUILink,
   LinkProps,
+  Link as MUILink,
   Stack,
   Typography,
   TypographyProps,
@@ -170,8 +170,8 @@ const DatasetMetadataLink = ({
     sx={{ display: "inline-flex", alignItems: "center", gap: 1 }}
     {...props}
   >
+    {external ? <Icon name="linkExternal" size={16} /> : null}
     {label}
-    {external ? <Icon name="linkExternal" size={12} /> : null}
   </Link>
 );
 
