@@ -61,9 +61,7 @@ export const ChartFootnotes = ({
       />
       {latestUpdateDate ? (
         <Typography component="span" variant="caption" color="grey.600">
-          <strong>
-            <Trans id="dataset.footnotes.updated">Latest data update</Trans>
-          </strong>
+          <Trans id="dataset.footnotes.updated">Latest data update</Trans>
           <Trans id="typography.colon">: </Trans>
           {formatLocale.format("%d.%m.%Y %H:%M")(new Date(latestUpdateDate))}
         </Typography>
