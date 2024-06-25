@@ -1,5 +1,5 @@
 import { Trans } from "@lingui/macro";
-import { Box, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 import { Fragment, useMemo } from "react";
 
 import {
@@ -139,9 +139,7 @@ export const ChartFiltersList = (props: ChartFiltersListProps) => {
 
   return fetching ? (
     <Typography component="div" variant="caption" color="grey.600">
-      <b>
-        <Trans id="controls.section.data.filters">Filters</Trans>:
-      </b>{" "}
+      <Trans id="controls.section.data.filters">Filters</Trans>:{" "}
       <Trans id="hint.loading.data">Loading data...</Trans>
     </Typography>
   ) : allFilters.length ? (
@@ -154,22 +152,20 @@ export const ChartFiltersList = (props: ChartFiltersListProps) => {
       <Typography
         component="span"
         variant="inherit"
-        fontWeight="bold"
         color="grey.600"
-        sx={{ mr: 2 }}
+        sx={{ mr: 1 }}
       >
         <Trans id="controls.section.data.filters">Filters</Trans>:
       </Typography>
       {allFilters.map(({ dimension, value }, i) => (
         <Fragment key={dimension.iri}>
-          <Box component="span" fontWeight="bold">
+          <span>
             <OpenMetadataPanelWrapper component={dimension}>
-              <span style={{ fontWeight: "bold" }}>{dimension.label}</span>
+              <span>{dimension.label}</span>
             </OpenMetadataPanelWrapper>
             {": "}
-          </Box>
-
-          <Box component="span">{value && value.label}</Box>
+          </span>
+          <span>{value && value.label}</span>
           {i < allFilters.length - 1 && ", "}
         </Fragment>
       ))}

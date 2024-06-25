@@ -177,15 +177,10 @@ const useOtherStyles = makeStyles<Theme>((theme) => {
       padding: 0,
       margin: 0,
       fontSize: "inherit",
-      color: "inherit",
-      textDecoration: "underline",
-      textUnderlineOffset: "2px",
+      color: theme.palette.primary.main,
       textAlign: "left",
       transition: "opacity 0.2s ease-in-out",
-
       "&:hover": {
-        textDecoration: "underline",
-        color: "inherit",
         opacity: 0.9,
       },
     },
