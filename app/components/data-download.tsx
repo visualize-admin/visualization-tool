@@ -438,24 +438,6 @@ const DownloadMenuItem = ({
   );
 };
 
-export const RunSparqlQuery = ({ url }: { url: string }) => {
-  return (
-    <Button
-      component="a"
-      variant="text"
-      color="primary"
-      size="small"
-      href={url}
-      target="_blank"
-      sx={{ p: 0 }}
-    >
-      <Typography variant="caption">
-        <Trans id="chart-controls.sparql-query">SPARQL query</Trans>
-      </Typography>
-    </Button>
-  );
-};
-
 type DimensionParsers = {
   [iri: string]: (d: string) => any;
 };

@@ -5,7 +5,6 @@ import useEvent from "@/utils/use-event";
 
 export type EmbedOptions = {
   showDownload?: boolean;
-  showSparqlQuery?: boolean;
   showDatePublished?: boolean;
   showMetadata?: boolean;
 };

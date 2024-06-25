@@ -56,7 +56,7 @@ export const ChartControls = ({
   chartConfig: ChartConfig;
   metadataPanelProps: Omit<
     ComponentProps<typeof MetadataPanel>,
-    "dataSource" | "chartConfigs"
+    "dataSource" | "chartConfig"
   >;
 }) => {
   const showFilters = chartConfig.interactiveFiltersConfig?.dataFilters.active;
@@ -86,7 +86,7 @@ export const ChartControls = ({
       >
         <MetadataPanel
           dataSource={dataSource}
-          chartConfigs={[chartConfig]}
+          chartConfig={chartConfig}
           {...metadataPanelProps}
         />
       </Box>

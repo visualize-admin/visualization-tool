@@ -8,14 +8,11 @@ import {
   useQueryFilters,
 } from "@/charts/shared/chart-helpers";
 import { ChartFiltersList } from "@/components/chart-filters-list";
-import { DataDownloadMenu, RunSparqlQuery } from "@/components/data-download";
+import { DataDownloadMenu } from "@/components/data-download";
 import { ChartConfig, DataSource } from "@/configurator";
 import { Dimension } from "@/domain/data";
 import { useTimeFormatLocale } from "@/formatters";
-import {
-  useDataCubesMetadataQuery,
-  useDataCubesObservationsQuery,
-} from "@/graphql/hooks";
+import { useDataCubesMetadataQuery } from "@/graphql/hooks";
 import { useLocale } from "@/locales/use-locale";
 import { assert } from "@/utils/assert";
 import { useEmbedOptions } from "@/utils/embed";
@@ -75,17 +72,8 @@ export const ChartFootnotes = ({
       cubeFilters: chartConfig.cubes.map((cube) => ({ iri: cube.iri })),
     },
   });
-  const [{ data: downloadData }] = useDataCubesObservationsQuery({
-    variables: {
-      ...commonQueryVariables,
-      cubeFilters: queryFilters,
-    },
-  });
-  const sparqlEditorUrls =
-    downloadData?.dataCubesObservations?.sparqlEditorUrls;
   const formatLocale = useTimeFormatLocale();
-  const [{ showDownload, showSparqlQuery, showDatePublished }] =
-    useEmbedOptions();
+  const [{ showDownload, showDatePublished }] = useEmbedOptions();
 
   return (
     <div>
@@ -96,9 +84,6 @@ export const ChartFootnotes = ({
       />
       {data?.dataCubesMetadata
         ? data.dataCubesMetadata.map((dataCubeMetadata) => {
-            const sparqlEditorUrl = sparqlEditorUrls?.find(
-              (d) => d.cubeIri === dataCubeMetadata.iri
-            )?.url;
             const cubeQueryFilters = queryFilters.find(
               (f) => f.iri === dataCubeMetadata.iri
             );
@@ -133,12 +118,6 @@ export const ChartFootnotes = ({
                       filters={cubeQueryFilters}
                     />
                   ) : null}
-                  {sparqlEditorUrl && showSparqlQuery !== false && (
-                    <RunSparqlQuery
-                      key={sparqlEditorUrl}
-                      url={sparqlEditorUrl}
-                    />
-                  )}
                   {configKey && shareUrl && !visualizeLinkText && (
                     <LinkButton href={shareUrl}>
                       <Trans id="metadata.link.created.with.visualize">

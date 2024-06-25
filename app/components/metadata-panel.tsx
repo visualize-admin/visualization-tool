@@ -24,7 +24,6 @@ import keyBy from "lodash/keyBy";
 import omit from "lodash/omit";
 import orderBy from "lodash/orderBy";
 import sortBy from "lodash/sortBy";
-import uniqBy from "lodash/uniqBy";
 import { useRouter } from "next/router";
 import React, {
   ReactNode,
@@ -34,6 +33,10 @@ import React, {
   useState,
 } from "react";
 
+import {
+  extractChartConfigComponentIris,
+  useQueryFilters,
+} from "@/charts/shared/chart-helpers";
 import { DatasetMetadata } from "@/components/dataset-metadata";
 import { Error, Loading } from "@/components/hint";
 import { InfoIconTooltip } from "@/components/info-icon-tooltip";
@@ -59,6 +62,7 @@ import { useDimensionFormatters } from "@/formatters";
 import {
   useDataCubesComponentsQuery,
   useDataCubesMetadataQuery,
+  useDataCubesObservationsQuery,
 } from "@/graphql/hooks";
 import { Icon } from "@/icons";
 import SvgIcArrowRight from "@/icons/components/IcArrowRight";
@@ -233,13 +237,13 @@ export const OpenMetadataPanelWrapper = ({
 };
 
 export const MetadataPanel = ({
-  chartConfigs,
+  chartConfig,
   dataSource,
   components,
   container,
   top = 0,
 }: {
-  chartConfigs: ChartConfig[];
+  chartConfig: ChartConfig;
   dataSource: DataSource;
   components: Component[];
   container?: HTMLDivElement | null;
@@ -321,15 +325,12 @@ export const MetadataPanel = ({
           </TabList>
           <AnimatePresence>
             {activeSection === "general" ? (
-              <MotionBox key="general-tab" {...animationProps}>
-                <TabPanelGeneral
-                  dataSource={dataSource}
-                  chartConfigs={chartConfigs}
-                />
+              <MotionBox key="cubes-panel" {...animationProps}>
+                <CubesPanel dataSource={dataSource} chartConfig={chartConfig} />
               </MotionBox>
             ) : activeSection === "data" ? (
-              <MotionBox key="data-tab" {...animationProps}>
-                <TabPanelData dataSource={dataSource} components={components} />
+              <MotionBox key="data-panel" {...animationProps}>
+                <DataPanel dataSource={dataSource} components={components} />
               </MotionBox>
             ) : null}
           </AnimatePresence>
@@ -371,29 +372,41 @@ const Header = ({ onClose }: { onClose: () => void }) => {
   );
 };
 
-const TabPanelGeneral = ({
+const CubesPanel = ({
   dataSource,
-  chartConfigs,
+  chartConfig,
 }: {
   dataSource: DataSource;
-  chartConfigs: ChartConfig[];
+  chartConfig: ChartConfig;
 }) => {
   const classes = useOtherStyles();
   const locale = useLocale();
-  const cubes = uniqBy(
-    chartConfigs.flatMap((x) => x.cubes).map((x) => ({ iri: x.iri })),
-    (x) => x.iri
-  );
-  const [{ data, fetching, error }] = useDataCubesMetadataQuery({
+  const cubes = chartConfig.cubes.map((x) => ({ iri: x.iri }));
+  const [{ data: dataCubesMetadataData, fetching, error }] =
+    useDataCubesMetadataQuery({
+      variables: {
+        sourceType: dataSource.type,
+        sourceUrl: dataSource.url,
+        locale,
+        cubeFilters: cubes,
+      },
+    });
+  const cubesMetadata = dataCubesMetadataData?.dataCubesMetadata;
+  const queryFilters = useQueryFilters({
+    chartConfig,
+    componentIris: extractChartConfigComponentIris(chartConfig),
+  });
+  const [{ data: dataCubesObservationsData }] = useDataCubesObservationsQuery({
     variables: {
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
-      cubeFilters: cubes,
+      cubeFilters: queryFilters,
     },
   });
-  const cubesMetadata = data?.dataCubesMetadata;
-  if (!cubesMetadata) {
+  const cubesObservations = dataCubesObservationsData?.dataCubesObservations;
+
+  if (!cubesMetadata || !cubesObservations) {
     return null;
   }
 
@@ -409,6 +422,11 @@ const TabPanelGeneral = ({
             key={cube.iri}
             cube={cube}
             showTitle={cubes.length > 1}
+            sparqlEditorUrl={
+              cubesObservations?.sparqlEditorUrls?.find(
+                (x) => x.cubeIri === cube.iri
+              )?.url
+            }
           />
         ))}
       </Stack>
@@ -416,7 +434,7 @@ const TabPanelGeneral = ({
   );
 };
 
-const TabPanelData = ({
+const DataPanel = ({
   dataSource,
   components,
 }: {

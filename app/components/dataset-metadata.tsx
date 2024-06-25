@@ -22,15 +22,15 @@ import { makeOpenDataLink } from "@/utils/opendata";
 export const DatasetMetadata = ({
   cube,
   showTitle,
+  sparqlEditorUrl,
 }: {
   cube: DataCubeMetadata;
   showTitle: boolean;
+  sparqlEditorUrl?: string;
 }) => {
   const locale = useLocale();
   const formatDate = useFormatDate();
-
   const openDataLink = cube ? makeOpenDataLink(locale, cube) : null;
-
   return (
     <div>
       {showTitle ? (
@@ -38,7 +38,6 @@ export const DatasetMetadata = ({
           {cube.title}
         </Typography>
       ) : null}
-
       <Stack spacing={2}>
         {cube.publisher && (
           <div>
@@ -56,7 +55,6 @@ export const DatasetMetadata = ({
             </DatasetMetadataBody>
           </div>
         )}
-
         <div>
           <DatasetMetadataTitle>
             <Trans id="dataset.metadata.date.created">Date Created</Trans>
@@ -65,14 +63,12 @@ export const DatasetMetadata = ({
             {cube.datePublished ? formatDate(cube.datePublished) ?? "–" : "–"}
           </DatasetMetadataBody>
         </div>
-
         <div>
           <DatasetMetadataTitle>
             <Trans id="dataset.metadata.version">Version</Trans>
           </DatasetMetadataTitle>
           <DatasetMetadataBody>{cube.version ?? "–"}</DatasetMetadataBody>
         </div>
-
         <div>
           <DatasetMetadataTitle>
             <Trans id="dataset.metadata.email">Contact points</Trans>
@@ -88,14 +84,13 @@ export const DatasetMetadata = ({
             )}
           </DatasetMetadataBody>
         </div>
-
         <div>
           <DatasetMetadataTitle>
             <Trans id="dataset.metadata.furtherinformation">
               Further information
             </Trans>
           </DatasetMetadataTitle>
-          <DatasetMetadataBody>
+          <DatasetMetadataBody sx={{ mt: 2 }}>
             {cube.landingPage ? (
               <DatasetMetadataLink
                 href={cube.landingPage}
@@ -109,16 +104,15 @@ export const DatasetMetadata = ({
             ) : (
               "–"
             )}
-
+            {sparqlEditorUrl ? (
+              <DatasetSparqlQuery url={sparqlEditorUrl} />
+            ) : null}
             {openDataLink ? (
-              <>
-                <br />
-                <DatasetMetadataLink
-                  external
-                  label="OpenData.swiss"
-                  href={openDataLink}
-                />
-              </>
+              <DatasetMetadataLink
+                external
+                label="OpenData.swiss"
+                href={openDataLink}
+              />
             ) : null}
           </DatasetMetadataBody>
         </div>
@@ -146,7 +140,16 @@ const DatasetMetadataBody = ({
   children: ReactNode;
   sx?: TypographyProps["sx"];
 }) => (
-  <Typography variant="body2" sx={{ color: "grey.900", ...sx }}>
+  <Typography
+    variant="body2"
+    sx={{
+      display: "flex",
+      flexDirection: "column",
+      gap: 2,
+      color: "grey.900",
+      ...sx,
+    }}
+  >
     {children}
   </Typography>
 );
@@ -174,6 +177,22 @@ const DatasetMetadataLink = ({
     {label}
   </Link>
 );
+
+const DatasetSparqlQuery = ({ url }: { url: string }) => {
+  return (
+    <Link
+      underline="hover"
+      color="primary"
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      sx={{ display: "inline-flex", alignItems: "center", gap: 1 }}
+    >
+      <Icon name="linkExternal" size={16} />
+      <Trans id="chart-controls.sparql-query">SPARQL query</Trans>
+    </Link>
+  );
+};
 
 const DatasetTags = ({ cube }: { cube: DataCubeMetadata }) => {
   return (

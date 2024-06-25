@@ -72,14 +72,12 @@ const Embed = ({ configKey, locale }: PublishActionProps) => {
       setEmbedOptions({
         showDownload: false,
         showMetadata: false,
-        showSparqlQuery: false,
         showDatePublished: false,
       });
     } else {
       setEmbedOptions({
         showDownload: true,
         showMetadata: true,
-        showSparqlQuery: true,
         showDatePublished: true,
       });
     }
