@@ -111,6 +111,7 @@ export const ChartMoreButton = ({ chartKey }: { chartKey: string }) => {
   return (
     <>
       <IconButton
+        color="secondary"
         onClick={(ev) => setAnchor(ev.currentTarget)}
         sx={{ height: "fit-content" }}
       >

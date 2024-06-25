@@ -366,7 +366,11 @@ const Header = ({ onClose }: { onClose: () => void }) => {
       <Typography variant="body2" fontWeight="bold">
         <Trans id="controls.metadata-panel.metadata">Details</Trans>
       </Typography>
-      <IconButton size="small" onClick={onClose}>
+      <IconButton
+        size="small"
+        onClick={onClose}
+        sx={{ color: "secondary.active" }}
+      >
         <SvgIcClose />
       </IconButton>
     </div>
