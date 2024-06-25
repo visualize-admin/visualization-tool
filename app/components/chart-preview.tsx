@@ -404,13 +404,9 @@ const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
       })),
     },
   });
-  const {
-    state: isTablePreview,
-    setState: setIsTablePreview,
-    containerRef,
-    containerHeight,
-  } = useChartTablePreview();
-  const handleToggleTableView = useEvent(() => setIsTablePreview((c) => !c));
+  const { isTable, setIsTable, containerRef, containerHeight } =
+    useChartTablePreview();
+  const handleToggleTableView = useEvent(() => setIsTable((v) => !v));
   const dimensions = components?.dataCubesComponents.dimensions;
   const measures = components?.dataCubesComponents.measures;
   const allComponents = useMemo(() => {
@@ -526,12 +522,12 @@ const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
                   ref={containerRef}
                   style={{
                     minWidth: 0,
-                    height: containerHeight.current,
+                    height: containerHeight,
                     paddingTop: 16,
                     flexGrow: 1,
                   }}
                 >
-                  {isTablePreview ? (
+                  {isTable ? (
                     <DataSetTable
                       dataSource={dataSource}
                       chartConfig={chartConfig}

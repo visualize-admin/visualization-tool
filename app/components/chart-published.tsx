@@ -199,13 +199,13 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
   const { meta } = chartConfig;
   const rootRef = useRef<HTMLDivElement>(null);
   const {
-    state: isTablePreview,
-    setState: setIsTablePreview,
+    isTable,
+    setIsTable,
     containerRef,
     containerHeight,
     computeContainerHeight,
   } = useChartTablePreview();
-  const handleToggleTableView = useEvent(() => setIsTablePreview((c) => !c));
+  const handleToggleTableView = useEvent(() => setIsTable((v) => !v));
   const [{ showDownload }] = useEmbedOptions();
   const metadataPanelStore = useMemo(() => createMetadataPanelStore(), []);
   const metadataPanelOpen = useStore(metadataPanelStore, (state) => state.open);
@@ -366,16 +366,16 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
                 style={{
                   // TODO before merging, Align with chart-preview
                   minWidth: 0,
-                  height: containerHeight.current,
+                  height: containerHeight,
                   marginTop: 16,
                   flexGrow: 1,
                 }}
               >
-                {isTablePreview ? (
+                {isTable ? (
                   <DataSetTable
-                    sx={{ maxHeight: "100%" }}
                     dataSource={dataSource}
                     chartConfig={chartConfig}
+                    sx={{ maxHeight: "100%" }}
                   />
                 ) : (
                   <ChartWithFilters

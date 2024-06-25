@@ -17,7 +17,7 @@ import {
   useDataCubesMetadataQuery,
   useDataCubesObservationsQuery,
 } from "@/graphql/hooks";
-import { getChartIcon, Icon } from "@/icons";
+import { Icon, getChartIcon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
 import { assert } from "@/utils/assert";
 import { useEmbedOptions } from "@/utils/embed";
@@ -61,13 +61,12 @@ export const ChartFootnotes = ({
   const classes = useFootnotesStyles({ useMarginTop: true });
   const locale = useLocale();
   const [shareUrl, setShareUrl] = useState("");
-  const { state: isTablePreview, setStateRaw: setIsTablePreview } =
-    useChartTablePreview();
+  const { isTable, setIsTableRaw } = useChartTablePreview();
 
   // Reset back to chart view when switching chart type.
   useEffect(() => {
-    setIsTablePreview(false);
-  }, [setIsTablePreview, chartConfig.chartType]);
+    setIsTableRaw(false);
+  }, [setIsTableRaw, chartConfig.chartType]);
 
   useEffect(() => {
     setShareUrl(`${window.location.origin}/${locale}/v/${configKey}`);
@@ -225,7 +224,7 @@ export const ChartFootnotes = ({
                           startIcon={
                             <Icon
                               name={
-                                isTablePreview
+                                isTable
                                   ? getChartIcon(chartConfig.chartType)
                                   : "table"
                               }
@@ -234,7 +233,7 @@ export const ChartFootnotes = ({
                           onClick={onToggleTableView}
                           sx={{ p: 0, typography: "caption" }}
                         >
-                          {isTablePreview ? (
+                          {isTable ? (
                             <Trans id="metadata.switch.chart">
                               Switch to chart view
                             </Trans>
