@@ -163,7 +163,7 @@ export const ChartFiltersList = (props: ChartFiltersListProps) => {
       {allFilters.map(({ dimension, value }, i) => (
         <Fragment key={dimension.iri}>
           <Box component="span" fontWeight="bold">
-            <OpenMetadataPanelWrapper dim={dimension}>
+            <OpenMetadataPanelWrapper component={dimension}>
               <span style={{ fontWeight: "bold" }}>{dimension.label}</span>
             </OpenMetadataPanelWrapper>
             {": "}

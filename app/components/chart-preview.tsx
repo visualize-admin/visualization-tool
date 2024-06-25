@@ -511,7 +511,7 @@ const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
                   dataSource={dataSource}
                   chartConfig={chartConfig}
                   metadataPanelProps={{
-                    dimensions: allComponents,
+                    components: allComponents,
                     top: BANNER_MARGIN_TOP,
                   }}
                 />

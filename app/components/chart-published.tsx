@@ -349,7 +349,7 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
                 dataSource={dataSource}
                 chartConfig={chartConfig}
                 metadataPanelProps={{
-                  dimensions: allComponents,
+                  components: allComponents,
                   container: rootRef.current,
                 }}
               />

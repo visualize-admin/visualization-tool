@@ -26,7 +26,13 @@ import orderBy from "lodash/orderBy";
 import sortBy from "lodash/sortBy";
 import uniqBy from "lodash/uniqBy";
 import { useRouter } from "next/router";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, {
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
 import { DatasetMetadata } from "@/components/dataset-metadata";
 import { Error, Loading } from "@/components/hint";
@@ -197,18 +203,21 @@ const animationProps: Transition = {
 };
 
 export const OpenMetadataPanelWrapper = ({
-  dim,
   children,
-}: React.PropsWithChildren<{ dim: Component }>) => {
+  component,
+}: {
+  children: ReactNode;
+  component: Component;
+}) => {
   const classes = useOtherStyles();
   const { openDimension } = useMetadataPanelStoreActions();
   const handleClick = useEvent((e: React.MouseEvent) => {
     e.stopPropagation();
-    openDimension(dim);
+    openDimension(component);
   });
 
-  const [embedOptions] = useEmbedOptions();
-  if (embedOptions.showMetadata === false) {
+  const [{ showMetadata }] = useEmbedOptions();
+  if (showMetadata === false) {
     return <>{children}</>;
   }
 
@@ -224,16 +233,19 @@ export const OpenMetadataPanelWrapper = ({
   );
 };
 
-type MetadataPanelProps = {
+export const MetadataPanel = ({
+  chartConfigs,
+  dataSource,
+  components,
+  container,
+  top = 0,
+}: {
   chartConfigs: ChartConfig[];
   dataSource: DataSource;
-  dimensions: Component[];
+  components: Component[];
   container?: HTMLDivElement | null;
   top?: number;
-};
-
-export const MetadataPanel = (props: MetadataPanelProps) => {
-  const { dimensions, container, top = 0, chartConfigs, dataSource } = props;
+}) => {
   const router = useRouter();
   const drawerClasses = useDrawerStyles({ top });
   const otherClasses = useOtherStyles();
@@ -255,16 +267,14 @@ export const MetadataPanel = (props: MetadataPanelProps) => {
       reset();
     };
     router.events.on("hashChangeStart", handleHashChange);
-    return () => router.events.off("hashChangeStart", handleHashChange);
+    return () => {
+      router.events.off("hashChangeStart", handleHashChange);
+    };
   }, [setOpen, reset, router.events]);
 
-  const [embedOptions] = useEmbedOptions();
+  const [{ showMetadata }] = useEmbedOptions();
 
-  if (embedOptions.showMetadata === false) {
-    return null;
-  }
-
-  return (
+  return showMetadata === false ? null : (
     <>
       <ToggleButton onClick={handleToggle} />
       <Drawer
@@ -284,7 +294,6 @@ export const MetadataPanel = (props: MetadataPanelProps) => {
         }}
       >
         <Header onClose={handleToggle} />
-
         <TabContext value={activeSection}>
           <TabList
             className={otherClasses.tabList}
@@ -311,7 +320,6 @@ export const MetadataPanel = (props: MetadataPanelProps) => {
               }
             />
           </TabList>
-
           <AnimatePresence>
             {activeSection === "general" ? (
               <MotionBox key="general-tab" {...animationProps}>
@@ -322,7 +330,7 @@ export const MetadataPanel = (props: MetadataPanelProps) => {
               </MotionBox>
             ) : activeSection === "data" ? (
               <MotionBox key="data-tab" {...animationProps}>
-                <TabPanelData dataSource={dataSource} dimensions={dimensions} />
+                <TabPanelData dataSource={dataSource} components={components} />
               </MotionBox>
             ) : null}
           </AnimatePresence>
@@ -373,12 +381,10 @@ const TabPanelGeneral = ({
 }) => {
   const classes = useOtherStyles();
   const locale = useLocale();
-
   const cubes = uniqBy(
     chartConfigs.flatMap((x) => x.cubes).map((x) => ({ iri: x.iri })),
     (x) => x.iri
   );
-
   const [{ data, fetching, error }] = useDataCubesMetadataQuery({
     variables: {
       sourceType: dataSource.type,
@@ -391,6 +397,7 @@ const TabPanelGeneral = ({
   if (!cubesMetadata) {
     return null;
   }
+
   return (
     <TabPanel className={classes.tabPanel} value="general">
       {fetching ? <Loading /> : null}
@@ -412,11 +419,12 @@ const TabPanelGeneral = ({
 
 const TabPanelData = ({
   dataSource,
-  dimensions,
+  components,
 }: {
   dataSource: DataSource;
-  dimensions: Component[];
+  components: Component[];
 }) => {
+  const locale = useLocale();
   const classes = useOtherStyles();
   const selectedDimension = useMetadataPanelStore(
     (state) => state.selectedDimension
@@ -424,64 +432,64 @@ const TabPanelData = ({
   const { setSelectedDimension, clearSelectedDimension } =
     useMetadataPanelStoreActions();
   const [inputValue, setInputValue] = useState("");
-
   const options = useMemo(() => {
-    return dimensions.flatMap(
+    return components.flatMap(
       (
-        d
+        component
       ): {
         label: string;
         value: Component;
         isJoinByDimension: boolean;
       }[] => {
-        if (isJoinByComponent(d)) {
-          return (d.originalIris ?? []).map((x) => ({
-            label: getComponentLabel(d, x.cubeIri),
+        if (isJoinByComponent(component)) {
+          return (component.originalIris ?? []).map((x) => ({
+            label: getComponentLabel(component, x.cubeIri),
             value: {
-              ...omit(d, "originalIris"),
+              ...omit(component, "originalIris"),
               cubeIri: x.cubeIri,
               iri: x.dimensionIri,
             } as Component,
             isJoinByDimension: true,
           }));
         } else {
-          return [{ label: d.label, value: d, isJoinByDimension: false }];
+          return [
+            {
+              label: component.label,
+              value: component,
+              isJoinByDimension: false,
+            },
+          ];
         }
       }
     );
-  }, [dimensions]);
-
-  const locale = useLocale();
-  const grouped = groupBy(
-    dimensions.flatMap((d): Component[] => {
-      if ("originalIris" in d && d.originalIris) {
+  }, [components]);
+  const groupedComponents = groupBy(
+    components.flatMap((component): Component[] => {
+      if ("originalIris" in component && component.originalIris) {
         return (
-          d.originalIris.map((o) => ({
-            ...d,
-            cubeIri: o.cubeIri,
-            iri: o.dimensionIri,
+          component.originalIris.map((originalIri) => ({
+            ...component,
+            cubeIri: originalIri.cubeIri,
+            iri: originalIri.dimensionIri,
           })) ?? []
         );
       } else {
-        return [d];
+        return [component];
       }
     }),
     (x) => x.cubeIri
   );
-
   const [metadataQuery] = useDataCubesMetadataQuery({
-    keepPreviousData: true,
     variables: {
       locale: locale,
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
-      cubeFilters: Object.keys(grouped).map((iri) => ({ iri })),
+      cubeFilters: Object.keys(groupedComponents).map((iri) => ({ iri })),
     },
+    keepPreviousData: true,
   });
-
   const dataCubesMetadata = metadataQuery.data?.dataCubesMetadata;
   const cubesByIri = keyBy(dataCubesMetadata, (x) => x.iri);
-
   const sortedOptions = useMemo(
     () => sortBy(options, (x) => cubesByIri[x.value.cubeIri]?.title),
     [options, cubesByIri]
@@ -499,9 +507,9 @@ const TabPanelData = ({
               <Trans id="button.back">Back</Trans>
             </BackButton>
             <Box sx={{ mt: 4 }}>
-              <TabPanelDataDimension
-                dim={selectedDimension}
-                expanded={true}
+              <ComponentTabPanel
+                component={selectedDimension}
+                expanded
                 dataSource={dataSource}
               />
             </Box>
@@ -545,7 +553,6 @@ const TabPanelData = ({
                   insideWords: true,
                 });
                 const parts = parse(option.label, matches);
-
                 return (
                   <li
                     {...props}
@@ -575,31 +582,39 @@ const TabPanelData = ({
               clearIcon={null}
             />
             <Stack spacing={4} divider={<Divider />}>
-              {Object.entries(grouped).map(([iri, dimensions]) => {
-                if (!cubesByIri[iri]) {
-                  return null;
+              {Object.entries(groupedComponents).map(
+                ([cubeIri, components]) => {
+                  const cube = cubesByIri[cubeIri];
+                  if (!cube) {
+                    return null;
+                  }
+
+                  return (
+                    <div key={cubeIri}>
+                      {dataCubesMetadata && dataCubesMetadata.length > 1 ? (
+                        <Typography
+                          variant="h4"
+                          sx={{ mb: 2 }}
+                          color="grey.700"
+                        >
+                          {cube.title}
+                        </Typography>
+                      ) : null}
+                      <Stack spacing={2}>
+                        {components.map((component) => (
+                          <ComponentTabPanel
+                            key={component.iri}
+                            component={component}
+                            cubeIri={cubeIri}
+                            expanded={false}
+                            dataSource={dataSource}
+                          />
+                        ))}
+                      </Stack>
+                    </div>
+                  );
                 }
-                return (
-                  <div key={iri}>
-                    {dataCubesMetadata && dataCubesMetadata.length > 1 ? (
-                      <Typography variant="h4" sx={{ mb: 2 }} color="grey.700">
-                        {cubesByIri[iri].title}
-                      </Typography>
-                    ) : null}
-                    <Stack spacing={2}>
-                      {dimensions.map((d) => (
-                        <TabPanelDataDimension
-                          key={d.iri}
-                          dim={d}
-                          cubeIri={iri}
-                          expanded={false}
-                          dataSource={dataSource}
-                        />
-                      ))}
-                    </Stack>
-                  </div>
-                );
-              })}
+              )}
             </Stack>
           </MotionBox>
         )}
@@ -608,13 +623,13 @@ const TabPanelData = ({
   );
 };
 
-const TabPanelDataDimension = ({
-  dim,
+const ComponentTabPanel = ({
+  component,
   dataSource,
   expanded,
   cubeIri,
 }: {
-  dim: Component;
+  component: Component;
   dataSource: DataSource;
   expanded: boolean;
   cubeIri?: string;
@@ -622,24 +637,22 @@ const TabPanelDataDimension = ({
   const classes = useOtherStyles();
   const { setSelectedDimension } = useMetadataPanelStoreActions();
   const label = useMemo(() => {
-    return getComponentLabel(dim as Dimension, cubeIri);
-  }, [cubeIri, dim]);
+    return getComponentLabel(component as Dimension, cubeIri);
+  }, [cubeIri, component]);
   const description = useMemo(() => {
-    const description = getComponentDescription(dim, cubeIri);
-
+    const description = getComponentDescription(component, cubeIri);
     if (!expanded && description && description.length > 180) {
       return `${description.slice(0, 180)}…`;
     }
-
     return description;
-  }, [cubeIri, dim, expanded]);
+  }, [cubeIri, component, expanded]);
 
   const locale = useLocale();
   const cubesIri = useMemo(() => {
-    return isJoinByComponent(dim)
-      ? dim.originalIris.map((x) => x.cubeIri)
-      : [dim.cubeIri];
-  }, [dim]);
+    return isJoinByComponent(component)
+      ? component.originalIris.map((x) => x.cubeIri)
+      : [component.cubeIri];
+  }, [component]);
   const [cubesQuery] = useDataCubesMetadataQuery({
     variables: {
       locale,
@@ -656,30 +669,33 @@ const TabPanelDataDimension = ({
     pause: !expanded,
     variables: {
       cubeFilters: [
-        { iri: dim.cubeIri, loadValues: true, componentIris: [dim.iri] },
+        {
+          iri: component.cubeIri,
+          loadValues: true,
+          componentIris: [component.iri],
+        },
       ],
       locale,
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
     },
   });
-
-  const loadedDimension = useMemo(() => {
+  const loadedComponent = useMemo(() => {
     return [
       ...(componentsQuery.data?.dataCubesComponents.dimensions ?? []),
       ...(componentsQuery.data?.dataCubesComponents.measures ?? []),
-    ].find((d) => dim.iri === d.iri);
+    ].find((d) => component.iri === d.iri);
   }, [
     componentsQuery.data?.dataCubesComponents.dimensions,
     componentsQuery.data?.dataCubesComponents.measures,
-    dim.iri,
+    component.iri,
   ]);
 
   const handleClick = useCallback(() => {
     if (!expanded) {
-      setSelectedDimension(dim);
+      setSelectedDimension(component);
     }
-  }, [expanded, dim, setSelectedDimension]);
+  }, [expanded, component, setSelectedDimension]);
 
   return (
     <div>
@@ -703,7 +719,7 @@ const TabPanelDataDimension = ({
             >
               {label}
             </Button>
-            {isJoinByComponent(dim) ? (
+            {isJoinByComponent(component) ? (
               <>
                 <JoinByChip
                   label={<Trans id="dimension.joined">Joined</Trans>}
@@ -726,20 +742,20 @@ const TabPanelDataDimension = ({
       </Flex>
 
       <AnimatePresence>
-        {expanded && loadedDimension && loadedDimension.values.length > 0 && (
+        {expanded && loadedComponent && loadedComponent.values.length > 0 && (
           <MotionBox
             key="dimension-values"
             className={classes.dimensionValues}
             component={Flex}
             {...animationProps}
           >
-            {isJoinByComponent(dim) ? (
+            {isJoinByComponent(component) ? (
               <div>
                 <Typography variant="h5" gutterBottom>
                   Joined with
                 </Typography>
-                {dim.originalIris.map((x) =>
-                  x.cubeIri === loadedDimension.cubeIri ? null : (
+                {component.originalIris.map((x) =>
+                  x.cubeIri === loadedComponent.cubeIri ? null : (
                     <div key={x.cubeIri}>
                       <Typography variant="body2">
                         {x.label} ({cubesByIri[x.cubeIri]?.title} )
@@ -759,11 +775,10 @@ const TabPanelDataDimension = ({
                 Available values
               </Trans>
             </Typography>
-            <DimensionValues dim={loadedDimension} />
+            <ComponentValues component={loadedComponent} />
           </MotionBox>
         )}
       </AnimatePresence>
-
       {!expanded && (
         <Button
           component="a"
@@ -780,20 +795,20 @@ const TabPanelDataDimension = ({
   );
 };
 
-const DimensionValues = ({ dim }: { dim: Component }) => {
+const ComponentValues = ({ component }: { component: Component }) => {
   const sortedValues = useMemo(() => {
-    const sorters = makeDimensionValueSorters(dim);
+    const sorters = makeDimensionValueSorters(component);
     return orderBy(
-      dim.values,
+      component.values,
       sorters.map((s) => (dv) => s(dv.label))
     ) as DimensionValue[];
-  }, [dim]);
+  }, [component]);
 
-  if (isStandardErrorDimension(dim)) {
-    return <DimensionValuesNumeric values={sortedValues} />;
+  if (isStandardErrorDimension(component)) {
+    return <MeasureValuesNumeric values={sortedValues} />;
   }
 
-  switch (dim.__typename) {
+  switch (component.__typename) {
     case "NominalDimension":
     case "OrdinalDimension":
     case "TemporalEntityDimension":
@@ -804,12 +819,12 @@ const DimensionValues = ({ dim }: { dim: Component }) => {
       return <DimensionValuesNominal values={sortedValues} />;
     case "NumericalMeasure":
       return sortedValues.length > 0 ? (
-        <DimensionValuesNumeric values={sortedValues} />
+        <MeasureValuesNumeric values={sortedValues} />
       ) : null;
     case "TemporalDimension":
-      return <DimensionValuesTemporal dim={dim} values={sortedValues} />;
+      return <DimensionValuesTemporal dim={component} values={sortedValues} />;
     default:
-      const _exhaustiveCheck: never = dim;
+      const _exhaustiveCheck: never = component;
       return _exhaustiveCheck;
   }
 };
@@ -838,9 +853,8 @@ const DimensionValuesNominal = ({ values }: { values: DimensionValue[] }) => {
   );
 };
 
-const DimensionValuesNumeric = ({ values }: { values: DimensionValue[] }) => {
+const MeasureValuesNumeric = ({ values }: { values: DimensionValue[] }) => {
   const [min, max] = [values[0].value, values[values.length - 1].value];
-
   return (
     <>
       <Typography variant="body2">Min: {min}</Typography>
@@ -859,7 +873,6 @@ const DimensionValuesTemporal = ({
   const formatters = useDimensionFormatters([dim]);
   const format = formatters[dim.iri];
   const [min, max] = [values[0].value, values[values.length - 1].value];
-
   return (
     <>
       <Typography variant="body2">Min: {format(min)}</Typography>

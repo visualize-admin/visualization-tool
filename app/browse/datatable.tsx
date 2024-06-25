@@ -51,7 +51,7 @@ const ComponentLabel = (props: ComponentLabelProps) => {
   }`;
 
   return linkToMetadataPanel ? (
-    <OpenMetadataPanelWrapper dim={component}>
+    <OpenMetadataPanelWrapper component={component}>
       <span style={{ fontWeight: "bold" }}>{label}</span>
     </OpenMetadataPanelWrapper>
   ) : component.description ? (

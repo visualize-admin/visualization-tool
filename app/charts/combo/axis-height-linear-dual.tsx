@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
 import { ComboLineColumnState } from "@/charts/combo/combo-line-column-state";
 import { ComboLineDualState } from "@/charts/combo/combo-line-dual-state";
@@ -62,7 +62,7 @@ export const AxisHeightLinearDual = (props: AxisHeightLinearDualProps) => {
         height={(axisLabelFontSize + TITLE_VPADDING) * 2}
         color={theme.palette.getContrastText(color)}
       >
-        <OpenMetadataPanelWrapper dim={y[orientation].dimension}>
+        <OpenMetadataPanelWrapper component={y[orientation].dimension}>
           <span
             style={{
               fontSize: axisLabelFontSize,

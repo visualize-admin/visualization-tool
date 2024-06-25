@@ -425,7 +425,7 @@ export const LegendItem = (props: LegendItemProps) => {
       className={clsx(classes.legendItem, shouldBeBigger && classes.bigger)}
     >
       {dimension ? (
-        <OpenMetadataPanelWrapper dim={dimension}>
+        <OpenMetadataPanelWrapper component={dimension}>
           {/* Account for the added space, to align the symbol and label. */}
           <span style={{ marginTop: 3 }}>{item}</span>
         </OpenMetadataPanelWrapper>

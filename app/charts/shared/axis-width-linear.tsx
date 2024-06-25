@@ -88,7 +88,7 @@ export const AxisWidthLinear = () => {
         height={axisLabelFontSize * 2}
         style={{ textAlign: "right" }}
       >
-        <OpenMetadataPanelWrapper dim={xMeasure}>
+        <OpenMetadataPanelWrapper component={xMeasure}>
           <span style={{ fontSize: axisLabelFontSize }}>{xAxisLabel}</span>
         </OpenMetadataPanelWrapper>
       </foreignObject>

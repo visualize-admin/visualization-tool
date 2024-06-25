@@ -153,7 +153,7 @@ const DataFilterSelectGeneric = (props: DataFilterSelectGenericProps) => {
   const sharedProps = {
     dimension,
     label: (
-      <OpenMetadataPanelWrapper dim={dimension}>
+      <OpenMetadataPanelWrapper component={dimension}>
         <span>{`${index + 1}. ${dimension.label}`}</span>
       </OpenMetadataPanelWrapper>
     ),
