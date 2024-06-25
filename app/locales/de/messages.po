@@ -147,6 +147,10 @@ msgstr "Diese Visualisierung aktualisieren"
 msgid "button.update.warning"
 msgstr "Denken Sie daran, dass sich die Aktualisierung dieser Visualisierung auf alle Stellen auswirkt, an denen sie bereits eingebettet ist!"
 
+#: app/components/chart-footnotes.tsx
+msgid "chart-controls.chart-view"
+msgstr "Diagrammansicht"
+
 #: app/components/chart-selection-tabs.tsx
 #: app/components/chart-shared.tsx
 msgid "chart-controls.delete"
@@ -160,7 +164,7 @@ msgstr "Sind Sie sicher, dass Sie dieses Diagramm löschen möchten?"
 msgid "chart-controls.delete.title"
 msgstr "Diagramm löschen?"
 
-#: app/components/chart-selection-tabs.tsx
+#: app/components/chart-shared.tsx
 #: app/components/chart-shared.tsx
 msgid "chart-controls.duplicate"
 msgstr "Duplikat"
@@ -168,6 +172,10 @@ msgstr "Duplikat"
 #: app/components/chart-shared.tsx
 msgid "chart-controls.edit"
 msgstr "Bearbeiten"
+
+#: app/components/chart-footnotes.tsx
+msgid "chart-controls.table-view"
+msgstr "Tabellenansicht"
 
 #: app/components/chart-selection-tabs.tsx
 msgid "chart-selection-tabs.add-chart-different-dataset.button"
@@ -1448,14 +1456,6 @@ msgstr "visualize.admin.ch"
 #: app/components/chart-footnotes.tsx
 msgid "metadata.source"
 msgstr "Quelle"
-
-#: app/components/chart-footnotes.tsx
-msgid "metadata.switch.chart"
-msgstr "Zur Diagrammansicht wechseln"
-
-#: app/components/chart-footnotes.tsx
-msgid "metadata.switch.table"
-msgstr "Zur Tabellenansicht wechseln"
 
 #: app/components/confirmation-dialog.tsx
 msgid "no"

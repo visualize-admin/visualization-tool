@@ -234,12 +234,12 @@ export const ChartFootnotes = ({
                           sx={{ p: 0, typography: "caption" }}
                         >
                           {isTable ? (
-                            <Trans id="metadata.switch.chart">
-                              Switch to chart view
+                            <Trans id="chart-controls.chart-view">
+                              Chart view
                             </Trans>
                           ) : (
-                            <Trans id="metadata.switch.table">
-                              Switch to table view
+                            <Trans id="chart-controls.table-view">
+                              Table view
                             </Trans>
                           )}
                         </Button>
