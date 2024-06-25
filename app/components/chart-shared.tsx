@@ -24,7 +24,6 @@ import { getChartIcon } from "@/icons";
 import SvgIcMore from "@/icons/components/IcMore";
 import { useLocale } from "@/src";
 import { createChartId } from "@/utils/create-chart-id";
-import { useEmbedOptions } from "@/utils/embed";
 
 export const ChartControls = ({
   dataSource,
@@ -81,7 +80,6 @@ export const ChartMoreButton = ({ chartKey }: { chartKey: string }) => {
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
   const handleClose = useEventCallback(() => setAnchor(null));
   const chartConfig = getChartConfig(state, chartKey);
-  const [{ showTableSwitch }] = useEmbedOptions();
   const { setIsTableRaw } = useChartTablePreview();
   // Reset back to chart view when switching chart type.
   useEffect(() => {
@@ -105,7 +103,7 @@ export const ChartMoreButton = ({ chartKey }: { chartKey: string }) => {
       >
         {isPublished(state) ? (
           <div>
-            {chartConfig.chartType !== "table" && showTableSwitch ? (
+            {chartConfig.chartType !== "table" ? (
               <TableViewChartMenuActionItem
                 chartType={chartConfig.chartType}
                 onSuccess={handleClose}

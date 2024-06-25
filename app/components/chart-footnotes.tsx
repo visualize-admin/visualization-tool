@@ -1,5 +1,5 @@
 import { Trans } from "@lingui/macro";
-import { Box, Button, Link, Theme, Typography } from "@mui/material";
+import { Box, Button, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { PropsWithChildren, useEffect, useState } from "react";
 
@@ -20,7 +20,6 @@ import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
 import { assert } from "@/utils/assert";
 import { useEmbedOptions } from "@/utils/embed";
-import { makeOpenDataLink } from "@/utils/opendata";
 
 export const useFootnotesStyles = makeStyles<Theme, { useMarginTop: boolean }>(
   (theme) => ({
@@ -87,14 +86,7 @@ export const ChartFootnotes = ({
     downloadData?.dataCubesObservations?.sparqlEditorUrls;
   const formatLocale = useTimeFormatLocale();
   const [
-    {
-      showDownload,
-      showLandingPage,
-      showSparqlQuery,
-      showDatePublished,
-      showSource,
-      showDatasetTitle,
-    },
+    { showDownload, showLandingPage, showSparqlQuery, showDatePublished },
   ] = useEmbedOptions();
 
   return (
@@ -106,7 +98,6 @@ export const ChartFootnotes = ({
       />
       {data?.dataCubesMetadata
         ? data.dataCubesMetadata.map((dataCubeMetadata) => {
-            const cubeLink = makeOpenDataLink(locale, dataCubeMetadata);
             const sparqlEditorUrl = sparqlEditorUrls?.find(
               (d) => d.cubeIri === dataCubeMetadata.iri
             )?.url;
@@ -116,32 +107,7 @@ export const ChartFootnotes = ({
             assert(cubeQueryFilters, "Cube query filters not found");
 
             return (
-              <Box key={dataCubeMetadata.iri} sx={{ mt: 2 }}>
-                {showDatasetTitle !== false ? (
-                  <Typography
-                    component="span"
-                    variant="caption"
-                    color="grey.600"
-                  >
-                    <strong>
-                      <Trans id="dataset.footnotes.dataset">Dataset</Trans>
-                    </strong>
-                    <Trans id="typography.colon">: </Trans>
-                    {cubeLink ? (
-                      <Link target="_blank" href={cubeLink} rel="noreferrer">
-                        {dataCubeMetadata.title}{" "}
-                        <Icon
-                          name="linkExternal"
-                          size="1em"
-                          style={{ display: "inline" }}
-                        />
-                      </Link>
-                    ) : (
-                      dataCubeMetadata.title
-                    )}
-                  </Typography>
-                ) : null}
-
+              <Box key={dataCubeMetadata.iri}>
                 {dataCubeMetadata.dateModified &&
                 showDatePublished !== false ? (
                   <Typography
@@ -149,7 +115,6 @@ export const ChartFootnotes = ({
                     variant="caption"
                     color="grey.600"
                   >
-                    ,&nbsp;
                     <strong>
                       <Trans id="dataset.footnotes.updated">
                         Latest update
@@ -158,38 +123,6 @@ export const ChartFootnotes = ({
                     <Trans id="typography.colon">: </Trans>
                     {formatLocale.format("%d.%m.%Y %H:%M")(
                       new Date(dataCubeMetadata.dateModified)
-                    )}
-                  </Typography>
-                ) : null}
-
-                {showSource !== false ? (
-                  <Typography
-                    component="div"
-                    variant="caption"
-                    color="grey.600"
-                  >
-                    <strong>
-                      <Trans id="metadata.source">Source</Trans>
-                    </strong>
-                    <Trans id="typography.colon">: </Trans>
-                    {dataCubeMetadata.publisher && (
-                      <Box
-                        component="span"
-                        sx={{ "> a": { color: "grey.600" } }}
-                        dangerouslySetInnerHTML={{
-                          __html: dataCubeMetadata.publisher,
-                        }}
-                      />
-                    )}
-                    {configKey && shareUrl && visualizeLinkText && (
-                      <>
-                        {" "}
-                        /{" "}
-                        <LinkButton href={shareUrl}>
-                          {" "}
-                          {visualizeLinkText}
-                        </LinkButton>
-                      </>
                     )}
                   </Typography>
                 ) : null}

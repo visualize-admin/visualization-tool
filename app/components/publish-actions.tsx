@@ -70,29 +70,23 @@ const Embed = ({ configKey, locale }: PublishActionProps) => {
   const handleChange: RadioGroupProps["onChange"] = (_ev, value) => {
     if (value === "minimal") {
       setEmbedOptions({
-        showDatasetTitle: false,
         showDownload: false,
         showLandingPage: false,
-        showSource: true,
         showMetadata: false,
         showSparqlQuery: false,
         showDatePublished: false,
-        showTableSwitch: false,
       });
     } else {
       setEmbedOptions({
-        showDatasetTitle: true,
         showDownload: true,
         showLandingPage: true,
-        showSource: true,
+        showMetadata: true,
         showSparqlQuery: true,
         showDatePublished: true,
-        showTableSwitch: true,
-        showMetadata: true,
       });
     }
   };
-  const isMinimal = embedOptions.showDatasetTitle === false;
+  const isMinimal = embedOptions.showDownload === false;
   const iFrameHeight = isMinimal ? "560px" : "640px";
 
   useEffect(() => {
@@ -138,9 +132,7 @@ const Embed = ({ configKey, locale }: PublishActionProps) => {
             <RadioGroup
               aria-labelledby="published-chart-embed-options"
               name="controlled-radio-buttons-group"
-              value={
-                embedOptions.showDatasetTitle === false ? "minimal" : "standard"
-              }
+              value={isMinimal ? "minimal" : "standard"}
               onChange={handleChange}
             >
               <FormControlLabel

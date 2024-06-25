@@ -1,16 +1,13 @@
 import { useRouter } from "next/router";
-import React, { useContext, useMemo, createContext } from "react";
+import React, { createContext, useContext, useMemo } from "react";
 
 import useEvent from "@/utils/use-event";
 
 export type EmbedOptions = {
   showDownload?: boolean;
   showLandingPage?: boolean;
-  showTableSwitch?: boolean;
   showSparqlQuery?: boolean;
   showDatePublished?: boolean;
-  showSource?: boolean;
-  showDatasetTitle?: boolean;
   showMetadata?: boolean;
 };
 
