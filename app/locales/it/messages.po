@@ -1082,7 +1082,7 @@ msgstr "Dimensioni condivise"
 
 #: app/components/chart-footnotes.tsx
 msgid "dataset.footnotes.updated"
-msgstr "Ultimo aggiornamento"
+msgstr "Ultimo aggiornamento dei dati"
 
 #: app/components/chart-published.tsx
 msgid "dataset.hasImputedValues"
