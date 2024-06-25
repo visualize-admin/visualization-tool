@@ -50,7 +50,6 @@ import {
 } from "@/configurator/components/ui-helpers";
 import {
   Component,
-  Dimension,
   DimensionValue,
   isJoinByComponent,
   isStandardErrorDimension,
@@ -432,8 +431,8 @@ const TabPanelData = ({
   const { setSelectedDimension, clearSelectedDimension } =
     useMetadataPanelStoreActions();
   const [inputValue, setInputValue] = useState("");
-  const options = useMemo(() => {
-    return components.flatMap(
+  const { options, groupedComponents } = useMemo(() => {
+    const options = components.flatMap(
       (
         component
       ): {
@@ -462,23 +461,25 @@ const TabPanelData = ({
         }
       }
     );
+    const groupedComponents = groupBy(
+      components.flatMap((component): Component[] => {
+        if ("originalIris" in component && component.originalIris) {
+          return (
+            component.originalIris.map((originalIri) => ({
+              ...component,
+              cubeIri: originalIri.cubeIri,
+              iri: originalIri.dimensionIri,
+            })) ?? []
+          );
+        } else {
+          return [component];
+        }
+      }),
+      (x) => x.cubeIri
+    );
+
+    return { options, groupedComponents };
   }, [components]);
-  const groupedComponents = groupBy(
-    components.flatMap((component): Component[] => {
-      if ("originalIris" in component && component.originalIris) {
-        return (
-          component.originalIris.map((originalIri) => ({
-            ...component,
-            cubeIri: originalIri.cubeIri,
-            iri: originalIri.dimensionIri,
-          })) ?? []
-        );
-      } else {
-        return [component];
-      }
-    }),
-    (x) => x.cubeIri
-  );
   const [metadataQuery] = useDataCubesMetadataQuery({
     variables: {
       locale: locale,
@@ -489,7 +490,10 @@ const TabPanelData = ({
     keepPreviousData: true,
   });
   const dataCubesMetadata = metadataQuery.data?.dataCubesMetadata;
-  const cubesByIri = keyBy(dataCubesMetadata, (x) => x.iri);
+  const cubesByIri = useMemo(
+    () => keyBy(dataCubesMetadata, (x) => x.iri),
+    [dataCubesMetadata]
+  );
   const sortedOptions = useMemo(
     () => sortBy(options, (x) => cubesByIri[x.value.cubeIri]?.title),
     [options, cubesByIri]
@@ -636,9 +640,10 @@ const ComponentTabPanel = ({
 }) => {
   const classes = useOtherStyles();
   const { setSelectedDimension } = useMetadataPanelStoreActions();
-  const label = useMemo(() => {
-    return getComponentLabel(component as Dimension, cubeIri);
-  }, [cubeIri, component]);
+  const label = useMemo(
+    () => getComponentLabel(component, cubeIri),
+    [cubeIri, component]
+  );
   const description = useMemo(() => {
     const description = getComponentDescription(component, cubeIri);
     if (!expanded && description && description.length > 180) {
