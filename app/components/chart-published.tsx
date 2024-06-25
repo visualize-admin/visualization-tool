@@ -51,7 +51,6 @@ import {
   InteractiveFiltersProvider,
 } from "@/stores/interactive-filters";
 import { useEmbedOptions } from "@/utils/embed";
-import useEvent from "@/utils/use-event";
 
 type ChartPublishedProps = {
   configKey?: string;
@@ -198,14 +197,8 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
   } = props;
   const { meta } = chartConfig;
   const rootRef = useRef<HTMLDivElement>(null);
-  const {
-    isTable,
-    setIsTable,
-    containerRef,
-    containerHeight,
-    computeContainerHeight,
-  } = useChartTablePreview();
-  const handleToggleTableView = useEvent(() => setIsTable((v) => !v));
+  const { isTable, containerRef, containerHeight, computeContainerHeight } =
+    useChartTablePreview();
   const [{ showDownload }] = useEmbedOptions();
   const metadataPanelStore = useMemo(() => createMetadataPanelStore(), []);
   const metadataPanelOpen = useStore(metadataPanelStore, (state) => state.open);
@@ -390,7 +383,6 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
                 chartConfig={chartConfig}
                 dimensions={dimensions}
                 configKey={configKey}
-                onToggleTableView={handleToggleTableView}
                 visualizeLinkText={
                   showDownload === false ? (
                     <Trans id="metadata.link.created.with.visualize.alternate">

@@ -62,7 +62,6 @@ import { InteractiveFiltersChartProvider } from "@/stores/interactive-filters";
 import { useTransitionStore } from "@/stores/transition";
 import { useTheme } from "@/themes";
 import { createSnapCornerToCursor } from "@/utils/dnd";
-import useEvent from "@/utils/use-event";
 
 type ChartPreviewProps = {
   dataSource: DataSource;
@@ -404,9 +403,7 @@ const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
       })),
     },
   });
-  const { isTable, setIsTable, containerRef, containerHeight } =
-    useChartTablePreview();
-  const handleToggleTableView = useEvent(() => setIsTable((v) => !v));
+  const { isTable, containerRef, containerHeight } = useChartTablePreview();
   const dimensions = components?.dataCubesComponents.dimensions;
   const measures = components?.dataCubesComponents.measures;
   const allComponents = useMemo(() => {
@@ -544,7 +541,6 @@ const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
                 <ChartFootnotes
                   dataSource={dataSource}
                   chartConfig={chartConfig}
-                  onToggleTableView={handleToggleTableView}
                   dimensions={dimensions}
                 />
                 {/* Wrap in div for subgrid layout */}

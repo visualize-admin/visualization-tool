@@ -8,7 +8,6 @@ import {
   useQueryFilters,
 } from "@/charts/shared/chart-helpers";
 import { ChartFiltersList } from "@/components/chart-filters-list";
-import { useChartTablePreview } from "@/components/chart-table-preview";
 import { DataDownloadMenu, RunSparqlQuery } from "@/components/data-download";
 import { ChartConfig, DataSource } from "@/configurator";
 import { Dimension } from "@/domain/data";
@@ -17,7 +16,7 @@ import {
   useDataCubesMetadataQuery,
   useDataCubesObservationsQuery,
 } from "@/graphql/hooks";
-import { Icon, getChartIcon } from "@/icons";
+import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
 import { assert } from "@/utils/assert";
 import { useEmbedOptions } from "@/utils/embed";
@@ -48,26 +47,17 @@ export const ChartFootnotes = ({
   chartConfig,
   dimensions,
   configKey,
-  onToggleTableView,
   visualizeLinkText,
 }: {
   dataSource: DataSource;
   chartConfig: ChartConfig;
   dimensions?: Dimension[];
   configKey?: string;
-  onToggleTableView: () => void;
   visualizeLinkText?: JSX.Element;
 }) => {
   const classes = useFootnotesStyles({ useMarginTop: true });
   const locale = useLocale();
   const [shareUrl, setShareUrl] = useState("");
-  const { isTable, setIsTableRaw } = useChartTablePreview();
-
-  // Reset back to chart view when switching chart type.
-  useEffect(() => {
-    setIsTableRaw(false);
-  }, [setIsTableRaw, chartConfig.chartType]);
-
   useEffect(() => {
     setShareUrl(`${window.location.origin}/${locale}/v/${configKey}`);
   }, [configKey, locale]);
@@ -100,7 +90,6 @@ export const ChartFootnotes = ({
     {
       showDownload,
       showLandingPage,
-      showTableSwitch,
       showSparqlQuery,
       showDatePublished,
       showSource,
@@ -212,39 +201,6 @@ export const ChartFootnotes = ({
                       title={dataCubeMetadata.title}
                       filters={cubeQueryFilters}
                     />
-                  ) : null}
-                  {showTableSwitch !== false ? (
-                    <>
-                      {chartConfig.chartType !== "table" && (
-                        <Button
-                          component="a"
-                          color="primary"
-                          variant="text"
-                          size="small"
-                          startIcon={
-                            <Icon
-                              name={
-                                isTable
-                                  ? getChartIcon(chartConfig.chartType)
-                                  : "table"
-                              }
-                            />
-                          }
-                          onClick={onToggleTableView}
-                          sx={{ p: 0, typography: "caption" }}
-                        >
-                          {isTable ? (
-                            <Trans id="chart-controls.chart-view">
-                              Chart view
-                            </Trans>
-                          ) : (
-                            <Trans id="chart-controls.table-view">
-                              Table view
-                            </Trans>
-                          )}
-                        </Button>
-                      )}
-                    </>
                   ) : null}
                   {dataCubeMetadata.landingPage &&
                     showLandingPage !== false && (

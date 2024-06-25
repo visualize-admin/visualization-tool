@@ -1,6 +1,6 @@
 import { Trans, t } from "@lingui/macro";
 import { Box, IconButton, useEventCallback } from "@mui/material";
-import { ComponentProps, useState } from "react";
+import { ComponentProps, useEffect, useState } from "react";
 
 import {
   ChartDataFiltersList,
@@ -8,6 +8,7 @@ import {
   useChartDataFiltersState,
 } from "@/charts/shared/chart-data-filters";
 import { ArrowMenu } from "@/components/arrow-menu";
+import { useChartTablePreview } from "@/components/chart-table-preview";
 import { MenuActionItem } from "@/components/menu-action-item";
 import { MetadataPanel } from "@/components/metadata-panel";
 import {
@@ -19,9 +20,11 @@ import {
   isPublished,
   useConfiguratorState,
 } from "@/configurator";
+import { getChartIcon } from "@/icons";
 import SvgIcMore from "@/icons/components/IcMore";
 import { useLocale } from "@/src";
 import { createChartId } from "@/utils/create-chart-id";
+import { useEmbedOptions } from "@/utils/embed";
 
 export const ChartControls = ({
   dataSource,
@@ -74,9 +77,17 @@ export const ChartControls = ({
 };
 
 export const ChartMoreButton = ({ chartKey }: { chartKey: string }) => {
+  const [state, dispatch] = useConfiguratorState(hasChartConfigs);
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
   const handleClose = useEventCallback(() => setAnchor(null));
-  const [state, dispatch] = useConfiguratorState(hasChartConfigs);
+  const chartConfig = getChartConfig(state, chartKey);
+  const [{ showTableSwitch }] = useEmbedOptions();
+  const { setIsTableRaw } = useChartTablePreview();
+  // Reset back to chart view when switching chart type.
+  useEffect(() => {
+    setIsTableRaw(false);
+  }, [chartConfig.chartType, setIsTableRaw]);
+
   return (
     <>
       <IconButton
@@ -92,10 +103,19 @@ export const ChartMoreButton = ({ chartKey }: { chartKey: string }) => {
         anchorOrigin={{ horizontal: "center", vertical: "bottom" }}
         transformOrigin={{ horizontal: "center", vertical: "top" }}
       >
-        {isPublished(state) ? null : (
+        {isPublished(state) ? (
+          <div>
+            {chartConfig.chartType !== "table" && showTableSwitch ? (
+              <TableViewChartMenuActionItem
+                chartType={chartConfig.chartType}
+                onSuccess={handleClose}
+              />
+            ) : null}
+          </div>
+        ) : (
           <div>
             <DuplicateChartMenuActionItem
-              chartKey={chartKey}
+              chartConfig={chartConfig}
               onSuccess={handleClose}
             />
             {isConfiguring(state) ? null : (
@@ -135,6 +155,12 @@ export const ChartMoreButton = ({ chartKey }: { chartKey: string }) => {
                 label={<Trans id="chart-controls.delete">Delete</Trans>}
               />
             ) : null}
+            {chartConfig.chartType !== "table" ? (
+              <TableViewChartMenuActionItem
+                chartType={chartConfig.chartType}
+                onSuccess={handleClose}
+              />
+            ) : null}
           </div>
         )}
       </ArrowMenu>
@@ -143,14 +169,14 @@ export const ChartMoreButton = ({ chartKey }: { chartKey: string }) => {
 };
 
 export const DuplicateChartMenuActionItem = ({
-  chartKey,
+  chartConfig,
   onSuccess,
 }: {
-  chartKey: string;
+  chartConfig: ChartConfig;
   onSuccess: () => void;
 }) => {
   const locale = useLocale();
-  const [state, dispatch] = useConfiguratorState(hasChartConfigs);
+  const [_, dispatch] = useConfiguratorState(hasChartConfigs);
   return (
     <MenuActionItem
       type="button"
@@ -159,10 +185,7 @@ export const DuplicateChartMenuActionItem = ({
         dispatch({
           type: "CHART_CONFIG_ADD",
           value: {
-            chartConfig: {
-              ...getChartConfig(state, chartKey),
-              key: createChartId(),
-            },
+            chartConfig: { ...chartConfig, key: createChartId() },
             locale,
           },
         });
@@ -170,6 +193,34 @@ export const DuplicateChartMenuActionItem = ({
       }}
       iconName="duplicate"
       label={<Trans id="chart-controls.duplicate">Duplicate</Trans>}
+    />
+  );
+};
+
+const TableViewChartMenuActionItem = ({
+  chartType,
+  onSuccess,
+}: {
+  chartType: ChartConfig["chartType"];
+  onSuccess: () => void;
+}) => {
+  const { isTable, setIsTable } = useChartTablePreview();
+  return (
+    <MenuActionItem
+      type="button"
+      as="menuitem"
+      onClick={() => {
+        setIsTable(!isTable);
+        onSuccess();
+      }}
+      iconName={isTable ? getChartIcon(chartType) : "table"}
+      label={
+        isTable ? (
+          <Trans id="chart-controls.chart-view">Chart view</Trans>
+        ) : (
+          <Trans id="chart-controls.table-view">Table view</Trans>
+        )
+      }
     />
   );
 };
