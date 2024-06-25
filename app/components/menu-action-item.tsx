@@ -1,4 +1,4 @@
-import { Button, Link, MenuItem, styled } from "@mui/material";
+import { Button, Divider, Link, MenuItem, styled } from "@mui/material";
 import NextLink from "next/link";
 
 import ConfirmationDialog from "@/components/confirmation-dialog";
@@ -55,7 +55,6 @@ export const MenuActionItem = (
     open: openConfirmation,
     close: closeConfirmation,
   } = useDisclosure();
-
   const Wrapper = ({
     icon,
     label,
@@ -98,14 +97,17 @@ export const MenuActionItem = (
       );
     } else {
       return (
-        <StyledMenuItem
-          color={color}
-          component={props.type === "link" ? Link : "div"}
-          {...forwardedProps}
-        >
-          <Icon size={16} name={icon} style={{ marginTop: "0.25rem" }} />
-          {label}
-        </StyledMenuItem>
+        <>
+          <StyledMenuItem
+            color={color}
+            component={props.type === "link" ? Link : "div"}
+            {...forwardedProps}
+          >
+            <Icon size={16} name={icon} style={{ marginTop: "0.25rem" }} />
+            {label}
+          </StyledMenuItem>
+          <Divider sx={{ mx: 1, "&:last-of-type": { display: "none" } }} />
+        </>
       );
     }
   };
