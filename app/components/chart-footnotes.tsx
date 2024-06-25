@@ -16,7 +16,6 @@ import {
   useDataCubesMetadataQuery,
   useDataCubesObservationsQuery,
 } from "@/graphql/hooks";
-import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
 import { assert } from "@/utils/assert";
 import { useEmbedOptions } from "@/utils/embed";
@@ -85,9 +84,8 @@ export const ChartFootnotes = ({
   const sparqlEditorUrls =
     downloadData?.dataCubesObservations?.sparqlEditorUrls;
   const formatLocale = useTimeFormatLocale();
-  const [
-    { showDownload, showLandingPage, showSparqlQuery, showDatePublished },
-  ] = useEmbedOptions();
+  const [{ showDownload, showSparqlQuery, showDatePublished }] =
+    useEmbedOptions();
 
   return (
     <div>
@@ -135,23 +133,6 @@ export const ChartFootnotes = ({
                       filters={cubeQueryFilters}
                     />
                   ) : null}
-                  {dataCubeMetadata.landingPage &&
-                    showLandingPage !== false && (
-                      <Button
-                        variant="text"
-                        component="a"
-                        href={dataCubeMetadata.landingPage}
-                        target="_blank"
-                        color="primary"
-                        size="small"
-                        sx={{ p: 0, typography: "caption" }}
-                        startIcon={<Icon name="linkExternal" />}
-                      >
-                        <Trans id="dataset.metadata.learnmore">
-                          Learn more about the dataset
-                        </Trans>
-                      </Button>
-                    )}
                   {sparqlEditorUrl && showSparqlQuery !== false && (
                     <RunSparqlQuery
                       key={sparqlEditorUrl}

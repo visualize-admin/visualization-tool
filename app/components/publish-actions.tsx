@@ -71,7 +71,6 @@ const Embed = ({ configKey, locale }: PublishActionProps) => {
     if (value === "minimal") {
       setEmbedOptions({
         showDownload: false,
-        showLandingPage: false,
         showMetadata: false,
         showSparqlQuery: false,
         showDatePublished: false,
@@ -79,7 +78,6 @@ const Embed = ({ configKey, locale }: PublishActionProps) => {
     } else {
       setEmbedOptions({
         showDownload: true,
-        showLandingPage: true,
         showMetadata: true,
         showSparqlQuery: true,
         showDatePublished: true,
