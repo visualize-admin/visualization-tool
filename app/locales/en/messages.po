@@ -1107,7 +1107,7 @@ msgstr "Further information"
 #: app/components/chart-footnotes.tsx
 #: app/components/dataset-metadata.tsx
 msgid "dataset.metadata.learnmore"
-msgstr "Learn more about the dataset"
+msgstr "More about the dataset"
 
 #: app/components/dataset-metadata.tsx
 msgid "dataset.metadata.source"

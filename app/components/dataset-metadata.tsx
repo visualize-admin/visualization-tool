@@ -104,7 +104,7 @@ export const DatasetMetadata = ({
                 external
                 label={
                   <Trans id="dataset.metadata.learnmore">
-                    Learn more about the dataset
+                    More about the dataset
                   </Trans>
                 }
               />
