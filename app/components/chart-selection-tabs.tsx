@@ -291,7 +291,7 @@ const TabsEditable = (props: TabsEditableProps) => {
           onClose={handleClose}
         >
           <DuplicateChartMenuActionItem
-            chartKey={tabsState.activeChartKey}
+            chartConfig={getChartConfig(state, tabsState.activeChartKey)}
             onSuccess={handleClose}
           />
 
