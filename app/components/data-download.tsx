@@ -5,17 +5,12 @@ import {
   ListSubheader,
   MenuItem,
   Typography,
+  useEventCallback,
 } from "@mui/material";
 import { ascending } from "d3-array";
 import { Workbook } from "exceljs";
 import { saveAs } from "file-saver";
 import keyBy from "lodash/keyBy";
-import HoverMenu from "material-ui-popup-state/HoverMenu";
-import {
-  bindHover,
-  bindMenu,
-  usePopupState,
-} from "material-ui-popup-state/hooks";
 import {
   Dispatch,
   PropsWithChildren,
@@ -29,6 +24,7 @@ import {
 import { useClient } from "urql";
 
 import { getSortedColumns } from "@/browse/datatable";
+import { ArrowMenuBottomTop } from "@/components/arrow-menu";
 import Flex from "@/components/flex";
 import { DataSource, SortingField } from "@/config-types";
 import {
@@ -200,10 +196,8 @@ const DataDownloadInnerMenu = ({
   filters: DataCubeObservationFilter;
 }) => {
   const [state] = useDataDownloadState();
-  const popupState = usePopupState({
-    variant: "popover",
-    popupId: "dataDownloadMenu",
-  });
+  const [anchor, setAnchor] = useState<HTMLElement | null>(null);
+  const handleClose = useEventCallback(() => setAnchor(null));
   return (
     <>
       <Button
@@ -217,13 +211,15 @@ const DataDownloadInnerMenu = ({
             <SvgIcDownload width={16} />
           )
         }
-        {...bindHover(popupState)}
+        onClick={(e) => setAnchor(e.currentTarget)}
         sx={{ width: "fit-content", minHeight: 0, p: 0, ml: "2px" }}
       >
         <Trans id="button.download.data">Download data</Trans>
       </Button>
-      <HoverMenu
-        {...bindMenu(popupState)}
+      <ArrowMenuBottomTop
+        open={!!anchor}
+        anchorEl={anchor}
+        onClose={handleClose}
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
         transformOrigin={{ vertical: "bottom", horizontal: "center" }}
         MenuListProps={{
@@ -234,6 +230,7 @@ const DataDownloadInnerMenu = ({
           ),
           sx: { width: 200, pt: 1, pb: 2 },
         }}
+        sx={{ transform: "translateY(-12px)" }}
       >
         {filters.filters && (
           <DataDownloadMenuSection
@@ -258,7 +255,7 @@ const DataDownloadInnerMenu = ({
             </Typography>
           </RawMenuItem>
         )}
-      </HoverMenu>
+      </ArrowMenuBottomTop>
     </>
   );
 };

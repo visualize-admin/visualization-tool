@@ -8,7 +8,7 @@ import {
   ChartDataFiltersToggle,
   useChartDataFiltersState,
 } from "@/charts/shared/chart-data-filters";
-import { ArrowMenu } from "@/components/arrow-menu";
+import { ArrowMenuTopBottom } from "@/components/arrow-menu";
 import { chartPanelLayoutGridClasses } from "@/components/chart-panel-layout-grid";
 import { useChartTablePreview } from "@/components/chart-table-preview";
 import { MenuActionItem } from "@/components/menu-action-item";
@@ -123,7 +123,7 @@ export const ChartMoreButton = ({
       >
         <SvgIcMore />
       </IconButton>
-      <ArrowMenu
+      <ArrowMenuTopBottom
         open={!!anchor}
         anchorEl={anchor}
         onClose={handleClose}
@@ -193,7 +193,7 @@ export const ChartMoreButton = ({
             ) : null}
           </div>
         )}
-      </ArrowMenu>
+      </ArrowMenuTopBottom>
     </>
   );
 };
