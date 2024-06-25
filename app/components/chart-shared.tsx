@@ -144,10 +144,6 @@ export const ChartMoreButton = ({
           </div>
         ) : (
           <div>
-            <DuplicateChartMenuActionItem
-              chartConfig={chartConfig}
-              onSuccess={handleClose}
-            />
             {isConfiguring(state) ? null : (
               <MenuActionItem
                 type="button"
@@ -160,6 +156,10 @@ export const ChartMoreButton = ({
                 label={<Trans id="chart-controls.edit">Edit</Trans>}
               />
             )}
+            <DuplicateChartMenuActionItem
+              chartConfig={chartConfig}
+              onSuccess={handleClose}
+            />
             {state.chartConfigs.length > 1 ? (
               <MenuActionItem
                 type="button"
