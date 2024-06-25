@@ -418,11 +418,7 @@ const CubesPanel = ({
     componentIris: extractChartConfigComponentIris(chartConfig),
   });
   const [
-    {
-      data: dataCubesObservationsData,
-      fetching: fetchingDataCubesObservations,
-      error: dataCubesObservationsError,
-    },
+    { data: dataCubesObservationsData, error: dataCubesObservationsError },
   ] = useDataCubesObservationsQuery({
     variables: {
       sourceType: dataSource.type,
@@ -433,12 +429,11 @@ const CubesPanel = ({
   });
   const cubesObservations = dataCubesObservationsData?.dataCubesObservations;
 
-  const fetching = fetchingDataCubesMetadata || fetchingDataCubesObservations;
   const error = dataCubesMetadataError || dataCubesObservationsError;
 
   return (
     <TabPanel className={classes.tabPanel} value="general">
-      {fetching ? <Loading /> : null}
+      {fetchingDataCubesMetadata ? <Loading /> : null}
       {error ? (
         <Error>{`${error instanceof Error ? error.message : error}`}</Error>
       ) : null}
