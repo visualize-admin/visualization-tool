@@ -218,7 +218,7 @@ const DataDownloadInnerMenu = ({
           )
         }
         {...bindHover(popupState)}
-        sx={{ minHeight: 0, p: 0, ml: "2px" }}
+        sx={{ width: "fit-content", minHeight: 0, p: 0, ml: "2px" }}
       >
         <Trans id="button.download.data">Download data</Trans>
       </Button>
