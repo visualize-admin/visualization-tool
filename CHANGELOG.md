@@ -27,6 +27,8 @@ You can also check the
   - Optimized the user profile page and preview of a draft chart
   - :flag: :new: Added an `easter-eggs` flag that allows you to enable easter
     eggs in the application
+  - Published charts now have a "more options" button with two actions - "Share"
+    and "Table view"
 - Fixes
   - Fixed using a time range brush in column charts when X dimension is a
     `TemporalEntityDimension`
@@ -43,9 +45,17 @@ You can also check the
     chart in smaller browser windows
   - Saving a new dashboard when in layouting step as a logged-in user will not
     redirect to the editing step anymore
+  - Metadata panel is now behaving correctly in the editing mode when editing
+    several charts e.g. in a dashboard
 - Style
+  - Cleaned up the chart footnotes and moved most of them to the metadata panel
+    – it means that the footnotes don't look broken anymore for charts based on
+    merged cubes. This was followed by a removal of embed options, as now every
+    chart has much more minimalistic appearance
   - Global dashboard time slider won't show marks if there's more than 50 of
     them
+  - Updated style of the buttons that open metadata panel
+  - Data download menu now opens on click, not hover
 
 # [4.6.1] - 2024-06-05
 
