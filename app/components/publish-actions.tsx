@@ -71,16 +71,14 @@ const Embed = ({ configKey, locale }: PublishActionProps) => {
     if (value === "minimal") {
       setEmbedOptions({
         showMetadata: false,
-        showDatePublished: false,
       });
     } else {
       setEmbedOptions({
         showMetadata: true,
-        showDatePublished: true,
       });
     }
   };
-  const isMinimal = embedOptions.showDatePublished === false;
+  const isMinimal = embedOptions.showMetadata === false;
   const iFrameHeight = isMinimal ? "560px" : "640px";
 
   useEffect(() => {

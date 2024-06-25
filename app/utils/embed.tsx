@@ -4,7 +4,6 @@ import React, { createContext, useContext, useMemo } from "react";
 import useEvent from "@/utils/use-event";
 
 export type EmbedOptions = {
-  showDatePublished?: boolean;
   showMetadata?: boolean;
 };
 
