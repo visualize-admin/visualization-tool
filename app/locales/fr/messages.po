@@ -94,10 +94,6 @@ msgstr "Jeu de données complet"
 msgid "button.download.data.visible"
 msgstr "Données du graphique"
 
-#: app/components/data-download.tsx
-msgid "button.download.runsparqlquery.visible"
-msgstr "Lancer la requête SPARQL"
-
 #: app/components/publish-actions.tsx
 msgid "button.embed"
 msgstr "Intégrer"
@@ -147,7 +143,7 @@ msgstr "Actualiser cette visualisation"
 msgid "button.update.warning"
 msgstr "Gardez à l'esprit que la mise à jour de cette visualisation affectera tous les endroits où elle est déjà intégrée !"
 
-#: app/components/chart-footnotes.tsx
+#: app/components/chart-shared.tsx
 msgid "chart-controls.chart-view"
 msgstr "Vue graphique"
 
@@ -165,7 +161,6 @@ msgid "chart-controls.delete.title"
 msgstr "Supprimer le graphique ?"
 
 #: app/components/chart-shared.tsx
-#: app/components/chart-shared.tsx
 msgid "chart-controls.duplicate"
 msgstr "Dupliquer"
 
@@ -173,7 +168,11 @@ msgstr "Dupliquer"
 msgid "chart-controls.edit"
 msgstr "Modifier"
 
-#: app/components/chart-footnotes.tsx
+#: app/components/data-download.tsx
+msgid "chart-controls.sparql-query"
+msgstr "Requête SPARQL"
+
+#: app/components/chart-shared.tsx
 msgid "chart-controls.table-view"
 msgstr "Vue du tableau"
 

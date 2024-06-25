@@ -450,9 +450,7 @@ export const RunSparqlQuery = ({ url }: { url: string }) => {
       sx={{ p: 0 }}
     >
       <Typography variant="caption">
-        <Trans id="button.download.runsparqlquery.visible">
-          Run SPARQL query (visible)
-        </Trans>
+        <Trans id="chart-controls.sparql-query">SPARQL query</Trans>
       </Typography>
     </Button>
   );
