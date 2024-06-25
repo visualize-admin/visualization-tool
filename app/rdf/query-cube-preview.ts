@@ -69,8 +69,8 @@ CONSTRUCT {
   ?observationValue schema:position ?observationPosition .
 } WHERE {
   VALUES ?cube { <${iri}> }
-  FILTER(EXISTS { ?cube a cube:Cube . }) {}
-  UNION {
+  FILTER(EXISTS { ?cube a cube:Cube . })
+  {
     ?cube cube:observationConstraint/sh:property ?dimension .
     ?dimension sh:path ?dimensionIri .
     OPTIONAL { ?dimension rdf:type ?dimensionType . }
@@ -107,9 +107,11 @@ CONSTRUCT {
     )}
     FILTER(?dimensionIri != cube:observedBy && ?dimensionIri != rdf:type)
   } UNION {
+    VALUES ?cube { <${iri}> }
     ?cube cube:observationConstraint/sh:property/sh:path ?observationPredicate .
-    { SELECT * WHERE {
-    { SELECT * WHERE {
+    { SELECT ?observation ?observationPredicate ?observationValue ?observationLabel ?observationPosition WHERE {
+    { SELECT ?observation WHERE {
+      VALUES ?cube { <${iri}> }
       ?cube cube:observationSet ?observationSet .
       ?observationSet cube:observation ?observation .
       FILTER(EXISTS { ?cube cube:observationConstraint/sh:property/sh:datatype cube:Undefined . } || NOT EXISTS { ?observation ?p ""^^cube:Undefined . })
