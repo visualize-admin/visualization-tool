@@ -355,6 +355,7 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
                 metadataPanelProps={{
                   components: allComponents,
                   container: rootRef.current,
+                  allowMultipleOpen: true,
                 }}
               />
 

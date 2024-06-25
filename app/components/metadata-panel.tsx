@@ -71,6 +71,7 @@ import { useLocale } from "@/locales/use-locale";
 import { useTransitionStore } from "@/stores/transition";
 import { assert } from "@/utils/assert";
 import { useEmbedOptions } from "@/utils/embed";
+import { useEventEmitter } from "@/utils/eventEmitter";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
 
@@ -243,12 +244,14 @@ export const MetadataPanel = ({
   components,
   container,
   top = 0,
+  allowMultipleOpen,
 }: {
   chartConfig: ChartConfig;
   dataSource: DataSource;
   components: Component[];
   container?: HTMLDivElement | null;
   top?: number;
+  allowMultipleOpen?: boolean;
 }) => {
   const router = useRouter();
   const drawerClasses = useDrawerStyles({ top });
@@ -260,8 +263,16 @@ export const MetadataPanel = ({
   const setEnableTransition = useTransitionStore((state) => state.setEnable);
   const { setOpen, toggle, setActiveSection, reset } =
     useMetadataPanelStoreActions();
+  const ee = useEventEmitter("metadata-panel-opened", () => {
+    if (open) {
+      setOpen(false);
+    }
+  });
   const handleToggle = useEvent(() => {
     toggle();
+    if (!allowMultipleOpen) {
+      ee.emit("metadata-panel-opened", { datasetIri: "" });
+    }
   });
 
   // Close and reset the metadata panel when route has changed.
@@ -387,21 +398,32 @@ const CubesPanel = ({
   const classes = useOtherStyles();
   const locale = useLocale();
   const cubes = chartConfig.cubes.map((x) => ({ iri: x.iri }));
-  const [{ data: dataCubesMetadataData, fetching, error }] =
-    useDataCubesMetadataQuery({
-      variables: {
-        sourceType: dataSource.type,
-        sourceUrl: dataSource.url,
-        locale,
-        cubeFilters: cubes,
-      },
-    });
+  const [
+    {
+      data: dataCubesMetadataData,
+      fetching: fetchingDataCubesMetadata,
+      error: dataCubesMetadataError,
+    },
+  ] = useDataCubesMetadataQuery({
+    variables: {
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+      cubeFilters: cubes,
+    },
+  });
   const cubesMetadata = dataCubesMetadataData?.dataCubesMetadata;
   const queryFilters = useQueryFilters({
     chartConfig,
     componentIris: extractChartConfigComponentIris(chartConfig),
   });
-  const [{ data: dataCubesObservationsData }] = useDataCubesObservationsQuery({
+  const [
+    {
+      data: dataCubesObservationsData,
+      fetching: fetchingDataCubesObservations,
+      error: dataCubesObservationsError,
+    },
+  ] = useDataCubesObservationsQuery({
     variables: {
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
@@ -411,9 +433,8 @@ const CubesPanel = ({
   });
   const cubesObservations = dataCubesObservationsData?.dataCubesObservations;
 
-  if (!cubesMetadata || !cubesObservations) {
-    return null;
-  }
+  const fetching = fetchingDataCubesMetadata || fetchingDataCubesObservations;
+  const error = dataCubesMetadataError || dataCubesObservationsError;
 
   return (
     <TabPanel className={classes.tabPanel} value="general">

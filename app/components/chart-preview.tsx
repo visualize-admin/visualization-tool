@@ -44,6 +44,10 @@ import { DragHandle } from "@/components/drag-handle";
 import Flex from "@/components/flex";
 import { Checkbox } from "@/components/form";
 import { HintYellow } from "@/components/hint";
+import {
+  MetadataPanelStoreContext,
+  createMetadataPanelStore,
+} from "@/components/metadata-panel-store";
 import { BANNER_MARGIN_TOP } from "@/components/presence";
 import {
   ChartConfig,
@@ -416,60 +420,98 @@ const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
 
     return [...dimensions, ...measures];
   }, [dimensions, measures]);
+  const metadataPanelStore = useMemo(() => {
+    return createMetadataPanelStore();
+  }, []);
 
   return (
-    <Box className={chartClasses.root}>
-      {props.children}
-      <ChartErrorBoundary resetKeys={[state]}>
-        <div>
-          {metadata?.dataCubesMetadata.some(
-            (d) => d.publicationStatus === DataCubePublicationStatus.Draft
-          ) && (
-            <Box sx={{ mb: 4 }}>
-              <HintYellow iconName="datasetError" iconSize={64}>
-                <Trans id="dataset.publicationStatus.draft.warning">
-                  Careful, this dataset is only a draft.
-                  <br />
-                  <strong>Don&apos;t use for reporting!</strong>
-                </Trans>
-              </HintYellow>
-            </Box>
-          )}
-        </div>
-        {hasChartConfigs(state) && (
-          <>
-            <Head>
-              <title key="title">
-                {!chartConfig.meta.title[locale]
-                  ? // FIXME: adapt to design
-                    metadata?.dataCubesMetadata.map((d) => d.title).join(", ")
-                  : chartConfig.meta.title[locale]}{" "}
-                - visualize.admin.ch
-              </title>
-            </Head>
-            <LoadingStateProvider>
-              <InteractiveFiltersChartProvider chartConfigKey={chartConfig.key}>
-                <Flex
-                  sx={{
-                    justifyContent:
-                      configuring || chartConfig.meta.title[locale]
-                        ? "space-between"
-                        : "flex-end",
-                    alignItems: "flex-start",
-                    gap: 2,
-                  }}
+    <MetadataPanelStoreContext.Provider value={metadataPanelStore}>
+      <Box className={chartClasses.root}>
+        {props.children}
+        <ChartErrorBoundary resetKeys={[state]}>
+          <div>
+            {metadata?.dataCubesMetadata.some(
+              (d) => d.publicationStatus === DataCubePublicationStatus.Draft
+            ) && (
+              <Box sx={{ mb: 4 }}>
+                <HintYellow iconName="datasetError" iconSize={64}>
+                  <Trans id="dataset.publicationStatus.draft.warning">
+                    Careful, this dataset is only a draft.
+                    <br />
+                    <strong>Don&apos;t use for reporting!</strong>
+                  </Trans>
+                </HintYellow>
+              </Box>
+            )}
+          </div>
+          {hasChartConfigs(state) && (
+            <>
+              <Head>
+                <title key="title">
+                  {!chartConfig.meta.title[locale]
+                    ? // FIXME: adapt to design
+                      metadata?.dataCubesMetadata.map((d) => d.title).join(", ")
+                    : chartConfig.meta.title[locale]}{" "}
+                  - visualize.admin.ch
+                </title>
+              </Head>
+              <LoadingStateProvider>
+                <InteractiveFiltersChartProvider
+                  chartConfigKey={chartConfig.key}
                 >
-                  {configuring || chartConfig.meta.title[locale] ? (
-                    <Title
-                      text={chartConfig.meta.title[locale]}
+                  <Flex
+                    sx={{
+                      justifyContent:
+                        configuring || chartConfig.meta.title[locale]
+                          ? "space-between"
+                          : "flex-end",
+                      alignItems: "flex-start",
+                      gap: 2,
+                    }}
+                  >
+                    {configuring || chartConfig.meta.title[locale] ? (
+                      <Title
+                        text={chartConfig.meta.title[locale]}
+                        lighterColor
+                        onClick={
+                          configuring
+                            ? () =>
+                                dispatch({
+                                  type: "CHART_ACTIVE_FIELD_CHANGED",
+                                  value: "title",
+                                })
+                            : undefined
+                        }
+                      />
+                    ) : (
+                      // We need to have a span here to keep the space between the
+                      // title and the chart (subgrid layout)
+                      <span />
+                    )}
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 2,
+                        mt: "-0.5rem",
+                      }}
+                    >
+                      <ChartMoreButton chartKey={chartConfig.key} />
+                      {actionElementSlot}
+                    </Box>
+                  </Flex>
+                  {configuring || chartConfig.meta.description[locale] ? (
+                    <Description
+                      text={chartConfig.meta.description[locale]}
                       lighterColor
                       onClick={
                         configuring
-                          ? () =>
+                          ? () => {
                               dispatch({
                                 type: "CHART_ACTIVE_FIELD_CHANGED",
-                                value: "title",
-                              })
+                                value: "description",
+                              });
+                            }
                           : undefined
                       }
                     />
@@ -478,83 +520,52 @@ const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
                     // title and the chart (subgrid layout)
                     <span />
                   )}
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 2,
-                      mt: "-0.5rem",
+                  <ChartControls
+                    dataSource={dataSource}
+                    chartConfig={chartConfig}
+                    metadataPanelProps={{
+                      components: allComponents,
+                      top: BANNER_MARGIN_TOP,
+                    }}
+                  />
+                  <div
+                    ref={containerRef}
+                    style={{
+                      minWidth: 0,
+                      height: containerHeight,
+                      paddingTop: 16,
+                      flexGrow: 1,
                     }}
                   >
-                    <ChartMoreButton chartKey={chartConfig.key} />
-                    {actionElementSlot}
-                  </Box>
-                </Flex>
-                {configuring || chartConfig.meta.description[locale] ? (
-                  <Description
-                    text={chartConfig.meta.description[locale]}
-                    lighterColor
-                    onClick={
-                      configuring
-                        ? () => {
-                            dispatch({
-                              type: "CHART_ACTIVE_FIELD_CHANGED",
-                              value: "description",
-                            });
-                          }
-                        : undefined
-                    }
+                    {isTable ? (
+                      <DataSetTable
+                        dataSource={dataSource}
+                        chartConfig={chartConfig}
+                        sx={{ width: "100%", maxHeight: "100%" }}
+                      />
+                    ) : (
+                      <ChartWithFilters
+                        dataSource={dataSource}
+                        componentIris={componentIris}
+                        chartConfig={chartConfig}
+                      />
+                    )}
+                  </div>
+                  <ChartFootnotes
+                    dataSource={dataSource}
+                    chartConfig={chartConfig}
+                    dimensions={dimensions}
                   />
-                ) : (
-                  // We need to have a span here to keep the space between the
-                  // title and the chart (subgrid layout)
-                  <span />
-                )}
-                <ChartControls
-                  dataSource={dataSource}
-                  chartConfig={chartConfig}
-                  metadataPanelProps={{
-                    components: allComponents,
-                    top: BANNER_MARGIN_TOP,
-                  }}
-                />
-                <div
-                  ref={containerRef}
-                  style={{
-                    minWidth: 0,
-                    height: containerHeight,
-                    paddingTop: 16,
-                    flexGrow: 1,
-                  }}
-                >
-                  {isTable ? (
-                    <DataSetTable
-                      dataSource={dataSource}
-                      chartConfig={chartConfig}
-                      sx={{ width: "100%", maxHeight: "100%" }}
-                    />
-                  ) : (
-                    <ChartWithFilters
-                      dataSource={dataSource}
-                      componentIris={componentIris}
-                      chartConfig={chartConfig}
-                    />
-                  )}
-                </div>
-                <ChartFootnotes
-                  dataSource={dataSource}
-                  chartConfig={chartConfig}
-                  dimensions={dimensions}
-                />
-                {/* Wrap in div for subgrid layout */}
-                <div className="debug-panel">
-                  <DebugPanel configurator interactiveFilters />
-                </div>
-              </InteractiveFiltersChartProvider>
-            </LoadingStateProvider>
-          </>
-        )}
-      </ChartErrorBoundary>
-    </Box>
+                  {/* Wrap in div for subgrid layout */}
+                  <div className="debug-panel">
+                    <DebugPanel configurator interactiveFilters />
+                  </div>
+                </InteractiveFiltersChartProvider>
+              </LoadingStateProvider>
+            </>
+          )}
+        </ChartErrorBoundary>
+      </Box>
+    </MetadataPanelStoreContext.Provider>
   );
 };
