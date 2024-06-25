@@ -70,7 +70,6 @@ import SvgIcClose from "@/icons/components/IcClose";
 import { useLocale } from "@/locales/use-locale";
 import { useTransitionStore } from "@/stores/transition";
 import { assert } from "@/utils/assert";
-import { useEmbedOptions } from "@/utils/embed";
 import { useEventEmitter } from "@/utils/eventEmitter";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
@@ -216,11 +215,6 @@ export const OpenMetadataPanelWrapper = ({
     openDimension(component);
   });
 
-  const [{ showMetadata }] = useEmbedOptions();
-  if (showMetadata === false) {
-    return <>{children}</>;
-  }
-
   return (
     <Button
       className={classes.openDimension}
@@ -282,9 +276,7 @@ export const MetadataPanel = ({
     };
   }, [setOpen, reset, router.events]);
 
-  const [{ showMetadata }] = useEmbedOptions();
-
-  return showMetadata === false ? null : (
+  return (
     <>
       <ToggleButton onClick={handleToggle} />
       <Drawer
