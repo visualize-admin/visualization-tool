@@ -335,9 +335,11 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
                     text={meta.title[locale]}
                     smaller={state.layout.type === "dashboard"}
                   />
+                ) : // We need to have a span here to keep the space between the
+                // title and the chart (subgrid layout)
+                state.layout.type === "dashboard" ? (
+                  <span>&nbsp;</span>
                 ) : (
-                  // We need to have a span here to keep the space between the
-                  // title and the chart (subgrid layout)
                   <span />
                 )}
                 <ChartMoreButton
@@ -350,9 +352,11 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
                   text={meta.description[locale]}
                   smaller={state.layout.type === "dashboard"}
                 />
+              ) : // We need to have a span here to keep the space between the
+              // title and the chart (subgrid layout)
+              state.layout.type === "dashboard" ? (
+                <span>&nbsp;</span>
               ) : (
-                // We need to have a span here to keep the space between the
-                // title and the chart (subgrid layout)
                 <span />
               )}
               <ChartControls

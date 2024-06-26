@@ -23,9 +23,7 @@ import { useLocale } from "@/locales/use-locale";
 
 const useStyles = makeStyles<Theme, { interactive?: boolean }>({
   text: {
-    marginBottom: 4,
     cursor: ({ interactive }) => (interactive ? "pointer" : "text"),
-
     "&:hover": {
       textDecoration: ({ interactive }) => (interactive ? "underline" : "none"),
     },

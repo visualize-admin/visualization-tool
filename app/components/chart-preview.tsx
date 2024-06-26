@@ -484,9 +484,11 @@ const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
                             : undefined
                         }
                       />
+                    ) : // We need to have a span here to keep the space between the
+                    // title and the chart (subgrid layout)
+                    state.layout.type === "dashboard" ? (
+                      <span>&nbsp;</span>
                     ) : (
-                      // We need to have a span here to keep the space between the
-                      // title and the chart (subgrid layout)
                       <span />
                     )}
                     <Box
@@ -517,9 +519,11 @@ const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
                           : undefined
                       }
                     />
+                  ) : // We need to have a span here to keep the space between the
+                  // title and the chart (subgrid layout)
+                  state.layout.type === "dashboard" ? (
+                    <span>&nbsp;</span>
                   ) : (
-                    // We need to have a span here to keep the space between the
-                    // title and the chart (subgrid layout)
                     <span />
                   )}
                   <ChartControls
