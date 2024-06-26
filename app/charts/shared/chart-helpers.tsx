@@ -192,7 +192,7 @@ export const extractChartConfigComponentIris = ({
 }: {
   chartConfig: ChartConfig;
   includeFilters?: boolean;
-}) => {
+}): string[] => {
   const { fields, interactiveFiltersConfig } = chartConfig;
   const fieldIris = Object.values(fields).map((field) => field.componentIri);
   const additionalFieldIris =
@@ -213,15 +213,27 @@ export const extractChartConfigComponentIris = ({
     IFKeys.forEach((k) => {
       const v = interactiveFiltersConfig[k];
       switch (k) {
-        case "legend":
-          IFIris.push((v as InteractiveFiltersLegend).componentIri);
+        case "legend": {
+          const legend = v as InteractiveFiltersLegend;
+          if (legend.active) {
+            IFIris.push(legend.componentIri);
+          }
           break;
-        case "timeRange":
-          IFIris.push((v as InteractiveFiltersTimeRange).componentIri);
+        }
+        case "timeRange": {
+          const timeRange = v as InteractiveFiltersTimeRange;
+          if (timeRange.active) {
+            IFIris.push(timeRange.componentIri);
+          }
           break;
-        case "dataFilters":
-          IFIris.push(...(v as InteractiveFiltersDataConfig).componentIris);
+        }
+        case "dataFilters": {
+          const dataFilters = v as InteractiveFiltersDataConfig;
+          if (dataFilters.active) {
+            IFIris.push(...dataFilters.componentIris);
+          }
           break;
+        }
         case "calculation":
           break;
         default:
