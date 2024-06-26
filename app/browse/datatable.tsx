@@ -236,7 +236,7 @@ export const DataSetTable = ({
   sx?: SxProps<Theme>;
 }) => {
   const locale = useLocale();
-  const componentIris = extractChartConfigComponentIris(chartConfig);
+  const componentIris = extractChartConfigComponentIris({ chartConfig });
   const commonQueryVariables = {
     sourceType: dataSource.type,
     sourceUrl: dataSource.url,

@@ -402,7 +402,7 @@ const CubesPanel = ({
   const cubesMetadata = dataCubesMetadataData?.dataCubesMetadata;
   const queryFilters = useQueryFilters({
     chartConfig,
-    componentIris: extractChartConfigComponentIris(chartConfig),
+    componentIris: extractChartConfigComponentIris({ chartConfig }),
   });
   const [
     { data: dataCubesObservationsData, error: dataCubesObservationsError },

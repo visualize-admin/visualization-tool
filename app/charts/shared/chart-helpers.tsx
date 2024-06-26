@@ -179,26 +179,39 @@ const getComboChartConfigAdditionalFields = (chartConfig: ComboChartConfig) => {
 export const extractChartConfigsComponentIris = (
   chartConfigs: ChartConfig[]
 ) => {
-  return uniq(chartConfigs.map(extractChartConfigComponentIris).flat());
+  return uniq(
+    chartConfigs
+      .map((chartConfig) => extractChartConfigComponentIris({ chartConfig }))
+      .flat()
+  );
 };
 
-export const extractChartConfigComponentIris = (chartConfig: ChartConfig) => {
-  const { fields, interactiveFiltersConfig: IFConfig } = chartConfig;
-  const fieldIris = Object.values(fields).map((d) => d.componentIri);
+export const extractChartConfigComponentIris = ({
+  chartConfig,
+  includeFilters = true,
+}: {
+  chartConfig: ChartConfig;
+  includeFilters?: boolean;
+}) => {
+  const { fields, interactiveFiltersConfig } = chartConfig;
+  const fieldIris = Object.values(fields).map((field) => field.componentIri);
   const additionalFieldIris =
     chartConfig.chartType === "map"
       ? getMapChartConfigAdditionalFields(chartConfig)
       : isComboChartConfig(chartConfig)
         ? getComboChartConfigAdditionalFields(chartConfig)
         : [];
-  const filterIris = getChartConfigFilterComponentIris(chartConfig);
-  const IFKeys = IFConfig ? (Object.keys(IFConfig) as IFKey[]) : [];
+  const filterIris = includeFilters
+    ? getChartConfigFilterComponentIris(chartConfig)
+    : [];
+  const IFKeys = interactiveFiltersConfig
+    ? (Object.keys(interactiveFiltersConfig) as IFKey[])
+    : [];
   const IFIris: string[] = [];
 
-  if (IFConfig) {
+  if (interactiveFiltersConfig) {
     IFKeys.forEach((k) => {
-      const v = IFConfig[k];
-
+      const v = interactiveFiltersConfig[k];
       switch (k) {
         case "legend":
           IFIris.push((v as InteractiveFiltersLegend).componentIri);

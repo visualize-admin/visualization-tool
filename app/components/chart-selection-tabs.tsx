@@ -364,7 +364,7 @@ const NextStepButton = (props: React.PropsWithChildren<{}>) => {
   const locale = useLocale();
   const [state, dispatch] = useConfiguratorState(hasChartConfigs);
   const chartConfig = getChartConfig(state);
-  const componentIris = extractChartConfigComponentIris(chartConfig);
+  const componentIris = extractChartConfigComponentIris({ chartConfig });
   const [{ data: components }] = useDataCubesComponentsQuery({
     variables: {
       sourceType: state.dataSource.type,

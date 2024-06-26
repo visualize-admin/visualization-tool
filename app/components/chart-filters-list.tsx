@@ -38,7 +38,7 @@ export const ChartFiltersList = (props: ChartFiltersListProps) => {
   const animationField = getAnimationField(chartConfig);
   const queryFilters = useQueryFilters({
     chartConfig,
-    componentIris: extractChartConfigComponentIris(chartConfig),
+    componentIris: extractChartConfigComponentIris({ chartConfig }),
   });
   // TODO: Refactor to somehow access current filter labels instead of fetching them again
   const [{ data, fetching }] = useDataCubesComponentsQuery({
