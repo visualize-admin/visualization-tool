@@ -212,7 +212,13 @@ const DataDownloadInnerMenu = ({
           )
         }
         onClick={(e) => setAnchor(e.currentTarget)}
-        sx={{ width: "fit-content", minHeight: 0, p: 0, ml: "2px" }}
+        sx={{
+          width: "fit-content",
+          minHeight: 0,
+          p: 0,
+          ml: "2.5px",
+          fontSize: "inherit",
+        }}
       >
         <Trans id="button.download.data">Download data</Trans>
       </Button>
