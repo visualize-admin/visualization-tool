@@ -24,14 +24,17 @@ import { useDataCubesComponentsQuery } from "@/graphql/hooks";
 import { useLocale } from "@/locales/use-locale";
 import { useChartInteractiveFilters } from "@/stores/interactive-filters";
 
-type ChartFiltersListProps = {
+export const ChartFiltersList = ({
+  cubeIri,
+  dataSource,
+  chartConfig,
+  dimensions,
+}: {
+  cubeIri: string;
   dataSource: DataSource;
   chartConfig: ChartConfig;
   dimensions?: Dimension[];
-};
-
-export const ChartFiltersList = (props: ChartFiltersListProps) => {
-  const { dataSource, chartConfig, dimensions } = props;
+}) => {
   const locale = useLocale();
   const timeFormatUnit = useTimeFormatUnit();
   const timeSlider = useChartInteractiveFilters((d) => d.timeSlider);
@@ -40,13 +43,16 @@ export const ChartFiltersList = (props: ChartFiltersListProps) => {
     chartConfig,
     componentIris: extractChartConfigComponentIris({ chartConfig }),
   });
+  const cubeQueryFilters = useMemo(() => {
+    return queryFilters.filter((d) => d.iri === cubeIri);
+  }, [queryFilters, cubeIri]);
   // TODO: Refactor to somehow access current filter labels instead of fetching them again
   const [{ data, fetching }] = useDataCubesComponentsQuery({
     variables: {
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
-      cubeFilters: queryFilters.map((filter) => ({
+      cubeFilters: cubeQueryFilters.map((filter) => ({
         iri: filter.iri,
         componentIris: filter.componentIris,
         filters: filter.filters,
