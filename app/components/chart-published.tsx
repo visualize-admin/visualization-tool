@@ -387,6 +387,7 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
                 dataSource={dataSource}
                 chartConfig={chartConfig}
                 components={allComponents}
+                showVisualizeLink={state.chartConfigs.length === 1}
               />
             </InteractiveFiltersChartProvider>
           </LoadingStateProvider>

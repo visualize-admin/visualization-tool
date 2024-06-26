@@ -1444,6 +1444,10 @@ msgstr "Multiple datasets"
 msgid "logo.swiss.confederation"
 msgstr "Logo of the Swiss Confederation"
 
+#: app/components/chart-footnotes.tsx
+msgid "metadata.link.created.with"
+msgstr "Created with"
+
 #: app/components/confirmation-dialog.tsx
 msgid "no"
 msgstr "No"

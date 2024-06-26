@@ -1,5 +1,5 @@
 import { Trans } from "@lingui/macro";
-import { Box, Theme, Typography } from "@mui/material";
+import { Box, Link, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import uniqBy from "lodash/uniqBy";
 import { useMemo } from "react";
@@ -44,10 +44,12 @@ export const ChartFootnotes = ({
   dataSource,
   chartConfig,
   components,
+  showVisualizeLink = false,
 }: {
   dataSource: DataSource;
   chartConfig: ChartConfig;
   components: Component[];
+  showVisualizeLink?: boolean;
 }) => {
   const locale = useLocale();
   const usedComponents = useMemo(() => {
@@ -101,6 +103,7 @@ export const ChartFootnotes = ({
           ) : null}
         </div>
       ))}
+      {showVisualizeLink ? <VisualizeLink /> : null}
     </Box>
   );
 };
@@ -274,4 +277,23 @@ const ChartFootnotesComboLineSingle = ({
       })}
     </ChartFootnotesLegendContainer>
   ) : null;
+};
+
+const VisualizeLink = () => {
+  const locale = useLocale();
+  return (
+    <Typography variant="caption" color="grey.600">
+      <Trans id="metadata.link.created.with">Created with</Trans>
+      <Link
+        href={`https://visualize.admin.ch/${locale}/`}
+        target="_blank"
+        rel="noopener noreferrer"
+        color="primary.main"
+        sx={{ "&:hover": { textDecoration: "none" } }}
+      >
+        {" "}
+        visualize.admin.ch
+      </Link>
+    </Typography>
+  );
 };

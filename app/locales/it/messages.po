@@ -1444,6 +1444,10 @@ msgstr ""
 msgid "logo.swiss.confederation"
 msgstr "Logo della Confederazione svizzera"
 
+#: app/components/chart-footnotes.tsx
+msgid "metadata.link.created.with"
+msgstr "Creato con"
+
 #: app/components/confirmation-dialog.tsx
 msgid "no"
 msgstr "No"
