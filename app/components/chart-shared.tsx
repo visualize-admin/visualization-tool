@@ -235,7 +235,7 @@ const ShareChartMenuActionItem = ({ configKey }: { configKey: string }) => {
       href={shareUrl}
       target="_blank"
       rel="noopener noreferrer"
-      iconName="linkExternal"
+      iconName="share"
       label={<Trans id="button.share">Share</Trans>}
     />
   );
