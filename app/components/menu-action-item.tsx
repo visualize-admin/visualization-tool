@@ -91,6 +91,7 @@ export const MenuActionItem = (
           color={color}
           variant="contained"
           {...forwardedProps}
+          sx={{ minHeight: 0 }}
         >
           {label}
         </Button>
@@ -102,6 +103,7 @@ export const MenuActionItem = (
             color={color}
             component={props.type === "link" ? Link : "div"}
             {...forwardedProps}
+            sx={{ minHeight: 0 }}
           >
             <Icon size={16} name={icon} style={{ marginTop: "0.25rem" }} />
             {label}
