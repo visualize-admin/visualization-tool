@@ -139,7 +139,10 @@ export const ChartMoreButton = ({
               />
             ) : null}
             {configKey ? (
-              <ShareChartMenuActionItem configKey={configKey} />
+              <>
+                <CopyChartMenuActionItem configKey={configKey} />
+                <ShareChartMenuActionItem configKey={configKey} />
+              </>
             ) : null}
           </div>
         ) : (
@@ -195,6 +198,27 @@ export const ChartMoreButton = ({
         )}
       </ArrowMenuTopBottom>
     </>
+  );
+};
+
+const CopyChartMenuActionItem = ({ configKey }: { configKey: string }) => {
+  const locale = useLocale();
+  const [copyUrl, setCopyUrl] = useState("");
+  useEffect(() => {
+    setCopyUrl(
+      `${window.location.origin}/${locale}/create/new?copy=${configKey}`
+    );
+  }, [configKey, locale]);
+  return (
+    <MenuActionItem
+      type="link"
+      as="menuitem"
+      href={copyUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      iconName="edit"
+      label={<Trans id="chart-controls.copy-and-edit">Copy and edit</Trans>}
+    />
   );
 };
 

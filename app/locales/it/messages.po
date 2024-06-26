@@ -131,6 +131,7 @@ msgstr "Impossibile salvare la bozza"
 msgid "button.save-draft.saved"
 msgstr "Bozza salvata nelle [visualizzazioni](/profile)"
 
+#: app/components/chart-shared.tsx
 #: app/components/publish-actions.tsx
 msgid "button.share"
 msgstr "Condividi"
@@ -146,6 +147,10 @@ msgstr "Tenete presente che l'aggiornamento di questa visualizzazione avrà effe
 #: app/components/chart-shared.tsx
 msgid "chart-controls.chart-view"
 msgstr "Visualizzazione grafico"
+
+#: app/components/chart-shared.tsx
+msgid "chart-controls.copy-and-edit"
+msgstr "Copia e modifica"
 
 #: app/components/chart-selection-tabs.tsx
 #: app/components/chart-shared.tsx
@@ -168,7 +173,7 @@ msgstr "Duplicare"
 msgid "chart-controls.edit"
 msgstr "Modifica"
 
-#: app/components/data-download.tsx
+#: app/components/dataset-metadata.tsx
 msgid "chart-controls.sparql-query"
 msgstr "SPARQL query"
 
@@ -1104,7 +1109,6 @@ msgstr "Punti di contatto"
 msgid "dataset.metadata.furtherinformation"
 msgstr "Addizionali informazioni"
 
-#: app/components/chart-footnotes.tsx
 #: app/components/dataset-metadata.tsx
 msgid "dataset.metadata.learnmore"
 msgstr "Ulteriori informazioni sul set di dati"
@@ -1440,14 +1444,6 @@ msgstr ""
 msgid "logo.swiss.confederation"
 msgstr "Logo della Confederazione svizzera"
 
-#: app/components/chart-footnotes.tsx
-msgid "metadata.link.created.with.visualize"
-msgstr "Creato con visualize.admin.ch"
-
-#: app/components/chart-published.tsx
-msgid "metadata.link.created.with.visualize.alternate"
-msgstr "visualize.admin.ch"
-
 #: app/components/confirmation-dialog.tsx
 msgid "no"
 msgstr "No"
@@ -1475,22 +1471,6 @@ msgstr "Codice di incorporamento"
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.caption"
 msgstr "Usa questo codice per incorporare il grafico in una pagina web"
-
-#: app/components/publish-actions.tsx
-msgid "publication.embed.style.minimal"
-msgstr "Minimal"
-
-#: app/components/publish-actions.tsx
-msgid "publication.embed.style.minimal.caption"
-msgstr "Solo la grafica e un link a visualize.admin.ch per maggiori informazioni"
-
-#: app/components/publish-actions.tsx
-msgid "publication.embed.style.standard"
-msgstr "Standard"
-
-#: app/components/publish-actions.tsx
-msgid "publication.embed.style.standard.caption"
-msgstr "Include metadati e un link per il download dei dati"
 
 #: app/components/publish-actions.tsx
 msgid "publication.popup.share"
