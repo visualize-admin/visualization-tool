@@ -138,7 +138,7 @@ export const ChartMoreButton = ({
                 onSuccess={handleClose}
               />
             ) : null}
-            {configKey ? (
+            {state.layout.type !== "dashboard" && configKey ? (
               <>
                 <CopyChartMenuActionItem configKey={configKey} />
                 <ShareChartMenuActionItem configKey={configKey} />
