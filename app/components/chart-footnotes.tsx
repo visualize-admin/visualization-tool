@@ -32,7 +32,7 @@ export const useFootnotesStyles = makeStyles<Theme, { useMarginTop: boolean }>(
       alignItems: "center",
       flexWrap: "wrap",
       overflow: "hidden",
-
+      fontSize: theme.typography.caption.fontSize,
       "& > button": {
         minWidth: "auto",
       },
