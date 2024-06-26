@@ -94,9 +94,15 @@ const useItemStyles = makeStyles<Theme, ItemStyleProps>((theme) => {
         width: `calc(0.5rem * var(--size-adjust, 1))`,
         height: ({ symbol }) =>
           `calc(${["square", "circle"].includes(symbol) ? "0.5rem" : "2px"} * var(--size-adjust, 1))`,
-        marginTop: ({ symbol }) =>
+        marginTop: ({ symbol, usage }) =>
           `calc(0.75rem - calc(${
-            ["square", "circle"].includes(symbol) ? "0.5rem" : "2px"
+            ["square", "circle"].includes(symbol)
+              ? usage === "tooltip"
+                ? "0.6rem"
+                : "0.5rem"
+              : usage === "tooltip"
+                ? "0.2rem"
+                : "2px"
           } * var(--size-adjust, 1)) * 0.5)`,
         marginRight: "0.4rem",
         flexShrink: 0,

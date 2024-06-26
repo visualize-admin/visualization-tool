@@ -386,8 +386,7 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
               <ChartFootnotes
                 dataSource={dataSource}
                 chartConfig={chartConfig}
-                dimensions={dimensions}
-                measures={measures}
+                components={allComponents}
               />
             </InteractiveFiltersChartProvider>
           </LoadingStateProvider>

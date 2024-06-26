@@ -14,7 +14,7 @@ import {
   getAnimationField,
 } from "@/configurator";
 import {
-  Dimension,
+  Component,
   isTemporalDimension,
   isTemporalOrdinalDimension,
 } from "@/domain/data";
@@ -28,12 +28,12 @@ export const ChartFiltersList = ({
   cubeIri,
   dataSource,
   chartConfig,
-  dimensions,
+  components,
 }: {
   cubeIri: string;
   dataSource: DataSource;
   chartConfig: ChartConfig;
-  dimensions?: Dimension[];
+  components: Component[];
 }) => {
   const locale = useLocale();
   const timeFormatUnit = useTimeFormatUnit();
@@ -62,7 +62,7 @@ export const ChartFiltersList = ({
     },
   });
   const allFilters = useMemo(() => {
-    if (!data?.dataCubesComponents || !dimensions) {
+    if (!data?.dataCubesComponents || components.length === 0) {
       return [];
     }
 
@@ -96,7 +96,7 @@ export const ChartFiltersList = ({
       });
 
       if (animationField) {
-        const dimension = dimensions.find(
+        const dimension = components.find(
           (d) =>
             d.iri === animationField.componentIri && d.cubeIri === filter.iri
         );
@@ -135,7 +135,7 @@ export const ChartFiltersList = ({
     });
   }, [
     data?.dataCubesComponents,
-    dimensions,
+    components,
     queryFilters,
     animationField,
     timeFormatUnit,

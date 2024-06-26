@@ -554,8 +554,7 @@ const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
                   <ChartFootnotes
                     dataSource={dataSource}
                     chartConfig={chartConfig}
-                    dimensions={dimensions}
-                    measures={measures}
+                    components={allComponents}
                   />
                   {/* Wrap in div for subgrid layout */}
                   <div className="debug-panel">
