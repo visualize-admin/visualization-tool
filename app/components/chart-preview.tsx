@@ -473,6 +473,7 @@ const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
                       <Title
                         text={chartConfig.meta.title[locale]}
                         lighterColor
+                        smaller={state.layout.type === "dashboard"}
                         onClick={
                           configuring
                             ? () =>
@@ -504,6 +505,7 @@ const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
                     <Description
                       text={chartConfig.meta.description[locale]}
                       lighterColor
+                      smaller={state.layout.type === "dashboard"}
                       onClick={
                         configuring
                           ? () => {

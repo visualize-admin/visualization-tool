@@ -39,21 +39,23 @@ const getEmptyColor = (lighterColor?: boolean) => {
 type Props = TypographyProps & {
   text: string;
   lighterColor?: boolean;
+  smaller?: boolean;
 };
 
 export const Title = (props: Props) => {
-  const { text, lighterColor, onClick, className, sx, ...rest } = props;
+  const { text, lighterColor, smaller, onClick, className, sx, ...rest } =
+    props;
   const classes = useStyles({ interactive: !!onClick });
-
   return (
     <Typography
       {...rest}
-      variant="h2"
+      variant={smaller ? "h3" : "h2"}
       className={clsx(classes.text, className)}
       onClick={onClick}
       sx={{
         color: text ? text : getEmptyColor(lighterColor),
         wordBreak: "break-word",
+        fontWeight: "normal",
         ...sx,
       }}
     >
@@ -63,13 +65,13 @@ export const Title = (props: Props) => {
 };
 
 export const Description = (props: Props) => {
-  const { text, lighterColor, onClick, className, sx, ...rest } = props;
+  const { text, lighterColor, smaller, onClick, className, sx, ...rest } =
+    props;
   const classes = useStyles({ interactive: !!onClick });
-
   return (
     <Typography
       {...rest}
-      variant="body1"
+      variant={smaller ? "body2" : "body1"}
       className={clsx(classes.text, className)}
       onClick={onClick}
       sx={{
