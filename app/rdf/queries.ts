@@ -279,6 +279,10 @@ const getRegularDimensionsValues = async (
     cache: LRUCache | undefined;
   }
 ) => {
+  if (resolvedDimensions.length === 0) {
+    return [];
+  }
+
   // `cube` and `locale` are the same for all dimensions
   const { cube, locale } = resolvedDimensions[0];
   const cubeIri = cube.term?.value!;
