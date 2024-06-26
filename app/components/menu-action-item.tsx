@@ -1,4 +1,4 @@
-import { Button, Link, MenuItem, styled } from "@mui/material";
+import { Button, Divider, Link, MenuItem, styled } from "@mui/material";
 import NextLink from "next/link";
 
 import ConfirmationDialog from "@/components/confirmation-dialog";
@@ -7,12 +7,13 @@ import { Icon, IconName } from "@/icons";
 
 const StyledMenuItem = styled(MenuItem)(({ theme, color }) => ({
   display: "flex",
-  alignItems: "center",
+  alignItems: "flex-start",
   gap: theme.spacing(2),
   color:
     color === "primary" || color === "error"
       ? theme.palette[color].main
       : theme.palette.primary.main,
+  whiteSpace: "normal",
 })) as typeof MenuItem;
 
 export type MenuActionProps = {
@@ -26,6 +27,8 @@ export type MenuActionProps = {
   | {
       type: "link";
       href: string;
+      target?: string;
+      rel?: string;
     }
   | {
       type: "button";
@@ -52,7 +55,6 @@ export const MenuActionItem = (
     open: openConfirmation,
     close: closeConfirmation,
   } = useDisclosure();
-
   const Wrapper = ({
     icon,
     label,
@@ -78,6 +80,8 @@ export const MenuActionItem = (
           }
         : {
             href: props.href,
+            target: props.target,
+            rel: props.rel,
           };
     if (props.as === "button") {
       return (
@@ -87,20 +91,25 @@ export const MenuActionItem = (
           color={color}
           variant="contained"
           {...forwardedProps}
+          sx={{ minHeight: 0 }}
         >
           {label}
         </Button>
       );
     } else {
       return (
-        <StyledMenuItem
-          color={color}
-          component={props.type === "link" ? Link : "div"}
-          {...forwardedProps}
-        >
-          <Icon size={16} name={icon} />
-          {label}
-        </StyledMenuItem>
+        <>
+          <StyledMenuItem
+            color={color}
+            component={props.type === "link" ? Link : "div"}
+            {...forwardedProps}
+            sx={{ minHeight: 0 }}
+          >
+            <Icon size={16} name={icon} style={{ marginTop: "0.25rem" }} />
+            {label}
+          </StyledMenuItem>
+          <Divider sx={{ mx: 1, "&:last-of-type": { display: "none" } }} />
+        </>
       );
     }
   };

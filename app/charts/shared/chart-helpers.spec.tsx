@@ -209,7 +209,9 @@ describe("getChartConfigComponentIris", () => {
   );
 
   it("should return correct componentIris for line chart", () => {
-    const componentsIris = extractChartConfigComponentIris(lineConfig);
+    const componentsIris = extractChartConfigComponentIris({
+      chartConfig: lineConfig,
+    });
     expect(componentsIris).toEqual([
       "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/0",
       "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/1",
@@ -221,7 +223,9 @@ describe("getChartConfigComponentIris", () => {
   });
 
   it("should return correct componentIris for map chart", () => {
-    const componentsIris = extractChartConfigComponentIris(mapConfig);
+    const componentsIris = extractChartConfigComponentIris({
+      chartConfig: mapConfig,
+    });
     expect(componentsIris).toEqual([
       "https://environment.ld.admin.ch/foen/nfi/Topic/3",
       "https://environment.ld.admin.ch/foen/nfi/Topic/3r",
@@ -235,9 +239,9 @@ describe("getChartConfigComponentIris", () => {
   });
 
   it("should return correct componentIris for dual line chart (join by)", () => {
-    const componentIris = extractChartConfigComponentIris(
-      dualLine1Fixture as unknown as ChartConfig
-    );
+    const componentIris = extractChartConfigComponentIris({
+      chartConfig: dualLine1Fixture as unknown as ChartConfig,
+    });
     expect(
       componentIris.includes(
         "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr"

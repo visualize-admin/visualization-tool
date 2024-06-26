@@ -2,7 +2,7 @@ import { Trans } from "@lingui/macro";
 import { Box, SxProps, Typography } from "@mui/material";
 import Button, { ButtonProps } from "@mui/material/Button";
 import { useRouter } from "next/router";
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 
 import { SelectDatasetStep } from "@/browser/select-dataset-step";
 import { META } from "@/charts";
@@ -13,6 +13,10 @@ import {
 } from "@/components/chart-selection-tabs";
 import { HEADER_HEIGHT } from "@/components/header-constants";
 import { Loading } from "@/components/hint";
+import {
+  MetadataPanelStoreContext,
+  createMetadataPanelStore,
+} from "@/components/metadata-panel-store";
 import {
   ConfiguratorState,
   getChartConfig,
@@ -444,6 +448,9 @@ export const Configurator = () => {
   const [configuratorState] = useConfiguratorState();
   const isLoadingConfigureChartStep =
     configuratorState.state === "INITIAL" && pathname === "/create/[chartId]";
+  const metadataPanelStore = useMemo(() => {
+    return createMetadataPanelStore();
+  }, []);
 
   return isLoadingConfigureChartStep ? (
     <LoadingConfigureChartStep />
@@ -452,7 +459,9 @@ export const Configurator = () => {
   ) : configuratorState.state === "INITIAL" ? null : (
     <InteractiveFiltersProvider chartConfigs={configuratorState.chartConfigs}>
       {configuratorState.state === "CONFIGURING_CHART" && (
-        <ConfigureChartStep />
+        <MetadataPanelStoreContext.Provider value={metadataPanelStore}>
+          <ConfigureChartStep />
+        </MetadataPanelStoreContext.Provider>
       )}
       {configuratorState.state === "LAYOUTING" && <LayoutingStep />}
       {configuratorState.state === "PUBLISHING" && <PublishStep />}

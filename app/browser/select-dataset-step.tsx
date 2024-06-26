@@ -525,12 +525,17 @@ const DatasetMetadataSingleCubeAdapter = ({
       sourceUrl: dataSource.url,
     },
   });
+
   if (!data.data) {
     return null;
   }
 
   return (
-    <DatasetMetadata cube={data.data.dataCubeMetadata} showTitle={false} />
+    <DatasetMetadata
+      cube={data.data.dataCubeMetadata}
+      showTitle={false}
+      dataSource={dataSource}
+    />
   );
 };
 

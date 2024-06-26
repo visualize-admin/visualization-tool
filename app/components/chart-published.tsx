@@ -12,19 +12,22 @@ import { isUsingImputation } from "@/charts/shared/imputation";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
 import { ChartFootnotes } from "@/components/chart-footnotes";
 import { ChartPanelLayout, ChartWrapper } from "@/components/chart-panel";
-import { ChartControls } from "@/components/chart-shared";
+import {
+  ChartControls,
+  ChartMoreButton,
+  useChartStyles,
+} from "@/components/chart-shared";
 import {
   ChartTablePreviewProvider,
   useChartTablePreview,
 } from "@/components/chart-table-preview";
-import { useChartStyles } from "@/components/chart-utils";
 import { ChartWithFilters } from "@/components/chart-with-filters";
 import { DashboardInteractiveFilters } from "@/components/dashboard-interactive-filters";
 import Flex from "@/components/flex";
 import { HintBlue, HintRed, HintYellow } from "@/components/hint";
 import {
-  createMetadataPanelStore,
   MetadataPanelStoreContext,
+  createMetadataPanelStore,
 } from "@/components/metadata-panel-store";
 import {
   ChartConfig,
@@ -50,8 +53,6 @@ import {
   InteractiveFiltersChartProvider,
   InteractiveFiltersProvider,
 } from "@/stores/interactive-filters";
-import { useEmbedOptions } from "@/utils/embed";
-import useEvent from "@/utils/use-event";
 
 type ChartPublishedProps = {
   configKey?: string;
@@ -198,15 +199,8 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
   } = props;
   const { meta } = chartConfig;
   const rootRef = useRef<HTMLDivElement>(null);
-  const {
-    state: isTablePreview,
-    setState: setIsTablePreview,
-    containerRef,
-    containerHeight,
-    computeContainerHeight,
-  } = useChartTablePreview();
-  const handleToggleTableView = useEvent(() => setIsTablePreview((c) => !c));
-  const [{ showDownload }] = useEmbedOptions();
+  const { isTable, containerRef, containerHeight, computeContainerHeight } =
+    useChartTablePreview();
   const metadataPanelStore = useMemo(() => createMetadataPanelStore(), []);
   const metadataPanelOpen = useStore(metadataPanelStore, (state) => state.open);
   const shouldShrink = useMemo(() => {
@@ -343,6 +337,10 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
                   // title and the chart (subgrid layout)
                   <span />
                 )}
+                <ChartMoreButton
+                  configKey={configKey}
+                  chartKey={chartConfig.key}
+                />
               </Flex>
               {meta.description[locale] ? (
                 <Description text={meta.description[locale]} />
@@ -355,8 +353,9 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
                 dataSource={dataSource}
                 chartConfig={chartConfig}
                 metadataPanelProps={{
-                  dimensions: allComponents,
+                  components: allComponents,
                   container: rootRef.current,
+                  allowMultipleOpen: true,
                 }}
               />
 
@@ -365,16 +364,16 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
                 style={{
                   // TODO before merging, Align with chart-preview
                   minWidth: 0,
-                  height: containerHeight.current,
+                  height: containerHeight,
                   marginTop: 16,
                   flexGrow: 1,
                 }}
               >
-                {isTablePreview ? (
+                {isTable ? (
                   <DataSetTable
-                    sx={{ maxHeight: "100%" }}
                     dataSource={dataSource}
                     chartConfig={chartConfig}
+                    sx={{ maxHeight: "100%" }}
                   />
                 ) : (
                   <ChartWithFilters
@@ -387,16 +386,8 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
               <ChartFootnotes
                 dataSource={dataSource}
                 chartConfig={chartConfig}
-                dimensions={dimensions}
-                configKey={configKey}
-                onToggleTableView={handleToggleTableView}
-                visualizeLinkText={
-                  showDownload === false ? (
-                    <Trans id="metadata.link.created.with.visualize.alternate">
-                      visualize.admin.ch
-                    </Trans>
-                  ) : undefined
-                }
+                components={allComponents}
+                showVisualizeLink={state.chartConfigs.length === 1}
               />
             </InteractiveFiltersChartProvider>
           </LoadingStateProvider>

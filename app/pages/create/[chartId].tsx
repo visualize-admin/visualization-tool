@@ -1,12 +1,7 @@
 import { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
-import { useMemo } from "react";
 
 import { AppLayout } from "@/components/layout";
-import {
-  createMetadataPanelStore,
-  MetadataPanelStoreContext,
-} from "@/components/metadata-panel-store";
 import { Configurator, ConfiguratorStateProvider } from "@/configurator";
 import { AddNewDatasetPanel } from "@/configurator/components/add-new-dataset-panel";
 
@@ -28,10 +23,6 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
 };
 
 const ChartConfiguratorPage: NextPage<PageProps> = ({ chartId }) => {
-  const metadataPanelStore = useMemo(() => {
-    return createMetadataPanelStore();
-  }, []);
-
   return (
     <>
       <Head>
@@ -40,10 +31,8 @@ const ChartConfiguratorPage: NextPage<PageProps> = ({ chartId }) => {
       </Head>
       <AppLayout>
         <ConfiguratorStateProvider chartId={chartId}>
-          <MetadataPanelStoreContext.Provider value={metadataPanelStore}>
-            <Configurator />
-            <AddNewDatasetPanel />
-          </MetadataPanelStoreContext.Provider>
+          <Configurator />
+          <AddNewDatasetPanel />
         </ConfiguratorStateProvider>
       </AppLayout>
     </>

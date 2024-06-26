@@ -1,34 +1,34 @@
-import React, {
+import {
   Dispatch,
   ReactNode,
   RefObject,
   SetStateAction,
   createContext,
-  useContext,
-  useState,
-  useMemo,
-  useEffect,
-  useRef,
   useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
 } from "react";
 
 import { hasChartConfigs, useConfiguratorState } from "@/configurator";
 
 type Context = {
-  state: boolean;
-  setState: Dispatch<SetStateAction<boolean>>;
-  setStateRaw: Dispatch<SetStateAction<boolean>>;
+  isTable: boolean;
+  setIsTable: Dispatch<SetStateAction<boolean>>;
+  setIsTableRaw: Dispatch<SetStateAction<boolean>>;
   containerRef: RefObject<HTMLDivElement>;
-  containerHeight: { current: "auto" | number };
+  containerHeight: "auto" | number;
   computeContainerHeight: () => void;
 };
 
 const ChartTablePreviewContext = createContext<Context>({
-  state: false,
-  setState: () => {},
-  setStateRaw: () => {},
+  isTable: false,
+  setIsTable: () => {},
+  setIsTableRaw: () => {},
   containerRef: { current: null },
-  containerHeight: { current: "auto" },
+  containerHeight: "auto",
   computeContainerHeight: () => undefined,
 });
 
@@ -45,7 +45,7 @@ export const useChartTablePreview = () => {
 };
 
 /**
- * Keep tracks of whether we are looking at the chart of a table
+ * Keeps track of whether we are looking at the chart or a table.
  * Before changing type, the height of containerRef is measured
  * and passed back into containerHeight.
  */
@@ -55,7 +55,7 @@ export const ChartTablePreviewProvider = ({
   children: ReactNode;
 }) => {
   const [configuratorState] = useConfiguratorState(hasChartConfigs);
-  const [state, setStateRaw] = useState<boolean>(false);
+  const [isTable, setIsTableRaw] = useState<boolean>(false);
   const containerHeight = useRef("auto" as "auto" | number);
   const containerRef = useRef<HTMLDivElement>(null);
   const computeContainerHeight = () => {
@@ -63,16 +63,15 @@ export const ChartTablePreviewProvider = ({
       return;
     }
 
-    const bcr = containerRef.current.getBoundingClientRect();
-    containerHeight.current = bcr.height;
+    const { height } = containerRef.current.getBoundingClientRect();
+    containerHeight.current = height;
   };
-  const setState = useCallback(
+  const setIsTable = useCallback(
     (v) => {
       computeContainerHeight();
-
-      return setStateRaw(v);
+      return setIsTableRaw(v);
     },
-    [setStateRaw]
+    [setIsTableRaw]
   );
 
   useEffect(() => {
@@ -81,14 +80,14 @@ export const ChartTablePreviewProvider = ({
 
   const ctx = useMemo(() => {
     return {
-      state,
-      setState,
-      setStateRaw,
+      isTable,
+      setIsTable,
+      setIsTableRaw,
       containerRef,
-      containerHeight,
+      containerHeight: containerHeight.current,
       computeContainerHeight,
     };
-  }, [setState, state, containerRef, containerHeight, setStateRaw]);
+  }, [isTable, setIsTable, setIsTableRaw, containerRef, containerHeight]);
 
   return (
     <ChartTablePreviewContext.Provider value={ctx}>

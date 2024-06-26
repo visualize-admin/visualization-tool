@@ -10,6 +10,9 @@ interface Events {
   "dataset-added": {
     datasetIri: string;
   };
+  "metadata-panel-opened": {
+    datasetIri: string;
+  };
 }
 
 type GlobalEventEmitter = StrictEventEmitter<EventEmitter, Events>;

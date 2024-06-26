@@ -94,10 +94,6 @@ msgstr "Jeu de données complet"
 msgid "button.download.data.visible"
 msgstr "Données du graphique"
 
-#: app/components/data-download.tsx
-msgid "button.download.runsparqlquery.visible"
-msgstr "Lancer la requête SPARQL"
-
 #: app/components/publish-actions.tsx
 msgid "button.embed"
 msgstr "Intégrer"
@@ -135,6 +131,7 @@ msgstr "Impossible d'enregistrer le brouillon"
 msgid "button.save-draft.saved"
 msgstr "Brouillon enregistré dans [Mes visualisations](/profile)"
 
+#: app/components/chart-shared.tsx
 #: app/components/publish-actions.tsx
 msgid "button.share"
 msgstr "Partager"
@@ -147,21 +144,42 @@ msgstr "Actualiser cette visualisation"
 msgid "button.update.warning"
 msgstr "Gardez à l'esprit que la mise à jour de cette visualisation affectera tous les endroits où elle est déjà intégrée !"
 
-#: app/components/chart-preview.tsx
+#: app/components/chart-shared.tsx
+msgid "chart-controls.chart-view"
+msgstr "Vue graphique"
+
+#: app/components/chart-shared.tsx
+msgid "chart-controls.copy-and-edit"
+msgstr "Copier et éditer"
+
+#: app/components/chart-selection-tabs.tsx
+#: app/components/chart-shared.tsx
 msgid "chart-controls.delete"
 msgstr "Supprimer"
 
-#: app/components/chart-preview.tsx
+#: app/components/chart-shared.tsx
 msgid "chart-controls.delete.confirmation"
 msgstr "Êtes-vous sûr de vouloir supprimer ce graphique ?"
 
-#: app/components/chart-preview.tsx
+#: app/components/chart-shared.tsx
 msgid "chart-controls.delete.title"
 msgstr "Supprimer le graphique ?"
 
-#: app/components/chart-preview.tsx
+#: app/components/chart-shared.tsx
+msgid "chart-controls.duplicate"
+msgstr "Dupliquer"
+
+#: app/components/chart-shared.tsx
 msgid "chart-controls.edit"
 msgstr "Modifier"
+
+#: app/components/dataset-metadata.tsx
+msgid "chart-controls.sparql-query"
+msgstr "Requête SPARQL"
+
+#: app/components/chart-shared.tsx
+msgid "chart-controls.table-view"
+msgstr "Vue du tableau"
 
 #: app/components/chart-selection-tabs.tsx
 msgid "chart-selection-tabs.add-chart-different-dataset.button"
@@ -479,10 +497,6 @@ msgstr "Description"
 msgid "controls.dimensionvalue.none"
 msgstr "Aucune filtre"
 
-#: app/components/chart-selection-tabs.tsx
-msgid "controls.duplicate.visualization"
-msgstr "Dupliquer cette visualisation"
-
 #: app/configurator/components/filters.tsx
 msgid "controls.filter.nb-elements"
 msgstr "{0} sur {1}"
@@ -630,7 +644,7 @@ msgstr "Valeurs disponibles"
 #: app/components/metadata-panel.tsx
 #: app/components/metadata-panel.tsx
 msgid "controls.metadata-panel.metadata"
-msgstr "Metadata"
+msgstr "Détails"
 
 #: app/components/metadata-panel.tsx
 msgid "controls.metadata-panel.section.data"
@@ -670,10 +684,6 @@ msgstr "Actif"
 #: app/configurator/components/chart-controls/control-tab.tsx
 msgid "controls.option.isNotActive"
 msgstr "Inactif"
-
-#: app/components/chart-selection-tabs.tsx
-msgid "controls.remove.visualization"
-msgstr "Supprimer cette visualisation"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.scale.type"
@@ -1076,12 +1086,8 @@ msgid "dataset-result.shared-dimensions"
 msgstr "Dimensions partagées"
 
 #: app/components/chart-footnotes.tsx
-msgid "dataset.footnotes.dataset"
-msgstr "Jeu de données"
-
-#: app/components/chart-footnotes.tsx
 msgid "dataset.footnotes.updated"
-msgstr "Mise à jour"
+msgstr "Mise à jour des données"
 
 #: app/components/chart-published.tsx
 msgid "dataset.hasImputedValues"
@@ -1103,7 +1109,6 @@ msgstr "Points de contact"
 msgid "dataset.metadata.furtherinformation"
 msgstr "Informations complémentaires"
 
-#: app/components/chart-footnotes.tsx
 #: app/components/dataset-metadata.tsx
 msgid "dataset.metadata.learnmore"
 msgstr "En savoir plus sur le jeu de données"
@@ -1363,6 +1368,10 @@ msgid "login.chart.edit"
 msgstr "Editer"
 
 #: app/login/components/profile-tables.tsx
+msgid "login.chart.preview"
+msgstr "Aperçu"
+
+#: app/login/components/profile-tables.tsx
 msgid "login.chart.rename"
 msgstr "Renommer"
 
@@ -1373,10 +1382,6 @@ msgstr "Partager"
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.view"
 msgstr "Voir"
-
-#: app/login/components/profile-tables.tsx
-msgid "login.chart.preview"
-msgstr "Aperçu"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.create-chart"
@@ -1440,24 +1445,8 @@ msgid "logo.swiss.confederation"
 msgstr "Logo de la Confédération Suisse"
 
 #: app/components/chart-footnotes.tsx
-msgid "metadata.link.created.with.visualize"
-msgstr "Créé avec visualize.admin.ch"
-
-#: app/components/chart-published.tsx
-msgid "metadata.link.created.with.visualize.alternate"
-msgstr "visualize.admin.ch"
-
-#: app/components/chart-footnotes.tsx
-msgid "metadata.source"
-msgstr "Source"
-
-#: app/components/chart-footnotes.tsx
-msgid "metadata.switch.chart"
-msgstr "Passer à la vue graphique"
-
-#: app/components/chart-footnotes.tsx
-msgid "metadata.switch.table"
-msgstr "Passer à la vue en tableau"
+msgid "metadata.link.created.with"
+msgstr "Créé avec"
 
 #: app/components/confirmation-dialog.tsx
 msgid "no"
@@ -1486,22 +1475,6 @@ msgstr "Code pour intégrer"
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.caption"
 msgstr "Utilisez ce code pour intégrer le graphique sur une page web"
-
-#: app/components/publish-actions.tsx
-msgid "publication.embed.style.minimal"
-msgstr "Minimal"
-
-#: app/components/publish-actions.tsx
-msgid "publication.embed.style.minimal.caption"
-msgstr "Seulement le graphique et un lien vers visualize.admin.ch pour plus d'informations"
-
-#: app/components/publish-actions.tsx
-msgid "publication.embed.style.standard"
-msgstr "Standard"
-
-#: app/components/publish-actions.tsx
-msgid "publication.embed.style.standard.caption"
-msgstr "Inclut les métadonnées et un lien de téléchargement des données"
 
 #: app/components/publish-actions.tsx
 msgid "publication.popup.share"
@@ -1577,8 +1550,6 @@ msgstr "Semaine"
 msgid "time-units.Year"
 msgstr "Année"
 
-#: app/components/chart-footnotes.tsx
-#: app/components/chart-footnotes.tsx
 #: app/components/chart-footnotes.tsx
 msgid "typography.colon"
 msgstr " : "

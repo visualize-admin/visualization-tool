@@ -1,5 +1,5 @@
 import { Trans } from "@lingui/macro";
-import { Box, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 import { Fragment, useMemo } from "react";
 
 import {
@@ -14,7 +14,7 @@ import {
   getAnimationField,
 } from "@/configurator";
 import {
-  Dimension,
+  Component,
   isTemporalDimension,
   isTemporalOrdinalDimension,
 } from "@/domain/data";
@@ -24,29 +24,35 @@ import { useDataCubesComponentsQuery } from "@/graphql/hooks";
 import { useLocale } from "@/locales/use-locale";
 import { useChartInteractiveFilters } from "@/stores/interactive-filters";
 
-type ChartFiltersListProps = {
+export const ChartFiltersList = ({
+  cubeIri,
+  dataSource,
+  chartConfig,
+  components,
+}: {
+  cubeIri: string;
   dataSource: DataSource;
   chartConfig: ChartConfig;
-  dimensions?: Dimension[];
-};
-
-export const ChartFiltersList = (props: ChartFiltersListProps) => {
-  const { dataSource, chartConfig, dimensions } = props;
+  components: Component[];
+}) => {
   const locale = useLocale();
   const timeFormatUnit = useTimeFormatUnit();
   const timeSlider = useChartInteractiveFilters((d) => d.timeSlider);
   const animationField = getAnimationField(chartConfig);
   const queryFilters = useQueryFilters({
     chartConfig,
-    componentIris: extractChartConfigComponentIris(chartConfig),
+    componentIris: extractChartConfigComponentIris({ chartConfig }),
   });
+  const cubeQueryFilters = useMemo(() => {
+    return queryFilters.filter((d) => d.iri === cubeIri);
+  }, [queryFilters, cubeIri]);
   // TODO: Refactor to somehow access current filter labels instead of fetching them again
   const [{ data, fetching }] = useDataCubesComponentsQuery({
     variables: {
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
-      cubeFilters: queryFilters.map((filter) => ({
+      cubeFilters: cubeQueryFilters.map((filter) => ({
         iri: filter.iri,
         componentIris: filter.componentIris,
         filters: filter.filters,
@@ -56,7 +62,7 @@ export const ChartFiltersList = (props: ChartFiltersListProps) => {
     },
   });
   const allFilters = useMemo(() => {
-    if (!data?.dataCubesComponents || !dimensions) {
+    if (!data?.dataCubesComponents || components.length === 0) {
       return [];
     }
 
@@ -90,7 +96,7 @@ export const ChartFiltersList = (props: ChartFiltersListProps) => {
       });
 
       if (animationField) {
-        const dimension = dimensions.find(
+        const dimension = components.find(
           (d) =>
             d.iri === animationField.componentIri && d.cubeIri === filter.iri
         );
@@ -129,7 +135,7 @@ export const ChartFiltersList = (props: ChartFiltersListProps) => {
     });
   }, [
     data?.dataCubesComponents,
-    dimensions,
+    components,
     queryFilters,
     animationField,
     timeFormatUnit,
@@ -139,9 +145,7 @@ export const ChartFiltersList = (props: ChartFiltersListProps) => {
 
   return fetching ? (
     <Typography component="div" variant="caption" color="grey.600">
-      <b>
-        <Trans id="controls.section.data.filters">Filters</Trans>:
-      </b>{" "}
+      <Trans id="controls.section.data.filters">Filters</Trans>:{" "}
       <Trans id="hint.loading.data">Loading data...</Trans>
     </Typography>
   ) : allFilters.length ? (
@@ -154,22 +158,20 @@ export const ChartFiltersList = (props: ChartFiltersListProps) => {
       <Typography
         component="span"
         variant="inherit"
-        fontWeight="bold"
         color="grey.600"
-        sx={{ mr: 2 }}
+        sx={{ mr: 1 }}
       >
         <Trans id="controls.section.data.filters">Filters</Trans>:
       </Typography>
       {allFilters.map(({ dimension, value }, i) => (
         <Fragment key={dimension.iri}>
-          <Box component="span" fontWeight="bold">
-            <OpenMetadataPanelWrapper dim={dimension}>
-              <span style={{ fontWeight: "bold" }}>{dimension.label}</span>
+          <span>
+            <OpenMetadataPanelWrapper component={dimension}>
+              <span>{dimension.label}</span>
             </OpenMetadataPanelWrapper>
             {": "}
-          </Box>
-
-          <Box component="span">{value && value.label}</Box>
+          </span>
+          <span>{value && value.label}</span>
           {i < allFilters.length - 1 && ", "}
         </Fragment>
       ))}

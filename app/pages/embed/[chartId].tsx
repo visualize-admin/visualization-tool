@@ -10,7 +10,6 @@ import {
 } from "@/configurator";
 import { getConfig, increaseConfigViewCount } from "@/db/config";
 import { serializeProps } from "@/db/serialize";
-import { EmbedOptionsProvider } from "@/utils/embed";
 
 type PageProps =
   | {
@@ -58,14 +57,12 @@ const EmbedPage = (props: PageProps) => {
   } = props;
 
   return (
-    <EmbedOptionsProvider>
-      <ConfiguratorStateProvider
-        chartId="published"
-        initialState={{ ...state, state: "PUBLISHED" }}
-      >
-        <ChartPublished configKey={key} />
-      </ConfiguratorStateProvider>
-    </EmbedOptionsProvider>
+    <ConfiguratorStateProvider
+      chartId="published"
+      initialState={{ ...state, state: "PUBLISHED" }}
+    >
+      <ChartPublished configKey={key} />
+    </ConfiguratorStateProvider>
   );
 };
 
