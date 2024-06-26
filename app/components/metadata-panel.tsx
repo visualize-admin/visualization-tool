@@ -794,7 +794,7 @@ const ComponentTabPanel = ({
                   x.cubeIri === loadedComponent.cubeIri ? null : (
                     <div key={x.cubeIri}>
                       <Typography variant="body2">
-                        {x.label} ({cubesByIri[x.cubeIri]?.title} )
+                        {x.label} ({cubesByIri[x.cubeIri]?.title})
                       </Typography>
                     </div>
                   )
