@@ -757,6 +757,7 @@ export const ChartConfigurator = ({
         chartConfig={chartConfig}
         components={components}
         top={HEADER_HEIGHT}
+        renderToggle={false}
       />
     </InteractiveFiltersChartProvider>
   );

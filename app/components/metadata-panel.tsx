@@ -234,6 +234,7 @@ export const MetadataPanel = ({
   container,
   top = 0,
   allowMultipleOpen,
+  renderToggle = true,
 }: {
   chartConfig: ChartConfig;
   dataSource: DataSource;
@@ -241,6 +242,7 @@ export const MetadataPanel = ({
   container?: HTMLDivElement | null;
   top?: number;
   allowMultipleOpen?: boolean;
+  renderToggle?: boolean;
 }) => {
   const router = useRouter();
   const drawerClasses = useDrawerStyles({ top });
@@ -278,7 +280,7 @@ export const MetadataPanel = ({
 
   return (
     <>
-      <ToggleButton onClick={handleToggle} />
+      {renderToggle && <ToggleButton onClick={handleToggle} />}
       <Drawer
         data-testid="panel-metadata"
         className={drawerClasses.root}
