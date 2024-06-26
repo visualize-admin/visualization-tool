@@ -226,8 +226,8 @@ const DataDownloadInnerMenu = ({
         open={!!anchor}
         anchorEl={anchor}
         onClose={handleClose}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-        transformOrigin={{ vertical: "bottom", horizontal: "center" }}
+        anchorOrigin={{ horizontal: "right", vertical: "top" }}
+        transformOrigin={{ horizontal: "center", vertical: "bottom" }}
         MenuListProps={{
           subheader: (
             <ListSubheader>

@@ -127,8 +127,8 @@ export const ChartMoreButton = ({
         open={!!anchor}
         anchorEl={anchor}
         onClose={handleClose}
-        anchorOrigin={{ horizontal: "center", vertical: "bottom" }}
-        transformOrigin={{ horizontal: "center", vertical: "top" }}
+        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+        transformOrigin={{ horizontal: "right", vertical: "top" }}
       >
         {isPublished(state) ? (
           <div>

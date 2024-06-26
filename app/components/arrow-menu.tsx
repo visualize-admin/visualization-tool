@@ -14,7 +14,7 @@ export const ArrowMenuTopBottom = styled(Menu)(({ theme }) => ({
       position: "absolute",
       margin: "auto",
       top: -5,
-      left: 0,
+      left: "calc(100% - 40px)",
       right: 0,
     },
   },
@@ -35,7 +35,7 @@ export const ArrowMenuBottomTop = styled(Menu)(({ theme }) => ({
       margin: "auto",
       bottom: -5,
       left: 0,
-      right: 0,
+      right: "calc(100% - 40px)",
     },
   },
 }));
