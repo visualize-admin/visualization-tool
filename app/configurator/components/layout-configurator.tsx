@@ -11,12 +11,12 @@ import {
 import capitalize from "lodash/capitalize";
 import keyBy from "lodash/keyBy";
 import omit from "lodash/omit";
-import { Fragment, useMemo } from "react";
+import { Fragment, useCallback, useMemo } from "react";
 
 import { DataFilterGenericDimensionProps } from "@/charts/shared/chart-data-filters";
 import { Select } from "@/components/form";
 import { generateLayout } from "@/components/react-grid";
-import { ChartConfig, LayoutDashboard } from "@/config-types";
+import { ChartConfig, getChartConfig, LayoutDashboard } from "@/config-types";
 import { LayoutAnnotator } from "@/configurator/components/annotators";
 import {
   ControlSection,
@@ -315,7 +315,8 @@ const SharedFilterOptionsTimeRange = ({
   const formatLocale = useTimeFormatLocale();
   const formatDate = formatLocale.format(timeFormat);
   const parseDate = formatLocale.parse(timeFormat);
-  const [, dispatch] = useConfiguratorState();
+  const [state, dispatch] = useConfiguratorState();
+  const dashboardInteractiveFilters = useDashboardInteractiveFilters();
 
   const { minDate, maxDate, optionValues, options } = useMemo(() => {
     return extractDataPickerOptionsFromDimension({
@@ -324,22 +325,71 @@ const SharedFilterOptionsTimeRange = ({
     });
   }, [dimension, parseDate]);
 
+  const updateChartStoresFrom = useCallback(
+    (newDate: Date) => {
+      const sharedFilterIri = sharedFilter.componentIri;
+      Object.entries(dashboardInteractiveFilters.stores).forEach(
+        ([chartKey, [getInteractiveFiltersState]]) => {
+          const { interactiveFiltersConfig } = getChartConfig(state, chartKey);
+          const interactiveFiltersState = getInteractiveFiltersState();
+          const { from, to } = interactiveFiltersState.timeRange;
+          const setTimeRangeFilter = interactiveFiltersState.setTimeRange;
+          if (
+            from &&
+            to &&
+            interactiveFiltersConfig?.timeRange.componentIri === sharedFilterIri
+          ) {
+            setTimeRangeFilter(newDate, to);
+          }
+        }
+      );
+    },
+    [dashboardInteractiveFilters.stores, sharedFilter.componentIri, state]
+  );
+
+  const updateChartStoresTo = useCallback(
+    (newDate: Date) => {
+      const sharedFilterIri = sharedFilter.componentIri;
+      Object.entries(dashboardInteractiveFilters.stores).forEach(
+        ([chartKey, [getInteractiveFiltersState]]) => {
+          const { interactiveFiltersConfig } = getChartConfig(state, chartKey);
+          const interactiveFiltersState = getInteractiveFiltersState();
+          const { from, to } = interactiveFiltersState.timeRange;
+          const setTimeRangeFilter = interactiveFiltersState.setTimeRange;
+          if (
+            from &&
+            to &&
+            interactiveFiltersConfig?.timeRange.componentIri === sharedFilterIri
+          ) {
+            setTimeRangeFilter(from, newDate);
+          }
+        }
+      );
+    },
+    [dashboardInteractiveFilters.stores, sharedFilter.componentIri, state]
+  );
+
   const handleChangeFromDate: DatePickerFieldProps["onChange"] = (ev) => {
+    const newDate = parseDate(ev.target.value);
+    if (!newDate) {
+      return;
+    }
     dispatch({
       type: "DASHBOARD_FILTER_UPDATE",
       value: {
         ...sharedFilter,
         presets: {
           ...sharedFilter.presets,
-          from: formatDate(new Date(ev.target.value)),
+          from: formatDate(newDate),
         },
       },
     });
+    updateChartStoresFrom(newDate);
   };
 
   const handleChangeFromGeneric: DataFilterGenericDimensionProps["onChange"] = (
     ev
-  ) =>
+  ) => {
     dispatch({
       type: "DASHBOARD_FILTER_UPDATE",
       value: {
@@ -350,22 +400,33 @@ const SharedFilterOptionsTimeRange = ({
         },
       },
     });
+    const parsedDate = parseDate(ev.target.value as string);
+    if (parsedDate) {
+      updateChartStoresFrom(parsedDate);
+    }
+  };
 
-  const handleChangeToDate: DatePickerFieldProps["onChange"] = (ev) =>
+  const handleChangeToDate: DatePickerFieldProps["onChange"] = (ev) => {
+    const newDate = parseDate(ev.target.value);
+    if (!newDate) {
+      return;
+    }
     dispatch({
       type: "DASHBOARD_FILTER_UPDATE",
       value: {
         ...sharedFilter,
         presets: {
           ...sharedFilter.presets,
-          to: formatDate(new Date(ev.target.value)),
+          to: formatDate(newDate),
         },
       },
     });
+    updateChartStoresTo(newDate);
+  };
 
   const handleChangeToGeneric: DataFilterGenericDimensionProps["onChange"] = (
     ev
-  ) =>
+  ) => {
     dispatch({
       type: "DASHBOARD_FILTER_UPDATE",
       value: {
@@ -376,6 +437,11 @@ const SharedFilterOptionsTimeRange = ({
         },
       },
     });
+    const parsedDate = parseDate(ev.target.value as string);
+    if (parsedDate) {
+      updateChartStoresTo(parsedDate);
+    }
+  };
 
   return (
     <Stack spacing={1} direction="column" gap="0.25rem">

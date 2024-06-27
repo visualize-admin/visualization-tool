@@ -150,9 +150,7 @@ const DashboardTimeRangeSlider = ({
       for (const [_getState, _useStore, store] of Object.values(
         dashboardInteractiveFilters.stores
       )) {
-        store.setState({
-          timeRange: newTimeRange,
-        });
+        store.setState({ timeRange: newTimeRange });
         setTimeRange([value[0], value[1]]);
       }
     }
@@ -172,6 +170,16 @@ const DashboardTimeRangeSlider = ({
     },
     [timeRange, timeUnit, presets, handleChangeSlider, filter.componentIri]
   );
+
+  useEffect(() => {
+    if (filter.presets.from && filter.presets.to && timeUnit) {
+      const parser = timeUnitToParser[timeUnit];
+      setTimeRange([
+        toUnixSeconds(parser(filter.presets.from)),
+        toUnixSeconds(parser(filter.presets.to)),
+      ]);
+    }
+  }, [filter.presets.from, filter.presets.to, timeUnit]);
 
   const mountedForSomeTime = useTimeout(500, mounted);
 
