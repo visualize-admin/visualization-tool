@@ -47,6 +47,8 @@ You can also check the
     redirect to the editing step anymore
   - Metadata panel is now behaving correctly in the editing mode when editing
     several charts e.g. in a dashboard
+  - Sub-theme filters now work correctly both in the search page and in the
+    dataset selection modal when adding a new chart based on another cube
 - Style
   - Cleaned up the chart footnotes and moved most of them to the metadata panel
     – it means that the footnotes don't look broken anymore for charts based on
