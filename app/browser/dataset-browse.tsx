@@ -354,7 +354,7 @@ const encodeFilter = (filter: BrowseFilter) => {
       case "DataCubeOrganization":
         return "organization";
       case "DataCubeAbout":
-        throw new Error("Should not happen");
+        return "topic";
       case "Termset":
         return "termset";
       default:
@@ -394,18 +394,18 @@ const NavItem = ({
         {
           includeDrafts,
           search,
-          topic: level === 2 ? next.iri : undefined,
+          topic: level === 2 && !disableLink ? next.iri : undefined,
         },
         Boolean
       )
     );
     const newFilters = [...filters].filter(
       (f) =>
-        f.__typename !== "DataCubeAbout" &&
+        (disableLink ? true : f.__typename !== "DataCubeAbout") &&
         (level === 1 ? f.__typename !== next.__typename : true)
     );
 
-    if (level === 1) {
+    if (level === 1 || disableLink) {
       newFilters.push(next);
     }
 
@@ -413,7 +413,7 @@ const NavItem = ({
       newFilters,
       `/browse/${newFilters.map(encodeFilter).join("/")}?${extraURLParams}`,
     ] as const;
-  }, [includeDrafts, search, level, next, filters]);
+  }, [includeDrafts, search, level, next, filters, disableLink]);
 
   const [newFiltersRemove, removeFilterPath] = useMemo(() => {
     const extraURLParams = stringify(
@@ -446,10 +446,14 @@ const NavItem = ({
     >
       <ButtonBase
         className={classes.removeFilterButton}
-        onClick={(ev) => {
-          ev.preventDefault();
-          setFilters(newFiltersRemove);
-        }}
+        onClick={
+          disableLink
+            ? (e) => {
+                e.preventDefault();
+                setFilters(newFiltersRemove);
+              }
+            : undefined
+        }
       >
         <SvgIcClose width={24} height={24} />
       </ButtonBase>
@@ -501,13 +505,17 @@ const NavItem = ({
           >
             <MUILink
               className={classes.link}
-              href={path}
+              href={disableLink ? undefined : path}
               underline="none"
               variant="body2"
-              onClick={(ev) => {
-                ev.preventDefault();
-                setFilters(newFiltersAdd);
-              }}
+              onClick={
+                disableLink
+                  ? (e) => {
+                      e.preventDefault();
+                      setFilters(newFiltersAdd);
+                    }
+                  : undefined
+              }
             >
               {children}
             </MUILink>
