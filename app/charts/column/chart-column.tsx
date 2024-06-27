@@ -40,11 +40,11 @@ const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
   const { chartConfig, dimensions } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
   const filters = useChartConfigFilters(chartConfig);
-  const { sharedFilters } = useDashboardInteractiveFilters();
+  const { sharedTimeRangeFilters } = useDashboardInteractiveFilters();
 
   const showTimeBrush = shouldShowBrush(
     interactiveFiltersConfig,
-    sharedFilters
+    sharedTimeRangeFilters
   );
 
   return (

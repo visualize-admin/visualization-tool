@@ -62,7 +62,7 @@ export const configStateMock = {
     ],
     activeChartKey: "abc",
     dashboardFilters: {
-      filters: [],
+      timeRangeFilters: [],
     },
   },
   groupedColumnChart: {
@@ -198,7 +198,7 @@ export const configStateMock = {
     ],
     activeChartKey: "2of7iJAjccuj",
     dashboardFilters: {
-      filters: [],
+      timeRangeFilters: [],
     },
   },
 } satisfies Record<string, ConfiguratorState>;

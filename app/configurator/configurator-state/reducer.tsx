@@ -1057,13 +1057,13 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       newDraft.activeChartKey = action.value.chartKey;
       return newDraft;
 
-    case "DASHBOARD_FILTER_ADD":
+    case "DASHBOARD_TIME_RANGE_FILTER_ADD":
       if (isLayouting(draft)) {
         setWith(
           draft,
-          "dashboardFilters.filters",
+          "dashboardFilters.timeRangeFilters",
           uniqBy(
-            [...(draft.dashboardFilters?.filters ?? []), action.value],
+            [...(draft.dashboardFilters?.timeRangeFilters ?? []), action.value],
             (x) => x.componentIri
           ),
           Object
@@ -1072,26 +1072,33 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
       return draft;
 
-    case "DASHBOARD_FILTER_UPDATE":
+    case "DASHBOARD_TIME_RANGE_FILTER_UPDATE":
       if (isLayouting(draft)) {
-        const idx = draft.dashboardFilters?.filters.findIndex(
+        const idx = draft.dashboardFilters?.timeRangeFilters.findIndex(
           (f) => f.componentIri === action.value.componentIri
         );
 
         if (idx !== undefined && idx > -1) {
-          const newFilters = [...(draft.dashboardFilters?.filters ?? [])];
+          const newFilters = [
+            ...(draft.dashboardFilters?.timeRangeFilters ?? []),
+          ];
           newFilters.splice(idx, 1, action.value);
-          setWith(draft, "dashboardFilters.filters", newFilters, Object);
+          setWith(
+            draft,
+            "dashboardFilters.timeRangeFilters",
+            newFilters,
+            Object
+          );
         }
       }
       return draft;
 
-    case "DASHBOARD_FILTER_REMOVE":
+    case "DASHBOARD_TIME_RANGE_FILTER_REMOVE":
       if (isLayouting(draft)) {
-        const newFilters = draft.dashboardFilters?.filters.filter(
+        const newFilters = draft.dashboardFilters?.timeRangeFilters.filter(
           (f) => f.componentIri !== action.value
         );
-        setWith(draft, "dashboardFilters.filters", newFilters, Object);
+        setWith(draft, "dashboardFilters.timeRangeFilters", newFilters, Object);
       }
       return draft;
 

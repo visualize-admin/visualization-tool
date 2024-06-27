@@ -1157,11 +1157,8 @@ export type DashboardFilterTimeRange = t.TypeOf<
   typeof DashboardFilterTimeRange
 >;
 
-const DashboardFilter = DashboardFilterTimeRange; // Will be replaced by an union later
-export type DashboardFilter = t.TypeOf<typeof DashboardFilter>;
-
 const DashboardFiltersConfig = t.type({
-  filters: t.array(DashboardFilter),
+  timeRangeFilters: t.array(DashboardFilterTimeRange),
 });
 export type DashboardFiltersConfig = t.TypeOf<typeof DashboardFiltersConfig>;
 

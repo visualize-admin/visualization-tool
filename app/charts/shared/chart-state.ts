@@ -511,10 +511,10 @@ export const useChartData = (
   const interactiveToTime = timeRange.to?.getTime();
   const dashboardFilters = useDashboardInteractiveFilters();
   const interactiveTimeRangeFilters = useMemo(() => {
-    const isDashboardFilterActive = !!dashboardFilters.sharedFilters.find(
-      (f) => {
+    const isDashboardFilterActive =
+      !!dashboardFilters.sharedTimeRangeFilters.find((f) => {
         const timeRangeFilterIri = interactiveTimeRange?.componentIri;
-        if (f.type !== "timeRange" || !timeRangeFilterIri) {
+        if (!timeRangeFilterIri) {
           return false;
         }
         return isJoinById(timeRangeFilterIri)
@@ -522,8 +522,7 @@ export const useChartData = (
               f.componentIri
             )
           : f.componentIri === timeRangeFilterIri;
-      }
-    );
+      });
     const interactiveTimeRangeFilter: ValuePredicate | null =
       getXAsDate &&
       interactiveFromTime &&
@@ -537,7 +536,7 @@ export const useChartData = (
 
     return interactiveTimeRangeFilter ? [interactiveTimeRangeFilter] : [];
   }, [
-    dashboardFilters.sharedFilters,
+    dashboardFilters.sharedTimeRangeFilters,
     getXAsDate,
     interactiveFromTime,
     interactiveToTime,

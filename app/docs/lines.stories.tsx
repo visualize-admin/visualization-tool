@@ -46,7 +46,7 @@ const LineChartStory = () => (
       },
       chartConfigs: [chartConfig],
       activeChartKey: "line",
-      dashboardFilters: { filters: [] },
+      dashboardFilters: { timeRangeFilters: [] },
     }}
   >
     <InteractiveFiltersProvider chartConfigs={[chartConfig]}>

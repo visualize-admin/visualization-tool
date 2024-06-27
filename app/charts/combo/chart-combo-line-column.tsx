@@ -26,7 +26,7 @@ const ChartComboLineColumn = memo(
   (props: ChartProps<ComboLineColumnConfig>) => {
     const { chartConfig } = props;
     const { interactiveFiltersConfig } = chartConfig;
-    const { sharedFilters } = useDashboardInteractiveFilters();
+    const { sharedTimeRangeFilters } = useDashboardInteractiveFilters();
 
     return (
       <ComboLineColumnChart {...props}>
@@ -37,9 +37,10 @@ const ChartComboLineColumn = memo(
             <AxisWidthBand />
             <ComboLineColumn />
             <InteractionColumns />
-            {shouldShowBrush(interactiveFiltersConfig, sharedFilters) && (
-              <BrushTime />
-            )}
+            {shouldShowBrush(
+              interactiveFiltersConfig,
+              sharedTimeRangeFilters
+            ) && <BrushTime />}
           </ChartSvg>
           <HoverDotMultiple />
           <Ruler rotate />

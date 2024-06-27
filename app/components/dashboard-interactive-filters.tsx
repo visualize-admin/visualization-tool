@@ -22,7 +22,7 @@ import { useConfigsCubeComponents } from "@/graphql/hooks";
 import { TimeUnit } from "@/graphql/query-hooks";
 import { useLocale } from "@/src";
 import {
-  SharedFilter,
+  SharedTimeRangeFilter,
   useDashboardInteractiveFilters,
 } from "@/stores/interactive-filters";
 import { assert } from "@/utils/assert";
@@ -81,7 +81,7 @@ const DashboardTimeRangeSlider = ({
   filter,
   mounted,
 }: {
-  filter: Extract<SharedFilter, { type: "timeRange" }>;
+  filter: SharedTimeRangeFilter;
   mounted: boolean;
 }) => {
   const classes = useStyles();
@@ -183,7 +183,7 @@ const DashboardTimeRangeSlider = ({
 
   const mountedForSomeTime = useTimeout(500, mounted);
 
-  if (!filter || !timeRange || filter.type !== "timeRange" || !filter.active) {
+  if (!filter || !timeRange || !filter.active) {
     return null;
   }
 
@@ -208,22 +208,24 @@ export const DashboardInteractiveFilters = () => {
 
   return (
     <>
-      {dashboardInteractiveFilters.sharedFilters.map((filter) => {
-        if (filter.type !== "timeRange" || !filter.active) {
-          return null;
-        }
+      {dashboardInteractiveFilters.sharedTimeRangeFilters
+        .slice(1)
+        .map((filter) => {
+          if (!filter.active) {
+            return null;
+          }
 
-        return (
-          <Collapse in={filter.active} key={filter.componentIri}>
-            <div>
-              <DashboardTimeRangeSlider
-                filter={filter}
-                mounted={filter.active}
-              />
-            </div>
-          </Collapse>
-        );
-      })}
+          return (
+            <Collapse in={filter.active} key={filter.componentIri}>
+              <div>
+                <DashboardTimeRangeSlider
+                  filter={filter}
+                  mounted={filter.active}
+                />
+              </div>
+            </Collapse>
+          );
+        })}
     </>
   );
 };

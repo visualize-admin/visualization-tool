@@ -9,8 +9,9 @@ import {
   useEventCallback,
 } from "@mui/material";
 import capitalize from "lodash/capitalize";
-import keyBy from "lodash/keyBy";
 import omit from "lodash/omit";
+import uniq from "lodash/uniq";
+import uniqBy from "lodash/uniqBy";
 import { Fragment, useCallback, useMemo } from "react";
 
 import { DataFilterGenericDimensionProps } from "@/charts/shared/chart-data-filters";
@@ -41,15 +42,18 @@ import {
   canDimensionBeTimeFiltered,
   Dimension,
   isJoinByComponent,
+  isTemporalDimensionWithTimeUnit,
   TemporalDimension,
   TemporalEntityDimension,
 } from "@/domain/data";
+import { truthy } from "@/domain/types";
 import { useFlag } from "@/flags";
 import { useTimeFormatLocale, useTimeFormatUnit } from "@/formatters";
 import { useConfigsCubeComponents } from "@/graphql/hooks";
+import { timeUnitFormats } from "@/rdf/mappings";
 import { useLocale } from "@/src";
 import {
-  SharedFilter,
+  SharedTimeRangeFilter,
   useDashboardInteractiveFilters,
 } from "@/stores/interactive-filters";
 import { getTimeFilterOptions } from "@/utils/time-filter-options";
@@ -111,7 +115,7 @@ const LayoutLayoutConfigurator = () => {
 const LayoutSharedFiltersConfigurator = () => {
   const [state, dispatch] = useConfiguratorState(isLayouting);
   const { layout } = state;
-  const { sharedFilters, potentialSharedFilters } =
+  const { sharedTimeRangeFilters, potentialSharedTimeRangeFilters } =
     useDashboardInteractiveFilters();
 
   const locale = useLocale();
@@ -122,74 +126,87 @@ const LayoutSharedFiltersConfigurator = () => {
     },
   });
 
-  const dimensionsByIri = useMemo(() => {
-    const res: Record<string, Dimension> = {};
-    for (const dim of data?.dataCubesComponents.dimensions ?? []) {
-      res[dim.iri] = dim;
+  const { dimensions, dimensionsByIri } = useMemo(() => {
+    const dimensions = data?.dataCubesComponents.dimensions ?? [];
+    const dimensionsByIri: Record<string, Dimension> = {};
+    for (const dim of dimensions) {
+      dimensionsByIri[dim.iri] = dim;
       if (isJoinByComponent(dim)) {
         for (const o of dim.originalIris) {
-          res[o.dimensionIri] = dim;
+          dimensionsByIri[o.dimensionIri] = dim;
         }
       }
     }
-    return res;
+    return { dimensions, dimensionsByIri };
   }, [data?.dataCubesComponents.dimensions]);
 
-  const sharedFiltersByIri = useMemo(() => {
-    return keyBy(sharedFilters, (x) => x.componentIri);
-  }, [sharedFilters]);
+  const shownFilters = potentialSharedTimeRangeFilters.filter((filter) => {
+    const dimension = dimensionsByIri[filter.componentIri];
+    return dimension && canDimensionBeTimeFiltered(dimension);
+  });
+  const timeUnits = uniq(
+    shownFilters
+      .map((filter) => {
+        const dimension = dimensionsByIri[filter.componentIri];
+        return isTemporalDimensionWithTimeUnit(dimension)
+          ? dimension.timeUnit
+          : undefined;
+      })
+      .filter(truthy)
+  );
 
   const formatLocale = useTimeFormatLocale();
   const timeFormatUnit = useTimeFormatUnit();
 
   const handleToggle: SwitchProps["onChange"] = useEventCallback(
-    (event, checked) => {
-      const componentIri = event.currentTarget.dataset.componentIri;
-      const dimension = componentIri
-        ? dimensionsByIri[componentIri]
-        : undefined;
+    (_, checked) => {
+      for (const { componentIri } of shownFilters) {
+        const dimension = componentIri
+          ? dimensionsByIri[componentIri]
+          : undefined;
 
-      if (
-        !componentIri ||
-        !dimension ||
-        !canDimensionBeTimeFiltered(dimension)
-      ) {
-        return;
-      }
-
-      if (checked) {
-        const options = getTimeFilterOptions({
-          dimension: dimension,
-          formatLocale,
-          timeFormatUnit,
-        });
-
-        const from = options.sortedOptions[0].date;
-        const to = options.sortedOptions.at(-1)?.date;
-        const dateFormatter = timeUnitToFormatter[dimension.timeUnit];
-
-        if (!from || !to) {
+        if (
+          !componentIri ||
+          !dimension ||
+          !canDimensionBeTimeFiltered(dimension)
+        ) {
           return;
         }
 
-        dispatch({
-          type: "DASHBOARD_FILTER_ADD",
-          value: {
-            type: "timeRange",
-            active: true,
-            presets: {
-              type: "range",
-              from: dateFormatter(from),
-              to: dateFormatter(to),
+        if (checked) {
+          const options = getTimeFilterOptions({
+            dimension: dimension,
+            formatLocale,
+            timeFormatUnit,
+          });
+
+          const from = options.sortedOptions[0].date;
+          const to = options.sortedOptions.at(-1)?.date;
+          const dateFormatter = timeUnitToFormatter[dimension.timeUnit];
+
+          if (!from || !to) {
+            return;
+          }
+
+          dispatch({
+            type: "DASHBOARD_TIME_RANGE_FILTER_ADD",
+            value: {
+              type: "timeRange",
+              active: true,
+              presets: {
+                type: "range",
+                from: dateFormatter(from),
+                to: dateFormatter(to),
+              },
+              componentIri: componentIri,
             },
-            componentIri: componentIri,
-          },
-        });
-      } else {
-        dispatch({
-          type: "DASHBOARD_FILTER_REMOVE",
-          value: componentIri,
-        });
+          });
+        } else {
+          dispatch({
+            type: "DASHBOARD_TIME_RANGE_FILTER_REMOVE",
+            value: componentIri,
+          });
+        }
       }
     }
   );
@@ -197,14 +214,10 @@ const LayoutSharedFiltersConfigurator = () => {
   switch (layout.type) {
     case "tab":
     case "dashboard":
-      const shownFilters = potentialSharedFilters.filter((filter) => {
-        const dimension = dimensionsByIri[filter.componentIri];
-        return dimension && canDimensionBeTimeFiltered(dimension);
-      });
-
-      if (!shownFilters.length) {
+      if (!timeUnits.length) {
         return null;
       }
+
       return (
         <ControlSection
           role="tablist"
@@ -220,20 +233,48 @@ const LayoutSharedFiltersConfigurator = () => {
           </SubsectionTitle>
           <ControlSectionContent>
             <Stack gap="0.5rem">
-              {shownFilters.map((filter) => {
-                const dimension = dimensionsByIri[filter.componentIri];
-                const sharedFilter = sharedFiltersByIri[filter.componentIri];
+              {timeUnits.map((timeUnit) => {
+                const timeUnitDimensions = dimensions.filter(
+                  (dimension) =>
+                    isTemporalDimensionWithTimeUnit(dimension) &&
+                    dimension.timeUnit === timeUnit
+                ) as TemporalDimension[];
+                const timeFormat = timeUnitFormats.get(timeUnit);
+
+                if (!timeUnitDimensions.length || !timeFormat) {
+                  return null;
+                }
+
+                const values = timeUnitDimensions.flatMap(
+                  (dimension) => dimension.values
+                );
+                const combinedDimension: TemporalDimension = {
+                  __typename: "TemporalDimension",
+                  cubeIri: "all",
+                  iri: "combined",
+                  label: t({
+                    id: "controls.section.shared-filters.date",
+                    message: "Date",
+                  }),
+                  isKeyDimension: true,
+                  isNumerical: false,
+                  values: uniqBy(values, "value").sort((a, b) =>
+                    (a.value as string).localeCompare(b.value as string)
+                  ),
+                  timeUnit,
+                  timeFormat,
+                };
+
                 return (
-                  <Fragment key={filter.componentIri}>
+                  <Fragment key={timeUnit}>
                     <Box
                       display="flex"
                       alignItems="center"
                       justifyContent="space-between"
                       width="100%"
-                      key={filter.componentIri}
                     >
                       <Typography variant="body2" flexGrow={1}>
-                        {dimension.label || filter.componentIri}
+                        {combinedDimension.label}
                       </Typography>
                       <FormControlLabel
                         sx={{ mr: 0 }}
@@ -248,19 +289,20 @@ const LayoutSharedFiltersConfigurator = () => {
                         }
                         control={
                           <Switch
-                            checked={!!sharedFilter}
+                            checked={!!sharedTimeRangeFilters.length}
                             onChange={handleToggle}
                             inputProps={{
                               // @ts-expect-error ts(2322) - data-component-iri is not considered a valid attribute, while it is
-                              "data-component-iri": filter.componentIri,
+                              "data-component-iri": combinedDimension.iri,
                             }}
                           />
                         }
                       />
                     </Box>
                     <SharedFilterOptions
-                      sharedFilter={sharedFilter}
-                      dimension={dimension}
+                      key={timeUnit}
+                      sharedFilters={sharedTimeRangeFilters}
+                      dimension={combinedDimension}
                     />
                   </Fragment>
                 );
@@ -275,17 +317,13 @@ const LayoutSharedFiltersConfigurator = () => {
 };
 
 const SharedFilterOptions = ({
-  sharedFilter,
+  sharedFilters,
   dimension,
 }: {
-  sharedFilter: SharedFilter;
+  sharedFilters: SharedTimeRangeFilter[];
   dimension: Dimension;
 }) => {
-  if (!sharedFilter) {
-    return null;
-  }
-
-  if (sharedFilter.type !== "timeRange") {
+  if (!sharedFilters.length) {
     return null;
   }
 
@@ -298,17 +336,17 @@ const SharedFilterOptions = ({
 
   return (
     <SharedFilterOptionsTimeRange
-      sharedFilter={sharedFilter}
+      sharedFilters={sharedFilters}
       dimension={dimension}
     />
   );
 };
 
 const SharedFilterOptionsTimeRange = ({
-  sharedFilter,
+  sharedFilters,
   dimension,
 }: {
-  sharedFilter: SharedFilter;
+  sharedFilters: SharedTimeRangeFilter[];
   dimension: TemporalDimension | TemporalEntityDimension;
 }) => {
   const { timeUnit, timeFormat } = dimension;
@@ -327,46 +365,58 @@ const SharedFilterOptionsTimeRange = ({
 
   const updateChartStoresFrom = useCallback(
     (newDate: Date) => {
-      const sharedFilterIri = sharedFilter.componentIri;
-      Object.entries(dashboardInteractiveFilters.stores).forEach(
-        ([chartKey, [getInteractiveFiltersState]]) => {
-          const { interactiveFiltersConfig } = getChartConfig(state, chartKey);
-          const interactiveFiltersState = getInteractiveFiltersState();
-          const { from, to } = interactiveFiltersState.timeRange;
-          const setTimeRangeFilter = interactiveFiltersState.setTimeRange;
-          if (
-            from &&
-            to &&
-            interactiveFiltersConfig?.timeRange.componentIri === sharedFilterIri
-          ) {
-            setTimeRangeFilter(newDate, to);
+      sharedFilters.forEach((sharedFilter) => {
+        const sharedFilterIri = sharedFilter.componentIri;
+        Object.entries(dashboardInteractiveFilters.stores).forEach(
+          ([chartKey, [getInteractiveFiltersState]]) => {
+            const { interactiveFiltersConfig } = getChartConfig(
+              state,
+              chartKey
+            );
+            const interactiveFiltersState = getInteractiveFiltersState();
+            const { from, to } = interactiveFiltersState.timeRange;
+            const setTimeRangeFilter = interactiveFiltersState.setTimeRange;
+            if (
+              from &&
+              to &&
+              interactiveFiltersConfig?.timeRange.componentIri ===
+                sharedFilterIri
+            ) {
+              setTimeRangeFilter(newDate, to);
+            }
           }
-        }
-      );
+        );
+      });
     },
-    [dashboardInteractiveFilters.stores, sharedFilter.componentIri, state]
+    [dashboardInteractiveFilters.stores, sharedFilters, state]
   );
 
   const updateChartStoresTo = useCallback(
     (newDate: Date) => {
-      const sharedFilterIri = sharedFilter.componentIri;
-      Object.entries(dashboardInteractiveFilters.stores).forEach(
-        ([chartKey, [getInteractiveFiltersState]]) => {
-          const { interactiveFiltersConfig } = getChartConfig(state, chartKey);
-          const interactiveFiltersState = getInteractiveFiltersState();
-          const { from, to } = interactiveFiltersState.timeRange;
-          const setTimeRangeFilter = interactiveFiltersState.setTimeRange;
-          if (
-            from &&
-            to &&
-            interactiveFiltersConfig?.timeRange.componentIri === sharedFilterIri
-          ) {
-            setTimeRangeFilter(from, newDate);
+      sharedFilters.forEach((sharedFilter) => {
+        const sharedFilterIri = sharedFilter.componentIri;
+        Object.entries(dashboardInteractiveFilters.stores).forEach(
+          ([chartKey, [getInteractiveFiltersState]]) => {
+            const { interactiveFiltersConfig } = getChartConfig(
+              state,
+              chartKey
+            );
+            const interactiveFiltersState = getInteractiveFiltersState();
+            const { from, to } = interactiveFiltersState.timeRange;
+            const setTimeRangeFilter = interactiveFiltersState.setTimeRange;
+            if (
+              from &&
+              to &&
+              interactiveFiltersConfig?.timeRange.componentIri ===
+                sharedFilterIri
+            ) {
+              setTimeRangeFilter(from, newDate);
+            }
           }
-        }
-      );
+        );
+      });
     },
-    [dashboardInteractiveFilters.stores, sharedFilter.componentIri, state]
+    [dashboardInteractiveFilters.stores, sharedFilters, state]
   );
 
   const handleChangeFromDate: DatePickerFieldProps["onChange"] = (ev) => {
@@ -374,15 +424,18 @@ const SharedFilterOptionsTimeRange = ({
     if (!newDate) {
       return;
     }
-    dispatch({
-      type: "DASHBOARD_FILTER_UPDATE",
-      value: {
-        ...sharedFilter,
-        presets: {
-          ...sharedFilter.presets,
-          from: formatDate(newDate),
+    sharedFilters.forEach((sharedFilter) => {
+      dispatch({
+        type: "DASHBOARD_TIME_RANGE_FILTER_UPDATE",
+        value: {
+          type: "timeRange",
+          ...sharedFilter,
+          presets: {
+            ...sharedFilter.presets,
+            from: formatDate(newDate),
+          },
         },
-      },
+      });
     });
     updateChartStoresFrom(newDate);
   };
@@ -390,15 +443,18 @@ const SharedFilterOptionsTimeRange = ({
   const handleChangeFromGeneric: DataFilterGenericDimensionProps["onChange"] = (
     ev
   ) => {
-    dispatch({
-      type: "DASHBOARD_FILTER_UPDATE",
-      value: {
-        ...sharedFilter,
-        presets: {
-          ...sharedFilter.presets,
-          from: ev.target.value as string,
+    sharedFilters.forEach((sharedFilter) => {
+      dispatch({
+        type: "DASHBOARD_TIME_RANGE_FILTER_UPDATE",
+        value: {
+          type: "timeRange",
+          ...sharedFilter,
+          presets: {
+            ...sharedFilter.presets,
+            from: ev.target.value as string,
+          },
         },
-      },
+      });
     });
     const parsedDate = parseDate(ev.target.value as string);
     if (parsedDate) {
@@ -411,15 +467,18 @@ const SharedFilterOptionsTimeRange = ({
     if (!newDate) {
       return;
     }
-    dispatch({
-      type: "DASHBOARD_FILTER_UPDATE",
-      value: {
-        ...sharedFilter,
-        presets: {
-          ...sharedFilter.presets,
-          to: formatDate(newDate),
+    sharedFilters.forEach((sharedFilter) => {
+      dispatch({
+        type: "DASHBOARD_TIME_RANGE_FILTER_UPDATE",
+        value: {
+          type: "timeRange",
+          ...sharedFilter,
+          presets: {
+            ...sharedFilter.presets,
+            to: formatDate(newDate),
+          },
         },
-      },
+      });
     });
     updateChartStoresTo(newDate);
   };
@@ -427,21 +486,26 @@ const SharedFilterOptionsTimeRange = ({
   const handleChangeToGeneric: DataFilterGenericDimensionProps["onChange"] = (
     ev
   ) => {
-    dispatch({
-      type: "DASHBOARD_FILTER_UPDATE",
-      value: {
-        ...sharedFilter,
-        presets: {
-          ...sharedFilter.presets,
-          to: ev.target.value as string,
+    sharedFilters.forEach((sharedFilter) => {
+      dispatch({
+        type: "DASHBOARD_TIME_RANGE_FILTER_UPDATE",
+        value: {
+          type: "timeRange",
+          ...sharedFilter,
+          presets: {
+            ...sharedFilter.presets,
+            to: ev.target.value as string,
+          },
         },
-      },
+      });
     });
     const parsedDate = parseDate(ev.target.value as string);
     if (parsedDate) {
       updateChartStoresTo(parsedDate);
     }
   };
+
+  const sharedFilter = sharedFilters[0];
 
   return (
     <Stack spacing={1} direction="column" gap="0.25rem">
