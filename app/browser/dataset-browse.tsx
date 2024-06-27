@@ -441,6 +441,8 @@ const NavItem = ({
       passHref
       legacyBehavior
       disabled={!!disableLink}
+      scroll={false}
+      shallow
     >
       <ButtonBase
         className={classes.removeFilterButton}
@@ -494,6 +496,8 @@ const NavItem = ({
             passHref
             legacyBehavior
             disabled={!!disableLink}
+            scroll={false}
+            shallow
           >
             <MUILink
               className={classes.link}
