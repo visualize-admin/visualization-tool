@@ -523,10 +523,12 @@ const Subthemes = ({
   subthemes,
   filters,
   counts,
+  disableLinks,
 }: {
   subthemes: SearchCube["subthemes"];
   filters: BrowseFilter[];
   counts: Record<string, number>;
+  disableLinks?: boolean;
 }) => {
   return (
     <>
@@ -546,6 +548,7 @@ const Subthemes = ({
             active={filters[filters.length - 1]?.iri === d.iri}
             level={2}
             count={count}
+            disableLink={disableLinks}
           >
             {d.label}
           </NavItem>
@@ -867,6 +870,7 @@ export const SearchFilters = ({
               subthemes={subthemes}
               filters={filters}
               counts={counts}
+              disableLinks={disableNavLinks}
             />
           ) : null
         }
