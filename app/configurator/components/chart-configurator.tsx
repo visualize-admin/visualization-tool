@@ -120,7 +120,6 @@ const DataFilterSelectGeneric = (props: DataFilterSelectGenericProps) => {
   const [state] = useConfiguratorState();
   const chartConfig = getChartConfig(state);
   const [{ data, fetching }] = useDataCubesComponentsQuery({
-    keepPreviousData: true,
     variables: {
       sourceType: state.dataSource.type,
       sourceUrl: state.dataSource.url,
@@ -138,6 +137,7 @@ const DataFilterSelectGeneric = (props: DataFilterSelectGenericProps) => {
         };
       }),
     },
+    keepPreviousData: true,
   });
 
   const dimension = data?.dataCubesComponents?.dimensions?.[0] ?? rawDimension;
@@ -361,13 +361,13 @@ const useFilterReorder = ({
     { data: componentsData, fetching: componentsFetching },
     executeComponentsQuery,
   ] = useDataCubesComponentsQuery({
-    keepPreviousData: true,
     variables: {
       sourceType: state.dataSource.type,
       sourceUrl: state.dataSource.url,
       locale,
       ...variables,
     },
+    keepPreviousData: true,
   });
 
   useEffect(() => {
