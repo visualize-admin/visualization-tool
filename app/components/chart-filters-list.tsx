@@ -52,11 +52,11 @@ export const ChartFiltersList = ({
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
-      cubeFilters: cubeQueryFilters.map((filter) => ({
-        iri: filter.iri,
-        componentIris: filter.componentIris,
-        filters: filter.filters,
-        joinBy: filter.joinBy,
+      cubeFilters: chartConfig.cubes.map((cube) => ({
+        iri: cube.iri,
+        componentIris: extractChartConfigComponentIris({ chartConfig }),
+        filters: cubeQueryFilters.find((f) => f.iri === cube.iri)?.filters,
+        joinBy: cube.joinBy,
         loadValues: true,
       })),
     },
