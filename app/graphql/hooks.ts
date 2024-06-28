@@ -224,7 +224,7 @@ export const executeDataCubesComponentsQuery = async (
   }
 
   const { dimensions: firstDimensions = [], measures: firstMeasures = [] } =
-    queries[0].data?.dataCubeComponents || {};
+    queries[0]?.data?.dataCubeComponents || {};
   assert(firstDimensions !== undefined, "Undefined dimensions");
   assert(firstMeasures !== undefined, "Undefined measures");
 
@@ -331,7 +331,7 @@ export const executeDataCubesObservationsQuery = async (
     queries.length > 1
       ? mergeObservations(queries)
       : // If we are fetching data from a single cube, we can just return the data
-        queries[0].data?.dataCubeObservations?.data!;
+        queries[0]?.data?.dataCubeObservations?.data!;
 
   return {
     data: {

@@ -193,8 +193,11 @@ const ConfigureChartStep = () => {
             <ChartConfiguratorTable state={state} />
           ) : (
             // Need to use key to force re-render when switching between charts
-            // to fix stale data issues
-            <ChartConfigurator key={state.activeChartKey} state={state} />
+            // or adding / removing cubes to fix stale data issues
+            <ChartConfigurator
+              key={`${chartConfig.key}_${chartConfig.cubes.length}`}
+              state={state}
+            />
           )}
         </PanelBodyWrapper>
         <PanelBodyWrapper type="M">

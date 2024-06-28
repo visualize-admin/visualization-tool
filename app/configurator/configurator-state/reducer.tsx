@@ -761,7 +761,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
             };
           } else {
             console.warn(
-              `Could not set filter, no cube in chat config was found with iri ${cubeIri}`
+              `Could not set filter, no cube in chart config was found with iri ${cubeIri}`
             );
           }
         }
