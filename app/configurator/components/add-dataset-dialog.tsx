@@ -903,10 +903,10 @@ export const DatasetDialog = ({
 
   const handleSubmit = (ev: FormEvent<HTMLFormElement>) => {
     ev.preventDefault();
-    const formdata = Object.fromEntries(
+    const formData = Object.fromEntries(
       new FormData(ev.currentTarget).entries()
     );
-    setQuery(formdata.search as string);
+    setQuery(formData.search as string);
   };
 
   const handleClose: DialogProps["onClose"] = useEventCallback((ev, reason) => {
@@ -1257,6 +1257,7 @@ const useAddDataset = () => {
           JSON.stringify(state)
         ) as ConfiguratorStateConfiguringChart;
         addDatasetInConfig(nextState, addDatasetOptions);
+        console.log("nextState", nextState);
 
         const allCubes = uniqBy(
           nextState.chartConfigs.flatMap((x) => x.cubes),

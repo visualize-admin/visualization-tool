@@ -264,35 +264,34 @@ export const addDatasetInConfig = function (
     };
   }
 ) {
+  const chartConfig = getChartConfig(config, config.activeChartKey);
   const { iri, joinBy } = options;
-  for (const chartConfig of config.chartConfigs) {
-    chartConfig.cubes[0].joinBy = joinBy.left;
-    chartConfig.cubes.push({
-      iri: iri,
-      publishIri: iri,
-      joinBy: joinBy.right,
-      filters: {},
-    });
+  chartConfig.cubes[0].joinBy = joinBy.left;
+  chartConfig.cubes.push({
+    iri: iri,
+    publishIri: iri,
+    joinBy: joinBy.right,
+    filters: {},
+  });
 
-    // Need to go over fields, and replace any IRI part of the joinBy by "joinBy"
-    const { encodings } = getChartSpec(chartConfig);
-    const encodingAndFields = encodings.map(
-      (e) =>
-        [
-          e,
-          chartConfig.fields[e.field as keyof typeof chartConfig.fields] as any,
-        ] as const
-    );
-    for (const [encoding, field] of encodingAndFields) {
-      if (!field) {
-        continue;
-      }
-      for (const iriAttribute of encoding.iriAttributes) {
-        const value = get(field, iriAttribute);
-        const index = joinBy.left.indexOf(value) ?? joinBy.right.indexOf(value);
-        if (index > -1) {
-          set(field, iriAttribute, mkJoinById(index));
-        }
+  // Need to go over fields, and replace any IRI part of the joinBy by "joinBy"
+  const { encodings } = getChartSpec(chartConfig);
+  const encodingAndFields = encodings.map(
+    (e) =>
+      [
+        e,
+        chartConfig.fields[e.field as keyof typeof chartConfig.fields] as any,
+      ] as const
+  );
+  for (const [encoding, field] of encodingAndFields) {
+    if (!field) {
+      continue;
+    }
+    for (const iriAttribute of encoding.iriAttributes) {
+      const value = get(field, iriAttribute);
+      const index = joinBy.left.indexOf(value) ?? joinBy.right.indexOf(value);
+      if (index > -1) {
+        set(field, iriAttribute, mkJoinById(index));
       }
     }
   }
