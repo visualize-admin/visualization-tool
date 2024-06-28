@@ -127,12 +127,12 @@ describe("add dataset", () => {
       addAction
     ) as ConfiguratorStatePublishing;
 
-    getCachedComponents.mockImplementation((_, cubes) => {
+    getCachedComponents.mockImplementation((options) => {
       // TODO Cubes join by need to be reset at the moment, will change
       // when we have more than 2 cubes
-      expect(cubes.map((x) => x.joinBy).every((x) => x === undefined)).toBe(
-        true
-      );
+      expect(
+        options.cubeFilters.map((x) => x.joinBy).every((x) => x === undefined)
+      ).toBe(true);
       return getCachedComponentsMock.electricyPricePerCantonDimensions;
     });
     const newState2 = runReducer(

@@ -361,14 +361,14 @@ export const handleChartFieldChanged = (
     selectedValues: actionSelectedValues,
   } = action.value;
   const f = get(chartConfig.fields, field);
-  const dataCubesComponents = getCachedComponents(
-    draft.dataSource,
-    chartConfig.cubes.map((cube) => ({
+  const dataCubesComponents = getCachedComponents({
+    locale,
+    dataSource: draft.dataSource,
+    cubeFilters: chartConfig.cubes.map((cube) => ({
       iri: cube.iri,
       joinBy: cube.joinBy,
     })),
-    locale
-  );
+  });
   const dimensions = dataCubesComponents?.dimensions ?? [];
   const measures = dataCubesComponents?.measures ?? [];
   const components = [...dimensions, ...measures];
@@ -418,14 +418,14 @@ export const handleChartOptionChanged = (
     const { locale, path, field, value } = action.value;
     const chartConfig = getChartConfig(draft);
     const updatePath = field === null ? path : `fields["${field}"].${path}`;
-    const dataCubesComponents = getCachedComponents(
-      draft.dataSource,
-      chartConfig.cubes.map((cube) => ({
+    const dataCubesComponents = getCachedComponents({
+      locale,
+      dataSource: draft.dataSource,
+      cubeFilters: chartConfig.cubes.map((cube) => ({
         iri: cube.iri,
         joinBy: cube.joinBy,
       })),
-      locale
-    );
+    });
 
     const dimensions = dataCubesComponents?.dimensions ?? [];
     const measures = dataCubesComponents?.measures ?? [];
@@ -575,14 +575,14 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       if (isConfiguring(draft)) {
         const { locale, chartKey, chartType } = action.value;
         const chartConfig = getChartConfig(draft, chartKey);
-        const dataCubesComponents = getCachedComponents(
-          draft.dataSource,
-          chartConfig.cubes.map((cube) => ({
+        const dataCubesComponents = getCachedComponents({
+          locale,
+          dataSource: draft.dataSource,
+          cubeFilters: chartConfig.cubes.map((cube) => ({
             iri: cube.iri,
             joinBy: cube.joinBy,
           })),
-          locale
-        );
+        });
         const dimensions = dataCubesComponents?.dimensions;
         const measures = dataCubesComponents?.measures;
 
@@ -621,14 +621,14 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       if (isConfiguring(draft)) {
         const chartConfig = getChartConfig(draft);
         delete (chartConfig.fields as GenericFields)[action.value.field];
-        const dataCubesComponents = getCachedComponents(
-          draft.dataSource,
-          chartConfig.cubes.map((cube) => ({
+        const dataCubesComponents = getCachedComponents({
+          locale: action.value.locale,
+          dataSource: draft.dataSource,
+          cubeFilters: chartConfig.cubes.map((cube) => ({
             iri: cube.iri,
             joinBy: cube.joinBy,
           })),
-          action.value.locale
-        );
+        });
         const dimensions = dataCubesComponents?.dimensions ?? [];
         const newConfig = deriveFiltersFromFields(chartConfig, { dimensions });
         const index = draft.chartConfigs.findIndex(
@@ -872,14 +872,14 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       if (isConfiguring(draft)) {
         const chartConfig =
           createDraft(action.value.chartConfig) ?? getChartConfig(draft);
-        const dataCubesComponents = getCachedComponents(
-          draft.dataSource,
-          chartConfig.cubes.map((cube) => ({
+        const dataCubesComponents = getCachedComponents({
+          locale: action.value.locale,
+          dataSource: draft.dataSource,
+          cubeFilters: chartConfig.cubes.map((cube) => ({
             iri: cube.iri,
             joinBy: cube.joinBy,
           })),
-          action.value.locale
-        );
+        });
 
         if (dataCubesComponents) {
           const cubes = current(chartConfig.cubes);
@@ -922,15 +922,14 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         const newCubes = chartConfig.cubes.filter(
           (c) => c.iri !== removedCubeIri
         );
-        const dataCubesComponents = getCachedComponents(
-          draft.dataSource,
-          newCubes.map((cube) => ({
+        const dataCubesComponents = getCachedComponents({
+          locale,
+          dataSource: draft.dataSource,
+          cubeFilters: newCubes.map((cube) => ({
             iri: cube.iri,
-            // Only keep joinBy while we have more than one cube
             joinBy: newCubes.length > 1 ? cube.joinBy : undefined,
           })),
-          locale
-        );
+        });
 
         if (!dataCubesComponents) {
           throw new Error(
