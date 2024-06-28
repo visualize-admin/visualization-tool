@@ -68,7 +68,16 @@ const ColumnsStory = {
         },
         chartConfigs: [chartConfig],
         activeChartKey: "scatterplot",
-        dashboardFilters: { timeRangeFilters: [] },
+        dashboardFilters: {
+          timeRange: {
+            active: false,
+            timeUnit: "",
+            presets: {
+              from: "",
+              to: "",
+            },
+          },
+        },
       }}
     >
       <InteractiveFiltersProvider chartConfigs={[chartConfig]}>
@@ -118,7 +127,16 @@ const ScatterplotStory = {
         },
         chartConfigs: [chartConfig],
         activeChartKey: "scatterplot",
-        dashboardFilters: { timeRangeFilters: [] },
+        dashboardFilters: {
+          timeRange: {
+            active: false,
+            timeUnit: "",
+            presets: {
+              from: "",
+              to: "",
+            },
+          },
+        },
       }}
     >
       <InteractiveFiltersProvider chartConfigs={[chartConfig]}>

@@ -5,17 +5,17 @@ import { getChartSpec } from "@/charts/chart-config-ui-options";
 import {
   CalculationType,
   ChartConfig,
+  DashboardTimeRangeFilter,
   FilterValueSingle,
   hasChartConfigs,
-  InteractiveFiltersConfig,
   useConfiguratorState,
 } from "@/configurator";
 import { truthy } from "@/domain/types";
 import { getOriginalIris, isJoinById } from "@/graphql/join";
 import {
-  createBoundUseStoreWithSelector,
   ExtractState,
   UseBoundStoreWithSelector,
+  createBoundUseStoreWithSelector,
 } from "@/stores/utils";
 import { assert } from "@/utils/assert";
 
@@ -142,29 +142,16 @@ type InteractiveFiltersContextValue = [
   StoreApi<State>,
 ];
 
-export type SharedTimeRangeFilter =
-  NonNullable<InteractiveFiltersConfig>["timeRange"];
-
-export type PotentialSharedTimeRangeFilter = Pick<
-  SharedTimeRangeFilter,
-  "componentIri"
->;
-
 const InteractiveFiltersContext = createContext<
   | {
+      potentialTimeRangeFilterIris: string[];
+      timeRange: DashboardTimeRangeFilter | undefined;
       stores: Record<ChartConfig["key"], InteractiveFiltersContextValue>;
-      potentialSharedTimeRangeFilters: PotentialSharedTimeRangeFilter[];
-      sharedTimeRangeFilters: SharedTimeRangeFilter[];
     }
   | undefined
 >(undefined);
 
-/**
- * Returns time range filters that are shared across multiple charts.
- */
-const getPotentialSharedTimeRangeFilters = (
-  chartConfigs: ChartConfig[]
-): PotentialSharedTimeRangeFilter[] => {
+const getPotentialTimeRangeFilterIris = (chartConfigs: ChartConfig[]) => {
   const temporalDimensions = chartConfigs.flatMap((config) => {
     const chartSpec = getChartSpec(config);
     const temporalEncodings = chartSpec.encodings.filter((x) =>
@@ -194,12 +181,7 @@ const getPotentialSharedTimeRangeFilters = (
     return chartTemporalDimensions;
   });
 
-  return temporalDimensions.map((dimension) => {
-    return {
-      type: "timeRange",
-      componentIri: dimension.componentIri,
-    };
-  });
+  return temporalDimensions.map((dimension) => dimension.componentIri);
 };
 
 /**
@@ -214,8 +196,8 @@ export const InteractiveFiltersProvider = ({
   const [state] = useConfiguratorState(hasChartConfigs);
   const storeRefs = useRef<Record<ChartConfig["key"], StoreApi<State>>>({});
 
-  const potentialSharedTimeRangeFilters = useMemo(() => {
-    return getPotentialSharedTimeRangeFilters(chartConfigs);
+  const potentialTimeRangeFilterIris = useMemo(() => {
+    return getPotentialTimeRangeFilterIris(chartConfigs);
   }, [chartConfigs]);
 
   const stores = useMemo<
@@ -236,15 +218,15 @@ export const InteractiveFiltersProvider = ({
     );
   }, [chartConfigs]);
 
-  const sharedTimeRangeFilters = state.dashboardFilters?.timeRangeFilters;
+  const timeRange = state.dashboardFilters?.timeRange;
 
   const ctxValue = useMemo(
     () => ({
       stores,
-      potentialSharedTimeRangeFilters,
-      sharedTimeRangeFilters: sharedTimeRangeFilters ?? [],
+      potentialTimeRangeFilterIris,
+      timeRange,
     }),
-    [stores, potentialSharedTimeRangeFilters, sharedTimeRangeFilters]
+    [stores, potentialTimeRangeFilterIris, timeRange]
   );
 
   return (

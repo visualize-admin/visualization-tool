@@ -270,14 +270,9 @@ export type ConfiguratorStateAction =
       };
     }
   | {
-      type: "DASHBOARD_TIME_RANGE_FILTER_ADD";
-      value: DashboardFiltersConfig["timeRangeFilters"][number];
+      type: "DASHBOARD_TIME_RANGE_FILTER_UPDATE";
+      value: DashboardFiltersConfig["timeRange"];
     }
   | {
       type: "DASHBOARD_TIME_RANGE_FILTER_REMOVE";
-      value: DashboardFiltersConfig["timeRangeFilters"][number]["componentIri"];
-    }
-  | {
-      type: "DASHBOARD_TIME_RANGE_FILTER_UPDATE";
-      value: DashboardFiltersConfig["timeRangeFilters"][number];
     };

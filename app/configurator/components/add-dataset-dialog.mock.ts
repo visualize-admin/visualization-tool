@@ -101,6 +101,13 @@ export const photovoltaikChartStateMock: ConfiguratorStateConfiguringChart = {
   ],
   activeChartKey: "8-5RW138pTDA",
   dashboardFilters: {
-    timeRangeFilters: [],
+    timeRange: {
+      active: false,
+      timeUnit: "",
+      presets: {
+        from: "",
+        to: "",
+      },
+    },
   },
 };

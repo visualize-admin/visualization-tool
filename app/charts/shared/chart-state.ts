@@ -56,7 +56,6 @@ import {
   isTemporalEntityDimension,
 } from "@/domain/data";
 import { Has } from "@/domain/types";
-import { getOriginalIris, isJoinById } from "@/graphql/join";
 import { ScaleType, TimeUnit } from "@/graphql/resolver-types";
 import {
   useChartInteractiveFilters,
@@ -511,23 +510,11 @@ export const useChartData = (
   const interactiveToTime = timeRange.to?.getTime();
   const dashboardFilters = useDashboardInteractiveFilters();
   const interactiveTimeRangeFilters = useMemo(() => {
-    const isDashboardFilterActive =
-      !!dashboardFilters.sharedTimeRangeFilters.find((f) => {
-        const timeRangeFilterIri = interactiveTimeRange?.componentIri;
-        if (!timeRangeFilterIri) {
-          return false;
-        }
-        return isJoinById(timeRangeFilterIri)
-          ? getOriginalIris(timeRangeFilterIri, chartConfig).includes(
-              f.componentIri
-            )
-          : f.componentIri === timeRangeFilterIri;
-      });
     const interactiveTimeRangeFilter: ValuePredicate | null =
       getXAsDate &&
       interactiveFromTime &&
       interactiveToTime &&
-      (interactiveTimeRange?.active || isDashboardFilterActive)
+      (interactiveTimeRange?.active || dashboardFilters.timeRange?.active)
         ? (d: Observation) => {
             const time = getXAsDate(d).getTime();
             return time >= interactiveFromTime && time <= interactiveToTime;
@@ -536,13 +523,11 @@ export const useChartData = (
 
     return interactiveTimeRangeFilter ? [interactiveTimeRangeFilter] : [];
   }, [
-    dashboardFilters.sharedTimeRangeFilters,
+    dashboardFilters.timeRange,
     getXAsDate,
     interactiveFromTime,
     interactiveToTime,
     interactiveTimeRange?.active,
-    interactiveTimeRange?.componentIri,
-    chartConfig,
   ]);
 
   // interactive time slider

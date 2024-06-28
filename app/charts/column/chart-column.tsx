@@ -40,13 +40,11 @@ const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
   const { chartConfig, dimensions } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
   const filters = useChartConfigFilters(chartConfig);
-  const { sharedTimeRangeFilters } = useDashboardInteractiveFilters();
-
+  const dashboardFilters = useDashboardInteractiveFilters();
   const showTimeBrush = shouldShowBrush(
     interactiveFiltersConfig,
-    sharedTimeRangeFilters
+    dashboardFilters.timeRange
   );
-
   return (
     <>
       {fields.segment?.componentIri && fields.segment.type === "stacked" ? (

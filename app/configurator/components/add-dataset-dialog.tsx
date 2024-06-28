@@ -1257,7 +1257,6 @@ const useAddDataset = () => {
           JSON.stringify(state)
         ) as ConfiguratorStateConfiguringChart;
         addDatasetInConfig(nextState, addDatasetOptions);
-        console.log("nextState", nextState);
 
         const allCubes = uniqBy(
           nextState.chartConfigs.flatMap((x) => x.cubes),
