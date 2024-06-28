@@ -948,7 +948,9 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
           cubeCount: iris.length,
         });
         const initialConfig = getInitialConfig({
-          chartType: possibleChartTypes[0],
+          chartType: possibleChartTypes.includes(chartConfig.chartType)
+            ? chartConfig.chartType
+            : possibleChartTypes[0],
           iris,
           dimensions,
           measures,
