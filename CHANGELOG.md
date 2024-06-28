@@ -29,6 +29,11 @@ You can also check the
     eggs in the application
   - Published charts now have a "more options" button with two actions - "Share"
     and "Table view"
+  - Shared dashboard time range filters are now rendered as one `Date` filter
+    that can be used to filter all charts in the dashboard. Date range is
+    combined from all charts in the dashboard and the "lowest" time unit is used
+    in the time slider (e.g. if one chart has a year resolution and another has
+    a month resolution, the time slider will show months)
 - Fixes
   - Fixed using a time range brush in column charts when X dimension is a
     `TemporalEntityDimension`
@@ -49,6 +54,9 @@ You can also check the
     several charts e.g. in a dashboard
   - Sub-theme filters now work correctly both in the search page and in the
     dataset selection modal when adding a new chart based on another cube
+  - Changing dashboard time range filter presets now correctly updates the
+    charts
+  - Merged cubes are now done on a chart basis and are not shared between charts
 - Style
   - Cleaned up the chart footnotes and moved most of them to the metadata panel
     – it means that the footnotes don't look broken anymore for charts based on
@@ -58,6 +66,8 @@ You can also check the
     them
   - Updated style of the buttons that open metadata panel
   - Data download menu now opens on click, not hover
+  - Removed unnecessary row gaps in the dashboard layout when e.g. title or
+    description is missing
 
 # [4.6.1] - 2024-06-05
 
