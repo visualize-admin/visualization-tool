@@ -141,7 +141,7 @@ describe("add dataset", () => {
     ) as ConfiguratorStatePublishing;
     const config = newState2.chartConfigs[0] as MapConfig;
     expect(config.cubes.length).toBe(1);
-    expect(config.chartType).toEqual("column");
+    expect(config.chartType).toEqual("map");
   });
 });
 
