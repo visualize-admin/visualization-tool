@@ -341,10 +341,12 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
                   // title and the chart (subgrid layout)
                   <span style={{ height: 1 }} />
                 )}
-                <ChartMoreButton
-                  configKey={configKey}
-                  chartKey={chartConfig.key}
-                />
+                <Box sx={{ mt: "-0.33rem" }}>
+                  <ChartMoreButton
+                    configKey={configKey}
+                    chartKey={chartConfig.key}
+                  />
+                </Box>
               </Flex>
               {meta.description[locale] ? (
                 <Description

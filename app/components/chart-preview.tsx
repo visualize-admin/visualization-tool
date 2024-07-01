@@ -495,7 +495,7 @@ const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
                         display: "flex",
                         alignItems: "center",
                         gap: 2,
-                        mt: "-0.5rem",
+                        mt: "-0.33rem",
                       }}
                     >
                       <ChartMoreButton chartKey={chartConfig.key} />
