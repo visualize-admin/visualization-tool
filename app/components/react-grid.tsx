@@ -210,9 +210,14 @@ type ChartGridLayoutProps = {
 export const ChartGridLayout = (props: ChartGridLayoutProps) => {
   const { children, layouts, resize } = props;
   const [mounted, setMounted] = useState(false);
-  const mountedForSomeTime = useTimeout(500, mounted);
+  const mountedForSomeTime = useTimeout(250, mounted);
   const mountedRef = useRef(false);
   const chartContainerClasses = useChartContainerStyles();
+
+  useEffect(() => {
+    setMounted(false);
+    mountedRef.current = false;
+  }, [layouts]);
 
   const enhancedLayouts = useMemo(() => {
     let i = -1;
@@ -227,7 +232,9 @@ export const ChartGridLayout = (props: ChartGridLayoutProps) => {
           ) as HTMLDivElement | null;
           if (chartWrapper) {
             const chartWrapperScrollHeight = chartWrapper.scrollHeight;
-            const chart = chartWrapper.querySelector(`svg.${CHART_CLASS_NAME}`);
+            const chart =
+              chartWrapper.querySelector(`.${CHART_CLASS_NAME}`) ??
+              chartWrapper.querySelector("canvas"); // map
             if (chart) {
               const chartHeight = chart.clientHeight;
               const minChartWrapperHeight =
@@ -293,7 +300,6 @@ export const ChartGridLayout = (props: ChartGridLayoutProps) => {
       useCSSTransforms={mounted}
       compactType="vertical"
       preventCollision={false}
-      style={{ opacity: mountedForSomeTime ? 1 : 0 }}
     >
       {children}
     </ResponsiveReactGridLayout>
