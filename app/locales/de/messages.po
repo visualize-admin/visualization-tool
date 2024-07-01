@@ -167,7 +167,7 @@ msgstr "Diagramm löschen?"
 
 #: app/components/chart-shared.tsx
 msgid "chart-controls.duplicate"
-msgstr "Duplikat"
+msgstr "Duplizieren"
 
 #: app/components/chart-shared.tsx
 msgid "chart-controls.edit"
