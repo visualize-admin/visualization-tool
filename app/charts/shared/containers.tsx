@@ -7,15 +7,17 @@ import { ReactNode, useEffect, useRef } from "react";
 import { useChartState } from "@/charts/shared/chart-state";
 import { CalculationToggle } from "@/charts/shared/interactive-filter-calculation-toggle";
 import { useObserverRef } from "@/charts/shared/use-size";
-import { ChartConfig } from "@/configurator";
+import {
+  ChartConfig,
+  hasChartConfigs,
+  useConfiguratorState,
+} from "@/configurator";
 import { useTransitionStore } from "@/stores/transition";
-
-export const MIN_CHART_HEIGHT = 300;
 
 export const useStyles = makeStyles<
   {},
   {},
-  ChartConfig["chartType"] | "chartContainer"
+  ChartConfig["chartType"] | "chartContainer" | "constrainMinHeight"
 >(() => ({
   chartContainer: {
     position: "relative",
@@ -30,7 +32,9 @@ export const useStyles = makeStyles<
     // the chart state function can get it and apply it to the plot area.
     // The ReactGridChartPreview component should also disable this behavior.
     aspectRatio: "5 / 2",
-    minHeight: MIN_CHART_HEIGHT,
+  },
+  constrainMinHeight: {
+    minHeight: 300,
   },
 
   // Chart type specific styles, if we need for example to set a specific aspect-ratio
@@ -54,14 +58,20 @@ export const ChartContainer = ({
   children: ReactNode;
   type: ChartConfig["chartType"];
 }) => {
+  const [state] = useConfiguratorState(hasChartConfigs);
   const ref = useObserverRef();
   const classes = useStyles();
-
   return (
     <div
       ref={ref}
       aria-hidden="true"
-      className={clsx(classes.chartContainer, classes[type])}
+      className={clsx(
+        classes.chartContainer,
+        classes[type],
+        state.layout.type === "dashboard" && state.layout.layout === "canvas"
+          ? null
+          : classes.constrainMinHeight
+      )}
     >
       {children}
     </div>

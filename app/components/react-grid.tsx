@@ -214,11 +214,6 @@ export const ChartGridLayout = (props: ChartGridLayoutProps) => {
   const mountedRef = useRef(false);
   const chartContainerClasses = useChartContainerStyles();
 
-  useEffect(() => {
-    setMounted(false);
-    mountedRef.current = false;
-  }, [layouts]);
-
   const enhancedLayouts = useMemo(() => {
     let i = -1;
     const layoutsLength = Object.keys(layouts ?? {}).length;
