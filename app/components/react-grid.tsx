@@ -210,7 +210,7 @@ type ChartGridLayoutProps = {
 export const ChartGridLayout = (props: ChartGridLayoutProps) => {
   const { children, layouts, resize } = props;
   const [mounted, setMounted] = useState(false);
-  const mountedForSomeTime = useTimeout(250, mounted);
+  const mountedForSomeTime = useTimeout(500, mounted);
   const mountedRef = useRef(false);
   const chartContainerClasses = useChartContainerStyles();
 
