@@ -7,11 +7,12 @@ import { ReactNode, useEffect, useRef } from "react";
 import { useChartState } from "@/charts/shared/chart-state";
 import { CalculationToggle } from "@/charts/shared/interactive-filter-calculation-toggle";
 import { useObserverRef } from "@/charts/shared/use-size";
-import { chartPanelLayoutGridClasses } from "@/components/chart-panel-layout-grid";
 import { ChartConfig } from "@/configurator";
 import { useTransitionStore } from "@/stores/transition";
 
-const useStyles = makeStyles<
+export const MIN_CHART_HEIGHT = 300;
+
+export const useStyles = makeStyles<
   {},
   {},
   ChartConfig["chartType"] | "chartContainer"
@@ -29,12 +30,7 @@ const useStyles = makeStyles<
     // the chart state function can get it and apply it to the plot area.
     // The ReactGridChartPreview component should also disable this behavior.
     aspectRatio: "5 / 2",
-    minHeight: 300,
-
-    [`.${chartPanelLayoutGridClasses.root} &`]: {
-      aspectRatio: "auto",
-      minHeight: 0,
-    },
+    minHeight: MIN_CHART_HEIGHT,
   },
 
   // Chart type specific styles, if we need for example to set a specific aspect-ratio
@@ -72,6 +68,8 @@ export const ChartContainer = ({
   );
 };
 
+export const CHART_CLASS_NAME = "chart";
+
 export const ChartSvg = ({ children }: { children: ReactNode }) => {
   const ref = useRef<SVGSVGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
@@ -97,6 +95,7 @@ export const ChartSvg = ({ children }: { children: ReactNode }) => {
   return (
     <svg
       ref={ref}
+      className={CHART_CLASS_NAME}
       width={width}
       style={{ position: "absolute", left: 0, top: 0 }}
     >

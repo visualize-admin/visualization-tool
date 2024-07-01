@@ -4,9 +4,16 @@ import clsx from "clsx";
 import map from "lodash/map";
 import mapValues from "lodash/mapValues";
 import range from "lodash/range";
-import { ComponentProps, useEffect, useMemo, useState } from "react";
+import { ComponentProps, useEffect, useMemo, useRef, useState } from "react";
 import { Layout, Responsive, WidthProvider } from "react-grid-layout";
 import { match } from "ts-pattern";
+
+import {
+  CHART_CLASS_NAME,
+  useStyles as useChartContainerStyles,
+} from "@/charts/shared/containers";
+import { getChartWrapperId } from "@/components/chart-panel";
+import { useTimeout } from "@/hooks/use-timeout";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
@@ -27,7 +34,7 @@ export const availableHandles: ResizeHandle[] = [
 /** In grid unit */
 const MAX_H = 10;
 const INITIAL_H = 7;
-export const MIN_H = 5;
+export const MIN_H = 1;
 
 /** In grid unit */
 const MAX_W = 4;
@@ -192,6 +199,8 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
+const CHART_GRID_MIN_HEIGHT = 100;
+
 type ChartGridLayoutProps = {
   className: string;
   onLayoutChange: Function;
@@ -201,22 +210,69 @@ type ChartGridLayoutProps = {
 export const ChartGridLayout = (props: ChartGridLayoutProps) => {
   const { children, layouts, resize } = props;
   const [mounted, setMounted] = useState(false);
+  const mountedForSomeTime = useTimeout(250, mounted);
+  const mountedRef = useRef(false);
+  const chartContainerClasses = useChartContainerStyles();
 
   const enhancedLayouts = useMemo(() => {
     return mapValues(layouts, (layouts) => {
-      return layouts.map((x) => {
+      return layouts.map((x, i) => {
+        let minH = MIN_H;
+        if (mountedForSomeTime) {
+          const chartWrapper = document.querySelector(
+            `#${getChartWrapperId(x.i)}`
+          ) as HTMLDivElement | null;
+          if (chartWrapper) {
+            const chartWrapperScrollHeight = chartWrapper.scrollHeight;
+            const chart = chartWrapper.querySelector(`svg.${CHART_CLASS_NAME}`);
+            if (chart) {
+              const chartHeight = chart.clientHeight;
+              const minChartWrapperHeight =
+                chartWrapperScrollHeight - chartHeight + CHART_GRID_MIN_HEIGHT;
+              minH = Math.max(
+                MIN_H,
+                Math.ceil(minChartWrapperHeight / ROW_HEIGHT)
+              );
+            }
+          }
+          const chartContainer = chartWrapper?.querySelector(
+            `.${chartContainerClasses.chartContainer}`
+          ) as HTMLDivElement | null;
+          if (chartContainer) {
+            chartContainer.style.aspectRatio = "auto";
+            chartContainer.style.minHeight = `${CHART_GRID_MIN_HEIGHT}px`;
+          }
+
+          if (!mountedRef.current) {
+            if (i === layouts.length - 1) {
+              mountedRef.current = true;
+            }
+            return {
+              ...x,
+              minH,
+              h: minH,
+              maxW: MAX_W,
+              w: Math.min(MAX_W, x.w),
+              resizeHandles: resize ? availableHandles : [],
+            };
+          }
+        }
         return {
           ...x,
-          minH: MIN_H,
-          maxH: MAX_H,
-          h: Math.min(MAX_H, Math.max(MIN_H, x.h)),
+          minH,
+          h: Math.max(minH, x.h),
           maxW: MAX_W,
           w: Math.min(MAX_W, x.w),
           resizeHandles: resize ? availableHandles : [],
         };
       });
     });
-  }, [layouts, resize]);
+  }, [
+    layouts,
+    mountedForSomeTime,
+    resize,
+    chartContainerClasses.chartContainer,
+  ]);
 
   useEffect(() => {
     setMounted(true);
@@ -234,6 +290,7 @@ export const ChartGridLayout = (props: ChartGridLayoutProps) => {
       useCSSTransforms={mounted}
       compactType="vertical"
       preventCollision={false}
+      style={{ opacity: mountedForSomeTime ? 1 : 0 }}
     >
       {children}
     </ResponsiveReactGridLayout>

@@ -32,18 +32,18 @@ const decodeLayouts = (layouts: Layouts) => {
 
 const ChartPanelLayoutCanvas = (props: ChartPanelLayoutTypeProps) => {
   const { chartConfigs } = props;
-  const [config, dispatch] = useConfiguratorState(hasChartConfigs);
+  const [state, dispatch] = useConfiguratorState(hasChartConfigs);
   const [layouts, setLayouts] = useState<Layouts>(() => {
     assert(
-      config.layout.type === "dashboard" && config.layout.layout === "canvas",
+      state.layout.type === "dashboard" && state.layout.layout === "canvas",
       "ChartPanelLayoutGrid should be rendered only for dashboard layout with canvas"
     );
 
-    return config.layout.layouts;
+    return state.layout.layouts;
   });
 
   const handleChangeLayouts = (layouts: Layouts) => {
-    const layout = config.layout;
+    const layout = state.layout;
     assert(
       layout.type === "dashboard" && layout.layout === "canvas",
       "ChartPanelLayoutGrid should be rendered only for dashboard layout with canvas"
@@ -66,9 +66,10 @@ const ChartPanelLayoutCanvas = (props: ChartPanelLayoutTypeProps) => {
 
   return (
     <ChartGridLayout
+      key={state.state}
       className={clsx(chartPanelLayoutGridClasses.root, props.className)}
       layouts={layouts}
-      resize={config.state === "LAYOUTING"}
+      resize={state.state === "LAYOUTING"}
       draggableHandle={`.${chartPanelLayoutGridClasses.dragHandle}`}
       onLayoutChange={(_l, allLayouts) => handleChangeLayouts(allLayouts)}
     >
