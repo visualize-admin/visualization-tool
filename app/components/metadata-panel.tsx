@@ -437,7 +437,7 @@ const CubesPanel = ({
             <DatasetMetadata
               key={cube.iri}
               cube={cube}
-              showTitle={cubes.length > 1}
+              showTitle
               sparqlEditorUrl={sparqlEditorUrl}
               dataSource={dataSource}
               queryFilters={cubeQueryFilters}
