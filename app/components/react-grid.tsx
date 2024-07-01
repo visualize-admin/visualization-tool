@@ -33,11 +33,11 @@ export const availableHandles: ResizeHandle[] = [
 
 /** In grid unit */
 const MAX_H = 10;
-const INITIAL_H = 7;
+export const INITIAL_H = 7;
 export const MIN_H = 1;
 
 /** In grid unit */
-const MAX_W = 4;
+export const MAX_W = 4;
 
 export const COLS = { lg: 4, md: 2, sm: 1, xs: 1, xxs: 1 };
 const ROW_HEIGHT = 100;
@@ -205,10 +205,11 @@ type ChartGridLayoutProps = {
   className: string;
   onLayoutChange: Function;
   resize?: boolean;
+  initialize: boolean;
 } & ComponentProps<typeof ResponsiveReactGridLayout>;
 
 export const ChartGridLayout = (props: ChartGridLayoutProps) => {
-  const { children, layouts, resize } = props;
+  const { children, layouts, resize, initialize } = props;
   const [mounted, setMounted] = useState(false);
   const mountedForSomeTime = useTimeout(250, mounted);
   const mountedRef = useRef(false);
@@ -255,7 +256,8 @@ export const ChartGridLayout = (props: ChartGridLayoutProps) => {
             return {
               ...x,
               minH,
-              h: minH,
+              // Do not reset once layouts have been enhanced at least once
+              h: initialize ? minH : Math.max(minH, x.h),
               maxW: MAX_W,
               w: Math.min(MAX_W, x.w),
               resizeHandles: resize ? availableHandles : [],
@@ -273,6 +275,7 @@ export const ChartGridLayout = (props: ChartGridLayoutProps) => {
       });
     });
   }, [
+    initialize,
     layouts,
     mountedForSomeTime,
     resize,
