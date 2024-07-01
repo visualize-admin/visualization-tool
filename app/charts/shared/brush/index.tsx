@@ -47,7 +47,7 @@ export const shouldShowBrush = (
   dashboardTimeRange: DashboardTimeRangeFilter | undefined
 ) => {
   const chartTimeRange = interactiveFiltersConfig?.timeRange;
-  return chartTimeRange?.active && !dashboardTimeRange?.active;
+  return !dashboardTimeRange?.active && chartTimeRange?.active;
 };
 
 export const BrushTime = () => {

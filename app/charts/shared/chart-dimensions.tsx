@@ -7,6 +7,7 @@ import { getTickNumber } from "@/charts/shared/ticks";
 import { TICK_FONT_SIZE } from "@/charts/shared/use-chart-theme";
 import { Bounds, Margins } from "@/charts/shared/use-size";
 import { ChartConfig } from "@/configurator";
+import { useDashboardInteractiveFilters } from "@/stores/interactive-filters";
 import { getTextWidth } from "@/utils/get-text-width";
 
 type ComputeChartPaddingProps = {
@@ -20,7 +21,11 @@ type ComputeChartPaddingProps = {
   normalize?: boolean;
 };
 
-const computeChartPadding = (props: ComputeChartPaddingProps) => {
+const computeChartPadding = (
+  props: ComputeChartPaddingProps & {
+    dashboardFilters: ReturnType<typeof useDashboardInteractiveFilters>;
+  }
+) => {
   const {
     yScale,
     height,
@@ -29,6 +34,7 @@ const computeChartPadding = (props: ComputeChartPaddingProps) => {
     formatNumber,
     bandDomain,
     normalize,
+    dashboardFilters,
   } = props;
 
   // Fake ticks to compute maximum tick length as
@@ -49,7 +55,9 @@ const computeChartPadding = (props: ComputeChartPaddingProps) => {
   );
 
   let bottom =
-    interactiveFiltersConfig?.timeRange.active || animationPresent
+    (!dashboardFilters.timeRange?.active &&
+      !!interactiveFiltersConfig?.timeRange.active) ||
+    animationPresent
       ? BRUSH_BOTTOM_SPACE
       : 48;
 
@@ -73,7 +81,7 @@ export const useChartPadding = (props: ComputeChartPaddingProps) => {
     bandDomain,
     normalize,
   } = props;
-
+  const dashboardFilters = useDashboardInteractiveFilters();
   return useMemo(() => {
     return computeChartPadding({
       yScale,
@@ -84,6 +92,7 @@ export const useChartPadding = (props: ComputeChartPaddingProps) => {
       formatNumber,
       bandDomain,
       normalize,
+      dashboardFilters,
     });
   }, [
     yScale,
@@ -94,6 +103,7 @@ export const useChartPadding = (props: ComputeChartPaddingProps) => {
     formatNumber,
     bandDomain,
     normalize,
+    dashboardFilters,
   ]);
 };
 
