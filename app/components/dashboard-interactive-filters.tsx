@@ -18,6 +18,7 @@ import {
 } from "@/configurator/components/ui-helpers";
 import { TimeUnit } from "@/graphql/query-hooks";
 import { useDashboardInteractiveFilters } from "@/stores/interactive-filters";
+import { useTransitionStore } from "@/stores/transition";
 import { assert } from "@/utils/assert";
 
 import { useTimeout } from "../hooks/use-timeout";
@@ -79,6 +80,7 @@ const DashboardTimeRangeSlider = ({
 }) => {
   const classes = useStyles();
   const dashboardInteractiveFilters = useDashboardInteractiveFilters();
+  const setEnableTransition = useTransitionStore((state) => state.setEnable);
   const presets = filter.presets;
   assert(
     presets,
@@ -123,6 +125,7 @@ const DashboardTimeRangeSlider = ({
     if (!newTimeRange) {
       return;
     }
+    setEnableTransition(false);
     for (const [_getState, _useStore, store] of Object.values(
       dashboardInteractiveFilters.stores
     )) {
@@ -165,6 +168,7 @@ const DashboardTimeRangeSlider = ({
     <Slider
       className={classes.slider}
       onChange={(_ev, value) => handleChangeSlider(value)}
+      onChangeCommitted={() => setEnableTransition(true)}
       min={min}
       max={max}
       valueLabelFormat={valueLabelFormat}
