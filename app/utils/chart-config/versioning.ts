@@ -931,7 +931,7 @@ export const migrateChartConfig = makeMigrate<ChartConfig>(
   }
 );
 
-export const CONFIGURATOR_STATE_VERSION = "3.4.0";
+export const CONFIGURATOR_STATE_VERSION = "3.5.0";
 
 export const configuratorStateMigrations: Migration[] = [
   {
@@ -1230,6 +1230,58 @@ export const configuratorStateMigrations: Migration[] = [
 
         draft.chartConfigs = chartConfigs;
       });
+    },
+  },
+  {
+    description: "ALL (modify dashboardFilters)",
+    from: "3.4.0",
+    to: "3.5.0",
+    up: (config) => {
+      const oldTimeRangeFilter = config.dashboardFilters.filters[0];
+      const newConfig = {
+        ...config,
+        version: "3.5.0",
+        dashboardFilters: {
+          timeRange: {
+            active: oldTimeRangeFilter?.active ?? false,
+            timeUnit: "",
+            presets: {
+              from: oldTimeRangeFilter?.from ?? "",
+              to: oldTimeRangeFilter?.to ?? "",
+            },
+          } ?? {
+            active: false,
+            timeUnit: "",
+            presets: {
+              from: "",
+              to: "",
+            },
+          },
+        },
+      };
+      return newConfig;
+    },
+    down: (config) => {
+      const oldTimeRangeFilter = config.dashboardFilters.timeRange;
+      const newConfig = {
+        ...config,
+        version: "3.4.0",
+        dashboardFilters: {
+          filters: [
+            {
+              type: "timeRange",
+              active: oldTimeRangeFilter.active,
+              componentIri: "",
+              presets: {
+                type: "range",
+                from: oldTimeRangeFilter.presets.from,
+                to: oldTimeRangeFilter.presets.to,
+              },
+            },
+          ],
+        },
+      };
+      return newConfig;
     },
   },
 ];

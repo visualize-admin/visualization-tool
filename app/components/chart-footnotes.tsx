@@ -78,7 +78,7 @@ export const ChartFootnotes = ({
   const formatLocale = useTimeFormatLocale();
 
   return (
-    <Box sx={{ "& > :not(:last-child)": { mb: 3 } }}>
+    <Box sx={{ mt: 1, "& > :not(:last-child)": { mb: 3 } }}>
       {data?.dataCubesMetadata.map((metadata) => (
         <div key={metadata.iri}>
           <ChartFootnotesLegend

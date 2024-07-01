@@ -48,7 +48,6 @@ import groupBy from "lodash/groupBy";
 import keyBy from "lodash/keyBy";
 import maxBy from "lodash/maxBy";
 import uniq from "lodash/uniq";
-import uniqBy from "lodash/uniqBy";
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { useClient } from "urql";
 
@@ -61,6 +60,7 @@ import {
   addDatasetInConfig,
   ConfiguratorStateConfiguringChart,
   DataSource,
+  getChartConfig,
   isConfiguring,
   useConfiguratorState,
 } from "@/configurator";
@@ -903,10 +903,10 @@ export const DatasetDialog = ({
 
   const handleSubmit = (ev: FormEvent<HTMLFormElement>) => {
     ev.preventDefault();
-    const formdata = Object.fromEntries(
+    const formData = Object.fromEntries(
       new FormData(ev.currentTarget).entries()
     );
-    setQuery(formdata.search as string);
+    setQuery(formData.search as string);
   };
 
   const handleClose: DialogProps["onClose"] = useEventCallback((ev, reason) => {
@@ -1257,18 +1257,16 @@ const useAddDataset = () => {
           JSON.stringify(state)
         ) as ConfiguratorStateConfiguringChart;
         addDatasetInConfig(nextState, addDatasetOptions);
+        const chartConfig = getChartConfig(nextState, state.activeChartKey);
 
-        const allCubes = uniqBy(
-          nextState.chartConfigs.flatMap((x) => x.cubes),
-          (x) => x.iri
-        );
         const res = await executeDataCubesComponentsQuery(client, {
-          locale: locale,
+          locale,
           sourceType,
           sourceUrl,
-          cubeFilters: allCubes.map((cube) => ({
+          cubeFilters: chartConfig.cubes.map((cube) => ({
             iri: cube.iri,
             joinBy: cube.joinBy,
+            componentIris: undefined,
             loadValues: true,
           })),
         });
@@ -1276,6 +1274,7 @@ const useAddDataset = () => {
         if (res.error || !res.data) {
           throw new Error("Could not fetch dimensions and measures");
         }
+
         dispatch({
           type: "DATASET_ADD",
           value: addDatasetOptions,
@@ -1284,7 +1283,7 @@ const useAddDataset = () => {
         const possibleType = getPossibleChartTypes({
           dimensions: dimensions,
           measures: measures,
-          cubeCount: allCubes.length,
+          cubeCount: chartConfig.cubes.length,
         });
         dispatch({
           type: "CHART_TYPE_CHANGED",

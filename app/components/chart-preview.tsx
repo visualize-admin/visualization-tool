@@ -461,6 +461,7 @@ const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
                 >
                   <Flex
                     sx={{
+                      height: "fit-content",
                       justifyContent:
                         configuring || chartConfig.meta.title[locale]
                           ? "space-between"
@@ -484,12 +485,10 @@ const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
                             : undefined
                         }
                       />
-                    ) : // We need to have a span here to keep the space between the
-                    // title and the chart (subgrid layout)
-                    state.layout.type === "dashboard" ? (
-                      <span>&nbsp;</span>
                     ) : (
-                      <span />
+                      // We need to have a span here to keep the space between the
+                      // title and the chart (subgrid layout)
+                      <span style={{ height: 1 }} />
                     )}
                     <Box
                       sx={{
@@ -519,12 +518,10 @@ const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
                           : undefined
                       }
                     />
-                  ) : // We need to have a span here to keep the space between the
-                  // title and the chart (subgrid layout)
-                  state.layout.type === "dashboard" ? (
-                    <span>&nbsp;</span>
                   ) : (
-                    <span />
+                    // We need to have a span here to keep the space between the
+                    // title and the chart (subgrid layout)
+                    <span style={{ height: 1 }} />
                   )}
                   <ChartControls
                     dataSource={dataSource}

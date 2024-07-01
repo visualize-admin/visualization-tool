@@ -144,9 +144,7 @@ export const TimeSlider = (props: TimeSliderProps) => {
     return new Timeline(timelineProps);
   }, [timelineProps]);
 
-  if (
-    dashboardFilters.sharedFilters.find((x) => x.componentIri === componentIri)
-  ) {
+  if (dashboardFilters.timeRange?.active) {
     return null;
   }
 

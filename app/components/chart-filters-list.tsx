@@ -52,13 +52,16 @@ export const ChartFiltersList = ({
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
-      cubeFilters: cubeQueryFilters.map((filter) => ({
-        iri: filter.iri,
-        componentIris: filter.componentIris,
-        filters: filter.filters,
-        joinBy: filter.joinBy,
-        loadValues: true,
-      })),
+      cubeFilters: chartConfig.cubes.map((cube) => {
+        const f = cubeQueryFilters.find((f) => f.iri === cube.iri);
+        return {
+          iri: f?.iri ?? cube.iri,
+          componentIris: f?.componentIris,
+          filters: f?.filters,
+          joinBy: f?.joinBy,
+          loadValues: true,
+        };
+      }),
     },
   });
   const allFilters = useMemo(() => {

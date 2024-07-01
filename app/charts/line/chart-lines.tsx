@@ -30,8 +30,7 @@ export const ChartLinesVisualization = (
 const ChartLines = memo((props: ChartProps<LineConfig>) => {
   const { chartConfig } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
-  const { sharedFilters } = useDashboardInteractiveFilters();
-
+  const dashboardFilters = useDashboardInteractiveFilters();
   return (
     <LineChart {...props}>
       <ChartContainer type="line">
@@ -40,9 +39,10 @@ const ChartLines = memo((props: ChartProps<LineConfig>) => {
           <Lines />
           <ErrorWhiskers />
           <InteractionHorizontal />
-          {shouldShowBrush(interactiveFiltersConfig, sharedFilters) && (
-            <BrushTime />
-          )}
+          {shouldShowBrush(
+            interactiveFiltersConfig,
+            dashboardFilters.timeRange
+          ) && <BrushTime />}
         </ChartSvg>
 
         <Ruler />

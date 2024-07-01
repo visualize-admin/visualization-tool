@@ -815,6 +815,10 @@ msgid "controls.section.shared-filters"
 msgstr "Filtri condivisi"
 
 #: app/configurator/components/layout-configurator.tsx
+msgid "controls.section.shared-filters.date"
+msgstr "Data"
+
+#: app/configurator/components/layout-configurator.tsx
 msgid "controls.section.shared-filters.shared-switch"
 msgstr "Condiviso"
 

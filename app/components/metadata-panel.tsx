@@ -475,7 +475,7 @@ const DataPanel = ({
       }[] => {
         if (isJoinByComponent(component)) {
           return (component.originalIris ?? []).map((x) => ({
-            label: getComponentLabel(component, x.cubeIri),
+            label: getComponentLabel(component, { cubeIri: x.cubeIri }),
             value: {
               ...omit(component, "originalIris"),
               cubeIri: x.cubeIri,
@@ -674,7 +674,7 @@ const ComponentTabPanel = ({
   const classes = useOtherStyles();
   const { setSelectedDimension } = useMetadataPanelStoreActions();
   const label = useMemo(
-    () => getComponentLabel(component, cubeIri),
+    () => getComponentLabel(component, { cubeIri }),
     [cubeIri, component]
   );
   const description = useMemo(() => {

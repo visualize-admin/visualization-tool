@@ -324,6 +324,7 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
             <InteractiveFiltersChartProvider chartConfigKey={chartConfig.key}>
               <Flex
                 sx={{
+                  height: "fit-content",
                   justifyContent: meta.title[locale]
                     ? "space-between"
                     : "flex-end",
@@ -335,12 +336,10 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
                     text={meta.title[locale]}
                     smaller={state.layout.type === "dashboard"}
                   />
-                ) : // We need to have a span here to keep the space between the
-                // title and the chart (subgrid layout)
-                state.layout.type === "dashboard" ? (
-                  <span>&nbsp;</span>
                 ) : (
-                  <span />
+                  // We need to have a span here to keep the space between the
+                  // title and the chart (subgrid layout)
+                  <span style={{ height: 1 }} />
                 )}
                 <ChartMoreButton
                   configKey={configKey}
@@ -352,12 +351,10 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
                   text={meta.description[locale]}
                   smaller={state.layout.type === "dashboard"}
                 />
-              ) : // We need to have a span here to keep the space between the
-              // title and the chart (subgrid layout)
-              state.layout.type === "dashboard" ? (
-                <span>&nbsp;</span>
               ) : (
-                <span />
+                // We need to have a span here to keep the space between the
+                // title and the chart (subgrid layout)
+                <span style={{ height: 1 }} />
               )}
               <ChartControls
                 dataSource={dataSource}
