@@ -215,8 +215,11 @@ export const ChartGridLayout = (props: ChartGridLayoutProps) => {
   const chartContainerClasses = useChartContainerStyles();
 
   const enhancedLayouts = useMemo(() => {
-    return mapValues(layouts, (layouts) => {
-      return layouts.map((x, i) => {
+    let i = -1;
+    const layoutsLength = Object.keys(layouts ?? {}).length;
+    return mapValues(layouts, (layoutValues) => {
+      i++;
+      return layoutValues.map((x, j) => {
         let minH = MIN_H;
         if (mountedForSomeTime) {
           const chartWrapper = document.querySelector(
@@ -244,7 +247,7 @@ export const ChartGridLayout = (props: ChartGridLayoutProps) => {
           }
 
           if (!mountedRef.current) {
-            if (i === layouts.length - 1) {
+            if (i === layoutsLength - 1 && j === layoutValues.length - 1) {
               mountedRef.current = true;
             }
             return {
