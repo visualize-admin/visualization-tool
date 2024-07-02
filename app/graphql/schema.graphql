@@ -131,6 +131,8 @@ type Query {
     sourceType: String!
     sourceUrl: String!
     locale: String!
+    # In case of changing this variable name, or any other `cubeFilter` down below,
+    # make sure to update GraphQL context to keep the caching-per-cube behavior working.
     cubeFilter: DataCubeComponentFilter!
   ): DataCubeComponents!
   dataCubeComponentTermsets(

@@ -1,4 +1,4 @@
-import { getAllConfigs } from "../../../db/config";
+import { getAllConfigsMetadata } from "../../../db/config";
 import { api } from "../../../server/nextkit";
 
 /**
@@ -6,11 +6,12 @@ import { api } from "../../../server/nextkit";
  */
 const route = api({
   GET: async ({ req }) => {
-    return getAllConfigs({
+    return getAllConfigsMetadata({
       limit:
         req.query.limit && !Array.isArray(req.query.limit)
           ? parseInt(req.query.limit as string)
           : undefined,
+      orderByViewCount: req.query.orderByViewCount === "true",
     });
   },
 });
