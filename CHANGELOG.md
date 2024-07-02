@@ -35,6 +35,9 @@ You can also check the
     in the time slider (e.g. if one chart has a year resolution and another has
     a month resolution, the time slider will show months)
   - Switched from in-house Cube Checker to Zazuko's Cube Validator
+  - Switched INT and TEST data sources to use cached LINDAS endpoints, and added
+    three uncached endpoints for testing purposes (Prod-uncached, Int-uncached,
+    Test-uncached)
 - Fixes
   - Fixed using a time range brush in column charts when X dimension is a
     `TemporalEntityDimension`
