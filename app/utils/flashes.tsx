@@ -34,11 +34,11 @@ const CannotFindCubeContent = () => {
         <Trans id="flashes.couldnt-load-cube.title">Could not load cube</Trans>
       </AlertTitle>
       <Link
-        href={`/_cube-checker?cubeIri=${errorOptions.iri}`}
+        href={`https://cube-validator.lindas.admin.ch/validate/${encodeURIComponent(errorOptions.endpointUrl)}/${encodeURIComponent(errorOptions.iri)}?profile=https:%2F%2Fcube.link%2Fref%2Fmain%2Fshape%2Fprofile-visualize`}
         sx={{ display: "flex", alignItems: "center", gap: 1 }}
       >
         <Trans id="flashes.couldnt-load-cube.view-cube-checker">
-          View in cube checker
+          View in Cube Validator
         </Trans>{" "}
         <Icon name="arrowRight" size={16} />
       </Link>

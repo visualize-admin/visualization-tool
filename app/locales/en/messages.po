@@ -1048,22 +1048,6 @@ msgstr "Title"
 msgid "controls.tree.select-value"
 msgstr "Select"
 
-#: app/pages/_cube-checker.tsx
-msgid "cube-checker.cube-checker"
-msgstr "Cube checker"
-
-#: app/pages/_cube-checker.tsx
-msgid "cube-checker.description"
-msgstr "Cube checker helps you understand if a cube has all the necessary attributes and properties to be viewable in visualize.admin.ch."
-
-#: app/pages/_cube-checker.tsx
-msgid "cube-checker.field-placeholder"
-msgstr "Cube IRI"
-
-#: app/pages/_cube-checker.tsx
-msgid "cube-checker.help"
-msgstr "More information here."
-
 #: app/components/data-source-menu.tsx
 msgid "data.source"
 msgstr "Data source"
@@ -1240,7 +1224,7 @@ msgstr "Could not load cube"
 
 #: app/utils/flashes.tsx
 msgid "flashes.couldnt-load-cube.view-cube-checker"
-msgstr "View in cube checker"
+msgstr "View in Cube Validator"
 
 #: app/components/footer.tsx
 msgid "footer.institution.name"

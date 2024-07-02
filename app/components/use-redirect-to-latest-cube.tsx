@@ -29,11 +29,12 @@ export const useRedirectToLatestCube = ({
     if (datasetIri && !Array.isArray(datasetIri)) {
       hasRun.current = true;
 
+      const endpointUrl = getMaybeCachedSparqlUrl({
+        endpointUrl: url,
+        cubeIri: datasetIri,
+      });
       const sparqlClient = new ParsingClient({
-        endpointUrl: getMaybeCachedSparqlUrl({
-          endpointUrl: url,
-          cubeIri: datasetIri,
-        }),
+        endpointUrl,
       });
       const latestIri = await queryLatestCubeIri(sparqlClient, datasetIri);
 
@@ -43,6 +44,7 @@ export const useRedirectToLatestCube = ({
           query: getErrorQueryParams("CANNOT_FIND_CUBE", {
             ...router.query,
             iri: datasetIri,
+            endpointUrl,
           }),
         });
       }

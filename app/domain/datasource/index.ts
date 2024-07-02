@@ -82,7 +82,7 @@ export const useDataSourceState = () => {
 };
 
 export const isDataSourceChangeable = (pathname: string) => {
-  return ["/", "/browse", "/_cube-checker"].includes(pathname);
+  return ["/", "/browse"].includes(pathname);
 };
 
 export const dataSourceToSparqlEditorUrl = (dataSource: DataSource): string => {

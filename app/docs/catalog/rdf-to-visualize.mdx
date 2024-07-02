@@ -38,29 +38,19 @@ you find this documentation incomplete.
 See also [the RDF cube schema](https://zazuko.github.io/rdf-cube-schema/) for
 more information on the RDF cube schema specification.
 
-### Cube checker
+### Cube Validator
 
-To be correctly displayed inside visualize, your cube needs to have some
+To be correctly displayed inside Visualize, your cube needs to have some
 attributes, some which are part of the cube specification, other which are
-specific to visualize. To help you understand why a cube does not behave as
-expected, [the cube checker](/_cube-checker) can help you: it provides a list of
-check against a cube that you can use to troubleshoot.
+specific to Visualize. To help you understand why a cube does not behave as
+expected, [the Cube Validator](https://cube-validator.lindas.admin.ch/select)
+can help you: it provides a list of checks against a cube that you can use to
+troubleshoot.
 
 It can be used to understand:
 
 - Why a cube does not appear on the search
-- Why a cube cannot be loaded inside visualize
-
-In the future, more checks could be implemented, for example checks on
-dimensions, do not hesitate to
-[post an issue](https://github.com/visualize-admin/visualization-tool/issues) if
-you have an idea of a check.
-
-⚠️ For now, the cube checker only supports versioned iris, so make sure the IRI
-you're using has a version at the end.
-
-- ❌ https://environment.ld.admin.ch/foen/ubd000502
-- ✅ https://environment.ld.admin.ch/foen/ubd000502/3
+- Why a cube cannot be loaded inside Visualize
 
 ### Cube
 
