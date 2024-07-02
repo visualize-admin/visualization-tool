@@ -1389,7 +1389,7 @@ msgstr "Denken Sie daran, dass das Entfernen dieser Visualisierung sich auf alle
 
 #: app/login/components/profile-content-tabs.tsx
 msgid "login.profile.home"
-msgstr "Empfang"
+msgstr "Übersicht"
 
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
