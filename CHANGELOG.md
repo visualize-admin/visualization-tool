@@ -34,6 +34,7 @@ You can also check the
     combined from all charts in the dashboard and the "lowest" time unit is used
     in the time slider (e.g. if one chart has a year resolution and another has
     a month resolution, the time slider will show months)
+  - Switched from in-house Cube Checker to Zazuko's Cube Validator
 - Fixes
   - Fixed using a time range brush in column charts when X dimension is a
     `TemporalEntityDimension`
