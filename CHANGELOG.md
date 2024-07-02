@@ -57,6 +57,9 @@ You can also check the
   - Changing dashboard time range filter presets now correctly updates the
     charts
   - Merged cubes are now done on a chart basis and are not shared between charts
+- Performance
+  - Introduced querying per cube iri for supported endpoint (PROD LINDAS
+    cached), so that we hit Varnish cache per cube
 - Style
   - Cleaned up the chart footnotes and moved most of them to the metadata panel
     – it means that the footnotes don't look broken anymore for charts based on
