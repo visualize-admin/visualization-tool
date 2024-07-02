@@ -3,13 +3,15 @@ import { useEffect, useMemo, useRef } from "react";
 import { GroupedColumnsState } from "@/charts/column/columns-grouped-state";
 import {
   RenderColumnDatum,
-  RenderWhiskerDatum,
-  filterWithoutErrors,
   renderColumns,
-  renderWhiskers,
 } from "@/charts/column/rendering-utils";
 import { useChartState } from "@/charts/shared/chart-state";
-import { renderContainer } from "@/charts/shared/rendering-utils";
+import {
+  RenderWhiskerDatum,
+  filterWithoutErrors,
+  renderContainer,
+  renderWhiskers,
+} from "@/charts/shared/rendering-utils";
 import { useTransitionStore } from "@/stores/transition";
 
 export const ErrorWhiskers = () => {
@@ -24,18 +26,16 @@ export const ErrorWhiskers = () => {
     grouped,
     showYStandardError,
   } = useChartState() as GroupedColumnsState;
-  const { margins } = bounds;
+  const { margins, width, height } = bounds;
   const ref = useRef<SVGGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
-  // As xScale object is not re-created when its domain or range changes, we use this
-  // trick to force the re-rendering of the whiskers when the xScale changes.
-  const bandwidth = xScaleIn.bandwidth();
   const renderData: RenderWhiskerDatum[] = useMemo(() => {
     if (!getYErrorRange || !showYStandardError) {
       return [];
     }
 
+    const bandwidth = xScaleIn.bandwidth();
     return grouped
       .filter((d) => d[1].some(filterWithoutErrors(getYError)))
       .flatMap(([segment, observations]) =>
@@ -43,16 +43,16 @@ export const ErrorWhiskers = () => {
           const x0 = xScaleIn(getSegment(d)) as number;
           const barWidth = Math.min(bandwidth, 15);
           const [y1, y2] = getYErrorRange(d);
-
           return {
             key: `${segment}-${getSegment(d)}`,
             x: (xScale(segment) as number) + x0 + bandwidth / 2 - barWidth / 2,
             y1: yScale(y1),
             y2: yScale(y2),
             width: barWidth,
-          };
+          } as RenderWhiskerDatum;
         })
       );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     getSegment,
     getYErrorRange,
@@ -62,7 +62,8 @@ export const ErrorWhiskers = () => {
     xScale,
     xScaleIn,
     yScale,
-    bandwidth,
+    width,
+    height,
   ]);
 
   useEffect(() => {

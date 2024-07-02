@@ -12,13 +12,17 @@ import { isUsingImputation } from "@/charts/shared/imputation";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
 import { ChartFootnotes } from "@/components/chart-footnotes";
 import { ChartPanelLayout, ChartWrapper } from "@/components/chart-panel";
-import { ChartControls } from "@/components/chart-shared";
+import {
+  ChartControls,
+  ChartMoreButton,
+  useChartStyles,
+} from "@/components/chart-shared";
 import {
   ChartTablePreviewProvider,
   useChartTablePreview,
 } from "@/components/chart-table-preview";
-import { useChartStyles } from "@/components/chart-utils";
 import { ChartWithFilters } from "@/components/chart-with-filters";
+import { DashboardInteractiveFilters } from "@/components/dashboard-interactive-filters";
 import Flex from "@/components/flex";
 import { HintBlue, HintRed, HintYellow } from "@/components/hint";
 import {
@@ -49,8 +53,6 @@ import {
   InteractiveFiltersChartProvider,
   InteractiveFiltersProvider,
 } from "@/stores/interactive-filters";
-import { useEmbedOptions } from "@/utils/embed";
-import useEvent from "@/utils/use-event";
 
 type ChartPublishedProps = {
   configKey?: string;
@@ -149,6 +151,7 @@ export const ChartPublished = (props: ChartPublishedProps) => {
             )}
           </Flex>
           <ChartTablePreviewProvider>
+            <DashboardInteractiveFilters />
             <ChartWrapper layoutType={state.layout.type}>
               <ChartPublishedInner
                 dataSource={dataSource}
@@ -185,7 +188,7 @@ type ChartPublishInnerProps = {
   children?: React.ReactNode;
 };
 
-const ChartPublishedInner = (props: ChartPublishInnerProps) => {
+const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
   const {
     dataSource = DEFAULT_DATA_SOURCE,
     state,
@@ -196,15 +199,8 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
   } = props;
   const { meta } = chartConfig;
   const rootRef = useRef<HTMLDivElement>(null);
-  const {
-    state: isTablePreview,
-    setState: setIsTablePreview,
-    containerRef,
-    containerHeight,
-    computeContainerHeight,
-  } = useChartTablePreview();
-  const handleToggleTableView = useEvent(() => setIsTablePreview((c) => !c));
-  const [{ showDownload }] = useEmbedOptions();
+  const { isTable, containerRef, containerHeight, computeContainerHeight } =
+    useChartTablePreview();
   const metadataPanelStore = useMemo(() => createMetadataPanelStore(), []);
   const metadataPanelOpen = useStore(metadataPanelStore, (state) => state.open);
   const shouldShrink = useMemo(() => {
@@ -328,6 +324,7 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
             <InteractiveFiltersChartProvider chartConfigKey={chartConfig.key}>
               <Flex
                 sx={{
+                  height: "fit-content",
                   justifyContent: meta.title[locale]
                     ? "space-between"
                     : "flex-end",
@@ -335,26 +332,39 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
                 }}
               >
                 {meta.title[locale] ? (
-                  <Title text={meta.title[locale]} />
+                  <Title
+                    text={meta.title[locale]}
+                    smaller={state.layout.type === "dashboard"}
+                  />
                 ) : (
                   // We need to have a span here to keep the space between the
                   // title and the chart (subgrid layout)
-                  <span />
+                  <span style={{ height: 1 }} />
                 )}
+                <Box sx={{ mt: "-0.33rem" }}>
+                  <ChartMoreButton
+                    configKey={configKey}
+                    chartKey={chartConfig.key}
+                  />
+                </Box>
               </Flex>
               {meta.description[locale] ? (
-                <Description text={meta.description[locale]} />
+                <Description
+                  text={meta.description[locale]}
+                  smaller={state.layout.type === "dashboard"}
+                />
               ) : (
                 // We need to have a span here to keep the space between the
                 // title and the chart (subgrid layout)
-                <span />
+                <span style={{ height: 1 }} />
               )}
               <ChartControls
                 dataSource={dataSource}
                 chartConfig={chartConfig}
                 metadataPanelProps={{
-                  dimensions: allComponents,
+                  components: allComponents,
                   container: rootRef.current,
+                  allowMultipleOpen: true,
                 }}
               />
 
@@ -363,16 +373,16 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
                 style={{
                   // TODO before merging, Align with chart-preview
                   minWidth: 0,
-                  height: containerHeight.current,
+                  height: containerHeight,
                   marginTop: 16,
                   flexGrow: 1,
                 }}
               >
-                {isTablePreview ? (
+                {isTable ? (
                   <DataSetTable
-                    sx={{ maxHeight: "100%" }}
                     dataSource={dataSource}
                     chartConfig={chartConfig}
+                    sx={{ maxHeight: "100%" }}
                   />
                 ) : (
                   <ChartWithFilters
@@ -385,16 +395,8 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
               <ChartFootnotes
                 dataSource={dataSource}
                 chartConfig={chartConfig}
-                dimensions={dimensions}
-                configKey={configKey}
-                onToggleTableView={handleToggleTableView}
-                visualizeLinkText={
-                  showDownload === false ? (
-                    <Trans id="metadata.link.created.with.visualize.alternate">
-                      visualize.admin.ch
-                    </Trans>
-                  ) : undefined
-                }
+                components={allComponents}
+                showVisualizeLink={state.chartConfigs.length === 1}
               />
             </InteractiveFiltersChartProvider>
           </LoadingStateProvider>
@@ -403,3 +405,9 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
     </MetadataPanelStoreContext.Provider>
   );
 };
+
+const ChartPublishedInner = (props: ChartPublishInnerProps) => (
+  // Enforce re-mounting of the component when the chart config changes
+  // to ensure we do not use any out of date data.
+  <ChartPublishedInnerImpl {...props} key={props.chartConfig.key} />
+);

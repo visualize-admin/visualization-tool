@@ -65,6 +65,7 @@ type ProfileVisualizationsTableProps = {
 };
 
 const StyledTable = styled(Table)(({ theme }) => ({
+  tableLayout: "fixed",
   [`& .${tableRowClasses.root}`]: {
     verticalAlign: "middle",
     height: 56,
@@ -95,7 +96,7 @@ export const ProfileVisualizationsTable = (
                 },
               }}
             >
-              <TableRow sx={{}}>
+              <TableRow>
                 <TableCell>
                   <Trans id="login.profile.my-visualizations.chart-type">
                     Type
@@ -201,7 +202,10 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
       {
         type: "link",
         href: `/${locale}/v/${config.key}`,
-        label: t({ id: "login.chart.view", message: "View" }),
+        label:
+          config.published_state === PUBLISHED_STATE.PUBLISHED
+            ? t({ id: "login.chart.view", message: "View" })
+            : t({ id: "login.chart.preview", message: "Preview" }),
         iconName: "eye",
         priority:
           config.published_state === PUBLISHED_STATE.PUBLISHED ? 0 : undefined,
@@ -298,31 +302,29 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
   ]);
 
   const chartTitle = useMemo(() => {
-    const title = config.data.chartConfigs
-      .map((d) => d.meta.title?.[locale] ?? false)
-      .filter(truthy)
-      .join(", ");
+    const title =
+      config.data.layout.meta.title?.[locale] ??
+      config.data.chartConfigs
+        .map((d) => d.meta.title?.[locale] ?? false)
+        .filter(truthy)
+        .join(", ");
 
     return title
       ? title
       : t({ id: "annotation.add.title", message: "[ No Title ]" });
-  }, [config.data.chartConfigs, locale]);
+  }, [config.data.chartConfigs, config.data.layout.meta.title, locale]);
 
   return (
     <TableRow>
       <TableCell width="10%">
         <Typography variant="body2">
-          {config.data.chartConfigs.length > 1 ? "multi" : "single"}
+          {config.data.chartConfigs.length > 1 ? "dashboard" : "single"}
         </Typography>
       </TableCell>
       <TableCell width="30%">
-        <NextLink href={`/v/${config.key}`} passHref legacyBehavior>
-          <Link color="primary">
-            <Typography variant="body2" noWrap>
-              {chartTitle}
-            </Typography>
-          </Link>
-        </NextLink>
+        <Typography variant="body2" noWrap title={chartTitle}>
+          {chartTitle}
+        </Typography>
       </TableCell>
       <TableCell width="30%">
         {fetching ? (

@@ -38,7 +38,14 @@ export const getInitialConfiguringConfigBasedOnCube = (props: {
     chartConfigs: [chartConfig],
     activeChartKey: chartConfig.key,
     dashboardFilters: {
-      filters: [],
+      timeRange: {
+        active: false,
+        timeUnit: "",
+        presets: {
+          from: "",
+          to: "",
+        },
+      },
     },
   };
 };

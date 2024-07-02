@@ -194,6 +194,35 @@ export const getAllConfigs = async ({
   return await Promise.all(parsedConfigs.map(upgradeDbConfig));
 };
 
+export const getConfigViewCount = async (configKey: string) => {
+  return await prisma.config
+    .findFirstOrThrow({
+      where: {
+        key: configKey,
+      },
+      include: {
+        _count: {
+          select: {
+            views: true,
+          },
+        },
+      },
+    })
+    .then((config) => config._count.views)
+    .catch(() => 0);
+};
+
+/**
+ * Increase the view count of a config.
+ */
+export const increaseConfigViewCount = async (configKey: string) => {
+  await prisma.configView.create({
+    data: {
+      config_key: configKey,
+    },
+  });
+};
+
 /**
  * Get all configs metadata from DB.
  */

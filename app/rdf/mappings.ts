@@ -32,3 +32,13 @@ export const timeUnitFormats = new Map<TimeUnit, string>([
   [TimeUnit.Minute, "%Y-%m-%dT%H:%M"],
   [TimeUnit.Second, "%Y-%m-%dT%H:%M:%S"],
 ]);
+
+export const timeUnitOrder = new Map<TimeUnit, number>([
+  [TimeUnit.Year, 0],
+  [TimeUnit.Month, 1],
+  [TimeUnit.Week, 2],
+  [TimeUnit.Day, 3],
+  [TimeUnit.Hour, 4],
+  [TimeUnit.Minute, 5],
+  [TimeUnit.Second, 6],
+]);

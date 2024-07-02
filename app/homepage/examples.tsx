@@ -70,11 +70,14 @@ type ExampleProps = {
 const Example = (props: ExampleProps) => {
   const { queryKey, configuratorState, headline, description, reverse } = props;
   const client = useClient();
-  const { data, error } = useFetchData([queryKey], () => {
-    return upgradeConfiguratorState(configuratorState, {
-      client,
-      dataSource: configuratorState.dataSource,
-    });
+  const { data, error } = useFetchData({
+    queryKey: [queryKey],
+    queryFn: () => {
+      return upgradeConfiguratorState(configuratorState, {
+        client,
+        dataSource: configuratorState.dataSource,
+      });
+    },
   });
 
   return data ? (

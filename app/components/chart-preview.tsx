@@ -6,8 +6,8 @@ import {
   useDraggable,
   useDroppable,
 } from "@dnd-kit/core";
-import { Trans, t } from "@lingui/macro";
-import { Box, IconButton, useEventCallback } from "@mui/material";
+import { Trans } from "@lingui/macro";
+import { Box } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import Head from "next/head";
 import React, {
@@ -20,7 +20,6 @@ import React, {
 
 import { DataSetTable } from "@/browse/datatable";
 import { LoadingStateProvider } from "@/charts/shared/chart-loading-state";
-import { ArrowMenu } from "@/components/arrow-menu";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
 import { ChartFootnotes } from "@/components/chart-footnotes";
 import {
@@ -29,19 +28,26 @@ import {
   ChartWrapperProps,
 } from "@/components/chart-panel";
 import { chartPanelLayoutGridClasses } from "@/components/chart-panel-layout-grid";
-import { ChartControls } from "@/components/chart-shared";
+import {
+  ChartControls,
+  ChartMoreButton,
+  useChartStyles,
+} from "@/components/chart-shared";
 import {
   ChartTablePreviewProvider,
   useChartTablePreview,
 } from "@/components/chart-table-preview";
-import { useChartStyles } from "@/components/chart-utils";
 import { ChartWithFilters } from "@/components/chart-with-filters";
+import { DashboardInteractiveFilters } from "@/components/dashboard-interactive-filters";
 import DebugPanel from "@/components/debug-panel";
-import { DragHandle, DragHandleProps } from "@/components/drag-handle";
+import { DragHandle } from "@/components/drag-handle";
 import Flex from "@/components/flex";
 import { Checkbox } from "@/components/form";
 import { HintYellow } from "@/components/hint";
-import { MenuActionItem } from "@/components/menu-action-item";
+import {
+  MetadataPanelStoreContext,
+  createMetadataPanelStore,
+} from "@/components/metadata-panel-store";
 import { BANNER_MARGIN_TOP } from "@/components/presence";
 import {
   ChartConfig,
@@ -58,13 +64,11 @@ import {
   useDataCubesMetadataQuery,
 } from "@/graphql/hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
-import SvgIcMore from "@/icons/components/IcMore";
 import { useLocale } from "@/locales/use-locale";
 import { InteractiveFiltersChartProvider } from "@/stores/interactive-filters";
 import { useTransitionStore } from "@/stores/transition";
 import { useTheme } from "@/themes";
 import { createSnapCornerToCursor } from "@/utils/dnd";
-import useEvent from "@/utils/use-event";
 
 type ChartPreviewProps = {
   dataSource: DataSource;
@@ -78,17 +82,24 @@ export const ChartPreview = (props: ChartPreviewProps) => {
 
   return layout.type === "dashboard" && !editing ? (
     <DashboardPreview dataSource={dataSource} layoutType={layout.layout} />
-  ) : layout.type === "singleURLs" ? (
+  ) : layout.type === "singleURLs" && !editing ? (
     <SingleURLsPreview dataSource={dataSource} layout={layout} />
   ) : (
     // Important to keep the key here to force re-rendering of the chart when
     // we switch tabs in the configurator, otherwise we end up with the wrong
     // data in the downstream hooks (useDataCubesMetadataQuery, etc.)
-    <ChartTablePreviewProvider key={state.activeChartKey}>
-      <ChartWrapper editing={editing} layoutType={layout.type}>
-        <ChartPreviewInner dataSource={dataSource} />
-      </ChartWrapper>
-    </ChartTablePreviewProvider>
+    <>
+      {state.state !== "CONFIGURING_CHART" ? (
+        <DashboardInteractiveFilters
+          key={state.chartConfigs.map((x) => x.key).join(",")}
+        />
+      ) : null}
+      <ChartTablePreviewProvider key={state.activeChartKey}>
+        <ChartWrapper editing={editing} layoutType={layout.type}>
+          <ChartPreviewInner dataSource={dataSource} />
+        </ChartWrapper>
+      </ChartTablePreviewProvider>
+    </>
   );
 };
 
@@ -225,78 +236,6 @@ type CommonChartPreviewProps = ChartWrapperProps & {
   dataSource: DataSource;
 };
 
-const ChartPreviewChartMoreButton = ({ chartKey }: { chartKey: string }) => {
-  const [anchor, setAnchor] = useState<HTMLElement | null>(null);
-  const handleClose = useEventCallback(() => setAnchor(null));
-  const [state, dispatch] = useConfiguratorState(hasChartConfigs);
-  return (
-    <>
-      <IconButton onClick={(ev) => setAnchor(ev.currentTarget)}>
-        <SvgIcMore />
-      </IconButton>
-      <ArrowMenu
-        open={!!anchor}
-        anchorEl={anchor}
-        onClose={handleClose}
-        anchorOrigin={{ horizontal: "center", vertical: "bottom" }}
-        transformOrigin={{ horizontal: "center", vertical: "top" }}
-      >
-        <MenuActionItem
-          type="button"
-          as="menuitem"
-          onClick={() => {
-            dispatch({ type: "CONFIGURE_CHART", value: { chartKey } });
-            handleClose();
-          }}
-          iconName="edit"
-          label={<Trans id="chart-controls.edit">Edit</Trans>}
-        />
-        {state.chartConfigs.length > 1 ? (
-          <MenuActionItem
-            type="button"
-            as="menuitem"
-            color="error"
-            requireConfirmation
-            confirmationTitle={t({
-              id: "chart-controls.delete.title",
-              message: "Delete chart?",
-            })}
-            confirmationText={t({
-              id: "chart-controls.delete.confirmation",
-              message: "Are you sure you want to delete this chart?",
-            })}
-            onClick={() => {
-              dispatch({ type: "CHART_CONFIG_REMOVE", value: { chartKey } });
-              handleClose();
-            }}
-            iconName="trash"
-            label={<Trans id="chart-controls.delete">Delete</Trans>}
-          />
-        ) : null}
-      </ArrowMenu>
-    </>
-  );
-};
-
-const ChartTopRightControls = ({
-  chartKey,
-  dragHandleProps,
-}: {
-  chartKey: string;
-  dragHandleProps?: DragHandleProps;
-}) => {
-  return (
-    <>
-      <ChartPreviewChartMoreButton chartKey={chartKey} />
-      <DragHandle
-        dragging
-        className={chartPanelLayoutGridClasses.dragHandle}
-        {...dragHandleProps}
-      />
-    </>
-  );
-};
-
 const ReactGridChartPreview = forwardRef<
   HTMLDivElement,
   CommonChartPreviewProps
@@ -308,7 +247,12 @@ const ReactGridChartPreview = forwardRef<
         <ChartPreviewInner
           dataSource={dataSource}
           chartKey={chartKey}
-          actionElementSlot={<ChartTopRightControls chartKey={chartKey} />}
+          actionElementSlot={
+            <DragHandle
+              className={chartPanelLayoutGridClasses.dragHandle}
+              dragging
+            />
+          }
         >
           {children}
         </ChartPreviewInner>
@@ -361,13 +305,11 @@ const DndChartPreview = (props: CommonChartPreviewProps) => {
           dataSource={dataSource}
           chartKey={chartKey}
           actionElementSlot={
-            <ChartTopRightControls
-              chartKey={chartKey}
-              dragHandleProps={{
-                ...listeners,
-                ref: setActivatorNodeRef,
-                dragging: isDragging,
-              }}
+            <DragHandle
+              ref={setActivatorNodeRef}
+              className={chartPanelLayoutGridClasses.dragHandle}
+              dragging={isDragging}
+              {...listeners}
             />
           }
         />
@@ -396,27 +338,24 @@ const SingleURLsPreview = (props: SingleURLsPreviewProps) => {
               dataSource={dataSource}
               chartKey={chartConfig.key}
               actionElementSlot={
-                <>
-                  <ChartPreviewChartMoreButton chartKey={key} />
-                  <Checkbox
-                    checked={checked}
-                    disabled={keys.length === 1 && checked}
-                    onChange={() => {
-                      dispatch({
-                        type: "LAYOUT_CHANGED",
-                        value: {
-                          ...layout,
-                          publishableChartKeys: checked
-                            ? keys.filter((k) => k !== key)
-                            : state.chartConfigs
-                                .map((c) => c.key)
-                                .filter((k) => keys.includes(k) || k === key),
-                        },
-                      });
-                    }}
-                    label=""
-                  />
-                </>
+                <Checkbox
+                  checked={checked}
+                  disabled={keys.length === 1 && checked}
+                  onChange={() => {
+                    dispatch({
+                      type: "LAYOUT_CHANGED",
+                      value: {
+                        ...layout,
+                        publishableChartKeys: checked
+                          ? keys.filter((k) => k !== key)
+                          : state.chartConfigs
+                              .map((c) => c.key)
+                              .filter((k) => keys.includes(k) || k === key),
+                      },
+                    });
+                  }}
+                  label=""
+                />
               }
             />
           </ChartWrapper>
@@ -471,13 +410,7 @@ const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
       })),
     },
   });
-  const {
-    state: isTablePreview,
-    setState: setIsTablePreview,
-    containerRef,
-    containerHeight,
-  } = useChartTablePreview();
-  const handleToggleTableView = useEvent(() => setIsTablePreview((c) => !c));
+  const { isTable, containerRef, containerHeight } = useChartTablePreview();
   const dimensions = components?.dataCubesComponents.dimensions;
   const measures = components?.dataCubesComponents.measures;
   const allComponents = useMemo(() => {
@@ -487,136 +420,155 @@ const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
 
     return [...dimensions, ...measures];
   }, [dimensions, measures]);
+  const metadataPanelStore = useMemo(() => {
+    return createMetadataPanelStore();
+  }, []);
 
   return (
-    <Box className={chartClasses.root}>
-      {props.children}
-      <ChartErrorBoundary resetKeys={[state]}>
-        <div>
-          {metadata?.dataCubesMetadata.some(
-            (d) => d.publicationStatus === DataCubePublicationStatus.Draft
-          ) && (
-            <Box sx={{ mb: 4 }}>
-              <HintYellow iconName="datasetError" iconSize={64}>
-                <Trans id="dataset.publicationStatus.draft.warning">
-                  Careful, this dataset is only a draft.
-                  <br />
-                  <strong>Don&apos;t use for reporting!</strong>
-                </Trans>
-              </HintYellow>
-            </Box>
-          )}
-        </div>
-        {hasChartConfigs(state) && (
-          <>
-            <Head>
-              <title key="title">
-                {!chartConfig.meta.title[locale]
-                  ? // FIXME: adapt to design
-                    metadata?.dataCubesMetadata.map((d) => d.title).join(", ")
-                  : chartConfig.meta.title[locale]}{" "}
-                - visualize.admin.ch
-              </title>
-            </Head>
-            <LoadingStateProvider>
-              <InteractiveFiltersChartProvider chartConfigKey={chartConfig.key}>
-                <Flex
-                  sx={{
-                    justifyContent:
-                      configuring || chartConfig.meta.title[locale]
-                        ? "space-between"
-                        : "flex-end",
-                    alignItems: "flex-start",
-                    gap: 2,
-                  }}
+    <MetadataPanelStoreContext.Provider value={metadataPanelStore}>
+      <Box className={chartClasses.root}>
+        {props.children}
+        <ChartErrorBoundary resetKeys={[state]}>
+          <div>
+            {metadata?.dataCubesMetadata.some(
+              (d) => d.publicationStatus === DataCubePublicationStatus.Draft
+            ) && (
+              <Box sx={{ mb: 4 }}>
+                <HintYellow iconName="datasetError" iconSize={64}>
+                  <Trans id="dataset.publicationStatus.draft.warning">
+                    Careful, this dataset is only a draft.
+                    <br />
+                    <strong>Don&apos;t use for reporting!</strong>
+                  </Trans>
+                </HintYellow>
+              </Box>
+            )}
+          </div>
+          {hasChartConfigs(state) && (
+            <>
+              <Head>
+                <title key="title">
+                  {!chartConfig.meta.title[locale]
+                    ? // FIXME: adapt to design
+                      metadata?.dataCubesMetadata.map((d) => d.title).join(", ")
+                    : chartConfig.meta.title[locale]}{" "}
+                  - visualize.admin.ch
+                </title>
+              </Head>
+              <LoadingStateProvider>
+                <InteractiveFiltersChartProvider
+                  chartConfigKey={chartConfig.key}
                 >
-                  {configuring || chartConfig.meta.title[locale] ? (
-                    <Title
-                      text={chartConfig.meta.title[locale]}
+                  <Flex
+                    sx={{
+                      height: "fit-content",
+                      justifyContent:
+                        configuring || chartConfig.meta.title[locale]
+                          ? "space-between"
+                          : "flex-end",
+                      alignItems: "flex-start",
+                      gap: 2,
+                    }}
+                  >
+                    {configuring || chartConfig.meta.title[locale] ? (
+                      <Title
+                        text={chartConfig.meta.title[locale]}
+                        lighterColor
+                        smaller={state.layout.type === "dashboard"}
+                        onClick={
+                          configuring
+                            ? () =>
+                                dispatch({
+                                  type: "CHART_ACTIVE_FIELD_CHANGED",
+                                  value: "title",
+                                })
+                            : undefined
+                        }
+                      />
+                    ) : (
+                      // We need to have a span here to keep the space between the
+                      // title and the chart (subgrid layout)
+                      <span style={{ height: 1 }} />
+                    )}
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 2,
+                        mt: "-0.33rem",
+                      }}
+                    >
+                      <ChartMoreButton chartKey={chartConfig.key} />
+                      {actionElementSlot}
+                    </Box>
+                  </Flex>
+                  {configuring || chartConfig.meta.description[locale] ? (
+                    <Description
+                      text={chartConfig.meta.description[locale]}
                       lighterColor
+                      smaller={state.layout.type === "dashboard"}
                       onClick={
                         configuring
-                          ? () =>
+                          ? () => {
                               dispatch({
                                 type: "CHART_ACTIVE_FIELD_CHANGED",
-                                value: "title",
-                              })
+                                value: "description",
+                              });
+                            }
                           : undefined
                       }
                     />
                   ) : (
                     // We need to have a span here to keep the space between the
                     // title and the chart (subgrid layout)
-                    <span />
+                    <span style={{ height: 1 }} />
                   )}
-                  {actionElementSlot}
-                </Flex>
-                {configuring || chartConfig.meta.description[locale] ? (
-                  <Description
-                    text={chartConfig.meta.description[locale]}
-                    lighterColor
-                    onClick={
-                      configuring
-                        ? () => {
-                            dispatch({
-                              type: "CHART_ACTIVE_FIELD_CHANGED",
-                              value: "description",
-                            });
-                          }
-                        : undefined
-                    }
+                  <ChartControls
+                    dataSource={dataSource}
+                    chartConfig={chartConfig}
+                    metadataPanelProps={{
+                      components: allComponents,
+                      top: BANNER_MARGIN_TOP,
+                    }}
                   />
-                ) : (
-                  // We need to have a span here to keep the space between the
-                  // title and the chart (subgrid layout)
-                  <span />
-                )}
-                <ChartControls
-                  dataSource={dataSource}
-                  chartConfig={chartConfig}
-                  metadataPanelProps={{
-                    dimensions: allComponents,
-                    top: BANNER_MARGIN_TOP,
-                  }}
-                />
-                <div
-                  ref={containerRef}
-                  style={{
-                    minWidth: 0,
-                    height: containerHeight.current,
-                    paddingTop: 16,
-                    flexGrow: 1,
-                  }}
-                >
-                  {isTablePreview ? (
-                    <DataSetTable
-                      dataSource={dataSource}
-                      chartConfig={chartConfig}
-                      sx={{ width: "100%", maxHeight: "100%" }}
-                    />
-                  ) : (
-                    <ChartWithFilters
-                      dataSource={dataSource}
-                      componentIris={componentIris}
-                      chartConfig={chartConfig}
-                    />
-                  )}
-                </div>
-                <ChartFootnotes
-                  dataSource={dataSource}
-                  chartConfig={chartConfig}
-                  onToggleTableView={handleToggleTableView}
-                  dimensions={dimensions}
-                />
-                {/* Wrap in div for subgrid layout */}
-                <div className="debug-panel">
-                  <DebugPanel configurator interactiveFilters />
-                </div>
-              </InteractiveFiltersChartProvider>
-            </LoadingStateProvider>
-          </>
-        )}
-      </ChartErrorBoundary>
-    </Box>
+                  <div
+                    ref={containerRef}
+                    style={{
+                      minWidth: 0,
+                      height: containerHeight,
+                      paddingTop: 16,
+                      flexGrow: 1,
+                    }}
+                  >
+                    {isTable ? (
+                      <DataSetTable
+                        dataSource={dataSource}
+                        chartConfig={chartConfig}
+                        sx={{ width: "100%", maxHeight: "100%" }}
+                      />
+                    ) : (
+                      <ChartWithFilters
+                        dataSource={dataSource}
+                        componentIris={componentIris}
+                        chartConfig={chartConfig}
+                      />
+                    )}
+                  </div>
+                  <ChartFootnotes
+                    dataSource={dataSource}
+                    chartConfig={chartConfig}
+                    components={allComponents}
+                  />
+                  {/* Wrap in div for subgrid layout */}
+                  <div className="debug-panel">
+                    <DebugPanel configurator interactiveFilters />
+                  </div>
+                </InteractiveFiltersChartProvider>
+              </LoadingStateProvider>
+            </>
+          )}
+        </ChartErrorBoundary>
+      </Box>
+    </MetadataPanelStoreContext.Provider>
   );
 };

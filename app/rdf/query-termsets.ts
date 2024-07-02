@@ -32,7 +32,9 @@ SELECT DISTINCT (COUNT(distinct ?iri) as ?count) ?termsetIri ?termsetLabel WHERE
       cubeIriVar: "?iri",
     }).toString()}
 
-  }      GROUP BY ?termsetIri ?termsetLabel`
+  }      GROUP BY ?termsetIri ?termsetLabel`, {
+    operation: "postUrlencoded",
+  }
   );
 
   return qs.map((result) => ({

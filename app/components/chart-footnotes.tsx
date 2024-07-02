@@ -1,27 +1,24 @@
 import { Trans } from "@lingui/macro";
-import { Box, Button, Link, Theme, Typography } from "@mui/material";
+import { Box, Link, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { PropsWithChildren, useEffect, useState } from "react";
+import uniqBy from "lodash/uniqBy";
+import { useMemo } from "react";
 
-import {
-  extractChartConfigComponentIris,
-  useQueryFilters,
-} from "@/charts/shared/chart-helpers";
+import { extractChartConfigComponentIris } from "@/charts/shared/chart-helpers";
+import { LegendItem } from "@/charts/shared/legend-color";
 import { ChartFiltersList } from "@/components/chart-filters-list";
-import { useChartTablePreview } from "@/components/chart-table-preview";
-import { DataDownloadMenu, RunSparqlQuery } from "@/components/data-download";
-import { ChartConfig, DataSource } from "@/configurator";
-import { Dimension } from "@/domain/data";
-import { useTimeFormatLocale } from "@/formatters";
 import {
-  useDataCubesMetadataQuery,
-  useDataCubesObservationsQuery,
-} from "@/graphql/hooks";
-import { Icon, getChartIcon } from "@/icons";
+  ChartConfig,
+  ComboLineColumnConfig,
+  ComboLineDualConfig,
+  ComboLineSingleConfig,
+  DataSource,
+} from "@/configurator";
+import { Component, Measure } from "@/domain/data";
+import { truthy } from "@/domain/types";
+import { useTimeFormatLocale } from "@/formatters";
+import { useDataCubesMetadataQuery } from "@/graphql/hooks";
 import { useLocale } from "@/locales/use-locale";
-import { assert } from "@/utils/assert";
-import { useEmbedOptions } from "@/utils/embed";
-import { makeOpenDataLink } from "@/utils/opendata";
 
 export const useFootnotesStyles = makeStyles<Theme, { useMarginTop: boolean }>(
   (theme) => ({
@@ -35,7 +32,7 @@ export const useFootnotesStyles = makeStyles<Theme, { useMarginTop: boolean }>(
       alignItems: "center",
       flexWrap: "wrap",
       overflow: "hidden",
-
+      fontSize: theme.typography.caption.fontSize,
       "& > button": {
         minWidth: "auto",
       },
@@ -46,257 +43,257 @@ export const useFootnotesStyles = makeStyles<Theme, { useMarginTop: boolean }>(
 export const ChartFootnotes = ({
   dataSource,
   chartConfig,
-  dimensions,
-  configKey,
-  onToggleTableView,
-  visualizeLinkText,
+  components,
+  showVisualizeLink = false,
 }: {
   dataSource: DataSource;
   chartConfig: ChartConfig;
-  dimensions?: Dimension[];
-  configKey?: string;
-  onToggleTableView: () => void;
-  visualizeLinkText?: JSX.Element;
+  components: Component[];
+  showVisualizeLink?: boolean;
 }) => {
-  const classes = useFootnotesStyles({ useMarginTop: true });
   const locale = useLocale();
-  const [shareUrl, setShareUrl] = useState("");
-  const { state: isTablePreview, setStateRaw: setIsTablePreview } =
-    useChartTablePreview();
-
-  // Reset back to chart view when switching chart type.
-  useEffect(() => {
-    setIsTablePreview(false);
-  }, [setIsTablePreview, chartConfig.chartType]);
-
-  useEffect(() => {
-    setShareUrl(`${window.location.origin}/${locale}/v/${configKey}`);
-  }, [configKey, locale]);
-
-  const queryFilters = useQueryFilters({
-    chartConfig,
-    componentIris: extractChartConfigComponentIris(chartConfig),
-  });
-  const commonQueryVariables = {
-    sourceType: dataSource.type,
-    sourceUrl: dataSource.url,
-    locale,
-  };
+  const usedComponents = useMemo(() => {
+    const componentIris = extractChartConfigComponentIris({
+      chartConfig,
+      includeFilters: false,
+    });
+    return componentIris
+      .map((componentIri) => {
+        return components.find((component) => component.iri === componentIri);
+      })
+      .filter(truthy); // exclude potential joinBy components
+  }, [chartConfig, components]);
   const [{ data }] = useDataCubesMetadataQuery({
     variables: {
-      ...commonQueryVariables,
-      cubeFilters: chartConfig.cubes.map((cube) => ({ iri: cube.iri })),
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+      cubeFilters: uniqBy(
+        usedComponents.map((component) => ({ iri: component.cubeIri })),
+        "iri"
+      ),
     },
+    pause: !usedComponents.length,
   });
-  const [{ data: downloadData }] = useDataCubesObservationsQuery({
-    variables: {
-      ...commonQueryVariables,
-      cubeFilters: queryFilters,
-    },
-  });
-  const sparqlEditorUrls =
-    downloadData?.dataCubesObservations?.sparqlEditorUrls;
   const formatLocale = useTimeFormatLocale();
-  const [
-    {
-      showDownload,
-      showLandingPage,
-      showTableSwitch,
-      showSparqlQuery,
-      showDatePublished,
-      showSource,
-      showDatasetTitle,
-    },
-  ] = useEmbedOptions();
 
   return (
-    <div>
-      <ChartFiltersList
-        dataSource={dataSource}
-        chartConfig={chartConfig}
-        dimensions={dimensions}
-      />
-      {data?.dataCubesMetadata
-        ? data.dataCubesMetadata.map((dataCubeMetadata) => {
-            const cubeLink = makeOpenDataLink(locale, dataCubeMetadata);
-            const sparqlEditorUrl = sparqlEditorUrls?.find(
-              (d) => d.cubeIri === dataCubeMetadata.iri
-            )?.url;
-            const cubeQueryFilters = queryFilters.find(
-              (f) => f.iri === dataCubeMetadata.iri
-            );
-            assert(cubeQueryFilters, "Cube query filters not found");
-
-            return (
-              <Box key={dataCubeMetadata.iri} sx={{ mt: 2 }}>
-                {showDatasetTitle !== false ? (
-                  <Typography
-                    component="span"
-                    variant="caption"
-                    color="grey.600"
-                  >
-                    <strong>
-                      <Trans id="dataset.footnotes.dataset">Dataset</Trans>
-                    </strong>
-                    <Trans id="typography.colon">: </Trans>
-                    {cubeLink ? (
-                      <Link target="_blank" href={cubeLink} rel="noreferrer">
-                        {dataCubeMetadata.title}{" "}
-                        <Icon
-                          name="linkExternal"
-                          size="1em"
-                          style={{ display: "inline" }}
-                        />
-                      </Link>
-                    ) : (
-                      dataCubeMetadata.title
-                    )}
-                  </Typography>
-                ) : null}
-
-                {dataCubeMetadata.dateModified &&
-                showDatePublished !== false ? (
-                  <Typography
-                    component="span"
-                    variant="caption"
-                    color="grey.600"
-                  >
-                    ,&nbsp;
-                    <strong>
-                      <Trans id="dataset.footnotes.updated">
-                        Latest update
-                      </Trans>
-                    </strong>
-                    <Trans id="typography.colon">: </Trans>
-                    {formatLocale.format("%d.%m.%Y %H:%M")(
-                      new Date(dataCubeMetadata.dateModified)
-                    )}
-                  </Typography>
-                ) : null}
-
-                {showSource !== false ? (
-                  <Typography
-                    component="div"
-                    variant="caption"
-                    color="grey.600"
-                  >
-                    <strong>
-                      <Trans id="metadata.source">Source</Trans>
-                    </strong>
-                    <Trans id="typography.colon">: </Trans>
-                    {dataCubeMetadata.publisher && (
-                      <Box
-                        component="span"
-                        sx={{ "> a": { color: "grey.600" } }}
-                        dangerouslySetInnerHTML={{
-                          __html: dataCubeMetadata.publisher,
-                        }}
-                      />
-                    )}
-                    {configKey && shareUrl && visualizeLinkText && (
-                      <>
-                        {" "}
-                        /{" "}
-                        <LinkButton href={shareUrl}>
-                          {" "}
-                          {visualizeLinkText}
-                        </LinkButton>
-                      </>
-                    )}
-                  </Typography>
-                ) : null}
-
-                <Box className={classes.actions}>
-                  {showDownload !== false ? (
-                    <DataDownloadMenu
-                      dataSource={dataSource}
-                      title={dataCubeMetadata.title}
-                      filters={cubeQueryFilters}
-                    />
-                  ) : null}
-                  {showTableSwitch !== false ? (
-                    <>
-                      {chartConfig.chartType !== "table" && (
-                        <Button
-                          component="a"
-                          color="primary"
-                          variant="text"
-                          size="small"
-                          startIcon={
-                            <Icon
-                              name={
-                                isTablePreview
-                                  ? getChartIcon(chartConfig.chartType)
-                                  : "table"
-                              }
-                            />
-                          }
-                          onClick={onToggleTableView}
-                          sx={{ p: 0, typography: "caption" }}
-                        >
-                          {isTablePreview ? (
-                            <Trans id="metadata.switch.chart">
-                              Switch to chart view
-                            </Trans>
-                          ) : (
-                            <Trans id="metadata.switch.table">
-                              Switch to table view
-                            </Trans>
-                          )}
-                        </Button>
-                      )}
-                    </>
-                  ) : null}
-                  {dataCubeMetadata.landingPage &&
-                    showLandingPage !== false && (
-                      <Button
-                        variant="text"
-                        component="a"
-                        href={dataCubeMetadata.landingPage}
-                        target="_blank"
-                        color="primary"
-                        size="small"
-                        sx={{ p: 0, typography: "caption" }}
-                        startIcon={<Icon name="linkExternal" />}
-                      >
-                        <Trans id="dataset.metadata.learnmore">
-                          Learn more about the dataset
-                        </Trans>
-                      </Button>
-                    )}
-                  {sparqlEditorUrl && showSparqlQuery !== false && (
-                    <RunSparqlQuery
-                      key={sparqlEditorUrl}
-                      url={sparqlEditorUrl}
-                    />
-                  )}
-                  {configKey && shareUrl && !visualizeLinkText && (
-                    <LinkButton href={shareUrl}>
-                      <Trans id="metadata.link.created.with.visualize">
-                        Created with visualize.admin.ch
-                      </Trans>
-                    </LinkButton>
-                  )}
-                </Box>
-              </Box>
-            );
-          })
-        : null}
-    </div>
+    <Box sx={{ mt: 1, "& > :not(:last-child)": { mb: 3 } }}>
+      {data?.dataCubesMetadata.map((metadata) => (
+        <div key={metadata.iri}>
+          <ChartFootnotesLegend
+            cubeIri={metadata.iri}
+            chartConfig={chartConfig}
+            components={components}
+          />
+          <ChartFiltersList
+            dataSource={dataSource}
+            chartConfig={chartConfig}
+            components={components}
+            cubeIri={metadata.iri}
+          />
+          {metadata.dateModified ? (
+            <Typography component="span" variant="caption" color="grey.600">
+              <Trans id="dataset.footnotes.updated">Latest data update</Trans>
+              <Trans id="typography.colon">: </Trans>
+              {formatLocale.format("%d.%m.%Y %H:%M")(
+                new Date(metadata.dateModified)
+              )}
+            </Typography>
+          ) : null}
+        </div>
+      ))}
+      {showVisualizeLink ? <VisualizeLink /> : null}
+    </Box>
   );
 };
 
-const LinkButton = (props: PropsWithChildren<{ href: string }>) => {
+const ChartFootnotesLegend = ({
+  cubeIri,
+  chartConfig,
+  components,
+}: {
+  cubeIri: string;
+  chartConfig: ChartConfig;
+  components: Component[];
+}) => {
+  switch (chartConfig.chartType) {
+    case "comboLineColumn": {
+      return (
+        <ChartFootnotesComboLineColumn
+          cubeIri={cubeIri}
+          chartConfig={chartConfig}
+          components={components}
+        />
+      );
+    }
+    case "comboLineDual": {
+      return (
+        <ChartFootnotesComboLineDual
+          cubeIri={cubeIri}
+          chartConfig={chartConfig}
+          components={components}
+        />
+      );
+    }
+    case "comboLineSingle": {
+      return (
+        <ChartFootnotesComboLineSingle
+          cubeIri={cubeIri}
+          chartConfig={chartConfig}
+          components={components}
+        />
+      );
+    }
+    default:
+      return null;
+  }
+};
+
+const ChartFootnotesLegendContainer = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
+  return <Box sx={{ display: "flex", gap: 3, mb: 1 }}>{children}</Box>;
+};
+
+const ChartFootnotesComboLineColumn = ({
+  cubeIri,
+  chartConfig,
+  components,
+}: {
+  cubeIri: string;
+  chartConfig: ComboLineColumnConfig;
+  components: Component[];
+}) => {
+  const {
+    y: { columnComponentIri, lineComponentIri, lineAxisOrientation },
+  } = chartConfig.fields;
+  const columnAxisComponent = components.find(
+    (d) => d.iri === columnComponentIri && d.cubeIri === cubeIri
+  );
+  const lineAxisComponent = components.find(
+    (d) => d.iri === lineComponentIri && d.cubeIri === cubeIri
+  );
+  const firstComponent =
+    lineAxisOrientation === "left" ? lineAxisComponent : columnAxisComponent;
+  const secondComponent =
+    lineAxisOrientation === "left" ? columnAxisComponent : lineAxisComponent;
+  return firstComponent || secondComponent ? (
+    <ChartFootnotesLegendContainer>
+      {firstComponent && (
+        <LegendItem
+          item={firstComponent.label}
+          color={chartConfig.fields.y.colorMapping[firstComponent.iri]}
+          symbol={lineAxisOrientation === "left" ? "line" : "square"}
+          usage="tooltip"
+          dimension={firstComponent as Measure}
+        />
+      )}
+      {secondComponent && (
+        <LegendItem
+          item={secondComponent.label}
+          color={chartConfig.fields.y.colorMapping[secondComponent.iri]}
+          symbol={lineAxisOrientation === "left" ? "square" : "line"}
+          usage="tooltip"
+          dimension={secondComponent as Measure}
+        />
+      )}
+    </ChartFootnotesLegendContainer>
+  ) : null;
+};
+
+const ChartFootnotesComboLineDual = ({
+  cubeIri,
+  chartConfig,
+  components,
+}: {
+  cubeIri: string;
+  chartConfig: ComboLineDualConfig;
+  components: Component[];
+}) => {
+  const {
+    y: { leftAxisComponentIri, rightAxisComponentIri },
+  } = chartConfig.fields;
+  const leftAxisComponent = components.find(
+    (d) => d.iri === leftAxisComponentIri && d.cubeIri === cubeIri
+  );
+  const rightAxisComponent = components.find(
+    (d) => d.iri === rightAxisComponentIri && d.cubeIri === cubeIri
+  );
+  return leftAxisComponent || rightAxisComponent ? (
+    <ChartFootnotesLegendContainer>
+      {leftAxisComponent && (
+        <LegendItem
+          item={leftAxisComponent.label}
+          color={chartConfig.fields.y.colorMapping[leftAxisComponent.iri]}
+          symbol="line"
+          usage="tooltip"
+          dimension={leftAxisComponent as Measure}
+        />
+      )}
+      {rightAxisComponent && (
+        <LegendItem
+          item={rightAxisComponent.label}
+          color={chartConfig.fields.y.colorMapping[rightAxisComponent.iri]}
+          symbol="line"
+          usage="tooltip"
+          dimension={rightAxisComponent as Measure}
+        />
+      )}
+    </ChartFootnotesLegendContainer>
+  ) : null;
+};
+
+const ChartFootnotesComboLineSingle = ({
+  cubeIri,
+  chartConfig,
+  components,
+}: {
+  cubeIri: string;
+  chartConfig: ComboLineSingleConfig;
+  components: Component[];
+}) => {
+  const {
+    y: { componentIris },
+  } = chartConfig.fields;
+  return componentIris.length ? (
+    <ChartFootnotesLegendContainer>
+      {componentIris.map((componentIri) => {
+        const component = components.find(
+          (d) => d.iri === componentIri && d.cubeIri === cubeIri
+        );
+        return component ? (
+          <LegendItem
+            key={component.iri}
+            item={component.label}
+            color={chartConfig.fields.y.colorMapping[component.iri]}
+            symbol="line"
+            usage="tooltip"
+            dimension={component as Measure}
+          />
+        ) : null;
+      })}
+    </ChartFootnotesLegendContainer>
+  ) : null;
+};
+
+const VisualizeLink = () => {
+  const locale = useLocale();
   return (
-    <Button
-      component="a"
-      variant="text"
-      color="primary"
-      size="small"
-      sx={{ p: 0, typography: "caption", verticalAlign: "unset" }}
-      target="_blank"
-      rel="noopener noreferrer"
-      {...props}
-    />
+    <Typography variant="caption" color="grey.600">
+      <Trans id="metadata.link.created.with">Created with</Trans>
+      <Link
+        href={`https://visualize.admin.ch/${locale}/`}
+        target="_blank"
+        rel="noopener noreferrer"
+        color="primary.main"
+        sx={{ "&:hover": { textDecoration: "none" } }}
+      >
+        {" "}
+        visualize.admin.ch
+      </Link>
+    </Typography>
   );
 };

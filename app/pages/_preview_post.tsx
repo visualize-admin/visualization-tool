@@ -3,7 +3,7 @@ import { Box } from "@mui/material";
 const Page = () => {
   return (
     <Box sx={{ display: "flex", gap: 2, p: 6 }}>
-      <form method="post" action="/preview_post" target="_blank">
+      <form method="post" action="preview_post" target="_blank">
         <input
           type="hidden"
           name="chartState"
@@ -11,7 +11,7 @@ const Page = () => {
         />
         <input type="submit" value="☀️ Preview a Photovoltaikanlagen chart" />
       </form>
-      <form method="post" action="/preview_post" target="_blank">
+      <form method="post" action="preview_post" target="_blank">
         <input
           type="hidden"
           name="chartState"

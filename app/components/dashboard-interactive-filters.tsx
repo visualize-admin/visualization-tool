@@ -6,26 +6,19 @@ import {
 } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import { makeStyles } from "@mui/styles";
-import uniqBy from "lodash/uniqBy";
 import { useEffect, useMemo, useState } from "react";
 
 import {
-  hasChartConfigs,
+  DashboardTimeRangeFilter,
   InteractiveFiltersTimeRange,
-  useConfiguratorState,
 } from "@/configurator";
 import {
   timeUnitToFormatter,
   timeUnitToParser,
 } from "@/configurator/components/ui-helpers";
-import { canDimensionBeTimeFiltered } from "@/domain/data";
-import { useDataCubesComponentsQuery } from "@/graphql/hooks";
-import { DataCubeComponentFilter, TimeUnit } from "@/graphql/query-hooks";
-import { useLocale } from "@/src";
-import {
-  SharedFilter,
-  useDashboardInteractiveFilters,
-} from "@/stores/interactive-filters";
+import { TimeUnit } from "@/graphql/query-hooks";
+import { useDashboardInteractiveFilters } from "@/stores/interactive-filters";
+import { useTransitionStore } from "@/stores/transition";
 import { assert } from "@/utils/assert";
 
 import { useTimeout } from "../hooks/use-timeout";
@@ -58,7 +51,7 @@ const valueToTimeRange = (value: number[]) => {
 };
 
 const presetToTimeRange = (
-  presets: InteractiveFiltersTimeRange["presets"],
+  presets: Pick<InteractiveFiltersTimeRange["presets"], "from" | "to">,
   timeUnit: TimeUnit
 ) => {
   if (!timeUnit) {
@@ -82,67 +75,28 @@ const DashboardTimeRangeSlider = ({
   filter,
   mounted,
 }: {
-  filter: Extract<SharedFilter, { type: "timeRange" }>;
+  filter: DashboardTimeRangeFilter;
   mounted: boolean;
 }) => {
   const classes = useStyles();
-
   const dashboardInteractiveFilters = useDashboardInteractiveFilters();
-
-  const [state] = useConfiguratorState(hasChartConfigs);
-  const source = state.dataSource;
-  const locale = useLocale();
-
-  const cubeFilters = useMemo(() => {
-    return uniqBy(
-      state.chartConfigs.flatMap((chartConfig) =>
-        chartConfig.cubes.map((x: DataCubeComponentFilter) => ({
-          iri: x.iri,
-          componentIris: [filter.componentIri],
-          joinBy: x.joinBy,
-        }))
-      ),
-      (x) => x.iri
-    );
-  }, [filter.componentIri, state.chartConfigs]);
-
-  const [data] = useDataCubesComponentsQuery({
-    variables: {
-      sourceUrl: source.url,
-      sourceType: source.type,
-      cubeFilters,
-      locale,
-    },
-  });
-
-  const timeUnit = useMemo(() => {
-    const dim = data?.data?.dataCubesComponents?.dimensions?.[0];
-    return canDimensionBeTimeFiltered(dim) ? dim.timeUnit : undefined;
-  }, [data?.data?.dataCubesComponents?.dimensions]);
-
+  const setEnableTransition = useTransitionStore((state) => state.setEnable);
   const presets = filter.presets;
   assert(
     presets,
     "Filter presets should be defined when time range filter is rendered"
   );
 
+  const timeUnit = filter.timeUnit as TimeUnit;
+
   // In Unix timestamp
   const [timeRange, setTimeRange] = useState(() =>
+    // timeUnit can still be an empty string
     timeUnit ? presetToTimeRange(presets, timeUnit) : undefined
   );
 
-  useEffect(
-    function initTimeRangeAfterDataFetch() {
-      if (timeRange || !timeUnit) {
-        return;
-      }
-      setTimeRange(presetToTimeRange(presets, timeUnit));
-    },
-    [timeRange, timeUnit, presets]
-  );
-
   const { min, max } = useMemo(() => {
-    if (!timeUnit || !presets) {
+    if (!timeUnit) {
       return { min: 0, max: 0 };
     }
     const parser = timeUnitToParser[timeUnit];
@@ -158,42 +112,63 @@ const DashboardTimeRangeSlider = ({
     if (!timeUnit) {
       return "";
     }
-    const d = new Date(value * 1000);
-    return timeUnitToFormatter[timeUnit](d);
+    const date = new Date(value * 1000);
+    return timeUnitToFormatter[timeUnit](date);
   });
 
-  const handleChangeSlider = useEventCallback(
-    (componentIri: string, value: number | number[]) => {
-      assert(Array.isArray(value), "Value should be an array of two numbers");
-      if (!componentIri || !timeUnit) {
-        return;
-      }
-      const newTimeRange = valueToTimeRange(value);
-      if (!newTimeRange) {
-        return;
-      }
-      for (const [_getState, _useStore, store] of Object.values(
-        dashboardInteractiveFilters.stores
-      )) {
-        store.setState({
-          timeRange: newTimeRange,
-        });
-        setTimeRange([value[0], value[1]]);
-      }
+  const handleChangeSlider = useEventCallback((value: number | number[]) => {
+    assert(Array.isArray(value), "Value should be an array of two numbers");
+    if (!timeUnit) {
+      return;
     }
+    const newTimeRange = valueToTimeRange(value);
+    if (!newTimeRange) {
+      return;
+    }
+    setEnableTransition(false);
+    for (const [_getState, _useStore, store] of Object.values(
+      dashboardInteractiveFilters.stores
+    )) {
+      store.setState({ timeRange: newTimeRange });
+      setTimeRange([value[0], value[1]]);
+    }
+  });
+
+  useEffect(
+    function initTimeRangeAfterDataFetch() {
+      if (timeRange || !timeUnit) {
+        return;
+      }
+      const parser = timeUnitToParser[timeUnit];
+      handleChangeSlider([
+        toUnixSeconds(parser(presets.from)),
+        toUnixSeconds(parser(presets.to)),
+      ]);
+    },
+    [timeRange, timeUnit, presets, handleChangeSlider]
   );
+
+  useEffect(() => {
+    if (presets.from && presets.to && timeUnit) {
+      const parser = timeUnitToParser[timeUnit];
+      setTimeRange([
+        toUnixSeconds(parser(presets.from)),
+        toUnixSeconds(parser(presets.to)),
+      ]);
+    }
+  }, [presets.from, presets.to, timeUnit]);
 
   const mountedForSomeTime = useTimeout(500, mounted);
 
-  if (!filter || !timeRange || filter.type !== "timeRange" || !filter.active) {
+  if (!timeRange || !filter.active) {
     return null;
   }
 
   return (
     <Slider
       className={classes.slider}
-      key={filter.componentIri}
-      onChange={(_ev, value) => handleChangeSlider(filter.componentIri, value)}
+      onChange={(_ev, value) => handleChangeSlider(value)}
+      onChangeCommitted={() => setEnableTransition(true)}
       min={min}
       max={max}
       valueLabelFormat={valueLabelFormat}
@@ -206,28 +181,17 @@ const DashboardTimeRangeSlider = ({
 };
 
 export const DashboardInteractiveFilters = () => {
-  const dashboardInteractiveFilters = useDashboardInteractiveFilters();
-
-  return (
-    <>
-      {dashboardInteractiveFilters.sharedFilters.map((filter) => {
-        if (filter.type !== "timeRange" || !filter.active) {
-          return null;
-        }
-
-        return (
-          <Collapse in={filter.active} key={filter.componentIri}>
-            <div>
-              <DashboardTimeRangeSlider
-                filter={filter}
-                mounted={filter.active}
-              />
-            </div>
-          </Collapse>
-        );
-      })}
-    </>
-  );
+  const { timeRange } = useDashboardInteractiveFilters();
+  return timeRange?.active ? (
+    <Collapse in={timeRange.active}>
+      <div>
+        <DashboardTimeRangeSlider
+          filter={timeRange}
+          mounted={timeRange.active}
+        />
+      </div>
+    </Collapse>
+  ) : null;
 };
 
 function stepFromTimeUnit(timeUnit: TimeUnit | undefined) {

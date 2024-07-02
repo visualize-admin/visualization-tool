@@ -774,6 +774,9 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         optional: false,
         componentTypes: ["NumericalMeasure"],
         filters: false,
+        options: {
+          showStandardError: {},
+        },
       },
       {
         iriAttributes: ["componentIri"],

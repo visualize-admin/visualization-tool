@@ -3,14 +3,9 @@ import {
   Box,
   Button,
   Divider,
-  FormControl,
-  FormControlLabel,
   Link,
   Popover,
   PopoverProps,
-  Radio,
-  RadioGroup,
-  RadioGroupProps,
   Stack,
   Typography,
 } from "@mui/material";
@@ -20,7 +15,6 @@ import { CopyToClipboardTextInput } from "@/components/copy-to-clipboard-text-in
 import Flex from "@/components/flex";
 import { IconLink } from "@/components/links";
 import { Icon } from "@/icons";
-import { useEmbedOptions } from "@/utils/embed";
 import { useI18n } from "@/utils/use-i18n";
 
 type PublishActionProps = {
@@ -66,44 +60,12 @@ const TriggeredPopover = (props: TriggeredPopoverProps) => {
 const Embed = ({ configKey, locale }: PublishActionProps) => {
   const [embedIframeUrl, setEmbedIframeUrl] = useState("");
   const [embedAEMUrl, setEmbedAEMUrl] = useState("");
-  const [embedOptions, setEmbedOptions] = useEmbedOptions();
-  const handleChange: RadioGroupProps["onChange"] = (_ev, value) => {
-    if (value === "minimal") {
-      setEmbedOptions({
-        showDatasetTitle: false,
-        showDownload: false,
-        showLandingPage: false,
-        showSource: true,
-        showMetadata: false,
-        showSparqlQuery: false,
-        showDatePublished: false,
-        showTableSwitch: false,
-      });
-    } else {
-      setEmbedOptions({
-        showDatasetTitle: true,
-        showDownload: true,
-        showLandingPage: true,
-        showSource: true,
-        showSparqlQuery: true,
-        showDatePublished: true,
-        showTableSwitch: true,
-        showMetadata: true,
-      });
-    }
-  };
-  const isMinimal = embedOptions.showDatasetTitle === false;
-  const iFrameHeight = isMinimal ? "560px" : "640px";
-
   useEffect(() => {
-    const embedOptionsParam = encodeURIComponent(JSON.stringify(embedOptions));
-    setEmbedIframeUrl(
-      `${window.location.origin}/${locale}/embed/${configKey}?embedOptions=${embedOptionsParam}`
-    );
+    setEmbedIframeUrl(`${window.location.origin}/${locale}/embed/${configKey}`);
     setEmbedAEMUrl(
-      `${window.location.origin}/api/embed-aem-ext/${locale}/${configKey}?embedOptions=${embedOptionsParam}`
+      `${window.location.origin}/api/embed-aem-ext/${locale}/${configKey}`
     );
-  }, [configKey, locale, embedOptions]);
+  }, [configKey, locale]);
 
   return (
     <TriggeredPopover
@@ -130,64 +92,6 @@ const Embed = ({ configKey, locale }: PublishActionProps) => {
     >
       <Box m={4} sx={{ "& > * + *": { mt: 4 } }}>
         <div>
-          <FormControl>
-            <Typography variant="h5" gutterBottom>
-              Embed style
-            </Typography>
-
-            <RadioGroup
-              aria-labelledby="published-chart-embed-options"
-              name="controlled-radio-buttons-group"
-              value={
-                embedOptions.showDatasetTitle === false ? "minimal" : "standard"
-              }
-              onChange={handleChange}
-            >
-              <FormControlLabel
-                value="standard"
-                control={<Radio />}
-                sx={{ alignItems: "flex-start", mb: 2 }}
-                label={
-                  <div>
-                    <Typography variant="body2" display="block">
-                      <Trans id="publication.embed.style.standard">
-                        Standard
-                      </Trans>
-                    </Typography>
-                    <Typography variant="caption" display="block">
-                      <Trans id="publication.embed.style.standard.caption">
-                        Provides metadata and download links for the dataset
-                      </Trans>
-                    </Typography>
-                  </div>
-                }
-                disableTypography
-              />
-              <FormControlLabel
-                value="minimal"
-                control={<Radio />}
-                sx={{ alignItems: "flex-start" }}
-                label={
-                  <div>
-                    <Typography variant="body2" display="block">
-                      <Trans id="publication.embed.style.minimal">
-                        Minimal
-                      </Trans>
-                    </Typography>
-                    <Typography variant="caption" display="block">
-                      <Trans id="publication.embed.style.minimal.caption">
-                        Chart only with link to full information on
-                        visualize.admin.ch.
-                      </Trans>
-                    </Typography>
-                  </div>
-                }
-                disableTypography
-              />
-            </RadioGroup>
-          </FormControl>
-        </div>
-        <div>
           <Typography component="div" variant="h5">
             <Trans id="publication.embed.iframe">Iframe Embed Code</Trans>
           </Typography>
@@ -197,10 +101,11 @@ const Embed = ({ configKey, locale }: PublishActionProps) => {
             </Trans>
           </Typography>
           <CopyToClipboardTextInput
-            content={`<iframe src="${embedIframeUrl}" style="border:0px #ffffff none; max-width: 100%" name="visualize.admin.ch" scrolling="no" frameborder="1" marginheight="0px" marginwidth="0px" height="${iFrameHeight}" width="600px" allowfullscreen></iframe>`}
+            // TODO: height could be calculated based on the content with
+            // a small JS snippet
+            content={`<iframe src="${embedIframeUrl}" style="border:0px #ffffff none; max-width: 100%" name="visualize.admin.ch" scrolling="no" frameborder="1" marginheight="0px" marginwidth="0px" height="640px" width="600px" allowfullscreen></iframe>`}
           />
         </div>
-
         <div>
           <Typography component="div" variant="h5">
             <Trans id="publication.embed.AEM">

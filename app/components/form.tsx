@@ -739,7 +739,6 @@ export const Switch = ({
   sx?: SxProps;
 } & FieldProps) => {
   const genId = `switch-${useId(id)}`;
-
   return (
     <FormControlLabel
       htmlFor={genId}

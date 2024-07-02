@@ -75,6 +75,10 @@ const useLinesState = (
     getXAsString,
     yMeasure,
     getY,
+    showYStandardError,
+    getYError,
+    getYErrorRange,
+    yErrorMeasure,
     getMinY,
     segmentDimension,
     segmentsByAbbreviationOrLabel,
@@ -133,13 +137,22 @@ const useLinesState = (
   const xScaleTimeRange = scaleTime().domain(xScaleTimeRangeDomain);
 
   // y
-  const minValue = getMinY(scalesData, getY);
-  const maxValue = max(scalesData, getY) ?? 0;
+  const minValue = getMinY(scalesData, (d) =>
+    getYErrorRange ? getYErrorRange(d)[0] : getY(d)
+  );
+  const maxValue =
+    max(scalesData, (d) => (getYErrorRange ? getYErrorRange(d)[1] : getY(d))) ??
+    0;
   const yDomain = [minValue, maxValue];
   const yScale = scaleLinear().domain(yDomain).nice();
 
-  const paddingMinValue = getMinY(paddingData, getY);
-  const paddingMaxValue = max(paddingData, getY) ?? 0;
+  const paddingMinValue = getMinY(paddingData, (d) =>
+    getYErrorRange ? getYErrorRange(d)[0] : getY(d)
+  );
+  const paddingMaxValue =
+    max(paddingData, (d) =>
+      getYErrorRange ? getYErrorRange(d)[1] : getY(d)
+    ) ?? 0;
   const paddingYScale = scaleLinear()
     .domain([paddingMinValue, paddingMaxValue])
     .nice();
@@ -247,6 +260,14 @@ const useLinesState = (
         yMeasure.unit
       );
 
+    const getError = (d: Observation) => {
+      if (!showYStandardError || !getYError || getYError(d) === null) {
+        return;
+      }
+
+      return `${getYError(d)}${yErrorMeasure?.unit ?? ""}`;
+    };
+
     return {
       xAnchor,
       yAnchor,
@@ -259,6 +280,7 @@ const useLinesState = (
       datum: {
         label: fields.segment && getSegmentAbbreviationOrLabel(datum),
         value: yValueFormatter(getY(datum)),
+        error: getError(datum),
         color: colors(getSegment(datum)) as string,
       },
       values: sortedTooltipValues.map((td) => ({

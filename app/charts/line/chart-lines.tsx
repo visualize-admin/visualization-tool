@@ -1,7 +1,7 @@
 import { memo } from "react";
 
 import { ChartDataWrapper } from "@/charts/chart-data-wrapper";
-import { Lines } from "@/charts/line/lines";
+import { ErrorWhiskers, Lines } from "@/charts/line/lines";
 import { LineChart } from "@/charts/line/lines-state";
 import { AxisHeightLinear } from "@/charts/shared/axis-height-linear";
 import { AxisTime, AxisTimeDomain } from "@/charts/shared/axis-width-time";
@@ -30,18 +30,19 @@ export const ChartLinesVisualization = (
 const ChartLines = memo((props: ChartProps<LineConfig>) => {
   const { chartConfig } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
-  const { sharedFilters } = useDashboardInteractiveFilters();
-
+  const dashboardFilters = useDashboardInteractiveFilters();
   return (
     <LineChart {...props}>
       <ChartContainer type="line">
         <ChartSvg>
           <AxisHeightLinear /> <AxisTime /> <AxisTimeDomain />
           <Lines />
+          <ErrorWhiskers />
           <InteractionHorizontal />
-          {shouldShowBrush(interactiveFiltersConfig, sharedFilters) && (
-            <BrushTime />
-          )}
+          {shouldShowBrush(
+            interactiveFiltersConfig,
+            dashboardFilters.timeRange
+          ) && <BrushTime />}
         </ChartSvg>
 
         <Ruler />

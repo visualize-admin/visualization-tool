@@ -1,7 +1,7 @@
 import { Box, TableSortLabel, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
-import React, { useMemo, useContext, createContext } from "react";
+import React, { createContext, useContext, useMemo } from "react";
 import { HeaderGroup } from "react-table";
 
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
@@ -107,7 +107,7 @@ export const TableContent = ({ children }: { children: React.ReactNode }) => {
                       active={isCustomSorted}
                       direction={column.isSortedDesc ? "desc" : "asc"}
                     >
-                      <OpenMetadataPanelWrapper dim={dim}>
+                      <OpenMetadataPanelWrapper component={dim}>
                         <span style={{ fontWeight: "bold" }}>
                           {column.render("Header")}
                         </span>

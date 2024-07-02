@@ -5,7 +5,7 @@ import SvgIcClose from "@/icons/components/IcClose";
 export const DialogCloseButton = (props: IconButtonProps) => (
   <IconButton
     {...props}
-    sx={{ position: "absolute", top: "1rem", right: "1rem" }}
+    sx={{ zIndex: 1, position: "absolute", top: "1rem", right: "1rem" }}
   >
     <SvgIcClose />
   </IconButton>

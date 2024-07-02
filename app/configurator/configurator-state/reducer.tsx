@@ -4,7 +4,6 @@ import get from "lodash/get";
 import isEqual from "lodash/isEqual";
 import setWith from "lodash/setWith";
 import sortBy from "lodash/sortBy";
-import uniqBy from "lodash/uniqBy";
 import unset from "lodash/unset";
 import { Reducer } from "use-immer";
 
@@ -26,6 +25,7 @@ import {
   ColorMapping,
   ColumnStyleCategory,
   ConfiguratorState,
+  DashboardTimeRangeFilter,
   enableLayouting,
   Filters,
   GenericField,
@@ -361,14 +361,14 @@ export const handleChartFieldChanged = (
     selectedValues: actionSelectedValues,
   } = action.value;
   const f = get(chartConfig.fields, field);
-  const dataCubesComponents = getCachedComponents(
-    draft.dataSource,
-    chartConfig.cubes.map((cube) => ({
+  const dataCubesComponents = getCachedComponents({
+    locale,
+    dataSource: draft.dataSource,
+    cubeFilters: chartConfig.cubes.map((cube) => ({
       iri: cube.iri,
       joinBy: cube.joinBy,
     })),
-    locale
-  );
+  });
   const dimensions = dataCubesComponents?.dimensions ?? [];
   const measures = dataCubesComponents?.measures ?? [];
   const components = [...dimensions, ...measures];
@@ -418,14 +418,14 @@ export const handleChartOptionChanged = (
     const { locale, path, field, value } = action.value;
     const chartConfig = getChartConfig(draft);
     const updatePath = field === null ? path : `fields["${field}"].${path}`;
-    const dataCubesComponents = getCachedComponents(
-      draft.dataSource,
-      chartConfig.cubes.map((cube) => ({
+    const dataCubesComponents = getCachedComponents({
+      locale,
+      dataSource: draft.dataSource,
+      cubeFilters: chartConfig.cubes.map((cube) => ({
         iri: cube.iri,
         joinBy: cube.joinBy,
       })),
-      locale
-    );
+    });
 
     const dimensions = dataCubesComponents?.dimensions ?? [];
     const measures = dataCubesComponents?.measures ?? [];
@@ -575,14 +575,14 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       if (isConfiguring(draft)) {
         const { locale, chartKey, chartType } = action.value;
         const chartConfig = getChartConfig(draft, chartKey);
-        const dataCubesComponents = getCachedComponents(
-          draft.dataSource,
-          chartConfig.cubes.map((cube) => ({
+        const dataCubesComponents = getCachedComponents({
+          locale,
+          dataSource: draft.dataSource,
+          cubeFilters: chartConfig.cubes.map((cube) => ({
             iri: cube.iri,
             joinBy: cube.joinBy,
           })),
-          locale
-        );
+        });
         const dimensions = dataCubesComponents?.dimensions;
         const measures = dataCubesComponents?.measures;
 
@@ -621,14 +621,14 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       if (isConfiguring(draft)) {
         const chartConfig = getChartConfig(draft);
         delete (chartConfig.fields as GenericFields)[action.value.field];
-        const dataCubesComponents = getCachedComponents(
-          draft.dataSource,
-          chartConfig.cubes.map((cube) => ({
+        const dataCubesComponents = getCachedComponents({
+          locale: action.value.locale,
+          dataSource: draft.dataSource,
+          cubeFilters: chartConfig.cubes.map((cube) => ({
             iri: cube.iri,
             joinBy: cube.joinBy,
           })),
-          action.value.locale
-        );
+        });
         const dimensions = dataCubesComponents?.dimensions ?? [];
         const newConfig = deriveFiltersFromFields(chartConfig, { dimensions });
         const index = draft.chartConfigs.findIndex(
@@ -761,7 +761,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
             };
           } else {
             console.warn(
-              `Could not set filter, no cube in chat config was found with iri ${cubeIri}`
+              `Could not set filter, no cube in chart config was found with iri ${cubeIri}`
             );
           }
         }
@@ -872,14 +872,14 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       if (isConfiguring(draft)) {
         const chartConfig =
           createDraft(action.value.chartConfig) ?? getChartConfig(draft);
-        const dataCubesComponents = getCachedComponents(
-          draft.dataSource,
-          chartConfig.cubes.map((cube) => ({
+        const dataCubesComponents = getCachedComponents({
+          locale: action.value.locale,
+          dataSource: draft.dataSource,
+          cubeFilters: chartConfig.cubes.map((cube) => ({
             iri: cube.iri,
             joinBy: cube.joinBy,
           })),
-          action.value.locale
-        );
+        });
 
         if (dataCubesComponents) {
           const cubes = current(chartConfig.cubes);
@@ -922,15 +922,14 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         const newCubes = chartConfig.cubes.filter(
           (c) => c.iri !== removedCubeIri
         );
-        const dataCubesComponents = getCachedComponents(
-          draft.dataSource,
-          newCubes.map((cube) => ({
+        const dataCubesComponents = getCachedComponents({
+          locale,
+          dataSource: draft.dataSource,
+          cubeFilters: newCubes.map((cube) => ({
             iri: cube.iri,
-            // Only keep joinBy while we have more than one cube
             joinBy: newCubes.length > 1 ? cube.joinBy : undefined,
           })),
-          locale
-        );
+        });
 
         if (!dataCubesComponents) {
           throw new Error(
@@ -948,7 +947,9 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
           cubeCount: iris.length,
         });
         const initialConfig = getInitialConfig({
-          chartType: possibleChartTypes[0],
+          chartType: possibleChartTypes.includes(chartConfig.chartType)
+            ? chartConfig.chartType
+            : possibleChartTypes[0],
           iris,
           dimensions,
           measures,
@@ -1057,41 +1058,27 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       newDraft.activeChartKey = action.value.chartKey;
       return newDraft;
 
-    case "DASHBOARD_FILTER_ADD":
+    case "DASHBOARD_TIME_RANGE_FILTER_UPDATE":
+      if (isLayouting(draft)) {
+        setWith(draft, "dashboardFilters.timeRange", action.value, Object);
+      }
+      return draft;
+
+    case "DASHBOARD_TIME_RANGE_FILTER_REMOVE":
       if (isLayouting(draft)) {
         setWith(
           draft,
-          "dashboardFilters.filters",
-          uniqBy(
-            [...(draft.dashboardFilters?.filters ?? []), action.value],
-            (x) => x.componentIri
-          ),
+          "dashboardFilters.timeRange",
+          {
+            active: false,
+            timeUnit: "",
+            presets: {
+              from: "",
+              to: "",
+            },
+          } as DashboardTimeRangeFilter,
           Object
         );
-      }
-
-      return draft;
-
-    case "DASHBOARD_FILTER_UPDATE":
-      if (isLayouting(draft)) {
-        const idx = draft.dashboardFilters?.filters.findIndex(
-          (f) => f.componentIri === action.value.componentIri
-        );
-
-        if (idx !== undefined && idx > -1) {
-          const newFilters = [...(draft.dashboardFilters?.filters ?? [])];
-          newFilters.splice(idx, 1, action.value);
-          setWith(draft, "dashboardFilters.filters", newFilters, Object);
-        }
-      }
-      return draft;
-
-    case "DASHBOARD_FILTER_REMOVE":
-      if (isLayouting(draft)) {
-        const newFilters = draft.dashboardFilters?.filters.filter(
-          (f) => f.componentIri !== action.value
-        );
-        setWith(draft, "dashboardFilters.filters", newFilters, Object);
       }
       return draft;
 
@@ -1148,7 +1135,7 @@ export function ensureDashboardLayoutAreCorrect(
       for (const chartConfig of newConfigs) {
         let chartX = curX;
         let chartY = curY;
-        let chartW = 2;
+        let chartW = 1;
         let chartH = MIN_H;
         canvasLayouts.push({
           i: chartConfig.key,

@@ -24,11 +24,10 @@ import { ContentLayout } from "@/components/layout";
 import { PublishActions } from "@/components/publish-actions";
 import { ConfiguratorStatePublished, getChartConfig } from "@/config-types";
 import { ConfiguratorStateProvider } from "@/configurator/configurator-state";
-import { getConfig } from "@/db/config";
+import { getConfig, increaseConfigViewCount } from "@/db/config";
 import { deserializeProps, Serialized, serializeProps } from "@/db/serialize";
 import { useLocale } from "@/locales/use-locale";
 import { useDataSourceStore } from "@/stores/data-source";
-import { EmbedOptionsProvider } from "@/utils/embed";
 
 type PageProps =
   | {
@@ -49,13 +48,18 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
   const config = await getConfig(query.chartId as string);
 
   if (config && config.data) {
-    // TODO validate configuration
-    return { props: serializeProps({ status: "found", config }) };
+    await increaseConfigViewCount(config.key);
+    return {
+      props: serializeProps({
+        status: "found",
+        config,
+      }),
+    };
   }
 
   res.statusCode = 404;
 
-  return { props: { status: "notfound", config: null } };
+  return { props: { status: "notfound", config: null, viewCount: null } };
 };
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -63,6 +67,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     backgroundColor: "white",
     padding: `${theme.spacing(3)} 2.25rem`,
     justifyContent: "flex-end",
+    alignItems: "center",
     display: "flex",
     width: "100%",
     borderBottom: "1px solid",
@@ -70,6 +75,14 @@ const useStyles = makeStyles((theme: Theme) => ({
     [theme.breakpoints.down("md")]: {
       padding: `${theme.spacing(3)} 0.75rem`,
     },
+  },
+  viewCount: {
+    display: "flex",
+    alignItems: "center",
+    "& svg": {
+      marginRight: theme.spacing(1),
+    },
+    color: theme.palette.text.secondary,
   },
 }));
 
@@ -113,7 +126,9 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
       // Remove publishSuccess from URL so that when reloading of sharing the link
       // to someone, there is no publishSuccess mention
       if (query.publishSuccess) {
-        replace({ pathname: window.location.pathname });
+        replace({ pathname: window.location.pathname }, undefined, {
+          shallow: true,
+        });
       }
     },
     [query.publishSuccess, replace]
@@ -138,7 +153,7 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
   }
 
   return (
-    <EmbedOptionsProvider>
+    <>
       <Head>
         <meta name="twitter:card" content="summary_large_image" />
         {/* FIXME: possibly we'll need to copy the content of first chart when migrating / saving to db
@@ -150,9 +165,11 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
         />
       </Head>
       <ContentLayout>
-        <Box className={classes.actionBar}>
-          <PublishActions configKey={key} locale={locale} />
-        </Box>
+        {config.published_state === PUBLISHED_STATE.PUBLISHED && (
+          <Box className={classes.actionBar}>
+            <PublishActions configKey={key} locale={locale} />
+          </Box>
+        )}
         <Box
           px={[2, 4]}
           sx={{ backgroundColor: "muted.main" }}
@@ -180,7 +197,6 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
                 <Alert
                   severity="warning"
                   sx={{
-                    maxWidth: 600,
                     margin: "auto",
                     flexDirection: "row",
                     alignItems: "center",
@@ -263,7 +279,7 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
           </Box>
         </Box>
       </ContentLayout>
-    </EmbedOptionsProvider>
+    </>
   );
 };
 

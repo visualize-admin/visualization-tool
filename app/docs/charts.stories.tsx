@@ -68,7 +68,16 @@ const ColumnsStory = {
         },
         chartConfigs: [chartConfig],
         activeChartKey: "scatterplot",
-        dashboardFilters: { filters: [] },
+        dashboardFilters: {
+          timeRange: {
+            active: false,
+            timeUnit: "",
+            presets: {
+              from: "",
+              to: "",
+            },
+          },
+        },
       }}
     >
       <InteractiveFiltersProvider chartConfigs={[chartConfig]}>
@@ -98,8 +107,7 @@ const ColumnsStory = {
   ),
 };
 
-export { ColumnsStory as Columns };
-export { ScatterplotStory as Scatterplot };
+export { ColumnsStory as Columns, ScatterplotStory as Scatterplot };
 
 const ScatterplotStory = {
   render: () => (
@@ -119,7 +127,16 @@ const ScatterplotStory = {
         },
         chartConfigs: [chartConfig],
         activeChartKey: "scatterplot",
-        dashboardFilters: { filters: [] },
+        dashboardFilters: {
+          timeRange: {
+            active: false,
+            timeUnit: "",
+            presets: {
+              from: "",
+              to: "",
+            },
+          },
+        },
       }}
     >
       <InteractiveFiltersProvider chartConfigs={[chartConfig]}>

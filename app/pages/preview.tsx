@@ -5,8 +5,8 @@ import create, { useStore } from "zustand";
 import { ChartPublished } from "@/components/chart-published";
 import { ConfiguratorStatePublished } from "@/config-types";
 import { GraphqlProvider } from "@/graphql/GraphqlProvider";
-import { Locale, i18n } from "@/locales/locales";
-import { LocaleProvider } from "@/locales/use-locale";
+import { i18n } from "@/locales/locales";
+import { LocaleProvider, useLocale } from "@/locales/use-locale";
 import { ConfiguratorStateProvider } from "@/src";
 import * as federalTheme from "@/themes/federal";
 import { migrateConfiguratorState } from "@/utils/chart-config/versioning";
@@ -34,11 +34,9 @@ if (typeof window !== "undefined") {
 }
 
 export default function Preview() {
-  const locale: Locale = "en";
+  const locale = useLocale();
   i18n.activate(locale);
-
   const state = useStore(chartStateStore, (d) => d.state);
-
   return state ? (
     <LocaleProvider value={locale}>
       <I18nProvider i18n={i18n}>

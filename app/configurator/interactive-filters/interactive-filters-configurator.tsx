@@ -91,6 +91,7 @@ export const InteractiveFiltersConfigurator = ({
         role="tablist"
         aria-labelledby="controls-interactive-filters"
         collapse
+        defaultExpanded={false}
       >
         <SectionTitle
           titleId="controls-interactive-filters"

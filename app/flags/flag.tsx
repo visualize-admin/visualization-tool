@@ -81,7 +81,8 @@ const isVercelPreviewHost = (host: string) => {
 
 const initFromHost = (host: string) => {
   const setDefaultFlag = (name: FlagName, value: FlagValue) => {
-    if (flag(name) === undefined) {
+    const flagValue = flag(name);
+    if (flagValue === null) {
       flag(name, value);
     }
   };

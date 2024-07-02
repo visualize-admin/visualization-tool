@@ -1,7 +1,7 @@
 import { Box, BoxProps, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
-import React, { forwardRef, HTMLProps } from "react";
+import React, { HTMLProps, forwardRef } from "react";
 
 import ChartPanelLayoutCanvas, {
   chartPanelLayoutGridClasses,
@@ -21,6 +21,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     gap: theme.spacing(4),
   },
   chartWrapper: {
+    overflow: "hidden",
     [`.${chartPanelLayoutGridClasses.root} &`]: {
       transition: theme.transitions.create(["box-shadow"], {
         duration: theme.transitions.duration.shortest,
@@ -33,7 +34,6 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   chartWrapperInner: {
     display: "contents",
-    overflow: "hidden",
     width: "auto",
     height: "100%",
   },

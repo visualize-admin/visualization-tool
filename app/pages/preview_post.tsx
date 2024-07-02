@@ -6,12 +6,17 @@ import { useState } from "react";
 
 import { ChartPublished } from "@/components/chart-published";
 import { GraphqlProvider } from "@/graphql/GraphqlProvider";
-import { Locale, i18n } from "@/locales/locales";
+import { Locale, defaultLocale, i18n } from "@/locales/locales";
 import { LocaleProvider } from "@/locales/use-locale";
 import { ConfiguratorStateProvider } from "@/src";
 import * as federalTheme from "@/themes/federal";
 import { migrateConfiguratorState } from "@/utils/chart-config/versioning";
 import { runMiddleware } from "@/utils/run-middleware";
+
+type PageProps = {
+  locale: Locale;
+  configuratorState: any;
+};
 
 const cors = configureCors();
 
@@ -29,7 +34,11 @@ const streamToString = async (stream: any) => {
   return null;
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+export const getServerSideProps: GetServerSideProps<PageProps> = async ({
+  req,
+  res,
+  locale,
+}) => {
   let state: any | null = null;
 
   if (req.method === "POST") {
@@ -41,18 +50,17 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
 
   return {
     props: {
-      ...state,
+      locale: (locale ?? defaultLocale) as Locale,
+      configuratorState: state,
     },
   };
 };
 
-export default function Preview(props: any) {
-  const locale: Locale = "en";
+export default function Preview({ configuratorState, locale }: PageProps) {
   i18n.activate(locale);
   const [migrated] = useState(() =>
-    migrateConfiguratorState({ ...props, state: "PUBLISHED" })
+    migrateConfiguratorState({ ...configuratorState, state: "PUBLISHED" })
   );
-
   return (
     <LocaleProvider value={locale}>
       <I18nProvider i18n={i18n}>
@@ -62,7 +70,7 @@ export default function Preview(props: any) {
               chartId="published"
               initialState={migrated}
             >
-              <ChartPublished configKey="preview" {...props} />
+              <ChartPublished configKey="preview" {...migrated} />
             </ConfiguratorStateProvider>
           </ThemeProvider>
         </GraphqlProvider>

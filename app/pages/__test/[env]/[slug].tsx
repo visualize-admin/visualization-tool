@@ -10,7 +10,6 @@ import {
   Meta,
 } from "@/configurator";
 import { migrateConfiguratorState } from "@/utils/chart-config/versioning";
-import { EmbedOptionsProvider } from "@/utils/embed";
 
 // FIXME: keep this in sync with configurator types.
 type DbConfig = {
@@ -45,17 +44,15 @@ const Page: NextPage = () => {
 
   if (config) {
     return (
-      <EmbedOptionsProvider>
-        <ConfiguratorStateProvider
-          chartId="published"
-          initialState={migrateConfiguratorState({
-            ...config.data,
-            state: "PUBLISHED",
-          })}
-        >
-          <ChartPublished />
-        </ConfiguratorStateProvider>
-      </EmbedOptionsProvider>
+      <ConfiguratorStateProvider
+        chartId="published"
+        initialState={migrateConfiguratorState({
+          ...config.data,
+          state: "PUBLISHED",
+        })}
+      >
+        <ChartPublished />
+      </ConfiguratorStateProvider>
     );
   }
   return null;

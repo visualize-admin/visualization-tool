@@ -188,7 +188,6 @@ export const DataSetPreview = ({
               {dataCubeMetadata.description}
             </Typography>
           )}
-
           <Flex className={classes.tableWrapper}>
             <DataSetPreviewTable
               title={dataCubeMetadata.title}
@@ -225,7 +224,7 @@ export type DataSetPreviewProps = React.ComponentProps<typeof DataSetPreview>;
 
 export const FirstTenRowsCaption = () => {
   return (
-    <Typography variant="body2" sx={{ fontWeight: "light" }}>
+    <Typography variant="caption" sx={{ fontWeight: "light" }}>
       <Trans id="datatable.showing.first.rows">Showing first 10 rows</Trans>
     </Typography>
   );

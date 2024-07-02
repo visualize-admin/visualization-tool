@@ -25,7 +25,8 @@ import { useClient } from "urql";
 import { useDebounce } from "use-debounce";
 
 import { extractChartConfigComponentIris } from "@/charts/shared/chart-helpers";
-import { ArrowMenu } from "@/components/arrow-menu";
+import { ArrowMenuTopBottom } from "@/components/arrow-menu";
+import { DuplicateChartMenuActionItem } from "@/components/chart-shared";
 import Flex from "@/components/flex";
 import { MenuActionItem } from "@/components/menu-action-item";
 import { VisualizeTab, VisualizeTabList } from "@/components/tabs";
@@ -54,7 +55,6 @@ import { useDataCubesComponentsQuery } from "@/graphql/hooks";
 import { Icon, IconName } from "@/icons";
 import { defaultLocale, useLocale } from "@/locales";
 import { createConfig, updateConfig } from "@/utils/chart-config/api";
-import { createChartId } from "@/utils/create-chart-id";
 import { getRouterChartId } from "@/utils/router/helpers";
 import { replaceLinks } from "@/utils/ui-strings";
 import useEvent from "@/utils/use-event";
@@ -148,7 +148,6 @@ const TabsEditable = (props: TabsEditableProps) => {
   const { state, chartConfig, data } = props;
   const [, dispatch] = useConfiguratorState();
   const isConfiguringChart = isConfiguring(state);
-  const locale = useLocale();
   const [tabsState, setTabsState] = useTabsState();
   const [popoverAnchorEl, setPopoverAnchorEl] = useState<HTMLElement | null>(
     null
@@ -277,7 +276,7 @@ const TabsEditable = (props: TabsEditableProps) => {
       ) : null}
 
       {tabsState.popoverType === "edit" ? (
-        <ArrowMenu
+        <ArrowMenuTopBottom
           id="chart-selection-popover"
           open={tabsState.popoverOpen}
           anchorEl={popoverAnchorEl}
@@ -291,28 +290,9 @@ const TabsEditable = (props: TabsEditableProps) => {
           }}
           onClose={handleClose}
         >
-          <MenuActionItem
-            type="button"
-            as="menuitem"
-            onClick={() => {
-              dispatch({
-                type: "CHART_CONFIG_ADD",
-                value: {
-                  chartConfig: {
-                    ...getChartConfig(state, tabsState.activeChartKey),
-                    key: createChartId(),
-                  },
-                  locale,
-                },
-              });
-              handleClose();
-            }}
-            iconName="duplicate"
-            label={
-              <Trans id="controls.duplicate.visualization">
-                Duplicate this visualization
-              </Trans>
-            }
+          <DuplicateChartMenuActionItem
+            chartConfig={getChartConfig(state, tabsState.activeChartKey)}
+            onSuccess={handleClose}
           />
 
           {state.chartConfigs.length > 1 && (
@@ -320,11 +300,7 @@ const TabsEditable = (props: TabsEditableProps) => {
               as="menuitem"
               type="button"
               iconName="trash"
-              label={
-                <Trans id="controls.remove.visualization">
-                  Remove this visualization
-                </Trans>
-              }
+              label={<Trans id="chart-controls.delete">Delete</Trans>}
               color="error"
               requireConfirmation
               confirmationTitle={t({
@@ -346,7 +322,7 @@ const TabsEditable = (props: TabsEditableProps) => {
               }}
             />
           )}
-        </ArrowMenu>
+        </ArrowMenuTopBottom>
       ) : null}
     </>
   );
@@ -388,7 +364,7 @@ const NextStepButton = (props: React.PropsWithChildren<{}>) => {
   const locale = useLocale();
   const [state, dispatch] = useConfiguratorState(hasChartConfigs);
   const chartConfig = getChartConfig(state);
-  const componentIris = extractChartConfigComponentIris(chartConfig);
+  const componentIris = extractChartConfigComponentIris({ chartConfig });
   const [{ data: components }] = useDataCubesComponentsQuery({
     variables: {
       sourceType: state.dataSource.type,
@@ -474,7 +450,11 @@ export const SaveDraftButton = ({
           published_state: PUBLISHED_STATE.DRAFT,
         });
         if (saved) {
-          const config = await initChartStateFromChartEdit(client, saved.key);
+          const config = await initChartStateFromChartEdit(
+            client,
+            saved.key,
+            state.state
+          );
 
           if (!config) {
             return;
