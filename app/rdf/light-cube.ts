@@ -10,7 +10,7 @@ import { getCubePreview } from "@/rdf/query-cube-preview";
 import {
   getCubeComponentTermsets,
   getCubeTermsets,
-} from "@/rdf/query-cube-termsets";
+} from "@/rdf/query-termsets";
 
 type LightCubeOptions = {
   iri: string;
