@@ -98,7 +98,7 @@ describe("datasource state hook", () => {
 
     expect(getState()).toEqual({
       type: "sparql",
-      url: "https://test.lindas.admin.ch/query",
+      url: "https://lindas-cached.test.cluster.ldbar.ch/query",
     });
     expect(setURLParam).toHaveBeenCalledWith("dataSource", "Test");
   });
@@ -110,7 +110,7 @@ describe("datasource state hook", () => {
     });
     expect(getState()).toEqual({
       type: "sparql",
-      url: "https://test.lindas.admin.ch/query",
+      url: "https://lindas-cached.test.cluster.ldbar.ch/query",
     });
   });
 
