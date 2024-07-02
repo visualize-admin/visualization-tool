@@ -11,6 +11,7 @@ const route = api({
         req.query.limit && !Array.isArray(req.query.limit)
           ? parseInt(req.query.limit as string)
           : undefined,
+      orderByViewCount: req.query.orderByViewCount === "true",
     });
   },
 });

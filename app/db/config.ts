@@ -228,8 +228,10 @@ export const increaseConfigViewCount = async (configKey: string) => {
  */
 export const getAllConfigsMetadata = async ({
   limit,
+  orderByViewCount,
 }: {
   limit?: number;
+  orderByViewCount?: boolean;
 } = {}) => {
   return await prisma.config.findMany({
     select: {
@@ -239,9 +241,9 @@ export const getAllConfigsMetadata = async ({
       published_state: true,
       user_id: true,
     },
-    orderBy: {
-      created_at: "desc",
-    },
+    orderBy: orderByViewCount
+      ? { views: { _count: "desc" } }
+      : { created_at: "desc" },
     take: limit,
   });
 };
