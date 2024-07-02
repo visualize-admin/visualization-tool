@@ -25,8 +25,7 @@ export const ChartComboLineDualVisualization = (
 const ChartComboLineDual = memo((props: ChartProps<ComboLineDualConfig>) => {
   const { chartConfig } = props;
   const { interactiveFiltersConfig } = chartConfig;
-  const { sharedFilters } = useDashboardInteractiveFilters();
-
+  const dashboardFilters = useDashboardInteractiveFilters();
   return (
     <ComboLineDualChart {...props}>
       <ChartContainer type="comboLineDual">
@@ -36,9 +35,10 @@ const ChartComboLineDual = memo((props: ChartProps<ComboLineDualConfig>) => {
           <AxisTimeDomain />
           <ComboLineDual />
           <InteractionHorizontal />
-          {shouldShowBrush(interactiveFiltersConfig, sharedFilters) && (
-            <BrushTime />
-          )}
+          {shouldShowBrush(
+            interactiveFiltersConfig,
+            dashboardFilters.timeRange
+          ) && <BrushTime />}
         </ChartSvg>
         <HoverDotMultiple />
         <Ruler />

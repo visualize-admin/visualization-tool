@@ -28,7 +28,6 @@ import { getConfig, increaseConfigViewCount } from "@/db/config";
 import { deserializeProps, Serialized, serializeProps } from "@/db/serialize";
 import { useLocale } from "@/locales/use-locale";
 import { useDataSourceStore } from "@/stores/data-source";
-import { EmbedOptionsProvider } from "@/utils/embed";
 
 type PageProps =
   | {
@@ -154,7 +153,7 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
   }
 
   return (
-    <EmbedOptionsProvider>
+    <>
       <Head>
         <meta name="twitter:card" content="summary_large_image" />
         {/* FIXME: possibly we'll need to copy the content of first chart when migrating / saving to db
@@ -280,7 +279,7 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
           </Box>
         </Box>
       </ContentLayout>
-    </EmbedOptionsProvider>
+    </>
   );
 };
 

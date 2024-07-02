@@ -17,12 +17,12 @@ import {
   ComboLineColumnConfig,
   ComboLineDualConfig,
   ComboLineSingleConfig,
+  DashboardTimeRangeFilter,
   LineConfig,
 } from "@/configurator";
 import { Observation } from "@/domain/data";
 import { useFormatFullDateAuto } from "@/formatters";
 import {
-  SharedFilter,
   useChartInteractiveFilters,
   useInteractiveFiltersGetState,
 } from "@/stores/interactive-filters";
@@ -44,16 +44,10 @@ export const shouldShowBrush = (
         | ColumnConfig
       )["interactiveFiltersConfig"]
     | undefined,
-  sharedFilters: SharedFilter[] | undefined
+  dashboardTimeRange: DashboardTimeRangeFilter | undefined
 ) => {
   const chartTimeRange = interactiveFiltersConfig?.timeRange;
-  const chartTimeRangeIri = chartTimeRange?.componentIri;
-  const sharedFilter = sharedFilters?.find(
-    (x) => x.type === "timeRange" && x.componentIri === chartTimeRangeIri
-  );
-  return (
-    (chartTimeRange?.active && !sharedFilter) || sharedFilter?.active == false
-  );
+  return !dashboardTimeRange?.active && chartTimeRange?.active;
 };
 
 export const BrushTime = () => {

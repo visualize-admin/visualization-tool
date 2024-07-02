@@ -12,9 +12,11 @@ import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 import uniqBy from "lodash/uniqBy";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useClient } from "urql";
 
 import { useMetadataPanelStoreActions } from "@/components/metadata-panel-store";
 import useDisclosure from "@/components/use-disclosure";
+import { getChartConfig } from "@/configurator";
 import { DatasetDialog } from "@/configurator/components/add-dataset-dialog";
 import { DatasetsBadge } from "@/configurator/components/badges";
 import { BetaTag } from "@/configurator/components/beta-tag";
@@ -29,7 +31,10 @@ import {
 } from "@/configurator/configurator-state";
 import { DataCubeMetadata } from "@/domain/data";
 import useFlag from "@/flags/useFlag";
-import { useDataCubesMetadataQuery } from "@/graphql/hooks";
+import {
+  executeDataCubesComponentsQuery,
+  useDataCubesMetadataQuery,
+} from "@/graphql/hooks";
 import SvgIcAdd from "@/icons/components/IcAdd";
 import SvgIcChecked from "@/icons/components/IcChecked";
 import SvgIcTrash from "@/icons/components/IcTrash";
@@ -82,8 +87,10 @@ const DatasetRow = ({
 }) => {
   const ref = useRef<HTMLDivElement>(null);
   const locale = useLocale();
+  const client = useClient();
   const classes = useStyles();
-  const [, dispatch] = useConfiguratorState(isConfiguring);
+  const [state, dispatch] = useConfiguratorState(isConfiguring);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (added && ref.current) {
@@ -136,12 +143,33 @@ const DatasetRow = ({
         <div>
           {canRemove ? (
             <IconButton
-              onClick={() =>
-                dispatch({
-                  type: "DATASET_REMOVE",
-                  value: { locale, iri: cube.iri },
-                })
-              }
+              disabled={loading}
+              onClick={async () => {
+                try {
+                  const chartConfig = getChartConfig(state);
+                  const newCubes = chartConfig.cubes.filter(
+                    (c) => c.iri !== cube.iri
+                  );
+                  await executeDataCubesComponentsQuery(client, {
+                    locale,
+                    sourceUrl: state.dataSource.url,
+                    sourceType: state.dataSource.type,
+                    cubeFilters: newCubes.map((cube) => ({
+                      iri: cube.iri,
+                      joinBy: newCubes.length > 1 ? cube.joinBy : undefined,
+                      loadValues: true,
+                    })),
+                  });
+                  dispatch({
+                    type: "DATASET_REMOVE",
+                    value: { locale, iri: cube.iri },
+                  });
+                } catch (e) {
+                  console.error(e);
+                } finally {
+                  setLoading(false);
+                }
+              }}
             >
               <SvgIcTrash />
             </IconButton>

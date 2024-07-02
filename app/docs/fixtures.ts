@@ -89,7 +89,14 @@ export const states: ConfiguratorState[] = [
     ],
     activeChartKey: "column",
     dashboardFilters: {
-      filters: [],
+      timeRange: {
+        active: false,
+        timeUnit: "",
+        presets: {
+          from: "",
+          to: "",
+        },
+      },
     },
   },
 ];

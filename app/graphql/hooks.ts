@@ -183,14 +183,6 @@ export const executeDataCubesComponentsQuery = async (
   onFetching?: () => void
 ) => {
   const { locale, sourceType, sourceUrl, cubeFilters } = variables;
-
-  if (cubeFilters.length > 1 && !cubeFilters.every((f) => f.joinBy)) {
-    console.log({ cubeFilters });
-    throw new Error(
-      "When fetching data from multiple cubes, all cube filters must have joinBy property set."
-    );
-  }
-
   const queries = await Promise.all(
     cubeFilters.map((cubeFilter) => {
       const cubeVariables = {
@@ -255,7 +247,6 @@ export const executeDataCubesComponentsQuery = async (
                     dataCubeComponents !== undefined,
                     "Undefined dataCubeComponents"
                   );
-                  assert(joinBy, "Undefined joinBy");
                   return {
                     dataCubeComponents,
                     joinBy,
@@ -279,16 +270,6 @@ export const useDataCubesComponentsQuery = makeUseQuery<
   DataCubesComponentsOptions,
   DataCubesComponentsData
 >({
-  check: (variables: DataCubesComponentsOptions["variables"]) => {
-    const { cubeFilters } = variables;
-    if (cubeFilters.length > 1 && !cubeFilters.every((f) => f.joinBy)) {
-      console.log({ cubeFilters });
-      throw new Error(
-        "When fetching data from multiple cubes, all cube filters must have joinBy property set."
-      );
-    }
-  },
-
   fetch: executeDataCubesComponentsQuery,
 });
 
@@ -371,15 +352,6 @@ export const useDataCubesObservationsQuery = makeUseQuery<
   DataCubesObservationsOptions,
   DataCubesObservationsData
 >({
-  check: (variables) => {
-    const { cubeFilters } = variables;
-
-    if (cubeFilters.length > 1 && !cubeFilters.every((f) => f.joinBy)) {
-      throw new Error(
-        "When fetching data from multiple cubes, all cube filters must have joinBy property set."
-      );
-    }
-  },
   fetch: executeDataCubesObservationsQuery,
 });
 

@@ -62,7 +62,14 @@ export const configStateMock = {
     ],
     activeChartKey: "abc",
     dashboardFilters: {
-      filters: [],
+      timeRange: {
+        active: false,
+        timeUnit: "",
+        presets: {
+          from: "",
+          to: "",
+        },
+      },
     },
   },
   groupedColumnChart: {
@@ -198,7 +205,14 @@ export const configStateMock = {
     ],
     activeChartKey: "2of7iJAjccuj",
     dashboardFilters: {
-      filters: [],
+      timeRange: {
+        active: false,
+        timeUnit: "",
+        presets: {
+          from: "",
+          to: "",
+        },
+      },
     },
   },
 } satisfies Record<string, ConfiguratorState>;

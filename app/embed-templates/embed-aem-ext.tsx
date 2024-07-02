@@ -2,15 +2,13 @@ import Head from "next/head";
 import { renderToStaticMarkup } from "react-dom/server";
 
 import { PUBLIC_URL } from "@/domain/env";
-import { EmbedOptions } from "@/utils/embed";
 
 type Props = {
   locale: string;
   chartId: string;
-  embedOptions: EmbedOptions;
 };
 
-const EmbedHTML = ({ locale, chartId, embedOptions }: Props) => (
+const EmbedHTML = ({ locale, chartId }: Props) => (
   <html lang={locale}>
     <Head>
       <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -19,11 +17,7 @@ const EmbedHTML = ({ locale, chartId, embedOptions }: Props) => (
       <iframe
         title="chart"
         // src="/static/embed-content-placeholder.html"
-        src={`${PUBLIC_URL}/${locale}/embed/${chartId}?${
-          embedOptions
-            ? `embedOptions=${encodeURIComponent(JSON.stringify(embedOptions))}`
-            : ""
-        }`}
+        src={`${PUBLIC_URL}/${locale}/embed/${chartId}`}
         data-visualize-iframe
         style={{ width: 1, minWidth: "100%" }}
         frameBorder="0"

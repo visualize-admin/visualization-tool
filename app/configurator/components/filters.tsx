@@ -201,7 +201,6 @@ const FilterControls = ({
   activeKeysLength: number;
 }) => {
   const classes = useFootnotesStyles({ useMarginTop: false });
-
   return (
     <Box className={classes.actions}>
       <Button

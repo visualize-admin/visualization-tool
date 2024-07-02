@@ -398,7 +398,7 @@ const DataFilterGenericDimension = (props: DataFilterGenericDimensionProps) => {
       label={
         <FieldLabel
           label={
-            <OpenMetadataPanelWrapper dim={dimension}>
+            <OpenMetadataPanelWrapper component={dimension}>
               {label}
             </OpenMetadataPanelWrapper>
           }
@@ -464,7 +464,7 @@ const DataFilterHierarchyDimension = (
       label={
         <FieldLabel
           label={
-            <OpenMetadataPanelWrapper dim={dimension}>
+            <OpenMetadataPanelWrapper component={dimension}>
               {label}
             </OpenMetadataPanelWrapper>
           }
@@ -506,7 +506,7 @@ const DataFilterTemporalDimension = ({
       label={
         <FieldLabel
           label={
-            <OpenMetadataPanelWrapper dim={dimension}>
+            <OpenMetadataPanelWrapper component={dimension}>
               {label}
             </OpenMetadataPanelWrapper>
           }

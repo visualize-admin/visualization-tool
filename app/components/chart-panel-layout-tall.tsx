@@ -48,7 +48,8 @@ const ChartPanelLayoutTallRow = (props: ChartPanelLayoutTallRowProps) => {
               xs: "1fr",
               md: "calc(50% - 8px) calc(50% - 8px)",
             },
-            gap: "16px",
+            gridAutoRows: "min-content",
+            columnGap: 4,
           }}
         >
           {row.chartConfigs.map(row.renderChart)}

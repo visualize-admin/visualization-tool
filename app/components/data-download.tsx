@@ -5,17 +5,12 @@ import {
   ListSubheader,
   MenuItem,
   Typography,
+  useEventCallback,
 } from "@mui/material";
 import { ascending } from "d3-array";
 import { Workbook } from "exceljs";
 import { saveAs } from "file-saver";
 import keyBy from "lodash/keyBy";
-import HoverMenu from "material-ui-popup-state/HoverMenu";
-import {
-  bindHover,
-  bindMenu,
-  usePopupState,
-} from "material-ui-popup-state/hooks";
 import {
   Dispatch,
   PropsWithChildren,
@@ -29,6 +24,7 @@ import {
 import { useClient } from "urql";
 
 import { getSortedColumns } from "@/browse/datatable";
+import { ArrowMenuBottomTop } from "@/components/arrow-menu";
 import Flex from "@/components/flex";
 import { DataSource, SortingField } from "@/config-types";
 import {
@@ -47,7 +43,7 @@ import {
   executeDataCubesObservationsQuery,
 } from "@/graphql/hooks";
 import { DataCubeObservationFilter } from "@/graphql/query-hooks";
-import { Icon } from "@/icons";
+import SvgIcDownload from "@/icons/components/IcDownload";
 import { Locale } from "@/locales/locales";
 import { useLocale } from "@/src";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
@@ -200,32 +196,38 @@ const DataDownloadInnerMenu = ({
   filters: DataCubeObservationFilter;
 }) => {
   const [state] = useDataDownloadState();
-  const popupState = usePopupState({
-    variant: "popover",
-    popupId: "dataDownloadMenu",
-  });
-
+  const [anchor, setAnchor] = useState<HTMLElement | null>(null);
+  const handleClose = useEventCallback(() => setAnchor(null));
   return (
     <>
       <Button
-        component="a"
         variant="text"
         color="primary"
         size="small"
         startIcon={
-          state.isDownloading ? <CircularProgress /> : <Icon name="download" />
+          state.isDownloading ? (
+            <CircularProgress size={16} />
+          ) : (
+            <SvgIcDownload width={16} />
+          )
         }
-        {...bindHover(popupState)}
-        sx={{ p: 0, ml: "2px" }}
+        onClick={(e) => setAnchor(e.currentTarget)}
+        sx={{
+          width: "fit-content",
+          minHeight: 0,
+          p: 0,
+          ml: "2.5px",
+          fontSize: "inherit",
+        }}
       >
-        <Typography variant="caption">
-          <Trans id="button.download.data">Download data</Trans>
-        </Typography>
+        <Trans id="button.download.data">Download data</Trans>
       </Button>
-      <HoverMenu
-        {...bindMenu(popupState)}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-        transformOrigin={{ vertical: "bottom", horizontal: "center" }}
+      <ArrowMenuBottomTop
+        open={!!anchor}
+        anchorEl={anchor}
+        onClose={handleClose}
+        anchorOrigin={{ horizontal: "right", vertical: "top" }}
+        transformOrigin={{ horizontal: "center", vertical: "bottom" }}
         MenuListProps={{
           subheader: (
             <ListSubheader>
@@ -234,6 +236,7 @@ const DataDownloadInnerMenu = ({
           ),
           sx: { width: 200, pt: 1, pb: 2 },
         }}
+        sx={{ transform: "translateY(-12px)" }}
       >
         {filters.filters && (
           <DataDownloadMenuSection
@@ -258,7 +261,7 @@ const DataDownloadInnerMenu = ({
             </Typography>
           </RawMenuItem>
         )}
-      </HoverMenu>
+      </ArrowMenuBottomTop>
     </>
   );
 };
@@ -434,26 +437,6 @@ const DownloadMenuItem = ({
       sx={{ minWidth: 0, p: 0 }}
     >
       {fileFormat.toUpperCase()}
-    </Button>
-  );
-};
-
-export const RunSparqlQuery = ({ url }: { url: string }) => {
-  return (
-    <Button
-      component="a"
-      variant="text"
-      color="primary"
-      size="small"
-      href={url}
-      target="_blank"
-      sx={{ p: 0 }}
-    >
-      <Typography variant="caption">
-        <Trans id="button.download.runsparqlquery.visible">
-          Run SPARQL query (visible)
-        </Trans>
-      </Typography>
     </Button>
   );
 };

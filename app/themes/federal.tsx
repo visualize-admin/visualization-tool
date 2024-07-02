@@ -145,7 +145,7 @@ theme.typography = merge(theme.typography, {
   }),
   h3: createTypographyVariant(theme, {
     fontSize: [16, 18],
-    lineHeight: [28, 36],
+    lineHeight: [24, 28],
     fontWeight: "bold",
   }),
   h4: createTypographyVariant(theme, {

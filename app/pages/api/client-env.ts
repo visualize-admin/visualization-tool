@@ -23,6 +23,7 @@ export default async function clientEnvApi(
           SQL_ENDPOINT: process.env.SQL_ENDPOINT,
           PUBLIC_URL: process.env.PUBLIC_URL,
           GRAPHQL_ENDPOINT: process.env.GRAPHQL_ENDPOINT,
+          ADFS_PROFILE_URL: process.env.ADFS_PROFILE_URL,
         })}`;
 
         if (result) {

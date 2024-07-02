@@ -11,7 +11,13 @@ import { DimensionValue } from "@/domain/data";
 import { SPARQL_GEO_ENDPOINT } from "@/domain/env";
 import { Awaited } from "@/domain/types";
 import { Timings } from "@/gql-flamegraph/resolvers";
+import { getMaybeCachedSparqlUrl } from "@/graphql/caching-utils";
 import { RequestQueryMeta } from "@/graphql/query-meta";
+import {
+  QueryResolvers,
+  Resolver,
+  ResolversObject,
+} from "@/graphql/resolver-types";
 import { ResolvedDimension } from "@/graphql/shared-types";
 import { createSource, pragmas } from "@/rdf/create-source";
 import { ExtendedCube } from "@/rdf/extended-cube";
@@ -183,18 +189,38 @@ const createContextContent = async ({
   );
 };
 
+type ExtractResolversObject<O> = O extends ResolversObject<infer S> ? S : never;
+type Resolvers = ExtractResolversObject<QueryResolvers>;
+type ExtractResolver<O> =
+  O extends Resolver<any, any, any, infer S> ? S : never;
+type VariableValues = ExtractResolver<Resolvers[keyof Resolvers]>;
+
 export const createContext = ({ req }: { req: IncomingMessage }) => {
   const debug = isDebugMode(req);
-  let setupping: ReturnType<typeof createContextContent>;
+  let settingUp: ReturnType<typeof createContextContent>;
 
   const ctx = {
     debug,
     // Stores meta information on queries that have been made during the request
     queries: [] as RequestQueryMeta[],
     timings: undefined as Timings | undefined,
-    setup: async ({ variableValues: { sourceUrl } }: GraphQLResolveInfo) => {
-      setupping = setupping || createContextContent({ sourceUrl, ctx, req });
-      return await setupping;
+    setup: async (props: GraphQLResolveInfo) => {
+      const variableValues = props.variableValues as VariableValues;
+      const { sourceUrl } = variableValues;
+      settingUp =
+        settingUp ||
+        createContextContent({
+          sourceUrl: getMaybeCachedSparqlUrl({
+            endpointUrl: sourceUrl,
+            cubeIri:
+              "cubeFilter" in variableValues
+                ? variableValues.cubeFilter.iri
+                : undefined,
+          }),
+          ctx,
+          req,
+        });
+      return await settingUp;
     },
   };
 

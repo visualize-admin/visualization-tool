@@ -62,7 +62,7 @@ export const AxisHeightLinear = () => {
         </text>
       ) : (
         <foreignObject width={axisTitleWidth} height={axisLabelFontSize * 2}>
-          <OpenMetadataPanelWrapper dim={state.yMeasure}>
+          <OpenMetadataPanelWrapper component={state.yMeasure}>
             <span style={{ fontSize: axisLabelFontSize }}>
               {state.yAxisLabel}
             </span>

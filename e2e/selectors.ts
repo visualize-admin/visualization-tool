@@ -122,7 +122,7 @@ export const createSelectors = ({ screen, page, within }: Ctx) => {
         }
       },
       tablePreviewSwitch: async () => {
-        return await screen.findByText("Switch to table view");
+        return await screen.findByText("Table view");
       },
     },
   };

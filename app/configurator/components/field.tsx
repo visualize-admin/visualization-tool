@@ -419,7 +419,7 @@ export const DataFilterTemporal = (props: DataFilterTemporalProps) => {
         label={
           <FieldLabel
             label={
-              <OpenMetadataPanelWrapper dim={dimension}>
+              <OpenMetadataPanelWrapper component={dimension}>
                 {label}
               </OpenMetadataPanelWrapper>
             }

@@ -29,7 +29,11 @@ import {
   getPossibleFiltersQueryVariables,
   skipPossibleFiltersQuery,
 } from "@/charts/shared/ensure-possible-filters";
-import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
+import { HEADER_HEIGHT } from "@/components/header-constants";
+import {
+  MetadataPanel,
+  OpenMetadataPanelWrapper,
+} from "@/components/metadata-panel";
 import { MoveDragButton } from "@/components/move-drag-button";
 import useDisclosure from "@/components/use-disclosure";
 import {
@@ -116,7 +120,6 @@ const DataFilterSelectGeneric = (props: DataFilterSelectGenericProps) => {
   const [state] = useConfiguratorState();
   const chartConfig = getChartConfig(state);
   const [{ data, fetching }] = useDataCubesComponentsQuery({
-    keepPreviousData: true,
     variables: {
       sourceType: state.dataSource.type,
       sourceUrl: state.dataSource.url,
@@ -134,6 +137,7 @@ const DataFilterSelectGeneric = (props: DataFilterSelectGenericProps) => {
         };
       }),
     },
+    keepPreviousData: true,
   });
 
   const dimension = data?.dataCubesComponents?.dimensions?.[0] ?? rawDimension;
@@ -153,7 +157,7 @@ const DataFilterSelectGeneric = (props: DataFilterSelectGenericProps) => {
   const sharedProps = {
     dimension,
     label: (
-      <OpenMetadataPanelWrapper dim={dimension}>
+      <OpenMetadataPanelWrapper component={dimension}>
         <span>{`${index + 1}. ${dimension.label}`}</span>
       </OpenMetadataPanelWrapper>
     ),
@@ -357,13 +361,13 @@ const useFilterReorder = ({
     { data: componentsData, fetching: componentsFetching },
     executeComponentsQuery,
   ] = useDataCubesComponentsQuery({
-    keepPreviousData: true,
     variables: {
       sourceType: state.dataSource.type,
       sourceUrl: state.dataSource.url,
       locale,
       ...variables,
     },
+    keepPreviousData: true,
   });
 
   useEffect(() => {
@@ -584,8 +588,11 @@ export const ChartConfigurator = ({
   const fetching = possibleFiltersFetching || dataFetching;
   const filterMenuButtonRef = useRef(null);
   const classes = useStyles({ fetching });
+  const components = useMemo(() => {
+    return [...(dimensions ?? []), ...(measures ?? [])];
+  }, [dimensions, measures]);
 
-  if (!dimensions || !measures) {
+  if (components.length === 0) {
     return (
       <>
         <ControlSectionSkeleton />
@@ -745,6 +752,13 @@ export const ChartConfigurator = ({
         <InteractiveFiltersConfigurator state={state} />
       )}
       <DatasetsControlSection />
+      <MetadataPanel
+        dataSource={state.dataSource}
+        chartConfig={chartConfig}
+        components={components}
+        top={HEADER_HEIGHT}
+        renderToggle={false}
+      />
     </InteractiveFiltersChartProvider>
   );
 };

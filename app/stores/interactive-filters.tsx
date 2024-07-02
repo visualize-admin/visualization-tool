@@ -1,4 +1,3 @@
-import groupBy from "lodash/groupBy";
 import React, { createContext, useContext, useMemo, useRef } from "react";
 import create, { StateCreator, StoreApi, UseBoundStore } from "zustand";
 
@@ -6,17 +5,17 @@ import { getChartSpec } from "@/charts/chart-config-ui-options";
 import {
   CalculationType,
   ChartConfig,
+  DashboardTimeRangeFilter,
   FilterValueSingle,
   hasChartConfigs,
-  InteractiveFiltersConfig,
   useConfiguratorState,
 } from "@/configurator";
 import { truthy } from "@/domain/types";
 import { getOriginalIris, isJoinById } from "@/graphql/join";
 import {
-  createBoundUseStoreWithSelector,
   ExtractState,
   UseBoundStoreWithSelector,
+  createBoundUseStoreWithSelector,
 } from "@/stores/utils";
 import { assert } from "@/utils/assert";
 
@@ -143,27 +142,16 @@ type InteractiveFiltersContextValue = [
   StoreApi<State>,
 ];
 
-export type SharedFilter = {
-  type: "timeRange";
-} & NonNullable<InteractiveFiltersConfig>["timeRange"];
-
-export type PotentialSharedFilter = Pick<SharedFilter, "type" | "componentIri">;
-
 const InteractiveFiltersContext = createContext<
   | {
+      potentialTimeRangeFilterIris: string[];
+      timeRange: DashboardTimeRangeFilter | undefined;
       stores: Record<ChartConfig["key"], InteractiveFiltersContextValue>;
-      potentialSharedFilters: PotentialSharedFilter[];
-      sharedFilters: SharedFilter[];
     }
   | undefined
 >(undefined);
 
-/**
- * Returns filters that are shared across multiple charts.
- */
-const getPotentialSharedFilters = (
-  chartConfigs: ChartConfig[]
-): PotentialSharedFilter[] => {
+const getPotentialTimeRangeFilterIris = (chartConfigs: ChartConfig[]) => {
   const temporalDimensions = chartConfigs.flatMap((config) => {
     const chartSpec = getChartSpec(config);
     const temporalEncodings = chartSpec.encodings.filter((x) =>
@@ -193,16 +181,7 @@ const getPotentialSharedFilters = (
     return chartTemporalDimensions;
   });
 
-  const sharedTemporalDimensions = Object.values(
-    groupBy(temporalDimensions, (x) => x.componentIri)
-  ).filter((x) => x.length > 1);
-
-  return sharedTemporalDimensions.map((x) => {
-    return {
-      type: "timeRange",
-      componentIri: x[0].componentIri,
-    };
-  });
+  return temporalDimensions.map((dimension) => dimension.componentIri);
 };
 
 /**
@@ -217,8 +196,8 @@ export const InteractiveFiltersProvider = ({
   const [state] = useConfiguratorState(hasChartConfigs);
   const storeRefs = useRef<Record<ChartConfig["key"], StoreApi<State>>>({});
 
-  const potentialSharedFilters = useMemo(() => {
-    return getPotentialSharedFilters(chartConfigs);
+  const potentialTimeRangeFilterIris = useMemo(() => {
+    return getPotentialTimeRangeFilterIris(chartConfigs);
   }, [chartConfigs]);
 
   const stores = useMemo<
@@ -239,15 +218,15 @@ export const InteractiveFiltersProvider = ({
     );
   }, [chartConfigs]);
 
-  const sharedFilters = state.dashboardFilters?.filters;
+  const timeRange = state.dashboardFilters?.timeRange;
 
   const ctxValue = useMemo(
     () => ({
       stores,
-      potentialSharedFilters,
-      sharedFilters: sharedFilters ?? [],
+      potentialTimeRangeFilterIris,
+      timeRange,
     }),
-    [stores, potentialSharedFilters, sharedFilters]
+    [stores, potentialTimeRangeFilterIris, timeRange]
   );
 
   return (

@@ -1,6 +1,4 @@
 import { Trans } from "@lingui/macro";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import MUITreeItem, {
   TreeItemContentClassKey,
   TreeItemProps,
@@ -23,17 +21,19 @@ import {
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 import React, {
+  forwardRef,
   useCallback,
   useEffect,
   useMemo,
   useRef,
   useState,
-  forwardRef,
 } from "react";
 
 import { Label } from "@/components/form";
 import { HierarchyValue } from "@/domain/data";
 import { Icon } from "@/icons";
+import SvgIcChevronDown from "@/icons/components/IcChevronDown";
+import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import { flattenTree, pruneTree } from "@/rdf/tree-utils";
 import useEvent from "@/utils/use-event";
 
@@ -424,7 +424,7 @@ function SelectTree({
                 defaultExpanded={defaultExpanded}
                 label={label}
                 expandIcon={
-                  children && children.length > 0 ? <ChevronRightIcon /> : null
+                  children && children.length > 0 ? <SvgIcChevronRight /> : null
                 }
                 classes={treeItemClasses}
                 TransitionComponent={Collapse}
@@ -556,8 +556,8 @@ function SelectTree({
             expanded={expanded}
             onNodeToggle={handleNodeToggle}
             onNodeSelect={handleNodeSelect}
-            defaultCollapseIcon={<ExpandMoreIcon />}
-            defaultExpandIcon={<ChevronRightIcon />}
+            defaultCollapseIcon={<SvgIcChevronDown />}
+            defaultExpandIcon={<SvgIcChevronRight />}
             sx={{
               flexGrow: 1,
               overflowY: "auto",

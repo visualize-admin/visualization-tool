@@ -4,7 +4,7 @@ import { useRef } from "react";
 import useDisclosure from "@/components/use-disclosure";
 import { Icon } from "@/icons";
 
-import { ArrowMenu } from "./arrow-menu";
+import { ArrowMenuTopBottom } from "./arrow-menu";
 import { MenuActionItem, MenuActionProps } from "./menu-action-item";
 
 type ActionsProps = {
@@ -28,7 +28,7 @@ export const RowActions = (props: ActionsProps) => {
       <IconButton ref={buttonRef} onClick={isOpen ? close : open}>
         <Icon name="more" size={16} />
       </IconButton>
-      <ArrowMenu
+      <ArrowMenuTopBottom
         onClose={close}
         open={isOpen}
         anchorEl={buttonRef.current}
@@ -49,7 +49,7 @@ export const RowActions = (props: ActionsProps) => {
             {...(props.type === "button" ? { onDialogClose: close } : {})}
           />
         ))}
-      </ArrowMenu>
+      </ArrowMenuTopBottom>
     </Box>
   );
 };

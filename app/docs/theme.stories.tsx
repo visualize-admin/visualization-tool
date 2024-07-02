@@ -1,4 +1,3 @@
-import { ChevronLeft, ChevronRight } from "@mui/icons-material";
 import {
   Alert,
   AlertProps,
@@ -31,8 +30,11 @@ import {
 } from "@mui/material";
 import { BoxProps } from "@mui/system";
 import { Meta } from "@storybook/react";
-import { ComponentProps, useState } from "react";
 import { useSnackbar } from "notistack";
+import { ComponentProps, useState } from "react";
+
+import SvgIcChevronLeft from "@/icons/components/IcChevronLeft";
+import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 
 import { DialogCloseButton } from "../components/dialog-close-button";
 import useDisclosure from "../components/use-disclosure";
@@ -263,10 +265,18 @@ const ButtonsExample: React.FC = () => {
         <Button variant="contained" size="small">
           Small
         </Button>
-        <Button startIcon={<ChevronLeft />} variant="contained" size="small">
+        <Button
+          startIcon={<SvgIcChevronLeft />}
+          variant="contained"
+          size="small"
+        >
           Small
         </Button>
-        <Button endIcon={<ChevronRight />} variant="contained" size="small">
+        <Button
+          endIcon={<SvgIcChevronRight />}
+          variant="contained"
+          size="small"
+        >
           Small
         </Button>
       </div>
@@ -281,10 +291,14 @@ const ButtonsExample: React.FC = () => {
         <Button variant="outlined" size="small">
           Small
         </Button>
-        <Button startIcon={<ChevronLeft />} variant="outlined" size="small">
+        <Button
+          startIcon={<SvgIcChevronLeft />}
+          variant="outlined"
+          size="small"
+        >
           Small
         </Button>
-        <Button endIcon={<ChevronRight />} variant="outlined" size="small">
+        <Button endIcon={<SvgIcChevronRight />} variant="outlined" size="small">
           Small
         </Button>
       </div>
@@ -299,10 +313,10 @@ const ButtonsExample: React.FC = () => {
         <Button variant="text" size="small">
           Small
         </Button>
-        <Button startIcon={<ChevronLeft />} variant="text" size="small">
+        <Button startIcon={<SvgIcChevronLeft />} variant="text" size="small">
           Button
         </Button>
-        <Button endIcon={<ChevronRight />} variant="text" size="small">
+        <Button endIcon={<SvgIcChevronRight />} variant="text" size="small">
           Button
         </Button>
       </div>

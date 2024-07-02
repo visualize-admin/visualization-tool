@@ -109,7 +109,7 @@ export const ColorPalette = ({
   return (
     <Box mt={2} sx={{ pointerEvents: disabled ? "none" : "auto" }}>
       <Label smaller htmlFor="color-palette-toggle" sx={{ mb: 1 }}>
-        <Trans id="controls.color.palette">Color Palette</Trans>
+        <Trans id="controls.color.palette">Color palette</Trans>
       </Label>
       <Select
         className={classes.root}
