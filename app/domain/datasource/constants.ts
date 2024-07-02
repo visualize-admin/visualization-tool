@@ -22,7 +22,7 @@ export const SOURCE_OPTIONS = [
     url: "https://int.lindas.admin.ch/query",
     position: 2,
     isTrusted: false,
-    supportsCachingPerCubeIri: false,
+    supportsCachingPerCubeIri: true,
   },
   {
     value: "sparql+https://test.lindas.admin.ch/query",
@@ -30,7 +30,7 @@ export const SOURCE_OPTIONS = [
     url: "https://test.lindas.admin.ch/query",
     position: 1,
     isTrusted: false,
-    supportsCachingPerCubeIri: false,
+    supportsCachingPerCubeIri: true,
   },
 ].filter((d) => WHITELISTED_DATA_SOURCES.includes(d.label));
 
