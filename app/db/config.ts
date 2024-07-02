@@ -179,8 +179,17 @@ export const getConfig = async (key: string) => {
 /**
  * Get all configs from DB.
  */
-export const getAllConfigs = async () => {
-  const configs = await prisma.config.findMany();
+export const getAllConfigs = async ({
+  limit,
+}: {
+  limit?: number;
+} = {}) => {
+  const configs = await prisma.config.findMany({
+    orderBy: {
+      created_at: "desc",
+    },
+    take: limit,
+  });
   const parsedConfigs = configs.map(parseDbConfig);
   return await Promise.all(parsedConfigs.map(upgradeDbConfig));
 };
@@ -211,6 +220,31 @@ export const increaseConfigViewCount = async (configKey: string) => {
     data: {
       config_key: configKey,
     },
+  });
+};
+
+/**
+ * Get all configs metadata from DB.
+ */
+export const getAllConfigsMetadata = async ({
+  limit,
+  orderByViewCount,
+}: {
+  limit?: number;
+  orderByViewCount?: boolean;
+} = {}) => {
+  return await prisma.config.findMany({
+    select: {
+      key: true,
+      created_at: true,
+      updated_at: true,
+      published_state: true,
+      user_id: true,
+    },
+    orderBy: orderByViewCount
+      ? { views: { _count: "desc" } }
+      : { created_at: "desc" },
+    take: limit,
   });
 };
 
