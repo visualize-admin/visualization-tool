@@ -26,35 +26,38 @@
   }
 `}</style>
 
-Visualize fetches and parses RDF cubes. For easier consumption by the charts,
-we transform some of the terms.
+Visualize fetches and parses RDF cubes. For easier consumption by the charts, we
+transform some of the terms.
 
-Most of the parsing is done in [rdf/parse.ts](https://github.com/visualize-admin/visualization-tool/blob/main/app/rdf/parse.ts), this
-file can serve as a reference. Do not hesitate to [post an issue](https://github.com/visualize-admin/visualization-tool/issues) if you find this
-documentation incomplete.
+Most of the parsing is done in
+[rdf/parse.ts](https://github.com/visualize-admin/visualization-tool/blob/main/app/rdf/parse.ts),
+this file can serve as a reference. Do not hesitate to
+[post an issue](https://github.com/visualize-admin/visualization-tool/issues) if
+you find this documentation incomplete.
 
-See also [the RDF cube schema](https://zazuko.github.io/rdf-cube-schema/) for more information on the
-RDF cube schema specification.
+See also [the RDF cube schema](https://zazuko.github.io/rdf-cube-schema/) for
+more information on the RDF cube schema specification.
 
 ### Cube checker
 
-To be correctly displayed inside visualize, your cube needs to have some attributes,
-some which are part of the cube specification, other which are specific to visualize.
-To help you understand why a cube does not behave as expected, [the cube checker](/_cube-checker) can
-help you: it provides a list of check against a cube that you can use to
-troubleshoot.
+To be correctly displayed inside visualize, your cube needs to have some
+attributes, some which are part of the cube specification, other which are
+specific to visualize. To help you understand why a cube does not behave as
+expected, [the cube checker](/_cube-checker) can help you: it provides a list of
+check against a cube that you can use to troubleshoot.
 
 It can be used to understand:
 
 - Why a cube does not appear on the search
 - Why a cube cannot be loaded inside visualize
 
-In the future, more checks could be implemented, for example checks on dimensions,
-do not hesitate to [post an issue](https://github.com/visualize-admin/visualization-tool/issues)
-if you have an idea of a check.
+In the future, more checks could be implemented, for example checks on
+dimensions, do not hesitate to
+[post an issue](https://github.com/visualize-admin/visualization-tool/issues) if
+you have an idea of a check.
 
-⚠️ For now, the cube checker only supports versioned iris, so make sure the IRI you're using has a
-version at the end.
+⚠️ For now, the cube checker only supports versioned iris, so make sure the IRI
+you're using has a version at the end.
 
 - ❌ https://environment.ld.admin.ch/foen/ubd000502
 - ✅ https://environment.ld.admin.ch/foen/ubd000502/3
@@ -78,9 +81,9 @@ version at the end.
 
 #### Key / Measure
 
-Values inside key dimensions must
-_uniquely identify a row_. For this reason, and because visualize does not deal
-with aggregation, key dimensions must either be **encoded** or **part of a filter**.
+Values inside key dimensions must _uniquely identify a row_. For this reason,
+and because visualize does not deal with aggregation, key dimensions must either
+be **encoded** or **part of a filter**.
 
 | RDF                                  | Visualize                       |
 | :----------------------------------- | :------------------------------ |
@@ -109,10 +112,10 @@ with aggregation, key dimensions must either be **encoded** or **part of a filte
 | `?dimension shacl:datatype xsd:double`  | `dim.isNumerical = true` |
 
 ℹ️ At the moment, `isNumerical` property is used when sorting and formatting
-dimension values in some specific cases (e.g. when NominalDimension is numerical).
-Generally, this property is a "last resort property", as numerical dimensions are
-usually treated as `NumericalMeasure`s based on `https://cube.link/MeasureDimension`
-property.
+dimension values in some specific cases (e.g. when NominalDimension is
+numerical). Generally, this property is a "last resort property", as numerical
+dimensions are usually treated as `NumericalMeasure`s based on
+`https://cube.link/MeasureDimension` property.
 
 - `isLiteral`
 
@@ -132,7 +135,8 @@ will be fetched outside of the cube.
 | `?dimension cube:meta/dataKind schema:GeoCoordinates`           | `dim.dataKind = "GeoCoordinates"` |
 | `?dimension cube:meta/dataKind schema:GeoShape`                 | `dim.dataKind = "GeoShape"`       |
 
-ℹ️ Temporal dimensions can be used to animate the chart. **Important note**: time can also be ordinal if the scale type is set to `Ordinal`!
+ℹ️ Temporal dimensions can be used to animate the chart. **Important note**:
+time can also be ordinal if the scale type is set to `Ordinal`!
 
 ℹ️ GeoCoordinates dimensions can be shown on a map as _points_
 
@@ -140,32 +144,36 @@ will be fetched outside of the cube.
 
 #### Values
 
-The `sh:in` predicate on the dimension is used to attach what values are available
-on the dimension. It is used by visualize as an optimization to list the values that
-are available on the dimension. This list of possible values can be used for example
-on dimension filters, or inside the legend.
+The `sh:in` predicate on the dimension is used to attach what values are
+available on the dimension. It is used by visualize as an optimization to list
+the values that are available on the dimension. This list of possible values can
+be used for example on dimension filters, or inside the legend.
 
-- It is provided automatically by `cube-creator` if the number of distinct values is
-  inferior to `100`.
-- If this property is not present, visualize dynamically loads all distinct values from
-  the dimension, which results in poorer performance than if the values are present.
+- It is provided automatically by `cube-creator` if the number of distinct
+  values is inferior to `100`.
+- If this property is not present, visualize dynamically loads all distinct
+  values from the dimension, which results in poorer performance than if the
+  values are present.
 
 #### Currencies
 
-If the dimension is related to a currency (`?dimension a qudt:CurrencyUnit`), when the
-values are displayed, we use the currency information to show the correct number of
-decimals for the value.
+If the dimension is related to a currency (`?dimension a qudt:CurrencyUnit`),
+when the values are displayed, we use the currency information to show the
+correct number of decimals for the value.
 
-- CHF has currency exponent 2, so we will show _at least_ 2 decimals, adding trailing zeroes if necessary
+- CHF has currency exponent 2, so we will show _at least_ 2 decimals, adding
+  trailing zeroes if necessary
 - YEN has currency exponent 0, so we would not add trailing zeroes
-- Additionally, if the dimension's dataType indicates it contains rounded values (`?dim sh:datatype xsd:int` or `?dim sh:datatype xsd:integer`), we do not use this logic
-  and will show the values without decimals
+- Additionally, if the dimension's dataType indicates it contains rounded values
+  (`?dim sh:datatype xsd:int` or `?dim sh:datatype xsd:integer`), we do not use
+  this logic and will show the values without decimals
 
 #### Related dimensions
 
 ##### Standard error
 
-A dimension can indicate that it is contains standard error values for another dimension.
+A dimension can indicate that it is contains standard error values for another
+dimension.
 
 ℹ️ Standard error dimensions are not shown in the left filters.
 
@@ -175,13 +183,17 @@ A dimension can indicate that it is contains standard error values for another d
 
 #### Possible chart types
 
-After parsing, we can determine the type of our dimension. Conditions are checked
-one after the other.
+After parsing, we can determine the type of our dimension. Conditions are
+checked one after the other.
 
-- **Ordinal Measure** if `isMeasureDimension = true and scaleType = "Ordinal"`, else
-- **Numerical Measure** if `isMeasureDimension = true and scaleType != "Ordinal"`, else
-- **Standard Error Dimension** if any of the related dimensions has `StandardError` type, else
-- **Temporal Ordinal Dimension** if `dataKind = "Time" and scaleType = "Ordinal"`, else
+- **Ordinal Measure** if `isMeasureDimension = true and scaleType = "Ordinal"`,
+  else
+- **Numerical Measure** if
+  `isMeasureDimension = true and scaleType != "Ordinal"`, else
+- **Standard Error Dimension** if any of the related dimensions has
+  `StandardError` type, else
+- **Temporal Ordinal Dimension** if
+  `dataKind = "Time" and scaleType = "Ordinal"`, else
 - **Temporal Dimension** if `dataKind = "Time" and scaleType != "Ordinal"`, else
 - **GeoCoordinates Dimension** if `dataKind = "GeoCoordinates"`, else
 - **GeoShapes Dimension** if `dataKind = "GeoShape"`, else
@@ -237,11 +249,12 @@ To enable particular chart types the following conditions have to be met:
 
 ## Update constraints
 
-When updating a cube, you have to follow a number of rules to make sure that
-the charts that rely on those cubes will continue to work.
+When updating a cube, you have to follow a number of rules to make sure that the
+charts that rely on those cubes will continue to work.
 
-- Structure of a dimension should not be changed, otherwise, if a filter relies on the dimension, it might
-  not work anymore. Here are the properties of a dimension that should not change:
+- Structure of a dimension should not be changed, otherwise, if a filter relies
+  on the dimension, it might not work anymore. Here are the properties of a
+  dimension that should not change:
 
   - `a`: Dimension type
   - `qudt:hasUnit`: Unit
@@ -249,15 +262,16 @@ the charts that rely on those cubes will continue to work.
   - `shacl:datatype`: Data type
   - `meta:dataKind`: Data kind
 
-  Please refer to the [RDF Cube Schema](https://zazuko.github.io/rdf-cube-schema/#properties-0) to
+  Please refer to the
+  [RDF Cube Schema](https://zazuko.github.io/rdf-cube-schema/#properties-0) to
   learn more about those attributes.
 
-- Similarly, a dimension should not be removed (same reason: if it is used in a chart filter, the filter
-  will not be correct when the dimension is removed)
-- Observations should not be removed, otherwise a chart that shows only those observations via a data filter
-  will not show anything anymore.
+- Similarly, a dimension should not be removed (same reason: if it is used in a
+  chart filter, the filter will not be correct when the dimension is removed)
+- Observations should not be removed, otherwise a chart that shows only those
+  observations via a data filter will not show anything anymore.
 
 If you need to do any of those things, you should create a new cube.
 
-If your cube is in draft, you can ignore those rules as chart owners know that they are
-relying on something that is not finished and that can change.
+If your cube is in draft, you can ignore those rules as chart owners know that
+they are relying on something that is not finished and that can change.
