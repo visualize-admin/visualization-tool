@@ -70,6 +70,7 @@ const ChartPublishedIndividualChart = forwardRef<
         key={chartConfig.key}
         layoutType={state.layout.type}
         ref={ref}
+        chartKey={chartConfig.key}
         {...rest}
       >
         <ChartPublishedInner
@@ -152,7 +153,10 @@ export const ChartPublished = (props: ChartPublishedProps) => {
           </Flex>
           <ChartTablePreviewProvider>
             <DashboardInteractiveFilters />
-            <ChartWrapper layoutType={state.layout.type}>
+            <ChartWrapper
+              layoutType={state.layout.type}
+              chartKey={state.activeChartKey}
+            >
               <ChartPublishedInner
                 dataSource={dataSource}
                 state={state}
