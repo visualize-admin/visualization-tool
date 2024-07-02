@@ -8,10 +8,7 @@ import { ComponentProps, useEffect, useMemo, useRef, useState } from "react";
 import { Layout, Responsive, WidthProvider } from "react-grid-layout";
 import { match } from "ts-pattern";
 
-import {
-  CHART_CLASS_NAME,
-  useStyles as useChartContainerStyles,
-} from "@/charts/shared/containers";
+import { useStyles as useChartContainerStyles } from "@/charts/shared/containers";
 import { getChartWrapperId } from "@/components/chart-panel";
 import { useTimeout } from "@/hooks/use-timeout";
 
@@ -33,11 +30,11 @@ export const availableHandles: ResizeHandle[] = [
 
 /** In grid unit */
 const MAX_H = 10;
-export const INITIAL_H = 7;
+const INITIAL_H = 7;
 export const MIN_H = 1;
 
 /** In grid unit */
-export const MAX_W = 4;
+const MAX_W = 4;
 
 export const COLS = { lg: 4, md: 2, sm: 1, xs: 1, xxs: 1 };
 const ROW_HEIGHT = 100;
@@ -201,85 +198,91 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 const CHART_GRID_MIN_HEIGHT = 100;
 
-type ChartGridLayoutProps = {
+export const ChartGridLayout = ({
+  children,
+  className,
+  layouts,
+  resize,
+  initialize,
+  ...rest
+}: {
   className: string;
   onLayoutChange: Function;
   resize?: boolean;
   initialize: boolean;
-} & ComponentProps<typeof ResponsiveReactGridLayout>;
-
-export const ChartGridLayout = (props: ChartGridLayoutProps) => {
-  const { children, layouts, resize, initialize } = props;
+} & ComponentProps<typeof ResponsiveReactGridLayout>) => {
   const [mounted, setMounted] = useState(false);
   const mountedForSomeTime = useTimeout(500, mounted);
-  const mountedRef = useRef(false);
+  const allLayoutsProcessedRef = useRef(false);
   const chartContainerClasses = useChartContainerStyles();
-
   const enhancedLayouts = useMemo(() => {
-    let i = -1;
-    const layoutsLength = Object.keys(layouts ?? {}).length;
-    return mapValues(layouts, (layoutValues) => {
-      i++;
-      return layoutValues.map((x, j) => {
+    if (!layouts) {
+      return {};
+    }
+
+    let iLayout = -1;
+    const nLayouts = Object.keys(layouts).length;
+    return mapValues(layouts, (chartLayouts) => {
+      iLayout++;
+      const nChartLayouts = chartLayouts.length;
+      return chartLayouts.map((chartLayout, iChartLayout) => {
+        const defaultProps = {
+          ...chartLayout,
+          maxW: MAX_W,
+          w: Math.min(MAX_W, chartLayout.w),
+          resizeHandles: resize ? availableHandles : [],
+        };
         let minH = MIN_H;
         if (mountedForSomeTime) {
-          const chartWrapper = document.querySelector(
-            `#${getChartWrapperId(x.i)}`
-          ) as HTMLDivElement | null;
-          if (chartWrapper) {
-            const chartWrapperScrollHeight = chartWrapper.scrollHeight;
-            const chart =
-              chartWrapper.querySelector(`.${CHART_CLASS_NAME}`) ??
-              chartWrapper.querySelector("canvas"); // map
-            if (chart) {
-              const chartHeight = chart.clientHeight;
-              const minChartWrapperHeight =
-                chartWrapperScrollHeight - chartHeight + CHART_GRID_MIN_HEIGHT;
-              minH = Math.max(
-                MIN_H,
-                Math.ceil(minChartWrapperHeight / ROW_HEIGHT)
-              );
+          const chartKey = chartLayout.i;
+          const wrapper: HTMLDivElement | null = document.querySelector(
+            `#${getChartWrapperId(chartKey)}`
+          );
+
+          if (wrapper) {
+            const chartContainer: HTMLDivElement | null = wrapper.querySelector(
+              `.${chartContainerClasses.chartContainer}`
+            );
+
+            if (chartContainer) {
+              const minWrapperHeight =
+                wrapper.scrollHeight -
+                chartContainer.clientHeight +
+                CHART_GRID_MIN_HEIGHT;
+              minH = Math.max(MIN_H, Math.ceil(minWrapperHeight / ROW_HEIGHT));
             }
-          }
-          const chartContainer = chartWrapper?.querySelector(
-            `.${chartContainerClasses.chartContainer}`
-          ) as HTMLDivElement | null;
-          if (chartContainer) {
-            chartContainer.style.aspectRatio = "auto";
-            chartContainer.style.minHeight = `${CHART_GRID_MIN_HEIGHT}px`;
           }
 
-          if (!mountedRef.current) {
-            if (i === layoutsLength - 1 && j === layoutValues.length - 1) {
-              mountedRef.current = true;
+          if (!allLayoutsProcessedRef.current) {
+            const allLayoutsProcessed =
+              iLayout === nLayouts - 1 && iChartLayout === nChartLayouts - 1;
+
+            if (allLayoutsProcessed) {
+              allLayoutsProcessedRef.current = true;
             }
+
             return {
-              ...x,
+              ...defaultProps,
               minH,
-              // Do not reset once layouts have been enhanced at least once
-              h: initialize ? minH : Math.max(minH, x.h),
-              maxW: MAX_W,
-              w: Math.min(MAX_W, x.w),
-              resizeHandles: resize ? availableHandles : [],
+              // Initialize the chart with the minimum height
+              h: initialize ? minH : Math.max(minH, chartLayout.h),
             };
           }
         }
+
         return {
-          ...x,
+          ...defaultProps,
           minH,
-          h: Math.max(minH, x.h),
-          maxW: MAX_W,
-          w: Math.min(MAX_W, x.w),
-          resizeHandles: resize ? availableHandles : [],
+          h: Math.max(minH, chartLayout.h),
         };
       });
     });
   }, [
+    chartContainerClasses.chartContainer,
     initialize,
     layouts,
     mountedForSomeTime,
     resize,
-    chartContainerClasses.chartContainer,
   ]);
 
   useEffect(() => {
@@ -289,9 +292,9 @@ export const ChartGridLayout = (props: ChartGridLayoutProps) => {
   const classes = useStyles();
   return (
     <ResponsiveReactGridLayout
-      {...props}
+      {...rest}
       layouts={enhancedLayouts}
-      className={clsx(classes.root, props.className)}
+      className={clsx(classes.root, className)}
       cols={COLS}
       rowHeight={ROW_HEIGHT}
       measureBeforeMount={false}
@@ -303,6 +306,9 @@ export const ChartGridLayout = (props: ChartGridLayoutProps) => {
     </ResponsiveReactGridLayout>
   );
 };
+
+export const getInitialTileWidth = () => MAX_W / 4;
+export const getInitialTileHeight = () => INITIAL_H;
 
 export const generateLayout = function ({
   count,
@@ -356,8 +362,8 @@ export const generateLayout = function ({
         return {
           x: ((i % 4) * MAX_W) / 4,
           y: Math.floor(i / 2) * INITIAL_H,
-          w: MAX_W / 4,
-          h: INITIAL_H,
+          w: getInitialTileWidth(),
+          h: getInitialTileHeight(),
           i: i.toString(),
           resizeHandles: [],
         };

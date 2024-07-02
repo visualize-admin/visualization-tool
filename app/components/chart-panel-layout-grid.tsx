@@ -5,7 +5,10 @@ import { useState } from "react";
 import { Layouts } from "react-grid-layout";
 
 import { ChartPanelLayoutTypeProps } from "@/components/chart-panel";
-import ChartGridLayout, { INITIAL_H, MAX_W } from "@/components/react-grid";
+import ChartGridLayout, {
+  getInitialTileHeight,
+  getInitialTileWidth,
+} from "@/components/react-grid";
 import { ReactGridLayoutsType, hasChartConfigs } from "@/configurator";
 import { useConfiguratorState } from "@/src";
 import { assert } from "@/utils/assert";
@@ -73,7 +76,10 @@ const ChartPanelLayoutCanvas = (props: ChartPanelLayoutTypeProps) => {
       draggableHandle={`.${chartPanelLayoutGridClasses.dragHandle}`}
       onLayoutChange={(_l, allLayouts) => handleChangeLayouts(allLayouts)}
       initialize={layouts["lg"].every((layout) => {
-        return layout.w === MAX_W / 4 && layout.h === INITIAL_H;
+        return (
+          layout.w === getInitialTileWidth() &&
+          layout.h === getInitialTileHeight()
+        );
       })}
     >
       {chartConfigs.map((chartConfig) => props.renderChart(chartConfig))}
