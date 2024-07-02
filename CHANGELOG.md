@@ -64,6 +64,8 @@ You can also check the
     charts
   - Free canvas cards are now constrained in a way that their height can't be
     too small so that content overflows or chart is not visible
+  - Chart title and description is now persisted when switching between chart
+    types
 - Performance
   - Introduced querying per cube iri for supported endpoint (PROD LINDAS
     cached), so that we hit Varnish cache per cube
