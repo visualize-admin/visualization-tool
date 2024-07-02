@@ -953,6 +953,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
           iris,
           dimensions,
           measures,
+          meta: chartConfig.meta,
         });
         const newChartConfig = deriveFiltersFromFields(initialConfig, {
           dimensions,
