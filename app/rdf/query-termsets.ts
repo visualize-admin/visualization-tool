@@ -25,7 +25,6 @@ SELECT DISTINCT (COUNT(DISTINCT ?cubeIri) as ?count) ?termsetIri ?termsetLabel W
     cubeIriVar: "?cubeIri",
   })}
   ${buildLocalizedSubQuery("termsetIri", "schema:name", "termsetLabel", { locale })}
-
 } GROUP BY ?termsetIri ?termsetLabel`,
     { operation: "postUrlencoded" }
   );
@@ -55,7 +54,7 @@ PREFIX schema: <http://schema.org/>
 SELECT DISTINCT ?termsetIri ?termsetLabel WHERE {
   VALUES (?cubeIri) {(<${iri}>)}
   ?termsetIri meta:isUsedIn ?cubeIri .
-    ${buildLocalizedSubQuery("termsetIri", "schema:name", "termsetLabel", { locale })}
+  ${buildLocalizedSubQuery("termsetIri", "schema:name", "termsetLabel", { locale })}
 }`,
     { operation: "postUrlencoded" }
   );
@@ -83,19 +82,19 @@ PREFIX sh: <http://www.w3.org/ns/shacl#>
 
 SELECT DISTINCT ?dimensionIri ?dimensionLabel ?termsetIri ?termsetLabel WHERE {
   VALUES (?iri) {(<${iri}>)}
-
   ?iri cube:observationConstraint/sh:property ?dimension .
-  ?dimension sh:path ?dimensionIri .
-  ?dimension a cube:KeyDimension .
-  ?dimension sh:in/rdf:rest*/rdf:first ?value.
+  ?dimension
+    sh:path ?dimensionIri ;
+    a cube:KeyDimension ;
+    sh:in/rdf:rest*/rdf:first ?value .
   ?value schema:inDefinedTermSet ?termsetIri .
   ?termsetIri a meta:SharedDimension .
-
   ${buildLocalizedSubQuery("dimension", "schema:name", "dimensionLabel", { locale })}
   ${buildLocalizedSubQuery("termsetIri", "schema:name", "termsetLabel", { locale })}
-  
 }`;
-  const qs = await sparqlClient.query.select(query);
+  const qs = await sparqlClient.query.select(query, {
+    operation: "postUrlencoded",
+  });
 
   const parsed = qs.map((result) => ({
     dimensionIri: result.dimensionIri.value,
