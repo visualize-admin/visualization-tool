@@ -101,7 +101,7 @@ export const ColumnsGrouped = () => {
   const ref = useRef<SVGGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
-  const { margins } = bounds;
+  const { margins, height } = bounds;
   const bandwidth = xScaleIn.bandwidth();
   const y0 = yScale(0);
   const renderData: RenderColumnDatum[] = useMemo(() => {
@@ -121,6 +121,7 @@ export const ColumnsGrouped = () => {
         };
       });
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     colors,
     getSegment,
@@ -132,6 +133,7 @@ export const ColumnsGrouped = () => {
     yScale,
     y0,
     getRenderingKey,
+    height,
   ]);
 
   useEffect(() => {

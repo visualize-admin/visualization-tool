@@ -15,7 +15,7 @@ export const ColumnsStacked = () => {
   const transitionDuration = useTransitionStore((state) => state.duration);
   const { bounds, getX, xScale, yScale, colors, series, getRenderingKey } =
     useChartState() as StackedColumnsState;
-  const { margins } = bounds;
+  const { margins, height } = bounds;
   const bandwidth = xScale.bandwidth();
   const y0 = yScale(0);
   const renderData: RenderColumnDatum[] = useMemo(() => {
@@ -35,7 +35,18 @@ export const ColumnsStacked = () => {
         };
       });
     });
-  }, [bandwidth, colors, getX, series, xScale, yScale, getRenderingKey]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    bandwidth,
+    colors,
+    getX,
+    series,
+    xScale,
+    yScale,
+    getRenderingKey,
+    // Need to reset the yRange on height change
+    height,
+  ]);
 
   useEffect(() => {
     if (ref.current) {
