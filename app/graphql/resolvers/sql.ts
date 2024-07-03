@@ -103,7 +103,8 @@ export const dataCubeComponentTermsets: NonNullable<
 
 export const possibleFilters: NonNullable<
   QueryResolvers["possibleFilters"]
-> = async (_, { iri, filters }) => {
+> = async (_, { cubeFilter }) => {
+  const { iri, filters } = cubeFilter;
   // FIXME: there ideally would be an access to a parent cube
   const result = await fetchSQL({
     path: "cube_observations",

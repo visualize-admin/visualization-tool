@@ -49,7 +49,9 @@ export const upgradeCubePublishIri = async (
       {
         sourceUrl: dataSource.url,
         sourceType: dataSource.type,
-        iri: publishIri,
+        cubeFilter: {
+          iri: publishIri,
+        },
       }
     )
     .toPromise();

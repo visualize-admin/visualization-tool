@@ -4,9 +4,13 @@ import clsx from "clsx";
 import map from "lodash/map";
 import mapValues from "lodash/mapValues";
 import range from "lodash/range";
-import { ComponentProps, useEffect, useMemo, useState } from "react";
+import { ComponentProps, useEffect, useMemo, useRef, useState } from "react";
 import { Layout, Responsive, WidthProvider } from "react-grid-layout";
 import { match } from "ts-pattern";
+
+import { useStyles as useChartContainerStyles } from "@/charts/shared/containers";
+import { getChartWrapperId } from "@/components/chart-panel";
+import { useTimeout } from "@/hooks/use-timeout";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
@@ -27,7 +31,7 @@ export const availableHandles: ResizeHandle[] = [
 /** In grid unit */
 const MAX_H = 10;
 const INITIAL_H = 7;
-export const MIN_H = 5;
+export const MIN_H = 1;
 
 /** In grid unit */
 const MAX_W = 4;
@@ -192,31 +196,94 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-type ChartGridLayoutProps = {
+const CHART_GRID_MIN_HEIGHT = 100;
+
+export const ChartGridLayout = ({
+  children,
+  className,
+  layouts,
+  resize,
+  initialize,
+  ...rest
+}: {
   className: string;
   onLayoutChange: Function;
   resize?: boolean;
-} & ComponentProps<typeof ResponsiveReactGridLayout>;
-
-export const ChartGridLayout = (props: ChartGridLayoutProps) => {
-  const { children, layouts, resize } = props;
+  initialize: boolean;
+} & ComponentProps<typeof ResponsiveReactGridLayout>) => {
   const [mounted, setMounted] = useState(false);
-
+  const mountedForSomeTime = useTimeout(500, mounted);
+  const allLayoutsProcessedRef = useRef(false);
+  const chartContainerClasses = useChartContainerStyles();
   const enhancedLayouts = useMemo(() => {
-    return mapValues(layouts, (layouts) => {
-      return layouts.map((x) => {
-        return {
-          ...x,
-          minH: MIN_H,
-          maxH: MAX_H,
-          h: Math.min(MAX_H, Math.max(MIN_H, x.h)),
+    if (!layouts) {
+      return {};
+    }
+
+    let iLayout = -1;
+    const nLayouts = Object.keys(layouts).length;
+    return mapValues(layouts, (chartLayouts) => {
+      iLayout++;
+      const nChartLayouts = chartLayouts.length;
+      return chartLayouts.map((chartLayout, iChartLayout) => {
+        const defaultProps = {
+          ...chartLayout,
           maxW: MAX_W,
-          w: Math.min(MAX_W, x.w),
+          w: Math.min(MAX_W, chartLayout.w),
           resizeHandles: resize ? availableHandles : [],
+        };
+        let minH = MIN_H;
+        if (mountedForSomeTime) {
+          const chartKey = chartLayout.i;
+          const wrapper: HTMLDivElement | null = document.querySelector(
+            `#${getChartWrapperId(chartKey)}`
+          );
+
+          if (wrapper) {
+            const chartContainer: HTMLDivElement | null = wrapper.querySelector(
+              `.${chartContainerClasses.chartContainer}`
+            );
+
+            if (chartContainer) {
+              const minWrapperHeight =
+                wrapper.scrollHeight -
+                chartContainer.clientHeight +
+                CHART_GRID_MIN_HEIGHT;
+              minH = Math.max(MIN_H, Math.ceil(minWrapperHeight / ROW_HEIGHT));
+            }
+          }
+
+          if (!allLayoutsProcessedRef.current) {
+            const allLayoutsProcessed =
+              iLayout === nLayouts - 1 && iChartLayout === nChartLayouts - 1;
+
+            if (allLayoutsProcessed) {
+              allLayoutsProcessedRef.current = true;
+            }
+
+            return {
+              ...defaultProps,
+              minH,
+              // Initialize the chart with the minimum height
+              h: initialize ? minH : Math.max(minH, chartLayout.h),
+            };
+          }
+        }
+
+        return {
+          ...defaultProps,
+          minH,
+          h: Math.max(minH, chartLayout.h),
         };
       });
     });
-  }, [layouts, resize]);
+  }, [
+    chartContainerClasses.chartContainer,
+    initialize,
+    layouts,
+    mountedForSomeTime,
+    resize,
+  ]);
 
   useEffect(() => {
     setMounted(true);
@@ -225,9 +292,9 @@ export const ChartGridLayout = (props: ChartGridLayoutProps) => {
   const classes = useStyles();
   return (
     <ResponsiveReactGridLayout
-      {...props}
+      {...rest}
       layouts={enhancedLayouts}
-      className={clsx(classes.root, props.className)}
+      className={clsx(classes.root, className)}
       cols={COLS}
       rowHeight={ROW_HEIGHT}
       measureBeforeMount={false}
@@ -239,6 +306,9 @@ export const ChartGridLayout = (props: ChartGridLayoutProps) => {
     </ResponsiveReactGridLayout>
   );
 };
+
+export const getInitialTileWidth = () => MAX_W / 4;
+export const getInitialTileHeight = () => INITIAL_H;
 
 export const generateLayout = function ({
   count,
@@ -292,8 +362,8 @@ export const generateLayout = function ({
         return {
           x: ((i % 4) * MAX_W) / 4,
           y: Math.floor(i / 2) * INITIAL_H,
-          w: MAX_W / 4,
-          h: INITIAL_H,
+          w: getInitialTileWidth(),
+          h: getInitialTileHeight(),
           i: i.toString(),
           resizeHandles: [],
         };

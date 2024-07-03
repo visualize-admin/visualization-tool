@@ -1,9 +1,13 @@
 query DataCubeLatestIri(
-  $iri: String!
   $sourceType: String!
   $sourceUrl: String!
+  $cubeFilter: DataCubeLatestIriFilter!
 ) {
-  dataCubeLatestIri(iri: $iri, sourceType: $sourceType, sourceUrl: $sourceUrl)
+  dataCubeLatestIri(
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    cubeFilter: $cubeFilter
+  )
 }
 
 query DataCubeComponents(
@@ -101,16 +105,14 @@ query SearchCubes(
 }
 
 query PossibleFilters(
-  $iri: String!
   $sourceType: String!
   $sourceUrl: String!
-  $filters: SingleFilters!
+  $cubeFilter: DataCubePossibleFiltersCubeFilter!
 ) {
   possibleFilters(
-    iri: $iri
     sourceType: $sourceType
     sourceUrl: $sourceUrl
-    filters: $filters
+    cubeFilter: $cubeFilter
   ) {
     iri
     type

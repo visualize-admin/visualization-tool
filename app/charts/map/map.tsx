@@ -6,7 +6,7 @@ import { geoArea } from "d3-geo";
 import debounce from "lodash/debounce";
 import orderBy from "lodash/orderBy";
 import maplibreglraw from "maplibre-gl";
-import React, { useState, useMemo, useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Map, { LngLatLike, MapboxEvent } from "react-map-gl";
 
 import "maplibre-gl/dist/maplibre-gl.css";

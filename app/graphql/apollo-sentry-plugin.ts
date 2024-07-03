@@ -11,7 +11,7 @@ const getDataCubeIri = (req: GraphQLRequest) => {
     operationName === "ComponentsWithHierarchies" ||
     operationName === "PossibleFilters"
   ) {
-    return variables?.iri;
+    return variables?.iri ?? variables?.cubeFilter?.iri;
   } else if (operationName === "DimensionHierarchy") {
     return variables?.cubeIri;
   } else {

@@ -1,4 +1,4 @@
-import { locales } from "../app/locales";
+import { locales } from "../app/locales/constants";
 
 import { setup } from "./common";
 
@@ -6,7 +6,7 @@ const { test } = setup();
 
 // @noci as it's a special test that's supposed to preload varnish cache
 // for most recent charts
-test("it should preload most recent charts @noci", async ({ page }) => {
+test("@noci it should preload most recent charts", async ({ page }) => {
   const fetchedConfigs = await fetch(
     "https://visualize.admin.ch/api/config/all-metadata?limit=25"
   ).then((res) => res.json());
@@ -23,7 +23,7 @@ test("it should preload most recent charts @noci", async ({ page }) => {
 
 // @noci as it's a special test that's supposed to preload varnish cache
 // for most viewed charts
-test("it should preload most viewed charts @noci", async ({ page }) => {
+test("@noci it should preload most viewed charts", async ({ page }) => {
   const fetchedConfigs = await fetch(
     "https://visualize.admin.ch/api/config/all-metadata?limit=25&orderByViewCount=true"
   ).then((res) => res.json());

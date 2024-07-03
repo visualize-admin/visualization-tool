@@ -39,9 +39,13 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
+export const getChartWrapperId = (chartKey: string) =>
+  `chart-wrapper-${chartKey}`;
+
 export type ChartWrapperProps = BoxProps & {
   editing?: boolean;
   layoutType?: Layout["type"];
+  chartKey: string;
 };
 
 export const ChartWrapper = forwardRef<HTMLDivElement, ChartWrapperProps>(
@@ -52,6 +56,7 @@ export const ChartWrapper = forwardRef<HTMLDivElement, ChartWrapperProps>(
       <Box
         ref={ref}
         {...rest}
+        id={getChartWrapperId(props.chartKey)}
         className={clsx(classes.chartWrapper, props.className)}
       >
         {(editing || layoutType === "tab") && <ChartSelectionTabs />}

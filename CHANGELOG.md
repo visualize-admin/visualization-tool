@@ -35,6 +35,9 @@ You can also check the
     in the time slider (e.g. if one chart has a year resolution and another has
     a month resolution, the time slider will show months)
   - Switched from in-house Cube Checker to Zazuko's Cube Validator
+  - Switched INT and TEST data sources to use cached LINDAS endpoints, and added
+    three uncached endpoints for testing purposes (Prod-uncached, Int-uncached,
+    Test-uncached)
 - Fixes
   - Fixed using a time range brush in column charts when X dimension is a
     `TemporalEntityDimension`
@@ -57,7 +60,12 @@ You can also check the
     dataset selection modal when adding a new chart based on another cube
   - Changing dashboard time range filter presets now correctly updates the
     charts
-  - Merged cubes are now done on a chart basis and are not shared between charts
+  - Merged cubes are now merged on a chart basis and are not shared between
+    charts
+  - Free canvas cards are now constrained in a way that their height can't be
+    too small so that content overflows or chart is not visible
+  - Chart title and description is now persisted when switching between chart
+    types
 - Performance
   - Introduced querying per cube iri for supported endpoint (PROD LINDAS
     cached), so that we hit Varnish cache per cube

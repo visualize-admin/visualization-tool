@@ -95,7 +95,11 @@ export const ChartPreview = (props: ChartPreviewProps) => {
         />
       ) : null}
       <ChartTablePreviewProvider key={state.activeChartKey}>
-        <ChartWrapper editing={editing} layoutType={layout.type}>
+        <ChartWrapper
+          editing={editing}
+          layoutType={layout.type}
+          chartKey={state.activeChartKey}
+        >
           <ChartPreviewInner dataSource={dataSource} />
         </ChartWrapper>
       </ChartTablePreviewProvider>
@@ -218,7 +222,7 @@ const DashboardPreview = (props: DashboardPreviewProps) => {
             cursor: "grabbing",
           }}
         >
-          <ChartWrapper>
+          <ChartWrapper chartKey="dragged">
             <ChartPreviewInner
               dataSource={dataSource}
               chartKey={activeChartKey}
@@ -243,7 +247,7 @@ const ReactGridChartPreview = forwardRef<
   const { children, chartKey, dataSource, ...rest } = props;
   return (
     <ChartTablePreviewProvider>
-      <ChartWrapper {...rest} ref={ref}>
+      <ChartWrapper {...rest} ref={ref} chartKey={chartKey}>
         <ChartPreviewInner
           dataSource={dataSource}
           chartKey={chartKey}
@@ -292,6 +296,7 @@ const DndChartPreview = (props: CommonChartPreviewProps) => {
         {...rest}
         ref={setRef}
         {...attributes}
+        chartKey={chartKey}
         style={{
           display: active ? "flex" : "contents",
           opacity: isDragging ? 0.2 : isOver ? 0.8 : 1,
@@ -330,10 +335,9 @@ const SingleURLsPreview = (props: SingleURLsPreviewProps) => {
       const checked = layout.publishableChartKeys.includes(chartConfig.key);
       const { publishableChartKeys: keys } = layout;
       const { key } = chartConfig;
-
       return (
         <ChartTablePreviewProvider>
-          <ChartWrapper>
+          <ChartWrapper chartKey={key}>
             <ChartPreviewInner
               dataSource={dataSource}
               chartKey={chartConfig.key}
