@@ -13,7 +13,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import React, { ReactNode, useState, useEffect } from "react";
+import { ReactNode, useEffect, useState } from "react";
 
 import Flex from "@/components/flex";
 import { MotionBox } from "@/components/presence";
@@ -165,7 +165,7 @@ export const LoadingOverlay = () => {
 };
 
 export const NoDataHint = () => (
-  <Alert severity="info" icon={<Icon name="warning" size={64} />}>
+  <Alert severity="info">
     <AlertTitle>
       <Trans id="hint.nodata.title">
         No data available for current filter selection
@@ -178,7 +178,7 @@ export const NoDataHint = () => (
 );
 
 export const NoGeometriesHint = () => (
-  <Alert severity="info" icon={<Icon name="warning" size={64} />}>
+  <Alert severity="info">
     <AlertTitle>
       <Trans id="hint.nogeometries.title">No geometries available</Trans>
     </AlertTitle>
@@ -191,7 +191,6 @@ export const NoGeometriesHint = () => (
 export const LoadingDataError = ({ message }: { message?: string }) => (
   <Alert
     severity="error"
-    icon={<Icon name="hintWarning" size={64} />}
     sx={{
       "& > .MuiAlert-icon": {
         ml: "2rem",
@@ -233,7 +232,7 @@ export const LoadingDataError = ({ message }: { message?: string }) => (
 );
 
 export const LoadingGeoDimensionsError = () => (
-  <Alert severity="error" icon={<Icon name="hintWarning" size={64} />}>
+  <Alert severity="error">
     <AlertTitle>
       <Trans id="hint.coordinatesloadingerror.title">
         Coordinates loading error
@@ -249,7 +248,7 @@ export const LoadingGeoDimensionsError = () => (
 export const ChartUnexpectedError = ({ error }: { error?: Error }) => {
   const theme = useTheme();
   return (
-    <Alert severity="error" icon={<Icon name="hintWarning" size={64} />}>
+    <Alert severity="error">
       <AlertTitle>
         <Trans id="hint.chartunexpected.title">Unexpected error</Trans>
       </AlertTitle>
@@ -271,7 +270,7 @@ export const ChartUnexpectedError = ({ error }: { error?: Error }) => {
 };
 
 export const OnlyNegativeDataHint = () => (
-  <Alert severity="warning" icon={<Icon name="datasetError" size={64} />}>
+  <Alert severity="warning">
     <AlertTitle>
       <Trans id="hint.only.negative.data.title">Negative Values</Trans>
     </AlertTitle>
@@ -282,7 +281,7 @@ export const OnlyNegativeDataHint = () => (
 );
 
 export const PublishSuccess = () => (
-  <Alert severity="success" icon={<Icon name="datasetSuccess" size={64} />}>
+  <Alert severity="success">
     <Trans id="hint.publication.success">
       Your visualization is now published. You can share and embed it using the
       URL or the options below.
@@ -296,11 +295,14 @@ const mkHint = (severity: AlertProps["severity"], displayName: string) => {
     children,
     iconSize = 24,
   }: {
-    iconName: IconName;
+    iconName?: IconName;
     children: ReactNode;
     iconSize?: number;
   }) => (
-    <Alert severity={severity} icon={<Icon name={iconName} size={iconSize} />}>
+    <Alert
+      severity={severity}
+      icon={iconName ? <Icon name={iconName} size={iconSize} /> : false}
+    >
       {children}
     </Alert>
   );

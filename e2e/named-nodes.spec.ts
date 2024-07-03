@@ -14,7 +14,7 @@ const cubeIri = "https://environment.ld.admin.ch/foen/BFS_cofog_national/2";
 const versionedDimensionIri =
   "https://environment.ld.admin.ch/foen/BFS_cofog_national/sector";
 
-test("it should be possible to query dimension values from versioned dimension correctly @noci", async ({
+test("@noci it should be possible to query dimension values from versioned dimension correctly", async ({
   page,
 }) => {
   await page.goto("/");

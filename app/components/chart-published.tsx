@@ -284,7 +284,7 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
               (d) => d.publicationStatus === DataCubePublicationStatus.Draft
             ) && (
               <Box sx={{ mb: 4 }}>
-                <HintRed iconName="datasetError" iconSize={64}>
+                <HintRed>
                   <Trans id="dataset.publicationStatus.draft.warning">
                     Careful, this dataset is only a draft.
                     <br />
@@ -295,7 +295,7 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
             )}
             {metadata?.some((d) => d.expires) && (
               <Box sx={{ mb: 4 }}>
-                <HintRed iconName="datasetError" iconSize={64}>
+                <HintRed>
                   <Trans id="dataset.publicationStatus.expires.warning">
                     Careful, the data for this chart has expired.
                     <br />
@@ -306,7 +306,7 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
             )}
             {!isTrustedDataSource && (
               <Box sx={{ mb: 4 }}>
-                <HintYellow iconName="hintWarning">
+                <HintYellow>
                   <Trans id="data.source.notTrusted">
                     This chart is not using a trusted data source.
                   </Trans>
@@ -315,7 +315,7 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
             )}
             {isUsingImputation(chartConfig) && (
               <Box sx={{ mb: 4 }}>
-                <HintBlue iconName="hintWarning">
+                <HintBlue>
                   <Trans id="dataset.hasImputedValues">
                     Some data in this dataset is missing and has been
                     interpolated to fill the gaps.

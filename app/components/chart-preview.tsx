@@ -433,21 +433,6 @@ const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
       <Box className={chartClasses.root}>
         {props.children}
         <ChartErrorBoundary resetKeys={[state]}>
-          <div>
-            {metadata?.dataCubesMetadata.some(
-              (d) => d.publicationStatus === DataCubePublicationStatus.Draft
-            ) && (
-              <Box sx={{ mb: 4 }}>
-                <HintYellow iconName="datasetError" iconSize={64}>
-                  <Trans id="dataset.publicationStatus.draft.warning">
-                    Careful, this dataset is only a draft.
-                    <br />
-                    <strong>Don&apos;t use for reporting!</strong>
-                  </Trans>
-                </HintYellow>
-              </Box>
-            )}
-          </div>
           {hasChartConfigs(state) && (
             <>
               <Head>
@@ -527,6 +512,22 @@ const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
                     // title and the chart (subgrid layout)
                     <span style={{ height: 1 }} />
                   )}
+                  <Box sx={{ mt: 4 }}>
+                    {metadata?.dataCubesMetadata.some(
+                      (d) =>
+                        d.publicationStatus === DataCubePublicationStatus.Draft
+                    ) && (
+                      <Box sx={{ mb: 4 }}>
+                        <HintYellow>
+                          <Trans id="dataset.publicationStatus.draft.warning">
+                            Careful, this dataset is only a draft.
+                            <br />
+                            <strong>Don&apos;t use for reporting!</strong>
+                          </Trans>
+                        </HintYellow>
+                      </Box>
+                    )}
+                  </Box>
                   <ChartControls
                     dataSource={dataSource}
                     chartConfig={chartConfig}

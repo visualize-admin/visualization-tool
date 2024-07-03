@@ -1357,11 +1357,11 @@ msgstr "Bearbeiten"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.preview"
-msgstr ""
+msgstr "Vorschau"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.rename"
-msgstr ""
+msgstr "Umbenennen"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.share"

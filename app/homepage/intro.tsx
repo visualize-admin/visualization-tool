@@ -20,7 +20,7 @@ export const Intro = ({
       {warningHint && (
         <Box sx={{ maxWidth: "64rem", m: "0 auto" }}>
           <Box sx={{ mx: 4, mt: 6 }}>
-            <HintRed iconName="hintWarning">{warningHint}</HintRed>
+            <HintRed>{warningHint}</HintRed>
           </Box>
         </Box>
       )}

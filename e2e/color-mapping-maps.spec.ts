@@ -5,15 +5,14 @@ import { harReplayGraphqlEndpointQueryParam } from "./har-utils";
 
 const { test } = setup();
 
-test("should be possible to de-select options from color component in maps @noci", async ({
+test("@noci should be possible to de-select options from color component in maps", async ({
   page,
   within,
   actions,
   selectors,
-  replayFromHAR
+  replayFromHAR,
 }) => {
-
-  await replayFromHAR()
+  await replayFromHAR();
   const key = "color-mapping-maps.spec";
   const config = forestFireDanger;
   await loadChartInLocalStorage(page, key, config);
