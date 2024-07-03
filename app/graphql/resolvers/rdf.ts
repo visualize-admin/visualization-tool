@@ -195,7 +195,8 @@ const getResolvedDimension = async (
 
 export const possibleFilters: NonNullable<
   QueryResolvers["possibleFilters"]
-> = async (_, { iri, filters }, { setup }, info) => {
+> = async (_, { cubeFilter }, { setup }, info) => {
+  const { iri, filters } = cubeFilter;
   const { sparqlClient, loaders, cache } = await setup(info);
   const cube = await loaders.cube.load(iri);
   const cubeIri = cube.term?.value;

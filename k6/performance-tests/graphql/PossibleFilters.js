@@ -6,16 +6,14 @@ const cubes = JSON.parse(
   open(`${__ENV.WORKSPACE}/k6/performance-tests/data.json`)
 );
 const query = `query PossibleFilters(
-  $iri: String!
   $sourceType: String!
   $sourceUrl: String!
-  $filters: SingleFilters!
+  $cubeFilter: DataCubePossibleFiltersCubeFilter!
 ) {
   possibleFilters(
-    iri: $iri
     sourceType: $sourceType
     sourceUrl: $sourceUrl
-    filters: $filters
+    cubeFilter: $cubeFilter
   ) {
     iri
     type
@@ -31,11 +29,13 @@ const metadata = cubes.find((cube) => cube.iri === cubeIri);
 const checkTiming = __ENV.CHECK_TIMING === "true";
 
 const variables = {
-  iri: cubeIri,
   locale: "en",
   sourceType: "sparql",
   sourceUrl: "https://lindas.admin.ch/query",
-  filters: metadata.filters,
+  cubeFilter: {
+    iri: cubeIri,
+    filters: metadata.filters,
+  },
 };
 
 /** @type {import("k6/options").Options} */

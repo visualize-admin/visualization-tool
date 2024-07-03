@@ -78,6 +78,11 @@ export type DataCubeOrganization = {
   label?: Maybe<Scalars['String']>;
 };
 
+export type DataCubePossibleFiltersCubeFilter = {
+  iri: Scalars['String'];
+  filters: Scalars['SingleFilters'];
+};
+
 
 export type DataCubePreviewFilter = {
   iri: Scalars['String'];
@@ -174,10 +179,9 @@ export type QueryDataCubePreviewArgs = {
 
 
 export type QueryPossibleFiltersArgs = {
-  iri: Scalars['String'];
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
-  filters: Scalars['SingleFilters'];
+  cubeFilter: DataCubePossibleFiltersCubeFilter;
 };
 
 
@@ -344,10 +348,9 @@ export type SearchCubesQueryVariables = Exact<{
 export type SearchCubesQuery = { __typename: 'Query', searchCubes: Array<{ __typename: 'SearchCubeResult', highlightedTitle?: Maybe<string>, highlightedDescription?: Maybe<string>, cube: SearchCube }> };
 
 export type PossibleFiltersQueryVariables = Exact<{
-  iri: Scalars['String'];
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
-  filters: Scalars['SingleFilters'];
+  cubeFilter: DataCubePossibleFiltersCubeFilter;
 }>;
 
 
@@ -479,12 +482,11 @@ export function useSearchCubesQuery(options: Omit<Urql.UseQueryArgs<SearchCubesQ
   return Urql.useQuery<SearchCubesQuery>({ query: SearchCubesDocument, ...options });
 };
 export const PossibleFiltersDocument = gql`
-    query PossibleFilters($iri: String!, $sourceType: String!, $sourceUrl: String!, $filters: SingleFilters!) {
+    query PossibleFilters($sourceType: String!, $sourceUrl: String!, $cubeFilter: DataCubePossibleFiltersCubeFilter!) {
   possibleFilters(
-    iri: $iri
     sourceType: $sourceType
     sourceUrl: $sourceUrl
-    filters: $filters
+    cubeFilter: $cubeFilter
   ) {
     iri
     type

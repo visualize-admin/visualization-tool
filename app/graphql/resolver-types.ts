@@ -78,6 +78,11 @@ export type DataCubeOrganization = {
   label?: Maybe<Scalars['String']>;
 };
 
+export type DataCubePossibleFiltersCubeFilter = {
+  iri: Scalars['String'];
+  filters: Scalars['SingleFilters'];
+};
+
 
 export type DataCubePreviewFilter = {
   iri: Scalars['String'];
@@ -174,10 +179,9 @@ export type QueryDataCubePreviewArgs = {
 
 
 export type QueryPossibleFiltersArgs = {
-  iri: Scalars['String'];
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
-  filters: Scalars['SingleFilters'];
+  cubeFilter: DataCubePossibleFiltersCubeFilter;
 };
 
 
@@ -348,6 +352,7 @@ export type ResolversTypes = ResolversObject<{
   DataCubeObservationFilter: DataCubeObservationFilter;
   DataCubeObservations: ResolverTypeWrapper<Scalars['DataCubeObservations']>;
   DataCubeOrganization: ResolverTypeWrapper<DataCubeOrganization>;
+  DataCubePossibleFiltersCubeFilter: DataCubePossibleFiltersCubeFilter;
   DataCubePreview: ResolverTypeWrapper<Scalars['DataCubePreview']>;
   DataCubePreviewFilter: DataCubePreviewFilter;
   DataCubePublicationStatus: DataCubePublicationStatus;
@@ -392,6 +397,7 @@ export type ResolversParentTypes = ResolversObject<{
   DataCubeObservationFilter: DataCubeObservationFilter;
   DataCubeObservations: Scalars['DataCubeObservations'];
   DataCubeOrganization: DataCubeOrganization;
+  DataCubePossibleFiltersCubeFilter: DataCubePossibleFiltersCubeFilter;
   DataCubePreview: Scalars['DataCubePreview'];
   DataCubePreviewFilter: DataCubePreviewFilter;
   DataCubeTermsetFilter: DataCubeTermsetFilter;
@@ -488,7 +494,7 @@ export type QueryResolvers<ContextType = VisualizeGraphQLContext, ParentType ext
   dataCubeMetadata?: Resolver<ResolversTypes['DataCubeMetadata'], ParentType, ContextType, RequireFields<QueryDataCubeMetadataArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'cubeFilter'>>;
   dataCubeObservations?: Resolver<ResolversTypes['DataCubeObservations'], ParentType, ContextType, RequireFields<QueryDataCubeObservationsArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'cubeFilter'>>;
   dataCubePreview?: Resolver<ResolversTypes['DataCubePreview'], ParentType, ContextType, RequireFields<QueryDataCubePreviewArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'cubeFilter'>>;
-  possibleFilters?: Resolver<Array<ResolversTypes['ObservationFilter']>, ParentType, ContextType, RequireFields<QueryPossibleFiltersArgs, 'iri' | 'sourceType' | 'sourceUrl' | 'filters'>>;
+  possibleFilters?: Resolver<Array<ResolversTypes['ObservationFilter']>, ParentType, ContextType, RequireFields<QueryPossibleFiltersArgs, 'sourceType' | 'sourceUrl' | 'cubeFilter'>>;
   searchCubes?: Resolver<Array<ResolversTypes['SearchCubeResult']>, ParentType, ContextType, RequireFields<QuerySearchCubesArgs, 'sourceType' | 'sourceUrl'>>;
   dataCubeDimensionGeoShapes?: Resolver<Maybe<ResolversTypes['GeoShapes']>, ParentType, ContextType, RequireFields<QueryDataCubeDimensionGeoShapesArgs, 'cubeIri' | 'dimensionIri' | 'sourceType' | 'sourceUrl' | 'locale'>>;
   allTermsets?: Resolver<Array<ResolversTypes['TermsetCount']>, ParentType, ContextType, RequireFields<QueryAllTermsetsArgs, 'sourceType' | 'sourceUrl' | 'locale'>>;

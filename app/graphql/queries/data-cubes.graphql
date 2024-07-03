@@ -105,16 +105,14 @@ query SearchCubes(
 }
 
 query PossibleFilters(
-  $iri: String!
   $sourceType: String!
   $sourceUrl: String!
-  $filters: SingleFilters!
+  $cubeFilter: DataCubePossibleFiltersCubeFilter!
 ) {
   possibleFilters(
-    iri: $iri
     sourceType: $sourceType
     sourceUrl: $sourceUrl
-    filters: $filters
+    cubeFilter: $cubeFilter
   ) {
     iri
     type

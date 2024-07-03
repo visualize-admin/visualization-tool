@@ -118,6 +118,11 @@ input DataCubePreviewFilter {
   iri: String!
 }
 
+input DataCubePossibleFiltersCubeFilter {
+  iri: String!
+  filters: SingleFilters!
+}
+
 type TermsetCount {
   termset: Termset!
   count: Int!
@@ -164,10 +169,9 @@ type Query {
     cubeFilter: DataCubePreviewFilter!
   ): DataCubePreview!
   possibleFilters(
-    iri: String!
     sourceType: String!
     sourceUrl: String!
-    filters: SingleFilters!
+    cubeFilter: DataCubePossibleFiltersCubeFilter!
   ): [ObservationFilter!]!
   searchCubes(
     sourceType: String!

@@ -17,10 +17,12 @@ export const getPossibleFiltersQueryVariables = (props: {
   const { cubeIri, dataSource, unmappedFilters } = props;
   const filterKey = getPossibleFiltersQueryKey(unmappedFilters);
   return {
-    iri: cubeIri,
     sourceType: dataSource.type,
     sourceUrl: dataSource.url,
-    filters: unmappedFilters,
+    cubeFilter: {
+      iri: cubeIri,
+      filters: unmappedFilters,
+    },
     // @ts-ignore
     filterKey,
   };
