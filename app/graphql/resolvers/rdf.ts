@@ -42,9 +42,11 @@ import { getSparqlEditorUrl } from "@/rdf/sparql-utils";
 
 export const dataCubeLatestIri: NonNullable<
   QueryResolvers["dataCubeLatestIri"]
-> = async (_, { iri }, { setup }, info) => {
+> = async (_, { cubeFilter }, { setup }, info) => {
   const { sparqlClient } = await setup(info);
-  return (await queryLatestCubeIri(sparqlClient, iri)) ?? iri;
+  return (
+    (await queryLatestCubeIri(sparqlClient, cubeFilter.iri)) ?? cubeFilter.iri
+  );
 };
 
 const sortResults = (

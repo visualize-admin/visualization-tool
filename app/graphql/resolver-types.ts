@@ -55,6 +55,10 @@ export type DataCubeComponentFilter = {
 };
 
 
+export type DataCubeLatestIriFilter = {
+  iri: Scalars['String'];
+};
+
 
 export type DataCubeMetadataFilter = {
   iri: Scalars['String'];
@@ -123,9 +127,9 @@ export type Query = {
 
 
 export type QueryDataCubeLatestIriArgs = {
-  iri: Scalars['String'];
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
+  cubeFilter: DataCubeLatestIriFilter;
 };
 
 
@@ -338,6 +342,7 @@ export type ResolversTypes = ResolversObject<{
   String: ResolverTypeWrapper<Scalars['String']>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   DataCubeComponents: ResolverTypeWrapper<Scalars['DataCubeComponents']>;
+  DataCubeLatestIriFilter: DataCubeLatestIriFilter;
   DataCubeMetadata: ResolverTypeWrapper<Scalars['DataCubeMetadata']>;
   DataCubeMetadataFilter: DataCubeMetadataFilter;
   DataCubeObservationFilter: DataCubeObservationFilter;
@@ -381,6 +386,7 @@ export type ResolversParentTypes = ResolversObject<{
   String: Scalars['String'];
   Boolean: Scalars['Boolean'];
   DataCubeComponents: Scalars['DataCubeComponents'];
+  DataCubeLatestIriFilter: DataCubeLatestIriFilter;
   DataCubeMetadata: Scalars['DataCubeMetadata'];
   DataCubeMetadataFilter: DataCubeMetadataFilter;
   DataCubeObservationFilter: DataCubeObservationFilter;
@@ -476,7 +482,7 @@ export type ObservationFilterResolvers<ContextType = VisualizeGraphQLContext, Pa
 }>;
 
 export type QueryResolvers<ContextType = VisualizeGraphQLContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
-  dataCubeLatestIri?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<QueryDataCubeLatestIriArgs, 'iri' | 'sourceType' | 'sourceUrl'>>;
+  dataCubeLatestIri?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<QueryDataCubeLatestIriArgs, 'sourceType' | 'sourceUrl' | 'cubeFilter'>>;
   dataCubeComponents?: Resolver<ResolversTypes['DataCubeComponents'], ParentType, ContextType, RequireFields<QueryDataCubeComponentsArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'cubeFilter'>>;
   dataCubeComponentTermsets?: Resolver<Array<ResolversTypes['ComponentTermsets']>, ParentType, ContextType, RequireFields<QueryDataCubeComponentTermsetsArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'cubeFilter'>>;
   dataCubeMetadata?: Resolver<ResolversTypes['DataCubeMetadata'], ParentType, ContextType, RequireFields<QueryDataCubeMetadataArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'cubeFilter'>>;

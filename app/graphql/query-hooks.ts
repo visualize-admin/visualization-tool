@@ -55,6 +55,10 @@ export type DataCubeComponentFilter = {
 };
 
 
+export type DataCubeLatestIriFilter = {
+  iri: Scalars['String'];
+};
+
 
 export type DataCubeMetadataFilter = {
   iri: Scalars['String'];
@@ -123,9 +127,9 @@ export type Query = {
 
 
 export type QueryDataCubeLatestIriArgs = {
-  iri: Scalars['String'];
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
+  cubeFilter: DataCubeLatestIriFilter;
 };
 
 
@@ -268,9 +272,9 @@ export enum TimeUnit {
 
 
 export type DataCubeLatestIriQueryVariables = Exact<{
-  iri: Scalars['String'];
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
+  cubeFilter: DataCubeLatestIriFilter;
 }>;
 
 
@@ -371,8 +375,12 @@ export type SearchPageQuery = { __typename: 'Query', allTermsets: Array<{ __type
 
 
 export const DataCubeLatestIriDocument = gql`
-    query DataCubeLatestIri($iri: String!, $sourceType: String!, $sourceUrl: String!) {
-  dataCubeLatestIri(iri: $iri, sourceType: $sourceType, sourceUrl: $sourceUrl)
+    query DataCubeLatestIri($sourceType: String!, $sourceUrl: String!, $cubeFilter: DataCubeLatestIriFilter!) {
+  dataCubeLatestIri(
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    cubeFilter: $cubeFilter
+  )
 }
     `;
 

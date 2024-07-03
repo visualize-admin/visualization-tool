@@ -110,6 +110,10 @@ input DataCubeObservationFilter {
   joinBy: [String!]
 }
 
+input DataCubeLatestIriFilter {
+  iri: String!
+}
+
 input DataCubePreviewFilter {
   iri: String!
 }
@@ -123,9 +127,9 @@ type TermsetCount {
 # clients can execute, along with the return type for each.
 type Query {
   dataCubeLatestIri(
-    iri: String!
     sourceType: String!
     sourceUrl: String!
+    cubeFilter: DataCubeLatestIriFilter!
   ): String!
   dataCubeComponents(
     sourceType: String!
