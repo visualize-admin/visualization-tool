@@ -1395,7 +1395,7 @@ msgstr "Übersicht"
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
 msgid "login.profile.my-drafts"
-msgstr "Meine Entwurfsvisualisierungen"
+msgstr "Entwürfe"
 
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx

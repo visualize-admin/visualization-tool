@@ -42,9 +42,11 @@ import { getSparqlEditorUrl } from "@/rdf/sparql-utils";
 
 export const dataCubeLatestIri: NonNullable<
   QueryResolvers["dataCubeLatestIri"]
-> = async (_, { iri }, { setup }, info) => {
+> = async (_, { cubeFilter }, { setup }, info) => {
   const { sparqlClient } = await setup(info);
-  return (await queryLatestCubeIri(sparqlClient, iri)) ?? iri;
+  return (
+    (await queryLatestCubeIri(sparqlClient, cubeFilter.iri)) ?? cubeFilter.iri
+  );
 };
 
 const sortResults = (
@@ -193,7 +195,8 @@ const getResolvedDimension = async (
 
 export const possibleFilters: NonNullable<
   QueryResolvers["possibleFilters"]
-> = async (_, { iri, filters }, { setup }, info) => {
+> = async (_, { cubeFilter }, { setup }, info) => {
+  const { iri, filters } = cubeFilter;
   const { sparqlClient, loaders, cache } = await setup(info);
   const cube = await loaders.cube.load(iri);
   const cubeIri = cube.term?.value;

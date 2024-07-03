@@ -777,7 +777,7 @@ export default function main() {
 
       response = http.post(
         "https://test.visualize.admin.ch/api/graphql",
-        '{"query":"query PossibleFilters($iri: String!, $sourceType: String!, $sourceUrl: String!, $filters: Filters!) {\\n  possibleFilters(\\n    iri: $iri\\n    sourceType: $sourceType\\n    sourceUrl: $sourceUrl\\n    filters: $filters\\n  ) {\\n    iri\\n    type\\n    value\\n    __typename\\n  }\\n}\\n","operationName":"PossibleFilters","variables":{"iri":"https://environment.ld.admin.ch/foen/fab_Offentliche_Ausgaben_test3/7","sourceType":"sparql","sourceUrl":"https://int.lindas.admin.ch/query","filters":{"https://environment.ld.admin.ch/foen/fab_Offentliche_Ausgaben_test3/kurzel":{"type":"single","value":"Bd"}},"filterKey":"https://environment.ld.admin.ch/foen/fab_Offentliche_Ausgaben_test3/kurzel"}}',
+        '{"query":"query PossibleFilters($sourceType: String!, $sourceUrl: String!, $cubeFilter: DataCubePossibleFiltersCubeFilter!) {\\n  possibleFilters(\\n    sourceType: $sourceType\\n    sourceUrl: $sourceUrl\\n    cubeFilter: $cubeFilter\\n  ) {\\n    iri\\n    type\\n    value\\n    __typename\\n  }\\n}\\n","operationName":"PossibleFilters","variables":{"sourceType":"sparql","sourceUrl":"https://int.lindas.admin.ch/query","cubeFilter":{"iri":"https://environment.ld.admin.ch/foen/fab_Offentliche_Ausgaben_test3/7","filters":{"https://environment.ld.admin.ch/foen/fab_Offentliche_Ausgaben_test3/kurzel":{"type":"single","value":"Bd"}}},"filterKey":"https://environment.ld.admin.ch/foen/fab_Offentliche_Ausgaben_test3/kurzel"}}',
         {
           headers: {
             Accept: "*/*",

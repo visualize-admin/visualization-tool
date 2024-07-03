@@ -23,17 +23,16 @@ import {
   it as pluralsIt,
 } from "make-plural/plurals";
 
+import { defaultLocale, locales } from "@/locales/constants";
+
 import { messages as catalogDe } from "./de/messages";
 import { messages as catalogEn } from "./en/messages";
 import { messages as catalogFr } from "./fr/messages";
 import { messages as catalogIt } from "./it/messages";
 
-// Keep up-to-date with actual locales!
-export const defaultLocale = "de";
-// The order specified here will determine the fallback order when strings are not available in the preferred language
-export const locales = ["de", "fr", "it", "en"] as const;
-
 export type Locale = (typeof locales)[number];
+
+export { defaultLocale, locales };
 
 i18n.loadLocaleData({
   de: { plurals: pluralsDe },
