@@ -24,7 +24,8 @@ export const useStyles = makeStyles<
     width: "100%",
     overflow: "hidden",
     flexGrow: 1,
-
+  },
+  constrainMinHeight: {
     // TODO The aspect ratio is currently set for the whole chart instead of
     // affecting only the plot area. Only the plot area should be affected
     // otherwise long y-axis ticks squash vertically a chart.
@@ -32,8 +33,6 @@ export const useStyles = makeStyles<
     // the chart state function can get it and apply it to the plot area.
     // The ReactGridChartPreview component should also disable this behavior.
     aspectRatio: "5 / 2",
-  },
-  constrainMinHeight: {
     minHeight: 300,
   },
 
