@@ -134,7 +134,7 @@ export const DataSetPreview = ({
         {dataCubeMetadata.publicationStatus ===
           DataCubePublicationStatus.Draft && (
           <Box sx={{ mb: 4 }}>
-            <HintRed iconName="datasetError" iconSize={64}>
+            <HintRed>
               <Trans id="dataset.publicationStatus.draft.warning">
                 Careful, this dataset is only a draft.
                 <br />
