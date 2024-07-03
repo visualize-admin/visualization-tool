@@ -11,6 +11,10 @@ You can also check the
 
 # Unreleased
 
+Nothing yet.
+
+# [4.7.0] - 2024-07-03
+
 - Features
   - Added `TemporalEntityDimension` support for global dashboard filters
   - Added support for setting chart language when using preview via API mode
