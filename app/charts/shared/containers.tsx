@@ -10,6 +10,7 @@ import { useObserverRef } from "@/charts/shared/use-size";
 import {
   ChartConfig,
   hasChartConfigs,
+  isConfiguring,
   useConfiguratorState,
 } from "@/configurator";
 import { useTransitionStore } from "@/stores/transition";
@@ -67,7 +68,9 @@ export const ChartContainer = ({
       className={clsx(
         classes.chartContainer,
         classes[type],
-        state.layout.type === "dashboard" && state.layout.layout === "canvas"
+        !isConfiguring(state) &&
+          state.layout.type === "dashboard" &&
+          state.layout.layout === "canvas"
           ? null
           : classes.constrainMinHeight
       )}
