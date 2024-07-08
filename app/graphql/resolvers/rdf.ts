@@ -100,10 +100,11 @@ export const searchCubes: NonNullable<QueryResolvers["searchCubes"]> = async (
 
 export const dataCubeDimensionGeoShapes: NonNullable<
   QueryResolvers["dataCubeDimensionGeoShapes"]
-> = async (_, { cubeIri, dimensionIri, locale }, { setup }, info) => {
+> = async (_, { locale, cubeFilter }, { setup }, info) => {
+  const { iri, dimensionIri } = cubeFilter;
   const { loaders, sparqlClient, cache } = await setup(info);
   const dimension = await getResolvedDimension(dimensionIri, {
-    cubeIri,
+    cubeIri: iri,
     locale,
     sparqlClient,
     loaders,
