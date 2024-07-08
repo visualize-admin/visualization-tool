@@ -11,7 +11,8 @@ You can also check the
 
 # Unreleased
 
-Nothing yet.
+- Fixes
+  - Going back to edit mode from free canvas layout no longer hides the chart
 
 # [4.7.1] - 2024-07-08
 
