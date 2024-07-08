@@ -76,12 +76,14 @@ export const ChartMapVisualization = (props: VisualizationProps<MapConfig>) => {
     },
   ] = useDataCubeDimensionGeoShapesQuery({
     variables: {
-      // FIXME: This assumes that there is only one cube.
-      cubeIri: chartConfig.cubes[0].iri,
-      dimensionIri: geoShapesIri!,
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
+      cubeFilter: {
+        // FIXME: This assumes that there is only one cube.
+        iri: chartConfig.cubes[0].iri,
+        dimensionIri: geoShapesIri!,
+      },
     },
     pause: !geoShapesIri || geoShapesIri === "",
   });

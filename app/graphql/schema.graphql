@@ -123,6 +123,11 @@ input DataCubePossibleFiltersCubeFilter {
   filters: SingleFilters!
 }
 
+input DataCubeDimensionGeoShapesCubeFilter {
+  iri: String!
+  dimensionIri: String!
+}
+
 type TermsetCount {
   termset: Termset!
   count: Int!
@@ -183,11 +188,10 @@ type Query {
     filters: [SearchCubeFilter!]
   ): [SearchCubeResult!]!
   dataCubeDimensionGeoShapes(
-    cubeIri: String!
-    dimensionIri: String!
     sourceType: String!
     sourceUrl: String!
     locale: String!
+    cubeFilter: DataCubeDimensionGeoShapesCubeFilter!
   ): GeoShapes
   allTermsets(
     sourceType: String!

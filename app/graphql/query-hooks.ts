@@ -55,6 +55,11 @@ export type DataCubeComponentFilter = {
 };
 
 
+export type DataCubeDimensionGeoShapesCubeFilter = {
+  iri: Scalars['String'];
+  dimensionIri: Scalars['String'];
+};
+
 export type DataCubeLatestIriFilter = {
   iri: Scalars['String'];
 };
@@ -197,11 +202,10 @@ export type QuerySearchCubesArgs = {
 
 
 export type QueryDataCubeDimensionGeoShapesArgs = {
-  cubeIri: Scalars['String'];
-  dimensionIri: Scalars['String'];
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   locale: Scalars['String'];
+  cubeFilter: DataCubeDimensionGeoShapesCubeFilter;
 };
 
 
@@ -357,11 +361,10 @@ export type PossibleFiltersQueryVariables = Exact<{
 export type PossibleFiltersQuery = { __typename: 'Query', possibleFilters: Array<{ __typename: 'ObservationFilter', iri: string, type: string, value?: Maybe<any> }> };
 
 export type DataCubeDimensionGeoShapesQueryVariables = Exact<{
-  cubeIri: Scalars['String'];
-  dimensionIri: Scalars['String'];
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   locale: Scalars['String'];
+  cubeFilter: DataCubeDimensionGeoShapesCubeFilter;
 }>;
 
 
@@ -499,13 +502,12 @@ export function usePossibleFiltersQuery(options: Omit<Urql.UseQueryArgs<Possible
   return Urql.useQuery<PossibleFiltersQuery>({ query: PossibleFiltersDocument, ...options });
 };
 export const DataCubeDimensionGeoShapesDocument = gql`
-    query DataCubeDimensionGeoShapes($cubeIri: String!, $dimensionIri: String!, $sourceType: String!, $sourceUrl: String!, $locale: String!) {
+    query DataCubeDimensionGeoShapes($sourceType: String!, $sourceUrl: String!, $locale: String!, $cubeFilter: DataCubeDimensionGeoShapesCubeFilter!) {
   dataCubeDimensionGeoShapes(
-    cubeIri: $cubeIri
-    dimensionIri: $dimensionIri
     sourceType: $sourceType
     sourceUrl: $sourceUrl
     locale: $locale
+    cubeFilter: $cubeFilter
   )
 }
     `;

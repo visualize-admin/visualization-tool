@@ -55,6 +55,11 @@ export type DataCubeComponentFilter = {
 };
 
 
+export type DataCubeDimensionGeoShapesCubeFilter = {
+  iri: Scalars['String'];
+  dimensionIri: Scalars['String'];
+};
+
 export type DataCubeLatestIriFilter = {
   iri: Scalars['String'];
 };
@@ -197,11 +202,10 @@ export type QuerySearchCubesArgs = {
 
 
 export type QueryDataCubeDimensionGeoShapesArgs = {
-  cubeIri: Scalars['String'];
-  dimensionIri: Scalars['String'];
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   locale: Scalars['String'];
+  cubeFilter: DataCubeDimensionGeoShapesCubeFilter;
 };
 
 
@@ -346,6 +350,7 @@ export type ResolversTypes = ResolversObject<{
   String: ResolverTypeWrapper<Scalars['String']>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   DataCubeComponents: ResolverTypeWrapper<Scalars['DataCubeComponents']>;
+  DataCubeDimensionGeoShapesCubeFilter: DataCubeDimensionGeoShapesCubeFilter;
   DataCubeLatestIriFilter: DataCubeLatestIriFilter;
   DataCubeMetadata: ResolverTypeWrapper<Scalars['DataCubeMetadata']>;
   DataCubeMetadataFilter: DataCubeMetadataFilter;
@@ -391,6 +396,7 @@ export type ResolversParentTypes = ResolversObject<{
   String: Scalars['String'];
   Boolean: Scalars['Boolean'];
   DataCubeComponents: Scalars['DataCubeComponents'];
+  DataCubeDimensionGeoShapesCubeFilter: DataCubeDimensionGeoShapesCubeFilter;
   DataCubeLatestIriFilter: DataCubeLatestIriFilter;
   DataCubeMetadata: Scalars['DataCubeMetadata'];
   DataCubeMetadataFilter: DataCubeMetadataFilter;
@@ -496,7 +502,7 @@ export type QueryResolvers<ContextType = VisualizeGraphQLContext, ParentType ext
   dataCubePreview?: Resolver<ResolversTypes['DataCubePreview'], ParentType, ContextType, RequireFields<QueryDataCubePreviewArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'cubeFilter'>>;
   possibleFilters?: Resolver<Array<ResolversTypes['ObservationFilter']>, ParentType, ContextType, RequireFields<QueryPossibleFiltersArgs, 'sourceType' | 'sourceUrl' | 'cubeFilter'>>;
   searchCubes?: Resolver<Array<ResolversTypes['SearchCubeResult']>, ParentType, ContextType, RequireFields<QuerySearchCubesArgs, 'sourceType' | 'sourceUrl'>>;
-  dataCubeDimensionGeoShapes?: Resolver<Maybe<ResolversTypes['GeoShapes']>, ParentType, ContextType, RequireFields<QueryDataCubeDimensionGeoShapesArgs, 'cubeIri' | 'dimensionIri' | 'sourceType' | 'sourceUrl' | 'locale'>>;
+  dataCubeDimensionGeoShapes?: Resolver<Maybe<ResolversTypes['GeoShapes']>, ParentType, ContextType, RequireFields<QueryDataCubeDimensionGeoShapesArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'cubeFilter'>>;
   allTermsets?: Resolver<Array<ResolversTypes['TermsetCount']>, ParentType, ContextType, RequireFields<QueryAllTermsetsArgs, 'sourceType' | 'sourceUrl' | 'locale'>>;
 }>;
 
