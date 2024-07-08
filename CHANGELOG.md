@@ -11,6 +11,10 @@ You can also check the
 
 # Unreleased
 
+Nothing yet.
+
+# [4.7.1] - 2024-07-08
+
 - Fixes
   - Caching per cube iri is now correctly done for geo queries
 
