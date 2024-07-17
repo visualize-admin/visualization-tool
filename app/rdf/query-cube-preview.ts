@@ -110,7 +110,9 @@ CONSTRUCT {
     VALUES ?cube { <${iri}> }
     ?cube cube:observationConstraint/sh:property/sh:path ?observationPredicate .
     { SELECT ?observation ?observationPredicate ?observationValue ?observationLabel ?observationPosition WHERE {
-    { SELECT ?observation WHERE {
+    { 
+#pragma evaluate on  ## improve preview speed (wrt Stardog issue 2094 on Stardog >= 10 // see also SBAR-1122)
+      SELECT ?observation WHERE {
       VALUES ?cube { <${iri}> }
       ?cube cube:observationSet ?observationSet .
       ?observationSet cube:observation ?observation .
