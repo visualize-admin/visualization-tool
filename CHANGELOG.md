@@ -13,6 +13,11 @@ You can also check the
 
 Nothing yet.
 
+# [4.7.3] - 2024-07-18
+
+- Fixes
+  - Cube preview speed should be fine again with new Stardog version
+
 # [4.7.2] - 2024-07-08
 
 - Fixes
