@@ -11,10 +11,13 @@ export const makeOpenDataLink = (lang: string, cube: DataCubeMetadata) => {
     return;
   }
 
+  const creatorSlug = creatorIri.replace(
+    "https://register.ld.admin.ch/opendataswiss/org/",
+    ""
+  );
+
   return `https://opendata.swiss/${lang}/perma/${encodeURIComponent(
-    `${identifier}@${creatorIri.replace(
-      "https://register.ld.admin.ch/opendataswiss/org/",
-      ""
-    )}`
+    // Sometimes the identifier is prefixed with the creator slug
+    `${identifier.replace(`@${creatorSlug}`, "")}@${creatorSlug}`
   )}`;
 };
