@@ -107,6 +107,9 @@ export const MapLegend = ({
               sx={{ marginLeft: `${MARGIN.left}px` }}
             >
               {areaLayer.colors.component.label}
+              {areaLayer.colors.component.unit
+                ? ` (${areaLayer.colors.component.unit})`
+                : ""}
             </Typography>
             {areaLayer.colors.type === "continuous" ? (
               areaLayer.colors.interpolationType === "linear" ? (
