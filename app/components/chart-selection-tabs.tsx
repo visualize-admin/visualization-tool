@@ -25,7 +25,7 @@ import { useClient } from "urql";
 import { useDebounce } from "use-debounce";
 
 import { extractChartConfigComponentIris } from "@/charts/shared/chart-helpers";
-import { ArrowMenuTopBottom } from "@/components/arrow-menu";
+import { ArrowMenuTopCenter } from "@/components/arrow-menu";
 import { DuplicateChartMenuActionItem } from "@/components/chart-shared";
 import Flex from "@/components/flex";
 import { MenuActionItem } from "@/components/menu-action-item";
@@ -276,7 +276,7 @@ const TabsEditable = (props: TabsEditableProps) => {
       ) : null}
 
       {tabsState.popoverType === "edit" ? (
-        <ArrowMenuTopBottom
+        <ArrowMenuTopCenter
           id="chart-selection-popover"
           open={tabsState.popoverOpen}
           anchorEl={popoverAnchorEl}
@@ -322,7 +322,7 @@ const TabsEditable = (props: TabsEditableProps) => {
               }}
             />
           )}
-        </ArrowMenuTopBottom>
+        </ArrowMenuTopCenter>
       ) : null}
     </>
   );
