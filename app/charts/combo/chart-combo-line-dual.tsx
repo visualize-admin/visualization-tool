@@ -28,7 +28,7 @@ const ChartComboLineDual = memo((props: ChartProps<ComboLineDualConfig>) => {
   const dashboardFilters = useDashboardInteractiveFilters();
   return (
     <ComboLineDualChart {...props}>
-      <ChartContainer type="comboLineDual">
+      <ChartContainer>
         <ChartSvg>
           <AxisHeightLinearDual orientation="left" />
           <AxisHeightLinearDual orientation="right" /> <AxisTime />

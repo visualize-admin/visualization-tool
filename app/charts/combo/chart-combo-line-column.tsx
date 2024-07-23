@@ -29,7 +29,7 @@ const ChartComboLineColumn = memo(
     const dashboardFilters = useDashboardInteractiveFilters();
     return (
       <ComboLineColumnChart {...props}>
-        <ChartContainer type="comboLineColumn">
+        <ChartContainer>
           <ChartSvg>
             <AxisHeightLinearDual orientation="left" />
             <AxisHeightLinearDual orientation="right" />

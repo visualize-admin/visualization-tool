@@ -6,7 +6,13 @@ import { BRUSH_BOTTOM_SPACE } from "@/charts/shared/brush/constants";
 import { getTickNumber } from "@/charts/shared/ticks";
 import { TICK_FONT_SIZE } from "@/charts/shared/use-chart-theme";
 import { Bounds, Margins } from "@/charts/shared/use-size";
-import { ChartConfig } from "@/configurator";
+import { CHART_GRID_MIN_HEIGHT } from "@/components/react-grid";
+import {
+  ChartConfig,
+  hasChartConfigs,
+  isLayoutingFreeCanvas,
+  useConfiguratorState,
+} from "@/configurator";
 import { useDashboardInteractiveFilters } from "@/stores/interactive-filters";
 import { getTextWidth } from "@/utils/get-text-width";
 
@@ -107,20 +113,25 @@ export const useChartPadding = (props: ComputeChartPaddingProps) => {
   ]);
 };
 
-export const getChartBounds = (
+const ASPECT_RATIO = 2 / 5;
+
+export const useChartBounds = (
   width: number,
   margins: Margins,
   height: number
 ): Bounds => {
+  const [state] = useConfiguratorState(hasChartConfigs);
   const { left, top, right, bottom } = margins;
 
   const chartWidth = width - left - right;
-  const chartHeight = height - top - bottom;
+  const chartHeight = isLayoutingFreeCanvas(state)
+    ? Math.max(CHART_GRID_MIN_HEIGHT, height - top - bottom)
+    : chartWidth * ASPECT_RATIO;
 
   return {
     width,
     height: chartHeight + top + bottom,
-    aspectRatio: chartHeight / chartWidth,
+    aspectRatio: ASPECT_RATIO,
     margins,
     chartWidth,
     chartHeight,

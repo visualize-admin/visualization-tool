@@ -8,7 +8,10 @@ import { ComponentProps, useEffect, useMemo, useRef, useState } from "react";
 import { Layout, Responsive, WidthProvider } from "react-grid-layout";
 import { match } from "ts-pattern";
 
-import { useStyles as useChartContainerStyles } from "@/charts/shared/containers";
+import {
+  CHART_CLASS_NAME,
+  useStyles as useChartContainerStyles,
+} from "@/charts/shared/containers";
 import { getChartWrapperId } from "@/components/chart-panel";
 import { useTimeout } from "@/hooks/use-timeout";
 
@@ -57,7 +60,6 @@ const useStyles = makeStyles((theme: Theme) => ({
 
       // Customization
       boxSizing: "border-box",
-      overflow: "hidden",
     },
     "& .react-grid-item img": {
       pointerEvents: "none",
@@ -196,7 +198,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-const CHART_GRID_MIN_HEIGHT = 100;
+export const CHART_GRID_MIN_HEIGHT = 100;
 
 export const ChartGridLayout = ({
   children,
@@ -241,13 +243,13 @@ export const ChartGridLayout = ({
 
           if (wrapper) {
             const chartContainer: HTMLDivElement | null = wrapper.querySelector(
-              `.${chartContainerClasses.chartContainer}`
+              `.${chartContainerClasses.chartContainer} > .${CHART_CLASS_NAME}`
             );
 
             if (chartContainer) {
               const minWrapperHeight =
                 wrapper.scrollHeight -
-                chartContainer.clientHeight +
+                chartContainer.scrollHeight +
                 CHART_GRID_MIN_HEIGHT;
               minH = Math.max(MIN_H, Math.ceil(minWrapperHeight / ROW_HEIGHT));
             }

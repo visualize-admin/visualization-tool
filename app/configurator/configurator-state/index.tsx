@@ -231,6 +231,16 @@ export const isLayouting = (
   return s.state === "LAYOUTING";
 };
 
+export const isLayoutingFreeCanvas = (
+  s: ConfiguratorStateWithChartConfigs
+): s is ConfiguratorStateLayouting => {
+  return (
+    !isConfiguring(s) &&
+    s.layout.type === "dashboard" &&
+    s.layout.layout === "canvas"
+  );
+};
+
 export const isPublishing = (
   s: ConfiguratorState
 ): s is ConfiguratorStatePublishing => {

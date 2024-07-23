@@ -49,7 +49,7 @@ const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
     <>
       {fields.segment?.componentIri && fields.segment.type === "stacked" ? (
         <StackedColumnsChart {...props}>
-          <ChartContainer type="column">
+          <ChartContainer>
             <ChartSvg>
               <AxisHeightLinear /> <AxisWidthBand />
               <ColumnsStacked /> <AxisWidthBandDomain />
@@ -77,7 +77,7 @@ const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
         </StackedColumnsChart>
       ) : fields.segment?.componentIri && fields.segment.type === "grouped" ? (
         <GroupedColumnChart {...props}>
-          <ChartContainer type="column">
+          <ChartContainer>
             <ChartSvg>
               <AxisHeightLinear />
               <AxisWidthBand />
@@ -108,7 +108,7 @@ const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
         </GroupedColumnChart>
       ) : (
         <ColumnChart {...props}>
-          <ChartContainer type="column">
+          <ChartContainer>
             <ChartSvg>
               <AxisHeightLinear />
               <AxisWidthBand />

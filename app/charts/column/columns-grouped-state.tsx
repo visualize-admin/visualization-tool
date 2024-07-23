@@ -23,7 +23,7 @@ import {
   PADDING_WITHIN,
 } from "@/charts/column/constants";
 import {
-  getChartBounds,
+  useChartBounds,
   useChartPadding,
 } from "@/charts/shared/chart-dimensions";
 import {
@@ -339,7 +339,7 @@ const useColumnsGroupedState = (
     bottom,
     left,
   };
-  const bounds = getChartBounds(width, margins, height);
+  const bounds = useChartBounds(width, margins, height);
   const { chartWidth, chartHeight } = bounds;
 
   // Adjust of scales based on chart dimensions

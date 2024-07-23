@@ -1,6 +1,5 @@
 import { Box, BoxProps } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import clsx from "clsx";
 import { select } from "d3-selection";
 import { ReactNode, useEffect, useRef } from "react";
 
@@ -8,72 +7,32 @@ import { useChartState } from "@/charts/shared/chart-state";
 import { CalculationToggle } from "@/charts/shared/interactive-filter-calculation-toggle";
 import { useObserverRef } from "@/charts/shared/use-size";
 import {
-  ChartConfig,
   hasChartConfigs,
-  isConfiguring,
+  isLayoutingFreeCanvas,
   useConfiguratorState,
 } from "@/configurator";
 import { useTransitionStore } from "@/stores/transition";
 
-export const useStyles = makeStyles<
-  {},
-  {},
-  ChartConfig["chartType"] | "chartContainer" | "constrainMinHeight"
->(() => ({
+export const useStyles = makeStyles<{}, {}, "chartContainer">(() => ({
   chartContainer: {
     position: "relative",
     width: "100%",
-    overflow: "hidden",
     flexGrow: 1,
   },
-  constrainMinHeight: {
-    // TODO The aspect ratio is currently set for the whole chart instead of
-    // affecting only the plot area. Only the plot area should be affected
-    // otherwise long y-axis ticks squash vertically a chart.
-    // To remedy, the aspectRatio should be provided via context so that
-    // the chart state function can get it and apply it to the plot area.
-    // The ReactGridChartPreview component should also disable this behavior.
-    aspectRatio: "5 / 2",
-    minHeight: 300,
-  },
-
-  // Chart type specific styles, if we need for example to set a specific aspect-ratio
-  // for a specific chart type
-  area: {},
-  column: {},
-  comboLineColumn: {},
-  comboLineDual: {},
-  comboLineSingle: {},
-  line: {},
-  map: {},
-  pie: {},
-  scatterplot: {},
-  table: {},
 }));
 
-export const ChartContainer = ({
-  children,
-  type,
-}: {
-  children: ReactNode;
-  type: ChartConfig["chartType"];
-}) => {
+export const ChartContainer = ({ children }: { children: ReactNode }) => {
   const [state] = useConfiguratorState(hasChartConfigs);
+  const isFreeCanvas = isLayoutingFreeCanvas(state);
   const ref = useObserverRef();
+  const { bounds } = useChartState();
   const classes = useStyles();
   return (
     <div
       ref={ref}
       aria-hidden="true"
-      className={clsx(
-        classes.chartContainer,
-        classes[type],
-        !isConfiguring(state) &&
-          state.layout.type === "dashboard" &&
-          state.layout.layout === "canvas"
-          ? null
-          : classes.constrainMinHeight
-      )}
+      className={classes.chartContainer}
+      style={{ height: isFreeCanvas ? "initial" : bounds.height }}
     >
       {children}
     </div>

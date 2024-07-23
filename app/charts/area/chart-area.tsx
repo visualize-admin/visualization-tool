@@ -31,7 +31,7 @@ const ChartAreas = memo((props: ChartProps<AreaConfig>) => {
 
   return (
     <AreaChart {...props}>
-      <ChartContainer type="area">
+      <ChartContainer>
         <ChartSvg>
           <AxisTime /> <AxisHeightLinear />
           <Areas /> <AxisTimeDomain />
