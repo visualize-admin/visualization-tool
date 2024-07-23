@@ -33,7 +33,7 @@ const ChartLines = memo((props: ChartProps<LineConfig>) => {
   const dashboardFilters = useDashboardInteractiveFilters();
   return (
     <LineChart {...props}>
-      <ChartContainer type="line">
+      <ChartContainer>
         <ChartSvg>
           <AxisHeightLinear /> <AxisTime /> <AxisTimeDomain />
           <Lines />

@@ -10,7 +10,7 @@ import {
   usePieStateData,
   usePieStateVariables,
 } from "@/charts/pie/pie-state-props";
-import { getChartBounds } from "@/charts/shared/chart-dimensions";
+import { useChartBounds } from "@/charts/shared/chart-dimensions";
 import {
   ChartContext,
   ChartStateData,
@@ -147,7 +147,7 @@ const usePieState = (
     bottom: 40,
     left: 40,
   };
-  const bounds = getChartBounds(width, margins, height);
+  const bounds = useChartBounds(width, margins, height);
   const { chartWidth, chartHeight } = bounds;
 
   // Pie values

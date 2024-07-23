@@ -29,7 +29,7 @@ const ChartComboLineSingle = memo(
     const dashboardFilters = useDashboardInteractiveFilters();
     return (
       <ComboLineSingleChart {...props}>
-        <ChartContainer type="comboLineSingle">
+        <ChartContainer>
           <ChartSvg>
             <AxisHeightLinear /> <AxisTime /> <AxisTimeDomain />
             <ComboLineSingle />

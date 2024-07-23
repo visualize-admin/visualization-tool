@@ -36,7 +36,7 @@ const ChartScatterplot = memo((props: ChartProps<ScatterPlotConfig>) => {
   const filters = useChartConfigFilters(chartConfig);
   return (
     <ScatterplotChart {...props}>
-      <ChartContainer type="scatterplot">
+      <ChartContainer>
         <ChartSvg>
           <AxisWidthLinear />
           <AxisHeightLinear />

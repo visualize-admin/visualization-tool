@@ -34,7 +34,7 @@ const ChartPie = memo((props: ChartProps<PieConfig>) => {
 
   return (
     <PieChart {...props}>
-      <ChartContainer type="pie">
+      <ChartContainer>
         <ChartSvg>
           <Pie />
         </ChartSvg>

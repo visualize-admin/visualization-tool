@@ -10,7 +10,7 @@ import {
   useScatterplotStateVariables,
 } from "@/charts/scatterplot//scatterplot-state-props";
 import {
-  getChartBounds,
+  useChartBounds,
   useChartPadding,
 } from "@/charts/shared/chart-dimensions";
 import {
@@ -158,7 +158,7 @@ const useScatterplotState = (
     bottom,
     left,
   };
-  const bounds = getChartBounds(width, margins, height);
+  const bounds = useChartBounds(width, margins, height);
   const { chartWidth, chartHeight } = bounds;
 
   xScale.range([0, chartWidth]);

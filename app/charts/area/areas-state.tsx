@@ -23,7 +23,7 @@ import {
   useAreasStateVariables,
 } from "@/charts/area/areas-state-props";
 import {
-  getChartBounds,
+  useChartBounds,
   useChartPadding,
 } from "@/charts/shared/chart-dimensions";
 import {
@@ -336,7 +336,7 @@ const useAreasState = (
     bottom,
     left,
   };
-  const bounds = getChartBounds(width, margins, height);
+  const bounds = useChartBounds(width, margins, height);
   const { chartWidth, chartHeight } = bounds;
 
   /** Adjust scales according to dimensions */

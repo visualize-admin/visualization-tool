@@ -136,7 +136,7 @@ const ChartMap = memo((props: ChartMapProps) => {
   const filters = useChartConfigFilters(chartConfig);
   return (
     <MapChart {...props}>
-      <ChartContainer type="map">
+      <ChartContainer>
         <MapComponent />
         <MapTooltip />
       </ChartContainer>

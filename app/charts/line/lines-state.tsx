@@ -17,7 +17,7 @@ import {
   useLinesStateVariables,
 } from "@/charts/line/lines-state-props";
 import {
-  getChartBounds,
+  useChartBounds,
   useChartPadding,
 } from "@/charts/shared/chart-dimensions";
 import { getWideData } from "@/charts/shared/chart-helpers";
@@ -228,7 +228,7 @@ const useLinesState = (
     bottom,
     left,
   };
-  const bounds = getChartBounds(width, margins, height);
+  const bounds = useChartBounds(width, margins, height);
   const { chartWidth, chartHeight } = bounds;
 
   xScale.range([0, chartWidth]);
