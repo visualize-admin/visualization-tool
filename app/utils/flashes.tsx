@@ -60,7 +60,7 @@ const Flashes = () => {
   const errorId = query.errorId as keyof typeof flashes;
   const ErrorComponent = renderErrorContent[errorId];
   return (
-    <Box sx={{ position: "fixed", bottom: "1rem", right: "1rem" }}>
+    <Box sx={{ position: "fixed", bottom: "1rem", right: "1rem", zIndex: 1 }}>
       <AnimatePresence>
         {errorId && !dismissed[errorId] ? (
           <motion.div
