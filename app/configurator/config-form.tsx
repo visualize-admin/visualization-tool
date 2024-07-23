@@ -526,10 +526,12 @@ export const useSingleFilterField = ({
     [dispatch, filters]
   );
 
-  // TODO Fix
+  const cubeIri = filters[0].cubeIri;
   const dimensionIri = filters[0].dimensionIri;
+  const chartConfig = getChartConfig(state);
+  const cube = chartConfig.cubes.find((cube) => cube.iri === cubeIri);
   const stateValue = isConfiguring(state)
-    ? get(getChartConfig(state), ["filters", dimensionIri, "value"], "")
+    ? get(cube, ["filters", dimensionIri, "value"], "")
     : "";
   const checked = stateValue === value;
 
