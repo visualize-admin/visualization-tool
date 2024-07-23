@@ -13,6 +13,18 @@ You can also check the
 
 Nothing yet.
 
+# [4.7.4] - 2024-07-23
+
+- Features
+  - Measure's unit is now displayed in map legend
+- Fixes
+  - Charts now correctly maintains aspect ratio, preventing them from being
+    squished
+  - OpenData.swiss links are now constructed correctly in cases where
+    organization is a part of identifier
+  - Toast notifications are not overlapped by other content anymore
+  - Chart selection tabs popover's arrow is now correctly centered
+
 # [4.7.3] - 2024-07-18
 
 - Fixes
