@@ -1175,10 +1175,8 @@ export const DimensionValuesSingleFilter = ({
   const locale = useLocale();
   const sortedDimensionValues = useMemo(() => {
     const values = dimension.values;
-
     return [...values].sort(valueComparator(locale));
   }, [dimension?.values, locale]);
-
   return dimension ? (
     <>
       {sortedDimensionValues.map((dv) => {

@@ -156,7 +156,7 @@ const useTableState = (
   const memoizedData = useMemo(
     function replaceKeys() {
       // Only read keys once
-      const keys = Object.keys(chartData[0]);
+      const keys = Object.keys(chartData[0] ?? []);
       const lkey = keys.length;
       const slugifiedKeys = keys.map(getSlugifiedIri);
 

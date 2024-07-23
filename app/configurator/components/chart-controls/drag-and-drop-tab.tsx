@@ -42,7 +42,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    justifyContent: "flex-end",
+    justifyContent: "center",
     flexGrow: 0,
     flexShrink: 0,
     paddingBottom: 0,
