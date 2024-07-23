@@ -398,7 +398,7 @@ export const MapComponent = () => {
         </div>
       )}
 
-      {dataLoaded ? (
+      {dataLoaded && width > 1 && height > 1 ? (
         <Map
           initialViewState={defaultViewState}
           mapLib={maplibregl}
