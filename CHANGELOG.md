@@ -11,7 +11,11 @@ You can also check the
 
 # Unreleased
 
-Nothing yet.
+- Fixes
+  - Map is now correctly centered after copying a chart or switching to layout
+    mode
+  - Table single filters now correctly display selected state
+  - Drag handles are now centered in table configurator
 
 # [4.7.4] - 2024-07-23
 
