@@ -116,8 +116,12 @@ const LayoutLayoutConfigurator = () => {
 const LayoutSharedFiltersConfigurator = () => {
   const [state, dispatch] = useConfiguratorState(isLayouting);
   const { layout } = state;
-  const { timeRange, potentialTimeRangeFilterIris } =
-    useDashboardInteractiveFilters();
+  const {
+    timeRange,
+    potentialTimeRangeFilterIris,
+    dataFilters,
+    potentialDataFilterIris,
+  } = useDashboardInteractiveFilters();
 
   const locale = useLocale();
   const [{ data }] = useConfigsCubeComponents({
@@ -224,7 +228,11 @@ const LayoutSharedFiltersConfigurator = () => {
   switch (layout.type) {
     case "tab":
     case "dashboard":
-      if (!timeRange || potentialTimeRangeFilterIris.length === 0) {
+      if (
+        !timeRange ||
+        (potentialTimeRangeFilterIris.length === 0 &&
+          (!dataFilters || potentialDataFilterIris.length === 0))
+      ) {
         return null;
       }
 

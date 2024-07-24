@@ -5,6 +5,7 @@ import { getChartSpec } from "@/charts/chart-config-ui-options";
 import {
   CalculationType,
   ChartConfig,
+  DashboardDataFiltersConfig,
   DashboardTimeRangeFilter,
   FilterValueSingle,
   hasChartConfigs,
@@ -146,6 +147,8 @@ const InteractiveFiltersContext = createContext<
   | {
       potentialTimeRangeFilterIris: string[];
       timeRange: DashboardTimeRangeFilter | undefined;
+      potentialDataFilterIris: string[];
+      dataFilters: DashboardDataFiltersConfig | undefined;
       stores: Record<ChartConfig["key"], InteractiveFiltersContextValue>;
     }
   | undefined
@@ -222,9 +225,14 @@ export const InteractiveFiltersProvider = ({
 
   const ctxValue = useMemo(
     () => ({
-      stores,
       potentialTimeRangeFilterIris,
       timeRange,
+      potentialDataFilterIris: [],
+      dataFilters: {
+        active: false,
+        componentIris: [],
+      },
+      stores,
     }),
     [stores, potentialTimeRangeFilterIris, timeRange]
   );

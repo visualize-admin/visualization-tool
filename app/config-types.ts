@@ -1150,13 +1150,21 @@ const DashboardTimeRangeFilter = t.type({
     to: t.string,
   }),
 });
-
 export type DashboardTimeRangeFilter = t.TypeOf<
   typeof DashboardTimeRangeFilter
 >;
 
+const DashboardDataFiltersConfig = t.type({
+  active: t.boolean,
+  componentIris: t.array(t.string),
+});
+export type DashboardDataFiltersConfig = t.TypeOf<
+  typeof DashboardDataFiltersConfig
+>;
+
 const DashboardFiltersConfig = t.type({
   timeRange: DashboardTimeRangeFilter,
+  dataFilters: DashboardDataFiltersConfig,
 });
 export type DashboardFiltersConfig = t.TypeOf<typeof DashboardFiltersConfig>;
 
