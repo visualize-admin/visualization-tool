@@ -1085,6 +1085,40 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       }
       return draft;
 
+    case "DASHBOARD_DATA_FILTER_ADD":
+      if (isLayouting(draft) && draft.dashboardFilters) {
+        const { dimensionIri } = action.value;
+        const newFilters = {
+          ...draft.dashboardFilters,
+          dataFilters: {
+            ...draft.dashboardFilters.dataFilters,
+            componentIris: [
+              ...draft.dashboardFilters.dataFilters.componentIris,
+              dimensionIri,
+            ],
+          },
+        };
+        draft.dashboardFilters = newFilters;
+      }
+      return draft;
+
+    case "DASHBOARD_DATA_FILTER_REMOVE":
+      if (isLayouting(draft) && draft.dashboardFilters) {
+        const { dimensionIri } = action.value;
+        const newFilters = {
+          ...draft.dashboardFilters,
+          dataFilters: {
+            ...draft.dashboardFilters.dataFilters,
+            componentIris:
+              draft.dashboardFilters.dataFilters.componentIris.filter(
+                (d) => d !== dimensionIri
+              ),
+          },
+        };
+        draft.dashboardFilters = newFilters;
+      }
+      return draft;
+
     default:
       throw unreachableError(action);
   }

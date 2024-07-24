@@ -71,7 +71,6 @@ export const configStateMock = {
         },
       },
       dataFilters: {
-        active: false,
         componentIris: [],
       },
     },
@@ -218,7 +217,6 @@ export const configStateMock = {
         },
       },
       dataFilters: {
-        active: false,
         componentIris: [],
       },
     },

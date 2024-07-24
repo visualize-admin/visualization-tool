@@ -1155,7 +1155,6 @@ export type DashboardTimeRangeFilter = t.TypeOf<
 >;
 
 const DashboardDataFiltersConfig = t.type({
-  active: t.boolean,
   componentIris: t.array(t.string),
 });
 export type DashboardDataFiltersConfig = t.TypeOf<

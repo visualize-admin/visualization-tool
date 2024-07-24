@@ -47,7 +47,6 @@ export const getInitialConfiguringConfigBasedOnCube = (props: {
         },
       },
       dataFilters: {
-        active: false,
         componentIris: [],
       },
     },

@@ -110,7 +110,6 @@ export const photovoltaikChartStateMock: ConfiguratorStateConfiguringChart = {
       },
     },
     dataFilters: {
-      active: false,
       componentIris: [],
     },
   },

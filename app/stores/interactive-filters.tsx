@@ -1,3 +1,4 @@
+import uniq from "lodash/uniq";
 import React, { createContext, useContext, useMemo, useRef } from "react";
 import create, { StateCreator, StoreApi, UseBoundStore } from "zustand";
 
@@ -187,6 +188,20 @@ const getPotentialTimeRangeFilterIris = (chartConfigs: ChartConfig[]) => {
   return temporalDimensions.map((dimension) => dimension.componentIri);
 };
 
+const getPotentialDataFilterIris = (chartConfigs: ChartConfig[]) => {
+  return uniq(
+    chartConfigs.flatMap((config) => {
+      return config.cubes
+        .map((cube) => cube.filters)
+        .flatMap((filters) => {
+          return Object.entries(filters)
+            .filter(([_, filter]) => filter.type === "single")
+            .map(([dimensionIri]) => dimensionIri);
+        });
+    })
+  );
+};
+
 /**
  * Creates and provides all the interactive filters stores for the given chartConfigs.
  */
@@ -201,6 +216,9 @@ export const InteractiveFiltersProvider = ({
 
   const potentialTimeRangeFilterIris = useMemo(() => {
     return getPotentialTimeRangeFilterIris(chartConfigs);
+  }, [chartConfigs]);
+  const potentialDataFilterIris = useMemo(() => {
+    return getPotentialDataFilterIris(chartConfigs);
   }, [chartConfigs]);
 
   const stores = useMemo<
@@ -222,19 +240,23 @@ export const InteractiveFiltersProvider = ({
   }, [chartConfigs]);
 
   const timeRange = state.dashboardFilters?.timeRange;
+  const dataFilters = state.dashboardFilters?.dataFilters;
 
   const ctxValue = useMemo(
     () => ({
       potentialTimeRangeFilterIris,
       timeRange,
-      potentialDataFilterIris: [],
-      dataFilters: {
-        active: false,
-        componentIris: [],
-      },
+      potentialDataFilterIris,
+      dataFilters,
       stores,
     }),
-    [stores, potentialTimeRangeFilterIris, timeRange]
+    [
+      potentialTimeRangeFilterIris,
+      timeRange,
+      potentialDataFilterIris,
+      dataFilters,
+      stores,
+    ]
   );
 
   return (

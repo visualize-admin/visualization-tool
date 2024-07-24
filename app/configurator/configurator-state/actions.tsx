@@ -275,4 +275,16 @@ export type ConfiguratorStateAction =
     }
   | {
       type: "DASHBOARD_TIME_RANGE_FILTER_REMOVE";
+    }
+  | {
+      type: "DASHBOARD_DATA_FILTER_ADD";
+      value: {
+        dimensionIri: string;
+      };
+    }
+  | {
+      type: "DASHBOARD_DATA_FILTER_REMOVE";
+      value: {
+        dimensionIri: string;
+      };
     };
