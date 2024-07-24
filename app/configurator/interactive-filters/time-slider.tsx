@@ -16,6 +16,7 @@ import { TableChartState } from "@/charts/table/table-state";
 import { Slider as GenericSlider } from "@/components/form";
 import { AnimationField, Filters, SortingField } from "@/config-types";
 import { parseDate } from "@/configurator/components/ui-helpers";
+import { hasChartConfigs } from "@/configurator/configurator-state";
 import {
   Dimension,
   isTemporalDimension,
@@ -25,10 +26,8 @@ import {
 import { truthy } from "@/domain/types";
 import { useTimeFormatUnit } from "@/formatters";
 import { Icon } from "@/icons";
-import {
-  useChartInteractiveFilters,
-  useDashboardInteractiveFilters,
-} from "@/stores/interactive-filters";
+import { useConfiguratorState } from "@/src";
+import { useChartInteractiveFilters } from "@/stores/interactive-filters";
 import { Timeline, TimelineProps } from "@/utils/observables";
 import {
   getSortingOrders,
@@ -67,14 +66,13 @@ export const TimeSlider = (props: TimeSliderProps) => {
     dimensions,
   } = props;
 
+  const [state] = useConfiguratorState(hasChartConfigs);
   const dimension = useMemo(() => {
     return dimensions.find((d) => d.iri === componentIri);
   }, [componentIri, dimensions]);
   const temporal = isTemporalDimension(dimension);
   const temporalEntity = isTemporalEntityDimension(dimension);
   const temporalOrdinal = isTemporalOrdinalDimension(dimension);
-
-  const dashboardFilters = useDashboardInteractiveFilters();
 
   if (!(temporal || temporalEntity || temporalOrdinal)) {
     throw new Error("You can only use TimeSlider with temporal dimensions!");
@@ -144,7 +142,7 @@ export const TimeSlider = (props: TimeSliderProps) => {
     return new Timeline(timelineProps);
   }, [timelineProps]);
 
-  if (dashboardFilters.timeRange?.active) {
+  if (state.dashboardFilters?.timeRange.active) {
     return null;
   }
 

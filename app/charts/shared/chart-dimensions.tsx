@@ -9,11 +9,11 @@ import { Bounds, Margins } from "@/charts/shared/use-size";
 import { CHART_GRID_MIN_HEIGHT } from "@/components/react-grid";
 import {
   ChartConfig,
+  DashboardFiltersConfig,
   hasChartConfigs,
   isLayoutingFreeCanvas,
   useConfiguratorState,
 } from "@/configurator";
-import { useDashboardInteractiveFilters } from "@/stores/interactive-filters";
 import { getTextWidth } from "@/utils/get-text-width";
 
 type ComputeChartPaddingProps = {
@@ -29,7 +29,7 @@ type ComputeChartPaddingProps = {
 
 const computeChartPadding = (
   props: ComputeChartPaddingProps & {
-    dashboardFilters: ReturnType<typeof useDashboardInteractiveFilters>;
+    dashboardFilters: DashboardFiltersConfig | undefined;
   }
 ) => {
   const {
@@ -61,7 +61,7 @@ const computeChartPadding = (
   );
 
   let bottom =
-    (!dashboardFilters.timeRange?.active &&
+    (!dashboardFilters?.timeRange.active &&
       !!interactiveFiltersConfig?.timeRange.active) ||
     animationPresent
       ? BRUSH_BOTTOM_SPACE
@@ -87,7 +87,7 @@ export const useChartPadding = (props: ComputeChartPaddingProps) => {
     bandDomain,
     normalize,
   } = props;
-  const dashboardFilters = useDashboardInteractiveFilters();
+  const [{ dashboardFilters }] = useConfiguratorState(hasChartConfigs);
   return useMemo(() => {
     return computeChartPadding({
       yScale,

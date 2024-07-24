@@ -1,16 +1,13 @@
-import {
-  Collapse,
-  Slider,
-  sliderClasses,
-  useEventCallback,
-} from "@mui/material";
+import { Slider, sliderClasses, useEventCallback } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import { makeStyles } from "@mui/styles";
 import { useEffect, useMemo, useState } from "react";
 
 import {
   DashboardTimeRangeFilter,
+  hasChartConfigs,
   InteractiveFiltersTimeRange,
+  useConfiguratorState,
 } from "@/configurator";
 import {
   timeUnitToFormatter,
@@ -181,17 +178,17 @@ const DashboardTimeRangeSlider = ({
 };
 
 export const DashboardInteractiveFilters = () => {
-  const { timeRange } = useDashboardInteractiveFilters();
-  return timeRange?.active ? (
-    <Collapse in={timeRange.active}>
-      <div>
+  const [{ dashboardFilters }] = useConfiguratorState(hasChartConfigs);
+  return (
+    <div>
+      {dashboardFilters?.timeRange.active ? (
         <DashboardTimeRangeSlider
-          filter={timeRange}
-          mounted={timeRange.active}
+          filter={dashboardFilters.timeRange}
+          mounted={dashboardFilters.timeRange.active}
         />
-      </div>
-    </Collapse>
-  ) : null;
+      ) : null}
+    </div>
+  );
 };
 
 function stepFromTimeUnit(timeUnit: TimeUnit | undefined) {

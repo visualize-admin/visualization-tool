@@ -6,11 +6,7 @@ import { getChartSpec } from "@/charts/chart-config-ui-options";
 import {
   CalculationType,
   ChartConfig,
-  DashboardDataFiltersConfig,
-  DashboardTimeRangeFilter,
   FilterValueSingle,
-  hasChartConfigs,
-  useConfiguratorState,
 } from "@/configurator";
 import { truthy } from "@/domain/types";
 import { getOriginalIris, isJoinById } from "@/graphql/join";
@@ -147,9 +143,7 @@ type InteractiveFiltersContextValue = [
 const InteractiveFiltersContext = createContext<
   | {
       potentialTimeRangeFilterIris: string[];
-      timeRange: DashboardTimeRangeFilter | undefined;
       potentialDataFilterIris: string[];
-      dataFilters: DashboardDataFiltersConfig | undefined;
       stores: Record<ChartConfig["key"], InteractiveFiltersContextValue>;
     }
   | undefined
@@ -211,7 +205,6 @@ export const InteractiveFiltersProvider = ({
 }: React.PropsWithChildren<{
   chartConfigs: ChartConfig[];
 }>) => {
-  const [state] = useConfiguratorState(hasChartConfigs);
   const storeRefs = useRef<Record<ChartConfig["key"], StoreApi<State>>>({});
 
   const potentialTimeRangeFilterIris = useMemo(() => {
@@ -239,24 +232,13 @@ export const InteractiveFiltersProvider = ({
     );
   }, [chartConfigs]);
 
-  const timeRange = state.dashboardFilters?.timeRange;
-  const dataFilters = state.dashboardFilters?.dataFilters;
-
   const ctxValue = useMemo(
     () => ({
       potentialTimeRangeFilterIris,
-      timeRange,
       potentialDataFilterIris,
-      dataFilters,
       stores,
     }),
-    [
-      potentialTimeRangeFilterIris,
-      timeRange,
-      potentialDataFilterIris,
-      dataFilters,
-      stores,
-    ]
+    [potentialTimeRangeFilterIris, potentialDataFilterIris, stores]
   );
 
   return (

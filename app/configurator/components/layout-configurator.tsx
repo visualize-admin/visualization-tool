@@ -115,12 +115,9 @@ const LayoutLayoutConfigurator = () => {
 const LayoutSharedFiltersConfigurator = () => {
   const [state, dispatch] = useConfiguratorState(isLayouting);
   const { layout } = state;
-  const {
-    timeRange,
-    potentialTimeRangeFilterIris,
-    dataFilters,
-    potentialDataFilterIris,
-  } = useDashboardInteractiveFilters();
+  const { potentialTimeRangeFilterIris, potentialDataFilterIris } =
+    useDashboardInteractiveFilters();
+  const { timeRange, dataFilters } = state.dashboardFilters ?? {};
 
   const locale = useLocale();
   const [{ data }] = useConfigsCubeComponents({

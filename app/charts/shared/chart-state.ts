@@ -32,6 +32,8 @@ import {
   GenericField,
   InteractiveFiltersConfig,
   getAnimationField,
+  hasChartConfigs,
+  useConfiguratorState,
 } from "@/configurator";
 import {
   parseDate,
@@ -57,10 +59,7 @@ import {
 } from "@/domain/data";
 import { Has } from "@/domain/types";
 import { ScaleType, TimeUnit } from "@/graphql/resolver-types";
-import {
-  useChartInteractiveFilters,
-  useDashboardInteractiveFilters,
-} from "@/stores/interactive-filters";
+import { useChartInteractiveFilters } from "@/stores/interactive-filters";
 
 export type ChartState =
   | AreasState
@@ -508,13 +507,13 @@ export const useChartData = (
   // interactive time range
   const interactiveFromTime = timeRange.from?.getTime();
   const interactiveToTime = timeRange.to?.getTime();
-  const dashboardFilters = useDashboardInteractiveFilters();
+  const [{ dashboardFilters }] = useConfiguratorState(hasChartConfigs);
   const interactiveTimeRangeFilters = useMemo(() => {
     const interactiveTimeRangeFilter: ValuePredicate | null =
       getXAsDate &&
       interactiveFromTime &&
       interactiveToTime &&
-      (interactiveTimeRange?.active || dashboardFilters.timeRange?.active)
+      (interactiveTimeRange?.active || dashboardFilters?.timeRange.active)
         ? (d: Observation) => {
             const time = getXAsDate(d).getTime();
             return time >= interactiveFromTime && time <= interactiveToTime;
@@ -523,7 +522,7 @@ export const useChartData = (
 
     return interactiveTimeRangeFilter ? [interactiveTimeRangeFilter] : [];
   }, [
-    dashboardFilters.timeRange,
+    dashboardFilters?.timeRange,
     getXAsDate,
     interactiveFromTime,
     interactiveToTime,
