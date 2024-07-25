@@ -225,9 +225,22 @@ const LayoutSharedFiltersConfigurator = () => {
     (checked: boolean, componentIri: string) => {
       if (checked) {
         dispatch({
-          type: "DASHBOARD_DATA_FILTER_ADD",
+          type: "DASHBOARD_DATA_FILTERS_SET",
           value: {
-            dimensionIri: componentIri,
+            componentIris: dataFilters?.componentIris
+              ? [...dataFilters.componentIris, componentIri].sort((a, b) => {
+                  const dimensions = data?.dataCubesComponents.dimensions ?? [];
+                  const aIndex =
+                    dimensions.find((d) => d.iri === a)?.order ??
+                    dimensions.findIndex((d) => d.iri === a) ??
+                    0;
+                  const bIndex =
+                    dimensions.find((d) => d.iri === b)?.order ??
+                    dimensions.findIndex((d) => d.iri === b) ??
+                    0;
+                  return aIndex - bIndex;
+                })
+              : [componentIri],
           },
         });
       } else {

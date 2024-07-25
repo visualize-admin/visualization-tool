@@ -283,6 +283,12 @@ export type ConfiguratorStateAction =
       };
     }
   | {
+      type: "DASHBOARD_DATA_FILTERS_SET";
+      value: {
+        componentIris: string[];
+      };
+    }
+  | {
       type: "DASHBOARD_DATA_FILTER_REMOVE";
       value: {
         dimensionIri: string;

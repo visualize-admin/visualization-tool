@@ -1102,6 +1102,12 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       }
       return draft;
 
+    case "DASHBOARD_DATA_FILTERS_SET":
+      if (isLayouting(draft) && draft.dashboardFilters) {
+        draft.dashboardFilters.dataFilters = action.value;
+      }
+      return draft;
+
     case "DASHBOARD_DATA_FILTER_REMOVE":
       if (isLayouting(draft) && draft.dashboardFilters) {
         const { dimensionIri } = action.value;
