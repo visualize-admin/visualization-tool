@@ -194,7 +194,7 @@ const LayoutSharedFiltersConfigurator = () => {
           timeFormatUnit,
         });
 
-        const from = options.sortedOptions[0].date;
+        const from = options.sortedOptions[0]?.date;
         const to = options.sortedOptions.at(-1)?.date;
         const formatDate = timeUnitToFormatter[combinedDimension.timeUnit];
 
@@ -266,7 +266,8 @@ const LayoutSharedFiltersConfigurator = () => {
           </SubsectionTitle>
           <ControlSectionContent>
             <Stack gap="0.5rem">
-              {timeRange ? (
+              {/* TODO: allow TemporalOrdinalDimensions to work here */}
+              {timeRange && combinedDimension.values.length ? (
                 <>
                   <Box
                     sx={{
