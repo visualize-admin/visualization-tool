@@ -40,6 +40,7 @@ import {
   ChartConfig,
   ConfiguratorStateConfiguringChart,
   ConfiguratorStatePublishing,
+  DashboardFiltersConfig,
   DataSource,
   Filters,
   getChartConfig,
@@ -629,6 +630,7 @@ export const ChartConfigurator = ({
           <ChartFields
             dataSource={state.dataSource}
             chartConfig={chartConfig}
+            dashboardFilters={state.dashboardFilters}
             dimensions={dimensions}
             measures={measures}
           />
@@ -755,6 +757,7 @@ export const ChartConfigurator = ({
       <MetadataPanel
         dataSource={state.dataSource}
         chartConfig={chartConfig}
+        dashboardFilters={state.dashboardFilters}
         components={components}
         top={HEADER_HEIGHT}
         renderToggle={false}
@@ -766,14 +769,16 @@ export const ChartConfigurator = ({
 type ChartFieldsProps = {
   dataSource: DataSource;
   chartConfig: ChartConfig;
+  dashboardFilters: DashboardFiltersConfig | undefined;
   dimensions?: Dimension[];
   measures?: Measure[];
 };
 
 const ChartFields = (props: ChartFieldsProps) => {
-  const { dataSource, chartConfig, dimensions, measures } = props;
+  const { dataSource, chartConfig, dashboardFilters, dimensions, measures } =
+    props;
   const components = [...(dimensions ?? []), ...(measures ?? [])];
-  const queryFilters = useQueryFilters({ chartConfig });
+  const queryFilters = useQueryFilters({ chartConfig, dashboardFilters });
   const locale = useLocale();
   const [{ data: observationsData }] = useDataCubesObservationsQuery({
     variables: {

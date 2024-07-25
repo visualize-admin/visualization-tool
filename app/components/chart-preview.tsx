@@ -89,9 +89,10 @@ export const ChartPreview = (props: ChartPreviewProps) => {
     // we switch tabs in the configurator, otherwise we end up with the wrong
     // data in the downstream hooks (useDataCubesMetadataQuery, etc.)
     <>
-      {state.state !== "CONFIGURING_CHART" ? (
+      {!isConfiguring(state) ? (
         <DashboardInteractiveFilters
           key={state.chartConfigs.map((x) => x.key).join(",")}
+          sx={{ mb: 4 }}
         />
       ) : null}
       <ChartTablePreviewProvider key={state.activeChartKey}>
@@ -531,6 +532,7 @@ const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
                   <ChartControls
                     dataSource={dataSource}
                     chartConfig={chartConfig}
+                    dashboardFilters={state.dashboardFilters}
                     metadataPanelProps={{
                       components: allComponents,
                       top: BANNER_MARGIN_TOP,
@@ -549,6 +551,7 @@ const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
                       <DataSetTable
                         dataSource={dataSource}
                         chartConfig={chartConfig}
+                        dashboardFilters={state.dashboardFilters}
                         sx={{ width: "100%", maxHeight: "100%" }}
                       />
                     ) : (
@@ -556,12 +559,14 @@ const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
                         dataSource={dataSource}
                         componentIris={componentIris}
                         chartConfig={chartConfig}
+                        dashboardFilters={state.dashboardFilters}
                       />
                     )}
                   </div>
                   <ChartFootnotes
                     dataSource={dataSource}
                     chartConfig={chartConfig}
+                    dashboardFilters={state.dashboardFilters}
                     components={allComponents}
                   />
                   {/* Wrap in div for subgrid layout */}

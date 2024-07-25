@@ -152,7 +152,7 @@ export const ChartPublished = (props: ChartPublishedProps) => {
             )}
           </Flex>
           <ChartTablePreviewProvider>
-            <DashboardInteractiveFilters />
+            <DashboardInteractiveFilters sx={{ mb: 4 }} />
             <ChartWrapper
               layoutType={state.layout.type}
               chartKey={state.activeChartKey}
@@ -365,6 +365,7 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
               <ChartControls
                 dataSource={dataSource}
                 chartConfig={chartConfig}
+                dashboardFilters={state.dashboardFilters}
                 metadataPanelProps={{
                   components: allComponents,
                   container: rootRef.current,
@@ -386,6 +387,7 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
                   <DataSetTable
                     dataSource={dataSource}
                     chartConfig={chartConfig}
+                    dashboardFilters={state.dashboardFilters}
                     sx={{ maxHeight: "100%" }}
                   />
                 ) : (
@@ -393,12 +395,14 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
                     dataSource={dataSource}
                     componentIris={componentIris}
                     chartConfig={chartConfig}
+                    dashboardFilters={state.dashboardFilters}
                   />
                 )}
               </div>
               <ChartFootnotes
                 dataSource={dataSource}
                 chartConfig={chartConfig}
+                dashboardFilters={state.dashboardFilters}
                 components={allComponents}
                 showVisualizeLink={state.chartConfigs.length === 1}
               />

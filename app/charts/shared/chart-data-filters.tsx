@@ -18,6 +18,7 @@ import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import SelectTree from "@/components/select-tree";
 import {
   ChartConfig,
+  DashboardFiltersConfig,
   DataSource,
   Filters,
   getFiltersByMappingStatus,
@@ -66,9 +67,11 @@ type PreparedFilter = {
 export const useChartDataFiltersState = ({
   dataSource,
   chartConfig,
+  dashboardFilters,
 }: {
   dataSource: DataSource;
   chartConfig: ChartConfig;
+  dashboardFilters: DashboardFiltersConfig | undefined;
 }) => {
   const componentIris =
     chartConfig.interactiveFiltersConfig?.dataFilters.componentIris;
@@ -81,6 +84,7 @@ export const useChartDataFiltersState = ({
   const { loading } = useLoadingState();
   const queryFilters = useQueryFilters({
     chartConfig,
+    dashboardFilters,
     allowNoneValues: true,
     componentIris,
   });
@@ -107,6 +111,7 @@ export const useChartDataFiltersState = ({
       };
     });
   }, [chartConfig, componentIris, queryFilters]);
+  // TODO: disable when dashboard filters are active?
   const { error } = useEnsurePossibleInteractiveFilters({
     dataSource,
     chartConfig,
@@ -371,7 +376,9 @@ export type DataFilterGenericDimensionProps = {
   disabled: boolean;
 };
 
-const DataFilterGenericDimension = (props: DataFilterGenericDimensionProps) => {
+export const DataFilterGenericDimension = (
+  props: DataFilterGenericDimensionProps
+) => {
   const { dimension, value, onChange, options: propOptions, disabled } = props;
   const { label, isKeyDimension } = dimension;
   const noneLabel = t({
@@ -420,7 +427,7 @@ type DataFilterHierarchyDimensionProps = {
   disabled: boolean;
 };
 
-const DataFilterHierarchyDimension = (
+export const DataFilterHierarchyDimension = (
   props: DataFilterHierarchyDimensionProps
 ) => {
   const { dimension, value, onChange, hierarchy, disabled } = props;
@@ -475,7 +482,7 @@ const DataFilterHierarchyDimension = (
   );
 };
 
-const DataFilterTemporalDimension = ({
+export const DataFilterTemporalDimension = ({
   dimension,
   value,
   onChange,
