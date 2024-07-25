@@ -170,9 +170,8 @@ export const ChartWithFilters = forwardRef<
   HTMLDivElement,
   ChartWithFiltersProps
 >((props, ref) => {
-  useSyncInteractiveFilters(props.chartConfig);
+  useSyncInteractiveFilters(props.chartConfig, props.dashboardFilters);
   const classes = useStyles();
-
   return (
     <div className={classes.chartWithFilters} ref={ref}>
       <Observer>

@@ -2,6 +2,7 @@ import { useEffect, useMemo } from "react";
 
 import {
   ChartConfig,
+  DashboardFiltersConfig,
   FilterValueSingle,
   isSegmentInConfig,
   useChartConfigFilters,
@@ -18,7 +19,10 @@ import { useChartInteractiveFilters } from "@/stores/interactive-filters";
  *   inside the interactive filters
  *
  */
-const useSyncInteractiveFilters = (chartConfig: ChartConfig) => {
+const useSyncInteractiveFilters = (
+  chartConfig: ChartConfig,
+  dashboardFilters: DashboardFiltersConfig | undefined
+) => {
   const { interactiveFiltersConfig } = chartConfig;
   const filters = useChartConfigFilters(chartConfig);
   const resetCategories = useChartInteractiveFilters((d) => d.resetCategories);
@@ -52,23 +56,27 @@ const useSyncInteractiveFilters = (chartConfig: ChartConfig) => {
 
   // Data Filters
   const componentIris = interactiveFiltersConfig?.dataFilters.componentIris;
+  const dashboardComponentIris = dashboardFilters?.dataFilters.componentIris;
   useEffect(() => {
     if (componentIris) {
       // If dimension is already in use as interactive filter, use it,
-      // otherwise, default to editor config filter dimension value.
-      const newInteractiveDataFilters = componentIris.reduce<{
-        [key: string]: FilterValueSingle;
-      }>((obj, iri) => {
-        const configFilter = filters[iri];
+      // otherwise, default to editor config filter dimension value (only
+      // if dashboard filters are not set).
+      const newInteractiveDataFilters = componentIris
+        .concat(dashboardComponentIris ?? [])
+        .reduce<{
+          [key: string]: FilterValueSingle;
+        }>((obj, iri) => {
+          const configFilter = filters[iri];
 
-        if (Object.keys(dataFilters).includes(iri)) {
-          obj[iri] = dataFilters[iri];
-        } else if (configFilter?.type === "single") {
-          obj[iri] = configFilter;
-        }
+          if (Object.keys(dataFilters).includes(iri)) {
+            obj[iri] = dataFilters[iri];
+          } else if (configFilter?.type === "single") {
+            obj[iri] = configFilter;
+          }
 
-        return obj;
-      }, {});
+          return obj;
+        }, {});
 
       setDataFilters(newInteractiveDataFilters);
     }

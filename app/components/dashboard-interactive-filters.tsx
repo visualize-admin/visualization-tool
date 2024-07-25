@@ -383,7 +383,7 @@ const DataFilter = ({ componentIri }: { componentIri: string }) => {
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dimension]);
+  }, [dimension?.values]);
   const disabled = !dimension?.values.length;
   const hierarchy = dimension?.hierarchy;
 
