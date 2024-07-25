@@ -116,6 +116,7 @@ export const useChartDataFiltersState = ({
     dataSource,
     chartConfig,
     preparedFilters,
+    dashboardFilters,
   });
   return {
     open,
@@ -539,20 +540,19 @@ export const DataFilterTemporalDimension = ({
   );
 };
 
-type EnsurePossibleInteractiveFiltersProps = {
-  dataSource: DataSource;
-  chartConfig: ChartConfig;
-  preparedFilters?: PreparedFilter[];
-};
-
 /**
  * This runs every time the state changes and it ensures that the selected interactive
  * filters return at least 1 observation. Otherwise they are reloaded.
+ *
+ * This behavior is disabled when the dashboard filters are active.
  */
-const useEnsurePossibleInteractiveFilters = (
-  props: EnsurePossibleInteractiveFiltersProps
-) => {
-  const { dataSource, chartConfig, preparedFilters } = props;
+const useEnsurePossibleInteractiveFilters = (props: {
+  dataSource: DataSource;
+  chartConfig: ChartConfig;
+  dashboardFilters: DashboardFiltersConfig | undefined;
+  preparedFilters?: PreparedFilter[];
+}) => {
+  const { dataSource, chartConfig, dashboardFilters, preparedFilters } = props;
   const [, dispatch] = useConfiguratorState();
   const loadingState = useLoadingState();
   const [error, setError] = useState<Error>();
@@ -569,7 +569,10 @@ const useEnsurePossibleInteractiveFilters = (
 
   useEffect(() => {
     const run = async () => {
-      if (!filtersByCubeIri) {
+      if (
+        !filtersByCubeIri ||
+        dashboardFilters?.dataFilters.componentIris.length
+      ) {
         return;
       }
 
@@ -667,6 +670,7 @@ const useEnsurePossibleInteractiveFilters = (
     loadingState,
     filtersByCubeIri,
     getInteractiveFiltersState,
+    dashboardFilters?.dataFilters.componentIris.length,
   ]);
 
   return { error };
