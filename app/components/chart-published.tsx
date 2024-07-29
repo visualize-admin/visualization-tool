@@ -63,35 +63,50 @@ type ChartPublishedIndividualChartProps = ChartPublishInnerProps;
 const ChartPublishedIndividualChart = forwardRef<
   HTMLDivElement,
   ChartPublishedIndividualChartProps
->(({ dataSource, state, chartConfig, configKey, children, ...rest }, ref) => {
-  return (
-    <ChartTablePreviewProvider key={chartConfig.key}>
-      <ChartWrapper
-        key={chartConfig.key}
-        layoutType={state.layout.type}
-        ref={ref}
-        chartKey={chartConfig.key}
-        {...rest}
-      >
-        <ChartPublishedInner
+>(
+  (
+    {
+      dataSource,
+      state,
+      chartConfig,
+      configKey,
+      metadataPanelStore,
+      children,
+      ...rest
+    },
+    ref
+  ) => {
+    return (
+      <ChartTablePreviewProvider key={chartConfig.key}>
+        <ChartWrapper
           key={chartConfig.key}
-          dataSource={dataSource}
-          state={state}
-          chartConfig={chartConfig}
-          configKey={configKey}
+          layoutType={state.layout.type}
+          ref={ref}
+          chartKey={chartConfig.key}
+          {...rest}
         >
-          {children}
-        </ChartPublishedInner>
-      </ChartWrapper>
-    </ChartTablePreviewProvider>
-  );
-});
+          <ChartPublishedInner
+            key={chartConfig.key}
+            dataSource={dataSource}
+            state={state}
+            chartConfig={chartConfig}
+            configKey={configKey}
+            metadataPanelStore={metadataPanelStore}
+          >
+            {children}
+          </ChartPublishedInner>
+        </ChartWrapper>
+      </ChartTablePreviewProvider>
+    );
+  }
+);
 
 export const ChartPublished = (props: ChartPublishedProps) => {
   const { configKey } = props;
   const [state] = useConfiguratorState(isPublished);
   const { dataSource } = state;
   const locale = useLocale();
+  const metadataPanelStore = useMemo(() => createMetadataPanelStore(), []);
   const renderChart = useCallback(
     (chartConfig: ChartConfig) => (
       <ChartPublishedIndividualChart
@@ -100,74 +115,78 @@ export const ChartPublished = (props: ChartPublishedProps) => {
         state={state}
         chartConfig={chartConfig}
         configKey={configKey}
+        metadataPanelStore={metadataPanelStore}
       />
     ),
-    [configKey, dataSource, state]
+    [configKey, dataSource, metadataPanelStore, state]
   );
 
   return (
-    <InteractiveFiltersProvider chartConfigs={state.chartConfigs}>
-      {state.layout.type === "dashboard" ? (
-        <>
-          <Box
-            sx={{
-              mb:
-                state.layout.meta.title[locale] ||
-                state.layout.meta.description[locale]
-                  ? 4
-                  : 0,
-            }}
-          >
-            {state.layout.meta.title[locale] && (
-              <Title text={state.layout.meta.title[locale]} />
-            )}
-            {state.layout.meta.description[locale] && (
-              <Description text={state.layout.meta.description[locale]} />
-            )}
-          </Box>
-
-          <ChartPanelLayout
-            layoutType={state.layout.layout}
-            chartConfigs={state.chartConfigs}
-            renderChart={renderChart}
-          />
-        </>
-      ) : (
-        <>
-          <Flex
-            sx={{
-              flexDirection: "column",
-              mb:
-                state.layout.meta.title[locale] ||
-                state.layout.meta.description[locale]
-                  ? 4
-                  : 0,
-            }}
-          >
-            {state.layout.meta.title[locale] && (
-              <Title text={state.layout.meta.title[locale]} />
-            )}
-            {state.layout.meta.description[locale] && (
-              <Description text={state.layout.meta.description[locale]} />
-            )}
-          </Flex>
-          <ChartTablePreviewProvider>
-            <DashboardInteractiveFilters sx={{ mb: 4 }} />
-            <ChartWrapper
-              layoutType={state.layout.type}
-              chartKey={state.activeChartKey}
+    <MetadataPanelStoreContext.Provider value={metadataPanelStore}>
+      <InteractiveFiltersProvider chartConfigs={state.chartConfigs}>
+        {state.layout.type === "dashboard" ? (
+          <>
+            <Box
+              sx={{
+                mb:
+                  state.layout.meta.title[locale] ||
+                  state.layout.meta.description[locale]
+                    ? 4
+                    : 0,
+              }}
             >
-              <ChartPublishedInner
-                dataSource={dataSource}
-                state={state}
-                chartConfig={getChartConfig(state)}
-                configKey={configKey}
-              />
-            </ChartWrapper>
-          </ChartTablePreviewProvider>
-        </>
-      )}
-    </InteractiveFiltersProvider>
+              {state.layout.meta.title[locale] && (
+                <Title text={state.layout.meta.title[locale]} />
+              )}
+              {state.layout.meta.description[locale] && (
+                <Description text={state.layout.meta.description[locale]} />
+              )}
+            </Box>
+
+            <ChartPanelLayout
+              layoutType={state.layout.layout}
+              chartConfigs={state.chartConfigs}
+              renderChart={renderChart}
+            />
+          </>
+        ) : (
+          <>
+            <Flex
+              sx={{
+                flexDirection: "column",
+                mb:
+                  state.layout.meta.title[locale] ||
+                  state.layout.meta.description[locale]
+                    ? 4
+                    : 0,
+              }}
+            >
+              {state.layout.meta.title[locale] && (
+                <Title text={state.layout.meta.title[locale]} />
+              )}
+              {state.layout.meta.description[locale] && (
+                <Description text={state.layout.meta.description[locale]} />
+              )}
+            </Flex>
+            <ChartTablePreviewProvider>
+              <DashboardInteractiveFilters sx={{ mb: 4 }} />
+              <ChartWrapper
+                layoutType={state.layout.type}
+                chartKey={state.activeChartKey}
+              >
+                <ChartPublishedInner
+                  dataSource={dataSource}
+                  state={state}
+                  chartConfig={getChartConfig(state)}
+                  configKey={configKey}
+                  metadataPanelStore={metadataPanelStore}
+                />
+              </ChartWrapper>
+            </ChartTablePreviewProvider>
+          </>
+        )}
+      </InteractiveFiltersProvider>
+    </MetadataPanelStoreContext.Provider>
   );
 };
 
@@ -190,6 +209,7 @@ type ChartPublishInnerProps = {
   configKey: string | undefined;
   className?: string;
   children?: React.ReactNode;
+  metadataPanelStore: ReturnType<typeof createMetadataPanelStore>;
 };
 
 const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
@@ -200,12 +220,12 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
     configKey,
     className,
     children,
+    metadataPanelStore,
   } = props;
   const { meta } = chartConfig;
   const rootRef = useRef<HTMLDivElement>(null);
   const { isTable, containerRef, containerHeight, computeContainerHeight } =
     useChartTablePreview();
-  const metadataPanelStore = useMemo(() => createMetadataPanelStore(), []);
   const metadataPanelOpen = useStore(metadataPanelStore, (state) => state.open);
   const shouldShrink = useMemo(() => {
     const rootWidth = rootRef.current?.getBoundingClientRect().width;
@@ -268,93 +288,71 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
   }, [dimensions, measures]);
 
   return (
-    <MetadataPanelStoreContext.Provider value={metadataPanelStore}>
-      <Box
-        className={clsx(
-          chartClasses.root,
-          publishedChartClasses.root,
-          className
-        )}
-        ref={rootRef}
-      >
-        {children}
-        <ChartErrorBoundary resetKeys={[chartConfig]}>
-          <div>
-            {metadata?.some(
-              (d) => d.publicationStatus === DataCubePublicationStatus.Draft
-            ) && (
-              <Box sx={{ mb: 4 }}>
-                <HintRed>
-                  <Trans id="dataset.publicationStatus.draft.warning">
-                    Careful, this dataset is only a draft.
-                    <br />
-                    <strong>Don&apos;t use for reporting!</strong>
-                  </Trans>
-                </HintRed>
-              </Box>
-            )}
-            {metadata?.some((d) => d.expires) && (
-              <Box sx={{ mb: 4 }}>
-                <HintRed>
-                  <Trans id="dataset.publicationStatus.expires.warning">
-                    Careful, the data for this chart has expired.
-                    <br />
-                    <strong>Don&apos;t use for reporting!</strong>
-                  </Trans>
-                </HintRed>
-              </Box>
-            )}
-            {!isTrustedDataSource && (
-              <Box sx={{ mb: 4 }}>
-                <HintYellow>
-                  <Trans id="data.source.notTrusted">
-                    This chart is not using a trusted data source.
-                  </Trans>
-                </HintYellow>
-              </Box>
-            )}
-            {isUsingImputation(chartConfig) && (
-              <Box sx={{ mb: 4 }}>
-                <HintBlue>
-                  <Trans id="dataset.hasImputedValues">
-                    Some data in this dataset is missing and has been
-                    interpolated to fill the gaps.
-                  </Trans>
-                </HintBlue>
-              </Box>
-            )}
-          </div>
-          <LoadingStateProvider>
-            <InteractiveFiltersChartProvider chartConfigKey={chartConfig.key}>
-              <Flex
-                sx={{
-                  height: "fit-content",
-                  justifyContent: meta.title[locale]
-                    ? "space-between"
-                    : "flex-end",
-                  gap: 2,
-                }}
-              >
-                {meta.title[locale] ? (
-                  <Title
-                    text={meta.title[locale]}
-                    smaller={state.layout.type === "dashboard"}
-                  />
-                ) : (
-                  // We need to have a span here to keep the space between the
-                  // title and the chart (subgrid layout)
-                  <span style={{ height: 1 }} />
-                )}
-                <Box sx={{ mt: "-0.33rem" }}>
-                  <ChartMoreButton
-                    configKey={configKey}
-                    chartKey={chartConfig.key}
-                  />
-                </Box>
-              </Flex>
-              {meta.description[locale] ? (
-                <Description
-                  text={meta.description[locale]}
+    <Box
+      className={clsx(chartClasses.root, publishedChartClasses.root, className)}
+      ref={rootRef}
+    >
+      {children}
+      <ChartErrorBoundary resetKeys={[chartConfig]}>
+        <div>
+          {metadata?.some(
+            (d) => d.publicationStatus === DataCubePublicationStatus.Draft
+          ) && (
+            <Box sx={{ mb: 4 }}>
+              <HintRed>
+                <Trans id="dataset.publicationStatus.draft.warning">
+                  Careful, this dataset is only a draft.
+                  <br />
+                  <strong>Don&apos;t use for reporting!</strong>
+                </Trans>
+              </HintRed>
+            </Box>
+          )}
+          {metadata?.some((d) => d.expires) && (
+            <Box sx={{ mb: 4 }}>
+              <HintRed>
+                <Trans id="dataset.publicationStatus.expires.warning">
+                  Careful, the data for this chart has expired.
+                  <br />
+                  <strong>Don&apos;t use for reporting!</strong>
+                </Trans>
+              </HintRed>
+            </Box>
+          )}
+          {!isTrustedDataSource && (
+            <Box sx={{ mb: 4 }}>
+              <HintYellow>
+                <Trans id="data.source.notTrusted">
+                  This chart is not using a trusted data source.
+                </Trans>
+              </HintYellow>
+            </Box>
+          )}
+          {isUsingImputation(chartConfig) && (
+            <Box sx={{ mb: 4 }}>
+              <HintBlue>
+                <Trans id="dataset.hasImputedValues">
+                  Some data in this dataset is missing and has been interpolated
+                  to fill the gaps.
+                </Trans>
+              </HintBlue>
+            </Box>
+          )}
+        </div>
+        <LoadingStateProvider>
+          <InteractiveFiltersChartProvider chartConfigKey={chartConfig.key}>
+            <Flex
+              sx={{
+                height: "fit-content",
+                justifyContent: meta.title[locale]
+                  ? "space-between"
+                  : "flex-end",
+                gap: 2,
+              }}
+            >
+              {meta.title[locale] ? (
+                <Title
+                  text={meta.title[locale]}
                   smaller={state.layout.type === "dashboard"}
                 />
               ) : (
@@ -362,55 +360,71 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
                 // title and the chart (subgrid layout)
                 <span style={{ height: 1 }} />
               )}
-              <ChartControls
-                dataSource={dataSource}
-                chartConfig={chartConfig}
-                dashboardFilters={state.dashboardFilters}
-                metadataPanelProps={{
-                  components: allComponents,
-                  container: rootRef.current,
-                  allowMultipleOpen: true,
-                }}
+              <Box sx={{ mt: "-0.33rem" }}>
+                <ChartMoreButton
+                  configKey={configKey}
+                  chartKey={chartConfig.key}
+                />
+              </Box>
+            </Flex>
+            {meta.description[locale] ? (
+              <Description
+                text={meta.description[locale]}
+                smaller={state.layout.type === "dashboard"}
               />
+            ) : (
+              // We need to have a span here to keep the space between the
+              // title and the chart (subgrid layout)
+              <span style={{ height: 1 }} />
+            )}
+            <ChartControls
+              dataSource={dataSource}
+              chartConfig={chartConfig}
+              dashboardFilters={state.dashboardFilters}
+              metadataPanelProps={{
+                components: allComponents,
+                container: rootRef.current,
+                allowMultipleOpen: true,
+              }}
+            />
 
-              <div
-                ref={containerRef}
-                style={{
-                  // TODO before merging, Align with chart-preview
-                  minWidth: 0,
-                  height: containerHeight,
-                  marginTop: 16,
-                  flexGrow: 1,
-                }}
-              >
-                {isTable ? (
-                  <DataSetTable
-                    dataSource={dataSource}
-                    chartConfig={chartConfig}
-                    dashboardFilters={state.dashboardFilters}
-                    sx={{ maxHeight: "100%" }}
-                  />
-                ) : (
-                  <ChartWithFilters
-                    dataSource={dataSource}
-                    componentIris={componentIris}
-                    chartConfig={chartConfig}
-                    dashboardFilters={state.dashboardFilters}
-                  />
-                )}
-              </div>
-              <ChartFootnotes
-                dataSource={dataSource}
-                chartConfig={chartConfig}
-                dashboardFilters={state.dashboardFilters}
-                components={allComponents}
-                showVisualizeLink={state.chartConfigs.length === 1}
-              />
-            </InteractiveFiltersChartProvider>
-          </LoadingStateProvider>
-        </ChartErrorBoundary>
-      </Box>
-    </MetadataPanelStoreContext.Provider>
+            <div
+              ref={containerRef}
+              style={{
+                // TODO before merging, Align with chart-preview
+                minWidth: 0,
+                height: containerHeight,
+                marginTop: 16,
+                flexGrow: 1,
+              }}
+            >
+              {isTable ? (
+                <DataSetTable
+                  dataSource={dataSource}
+                  chartConfig={chartConfig}
+                  dashboardFilters={state.dashboardFilters}
+                  sx={{ maxHeight: "100%" }}
+                />
+              ) : (
+                <ChartWithFilters
+                  dataSource={dataSource}
+                  componentIris={componentIris}
+                  chartConfig={chartConfig}
+                  dashboardFilters={state.dashboardFilters}
+                />
+              )}
+            </div>
+            <ChartFootnotes
+              dataSource={dataSource}
+              chartConfig={chartConfig}
+              dashboardFilters={state.dashboardFilters}
+              components={allComponents}
+              showVisualizeLink={state.chartConfigs.length === 1}
+            />
+          </InteractiveFiltersChartProvider>
+        </LoadingStateProvider>
+      </ChartErrorBoundary>
+    </Box>
   );
 };
 
