@@ -1296,6 +1296,7 @@ export const configuratorStateMigrations: Migration[] = [
           ...config.dashboardFilters,
           dataFilters: {
             componentIris: [],
+            filters: {},
           },
         },
       };

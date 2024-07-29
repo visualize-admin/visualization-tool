@@ -57,6 +57,7 @@ const LineChartStory = () => (
         },
         dataFilters: {
           componentIris: [],
+          filters: {},
         },
       },
     }}

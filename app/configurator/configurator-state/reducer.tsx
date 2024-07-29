@@ -740,7 +740,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
       return draft;
 
-    case "CHART_CONFIG_FILTER_SET_SINGLE":
+    case "FILTER_SET_SINGLE":
       if (isConfiguring(draft)) {
         const { filters, value } = action.value;
         const chartConfig = getChartConfig(draft);
@@ -765,11 +765,20 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
             );
           }
         }
+      } else if (isLayouting(draft)) {
+        const { filters, value } = action.value;
+        const { dimensionIri } = filters[0];
+        if (draft.dashboardFilters) {
+          draft.dashboardFilters.dataFilters.filters[dimensionIri] = {
+            type: "single",
+            value,
+          };
+        }
       }
 
       return draft;
 
-    case "CHART_CONFIG_FILTER_REMOVE_SINGLE":
+    case "FILTER_REMOVE_SINGLE":
       if (isConfiguring(draft)) {
         const { filters } = action.value;
         const chartConfig = getChartConfig(draft);
@@ -787,6 +796,12 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
             );
             chartConfig.interactiveFiltersConfig = newIFConfig;
           }
+        }
+      } else if (isLayouting(draft)) {
+        const { filters } = action.value;
+        const { dimensionIri } = filters[0];
+        if (draft.dashboardFilters) {
+          delete draft.dashboardFilters.dataFilters.filters[dimensionIri];
         }
       }
 

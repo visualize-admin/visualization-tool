@@ -277,15 +277,16 @@ const DashboardDataFilters = ({
 const DataFilter = ({ componentIri }: { componentIri: string }) => {
   const locale = useLocale();
   const classes = useDataFilterStyles();
-  const [state] = useConfiguratorState(hasChartConfigs);
+  const [{ chartConfigs, dataSource, dashboardFilters }] =
+    useConfiguratorState(hasChartConfigs);
   const dashboardInteractiveFilters = useDashboardInteractiveFilters();
-  const chartConfigs = state.chartConfigs.filter((config) =>
+  const relevantChartConfigs = chartConfigs.filter((config) =>
     config.cubes.some((cube) =>
       Object.keys(cube.filters).includes(componentIri)
     )
   );
   const cubeIris = uniq(
-    state.chartConfigs.flatMap((config) =>
+    chartConfigs.flatMap((config) =>
       config.cubes
         .filter((cube) => Object.keys(cube.filters).includes(componentIri))
         .map((cube) => cube.iri)
@@ -302,8 +303,8 @@ const DataFilter = ({ componentIri }: { componentIri: string }) => {
 
   const [{ data }] = useDataCubesComponentsQuery({
     variables: {
-      sourceType: state.dataSource.type,
-      sourceUrl: state.dataSource.url,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
       locale,
       cubeFilters: [
         { iri: cubeIri, componentIris: [componentIri], loadValues: true },
@@ -328,7 +329,9 @@ const DataFilter = ({ componentIri }: { componentIri: string }) => {
       for (const [chartKey, [_getState, _useStore, store]] of Object.entries(
         dashboardInteractiveFilters.stores
       )) {
-        if (chartConfigs.map((config) => config.key).includes(chartKey)) {
+        if (
+          relevantChartConfigs.map((config) => config.key).includes(chartKey)
+        ) {
           store.setState({
             dataFilters: {
               ...store.getState().dataFilters,
@@ -343,6 +346,16 @@ const DataFilter = ({ componentIri }: { componentIri: string }) => {
     }
   );
 
+  // Sync the interactive filter value with the config value
+  useEffect(() => {
+    const value = dashboardFilters?.dataFilters.filters[componentIri].value as
+      | string
+      | undefined;
+    if (value) {
+      handleChange({ target: { value } });
+    }
+  }, [componentIri, handleChange, dashboardFilters?.dataFilters.filters]);
+
   // Store the state of the stores to restore it when the component is unmounted
   const storesRef = useRef<{ [chartKey: string]: InteractiveFiltersState }>();
   useEffect(() => {
@@ -354,7 +367,13 @@ const DataFilter = ({ componentIri }: { componentIri: string }) => {
       )
     );
 
-    if (dimension?.values.length) {
+    const value = dashboardFilters?.dataFilters.filters[componentIri]?.value as
+      | string
+      | undefined;
+
+    if (value) {
+      handleChange({ target: { value } } as ChangeEvent<HTMLSelectElement>);
+    } else if (dimension?.values.length) {
       handleChange({
         target: { value: dimension.values[0].value as string },
       } as ChangeEvent<HTMLSelectElement>);
@@ -366,7 +385,9 @@ const DataFilter = ({ componentIri }: { componentIri: string }) => {
       for (const [chartKey, [_getState, _useStore, store]] of Object.entries(
         dashboardInteractiveFilters.stores
       )) {
-        if (chartConfigs.map((config) => config.key).includes(chartKey)) {
+        if (
+          relevantChartConfigs.map((config) => config.key).includes(chartKey)
+        ) {
           const dataFilters = store.getState().dataFilters;
           const refStore = storesRefCurrent[chartKey];
           if (refStore) {

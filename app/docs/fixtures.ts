@@ -99,6 +99,7 @@ export const states: ConfiguratorState[] = [
       },
       dataFilters: {
         componentIris: [],
+        filters: {},
       },
     },
   },

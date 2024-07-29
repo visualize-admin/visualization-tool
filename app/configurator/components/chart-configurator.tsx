@@ -99,24 +99,23 @@ import useEvent from "@/utils/use-event";
 import { FiltersBadge } from "./badges";
 import { DatasetsControlSection } from "./dataset-control-section";
 
-type DataFilterSelectGenericProps = {
+export const DataFilterSelectGeneric = ({
+  rawDimension,
+  filterDimensionIris,
+  index,
+  disabled,
+  onRemove,
+  sideControls,
+  disableLabel,
+}: {
   rawDimension: Dimension;
   filterDimensionIris: string[];
   index: number;
   disabled?: boolean;
-  onRemove: () => void;
+  onRemove?: () => void;
   sideControls?: React.ReactNode;
-};
-
-const DataFilterSelectGeneric = (props: DataFilterSelectGenericProps) => {
-  const {
-    rawDimension,
-    filterDimensionIris,
-    index,
-    disabled,
-    onRemove,
-    sideControls,
-  } = props;
+  disableLabel?: boolean;
+}) => {
   const locale = useLocale();
   const [state] = useConfiguratorState();
   const chartConfig = getChartConfig(state);
@@ -157,7 +156,7 @@ const DataFilterSelectGeneric = (props: DataFilterSelectGenericProps) => {
 
   const sharedProps = {
     dimension,
-    label: (
+    label: disableLabel ? null : (
       <OpenMetadataPanelWrapper component={dimension}>
         <span>{`${index + 1}. ${dimension.label}`}</span>
       </OpenMetadataPanelWrapper>
@@ -423,7 +422,7 @@ const useFilterReorder = ({
     onAddDimensionFilter?.();
     const filterValue = dimension.values[0];
     dispatch({
-      type: "CHART_CONFIG_FILTER_SET_SINGLE",
+      type: "FILTER_SET_SINGLE",
       value: {
         filters: dimensionToFieldProps(dimension),
         value: `${filterValue.value}`,
@@ -433,7 +432,7 @@ const useFilterReorder = ({
 
   const handleRemoveDimensionFilter = useEvent((dimension: Dimension) => {
     dispatch({
-      type: "CHART_CONFIG_FILTER_REMOVE_SINGLE",
+      type: "FILTER_REMOVE_SINGLE",
       value: {
         filters: dimensionToFieldProps(dimension),
       },

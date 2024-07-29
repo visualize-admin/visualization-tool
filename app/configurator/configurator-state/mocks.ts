@@ -72,6 +72,7 @@ export const configStateMock = {
       },
       dataFilters: {
         componentIris: [],
+        filters: {},
       },
     },
   },
@@ -218,6 +219,7 @@ export const configStateMock = {
       },
       dataFilters: {
         componentIris: [],
+        filters: {},
       },
     },
   },

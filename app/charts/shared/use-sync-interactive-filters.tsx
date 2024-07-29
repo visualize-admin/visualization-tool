@@ -68,8 +68,11 @@ const useSyncInteractiveFilters = (
           [key: string]: FilterValueSingle;
         }>((obj, iri) => {
           const configFilter = filters[iri];
+          const dashboardFilter = dashboardFilters?.dataFilters.filters[iri];
 
-          if (Object.keys(dataFilters).includes(iri)) {
+          if (dashboardFilter?.type === "single") {
+            obj[iri] = dashboardFilter;
+          } else if (Object.keys(dataFilters).includes(iri)) {
             obj[iri] = dataFilters[iri];
           } else if (configFilter?.type === "single") {
             obj[iri] = configFilter;
@@ -81,7 +84,12 @@ const useSyncInteractiveFilters = (
       setDataFilters(newInteractiveDataFilters);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [componentIris, setDataFilters]);
+  }, [
+    componentIris,
+    dashboardComponentIris,
+    dashboardFilters?.dataFilters.filters,
+    setDataFilters,
+  ]);
 
   const changes = useFilterChanges(filters);
   useEffect(() => {

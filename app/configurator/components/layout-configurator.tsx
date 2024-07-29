@@ -23,6 +23,7 @@ import {
   LayoutDashboard,
 } from "@/config-types";
 import { LayoutAnnotator } from "@/configurator/components/annotators";
+import { DataFilterSelectGeneric } from "@/configurator/components/chart-configurator";
 import {
   ControlSection,
   ControlSectionContent,
@@ -120,18 +121,21 @@ const LayoutSharedFiltersConfigurator = () => {
   const { timeRange, dataFilters } = state.dashboardFilters ?? {};
 
   const locale = useLocale();
-  const [{ data }] = useConfigsCubeComponents({
+  const [{ data, fetching }] = useConfigsCubeComponents({
     variables: {
       state,
       locale: locale,
     },
   });
+  const dimensions = useMemo(
+    () => data?.dataCubesComponents.dimensions ?? [],
+    [data?.dataCubesComponents.dimensions]
+  );
 
   const formatLocale = useTimeFormatLocale();
   const timeFormatUnit = useTimeFormatUnit();
 
   const combinedDimension = useMemo(() => {
-    const dimensions = data?.dataCubesComponents.dimensions ?? [];
     const timeUnitDimensions = dimensions.filter(
       (dimension) =>
         isTemporalDimensionWithTimeUnit(dimension) &&
@@ -179,11 +183,7 @@ const LayoutSharedFiltersConfigurator = () => {
     };
 
     return combinedDimension;
-  }, [
-    data?.dataCubesComponents.dimensions,
-    formatLocale,
-    potentialTimeRangeFilterIris,
-  ]);
+  }, [dimensions, formatLocale, potentialTimeRangeFilterIris]);
 
   const handleTimeRangeFilterToggle: SwitchProps["onChange"] = useEventCallback(
     (_, checked) => {
@@ -229,7 +229,6 @@ const LayoutSharedFiltersConfigurator = () => {
           value: {
             componentIris: dataFilters?.componentIris
               ? [...dataFilters.componentIris, componentIri].sort((a, b) => {
-                  const dimensions = data?.dataCubesComponents.dimensions ?? [];
                   const aIndex =
                     dimensions.find((d) => d.iri === a)?.order ??
                     dimensions.findIndex((d) => d.iri === a) ??
@@ -241,6 +240,17 @@ const LayoutSharedFiltersConfigurator = () => {
                   return aIndex - bIndex;
                 })
               : [componentIri],
+            filters: dataFilters?.filters ?? {},
+          },
+        });
+        const value = dimensions.find((d) => d.iri === componentIri)?.values[0]
+          .value as string;
+        dispatch({
+          type: "FILTER_SET_SINGLE",
+          value: {
+            // FIXME: shared filters should be scoped per cube
+            filters: [{ cubeIri: "", dimensionIri: componentIri }],
+            value,
           },
         });
       } else {
@@ -248,6 +258,13 @@ const LayoutSharedFiltersConfigurator = () => {
           type: "DASHBOARD_DATA_FILTER_REMOVE",
           value: {
             dimensionIri: componentIri,
+          },
+        });
+        dispatch({
+          type: "FILTER_REMOVE_SINGLE",
+          value: {
+            // FIXME: shared filters should be scoped per cube
+            filters: [{ cubeIri: "", dimensionIri: componentIri }],
           },
         });
       }
@@ -308,34 +325,50 @@ const LayoutSharedFiltersConfigurator = () => {
               ) : null}
               {dataFilters ? (
                 <>
-                  {potentialDataFilterIris.map((componentIri) => {
-                    const dimension = data?.dataCubesComponents.dimensions.find(
+                  {potentialDataFilterIris.map((componentIri, i) => {
+                    const dimension = dimensions.find(
                       (dimension) => dimension.iri === componentIri
                     );
                     if (!dimension) {
                       return null;
                     }
+                    const checked = dataFilters.componentIris.includes(
+                      dimension.iri
+                    );
                     return (
                       <Box
                         key={dimension.iri}
-                        sx={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                          width: "100%",
-                        }}
+                        sx={{ display: "flex", flexDirection: "column" }}
                       >
-                        <Typography variant="body2">
-                          {dimension.label}
-                        </Typography>
-                        <Switch
-                          checked={dataFilters.componentIris.includes(
-                            dimension.iri
-                          )}
-                          onChange={(_, checked) => {
-                            handleDataFiltersToggle(checked, dimension.iri);
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
                           }}
-                        />
+                        >
+                          <Typography variant="body2">
+                            {dimension.label}
+                          </Typography>
+                          <Switch
+                            checked={checked}
+                            onChange={(_, checked) => {
+                              handleDataFiltersToggle(checked, dimension.iri);
+                            }}
+                          />
+                        </Box>
+                        {checked ? (
+                          <Box sx={{ mb: 1 }}>
+                            <DataFilterSelectGeneric
+                              key={dimension.iri}
+                              rawDimension={dimension}
+                              filterDimensionIris={[]}
+                              index={i}
+                              disabled={fetching}
+                              disableLabel
+                            />
+                          </Box>
+                        ) : null}
                       </Box>
                     );
                   })}

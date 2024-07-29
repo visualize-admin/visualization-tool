@@ -139,7 +139,7 @@ export type ConfiguratorStateAction =
       };
     }
   | {
-      type: "CHART_CONFIG_FILTER_SET_SINGLE";
+      type: "FILTER_SET_SINGLE";
       value: {
         filters: {
           cubeIri: string;
@@ -149,7 +149,7 @@ export type ConfiguratorStateAction =
       };
     }
   | {
-      type: "CHART_CONFIG_FILTER_REMOVE_SINGLE";
+      type: "FILTER_REMOVE_SINGLE";
       value: {
         filters: {
           cubeIri: string;
@@ -284,9 +284,7 @@ export type ConfiguratorStateAction =
     }
   | {
       type: "DASHBOARD_DATA_FILTERS_SET";
-      value: {
-        componentIris: string[];
-      };
+      value: DashboardFiltersConfig["dataFilters"];
     }
   | {
       type: "DASHBOARD_DATA_FILTER_REMOVE";
