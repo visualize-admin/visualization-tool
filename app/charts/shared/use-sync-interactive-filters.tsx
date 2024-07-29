@@ -57,39 +57,58 @@ const useSyncInteractiveFilters = (
   // Data Filters
   const componentIris = interactiveFiltersConfig?.dataFilters.componentIris;
   const dashboardComponentIris = dashboardFilters?.dataFilters.componentIris;
-  useEffect(() => {
+  const newPotentialInteractiveDataFilters = useMemo(() => {
     if (componentIris) {
       // If dimension is already in use as interactive filter, use it,
       // otherwise, default to editor config filter dimension value (only
       // if dashboard filters are not set).
-      const newInteractiveDataFilters = componentIris
-        .concat(dashboardComponentIris ?? [])
-        .reduce<{
-          [key: string]: FilterValueSingle;
-        }>((obj, iri) => {
-          const configFilter = filters[iri];
-          const dashboardFilter = dashboardFilters?.dataFilters.filters[iri];
+      return componentIris.concat(dashboardComponentIris ?? []);
+    }
+  }, [componentIris, dashboardComponentIris]);
 
-          if (dashboardFilter?.type === "single") {
-            obj[iri] = dashboardFilter;
-          } else if (Object.keys(dataFilters).includes(iri)) {
-            obj[iri] = dataFilters[iri];
-          } else if (configFilter?.type === "single") {
-            obj[iri] = configFilter;
-          }
-
-          return obj;
-        }, {});
+  useEffect(() => {
+    if (newPotentialInteractiveDataFilters) {
+      const newInteractiveDataFilters =
+        newPotentialInteractiveDataFilters.reduce(
+          (obj, iri) => {
+            const dashboardFilter = dashboardFilters?.dataFilters.filters[iri];
+            if (dashboardFilter?.type === "single") {
+              obj[iri] = dashboardFilter;
+            }
+            return obj;
+          },
+          {} as { [key: string]: FilterValueSingle }
+        );
 
       setDataFilters(newInteractiveDataFilters);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    componentIris,
+    newPotentialInteractiveDataFilters,
     dashboardComponentIris,
     dashboardFilters?.dataFilters.filters,
-    setDataFilters,
   ]);
+
+  useEffect(() => {
+    if (newPotentialInteractiveDataFilters) {
+      const newInteractiveDataFilters =
+        newPotentialInteractiveDataFilters.reduce(
+          (obj, iri) => {
+            const configFilter = filters[iri];
+            if (Object.keys(dataFilters).includes(iri)) {
+              obj[iri] = dataFilters[iri];
+            } else if (configFilter?.type === "single") {
+              obj[iri] = configFilter;
+            }
+            return obj;
+          },
+          {} as { [key: string]: FilterValueSingle }
+        );
+
+      setDataFilters(newInteractiveDataFilters);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [newPotentialInteractiveDataFilters, setDataFilters]);
 
   const changes = useFilterChanges(filters);
   useEffect(() => {
