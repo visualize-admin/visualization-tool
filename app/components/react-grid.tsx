@@ -4,7 +4,7 @@ import clsx from "clsx";
 import map from "lodash/map";
 import mapValues from "lodash/mapValues";
 import range from "lodash/range";
-import { ComponentProps, useEffect, useMemo, useRef, useState } from "react";
+import { ComponentProps, useEffect, useRef, useState } from "react";
 import { Layout, Responsive, WidthProvider } from "react-grid-layout";
 import { match } from "ts-pattern";
 
@@ -213,85 +213,82 @@ export const ChartGridLayout = ({
   resize?: boolean;
   initialize: boolean;
 } & ComponentProps<typeof ResponsiveReactGridLayout>) => {
+  const classes = useStyles();
   const [mounted, setMounted] = useState(false);
   const mountedForSomeTime = useTimeout(500, mounted);
-  const allLayoutsProcessedRef = useRef(false);
   const chartContainerClasses = useChartContainerStyles();
-  const enhancedLayouts = useMemo(() => {
+  const [enhancedLayouts, setEnhancedLayouts] = useState(() => {
     if (!layouts) {
       return {};
     }
 
-    let iLayout = -1;
-    const nLayouts = Object.keys(layouts).length;
     return mapValues(layouts, (chartLayouts) => {
-      iLayout++;
-      const nChartLayouts = chartLayouts.length;
-      return chartLayouts.map((chartLayout, iChartLayout) => {
-        const defaultProps = {
+      return chartLayouts.map((chartLayout) => {
+        return {
           ...chartLayout,
           maxW: MAX_W,
           w: Math.min(MAX_W, chartLayout.w),
           resizeHandles: resize ? availableHandles : [],
-        };
-        let minH = MIN_H;
-        if (mountedForSomeTime) {
-          const chartKey = chartLayout.i;
-          const wrapper: HTMLDivElement | null = document.querySelector(
-            `#${getChartWrapperId(chartKey)}`
-          );
-
-          if (wrapper) {
-            const chartContainer: HTMLDivElement | null = wrapper.querySelector(
-              `.${chartContainerClasses.chartContainer} > .${CHART_CLASS_NAME}`
-            );
-
-            if (chartContainer) {
-              const minWrapperHeight =
-                wrapper.scrollHeight -
-                chartContainer.scrollHeight +
-                CHART_GRID_MIN_HEIGHT;
-              minH = Math.max(MIN_H, Math.ceil(minWrapperHeight / ROW_HEIGHT));
-            }
-          }
-
-          if (!allLayoutsProcessedRef.current) {
-            const allLayoutsProcessed =
-              iLayout === nLayouts - 1 && iChartLayout === nChartLayouts - 1;
-
-            if (allLayoutsProcessed) {
-              allLayoutsProcessedRef.current = true;
-            }
-
-            return {
-              ...defaultProps,
-              minH,
-              // Initialize the chart with the minimum height
-              h: initialize ? minH : Math.max(minH, chartLayout.h),
-            };
-          }
-        }
-
-        return {
-          ...defaultProps,
-          minH,
-          h: Math.max(minH, chartLayout.h),
+          minH: MIN_H,
+          h: Math.max(MIN_H, chartLayout.h),
         };
       });
     });
-  }, [
-    chartContainerClasses.chartContainer,
-    initialize,
-    layouts,
-    mountedForSomeTime,
-    resize,
-  ]);
+  });
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  const classes = useStyles();
+  const hasBeenConstrained = useRef(false);
+  useEffect(() => {
+    if (!mountedForSomeTime || hasBeenConstrained.current) {
+      return;
+    }
+
+    const newLayouts = mapValues(enhancedLayouts, (chartLayouts) => {
+      return chartLayouts.map((chartLayout) => {
+        let minH = MIN_H;
+
+        const chartKey = chartLayout.i;
+        const wrapper: HTMLDivElement | null = document.querySelector(
+          `#${getChartWrapperId(chartKey)}`
+        );
+
+        if (wrapper) {
+          const chartContainer: HTMLDivElement | null = wrapper.querySelector(
+            `.${chartContainerClasses.chartContainer} > .${CHART_CLASS_NAME}`
+          );
+
+          if (chartContainer) {
+            const minWrapperHeight =
+              wrapper.scrollHeight -
+              chartContainer.scrollHeight +
+              CHART_GRID_MIN_HEIGHT;
+            minH = Math.max(MIN_H, Math.ceil(minWrapperHeight / ROW_HEIGHT));
+          }
+        }
+
+        return {
+          ...chartLayout,
+          maxW: MAX_W,
+          w: Math.min(MAX_W, chartLayout.w),
+          resizeHandles: resize ? availableHandles : [],
+          minH,
+          h: minH,
+        };
+      });
+    });
+    setEnhancedLayouts(newLayouts);
+    hasBeenConstrained.current = true;
+  }, [
+    chartContainerClasses.chartContainer,
+    initialize,
+    enhancedLayouts,
+    mountedForSomeTime,
+    resize,
+  ]);
+
   return (
     <ResponsiveReactGridLayout
       {...rest}
