@@ -8,10 +8,7 @@ import { ComponentProps, useEffect, useRef, useState } from "react";
 import { Layout, Responsive, WidthProvider } from "react-grid-layout";
 import { match } from "ts-pattern";
 
-import {
-  CHART_CLASS_NAME,
-  useStyles as useChartContainerStyles,
-} from "@/charts/shared/containers";
+import { useStyles as useChartContainerStyles } from "@/charts/shared/containers";
 import { getChartWrapperId } from "@/components/chart-panel";
 import { useTimeout } from "@/hooks/use-timeout";
 
@@ -257,13 +254,13 @@ export const ChartGridLayout = ({
 
         if (wrapper) {
           const chartContainer: HTMLDivElement | null = wrapper.querySelector(
-            `.${chartContainerClasses.chartContainer} > .${CHART_CLASS_NAME}`
+            `.${chartContainerClasses.chartContainer}`
           );
 
           if (chartContainer) {
             const minWrapperHeight =
               wrapper.scrollHeight -
-              chartContainer.scrollHeight +
+              chartContainer.clientHeight +
               CHART_GRID_MIN_HEIGHT;
             minH = Math.max(MIN_H, Math.ceil(minWrapperHeight / ROW_HEIGHT));
           }

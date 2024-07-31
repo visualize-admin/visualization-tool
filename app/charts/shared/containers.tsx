@@ -39,8 +39,6 @@ export const ChartContainer = ({ children }: { children: ReactNode }) => {
   );
 };
 
-export const CHART_CLASS_NAME = "chart";
-
 export const ChartSvg = ({ children }: { children: ReactNode }) => {
   const ref = useRef<SVGSVGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
@@ -66,7 +64,6 @@ export const ChartSvg = ({ children }: { children: ReactNode }) => {
   return (
     <svg
       ref={ref}
-      className={CHART_CLASS_NAME}
       width={width}
       style={{ position: "absolute", left: 0, top: 0 }}
     >
