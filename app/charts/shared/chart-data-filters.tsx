@@ -17,6 +17,7 @@ import { Loading } from "@/components/hint";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import SelectTree from "@/components/select-tree";
 import {
+  areDataFiltersActive,
   ChartConfig,
   DashboardFiltersConfig,
   DataSource,
@@ -567,12 +568,11 @@ const useEnsurePossibleInteractiveFilters = (props: {
     }, {});
   }, [preparedFilters]);
 
+  const dataFiltersActive = areDataFiltersActive(dashboardFilters);
+
   useEffect(() => {
     const run = async () => {
-      if (
-        !filtersByCubeIri ||
-        dashboardFilters?.dataFilters.componentIris.length
-      ) {
+      if (!filtersByCubeIri || dataFiltersActive) {
         return;
       }
 
@@ -670,7 +670,7 @@ const useEnsurePossibleInteractiveFilters = (props: {
     loadingState,
     filtersByCubeIri,
     getInteractiveFiltersState,
-    dashboardFilters?.dataFilters.componentIris.length,
+    dataFiltersActive,
   ]);
 
   return { error };

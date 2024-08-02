@@ -1168,6 +1168,12 @@ const DashboardFiltersConfig = t.type({
 });
 export type DashboardFiltersConfig = t.TypeOf<typeof DashboardFiltersConfig>;
 
+export const areDataFiltersActive = (
+  dashboardFilters: DashboardFiltersConfig | undefined
+) => {
+  return dashboardFilters?.dataFilters.componentIris.length;
+};
+
 const Config = t.intersection([
   t.type(
     {
