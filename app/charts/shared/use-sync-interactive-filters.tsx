@@ -10,6 +10,7 @@ import {
 import { parseDate } from "@/configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import useFilterChanges from "@/configurator/use-filter-changes";
+import { truthy } from "@/domain/types";
 import { useChartInteractiveFilters } from "@/stores/interactive-filters";
 
 /**
@@ -68,17 +69,16 @@ const useSyncInteractiveFilters = (
 
   useEffect(() => {
     if (newPotentialInteractiveDataFilters) {
-      const newInteractiveDataFilters =
-        newPotentialInteractiveDataFilters.reduce(
-          (obj, iri) => {
+      const newInteractiveDataFilters = Object.fromEntries(
+        Object.entries(newPotentialInteractiveDataFilters)
+          .map(([iri]) => {
             const dashboardFilter = dashboardFilters?.dataFilters.filters[iri];
-            if (dashboardFilter?.type === "single") {
-              obj[iri] = dashboardFilter;
-            }
-            return obj;
-          },
-          {} as { [key: string]: FilterValueSingle }
-        );
+            return dashboardFilter?.type === "single"
+              ? ([iri, dashboardFilter] as const)
+              : null;
+          })
+          .filter(truthy)
+      );
 
       setDataFilters(newInteractiveDataFilters);
     }
