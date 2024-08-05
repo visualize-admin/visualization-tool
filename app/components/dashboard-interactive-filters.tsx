@@ -31,7 +31,10 @@ import { isTemporalDimension } from "@/domain/data";
 import { useDataCubesComponentsQuery } from "@/graphql/hooks";
 import { TimeUnit } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
-import { useDashboardInteractiveFilters } from "@/stores/interactive-filters";
+import {
+  setDataFilter,
+  useDashboardInteractiveFilters,
+} from "@/stores/interactive-filters";
 import { useTransitionStore } from "@/stores/transition";
 import { assert } from "@/utils/assert";
 import useEvent from "@/utils/use-event";
@@ -366,15 +369,7 @@ const DataFilter = ({ componentIri }: { componentIri: string }) => {
         if (
           relevantChartConfigs.map((config) => config.key).includes(chartKey)
         ) {
-          store.setState({
-            dataFilters: {
-              ...store.getState().dataFilters,
-              [componentIri]: {
-                type: "single",
-                value: newValue,
-              },
-            },
-          });
+          setDataFilter(store, componentIri, newValue);
         }
       }
     }

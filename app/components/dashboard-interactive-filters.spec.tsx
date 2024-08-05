@@ -1,6 +1,9 @@
 import { saveDataFiltersSnapshot } from "@/components/dashboard-interactive-filters";
 import { ChartConfig } from "@/configurator";
-import { InteractiveFiltersContextValue } from "@/stores/interactive-filters";
+import {
+  InteractiveFiltersContextValue,
+  setDataFilter,
+} from "@/stores/interactive-filters";
 
 class MockState<T = unknown> {
   private _state: any;
@@ -54,19 +57,6 @@ test("Save snapshot, modify the store manually, then restore and check result", 
     stores,
     "component1"
   );
-
-  const setDataFilter = (
-    store: InteractiveFiltersContextValue["2"],
-    key: string,
-    value: string
-  ) => {
-    store.setState({
-      dataFilters: {
-        ...store.getState().dataFilters,
-        [key]: { type: "single", value },
-      },
-    });
-  };
 
   // Manually modify the store
   setDataFilter(stores.chart1[2], "component1", "modified filter");

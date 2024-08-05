@@ -134,10 +134,11 @@ const interactiveFiltersStoreCreator: StateCreator<State> = (set) => {
   };
 };
 
+export type InteractiveFiltersStore = StoreApi<State>;
 export type InteractiveFiltersContextValue = [
   UseBoundStore<StoreApi<State>>["getState"],
   UseBoundStoreWithSelector<StoreApi<State>>,
-  StoreApi<State>,
+  InteractiveFiltersStore,
 ];
 
 const InteractiveFiltersContext = createContext<
@@ -314,4 +315,17 @@ export const useDashboardInteractiveFilters = () => {
   );
 
   return ctx;
+};
+
+export const setDataFilter = (
+  store: InteractiveFiltersStore,
+  key: string,
+  value: string
+) => {
+  store.setState({
+    dataFilters: {
+      ...store.getState().dataFilters,
+      [key]: { type: "single", value },
+    },
+  });
 };
