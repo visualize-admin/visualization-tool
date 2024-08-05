@@ -9,7 +9,7 @@ import {
 import { Theme } from "@mui/material/styles";
 import { makeStyles } from "@mui/styles";
 import uniq from "lodash/uniq";
-import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useMemo, useState } from "react";
 
 import {
   DataFilterGenericDimension,
@@ -17,6 +17,7 @@ import {
   DataFilterTemporalDimension,
 } from "@/charts/shared/chart-data-filters";
 import {
+  ChartConfig,
   DashboardTimeRangeFilter,
   hasChartConfigs,
   InteractiveFiltersTimeRange,
@@ -259,6 +260,44 @@ const useDataFilterStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
+type StoreSnapshot = { [chartKey: string]: InteractiveFiltersState };
+type Stores = ReturnType<typeof useDashboardInteractiveFilters>["stores"];
+
+const saveSnapshot = (stores: Stores): StoreSnapshot => {
+  return Object.fromEntries(
+    Object.entries(stores).map(([key, [_getState, _useStore, store]]) => {
+      const state = store.getState();
+      return [key, state];
+    })
+  );
+};
+
+const restoreSnapshot = (
+  chartConfigs: ChartConfig[],
+  stores: Stores,
+  storeSnapshot: StoreSnapshot,
+  componentIri: string
+) => {
+  for (const [chartKey, [_getState, _useStore, store]] of Object.entries(
+    stores
+  )) {
+    if (chartConfigs.map((config) => config.key).includes(chartKey)) {
+      const dataFilters = store.getState().dataFilters;
+      const refStore = storeSnapshot[chartKey];
+      if (refStore) {
+        const refDataFilters = refStore.dataFilters;
+        if (refDataFilters[componentIri]) {
+          dataFilters[componentIri] = refDataFilters[componentIri];
+          store.setState({ dataFilters });
+        } else {
+          delete dataFilters[componentIri];
+          store.setState({ dataFilters });
+        }
+      }
+    }
+  }
+};
+
 const DashboardDataFilters = ({
   componentIris,
 }: {
@@ -356,16 +395,9 @@ const DataFilter = ({ componentIri }: { componentIri: string }) => {
     }
   }, [componentIri, handleChange, dashboardFilters?.dataFilters.filters]);
 
-  // Store the state of the stores to restore it when the component is unmounted
-  const storesRef = useRef<{ [chartKey: string]: InteractiveFiltersState }>();
   useEffect(() => {
-    storesRef.current = Object.fromEntries(
-      Object.entries(dashboardInteractiveFilters.stores).map(
-        ([key, [_getState, _useStore, store]]) => {
-          return [key, store.getState()];
-        }
-      )
-    );
+    const stores = dashboardInteractiveFilters.stores;
+    const snapshot = saveSnapshot(dashboardInteractiveFilters.stores);
 
     const value = dashboardFilters?.dataFilters.filters[componentIri]?.value as
       | string
@@ -379,28 +411,9 @@ const DataFilter = ({ componentIri }: { componentIri: string }) => {
       } as ChangeEvent<HTMLSelectElement>);
     }
 
-    const storesRefCurrent = storesRef.current;
-
     return () => {
-      for (const [chartKey, [_getState, _useStore, store]] of Object.entries(
-        dashboardInteractiveFilters.stores
-      )) {
-        if (
-          relevantChartConfigs.map((config) => config.key).includes(chartKey)
-        ) {
-          const dataFilters = store.getState().dataFilters;
-          const refStore = storesRefCurrent[chartKey];
-          if (refStore) {
-            const refDataFilters = refStore.dataFilters;
-            if (refDataFilters[componentIri]) {
-              dataFilters[componentIri] = refDataFilters[componentIri];
-              store.setState({ dataFilters });
-            } else {
-              delete dataFilters[componentIri];
-              store.setState({ dataFilters });
-            }
-          }
-        }
+      if (snapshot) {
+        restoreSnapshot(relevantChartConfigs, stores, snapshot, componentIri);
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
