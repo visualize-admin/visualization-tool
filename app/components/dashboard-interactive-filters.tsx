@@ -31,10 +31,7 @@ import { isTemporalDimension } from "@/domain/data";
 import { useDataCubesComponentsQuery } from "@/graphql/hooks";
 import { TimeUnit } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
-import {
-  InteractiveFiltersState,
-  useDashboardInteractiveFilters,
-} from "@/stores/interactive-filters";
+import { useDashboardInteractiveFilters } from "@/stores/interactive-filters";
 import { useTransitionStore } from "@/stores/transition";
 import { assert } from "@/utils/assert";
 import useEvent from "@/utils/use-event";
@@ -260,34 +257,30 @@ const useDataFilterStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-type StoreSnapshot = { [chartKey: string]: InteractiveFiltersState };
 type Stores = ReturnType<typeof useDashboardInteractiveFilters>["stores"];
 
-const saveSnapshot = (stores: Stores): StoreSnapshot => {
-  return Object.fromEntries(
-    Object.entries(stores).map(([key, [_getState, _useStore, store]]) => {
-      const state = store.getState();
-      return [key, state];
-    })
-  );
-};
-
-const restoreSnapshot = (
+const saveDataFiltersSnapshot = (
   chartConfigs: ChartConfig[],
   stores: Stores,
-  storeSnapshot: StoreSnapshot,
   componentIri: string
 ) => {
-  for (const [chartKey, [_getState, _useStore, store]] of Object.entries(
-    stores
-  )) {
-    if (chartConfigs.map((config) => config.key).includes(chartKey)) {
-      const dataFilters = store.getState().dataFilters;
-      const refStore = storeSnapshot[chartKey];
-      if (refStore) {
-        const refDataFilters = refStore.dataFilters;
-        if (refDataFilters[componentIri]) {
-          dataFilters[componentIri] = refDataFilters[componentIri];
+  const snapshot = Object.fromEntries(
+    Object.entries(stores).map(([key, [_getState, _useStore, store]]) => {
+      const state = store.getState();
+      const filterValue = state.dataFilters[componentIri];
+      return [key, filterValue];
+    })
+  );
+
+  return () => {
+    for (const [chartKey, [_getState, _useStore, store]] of Object.entries(
+      stores
+    )) {
+      if (chartConfigs.map((config) => config.key).includes(chartKey)) {
+        const dataFilters = store.getState().dataFilters;
+        const filterValue = snapshot[chartKey];
+        if (filterValue) {
+          dataFilters[componentIri] = filterValue;
           store.setState({ dataFilters });
         } else {
           delete dataFilters[componentIri];
@@ -295,7 +288,7 @@ const restoreSnapshot = (
         }
       }
     }
-  }
+  };
 };
 
 const DashboardDataFilters = ({
@@ -396,8 +389,11 @@ const DataFilter = ({ componentIri }: { componentIri: string }) => {
   }, [componentIri, handleChange, dashboardFilters?.dataFilters.filters]);
 
   useEffect(() => {
-    const stores = dashboardInteractiveFilters.stores;
-    const snapshot = saveSnapshot(dashboardInteractiveFilters.stores);
+    const restoreSnapshot = saveDataFiltersSnapshot(
+      relevantChartConfigs,
+      dashboardInteractiveFilters.stores,
+      componentIri
+    );
 
     const value = dashboardFilters?.dataFilters.filters[componentIri]?.value as
       | string
@@ -412,9 +408,7 @@ const DataFilter = ({ componentIri }: { componentIri: string }) => {
     }
 
     return () => {
-      if (snapshot) {
-        restoreSnapshot(relevantChartConfigs, stores, snapshot, componentIri);
-      }
+      restoreSnapshot();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dimension?.values]);
