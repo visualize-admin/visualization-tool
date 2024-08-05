@@ -11,9 +11,9 @@ import {
 import { truthy } from "@/domain/types";
 import { getOriginalIris, isJoinById } from "@/graphql/join";
 import {
+  createBoundUseStoreWithSelector,
   ExtractState,
   UseBoundStoreWithSelector,
-  createBoundUseStoreWithSelector,
 } from "@/stores/utils";
 import { assert } from "@/utils/assert";
 
@@ -134,7 +134,7 @@ const interactiveFiltersStoreCreator: StateCreator<State> = (set) => {
   };
 };
 
-type InteractiveFiltersContextValue = [
+export type InteractiveFiltersContextValue = [
   UseBoundStore<StoreApi<State>>["getState"],
   UseBoundStoreWithSelector<StoreApi<State>>,
   StoreApi<State>,
