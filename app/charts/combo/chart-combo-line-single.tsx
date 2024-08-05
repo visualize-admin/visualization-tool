@@ -12,7 +12,8 @@ import { Ruler } from "@/charts/shared/interaction/ruler";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { InteractionHorizontal } from "@/charts/shared/overlay-horizontal";
 import { ComboLineSingleConfig } from "@/config-types";
-import { useDashboardInteractiveFilters } from "@/stores/interactive-filters";
+import { hasChartConfigs } from "@/configurator";
+import { useConfiguratorState } from "@/src";
 
 import { ChartProps, VisualizationProps } from "../shared/ChartProps";
 
@@ -26,7 +27,7 @@ const ChartComboLineSingle = memo(
   (props: ChartProps<ComboLineSingleConfig>) => {
     const { chartConfig } = props;
     const { interactiveFiltersConfig } = chartConfig;
-    const dashboardFilters = useDashboardInteractiveFilters();
+    const [{ dashboardFilters }] = useConfiguratorState(hasChartConfigs);
     return (
       <ComboLineSingleChart {...props}>
         <ChartContainer>
@@ -36,7 +37,7 @@ const ChartComboLineSingle = memo(
             <InteractionHorizontal />
             {shouldShowBrush(
               interactiveFiltersConfig,
-              dashboardFilters.timeRange
+              dashboardFilters?.timeRange
             ) && <BrushTime />}
           </ChartSvg>
           <HoverDotMultiple />

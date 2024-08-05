@@ -93,6 +93,7 @@ describe("useQueryFilters", () => {
       line1Fixture.data.chartConfig.chartType as ChartType,
       line1Fixture.data.chartConfig.filters as Filters,
       commonInteractiveFiltersConfig,
+      undefined,
       commonInteractiveFiltersState.dataFilters
     );
     expect(queryFilters[col("3")]).toEqual({
@@ -110,6 +111,7 @@ describe("useQueryFilters", () => {
           active: true,
         },
       }),
+      undefined,
       commonInteractiveFiltersState.dataFilters
     );
 
@@ -128,6 +130,7 @@ describe("useQueryFilters", () => {
           active: true,
         },
       }),
+      undefined,
       merge({}, commonInteractiveFiltersState, {
         dataFilters: {
           [col("3")]: {
@@ -171,7 +174,7 @@ describe("useQueryFilters", () => {
     >(
       (props: Parameters<typeof useQueryFilters>[0]) => useQueryFilters(props),
       {
-        initialProps: { chartConfig },
+        initialProps: { chartConfig, dashboardFilters: undefined },
       }
     );
 

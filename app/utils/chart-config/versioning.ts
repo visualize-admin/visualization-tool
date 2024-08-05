@@ -931,7 +931,7 @@ export const migrateChartConfig = makeMigrate<ChartConfig>(
   }
 );
 
-export const CONFIGURATOR_STATE_VERSION = "3.5.0";
+export const CONFIGURATOR_STATE_VERSION = "3.6.0";
 
 export const configuratorStateMigrations: Migration[] = [
   {
@@ -1279,6 +1279,35 @@ export const configuratorStateMigrations: Migration[] = [
               },
             },
           ],
+        },
+      };
+      return newConfig;
+    },
+  },
+  {
+    description: "ALL (modify dashboardFilters)",
+    from: "3.5.0",
+    to: "3.6.0",
+    up: (config) => {
+      const newConfig = {
+        ...config,
+        version: "3.6.0",
+        dashboardFilters: {
+          ...config.dashboardFilters,
+          dataFilters: {
+            componentIris: [],
+            filters: {},
+          },
+        },
+      };
+      return newConfig;
+    },
+    down: (config) => {
+      const newConfig = {
+        ...config,
+        version: "3.5.0",
+        dashboardFilters: {
+          timeRange: config.dashboardFilters.timeRange,
         },
       };
       return newConfig;

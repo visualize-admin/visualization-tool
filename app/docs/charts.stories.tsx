@@ -77,6 +77,10 @@ const ColumnsStory = {
               to: "",
             },
           },
+          dataFilters: {
+            componentIris: [],
+            filters: {},
+          },
         },
       }}
     >
@@ -135,6 +139,10 @@ const ScatterplotStory = {
               from: "",
               to: "",
             },
+          },
+          dataFilters: {
+            componentIris: [],
+            filters: {},
           },
         },
       }}

@@ -70,6 +70,10 @@ export const configStateMock = {
           to: "",
         },
       },
+      dataFilters: {
+        componentIris: [],
+        filters: {},
+      },
     },
   },
   groupedColumnChart: {
@@ -212,6 +216,10 @@ export const configStateMock = {
           from: "",
           to: "",
         },
+      },
+      dataFilters: {
+        componentIris: [],
+        filters: {},
       },
     },
   },

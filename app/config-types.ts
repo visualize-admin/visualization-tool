@@ -1150,15 +1150,29 @@ const DashboardTimeRangeFilter = t.type({
     to: t.string,
   }),
 });
-
 export type DashboardTimeRangeFilter = t.TypeOf<
   typeof DashboardTimeRangeFilter
 >;
 
+const DashboardDataFiltersConfig = t.type({
+  componentIris: t.array(t.string),
+  filters: SingleFilters,
+});
+export type DashboardDataFiltersConfig = t.TypeOf<
+  typeof DashboardDataFiltersConfig
+>;
+
 const DashboardFiltersConfig = t.type({
   timeRange: DashboardTimeRangeFilter,
+  dataFilters: DashboardDataFiltersConfig,
 });
 export type DashboardFiltersConfig = t.TypeOf<typeof DashboardFiltersConfig>;
+
+export const areDataFiltersActive = (
+  dashboardFilters: DashboardFiltersConfig | undefined
+) => {
+  return dashboardFilters?.dataFilters.componentIris.length;
+};
 
 const Config = t.intersection([
   t.type(

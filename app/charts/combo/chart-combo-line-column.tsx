@@ -12,7 +12,8 @@ import { HoverDotMultiple } from "@/charts/shared/interaction/hover-dots-multipl
 import { Ruler } from "@/charts/shared/interaction/ruler";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { ComboLineColumnConfig } from "@/config-types";
-import { useDashboardInteractiveFilters } from "@/stores/interactive-filters";
+import { hasChartConfigs } from "@/configurator";
+import { useConfiguratorState } from "@/src";
 
 import { ChartProps, VisualizationProps } from "../shared/ChartProps";
 
@@ -26,7 +27,7 @@ const ChartComboLineColumn = memo(
   (props: ChartProps<ComboLineColumnConfig>) => {
     const { chartConfig } = props;
     const { interactiveFiltersConfig } = chartConfig;
-    const dashboardFilters = useDashboardInteractiveFilters();
+    const [{ dashboardFilters }] = useConfiguratorState(hasChartConfigs);
     return (
       <ComboLineColumnChart {...props}>
         <ChartContainer>
@@ -38,7 +39,7 @@ const ChartComboLineColumn = memo(
             <InteractionColumns />
             {shouldShowBrush(
               interactiveFiltersConfig,
-              dashboardFilters.timeRange
+              dashboardFilters?.timeRange
             ) && <BrushTime />}
           </ChartSvg>
           <HoverDotMultiple />

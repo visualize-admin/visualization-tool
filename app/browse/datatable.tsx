@@ -20,7 +20,11 @@ import {
 } from "@/charts/shared/chart-helpers";
 import { Loading } from "@/components/hint";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
-import { ChartConfig, DataSource } from "@/config-types";
+import {
+  ChartConfig,
+  DashboardFiltersConfig,
+  DataSource,
+} from "@/config-types";
 import {
   Component,
   Dimension,
@@ -229,10 +233,12 @@ export const DataSetPreviewTable = ({
 export const DataSetTable = ({
   dataSource,
   chartConfig,
+  dashboardFilters,
   sx,
 }: {
   dataSource: DataSource;
   chartConfig: ChartConfig;
+  dashboardFilters: DashboardFiltersConfig | undefined;
   sx?: SxProps<Theme>;
 }) => {
   const locale = useLocale();
@@ -269,7 +275,11 @@ export const DataSetTable = ({
       ...componentsData.dataCubesComponents.measures,
     ]);
   }, [componentsData?.dataCubesComponents]);
-  const queryFilters = useQueryFilters({ chartConfig, componentIris });
+  const queryFilters = useQueryFilters({
+    chartConfig,
+    dashboardFilters,
+    componentIris,
+  });
   const [{ data: observationsData }] = useDataCubesObservationsQuery({
     variables: {
       ...commonQueryVariables,

@@ -740,7 +740,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
       return draft;
 
-    case "CHART_CONFIG_FILTER_SET_SINGLE":
+    case "FILTER_SET_SINGLE":
       if (isConfiguring(draft)) {
         const { filters, value } = action.value;
         const chartConfig = getChartConfig(draft);
@@ -765,11 +765,20 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
             );
           }
         }
+      } else if (isLayouting(draft)) {
+        const { filters, value } = action.value;
+        const { dimensionIri } = filters[0];
+        if (draft.dashboardFilters) {
+          draft.dashboardFilters.dataFilters.filters[dimensionIri] = {
+            type: "single",
+            value,
+          };
+        }
       }
 
       return draft;
 
-    case "CHART_CONFIG_FILTER_REMOVE_SINGLE":
+    case "FILTER_REMOVE_SINGLE":
       if (isConfiguring(draft)) {
         const { filters } = action.value;
         const chartConfig = getChartConfig(draft);
@@ -787,6 +796,12 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
             );
             chartConfig.interactiveFiltersConfig = newIFConfig;
           }
+        }
+      } else if (isLayouting(draft)) {
+        const { filters } = action.value;
+        const { dimensionIri } = filters[0];
+        if (draft.dashboardFilters) {
+          delete draft.dashboardFilters.dataFilters.filters[dimensionIri];
         }
       }
 
@@ -1082,6 +1097,46 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
           } as DashboardTimeRangeFilter,
           Object
         );
+      }
+      return draft;
+
+    case "DASHBOARD_DATA_FILTER_ADD":
+      if (isLayouting(draft) && draft.dashboardFilters) {
+        const { dimensionIri } = action.value;
+        const newFilters = {
+          ...draft.dashboardFilters,
+          dataFilters: {
+            ...draft.dashboardFilters.dataFilters,
+            componentIris: [
+              ...draft.dashboardFilters.dataFilters.componentIris,
+              dimensionIri,
+            ],
+          },
+        };
+        draft.dashboardFilters = newFilters;
+      }
+      return draft;
+
+    case "DASHBOARD_DATA_FILTERS_SET":
+      if (isLayouting(draft) && draft.dashboardFilters) {
+        draft.dashboardFilters.dataFilters = action.value;
+      }
+      return draft;
+
+    case "DASHBOARD_DATA_FILTER_REMOVE":
+      if (isLayouting(draft) && draft.dashboardFilters) {
+        const { dimensionIri } = action.value;
+        const newFilters = {
+          ...draft.dashboardFilters,
+          dataFilters: {
+            ...draft.dashboardFilters.dataFilters,
+            componentIris:
+              draft.dashboardFilters.dataFilters.componentIris.filter(
+                (d) => d !== dimensionIri
+              ),
+          },
+        };
+        draft.dashboardFilters = newFilters;
       }
       return draft;
 

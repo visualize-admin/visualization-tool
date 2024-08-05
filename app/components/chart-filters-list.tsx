@@ -9,6 +9,7 @@ import {
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import {
   ChartConfig,
+  DashboardFiltersConfig,
   DataSource,
   FilterValue,
   getAnimationField,
@@ -28,11 +29,13 @@ export const ChartFiltersList = ({
   cubeIri,
   dataSource,
   chartConfig,
+  dashboardFilters,
   components,
 }: {
   cubeIri: string;
   dataSource: DataSource;
   chartConfig: ChartConfig;
+  dashboardFilters: DashboardFiltersConfig | undefined;
   components: Component[];
 }) => {
   const locale = useLocale();
@@ -41,6 +44,7 @@ export const ChartFiltersList = ({
   const animationField = getAnimationField(chartConfig);
   const queryFilters = useQueryFilters({
     chartConfig,
+    dashboardFilters,
     componentIris: extractChartConfigComponentIris({ chartConfig }),
   });
   const cubeQueryFilters = useMemo(() => {

@@ -2,6 +2,7 @@ import { useEffect, useMemo } from "react";
 
 import {
   ChartConfig,
+  DashboardFiltersConfig,
   FilterValueSingle,
   isSegmentInConfig,
   useChartConfigFilters,
@@ -9,6 +10,7 @@ import {
 import { parseDate } from "@/configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import useFilterChanges from "@/configurator/use-filter-changes";
+import { truthy } from "@/domain/types";
 import { useChartInteractiveFilters } from "@/stores/interactive-filters";
 
 /**
@@ -18,7 +20,10 @@ import { useChartInteractiveFilters } from "@/stores/interactive-filters";
  *   inside the interactive filters
  *
  */
-const useSyncInteractiveFilters = (chartConfig: ChartConfig) => {
+const useSyncInteractiveFilters = (
+  chartConfig: ChartConfig,
+  dashboardFilters: DashboardFiltersConfig | undefined
+) => {
   const { interactiveFiltersConfig } = chartConfig;
   const filters = useChartConfigFilters(chartConfig);
   const resetCategories = useChartInteractiveFilters((d) => d.resetCategories);
@@ -52,28 +57,58 @@ const useSyncInteractiveFilters = (chartConfig: ChartConfig) => {
 
   // Data Filters
   const componentIris = interactiveFiltersConfig?.dataFilters.componentIris;
-  useEffect(() => {
+  const dashboardComponentIris = dashboardFilters?.dataFilters.componentIris;
+  const newPotentialInteractiveDataFilters = useMemo(() => {
     if (componentIris) {
       // If dimension is already in use as interactive filter, use it,
-      // otherwise, default to editor config filter dimension value.
-      const newInteractiveDataFilters = componentIris.reduce<{
-        [key: string]: FilterValueSingle;
-      }>((obj, iri) => {
-        const configFilter = filters[iri];
+      // otherwise, default to editor config filter dimension value (only
+      // if dashboard filters are not set).
+      return componentIris.concat(dashboardComponentIris ?? []);
+    }
+  }, [componentIris, dashboardComponentIris]);
 
-        if (Object.keys(dataFilters).includes(iri)) {
-          obj[iri] = dataFilters[iri];
-        } else if (configFilter?.type === "single") {
-          obj[iri] = configFilter;
-        }
-
-        return obj;
-      }, {});
+  useEffect(() => {
+    if (newPotentialInteractiveDataFilters) {
+      const newInteractiveDataFilters = Object.fromEntries(
+        Object.entries(newPotentialInteractiveDataFilters)
+          .map(([iri]) => {
+            const dashboardFilter = dashboardFilters?.dataFilters.filters[iri];
+            return dashboardFilter?.type === "single"
+              ? ([iri, dashboardFilter] as const)
+              : null;
+          })
+          .filter(truthy)
+      );
 
       setDataFilters(newInteractiveDataFilters);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [componentIris, setDataFilters]);
+  }, [
+    newPotentialInteractiveDataFilters,
+    dashboardComponentIris,
+    dashboardFilters?.dataFilters.filters,
+  ]);
+
+  useEffect(() => {
+    if (newPotentialInteractiveDataFilters) {
+      const newInteractiveDataFilters =
+        newPotentialInteractiveDataFilters.reduce(
+          (obj, iri) => {
+            const configFilter = filters[iri];
+            if (Object.keys(dataFilters).includes(iri)) {
+              obj[iri] = dataFilters[iri];
+            } else if (configFilter?.type === "single") {
+              obj[iri] = configFilter;
+            }
+            return obj;
+          },
+          {} as { [key: string]: FilterValueSingle }
+        );
+
+      setDataFilters(newInteractiveDataFilters);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [newPotentialInteractiveDataFilters, setDataFilters]);
 
   const changes = useFilterChanges(filters);
   useEffect(() => {

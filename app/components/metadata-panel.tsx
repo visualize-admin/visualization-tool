@@ -45,7 +45,12 @@ import {
   useMetadataPanelStoreActions,
 } from "@/components/metadata-panel-store";
 import { MotionBox } from "@/components/presence";
-import { BackButton, ChartConfig, DataSource } from "@/configurator";
+import {
+  BackButton,
+  ChartConfig,
+  DashboardFiltersConfig,
+  DataSource,
+} from "@/configurator";
 import { DRAWER_WIDTH } from "@/configurator/components/drawer";
 import {
   getComponentDescription,
@@ -229,6 +234,7 @@ export const OpenMetadataPanelWrapper = ({
 
 export const MetadataPanel = ({
   chartConfig,
+  dashboardFilters,
   dataSource,
   components,
   container,
@@ -237,6 +243,7 @@ export const MetadataPanel = ({
   renderToggle = true,
 }: {
   chartConfig: ChartConfig;
+  dashboardFilters: DashboardFiltersConfig | undefined;
   dataSource: DataSource;
   components: Component[];
   container?: HTMLDivElement | null;
@@ -327,7 +334,11 @@ export const MetadataPanel = ({
           <AnimatePresence>
             {activeSection === "general" ? (
               <MotionBox key="cubes-panel" {...animationProps}>
-                <CubesPanel dataSource={dataSource} chartConfig={chartConfig} />
+                <CubesPanel
+                  dataSource={dataSource}
+                  chartConfig={chartConfig}
+                  dashboardFilters={dashboardFilters}
+                />
               </MotionBox>
             ) : activeSection === "data" ? (
               <MotionBox key="data-panel" {...animationProps}>
@@ -380,9 +391,11 @@ const Header = ({ onClose }: { onClose: () => void }) => {
 const CubesPanel = ({
   dataSource,
   chartConfig,
+  dashboardFilters,
 }: {
   dataSource: DataSource;
   chartConfig: ChartConfig;
+  dashboardFilters: DashboardFiltersConfig | undefined;
 }) => {
   const classes = useOtherStyles();
   const locale = useLocale();
@@ -404,6 +417,7 @@ const CubesPanel = ({
   const cubesMetadata = dataCubesMetadataData?.dataCubesMetadata;
   const queryFilters = useQueryFilters({
     chartConfig,
+    dashboardFilters,
     componentIris: extractChartConfigComponentIris({ chartConfig }),
   });
   const [

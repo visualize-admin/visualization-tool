@@ -335,16 +335,6 @@ export const MostRecentDateSwitch = (props: MostRecentDateSwitchProps) => {
   );
 };
 
-type DataFilterTemporalProps = {
-  label: React.ReactNode;
-  dimension: TemporalDimension;
-  timeUnit: DatePickerTimeUnit;
-  disabled?: boolean;
-  isOptional?: boolean;
-  topControls?: React.ReactNode;
-  sideControls?: React.ReactNode;
-};
-
 export const dimensionToFieldProps = (dim: Component) => {
   return isJoinByComponent(dim)
     ? dim.originalIris.map((o) => pick(o, ["cubeIri", "dimensionIri"]))
@@ -356,16 +346,23 @@ export const dimensionToFieldProps = (dim: Component) => {
       ];
 };
 
-export const DataFilterTemporal = (props: DataFilterTemporalProps) => {
-  const {
-    label: _label,
-    dimension,
-    timeUnit,
-    disabled,
-    isOptional,
-    topControls,
-    sideControls,
-  } = props;
+export const DataFilterTemporal = ({
+  label: _label,
+  dimension,
+  timeUnit,
+  disabled,
+  isOptional,
+  topControls,
+  sideControls,
+}: {
+  label: React.ReactNode;
+  dimension: TemporalDimension;
+  timeUnit: DatePickerTimeUnit;
+  disabled?: boolean;
+  isOptional?: boolean;
+  topControls?: React.ReactNode;
+  sideControls?: React.ReactNode;
+}) => {
   const { values, timeFormat } = dimension;
   const formatLocale = useTimeFormatLocale();
   const formatDate = formatLocale.format(timeFormat);

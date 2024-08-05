@@ -269,7 +269,7 @@ export type SelectTreeProps = {
   value: NodeId | undefined;
   topControls?: React.ReactNode;
   sideControls?: React.ReactNode;
-  onChange: (ev: { target: { value: NodeId } }) => void;
+  onChange: (e: { target: { value: NodeId } }) => void;
   disabled?: boolean;
   label?: React.ReactNode;
   onOpen?: () => void;

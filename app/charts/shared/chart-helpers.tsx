@@ -23,6 +23,7 @@ import {
 import {
   CategoricalColorField,
   ComboChartConfig,
+  DashboardFiltersConfig,
   GenericField,
   NumericalColorField,
   getChartConfigFilters,
@@ -54,14 +55,20 @@ export const prepareCubeQueryFilters = (
   chartType: ChartType,
   cubeFilters: Filters,
   interactiveFiltersConfig: InteractiveFiltersConfig,
+  dashboardFiltersConfig: DashboardFiltersConfig | undefined,
   cubeDataFilters: InteractiveFiltersState["dataFilters"],
   allowNoneValues = false
 ): Filters => {
   const queryFilters = { ...cubeFilters };
 
-  if (chartType !== "table" && interactiveFiltersConfig?.dataFilters.active) {
+  if (chartType !== "table") {
     for (const [k, v] of Object.entries(cubeDataFilters)) {
-      queryFilters[k] = v;
+      if (
+        interactiveFiltersConfig?.dataFilters.active ||
+        dashboardFiltersConfig?.dataFilters.componentIris.includes(k)
+      ) {
+        queryFilters[k] = v;
+      }
     }
   }
 
@@ -75,16 +82,16 @@ export const prepareCubeQueryFilters = (
 
 export const useQueryFilters = ({
   chartConfig,
+  dashboardFilters,
   allowNoneValues,
   componentIris,
 }: {
   chartConfig: ChartConfig;
+  dashboardFilters: DashboardFiltersConfig | undefined;
   allowNoneValues?: boolean;
   componentIris?: string[];
 }): DataCubeObservationFilter[] => {
-  const allInteractiveDataFilters = useChartInteractiveFilters(
-    (d) => d.dataFilters
-  );
+  const chartDataFilters = useChartInteractiveFilters((d) => d.dataFilters);
   return useMemo(() => {
     return chartConfig.cubes.map((cube) => {
       const cubeFilters = getChartConfigFilters(chartConfig.cubes, {
@@ -95,8 +102,8 @@ export const useQueryFilters = ({
       // This is a bigger issue we should address in the future, probably by keeping
       // track of interactive data filters per cube.
       // Only include data filters that are part of the chart config.
-      const cubeDataInteractiveFilters = Object.fromEntries(
-        Object.entries(allInteractiveDataFilters).filter(([key]) =>
+      const cubeDataFilters = Object.fromEntries(
+        Object.entries(chartDataFilters).filter(([key]) =>
           cubeFiltersKeys.includes(key)
         )
       );
@@ -108,7 +115,8 @@ export const useQueryFilters = ({
           chartConfig.chartType,
           cubeFilters,
           chartConfig.interactiveFiltersConfig,
-          cubeDataInteractiveFilters,
+          dashboardFilters,
+          cubeDataFilters,
           allowNoneValues
         ),
         joinBy: cube.joinBy,
@@ -118,9 +126,10 @@ export const useQueryFilters = ({
     chartConfig.cubes,
     chartConfig.chartType,
     chartConfig.interactiveFiltersConfig,
-    allInteractiveDataFilters,
-    allowNoneValues,
+    chartDataFilters,
     componentIris,
+    dashboardFilters,
+    allowNoneValues,
   ]);
 };
 

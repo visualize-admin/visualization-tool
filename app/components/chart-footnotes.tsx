@@ -12,6 +12,7 @@ import {
   ComboLineColumnConfig,
   ComboLineDualConfig,
   ComboLineSingleConfig,
+  DashboardFiltersConfig,
   DataSource,
 } from "@/configurator";
 import { Component, Measure } from "@/domain/data";
@@ -43,11 +44,13 @@ export const useFootnotesStyles = makeStyles<Theme, { useMarginTop: boolean }>(
 export const ChartFootnotes = ({
   dataSource,
   chartConfig,
+  dashboardFilters,
   components,
   showVisualizeLink = false,
 }: {
   dataSource: DataSource;
   chartConfig: ChartConfig;
+  dashboardFilters: DashboardFiltersConfig | undefined;
   components: Component[];
   showVisualizeLink?: boolean;
 }) => {
@@ -89,6 +92,7 @@ export const ChartFootnotes = ({
           <ChartFiltersList
             dataSource={dataSource}
             chartConfig={chartConfig}
+            dashboardFilters={dashboardFilters}
             components={components}
             cubeIri={metadata.iri}
           />
