@@ -86,6 +86,7 @@ const GenericChart = (props: GenericChartProps) => {
     dashboardFilters,
     componentIris,
   });
+
   const commonProps = {
     dataSource,
     observationQueryFilters,

@@ -375,7 +375,7 @@ const DataFilter = ({ componentIri }: { componentIri: string }) => {
     }
   );
 
-  // Sync the interactive filter value with the config value
+  // Syncs the interactive filter value with the config value
   useEffect(() => {
     const value = dashboardFilters?.dataFilters.filters[componentIri].value as
       | string
