@@ -25,9 +25,9 @@ import {
   ComboChartConfig,
   DashboardFiltersConfig,
   GenericField,
-  NumericalColorField,
   getChartConfigFilters,
   isComboChartConfig,
+  NumericalColorField,
 } from "@/configurator";
 import { parseDate } from "@/configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
@@ -35,9 +35,9 @@ import {
   Component,
   Dimension,
   DimensionValue,
+  getTemporalEntityValue,
   Observation,
   ObservationValue,
-  getTemporalEntityValue,
 } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { getOriginalIris, isJoinById } from "@/graphql/join";
@@ -91,7 +91,9 @@ export const useQueryFilters = ({
   allowNoneValues?: boolean;
   componentIris?: string[];
 }): DataCubeObservationFilter[] => {
-  const chartDataFilters = useChartInteractiveFilters((d) => d.dataFilters);
+  const chartInteractiveFilters = useChartInteractiveFilters(
+    (d) => d.dataFilters
+  );
   return useMemo(() => {
     return chartConfig.cubes.map((cube) => {
       const cubeFilters = getChartConfigFilters(chartConfig.cubes, {
@@ -103,7 +105,7 @@ export const useQueryFilters = ({
       // track of interactive data filters per cube.
       // Only include data filters that are part of the chart config.
       const cubeDataFilters = Object.fromEntries(
-        Object.entries(chartDataFilters).filter(([key]) =>
+        Object.entries(chartInteractiveFilters).filter(([key]) =>
           cubeFiltersKeys.includes(key)
         )
       );
@@ -126,7 +128,7 @@ export const useQueryFilters = ({
     chartConfig.cubes,
     chartConfig.chartType,
     chartConfig.interactiveFiltersConfig,
-    chartDataFilters,
+    chartInteractiveFilters,
     componentIris,
     dashboardFilters,
     allowNoneValues,
