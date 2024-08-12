@@ -2,8 +2,8 @@ import { SelectChangeEvent, SelectProps } from "@mui/material";
 import get from "lodash/get";
 import React, {
   ChangeEvent,
-  InputHTMLAttributes,
   createContext,
+  InputHTMLAttributes,
   useCallback,
   useContext,
   useMemo,
@@ -20,8 +20,8 @@ import {
   isComboChartConfig,
 } from "@/config-types";
 import {
-  GetConfiguratorStateAction,
   getChartOptionField,
+  GetConfiguratorStateAction,
   getFilterValue,
   isConfiguring,
   isLayouting,
@@ -33,8 +33,8 @@ import {
   Dimension,
   DimensionValue,
   HierarchyValue,
-  Measure,
   isMeasure,
+  Measure,
 } from "@/domain/data";
 import { useLocale } from "@/locales/use-locale";
 import { bfs } from "@/utils/bfs";

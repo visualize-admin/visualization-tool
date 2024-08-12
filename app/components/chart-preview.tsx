@@ -11,8 +11,8 @@ import { Box } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import Head from "next/head";
 import React, {
-  ReactNode,
   forwardRef,
+  ReactNode,
   useCallback,
   useMemo,
   useState,
@@ -45,17 +45,17 @@ import Flex from "@/components/flex";
 import { Checkbox } from "@/components/form";
 import { HintYellow } from "@/components/hint";
 import {
-  MetadataPanelStoreContext,
   createMetadataPanelStore,
+  MetadataPanelStoreContext,
 } from "@/components/metadata-panel-store";
 import { BANNER_MARGIN_TOP } from "@/components/presence";
 import {
   ChartConfig,
   DataSource,
-  Layout,
   getChartConfig,
   hasChartConfigs,
   isConfiguring,
+  Layout,
   useConfiguratorState,
 } from "@/configurator";
 import { Description, Title } from "@/configurator/components/annotators";
