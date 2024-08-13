@@ -1,86 +1,105 @@
+import fetch from "node-fetch";
+import pLimit from "p-limit";
+import { chromium, Page } from "playwright";
+
 import { locales } from "../app/locales/constants";
 
-import { setup } from "./common";
+type Config = { key: string };
 
-const { test } = setup();
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-const fetchMetadata = ({
-  limit,
-  orderByViewCount,
-}: {
-  limit: 25;
+const preloadChart = async (page: Page, locale: string, key: string) => {
+  const loadPage = async () => {
+    console.log(`Loading ${key} in ${locale}`);
+    await page.goto(`https://visualize.admin.ch/${locale}/v/${key}`);
+    // Wait for all the queries to finish
+    await page.waitForLoadState("networkidle");
+  };
+  await Promise.race([
+    loadPage().catch(() => {
+      console.error(`Failed to load ${key} in ${locale}`);
+    }),
+    sleep(10000),
+  ]);
+};
+
+const openNewPage = async () => {
+  const browser = await chromium.launch({
+    headless: false,
+  });
+  const context = await browser.newContext();
+  const page = await context.newPage();
+  return page;
+};
+
+type ConfigQueryOptions = {
+  limit?: number;
   orderByViewCount?: boolean;
-}) => {
-  const qp = new URLSearchParams();
+};
+
+const fetchConfigs = ({ limit, orderByViewCount }: ConfigQueryOptions) => {
+  let qp = "";
   if (limit !== undefined) {
-    qp.append("limit", `${limit}`);
+    qp = `${qp}limit=${limit}&`;
   }
   if (orderByViewCount !== undefined) {
-    qp.append("orderByViewCount", orderByViewCount ? "true" : "false");
+    qp = `${qp}orderByViewCount=true&`;
   }
-  return fetch(`https://visualize.admin.ch/api/config/all-metadata?${qp}`).then(
-    (res) => res.json()
+  const url = `https://visualize.admin.ch/api/config/all-metadata?${qp}`;
+  return fetch(url).then((res) => res.json() as Promise<{ data: Config[] }>);
+};
+
+const preloadChartsPool = async (
+  configs: Config[],
+  concurrency: number = 4
+) => {
+  const openers = Array.from({ length: concurrency }, (_, i) => openNewPage());
+  const pages = await Promise.all(openers);
+  const ready = [...pages];
+
+  const withLocales = configs.flatMap((config) =>
+    locales.map((locale) => ({ locale, key: config.key }))
   );
+  let i = 0;
+
+  const limit = pLimit(concurrency);
+
+  const fetchPage = async ({ locale, key }: Config & { locale: string }) => {
+    i++;
+    const page = ready.pop();
+    if (!page) throw new Error("No pages available");
+    await preloadChart(page, locale, key);
+    ready.push(page);
+    if (i % 10 !== 0) {
+      return;
+    }
+    console.log(`Progress: ${i}/${withLocales.length}`);
+  };
+
+  const promises = withLocales.map((datum) => limit(() => fetchPage(datum)));
+  await Promise.all(promises);
+
+  await Promise.all(pages.map((page) => page.close()));
 };
 
-const TEST_TIMEOUT_MS = 5 * 60 * 1000;
-const NAVIGATION_TIMEOUT_MS = 10_1000;
-
-const formatError = (e: unknown) => {
-  return e instanceof Error ? e.message : JSON.stringify(e);
+const preloadChartsWithOptions = async (
+  configQuery: ConfigQueryOptions,
+  concurrency: number
+) => {
+  const fetchedConfigs = await fetchConfigs(configQuery);
+  await preloadChartsPool(fetchedConfigs.data, concurrency);
 };
 
-// @noci as it's a special test that's supposed to preload varnish cache
-// for most recent charts
-test("@noci it should preload most recent charts", async ({
-  page,
-  browser,
-}) => {
-  test.setTimeout(TEST_TIMEOUT_MS);
-  const fetchedConfigs = await fetchMetadata({ limit: 25 });
-  const keys = fetchedConfigs.data.map((config) => config.key);
+const main = async () => {
+  const concurrency = process.env.CI ? 2 : 4;
+  // Latest charts
+  await preloadChartsWithOptions({ limit: 25 }, concurrency);
+  // Most viewed charts
+  await preloadChartsWithOptions(
+    { limit: 25, orderByViewCount: true },
+    concurrency
+  );
+  process.exit(0);
+};
 
-  for (const key of keys) {
-    for (const locale of locales) {
-      await page
-        .goto(`https://visualize.admin.ch/${locale}/v/${key}`, {
-          timeout: NAVIGATION_TIMEOUT_MS,
-        })
-        .catch((e) => {
-          console.warn(`Error during goto for ${key}: ${formatError(e)}`);
-        });
-      // Wait for all the queries to finish
-      await page.waitForLoadState("networkidle").catch(() => {
-        console.warn("Timeout waitForLoadState for", key);
-      });
-    }
-  }
-});
-
-// @noci as it's a special test that's supposed to preload varnish cache
-// for most viewed charts
-test("@noci it should preload most viewed charts", async ({ page }) => {
-  test.setTimeout(TEST_TIMEOUT_MS);
-
-  const fetchedConfigs = await fetchMetadata({
-    limit: 25,
-    orderByViewCount: true,
-  });
-  const keys = fetchedConfigs.data.map((config) => config.key);
-
-  for (const key of keys) {
-    for (const locale of locales) {
-      await page
-        .goto(`https://visualize.admin.ch/${locale}/v/${key}`, {
-          timeout: NAVIGATION_TIMEOUT_MS,
-        })
-        .catch((e) => {
-          console.warn(`Error during goto for ${key}: ${formatError(e)}`);
-        });
-      // Wait for all the queries to finish
-      await page.waitForLoadState("networkidle").catch(() => {
-        console.warn("Timeout for", key);
-      });
-    }
-  }
-});
+main();
