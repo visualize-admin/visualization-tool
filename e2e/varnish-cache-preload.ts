@@ -25,7 +25,7 @@ const preloadChart = async (page: Page, locale: string, key: string) => {
 
 const openNewPage = async () => {
   const browser = await chromium.launch({
-    headless: false,
+    headless: process.env.CI === "true",
   });
   const context = await browser.newContext();
   const page = await context.newPage();
