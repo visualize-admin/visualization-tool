@@ -26,6 +26,7 @@ const fetchMetadata = ({
 // @noci as it's a special test that's supposed to preload varnish cache
 // for most recent charts
 test("@noci it should preload most recent charts", async ({ page }) => {
+  test.setTimeout(5 * 60 * 1000);
   const fetchedConfigs = await fetchMetadata({ limit: 25 });
   const keys = fetchedConfigs.data.map((config) => config.key);
 
@@ -43,6 +44,8 @@ test("@noci it should preload most recent charts", async ({ page }) => {
 // @noci as it's a special test that's supposed to preload varnish cache
 // for most viewed charts
 test("@noci it should preload most viewed charts", async ({ page }) => {
+  test.setTimeout(5 * 60 * 1000);
+
   const fetchedConfigs = await fetchMetadata({
     limit: 25,
     orderByViewCount: true,
