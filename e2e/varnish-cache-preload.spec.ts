@@ -28,7 +28,6 @@ const atMost = async ({
       }, timeout)
     ),
   ]);
-  throw new Error("Timeout");
 };
 
 const fetchMetadata = ({
