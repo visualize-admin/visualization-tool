@@ -4,32 +4,6 @@ import { setup } from "./common";
 
 const { test } = setup();
 
-const atMost = async ({
-  timeout,
-  fn,
-  onTimeout,
-}: {
-  timeout: number;
-  fn: () => Promise<void>;
-  onTimeout: () => void;
-}) => {
-  let success = false;
-  await Promise.race([
-    fn().then((result) => {
-      success = true;
-      return result;
-    }),
-    new Promise((resolve, reject) =>
-      setTimeout(() => {
-        if (!success) {
-          onTimeout();
-        }
-        return resolve(void 0);
-      }, timeout)
-    ),
-  ]);
-};
-
 const fetchMetadata = ({
   limit,
   orderByViewCount,
@@ -57,16 +31,10 @@ test("@noci it should preload most recent charts", async ({ page }) => {
 
   for (const key of keys) {
     for (const locale of locales) {
-      await atMost({
-        timeout: 40_1000,
-        fn: async () => {
-          await page.goto(`https://visualize.admin.ch/${locale}/v/${key}`);
-          // Wait for all the queries to finish
-          await page.waitForLoadState("networkidle");
-        },
-        onTimeout: () => {
-          console.error(`Timeout for ${key}`);
-        },
+      await page.goto(`https://visualize.admin.ch/${locale}/v/${key}`);
+      // Wait for all the queries to finish
+      await page.waitForLoadState("networkidle").catch(() => {
+        console.warn("Timeout for", key);
       });
     }
   }
@@ -83,16 +51,10 @@ test("@noci it should preload most viewed charts", async ({ page }) => {
 
   for (const key of keys) {
     for (const locale of locales) {
-      await atMost({
-        timeout: 40_1000,
-        fn: async () => {
-          await page.goto(`https://visualize.admin.ch/${locale}/v/${key}`);
-          // Wait for all the queries to finish
-          await page.waitForLoadState("networkidle");
-        },
-        onTimeout: () => {
-          console.error(`Timeout for ${key}`);
-        },
+      await page.goto(`https://visualize.admin.ch/${locale}/v/${key}`);
+      // Wait for all the queries to finish
+      await page.waitForLoadState("networkidle").catch(() => {
+        console.warn("Timeout for", key);
       });
     }
   }
