@@ -23,10 +23,11 @@ import {
 import {
   CategoricalColorField,
   ComboChartConfig,
+  DashboardFiltersConfig,
   GenericField,
-  NumericalColorField,
   getChartConfigFilters,
   isComboChartConfig,
+  NumericalColorField,
 } from "@/configurator";
 import { parseDate } from "@/configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
@@ -34,9 +35,9 @@ import {
   Component,
   Dimension,
   DimensionValue,
+  getTemporalEntityValue,
   Observation,
   ObservationValue,
-  getTemporalEntityValue,
 } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { getOriginalIris, isJoinById } from "@/graphql/join";
@@ -47,21 +48,37 @@ import {
 } from "@/stores/interactive-filters";
 
 // Prepare filters used in data query:
-// - merges publisher data filters and interactive data filters (user-defined),
+// - merges publisher data filters, interactive data filters, and dashboard filters
 //   if applicable
 // - removes none values since they should not be sent as part of the GraphQL query
 export const prepareCubeQueryFilters = (
   chartType: ChartType,
   cubeFilters: Filters,
   interactiveFiltersConfig: InteractiveFiltersConfig,
-  cubeDataFilters: InteractiveFiltersState["dataFilters"],
+  dashboardFiltersConfig: DashboardFiltersConfig | undefined,
+  interactiveDataFilters: InteractiveFiltersState["dataFilters"],
   allowNoneValues = false
 ): Filters => {
   const queryFilters = { ...cubeFilters };
 
-  if (chartType !== "table" && interactiveFiltersConfig?.dataFilters.active) {
-    for (const [k, v] of Object.entries(cubeDataFilters)) {
-      queryFilters[k] = v;
+  if (chartType !== "table") {
+    for (const [k, v] of Object.entries(
+      dashboardFiltersConfig?.dataFilters.filters ?? {}
+    )) {
+      if (
+        k in cubeFilters &&
+        dashboardFiltersConfig?.dataFilters.componentIris?.includes(k)
+      ) {
+        queryFilters[k] = v;
+      }
+    }
+    for (const [k, v] of Object.entries(interactiveDataFilters)) {
+      if (
+        interactiveFiltersConfig?.dataFilters.active ||
+        dashboardFiltersConfig?.dataFilters.componentIris?.includes(k)
+      ) {
+        queryFilters[k] = v;
+      }
     }
   }
 
@@ -75,16 +92,19 @@ export const prepareCubeQueryFilters = (
 
 export const useQueryFilters = ({
   chartConfig,
+  dashboardFilters,
   allowNoneValues,
   componentIris,
 }: {
   chartConfig: ChartConfig;
+  dashboardFilters: DashboardFiltersConfig | undefined;
   allowNoneValues?: boolean;
   componentIris?: string[];
 }): DataCubeObservationFilter[] => {
-  const allInteractiveDataFilters = useChartInteractiveFilters(
+  const chartInteractiveFilters = useChartInteractiveFilters(
     (d) => d.dataFilters
   );
+
   return useMemo(() => {
     return chartConfig.cubes.map((cube) => {
       const cubeFilters = getChartConfigFilters(chartConfig.cubes, {
@@ -95,22 +115,25 @@ export const useQueryFilters = ({
       // This is a bigger issue we should address in the future, probably by keeping
       // track of interactive data filters per cube.
       // Only include data filters that are part of the chart config.
-      const cubeDataInteractiveFilters = Object.fromEntries(
-        Object.entries(allInteractiveDataFilters).filter(([key]) =>
+      const cubeInteractiveDataFilters = Object.fromEntries(
+        Object.entries(chartInteractiveFilters).filter(([key]) =>
           cubeFiltersKeys.includes(key)
         )
+      );
+
+      const preparedFilters = prepareCubeQueryFilters(
+        chartConfig.chartType,
+        cubeFilters,
+        chartConfig.interactiveFiltersConfig,
+        dashboardFilters,
+        cubeInteractiveDataFilters,
+        allowNoneValues
       );
 
       return {
         iri: cube.iri,
         componentIris,
-        filters: prepareCubeQueryFilters(
-          chartConfig.chartType,
-          cubeFilters,
-          chartConfig.interactiveFiltersConfig,
-          cubeDataInteractiveFilters,
-          allowNoneValues
-        ),
+        filters: preparedFilters,
         joinBy: cube.joinBy,
       };
     });
@@ -118,9 +141,10 @@ export const useQueryFilters = ({
     chartConfig.cubes,
     chartConfig.chartType,
     chartConfig.interactiveFiltersConfig,
-    allInteractiveDataFilters,
-    allowNoneValues,
+    chartInteractiveFilters,
     componentIris,
+    dashboardFilters,
+    allowNoneValues,
   ]);
 };
 

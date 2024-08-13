@@ -15,6 +15,7 @@ import { MenuActionItem } from "@/components/menu-action-item";
 import { MetadataPanel } from "@/components/metadata-panel";
 import {
   ChartConfig,
+  DashboardFiltersConfig,
   DataSource,
   getChartConfig,
   hasChartConfigs,
@@ -50,19 +51,27 @@ export const useChartStyles = makeStyles<Theme>((theme) => ({
 export const ChartControls = ({
   dataSource,
   chartConfig,
+  dashboardFilters,
   metadataPanelProps,
 }: {
   dataSource: DataSource;
   chartConfig: ChartConfig;
+  dashboardFilters: DashboardFiltersConfig | undefined;
   metadataPanelProps: Omit<
     ComponentProps<typeof MetadataPanel>,
-    "dataSource" | "chartConfig"
+    "dataSource" | "chartConfig" | "dashboardFilters"
   >;
 }) => {
-  const showFilters = chartConfig.interactiveFiltersConfig?.dataFilters.active;
+  const showFilters =
+    chartConfig.interactiveFiltersConfig?.dataFilters.active &&
+    chartConfig.interactiveFiltersConfig.dataFilters.componentIris.some(
+      (componentIri) =>
+        !dashboardFilters?.dataFilters.componentIris.includes(componentIri)
+    );
   const chartFiltersState = useChartDataFiltersState({
     dataSource,
     chartConfig,
+    dashboardFilters,
   });
   return (
     <Box
@@ -87,6 +96,7 @@ export const ChartControls = ({
         <MetadataPanel
           dataSource={dataSource}
           chartConfig={chartConfig}
+          dashboardFilters={dashboardFilters}
           {...metadataPanelProps}
         />
       </Box>

@@ -1,3 +1,4 @@
+import uniq from "lodash/uniq";
 import React, { createContext, useContext, useMemo, useRef } from "react";
 import create, { StateCreator, StoreApi, UseBoundStore } from "zustand";
 
@@ -5,17 +6,14 @@ import { getChartSpec } from "@/charts/chart-config-ui-options";
 import {
   CalculationType,
   ChartConfig,
-  DashboardTimeRangeFilter,
   FilterValueSingle,
-  hasChartConfigs,
-  useConfiguratorState,
 } from "@/configurator";
 import { truthy } from "@/domain/types";
 import { getOriginalIris, isJoinById } from "@/graphql/join";
 import {
+  createBoundUseStoreWithSelector,
   ExtractState,
   UseBoundStoreWithSelector,
-  createBoundUseStoreWithSelector,
 } from "@/stores/utils";
 import { assert } from "@/utils/assert";
 
@@ -136,16 +134,17 @@ const interactiveFiltersStoreCreator: StateCreator<State> = (set) => {
   };
 };
 
-type InteractiveFiltersContextValue = [
+export type InteractiveFiltersStore = StoreApi<State>;
+export type InteractiveFiltersContextValue = [
   UseBoundStore<StoreApi<State>>["getState"],
   UseBoundStoreWithSelector<StoreApi<State>>,
-  StoreApi<State>,
+  InteractiveFiltersStore,
 ];
 
 const InteractiveFiltersContext = createContext<
   | {
       potentialTimeRangeFilterIris: string[];
-      timeRange: DashboardTimeRangeFilter | undefined;
+      potentialDataFilterIris: string[];
       stores: Record<ChartConfig["key"], InteractiveFiltersContextValue>;
     }
   | undefined
@@ -184,6 +183,20 @@ const getPotentialTimeRangeFilterIris = (chartConfigs: ChartConfig[]) => {
   return temporalDimensions.map((dimension) => dimension.componentIri);
 };
 
+const getPotentialDataFilterIris = (chartConfigs: ChartConfig[]) => {
+  return uniq(
+    chartConfigs.flatMap((config) => {
+      return config.cubes
+        .map((cube) => cube.filters)
+        .flatMap((filters) => {
+          return Object.entries(filters)
+            .filter(([_, filter]) => filter.type === "single")
+            .map(([dimensionIri]) => dimensionIri);
+        });
+    })
+  );
+};
+
 /**
  * Creates and provides all the interactive filters stores for the given chartConfigs.
  */
@@ -193,11 +206,13 @@ export const InteractiveFiltersProvider = ({
 }: React.PropsWithChildren<{
   chartConfigs: ChartConfig[];
 }>) => {
-  const [state] = useConfiguratorState(hasChartConfigs);
   const storeRefs = useRef<Record<ChartConfig["key"], StoreApi<State>>>({});
 
   const potentialTimeRangeFilterIris = useMemo(() => {
     return getPotentialTimeRangeFilterIris(chartConfigs);
+  }, [chartConfigs]);
+  const potentialDataFilterIris = useMemo(() => {
+    return getPotentialDataFilterIris(chartConfigs);
   }, [chartConfigs]);
 
   const stores = useMemo<
@@ -218,15 +233,13 @@ export const InteractiveFiltersProvider = ({
     );
   }, [chartConfigs]);
 
-  const timeRange = state.dashboardFilters?.timeRange;
-
   const ctxValue = useMemo(
     () => ({
-      stores,
       potentialTimeRangeFilterIris,
-      timeRange,
+      potentialDataFilterIris,
+      stores,
     }),
-    [stores, potentialTimeRangeFilterIris, timeRange]
+    [potentialTimeRangeFilterIris, potentialDataFilterIris, stores]
   );
 
   return (
@@ -302,4 +315,17 @@ export const useDashboardInteractiveFilters = () => {
   );
 
   return ctx;
+};
+
+export const setDataFilter = (
+  store: InteractiveFiltersStore,
+  key: string,
+  value: string
+) => {
+  store.setState({
+    dataFilters: {
+      ...store.getState().dataFilters,
+      [key]: { type: "single", value },
+    },
+  });
 };

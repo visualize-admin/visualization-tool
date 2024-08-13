@@ -17,7 +17,9 @@ import { Loading } from "@/components/hint";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import SelectTree from "@/components/select-tree";
 import {
+  areDataFiltersActive,
   ChartConfig,
+  DashboardFiltersConfig,
   DataSource,
   Filters,
   getFiltersByMappingStatus,
@@ -66,9 +68,11 @@ type PreparedFilter = {
 export const useChartDataFiltersState = ({
   dataSource,
   chartConfig,
+  dashboardFilters,
 }: {
   dataSource: DataSource;
   chartConfig: ChartConfig;
+  dashboardFilters: DashboardFiltersConfig | undefined;
 }) => {
   const componentIris =
     chartConfig.interactiveFiltersConfig?.dataFilters.componentIris;
@@ -81,6 +85,7 @@ export const useChartDataFiltersState = ({
   const { loading } = useLoadingState();
   const queryFilters = useQueryFilters({
     chartConfig,
+    dashboardFilters,
     allowNoneValues: true,
     componentIris,
   });
@@ -107,10 +112,12 @@ export const useChartDataFiltersState = ({
       };
     });
   }, [chartConfig, componentIris, queryFilters]);
+  // TODO: disable when dashboard filters are active?
   const { error } = useEnsurePossibleInteractiveFilters({
     dataSource,
     chartConfig,
     preparedFilters,
+    dashboardFilters,
   });
   return {
     open,
@@ -371,7 +378,9 @@ export type DataFilterGenericDimensionProps = {
   disabled: boolean;
 };
 
-const DataFilterGenericDimension = (props: DataFilterGenericDimensionProps) => {
+export const DataFilterGenericDimension = (
+  props: DataFilterGenericDimensionProps
+) => {
   const { dimension, value, onChange, options: propOptions, disabled } = props;
   const { label, isKeyDimension } = dimension;
   const noneLabel = t({
@@ -420,7 +429,7 @@ type DataFilterHierarchyDimensionProps = {
   disabled: boolean;
 };
 
-const DataFilterHierarchyDimension = (
+export const DataFilterHierarchyDimension = (
   props: DataFilterHierarchyDimensionProps
 ) => {
   const { dimension, value, onChange, hierarchy, disabled } = props;
@@ -475,7 +484,7 @@ const DataFilterHierarchyDimension = (
   );
 };
 
-const DataFilterTemporalDimension = ({
+export const DataFilterTemporalDimension = ({
   dimension,
   value,
   onChange,
@@ -532,20 +541,19 @@ const DataFilterTemporalDimension = ({
   );
 };
 
-type EnsurePossibleInteractiveFiltersProps = {
-  dataSource: DataSource;
-  chartConfig: ChartConfig;
-  preparedFilters?: PreparedFilter[];
-};
-
 /**
  * This runs every time the state changes and it ensures that the selected interactive
  * filters return at least 1 observation. Otherwise they are reloaded.
+ *
+ * This behavior is disabled when the dashboard filters are active.
  */
-const useEnsurePossibleInteractiveFilters = (
-  props: EnsurePossibleInteractiveFiltersProps
-) => {
-  const { dataSource, chartConfig, preparedFilters } = props;
+const useEnsurePossibleInteractiveFilters = (props: {
+  dataSource: DataSource;
+  chartConfig: ChartConfig;
+  dashboardFilters: DashboardFiltersConfig | undefined;
+  preparedFilters?: PreparedFilter[];
+}) => {
+  const { dataSource, chartConfig, dashboardFilters, preparedFilters } = props;
   const [, dispatch] = useConfiguratorState();
   const loadingState = useLoadingState();
   const [error, setError] = useState<Error>();
@@ -560,9 +568,11 @@ const useEnsurePossibleInteractiveFilters = (
     }, {});
   }, [preparedFilters]);
 
+  const dataFiltersActive = areDataFiltersActive(dashboardFilters);
+
   useEffect(() => {
     const run = async () => {
-      if (!filtersByCubeIri) {
+      if (!filtersByCubeIri || dataFiltersActive) {
         return;
       }
 
@@ -660,6 +670,7 @@ const useEnsurePossibleInteractiveFilters = (
     loadingState,
     filtersByCubeIri,
     getInteractiveFiltersState,
+    dataFiltersActive,
   ]);
 
   return { error };
