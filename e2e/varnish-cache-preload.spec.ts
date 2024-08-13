@@ -29,7 +29,7 @@ const openNewPage = async () => {
   });
   const context = await browser.newContext();
   const page = await context.newPage();
-  return page;
+  return { page, browser, context };
 };
 
 type ConfigQueryOptions = {
@@ -54,8 +54,8 @@ const preloadChartsPool = async (
   concurrency: number = 4
 ) => {
   const openers = Array.from({ length: concurrency }, (_, i) => openNewPage());
-  const pages = await Promise.all(openers);
-  const ready = [...pages];
+  const contexts = await Promise.all(openers);
+  const ready = contexts.map((c) => c.page);
 
   const withLocales = configs.flatMap((config) =>
     locales.map((locale) => ({ locale, key: config.key }))
@@ -79,7 +79,13 @@ const preloadChartsPool = async (
   const promises = withLocales.map((datum) => limit(() => fetchPage(datum)));
   await Promise.all(promises);
 
-  await Promise.all(pages.map((page) => page.close()));
+  await Promise.all(
+    contexts.map(async ({ browser, page, context }) => {
+      await page.close();
+      await context.close();
+      return browser.close();
+    })
+  );
 };
 
 const preloadChartsWithOptions = async (
