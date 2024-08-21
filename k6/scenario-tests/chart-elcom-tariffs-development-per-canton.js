@@ -113,6 +113,10 @@ export default function main() {
             "x-visualize-cache-control": "",
             "x-visualize-debug": "",
           },
+
+          "tags": {
+            "graphqlQuery": "DataCubeComponents"
+          }
         }
       );
 
@@ -145,6 +149,10 @@ export default function main() {
             "x-visualize-cache-control": "",
             "x-visualize-debug": "",
           },
+
+          "tags": {
+            "graphqlQuery": "DataCubeComponents"
+          }
         }
       );
 
@@ -177,6 +185,10 @@ export default function main() {
             "x-visualize-cache-control": "",
             "x-visualize-debug": "",
           },
+
+          "tags": {
+            "graphqlQuery": "PossibleFilters"
+          }
         }
       );
 
@@ -209,6 +221,10 @@ export default function main() {
             "x-visualize-cache-control": "",
             "x-visualize-debug": "",
           },
+
+          "tags": {
+            "graphqlQuery": "DataCubeMetadata"
+          }
         }
       );
 
@@ -241,6 +257,10 @@ export default function main() {
             "x-visualize-cache-control": "",
             "x-visualize-debug": "",
           },
+
+          "tags": {
+            "graphqlQuery": "DataCubeComponents"
+          }
         }
       );
 
@@ -273,6 +293,10 @@ export default function main() {
             "x-visualize-cache-control": "",
             "x-visualize-debug": "",
           },
+
+          "tags": {
+            "graphqlQuery": "DataCubeComponents"
+          }
         }
       );
 
@@ -305,6 +329,10 @@ export default function main() {
             "x-visualize-cache-control": "",
             "x-visualize-debug": "",
           },
+
+          "tags": {
+            "graphqlQuery": "DataCubeObservations"
+          }
         }
       );
 
@@ -337,6 +365,10 @@ export default function main() {
             "x-visualize-cache-control": "",
             "x-visualize-debug": "",
           },
+
+          "tags": {
+            "graphqlQuery": "DataCubeComponents"
+          }
         }
       );
 
@@ -369,6 +401,10 @@ export default function main() {
             "x-visualize-cache-control": "",
             "x-visualize-debug": "",
           },
+
+          "tags": {
+            "graphqlQuery": "DataCubeComponents"
+          }
         }
       );
 
@@ -401,6 +437,10 @@ export default function main() {
             "x-visualize-cache-control": "",
             "x-visualize-debug": "",
           },
+
+          "tags": {
+            "graphqlQuery": "DataCubeComponents"
+          }
         }
       );
 
@@ -433,6 +473,10 @@ export default function main() {
             "x-visualize-cache-control": "",
             "x-visualize-debug": "",
           },
+
+          "tags": {
+            "graphqlQuery": "PossibleFilters"
+          }
         }
       );
 
@@ -465,6 +509,10 @@ export default function main() {
             "x-visualize-cache-control": "",
             "x-visualize-debug": "",
           },
+
+          "tags": {
+            "graphqlQuery": "DataCubeObservations"
+          }
         }
       );
 
@@ -497,6 +545,10 @@ export default function main() {
             "x-visualize-cache-control": "",
             "x-visualize-debug": "",
           },
+
+          "tags": {
+            "graphqlQuery": "DataCubeComponents"
+          }
         }
       );
 
@@ -529,6 +581,10 @@ export default function main() {
             "x-visualize-cache-control": "",
             "x-visualize-debug": "",
           },
+
+          "tags": {
+            "graphqlQuery": "DataCubeComponents"
+          }
         }
       );
 
@@ -561,6 +617,10 @@ export default function main() {
             "x-visualize-cache-control": "",
             "x-visualize-debug": "",
           },
+
+          "tags": {
+            "graphqlQuery": "DataCubeComponents"
+          }
         }
       );
 
@@ -593,6 +653,10 @@ export default function main() {
             "x-visualize-cache-control": "",
             "x-visualize-debug": "",
           },
+
+          "tags": {
+            "graphqlQuery": "PossibleFilters"
+          }
         }
       );
 
@@ -625,6 +689,10 @@ export default function main() {
             "x-visualize-cache-control": "",
             "x-visualize-debug": "",
           },
+
+          "tags": {
+            "graphqlQuery": "DataCubeObservations"
+          }
         }
       );
 
@@ -657,6 +725,10 @@ export default function main() {
             "x-visualize-cache-control": "",
             "x-visualize-debug": "",
           },
+
+          "tags": {
+            "graphqlQuery": "DataCubeComponents"
+          }
         }
       );
 
@@ -689,6 +761,10 @@ export default function main() {
             "x-visualize-cache-control": "",
             "x-visualize-debug": "",
           },
+
+          "tags": {
+            "graphqlQuery": "DataCubeComponents"
+          }
         }
       );
 
@@ -721,6 +797,10 @@ export default function main() {
             "x-visualize-cache-control": "",
             "x-visualize-debug": "",
           },
+
+          "tags": {
+            "graphqlQuery": "DataCubeComponents"
+          }
         }
       );
 
@@ -753,6 +833,10 @@ export default function main() {
             "x-visualize-cache-control": "",
             "x-visualize-debug": "",
           },
+
+          "tags": {
+            "graphqlQuery": "PossibleFilters"
+          }
         }
       );
 
@@ -785,6 +869,10 @@ export default function main() {
             "x-visualize-cache-control": "",
             "x-visualize-debug": "",
           },
+
+          "tags": {
+            "graphqlQuery": "DataCubeObservations"
+          }
         }
       );
 
@@ -817,6 +905,10 @@ export default function main() {
             "x-visualize-cache-control": "",
             "x-visualize-debug": "",
           },
+
+          "tags": {
+            "graphqlQuery": "DataCubeComponents"
+          }
         }
       );
 
@@ -841,6 +933,10 @@ export default function main() {
             "sentry-trace": "ee802d00094e4c389ee936d24bd5cc5f-85907776c59f1b52",
             "sec-ch-ua-platform": '"Windows"',
           },
+
+          "tags": {
+            "graphqlQuery": "DataCubeComponents"
+          }
         }
       );
 
@@ -865,6 +961,10 @@ export default function main() {
             "sentry-trace": "ee802d00094e4c389ee936d24bd5cc5f-85907776c59f1b52",
             "sec-ch-ua-platform": '"Windows"',
           },
+
+          "tags": {
+            "graphqlQuery": "DataCubeComponents"
+          }
         }
       );
 
@@ -889,6 +989,10 @@ export default function main() {
             "sentry-trace": "ee802d00094e4c389ee936d24bd5cc5f-85907776c59f1b52",
             "sec-ch-ua-platform": '"Windows"',
           },
+
+          "tags": {
+            "graphqlQuery": "PossibleFilters"
+          }
         }
       );
 
@@ -913,6 +1017,10 @@ export default function main() {
             "sentry-trace": "ee802d00094e4c389ee936d24bd5cc5f-85907776c59f1b52",
             "sec-ch-ua-platform": '"Windows"',
           },
+
+          "tags": {
+            "graphqlQuery": "DataCubeObservations"
+          }
         }
       );
 
@@ -937,6 +1045,10 @@ export default function main() {
             "sentry-trace": "ee802d00094e4c389ee936d24bd5cc5f-85907776c59f1b52",
             "sec-ch-ua-platform": '"Windows"',
           },
+
+          "tags": {
+            "graphqlQuery": "DataCubeComponents"
+          }
         }
       );
     }
