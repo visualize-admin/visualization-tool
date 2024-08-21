@@ -3,8 +3,6 @@
  * Browser: chromium 125.0.6422.26
  */
 
-import { URL } from "node:url";
-
 import { htmlReport } from "https://raw.githubusercontent.com/benc-uk/k6-reporter/main/dist/bundle.js";
 import { group } from "k6";
 import http from "k6/http";
@@ -22,7 +20,7 @@ export const options = {
 };
 
 const BASE_URL = `https://visualization-tool-lutpgivlt-ixt1.vercel.app`;
-const HOST = new URL(BASE_URL).host;
+const HOST = BASE_URL.replace(/^https?:\/\//, "");
 
 export default function main() {
   let response;
