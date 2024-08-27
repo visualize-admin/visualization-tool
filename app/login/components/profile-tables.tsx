@@ -301,9 +301,9 @@ const ProfileVisualizationsRow = (props: {
 
   const chartTitle = useMemo(() => {
     const title =
-      config.data.layout.meta.title?.[locale] ??
+      config.data.layout.meta.title?.[locale] ||
       config.data.chartConfigs
-        .map((d) => d.meta.title?.[locale] ?? false)
+        .map((chartConfig) => chartConfig.meta.title?.[locale] ?? false)
         .filter(truthy)
         .join(", ");
 
