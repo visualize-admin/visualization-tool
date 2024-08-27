@@ -561,6 +561,7 @@ const DashboardTimeRangeFilterOptions = ({
             minDate={minDate}
             maxDate={maxDate}
             label={t({ id: "controls.filters.select.from", message: "From" })}
+            parseDate={parseDate}
           />
         ) : (
           <Select
@@ -582,6 +583,7 @@ const DashboardTimeRangeFilterOptions = ({
             minDate={minDate}
             maxDate={maxDate}
             label={t({ id: "controls.filters.select.to", message: "To" })}
+            parseDate={parseDate}
           />
         ) : (
           <Select

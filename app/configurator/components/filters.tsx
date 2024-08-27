@@ -1030,6 +1030,7 @@ export const TimeFilter = (props: TimeFilterProps) => {
                     dateFormat={formatDateValue}
                     minDate={from}
                     maxDate={to}
+                    parseDate={parse}
                   />
                 }
                 right={
@@ -1049,6 +1050,7 @@ export const TimeFilter = (props: TimeFilterProps) => {
                     dateFormat={formatDateValue}
                     minDate={from}
                     maxDate={to}
+                    parseDate={parse}
                   />
                 }
               />

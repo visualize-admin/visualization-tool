@@ -434,6 +434,7 @@ export const DataFilterTemporal = ({
         disabled={disabled || usesMostRecentDate}
         topControls={topControls}
         sideControls={sideControls}
+        parseDate={parseDate}
       />
       <MostRecentDateSwitch
         checked={usesMostRecentDate}

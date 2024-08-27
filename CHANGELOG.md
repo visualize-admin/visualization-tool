@@ -18,6 +18,7 @@ You can also check the
   - Drag handles are now centered in table configurator
   - Single chart titles are now correctly displayed in user profile
   - Renaming of charts through user profile now works correctly
+  - Manually entering dates in date pickers works correctly again
 
 # [4.7.4] - 2024-07-23
 
