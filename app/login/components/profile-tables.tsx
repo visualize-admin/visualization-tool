@@ -301,17 +301,16 @@ const ProfileVisualizationsRow = (props: {
 
   const isSingleChart = config.data.chartConfigs.length === 1;
   const chartTitle = useMemo(() => {
-    const title =
-      config.data.layout.meta.title?.[locale] ||
-      config.data.chartConfigs
-        .map((chartConfig) => chartConfig.meta.title?.[locale] ?? false)
-        .filter(truthy)
-        .join(", ");
-
-    return title
-      ? title
-      : t({ id: "annotation.add.title", message: "[ No Title ]" });
-  }, [config.data.chartConfigs, config.data.layout.meta.title, locale]);
+    const title = isSingleChart
+      ? config.data.chartConfigs[0].meta.title[locale]
+      : config.data.layout.meta.title[locale];
+    return title || t({ id: "annotation.add.title", message: "[ No Title ]" });
+  }, [
+    config.data.chartConfigs,
+    config.data.layout.meta.title,
+    isSingleChart,
+    locale,
+  ]);
 
   return (
     <TableRow>
