@@ -1,11 +1,10 @@
 import { Box, IconButton } from "@mui/material";
 import { useRef } from "react";
 
+import { ArrowMenuTopCenter } from "@/components/arrow-menu";
+import { MenuActionItem, MenuActionProps } from "@/components/menu-action-item";
 import useDisclosure from "@/components/use-disclosure";
 import { Icon } from "@/icons";
-
-import { ArrowMenuTopBottom } from "./arrow-menu";
-import { MenuActionItem, MenuActionProps } from "./menu-action-item";
 
 type ActionsProps = {
   actions: MenuActionProps[];
@@ -28,7 +27,7 @@ export const RowActions = (props: ActionsProps) => {
       <IconButton ref={buttonRef} onClick={isOpen ? close : open}>
         <Icon name="more" size={16} />
       </IconButton>
-      <ArrowMenuTopBottom
+      <ArrowMenuTopCenter
         onClose={close}
         open={isOpen}
         anchorEl={buttonRef.current}
@@ -49,7 +48,7 @@ export const RowActions = (props: ActionsProps) => {
             {...(props.type === "button" ? { onDialogClose: close } : {})}
           />
         ))}
-      </ArrowMenuTopBottom>
+      </ArrowMenuTopCenter>
     </Box>
   );
 };
