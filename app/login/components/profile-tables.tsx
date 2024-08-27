@@ -163,12 +163,10 @@ export const ProfileVisualizationsTable = (
   );
 };
 
-type ProfileVisualizationsRowProps = {
+const ProfileVisualizationsRow = (props: {
   userId: number;
   config: ParsedConfig;
-};
-
-const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
+}) => {
   const { userId, config } = props;
   const { dataSource } = config.data;
   const dataSets = Array.from(
