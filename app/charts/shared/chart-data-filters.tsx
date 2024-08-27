@@ -529,6 +529,7 @@ export const DataFilterTemporalDimension = ({
       minDate={minDate}
       maxDate={maxDate}
       disabled={disabled}
+      parseDate={parseDate}
     />
   ) : (
     <DataFilterGenericDimension

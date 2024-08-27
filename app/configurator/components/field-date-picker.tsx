@@ -19,6 +19,7 @@ export type DatePickerFieldProps = {
   sideControls?: React.ReactNode;
   timeUnit?: DatePickerTimeUnit;
   dateFormat?: (d: Date) => string;
+  parseDate: (s: string) => Date | null;
 } & Omit<
   DatePickerProps<Date>,
   "value" | "onChange" | "shouldDisableDate" | "inputFormat" | "renderInput"
@@ -36,6 +37,7 @@ export const DatePickerField = (props: DatePickerFieldProps) => {
     sideControls,
     timeUnit = TimeUnit.Day,
     dateFormat = timeFormat("%Y-%m-%d"),
+    parseDate,
     ...rest
   } = props;
   const handleChange = useCallback(
@@ -106,6 +108,9 @@ export const DatePickerField = (props: DatePickerFieldProps) => {
                 hiddenLabel
                 size="small"
                 {...params}
+                onChange={(e) => {
+                  handleChange(parseDate(e.target.value));
+                }}
                 sx={{
                   ...params.sx,
 
