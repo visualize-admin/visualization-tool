@@ -163,12 +163,10 @@ export const ProfileVisualizationsTable = (
   );
 };
 
-type ProfileVisualizationsRowProps = {
+const ProfileVisualizationsRow = (props: {
   userId: number;
   config: ParsedConfig;
-};
-
-const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
+}) => {
   const { userId, config } = props;
   const { dataSource } = config.data;
   const dataSets = Array.from(
@@ -301,24 +299,26 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
     updateConfigMut,
   ]);
 
+  const isSingleChart = config.data.chartConfigs.length === 1;
   const chartTitle = useMemo(() => {
-    const title =
-      config.data.layout.meta.title?.[locale] ??
-      config.data.chartConfigs
-        .map((d) => d.meta.title?.[locale] ?? false)
-        .filter(truthy)
-        .join(", ");
-
-    return title
-      ? title
-      : t({ id: "annotation.add.title", message: "[ No Title ]" });
-  }, [config.data.chartConfigs, config.data.layout.meta.title, locale]);
+    const title = isSingleChart
+      ? config.data.chartConfigs[0].meta.title[locale]
+      : config.data.layout.meta.title[locale];
+    return title || t({ id: "annotation.add.title", message: "[ No Title ]" });
+  }, [
+    config.data.chartConfigs,
+    config.data.layout.meta.title,
+    isSingleChart,
+    locale,
+  ]);
 
   return (
     <TableRow>
       <TableCell width="10%">
         <Typography variant="body2">
-          {config.data.chartConfigs.length > 1 ? "dashboard" : "single"}
+          {isSingleChart
+            ? t({ id: "controls.layout.chart", message: "Chart" })
+            : t({ id: "controls.layout.dashboard", message: "Dashboard" })}
         </Typography>
       </TableCell>
       <TableCell width="30%">
