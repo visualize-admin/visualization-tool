@@ -16,6 +16,8 @@ You can also check the
     mode
   - Table single filters now correctly display selected state
   - Drag handles are now centered in table configurator
+  - Single chart titles are now correctly displayed in user profile
+  - Renaming of charts through user profile now works correctly
 
 # [4.7.4] - 2024-07-23
 
