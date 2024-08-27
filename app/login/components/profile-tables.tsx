@@ -299,6 +299,7 @@ const ProfileVisualizationsRow = (props: {
     updateConfigMut,
   ]);
 
+  const isSingleChart = config.data.chartConfigs.length === 1;
   const chartTitle = useMemo(() => {
     const title =
       config.data.layout.meta.title?.[locale] ||
@@ -316,7 +317,9 @@ const ProfileVisualizationsRow = (props: {
     <TableRow>
       <TableCell width="10%">
         <Typography variant="body2">
-          {config.data.chartConfigs.length > 1 ? "dashboard" : "single"}
+          {isSingleChart
+            ? t({ id: "controls.layout.chart", message: "Chart" })
+            : t({ id: "controls.layout.dashboard", message: "Dashboard" })}
         </Typography>
       </TableCell>
       <TableCell width="30%">

@@ -609,7 +609,12 @@ msgstr "Italienisch"
 msgid "controls.layout.canvas"
 msgstr "Freies Layout"
 
+#: app/login/components/profile-tables.tsx
+msgid "controls.layout.chart"
+msgstr ""
+
 #: app/configurator/components/field-i18n.ts
+#: app/login/components/profile-tables.tsx
 msgid "controls.layout.dashboard"
 msgstr "Dashboard"
 
@@ -817,10 +822,6 @@ msgstr "Geteilte Filter"
 #: app/configurator/components/layout-configurator.tsx
 msgid "controls.section.shared-filters.date"
 msgstr "Datum"
-
-#: app/configurator/components/layout-configurator.tsx
-msgid "controls.section.shared-filters.shared-switch"
-msgstr "Geteilt"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.show-standard-error"
