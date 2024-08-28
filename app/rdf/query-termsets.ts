@@ -52,8 +52,7 @@ export const getCubeTermsets = async (
 PREFIX schema: <http://schema.org/>
 
 SELECT DISTINCT ?termsetIri ?termsetLabel WHERE {
-  VALUES (?cubeIri) {(<${iri}>)}
-  ?termsetIri meta:isUsedIn ?cubeIri .
+  ?termsetIri meta:isUsedIn <${iri}> .
   ${buildLocalizedSubQuery("termsetIri", "schema:name", "termsetLabel", { locale })}
 }`,
     { operation: "postUrlencoded" }
