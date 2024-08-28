@@ -81,8 +81,7 @@ PREFIX schema: <http://schema.org/>
 PREFIX sh: <http://www.w3.org/ns/shacl#>
 
 SELECT DISTINCT ?dimensionIri ?dimensionLabel ?termsetIri ?termsetLabel WHERE {
-  VALUES (?iri) {(<${iri}>)}
-  ?iri cube:observationConstraint/sh:property ?dimension .
+  <${iri}> cube:observationConstraint/sh:property ?dimension .
   ?dimension
     sh:path ?dimensionIri ;
     a cube:KeyDimension ;
