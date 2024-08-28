@@ -213,7 +213,6 @@ const mkScoresQuery = (
               sh:path ?dimensionIri ;
               cubeMeta:dataKind/time:unitType ?unitType ;
               cubeMeta:dataKind/time:unitType <${unitNode}>.
-
             ${buildLocalizedSubQuery(
               "dimension",
               "schema:name",
@@ -228,20 +227,7 @@ const mkScoresQuery = (
             return `
             VALUES (?termsetIri) {${sharedDimensions.map((sd) => `(<${sd}>)`).join(" ")}}
             ?iri a cube:Cube .
-            ?iri cube:observationConstraint/sh:property ?dimension .
-            ?dimension a cube:KeyDimension .
-            ?dimension sh:in/rdf:first ?value.
-            ?dimension sh:path ?dimensionIri .
-            ${buildLocalizedSubQuery(
-              "dimension",
-              "schema:name",
-              "dimensionLabel",
-              {
-                locale,
-              }
-            )}
-      
-            ?value schema:inDefinedTermSet ?termsetIri .
+            ?termsetIri meta:isUsedIn ?iri .
             ${buildLocalizedSubQuery("termsetIri", "schema:name", "termsetLabel", { locale })}`;
           }
         })
