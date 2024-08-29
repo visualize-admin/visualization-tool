@@ -12,8 +12,8 @@ import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { theme } from "@/themes/federal";
 import { getTextWidth } from "@/utils/get-text-width";
 
+import { TITLE_VPADDING } from "./combo-line-container";
 const TITLE_HPADDING = 8;
-const TITLE_VPADDING = 4;
 
 type AxisHeightLinearDualProps = {
   orientation?: "left" | "right";
@@ -32,6 +32,11 @@ export const AxisHeightLinearDual = (props: AxisHeightLinearDualProps) => {
   const axisTitleWidth =
     getTextWidth(axisTitle, { fontSize: axisLabelFontSize }) + TICK_PADDING;
   const color = colors(axisTitle);
+  const otherAxisTitle = y[leftAligned ? "right" : "left"].label;
+  const otherAxisTitleWidth = getTextWidth(otherAxisTitle, { fontSize: axisLabelFontSize }) + TICK_PADDING;
+  const overLappingTitles = axisTitleWidth + otherAxisTitleWidth > bounds.chartWidth;
+
+  const largerTitleWidth = Math.max(axisTitleWidth, otherAxisTitleWidth);
 
   useRenderAxisHeightLinear(ref, {
     id: `axis-height-linear-${orientation}`,
@@ -48,9 +53,9 @@ export const AxisHeightLinearDual = (props: AxisHeightLinearDualProps) => {
     <>
       <foreignObject
         x={
-          leftAligned
+          leftAligned || overLappingTitles
             ? 0
-            : bounds.chartWidth +
+            :  bounds.chartWidth +
               margins.left -
               axisTitleWidth +
               // Align the title with the rightmost tick.
@@ -58,6 +63,7 @@ export const AxisHeightLinearDual = (props: AxisHeightLinearDualProps) => {
               TICK_PADDING -
               TITLE_HPADDING * 2
         }
+        y={overLappingTitles ?   axisLabelFontSize / 2 - (largerTitleWidth === axisTitleWidth ? 32 : 0) : 0}
         width={axisTitleWidth + TITLE_HPADDING * 2}
         height={(axisLabelFontSize + TITLE_VPADDING) * 2}
         color={theme.palette.getContrastText(color)}
@@ -65,7 +71,7 @@ export const AxisHeightLinearDual = (props: AxisHeightLinearDualProps) => {
         <OpenMetadataPanelWrapper component={y[orientation].dimension}>
           <span
             style={{
-              fontSize: axisLabelFontSize,
+              fontSize: axisLabelFontSize ,
               backgroundColor: color,
               color: theme.palette.getContrastText(color),
               paddingTop: TITLE_VPADDING,
