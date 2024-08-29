@@ -391,7 +391,6 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
             <div
               ref={containerRef}
               style={{
-                // TODO before merging, Align with chart-preview
                 minWidth: 0,
                 height: containerHeight,
                 marginTop: 16,
