@@ -42,7 +42,7 @@ const toTree = (
     depth: number
   ): HierarchyValue | undefined => {
     const name = getName(node.resource, locale);
-    // TODO Find out why some hierachy nodes have no label. We filter
+    // TODO Find out why some hierarchy nodes have no label. We filter
     // them out at the moment
     // @see https://zulip.zazuko.com/#narrow/stream/40-bafu-ext/topic/labels.20for.20each.20hierarchy.20level/near/312845
 

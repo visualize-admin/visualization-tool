@@ -186,7 +186,7 @@ export const applyTableDimensionToFilters = (props: {
     filters[originalIri] = {
       type: "single",
       // TODO, possibly in case of join by dimensions, we could get a value that is not part
-      // of of the full range of values
+      // of the full range of values
       value: possibleFilter?.value ?? dimension.values[0].value,
     };
   }

@@ -100,9 +100,7 @@ const useLinesState = (
   const formatNumber = useFormatNumber({ decimals: "auto" });
   const timeFormatUnit = useTimeFormatUnit();
   const formatters = useChartFormatters(chartProps);
-
-  // TODO: extract to variables
-  const xKey = fields.x.componentIri;
+  const xKey = xDimension.iri;
 
   const segmentsByValue = useMemo(() => {
     const values = segmentDimension?.values || [];

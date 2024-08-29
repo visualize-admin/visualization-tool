@@ -27,10 +27,10 @@ import { ChartProps, VisualizationProps } from "../shared/ChartProps";
 
 export const ChartMapVisualization = (props: VisualizationProps<MapConfig>) => {
   const { dataSource, chartConfig } = props;
+  const { fields } = chartConfig;
   const locale = useLocale();
-
-  const areaDimensionIri = chartConfig.fields.areaLayer?.componentIri || "";
-  const symbolDimensionIri = chartConfig.fields.symbolLayer?.componentIri || "";
+  const areaDimensionIri = fields.areaLayer?.componentIri || "";
+  const symbolDimensionIri = fields.symbolLayer?.componentIri || "";
   const [
     {
       data: geoCoordinatesDimension,
@@ -51,7 +51,7 @@ export const ChartMapVisualization = (props: VisualizationProps<MapConfig>) => {
       sourceUrl: dataSource.url,
       locale,
     },
-    pause: !symbolDimensionIri || symbolDimensionIri === "",
+    pause: !symbolDimensionIri,
   });
 
   const geoCoordinatesDimensionValues =
@@ -64,7 +64,7 @@ export const ChartMapVisualization = (props: VisualizationProps<MapConfig>) => {
   const geoShapesIri = useMemo(() => {
     const iri = areaDimensionIri || symbolDimensionIri;
     return isJoinById(iri)
-      ? getResolvedJoinByIri(chartConfig.cubes[0], iri)
+      ? getResolvedJoinByIri(chartConfig.cubes[0], iri) ?? iri
       : iri;
   }, [areaDimensionIri, chartConfig.cubes, symbolDimensionIri]);
 
@@ -82,13 +82,13 @@ export const ChartMapVisualization = (props: VisualizationProps<MapConfig>) => {
       cubeFilter: {
         // FIXME: This assumes that there is only one cube.
         iri: chartConfig.cubes[0].iri,
-        dimensionIri: geoShapesIri!,
+        dimensionIri: geoShapesIri,
       },
     },
-    pause: !geoShapesIri || geoShapesIri === "",
+    pause: !geoShapesIri,
   });
 
-  const shapes = fetchedGeoShapes?.dataCubeDimensionGeoShapes ?? undefined;
+  const shapes = fetchedGeoShapes?.dataCubeDimensionGeoShapes;
   const geometries: any[] | undefined = (
     shapes?.topology?.objects?.shapes as any
   )?.geometries;

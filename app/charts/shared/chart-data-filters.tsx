@@ -112,13 +112,13 @@ export const useChartDataFiltersState = ({
       };
     });
   }, [chartConfig, componentIris, queryFilters]);
-  // TODO: disable when dashboard filters are active?
   const { error } = useEnsurePossibleInteractiveFilters({
     dataSource,
     chartConfig,
     preparedFilters,
     dashboardFilters,
   });
+
   return {
     open,
     setOpen,
