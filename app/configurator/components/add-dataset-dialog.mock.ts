@@ -85,6 +85,8 @@ export const photovoltaikChartStateMock: ConfiguratorStateConfiguringChart = {
       },
       fields: {
         x: {
+          cubeIri:
+            "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/14",
           componentIri:
             "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
           sorting: {
@@ -93,6 +95,8 @@ export const photovoltaikChartStateMock: ConfiguratorStateConfiguringChart = {
           },
         },
         y: {
+          cubeIri:
+            "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/14",
           componentIri:
             "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/AnzahlAnlagen",
         },

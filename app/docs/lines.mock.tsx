@@ -27,14 +27,17 @@ const interactiveFiltersConfig: InteractiveFiltersConfig = {
 };
 export const fields = {
   x: {
+    cubeIri: "http://environment.ld.admin.ch/foen/px/0703010000_103",
     componentIri:
       "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/0",
   },
   y: {
+    cubeIri: "http://environment.ld.admin.ch/foen/px/0703010000_103",
     componentIri:
       "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/0",
   },
   segment: {
+    cubeIri: "http://environment.ld.admin.ch/foen/px/0703010000_103",
     componentIri:
       "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/3",
     palette: "category10",

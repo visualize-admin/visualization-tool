@@ -243,20 +243,24 @@ describe("chart type switch", () => {
       },
       fields: {
         x: {
+          componentCubeIri: "https://environment.ld.admin.ch/foen/ubd0104",
           componentIri:
             "https://environment.ld.admin.ch/foen/ubd0104/parametertype",
         },
         y: {
+          componentCubeIri: "https://environment.ld.admin.ch/foen/ubd0104",
           componentIri: "https://environment.ld.admin.ch/foen/ubd0104/value",
         },
       },
       interactiveFiltersConfig: {
         legend: {
           active: false,
+          componentCubeIri: "",
           componentIri: "",
         },
         timeRange: {
           active: false,
+          componentCubeIri: "",
           componentIri: "",
           presets: {
             type: "range",

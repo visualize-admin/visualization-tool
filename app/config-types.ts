@@ -132,6 +132,7 @@ export type MetaKey = keyof Meta;
 
 const InteractiveFiltersLegend = t.type({
   active: t.boolean,
+  componentCubeIri: t.string,
   componentIri: t.string,
 });
 export type InteractiveFiltersLegend = t.TypeOf<
@@ -140,6 +141,7 @@ export type InteractiveFiltersLegend = t.TypeOf<
 
 const InteractiveFiltersTimeRange = t.type({
   active: t.boolean,
+  componentCubeIri: t.string,
   componentIri: t.string,
   presets: t.type({
     type: t.literal("range"),
@@ -153,6 +155,7 @@ export type InteractiveFiltersTimeRange = t.TypeOf<
 
 const InteractiveFiltersDataConfig = t.type({
   active: t.boolean,
+  // FIXME: convert to { cubeIri: string, componentIri: string }[]
   componentIris: t.array(t.string),
 });
 export type InteractiveFiltersDataConfig = t.TypeOf<
@@ -199,7 +202,7 @@ const ColorMapping = t.record(t.string, t.string);
 export type ColorMapping = t.TypeOf<typeof ColorMapping>;
 
 const GenericField = t.intersection([
-  t.type({ componentIri: t.string }),
+  t.type({ componentCubeIri: t.string, componentIri: t.string }),
   t.partial({ useAbbreviations: t.boolean }),
 ]);
 export type GenericField = t.TypeOf<typeof GenericField>;
@@ -242,9 +245,9 @@ export type SortingField = t.TypeOf<typeof SortingField>;
 
 const Cube = t.intersection([
   t.type({
-    /** The IRI of the cube, used for querying */
+    /** Iri of a cube used for querying */
     iri: t.string,
-    /** The IRI of the cube used when first published */
+    /** Iri of a cube when first published */
     publishIri: t.string,
     filters: Filters,
   }),
@@ -494,6 +497,7 @@ export type ColumnStyleHeatmap = t.TypeOf<typeof ColumnStyleHeatmap>;
 export type ColumnStyleBar = t.TypeOf<typeof ColumnStyleBar>;
 
 const TableColumn = t.type({
+  componentCubeIri: t.string,
   componentIri: t.string,
   componentType: ComponentType,
   index: t.number,
@@ -510,6 +514,7 @@ export type TableSettings = t.TypeOf<typeof TableSettings>;
 const TableFields = t.record(t.string, TableColumn);
 
 const TableSortingOption = t.type({
+  componentCubeIri: t.string,
   componentIri: t.string,
   componentType: ComponentType,
   sortingOrder: SortingOrder,
@@ -562,6 +567,7 @@ export type FixedColorField = t.TypeOf<typeof FixedColorField>;
 const CategoricalColorField = t.intersection([
   t.type({
     type: t.literal("categorical"),
+    componentCubeIri: t.string,
     componentIri: t.string,
     palette: t.string,
     colorMapping: ColorMapping,
@@ -575,6 +581,7 @@ export type CategoricalColorField = t.TypeOf<typeof CategoricalColorField>;
 const NumericalColorField = t.intersection([
   t.type({
     type: t.literal("numerical"),
+    componentCubeIri: t.string,
     componentIri: t.string,
     palette: t.union([DivergingPaletteType, SequentialPaletteType]),
   }),
@@ -603,14 +610,17 @@ export type ColorField =
   | NumericalColorField;
 
 const MapAreaLayer = t.type({
+  componentCubeIri: t.string,
   componentIri: t.string,
   color: t.union([CategoricalColorField, NumericalColorField]),
 });
 export type MapAreaLayer = t.TypeOf<typeof MapAreaLayer>;
 
 const MapSymbolLayer = t.type({
+  componentCubeIri: t.string,
   componentIri: t.string,
   // symbol radius (size)
+  measureCubeIri: t.string,
   measureIri: t.string,
   color: t.union([FixedColorField, CategoricalColorField, NumericalColorField]),
 });
@@ -647,6 +657,7 @@ export type MapConfig = t.TypeOf<typeof MapConfig>;
 const ComboLineSingleFields = t.type({
   x: GenericField,
   y: t.type({
+    // FIXME: convert to { cubeIri: string, componentIri: string }[]
     componentIris: t.array(t.string),
     palette: t.string,
     colorMapping: ColorMapping,
@@ -670,7 +681,9 @@ export type ComboLineSingleConfig = t.TypeOf<typeof ComboLineSingleConfig>;
 const ComboLineDualFields = t.type({
   x: GenericField,
   y: t.type({
+    leftAxisComponentCubeIri: t.string,
     leftAxisComponentIri: t.string,
+    rightAxisComponentCubeIri: t.string,
     rightAxisComponentIri: t.string,
     palette: t.string,
     colorMapping: ColorMapping,
@@ -694,8 +707,10 @@ export type ComboLineDualConfig = t.TypeOf<typeof ComboLineDualConfig>;
 const ComboLineColumnFields = t.type({
   x: GenericField,
   y: t.type({
+    lineComponentCubeIri: t.string,
     lineComponentIri: t.string,
     lineAxisOrientation: t.union([t.literal("left"), t.literal("right")]),
+    columnComponentCubeIri: t.string,
     columnComponentIri: t.string,
     palette: t.string,
     colorMapping: ColorMapping,
@@ -911,6 +926,7 @@ type _InteractiveFiltersAdjusters = {
   legend: FieldAdjuster<ChartConfig, InteractiveFiltersLegend>;
   timeRange: {
     active: FieldAdjuster<ChartConfig, boolean>;
+    componentCubeIri: FieldAdjuster<ChartConfig, string>;
     componentIri: FieldAdjuster<ChartConfig, string>;
     presets: {
       type: FieldAdjuster<ChartConfig, "range">;

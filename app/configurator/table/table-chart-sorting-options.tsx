@@ -216,6 +216,7 @@ const AddTableSortingOption = ({
           type: "CHART_CONFIG_REPLACED",
           value: {
             chartConfig: addSortingOption(chartConfig, {
+              cubeIri: component.cubeIri,
               componentIri: component.iri,
               componentType: component.__typename,
               sortingOrder: "asc",
@@ -310,6 +311,7 @@ const ChangeTableSortingOption = ({
             chartConfig: changeSortingOption(chartConfig, {
               index,
               option: {
+                cubeIri: component.cubeIri,
                 componentIri: component.iri,
                 componentType: component.__typename,
                 sortingOrder: "asc",

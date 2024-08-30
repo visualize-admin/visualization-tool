@@ -357,6 +357,7 @@ export const handleChartFieldChanged = (
   const {
     locale,
     field,
+    componentCubeIri,
     componentIri,
     selectedValues: actionSelectedValues,
   } = action.value;
@@ -372,16 +373,20 @@ export const handleChartFieldChanged = (
   const dimensions = dataCubesComponents?.dimensions ?? [];
   const measures = dataCubesComponents?.measures ?? [];
   const components = [...dimensions, ...measures];
-  const component = components.find((d) => d.iri === componentIri);
+  const component = components.find(
+    (d) => d.cubeIri === componentCubeIri && d.iri === componentIri
+  );
   const selectedValues = actionSelectedValues ?? component?.values ?? [];
 
   if (f) {
-    // Reset field properties, excluding componentIri.
-    (chartConfig.fields as GenericFields)[field] = { componentIri };
+    (chartConfig.fields as GenericFields)[field] = {
+      componentCubeIri,
+      componentIri,
+    };
   }
 
   const sideEffect = getChartFieldChangeSideEffect(chartConfig, field);
-  sideEffect?.(componentIri, {
+  sideEffect?.(componentIri, componentCubeIri, {
     chartConfig,
     dimensions,
     measures,
@@ -546,6 +551,7 @@ export const setRangeFilter = (
 
   if (chartConfig.interactiveFiltersConfig) {
     chartConfig.interactiveFiltersConfig.timeRange = {
+      componentCubeIri: dimension.cubeIri,
       componentIri: dimension.iri,
       active: chartConfig.interactiveFiltersConfig.timeRange.active,
       presets: {

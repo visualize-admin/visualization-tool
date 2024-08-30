@@ -28,14 +28,17 @@ export const interactiveFiltersConfig: InteractiveFiltersConfig = {
 
 export const scatterplotFields: ScatterPlotFields = {
   x: {
+    cubeIri: "http://environment.ld.admin.ch/foen/px/0703010000_103",
     componentIri:
       "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/0",
   },
   y: {
+    cubeIri: "http://environment.ld.admin.ch/foen/px/0703010000_103",
     componentIri:
       "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/1",
   },
   segment: {
+    cubeIri: "http://environment.ld.admin.ch/foen/px/0703010000_103",
     componentIri:
       "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1",
     palette: "category10",

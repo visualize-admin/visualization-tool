@@ -67,6 +67,7 @@ export type ConfiguratorStateAction =
       value: {
         locale: Locale;
         field: EncodingFieldType;
+        componentCubeIri: string;
         componentIri: string;
         selectedValues?: $FixMe[];
       };
@@ -177,6 +178,7 @@ export type ConfiguratorStateAction =
       value: {
         field: string;
         colorConfigPath: string | undefined;
+        cubeIri: string;
         dimensionIri: string;
         values: DimensionValue[];
         random: boolean;

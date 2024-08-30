@@ -620,6 +620,7 @@ describe("colorMapping", () => {
         value: {
           field: "areaLayer",
           colorConfigPath: "color",
+          cubeIri: "https://first-dataset",
           dimensionIri: "year-period-1",
           values: [
             { value: "red", label: "red", color: "red" },

@@ -54,10 +54,15 @@ export const states: ConfiguratorState[] = [
         chartType: "column",
         fields: {
           x: {
+            cubeIri: "",
             componentIri: "foo",
-            sorting: { sortingType: "byDimensionLabel", sortingOrder: "asc" },
+            sorting: {
+              sortingType: "byDimensionLabel",
+              sortingOrder: "asc",
+            },
           },
           y: {
+            cubeIri: "",
             componentIri: "foo",
           },
         },
@@ -142,11 +147,13 @@ export const observations = [
 
 export const fields: ColumnFields = {
   x: {
+    cubeIri: "http://environment.ld.admin.ch/foen/px/0703030000_124",
     componentIri:
       "http://environment.ld.admin.ch/foen/px/0703030000_124/dimension/0",
     sorting: { sortingType: "byDimensionLabel", sortingOrder: "asc" },
   },
   y: {
+    cubeIri: "http://environment.ld.admin.ch/foen/px/0703030000_124",
     componentIri:
       "http://environment.ld.admin.ch/foen/px/0703030000_124/measure/0",
   },
@@ -906,12 +913,14 @@ export const tableConfig: TableConfig = {
   settings: { showSearch: true, showAllRows: true },
   sorting: [
     {
+      cubeIri: "http://environment.ld.admin.ch/foen/px/0703010000_105",
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2",
       componentType: "NominalDimension",
       sortingOrder: "desc",
     },
     {
+      cubeIri: "http://environment.ld.admin.ch/foen/px/0703010000_105",
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/5",
       componentType: "NumericalMeasure",
@@ -920,6 +929,7 @@ export const tableConfig: TableConfig = {
   ],
   fields: {
     "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/0": {
+      cubeIri: "http://environment.ld.admin.ch/foen/px/0703010000_105",
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/0",
       index: 1,
@@ -934,6 +944,7 @@ export const tableConfig: TableConfig = {
       },
     },
     "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/1": {
+      cubeIri: "http://environment.ld.admin.ch/foen/px/0703010000_105",
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/1",
       index: 7,
@@ -961,6 +972,7 @@ export const tableConfig: TableConfig = {
       },
     },
     "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2": {
+      cubeIri: "http://environment.ld.admin.ch/foen/px/0703010000_105",
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2",
       index: 3,
@@ -975,6 +987,7 @@ export const tableConfig: TableConfig = {
       },
     },
     "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/3": {
+      cubeIri: "http://environment.ld.admin.ch/foen/px/0703010000_105",
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/3",
       index: 4,
@@ -989,6 +1002,7 @@ export const tableConfig: TableConfig = {
       },
     },
     "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/4": {
+      cubeIri: "http://environment.ld.admin.ch/foen/px/0703010000_105",
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/4",
       index: 5,
@@ -1003,6 +1017,7 @@ export const tableConfig: TableConfig = {
       },
     },
     "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/0": {
+      cubeIri: "http://environment.ld.admin.ch/foen/px/0703010000_105",
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/0",
       index: 6,
@@ -1017,6 +1032,7 @@ export const tableConfig: TableConfig = {
       },
     },
     "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/1": {
+      cubeIri: "http://environment.ld.admin.ch/foen/px/0703010000_105",
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/1",
       index: 2,
@@ -1030,6 +1046,7 @@ export const tableConfig: TableConfig = {
       },
     },
     "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/2": {
+      cubeIri: "http://environment.ld.admin.ch/foen/px/0703010000_105",
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/2",
       index: 8,
@@ -1044,6 +1061,7 @@ export const tableConfig: TableConfig = {
       },
     },
     "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/3": {
+      cubeIri: "http://environment.ld.admin.ch/foen/px/0703010000_105",
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/3",
       index: 9,
@@ -1058,6 +1076,7 @@ export const tableConfig: TableConfig = {
       },
     },
     "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/4": {
+      cubeIri: "http://environment.ld.admin.ch/foen/px/0703010000_105",
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/4",
       index: 10,
@@ -1074,6 +1093,7 @@ export const tableConfig: TableConfig = {
       },
     },
     "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/5": {
+      cubeIri: "http://environment.ld.admin.ch/foen/px/0703010000_105",
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/5",
       index: 11,
@@ -1083,6 +1103,7 @@ export const tableConfig: TableConfig = {
       columnStyle: { type: "heatmap", palette: "PRGn", textStyle: "regular" },
     },
     "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/6": {
+      cubeIri: "http://environment.ld.admin.ch/foen/px/0703010000_105",
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/6",
       index: 12,
@@ -1096,6 +1117,7 @@ export const tableConfig: TableConfig = {
       },
     },
     "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/7": {
+      cubeIri: "http://environment.ld.admin.ch/foen/px/0703010000_105",
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/7",
       index: 13,
@@ -1110,6 +1132,7 @@ export const tableConfig: TableConfig = {
       },
     },
     "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/8": {
+      cubeIri: "http://environment.ld.admin.ch/foen/px/0703010000_105",
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/8",
       index: 14,

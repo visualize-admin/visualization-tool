@@ -241,6 +241,7 @@ export type EncodingSortingOption<T extends ChartConfig = ChartConfig> = {
 
 type OnEncodingChange<T extends ChartConfig = ChartConfig> = (
   iri: string,
+  cubeIri: string,
   options: {
     chartConfig: T;
     dimensions: Dimension[];
@@ -368,17 +369,19 @@ export const ANIMATION_FIELD_SPEC: EncodingSpec<
   filters: true,
   hide: true,
   disableInteractiveFilters: true,
-  onChange: (iri, { chartConfig, initializing }) => {
+  onChange: (componentIri, componentCubeIri, { chartConfig, initializing }) => {
     if (initializing || !chartConfig.fields.animation) {
       chartConfig.fields.animation = {
-        componentIri: iri,
+        componentCubeIri,
+        componentIri,
         showPlayButton: true,
         duration: 30,
         type: "continuous",
         dynamicScales: false,
       };
     } else {
-      chartConfig.fields.animation.componentIri = iri;
+      chartConfig.fields.animation.componentCubeIri = componentCubeIri;
+      chartConfig.fields.animation.componentIri = componentIri;
     }
   },
   getDisabledState: (
@@ -407,14 +410,19 @@ export const ANIMATION_FIELD_SPEC: EncodingSpec<
       };
     }
 
+    const getKey = (cubeIri: string, componentIri: string) =>
+      cubeIri + componentIri;
     const fieldComponentsMap = Object.fromEntries(
       Object.entries<GenericField>(chartConfig.fields)
         .filter((d) => d[0] !== "animation")
-        .map(([k, v]) => [v.componentIri, k])
+        .map(([k, v]) => [getKey(v.componentCubeIri, v.componentIri), k])
     );
-    const temporalFieldComponentIris = temporalDimensions.filter((d) => {
-      return fieldComponentsMap[d.iri];
-    });
+
+    const temporalFieldComponentIris = temporalDimensions.filter(
+      (dimension) => {
+        return fieldComponentsMap[getKey(dimension.cubeIri, dimension.iri)];
+      }
+    );
 
     if (temporalDimensions.length === temporalFieldComponentIris.length) {
       return {
@@ -477,9 +485,13 @@ export const defaultSegmentOnChange: OnEncodingChange<
   | ScatterPlotConfig
   | PieConfig
   | TableConfig
-> = (iri, { chartConfig, dimensions, measures, selectedValues }) => {
+> = (
+  componentIri,
+  componentCubeIri,
+  { chartConfig, dimensions, measures, selectedValues }
+) => {
   const components = [...dimensions, ...measures];
-  const component = components.find((d) => d.iri === iri);
+  const component = components.find((d) => d.iri === componentIri);
   const palette = getDefaultCategoricalPaletteName(
     component,
     chartConfig.fields.segment && "palette" in chartConfig.fields.segment
@@ -492,11 +504,13 @@ export const defaultSegmentOnChange: OnEncodingChange<
   });
 
   if (chartConfig.fields.segment && "palette" in chartConfig.fields.segment) {
-    chartConfig.fields.segment.componentIri = iri;
+    chartConfig.fields.segment.componentCubeIri = componentCubeIri;
+    chartConfig.fields.segment.componentIri = componentIri;
     chartConfig.fields.segment.colorMapping = colorMapping;
   } else {
     chartConfig.fields.segment = {
-      componentIri: iri,
+      componentCubeIri,
+      componentIri,
       palette,
       sorting: DEFAULT_SORTING,
       colorMapping,
@@ -508,15 +522,16 @@ export const defaultSegmentOnChange: OnEncodingChange<
   }
 
   const multiFilter = makeMultiFilter(selectedValues.map((d) => d.value));
-  const cube = chartConfig.cubes.find((d) => d.iri === component.cubeIri);
+  const cube = chartConfig.cubes.find((cube) => cube.iri === componentCubeIri);
 
   if (cube) {
-    cube.filters[iri] = multiFilter;
+    cube.filters[componentIri] = multiFilter;
   }
 };
 
 const onMapFieldChange: OnEncodingChange<MapConfig> = (
   iri,
+  _,
   { chartConfig, dimensions, measures, field }
 ) => {
   initializeMapLayerField({
@@ -544,7 +559,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         optional: false,
         componentTypes: ["NumericalMeasure"],
         filters: false,
-        onChange: (iri, { chartConfig, measures }) => {
+        onChange: (iri, _, { chartConfig, measures }) => {
           const yMeasure = measures.find((d) => d.iri === iri);
 
           if (disableStacked(yMeasure)) {
@@ -623,7 +638,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         iriAttributes: ["componentIri"],
         componentTypes: ["NumericalMeasure"],
         filters: false,
-        onChange: (iri, { chartConfig, measures }) => {
+        onChange: (iri, _, { chartConfig, measures }) => {
           if (chartConfig.fields.segment?.type === "stacked") {
             const yMeasure = measures.find((d) => d.iri === iri);
 
@@ -664,7 +679,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
           { sortingType: "byMeasure", sortingOrder: ["asc", "desc"] },
           { sortingType: "byDimensionLabel", sortingOrder: ["asc", "desc"] },
         ],
-        onChange: (iri, { chartConfig, dimensions }) => {
+        onChange: (iri, _, { chartConfig, dimensions }) => {
           const component = dimensions.find((d) => d.iri === iri);
 
           if (!isTemporalDimension(component)) {
@@ -687,10 +702,9 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         componentTypes: SEGMENT_ENABLED_COMPONENTS,
         filters: true,
         sorting: COLUMN_SEGMENT_SORTING,
-        onChange: (iri, options) => {
+        onChange: (iri, cubeIri, options) => {
           const { chartConfig, dimensions, measures } = options;
-          defaultSegmentOnChange(iri, options);
-
+          defaultSegmentOnChange(iri, cubeIri, options);
           const components = [...dimensions, ...measures];
           const segment: ColumnSegmentField = get(
             chartConfig,
@@ -713,7 +727,6 @@ const chartConfigOptionsUISpec: ChartSpecs = {
           calculation: {
             getDisabledState: (chartConfig) => {
               const grouped = chartConfig.fields.segment?.type === "grouped";
-
               return {
                 disabled: grouped,
                 warnMessage: grouped
@@ -731,7 +744,6 @@ const chartConfigOptionsUISpec: ChartSpecs = {
               const yIri = chartConfig.fields.y.componentIri;
               const yDimension = dimensions.find((d) => d.iri === yIri);
               const disabledStacked = disableStacked(yDimension);
-
               return [
                 {
                   value: "stacked",
@@ -750,8 +762,11 @@ const chartConfigOptionsUISpec: ChartSpecs = {
                 },
               ];
             },
-            onChange: (d, { chartConfig }) => {
-              if (chartConfig.interactiveFiltersConfig && d === "grouped") {
+            onChange: (subtype, { chartConfig }) => {
+              if (
+                chartConfig.interactiveFiltersConfig &&
+                subtype === "grouped"
+              ) {
                 const path = "interactiveFiltersConfig.calculation";
                 setWith(chartConfig, path, { active: false, type: "identity" });
               }
