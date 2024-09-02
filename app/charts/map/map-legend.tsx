@@ -34,6 +34,7 @@ const HEIGHT = 40;
 const COLOR_RAMP_HEIGHT = 10;
 const MARGIN = { top: 6, right: 4, bottom: 0, left: 4 };
 const AXIS_TICK_ROTATE_ANGLE = 45;
+const LABELFONTSIZE = 10
 
 const useLegendWidth = () => Math.min(useSize().width, MAX_WIDTH);
 
@@ -44,7 +45,7 @@ const makeAxis = (
     fontFamily,
     formatNumber,
     labelColor,
-    legendFontSize,
+    LABELFONTSIZE,
     scale,
     thresholds,
   }: {
@@ -52,7 +53,7 @@ const makeAxis = (
     fontFamily: string;
     formatNumber: (x: NumberValue | undefined | null) => string;
     labelColor: string;
-    legendFontSize: number;
+    LABELFONTSIZE: number;
     scale: ScaleLinear<number, number, number>;
     thresholds: number[];
   }
@@ -66,7 +67,7 @@ const makeAxis = (
   g.select("path.domain").remove();
   g.selectAll(".tick line").attr("stroke", axisLabelColor);
   g.selectAll(".tick text")
-    .attr("font-size", legendFontSize)
+    .attr("font-size", LABELFONTSIZE)
     .attr("font-family", fontFamily)
     .attr("fill", labelColor)
     .attr("transform", `rotate(${AXIS_TICK_ROTATE_ANGLE})`)
@@ -299,7 +300,7 @@ const CircleLegend = ({
   const width = useLegendWidth();
 
   const [{ interaction }] = useInteraction();
-  const { axisLabelColor, legendFontSize } = useChartTheme();
+  const { axisLabelColor } = useChartTheme();
   const { symbolLayer } = useChartState() as MapState;
   const {
     data,
@@ -349,7 +350,7 @@ const CircleLegend = ({
                 stroke={axisLabelColor}
                 radius={radius}
                 maxRadius={maxRadius}
-                fontSize={legendFontSize}
+                fontSize={LABELFONTSIZE}
                 showLine={!interaction.visible}
               />
             );
@@ -369,7 +370,7 @@ const CircleLegend = ({
               stroke={axisLabelColor}
               radius={radius}
               maxRadius={maxRadius}
-              fontSize={legendFontSize}
+              fontSize={LABELFONTSIZE}
             />
           )}
       </g>
@@ -393,16 +394,16 @@ const getMaxRotatedAxisLabelHeight = (
   values: number[],
   options: {
     formatNumber: (d: number) => string;
-    legendFontSize: number;
+    LABELFONTSIZE: number;
   }
 ) => {
-  const { formatNumber, legendFontSize } = options;
+  const { formatNumber, LABELFONTSIZE } = options;
 
   return Math.max(
     ...values.map((d) => {
       return getRotatedAxisLabelHeight(d, {
         formatNumber,
-        fontSize: legendFontSize,
+        fontSize: LABELFONTSIZE,
       });
     })
   );
@@ -412,16 +413,16 @@ const useLegendWithRotatedAxisLabelsHeight = (
   values: number[],
   options: {
     formatNumber: (d: number) => string;
-    legendFontSize: number;
+    LABELFONTSIZE: number;
   }
 ) => {
-  const { formatNumber, legendFontSize } = options;
+  const { formatNumber, LABELFONTSIZE } = options;
   const maxLabelHeight = useMemo(() => {
     return getMaxRotatedAxisLabelHeight(values, {
       formatNumber,
-      legendFontSize,
+      LABELFONTSIZE,
     });
-  }, [values, formatNumber, legendFontSize]);
+  }, [values, formatNumber, LABELFONTSIZE]);
 
   return Math.max(HEIGHT, HEIGHT * 0.4 + maxLabelHeight);
 };
@@ -437,7 +438,7 @@ const JenksColorLegend = ({
 }) => {
   const width = useLegendWidth();
   const legendAxisRef = useRef<SVGGElement>(null);
-  const { axisLabelColor, labelColor, fontFamily, legendFontSize } =
+  const { axisLabelColor, labelColor, fontFamily } =
     useChartTheme();
   const formatNumber = useFormatInteger();
   const thresholds = useMemo(() => colorScale.domain(), [colorScale]);
@@ -462,7 +463,7 @@ const JenksColorLegend = ({
         fontFamily,
         formatNumber,
         labelColor,
-        legendFontSize,
+        LABELFONTSIZE,
         scale,
         thresholds: tickValues,
       }),
@@ -471,7 +472,7 @@ const JenksColorLegend = ({
       fontFamily,
       formatNumber,
       labelColor,
-      legendFontSize,
+      LABELFONTSIZE,
       scale,
       tickValues,
     ]
@@ -479,7 +480,7 @@ const JenksColorLegend = ({
 
   const height = useLegendWithRotatedAxisLabelsHeight(thresholdsScale.range(), {
     formatNumber,
-    legendFontSize,
+    LABELFONTSIZE,
   });
 
   return (
@@ -522,7 +523,7 @@ const QuantileColorLegend = ({
   const width = useLegendWidth();
   const legendAxisRef = useRef<SVGGElement>(null);
 
-  const { axisLabelColor, labelColor, fontFamily, legendFontSize } =
+  const { axisLabelColor, labelColor, fontFamily } =
     useChartTheme();
   const formatNumber = useFormatInteger();
 
@@ -551,7 +552,7 @@ const QuantileColorLegend = ({
         fontFamily,
         formatNumber,
         labelColor,
-        legendFontSize,
+        LABELFONTSIZE,
         scale,
         thresholds,
       }),
@@ -560,7 +561,7 @@ const QuantileColorLegend = ({
       fontFamily,
       formatNumber,
       labelColor,
-      legendFontSize,
+      LABELFONTSIZE,
       scale,
       thresholds,
     ]
@@ -568,7 +569,7 @@ const QuantileColorLegend = ({
 
   const height = useLegendWithRotatedAxisLabelsHeight(thresholdsScale.range(), {
     formatNumber,
-    legendFontSize,
+    LABELFONTSIZE,
   });
 
   return (
@@ -611,7 +612,7 @@ const QuantizeColorLegend = ({
   const width = useLegendWidth();
   const legendAxisRef = useRef<SVGGElement>(null);
 
-  const { axisLabelColor, labelColor, fontFamily, legendFontSize } =
+  const { axisLabelColor, labelColor, fontFamily } =
     useChartTheme();
   const formatNumber = useFormatInteger();
 
@@ -636,7 +637,7 @@ const QuantizeColorLegend = ({
         fontFamily,
         formatNumber,
         labelColor,
-        legendFontSize,
+        LABELFONTSIZE,
         scale,
         thresholds,
       }),
@@ -645,7 +646,7 @@ const QuantizeColorLegend = ({
       fontFamily,
       formatNumber,
       labelColor,
-      legendFontSize,
+      LABELFONTSIZE,
       scale,
       thresholds,
     ]
@@ -653,7 +654,7 @@ const QuantizeColorLegend = ({
 
   const height = useLegendWithRotatedAxisLabelsHeight(thresholds, {
     formatNumber,
-    legendFontSize,
+    LABELFONTSIZE,
   });
 
   return (
@@ -695,7 +696,7 @@ const ContinuousColorLegend = ({
   valueFormatter: (v: Observation[string]) => string;
 }) => {
   const width = useLegendWidth();
-  const { legendLabelColor, labelFontSize, fontFamily } = useChartTheme();
+  const { legendLabelColor, fontFamily } = useChartTheme();
   const scale = scaleLinear()
     .domain(domain)
     .range([MARGIN.left, width - MARGIN.right]);
@@ -725,10 +726,10 @@ const ContinuousColorLegend = ({
           MARGIN.top + COLOR_RAMP_HEIGHT + 14
         })`}
         fontFamily={fontFamily}
-        fontSize={labelFontSize}
+        fontSize={LABELFONTSIZE}
         fill={legendLabelColor}
       >
-        <text textAnchor="start" fontSize={labelFontSize}>
+        <text textAnchor="start" fontSize={LABELFONTSIZE}>
           {valueFormatter(min)}
         </text>
         <text x={width - MARGIN.right - MARGIN.left} textAnchor="end">
