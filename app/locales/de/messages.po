@@ -30,7 +30,6 @@ msgstr "Kein Ergebnis"
 msgid "annotation.add.description"
 msgstr "[ Ohne Beschreibung ]"
 
-#: app/components/rename-dialog.tsx
 #: app/configurator/components/annotators.tsx
 #: app/login/components/profile-tables.tsx
 msgid "annotation.add.title"
@@ -107,7 +106,7 @@ msgstr "Kopieren"
 msgid "button.hint.copied"
 msgstr "Kopiert!"
 
-#: app/components/chart-selection-tabs.tsx
+#: app/configurator/components/configurator.tsx
 msgid "button.layout"
 msgstr "Weiter zu den Layout-Optionen"
 
@@ -115,32 +114,32 @@ msgstr "Weiter zu den Layout-Optionen"
 msgid "button.new.visualization"
 msgstr "Neue Visualisierung erstellen"
 
-#: app/components/chart-selection-tabs.tsx
+#: app/configurator/components/configurator.tsx
 msgid "button.publish"
 msgstr "Veröffentlichen"
 
-#: app/components/chart-selection-tabs.tsx
+#: app/configurator/components/configurator.tsx
 msgid "button.save-draft"
 msgstr "Entwurf speichern"
 
-#: app/components/chart-selection-tabs.tsx
+#: app/configurator/components/configurator.tsx
 msgid "button.save-draft.error"
 msgstr "Entwurf konnte nicht gespeichert werden"
 
-#: app/components/chart-selection-tabs.tsx
+#: app/configurator/components/configurator.tsx
 msgid "button.save-draft.saved"
-msgstr "Entwurf gespeichert in [Meine veröffentlichten Visualisierungen](/profile)"
+msgstr "Entwurf gespeichert in [Meine Visualisierungen](/profile)"
 
 #: app/components/chart-shared.tsx
 #: app/components/publish-actions.tsx
 msgid "button.share"
 msgstr "Teilen"
 
-#: app/components/chart-selection-tabs.tsx
+#: app/configurator/components/configurator.tsx
 msgid "button.update"
 msgstr "Diese Visualisierung aktualisieren"
 
-#: app/components/chart-selection-tabs.tsx
+#: app/configurator/components/configurator.tsx
 msgid "button.update.warning"
 msgstr "Denken Sie daran, dass sich die Aktualisierung dieser Visualisierung auf alle Stellen auswirkt, an denen sie bereits eingebettet ist!"
 
@@ -182,6 +181,10 @@ msgid "chart-controls.table-view"
 msgstr "Tabellenansicht"
 
 #: app/components/chart-selection-tabs.tsx
+msgid "chart-selection-tabs.add-chart"
+msgstr ""
+
+#: app/components/chart-selection-tabs.tsx
 msgid "chart-selection-tabs.add-chart-different-dataset.button"
 msgstr "Datensatz auswählen"
 
@@ -199,7 +202,7 @@ msgstr "Hinzufügen"
 
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "chart.datasets.add-dataset-dialog.description"
-msgstr "Sie können nur Datensätze kombinieren, die Dimensionen mit derselben Einheit und Auflösung teilen. Standardmäßig werden Dimensionen ausgewählt, die zum aktuellen Diagramm passen."
+msgstr "Sie können nur Datensätze kombinieren, die Dimensionen mit derselben Einheit und Auflösung teilen. Standardmässig werden Dimensionen ausgewählt, die zum aktuellen Diagramm passen."
 
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "chart.datasets.add-dataset-dialog.title"
@@ -700,7 +703,7 @@ msgstr "Suche zurücksetzen"
 
 #: app/charts/chart-config-ui-options.ts
 msgid "controls.section.animation.disabled-by-sorting"
-msgstr "Die Animation ist bei der Sortierung nach Gesamtgröße deaktiviert."
+msgstr "Die Animation ist bei der Sortierung nach Gesamtgrösse deaktiviert."
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.animation.duration"
@@ -740,7 +743,7 @@ msgstr "Kontinuierlich"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.animation.type.explanation"
-msgstr "Verwenden Sie den Typ Abgestuft, um die Animation in festen Abständen zwischen Datenpunkten springen zu lassen. Dieser Modus ist nützlich, wenn Sie Daten mit einer Zeitdimension mit einer ungleichmäßigen Verteilung der Daten animieren möchten."
+msgstr "Verwenden Sie den Typ Abgestuft, um die Animation in festen Abständen zwischen Datenpunkten springen zu lassen. Dieser Modus ist nützlich, wenn Sie Daten mit einer Zeitdimension mit einer ungleichmässigen Verteilung der Daten animieren möchten."
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.animation.type.stepped"
@@ -990,7 +993,7 @@ msgstr "Kleinste zuerst"
 
 #: app/charts/chart-config-ui-options.ts
 msgid "controls.sorting.byTotalSize.disabled-by-animation"
-msgstr "Die Sortierung nach Gesamtgröße ist während der Animation deaktiviert."
+msgstr "Die Sortierung nach Gesamtgrösse ist während der Animation deaktiviert."
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.sorting.byTotalSize.largestBottom"
@@ -1084,7 +1087,7 @@ msgstr "Einige Daten in diesem Datensatz fehlen und wurden interpoliert, um die 
 
 #: app/browser/dataset-browse.tsx
 msgid "dataset.includeDrafts"
-msgstr "Entwürfe einschließen"
+msgstr "Entwürfe einschliessen"
 
 #: app/components/dataset-metadata.tsx
 msgid "dataset.metadata.date.created"
@@ -1184,11 +1187,11 @@ msgstr "{0} angezeigt in dieser Ansicht"
 
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.preview.new-dimension"
-msgstr "Neue"
+msgstr "Neu"
 
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.preview.title"
-msgstr "Überprüfen Sie die verfügbaren Abmessungen"
+msgstr "Überprüfen Sie die verfügbaren Dimensionen"
 
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.search-options.more-2-options-selected"
@@ -1362,7 +1365,7 @@ msgstr "Vorschau"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.rename"
-msgstr "Umbenennen"
+msgstr ""
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.share"
@@ -1370,7 +1373,7 @@ msgstr "Teilen"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.view"
-msgstr "Vorschau"
+msgstr ""
 
 #: app/login/components/profile-tables.tsx
 msgid "login.create-chart"
@@ -1390,19 +1393,19 @@ msgstr "Denken Sie daran, dass das Entfernen dieser Visualisierung sich auf alle
 
 #: app/login/components/profile-content-tabs.tsx
 msgid "login.profile.home"
-msgstr "Übersicht"
+msgstr "Empfang"
 
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
 msgid "login.profile.my-drafts"
-msgstr "Entwürfe"
+msgstr "Meine Entwürfe"
 
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
 msgid "login.profile.my-published-visualizations"
-msgstr "Meine veröffentlichten Visualisierungen"
+msgstr "Meine Visualisierungen"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.my-visualizations.chart-actions"

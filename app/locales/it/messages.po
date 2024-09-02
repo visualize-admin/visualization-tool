@@ -30,7 +30,6 @@ msgstr "Nessun risultato"
 msgid "annotation.add.description"
 msgstr "[ Nessuna descrizione ]"
 
-#: app/components/rename-dialog.tsx
 #: app/configurator/components/annotators.tsx
 #: app/login/components/profile-tables.tsx
 msgid "annotation.add.title"
@@ -107,7 +106,7 @@ msgstr "Clicca per copiare"
 msgid "button.hint.copied"
 msgstr "Copiato!"
 
-#: app/components/chart-selection-tabs.tsx
+#: app/configurator/components/configurator.tsx
 msgid "button.layout"
 msgstr "Procedi alle opzioni di layout"
 
@@ -115,19 +114,19 @@ msgstr "Procedi alle opzioni di layout"
 msgid "button.new.visualization"
 msgstr "Crea una nuova visualizzazione"
 
-#: app/components/chart-selection-tabs.tsx
+#: app/configurator/components/configurator.tsx
 msgid "button.publish"
 msgstr "Pubblicare"
 
-#: app/components/chart-selection-tabs.tsx
+#: app/configurator/components/configurator.tsx
 msgid "button.save-draft"
 msgstr "Salva la bozza"
 
-#: app/components/chart-selection-tabs.tsx
+#: app/configurator/components/configurator.tsx
 msgid "button.save-draft.error"
 msgstr "Impossibile salvare la bozza"
 
-#: app/components/chart-selection-tabs.tsx
+#: app/configurator/components/configurator.tsx
 msgid "button.save-draft.saved"
 msgstr "Bozza salvata nelle [visualizzazioni](/profile)"
 
@@ -136,11 +135,11 @@ msgstr "Bozza salvata nelle [visualizzazioni](/profile)"
 msgid "button.share"
 msgstr "Condividi"
 
-#: app/components/chart-selection-tabs.tsx
+#: app/configurator/components/configurator.tsx
 msgid "button.update"
 msgstr "Aggiornare questa visualizzazione"
 
-#: app/components/chart-selection-tabs.tsx
+#: app/configurator/components/configurator.tsx
 msgid "button.update.warning"
 msgstr "Tenete presente che l'aggiornamento di questa visualizzazione avrà effetto su tutti i luoghi in cui potrebbe essere già incorporata!"
 
@@ -180,6 +179,10 @@ msgstr "SPARQL query"
 #: app/components/chart-shared.tsx
 msgid "chart-controls.table-view"
 msgstr "Visualizzazione tabella"
+
+#: app/components/chart-selection-tabs.tsx
+msgid "chart-selection-tabs.add-chart"
+msgstr ""
 
 #: app/components/chart-selection-tabs.tsx
 msgid "chart-selection-tabs.add-chart-different-dataset.button"
@@ -1402,7 +1405,7 @@ msgstr "Le mie bozze"
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
 msgid "login.profile.my-published-visualizations"
-msgstr ""
+msgstr "Le mie visualizzazioni"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.my-visualizations.chart-actions"

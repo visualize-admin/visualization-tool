@@ -30,7 +30,6 @@ msgstr "No results"
 msgid "annotation.add.description"
 msgstr "[ No Description ]"
 
-#: app/components/rename-dialog.tsx
 #: app/configurator/components/annotators.tsx
 #: app/login/components/profile-tables.tsx
 msgid "annotation.add.title"
@@ -107,7 +106,7 @@ msgstr "Click to copy"
 msgid "button.hint.copied"
 msgstr "Copied!"
 
-#: app/components/chart-selection-tabs.tsx
+#: app/configurator/components/configurator.tsx
 msgid "button.layout"
 msgstr "Proceed to layout options"
 
@@ -115,19 +114,19 @@ msgstr "Proceed to layout options"
 msgid "button.new.visualization"
 msgstr "Create New Visualization"
 
-#: app/components/chart-selection-tabs.tsx
+#: app/configurator/components/configurator.tsx
 msgid "button.publish"
 msgstr "Publish"
 
-#: app/components/chart-selection-tabs.tsx
+#: app/configurator/components/configurator.tsx
 msgid "button.save-draft"
 msgstr "Save draft"
 
-#: app/components/chart-selection-tabs.tsx
+#: app/configurator/components/configurator.tsx
 msgid "button.save-draft.error"
 msgstr "Could not save draft"
 
-#: app/components/chart-selection-tabs.tsx
+#: app/configurator/components/configurator.tsx
 msgid "button.save-draft.saved"
 msgstr "Draft saved in [My visualisations](/profile)"
 
@@ -136,11 +135,11 @@ msgstr "Draft saved in [My visualisations](/profile)"
 msgid "button.share"
 msgstr "Share"
 
-#: app/components/chart-selection-tabs.tsx
+#: app/configurator/components/configurator.tsx
 msgid "button.update"
 msgstr "Update this visualization"
 
-#: app/components/chart-selection-tabs.tsx
+#: app/configurator/components/configurator.tsx
 msgid "button.update.warning"
 msgstr "Keep in mind that updating this visualization will affect all the places where it might be already embedded!"
 
@@ -180,6 +179,10 @@ msgstr "SPARQL query"
 #: app/components/chart-shared.tsx
 msgid "chart-controls.table-view"
 msgstr "Table view"
+
+#: app/components/chart-selection-tabs.tsx
+msgid "chart-selection-tabs.add-chart"
+msgstr "Add chart"
 
 #: app/components/chart-selection-tabs.tsx
 msgid "chart-selection-tabs.add-chart-different-dataset.button"
@@ -1396,7 +1399,7 @@ msgstr "Home"
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
 msgid "login.profile.my-drafts"
-msgstr "My draft visualisations"
+msgstr "My drafts"
 
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
@@ -1541,7 +1544,7 @@ msgstr "Year"
 
 #: app/components/chart-footnotes.tsx
 msgid "typography.colon"
-msgstr ": "
+msgstr ":"
 
 #: app/components/confirmation-dialog.tsx
 msgid "yes"
