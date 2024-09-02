@@ -79,10 +79,10 @@ const BackContainer = (props: React.PropsWithChildren<{ sx?: SxProps }>) => {
   return (
     <Box
       sx={{
-        px: 2,
-        minHeight: 78,
         display: "flex",
         alignItems: "center",
+        height: "100%",
+        px: 2,
         ...sx,
       }}
     >

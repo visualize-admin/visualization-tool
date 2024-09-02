@@ -64,6 +64,8 @@ const useStyles = makeStyles<Theme>((theme) => ({
   },
   RPanelHeaderWrapper: {
     gridArea: "right",
+    display: "flex",
+    alignItems: "center",
     padding: theme.spacing(5),
   },
   LPanelBodyWrapper: {
