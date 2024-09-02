@@ -33,11 +33,10 @@ export const VisualizeTab = styled(Tab)<TabProps>(({ theme }) => {
   return {
     marginRight: theme.spacing(2),
     background: theme.palette.background.paper,
-    border: `1px solid ${theme.palette.divider} !important`,
+    border: `1px solid ${theme.palette.divider}`,
     position: "relative",
     top: 0,
     zIndex: 1,
-    borderBottom: `1px solid ${theme.palette.divider}`,
     "&.Mui-selected": {
       borderBottomColor: theme.palette.background.paper,
     },
