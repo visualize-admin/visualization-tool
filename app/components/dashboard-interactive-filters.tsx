@@ -30,6 +30,7 @@ import {
 import { isTemporalDimension } from "@/domain/data";
 import { useDataCubesComponentsQuery } from "@/graphql/hooks";
 import { TimeUnit } from "@/graphql/query-hooks";
+import { useTimeout } from "@/hooks/use-timeout";
 import { useLocale } from "@/locales/use-locale";
 import {
   setDataFilter,
@@ -39,26 +40,28 @@ import { useTransitionStore } from "@/stores/transition";
 import { assert } from "@/utils/assert";
 import useEvent from "@/utils/use-event";
 
-import { useTimeout } from "../hooks/use-timeout";
-
 export const DashboardInteractiveFilters = (props: BoxProps) => {
+  const { sx, ...rest } = props;
   const [state] = useConfiguratorState(hasChartConfigs);
   const { dashboardFilters } = state;
-  return (
-    <Box {...props}>
-      {dashboardFilters?.timeRange.active ? (
+  const { timeRange, dataFilters } = dashboardFilters ?? {
+    timeRange: undefined,
+    dataFilters: undefined,
+  };
+  const show = !!(timeRange?.active || dataFilters?.componentIris.length);
+  return show ? (
+    <Box {...rest} sx={{ ...sx, mb: 4 }}>
+      {timeRange?.active ? (
         <DashboardTimeRangeSlider
-          filter={dashboardFilters.timeRange}
-          mounted={dashboardFilters.timeRange.active}
+          filter={timeRange}
+          mounted={timeRange.active}
         />
       ) : null}
-      {dashboardFilters?.dataFilters.componentIris.length ? (
-        <DashboardDataFilters
-          componentIris={dashboardFilters.dataFilters.componentIris}
-        />
+      {dataFilters?.componentIris.length ? (
+        <DashboardDataFilters componentIris={dataFilters.componentIris} />
       ) : null}
     </Box>
-  );
+  ) : null;
 };
 
 const useTimeRangeRangeStyles = makeStyles((theme: Theme) => ({

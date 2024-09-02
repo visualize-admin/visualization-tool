@@ -169,7 +169,7 @@ export const ChartPublished = (props: ChartPublishedProps) => {
               )}
             </Flex>
             <ChartTablePreviewProvider>
-              <DashboardInteractiveFilters sx={{ mb: 4 }} />
+              <DashboardInteractiveFilters />
               <ChartWrapper
                 layoutType={state.layout.type}
                 chartKey={state.activeChartKey}
