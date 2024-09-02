@@ -17,6 +17,7 @@ import {
 import { isMostRecentValue } from "@/domain/most-recent-value";
 import { PromiseValue, truthy } from "@/domain/types";
 import { resolveDimensionType } from "@/graphql/resolvers";
+import { getComponentIri } from "@/graphql/resolvers/rdf";
 import {
   ResolvedDimension,
   ResolvedObservationsQuery,
@@ -316,6 +317,7 @@ export const dimensionIsVersioned = (dimension: CubeDimension) =>
   !!dimension.out(ns.schema.version)?.value;
 
 export const getCubeObservations = async ({
+  cubeIri,
   cube,
   locale,
   sparqlClient,
@@ -326,6 +328,7 @@ export const getCubeObservations = async ({
   componentIris,
   cache,
 }: {
+  cubeIri: string;
   cube: ExtendedCube;
   locale: string;
   sparqlClient: ParsingClient;
@@ -428,7 +431,7 @@ export const getCubeObservations = async ({
       : null;
   const filteredObservationsRaw: typeof observationsRaw = [];
   const observations: Observation[] = [];
-  const observationParser = parseObservation(resolvedDimensions, raw);
+  const observationParser = parseObservation(cubeIri, resolvedDimensions, raw);
 
   // As we keep unversioned values in the config, and fetch versioned values in the
   // observations, we need to unversion the observations to match the filters.
@@ -781,6 +784,7 @@ async function fetchViewObservations({
 type RDFObservation = Record<string, Literal | NamedNode<string>>;
 
 function parseObservation(
+  cubeIri: string,
   cubeDimensions: ResolvedDimension[],
   raw: boolean | undefined
 ): (value: RDFObservation) => Observation {
@@ -804,7 +808,9 @@ function parseObservation(
       if (d.data.hasHierarchy) {
         res[iriDimensionIri(d.data.iri)] = obs[d.data.iri]?.value;
       }
-      res[d.data.iri] = raw ? rawValue : label ?? value ?? null;
+      res[getComponentIri(cubeIri, d.data.iri)] = raw
+        ? rawValue
+        : label ?? value ?? null;
     }
     return res;
   };

@@ -160,7 +160,7 @@ export const dataCubeDimensionGeoShapes: NonNullable<
 
 // TODO: could be refactored to not fetch the whole cube shape.
 const getResolvedDimension = async (
-  iri: string,
+  _iri: string,
   options: {
     cubeIri: string;
     locale: string;
@@ -169,6 +169,7 @@ const getResolvedDimension = async (
     cache: LRUCache | undefined;
   }
 ): Promise<ResolvedDimension> => {
+  const iri = getComponentQueryIri(_iri);
   const { cubeIri, locale, sparqlClient, loaders, cache } = options;
   const cube = await loaders.cube.load(cubeIri);
 
@@ -197,7 +198,13 @@ const getResolvedDimension = async (
 export const possibleFilters: NonNullable<
   QueryResolvers["possibleFilters"]
 > = async (_, { cubeFilter }, { setup }, info) => {
-  const { iri, filters } = cubeFilter;
+  const { iri, filters: _filters } = cubeFilter;
+  const filters = Object.fromEntries(
+    Object.entries(_filters).map(([key, value]) => [
+      getComponentQueryIri(key),
+      value,
+    ])
+  );
   const { sparqlClient, loaders, cache } = await setup(info);
   const cube = await loaders.cube.load(iri);
   const cubeIri = cube.term?.value;
@@ -209,12 +216,36 @@ export const possibleFilters: NonNullable<
   return await getPossibleFilters(cubeIri, { filters, sparqlClient, cache });
 };
 
+export const getComponentIri = (cubeIri: string, iri: string) => {
+  return `${cubeIri}___^^^___${iri}`;
+};
+
+export const getComponentQueryIri = (iri: string) => {
+  return iri.split("___^^^___")[1] ?? iri;
+};
+
 export const dataCubeComponents: NonNullable<
   QueryResolvers["dataCubeComponents"]
 > = async (_, { locale, cubeFilter }, { setup }, info) => {
   const { loaders, sparqlClient, sparqlClientStream, cache } =
     await setup(info);
-  const { iri, componentIris, filters, loadValues } = cubeFilter;
+  const {
+    iri,
+    componentIris: _componentIris,
+    filters: _filters,
+    loadValues,
+  } = cubeFilter;
+  const componentIris = _componentIris
+    ? _componentIris.map(getComponentQueryIri)
+    : undefined;
+  const filters = _filters
+    ? Object.fromEntries(
+        Object.entries(_filters).map(([key, value]) => [
+          getComponentQueryIri(key),
+          value,
+        ])
+      )
+    : undefined;
   const cube = await loaders.cube.load(iri);
 
   if (!cube) {
@@ -258,7 +289,9 @@ export const dataCubeComponents: NonNullable<
       const baseComponent: BaseComponent = {
         // We need to use original iri here, as the cube iri might have changed.
         cubeIri: iri,
-        iri: data.iri,
+        // As we can have multiple cubes with the same iri, we need to use combined iri.
+        iri: getComponentIri(iri, data.iri),
+        queryIri: data.iri,
         label: data.name,
         description: data.description,
         unit: data.unit,
@@ -365,7 +398,18 @@ export const dataCubeObservations: NonNullable<
   QueryResolvers["dataCubeObservations"]
 > = async (_, { locale, cubeFilter }, { setup }, info) => {
   const { loaders, sparqlClient, cache } = await setup(info);
-  const { iri, filters, componentIris } = cubeFilter;
+  const { iri, filters: _filters, componentIris: _componentIris } = cubeFilter;
+  const componentIris = _componentIris
+    ? _componentIris.map(getComponentQueryIri)
+    : undefined;
+  const filters = _filters
+    ? Object.fromEntries(
+        Object.entries(_filters).map(([key, value]) => [
+          getComponentQueryIri(key),
+          value,
+        ])
+      )
+    : undefined;
   const cube = await loaders.cube.load(iri);
 
   if (!cube) {
@@ -374,6 +418,7 @@ export const dataCubeObservations: NonNullable<
 
   await cube.fetchShape();
   const { query, observations } = await getCubeObservations({
+    cubeIri: iri,
     cube,
     locale,
     sparqlClient,

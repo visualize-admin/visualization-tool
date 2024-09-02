@@ -95,6 +95,7 @@ export const MapLegend = ({
       : undefined,
   ].filter(truthy);
   const formatters = useDimensionFormatters(measureDimensions);
+  console.log("MapLegend", { areaLayer, symbolLayer, showAreaLegend });
 
   return (
     <Box>

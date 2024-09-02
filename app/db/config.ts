@@ -140,13 +140,13 @@ const ensureMigratedCubeIris = (chartConfig: ChartConfig) => {
 };
 
 const parseDbConfig = (d: PrismaConfig) => {
-  const data = d.data;
-  const state = migrateConfiguratorState(data) as ConfiguratorStatePublished;
+  const data = d.data as ConfiguratorStatePublished;
+  // const state = migrateConfiguratorState(data) as ConfiguratorStatePublished;
   return {
     ...d,
     data: {
-      ...state,
-      chartConfigs: state.chartConfigs
+      ...data,
+      chartConfigs: data.chartConfigs
         .map(ensureFiltersOrder)
         .map(ensureMigratedCubeIris),
     },
@@ -181,7 +181,13 @@ export const getConfig = async (key: string) => {
   }
 
   const dbConfig = parseDbConfig(config);
-  return await upgradeDbConfig(dbConfig);
+  console.log("dbConfig", dbConfig);
+  const upgradedConfig = await upgradeDbConfig(dbConfig);
+  console.log("upgradedConfig", upgradedConfig);
+  return {
+    ...upgradedConfig,
+    data: migrateConfiguratorState(upgradedConfig.data),
+  };
 };
 
 /**

@@ -69,6 +69,7 @@ export const initChartStateFromCube = async (
   const temporaryChartConfig = deriveFiltersFromFields(initialChartConfig, {
     dimensions,
   });
+  console.log("temporaryChartConfig", temporaryChartConfig);
   const { unmappedFilters } = getFiltersByMappingStatus(temporaryChartConfig, {
     cubeIri,
   });
@@ -78,6 +79,7 @@ export const initChartStateFromCube = async (
     dataSource,
     unmappedFilters,
   });
+  console.log("variables", variables);
   const { data: possibleFilters } = await client
     .query<
       PossibleFiltersQuery,
@@ -93,6 +95,7 @@ export const initChartStateFromCube = async (
     dimensions,
     possibleFilters: possibleFilters?.possibleFilters,
   });
+  console.log("chartConfig", chartConfig);
 
   return transitionStepNext(
     getStateWithCurrentDataSource(SELECTING_DATASET_STATE),

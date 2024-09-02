@@ -208,6 +208,7 @@ export type Component = Dimension | Measure;
 export type BaseComponent = {
   cubeIri: string;
   iri: string;
+  queryIri: string;
   label: string;
   description?: string;
   unit?: string;

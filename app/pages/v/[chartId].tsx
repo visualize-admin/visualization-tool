@@ -46,6 +46,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
   res,
 }) => {
   const config = await getConfig(query.chartId as string);
+  console.log(config?.data.chartConfigs[0].fields.areaLayer);
 
   if (config && config.data) {
     await increaseConfigViewCount(config.key);

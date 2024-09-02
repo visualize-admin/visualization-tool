@@ -1,4 +1,4 @@
-import produce from "immer";
+import produce, { current } from "immer";
 
 import { DEFAULT_OTHER_COLOR_FIELD_OPACITY } from "@/charts/map/constants";
 import { ChartConfig, ConfiguratorState } from "@/config-types";
@@ -7,6 +7,7 @@ import {
   LEGACY_PROD_DATA_SOURCE_URL,
   PROD_DATA_SOURCE_URL,
 } from "@/domain/datasource/constants";
+import { getComponentIri, getComponentQueryIri } from "@/graphql/resolvers/rdf";
 import { DEFAULT_CATEGORICAL_PALETTE_NAME } from "@/palettes";
 import { createChartId } from "@/utils/create-chart-id";
 
@@ -18,7 +19,7 @@ type Migration = {
   down: (config: any, migrationProps?: any) => any;
 };
 
-export const CHART_CONFIG_VERSION = "3.3.0";
+export const CHART_CONFIG_VERSION = "3.4.0";
 
 export const chartConfigMigrations: Migration[] = [
   {
@@ -922,6 +923,41 @@ export const chartConfigMigrations: Migration[] = [
       });
     },
   },
+  {
+    description: ``,
+    from: "3.3.0",
+    to: "3.4.0",
+    up: (config) => {
+      const newConfig = { ...config, version: "3.4.0" };
+
+      return produce(newConfig, (draft: any) => {
+        const cube = draft.cubes[0];
+        draft.fields = migrateComponentIri(draft.fields, cube.iri);
+        console.log(current(draft.fields));
+        draft.cubes = draft.cubes.map((cube: any) => {
+          cube.filters = migrateComponentIri(cube.filters, cube.iri);
+          return cube;
+        });
+      });
+    },
+    down: (config) => {
+      const newConfig = { ...config, version: "3.3.0" };
+
+      return produce(newConfig, (draft: any) => {
+        draft.fields = Object.entries(draft.fields).reduce(
+          (acc, [key, field]) => {
+            acc[key] = {
+              ...field,
+              componentIri: getComponentQueryIri(field.componentIri),
+            };
+
+            return acc;
+          },
+          {}
+        );
+      });
+    },
+  },
 ];
 
 export const migrateChartConfig = makeMigrate<ChartConfig>(
@@ -931,7 +967,7 @@ export const migrateChartConfig = makeMigrate<ChartConfig>(
   }
 );
 
-export const CONFIGURATOR_STATE_VERSION = "3.6.0";
+export const CONFIGURATOR_STATE_VERSION = "3.7.0";
 
 export const configuratorStateMigrations: Migration[] = [
   {
@@ -1313,7 +1349,62 @@ export const configuratorStateMigrations: Migration[] = [
       return newConfig;
     },
   },
+  {
+    description: "ALL (bump ChartConfig version)",
+    from: "3.6.0",
+    to: "3.7.0",
+    up: (config) => {
+      const newConfig = { ...config, version: "3.7.0" };
+
+      return produce(newConfig, (draft: any) => {
+        const chartConfigs: any[] = [];
+
+        for (const chartConfig of draft.chartConfigs) {
+          const migratedChartConfig = migrateChartConfig(chartConfig, {
+            migrationProps: draft,
+            toVersion: "3.4.0",
+          });
+          chartConfigs.push(migratedChartConfig);
+        }
+
+        draft.chartConfigs = chartConfigs;
+      });
+    },
+    down: (config) => {
+      const newConfig = { ...config, version: "3.6.0" };
+
+      return produce(newConfig, (draft: any) => {
+        const chartConfigs: any[] = [];
+
+        for (const chartConfig of draft.chartConfigs) {
+          const migratedChartConfig = migrateChartConfig(chartConfig, {
+            migrationProps: draft,
+            toVersion: "3.3.0",
+          });
+          chartConfigs.push(migratedChartConfig);
+        }
+
+        draft.chartConfigs = chartConfigs;
+      });
+    },
+  },
 ];
+
+const migrateComponentIri = (obj: any, cubeIri: string) => {
+  for (const [key, value] of Object.entries(obj)) {
+    if (key.toLowerCase().includes("iri")) {
+      obj[key] = getComponentIri(cubeIri, value);
+    } else {
+      obj[key] = value;
+    }
+
+    if (typeof value === "object") {
+      migrateComponentIri(value, cubeIri);
+    }
+
+    return obj;
+  }
+};
 
 export const migrateConfiguratorState = makeMigrate<ConfiguratorState>(
   configuratorStateMigrations,

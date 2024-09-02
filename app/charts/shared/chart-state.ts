@@ -156,6 +156,7 @@ export const useBandXVariables = (
     observations: Observation[];
   }
 ): BandXVariables => {
+  console.log("useBandXVariables", dimensionsByIri);
   const xDimension = dimensionsByIri[x.componentIri];
   if (!xDimension) {
     throw Error(`No dimension <${x.componentIri}> in cube!`);

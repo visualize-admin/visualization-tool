@@ -3,6 +3,7 @@ import { Quad } from "rdf-js";
 
 import { SearchCube } from "@/domain/data";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
+import { getComponentIri } from "@/graphql/resolvers/rdf";
 import * as ns from "@/rdf/namespace";
 
 const visualizePredicates = {
@@ -89,7 +90,7 @@ function buildSearchCubes(
         dimensions: dimensions?.map((x) => {
           const dim = bySubjectAndPredicate.get(x.object.value);
           return {
-            iri: x.object.value,
+            iri: getComponentIri(iri, x.object.value),
             label: dim?.get(ns.schema.name.value)?.[0].object.value ?? "",
             timeUnit:
               dim?.get(visualizePredicates.hasTimeUnit)?.[0].object.value ?? "",

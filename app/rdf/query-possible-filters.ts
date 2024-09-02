@@ -6,6 +6,7 @@ import { LRUCache } from "typescript-lru-cache";
 
 import { SingleFilters } from "@/config-types";
 import { isMostRecentValue } from "@/domain/most-recent-value";
+import { getComponentIri } from "@/graphql/resolvers/rdf";
 import * as ns from "@/rdf/namespace";
 import { loadMaxDimensionValue } from "@/rdf/query-dimension-values";
 import { formatIriToQueryNode } from "@/rdf/query-utils";
@@ -42,7 +43,7 @@ export const getPossibleFilters = async (
     operation: "postUrlencoded",
   });
 
-  return parsePossibleFilters(observation, queryFilters);
+  return parsePossibleFilters(cubeIri, observation, queryFilters);
 };
 
 export type DimensionMetadata = {
@@ -220,12 +221,13 @@ export const getQueryFilters = async (
 };
 
 const parsePossibleFilters = (
+  cubeIri: string,
   observation: ResultRow,
   queryFilters: QueryFilter[]
 ) => {
   return queryFilters.map(({ i, iri, isVersioned }) => ({
     type: "single",
-    iri,
+    iri: getComponentIri(cubeIri, iri),
     value: observation[getQueryDimension(i, isVersioned)].value,
   }));
 };
