@@ -3,9 +3,14 @@ import { styled, Tab, TabProps, tabsClasses } from "@mui/material";
 
 export const VisualizeTabList = styled(TabList)<TabListProps>(({ theme }) => {
   return {
-    position: "relative",
+    border: "none !important",
     [`& .${tabsClasses.indicator}`]: {
       display: "none",
+    },
+    [`& .${tabsClasses.scrollButtons}`]: {
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
     },
 
     // Use before so that bottom border of tabs can go "over" the tab list
@@ -28,7 +33,7 @@ export const VisualizeTab = styled(Tab)<TabProps>(({ theme }) => {
   return {
     marginRight: theme.spacing(2),
     background: theme.palette.background.paper,
-    border: `1px solid ${theme.palette.divider}`,
+    border: `1px solid ${theme.palette.divider} !important`,
     position: "relative",
     top: 0,
     zIndex: 1,

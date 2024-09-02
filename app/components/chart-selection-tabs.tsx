@@ -356,18 +356,6 @@ const useTabsInnerStyles = makeStyles<Theme>((theme) => ({
   tab: {
     zIndex: 1,
     maxWidth: "auto",
-    "&:first-child": {
-      // We need to add a negative margin to the first tab so that its left margin
-      // goes "under" the border of the tab list.
-      marginLeft: -1,
-    },
-  },
-  // :last-child does not work when the tabs are not scrollable
-  // MUI seems to add an empty element at the end, thus we cannot use :last-child
-  lastTab: {
-    // We need to add a negative margin to the last tab so that its right margin
-    // goes "under" the border of the tab list.
-    marginRight: -1,
   },
   tabList: {
     top: 1,
@@ -382,25 +370,21 @@ const useTabsInnerStyles = makeStyles<Theme>((theme) => ({
     [`& .${tabClasses.root}`]: {
       maxWidth: "max-content",
     },
-
-    "&:before, &:after": {
-      top: 1,
-      content: '""',
-      bottom: 1,
-      position: "absolute",
-      width: "var(--cut-off-width)",
-      zIndex: 10,
+  },
+  scrollButton: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    width: "2.5rem",
+    minWidth: "2.5rem",
+    padding: 0,
+    minHeight: 0,
+    color: theme.palette.text.primary,
+    "&:hover": {
+      backgroundColor: "transparent",
     },
-    "&:before": {
-      borderBottom: 0,
-      left: 0,
-      right: "auto",
-      backgroundImage: "linear-gradient(to left, transparent, var(--bg))",
-    },
-    "&:after": {
-      left: "auto",
-      right: 0,
-      backgroundImage: "linear-gradient(to right, transparent, var(--bg))",
+    "& > svg": {
+      pointerEvents: "none",
     },
   },
 }));
@@ -447,8 +431,23 @@ const TabsInner = (props: {
               <VisualizeTabList
                 ref={provided.innerRef}
                 variant="scrollable"
-                scrollButtons={false}
                 className={classes.tabList}
+                ScrollButtonComponent={({ direction, disabled, onClick }) => (
+                  <Button
+                    className={classes.scrollButton}
+                    onClick={onClick}
+                    style={{ cursor: disabled ? "auto" : "pointer" }}
+                    variant="text"
+                  >
+                    {disabled ? null : (
+                      <Icon
+                        name={
+                          direction === "left" ? "chevronLeft" : "chevronRight"
+                        }
+                      />
+                    )}
+                  </Button>
+                )}
               >
                 {data.map((d, i) => (
                   <PassthroughTab key={d.key} value={`${i}`}>
@@ -472,14 +471,11 @@ const TabsInner = (props: {
                               classes.tab,
                               // We need to add the "selected" class ourselves since we are wrapping
                               // the tabs by Draggable.
-                              i === activeTabIndex ? "Mui-selected" : "",
-                              i === data.length - 1 ? classes.lastTab : ""
+                              i === activeTabIndex ? "Mui-selected" : ""
                             )}
                             sx={{
                               px: 0,
-                              flexShrink: 1,
                               minWidth: d.label ? 180 : 0,
-                              flexBasis: "100%",
                             }}
                             label={
                               <TabContent
@@ -518,7 +514,7 @@ const TabsInner = (props: {
           variant="contained"
           startIcon={<Icon name="add" />}
           onClick={onChartAdd}
-          sx={{ minWidth: "fit-content", ml: "1.25rem", px: 3 }}
+          sx={{ minWidth: "fit-content", ml: "0.5rem", px: 3 }}
         >
           <Trans id="chart-selection-tabs.add-chart">Add chart</Trans>
         </Button>
