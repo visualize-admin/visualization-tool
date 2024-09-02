@@ -366,3 +366,7 @@ goes:
 
 In the future, we might want to integrate further Accent so that it opens pull
 requests.
+
+> ℹ️ To automatically authenticate with Accent, you can set the `ACCENT_API_KEY`
+> environment variable in your `.env` file in the root of the project. You can
+> find the API key in the Accent web UI.
