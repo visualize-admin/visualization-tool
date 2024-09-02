@@ -17,6 +17,7 @@ import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 
 import { ArrowMenuTopCenter } from "@/components/arrow-menu";
 import { DuplicateChartMenuActionItem } from "@/components/chart-shared";
+import { DragHandle } from "@/components/drag-handle";
 import Flex from "@/components/flex";
 import { MenuActionItem } from "@/components/menu-action-item";
 import { VisualizeTab, VisualizeTabList } from "@/components/tabs";
@@ -40,8 +41,6 @@ import { useFlag } from "@/flags";
 import { Icon, IconName } from "@/icons";
 import { defaultLocale, useLocale } from "@/locales";
 import useEvent from "@/utils/use-event";
-
-import { DragHandle } from "./drag-handle";
 
 type TabsState = {
   popoverOpen: boolean;
@@ -315,14 +314,8 @@ type TabDatum = {
   label?: string | undefined;
 };
 
-type TabsFixedProps = {
-  data: TabDatum[];
-};
-
-const TabsFixed = (props: TabsFixedProps) => {
-  const { data } = props;
+const TabsFixed = ({ data }: { data: TabDatum[] }) => {
   const [, dispatch] = useConfiguratorState(isPublished);
-
   return (
     <TabsInner
       data={data}
@@ -337,16 +330,6 @@ const TabsFixed = (props: TabsFixedProps) => {
       }}
     />
   );
-};
-
-type TabsInnerProps = {
-  data: TabDatum[];
-  addable: boolean;
-  editable: boolean;
-  draggable: boolean;
-  onChartAdd?: (e: React.MouseEvent<HTMLElement>) => void;
-  onChartEdit?: (e: React.MouseEvent<HTMLElement>, key: string) => void;
-  onChartSwitch?: (key: string) => void;
 };
 
 /**
@@ -422,7 +405,15 @@ const useTabsInnerStyles = makeStyles<Theme>((theme) => ({
   },
 }));
 
-const TabsInner = (props: TabsInnerProps) => {
+const TabsInner = (props: {
+  data: TabDatum[];
+  addable: boolean;
+  editable: boolean;
+  draggable: boolean;
+  onChartAdd?: (e: React.MouseEvent<HTMLElement>) => void;
+  onChartEdit?: (e: React.MouseEvent<HTMLElement>, key: string) => void;
+  onChartSwitch?: (key: string) => void;
+}) => {
   const classes = useTabsInnerStyles();
   const {
     data,
@@ -614,7 +605,7 @@ export const useIconStyles = makeStyles<
   },
 }));
 
-type TabContentProps = {
+const TabContent = (props: {
   iconName: IconName;
   chartKey: string;
   editable?: boolean;
@@ -627,9 +618,7 @@ type TabContentProps = {
     activeChartKey: string
   ) => void;
   onSwitchClick?: () => void;
-};
-
-const TabContent = (props: TabContentProps) => {
+}) => {
   const {
     iconName,
     chartKey,
@@ -642,7 +631,6 @@ const TabContent = (props: TabContentProps) => {
     onSwitchClick,
   } = props;
   const classes = useIconStyles({ active, dragging });
-
   return (
     <Flex className={classes.root}>
       <Button
@@ -652,7 +640,6 @@ const TabContent = (props: TabContentProps) => {
       >
         <Icon name={iconName} />
       </Button>
-
       {label ? (
         <Tooltip title={label} enterDelay={750}>
           <Button
@@ -676,7 +663,6 @@ const TabContent = (props: TabContentProps) => {
           <Icon name="chevronDown" />
         </Button>
       )}
-
       {draggable && <DragHandle dragging={dragging} />}
     </Flex>
   );
