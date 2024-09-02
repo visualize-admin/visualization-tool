@@ -43,6 +43,7 @@ const useStyles = makeStyles<Theme>((theme) => ({
   panelHeaderLayout: {
     gridArea: "header",
     background: theme.palette.background.paper,
+    minHeight: 96,
   },
   LMRPanelHeaderLayout: {
     width: "100%",
