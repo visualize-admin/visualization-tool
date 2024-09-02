@@ -10,7 +10,7 @@ export const useChartTheme = () => {
   const domainColor = theme.palette.grey[800];
   const gridColor = theme.palette.grey[300];
   const fontFamily = theme.typography.fontFamily as string;
-  const axisLabelFontSize = 10;
+  const axisLabelFontSize = 12;
   const axisLabelFontWeight = 500;
   const axisLabelColor = theme.palette.grey[800];
   const markBorderColor = theme.palette.grey[100];
