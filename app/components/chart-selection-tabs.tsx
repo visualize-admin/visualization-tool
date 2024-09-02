@@ -513,22 +513,15 @@ const TabsInner = (props: {
         </DragDropContext>
       </TabContext>
       {addable && (
-        <VisualizeTab
-          component="div"
-          className={classes.tab}
-          sx={{
-            px: 0,
-            pt: "2px",
-            top: 1,
-            margin: "0 1.25rem",
-            height: "100%",
-            border: "1px solid",
-            borderColor: "divider",
-            minWidth: "fit-content",
-          }}
+        <Button
+          color="primary"
+          variant="contained"
+          startIcon={<Icon name="add" />}
           onClick={onChartAdd}
-          label={<TabContent iconName="add" chartKey="" />}
-        />
+          sx={{ minWidth: "fit-content", ml: "1.25rem", px: 3 }}
+        >
+          <Trans id="chart-selection-tabs.add-chart">Add chart</Trans>
+        </Button>
       )}
     </div>
   );
