@@ -37,6 +37,8 @@ import { getTextWidth } from "@/utils/get-text-width";
 
 import { ChartProps } from "../shared/ChartProps";
 
+import { TITLE_VPADDING } from "./combo-line-container";
+
 export type ComboLineDualState = CommonChartState &
   ComboLineDualStateVariables &
   InteractiveXTimeRangeState & {
@@ -211,7 +213,7 @@ const ComboLineDualChartProvider = (
   const overLappingTitles = axisTitleWidth + otherAxisTitleWidth > bounds.chartWidth;
 
   if (overLappingTitles) {
-    bounds.height += axisLabelFontSize; // Add space for the legend if titles are overlapping
+    bounds.height += (axisLabelFontSize + TITLE_VPADDING); // Add space for the legend if titles are overlapping
   }
 
   return (

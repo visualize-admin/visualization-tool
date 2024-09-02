@@ -35,8 +35,8 @@ export const AxisHeightLinearDual = (props: AxisHeightLinearDualProps) => {
   const otherAxisTitle = y[leftAligned ? "right" : "left"].label;
   const otherAxisTitleWidth = getTextWidth(otherAxisTitle, { fontSize: axisLabelFontSize }) + TICK_PADDING;
   const overLappingTitles = axisTitleWidth + otherAxisTitleWidth > bounds.chartWidth;
+  const overLappingAmount = (axisTitleWidth + otherAxisTitleWidth) / bounds.chartWidth
 
-  const largerTitleWidth = Math.max(axisTitleWidth, otherAxisTitleWidth);
 
   useRenderAxisHeightLinear(ref, {
     id: `axis-height-linear-${orientation}`,
@@ -49,28 +49,30 @@ export const AxisHeightLinearDual = (props: AxisHeightLinearDualProps) => {
     textColor: labelColor,
   });
 
+  const rightXAlignment = bounds.chartWidth +
+  margins.left -
+  (overLappingTitles ? axisTitleWidth / overLappingAmount : axisTitleWidth) +
+  // Align the title with the rightmost tick.
+  maxRightTickWidth +
+  TICK_PADDING -
+  TITLE_HPADDING  * (overLappingTitles ? Math.floor(overLappingAmount) : 2);
+
   return (
     <>
       <foreignObject
         x={
-          leftAligned || overLappingTitles
+          leftAligned
             ? 0
-            :  bounds.chartWidth +
-              margins.left -
-              axisTitleWidth +
-              // Align the title with the rightmost tick.
-              maxRightTickWidth +
-              TICK_PADDING -
-              TITLE_HPADDING * 2
+            :  rightXAlignment
         }
-        y={overLappingTitles ?   axisLabelFontSize / 2 - (largerTitleWidth === axisTitleWidth ? 32 : 0) : 0}
         width={axisTitleWidth + TITLE_HPADDING * 2}
-        height={(axisLabelFontSize + TITLE_VPADDING) * 2}
+        height={(overLappingTitles ? axisLabelFontSize * Math.ceil(overLappingAmount) : axisLabelFontSize + TITLE_VPADDING) * 2}
         color={theme.palette.getContrastText(color)}
       >
         <OpenMetadataPanelWrapper component={y[orientation].dimension}>
           <span
             style={{
+              width: overLappingTitles ? axisTitleWidth / overLappingAmount : "auto",
               fontSize: axisLabelFontSize ,
               backgroundColor: color,
               color: theme.palette.getContrastText(color),
