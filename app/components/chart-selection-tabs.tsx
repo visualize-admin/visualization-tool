@@ -1,30 +1,20 @@
 import { t, Trans } from "@lingui/macro";
 import { TabContext } from "@mui/lab";
 import {
-  Box,
   Button,
   Divider,
-  Grow,
   Popover,
   Stack,
   tabClasses,
   Theme,
   Tooltip,
   Typography,
-  useEventCallback,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { PUBLISHED_STATE } from "@prisma/client";
 import clsx from "clsx";
-import { useSession } from "next-auth/react";
-import Link from "next/link";
-import { useRouter } from "next/router";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
-import { useClient } from "urql";
-import { useDebounce } from "use-debounce";
 
-import { extractChartConfigComponentIris } from "@/charts/shared/chart-helpers";
 import { ArrowMenuTopCenter } from "@/components/arrow-menu";
 import { DuplicateChartMenuActionItem } from "@/components/chart-shared";
 import Flex from "@/components/flex";
@@ -35,33 +25,23 @@ import {
   ChartType,
   ConfiguratorStatePublished,
   ConfiguratorStateWithChartConfigs,
-  enableLayouting,
   getChartConfig,
   hasChartConfigs,
-  initChartStateFromChartEdit,
   isConfiguring,
   isLayouting,
   isPublished,
   isPublishing,
-  saveChartLocally,
   useConfiguratorState,
 } from "@/configurator";
 import { useSearchDatasetPanelStore } from "@/configurator/components/add-new-dataset-panel";
 import { ChartTypeSelector } from "@/configurator/components/chart-type-selector";
 import { getIconName } from "@/configurator/components/ui-helpers";
-import { useUserConfig } from "@/domain/user-configs";
 import { useFlag } from "@/flags";
-import { useDataCubesComponentsQuery } from "@/graphql/hooks";
 import { Icon, IconName } from "@/icons";
 import { defaultLocale, useLocale } from "@/locales";
-import { createConfig, updateConfig } from "@/utils/chart-config/api";
-import { getRouterChartId } from "@/utils/router/helpers";
-import { replaceLinks } from "@/utils/ui-strings";
 import useEvent from "@/utils/use-event";
-import { useMutate } from "@/utils/use-fetch-data";
 
 import { DragHandle } from "./drag-handle";
-import { useLocalSnack } from "./use-local-snack";
 
 type TabsState = {
   popoverOpen: boolean;
@@ -359,230 +339,6 @@ const TabsFixed = (props: TabsFixedProps) => {
   );
 };
 
-const NextStepButton = (props: React.PropsWithChildren<{}>) => {
-  const { children } = props;
-  const locale = useLocale();
-  const [state, dispatch] = useConfiguratorState(hasChartConfigs);
-  const chartConfig = getChartConfig(state);
-  const componentIris = extractChartConfigComponentIris({ chartConfig });
-  const [{ data: components }] = useDataCubesComponentsQuery({
-    variables: {
-      sourceType: state.dataSource.type,
-      sourceUrl: state.dataSource.url,
-      locale,
-      cubeFilters: chartConfig.cubes.map((cube) => ({
-        iri: cube.iri,
-        componentIris,
-        filters: cube.filters,
-        joinBy: cube.joinBy,
-        loadValues: true,
-      })),
-    },
-  });
-  const handleClick = useEvent(() => {
-    if (components?.dataCubesComponents) {
-      dispatch({
-        type: "STEP_NEXT",
-        dataCubesComponents: components.dataCubesComponents,
-      });
-    }
-  });
-
-  return (
-    <Button
-      color="primary"
-      variant="contained"
-      onClick={handleClick}
-      sx={{ minWidth: "fit-content" }}
-    >
-      {children}
-    </Button>
-  );
-};
-
-const LayoutChartButton = () => {
-  return (
-    <NextStepButton>
-      <Trans id="button.layout">Proceed to layout options</Trans>
-    </NextStepButton>
-  );
-};
-
-export const SaveDraftButton = ({
-  chartId,
-}: {
-  chartId: string | undefined;
-}) => {
-  const { data: config, invalidate: invalidateConfig } = useUserConfig(chartId);
-  const session = useSession();
-  const client = useClient();
-
-  const [state, dispatch] = useConfiguratorState();
-
-  const [snack, enqueueSnackbar, dismissSnack] = useLocalSnack();
-  const [debouncedSnack] = useDebounce(snack, 500);
-  const { asPath, replace } = useRouter();
-
-  const createConfigMut = useMutate(createConfig);
-  const updatePublishedStateMut = useMutate(updateConfig);
-  const loggedInId = session.data?.user.id;
-
-  const handleClick = useEventCallback(async () => {
-    try {
-      if (config?.user_id && loggedInId) {
-        const updated = await updatePublishedStateMut.mutate({
-          data: state,
-          published_state: PUBLISHED_STATE.DRAFT,
-          key: config.key,
-        });
-
-        if (updated) {
-          if (asPath !== `/create/${updated.key}`) {
-            replace(`/create/new?edit=${updated.key}`);
-          }
-        } else {
-          throw new Error("Could not update draft");
-        }
-      } else if (state) {
-        const saved = await createConfigMut.mutate({
-          data: state,
-          user_id: loggedInId,
-          published_state: PUBLISHED_STATE.DRAFT,
-        });
-        if (saved) {
-          const config = await initChartStateFromChartEdit(
-            client,
-            saved.key,
-            state.state
-          );
-
-          if (!config) {
-            return;
-          }
-
-          dispatch({ type: "INITIALIZED", value: config });
-          saveChartLocally(saved.key, config);
-          replace(`/create/${saved.key}`, undefined, {
-            shallow: true,
-          });
-        } else {
-          throw new Error("Could not save draft");
-        }
-      }
-
-      enqueueSnackbar({
-        message: (
-          <>
-            {replaceLinks(
-              t({
-                id: "button.save-draft.saved",
-                message: "Draft saved in [My visualisations](/profile)",
-              }),
-              (label, href) => {
-                return (
-                  <div>
-                    <Link href={href}>{label}</Link>
-                  </div>
-                );
-              }
-            )}
-          </>
-        ),
-        variant: "success",
-      });
-
-      invalidateConfig();
-    } catch (e) {
-      console.log(
-        `Error while saving draft: ${e instanceof Error ? e.message : e}`
-      );
-      enqueueSnackbar({
-        message: t({
-          id: "button.save-draft.error",
-          message: "Could not save draft",
-        }),
-        variant: "error",
-      });
-    }
-
-    setTimeout(() => {
-      updatePublishedStateMut.reset();
-      createConfigMut.reset();
-    }, 2000);
-  });
-
-  const hasUpdated = !!(updatePublishedStateMut.data || createConfigMut.data);
-  const [debouncedHasUpdated] = useDebounce(hasUpdated, 300);
-
-  if (!loggedInId) {
-    return null;
-  }
-
-  return (
-    <Tooltip
-      arrow
-      title={debouncedSnack?.message ?? ""}
-      open={!!snack}
-      disableFocusListener
-      disableHoverListener
-      disableTouchListener
-      onClose={() => dismissSnack()}
-    >
-      <Button
-        endIcon={
-          hasUpdated || debouncedHasUpdated ? (
-            <Grow in={hasUpdated}>
-              <span>
-                <Icon name="check" />
-              </span>
-            </Grow>
-          ) : null
-        }
-        variant="outlined"
-        onClick={handleClick}
-      >
-        <Trans id="button.save-draft">Save draft</Trans>
-      </Button>
-    </Tooltip>
-  );
-};
-
-export const PublishChartButton = ({
-  chartId,
-}: {
-  chartId: string | undefined;
-}) => {
-  const session = useSession();
-  const { data: config } = useUserConfig(chartId);
-  const editingPublishedChart =
-    session.data?.user.id &&
-    config?.user_id === session.data.user.id &&
-    config.published_state === "PUBLISHED";
-
-  return (
-    <NextStepButton>
-      {editingPublishedChart ? (
-        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-          <Tooltip
-            title={t({
-              id: "button.update.warning",
-              message:
-                "Keep in mind that updating this visualization will affect all the places where it might be already embedded!",
-            })}
-          >
-            <div>
-              <Icon name="hintWarning" />
-            </div>
-          </Tooltip>
-          <Trans id="button.update">Update this visualization</Trans>
-        </Box>
-      ) : (
-        <Trans id="button.publish">Publish</Trans>
-      )}
-    </NextStepButton>
-  );
-};
-
 type TabsInnerProps = {
   data: TabDatum[];
   addable: boolean;
@@ -612,7 +368,6 @@ const useTabsInnerStyles = makeStyles<Theme>((theme) => ({
   root: {
     display: "flex",
     alignItems: "center",
-    justifyContent: "space-between",
     gap: 1,
   },
   tab: {
@@ -678,13 +433,8 @@ const TabsInner = (props: TabsInnerProps) => {
     onChartAdd,
     onChartSwitch,
   } = props;
-  const [state, dispatch] = useConfiguratorState(hasChartConfigs);
-
-  const { asPath } = useRouter();
-  const chartId = getRouterChartId(asPath);
-
+  const [_, dispatch] = useConfiguratorState(hasChartConfigs);
   const activeTabIndex = data.findIndex((x) => x.active);
-
   return (
     <div className={classes.root}>
       <TabContext value={`${activeTabIndex}`}>
@@ -771,7 +521,6 @@ const TabsInner = (props: TabsInnerProps) => {
           </Droppable>
         </DragDropContext>
       </TabContext>
-
       {addable && (
         <VisualizeTab
           component="div"
@@ -780,7 +529,7 @@ const TabsInner = (props: TabsInnerProps) => {
             px: 0,
             pt: "2px",
             top: 1,
-            margin: "0 1rem",
+            margin: "0 1.25rem",
             height: "100%",
             border: "1px solid",
             borderColor: "divider",
@@ -790,17 +539,6 @@ const TabsInner = (props: TabsInnerProps) => {
           label={<TabContent iconName="add" chartKey="" />}
         />
       )}
-      <Box flexGrow={1} />
-      <Box gap="0.5rem" display="flex" flexShrink={0}>
-        {isConfiguring(state) ? <SaveDraftButton chartId={chartId} /> : null}
-        {editable &&
-          isConfiguring(state) &&
-          (enableLayouting(state) ? (
-            <LayoutChartButton />
-          ) : (
-            <PublishChartButton chartId={chartId} />
-          ))}
-      </Box>
     </div>
   );
 };
