@@ -30,7 +30,6 @@ msgstr "Aucun résultat"
 msgid "annotation.add.description"
 msgstr "[ Pas de description ]"
 
-#: app/components/rename-dialog.tsx
 #: app/configurator/components/annotators.tsx
 #: app/login/components/profile-tables.tsx
 msgid "annotation.add.title"
@@ -107,7 +106,7 @@ msgstr "Cliquer pour copier"
 msgid "button.hint.copied"
 msgstr "Copié!"
 
-#: app/components/chart-selection-tabs.tsx
+#: app/configurator/components/configurator.tsx
 msgid "button.layout"
 msgstr "Passer aux options de présentation"
 
@@ -115,19 +114,19 @@ msgstr "Passer aux options de présentation"
 msgid "button.new.visualization"
 msgstr "Créer une nouvelle visualisation"
 
-#: app/components/chart-selection-tabs.tsx
+#: app/configurator/components/configurator.tsx
 msgid "button.publish"
 msgstr "Publier"
 
-#: app/components/chart-selection-tabs.tsx
+#: app/configurator/components/configurator.tsx
 msgid "button.save-draft"
 msgstr "Sauver le brouillon"
 
-#: app/components/chart-selection-tabs.tsx
+#: app/configurator/components/configurator.tsx
 msgid "button.save-draft.error"
 msgstr "Impossible d'enregistrer le brouillon"
 
-#: app/components/chart-selection-tabs.tsx
+#: app/configurator/components/configurator.tsx
 msgid "button.save-draft.saved"
 msgstr "Brouillon enregistré dans [Mes visualisations](/profile)"
 
@@ -136,17 +135,17 @@ msgstr "Brouillon enregistré dans [Mes visualisations](/profile)"
 msgid "button.share"
 msgstr "Partager"
 
-#: app/components/chart-selection-tabs.tsx
+#: app/configurator/components/configurator.tsx
 msgid "button.update"
 msgstr "Actualiser cette visualisation"
 
-#: app/components/chart-selection-tabs.tsx
+#: app/configurator/components/configurator.tsx
 msgid "button.update.warning"
 msgstr "Gardez à l'esprit que la mise à jour de cette visualisation affectera tous les endroits où elle est déjà intégrée !"
 
 #: app/components/chart-shared.tsx
 msgid "chart-controls.chart-view"
-msgstr "Vue graphique"
+msgstr "Vue en graphique"
 
 #: app/components/chart-shared.tsx
 msgid "chart-controls.copy-and-edit"
@@ -179,7 +178,11 @@ msgstr "Requête SPARQL"
 
 #: app/components/chart-shared.tsx
 msgid "chart-controls.table-view"
-msgstr "Vue du tableau"
+msgstr "Vue en tableau"
+
+#: app/components/chart-selection-tabs.tsx
+msgid "chart-selection-tabs.add-chart"
+msgstr ""
 
 #: app/components/chart-selection-tabs.tsx
 msgid "chart-selection-tabs.add-chart-different-dataset.button"
@@ -829,7 +832,7 @@ msgstr "Afficher l'erreur type"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.show-standard-error.explanation"
-msgstr "Montrer les incertitudes qui s'étendent à partir des points de données pour représenter les erreurs standard"
+msgstr "Montrer les incertitudes via des barres d'erreur"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.sorting"

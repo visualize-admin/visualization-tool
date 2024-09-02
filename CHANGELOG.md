@@ -19,6 +19,8 @@ You can also check the
   - Single chart titles are now correctly displayed in user profile
   - Renaming of charts through user profile now works correctly
   - Manually entering dates in date pickers works correctly again
+  - Improved scrolling behavior in the chart tabs
+  - Aligned editor and layouting page layouts
 
 # [4.7.4] - 2024-07-23
 
