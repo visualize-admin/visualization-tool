@@ -50,6 +50,7 @@ import {
 } from "@/configurator/components/drawer";
 import { IconButton } from "@/configurator/components/icon-button";
 import {
+  LAYOUT_HEADER_HEIGHT,
   PanelBodyWrapper,
   PanelHeaderLayout,
   PanelHeaderWrapper,
@@ -75,13 +76,13 @@ import { useMutate } from "@/utils/use-fetch-data";
 
 const BackContainer = (props: React.PropsWithChildren<{ sx?: SxProps }>) => {
   const { children, sx } = props;
-
   return (
     <Box
       sx={{
         display: "flex",
         alignItems: "center",
-        height: "100%",
+        height: LAYOUT_HEADER_HEIGHT,
+        flexGrow: 1,
         px: 2,
         ...sx,
       }}
