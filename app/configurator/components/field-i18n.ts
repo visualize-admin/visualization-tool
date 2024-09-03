@@ -28,6 +28,7 @@ const fieldLabels = {
     id: "controls.description",
     message: "Description",
   }),
+  "controls.label": defineMessage({ id: "controls.label", message: "Label" }),
   "controls.column.stacked": defineMessage({
     id: "controls.column.stacked",
     message: "Stacked",
@@ -262,6 +263,8 @@ export function getFieldLabel(field: string): string {
       return i18n._(fieldLabels["controls.title"]);
     case "description":
       return i18n._(fieldLabels["controls.description"]);
+    case "label":
+      return i18n._(fieldLabels["controls.label"]);
 
     // Encoding Options
     case "stacked":

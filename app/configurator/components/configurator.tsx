@@ -34,6 +34,7 @@ import {
   hasChartConfigs,
   initChartStateFromChartEdit,
   isConfiguring,
+  MetaKey,
   saveChartLocally,
   useConfiguratorState,
 } from "@/configurator";
@@ -115,8 +116,8 @@ export const BackButton = ({
 
 export const isAnnotationField = (
   field: string | undefined
-): field is "title" | "description" => {
-  return field === "title" || field === "description";
+): field is MetaKey => {
+  return field === "title" || field === "description" || field === "label";
 };
 
 const useAssureCorrectDataSource = (stateGuard: ConfiguratorState["state"]) => {

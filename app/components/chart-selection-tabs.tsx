@@ -39,7 +39,7 @@ import { ChartTypeSelector } from "@/configurator/components/chart-type-selector
 import { getIconName } from "@/configurator/components/ui-helpers";
 import { useFlag } from "@/flags";
 import { Icon, IconName } from "@/icons";
-import { defaultLocale, useLocale } from "@/locales";
+import { useLocale } from "@/locales";
 import useEvent from "@/utils/use-event";
 
 type TabsState = {
@@ -92,19 +92,16 @@ export const ChartSelectionTabs = () => {
   }
 
   const chartConfig = getChartConfig(state);
-  const data: TabDatum[] = state.chartConfigs.map((d) => {
-    return {
-      key: d.key,
-      chartType: d.chartType,
-      active: d.key === chartConfig.key,
-      label:
-        d.meta.title[locale] !== ""
-          ? d.meta.title[locale]
-          : d.meta.title[defaultLocale] !== ""
-            ? d.meta.title[defaultLocale]
-            : undefined,
-    };
-  });
+  const data: TabDatum[] = state.chartConfigs.map(
+    ({ key, chartType, meta }) => {
+      return {
+        key,
+        chartType,
+        active: key === chartConfig.key,
+        label: meta.label[locale] !== "" ? meta.label[locale] : undefined,
+      };
+    }
+  );
 
   return (
     <TabsStateProvider>
@@ -620,6 +617,12 @@ const TabContent = (props: {
     onSwitchClick,
   } = props;
   const classes = useIconStyles({ active, dragging });
+  const [_, dispatch] = useConfiguratorState();
+  const allowEditingLabel = editable && !label;
+  const addLabel = t({
+    id: "chart-selection-tabs.add-label",
+    message: "Add label",
+  });
   return (
     <Flex className={classes.root}>
       <Button
@@ -629,24 +632,33 @@ const TabContent = (props: {
       >
         <Icon name={iconName} />
       </Button>
-      {label ? (
-        <Tooltip title={label} enterDelay={750}>
+      {label || allowEditingLabel ? (
+        <Tooltip title={label || addLabel} enterDelay={750}>
           <Button
             variant="text"
-            color="primary"
             className={classes.label}
-            onClick={onSwitchClick}
+            onClick={() => {
+              onSwitchClick?.();
+              if (allowEditingLabel) {
+                dispatch({
+                  type: "CHART_ACTIVE_FIELD_CHANGED",
+                  value: "label",
+                });
+              }
+            }}
+            sx={{
+              color: (t) =>
+                label ? "inherit" : `${t.palette.grey[500]} !important`,
+            }}
           >
-            {label}
+            {label || `[ ${addLabel} ]`}
           </Button>
         </Tooltip>
       ) : null}
       {editable && (
         <Button
           variant="text"
-          onClick={(e) => {
-            onChevronDownClick?.(e, chartKey);
-          }}
+          onClick={(e) => onChevronDownClick?.(e, chartKey)}
           className={classes.editIconWrapper}
         >
           <Icon name="chevronDown" />

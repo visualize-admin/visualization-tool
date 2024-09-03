@@ -196,6 +196,10 @@ msgstr "Fügen Sie ein Diagramm basierend auf einem anderen Datensatz hinzu"
 msgid "chart-selection-tabs.add-chart-same-dataset.caption"
 msgstr "Fügen Sie ein Diagramm basierend auf demselben Datensatz hinzu"
 
+#: app/components/chart-selection-tabs.tsx
+msgid "chart-selection-tabs.add-label"
+msgstr ""
+
 #: app/configurator/components/dataset-control-section.tsx
 msgid "chart.datasets.add"
 msgstr "Hinzufügen"
@@ -587,6 +591,10 @@ msgstr "-"
 #: app/configurator/components/field-i18n.ts
 msgid "controls.imputation.type.zeros"
 msgstr "Nullen"
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.label"
+msgstr ""
 
 #: app/components/rename-dialog.tsx
 #: app/configurator/components/field-i18n.ts
