@@ -508,12 +508,10 @@ msgstr "No Filter"
 msgid "controls.filter.nb-elements"
 msgstr "{0} of {1}"
 
-#: app/configurator/components/add-dataset-dialog.tsx
 #: app/configurator/components/filters.tsx
 msgid "controls.filter.select.all"
 msgstr "Select all"
 
-#: app/configurator/components/add-dataset-dialog.tsx
 #: app/configurator/components/filters.tsx
 msgid "controls.filter.select.none"
 msgstr "Select none"
@@ -1186,14 +1184,6 @@ msgid "dataset.search.preview.description"
 msgstr "Review data preview of new available dimensions and continue to edit visualization."
 
 #: app/configurator/components/add-dataset-dialog.tsx
-msgid "dataset.search.preview.dimensions"
-msgstr "Dimensions"
-
-#: app/configurator/components/add-dataset-dialog.tsx
-msgid "dataset.search.preview.dimensions-shown"
-msgstr "{0} shown in this view"
-
-#: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.preview.new-dimension"
 msgstr "New"
 
@@ -1438,6 +1428,10 @@ msgstr "Dataset"
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.my-visualizations.multiple-datasets"
 msgstr "Multiple datasets"
+
+#: app/login/components/login-menu.tsx
+msgid "login.sign-in"
+msgstr "Sign in"
 
 #: app/components/header.tsx
 #: app/components/header.tsx
