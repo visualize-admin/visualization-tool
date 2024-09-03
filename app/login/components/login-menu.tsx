@@ -1,23 +1,62 @@
-import { Trans } from "@lingui/macro";
-import { Box, Button, Link, Typography } from "@mui/material";
-import { signIn } from "next-auth/react";
-import NextLink from "next/link";
+import { t, Trans } from "@lingui/macro";
+import { Button, Typography } from "@mui/material";
+import { signIn, signOut } from "next-auth/react";
+import { useState } from "react";
 
+import { ArrowMenuTopCenter } from "@/components/arrow-menu";
+import { MenuActionItem } from "@/components/menu-action-item";
+import { ADFS_PROFILE_URL } from "@/domain/env";
 import { useUser } from "@/login/utils";
 
 export const LoginMenu = () => {
   const user = useUser();
-
+  const [anchorEl, setAnchorEl] = useState<null | HTMLButtonElement>(null);
   return (
-    <Box sx={{ alignItems: "center", display: "flex" }}>
+    <div>
       {user ? (
-        <Typography variant="body2">
-          <NextLink href="/profile" passHref legacyBehavior>
-            <Link sx={{ textDecoration: "none", color: "primary.main" }}>
-              {user.name}
-            </Link>
-          </NextLink>
-        </Typography>
+        <>
+          <Button
+            variant="text"
+            onClick={(e) => setAnchorEl(e.currentTarget)}
+            style={{ minWidth: 0 }}
+          >
+            <Typography variant="body2">{user.name}</Typography>
+          </Button>
+          <ArrowMenuTopCenter
+            anchorEl={anchorEl}
+            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+            transformOrigin={{ vertical: "top", horizontal: "center" }}
+            open={!!anchorEl}
+            onClose={() => setAnchorEl(null)}
+          >
+            <MenuActionItem
+              type="link"
+              as="menuitem"
+              label={t({
+                id: "login.profile.my-visualizations",
+                message: "My visualizations",
+              })}
+              href="/profile"
+            />
+            {ADFS_PROFILE_URL && (
+              <MenuActionItem
+                type="link"
+                as="menuitem"
+                label="eIAM MyAccount"
+                href={ADFS_PROFILE_URL}
+              />
+            )}
+            <MenuActionItem
+              type="button"
+              as="menuitem"
+              label={t({
+                id: "login.sign-out",
+                message: "Sign out",
+              })}
+              onClick={async () => await signOut()}
+            />
+          </ArrowMenuTopCenter>
+        </>
       ) : (
         <Button
           variant="text"
@@ -28,6 +67,6 @@ export const LoginMenu = () => {
           <Trans id="login.sign-in">Sign in</Trans>
         </Button>
       )}
-    </Box>
+    </div>
   );
 };
