@@ -18,7 +18,7 @@ const StyledMenuItem = styled(MenuItem)(({ theme, color }) => ({
 
 export type MenuActionProps = {
   label: string | NonNullable<React.ReactNode>;
-  iconName: IconName;
+  iconName?: IconName;
   priority?: number;
   stayOpen?: boolean;
   color?: "primary" | "error";
@@ -60,7 +60,7 @@ export const MenuActionItem = (
     label,
     color = "primary",
   }: {
-    icon: IconName;
+    icon?: IconName;
     label: string | NonNullable<React.ReactNode>;
     color?: MenuActionProps["color"];
   }) => {
@@ -105,7 +105,9 @@ export const MenuActionItem = (
             {...forwardedProps}
             sx={{ minHeight: 0 }}
           >
-            <Icon size={16} name={icon} style={{ marginTop: "0.25rem" }} />
+            {icon && (
+              <Icon size={16} name={icon} style={{ marginTop: "0.25rem" }} />
+            )}
             {label}
           </StyledMenuItem>
           <Divider sx={{ mx: 1, "&:last-of-type": { display: "none" } }} />
