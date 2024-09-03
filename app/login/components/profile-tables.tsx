@@ -354,7 +354,7 @@ const ProfileVisualizationsRow = (props: {
       </TableCell>
       <TableCell width="10%">
         <Typography width="auto" variant="body2">
-          {config.updated_at.toLocaleDateString("de")}
+          {config.updated_at.toLocaleString("de")}
         </Typography>
       </TableCell>
       <TableCell width="20%" align="right">
