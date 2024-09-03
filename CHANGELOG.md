@@ -21,6 +21,8 @@ You can also check the
   - Manually entering dates in date pickers works correctly again
   - Improved scrolling behavior in the chart tabs
   - Aligned editor and layouting page layouts
+- Maintenance
+  - Updated cube-hierarchy-query library to 3.0.0
 
 # [4.7.4] - 2024-07-23
 
