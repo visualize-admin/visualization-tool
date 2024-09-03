@@ -11,6 +11,8 @@ You can also check the
 
 # Unreleased
 
+- Features
+  - It's now possible to label individual chart tabs
 - Fixes
   - Map is now correctly centered after copying a chart or switching to layout
     mode
@@ -20,6 +22,7 @@ You can also check the
   - Renaming of charts through user profile now works correctly
   - Manually entering dates in date pickers works correctly again
   - Improved scrolling behavior in the chart tabs
+- Style
   - Aligned editor and layouting page layouts
 
 # [4.7.4] - 2024-07-23
