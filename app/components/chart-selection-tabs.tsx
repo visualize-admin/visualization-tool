@@ -618,7 +618,7 @@ const TabContent = (props: {
   } = props;
   const classes = useIconStyles({ active, dragging });
   const [_, dispatch] = useConfiguratorState();
-  const allowEditingLabel = editable && !label;
+  const showAddLabel = editable && !label;
   const addLabel = t({
     id: "chart-selection-tabs.add-label",
     message: "Add label",
@@ -632,14 +632,14 @@ const TabContent = (props: {
       >
         <Icon name={iconName} />
       </Button>
-      {label || allowEditingLabel ? (
+      {label || showAddLabel ? (
         <Tooltip title={label || addLabel} enterDelay={750}>
           <Button
             variant="text"
             className={classes.label}
             onClick={() => {
               onSwitchClick?.();
-              if (allowEditingLabel) {
+              if (editable) {
                 dispatch({
                   type: "CHART_ACTIVE_FIELD_CHANGED",
                   value: "label",
