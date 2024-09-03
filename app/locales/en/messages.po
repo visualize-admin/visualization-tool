@@ -1405,6 +1405,10 @@ msgstr "My drafts"
 msgid "login.profile.my-published-visualizations"
 msgstr "My published visualizations"
 
+#: app/login/components/login-menu.tsx
+msgid "login.profile.my-visualizations"
+msgstr "My visualizations"
+
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.my-visualizations.chart-actions"
 msgstr "Actions"
@@ -1432,6 +1436,10 @@ msgstr "Multiple datasets"
 #: app/login/components/login-menu.tsx
 msgid "login.sign-in"
 msgstr "Sign in"
+
+#: app/login/components/login-menu.tsx
+msgid "login.sign-out"
+msgstr "Sign out"
 
 #: app/components/header.tsx
 #: app/components/header.tsx

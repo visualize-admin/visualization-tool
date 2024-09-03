@@ -1405,6 +1405,10 @@ msgstr "Meine Entwürfe"
 msgid "login.profile.my-published-visualizations"
 msgstr "Meine Visualisierungen"
 
+#: app/login/components/login-menu.tsx
+msgid "login.profile.my-visualizations"
+msgstr ""
+
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.my-visualizations.chart-actions"
 msgstr "Aktionen"
@@ -1431,6 +1435,10 @@ msgstr ""
 
 #: app/login/components/login-menu.tsx
 msgid "login.sign-in"
+msgstr ""
+
+#: app/login/components/login-menu.tsx
+msgid "login.sign-out"
 msgstr ""
 
 #: app/components/header.tsx

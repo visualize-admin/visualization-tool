@@ -1405,6 +1405,10 @@ msgstr "Mes visualisations en brouillon"
 msgid "login.profile.my-published-visualizations"
 msgstr "Mes visualisations publiées"
 
+#: app/login/components/login-menu.tsx
+msgid "login.profile.my-visualizations"
+msgstr ""
+
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.my-visualizations.chart-actions"
 msgstr "Actions"
@@ -1431,6 +1435,10 @@ msgstr ""
 
 #: app/login/components/login-menu.tsx
 msgid "login.sign-in"
+msgstr ""
+
+#: app/login/components/login-menu.tsx
+msgid "login.sign-out"
 msgstr ""
 
 #: app/components/header.tsx
