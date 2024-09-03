@@ -27,11 +27,8 @@ const ConfirmationDialog = ({
   onClose: NonNullable<DialogProps["onClose"]>;
 }) => {
   const [loading, setLoading] = useState(false);
-
   return (
     <Dialog
-      // To prevent the click away listener from closing the dialog.
-      onClick={(e) => e.stopPropagation()}
       maxWidth="xs"
       {...props}
     >
