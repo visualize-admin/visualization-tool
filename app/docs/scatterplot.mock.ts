@@ -72,6 +72,12 @@ export const chartConfig: ScatterPlotConfig = {
       fr: "",
       it: "",
     },
+    label: {
+      en: "",
+      de: "",
+      fr: "",
+      it: "",
+    },
   },
   cubes: [
     {

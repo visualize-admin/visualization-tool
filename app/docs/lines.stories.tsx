@@ -41,6 +41,7 @@ const LineChartStory = () => (
         meta: {
           title: { en: "", de: "", fr: "", it: "" },
           description: { en: "", de: "", fr: "", it: "" },
+          label: { en: "", de: "", fr: "", it: "" },
         },
         activeField: undefined,
       },

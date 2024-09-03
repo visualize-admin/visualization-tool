@@ -83,6 +83,12 @@ const TooltipBoxStory = () => (
               fr: "",
               it: "",
             },
+            label: {
+              en: "",
+              de: "",
+              fr: "",
+              it: "",
+            },
           },
           cubes: [
             {
@@ -248,6 +254,12 @@ const TooltipContentStory = {
               fr: "",
               it: "",
             },
+            label: {
+              en: "",
+              de: "",
+              fr: "",
+              it: "",
+            },
           },
           cubes: [
             {
@@ -311,6 +323,12 @@ export const TooltipContentStory2 = {
               it: "",
             },
             description: {
+              en: "",
+              de: "",
+              fr: "",
+              it: "",
+            },
+            label: {
               en: "",
               de: "",
               fr: "",

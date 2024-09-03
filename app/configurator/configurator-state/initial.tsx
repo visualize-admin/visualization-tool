@@ -32,6 +32,12 @@ export const getInitialConfiguringConfigBasedOnCube = (props: {
           fr: "",
           it: "",
         },
+        label: {
+          de: "",
+          en: "",
+          fr: "",
+          it: "",
+        },
       },
       activeField: undefined,
     },

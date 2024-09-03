@@ -23,6 +23,7 @@ export const states: ConfiguratorState[] = [
       meta: {
         title: { en: "", de: "", fr: "", it: "" },
         description: { en: "", de: "", fr: "", it: "" },
+        label: { en: "", de: "", fr: "", it: "" },
       },
       activeField: undefined,
     },
@@ -38,6 +39,12 @@ export const states: ConfiguratorState[] = [
             it: "",
           },
           description: {
+            en: "",
+            de: "",
+            fr: "",
+            it: "",
+          },
+          label: {
             en: "",
             de: "",
             fr: "",
@@ -888,6 +895,12 @@ export const tableConfig: TableConfig = {
       it: "",
     },
     description: {
+      en: "",
+      de: "",
+      fr: "",
+      it: "",
+    },
+    label: {
       en: "",
       de: "",
       fr: "",

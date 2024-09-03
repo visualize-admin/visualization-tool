@@ -330,6 +330,12 @@ export const META: Meta = {
     fr: "",
     it: "",
   },
+  label: {
+    en: "",
+    de: "",
+    fr: "",
+    it: "",
+  },
 };
 
 type GetInitialConfigOptions = {
