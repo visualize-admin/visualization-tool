@@ -560,6 +560,12 @@ describe("deriveFiltersFromFields", () => {
             "fr": "",
             "it": "",
           },
+          "label": Object {
+            "de": "",
+            "en": "",
+            "fr": "",
+            "it": "",
+          },
           "title": Object {
             "de": "",
             "en": "",
