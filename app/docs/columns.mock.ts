@@ -30,6 +30,12 @@ export const chartConfig: ColumnConfig = {
       fr: "",
       it: "",
     },
+    label: {
+      en: "",
+      de: "",
+      fr: "",
+      it: "",
+    },
   },
   cubes: [
     {

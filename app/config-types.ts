@@ -112,7 +112,6 @@ export const extractSingleFilters = (filters: Filters): SingleFilters => {
   ) as SingleFilters;
 };
 
-// Meta
 const Title = t.type({
   de: t.string,
   fr: t.string,
@@ -126,7 +125,19 @@ const Description = t.type({
   it: t.string,
   en: t.string,
 });
-const Meta = t.type({ title: Title, description: Description });
+export type Description = t.TypeOf<typeof Description>;
+const Label = t.type({
+  de: t.string,
+  fr: t.string,
+  it: t.string,
+  en: t.string,
+});
+export type Label = t.TypeOf<typeof Label>;
+const Meta = t.type({
+  title: Title,
+  description: Description,
+  label: Label,
+});
 export type Meta = t.TypeOf<typeof Meta>;
 export type MetaKey = keyof Meta;
 

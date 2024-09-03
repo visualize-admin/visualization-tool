@@ -79,6 +79,12 @@ export const chartConfig: LineConfig = {
       fr: "",
       it: "",
     },
+    label: {
+      en: "",
+      de: "",
+      fr: "",
+      it: "",
+    },
   },
   cubes: [
     {

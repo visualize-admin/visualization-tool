@@ -240,6 +240,12 @@ describe("chart type switch", () => {
           fr: "",
           it: "",
         },
+        label: {
+          en: "",
+          de: "",
+          fr: "",
+          it: "",
+        },
       },
       fields: {
         x: {
