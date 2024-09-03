@@ -13,6 +13,11 @@ You can also check the
 
 - Features
   - It's now possible to label individual chart tabs
+  - Time is now displayed in addition to date in `Last edit` column in user
+    profile
+  - Free canvas layout option now includes a 3-column layout, depending on the
+    screen width
+  - Added a new popover login menu
 - Fixes
   - Map is now correctly centered after copying a chart or switching to layout
     mode
@@ -24,6 +29,8 @@ You can also check the
   - Improved scrolling behavior in the chart tabs
 - Style
   - Aligned editor and layouting page layouts
+  - Removed dimension selection from modal when merging cubes
+  - Updated styles of confirmation dialog
 
 # [4.7.4] - 2024-07-23
 
