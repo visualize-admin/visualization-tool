@@ -85,7 +85,7 @@ const AnnotationOptions = (props: AnnotationOptionsProps) => {
       tabIndex={-1}
       sx={{ overflowX: "hidden", overflowY: "auto" }}
     >
-      <ControlSection>
+      <ControlSection hideTopBorder>
         <SectionTitle>{getFieldLabel(activeField)}</SectionTitle>
         <ControlSectionContent gap="none">
           {orderedLocales.map((locale) => (
