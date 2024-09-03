@@ -27,6 +27,7 @@
     "locales:compile": "lingui compile --verbose",
     "locales:push": "dotenv -- accent sync --add-translations",
     "locales:pull": "dotenv -- accent export; yarn locales:extract # putting back file location comments",
+    "locales:sync": "yarn locales:push && yarn locales:pull",
     "locales:browse": "open 'https://accent.interactivethings.io/app/projects/584e1dfa-ff1f-4b26-8cac-07004c465134'",
     "graphql:codegen": "graphql-codegen --config codegen.yml",
     "graphql:codegen:dev": "graphql-codegen --config codegen.yml --watch",
