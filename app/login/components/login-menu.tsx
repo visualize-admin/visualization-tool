@@ -1,3 +1,4 @@
+import { Trans } from "@lingui/macro";
 import { Box, Button, Link, Typography } from "@mui/material";
 import { signIn } from "next-auth/react";
 import NextLink from "next/link";
@@ -24,7 +25,7 @@ export const LoginMenu = () => {
           size="small"
           onClick={() => signIn("adfs")}
         >
-          Sign in
+          <Trans id="login.sign-in">Sign in</Trans>
         </Button>
       )}
     </Box>
