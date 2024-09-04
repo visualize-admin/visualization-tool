@@ -211,13 +211,17 @@ export const OpenMetadataPanelWrapper = ({
   component,
 }: {
   children: ReactNode;
-  component: Component;
+  component?: Component;
 }) => {
   const classes = useOtherStyles();
-  const { openDimension } = useMetadataPanelStoreActions();
+  const { openDimension, setOpen } = useMetadataPanelStoreActions();
   const handleClick = useEvent((e: React.MouseEvent) => {
     e.stopPropagation();
-    openDimension(component);
+    if (component) {
+      openDimension(component);
+    } else {
+      setOpen(true);
+    }
   });
 
   return (

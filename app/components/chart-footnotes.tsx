@@ -7,6 +7,7 @@ import { useMemo } from "react";
 import { extractChartConfigComponentIris } from "@/charts/shared/chart-helpers";
 import { LegendItem } from "@/charts/shared/legend-color";
 import { ChartFiltersList } from "@/components/chart-filters-list";
+import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import {
   ChartConfig,
   ComboLineColumnConfig,
@@ -96,8 +97,16 @@ export const ChartFootnotes = ({
             components={components}
             cubeIri={metadata.iri}
           />
+          <Typography component="span" variant="caption" color="grey.600">
+            <OpenMetadataPanelWrapper>
+              <Trans id="dataset.footnotes.dataset">Dataset</Trans>
+            </OpenMetadataPanelWrapper>
+            <Trans id="typography.colon">: </Trans>
+            {metadata.title}
+          </Typography>
           {metadata.dateModified ? (
             <Typography component="span" variant="caption" color="grey.600">
+              {", "}
               <Trans id="dataset.footnotes.updated">Latest data update</Trans>
               <Trans id="typography.colon">: </Trans>
               {formatLocale.format("%d.%m.%Y %H:%M")(
