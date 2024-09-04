@@ -175,7 +175,7 @@ const useOtherStyles = makeStyles<Theme>((theme) => {
         borderBottom: "none",
       },
     },
-    openDimension: {
+    openComponent: {
       minHeight: 0,
       verticalAlign: "baseline",
       padding: 0,
@@ -214,11 +214,11 @@ export const OpenMetadataPanelWrapper = ({
   component?: Component;
 }) => {
   const classes = useOtherStyles();
-  const { openDimension, setOpen } = useMetadataPanelStoreActions();
+  const { openComponent, setOpen } = useMetadataPanelStoreActions();
   const handleClick = useEvent((e: React.MouseEvent) => {
     e.stopPropagation();
     if (component) {
-      openDimension(component);
+      openComponent(component);
     } else {
       setOpen(true);
     }
@@ -226,7 +226,7 @@ export const OpenMetadataPanelWrapper = ({
 
   return (
     <Button
-      className={classes.openDimension}
+      className={classes.openComponent}
       variant="text"
       size="small"
       onClick={handleClick}
@@ -477,9 +477,9 @@ const DataPanel = ({
   const locale = useLocale();
   const classes = useOtherStyles();
   const selectedDimension = useMetadataPanelStore(
-    (state) => state.selectedDimension
+    (state) => state.selectedComponent
   );
-  const { setSelectedDimension, clearSelectedDimension } =
+  const { setSelectedComponent, clearSelectedComponent } =
     useMetadataPanelStoreActions();
   const [inputValue, setInputValue] = useState("");
   const { options, groupedComponents } = useMemo(() => {
@@ -556,7 +556,7 @@ const DataPanel = ({
         {selectedDimension ? (
           <MotionBox key="dimension-selected" {...animationProps}>
             <BackButton
-              onClick={() => clearSelectedDimension()}
+              onClick={() => clearSelectedComponent()}
               sx={{ color: "primary.main" }}
             >
               <Trans id="button.back">Back</Trans>
@@ -578,7 +578,7 @@ const DataPanel = ({
             <Autocomplete
               className={classes.search}
               disablePortal
-              onChange={(_, v) => v && setSelectedDimension(v.value)}
+              onChange={(_, v) => v && setSelectedComponent(v.value)}
               inputValue={inputValue}
               onInputChange={(_, v) => setInputValue(v.toLowerCase())}
               options={sortedOptions}
@@ -690,7 +690,7 @@ const ComponentTabPanel = ({
   cubeIri?: string;
 }) => {
   const classes = useOtherStyles();
-  const { setSelectedDimension } = useMetadataPanelStoreActions();
+  const { setSelectedComponent } = useMetadataPanelStoreActions();
   const label = useMemo(
     () => getComponentLabel(component, { cubeIri }),
     [cubeIri, component]
@@ -749,9 +749,9 @@ const ComponentTabPanel = ({
 
   const handleClick = useCallback(() => {
     if (!expanded) {
-      setSelectedDimension(component);
+      setSelectedComponent(component);
     }
-  }, [expanded, component, setSelectedDimension]);
+  }, [expanded, component, setSelectedComponent]);
 
   return (
     <div>
