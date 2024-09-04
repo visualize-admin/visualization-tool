@@ -31,6 +31,8 @@ You can also check the
   - Aligned editor and layouting page layouts
   - Removed dimension selection from modal when merging cubes
   - Updated styles of confirmation dialog
+- Maintenance
+  - Updated cube-hierarchy-query library to 3.0.0
 
 # [4.7.4] - 2024-07-23
 
