@@ -18,7 +18,14 @@ export const LoginMenu = () => {
           <Button
             variant="text"
             onClick={(e) => setAnchorEl(e.currentTarget)}
-            style={{ minWidth: 0 }}
+            sx={{
+              minWidth: 0,
+              minHeight: 0,
+              padding: 0,
+              "&:hover": {
+                backgroundColor: "transparent !important",
+              },
+            }}
           >
             <Typography variant="body2">{user.name}</Typography>
           </Button>
