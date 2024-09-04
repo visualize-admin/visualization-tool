@@ -18,6 +18,10 @@ You can also check the
   - Free canvas layout option now includes a 3-column layout, depending on the
     screen width
   - Added a new popover login menu
+  - The page is now scrolled to the top when toggling shared filters in the
+    layouting step
+  - Past layouts are now preserved when switching between layouts in the
+    layouting step
 - Fixes
   - Map is now correctly centered after copying a chart or switching to layout
     mode
