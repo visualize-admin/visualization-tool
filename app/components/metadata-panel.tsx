@@ -214,12 +214,14 @@ export const OpenMetadataPanelWrapper = ({
   component?: Component;
 }) => {
   const classes = useOtherStyles();
-  const { openComponent, setOpen } = useMetadataPanelStoreActions();
+  const { openComponent, setOpen, setActiveSection } =
+    useMetadataPanelStoreActions();
   const handleClick = useEvent((e: React.MouseEvent) => {
     e.stopPropagation();
     if (component) {
       openComponent(component);
     } else {
+      setActiveSection("general");
       setOpen(true);
     }
   });
