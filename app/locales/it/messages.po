@@ -1084,6 +1084,10 @@ msgid "dataset-result.shared-dimensions"
 msgstr "Dimensioni condivise"
 
 #: app/components/chart-footnotes.tsx
+msgid "dataset.footnotes.dataset"
+msgstr ""
+
+#: app/components/chart-footnotes.tsx
 msgid "dataset.footnotes.updated"
 msgstr "Ultimo aggiornamento dei dati"
 
@@ -1552,6 +1556,7 @@ msgstr "Settimana"
 msgid "time-units.Year"
 msgstr "Anno"
 
+#: app/components/chart-footnotes.tsx
 #: app/components/chart-footnotes.tsx
 msgid "typography.colon"
 msgstr ": "
