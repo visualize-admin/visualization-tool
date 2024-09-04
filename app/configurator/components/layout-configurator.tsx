@@ -11,7 +11,7 @@ import { ascending, descending } from "d3-array";
 import capitalize from "lodash/capitalize";
 import omit from "lodash/omit";
 import uniqBy from "lodash/uniqBy";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 
 import { DataFilterGenericDimensionProps } from "@/charts/shared/chart-data-filters";
 import { Select } from "@/components/form";
@@ -73,9 +73,7 @@ export const LayoutConfigurator = () => {
 const LayoutLayoutConfigurator = () => {
   const [state] = useConfiguratorState(isLayouting);
   const { layout } = state;
-
   const freeCanvasFlag = useFlag("layouter.dashboard.free-canvas");
-
   switch (layout.type) {
     case "dashboard":
       return (
@@ -99,10 +97,10 @@ const LayoutLayoutConfigurator = () => {
                 m: 2,
               }}
             >
-              <LayoutButton type="tall" layout={layout} />
-              <LayoutButton type="vertical" layout={layout} />
+              <DashboardLayoutButton type="tall" layout={layout} />
+              <DashboardLayoutButton type="vertical" layout={layout} />
               {freeCanvasFlag ? (
-                <LayoutButton type="canvas" layout={layout} />
+                <DashboardLayoutButton type="canvas" layout={layout} />
               ) : null}
             </Box>
           </ControlSectionContent>
@@ -599,11 +597,6 @@ const DashboardTimeRangeFilterOptions = ({
   );
 };
 
-type LayoutButtonProps = {
-  type: LayoutDashboard["layout"];
-  layout: LayoutDashboard;
-};
-
 const migrateLayout = (
   layout: LayoutDashboard,
   newLayoutType: LayoutDashboard["layout"],
@@ -634,20 +627,40 @@ const migrateLayout = (
   }
 };
 
-const LayoutButton = (props: LayoutButtonProps) => {
-  const { type, layout } = props;
+const DashboardLayoutButton = ({
+  type,
+  layout,
+}: {
+  type: LayoutDashboard["layout"];
+  layout: LayoutDashboard;
+}) => {
   const [config, dispatch] = useConfiguratorState(isLayouting);
+  const ref = useRef<LayoutDashboard>();
+  const checked = layout.layout === type;
+  useEffect(() => {
+    if (checked) {
+      ref.current = layout;
+    }
+  }, [layout, checked]);
+  const handleClick = useEventCallback(() => {
+    if (ref.current?.layout === type) {
+      dispatch({
+        type: "LAYOUT_CHANGED",
+        value: ref.current,
+      });
+    } else {
+      dispatch({
+        type: "LAYOUT_CHANGED",
+        value: migrateLayout(layout, type, config.chartConfigs),
+      });
+    }
+  });
 
   return (
     <IconButton
       label={`layout${capitalize(type)}`}
-      checked={layout.layout === type}
-      onClick={() => {
-        dispatch({
-          type: "LAYOUT_CHANGED",
-          value: migrateLayout(layout, type, config.chartConfigs),
-        });
-      }}
+      checked={checked}
+      onClick={handleClick}
     />
   );
 };
