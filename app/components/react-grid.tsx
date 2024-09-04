@@ -237,7 +237,7 @@ export const ChartGridLayout = ({
     setMounted(true);
   }, []);
 
-  const hasBeenConstrained = useRef(false);
+  const hasBeenConstrained = useRef(!initialize);
   useEffect(() => {
     if (!mountedForSomeTime || hasBeenConstrained.current) {
       return;
