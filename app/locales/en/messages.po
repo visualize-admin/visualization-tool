@@ -508,12 +508,10 @@ msgstr "No Filter"
 msgid "controls.filter.nb-elements"
 msgstr "{0} of {1}"
 
-#: app/configurator/components/add-dataset-dialog.tsx
 #: app/configurator/components/filters.tsx
 msgid "controls.filter.select.all"
 msgstr "Select all"
 
-#: app/configurator/components/add-dataset-dialog.tsx
 #: app/configurator/components/filters.tsx
 msgid "controls.filter.select.none"
 msgstr "Select none"
@@ -1086,6 +1084,10 @@ msgid "dataset-result.shared-dimensions"
 msgstr "Shared dimensions:"
 
 #: app/components/chart-footnotes.tsx
+msgid "dataset.footnotes.dataset"
+msgstr "Dataset"
+
+#: app/components/chart-footnotes.tsx
 msgid "dataset.footnotes.updated"
 msgstr "Latest data update"
 
@@ -1184,14 +1186,6 @@ msgstr "Datasets"
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.preview.description"
 msgstr "Review data preview of new available dimensions and continue to edit visualization."
-
-#: app/configurator/components/add-dataset-dialog.tsx
-msgid "dataset.search.preview.dimensions"
-msgstr "Dimensions"
-
-#: app/configurator/components/add-dataset-dialog.tsx
-msgid "dataset.search.preview.dimensions-shown"
-msgstr "{0} shown in this view"
 
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.preview.new-dimension"
@@ -1415,6 +1409,10 @@ msgstr "My drafts"
 msgid "login.profile.my-published-visualizations"
 msgstr "My published visualizations"
 
+#: app/login/components/login-menu.tsx
+msgid "login.profile.my-visualizations"
+msgstr "My visualizations"
+
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.my-visualizations.chart-actions"
 msgstr "Actions"
@@ -1438,6 +1436,14 @@ msgstr "Dataset"
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.my-visualizations.multiple-datasets"
 msgstr "Multiple datasets"
+
+#: app/login/components/login-menu.tsx
+msgid "login.sign-in"
+msgstr "Sign in"
+
+#: app/login/components/login-menu.tsx
+msgid "login.sign-out"
+msgstr "Sign out"
 
 #: app/components/header.tsx
 #: app/components/header.tsx
@@ -1550,6 +1556,7 @@ msgstr "Week"
 msgid "time-units.Year"
 msgstr "Year"
 
+#: app/components/chart-footnotes.tsx
 #: app/components/chart-footnotes.tsx
 msgid "typography.colon"
 msgstr ":"

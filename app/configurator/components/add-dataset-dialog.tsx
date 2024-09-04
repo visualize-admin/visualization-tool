@@ -23,7 +23,6 @@ import {
   InputAdornment,
   Link,
   ListItemText,
-  ListSubheader,
   MenuItem,
   OutlinedInput,
   paperClasses,
@@ -330,8 +329,6 @@ const PreviewDataTable = ({
   const locale = useLocale();
   const isQueryPaused = !otherCubeComponents || !currentComponents;
 
-  const classes = useStyles();
-
   const cubeFilters = [
     {
       iri: currentComponents!.dimensions?.[0].cubeIri,
@@ -362,11 +359,6 @@ const PreviewDataTable = ({
 
   const isFetching =
     fetchingComponents || observations.fetching || currentCubes.fetching;
-
-  const currentCubesByIri = useMemo(
-    () => keyBy(currentCubes.data?.dataCubesMetadata, (x) => x.iri),
-    [currentCubes.data?.dataCubesMetadata]
-  );
 
   const allColumns = useMemo(() => {
     const shouldIncludeColumnInPreview = (d: Dimension | Measure) =>
@@ -431,25 +423,6 @@ const PreviewDataTable = ({
     otherCubeComponents?.measures,
   ]);
 
-  const dimensionMenuItemsGroups = useMemo(() => {
-    const allColumnsByCube = groupBy(allColumns, (c) => c.cubeIri);
-    return [...existingCubes.map((x) => x.iri), otherCube.iri].map(
-      (cubeIri) => {
-        return {
-          cubeIri,
-          groupName: currentCubesByIri[cubeIri]?.title ?? otherCube.title,
-          items: allColumnsByCube[cubeIri] ?? [],
-        };
-      }
-    );
-  }, [
-    allColumns,
-    currentCubesByIri,
-    existingCubes,
-    otherCube.iri,
-    otherCube.title,
-  ]);
-
   const [selectedColumnsRaw, setSelectedColumns] = useState<
     undefined | string[]
   >(undefined);
@@ -477,44 +450,6 @@ const PreviewDataTable = ({
     [selectedColumns]
   );
 
-  const handleClickDimensionMenuItem = (ev: React.MouseEvent<HTMLElement>) => {
-    const columnId = ev.currentTarget.getAttribute("data-column-id");
-    if (!columnId) {
-      return;
-    }
-    setSelectedColumns((prev_) => {
-      const prev = prev_ ?? [];
-      return selectedColumnsByIri[columnId]
-        ? prev.filter((x) => x !== columnId)
-        : [...prev, columnId];
-    });
-  };
-
-  const handleClickSelectAllFromCube = (cubeIri: string) => {
-    setSelectedColumns((prev_) => {
-      const prev = prev_ ?? [];
-      return uniq(
-        prev.concat(
-          allColumns
-            .filter((column) => column.cubeIri === cubeIri)
-            .map((column) => columnId(column))
-        )
-      );
-    });
-  };
-
-  const handleClickUnselectAllFromCube = (cubeIri: string) => {
-    setSelectedColumns((prev_) => {
-      const prev = prev_ ?? [];
-      const toRemove = new Set(
-        allColumns
-          .filter((column) => column.cubeIri === cubeIri)
-          .map((column) => columnId(column))
-      );
-      return uniq(prev.filter((x) => !toRemove.has(x)));
-    });
-  };
-
   const previewObservations = useMemo(() => {
     const data = observations.data?.dataCubesObservations.data ?? [];
     const bestObservation = maxBy(data, (obs) => {
@@ -529,139 +464,46 @@ const PreviewDataTable = ({
 
   return (
     <>
-      <DialogContent
-        sx={{
-          overflowX: "hidden",
-          display: "flex",
-          flexDirection: "column",
-          gap: "1rem",
-        }}
-      >
-        <Typography variant="h2">
-          <Trans id="dataset.search.preview.title">
-            Review available dimensions
-          </Trans>
-        </Typography>
-        <Typography variant="body1">
-          <Trans id="dataset.search.preview.description">
-            Review all available dimensions before continuing to edit your
-            visualization.
-          </Trans>
-        </Typography>
-        <div>
-          <Typography variant="h6" mb={1}>
-            <Trans id="dataset.search.preview.datasets">Datasets</Trans>
+      <DialogContent sx={{ overflowX: "hidden" }}>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+          <Typography variant="h2">
+            <Trans id="dataset.search.preview.title">
+              Review available dimensions
+            </Trans>
           </Typography>
-          <Stack direction="column" spacing={1}>
-            <Typography variant="caption">
-              {currentCubes.data?.dataCubesMetadata[0].title}
+          <Typography variant="body1">
+            <Trans id="dataset.search.preview.description">
+              Review all available dimensions before continuing to edit your
+              visualization.
+            </Trans>
+          </Typography>
+          <div>
+            <Typography variant="h6" mb={1}>
+              <Trans id="dataset.search.preview.datasets">Datasets</Trans>
             </Typography>
-            <div>
-              <NewAnnotation />
-              <br />
-              <Typography variant="caption" mt={-1} component="div">
-                {otherCube.title}
+            <Stack direction="column" spacing={1}>
+              <Typography variant="caption">
+                {currentCubes.data?.dataCubesMetadata[0].title}
               </Typography>
-            </div>
-          </Stack>
-        </div>
-        <div>
-          <Typography variant="h6" mb={1}>
-            <Trans id="dataset.search.preview.dimensions">Dimensions</Trans>
-          </Typography>
-          <Select
-            multiple
-            className={classes.previewSelect}
-            MenuProps={{
-              className: classes.previewSelectPaper,
-              transformOrigin: { vertical: "top", horizontal: "left" },
-              anchorOrigin: { vertical: "bottom", horizontal: "left" },
-              anchorReference: "anchorEl",
-            }}
-            value={Object.keys(selectedColumnsByIri)}
-            renderValue={() => {
-              return (
-                <Typography sx={{ alignSelf: "flex-start" }}>
-                  <Trans id="dataset.search.preview.dimensions-shown">
-                    Dimensions: {selectedColumns.length} shown
-                  </Trans>
+              <div>
+                <NewAnnotation />
+                <br />
+                <Typography variant="caption" mt={-1} component="div">
+                  {otherCube.title}
                 </Typography>
-              );
-            }}
-          >
-            {dimensionMenuItemsGroups.flatMap((group) => {
-              return [
-                <ListSubheader
-                  key={group.groupName}
-                  sx={{
-                    alignItems: "center",
-                    display: "flex",
-                    gap: "0.5rem",
-                    justifyContent: "space-between",
-                    "&:not(&:first-child)": {
-                      marginTop: "0.5rem",
-                    },
-                  }}
-                >
-                  {group.groupName}
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      "& button": { whiteSpace: "nowrap" },
-                    }}
-                  >
-                    <Button
-                      size="small"
-                      variant="text"
-                      onClick={() =>
-                        handleClickSelectAllFromCube(group.cubeIri)
-                      }
-                    >
-                      <Trans id="controls.filter.select.all">Select all</Trans>
-                    </Button>{" "}
-                    -{" "}
-                    <Button
-                      size="small"
-                      variant="text"
-                      onClick={() =>
-                        handleClickUnselectAllFromCube(group.cubeIri)
-                      }
-                    >
-                      <Trans id="controls.filter.select.none">
-                        Select none
-                      </Trans>
-                    </Button>
-                  </Box>
-                </ListSubheader>,
-                ...group.items.map((column) => (
-                  <MenuItem
-                    key={column.iri}
-                    value={column.iri}
-                    sx={{ gap: 2, display: "flex" }}
-                    data-column-id={columnId(column)}
-                    onClick={handleClickDimensionMenuItem}
-                  >
-                    <Checkbox
-                      checked={!!selectedColumnsByIri[columnId(column)]}
-                    />
-                    {column.label}
-                    {column.cubeIri === otherCube.iri && <NewAnnotation />}
-                  </MenuItem>
-                )),
-              ];
-            })}
-          </Select>
-        </div>
-        {isFetching ? <Loading delayMs={0} /> : null}
-        {observations.error ? (
-          <ErrorHint>
-            <Box component="details" sx={{ width: "100%" }}>
-              <summary>{observations.error.name}</summary>
-              {observations.error.message}
-            </Box>
-          </ErrorHint>
-        ) : null}
+              </div>
+            </Stack>
+          </div>
+          {isFetching ? <Loading delayMs={0} /> : null}
+          {observations.error ? (
+            <ErrorHint>
+              <Box component="details" sx={{ width: "100%" }}>
+                <summary>{observations.error.name}</summary>
+                {observations.error.message}
+              </Box>
+            </ErrorHint>
+          ) : null}
+        </Box>
         {otherCubeComponents ? (
           <>
             {observations.data?.dataCubesObservations ? (
@@ -673,12 +515,7 @@ const PreviewDataTable = ({
                   gap: 2,
                 }}
               >
-                <Box
-                  sx={{
-                    width: "100%",
-                    overflowX: "scroll",
-                  }}
-                >
+                <Box sx={{ overflowX: "scroll", width: "100%", mt: 6 }}>
                   <Table>
                     <TableHead>
                       <TableRow>

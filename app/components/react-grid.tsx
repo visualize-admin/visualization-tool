@@ -36,7 +36,7 @@ export const MIN_H = 1;
 /** In grid unit */
 const MAX_W = 4;
 
-export const COLS = { lg: 4, md: 2, sm: 1, xs: 1, xxs: 1 };
+export const COLS = { lg: 4, md: 3, sm: 2, xs: 1, xxs: 1 };
 const ROW_HEIGHT = 100;
 
 const useStyles = makeStyles((theme: Theme) => ({

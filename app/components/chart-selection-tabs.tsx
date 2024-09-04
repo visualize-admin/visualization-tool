@@ -544,6 +544,7 @@ export const useIconStyles = makeStyles<
     flexWrap: "nowrap",
     whiteSpace: "nowrap",
     minWidth: 0,
+    maxWidth: 400,
     overflow: "hidden",
     minHeight: "100%",
     position: "relative",
