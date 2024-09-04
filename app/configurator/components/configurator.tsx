@@ -641,11 +641,19 @@ const LayoutingStep = () => {
           <PublishChartButton chartId={chartId} />
         </PanelHeaderWrapper>
       </PanelHeaderLayout>
-      {!isSingleURLs && (
-        <PanelBodyWrapper type="L">
-          <LayoutConfigurator />
-        </PanelBodyWrapper>
-      )}
+      <PanelBodyWrapper
+        type="L"
+        sx={{
+          position: "absolute",
+          left: isSingleURLs ? -DRAWER_WIDTH : 0,
+          top: isSingleURLs ? LAYOUT_HEADER_HEIGHT : 0,
+          width: DRAWER_WIDTH,
+          height: "100%",
+          transition: "left 0.3s",
+        }}
+      >
+        <LayoutConfigurator />
+      </PanelBodyWrapper>
       <PanelBodyWrapper type="M">
         <Box
           sx={
