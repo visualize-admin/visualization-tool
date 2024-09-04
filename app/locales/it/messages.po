@@ -1442,6 +1442,7 @@ msgid "login.sign-in"
 msgstr ""
 
 #: app/login/components/login-menu.tsx
+#: app/login/components/profile-header.tsx
 msgid "login.sign-out"
 msgstr ""
 
