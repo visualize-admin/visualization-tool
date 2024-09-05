@@ -627,6 +627,18 @@ msgstr "Chart"
 msgid "controls.layout.dashboard"
 msgstr "Dashboard"
 
+#: app/configurator/components/configurator.tsx
+msgid "controls.layout.preview-lg"
+msgstr "Preview using available width"
+
+#: app/configurator/components/configurator.tsx
+msgid "controls.layout.preview-md"
+msgstr "Preview using medium width"
+
+#: app/configurator/components/configurator.tsx
+msgid "controls.layout.preview-sm"
+msgstr "Preview using small width"
+
 #: app/configurator/components/field-i18n.ts
 msgid "controls.layout.singleURLs"
 msgstr "Separate URLs"
