@@ -15,7 +15,7 @@ import { PUBLISHED_STATE } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import { useClient } from "urql";
 import { useDebounce } from "use-debounce";
 
@@ -62,6 +62,7 @@ import {
   PanelLayout,
 } from "@/configurator/components/layout";
 import { LayoutConfigurator } from "@/configurator/components/layout-configurator";
+import { usePreviewBreakpoint } from "@/configurator/components/preview-breakpoint";
 import { ShowDrawerButton } from "@/configurator/components/show-drawer-button";
 import { ChartConfiguratorTable } from "@/configurator/table/table-chart-configurator";
 import { useUserConfig } from "@/domain/user-configs";
@@ -519,14 +520,8 @@ const LayoutingStep = () => {
     }
   }, [state.layout]);
 
-  const [previewBreakpoint, setPreviewBreakpoint] =
-    useState<PreviewBreakpoint | null>(null);
-  const maxWidthLayoutRef = useRef(state.layout);
-  useEffect(() => {
-    if (!previewBreakpoint) {
-      maxWidthLayoutRef.current = state.layout;
-    }
-  }, [previewBreakpoint, state.layout]);
+  const { previewBreakpoint, setPreviewBreakpoint, previewBreakpointLayout } =
+    usePreviewBreakpoint();
 
   if (state.state !== "LAYOUTING") {
     return null;
@@ -685,7 +680,7 @@ const LayoutingStep = () => {
               dispatch({
                 type: "LAYOUT_CHANGED",
                 value: {
-                  ...maxWidthLayoutRef.current,
+                  ...previewBreakpointLayout,
                   activeField: undefined,
                 },
               });
