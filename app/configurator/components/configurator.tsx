@@ -1,8 +1,11 @@
 import { t, Trans } from "@lingui/macro";
 import {
   Box,
+  Breakpoint,
   Grow,
   SxProps,
+  ToggleButton,
+  ToggleButtonGroup,
   Tooltip,
   Typography,
   useEventCallback,
@@ -12,7 +15,7 @@ import { PUBLISHED_STATE } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useClient } from "urql";
 import { useDebounce } from "use-debounce";
 
@@ -513,6 +516,14 @@ const LayoutingStep = () => {
     }
   }, [state.layout]);
 
+  const [maxWidth, setMaxWidth] = useState<Breakpoint | null>(null);
+  const maxWidthLayoutRef = useRef(state.layout);
+  useEffect(() => {
+    if (!maxWidth) {
+      maxWidthLayoutRef.current = state.layout;
+    }
+  }, [maxWidth, state.layout]);
+
   if (state.state !== "LAYOUTING") {
     return null;
   }
@@ -520,9 +531,11 @@ const LayoutingStep = () => {
   const isSingleURLs = state.layout.type === "singleURLs";
   const chartId = getRouterChartId(asPath);
 
+  const centerLayout = !!(isSingleURLs || maxWidth);
+
   return (
     <PanelLayout
-      // SingleURLs layout doesn't have an options panel
+      type={centerLayout ? "M" : "LM"}
       type={isSingleURLs ? "M" : "LM"}
       sx={{ background: (t) => t.palette.muted.main }}
     >
@@ -645,8 +658,8 @@ const LayoutingStep = () => {
         type="L"
         sx={{
           position: "absolute",
-          left: isSingleURLs ? -DRAWER_WIDTH : 0,
-          top: isSingleURLs ? LAYOUT_HEADER_HEIGHT : 0,
+          left: centerLayout ? -DRAWER_WIDTH : 0,
+          top: centerLayout ? LAYOUT_HEADER_HEIGHT : 0,
           width: DRAWER_WIDTH,
           height: "100%",
           transition: "left 0.3s",
@@ -655,6 +668,37 @@ const LayoutingStep = () => {
         <LayoutConfigurator />
       </PanelBodyWrapper>
       <PanelBodyWrapper type="M">
+        <ToggleButtonGroup value={maxWidth} exclusive sx={{ float: "right" }}>
+          {["lg", "md", "sm"].map((value) => {
+            return (
+              <ToggleButton
+                key={value}
+                value={value}
+                onClick={() => {
+                  if (maxWidth === value) {
+                    dispatch({
+                      type: "LAYOUT_CHANGED",
+                      value: {
+                        ...maxWidthLayoutRef.current,
+                        activeField: undefined,
+                      },
+                    });
+                    setMaxWidth(null);
+                  } else {
+                    setMaxWidth(value as Breakpoint);
+                    dispatch({
+                      type: "LAYOUT_CHANGED",
+                      value: { ...state.layout, activeField: undefined },
+                    });
+                  }
+                }}
+                sx={{ borderRadius: 0 }}
+              >
+                {value.toUpperCase()}
+              </ToggleButton>
+            );
+          })}
+        </ToggleButtonGroup>
         <Box
           sx={
             isSingleURLs
@@ -663,7 +707,15 @@ const LayoutingStep = () => {
                   maxWidth: { xs: "100%", lg: 1280 },
                   mx: "auto",
                 }
-              : {}
+              : {
+                  width: "100%",
+                  maxWidth:
+                    maxWidth && maxWidth !== "lg"
+                      ? (t) => t.breakpoints.values[maxWidth]
+                      : "100%",
+                  mx: "auto",
+                  transition: "max-width 1s, padding-left 1s",
+                }
           }
         >
           <Box
@@ -713,7 +765,8 @@ const LayoutingStep = () => {
               </>
             )}
           </Box>
-          <ChartPreview dataSource={state.dataSource} />
+          {/* We need to reset the key to prevent overwriting of the layout */}
+          <ChartPreview key={maxWidth} dataSource={state.dataSource} />
         </Box>
       </PanelBodyWrapper>
       <ConfiguratorDrawer
