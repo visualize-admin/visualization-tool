@@ -4,7 +4,6 @@ import {
   Divider,
   Grow,
   SxProps,
-  Theme,
   ToggleButton,
   ToggleButtonGroup,
   Tooltip,
@@ -12,7 +11,6 @@ import {
   useEventCallback,
 } from "@mui/material";
 import Button, { ButtonProps } from "@mui/material/Button";
-import { makeStyles } from "@mui/styles";
 import { PUBLISHED_STATE } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import NextLink from "next/link";
@@ -64,6 +62,7 @@ import {
   PanelLayout,
 } from "@/configurator/components/layout";
 import { LayoutConfigurator } from "@/configurator/components/layout-configurator";
+import { ShowDrawerButton } from "@/configurator/components/show-drawer-button";
 import { ChartConfiguratorTable } from "@/configurator/table/table-chart-configurator";
 import { useUserConfig } from "@/domain/user-configs";
 import { useDataCubesComponentsQuery } from "@/graphql/hooks";
@@ -781,31 +780,6 @@ const LayoutingStep = () => {
         </div>
       </ConfiguratorDrawer>
     </PanelLayout>
-  );
-};
-
-const useShowDrawerButtonStyles = makeStyles<Theme>((theme) => ({
-  root: {
-    zIndex: 1,
-    float: "left",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    width: 42,
-    height: 32,
-    background: theme.palette.background.paper,
-    "&:hover": {
-      background: theme.palette.background.paper,
-    },
-  },
-}));
-
-const ShowDrawerButton = ({ onClick }: { onClick: () => void }) => {
-  const classes = useShowDrawerButtonStyles();
-  return (
-    <Button className={classes.root} variant="text" onClick={onClick}>
-      <Icon name="doubleArrow" />
-    </Button>
   );
 };
 
