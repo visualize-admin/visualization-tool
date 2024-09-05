@@ -53,7 +53,7 @@ export const PreviewContainer = ({
   const maxWidth = useMemo(() => {
     if (breakpoint) {
       if (breakpoint === "lg") {
-        return `calc(${singleColumn ? `${SINGLE_COLUMN_MAX_WIDTH}px` : "100%"} - ${PREVIEW_CONTAINER_PADDING}px)`;
+        return `calc(100% - ${PREVIEW_CONTAINER_PADDING}px)`;
       } else {
         return breakpoints.values[breakpoint];
       }
