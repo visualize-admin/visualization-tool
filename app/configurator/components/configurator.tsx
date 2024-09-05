@@ -61,6 +61,7 @@ import {
 import { LayoutConfigurator } from "@/configurator/components/layout-configurator";
 import {
   PreviewBreakpointToggleMenu,
+  PreviewContainer,
   usePreviewBreakpoint,
 } from "@/configurator/components/preview-breakpoint";
 import { ShowDrawerButton } from "@/configurator/components/show-drawer-button";
@@ -563,7 +564,6 @@ const LayoutingStep = () => {
                 return;
               }
 
-              setPreviewBreakpoint(null);
               if (layoutRef.current?.type === "tab") {
                 dispatch({
                   type: "LAYOUT_CHANGED",
@@ -579,6 +579,8 @@ const LayoutingStep = () => {
                   },
                 });
               }
+
+              setPreviewBreakpoint(null);
             }}
           />
           <IconButton
@@ -589,7 +591,6 @@ const LayoutingStep = () => {
                 return;
               }
 
-              setPreviewBreakpoint(null);
               if (layoutRef.current?.type === "dashboard") {
                 dispatch({
                   type: "LAYOUT_CHANGED",
@@ -606,6 +607,8 @@ const LayoutingStep = () => {
                   },
                 });
               }
+
+              setPreviewBreakpoint(null);
             }}
           />
           <IconButton
@@ -616,7 +619,6 @@ const LayoutingStep = () => {
                 return;
               }
 
-              setPreviewBreakpoint(null);
               if (layoutRef.current?.type === "singleURLs") {
                 dispatch({
                   type: "LAYOUT_CHANGED",
@@ -637,6 +639,8 @@ const LayoutingStep = () => {
                   },
                 });
               }
+
+              setPreviewBreakpoint(null);
             }}
           />
         </PanelHeaderWrapper>
@@ -686,17 +690,9 @@ const LayoutingStep = () => {
             setPreviewBreakpoint(previewBreakpoint === value ? null : value);
           }}
         />
-        <Box
-          sx={{
-            width: "100%",
-            maxWidth: previewBreakpoint
-              ? (t) =>
-                  `calc(${previewBreakpoint !== "lg" ? `${t.breakpoints.values[previewBreakpoint]}px` : isSingleURLs ? 1280 : "100%"} - 216px)`
-              : isSingleURLs
-                ? 1280
-                : "100%",
-            mx: "auto",
-          }}
+        <PreviewContainer
+          breakpoint={previewBreakpoint}
+          singleColumn={isSingleURLs}
         >
           <Box
             sx={{
@@ -747,7 +743,7 @@ const LayoutingStep = () => {
           </Box>
           {/* We need to reset the key to prevent overwriting of the layout */}
           <ChartPreview key={previewBreakpoint} dataSource={state.dataSource} />
-        </Box>
+        </PreviewContainer>
       </PanelBodyWrapper>
       <ConfiguratorDrawer
         anchor="left"

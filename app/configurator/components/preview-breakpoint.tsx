@@ -5,10 +5,11 @@ import {
   ToggleButton,
   ToggleButtonGroup,
   Tooltip,
+  useTheme,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
-import { Fragment, useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 
 import {
   isLayouting,
@@ -33,6 +34,37 @@ export const usePreviewBreakpoint = () => {
     setPreviewBreakpoint: setBreakpoint,
     previewBreakpointLayout: layoutRef.current,
   };
+};
+
+const SINGLE_COLUMN_MAX_WIDTH = 1280;
+const PREVIEW_CONTAINER_PADDING = 216;
+
+export const PreviewContainer = ({
+  children,
+  breakpoint,
+  singleColumn,
+}: {
+  children: React.ReactNode;
+  breakpoint: PreviewBreakpoint | null;
+  singleColumn?: boolean;
+}) => {
+  const classes = useStyles();
+  const { breakpoints } = useTheme();
+  const maxWidth = useMemo(() => {
+    if (breakpoint) {
+      if (breakpoint === "lg") {
+        return `calc(${singleColumn ? `${SINGLE_COLUMN_MAX_WIDTH}px` : "100%"} - ${PREVIEW_CONTAINER_PADDING}px)`;
+      } else {
+        return breakpoints.values[breakpoint];
+      }
+    }
+    return singleColumn ? SINGLE_COLUMN_MAX_WIDTH : "100%";
+  }, [breakpoint, breakpoints, singleColumn]);
+  return (
+    <div className={classes.container} style={{ maxWidth }}>
+      {children}
+    </div>
+  );
 };
 
 export const PreviewBreakpointToggleMenu = ({
@@ -110,6 +142,10 @@ const PREVIEW_BREAKPOINT_OPTIONS: {
 ];
 
 const useStyles = makeStyles<Theme>((theme) => ({
+  container: {
+    width: "100%",
+    margin: "0 auto",
+  },
   toggleButtonGroup: {
     float: "right",
     backgroundColor: theme.palette.background.paper,
