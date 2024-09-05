@@ -794,6 +794,9 @@ const useShowDrawerButtonStyles = makeStyles<Theme>((theme) => ({
     width: 42,
     height: 32,
     background: theme.palette.background.paper,
+    "&:hover": {
+      background: theme.palette.background.paper,
+    },
   },
 }));
 
@@ -817,17 +820,26 @@ const PreviewWidthButtons = ({
     {
       breakpoint: "lg",
       iconName: "desktop",
-      title: "Preview using available width",
+      title: t({
+        id: "controls.layout.preview-lg",
+        message: "Preview using available width",
+      }),
     },
     {
       breakpoint: "md",
       iconName: "tabletPortrait",
-      title: "Preview using tablet width",
+      title: t({
+        id: "controls.layout.preview-md",
+        message: "Preview using medium width",
+      }),
     },
     {
       breakpoint: "sm",
       iconName: "mobilePortrait",
-      title: "Preview using mobile width",
+      title: t({
+        id: "controls.layout.preview-sm",
+        message: "Preview using small width",
+      }),
     },
   ] as const;
 
