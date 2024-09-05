@@ -1,9 +1,10 @@
 import { t, Trans } from "@lingui/macro";
 import {
   Box,
-  Breakpoint,
+  Divider,
   Grow,
   SxProps,
+  Theme,
   ToggleButton,
   ToggleButtonGroup,
   Tooltip,
@@ -11,6 +12,7 @@ import {
   useEventCallback,
 } from "@mui/material";
 import Button, { ButtonProps } from "@mui/material/Button";
+import { makeStyles } from "@mui/styles";
 import { PUBLISHED_STATE } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import NextLink from "next/link";
@@ -493,6 +495,8 @@ const ConfigureChartStep = () => {
   );
 };
 
+type PreviewBreakpoint = "lg" | "md" | "sm";
+
 const LayoutingStep = () => {
   const locale = useLocale();
   const [state, dispatch] = useConfiguratorState(isLayouting);
@@ -516,13 +520,14 @@ const LayoutingStep = () => {
     }
   }, [state.layout]);
 
-  const [maxWidth, setMaxWidth] = useState<Breakpoint | null>(null);
+  const [previewBreakpoint, setPreviewBreakpoint] =
+    useState<PreviewBreakpoint | null>(null);
   const maxWidthLayoutRef = useRef(state.layout);
   useEffect(() => {
-    if (!maxWidth) {
+    if (!previewBreakpoint) {
       maxWidthLayoutRef.current = state.layout;
     }
-  }, [maxWidth, state.layout]);
+  }, [previewBreakpoint, state.layout]);
 
   if (state.state !== "LAYOUTING") {
     return null;
@@ -531,12 +536,11 @@ const LayoutingStep = () => {
   const isSingleURLs = state.layout.type === "singleURLs";
   const chartId = getRouterChartId(asPath);
 
-  const centerLayout = !!(isSingleURLs || maxWidth);
+  const centerLayout = !!(isSingleURLs || previewBreakpoint);
 
   return (
     <PanelLayout
       type={centerLayout ? "M" : "LM"}
-      type={isSingleURLs ? "M" : "LM"}
       sx={{ background: (t) => t.palette.muted.main }}
     >
       <PanelHeaderLayout type="LMR">
@@ -567,6 +571,7 @@ const LayoutingStep = () => {
                 return;
               }
 
+              setPreviewBreakpoint(null);
               if (layoutRef.current?.type === "tab") {
                 dispatch({
                   type: "LAYOUT_CHANGED",
@@ -592,6 +597,7 @@ const LayoutingStep = () => {
                 return;
               }
 
+              setPreviewBreakpoint(null);
               if (layoutRef.current?.type === "dashboard") {
                 dispatch({
                   type: "LAYOUT_CHANGED",
@@ -618,6 +624,7 @@ const LayoutingStep = () => {
                 return;
               }
 
+              setPreviewBreakpoint(null);
               if (layoutRef.current?.type === "singleURLs") {
                 dispatch({
                   type: "LAYOUT_CHANGED",
@@ -657,6 +664,7 @@ const LayoutingStep = () => {
       <PanelBodyWrapper
         type="L"
         sx={{
+          zIndex: 2,
           position: "absolute",
           left: centerLayout ? -DRAWER_WIDTH : 0,
           top: centerLayout ? LAYOUT_HEADER_HEIGHT : 0,
@@ -668,55 +676,45 @@ const LayoutingStep = () => {
         <LayoutConfigurator />
       </PanelBodyWrapper>
       <PanelBodyWrapper type="M">
-        <ToggleButtonGroup value={maxWidth} exclusive sx={{ float: "right" }}>
-          {["lg", "md", "sm"].map((value) => {
-            return (
-              <ToggleButton
-                key={value}
-                value={value}
-                onClick={() => {
-                  if (maxWidth === value) {
-                    dispatch({
-                      type: "LAYOUT_CHANGED",
-                      value: {
-                        ...maxWidthLayoutRef.current,
-                        activeField: undefined,
-                      },
-                    });
-                    setMaxWidth(null);
-                  } else {
-                    setMaxWidth(value as Breakpoint);
-                    dispatch({
-                      type: "LAYOUT_CHANGED",
-                      value: { ...state.layout, activeField: undefined },
-                    });
-                  }
-                }}
-                sx={{ borderRadius: 0 }}
-              >
-                {value.toUpperCase()}
-              </ToggleButton>
-            );
-          })}
-        </ToggleButtonGroup>
+        {!isSingleURLs && previewBreakpoint && (
+          <ShowDrawerButton onClick={() => setPreviewBreakpoint(null)} />
+        )}
+        <PreviewWidthButtons
+          value={previewBreakpoint}
+          onChange={(value) => {
+            if (previewBreakpoint === value) {
+              dispatch({
+                type: "LAYOUT_CHANGED",
+                value: {
+                  ...maxWidthLayoutRef.current,
+                  activeField: undefined,
+                },
+              });
+              setPreviewBreakpoint(null);
+            } else {
+              dispatch({
+                type: "LAYOUT_CHANGED",
+                value: {
+                  ...state.layout,
+                  activeField: undefined,
+                },
+              });
+              setPreviewBreakpoint(value);
+            }
+          }}
+        />
+
         <Box
-          sx={
-            isSingleURLs
-              ? {
-                  width: "100%",
-                  maxWidth: { xs: "100%", lg: 1280 },
-                  mx: "auto",
-                }
-              : {
-                  width: "100%",
-                  maxWidth:
-                    maxWidth && maxWidth !== "lg"
-                      ? (t) => t.breakpoints.values[maxWidth]
-                      : "100%",
-                  mx: "auto",
-                  transition: "max-width 1s, padding-left 1s",
-                }
-          }
+          sx={{
+            width: "100%",
+            maxWidth: previewBreakpoint
+              ? (t) =>
+                  `calc(${previewBreakpoint !== "lg" ? `${t.breakpoints.values[previewBreakpoint]}px` : isSingleURLs ? 1280 : "100%"} - 216px)`
+              : isSingleURLs
+                ? 1280
+                : "100%",
+            mx: "auto",
+          }}
         >
           <Box
             sx={{
@@ -766,7 +764,7 @@ const LayoutingStep = () => {
             )}
           </Box>
           {/* We need to reset the key to prevent overwriting of the layout */}
-          <ChartPreview key={maxWidth} dataSource={state.dataSource} />
+          <ChartPreview key={previewBreakpoint} dataSource={state.dataSource} />
         </Box>
       </PanelBodyWrapper>
       <ConfiguratorDrawer
@@ -783,6 +781,95 @@ const LayoutingStep = () => {
         </div>
       </ConfiguratorDrawer>
     </PanelLayout>
+  );
+};
+
+const useShowDrawerButtonStyles = makeStyles<Theme>((theme) => ({
+  root: {
+    zIndex: 1,
+    float: "left",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    width: 42,
+    height: 32,
+    background: theme.palette.background.paper,
+  },
+}));
+
+const ShowDrawerButton = ({ onClick }: { onClick: () => void }) => {
+  const classes = useShowDrawerButtonStyles();
+  return (
+    <Button className={classes.root} variant="text" onClick={onClick}>
+      <Icon name="doubleArrow" />
+    </Button>
+  );
+};
+
+const PreviewWidthButtons = ({
+  value,
+  onChange,
+}: {
+  value: PreviewBreakpoint | null;
+  onChange: (value: PreviewBreakpoint | null) => void;
+}) => {
+  const options = [
+    {
+      breakpoint: "lg",
+      iconName: "desktop",
+      title: "Preview using available width",
+    },
+    {
+      breakpoint: "md",
+      iconName: "tabletPortrait",
+      title: "Preview using tablet width",
+    },
+    {
+      breakpoint: "sm",
+      iconName: "mobilePortrait",
+      title: "Preview using mobile width",
+    },
+  ] as const;
+
+  return (
+    <ToggleButtonGroup
+      value={value}
+      exclusive
+      color="primary"
+      sx={{ float: "right", backgroundColor: "background.paper" }}
+    >
+      {options.map(({ breakpoint, iconName, title }) => {
+        return (
+          <>
+            <Tooltip title={title} arrow enterDelay={1000}>
+              <ToggleButton
+                key={value}
+                value={breakpoint}
+                onClick={() => onChange(breakpoint)}
+                sx={{
+                  border: "none",
+                  backgroundColor: "background.paper",
+                  color: breakpoint === value ? "primary.main" : "text.primary",
+                  "&:hover": {
+                    backgroundColor: "background.paper",
+                    color: "primary.main",
+                  },
+                }}
+              >
+                <Icon name={iconName} size={16} />
+              </ToggleButton>
+            </Tooltip>
+            {breakpoint !== "sm" && (
+              <Divider
+                orientation="vertical"
+                flexItem
+                sx={{ alignSelf: "center", height: 16 }}
+              />
+            )}
+          </>
+        );
+      })}
+    </ToggleButtonGroup>
   );
 };
 
