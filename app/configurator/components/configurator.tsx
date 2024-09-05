@@ -1,11 +1,8 @@
 import { t, Trans } from "@lingui/macro";
 import {
   Box,
-  Divider,
   Grow,
   SxProps,
-  ToggleButton,
-  ToggleButtonGroup,
   Tooltip,
   Typography,
   useEventCallback,
@@ -62,7 +59,10 @@ import {
   PanelLayout,
 } from "@/configurator/components/layout";
 import { LayoutConfigurator } from "@/configurator/components/layout-configurator";
-import { usePreviewBreakpoint } from "@/configurator/components/preview-breakpoint";
+import {
+  PreviewBreakpointToggleMenu,
+  usePreviewBreakpoint,
+} from "@/configurator/components/preview-breakpoint";
 import { ShowDrawerButton } from "@/configurator/components/show-drawer-button";
 import { ChartConfiguratorTable } from "@/configurator/table/table-chart-configurator";
 import { useUserConfig } from "@/domain/user-configs";
@@ -495,8 +495,6 @@ const ConfigureChartStep = () => {
   );
 };
 
-type PreviewBreakpoint = "lg" | "md" | "sm";
-
 const LayoutingStep = () => {
   const locale = useLocale();
   const [state, dispatch] = useConfiguratorState(isLayouting);
@@ -673,31 +671,21 @@ const LayoutingStep = () => {
         {!isSingleURLs && previewBreakpoint && (
           <ShowDrawerButton onClick={() => setPreviewBreakpoint(null)} />
         )}
-        <PreviewWidthButtons
+        <PreviewBreakpointToggleMenu
           value={previewBreakpoint}
           onChange={(value) => {
-            if (previewBreakpoint === value) {
-              dispatch({
-                type: "LAYOUT_CHANGED",
-                value: {
-                  ...previewBreakpointLayout,
-                  activeField: undefined,
-                },
-              });
-              setPreviewBreakpoint(null);
-            } else {
-              dispatch({
-                type: "LAYOUT_CHANGED",
-                value: {
-                  ...state.layout,
-                  activeField: undefined,
-                },
-              });
-              setPreviewBreakpoint(value);
-            }
+            dispatch({
+              type: "LAYOUT_CHANGED",
+              value: {
+                ...(previewBreakpoint === value
+                  ? previewBreakpointLayout
+                  : state.layout),
+                activeField: undefined,
+              },
+            });
+            setPreviewBreakpoint(previewBreakpoint === value ? null : value);
           }}
         />
-
         <Box
           sx={{
             width: "100%",
@@ -775,82 +763,6 @@ const LayoutingStep = () => {
         </div>
       </ConfiguratorDrawer>
     </PanelLayout>
-  );
-};
-
-const PreviewWidthButtons = ({
-  value,
-  onChange,
-}: {
-  value: PreviewBreakpoint | null;
-  onChange: (value: PreviewBreakpoint | null) => void;
-}) => {
-  const options = [
-    {
-      breakpoint: "lg",
-      iconName: "desktop",
-      title: t({
-        id: "controls.layout.preview-lg",
-        message: "Preview using available width",
-      }),
-    },
-    {
-      breakpoint: "md",
-      iconName: "tabletPortrait",
-      title: t({
-        id: "controls.layout.preview-md",
-        message: "Preview using medium width",
-      }),
-    },
-    {
-      breakpoint: "sm",
-      iconName: "mobilePortrait",
-      title: t({
-        id: "controls.layout.preview-sm",
-        message: "Preview using small width",
-      }),
-    },
-  ] as const;
-
-  return (
-    <ToggleButtonGroup
-      value={value}
-      exclusive
-      color="primary"
-      sx={{ float: "right", backgroundColor: "background.paper" }}
-    >
-      {options.map(({ breakpoint, iconName, title }) => {
-        return (
-          <>
-            <Tooltip title={title} arrow enterDelay={1000}>
-              <ToggleButton
-                key={value}
-                value={breakpoint}
-                onClick={() => onChange(breakpoint)}
-                sx={{
-                  border: "none",
-                  backgroundColor: "background.paper",
-                  color: breakpoint === value ? "primary.main" : "text.primary",
-                  "&:hover": {
-                    backgroundColor: "background.paper",
-                    color: "primary.main",
-                  },
-                }}
-              >
-                <Icon name={iconName} size={16} />
-              </ToggleButton>
-            </Tooltip>
-            {breakpoint !== "sm" && (
-              <Divider
-                orientation="vertical"
-                flexItem
-                sx={{ alignSelf: "center", height: 16 }}
-              />
-            )}
-          </>
-        );
-      })}
-    </ToggleButtonGroup>
   );
 };
 
