@@ -78,7 +78,7 @@ export const DashboardInteractiveFilters = (props: BoxProps) => {
 
 const useTimeRangeRangeStyles = makeStyles((theme: Theme) => ({
   slider: {
-    maxWidth: 800,
+    maxWidth: `calc(100% - ${theme.spacing(6)})`,
     margin: theme.spacing(6, 4, 2),
     [`& .${sliderClasses.track}`]: {
       height: 1,

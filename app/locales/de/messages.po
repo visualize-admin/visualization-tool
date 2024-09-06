@@ -627,6 +627,18 @@ msgstr ""
 msgid "controls.layout.dashboard"
 msgstr "Dashboard"
 
+#: app/configurator/components/configurator.tsx
+msgid "controls.layout.preview-lg"
+msgstr ""
+
+#: app/configurator/components/configurator.tsx
+msgid "controls.layout.preview-md"
+msgstr ""
+
+#: app/configurator/components/configurator.tsx
+msgid "controls.layout.preview-sm"
+msgstr ""
+
 #: app/configurator/components/field-i18n.ts
 msgid "controls.layout.singleURLs"
 msgstr "Separate URLs"

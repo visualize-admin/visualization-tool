@@ -12,7 +12,7 @@ import { PUBLISHED_STATE } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { useClient } from "urql";
 import { useDebounce } from "use-debounce";
 
@@ -29,6 +29,7 @@ import {
 import { useLocalSnack } from "@/components/use-local-snack";
 import {
   ConfiguratorState,
+  ConfiguratorStateLayouting,
   enableLayouting,
   getChartConfig,
   hasChartConfigs,
@@ -59,6 +60,12 @@ import {
   PanelLayout,
 } from "@/configurator/components/layout";
 import { LayoutConfigurator } from "@/configurator/components/layout-configurator";
+import {
+  PreviewBreakpointToggleMenu,
+  PreviewContainer,
+  usePreviewBreakpoint,
+} from "@/configurator/components/preview-breakpoint";
+import { ShowDrawerButton } from "@/configurator/components/show-drawer-button";
 import { ChartConfiguratorTable } from "@/configurator/table/table-chart-configurator";
 import { useUserConfig } from "@/domain/user-configs";
 import { useDataCubesComponentsQuery } from "@/graphql/hooks";
@@ -513,6 +520,35 @@ const LayoutingStep = () => {
     }
   }, [state.layout]);
 
+  const { previewBreakpoint, setPreviewBreakpoint, previewBreakpointLayout } =
+    usePreviewBreakpoint();
+
+  const handleLayoutChange = useCallback(
+    (
+      newLayoutType: ConfiguratorStateLayouting["layout"]["type"],
+      newLayoutCallback: () => void
+    ) => {
+      if (newLayoutType === state.layout.type) {
+        return;
+      }
+
+      if (layoutRef.current?.type === newLayoutType) {
+        dispatch({
+          type: "LAYOUT_CHANGED",
+          value: {
+            ...layoutRef.current,
+            activeField: undefined,
+          },
+        });
+      } else {
+        newLayoutCallback();
+      }
+
+      setPreviewBreakpoint(null);
+    },
+    [dispatch, setPreviewBreakpoint, state.layout.type]
+  );
+
   if (state.state !== "LAYOUTING") {
     return null;
   }
@@ -520,10 +556,11 @@ const LayoutingStep = () => {
   const isSingleURLs = state.layout.type === "singleURLs";
   const chartId = getRouterChartId(asPath);
 
+  const centerLayout = !!(isSingleURLs || previewBreakpoint);
+
   return (
     <PanelLayout
-      // SingleURLs layout doesn't have an options panel
-      type={isSingleURLs ? "M" : "LM"}
+      type={centerLayout ? "M" : "LM"}
       sx={{ background: (t) => t.palette.muted.main }}
     >
       <PanelHeaderLayout type="LMR">
@@ -549,17 +586,8 @@ const LayoutingStep = () => {
           <IconButton
             label="layoutTab"
             checked={state.layout.type === "tab"}
-            onClick={() => {
-              if (state.layout.type === "tab") {
-                return;
-              }
-
-              if (layoutRef.current?.type === "tab") {
-                dispatch({
-                  type: "LAYOUT_CHANGED",
-                  value: layoutRef.current,
-                });
-              } else {
+            onClick={() =>
+              handleLayoutChange("tab", () => {
                 dispatch({
                   type: "LAYOUT_CHANGED",
                   value: {
@@ -568,23 +596,14 @@ const LayoutingStep = () => {
                     activeField: undefined,
                   },
                 });
-              }
-            }}
+              })
+            }
           />
           <IconButton
             label="layoutDashboard"
             checked={state.layout.type === "dashboard"}
-            onClick={() => {
-              if (state.layout.type === "dashboard") {
-                return;
-              }
-
-              if (layoutRef.current?.type === "dashboard") {
-                dispatch({
-                  type: "LAYOUT_CHANGED",
-                  value: layoutRef.current,
-                });
-              } else {
+            onClick={() =>
+              handleLayoutChange("dashboard", () => {
                 dispatch({
                   type: "LAYOUT_CHANGED",
                   value: {
@@ -594,23 +613,14 @@ const LayoutingStep = () => {
                     activeField: undefined,
                   },
                 });
-              }
-            }}
+              })
+            }
           />
           <IconButton
             label="layoutSingleURLs"
             checked={state.layout.type === "singleURLs"}
-            onClick={() => {
-              if (state.layout.type === "singleURLs") {
-                return;
-              }
-
-              if (layoutRef.current?.type === "singleURLs") {
-                dispatch({
-                  type: "LAYOUT_CHANGED",
-                  value: layoutRef.current,
-                });
-              } else {
+            onClick={() =>
+              handleLayoutChange("singleURLs", () => {
                 dispatch({
                   type: "LAYOUT_CHANGED",
                   value: {
@@ -624,8 +634,8 @@ const LayoutingStep = () => {
                     activeField: undefined,
                   },
                 });
-              }
-            }}
+              })
+            }
           />
         </PanelHeaderWrapper>
         <PanelHeaderWrapper
@@ -641,22 +651,42 @@ const LayoutingStep = () => {
           <PublishChartButton chartId={chartId} />
         </PanelHeaderWrapper>
       </PanelHeaderLayout>
-      {!isSingleURLs && (
-        <PanelBodyWrapper type="L">
-          <LayoutConfigurator />
-        </PanelBodyWrapper>
-      )}
+      <PanelBodyWrapper
+        type="L"
+        sx={{
+          zIndex: 2,
+          position: "absolute",
+          left: centerLayout ? -DRAWER_WIDTH : 0,
+          top: centerLayout ? LAYOUT_HEADER_HEIGHT : 0,
+          width: DRAWER_WIDTH,
+          height: "100%",
+          transition: "left 0.3s",
+        }}
+      >
+        <LayoutConfigurator />
+      </PanelBodyWrapper>
       <PanelBodyWrapper type="M">
-        <Box
-          sx={
-            isSingleURLs
-              ? {
-                  width: "100%",
-                  maxWidth: { xs: "100%", lg: 1280 },
-                  mx: "auto",
-                }
-              : {}
-          }
+        {!isSingleURLs && previewBreakpoint && (
+          <ShowDrawerButton onClick={() => setPreviewBreakpoint(null)} />
+        )}
+        <PreviewBreakpointToggleMenu
+          value={previewBreakpoint}
+          onChange={(value) => {
+            dispatch({
+              type: "LAYOUT_CHANGED",
+              value: {
+                ...(previewBreakpoint === value
+                  ? previewBreakpointLayout
+                  : state.layout),
+                activeField: undefined,
+              },
+            });
+            setPreviewBreakpoint(previewBreakpoint === value ? null : value);
+          }}
+        />
+        <PreviewContainer
+          breakpoint={previewBreakpoint}
+          singleColumn={isSingleURLs}
         >
           <Box
             sx={{
@@ -705,8 +735,9 @@ const LayoutingStep = () => {
               </>
             )}
           </Box>
-          <ChartPreview dataSource={state.dataSource} />
-        </Box>
+          {/* We need to reset the key to prevent overwriting of the layout */}
+          <ChartPreview key={previewBreakpoint} dataSource={state.dataSource} />
+        </PreviewContainer>
       </PanelBodyWrapper>
       <ConfiguratorDrawer
         anchor="left"

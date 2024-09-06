@@ -22,6 +22,8 @@ You can also check the
     layouting step
   - Past layouts are now preserved when switching between layouts in the
     layouting step
+  - It's now possible to preview a chart in different sizes before publishing
+    (in the layout step)
 - Fixes
   - Map is now correctly centered after copying a chart or switching to layout
     mode

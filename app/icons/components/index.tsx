@@ -46,6 +46,7 @@ import { default as DatasetError } from "@/icons/components/IcDatasetError";
 import { default as DatasetSuccess } from "@/icons/components/IcDatasetSuccess";
 import { default as Description } from "@/icons/components/IcDescription";
 import { default as Desktop } from "@/icons/components/IcDesktop";
+import { default as DoubleArrow } from "@/icons/components/IcDoubleArrow";
 import { default as Download } from "@/icons/components/IcDownload";
 import { default as Drag } from "@/icons/components/IcDrag";
 import { default as DragHandle } from "@/icons/components/IcDragHandle";
@@ -201,6 +202,7 @@ export const Icons = {
   datasetSuccess: DatasetSuccess,
   description: Description,
   desktop: Desktop,
+  doubleArrow: DoubleArrow,
   download: Download,
   dragHandle: DragHandle,
   drag: Drag,

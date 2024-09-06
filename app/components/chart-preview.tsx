@@ -120,11 +120,6 @@ const snapCornerToCursor = createSnapCornerToCursor({
   xOffset: -DRAG_OVERLAY_WIDTH,
 });
 
-type DashboardPreviewProps = ChartPreviewProps & {
-  layoutType: Extract<Layout, { type: "dashboard" }>["layout"];
-  editing?: boolean;
-};
-
 const useStyles = makeStyles(() => ({
   canvasChartPanelLayout: {
     // Provide some space at the bottom of the canvas layout to make it possible
@@ -133,7 +128,12 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const DashboardPreview = (props: DashboardPreviewProps) => {
+const DashboardPreview = (
+  props: ChartPreviewProps & {
+    layoutType: Extract<Layout, { type: "dashboard" }>["layout"];
+    editing?: boolean;
+  }
+) => {
   const { dataSource, layoutType, editing } = props;
   const [state, dispatch] = useConfiguratorState(hasChartConfigs);
   const theme = useTheme();
