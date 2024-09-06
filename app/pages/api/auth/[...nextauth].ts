@@ -28,6 +28,21 @@ const providers = [
 export const nextAuthOptions = {
   providers,
   callbacks: {
+    /** Necessary otherwise we cannot sign out */
+    jwt: async ({ token }) => {
+      return token;
+    },
+    redirect: async ({ url, baseUrl }) => {
+      if (url.startsWith("/")) {
+        if (url === "/api/auth/signout") {
+          return `${ADFS_ISSUER}/protocol/openid-connect/logout?redirect_url=${baseUrl}`;
+        }
+        return `${baseUrl}${url}`;
+      } else if (new URL(url).origin === baseUrl) {
+        return url;
+      }
+      return baseUrl;
+    },
     /**
      * When the user is logged in, ensures it creates on our side and save its id
      * on the session.
@@ -39,10 +54,6 @@ export const nextAuthOptions = {
         session.user.id = user.id;
       }
       return session;
-    },
-    /** Necessary otherwise we cannot sign out */
-    jwt: async ({ token }) => {
-      return token;
     },
   },
   debug: false,
