@@ -16,6 +16,7 @@ import {
   DataFilterHierarchyDimension,
   DataFilterTemporalDimension,
 } from "@/charts/shared/chart-data-filters";
+import { useCombinedTemporalDimension } from "@/charts/shared/use-combined-temporal-dimension";
 import {
   ChartConfig,
   DashboardTimeRangeFilter,
@@ -25,6 +26,7 @@ import {
   useConfiguratorState,
 } from "@/configurator";
 import {
+  parseDate,
   timeUnitToFormatter,
   timeUnitToParser,
 } from "@/configurator/components/ui-helpers";
@@ -140,25 +142,10 @@ const DashboardTimeRangeSlider = ({
   );
 
   const timeUnit = filter.timeUnit as TimeUnit;
-
-  // In Unix timestamp
   const [timeRange, setTimeRange] = useState(() =>
     // timeUnit can still be an empty string
     timeUnit ? presetToTimeRange(presets, timeUnit) : undefined
   );
-
-  const { min, max } = useMemo(() => {
-    if (!timeUnit) {
-      return { min: 0, max: 0 };
-    }
-    const parser = timeUnitToParser[timeUnit];
-    return {
-      min: toUnixSeconds(parser(presets.from)),
-      max: toUnixSeconds(parser(presets.to)),
-    };
-  }, [timeUnit, presets]);
-
-  const step = stepFromTimeUnit(timeUnit);
 
   const valueLabelFormat = useEventCallback((value: number) => {
     if (!timeUnit) {
@@ -211,8 +198,23 @@ const DashboardTimeRangeSlider = ({
   }, [presets.from, presets.to, timeUnit]);
 
   const mountedForSomeTime = useTimeout(500, mounted);
+  const combinedTemporalDimension = useCombinedTemporalDimension();
+  const sliderRange = useMemo(() => {
+    const { values } = combinedTemporalDimension;
+    const min = values[0]?.value;
+    const max = values[values.length - 1]?.value;
 
-  if (!timeRange || !filter.active) {
+    if (!min || !max) {
+      return;
+    }
+
+    return [
+      toUnixSeconds(parseDate(min as string)),
+      toUnixSeconds(parseDate(max as string)),
+    ];
+  }, [combinedTemporalDimension]);
+
+  if (!timeRange || !filter.active || !sliderRange) {
     return null;
   }
 
@@ -221,39 +223,18 @@ const DashboardTimeRangeSlider = ({
       className={classes.slider}
       onChange={(_ev, value) => handleChangeSlider(value)}
       onChangeCommitted={() => setEnableTransition(true)}
-      min={min}
-      max={max}
       valueLabelFormat={valueLabelFormat}
-      step={step}
+      step={null}
+      min={sliderRange[0]}
+      max={sliderRange[1]}
       valueLabelDisplay={mountedForSomeTime ? "on" : "off"}
       value={timeRange}
-      marks={(max - min) / (step ?? 1) < 50}
+      marks={combinedTemporalDimension.values.map(({ value }) => ({
+        value: toUnixSeconds(parseDate(value as string)),
+      }))}
     />
   );
 };
-
-function stepFromTimeUnit(timeUnit: TimeUnit | undefined) {
-  if (!timeUnit) {
-    return 0;
-  }
-
-  switch (timeUnit) {
-    case "Year":
-      return 1 * 60 * 60 * 24 * 365;
-    case "Month":
-      return 1 * 60 * 60 * 24 * 30;
-    case "Week":
-      return 1 * 60 * 60 * 24 * 7;
-    case "Day":
-      return 1 * 60 * 60 * 24;
-    case "Hour":
-      return 1 * 60 * 60;
-    case "Minute":
-      return 1 * 60;
-    case "Second":
-      return 1;
-  }
-}
 
 const useDataFilterStyles = makeStyles((theme: Theme) => ({
   wrapper: {

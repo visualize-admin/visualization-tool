@@ -33,6 +33,8 @@ You can also check the
   - Renaming of charts through user profile now works correctly
   - Manually entering dates in date pickers works correctly again
   - Improved scrolling behavior in the chart tabs
+  - Shared time range filter now correctly positions the marks in the time
+    slider
 - Style
   - Aligned editor and layouting page layouts
   - Removed dimension selection from modal when merging cubes
