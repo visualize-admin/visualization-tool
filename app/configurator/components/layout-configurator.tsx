@@ -7,13 +7,12 @@ import {
   Typography,
   useEventCallback,
 } from "@mui/material";
-import { ascending, descending } from "d3-array";
 import capitalize from "lodash/capitalize";
 import omit from "lodash/omit";
-import uniqBy from "lodash/uniqBy";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 
 import { DataFilterGenericDimensionProps } from "@/charts/shared/chart-data-filters";
+import { useCombinedTemporalDimension } from "@/charts/shared/use-combined-temporal-dimension";
 import { Select } from "@/components/form";
 import { generateLayout } from "@/components/react-grid";
 import {
@@ -46,15 +45,12 @@ import {
 import {
   canDimensionBeTimeFiltered,
   Dimension,
-  isTemporalDimensionWithTimeUnit,
   TemporalDimension,
   TemporalEntityDimension,
 } from "@/domain/data";
 import { useFlag } from "@/flags";
 import { useTimeFormatLocale, useTimeFormatUnit } from "@/formatters";
 import { useConfigsCubeComponents } from "@/graphql/hooks";
-import { TimeUnit } from "@/graphql/resolver-types";
-import { timeUnitFormats, timeUnitOrder } from "@/rdf/mappings";
 import { useLocale } from "@/src";
 import { useDashboardInteractiveFilters } from "@/stores/interactive-filters";
 import { getTimeFilterOptions } from "@/utils/time-filter-options";
@@ -122,7 +118,7 @@ const LayoutSharedFiltersConfigurator = () => {
   const [{ data, fetching }] = useConfigsCubeComponents({
     variables: {
       state,
-      locale: locale,
+      locale,
     },
   });
   const dimensions = useMemo(
@@ -133,68 +129,21 @@ const LayoutSharedFiltersConfigurator = () => {
   const formatLocale = useTimeFormatLocale();
   const timeFormatUnit = useTimeFormatUnit();
 
-  const combinedDimension = useMemo(() => {
-    const timeUnitDimensions = dimensions.filter(
-      (dimension) =>
-        isTemporalDimensionWithTimeUnit(dimension) &&
-        potentialTimeRangeFilterIris.includes(dimension.iri)
-    ) as (TemporalDimension | TemporalEntityDimension)[];
-    // We want to use lowest time unit for combined dimension filtering,
-    // so in case we have year and day, we'd filter both by day
-    const timeUnit = timeUnitDimensions.sort((a, b) =>
-      descending(
-        timeUnitOrder.get(a.timeUnit) ?? 0,
-        timeUnitOrder.get(b.timeUnit) ?? 0
-      )
-    )[0]?.timeUnit as TimeUnit;
-    const timeFormat = timeUnitFormats.get(timeUnit) as string;
-    const values = timeUnitDimensions.flatMap((dimension) => {
-      const formatDate = formatLocale.format(timeFormat);
-      const parseDate = formatLocale.parse(dimension.timeFormat);
-      // Standardize values to have same date format
-      return dimension.values.map((dimensionValue) => {
-        const value = formatDate(
-          parseDate(dimensionValue.value as string) as Date
-        );
-        return {
-          ...dimensionValue,
-          value,
-          label: value,
-        };
-      });
-    });
-    const combinedDimension: TemporalDimension = {
-      __typename: "TemporalDimension",
-      cubeIri: "all",
-      iri: "combined-date-filter",
-      label: t({
-        id: "controls.section.shared-filters.date",
-        message: "Date",
-      }),
-      isKeyDimension: true,
-      isNumerical: false,
-      values: uniqBy(values, "value").sort((a, b) =>
-        ascending(a.value, b.value)
-      ),
-      timeUnit,
-      timeFormat,
-    };
-
-    return combinedDimension;
-  }, [dimensions, formatLocale, potentialTimeRangeFilterIris]);
+  const combinedTemporalDimension = useCombinedTemporalDimension();
 
   const handleTimeRangeFilterToggle: SwitchProps["onChange"] = useEventCallback(
     (_, checked) => {
       if (checked) {
         const options = getTimeFilterOptions({
-          dimension: combinedDimension,
+          dimension: combinedTemporalDimension,
           formatLocale,
           timeFormatUnit,
         });
 
         const from = options.sortedOptions[0]?.date;
         const to = options.sortedOptions.at(-1)?.date;
-        const formatDate = timeUnitToFormatter[combinedDimension.timeUnit];
+        const formatDate =
+          timeUnitToFormatter[combinedTemporalDimension.timeUnit];
 
         if (!from || !to) {
           return;
@@ -204,7 +153,7 @@ const LayoutSharedFiltersConfigurator = () => {
           type: "DASHBOARD_TIME_RANGE_FILTER_UPDATE",
           value: {
             active: true,
-            timeUnit: combinedDimension.timeUnit,
+            timeUnit: combinedTemporalDimension.timeUnit,
             presets: {
               from: formatDate(from),
               to: formatDate(to),
@@ -295,7 +244,7 @@ const LayoutSharedFiltersConfigurator = () => {
           <ControlSectionContent>
             <Stack gap="0.5rem">
               {/* TODO: allow TemporalOrdinalDimensions to work here */}
-              {timeRange && combinedDimension.values.length ? (
+              {timeRange && combinedTemporalDimension.values.length ? (
                 <>
                   <Box
                     sx={{
@@ -306,7 +255,7 @@ const LayoutSharedFiltersConfigurator = () => {
                     }}
                   >
                     <Typography variant="body2">
-                      {combinedDimension.label}
+                      {combinedTemporalDimension.label}
                     </Typography>
                     <Switch
                       checked={timeRange.active}
@@ -316,7 +265,7 @@ const LayoutSharedFiltersConfigurator = () => {
                   {timeRange.active ? (
                     <DashboardFiltersOptions
                       timeRangeFilter={timeRange}
-                      timeRangeCombinedDimension={combinedDimension}
+                      timeRangeCombinedDimension={combinedTemporalDimension}
                     />
                   ) : null}
                 </>
