@@ -75,6 +75,37 @@ export const PreviewBreakpointToggleMenu = ({
   onChange: (value: PreviewBreakpoint | null) => void;
 }) => {
   const classes = useStyles();
+  const previewBreakpointOptions: {
+    breakpoint: PreviewBreakpoint;
+    iconName: IconName;
+    title: string;
+  }[] = [
+    {
+      breakpoint: "lg",
+      iconName: "desktop",
+      title: t({
+        id: "controls.layout.preview-lg",
+        message: "Preview using available width",
+      }),
+    },
+    {
+      breakpoint: "md",
+      iconName: "tabletPortrait",
+      title: t({
+        id: "controls.layout.preview-md",
+        message: "Preview using medium width",
+      }),
+    },
+    {
+      breakpoint: "sm",
+      iconName: "mobilePortrait",
+      title: t({
+        id: "controls.layout.preview-sm",
+        message: "Preview using small width",
+      }),
+    },
+  ];
+
   return (
     <ToggleButtonGroup
       className={classes.toggleButtonGroup}
@@ -82,7 +113,7 @@ export const PreviewBreakpointToggleMenu = ({
       value={value}
       exclusive
     >
-      {PREVIEW_BREAKPOINT_OPTIONS.map(({ breakpoint, iconName, title }) => {
+      {previewBreakpointOptions.map(({ breakpoint, iconName, title }) => {
         return (
           <Fragment key={breakpoint}>
             <Tooltip title={title} arrow enterDelay={1000}>
@@ -109,37 +140,6 @@ export const PreviewBreakpointToggleMenu = ({
     </ToggleButtonGroup>
   );
 };
-
-const PREVIEW_BREAKPOINT_OPTIONS: {
-  breakpoint: PreviewBreakpoint;
-  iconName: IconName;
-  title: string;
-}[] = [
-  {
-    breakpoint: "lg",
-    iconName: "desktop",
-    title: t({
-      id: "controls.layout.preview-lg",
-      message: "Preview using available width",
-    }),
-  },
-  {
-    breakpoint: "md",
-    iconName: "tabletPortrait",
-    title: t({
-      id: "controls.layout.preview-md",
-      message: "Preview using medium width",
-    }),
-  },
-  {
-    breakpoint: "sm",
-    iconName: "mobilePortrait",
-    title: t({
-      id: "controls.layout.preview-sm",
-      message: "Preview using small width",
-    }),
-  },
-];
 
 const useStyles = makeStyles<Theme>((theme) => ({
   container: {
