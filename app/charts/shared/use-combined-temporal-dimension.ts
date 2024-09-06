@@ -31,13 +31,10 @@ export const useCombinedTemporalDimension = () => {
       locale,
     },
   });
-  const dimensions = useMemo(
-    () => data?.dataCubesComponents.dimensions ?? [],
-    [data?.dataCubesComponents.dimensions]
-  );
-
   return useMemo(() => {
-    const timeUnitDimensions = dimensions.filter(
+    const timeUnitDimensions = (
+      data?.dataCubesComponents.dimensions ?? []
+    ).filter(
       (dimension) =>
         isTemporalDimensionWithTimeUnit(dimension) &&
         potentialTimeRangeFilterIris.includes(dimension.iri)
@@ -83,5 +80,9 @@ export const useCombinedTemporalDimension = () => {
     };
 
     return combinedDimension;
-  }, [dimensions, formatLocale, potentialTimeRangeFilterIris]);
+  }, [
+    data?.dataCubesComponents.dimensions,
+    formatLocale,
+    potentialTimeRangeFilterIris,
+  ]);
 };
