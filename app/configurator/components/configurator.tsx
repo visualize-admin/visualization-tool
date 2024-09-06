@@ -12,7 +12,7 @@ import { PUBLISHED_STATE } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import { useClient } from "urql";
 import { useDebounce } from "use-debounce";
 
@@ -34,6 +34,7 @@ import {
   hasChartConfigs,
   initChartStateFromChartEdit,
   isConfiguring,
+  isLayouting,
   MetaKey,
   saveChartLocally,
   useConfiguratorState,
@@ -491,7 +492,7 @@ const ConfigureChartStep = () => {
 
 const LayoutingStep = () => {
   const locale = useLocale();
-  const [state, dispatch] = useConfiguratorState();
+  const [state, dispatch] = useConfiguratorState(isLayouting);
   const handleClosePanel = useEvent(() => {
     dispatch({ type: "LAYOUT_ACTIVE_FIELD_CHANGED", value: undefined });
   });
@@ -504,6 +505,13 @@ const LayoutingStep = () => {
 
   useAssureCorrectDataSource("LAYOUTING");
   const { asPath } = useRouter();
+
+  const layoutRef = useRef(state.layout);
+  useEffect(() => {
+    if (layoutRef.current?.type === state.layout.type) {
+      layoutRef.current = state.layout;
+    }
+  }, [state.layout]);
 
   if (state.state !== "LAYOUTING") {
     return null;
@@ -546,14 +554,21 @@ const LayoutingStep = () => {
                 return;
               }
 
-              dispatch({
-                type: "LAYOUT_CHANGED",
-                value: {
-                  type: "tab",
-                  meta: state.layout.meta,
-                  activeField: undefined,
-                },
-              });
+              if (layoutRef.current?.type === "tab") {
+                dispatch({
+                  type: "LAYOUT_CHANGED",
+                  value: layoutRef.current,
+                });
+              } else {
+                dispatch({
+                  type: "LAYOUT_CHANGED",
+                  value: {
+                    type: "tab",
+                    meta: state.layout.meta,
+                    activeField: undefined,
+                  },
+                });
+              }
             }}
           />
           <IconButton
@@ -564,15 +579,22 @@ const LayoutingStep = () => {
                 return;
               }
 
-              dispatch({
-                type: "LAYOUT_CHANGED",
-                value: {
-                  type: "dashboard",
-                  meta: state.layout.meta,
-                  layout: "tall",
-                  activeField: undefined,
-                },
-              });
+              if (layoutRef.current?.type === "dashboard") {
+                dispatch({
+                  type: "LAYOUT_CHANGED",
+                  value: layoutRef.current,
+                });
+              } else {
+                dispatch({
+                  type: "LAYOUT_CHANGED",
+                  value: {
+                    type: "dashboard",
+                    meta: state.layout.meta,
+                    layout: "tall",
+                    activeField: undefined,
+                  },
+                });
+              }
             }}
           />
           <IconButton
@@ -583,19 +605,26 @@ const LayoutingStep = () => {
                 return;
               }
 
-              dispatch({
-                type: "LAYOUT_CHANGED",
-                value: {
-                  type: "singleURLs",
-                  publishableChartKeys: state.chartConfigs.map(
-                    (chartConfig) => chartConfig.key
-                  ),
-                  // Clear the meta data, as it's not used in singleURLs layout,
-                  // but makes the types more consistent
-                  meta: META,
-                  activeField: undefined,
-                },
-              });
+              if (layoutRef.current?.type === "singleURLs") {
+                dispatch({
+                  type: "LAYOUT_CHANGED",
+                  value: layoutRef.current,
+                });
+              } else {
+                dispatch({
+                  type: "LAYOUT_CHANGED",
+                  value: {
+                    type: "singleURLs",
+                    publishableChartKeys: state.chartConfigs.map(
+                      (chartConfig) => chartConfig.key
+                    ),
+                    // Clear the meta data, as it's not used in singleURLs layout,
+                    // but makes the types more consistent
+                    meta: META,
+                    activeField: undefined,
+                  },
+                });
+              }
             }}
           />
         </PanelHeaderWrapper>

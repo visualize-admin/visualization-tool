@@ -9,7 +9,7 @@ import {
 import { Theme } from "@mui/material/styles";
 import { makeStyles } from "@mui/styles";
 import uniq from "lodash/uniq";
-import { ChangeEvent, useEffect, useMemo, useState } from "react";
+import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 
 import {
   DataFilterGenericDimension,
@@ -21,6 +21,7 @@ import {
   DashboardTimeRangeFilter,
   hasChartConfigs,
   InteractiveFiltersTimeRange,
+  isLayouting,
   useConfiguratorState,
 } from "@/configurator";
 import {
@@ -42,22 +43,33 @@ import useEvent from "@/utils/use-event";
 
 export const DashboardInteractiveFilters = (props: BoxProps) => {
   const { sx, ...rest } = props;
+  const ref = useRef<HTMLDivElement>(null);
   const [state] = useConfiguratorState(hasChartConfigs);
+  const layouting = isLayouting(state);
   const { dashboardFilters } = state;
   const { timeRange, dataFilters } = dashboardFilters ?? {
     timeRange: undefined,
     dataFilters: undefined,
   };
-  const show = !!(timeRange?.active || dataFilters?.componentIris.length);
-  return show ? (
-    <Box {...rest} sx={{ ...sx, mb: 4 }}>
-      {timeRange?.active ? (
+  const showTimeRange = !!timeRange?.active;
+  const showDataFilters = !!dataFilters?.componentIris.length;
+  useEffect(() => {
+    if (layouting && (showTimeRange || showDataFilters)) {
+      ref.current?.scrollIntoView({
+        block: "nearest",
+        behavior: "smooth",
+      });
+    }
+  }, [layouting, showDataFilters, showTimeRange]);
+  return showTimeRange || showDataFilters ? (
+    <Box ref={ref} {...rest} sx={{ ...sx, mb: 4 }}>
+      {showTimeRange ? (
         <DashboardTimeRangeSlider
           filter={timeRange}
           mounted={timeRange.active}
         />
       ) : null}
-      {dataFilters?.componentIris.length ? (
+      {showDataFilters ? (
         <DashboardDataFilters componentIris={dataFilters.componentIris} />
       ) : null}
     </Box>
