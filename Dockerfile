@@ -5,6 +5,7 @@ WORKDIR /usr/src/app
 
 # build with
 # docker build \
+#   --build-arg PREVENT_SEARCH_BOTS=<true/false> \
 #   --build-arg COMMIT=$(git rev-parse HEAD) \
 #   --build-arg VECTOR_TILE_URL=<url of the vector service> \
 #   --build-arg MAPTILER_STYLE_KEY=<maptiler style key> \
@@ -15,6 +16,7 @@ WORKDIR /usr/src/app
 #   --build-arg NEXTAUTH_URL=<nextauth url>
 
 # Supplied by build pipeline
+ARG PREVENT_SEARCH_BOTS
 ARG COMMIT
 ARG VECTOR_TILE_URL
 ARG MAPTILER_STYLE_KEY
@@ -35,6 +37,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV STORYBOOK_DISABLE_TELEMETRY=1
 ENV PORT 3000
 
+ENV PREVENT_SEARCH_BOTS=$PREVENT_SEARCH_BOTS
 ENV NEXT_PUBLIC_COMMIT=$COMMIT
 ENV NEXT_PUBLIC_BASE_VECTOR_TILE_URL=$VECTOR_TILE_URL
 ENV NEXT_PUBLIC_MAPTILER_STYLE_KEY=$MAPTILER_STYLE_KEY

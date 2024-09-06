@@ -52,6 +52,7 @@ export const ADFS_PROFILE_URL =
  * Server-side-only **RUNTIME** variables (not exposed through window)
  */
 
+export const PREVENT_SEARCH_BOTS = process.env.PREVENT_SEARCH_BOTS === "true";
 export const DATABASE_URL = process.env.DATABASE_URL;
 export const ADFS_ID = process.env.ADFS_ID;
 export const ADFS_ISSUER = process.env.ADFS_ISSUER;
