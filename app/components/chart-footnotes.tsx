@@ -101,14 +101,14 @@ export const ChartFootnotes = ({
             <OpenMetadataPanelWrapper>
               <Trans id="dataset.footnotes.dataset">Dataset</Trans>
             </OpenMetadataPanelWrapper>
-            <Trans id="typography.colon">: </Trans>
-            {metadata.title}
+            : {metadata.title}
           </Typography>
           {metadata.dateModified ? (
             <Typography component="span" variant="caption" color="grey.600">
               {", "}
-              <Trans id="dataset.footnotes.updated">Latest data update</Trans>
-              <Trans id="typography.colon">: </Trans>
+              <Trans id="dataset.footnotes.updated">
+                Latest data update
+              </Trans>:{" "}
               {formatLocale.format("%d.%m.%Y %H:%M")(
                 new Date(metadata.dateModified)
               )}
