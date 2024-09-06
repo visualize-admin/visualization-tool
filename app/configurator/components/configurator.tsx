@@ -12,7 +12,7 @@ import { PUBLISHED_STATE } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { useClient } from "urql";
 import { useDebounce } from "use-debounce";
 
@@ -29,6 +29,7 @@ import {
 import { useLocalSnack } from "@/components/use-local-snack";
 import {
   ConfiguratorState,
+  ConfiguratorStateLayouting,
   enableLayouting,
   getChartConfig,
   hasChartConfigs,
@@ -522,6 +523,32 @@ const LayoutingStep = () => {
   const { previewBreakpoint, setPreviewBreakpoint, previewBreakpointLayout } =
     usePreviewBreakpoint();
 
+  const handleLayoutChange = useCallback(
+    (
+      newLayoutType: ConfiguratorStateLayouting["layout"]["type"],
+      newLayoutCallback: () => void
+    ) => {
+      if (newLayoutType === state.layout.type) {
+        return;
+      }
+
+      if (layoutRef.current?.type === newLayoutType) {
+        dispatch({
+          type: "LAYOUT_CHANGED",
+          value: {
+            ...layoutRef.current,
+            activeField: undefined,
+          },
+        });
+      } else {
+        newLayoutCallback();
+      }
+
+      setPreviewBreakpoint(null);
+    },
+    [dispatch, setPreviewBreakpoint, state.layout.type]
+  );
+
   if (state.state !== "LAYOUTING") {
     return null;
   }
@@ -559,17 +586,8 @@ const LayoutingStep = () => {
           <IconButton
             label="layoutTab"
             checked={state.layout.type === "tab"}
-            onClick={() => {
-              if (state.layout.type === "tab") {
-                return;
-              }
-
-              if (layoutRef.current?.type === "tab") {
-                dispatch({
-                  type: "LAYOUT_CHANGED",
-                  value: layoutRef.current,
-                });
-              } else {
+            onClick={() =>
+              handleLayoutChange("tab", () => {
                 dispatch({
                   type: "LAYOUT_CHANGED",
                   value: {
@@ -578,25 +596,14 @@ const LayoutingStep = () => {
                     activeField: undefined,
                   },
                 });
-              }
-
-              setPreviewBreakpoint(null);
-            }}
+              })
+            }
           />
           <IconButton
             label="layoutDashboard"
             checked={state.layout.type === "dashboard"}
-            onClick={() => {
-              if (state.layout.type === "dashboard") {
-                return;
-              }
-
-              if (layoutRef.current?.type === "dashboard") {
-                dispatch({
-                  type: "LAYOUT_CHANGED",
-                  value: layoutRef.current,
-                });
-              } else {
+            onClick={() =>
+              handleLayoutChange("dashboard", () => {
                 dispatch({
                   type: "LAYOUT_CHANGED",
                   value: {
@@ -606,25 +613,14 @@ const LayoutingStep = () => {
                     activeField: undefined,
                   },
                 });
-              }
-
-              setPreviewBreakpoint(null);
-            }}
+              })
+            }
           />
           <IconButton
             label="layoutSingleURLs"
             checked={state.layout.type === "singleURLs"}
-            onClick={() => {
-              if (state.layout.type === "singleURLs") {
-                return;
-              }
-
-              if (layoutRef.current?.type === "singleURLs") {
-                dispatch({
-                  type: "LAYOUT_CHANGED",
-                  value: layoutRef.current,
-                });
-              } else {
+            onClick={() =>
+              handleLayoutChange("singleURLs", () => {
                 dispatch({
                   type: "LAYOUT_CHANGED",
                   value: {
@@ -638,10 +634,8 @@ const LayoutingStep = () => {
                     activeField: undefined,
                   },
                 });
-              }
-
-              setPreviewBreakpoint(null);
-            }}
+              })
+            }
           />
         </PanelHeaderWrapper>
         <PanelHeaderWrapper
