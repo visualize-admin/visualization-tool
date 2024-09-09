@@ -87,7 +87,6 @@ export const MenuActionItem = (
       return (
         <Button
           size="xsmall"
-          component={props.type === "link" ? Link : "button"}
           color={color}
           variant="contained"
           {...forwardedProps}
