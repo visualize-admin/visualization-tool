@@ -268,15 +268,25 @@ const ProfileVisualizationsRow = (props: {
         color: "error",
         iconName: removeConfigMut.status === "fetching" ? "loading" : "trash",
         requireConfirmation: true,
-        confirmationTitle: t({
-          id: "login.chart.delete.confirmation",
-          message: "Are you sure you want to delete this chart?",
-        }),
-        confirmationText: t({
-          id: "login.profile.chart.delete.warning",
-          message:
-            "Keep in mind that removing this visualization will affect all the places where it might be already embedded!",
-        }),
+        confirmationTitle: isPublished
+          ? t({
+              id: "login.chart.delete.confirmation",
+              message: "Are you sure you want to delete this chart?",
+            })
+          : t({
+              id: "login.chart.delete-draft.confirmation",
+              message: "Are you sure you want to delete this draft?",
+            }),
+        confirmationText: isPublished
+          ? t({
+              id: "login.profile.chart.delete.warning",
+              message:
+                "This action cannot be undone. Removing this chart will affect all the places where it's embedded!",
+            })
+          : t({
+              id: "login.profile.chart.delete-draft.warning",
+              message: "This action cannot be undone.",
+            }),
         onClick: () => {
           return removeConfigMut.mutate({ key: config.key });
         },
