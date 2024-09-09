@@ -638,7 +638,7 @@ export const ChartAnnotatorTabField = (props: AnnotatorTabFieldProps) => {
 };
 
 export const LayoutAnnotatorTabField = (
-  props: AnnotatorTabFieldProps<"title" | "description">
+  props: AnnotatorTabFieldProps<"title" | "description" | "label">
 ) => {
   const { value, emptyValueWarning, ...tabProps } = props;
   const fieldProps = useActiveLayoutField({ value });

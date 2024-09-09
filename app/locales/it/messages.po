@@ -172,6 +172,10 @@ msgstr "Duplicare"
 msgid "chart-controls.edit"
 msgstr "Modifica"
 
+#: app/components/chart-selection-tabs.tsx
+msgid "chart-controls.edit-tab-label"
+msgstr "Modifica etichetta scheda"
+
 #: app/components/dataset-metadata.tsx
 msgid "chart-controls.sparql-query"
 msgstr "SPARQL query"
@@ -197,8 +201,8 @@ msgid "chart-selection-tabs.add-chart-same-dataset.caption"
 msgstr "Aggiungi grafico basato sullo stesso set di dati"
 
 #: app/components/chart-selection-tabs.tsx
-msgid "chart-selection-tabs.add-label"
-msgstr ""
+msgid "chart-selection-tabs.no-label"
+msgstr "Senza etichetta"
 
 #: app/configurator/components/dataset-control-section.tsx
 msgid "chart.datasets.add"
@@ -296,6 +300,11 @@ msgstr "Animazione"
 #: app/configurator/components/annotators.tsx
 msgid "controls.annotator.add-description-warning"
 msgstr "Aggiungi una descrizione"
+
+#: app/configurator/components/annotators.tsx
+#: app/configurator/components/annotators.tsx
+msgid "controls.annotator.add-tab-label-warning"
+msgstr "Please add a tab label"
 
 #: app/configurator/components/annotators.tsx
 #: app/configurator/components/annotators.tsx

@@ -136,6 +136,16 @@ export const ChartAnnotator = () => {
           }
           mainLabel={getFieldLabel("description")}
         />
+          <ChartAnnotatorTabField
+          value="label"
+          icon="layoutTab"
+          emptyValueWarning={
+            <Trans id="controls.annotator.add-tab-label-warning">
+             Please add a tab label
+            </Trans>
+          }
+          mainLabel={getFieldLabel("label")}
+        />
       </ControlSectionContent>
     </ControlSection>
   );
@@ -188,6 +198,16 @@ export const LayoutAnnotator = () => {
             </Trans>
           }
           mainLabel={getFieldLabel("description")}
+        />
+        <LayoutAnnotatorTabField
+          value="label"
+          icon="layoutTab"
+          emptyValueWarning={
+            <Trans id="controls.annotator.add-tab-label-warning">
+              Please add a tab label
+            </Trans>
+          }
+          mainLabel={getFieldLabel("label")}
         />
       </ControlSectionContent>
     </ControlSection>
