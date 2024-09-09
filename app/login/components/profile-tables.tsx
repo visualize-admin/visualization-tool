@@ -13,6 +13,7 @@ import {
   tableHeadClasses,
   TableRow,
   tableRowClasses,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { PUBLISHED_STATE } from "@prisma/client";
@@ -331,9 +332,16 @@ const ProfileVisualizationsRow = (props: {
         </Typography>
       </TableCell>
       <TableCell width="30%">
-        <Typography variant="body2" noWrap title={chartTitle}>
-          {chartTitle}
-        </Typography>
+        <Tooltip
+          arrow
+          title={chartTitle}
+          color="primary"
+          sx={{ cursor: "pointer" }}
+        >
+          <Typography variant="body2" noWrap title={chartTitle}>
+            {chartTitle}
+          </Typography>
+        </Tooltip>
       </TableCell>
       <TableCell width="30%">
         {fetching ? (
