@@ -151,7 +151,6 @@ const useStyles = makeStyles<Theme>((theme) => ({
   container: {
     width: "100%",
     margin: "0 auto",
-    containerType: "inline-size",
   },
   toggleButtonGroup: {
     float: "right",

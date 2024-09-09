@@ -16,6 +16,7 @@ import { useConfiguratorState } from "@/src";
 
 const useStyles = makeStyles((theme: Theme) => ({
   panelLayout: {
+    containerType: "inline-size",
     display: "flex",
     flexDirection: "column",
     gap: theme.spacing(4),
