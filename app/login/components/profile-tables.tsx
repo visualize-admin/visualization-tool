@@ -197,12 +197,14 @@ const ProfileVisualizationsRow = (props: {
   } = useDisclosure();
 
   const isPublished = config.published_state === PUBLISHED_STATE.PUBLISHED;
+  const publishLink = `/${locale}/v/${config.key}`;
+  const editLink = `/${locale}/create/new?edit=${config.key}${config.data.chartConfigs.length > 1 ? `&state=${CONFIGURATOR_STATE_LAYOUTING}` : ""}`;
 
   const actions = useMemo(() => {
     const actions: (MenuActionProps | null)[] = [
       {
         type: "link",
-        href: `/${locale}/v/${config.key}`,
+        href: publishLink,
         label: isPublished
           ? t({ id: "login.chart.view", message: "View" })
           : t({ id: "login.chart.preview", message: "Preview" }),
@@ -217,14 +219,14 @@ const ProfileVisualizationsRow = (props: {
       },
       {
         type: "link",
-        href: `/${locale}/create/new?edit=${config.key}${config.data.chartConfigs.length > 1 ? `&state=${CONFIGURATOR_STATE_LAYOUTING}` : ""}`,
+        href: editLink,
         label: t({ id: "login.chart.edit", message: "Edit" }),
         iconName: "edit",
         priority: !isPublished ? 0 : undefined,
       },
       {
         type: "link",
-        href: `/${locale}/v/${config.key}`,
+        href: publishLink,
         label: t({ id: "login.chart.share", message: "Share" }),
         iconName: "linkExternal",
       },
@@ -299,10 +301,12 @@ const ProfileVisualizationsRow = (props: {
 
     return sortBy(actions.filter(truthy), (x) => x.priority);
   }, [
+    publishLink,
+    isPublished,
     locale,
     config.key,
     config.data,
-    isPublished,
+    editLink,
     updateConfigMut,
     removeConfigMut,
     invalidateUserConfigs,
@@ -332,16 +336,19 @@ const ProfileVisualizationsRow = (props: {
         </Typography>
       </TableCell>
       <TableCell width="30%">
-        <Tooltip
-          arrow
-          title={chartTitle}
-          color="primary"
-          sx={{ cursor: "pointer" }}
+        <NextLink
+          href={isPublished ? publishLink : editLink}
+          passHref
+          legacyBehavior
         >
-          <Typography variant="body2" noWrap title={chartTitle}>
-            {chartTitle}
-          </Typography>
-        </Tooltip>
+          <Link color="primary">
+            <Tooltip arrow title={chartTitle} color="primary">
+              <Typography variant="body2" noWrap>
+                {chartTitle}
+              </Typography>
+            </Tooltip>
+          </Link>
+        </NextLink>
       </TableCell>
       <TableCell width="30%">
         {fetching ? (
