@@ -201,9 +201,9 @@ export const LayoutAnnotator = () => {
         />
         <LayoutAnnotatorTabField
           value="label"
-          icon="calendar"
+          icon="layoutTab"
           emptyValueWarning={
-            <Trans id="controls.annotator.add-description-warning">
+            <Trans id="controls.annotator.add-tab-label-warning">
               Please add a tab label
             </Trans>
           }
