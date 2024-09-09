@@ -59,6 +59,7 @@ export const MenuActionItem = (
     icon,
     label,
     color = "primary",
+    ...rest
   }: {
     icon?: IconName;
     label: string | NonNullable<React.ReactNode>;
@@ -77,11 +78,13 @@ export const MenuActionItem = (
       props.type === "button"
         ? {
             onClick: handleClick,
+            ...rest,
           }
         : {
             href: props.href,
             target: props.target,
             rel: props.rel,
+            ...rest,
           };
     if (props.as === "button") {
       return (
