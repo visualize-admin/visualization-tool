@@ -35,7 +35,7 @@ export const nextAuthOptions = {
     redirect: async ({ url, baseUrl }) => {
       if (url.startsWith("/")) {
         if (url === "/api/auth/signout") {
-          return `${ADFS_ISSUER}/protocol/openid-connect/logout?redirect_url=${baseUrl}`;
+          return `${ADFS_ISSUER}/protocol/openid-connect/logout?redirect_uri=${baseUrl}`;
         }
         return `${baseUrl}${url}`;
       } else if (new URL(url).origin === baseUrl) {
