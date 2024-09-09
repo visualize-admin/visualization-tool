@@ -56,7 +56,7 @@ export const PreviewContainer = ({
         case "lg":
           return `calc(100% - ${PREVIEW_CONTAINER_PADDING}px)`;
         case "md":
-          return breakpoints.values[breakpoint];
+          return `min(calc(100% - ${PREVIEW_CONTAINER_PADDING}px), ${breakpoints.values.md}px)`;
         case "sm":
           return 480;
         default:
