@@ -1411,7 +1411,7 @@ msgstr "Cette action ne peut pas être annulée."
 
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.chart.delete.warning"
-msgstr "Cette action ne peut pas être annulée. La suppression de ce graphique affectera tous les endroits où il est intégré !"
+msgstr "Gardez à l'esprit que la suppression de cette visualisation affectera tous les endroits où elle est déjà intégrée !"
 
 #: app/login/components/profile-content-tabs.tsx
 msgid "login.profile.home"

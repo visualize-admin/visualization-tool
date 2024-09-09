@@ -1197,7 +1197,7 @@ msgstr "Datasets"
 
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.preview.description"
-msgstr "Review data preview of new available dimensions and continue to edit visualization."
+msgstr "Review data preview of available dimensions and continue to edit visualization."
 
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.preview.new-dimension"
@@ -1205,7 +1205,7 @@ msgstr "New"
 
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.preview.title"
-msgstr "Review available dimensions"
+msgstr "Available dimensions"
 
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.search-options.more-2-options-selected"
