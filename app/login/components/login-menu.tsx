@@ -1,9 +1,8 @@
 import { t, Trans } from "@lingui/macro";
-import { Button, Typography } from "@mui/material";
+import { Button, Menu, Typography } from "@mui/material";
 import { signIn, signOut } from "next-auth/react";
 import { useState } from "react";
 
-import { ArrowMenuTopCenter } from "@/components/arrow-menu";
 import { MenuActionItem } from "@/components/menu-action-item";
 import { ADFS_PROFILE_URL } from "@/domain/env";
 import { useUser } from "@/login/utils";
@@ -29,12 +28,13 @@ export const LoginMenu = () => {
           >
             <Typography variant="body2">{user.name}</Typography>
           </Button>
-          <ArrowMenuTopCenter
+          <Menu
             anchorEl={anchorEl}
             anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
             transformOrigin={{ vertical: "top", horizontal: "center" }}
             open={!!anchorEl}
             onClose={() => setAnchorEl(null)}
+            PaperProps={{ sx: { mt: 3 } }}
           >
             <MenuActionItem
               type="link"
@@ -62,7 +62,7 @@ export const LoginMenu = () => {
               })}
               onClick={async () => await signOut()}
             />
-          </ArrowMenuTopCenter>
+          </Menu>
         </>
       ) : (
         <Button

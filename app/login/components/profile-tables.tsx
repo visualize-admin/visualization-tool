@@ -13,6 +13,7 @@ import {
   tableHeadClasses,
   TableRow,
   tableRowClasses,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { PUBLISHED_STATE } from "@prisma/client";
@@ -195,18 +196,20 @@ const ProfileVisualizationsRow = (props: {
     close: closeRename,
   } = useDisclosure();
 
+  const isPublished = config.published_state === PUBLISHED_STATE.PUBLISHED;
+  const publishLink = `/${locale}/v/${config.key}`;
+  const editLink = `/${locale}/create/new?edit=${config.key}${config.data.chartConfigs.length > 1 ? `&state=${CONFIGURATOR_STATE_LAYOUTING}` : ""}`;
+
   const actions = useMemo(() => {
     const actions: (MenuActionProps | null)[] = [
       {
         type: "link",
-        href: `/${locale}/v/${config.key}`,
-        label:
-          config.published_state === PUBLISHED_STATE.PUBLISHED
-            ? t({ id: "login.chart.view", message: "View" })
-            : t({ id: "login.chart.preview", message: "Preview" }),
+        href: publishLink,
+        label: isPublished
+          ? t({ id: "login.chart.view", message: "View" })
+          : t({ id: "login.chart.preview", message: "Preview" }),
         iconName: "eye",
-        priority:
-          config.published_state === PUBLISHED_STATE.PUBLISHED ? 0 : undefined,
+        priority: isPublished ? 0 : undefined,
       },
       {
         type: "link",
@@ -216,19 +219,18 @@ const ProfileVisualizationsRow = (props: {
       },
       {
         type: "link",
-        href: `/${locale}/create/new?edit=${config.key}${config.data.chartConfigs.length > 1 ? `&state=${CONFIGURATOR_STATE_LAYOUTING}` : ""}`,
+        href: editLink,
         label: t({ id: "login.chart.edit", message: "Edit" }),
         iconName: "edit",
-        priority:
-          config.published_state === PUBLISHED_STATE.DRAFT ? 0 : undefined,
+        priority: !isPublished ? 0 : undefined,
       },
       {
         type: "link",
-        href: `/${locale}/v/${config.key}`,
+        href: publishLink,
         label: t({ id: "login.chart.share", message: "Share" }),
         iconName: "linkExternal",
       },
-      config.published_state === PUBLISHED_STATE.PUBLISHED
+      isPublished
         ? {
             type: "button",
             label: t({
@@ -269,15 +271,25 @@ const ProfileVisualizationsRow = (props: {
         color: "error",
         iconName: removeConfigMut.status === "fetching" ? "loading" : "trash",
         requireConfirmation: true,
-        confirmationTitle: t({
-          id: "login.chart.delete.confirmation",
-          message: "Are you sure you want to delete this chart?",
-        }),
-        confirmationText: t({
-          id: "login.profile.chart.delete.warning",
-          message:
-            "Keep in mind that removing this visualization will affect all the places where it might be already embedded!",
-        }),
+        confirmationTitle: isPublished
+          ? t({
+              id: "login.chart.delete.confirmation",
+              message: "Are you sure you want to delete this chart?",
+            })
+          : t({
+              id: "login.chart.delete-draft.confirmation",
+              message: "Are you sure you want to delete this draft?",
+            }),
+        confirmationText: isPublished
+          ? t({
+              id: "login.profile.chart.delete.warning",
+              message:
+                "This action cannot be undone. Removing this chart will affect all the places where it's embedded!",
+            })
+          : t({
+              id: "login.profile.chart.delete-draft.warning",
+              message: "This action cannot be undone.",
+            }),
         onClick: () => {
           return removeConfigMut.mutate({ key: config.key });
         },
@@ -289,14 +301,16 @@ const ProfileVisualizationsRow = (props: {
 
     return sortBy(actions.filter(truthy), (x) => x.priority);
   }, [
+    publishLink,
+    isPublished,
     locale,
-    config.data,
     config.key,
-    config.published_state,
+    config.data,
+    editLink,
+    updateConfigMut,
+    removeConfigMut,
     invalidateUserConfigs,
     openRename,
-    removeConfigMut,
-    updateConfigMut,
   ]);
 
   const isSingleChart = config.data.chartConfigs.length === 1;
@@ -322,9 +336,19 @@ const ProfileVisualizationsRow = (props: {
         </Typography>
       </TableCell>
       <TableCell width="30%">
-        <Typography variant="body2" noWrap title={chartTitle}>
-          {chartTitle}
-        </Typography>
+        <NextLink
+          href={isPublished ? publishLink : editLink}
+          passHref
+          legacyBehavior
+        >
+          <Link color="primary">
+            <Tooltip arrow title={chartTitle} color="primary">
+              <Typography variant="body2" noWrap>
+                {chartTitle}
+              </Typography>
+            </Tooltip>
+          </Link>
+        </NextLink>
       </TableCell>
       <TableCell width="30%">
         {fetching ? (
@@ -354,7 +378,10 @@ const ProfileVisualizationsRow = (props: {
       </TableCell>
       <TableCell width="10%">
         <Typography width="auto" variant="body2">
-          {config.updated_at.toLocaleString("de")}
+          {config.updated_at.toLocaleString("de", {
+            dateStyle: "medium",
+            timeStyle: "short",
+          })}
         </Typography>
       </TableCell>
       <TableCell width="20%" align="right">

@@ -627,15 +627,15 @@ msgstr ""
 msgid "controls.layout.dashboard"
 msgstr "Dashboard"
 
-#: app/configurator/components/configurator.tsx
+#: app/configurator/components/preview-breakpoint.tsx
 msgid "controls.layout.preview-lg"
 msgstr ""
 
-#: app/configurator/components/configurator.tsx
+#: app/configurator/components/preview-breakpoint.tsx
 msgid "controls.layout.preview-md"
 msgstr ""
 
-#: app/configurator/components/configurator.tsx
+#: app/configurator/components/preview-breakpoint.tsx
 msgid "controls.layout.preview-sm"
 msgstr ""
 
@@ -840,7 +840,7 @@ msgstr "Opzioni di layout"
 msgid "controls.section.shared-filters"
 msgstr "Filtri condivisi"
 
-#: app/configurator/components/layout-configurator.tsx
+#: app/charts/shared/use-combined-temporal-dimension.ts
 msgid "controls.section.shared-filters.date"
 msgstr "Data"
 
@@ -1365,6 +1365,10 @@ msgid "login.chart.delete"
 msgstr "Cancellare"
 
 #: app/login/components/profile-tables.tsx
+msgid "login.chart.delete-draft.confirmation"
+msgstr ""
+
+#: app/login/components/profile-tables.tsx
 msgid "login.chart.delete.confirmation"
 msgstr "Sei sicuro di voler cancellare questo grafico?"
 
@@ -1400,6 +1404,10 @@ msgstr "Non ci sono ancora grafici"
 #: app/components/confirmation-dialog.tsx
 msgid "login.profile.chart.confirmation.default"
 msgstr "Siete sicuri di voler eseguire questa azione?"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.profile.chart.delete-draft.warning"
+msgstr ""
 
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.chart.delete.warning"
@@ -1568,11 +1576,6 @@ msgstr "Settimana"
 #: app/configurator/components/ui-helpers.ts
 msgid "time-units.Year"
 msgstr "Anno"
-
-#: app/components/chart-footnotes.tsx
-#: app/components/chart-footnotes.tsx
-msgid "typography.colon"
-msgstr ": "
 
 #: app/components/confirmation-dialog.tsx
 msgid "yes"
