@@ -3,7 +3,6 @@ import { TabContext } from "@mui/lab";
 import {
   Button,
   Divider,
-  Popover,
   Stack,
   tabClasses,
   Theme,
@@ -179,18 +178,27 @@ const TabsEditable = (props: TabsEditableProps) => {
       />
 
       {tabsState.popoverType === "add" ? (
-        <Popover
+        <ArrowMenuTopCenter
           id="chart-selection-popover"
           open={tabsState.popoverOpen}
           anchorEl={popoverAnchorEl}
           anchorOrigin={{
-            horizontal: "left",
+            horizontal: "center",
             vertical: "bottom",
+          }}
+          transformOrigin={{
+            horizontal: "center",
+            vertical: "top",
           }}
           onClose={handleClose}
           PaperProps={{
             sx: {
+              width: "calc(320px + 2rem)",
+              mt: 3,
               py: "1rem",
+              "& > .MuiList-root": {
+                py: 0,
+              },
             },
           }}
         >
@@ -218,7 +226,7 @@ const TabsEditable = (props: TabsEditableProps) => {
                 showHelp={false}
                 showComparisonCharts={false}
                 chartKey={tabsState.activeChartKey ?? chartConfig.key}
-                sx={{ width: 320, px: 3, pb: 3 }}
+                sx={{ pb: 3 }}
               />
             </Stack>
             {addNewDatasetFlag ? (
@@ -248,7 +256,7 @@ const TabsEditable = (props: TabsEditableProps) => {
               </Stack>
             ) : null}
           </Stack>
-        </Popover>
+        </ArrowMenuTopCenter>
       ) : null}
 
       {tabsState.popoverType === "edit" ? (
@@ -386,7 +394,15 @@ const useTabsInnerStyles = makeStyles<Theme>((theme) => ({
   },
 }));
 
-const TabsInner = (props: {
+const TabsInner = ({
+  data,
+  addable,
+  editable,
+  draggable,
+  onChartEdit,
+  onChartAdd,
+  onChartSwitch,
+}: {
   data: TabDatum[];
   addable: boolean;
   editable: boolean;
@@ -396,15 +412,6 @@ const TabsInner = (props: {
   onChartSwitch?: (key: string) => void;
 }) => {
   const classes = useTabsInnerStyles();
-  const {
-    data,
-    addable,
-    editable,
-    draggable,
-    onChartEdit,
-    onChartAdd,
-    onChartSwitch,
-  } = props;
   const [_, dispatch] = useConfiguratorState(hasChartConfigs);
   const activeTabIndex = data.findIndex((x) => x.active);
   return (
