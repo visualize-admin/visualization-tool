@@ -31,11 +31,11 @@ import { createChartId } from "@/utils/create-chart-id";
 /** Generic styles shared between `ChartPreview` and `ChartPublished`. */
 export const useChartStyles = makeStyles<Theme>((theme) => ({
   root: {
+    flexGrow: 1,
     display: "grid",
     gridTemplateRows: "subgrid",
     /** Should stay in sync with the number of rows contained in a chart */
     gridRow: "span 7",
-    height: "100%",
     padding: theme.spacing(6),
     backgroundColor: theme.palette.background.paper,
     border: "1px solid",

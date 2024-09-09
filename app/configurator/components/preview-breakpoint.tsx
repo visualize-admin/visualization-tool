@@ -52,10 +52,16 @@ export const PreviewContainer = ({
   const { breakpoints } = useTheme();
   const maxWidth = useMemo(() => {
     if (breakpoint) {
-      if (breakpoint === "lg") {
-        return `calc(100% - ${PREVIEW_CONTAINER_PADDING}px)`;
-      } else {
-        return breakpoints.values[breakpoint];
+      switch (breakpoint) {
+        case "lg":
+          return `calc(100% - ${PREVIEW_CONTAINER_PADDING}px)`;
+        case "md":
+          return `min(calc(100% - ${PREVIEW_CONTAINER_PADDING}px), ${breakpoints.values.md}px)`;
+        case "sm":
+          return 480;
+        default:
+          const _exhaustiveCheck: never = breakpoint;
+          return _exhaustiveCheck;
       }
     }
     return singleColumn ? SINGLE_COLUMN_MAX_WIDTH : "100%";

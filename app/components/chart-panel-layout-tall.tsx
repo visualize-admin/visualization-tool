@@ -1,6 +1,7 @@
 import { Box, useMediaQuery } from "@mui/material";
 import { useMemo } from "react";
 
+import classes from "@/components/chart-panel-layout-tall.module.css";
 import { ChartConfig } from "@/config-types";
 import { useTheme } from "@/themes";
 
@@ -41,17 +42,7 @@ const ChartPanelLayoutTallRow = (props: ChartPanelLayoutTallRowProps) => {
       }
 
       return (
-        <Box
-          sx={{
-            display: "grid",
-            gridTemplateColumns: {
-              xs: "1fr",
-              md: "calc(50% - 8px) calc(50% - 8px)",
-            },
-            gridAutoRows: "min-content",
-            columnGap: 4,
-          }}
-        >
+        <Box className={classes.root}>
           {row.chartConfigs.map(row.renderChart)}
         </Box>
       );
