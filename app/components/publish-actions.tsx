@@ -6,7 +6,7 @@ import {
   Popover,
   PopoverProps,
   Stack,
-  Typography
+  Typography,
 } from "@mui/material";
 import { ReactNode, useEffect, useState } from "react";
 
