@@ -125,20 +125,20 @@ msgstr "Eliminare il grafico?"
 msgid "chart-controls.edit"
 msgstr "Modifica"
 
-msgid "chart-selection-tabs.add-chart-different-dataset.button"
-msgstr "Seleziona il set di dati"
-
 msgid "chart-controls.duplicate"
 msgstr "Duplicare"
+
+msgid "chart-selection-tabs.add-chart-different-dataset.button"
+msgstr "Seleziona il set di dati"
 
 msgid "chart-selection-tabs.add-chart-different-dataset.caption"
 msgstr "Aggiungi grafico basato su un set di dati diverso"
 
-msgid "chart-controls.edit-tab-label"
-msgstr "Modifica etichetta scheda"
-
 msgid "chart-controls.sparql-query"
 msgstr "SPARQL query"
+
+msgid "chart-controls.edit-tab-label"
+msgstr "Modifica etichetta scheda"
 
 msgid "chart-selection-tabs.add-chart-same-dataset.caption"
 msgstr "Aggiungi grafico basato sullo stesso set di dati"
@@ -245,6 +245,9 @@ msgstr "Mostra in %"
 
 msgid "controls.chart.category.combo"
 msgstr "Confronto"
+
+msgid "controls.annotator.add-tab-label-warning"
+msgstr "Please add a tab label"
 
 msgid "controls.chart.category.combo.hint"
 msgstr "I tipi di grafico di confronto combinano diverse misure in un grafico, aiutando a visualizzare le loro relazioni o correlazioni, anche quando hanno unità o scale diverse."
@@ -444,11 +447,11 @@ msgstr "Italiano"
 msgid "controls.layout.canvas"
 msgstr "Layout libero"
 
-msgid "controls.layout.dashboard"
-msgstr "Dashboard"
-
 msgid "controls.label"
 msgstr ""
+
+msgid "controls.layout.dashboard"
+msgstr "Dashboard"
 
 msgid "controls.layout.singleURLs"
 msgstr "URL separati"
@@ -477,11 +480,11 @@ msgstr "Valori disponibili"
 msgid "controls.layout.preview-lg"
 msgstr ""
 
-msgid "controls.layout.preview-md"
-msgstr ""
-
 msgid "controls.metadata-panel.section.data"
 msgstr "Dati"
+
+msgid "controls.layout.preview-md"
+msgstr ""
 
 msgid "controls.metadata-panel.section.general"
 msgstr "Generale"
@@ -489,11 +492,11 @@ msgstr "Generale"
 msgid "controls.layout.preview-sm"
 msgstr ""
 
-msgid "controls.metadata-panel.metadata"
-msgstr "Dettagli"
-
 msgid "controls.metadata-panel.show-more"
 msgstr "Mostra di più"
+
+msgid "controls.metadata-panel.metadata"
+msgstr "Dettagli"
 
 msgid "controls.nav.back-to-configurator"
 msgstr "Torniamo alla modifica"
@@ -1020,12 +1023,12 @@ msgstr "Azioni"
 msgid "login.profile.my-visualizations.chart-name"
 msgstr "Nome"
 
+msgid "login.profile.my-visualizations"
+msgstr ""
+
 #~ msgid "login.profile.my-visualizations.chart-published-date"#~ msgstr "Pubblicato"
 msgid "login.profile.my-visualizations.chart-type"
 msgstr "Tipo"
-
-msgid "login.profile.my-visualizations"
-msgstr ""
 
 msgid "login.profile.my-visualizations.chart-updated-date"
 msgstr ""

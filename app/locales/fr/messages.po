@@ -110,11 +110,11 @@ msgstr "Vue en graphique"
 msgid "button.update.warning"
 msgstr "Gardez à l'esprit que la mise à jour de cette visualisation affectera tous les endroits où elle est déjà intégrée !"
 
-msgid "chart-controls.copy-and-edit"
-msgstr "Copier et éditer"
-
 msgid "chart-controls.delete"
 msgstr "Supprimer"
+
+msgid "chart-controls.copy-and-edit"
+msgstr "Copier et éditer"
 
 msgid "chart-controls.delete.confirmation"
 msgstr "Êtes-vous sûr de vouloir supprimer ce graphique ?"
@@ -125,23 +125,23 @@ msgstr "Supprimer le graphique ?"
 msgid "chart-controls.edit"
 msgstr "Modifier"
 
-msgid "chart-selection-tabs.add-chart-different-dataset.button"
-msgstr "Sélectionner un ensemble de données"
-
 msgid "chart-controls.duplicate"
 msgstr "Dupliquer"
+
+msgid "chart-selection-tabs.add-chart-different-dataset.button"
+msgstr "Sélectionner un ensemble de données"
 
 msgid "chart-selection-tabs.add-chart-different-dataset.caption"
 msgstr "Ajouter un graphique basé sur un ensemble de données différent"
 
-msgid "chart-controls.sparql-query"
-msgstr "Requête SPARQL"
+msgid "chart-selection-tabs.add-chart-same-dataset.caption"
+msgstr "Ajouter un graphique basé sur le même ensemble de données"
 
 msgid "chart-controls.edit-tab-label"
 msgstr "Modifier le nom de l'onglet"
 
-msgid "chart-selection-tabs.add-chart-same-dataset.caption"
-msgstr "Ajouter un graphique basé sur le même ensemble de données"
+msgid "chart-controls.sparql-query"
+msgstr "Requête SPARQL"
 
 msgid "chart.datasets.add"
 msgstr "Ajouter"
@@ -149,11 +149,11 @@ msgstr "Ajouter"
 msgid "chart-controls.table-view"
 msgstr "Vue en tableau"
 
-msgid "chart-selection-tabs.add-chart"
-msgstr ""
-
 msgid "chart.datasets.add-dataset-dialog.description"
 msgstr "Vous ne pouvez combiner que des ensembles de données qui partagent des dimensions avec la même unité et résolution. Par défaut, les dimensions correspondant au graphique actuel sont sélectionnées."
+
+msgid "chart-selection-tabs.add-chart"
+msgstr ""
 
 msgid "chart.datasets.add-dataset-dialog.title"
 msgstr "Sélectionner un ensemble de données avec des dimensions partagées"
@@ -167,11 +167,11 @@ msgstr "Zones"
 msgid "chart.map.layers.base"
 msgstr "Affichage de la carte"
 
-msgid "chart-selection-tabs.no-label"
-msgstr "Pas de Titre"
-
 msgid "chart.map.layers.base.show"
 msgstr "Afficher la carte du monde"
+
+msgid "chart-selection-tabs.no-label"
+msgstr "Pas de Titre"
 
 msgid "chart.map.layers.base.view.locked"
 msgstr "Carte verrouillée"
@@ -245,6 +245,9 @@ msgstr "Afficher en %"
 
 msgid "controls.chart.category.combo"
 msgstr "Comparaison"
+
+msgid "controls.annotator.add-tab-label-warning"
+msgstr "Veuillez ajouter une étiquette d'onglet"
 
 msgid "controls.chart.category.combo.hint"
 msgstr "Les types de graphiques comparatifs combinent plusieurs mesures dans un graphique, ce qui permet de visualiser leurs relations ou corrélations, même si elles ont des unités ou des échelles différentes."
@@ -483,16 +486,16 @@ msgstr "Données"
 msgid "controls.layout.preview-md"
 msgstr ""
 
-msgid "controls.layout.preview-sm"
-msgstr ""
-
 msgid "controls.metadata-panel.section.general"
 msgstr "Général"
 
-msgid "controls.metadata-panel.show-more"
-msgstr "Détails"
+msgid "controls.layout.preview-sm"
+msgstr ""
 
 msgid "controls.metadata-panel.metadata"
+msgstr "Détails"
+
+msgid "controls.metadata-panel.show-more"
 msgstr "Détails"
 
 msgid "controls.nav.back-to-configurator"
@@ -606,11 +609,11 @@ msgstr "Afficher l'erreur type"
 msgid "controls.section.sorting"
 msgstr "Trier"
 
-msgid "controls.section.tableSettings"
-msgstr "Paramètres du tableau"
-
 msgid "controls.section.shared-filters.date"
 msgstr "Date"
+
+msgid "controls.section.tableSettings"
+msgstr "Paramètres du tableau"
 
 msgid "controls.section.tableSorting"
 msgstr "Tri du tableau"
@@ -618,11 +621,11 @@ msgstr "Tri du tableau"
 msgid "controls.section.tableoptions"
 msgstr "Options du tableau"
 
-msgid "controls.section.title.warning"
-msgstr "Ajoutez un titre et une description"
-
 msgid "controls.section.show-standard-error.explanation"
 msgstr "Montrer les incertitudes via des barres d'erreur"
+
+msgid "controls.section.title.warning"
+msgstr "Ajoutez un titre et une description"
 
 msgid "controls.segment"
 msgstr "Segmentation"
@@ -786,11 +789,11 @@ msgstr "Certaines données de cet ensemble de données sont manquantes et ont é
 msgid "dataset.includeDrafts"
 msgstr "Inclure les brouillons"
 
-msgid "dataset.footnotes.dataset"
-msgstr ""
-
 msgid "dataset.metadata.date.created"
 msgstr "Date de création"
+
+msgid "dataset.footnotes.dataset"
+msgstr ""
 
 msgid "dataset.metadata.email"
 msgstr "Points de contact"
@@ -979,11 +982,11 @@ msgstr "Êtes-vous sûr de vouloir supprimer cette carte ?"
 msgid "login.chart.edit"
 msgstr "Editer"
 
-msgid "login.chart.preview"
-msgstr "Aperçu"
-
 msgid "login.chart.rename"
 msgstr "Renommer"
+
+msgid "login.chart.preview"
+msgstr "Aperçu"
 
 msgid "login.chart.share"
 msgstr "Partager"

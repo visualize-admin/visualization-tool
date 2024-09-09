@@ -110,11 +110,11 @@ msgstr "Diagrammansicht"
 msgid "button.update.warning"
 msgstr "Denken Sie daran, dass sich die Aktualisierung dieser Visualisierung auf alle Stellen auswirkt, an denen sie bereits eingebettet ist!"
 
-msgid "chart-controls.copy-and-edit"
-msgstr "Kopieren und editieren"
-
 msgid "chart-controls.delete"
 msgstr "Löschen"
+
+msgid "chart-controls.copy-and-edit"
+msgstr "Kopieren und editieren"
 
 msgid "chart-controls.delete.confirmation"
 msgstr "Sind Sie sicher, dass Sie dieses Diagramm löschen möchten?"
@@ -125,35 +125,35 @@ msgstr "Diagramm löschen?"
 msgid "chart-controls.edit"
 msgstr "Bearbeiten"
 
-msgid "chart-controls.duplicate"
-msgstr "Duplizieren"
-
 msgid "chart-selection-tabs.add-chart-different-dataset.button"
 msgstr "Datensatz auswählen"
+
+msgid "chart-controls.duplicate"
+msgstr "Duplizieren"
 
 msgid "chart-selection-tabs.add-chart-different-dataset.caption"
 msgstr "Fügen Sie ein Diagramm basierend auf einem anderen Datensatz hinzu"
 
-msgid "chart-controls.edit-tab-label"
-msgstr "Tab titel editieren"
+msgid "chart-selection-tabs.add-chart-same-dataset.caption"
+msgstr "Fügen Sie ein Diagramm basierend auf demselben Datensatz hinzu"
 
 msgid "chart-controls.sparql-query"
 msgstr "SPARQL-Abfrage"
 
-msgid "chart-selection-tabs.add-chart-same-dataset.caption"
-msgstr "Fügen Sie ein Diagramm basierend auf demselben Datensatz hinzu"
-
-msgid "chart.datasets.add"
-msgstr "Hinzufügen"
+msgid "chart-controls.edit-tab-label"
+msgstr "Tab titel editieren"
 
 msgid "chart-controls.table-view"
 msgstr "Tabellenansicht"
 
-msgid "chart.datasets.add-dataset-dialog.description"
-msgstr "Sie können nur Datensätze kombinieren, die Dimensionen mit derselben Einheit und Auflösung teilen. Standardmässig werden Dimensionen ausgewählt, die zum aktuellen Diagramm passen."
+msgid "chart.datasets.add"
+msgstr "Hinzufügen"
 
 msgid "chart-selection-tabs.add-chart"
 msgstr "Diagramm hinzufügen"
+
+msgid "chart.datasets.add-dataset-dialog.description"
+msgstr "Sie können nur Datensätze kombinieren, die Dimensionen mit derselben Einheit und Auflösung teilen. Standardmässig werden Dimensionen ausgewählt, die zum aktuellen Diagramm passen."
 
 msgid "chart.datasets.add-dataset-dialog.title"
 msgstr "Wählen Sie einen Datensatz mit gemeinsamen Dimensionen aus"
@@ -167,11 +167,11 @@ msgstr "Flächen"
 msgid "chart.map.layers.base"
 msgstr "Kartenanzeige"
 
-msgid "chart.map.layers.base.show"
-msgstr "Weltkarte anzeigen"
-
 msgid "chart-selection-tabs.no-label"
 msgstr "Ohne Titel"
+
+msgid "chart.map.layers.base.show"
+msgstr "Weltkarte anzeigen"
 
 msgid "chart.map.layers.base.view.locked"
 msgstr "Gesperrte Ansicht"
@@ -245,6 +245,9 @@ msgstr "In % anzeigen"
 
 msgid "controls.chart.category.combo"
 msgstr "Vergleich"
+
+msgid "controls.annotator.add-tab-label-warning"
+msgstr "Please add a tab label"
 
 msgid "controls.chart.category.combo.hint"
 msgstr "Vergleichsdiagrammtypen kombinieren mehrere Messwerte in einem Diagramm und helfen, ihre Beziehungen oder Korrelationen zu visualisieren, selbst wenn sie unterschiedliche Einheiten oder Skalen haben."
@@ -459,11 +462,11 @@ msgstr "Wählen Sie die Diagramme aus, die separat veröffentlicht werden sollen
 msgid "controls.layout.tab"
 msgstr "Tab Layout"
 
-msgid "controls.layout.tall"
-msgstr "Hoch"
-
 msgid "controls.layout.chart"
 msgstr "Diagramm"
+
+msgid "controls.layout.tall"
+msgstr "Hoch"
 
 msgid "controls.layout.vertical"
 msgstr "Vertikal"
@@ -477,23 +480,23 @@ msgstr "Verfügbare Werte"
 msgid "controls.layout.preview-lg"
 msgstr "Vorschau mit verfügbarer Breite"
 
-msgid "controls.metadata-panel.section.data"
-msgstr "Daten"
-
 msgid "controls.layout.preview-md"
 msgstr "Vorschau in mittlerer Breite"
 
-msgid "controls.layout.preview-sm"
-msgstr "Vorschau in kleiner Breite"
+msgid "controls.metadata-panel.section.data"
+msgstr "Daten"
 
 msgid "controls.metadata-panel.section.general"
 msgstr "Allgemeines"
 
-msgid "controls.metadata-panel.show-more"
-msgstr "Zeig mehr"
+msgid "controls.layout.preview-sm"
+msgstr "Vorschau in kleiner Breite"
 
 msgid "controls.metadata-panel.metadata"
 msgstr "Details"
+
+msgid "controls.metadata-panel.show-more"
+msgstr "Zeig mehr"
 
 msgid "controls.nav.back-to-configurator"
 msgstr "Zurück zum Editieren"
@@ -597,20 +600,20 @@ msgstr "Animation"
 msgid "controls.section.layout-options"
 msgstr "Layout-Optionen"
 
-msgid "controls.section.show-standard-error"
-msgstr "Standardfehler anzeigen"
-
 msgid "controls.section.shared-filters"
 msgstr "Geteilte Filter"
+
+msgid "controls.section.show-standard-error"
+msgstr "Standardfehler anzeigen"
 
 msgid "controls.section.sorting"
 msgstr "Sortieren"
 
-msgid "controls.section.shared-filters.date"
-msgstr "Datum"
-
 msgid "controls.section.tableSettings"
 msgstr "Tabelleneinstellungen"
+
+msgid "controls.section.shared-filters.date"
+msgstr "Datum"
 
 msgid "controls.section.tableSorting"
 msgstr "Tabellensortierung"
@@ -618,11 +621,11 @@ msgstr "Tabellensortierung"
 msgid "controls.section.tableoptions"
 msgstr "Tabellenoptionen"
 
-msgid "controls.section.title.warning"
-msgstr "Fügen Sie einen Titel oder eine Beschreibung hinzu"
-
 msgid "controls.section.show-standard-error.explanation"
 msgstr "Zeigen Sie Unsicherheiten, die sich von Datenpunkten ausbreiten, um Standardfehler darzustellen."
+
+msgid "controls.section.title.warning"
+msgstr "Fügen Sie einen Titel oder eine Beschreibung hinzu"
 
 msgid "controls.segment"
 msgstr "Segmentierung"
@@ -786,11 +789,11 @@ msgstr "Einige Daten in diesem Datensatz fehlen und wurden interpoliert, um die 
 msgid "dataset.includeDrafts"
 msgstr "Entwürfe einschliessen"
 
-msgid "dataset.metadata.date.created"
-msgstr "Erstellungsdatum"
-
 msgid "dataset.footnotes.dataset"
 msgstr "Datensatz"
+
+msgid "dataset.metadata.date.created"
+msgstr "Erstellungsdatum"
 
 msgid "dataset.metadata.email"
 msgstr "Kontaktstellen"
@@ -979,11 +982,11 @@ msgstr "Sind Sie sicher, dass Sie diese Grafik löschen wollen?"
 msgid "login.chart.edit"
 msgstr "Bearbeiten"
 
-msgid "login.chart.rename"
-msgstr ""
-
 msgid "login.chart.preview"
 msgstr "Vorschau"
+
+msgid "login.chart.rename"
+msgstr ""
 
 msgid "login.chart.share"
 msgstr "Teilen"

@@ -125,29 +125,29 @@ msgstr "Delete chart?"
 msgid "chart-controls.edit"
 msgstr "Edit"
 
-msgid "chart-selection-tabs.add-chart-different-dataset.button"
-msgstr "Select dataset"
-
 msgid "chart-controls.duplicate"
 msgstr "Duplicate"
+
+msgid "chart-selection-tabs.add-chart-different-dataset.button"
+msgstr "Select dataset"
 
 msgid "chart-selection-tabs.add-chart-different-dataset.caption"
 msgstr "Add chart based on a different dataset"
 
-msgid "chart-controls.edit-tab-label"
-msgstr "Edit tab label"
+msgid "chart-selection-tabs.add-chart-same-dataset.caption"
+msgstr "Add chart based on the same dataset"
 
 msgid "chart-controls.sparql-query"
 msgstr "SPARQL query"
 
-msgid "chart-selection-tabs.add-chart-same-dataset.caption"
-msgstr "Add chart based on the same dataset"
-
-msgid "chart.datasets.add"
-msgstr "Add dataset"
+msgid "chart-controls.edit-tab-label"
+msgstr "Edit tab label"
 
 msgid "chart-controls.table-view"
 msgstr "Table view"
+
+msgid "chart.datasets.add"
+msgstr "Add dataset"
 
 msgid "chart-selection-tabs.add-chart"
 msgstr "Add chart"
@@ -167,11 +167,11 @@ msgstr "Areas"
 msgid "chart.map.layers.base"
 msgstr "Map Display"
 
-msgid "chart-selection-tabs.no-label"
-msgstr "No label"
-
 msgid "chart.map.layers.base.show"
 msgstr "Show Worldmap"
+
+msgid "chart-selection-tabs.no-label"
+msgstr "No label"
 
 msgid "chart.map.layers.base.view.locked"
 msgstr "Locked view"
@@ -242,6 +242,9 @@ msgstr "100%"
 
 msgid "controls.calculation.show-in-percentage"
 msgstr "Show in %"
+
+msgid "controls.annotator.add-tab-label-warning"
+msgstr "Please add a tab label"
 
 msgid "controls.chart.category.combo"
 msgstr "Comparison"
@@ -459,11 +462,11 @@ msgstr "Select the charts to publish separately. After proceeding to publish, th
 msgid "controls.layout.tab"
 msgstr "Tab Layout"
 
-msgid "controls.layout.chart"
-msgstr "Chart"
-
 msgid "controls.layout.tall"
 msgstr "Tall"
+
+msgid "controls.layout.chart"
+msgstr "Chart"
 
 msgid "controls.layout.vertical"
 msgstr "Vertical"
@@ -477,11 +480,11 @@ msgstr "Available values"
 msgid "controls.layout.preview-lg"
 msgstr "Preview using available width"
 
-msgid "controls.layout.preview-md"
-msgstr "Preview using medium width"
-
 msgid "controls.metadata-panel.section.data"
 msgstr "Data"
+
+msgid "controls.layout.preview-md"
+msgstr "Preview using medium width"
 
 msgid "controls.layout.preview-sm"
 msgstr "Preview using small width"
@@ -489,11 +492,11 @@ msgstr "Preview using small width"
 msgid "controls.metadata-panel.section.general"
 msgstr "General"
 
-msgid "controls.metadata-panel.metadata"
-msgstr "Details"
-
 msgid "controls.metadata-panel.show-more"
 msgstr "Show more"
+
+msgid "controls.metadata-panel.metadata"
+msgstr "Details"
 
 msgid "controls.nav.back-to-configurator"
 msgstr "Back to editing"
@@ -597,11 +600,11 @@ msgstr "Animation"
 msgid "controls.section.layout-options"
 msgstr "Layout Options"
 
-msgid "controls.section.shared-filters"
-msgstr "Shared filters"
-
 msgid "controls.section.show-standard-error"
 msgstr "Show standard error"
+
+msgid "controls.section.shared-filters"
+msgstr "Shared filters"
 
 msgid "controls.section.sorting"
 msgstr "Sort"
@@ -1020,12 +1023,12 @@ msgstr "Actions"
 msgid "login.profile.my-visualizations.chart-name"
 msgstr "Name"
 
-msgid "login.profile.my-visualizations"
-msgstr "My visualizations"
-
 #~ msgid "login.profile.my-visualizations.chart-published-date"#~ msgstr "Published"
 msgid "login.profile.my-visualizations.chart-type"
 msgstr "Type"
+
+msgid "login.profile.my-visualizations"
+msgstr "My visualizations"
 
 msgid "login.profile.my-visualizations.chart-updated-date"
 msgstr "Updated"
