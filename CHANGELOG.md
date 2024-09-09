@@ -24,6 +24,7 @@ You can also check the
     layouting step
   - It's now possible to preview a chart in different sizes before publishing
     (in the layout step)
+  - Clicking on a chart title in the user profile now opens the chart
 - Fixes
   - Map is now correctly centered after copying a chart or switching to layout
     mode
@@ -39,6 +40,7 @@ You can also check the
   - Aligned editor and layouting page layouts
   - Removed dimension selection from modal when merging cubes
   - Updated styles of confirmation dialog
+  - Various small style improvements
 - Maintenance
   - Updated cube-hierarchy-query library to 3.0.0
 
