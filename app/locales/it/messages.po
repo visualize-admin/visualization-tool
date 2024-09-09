@@ -1366,7 +1366,7 @@ msgstr "Cancellare"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.delete-draft.confirmation"
-msgstr "Sei sicuro di voler eliminare questa bozza?"
+msgstr ""
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.delete.confirmation"
@@ -1407,7 +1407,7 @@ msgstr "Siete sicuri di voler eseguire questa azione?"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.chart.delete-draft.warning"
-msgstr "Questa azione non può essere annullata."
+msgstr ""
 
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.chart.delete.warning"

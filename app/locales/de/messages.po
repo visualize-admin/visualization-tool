@@ -53,7 +53,7 @@ msgstr "Kategorien"
 
 #: app/login/components/profile-header.tsx
 msgid "browse.dataset.all"
-msgstr "Alle Datensätze durchsuchen"
+msgstr "Datensatz suchen"
 
 #: app/browser/dataset-preview.tsx
 #: app/browser/dataset-preview.tsx
@@ -198,7 +198,7 @@ msgstr "Fügen Sie ein Diagramm basierend auf demselben Datensatz hinzu"
 
 #: app/components/chart-selection-tabs.tsx
 msgid "chart-selection-tabs.add-label"
-msgstr "Tab-Titel hinzufügen"
+msgstr ""
 
 #: app/configurator/components/dataset-control-section.tsx
 msgid "chart.datasets.add"
@@ -1366,7 +1366,7 @@ msgstr "Löschen"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.delete-draft.confirmation"
-msgstr "Möchten Sie diesen Entwurf wirklich löschen?"
+msgstr ""
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.delete.confirmation"
@@ -1407,7 +1407,7 @@ msgstr "Sind Sie sicher, dass Sie diese Aktion durchführen wollen?"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.chart.delete-draft.warning"
-msgstr "Diese Aktion kann nicht rückgängig gemacht werden."
+msgstr ""
 
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.chart.delete.warning"
@@ -1415,7 +1415,7 @@ msgstr "Denken Sie daran, dass das Entfernen dieser Visualisierung sich auf alle
 
 #: app/login/components/profile-content-tabs.tsx
 msgid "login.profile.home"
-msgstr "Empfang"
+msgstr "Übersicht"
 
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
@@ -1427,7 +1427,7 @@ msgstr "Meine Entwürfe"
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
 msgid "login.profile.my-published-visualizations"
-msgstr "Meine Visualisierungen"
+msgstr "Veröffentlichte Visualisierungen"
 
 #: app/login/components/login-menu.tsx
 msgid "login.profile.my-visualizations"

@@ -1366,7 +1366,7 @@ msgstr "Supprimer"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.delete-draft.confirmation"
-msgstr "Etes-vous sûr de vouloir supprimer ce brouillon ?"
+msgstr ""
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.delete.confirmation"
@@ -1407,7 +1407,7 @@ msgstr "Êtes-vous sûr de vouloir effectuer cette action ?"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.chart.delete-draft.warning"
-msgstr "Cette action ne peut pas être annulée."
+msgstr ""
 
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.chart.delete.warning"
