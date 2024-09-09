@@ -1,0 +1,13 @@
+.root {
+  display: grid;
+  grid-auto-rows: min-content;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+/* sm + 1px */
+@container (min-width: 769px) {
+  .root {
+    grid-template-columns: 1fr 1fr;
+  }
+}
