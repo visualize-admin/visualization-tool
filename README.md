@@ -69,7 +69,8 @@ yarn dev:ssl # If you are working with the login process
 > experience an SSL error when the authentication provider redirects you back to
 > the app after login. You can either remove the trailing s in the URL after the
 > redirection, or use the `yarn dev:ssl` command to use HTTPs for the
-> development server.
+> development server. Also, make sure to set the `NEXTAUTH_URL` environment
+> variable to `https://localhost:3000` in your `.env.local` file.
 
 > 👉 In [Visual Studio Code](https://code.visualstudio.com/), you also can run
 > the **default build task** (CMD-SHIFT-B) to start the dev server, database
@@ -350,6 +351,9 @@ We use Next-auth to integrate our application with it, through a
 You can use the ref eIAM. ADFS environment variables should be configured in
 your `.env.local` file. You'll find those secret variables in our shared
 1Password in the "Visualize.admin .env.local" entry.
+
+Make sure to set the `NEXTAUTH_URL` environment variable to
+`http://localhost:3000` and run the dev server with `yarn dev:ssl`.
 
 ## 10. <a name='Translations'></a>Translations
 
