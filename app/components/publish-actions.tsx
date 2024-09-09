@@ -3,11 +3,10 @@ import {
   Box,
   Button,
   Divider,
-  Link,
   Popover,
   PopoverProps,
   Stack,
-  Typography,
+  Typography
 } from "@mui/material";
 import { ReactNode, useEffect, useState } from "react";
 
@@ -158,7 +157,7 @@ const Share = ({ configKey, locale }: PublishActionProps) => {
         );
       }}
     >
-      <Box m={4}>
+      <Box m={4} sx={{ "& > * + *": { mt: 4 } }}>
         <Flex
           sx={{
             justifyContent: "space-between",
@@ -217,19 +216,7 @@ const Share = ({ configKey, locale }: PublishActionProps) => {
           <Typography component="div" variant="body1" color="grey.700">
             <Trans id="publication.share.chart.url">Chart URL: </Trans>
           </Typography>
-          <Box my={1} sx={{ color: "primary" }}>
-            <Link
-              href={shareUrl}
-              sx={{
-                color: "primary",
-                textDecoration: "underline",
-                cursor: "pointer",
-                mr: 4,
-              }}
-            >
-              {shareUrl}
-            </Link>
-          </Box>
+          <CopyToClipboardTextInput content={shareUrl} />
         </Box>
       </Box>
     </TriggeredPopover>

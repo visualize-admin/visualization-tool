@@ -50,7 +50,7 @@ const useCopyToClipboardTextInputStyles = makeStyles((theme: Theme) => ({
     padding: `${theme.spacing(0)} ${theme.spacing(2)}`,
     flexGrow: 1,
     fontSize: "1rem",
-    minWidth: 160,
+    minWidth: 250,
     overflowX: "auto",
     borderTopLeftRadius: "default",
     borderBottomLeftRadius: "default",
