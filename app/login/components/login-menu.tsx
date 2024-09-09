@@ -60,7 +60,9 @@ export const LoginMenu = () => {
                 id: "login.sign-out",
                 message: "Sign out",
               })}
-              onClick={async () => await signOut()}
+              onClick={async () =>
+                await signOut({ callbackUrl: "/api/auth/signout" })
+              }
             />
           </ArrowMenuTopCenter>
         </>
