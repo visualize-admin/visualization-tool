@@ -195,18 +195,18 @@ const ProfileVisualizationsRow = (props: {
     close: closeRename,
   } = useDisclosure();
 
+  const isPublished = config.published_state === PUBLISHED_STATE.PUBLISHED;
+
   const actions = useMemo(() => {
     const actions: (MenuActionProps | null)[] = [
       {
         type: "link",
         href: `/${locale}/v/${config.key}`,
-        label:
-          config.published_state === PUBLISHED_STATE.PUBLISHED
-            ? t({ id: "login.chart.view", message: "View" })
-            : t({ id: "login.chart.preview", message: "Preview" }),
+        label: isPublished
+          ? t({ id: "login.chart.view", message: "View" })
+          : t({ id: "login.chart.preview", message: "Preview" }),
         iconName: "eye",
-        priority:
-          config.published_state === PUBLISHED_STATE.PUBLISHED ? 0 : undefined,
+        priority: isPublished ? 0 : undefined,
       },
       {
         type: "link",
@@ -219,8 +219,7 @@ const ProfileVisualizationsRow = (props: {
         href: `/${locale}/create/new?edit=${config.key}${config.data.chartConfigs.length > 1 ? `&state=${CONFIGURATOR_STATE_LAYOUTING}` : ""}`,
         label: t({ id: "login.chart.edit", message: "Edit" }),
         iconName: "edit",
-        priority:
-          config.published_state === PUBLISHED_STATE.DRAFT ? 0 : undefined,
+        priority: !isPublished ? 0 : undefined,
       },
       {
         type: "link",
@@ -228,7 +227,7 @@ const ProfileVisualizationsRow = (props: {
         label: t({ id: "login.chart.share", message: "Share" }),
         iconName: "linkExternal",
       },
-      config.published_state === PUBLISHED_STATE.PUBLISHED
+      isPublished
         ? {
             type: "button",
             label: t({
@@ -290,13 +289,13 @@ const ProfileVisualizationsRow = (props: {
     return sortBy(actions.filter(truthy), (x) => x.priority);
   }, [
     locale,
-    config.data,
     config.key,
-    config.published_state,
+    config.data,
+    isPublished,
+    updateConfigMut,
+    removeConfigMut,
     invalidateUserConfigs,
     openRename,
-    removeConfigMut,
-    updateConfigMut,
   ]);
 
   const isSingleChart = config.data.chartConfigs.length === 1;
