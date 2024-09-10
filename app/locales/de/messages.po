@@ -202,7 +202,7 @@ msgstr "Fügen Sie ein Diagramm basierend auf demselben Datensatz hinzu"
 
 #: app/components/chart-selection-tabs.tsx
 msgid "chart-selection-tabs.no-label"
-msgstr "Ohne Titel"
+msgstr ""
 
 #: app/configurator/components/dataset-control-section.tsx
 msgid "chart.datasets.add"
@@ -301,7 +301,6 @@ msgstr "Animation"
 msgid "controls.annotator.add-description-warning"
 msgstr "Fügen Sie eine Beschreibung hinzu"
 
-#: app/configurator/components/annotators.tsx
 #: app/configurator/components/annotators.tsx
 msgid "controls.annotator.add-tab-label-warning"
 msgstr "Please add a tab label"
@@ -1375,7 +1374,7 @@ msgstr "Löschen"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.delete-draft.confirmation"
-msgstr ""
+msgstr "Möchten Sie diesen Entwurf wirklich löschen?"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.delete.confirmation"
@@ -1416,7 +1415,7 @@ msgstr "Sind Sie sicher, dass Sie diese Aktion durchführen wollen?"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.chart.delete-draft.warning"
-msgstr ""
+msgstr "Diese Aktion kann nicht rückgängig gemacht werden."
 
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.chart.delete.warning"
@@ -1430,7 +1429,7 @@ msgstr "Übersicht"
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
 msgid "login.profile.my-drafts"
-msgstr "Meine Entwürfe"
+msgstr "Entwürfe"
 
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx

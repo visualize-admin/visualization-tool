@@ -302,7 +302,6 @@ msgid "controls.annotator.add-description-warning"
 msgstr "Ajoutez une description au graphique"
 
 #: app/configurator/components/annotators.tsx
-#: app/configurator/components/annotators.tsx
 msgid "controls.annotator.add-tab-label-warning"
 msgstr "Veuillez ajouter une étiquette d'onglet"
 

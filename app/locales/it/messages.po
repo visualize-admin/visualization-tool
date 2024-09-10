@@ -302,9 +302,8 @@ msgid "controls.annotator.add-description-warning"
 msgstr "Aggiungi una descrizione"
 
 #: app/configurator/components/annotators.tsx
-#: app/configurator/components/annotators.tsx
 msgid "controls.annotator.add-tab-label-warning"
-msgstr "Please add a tab label"
+msgstr "Aggiungi un'etichetta di scheda"
 
 #: app/configurator/components/annotators.tsx
 #: app/configurator/components/annotators.tsx

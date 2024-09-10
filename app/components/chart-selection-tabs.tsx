@@ -6,7 +6,7 @@ import {
   Stack,
   tabClasses,
   Theme,
-  Typography
+  Typography,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
@@ -145,13 +145,12 @@ const TabsEditable = (props: TabsEditableProps) => {
 
   const addNewDatasetFlag = useFlag("configurator.add-dataset.new");
 
-
   const switchChart = (key: string) => {
     dispatch({
       type: "SWITCH_ACTIVE_CHART",
       value: key,
     });
-  }
+  };
 
   return (
     <>
@@ -276,20 +275,23 @@ const TabsEditable = (props: TabsEditableProps) => {
           }}
           onClose={handleClose}
         >
-      {isConfiguringChart &&  <MenuActionItem 
-          as="menuitem"
-          type="button"
-          iconName="text"
-          label={<Trans id="chart-controls.edit-tab-label" >Edit tab label</Trans>}
-          onClick={() => {
+          {isConfiguringChart && (
+            <MenuActionItem
+              as="menuitem"
+              type="button"
+              iconName="text"
+              label={
+                <Trans id="chart-controls.edit-tab-label">Edit tab label</Trans>
+              }
+              onClick={() => {
                 switchChart(tabsState.activeChartKey);
                 dispatch({
                   type: "CHART_ACTIVE_FIELD_CHANGED",
-                  value: 'label'
+                  value: "label",
                 });
-          }}
-          
-        />}
+              }}
+            />
+          )}
           <DuplicateChartMenuActionItem
             chartConfig={getChartConfig(state, tabsState.activeChartKey)}
             onSuccess={handleClose}
@@ -590,8 +592,8 @@ export const useIconStyles = makeStyles<
   },
   chartIconWrapper: {
     minWidth: "fit-content",
-    display: 'flex',
-    alignItems: 'center',
+    display: "flex",
+    alignItems: "center",
     gap: spacing(2),
     color: (d) => (d.active ? palette.primary.main : palette.secondary.active),
   },
@@ -652,28 +654,32 @@ const TabContent = (props: {
   });
   return (
     <Flex className={classes.root}>
-      {label || showAddLabel ? (
-          <Button
-            variant="text"
-            className={classes.chartIconWrapper}  
-            onClick={() => {
-              onSwitchClick?.();
-           if (editable) {
-              dispatch({
-                type: "CHART_ACTIVE_FIELD_CHANGED",
-                value: undefined
-              });
-            }}
+      <Button
+        variant="text"
+        className={classes.chartIconWrapper}
+        onClick={() => {
+          onSwitchClick?.();
+          if (editable) {
+            dispatch({
+              type: "CHART_ACTIVE_FIELD_CHANGED",
+              value: undefined,
+            });
           }
-            sx={{
-              color: (t) =>
-                label ? "inherit" : `${t.palette.grey[500]} !important`,
-            }}
-          >
-             <Icon name={iconName} />
-           {label || `[ ${addLabel} ]`}
-          </Button>
-      ) : null}
+        }}
+      >
+        <Icon name={iconName} />
+        <Typography
+          variant="body2"
+          sx={{
+            color: (t) =>
+              label || !editable
+                ? "inherit"
+                : `${t.palette.grey[500]} !important`,
+          }}
+        >
+          {label || showAddLabel ? label || `[ ${addLabel} ]` : null}
+        </Typography>
+      </Button>
       {editable && (
         <Button
           variant="text"

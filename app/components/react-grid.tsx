@@ -1,16 +1,19 @@
 import { Theme } from "@mui/material/styles";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
+import isEqual from "lodash/isEqual";
 import map from "lodash/map";
 import mapValues from "lodash/mapValues";
 import range from "lodash/range";
-import { ComponentProps, useEffect, useRef, useState } from "react";
+import { ComponentProps, useEffect, useState } from "react";
 import { Layout, Responsive, WidthProvider } from "react-grid-layout";
 import { match } from "ts-pattern";
 
 import { useStyles as useChartContainerStyles } from "@/charts/shared/containers";
 import { getChartWrapperId } from "@/components/chart-panel";
+import { hasChartConfigs, isLayouting } from "@/configurator";
 import { useTimeout } from "@/hooks/use-timeout";
+import { useConfiguratorState } from "@/src";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
@@ -195,22 +198,22 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-export const CHART_GRID_MIN_HEIGHT = 100;
+export const CHART_GRID_MIN_HEIGHT = 150;
 
 export const ChartGridLayout = ({
   children,
   className,
   layouts,
   resize,
-  initialize,
   ...rest
 }: {
   className: string;
   onLayoutChange: Function;
   resize?: boolean;
-  initialize: boolean;
 } & ComponentProps<typeof ResponsiveReactGridLayout>) => {
   const classes = useStyles();
+  const [state] = useConfiguratorState(hasChartConfigs);
+  const allowHeightInitialization = isLayouting(state);
   const [mounted, setMounted] = useState(false);
   const mountedForSomeTime = useTimeout(500, mounted);
   const chartContainerClasses = useChartContainerStyles();
@@ -226,7 +229,7 @@ export const ChartGridLayout = ({
           maxW: MAX_W,
           w: Math.min(MAX_W, chartLayout.w),
           resizeHandles: resize ? availableHandles : [],
-          minH: MIN_H,
+          minH: chartLayout.minH ?? MIN_H,
           h: Math.max(MIN_H, chartLayout.h),
         };
       });
@@ -237,9 +240,8 @@ export const ChartGridLayout = ({
     setMounted(true);
   }, []);
 
-  const hasBeenConstrained = useRef(!initialize);
   useEffect(() => {
-    if (!mountedForSomeTime || hasBeenConstrained.current) {
+    if (!mountedForSomeTime || !allowHeightInitialization) {
       return;
     }
 
@@ -276,11 +278,13 @@ export const ChartGridLayout = ({
         };
       });
     });
-    setEnhancedLayouts(newLayouts);
-    hasBeenConstrained.current = true;
+
+    if (!isEqual(newLayouts, enhancedLayouts)) {
+      setEnhancedLayouts(newLayouts);
+    }
   }, [
+    allowHeightInitialization,
     chartContainerClasses.chartContainer,
-    initialize,
     enhancedLayouts,
     mountedForSomeTime,
     resize,

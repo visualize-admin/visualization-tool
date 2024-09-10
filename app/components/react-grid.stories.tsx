@@ -91,7 +91,6 @@ export const Example = () => {
         onLayoutChange={(_layouts, allLayouts) => setLayouts(allLayouts)}
         layouts={layouts}
         resize
-        initialize={false}
       >
         {generateDOM({ count })}
       </ChartGridLayout>

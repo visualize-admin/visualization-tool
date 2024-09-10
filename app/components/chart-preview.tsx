@@ -10,13 +10,7 @@ import { Trans } from "@lingui/macro";
 import { Box } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import Head from "next/head";
-import React, {
-  forwardRef,
-  ReactNode,
-  useCallback,
-  useMemo,
-  useState,
-} from "react";
+import { forwardRef, ReactNode, useCallback, useMemo, useState } from "react";
 
 import { DataSetTable } from "@/browse/datatable";
 import { LoadingStateProvider } from "@/charts/shared/chart-loading-state";
@@ -70,12 +64,7 @@ import { useTransitionStore } from "@/stores/transition";
 import { useTheme } from "@/themes";
 import { createSnapCornerToCursor } from "@/utils/dnd";
 
-type ChartPreviewProps = {
-  dataSource: DataSource;
-};
-
-export const ChartPreview = (props: ChartPreviewProps) => {
-  const { dataSource } = props;
+export const ChartPreview = ({ dataSource }: { dataSource: DataSource }) => {
   const [state] = useConfiguratorState(hasChartConfigs);
   const editing = isConfiguring(state);
   const { layout } = state;
@@ -128,13 +117,15 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const DashboardPreview = (
-  props: ChartPreviewProps & {
-    layoutType: Extract<Layout, { type: "dashboard" }>["layout"];
-    editing?: boolean;
-  }
-) => {
-  const { dataSource, layoutType, editing } = props;
+const DashboardPreview = ({
+  dataSource,
+  layoutType,
+  editing,
+}: {
+  dataSource: DataSource;
+  layoutType: Extract<Layout, { type: "dashboard" }>["layout"];
+  editing?: boolean;
+}) => {
   const [state, dispatch] = useConfiguratorState(hasChartConfigs);
   const theme = useTheme();
   const transition = useTransitionStore();
@@ -331,12 +322,13 @@ const DndChartPreview = (props: CommonChartPreviewProps) => {
   );
 };
 
-type SingleURLsPreviewProps = ChartPreviewProps & {
+const SingleURLsPreview = ({
+  dataSource,
+  layout,
+}: {
+  dataSource: DataSource;
   layout: Extract<Layout, { type: "singleURLs" }>;
-};
-
-const SingleURLsPreview = (props: SingleURLsPreviewProps) => {
-  const { dataSource, layout } = props;
+}) => {
   const [state, dispatch] = useConfiguratorState(hasChartConfigs);
   const renderChart = useCallback(
     (chartConfig: ChartConfig) => {
@@ -386,14 +378,17 @@ const SingleURLsPreview = (props: SingleURLsPreviewProps) => {
   );
 };
 
-type ChartPreviewInnerProps = ChartPreviewProps & {
+const ChartPreviewInner = ({
+  children,
+  dataSource,
+  chartKey,
+  actionElementSlot,
+}: {
+  children?: ReactNode;
+  dataSource: DataSource;
   chartKey?: string | null;
   actionElementSlot?: ReactNode;
-  children?: React.ReactNode;
-};
-
-const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
-  const { dataSource, chartKey, actionElementSlot } = props;
+}) => {
   const [state, dispatch] = useConfiguratorState();
   const configuring = isConfiguring(state);
   const chartConfig = getChartConfig(state, chartKey);
@@ -435,7 +430,7 @@ const ChartPreviewInner = (props: ChartPreviewInnerProps) => {
 
   return (
     <Box className={chartClasses.root}>
-      {props.children}
+      {children}
       <ChartErrorBoundary resetKeys={[state]}>
         {hasChartConfigs(state) && (
           <>

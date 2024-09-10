@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
-import { Fragment, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import {
   isLayouting,
@@ -28,7 +28,6 @@ export const usePreviewBreakpoint = () => {
       layoutRef.current = state.layout;
     }
   }, [breakpoint, state.layout]);
-
   return {
     previewBreakpoint: breakpoint,
     setPreviewBreakpoint: setBreakpoint,
@@ -111,7 +110,6 @@ export const PreviewBreakpointToggleMenu = ({
       }),
     },
   ];
-
   return (
     <ToggleButtonGroup
       className={classes.toggleButtonGroup}
@@ -120,28 +118,32 @@ export const PreviewBreakpointToggleMenu = ({
       exclusive
     >
       {previewBreakpointOptions.map(({ breakpoint, iconName, title }) => {
-        return (
-          <Fragment key={breakpoint}>
-            <Tooltip title={title} arrow enterDelay={1000}>
-              <ToggleButton
-                className={clsx(classes.toggleButton, {
-                  [classes.toggleButtonSelected]: value === breakpoint,
-                })}
-                value={breakpoint}
-                onClick={() => onChange(breakpoint)}
-              >
-                <Icon name={iconName} size={16} />
-              </ToggleButton>
-            </Tooltip>
-            {breakpoint !== "sm" && (
-              <Divider
-                className={classes.divider}
-                orientation="vertical"
-                flexItem
-              />
-            )}
-          </Fragment>
-        );
+        return [
+          <Tooltip
+            key={`${breakpoint}-tooltip`}
+            title={title}
+            arrow
+            enterDelay={1000}
+          >
+            <ToggleButton
+              className={clsx(classes.toggleButton, {
+                [classes.toggleButtonSelected]: value === breakpoint,
+              })}
+              value={breakpoint}
+              onClick={() => onChange(breakpoint)}
+            >
+              <Icon name={iconName} size={16} />
+            </ToggleButton>
+          </Tooltip>,
+          breakpoint !== "sm" ? (
+            <Divider
+              key={`${breakpoint}-divider`}
+              className={classes.divider}
+              orientation="vertical"
+              flexItem
+            />
+          ) : null,
+        ];
       })}
     </ToggleButtonGroup>
   );
@@ -170,6 +172,9 @@ const useStyles = makeStyles<Theme>((theme) => ({
   },
   divider: {
     alignSelf: "center",
+    borderLeft: `2px solid ${theme.palette.divider} !important`,
     height: 16,
+    marginLeft: "-1px !important",
+    backgroundColor: theme.palette.divider,
   },
 }));
