@@ -11,7 +11,9 @@ import { match } from "ts-pattern";
 
 import { useStyles as useChartContainerStyles } from "@/charts/shared/containers";
 import { getChartWrapperId } from "@/components/chart-panel";
+import { hasChartConfigs, isLayouting } from "@/configurator";
 import { useTimeout } from "@/hooks/use-timeout";
+import { useConfiguratorState } from "@/src";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
@@ -210,6 +212,8 @@ export const ChartGridLayout = ({
   resize?: boolean;
 } & ComponentProps<typeof ResponsiveReactGridLayout>) => {
   const classes = useStyles();
+  const [state] = useConfiguratorState(hasChartConfigs);
+  const allowHeightInitialization = isLayouting(state);
   const [mounted, setMounted] = useState(false);
   const mountedForSomeTime = useTimeout(500, mounted);
   const chartContainerClasses = useChartContainerStyles();
@@ -237,7 +241,7 @@ export const ChartGridLayout = ({
   }, []);
 
   useEffect(() => {
-    if (!mountedForSomeTime) {
+    if (!mountedForSomeTime || !allowHeightInitialization) {
       return;
     }
 
@@ -279,6 +283,7 @@ export const ChartGridLayout = ({
       setEnhancedLayouts(newLayouts);
     }
   }, [
+    allowHeightInitialization,
     chartContainerClasses.chartContainer,
     enhancedLayouts,
     mountedForSomeTime,
