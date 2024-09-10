@@ -10,18 +10,17 @@ import {
   useSortBy,
   useTable,
 } from "react-table";
+import AutoSizer from "react-virtualized-auto-sizer";
 import { FixedSizeList, VariableSizeList } from "react-window";
 
 import { useChartState } from "@/charts/shared/chart-state";
 import { CellDesktop } from "@/charts/table/cell-desktop";
 import { DDContent } from "@/charts/table/cell-mobile";
-import { TABLE_HEIGHT } from "@/charts/table/constants";
 import { GroupHeader } from "@/charts/table/group-header";
 import {
   TableContent,
   TableContentProvider,
 } from "@/charts/table/table-content";
-import { scrollbarWidth } from "@/charts/table/table-helpers";
 import { TableChartState } from "@/charts/table/table-state";
 import Flex from "@/components/flex";
 import { Input, Switch } from "@/components/form";
@@ -305,21 +304,26 @@ export const Table = () => {
         <Box
           sx={{
             width: "100%",
+            height: "100%",
             position: "relative",
             backgroundColor: "grey.100",
             mb: 4,
             fontSize: "0.875rem",
           }}
         >
-          <VariableSizeList
-            key={rows.length} // Reset when groups are toggled because itemSize remains cached per index
-            height={TABLE_HEIGHT}
-            itemCount={rows.length}
-            itemSize={getMobileItemSize}
-            width={bounds.width}
-          >
-            {renderMobileRow}
-          </VariableSizeList>
+          <AutoSizer disableWidth>
+            {({ height }) => (
+              <VariableSizeList
+                key={rows.length} // Reset when groups are toggled because itemSize remains cached per index
+                height={height}
+                itemCount={rows.length}
+                itemSize={getMobileItemSize}
+                width={bounds.width}
+              >
+                {renderMobileRow}
+              </VariableSizeList>
+            )}
+          </AutoSizer>
         </Box>
       ) : (
         /* Regular table view */
@@ -330,27 +334,28 @@ export const Table = () => {
             mb: 4,
             fontSize: "0.875rem",
           }}
-          {...getTableProps({ style: { minWidth: "100%" } })}
+          {...getTableProps({ style: { minWidth: "100%", height: "100%" } })}
         >
-          <div {...getTableBodyProps()}>
+          <div {...getTableBodyProps()} style={{ height: "100%" }}>
             <TableContentProvider
               headerGroups={headerGroups}
               tableColumnsMeta={tableColumnsMeta}
               customSortCount={customSortCount}
               totalColumnsWidth={totalColumnsWidth}
             >
-              <FixedSizeList
-                outerElementType={TableContentWrapper}
-                height={Math.min(
-                  TABLE_HEIGHT,
-                  rows.length * rowHeight + scrollbarWidth()
+              <AutoSizer disableWidth>
+                {({ height }) => (
+                  <FixedSizeList
+                    outerElementType={TableContentWrapper}
+                    height={height}
+                    itemCount={rows.length}
+                    itemSize={rowHeight} // depends on whether a column has bars (40px or 56px)
+                    width="100%"
+                  >
+                    {renderDesktopRow}
+                  </FixedSizeList>
                 )}
-                itemCount={rows.length}
-                itemSize={rowHeight} // depends on whether a column has bars (40px or 56px)
-                width="100%"
-              >
-                {renderDesktopRow}
-              </FixedSizeList>
+              </AutoSizer>
             </TableContentProvider>
           </div>
         </Box>

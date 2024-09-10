@@ -15,6 +15,7 @@ import { useTransitionStore } from "@/stores/transition";
 
 export const useStyles = makeStyles<{}, {}, "chartContainer">(() => ({
   chartContainer: {
+    overflow: "hidden",
     position: "relative",
     width: "100%",
     flexGrow: 1,
