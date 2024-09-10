@@ -28,7 +28,6 @@ export const usePreviewBreakpoint = () => {
       layoutRef.current = state.layout;
     }
   }, [breakpoint, state.layout]);
-
   return {
     previewBreakpoint: breakpoint,
     setPreviewBreakpoint: setBreakpoint,
