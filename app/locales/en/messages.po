@@ -302,7 +302,6 @@ msgid "controls.annotator.add-description-warning"
 msgstr "Please add a description"
 
 #: app/configurator/components/annotators.tsx
-#: app/configurator/components/annotators.tsx
 msgid "controls.annotator.add-tab-label-warning"
 msgstr "Please add a tab label"
 
@@ -601,7 +600,7 @@ msgstr "Zeros"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.label"
-msgstr "Label"
+msgstr "Tab label"
 
 #: app/components/rename-dialog.tsx
 #: app/configurator/components/field-i18n.ts
@@ -1430,7 +1429,7 @@ msgstr "Home"
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
 msgid "login.profile.my-drafts"
-msgstr "My drafts"
+msgstr "Drafts"
 
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx

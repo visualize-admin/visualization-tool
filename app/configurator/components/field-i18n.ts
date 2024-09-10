@@ -28,7 +28,10 @@ const fieldLabels = {
     id: "controls.description",
     message: "Description",
   }),
-  "controls.label": defineMessage({ id: "controls.label", message: "Label" }),
+  "controls.label": defineMessage({
+    id: "controls.label",
+    message: "Tab label",
+  }),
   "controls.column.stacked": defineMessage({
     id: "controls.column.stacked",
     message: "Stacked",
