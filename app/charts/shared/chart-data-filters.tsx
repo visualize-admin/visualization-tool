@@ -267,7 +267,9 @@ const DataFilter = ({
     );
     return otherKeys.length > 0
       ? interactiveFilters
-      : Object.fromEntries(
+      : // In case of only one filter, we want to constrain the values
+        // by config filters.
+        Object.fromEntries(
           Object.entries(filters).filter(([key]) => key !== dimensionIri)
         );
   }, [filters, interactiveFilters, dimensionIri]);

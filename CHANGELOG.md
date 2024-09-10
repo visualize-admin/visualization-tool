@@ -36,6 +36,7 @@ You can also check the
   - Improved scrolling behavior in the chart tabs
   - Shared time range filter now correctly positions the marks in the time
     slider
+  - Single interactive filters are now constrained by config filters
 - Style
   - Aligned editor and layouting page layouts
   - Removed dimension selection from modal when merging cubes
