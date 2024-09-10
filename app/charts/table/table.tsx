@@ -312,7 +312,7 @@ export const Table = () => {
           }}
         >
           <AutoSizer disableWidth>
-            {({ height }) => (
+            {({ height }: { height: number }) => (
               <VariableSizeList
                 key={rows.length} // Reset when groups are toggled because itemSize remains cached per index
                 height={height}
@@ -344,7 +344,7 @@ export const Table = () => {
               totalColumnsWidth={totalColumnsWidth}
             >
               <AutoSizer disableWidth>
-                {({ height }) => (
+                {({ height }: { height: number }) => (
                   <FixedSizeList
                     outerElementType={TableContentWrapper}
                     height={height}
