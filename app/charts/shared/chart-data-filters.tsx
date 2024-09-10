@@ -261,9 +261,18 @@ const DataFilter = ({
   const updateDataFilter = useChartInteractiveFilters(
     (d) => d.updateDataFilter
   );
-  const otherKeys = Object.keys(interactiveFilters).filter(
-    (key) => key !== dimensionIri
-  );
+  const queryFilters = useMemo(() => {
+    const otherKeys = Object.keys(interactiveFilters).filter(
+      (key) => key !== dimensionIri
+    );
+    return otherKeys.length > 0
+      ? interactiveFilters
+      : // In case of only one filter, we want to constrain the values
+        // by config filters.
+        Object.fromEntries(
+          Object.entries(filters).filter(([key]) => key !== dimensionIri)
+        );
+  }, [filters, interactiveFilters, dimensionIri]);
   const [{ data, fetching }] = useDataCubesComponentsQuery({
     variables: {
       sourceType: dataSource.type,
@@ -273,7 +282,7 @@ const DataFilter = ({
         {
           iri: cubeIri,
           componentIris: [dimensionIri],
-          filters: otherKeys.length > 0 ? interactiveFilters : undefined,
+          filters: queryFilters,
           loadValues: true,
         },
       ],
@@ -282,7 +291,7 @@ const DataFilter = ({
       // If this is not present, we'll have outdated dimension
       // values after we change the filter order.
       // @ts-ignore
-      filterKeys: otherKeys.join(", "),
+      filterKeys: Object.keys(queryFilters).join(", "),
     },
     keepPreviousData: true,
   });
