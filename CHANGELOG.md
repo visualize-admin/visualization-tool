@@ -11,6 +11,10 @@ You can also check the
 
 # Unreleased
 
+Nothing yet.
+
+# [4.8.0] - 2024-09-11
+
 - Features
   - It's now possible to label individual chart tabs
   - Time is now displayed in addition to date in `Last edit` column in user
