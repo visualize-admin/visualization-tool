@@ -11,7 +11,11 @@ import { match } from "ts-pattern";
 
 import { useStyles as useChartContainerStyles } from "@/charts/shared/containers";
 import { getChartWrapperId } from "@/components/chart-panel";
-import { hasChartConfigs, isLayouting } from "@/configurator";
+import {
+  hasChartConfigs,
+  isLayouting,
+  ReactGridLayoutType,
+} from "@/configurator";
 import { useTimeout } from "@/hooks/use-timeout";
 import { useConfiguratorState } from "@/src";
 
@@ -328,7 +332,7 @@ export const generateLayout = function ({
   maxHeight?: number;
   layout: "horizontal" | "vertical" | "wide" | "tall" | "tiles";
   resizeHandles?: ResizeHandle[];
-}) {
+}): ReactGridLayoutType[] {
   return map(range(0, count), (_item, i) => {
     return match(layout)
       .with("horizontal", () => {

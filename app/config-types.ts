@@ -1119,6 +1119,7 @@ const ReactGridLayoutType = t.type({
   i: t.string,
   resizeHandles: t.union([t.array(ResizeHandle), t.undefined]),
 });
+export type ReactGridLayoutType = t.TypeOf<typeof ReactGridLayoutType>;
 
 export const ReactGridLayoutsType = t.record(
   t.string,
