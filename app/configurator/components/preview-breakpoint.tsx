@@ -36,7 +36,7 @@ export const PreviewContainer = ({
 }) => {
   const classes = useStyles();
   const { breakpoints } = useTheme();
-  const maxWidth = useMemo(() => {
+  const width = useMemo(() => {
     if (breakpoint) {
       switch (breakpoint) {
         case "xl":
@@ -55,8 +55,16 @@ export const PreviewContainer = ({
     return singleColumn ? theme.breakpoints.values.lg - 1 : "100%";
   }, [breakpoint, breakpoints, singleColumn]);
   return (
-    <div className={classes.container} style={{ maxWidth }}>
-      {children}
+    <div
+      className={classes.container}
+      style={{ marginTop: breakpoint ? "3rem" : 0 }}
+    >
+      <div
+        className={classes.chartContainer}
+        style={{ width, paddingTop: breakpoint ? "0.5rem" : 0 }}
+      >
+        {children}
+      </div>
     </div>
   );
 };
@@ -149,7 +157,14 @@ export const PreviewBreakpointToggleMenu = ({
 const useStyles = makeStyles<Theme>((theme) => ({
   container: {
     width: "100%",
+    overflowX: "auto",
+    // Show the scrollbar on top
+    transform: "rotateX(180deg)",
+  },
+  chartContainer: {
     margin: "0 auto",
+    // Show the scrollbar on top
+    transform: "rotateX(180deg)",
   },
   toggleButtonGroup: {
     float: "right",
