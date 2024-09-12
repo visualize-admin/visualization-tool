@@ -20,23 +20,12 @@ import { Icon, IconName } from "@/icons";
 type PreviewBreakpoint = "lg" | "md" | "sm";
 
 export const usePreviewBreakpoint = () => {
-  const [state] = useConfiguratorState(isLayouting);
   const [breakpoint, setBreakpoint] = useState<PreviewBreakpoint | null>(null);
-  const layoutRef = useRef(state.layout);
-  useEffect(() => {
-    if (!breakpoint) {
-      layoutRef.current = state.layout;
-    }
-  }, [breakpoint, state.layout]);
   return {
     previewBreakpoint: breakpoint,
     setPreviewBreakpoint: setBreakpoint,
-    previewBreakpointLayout: layoutRef.current,
   };
 };
-
-const SINGLE_COLUMN_MAX_WIDTH = 1280;
-const PREVIEW_CONTAINER_PADDING = 216;
 
 export const PreviewContainer = ({
   children,

@@ -520,8 +520,7 @@ const LayoutingStep = () => {
     }
   }, [state.layout]);
 
-  const { previewBreakpoint, setPreviewBreakpoint, previewBreakpointLayout } =
-    usePreviewBreakpoint();
+  const { previewBreakpoint, setPreviewBreakpoint } = usePreviewBreakpoint();
 
   const handleLayoutChange = useCallback(
     (
@@ -675,9 +674,7 @@ const LayoutingStep = () => {
             dispatch({
               type: "LAYOUT_CHANGED",
               value: {
-                ...(previewBreakpoint === value
-                  ? previewBreakpointLayout
-                  : state.layout),
+                ...state.layout,
                 activeField: undefined,
               },
             });
