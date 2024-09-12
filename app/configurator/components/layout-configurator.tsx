@@ -576,6 +576,9 @@ const migrateLayout = (
       ...layout,
       layout: newLayoutType,
       layouts,
+      layoutsMetadata: Object.fromEntries(
+        chartConfigs.map(({ key }) => [key, { initialized: false }])
+      ),
     };
   } else {
     return {

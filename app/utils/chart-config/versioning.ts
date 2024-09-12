@@ -959,7 +959,7 @@ export const migrateChartConfig = makeMigrate<ChartConfig>(
   }
 );
 
-export const CONFIGURATOR_STATE_VERSION = "3.7.0";
+export const CONFIGURATOR_STATE_VERSION = "3.8.0";
 
 export const configuratorStateMigrations: Migration[] = [
   {
@@ -1408,6 +1408,49 @@ export const configuratorStateMigrations: Migration[] = [
         }
 
         draft.chartConfigs = chartConfigs;
+      });
+    },
+  },
+  {
+    description: "ALL (add layoutsMetadata to free canvas layout)",
+    from: "3.7.0",
+    to: "3.8.0",
+    up: (config) => {
+      const newConfig = {
+        ...config,
+        version: "3.8.0",
+      };
+
+      return produce(newConfig, (draft: any) => {
+        if (
+          draft.layout.type === "dashboard" &&
+          draft.layout.layout === "canvas"
+        ) {
+          draft.layout.layoutsMetadata = draft.chartConfigs.reduce(
+            (acc: any, chartConfig: any) => {
+              acc[chartConfig.key] = {
+                initialized: true,
+              };
+              return acc;
+            },
+            {}
+          );
+        }
+      });
+    },
+    down: (config) => {
+      const newConfig = {
+        ...config,
+        version: "3.7.0",
+      };
+
+      return produce(newConfig, (draft: any) => {
+        if (
+          draft.layout.type === "dashboard" &&
+          draft.layout.layout === "canvas"
+        ) {
+          delete draft.layout.layoutsMetadata;
+        }
       });
     },
   },
