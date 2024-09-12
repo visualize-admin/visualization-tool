@@ -9,15 +9,13 @@ import {
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { ReactNode, useMemo, useState } from "react";
 
-import {
-  isLayouting,
-  useConfiguratorState,
-} from "@/configurator/configurator-state";
+import { FREE_CANVAS_BREAKPOINTS } from "@/components/react-grid";
 import { Icon, IconName } from "@/icons";
+import { theme } from "@/themes/federal";
 
-type PreviewBreakpoint = "lg" | "md" | "sm";
+type PreviewBreakpoint = keyof typeof FREE_CANVAS_BREAKPOINTS;
 
 export const usePreviewBreakpoint = () => {
   const [breakpoint, setBreakpoint] = useState<PreviewBreakpoint | null>(null);
@@ -32,7 +30,7 @@ export const PreviewContainer = ({
   breakpoint,
   singleColumn,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
   breakpoint: PreviewBreakpoint | null;
   singleColumn?: boolean;
 }) => {
@@ -41,18 +39,20 @@ export const PreviewContainer = ({
   const maxWidth = useMemo(() => {
     if (breakpoint) {
       switch (breakpoint) {
+        case "xl":
+          return breakpoints.values.lg - 1;
         case "lg":
-          return `calc(100% - ${PREVIEW_CONTAINER_PADDING}px)`;
+          return breakpoints.values.md - 1;
         case "md":
-          return `min(calc(100% - ${PREVIEW_CONTAINER_PADDING}px), ${breakpoints.values.md}px)`;
+          return breakpoints.values.sm - 1;
         case "sm":
-          return 480;
+          return FREE_CANVAS_BREAKPOINTS.md;
         default:
           const _exhaustiveCheck: never = breakpoint;
           return _exhaustiveCheck;
       }
     }
-    return singleColumn ? SINGLE_COLUMN_MAX_WIDTH : "100%";
+    return singleColumn ? theme.breakpoints.values.lg - 1 : "100%";
   }, [breakpoint, breakpoints, singleColumn]);
   return (
     <div className={classes.container} style={{ maxWidth }}>
@@ -75,11 +75,19 @@ export const PreviewBreakpointToggleMenu = ({
     title: string;
   }[] = [
     {
-      breakpoint: "lg",
+      breakpoint: "xl",
       iconName: "desktop",
       title: t({
+        id: "controls.layout.preview-xl",
+        message: "Preview using extra large width",
+      }),
+    },
+    {
+      breakpoint: "lg",
+      iconName: "laptop",
+      title: t({
         id: "controls.layout.preview-lg",
-        message: "Preview using available width",
+        message: "Preview using large width",
       }),
     },
     {

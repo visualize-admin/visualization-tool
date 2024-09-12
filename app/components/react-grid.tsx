@@ -39,7 +39,13 @@ export const MIN_H = 1;
 /** In grid unit */
 const MAX_W = 4;
 
-export const COLS = { lg: 4, md: 3, sm: 2, xs: 1, xxs: 1 };
+export const COLS = { xl: 4, lg: 3, md: 2, sm: 1 };
+export const FREE_CANVAS_BREAKPOINTS = {
+  xl: theme.breakpoints.values.md,
+  lg: theme.breakpoints.values.sm,
+  md: 480,
+  sm: 0,
+};
 const ROW_HEIGHT = 100;
 
 const useStyles = makeStyles((theme: Theme) => ({
