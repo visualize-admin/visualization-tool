@@ -6,11 +6,10 @@ export const useChartTheme = () => {
   const theme = useTheme();
   const labelColor = theme.palette.grey[800];
   const legendLabelColor = theme.palette.grey[700];
-  const legendFontSize = 10;
   const domainColor = theme.palette.grey[800];
   const gridColor = theme.palette.grey[300];
   const fontFamily = theme.typography.fontFamily as string;
-  const axisLabelFontSize = 14;
+  const axisLabelFontSize = 12;
   const axisLabelFontWeight = 500;
   const axisLabelColor = theme.palette.grey[800];
   const markBorderColor = theme.palette.grey[100];
@@ -25,7 +24,6 @@ export const useChartTheme = () => {
     axisLabelFontWeight,
     labelColor,
     labelFontSize: TICK_FONT_SIZE,
-    legendFontSize,
     domainColor,
     gridColor,
     legendLabelColor,
