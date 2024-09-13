@@ -262,17 +262,8 @@ const DataFilter = ({
     (d) => d.updateDataFilter
   );
   const queryFilters = useMemo(() => {
-    const otherKeys = Object.keys(interactiveFilters).filter(
-      (key) => key !== dimensionIri
-    );
-    return otherKeys.length > 0
-      ? interactiveFilters
-      : // In case of only one filter, we want to constrain the values
-        // by config filters.
-        Object.fromEntries(
-          Object.entries(filters).filter(([key]) => key !== dimensionIri)
-        );
-  }, [filters, interactiveFilters, dimensionIri]);
+    return getInteractiveQueryFilters({ filters, interactiveFilters });
+  }, [filters, interactiveFilters]);
   const [{ data, fetching }] = useDataCubesComponentsQuery({
     variables: {
       sourceType: dataSource.type,
@@ -377,6 +368,39 @@ const DataFilter = ({
   ) : (
     <Loading />
   );
+};
+
+// We need to include filters that are not interactive filters, to only
+// show values that make sense in the context of the current filters.
+export const getInteractiveQueryFilters = ({
+  filters,
+  interactiveFilters,
+}: {
+  filters: Filters;
+  interactiveFilters: Filters;
+}) => {
+  const orderedNotInteractiveFilters = Object.fromEntries(
+    Object.entries(filters)
+      .filter(([k]) => !(k in interactiveFilters))
+      .map(([k, v], i) => {
+        return [k, { ...v, position: i }];
+      })
+  );
+  const orderedInteractiveFilters = Object.fromEntries(
+    Object.entries(interactiveFilters).map(([k, v], i) => {
+      return [
+        k,
+        {
+          ...v,
+          position: i + Object.keys(orderedNotInteractiveFilters).length,
+        },
+      ];
+    })
+  );
+  return {
+    ...orderedNotInteractiveFilters,
+    ...orderedInteractiveFilters,
+  };
 };
 
 export type DataFilterGenericDimensionProps = {
