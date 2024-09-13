@@ -436,7 +436,10 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
               chartConfig={chartConfig}
               dashboardFilters={state.dashboardFilters}
               components={allComponents}
-              showVisualizeLink={state.chartConfigs.length === 1}
+              showVisualizeLink={
+                state.chartConfigs.length === 1 &&
+                state.layout.type !== "dashboard"
+              }
             />
           </InteractiveFiltersChartProvider>
         </LoadingStateProvider>
