@@ -6,7 +6,6 @@ import { Icon } from "@/icons";
 
 const useStyles = makeStyles<Theme>((theme) => ({
   root: {
-    float: "left",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",

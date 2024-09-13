@@ -55,10 +55,7 @@ export const PreviewContainer = ({
     return singleColumn ? theme.breakpoints.values.lg - 1 : "100%";
   }, [breakpoint, breakpoints, singleColumn]);
   return (
-    <div
-      className={classes.container}
-      style={{ marginTop: breakpoint ? "3rem" : 0 }}
-    >
+    <div className={classes.container}>
       <div
         className={classes.chartContainer}
         style={{ width, paddingTop: breakpoint ? "0.5rem" : 0 }}
@@ -157,17 +154,15 @@ export const PreviewBreakpointToggleMenu = ({
 const useStyles = makeStyles<Theme>((theme) => ({
   container: {
     width: "100%",
-    overflowX: "auto",
-    // Show the scrollbar on top
-    transform: "rotateX(180deg)",
+    height: "calc(100% - 2rem)",
+    overflowY: "auto",
   },
   chartContainer: {
     margin: "0 auto",
-    // Show the scrollbar on top
-    transform: "rotateX(180deg)",
+    paddingBottom: "2rem",
   },
   toggleButtonGroup: {
-    float: "right",
+    marginLeft: "auto",
     backgroundColor: theme.palette.background.paper,
   },
   toggleButton: {

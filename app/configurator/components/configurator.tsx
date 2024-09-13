@@ -456,7 +456,7 @@ const ConfigureChartStep = () => {
         </PanelHeaderLayout>
         <PanelBodyWrapper
           type="L"
-          sx={{
+          style={{
             flexGrow: 1,
             display: "flex",
             height: "100%",
@@ -474,7 +474,10 @@ const ConfigureChartStep = () => {
             />
           )}
         </PanelBodyWrapper>
-        <PanelBodyWrapper type="M">
+        <PanelBodyWrapper
+          type="M"
+          style={{ overflowX: "hidden", overflowY: "auto" }}
+        >
           <ChartPreview dataSource={state.dataSource} />
         </PanelBodyWrapper>
         <ConfiguratorDrawer
@@ -664,23 +667,28 @@ const LayoutingStep = () => {
       >
         <LayoutConfigurator />
       </PanelBodyWrapper>
-      <PanelBodyWrapper type="M">
-        {!isSingleURLs && previewBreakpoint && (
-          <ShowDrawerButton onClick={() => setPreviewBreakpoint(null)} />
-        )}
-        <PreviewBreakpointToggleMenu
-          value={previewBreakpoint}
-          onChange={(value) => {
-            dispatch({
-              type: "LAYOUT_CHANGED",
-              value: {
-                ...state.layout,
-                activeField: undefined,
-              },
-            });
-            setPreviewBreakpoint(previewBreakpoint === value ? null : value);
-          }}
-        />
+      <PanelBodyWrapper
+        type="M"
+        style={{ overflowY: "hidden", overflowX: "auto" }}
+      >
+        <Box sx={{ display: "flex", pb: 4 }}>
+          {!isSingleURLs && previewBreakpoint && (
+            <ShowDrawerButton onClick={() => setPreviewBreakpoint(null)} />
+          )}
+          <PreviewBreakpointToggleMenu
+            value={previewBreakpoint}
+            onChange={(value) => {
+              dispatch({
+                type: "LAYOUT_CHANGED",
+                value: {
+                  ...state.layout,
+                  activeField: undefined,
+                },
+              });
+              setPreviewBreakpoint(previewBreakpoint === value ? null : value);
+            }}
+          />
+        </Box>
         <PreviewContainer
           breakpoint={previewBreakpoint}
           singleColumn={isSingleURLs}
