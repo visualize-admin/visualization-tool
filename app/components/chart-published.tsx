@@ -1,5 +1,5 @@
 import { Trans } from "@lingui/macro";
-import { Box, Theme, useMediaQuery } from "@mui/material";
+import { Box, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 import { forwardRef, useCallback, useEffect, useMemo, useRef } from "react";
@@ -53,7 +53,6 @@ import {
   InteractiveFiltersChartProvider,
   InteractiveFiltersProvider,
 } from "@/stores/interactive-filters";
-import { theme } from "@/themes/federal";
 
 type ChartPublishedProps = {
   configKey?: string;
@@ -109,9 +108,7 @@ export const ChartPublished = (props: ChartPublishedProps) => {
   const locale = useLocale();
   const metadataPanelStore = useMemo(() => createMetadataPanelStore(), []);
 
-  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-  const isDesktop = useMediaQuery(theme.breakpoints.up("lg"));
-  const isTablet = !isMobile && !isDesktop;
+  const publishedChartClasses = usePublishedChartStyles({ shrink: true });
 
   const renderChart = useCallback(
     (chartConfig: ChartConfig) => (
@@ -127,22 +124,11 @@ export const ChartPublished = (props: ChartPublishedProps) => {
     [configKey, dataSource, metadataPanelStore, state]
   );
 
-  const getPadding = () => {
-    if (isDesktop) return 32;
-    if (isTablet) return 24;
-    if (isMobile) return "24px 16px 8px 16px";
-  };
-
   return (
     <MetadataPanelStoreContext.Provider value={metadataPanelStore}>
       <InteractiveFiltersProvider chartConfigs={state.chartConfigs}>
         {state.layout.type === "dashboard" ? (
-          <Box
-            style={{
-              padding: getPadding(),
-              backgroundColor: theme.palette.grey[200],
-            }}
-          >
+          <Box className={publishedChartClasses.dashboardBoxWrapper}>
             <Box
               sx={{
                 mb:
@@ -159,14 +145,7 @@ export const ChartPublished = (props: ChartPublishedProps) => {
                 <Description text={state.layout.meta.description[locale]} />
               )}
             </Box>
-            <Flex
-              style={{
-                gap: 16,
-              }}
-              sx={{
-                flexDirection: "column",
-              }}
-            >
+            <Flex sx={{ flexDirection: "column", gap: 4 }}>
               <ChartPanelLayout
                 layoutType={state.layout.layout}
                 chartConfigs={state.chartConfigs}
@@ -224,6 +203,19 @@ const usePublishedChartStyles = makeStyles<Theme, { shrink: boolean }>(
       paddingLeft: ({ shrink }) =>
         `calc(${theme.spacing(5)} + ${shrink ? DRAWER_WIDTH : 0}px)`,
       transition: "padding 0.25s ease",
+    },
+    dashboardBoxWrapper: {
+      [theme.breakpoints.up("xs")]: {
+        padding: theme.spacing(5, 4, 2, 4),
+      },
+      [theme.breakpoints.up("md")]: {
+        padding: theme.spacing(5),
+      },
+      [theme.breakpoints.up("lg")]: {
+        padding: theme.spacing(6),
+      },
+
+      backgroundColor: theme.palette.grey[200],
     },
   })
 );
