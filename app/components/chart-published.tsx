@@ -1,5 +1,5 @@
 import { Trans } from "@lingui/macro";
-import { Box, Theme } from "@mui/material";
+import { Box, Theme, useMediaQuery } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 import { forwardRef, useCallback, useEffect, useMemo, useRef } from "react";
@@ -10,7 +10,7 @@ import { extractChartConfigsComponentIris } from "@/charts/shared/chart-helpers"
 import { LoadingStateProvider } from "@/charts/shared/chart-loading-state";
 import { isUsingImputation } from "@/charts/shared/imputation";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
-import { ChartFootnotes } from "@/components/chart-footnotes";
+import { ChartFootnotes, VisualizeLink } from "@/components/chart-footnotes";
 import { ChartPanelLayout, ChartWrapper } from "@/components/chart-panel";
 import {
   ChartControls,
@@ -53,6 +53,7 @@ import {
   InteractiveFiltersChartProvider,
   InteractiveFiltersProvider,
 } from "@/stores/interactive-filters";
+import { theme } from "@/themes/federal";
 
 type ChartPublishedProps = {
   configKey?: string;
@@ -107,6 +108,11 @@ export const ChartPublished = (props: ChartPublishedProps) => {
   const { dataSource } = state;
   const locale = useLocale();
   const metadataPanelStore = useMemo(() => createMetadataPanelStore(), []);
+
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const isDesktop = useMediaQuery(theme.breakpoints.up("lg"));
+  const isTablet = !isMobile && !isDesktop;
+
   const renderChart = useCallback(
     (chartConfig: ChartConfig) => (
       <ChartPublishedIndividualChart
@@ -121,11 +127,22 @@ export const ChartPublished = (props: ChartPublishedProps) => {
     [configKey, dataSource, metadataPanelStore, state]
   );
 
+  const getPadding = () => {
+    if (isDesktop) return 32;
+    if (isTablet) return 24;
+    if (isMobile) return "24px 16px 8px 16px";
+  };
+
   return (
     <MetadataPanelStoreContext.Provider value={metadataPanelStore}>
       <InteractiveFiltersProvider chartConfigs={state.chartConfigs}>
         {state.layout.type === "dashboard" ? (
-          <>
+          <Box
+            style={{
+              padding: getPadding(),
+              backgroundColor: theme.palette.grey[200],
+            }}
+          >
             <Box
               sx={{
                 mb:
@@ -142,13 +159,22 @@ export const ChartPublished = (props: ChartPublishedProps) => {
                 <Description text={state.layout.meta.description[locale]} />
               )}
             </Box>
-
-            <ChartPanelLayout
-              layoutType={state.layout.layout}
-              chartConfigs={state.chartConfigs}
-              renderChart={renderChart}
-            />
-          </>
+            <Flex
+              style={{
+                gap: 16,
+              }}
+              sx={{
+                flexDirection: "column",
+              }}
+            >
+              <ChartPanelLayout
+                layoutType={state.layout.layout}
+                chartConfigs={state.chartConfigs}
+                renderChart={renderChart}
+              />
+              <VisualizeLink />
+            </Flex>
+          </Box>
         ) : (
           <>
             <Flex
