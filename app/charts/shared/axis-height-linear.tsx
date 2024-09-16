@@ -51,6 +51,9 @@ export const AxisHeightLinear = () => {
     textColor: labelColor,
   });
 
+  const textIsOverlapping = axisTitleWidth > state.bounds.chartWidth;
+  const overlappingAmount = Math.ceil(axisTitleWidth / state.bounds.chartWidth);
+
   return (
     <>
       {state.chartType === "comboLineSingle" ? (
@@ -61,7 +64,10 @@ export const AxisHeightLinear = () => {
           {state.yAxisLabel}
         </text>
       ) : (
-        <foreignObject width={axisTitleWidth} height={axisLabelFontSize * 2}>
+        <foreignObject
+          width={textIsOverlapping ? state.bounds.chartWidth : axisTitleWidth}
+          height={(axisLabelFontSize + TICK_PADDING) * overlappingAmount * 2}
+        >
           <OpenMetadataPanelWrapper component={state.yMeasure}>
             <span style={{ fontSize: axisLabelFontSize }}>
               {state.yAxisLabel}

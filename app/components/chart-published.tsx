@@ -10,7 +10,7 @@ import { extractChartConfigsComponentIris } from "@/charts/shared/chart-helpers"
 import { LoadingStateProvider } from "@/charts/shared/chart-loading-state";
 import { isUsingImputation } from "@/charts/shared/imputation";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
-import { ChartFootnotes } from "@/components/chart-footnotes";
+import { ChartFootnotes, VisualizeLink } from "@/components/chart-footnotes";
 import { ChartPanelLayout, ChartWrapper } from "@/components/chart-panel";
 import {
   ChartControls,
@@ -107,6 +107,9 @@ export const ChartPublished = (props: ChartPublishedProps) => {
   const { dataSource } = state;
   const locale = useLocale();
   const metadataPanelStore = useMemo(() => createMetadataPanelStore(), []);
+
+  const publishedChartClasses = usePublishedChartStyles({ shrink: true });
+
   const renderChart = useCallback(
     (chartConfig: ChartConfig) => (
       <ChartPublishedIndividualChart
@@ -125,7 +128,7 @@ export const ChartPublished = (props: ChartPublishedProps) => {
     <MetadataPanelStoreContext.Provider value={metadataPanelStore}>
       <InteractiveFiltersProvider chartConfigs={state.chartConfigs}>
         {state.layout.type === "dashboard" ? (
-          <>
+          <Box className={publishedChartClasses.dashboardBoxWrapper}>
             <Box
               sx={{
                 mb:
@@ -142,13 +145,15 @@ export const ChartPublished = (props: ChartPublishedProps) => {
                 <Description text={state.layout.meta.description[locale]} />
               )}
             </Box>
-
-            <ChartPanelLayout
-              layoutType={state.layout.layout}
-              chartConfigs={state.chartConfigs}
-              renderChart={renderChart}
-            />
-          </>
+            <Flex sx={{ flexDirection: "column", gap: 4 }}>
+              <ChartPanelLayout
+                layoutType={state.layout.layout}
+                chartConfigs={state.chartConfigs}
+                renderChart={renderChart}
+              />
+              <VisualizeLink />
+            </Flex>
+          </Box>
         ) : (
           <>
             <Flex
@@ -198,6 +203,19 @@ const usePublishedChartStyles = makeStyles<Theme, { shrink: boolean }>(
       paddingLeft: ({ shrink }) =>
         `calc(${theme.spacing(5)} + ${shrink ? DRAWER_WIDTH : 0}px)`,
       transition: "padding 0.25s ease",
+    },
+    dashboardBoxWrapper: {
+      [theme.breakpoints.up("xs")]: {
+        padding: theme.spacing(5, 4, 2, 4),
+      },
+      [theme.breakpoints.up("md")]: {
+        padding: theme.spacing(5),
+      },
+      [theme.breakpoints.up("lg")]: {
+        padding: theme.spacing(6),
+      },
+
+      backgroundColor: theme.palette.grey[200],
     },
   })
 );
@@ -418,7 +436,10 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
               chartConfig={chartConfig}
               dashboardFilters={state.dashboardFilters}
               components={allComponents}
-              showVisualizeLink={state.chartConfigs.length === 1}
+              showVisualizeLink={
+                state.chartConfigs.length === 1 &&
+                state.layout.type !== "dashboard"
+              }
             />
           </InteractiveFiltersChartProvider>
         </LoadingStateProvider>
