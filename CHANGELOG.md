@@ -19,6 +19,10 @@ You can also check the
   - Preview mode now takes the real size of the breakpoint, making the area
     horizontally scrollable in case the screen size is smaller than the
     breakpoint
+- Fixes
+  - Interactive filters in the published mode and now only showing combinations
+    of filters that are actually present in the data, taking configurator
+    filters into account
 
 # [4.8.0] - 2024-09-11
 
