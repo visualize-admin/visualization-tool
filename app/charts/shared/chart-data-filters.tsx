@@ -2,6 +2,8 @@ import { t, Trans } from "@lingui/macro";
 import { Box, Button, SelectChangeEvent, Typography } from "@mui/material";
 import isEmpty from "lodash/isEmpty";
 import isEqual from "lodash/isEqual";
+import mapValues from "lodash/mapValues";
+import pickBy from "lodash/pickBy";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useClient } from "urql";
 
@@ -379,28 +381,15 @@ export const getInteractiveQueryFilters = ({
   filters: Filters;
   interactiveFilters: Filters;
 }) => {
-  const orderedNotInteractiveFilters = Object.fromEntries(
-    Object.entries(filters)
-      .filter(([k]) => !(k in interactiveFilters))
-      .map(([k, v], i) => {
-        return [k, { ...v, position: i }];
-      })
+  const nonInteractiveFilters = pickBy(
+    filters,
+    (_, k) => !(k in interactiveFilters)
   );
-  const orderedInteractiveFilters = Object.fromEntries(
-    Object.entries(interactiveFilters).map(([k, v], i) => {
-      return [
-        k,
-        {
-          ...v,
-          position: i + Object.keys(orderedNotInteractiveFilters).length,
-        },
-      ];
-    })
+  let i = 0;
+  return mapValues(
+    { ...nonInteractiveFilters, ...interactiveFilters },
+    (v) => ({ ...v, position: i++ })
   );
-  return {
-    ...orderedNotInteractiveFilters,
-    ...orderedInteractiveFilters,
-  };
 };
 
 export type DataFilterGenericDimensionProps = {
