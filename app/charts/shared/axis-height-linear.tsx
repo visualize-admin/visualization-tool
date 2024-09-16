@@ -66,7 +66,7 @@ export const AxisHeightLinear = () => {
       ) : (
         <foreignObject
           width={textIsOverlapping ? state.bounds.chartWidth : axisTitleWidth}
-          height={axisLabelFontSize * overlappingAmount * 2}
+          height={(axisLabelFontSize + TICK_PADDING) * overlappingAmount * 2}
         >
           <OpenMetadataPanelWrapper component={state.yMeasure}>
             <span style={{ fontSize: axisLabelFontSize }}>
