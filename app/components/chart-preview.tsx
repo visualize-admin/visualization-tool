@@ -113,7 +113,7 @@ const useStyles = makeStyles(() => ({
   canvasChartPanelLayout: {
     // Provide some space at the bottom of the canvas layout to make it possible
     // to resize vertically the last charts
-    marginBottom: "10rem",
+    paddingBottom: "10rem",
   },
 }));
 

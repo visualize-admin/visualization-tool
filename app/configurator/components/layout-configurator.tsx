@@ -14,12 +14,16 @@ import { useCallback, useEffect, useMemo, useRef } from "react";
 import { DataFilterGenericDimensionProps } from "@/charts/shared/chart-data-filters";
 import { useCombinedTemporalDimension } from "@/charts/shared/use-combined-temporal-dimension";
 import { Select } from "@/components/form";
-import { generateLayout } from "@/components/react-grid";
+import {
+  FREE_CANVAS_BREAKPOINTS,
+  generateLayout,
+} from "@/components/react-grid";
 import {
   ChartConfig,
   DashboardTimeRangeFilter,
   getChartConfig,
   LayoutDashboard,
+  ReactGridLayoutType,
 } from "@/config-types";
 import { LayoutAnnotator } from "@/configurator/components/annotators";
 import { DataFilterSelectGeneric } from "@/configurator/components/chart-configurator";
@@ -552,21 +556,29 @@ const migrateLayout = (
   chartConfigs: ChartConfig[]
 ): LayoutDashboard => {
   if (newLayoutType === "canvas") {
-    const generated = generateLayout({
+    const defaultLayout = generateLayout({
       count: chartConfigs.length,
       layout: "tiles",
-    });
+    }).map((l, i) => ({
+      ...l,
+      i: chartConfigs[i].key,
+    }));
+    const layouts: Record<
+      keyof typeof FREE_CANVAS_BREAKPOINTS,
+      ReactGridLayoutType[]
+    > = {
+      xl: defaultLayout,
+      lg: defaultLayout,
+      md: defaultLayout,
+      sm: defaultLayout,
+    };
     return {
       ...layout,
       layout: newLayoutType,
-      layouts: {
-        lg: generated.map((l, i) => ({
-          ...l,
-          // We must pay attention to correctly change the i value to
-          // chart config key, as it is used to identify the layout
-          i: chartConfigs[i].key,
-        })),
-      },
+      layouts,
+      layoutsMetadata: Object.fromEntries(
+        chartConfigs.map(({ key }) => [key, { initialized: false }])
+      ),
     };
   } else {
     return {

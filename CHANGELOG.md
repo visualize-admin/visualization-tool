@@ -11,7 +11,14 @@ You can also check the
 
 # Unreleased
 
-Nothing yet.
+- Features
+  - Added a new preview option (xl) in the layouting step
+  - Changes made in the preview mode are now persisted in the free canvas
+    layout, so that the user can tailor the dashboard's layout in every
+    breakpoint size
+  - Preview mode now takes the real size of the breakpoint, making the area
+    horizontally scrollable in case the screen size is smaller than the
+    breakpoint
 
 # [4.8.0] - 2024-09-11
 

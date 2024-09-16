@@ -9,65 +9,59 @@ import {
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { ReactNode, useMemo, useState } from "react";
 
-import {
-  isLayouting,
-  useConfiguratorState,
-} from "@/configurator/configurator-state";
+import { FREE_CANVAS_BREAKPOINTS } from "@/components/react-grid";
 import { Icon, IconName } from "@/icons";
+import { theme } from "@/themes/federal";
 
-type PreviewBreakpoint = "lg" | "md" | "sm";
+type PreviewBreakpoint = keyof typeof FREE_CANVAS_BREAKPOINTS;
 
 export const usePreviewBreakpoint = () => {
-  const [state] = useConfiguratorState(isLayouting);
   const [breakpoint, setBreakpoint] = useState<PreviewBreakpoint | null>(null);
-  const layoutRef = useRef(state.layout);
-  useEffect(() => {
-    if (!breakpoint) {
-      layoutRef.current = state.layout;
-    }
-  }, [breakpoint, state.layout]);
   return {
     previewBreakpoint: breakpoint,
     setPreviewBreakpoint: setBreakpoint,
-    previewBreakpointLayout: layoutRef.current,
   };
 };
-
-const SINGLE_COLUMN_MAX_WIDTH = 1280;
-const PREVIEW_CONTAINER_PADDING = 216;
 
 export const PreviewContainer = ({
   children,
   breakpoint,
   singleColumn,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
   breakpoint: PreviewBreakpoint | null;
   singleColumn?: boolean;
 }) => {
   const classes = useStyles();
   const { breakpoints } = useTheme();
-  const maxWidth = useMemo(() => {
+  const width = useMemo(() => {
     if (breakpoint) {
       switch (breakpoint) {
+        case "xl":
+          return breakpoints.values.lg - 1;
         case "lg":
-          return `calc(100% - ${PREVIEW_CONTAINER_PADDING}px)`;
+          return breakpoints.values.md - 1;
         case "md":
-          return `min(calc(100% - ${PREVIEW_CONTAINER_PADDING}px), ${breakpoints.values.md}px)`;
+          return breakpoints.values.sm - 1;
         case "sm":
-          return 480;
+          return FREE_CANVAS_BREAKPOINTS.md;
         default:
           const _exhaustiveCheck: never = breakpoint;
           return _exhaustiveCheck;
       }
     }
-    return singleColumn ? SINGLE_COLUMN_MAX_WIDTH : "100%";
+    return singleColumn ? theme.breakpoints.values.lg - 1 : "100%";
   }, [breakpoint, breakpoints, singleColumn]);
   return (
-    <div className={classes.container} style={{ maxWidth }}>
-      {children}
+    <div className={classes.container}>
+      <div
+        className={classes.chartContainer}
+        style={{ width, paddingTop: breakpoint ? "0.5rem" : 0 }}
+      >
+        {children}
+      </div>
     </div>
   );
 };
@@ -86,11 +80,19 @@ export const PreviewBreakpointToggleMenu = ({
     title: string;
   }[] = [
     {
-      breakpoint: "lg",
+      breakpoint: "xl",
       iconName: "desktop",
       title: t({
+        id: "controls.layout.preview-xl",
+        message: "Preview using extra large width",
+      }),
+    },
+    {
+      breakpoint: "lg",
+      iconName: "laptop",
+      title: t({
         id: "controls.layout.preview-lg",
-        message: "Preview using available width",
+        message: "Preview using large width",
       }),
     },
     {
@@ -152,10 +154,15 @@ export const PreviewBreakpointToggleMenu = ({
 const useStyles = makeStyles<Theme>((theme) => ({
   container: {
     width: "100%",
+    height: "calc(100% - 2rem)",
+    overflowY: "auto",
+  },
+  chartContainer: {
     margin: "0 auto",
+    paddingBottom: "2rem",
   },
   toggleButtonGroup: {
-    float: "right",
+    marginLeft: "auto",
     backgroundColor: theme.palette.background.paper,
   },
   toggleButton: {

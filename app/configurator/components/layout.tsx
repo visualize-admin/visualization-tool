@@ -81,8 +81,6 @@ const useStyles = makeStyles<Theme>((theme) => ({
     gridArea: "left",
   },
   MPanelBodyWrapper: {
-    overflowX: "hidden",
-    overflowY: "auto",
     padding: theme.spacing(5),
     gridArea: "middle",
   },

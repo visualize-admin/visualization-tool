@@ -11,9 +11,16 @@ import { match } from "ts-pattern";
 
 import { useStyles as useChartContainerStyles } from "@/charts/shared/containers";
 import { getChartWrapperId } from "@/components/chart-panel";
-import { hasChartConfigs, isLayouting } from "@/configurator";
+import {
+  hasChartConfigs,
+  isLayouting,
+  LayoutDashboardFreeCanvas,
+  ReactGridLayoutType,
+} from "@/configurator";
 import { useTimeout } from "@/hooks/use-timeout";
 import { useConfiguratorState } from "@/src";
+import { theme } from "@/themes/federal";
+import { assert } from "@/utils/assert";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
@@ -39,7 +46,13 @@ export const MIN_H = 1;
 /** In grid unit */
 const MAX_W = 4;
 
-export const COLS = { lg: 4, md: 3, sm: 2, xs: 1, xxs: 1 };
+export const COLS = { xl: 4, lg: 3, md: 2, sm: 1 };
+export const FREE_CANVAS_BREAKPOINTS = {
+  xl: theme.breakpoints.values.md,
+  lg: theme.breakpoints.values.sm,
+  md: 480,
+  sm: 0,
+};
 const ROW_HEIGHT = 100;
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -212,7 +225,12 @@ export const ChartGridLayout = ({
   resize?: boolean;
 } & ComponentProps<typeof ResponsiveReactGridLayout>) => {
   const classes = useStyles();
-  const [state] = useConfiguratorState(hasChartConfigs);
+  const [state, dispatch] = useConfiguratorState(hasChartConfigs);
+  assert(
+    state.layout.type === "dashboard" && state.layout.layout === "canvas",
+    "ChartGridLayout can only be used in a canvas layout!"
+  );
+  const configLayout = state.layout as LayoutDashboardFreeCanvas;
   const allowHeightInitialization = isLayouting(state);
   const [mounted, setMounted] = useState(false);
   const mountedForSomeTime = useTimeout(500, mounted);
@@ -245,49 +263,78 @@ export const ChartGridLayout = ({
       return;
     }
 
-    const newLayouts = mapValues(enhancedLayouts, (chartLayouts) => {
-      return chartLayouts.map((chartLayout) => {
-        let minH = MIN_H;
+    const newLayouts = Object.fromEntries(
+      Object.entries(enhancedLayouts).map(([breakpoint, chartLayouts]) => {
+        return [
+          breakpoint,
+          chartLayouts.map((chartLayout) => {
+            if (configLayout.layoutsMetadata[chartLayout.i].initialized) {
+              return chartLayout;
+            }
 
-        const chartKey = chartLayout.i;
-        const wrapper: HTMLDivElement | null = document.querySelector(
-          `#${getChartWrapperId(chartKey)}`
-        );
+            let minH = MIN_H;
 
-        if (wrapper) {
-          const chartContainer: HTMLDivElement | null = wrapper.querySelector(
-            `.${chartContainerClasses.chartContainer}`
-          );
+            const chartKey = chartLayout.i;
+            const wrapper: HTMLDivElement | null = document.querySelector(
+              `#${getChartWrapperId(chartKey)}`
+            );
 
-          if (chartContainer) {
-            const minWrapperHeight =
-              wrapper.scrollHeight -
-              chartContainer.clientHeight +
-              CHART_GRID_MIN_HEIGHT;
-            minH = Math.max(MIN_H, Math.ceil(minWrapperHeight / ROW_HEIGHT));
-          }
-        }
+            if (wrapper) {
+              const chartContainer: HTMLDivElement | null =
+                wrapper.querySelector(
+                  `.${chartContainerClasses.chartContainer}`
+                );
 
-        return {
-          ...chartLayout,
-          maxW: MAX_W,
-          w: Math.min(MAX_W, chartLayout.w),
-          resizeHandles: resize ? availableHandles : [],
-          minH,
-          h: minH,
-        };
-      });
-    });
+              if (chartContainer) {
+                const minWrapperHeight =
+                  wrapper.scrollHeight -
+                  chartContainer.clientHeight +
+                  CHART_GRID_MIN_HEIGHT;
+                minH = Math.max(
+                  MIN_H,
+                  Math.ceil(minWrapperHeight / ROW_HEIGHT)
+                );
+              }
+            }
+
+            return {
+              ...chartLayout,
+              maxW: MAX_W,
+              w: Math.min(MAX_W, chartLayout.w),
+              resizeHandles: resize ? availableHandles : [],
+              minH,
+              h: minH,
+            };
+          }),
+        ];
+      })
+    );
 
     if (!isEqual(newLayouts, enhancedLayouts)) {
       setEnhancedLayouts(newLayouts);
+      dispatch({
+        type: "LAYOUT_CHANGED",
+        value: {
+          ...configLayout,
+          layouts: newLayouts,
+          layoutsMetadata: Object.fromEntries(
+            Object.entries(configLayout.layoutsMetadata).map(
+              ([chartId, metadata]) => {
+                return [chartId, { ...metadata, initialized: true }];
+              }
+            )
+          ),
+        },
+      });
     }
   }, [
     allowHeightInitialization,
     chartContainerClasses.chartContainer,
+    dispatch,
     enhancedLayouts,
     mountedForSomeTime,
     resize,
+    configLayout,
   ]);
 
   return (
@@ -322,7 +369,7 @@ export const generateLayout = function ({
   maxHeight?: number;
   layout: "horizontal" | "vertical" | "wide" | "tall" | "tiles";
   resizeHandles?: ResizeHandle[];
-}) {
+}): ReactGridLayoutType[] {
   return map(range(0, count), (_item, i) => {
     return match(layout)
       .with("horizontal", () => {

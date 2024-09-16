@@ -28,7 +28,7 @@ import {
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import { getCenteredTooltipPlacement } from "@/charts/shared/interaction/tooltip-box";
 import { getTickNumber } from "@/charts/shared/ticks";
-import { TICK_FONT_SIZE } from "@/charts/shared/use-chart-theme";
+import { TICK_FONT_SIZE, useChartTheme } from "@/charts/shared/use-chart-theme";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { ComboLineDualConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
@@ -36,6 +36,8 @@ import { truthy } from "@/domain/types";
 import { getTextWidth } from "@/utils/get-text-width";
 
 import { ChartProps } from "../shared/ChartProps";
+
+import { TITLE_VPADDING } from "./combo-line-container";
 
 export type ComboLineDualState = CommonChartState &
   ComboLineDualStateVariables &
@@ -199,6 +201,20 @@ const ComboLineDualChartProvider = (
   const variables = useComboLineDualStateVariables(chartProps);
   const data = useComboLineDualStateData(chartProps, variables);
   const state = useComboLineDualState(chartProps, variables, data);
+  const { bounds, y } = state;
+   
+
+  const { axisLabelFontSize } = useChartTheme();
+  const axisTitle = y['left'].label;
+  const axisTitleWidth =
+    getTextWidth(axisTitle, { fontSize: axisLabelFontSize }) + TICK_PADDING;
+  const otherAxisTitle = y['right'].label;
+  const otherAxisTitleWidth = getTextWidth(otherAxisTitle, { fontSize: axisLabelFontSize }) + TICK_PADDING;
+  const overLappingTitles = axisTitleWidth + otherAxisTitleWidth > bounds.chartWidth;
+
+  if (overLappingTitles) {
+    bounds.height += (axisLabelFontSize + TITLE_VPADDING); // Add space for the legend if titles are overlapping
+  }
 
   return (
     <ChartContext.Provider value={state}>{children}</ChartContext.Provider>
@@ -214,3 +230,4 @@ export const ComboLineDualChart = (
     </InteractionProvider>
   );
 };
+
