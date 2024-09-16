@@ -5,7 +5,9 @@ import { useState } from "react";
 import { Layouts } from "react-grid-layout";
 
 import { ChartPanelLayoutTypeProps } from "@/components/chart-panel";
-import ChartGridLayout from "@/components/react-grid";
+import ChartGridLayout, {
+  FREE_CANVAS_BREAKPOINTS,
+} from "@/components/react-grid";
 import { ReactGridLayoutsType, hasChartConfigs } from "@/configurator";
 import { useConfiguratorState } from "@/src";
 import { assert } from "@/utils/assert";
@@ -72,6 +74,7 @@ const ChartPanelLayoutCanvas = (props: ChartPanelLayoutTypeProps) => {
       resize={state.state === "LAYOUTING"}
       draggableHandle={`.${chartPanelLayoutGridClasses.dragHandle}`}
       onLayoutChange={(_l, allLayouts) => handleChangeLayouts(allLayouts)}
+      breakpoints={FREE_CANVAS_BREAKPOINTS}
     >
       {chartConfigs.map((chartConfig) => props.renderChart(chartConfig))}
     </ChartGridLayout>

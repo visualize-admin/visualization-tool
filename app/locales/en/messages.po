@@ -637,7 +637,7 @@ msgstr "Dashboard"
 
 #: app/configurator/components/preview-breakpoint.tsx
 msgid "controls.layout.preview-lg"
-msgstr "Preview using available width"
+msgstr "Preview using large width"
 
 #: app/configurator/components/preview-breakpoint.tsx
 msgid "controls.layout.preview-md"
@@ -646,6 +646,10 @@ msgstr "Preview using medium width"
 #: app/configurator/components/preview-breakpoint.tsx
 msgid "controls.layout.preview-sm"
 msgstr "Preview using small width"
+
+#: app/configurator/components/preview-breakpoint.tsx
+msgid "controls.layout.preview-xl"
+msgstr "Preview using extra large width"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.layout.singleURLs"

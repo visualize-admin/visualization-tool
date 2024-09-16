@@ -637,15 +637,19 @@ msgstr "Dashboard"
 
 #: app/configurator/components/preview-breakpoint.tsx
 msgid "controls.layout.preview-lg"
-msgstr ""
+msgstr "Anteprima con larghezza elevata"
 
 #: app/configurator/components/preview-breakpoint.tsx
 msgid "controls.layout.preview-md"
-msgstr ""
+msgstr "Anteprima utilizzando la larghezza media"
 
 #: app/configurator/components/preview-breakpoint.tsx
 msgid "controls.layout.preview-sm"
-msgstr ""
+msgstr "Anteprima utilizzando una larghezza ridotta"
+
+#: app/configurator/components/preview-breakpoint.tsx
+msgid "controls.layout.preview-xl"
+msgstr "Anteprima utilizzando larghezza extra large"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.layout.singleURLs"

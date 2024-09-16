@@ -1119,11 +1119,26 @@ const ReactGridLayoutType = t.type({
   i: t.string,
   resizeHandles: t.union([t.array(ResizeHandle), t.undefined]),
 });
+export type ReactGridLayoutType = t.TypeOf<typeof ReactGridLayoutType>;
 
 export const ReactGridLayoutsType = t.record(
   t.string,
   t.array(ReactGridLayoutType)
 );
+export type ReactGridLayoutsType = t.TypeOf<typeof ReactGridLayoutsType>;
+
+const ReactGridLayoutMetadata = t.type({
+  initialized: t.boolean,
+});
+export type ReactGridLayoutMetadata = t.TypeOf<typeof ReactGridLayoutMetadata>;
+
+const ReactGridLayoutsMetadataType = t.record(
+  t.string,
+  ReactGridLayoutMetadata
+);
+export type ReactGridLayoutsMetadataType = t.TypeOf<
+  typeof ReactGridLayoutsMetadataType
+>;
 
 const Layout = t.intersection([
   t.type({
@@ -1142,6 +1157,7 @@ const Layout = t.intersection([
       type: t.literal("dashboard"),
       layout: t.literal("canvas"),
       layouts: ReactGridLayoutsType,
+      layoutsMetadata: ReactGridLayoutsMetadataType,
     }),
     t.type({
       type: t.literal("singleURLs"),
@@ -1152,6 +1168,10 @@ const Layout = t.intersection([
 export type Layout = t.TypeOf<typeof Layout>;
 export type LayoutType = Layout["type"];
 export type LayoutDashboard = Extract<Layout, { type: "dashboard" }>;
+export type LayoutDashboardFreeCanvas = Extract<
+  Layout,
+  { type: "dashboard"; layout: "canvas" }
+>;
 
 const DashboardTimeRangeFilter = t.type({
   active: t.boolean,
