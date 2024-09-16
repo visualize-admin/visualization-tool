@@ -8,7 +8,7 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, RefObject, useEffect, useState } from "react";
 
 import { CopyToClipboardTextInput } from "@/components/copy-to-clipboard-text-input";
 import Flex from "@/components/flex";
@@ -16,9 +16,12 @@ import { IconLink } from "@/components/links";
 import { Icon } from "@/icons";
 import { useI18n } from "@/utils/use-i18n";
 
+import { Radio } from "./form";
+
 type PublishActionProps = {
   configKey: string;
   locale: string;
+  chartRef?: RefObject<HTMLElement>;
 };
 
 export const PublishActions = (props: PublishActionProps) => {
@@ -56,15 +59,48 @@ const TriggeredPopover = (props: TriggeredPopoverProps) => {
   );
 };
 
-const Embed = ({ configKey, locale }: PublishActionProps) => {
+const Embed = ({ configKey, locale, chartRef }: PublishActionProps) => {
   const [embedIframeUrl, setEmbedIframeUrl] = useState("");
   const [embedAEMUrl, setEmbedAEMUrl] = useState("");
+  const [responsiveIframe, setResponsiveIframe] = useState(true);
+  const [iframeHeight, setIframeHeight] = useState(640);
+
+  useEffect(() => {
+    if (chartRef?.current) {
+      const height = chartRef?.current?.getBoundingClientRect().height || 640;
+      setIframeHeight(height);
+    }
+  }, [chartRef]);
+
   useEffect(() => {
     setEmbedIframeUrl(`${window.location.origin}/${locale}/embed/${configKey}`);
     setEmbedAEMUrl(
       `${window.location.origin}/api/embed-aem-ext/${locale}/${configKey}`
     );
   }, [configKey, locale]);
+
+  const radiogoup = {
+    responsiveIframeLabel: t({
+      id: "publication.embed.iframe.responsive",
+      message: `Responsive iframe`,
+    }),
+    staticIframeLabel: t({
+      id: "publication.embed.iframe.static",
+      message: `Static iframe`,
+    }),
+    responsiveIframeWarn: t({
+      id: "publication.embed.iframe.responsive.warn",
+      message: `For embedding visualizations in web pages without CMS support. The iframe will be responsive. The JavaScript part of the embed code ensures that the iframe always maintains the correct size.`,
+    }),
+    staticIframeWarn: t({
+      id: "publication.embed.iframe.static.warn",
+      message: `For embedding visualizations in systems without Web Components or JavaScript support. (e.g. WordPress)`,
+    }),
+  };
+
+  const onRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setResponsiveIframe(event.target.value === "responsive");
+  };
 
   return (
     <TriggeredPopover
@@ -99,22 +135,40 @@ const Embed = ({ configKey, locale }: PublishActionProps) => {
               Use this link to embed the chart into other webpages.
             </Trans>
           </Typography>
+          <Flex sx={{ justifyContent: "flex-start", flexWrap: "wrap" }} mt={3}>
+            <Radio
+              checked={responsiveIframe}
+              value={"responsive"}
+              name="iframe-type"
+              onChange={onRadioChange}
+              label={radiogoup.responsiveIframeLabel}
+              warnMessage={radiogoup.responsiveIframeWarn}
+            />
+            <Radio
+              checked={!responsiveIframe}
+              value={"static"}
+              name="iframe-type"
+              onChange={onRadioChange}
+              label={radiogoup.staticIframeLabel}
+              warnMessage={radiogoup.staticIframeWarn}
+            />
+          </Flex>
+
           <CopyToClipboardTextInput
             // TODO: height could be calculated based on the content with
             // a small JS snippet
-            content={`<iframe src="${embedIframeUrl}" style="border:0px #ffffff none; max-width: 100%" name="visualize.admin.ch" scrolling="no" frameborder="1" marginheight="0px" marginwidth="0px" height="640px" width="600px" allowfullscreen></iframe>`}
+            content={`<iframe src="${embedIframeUrl}" style="border:0px #ffffff none; max-width: 100%" name="visualize.admin.ch" scrolling="no" frameborder="1" marginheight="0px" marginwidth="0px" height="${responsiveIframe ? `${iframeHeight}px` : "640px"}" width="600px" allowfullscreen></iframe>`}
           />
         </div>
         <div>
           <Typography component="div" variant="h5">
-            <Trans id="publication.embed.AEM">
-              Embed Code for AEM &quot;External Application&quot;
+            <Trans id="publication.embed.external-application">
+              Embed Code for &quot;External Application&quot;
             </Trans>
           </Typography>
           <Typography variant="caption">
-            <Trans id="publication.embed.AEM.caption">
-              Use this link to embed the chart into Adobe Experience Manager
-              assets.
+            <Trans id="publication.embed.external-application.caption">
+              Use this link to embed the chart without iframe tags.
             </Trans>
           </Typography>
           <CopyToClipboardTextInput content={embedAEMUrl} />
