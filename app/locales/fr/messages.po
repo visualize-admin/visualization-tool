@@ -1500,12 +1500,12 @@ msgid "profile.chart.rename-dialog.title"
 msgstr "Renommer la visualisation"
 
 #: app/components/publish-actions.tsx
-msgid "publication.embed.AEM"
-msgstr "Code pour intégrer sur AEM comme \"External Application\""
+msgid "publication.embed.external-application"
+msgstr "Code pour intégrer sur comme \"External Application\""
 
 #: app/components/publish-actions.tsx
-msgid "publication.embed.AEM.caption"
-msgstr "Utilisez ce code pour intégrer le graphique sur Adobe Experience Manager"
+msgid "publication.embed.external-application.caption"
+msgstr ""
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe"
@@ -1514,6 +1514,22 @@ msgstr "Code pour intégrer"
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.caption"
 msgstr "Utilisez ce code pour intégrer le graphique sur une page web"
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.responsive"
+msgstr "Iframe réactif"
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.responsive.warn"
+msgstr "Pour intégrer des visualisations dans des pages web sans support CMS. L'iframe sera réactive. La partie JavaScript du code d'intégration garantit que l'iframe conserve toujours la taille correcte."
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.static"
+msgstr "Iframe statique"
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.static.warn"
+msgstr "Pour intégrer des visualisations dans des systèmes qui ne prennent pas en charge les composants Web ou JavaScript. (par exemple WordPress)"
 
 #: app/components/publish-actions.tsx
 msgid "publication.popup.share"
