@@ -326,6 +326,8 @@ const ProfileVisualizationsRow = (props: {
     locale,
   ]);
 
+  const rootClasses = useRootStyles();
+
   return (
     <TableRow>
       <TableCell width="10%">
@@ -343,7 +345,11 @@ const ProfileVisualizationsRow = (props: {
         >
           <Link color="primary">
             <OverflowTooltip arrow title={chartTitle} color="primary">
-              <Typography variant="body2" noWrap>
+              <Typography
+                className={rootClasses.noTooltip}
+                variant="body2"
+                noWrap
+              >
                 {chartTitle}
               </Typography>
             </OverflowTooltip>
@@ -367,9 +373,13 @@ const ProfileVisualizationsRow = (props: {
                 title={data?.dataCubesMetadata[0]?.title ?? ""}
                 color="primary"
               >
-              <Typography variant="body2" noWrap>
-                {data?.dataCubesMetadata[0]?.title ?? ""}
-              </Typography>
+                <Typography
+                  className={rootClasses.noTooltip}
+                  variant="body2"
+                  noWrap
+                >
+                  {data?.dataCubesMetadata[0]?.title ?? ""}
+                </Typography>
               </OverflowTooltip>
             </Link>
           </NextLink>
