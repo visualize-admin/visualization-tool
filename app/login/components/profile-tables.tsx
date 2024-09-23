@@ -13,7 +13,6 @@ import {
   tableHeadClasses,
   TableRow,
   tableRowClasses,
-  Tooltip,
   Typography,
 } from "@mui/material";
 import { PUBLISHED_STATE } from "@prisma/client";
@@ -22,6 +21,7 @@ import NextLink from "next/link";
 import React, { useMemo } from "react";
 
 import { MenuActionProps } from "@/components/menu-action-item";
+import { OverflowTooltip } from "@/components/overflow-tooltip";
 import { RenameDialog } from "@/components/rename-dialog";
 import { RowActions } from "@/components/row-actions";
 import useDisclosure from "@/components/use-disclosure";
@@ -326,6 +326,8 @@ const ProfileVisualizationsRow = (props: {
     locale,
   ]);
 
+  const rootClasses = useRootStyles();
+
   return (
     <TableRow>
       <TableCell width="10%">
@@ -342,11 +344,15 @@ const ProfileVisualizationsRow = (props: {
           legacyBehavior
         >
           <Link color="primary">
-            <Tooltip arrow title={chartTitle} color="primary">
-              <Typography variant="body2" noWrap>
+            <OverflowTooltip arrow title={chartTitle} color="primary">
+              <Typography
+                className={rootClasses.noTooltip}
+                variant="body2"
+                noWrap
+              >
                 {chartTitle}
               </Typography>
-            </Tooltip>
+            </OverflowTooltip>
           </Link>
         </NextLink>
       </TableCell>
@@ -362,9 +368,19 @@ const ProfileVisualizationsRow = (props: {
             legacyBehavior
           >
             <Link color="primary">
-              <Typography variant="body2" noWrap>
-                {data?.dataCubesMetadata[0]?.title ?? ""}
-              </Typography>
+              <OverflowTooltip
+                arrow
+                title={data?.dataCubesMetadata[0]?.title ?? ""}
+                color="primary"
+              >
+                <Typography
+                  className={rootClasses.noTooltip}
+                  variant="body2"
+                  noWrap
+                >
+                  {data?.dataCubesMetadata[0]?.title ?? ""}
+                </Typography>
+              </OverflowTooltip>
             </Link>
           </NextLink>
         ) : (

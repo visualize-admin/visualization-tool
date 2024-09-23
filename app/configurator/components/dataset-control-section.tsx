@@ -14,6 +14,7 @@ import uniqBy from "lodash/uniqBy";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useClient } from "urql";
 
+import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { useMetadataPanelStoreActions } from "@/components/metadata-panel-store";
 import useDisclosure from "@/components/use-disclosure";
 import { getChartConfig } from "@/configurator";
@@ -40,7 +41,6 @@ import SvgIcChecked from "@/icons/components/IcChecked";
 import SvgIcTrash from "@/icons/components/IcTrash";
 import { useLocale } from "@/locales/use-locale";
 import { useEventEmitter } from "@/utils/eventEmitter";
-import { MaybeTooltip } from "@/utils/maybe-tooltip";
 
 const useStyles = makeStyles((theme: Theme) => ({
   row: {
