@@ -208,7 +208,11 @@ export const Table = () => {
           <Box
             className={classes.mobileRow}
             {...row.getRowProps({
-              style: { ...style, flexDirection: "column" },
+              style: {
+                ...style,
+                flexDirection: "column",
+                width: "max-content",
+              },
             })}
           >
             {row.subRows.length === 0 ? (
@@ -218,29 +222,37 @@ export const Table = () => {
                     key={i}
                     component="dl"
                     sx={{
-                      color: "grey.800",
-                      fontSize: "0.75rem",
-                      width: "100%",
-                      height: MOBILE_ROW_HEIGHT,
                       justifyContent: "space-between",
                       alignItems: "center",
+                      color: "grey.800",
+                      fontSize: "0.75rem",
+                      margin: 0,
                     }}
                   >
                     <Box
                       component="dt"
-                      sx={{ flex: "1 1 100%", fontWeight: "bold", mr: 2 }}
+                      sx={{
+                        fontWeight: "bold",
+                        mr: 2,
+                        whiteSpace: "nowrap",
+                      }}
                     >
                       {cell.column.Header}
                     </Box>
-                    <Box
+                    <Flex
                       component="dd"
-                      sx={{ flex: "1 1 100%", ml: 2, position: "relative" }}
+                      sx={{
+                        position: "relative",
+                        justifyContent: "flex-end",
+                        textAlign: "right",
+                        ml: 2,
+                      }}
                     >
                       <DDContent
                         cell={cell}
                         columnMeta={tableColumnsMeta[cell.column.id]}
                       />
-                    </Box>
+                    </Flex>
                   </Flex>
                 );
               })
@@ -311,14 +323,14 @@ export const Table = () => {
             fontSize: "0.875rem",
           }}
         >
-          <AutoSizer disableWidth>
-            {({ height }: { height: number }) => (
+          <AutoSizer>
+            {({ width, height }: { width: number; height: number }) => (
               <VariableSizeList
                 key={rows.length} // Reset when groups are toggled because itemSize remains cached per index
                 height={height}
                 itemCount={rows.length}
                 itemSize={getMobileItemSize}
-                width={bounds.width}
+                width={width}
               >
                 {renderMobileRow}
               </VariableSizeList>
