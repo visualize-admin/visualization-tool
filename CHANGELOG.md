@@ -23,8 +23,8 @@ You can also check the
   - Interactive filters in the published mode and now only showing combinations
     of filters that are actually present in the data, taking configurator
     filters into account
-  - Chart title tooltip in the user profile now only shows when the title is
-    truncated
+  - Chart title and dataset tooltips in the user profile now only shows when the
+    title is truncated
 
 # [4.8.0] - 2024-09-11
 

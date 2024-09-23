@@ -362,9 +362,15 @@ const ProfileVisualizationsRow = (props: {
             legacyBehavior
           >
             <Link color="primary">
+              <OverflowTooltip
+                arrow
+                title={data?.dataCubesMetadata[0]?.title ?? ""}
+                color="primary"
+              >
               <Typography variant="body2" noWrap>
                 {data?.dataCubesMetadata[0]?.title ?? ""}
               </Typography>
+              </OverflowTooltip>
             </Link>
           </NextLink>
         ) : (
