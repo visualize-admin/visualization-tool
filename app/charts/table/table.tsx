@@ -226,7 +226,7 @@ export const Table = () => {
                       alignItems: "center",
                       color: "grey.800",
                       fontSize: "0.75rem",
-                      margin: 0,
+                      my: 1,
                     }}
                   >
                     <Box
