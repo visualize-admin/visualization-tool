@@ -23,6 +23,8 @@ You can also check the
   - Interactive filters in the published mode and now only showing combinations
     of filters that are actually present in the data, taking configurator
     filters into account
+  - Compact table view now works again with heatmap cells
+  - Compact table view margins were improved so rows do not overlap
 
 # [4.8.0] - 2024-09-11
 
