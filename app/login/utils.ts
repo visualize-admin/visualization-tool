@@ -19,6 +19,13 @@ export const useRootStyles = makeStyles<Theme>((theme) => ({
     maxWidth: 1400,
     margin: "0 auto",
   },
+  noTooltip: {
+    // Disable native tooltip in Safari
+    "&::after": {
+      content: "''",
+      display: "block",
+    },
+  },
 }));
 
 export const useUser = () => {

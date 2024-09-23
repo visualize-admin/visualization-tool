@@ -32,6 +32,7 @@ import {
 } from "@/components/form";
 import { Loading, LoadingDataError } from "@/components/hint";
 import MaybeLink from "@/components/maybe-link";
+import { MaybeTooltip } from "@/components/maybe-tooltip";
 import {
   accordionPresenceProps,
   MotionBox,
@@ -57,7 +58,6 @@ import {
 import SvgIcCategories from "@/icons/components/IcCategories";
 import SvgIcClose from "@/icons/components/IcClose";
 import SvgIcOrganisations from "@/icons/components/IcOrganisations";
-import { MaybeTooltip } from "@/utils/maybe-tooltip";
 import useEvent from "@/utils/use-event";
 
 import {
