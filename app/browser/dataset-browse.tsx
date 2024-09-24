@@ -901,10 +901,14 @@ export const SearchFilters = ({
       { element: orgNav, __typename: "DataCubeOrganization" },
       { element: termsetNav, __typename: "Termset" },
     ],
-    (x) =>
-      x.__typename === filters[0]?.__typename
-        ? 0
-        : navOrder[x.__typename as keyof typeof navOrder]
+    (x) => {
+      const i = filters.findIndex((f) => f.__typename === x.__typename);
+      return i === -1
+        ? // If the filter is not in the list, we want to put it at the end
+          navOrder[x.__typename as BrowseFilter["__typename"]] +
+            Object.keys(navOrder).length
+        : i;
+    }
   );
 
   return (
