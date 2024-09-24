@@ -29,6 +29,54 @@ const parseCSV = async (filepath: string) => {
 };
 
 describe("parse-search-results", () => {
+  it("should correctly parse cube", async () => {
+    const data = await parseCSV(
+      path.join(
+        __dirname,
+        "./query-search-results-photovoltaikanlagen.mock.csv"
+      )
+    );
+    const searchCubes = buildSearchCubes(data);
+
+    expect(searchCubes).toMatchInlineSnapshot(`
+      Array [
+        Object {
+          "creator": Object {
+            "iri": "https://register.ld.admin.ch/opendataswiss/org/bundesamt-fur-energie-bfe",
+            "label": "Swiss Federal Office of Energy SFOE",
+          },
+          "datePublished": "2022-08-16",
+          "description": "Seit 2014 werden Photovoltaikanlagen mit einer Einmalvergütung (EIV) gefördert. Dabei wird abhängig von der Leistung, der Anlagenkategorie und dem Inbetriebnahmedatum ein einmaliger Beitrag an die Anlagenbetreiber ausbezahlt. Hier finden Sie pro Kanton und Auszahlungsjahr einen Überblick über die Anzahl geförderter EIV-Anlagen, die installierte Leistung in Kilowatt (kW) sowie den ausbezahlten EIV-Förderbeitrag. Die dargestellten Daten entsprechen nicht vollständig der offiziellen Statistik der erneuerbaren Energien durch das BFE. Da der Abbau der Wartelisten zeitverzögert stattfindet, können Abweichungen entstehen.",
+          "dimensions": undefined,
+          "iri": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/10",
+          "publicationStatus": "PUBLISHED",
+          "subthemes": Array [],
+          "termsets": Array [
+            Object {
+              "iri": "https://ld.admin.ch/dimension/office",
+              "label": "Federal Offices",
+            },
+            Object {
+              "iri": "https://ld.admin.ch/dimension/canton",
+              "label": "Cantons",
+            },
+          ],
+          "themes": Array [
+            Object {
+              "iri": "https://register.ld.admin.ch/opendataswiss/category/energy",
+              "label": "Energy",
+            },
+            Object {
+              "iri": "https://register.ld.admin.ch/opendataswiss/category/national-economy",
+              "label": "National economy",
+            },
+          ],
+          "title": "Einmalvergütung für Photovoltaikanlagen",
+        },
+      ]
+    `);
+  });
+
   it("should build search cubes from CSV (shared dimension query)", async () => {
     const data = await parseCSV(
       path.join(__dirname, "./query-search-results-shared-dimensions.mock.csv")
@@ -167,7 +215,6 @@ describe("parse-search-results", () => {
     const data = await parseCSV(
       path.join(__dirname, "./query-search-results-temporal.mock.csv")
     );
-    // Build search cubes using the buildSearchCubes function
     const searchCubes = buildSearchCubes(data);
 
     expect(searchCubes.slice(0, 3)).toMatchInlineSnapshot(`
