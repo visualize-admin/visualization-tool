@@ -702,44 +702,6 @@ const NavSection = ({
   );
 };
 
-const TermsetNavSection = ({
-  currentFilter,
-  termsetCounts,
-  disableLinks,
-}: {
-  currentFilter: Termset | undefined;
-  termsetCounts: { termset: Termset; count: number }[];
-  disableLinks: boolean;
-}) => {
-  const { counts, termsets } = useMemo(() => {
-    const termsets = termsetCounts.map((x) => x.termset) ?? [];
-    const counts = Object.fromEntries(
-      termsetCounts.map((x) => [x.termset.iri, x.count])
-    );
-    return {
-      counts,
-      termsets: sortBy(termsets, (t) => t.label),
-    };
-  }, [termsetCounts]);
-
-  return (
-    <NavSection
-      items={termsets}
-      theme={{
-        backgroundColor: "grey.300",
-        borderColor: "grey.800",
-      }}
-      navItemTheme={termsetNavItemTheme}
-      currentFilter={currentFilter}
-      icon={<SvgIcOrganisations width={20} height={20} />}
-      label={<Trans id="browse-panel.termsets">Concepts</Trans>}
-      filters={[]}
-      counts={counts}
-      disableLinks={disableLinks}
-    />
-  );
-};
-
 const navOrder: Record<BrowseFilter["__typename"], number> = {
   DataCubeTheme: 1,
   DataCubeOrganization: 2,
@@ -766,21 +728,25 @@ export const SearchFilters = ({
     const result: Record<string, number> = {};
 
     for (const { cube } of cubes) {
-      const countables = [
+      const countable = [
         ...cube.themes,
         ...cube.subthemes,
         cube.creator,
       ].filter(truthy);
 
-      for (const { iri } of countables) {
+      for (const { iri } of countable) {
         if (iri) {
           result[iri] = (result[iri] ?? 0) + 1;
         }
       }
     }
 
+    for (const { termset, count } of termsetCounts) {
+      result[termset.iri] = count;
+    }
+
     return result;
-  }, [cubes]);
+  }, [cubes, termsetCounts]);
 
   const {
     DataCubeTheme: themeFilter,
@@ -825,6 +791,24 @@ export const SearchFilters = ({
 
     return true;
   });
+
+  const displayedTermsets = termsetCounts
+    .map((d) => d.termset)
+    .filter((termset) => {
+      if (!termset.label) {
+        return false;
+      }
+
+      if (!counts[termset.iri] && termsetFilter?.iri !== termset.iri) {
+        return false;
+      }
+
+      if (termsetFilter && termsetFilter.iri !== termset.iri) {
+        return false;
+      }
+
+      return true;
+    });
 
   const themeNav =
     displayedThemes && displayedThemes.length > 0 ? (
@@ -888,10 +872,20 @@ export const SearchFilters = ({
   const termsetFlag = useFlag("search.termsets");
   const termsetNav =
     termsetCounts.length === 0 || !termsetFlag ? null : (
-      <TermsetNavSection
+      <NavSection
         key="termsets"
-        termsetCounts={termsetCounts ?? []}
+        items={displayedTermsets}
+        theme={{
+          backgroundColor: "grey.300",
+          borderColor: "grey.800",
+        }}
+        navItemTheme={termsetNavItemTheme}
         currentFilter={termsetFilter}
+        counts={counts}
+        filters={filters}
+        icon={<SvgIcOrganisations width={20} height={20} />}
+        label={<Trans id="browse-panel.termsets">Concepts</Trans>}
+        extra={null}
         disableLinks={disableNavLinks}
       />
     );
