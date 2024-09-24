@@ -18,7 +18,7 @@ const parseCSV = async (filepath: string) => {
   );
 
   // Parse the rows into subject, predicate, and object
-  const rows = csvParse(csvData).slice(1);
+  const rows = csvParse(csvData);
   return rows.map((row) => {
     return {
       subject: { value: row.subject! },
