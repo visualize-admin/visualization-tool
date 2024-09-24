@@ -3,7 +3,7 @@ import { NamedNode } from "rdf-js";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
 
 import { MAX_BATCH_SIZE } from "@/graphql/context";
-import { formatIriToQueryNode } from "@/rdf/query-utils";
+import { iriToNode } from "@/rdf/query-utils";
 
 export interface GeoShape {
   geometryIri: string;
@@ -22,7 +22,7 @@ type GeoShapesLoaderProps = {
 export const createGeoShapesLoader = (props: GeoShapesLoaderProps) => {
   const { geoSparqlClient } = props;
   return async (geometryIris: readonly string[]): Promise<GeoShape[]> => {
-    const geometryIriQueryNodes = geometryIris.map(formatIriToQueryNode);
+    const geometryIriQueryNodes = geometryIris.map(iriToNode);
     const wktStringsByGeometry = await getWktStringsByGeometry({
       geometryIriQueryNodes,
       geoSparqlClient,

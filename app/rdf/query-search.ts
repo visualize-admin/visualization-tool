@@ -13,15 +13,15 @@ import { buildSearchCubes } from "@/rdf/parse-search-results";
 import { computeScores, highlight } from "@/rdf/query-search-score-utils";
 import {
   buildLocalizedSubQuery,
-  formatIriToQueryNode,
+  iriToNode,
   makeVisualizeDatasetFilter,
 } from "@/rdf/query-utils";
 
-const makeInFilter = (name: string, values: string[]) => {
+export const makeInFilter = (name: string, values: string[]) => {
   return `
     ${
       values.length > 0
-        ? `FILTER (bound(?${name}) && ?${name} IN (${values.map(formatIriToQueryNode)}))`
+        ? `FILTER (bound(?${name}) && ?${name} IN (${values.map(iriToNode)}))`
         : ""
     }`;
 };
@@ -186,7 +186,7 @@ const mkScoresQuery = (
     ?creatorIri schema:name ?creatorLabel .
     ?themeIri schema:name ?themeLabel .
     ?subthemeIri schema:inDefinedTermSet ?subthemeTermset ;
-                  schema:name ?subthemeLabel .
+      schema:name ?subthemeLabel .
   }
     WHERE {
       ?iri a cube:Cube .
@@ -234,8 +234,8 @@ const mkScoresQuery = (
         .join("\n")}
 
       # Publisher, creator status, datePublished
-      OPTIONAL { ?iri dcterms:publisher ?publisher . }
       ?iri schema:creativeWorkStatus ?status .
+      OPTIONAL { ?iri dcterms:publisher ?publisher . }
       OPTIONAL { ?iri schema:datePublished ?datePublished . }
 
       ${creatorValues.length ? makeInFilter("creatorIri", creatorValues) : ""}
@@ -263,10 +263,11 @@ const mkScoresQuery = (
           })}
         }
       }
+
       ${
         themeValues.length
           ? `
-      VALUES ?theme { ${themeValues.map(formatIriToQueryNode).join(" ")} }
+      VALUES ?theme { ${themeValues.map(iriToNode).join(" ")} }
       ?iri dcat:theme ?theme .
       `
           : ""

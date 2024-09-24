@@ -8,7 +8,7 @@ import { SingleFilters } from "@/config-types";
 import { isMostRecentValue } from "@/domain/most-recent-value";
 import * as ns from "@/rdf/namespace";
 import { loadMaxDimensionValue } from "@/rdf/query-dimension-values";
-import { formatIriToQueryNode } from "@/rdf/query-utils";
+import { iriToNode } from "@/rdf/query-utils";
 
 export const getPossibleFilters = async (
   cubeIri: string,
@@ -68,7 +68,7 @@ SELECT ?${DIMENSION_IRI} ?${VERSION} ?${NODE_KIND} WHERE {
   ?dimension sh:path ?${DIMENSION_IRI} .
   OPTIONAL { ?dimension schema:version ?${VERSION} . }
   OPTIONAL { ?dimension sh:nodeKind ?${NODE_KIND} . }
-  ${dimensionIris.length > 0 ? `FILTER(?${DIMENSION_IRI} IN (${dimensionIris.map(formatIriToQueryNode).join(", ")}))` : ""}
+  ${dimensionIris.length > 0 ? `FILTER(?${DIMENSION_IRI} IN (${dimensionIris.map(iriToNode).join(", ")}))` : ""}
 }`;
   const results = await sparqlClient.query.select(query, {
     operation: "postUrlencoded",
@@ -140,7 +140,7 @@ const stringifyDimension = (i: number, isVersioned: boolean) => {
 };
 
 const getQueryValue = (value: string, isLiteral: boolean) => {
-  return isLiteral ? `"${value}"` : formatIriToQueryNode(value);
+  return isLiteral ? `"${value}"` : iriToNode(value);
 };
 
 type QueryFilter = {
