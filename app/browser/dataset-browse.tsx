@@ -21,7 +21,7 @@ import uniqBy from "lodash/uniqBy";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { stringify } from "qs";
-import React, { ComponentProps, useMemo, useState } from "react";
+import React, { ComponentProps, ReactNode, useMemo, useState } from "react";
 
 import Flex, { FlexProps } from "@/components/flex";
 import {
@@ -41,15 +41,15 @@ import {
 } from "@/components/presence";
 import Tag from "@/components/tag";
 import useDisclosure from "@/components/use-disclosure";
-import { SearchCube, Termset } from "@/domain/data";
+import { SearchCube } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { useFlag } from "@/flags";
 import { useFormatDate } from "@/formatters";
 import {
   DataCubeOrganization,
+  DataCubeTermset,
   DataCubeTheme,
   SearchCubeResultOrder,
-  TermsetCount,
 } from "@/graphql/query-hooks";
 import {
   DataCubePublicationStatus,
@@ -355,7 +355,7 @@ const encodeFilter = (filter: BrowseFilter) => {
         return "organization";
       case "DataCubeAbout":
         return "topic";
-      case "Termset":
+      case "DataCubeTermset":
         return "termset";
       default:
         const check: never = __typename;
@@ -375,7 +375,7 @@ const NavItem = ({
   level = 1,
   disableLink,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
   filters: BrowseFilter[];
   next: BrowseFilter;
   count?: number;
@@ -611,10 +611,10 @@ const NavSection = ({
 }: {
   label: React.ReactNode;
   icon: React.ReactNode;
-  items: (DataCubeTheme | DataCubeOrganization | Termset)[];
+  items: (DataCubeTheme | DataCubeOrganization | DataCubeTermset)[];
   theme: { backgroundColor: string; borderColor: string };
   navItemTheme: NavItemTheme;
-  currentFilter?: DataCubeTheme | DataCubeOrganization | Termset;
+  currentFilter?: DataCubeTheme | DataCubeOrganization | DataCubeTermset;
   filters: BrowseFilter[];
   counts: Record<string, number>;
   extra?: React.ReactNode;
@@ -705,7 +705,7 @@ const NavSection = ({
 const navOrder: Record<BrowseFilter["__typename"], number> = {
   DataCubeTheme: 1,
   DataCubeOrganization: 2,
-  Termset: 3,
+  DataCubeTermset: 3,
   // Not used in the nav
   DataCubeAbout: 4,
 };
@@ -714,13 +714,13 @@ export const SearchFilters = ({
   cubes,
   themes,
   orgs,
-  termsets: termsetCounts,
+  termsets,
   disableNavLinks = false,
 }: {
   cubes: SearchCubeResult[];
   themes: DataCubeTheme[];
   orgs: DataCubeOrganization[];
-  termsets: TermsetCount[];
+  termsets: DataCubeTermset[];
   disableNavLinks?: boolean;
 }) => {
   const { filters } = useBrowseContext();
@@ -731,6 +731,7 @@ export const SearchFilters = ({
       const countable = [
         ...cube.themes,
         ...cube.subthemes,
+        ...cube.termsets,
         cube.creator,
       ].filter(truthy);
 
@@ -741,22 +742,23 @@ export const SearchFilters = ({
       }
     }
 
-    for (const { termset, count } of termsetCounts) {
-      result[termset.iri] = count;
-    }
-
     return result;
-  }, [cubes, termsetCounts]);
+  }, [cubes]);
 
   const {
     DataCubeTheme: themeFilter,
     DataCubeOrganization: orgFilter,
-    Termset: termsetFilter,
+    DataCubeTermset: termsetFilter,
   } = useMemo(() => {
-    return keyBy(filters, (f) => f.__typename) as {
-      DataCubeTheme?: DataCubeTheme;
-      DataCubeOrganization?: DataCubeOrganization;
-      Termset?: Termset;
+    const result = keyBy(filters, (f) => f.__typename) as {
+      [K in BrowseFilter["__typename"]]?: BrowseFilter;
+    };
+    return {
+      DataCubeTheme: result.DataCubeTheme as DataCubeTheme | undefined,
+      DataCubeOrganization: result.DataCubeOrganization as
+        | DataCubeOrganization
+        | undefined,
+      DataCubeTermset: result.DataCubeTermset as DataCubeTermset | undefined,
     };
   }, [filters]);
 
@@ -792,23 +794,21 @@ export const SearchFilters = ({
     return true;
   });
 
-  const displayedTermsets = termsetCounts
-    .map((d) => d.termset)
-    .filter((termset) => {
-      if (!termset.label) {
-        return false;
-      }
+  const displayedTermsets = termsets.filter((termset) => {
+    if (!termset.label) {
+      return false;
+    }
 
-      if (!counts[termset.iri] && termsetFilter?.iri !== termset.iri) {
-        return false;
-      }
+    if (!counts[termset.iri] && termsetFilter?.iri !== termset.iri) {
+      return false;
+    }
 
-      if (termsetFilter && termsetFilter.iri !== termset.iri) {
-        return false;
-      }
+    if (termsetFilter && termsetFilter.iri !== termset.iri) {
+      return false;
+    }
 
-      return true;
-    });
+    return true;
+  });
 
   const themeNav =
     displayedThemes && displayedThemes.length > 0 ? (
@@ -871,7 +871,7 @@ export const SearchFilters = ({
 
   const termsetFlag = useFlag("search.termsets");
   const termsetNav =
-    termsetCounts.length === 0 || !termsetFlag ? null : (
+    termsets.length === 0 || !termsetFlag ? null : (
       <NavSection
         key="termsets"
         items={displayedTermsets}
@@ -889,21 +889,22 @@ export const SearchFilters = ({
         disableLinks={disableNavLinks}
       />
     );
-  const navs = sortBy(
-    [
-      { element: themeNav, __typename: "DataCubeTheme" },
-      { element: orgNav, __typename: "DataCubeOrganization" },
-      { element: termsetNav, __typename: "Termset" },
-    ],
-    (x) => {
-      const i = filters.findIndex((f) => f.__typename === x.__typename);
-      return i === -1
-        ? // If the filter is not in the list, we want to put it at the end
-          navOrder[x.__typename as BrowseFilter["__typename"]] +
-            Object.keys(navOrder).length
-        : i;
-    }
-  );
+  const baseNavs: {
+    element: ReactNode;
+    __typename: BrowseFilter["__typename"];
+  }[] = [
+    { element: themeNav, __typename: "DataCubeTheme" },
+    { element: orgNav, __typename: "DataCubeOrganization" },
+    { element: termsetNav, __typename: "DataCubeTermset" },
+  ];
+  const navs = sortBy(baseNavs, (x) => {
+    const i = filters.findIndex((f) => f.__typename === x.__typename);
+    return i === -1
+      ? // If the filter is not in the list, we want to put it at the end
+        navOrder[x.__typename as BrowseFilter["__typename"]] +
+          Object.keys(navOrder).length
+      : i;
+  });
 
   return (
     <Flex

@@ -1,22 +1,3 @@
-query SearchPage(
-  $sourceType: String!
-  $sourceUrl: String!
-  $includeDrafts: Boolean
-  $filters: [SearchCubeFilter!]
-  $locale: String!
-) {
-  allTermsets(
-    sourceType: $sourceType
-    sourceUrl: $sourceUrl
-    includeDrafts: $includeDrafts
-    filters: $filters
-    locale: $locale
-  ) {
-    count
-    termset
-  }
-}
-
 query SearchCubes(
   $sourceType: String!
   $sourceUrl: String!

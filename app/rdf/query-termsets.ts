@@ -2,75 +2,7 @@ import groupBy from "lodash/groupBy";
 import ParsingClient from "sparql-http-client/ParsingClient";
 
 import { ComponentTermsets, Termset } from "@/domain/data";
-import {
-  SearchCubeFilter,
-  SearchCubeFilterType,
-} from "@/graphql/resolver-types";
-import { makeInFilter } from "@/rdf/query-search";
-import {
-  buildLocalizedSubQuery,
-  iriToNode,
-  makeVisualizeDatasetFilter,
-} from "@/rdf/query-utils";
-
-export const queryAllTermsets = async (options: {
-  locale: string;
-  sparqlClient: ParsingClient;
-  filters?: SearchCubeFilter[];
-  includeDrafts?: boolean;
-}): Promise<{ termset: Termset; count: number }[]> => {
-  const { sparqlClient, locale, filters = [], includeDrafts } = options;
-  const creators = filters
-    .filter((d) => d.type === SearchCubeFilterType.DataCubeOrganization)
-    .map((d) => d.value);
-  const themes = filters
-    .filter((d) => d.type === SearchCubeFilterType.DataCubeTheme)
-    .map((d) => d.value);
-  const qs = await sparqlClient.query.select(
-    `PREFIX cube: <https://cube.link/>
-PREFIX dcat: <http://www.w3.org/ns/dcat#>
-PREFIX dcterms: <http://purl.org/dc/terms/>
-PREFIX meta: <https://cube.link/meta/>
-PREFIX schema: <http://schema.org/>
-
-SELECT DISTINCT (COUNT(DISTINCT ?cubeIri) as ?count) ?termsetIri ?termsetLabel WHERE {
-  ?termsetIri meta:isUsedIn ?cubeIri .
-  ${creators.length ? makeInFilter("creatorIri", creators) : ""}
-  ${
-    themes.length
-      ? `
-      VALUES ?theme { ${themes.map(iriToNode).join(" ")} }
-      ?cubeIri dcat:theme ?theme .
-      `
-      : ""
-  }
-  OPTIONAL {
-    ?cubeIri dcterms:creator ?creatorIri .
-    GRAPH <https://lindas.admin.ch/sfa/opendataswiss> {
-      ?creatorIri a schema:Organization ;
-        schema:inDefinedTermSet <https://register.ld.admin.ch/opendataswiss/org> .
-    }
-  }
-  ${makeVisualizeDatasetFilter({
-    includeDrafts: !!includeDrafts,
-    cubeIriVar: "?cubeIri",
-  })}
-  ${buildLocalizedSubQuery("termsetIri", "schema:name", "termsetLabel", { locale })}
-} GROUP BY ?termsetIri ?termsetLabel`,
-    { operation: "postUrlencoded" }
-  );
-
-  return qs
-    .map((result) => ({
-      count: +result.count.value,
-      termset: {
-        __typename: "Termset",
-        iri: result.termsetIri?.value,
-        label: result.termsetLabel?.value,
-      },
-    }))
-    .filter((d) => d.termset.iri) as { termset: Termset; count: number }[];
-};
+import { buildLocalizedSubQuery } from "@/rdf/query-utils";
 
 export const getCubeTermsets = async (
   iri: string,

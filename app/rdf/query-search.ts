@@ -13,6 +13,7 @@ import { buildSearchCubes } from "@/rdf/parse-search-results";
 import { computeScores, highlight } from "@/rdf/query-search-score-utils";
 import {
   buildLocalizedSubQuery,
+  GROUP_SEPARATOR,
   iriToNode,
   makeVisualizeDatasetFilter,
 } from "@/rdf/query-utils";
@@ -38,7 +39,7 @@ const fanOutExclusiveFilters = (
   }
 
   const { exclusive = [], common = [] } = groupBy(filters, (f) => {
-    return f.type === SearchCubeFilterType.Termset ||
+    return f.type === SearchCubeFilterType.DataCubeTermset ||
       f.type === SearchCubeFilterType.TemporalDimension
       ? "exclusive"
       : "common";
@@ -152,21 +153,21 @@ const mkScoresQuery = (
   # HOTFIX WRT Stardog v9.2.1 bug see https://control.vshn.net/tickets/sbar-1066
   #pragma join.bind off
 
+  PREFIX cube: <https://cube.link/>
+  PREFIX cubeMeta: <https://cube.link/meta/>
+  PREFIX dcat: <http://www.w3.org/ns/dcat#>
+  PREFIX dcterms: <http://purl.org/dc/terms/>
   PREFIX meta: <https://cube.link/meta/>
   PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
   PREFIX schema: <http://schema.org/>
   PREFIX sh: <http://www.w3.org/ns/shacl#>
-  PREFIX cube: <https://cube.link/>
-  PREFIX cubeMeta: <https://cube.link/meta/>
-  PREFIX dcterms: <http://purl.org/dc/terms/>
-  PREFIX dcat: <http://www.w3.org/ns/dcat#>
-  PREFIX visualize: <https://visualize.admin.ch/>
   PREFIX time: <http://www.w3.org/2006/time#>
+  PREFIX visualize: <https://visualize.admin.ch/>
 
   CONSTRUCT {
-    ?iri a cube:Cube ;
-      cube:observationConstraint ?shape;
-      dcat:theme ?themeIri;
+    ?iri
+      a cube:Cube ;
+      cube:observationConstraint ?shape ;
       dcterms:publisher ?publisher ;
       schema:about ?subthemeIri;
       schema:creativeWorkStatus ?status ;
@@ -175,19 +176,44 @@ const mkScoresQuery = (
       schema:description ?description ;
       schema:name ?title ;
       schema:workExample <https://ld.admin.ch/application/visualize> ;
-      visualize:hasDimension ?dimensionIri.
+      visualize:hasDimension ?dimensionIri ;
+      <themeIris> ?themeIris ;
+      <themeLabels> ?themeLabels .
 
     ?dimensionIri
-      visualize:hasTermset ?termsetIri ;
       visualize:hasTimeUnit ?unitType ;
       schema:name ?dimensionLabel .
-      
-    ?termsetIri schema:name ?termsetLabel .
+
+    ?termsetIri
+      meta:isUsedIn ?iri ;
+      schema:name ?termsetLabel .
+
     ?creatorIri schema:name ?creatorLabel .
-    ?themeIri schema:name ?themeLabel .
-    ?subthemeIri schema:inDefinedTermSet ?subthemeTermset ;
+
+    ?subthemeIri
+      schema:inDefinedTermSet ?subthemeTermset ;
       schema:name ?subthemeLabel .
-  }
+  } WHERE {
+    SELECT
+      ?iri
+      ?shape
+      (GROUP_CONCAT(DISTINCT ?themeIri; SEPARATOR="${GROUP_SEPARATOR}") as ?themeIris)
+      (GROUP_CONCAT(DISTINCT ?themeLabel; SEPARATOR="${GROUP_SEPARATOR}") as ?themeLabels)
+      ?publisher
+      ?status
+      ?creatorIri
+      ?datePublished
+      ?description
+      ?title
+      ?dimensionIri
+      ?unitType
+      ?dimensionLabel
+      ?termsetIri
+      ?termsetLabel
+      ?creatorLabel
+      ?subthemeIri
+      ?subthemeTermset
+      ?subthemeLabel
     WHERE {
       ?iri a cube:Cube .
       ${buildLocalizedSubQuery("iri", "schema:name", "title", {
@@ -198,9 +224,9 @@ const mkScoresQuery = (
       })}
 
       ${filters
-        ?.map((df) => {
-          if (df.type === SearchCubeFilterType.TemporalDimension) {
-            const value = df.value as TimeUnit;
+        ?.map((filter) => {
+          if (filter.type === SearchCubeFilterType.TemporalDimension) {
+            const value = filter.value as TimeUnit;
             const unitNode = unitsToNode.get(value);
             if (!unitNode) {
               throw new Error(`Invalid temporal unit used ${value}`);
@@ -222,16 +248,26 @@ const mkScoresQuery = (
               }
             )}
           `;
-          } else if (df.type === SearchCubeFilterType.Termset) {
-            const sharedDimensions = df.value.split(";");
+          } else if (filter.type === SearchCubeFilterType.DataCubeTermset) {
+            const sharedDimensions = filter.value.split(";");
             return `
-            VALUES (?termsetIri) {${sharedDimensions.map((sd) => `(<${sd}>)`).join(" ")}}
+            VALUES (?termsetIri) {${sharedDimensions.map((sd) => `( ${iriToNode(sd)} )`).join(" ")}}
             ?termsetIri meta:isUsedIn ?iri .
             ${buildLocalizedSubQuery("termsetIri", "schema:name", "termsetLabel", { locale })}`;
           }
         })
         .filter(truthy)
         .join("\n")}
+
+        ${
+          !filters?.find((f) => f.type === SearchCubeFilterType.DataCubeTermset)
+            ? `
+          OPTIONAL {
+          ?termsetIri meta:isUsedIn ?iri .
+          ${buildLocalizedSubQuery("termsetIri", "schema:name", "termsetLabel", { locale })}
+          }`
+            : ""
+        }
 
       # Publisher, creator status, datePublished
       ?iri schema:creativeWorkStatus ?status .
@@ -274,11 +310,11 @@ const mkScoresQuery = (
       }
 
       # Add more subtheme termsets here when they are available
-       ${
-         creatorValues.includes(
-           "https://register.ld.admin.ch/opendataswiss/org/bundesamt-fur-umwelt-bafu"
-         )
-           ? `
+      ${
+        creatorValues.includes(
+          "https://register.ld.admin.ch/opendataswiss/org/bundesamt-fur-umwelt-bafu"
+        )
+          ? `
       OPTIONAL {
         ?iri schema:about ?subthemeIri .
         VALUES (?subthemeGraph ?subthemeTermset) { (<https://lindas.admin.ch/foen/themes> <https://register.ld.admin.ch/foen/theme>) }
@@ -294,13 +330,13 @@ const mkScoresQuery = (
         )}
       } 
       `
-           : ""
-       }
+          : ""
+      }
 
       ${makeVisualizeDatasetFilter({
         includeDrafts: !!includeDrafts,
         cubeIriVar: "?iri",
-      }).toString()}
+      })}
 
       ${
         query
@@ -345,6 +381,24 @@ const mkScoresQuery = (
       )`
           : ""
       }
-    
-    }`;
+    }
+    GROUP BY
+      ?iri
+      ?shape
+      ?publisher
+      ?status
+      ?creatorIri
+      ?datePublished
+      ?description
+      ?title
+      ?dimensionIri
+      ?unitType
+      ?dimensionLabel
+      ?termsetIri
+      ?termsetLabel
+      ?creatorLabel
+      ?subthemeIri
+      ?subthemeTermset
+      ?subthemeLabel
+  }`;
 };

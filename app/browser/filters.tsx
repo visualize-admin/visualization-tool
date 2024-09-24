@@ -1,6 +1,6 @@
-import { Termset } from "@/domain/data";
 import {
   DataCubeOrganization,
+  DataCubeTermset,
   DataCubeTheme,
   SearchCubeFilterType,
 } from "@/graphql/query-hooks";
@@ -15,7 +15,7 @@ export type BrowseFilter =
   | DataCubeTheme
   | DataCubeOrganization
   | DataCubeAbout
-  | (Omit<Termset, "label"> & { label?: string });
+  | DataCubeTermset;
 
 /** Builds the state search filters from query params */
 
@@ -35,7 +35,7 @@ export const getFiltersFromParams = (params: BrowseParams) => {
           case "organization":
             return SearchCubeFilterType.DataCubeOrganization;
           case "termset":
-            return SearchCubeFilterType.Termset;
+            return SearchCubeFilterType.DataCubeTermset;
         }
       })();
       filters.push({
@@ -81,7 +81,7 @@ export const getParamsFromFilters = (filters: BrowseFilter[]) => {
       case "DataCubeAbout":
         params.topic = filter.iri;
         break;
-      case "Termset":
+      case "DataCubeTermset":
         params[typeAttr] = "termset";
         params[iriAttr] = filter.iri;
         break;

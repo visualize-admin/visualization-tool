@@ -98,6 +98,12 @@ export enum DataCubePublicationStatus {
   Published = 'PUBLISHED'
 }
 
+export type DataCubeTermset = {
+  __typename: 'DataCubeTermset';
+  iri: Scalars['String'];
+  label?: Maybe<Scalars['String']>;
+};
+
 export type DataCubeTermsetFilter = {
   iri: Scalars['String'];
 };
@@ -132,7 +138,6 @@ export type Query = {
   possibleFilters: Array<ObservationFilter>;
   searchCubes: Array<SearchCubeResult>;
   dataCubeDimensionGeoShapes?: Maybe<Scalars['GeoShapes']>;
-  allTermsets: Array<TermsetCount>;
 };
 
 
@@ -209,15 +214,6 @@ export type QueryDataCubeDimensionGeoShapesArgs = {
 };
 
 
-export type QueryAllTermsetsArgs = {
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
-  locale: Scalars['String'];
-  filters?: Maybe<Array<SearchCubeFilter>>;
-  includeDrafts?: Maybe<Scalars['Boolean']>;
-};
-
-
 export type RelatedDimension = {
   __typename: 'RelatedDimension';
   type: Scalars['String'];
@@ -243,7 +239,7 @@ export enum SearchCubeFilterType {
   DataCubeTheme = 'DataCubeTheme',
   DataCubeOrganization = 'DataCubeOrganization',
   DataCubeAbout = 'DataCubeAbout',
-  Termset = 'Termset'
+  DataCubeTermset = 'DataCubeTermset'
 }
 
 export type SearchCubeResult = {
@@ -262,12 +258,6 @@ export enum SearchCubeResultOrder {
 
 
 
-export type TermsetCount = {
-  __typename: 'TermsetCount';
-  termset: Scalars['Termset'];
-  count: Scalars['Int'];
-};
-
 export enum TimeUnit {
   Year = 'Year',
   Month = 'Month',
@@ -279,17 +269,6 @@ export enum TimeUnit {
 }
 
 
-
-export type SearchPageQueryVariables = Exact<{
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
-  includeDrafts?: Maybe<Scalars['Boolean']>;
-  filters?: Maybe<Array<SearchCubeFilter> | SearchCubeFilter>;
-  locale: Scalars['String'];
-}>;
-
-
-export type SearchPageQuery = { __typename: 'Query', allTermsets: Array<{ __typename: 'TermsetCount', count: number, termset: Termset }> };
 
 export type SearchCubesQueryVariables = Exact<{
   sourceType: Scalars['String'];
@@ -383,24 +362,6 @@ export type PossibleFiltersQueryVariables = Exact<{
 export type PossibleFiltersQuery = { __typename: 'Query', possibleFilters: Array<{ __typename: 'ObservationFilter', iri: string, type: string, value?: Maybe<any> }> };
 
 
-export const SearchPageDocument = gql`
-    query SearchPage($sourceType: String!, $sourceUrl: String!, $includeDrafts: Boolean, $filters: [SearchCubeFilter!], $locale: String!) {
-  allTermsets(
-    sourceType: $sourceType
-    sourceUrl: $sourceUrl
-    includeDrafts: $includeDrafts
-    filters: $filters
-    locale: $locale
-  ) {
-    count
-    termset
-  }
-}
-    `;
-
-export function useSearchPageQuery(options: Omit<Urql.UseQueryArgs<SearchPageQueryVariables>, 'query'> = {}) {
-  return Urql.useQuery<SearchPageQuery>({ query: SearchPageDocument, ...options });
-};
 export const SearchCubesDocument = gql`
     query SearchCubes($sourceType: String!, $sourceUrl: String!, $locale: String!, $query: String, $order: SearchCubeResultOrder, $includeDrafts: Boolean, $filters: [SearchCubeFilter!]) {
   searchCubes(
