@@ -213,6 +213,7 @@ export type QueryAllTermsetsArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   locale: Scalars['String'];
+  filters?: Maybe<Array<SearchCubeFilter>>;
   includeDrafts?: Maybe<Scalars['Boolean']>;
 };
 

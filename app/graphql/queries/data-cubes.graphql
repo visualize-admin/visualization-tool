@@ -1,5 +1,17 @@
-query SearchPage($sourceType: String!, $sourceUrl: String!, $locale: String!) {
-  allTermsets(sourceType: $sourceType, sourceUrl: $sourceUrl, locale: $locale) {
+query SearchPage(
+  $sourceType: String!
+  $sourceUrl: String!
+  $includeDrafts: Boolean
+  $filters: [SearchCubeFilter!]
+  $locale: String!
+) {
+  allTermsets(
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    includeDrafts: $includeDrafts
+    filters: $filters
+    locale: $locale
+  ) {
     count
     termset
   }

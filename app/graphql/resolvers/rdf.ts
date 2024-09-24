@@ -432,7 +432,7 @@ const getDimensionValuesLoader = (
 
 export const allTermsets: NonNullable<QueryResolvers["allTermsets"]> = async (
   _,
-  { locale, includeDrafts },
+  { locale, includeDrafts, filters },
   { setup },
   info
 ) => {
@@ -440,6 +440,7 @@ export const allTermsets: NonNullable<QueryResolvers["allTermsets"]> = async (
   return await queryAllTermsets({
     locale,
     includeDrafts: !!includeDrafts,
+    filters: filters ?? undefined,
     sparqlClient,
   });
 };

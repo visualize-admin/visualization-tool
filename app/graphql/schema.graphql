@@ -197,6 +197,7 @@ type Query {
     sourceType: String!
     sourceUrl: String!
     locale: String!
+    filters: [SearchCubeFilter!]
     includeDrafts: Boolean
   ): [TermsetCount!]!
 }

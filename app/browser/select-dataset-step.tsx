@@ -274,7 +274,10 @@ const SelectDatasetStepContent = ({
     );
   }, [cubes]);
 
-  const searchPageData = useSearchPageData();
+  const searchPageData = useSearchPageData({
+    includeDrafts,
+    filters: queryFilters,
+  });
   const termsets = useMemo(
     () => searchPageData.data?.allTermsets ?? [],
     [searchPageData.data?.allTermsets]

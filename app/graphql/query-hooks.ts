@@ -213,6 +213,7 @@ export type QueryAllTermsetsArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   locale: Scalars['String'];
+  filters?: Maybe<Array<SearchCubeFilter>>;
   includeDrafts?: Maybe<Scalars['Boolean']>;
 };
 
@@ -279,6 +280,30 @@ export enum TimeUnit {
 
 
 
+export type SearchPageQueryVariables = Exact<{
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
+  includeDrafts?: Maybe<Scalars['Boolean']>;
+  filters?: Maybe<Array<SearchCubeFilter> | SearchCubeFilter>;
+  locale: Scalars['String'];
+}>;
+
+
+export type SearchPageQuery = { __typename: 'Query', allTermsets: Array<{ __typename: 'TermsetCount', count: number, termset: Termset }> };
+
+export type SearchCubesQueryVariables = Exact<{
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
+  locale: Scalars['String'];
+  query?: Maybe<Scalars['String']>;
+  order?: Maybe<SearchCubeResultOrder>;
+  includeDrafts?: Maybe<Scalars['Boolean']>;
+  filters?: Maybe<Array<SearchCubeFilter> | SearchCubeFilter>;
+}>;
+
+
+export type SearchCubesQuery = { __typename: 'Query', searchCubes: Array<{ __typename: 'SearchCubeResult', highlightedTitle?: Maybe<string>, highlightedDescription?: Maybe<string>, cube: SearchCube }> };
+
 export type DataCubeLatestIriQueryVariables = Exact<{
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
@@ -297,6 +322,16 @@ export type DataCubeComponentsQueryVariables = Exact<{
 
 
 export type DataCubeComponentsQuery = { __typename: 'Query', dataCubeComponents: DataCubeComponents };
+
+export type DataCubeDimensionGeoShapesQueryVariables = Exact<{
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
+  locale: Scalars['String'];
+  cubeFilter: DataCubeDimensionGeoShapesCubeFilter;
+}>;
+
+
+export type DataCubeDimensionGeoShapesQuery = { __typename: 'Query', dataCubeDimensionGeoShapes?: Maybe<GeoShapes> };
 
 export type DataCubeMetadataQueryVariables = Exact<{
   sourceType: Scalars['String'];
@@ -338,19 +373,6 @@ export type DataCubePreviewQueryVariables = Exact<{
 
 export type DataCubePreviewQuery = { __typename: 'Query', dataCubePreview: DataCubePreview };
 
-export type SearchCubesQueryVariables = Exact<{
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
-  locale: Scalars['String'];
-  query?: Maybe<Scalars['String']>;
-  order?: Maybe<SearchCubeResultOrder>;
-  includeDrafts?: Maybe<Scalars['Boolean']>;
-  filters?: Maybe<Array<SearchCubeFilter> | SearchCubeFilter>;
-}>;
-
-
-export type SearchCubesQuery = { __typename: 'Query', searchCubes: Array<{ __typename: 'SearchCubeResult', highlightedTitle?: Maybe<string>, highlightedDescription?: Maybe<string>, cube: SearchCube }> };
-
 export type PossibleFiltersQueryVariables = Exact<{
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
@@ -360,26 +382,46 @@ export type PossibleFiltersQueryVariables = Exact<{
 
 export type PossibleFiltersQuery = { __typename: 'Query', possibleFilters: Array<{ __typename: 'ObservationFilter', iri: string, type: string, value?: Maybe<any> }> };
 
-export type DataCubeDimensionGeoShapesQueryVariables = Exact<{
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
-  locale: Scalars['String'];
-  cubeFilter: DataCubeDimensionGeoShapesCubeFilter;
-}>;
 
+export const SearchPageDocument = gql`
+    query SearchPage($sourceType: String!, $sourceUrl: String!, $includeDrafts: Boolean, $filters: [SearchCubeFilter!], $locale: String!) {
+  allTermsets(
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    includeDrafts: $includeDrafts
+    filters: $filters
+    locale: $locale
+  ) {
+    count
+    termset
+  }
+}
+    `;
 
-export type DataCubeDimensionGeoShapesQuery = { __typename: 'Query', dataCubeDimensionGeoShapes?: Maybe<GeoShapes> };
+export function useSearchPageQuery(options: Omit<Urql.UseQueryArgs<SearchPageQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<SearchPageQuery>({ query: SearchPageDocument, ...options });
+};
+export const SearchCubesDocument = gql`
+    query SearchCubes($sourceType: String!, $sourceUrl: String!, $locale: String!, $query: String, $order: SearchCubeResultOrder, $includeDrafts: Boolean, $filters: [SearchCubeFilter!]) {
+  searchCubes(
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    locale: $locale
+    query: $query
+    order: $order
+    includeDrafts: $includeDrafts
+    filters: $filters
+  ) {
+    highlightedTitle
+    highlightedDescription
+    cube
+  }
+}
+    `;
 
-export type SearchPageQueryVariables = Exact<{
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
-  locale: Scalars['String'];
-}>;
-
-
-export type SearchPageQuery = { __typename: 'Query', allTermsets: Array<{ __typename: 'TermsetCount', count: number, termset: Termset }> };
-
-
+export function useSearchCubesQuery(options: Omit<Urql.UseQueryArgs<SearchCubesQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<SearchCubesQuery>({ query: SearchCubesDocument, ...options });
+};
 export const DataCubeLatestIriDocument = gql`
     query DataCubeLatestIri($sourceType: String!, $sourceUrl: String!, $cubeFilter: DataCubeLatestIriFilter!) {
   dataCubeLatestIri(
@@ -407,6 +449,20 @@ export const DataCubeComponentsDocument = gql`
 export function useDataCubeComponentsQuery(options: Omit<Urql.UseQueryArgs<DataCubeComponentsQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<DataCubeComponentsQuery>({ query: DataCubeComponentsDocument, ...options });
 };
+export const DataCubeDimensionGeoShapesDocument = gql`
+    query DataCubeDimensionGeoShapes($sourceType: String!, $sourceUrl: String!, $locale: String!, $cubeFilter: DataCubeDimensionGeoShapesCubeFilter!) {
+  dataCubeDimensionGeoShapes(
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    locale: $locale
+    cubeFilter: $cubeFilter
+  )
+}
+    `;
+
+export function useDataCubeDimensionGeoShapesQuery(options: Omit<Urql.UseQueryArgs<DataCubeDimensionGeoShapesQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<DataCubeDimensionGeoShapesQuery>({ query: DataCubeDimensionGeoShapesDocument, ...options });
+};
 export const DataCubeMetadataDocument = gql`
     query DataCubeMetadata($sourceType: String!, $sourceUrl: String!, $locale: String!, $cubeFilter: DataCubeMetadataFilter!) {
   dataCubeMetadata(
@@ -424,10 +480,10 @@ export function useDataCubeMetadataQuery(options: Omit<Urql.UseQueryArgs<DataCub
 export const DataCubeComponentTermsetsDocument = gql`
     query DataCubeComponentTermsets($sourceType: String!, $sourceUrl: String!, $locale: String!, $cubeFilter: DataCubeTermsetFilter!) {
   dataCubeComponentTermsets(
-    cubeFilter: $cubeFilter
     sourceType: $sourceType
     sourceUrl: $sourceUrl
     locale: $locale
+    cubeFilter: $cubeFilter
   )
 }
     `;
@@ -463,27 +519,6 @@ export const DataCubePreviewDocument = gql`
 export function useDataCubePreviewQuery(options: Omit<Urql.UseQueryArgs<DataCubePreviewQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<DataCubePreviewQuery>({ query: DataCubePreviewDocument, ...options });
 };
-export const SearchCubesDocument = gql`
-    query SearchCubes($sourceType: String!, $sourceUrl: String!, $locale: String!, $query: String, $order: SearchCubeResultOrder, $includeDrafts: Boolean, $filters: [SearchCubeFilter!]) {
-  searchCubes(
-    sourceType: $sourceType
-    sourceUrl: $sourceUrl
-    locale: $locale
-    query: $query
-    order: $order
-    includeDrafts: $includeDrafts
-    filters: $filters
-  ) {
-    highlightedTitle
-    highlightedDescription
-    cube
-  }
-}
-    `;
-
-export function useSearchCubesQuery(options: Omit<Urql.UseQueryArgs<SearchCubesQueryVariables>, 'query'> = {}) {
-  return Urql.useQuery<SearchCubesQuery>({ query: SearchCubesDocument, ...options });
-};
 export const PossibleFiltersDocument = gql`
     query PossibleFilters($sourceType: String!, $sourceUrl: String!, $cubeFilter: DataCubePossibleFiltersCubeFilter!) {
   possibleFilters(
@@ -500,30 +535,4 @@ export const PossibleFiltersDocument = gql`
 
 export function usePossibleFiltersQuery(options: Omit<Urql.UseQueryArgs<PossibleFiltersQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<PossibleFiltersQuery>({ query: PossibleFiltersDocument, ...options });
-};
-export const DataCubeDimensionGeoShapesDocument = gql`
-    query DataCubeDimensionGeoShapes($sourceType: String!, $sourceUrl: String!, $locale: String!, $cubeFilter: DataCubeDimensionGeoShapesCubeFilter!) {
-  dataCubeDimensionGeoShapes(
-    sourceType: $sourceType
-    sourceUrl: $sourceUrl
-    locale: $locale
-    cubeFilter: $cubeFilter
-  )
-}
-    `;
-
-export function useDataCubeDimensionGeoShapesQuery(options: Omit<Urql.UseQueryArgs<DataCubeDimensionGeoShapesQueryVariables>, 'query'> = {}) {
-  return Urql.useQuery<DataCubeDimensionGeoShapesQuery>({ query: DataCubeDimensionGeoShapesDocument, ...options });
-};
-export const SearchPageDocument = gql`
-    query SearchPage($sourceType: String!, $sourceUrl: String!, $locale: String!) {
-  allTermsets(sourceType: $sourceType, sourceUrl: $sourceUrl, locale: $locale) {
-    count
-    termset
-  }
-}
-    `;
-
-export function useSearchPageQuery(options: Omit<Urql.UseQueryArgs<SearchPageQueryVariables>, 'query'> = {}) {
-  return Urql.useQuery<SearchPageQuery>({ query: SearchPageDocument, ...options });
 };
