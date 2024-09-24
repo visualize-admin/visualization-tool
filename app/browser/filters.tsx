@@ -21,10 +21,11 @@ export type BrowseFilter =
 
 export const getFiltersFromParams = (params: BrowseParams) => {
   const filters: BrowseFilter[] = [];
-  const { type, subtype, iri, subiri, topic } = params;
+  const { type, subtype, subsubtype, iri, subiri, subsubiri, topic } = params;
   for (const [t, i] of [
     [type, iri],
     [subtype, subiri],
+    [subsubtype, subsubiri],
   ]) {
     if (t && i && (t === "theme" || t === "organization" || t === "termset")) {
       const __typename = (() => {
@@ -58,14 +59,16 @@ export const getParamsFromFilters = (filters: BrowseFilter[]) => {
   const params: BrowseParams = {
     type: undefined,
     subtype: undefined,
+    subsubtype: undefined,
     iri: undefined,
     subiri: undefined,
+    subsubiri: undefined,
     topic: undefined,
   };
   let i = 0;
   for (const filter of filters) {
-    const typeAttr = i === 0 ? "type" : ("subtype" as const);
-    const iriAttr = i === 0 ? "iri" : ("subiri" as const);
+    const typeAttr = i === 0 ? "type" : i === 1 ? "subtype" : "subsubtype";
+    const iriAttr = i === 0 ? "iri" : i === 1 ? "subiri" : "subsubiri";
     switch (filter.__typename) {
       case "DataCubeTheme":
         params[typeAttr] = "theme";
