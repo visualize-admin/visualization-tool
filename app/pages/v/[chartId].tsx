@@ -90,7 +90,7 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
   const locale = useLocale();
   const { query, replace } = useRouter();
   const classes = useStyles();
-  const wrappingChartDiv = useRef<HTMLDivElement>(null);
+  const chartWrapperRef = useRef<HTMLDivElement>(null);
 
   // Keep initial value of publishSuccess
   const [publishSuccess] = useState(() => !!query.publishSuccess);
@@ -169,7 +169,7 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
         {config.published_state === PUBLISHED_STATE.PUBLISHED && (
           <Box className={classes.actionBar}>
             <PublishActions
-              chartRef={wrappingChartDiv}
+              chartWrapperRef={chartWrapperRef}
               configKey={key}
               locale={locale}
             />
@@ -234,7 +234,7 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
               </Box>
             )}
 
-            <Box ref={wrappingChartDiv}>
+            <Box ref={chartWrapperRef}>
               <ConfiguratorStateProvider
                 chartId="published"
                 initialState={state}
