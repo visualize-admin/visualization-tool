@@ -184,6 +184,7 @@ type Query {
     query: String
     order: SearchCubeResultOrder
     includeDrafts: Boolean
+    fetchDimensionTermsets: Boolean
     filters: [SearchCubeFilter!]
   ): [SearchCubeResult!]!
   dataCubeDimensionGeoShapes(

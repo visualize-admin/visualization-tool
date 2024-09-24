@@ -68,12 +68,14 @@ export const searchCubes = async ({
   locale: _locale,
   filters,
   includeDrafts,
+  fetchDimensionTermsets,
   sparqlClient,
 }: {
   query?: string | null;
   locale?: string | null;
   filters?: SearchCubeFilter[] | null;
   includeDrafts?: Boolean | null;
+  fetchDimensionTermsets?: boolean | null;
   sparqlClient: ParsingClient;
 }) => {
   const locale = _locale ?? defaultLocale;
@@ -95,7 +97,8 @@ export const searchCubes = async ({
       creatorValues,
       themeValues,
       includeDrafts,
-      query
+      query,
+      fetchDimensionTermsets
     )
   );
 
@@ -146,7 +149,8 @@ const mkScoresQuery = (
   creatorValues: string[],
   themeValues: string[],
   includeDrafts: Boolean | null | undefined,
-  query: string | null | undefined
+  query: string | null | undefined,
+  fetchDimensionTermsets: boolean | null | undefined
 ) => {
   return `
   ${pragmas}
@@ -182,7 +186,10 @@ const mkScoresQuery = (
 
     ?dimensionIri
       visualize:hasTimeUnit ?unitType ;
-      schema:name ?dimensionLabel .
+      schema:name ?dimensionLabel ;
+      visualize:hasTermset ?dimensionTermsetIri .
+
+    ?dimensionTermsetIri schema:name ?dimensionTermsetLabel .
 
     ?termsetIri
       meta:isUsedIn ?iri ;
@@ -206,8 +213,10 @@ const mkScoresQuery = (
       ?description
       ?title
       ?dimensionIri
-      ?unitType
       ?dimensionLabel
+      ?dimensionTermsetIri
+      ?dimensionTermsetLabel
+      ?unitType
       ?termsetIri
       ?termsetLabel
       ?creatorLabel
@@ -249,11 +258,26 @@ const mkScoresQuery = (
             )}
           `;
           } else if (filter.type === SearchCubeFilterType.DataCubeTermset) {
-            const sharedDimensions = filter.value.split(";");
-            return `
-            VALUES (?termsetIri) {${sharedDimensions.map((sd) => `( ${iriToNode(sd)} )`).join(" ")}}
-            ?termsetIri meta:isUsedIn ?iri .
-            ${buildLocalizedSubQuery("termsetIri", "schema:name", "termsetLabel", { locale })}`;
+            if (fetchDimensionTermsets) {
+              const sharedDimensions = filter.value.split(";");
+              return `
+                VALUES (?dimensionTermsetIri) {${sharedDimensions.map((sd) => `(${iriToNode(sd)})`).join(" ")}}
+                ?iri cube:observationConstraint/sh:property ?dimension .
+                ${buildLocalizedSubQuery("dimension", "schema:name", "dimensionLabel", { locale })}
+                ?dimension
+                  sh:path ?dimensionIri ;
+                  a cube:KeyDimension ;
+                  sh:in/rdf:first ?value .
+                ?value schema:inDefinedTermSet ?dimensionTermsetIri .
+                ${buildLocalizedSubQuery("dimensionTermsetIri", "schema:name", "dimensionTermsetLabel", { locale })}
+              `;
+            } else {
+              const termsets = filter.value.split(";");
+              return `
+                VALUES (?termsetIri) {${termsets.map((termset) => `(${iriToNode(termset)})`).join(" ")}}
+                ?termsetIri meta:isUsedIn ?iri .
+                ${buildLocalizedSubQuery("termsetIri", "schema:name", "termsetLabel", { locale })}`;
+            }
           }
         })
         .filter(truthy)
@@ -263,8 +287,8 @@ const mkScoresQuery = (
           !filters?.find((f) => f.type === SearchCubeFilterType.DataCubeTermset)
             ? `
           OPTIONAL {
-          ?termsetIri meta:isUsedIn ?iri .
-          ${buildLocalizedSubQuery("termsetIri", "schema:name", "termsetLabel", { locale })}
+            ?termsetIri meta:isUsedIn ?iri .
+            ${buildLocalizedSubQuery("termsetIri", "schema:name", "termsetLabel", { locale })}
           }`
             : ""
         }
@@ -392,8 +416,10 @@ const mkScoresQuery = (
       ?description
       ?title
       ?dimensionIri
-      ?unitType
       ?dimensionLabel
+      ?dimensionTermsetIri
+      ?dimensionTermsetLabel
+      ?unitType
       ?termsetIri
       ?termsetLabel
       ?creatorLabel

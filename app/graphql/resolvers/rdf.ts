@@ -80,7 +80,7 @@ const sortResults = (
 
 export const searchCubes: NonNullable<QueryResolvers["searchCubes"]> = async (
   _,
-  { locale, query, order, includeDrafts, filters },
+  { locale, query, order, includeDrafts, fetchDimensionTermsets, filters },
   { setup },
   info
 ) => {
@@ -88,6 +88,7 @@ export const searchCubes: NonNullable<QueryResolvers["searchCubes"]> = async (
   const cubes = await _searchCubes({
     locale,
     includeDrafts,
+    fetchDimensionTermsets,
     filters,
     query,
     sparqlClient,

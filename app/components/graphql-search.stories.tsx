@@ -108,6 +108,7 @@ export const Search = () => {
           : null,
       ].filter(truthy),
       includeDrafts: false,
+      fetchDimensionTermsets: true,
       query,
     },
   });

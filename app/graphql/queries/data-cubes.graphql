@@ -5,6 +5,7 @@ query SearchCubes(
   $query: String
   $order: SearchCubeResultOrder
   $includeDrafts: Boolean
+  $fetchDimensionTermsets: Boolean
   $filters: [SearchCubeFilter!]
 ) {
   searchCubes(
@@ -14,6 +15,7 @@ query SearchCubes(
     query: $query
     order: $order
     includeDrafts: $includeDrafts
+    fetchDimensionTermsets: $fetchDimensionTermsets
     filters: $filters
   ) {
     highlightedTitle

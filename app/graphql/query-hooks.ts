@@ -202,6 +202,7 @@ export type QuerySearchCubesArgs = {
   query?: Maybe<Scalars['String']>;
   order?: Maybe<SearchCubeResultOrder>;
   includeDrafts?: Maybe<Scalars['Boolean']>;
+  fetchDimensionTermsets?: Maybe<Scalars['Boolean']>;
   filters?: Maybe<Array<SearchCubeFilter>>;
 };
 
@@ -277,6 +278,7 @@ export type SearchCubesQueryVariables = Exact<{
   query?: Maybe<Scalars['String']>;
   order?: Maybe<SearchCubeResultOrder>;
   includeDrafts?: Maybe<Scalars['Boolean']>;
+  fetchDimensionTermsets?: Maybe<Scalars['Boolean']>;
   filters?: Maybe<Array<SearchCubeFilter> | SearchCubeFilter>;
 }>;
 
@@ -363,7 +365,7 @@ export type PossibleFiltersQuery = { __typename: 'Query', possibleFilters: Array
 
 
 export const SearchCubesDocument = gql`
-    query SearchCubes($sourceType: String!, $sourceUrl: String!, $locale: String!, $query: String, $order: SearchCubeResultOrder, $includeDrafts: Boolean, $filters: [SearchCubeFilter!]) {
+    query SearchCubes($sourceType: String!, $sourceUrl: String!, $locale: String!, $query: String, $order: SearchCubeResultOrder, $includeDrafts: Boolean, $fetchDimensionTermsets: Boolean, $filters: [SearchCubeFilter!]) {
   searchCubes(
     sourceType: $sourceType
     sourceUrl: $sourceUrl
@@ -371,6 +373,7 @@ export const SearchCubesDocument = gql`
     query: $query
     order: $order
     includeDrafts: $includeDrafts
+    fetchDimensionTermsets: $fetchDimensionTermsets
     filters: $filters
   ) {
     highlightedTitle

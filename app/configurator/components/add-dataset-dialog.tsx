@@ -714,6 +714,7 @@ export const DatasetDialog = ({
       query: query,
       order: SearchCubeResultOrder.Score,
       includeDrafts: false,
+      fetchDimensionTermsets: true,
       filters: [
         selectedTemporalDimension
           ? {

@@ -77,7 +77,7 @@ describe("parse-search-results", () => {
     `);
   });
 
-  it("should build search cubes from CSV (shared dimension query)", async () => {
+  it("should build search cubes from CSV (shared dimension query, all)", async () => {
     const data = await parseCSV(
       path.join(__dirname, "./query-search-results-shared-dimensions.mock.csv")
     );
@@ -86,6 +86,33 @@ describe("parse-search-results", () => {
 
     expect(searchCubes.slice(0, 3)).toMatchInlineSnapshot(`
       Array [
+        Object {
+          "creator": Object {
+            "iri": "https://register.ld.admin.ch/opendataswiss/org/elcom",
+            "label": "Federal Electricity Commission ElCom",
+          },
+          "datePublished": "2021-01-01",
+          "description": "Median electricity tariff per region & consumption profiles",
+          "dimensions": Array [
+            Object {
+              "iri": "https://energy.ld.admin.ch/elcom/electricityprice/dimension/canton",
+              "label": "Canton",
+              "termsets": Array [
+                Object {
+                  "iri": "https://ld.admin.ch/dimension/canton",
+                  "label": "Cantons",
+                },
+              ],
+              "timeUnit": "",
+            },
+          ],
+          "iri": "https://energy.ld.admin.ch/elcom/electricityprice-canton",
+          "publicationStatus": "PUBLISHED",
+          "subthemes": Array [],
+          "termsets": Array [],
+          "themes": Array [],
+          "title": "Median electricity tariff per canton",
+        },
         Object {
           "creator": Object {
             "iri": "https://register.ld.admin.ch/opendataswiss/org/bundesamt-fur-energie-bfe",
@@ -109,6 +136,7 @@ describe("parse-search-results", () => {
           "iri": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/14",
           "publicationStatus": "PUBLISHED",
           "subthemes": Array [],
+          "termsets": Array [],
           "themes": Array [
             Object {
               "iri": "https://register.ld.admin.ch/opendataswiss/category/national-economy",
@@ -144,6 +172,7 @@ describe("parse-search-results", () => {
           "iri": "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_co2wirkung/4",
           "publicationStatus": "PUBLISHED",
           "subthemes": Array [],
+          "termsets": Array [],
           "themes": Array [
             Object {
               "iri": "https://register.ld.admin.ch/opendataswiss/category/energy",
@@ -164,54 +193,11 @@ describe("parse-search-results", () => {
           ],
           "title": "Gebäudeprogramm - CO2-Wirkungen je Massnahmenbereich",
         },
-        Object {
-          "creator": Object {
-            "iri": "https://register.ld.admin.ch/opendataswiss/org/bundesamt-fur-energie-bfe",
-            "label": "Swiss Federal Office of Energy SFOE",
-          },
-          "datePublished": "2023-09-12",
-          "description": "Anzahl Gesuche mit Auszahlungen im jeweiligen Jahr, Gebäudeprogramm ab 2017 (nur direkte Massnahmen)",
-          "dimensions": Array [
-            Object {
-              "iri": "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_anzahl_gesuche/region",
-              "label": "Kanton",
-              "termsets": Array [
-                Object {
-                  "iri": "https://ld.admin.ch/dimension/canton",
-                  "label": "Cantons",
-                },
-              ],
-              "timeUnit": "",
-            },
-          ],
-          "iri": "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_anzahl_gesuche/15",
-          "publicationStatus": "PUBLISHED",
-          "subthemes": Array [],
-          "themes": Array [
-            Object {
-              "iri": "https://register.ld.admin.ch/opendataswiss/category/energy",
-              "label": "Energy",
-            },
-            Object {
-              "iri": "https://register.ld.admin.ch/opendataswiss/category/construction",
-              "label": "Construction and housing",
-            },
-            Object {
-              "iri": "https://register.ld.admin.ch/opendataswiss/category/population",
-              "label": "Population",
-            },
-            Object {
-              "iri": "https://register.ld.admin.ch/opendataswiss/category/statistical-basis",
-              "label": "Statistical basis",
-            },
-          ],
-          "title": "Gebäudeprogramm - Anzahl unterstützter Gesuche",
-        },
       ]
     `);
   });
 
-  it("should build search cubes from CSV (shared dimension query)", async () => {
+  it("should build search cubes from CSV (shared dimension query, temporal)", async () => {
     const data = await parseCSV(
       path.join(__dirname, "./query-search-results-temporal.mock.csv")
     );
@@ -219,6 +205,28 @@ describe("parse-search-results", () => {
 
     expect(searchCubes.slice(0, 3)).toMatchInlineSnapshot(`
       Array [
+        Object {
+          "creator": Object {
+            "iri": "https://register.ld.admin.ch/opendataswiss/org/elcom",
+            "label": "Eidgenössische Elektrizitätskommission ElCom",
+          },
+          "datePublished": "2021-01-01",
+          "description": "Strompreise per Stromnetzbetreiber und Gemeinde in der Schweiz",
+          "dimensions": Array [
+            Object {
+              "iri": "https://energy.ld.admin.ch/elcom/electricityprice/dimension/period",
+              "label": "",
+              "termsets": Array [],
+              "timeUnit": "http://www.w3.org/2006/time#unitYear",
+            },
+          ],
+          "iri": "https://energy.ld.admin.ch/elcom/electricityprice",
+          "publicationStatus": "PUBLISHED",
+          "subthemes": Array [],
+          "termsets": Array [],
+          "themes": Array [],
+          "title": "Strompreis per Stromnetzbetreiber",
+        },
         Object {
           "creator": Object {
             "iri": "https://register.ld.admin.ch/opendataswiss/org/bundesamt-fur-energie-bfe",
@@ -237,15 +245,8 @@ describe("parse-search-results", () => {
           "iri": "https://energy.ld.admin.ch/sfoe/OGD84GebTest/1",
           "publicationStatus": "PUBLISHED",
           "subthemes": Array [],
+          "termsets": Array [],
           "themes": Array [
-            Object {
-              "iri": "https://register.ld.admin.ch/opendataswiss/category/energy",
-              "label": "Energie",
-            },
-            Object {
-              "iri": "https://register.ld.admin.ch/opendataswiss/category/national-economy",
-              "label": "Volkswirtschaft",
-            },
             Object {
               "iri": "https://register.ld.admin.ch/opendataswiss/category/energy",
               "label": "Energie",
@@ -308,6 +309,7 @@ describe("parse-search-results", () => {
               "label": "Wirtschaft und Konsum",
             },
           ],
+          "termsets": Array [],
           "themes": Array [
             Object {
               "iri": "https://register.ld.admin.ch/opendataswiss/category/territory",
@@ -328,39 +330,8 @@ describe("parse-search-results", () => {
           ],
           "title": "Statistik der Wasserkraftanlagen (WASTA)",
         },
-        Object {
-          "creator": Object {
-            "iri": "https://register.ld.admin.ch/opendataswiss/org/bundesamt-fur-umwelt-bafu",
-            "label": "Bundesamt für Umwelt BAFU",
-          },
-          "datePublished": "2022-08-17",
-          "description": "Cf. IIR report Submission 2022.",
-          "dimensions": Array [
-            Object {
-              "iri": "https://environment.ld.admin.ch/foen/BAFU_LuChem_EMIS_pollutants_KCA_all_years/year",
-              "label": "",
-              "termsets": Array [],
-              "timeUnit": "http://www.w3.org/2006/time#unitYear",
-            },
-          ],
-          "iri": "https://environment.ld.admin.ch/foen/BAFU_LuChem_EMIS_pollutants_KCA_all_years/7",
-          "publicationStatus": "PUBLISHED",
-          "subthemes": Array [
-            Object {
-              "iri": "https://register.ld.admin.ch/foen/theme/11",
-              "label": "Luft",
-            },
-          ],
-          "themes": Array [
-            Object {
-              "iri": "https://register.ld.admin.ch/opendataswiss/category/territory",
-              "label": "Raum und Umwelt",
-            },
-          ],
-          "title": "Schlüsselkategorien für die wichtigsten Schadstoffe für das Einreichungsjahr 2022",
-        },
       ]
-    `);
+`);
   });
 });
 

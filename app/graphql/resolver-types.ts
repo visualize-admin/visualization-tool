@@ -202,6 +202,7 @@ export type QuerySearchCubesArgs = {
   query?: Maybe<Scalars['String']>;
   order?: Maybe<SearchCubeResultOrder>;
   includeDrafts?: Maybe<Scalars['Boolean']>;
+  fetchDimensionTermsets?: Maybe<Scalars['Boolean']>;
   filters?: Maybe<Array<SearchCubeFilter>>;
 };
 
