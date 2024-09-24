@@ -226,18 +226,7 @@ const mkScoresQuery = (
             const sharedDimensions = df.value.split(";");
             return `
             VALUES (?termsetIri) {${sharedDimensions.map((sd) => `(<${sd}>)`).join(" ")}}
-            ?iri cube:observationConstraint/sh:property ?dimension .
-            ?dimension
-              sh:path ?dimensionIri ;
-              a cube:KeyDimension ;
-              sh:in/rdf:first ?value .
-            ?value schema:inDefinedTermSet ?termsetIri .
-            ${buildLocalizedSubQuery(
-              "dimension",
-              "schema:name",
-              "dimensionLabel",
-              { locale }
-            )}
+            ?termsetIri meta:isUsedIn ?iri .
             ${buildLocalizedSubQuery("termsetIri", "schema:name", "termsetLabel", { locale })}`;
           }
         })
