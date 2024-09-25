@@ -391,7 +391,7 @@ const SelectDatasetStepContent = ({
         <PanelBodyWrapper
           type="M"
           className={classes.panelMiddle}
-          sx={{ maxWidth: 1040 }}
+          sx={{ maxWidth: 1040, p: 5 }}
         >
           <AnimatePresence mode="wait">
             {dataset ? (

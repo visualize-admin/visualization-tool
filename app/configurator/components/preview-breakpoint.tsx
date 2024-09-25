@@ -156,6 +156,7 @@ const useStyles = makeStyles<Theme>((theme) => ({
     width: "100%",
     height: "calc(100% - 2rem)",
     overflowY: "auto",
+    padding: theme.spacing(5),
   },
   chartContainer: {
     margin: "0 auto",
