@@ -19,6 +19,14 @@ You can also check the
   - Preview mode now takes the real size of the breakpoint, making the area
     horizontally scrollable in case the screen size is smaller than the
     breakpoint
+- Fixes
+  - Interactive filters in the published mode and now only showing combinations
+    of filters that are actually present in the data, taking configurator
+    filters into account
+  - Compact table view now works again with heatmap cells
+  - Compact table view margins were improved so rows do not overlap
+  - Chart title and dataset tooltips in the user profile now only shows when the
+    title is truncated
 
 # [4.8.0] - 2024-09-11
 

@@ -292,7 +292,7 @@ const ChartFootnotesComboLineSingle = ({
   ) : null;
 };
 
-const VisualizeLink = () => {
+export const VisualizeLink = () => {
   const locale = useLocale();
   return (
     <Typography variant="caption" color="grey.600">

@@ -109,6 +109,9 @@ export const ChartPublished = (props: ChartPublishedProps) => {
   const { dataSource } = state;
   const locale = useLocale();
   const metadataPanelStore = useMemo(() => createMetadataPanelStore(), []);
+
+  const publishedChartClasses = usePublishedChartStyles({ shrink: true });
+
   const renderChart = useCallback(
     (chartConfig: ChartConfig) => (
       <ChartPublishedIndividualChart
@@ -136,7 +139,7 @@ export const ChartPublished = (props: ChartPublishedProps) => {
       <InteractiveFiltersProvider chartConfigs={state.chartConfigs}>
         <Box ref={ref}>
           {state.layout.type === "dashboard" ? (
-            <>
+            <Box className={publishedChartClasses.dashboardBoxWrapper}>
               <Box
                 sx={{
                   mb:
@@ -159,7 +162,7 @@ export const ChartPublished = (props: ChartPublishedProps) => {
                 chartConfigs={state.chartConfigs}
                 renderChart={renderChart}
               />
-            </>
+            </Box>
           ) : (
             <>
               <Flex
@@ -210,6 +213,19 @@ const usePublishedChartStyles = makeStyles<Theme, { shrink: boolean }>(
       paddingLeft: ({ shrink }) =>
         `calc(${theme.spacing(5)} + ${shrink ? DRAWER_WIDTH : 0}px)`,
       transition: "padding 0.25s ease",
+    },
+    dashboardBoxWrapper: {
+      [theme.breakpoints.up("xs")]: {
+        padding: theme.spacing(5, 4, 2, 4),
+      },
+      [theme.breakpoints.up("md")]: {
+        padding: theme.spacing(5),
+      },
+      [theme.breakpoints.up("lg")]: {
+        padding: theme.spacing(6),
+      },
+
+      backgroundColor: theme.palette.grey[200],
     },
   })
 );
@@ -430,7 +446,10 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
               chartConfig={chartConfig}
               dashboardFilters={state.dashboardFilters}
               components={allComponents}
-              showVisualizeLink={state.chartConfigs.length === 1}
+              showVisualizeLink={
+                state.chartConfigs.length === 1 &&
+                state.layout.type !== "dashboard"
+              }
             />
           </InteractiveFiltersChartProvider>
         </LoadingStateProvider>

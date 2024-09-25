@@ -2,6 +2,8 @@ import { t, Trans } from "@lingui/macro";
 import { Box, Button, SelectChangeEvent, Typography } from "@mui/material";
 import isEmpty from "lodash/isEmpty";
 import isEqual from "lodash/isEqual";
+import mapValues from "lodash/mapValues";
+import pickBy from "lodash/pickBy";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useClient } from "urql";
 
@@ -262,17 +264,8 @@ const DataFilter = ({
     (d) => d.updateDataFilter
   );
   const queryFilters = useMemo(() => {
-    const otherKeys = Object.keys(interactiveFilters).filter(
-      (key) => key !== dimensionIri
-    );
-    return otherKeys.length > 0
-      ? interactiveFilters
-      : // In case of only one filter, we want to constrain the values
-        // by config filters.
-        Object.fromEntries(
-          Object.entries(filters).filter(([key]) => key !== dimensionIri)
-        );
-  }, [filters, interactiveFilters, dimensionIri]);
+    return getInteractiveQueryFilters({ filters, interactiveFilters });
+  }, [filters, interactiveFilters]);
   const [{ data, fetching }] = useDataCubesComponentsQuery({
     variables: {
       sourceType: dataSource.type,
@@ -376,6 +369,26 @@ const DataFilter = ({
     </Flex>
   ) : (
     <Loading />
+  );
+};
+
+// We need to include filters that are not interactive filters, to only
+// show values that make sense in the context of the current filters.
+export const getInteractiveQueryFilters = ({
+  filters,
+  interactiveFilters,
+}: {
+  filters: Filters;
+  interactiveFilters: Filters;
+}) => {
+  const nonInteractiveFilters = pickBy(
+    filters,
+    (_, k) => !(k in interactiveFilters)
+  );
+  let i = 0;
+  return mapValues(
+    { ...nonInteractiveFilters, ...interactiveFilters },
+    (v) => ({ ...v, position: i++ })
   );
 };
 
