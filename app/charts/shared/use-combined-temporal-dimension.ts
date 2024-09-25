@@ -49,7 +49,7 @@ export const useCombinedTemporalDimension = () => {
   ]);
 };
 
-const getCombinedTemporalDimension = ({
+export const getCombinedTemporalDimension = ({
   formatLocale,
   dimensions,
   potentialTimeRangeFilterIris,
