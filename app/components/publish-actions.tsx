@@ -153,7 +153,7 @@ const Embed = ({ chartWrapperRef, configKey, locale }: PublishActionProps) => {
             />
           </Flex>
           <CopyToClipboardTextInput
-            content={`<iframe src="${embedUrl}" style="border:0px #ffffff none; max-width: 100%" name="visualize.admin.ch" scrolling="no" frameborder="1" marginheight="0px" marginwidth="0px" height="${`${iframeHeight}px`}" width="600px" allowfullscreen></iframe>${isResponsive ? `<script type="text/javascript">!function(){window.addEventListener("message", function (e) { if (e.data.type === "${CHART_RESIZE_EVENT_TYPE}") { document.querySelectorAll("iframe").forEach((iframe) => { if (iframe.contentWindow === e.source) { iframe.style.height = e.data.height + "px"; } }); } })}();</script>` : ""}`}
+            content={`<iframe src="${embedUrl}" width="100%" height="${`${iframeHeight}px`}" style="border:0px #ffffff none;" name="visualize.admin.ch"></iframe>${isResponsive ? `<script type="text/javascript">!function(){window.addEventListener("message", function (e) { if (e.data.type === "${CHART_RESIZE_EVENT_TYPE}") { document.querySelectorAll("iframe").forEach((iframe) => { if (iframe.contentWindow === e.source) { iframe.style.height = e.data.height + "px"; } }); } })}();</script>` : ""}`}
           />
         </div>
         <div>
