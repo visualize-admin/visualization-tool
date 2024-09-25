@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import { ChangeEvent, ReactNode, RefObject, useEffect, useState } from "react";
 
+import { CHART_RESIZE_EVENT_TYPE } from "@/charts/shared/use-size";
 import { CopyToClipboardTextInput } from "@/components/copy-to-clipboard-text-input";
 import Flex from "@/components/flex";
 import { IconLink } from "@/components/links";
@@ -20,7 +21,7 @@ import { useI18n } from "@/utils/use-i18n";
 import { Radio } from "./form";
 
 type PublishActionProps = {
-  chartWrapperRef?: RefObject<HTMLElement>;
+  chartWrapperRef: RefObject<HTMLDivElement>;
   configKey: string;
   locale: string;
 };
@@ -63,7 +64,7 @@ const TriggeredPopover = (props: TriggeredPopoverProps) => {
 const Embed = ({ chartWrapperRef, configKey, locale }: PublishActionProps) => {
   const [embedUrl, setEmbedUrl] = useState("");
   const [embedAEMUrl, setEmbedAEMUrl] = useState("");
-  const [isResponsive, setIsResponsive] = useState(false);
+  const [isResponsive, setIsResponsive] = useState(true);
   const [iframeHeight, setIframeHeight] = useState(0);
 
   const handlePopoverOpen = useEvent(() => {
@@ -152,7 +153,7 @@ const Embed = ({ chartWrapperRef, configKey, locale }: PublishActionProps) => {
             />
           </Flex>
           <CopyToClipboardTextInput
-            content={`<iframe src="${embedUrl}" style="border:0px #ffffff none; max-width: 100%" name="visualize.admin.ch" scrolling="no" frameborder="1" marginheight="0px" marginwidth="0px" height="${`${iframeHeight}px`}" width="600px" allowfullscreen></iframe>`}
+            content={`<iframe src="${embedUrl}" style="border:0px #ffffff none; max-width: 100%" name="visualize.admin.ch" scrolling="no" frameborder="1" marginheight="0px" marginwidth="0px" height="${`${iframeHeight}px`}" width="600px" allowfullscreen></iframe>${isResponsive ? `<script type="text/javascript">!function(){window.addEventListener("message", function (e) { if (e.data.type === "${CHART_RESIZE_EVENT_TYPE}") { document.querySelectorAll("iframe").forEach((iframe) => { if (iframe.contentWindow === e.source) { iframe.style.height = e.data.height + "px"; } }); } })}();</script>` : ""}`}
           />
         </div>
         <div>
