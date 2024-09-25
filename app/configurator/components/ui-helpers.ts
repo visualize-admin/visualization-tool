@@ -13,6 +13,7 @@ import {
   Component,
   Dimension,
   DimensionValue,
+  getTemporalEntityValue,
   isJoinByComponent,
   isTemporalDimension,
   Measure,
@@ -380,8 +381,8 @@ export const extractDataPickerOptionsFromDimension = ({
     const [minValue, maxValue] = isTemporalDimension(dimension)
       ? [values[0].value as string, values[values.length - 1].value as string]
       : [
-          values[0].position as string,
-          values[values.length - 1].position as string,
+          getTemporalEntityValue(values[0]) as string,
+          getTemporalEntityValue(values[values.length - 1]) as string,
         ];
     const dimensionType = dimension.__typename;
     const options = match(dimensionType)
@@ -398,7 +399,7 @@ export const extractDataPickerOptionsFromDimension = ({
         return values.map((d) => {
           return {
             label: `${d.label}`,
-            value: `${d.position}`,
+            value: `${getTemporalEntityValue(d)}`,
           };
         });
       })
