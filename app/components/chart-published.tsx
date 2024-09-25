@@ -56,10 +56,6 @@ import {
 } from "@/stores/interactive-filters";
 import { useResizeObserver } from "@/utils/use-resize-observer";
 
-type ChartPublishedProps = {
-  configKey?: string;
-};
-
 type ChartPublishedIndividualChartProps = ChartPublishInnerProps;
 
 const ChartPublishedIndividualChart = forwardRef<
@@ -103,8 +99,13 @@ const ChartPublishedIndividualChart = forwardRef<
   }
 );
 
-export const ChartPublished = (props: ChartPublishedProps) => {
-  const { configKey } = props;
+export const ChartPublished = ({
+  configKey,
+  disableBorder,
+}: {
+  configKey?: string;
+  disableBorder?: boolean;
+}) => {
   const [state] = useConfiguratorState(isPublished);
   const { dataSource } = state;
   const locale = useLocale();
@@ -194,6 +195,7 @@ export const ChartPublished = (props: ChartPublishedProps) => {
                     chartConfig={getChartConfig(state)}
                     configKey={configKey}
                     metadataPanelStore={metadataPanelStore}
+                    disableBorder={disableBorder}
                   />
                 </ChartWrapper>
               </ChartTablePreviewProvider>
@@ -238,6 +240,7 @@ type ChartPublishInnerProps = {
   className?: string;
   children?: React.ReactNode;
   metadataPanelStore: ReturnType<typeof createMetadataPanelStore>;
+  disableBorder?: boolean;
 };
 
 const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
@@ -249,6 +252,7 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
     className,
     children,
     metadataPanelStore,
+    disableBorder,
   } = props;
   const { meta } = chartConfig;
   const rootRef = useRef<HTMLDivElement>(null);
@@ -273,7 +277,7 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
     return () => unsubscribe();
   });
 
-  const chartClasses = useChartStyles();
+  const chartClasses = useChartStyles({ disableBorder });
   const publishedChartClasses = usePublishedChartStyles({
     shrink: shouldShrink,
   });

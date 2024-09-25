@@ -393,7 +393,7 @@ const ChartPreviewInner = ({
   const configuring = isConfiguring(state);
   const chartConfig = getChartConfig(state, chartKey);
   const locale = useLocale();
-  const chartClasses = useChartStyles();
+  const chartClasses = useChartStyles({ disableBorder: false });
   const commonQueryVariables = {
     sourceType: dataSource.type,
     sourceUrl: dataSource.url,
