@@ -6,8 +6,10 @@ import { SearchCubeResultOrder } from "@/graphql/query-hooks";
 export type BrowseParams = {
   type?: "theme" | "organization" | "dataset" | "termset";
   subtype?: "theme" | "organization" | "termset";
+  subsubtype?: "theme" | "organization" | "termset";
   iri?: string;
   subiri?: string;
+  subsubiri?: string;
   topic?: string;
   search?: string;
   order?: SearchCubeResultOrder;

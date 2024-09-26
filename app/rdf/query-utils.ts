@@ -2,7 +2,7 @@ import { locales } from "@/locales/locales";
 
 export const GROUP_SEPARATOR = "|||";
 
-export const formatIriToQueryNode = (iri: string) => {
+export const iriToNode = (iri: string) => {
   return `<${iri}>`;
 };
 

@@ -24,7 +24,6 @@ import {
 } from "@/browser/dataset-browse";
 import { DataSetPreview, DataSetPreviewProps } from "@/browser/dataset-preview";
 import { BrowseFilter, DataCubeAbout } from "@/browser/filters";
-import { useSearchPageData } from "@/browser/search-page-data";
 import { DatasetMetadata } from "@/components/dataset-metadata";
 import Flex from "@/components/flex";
 import { Footer } from "@/components/footer";
@@ -46,6 +45,7 @@ import {
 import { truthy } from "@/domain/types";
 import {
   DataCubeOrganization,
+  DataCubeTermset,
   DataCubeTheme,
   SearchCubeFilterType,
   useDataCubeMetadataQuery,
@@ -274,11 +274,17 @@ const SelectDatasetStepContent = ({
     );
   }, [cubes]);
 
-  const searchPageData = useSearchPageData();
-  const termsets = useMemo(
-    () => searchPageData.data?.allTermsets ?? [],
-    [searchPageData.data?.allTermsets]
-  );
+  const termsets: DataCubeTermset[] = useMemo(() => {
+    return sortBy(
+      uniqBy(
+        cubes.flatMap((d) =>
+          d.cube.termsets.map((d) => ({ ...d, __typename: "DataCubeTermset" }))
+        ),
+        (d) => d.iri
+      ),
+      (d) => d.label
+    );
+  }, [cubes]);
 
   const pageTitle = useMemo(() => {
     return queryFilters
@@ -290,8 +296,8 @@ const SelectDatasetStepContent = ({
               return themes;
             case SearchCubeFilterType.DataCubeOrganization:
               return orgs;
-            case SearchCubeFilterType.Termset:
-              return termsets.map((x) => x.termset);
+            case SearchCubeFilterType.DataCubeTermset:
+              return termsets;
             case SearchCubeFilterType.DataCubeAbout:
               return [];
             case SearchCubeFilterType.TemporalDimension:

@@ -51,10 +51,6 @@ export const Query: QueryResolvers = {
     const source = getSource(args.sourceType);
     return await source.dataCubeDimensionGeoShapes(parent, args, context, info);
   },
-  allTermsets: async (parent, args, context, info) => {
-    const source = getSource(args.sourceType);
-    return await source.allTermsets(parent, args, context, info);
-  },
 };
 
 export const resolveDimensionType = (

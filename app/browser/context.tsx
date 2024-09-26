@@ -34,6 +34,8 @@ export const getBrowseParamsFromQuery = (
       "iri",
       "subtype",
       "subiri",
+      "subsubtype",
+      "subsubiri",
       "topic",
       "includeDrafts",
       "order",
@@ -44,8 +46,17 @@ export const getBrowseParamsFromQuery = (
     (v) => (Array.isArray(v) ? v[0] : v)
   );
 
-  const { type, iri, subtype, subiri, topic, includeDrafts, ...values } =
-    rawValues;
+  const {
+    type,
+    iri,
+    subtype,
+    subiri,
+    subsubtype,
+    subsubiri,
+    topic,
+    includeDrafts,
+    ...values
+  } = rawValues;
   const previous = values.previous ? JSON.parse(values.previous) : undefined;
 
   return pickBy(
@@ -55,6 +66,8 @@ export const getBrowseParamsFromQuery = (
       iri: iri ?? previous?.iri,
       subtype: subtype ?? previous?.subtype,
       subiri: subiri ?? previous?.subiri,
+      subsubtype: subsubtype ?? previous?.subsubtype,
+      subsubiri: subsubiri ?? previous?.subsubiri,
       topic: topic ?? previous?.topic,
       includeDrafts: includeDrafts ? JSON.parse(includeDrafts) : undefined,
     },
@@ -63,7 +76,8 @@ export const getBrowseParamsFromQuery = (
 };
 
 export const buildURLFromBrowseState = (browseState: BrowseParams) => {
-  const { type, iri, subtype, subiri, ...queryParams } = browseState;
+  const { type, iri, subtype, subiri, subsubtype, subsubiri, ...queryParams } =
+    browseState;
 
   const typePart =
     type && iri
@@ -73,8 +87,14 @@ export const buildURLFromBrowseState = (browseState: BrowseParams) => {
     subtype && subiri
       ? `${encodeURIComponent(subtype)}/${encodeURIComponent(subiri)}`
       : undefined;
+  const subsubtypePart =
+    subsubtype && subsubiri
+      ? `${encodeURIComponent(subsubtype)}/${encodeURIComponent(subsubiri)}`
+      : undefined;
 
-  const pathname = ["/browse", typePart, subtypePart].filter(Boolean).join("/");
+  const pathname = ["/browse", typePart, subtypePart, subsubtypePart]
+    .filter(Boolean)
+    .join("/");
   return {
     pathname,
     query: queryParams,

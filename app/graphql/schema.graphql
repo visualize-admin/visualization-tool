@@ -14,6 +14,7 @@ scalar DataCubePreview
 scalar Termset
 scalar ComponentTermsets
 scalar GeoShapes
+scalar SearchCube
 
 enum DataCubePublicationStatus {
   DRAFT
@@ -48,8 +49,6 @@ enum TimeUnit {
   Second
 }
 
-scalar SearchCube
-
 type SearchCubeResult {
   score: Float
   cube: SearchCube!
@@ -67,12 +66,17 @@ type DataCubeOrganization {
   label: String
 }
 
+type DataCubeTermset {
+  iri: String!
+  label: String
+}
+
 enum SearchCubeFilterType {
   TemporalDimension
   DataCubeTheme
   DataCubeOrganization
   DataCubeAbout
-  Termset
+  DataCubeTermset
 }
 
 input SearchCubeFilter {
@@ -128,11 +132,6 @@ input DataCubeDimensionGeoShapesCubeFilter {
   dimensionIri: String!
 }
 
-type TermsetCount {
-  termset: Termset!
-  count: Int!
-}
-
 # The "Query" type is special: it lists all of the available queries that
 # clients can execute, along with the return type for each.
 type Query {
@@ -185,6 +184,7 @@ type Query {
     query: String
     order: SearchCubeResultOrder
     includeDrafts: Boolean
+    fetchDimensionTermsets: Boolean
     filters: [SearchCubeFilter!]
   ): [SearchCubeResult!]!
   dataCubeDimensionGeoShapes(
@@ -193,10 +193,4 @@ type Query {
     locale: String!
     cubeFilter: DataCubeDimensionGeoShapesCubeFilter!
   ): GeoShapes
-  allTermsets(
-    sourceType: String!
-    sourceUrl: String!
-    locale: String!
-    includeDrafts: Boolean
-  ): [TermsetCount!]!
 }
