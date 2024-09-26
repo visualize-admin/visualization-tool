@@ -125,7 +125,10 @@ export const useChartBounds = (
 
   const chartWidth = width - left - right;
   const chartHeight = isLayoutingFreeCanvas(state)
-    ? Math.max(CHART_GRID_MIN_HEIGHT, height - top - bottom)
+    ? Math.max(
+        Math.max(40, CHART_GRID_MIN_HEIGHT - top - bottom),
+        height - top - bottom
+      )
     : chartWidth * ASPECT_RATIO;
 
   return {
