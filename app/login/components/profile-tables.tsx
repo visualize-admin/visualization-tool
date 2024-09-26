@@ -214,7 +214,7 @@ const ProfileVisualizationsRow = (props: {
       {
         type: "link",
         href: `/${locale}/create/new?copy=${config.key}`,
-        label: t({ id: "login.chart.copy", message: "Copy" }),
+        label: t({ id: "login.chart.duplicate", message: "Duplicate" }),
         iconName: "copy",
       },
       {
@@ -223,12 +223,6 @@ const ProfileVisualizationsRow = (props: {
         label: t({ id: "login.chart.edit", message: "Edit" }),
         iconName: "edit",
         priority: !isPublished ? 0 : undefined,
-      },
-      {
-        type: "link",
-        href: publishLink,
-        label: t({ id: "login.chart.share", message: "Share" }),
-        iconName: "linkExternal",
       },
       isPublished
         ? {

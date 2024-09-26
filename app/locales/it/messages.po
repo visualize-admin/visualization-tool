@@ -1369,10 +1369,6 @@ msgid "login.chart.actions.unpublish"
 msgstr "Annullare la pubblicazione"
 
 #: app/login/components/profile-tables.tsx
-msgid "login.chart.copy"
-msgstr "Copia"
-
-#: app/login/components/profile-tables.tsx
 msgid "login.chart.delete"
 msgstr "Cancellare"
 
@@ -1383,6 +1379,10 @@ msgstr ""
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.delete.confirmation"
 msgstr "Sei sicuro di voler cancellare questo grafico?"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.chart.duplicate"
+msgstr "Duplicare"
 
 #: app/login/components/profile-tables.tsx
 #: app/pages/v/[chartId].tsx
