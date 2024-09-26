@@ -36,6 +36,9 @@ You can also check the
   - Shared time slider now works correctly in cases of applied to charts from
     different cubes, where one cube has a temporal dimension and the other does
     not
+  - Adding a new chart when the free canvas layout has already been initialized
+    is not breaking the application anymore
+  - Axis titles now wrap
 
 # [4.8.0] - 2024-09-11
 
