@@ -88,6 +88,9 @@ const useTimeRangeRangeStyles = makeStyles((theme: Theme) => ({
     [`& .${sliderClasses.rail}.${sliderClasses.rail}`]: {
       backgroundColor: theme.palette.grey[600],
     },
+    [`& .${sliderClasses.valueLabel}`]: {
+      padding: theme.spacing(1, 2),
+    },
   },
 }));
 
