@@ -224,12 +224,6 @@ const ProfileVisualizationsRow = (props: {
         iconName: "edit",
         priority: !isPublished ? 0 : undefined,
       },
-      {
-        type: "link",
-        href: publishLink,
-        label: t({ id: "login.chart.share", message: "Share" }),
-        iconName: "linkExternal",
-      },
       isPublished
         ? {
             type: "button",
