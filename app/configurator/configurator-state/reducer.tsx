@@ -915,7 +915,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
           draft.activeChartKey = action.value.chartConfig.key;
         }
 
-        ensureDashboardLayoutAreCorrect(draft);
+        ensureDashboardLayoutIsCorrect(draft);
       }
 
       return draft;
@@ -1013,7 +1013,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         console.log(current(draft));
       }
 
-      ensureDashboardLayoutAreCorrect(draft);
+      ensureDashboardLayoutIsCorrect(draft);
 
       return draft;
 
@@ -1167,7 +1167,7 @@ const withLogging = <TState, TAction extends { type: unknown }>(
 };
 export const reducer = reducerLogging ? withLogging(reducer_) : reducer_;
 
-export function ensureDashboardLayoutAreCorrect(
+export function ensureDashboardLayoutIsCorrect(
   draft: WritableDraft<ConfiguratorState>
 ) {
   if (
