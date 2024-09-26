@@ -34,7 +34,7 @@ const HEIGHT = 40;
 const COLOR_RAMP_HEIGHT = 10;
 const MARGIN = { top: 6, right: 4, bottom: 0, left: 4 };
 const AXIS_TICK_ROTATE_ANGLE = 45;
-const LABELFONTSIZE = 10
+const AXIS_LABEL_FONT_SIZE = 10;
 
 const useLegendWidth = () => Math.min(useSize().width, MAX_WIDTH);
 
@@ -42,18 +42,18 @@ const makeAxis = (
   g: Selection<SVGGElement, unknown, null, undefined>,
   {
     axisLabelColor,
+    axisLabelFontSize,
     fontFamily,
     formatNumber,
     labelColor,
-    LABELFONTSIZE,
     scale,
     thresholds,
   }: {
     axisLabelColor: string;
+    axisLabelFontSize: number;
     fontFamily: string;
     formatNumber: (x: NumberValue | undefined | null) => string;
     labelColor: string;
-    LABELFONTSIZE: number;
     scale: ScaleLinear<number, number, number>;
     thresholds: number[];
   }
@@ -67,7 +67,7 @@ const makeAxis = (
   g.select("path.domain").remove();
   g.selectAll(".tick line").attr("stroke", axisLabelColor);
   g.selectAll(".tick text")
-    .attr("font-size", LABELFONTSIZE)
+    .attr("font-size", axisLabelFontSize)
     .attr("font-family", fontFamily)
     .attr("fill", labelColor)
     .attr("transform", `rotate(${AXIS_TICK_ROTATE_ANGLE})`)
@@ -350,7 +350,7 @@ const CircleLegend = ({
                 stroke={axisLabelColor}
                 radius={radius}
                 maxRadius={maxRadius}
-                fontSize={LABELFONTSIZE}
+                fontSize={AXIS_LABEL_FONT_SIZE}
                 showLine={!interaction.visible}
               />
             );
@@ -370,7 +370,7 @@ const CircleLegend = ({
               stroke={axisLabelColor}
               radius={radius}
               maxRadius={maxRadius}
-              fontSize={LABELFONTSIZE}
+              fontSize={AXIS_LABEL_FONT_SIZE}
             />
           )}
       </g>
@@ -394,16 +394,16 @@ const getMaxRotatedAxisLabelHeight = (
   values: number[],
   options: {
     formatNumber: (d: number) => string;
-    LABELFONTSIZE: number;
+    fontSize: number;
   }
 ) => {
-  const { formatNumber, LABELFONTSIZE } = options;
+  const { formatNumber, fontSize } = options;
 
   return Math.max(
     ...values.map((d) => {
       return getRotatedAxisLabelHeight(d, {
         formatNumber,
-        fontSize: LABELFONTSIZE,
+        fontSize,
       });
     })
   );
@@ -413,16 +413,16 @@ const useLegendWithRotatedAxisLabelsHeight = (
   values: number[],
   options: {
     formatNumber: (d: number) => string;
-    LABELFONTSIZE: number;
+    fontSize: number;
   }
 ) => {
-  const { formatNumber, LABELFONTSIZE } = options;
+  const { formatNumber, fontSize } = options;
   const maxLabelHeight = useMemo(() => {
     return getMaxRotatedAxisLabelHeight(values, {
       formatNumber,
-      LABELFONTSIZE,
+      fontSize,
     });
-  }, [values, formatNumber, LABELFONTSIZE]);
+  }, [values, formatNumber, fontSize]);
 
   return Math.max(HEIGHT, HEIGHT * 0.4 + maxLabelHeight);
 };
@@ -438,8 +438,7 @@ const JenksColorLegend = ({
 }) => {
   const width = useLegendWidth();
   const legendAxisRef = useRef<SVGGElement>(null);
-  const { axisLabelColor, labelColor, fontFamily } =
-    useChartTheme();
+  const { axisLabelColor, labelColor, fontFamily } = useChartTheme();
   const formatNumber = useFormatInteger();
   const thresholds = useMemo(() => colorScale.domain(), [colorScale]);
   const [min, max] = domain;
@@ -460,27 +459,19 @@ const JenksColorLegend = ({
     () =>
       makeAxis(select(legendAxisRef.current) as any, {
         axisLabelColor,
+        axisLabelFontSize: AXIS_LABEL_FONT_SIZE,
         fontFamily,
         formatNumber,
         labelColor,
-        LABELFONTSIZE,
         scale,
         thresholds: tickValues,
       }),
-    [
-      axisLabelColor,
-      fontFamily,
-      formatNumber,
-      labelColor,
-      LABELFONTSIZE,
-      scale,
-      tickValues,
-    ]
+    [axisLabelColor, fontFamily, formatNumber, labelColor, scale, tickValues]
   );
 
   const height = useLegendWithRotatedAxisLabelsHeight(thresholdsScale.range(), {
     formatNumber,
-    LABELFONTSIZE,
+    fontSize: AXIS_LABEL_FONT_SIZE,
   });
 
   return (
@@ -523,8 +514,7 @@ const QuantileColorLegend = ({
   const width = useLegendWidth();
   const legendAxisRef = useRef<SVGGElement>(null);
 
-  const { axisLabelColor, labelColor, fontFamily } =
-    useChartTheme();
+  const { axisLabelColor, labelColor, fontFamily } = useChartTheme();
   const formatNumber = useFormatInteger();
 
   const thresholds = useMemo(
@@ -549,27 +539,19 @@ const QuantileColorLegend = ({
     () =>
       makeAxis(select(legendAxisRef.current) as any, {
         axisLabelColor,
+        axisLabelFontSize: AXIS_LABEL_FONT_SIZE,
         fontFamily,
         formatNumber,
         labelColor,
-        LABELFONTSIZE,
         scale,
         thresholds,
       }),
-    [
-      axisLabelColor,
-      fontFamily,
-      formatNumber,
-      labelColor,
-      LABELFONTSIZE,
-      scale,
-      thresholds,
-    ]
+    [axisLabelColor, fontFamily, formatNumber, labelColor, scale, thresholds]
   );
 
   const height = useLegendWithRotatedAxisLabelsHeight(thresholdsScale.range(), {
     formatNumber,
-    LABELFONTSIZE,
+    fontSize: AXIS_LABEL_FONT_SIZE,
   });
 
   return (
@@ -612,8 +594,7 @@ const QuantizeColorLegend = ({
   const width = useLegendWidth();
   const legendAxisRef = useRef<SVGGElement>(null);
 
-  const { axisLabelColor, labelColor, fontFamily } =
-    useChartTheme();
+  const { axisLabelColor, labelColor, fontFamily } = useChartTheme();
   const formatNumber = useFormatInteger();
 
   const classesScale = scaleLinear()
@@ -634,27 +615,19 @@ const QuantizeColorLegend = ({
     () =>
       makeAxis(select(legendAxisRef.current) as any, {
         axisLabelColor,
+        axisLabelFontSize: AXIS_LABEL_FONT_SIZE,
         fontFamily,
         formatNumber,
         labelColor,
-        LABELFONTSIZE,
         scale,
         thresholds,
       }),
-    [
-      axisLabelColor,
-      fontFamily,
-      formatNumber,
-      labelColor,
-      LABELFONTSIZE,
-      scale,
-      thresholds,
-    ]
+    [axisLabelColor, fontFamily, formatNumber, labelColor, scale, thresholds]
   );
 
   const height = useLegendWithRotatedAxisLabelsHeight(thresholds, {
     formatNumber,
-    LABELFONTSIZE,
+    fontSize: AXIS_LABEL_FONT_SIZE,
   });
 
   return (
@@ -726,10 +699,10 @@ const ContinuousColorLegend = ({
           MARGIN.top + COLOR_RAMP_HEIGHT + 14
         })`}
         fontFamily={fontFamily}
-        fontSize={LABELFONTSIZE}
+        fontSize={AXIS_LABEL_FONT_SIZE}
         fill={legendLabelColor}
       >
-        <text textAnchor="start" fontSize={LABELFONTSIZE}>
+        <text textAnchor="start" fontSize={AXIS_LABEL_FONT_SIZE}>
           {valueFormatter(min)}
         </text>
         <text x={width - MARGIN.right - MARGIN.left} textAnchor="end">
