@@ -156,10 +156,12 @@ const useStyles = makeStyles<Theme>((theme) => ({
     width: "100%",
     height: "calc(100% - 2rem)",
     overflowY: "auto",
+    padding: theme.spacing(6, 0, 6, 6),
   },
   chartContainer: {
     margin: "0 auto",
     paddingBottom: "2rem",
+    paddingRight: theme.spacing(6),
   },
   toggleButtonGroup: {
     marginLeft: "auto",

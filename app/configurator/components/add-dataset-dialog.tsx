@@ -714,6 +714,7 @@ export const DatasetDialog = ({
       query: query,
       order: SearchCubeResultOrder.Score,
       includeDrafts: false,
+      fetchDimensionTermsets: true,
       filters: [
         selectedTemporalDimension
           ? {
@@ -723,7 +724,7 @@ export const DatasetDialog = ({
           : null,
         selectedSharedDimensions && selectedSharedDimensions.length > 0
           ? {
-              type: SearchCubeFilterType.Termset,
+              type: SearchCubeFilterType.DataCubeTermset,
               value: uniq(
                 selectedSharedDimensions.flatMap((x) =>
                   x.termsets.map((x) => x.iri)

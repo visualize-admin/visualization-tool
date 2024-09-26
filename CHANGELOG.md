@@ -21,6 +21,8 @@ You can also check the
     breakpoint
   - Responsive embed mode has been introduced, which allows the user to embed
     the chart that will adapt its height to the content
+  - It's now possible to simultaneously select browse filters from every panel
+    (themes, organizations, concepts)
 - Fixes
   - Interactive filters in the published mode and now only showing combinations
     of filters that are actually present in the data, taking configurator
@@ -29,6 +31,8 @@ You can also check the
   - Compact table view margins were improved so rows do not overlap
   - Chart title and dataset tooltips in the user profile now only shows when the
     title is truncated
+  - Concepts navigation on the browse page now shows the correct number of
+    results
 
 # [4.8.0] - 2024-09-11
 

@@ -4,6 +4,7 @@ import { Quad } from "rdf-js";
 import { SearchCube } from "@/domain/data";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import * as ns from "@/rdf/namespace";
+import { GROUP_SEPARATOR } from "@/rdf/query-utils";
 
 const visualizePredicates = {
   hasDimension: ns.visualizeAdmin`hasDimension`.value,
@@ -35,7 +36,10 @@ function buildSearchCubes(
   for (const iri of iriList) {
     const cubeQuads = bySubjectAndPredicate.get(iri);
     if (cubeQuads) {
-      const themeQuads = cubeQuads.get(ns.dcat.theme.value);
+      const themeQuads = cubeQuads.get("tag:/themeIris")?.[0];
+      const themeIris = themeQuads?.object.value.split(GROUP_SEPARATOR);
+      const themeLabelQuads = cubeQuads.get("tag:/themeLabels")?.[0];
+      const themeLabels = themeLabelQuads?.object.value.split(GROUP_SEPARATOR);
       const subthemesQuads = cubeQuads.get(ns.schema.about.value);
       const dimensions = cubeQuads.get(visualizePredicates.hasDimension);
       const creatorIri = cubeQuads.get(ns.schema.creator.value)?.[0]?.object
@@ -43,6 +47,9 @@ function buildSearchCubes(
       const publicationStatus = cubeQuads.get(
         ns.schema.creativeWorkStatus.value
       )?.[0].object.value;
+      const termsetQuads = byPredicateAndObject
+        .get("https://cube.link/meta/isUsedIn")
+        ?.get(iri);
 
       const cubeSearchCube: SearchCube = {
         iri,
@@ -67,13 +74,10 @@ function buildSearchCubes(
             }
           : null,
         themes:
-          themeQuads?.map((x) => {
+          themeIris?.map((iri, i) => {
             return {
-              iri: x.object.value,
-              label:
-                bySubjectAndPredicate
-                  .get(x.object.value)
-                  ?.get(ns.schema.name.value)?.[0].object.value ?? "",
+              iri,
+              label: themeLabels?.[i] ?? "",
             };
           }) ?? [],
         subthemes:
@@ -83,6 +87,16 @@ function buildSearchCubes(
               label:
                 bySubjectAndPredicate
                   .get(x.object.value)
+                  ?.get(ns.schema.name.value)?.[0].object.value ?? "",
+            };
+          }) ?? [],
+        termsets:
+          termsetQuads?.map((x) => {
+            return {
+              iri: x.subject.value,
+              label:
+                bySubjectAndPredicate
+                  .get(x.subject.value)
                   ?.get(ns.schema.name.value)?.[0].object.value ?? "",
             };
           }) ?? [],

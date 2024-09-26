@@ -476,7 +476,7 @@ const ConfigureChartStep = () => {
         </PanelBodyWrapper>
         <PanelBodyWrapper
           type="M"
-          style={{ overflowX: "hidden", overflowY: "auto" }}
+          sx={{ overflowX: "hidden", overflowY: "auto", p: 6 }}
         >
           <ChartPreview dataSource={state.dataSource} />
         </PanelBodyWrapper>
@@ -671,7 +671,7 @@ const LayoutingStep = () => {
         type="M"
         style={{ overflowY: "hidden", overflowX: "auto" }}
       >
-        <Box sx={{ display: "flex", pb: 4 }}>
+        <Box sx={{ display: "flex", px: 6, py: 4 }}>
           {!isSingleURLs && previewBreakpoint && (
             <ShowDrawerButton onClick={() => setPreviewBreakpoint(null)} />
           )}
@@ -770,7 +770,7 @@ const PublishStep = () => {
 
   return (
     <PanelLayout type="LM">
-      <PanelBodyWrapper type="M">
+      <PanelBodyWrapper type="M" sx={{ p: 6 }}>
         <ChartPreview dataSource={state.dataSource} />
       </PanelBodyWrapper>
     </PanelLayout>

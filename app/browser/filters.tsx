@@ -1,6 +1,6 @@
-import { Termset } from "@/domain/data";
 import {
   DataCubeOrganization,
+  DataCubeTermset,
   DataCubeTheme,
   SearchCubeFilterType,
 } from "@/graphql/query-hooks";
@@ -15,16 +15,17 @@ export type BrowseFilter =
   | DataCubeTheme
   | DataCubeOrganization
   | DataCubeAbout
-  | (Omit<Termset, "label"> & { label?: string });
+  | DataCubeTermset;
 
 /** Builds the state search filters from query params */
 
 export const getFiltersFromParams = (params: BrowseParams) => {
   const filters: BrowseFilter[] = [];
-  const { type, subtype, iri, subiri, topic } = params;
+  const { type, subtype, subsubtype, iri, subiri, subsubiri, topic } = params;
   for (const [t, i] of [
     [type, iri],
     [subtype, subiri],
+    [subsubtype, subsubiri],
   ]) {
     if (t && i && (t === "theme" || t === "organization" || t === "termset")) {
       const __typename = (() => {
@@ -34,7 +35,7 @@ export const getFiltersFromParams = (params: BrowseParams) => {
           case "organization":
             return SearchCubeFilterType.DataCubeOrganization;
           case "termset":
-            return SearchCubeFilterType.Termset;
+            return SearchCubeFilterType.DataCubeTermset;
         }
       })();
       filters.push({
@@ -58,14 +59,16 @@ export const getParamsFromFilters = (filters: BrowseFilter[]) => {
   const params: BrowseParams = {
     type: undefined,
     subtype: undefined,
+    subsubtype: undefined,
     iri: undefined,
     subiri: undefined,
+    subsubiri: undefined,
     topic: undefined,
   };
   let i = 0;
   for (const filter of filters) {
-    const typeAttr = i === 0 ? "type" : ("subtype" as const);
-    const iriAttr = i === 0 ? "iri" : ("subiri" as const);
+    const typeAttr = i === 0 ? "type" : i === 1 ? "subtype" : "subsubtype";
+    const iriAttr = i === 0 ? "iri" : i === 1 ? "subiri" : "subsubiri";
     switch (filter.__typename) {
       case "DataCubeTheme":
         params[typeAttr] = "theme";
@@ -78,7 +81,7 @@ export const getParamsFromFilters = (filters: BrowseFilter[]) => {
       case "DataCubeAbout":
         params.topic = filter.iri;
         break;
-      case "Termset":
+      case "DataCubeTermset":
         params[typeAttr] = "termset";
         params[iriAttr] = filter.iri;
         break;
