@@ -59,7 +59,10 @@ import {
 } from "@/domain/data";
 import { Has } from "@/domain/types";
 import { ScaleType, TimeUnit } from "@/graphql/resolver-types";
-import { useChartInteractiveFilters } from "@/stores/interactive-filters";
+import {
+  useChartInteractiveFilters,
+  useDashboardInteractiveFilters,
+} from "@/stores/interactive-filters";
 
 export type ChartState =
   | AreasState
@@ -469,11 +472,13 @@ export const useChartData = (
   observations: Observation[],
   {
     chartConfig,
+    timeRangeDimensionIri,
     getXAsDate,
     getSegmentAbbreviationOrLabel,
     getTimeRangeDate,
   }: {
     chartConfig: ChartConfig;
+    timeRangeDimensionIri: string | undefined;
     getXAsDate?: (d: Observation) => Date;
     getSegmentAbbreviationOrLabel?: (d: Observation) => string;
     getTimeRangeDate?: (d: Observation) => Date;
@@ -497,7 +502,9 @@ export const useChartData = (
       getTimeRangeDate && timeRangeFromTime && timeRangeToTime
         ? (d: Observation) => {
             const time = getTimeRangeDate(d).getTime();
-            return time >= timeRangeFromTime && time <= timeRangeToTime;
+            return !isNaN(time)
+              ? time >= timeRangeFromTime && time <= timeRangeToTime
+              : true;
           }
         : null;
 
@@ -508,25 +515,33 @@ export const useChartData = (
   const interactiveFromTime = timeRange.from?.getTime();
   const interactiveToTime = timeRange.to?.getTime();
   const [{ dashboardFilters }] = useConfiguratorState(hasChartConfigs);
+  const { potentialTimeRangeFilterIris } = useDashboardInteractiveFilters();
   const interactiveTimeRangeFilters = useMemo(() => {
     const interactiveTimeRangeFilter: ValuePredicate | null =
       getXAsDate &&
       interactiveFromTime &&
       interactiveToTime &&
-      (interactiveTimeRange?.active || dashboardFilters?.timeRange.active)
+      (interactiveTimeRange?.active ||
+        (dashboardFilters?.timeRange.active &&
+          timeRangeDimensionIri &&
+          potentialTimeRangeFilterIris.includes(timeRangeDimensionIri)))
         ? (d: Observation) => {
             const time = getXAsDate(d).getTime();
-            return time >= interactiveFromTime && time <= interactiveToTime;
+            return !isNaN(time)
+              ? time >= interactiveFromTime && time <= interactiveToTime
+              : true;
           }
         : null;
 
     return interactiveTimeRangeFilter ? [interactiveTimeRangeFilter] : [];
   }, [
-    dashboardFilters?.timeRange,
     getXAsDate,
     interactiveFromTime,
     interactiveToTime,
     interactiveTimeRange?.active,
+    dashboardFilters?.timeRange.active,
+    timeRangeDimensionIri,
+    potentialTimeRangeFilterIris,
   ]);
 
   // interactive time slider

@@ -78,6 +78,7 @@ export const useScatterplotStateData = (
   });
   const data = useChartData(plottableData, {
     chartConfig,
+    timeRangeDimensionIri: undefined,
     getSegmentAbbreviationOrLabel,
   });
 

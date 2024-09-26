@@ -96,6 +96,7 @@ export const useMapStateData = (
   const plottableData = usePlottableData(observations, {});
   const data = useChartData(plottableData, {
     chartConfig,
+    timeRangeDimensionIri: undefined,
   });
 
   const areaLayer = useMemo(() => {
