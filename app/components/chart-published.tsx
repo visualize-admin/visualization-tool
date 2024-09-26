@@ -56,25 +56,18 @@ import {
 } from "@/stores/interactive-filters";
 import { useResizeObserver } from "@/utils/use-resize-observer";
 
-type ChartPublishedIndividualChartProps = ChartPublishInnerProps;
+type ChartPublishedIndividualChartProps = Omit<
+  ChartPublishInnerProps,
+  "metadataPanelStore"
+>;
 
 const ChartPublishedIndividualChart = forwardRef<
   HTMLDivElement,
   ChartPublishedIndividualChartProps
->(
-  (
-    {
-      dataSource,
-      state,
-      chartConfig,
-      configKey,
-      metadataPanelStore,
-      children,
-      ...rest
-    },
-    ref
-  ) => {
-    return (
+>(({ dataSource, state, chartConfig, configKey, children, ...rest }, ref) => {
+  const metadataPanelStore = useMemo(() => createMetadataPanelStore(), []);
+  return (
+    <MetadataPanelStoreContext.Provider value={metadataPanelStore}>
       <ChartTablePreviewProvider key={chartConfig.key}>
         <ChartWrapper
           key={chartConfig.key}
@@ -95,9 +88,9 @@ const ChartPublishedIndividualChart = forwardRef<
           </ChartPublishedInner>
         </ChartWrapper>
       </ChartTablePreviewProvider>
-    );
-  }
-);
+    </MetadataPanelStoreContext.Provider>
+  );
+});
 
 export const ChartPublished = ({
   configKey,
@@ -121,10 +114,9 @@ export const ChartPublished = ({
         state={state}
         chartConfig={chartConfig}
         configKey={configKey}
-        metadataPanelStore={metadataPanelStore}
       />
     ),
-    [configKey, dataSource, metadataPanelStore, state]
+    [configKey, dataSource, state]
   );
   // Sends out the height of the chart, so the iframe can be resized accordingly.
   const handleHeightChange = useCallback(

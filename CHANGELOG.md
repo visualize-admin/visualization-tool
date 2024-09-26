@@ -39,6 +39,7 @@ You can also check the
   - Adding a new chart when the free canvas layout has already been initialized
     is not breaking the application anymore
   - Axis titles now wrap
+  - Metadata panel is not longer shared between separate charts in a dashboard
 
 # [4.8.0] - 2024-09-11
 
