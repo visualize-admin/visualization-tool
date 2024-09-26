@@ -19,7 +19,12 @@ import {
   getChartFieldChangeSideEffect,
   getChartFieldOptionChangeSideEffect,
 } from "@/charts/chart-config-ui-options";
-import { COLS, MIN_H } from "@/components/react-grid";
+import {
+  COLS,
+  FREE_CANVAS_BREAKPOINTS,
+  getInitialTileHeight,
+  getInitialTileWidth,
+} from "@/components/react-grid";
 import {
   ChartConfig,
   ColorMapping,
@@ -1172,46 +1177,47 @@ export function ensureDashboardLayoutAreCorrect(
   ) {
     const chartConfigKeys = draft.chartConfigs.map((c) => c.key).sort();
 
-    const canvasLayouts = draft.layout.layouts["lg"];
-    const layoutConfigKeys = canvasLayouts.map((c) => c.i).sort();
+    const breakpoints = Object.keys(FREE_CANVAS_BREAKPOINTS);
+    const xlCanvasLayouts = draft.layout.layouts[breakpoints[0]];
+    const xlLayoutConfigKeys = xlCanvasLayouts.map((c) => c.i).sort();
 
-    if (!isEqual(chartConfigKeys, layoutConfigKeys)) {
-      // remove charts that are no longer in the chartConfigs
-      draft.layout.layouts["lg"] = canvasLayouts.filter((c) =>
-        chartConfigKeys.includes(c.i)
-      );
+    const newConfigs = draft.chartConfigs.filter(
+      (x) => !xlLayoutConfigKeys.includes(x.key)
+    );
 
-      // add new charts
-      const newConfigs = draft.chartConfigs.filter(
-        (x) => !layoutConfigKeys.includes(x.key)
-      );
+    if (!isEqual(chartConfigKeys, xlLayoutConfigKeys)) {
+      for (const bp of breakpoints) {
+        const canvasLayouts = draft.layout.layouts[bp];
+        draft.layout.layouts[bp] = canvasLayouts.filter((c) =>
+          chartConfigKeys.includes(c.i)
+        );
 
-      let curX =
-        (Math.max(...canvasLayouts.map((c) => c.x + c.w)) ?? 0) % COLS.lg;
-      let curY = Math.max(...canvasLayouts.map((c) => c.y + c.h)) ?? 0;
+        let curX =
+          (Math.max(...canvasLayouts.map((c) => c.x + c.w)) ?? 0) % COLS.lg;
+        let curY = Math.max(...canvasLayouts.map((c) => c.y + c.h)) ?? 0;
 
-      for (const chartConfig of newConfigs) {
-        let chartX = curX;
-        let chartY = curY;
-        let chartW = 1;
-        let chartH = MIN_H;
-        canvasLayouts.push({
-          i: chartConfig.key,
-          x: chartX,
-          y: chartY,
-          w: chartW,
-          h: chartH,
-          // Is initialized later
-          resizeHandles: [],
-        });
-        curX += chartW;
-        if (curX > COLS.lg) {
-          curX = 0;
-          curY += chartH;
+        for (const chartConfig of newConfigs) {
+          let chartX = curX;
+          let chartY = curY;
+          let chartW = getInitialTileWidth();
+          let chartH = getInitialTileHeight();
+          canvasLayouts.push({
+            i: chartConfig.key,
+            x: chartX,
+            y: chartY,
+            w: chartW,
+            h: chartH,
+            // Is initialized later
+            resizeHandles: [],
+          });
+          curX += chartW;
+          if (curX > COLS.lg) {
+            curX = 0;
+            curY += chartH;
+          }
         }
+        draft.layout.layouts[bp] = canvasLayouts;
       }
     }
-
-    draft.layout.layouts["lg"] = canvasLayouts;
   }
 }

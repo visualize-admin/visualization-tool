@@ -40,8 +40,9 @@ export const availableHandles: ResizeHandle[] = [
 
 /** In grid unit */
 const MAX_H = 10;
+
 const INITIAL_H = 7;
-export const MIN_H = 1;
+const MIN_H = 1;
 
 /** In grid unit */
 const MAX_W = 4;
