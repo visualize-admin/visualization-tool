@@ -214,7 +214,7 @@ const ProfileVisualizationsRow = (props: {
       {
         type: "link",
         href: `/${locale}/create/new?copy=${config.key}`,
-        label: t({ id: "login.chart.copy", message: "Copy" }),
+        label: t({ id: "login.chart.duplicate", message: "Duplicate" }),
         iconName: "copy",
       },
       {
