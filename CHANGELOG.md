@@ -19,6 +19,8 @@ You can also check the
   - Preview mode now takes the real size of the breakpoint, making the area
     horizontally scrollable in case the screen size is smaller than the
     breakpoint
+  - Responsive embed mode has been introduced, which allows the user to embed
+    the chart that will adapt its height to the content
   - It's now possible to simultaneously select browse filters from every panel
     (themes, organizations, concepts)
 - Fixes

@@ -1,4 +1,5 @@
 import { Meta } from "@storybook/react";
+import { useRef } from "react";
 
 import { PublishActions } from "@/components/publish-actions";
 
@@ -8,7 +9,10 @@ const meta: Meta = {
 export default meta;
 
 const PublishActionsStory = () => {
-  return <PublishActions configKey="123456789" locale="en" />;
+  const ref = useRef<HTMLDivElement>(null);
+  return (
+    <PublishActions configKey="123456789" locale="en" chartWrapperRef={ref} />
+  );
 };
 
 export { PublishActionsStory as PublishActions };

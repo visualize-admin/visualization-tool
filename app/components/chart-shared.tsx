@@ -29,24 +29,26 @@ import { useLocale } from "@/src";
 import { createChartId } from "@/utils/create-chart-id";
 
 /** Generic styles shared between `ChartPreview` and `ChartPublished`. */
-export const useChartStyles = makeStyles<Theme>((theme) => ({
-  root: {
-    flexGrow: 1,
-    display: "grid",
-    gridTemplateRows: "subgrid",
-    /** Should stay in sync with the number of rows contained in a chart */
-    gridRow: "span 7",
-    padding: theme.spacing(6),
-    backgroundColor: theme.palette.background.paper,
-    border: "1px solid",
-    borderColor: theme.palette.divider,
-    color: theme.palette.grey[800],
-    [`.${chartPanelLayoutGridClasses.root} &`]: {
-      display: "flex",
-      flexDirection: "column",
+export const useChartStyles = makeStyles<Theme, { disableBorder?: boolean }>(
+  (theme) => ({
+    root: {
+      flexGrow: 1,
+      display: "grid",
+      gridTemplateRows: "subgrid",
+      /** Should stay in sync with the number of rows contained in a chart */
+      gridRow: "span 7",
+      padding: theme.spacing(6),
+      backgroundColor: theme.palette.background.paper,
+      border: ({ disableBorder }) =>
+        disableBorder ? "none" : `1px solid ${theme.palette.divider}`,
+      color: theme.palette.grey[800],
+      [`.${chartPanelLayoutGridClasses.root} &`]: {
+        display: "flex",
+        flexDirection: "column",
+      },
     },
-  },
-}));
+  })
+);
 
 export const ChartControls = ({
   dataSource,

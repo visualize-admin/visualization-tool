@@ -16,7 +16,7 @@ import ErrorPage from "next/error";
 import Head from "next/head";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { ChartPublished } from "@/components/chart-published";
 import { PublishSuccess } from "@/components/hint";
@@ -90,6 +90,7 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
   const locale = useLocale();
   const { query, replace } = useRouter();
   const classes = useStyles();
+  const chartWrapperRef = useRef<HTMLDivElement>(null);
 
   // Keep initial value of publishSuccess
   const [publishSuccess] = useState(() => !!query.publishSuccess);
@@ -167,7 +168,11 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
       <ContentLayout>
         {config.published_state === PUBLISHED_STATE.PUBLISHED && (
           <Box className={classes.actionBar}>
-            <PublishActions configKey={key} locale={locale} />
+            <PublishActions
+              chartWrapperRef={chartWrapperRef}
+              configKey={key}
+              locale={locale}
+            />
           </Box>
         )}
         <Box
@@ -229,9 +234,14 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
               </Box>
             )}
 
-            <ConfiguratorStateProvider chartId="published" initialState={state}>
-              <ChartPublished configKey={key} />
-            </ConfiguratorStateProvider>
+            <Box ref={chartWrapperRef}>
+              <ConfiguratorStateProvider
+                chartId="published"
+                initialState={state}
+              >
+                <ChartPublished configKey={key} />
+              </ConfiguratorStateProvider>
+            </Box>
 
             <Typography component="div" my={4}>
               {publishSuccess ? (

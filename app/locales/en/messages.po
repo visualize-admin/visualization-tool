@@ -641,11 +641,11 @@ msgstr "Preview using large width"
 
 #: app/configurator/components/preview-breakpoint.tsx
 msgid "controls.layout.preview-md"
-msgstr "Preview using medium width"
+msgstr "Preview using tablet"
 
 #: app/configurator/components/preview-breakpoint.tsx
 msgid "controls.layout.preview-sm"
-msgstr "Preview using small width"
+msgstr "Preview using mobile"
 
 #: app/configurator/components/preview-breakpoint.tsx
 msgid "controls.layout.preview-xl"
@@ -1500,12 +1500,12 @@ msgid "profile.chart.rename-dialog.title"
 msgstr "Rename the visualization"
 
 #: app/components/publish-actions.tsx
-msgid "publication.embed.AEM"
-msgstr "Embed Code for AEM \"External Application\""
+msgid "publication.embed.external-application"
+msgstr "Embed Code for \"External Application\""
 
 #: app/components/publish-actions.tsx
-msgid "publication.embed.AEM.caption"
-msgstr "Use this link to embed the chart into Adobe Experience Manager assets."
+msgid "publication.embed.external-application.caption"
+msgstr "Use this link to embed the chart without iframe tags."
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe"
@@ -1514,6 +1514,22 @@ msgstr "Embed Code"
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.caption"
 msgstr "Use this link to embed the chart in any webpage."
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.responsive"
+msgstr "Responsive iframe"
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.responsive.warn"
+msgstr "For embedding visualizations in web pages without CMS support. The iframe will be responsive. The JavaScript part of the embed code ensures that the iframe always maintains the correct size."
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.static"
+msgstr "Static iframe"
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.static.warn"
+msgstr "For embedding visualizations in systems without Web Components or JavaScript support. (e.g. WordPress)"
 
 #: app/components/publish-actions.tsx
 msgid "publication.popup.share"

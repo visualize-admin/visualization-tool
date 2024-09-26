@@ -9,8 +9,9 @@ import { DataSetTable } from "@/browse/datatable";
 import { extractChartConfigsComponentIris } from "@/charts/shared/chart-helpers";
 import { LoadingStateProvider } from "@/charts/shared/chart-loading-state";
 import { isUsingImputation } from "@/charts/shared/imputation";
+import { CHART_RESIZE_EVENT_TYPE } from "@/charts/shared/use-size";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
-import { ChartFootnotes, VisualizeLink } from "@/components/chart-footnotes";
+import { ChartFootnotes } from "@/components/chart-footnotes";
 import { ChartPanelLayout, ChartWrapper } from "@/components/chart-panel";
 import {
   ChartControls,
@@ -53,10 +54,7 @@ import {
   InteractiveFiltersChartProvider,
   InteractiveFiltersProvider,
 } from "@/stores/interactive-filters";
-
-type ChartPublishedProps = {
-  configKey?: string;
-};
+import { useResizeObserver } from "@/utils/use-resize-observer";
 
 type ChartPublishedIndividualChartProps = ChartPublishInnerProps;
 
@@ -101,8 +99,13 @@ const ChartPublishedIndividualChart = forwardRef<
   }
 );
 
-export const ChartPublished = (props: ChartPublishedProps) => {
-  const { configKey } = props;
+export const ChartPublished = ({
+  configKey,
+  disableBorder,
+}: {
+  configKey?: string;
+  disableBorder?: boolean;
+}) => {
   const [state] = useConfiguratorState(isPublished);
   const { dataSource } = state;
   const locale = useLocale();
@@ -123,73 +126,82 @@ export const ChartPublished = (props: ChartPublishedProps) => {
     ),
     [configKey, dataSource, metadataPanelStore, state]
   );
+  // Sends out the height of the chart, so the iframe can be resized accordingly.
+  const handleHeightChange = useCallback(
+    ({ height }: { width: number; height: number }) => {
+      window.parent.postMessage({ type: CHART_RESIZE_EVENT_TYPE, height }, "*");
+    },
+    []
+  );
+  const [ref] = useResizeObserver(handleHeightChange);
 
   return (
     <MetadataPanelStoreContext.Provider value={metadataPanelStore}>
       <InteractiveFiltersProvider chartConfigs={state.chartConfigs}>
-        {state.layout.type === "dashboard" ? (
-          <Box className={publishedChartClasses.dashboardBoxWrapper}>
-            <Box
-              sx={{
-                mb:
-                  state.layout.meta.title[locale] ||
-                  state.layout.meta.description[locale]
-                    ? 4
-                    : 0,
-              }}
-            >
-              {state.layout.meta.title[locale] && (
-                <Title text={state.layout.meta.title[locale]} />
-              )}
-              {state.layout.meta.description[locale] && (
-                <Description text={state.layout.meta.description[locale]} />
-              )}
-            </Box>
-            <Flex sx={{ flexDirection: "column", gap: 4 }}>
+        <Box ref={ref}>
+          {state.layout.type === "dashboard" ? (
+            <Box className={publishedChartClasses.dashboardBoxWrapper}>
+              <Box
+                sx={{
+                  mb:
+                    state.layout.meta.title[locale] ||
+                    state.layout.meta.description[locale]
+                      ? 4
+                      : 0,
+                }}
+              >
+                {state.layout.meta.title[locale] && (
+                  <Title text={state.layout.meta.title[locale]} />
+                )}
+                {state.layout.meta.description[locale] && (
+                  <Description text={state.layout.meta.description[locale]} />
+                )}
+              </Box>
+
               <ChartPanelLayout
                 layoutType={state.layout.layout}
                 chartConfigs={state.chartConfigs}
                 renderChart={renderChart}
               />
-              <VisualizeLink />
-            </Flex>
-          </Box>
-        ) : (
-          <>
-            <Flex
-              sx={{
-                flexDirection: "column",
-                mb:
-                  state.layout.meta.title[locale] ||
-                  state.layout.meta.description[locale]
-                    ? 4
-                    : 0,
-              }}
-            >
-              {state.layout.meta.title[locale] && (
-                <Title text={state.layout.meta.title[locale]} />
-              )}
-              {state.layout.meta.description[locale] && (
-                <Description text={state.layout.meta.description[locale]} />
-              )}
-            </Flex>
-            <ChartTablePreviewProvider>
-              <DashboardInteractiveFilters />
-              <ChartWrapper
-                layoutType={state.layout.type}
-                chartKey={state.activeChartKey}
+            </Box>
+          ) : (
+            <>
+              <Flex
+                sx={{
+                  flexDirection: "column",
+                  mb:
+                    state.layout.meta.title[locale] ||
+                    state.layout.meta.description[locale]
+                      ? 4
+                      : 0,
+                }}
               >
-                <ChartPublishedInner
-                  dataSource={dataSource}
-                  state={state}
-                  chartConfig={getChartConfig(state)}
-                  configKey={configKey}
-                  metadataPanelStore={metadataPanelStore}
-                />
-              </ChartWrapper>
-            </ChartTablePreviewProvider>
-          </>
-        )}
+                {state.layout.meta.title[locale] && (
+                  <Title text={state.layout.meta.title[locale]} />
+                )}
+                {state.layout.meta.description[locale] && (
+                  <Description text={state.layout.meta.description[locale]} />
+                )}
+              </Flex>
+              <ChartTablePreviewProvider>
+                <DashboardInteractiveFilters />
+                <ChartWrapper
+                  layoutType={state.layout.type}
+                  chartKey={state.activeChartKey}
+                >
+                  <ChartPublishedInner
+                    dataSource={dataSource}
+                    state={state}
+                    chartConfig={getChartConfig(state)}
+                    configKey={configKey}
+                    metadataPanelStore={metadataPanelStore}
+                    disableBorder={disableBorder}
+                  />
+                </ChartWrapper>
+              </ChartTablePreviewProvider>
+            </>
+          )}
+        </Box>
       </InteractiveFiltersProvider>
     </MetadataPanelStoreContext.Provider>
   );
@@ -228,6 +240,7 @@ type ChartPublishInnerProps = {
   className?: string;
   children?: React.ReactNode;
   metadataPanelStore: ReturnType<typeof createMetadataPanelStore>;
+  disableBorder?: boolean;
 };
 
 const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
@@ -239,6 +252,7 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
     className,
     children,
     metadataPanelStore,
+    disableBorder,
   } = props;
   const { meta } = chartConfig;
   const rootRef = useRef<HTMLDivElement>(null);
@@ -263,7 +277,7 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
     return () => unsubscribe();
   });
 
-  const chartClasses = useChartStyles();
+  const chartClasses = useChartStyles({ disableBorder });
   const publishedChartClasses = usePublishedChartStyles({
     shrink: shouldShrink,
   });

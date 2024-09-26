@@ -641,11 +641,11 @@ msgstr "Vorschau in grosser Breite"
 
 #: app/configurator/components/preview-breakpoint.tsx
 msgid "controls.layout.preview-md"
-msgstr "Vorschau in mittlerer Breite"
+msgstr "Vorschau mit Tablet"
 
 #: app/configurator/components/preview-breakpoint.tsx
 msgid "controls.layout.preview-sm"
-msgstr "Vorschau in kleiner Breite"
+msgstr "Vorschau mit Phone-Breite"
 
 #: app/configurator/components/preview-breakpoint.tsx
 msgid "controls.layout.preview-xl"
@@ -1500,12 +1500,12 @@ msgid "profile.chart.rename-dialog.title"
 msgstr "Benennen Sie die Visualisierung um"
 
 #: app/components/publish-actions.tsx
-msgid "publication.embed.AEM"
-msgstr "Einbett-Code für AEM «Externe Applikation»"
+msgid "publication.embed.external-application"
+msgstr "Einbett-Code für «Externe Applikation»"
 
 #: app/components/publish-actions.tsx
-msgid "publication.embed.AEM.caption"
-msgstr "Verwenden Sie diesen Code, um das Diagramm in Adobe Experience Manager einzubetten"
+msgid "publication.embed.external-application.caption"
+msgstr ""
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe"
@@ -1514,6 +1514,22 @@ msgstr "Einbett-Code"
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.caption"
 msgstr "Verwenden Sie diesen Code, um das Diagramm auf einer Webseite einzubetten"
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.responsive"
+msgstr "Anpassungsfähiges iframe"
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.responsive.warn"
+msgstr "Zum Einbetten von Visualisierungen in Webseiten ohne CMS-Unterstützung. Der iframe wird responsiv sein. Der JavaScript-Teil des Einbettungscodes sorgt dafür, dass der iframe immer die richtige Größe beibehält."
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.static"
+msgstr "Statisches Iframe"
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.static.warn"
+msgstr "Zum Einbetten von Visualisierungen in Systeme ohne Webkomponenten oder JavaScript-Unterstützung. (z. B. WordPress)"
 
 #: app/components/publish-actions.tsx
 msgid "publication.popup.share"

@@ -28,6 +28,8 @@ export type Bounds = {
 
 const RESIZE_DELAY = 500;
 
+export const CHART_RESIZE_EVENT_TYPE = "VISUALIZE-CHART-RESIZE";
+
 export const Observer = ({ children }: { children: ReactNode }) => {
   const [ref, width, height] = useResizeObserver<HTMLDivElement>();
   const prevWidth = useTimedPrevious(width, RESIZE_DELAY);
