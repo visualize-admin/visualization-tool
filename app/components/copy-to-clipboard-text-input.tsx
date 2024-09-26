@@ -120,7 +120,7 @@ export const CopyToClipboardTextInput = ({ content }: { content: string }) => {
   const classes = useCopyToClipboardTextInputStyles();
 
   return (
-    <Flex sx={{ alignItems: "stretch", height: 48, mt: 1, mb: 2 }}>
+    <Flex sx={{ alignItems: "stretch", height: 48, mt: 1 }}>
       <Input className={classes.input} type="text" value={content} readOnly />
       <Button
         variant="text"

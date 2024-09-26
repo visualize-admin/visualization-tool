@@ -88,10 +88,12 @@ export const Radio = ({
   disabled,
   onChange,
   warnMessage,
+  formLabelProps,
 }: {
   label: string;
   disabled?: boolean;
   warnMessage?: string;
+  formLabelProps?: Partial<FormControlLabelProps>;
 } & FieldProps) => {
   const color = checked
     ? disabled
@@ -128,6 +130,7 @@ export const Radio = ({
           />
         }
         disabled={disabled}
+        {...formLabelProps}
       />
     </MaybeTooltip>
   );
