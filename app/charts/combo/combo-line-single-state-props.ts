@@ -90,7 +90,7 @@ export const useComboLineSingleStateData = (
   variables: ComboLineSingleStateVariables
 ): ChartStateData => {
   const { chartConfig, observations } = chartProps;
-  const { sortData, getX, y, getTimeRangeDate } = variables;
+  const { sortData, xDimension, getX, y, getTimeRangeDate } = variables;
   const plottableData = usePlottableData(observations, {
     getX,
     getY: (d) => {
@@ -108,6 +108,7 @@ export const useComboLineSingleStateData = (
   }, [sortData, plottableData]);
   const data = useChartData(sortedPlottableData, {
     chartConfig,
+    timeRangeDimensionIri: xDimension.iri,
     getXAsDate: getX,
     getTimeRangeDate,
   });

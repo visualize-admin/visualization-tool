@@ -77,6 +77,7 @@ export const useAreasStateData = (
   const { chartConfig, observations } = chartProps;
   const {
     sortData,
+    xDimension,
     getX,
     getY,
     getSegmentAbbreviationOrLabel,
@@ -91,6 +92,7 @@ export const useAreasStateData = (
   }, [sortData, plottableData]);
   const data = useChartData(sortedPlottableData, {
     chartConfig,
+    timeRangeDimensionIri: xDimension.iri,
     getXAsDate: getX,
     getSegmentAbbreviationOrLabel,
     getTimeRangeDate,

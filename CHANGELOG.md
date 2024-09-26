@@ -31,6 +31,9 @@ You can also check the
     title is truncated
   - Concepts navigation on the browse page now shows the correct number of
     results
+  - Shared time slider now works correctly in cases of applied to charts from
+    different cubes, where one cube has a temporal dimension and the other does
+    not
 
 # [4.8.0] - 2024-09-11
 

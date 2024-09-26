@@ -130,6 +130,7 @@ export const useColumnsGroupedStateData = (
   const { chartConfig, observations } = chartProps;
   const {
     sortData,
+    xDimension,
     getXAsDate,
     getY,
     getSegmentAbbreviationOrLabel,
@@ -143,6 +144,7 @@ export const useColumnsGroupedStateData = (
   }, [sortData, plottableData]);
   const data = useChartData(sortedPlottableData, {
     chartConfig,
+    timeRangeDimensionIri: xDimension.iri,
     getXAsDate,
     getSegmentAbbreviationOrLabel,
     getTimeRangeDate,

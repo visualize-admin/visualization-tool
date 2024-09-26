@@ -70,6 +70,7 @@ export const usePieStateData = (
   });
   const data = useChartData(plottableData, {
     chartConfig,
+    timeRangeDimensionIri: undefined,
     getSegmentAbbreviationOrLabel,
   });
 
