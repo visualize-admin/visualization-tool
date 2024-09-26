@@ -125,8 +125,12 @@ export const ChartMoreButton = ({
   useEffect(() => {
     setIsTableRaw(false);
   }, [chartConfig.chartType, setIsTableRaw]);
+  const disableButton =
+    isPublished(state) &&
+    state.layout.type === "dashboard" &&
+    chartConfig.chartType === "table";
 
-  return (
+  return disableButton ? null : (
     <>
       <IconButton
         color="secondary"
