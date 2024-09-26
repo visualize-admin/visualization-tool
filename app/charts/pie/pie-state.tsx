@@ -10,7 +10,10 @@ import {
   usePieStateData,
   usePieStateVariables,
 } from "@/charts/pie/pie-state-props";
-import { useChartBounds } from "@/charts/shared/chart-dimensions";
+import {
+  useAxisLabelHeight,
+  useChartBounds,
+} from "@/charts/shared/chart-dimensions";
 import {
   ChartContext,
   ChartStateData,
@@ -141,11 +144,19 @@ const usePieState = (
   ]);
 
   // Dimensions
+  const left = 40;
+  const right = 40;
+  const yAxisLabelMargin = useAxisLabelHeight({
+    label: yMeasure.label,
+    width,
+    marginLeft: left,
+    marginRight: right,
+  });
   const margins = {
-    top: 40,
-    right: 40,
+    top: 40 + yAxisLabelMargin,
+    right,
     bottom: 40,
-    left: 40,
+    left,
   };
   const bounds = useChartBounds(width, margins, height);
   const { chartWidth, chartHeight } = bounds;

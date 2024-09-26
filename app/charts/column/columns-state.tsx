@@ -16,6 +16,7 @@ import {
 } from "@/charts/column/columns-state-props";
 import { PADDING_INNER, PADDING_OUTER } from "@/charts/column/constants";
 import {
+  useAxisLabelHeight,
   useChartBounds,
   useChartPadding,
 } from "@/charts/shared/chart-dimensions";
@@ -192,9 +193,16 @@ const useColumnsState = (
     formatNumber,
     bandDomain: xTimeRangeDomainLabels,
   });
+  const right = 40;
+  const yAxisLabelMargin = useAxisLabelHeight({
+    label: yMeasure.label,
+    width,
+    marginLeft: left,
+    marginRight: right,
+  });
   const margins = {
-    top: 50,
-    right: 40,
+    top: 40 + yAxisLabelMargin,
+    right,
     bottom,
     left,
   };

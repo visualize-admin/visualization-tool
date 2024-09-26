@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { TICK_PADDING } from "@/charts/shared/axis-height-linear";
 import { BRUSH_BOTTOM_SPACE } from "@/charts/shared/brush/constants";
 import { getTickNumber } from "@/charts/shared/ticks";
-import { TICK_FONT_SIZE } from "@/charts/shared/use-chart-theme";
+import { TICK_FONT_SIZE, useChartTheme } from "@/charts/shared/use-chart-theme";
 import { Bounds, Margins } from "@/charts/shared/use-size";
 import { CHART_GRID_MIN_HEIGHT } from "@/components/react-grid";
 import {
@@ -136,4 +136,23 @@ export const useChartBounds = (
     chartWidth,
     chartHeight,
   };
+};
+
+const LINE_HEIGHT = 1.25;
+
+export const useAxisLabelHeight = ({
+  label,
+  width,
+  marginLeft,
+  marginRight,
+}: {
+  label: string;
+  width: number;
+  marginLeft: number;
+  marginRight: number;
+}) => {
+  const { axisLabelFontSize: fontSize } = useChartTheme();
+  const labelWidth = getTextWidth(label, { fontSize });
+  const lines = Math.ceil(labelWidth / (width - marginLeft - marginRight));
+  return fontSize * LINE_HEIGHT * lines;
 };
