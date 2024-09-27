@@ -2,7 +2,7 @@ import { axisBottom } from "d3-axis";
 import { useEffect, useRef } from "react";
 
 import { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
-import { useAxisLabelHeight } from "@/charts/shared/chart-dimensions";
+import { useAxisLabelHeightOffset } from "@/charts/shared/chart-dimensions";
 import { useChartState } from "@/charts/shared/chart-state";
 import {
   maybeTransition,
@@ -80,7 +80,7 @@ export const AxisWidthLinear = () => {
     xScale,
   ]);
 
-  const height = useAxisLabelHeight({
+  const { height } = useAxisLabelHeightOffset({
     label: xAxisLabel,
     width: chartWidth,
     marginLeft: margins.left,

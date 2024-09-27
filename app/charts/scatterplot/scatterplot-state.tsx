@@ -10,7 +10,7 @@ import {
   useScatterplotStateVariables,
 } from "@/charts/scatterplot//scatterplot-state-props";
 import {
-  useAxisLabelHeight,
+  useAxisLabelHeightOffset,
   useChartBounds,
   useChartPadding,
 } from "@/charts/shared/chart-dimensions";
@@ -154,20 +154,20 @@ const useScatterplotState = (
     formatNumber,
   });
   const right = 40;
-  const xAxisLabelMargin = useAxisLabelHeight({
+  const { offset: xAxisLabelMargin } = useAxisLabelHeightOffset({
     label: xAxisLabel,
     width,
     marginLeft: left,
     marginRight: right,
   });
-  const yAxisLabelMargin = useAxisLabelHeight({
+  const { offset: yAxisLabelMargin } = useAxisLabelHeightOffset({
     label: yAxisLabel,
     width,
     marginLeft: left,
     marginRight: right,
   });
   const margins = {
-    top: 40 + yAxisLabelMargin,
+    top: 50 + yAxisLabelMargin,
     right,
     bottom: bottom + xAxisLabelMargin,
     left,

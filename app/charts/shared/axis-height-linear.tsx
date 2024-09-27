@@ -9,7 +9,7 @@ import type { ColumnsState } from "@/charts/column/columns-state";
 import { ComboLineSingleState } from "@/charts/combo/combo-line-single-state";
 import type { LinesState } from "@/charts/line/lines-state";
 import type { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
-import { useAxisLabelHeight } from "@/charts/shared/chart-dimensions";
+import { useAxisLabelHeightOffset } from "@/charts/shared/chart-dimensions";
 import { useChartState } from "@/charts/shared/chart-state";
 import {
   maybeTransition,
@@ -52,7 +52,7 @@ export const AxisHeightLinear = () => {
     textColor: labelColor,
   });
 
-  const height = useAxisLabelHeight({
+  const { height } = useAxisLabelHeightOffset({
     label: state.yAxisLabel,
     width: state.bounds.chartWidth,
     marginLeft: state.bounds.margins.left,

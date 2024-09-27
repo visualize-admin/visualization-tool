@@ -11,7 +11,7 @@ import {
   usePieStateVariables,
 } from "@/charts/pie/pie-state-props";
 import {
-  useAxisLabelHeight,
+  useAxisLabelHeightOffset,
   useChartBounds,
 } from "@/charts/shared/chart-dimensions";
 import {
@@ -146,14 +146,14 @@ const usePieState = (
   // Dimensions
   const left = 40;
   const right = 40;
-  const yAxisLabelMargin = useAxisLabelHeight({
+  const { offset: yAxisLabelMargin } = useAxisLabelHeightOffset({
     label: yMeasure.label,
     width,
     marginLeft: left,
     marginRight: right,
   });
   const margins = {
-    top: 40 + yAxisLabelMargin,
+    top: 50 + yAxisLabelMargin,
     right,
     bottom: 40,
     left,
