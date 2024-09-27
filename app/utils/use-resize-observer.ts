@@ -1,5 +1,6 @@
 import { ResizeObserver } from "@juggle/resize-observer";
 import { useEventCallback } from "@mui/material";
+import isEqual from "lodash/isEqual";
 import throttle from "lodash/throttle";
 import { useEffect, useRef, useState } from "react";
 
@@ -28,18 +29,21 @@ export const useResizeObserver = <T extends Element>(
 
         const entry = entries[0];
 
+        const { width, height } = size;
         const { inlineSize: newWidth, blockSize: newHeight } =
           entry.contentBoxSize[0];
         // Prevent flickering when scrollbars appear and triggers another resize
         // by only resizing when difference to current measurement is above a certain threshold
         const newSize =
-          (Math.abs(newHeight - size.height) > 16 && newHeight > 0) ||
-          (Math.abs(newWidth - size.width) > 16 && newWidth > 0)
-            ? {
-                height: newHeight,
-                width: newWidth,
-              }
+          (Math.abs(newHeight - height) > 16 && newHeight > 0) ||
+          (Math.abs(newWidth - width) > 16 && newWidth > 0)
+            ? { height: newHeight, width: newWidth }
             : size;
+
+        if (isEqual(newSize, size)) {
+          return;
+        }
+
         changeSize(newSize);
         cb?.(newSize);
       }, 16);
