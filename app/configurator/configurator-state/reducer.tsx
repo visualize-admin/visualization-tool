@@ -973,7 +973,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
           iris,
           dimensions,
           measures,
-          meta: chartConfig.meta,
+          meta: current(chartConfig.meta), // Cast proxy to object
         });
         const newChartConfig = deriveFiltersFromFields(initialConfig, {
           dimensions,
