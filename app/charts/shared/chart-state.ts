@@ -426,7 +426,9 @@ export const useInteractiveFiltersVariables = (
   return {
     getTimeRangeDate: isTemporalDimension(dimension)
       ? getTimeRangeDate
-      : getTimeRangeEntityDate,
+      : isTemporalEntityDimension(dimension)
+        ? getTimeRangeEntityDate
+        : () => new Date(),
   };
 };
 
@@ -502,9 +504,7 @@ export const useChartData = (
       getTimeRangeDate && timeRangeFromTime && timeRangeToTime
         ? (d: Observation) => {
             const time = getTimeRangeDate(d).getTime();
-            return !isNaN(time)
-              ? time >= timeRangeFromTime && time <= timeRangeToTime
-              : true;
+            return time >= timeRangeFromTime && time <= timeRangeToTime;
           }
         : null;
 
@@ -527,9 +527,7 @@ export const useChartData = (
           potentialTimeRangeFilterIris.includes(timeRangeDimensionIri)))
         ? (d: Observation) => {
             const time = getXAsDate(d).getTime();
-            return !isNaN(time)
-              ? time >= interactiveFromTime && time <= interactiveToTime
-              : true;
+            return time >= interactiveFromTime && time <= interactiveToTime;
           }
         : null;
 
@@ -629,6 +627,7 @@ export const useChartData = (
   const timeRangeData = useMemo(() => {
     return observations.filter(overEvery(timeRangeFilters));
   }, [observations, timeRangeFilters]);
+  console.log("timeRangeData", timeRangeData);
 
   const paddingData = useMemo(() => {
     if (dynamicScales) {
