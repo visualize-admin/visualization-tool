@@ -186,7 +186,7 @@ msgstr "Visualizzazione tabella"
 
 #: app/components/chart-selection-tabs.tsx
 msgid "chart-selection-tabs.add-chart"
-msgstr ""
+msgstr "Aggiungere grafico"
 
 #: app/components/chart-selection-tabs.tsx
 msgid "chart-selection-tabs.add-chart-different-dataset.button"
@@ -600,7 +600,7 @@ msgstr "Zeri"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.label"
-msgstr ""
+msgstr "Etichetta della scheda"
 
 #: app/components/rename-dialog.tsx
 #: app/configurator/components/field-i18n.ts
@@ -628,7 +628,7 @@ msgstr "Layout libero"
 
 #: app/login/components/profile-tables.tsx
 msgid "controls.layout.chart"
-msgstr ""
+msgstr "Grafico"
 
 #: app/configurator/components/field-i18n.ts
 #: app/login/components/profile-tables.tsx
@@ -959,7 +959,7 @@ msgstr "Seleziona una misura"
 #: app/configurator/components/field.tsx
 #: app/configurator/components/field.tsx
 msgid "controls.select.optional"
-msgstr ""
+msgstr "opzionale"
 
 #: app/configurator/components/filters.tsx
 #: app/configurator/components/filters.tsx
@@ -1109,7 +1109,7 @@ msgstr "Dimensioni condivise"
 
 #: app/components/chart-footnotes.tsx
 msgid "dataset.footnotes.dataset"
-msgstr ""
+msgstr "Insieme di dati"
 
 #: app/components/chart-footnotes.tsx
 msgid "dataset.footnotes.updated"
@@ -1274,11 +1274,11 @@ msgstr "Tutorials"
 
 #: app/components/hint.tsx
 msgid "hint.chartunexpected.message"
-msgstr ""
+msgstr "Si è verificato un errore imprevisto durante la visualizzazione di questo grafico."
 
 #: app/components/hint.tsx
 msgid "hint.chartunexpected.title"
-msgstr ""
+msgstr "Errore imprevisto"
 
 #: app/components/hint.tsx
 msgid "hint.coordinatesloadingerror.message"
@@ -1374,7 +1374,7 @@ msgstr "Cancellare"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.delete-draft.confirmation"
-msgstr ""
+msgstr "Sei sicuro di voler eliminare questa bozza?"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.delete.confirmation"
@@ -1395,15 +1395,11 @@ msgstr "Anteprima"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.rename"
-msgstr ""
-
-#: app/login/components/profile-tables.tsx
-msgid "login.chart.share"
-msgstr "Condividi"
+msgstr "Rinominare"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.view"
-msgstr ""
+msgstr "Mostra"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.create-chart"
@@ -1419,7 +1415,7 @@ msgstr "Siete sicuri di voler eseguire questa azione?"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.chart.delete-draft.warning"
-msgstr ""
+msgstr "Questa azione non può essere annullata."
 
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.chart.delete.warning"
@@ -1443,7 +1439,7 @@ msgstr "Le mie visualizzazioni"
 
 #: app/login/components/login-menu.tsx
 msgid "login.profile.my-visualizations"
-msgstr ""
+msgstr "Le mie visualizzazioni"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.my-visualizations.chart-actions"
@@ -1459,7 +1455,7 @@ msgstr "Tipo"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.my-visualizations.chart-updated-date"
-msgstr ""
+msgstr "Aggiornato"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.my-visualizations.dataset-name"
@@ -1467,16 +1463,16 @@ msgstr "Set di dati"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.my-visualizations.multiple-datasets"
-msgstr ""
+msgstr "Più set di dati"
 
 #: app/login/components/login-menu.tsx
 msgid "login.sign-in"
-msgstr ""
+msgstr "Accedi"
 
 #: app/login/components/login-menu.tsx
 #: app/login/components/profile-header.tsx
 msgid "login.sign-out"
-msgstr ""
+msgstr "Disconnessione"
 
 #: app/components/header.tsx
 #: app/components/header.tsx
@@ -1493,11 +1489,11 @@ msgstr "No"
 
 #: app/components/rename-dialog.tsx
 msgid "profile.chart.rename-dialog.description"
-msgstr ""
+msgstr "Rendi più chiaro il grafico con un titolo chiaro: un buon titolo aiuta a comprenderne il contenuto."
 
 #: app/components/rename-dialog.tsx
 msgid "profile.chart.rename-dialog.title"
-msgstr ""
+msgstr "Rinomina la visualizzazione"
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.external-application"
@@ -1505,7 +1501,7 @@ msgstr "Codice da incorporare su come \"External Application\""
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.external-application.caption"
-msgstr ""
+msgstr "Utilizza questo link per incorporare il grafico senza tag iframe."
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe"

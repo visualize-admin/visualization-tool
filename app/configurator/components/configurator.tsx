@@ -539,6 +539,7 @@ const LayoutingStep = () => {
           type: "LAYOUT_CHANGED",
           value: {
             ...layoutRef.current,
+            meta: state.layout.meta,
             activeField: undefined,
           },
         });
@@ -548,7 +549,7 @@ const LayoutingStep = () => {
 
       setPreviewBreakpoint(null);
     },
-    [dispatch, setPreviewBreakpoint, state.layout.type]
+    [dispatch, setPreviewBreakpoint, state.layout.meta, state.layout.type]
   );
 
   if (state.state !== "LAYOUTING") {

@@ -40,8 +40,9 @@ export const availableHandles: ResizeHandle[] = [
 
 /** In grid unit */
 const MAX_H = 10;
+
 const INITIAL_H = 7;
-export const MIN_H = 1;
+const MIN_H = 1;
 
 /** In grid unit */
 const MAX_W = 4;
@@ -268,7 +269,7 @@ export const ChartGridLayout = ({
         return [
           breakpoint,
           chartLayouts.map((chartLayout) => {
-            if (configLayout.layoutsMetadata[chartLayout.i].initialized) {
+            if (configLayout.layoutsMetadata[chartLayout.i]?.initialized) {
               return chartLayout;
             }
 
@@ -318,11 +319,10 @@ export const ChartGridLayout = ({
           ...configLayout,
           layouts: newLayouts,
           layoutsMetadata: Object.fromEntries(
-            Object.entries(configLayout.layoutsMetadata).map(
-              ([chartId, metadata]) => {
-                return [chartId, { ...metadata, initialized: true }];
-              }
-            )
+            state.chartConfigs.map(({ key }) => {
+              const layoutMetadata = configLayout.layoutsMetadata[key];
+              return [key, { ...layoutMetadata, initialized: true }];
+            })
           ),
         },
       });
@@ -335,6 +335,7 @@ export const ChartGridLayout = ({
     mountedForSomeTime,
     resize,
     configLayout,
+    state.chartConfigs,
   ]);
 
   return (

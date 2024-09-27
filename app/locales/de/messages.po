@@ -174,7 +174,7 @@ msgstr "Bearbeiten"
 
 #: app/components/chart-selection-tabs.tsx
 msgid "chart-controls.edit-tab-label"
-msgstr "Tab titel editieren"
+msgstr "Tab-Titel editieren"
 
 #: app/components/dataset-metadata.tsx
 msgid "chart-controls.sparql-query"
@@ -202,7 +202,7 @@ msgstr "Fügen Sie ein Diagramm basierend auf demselben Datensatz hinzu"
 
 #: app/components/chart-selection-tabs.tsx
 msgid "chart-selection-tabs.no-label"
-msgstr ""
+msgstr "Kein Tab-Titel"
 
 #: app/configurator/components/dataset-control-section.tsx
 msgid "chart.datasets.add"
@@ -303,7 +303,7 @@ msgstr "Fügen Sie eine Beschreibung hinzu"
 
 #: app/configurator/components/annotators.tsx
 msgid "controls.annotator.add-tab-label-warning"
-msgstr "Please add a tab label"
+msgstr "Bitte fügen Sie eine Tab-Titel hinzu"
 
 #: app/configurator/components/annotators.tsx
 #: app/configurator/components/annotators.tsx
@@ -959,7 +959,7 @@ msgstr "Messwert auswählen"
 #: app/configurator/components/field.tsx
 #: app/configurator/components/field.tsx
 msgid "controls.select.optional"
-msgstr ""
+msgstr "optional"
 
 #: app/configurator/components/filters.tsx
 #: app/configurator/components/filters.tsx
@@ -1274,11 +1274,11 @@ msgstr "Tutorials"
 
 #: app/components/hint.tsx
 msgid "hint.chartunexpected.message"
-msgstr ""
+msgstr "Beim Anzeigen dieses Diagramms ist ein unerwarteter Fehler aufgetreten."
 
 #: app/components/hint.tsx
 msgid "hint.chartunexpected.title"
-msgstr ""
+msgstr "Unerwarteter Fehler"
 
 #: app/components/hint.tsx
 msgid "hint.coordinatesloadingerror.message"
@@ -1395,15 +1395,11 @@ msgstr "Vorschau"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.rename"
-msgstr ""
-
-#: app/login/components/profile-tables.tsx
-msgid "login.chart.share"
-msgstr "Teilen"
+msgstr "Umbenennen"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.view"
-msgstr ""
+msgstr "Anzeigen"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.create-chart"
@@ -1467,7 +1463,7 @@ msgstr "Datensatz"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.my-visualizations.multiple-datasets"
-msgstr ""
+msgstr "Mehrere Datensätze"
 
 #: app/login/components/login-menu.tsx
 msgid "login.sign-in"
@@ -1505,7 +1501,7 @@ msgstr "Einbett-Code für «Externe Applikation»"
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.external-application.caption"
-msgstr ""
+msgstr "Verwenden Sie diesen Link, um das Diagramm ohne Iframe-Tags einzubetten."
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe"

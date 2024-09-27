@@ -1398,10 +1398,6 @@ msgid "login.chart.rename"
 msgstr "Rename"
 
 #: app/login/components/profile-tables.tsx
-msgid "login.chart.share"
-msgstr "Share"
-
-#: app/login/components/profile-tables.tsx
 msgid "login.chart.view"
 msgstr "View"
 

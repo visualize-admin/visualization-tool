@@ -23,6 +23,7 @@ import {
   useAreasStateVariables,
 } from "@/charts/area/areas-state-props";
 import {
+  useAxisLabelHeightOffset,
   useChartBounds,
   useChartPadding,
 } from "@/charts/shared/chart-dimensions";
@@ -330,9 +331,16 @@ const useAreasState = (
     formatNumber,
     normalize,
   });
+  const right = 40;
+  const { offset: yAxisLabelMargin } = useAxisLabelHeightOffset({
+    label: yMeasure.label,
+    width,
+    marginLeft: left,
+    marginRight: right,
+  });
   const margins = {
-    top: 50,
-    right: 40,
+    top: 50 + yAxisLabelMargin,
+    right,
     bottom,
     left,
   };

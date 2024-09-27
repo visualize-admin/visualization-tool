@@ -17,6 +17,7 @@ import {
   useLinesStateVariables,
 } from "@/charts/line/lines-state-props";
 import {
+  useAxisLabelHeightOffset,
   useChartBounds,
   useChartPadding,
 } from "@/charts/shared/chart-dimensions";
@@ -220,9 +221,16 @@ const useLinesState = (
     interactiveFiltersConfig,
     formatNumber,
   });
+  const right = 40;
+  const { offset: yAxisLabelMargin } = useAxisLabelHeightOffset({
+    label: yMeasure.label,
+    width,
+    marginLeft: left,
+    marginRight: right,
+  });
   const margins = {
-    top: 50,
-    right: 40,
+    top: 50 + yAxisLabelMargin,
+    right,
     bottom,
     left,
   };

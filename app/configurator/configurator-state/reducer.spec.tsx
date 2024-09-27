@@ -26,7 +26,7 @@ import {
   applyNonTableDimensionToFilters,
   applyTableDimensionToFilters,
   deriveFiltersFromFields,
-  ensureDashboardLayoutAreCorrect,
+  ensureDashboardLayoutIsCorrect,
   handleChartFieldChanged,
   handleChartOptionChanged,
   reducer,
@@ -1127,7 +1127,7 @@ describe("handleChartOptionChanged", () => {
   });
 });
 
-describe("ensureDashboardLayoutAreCorrect", () => {
+describe("ensureDashboardLayoutIsCorrect", () => {
   const state = configStateMock.map;
   const newState = produce(state, (state: ConfiguratorState) => {
     assert(
@@ -1141,12 +1141,12 @@ describe("ensureDashboardLayoutAreCorrect", () => {
     );
     state.layout.layout = "canvas";
     assert(state.layout.layout === "canvas", "Layout type should be canvas");
-    state.layout.layouts = { lg: [] };
+    state.layout.layouts = { xl: [], lg: [], md: [], sm: [] };
     state.chartConfigs.push({
       ...state.chartConfigs[0],
       key: "newKey",
     });
-    ensureDashboardLayoutAreCorrect(state);
+    ensureDashboardLayoutIsCorrect(state);
     return state;
   });
   expect((newState as any).layout.layouts.lg.length).toBe(2);

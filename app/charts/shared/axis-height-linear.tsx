@@ -9,6 +9,7 @@ import type { ColumnsState } from "@/charts/column/columns-state";
 import { ComboLineSingleState } from "@/charts/combo/combo-line-single-state";
 import type { LinesState } from "@/charts/line/lines-state";
 import type { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
+import { useAxisLabelHeightOffset } from "@/charts/shared/chart-dimensions";
 import { useChartState } from "@/charts/shared/chart-state";
 import {
   maybeTransition,
@@ -51,8 +52,12 @@ export const AxisHeightLinear = () => {
     textColor: labelColor,
   });
 
-  const textIsOverlapping = axisTitleWidth > state.bounds.chartWidth;
-  const overlappingAmount = Math.ceil(axisTitleWidth / state.bounds.chartWidth);
+  const { height } = useAxisLabelHeightOffset({
+    label: state.yAxisLabel,
+    width: state.bounds.chartWidth,
+    marginLeft: state.bounds.margins.left,
+    marginRight: state.bounds.margins.right,
+  });
 
   return (
     <>
@@ -65,8 +70,8 @@ export const AxisHeightLinear = () => {
         </text>
       ) : (
         <foreignObject
-          width={textIsOverlapping ? state.bounds.chartWidth : axisTitleWidth}
-          height={(axisLabelFontSize + TICK_PADDING) * overlappingAmount * 2}
+          width={Math.min(axisTitleWidth, state.bounds.chartWidth)}
+          height={height}
         >
           <OpenMetadataPanelWrapper component={state.yMeasure}>
             <span style={{ fontSize: axisLabelFontSize }}>

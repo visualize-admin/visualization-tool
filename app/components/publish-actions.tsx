@@ -6,6 +6,7 @@ import {
   Popover,
   PopoverProps,
   Stack,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { ChangeEvent, ReactNode, RefObject, useEffect, useState } from "react";
@@ -13,12 +14,11 @@ import { ChangeEvent, ReactNode, RefObject, useEffect, useState } from "react";
 import { CHART_RESIZE_EVENT_TYPE } from "@/charts/shared/use-size";
 import { CopyToClipboardTextInput } from "@/components/copy-to-clipboard-text-input";
 import Flex from "@/components/flex";
+import { Radio } from "@/components/form";
 import { IconLink } from "@/components/links";
 import { Icon } from "@/icons";
 import useEvent from "@/utils/use-event";
 import { useI18n } from "@/utils/use-i18n";
-
-import { Radio } from "./form";
 
 type PublishActionProps = {
   chartWrapperRef: RefObject<HTMLDivElement>;
@@ -110,7 +110,7 @@ const Embed = ({ chartWrapperRef, configKey, locale }: PublishActionProps) => {
         </Button>
       )}
     >
-      <Box m={4} sx={{ "& > * + *": { mt: 4 } }}>
+      <Flex sx={{ flexDirection: "column", gap: 4, p: 4 }}>
         <div>
           <Typography component="div" variant="h5">
             <Trans id="publication.embed.iframe">Iframe Embed Code</Trans>
@@ -120,35 +120,33 @@ const Embed = ({ chartWrapperRef, configKey, locale }: PublishActionProps) => {
               Use this link to embed the chart into other webpages.
             </Trans>
           </Typography>
-          <Flex sx={{ justifyContent: "flex-start", flexWrap: "wrap" }} mt={3}>
-            <Radio
-              checked={isResponsive}
+          <Flex sx={{ alignItems: "center", gap: 4, mt: 3, mb: 2 }}>
+            <EmbedRadio
               value="responsive"
-              name="iframe-type"
+              checked={isResponsive}
               onChange={handleChange}
               label={t({
                 id: "publication.embed.iframe.responsive",
                 message: "Responsive iframe",
               })}
-              warnMessage={t({
+              infoMessage={t({
                 id: "publication.embed.iframe.responsive.warn",
                 message:
                   "For embedding visualizations in web pages without CMS support. The iframe will be responsive. The JavaScript part of the embed code ensures that the iframe always maintains the correct size.",
               })}
             />
-            <Radio
-              checked={!isResponsive}
+            <EmbedRadio
               value="static"
-              name="iframe-type"
+              checked={!isResponsive}
               onChange={handleChange}
               label={t({
                 id: "publication.embed.iframe.static",
                 message: "Static iframe",
               })}
-              warnMessage={t({
+              infoMessage={t({
                 id: "publication.embed.iframe.static.warn",
                 message:
-                  "For embedding visualizations in systems without Web Components or JavaScript support. (e.g. WordPress)",
+                  "For embedding visualizations in systems without JavaScript support (e.g. WordPress).",
               })}
             />
           </Flex>
@@ -169,8 +167,39 @@ const Embed = ({ chartWrapperRef, configKey, locale }: PublishActionProps) => {
           </Typography>
           <CopyToClipboardTextInput content={embedAEMUrl} />
         </div>
-      </Box>
+      </Flex>
     </TriggeredPopover>
+  );
+};
+
+const EmbedRadio = ({
+  infoMessage,
+  ...rest
+}: {
+  value: string;
+  checked: boolean;
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  label: string;
+  infoMessage?: string;
+}) => {
+  return (
+    <Flex sx={{ alignItems: "center", gap: 1 }}>
+      <Radio {...rest} formLabelProps={{ sx: { m: 0 } }} />
+      {infoMessage && (
+        <Tooltip
+          arrow
+          title={<Typography variant="body2">{infoMessage}</Typography>}
+          PopperProps={{ sx: { width: 190, p: 0 } }}
+          componentsProps={{
+            tooltip: { sx: { color: "secondary.active", px: 4, py: 3 } },
+          }}
+        >
+          <Box sx={{ color: "secondary.active" }}>
+            <Icon name="infoOutline" size={16} />
+          </Box>
+        </Tooltip>
+      )}
+    </Flex>
   );
 };
 

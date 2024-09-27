@@ -2,6 +2,7 @@ import { axisBottom } from "d3-axis";
 import { useEffect, useRef } from "react";
 
 import { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
+import { useAxisLabelHeightOffset } from "@/charts/shared/chart-dimensions";
 import { useChartState } from "@/charts/shared/chart-state";
 import {
   maybeTransition,
@@ -79,13 +80,20 @@ export const AxisWidthLinear = () => {
     xScale,
   ]);
 
+  const { height } = useAxisLabelHeightOffset({
+    label: xAxisLabel,
+    width: chartWidth,
+    marginLeft: margins.left,
+    marginRight: margins.right,
+  });
+
   return (
     <>
       <foreignObject
         x={margins.left}
         y={margins.top + chartHeight + 24}
         width={chartWidth}
-        height={axisLabelFontSize * 2}
+        height={height}
         style={{ textAlign: "right" }}
       >
         <OpenMetadataPanelWrapper component={xMeasure}>

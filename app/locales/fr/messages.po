@@ -186,7 +186,7 @@ msgstr "Vue en tableau"
 
 #: app/components/chart-selection-tabs.tsx
 msgid "chart-selection-tabs.add-chart"
-msgstr ""
+msgstr "Ajouter un graphique"
 
 #: app/components/chart-selection-tabs.tsx
 msgid "chart-selection-tabs.add-chart-different-dataset.button"
@@ -252,11 +252,11 @@ msgstr "Nombre total de lignes:"
 
 #: app/components/chart-selection-tabs.tsx
 msgid "chat-preview.delete.confirmation"
-msgstr ""
+msgstr "Etes-vous sûr de vouloir supprimer ce graphique ?"
 
 #: app/components/chart-selection-tabs.tsx
 msgid "chat-preview.delete.title"
-msgstr ""
+msgstr "Supprimer le graphique ?"
 
 #: app/configurator/table/table-chart-options.tsx
 msgid "columnStyle.bar"
@@ -600,7 +600,7 @@ msgstr "Zéros"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.label"
-msgstr ""
+msgstr "Étiquette de l'onglet"
 
 #: app/components/rename-dialog.tsx
 #: app/configurator/components/field-i18n.ts
@@ -628,7 +628,7 @@ msgstr "Mise en page libre"
 
 #: app/login/components/profile-tables.tsx
 msgid "controls.layout.chart"
-msgstr ""
+msgstr "Graphique"
 
 #: app/configurator/components/field-i18n.ts
 #: app/login/components/profile-tables.tsx
@@ -959,7 +959,7 @@ msgstr "Sélectionner une variable"
 #: app/configurator/components/field.tsx
 #: app/configurator/components/field.tsx
 msgid "controls.select.optional"
-msgstr "Optionnel"
+msgstr "optionnel"
 
 #: app/configurator/components/filters.tsx
 #: app/configurator/components/filters.tsx
@@ -1109,7 +1109,7 @@ msgstr "Dimensions partagées"
 
 #: app/components/chart-footnotes.tsx
 msgid "dataset.footnotes.dataset"
-msgstr ""
+msgstr "Ensemble de données"
 
 #: app/components/chart-footnotes.tsx
 msgid "dataset.footnotes.updated"
@@ -1274,11 +1274,11 @@ msgstr "Tutoriels"
 
 #: app/components/hint.tsx
 msgid "hint.chartunexpected.message"
-msgstr ""
+msgstr "Une erreur inattendue s'est produite lors de l'affichage de ce graphique."
 
 #: app/components/hint.tsx
 msgid "hint.chartunexpected.title"
-msgstr ""
+msgstr "Erreur inattendue"
 
 #: app/components/hint.tsx
 msgid "hint.coordinatesloadingerror.message"
@@ -1374,7 +1374,7 @@ msgstr "Supprimer"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.delete-draft.confirmation"
-msgstr ""
+msgstr "Etes-vous sûr de vouloir supprimer ce brouillon ?"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.delete.confirmation"
@@ -1398,10 +1398,6 @@ msgid "login.chart.rename"
 msgstr "Renommer"
 
 #: app/login/components/profile-tables.tsx
-msgid "login.chart.share"
-msgstr "Partager"
-
-#: app/login/components/profile-tables.tsx
 msgid "login.chart.view"
 msgstr "Voir"
 
@@ -1419,7 +1415,7 @@ msgstr "Êtes-vous sûr de vouloir effectuer cette action ?"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.chart.delete-draft.warning"
-msgstr ""
+msgstr "Cette action ne peut pas être annulée."
 
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.chart.delete.warning"
@@ -1443,7 +1439,7 @@ msgstr "Mes visualisations publiées"
 
 #: app/login/components/login-menu.tsx
 msgid "login.profile.my-visualizations"
-msgstr ""
+msgstr "Mes visualisations"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.my-visualizations.chart-actions"
@@ -1467,16 +1463,16 @@ msgstr "Ensemble de données"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.my-visualizations.multiple-datasets"
-msgstr ""
+msgstr "Plusieurs ensembles de données"
 
 #: app/login/components/login-menu.tsx
 msgid "login.sign-in"
-msgstr ""
+msgstr "Se connecter"
 
 #: app/login/components/login-menu.tsx
 #: app/login/components/profile-header.tsx
 msgid "login.sign-out"
-msgstr ""
+msgstr "Se déconnecter"
 
 #: app/components/header.tsx
 #: app/components/header.tsx
@@ -1505,7 +1501,7 @@ msgstr "Code pour intégrer sur comme \"External Application\""
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.external-application.caption"
-msgstr ""
+msgstr "Utilisez ce lien pour intégrer le graphique sans balises iframe."
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe"

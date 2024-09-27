@@ -200,6 +200,7 @@ const ChartTypeSelectorMenu = (props: ChartTypeSelectorMenuProps) => {
         sx={{
           display: "grid",
           gridTemplateColumns: ["1fr 1fr", "1fr 1fr", "1fr 1fr 1fr"],
+          justifyItems: "center",
           gridGap: "0.75rem",
           mx: 2,
         }}
