@@ -627,7 +627,6 @@ export const useChartData = (
   const timeRangeData = useMemo(() => {
     return observations.filter(overEvery(timeRangeFilters));
   }, [observations, timeRangeFilters]);
-  console.log("timeRangeData", timeRangeData);
 
   const paddingData = useMemo(() => {
     if (dynamicScales) {
