@@ -889,7 +889,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       return draft;
 
     case "CHART_CONFIG_ADD":
-      if (isConfiguring(draft)) {
+      if (isConfiguring(draft) || isLayouting(draft)) {
         const chartConfig =
           createDraft(action.value.chartConfig) ?? getChartConfig(draft);
         const dataCubesComponents = getCachedComponents({
@@ -1175,20 +1175,21 @@ export function ensureDashboardLayoutIsCorrect(
     draft.layout.type === "dashboard" &&
     draft.layout.layout === "canvas"
   ) {
+    const layouts = draft.layout.layouts;
     const chartConfigKeys = draft.chartConfigs.map((c) => c.key).sort();
 
     const breakpoints = Object.keys(FREE_CANVAS_BREAKPOINTS);
-    const xlCanvasLayouts = draft.layout.layouts[breakpoints[0]];
-    const xlLayoutConfigKeys = xlCanvasLayouts.map((c) => c.i).sort();
+    const layoutConfigKeys = Array.from(
+      new Set(breakpoints.flatMap((bp) => layouts[bp].map((c) => c.i)))
+    ).sort();
 
     const newConfigs = draft.chartConfigs.filter(
-      (x) => !xlLayoutConfigKeys.includes(x.key)
+      (x) => !layoutConfigKeys.includes(x.key)
     );
 
-    if (!isEqual(chartConfigKeys, xlLayoutConfigKeys)) {
+    if (!isEqual(chartConfigKeys, layoutConfigKeys)) {
       for (const bp of breakpoints) {
-        const canvasLayouts = draft.layout.layouts[bp];
-        draft.layout.layouts[bp] = canvasLayouts.filter((c) =>
+        const canvasLayouts = draft.layout.layouts[bp].filter((c) =>
           chartConfigKeys.includes(c.i)
         );
 
@@ -1216,6 +1217,7 @@ export function ensureDashboardLayoutIsCorrect(
             curY += chartH;
           }
         }
+
         draft.layout.layouts[bp] = canvasLayouts;
       }
     }

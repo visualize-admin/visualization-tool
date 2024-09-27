@@ -158,12 +158,16 @@ const DashboardPreview = ({
 
   if (layoutType === "canvas") {
     return (
-      <ChartPanelLayout
-        chartConfigs={state.chartConfigs}
-        renderChart={renderChart}
-        layoutType={layoutType}
-        className={classes.canvasChartPanelLayout}
-      />
+      // Force re-rendering of the canvas layout when the chart configs change
+      // to properly initialize the height of the new charts
+      <div key={state.chartConfigs.map((c) => c.key).join(",")}>
+        <ChartPanelLayout
+          chartConfigs={state.chartConfigs}
+          renderChart={renderChart}
+          layoutType={layoutType}
+          className={classes.canvasChartPanelLayout}
+        />
+      </div>
     );
   }
 
