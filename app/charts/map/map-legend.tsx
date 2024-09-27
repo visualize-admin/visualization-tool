@@ -685,6 +685,7 @@ const ContinuousColorLegend = ({
         y={-1} // needed to align with other legends, not sure why
         width={width - MARGIN.left - MARGIN.right}
         height={COLOR_RAMP_HEIGHT}
+        style={{ display: "flex" }}
       >
         <ColorRamp
           width={width - MARGIN.left - MARGIN.right}

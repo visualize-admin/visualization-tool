@@ -72,7 +72,7 @@ export const ChartSvg = ({ children }: { children: ReactNode }) => {
         <foreignObject
           width={width - margins.right}
           height="24"
-          style={{ textAlign: "right" }}
+          style={{ display: "flex", textAlign: "right" }}
         >
           <CalculationToggle />
         </foreignObject>

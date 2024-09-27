@@ -72,6 +72,7 @@ export const AxisHeightLinear = () => {
         <foreignObject
           width={Math.min(axisTitleWidth, state.bounds.chartWidth)}
           height={height}
+          style={{ display: "flex" }}
         >
           <OpenMetadataPanelWrapper component={state.yMeasure}>
             <span style={{ fontSize: axisLabelFontSize }}>

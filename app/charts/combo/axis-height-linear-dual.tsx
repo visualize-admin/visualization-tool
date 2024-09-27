@@ -33,10 +33,13 @@ export const AxisHeightLinearDual = (props: AxisHeightLinearDualProps) => {
     getTextWidth(axisTitle, { fontSize: axisLabelFontSize }) + TICK_PADDING;
   const color = colors(axisTitle);
   const otherAxisTitle = y[leftAligned ? "right" : "left"].label;
-  const otherAxisTitleWidth = getTextWidth(otherAxisTitle, { fontSize: axisLabelFontSize }) + TICK_PADDING;
-  const overLappingTitles = axisTitleWidth + otherAxisTitleWidth > bounds.chartWidth;
-  const overLappingAmount = (axisTitleWidth + otherAxisTitleWidth) / bounds.chartWidth
-
+  const otherAxisTitleWidth =
+    getTextWidth(otherAxisTitle, { fontSize: axisLabelFontSize }) +
+    TICK_PADDING;
+  const overLappingTitles =
+    axisTitleWidth + otherAxisTitleWidth > bounds.chartWidth;
+  const overLappingAmount =
+    (axisTitleWidth + otherAxisTitleWidth) / bounds.chartWidth;
 
   useRenderAxisHeightLinear(ref, {
     id: `axis-height-linear-${orientation}`,
@@ -49,31 +52,35 @@ export const AxisHeightLinearDual = (props: AxisHeightLinearDualProps) => {
     textColor: labelColor,
   });
 
-  const rightXAlignment = bounds.chartWidth +
-  margins.left -
-  (overLappingTitles ? axisTitleWidth / overLappingAmount : axisTitleWidth) +
-  // Align the title with the rightmost tick.
-  maxRightTickWidth +
-  TICK_PADDING -
-  TITLE_HPADDING  * (overLappingTitles ? Math.floor(overLappingAmount) : 2);
+  const rightXAlignment =
+    bounds.chartWidth +
+    margins.left -
+    (overLappingTitles ? axisTitleWidth / overLappingAmount : axisTitleWidth) +
+    // Align the title with the rightmost tick.
+    maxRightTickWidth +
+    TICK_PADDING -
+    TITLE_HPADDING * (overLappingTitles ? Math.floor(overLappingAmount) : 2);
 
   return (
     <>
       <foreignObject
-        x={
-          leftAligned
-            ? 0
-            :  rightXAlignment
-        }
+        x={leftAligned ? 0 : rightXAlignment}
         width={axisTitleWidth + TITLE_HPADDING * 2}
-        height={(overLappingTitles ? axisLabelFontSize * Math.ceil(overLappingAmount) : axisLabelFontSize + TITLE_VPADDING) * 2}
+        height={
+          (overLappingTitles
+            ? axisLabelFontSize * Math.ceil(overLappingAmount)
+            : axisLabelFontSize + TITLE_VPADDING) * 2
+        }
         color={theme.palette.getContrastText(color)}
+        style={{ display: "flex" }}
       >
         <OpenMetadataPanelWrapper component={y[orientation].dimension}>
           <span
             style={{
-              width: overLappingTitles ? axisTitleWidth / overLappingAmount : "auto",
-              fontSize: axisLabelFontSize ,
+              width: overLappingTitles
+                ? axisTitleWidth / overLappingAmount
+                : "auto",
+              fontSize: axisLabelFontSize,
               backgroundColor: color,
               color: theme.palette.getContrastText(color),
               paddingTop: TITLE_VPADDING,
