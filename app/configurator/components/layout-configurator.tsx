@@ -73,7 +73,6 @@ export const LayoutConfigurator = () => {
 const LayoutLayoutConfigurator = () => {
   const [state] = useConfiguratorState(isLayouting);
   const { layout } = state;
-  const freeCanvasFlag = useFlag("layouter.dashboard.free-canvas");
   switch (layout.type) {
     case "dashboard":
       return (
@@ -99,9 +98,7 @@ const LayoutLayoutConfigurator = () => {
             >
               <DashboardLayoutButton type="tall" layout={layout} />
               <DashboardLayoutButton type="vertical" layout={layout} />
-              {freeCanvasFlag ? (
-                <DashboardLayoutButton type="canvas" layout={layout} />
-              ) : null}
+              <DashboardLayoutButton type="canvas" layout={layout} />
             </Box>
           </ControlSectionContent>
         </ControlSection>

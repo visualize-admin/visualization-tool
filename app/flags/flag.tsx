@@ -91,11 +91,8 @@ const initFromHost = (host: string) => {
     host.includes("test.visualize.admin.ch") ||
     isVercelPreviewHost(host)
   ) {
-    setDefaultFlag("configurator.add-dataset.new", true);
     setDefaultFlag("configurator.add-dataset.shared", true);
-    setDefaultFlag("layouter.dashboard.free-canvas", true);
     setDefaultFlag("layouter.dashboard.shared-filters", true);
-    setDefaultFlag("search.termsets", true);
   }
 };
 

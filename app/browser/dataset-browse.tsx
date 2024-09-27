@@ -43,7 +43,6 @@ import Tag from "@/components/tag";
 import useDisclosure from "@/components/use-disclosure";
 import { SearchCube } from "@/domain/data";
 import { truthy } from "@/domain/types";
-import { useFlag } from "@/flags";
 import { useFormatDate } from "@/formatters";
 import {
   DataCubeOrganization,
@@ -869,9 +868,8 @@ export const SearchFilters = ({
       />
     ) : null;
 
-  const termsetFlag = useFlag("search.termsets");
   const termsetNav =
-    termsets.length === 0 || !termsetFlag ? null : (
+    termsets.length === 0 ? null : (
       <NavSection
         key="termsets"
         items={displayedTermsets}
