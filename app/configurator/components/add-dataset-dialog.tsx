@@ -569,23 +569,35 @@ const PreviewDataTable = ({
                     </TableBody>
                   </Table>
                 </Box>
-                <FirstTenRowsCaption />
               </Box>
             ) : null}
           </>
         ) : null}
       </DialogContent>
-      <DialogActions>
-        <Button variant="outlined" onClick={onClickBack}>
-          <Trans id="button.back">Back</Trans>
-        </Button>
-        <LoadingButton
-          loading={addingDataset}
-          variant="contained"
-          onClick={onConfirm}
-        >
-          <Trans id="button.confirm">Confirm</Trans>
-        </LoadingButton>
+      <DialogActions
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "flex-end",
+          gap: 1,
+          px: 4,
+          pt: "0 !important",
+          pb: "2rem !important",
+        }}
+      >
+        <FirstTenRowsCaption />
+        <Box sx={{ display: "flex", gap: 2 }}>
+          <Button variant="outlined" onClick={onClickBack}>
+            <Trans id="button.back">Back</Trans>
+          </Button>
+          <LoadingButton
+            loading={addingDataset}
+            variant="contained"
+            onClick={onConfirm}
+          >
+            <Trans id="button.confirm">Confirm</Trans>
+          </LoadingButton>
+        </Box>
       </DialogActions>
     </>
   );
