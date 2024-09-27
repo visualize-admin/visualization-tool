@@ -6,7 +6,6 @@
   },
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "prettier.requireConfig": true,
   "eslint.validate": [
     "javascript",
     "javascriptreact",
