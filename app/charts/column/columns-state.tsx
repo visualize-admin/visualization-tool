@@ -191,7 +191,9 @@ const useColumnsState = (
     interactiveFiltersConfig,
     animationPresent: !!fields.animation,
     formatNumber,
-    bandDomain: xTimeRangeDomainLabels,
+    bandDomain: xTimeRangeDomainLabels.every((d) => d === undefined)
+      ? xScale.domain()
+      : xTimeRangeDomainLabels,
   });
   const right = 40;
   const { offset: yAxisLabelMargin } = useAxisLabelHeightOffset({

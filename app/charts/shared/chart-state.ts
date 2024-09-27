@@ -426,9 +426,7 @@ export const useInteractiveFiltersVariables = (
   return {
     getTimeRangeDate: isTemporalDimension(dimension)
       ? getTimeRangeDate
-      : isTemporalEntityDimension(dimension)
-        ? getTimeRangeEntityDate
-        : () => new Date(),
+      : getTimeRangeEntityDate,
   };
 };
 

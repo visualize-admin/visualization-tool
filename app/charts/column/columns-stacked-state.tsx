@@ -389,7 +389,9 @@ const useColumnsStackedState = (
     interactiveFiltersConfig,
     animationPresent: !!fields.animation,
     formatNumber,
-    bandDomain: xTimeRangeDomainLabels,
+    bandDomain: xTimeRangeDomainLabels.every((d) => d === undefined)
+      ? xScale.domain()
+      : xTimeRangeDomainLabels,
     normalize,
   });
   const right = 40;
