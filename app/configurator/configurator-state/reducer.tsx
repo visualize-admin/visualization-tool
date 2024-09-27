@@ -889,7 +889,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       return draft;
 
     case "CHART_CONFIG_ADD":
-      if (isConfiguring(draft)) {
+      if (isConfiguring(draft) || isLayouting(draft)) {
         const chartConfig =
           createDraft(action.value.chartConfig) ?? getChartConfig(draft);
         const dataCubesComponents = getCachedComponents({
