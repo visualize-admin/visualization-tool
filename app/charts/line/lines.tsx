@@ -1,4 +1,3 @@
-import { useTheme } from "@mui/material";
 import { line } from "d3-shape";
 import { Fragment, memo, useEffect, useMemo, useRef } from "react";
 
@@ -14,7 +13,6 @@ import { Observation } from "@/domain/data";
 import { useTransitionStore } from "@/stores/transition";
 
 export const ErrorWhiskers = () => {
-  const theme = useTheme();
   const {
     getX,
     getYError,
@@ -23,6 +21,8 @@ export const ErrorWhiskers = () => {
     yScale,
     xScale,
     showYStandardError,
+    colors,
+    getSegment,
     bounds,
   } = useChartState() as LinesState;
   const { margins } = bounds;
@@ -36,6 +36,7 @@ export const ErrorWhiskers = () => {
 
     return chartData.filter(filterWithoutErrors(getYError)).map((d, i) => {
       const x0 = xScale(getX(d)) as number;
+      const segment = getSegment(d);
       const barWidth = 15;
       const [y1, y2] = getYErrorRange(d);
       return {
@@ -44,17 +45,18 @@ export const ErrorWhiskers = () => {
         y1: yScale(y1),
         y2: yScale(y2),
         width: barWidth,
-        fill: theme.palette.primary.main,
+        fill: colors(segment),
         renderMiddleCircle: true,
       } as RenderWhiskerDatum;
     });
   }, [
     chartData,
+    colors,
+    getSegment,
     getX,
     getYError,
     getYErrorRange,
     showYStandardError,
-    theme.palette.primary.main,
     xScale,
     yScale,
   ]);

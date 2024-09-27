@@ -40,6 +40,7 @@ You can also check the
     is not breaking the application anymore
   - Axis titles now wrap
   - Metadata panel is not longer shared between separate charts in a dashboard
+  - Segmented line charts' whiskers have now the same color as the line
 
 # [4.8.0] - 2024-09-11
 
