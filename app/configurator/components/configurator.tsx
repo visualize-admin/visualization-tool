@@ -17,7 +17,6 @@ import { useClient } from "urql";
 import { useDebounce } from "use-debounce";
 
 import { SelectDatasetStep } from "@/browser/select-dataset-step";
-import { META } from "@/charts";
 import { extractChartConfigComponentIris } from "@/charts/shared/chart-helpers";
 import { ChartPreview } from "@/components/chart-preview";
 import { HEADER_HEIGHT } from "@/components/header-constants";
@@ -631,9 +630,7 @@ const LayoutingStep = () => {
                     publishableChartKeys: state.chartConfigs.map(
                       (chartConfig) => chartConfig.key
                     ),
-                    // Clear the meta data, as it's not used in singleURLs layout,
-                    // but makes the types more consistent
-                    meta: META,
+                    meta: state.layout.meta,
                     activeField: undefined,
                   },
                 });
