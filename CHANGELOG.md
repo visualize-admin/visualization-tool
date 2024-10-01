@@ -11,6 +11,10 @@ You can also check the
 
 # Unreleased
 
+Nothing yet.
+
+# [4.9.0] - 2024-10-01
+
 - Features
   - Added a new preview option (xl) in the layouting step
   - Changes made in the preview mode are now persisted in the free canvas
