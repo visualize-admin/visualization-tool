@@ -2,6 +2,7 @@ import { t, Trans } from "@lingui/macro";
 import {
   Box,
   Grow,
+  Link,
   SxProps,
   Tooltip,
   Typography,
@@ -280,12 +281,14 @@ export const SaveDraftButton = ({
             {replaceLinks(
               t({
                 id: "button.save-draft.saved",
-                message: "Draft saved in [My visualisations](/profile)",
+                message: "Draft saved in [My visualizations](/profile)",
               }),
               (label, href) => {
                 return (
                   <div>
-                    <NextLink href={href}>{label}</NextLink>
+                    <NextLink href={href} passHref legacyBehavior>
+                      <Link sx={{ color: "primary.main" }}>{label}</Link>
+                    </NextLink>
                   </div>
                 );
               }
