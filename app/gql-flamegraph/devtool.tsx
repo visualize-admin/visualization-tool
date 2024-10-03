@@ -330,14 +330,29 @@ const Queries = ({ queries }: { queries: RequestQueryMeta[] }) => {
         return (
           <div key={i} style={{ overflowX: "auto" }}>
             <div>
+              {q.source && (
+                <>
+                  <Typography variant="caption" sx={{ fontWeight: "bold" }}>
+                    {q.source}
+                  </Typography>
+                  {" – "}
+                </>
+              )}
               <Typography variant="caption">
                 {q.endTime - q.startTime}ms
               </Typography>{" "}
-              -{" "}
+              –{" "}
               <CopyLink toCopy={q.text} sx={{ fontSize: "small" }}>
                 Copy
               </CopyLink>
             </div>
+            {q.reason && (
+              <div style={{ marginBottom: "0.25rem" }}>
+                <Typography variant="caption" sx={{ fontStyle: "italic" }}>
+                  ℹ️ {q.reason}
+                </Typography>
+              </div>
+            )}
             <Box
               cols={100}
               rows={10}

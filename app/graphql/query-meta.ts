@@ -2,5 +2,6 @@ export type RequestQueryMeta = {
   text: string;
   startTime: number;
   endTime: number;
-  label?: string;
+  source?: string;
+  reason?: string;
 };

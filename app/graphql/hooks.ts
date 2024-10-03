@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Client, useClient } from "urql";
+import { Client, OperationContext, useClient } from "urql";
 
 import { ConfiguratorState, hasChartConfigs } from "@/configurator";
 import {
@@ -7,10 +7,8 @@ import {
   DataCubeMetadata,
   DataCubesObservations,
 } from "@/domain/data";
-import { Locale } from "@/locales/locales";
-import { assert } from "@/utils/assert";
-
-import { joinDimensions, mergeObservations } from "./join";
+import { getGraphqlHeaders } from "@/graphql/client";
+import { joinDimensions, mergeObservations } from "@/graphql/join";
 import {
   DataCubeComponentFilter,
   DataCubeComponentsDocument,
@@ -24,7 +22,24 @@ import {
   DataCubeObservationsDocument,
   DataCubeObservationsQuery,
   DataCubeObservationsQueryVariables,
-} from "./query-hooks";
+} from "@/graphql/query-hooks";
+import { Locale } from "@/locales/locales";
+import { assert } from "@/utils/assert";
+
+export const getQueryRequestContext = (options: {
+  querySource?: string;
+  queryReason?: string;
+}): Partial<OperationContext> => {
+  if (!options) {
+    return {};
+  }
+
+  return {
+    fetchOptions: {
+      headers: getGraphqlHeaders(options),
+    },
+  };
+};
 
 const useQueryKey = (options: object) => {
   return useMemo(() => {
