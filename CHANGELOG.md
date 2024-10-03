@@ -11,6 +11,10 @@ You can also check the
 
 # Unreleased
 
+Nothing yet.
+
+# [4.9.1] - 2024-10-03
+
 - Performance
   - Added pragmas to the SPARQL query button
 
