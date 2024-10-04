@@ -25,9 +25,13 @@ type StatProps = {
 
 type PageProps = {
   charts: StatProps & {
-    mostPopular: {
+    mostPopularAllTime: {
       key: string;
       createdDate: Date;
+      viewCount: number;
+    }[];
+    mostPopularThisMonth: {
+      key: string;
       viewCount: number;
     }[];
   };
@@ -36,7 +40,8 @@ type PageProps = {
 
 export const getServerSideProps: GetServerSideProps<PageProps> = async () => {
   const [
-    mostPopularCharts,
+    mostPopularAllTimeCharts,
+    mostPopularThisMonthCharts,
     chartCountByDay,
     chartTrendAverages,
     viewCountByDay,
@@ -69,6 +74,25 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async () => {
           };
         })
       ),
+    prisma.$queryRaw`
+      SELECT config_key AS key, COUNT(*) AS view_count
+      FROM config_view
+      WHERE viewed_at > CURRENT_DATE - INTERVAL '30 days'
+      GROUP BY config_key
+      ORDER BY view_count DESC
+      LIMIT 10;
+    `.then((rows) => {
+      return (
+        rows as {
+          key: string;
+          view_count: BigInt;
+        }[]
+      ).map((row) => ({
+        key: row.key,
+        // superjson conversion breaks when we use default BigInt
+        viewCount: Number(row.view_count),
+      }));
+    }),
     prisma.$queryRaw`
       SELECT
         DATE_TRUNC('day', created_at) AS day,
@@ -176,7 +200,8 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async () => {
   return {
     props: serializeProps({
       charts: {
-        mostPopular: mostPopularCharts,
+        mostPopularAllTime: mostPopularAllTimeCharts,
+        mostPopularThisMonth: mostPopularThisMonthCharts,
         countByDay: chartCountByDay,
         trendAverages: chartTrendAverages,
       },
@@ -190,6 +215,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async () => {
 
 const Statistics = (props: Serialized<PageProps>) => {
   const { charts, views } = deserializeProps(props);
+  console.log("month", charts.mostPopularThisMonth);
 
   return (
     <AppLayout>
@@ -235,11 +261,22 @@ const Statistics = (props: Serialized<PageProps>) => {
               }
             />
           )}
-          {charts.mostPopular.length > 0 && (
+          {charts.mostPopularAllTime.length > 0 && (
             <BaseStatsCard
-              title="Most popular charts"
+              title="Most popular charts (all time)"
               subtitle="Top 10 charts by view count"
-              data={charts.mostPopular.map((chart) => [
+              data={charts.mostPopularAllTime.map((chart) => [
+                chart.key,
+                { count: chart.viewCount, label: chart.key },
+              ])}
+              columnName="Chart"
+            />
+          )}
+          {charts.mostPopularThisMonth.length > 0 && (
+            <BaseStatsCard
+              title="Most popular charts (last 30 days)"
+              subtitle="Top 10 charts by view count"
+              data={charts.mostPopularThisMonth.map((chart) => [
                 chart.key,
                 { count: chart.viewCount, label: chart.key },
               ])}
