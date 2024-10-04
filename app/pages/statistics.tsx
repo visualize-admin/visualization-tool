@@ -282,12 +282,20 @@ const BaseStatsCard = ({
                 </Typography>
                 <Typography variant="caption">
                   Last 30 days daily average:{" "}
-                  <b>{trend.lastMonthDailyAverage.toFixed(2)}</b>
+                  <b>
+                    {trend.lastMonthDailyAverage >= 10
+                      ? formatInteger(trend.lastMonthDailyAverage)
+                      : trend.lastMonthDailyAverage.toFixed(2)}
+                  </b>
                 </Typography>
                 <br />
                 <Typography variant="caption">
                   Last 90 days daily average:{" "}
-                  <b>{trend.previousThreeMonthsDailyAverage.toFixed(2)}</b>
+                  <b>
+                    {trend.previousThreeMonthsDailyAverage >= 10
+                      ? formatInteger(trend.previousThreeMonthsDailyAverage)
+                      : trend.previousThreeMonthsDailyAverage.toFixed(2)}
+                  </b>
                 </Typography>
               </>
             }
@@ -453,7 +461,7 @@ const Bar = ({
 };
 
 const StatsCard = (
-  props: PageProps["charts"] & {
+  props: StatProps & {
     title: (total: number) => string;
     subtitle: (total: number, avgMonthlyCount: number) => string;
   }
