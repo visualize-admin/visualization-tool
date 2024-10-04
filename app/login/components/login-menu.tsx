@@ -26,7 +26,9 @@ export const LoginMenu = () => {
               },
             }}
           >
-            <Typography variant="body2">{user.name}</Typography>
+            <Typography variant="body2" noWrap>
+              {user.name}
+            </Typography>
           </Button>
           <Menu
             anchorEl={anchorEl}
