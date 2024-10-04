@@ -12,6 +12,7 @@ import { BANNER_MARGIN_TOP } from "@/components/presence";
 import prisma from "@/db/client";
 import { Serialized, deserializeProps, serializeProps } from "@/db/serialize";
 import { useFlag } from "@/flags";
+import { Icon } from "@/icons";
 import { Locale } from "@/locales/locales";
 import { useLocale } from "@/src";
 
@@ -63,7 +64,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async () => {
             _count: "desc",
           },
         },
-        take: 10,
+        take: 25,
       })
       .then((rows) =>
         rows.map((row) => {
@@ -80,7 +81,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async () => {
       WHERE viewed_at > CURRENT_DATE - INTERVAL '30 days'
       GROUP BY config_key
       ORDER BY view_count DESC
-      LIMIT 10;
+      LIMIT 25;
     `.then((rows) => {
       return (
         rows as {
@@ -264,20 +265,12 @@ const Statistics = (props: Serialized<PageProps>) => {
           {charts.mostPopularAllTime.length > 0 && (
             <BaseStatsCard
               title="Most popular charts (all time)"
-              subtitle="Top 10 charts by view count"
+              subtitle="Top 25 charts by view count"
               data={charts.mostPopularAllTime.map((chart) => [
                 chart.key,
                 {
                   count: chart.viewCount,
-                  label: (
-                    <Link
-                      href={`/${locale}/v/${chart.key}`}
-                      target="_blank"
-                      color="primary"
-                    >
-                      {chart.key}
-                    </Link>
-                  ),
+                  label: <ChartLink locale={locale} chartKey={chart.key} />,
                 },
               ])}
               columnName="Chart"
@@ -286,20 +279,12 @@ const Statistics = (props: Serialized<PageProps>) => {
           {charts.mostPopularThisMonth.length > 0 && (
             <BaseStatsCard
               title="Most popular charts (last 30 days)"
-              subtitle="Top 10 charts by view count"
+              subtitle="Top 25 charts by view count"
               data={charts.mostPopularThisMonth.map((chart) => [
                 chart.key,
                 {
                   count: chart.viewCount,
-                  label: (
-                    <Link
-                      href={`/${locale}/v/${chart.key}`}
-                      target="_blank"
-                      color="primary"
-                    >
-                      {chart.key}
-                    </Link>
-                  ),
+                  label: <ChartLink locale={locale} chartKey={chart.key} />,
                 },
               ])}
               columnName="Chart"
@@ -308,6 +293,30 @@ const Statistics = (props: Serialized<PageProps>) => {
         </Box>
       </Box>
     </AppLayout>
+  );
+};
+
+const ChartLink = ({
+  locale,
+  chartKey,
+}: {
+  locale: Locale;
+  chartKey: string;
+}) => {
+  return (
+    <Link
+      href={`/${locale}/v/${chartKey}`}
+      target="_blank"
+      color="primary"
+      sx={{
+        display: "flex",
+        gap: 2,
+        justifyContent: "space-between",
+      }}
+    >
+      {chartKey}
+      <Icon name="linkExternal" size={16} />
+    </Link>
   );
 };
 
