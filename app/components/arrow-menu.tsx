@@ -23,6 +23,18 @@ export const ArrowMenuTopCenter = styled(Menu)({
   },
 });
 
+export const ArrowMenuBottomCenter = styled(Menu)({
+  [`& .${paperClasses.root}`]: {
+    overflow: "visible",
+    "&:before": {
+      ...commonBeforeStyles,
+      bottom: -5,
+      left: "0%",
+      right: 0,
+    },
+  },
+});
+
 export const ArrowMenuTopBottom = styled(Menu)({
   [`& .${paperClasses.root}`]: {
     overflow: "visible",
