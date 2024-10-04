@@ -179,6 +179,12 @@ export const ChartMoreButton = ({
               chartConfig={chartConfig}
               onSuccess={handleClose}
             />
+            {chartConfig.chartType !== "table" ? (
+              <TableViewChartMenuActionItem
+                chartType={chartConfig.chartType}
+                onSuccess={handleClose}
+              />
+            ) : null}
             {state.chartConfigs.length > 1 ? (
               <MenuActionItem
                 type="button"
@@ -202,12 +208,6 @@ export const ChartMoreButton = ({
                 }}
                 iconName="trash"
                 label={<Trans id="chart-controls.delete">Delete</Trans>}
-              />
-            ) : null}
-            {chartConfig.chartType !== "table" ? (
-              <TableViewChartMenuActionItem
-                chartType={chartConfig.chartType}
-                onSuccess={handleClose}
               />
             ) : null}
           </div>

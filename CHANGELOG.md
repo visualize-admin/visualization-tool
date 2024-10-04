@@ -14,6 +14,7 @@ You can also check the
 - Features
   - Added most recent charts (all time and last 30 days) to the the Statistics
     page
+  - Made the Delete chart menu action always the last one across all Menu items
 - Fixes
   - Fixed inconsistent text style behavior in title and description fields
   - Fixed positioning of Menu Popover in the login profile row actions on small
