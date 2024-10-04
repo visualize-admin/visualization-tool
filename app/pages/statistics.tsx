@@ -1,18 +1,20 @@
 /* eslint-disable visualize-admin/no-large-sx */
-import { Box, Card, Tooltip, Typography } from "@mui/material";
+import { Box, Card, Link, Tooltip, Typography } from "@mui/material";
 import { max, rollups, sum } from "d3-array";
 import { formatLocale } from "d3-format";
-import { timeFormat } from "d3-time-format";
 import { motion } from "framer-motion";
 import uniq from "lodash/uniq";
 import { GetServerSideProps } from "next";
-import { ComponentProps, useMemo } from "react";
+import { ComponentProps, ReactNode, useMemo } from "react";
 
 import { AppLayout } from "@/components/layout";
 import { BANNER_MARGIN_TOP } from "@/components/presence";
 import prisma from "@/db/client";
 import { Serialized, deserializeProps, serializeProps } from "@/db/serialize";
 import { useFlag } from "@/flags";
+import { Icon } from "@/icons";
+import { Locale } from "@/locales/locales";
+import { useLocale } from "@/src";
 
 type StatProps = {
   countByDay: { day: Date; count: number }[];
@@ -23,17 +25,75 @@ type StatProps = {
 };
 
 type PageProps = {
-  charts: StatProps;
+  charts: StatProps & {
+    mostPopularAllTime: {
+      key: string;
+      createdDate: Date;
+      viewCount: number;
+    }[];
+    mostPopularThisMonth: {
+      key: string;
+      viewCount: number;
+    }[];
+  };
   views: StatProps;
 };
 
 export const getServerSideProps: GetServerSideProps<PageProps> = async () => {
   const [
+    mostPopularAllTimeCharts,
+    mostPopularThisMonthCharts,
     chartCountByDay,
     chartTrendAverages,
     viewCountByDay,
     viewTrendAverages,
   ] = await Promise.all([
+    prisma.config
+      .findMany({
+        select: {
+          key: true,
+          created_at: true,
+          _count: {
+            select: {
+              views: true,
+            },
+          },
+        },
+        orderBy: {
+          views: {
+            _count: "desc",
+          },
+        },
+        take: 25,
+      })
+      .then((rows) =>
+        rows.map((row) => {
+          return {
+            key: row.key,
+            createdDate: row.created_at,
+            viewCount: row._count.views,
+          };
+        })
+      ),
+    prisma.$queryRaw`
+      SELECT config_key AS key, COUNT(*) AS view_count
+      FROM config_view
+      WHERE viewed_at > CURRENT_DATE - INTERVAL '30 days'
+      GROUP BY config_key
+      ORDER BY view_count DESC
+      LIMIT 25;
+    `.then((rows) => {
+      return (
+        rows as {
+          key: string;
+          view_count: BigInt;
+        }[]
+      ).map((row) => ({
+        key: row.key,
+        // superjson conversion breaks when we use default BigInt
+        viewCount: Number(row.view_count),
+      }));
+    }),
     prisma.$queryRaw`
       SELECT
         DATE_TRUNC('day', created_at) AS day,
@@ -137,9 +197,12 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async () => {
       };
     }),
   ]);
+
   return {
     props: serializeProps({
       charts: {
+        mostPopularAllTime: mostPopularAllTimeCharts,
+        mostPopularThisMonth: mostPopularThisMonthCharts,
         countByDay: chartCountByDay,
         trendAverages: chartTrendAverages,
       },
@@ -153,6 +216,8 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async () => {
 
 const Statistics = (props: Serialized<PageProps>) => {
   const { charts, views } = deserializeProps(props);
+  const locale = useLocale();
+
   return (
     <AppLayout>
       <Box
@@ -167,15 +232,16 @@ const Statistics = (props: Serialized<PageProps>) => {
         <h1 style={{ margin: 0 }}>Statistics</h1>
         <Box
           sx={{
-            display: "flex",
-            flexDirection: ["column", "column", "row"],
-            gap: 2,
+            display: "grid",
+            gridTemplateColumns: ["1fr", "1fr", "1fr 1fr"],
+            gap: 4,
             my: [4, 6],
           }}
         >
           {charts.countByDay.length > 0 && (
             <StatsCard
-              {...charts}
+              countByDay={charts.countByDay}
+              trendAverages={charts.trendAverages}
               title={(total) =>
                 `Visualize users created ${formatInteger(total)} charts in total`
               }
@@ -186,7 +252,8 @@ const Statistics = (props: Serialized<PageProps>) => {
           )}
           {views.countByDay.length > 0 && (
             <StatsCard
-              {...views}
+              countByDay={views.countByDay}
+              trendAverages={views.trendAverages}
               title={(total) =>
                 `Charts were viewed ${formatInteger(total)} times in total`
               }
@@ -195,49 +262,106 @@ const Statistics = (props: Serialized<PageProps>) => {
               }
             />
           )}
+          {charts.mostPopularAllTime.length > 0 && (
+            <BaseStatsCard
+              title="Most popular charts (all time)"
+              subtitle="Top 25 charts by view count"
+              data={charts.mostPopularAllTime.map((chart) => [
+                chart.key,
+                {
+                  count: chart.viewCount,
+                  label: <ChartLink locale={locale} chartKey={chart.key} />,
+                },
+              ])}
+              columnName="Chart"
+            />
+          )}
+          {charts.mostPopularThisMonth.length > 0 && (
+            <BaseStatsCard
+              title="Most popular charts (last 30 days)"
+              subtitle="Top 25 charts by view count"
+              data={charts.mostPopularThisMonth.map((chart) => [
+                chart.key,
+                {
+                  count: chart.viewCount,
+                  label: <ChartLink locale={locale} chartKey={chart.key} />,
+                },
+              ])}
+              columnName="Chart"
+            />
+          )}
         </Box>
       </Box>
     </AppLayout>
   );
 };
 
+const ChartLink = ({
+  locale,
+  chartKey,
+}: {
+  locale: Locale;
+  chartKey: string;
+}) => {
+  return (
+    <Link
+      href={`/${locale}/v/${chartKey}`}
+      target="_blank"
+      color="primary"
+      sx={{
+        display: "flex",
+        gap: 2,
+        justifyContent: "space-between",
+      }}
+    >
+      {chartKey}
+      <Icon name="linkExternal" size={16} />
+    </Link>
+  );
+};
+
 export default Statistics;
 
-const formatShortMonth = timeFormat("%b");
-const formatYearMonth = timeFormat("%Y-%m");
+const formatYearMonth = (date: Date, { locale }: { locale: Locale }) => {
+  const year = date.getFullYear();
+  const month = date.toLocaleDateString(locale, { month: "short" });
+  return `${year} ${month}`;
+};
 
 const groupByYearMonth = (
-  countByDay: PageProps[keyof PageProps]["countByDay"]
+  countByDay: PageProps[keyof PageProps]["countByDay"],
+  { locale }: { locale: Locale }
 ) => {
   const countByDate = rollups(
     countByDay,
     (v) => ({
       count: sum(v, (d) => d.count),
-      date: v[0].day,
-      monthStr: formatShortMonth(v[0].day),
+      date: v[v.length - 1].day,
+      label: formatYearMonth(v[0].day, { locale }),
     }),
-    (d) => formatYearMonth(d.day)
+    (d) => formatYearMonth(d.day, { locale })
   ).reverse();
   const allYearMonthStrings = uniq(
     countByDate.map(([yearMonthStr]) => yearMonthStr)
   );
-  const start = countByDate[0][1].date;
-  const end = countByDate[countByDate.length - 1][1].date;
+  const start = new Date(countByDate[0][1].date);
+  const end = new Date(countByDate[countByDate.length - 1][1].date);
   if (start.getTime() !== end.getTime()) {
     for (let date = start; date <= end; date.setMonth(date.getMonth() + 1)) {
-      if (!allYearMonthStrings.includes(formatYearMonth(date))) {
+      const formattedDate = formatYearMonth(date, { locale });
+      if (!allYearMonthStrings.includes(formattedDate)) {
         countByDate.push([
-          formatYearMonth(date),
+          formattedDate,
           {
             count: 0,
-            date,
-            monthStr: formatShortMonth(date),
+            date: new Date(date),
+            label: formattedDate,
           },
         ]);
       }
     }
   }
-  countByDate.sort(([a], [b]) => b.localeCompare(a));
+  countByDate.sort(([_a, a], [_b, b]) => b.date.getTime() - a.date.getTime());
   return countByDate;
 };
 
@@ -245,12 +369,14 @@ const BaseStatsCard = ({
   title,
   subtitle,
   data,
+  columnName = "Date",
   trend,
 }: {
   title: string;
   subtitle: string;
-  data: [string, { count: number; date: Date; monthStr: string }][];
-  trend: {
+  data: [string, { count: number; label: ReactNode }][];
+  columnName?: string;
+  trend?: {
     direction: "up" | "down";
     lastMonthDailyAverage: number;
     previousThreeMonthsDailyAverage: number;
@@ -274,28 +400,40 @@ const BaseStatsCard = ({
           <Typography variant="h2" sx={{ fontWeight: "normal" }}>
             {title}
           </Typography>
-          <Tooltip
-            title={
-              <>
-                <Typography variant="h3" sx={{ fontWeight: "bold" }}>
-                  {trend.direction === "up" ? "Upward trend" : "Downward trend"}
-                </Typography>
-                <Typography variant="caption">
-                  Last 30 days daily average:{" "}
-                  <b>{trend.lastMonthDailyAverage.toFixed(2)}</b>
-                </Typography>
-                <br />
-                <Typography variant="caption">
-                  Last 90 days daily average:{" "}
-                  <b>{trend.previousThreeMonthsDailyAverage.toFixed(2)}</b>
-                </Typography>
-              </>
-            }
-          >
-            <Typography variant="h4" component="span" sx={{ mt: "0.5em" }}>
-              {trend.direction === "up" ? "📈" : "📉"}
-            </Typography>
-          </Tooltip>
+          {trend ? (
+            <Tooltip
+              title={
+                <>
+                  <Typography variant="h3" sx={{ fontWeight: "bold" }}>
+                    {trend.direction === "up"
+                      ? "Upward trend"
+                      : "Downward trend"}
+                  </Typography>
+                  <Typography variant="caption">
+                    Last 30 days daily average:{" "}
+                    <b>
+                      {trend.lastMonthDailyAverage >= 10
+                        ? formatInteger(trend.lastMonthDailyAverage)
+                        : trend.lastMonthDailyAverage.toFixed(2)}
+                    </b>
+                  </Typography>
+                  <br />
+                  <Typography variant="caption">
+                    Last 90 days daily average:{" "}
+                    <b>
+                      {trend.previousThreeMonthsDailyAverage >= 10
+                        ? formatInteger(trend.previousThreeMonthsDailyAverage)
+                        : trend.previousThreeMonthsDailyAverage.toFixed(2)}
+                    </b>
+                  </Typography>
+                </>
+              }
+            >
+              <Typography variant="h4" component="span" sx={{ mt: "0.5em" }}>
+                {trend.direction === "up" ? "📈" : "📉"}
+              </Typography>
+            </Tooltip>
+          ) : null}
         </Box>
         <Typography variant="h3" sx={{ fontWeight: "normal" }}>
           {subtitle}
@@ -333,7 +471,7 @@ const BaseStatsCard = ({
             variant="caption"
             sx={{ position: "sticky", top: 0, fontWeight: "bold" }}
           >
-            Date
+            {columnName}
           </Typography>
         </Box>
         <Box
@@ -364,8 +502,8 @@ const BaseStatsCard = ({
             backgroundColor: "background.paper",
           }}
         />
-        {data.map(([dateStr, datum]) => (
-          <Bar key={dateStr} {...datum} dateStr={dateStr} maxCount={maxCount} />
+        {data.map(([key, datum]) => (
+          <Bar key={key} {...datum} maxCount={maxCount} />
         ))}
       </Box>
     </Card>
@@ -373,12 +511,11 @@ const BaseStatsCard = ({
 };
 
 const Bar = ({
-  dateStr,
-  monthStr,
+  label,
   count,
   maxCount,
 }: ComponentProps<typeof BaseStatsCard>["data"][number][1] & {
-  dateStr: string;
+  label: ReactNode;
   maxCount: number;
 }) => {
   const easterEgg = useFlag("easter-eggs");
@@ -393,7 +530,7 @@ const Bar = ({
         }}
       >
         <Typography variant="caption" sx={{ cursor: "default" }}>
-          {monthStr} {dateStr.split("-")[0]}
+          {label}
         </Typography>
       </Box>
       <Box
@@ -453,18 +590,19 @@ const Bar = ({
 };
 
 const StatsCard = (
-  props: PageProps["charts"] & {
+  props: StatProps & {
     title: (total: number) => string;
     subtitle: (total: number, avgMonthlyCount: number) => string;
   }
 ) => {
   const { title, subtitle, countByDay, trendAverages } = props;
+  const locale = useLocale();
   const { countByYearMonth, total } = useMemo(() => {
     return {
-      countByYearMonth: groupByYearMonth(countByDay),
+      countByYearMonth: groupByYearMonth(countByDay, { locale }),
       total: sum(countByDay, (d) => d.count) ?? 0,
     };
-  }, [countByDay]);
+  }, [countByDay, locale]);
   const avgMonthlyCount = Math.round(total / countByYearMonth.length);
   const { lastMonthDailyAverage, previousThreeMonthsDailyAverage } =
     trendAverages;
