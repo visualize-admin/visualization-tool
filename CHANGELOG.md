@@ -11,6 +11,9 @@ You can also check the
 
 # Unreleased
 
+- Features
+  - Added most recent charts (all time and last 30 days) to the the Statistics
+    page
 - Fixes
   - Fixed inconsistent text style behavior in title and description fields
 
