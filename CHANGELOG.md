@@ -11,6 +11,10 @@ You can also check the
 
 # Unreleased
 
+Nothing yet.
+
+# [4.9.2] - 2024-10-04
+
 - Features
   - Added most recent charts (all time and last 30 days) to the the Statistics
     page
