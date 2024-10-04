@@ -7,10 +7,13 @@ import {
   ConfiguratorStateConfiguringChart,
   DataSource,
   decodeConfiguratorState,
+  SingleFilters,
 } from "@/config-types";
 import { SELECTING_DATASET_STATE } from "@/configurator/configurator-state/initial";
-import { executeDataCubesComponentsQuery } from "@/graphql/hooks";
 import {
+  DataCubePreviewDocument,
+  DataCubePreviewQuery,
+  DataCubePreviewQueryVariables,
   PossibleFiltersDocument,
   PossibleFiltersQuery,
   PossibleFiltersQueryVariables,
@@ -25,10 +28,7 @@ import { migrateConfiguratorState } from "@/utils/chart-config/versioning";
 import { getLocalStorageKey } from "./localstorage";
 import { deriveFiltersFromFields, transitionStepNext } from "./reducer";
 
-import {
-  getFiltersByMappingStatus,
-  getStateWithCurrentDataSource,
-} from "./index";
+import { getStateWithCurrentDataSource } from "./index";
 
 export const initChartStateFromCube = async (
   client: Client,
@@ -43,56 +43,61 @@ export const initChartStateFromCube = async (
     dataSource,
   });
 
-  const { data: components } = await executeDataCubesComponentsQuery(client, {
-    sourceType: dataSource.type,
-    sourceUrl: dataSource.url,
-    locale,
-    cubeFilters: [{ iri: cubeIri, loadValues: true }],
-  });
+  const { data: dataCubePreview } = await client
+    .query<DataCubePreviewQuery, DataCubePreviewQueryVariables>(
+      DataCubePreviewDocument,
+      {
+        sourceType: dataSource.type,
+        sourceUrl: dataSource.url,
+        locale,
+        cubeFilter: { iri: cubeIri },
+      }
+    )
+    .toPromise();
 
-  if (!components?.dataCubesComponents) {
-    throw new Error(`Could not fetch components for ${cubeIri}!`);
+  if (!dataCubePreview?.dataCubePreview) {
+    throw new Error(`Could not fetch preview for ${cubeIri}!`);
   }
 
-  const { dimensions, measures } = components.dataCubesComponents;
+  const { dimensions, measures } = dataCubePreview.dataCubePreview;
+  const { data: possibleFilters } = await client
+    .query<PossibleFiltersQuery, PossibleFiltersQueryVariables>(
+      PossibleFiltersDocument,
+      getPossibleFiltersQueryVariables({
+        cubeIri,
+        dataSource,
+        unmappedFilters: dataCubePreview.dataCubePreview.dimensions.reduce(
+          (acc, { iri, values }) => ({
+            ...acc,
+            [iri]: {
+              type: "single",
+              value: values[0].value,
+            },
+          }),
+          {} as SingleFilters
+        ),
+      })
+    )
+    .toPromise();
+
+  if (!possibleFilters?.possibleFilters) {
+    throw new Error(`Could not fetch possible filters for ${cubeIri}!`);
+  }
+
   const possibleChartTypes = getPossibleChartTypes({
     dimensions,
     measures,
     cubeCount: 1,
   });
-  const initialChartConfig = getInitialConfig({
-    chartType: possibleChartTypes[0],
-    iris: [{ iri: cubeIri, publishIri: cubePublishIri }],
-    dimensions,
-    measures,
-  });
-  const temporaryChartConfig = deriveFiltersFromFields(initialChartConfig, {
-    dimensions,
-  });
-  const { unmappedFilters } = getFiltersByMappingStatus(temporaryChartConfig, {
-    cubeIri,
-  });
-  const shouldFetchPossibleFilters = Object.keys(unmappedFilters).length > 0;
-  const variables = getPossibleFiltersQueryVariables({
-    cubeIri,
-    dataSource,
-    unmappedFilters,
-  });
-  const { data: possibleFilters } = await client
-    .query<
-      PossibleFiltersQuery,
-      PossibleFiltersQueryVariables
-    >(PossibleFiltersDocument, variables, { pause: !shouldFetchPossibleFilters })
-    .toPromise();
-
-  if (!possibleFilters?.possibleFilters && shouldFetchPossibleFilters) {
-    throw new Error(`Could not fetch possible filters for ${cubeIri}!`);
-  }
-
-  const chartConfig = deriveFiltersFromFields(initialChartConfig, {
-    dimensions,
-    possibleFilters: possibleFilters?.possibleFilters,
-  });
+  const chartConfig = deriveFiltersFromFields(
+    getInitialConfig({
+      chartType: possibleChartTypes[0],
+      iris: [{ iri: cubeIri, publishIri: cubePublishIri }],
+      dimensions,
+      measures,
+    }),
+    { dimensions, possibleFilters: possibleFilters.possibleFilters }
+  );
 
   return transitionStepNext(
     getStateWithCurrentDataSource(SELECTING_DATASET_STATE),
