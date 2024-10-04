@@ -16,6 +16,8 @@ You can also check the
     page
 - Fixes
   - Fixed inconsistent text style behavior in title and description fields
+  - Fixed positioning of Menu Popover in the login profile row actions on small
+    screens
 
 # [4.9.1] - 2024-10-03
 
