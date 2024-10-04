@@ -11,7 +11,8 @@ You can also check the
 
 # Unreleased
 
-Nothing yet.
+- Fixes
+  - Fixed inconsistent text style behavior in title and description fields
 
 # [4.9.1] - 2024-10-03
 
