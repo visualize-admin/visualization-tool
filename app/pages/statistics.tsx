@@ -1,11 +1,11 @@
 /* eslint-disable visualize-admin/no-large-sx */
-import { Box, Card, Tooltip, Typography } from "@mui/material";
+import { Box, Card, Link, Tooltip, Typography } from "@mui/material";
 import { max, rollups, sum } from "d3-array";
 import { formatLocale } from "d3-format";
 import { motion } from "framer-motion";
 import uniq from "lodash/uniq";
 import { GetServerSideProps } from "next";
-import { ComponentProps, useMemo } from "react";
+import { ComponentProps, ReactNode, useMemo } from "react";
 
 import { AppLayout } from "@/components/layout";
 import { BANNER_MARGIN_TOP } from "@/components/presence";
@@ -215,7 +215,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async () => {
 
 const Statistics = (props: Serialized<PageProps>) => {
   const { charts, views } = deserializeProps(props);
-  console.log("month", charts.mostPopularThisMonth);
+  const locale = useLocale();
 
   return (
     <AppLayout>
@@ -267,7 +267,18 @@ const Statistics = (props: Serialized<PageProps>) => {
               subtitle="Top 10 charts by view count"
               data={charts.mostPopularAllTime.map((chart) => [
                 chart.key,
-                { count: chart.viewCount, label: chart.key },
+                {
+                  count: chart.viewCount,
+                  label: (
+                    <Link
+                      href={`/${locale}/v/${chart.key}`}
+                      target="_blank"
+                      color="primary"
+                    >
+                      {chart.key}
+                    </Link>
+                  ),
+                },
               ])}
               columnName="Chart"
             />
@@ -278,7 +289,18 @@ const Statistics = (props: Serialized<PageProps>) => {
               subtitle="Top 10 charts by view count"
               data={charts.mostPopularThisMonth.map((chart) => [
                 chart.key,
-                { count: chart.viewCount, label: chart.key },
+                {
+                  count: chart.viewCount,
+                  label: (
+                    <Link
+                      href={`/${locale}/v/${chart.key}`}
+                      target="_blank"
+                      color="primary"
+                    >
+                      {chart.key}
+                    </Link>
+                  ),
+                },
               ])}
               columnName="Chart"
             />
@@ -343,7 +365,7 @@ const BaseStatsCard = ({
 }: {
   title: string;
   subtitle: string;
-  data: [string, { count: number; label: string }][];
+  data: [string, { count: number; label: ReactNode }][];
   columnName?: string;
   trend?: {
     direction: "up" | "down";
@@ -484,7 +506,7 @@ const Bar = ({
   count,
   maxCount,
 }: ComponentProps<typeof BaseStatsCard>["data"][number][1] & {
-  label: string;
+  label: ReactNode;
   maxCount: number;
 }) => {
   const easterEgg = useFlag("easter-eggs");
