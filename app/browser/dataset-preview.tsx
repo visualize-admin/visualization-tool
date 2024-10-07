@@ -12,6 +12,7 @@ import Flex from "@/components/flex";
 import { HintRed, Loading, LoadingDataError } from "@/components/hint";
 import { DataSource } from "@/config-types";
 import { sourceToLabel } from "@/domain/datasource";
+import { getQueryRequestContext } from "@/graphql/hooks";
 import {
   useDataCubeMetadataQuery,
   useDataCubePreviewQuery,
@@ -86,6 +87,11 @@ export interface Preview {
   label: string;
 }
 
+const DATA_CUBE_PREVIEW_QUERY_REQUEST_CONTEXT = getQueryRequestContext({
+  querySource: "DataSetPreview / dataset-preview.tsx",
+  queryReason: "Needed to display a dataset preview in the /browse page.",
+});
+
 export const DataSetPreview = ({
   dataSetIri,
   dataSource,
@@ -110,7 +116,10 @@ export const DataSetPreview = ({
     useDataCubeMetadataQuery({ variables });
   const [
     { data: previewData, fetching: fetchingPreview, error: previewError },
-  ] = useDataCubePreviewQuery({ variables });
+  ] = useDataCubePreviewQuery({
+    variables,
+    context: DATA_CUBE_PREVIEW_QUERY_REQUEST_CONTEXT,
+  });
   const classes = useStyles({
     descriptionPresent: !!metadata?.dataCubeMetadata.description,
   });

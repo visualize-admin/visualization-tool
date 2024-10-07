@@ -12,6 +12,12 @@ import { SPARQL_GEO_ENDPOINT } from "@/domain/env";
 import { Awaited } from "@/domain/types";
 import { Timings } from "@/gql-flamegraph/resolvers";
 import { getMaybeCachedSparqlUrl } from "@/graphql/caching-utils";
+import {
+  GQL_CACHE_CONTROL_HEADER,
+  GQL_DEBUG_HEADER,
+  GQL_QUERY_REASON_HEADER,
+  GQL_QUERY_SOURCE_HEADER,
+} from "@/graphql/client";
 import { RequestQueryMeta } from "@/graphql/query-meta";
 import {
   QueryResolvers,
@@ -84,10 +90,17 @@ const createLoaders = async (
 
 export type Loaders = Awaited<ReturnType<typeof createLoaders>>;
 
-const setupSparqlClients = (
-  ctx: VisualizeGraphQLContext,
-  sourceUrl: string
-) => {
+const setupSparqlClients = ({
+  ctx,
+  sourceUrl,
+  querySource,
+  queryReason,
+}: {
+  ctx: VisualizeGraphQLContext;
+  sourceUrl: string;
+  querySource: string | undefined;
+  queryReason: string | undefined;
+}) => {
   const sparqlClient = new ParsingClient({
     endpointUrl: sourceUrl,
   });
@@ -105,6 +118,8 @@ const setupSparqlClients = (
       startTime: t.start,
       endTime: t.end,
       text: args[0],
+      source: querySource,
+      reason: queryReason,
     });
   };
 
@@ -147,11 +162,11 @@ const sparqlCache = new LRUCache({
 });
 
 const shouldUseServerSideCache = (req: IncomingMessage) => {
-  return req.headers["x-visualize-cache-control"] !== "no-cache";
+  return req.headers[GQL_CACHE_CONTROL_HEADER] !== "no-cache";
 };
 
 const isDebugMode = (req: IncomingMessage) => {
-  return req.headers["x-visualize-debug"] === "true";
+  return req.headers[GQL_DEBUG_HEADER] === "true";
 };
 
 const createContextContent = async ({
@@ -164,7 +179,12 @@ const createContextContent = async ({
   req: IncomingMessage;
 }) => {
   const { sparqlClient, sparqlClientStream, geoSparqlClient } =
-    setupSparqlClients(ctx, sourceUrl);
+    setupSparqlClients({
+      ctx,
+      sourceUrl,
+      querySource: req.headers[GQL_QUERY_SOURCE_HEADER]?.toString(),
+      queryReason: req.headers[GQL_QUERY_REASON_HEADER]?.toString(),
+    });
   const contextCache = shouldUseServerSideCache(req) ? sparqlCache : undefined;
   const loaders = await createLoaders(
     sparqlClient,
