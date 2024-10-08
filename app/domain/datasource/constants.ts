@@ -50,6 +50,13 @@ export const SOURCE_OPTIONS = [
     isTrusted: false,
     supportsCachingPerCubeIri: true,
   },
+  {
+    value: "sparql+http://localhost:7019/",
+    label: "Qlever",
+    url: "http://localhost:8176/bafu-cubes/",
+    isTrusted: false,
+    supportsCachingPerCubeIri: false,
+  },
 ].filter((d) => WHITELISTED_DATA_SOURCES.includes(d.label));
 
 export const SOURCES_BY_LABEL = keyBy(SOURCE_OPTIONS, (d) => d.label);
