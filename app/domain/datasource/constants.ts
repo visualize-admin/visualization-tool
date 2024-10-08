@@ -1,6 +1,6 @@
 import keyBy from "lodash/keyBy";
 
-import { WHITELISTED_DATA_SOURCES } from "../env";
+import { FUSEKI_URL, WHITELISTED_DATA_SOURCES } from "../env";
 
 export const LEGACY_PROD_DATA_SOURCE_URL = "https://lindas.admin.ch/query";
 
@@ -50,7 +50,18 @@ export const SOURCE_OPTIONS = [
     isTrusted: false,
     supportsCachingPerCubeIri: true,
   },
-].filter((d) => WHITELISTED_DATA_SOURCES.includes(d.label));
+  FUSEKI_URL
+    ? {
+        value: `sparql+${FUSEKI_URL}`,
+        label: "Fuseki",
+        url: FUSEKI_URL,
+        isTrusted: false,
+        supportsCachingPerCubeIri: false,
+      }
+    : null,
+].filter(<T extends { label: string }>(d: T | null): d is T =>
+  WHITELISTED_DATA_SOURCES.includes(d && d.label)
+);
 
 export const SOURCES_BY_LABEL = keyBy(SOURCE_OPTIONS, (d) => d.label);
 export const SOURCES_BY_VALUE = keyBy(SOURCE_OPTIONS, (d) => d.value);
