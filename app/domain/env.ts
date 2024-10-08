@@ -31,6 +31,8 @@ export const WHITELISTED_DATA_SOURCES = clientEnv?.WHITELISTED_DATA_SOURCES ??
     ? JSON.parse(process.env.WHITELISTED_DATA_SOURCES)
     : undefined) ?? ["Prod"];
 
+export const FUSEKI_URL = clientEnv?.FUSEKI_URL ?? process.env.FUSEKI_URL;
+
 export const SPARQL_GEO_ENDPOINT =
   clientEnv?.SPARQL_GEO_ENDPOINT ??
   process.env.SPARQL_GEO_ENDPOINT ??
