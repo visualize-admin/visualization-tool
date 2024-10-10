@@ -1,0 +1,226 @@
+PREFIX schema: <http://schema.org/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+CONSTRUCT { 
+    ?resource1 schema:identifier ?resource2 .
+?resource1 schema:name ?resource3 .
+?resource1 schema:description ?resource4 .
+?resource1 schema:position ?resource5 .
+?resource1 schema:alternateName ?resource6 .
+?resource1 rdf:type ?resource7 .
+?resource8 skos:broader ?resource1 .
+?resource8 schema:identifier ?resource9 .
+?resource8 schema:name ?resource10 .
+?resource8 schema:description ?resource11 .
+?resource8 schema:position ?resource12 .
+?resource8 schema:alternateName ?resource13 .
+?resource8 rdf:type ?resource14 .
+?resource15 skos:broader ?resource8 .
+?resource15 schema:identifier ?resource16 .
+?resource15 schema:name ?resource17 .
+?resource15 schema:description ?resource18 .
+?resource15 schema:position ?resource19 .
+?resource15 schema:alternateName ?resource20 .
+?resource15 rdf:type ?resource21 .
+   }
+
+WHERE {
+
+    { 
+    { SELECT ?resource1
+?resource2
+?resource3
+?resource4
+?resource5
+?resource6
+?resource7
+?resource8
+
+WHERE {
+
+
+VALUES ( ?resource1 )
+{
+( <https://ld.admin.ch/cube/dimension/cofog/gftot> )
+}
+{ 
+    
+
+?resource1 schema:identifier ?resource2 .
+ 
+  } UNION {
+      
+
+?resource1 schema:name ?resource3 .
+
+    } UNION {
+      
+
+?resource1 schema:description ?resource4 .
+
+    } UNION {
+      
+
+?resource1 schema:position ?resource5 .
+
+    } UNION {
+      
+
+?resource1 schema:alternateName ?resource6 .
+
+    } UNION {
+      
+
+?resource1 rdf:type ?resource7 .
+
+    } UNION {
+      
+
+?resource8 skos:broader ?resource1 .
+
+    }
+
+
+
+
+}
+
+
+
+ } 
+  } UNION {
+      { SELECT ?resource8
+?resource9
+?resource10
+?resource11
+?resource12
+?resource13
+?resource14
+?resource15
+
+WHERE {
+
+            
+VALUES ( ?resource1 )
+{
+( <https://ld.admin.ch/cube/dimension/cofog/gftot> )
+}
+            
+?resource8 skos:broader ?resource1 .
+
+            
+
+{ 
+    
+
+?resource8 schema:identifier ?resource9 .
+ 
+  } UNION {
+      
+
+?resource8 schema:name ?resource10 .
+
+    } UNION {
+      
+
+?resource8 schema:description ?resource11 .
+
+    } UNION {
+      
+
+?resource8 schema:position ?resource12 .
+
+    } UNION {
+      
+
+?resource8 schema:alternateName ?resource13 .
+
+    } UNION {
+      
+
+?resource8 rdf:type ?resource14 .
+
+    } UNION {
+      
+
+?resource15 skos:broader ?resource8 .
+
+    }
+
+          
+
+
+}
+
+
+
+ }
+    } UNION {
+      { SELECT ?resource15
+?resource16
+?resource17
+?resource18
+?resource19
+?resource20
+?resource21
+
+WHERE {
+
+            
+VALUES ( ?resource1 )
+{
+( <https://ld.admin.ch/cube/dimension/cofog/gftot> )
+}
+
+?resource8 skos:broader ?resource1 .
+
+
+            
+?resource15 skos:broader ?resource8 .
+
+            
+
+{ 
+    
+
+?resource15 schema:identifier ?resource16 .
+ 
+  } UNION {
+      
+
+?resource15 schema:name ?resource17 .
+
+    } UNION {
+      
+
+?resource15 schema:description ?resource18 .
+
+    } UNION {
+      
+
+?resource15 schema:position ?resource19 .
+
+    } UNION {
+      
+
+?resource15 schema:alternateName ?resource20 .
+
+    } UNION {
+      
+
+?resource15 rdf:type ?resource21 .
+
+    }
+
+          
+
+
+}
+
+
+
+ }
+    }
+  
+}

@@ -1,0 +1,33 @@
+#pragma describe.strategy cbd
+#pragma join.hash off
+
+
+PREFIX unit: <http://qudt.org/vocab/unit/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX qudt: <http://qudt.org/schema/qudt/>
+
+SELECT DISTINCT ?iri ?label ?isCurrency ?currencyExponent ?isCurrency
+
+WHERE {
+
+        values ?iri {
+          unit:YR
+unit:SwissFranc
+        }
+
+        OPTIONAL { ?iri rdfs:label ?rdfsLabel }
+        OPTIONAL { ?iri  qudt:symbol  ?symbol }
+        OPTIONAL { ?iri  qudt:ucumCode  ?ucumCode }
+        OPTIONAL { ?iri  qudt:expression  ?expression }
+
+        OPTIONAL { ?iri ?isCurrency qudt:CurrencyUnit }
+        OPTIONAL { ?iri qudt:currencyExponent ?currencyExponent }
+
+        BIND(str(coalesce(str(?symbol), str(?ucumCode), str(?expression), str(?rdfsLabel), "?")) AS ?label)
+        
+        FILTER ( lang(?rdfsLabel) = "en" )
+      
+}
+
+
+

@@ -1,0 +1,85 @@
+#pragma describe.strategy cbd
+#pragma join.hash off
+
+#pragma describe.strategy cbd
+#pragma join.hash off
+
+SELECT DISTINCT ?dimension0 ?dimension1 ?dimension2 ?dimension3 ?dimension4 ?dimension5 ?dimension6 WHERE {
+  <https://environment.ld.admin.ch/foen/BFS_cofog_national/3> <https://cube.link/observationSet> ?observationSet0 .
+  ?observationSet0 <https://cube.link/observation> ?source0 .
+  ?source0 <https://environment.ld.admin.ch/foen/BFS_cofog_national/period> ?dimension0 .
+  ?source0 <https://environment.ld.admin.ch/foen/BFS_cofog_national/sector> ?dimension1 .
+  ?source0 <https://environment.ld.admin.ch/foen/BFS_cofog_national/in-mio-chf> ?dimension2 .
+  ?source0 <https://environment.ld.admin.ch/foen/BFS_cofog_national/cofog> ?dimension3 .
+  ?source0 <https://environment.ld.admin.ch/foen/BFS_cofog_national/in-pct> ?dimension4 .
+  ?dimension1 <http://schema.org/sameAs> ?dimension7 .
+  FILTER (
+    (?dimension3 = <https://ld.admin.ch/cube/dimension/cofog/gf01>)
+  )
+  FILTER (
+    (?dimension7 = <https://environment.ld.admin.ch/foen/BFS_cofog_national/Sector/S13>)
+  )
+  OPTIONAL {
+    ?dimension1 <http://schema.org/name> ?dimension5_0 .
+    FILTER (
+      LANGMATCHES(LANG(?dimension5_0), "en")
+    )
+  }
+  OPTIONAL {
+    ?dimension1 <http://schema.org/name> ?dimension5_1 .
+    FILTER (
+      LANGMATCHES(LANG(?dimension5_1), "de")
+    )
+  }
+  OPTIONAL {
+    ?dimension1 <http://schema.org/name> ?dimension5_2 .
+    FILTER (
+      LANGMATCHES(LANG(?dimension5_2), "fr")
+    )
+  }
+  OPTIONAL {
+    ?dimension1 <http://schema.org/name> ?dimension5_3 .
+    FILTER (
+      LANGMATCHES(LANG(?dimension5_3), "it")
+    )
+  }
+  OPTIONAL {
+    ?dimension1 <http://schema.org/name> ?dimension5_4 .
+    FILTER (
+      (LANG(?dimension5_4) = "")
+    )
+  }
+  BIND(COALESCE(?dimension5_0, ?dimension5_1, ?dimension5_2, ?dimension5_3, ?dimension5_4) AS ?dimension5)
+  OPTIONAL {
+    ?dimension3 <http://schema.org/name> ?dimension6_0 .
+    FILTER (
+      LANGMATCHES(LANG(?dimension6_0), "en")
+    )
+  }
+  OPTIONAL {
+    ?dimension3 <http://schema.org/name> ?dimension6_1 .
+    FILTER (
+      LANGMATCHES(LANG(?dimension6_1), "de")
+    )
+  }
+  OPTIONAL {
+    ?dimension3 <http://schema.org/name> ?dimension6_2 .
+    FILTER (
+      LANGMATCHES(LANG(?dimension6_2), "fr")
+    )
+  }
+  OPTIONAL {
+    ?dimension3 <http://schema.org/name> ?dimension6_3 .
+    FILTER (
+      LANGMATCHES(LANG(?dimension6_3), "it")
+    )
+  }
+  OPTIONAL {
+    ?dimension3 <http://schema.org/name> ?dimension6_4 .
+    FILTER (
+      (LANG(?dimension6_4) = "")
+    )
+  }
+  BIND(COALESCE(?dimension6_0, ?dimension6_1, ?dimension6_2, ?dimension6_3, ?dimension6_4) AS ?dimension6)
+}
+GROUP BY ?dimension0 ?dimension1 ?dimension2 ?dimension3 ?dimension4 ?dimension5 ?dimension6

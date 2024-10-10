@@ -1,0 +1,14 @@
+PREFIX cube: <https://cube.link/>
+PREFIX schema: <http://schema.org/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+SELECT ?dimension0 ?dimension1_v WHERE {
+  <https://environment.ld.admin.ch/foen/BFS_cofog_national/3> cube:observationSet/cube:observation ?observation .
+  ?observation <https://environment.ld.admin.ch/foen/BFS_cofog_national/cofog> ?dimension0 .
+  ?observation <https://environment.ld.admin.ch/foen/BFS_cofog_national/sector> ?dimension1 .
+  ?dimension1 schema:sameAs ?dimension1_v .
+  VALUES ?dimension0 { <https://ld.admin.ch/cube/dimension/cofog/gf01> }
+  BIND(?dimension1_v = <https://environment.ld.admin.ch/foen/BFS_cofog_national/Sector/S13> AS ?d1)
+}
+ORDER BY DESC(?d1)
+LIMIT 1

@@ -1,0 +1,15 @@
+#pragma describe.strategy cbd
+#pragma join.hash off
+
+SELECT ?cube WHERE {
+  ?cube <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://cube.link/Cube> .
+  <https://environment.ld.admin.ch/foen/BFS_cofog_national> <http://schema.org/hasPart> ?cube .
+  ?cube <http://schema.org/version> ?v1 .
+  FILTER (
+    (?v1 > "2"^^<http://www.w3.org/2001/XMLSchema#integer>)
+  )
+  ?cube <http://schema.org/creativeWorkStatus> ?v2 .
+  FILTER (
+    (?v2 IN (<https://ld.admin.ch/vocabulary/CreativeWorkStatus/Published>))
+  )
+}

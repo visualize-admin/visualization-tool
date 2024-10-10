@@ -48,6 +48,7 @@
   "dependencies": {
     "@babel/runtime": "^7.11.2",
     "@cozy/cli-tree": "^0.3.0",
+    "@types/n3": "^1.21.1",
     "core-js": "^3.15.1",
     "next": "^13.5.2",
     "react": "^18.2.0",

@@ -106,6 +106,15 @@ const setupSparqlClients = (
       endTime: t.end,
       text: args[0],
     });
+
+    // make a sha1 hash from the query text then save the query
+    const queryText = args[0];
+    const hash = require("crypto")
+      .createHash("sha1")
+      .update(queryText)
+      .digest("hex");
+    const filename = `/tmp/query-texts/${hash}.sparql.txt`;
+    require("fs").writeFileSync(filename, queryText);
   };
 
   sparqlClient.query.select = timed(
