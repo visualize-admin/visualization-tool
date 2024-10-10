@@ -51,8 +51,8 @@ export const SOURCE_OPTIONS = [
     supportsCachingPerCubeIri: true,
   },
   {
-    value: "sparql+http://localhost:7019/",
-    label: "Qlever",
+    value: "sparql+http://localhost:3030/dataset/",
+    label: "Fuseki",
     url: "http://localhost:8176/bafu-cubes/",
     isTrusted: false,
     supportsCachingPerCubeIri: false,
