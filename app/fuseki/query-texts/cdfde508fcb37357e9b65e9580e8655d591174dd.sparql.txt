@@ -1,0 +1,11 @@
+PREFIX cube: <https://cube.link/>
+PREFIX schema: <http://schema.org/>
+PREFIX sh: <http://www.w3.org/ns/shacl#>
+
+SELECT ?dimensionIri ?version ?nodeKind WHERE {
+  <https://environment.ld.admin.ch/foen/BFS_cofog_national/3> cube:observationConstraint/sh:property ?dimension .
+  ?dimension sh:path ?dimensionIri .
+  OPTIONAL { ?dimension schema:version ?version . }
+  OPTIONAL { ?dimension sh:nodeKind ?nodeKind . }
+  FILTER(?dimensionIri IN (<https://environment.ld.admin.ch/foen/BFS_cofog_national/cofog>, <https://environment.ld.admin.ch/foen/BFS_cofog_national/sector>))
+}

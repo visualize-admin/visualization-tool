@@ -1,0 +1,101 @@
+#pragma describe.strategy cbd
+#pragma join.hash off
+
+
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX schema: <http://schema.org/>
+PREFIX dcat: <http://www.w3.org/ns/dcat#>
+PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
+
+SELECT 
+    ?iri ?identifier ?title ?description ?version ?datePublished ?dateModified ?status ?creatorIri ?creatorLabel ?versionHistory ?contactPointName ?contactPointEmail ?publisher ?landingPage ?expires
+    (GROUP_CONCAT(DISTINCT ?themeIri; SEPARATOR="|||") AS ?themeIris) (GROUP_CONCAT(DISTINCT ?themeLabel; SEPARATOR="|||") AS ?themeLabels)
+    (GROUP_CONCAT(DISTINCT ?subthemeIri; SEPARATOR="|||") AS ?subthemeIris) (GROUP_CONCAT(DISTINCT ?subthemeLabel; SEPARATOR="|||") AS ?subthemeLabels)
+    (GROUP_CONCAT(DISTINCT ?workExample; SEPARATOR="|||") AS ?workExamples)
+    
+
+WHERE {
+
+    VALUES ?iri { <https://environment.ld.admin.ch/foen/BFS_cofog_national/3> }
+    OPTIONAL { ?iri dcterms:identifier ?identifier . }
+    OPTIONAL { ?iri schema:name ?title_en . FILTER(LANG(?title_en) = "en") }
+OPTIONAL { ?iri schema:name ?title_de . FILTER(LANG(?title_de) = "de") }
+OPTIONAL { ?iri schema:name ?title_fr . FILTER(LANG(?title_fr) = "fr") }
+OPTIONAL { ?iri schema:name ?title_it . FILTER(LANG(?title_it) = "it") }
+OPTIONAL { ?iri schema:name ?title_ . FILTER(LANG(?title_) = "") }
+BIND(COALESCE(?title_en, ?title_de, ?title_fr, ?title_it, ?title_) AS ?title)
+    OPTIONAL { ?iri schema:description ?description_en . FILTER(LANG(?description_en) = "en") }
+OPTIONAL { ?iri schema:description ?description_de . FILTER(LANG(?description_de) = "de") }
+OPTIONAL { ?iri schema:description ?description_fr . FILTER(LANG(?description_fr) = "fr") }
+OPTIONAL { ?iri schema:description ?description_it . FILTER(LANG(?description_it) = "it") }
+OPTIONAL { ?iri schema:description ?description_ . FILTER(LANG(?description_) = "") }
+BIND(COALESCE(?description_en, ?description_de, ?description_fr, ?description_it, ?description_) AS ?description)
+    OPTIONAL { ?iri schema:version ?version . }
+    OPTIONAL { ?iri schema:datePublished ?datePublished . }
+    OPTIONAL { ?iri schema:dateModified ?dateModified . }
+    ?iri schema:creativeWorkStatus ?status .
+    OPTIONAL {
+      ?iri dcterms:creator ?creatorIri .
+      GRAPH <https://lindas.admin.ch/sfa/opendataswiss> {
+        ?creatorIri a schema:Organization ;
+          schema:inDefinedTermSet <https://register.ld.admin.ch/opendataswiss/org> .
+          OPTIONAL { ?creatorIri schema:name ?creatorLabel_en . FILTER(LANG(?creatorLabel_en) = "en") }
+OPTIONAL { ?creatorIri schema:name ?creatorLabel_de . FILTER(LANG(?creatorLabel_de) = "de") }
+OPTIONAL { ?creatorIri schema:name ?creatorLabel_fr . FILTER(LANG(?creatorLabel_fr) = "fr") }
+OPTIONAL { ?creatorIri schema:name ?creatorLabel_it . FILTER(LANG(?creatorLabel_it) = "it") }
+OPTIONAL { ?creatorIri schema:name ?creatorLabel_ . FILTER(LANG(?creatorLabel_) = "") }
+BIND(COALESCE(?creatorLabel_en, ?creatorLabel_de, ?creatorLabel_fr, ?creatorLabel_it, ?creatorLabel_) AS ?creatorLabel)
+      }
+    }
+    OPTIONAL {
+      ?iri dcat:theme ?themeIri .
+      GRAPH <https://lindas.admin.ch/sfa/opendataswiss> {
+        ?themeIri a schema:DefinedTerm ;
+        schema:inDefinedTermSet <https://register.ld.admin.ch/opendataswiss/category> .
+        OPTIONAL { ?themeIri schema:name ?themeLabel_en . FILTER(LANG(?themeLabel_en) = "en") }
+OPTIONAL { ?themeIri schema:name ?themeLabel_de . FILTER(LANG(?themeLabel_de) = "de") }
+OPTIONAL { ?themeIri schema:name ?themeLabel_fr . FILTER(LANG(?themeLabel_fr) = "fr") }
+OPTIONAL { ?themeIri schema:name ?themeLabel_it . FILTER(LANG(?themeLabel_it) = "it") }
+OPTIONAL { ?themeIri schema:name ?themeLabel_ . FILTER(LANG(?themeLabel_) = "") }
+BIND(COALESCE(?themeLabel_en, ?themeLabel_de, ?themeLabel_fr, ?themeLabel_it, ?themeLabel_) AS ?themeLabel)
+      }
+    }
+    OPTIONAL { ?versionHistory schema:hasPart ?iri . }
+    OPTIONAL {
+      ?iri dcat:contactPoint ?contactPoint .
+      ?contactPoint vcard:fn ?contactPointName .
+      ?contactPoint vcard:hasEmail ?contactPointEmail .
+    }
+    OPTIONAL { ?iri dcterms:publisher ?publisher . }
+    OPTIONAL { ?iri dcat:landingPage ?landingPage_en . FILTER(LANG(?landingPage_en) = "en") }
+OPTIONAL { ?iri dcat:landingPage ?landingPage_de . FILTER(LANG(?landingPage_de) = "de") }
+OPTIONAL { ?iri dcat:landingPage ?landingPage_fr . FILTER(LANG(?landingPage_fr) = "fr") }
+OPTIONAL { ?iri dcat:landingPage ?landingPage_it . FILTER(LANG(?landingPage_it) = "it") }
+OPTIONAL { ?iri dcat:landingPage ?landingPage_ . FILTER(LANG(?landingPage_) = "") }
+OPTIONAL {
+  ?iri dcat:landingPage ?landingPage_raw .
+}
+BIND(COALESCE(?landingPage_en, ?landingPage_de, ?landingPage_fr, ?landingPage_it, ?landingPage_, ?landingPage_raw) AS ?landingPage)
+    OPTIONAL { ?iri schema:expires ?expires . }
+    OPTIONAL { ?iri schema:workExample ?workExample . }
+  
+}
+
+GROUP BY
+    (?iri)
+    (?identifier)
+    (?title)
+    (?description)
+    (?version)
+    (?datePublished)
+    (?dateModified)
+    (?status)
+    (?creatorIri)
+    (?creatorLabel)
+    (?versionHistory)
+    (?contactPointName)
+    (?contactPointEmail)
+    (?publisher)
+    (?landingPage)
+    (?expires)
+

@@ -1,0 +1,4 @@
+#pragma describe.strategy cbd
+#pragma join.hash off
+
+DESCRIBE <https://environment.ld.admin.ch/foen/BFS_cofog_national/3/shape/>

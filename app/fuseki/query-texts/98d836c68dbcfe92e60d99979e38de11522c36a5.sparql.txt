@@ -1,0 +1,65 @@
+PREFIX cube: <https://cube.link/>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX schema: <http://schema.org/>
+PREFIX sh: <http://www.w3.org/ns/shacl#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+CONSTRUCT {
+  [ rdf:first ?maybe_unversioned_value ] .
+  ?maybe_unversioned_value
+    schema:name ?name ;
+    schema:alternateName ?alternateName ;
+    schema:description ?description ;
+    schema:identifier ?identifier ;
+    schema:position ?position ;
+    schema:color ?color ;
+    geo:hasGeometry ?geometry ;
+    schema:latitude ?latitude ;
+    schema:longitude ?longitude .
+} WHERE { 
+  { #pragma evaluate on
+    SELECT ?value WHERE {
+      <https://environment.ld.admin.ch/foen/BFS_cofog_national/3> cube:observationConstraint/sh:property ?dimension .
+      ?dimension sh:path <https://environment.ld.admin.ch/foen/BFS_cofog_national/cofog> .
+      ?dimension sh:in/rdf:rest*/rdf:first ?value .
+    }
+  } UNION {
+    { #pragma evaluate on
+      SELECT DISTINCT ?value WHERE {
+        
+        <https://environment.ld.admin.ch/foen/BFS_cofog_national/3> cube:observationConstraint/sh:property ?dimension .
+        ?dimension sh:path <https://environment.ld.admin.ch/foen/BFS_cofog_national/cofog> .
+        FILTER(NOT EXISTS{ ?dimension sh:in ?in . })
+        <https://environment.ld.admin.ch/foen/BFS_cofog_national/3> cube:observationSet/cube:observation ?observation .
+        ?observation <https://environment.ld.admin.ch/foen/BFS_cofog_national/cofog> ?value .
+        
+      }
+    }
+  }
+  OPTIONAL { ?value schema:name ?name_en . FILTER(LANG(?name_en) = "en") }
+OPTIONAL { ?value schema:name ?name_de . FILTER(LANG(?name_de) = "de") }
+OPTIONAL { ?value schema:name ?name_fr . FILTER(LANG(?name_fr) = "fr") }
+OPTIONAL { ?value schema:name ?name_it . FILTER(LANG(?name_it) = "it") }
+OPTIONAL { ?value schema:name ?name_ . FILTER(LANG(?name_) = "") }
+BIND(COALESCE(?name_en, ?name_de, ?name_fr, ?name_it, ?name_) AS ?name)
+  OPTIONAL { ?value schema:description ?description_en . FILTER(LANG(?description_en) = "en") }
+OPTIONAL { ?value schema:description ?description_de . FILTER(LANG(?description_de) = "de") }
+OPTIONAL { ?value schema:description ?description_fr . FILTER(LANG(?description_fr) = "fr") }
+OPTIONAL { ?value schema:description ?description_it . FILTER(LANG(?description_it) = "it") }
+OPTIONAL { ?value schema:description ?description_ . FILTER(LANG(?description_) = "") }
+BIND(COALESCE(?description_en, ?description_de, ?description_fr, ?description_it, ?description_) AS ?description)
+  OPTIONAL { ?value schema:alternateName ?alternateName_en . FILTER(LANG(?alternateName_en) = "en") }
+OPTIONAL { ?value schema:alternateName ?alternateName_de . FILTER(LANG(?alternateName_de) = "de") }
+OPTIONAL { ?value schema:alternateName ?alternateName_fr . FILTER(LANG(?alternateName_fr) = "fr") }
+OPTIONAL { ?value schema:alternateName ?alternateName_it . FILTER(LANG(?alternateName_it) = "it") }
+OPTIONAL { ?value schema:alternateName ?alternateName_ . FILTER(LANG(?alternateName_) = "") }
+BIND(COALESCE(?alternateName_en, ?alternateName_de, ?alternateName_fr, ?alternateName_it, ?alternateName_) AS ?alternateName)
+  OPTIONAL { ?value schema:identifier ?identifier . }
+  OPTIONAL { ?value schema:position ?position . }
+  OPTIONAL { ?value schema:color ?color . }
+  OPTIONAL { ?value geo:hasGeometry ?geometry . }
+  OPTIONAL { ?value schema:latitude ?latitude . }
+  OPTIONAL { ?value schema:longitude ?longitude . }
+  
+  BIND(COALESCE(?unversioned_value, ?value) AS ?maybe_unversioned_value)
+}

@@ -1,0 +1,12 @@
+#pragma describe.strategy cbd
+#pragma join.hash off
+
+DESCRIBE ?subject WHERE {
+  {
+    BIND(<https://environment.ld.admin.ch/foen/BFS_cofog_national/2> AS ?subject)
+  }
+  UNION
+  {
+    ?subject <http://schema.org/hasPart> <https://environment.ld.admin.ch/foen/BFS_cofog_national/2> .
+  }
+}
