@@ -31,8 +31,8 @@ type RawDataCubeMetadata = {
 };
 
 const parseRawMetadata = (cube: RawDataCubeMetadata): DataCubeMetadata => {
-  const themeIris = cube.themeIris.value.split(GROUP_SEPARATOR);
-  const themeLabels = cube.themeLabels.value.split(GROUP_SEPARATOR);
+  const themeIris = cube.themeIris?.value.split(GROUP_SEPARATOR) ?? [];
+  const themeLabels = cube.themeLabels?.value.split(GROUP_SEPARATOR) ?? [];
 
   return {
     iri: cube.iri.value,
