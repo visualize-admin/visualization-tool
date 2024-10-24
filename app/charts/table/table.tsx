@@ -62,6 +62,10 @@ const useStyles = makeStyles(() => {
   };
 });
 
+export const shouldShowCompactMobileView = (width: number) => {
+  return width < MOBILE_VIEW_THRESHOLD;
+};
+
 export const Table = () => {
   const {
     bounds,
@@ -78,8 +82,7 @@ export const Table = () => {
 
   const [compactMobileViewEnabled, setCompactMobileView] = useState(false);
 
-  const showCompactMobileView =
-    bounds.width < MOBILE_VIEW_THRESHOLD && compactMobileViewEnabled;
+  const showCompactMobileView = shouldShowCompactMobileView(bounds.width);
 
   // Search & filter data
   const [searchTerm, setSearchTerm] = useState("");
@@ -281,6 +284,9 @@ export const Table = () => {
       tableColumnsMeta,
     ]
   );
+  // Make sure we don't cut the table off by having other UI elements enabled
+  const defaultListHeightOffset =
+    (showSearch ? 48 : 0) + (showCompactMobileView ? 48 : 0) + 4;
 
   return (
     <>
@@ -311,7 +317,7 @@ export const Table = () => {
         />
       </Box>
 
-      {showCompactMobileView ? (
+      {showCompactMobileView && compactMobileViewEnabled ? (
         /* Compact Mobile View */
         <Box
           sx={{
@@ -327,7 +333,7 @@ export const Table = () => {
             {({ width, height }: { width: number; height: number }) => (
               <VariableSizeList
                 key={rows.length} // Reset when groups are toggled because itemSize remains cached per index
-                height={height}
+                height={height - defaultListHeightOffset}
                 itemCount={rows.length}
                 itemSize={getMobileItemSize}
                 width={width}
@@ -359,7 +365,8 @@ export const Table = () => {
                 {({ height }: { height: number }) => (
                   <FixedSizeList
                     outerElementType={TableContentWrapper}
-                    height={height}
+                    // row height = header row height
+                    height={height - defaultListHeightOffset - rowHeight}
                     itemCount={rows.length}
                     itemSize={rowHeight} // depends on whether a column has bars (40px or 56px)
                     width="100%"
