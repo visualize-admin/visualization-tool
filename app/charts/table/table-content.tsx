@@ -61,6 +61,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     minHeight: SORTING_ARROW_WIDTH,
     alignItems: "center",
     justifyContent: "flex-start",
+    whiteSpace: "nowrap",
   },
   headerGroupMeasure: {
     justifyContent: "flex-end",
