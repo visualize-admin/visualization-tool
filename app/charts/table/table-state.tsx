@@ -25,7 +25,7 @@ import {
 } from "@/charts/shared/chart-state";
 import { useSize } from "@/charts/shared/use-size";
 import { BAR_CELL_PADDING, TABLE_HEIGHT } from "@/charts/table/constants";
-import { shouldShowCompactMobileView } from "@/charts/table/table";
+import { getTableUIElementsOffset } from "@/charts/table/table";
 import {
   TableStateVariables,
   useTableStateData,
@@ -139,8 +139,7 @@ const useTableState = (
     chartHeight +
     margins.top +
     margins.bottom +
-    (settings.showSearch ? 48 : 0) +
-    (shouldShowCompactMobileView(width) ? 48 : 0);
+    getTableUIElementsOffset({ showSearch: settings.showSearch, width });
   const bounds = {
     width,
     height,

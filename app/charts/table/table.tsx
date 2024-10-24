@@ -62,8 +62,21 @@ const useStyles = makeStyles(() => {
   };
 });
 
-export const shouldShowCompactMobileView = (width: number) => {
+const shouldShowCompactMobileView = (width: number) => {
   return width < MOBILE_VIEW_THRESHOLD;
+};
+
+/** Use to make sure we don't cut the table off by having other UI elements enabled */
+export const getTableUIElementsOffset = ({
+  showSearch,
+  width,
+}: {
+  showSearch: boolean;
+  width: number;
+}) => {
+  return (
+    (showSearch ? 48 : 0) + (shouldShowCompactMobileView(width) ? 48 : 0) + 4
+  );
 };
 
 export const Table = () => {
@@ -284,9 +297,10 @@ export const Table = () => {
       tableColumnsMeta,
     ]
   );
-  // Make sure we don't cut the table off by having other UI elements enabled
-  const defaultListHeightOffset =
-    (showSearch ? 48 : 0) + (showCompactMobileView ? 48 : 0) + 4;
+  const defaultListHeightOffset = getTableUIElementsOffset({
+    showSearch,
+    width: bounds.width,
+  });
 
   return (
     <>
