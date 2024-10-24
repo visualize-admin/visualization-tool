@@ -211,7 +211,7 @@ export const Table = () => {
               style: {
                 ...style,
                 flexDirection: "column",
-                width: "max-content",
+                width: "100%",
               },
             })}
           >
