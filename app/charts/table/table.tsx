@@ -62,6 +62,23 @@ const useStyles = makeStyles(() => {
   };
 });
 
+const shouldShowCompactMobileView = (width: number) => {
+  return width < MOBILE_VIEW_THRESHOLD;
+};
+
+/** Use to make sure we don't cut the table off by having other UI elements enabled */
+export const getTableUIElementsOffset = ({
+  showSearch,
+  width,
+}: {
+  showSearch: boolean;
+  width: number;
+}) => {
+  return (
+    (showSearch ? 48 : 0) + (shouldShowCompactMobileView(width) ? 48 : 0) + 4
+  );
+};
+
 export const Table = () => {
   const {
     bounds,
@@ -78,8 +95,7 @@ export const Table = () => {
 
   const [compactMobileViewEnabled, setCompactMobileView] = useState(false);
 
-  const showCompactMobileView =
-    bounds.width < MOBILE_VIEW_THRESHOLD && compactMobileViewEnabled;
+  const showCompactMobileView = shouldShowCompactMobileView(bounds.width);
 
   // Search & filter data
   const [searchTerm, setSearchTerm] = useState("");
@@ -211,7 +227,7 @@ export const Table = () => {
               style: {
                 ...style,
                 flexDirection: "column",
-                width: "max-content",
+                width: "100%",
               },
             })}
           >
@@ -281,6 +297,10 @@ export const Table = () => {
       tableColumnsMeta,
     ]
   );
+  const defaultListHeightOffset = getTableUIElementsOffset({
+    showSearch,
+    width: bounds.width,
+  });
 
   return (
     <>
@@ -311,7 +331,7 @@ export const Table = () => {
         />
       </Box>
 
-      {showCompactMobileView ? (
+      {showCompactMobileView && compactMobileViewEnabled ? (
         /* Compact Mobile View */
         <Box
           sx={{
@@ -327,7 +347,7 @@ export const Table = () => {
             {({ width, height }: { width: number; height: number }) => (
               <VariableSizeList
                 key={rows.length} // Reset when groups are toggled because itemSize remains cached per index
-                height={height}
+                height={height - defaultListHeightOffset}
                 itemCount={rows.length}
                 itemSize={getMobileItemSize}
                 width={width}
@@ -359,7 +379,8 @@ export const Table = () => {
                 {({ height }: { height: number }) => (
                   <FixedSizeList
                     outerElementType={TableContentWrapper}
-                    height={height}
+                    // row height = header row height
+                    height={height - defaultListHeightOffset - rowHeight}
                     itemCount={rows.length}
                     itemSize={rowHeight} // depends on whether a column has bars (40px or 56px)
                     width="100%"
