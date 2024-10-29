@@ -11,6 +11,10 @@ You can also check the
 
 # Unreleased
 
+Nothing yet.
+
+# [4.9.3] - 2024-10-29
+
 - Fixes
   - Last table row is no longer cut
 
