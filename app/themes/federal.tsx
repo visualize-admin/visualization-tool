@@ -196,7 +196,7 @@ const makeStandardAlertVariant = ({
   },
 });
 
-theme.components = {
+export const makeComponents = (theme: Theme): Theme["components"] => ({
   MuiLink: {
     defaultProps: {
       underline: "hover",
@@ -912,7 +912,9 @@ theme.components = {
         }
         `,
   },
-};
+});
+
+theme.components = makeComponents(theme);
 
 /**
  * Load these fonts early using <link rel="preload" />
