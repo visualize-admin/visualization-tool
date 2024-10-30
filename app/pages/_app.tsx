@@ -10,19 +10,19 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 
+import { SnackbarProvider } from "@/components/snackbar";
 import { PUBLIC_URL } from "@/domain/env";
 import { flag } from "@/flags/flag";
 import { GraphqlProvider } from "@/graphql/GraphqlProvider";
 import { i18n, parseLocaleString } from "@/locales/locales";
 import { LocaleProvider } from "@/locales/use-locale";
-import * as federalTheme from "@/themes/federal";
+import theme from "@/themes/default";
+import { EventEmitterProvider } from "@/utils/eventEmitter";
 import Flashes from "@/utils/flashes";
 import { analyticsPageView } from "@/utils/googleAnalytics";
 import AsyncLocalizationProvider from "@/utils/l10n-provider";
 import "@/utils/nprogress.css";
 import { useNProgress } from "@/utils/use-nprogress";
-import { EventEmitterProvider } from "@/utils/eventEmitter";
-import { SnackbarProvider } from "@/components/snackbar";
 
 const GQLDebugPanel = dynamic(() => import("@/gql-flamegraph/devtool"), {
   ssr: false,
@@ -73,7 +73,7 @@ export default function App({
         <meta property="og:type" content="website" />
         <meta property="og:title" content={"visualize.admin.ch"} />
         <meta property="og:url" content={`${PUBLIC_URL}${asPath}`} />
-        {federalTheme.preloadFonts?.map((src) => (
+        {theme.preloadFonts?.map((src) => (
           <link
             key={src}
             rel="preload"
@@ -88,7 +88,7 @@ export default function App({
         <LocaleProvider value={locale}>
           <I18nProvider i18n={i18n}>
             <GraphqlProvider>
-              <ThemeProvider theme={federalTheme.theme}>
+              <ThemeProvider theme={theme.theme}>
                 <EventEmitterProvider>
                   <SnackbarProvider>
                     <CssBaseline />
