@@ -1,74 +1,79 @@
-export const theme = {
+import { createTheme } from "@mui/material";
+
+/**
+ * Theme conforming to the Schleswig-Holstein guidelines
+ */
+export const theme = createTheme({
   palette: {
     primary: {
-      light: "#FFCCCC", // light red
-      main: "#FF0000", // red
-      hover: "#CC0000", // dark red
-      active: "#990000", // darker red
-      disabled: "#FF6666", // muted red
+      light: "#B7CDE3",
+      main: "#003064",
+      hover: "#D4004B",
+      active: "#D4004B",
+      disabled: "#B4BAC0",
     },
-    divider: "#E5E5E5",
+    divider: "#E3E5ED",
     action: {
-      hover: "#F2F7F9",
+      hover: "#EDEEF2",
     },
     secondary: {
-      main: "#008000", // green
-      hover: "#006400", // dark green
-      active: "#004d00", // darker green
-      disabled: "#66b266", // muted green
+      main: "#003064",
+      hover: "#D4004B",
+      active: "#D4004B",
+      disabled: "#B4BAC0",
     },
     success: {
-      main: "#3c763d",
+      main: "#157A6D",
       light: "#DFF0D8",
-      hover: "#3c763d",
-      active: "#3c763d",
-      disabled: "#DFF0D8",
+      hover: "#157A6D",
+      active: "#157A6D",
+      disabled: "#B4BAC0",
     },
     muted: {
-      main: "#F5F5F5",
-      colored: "#F9FAFB",
+      main: "#EDEEF2",
+      colored: "#F4F5F7",
       dark: "#F2F7F9",
     },
     brand: {
-      main: "#FF0000", // red
+      main: "#DC0018",
     },
     hint: {
-      main: "#008000", // green
+      main: "#64768F",
     },
     alert: {
-      main: "#FF0000", // red
-      light: "#FFCCCC", // light red
+      main: "#DC0018",
+      light: "#FFE6E1",
     },
     warning: {
-      main: "#8a6d3b",
+      main: "#8F845F",
       light: "#FCF0B4",
     },
     info: {
-      main: "#31708f",
-      light: "#d9edf7",
+      main: "#3A78B8",
+      light: "#C4D6E7",
     },
     error: {
-      main: "#a82824",
-      light: "#f2dede",
+      main: "#96205E",
+      light: "#EEDBE8",
     },
     organization: {
-      main: "#008000", // green
-      light: "#90EE90", // light green
+      main: "#001E49",
+      light: "#C4D6E7",
     },
     category: {
-      main: "#FF0000", // red
-      light: "#FFCCCC", // light red
+      main: "#001E49",
+      light: "#DFF0D8",
     },
     grey: {
       100: "#FFFFFF",
-      200: "#F5F5F5",
-      300: "#E5E5E5",
-      400: "#D5D5D5",
-      500: "#CCCCCC",
-      600: "#757575",
-      700: "#454545",
-      800: "#333333",
-      900: "#000000",
+      200: "#F4F5F7",
+      300: "#EDEEF2",
+      400: "#E3E5ED",
+      500: "#B4BAC0",
+      600: "#64768F",
+      700: "#525E71",
+      800: "#2F3947",
+      900: "#212529",
     },
   },
-};
+});
