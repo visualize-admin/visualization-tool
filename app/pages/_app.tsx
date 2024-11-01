@@ -89,12 +89,7 @@ export default function App({
         <LocaleProvider value={locale}>
           <I18nProvider i18n={i18n}>
             <GraphqlProvider>
-              <ThemeProvider
-                themes={{
-                  light: theme.theme,
-                  dark: theme.dark,
-                }}
-              >
+              <ThemeProvider themes={theme.themes}>
                 <EventEmitterProvider>
                   <SnackbarProvider>
                     <CssBaseline />

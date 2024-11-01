@@ -11,6 +11,7 @@ import { LanguageMenu } from "@/components/language-menu";
 import { SOURCE_OPTIONS } from "@/domain/datasource/constants";
 import { useFlag } from "@/flags";
 import { LoginMenu } from "@/login/components/login-menu";
+import { useTheme } from "@/themes";
 
 import { ThemeMenu } from "./theme-menu";
 
@@ -25,7 +26,11 @@ const useHeaderBorderStyles = makeStyles((theme: Theme) => ({
 }));
 
 const HeaderBorder = () => {
+  const theme = useTheme();
   const classes = useHeaderBorderStyles();
+
+  if (!theme.palette.brand) return null;
+
   return <Box className={classes.root} />;
 };
 

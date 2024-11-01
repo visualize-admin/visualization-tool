@@ -38,7 +38,7 @@ declare module "@mui/material" {
   }
 
   interface PaletteOptions {
-    muted?: PaletteColorOptions;
+    muted: PaletteColorOptions;
     alert?: PaletteColorOptions;
     organization?: PaletteColorOptions;
     category?: PaletteColorOptions;

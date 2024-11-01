@@ -1,15 +1,18 @@
 import { createTheme } from "@mui/material";
 
 import { theme as baseTheme } from "@/themes/base";
-import { preloadFonts, theme } from "@/themes/federal";
-import { theme as darkTheme } from "@/themes/federal-dark";
+import { preloadFonts, theme as sfTheme } from "@/themes/federal";
+import { theme as sfDarkTheme } from "@/themes/federal-dark";
 
-const customTheme = createTheme(baseTheme, theme);
-const customDarkTheme = createTheme(baseTheme, darkTheme);
+const swissFederalTheme = createTheme(baseTheme, sfTheme);
+const swissFederalThemeDark = createTheme(baseTheme, sfTheme, sfDarkTheme);
 
 const themeModule = {
-  theme: customTheme,
-  dark: customDarkTheme,
+  themes: {
+    base: baseTheme,
+    light: swissFederalTheme,
+    dark: swissFederalThemeDark,
+  },
   preloadFonts,
 };
 
