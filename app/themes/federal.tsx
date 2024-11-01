@@ -4,7 +4,7 @@ import merge from "lodash/merge";
 import omit from "lodash/omit";
 
 import { Icon } from "@/icons";
-import shadows from "@/themes/shadows";
+import { shadows } from "@/themes/base/shadows";
 
 const isSafari15 =
   typeof navigator !== "undefined" && navigator.vendor?.indexOf("Apple") >= 0
