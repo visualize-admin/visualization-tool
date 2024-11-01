@@ -12,4 +12,7 @@ export const typography: ThemeOptions["typography"] = {
     '"Segoe UI Emoji"',
     '"Segoe UI Symbol"',
   ].join(","),
+  link: {
+    textDecoration: "none",
+  },
 };

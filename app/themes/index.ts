@@ -1,4 +1,4 @@
-import type {} from "@mui/lab/themeAugmentation";
+import "@mui/lab/themeAugmentation";
 import { Theme, useTheme } from "@mui/material";
 import { CSSProperties } from "react";
 
@@ -29,7 +29,7 @@ declare module "@mui/material" {
 
   interface PaletteColorOptions {
     light?: string;
-    main: string;
+    main?: string;
     hover?: string;
     active?: string;
     disabled?: string;
@@ -38,12 +38,12 @@ declare module "@mui/material" {
   }
 
   interface PaletteOptions {
-    muted: PaletteColorOptions;
-    alert: PaletteColorOptions;
-    organization: PaletteColorOptions;
-    category: PaletteColorOptions;
-    brand: PaletteColorOptions;
-    hint: PaletteColorOptions;
+    muted?: PaletteColorOptions;
+    alert?: PaletteColorOptions;
+    organization?: PaletteColorOptions;
+    category?: PaletteColorOptions;
+    brand?: PaletteColorOptions;
+    hint?: PaletteColorOptions;
   }
 
   interface PaletteColor {
@@ -79,5 +79,4 @@ declare module "@mui/material" {
   }
 }
 
-export { theme as federal } from "./federal";
 export { useTheme };

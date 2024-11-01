@@ -1,3 +1,4 @@
+import { ThemeOptions } from "@mui/material";
 import { Shadows } from "@mui/material/styles/shadows";
 
 const shadowKeyUmbraOpacity = 0;
@@ -13,7 +14,7 @@ function createShadow(...px: number[]) {
 }
 
 // Values from https://github.com/material-components/material-components-web/blob/be8747f94574669cb5e7add1a7c54fa41a89cec7/packages/mdc-elevation/_variables.scss
-export const shadows = [
+export const shadows: ThemeOptions["shadows"] = [
   "none",
   createShadow(0, 2, 1, -1, 0, 1, 1, 0, 0, 1, 3, 0),
   createShadow(0, 3, 1, -2, 0, 2, 2, 0, 0, 1, 5, 0),

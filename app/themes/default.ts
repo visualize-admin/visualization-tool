@@ -1,9 +1,9 @@
 import { createTheme } from "@mui/material";
 
 import { theme as baseTheme } from "@/themes/base";
-import { preloadFonts, theme } from "@/themes/federal";
+import { preloadFonts } from "@/themes/federal";
 
-const customTheme = createTheme(baseTheme, theme);
+const customTheme = createTheme(baseTheme);
 
 const themeModule = {
   theme: customTheme,

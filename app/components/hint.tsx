@@ -3,13 +3,13 @@ import {
   Alert,
   AlertProps,
   AlertTitle,
+  alpha,
   Box,
   BoxProps,
+  keyframes,
   Link,
   Theme,
   Typography,
-  alpha,
-  keyframes,
   useTheme,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
@@ -147,7 +147,10 @@ export const LoadingOverlay = () => {
       className={classes.overlay}
       initial={{
         backgroundColor: alpha(theme.palette.grey[100], 0),
-        color: alpha(theme.palette.secondary.active!, 0),
+        color: alpha(
+          theme.palette.secondary.active ?? theme.palette.secondary.main,
+          0
+        ),
       }}
       animate={{
         backgroundColor: alpha(theme.palette.grey[100], 0.3),
@@ -155,7 +158,10 @@ export const LoadingOverlay = () => {
       }}
       exit={{
         backgroundColor: alpha(theme.palette.grey[100], 0),
-        color: alpha(theme.palette.secondary.active!, 0),
+        color: alpha(
+          theme.palette.secondary.active ?? theme.palette.secondary.main,
+          0
+        ),
       }}
       transition={{ duration: 0.2 }}
     >

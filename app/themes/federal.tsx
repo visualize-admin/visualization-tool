@@ -1,22 +1,8 @@
-import { Breakpoint, createTheme } from "@mui/material/styles";
-import omit from "lodash/omit";
+import { createTheme } from "@mui/material/styles";
 
 import { theme as baseTheme } from "@/themes/base";
 
-const breakpoints = ["xs", "md"] as Breakpoint[];
-
-const createTypographyVariant = (spec: Record<string, any>) => {
-  const res = omit(spec, ["lineHeight", "fontSize"]);
-  for (let i = 0; i < spec.fontSize.length; i++) {
-    const lineHeight = `${spec.lineHeight[i]}px`;
-    const fontSize = `${spec.fontSize[i]}px`;
-    res[baseTheme.breakpoints.up(breakpoints[i])] = {
-      fontSize,
-      lineHeight,
-    };
-  }
-  return res;
-};
+import { createTypographyVariant } from "./utils";
 
 /**
  * Theme conforming to the Swiss Federal CD guidelines
@@ -95,62 +81,51 @@ export const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: [
-      "FrutigerNeue",
-      "-apple-system",
-      "BlinkMacSystemFont",
-      '"Segoe UI"',
-      "Helvetica",
-      "Arial",
-      "sans-serif",
-      '"Apple Color Emoji"',
-      '"Segoe UI Emoji"',
-      '"Segoe UI Symbol"',
-    ].join(","),
+    fontFamily: ["FrutigerNeue", baseTheme.typography.fontFamily].join(","),
     link: {
       textDecoration: "none",
     },
-    h1: createTypographyVariant({
+    h1: createTypographyVariant(baseTheme, {
       fontSize: [24, 32],
       lineHeight: [36, 48],
       fontWeight: 700,
     }),
-    h2: createTypographyVariant({
+    h2: createTypographyVariant(baseTheme, {
       fontSize: [18, 24],
       lineHeight: [28, 36],
       fontWeight: 500,
     }),
-    h3: createTypographyVariant({
+    h3: createTypographyVariant(baseTheme, {
       fontSize: [16, 18],
       lineHeight: [24, 28],
       fontWeight: "bold",
     }),
-    h4: createTypographyVariant({
+    h4: createTypographyVariant(baseTheme, {
       fontSize: [14, 16],
       lineHeight: [22, 24],
       fontWeight: "bold",
     }),
-    h5: createTypographyVariant({
+    h5: createTypographyVariant(baseTheme, {
       fontSize: [14],
       lineHeight: [20],
       fontWeight: "bold",
     }),
-    h6: createTypographyVariant({
+    h6: createTypographyVariant(baseTheme, {
       fontSize: [12],
       lineHeight: [18],
       fontWeight: "bold",
     }),
-    body1: createTypographyVariant({
+    body1: createTypographyVariant(baseTheme, {
       fontSize: [14, 16],
       lineHeight: [22, 24],
       fontWeight: "regular",
     }),
-    body2: createTypographyVariant({
+    body2: createTypographyVariant(baseTheme, {
       fontSize: [12, 14],
       lineHeight: [18, 20],
       fontWeight: "regular",
     }),
-    caption: createTypographyVariant({
+    caption: createTypographyVariant(baseTheme, {
       fontSize: [12],
       lineHeight: [18],
       fontWeight: "regular",
