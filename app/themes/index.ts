@@ -1,5 +1,6 @@
 import type {} from "@mui/lab/themeAugmentation";
 import { Theme, useTheme } from "@mui/material";
+import { CSSProperties } from "react";
 
 export interface ThemeModule {
   theme: Theme;
@@ -11,7 +12,21 @@ declare module "@mui/material" {
   }
 }
 
+declare module "@mui/material/Typography" {
+  interface TypographyPropsVariantOverrides {
+    link: true;
+  }
+}
+
 declare module "@mui/material" {
+  interface TypographyVariants {
+    link: CSSProperties;
+  }
+
+  interface TypographyVariantsOptions {
+    link?: CSSProperties;
+  }
+
   interface PaletteColorOptions {
     light?: string;
     main: string;

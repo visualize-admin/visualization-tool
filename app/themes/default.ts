@@ -1,9 +1,9 @@
 import { createTheme } from "@mui/material";
 
-import { preloadFonts, theme } from "@/themes/base";
-import { theme as shleswigTheme } from "@/themes/shleswig";
+import { theme as baseTheme } from "@/themes/base";
+import { preloadFonts, theme } from "@/themes/federal";
 
-const customTheme = createTheme(theme, shleswigTheme);
+const customTheme = createTheme(baseTheme, theme);
 
 const themeModule = {
   theme: customTheme,
