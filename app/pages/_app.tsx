@@ -1,7 +1,7 @@
 import { I18nProvider } from "@lingui/react";
 import "core-js/features/array/flat-map";
 // Used for color-picker component. Must include here because of next.js constraints about global CSS imports
-import { CssBaseline, ThemeProvider } from "@mui/material";
+import { CssBaseline } from "@mui/material";
 import { Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { AppProps } from "next/app";
@@ -17,6 +17,7 @@ import { GraphqlProvider } from "@/graphql/GraphqlProvider";
 import { i18n, parseLocaleString } from "@/locales/locales";
 import { LocaleProvider } from "@/locales/use-locale";
 import theme from "@/themes/default";
+import { ThemeProvider } from "@/themes/theme-provider";
 import { EventEmitterProvider } from "@/utils/eventEmitter";
 import Flashes from "@/utils/flashes";
 import { analyticsPageView } from "@/utils/googleAnalytics";
@@ -88,7 +89,12 @@ export default function App({
         <LocaleProvider value={locale}>
           <I18nProvider i18n={i18n}>
             <GraphqlProvider>
-              <ThemeProvider theme={theme.theme}>
+              <ThemeProvider
+                themes={{
+                  light: theme.theme,
+                  dark: theme.dark,
+                }}
+              >
                 <EventEmitterProvider>
                   <SnackbarProvider>
                     <CssBaseline />

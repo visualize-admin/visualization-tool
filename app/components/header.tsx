@@ -9,7 +9,10 @@ import Flex from "@/components/flex";
 import { HEADER_HEIGHT } from "@/components/header-constants";
 import { LanguageMenu } from "@/components/language-menu";
 import { SOURCE_OPTIONS } from "@/domain/datasource/constants";
+import { useFlag } from "@/flags";
 import { LoginMenu } from "@/login/components/login-menu";
+
+import { ThemeMenu } from "./theme-menu";
 
 const useHeaderBorderStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -102,6 +105,7 @@ const MetadataMenu = ({ contentId }: { contentId?: string }) => {
 };
 
 export const Logo = () => {
+  const isDebug = useFlag("debug");
   return (
     <Flex sx={{ order: [2, 1], alignItems: ["center", "flex-start"] }}>
       <NextLink href="/" passHref legacyBehavior>
@@ -145,8 +149,8 @@ export const Logo = () => {
             </Typography>
           </Box>
         </NextLink>
-
         {SOURCE_OPTIONS.length > 1 && <DataSourceMenu />}
+        {isDebug ? <ThemeMenu /> : null}
       </Flex>
     </Flex>
   );
