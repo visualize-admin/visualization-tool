@@ -11,10 +11,10 @@ const swissFederalThemeDark = createTheme(baseTheme, sfTheme, sfDarkTheme);
 
 const themeModule = {
   themes: {
+    shleswig: shleswigTheme,
     base: baseTheme,
     light: swissFederalTheme,
     dark: swissFederalThemeDark,
-    shleswig: shleswigTheme,
   },
   preloadFonts,
 };

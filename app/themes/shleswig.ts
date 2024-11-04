@@ -1,5 +1,9 @@
 import { createTheme } from "@mui/material";
 
+import { theme as baseTheme } from "@/themes/base";
+
+import { createTypographyVariant } from "./utils";
+
 /**
  * Theme conforming to the Schleswig-Holstein guidelines
  */
@@ -33,9 +37,6 @@ export const theme = createTheme({
       main: "#EDEEF2",
       colored: "#F4F5F7",
       dark: "#F2F7F9",
-    },
-    brand: {
-      main: "#DC0018",
     },
     hint: {
       main: "#64768F",
@@ -75,5 +76,56 @@ export const theme = createTheme({
       800: "#2F3947",
       900: "#212529",
     },
+  },
+  typography: {
+    fontFamily: ["Arial", baseTheme.typography.fontFamily].join(","),
+    link: {
+      textDecoration: "none",
+    },
+    h1: createTypographyVariant(baseTheme, {
+      fontSize: [48],
+      lineHeight: ["140%"],
+      fontWeight: 400,
+    }),
+    h2: createTypographyVariant(baseTheme, {
+      fontSize: [32],
+      lineHeight: ["130%"],
+      fontWeight: 300,
+    }),
+    h3: createTypographyVariant(baseTheme, {
+      fontSize: [24],
+      lineHeight: ["135%"],
+      fontWeight: 400,
+    }),
+    h4: createTypographyVariant(baseTheme, {
+      fontSize: [18],
+      lineHeight: ["140%"],
+      fontWeight: 400,
+    }),
+    h5: createTypographyVariant(baseTheme, {
+      fontSize: [16],
+      lineHeight: ["120%"],
+      fontWeight: 400,
+    }),
+    h6: createTypographyVariant(baseTheme, {
+      fontSize: [14],
+      lineHeight: ["120%"],
+      fontWeight: 400,
+    }),
+    body1: createTypographyVariant(baseTheme, {
+      fontSize: [18],
+      lineHeight: ["140%"],
+      fontWeight: 300,
+    }),
+    body2: createTypographyVariant(baseTheme, {
+      fontSize: [16],
+      lineHeight: ["130%"],
+      fontWeight: 300,
+    }),
+    caption: createTypographyVariant(baseTheme, {
+      fontSize: [12],
+      lineHeight: ["130%"],
+      fontWeight: 300,
+    }),
   },
 });
