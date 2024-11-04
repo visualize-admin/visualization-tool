@@ -150,7 +150,7 @@ export const Logo = () => {
               variant="h4"
               sx={{ color: "grey.800", cursor: "pointer" }}
             >
-              visualize.admin.ch
+              <Trans id="header.title" />
             </Typography>
           </Box>
         </NextLink>
@@ -164,7 +164,7 @@ export const Logo = () => {
 const LogoMobile = () => (
   <svg width={30} height={34}>
     <title id="logo">
-      <Trans id="header.logo.title" context="Brand configuration" />
+      <Trans id="header.logo.title" />
     </title>
     <g fillRule="nonzero" fill="none">
       <path

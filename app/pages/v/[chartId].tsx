@@ -245,17 +245,9 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
 
             <Typography component="div" my={4}>
               {publishSuccess ? (
-                <Trans id="hint.how.to.share">
-                  You can share this chart either by sharing its URL or by
-                  embedding it on your website. You can also create a new
-                  visualization or duplicate the above chart.
-                </Trans>
+                <Trans id="hint.how.to.share" />
               ) : (
-                <Trans id="hint.create.your.own.chart">
-                  Create your own graphic now! With the visualization tool, you
-                  can create your own graphics, based on a large number of Swiss
-                  federal data.
-                </Trans>
+                <Trans id="hint.create.your.own.chart" />
               )}
             </Typography>
 

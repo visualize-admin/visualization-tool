@@ -82,9 +82,7 @@ export const Footer = ({ sx }: { sx?: FlexProps["sx"] }) => {
             message: "https://www.bafu.admin.ch/bafu/en/home.html",
           })}
         >
-          <Trans id="footer.institution.name">
-            Federal Office for the Environment FOEN
-          </Trans>
+          <Trans id="footer.institution.name" />
         </FooterLink>
       </Box>
 

@@ -4,7 +4,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: POEditor.com\n"
-"Project-Id-Version: visualize.admin.ch\n"
+"Project-Id-Version: acme.inc\n"
 "Language: de\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
@@ -16,9 +16,6 @@ msgstr ""
 #: app/configurator/components/chart-configurator.tsx
 msgid "Add filter"
 msgstr "Filter hinzufügen"
-
-msgid "Brand configuration"
-msgstr ""
 
 #: app/components/move-drag-button.tsx
 msgid "Drag filters to reorganize"
@@ -66,6 +63,10 @@ msgstr "Visualisierung von diesem Datensatz erstellen"
 #: app/browser/select-dataset-step.tsx
 msgid "browse.datasets.description"
 msgstr "Erkunden Sie die vom LINDAS Linked Data Service bereitgestellten Datensätze, indem Sie entweder nach Kategorien oder Organisationen filtern oder direkt nach bestimmten Stichworten suchen. Klicken Sie auf einen Datensatz, um detailliertere Informationen zu erhalten und Ihre eigenen Visualisierungen zu erstellen."
+
+#: app/browser/select-dataset-step.tsx
+msgid "browse.datasets.title"
+msgstr ""
 
 #: app/components/metadata-panel.tsx
 #: app/configurator/components/add-dataset-dialog.tsx
@@ -1275,10 +1276,14 @@ msgstr "Status"
 msgid "footer.tutorials"
 msgstr "Tutorials"
 
-#. Brand configuration
+#: app/components/header.tsx
 #: app/components/header.tsx
 msgid "header.logo.title"
 msgstr "Logo der Schweizerischen Eidgenossenschaft"
+
+#: app/components/header.tsx
+msgid "header.title"
+msgstr ""
 
 #: app/components/hint.tsx
 msgid "hint.chartunexpected.message"
@@ -1483,12 +1488,26 @@ msgid "login.sign-out"
 msgstr "Abmelden"
 
 #: app/components/chart-footnotes.tsx
+msgid "metadata.link.created.label"
+msgstr ""
+
+#: app/components/chart-footnotes.tsx
+msgid "metadata.link.created.url"
+msgstr ""
+
+#: app/components/chart-footnotes.tsx
 msgid "metadata.link.created.with"
 msgstr "Erstellt mit"
 
 #: app/components/confirmation-dialog.tsx
 msgid "no"
 msgstr "Nein"
+
+#: app/browser/dataset-preview.tsx
+#: app/browser/select-dataset-step.tsx
+#: app/components/chart-preview.tsx
+msgid "page.title"
+msgstr ""
 
 #: app/components/rename-dialog.tsx
 msgid "profile.chart.rename-dialog.description"
@@ -1552,11 +1571,11 @@ msgstr "Teilen via Twitter"
 
 #: app/components/publish-actions.tsx
 msgid "publication.share.mail.body"
-msgstr "Hier ist eine Visualisierung, die ich mit visualize.admin.ch erstellt habe"
+msgstr "Hier ist eine Visualisierung, die ich mit acme.inc erstellt habe"
 
 #: app/components/publish-actions.tsx
 msgid "publication.share.mail.subject"
-msgstr "visualize.admin.ch"
+msgstr "acme.inc"
 
 #: app/browser/dataset-browse.tsx
 #: app/configurator/components/filters.tsx
@@ -1571,6 +1590,10 @@ msgstr "Springen zu..."
 #: app/login/components/profile-tables.tsx
 msgid "show.all"
 msgstr "Alle anzeigen"
+
+#: app/browser/dataset-browse.tsx
+msgid "show.less"
+msgstr ""
 
 #: app/configurator/components/chart-controls/drag-and-drop-tab.tsx
 msgid "table.column.no"

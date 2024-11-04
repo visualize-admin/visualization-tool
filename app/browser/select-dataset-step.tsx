@@ -1,4 +1,4 @@
-import { Trans } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
 import { Box, Button, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { AnimatePresence } from "framer-motion";
@@ -28,11 +28,11 @@ import { DatasetMetadata } from "@/components/dataset-metadata";
 import Flex from "@/components/flex";
 import { Footer } from "@/components/footer";
 import {
+  bannerPresenceProps,
   BANNER_HEIGHT,
   BANNER_MARGIN_TOP,
   DURATION,
   MotionBox,
-  bannerPresenceProps,
   navPresenceProps,
   smoothPresenceProps,
 } from "@/components/presence";
@@ -332,19 +332,13 @@ const SelectDatasetStepContent = ({
               <div className={classes.panelBanner}>
                 <Flex className={classes.panelBannerContent}>
                   <Typography variant="h1" className={classes.panelBannerTitle}>
-                    Swiss Open Government Data
+                    <Trans id="browse.datasets.title" />
                   </Typography>
                   <Typography
                     variant="body2"
                     className={classes.panelBannerDescription}
                   >
-                    <Trans id="browse.datasets.description">
-                      Explore datasets provided by the LINDAS Linked Data
-                      Service by either filtering by categories or organisations
-                      or search directly for specific keywords. Click on a
-                      dataset to see more detailed information and start
-                      creating your own visualizations.
-                    </Trans>
+                    <Trans id="browse.datasets.description" />
                   </Typography>
                   <SearchDatasetInput browseState={browseState} />
                 </Flex>
@@ -459,7 +453,11 @@ const SelectDatasetStepContent = ({
                     >
                       <Head>
                         <title key="title">
-                          {pageTitle}- visualize.admin.ch
+                          {t({
+                            id: "page.title",
+                            values: { title: pageTitle },
+                            message: "{title} - visualize.admin.ch",
+                          })}
                         </title>
                       </Head>
                       <Typography

@@ -675,7 +675,7 @@ const NavSection = ({
                 color="inherit"
                 onClick={close}
               >
-                Show less
+                <Trans id="show.less">Show less</Trans>
               </Button>
             ) : (
               <Button

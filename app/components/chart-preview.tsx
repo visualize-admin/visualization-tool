@@ -6,7 +6,7 @@ import {
   useDraggable,
   useDroppable,
 } from "@dnd-kit/core";
-import { Trans } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
 import { Box } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import Head from "next/head";
@@ -440,11 +440,18 @@ const ChartPreviewInner = ({
           <>
             <Head>
               <title key="title">
-                {!chartConfig.meta.title[locale]
-                  ? // FIXME: adapt to design
-                    metadata?.dataCubesMetadata.map((d) => d.title).join(", ")
-                  : chartConfig.meta.title[locale]}{" "}
-                - visualize.admin.ch
+                {t({
+                  id: "page.title",
+                  values: {
+                    title: !chartConfig.meta.title[locale]
+                      ? // FIXME: adapt to design
+                        metadata?.dataCubesMetadata
+                          .map((d) => d.title)
+                          .join(", ")
+                      : chartConfig.meta.title[locale],
+                  },
+                  message: "{title} - visualize.admin.ch",
+                })}
               </title>
             </Head>
             <LoadingStateProvider>

@@ -1,4 +1,4 @@
-import { Trans } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
 import { Box, Link, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import uniqBy from "lodash/uniqBy";
@@ -298,14 +298,17 @@ export const VisualizeLink = () => {
     <Typography variant="caption" color="grey.600">
       <Trans id="metadata.link.created.with">Created with</Trans>
       <Link
-        href={`https://visualize.admin.ch/${locale}/`}
+        href={t({
+          id: "metadata.link.created.url",
+          values: { locale },
+          message: `https://visualize.admin.ch/{locale}/`,
+        })}
         target="_blank"
         rel="noopener noreferrer"
         color="primary.main"
         sx={{ "&:hover": { textDecoration: "none" } }}
       >
-        {" "}
-        visualize.admin.ch
+        <Trans id="metadata.link.created.label" />
       </Link>
     </Typography>
   );

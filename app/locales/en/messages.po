@@ -4,7 +4,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: POEditor.com\n"
-"Project-Id-Version: visualize.admin.ch\n"
+"Project-Id-Version: [ACME]\n"
 "Language: en\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
@@ -16,9 +16,6 @@ msgstr ""
 #: app/configurator/components/chart-configurator.tsx
 msgid "Add filter"
 msgstr "Add filter"
-
-msgid "Brand configuration"
-msgstr "Brand configuration"
 
 #: app/components/move-drag-button.tsx
 msgid "Drag filters to reorganize"
@@ -66,6 +63,10 @@ msgstr "Start a visualization"
 #: app/browser/select-dataset-step.tsx
 msgid "browse.datasets.description"
 msgstr "Explore datasets provided by the LINDAS Linked Data Service by either filtering by categories or organisations or search directly for specific keywords. Click on a dataset to see more detailed information and start creating your own visualizations."
+
+#: app/browser/select-dataset-step.tsx
+msgid "browse.datasets.title"
+msgstr "[ACME] Data"
 
 #: app/components/metadata-panel.tsx
 #: app/configurator/components/add-dataset-dialog.tsx
@@ -1275,10 +1276,14 @@ msgstr "Status"
 msgid "footer.tutorials"
 msgstr "Tutorials"
 
-#. Brand configuration
+#: app/components/header.tsx
 #: app/components/header.tsx
 msgid "header.logo.title"
-msgstr "Logo of the Swiss Confederation"
+msgstr "Logo of the [ACME]"
+
+#: app/components/header.tsx
+msgid "header.title"
+msgstr "[ACME]"
 
 #: app/components/hint.tsx
 msgid "hint.chartunexpected.message"
@@ -1298,7 +1303,7 @@ msgstr "Coordinates loading error"
 
 #: app/pages/v/[chartId].tsx
 msgid "hint.create.your.own.chart"
-msgstr "Copy this visualization or make a new visualization using Swiss Open Government Data."
+msgstr "Copy this visualization or make a new visualization using [ACME] Data."
 
 #: app/components/data-download.tsx
 #: app/components/data-download.tsx
@@ -1483,12 +1488,26 @@ msgid "login.sign-out"
 msgstr "Sign out"
 
 #: app/components/chart-footnotes.tsx
+msgid "metadata.link.created.label"
+msgstr "[ACME]"
+
+#: app/components/chart-footnotes.tsx
+msgid "metadata.link.created.url"
+msgstr "https://[ACME]/{locale}/"
+
+#: app/components/chart-footnotes.tsx
 msgid "metadata.link.created.with"
 msgstr "Created with"
 
 #: app/components/confirmation-dialog.tsx
 msgid "no"
 msgstr "No"
+
+#: app/browser/dataset-preview.tsx
+#: app/browser/select-dataset-step.tsx
+#: app/components/chart-preview.tsx
+msgid "page.title"
+msgstr "{title} - [ACME]"
 
 #: app/components/rename-dialog.tsx
 msgid "profile.chart.rename-dialog.description"
@@ -1552,11 +1571,11 @@ msgstr "Share on Twitter"
 
 #: app/components/publish-actions.tsx
 msgid "publication.share.mail.body"
-msgstr "Here is a visualization I created using visualize.admin.ch"
+msgstr "Here is a visualization I created using [ACME]"
 
 #: app/components/publish-actions.tsx
 msgid "publication.share.mail.subject"
-msgstr "visualize.admin.ch"
+msgstr "[ACME]"
 
 #: app/browser/dataset-browse.tsx
 #: app/configurator/components/filters.tsx
@@ -1571,6 +1590,10 @@ msgstr "Jump to..."
 #: app/login/components/profile-tables.tsx
 msgid "show.all"
 msgstr "Show all"
+
+#: app/browser/dataset-browse.tsx
+msgid "show.less"
+msgstr "Show less"
 
 #: app/configurator/components/chart-controls/drag-and-drop-tab.tsx
 msgid "table.column.no"

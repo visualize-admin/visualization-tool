@@ -1,4 +1,4 @@
-import { Trans } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
 import { Box, Button, Paper, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import Head from "next/head";
@@ -146,7 +146,11 @@ export const DataSetPreview = ({
         <Flex className={classes.header}>
           <Head>
             <title key="title">
-              {dataCubeMetadata.title} - visualize.admin.ch
+              {t({
+                id: "page.title",
+                values: { title: dataCubeMetadata.title },
+                message: "{title} - visualize.admin.ch",
+              })}
             </title>
           </Head>
           <Typography className={classes.title} component="div" variant="h1">
