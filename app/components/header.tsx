@@ -164,9 +164,7 @@ export const Logo = () => {
 const LogoMobile = () => (
   <svg width={30} height={34}>
     <title id="logo">
-      <Trans id="logo.swiss.confederation">
-        Logo of the Swiss Confederation
-      </Trans>
+      <Trans id="header.logo.title" context="Brand configuration" />
     </title>
     <g fillRule="nonzero" fill="none">
       <path
@@ -184,9 +182,7 @@ const LogoMobile = () => (
 const LogoDesktop = () => (
   <svg width={224} height={56}>
     <title id="logo">
-      <Trans id="logo.swiss.confederation">
-        Logo of the Swiss Confederation
-      </Trans>
+      <Trans id="header.logo.title" />
     </title>
     <g fillRule="nonzero" fill="none">
       <g fill="currentColor">

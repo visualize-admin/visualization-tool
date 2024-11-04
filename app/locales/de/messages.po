@@ -17,6 +17,9 @@ msgstr ""
 msgid "Add filter"
 msgstr "Filter hinzufügen"
 
+msgid "Brand configuration"
+msgstr ""
+
 #: app/components/move-drag-button.tsx
 msgid "Drag filters to reorganize"
 msgstr "Ziehen Sie die Filter per Drag & Drop, um sie neu zu organisieren"
@@ -1272,6 +1275,11 @@ msgstr "Status"
 msgid "footer.tutorials"
 msgstr "Tutorials"
 
+#. Brand configuration
+#: app/components/header.tsx
+msgid "header.logo.title"
+msgstr "Logo der Schweizerischen Eidgenossenschaft"
+
 #: app/components/hint.tsx
 msgid "hint.chartunexpected.message"
 msgstr "Beim Anzeigen dieses Diagramms ist ein unerwarteter Fehler aufgetreten."
@@ -1473,11 +1481,6 @@ msgstr "Einloggen"
 #: app/login/components/profile-header.tsx
 msgid "login.sign-out"
 msgstr "Abmelden"
-
-#: app/components/header.tsx
-#: app/components/header.tsx
-msgid "logo.swiss.confederation"
-msgstr "Logo der Schweizerischen Eidgenossenschaft"
 
 #: app/components/chart-footnotes.tsx
 msgid "metadata.link.created.with"

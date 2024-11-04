@@ -17,6 +17,9 @@ msgstr ""
 msgid "Add filter"
 msgstr "Add filter"
 
+msgid "Brand configuration"
+msgstr "Brand configuration"
+
 #: app/components/move-drag-button.tsx
 msgid "Drag filters to reorganize"
 msgstr "Drag filters to reorganize"
@@ -1272,6 +1275,11 @@ msgstr "Status"
 msgid "footer.tutorials"
 msgstr "Tutorials"
 
+#. Brand configuration
+#: app/components/header.tsx
+msgid "header.logo.title"
+msgstr "Logo of the Swiss Confederation"
+
 #: app/components/hint.tsx
 msgid "hint.chartunexpected.message"
 msgstr "An unexpected error occurred while displaying this chart."
@@ -1473,11 +1481,6 @@ msgstr "Sign in"
 #: app/login/components/profile-header.tsx
 msgid "login.sign-out"
 msgstr "Sign out"
-
-#: app/components/header.tsx
-#: app/components/header.tsx
-msgid "logo.swiss.confederation"
-msgstr "Logo of the Swiss Confederation"
 
 #: app/components/chart-footnotes.tsx
 msgid "metadata.link.created.with"
