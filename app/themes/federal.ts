@@ -131,6 +131,45 @@ export const theme = createTheme({
       fontWeight: "regular",
     }),
   },
+  components: {
+    MuiCssBaseline: {
+      styleOverrides: `
+            ${baseTheme.components?.MuiCssBaseline?.styleOverrides}  
+                
+            @font-face {
+              font-family: "FrutigerNeue";
+              font-display: swap;
+              font-style: normal;
+              font-weight: 700;
+              src: url("/static/fonts/FrutigerNeueW02-Bd.woff2") format("woff2");
+            }
+      
+            @font-face {
+              font-family: "FrutigerNeue";
+              font-display: swap;
+              font-style: normal;
+              font-weight: 400;
+              src: url("/static/fonts/FrutigerNeueW02-Regular.woff2") format("woff2");
+            }
+      
+            @font-face {
+              font-family: "FrutigerNeue";
+              font-display: swap;
+              font-style: normal;
+              font-weight: 300;
+              src: url("/static/fonts/FrutigerNeueW02-Light.woff2") format("woff2");
+            }
+            
+            @font-face {
+              font-family: "FrutigerNeue";
+              font-display: swap;
+              font-style: italic;
+              font-weight: 400;
+              src: url("/static/fonts/FrutigerNeueW02-It.woff2") format("woff2");
+            }
+            `,
+    },
+  },
 });
 
 /**
