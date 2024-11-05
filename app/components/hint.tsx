@@ -1,4 +1,4 @@
-import { Trans } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
 import {
   Alert,
   AlertProps,
@@ -213,10 +213,12 @@ export const LoadingDataError = ({ message }: { message?: string }) => (
     <Link
       typography="body2"
       target="_blank"
-      href="https://visualization-tool.status.interactivethings.io/"
+      href={t({
+        id: "hint.dataloadingerror.status.url",
+      })}
       sx={{ mt: "0.5em" }}
     >
-      <Trans id="hint.dataloadingerror.status">
+      <Trans id="hint.dataloadingerror.status.label">
         Check our status page for more information.
         <Icon name="linkExternal" size={14} />
       </Trans>

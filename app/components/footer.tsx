@@ -125,11 +125,19 @@ export const Footer = ({ sx }: { sx?: FlexProps["sx"] }) => {
           >
             <Version />
           </Typography>
-          <FooterLinkBottom href="https://www.youtube.com/channel/UCNK0uJTJ74kbv3jmNtZfgOw">
-            <Trans id="footer.tutorials">Tutorials</Trans>
+          <FooterLinkBottom
+            href={t({
+              id: "footer.link.0.url",
+            })}
+          >
+            <Trans id="footer.link.0.label">Tutorials</Trans>
           </FooterLinkBottom>
-          <FooterLinkBottom href="https://visualization-tool.status.interactivethings.io/">
-            <Trans id="footer.status">Status</Trans>
+          <FooterLinkBottom
+            href={t({
+              id: "footer.link.1.url",
+            })}
+          >
+            <Trans id="footer.link.1.label">Status</Trans>
           </FooterLinkBottom>
           <NextLink
             href={contentRoutes.legal[locale].path}

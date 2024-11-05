@@ -1269,12 +1269,20 @@ msgid "footer.institution.url"
 msgstr "https://www.bafu.admin.ch/bafu/fr/home.html"
 
 #: app/components/footer.tsx
-msgid "footer.status"
-msgstr "Statut"
+msgid "footer.link.0.label"
+msgstr ""
 
 #: app/components/footer.tsx
-msgid "footer.tutorials"
-msgstr "Tutoriels"
+msgid "footer.link.0.url"
+msgstr ""
+
+#: app/components/footer.tsx
+msgid "footer.link.1.label"
+msgstr ""
+
+#: app/components/footer.tsx
+msgid "footer.link.1.url"
+msgstr ""
 
 #: app/components/header.tsx
 #: app/components/header.tsx
@@ -1312,8 +1320,12 @@ msgid "hint.dataloadingerror.message"
 msgstr "Les données n'ont pas pu être téléchargées."
 
 #: app/components/hint.tsx
-msgid "hint.dataloadingerror.status"
-msgstr "Consultez la page de statut pour plus d'informations"
+msgid "hint.dataloadingerror.status.label"
+msgstr ""
+
+#: app/components/hint.tsx
+msgid "hint.dataloadingerror.status.url"
+msgstr ""
 
 #: app/components/hint.tsx
 msgid "hint.dataloadingerror.title"

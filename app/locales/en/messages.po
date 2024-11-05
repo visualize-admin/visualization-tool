@@ -1269,12 +1269,20 @@ msgid "footer.institution.url"
 msgstr "https://www.bafu.admin.ch/bafu/en/home.html"
 
 #: app/components/footer.tsx
-msgid "footer.status"
+msgid "footer.link.0.label"
+msgstr "Tutorials"
+
+#: app/components/footer.tsx
+msgid "footer.link.0.url"
+msgstr "https://www.youtube.com/channel/UCNK0uJTJ74kbv3jmNtZfgOw"
+
+#: app/components/footer.tsx
+msgid "footer.link.1.label"
 msgstr "Status"
 
 #: app/components/footer.tsx
-msgid "footer.tutorials"
-msgstr "Tutorials"
+msgid "footer.link.1.url"
+msgstr "https://visualization-tool.status.interactivethings.io/"
 
 #: app/components/header.tsx
 #: app/components/header.tsx
@@ -1312,8 +1320,12 @@ msgid "hint.dataloadingerror.message"
 msgstr "The data could not be loaded."
 
 #: app/components/hint.tsx
-msgid "hint.dataloadingerror.status"
-msgstr "Check the status page for more information"
+msgid "hint.dataloadingerror.status.label"
+msgstr "Check our status page for more information.<0/>"
+
+#: app/components/hint.tsx
+msgid "hint.dataloadingerror.status.url"
+msgstr "https://visualization-tool.status.interactivethings.io/"
 
 #: app/components/hint.tsx
 msgid "hint.dataloadingerror.title"
