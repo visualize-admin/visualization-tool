@@ -78,7 +78,7 @@ export const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: ["Arial", baseTheme.typography.fontFamily].join(","),
+    fontFamily: ["Avenir LT Pro", baseTheme.typography.fontFamily].join(","),
     link: {
       textDecoration: "none",
     },
@@ -128,4 +128,45 @@ export const theme = createTheme({
       fontWeight: 300,
     }),
   },
+  components: {
+    MuiCssBaseline: {
+      styleOverrides: `
+            ${baseTheme.components?.MuiCssBaseline?.styleOverrides}  
+                
+            @font-face {
+              font-family: "Avenir LT Pro";
+              font-display: swap;
+              font-style: normal;
+              font-weight: 300;
+              src: url("/static/fonts/AvenirLTPro-Light.woff2") format("woff2");
+            }
+      
+            @font-face {
+              font-family: "Avenir LT Pro";
+              font-display: swap;
+              font-style: normal;
+              font-weight: 400;
+              src: url("/static/fonts/AvenirLTPro-Regular.woff2") format("woff2");
+            }
+            
+            @font-face {
+              font-family: "Avenir LT Pro";
+              font-display: swap;
+              font-style: italic;
+              font-weight: 400;
+              src: url("/static/fonts/AvenirLTPro-It.woff2") format("woff2");
+            }
+            `,
+    },
+  },
 });
+
+/**
+ * Load these fonts early using <link rel="preload" />
+ * Use WOFF2 fonts if possible!
+ */
+export const preloadFonts = [
+  "/static/fonts/AvenirLTPro-It.woff2",
+  "/static/fonts/AvenirLTPro-Light.woff2",
+  "/static/fonts/AvenirLTPro-Regular.woff2",
+];
