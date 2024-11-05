@@ -6,22 +6,28 @@ import { forwardRef, ReactNode } from "react";
 
 import Flex, { FlexProps } from "@/components/flex";
 import contentRoutes from "@/content-routes.json";
-import { BUILD_VERSION } from "@/domain/env";
+import { BUILD_COMMIT, BUILD_GITHUB_REPO, BUILD_VERSION } from "@/domain/env";
 import { useLocale } from "@/locales/use-locale";
 
 const Version = () => {
-  const commitLink = (
-    <>
-      (
-      <Link
-        color="primary"
-        href={`https://github.com/visualize-admin/visualization-tool/blob/main/CHANGELOG.md`}
-      >
-        Changelog
-      </Link>
-      )
-    </>
-  );
+  let commitLink = null;
+
+  if (BUILD_GITHUB_REPO && BUILD_COMMIT) {
+    commitLink = (
+      <>
+        (
+        <Link
+          color="primary"
+          href={`${BUILD_GITHUB_REPO}/commit/${BUILD_COMMIT}`}
+        >
+          {BUILD_COMMIT.substr(0, 7)}
+        </Link>
+        )
+      </>
+    );
+  } else if (BUILD_COMMIT) {
+    commitLink = `(${BUILD_COMMIT.substr(0, 7)})`;
+  }
 
   return (
     <>
@@ -121,9 +127,13 @@ export const Footer = ({ sx }: { sx?: FlexProps["sx"] }) => {
           >
             <Version />
           </Typography>
+          <FooterLinkBottom href="https://github.com/visualize-admin/visualization-tool/blob/main/CHANGELOG.md">
+            Changelog
+          </FooterLinkBottom>
           <FooterLinkBottom href="https://www.youtube.com/channel/UCNK0uJTJ74kbv3jmNtZfgOw">
             <Trans id="footer.tutorials">Tutorials</Trans>
           </FooterLinkBottom>
+
           <FooterLinkBottom href="https://visualization-tool.status.interactivethings.io/">
             <Trans id="footer.status">Status</Trans>
           </FooterLinkBottom>
