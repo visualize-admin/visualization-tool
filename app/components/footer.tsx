@@ -6,28 +6,22 @@ import { forwardRef, ReactNode } from "react";
 
 import Flex, { FlexProps } from "@/components/flex";
 import contentRoutes from "@/content-routes.json";
-import { BUILD_COMMIT, BUILD_GITHUB_REPO, BUILD_VERSION } from "@/domain/env";
+import { BUILD_VERSION } from "@/domain/env";
 import { useLocale } from "@/locales/use-locale";
 
 const Version = () => {
-  let commitLink = null;
-
-  if (BUILD_GITHUB_REPO && BUILD_COMMIT) {
-    commitLink = (
-      <>
-        (
-        <Link
-          color="primary"
-          href={`${BUILD_GITHUB_REPO}/commit/${BUILD_COMMIT}`}
-        >
-          {BUILD_COMMIT.substr(0, 7)}
-        </Link>
-        )
-      </>
-    );
-  } else if (BUILD_COMMIT) {
-    commitLink = `(${BUILD_COMMIT.substr(0, 7)})`;
-  }
+  const commitLink = (
+    <>
+      (
+      <Link
+        color="primary"
+        href={`https://github.com/visualize-admin/visualization-tool/blob/main/CHANGELOG.md`}
+      >
+        <Trans id="footer.version.change-log">Change Log</Trans>
+      </Link>
+      )
+    </>
+  );
 
   return (
     <>
