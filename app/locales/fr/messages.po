@@ -1512,6 +1512,14 @@ msgid "publication.embed.iframe.caption"
 msgstr "Utilisez ce code pour intégrer le graphique sur une page web"
 
 #: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.remove-border"
+msgstr "Iframe sans bordure"
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.remove-border.warn"
+msgstr "Pour intégrer des visualisations dans des systèmes sans frontière."
+
+#: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.responsive"
 msgstr "Iframe réactif"
 
