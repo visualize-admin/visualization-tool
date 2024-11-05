@@ -17,7 +17,7 @@ const Version = () => {
         color="primary"
         href={`https://github.com/visualize-admin/visualization-tool/blob/main/CHANGELOG.md`}
       >
-        <Trans id="footer.version.change-log">Change Log</Trans>
+        Changelog
       </Link>
       )
     </>

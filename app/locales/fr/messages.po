@@ -1274,7 +1274,7 @@ msgstr "Tutoriels"
 
 #: app/components/footer.tsx
 msgid "footer.version.change-log"
-msgstr "Journal des modifications"
+msgstr ""
 
 #: app/components/hint.tsx
 msgid "hint.chartunexpected.message"
