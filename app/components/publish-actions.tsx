@@ -9,7 +9,6 @@ import {
   Switch,
   Tooltip,
   Typography,
-  useEventCallback,
 } from "@mui/material";
 import { ChangeEvent, ReactNode, RefObject, useEffect, useState } from "react";
 
@@ -67,7 +66,7 @@ const Embed = ({ chartWrapperRef, configKey, locale }: PublishActionProps) => {
   const [embedUrl, setEmbedUrl] = useState("");
   const [embedAEMUrl, setEmbedAEMUrl] = useState("");
   const [isResponsive, setIsResponsive] = useState(true);
-  const [withoutBorder, setWithoutBorder] = useState(false);
+  const [isWithoutBorder, setIsWithoutBorder] = useState(false);
   const [iframeHeight, setIframeHeight] = useState(0);
 
   const handlePopoverOpen = useEvent(() => {
@@ -82,19 +81,21 @@ const Embed = ({ chartWrapperRef, configKey, locale }: PublishActionProps) => {
   useEffect(() => {
     const { origin } = window.location;
     setEmbedUrl(
-      `${origin}/${locale}/embed/${configKey}${withoutBorder ? "?disableBorder=true" : ""}`
+      `${origin}/${locale}/embed/${configKey}${isWithoutBorder ? "?disableBorder=true" : ""}`
     );
     setEmbedAEMUrl(
-      `${origin}/api/embed-aem-ext/${locale}/${configKey}${withoutBorder ? "?disableBorder=true" : ""}`
+      `${origin}/api/embed-aem-ext/${locale}/${configKey}${isWithoutBorder ? "?disableBorder=true" : ""}`
     );
-  }, [configKey, locale, withoutBorder]);
+  }, [configKey, locale, isWithoutBorder]);
 
-  const handleChange = useEvent((e: ChangeEvent<HTMLInputElement>) => {
-    setIsResponsive(e.target.value === "responsive");
-  });
+  const handleResponsiveChange = useEvent(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      setIsResponsive(e.target.value === "responsive");
+    }
+  );
 
-  const handleStylingChange = useEventCallback((checked: boolean) => {
-    setWithoutBorder(checked);
+  const handleStylingChange = useEvent((_, checked: boolean) => {
+    setIsWithoutBorder(checked);
   });
 
   return (
@@ -135,7 +136,7 @@ const Embed = ({ chartWrapperRef, configKey, locale }: PublishActionProps) => {
             <EmbedRadio
               value="responsive"
               checked={isResponsive}
-              onChange={handleChange}
+              onChange={handleResponsiveChange}
               label={t({
                 id: "publication.embed.iframe.responsive",
                 message: "Responsive iframe",
@@ -149,7 +150,7 @@ const Embed = ({ chartWrapperRef, configKey, locale }: PublishActionProps) => {
             <EmbedRadio
               value="static"
               checked={!isResponsive}
-              onChange={handleChange}
+              onChange={handleResponsiveChange}
               label={t({
                 id: "publication.embed.iframe.static",
                 message: "Static iframe",
@@ -161,22 +162,22 @@ const Embed = ({ chartWrapperRef, configKey, locale }: PublishActionProps) => {
               })}
             />
             <EmbedToggleSwitch
-              value="without-border"
-              checked={withoutBorder}
-              onChange={(_, checked) => handleStylingChange(checked)}
+              value="remove-border"
+              checked={isWithoutBorder}
+              onChange={handleStylingChange}
               label={t({
                 id: "publication.embed.iframe.remove-border",
-                message: "Iframe without border",
+                message: "Remove border",
               })}
               infoMessage={t({
                 id: "publication.embed.iframe.remove-border.warn",
                 message:
-                  "For embedding visualizations in systems without a Border.",
+                  "For embedding visualizations in systems without a border.",
               })}
             />
           </Flex>
           <CopyToClipboardTextInput
-            content={`<iframe src="${embedUrl}" width="100%" style="${isResponsive ? "" : `height: ${iframeHeight || 640}px; `}border: ${withoutBorder ? "0px #ffffff none;" : "1px #ffffff;"}" name="visualize.admin.ch"></iframe>${isResponsive ? `<script type="text/javascript">!function(){window.addEventListener("message", function (e) { if (e.data.type === "${CHART_RESIZE_EVENT_TYPE}") { document.querySelectorAll("iframe").forEach((iframe) => { if (iframe.contentWindow === e.source) { iframe.style.height = e.data.height + "px"; } }); } })}();</script>` : ""}`}
+            content={`<iframe src="${embedUrl}" width="100%" style="${isResponsive ? "" : `height: ${iframeHeight || 640}px; `}border: 0px #ffffff none;"  name="visualize.admin.ch"></iframe>${isResponsive ? `<script type="text/javascript">!function(){window.addEventListener("message", function (e) { if (e.data.type === "${CHART_RESIZE_EVENT_TYPE}") { document.querySelectorAll("iframe").forEach((iframe) => { if (iframe.contentWindow === e.source) { iframe.style.height = e.data.height + "px"; } }); } })}();</script>` : ""}`}
           />
         </div>
         <div>

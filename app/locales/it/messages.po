@@ -1517,7 +1517,7 @@ msgstr "Usa questo codice per incorporare il grafico in una pagina web"
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.remove-border"
-msgstr "Iframe senza bordo"
+msgstr "Rimuovere il bordo"
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.remove-border.warn"

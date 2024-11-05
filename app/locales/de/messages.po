@@ -1517,7 +1517,7 @@ msgstr "Verwenden Sie diesen Code, um das Diagramm auf einer Webseite einzubette
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.remove-border"
-msgstr "Iframe ohne Rand"
+msgstr "Rand entfernen"
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.remove-border.warn"

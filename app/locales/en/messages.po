@@ -1517,11 +1517,11 @@ msgstr "Use this link to embed the chart in any webpage."
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.remove-border"
-msgstr "Iframe without border"
+msgstr "Remove border"
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.remove-border.warn"
-msgstr "For embedding visualizations in systems without a Border."
+msgstr "For embedding visualizations in systems without a border."
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.responsive"
