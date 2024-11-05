@@ -29,7 +29,7 @@ export const ChartMapVisualization = (props: VisualizationProps<MapConfig>) => {
   const { dataSource, chartConfig, componentIris } = props;
   const { fields } = chartConfig;
   const locale = useLocale();
-  const [componentsQuery] = useDataCubesComponentsQuery({
+  const [{ data: componentsData }] = useDataCubesComponentsQuery({
     variables: {
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
@@ -46,33 +46,36 @@ export const ChartMapVisualization = (props: VisualizationProps<MapConfig>) => {
 
   const getLayerIris = useCallback(
     (layer: keyof typeof fields) => {
-      const layerComponent = fields[layer];
-      if (layerComponent) {
+      const iri = fields[layer]?.componentIri;
+
+      if (iri) {
+        const dimensions = componentsData?.dataCubesComponents.dimensions ?? [];
+        // FIXME: We should probably introduce cubeIri to fields,
+        // as otherwise we can't distinguish between cubes
         const cubeIri =
-          componentsQuery.data?.dataCubesComponents.dimensions.find(
-            // FIXME: We should probably introduce cubeIri to fields,
-            // as otherwise we can't distinguish between cubes
-            (d) => d.iri === layerComponent.componentIri
-          )?.cubeIri ?? chartConfig.cubes[0].iri;
+          dimensions.find((d) => d.iri === iri)?.cubeIri ??
+          chartConfig.cubes[0].iri;
         const cube = chartConfig.cubes.find((c) => c.iri === cubeIri) as Cube;
-        if (isJoinById(layerComponent.componentIri)) {
+
+        if (isJoinById(iri)) {
           return {
-            dimensionIri:
-              getResolvedJoinByIri(cube, layerComponent.componentIri) ??
-              layerComponent.componentIri,
+            dimensionIri: getResolvedJoinByIri(cube, iri) ?? iri,
             cubeIri: cube.iri,
           };
         } else {
           return {
-            dimensionIri: layerComponent.componentIri,
+            dimensionIri: iri,
             cubeIri,
           };
         }
       }
 
-      return { dimensionIri: "", cubeIri: chartConfig.cubes[0].iri };
+      return {
+        dimensionIri: "",
+        cubeIri: chartConfig.cubes[0].iri,
+      };
     },
-    [chartConfig.cubes, componentsQuery.data, fields]
+    [chartConfig.cubes, componentsData, fields]
   );
   const { dimensionIri: areaDimensionIri, cubeIri: areaCubeIri } = useMemo(
     () => getLayerIris("areaLayer"),
