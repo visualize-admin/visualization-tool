@@ -1512,6 +1512,14 @@ msgid "publication.embed.iframe.caption"
 msgstr "Verwenden Sie diesen Code, um das Diagramm auf einer Webseite einzubetten"
 
 #: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.remove-border"
+msgstr "Rand entfernen"
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.remove-border.warn"
+msgstr "Zur Einbettung von Visualisierungen in Systeme ohne Rand."
+
+#: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.responsive"
 msgstr "Anpassungsfähiges iframe"
 
