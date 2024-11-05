@@ -1272,6 +1272,10 @@ msgstr "Stato"
 msgid "footer.tutorials"
 msgstr "Tutorials"
 
+#: app/components/footer.tsx
+msgid "footer.version.change-log"
+msgstr "Registro modifiche"
+
 #: app/components/hint.tsx
 msgid "hint.chartunexpected.message"
 msgstr "Si è verificato un errore imprevisto durante la visualizzazione di questo grafico."
