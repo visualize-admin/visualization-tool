@@ -1,3 +1,4 @@
+import { useMediaQuery, useTheme } from "@mui/material";
 import { extent, group, rollup, sum } from "d3-array";
 import {
   ScaleLinear,
@@ -352,6 +353,9 @@ const useAreasState = (
   xScaleTimeRange.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
 
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
   /** Tooltip */
   const getAnnotationInfo = useCallback(
     (datum: Observation): TooltipInfo => {
@@ -372,18 +376,21 @@ const useAreasState = (
         formatNumber,
       });
       const xAnchor = xScale(getX(datum));
-      const yAnchor = normalize
+      const yNormalized = normalize
         ? yScale.range()[0] * 0.5
         : yScale(sum(yValues) * (fields.segment ? 0.5 : 1));
+      const yAnchor = isMobile ? chartHeight : yNormalized;
 
       return {
         xAnchor,
         yAnchor,
-        placement: getCenteredTooltipPlacement({
-          chartWidth,
-          xAnchor,
-          topAnchor: !fields.segment,
-        }),
+        placement: isMobile
+          ? { x: "center", y: "bottom" }
+          : getCenteredTooltipPlacement({
+              chartWidth,
+              xAnchor,
+              topAnchor: !fields.segment,
+            }),
         xValue: timeFormatUnit(getX(datum), xDimension.timeUnit),
         datum: {
           label: fields.segment && getSegmentAbbreviationOrLabel(datum),
@@ -420,6 +427,8 @@ const useAreasState = (
       normalize,
       getIdentityY,
       chartWidth,
+      chartHeight,
+      isMobile,
     ]
   );
 
