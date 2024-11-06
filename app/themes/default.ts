@@ -19,6 +19,11 @@ swissFederalThemeDark.logos = {
   desktop: "/images/federal-dark-md.svg",
 };
 
+shleswigTheme.logos = {
+  mobile: "/images/schleswig-xs.svg",
+  desktop: "/images/schleswig-md.svg",
+};
+
 const themeModule = {
   themes: {
     shleswig: shleswigTheme,
