@@ -1270,21 +1270,23 @@ export const configuratorStateMigrations: Migration[] = [
         ...config,
         version: "3.5.0",
         dashboardFilters: {
-          timeRange: {
-            active: oldTimeRangeFilter?.active ?? false,
-            timeUnit: "",
-            presets: {
-              from: oldTimeRangeFilter?.from ?? "",
-              to: oldTimeRangeFilter?.to ?? "",
-            },
-          } ?? {
-            active: false,
-            timeUnit: "",
-            presets: {
-              from: "",
-              to: "",
-            },
-          },
+          timeRange: oldTimeRangeFilter
+            ? {
+                active: oldTimeRangeFilter.active,
+                timeUnit: "",
+                presets: {
+                  from: oldTimeRangeFilter.from,
+                  to: oldTimeRangeFilter.to,
+                },
+              }
+            : {
+                active: false,
+                timeUnit: "",
+                presets: {
+                  from: "",
+                  to: "",
+                },
+              },
         },
       };
       return newConfig;

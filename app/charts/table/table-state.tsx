@@ -359,15 +359,15 @@ const useTableState = (
           const absMinValue =
             min(chartData, (d) =>
               d[iri] !== null ? Math.abs(d[iri] as number) : 0
-            ) || 0;
+            ) ?? 0;
           const absMaxValue =
             max(chartData, (d) =>
               d[iri] !== null ? Math.abs(d[iri] as number) : 1
-            ) || 1;
+            ) ?? 1;
           const maxAbsoluteValue = Math.max(absMinValue, absMaxValue);
           const colorScale = scaleDiverging(
             getColorInterpolator((columnStyle as ColumnStyleHeatmap).palette)
-          ).domain([-maxAbsoluteValue, 0, maxAbsoluteValue] || [-1, 0, 1]);
+          ).domain([-maxAbsoluteValue, 0, maxAbsoluteValue]);
           return {
             ...common,
             colorScale,

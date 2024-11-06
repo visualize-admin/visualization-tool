@@ -25,7 +25,7 @@ const streamToString = async (stream: any) => {
     const chunks = [];
 
     for await (const chunk of stream) {
-      chunks.push(Buffer.from(chunk));
+      chunks.push(Buffer.from(chunk) as unknown as Uint8Array);
     }
 
     return Buffer.concat(chunks).toString("utf-8");
