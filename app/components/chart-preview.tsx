@@ -568,6 +568,7 @@ const ChartPreviewInner = ({
                   chartConfig={chartConfig}
                   dashboardFilters={state.dashboardFilters}
                   components={allComponents}
+                  showVisualizeLink
                 />
                 {/* Wrap in div for subgrid layout */}
                 <div className="debug-panel">

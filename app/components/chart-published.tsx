@@ -11,7 +11,7 @@ import { LoadingStateProvider } from "@/charts/shared/chart-loading-state";
 import { isUsingImputation } from "@/charts/shared/imputation";
 import { CHART_RESIZE_EVENT_TYPE } from "@/charts/shared/use-size";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
-import { ChartFootnotes } from "@/components/chart-footnotes";
+import { ChartFootnotes, VisualizeLink } from "@/components/chart-footnotes";
 import { ChartPanelLayout, ChartWrapper } from "@/components/chart-panel";
 import {
   ChartControls,
@@ -155,6 +155,7 @@ export const ChartPublished = ({
                 chartConfigs={state.chartConfigs}
                 renderChart={renderChart}
               />
+              <VisualizeLink />
             </Box>
           ) : (
             <>
@@ -219,6 +220,9 @@ const usePublishedChartStyles = makeStyles<Theme, { shrink: boolean }>(
         padding: theme.spacing(6),
       },
 
+      gap: 16,
+      display: "flex",
+      flexDirection: "column",
       backgroundColor: theme.palette.grey[200],
     },
   })
@@ -443,8 +447,9 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
               dashboardFilters={state.dashboardFilters}
               components={allComponents}
               showVisualizeLink={
-                state.chartConfigs.length === 1 &&
-                state.layout.type !== "dashboard"
+                state.layout.type !== "dashboard" ||
+                (state.layout.type === "dashboard" &&
+                  state.chartConfigs.length === 1)
               }
             />
           </InteractiveFiltersChartProvider>
