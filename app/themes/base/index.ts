@@ -1,7 +1,6 @@
 import { createTheme, ThemeOptions } from "@mui/material";
 
 import { components } from "./components";
-import { palette } from "./palette";
 import { shadows } from "./shadows";
 import { typography } from "./typography";
 
@@ -16,7 +15,6 @@ const shape = {
 };
 
 export const themeOptions: ThemeOptions = {
-  palette,
   breakpoints,
   spacing,
   shape,
