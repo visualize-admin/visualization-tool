@@ -12,6 +12,7 @@ shleswigTheme.logos = {
   mobile: "/images/schleswig-xs.svg",
   desktop: "/images/schleswig-md.svg",
 };
+console.log({ shleswigTheme });
 
 const swissFederalOptions = merge(baseOptions, sfTheme);
 const swissFederalTheme = createTheme(swissFederalOptions);
