@@ -155,7 +155,7 @@ export const ChartPublished = ({
                 chartConfigs={state.chartConfigs}
                 renderChart={renderChart}
               />
-              <VisualizeLink />
+              {state.chartConfigs.length !== 1 && <VisualizeLink />}
             </Box>
           ) : (
             <>
