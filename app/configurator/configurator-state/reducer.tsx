@@ -362,6 +362,7 @@ export const handleChartFieldChanged = (
   const {
     locale,
     field,
+    cubeIri,
     componentIri,
     selectedValues: actionSelectedValues,
   } = action.value;
@@ -382,11 +383,14 @@ export const handleChartFieldChanged = (
 
   if (f) {
     // Reset field properties, excluding componentIri.
-    (chartConfig.fields as GenericFields)[field] = { componentIri };
+    (chartConfig.fields as GenericFields)[field] = {
+      publishCubeIri: cubeIri,
+      componentIri,
+    };
   }
 
   const sideEffect = getChartFieldChangeSideEffect(chartConfig, field);
-  sideEffect?.(componentIri, {
+  sideEffect?.(componentIri, cubeIri, {
     chartConfig,
     dimensions,
     measures,

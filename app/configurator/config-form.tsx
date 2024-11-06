@@ -9,7 +9,11 @@ import React, {
   useMemo,
 } from "react";
 
-import { getFieldComponentIri, getInitialConfig } from "@/charts";
+import {
+  getFieldComponentIri,
+  getFieldPublishCubeIri,
+  getInitialConfig,
+} from "@/charts";
 import { EncodingFieldType } from "@/charts/chart-config-ui-options";
 import {
   ChartConfig,
@@ -19,6 +23,7 @@ import {
   getChartConfig,
   isComboChartConfig,
 } from "@/config-types";
+import { SEP } from "@/configurator/components/chart-options-selector";
 import {
   getChartOptionField,
   GetConfiguratorStateAction,
@@ -99,11 +104,11 @@ export const useChartFieldField = ({
   const locale = useLocale();
   const handleChange = useEvent(async (e: SelectChangeEvent<unknown>) => {
     if (e.target.value !== FIELD_VALUE_NONE) {
-      const dimensionIri = e.target.value as string;
-      const dimension = components.find(
-        (c) => c.iri === dimensionIri
+      const [iri, cubeIri] = (e.target.value as string).split(SEP);
+      const component = components.find(
+        (c) => c.iri === iri && c.cubeIri === cubeIri
       ) as Component;
-      const hierarchy = (isMeasure(dimension) ? [] : dimension.hierarchy) ?? [];
+      const hierarchy = (isMeasure(component) ? [] : component.hierarchy) ?? [];
 
       /**
        * When there are multiple hierarchies, we only want to select leaves from
@@ -126,17 +131,18 @@ export const useChartFieldField = ({
         },
       });
 
-      dispatch({
+      return dispatch({
         type: "CHART_FIELD_CHANGED",
         value: {
           locale,
           field,
-          componentIri: dimensionIri,
+          cubeIri: component.cubeIri,
+          componentIri: iri,
           selectedValues: leaves,
         },
       });
-      return;
     }
+
     dispatch({
       type: "CHART_FIELD_DELETED",
       value: {
@@ -150,7 +156,9 @@ export const useChartFieldField = ({
 
   if (isConfiguring(state)) {
     const chartConfig = getChartConfig(state);
-    value = getFieldComponentIri(chartConfig.fields, field) ?? FIELD_VALUE_NONE;
+    const iri = getFieldComponentIri(chartConfig.fields, field);
+    const publishCubeIri = getFieldPublishCubeIri(chartConfig.fields, field);
+    value = iri ? `${iri}${SEP}${publishCubeIri}` : FIELD_VALUE_NONE;
   }
 
   return {

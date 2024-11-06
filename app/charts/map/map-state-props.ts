@@ -65,7 +65,6 @@ export const useMapStateVariables = (
   const { getValue: getSymbol, getLabel: getSymbolLabel } =
     useDimensionWithAbbreviations(symbolLayerDimension, {
       observations,
-      field: symbolLayer,
     });
 
   return {

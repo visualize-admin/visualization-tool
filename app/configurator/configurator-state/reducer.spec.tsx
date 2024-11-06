@@ -605,6 +605,7 @@ describe("handleChartFieldChanged", () => {
         value: {
           locale: "en",
           field: "symbolLayer",
+          cubeIri: "https://first-dataset",
           componentIri: "symbolLayerIri",
         },
       })
@@ -681,6 +682,7 @@ describe("colorMapping", () => {
       value: {
         locale: "en",
         field: "segment",
+        cubeIri: "",
         componentIri: "newAreaLayerColorIri",
       },
     });

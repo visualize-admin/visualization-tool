@@ -20,15 +20,18 @@ export const DEFAULT_FIXED_COLOR_FIELD: FixedColorField = {
 };
 
 export const getDefaultCategoricalColorField = ({
+  cubeIri,
   iri,
   palette,
   dimensionValues,
 }: {
+  cubeIri: string;
   iri: string;
   palette: string;
   dimensionValues: DimensionValue[];
 }): CategoricalColorField => ({
   type: "categorical",
+  publishCubeIri: cubeIri,
   componentIri: iri,
   palette,
   colorMapping: mapValueIrisToColor({
@@ -39,13 +42,16 @@ export const getDefaultCategoricalColorField = ({
 });
 
 export const getDefaultNumericalColorField = ({
+  cubeIri,
   iri,
   colorPalette = "oranges",
 }: {
+  cubeIri: string;
   iri: string;
   colorPalette?: PaletteType;
 }): NumericalColorField => ({
   type: "numerical",
+  publishCubeIri: cubeIri,
   componentIri: iri,
   palette: colorPalette,
   scaleType: "continuous",

@@ -24,7 +24,6 @@ import {
   CategoricalColorField,
   ComboChartConfig,
   DashboardFiltersConfig,
-  GenericField,
   getChartConfigFilters,
   isComboChartConfig,
   NumericalColorField,
@@ -309,14 +308,16 @@ export const usePlottableData = (
   return useMemo(() => data.filter(isPlottable), [data, isPlottable]);
 };
 
-export const useDimensionWithAbbreviations = (
+export const useDimensionWithAbbreviations = <
+  T extends { useAbbreviations?: boolean },
+>(
   dimension: Dimension | undefined,
   {
     observations,
     field,
   }: {
     observations: Observation[];
-    field?: GenericField;
+    field?: T;
   }
 ) => {
   const { getAbbreviationOrLabelByValue, abbreviationOrLabelLookup } =

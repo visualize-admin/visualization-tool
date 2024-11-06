@@ -18,7 +18,7 @@ type Migration = {
   down: (config: any, migrationProps?: any) => any;
 };
 
-export const CHART_CONFIG_VERSION = "3.4.0";
+export const CHART_CONFIG_VERSION = "4.0.0";
 
 export const chartConfigMigrations: Migration[] = [
   {
@@ -950,6 +950,99 @@ export const chartConfigMigrations: Migration[] = [
       });
     },
   },
+  {
+    description: `ALL {
+      + cubeIri in fields
+    }`,
+    from: "3.4.0",
+    to: "4.0.0",
+    up: (config) => {
+      const newConfig = { ...config, version: "4.0.0" };
+
+      return produce(newConfig, (draft: any) => {
+        const publishCubeIri = draft.cubes[0].publishIri;
+
+        for (const fieldKey of Object.keys(draft.fields)) {
+          const field = draft.fields[fieldKey];
+
+          if (field.componentIri) {
+            field.publishCubeIri = publishCubeIri;
+          }
+
+          if (field.measureIri) {
+            field.measurePublishCubeIri = publishCubeIri;
+          }
+
+          if (field.componentIris) {
+            field.publishCubeIris = field.componentIris.map(
+              () => publishCubeIri
+            );
+          }
+
+          if (field.leftAxisComponentIri) {
+            field.leftAxisPublishCubeIri = publishCubeIri;
+          }
+
+          if (field.rightAxisComponentIri) {
+            field.rightAxisPublishCubeIri = publishCubeIri;
+          }
+
+          if (field.lineComponentIri) {
+            field.linePublishCubeIri = publishCubeIri;
+          }
+
+          if (field.columnComponentIri) {
+            field.columnPublishCubeIri = publishCubeIri;
+          }
+
+          if (field.color?.componentIri) {
+            field.color.publishCubeIri = publishCubeIri;
+          }
+        }
+      });
+    },
+    down: (config) => {
+      const newConfig = { ...config, version: "3.4.0" };
+
+      return produce(newConfig, (draft: any) => {
+        for (const fieldKey of Object.keys(draft.fields)) {
+          const field = draft.fields[fieldKey];
+
+          if (field.cubeIri) {
+            delete field.cubeIri;
+          }
+
+          if (field.measureCubeIri) {
+            delete field.measureCubeIri;
+          }
+
+          if (field.cubeIris) {
+            delete field.cubeIris;
+          }
+
+          if (field.leftAxisCubeIri) {
+            delete field.leftAxisCubeIri;
+          }
+
+          if (field.rightAxisCubeIri) {
+            delete field.rightAxisCubeIri;
+          }
+
+          if (field.lineCubeIri) {
+            delete field.lineCubeIri;
+          }
+
+          if (field.columnCubeIri) {
+            delete field.columnCubeIri;
+          }
+
+          if (field.color?.cubeIri) {
+            delete field.color.cubeIri;
+          }
+        }
+      });
+    },
+  },
 ];
 
 export const migrateChartConfig = makeMigrate<ChartConfig>(
@@ -959,7 +1052,7 @@ export const migrateChartConfig = makeMigrate<ChartConfig>(
   }
 );
 
-export const CONFIGURATOR_STATE_VERSION = "3.8.0";
+export const CONFIGURATOR_STATE_VERSION = "4.0.0";
 
 export const configuratorStateMigrations: Migration[] = [
   {
@@ -1453,6 +1546,45 @@ export const configuratorStateMigrations: Migration[] = [
         ) {
           delete draft.layout.layoutsMetadata;
         }
+      });
+    },
+  },
+  {
+    description: "ALL (bump ChartConfig version)",
+    from: "3.8.0",
+    to: "4.0.0",
+    up: (config) => {
+      const newConfig = { ...config, version: "4.0.0" };
+
+      return produce(newConfig, (draft: any) => {
+        const chartConfigs: any[] = [];
+
+        for (const chartConfig of draft.chartConfigs) {
+          const migratedChartConfig = migrateChartConfig(chartConfig, {
+            migrationProps: draft,
+            toVersion: "4.0.0",
+          });
+          chartConfigs.push(migratedChartConfig);
+        }
+
+        draft.chartConfigs = chartConfigs;
+      });
+    },
+    down: (config) => {
+      const newConfig = { ...config, version: "3.8.0" };
+
+      return produce(newConfig, (draft: any) => {
+        const chartConfigs: any[] = [];
+
+        for (const chartConfig of draft.chartConfigs) {
+          const migratedChartConfig = migrateChartConfig(chartConfig, {
+            migrationProps: draft,
+            toVersion: "3.4.0",
+          });
+          chartConfigs.push(migratedChartConfig);
+        }
+
+        draft.chartConfigs = chartConfigs;
       });
     },
   },

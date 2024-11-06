@@ -4,10 +4,12 @@ import { CHART_CONFIG_VERSION } from "@/utils/chart-config/versioning";
 
 export const columnFields = {
   x: {
+    publishCubeIri: "http://environment.ld.admin.ch/foen/px/0703010000_103",
     componentIri:
       "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1",
   },
   y: {
+    publishCubeIri: "http://environment.ld.admin.ch/foen/px/0703010000_103",
     componentIri:
       "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/1",
   },

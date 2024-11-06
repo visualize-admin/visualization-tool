@@ -249,10 +249,12 @@ describe("chart type switch", () => {
       },
       fields: {
         x: {
+          publishCubeIri: "https://environment.ld.admin.ch/foen/ubd0104",
           componentIri:
             "https://environment.ld.admin.ch/foen/ubd0104/parametertype",
         },
         y: {
+          publishCubeIri: "https://environment.ld.admin.ch/foen/ubd0104",
           componentIri: "https://environment.ld.admin.ch/foen/ubd0104/value",
         },
       },

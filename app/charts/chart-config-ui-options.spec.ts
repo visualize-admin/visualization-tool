@@ -9,7 +9,7 @@ jest.mock("../rdf/extended-cube", () => ({
 describe("defaultSegmentOnChange", () => {
   it("should not modify filters if selected values are empty", () => {
     const filters = { iri: { type: "single", value: "value" } };
-    defaultSegmentOnChange("iri", {
+    defaultSegmentOnChange("iri", "cubeIri", {
       field: "segment",
       chartConfig: { filters, fields: {} } as any as ColumnConfig,
       dimensions: [],
@@ -22,7 +22,7 @@ describe("defaultSegmentOnChange", () => {
 
   it("should correctly modify segment", () => {
     const chartConfig = { fields: {} } as any as ScatterPlotConfig;
-    defaultSegmentOnChange("iri", {
+    defaultSegmentOnChange("iri", "cubeIri", {
       field: "segment",
       chartConfig,
       dimensions: [],
@@ -34,6 +34,7 @@ describe("defaultSegmentOnChange", () => {
     expect(chartConfig.fields.segment).toEqual(
       expect.objectContaining({
         componentIri: "iri",
+        cubeIri: "cubeIri",
         palette: DEFAULT_CATEGORICAL_PALETTE_NAME,
       })
     );

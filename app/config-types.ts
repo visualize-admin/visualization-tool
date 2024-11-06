@@ -210,7 +210,7 @@ const ColorMapping = t.record(t.string, t.string);
 export type ColorMapping = t.TypeOf<typeof ColorMapping>;
 
 const GenericField = t.intersection([
-  t.type({ componentIri: t.string }),
+  t.type({ publishCubeIri: t.string, componentIri: t.string }),
   t.partial({ useAbbreviations: t.boolean }),
 ]);
 export type GenericField = t.TypeOf<typeof GenericField>;
@@ -505,6 +505,7 @@ export type ColumnStyleHeatmap = t.TypeOf<typeof ColumnStyleHeatmap>;
 export type ColumnStyleBar = t.TypeOf<typeof ColumnStyleBar>;
 
 const TableColumn = t.type({
+  publishCubeIri: t.string,
   componentIri: t.string,
   componentType: ComponentType,
   index: t.number,
@@ -573,6 +574,7 @@ export type FixedColorField = t.TypeOf<typeof FixedColorField>;
 const CategoricalColorField = t.intersection([
   t.type({
     type: t.literal("categorical"),
+    publishCubeIri: t.string,
     componentIri: t.string,
     palette: t.string,
     colorMapping: ColorMapping,
@@ -586,6 +588,7 @@ export type CategoricalColorField = t.TypeOf<typeof CategoricalColorField>;
 const NumericalColorField = t.intersection([
   t.type({
     type: t.literal("numerical"),
+    publishCubeIri: t.string,
     componentIri: t.string,
     palette: t.union([DivergingPaletteType, SequentialPaletteType]),
   }),
@@ -614,13 +617,16 @@ export type ColorField =
   | NumericalColorField;
 
 const MapAreaLayer = t.type({
+  publishCubeIri: t.string,
   componentIri: t.string,
   color: t.union([CategoricalColorField, NumericalColorField]),
 });
 export type MapAreaLayer = t.TypeOf<typeof MapAreaLayer>;
 
 const MapSymbolLayer = t.type({
+  publishCubeIri: t.string,
   componentIri: t.string,
+  measurePublishCubeIri: t.string,
   // symbol radius (size)
   measureIri: t.string,
   color: t.union([FixedColorField, CategoricalColorField, NumericalColorField]),
@@ -634,6 +640,7 @@ const BaseLayer = t.type({
 });
 export type BaseLayer = t.TypeOf<typeof BaseLayer>;
 
+// TODO: add useAbbreviations to all fields
 const MapFields = t.partial({
   areaLayer: MapAreaLayer,
   symbolLayer: MapSymbolLayer,
@@ -658,6 +665,7 @@ export type MapConfig = t.TypeOf<typeof MapConfig>;
 const ComboLineSingleFields = t.type({
   x: GenericField,
   y: t.type({
+    publishCubeIris: t.array(t.string),
     componentIris: t.array(t.string),
     palette: t.string,
     colorMapping: ColorMapping,
@@ -681,7 +689,9 @@ export type ComboLineSingleConfig = t.TypeOf<typeof ComboLineSingleConfig>;
 const ComboLineDualFields = t.type({
   x: GenericField,
   y: t.type({
+    leftAxisPublishCubeIri: t.string,
     leftAxisComponentIri: t.string,
+    rightAxisPublishCubeIri: t.string,
     rightAxisComponentIri: t.string,
     palette: t.string,
     colorMapping: ColorMapping,
@@ -705,8 +715,10 @@ export type ComboLineDualConfig = t.TypeOf<typeof ComboLineDualConfig>;
 const ComboLineColumnFields = t.type({
   x: GenericField,
   y: t.type({
+    lineCubeIri: t.string,
     lineComponentIri: t.string,
     lineAxisOrientation: t.union([t.literal("left"), t.literal("right")]),
+    columnCubeIri: t.string,
     columnComponentIri: t.string,
     palette: t.string,
     colorMapping: ColorMapping,

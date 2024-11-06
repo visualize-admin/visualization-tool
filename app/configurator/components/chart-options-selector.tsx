@@ -226,6 +226,8 @@ const ActiveFieldSwitch = (props: ActiveFieldSwitchProps) => {
   );
 };
 
+export const SEP = "___";
+
 type EncodingOptionsPanelProps = {
   encoding: EncodingSpec;
   chartConfig: ChartConfig;
@@ -292,7 +294,7 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
       dimensions,
       measures,
     }).map((d) => ({
-      value: d.iri,
+      value: `${d.iri}${SEP}${chartConfig.cubes.find((cube) => cube.iri === d.cubeIri)?.publishIri}`,
       label: getComponentLabel(d),
       disabled:
         ((encoding.exclusive === undefined || encoding.exclusive === true) &&
@@ -300,6 +302,7 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
         isStandardErrorDimension(d),
     }));
   }, [
+    chartConfig.cubes,
     dimensions,
     encoding.componentTypes,
     encoding.exclusive,

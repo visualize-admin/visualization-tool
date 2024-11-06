@@ -67,6 +67,7 @@ export type ConfiguratorStateAction =
       value: {
         locale: Locale;
         field: EncodingFieldType;
+        cubeIri: string;
         componentIri: string;
         selectedValues?: $FixMe[];
       };

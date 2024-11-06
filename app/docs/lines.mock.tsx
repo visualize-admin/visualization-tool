@@ -25,16 +25,20 @@ const interactiveFiltersConfig: InteractiveFiltersConfig = {
     type: "identity",
   },
 };
+
 export const fields = {
   x: {
+    publishCubeIri: "http://environment.ld.admin.ch/foen/px/0703010000_103",
     componentIri:
       "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/0",
   },
   y: {
+    publishCubeIri: "http://environment.ld.admin.ch/foen/px/0703010000_103",
     componentIri:
       "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/0",
   },
   segment: {
+    publishCubeIri: "http://environment.ld.admin.ch/foen/px/0703010000_103",
     componentIri:
       "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/3",
     palette: "category10",
@@ -63,6 +67,7 @@ export const fields = {
     },
   },
 };
+
 export const chartConfig: LineConfig = {
   key: "line",
   version: CHART_CONFIG_VERSION,
