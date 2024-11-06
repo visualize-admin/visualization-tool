@@ -92,7 +92,6 @@ const initFromHost = (host: string) => {
     isVercelPreviewHost(host)
   ) {
     setDefaultFlag("configurator.add-dataset.shared", true);
-    setDefaultFlag("layouter.dashboard.shared-filters", true);
   }
 };
 

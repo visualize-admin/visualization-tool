@@ -52,7 +52,6 @@ import {
   TemporalDimension,
   TemporalEntityDimension,
 } from "@/domain/data";
-import { useFlag } from "@/flags";
 import { useTimeFormatLocale, useTimeFormatUnit } from "@/formatters";
 import { useConfigsCubeComponents } from "@/graphql/hooks";
 import { useLocale } from "@/src";
@@ -60,12 +59,11 @@ import { useDashboardInteractiveFilters } from "@/stores/interactive-filters";
 import { getTimeFilterOptions } from "@/utils/time-filter-options";
 
 export const LayoutConfigurator = () => {
-  const sharedFiltersFlag = useFlag("layouter.dashboard.shared-filters");
   return (
     <>
       <LayoutAnnotator />
       <LayoutLayoutConfigurator />
-      {sharedFiltersFlag ? <LayoutSharedFiltersConfigurator /> : null}
+      <LayoutSharedFiltersConfigurator />
     </>
   );
 };

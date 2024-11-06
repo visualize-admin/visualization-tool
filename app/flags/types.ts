@@ -5,8 +5,6 @@ export type FlagName =
   | "debug"
   /** Whether we can add dataset from shared dimensions */
   | "configurator.add-dataset.shared"
-  /** Whether we can use shared filters on dashboard layout */
-  | "layouter.dashboard.shared-filters"
   /** Whether server side cache is disabled */
   | "server-side-cache.disable"
   /** The GraphQL endpoint, is used for testing purposes */
