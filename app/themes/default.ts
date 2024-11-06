@@ -9,6 +9,16 @@ const swissFederalTheme = createTheme(baseTheme, sfTheme);
 const shleswigTheme = createTheme(baseTheme, shTheme);
 const swissFederalThemeDark = createTheme(baseTheme, sfTheme, sfDarkTheme);
 
+swissFederalTheme.logos = {
+  mobile: "/images/federal-xs.svg",
+  desktop: "/images/federal-md.svg",
+};
+
+swissFederalThemeDark.logos = {
+  mobile: "/images/federal-dark-xs.svg",
+  desktop: "/images/federal-dark-md.svg",
+};
+
 const themeModule = {
   themes: {
     shleswig: shleswigTheme,

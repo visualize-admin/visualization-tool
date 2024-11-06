@@ -9,6 +9,10 @@ export interface ThemeModule {
 declare module "@mui/material" {
   interface Theme {
     dashed: true;
+    logos: {
+      mobile: string;
+      desktop: string;
+    };
   }
 }
 
