@@ -9,7 +9,7 @@ import {
 import { useChartState } from "@/charts/shared/chart-state";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
-import { theme } from "@/themes/federal";
+import { theme } from "@/themes/base";
 import { getTextWidth } from "@/utils/get-text-width";
 
 import { TITLE_VPADDING } from "./combo-line-container";

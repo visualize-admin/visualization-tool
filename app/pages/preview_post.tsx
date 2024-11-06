@@ -6,10 +6,10 @@ import { useState } from "react";
 
 import { ChartPublished } from "@/components/chart-published";
 import { GraphqlProvider } from "@/graphql/GraphqlProvider";
-import { Locale, defaultLocale, i18n } from "@/locales/locales";
+import { defaultLocale, i18n, Locale } from "@/locales/locales";
 import { LocaleProvider } from "@/locales/use-locale";
 import { ConfiguratorStateProvider } from "@/src";
-import * as federalTheme from "@/themes/federal";
+import * as federalTheme from "@/themes/base";
 import { migrateConfiguratorState } from "@/utils/chart-config/versioning";
 import { runMiddleware } from "@/utils/run-middleware";
 

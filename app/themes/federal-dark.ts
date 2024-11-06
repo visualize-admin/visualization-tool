@@ -1,9 +1,9 @@
-import { createTheme } from "@mui/material/styles";
+import { ThemeOptions } from "@mui/material";
 
 /**
  * Theme conforming to the Swiss Federal CD guidelines
  */
-export const theme = createTheme({
+export const theme: ThemeOptions = {
   palette: {
     mode: "dark",
     primary: {
@@ -77,4 +77,4 @@ export const theme = createTheme({
       900: "#ffffff",
     },
   },
-});
+};

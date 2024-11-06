@@ -1,4 +1,4 @@
-import { createTheme } from "@mui/material/styles";
+import { createTheme, ThemeOptions } from "@mui/material";
 
 import { components } from "./components";
 import { palette } from "./palette";
@@ -15,7 +15,7 @@ const shape = {
   borderRadius: 2,
 };
 
-export const theme = createTheme({
+export const themeOptions: ThemeOptions = {
   palette,
   breakpoints,
   spacing,
@@ -23,4 +23,6 @@ export const theme = createTheme({
   shadows,
   components,
   typography,
-});
+};
+
+export const theme = createTheme(themeOptions);

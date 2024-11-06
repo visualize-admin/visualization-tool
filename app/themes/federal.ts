@@ -1,4 +1,4 @@
-import { createTheme } from "@mui/material/styles";
+import { ThemeOptions } from "@mui/material";
 
 import { theme as baseTheme } from "@/themes/base";
 
@@ -7,7 +7,7 @@ import { createTypographyVariant } from "./utils";
 /**
  * Theme conforming to the Swiss Federal CD guidelines
  */
-export const theme = createTheme({
+export const theme: ThemeOptions = {
   palette: {
     primary: {
       light: "#d8e8ef",
@@ -170,7 +170,7 @@ export const theme = createTheme({
             `,
     },
   },
-});
+};
 
 /**
  * Load these fonts early using <link rel="preload" />
