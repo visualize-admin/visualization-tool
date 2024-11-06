@@ -11,6 +11,10 @@ You can also check the
 
 # Unreleased
 
+Nothing yet.
+
+# [4.9.4] - 2024-11-06
+
 - Features
   - Removed a flag for shared dashboard filters
 
