@@ -1,4 +1,4 @@
-import { Box, Theme, useMediaQuery, useTheme } from "@mui/material";
+import { Box, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 
 import { ComboLineColumnState } from "@/charts/combo/combo-line-column-state";
@@ -13,6 +13,7 @@ import {
 import { useInteraction } from "@/charts/shared/use-interaction";
 import { Margins } from "@/charts/shared/use-size";
 import { Observation } from "@/domain/data";
+import { useIsMobile } from "@/utils/use-is-mobile";
 
 type RulerProps = {
   rotate?: boolean;
@@ -95,8 +96,7 @@ export const RulerContent = (props: RulerContentProps) => {
   const { rotate, xValue, chartHeight, margins, xAnchor } = props;
   const classes = useStyles({ rotate });
 
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isMobile = useIsMobile();
 
   return (
     <>
