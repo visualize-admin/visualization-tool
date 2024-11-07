@@ -103,7 +103,9 @@ const useStyles = makeStyles<
     gridTemplateAreas: `". banner ."`,
     minHeight: BANNER_HEIGHT,
     marginTop: BANNER_MARGIN_TOP,
-    backgroundColor: theme.palette.primary.light,
+    backgroundColor:
+      theme.palette.component?.banner?.background ??
+      theme.palette.primary.light,
   },
   panelBanner: {
     maxWidth: 1400,
@@ -117,11 +119,13 @@ const useStyles = makeStyles<
     maxWidth: 720,
   },
   panelBannerTitle: {
-    color: theme.palette.grey[700],
+    color:
+      theme.palette.component?.banner?.foreground ?? theme.palette.grey[700],
     marginBottom: theme.spacing(4),
   },
   panelBannerDescription: {
-    color: theme.palette.grey[600],
+    color:
+      theme.palette.component?.banner?.foreground ?? theme.palette.grey[600],
     marginBottom: theme.spacing(3),
   },
   filters: {

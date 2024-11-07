@@ -53,6 +53,7 @@ declare module "@mui/material" {
     hint?: PaletteColorOptions;
     component?: {
       header?: ComponentColor;
+      banner?: ComponentColor;
     };
   }
 
@@ -79,6 +80,7 @@ declare module "@mui/material" {
     hint: PaletteColor;
     component?: {
       header?: ComponentColor;
+      banner?: ComponentColor;
     };
   }
 

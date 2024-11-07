@@ -91,6 +91,10 @@ export const theme: ThemeOptions = {
         background: "#E3E5ED",
         border: "#B4BAC0",
       },
+      banner: {
+        background: "#EDEEF2",
+        foreground: "#001E49",
+      },
     },
   },
   typography: {
