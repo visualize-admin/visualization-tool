@@ -383,6 +383,21 @@ const triangleXPos = (
   tooltipWidth: number,
   chartWidth: number
 ): number => {
+  if (chartWidth < tooltipWidth) {
+    const maxPosition = chartWidth + TRIANGLE_SIZE;
+
+    return Math.min(
+      Math.max(
+        value,
+        Math.min(
+          tooltipWidth / 2 - TRIANGLE_SIZE,
+          Math.min(chartWidth - tooltipWidth / 2 + TRIANGLE_SIZE, value)
+        )
+      ),
+      maxPosition
+    );
+  }
+
   const condition = chartWidth - tooltipWidth / 2 + TRIANGLE_SIZE < value;
 
   if (condition) {

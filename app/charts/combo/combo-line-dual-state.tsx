@@ -165,7 +165,9 @@ const useComboLineDualState = (
         };
       })
       .filter(truthy);
-    const yAnchor = isMobile ? chartHeight : mean(values.map((d) => d.yPos));
+    const yAnchor = isMobile
+      ? chartHeight + 32
+      : mean(values.map((d) => d.yPos));
     const placement: TooltipPlacement = isMobile
       ? { x: "center", y: "bottom" }
       : getCenteredTooltipPlacement({
