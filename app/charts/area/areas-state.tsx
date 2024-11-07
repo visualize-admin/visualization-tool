@@ -1,4 +1,3 @@
-import { useMediaQuery, useTheme } from "@mui/material";
 import { extent, group, rollup, sum } from "d3-array";
 import {
   ScaleLinear,
@@ -59,6 +58,7 @@ import {
   getSortingOrders,
   makeDimensionValueSorters,
 } from "@/utils/sorting-values";
+import { useIsMobile } from "@/utils/use-is-mobile";
 
 import { ChartProps } from "../shared/ChartProps";
 
@@ -353,8 +353,7 @@ const useAreasState = (
   xScaleTimeRange.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
 
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isMobile = useIsMobile();
 
   /** Tooltip */
   const getAnnotationInfo = useCallback(
@@ -376,10 +375,10 @@ const useAreasState = (
         formatNumber,
       });
       const xAnchor = xScale(getX(datum));
-      const yNormalized = normalize
+      const yDesktopAnchor = normalize
         ? yScale.range()[0] * 0.5
         : yScale(sum(yValues) * (fields.segment ? 0.5 : 1));
-      const yAnchor = isMobile ? chartHeight : yNormalized;
+      const yAnchor = isMobile ? chartHeight : yDesktopAnchor;
 
       return {
         xAnchor,
