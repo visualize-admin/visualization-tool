@@ -1390,12 +1390,20 @@ msgid "login.chart.edit"
 msgstr "Edit"
 
 #: app/login/components/profile-tables.tsx
+msgid "login.chart.embed"
+msgstr "Embed"
+
+#: app/login/components/profile-tables.tsx
 msgid "login.chart.preview"
 msgstr "Preview"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.rename"
 msgstr "Rename"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.chart.share"
+msgstr "Share"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.view"
