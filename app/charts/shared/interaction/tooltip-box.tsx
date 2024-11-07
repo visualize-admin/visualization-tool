@@ -9,7 +9,11 @@ import React, {
 } from "react";
 import ReactDOM from "react-dom";
 
-import { Margins } from "@/charts/shared/use-size";
+import { Margins, useSize } from "@/charts/shared/use-size";
+import { useIsMobile } from "@/utils/use-is-mobile";
+import { useResizeObserver } from "@/utils/use-resize-observer";
+
+import { useChartBounds } from "../chart-dimensions";
 
 const TRIANGLE_SIZE = 8;
 const TOOLTIP_OFFSET = 4;
@@ -123,19 +127,32 @@ export const TooltipBox = ({
 }: TooltipBoxProps) => {
   const triangle = mkTriangle(placement);
   const [pos, posRef] = usePosition();
+
+  const [tooltipRef, tooltipWidth] = useResizeObserver<HTMLDivElement>();
+
+  const isMobile = useIsMobile();
+  const { width, height } = useSize();
+  const { chartWidth } = useChartBounds(width, margins, height);
+
+  const tooltipX = isMobile
+    ? toolTipXBoundary(x!, tooltipWidth, chartWidth)
+    : x!;
+  const triangleX = triangleXPos(x!, tooltipWidth, chartWidth);
+
   return (
     <>
       <div ref={posRef} />
       <Portal>
         <Box
+          ref={tooltipRef}
           data-testid="chart-tooltip"
           style={{
             zIndex: 1301,
             position: "absolute",
-            left: x! + margins.left + pos.left,
+            left: tooltipX! + margins.left + pos.left,
             top: mxYOffset(y!, placement) + margins.top + pos.top,
-            pointerEvents: "none",
             transform: mkTranslation(placement),
+            pointerEvents: "none",
           }}
         >
           <Box
@@ -158,9 +175,9 @@ export const TooltipBox = ({
                 height: 0,
                 borderStyle: "solid",
                 top: triangle.top,
-                right: triangle.right,
                 bottom: triangle.bottom,
-                left: triangle.left,
+                left: isMobile ? triangleX : triangle.left,
+                right: !isMobile ? triangle.right : undefined,
                 borderWidth: triangle.borderWidth,
                 borderTopColor: triangle.borderTopColor,
                 borderRightColor: triangle.borderRightColor,
@@ -217,6 +234,7 @@ const mkXTranslation = (xP: Xplacement, yP: Yplacement): Xtranslation => {
         : `${TRIANGLE_SIZE + TOOLTIP_OFFSET}px`;
   }
 };
+
 const mkYTranslation = (yP: Yplacement): YTranslation =>
   yP === "top" ? "-100%" : yP === "middle" ? "-50%" : 0;
 
@@ -346,5 +364,40 @@ const mkTriangle = (p: TooltipPlacement) => {
         borderBottomColor: `transparent`,
         borderLeftColor: `transparent`,
       };
+  }
+};
+
+const toolTipXBoundary = (
+  value: number,
+  tooltipWidth: number,
+  chartWidth: number
+) => {
+  return Math.max(
+    tooltipWidth / 2 - TRIANGLE_SIZE,
+    Math.min(chartWidth - tooltipWidth / 2 + TRIANGLE_SIZE, value)
+  );
+};
+
+const triangleXPos = (
+  value: number,
+  tooltipWidth: number,
+  chartWidth: number
+): number => {
+  const condition = chartWidth - tooltipWidth / 2 + TRIANGLE_SIZE < value;
+
+  if (condition) {
+    const overflow = value - (chartWidth - tooltipWidth / 2 + TRIANGLE_SIZE);
+    const maxOverflow = tooltipWidth / 2 - TRIANGLE_SIZE;
+
+    const proportion = Math.min(overflow / maxOverflow, 1);
+
+    return (
+      tooltipWidth / 2 + proportion * (tooltipWidth / 2) - TRIANGLE_SIZE * 2
+    );
+  } else {
+    return Math.min(
+      tooltipWidth / 2 - TRIANGLE_SIZE,
+      Math.min(chartWidth - tooltipWidth / 2 + TRIANGLE_SIZE, value)
+    );
   }
 };
