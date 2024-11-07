@@ -34,6 +34,8 @@ declare module "@mui/material" {
   interface PaletteColorOptions {
     light?: string;
     main?: string;
+    contrastText?: string;
+    onLight?: string;
     hover?: string;
     active?: string;
     disabled?: string;
@@ -46,12 +48,14 @@ declare module "@mui/material" {
     alert?: PaletteColorOptions;
     organization?: PaletteColorOptions;
     category?: PaletteColorOptions;
+    termset?: PaletteColorOptions;
     brand?: PaletteColorOptions;
     hint?: PaletteColorOptions;
   }
 
   interface PaletteColor {
     hover?: string;
+    onLight?: string;
     disabled?: string;
     active?: string;
   }
@@ -61,6 +65,7 @@ declare module "@mui/material" {
     alert: PaletteColor;
     organization: PaletteColor;
     category: PaletteColor;
+    termset: PaletteColor;
     brand: PaletteColor;
     hint: PaletteColor;
   }

@@ -1,4 +1,4 @@
-import { BoxProps, Typography, TypographyProps, styled } from "@mui/material";
+import { BoxProps, styled, Typography, TypographyProps } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
@@ -20,16 +20,19 @@ const TagTypography = styled(Typography)(({ theme }) => ({
 
 const useStyles = makeStyles((theme: Theme) => ({
   themeType: {
-    backgroundColor: theme.palette.success.light,
+    backgroundColor: theme.palette.category?.light,
+    color: theme.palette.category?.onLight,
   },
   dimensionType: {
     backgroundColor: theme.palette.warning.light,
   },
   termsetType: {
-    backgroundColor: theme.palette.grey[200],
+    backgroundColor: theme.palette.termset?.light,
+    color: theme.palette.termset?.onLight,
   },
   organizationType: {
-    backgroundColor: theme.palette.primary.light,
+    backgroundColor: theme.palette.organization?.light,
+    color: theme.palette.organization?.onLight,
   },
   draftType: {},
   clickable: {

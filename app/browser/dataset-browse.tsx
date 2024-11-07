@@ -298,29 +298,26 @@ const defaultNavItemTheme: NavItemTheme = {
 
 const themeNavItemTheme: NavItemTheme = {
   activeBg: "category.main",
-  activeTextColor: "white",
-  textColor: "text.primary",
-  countColor: "category.main",
+  activeTextColor: "category.contrastText",
+  textColor: "category.onLight",
+  countColor: "category.onLight",
   countBg: "category.light",
 };
 
 const organizationNavItemTheme: NavItemTheme = {
   activeBg: "organization.main",
-  activeTextColor: "white",
-  textColor: "text.primary",
-  countColor: "organization.main",
+  activeTextColor: "organization.contrastText",
+  textColor: "organization.onLight",
+  countColor: "organization.onLight",
   countBg: "organization.light",
 };
 
 const termsetNavItemTheme: NavItemTheme = {
-  activeBg: "grey.300",
-  activeTextColor: "grey.900",
-  textColor: "grey.700",
-  countColor: "grey.800",
-  countBg: "grey.300",
-  closeColor: "grey.700",
-  showAllColor: "grey.600",
-  iconColor: "grey.700",
+  activeBg: "termset.main",
+  activeTextColor: "termset.contrastText",
+  textColor: "termset.onLight",
+  countColor: "termset.onLight",
+  countBg: "termset.light",
 };
 
 const NavChip = ({
@@ -636,7 +633,11 @@ const NavSection = ({
         >
           {icon}
         </Box>
-        <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+        <Typography
+          variant="body2"
+          sx={{ fontWeight: "bold" }}
+          color={navItemTheme.iconColor ?? navItemTheme.countColor}
+        >
           {label}
         </Typography>
       </NavSectionTitle>
@@ -874,8 +875,8 @@ export const SearchFilters = ({
         key="termsets"
         items={displayedTermsets}
         theme={{
-          backgroundColor: "grey.300",
-          borderColor: "grey.800",
+          backgroundColor: "termset.light",
+          borderColor: "termset.main",
         }}
         navItemTheme={termsetNavItemTheme}
         currentFilter={termsetFilter}
