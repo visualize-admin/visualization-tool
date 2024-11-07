@@ -22,6 +22,8 @@ export const useStyles = makeStyles<{}, {}, "chartContainer">(() => ({
   },
 }));
 
+const INTERACTIVE_TOGGLE_SPACING = 20;
+
 export const ChartContainer = ({ children }: { children: ReactNode }) => {
   const [state] = useConfiguratorState(hasChartConfigs);
   const isFreeCanvas = isLayoutingFreeCanvas(state);
@@ -71,6 +73,7 @@ export const ChartSvg = ({ children }: { children: ReactNode }) => {
       {interactiveFiltersConfig?.calculation.active && (
         <foreignObject
           width={width - margins.right}
+          y={INTERACTIVE_TOGGLE_SPACING}
           height="24"
           style={{ display: "flex", textAlign: "right" }}
         >
