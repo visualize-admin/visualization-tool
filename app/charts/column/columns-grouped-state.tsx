@@ -1,10 +1,10 @@
 import { extent, group, max, rollup, sum } from "d3-array";
 import {
   ScaleBand,
-  ScaleLinear,
-  ScaleOrdinal,
   scaleBand,
+  ScaleLinear,
   scaleLinear,
+  ScaleOrdinal,
   scaleOrdinal,
   scaleTime,
 } from "d3-scale";
@@ -34,7 +34,10 @@ import {
   InteractiveXTimeRangeState,
 } from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
-import { getCenteredTooltipPlacement } from "@/charts/shared/interaction/tooltip-box";
+import {
+  getCenteredTooltipPlacement,
+  TooltipPlacement,
+} from "@/charts/shared/interaction/tooltip-box";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useSize } from "@/charts/shared/use-size";
@@ -47,6 +50,7 @@ import {
   getSortingOrders,
   makeDimensionValueSorters,
 } from "@/utils/sorting-values";
+import { useIsMobile } from "@/utils/use-is-mobile";
 
 import { ChartProps } from "../shared/ChartProps";
 
@@ -359,6 +363,8 @@ const useColumnsGroupedState = (
   xScaleTimeRange.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
 
+  const isMobile = useIsMobile();
+
   // Tooltip
   const getAnnotationInfo = (datum: Observation): TooltipInfo => {
     const bw = xScale.bandwidth();
@@ -383,12 +389,14 @@ const useColumnsGroupedState = (
 
     const xAnchorRaw = (xScale(x) as number) + bw * 0.5;
     const [yMin, yMax] = extent(yValues, (d) => d ?? 0) as [number, number];
-    const yAnchor = yScale((yMin + yMax) * 0.5);
-    const placement = getCenteredTooltipPlacement({
-      chartWidth,
-      xAnchor: xAnchorRaw,
-      topAnchor: !fields.segment,
-    });
+    const yAnchor = isMobile ? chartHeight : yScale((yMin + yMax) * 0.5);
+    const placement: TooltipPlacement = isMobile
+      ? { x: "center", y: "bottom" }
+      : getCenteredTooltipPlacement({
+          chartWidth,
+          xAnchor: xAnchorRaw,
+          topAnchor: !fields.segment,
+        });
 
     const getError = (d: Observation) => {
       if (!showYStandardError || !getYError || getYError(d) == null) {

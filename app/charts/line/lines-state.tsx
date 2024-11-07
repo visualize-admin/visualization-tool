@@ -1,10 +1,10 @@
 import { extent, group, max } from "d3-array";
 import {
   ScaleLinear,
-  ScaleOrdinal,
-  ScaleTime,
   scaleLinear,
+  ScaleOrdinal,
   scaleOrdinal,
+  ScaleTime,
   scaleTime,
 } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
@@ -29,7 +29,10 @@ import {
   InteractiveXTimeRangeState,
 } from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
-import { getCenteredTooltipPlacement } from "@/charts/shared/interaction/tooltip-box";
+import {
+  getCenteredTooltipPlacement,
+  TooltipPlacement,
+} from "@/charts/shared/interaction/tooltip-box";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useSize } from "@/charts/shared/use-size";
@@ -46,6 +49,7 @@ import {
   getSortingOrders,
   makeDimensionValueSorters,
 } from "@/utils/sorting-values";
+import { useIsMobile } from "@/utils/use-is-mobile";
 
 import { ChartProps } from "../shared/ChartProps";
 
@@ -241,6 +245,8 @@ const useLinesState = (
   xScaleTimeRange.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
 
+  const isMobile = useIsMobile();
+
   // Tooltip
   const getAnnotationInfo = (datum: Observation): TooltipInfo => {
     const x = getX(datum);
@@ -257,7 +263,14 @@ const useLinesState = (
     const xAnchor = xScale(x);
     const yValues = tooltipValues.map(getY);
     const [yMin, yMax] = extent(yValues, (d) => d ?? 0) as [number, number];
-    const yAnchor = yScale((yMin + yMax) * 0.5);
+    const yAnchor = isMobile ? chartHeight : yScale((yMin + yMax) * 0.5);
+    const placement: TooltipPlacement = isMobile
+      ? { x: "center", y: "bottom" }
+      : getCenteredTooltipPlacement({
+          chartWidth,
+          xAnchor,
+          topAnchor: !fields.segment,
+        });
 
     const yValueFormatter = (value: number | null) =>
       formatNumberWithUnit(
@@ -277,11 +290,7 @@ const useLinesState = (
     return {
       xAnchor,
       yAnchor,
-      placement: getCenteredTooltipPlacement({
-        chartWidth,
-        xAnchor,
-        topAnchor: !fields.segment,
-      }),
+      placement,
       xValue: timeFormatUnit(getX(datum), xDimension.timeUnit),
       datum: {
         label: fields.segment && getSegmentAbbreviationOrLabel(datum),

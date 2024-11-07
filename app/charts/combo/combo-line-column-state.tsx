@@ -27,7 +27,10 @@ import {
   InteractiveXTimeRangeState,
 } from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
-import { getCenteredTooltipPlacement } from "@/charts/shared/interaction/tooltip-box";
+import {
+  getCenteredTooltipPlacement,
+  TooltipPlacement,
+} from "@/charts/shared/interaction/tooltip-box";
 import { getTickNumber } from "@/charts/shared/ticks";
 import { TICK_FONT_SIZE } from "@/charts/shared/use-chart-theme";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
@@ -38,6 +41,7 @@ import { useFormatFullDateAuto } from "@/formatters";
 import { TimeUnit } from "@/graphql/resolver-types";
 import { getTimeInterval } from "@/intervals";
 import { getTextWidth } from "@/utils/get-text-width";
+import { useIsMobile } from "@/utils/use-is-mobile";
 
 import { ChartProps } from "../shared/ChartProps";
 
@@ -151,6 +155,8 @@ const useComboLineColumnState = (
   const yScales = [yScale, yScaleLeft, yScaleRight];
   adjustScales(xScales, yScales, { chartWidth, chartHeight });
 
+  const isMobile = useIsMobile();
+
   // Tooltip
   const getAnnotationInfo = (d: Observation): TooltipInfo => {
     const x = getX(d);
@@ -172,17 +178,21 @@ const useComboLineColumnState = (
         };
       })
       .filter(truthy);
-    const yAnchor = mean(values.map((d) => d.yPos));
+    const yAnchor = isMobile ? chartHeight : mean(values.map((d) => d.yPos));
+    const placement: TooltipPlacement = isMobile
+      ? { x: "center", y: "bottom" }
+      : getCenteredTooltipPlacement({
+          chartWidth,
+          xAnchor: xScaled,
+          topAnchor: false,
+        });
+
     return {
       datum: { label: "", value: "0", color: schemeCategory10[0] },
       xAnchor: xScaled,
       yAnchor,
       xValue: timeFormatUnit(x, variables.xTimeUnit as TimeUnit),
-      placement: getCenteredTooltipPlacement({
-        chartWidth,
-        xAnchor: xScaled,
-        topAnchor: false,
-      }),
+      placement,
       values,
     } as TooltipInfo;
   };

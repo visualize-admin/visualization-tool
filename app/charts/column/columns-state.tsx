@@ -1,8 +1,8 @@
 import { extent, max, rollup, sum } from "d3-array";
 import {
   ScaleBand,
-  ScaleLinear,
   scaleBand,
+  ScaleLinear,
   scaleLinear,
   scaleTime,
 } from "d3-scale";
@@ -27,7 +27,10 @@ import {
   InteractiveXTimeRangeState,
 } from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
-import { getCenteredTooltipPlacement } from "@/charts/shared/interaction/tooltip-box";
+import {
+  getCenteredTooltipPlacement,
+  TooltipPlacement,
+} from "@/charts/shared/interaction/tooltip-box";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useSize } from "@/charts/shared/use-size";
@@ -42,6 +45,7 @@ import {
   getSortingOrders,
   makeDimensionValueSorters,
 } from "@/utils/sorting-values";
+import { useIsMobile } from "@/utils/use-is-mobile";
 
 import { ChartProps } from "../shared/ChartProps";
 
@@ -217,10 +221,22 @@ const useColumnsState = (
   xScaleTimeRange.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
 
+  const isMobile = useIsMobile();
+
   // Tooltip
   const getAnnotationInfo = (d: Observation): TooltipInfo => {
     const xAnchor = (xScale(getX(d)) as number) + xScale.bandwidth() * 0.5;
-    const yAnchor = yScale(Math.max(getY(d) ?? NaN, 0));
+    const yAnchor = isMobile
+      ? chartHeight
+      : yScale(Math.max(getY(d) ?? NaN, 0));
+    const placement: TooltipPlacement = isMobile
+      ? { x: "center", y: "bottom" }
+      : getCenteredTooltipPlacement({
+          chartWidth,
+          xAnchor,
+          topAnchor: !fields.segment,
+        });
+
     const xLabel = getXAbbreviationOrLabel(d);
 
     const yValueFormatter = (value: number | null) =>
@@ -243,11 +259,7 @@ const useColumnsState = (
     return {
       xAnchor,
       yAnchor,
-      placement: getCenteredTooltipPlacement({
-        chartWidth,
-        xAnchor,
-        topAnchor: !fields.segment,
-      }),
+      placement,
       xValue: xTimeUnit ? timeFormatUnit(xLabel, xTimeUnit) : xLabel,
       datum: {
         label: undefined,

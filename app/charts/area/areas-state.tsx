@@ -1,10 +1,10 @@
 import { extent, group, rollup, sum } from "d3-array";
 import {
   ScaleLinear,
-  ScaleOrdinal,
-  ScaleTime,
   scaleLinear,
+  ScaleOrdinal,
   scaleOrdinal,
+  ScaleTime,
   scaleTime,
 } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
@@ -40,7 +40,10 @@ import {
   InteractiveXTimeRangeState,
 } from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
-import { getCenteredTooltipPlacement } from "@/charts/shared/interaction/tooltip-box";
+import {
+  getCenteredTooltipPlacement,
+  TooltipPlacement,
+} from "@/charts/shared/interaction/tooltip-box";
 import {
   getStackedTooltipValueFormatter,
   getStackedYScale,
@@ -379,17 +382,18 @@ const useAreasState = (
         ? yScale.range()[0] * 0.5
         : yScale(sum(yValues) * (fields.segment ? 0.5 : 1));
       const yAnchor = isMobile ? chartHeight : yDesktopAnchor;
+      const placement: TooltipPlacement = isMobile
+        ? { x: "center", y: "bottom" }
+        : getCenteredTooltipPlacement({
+            chartWidth,
+            xAnchor,
+            topAnchor: !fields.segment,
+          });
 
       return {
         xAnchor,
         yAnchor,
-        placement: isMobile
-          ? { x: "center", y: "bottom" }
-          : getCenteredTooltipPlacement({
-              chartWidth,
-              xAnchor,
-              topAnchor: !fields.segment,
-            }),
+        placement,
         xValue: timeFormatUnit(getX(datum), xDimension.timeUnit),
         datum: {
           label: fields.segment && getSegmentAbbreviationOrLabel(datum),

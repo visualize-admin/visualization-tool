@@ -19,7 +19,10 @@ import {
   ChartStateData,
   CommonChartState,
 } from "@/charts/shared/chart-state";
-import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
+import {
+  TooltipInfo,
+  TooltipPlacement,
+} from "@/charts/shared/interaction/tooltip";
 import { TooltipScatterplot } from "@/charts/shared/interaction/tooltip-content";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useSize } from "@/charts/shared/use-size";
@@ -31,6 +34,7 @@ import {
   getSortingOrders,
   makeDimensionValueSorters,
 } from "@/utils/sorting-values";
+import { useIsMobile } from "@/utils/use-is-mobile";
 
 import { ChartProps } from "../shared/ChartProps";
 
@@ -178,12 +182,14 @@ const useScatterplotState = (
   xScale.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
 
+  const isMobile = useIsMobile();
+
   // Tooltip
   const getAnnotationInfo = (datum: Observation): TooltipInfo => {
     const xRef = xScale(getX(datum) ?? NaN);
     const yRef = yScale(getY(datum) ?? NaN);
     const xAnchor = xRef;
-    const yAnchor = yRef;
+    const yAnchor = isMobile ? chartHeight : yRef;
 
     const xPlacement =
       xAnchor < chartWidth * 0.33
@@ -199,10 +205,14 @@ const useScatterplotState = (
           ? "bottom"
           : "middle";
 
+    const placement: TooltipPlacement = isMobile
+      ? { x: "center", y: "bottom" }
+      : { x: xPlacement, y: yPlacement };
+
     return {
       xAnchor,
       yAnchor,
-      placement: { x: xPlacement, y: yPlacement },
+      placement,
       xValue: formatNumber(getX(datum)),
       tooltipContent: (
         <TooltipScatterplot
