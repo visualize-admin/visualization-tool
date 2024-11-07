@@ -62,11 +62,21 @@ export const theme: ThemeOptions = {
     },
     organization: {
       main: "#006699",
+      contrastText: "#FFFFFF",
+      onLight: "#001E49",
       light: "#d8e8ef", // same as primaryLight
     },
     category: {
       main: "#3c763d",
+      contrastText: "#FFFFFF",
+      onLight: "#001E49",
       light: "#DFF0D8", // same as successLight
+    },
+    termset: {
+      main: "#454545",
+      contrastText: "#FFFFFF",
+      onLight: "#001E49",
+      light: "#E5E5E5", // same as successLight
     },
     grey: {
       100: "#FFFFFF",
