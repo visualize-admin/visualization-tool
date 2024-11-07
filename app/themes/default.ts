@@ -6,15 +6,14 @@ import { preloadFonts as sfFonts, theme as sfTheme } from "@/themes/federal";
 import { theme as sfDarkTheme } from "@/themes/federal-dark";
 import { preloadFonts as shFonts, theme as shTheme } from "@/themes/schleswig";
 
-const schleswigOptions = merge(baseOptions, shTheme);
+const schleswigOptions = merge({ ...baseOptions }, shTheme);
 const shleswigTheme = createTheme(schleswigOptions);
 shleswigTheme.logos = {
   mobile: "/images/schleswig-xs.svg",
   desktop: "/images/schleswig-md.svg",
 };
-console.log({ shleswigTheme });
 
-const swissFederalOptions = merge(baseOptions, sfTheme);
+const swissFederalOptions = merge({ ...baseOptions }, sfTheme);
 const swissFederalTheme = createTheme(swissFederalOptions);
 swissFederalTheme.logos = {
   mobile: "/images/federal-xs.svg",

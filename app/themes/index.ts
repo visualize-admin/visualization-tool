@@ -51,6 +51,9 @@ declare module "@mui/material" {
     termset?: PaletteColorOptions;
     brand?: PaletteColorOptions;
     hint?: PaletteColorOptions;
+    component?: {
+      header?: ComponentColor;
+    };
   }
 
   interface PaletteColor {
@@ -58,6 +61,12 @@ declare module "@mui/material" {
     onLight?: string;
     disabled?: string;
     active?: string;
+  }
+
+  interface ComponentColor {
+    background?: string;
+    foreground?: string;
+    border?: string;
   }
 
   interface Palette {
@@ -68,6 +77,9 @@ declare module "@mui/material" {
     termset: PaletteColor;
     brand: PaletteColor;
     hint: PaletteColor;
+    component?: {
+      header?: ComponentColor;
+    };
   }
 
   interface TypographyPropsVariantOverrides {

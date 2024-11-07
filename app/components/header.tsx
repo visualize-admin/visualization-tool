@@ -50,7 +50,9 @@ const useHeaderStyles = makeStyles<Theme, { isConfiguring: boolean }>(
       maxWidth: ({ isConfiguring }) => (isConfiguring ? undefined : 1400),
       marginLeft: "auto",
       marginRight: "auto",
-      color: theme.palette.grey[700],
+      color:
+        theme.palette.component?.header?.foreground ?? theme.palette.grey[700],
+      backgroundColor: theme.palette.component?.header?.background,
     },
   })
 );
@@ -112,7 +114,7 @@ const MetadataMenu = ({ contentId }: { contentId?: string }) => {
 
 export const Logo = () => {
   const isDebug = useFlag("debug");
-  const { logos } = useTheme();
+  const { logos, palette } = useTheme();
   return (
     <Flex sx={{ order: [2, 1], alignItems: ["center", "flex-start"] }}>
       <NextLink href="/" passHref legacyBehavior>
@@ -142,7 +144,7 @@ export const Logo = () => {
             display: ["none", "block"],
             borderRightWidth: "1px",
             borderRightStyle: "solid",
-            borderRightColor: "grey.300",
+            borderRightColor: palette.component?.header?.border ?? "grey.300",
             color: "grey.900",
           }}
         >

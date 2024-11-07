@@ -86,6 +86,12 @@ export const theme: ThemeOptions = {
       800: "#2F3947",
       900: "#212529",
     },
+    component: {
+      header: {
+        background: "#E3E5ED",
+        border: "#B4BAC0",
+      },
+    },
   },
   typography: {
     fontFamily: ["Avenir LT Pro", baseTheme.typography.fontFamily].join(","),
