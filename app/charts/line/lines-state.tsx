@@ -31,7 +31,7 @@ import {
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import {
   getCenteredTooltipPlacement,
-  TooltipPlacement,
+  MOBILE_TOOLTIP_PLACEMENT,
 } from "@/charts/shared/interaction/tooltip-box";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
@@ -264,8 +264,8 @@ const useLinesState = (
     const yValues = tooltipValues.map(getY);
     const [yMin, yMax] = extent(yValues, (d) => d ?? 0) as [number, number];
     const yAnchor = isMobile ? chartHeight : yScale((yMin + yMax) * 0.5);
-    const placement: TooltipPlacement = isMobile
-      ? { x: "center", y: "bottom" }
+    const placement = isMobile
+      ? MOBILE_TOOLTIP_PLACEMENT
       : getCenteredTooltipPlacement({
           chartWidth,
           xAnchor,

@@ -19,10 +19,7 @@ import {
   ChartStateData,
   CommonChartState,
 } from "@/charts/shared/chart-state";
-import {
-  TooltipInfo,
-  TooltipPlacement,
-} from "@/charts/shared/interaction/tooltip";
+import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import { TooltipScatterplot } from "@/charts/shared/interaction/tooltip-content";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useSize } from "@/charts/shared/use-size";
@@ -37,6 +34,10 @@ import {
 import { useIsMobile } from "@/utils/use-is-mobile";
 
 import { ChartProps } from "../shared/ChartProps";
+import {
+  MOBILE_TOOLTIP_PLACEMENT,
+  TooltipPlacement,
+} from "../shared/interaction/tooltip-box";
 
 export type ScatterplotState = CommonChartState &
   ScatterplotStateVariables & {
@@ -206,7 +207,7 @@ const useScatterplotState = (
           : "middle";
 
     const placement: TooltipPlacement = isMobile
-      ? { x: "center", y: "bottom" }
+      ? MOBILE_TOOLTIP_PLACEMENT
       : { x: xPlacement, y: yPlacement };
 
     return {

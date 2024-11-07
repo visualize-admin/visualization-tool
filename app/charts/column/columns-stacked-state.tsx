@@ -44,7 +44,7 @@ import {
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import {
   getCenteredTooltipPlacement,
-  TooltipPlacement,
+  MOBILE_TOOLTIP_PLACEMENT,
 } from "@/charts/shared/interaction/tooltip-box";
 import {
   getStackedTooltipValueFormatter,
@@ -447,8 +447,8 @@ const useColumnsStackedState = (
       const yAnchor = isMobile
         ? chartHeight
         : yScale(sum(yValues.map((d) => d ?? 0)) * 0.5);
-      const placement: TooltipPlacement = isMobile
-        ? { x: "center", y: "bottom" }
+      const placement = isMobile
+        ? MOBILE_TOOLTIP_PLACEMENT
         : getCenteredTooltipPlacement({
             chartWidth,
             xAnchor: xAnchorRaw,

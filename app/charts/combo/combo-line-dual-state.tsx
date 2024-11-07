@@ -28,7 +28,7 @@ import {
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import {
   getCenteredTooltipPlacement,
-  TooltipPlacement,
+  MOBILE_TOOLTIP_PLACEMENT,
 } from "@/charts/shared/interaction/tooltip-box";
 import { getTickNumber } from "@/charts/shared/ticks";
 import { TICK_FONT_SIZE, useChartTheme } from "@/charts/shared/use-chart-theme";
@@ -166,10 +166,10 @@ const useComboLineDualState = (
       })
       .filter(truthy);
     const yAnchor = isMobile
-      ? chartHeight + 32
+      ? chartHeight + margins.bottom
       : mean(values.map((d) => d.yPos));
-    const placement: TooltipPlacement = isMobile
-      ? { x: "center", y: "bottom" }
+    const placement = isMobile
+      ? MOBILE_TOOLTIP_PLACEMENT
       : getCenteredTooltipPlacement({
           chartWidth,
           xAnchor: xScaled,

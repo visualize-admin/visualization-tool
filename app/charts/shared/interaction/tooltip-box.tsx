@@ -17,6 +17,10 @@ import { useChartBounds } from "../chart-dimensions";
 
 const TRIANGLE_SIZE = 8;
 const TOOLTIP_OFFSET = 4;
+export const MOBILE_TOOLTIP_PLACEMENT: TooltipPlacement = {
+  x: "center",
+  y: "bottom",
+};
 
 export type Xplacement = "left" | "center" | "right";
 export type Yplacement = "top" | "middle" | "bottom";
@@ -134,10 +138,10 @@ export const TooltipBox = ({
   const { width, height } = useSize();
   const { chartWidth } = useChartBounds(width, margins, height);
 
-  const tooltipX = isMobile
-    ? toolTipXBoundary(x!, tooltipWidth, chartWidth)
+  const tooltipXBoundary = isMobile
+    ? getTooltipXBoundary(x!, tooltipWidth, chartWidth)
     : x!;
-  const triangleX = triangleXPos(x!, tooltipWidth, chartWidth);
+  const triangleX = getTriangleXPos(x!, tooltipWidth, chartWidth);
 
   return (
     <>
@@ -149,7 +153,7 @@ export const TooltipBox = ({
           style={{
             zIndex: 1301,
             position: "absolute",
-            left: tooltipX! + margins.left + pos.left,
+            left: tooltipXBoundary! + margins.left + pos.left,
             top: mxYOffset(y!, placement) + margins.top + pos.top,
             transform: mkTranslation(placement),
             pointerEvents: "none",
@@ -367,41 +371,41 @@ const mkTriangle = (p: TooltipPlacement) => {
   }
 };
 
-const toolTipXBoundary = (
-  value: number,
+const getTooltipXBoundary = (
+  x: number,
   tooltipWidth: number,
   chartWidth: number
 ) => {
   return Math.max(
     tooltipWidth / 2 - TRIANGLE_SIZE,
-    Math.min(chartWidth - tooltipWidth / 2 + TRIANGLE_SIZE, value)
+    Math.min(chartWidth - tooltipWidth / 2 + TRIANGLE_SIZE, x)
   );
 };
 
-const triangleXPos = (
-  value: number,
+const getTriangleXPos = (
+  x: number,
   tooltipWidth: number,
   chartWidth: number
 ): number => {
   if (chartWidth < tooltipWidth) {
-    const maxPosition = chartWidth + TRIANGLE_SIZE;
+    const xMax = chartWidth + TRIANGLE_SIZE;
 
     return Math.min(
       Math.max(
-        value,
+        x,
         Math.min(
           tooltipWidth / 2 - TRIANGLE_SIZE,
-          Math.min(chartWidth - tooltipWidth / 2 + TRIANGLE_SIZE, value)
+          Math.min(chartWidth - tooltipWidth / 2 + TRIANGLE_SIZE, x)
         )
       ),
-      maxPosition
+      xMax
     );
   }
 
-  const condition = chartWidth - tooltipWidth / 2 + TRIANGLE_SIZE < value;
+  const hasReachedMax = chartWidth - tooltipWidth / 2 + TRIANGLE_SIZE < x;
 
-  if (condition) {
-    const overflow = value - (chartWidth - tooltipWidth / 2 + TRIANGLE_SIZE);
+  if (hasReachedMax) {
+    const overflow = x - (chartWidth - tooltipWidth / 2 + TRIANGLE_SIZE);
     const maxOverflow = tooltipWidth / 2 - TRIANGLE_SIZE;
 
     const proportion = Math.min(overflow / maxOverflow, 1);
@@ -412,7 +416,7 @@ const triangleXPos = (
   } else {
     return Math.min(
       tooltipWidth / 2 - TRIANGLE_SIZE,
-      Math.min(chartWidth - tooltipWidth / 2 + TRIANGLE_SIZE, value)
+      Math.min(chartWidth - tooltipWidth / 2 + TRIANGLE_SIZE, x)
     );
   }
 };
