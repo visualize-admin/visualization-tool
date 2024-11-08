@@ -14,7 +14,7 @@ export const BugReport = ({
   buttonUrl: string;
 }) => {
   return (
-    <Box sx={{ color: "grey.800" }}>
+    <Box sx={{ backgroundColor: "primary.main", color: "grey.100" }}>
       <Box sx={{ maxWidth: 1024, margin: "0 auto" }}>
         <Flex sx={{ flexDirection: ["column", "row"], px: 4, py: [6, 6, 7] }}>
           <Box sx={{ width: ["100%", "100%", "70%"], mb: [6, 6, 0] }}>
@@ -22,6 +22,7 @@ export const BugReport = ({
               sx={{
                 fontSize: ["1.5rem", "1.5rem", "2rem"],
                 lineHeight: 1.25,
+
                 mb: 3,
               }}
             >
@@ -42,13 +43,14 @@ export const BugReport = ({
               component={Link}
               href={buttonUrl}
               target="_blank"
-              variant="contained"
+              variant="inverted"
               rel="noopener noreferrer"
-              color="primary"
               sx={{
                 flexGrow: [1, 0, 0],
                 textDecoration: "none",
                 textAlign: "center",
+                bgcolor: (theme) => theme.palette.primary.contrastText,
+                color: (theme) => theme.palette.primary.main,
               }}
             >
               {buttonLabel}

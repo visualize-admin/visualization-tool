@@ -16,8 +16,14 @@ export const Newsletter = ({
   return (
     <Box sx={{ color: "grey.800" }}>
       <Box sx={{ maxWidth: 1024, margin: "0 auto" }}>
-        <Flex sx={{ flexDirection: ["column", "row"], px: 4, py: [6, 6, 7] }}>
-          <Box sx={{ width: ["100%", "100%", "70%"], mb: [6, 6, 0] }}>
+        <Flex sx={{ flexDirection: "column", gap: 12, px: 4, py: [6, 6, 7] }}>
+          <Flex
+            sx={{
+              width: ["100%", "100%", "70%"],
+              mb: [6, 6, 0],
+              flexDirection: "column",
+            }}
+          >
             <Typography
               sx={{
                 fontSize: ["1.5rem", "1.5rem", "2rem"],
@@ -30,10 +36,10 @@ export const Newsletter = ({
             <Typography component="div" variant="body1">
               {description}
             </Typography>
-          </Box>
+          </Flex>
+
           <Flex
             sx={{
-              justifyContent: "flex-end",
               alignItems: "center",
               width: ["100%", "50%", "30%"],
             }}
