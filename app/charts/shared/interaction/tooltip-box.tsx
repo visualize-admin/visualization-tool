@@ -141,7 +141,17 @@ export const TooltipBox = ({
   const tooltipXBoundary = isMobile
     ? getTooltipXBoundary(x!, tooltipWidth, chartWidth)
     : x!;
-  const triangleX = getTriangleXPos(x!, tooltipWidth, chartWidth);
+
+  const mobileTriangleXPosition = getTriangleXPos(x!, tooltipWidth, chartWidth);
+
+  const desktopTriangleXPosition = {
+    left: triangle.left,
+    right: triangle.right,
+  };
+
+  const triangleXPosition = isMobile
+    ? { left: mobileTriangleXPosition }
+    : desktopTriangleXPosition;
 
   return (
     <>
@@ -180,8 +190,7 @@ export const TooltipBox = ({
                 borderStyle: "solid",
                 top: triangle.top,
                 bottom: triangle.bottom,
-                left: isMobile ? triangleX : triangle.left,
-                right: !isMobile ? triangle.right : undefined,
+                ...triangleXPosition,
                 borderWidth: triangle.borderWidth,
                 borderTopColor: triangle.borderTopColor,
                 borderRightColor: triangle.borderRightColor,
