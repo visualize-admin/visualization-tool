@@ -1,7 +1,14 @@
 import { Box } from "@mui/material";
 import { Meta } from "@storybook/react";
 
-import { Contribute, Examples, Intro, Tutorial } from "@/homepage";
+import {
+  BugReport,
+  Contribute,
+  Examples,
+  Intro,
+  Newsletter,
+  Tutorial,
+} from "@/homepage";
 
 import { ReactSpecimen } from "./catalog";
 
@@ -32,6 +39,18 @@ const HomepageStory = {
           example1Description="Choose from a wide range of chart types and configure them according to your needs."
           example2Headline="Use powerful customizations"
           example2Description="With the help of custom filters and data segmentation, even complex issues can be visualized."
+        />
+        <Newsletter
+          headline="Would you like to stay in touch?"
+          description="Contact us directly, to receive information about new features and updates."
+          buttonLabel="Subscribe"
+          buttonUrl="mailto:visualize@bafu.admin.ch"
+        />
+        <BugReport
+          headline="Found a bug?"
+          description="Please report it to us, so we can fix it as soon as possible."
+          buttonLabel="Report a bug"
+          buttonUrl="mailto:visualize@bafu.admin.ch"
         />
         <Contribute
           headline="Would you like to visualize your own data?"

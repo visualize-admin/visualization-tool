@@ -1,25 +1,34 @@
 import { Box } from "@mui/material";
 import { ReactSpecimen } from "./catalog";
 
-import { Contribute, Examples, Intro, Tutorial } from "@/homepage";
-import { Canvas, Meta } from '@storybook/blocks';
-import * as HomepageStories from './homepage.stories';
+import {
+  BugReport,
+  Contribute,
+  Examples,
+  Intro,
+  Newsletter,
+  Tutorial,
+} from "@/homepage";
+import { Canvas, Meta } from "@storybook/blocks";
+import * as HomepageStories from "./homepage.stories";
 
 <Meta of={HomepageStories} />
 
 > The Homepage is the main page you see when you enter the Visualize app.
 
-It consists of 4 different components: Intro, Tutorial, Examples and Contribute. In order to compose a complete Homepage, you have to use them all in the correct order.
+It consists of 4 different components: Intro, Tutorial, Examples and Contribute.
+In order to compose a complete Homepage, you have to use them all in the correct
+order.
 
-You can either import them directly to JSX files or create a separate MDX file and use a MDXProvider to render the page (see ContentMDXProvider component).
+You can either import them directly to JSX files or create a separate MDX file
+and use a MDXProvider to render the page (see ContentMDXProvider component).
 
 <Canvas of={HomepageStories.Homepage} />
-
 
 ## How to use
 
 ```jsx
-import { Contribute, Examples, Intro, Tutorial } from "../homepage";
+import { Contribute, Examples, Intro, Tutorial, Newsletter } from "../homepage";
 
 <Intro
   title="Visualize Swiss Open Government Data"
@@ -38,6 +47,18 @@ import { Contribute, Examples, Intro, Tutorial } from "../homepage";
   example1Description="Choose from a wide range of chart types and configure them according to your needs."
   example2Headline="Use powerful customizations"
   example2Description="With the help of custom filters and data segmentation, even complex issues can be visualized."
+/>
+ <Newsletter
+  headline="Would you like to stay in touch?"
+  description="Contact us directly, to receive information about new features and updates."
+  buttonLabel="Subscribe"
+  buttonUrl="mailto:visualize@bafu.admin.ch"
+/>
+ <BugReport
+  headline="Found a bug?"
+  description="Please report it to us, so we can fix it as soon as possible."
+  buttonLabel="Report a bug"
+  buttonUrl="mailto:visualize@bafu.admin.ch"
 />
 <Contribute
   headline="Would you like to visualize your own data?"
