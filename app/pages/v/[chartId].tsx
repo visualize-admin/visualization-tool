@@ -172,6 +172,7 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
               chartWrapperRef={chartWrapperRef}
               configKey={key}
               locale={locale}
+              state={state}
             />
           </Box>
         )}
