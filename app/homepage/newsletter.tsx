@@ -19,7 +19,7 @@ export const Newsletter = ({
         flexDirection: "column",
         justifyContent: "space-between",
         gap: "48px",
-        alignItems: "end",
+        alignItems: ["start", "end"],
         width: "100%",
       }}
     >
@@ -28,7 +28,7 @@ export const Newsletter = ({
           width: ["100%", "100%", "70%"],
           flexDirection: "column",
           gap: 4,
-          maxWidth: "330px",
+          maxWidth: ["100%", "330px"],
         }}
       >
         <Typography
@@ -47,7 +47,7 @@ export const Newsletter = ({
       <Flex
         sx={{
           width: ["100%", "100%", "70%"],
-          maxWidth: "330px",
+          maxWidth: ["100%", "330px"],
         }}
       >
         <Button

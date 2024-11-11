@@ -27,7 +27,7 @@ export const Contribute = ({
           width: ["100%", "100%", "70%"],
           flexDirection: "column",
           gap: 4,
-          maxWidth: "330px",
+          maxWidth: ["100%", "330px"],
         }}
       >
         <Typography
@@ -45,7 +45,9 @@ export const Contribute = ({
       <Flex
         sx={{
           width: ["100%", "100%", "70%"],
-          maxWidth: "330px",
+          maxWidth: ["100%", "330px"],
+          paddingBottom: ["72px", "none"],
+          borderBottom: ["1px solid #e5e5e5", "none"],
         }}
       >
         <Button
