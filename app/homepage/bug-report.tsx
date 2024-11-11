@@ -14,16 +14,22 @@ export const BugReport = ({
   buttonUrl: string;
 }) => {
   return (
-    <Box sx={{ backgroundColor: "primary.main", color: "grey.100" }}>
+    <Box sx={{ color: "grey.800" }}>
       <Box sx={{ maxWidth: 1024, margin: "0 auto" }}>
-        <Flex sx={{ flexDirection: ["column", "row"], px: 4, py: [6, 6, 7] }}>
-          <Box sx={{ width: ["100%", "100%", "70%"], mb: [6, 6, 0] }}>
+        <Flex
+          sx={{ flexDirection: "column", gap: "48px", px: 4, py: [6, 6, 7] }}
+        >
+          <Flex
+            sx={{
+              width: ["100%", "100%", "70%"],
+              flexDirection: "column",
+              gap: "16px",
+            }}
+          >
             <Typography
               sx={{
                 fontSize: ["1.5rem", "1.5rem", "2rem"],
                 lineHeight: 1.25,
-
-                mb: 3,
               }}
             >
               {headline}
@@ -31,10 +37,10 @@ export const BugReport = ({
             <Typography component="div" variant="body1">
               {description}
             </Typography>
-          </Box>
+          </Flex>
+
           <Flex
             sx={{
-              justifyContent: "flex-end",
               alignItems: "center",
               width: ["100%", "50%", "30%"],
             }}
@@ -43,14 +49,13 @@ export const BugReport = ({
               component={Link}
               href={buttonUrl}
               target="_blank"
-              variant="inverted"
+              variant="outlined"
               rel="noopener noreferrer"
+              color="primary"
               sx={{
                 flexGrow: [1, 0, 0],
                 textDecoration: "none",
                 textAlign: "center",
-                bgcolor: (theme) => theme.palette.primary.contrastText,
-                color: (theme) => theme.palette.primary.main,
               }}
             >
               {buttonLabel}

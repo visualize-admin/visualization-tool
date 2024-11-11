@@ -18,21 +18,24 @@ export const contentId = "home";
   example2Headline="Entdecken Sie die umfangreichen Möglichkeiten"
   example2Description="Mit Hilfe von benutzerdefinierten Filtern und Darstellungsoptionen, können selbst komplexe Sachverhalte visualisiert werden."
 />
-<Newsletter
-  headline="Bleiben Sie auf dem Laufenden"
-  description="Abonnieren Sie unseren Newsletter, indem Sie Ihre E-Mail-Adresse unten hinzufügen."
-  buttonLabel="Abonnieren"
-  buttonUrl="mailto:visualize@bafu.admin.ch"
-/>
+<Section>
+  <Contribute
+    headline="Möchten Sie Ihre eigenen Daten visualisieren?"
+    description="Erfahren Sie, wie Ihre Daten in den Linked-Data Dienst (LINDAS) des Bundesarchivs integriert werden können."
+    buttonLabel="Mehr erfahren"
+    buttonUrl="https://lindas.admin.ch/?lang=de"
+  />
+  <div style={{ width: "1px", backgroundColor: "#e5e5e5" }}></div>
+  <Newsletter
+    headline="Abonnieren Sie unseren Newsletter"
+    description="Bleiben Sie auf dem Laufenden und abonnieren Sie unseren Newsletter, indem Sie Ihre E-Mail-Adresse unten hinzufügen."
+    buttonLabel="Abonnieren"
+    buttonUrl="mailto:visualize@bafu.admin.ch"
+  />
+</Section>
 <BugReport
   headline="Einen Fehler gefunden?"
-  description="Bitte melden Sie uns diesen, damit wir ihn so schnell wie möglich beheben können."
+  description="Bitte melden Sie uns den Fehler, damit wir ihn so schnell wie möglich beheben können."
   buttonLabel="Fehler melden"
   buttonUrl="mailto:visualize@bafu.admin.ch"
-/>
-<Contribute
-  headline="Möchten Sie Ihre eigenen Daten visualisieren?"
-  description="Erfahren Sie, wie Ihre Daten in den Linked-Data Dienst (LINDAS) des Bundesarchivs integriert werden können."
-  buttonLabel="Mehr erfahren"
-  buttonUrl="https://lindas.admin.ch/?lang=de"
 />

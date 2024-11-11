@@ -1,4 +1,4 @@
-import { Box, Button, Link, Typography } from "@mui/material";
+import { Button, Link, Typography } from "@mui/material";
 
 import Flex from "@/components/flex";
 
@@ -14,54 +14,58 @@ export const Newsletter = ({
   buttonUrl: string;
 }) => {
   return (
-    <Box sx={{ color: "grey.800" }}>
-      <Box sx={{ maxWidth: 1024, margin: "0 auto" }}>
-        <Flex sx={{ flexDirection: "column", gap: 12, px: 4, py: [6, 6, 7] }}>
-          <Flex
-            sx={{
-              width: ["100%", "100%", "70%"],
-              mb: [6, 6, 0],
-              flexDirection: "column",
-            }}
-          >
-            <Typography
-              sx={{
-                fontSize: ["1.5rem", "1.5rem", "2rem"],
-                lineHeight: 1.25,
-                mb: 3,
-              }}
-            >
-              {headline}
-            </Typography>
-            <Typography component="div" variant="body1">
-              {description}
-            </Typography>
-          </Flex>
-
-          <Flex
-            sx={{
-              alignItems: "center",
-              width: ["100%", "50%", "30%"],
-            }}
-          >
-            <Button
-              component={Link}
-              href={buttonUrl}
-              target="_blank"
-              variant="contained"
-              rel="noopener noreferrer"
-              color="primary"
-              sx={{
-                flexGrow: [1, 0, 0],
-                textDecoration: "none",
-                textAlign: "center",
-              }}
-            >
-              {buttonLabel}
-            </Button>
-          </Flex>
-        </Flex>
-      </Box>
-    </Box>
+    <Flex
+      sx={{
+        flexDirection: "column",
+        justifyContent: "space-between",
+        gap: "48px",
+        alignItems: "end",
+        width: "100%",
+      }}
+    >
+      <Flex
+        sx={{
+          width: ["100%", "100%", "70%"],
+          flexDirection: "column",
+          gap: 4,
+          maxWidth: "330px",
+        }}
+      >
+        <Typography
+          sx={{
+            fontSize: ["1.5rem", "1.5rem", "2rem"],
+            lineHeight: ["2.5rem", "2.5rem", "3rem"],
+            mb: 3,
+          }}
+        >
+          {headline}
+        </Typography>
+        <Typography component="div" variant="body1">
+          {description}
+        </Typography>
+      </Flex>
+      <Flex
+        sx={{
+          width: ["100%", "100%", "70%"],
+          maxWidth: "330px",
+        }}
+      >
+        <Button
+          component={Link}
+          href={buttonUrl}
+          target="_blank"
+          variant="outlined"
+          rel="noopener noreferrer"
+          color="inherit"
+          sx={{
+            flexGrow: [1, 0, 0],
+            textDecoration: "none",
+            textAlign: "center",
+          }}
+        >
+          {buttonLabel}
+        </Button>
+      </Flex>
+    </Flex>
   );
 };

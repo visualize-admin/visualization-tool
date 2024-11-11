@@ -9,6 +9,7 @@ import {
   Newsletter,
   Tutorial,
 } from "@/homepage";
+import { Section } from "@/homepage/section";
 
 import { ReactSpecimen } from "./catalog";
 
@@ -40,23 +41,26 @@ const HomepageStory = {
           example2Headline="Use powerful customizations"
           example2Description="With the help of custom filters and data segmentation, even complex issues can be visualized."
         />
-        <Newsletter
-          headline="Would you like to stay in touch?"
-          description="Contact us directly, to receive information about new features and updates."
-          buttonLabel="Subscribe"
-          buttonUrl="mailto:visualize@bafu.admin.ch"
-        />
+        <Section>
+          <Contribute
+            headline="Would you like to visualize your own data?"
+            description="Find out how you can integrate your data into the LINDAS Linked Data Service."
+            buttonLabel="Learn how"
+            buttonUrl="https://lindas.admin.ch/?lang=en"
+          />
+          <div style={{ width: "1px", backgroundColor: "#e5e5e5" }}></div>
+          <Newsletter
+            headline="Subscribe to our Newsletter"
+            description="Stay up to day and subscribe to our newsletter by adding your email address below."
+            buttonLabel="Subscribe"
+            buttonUrl="mailto:visualize@bafu.admin.ch"
+          />
+        </Section>
         <BugReport
           headline="Found a bug?"
-          description="Please report it to us, so we can fix it as soon as possible."
+          description="Please report the bug, so can fix it as soon as possible"
           buttonLabel="Report a bug"
           buttonUrl="mailto:visualize@bafu.admin.ch"
-        />
-        <Contribute
-          headline="Would you like to visualize your own data?"
-          description="Find out how you can integrate your data into the LINDAS Linked Data Service."
-          buttonLabel="Learn how"
-          buttonUrl="https://lindas.admin.ch/?lang=en"
         />
       </Box>
     </ReactSpecimen>

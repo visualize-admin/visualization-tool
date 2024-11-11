@@ -11,6 +11,7 @@ import {
   Newsletter,
   Tutorial,
 } from "@/homepage";
+import { Section } from "@/homepage/section";
 
 const castContentId = (contentId: unknown) => {
   if (typeof contentId === "string") {
@@ -44,6 +45,7 @@ const defaultMDXComponents = {
   Contribute,
   Newsletter,
   BugReport,
+  Section,
 };
 
 export const ContentMDXProvider = ({ children }: { children: ReactNode }) => {
