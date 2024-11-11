@@ -34,10 +34,7 @@ import {
 import { useIsMobile } from "@/utils/use-is-mobile";
 
 import { ChartProps } from "../shared/ChartProps";
-import {
-  MOBILE_TOOLTIP_PLACEMENT,
-  TooltipPlacement,
-} from "../shared/interaction/tooltip-box";
+import { TooltipPlacement } from "../shared/interaction/tooltip-box";
 
 export type ScatterplotState = CommonChartState &
   ScatterplotStateVariables & {
@@ -190,7 +187,7 @@ const useScatterplotState = (
     const xRef = xScale(getX(datum) ?? NaN);
     const yRef = yScale(getY(datum) ?? NaN);
     const xAnchor = xRef;
-    const yAnchor = isMobile ? chartHeight : yRef;
+    const yAnchor = isMobile ? 0 : yRef;
 
     const xPlacement =
       xAnchor < chartWidth * 0.33
@@ -207,7 +204,7 @@ const useScatterplotState = (
           : "middle";
 
     const placement: TooltipPlacement = isMobile
-      ? MOBILE_TOOLTIP_PLACEMENT
+      ? { x: "center", y: "top" }
       : { x: xPlacement, y: yPlacement };
 
     return {

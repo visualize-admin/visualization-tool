@@ -23,6 +23,7 @@ import { ScatterPlotConfig, useChartConfigFilters } from "@/config-types";
 import { TimeSlider } from "@/configurator/interactive-filters/time-slider";
 
 import { ChartProps, VisualizationProps } from "../shared/ChartProps";
+import { Ruler } from "../shared/interaction/ruler";
 
 export const ChartScatterplotVisualization = (
   props: VisualizationProps<ScatterPlotConfig>
@@ -45,6 +46,7 @@ const ChartScatterplot = memo((props: ChartProps<ScatterPlotConfig>) => {
           <Scatterplot />
           <InteractionVoronoi />
         </ChartSvg>
+        <Ruler />
         <Tooltip type="single" />
       </ChartContainer>
       {(fields.animation || fields.segment) && (
