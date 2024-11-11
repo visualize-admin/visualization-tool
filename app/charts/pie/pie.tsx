@@ -1,5 +1,5 @@
 import { arc, PieArcDatum } from "d3-shape";
-import React, { useMemo, useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 import { PieState } from "@/charts/pie/pie-state";
 import { RenderDatum, renderPies } from "@/charts/pie/rendering-utils";
