@@ -14,6 +14,7 @@ import uniqBy from "lodash/uniqBy";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useClient } from "urql";
 
+import Flex from "@/components/flex";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { useMetadataPanelStoreActions } from "@/components/metadata-panel-store";
 import useDisclosure from "@/components/use-disclosure";
@@ -233,7 +234,7 @@ export const DatasetsControlSection = () => {
   return (
     <ControlSection collapse defaultExpanded={false}>
       <SubsectionTitle titleId="controls-data" gutterBottom={false}>
-        <Trans id="controls.section.datasets.title">Data Sources</Trans>{" "}
+        <Trans id="controls.section.datasets.title">Dataset</Trans>{" "}
         <BetaTag
           tagProps={{
             sx: {
@@ -268,18 +269,18 @@ export const DatasetsControlSection = () => {
             );
           })}
         </Box>
-        <Box>
+        <Flex sx={{ justifyContent: "end" }}>
           {cubes.length === 1 ? (
             <Button
               onClick={openDatasetDialog}
               startIcon={<SvgIcAdd />}
-              variant="outlined"
+              variant="text"
               size="small"
             >
               {t({ id: "chart.datasets.add", message: "Add dataset" })}
             </Button>
           ) : null}
-        </Box>
+        </Flex>
         <DatasetDialog
           state={state}
           open={isDatasetDialogOpen}
