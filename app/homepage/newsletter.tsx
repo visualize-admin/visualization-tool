@@ -35,7 +35,6 @@ export const Newsletter = ({
           sx={{
             fontSize: ["1.5rem", "1.5rem", "2rem"],
             lineHeight: ["2.5rem", "2.5rem", "3rem"],
-            mb: 3,
           }}
         >
           {headline}
