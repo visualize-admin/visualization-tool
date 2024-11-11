@@ -47,8 +47,8 @@ export const renderPies = (
               (s: Selection<SVGPathElement, RenderDatum, BaseType, unknown>) =>
                 maybeTransition(s, {
                   transition,
-                  s: (g) => g.attr("stroke-width", 2),
-                  t: (g) => g.attr("stroke-width", 2),
+                  s: (g) => g.attr("stroke-width", 1),
+                  t: (g) => g.attr("stroke-width", 1),
                 })
             );
           })
