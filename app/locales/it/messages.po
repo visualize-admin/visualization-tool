@@ -1109,7 +1109,7 @@ msgstr "Dimensioni condivise"
 
 #: app/components/chart-footnotes.tsx
 msgid "dataset.footnotes.dataset"
-msgstr "Insieme di dati"
+msgstr "Set di dati"
 
 #: app/components/chart-footnotes.tsx
 msgid "dataset.footnotes.updated"

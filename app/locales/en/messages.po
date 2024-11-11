@@ -808,7 +808,7 @@ msgstr "An error happened while fetching possible filters, please retry later or
 
 #: app/configurator/components/dataset-control-section.tsx
 msgid "controls.section.datasets.title"
-msgstr "Data Sources"
+msgstr "Datasets"
 
 #: app/configurator/components/annotators.tsx
 #: app/configurator/components/annotators.tsx

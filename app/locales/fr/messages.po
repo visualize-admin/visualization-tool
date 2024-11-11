@@ -808,7 +808,7 @@ msgstr "Une erreur s'est produite lors de la récupération des filtres possible
 
 #: app/configurator/components/dataset-control-section.tsx
 msgid "controls.section.datasets.title"
-msgstr "Sources de données"
+msgstr "Ensembles de données"
 
 #: app/configurator/components/annotators.tsx
 #: app/configurator/components/annotators.tsx
