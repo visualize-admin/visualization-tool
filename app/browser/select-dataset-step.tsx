@@ -340,7 +340,7 @@ const SelectDatasetStepContent = ({
                   >
                     <Trans id="browse.datasets.description">
                       Explore datasets provided by the LINDAS Linked Data
-                      Service by either filtering by categories or organisations
+                      Service by either filtering by categories or organizations
                       or search directly for specific keywords. Click on a
                       dataset to see more detailed information and start
                       creating your own visualizations.
