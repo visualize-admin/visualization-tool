@@ -4,8 +4,8 @@ import { Divider } from "@mui/material";
 
 import { createMailtoLink } from "../../../app/templates/email";
 import {
-  BAFU_VISUALIZE_EMAIL,
-  IXT_SUPPORT_EMAIL,
+  OWNER_ORGANIZATION_EMAIL,
+  SUPPORT_EMAIL,
 } from "../../../app/templates/email/config";
 
 export const contentId = "home";
@@ -35,12 +35,16 @@ export const contentId = "home";
     buttonLabel="Scopri come farlo"
     buttonUrl="https://lindas.admin.ch/?lang=it"
   />
-  <Divider />
+  <Divider
+    orientation="vertical"
+    flexItem
+    sx={{ display: ["hidden", "box"] }}
+  />
   <Newsletter
     headline="Iscriviti alla nostra newsletter"
     description="Resta aggiornato e iscriviti alla nostra newsletter inserendo il tuo indirizzo email qui sotto."
     buttonLabel="Iscriviti"
-    buttonUrl={BAFU_VISUALIZE_EMAIL}
+    buttonUrl={OWNER_ORGANIZATION_EMAIL}
   />
 </Section>
 <Section
@@ -54,21 +58,25 @@ export const contentId = "home";
     buttonLabel="Segnala un bug"
     buttonUrl={createMailtoLink("it", {
       recipients: {
-        to: BAFU_VISUALIZE_EMAIL,
-        cc: IXT_SUPPORT_EMAIL,
+        to: OWNER_ORGANIZATION_EMAIL,
+        cc: SUPPORT_EMAIL,
       },
       template: bugReportTemplates,
     })}
   />
-  <Divider />
+  <Divider
+    orientation="vertical"
+    flexItem
+    sx={{ display: ["hidden", "box"], color: "grey.500" }}
+  />
   <FeatureRequest
     headline="Richiesta di nuove funzionalità"
     description="Invia le tue richieste di funzionalità oggi stesso e aiutaci a plasmare il futuro della nostra piattaforma!"
     buttonLabel="Invia"
     buttonUrl={createMailtoLink("it", {
       recipients: {
-        to: BAFU_VISUALIZE_EMAIL,
-        cc: IXT_SUPPORT_EMAIL,
+        to: OWNER_ORGANIZATION_EMAIL,
+        cc: SUPPORT_EMAIL,
       },
       template: featureRequestTemplates,
     })}

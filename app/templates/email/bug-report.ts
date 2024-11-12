@@ -1,7 +1,7 @@
 export const bugReportTemplates = {
   en: `
-Describe the bug (https://cube-validator.lindas.admin.ch/select)
-A clear and concise description of what the bug is. If it seems connected to some data problem (missing values, wrong parsing), please first check the cube in Cube Validator to see if everything is fine there.
+Describe the bug 
+A clear and concise description of what the bug is. If it seems connected to some data problem (missing values, wrong parsing), please first check the cube in Cube Validator (https://cube-validator.lindas.admin.ch/select) to see if everything is fine there.
 Please describe...
 
 ----------------------------------------------
@@ -34,11 +34,11 @@ Please describe...
 `,
 
   de: `
-Fehlermeldung (https://cube-validator.lindas.admin.ch/select)
+Fehlermeldung 
 
 ----------------------------------------------
 Beschreiben Sie den Fehler
-Eine klare und präzise Beschreibung des Fehlers. Wenn es mit einem Datenproblem zusammenhängt (fehlende Werte, falsche Analyse), überprüfen Sie bitte zuerst den Cube im Cube Validator, um sicherzustellen, dass dort alles in Ordnung ist.
+Eine klare und präzise Beschreibung des Fehlers. Wenn es mit einem Datenproblem zusammenhängt (fehlende Werte, falsche Analyse), überprüfen Sie bitte zuerst den Cube im Cube Validator (https://cube-validator.lindas.admin.ch/select), um sicherzustellen, dass dort alles in Ordnung ist.
 Bitte beschreiben Sie...
 
 ----------------------------------------------
@@ -71,8 +71,8 @@ Bitte beschreiben Sie...
 `,
 
   fr: `
-Description du bug (https://cube-validator.lindas.admin.ch/select)
-Une description claire et concise du bug. S'il semble lié à un problème de données (valeurs manquantes, analyse incorrecte), veuillez d'abord vérifier le cube dans le Cube Validator pour vous assurer que tout y est correct.
+Description du bug 
+Une description claire et concise du bug. S'il semble lié à un problème de données (valeurs manquantes, analyse incorrecte), veuillez d'abord vérifier le cube dans le Cube Validator (https://cube-validator.lindas.admin.ch/select) pour vous assurer que tout y est correct.
 Veuillez décrire...
 
 ----------------------------------------------
@@ -105,8 +105,8 @@ Veuillez décrire...
 `,
 
   it: `
-Descrizione del bug (https://cube-validator.lindas.admin.ch/select)
-Una descrizione chiara e concisa del bug. Se sembra collegato a un problema di dati (valori mancanti, analisi errata), controllare prima il cubo nel Cube Validator per assicurarsi che tutto sia a posto.
+Descrizione del bug 
+Una descrizione chiara e concisa del bug. Se sembra collegato a un problema di dati (valori mancanti, analisi errata), controllare prima il cubo nel Cube Validator (https://cube-validator.lindas.admin.ch/select) per assicurarsi che tutto sia a posto.
 Si prega di descrivere...
 
 ----------------------------------------------
