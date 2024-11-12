@@ -3,6 +3,7 @@ import { Quad } from "rdf-js";
 
 import { SearchCube } from "@/domain/data";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
+import { joinIris } from "@/graphql/resolvers/rdf";
 import * as ns from "@/rdf/namespace";
 import { GROUP_SEPARATOR } from "@/rdf/query-utils";
 
@@ -103,7 +104,12 @@ function buildSearchCubes(
         dimensions: dimensions?.map((x) => {
           const dim = bySubjectAndPredicate.get(x.object.value);
           return {
-            iri: x.object.value,
+            iri: joinIris({
+              // We don't need to unversion the cube iri here, as search cubes are
+              // temporary and dimensions coming from here aren't stored in chart config.
+              unversionedCubeIri: iri,
+              dimensionIri: x.object.value,
+            }),
             label: dim?.get(ns.schema.name.value)?.[0].object.value ?? "",
             timeUnit:
               dim?.get(visualizePredicates.hasTimeUnit)?.[0].object.value ?? "",

@@ -6,7 +6,9 @@ import { LRUCache } from "typescript-lru-cache";
 
 import { SingleFilters } from "@/config-types";
 import { isMostRecentValue } from "@/domain/most-recent-value";
+import { getFiltersWithSplitIris, joinIris } from "@/graphql/resolvers/rdf";
 import * as ns from "@/rdf/namespace";
+import { queryCubeVersionHistory } from "@/rdf/query-cube-version-history";
 import { loadMaxDimensionValue } from "@/rdf/query-dimension-values";
 import { iriToNode } from "@/rdf/query-utils";
 
@@ -18,7 +20,8 @@ export const getPossibleFilters = async (
     cache?: LRUCache;
   }
 ) => {
-  const { filters, sparqlClient, cache } = options;
+  const { filters: _filters, sparqlClient, cache } = options;
+  const filters = getFiltersWithSplitIris(_filters);
   const dimensionIris = Object.keys(filters);
 
   if (dimensionIris.length === 0) {
@@ -26,11 +29,10 @@ export const getPossibleFilters = async (
     return [];
   }
 
-  const dimensionsMetadata = await getDimensionsMetadata(
-    cubeIri,
-    dimensionIris,
-    sparqlClient
-  );
+  const [unversionedCubeIri = cubeIri, dimensionsMetadata] = await Promise.all([
+    queryCubeVersionHistory(sparqlClient, cubeIri),
+    getDimensionsMetadata(cubeIri, dimensionIris, sparqlClient),
+  ]);
   const queryFilters = await getQueryFilters(filters, {
     cubeIri,
     dimensionsMetadata,
@@ -42,7 +44,10 @@ export const getPossibleFilters = async (
     operation: "postUrlencoded",
   });
 
-  return parsePossibleFilters(observation, queryFilters);
+  return parsePossibleFilters(observation, {
+    unversionedCubeIri,
+    queryFilters,
+  });
 };
 
 export type DimensionMetadata = {
@@ -221,11 +226,17 @@ export const getQueryFilters = async (
 
 const parsePossibleFilters = (
   observation: ResultRow,
-  queryFilters: QueryFilter[]
+  {
+    unversionedCubeIri,
+    queryFilters,
+  }: {
+    unversionedCubeIri: string;
+    queryFilters: QueryFilter[];
+  }
 ) => {
   return queryFilters.map(({ i, iri, isVersioned }) => ({
     type: "single",
-    iri,
+    iri: joinIris({ unversionedCubeIri, dimensionIri: iri }),
     value: observation[getQueryDimension(i, isVersioned)].value,
   }));
 };

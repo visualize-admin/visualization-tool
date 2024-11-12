@@ -5,7 +5,7 @@ import { topology } from "topojson-server";
 import { LRUCache } from "typescript-lru-cache";
 import { parse as parseWKT } from "wellknown";
 
-import { Filters } from "@/config-types";
+import { Filters, SingleFilters } from "@/config-types";
 import {
   BaseComponent,
   BaseDimension,
@@ -32,12 +32,37 @@ import {
   getCubeDimensions,
   getCubeObservations,
 } from "@/rdf/queries";
+import { queryCubeVersionHistory } from "@/rdf/query-cube-version-history";
 import { GeoShape } from "@/rdf/query-geo-shapes";
 import { parseHierarchy, queryHierarchies } from "@/rdf/query-hierarchies";
 import { queryLatestCubeIri } from "@/rdf/query-latest-cube-iri";
 import { getPossibleFilters } from "@/rdf/query-possible-filters";
 import { SearchResult, searchCubes as _searchCubes } from "@/rdf/query-search";
 import { getSparqlEditorUrl } from "@/rdf/sparql-utils";
+
+const IRI_SEPARATOR = "___";
+
+export const joinIris = ({
+  unversionedCubeIri,
+  dimensionIri,
+}: {
+  unversionedCubeIri: string;
+  dimensionIri: string;
+}) => `${unversionedCubeIri}${IRI_SEPARATOR}${dimensionIri}`;
+
+export const splitIris = (iri: string) => {
+  const [unversionedCubeIri, dimensionIri] = iri.split(IRI_SEPARATOR);
+
+  return { unversionedCubeIri, dimensionIri: dimensionIri ?? undefined };
+};
+
+export const getFiltersWithSplitIris = <T extends Filters | SingleFilters>(
+  filters: T
+) => {
+  return Object.fromEntries(
+    Object.entries(filters).map(([k, v]) => [splitIris(k).dimensionIri ?? k, v])
+  ) as T;
+};
 
 export const dataCubeLatestIri: NonNullable<
   QueryResolvers["dataCubeLatestIri"]
@@ -101,7 +126,8 @@ export const searchCubes: NonNullable<QueryResolvers["searchCubes"]> = async (
 export const dataCubeDimensionGeoShapes: NonNullable<
   QueryResolvers["dataCubeDimensionGeoShapes"]
 > = async (_, { locale, cubeFilter }, { setup }, info) => {
-  const { iri, dimensionIri } = cubeFilter;
+  const { iri, dimensionIri: _dimensionIri } = cubeFilter;
+  const { dimensionIri } = splitIris(_dimensionIri);
   const { loaders, sparqlClient, cache } = await setup(info);
   const dimension = await getResolvedDimension(dimensionIri, {
     cubeIri: iri,
@@ -214,7 +240,8 @@ export const dataCubeComponents: NonNullable<
 > = async (_, { locale, cubeFilter }, { setup }, info) => {
   const { loaders, sparqlClient, sparqlClientStream, cache } =
     await setup(info);
-  const { iri, componentIris, filters, loadValues } = cubeFilter;
+  const { iri, componentIris, filters: _filters, loadValues } = cubeFilter;
+  const filters = _filters ? getFiltersWithSplitIris(_filters) : undefined;
   const cube = await loaders.cube.load(iri);
 
   if (!cube) {
@@ -222,13 +249,16 @@ export const dataCubeComponents: NonNullable<
   }
 
   await cube.fetchShape();
-  const rawComponents = await getCubeDimensions({
-    cube,
-    locale,
-    sparqlClient,
-    componentIris,
-    cache,
-  });
+  const [unversionedCubeIri = iri, rawComponents] = await Promise.all([
+    queryCubeVersionHistory(sparqlClient, iri),
+    getCubeDimensions({
+      cube,
+      locale,
+      sparqlClient,
+      componentIris,
+      cache,
+    }),
+  ]);
   const components = await Promise.all(
     rawComponents.map(async (component) => {
       const { data } = component;
@@ -258,7 +288,7 @@ export const dataCubeComponents: NonNullable<
       const baseComponent: BaseComponent = {
         // We need to use original iri here, as the cube iri might have changed.
         cubeIri: iri,
-        iri: data.iri,
+        iri: joinIris({ unversionedCubeIri, dimensionIri: data.iri }),
         label: data.name,
         description: data.description,
         unit: data.unit,

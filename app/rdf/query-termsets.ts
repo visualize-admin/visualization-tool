@@ -2,6 +2,8 @@ import groupBy from "lodash/groupBy";
 import ParsingClient from "sparql-http-client/ParsingClient";
 
 import { ComponentTermsets, Termset } from "@/domain/data";
+import { joinIris } from "@/graphql/resolvers/rdf";
+import { queryCubeVersionHistory } from "@/rdf/query-cube-version-history";
 import { buildLocalizedSubQuery } from "@/rdf/query-utils";
 
 export const getCubeTermsets = async (
@@ -55,12 +57,18 @@ SELECT DISTINCT ?dimensionIri ?dimensionLabel ?termsetIri ?termsetLabel WHERE {
   ${buildLocalizedSubQuery("dimension", "schema:name", "dimensionLabel", { locale })}
   ${buildLocalizedSubQuery("termsetIri", "schema:name", "termsetLabel", { locale })}
 }`;
-  const qs = await sparqlClient.query.select(query, {
-    operation: "postUrlencoded",
-  });
+  const [unversionedCubeIri = iri, qs] = await Promise.all([
+    queryCubeVersionHistory(sparqlClient, iri),
+    sparqlClient.query.select(query, {
+      operation: "postUrlencoded",
+    }),
+  ]);
 
   const parsed = qs.map((result) => ({
-    dimensionIri: result.dimensionIri.value,
+    dimensionIri: joinIris({
+      unversionedCubeIri,
+      dimensionIri: result.dimensionIri.value,
+    }),
     dimensionLabel: result.dimensionLabel.value,
     iri: result.termsetIri.value,
     label: result.termsetLabel.value,

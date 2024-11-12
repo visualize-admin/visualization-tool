@@ -18,6 +18,11 @@ import { isMostRecentValue } from "@/domain/most-recent-value";
 import { PromiseValue, truthy } from "@/domain/types";
 import { resolveDimensionType } from "@/graphql/resolvers";
 import {
+  getFiltersWithSplitIris,
+  joinIris,
+  splitIris,
+} from "@/graphql/resolvers/rdf";
+import {
   ResolvedDimension,
   ResolvedObservationsQuery,
 } from "@/graphql/shared-types";
@@ -25,6 +30,7 @@ import { createSource, pragmas } from "@/rdf/create-source";
 import { ExtendedCube } from "@/rdf/extended-cube";
 import * as ns from "@/rdf/namespace";
 import { parseCubeDimension, parseRelatedDimensions } from "@/rdf/parse";
+import { queryCubeVersionHistory } from "@/rdf/query-cube-version-history";
 import {
   loadDimensionsValuesWithMetadata,
   loadMaxDimensionValue,
@@ -319,7 +325,7 @@ export const getCubeObservations = async ({
   cube,
   locale,
   sparqlClient,
-  filters,
+  filters: _filters,
   preview,
   limit,
   raw,
@@ -342,13 +348,19 @@ export const getCubeObservations = async ({
   componentIris?: Maybe<string[]>;
   cache: LRUCache | undefined;
 }): Promise<ResolvedObservationsQuery["data"]> => {
+  const cubeIri = cube.term?.value!;
+  const filters = _filters ? getFiltersWithSplitIris(_filters) : null;
   const cubeView = View.fromCube(cube, false);
-  const allResolvedDimensions = await getCubeDimensions({
-    cube,
-    locale,
-    sparqlClient,
-    cache,
-  });
+  const [unversionedCubeIri = cubeIri, allResolvedDimensions] =
+    await Promise.all([
+      queryCubeVersionHistory(sparqlClient, cubeIri),
+      getCubeDimensions({
+        cube,
+        locale,
+        sparqlClient,
+        cache,
+      }),
+    ]);
   const resolvedDimensions = allResolvedDimensions.filter((d) => {
     if (componentIris) {
       return (
@@ -365,7 +377,7 @@ export const getCubeObservations = async ({
   const serverFilters: Record<string, FilterValueMulti> = {};
   let dbFilters: typeof filters = {};
 
-  for (const [k, v] of Object.entries(filters || {})) {
+  for (const [k, v] of Object.entries(filters ?? {})) {
     if (v.type !== "multi") {
       dbFilters[k] = v;
     } else {
@@ -469,7 +481,17 @@ export const getCubeObservations = async ({
     }
   }
 
-  return { query, observations };
+  return {
+    query,
+    observations: observations.map((obs) => {
+      return Object.fromEntries(
+        Object.entries(obs).map(([dimensionIri, value]) => [
+          joinIris({ unversionedCubeIri, dimensionIri }),
+          value,
+        ])
+      );
+    }),
+  };
 };
 
 const makeServerFilter = (filters: Record<string, FilterValueMulti>) => {
@@ -597,7 +619,8 @@ const buildFilters = async ({
   lookupSource.queryPrefix = pragmas;
 
   return await Promise.all(
-    Object.entries(filters).flatMap(async ([iri, filter]) => {
+    Object.entries(filters).flatMap(async ([filterIri, filter]) => {
+      const iri = splitIris(filterIri).dimensionIri ?? filterIri;
       const cubeDimension = cube.dimensions.find((d) => d.path?.value === iri);
 
       if (!cubeDimension) {
