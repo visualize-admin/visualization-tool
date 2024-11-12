@@ -367,7 +367,7 @@ const useTableState = (
           const maxAbsoluteValue = Math.max(absMinValue, absMaxValue);
           const colorScale = scaleDiverging(
             getColorInterpolator((columnStyle as ColumnStyleHeatmap).palette)
-          ).domain([-maxAbsoluteValue, 0, maxAbsoluteValue] || [-1, 0, 1]);
+          ).domain([-maxAbsoluteValue, 0, maxAbsoluteValue]);
           return {
             ...common,
             colorScale,
