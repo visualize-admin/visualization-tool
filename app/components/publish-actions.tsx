@@ -204,7 +204,7 @@ const Share = ({ configKey, locale }: PublishActionProps) => {
   );
 };
 
-type EmnbedContentProps = {
+type EmbedContentProps = {
   iframeHeight: number;
 } & Omit<PublishActionProps, "chartWrapperRef">;
 
@@ -212,7 +212,7 @@ export const EmbedContent = ({
   locale,
   configKey,
   iframeHeight,
-}: EmnbedContentProps) => {
+}: EmbedContentProps) => {
   const [embedUrl, setEmbedUrl] = useState("");
   const [embedAEMUrl, setEmbedAEMUrl] = useState("");
   const [isResponsive, setIsResponsive] = useState(true);

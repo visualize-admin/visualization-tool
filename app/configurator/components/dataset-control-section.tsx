@@ -136,7 +136,7 @@ const DatasetRow = ({
             component="span"
             onClick={handleDatasetClick}
           >
-            Dataset
+            Datasets
           </MuiLink>
           <br />
           <Typography variant="caption">{cube.title}</Typography>
@@ -234,7 +234,7 @@ export const DatasetsControlSection = () => {
   return (
     <ControlSection collapse defaultExpanded={false}>
       <SubsectionTitle titleId="controls-data" gutterBottom={false}>
-        <Trans id="controls.section.datasets.title">Dataset</Trans>{" "}
+        <Trans id="controls.section.datasets.title">Datasets</Trans>{" "}
         <BetaTag
           tagProps={{
             sx: {
