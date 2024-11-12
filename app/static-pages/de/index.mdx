@@ -1,3 +1,8 @@
+import { bugReportTemplates } from "@/templates/email/bug-report";
+import { featureRequestTemplates } from "@/templates/email/feature-request";
+
+import { createMailtoLink } from "../../../app/templates/email";
+
 export const contentId = "home";
 
 <Intro
@@ -33,9 +38,34 @@ export const contentId = "home";
     buttonUrl="mailto:visualize@bafu.admin.ch"
   />
 </Section>
-<BugReport
-  headline="Einen Fehler gefunden?"
-  description="Bitte melden Sie uns den Fehler, damit wir ihn so schnell wie möglich beheben können."
-  buttonLabel="Fehler melden"
-  buttonUrl="mailto:visualize@bafu.admin.ch"
-/>
+<Section
+  sx={{
+    color: "gray.800",
+  }}
+>
+  <BugReport
+    headline="Einen Fehler gefunden?"
+    description="Bitte melden Sie uns den Fehler, damit wir ihn so schnell wie möglich beheben können."
+    buttonLabel="Fehler melden"
+    buttonUrl={createMailtoLink("de", {
+      recipients: {
+        to: "visualize@bafu.admin.ch",
+        cc: "supprt@interactivethings.com",
+      },
+      template: bugReportTemplates,
+    })}
+  />
+  <div style={{ width: "1px", backgroundColor: "#cccccc" }}></div>
+  <FeatureRequest
+    headline="Neue Funktion anfordern"
+    description="Senden Sie uns Ihre Funktionsanfragen und helfen Sie, die Zukunft unserer Plattform zu gestalten!"
+    buttonLabel="Einreichen"
+    buttonUrl={createMailtoLink("de", {
+      recipients: {
+        to: "visualize@bafu.admin.ch",
+        cc: "supprt@interactivethings.com",
+      },
+      template: featureRequestTemplates,
+    })}
+  />
+</Section>

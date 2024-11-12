@@ -57,7 +57,6 @@ export const Newsletter = ({
           rel="noopener noreferrer"
           color="inherit"
           sx={{
-            flexGrow: [1, 0, 0],
             textDecoration: "none",
             textAlign: "center",
           }}

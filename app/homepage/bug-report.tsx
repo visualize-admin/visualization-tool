@@ -1,4 +1,4 @@
-import { Box, Button, Link, Typography } from "@mui/material";
+import { Button, Link, Typography } from "@mui/material";
 
 import Flex from "@/components/flex";
 
@@ -14,55 +14,57 @@ export const BugReport = ({
   buttonUrl: string;
 }) => {
   return (
-    <Box sx={{ color: "grey.800" }}>
-      <Box sx={{ maxWidth: 1024, margin: "0 auto" }}>
-        <Flex
-          sx={{ flexDirection: "column", gap: "48px", px: 4, py: [6, 6, 7] }}
+    <Flex
+      sx={{
+        flexDirection: "column",
+        justifyContent: "space-between",
+        gap: "48px",
+        width: "100%",
+      }}
+    >
+      <Flex
+        sx={{
+          width: ["100%", "100%", "70%"],
+          flexDirection: "column",
+          gap: 4,
+          maxWidth: ["100%", "330px"],
+        }}
+      >
+        <Typography
+          sx={{
+            fontSize: ["1.5rem", "1.5rem", "2rem"],
+            lineHeight: ["2.5rem", "2.5rem", "3rem"],
+          }}
         >
-          <Flex
-            sx={{
-              width: ["100%", "100%", "70%"],
-              flexDirection: "column",
-              gap: "16px",
-            }}
-          >
-            <Typography
-              sx={{
-                fontSize: ["1.5rem", "1.5rem", "2rem"],
-                lineHeight: 1.25,
-              }}
-            >
-              {headline}
-            </Typography>
-            <Typography component="div" variant="body1">
-              {description}
-            </Typography>
-          </Flex>
-
-          <Flex
-            sx={{
-              alignItems: "center",
-              width: ["100%", "50%", "30%"],
-            }}
-          >
-            <Button
-              component={Link}
-              href={buttonUrl}
-              target="_blank"
-              variant="outlined"
-              rel="noopener noreferrer"
-              color="primary"
-              sx={{
-                flexGrow: [1, 0, 0],
-                textDecoration: "none",
-                textAlign: "center",
-              }}
-            >
-              {buttonLabel}
-            </Button>
-          </Flex>
-        </Flex>
-      </Box>
-    </Box>
+          {headline}
+        </Typography>
+        <Typography component="div" variant="body1">
+          {description}
+        </Typography>
+      </Flex>
+      <Flex
+        sx={{
+          width: ["100%", "100%", "70%"],
+          maxWidth: ["100%", "330px"],
+          paddingBottom: ["72px", "0px"],
+          borderBottom: ["1px solid #e5e5e5", "none"],
+        }}
+      >
+        <Button
+          component={Link}
+          href={buttonUrl}
+          target="_blank"
+          variant="contained"
+          rel="noopener noreferrer"
+          color="primary"
+          sx={{
+            textDecoration: "none",
+            textAlign: "center",
+          }}
+        >
+          {buttonLabel}
+        </Button>
+      </Flex>
+    </Flex>
   );
 };

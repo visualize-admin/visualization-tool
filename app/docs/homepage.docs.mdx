@@ -9,16 +9,19 @@ import {
   Newsletter,
   Tutorial,
 } from "@/homepage";
+import { bugReportTemplates } from "@/templates/email/bug-report";
+import { featureRequestTemplates } from "@/templates/email/feature-request";
 import { Canvas, Meta } from "@storybook/blocks";
+import { createMailtoLink } from "../../app/templates/email";
 import * as HomepageStories from "./homepage.stories";
 
 <Meta of={HomepageStories} />
 
 > The Homepage is the main page you see when you enter the Visualize app.
 
-It consists of 4 different components: Intro, Tutorial, Examples and Contribute.
-In order to compose a complete Homepage, you have to use them all in the correct
-order.
+It consists of 7 different components: Intro, Tutorial, Examples, Newsletter,
+Bug Reporting, Feature Requesting and Contribute. In order to compose a complete
+Homepage, you have to use them all in the correct order.
 
 You can either import them directly to JSX files or create a separate MDX file
 and use a MDXProvider to render the page (see ContentMDXProvider component).
@@ -28,7 +31,7 @@ and use a MDXProvider to render the page (see ContentMDXProvider component).
 ## How to use
 
 ```jsx
-import { Contribute, Examples, Intro, Tutorial, Newsletter } from "../homepage";
+import { Contribute, Examples, Intro, Tutorial, Newsletter, BugReport, FeatureRequest } from "../homepage";
 
 <Intro
   title="Visualize Swiss Open Government Data"
@@ -54,11 +57,29 @@ import { Contribute, Examples, Intro, Tutorial, Newsletter } from "../homepage";
   buttonLabel="Subscribe"
   buttonUrl="mailto:visualize@bafu.admin.ch"
 />
+<FeatureRequest
+  headline="New feature request"
+  description="Submit your feature requests today and help shape the future of our platform!"
+  buttonLabel="Submit"
+ buttonUrl={createMailtoLink("en", {
+  recipients: {
+    to: "visualize@bafu.admin.ch",
+    cc: "supprt@interactivethings.com",
+  },
+  template: featureRequestTemplates,
+})}
+/>
  <BugReport
   headline="Found a bug?"
   description="Please report it to us, so we can fix it as soon as possible."
   buttonLabel="Report a bug"
-  buttonUrl="mailto:visualize@bafu.admin.ch"
+  buttonUrl={createMailtoLink("en", {
+    recipients: {
+      to: "visualize@bafu.admin.ch",
+      cc: "supprt@interactivethings.com",
+    },
+    template: bugReportTemplates,
+  })}
 />
 <Contribute
   headline="Would you like to visualize your own data?"

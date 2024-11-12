@@ -9,7 +9,12 @@ import {
   Newsletter,
   Tutorial,
 } from "@/homepage";
+import { FeatureRequest } from "@/homepage/feature-request";
 import { Section } from "@/homepage/section";
+import { bugReportTemplates } from "@/templates/email/bug-report";
+import { featureRequestTemplates } from "@/templates/email/feature-request";
+
+import { createMailtoLink } from "../../app/templates/email";
 
 import { ReactSpecimen } from "./catalog";
 
@@ -56,12 +61,38 @@ const HomepageStory = {
             buttonUrl="mailto:visualize@bafu.admin.ch"
           />
         </Section>
-        <BugReport
-          headline="Found a bug?"
-          description="Please report the bug, so can fix it as soon as possible"
-          buttonLabel="Report a bug"
-          buttonUrl="mailto:visualize@bafu.admin.ch"
-        />
+
+        <Section
+          sx={{
+            color: "gray.800",
+          }}
+        >
+          <BugReport
+            headline="Found a bug?"
+            description="Please report the bug, so can fix it as soon as possible"
+            buttonLabel="Report a bug"
+            buttonUrl={createMailtoLink("en", {
+              recipients: {
+                to: "visualize@bafu.admin.ch",
+                cc: "supprt@interactivethings.com",
+              },
+              template: bugReportTemplates,
+            })}
+          />
+          <div style={{ width: "1px", backgroundColor: "#cccccc" }}></div>
+          <FeatureRequest
+            headline="New feature request"
+            description="Submit your feature requests today and help shape the future of our platform!"
+            buttonLabel="Submit"
+            buttonUrl={createMailtoLink("en", {
+              recipients: {
+                to: "visualize@bafu.admin.ch",
+                cc: "supprt@interactivethings.com",
+              },
+              template: featureRequestTemplates,
+            })}
+          />
+        </Section>
       </Box>
     </ReactSpecimen>
   ),

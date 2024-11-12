@@ -11,6 +11,7 @@ import {
   Newsletter,
   Tutorial,
 } from "@/homepage";
+import { FeatureRequest } from "@/homepage/feature-request";
 import { Section } from "@/homepage/section";
 
 const castContentId = (contentId: unknown) => {
@@ -46,6 +47,7 @@ const defaultMDXComponents = {
   Newsletter,
   BugReport,
   Section,
+  FeatureRequest,
 };
 
 export const ContentMDXProvider = ({ children }: { children: ReactNode }) => {

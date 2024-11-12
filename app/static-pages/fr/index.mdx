@@ -1,3 +1,8 @@
+import { bugReportTemplates } from "@/templates/email/bug-report";
+import { featureRequestTemplates } from "@/templates/email/feature-request";
+
+import { createMailtoLink } from "../../../app/templates/email";
+
 export const contentId = "home";
 
 <Intro
@@ -33,9 +38,34 @@ export const contentId = "home";
     buttonUrl="mailto:visualize@bafu.admin.ch"
   />
 </Section>
-<BugReport
-  headline="Un bug a été trouvé?"
-  description="Veuillez nous signaler le bug afin que nous puissions le corriger le plus rapidement possible."
-  buttonLabel="Signaler un bug"
-  buttonUrl="mailto:visualize@bafu.admin.ch"
-/>
+<Section
+  sx={{
+    color: "gray.800",
+  }}
+>
+  <BugReport
+    headline="Un bug a été trouvé?"
+    description="Veuillez nous signaler le bug afin que nous puissions le corriger le plus rapidement possible."
+    buttonLabel="Signaler un bug"
+    buttonUrl={createMailtoLink("fr", {
+      recipients: {
+        to: "visualize@bafu.admin.ch",
+        cc: "supprt@interactivethings.com",
+      },
+      template: bugReportTemplates,
+    })}
+  />
+  <div style={{ width: "1px", backgroundColor: "#cccccc" }}></div>
+  <FeatureRequest
+    headline="Nouvelle demande de fonctionnalité"
+    description="Envoyez-nous vos demandes de fonctionnalités dès aujourd'hui et aidez à façonner l'avenir de notre plateforme!"
+    buttonLabel="Soumettre"
+    buttonUrl={createMailtoLink("fr", {
+      recipients: {
+        to: "visualize@bafu.admin.ch",
+        cc: "supprt@interactivethings.com",
+      },
+      template: featureRequestTemplates,
+    })}
+  />
+</Section>
