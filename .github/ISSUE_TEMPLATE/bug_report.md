@@ -14,10 +14,10 @@ everything is fine there.
 
 **To Reproduce** Steps to reproduce the behavior:
 
-1. Go to '...'
-2. Click on '...'
-3. Scroll down to '...'
-4. See error
+1. Go to '...'.
+2. Click on '...'.
+3. Scroll down to '...'.
+4. See error.
 
 **Expected behavior** A clear and concise description of what you expected to
 happen.
@@ -27,7 +27,7 @@ put your problem into a context.
 
 **Environment (please complete the following information):**
 
-- Visualize environment and version: [e.g. INT v3.12.0]
-- Browser and version [e.g. Chrome 107]
+- Visualize environment and version: [e.g. INT v4.9.4]
+- Browser and version [e.g. Chrome 132]
 
 **Additional context** Add any other context about the problem here.
