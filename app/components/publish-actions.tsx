@@ -17,6 +17,7 @@ import { CopyToClipboardTextInput } from "@/components/copy-to-clipboard-text-in
 import Flex from "@/components/flex";
 import { Radio } from "@/components/form";
 import { IconLink } from "@/components/links";
+import { ConfiguratorStatePublished } from "@/configurator";
 import { Icon } from "@/icons";
 import useEvent from "@/utils/use-event";
 import { useI18n } from "@/utils/use-i18n";
@@ -25,6 +26,7 @@ type PublishActionProps = {
   chartWrapperRef: RefObject<HTMLDivElement>;
   configKey: string;
   locale: string;
+  state?: ConfiguratorStatePublished;
 };
 
 export const PublishActions = (props: PublishActionProps) => {
@@ -62,7 +64,12 @@ const TriggeredPopover = (props: TriggeredPopoverProps) => {
   );
 };
 
-const Embed = ({ chartWrapperRef, configKey, locale }: PublishActionProps) => {
+const Embed = ({
+  chartWrapperRef,
+  configKey,
+  locale,
+  state,
+}: PublishActionProps) => {
   const [embedUrl, setEmbedUrl] = useState("");
   const [embedAEMUrl, setEmbedAEMUrl] = useState("");
   const [isResponsive, setIsResponsive] = useState(true);
@@ -161,20 +168,23 @@ const Embed = ({ chartWrapperRef, configKey, locale }: PublishActionProps) => {
                   "For embedding visualizations in systems without JavaScript support (e.g. WordPress).",
               })}
             />
-            <EmbedToggleSwitch
-              value="remove-border"
-              checked={isWithoutBorder}
-              onChange={handleStylingChange}
-              label={t({
-                id: "publication.embed.iframe.remove-border",
-                message: "Remove border",
-              })}
-              infoMessage={t({
-                id: "publication.embed.iframe.remove-border.warn",
-                message:
-                  "For embedding visualizations in systems without a border.",
-              })}
-            />
+            {state?.chartConfigs.length === 1 &&
+              state.layout.type === "tab" && (
+                <EmbedToggleSwitch
+                  value="remove-border"
+                  checked={isWithoutBorder}
+                  onChange={handleStylingChange}
+                  label={t({
+                    id: "publication.embed.iframe.remove-border",
+                    message: "Remove border",
+                  })}
+                  infoMessage={t({
+                    id: "publication.embed.iframe.remove-border.warn",
+                    message:
+                      "For embedding visualizations in systems without a border.",
+                  })}
+                />
+              )}
           </Flex>
           <CopyToClipboardTextInput
             content={`<iframe src="${embedUrl}" width="100%" style="${isResponsive ? "" : `height: ${iframeHeight || 640}px; `}border: 0px #ffffff none;"  name="visualize.admin.ch"></iframe>${isResponsive ? `<script type="text/javascript">!function(){window.addEventListener("message", function (e) { if (e.data.type === "${CHART_RESIZE_EVENT_TYPE}") { document.querySelectorAll("iframe").forEach((iframe) => { if (iframe.contentWindow === e.source) { iframe.style.height = e.data.height + "px"; } }); } })}();</script>` : ""}`}
