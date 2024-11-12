@@ -64,12 +64,12 @@ const HomepageStory = {
 
         <Section
           sx={{
-            color: "gray.800",
+            color: "grey.800",
           }}
         >
           <BugReport
             headline="Found a bug?"
-            description="Please report the bug, so can fix it as soon as possible"
+            description="Please report the bug, so can fix it as soon as possible."
             buttonLabel="Report a bug"
             buttonUrl={createMailtoLink("en", {
               recipients: {

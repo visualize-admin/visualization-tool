@@ -1,7 +1,11 @@
 import { bugReportTemplates } from "@/templates/email/bug-report";
 import { featureRequestTemplates } from "@/templates/email/feature-request";
-
+import { Divider } from "@mui/material";
 import { createMailtoLink } from "../../../app/templates/email";
+import {
+  BAFU_VISUALIZE_EMAIL,
+  IXT_SUPPORT_EMAIL,
+} from "../../../app/templates/email/config";
 
 export const contentId = "home";
 
@@ -30,17 +34,17 @@ export const contentId = "home";
     buttonLabel="Learn how"
     buttonUrl="https://lindas.admin.ch/?lang=en"
   />
-  <div style={{ width: "1px", backgroundColor: "#e5e5e5" }}></div>
+  <Divider />
   <Newsletter
     headline="Subscribe to our Newsletter"
     description="Stay up to day and subscribe to our newsletter by adding your email address below."
     buttonLabel="Subscribe"
-    buttonUrl="mailto:visualize@bafu.admin.ch"
+    buttonUrl={BAFU_VISUALIZE_EMAIL}
   />
 </Section>
 <Section
   sx={{
-    color: "gray.800",
+    color: "grey.800",
   }}
 >
   <BugReport
@@ -49,21 +53,21 @@ export const contentId = "home";
     buttonLabel="Report a bug"
     buttonUrl={createMailtoLink("en", {
       recipients: {
-        to: "visualize@bafu.admin.ch",
-        cc: "supprt@interactivethings.com",
+        to: BAFU_VISUALIZE_EMAIL,
+        cc: IXT_SUPPORT_EMAIL,
       },
       template: bugReportTemplates,
     })}
   />
-  <div style={{ width: "1px", backgroundColor: "#cccccc" }}></div>
+  <Divider />
   <FeatureRequest
     headline="New feature request"
     description="Submit your feature requests today and help shape the future of our platform!"
     buttonLabel="Submit"
     buttonUrl={createMailtoLink("en", {
       recipients: {
-        to: "visualize@bafu.admin.ch",
-        cc: "supprt@interactivethings.com",
+        to: BAFU_VISUALIZE_EMAIL,
+        cc: IXT_SUPPORT_EMAIL,
       },
       template: featureRequestTemplates,
     })}

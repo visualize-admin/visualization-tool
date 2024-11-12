@@ -32,8 +32,8 @@ export const Contribute = ({
       >
         <Typography
           sx={{
-            fontSize: ["1.5rem", "1.5rem", "2rem"],
-            lineHeight: ["2.5rem", "2.5rem", "3rem"],
+            fontSize: ["1.125rem", "1.125rem", "1.5rem"],
+            lineHeight: ["1.75rem", "1.75rem", "2rem"],
           }}
         >
           {headline}

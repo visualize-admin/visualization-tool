@@ -1,6 +1,6 @@
 export const bugReportTemplates = {
   en: `
-Describe the bug
+Describe the bug (https://cube-validator.lindas.admin.ch/select)
 A clear and concise description of what the bug is. If it seems connected to some data problem (missing values, wrong parsing), please first check the cube in Cube Validator to see if everything is fine there.
 Please describe...
 
@@ -24,7 +24,7 @@ If applicable, add screenshots or a short video to help put your problem into a 
 ----------------------------------------------
 Environment
 Please complete the following information.
-- Visualize environment and version: [e.g., INT v3.12.0]
+- Visualize environment and version: [e.g., INT v4.9.4]
 - Browser and version [e.g., Chrome 107]
 
 ----------------------------------------------
@@ -34,7 +34,7 @@ Please describe...
 `,
 
   de: `
-Fehlermeldung
+Fehlermeldung (https://cube-validator.lindas.admin.ch/select)
 
 ----------------------------------------------
 Beschreiben Sie den Fehler
@@ -61,7 +61,7 @@ Falls zutreffend, fügen Sie Screenshots oder ein kurzes Video hinzu, um Ihr Pro
 ----------------------------------------------
 Umgebung
 Bitte vervollständigen Sie die folgenden Informationen.
-- Visualize-Umgebung und Version: [z.B., INT v3.12.0]
+- Visualize-Umgebung und Version: [z.B., INT v4.9.4]
 - Browser und Version [z.B., Chrome 107]
 
 ----------------------------------------------
@@ -71,7 +71,7 @@ Bitte beschreiben Sie...
 `,
 
   fr: `
-Description du bug
+Description du bug (https://cube-validator.lindas.admin.ch/select)
 Une description claire et concise du bug. S'il semble lié à un problème de données (valeurs manquantes, analyse incorrecte), veuillez d'abord vérifier le cube dans le Cube Validator pour vous assurer que tout y est correct.
 Veuillez décrire...
 
@@ -95,7 +95,7 @@ Le cas échéant, ajoutez des captures d'écran ou une courte vidéo pour mettre
 ----------------------------------------------
 Environnement
 Veuillez compléter les informations suivantes.
-- Environnement et version Visualize : [ex. INT v3.12.0]
+- Environnement et version Visualize : [ex. INT v4.9.4]
 - Navigateur et version [ex. Chrome 107]
 
 ----------------------------------------------
@@ -105,7 +105,7 @@ Veuillez décrire...
 `,
 
   it: `
-Descrizione del bug
+Descrizione del bug (https://cube-validator.lindas.admin.ch/select)
 Una descrizione chiara e concisa del bug. Se sembra collegato a un problema di dati (valori mancanti, analisi errata), controllare prima il cubo nel Cube Validator per assicurarsi che tutto sia a posto.
 Si prega di descrivere...
 
@@ -129,7 +129,7 @@ Se applicabile, aggiungere screenshot o un breve video per contestualizzare il p
 ----------------------------------------------
 Ambiente
 Si prega di completare le seguenti informazioni.
-- Ambiente e versione Visualize: [es. INT v3.12.0]
+- Ambiente e versione Visualize: [es. INT v4.9.4]
 - Browser e versione [es. Chrome 107]
 
 ----------------------------------------------
