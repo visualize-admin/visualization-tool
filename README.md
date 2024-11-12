@@ -353,7 +353,7 @@ your `.env.local` file. You'll find those secret variables in our shared
 1Password in the "Visualize.admin .env.local" entry.
 
 Make sure to set the `NEXTAUTH_URL` environment variable to
-`http://localhost:3000` and run the dev server with `yarn dev:ssl`.
+`https://localhost:3000` and run the dev server with `yarn dev:ssl`.
 
 ## 10. <a name='Translations'></a>Translations
 
