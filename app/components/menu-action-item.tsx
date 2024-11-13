@@ -22,7 +22,7 @@ export type MenuActionProps = {
   priority?: number;
   stayOpen?: boolean;
   color?: "primary" | "error";
-  onClick?: (e?: React.MouseEvent<HTMLElement>) => Promise<unknown> | void;
+  onClick?: (e: React.MouseEvent<HTMLElement>) => Promise<unknown> | void;
 } & (
   | {
       type: "link";

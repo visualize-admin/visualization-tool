@@ -18,7 +18,7 @@ import { featureRequestTemplates } from "@/templates/email/feature-request";
 export const LoginMenu = () => {
   const user = useUser();
   const [anchorEl, setAnchorEl] = useState<null | HTMLButtonElement>(null);
-  const [feedbackAnchorEl, setFeedbackAnchorEl] = useState<boolean>(false);
+  const [feedbackMenuOpen, setFeedbackMenuOpen] = useState(false);
 
   return (
     <div>
@@ -73,7 +73,7 @@ export const LoginMenu = () => {
                 message: "Feedback",
               })}
               trailingIconName="chevronRight"
-              onClick={() => setFeedbackAnchorEl(true)}
+              onClick={() => setFeedbackMenuOpen(true)}
             />
             <MenuActionItem
               type="button"
@@ -89,8 +89,8 @@ export const LoginMenu = () => {
           </Menu>
           <Feedback
             anchorEl={anchorEl}
-            open={feedbackAnchorEl}
-            setClose={setFeedbackAnchorEl}
+            open={feedbackMenuOpen}
+            handleClose={() => setFeedbackMenuOpen(true)}
           />
         </>
       ) : (
@@ -109,11 +109,11 @@ export const LoginMenu = () => {
 
 const Feedback = ({
   open,
-  setClose,
+  handleClose,
   anchorEl,
 }: {
   open: boolean;
-  setClose: Dispatch<SetStateAction<boolean>>;
+  handleClose: Dispatch<SetStateAction<boolean>>;
   anchorEl: HTMLButtonElement | null;
 }) => {
   const locale = useLocale();
@@ -139,7 +139,7 @@ const Feedback = ({
     <Menu
       anchorPosition={position}
       open={open}
-      onClose={() => setClose(false)}
+      onClose={handleClose}
       anchorReference="anchorPosition"
       PaperProps={{ sx: { mt: 3 } }}
     >

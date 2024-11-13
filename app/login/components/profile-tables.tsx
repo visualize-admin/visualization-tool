@@ -18,7 +18,7 @@ import {
 import { PUBLISHED_STATE } from "@prisma/client";
 import sortBy from "lodash/sortBy";
 import NextLink from "next/link";
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 
 import { MenuActionProps } from "@/components/menu-action-item";
 import { OverflowTooltip } from "@/components/overflow-tooltip";
