@@ -160,7 +160,8 @@ const useComboLineColumnState = (
   // Tooltip
   const getAnnotationInfo = (d: Observation): TooltipInfo => {
     const x = getX(d);
-    const xScaled = (xScale(x) as number) + xScale.bandwidth() * 0.5;
+    const xScaled =
+      (xScale(formatDate(x)) as number) + xScale.bandwidth() * 0.5;
     const values = [variables.y.left, variables.y.right]
       .map(({ orientation, getY, label, chartType }) => {
         const y = getY(d);
