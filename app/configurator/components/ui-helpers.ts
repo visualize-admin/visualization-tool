@@ -31,11 +31,26 @@ export const timeUnitToParser: Record<
   TimeUnit,
   (dateStr: string) => Date | null
 > = {
-  Second: timeParse("%Y-%m-%dT%H:%M:%S"),
-  Hour: timeParse("%Y-%m-%dT%H:%M"), // same as minute
-  Minute: timeParse("%Y-%m-%dT%H:%M"),
-  Week: timeParse("%Y-%m-%d"), // same as day
-  Day: timeParse("%Y-%m-%d"),
+  Second: (dateStr: string) =>
+    timeParse("%Y-%m-%dT%H:%M:%S")(dateStr) ??
+    timeParse("%d.%m.%YT%H:%M:%S")(dateStr) ??
+    timeParse("%m.%d.%YT%H:%M:%S")(dateStr),
+  Hour: (dateStr: string) =>
+    timeParse("%Y-%m-%dT%H:%M")(dateStr) ??
+    timeParse("%d.%m.%YT%H:%M")(dateStr) ??
+    timeParse("%m.%d.%YT%H:%M")(dateStr),
+  Minute: (dateStr: string) =>
+    timeParse("%Y-%m-%dT%H:%M")(dateStr) ??
+    timeParse("%d.%m.%YT%H:%M")(dateStr) ??
+    timeParse("%m.%d.%YT%H:%M")(dateStr),
+  Week: (dateStr: string) =>
+    timeParse("%Y-%m-%d")(dateStr) ??
+    timeParse("%d.%m.%Y")(dateStr) ??
+    timeParse("%m.%d.%Y")(dateStr),
+  Day: (dateStr: string) =>
+    timeParse("%Y-%m-%d")(dateStr) ??
+    timeParse("%d.%m.%Y")(dateStr) ??
+    timeParse("%m.%d.%Y")(dateStr),
   Month: timeParse("%Y-%m"),
   Year: timeParse("%Y"),
 };
@@ -46,7 +61,6 @@ export const parseDate = (dateStr: string): Date =>
   timeUnitToParser.Day(dateStr) ??
   timeUnitToParser.Month(dateStr) ??
   timeUnitToParser.Year(dateStr) ??
-  // This should probably not happen
   new Date(dateStr);
 
 export const timeUnitToFormatter: Record<TimeUnit, (date: Date) => string> = {
