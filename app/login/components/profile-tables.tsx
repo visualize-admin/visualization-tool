@@ -190,9 +190,6 @@ const ProfileVisualizationsRow = (props: {
   const removeConfigMut = useMutate(removeConfig);
   const updateConfigMut = useMutate(updateConfig);
 
-  const [openShare, setOpenShare] = useState<HTMLElement | undefined>();
-  const [openEmbed, setOpenEmbed] = useState<HTMLElement | undefined>();
-
   const {
     isOpen: isRenameOpen,
     open: openRename,
