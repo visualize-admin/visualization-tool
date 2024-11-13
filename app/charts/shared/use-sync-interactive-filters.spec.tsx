@@ -74,24 +74,24 @@ const interactiveFiltersConfig: InteractiveFiltersConfig = {
   },
 };
 
-const chartConfig = migrateChartConfig(
-  {
-    ...fixture.data.chartConfig,
-    interactiveFiltersConfig,
-  },
-  {
-    migrationProps: {
-      meta: {},
-      dataSet: "foo",
-    },
-  }
-) as ChartConfig;
-
-const setup = ({
+const setup = async ({
   modifiedChartConfig,
 }: {
   modifiedChartConfig: ChartConfig;
 }) => {
+  const chartConfig = (await migrateChartConfig(
+    {
+      ...fixture.data.chartConfig,
+      interactiveFiltersConfig,
+    },
+    {
+      migrationProps: {
+        meta: {},
+        dataSet: "foo",
+      },
+    }
+  )) as ChartConfig;
+
   const Component = () => {
     const IFState = useChartInteractiveFilters((d) => ({
       categories: d.categories,
@@ -148,7 +148,19 @@ const setup = ({
 
 describe("useSyncInteractiveFilters", () => {
   it("should keep interactive filters in sync with values from chart config", async () => {
-    const { getIFState, clickUseModified } = setup({
+    const chartConfig = (await migrateChartConfig(
+      {
+        ...fixture.data.chartConfig,
+        interactiveFiltersConfig,
+      },
+      {
+        migrationProps: {
+          meta: {},
+          dataSet: "foo",
+        },
+      }
+    )) as ChartConfig;
+    const { getIFState, clickUseModified } = await setup({
       modifiedChartConfig: {
         ...chartConfig,
         cubes: [

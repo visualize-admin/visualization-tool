@@ -1,5 +1,3 @@
-import produce from "immer";
-
 import { DEFAULT_OTHER_COLOR_FIELD_OPACITY } from "@/charts/map/constants";
 import { ChartConfig, ConfiguratorState } from "@/config-types";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
@@ -14,8 +12,8 @@ type Migration = {
   description: string;
   from: string;
   to: string;
-  up: (config: any, migrationProps?: any) => any;
-  down: (config: any, migrationProps?: any) => any;
+  up: (config: any, migrationProps?: any) => Promise<any>;
+  down: (config: any, migrationProps?: any) => Promise<any>;
 };
 
 export const CHART_CONFIG_VERSION = "3.4.0";
@@ -33,13 +31,10 @@ export const chartConfigMigrations: Migration[] = [
       let newConfig = { ...config, version: "1.0.1" };
 
       if (newConfig.chartType === "map") {
-        const { baseLayer } = newConfig;
-        newConfig = produce(newConfig, (draft: any) => {
-          draft.baseLayer = {
-            show: baseLayer.show,
-            locked: false,
-          };
-        });
+        newConfig.baseLayer = {
+          show: newConfig.baseLayer.show,
+          locked: false,
+        };
       }
 
       return newConfig;
@@ -48,12 +43,9 @@ export const chartConfigMigrations: Migration[] = [
       let newConfig = { ...config, version: "1.0.0" };
 
       if (newConfig.chartType === "map") {
-        const { baseLayer } = newConfig;
-        newConfig = produce(newConfig, (draft: any) => {
-          draft.baseLayer = {
-            show: baseLayer.show,
-          };
-        });
+        newConfig.baseLayer = {
+          show: newConfig.baseLayer.show,
+        };
       }
 
       return newConfig;
@@ -78,18 +70,16 @@ export const chartConfigMigrations: Migration[] = [
         const { fields } = newConfig;
         const { symbolLayer } = fields;
         const { show, componentIri, measureIri, color } = symbolLayer;
-        newConfig = produce(newConfig, (draft: any) => {
-          draft.fields.symbolLayer = {
-            show,
-            componentIri,
-            measureIri,
-            colors: {
-              type: "fixed",
-              value: color,
-              opacity: 80,
-            },
-          };
-        });
+        newConfig.fields.symbolLayer = {
+          show,
+          componentIri,
+          measureIri,
+          colors: {
+            type: "fixed",
+            value: color,
+            opacity: 80,
+          },
+        };
       }
 
       return newConfig;
@@ -101,14 +91,12 @@ export const chartConfigMigrations: Migration[] = [
         const { fields } = newConfig;
         const { symbolLayer } = fields;
         const { show, componentIri, measureIri, colors } = symbolLayer;
-        newConfig = produce(newConfig, (draft: any) => {
-          draft.fields.symbolLayer = {
-            show,
-            componentIri,
-            measureIri,
-            color: colors.value,
-          };
-        });
+        newConfig.fields.symbolLayer = {
+          show,
+          componentIri,
+          measureIri,
+          color: colors.value,
+        };
       }
 
       return newConfig;
@@ -133,23 +121,22 @@ export const chartConfigMigrations: Migration[] = [
         const { areaLayer, symbolLayer } = fields;
         const { show: showAreaLayer, ...newAreaLayer } = areaLayer;
         const { show: showSymbolLayer, ...newSymbolLayer } = symbolLayer;
-        newConfig = produce(newConfig, (draft: any) => {
-          if (showAreaLayer) {
-            draft.fields.areaLayer = {
-              ...newAreaLayer,
-            };
-          } else {
-            delete draft.fields.areaLayer;
-          }
 
-          if (showSymbolLayer) {
-            draft.fields.symbolLayer = {
-              ...newSymbolLayer,
-            };
-          } else {
-            delete draft.fields.symbolLayer;
-          }
-        });
+        if (showAreaLayer) {
+          newConfig.fields.areaLayer = {
+            ...newAreaLayer,
+          };
+        } else {
+          delete newConfig.fields.areaLayer;
+        }
+
+        if (showSymbolLayer) {
+          newConfig.fields.symbolLayer = {
+            ...newSymbolLayer,
+          };
+        } else {
+          delete newConfig.fields.symbolLayer;
+        }
       }
 
       return newConfig;
@@ -160,43 +147,42 @@ export const chartConfigMigrations: Migration[] = [
       if (newConfig.chartType === "map") {
         const { fields } = newConfig;
         const { areaLayer, symbolLayer } = fields;
-        newConfig = produce(newConfig, (draft: any) => {
-          if (areaLayer) {
-            draft.fields.areaLayer = {
-              ...areaLayer,
-              show: true,
-            };
-          } else {
-            draft.fields.areaLayer = {
-              show: false,
-              componentIri: "",
-              measureIri: symbolLayer?.measureIri || "",
-              colorScaleType: "continuous",
-              colorScaleInterpolationType: "linear",
-              palette: "oranges",
-              nbClass: 5,
-            };
-          }
 
-          if (symbolLayer) {
-            draft.fields.symbolLayer = {
-              ...symbolLayer,
-              show: true,
-            };
-          } else {
-            draft.fields.symbolLayer = {
-              show: false,
-              // GeoShapes dimensions (Area Layer) can be used in Symbol Layer.
-              componentIri: areaLayer?.componentIri || "",
-              measureIri: areaLayer?.measureIri || "",
-              colors: {
-                type: "fixed",
-                value: "#1f77b4",
-                opacity: 80,
-              },
-            };
-          }
-        });
+        if (areaLayer) {
+          newConfig.fields.areaLayer = {
+            ...areaLayer,
+            show: true,
+          };
+        } else {
+          newConfig.fields.areaLayer = {
+            show: false,
+            componentIri: "",
+            measureIri: symbolLayer?.measureIri || "",
+            colorScaleType: "continuous",
+            colorScaleInterpolationType: "linear",
+            palette: "oranges",
+            nbClass: 5,
+          };
+        }
+
+        if (symbolLayer) {
+          newConfig.fields.symbolLayer = {
+            ...symbolLayer,
+            show: true,
+          };
+        } else {
+          newConfig.fields.symbolLayer = {
+            show: false,
+            // GeoShapes dimensions (Area Layer) can be used in Symbol Layer.
+            componentIri: areaLayer?.componentIri || "",
+            measureIri: areaLayer?.measureIri || "",
+            colors: {
+              type: "fixed",
+              value: "#1f77b4",
+              opacity: 80,
+            },
+          };
+        }
       }
 
       return newConfig;
@@ -283,50 +269,46 @@ export const chartConfigMigrations: Migration[] = [
             nbClass,
           } = areaLayer;
 
-          newConfig = produce(newConfig, (draft: any) => {
-            draft.fields.areaLayer = {
-              componentIri,
-              color: {
-                type: "numerical",
-                componentIri: measureIri,
-                palette,
-                ...(colorScaleType === "discrete"
-                  ? {
-                      scaleType: colorScaleType,
-                      interpolationType:
-                        colorScaleInterpolationType === "linear"
-                          ? "quantize"
-                          : colorScaleInterpolationType,
-                      nbClass,
-                    }
-                  : {
-                      scaleType: colorScaleType,
-                      interpolationType: "linear",
-                    }),
-              },
-            };
-          });
+          newConfig.fields.areaLayer = {
+            componentIri,
+            color: {
+              type: "numerical",
+              componentIri: measureIri,
+              palette,
+              ...(colorScaleType === "discrete"
+                ? {
+                    scaleType: colorScaleType,
+                    interpolationType:
+                      colorScaleInterpolationType === "linear"
+                        ? "quantize"
+                        : colorScaleInterpolationType,
+                    nbClass,
+                  }
+                : {
+                    scaleType: colorScaleType,
+                    interpolationType: "linear",
+                  }),
+            },
+          };
         }
 
         if (symbolLayer) {
           const { componentIri, measureIri, colors } = symbolLayer;
 
-          newConfig = produce(newConfig, (draft: any) => {
-            draft.fields.symbolLayer = {
-              componentIri,
-              measureIri,
-              color:
-                colors.type === "fixed" || colors.type === "categorical"
-                  ? colors
-                  : {
-                      type: "numerical",
-                      componentIri: colors.componentIri,
-                      palette: colors.palette,
-                      scaleType: "continuous",
-                      interpolationType: "linear",
-                    },
-            };
-          });
+          newConfig.fields.symbolLayer = {
+            componentIri,
+            measureIri,
+            color:
+              colors.type === "fixed" || colors.type === "categorical"
+                ? colors
+                : {
+                    type: "numerical",
+                    componentIri: colors.componentIri,
+                    palette: colors.palette,
+                    scaleType: "continuous",
+                    interpolationType: "linear",
+                  },
+          };
         }
       }
 
@@ -342,34 +324,30 @@ export const chartConfigMigrations: Migration[] = [
         if (areaLayer) {
           const { componentIri, color } = areaLayer;
 
-          newConfig = produce(newConfig, (draft: any) => {
-            draft.fields.areaLayer = {
-              componentIri,
-              measureIri: color.componentIri,
-              palette: color.palette,
-              colorScaleType: color.scaleType,
-              colorInterpolationType: color.interpolationType,
-              nbClass: color.nbClass ?? 3,
-            };
-          });
+          newConfig.fields.areaLayer = {
+            componentIri,
+            measureIri: color.componentIri,
+            palette: color.palette,
+            colorScaleType: color.scaleType,
+            colorInterpolationType: color.interpolationType,
+            nbClass: color.nbClass ?? 3,
+          };
         }
 
         if (symbolLayer) {
           const { componentIri, measureIri, color } = symbolLayer;
 
-          newConfig = produce(newConfig, (draft: any) => {
-            draft.fields.symbolLayer = {
-              componentIri,
-              measureIri,
-              ...(color.type === "fixed" || color.type === "categorical"
-                ? color
-                : {
-                    type: "continuous",
-                    componentIri: color.componentIri,
-                    palette: color.palette,
-                  }),
-            };
-          });
+          newConfig.fields.symbolLayer = {
+            componentIri,
+            measureIri,
+            ...(color.type === "fixed" || color.type === "categorical"
+              ? color
+              : {
+                  type: "continuous",
+                  componentIri: color.componentIri,
+                  palette: color.palette,
+                }),
+          };
         }
       }
 
@@ -395,9 +373,7 @@ export const chartConfigMigrations: Migration[] = [
         const { areaLayer } = fields;
 
         if (areaLayer && areaLayer.color.type === "categorical") {
-          newConfig = produce(newConfig, (draft: any) => {
-            delete draft.fields.areaLayer;
-          });
+          delete newConfig.fields.areaLayer;
         }
       }
 
@@ -417,13 +393,11 @@ export const chartConfigMigrations: Migration[] = [
       const { interactiveFiltersConfig } = newConfig;
 
       if (interactiveFiltersConfig) {
-        newConfig = produce(newConfig, (draft: any) => {
-          draft.interactiveFiltersConfig = {
-            legend: draft.interactiveFiltersConfig.legend,
-            timeRange: draft.interactiveFiltersConfig.time,
-            dataFilters: draft.interactiveFiltersConfig.dataFilters,
-          };
-        });
+        newConfig.interactiveFiltersConfig = {
+          legend: newConfig.interactiveFiltersConfig.legend,
+          timeRange: newConfig.interactiveFiltersConfig.time,
+          dataFilters: newConfig.interactiveFiltersConfig.dataFilters,
+        };
       }
 
       return newConfig;
@@ -434,13 +408,11 @@ export const chartConfigMigrations: Migration[] = [
       const { interactiveFiltersConfig } = newConfig;
 
       if (interactiveFiltersConfig) {
-        newConfig = produce(newConfig, (draft: any) => {
-          draft.interactiveFiltersConfig = {
-            legend: draft.interactiveFiltersConfig.legend,
-            time: draft.interactiveFiltersConfig.timeRange,
-            dataFilters: draft.interactiveFiltersConfig.dataFilters,
-          };
-        });
+        newConfig.interactiveFiltersConfig = {
+          legend: newConfig.interactiveFiltersConfig.legend,
+          time: newConfig.interactiveFiltersConfig.timeRange,
+          dataFilters: newConfig.interactiveFiltersConfig.dataFilters,
+        };
       }
 
       return newConfig;
@@ -459,14 +431,12 @@ export const chartConfigMigrations: Migration[] = [
       const { interactiveFiltersConfig } = newConfig;
 
       if (interactiveFiltersConfig) {
-        newConfig = produce(newConfig, (draft: any) => {
-          draft.interactiveFiltersConfig = {
-            ...draft.interactiveFiltersConfig,
-            timeSlider: {
-              componentIri: "",
-            },
-          };
-        });
+        newConfig.interactiveFiltersConfig = {
+          ...newConfig.interactiveFiltersConfig,
+          timeSlider: {
+            componentIri: "",
+          },
+        };
       }
 
       return newConfig;
@@ -477,13 +447,11 @@ export const chartConfigMigrations: Migration[] = [
       const { interactiveFiltersConfig } = newConfig;
 
       if (interactiveFiltersConfig) {
-        newConfig = produce(newConfig, (draft: any) => {
-          draft.interactiveFiltersConfig = {
-            legend: draft.interactiveFiltersConfig.legend,
-            time: draft.interactiveFiltersConfig.time,
-            dataFilters: draft.interactiveFiltersConfig.dataFilters,
-          };
-        });
+        newConfig.interactiveFiltersConfig = {
+          legend: newConfig.interactiveFiltersConfig.legend,
+          time: newConfig.interactiveFiltersConfig.time,
+          dataFilters: newConfig.interactiveFiltersConfig.dataFilters,
+        };
       }
 
       return newConfig;
@@ -507,22 +475,20 @@ export const chartConfigMigrations: Migration[] = [
         const { legend, timeRange, timeSlider, dataFilters } =
           interactiveFiltersConfig;
 
-        newConfig = produce(newConfig, (draft: any) => {
-          draft.interactiveFiltersConfig = { legend, timeRange, dataFilters };
+        newConfig.interactiveFiltersConfig = { legend, timeRange, dataFilters };
 
-          if (
-            ["column", "pie", "scatterplot"].includes(draft.chartType) &&
-            timeSlider?.componentIri
-          ) {
-            draft.fields.animation = {
-              ...timeSlider,
-              showPlayButton: true,
-              duration: 30,
-              type: "continuous",
-              dynamicScales: false,
-            };
-          }
-        });
+        if (
+          ["column", "pie", "scatterplot"].includes(newConfig.chartType) &&
+          timeSlider?.componentIri
+        ) {
+          newConfig.fields.animation = {
+            ...timeSlider,
+            showPlayButton: true,
+            duration: 30,
+            type: "continuous",
+            dynamicScales: false,
+          };
+        }
       }
 
       return newConfig;
@@ -534,17 +500,15 @@ export const chartConfigMigrations: Migration[] = [
       const { animation } = fields;
 
       if (animation) {
-        newConfig = produce(newConfig, (draft: any) => {
-          delete draft.fields.animation;
+        delete newConfig.fields.animation;
 
-          if (["column", "pie", "scatterplot"].includes(draft.chartType)) {
-            draft.interactiveFiltersConfig.timeSlider = {
-              componentIri: animation.componentIri,
-            };
-          } else {
-            draft.interactiveFiltersConfig.timeSlider = { componentIri: "" };
-          }
-        });
+        if (["column", "pie", "scatterplot"].includes(newConfig.chartType)) {
+          newConfig.interactiveFiltersConfig.timeSlider = {
+            componentIri: animation.componentIri,
+          };
+        } else {
+          newConfig.interactiveFiltersConfig.timeSlider = { componentIri: "" };
+        }
       }
 
       return newConfig;
@@ -565,20 +529,15 @@ export const chartConfigMigrations: Migration[] = [
       const { fields, interactiveFiltersConfig } = newConfig;
       const { x } = fields;
 
-      if (interactiveFiltersConfig) {
-        const { timeRange } = interactiveFiltersConfig;
-
-        newConfig = produce(newConfig, (draft: any) => {
-          if (
-            ["area", "column", "line"].includes(draft.chartType) &&
-            timeRange.active
-          ) {
-            draft.interactiveFiltersConfig.timeRange = {
-              ...timeRange,
-              componentIri: x.componentIri,
-            };
-          }
-        });
+      if (
+        interactiveFiltersConfig &&
+        ["area", "column", "line"].includes(newConfig.chartType) &&
+        newConfig.interactiveFiltersConfig.timeRange.active
+      ) {
+        newConfig.interactiveFiltersConfig.timeRange = {
+          ...newConfig.interactiveFiltersConfig.timeRange,
+          componentIri: x.componentIri,
+        };
       }
 
       return newConfig;
@@ -589,12 +548,10 @@ export const chartConfigMigrations: Migration[] = [
       const { interactiveFiltersConfig } = config;
 
       if (interactiveFiltersConfig) {
-        newConfig = produce(newConfig, (draft: any) => {
-          draft.interactiveFiltersConfig.timeRange = {
-            ...draft.interactiveFiltersConfig.timeRange,
-            componentIri: "",
-          };
-        });
+        newConfig.interactiveFiltersConfig.timeRange = {
+          ...newConfig.interactiveFiltersConfig.timeRange,
+          componentIri: "",
+        };
       }
 
       return newConfig;
@@ -613,15 +570,13 @@ export const chartConfigMigrations: Migration[] = [
       const { interactiveFiltersConfig } = newConfig;
 
       if (interactiveFiltersConfig) {
-        newConfig = produce(newConfig, (draft: any) => {
-          draft.interactiveFiltersConfig = {
-            ...draft.interactiveFiltersConfig,
-            calculation: {
-              active: false,
-              type: "identity",
-            },
-          };
-        });
+        newConfig.interactiveFiltersConfig = {
+          ...newConfig.interactiveFiltersConfig,
+          calculation: {
+            active: false,
+            type: "identity",
+          },
+        };
       }
 
       return newConfig;
@@ -632,10 +587,8 @@ export const chartConfigMigrations: Migration[] = [
       const { interactiveFiltersConfig } = config;
 
       if (interactiveFiltersConfig) {
-        newConfig = produce(newConfig, (draft: any) => {
-          const { calculation, ...rest } = interactiveFiltersConfig;
-          draft.interactiveFiltersConfig = rest;
-        });
+        const { calculation, ...rest } = interactiveFiltersConfig;
+        newConfig.interactiveFiltersConfig = rest;
       }
 
       return newConfig;
@@ -647,19 +600,17 @@ export const chartConfigMigrations: Migration[] = [
     to: "2.0.0",
     up: (config, configuratorState) => {
       const newConfig = { ...config, version: "2.0.0" };
+      newConfig.key = createChartId();
+      newConfig.meta = configuratorState.meta;
+      newConfig.activeField = configuratorState.activeField;
 
-      return produce(newConfig, (draft: any) => {
-        draft.key = createChartId();
-        draft.meta = configuratorState.meta;
-        draft.activeField = configuratorState.activeField;
-      });
+      return newConfig;
     },
     down: (config) => {
       const newConfig = { ...config, version: "1.4.2" };
+      delete newConfig.key;
 
-      return produce(newConfig, (draft: any) => {
-        delete draft.key;
-      });
+      return newConfig;
     },
   },
   {
@@ -674,26 +625,26 @@ export const chartConfigMigrations: Migration[] = [
     down: (config) => {
       const newConfig = { ...config, version: "2.0.0" };
 
-      return produce(newConfig, (draft: any) => {
-        if (
-          ["comboLineSingle", "comboLineDual", "comboLineColumn"].includes(
-            draft.chartType
-          )
-        ) {
-          draft.chartType = "line";
-          draft.fields = {
-            x: draft.fields.x,
-            y: {
-              componentIri:
-                draft.chartType === "comboLineSingle"
-                  ? draft.fields.y.componentIris[0]
-                  : draft.chartType === "comboLineDual"
-                    ? draft.fields.y.leftAxisComponentIri
-                    : draft.fields.y.lineComponentIri,
-            },
-          };
-        }
-      });
+      if (
+        ["comboLineSingle", "comboLineDual", "comboLineColumn"].includes(
+          newConfig.chartType
+        )
+      ) {
+        newConfig.chartType = "line";
+        newConfig.fields = {
+          x: newConfig.fields.x,
+          y: {
+            componentIri:
+              newConfig.chartType === "comboLineSingle"
+                ? newConfig.fields.y.componentIris[0]
+                : newConfig.chartType === "comboLineDual"
+                  ? newConfig.fields.y.leftAxisComponentIri
+                  : newConfig.fields.y.lineComponentIri,
+          },
+        };
+      }
+
+      return newConfig;
     },
   },
   {
@@ -708,55 +659,55 @@ export const chartConfigMigrations: Migration[] = [
     up: (config) => {
       const newConfig = { ...config, version: "2.2.0" };
 
-      return produce(newConfig, (draft: any) => {
-        if (draft.chartType === "comboLineSingle") {
-          draft.fields.y.palette = DEFAULT_CATEGORICAL_PALETTE_NAME;
-          draft.fields.y.colorMapping = mapValueIrisToColor({
-            palette: DEFAULT_CATEGORICAL_PALETTE_NAME,
-            dimensionValues: draft.fields.y.componentIris.map(
-              (iri: string) => ({ value: iri, label: iri })
-            ),
-          });
-        } else if (draft.chartType === "comboLineDual") {
-          draft.fields.y.palette = DEFAULT_CATEGORICAL_PALETTE_NAME;
-          draft.fields.y.colorMapping = mapValueIrisToColor({
-            palette: DEFAULT_CATEGORICAL_PALETTE_NAME,
-            dimensionValues: [
-              draft.fields.y.leftAxisComponentIri,
-              draft.fields.y.rightAxisComponentIri,
-            ].map((iri) => ({
-              value: iri,
-              label: iri,
-            })),
-          });
-        } else if (draft.chartType === "comboLineColumn") {
-          draft.fields.y.palette = DEFAULT_CATEGORICAL_PALETTE_NAME;
-          draft.fields.y.colorMapping = mapValueIrisToColor({
-            palette: DEFAULT_CATEGORICAL_PALETTE_NAME,
-            dimensionValues: [
-              draft.fields.y.lineComponentIri,
-              draft.fields.y.columnComponentIri,
-            ].map((iri) => ({
-              value: iri,
-              label: iri,
-            })),
-          });
-        }
-      });
+      if (newConfig.chartType === "comboLineSingle") {
+        newConfig.fields.y.palette = DEFAULT_CATEGORICAL_PALETTE_NAME;
+        newConfig.fields.y.colorMapping = mapValueIrisToColor({
+          palette: DEFAULT_CATEGORICAL_PALETTE_NAME,
+          dimensionValues: newConfig.fields.y.componentIris.map(
+            (iri: string) => ({ value: iri, label: iri })
+          ),
+        });
+      } else if (newConfig.chartType === "comboLineDual") {
+        newConfig.fields.y.palette = DEFAULT_CATEGORICAL_PALETTE_NAME;
+        newConfig.fields.y.colorMapping = mapValueIrisToColor({
+          palette: DEFAULT_CATEGORICAL_PALETTE_NAME,
+          dimensionValues: [
+            newConfig.fields.y.leftAxisComponentIri,
+            newConfig.fields.y.rightAxisComponentIri,
+          ].map((iri) => ({
+            value: iri,
+            label: iri,
+          })),
+        });
+      } else if (newConfig.chartType === "comboLineColumn") {
+        newConfig.fields.y.palette = DEFAULT_CATEGORICAL_PALETTE_NAME;
+        newConfig.fields.y.colorMapping = mapValueIrisToColor({
+          palette: DEFAULT_CATEGORICAL_PALETTE_NAME,
+          dimensionValues: [
+            newConfig.fields.y.lineComponentIri,
+            newConfig.fields.y.columnComponentIri,
+          ].map((iri) => ({
+            value: iri,
+            label: iri,
+          })),
+        });
+      }
+
+      return newConfig;
     },
     down: (config) => {
       const newConfig = { ...config, version: "2.1.0" };
 
-      return produce(newConfig, (draft: any) => {
-        if (
-          ["comboLineSingle", "comboLineDual", "comboLineColumn"].includes(
-            draft.chartType
-          )
-        ) {
-          delete draft.fields.y.palette;
-          delete draft.fields.y.colorMapping;
-        }
-      });
+      if (
+        ["comboLineSingle", "comboLineDual", "comboLineColumn"].includes(
+          newConfig.chartType
+        )
+      ) {
+        delete newConfig.fields.y.palette;
+        delete newConfig.fields.y.colorMapping;
+      }
+
+      return newConfig;
     },
   },
   {
@@ -768,17 +719,15 @@ export const chartConfigMigrations: Migration[] = [
     up: (config, configuratorState) => {
       const newConfig = { ...config, version: "2.3.0" };
       const { dataSet } = configuratorState;
+      newConfig.dataSet = dataSet;
 
-      return produce(newConfig, (draft: any) => {
-        draft.dataSet = dataSet;
-      });
+      return newConfig;
     },
     down: (config) => {
       const newConfig = { ...config, version: "2.2.0" };
+      delete newConfig.dataSet;
 
-      return produce(newConfig, (draft: any) => {
-        delete draft.dataSet;
-      });
+      return newConfig;
     },
   },
   {
@@ -795,21 +744,24 @@ export const chartConfigMigrations: Migration[] = [
     to: "3.0.0",
     up: (config) => {
       const newConfig = { ...config, version: "3.0.0" };
+      newConfig.cubes = [
+        {
+          iri: newConfig.dataSet,
+          filters: newConfig.filters,
+        },
+      ];
+      delete newConfig.dataSet;
+      delete newConfig.filters;
 
-      return produce(newConfig, (draft: any) => {
-        draft.cubes = [{ iri: draft.dataSet, filters: draft.filters }];
-        delete draft.dataSet;
-        delete draft.filters;
-      });
+      return newConfig;
     },
     down: (config) => {
       const newConfig = { ...config, version: "2.3.0" };
+      newConfig.dataSet = newConfig.cubes[0].iri;
+      newConfig.filters = newConfig.cubes[0].filters;
+      delete newConfig.cubes;
 
-      return produce(newConfig, (draft: any) => {
-        draft.dataSet = draft.cubes[0].iri;
-        draft.filters = draft.cubes[0].filters;
-        delete draft.cubes;
-      });
+      return newConfig;
     },
   },
   {
@@ -823,38 +775,38 @@ export const chartConfigMigrations: Migration[] = [
     up: (config) => {
       const newConfig = { ...config, version: "3.1.0" };
 
-      return produce(newConfig, (draft: any) => {
-        if (draft.chartType === "map") {
-          if (draft.fields.areaLayer) {
-            draft.fields.areaLayer.color.opacity =
+      if (newConfig.chartType === "map") {
+        if (newConfig.fields.areaLayer) {
+          newConfig.fields.areaLayer.color.opacity =
+            DEFAULT_OTHER_COLOR_FIELD_OPACITY;
+        }
+
+        if (newConfig.fields.symbolLayer) {
+          if (newConfig.fields.symbolLayer.color.type !== "fixed") {
+            newConfig.fields.symbolLayer.color.opacity =
               DEFAULT_OTHER_COLOR_FIELD_OPACITY;
           }
-
-          if (draft.fields.symbolLayer) {
-            if (draft.fields.symbolLayer.color.type !== "fixed") {
-              draft.fields.symbolLayer.color.opacity =
-                DEFAULT_OTHER_COLOR_FIELD_OPACITY;
-            }
-          }
         }
-      });
+      }
+
+      return newConfig;
     },
     down: (config) => {
       const newConfig = { ...config, version: "3.0.0" };
 
-      return produce(newConfig, (draft: any) => {
-        if (draft.chartType === "map") {
-          if (draft.fields.areaLayer) {
-            delete draft.fields.areaLayer.color.opacity;
-          }
+      if (newConfig.chartType === "map") {
+        if (newConfig.fields.areaLayer) {
+          delete newConfig.fields.areaLayer.color.opacity;
+        }
 
-          if (draft.fields.symbolLayer) {
-            if (draft.fields.symbolLayer.color.type !== "fixed") {
-              delete draft.fields.symbolLayer.color.opacity;
-            }
+        if (newConfig.fields.symbolLayer) {
+          if (newConfig.fields.symbolLayer.color.type !== "fixed") {
+            delete newConfig.fields.symbolLayer.color.opacity;
           }
         }
-      });
+      }
+
+      return newConfig;
     },
   },
   {
@@ -868,23 +820,21 @@ export const chartConfigMigrations: Migration[] = [
     to: "3.2.0",
     up: (config) => {
       const newConfig = { ...config, version: "3.2.0" };
+      newConfig.cubes = newConfig.cubes.map((cube: any) => ({
+        ...cube,
+        publishIri: cube.iri,
+      }));
 
-      return produce(newConfig, (draft: any) => {
-        draft.cubes = draft.cubes.map((cube: any) => ({
-          ...cube,
-          publishIri: cube.iri,
-        }));
-      });
+      return newConfig;
     },
     down: (config) => {
       const newConfig = { ...config, version: "3.1.0" };
-
-      return produce(newConfig, (draft: any) => {
-        draft.cubes = draft.cubes.map((cube: any) => {
-          const { publishIri, ...rest } = cube;
-          return rest;
-        });
+      newConfig.cubes = newConfig.cubes.map((cube: any) => {
+        const { publishIri, ...rest } = cube;
+        return rest;
       });
+
+      return newConfig;
     },
   },
   {
@@ -897,29 +847,27 @@ export const chartConfigMigrations: Migration[] = [
     to: "3.3.0",
     up: (config) => {
       const newConfig = { ...config, version: "3.3.0" };
+      newConfig.cubes = newConfig.cubes.map((cube: any) => {
+        if (typeof cube.joinBy === "string") {
+          cube.joinBy = [cube.joinBy];
+        }
 
-      return produce(newConfig, (draft: any) => {
-        draft.cubes = draft.cubes.map((cube: any) => {
-          if (typeof cube.joinBy === "string") {
-            cube.joinBy = [cube.joinBy];
-          }
-
-          return cube;
-        });
+        return cube;
       });
+
+      return newConfig;
     },
     down: (config) => {
       const newConfig = { ...config, version: "3.2.0" };
+      newConfig.cubes = newConfig.cubes.map((cube: any) => {
+        if (cube.joinBy) {
+          cube.joinBy = cube.joinBy[0];
+        }
 
-      return produce(newConfig, (draft: any) => {
-        draft.cubes = draft.cubes.map((cube: any) => {
-          if (cube.joinBy) {
-            cube.joinBy = cube.joinBy[0];
-          }
-
-          return cube;
-        });
+        return cube;
       });
+
+      return newConfig;
     },
   },
   {
@@ -932,22 +880,20 @@ export const chartConfigMigrations: Migration[] = [
     to: "3.4.0",
     up: (config) => {
       const newConfig = { ...config, version: "3.4.0" };
+      newConfig.meta.label = {
+        de: "",
+        fr: "",
+        it: "",
+        en: "",
+      };
 
-      return produce(newConfig, (draft: any) => {
-        draft.meta.label = {
-          de: "",
-          fr: "",
-          it: "",
-          en: "",
-        };
-      });
+      return newConfig;
     },
     down: (config) => {
       const newConfig = { ...config, version: "3.3.0" };
+      delete newConfig.meta.label;
 
-      return produce(newConfig, (draft: any) => {
-        delete draft.meta.label;
-      });
+      return newConfig;
     },
   },
 ];
@@ -966,139 +912,137 @@ export const configuratorStateMigrations: Migration[] = [
     description: "ALL",
     from: "1.0.0",
     to: "2.0.0",
-    up: (config) => {
+    up: async (config) => {
       const newConfig = { ...config, version: "2.0.0" };
 
-      return produce(newConfig, (draft: any) => {
-        const migratedChartConfig = migrateChartConfig(draft.chartConfig, {
-          migrationProps: draft,
+      const migratedChartConfig = await migrateChartConfig(
+        newConfig.chartConfig,
+        {
+          migrationProps: newConfig,
           toVersion: "2.0.0",
-        });
-        draft.chartConfigs = [migratedChartConfig];
-        delete draft.chartConfig;
-        delete draft.activeField;
-        draft.meta = {
-          title: {
-            de: "",
-            fr: "",
-            it: "",
-            en: "",
-          },
-          description: {
-            de: "",
-            fr: "",
-            it: "",
-            en: "",
-          },
-        };
-        draft.activeChartKey = migratedChartConfig.key;
-      });
-    },
-    down: (config: any) => {
-      const newConfig = { ...config, version: "1.0.0" };
+        }
+      );
+      newConfig.chartConfigs = [migratedChartConfig];
+      delete newConfig.chartConfig;
+      delete newConfig.activeField;
+      newConfig.meta = {
+        title: {
+          de: "",
+          fr: "",
+          it: "",
+          en: "",
+        },
+        description: {
+          de: "",
+          fr: "",
+          it: "",
+          en: "",
+        },
+      };
+      newConfig.activeChartKey = migratedChartConfig.key;
 
-      return produce(newConfig, (draft: any) => {
-        const chartConfig = draft.chartConfigs[0];
-        delete draft.chartConfigs;
-        delete draft.activeChartKey;
-        draft.meta = chartConfig.meta;
-        draft.activeField = chartConfig.activeField;
-        const migratedChartConfig = migrateChartConfig(chartConfig, {
-          toVersion: "1.4.2",
-        });
-        draft.chartConfig = migratedChartConfig;
+      return newConfig;
+    },
+    down: async (config: any) => {
+      const newConfig = { ...config, version: "1.0.0" };
+      const chartConfig = newConfig.chartConfigs[0];
+      delete newConfig.chartConfigs;
+      delete newConfig.activeChartKey;
+      newConfig.meta = chartConfig.meta;
+      newConfig.activeField = chartConfig.activeField;
+      const migratedChartConfig = await migrateChartConfig(chartConfig, {
+        toVersion: "1.4.2",
       });
+      newConfig.chartConfig = migratedChartConfig;
+
+      return newConfig;
     },
   },
   {
     description: "ALL",
     from: "2.0.0",
     to: "3.0.0",
-    up: (config) => {
+    up: async (config) => {
       const newConfig = { ...config, version: "3.0.0" };
+      const chartConfigs: any[] = [];
 
-      return produce(newConfig, (draft: any) => {
-        const chartConfigs: any[] = [];
+      for (const chartConfig of newConfig.chartConfigs) {
+        const migratedChartConfig = await migrateChartConfig(chartConfig, {
+          migrationProps: newConfig,
+          toVersion: "2.3.0",
+        });
+        chartConfigs.push(migratedChartConfig);
+      }
 
-        for (const chartConfig of draft.chartConfigs) {
-          const migratedChartConfig = migrateChartConfig(chartConfig, {
-            migrationProps: draft,
-            toVersion: "2.3.0",
+      delete newConfig.dataSet;
+      newConfig.chartConfigs = chartConfigs;
+
+      return newConfig;
+    },
+    down: async (config) => {
+      const newConfig = { ...config, version: "2.0.0" };
+      let dataSet: string | undefined;
+      const chartConfigs: any[] = [];
+
+      for (const chartConfig of newConfig.chartConfigs) {
+        if (!dataSet) {
+          dataSet = chartConfig.dataSet;
+        }
+
+        // Only migrate chartConfigs with the same dataSet as configuratorState.
+        if (chartConfig.dataSet === dataSet) {
+          const migratedChartConfig = await migrateChartConfig(chartConfig, {
+            migrationProps: newConfig,
+            toVersion: "2.2.0",
           });
           chartConfigs.push(migratedChartConfig);
+        } else {
+          console.warn(
+            "Cannot migrate chartConfig dataSet to configuratorState dataSet because they are not the same."
+          );
         }
+      }
 
-        delete draft.dataSet;
-        draft.chartConfigs = chartConfigs;
-      });
-    },
-    down: (config) => {
-      const newConfig = { ...config, version: "2.0.0" };
+      newConfig.dataSet = dataSet;
 
-      return produce(newConfig, (draft: any) => {
-        let dataSet: string | undefined;
-        const chartConfigs: any[] = [];
-
-        for (const chartConfig of draft.chartConfigs) {
-          if (!dataSet) {
-            dataSet = chartConfig.dataSet;
-          }
-
-          // Only migrate chartConfigs with the same dataSet as configuratorState.
-          if (chartConfig.dataSet === dataSet) {
-            const migratedChartConfig = migrateChartConfig(chartConfig, {
-              migrationProps: draft,
-              toVersion: "2.2.0",
-            });
-            chartConfigs.push(migratedChartConfig);
-          } else {
-            console.warn(
-              "Cannot migrate chartConfig dataSet to configuratorState dataSet because they are not the same."
-            );
-          }
-        }
-
-        draft.dataSet = dataSet;
-      });
+      return newConfig;
     },
   },
   {
     description: "ALL (bump ChartConfig version)",
     from: "3.0.0",
     to: "3.0.1",
-    up: (config) => {
+    up: async (config) => {
       const newConfig = { ...config, version: "3.0.1" };
+      const chartConfigs: any[] = [];
 
-      return produce(newConfig, (draft: any) => {
-        const chartConfigs: any[] = [];
+      for (const chartConfig of newConfig.chartConfigs) {
+        const migratedChartConfig = await migrateChartConfig(chartConfig, {
+          migrationProps: newConfig,
+          toVersion: "3.0.0",
+        });
+        chartConfigs.push(migratedChartConfig);
+      }
 
-        for (const chartConfig of draft.chartConfigs) {
-          const migratedChartConfig = migrateChartConfig(chartConfig, {
-            migrationProps: draft,
-            toVersion: "3.0.0",
-          });
-          chartConfigs.push(migratedChartConfig);
-        }
+      newConfig.chartConfigs = chartConfigs;
 
-        draft.chartConfigs = chartConfigs;
-      });
+      return newConfig;
     },
-    down: (config) => {
+    down: async (config) => {
       const newConfig = { ...config, version: "3.0.0" };
+      const chartConfigs: any[] = [];
 
-      return produce(newConfig, (draft: any) => {
-        const chartConfigs: any[] = [];
+      for (const chartConfig of newConfig.chartConfigs) {
+        const migratedChartConfig = await migrateChartConfig(chartConfig, {
+          migrationProps: newConfig,
+          toVersion: "2.3.0",
+        });
+        chartConfigs.push(migratedChartConfig);
+      }
 
-        for (const chartConfig of draft.chartConfigs) {
-          const migratedChartConfig = migrateChartConfig(chartConfig, {
-            migrationProps: draft,
-            toVersion: "2.3.0",
-          });
-          chartConfigs.push(migratedChartConfig);
-        }
+      newConfig.chartConfigs = chartConfigs;
 
-        draft.chartConfigs = chartConfigs;
-      });
+      return newConfig;
     },
   },
   {
@@ -1107,75 +1051,71 @@ export const configuratorStateMigrations: Migration[] = [
     to: "3.1.0",
     up: (config) => {
       const newConfig = { ...config, version: "3.1.0" };
+      newConfig.layout = {
+        type: "tab",
+        meta: newConfig.meta,
+        activeField: undefined,
+      };
+      delete newConfig.meta;
 
-      return produce(newConfig, (draft: any) => {
-        draft.layout = {
-          type: "tab",
-          meta: draft.meta,
-          activeField: undefined,
-        };
-        delete draft.meta;
-      });
+      return newConfig;
     },
     down: (config) => {
       const newConfig = { ...config, version: "3.0.1" };
+      newConfig.meta = newConfig.layout.meta ?? {
+        title: {
+          de: "",
+          fr: "",
+          it: "",
+          en: "",
+        },
+        description: {
+          de: "",
+          fr: "",
+          it: "",
+          en: "",
+        },
+      };
+      delete newConfig.layout;
 
-      return produce(newConfig, (draft: any) => {
-        draft.meta = draft.layout.meta ?? {
-          title: {
-            de: "",
-            fr: "",
-            it: "",
-            en: "",
-          },
-          description: {
-            de: "",
-            fr: "",
-            it: "",
-            en: "",
-          },
-        };
-        delete draft.layout;
-      });
+      return newConfig;
     },
   },
   {
     description: "ALL (bump ChartConfig version)",
     from: "3.1.0",
     to: "3.2.0",
-    up: (config) => {
+    up: async (config) => {
       const newConfig = { ...config, version: "3.2.0" };
+      const chartConfigs: any[] = [];
 
-      return produce(newConfig, (draft: any) => {
-        const chartConfigs: any[] = [];
+      for (const chartConfig of newConfig.chartConfigs) {
+        const migratedChartConfig = await migrateChartConfig(chartConfig, {
+          migrationProps: newConfig,
+          toVersion: "3.2.0",
+        });
+        chartConfigs.push(migratedChartConfig);
+      }
 
-        for (const chartConfig of draft.chartConfigs) {
-          const migratedChartConfig = migrateChartConfig(chartConfig, {
-            migrationProps: draft,
-            toVersion: "3.2.0",
-          });
-          chartConfigs.push(migratedChartConfig);
-        }
+      newConfig.chartConfigs = chartConfigs;
 
-        draft.chartConfigs = chartConfigs;
-      });
+      return newConfig;
     },
-    down: (config) => {
+    down: async (config) => {
       const newConfig = { ...config, version: "3.1.0" };
+      const chartConfigs: any[] = [];
 
-      return produce(newConfig, (draft: any) => {
-        const chartConfigs: any[] = [];
+      for (const chartConfig of newConfig.chartConfigs) {
+        const migratedChartConfig = await migrateChartConfig(chartConfig, {
+          migrationProps: newConfig,
+          toVersion: "3.1.0",
+        });
+        chartConfigs.push(migratedChartConfig);
+      }
 
-        for (const chartConfig of draft.chartConfigs) {
-          const migratedChartConfig = migrateChartConfig(chartConfig, {
-            migrationProps: draft,
-            toVersion: "3.1.0",
-          });
-          chartConfigs.push(migratedChartConfig);
-        }
+      newConfig.chartConfigs = chartConfigs;
 
-        draft.chartConfigs = chartConfigs;
-      });
+      return newConfig;
     },
   },
   {
@@ -1185,19 +1125,20 @@ export const configuratorStateMigrations: Migration[] = [
     up: (config) => {
       const newConfig = { ...config, version: "3.2.1" };
 
-      return produce(newConfig, (draft: any) => {
-        if (!draft.dataSource) {
-          draft.dataSource = {
-            type: "sparql",
-            url: PROD_DATA_SOURCE_URL,
-          };
-        } else if (draft.dataSource.url === LEGACY_PROD_DATA_SOURCE_URL) {
-          draft.dataSource.url = PROD_DATA_SOURCE_URL;
-        }
-      });
+      if (!newConfig.dataSource) {
+        newConfig.dataSource = {
+          type: "sparql",
+          url: PROD_DATA_SOURCE_URL,
+        };
+      } else if (newConfig.dataSource.url === LEGACY_PROD_DATA_SOURCE_URL) {
+        newConfig.dataSource.url = PROD_DATA_SOURCE_URL;
+      }
+
+      return newConfig;
     },
     down: (config) => {
       const newConfig = { ...config, version: "3.2.0" };
+
       return newConfig;
     },
   },
@@ -1213,11 +1154,13 @@ export const configuratorStateMigrations: Migration[] = [
           filters: [],
         },
       };
+
       return newConfig;
     },
     down: (config) => {
       const newConfig = { ...config, version: "3.2.1" };
       delete newConfig.dashboardFilters;
+
       return newConfig;
     },
   },
@@ -1225,39 +1168,37 @@ export const configuratorStateMigrations: Migration[] = [
     description: "ALL (bump ChartConfig version)",
     from: "3.3.0",
     to: "3.4.0",
-    up: (config) => {
+    up: async (config) => {
       const newConfig = { ...config, version: "3.4.0" };
+      const chartConfigs: any[] = [];
 
-      return produce(newConfig, (draft: any) => {
-        const chartConfigs: any[] = [];
+      for (const chartConfig of newConfig.chartConfigs) {
+        const migratedChartConfig = await migrateChartConfig(chartConfig, {
+          migrationProps: newConfig,
+          toVersion: "3.3.0",
+        });
+        chartConfigs.push(migratedChartConfig);
+      }
 
-        for (const chartConfig of draft.chartConfigs) {
-          const migratedChartConfig = migrateChartConfig(chartConfig, {
-            migrationProps: draft,
-            toVersion: "3.3.0",
-          });
-          chartConfigs.push(migratedChartConfig);
-        }
+      newConfig.chartConfigs = chartConfigs;
 
-        draft.chartConfigs = chartConfigs;
-      });
+      return newConfig;
     },
-    down: (config) => {
+    down: async (config) => {
       const newConfig = { ...config, version: "3.3.0" };
+      const chartConfigs: any[] = [];
 
-      return produce(newConfig, (draft: any) => {
-        const chartConfigs: any[] = [];
+      for (const chartConfig of newConfig.chartConfigs) {
+        const migratedChartConfig = await migrateChartConfig(chartConfig, {
+          migrationProps: newConfig,
+          toVersion: "3.2.0",
+        });
+        chartConfigs.push(migratedChartConfig);
+      }
 
-        for (const chartConfig of draft.chartConfigs) {
-          const migratedChartConfig = migrateChartConfig(chartConfig, {
-            migrationProps: draft,
-            toVersion: "3.2.0",
-          });
-          chartConfigs.push(migratedChartConfig);
-        }
+      newConfig.chartConfigs = chartConfigs;
 
-        draft.chartConfigs = chartConfigs;
-      });
+      return newConfig;
     },
   },
   {
@@ -1289,6 +1230,7 @@ export const configuratorStateMigrations: Migration[] = [
               },
         },
       };
+
       return newConfig;
     },
     down: (config) => {
@@ -1311,6 +1253,7 @@ export const configuratorStateMigrations: Migration[] = [
           ],
         },
       };
+
       return newConfig;
     },
   },
@@ -1330,6 +1273,7 @@ export const configuratorStateMigrations: Migration[] = [
           },
         },
       };
+
       return newConfig;
     },
     down: (config) => {
@@ -1340,6 +1284,7 @@ export const configuratorStateMigrations: Migration[] = [
           timeRange: config.dashboardFilters.timeRange,
         },
       };
+
       return newConfig;
     },
   },
@@ -1351,7 +1296,7 @@ export const configuratorStateMigrations: Migration[] = [
     } & bump ChartConfig version`,
     from: "3.6.0",
     to: "3.7.0",
-    up: (config) => {
+    up: async (config) => {
       const { layout, ...rest } = config;
       const { meta, ...restLayout } = layout;
       const newConfig = {
@@ -1371,21 +1316,21 @@ export const configuratorStateMigrations: Migration[] = [
         },
       };
 
-      return produce(newConfig, (draft: any) => {
-        const chartConfigs: any[] = [];
+      const chartConfigs: any[] = [];
 
-        for (const chartConfig of draft.chartConfigs) {
-          const migratedChartConfig = migrateChartConfig(chartConfig, {
-            migrationProps: draft,
-            toVersion: "3.4.0",
-          });
-          chartConfigs.push(migratedChartConfig);
-        }
+      for (const chartConfig of newConfig.chartConfigs) {
+        const migratedChartConfig = await migrateChartConfig(chartConfig, {
+          migrationProps: newConfig,
+          toVersion: "3.4.0",
+        });
+        chartConfigs.push(migratedChartConfig);
+      }
 
-        draft.chartConfigs = chartConfigs;
-      });
+      newConfig.chartConfigs = chartConfigs;
+
+      return newConfig;
     },
-    down: (config) => {
+    down: async (config) => {
       const { layout, ...rest } = config;
       const { meta, ...restLayout } = layout.meta;
       const { label, ...restMeta } = meta;
@@ -1398,19 +1343,19 @@ export const configuratorStateMigrations: Migration[] = [
         },
       };
 
-      return produce(newConfig, (draft: any) => {
-        const chartConfigs: any[] = [];
+      const chartConfigs: any[] = [];
 
-        for (const chartConfig of draft.chartConfigs) {
-          const migratedChartConfig = migrateChartConfig(chartConfig, {
-            migrationProps: draft,
-            toVersion: "3.3.0",
-          });
-          chartConfigs.push(migratedChartConfig);
-        }
+      for (const chartConfig of newConfig.chartConfigs) {
+        const migratedChartConfig = await migrateChartConfig(chartConfig, {
+          migrationProps: newConfig,
+          toVersion: "3.3.0",
+        });
+        chartConfigs.push(migratedChartConfig);
+      }
 
-        draft.chartConfigs = chartConfigs;
-      });
+      newConfig.chartConfigs = chartConfigs;
+
+      return newConfig;
     },
   },
   {
@@ -1423,22 +1368,22 @@ export const configuratorStateMigrations: Migration[] = [
         version: "3.8.0",
       };
 
-      return produce(newConfig, (draft: any) => {
-        if (
-          draft.layout.type === "dashboard" &&
-          draft.layout.layout === "canvas"
-        ) {
-          draft.layout.layoutsMetadata = draft.chartConfigs.reduce(
-            (acc: any, chartConfig: any) => {
-              acc[chartConfig.key] = {
-                initialized: true,
-              };
-              return acc;
-            },
-            {}
-          );
-        }
-      });
+      if (
+        newConfig.layout.type === "dashboard" &&
+        newConfig.layout.layout === "canvas"
+      ) {
+        newConfig.layout.layoutsMetadata = newConfig.chartConfigs.reduce(
+          (acc: any, chartConfig: any) => {
+            acc[chartConfig.key] = {
+              initialized: true,
+            };
+            return acc;
+          },
+          {}
+        );
+      }
+
+      return newConfig;
     },
     down: (config) => {
       const newConfig = {
@@ -1446,14 +1391,14 @@ export const configuratorStateMigrations: Migration[] = [
         version: "3.7.0",
       };
 
-      return produce(newConfig, (draft: any) => {
-        if (
-          draft.layout.type === "dashboard" &&
-          draft.layout.layout === "canvas"
-        ) {
-          delete draft.layout.layoutsMetadata;
-        }
-      });
+      if (
+        newConfig.layout.type === "dashboard" &&
+        newConfig.layout.layout === "canvas"
+      ) {
+        delete newConfig.layout.layoutsMetadata;
+      }
+
+      return newConfig;
     },
   },
 ];
@@ -1471,27 +1416,27 @@ function makeMigrate<V>(
 ) {
   const { defaultToVersion } = options;
 
-  return (
+  return async (
     data: any,
     options: {
       fromVersion?: string;
       toVersion?: string;
       migrationProps?: any;
     } = {}
-  ): V => {
+  ): Promise<V> => {
     const {
       fromVersion,
       toVersion = defaultToVersion,
       migrationProps,
     } = options;
-    const migrate = (
+    const migrate = async (
       data: any,
       {
         fromVersion,
       }: {
         fromVersion?: string;
       } = {}
-    ): any => {
+    ): Promise<any> => {
       const fromVersionFinal = fromVersion ?? data.version ?? "1.0.0";
       const direction = upOrDown(fromVersionFinal, toVersion);
 
@@ -1504,12 +1449,12 @@ function makeMigrate<V>(
       );
 
       if (migration) {
-        const newData = migration[direction](data, migrationProps);
-        return migrate(newData, { fromVersion });
+        const newData = await migration[direction](data, migrationProps);
+        return await migrate(newData, { fromVersion });
       }
     };
 
-    return migrate(data, { fromVersion });
+    return await migrate(data, { fromVersion });
   };
 }
 

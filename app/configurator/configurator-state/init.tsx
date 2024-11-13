@@ -117,7 +117,7 @@ export const initChartStateFromLocalStorage = async (
   let state: ConfiguratorState | undefined;
   try {
     const rawState = JSON.parse(storedState);
-    const migratedState = migrateConfiguratorState(rawState);
+    const migratedState = await migrateConfiguratorState(rawState);
     state = decodeConfiguratorState(migratedState);
   } catch (e) {
     console.error("Error while parsing stored state", e);
@@ -146,10 +146,10 @@ export const initChartStateFromChartCopy = async (
   if (config?.data) {
     // Do not keep the previous chart key
     delete config.data.key;
-    const state = migrateConfiguratorState({
+    const state = (await migrateConfiguratorState({
       ...config.data,
       state: "CONFIGURING_CHART",
-    }) as ConfiguratorStateConfiguringChart;
+    })) as ConfiguratorStateConfiguringChart;
     return await upgradeConfiguratorState(state, {
       client,
       dataSource: state.dataSource,
@@ -165,10 +165,10 @@ export const initChartStateFromChartEdit = async (
   const config = await fetchChartConfig(fromChartId);
 
   if (config?.data) {
-    const configState = migrateConfiguratorState({
+    const configState = (await migrateConfiguratorState({
       ...config.data,
       state: state ?? "CONFIGURING_CHART",
-    }) as ConfiguratorStateConfiguringChart;
+    })) as ConfiguratorStateConfiguringChart;
     return await upgradeConfiguratorState(configState, {
       client,
       dataSource: configState.dataSource,

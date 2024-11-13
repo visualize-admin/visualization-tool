@@ -1,6 +1,6 @@
 import { Box, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { useClient } from "urql";
 
 import { ChartPublished } from "@/components/chart-published";
@@ -29,7 +29,19 @@ export const Examples = (props: ExamplesProps) => {
     example2Headline,
     example2Description,
   } = props;
-  return (
+  const [state1, setState1] = useState<ConfiguratorState>();
+  const [state2, setState2] = useState<ConfiguratorState>();
+
+  useEffect(() => {
+    const run = async () => {
+      setState1(await migrateConfiguratorState(defaultState1));
+      setState2(await migrateConfiguratorState(defaultState2));
+    };
+
+    run();
+  }, []);
+
+  return state1 && state2 ? (
     <Box
       sx={{
         maxWidth: 1024,
@@ -44,19 +56,19 @@ export const Examples = (props: ExamplesProps) => {
       <HomepageSection>{headline}</HomepageSection>
       <Example
         queryKey="example1"
-        configuratorState={defaultState1}
+        configuratorState={state1}
         headline={example1Headline}
         description={example1Description}
       />
       <Example
         queryKey="example2"
-        configuratorState={defaultState2}
+        configuratorState={state2}
         headline={example2Headline}
         description={example2Description}
         reverse
       />
     </Box>
-  );
+  ) : null;
 };
 
 type ExampleProps = {
@@ -162,7 +174,7 @@ const ExampleCard = (props: ExampleCardProps) => {
   );
 };
 
-const defaultState1 = migrateConfiguratorState({
+const defaultState1 = {
   state: "PUBLISHED",
   dataSet: "https://environment.ld.admin.ch/foen/ubd003701/2",
   dataSource: {
@@ -252,9 +264,9 @@ const defaultState1 = migrateConfiguratorState({
     },
   },
   activeField: undefined,
-});
+};
 
-const defaultState2 = migrateConfiguratorState({
+const defaultState2 = {
   state: "PUBLISHED",
   dataSet: "https://culture.ld.admin.ch/sfa/StateAccounts_Office/4/",
   dataSource: {
@@ -329,4 +341,4 @@ const defaultState2 = migrateConfiguratorState({
       },
     },
   },
-});
+};

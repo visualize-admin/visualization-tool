@@ -81,6 +81,7 @@ describe("initChartStateFromChart", () => {
       chartConfig as ReturnType<typeof api.fetchChartConfig>
     );
   };
+
   it("should fetch work if existing chart is valid", async () => {
     setup({
       chartConfig: {
@@ -97,9 +98,9 @@ describe("initChartStateFromChart", () => {
       activeChartKey: migratedActiveChartKey,
       chartConfigs: migratedChartsConfigs,
       ...migratedRest
-    } = migrateConfiguratorState(
+    } = (await migrateConfiguratorState(
       fakeVizFixture
-    ) as ConfiguratorStateConfiguringChart;
+    )) as ConfiguratorStateConfiguringChart;
     const { key: migratedChartConfigKey, ...migratedChartConfig } =
       migratedChartsConfigs[0];
 

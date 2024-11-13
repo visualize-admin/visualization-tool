@@ -6,6 +6,7 @@ import { ChartPublished } from "@/components/chart-published";
 import {
   ChartConfig,
   ConfiguratorStateProvider,
+  ConfiguratorStatePublished,
   DataSource,
   Meta,
 } from "@/configurator";
@@ -29,13 +30,14 @@ const Page: NextPage = () => {
 
   useEffect(() => {
     if (!env || !slug) return;
+
     const run = async () => {
       const importedConfig = (
         await import(`../../../test/__fixtures/config/${env}/${slug}`)
       ).default;
       setConfig({
         ...importedConfig,
-        data: migrateConfiguratorState(importedConfig.data),
+        data: await migrateConfiguratorState(importedConfig.data),
       });
     };
 
@@ -46,10 +48,12 @@ const Page: NextPage = () => {
     return (
       <ConfiguratorStateProvider
         chartId="published"
-        initialState={migrateConfiguratorState({
+        initialState={
+          {
           ...config.data,
           state: "PUBLISHED",
-        })}
+          } as unknown as ConfiguratorStatePublished
+        }
       >
         <ChartPublished />
       </ConfiguratorStateProvider>

@@ -275,15 +275,15 @@ describe("useQueryFilters", () => {
   });
 });
 
-describe("getChartConfigComponentIris", () => {
+describe("getChartConfigComponentIris", async () => {
   const migrationOptions = {
     migrationProps: { dataSet: "foo", meta: {} },
   };
-  const lineConfig = migrateChartConfig(
+  const lineConfig = await migrateChartConfig(
     line1Fixture.data.chartConfig,
     migrationOptions
   );
-  const mapConfig = migrateChartConfig(
+  const mapConfig = await migrateChartConfig(
     map1Fixture.data.chartConfig,
     migrationOptions
   );

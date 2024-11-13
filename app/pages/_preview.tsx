@@ -8,37 +8,19 @@ const Page = () => {
   const locale = useLocale();
   useEffect(() => {
     const iframe = document.getElementById("chart") as HTMLIFrameElement;
-    iframe.onload = () => {
+    iframe.onload = async () => {
       const iframeWindow = iframe?.contentWindow as Window | undefined;
 
       if (iframeWindow) {
-        iframeWindow.postMessage(chartState, "*");
-      }
-    };
-  }, []);
-
-  return (
-    <Box sx={{ display: "flex", flexDirection: "column", gap: 6, p: 6 }}>
-      <iframe
-        id="chart"
-        src={`/${locale}/preview`}
-        style={{
-          width: 450,
-          height: 750,
-          border: "none",
-        }}
-      />
-    </Box>
-  );
-};
-
-export default Page;
-
-const chartState = migrateConfiguratorState({
+        iframeWindow.postMessage(
+          await migrateConfiguratorState({
   state: "CONFIGURING_CHART",
   dataSet:
     "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/2",
-  dataSource: { type: "sparql", url: "https://test.lindas.admin.ch/query" },
+            dataSource: {
+              type: "sparql",
+              url: "https://test.lindas.admin.ch/query",
+            },
   meta: {
     title: { de: "", fr: "", it: "", en: "" },
     description: { de: "", fr: "", it: "", en: "" },
@@ -73,4 +55,26 @@ const chartState = migrateConfiguratorState({
       },
     },
   },
-});
+          }),
+          "*"
+        );
+      }
+    };
+  }, []);
+
+  return (
+    <Box sx={{ display: "flex", flexDirection: "column", gap: 6, p: 6 }}>
+      <iframe
+        id="chart"
+        src={`/${locale}/preview`}
+        style={{
+          width: 450,
+          height: 750,
+          border: "none",
+        }}
+      />
+    </Box>
+  );
+};
+
+export default Page;

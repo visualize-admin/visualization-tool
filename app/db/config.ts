@@ -139,9 +139,12 @@ const ensureMigratedCubeIris = (chartConfig: ChartConfig) => {
   };
 };
 
-const parseDbConfig = (d: PrismaConfig) => {
+const parseDbConfig = async (d: PrismaConfig) => {
   const data = d.data;
-  const state = migrateConfiguratorState(data) as ConfiguratorStatePublished;
+  const state = (await migrateConfiguratorState(
+    data
+  )) as ConfiguratorStatePublished;
+
   return {
     ...d,
     data: {
@@ -161,7 +164,7 @@ const upgradeDbConfig = async (config: PrismaConfig) => {
     data: await upgradeConfiguratorStateServerSide(state as ConfiguratorState, {
       dataSource,
     }),
-  } as ReturnType<typeof parseDbConfig>;
+  } as Awaited<ReturnType<typeof parseDbConfig>>;
 };
 
 /**
@@ -180,7 +183,7 @@ export const getConfig = async (key: string) => {
     return;
   }
 
-  const dbConfig = parseDbConfig(config);
+  const dbConfig = await parseDbConfig(config);
   return await upgradeDbConfig(dbConfig);
 };
 
@@ -198,7 +201,8 @@ export const getAllConfigs = async ({
     },
     take: limit,
   });
-  const parsedConfigs = configs.map(parseDbConfig);
+  const parsedConfigs = await Promise.all(configs.map(parseDbConfig));
+
   return await Promise.all(parsedConfigs.map(upgradeDbConfig));
 };
 
@@ -268,8 +272,8 @@ export const getUserConfigs = async (userId: number) => {
       created_at: "desc",
     },
   });
-  const parsedConfigs = configs.map(parseDbConfig);
+  const parsedConfigs = await Promise.all(configs.map(parseDbConfig));
   return await Promise.all(parsedConfigs.map(upgradeDbConfig));
 };
 
-export type ParsedConfig = ReturnType<typeof parseDbConfig>;
+export type ParsedConfig = Awaited<ReturnType<typeof parseDbConfig>>;

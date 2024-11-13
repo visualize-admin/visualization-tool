@@ -996,18 +996,18 @@ describe("retainChartConfigWhenSwitchingChartType", () => {
     }
   };
 
-  it("should retain appropriate x & y fields and discard the others", () => {
+  it("should retain appropriate x & y fields and discard the others", async () => {
     runChecks(
-      migrateChartConfig(covid19ColumnChartConfig, {
+      await migrateChartConfig(covid19ColumnChartConfig, {
         migrationProps: { meta: {}, dataSet: "foo" },
       }),
       xyChecks
     );
   });
 
-  it("should retain appropriate segment fields and discard the others", () => {
+  it("should retain appropriate segment fields and discard the others", async () => {
     runChecks(
-      migrateChartConfig(covid19TableChartConfig, {
+      await migrateChartConfig(covid19TableChartConfig, {
         migrationProps: { meta: {}, dataSet: "foo" },
       }),
       segmentChecks
