@@ -1,5 +1,5 @@
 import { interpolate } from "d3-interpolate";
-import { Selection } from "d3-selection";
+import { select } from "d3-selection";
 import { PieArcDatum } from "d3-shape";
 import { Transition } from "d3-transition";
 
@@ -8,6 +8,8 @@ import {
   maybeTransition,
 } from "@/charts/shared/rendering-utils";
 import { Observation } from "@/domain/data";
+
+import type { BaseType, Selection } from "d3-selection";
 
 export type RenderDatum = {
   key: string;
@@ -26,7 +28,7 @@ export const renderPies = (
   renderData: RenderDatum[],
   options: RenderPieOptions
 ) => {
-  const { arcGenerator, handleMouseEnter, handleMouseLeave, transition } =
+  const { arcGenerator, transition, handleMouseEnter, handleMouseLeave } =
     options;
 
   g.selectAll<SVGPathElement, RenderDatum>("path")
@@ -37,8 +39,30 @@ export const renderPies = (
           .append("path")
           .attr("data-index", (_, i) => i)
           .attr("fill", (d) => d.color)
-          .on("mouseenter", (_, d) => handleMouseEnter(d.arcDatum))
-          .on("mouseleave", handleMouseLeave)
+          .attr("stroke", "black")
+          .attr("stroke-width", 0)
+          .on("mouseenter", function (_, d) {
+            handleMouseEnter(d.arcDatum);
+            select<SVGPathElement, RenderDatum>(this).call(
+              (s: Selection<SVGPathElement, RenderDatum, BaseType, unknown>) =>
+                maybeTransition(s, {
+                  transition,
+                  s: (g) => g.attr("stroke-width", 1),
+                  t: (g) => g.attr("stroke-width", 1),
+                })
+            );
+          })
+          .on("mouseleave", function () {
+            handleMouseLeave();
+            select<SVGPathElement, RenderDatum>(this).call(
+              (s: Selection<SVGPathElement, RenderDatum, BaseType, unknown>) =>
+                maybeTransition(s, {
+                  transition,
+                  s: (g) => g.attr("stroke-width", 0),
+                  t: (g) => g.attr("stroke-width", 0),
+                })
+            );
+          })
           .call((enter) =>
             maybeTransition(enter, {
               transition,
