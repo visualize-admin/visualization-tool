@@ -84,7 +84,7 @@ import {
   getDefaultCategoricalPaletteName,
 } from "@/palettes";
 import { bfs } from "@/utils/bfs";
-import { CHART_CONFIG_VERSION } from "@/utils/chart-config/versioning";
+import { CHART_CONFIG_VERSION } from "@/utils/chart-config/constants";
 import { createChartId } from "@/utils/create-chart-id";
 import { isMultiHierarchyNode } from "@/utils/hierarchy";
 import { unreachableError } from "@/utils/unreachable";

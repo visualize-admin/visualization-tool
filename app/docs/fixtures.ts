@@ -1,6 +1,6 @@
 import { Dimension, Measure } from "@/domain/data";
 import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
-import { CONFIGURATOR_STATE_VERSION } from "@/utils/chart-config/versioning";
+import { CONFIGURATOR_STATE_VERSION } from "@/utils/chart-config/constants";
 
 import { ColumnFields, ConfiguratorState, TableConfig } from "../configurator";
 import { TimeUnit } from "../graphql/query-hooks";

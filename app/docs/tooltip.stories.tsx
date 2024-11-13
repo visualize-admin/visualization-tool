@@ -21,7 +21,7 @@ import {
   observations,
 } from "@/docs/fixtures";
 import { InteractiveFiltersChartProvider } from "@/stores/interactive-filters";
-import { CHART_CONFIG_VERSION } from "@/utils/chart-config/versioning";
+import { CHART_CONFIG_VERSION } from "@/utils/chart-config/constants";
 
 import { ReactSpecimen } from "./catalog";
 

@@ -6,6 +6,10 @@ import {
   PROD_DATA_SOURCE_URL,
 } from "@/domain/datasource/constants";
 import { DEFAULT_CATEGORICAL_PALETTE_NAME } from "@/palettes";
+import {
+  CHART_CONFIG_VERSION,
+  CONFIGURATOR_STATE_VERSION,
+} from "@/utils/chart-config/constants";
 import { createChartId } from "@/utils/create-chart-id";
 
 type Migration = {
@@ -15,8 +19,6 @@ type Migration = {
   up: (config: any, migrationProps?: any) => Promise<any>;
   down: (config: any, migrationProps?: any) => Promise<any>;
 };
-
-export const CHART_CONFIG_VERSION = "3.4.0";
 
 export const chartConfigMigrations: Migration[] = [
   {
@@ -904,8 +906,6 @@ export const migrateChartConfig = makeMigrate<ChartConfig>(
     defaultToVersion: CHART_CONFIG_VERSION,
   }
 );
-
-export const CONFIGURATOR_STATE_VERSION = "3.8.0";
 
 export const configuratorStateMigrations: Migration[] = [
   {

@@ -4,12 +4,14 @@ import {
   LineConfig,
   MapConfig,
 } from "@/config-types";
+import {
+  CHART_CONFIG_VERSION,
+  CONFIGURATOR_STATE_VERSION,
+} from "@/utils/chart-config/constants";
 
 import {
   chartConfigMigrations,
-  CHART_CONFIG_VERSION,
   configuratorStateMigrations,
-  CONFIGURATOR_STATE_VERSION,
   migrateChartConfig,
   upOrDown,
 } from "./versioning";

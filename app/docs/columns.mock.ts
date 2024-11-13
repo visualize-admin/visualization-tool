@@ -1,6 +1,6 @@
 import { ColumnConfig } from "@/config-types";
 import { Dimension, Measure } from "@/domain/data";
-import { CHART_CONFIG_VERSION } from "@/utils/chart-config/versioning";
+import { CHART_CONFIG_VERSION } from "@/utils/chart-config/constants";
 
 export const columnFields = {
   x: {

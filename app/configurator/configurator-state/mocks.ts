@@ -9,7 +9,7 @@ import { ScaleType, TimeUnit } from "@/graphql/resolver-types";
 import {
   CHART_CONFIG_VERSION,
   CONFIGURATOR_STATE_VERSION,
-} from "@/utils/chart-config/versioning";
+} from "@/utils/chart-config/constants";
 
 export const configStateMock = {
   map: {
