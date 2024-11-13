@@ -37,11 +37,11 @@ export const RowActions = (props: { actions: MenuActionProps[] }) => {
             key={i}
             as="menuitem"
             {...actionProps}
-            onClick={() => {
+            onClick={(e) => {
               if (!actionProps.stayOpen) {
                 handleClose();
               }
-              actionProps.onClick?.();
+              actionProps.onClick?.(e);
             }}
             {...additionalProps}
           />
