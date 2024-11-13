@@ -14,12 +14,12 @@ import { ChangeEvent, ReactNode, RefObject, useEffect, useState } from "react";
 
 import { CHART_RESIZE_EVENT_TYPE } from "@/charts/shared/use-size";
 import { CopyToClipboardTextInput } from "@/components/copy-to-clipboard-text-input";
-import Flex from "@/components/flex";
+import { default as Flex } from "@/components/flex";
 import { Radio } from "@/components/form";
 import { IconLink } from "@/components/links";
 import { ConfiguratorStatePublished } from "@/configurator";
 import { Icon } from "@/icons";
-import useEvent from "@/utils/use-event";
+import { default as useEvent } from "@/utils/use-event";
 import { useI18n } from "@/utils/use-i18n";
 
 type PublishActionProps = {
@@ -43,12 +43,13 @@ type TriggeredPopoverProps = {
   renderTrigger: (
     setAnchorEl: (el: HTMLElement | undefined) => void
   ) => React.ReactNode;
+  trigger?: HTMLElement | undefined;
   popoverProps: Omit<PopoverProps, "open" | "anchorEl" | "onClose">;
 };
 
-const TriggeredPopover = (props: TriggeredPopoverProps) => {
-  const { children, renderTrigger, popoverProps } = props;
-  const [anchorEl, setAnchorEl] = useState<Element | undefined>();
+export const TriggeredPopover = (props: TriggeredPopoverProps) => {
+  const { children, renderTrigger, popoverProps, trigger } = props;
+  const [anchorEl, setAnchorEl] = useState<Element | undefined>(trigger);
   return (
     <>
       {renderTrigger(setAnchorEl)}
