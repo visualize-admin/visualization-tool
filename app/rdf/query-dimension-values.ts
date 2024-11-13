@@ -545,7 +545,7 @@ export const loadMinMaxDimensionValues = async ({
 }) => {
   const query = SELECT`(MIN(?value) as ?minValue) (MAX(?value) as ?maxValue)`
     .WHERE`${iriToNode(datasetIri)} ${ns.cube.observationSet}/${ns.cube.observation} ?observation .
-?observation <${dimensionIri}> ?value .
+?observation ${dimensionIri} ?value .
 FILTER ( (STRLEN(STR(?value)) > 0) && (STR(?value) != "NaN") )`;
 
   try {
