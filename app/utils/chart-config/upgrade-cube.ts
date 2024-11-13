@@ -8,11 +8,19 @@ import {
   DataCubeLatestIriDocument,
   DataCubeLatestIriQuery,
   DataCubeLatestIriQueryVariables,
+  DataCubeVersionHistoryDocument,
+  DataCubeVersionHistoryQuery,
+  DataCubeVersionHistoryQueryVariables,
 } from "@/graphql/query-hooks";
+import { queryCubeVersionHistory } from "@/rdf/query-cube-version-history";
 import { queryLatestCubeIri } from "@/rdf/query-latest-cube-iri";
 
 const makeUpgradeConfiguratorState =
-  <O>(cubeIriUpdateFn: (iri: string, options: O) => Promise<string>) =>
+  <O>({
+    cubeIriUpdateFn,
+  }: {
+    cubeIriUpdateFn: (iri: string, options: O) => Promise<string>;
+  }) =>
   async <V extends ConfiguratorState>(state: V, options: O): Promise<V> => {
     if (!hasChartConfigs(state)) {
       return state;
@@ -26,7 +34,7 @@ const makeUpgradeConfiguratorState =
           cubes: await Promise.all(
             chartConfig.cubes.map(async (cube) => ({
               ...cube,
-              iri: await cubeIriUpdateFn(cube.publishIri, options),
+              iri: await cubeIriUpdateFn(cube.iri, options),
             }))
           ),
         }))
@@ -34,9 +42,8 @@ const makeUpgradeConfiguratorState =
     };
   };
 
-/** Upgrades the cube's publishIri to the latest version. */
-export const upgradeCubePublishIri = async (
-  publishIri: string,
+export const getLatestCubeIri = async (
+  iri: string,
   options: {
     client: Client;
     dataSource: DataSource;
@@ -49,23 +56,42 @@ export const upgradeCubePublishIri = async (
       {
         sourceUrl: dataSource.url,
         sourceType: dataSource.type,
-        cubeFilter: {
-          iri: publishIri,
-        },
+        cubeFilter: { iri },
       }
     )
     .toPromise();
 
-  return data?.dataCubeLatestIri ?? publishIri;
+  return data?.dataCubeLatestIri ?? iri;
 };
 
-export const upgradeConfiguratorState = makeUpgradeConfiguratorState(
-  upgradeCubePublishIri
-);
+export const getUnversionedCubeIri = async (
+  iri: string,
+  options: {
+    client: Client;
+    dataSource: DataSource;
+  }
+) => {
+  const { client, dataSource } = options;
+  const { data } = await client
+    .query<DataCubeVersionHistoryQuery, DataCubeVersionHistoryQueryVariables>(
+      DataCubeVersionHistoryDocument,
+      {
+        sourceUrl: dataSource.url,
+        sourceType: dataSource.type,
+        cubeFilter: { iri },
+      }
+    )
+    .toPromise();
 
-/** Upgrades the cube to the latest version. */
-const upgradeCubePublishIriServerSide = async (
-  publishIri: string,
+  return data?.dataCubeVersionHistory ?? iri;
+};
+
+export const upgradeConfiguratorState = makeUpgradeConfiguratorState({
+  cubeIriUpdateFn: getLatestCubeIri,
+});
+
+const getLatestCubeIriServerSide = async (
+  iri: string,
   options: {
     dataSource: DataSource;
   }
@@ -74,13 +100,29 @@ const upgradeCubePublishIriServerSide = async (
   const client = new ParsingClient({
     endpointUrl: getMaybeCachedSparqlUrl({
       endpointUrl: dataSource.url,
-      cubeIri: publishIri,
+      cubeIri: iri,
     }),
   });
-  const iri = await queryLatestCubeIri(client, publishIri);
-  return iri ?? publishIri;
+  return (await queryLatestCubeIri(client, iri)) ?? iri;
 };
 
-export const upgradeConfiguratorStateServerSide = makeUpgradeConfiguratorState(
-  upgradeCubePublishIriServerSide
-);
+export const getUnversionedCubeIriServerSide = async (
+  cubeIri: string,
+  options: {
+    dataSource: DataSource;
+  }
+) => {
+  const { dataSource } = options;
+  const client = new ParsingClient({
+    endpointUrl: getMaybeCachedSparqlUrl({
+      endpointUrl: dataSource.url,
+      cubeIri,
+    }),
+  });
+  const iri = await queryCubeVersionHistory(client, cubeIri);
+  return iri ?? cubeIri;
+};
+
+export const upgradeConfiguratorStateServerSide = makeUpgradeConfiguratorState({
+  cubeIriUpdateFn: getLatestCubeIriServerSide,
+});
