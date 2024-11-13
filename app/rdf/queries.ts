@@ -17,11 +17,7 @@ import {
 import { isMostRecentValue } from "@/domain/most-recent-value";
 import { PromiseValue, truthy } from "@/domain/types";
 import { resolveDimensionType } from "@/graphql/resolvers";
-import {
-  getFiltersWithSplitIris,
-  joinIris,
-  splitIris,
-} from "@/graphql/resolvers/rdf";
+import { joinIris, splitIris } from "@/graphql/resolvers/rdf";
 import {
   ResolvedDimension,
   ResolvedObservationsQuery,
@@ -325,7 +321,7 @@ export const getCubeObservations = async ({
   cube,
   locale,
   sparqlClient,
-  filters: _filters,
+  filters,
   preview,
   limit,
   raw,
@@ -349,7 +345,6 @@ export const getCubeObservations = async ({
   cache: LRUCache | undefined;
 }): Promise<ResolvedObservationsQuery["data"]> => {
   const cubeIri = cube.term?.value!;
-  const filters = _filters ? getFiltersWithSplitIris(_filters) : null;
   const cubeView = View.fromCube(cube, false);
   const [unversionedCubeIri = cubeIri, allResolvedDimensions] =
     await Promise.all([

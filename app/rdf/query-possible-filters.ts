@@ -6,7 +6,7 @@ import { LRUCache } from "typescript-lru-cache";
 
 import { SingleFilters } from "@/config-types";
 import { isMostRecentValue } from "@/domain/most-recent-value";
-import { getFiltersWithSplitIris, joinIris } from "@/graphql/resolvers/rdf";
+import { joinIris } from "@/graphql/resolvers/rdf";
 import * as ns from "@/rdf/namespace";
 import { queryCubeVersionHistory } from "@/rdf/query-cube-version-history";
 import { loadMaxDimensionValue } from "@/rdf/query-dimension-values";
@@ -20,8 +20,7 @@ export const getPossibleFilters = async (
     cache?: LRUCache;
   }
 ) => {
-  const { filters: _filters, sparqlClient, cache } = options;
-  const filters = getFiltersWithSplitIris(_filters);
+  const { filters, sparqlClient, cache } = options;
   const dimensionIris = Object.keys(filters);
 
   if (dimensionIris.length === 0) {

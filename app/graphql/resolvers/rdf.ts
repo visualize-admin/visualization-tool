@@ -219,8 +219,6 @@ const getResolvedDimension = async (
     cache,
   });
 
-  console.log("iri", iri);
-
   const dimension = dimensions.find((d) => iri === d.data.iri);
 
   if (!dimension) {
@@ -233,7 +231,7 @@ const getResolvedDimension = async (
 export const possibleFilters: NonNullable<
   QueryResolvers["possibleFilters"]
 > = async (_, { cubeFilter }, { setup }, info) => {
-  const { iri, filters } = cubeFilter;
+  const { iri, filters: _filters } = cubeFilter;
   const { sparqlClient, loaders, cache } = await setup(info);
   const cube = await loaders.cube.load(iri);
   const cubeIri = cube.term?.value;
@@ -241,6 +239,8 @@ export const possibleFilters: NonNullable<
   if (!cubeIri) {
     return [];
   }
+
+  const filters = getFiltersWithSplitIris(_filters);
 
   return await getPossibleFilters(cubeIri, { filters, sparqlClient, cache });
 };
@@ -250,8 +250,12 @@ export const dataCubeComponents: NonNullable<
 > = async (_, { locale, cubeFilter }, { setup }, info) => {
   const { loaders, sparqlClient, sparqlClientStream, cache } =
     await setup(info);
-  const { iri, componentIris, filters: _filters, loadValues } = cubeFilter;
-  const filters = _filters ? getFiltersWithSplitIris(_filters) : undefined;
+  const {
+    iri,
+    componentIris: _componentIris,
+    filters: _filters,
+    loadValues,
+  } = cubeFilter;
   const cube = await loaders.cube.load(iri);
 
   if (!cube) {
@@ -259,6 +263,12 @@ export const dataCubeComponents: NonNullable<
   }
 
   await cube.fetchShape();
+
+  const filters = _filters ? getFiltersWithSplitIris(_filters) : undefined;
+  const componentIris = _componentIris?.map(
+    (iri) => splitIris(iri).dimensionIri ?? iri
+  );
+
   const [unversionedCubeIri = iri, rawComponents] = await Promise.all([
     queryCubeVersionHistory(sparqlClient, iri),
     getCubeDimensions({
@@ -405,7 +415,7 @@ export const dataCubeObservations: NonNullable<
   QueryResolvers["dataCubeObservations"]
 > = async (_, { locale, cubeFilter }, { setup }, info) => {
   const { loaders, sparqlClient, cache } = await setup(info);
-  const { iri, filters, componentIris } = cubeFilter;
+  const { iri, filters: _filters, componentIris: _componentIris } = cubeFilter;
   const cube = await loaders.cube.load(iri);
 
   if (!cube) {
@@ -413,6 +423,12 @@ export const dataCubeObservations: NonNullable<
   }
 
   await cube.fetchShape();
+
+  const filters = _filters ? getFiltersWithSplitIris(_filters) : undefined;
+  const componentIris = _componentIris?.map(
+    (iri) => splitIris(iri).dimensionIri
+  );
+
   const { query, observations } = await getCubeObservations({
     cube,
     locale,
