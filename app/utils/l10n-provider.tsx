@@ -1,6 +1,6 @@
 import { LocalizationProvider } from "@mui/lab";
 import DateAdapter from "@mui/lab/AdapterDateFns";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import { Locale } from "@/locales/locales";
 

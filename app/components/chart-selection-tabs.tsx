@@ -272,7 +272,7 @@ const TabsEditable = (props: TabsEditableProps) => {
             <MenuActionItem
               as="menuitem"
               type="button"
-              iconName="text"
+              leadingIconName="text"
               label={
                 <Trans id="chart-controls.edit-tab-label">Edit tab label</Trans>
               }
@@ -294,7 +294,7 @@ const TabsEditable = (props: TabsEditableProps) => {
             <MenuActionItem
               as="menuitem"
               type="button"
-              iconName="trash"
+              leadingIconName="trash"
               label={<Trans id="chart-controls.delete">Delete</Trans>}
               color="error"
               requireConfirmation

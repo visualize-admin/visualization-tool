@@ -171,7 +171,7 @@ export const ChartMoreButton = ({
                   dispatch({ type: "CONFIGURE_CHART", value: { chartKey } });
                   handleClose();
                 }}
-                iconName="edit"
+                leadingIconName="edit"
                 label={<Trans id="chart-controls.edit">Edit</Trans>}
               />
             )}
@@ -206,7 +206,7 @@ export const ChartMoreButton = ({
                   });
                   handleClose();
                 }}
-                iconName="trash"
+                leadingIconName="trash"
                 label={<Trans id="chart-controls.delete">Delete</Trans>}
               />
             ) : null}
@@ -232,7 +232,7 @@ const CopyChartMenuActionItem = ({ configKey }: { configKey: string }) => {
       href={copyUrl}
       target="_blank"
       rel="noopener noreferrer"
-      iconName="edit"
+      leadingIconName="edit"
       label={<Trans id="chart-controls.copy-and-edit">Copy and edit</Trans>}
     />
   );
@@ -251,7 +251,7 @@ const ShareChartMenuActionItem = ({ configKey }: { configKey: string }) => {
       href={shareUrl}
       target="_blank"
       rel="noopener noreferrer"
-      iconName="share"
+      leadingIconName="share"
       label={<Trans id="button.share">Share</Trans>}
     />
   );
@@ -280,7 +280,7 @@ export const DuplicateChartMenuActionItem = ({
         });
         onSuccess();
       }}
-      iconName="duplicate"
+      leadingIconName="duplicate"
       label={<Trans id="chart-controls.duplicate">Duplicate</Trans>}
     />
   );
@@ -302,7 +302,7 @@ const TableViewChartMenuActionItem = ({
         setIsTable(!isTable);
         onSuccess();
       }}
-      iconName={isTable ? getChartIcon(chartType) : "table"}
+      leadingIconName={isTable ? getChartIcon(chartType) : "table"}
       label={
         isTable ? (
           <Trans id="chart-controls.chart-view">Chart view</Trans>

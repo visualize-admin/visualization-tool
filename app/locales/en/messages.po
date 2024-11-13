@@ -1417,6 +1417,10 @@ msgstr "create one"
 msgid "login.no-charts"
 msgstr "No charts yet"
 
+#: app/login/components/login-menu.tsx
+msgid "login.profile.bug-report"
+msgstr "Report a Bug"
+
 #: app/components/confirmation-dialog.tsx
 msgid "login.profile.chart.confirmation.default"
 msgstr "Are you sure you want to perform this action?"
@@ -1428,6 +1432,14 @@ msgstr "This action cannot be undone."
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.chart.delete.warning"
 msgstr "Keep in mind that removing this visualization will affect all the places where it might be already embedded!"
+
+#: app/login/components/login-menu.tsx
+msgid "login.profile.feature-request"
+msgstr "Request a Feature"
+
+#: app/login/components/login-menu.tsx
+msgid "login.profile.feedback"
+msgstr "Feedback"
 
 #: app/login/components/profile-content-tabs.tsx
 msgid "login.profile.home"

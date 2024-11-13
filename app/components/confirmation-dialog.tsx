@@ -9,7 +9,7 @@ import {
   DialogProps,
   DialogTitle,
 } from "@mui/material";
-import { useState } from "react";
+import { MouseEvent, useState } from "react";
 
 const ConfirmationDialog = ({
   title,
@@ -23,7 +23,7 @@ const ConfirmationDialog = ({
   text?: string;
   onSuccess?: () => Promise<unknown> | void;
   onConfirm?: () => Promise<unknown> | void;
-  onClick: () => Promise<unknown> | void;
+  onClick: (e: MouseEvent<HTMLElement>) => Promise<unknown> | void;
   onClose: NonNullable<DialogProps["onClose"]>;
 }) => {
   const [loading, setLoading] = useState(false);
@@ -70,7 +70,7 @@ const ConfirmationDialog = ({
             e.stopPropagation();
             setLoading(true);
 
-            await onClick();
+            await onClick(e);
             await new Promise((r) => setTimeout(r, 100));
 
             props.onClose({}, "escapeKeyDown");

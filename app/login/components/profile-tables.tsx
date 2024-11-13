@@ -208,20 +208,20 @@ const ProfileVisualizationsRow = (props: {
         label: isPublished
           ? t({ id: "login.chart.view", message: "View" })
           : t({ id: "login.chart.preview", message: "Preview" }),
-        iconName: "eye",
+        leadingIconName: "eye",
         priority: isPublished ? 0 : undefined,
       },
       {
         type: "link",
         href: `/${locale}/create/new?copy=${config.key}`,
         label: t({ id: "login.chart.duplicate", message: "Duplicate" }),
-        iconName: "copy",
+        leadingIconName: "copy",
       },
       {
         type: "link",
         href: editLink,
         label: t({ id: "login.chart.edit", message: "Edit" }),
-        iconName: "edit",
+        leadingIconName: "edit",
         priority: !isPublished ? 0 : undefined,
       },
       isPublished
@@ -231,9 +231,9 @@ const ProfileVisualizationsRow = (props: {
               id: "login.chart.actions.unpublish",
               message: "Unpublish",
             }),
-            iconName: (updateConfigMut.status === "fetching"
+            leadingIconName: (updateConfigMut.status === "fetching"
               ? "loading"
-              : "unpublish") as MenuActionProps["iconName"],
+              : "unpublish") as MenuActionProps["leadingIconName"],
 
             onClick: async () => {
               await updateConfigMut.mutate({
@@ -254,7 +254,7 @@ const ProfileVisualizationsRow = (props: {
       {
         type: "button",
         label: t({ id: "login.chart.rename", message: "Rename" }),
-        iconName: "text",
+        leadingIconName: "text",
         onClick: () => {
           openRename();
         },
@@ -263,7 +263,8 @@ const ProfileVisualizationsRow = (props: {
         type: "button",
         label: t({ id: "login.chart.delete", message: "Delete" }),
         color: "error",
-        iconName: removeConfigMut.status === "fetching" ? "loading" : "trash",
+        leadingIconName:
+          removeConfigMut.status === "fetching" ? "loading" : "trash",
         requireConfirmation: true,
         confirmationTitle: isPublished
           ? t({
