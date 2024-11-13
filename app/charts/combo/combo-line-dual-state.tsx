@@ -146,7 +146,6 @@ const useComboLineDualState = (
   const getAnnotationInfo = (d: Observation): TooltipInfo => {
     const x = getX(d);
     const xScaled = xScale(x);
-    console.log(x, xScaled);
 
     const values = [variables.y.left, variables.y.right]
       .map(({ orientation, getY, label }) => {

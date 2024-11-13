@@ -71,14 +71,8 @@ yarn dev:ssl # If you are working with the login process
 > redirection, or use the `yarn dev:ssl` command to use HTTPs for the
 > development server. Also, make sure to set the `NEXTAUTH_URL` environment
 > variable to `https://localhost:3000` in your `.env.local` file
-
-> Authentication Requirements Checklist
->
-> - Create .env.loval file
-> - NEXTAUTH_URL=https://localhost:3000
-> - NEXTAUTH_SECRET=Some Secret
-> - Don't forget to import all ADFS\_ from
->   `https://vercel.com/ixt/visualization-tool/settings/environment-variables`
+> make sure to fill in every variable from .env.example to make sure the
+> authentication works
 
 > 👉 In [Visual Studio Code](https://code.visualstudio.com/), you also can run
 > the **default build task** (CMD-SHIFT-B) to start the dev server, database
