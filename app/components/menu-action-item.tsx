@@ -62,7 +62,6 @@ export const MenuActionItem = (
     trailingIcon,
     label,
     color = "primary",
-    onClick,
     ...rest
   }: {
     leadingIcon?: IconName;
@@ -72,11 +71,11 @@ export const MenuActionItem = (
     onClick?: (e: React.MouseEvent<HTMLElement>) => void;
   }) => {
     const handleClick = (e: React.MouseEvent<HTMLElement>) => {
-      if (props.type === "button") {
-        if (props.requireConfirmation) {
+      if (props.onClick) {
+        if ("requireConfirmation" in props && props.requireConfirmation) {
           openConfirmation();
         } else {
-          props.onClick(e);
+          return props.onClick(e);
         }
       }
     };
