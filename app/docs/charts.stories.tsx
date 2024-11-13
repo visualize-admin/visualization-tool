@@ -27,7 +27,7 @@ import {
   InteractiveFiltersChartProvider,
   InteractiveFiltersProvider,
 } from "@/stores/interactive-filters";
-import { CONFIGURATOR_STATE_VERSION } from "@/utils/chart-config/versioning";
+import { CONFIGURATOR_STATE_VERSION } from "@/utils/chart-config/constants";
 
 import {
   chartConfig,

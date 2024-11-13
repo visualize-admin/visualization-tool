@@ -278,8 +278,7 @@ export const addDatasetInConfig = function (
   const { iri, joinBy } = options;
   chartConfig.cubes[0].joinBy = joinBy.left;
   chartConfig.cubes.push({
-    iri: iri,
-    publishIri: iri,
+    iri,
     joinBy: joinBy.right,
     filters: {},
   });

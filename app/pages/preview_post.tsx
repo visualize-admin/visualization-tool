@@ -76,14 +76,12 @@ export default function Preview({ configuratorState, locale }: PageProps) {
       <I18nProvider i18n={i18n}>
         <GraphqlProvider>
           <ThemeProvider theme={federalTheme.theme}>
-            {migrated ? (
             <ConfiguratorStateProvider
               chartId="published"
               initialState={migrated}
             >
               <ChartPublished configKey="preview" {...migrated} />
             </ConfiguratorStateProvider>
-            ) : null}
           </ThemeProvider>
         </GraphqlProvider>
       </I18nProvider>

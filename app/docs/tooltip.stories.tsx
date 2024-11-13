@@ -90,13 +90,7 @@ const TooltipBoxStory = () => (
               it: "",
             },
           },
-          cubes: [
-            {
-              iri: "",
-              publishIri: "",
-              filters: {},
-            },
-          ],
+          cubes: [{ iri: "", filters: {} }],
           chartType: "column",
           fields,
           interactiveFiltersConfig: {
@@ -261,13 +255,7 @@ const TooltipContentStory = {
               it: "",
             },
           },
-          cubes: [
-            {
-              iri: "",
-              publishIri: "",
-              filters: {},
-            },
-          ],
+          cubes: [{ iri: "", filters: {} }],
           chartType: "column",
           fields,
           interactiveFiltersConfig: {
@@ -335,13 +323,7 @@ export const TooltipContentStory2 = {
               it: "",
             },
           },
-          cubes: [
-            {
-              iri: "",
-              publishIri: "",
-              filters: {},
-            },
-          ],
+          cubes: [{ iri: "", filters: {} }],
           chartType: "column",
           fields,
           interactiveFiltersConfig: {

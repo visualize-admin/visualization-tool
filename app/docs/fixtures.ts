@@ -51,13 +51,7 @@ export const states: ConfiguratorState[] = [
             it: "",
           },
         },
-        cubes: [
-          {
-            iri: "",
-            publishIri: "",
-            filters: {},
-          },
-        ],
+        cubes: [{ iri: "", filters: {} }],
         chartType: "column",
         fields: {
           x: {
@@ -907,13 +901,7 @@ export const tableConfig: TableConfig = {
       it: "",
     },
   },
-  cubes: [
-    {
-      iri: "",
-      publishIri: "",
-      filters: {},
-    },
-  ],
+  cubes: [{ iri: "", filters: {} }],
   chartType: "table",
   interactiveFiltersConfig: undefined,
   settings: { showSearch: true, showAllRows: true },

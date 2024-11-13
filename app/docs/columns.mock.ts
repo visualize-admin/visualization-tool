@@ -37,13 +37,7 @@ export const chartConfig: ColumnConfig = {
       it: "",
     },
   },
-  cubes: [
-    {
-      iri: "",
-      publishIri: "",
-      filters: {},
-    },
-  ],
+  cubes: [{ iri: "", filters: {} }],
   fields: columnFields,
   interactiveFiltersConfig: {
     legend: {

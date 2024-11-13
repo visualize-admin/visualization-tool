@@ -253,10 +253,8 @@ export type SortingField = t.TypeOf<typeof SortingField>;
 
 const Cube = t.intersection([
   t.type({
-    /** The IRI of the cube, used for querying */
+    /** * Cube iri at publish time (stored in the database) and latest one on the client side. */
     iri: t.string,
-    /** The IRI of the cube used when first published */
-    publishIri: t.string,
     filters: Filters,
   }),
   t.partial({

@@ -960,7 +960,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         const { dimensions, measures } = dataCubesComponents;
         const iris = chartConfig.cubes
           .filter((c) => c.iri !== removedCubeIri)
-          .map(({ iri, publishIri }) => ({ iri, publishIri }));
+          .map(({ iri }) => ({ iri }));
         const possibleChartTypes = getPossibleChartTypes({
           dimensions,
           measures,

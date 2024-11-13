@@ -4,7 +4,7 @@ import {
   ScatterPlotFields,
 } from "@/configurator";
 import { Component, Dimension, Measure } from "@/domain/data";
-import { CHART_CONFIG_VERSION } from "@/utils/chart-config/versioning";
+import { CHART_CONFIG_VERSION } from "@/utils/chart-config/constants";
 
 export const interactiveFiltersConfig: InteractiveFiltersConfig = {
   legend: {
@@ -79,13 +79,7 @@ export const chartConfig: ScatterPlotConfig = {
       it: "",
     },
   },
-  cubes: [
-    {
-      iri: "",
-      publishIri: "",
-      filters: {},
-    },
-  ],
+  cubes: [{ iri: "", filters: {} }],
   chartType: "scatterplot",
   interactiveFiltersConfig,
   fields: scatterplotFields,

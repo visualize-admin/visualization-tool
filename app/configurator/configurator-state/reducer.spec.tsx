@@ -474,7 +474,6 @@ describe("deriveFiltersFromFields", () => {
               "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
               "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton",
             ],
-            "publishIri": "https://energy.ld.admin.ch/elcom/electricityprice-canton",
           },
           Object {
             "filters": Object {
@@ -496,7 +495,6 @@ describe("deriveFiltersFromFields", () => {
               "https://energy.ld.admin.ch/elcom/electricityprice/dimension/period",
               "https://energy.ld.admin.ch/elcom/electricityprice/dimension/canton",
             ],
-            "publishIri": "https://energy.ld.admin.ch/elcom/electricityprice-canton",
           },
         ],
         "fields": Object {

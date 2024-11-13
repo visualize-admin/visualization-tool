@@ -392,11 +392,7 @@ export const getNewChartConfig = ({
 
   return getInitialConfig({
     chartType,
-    iris: cubes.map((cube) => ({
-      iri: cube.iri,
-      publishIri: cube.publishIri,
-      joinBy: cube.joinBy,
-    })),
+    iris: cubes.map((cube) => ({ iri: cube.iri, joinBy: cube.joinBy })),
     dimensions,
     measures,
   });
