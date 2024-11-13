@@ -1,5 +1,6 @@
 import { Button, Divider, Link, MenuItem, styled } from "@mui/material";
 import NextLink from "next/link";
+import { MouseEvent } from "react";
 
 import ConfirmationDialog from "@/components/confirmation-dialog";
 import useDisclosure from "@/components/use-disclosure";
@@ -22,7 +23,7 @@ export type MenuActionProps = {
   priority?: number;
   stayOpen?: boolean;
   color?: "primary" | "error";
-  onClick?: (e: React.MouseEvent<HTMLElement>) => Promise<unknown> | void;
+  onClick?: (e: MouseEvent<HTMLElement>) => Promise<unknown> | void;
 } & (
   | {
       type: "link";
@@ -33,11 +34,11 @@ export type MenuActionProps = {
   | {
       type: "button";
       requireConfirmation?: false | undefined;
-      onClick: (e?: React.MouseEvent<HTMLElement>) => Promise<unknown> | void;
+      onClick: (e: MouseEvent<HTMLElement>) => Promise<unknown> | void;
     }
   | {
       type: "button";
-      onClick: (e?: React.MouseEvent<HTMLElement>) => Promise<unknown> | void;
+      onClick: (e: MouseEvent<HTMLElement>) => Promise<unknown> | void;
       requireConfirmation: true;
       confirmationTitle?: string;
       confirmationText?: string;
