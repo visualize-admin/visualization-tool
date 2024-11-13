@@ -603,7 +603,6 @@ export const ChartConfigurator = ({
 
   return (
     <InteractiveFiltersChartProvider chartConfigKey={chartConfig.key}>
-      <DatasetsControlSection />
       <ControlSection collapse>
         <SubsectionTitle titleId="controls-design" gutterBottom={false}>
           <Trans id="controls.select.chart.type">Chart Type</Trans>
@@ -753,6 +752,7 @@ export const ChartConfigurator = ({
       {chartConfig.chartType !== "table" && (
         <InteractiveFiltersConfigurator state={state} />
       )}
+      <DatasetsControlSection />
       <MetadataPanel
         dataSource={state.dataSource}
         chartConfig={chartConfig}

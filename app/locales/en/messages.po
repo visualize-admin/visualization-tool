@@ -808,7 +808,7 @@ msgstr "An error happened while fetching possible filters, please retry later or
 
 #: app/configurator/components/dataset-control-section.tsx
 msgid "controls.section.datasets.title"
-msgstr "Datasets"
+msgstr "Data Sources"
 
 #: app/configurator/components/annotators.tsx
 #: app/configurator/components/annotators.tsx
@@ -1390,20 +1390,12 @@ msgid "login.chart.edit"
 msgstr "Edit"
 
 #: app/login/components/profile-tables.tsx
-msgid "login.chart.embed"
-msgstr "Embed"
-
-#: app/login/components/profile-tables.tsx
 msgid "login.chart.preview"
 msgstr "Preview"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.rename"
 msgstr "Rename"
-
-#: app/login/components/profile-tables.tsx
-msgid "login.chart.share"
-msgstr "Share"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.view"

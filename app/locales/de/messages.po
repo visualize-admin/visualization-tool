@@ -808,7 +808,7 @@ msgstr "Beim Abrufen möglicher Filter ist ein Fehler aufgetreten. Bitte versuch
 
 #: app/configurator/components/dataset-control-section.tsx
 msgid "controls.section.datasets.title"
-msgstr "Datensätze"
+msgstr "Datenquellen"
 
 #: app/configurator/components/annotators.tsx
 #: app/configurator/components/annotators.tsx
@@ -1390,20 +1390,12 @@ msgid "login.chart.edit"
 msgstr "Bearbeiten"
 
 #: app/login/components/profile-tables.tsx
-msgid "login.chart.embed"
-msgstr "Einbetten"
-
-#: app/login/components/profile-tables.tsx
 msgid "login.chart.preview"
 msgstr "Vorschau"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.rename"
 msgstr "Umbenennen"
-
-#: app/login/components/profile-tables.tsx
-msgid "login.chart.share"
-msgstr "Teilen"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.view"

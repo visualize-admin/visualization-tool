@@ -808,7 +808,7 @@ msgstr "Une erreur s'est produite lors de la récupération des filtres possible
 
 #: app/configurator/components/dataset-control-section.tsx
 msgid "controls.section.datasets.title"
-msgstr "Ensembles de données"
+msgstr "Sources de données"
 
 #: app/configurator/components/annotators.tsx
 #: app/configurator/components/annotators.tsx
@@ -1390,20 +1390,12 @@ msgid "login.chart.edit"
 msgstr "Editer"
 
 #: app/login/components/profile-tables.tsx
-msgid "login.chart.embed"
-msgstr "Intégrer"
-
-#: app/login/components/profile-tables.tsx
 msgid "login.chart.preview"
 msgstr "Aperçu"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.rename"
 msgstr "Renommer"
-
-#: app/login/components/profile-tables.tsx
-msgid "login.chart.share"
-msgstr "Partager"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.view"
