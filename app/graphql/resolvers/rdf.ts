@@ -53,7 +53,7 @@ export const joinIris = ({
 export const splitIris = (iri: string) => {
   const [unversionedCubeIri, dimensionIri] = iri.split(IRI_SEPARATOR);
 
-  return { unversionedCubeIri, dimensionIri: dimensionIri ?? undefined };
+  return { unversionedCubeIri, dimensionIri: dimensionIri || undefined };
 };
 
 export const getFiltersWithSplitIris = <T extends Filters | SingleFilters>(
@@ -137,7 +137,7 @@ export const dataCubeDimensionGeoShapes: NonNullable<
   const { iri, dimensionIri: _dimensionIri } = cubeFilter;
   const { dimensionIri } = splitIris(_dimensionIri);
   const { loaders, sparqlClient, cache } = await setup(info);
-  const dimension = await getResolvedDimension(dimensionIri, {
+  const dimension = await getResolvedDimension(dimensionIri ?? _dimensionIri, {
     cubeIri: iri,
     locale,
     sparqlClient,
@@ -426,7 +426,7 @@ export const dataCubeObservations: NonNullable<
 
   const filters = _filters ? getFiltersWithSplitIris(_filters) : undefined;
   const componentIris = _componentIris?.map(
-    (iri) => splitIris(iri).dimensionIri
+    (iri) => splitIris(iri).dimensionIri ?? iri
   );
 
   const { query, observations } = await getCubeObservations({
