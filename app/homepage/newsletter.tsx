@@ -2,7 +2,7 @@ import { Button, Link, Typography } from "@mui/material";
 
 import Flex from "@/components/flex";
 
-export const Contribute = ({
+export const Newsletter = ({
   headline,
   description,
   buttonLabel,
@@ -19,6 +19,7 @@ export const Contribute = ({
         flexDirection: "column",
         justifyContent: "space-between",
         gap: "48px",
+        alignItems: ["start", "end"],
         width: "100%",
       }}
     >
@@ -46,8 +47,6 @@ export const Contribute = ({
         sx={{
           width: ["100%", "100%", "70%"],
           maxWidth: ["100%", "330px"],
-          paddingBottom: ["72px", "0px"],
-          borderBottom: ["1px solid #e5e5e5", "none"],
         }}
       >
         <Button
@@ -55,8 +54,8 @@ export const Contribute = ({
           href={buttonUrl}
           target="_blank"
           variant="outlined"
-          color="inherit"
           rel="noopener noreferrer"
+          color="inherit"
           sx={{
             textDecoration: "none",
             textAlign: "center",
