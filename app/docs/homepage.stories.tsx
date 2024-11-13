@@ -56,7 +56,7 @@ const HomepageStory = {
           <div style={{ width: "1px", backgroundColor: "#e5e5e5" }}></div>
           <Newsletter
             headline="Subscribe to our Newsletter"
-            description="Stay up to day and subscribe to our newsletter by adding your email address below."
+            description="Stay up to date and subscribe to our newsletter by adding your email address below."
             buttonLabel="Subscribe"
             buttonUrl="mailto:visualize@bafu.admin.ch"
           />
