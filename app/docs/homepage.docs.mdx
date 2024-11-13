@@ -10,6 +10,7 @@ import {
   Tutorial,
 } from "@/homepage";
 import { bugReportTemplates } from "@/templates/email/bug-report";
+import { OWNER_ORGANIZATION_EMAIL } from "@/templates/email/config";
 import { featureRequestTemplates } from "@/templates/email/feature-request";
 import { Canvas, Meta } from "@storybook/blocks";
 import { createMailtoLink } from "../../app/templates/email";
@@ -55,7 +56,7 @@ import { Contribute, Examples, Intro, Tutorial, Newsletter, BugReport, FeatureRe
   headline="Stay up to date"
   description="Stay up to date and subscribe to our newsletter by adding your email address below."
   buttonLabel="Subscribe"
-  buttonUrl="mailto:visualize@bafu.admin.ch"
+  buttonUrl={`mailto:${OWNER_ORGANIZATION_EMAIL}`}
 />
 <FeatureRequest
   headline="New feature request"
@@ -67,6 +68,7 @@ import { Contribute, Examples, Intro, Tutorial, Newsletter, BugReport, FeatureRe
     cc: "supprt@interactivethings.com",
   },
   template: featureRequestTemplates,
+  subject: "Visualize Feature Request",
 })}
 />
  <BugReport
@@ -79,6 +81,7 @@ import { Contribute, Examples, Intro, Tutorial, Newsletter, BugReport, FeatureRe
       cc: "supprt@interactivethings.com",
     },
     template: bugReportTemplates,
+    subject: "Visualize Bug Report",
   })}
 />
 <Contribute

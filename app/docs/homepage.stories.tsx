@@ -12,6 +12,7 @@ import {
 import { FeatureRequest } from "@/homepage/feature-request";
 import { Section } from "@/homepage/section";
 import { bugReportTemplates } from "@/templates/email/bug-report";
+import { OWNER_ORGANIZATION_EMAIL } from "@/templates/email/config";
 import { featureRequestTemplates } from "@/templates/email/feature-request";
 
 import { createMailtoLink } from "../../app/templates/email";
@@ -58,7 +59,7 @@ const HomepageStory = {
             headline="Subscribe to our Newsletter"
             description="Stay up to date and subscribe to our newsletter by adding your email address below."
             buttonLabel="Subscribe"
-            buttonUrl="mailto:visualize@bafu.admin.ch"
+            buttonUrl={`mailto:${OWNER_ORGANIZATION_EMAIL}`}
           />
         </Section>
 
@@ -77,6 +78,7 @@ const HomepageStory = {
                 cc: "supprt@interactivethings.com",
               },
               template: bugReportTemplates,
+              subject: "Visualize Bug Report",
             })}
           />
           <div style={{ width: "1px", backgroundColor: "#cccccc" }}></div>
@@ -90,6 +92,7 @@ const HomepageStory = {
                 cc: "supprt@interactivethings.com",
               },
               template: featureRequestTemplates,
+              subject: "Visualize Feature Request",
             })}
           />
         </Section>

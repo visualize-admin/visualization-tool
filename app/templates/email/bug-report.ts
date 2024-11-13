@@ -1,5 +1,7 @@
 export const bugReportTemplates = {
   en: `
+Bug Report
+
 Describe the bug 
 A clear and concise description of what the bug is. If it seems connected to some data problem (missing values, wrong parsing), please first check the cube in Cube Validator (https://cube-validator.lindas.admin.ch/select) to see if everything is fine there.
 Please describe...
@@ -71,6 +73,8 @@ Bitte beschreiben Sie...
 `,
 
   fr: `
+Rapport de bug
+
 Description du bug 
 Une description claire et concise du bug. S'il semble lié à un problème de données (valeurs manquantes, analyse incorrecte), veuillez d'abord vérifier le cube dans le Cube Validator (https://cube-validator.lindas.admin.ch/select) pour vous assurer que tout y est correct.
 Veuillez décrire...
@@ -105,6 +109,8 @@ Veuillez décrire...
 `,
 
   it: `
+Segnalazione di bug
+
 Descrizione del bug 
 Una descrizione chiara e concisa del bug. Se sembra collegato a un problema di dati (valori mancanti, analisi errata), controllare prima il cubo nel Cube Validator (https://cube-validator.lindas.admin.ch/select) per assicurarsi che tutto sia a posto.
 Si prega di descrivere...

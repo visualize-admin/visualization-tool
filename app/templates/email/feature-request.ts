@@ -1,5 +1,7 @@
 export const featureRequestTemplates = {
   en: `
+New Feature
+
 Is your feature request related to a problem?
 A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
 Please describe...
@@ -20,18 +22,14 @@ Examples of how the feature would be beneficial and an estimation of how much im
 Please describe...
 
 ----------------------------------------------
-Environment
-Please complete the following information.
-- Visualize environment and version: [e.g., INT v3.12.0]
-- Browser and version [e.g., Chrome 107]
-
-----------------------------------------------
 Additional context
 Add any other context or screenshots about the feature request here.
 Please describe...
 `,
 
   de: `
+Neue Funktion
+
 Bezieht sich Ihre Feature-Anfrage auf ein Problem?
 Eine klare und präzise Beschreibung des Problems. Z.B. Es frustriert mich immer, wenn [...]
 Bitte beschreiben Sie...
@@ -52,18 +50,14 @@ Beispiele dafür, wie die Funktion nützlich wäre und eine Einschätzung der Au
 Bitte beschreiben Sie...
 
 ----------------------------------------------
-Umgebung
-Bitte vervollständigen Sie die folgenden Informationen.
-- Visualize-Umgebung und Version: [z.B., INT v3.12.0]
-- Browser und Version [z.B., Chrome 107]
-
-----------------------------------------------
 Zusätzlicher Kontext
 Fügen Sie hier weitere Kontextinformationen oder Screenshots zur Feature-Anfrage hinzu.
 Bitte beschreiben Sie...
 `,
 
   fr: `
+Nouvelle fonctionnalité
+
 Votre demande de fonctionnalité est-elle liée à un problème ?
 Une description claire et concise du problème. Ex. Je suis toujours frustré quand [...]
 Veuillez décrire...
@@ -84,18 +78,14 @@ Exemples de l'utilité de la fonctionnalité et estimation de son impact.
 Veuillez décrire...
 
 ----------------------------------------------
-Environnement
-Veuillez compléter les informations suivantes.
-- Environnement et version Visualize : [ex. INT v3.12.0]
-- Navigateur et version [ex. Chrome 107]
-
-----------------------------------------------
 Contexte supplémentaire
 Ajoutez ici tout autre contexte ou captures d'écran concernant la demande de fonctionnalité.
 Veuillez décrire...
 `,
 
   it: `
+Nuova funzionalità
+
 La sua richiesta di funzionalità è legata a un problema?
 Una descrizione chiara e concisa del problema. Es. Sono sempre frustrato quando [...]
 Si prega di descrivere...
@@ -114,12 +104,6 @@ Si prega di descrivere...
 Casi d'uso e impatto
 Esempi di come la funzionalità sarebbe utile e una stima del suo impatto.
 Si prega di descrivere...
-
-----------------------------------------------
-Ambiente
-Si prega di completare le seguenti informazioni.
-- Ambiente e versione Visualize: [es. INT v3.12.0]
-- Browser e versione [es. Chrome 107]
 
 ----------------------------------------------
 Contesto aggiuntivo

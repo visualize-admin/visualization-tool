@@ -42,9 +42,9 @@ export const contentId = "home";
   />
   <Newsletter
     headline="Iscriviti alla nostra newsletter"
-    description="Resta aggiornato e iscriviti alla nostra newsletter inserendo il tuo indirizzo email qui sotto."
+    description="Resta aggiornato e iscriviti alla nostra newsletter."
     buttonLabel="Iscriviti"
-    buttonUrl={OWNER_ORGANIZATION_EMAIL}
+    buttonUrl={`mailto:${OWNER_ORGANIZATION_EMAIL}`}
   />
 </Section>
 <Section
@@ -62,6 +62,7 @@ export const contentId = "home";
         cc: SUPPORT_EMAIL,
       },
       template: bugReportTemplates,
+      subject: "Visualize Bug Report",
     })}
   />
   <Divider
@@ -79,6 +80,7 @@ export const contentId = "home";
         cc: SUPPORT_EMAIL,
       },
       template: featureRequestTemplates,
+      subject: "Visualize Feature Request",
     })}
   />
 </Section>

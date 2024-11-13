@@ -10,12 +10,13 @@ export const createMailtoLink = (
   options: {
     recipients: EmailRecipients;
     template: typeof bugReportTemplates;
+    subject: string;
   }
 ) => {
   const template = options.template[lang];
   return `mailto:${options.recipients.to}?cc=${
     options.recipients.cc
-  }&subject=${encodeURIComponent("Bug Report")}&body=${encodeURIComponent(
+  }&subject=${encodeURIComponent(options.subject)}&body=${encodeURIComponent(
     template
   )}`;
 };
