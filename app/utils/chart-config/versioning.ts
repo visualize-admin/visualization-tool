@@ -1,15 +1,22 @@
 import { DEFAULT_OTHER_COLOR_FIELD_OPACITY } from "@/charts/map/constants";
 import { ChartConfig, ConfiguratorState } from "@/config-types";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
+import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import {
   LEGACY_PROD_DATA_SOURCE_URL,
   PROD_DATA_SOURCE_URL,
 } from "@/domain/datasource/constants";
+import { client } from "@/graphql/client";
+import { joinIris } from "@/graphql/resolvers/rdf";
 import { DEFAULT_CATEGORICAL_PALETTE_NAME } from "@/palettes";
 import {
   CHART_CONFIG_VERSION,
   CONFIGURATOR_STATE_VERSION,
 } from "@/utils/chart-config/constants";
+import {
+  getUnversionedCubeIri,
+  getUnversionedCubeIriServerSide,
+} from "@/utils/chart-config/upgrade-cube";
 import { createChartId } from "@/utils/create-chart-id";
 
 type Migration = {
@@ -898,6 +905,147 @@ export const chartConfigMigrations: Migration[] = [
       return newConfig;
     },
   },
+  {
+    description: `ALL {
+      cubes {
+         + unversionedIri
+         - publishIri
+      }
+    }`,
+    from: "3.4.0",
+    to: "4.0.0",
+    up: async (config, configuratorState) => {
+      let unversionedCubeIri = "";
+
+      const newConfig = { ...config, version: "4.0.0" };
+      newConfig.cubes = await Promise.all(
+        newConfig.cubes.map(async (cube: any, i: number) => {
+          const { publishIri, ...rest } = cube;
+          const isServerSide = typeof window === "undefined";
+          const fn = isServerSide
+            ? async () => {
+                return await getUnversionedCubeIriServerSide(rest.iri, {
+                  dataSource: configuratorState.dataSource,
+                });
+              }
+            : async () => {
+                return await getUnversionedCubeIri(rest.iri, {
+                  client,
+                  dataSource: configuratorState.dataSource,
+                });
+              };
+          const unversionedIri = await fn();
+
+          if (i === 0) {
+            unversionedCubeIri = unversionedIri;
+          }
+
+          return {
+            ...rest,
+            filters: Object.fromEntries(
+              Object.entries(cube.filters).map(([k, v]) => [
+                joinIris({
+                  unversionedCubeIri: unversionedIri,
+                  dimensionIri: k,
+                }),
+                v,
+              ])
+            ),
+          };
+        })
+      );
+
+      for (const v of Object.values<any>(config.fields)) {
+        if ("componentIri" in v) {
+          v.componentIri = joinIris({
+            unversionedCubeIri,
+            dimensionIri: v.componentIri,
+          });
+        }
+
+        if ("componentIris" in v) {
+          v.componentIris = v.componentIris.map((iri: string) =>
+            joinIris({
+              unversionedCubeIri,
+              dimensionIri: iri,
+            })
+          );
+        }
+
+        if ("measureIri" in v && v.measureIri !== FIELD_VALUE_NONE) {
+          v.measureIri = joinIris({
+            unversionedCubeIri,
+            dimensionIri: v.measureIri,
+          });
+        }
+
+        // Maps
+        if (v.color && "componentIri" in v.color) {
+          v.color.componentIri = joinIris({
+            unversionedCubeIri,
+            dimensionIri: v.color.componentIri,
+          });
+        }
+
+        if ("leftAxisComponentIri" in v) {
+          v.leftAxisComponentIri = joinIris({
+            unversionedCubeIri,
+            dimensionIri: v.leftAxisComponentIri,
+          });
+        }
+
+        if ("rightAxisComponentIri" in v) {
+          v.rightAxisComponentIri = joinIris({
+            unversionedCubeIri,
+            dimensionIri: v.rightAxisComponentIri,
+          });
+        }
+
+        if ("columnComponentIri" in v) {
+          v.columnComponentIri = joinIris({
+            unversionedCubeIri,
+            dimensionIri: v.columnComponentIri,
+          });
+        }
+
+        if ("lineComponentIri" in v) {
+          v.lineComponentIri = joinIris({
+            unversionedCubeIri,
+            dimensionIri: v.lineComponentIri,
+          });
+        }
+      }
+
+      for (const v of Object.values<any>(config.interactiveFiltersConfig)) {
+        if ("componentIri" in v) {
+          v.componentIri = joinIris({
+            unversionedCubeIri,
+            dimensionIri: v.componentIri,
+          });
+        }
+
+        if ("componentIris" in v) {
+          v.componentIris = v.componentIris.map((iri: string) =>
+            joinIris({
+              unversionedCubeIri,
+              dimensionIri: iri,
+            })
+          );
+        }
+      }
+
+      return newConfig;
+    },
+    down: async (config) => {
+      const newConfig = { ...config, version: "3.4.0" };
+      newConfig.cubes = newConfig.cubes.map((cube: any) => ({
+        ...cube,
+        publishIri: cube.unversionedIri,
+      }));
+
+      return newConfig;
+    },
+  },
 ];
 
 export const migrateChartConfig = makeMigrate<ChartConfig>(
@@ -1397,6 +1545,43 @@ export const configuratorStateMigrations: Migration[] = [
       ) {
         delete newConfig.layout.layoutsMetadata;
       }
+
+      return newConfig;
+    },
+  },
+  {
+    description: "ALL (bump ChartConfig version)",
+    from: "3.8.0",
+    to: "4.0.0",
+    up: async (config) => {
+      const newConfig = { ...config, version: "4.0.0" };
+      const chartConfigs: any[] = [];
+
+      for (const chartConfig of newConfig.chartConfigs) {
+        const migratedChartConfig = await migrateChartConfig(chartConfig, {
+          migrationProps: newConfig,
+          toVersion: "4.0.0",
+        });
+        chartConfigs.push(migratedChartConfig);
+      }
+
+      newConfig.chartConfigs = chartConfigs;
+
+      return newConfig;
+    },
+    down: async (config) => {
+      const newConfig = { ...config, version: "3.8.0" };
+      const chartConfigs: any[] = [];
+
+      for (const chartConfig of newConfig.chartConfigs) {
+        const migratedChartConfig = await migrateChartConfig(chartConfig, {
+          migrationProps: newConfig,
+          toVersion: "3.4.0",
+        });
+        chartConfigs.push(migratedChartConfig);
+      }
+
+      newConfig.chartConfigs = chartConfigs;
 
       return newConfig;
     },
