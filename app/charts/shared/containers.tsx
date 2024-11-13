@@ -69,13 +69,13 @@ export const ChartSvg = ({ children }: { children: ReactNode }) => {
       style={{ position: "absolute", left: 0, top: 0 }}
     >
       {interactiveFiltersConfig?.calculation.active && (
-        <foreignObject
+        <Box
+          component="foreignObject"
           width={width - margins.right}
-          height="24"
-          style={{ display: "flex", textAlign: "right" }}
+          sx={{ display: "flex", textAlign: "right", height: 26 }}
         >
           <CalculationToggle />
-        </foreignObject>
+        </Box>
       )}
       {children}
     </svg>
