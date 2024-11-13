@@ -2,7 +2,7 @@ import { Button, Link, Typography } from "@mui/material";
 
 import Flex from "@/components/flex";
 
-export const Contribute = ({
+export const BugReport = ({
   headline,
   description,
   buttonLabel,
@@ -54,9 +54,9 @@ export const Contribute = ({
           component={Link}
           href={buttonUrl}
           target="_blank"
-          variant="outlined"
-          color="inherit"
+          variant="contained"
           rel="noopener noreferrer"
+          color="primary"
           sx={{
             textDecoration: "none",
             textAlign: "center",

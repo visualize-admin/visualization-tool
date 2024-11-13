@@ -9,10 +9,18 @@ import React, {
 } from "react";
 import ReactDOM from "react-dom";
 
-import { Margins } from "@/charts/shared/use-size";
+import { Margins, useSize } from "@/charts/shared/use-size";
+import { useIsMobile } from "@/utils/use-is-mobile";
+import { useResizeObserver } from "@/utils/use-resize-observer";
+
+import { useChartBounds } from "../chart-dimensions";
 
 const TRIANGLE_SIZE = 8;
 const TOOLTIP_OFFSET = 4;
+export const MOBILE_TOOLTIP_PLACEMENT: TooltipPlacement = {
+  x: "center",
+  y: "bottom",
+};
 
 export type Xplacement = "left" | "center" | "right";
 export type Yplacement = "top" | "middle" | "bottom";
@@ -123,19 +131,42 @@ export const TooltipBox = ({
 }: TooltipBoxProps) => {
   const triangle = mkTriangle(placement);
   const [pos, posRef] = usePosition();
+
+  const [tooltipRef, tooltipWidth] = useResizeObserver<HTMLDivElement>();
+
+  const isMobile = useIsMobile();
+  const { width, height } = useSize();
+  const { chartWidth } = useChartBounds(width, margins, height);
+
+  const tooltipXBoundary = isMobile
+    ? getTooltipXBoundary(x!, tooltipWidth, chartWidth)
+    : x!;
+
+  const mobileTriangleXPosition = getTriangleXPos(x!, tooltipWidth, chartWidth);
+
+  const desktopTriangleXPosition = {
+    left: triangle.left,
+    right: triangle.right,
+  };
+
+  const triangleXPosition = isMobile
+    ? { left: mobileTriangleXPosition }
+    : desktopTriangleXPosition;
+
   return (
     <>
       <div ref={posRef} />
       <Portal>
         <Box
+          ref={tooltipRef}
           data-testid="chart-tooltip"
           style={{
             zIndex: 1301,
             position: "absolute",
-            left: x! + margins.left + pos.left,
+            left: tooltipXBoundary! + margins.left + pos.left,
             top: mxYOffset(y!, placement) + margins.top + pos.top,
-            pointerEvents: "none",
             transform: mkTranslation(placement),
+            pointerEvents: "none",
           }}
         >
           <Box
@@ -158,9 +189,8 @@ export const TooltipBox = ({
                 height: 0,
                 borderStyle: "solid",
                 top: triangle.top,
-                right: triangle.right,
                 bottom: triangle.bottom,
-                left: triangle.left,
+                ...triangleXPosition,
                 borderWidth: triangle.borderWidth,
                 borderTopColor: triangle.borderTopColor,
                 borderRightColor: triangle.borderRightColor,
@@ -217,6 +247,7 @@ const mkXTranslation = (xP: Xplacement, yP: Yplacement): Xtranslation => {
         : `${TRIANGLE_SIZE + TOOLTIP_OFFSET}px`;
   }
 };
+
 const mkYTranslation = (yP: Yplacement): YTranslation =>
   yP === "top" ? "-100%" : yP === "middle" ? "-50%" : 0;
 
@@ -346,5 +377,55 @@ const mkTriangle = (p: TooltipPlacement) => {
         borderBottomColor: `transparent`,
         borderLeftColor: `transparent`,
       };
+  }
+};
+
+const getTooltipXBoundary = (
+  x: number,
+  tooltipWidth: number,
+  chartWidth: number
+) => {
+  return Math.max(
+    tooltipWidth / 2 - TRIANGLE_SIZE,
+    Math.min(chartWidth - tooltipWidth / 2 + TRIANGLE_SIZE, x)
+  );
+};
+
+const getTriangleXPos = (
+  x: number,
+  tooltipWidth: number,
+  chartWidth: number
+): number => {
+  if (chartWidth < tooltipWidth) {
+    const xMax = chartWidth + TRIANGLE_SIZE;
+
+    return Math.min(
+      Math.max(
+        x,
+        Math.min(
+          tooltipWidth / 2 - TRIANGLE_SIZE,
+          Math.min(chartWidth - tooltipWidth / 2 + TRIANGLE_SIZE, x)
+        )
+      ),
+      xMax
+    );
+  }
+
+  const hasReachedMax = chartWidth - tooltipWidth / 2 + TRIANGLE_SIZE < x;
+
+  if (hasReachedMax) {
+    const overflow = x - (chartWidth - tooltipWidth / 2 + TRIANGLE_SIZE);
+    const maxOverflow = tooltipWidth / 2 - TRIANGLE_SIZE;
+
+    const proportion = Math.min(overflow / maxOverflow, 1);
+
+    return (
+      tooltipWidth / 2 + proportion * (tooltipWidth / 2) - TRIANGLE_SIZE * 2
+    );
+  } else {
+    return Math.min(
+      tooltipWidth / 2 - TRIANGLE_SIZE,
+      Math.min(chartWidth - tooltipWidth / 2 + TRIANGLE_SIZE, x)
+    );
   }
 };

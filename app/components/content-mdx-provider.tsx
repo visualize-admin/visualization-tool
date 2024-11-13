@@ -3,7 +3,16 @@ import { Box } from "@mui/material";
 import { ReactNode } from "react";
 
 import { ContentLayout, StaticContentLayout } from "@/components/layout";
-import { Contribute, Examples, Intro, Tutorial } from "@/homepage";
+import {
+  BugReport,
+  Contribute,
+  Examples,
+  Intro,
+  Newsletter,
+  Tutorial,
+} from "@/homepage";
+import { FeatureRequest } from "@/homepage/feature-request";
+import { Section } from "@/homepage/section";
 
 const castContentId = (contentId: unknown) => {
   if (typeof contentId === "string") {
@@ -35,6 +44,10 @@ const defaultMDXComponents = {
   Tutorial,
   Examples,
   Contribute,
+  Newsletter,
+  BugReport,
+  Section,
+  FeatureRequest,
 };
 
 export const ContentMDXProvider = ({ children }: { children: ReactNode }) => {
