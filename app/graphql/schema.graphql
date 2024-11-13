@@ -118,6 +118,10 @@ input DataCubeLatestIriFilter {
   iri: String!
 }
 
+input DataCubeVersionHistoryFilter {
+  iri: String!
+}
+
 input DataCubePreviewFilter {
   iri: String!
 }
@@ -140,6 +144,11 @@ type Query {
     sourceUrl: String!
     cubeFilter: DataCubeLatestIriFilter!
   ): String!
+  dataCubeVersionHistory(
+    sourceType: String!
+    sourceUrl: String!
+    cubeFilter: DataCubeVersionHistoryFilter!
+  ): String
   dataCubeComponents(
     sourceType: String!
     sourceUrl: String!

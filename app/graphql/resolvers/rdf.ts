@@ -73,6 +73,14 @@ export const dataCubeLatestIri: NonNullable<
   );
 };
 
+export const dataCubeVersionHistory: NonNullable<
+  QueryResolvers["dataCubeVersionHistory"]
+> = async (_, { cubeFilter }, { setup }, info) => {
+  const { iri } = cubeFilter;
+  const { sparqlClient } = await setup(info);
+  return (await queryCubeVersionHistory(sparqlClient, iri)) ?? iri;
+};
+
 const sortResults = (
   results: SearchResult[],
   order: SearchCubeResultOrder | undefined | null,
@@ -210,6 +218,8 @@ const getResolvedDimension = async (
     componentIris: [iri],
     cache,
   });
+
+  console.log("iri", iri);
 
   const dimension = dimensions.find((d) => iri === d.data.iri);
 

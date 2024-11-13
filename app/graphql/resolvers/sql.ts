@@ -72,6 +72,12 @@ export const dataCubeLatestIri: NonNullable<
   return "";
 };
 
+export const dataCubeVersionHistory: NonNullable<
+  QueryResolvers["dataCubeVersionHistory"]
+> = async () => {
+  return "";
+};
+
 export const searchCubes: NonNullable<
   QueryResolvers["searchCubes"]
 > = async () => {

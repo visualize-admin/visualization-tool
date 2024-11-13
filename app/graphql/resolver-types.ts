@@ -114,6 +114,10 @@ export type DataCubeTheme = {
   label?: Maybe<Scalars['String']>;
 };
 
+export type DataCubeVersionHistoryFilter = {
+  iri: Scalars['String'];
+};
+
 
 
 
@@ -130,6 +134,7 @@ export type ObservationFilter = {
 export type Query = {
   __typename?: 'Query';
   dataCubeLatestIri: Scalars['String'];
+  dataCubeVersionHistory?: Maybe<Scalars['String']>;
   dataCubeComponents: Scalars['DataCubeComponents'];
   dataCubeComponentTermsets: Array<Scalars['ComponentTermsets']>;
   dataCubeMetadata: Scalars['DataCubeMetadata'];
@@ -145,6 +150,13 @@ export type QueryDataCubeLatestIriArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   cubeFilter: DataCubeLatestIriFilter;
+};
+
+
+export type QueryDataCubeVersionHistoryArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
+  cubeFilter: DataCubeVersionHistoryFilter;
 };
 
 
@@ -356,6 +368,7 @@ export type ResolversTypes = ResolversObject<{
   DataCubeTermset: ResolverTypeWrapper<DataCubeTermset>;
   DataCubeTermsetFilter: DataCubeTermsetFilter;
   DataCubeTheme: ResolverTypeWrapper<DataCubeTheme>;
+  DataCubeVersionHistoryFilter: DataCubeVersionHistoryFilter;
   DimensionValue: ResolverTypeWrapper<Scalars['DimensionValue']>;
   FilterValue: ResolverTypeWrapper<Scalars['FilterValue']>;
   Filters: ResolverTypeWrapper<Scalars['Filters']>;
@@ -400,6 +413,7 @@ export type ResolversParentTypes = ResolversObject<{
   DataCubeTermset: DataCubeTermset;
   DataCubeTermsetFilter: DataCubeTermsetFilter;
   DataCubeTheme: DataCubeTheme;
+  DataCubeVersionHistoryFilter: DataCubeVersionHistoryFilter;
   DimensionValue: Scalars['DimensionValue'];
   FilterValue: Scalars['FilterValue'];
   Filters: Scalars['Filters'];
@@ -491,6 +505,7 @@ export type ObservationFilterResolvers<ContextType = VisualizeGraphQLContext, Pa
 
 export type QueryResolvers<ContextType = VisualizeGraphQLContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   dataCubeLatestIri?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<QueryDataCubeLatestIriArgs, 'sourceType' | 'sourceUrl' | 'cubeFilter'>>;
+  dataCubeVersionHistory?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<QueryDataCubeVersionHistoryArgs, 'sourceType' | 'sourceUrl' | 'cubeFilter'>>;
   dataCubeComponents?: Resolver<ResolversTypes['DataCubeComponents'], ParentType, ContextType, RequireFields<QueryDataCubeComponentsArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'cubeFilter'>>;
   dataCubeComponentTermsets?: Resolver<Array<ResolversTypes['ComponentTermsets']>, ParentType, ContextType, RequireFields<QueryDataCubeComponentTermsetsArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'cubeFilter'>>;
   dataCubeMetadata?: Resolver<ResolversTypes['DataCubeMetadata'], ParentType, ContextType, RequireFields<QueryDataCubeMetadataArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'cubeFilter'>>;

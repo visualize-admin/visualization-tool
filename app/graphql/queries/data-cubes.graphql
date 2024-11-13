@@ -36,6 +36,18 @@ query DataCubeLatestIri(
   )
 }
 
+query DataCubeVersionHistory(
+  $sourceType: String!
+  $sourceUrl: String!
+  $cubeFilter: DataCubeVersionHistoryFilter!
+) {
+  dataCubeVersionHistory(
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    cubeFilter: $cubeFilter
+  )
+}
+
 query DataCubeComponents(
   $sourceType: String!
   $sourceUrl: String!

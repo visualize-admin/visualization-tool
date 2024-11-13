@@ -114,6 +114,10 @@ export type DataCubeTheme = {
   label?: Maybe<Scalars['String']>;
 };
 
+export type DataCubeVersionHistoryFilter = {
+  iri: Scalars['String'];
+};
+
 
 
 
@@ -130,6 +134,7 @@ export type ObservationFilter = {
 export type Query = {
   __typename: 'Query';
   dataCubeLatestIri: Scalars['String'];
+  dataCubeVersionHistory?: Maybe<Scalars['String']>;
   dataCubeComponents: Scalars['DataCubeComponents'];
   dataCubeComponentTermsets: Array<Scalars['ComponentTermsets']>;
   dataCubeMetadata: Scalars['DataCubeMetadata'];
@@ -145,6 +150,13 @@ export type QueryDataCubeLatestIriArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   cubeFilter: DataCubeLatestIriFilter;
+};
+
+
+export type QueryDataCubeVersionHistoryArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
+  cubeFilter: DataCubeVersionHistoryFilter;
 };
 
 
@@ -294,6 +306,15 @@ export type DataCubeLatestIriQueryVariables = Exact<{
 
 export type DataCubeLatestIriQuery = { __typename: 'Query', dataCubeLatestIri: string };
 
+export type DataCubeVersionHistoryQueryVariables = Exact<{
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
+  cubeFilter: DataCubeVersionHistoryFilter;
+}>;
+
+
+export type DataCubeVersionHistoryQuery = { __typename: 'Query', dataCubeVersionHistory?: Maybe<string> };
+
 export type DataCubeComponentsQueryVariables = Exact<{
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
@@ -398,6 +419,19 @@ export const DataCubeLatestIriDocument = gql`
 
 export function useDataCubeLatestIriQuery(options: Omit<Urql.UseQueryArgs<DataCubeLatestIriQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<DataCubeLatestIriQuery>({ query: DataCubeLatestIriDocument, ...options });
+};
+export const DataCubeVersionHistoryDocument = gql`
+    query DataCubeVersionHistory($sourceType: String!, $sourceUrl: String!, $cubeFilter: DataCubeVersionHistoryFilter!) {
+  dataCubeVersionHistory(
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    cubeFilter: $cubeFilter
+  )
+}
+    `;
+
+export function useDataCubeVersionHistoryQuery(options: Omit<Urql.UseQueryArgs<DataCubeVersionHistoryQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<DataCubeVersionHistoryQuery>({ query: DataCubeVersionHistoryDocument, ...options });
 };
 export const DataCubeComponentsDocument = gql`
     query DataCubeComponents($sourceType: String!, $sourceUrl: String!, $locale: String!, $cubeFilter: DataCubeComponentFilter!) {
