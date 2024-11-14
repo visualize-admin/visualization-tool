@@ -1,4 +1,4 @@
-export const newsletterTemplate = {
+export const newsletterTemplates = {
   en: `
     I would like to subscribe to the Visualize newsletter. Please add my email address to the mailing list
   `,
