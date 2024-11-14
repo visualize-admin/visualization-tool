@@ -40,27 +40,33 @@ import { getPossibleFilters } from "@/rdf/query-possible-filters";
 import { SearchResult, searchCubes as _searchCubes } from "@/rdf/query-search";
 import { getSparqlEditorUrl } from "@/rdf/sparql-utils";
 
-const IRI_SEPARATOR = "___";
+const ID_SEPARATOR = "___";
 
-export const joinIris = ({
+export const makeComponentId = ({
   unversionedCubeIri,
-  dimensionIri,
+  unversionedComponentIri,
 }: {
   unversionedCubeIri: string;
-  dimensionIri: string;
-}) => `${unversionedCubeIri}${IRI_SEPARATOR}${dimensionIri}`;
+  unversionedComponentIri: string;
+}) => `${unversionedCubeIri}${ID_SEPARATOR}${unversionedComponentIri}`;
 
-export const splitIris = (iri: string) => {
-  const [unversionedCubeIri, dimensionIri] = iri.split(IRI_SEPARATOR);
+export const splitComponentId = (iri: string) => {
+  const [unversionedCubeIri, unversionedComponentIri] = iri.split(ID_SEPARATOR);
 
-  return { unversionedCubeIri, dimensionIri: dimensionIri || undefined };
+  return {
+    unversionedCubeIri,
+    unversionedComponentIri: unversionedComponentIri || undefined,
+  };
 };
 
-export const getFiltersWithSplitIris = <T extends Filters | SingleFilters>(
+export const getFiltersByComponentIris = <T extends Filters | SingleFilters>(
   filters: T
 ) => {
   return Object.fromEntries(
-    Object.entries(filters).map(([k, v]) => [splitIris(k).dimensionIri ?? k, v])
+    Object.entries(filters).map(([k, v]) => [
+      splitComponentId(k).unversionedComponentIri ?? k,
+      v,
+    ])
   ) as T;
 };
 
@@ -135,15 +141,18 @@ export const dataCubeDimensionGeoShapes: NonNullable<
   QueryResolvers["dataCubeDimensionGeoShapes"]
 > = async (_, { locale, cubeFilter }, { setup }, info) => {
   const { iri, dimensionIri: _dimensionIri } = cubeFilter;
-  const { dimensionIri } = splitIris(_dimensionIri);
+  const { unversionedComponentIri } = splitComponentId(_dimensionIri);
   const { loaders, sparqlClient, cache } = await setup(info);
-  const dimension = await getResolvedDimension(dimensionIri ?? _dimensionIri, {
-    cubeIri: iri,
-    locale,
-    sparqlClient,
-    loaders,
-    cache,
-  });
+  const dimension = await getResolvedDimension(
+    unversionedComponentIri ?? _dimensionIri,
+    {
+      cubeIri: iri,
+      locale,
+      sparqlClient,
+      loaders,
+      cache,
+    }
+  );
   const dimensionValuesLoader = getDimensionValuesLoader(
     sparqlClient,
     loaders,
@@ -153,7 +162,9 @@ export const dataCubeDimensionGeoShapes: NonNullable<
   const geometries = dimensionValues.map((d) => d.geometry).filter(truthy);
 
   if (geometries.length === 0) {
-    throw new Error(`No geometries found for dimension ${dimensionIri}!`);
+    throw new Error(
+      `No geometries found for dimension ${unversionedComponentIri}!`
+    );
   }
 
   const dimensionValuesByGeometry = new Map(
@@ -240,7 +251,7 @@ export const possibleFilters: NonNullable<
     return [];
   }
 
-  const filters = getFiltersWithSplitIris(_filters);
+  const filters = getFiltersByComponentIris(_filters);
 
   return await getPossibleFilters(cubeIri, { filters, sparqlClient, cache });
 };
@@ -264,9 +275,9 @@ export const dataCubeComponents: NonNullable<
 
   await cube.fetchShape();
 
-  const filters = _filters ? getFiltersWithSplitIris(_filters) : undefined;
+  const filters = _filters ? getFiltersByComponentIris(_filters) : undefined;
   const componentIris = _componentIris?.map(
-    (iri) => splitIris(iri).dimensionIri ?? iri
+    (iri) => splitComponentId(iri).unversionedComponentIri ?? iri
   );
 
   const [unversionedCubeIri = iri, rawComponents] = await Promise.all([
@@ -308,7 +319,10 @@ export const dataCubeComponents: NonNullable<
       const baseComponent: BaseComponent = {
         // We need to use original iri here, as the cube iri might have changed.
         cubeIri: iri,
-        id: joinIris({ unversionedCubeIri, dimensionIri: data.iri }),
+        id: makeComponentId({
+          unversionedCubeIri,
+          unversionedComponentIri: data.iri,
+        }),
         label: data.name,
         description: data.description,
         unit: data.unit,
@@ -424,9 +438,9 @@ export const dataCubeObservations: NonNullable<
 
   await cube.fetchShape();
 
-  const filters = _filters ? getFiltersWithSplitIris(_filters) : undefined;
+  const filters = _filters ? getFiltersByComponentIris(_filters) : undefined;
   const componentIris = _componentIris?.map(
-    (iri) => splitIris(iri).dimensionIri ?? iri
+    (iri) => splitComponentId(iri).unversionedComponentIri ?? iri
   );
 
   const { query, observations } = await getCubeObservations({

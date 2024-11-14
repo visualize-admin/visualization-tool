@@ -7,7 +7,7 @@ import {
   PROD_DATA_SOURCE_URL,
 } from "@/domain/datasource/constants";
 import { client } from "@/graphql/client";
-import { joinIris } from "@/graphql/resolvers/rdf";
+import { makeComponentId } from "@/graphql/resolvers/rdf";
 import { DEFAULT_CATEGORICAL_PALETTE_NAME } from "@/palettes";
 import {
   CHART_CONFIG_VERSION,
@@ -944,9 +944,9 @@ export const chartConfigMigrations: Migration[] = [
             ...rest,
             filters: Object.fromEntries(
               Object.entries(cube.filters).map(([k, v]) => [
-                joinIris({
+                makeComponentId({
                   unversionedCubeIri: unversionedIri,
-                  dimensionIri: k,
+                  unversionedComponentIri: k,
                 }),
                 v,
               ])
@@ -958,65 +958,66 @@ export const chartConfigMigrations: Migration[] = [
       for (const [k, v] of Object.entries<any>(newConfig.fields)) {
         if ("componentIris" in v) {
           v.componentIris = v.componentIris.map((iri: string) =>
-            joinIris({
+            makeComponentId({
               unversionedCubeIri,
-              dimensionIri: iri,
+              unversionedComponentIri: iri,
             })
           );
         } else if ("componentIri" in v) {
-          v.componentIri = joinIris({
+          v.componentIri = makeComponentId({
             unversionedCubeIri,
-            dimensionIri: v.componentIri,
+            unversionedComponentIri: v.componentIri,
           });
         }
 
         if ("measureIri" in v && v.measureIri !== FIELD_VALUE_NONE) {
-          v.measureIri = joinIris({
+          v.measureIri = makeComponentId({
             unversionedCubeIri,
-            dimensionIri: v.measureIri,
+            unversionedComponentIri: v.measureIri,
           });
         }
 
         // Maps
         if (v.color && "componentIri" in v.color) {
-          v.color.componentIri = joinIris({
+          v.color.componentIri = makeComponentId({
             unversionedCubeIri,
-            dimensionIri: v.color.componentIri,
+            unversionedComponentIri: v.color.componentIri,
           });
         }
 
         if ("leftAxisComponentIri" in v) {
-          v.leftAxisComponentIri = joinIris({
+          v.leftAxisComponentIri = makeComponentId({
             unversionedCubeIri,
-            dimensionIri: v.leftAxisComponentIri,
+            unversionedComponentIri: v.leftAxisComponentIri,
           });
         }
 
         if ("rightAxisComponentIri" in v) {
-          v.rightAxisComponentIri = joinIris({
+          v.rightAxisComponentIri = makeComponentId({
             unversionedCubeIri,
-            dimensionIri: v.rightAxisComponentIri,
+            unversionedComponentIri: v.rightAxisComponentIri,
           });
         }
 
         if ("columnComponentIri" in v) {
-          v.columnComponentIri = joinIris({
+          v.columnComponentIri = makeComponentId({
             unversionedCubeIri,
-            dimensionIri: v.columnComponentIri,
+            unversionedComponentIri: v.columnComponentIri,
           });
         }
 
         if ("lineComponentIri" in v) {
-          v.lineComponentIri = joinIris({
+          v.lineComponentIri = makeComponentId({
             unversionedCubeIri,
-            dimensionIri: v.lineComponentIri,
+            unversionedComponentIri: v.lineComponentIri,
           });
         }
 
         if (newConfig.chartType === "table") {
           delete newConfig.fields[k];
-          newConfig.fields[joinIris({ unversionedCubeIri, dimensionIri: k })] =
-            v;
+          newConfig.fields[
+            makeComponentId({ unversionedCubeIri, unversionedComponentIri: k })
+          ] = v;
         }
       }
 
@@ -1025,15 +1026,15 @@ export const chartConfigMigrations: Migration[] = [
       )) {
         if ("componentIris" in v) {
           v.componentIris = v.componentIris.map((iri: string) =>
-            joinIris({
+            makeComponentId({
               unversionedCubeIri,
-              dimensionIri: iri,
+              unversionedComponentIri: iri,
             })
           );
         } else if ("componentIri" in v) {
-          v.componentIri = joinIris({
+          v.componentIri = makeComponentId({
             unversionedCubeIri,
-            dimensionIri: v.componentIri,
+            unversionedComponentIri: v.componentIri,
           });
         }
       }

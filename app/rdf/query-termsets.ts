@@ -2,7 +2,7 @@ import groupBy from "lodash/groupBy";
 import ParsingClient from "sparql-http-client/ParsingClient";
 
 import { ComponentTermsets, Termset } from "@/domain/data";
-import { joinIris } from "@/graphql/resolvers/rdf";
+import { makeComponentId } from "@/graphql/resolvers/rdf";
 import { queryCubeVersionHistory } from "@/rdf/query-cube-version-history";
 import { buildLocalizedSubQuery } from "@/rdf/query-utils";
 
@@ -65,9 +65,9 @@ SELECT DISTINCT ?dimensionIri ?dimensionLabel ?termsetIri ?termsetLabel WHERE {
   ]);
 
   const parsed = qs.map((result) => ({
-    dimensionIri: joinIris({
+    dimensionIri: makeComponentId({
       unversionedCubeIri,
-      dimensionIri: result.dimensionIri.value,
+      unversionedComponentIri: result.dimensionIri.value,
     }),
     dimensionLabel: result.dimensionLabel.value,
     iri: result.termsetIri.value,

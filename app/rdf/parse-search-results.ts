@@ -3,7 +3,7 @@ import { Quad } from "rdf-js";
 
 import { SearchCube } from "@/domain/data";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
-import { joinIris } from "@/graphql/resolvers/rdf";
+import { makeComponentId } from "@/graphql/resolvers/rdf";
 import * as ns from "@/rdf/namespace";
 import { GROUP_SEPARATOR } from "@/rdf/query-utils";
 
@@ -104,13 +104,13 @@ function buildSearchCubes(
         dimensions: dimensions?.map((x) => {
           const dim = bySubjectAndPredicate.get(x.object.value);
           return {
-            iri: joinIris({
+            iri: makeComponentId({
               // TODO
               // Technically we don't need to unversion the cube iri here, as
               // search cubes are temporary and dimensions coming from here
               // aren't stored in chart config, but would be nice to be consistent.
               unversionedCubeIri: iri,
-              dimensionIri: x.object.value,
+              unversionedComponentIri: x.object.value,
             }),
             label: dim?.get(ns.schema.name.value)?.[0].object.value ?? "",
             timeUnit:

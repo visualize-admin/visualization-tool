@@ -17,7 +17,7 @@ import {
 import { isMostRecentValue } from "@/domain/most-recent-value";
 import { PromiseValue, truthy } from "@/domain/types";
 import { resolveDimensionType } from "@/graphql/resolvers";
-import { joinIris, splitIris } from "@/graphql/resolvers/rdf";
+import { makeComponentId, splitComponentId } from "@/graphql/resolvers/rdf";
 import {
   ResolvedDimension,
   ResolvedObservationsQuery,
@@ -482,7 +482,10 @@ export const getCubeObservations = async ({
     observations: observations.map((obs) => {
       return Object.fromEntries(
         Object.entries(obs).map(([dimensionIri, value]) => [
-          joinIris({ unversionedCubeIri, dimensionIri }),
+          makeComponentId({
+            unversionedCubeIri,
+            unversionedComponentIri: dimensionIri,
+          }),
           value,
         ])
       );
@@ -616,7 +619,8 @@ const buildFilters = async ({
 
   return await Promise.all(
     Object.entries(filters).flatMap(async ([filterIri, filter]) => {
-      const iri = splitIris(filterIri).dimensionIri ?? filterIri;
+      const iri =
+        splitComponentId(filterIri).unversionedComponentIri ?? filterIri;
       const cubeDimension = cube.dimensions.find((d) => d.path?.value === iri);
 
       if (!cubeDimension) {
