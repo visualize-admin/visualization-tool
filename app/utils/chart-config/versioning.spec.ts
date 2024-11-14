@@ -17,6 +17,10 @@ import {
 } from "./versioning";
 
 const CONFIGURATOR_STATE = {
+  dataSource: {
+    type: "sparql",
+    url: "",
+  },
   meta: {
     title: {
       de: "",
@@ -113,7 +117,7 @@ describe("config migrations", () => {
   };
 
   it("should migrate to newest config and back (but might lost some info for major version changes", async () => {
-    const migratedConfig = migrateChartConfig(oldMapConfig, {
+    const migratedConfig = await migrateChartConfig(oldMapConfig, {
       migrationProps: CONFIGURATOR_STATE,
     });
     const decodedConfig = decodeChartConfig(migratedConfig);
@@ -137,11 +141,11 @@ describe("config migrations", () => {
     expect(symbolLayer.color).toEqual("#1f77b4");
   });
 
-  it("should migrate to initial config from migrated config for minor version changes", () => {
-    const migratedConfig = migrateChartConfig(oldMapConfig, {
+  it("should migrate to initial config from migrated config for minor version changes", async () => {
+    const migratedConfig = await migrateChartConfig(oldMapConfig, {
       toVersion: "1.0.2",
     });
-    const migratedOldConfig = migrateChartConfig(migratedConfig, {
+    const migratedOldConfig = await migrateChartConfig(migratedConfig, {
       toVersion: "1.0.0",
     });
 
@@ -149,7 +153,7 @@ describe("config migrations", () => {
   });
 
   it("should correctly migrate interactiveFiltersConfig", async () => {
-    const migratedConfig = migrateChartConfig(oldLineConfig, {
+    const migratedConfig = await migrateChartConfig(oldLineConfig, {
       migrationProps: CONFIGURATOR_STATE,
     });
     const decodedConfig = decodeChartConfig(migratedConfig);

@@ -772,6 +772,18 @@ describe("filtering", () => {
 
 describe("retainChartConfigWhenSwitchingChartType", () => {
   const dataSetMetadata = covid19Metadata.data.dataCubeByIri;
+  const dimensions = (dataSetMetadata.dimensions as any as Dimension[]).map(
+    (d) => ({
+      ...d,
+      // Adding cube prefix.
+      iri: `foo___${d.iri}`,
+    })
+  );
+  const measures = (dataSetMetadata.measures as any as Measure[]).map((m) => ({
+    ...m,
+    // Adding cube prefix.
+    iri: `foo___${m.iri}`,
+  }));
 
   const deriveNewChartConfig = (
     oldConfig: ChartConfig,
@@ -781,12 +793,12 @@ describe("retainChartConfigWhenSwitchingChartType", () => {
       getChartConfigAdjustedToChartType({
         chartConfig: oldConfig,
         newChartType,
-        dimensions: dataSetMetadata.dimensions as any as Dimension[],
-        measures: dataSetMetadata.measures as any as Measure[],
+        dimensions,
+        measures,
       })
     );
     deriveFiltersFromFields(newConfig, {
-      dimensions: dataSetMetadata.dimensions as any as Dimension[],
+      dimensions,
     });
 
     return current(newConfig);
@@ -848,11 +860,11 @@ describe("retainChartConfigWhenSwitchingChartType", () => {
           {
             oldFieldGetterPath: [
               "filters",
-              "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/type",
+              "foo___https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/type",
             ],
             newFieldGetterPath: [
               "filters",
-              "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/type",
+              "foo___https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/type",
             ],
             equal: true,
           },
@@ -893,7 +905,7 @@ describe("retainChartConfigWhenSwitchingChartType", () => {
           {
             oldFieldGetterPath: [
               "fields",
-              "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/date",
+              "foo___https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/date",
               "componentIri",
             ],
             newFieldGetterPath: "fields.segment.componentIri",
@@ -905,7 +917,7 @@ describe("retainChartConfigWhenSwitchingChartType", () => {
           {
             fieldGetterPath: [
               "fields",
-              "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/date",
+              "foo___https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/date",
               "isGroup",
             ],
             expectedValue: true,
@@ -913,7 +925,7 @@ describe("retainChartConfigWhenSwitchingChartType", () => {
           {
             fieldGetterPath: [
               "fields",
-              "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/georegion",
+              "foo___https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/georegion",
               "isGroup",
             ],
             expectedValue: true,
@@ -929,7 +941,7 @@ describe("retainChartConfigWhenSwitchingChartType", () => {
             oldFieldGetterPath: "fields.segment.componentIri",
             newFieldGetterPath: [
               "fields",
-              "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/date",
+              "foo___https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/date",
               "componentIri",
             ],
             equal: true,
@@ -940,7 +952,7 @@ describe("retainChartConfigWhenSwitchingChartType", () => {
           {
             fieldGetterPath: [
               "fields",
-              "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/date",
+              "foo___https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/date",
               "isGroup",
             ],
             expectedValue: true,
@@ -997,7 +1009,14 @@ describe("retainChartConfigWhenSwitchingChartType", () => {
   it("should retain appropriate x & y fields and discard the others", async () => {
     runChecks(
       await migrateChartConfig(covid19ColumnChartConfig, {
-        migrationProps: { meta: {}, dataSet: "foo" },
+        migrationProps: {
+          meta: {},
+          dataSet: "foo",
+          dataSource: {
+            type: "sparql",
+            url: "",
+          },
+        },
       }),
       xyChecks
     );
@@ -1006,7 +1025,14 @@ describe("retainChartConfigWhenSwitchingChartType", () => {
   it("should retain appropriate segment fields and discard the others", async () => {
     runChecks(
       await migrateChartConfig(covid19TableChartConfig, {
-        migrationProps: { meta: {}, dataSet: "foo" },
+        migrationProps: {
+          meta: {},
+          dataSet: "foo",
+          dataSource: {
+            type: "sparql",
+            url: "",
+          },
+        },
       }),
       segmentChecks
     );

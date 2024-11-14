@@ -275,30 +275,39 @@ describe("useQueryFilters", () => {
   });
 });
 
-describe("getChartConfigComponentIris", async () => {
+describe("getChartConfigComponentIris", () => {
   const migrationOptions = {
-    migrationProps: { dataSet: "foo", meta: {} },
+    migrationProps: {
+      dataSet: "foo",
+      meta: {},
+      dataSource: {
+        type: "sparql",
+        url: "",
+      },
+    },
   };
-  const lineConfig = await migrateChartConfig(
-    line1Fixture.data.chartConfig,
-    migrationOptions
-  );
-  const mapConfig = await migrateChartConfig(
-    map1Fixture.data.chartConfig,
-    migrationOptions
-  );
+  let lineConfig: ChartConfig;
+  let mapConfig: ChartConfig;
 
-  it("should return correct componentIris for line chart", () => {
+  it("should return correct componentIris for line chart", async () => {
+    lineConfig = await migrateChartConfig(
+      line1Fixture.data.chartConfig,
+      migrationOptions
+    );
+    mapConfig = await migrateChartConfig(
+      map1Fixture.data.chartConfig,
+      migrationOptions
+    );
     const componentsIris = extractChartConfigComponentIris({
       chartConfig: lineConfig,
     });
     expect(componentsIris).toEqual([
-      "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/0",
-      "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/1",
-      "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2",
-      "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/3",
-      "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/4",
-      "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/0",
+      "foo___http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/0",
+      "foo___http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/1",
+      "foo___http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2",
+      "foo___http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/3",
+      "foo___http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/4",
+      "foo___http://environment.ld.admin.ch/foen/px/0703010000_105/measure/0",
     ]);
   });
 
@@ -307,14 +316,14 @@ describe("getChartConfigComponentIris", async () => {
       chartConfig: mapConfig,
     });
     expect(componentsIris).toEqual([
-      "https://environment.ld.admin.ch/foen/nfi/Topic/3",
-      "https://environment.ld.admin.ch/foen/nfi/Topic/3r",
-      "https://environment.ld.admin.ch/foen/nfi/classificationUnit",
-      "https://environment.ld.admin.ch/foen/nfi/evaluationType",
-      "https://environment.ld.admin.ch/foen/nfi/grid",
-      "https://environment.ld.admin.ch/foen/nfi/inventory",
-      "https://environment.ld.admin.ch/foen/nfi/unitOfEvaluation",
-      "https://environment.ld.admin.ch/foen/nfi/unitOfReference",
+      "foo___https://environment.ld.admin.ch/foen/nfi/Topic/3",
+      "foo___https://environment.ld.admin.ch/foen/nfi/Topic/3r",
+      "foo___https://environment.ld.admin.ch/foen/nfi/classificationUnit",
+      "foo___https://environment.ld.admin.ch/foen/nfi/evaluationType",
+      "foo___https://environment.ld.admin.ch/foen/nfi/grid",
+      "foo___https://environment.ld.admin.ch/foen/nfi/inventory",
+      "foo___https://environment.ld.admin.ch/foen/nfi/unitOfEvaluation",
+      "foo___https://environment.ld.admin.ch/foen/nfi/unitOfReference",
     ]);
   });
 

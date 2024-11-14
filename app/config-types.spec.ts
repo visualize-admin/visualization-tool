@@ -71,7 +71,6 @@ describe("getChartConfigFilters", () => {
       [
         {
           iri: "cube1",
-          unversionedIri: "cube1",
           joinBy: ["dimension1", "dimension2"],
           filters: {
             dimension1: { type: "single", value: "value1" },
@@ -80,7 +79,6 @@ describe("getChartConfigFilters", () => {
         },
         {
           iri: "cube2",
-          unversionedIri: "cube2",
           joinBy: ["dimension3", "dimension4"],
           filters: {
             dimension3: { type: "single", value: "value1" },
@@ -103,7 +101,6 @@ describe("getChartConfigFilters", () => {
     const result = getChartConfigFilters([
       {
         iri: "cube1",
-        unversionedIri: "cube1",
         joinBy: ["dimension1", "dimension2"],
         filters: {
           dimension1: { type: "single", value: "value1" },
@@ -112,7 +109,6 @@ describe("getChartConfigFilters", () => {
       },
       {
         iri: "cube2",
-        unversionedIri: "cube2",
         joinBy: ["dimension3", "dimension4"],
         filters: {
           dimension3: { type: "single", value: "value1" },
