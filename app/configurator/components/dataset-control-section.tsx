@@ -232,7 +232,7 @@ export const DatasetsControlSection = () => {
   }
 
   return (
-    <ControlSection collapse defaultExpanded={false}>
+    <ControlSection collapse defaultExpanded={true}>
       <SubsectionTitle titleId="controls-data" gutterBottom={false}>
         <Trans id="controls.section.datasets.title">Datasets</Trans>{" "}
         <BetaTag
