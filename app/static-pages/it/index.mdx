@@ -1,5 +1,6 @@
 import { bugReportTemplates } from "@/templates/email/bug-report";
 import { featureRequestTemplates } from "@/templates/email/feature-request";
+import { newsletterTemplates } from "@/templates/email/newsletter";
 import { Divider } from "@mui/material";
 
 import { createMailtoLink } from "../../../app/templates/email";
@@ -44,7 +45,14 @@ export const contentId = "home";
     headline="Iscriviti alla nostra newsletter"
     description="Resta aggiornato e iscriviti alla nostra newsletter."
     buttonLabel="Iscriviti"
-    buttonUrl={`mailto:${OWNER_ORGANIZATION_EMAIL}`}
+    buttonUrl={createMailtoLink("it", {
+      recipients: {
+        to: OWNER_ORGANIZATION_EMAIL,
+        cc: SUPPORT_EMAIL,
+      },
+      template: newsletterTemplates,
+      subject: "Visualize Newsletter Iscrizione",
+    })}
   />
 </Section>
 <Section
