@@ -45,7 +45,7 @@ export const useColumnsStateVariables = (
   } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
   const { x, y, animation } = fields;
-  const xDimension = dimensionsById[x.componentIri];
+  const xDimension = dimensionsById[x.componentId];
   const filters = useChartConfigFilters(chartConfig);
 
   const baseVariables = useBaseVariables(chartConfig);

@@ -230,7 +230,7 @@ export type QueryDataCubeDimensionGeoShapesArgs = {
 export type RelatedDimension = {
   __typename?: 'RelatedDimension';
   type: Scalars['String'];
-  iri: Scalars['String'];
+  id: Scalars['String'];
 };
 
 export enum ScaleType {
@@ -522,7 +522,7 @@ export interface RawObservationScalarConfig extends GraphQLScalarTypeConfig<Reso
 
 export type RelatedDimensionResolvers<ContextType = VisualizeGraphQLContext, ParentType extends ResolversParentTypes['RelatedDimension'] = ResolversParentTypes['RelatedDimension']> = ResolversObject<{
   type?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 

@@ -88,11 +88,11 @@ export const TabDropZone = (props: TabDropZoneProps) => {
                 ref={innerRef}
               >
                 {items.length === 0 && emptyComponent ? emptyComponent : null}
-                {items.map(({ componentIri, index, isHidden }, i) => {
+                {items.map(({ componentId, index, isHidden }, i) => {
                   return (
                     <Draggable
-                      key={componentIri}
-                      draggableId={componentIri}
+                      key={componentId}
+                      draggableId={componentId}
                       index={i}
                     >
                       {(
@@ -107,11 +107,11 @@ export const TabDropZone = (props: TabDropZoneProps) => {
                             className={classes.filterRow}
                           >
                             <DraggableTabField
-                              key={componentIri}
+                              key={componentId}
                               component={
-                                components.find((d) => d.id === componentIri)!
+                                components.find((d) => d.id === componentId)!
                               }
-                              value={`${componentIri}`}
+                              value={componentId}
                               upperLabel={
                                 <Trans id="table.column.no">
                                   Column {index + 1}

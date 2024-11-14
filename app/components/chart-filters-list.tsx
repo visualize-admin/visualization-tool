@@ -3,7 +3,7 @@ import { Typography } from "@mui/material";
 import { Fragment, useMemo } from "react";
 
 import {
-  extractChartConfigComponentIris,
+  extractChartConfigComponentIds,
   useQueryFilters,
 } from "@/charts/shared/chart-helpers";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
@@ -45,7 +45,7 @@ export const ChartFiltersList = ({
   const queryFilters = useQueryFilters({
     chartConfig,
     dashboardFilters,
-    componentIris: extractChartConfigComponentIris({ chartConfig }),
+    componentIris: extractChartConfigComponentIds({ chartConfig }),
   });
   const cubeQueryFilters = useMemo(() => {
     return queryFilters.filter((d) => d.iri === cubeIri);
@@ -104,8 +104,7 @@ export const ChartFiltersList = ({
 
       if (animationField) {
         const dimension = components.find(
-          (d) =>
-            d.id === animationField.componentIri && d.cubeIri === filter.iri
+          (d) => d.id === animationField.componentId
         );
 
         if (timeSlider.value) {

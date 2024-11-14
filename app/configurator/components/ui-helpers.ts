@@ -112,13 +112,13 @@ export const getErrorMeasure = (
 ) => {
   return [...dimensions, ...measures].find((m) => {
     return m.related?.some(
-      (r) => r.type === "StandardError" && r.iri === valueIri
+      (r) => r.type === "StandardError" && r.id === valueIri
     );
   });
 };
 
 export const useErrorMeasure = (
-  componentIri: string,
+  componentId: string,
   {
     dimensions,
     measures,
@@ -128,8 +128,8 @@ export const useErrorMeasure = (
   }
 ) => {
   return useMemo(() => {
-    return getErrorMeasure({ dimensions, measures }, componentIri);
-  }, [componentIri, dimensions, measures]);
+    return getErrorMeasure({ dimensions, measures }, componentId);
+  }, [componentId, dimensions, measures]);
 };
 
 export const useErrorVariable = (errorMeasure?: Component) => {

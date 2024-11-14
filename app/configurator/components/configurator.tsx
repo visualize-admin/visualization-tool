@@ -18,7 +18,7 @@ import { useClient } from "urql";
 import { useDebounce } from "use-debounce";
 
 import { SelectDatasetStep } from "@/browser/select-dataset-step";
-import { extractChartConfigComponentIris } from "@/charts/shared/chart-helpers";
+import { extractChartConfigComponentIds } from "@/charts/shared/chart-helpers";
 import { ChartPreview } from "@/components/chart-preview";
 import { HEADER_HEIGHT } from "@/components/header-constants";
 import { Loading } from "@/components/hint";
@@ -176,7 +176,7 @@ const NextStepButton = (props: React.PropsWithChildren<{}>) => {
   const locale = useLocale();
   const [state, dispatch] = useConfiguratorState(hasChartConfigs);
   const chartConfig = getChartConfig(state);
-  const componentIris = extractChartConfigComponentIris({ chartConfig });
+  const componentIris = extractChartConfigComponentIds({ chartConfig });
   const [{ data: components }] = useDataCubesComponentsQuery({
     variables: {
       sourceType: state.dataSource.type,

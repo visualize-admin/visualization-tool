@@ -63,7 +63,7 @@ const useComboLineSingleState = (
   const yUnits = Array.from(
     new Set(
       variables.y.lines.map((d) => {
-        return measuresById[d.iri].unit;
+        return measuresById[d.id].unit;
       })
     )
   );
@@ -76,7 +76,7 @@ const useComboLineSingleState = (
 
   const yAxisLabel = yUnits[0] ?? "";
 
-  const xKey = fields.x.componentIri;
+  const xKey = fields.x.componentId;
   const {
     width,
     height,

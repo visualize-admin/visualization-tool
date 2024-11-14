@@ -15,7 +15,7 @@ import { ascending, descending } from "d3-array";
 import { useCallback, useMemo, useRef, useState } from "react";
 
 import {
-  extractChartConfigComponentIris,
+  extractChartConfigComponentIds,
   useQueryFilters,
 } from "@/charts/shared/chart-helpers";
 import { Loading } from "@/components/hint";
@@ -245,7 +245,7 @@ export const DataSetTable = ({
   sx?: SxProps<Theme>;
 }) => {
   const locale = useLocale();
-  const componentIris = extractChartConfigComponentIris({ chartConfig });
+  const componentIris = extractChartConfigComponentIds({ chartConfig });
   const commonQueryVariables = {
     sourceType: dataSource.type,
     sourceUrl: dataSource.url,

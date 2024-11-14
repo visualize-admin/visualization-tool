@@ -4,11 +4,11 @@ import { CHART_CONFIG_VERSION } from "@/utils/chart-config/constants";
 
 export const columnFields = {
   x: {
-    componentIri:
+    componentId:
       "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1",
   },
   y: {
-    componentIri:
+    componentId:
       "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/1",
   },
 };
@@ -42,11 +42,11 @@ export const chartConfig: ColumnConfig = {
   interactiveFiltersConfig: {
     legend: {
       active: false,
-      componentIri: "",
+      componentId: "",
     },
     dataFilters: {
       active: false,
-      componentIris: [],
+      componentIds: [],
     },
     timeRange: {
       presets: {
@@ -55,7 +55,7 @@ export const chartConfig: ColumnConfig = {
         to: "0",
       },
       active: false,
-      componentIri: "",
+      componentId: "",
     },
     calculation: {
       active: false,

@@ -34,7 +34,7 @@ import React, {
 } from "react";
 
 import {
-  extractChartConfigComponentIris,
+  extractChartConfigComponentIds,
   useQueryFilters,
 } from "@/charts/shared/chart-helpers";
 import { DatasetMetadata } from "@/components/dataset-metadata";
@@ -424,7 +424,7 @@ const CubesPanel = ({
   const queryFilters = useQueryFilters({
     chartConfig,
     dashboardFilters,
-    componentIris: extractChartConfigComponentIris({ chartConfig }),
+    componentIris: extractChartConfigComponentIds({ chartConfig }),
   });
   const [
     { data: dataCubesObservationsData, error: dataCubesObservationsError },

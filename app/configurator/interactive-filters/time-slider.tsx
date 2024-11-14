@@ -58,7 +58,7 @@ type TimeSliderProps = {
 
 export const TimeSlider = (props: TimeSliderProps) => {
   const {
-    componentIri,
+    componentId,
     showPlayButton,
     type: animationType,
     duration: animationDuration,
@@ -68,8 +68,8 @@ export const TimeSlider = (props: TimeSliderProps) => {
 
   const [state] = useConfiguratorState(hasChartConfigs);
   const dimension = useMemo(() => {
-    return dimensions.find((d) => d.id === componentIri);
-  }, [componentIri, dimensions]);
+    return dimensions.find((d) => d.id === componentId);
+  }, [componentId, dimensions]);
   const temporal = isTemporalDimension(dimension);
   const temporalEntity = isTemporalEntityDimension(dimension);
   const temporalOrdinal = isTemporalOrdinalDimension(dimension);

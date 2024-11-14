@@ -172,10 +172,10 @@ export const TableColumnOptions = ({
     );
   }
 
-  const activeFieldComponentIri = chartConfig.fields[activeField]?.componentIri;
+  const activeFieldComponentId = chartConfig.fields[activeField]?.componentId;
   // It's a dimension which is not mapped to an encoding field, so we show the filter!
   // FIXME: activeField and encodingField should match? to remove type assertion
-  if (!activeFieldComponentIri) {
+  if (!activeFieldComponentId) {
     return null;
   }
 

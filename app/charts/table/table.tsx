@@ -87,9 +87,9 @@ export const Table = () => {
     showSearch,
     tableColumns,
     tableColumnsMeta,
-    groupingIris,
-    hiddenIris,
-    sortingIris,
+    groupingIds,
+    hiddenIds,
+    sortingIds,
   } = useChartState() as TableChartState;
   const classes = useStyles();
 
@@ -146,14 +146,14 @@ export const Table = () => {
         return useMemo(
           () => ({
             ...state,
-            sortBy: [...state.sortBy, ...sortingIris],
-            groupBy: groupingIris,
-            hiddenColumns: hiddenIris,
+            sortBy: [...state.sortBy, ...sortingIds],
+            groupBy: groupingIds,
+            hiddenColumns: hiddenIds,
           }),
           // eslint does not detect correctly the dependencies here due to the
           // hook not being in the body of the component.
           // eslint-disable-next-line react-hooks/exhaustive-deps
-          [state, groupingIris, hiddenIris, sortingIris]
+          [state, groupingIds, hiddenIds, sortingIds]
         );
       },
     },
@@ -164,7 +164,7 @@ export const Table = () => {
   );
 
   // If the table has a custom sort, the tableState.sortBy has these items prepended.
-  const customSortCount = tableState.sortBy.length - sortingIris.length;
+  const customSortCount = tableState.sortBy.length - sortingIds.length;
 
   // Desktop row
   const renderDesktopRow = useCallback(
@@ -189,18 +189,12 @@ export const Table = () => {
               );
             })
           ) : (
-            <GroupHeader row={row} groupingLevels={groupingIris.length} />
+            <GroupHeader row={row} groupingLevels={groupingIds.length} />
           )}
         </Box>
       );
     },
-    [
-      classes.desktopRow,
-      groupingIris.length,
-      prepareRow,
-      rows,
-      tableColumnsMeta,
-    ]
+    [classes.desktopRow, groupingIds.length, prepareRow, rows, tableColumnsMeta]
   );
 
   // Mobile row
@@ -281,7 +275,7 @@ export const Table = () => {
                   ml: `${row.depth * 12}px`,
                 }}
               >
-                <GroupHeader row={row} groupingLevels={groupingIris.length} />
+                <GroupHeader row={row} groupingLevels={groupingIds.length} />
               </Flex>
             )}
           </Box>
@@ -290,7 +284,7 @@ export const Table = () => {
     },
     [
       classes.mobileRow,
-      groupingIris.length,
+      groupingIds.length,
       prepareRow,
       rowHeight,
       rows,

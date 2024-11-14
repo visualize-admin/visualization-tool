@@ -131,7 +131,7 @@ export const useChartFieldField = ({
         value: {
           locale,
           field,
-          componentIri: dimensionId,
+          componentId: dimensionId,
           selectedValues: leaves,
         },
       });
@@ -529,16 +529,16 @@ export const useSingleFilterField = ({
   );
 
   const cubeIri = filters[0].cubeIri;
-  const dimensionIri = filters[0].dimensionId;
+  const dimensionId = filters[0].dimensionId;
   const chartConfig = getChartConfig(state);
   const cube = chartConfig.cubes.find((cube) => cube.iri === cubeIri);
   const stateValue = isConfiguring(state)
-    ? get(cube, ["filters", dimensionIri, "value"], "")
+    ? get(cube, ["filters", dimensionId, "value"], "")
     : "";
   const checked = stateValue === value;
 
   return {
-    name: dimensionIri,
+    name: dimensionId,
     value: value ? value : stateValue,
     checked,
     onChange,
@@ -547,10 +547,10 @@ export const useSingleFilterField = ({
 
 export const isMultiFilterFieldChecked = (
   filters: Filters,
-  dimensionIri: string,
+  dimensionId: string,
   value: string
 ) => {
-  const filter = filters[dimensionIri];
+  const filter = filters[dimensionId];
   const fieldChecked =
     filter?.type === "multi" ? filter.values?.[value] ?? false : false;
 

@@ -51,18 +51,18 @@ jest.mock("next-auth/react", () => {
 const getInteractiveFiltersConfig = () =>
   ({
     legend: {
-      componentIri: "https://fake-iri/dimension/0",
+      componentId: "https://fake-iri/dimension/0",
       active: false,
     },
     dataFilters: {
       active: true,
-      componentIris: [
+      componentIds: [
         "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1",
       ],
     },
     timeRange: {
       active: false,
-      componentIri: "https://fake-iri/dimension/2",
+      componentId: "https://fake-iri/dimension/2",
       presets: {
         type: "range",
         from: "2021-01-01",

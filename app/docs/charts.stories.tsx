@@ -79,7 +79,7 @@ const ColumnsStory = {
             },
           },
           dataFilters: {
-            componentIris: [],
+            componentIds: [],
             filters: {},
           },
         },
@@ -143,7 +143,7 @@ const ScatterplotStory = {
             },
           },
           dataFilters: {
-            componentIris: [],
+            componentIds: [],
             filters: {},
           },
         },

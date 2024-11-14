@@ -149,8 +149,8 @@ const useLegendGroups = ({
   const segmentField = (
     isSegmentInConfig(chartConfig) ? chartConfig.fields.segment : null
   ) as GenericSegmentField | null | undefined;
-  const segmentFilters = segmentField?.componentIri
-    ? filters[segmentField.componentIri]
+  const segmentFilters = segmentField?.componentId
+    ? filters[segmentField.componentId]
     : null;
   const segmentValues =
     segmentFilters?.type === "multi" ? segmentFilters.values : emptyObj;

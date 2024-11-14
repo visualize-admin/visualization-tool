@@ -49,16 +49,17 @@ export const useComboLineSingleStateVariables = (
 
   const numericalYVariables: NumericalYComboLineSingleVariables = {
     y: {
-      lines: chartConfig.fields.y.componentIris.map((iri) => ({
-        dimension: measuresById[iri],
-        iri,
-        label: measuresById[iri].label,
-        color: fields.y.colorMapping[iri],
-        getY: (d) => (d[iri] !== null ? Number(d[iri]) : null),
+      lines: chartConfig.fields.y.componentIds.map((id) => ({
+        dimension: measuresById[id],
+        id,
+        label: measuresById[id].label,
+        color: fields.y.colorMapping[id],
+        getY: (d) => (d[id] !== null ? Number(d[id]) : null),
         getMinY: (data) => {
           const minY =
-            min(data, (d) => (d[iri] !== null ? Number(d[iri]) : null)) ?? 0;
-          return shouldUseDynamicMinScaleValue(measuresById[iri].scaleType)
+            min(data, (d) => (d[id] !== null ? Number(d[id]) : null)) ?? 0;
+
+          return shouldUseDynamicMinScaleValue(measuresById[id].scaleType)
             ? minY
             : Math.min(0, minY);
         },

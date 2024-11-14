@@ -33,7 +33,7 @@ describe("defaultSegmentOnChange", () => {
     expect(Object.keys(chartConfig.fields)).toEqual(["segment"]);
     expect(chartConfig.fields.segment).toEqual(
       expect.objectContaining({
-        componentIri: "iri",
+        componentId: "iri",
         palette: DEFAULT_CATEGORICAL_PALETTE_NAME,
       })
     );

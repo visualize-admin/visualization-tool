@@ -9,16 +9,16 @@ import { CHART_CONFIG_VERSION } from "@/utils/chart-config/constants";
 export const interactiveFiltersConfig: InteractiveFiltersConfig = {
   legend: {
     active: true,
-    componentIri: "",
+    componentId: "",
   },
   timeRange: {
     active: false,
-    componentIri: "",
+    componentId: "",
     presets: { type: "range", from: "", to: "" },
   },
   dataFilters: {
     active: false,
-    componentIris: [],
+    componentIds: [],
   },
   calculation: {
     active: false,
@@ -28,15 +28,15 @@ export const interactiveFiltersConfig: InteractiveFiltersConfig = {
 
 export const scatterplotFields: ScatterPlotFields = {
   x: {
-    componentIri:
+    componentId:
       "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/0",
   },
   y: {
-    componentIri:
+    componentId:
       "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/1",
   },
   segment: {
-    componentIri:
+    componentId:
       "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1",
     palette: "category10",
     colorMapping: {

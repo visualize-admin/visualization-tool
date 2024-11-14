@@ -174,7 +174,7 @@ const useAreasState = (
     fields.segment?.useAbbreviations,
   ]);
 
-  const xKey = fields.x.componentIri;
+  const xKey = fields.x.componentId;
   const sumsByX = useMemo(() => {
     return Object.fromEntries(
       rollup(
@@ -372,7 +372,7 @@ const useAreasState = (
       });
       const yValueFormatter = getStackedTooltipValueFormatter({
         normalize,
-        yMeasureIri: yMeasure.id,
+        yMeasureId: yMeasure.id,
         yMeasureUnit: yMeasure.unit,
         formatters,
         formatNumber,

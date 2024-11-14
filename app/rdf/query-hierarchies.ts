@@ -31,7 +31,7 @@ const getName = (pointer: AnyPointer, language: string) => {
 
 const toTree = (
   results: HierarchyNode[],
-  dimensionIri: string,
+  dimensionId: string,
   locale: string,
   hasValue: (value: string) => boolean
 ): HierarchyValue[] => {
@@ -62,7 +62,7 @@ const toTree = (
           position: parseTerm(node.resource.out(ns.schema.position).term),
           identifier,
           depth,
-          dimensionIri,
+          dimensionId,
           hasValue: hasValue(value),
         }
       : undefined;
@@ -134,17 +134,17 @@ export const queryHierarchies = async (
 export const parseHierarchy = (
   hierarchies: NonNullable<Awaited<ReturnType<typeof queryHierarchies>>>,
   options: {
-    dimensionIri: string;
+    dimensionId: string;
     locale: string;
     dimensionValues: DimensionValue[];
   }
 ): HierarchyValue[] => {
-  const { dimensionIri, locale, dimensionValues } = options;
+  const { dimensionId, locale, dimensionValues } = options;
   const rawValues = new Set(dimensionValues.map((d) => `${d.value}`));
   const trees = hierarchies.map(({ nodes, hierarchyName }) => {
     const tree: (HierarchyValue & {
       hierarchyName?: string;
-    })[] = toTree(nodes, dimensionIri, locale, (d) => rawValues.has(d));
+    })[] = toTree(nodes, dimensionId, locale, (d) => rawValues.has(d));
 
     if (tree.length > 0) {
       // Augment hierarchy value with hierarchyName so that when regrouping
@@ -165,7 +165,7 @@ export const parseHierarchy = (
       label: d.label || "ADDITIONAL",
       value: `${d.value}`,
       depth: -1,
-      dimensionIri,
+      dimensionId,
       hasValue: true,
       position: -1,
       identifier: "",

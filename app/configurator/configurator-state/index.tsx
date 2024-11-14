@@ -14,6 +14,7 @@ import {
   enableLayouting,
   extractSingleFilters,
   FilterValue,
+  GenericField,
   getChartConfig,
   getChartConfigFilters,
   isColorFieldInConfig,
@@ -70,19 +71,19 @@ export const getPreviousState = (
 // FIXME: should by handled better, as color is a subfield and not actual field.
 // Side effects in ui encodings?
 const getNonGenericFieldValues = (chartConfig: ChartConfig): string[] => {
-  const iris: string[] = [];
+  const ids: string[] = [];
 
   if (isColorFieldInConfig(chartConfig)) {
     if (chartConfig.fields.areaLayer?.color.type === "categorical") {
-      iris.push(chartConfig.fields.areaLayer.color.componentIri);
+      ids.push(chartConfig.fields.areaLayer.color.componentId);
     }
 
     if (chartConfig.fields.symbolLayer?.color.type === "categorical") {
-      iris.push(chartConfig.fields.symbolLayer.color.componentIri);
+      ids.push(chartConfig.fields.symbolLayer.color.componentId);
     }
   }
 
-  return iris;
+  return ids;
 };
 
 /** Get all filters by mapping status.
@@ -99,23 +100,24 @@ export const getFiltersByMappingStatus = (
      *
      * This ensures that we won't apply single filters to original joinBy dimensions.
      *  */
-    joinByIris?: string[];
+    joinByIds?: string[];
     cubeIri?: string;
   }
 ) => {
-  const { joinByIris, cubeIri } = options;
-  const genericFieldValues = Object.values(chartConfig.fields).map(
-    (d) => d.componentIri
-  );
+  const { joinByIds, cubeIri } = options;
+  const genericFieldValues = Object.values<GenericField>(
+    // @ts-ignore - we are only interested in component ids
+    chartConfig.fields
+  ).map((d) => d.componentId);
   const nonGenericFieldValues = getNonGenericFieldValues(chartConfig);
-  const iris = new Set([
+  const ids = new Set([
     ...genericFieldValues,
     ...nonGenericFieldValues,
-    ...(joinByIris ?? []),
+    ...(joinByIds ?? []),
   ]);
   const filters = getChartConfigFilters(chartConfig.cubes, { cubeIri });
-  const mappedFilters = pickBy(filters, (_, iri) => iris.has(iri));
-  const unmappedFilters = pickBy(filters, (_, iri) => !iris.has(iri));
+  const mappedFilters = pickBy(filters, (_, id) => ids.has(id));
+  const unmappedFilters = pickBy(filters, (_, id) => !ids.has(id));
 
   if (!isSingleFilters(unmappedFilters)) {
     console.warn("Unmapped filters must be single filters!");
@@ -123,7 +125,7 @@ export const getFiltersByMappingStatus = (
 
   return {
     mappedFilters,
-    mappedFiltersIris: iris,
+    mappedFiltersIds: ids,
     unmappedFilters: extractSingleFilters(unmappedFilters),
   };
 };

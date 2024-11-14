@@ -30,7 +30,7 @@ enum ScaleType {
 
 type RelatedDimension {
   type: String!
-  iri: String!
+  id: String!
 }
 
 type ObservationFilter {

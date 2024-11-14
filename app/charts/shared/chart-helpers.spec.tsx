@@ -2,7 +2,7 @@ import { renderHook } from "@testing-library/react";
 import merge from "lodash/merge";
 
 import {
-  extractChartConfigComponentIris,
+  extractChartConfigComponentIds,
   prepareCubeQueryFilters,
   useQueryFilters,
 } from "@/charts/shared/chart-helpers";
@@ -47,11 +47,11 @@ const { col, val } = makeCubeNsGetters(
 const commonInteractiveFiltersConfig: InteractiveFiltersConfig = {
   legend: {
     active: false,
-    componentIri: col("2"),
+    componentId: col("2"),
   },
   timeRange: {
     active: false,
-    componentIri: col("1"),
+    componentId: col("1"),
     presets: {
       type: "range",
       from: "2010-01-01",
@@ -59,7 +59,7 @@ const commonInteractiveFiltersConfig: InteractiveFiltersConfig = {
     },
   },
   dataFilters: {
-    componentIris: [col("3"), col("4")],
+    componentIds: [col("3"), col("4")],
     active: false,
   },
   calculation: {
@@ -244,7 +244,7 @@ describe("useQueryFilters", () => {
               },
             },
             dataFilters: {
-              componentIris: ["A_1"],
+              componentIds: ["A_1"],
               filters: {
                 A_1: { type: "single", value: "A_1_Data_Filter" },
                 A_2: { type: "single", value: "A_2_3" },
@@ -298,7 +298,7 @@ describe("getChartConfigComponentIris", () => {
       map1Fixture.data.chartConfig,
       migrationOptions
     );
-    const componentsIris = extractChartConfigComponentIris({
+    const componentsIris = extractChartConfigComponentIds({
       chartConfig: lineConfig,
     });
     expect(componentsIris).toEqual([
@@ -312,7 +312,7 @@ describe("getChartConfigComponentIris", () => {
   });
 
   it("should return correct componentIris for map chart", () => {
-    const componentsIris = extractChartConfigComponentIris({
+    const componentsIris = extractChartConfigComponentIds({
       chartConfig: mapConfig,
     });
     expect(componentsIris).toEqual([
@@ -328,7 +328,7 @@ describe("getChartConfigComponentIris", () => {
   });
 
   it("should return correct componentIris for dual line chart (join by)", () => {
-    const componentIris = extractChartConfigComponentIris({
+    const componentIris = extractChartConfigComponentIds({
       chartConfig: dualLine1Fixture as unknown as ChartConfig,
     });
     expect(

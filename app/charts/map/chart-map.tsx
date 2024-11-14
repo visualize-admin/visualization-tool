@@ -44,27 +44,27 @@ export const ChartMapVisualization = (props: VisualizationProps<MapConfig>) => {
     keepPreviousData: true,
   });
 
-  const getLayerIris = useCallback(
+  const getLayerIds = useCallback(
     (layer: keyof typeof fields) => {
       const layerComponent = fields[layer];
 
       if (layerComponent) {
         const cubeIri =
           componentsQuery.data?.dataCubesComponents.dimensions.find(
-            (d) => d.id === layerComponent.componentIri
+            (d) => d.id === layerComponent.componentId
           )?.cubeIri;
         const cube = chartConfig.cubes.find((c) => c.iri === cubeIri) as Cube;
 
-        if (isJoinById(layerComponent.componentIri)) {
+        if (isJoinById(layerComponent.componentId)) {
           return {
             dimensionId:
-              getResolvedJoinById(cube, layerComponent.componentIri) ??
-              layerComponent.componentIri,
+              getResolvedJoinById(cube, layerComponent.componentId) ??
+              layerComponent.componentId,
             cubeIri: cube.iri,
           };
         } else {
           return {
-            dimensionId: layerComponent.componentIri,
+            dimensionId: layerComponent.componentId,
             cubeIri,
           };
         }
@@ -77,13 +77,13 @@ export const ChartMapVisualization = (props: VisualizationProps<MapConfig>) => {
     },
     [chartConfig.cubes, componentsQuery.data, fields]
   );
-  const { dimensionId: areaDimensionIri, cubeIri: areaCubeIri } = useMemo(
-    () => getLayerIris("areaLayer"),
-    [getLayerIris]
+  const { dimensionId: areaDimensionId, cubeIri: areaCubeIri } = useMemo(
+    () => getLayerIds("areaLayer"),
+    [getLayerIds]
   );
-  const { dimensionId: symbolDimensionIri, cubeIri: symbolCubeIri } = useMemo(
-    () => getLayerIris("symbolLayer"),
-    [getLayerIris]
+  const { dimensionId: symbolDimensionId, cubeIri: symbolCubeIri } = useMemo(
+    () => getLayerIds("symbolLayer"),
+    [getLayerIds]
   );
   const [
     {
@@ -96,7 +96,7 @@ export const ChartMapVisualization = (props: VisualizationProps<MapConfig>) => {
       cubeFilters: [
         {
           iri: symbolCubeIri!,
-          componentIris: [symbolDimensionIri],
+          componentIris: [symbolDimensionId],
           loadValues: true,
         },
       ],
@@ -104,7 +104,7 @@ export const ChartMapVisualization = (props: VisualizationProps<MapConfig>) => {
       sourceUrl: dataSource.url,
       locale,
     },
-    pause: !symbolDimensionIri || !symbolCubeIri,
+    pause: !symbolDimensionId || !symbolCubeIri,
   });
 
   const geoCoordinatesDimensionValues =
@@ -114,7 +114,7 @@ export const ChartMapVisualization = (props: VisualizationProps<MapConfig>) => {
       ? dimensionValuesToGeoCoordinates(geoCoordinatesDimensionValues)
       : undefined;
   }, [geoCoordinatesDimensionValues]);
-  const geoShapesIri = areaDimensionIri || symbolDimensionIri;
+  const geoShapesId = areaDimensionId || symbolDimensionId;
   const [
     {
       data: fetchedGeoShapes,
@@ -128,10 +128,10 @@ export const ChartMapVisualization = (props: VisualizationProps<MapConfig>) => {
       locale,
       cubeFilter: {
         iri: areaCubeIri!,
-        dimensionIri: geoShapesIri,
+        dimensionIri: geoShapesId,
       },
     },
-    pause: !geoShapesIri || !areaCubeIri,
+    pause: !geoShapesId || !areaCubeIri,
   });
 
   const shapes = fetchedGeoShapes?.dataCubeDimensionGeoShapes;
@@ -140,8 +140,8 @@ export const ChartMapVisualization = (props: VisualizationProps<MapConfig>) => {
   )?.geometries;
 
   const ready = shouldRenderMap({
-    areaDimensionIri,
-    symbolDimensionIri,
+    areaDimensionId,
+    symbolDimensionId,
     geometries,
     coordinates,
   });
@@ -150,13 +150,13 @@ export const ChartMapVisualization = (props: VisualizationProps<MapConfig>) => {
 
   const displayNoDataError =
     ready &&
-    (areaDimensionIri === "" ||
-      (areaDimensionIri !== "" && geometries?.length === 0)) &&
-    (symbolDimensionIri === "" ||
-      (symbolDimensionIri !== "" &&
+    (areaDimensionId === "" ||
+      (areaDimensionId !== "" && geometries?.length === 0)) &&
+    (symbolDimensionId === "" ||
+      (symbolDimensionId !== "" &&
         geometries?.length === 0 &&
         coordinates?.length === 0)) &&
-    areaDimensionIri !== symbolDimensionIri;
+    areaDimensionId !== symbolDimensionId;
 
   return displayNoDataError ? (
     <NoGeometriesHint />

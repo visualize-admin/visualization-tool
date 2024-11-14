@@ -332,8 +332,18 @@ export const dataCubeComponents: NonNullable<
         isNumerical: data.isNumerical,
         isKeyDimension: data.isKeyDimension,
         values,
-        related: data.related,
+        related: data.related.map((r) => ({
+          type: r.type,
+          id: makeComponentId({
+            unversionedCubeIri,
+            unversionedComponentIri: r.iri,
+          }),
+        })),
       };
+
+      if (baseComponent.related && baseComponent.related.length) {
+        console.log("baseComponent.related", baseComponent.related);
+      }
 
       if (data.isMeasureDimension) {
         const measure: Measure = {
@@ -355,7 +365,7 @@ export const dataCubeComponents: NonNullable<
         );
         const hierarchy = rawHierarchies
           ? parseHierarchy(rawHierarchies, {
-              dimensionIri: data.iri,
+              dimensionId: data.iri,
               locale,
               dimensionValues: values,
             })

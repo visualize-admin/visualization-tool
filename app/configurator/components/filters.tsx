@@ -298,7 +298,7 @@ const MultiFilterContent = ({
       type: "CHART_CONFIG_FILTER_SET_MULTI",
       value: {
         cubeIri,
-        dimensionIri: dimensionId,
+        dimensionId,
         values: newValues,
       },
     });
@@ -312,7 +312,7 @@ const MultiFilterContent = ({
       value: {
         field,
         colorConfigPath,
-        dimensionIri: dimensionId,
+        dimensionId,
         values,
         random: false,
       },

@@ -203,7 +203,7 @@ const useEnsurePossibleFilters = ({
   const [error, setError] = useState<Error>();
   const lastFilters = useRef<Record<string, Filters>>({});
   const client = useClient();
-  const joinByIris = useMemo(() => {
+  const joinByIds = useMemo(() => {
     return chartConfig.cubes.flatMap((cube) => cube.joinBy).filter(truthy);
   }, [chartConfig.cubes]);
 
@@ -212,7 +212,7 @@ const useEnsurePossibleFilters = ({
       chartConfig.cubes.forEach(async (cube) => {
         const { mappedFilters, unmappedFilters } = getFiltersByMappingStatus(
           chartConfig,
-          { cubeIri: cube.iri, joinByIris }
+          { cubeIri: cube.iri, joinByIds }
         );
 
         if (
@@ -297,7 +297,7 @@ const useEnsurePossibleFilters = ({
     chartConfig,
     chartConfig.cubes,
     state.dataSource,
-    joinByIris,
+    joinByIds,
   ]);
 
   return { error, fetching };
@@ -305,12 +305,12 @@ const useEnsurePossibleFilters = ({
 
 export const getFilterReorderCubeFilters = (
   chartConfig: ChartConfig,
-  { joinByIris }: { joinByIris: string[] }
+  { joinByIds }: { joinByIds: string[] }
 ) => {
   return chartConfig.cubes.map(({ iri, joinBy }) => {
     const { unmappedFilters } = getFiltersByMappingStatus(chartConfig, {
       cubeIri: iri,
-      joinByIris,
+      joinByIds,
     });
 
     return {
@@ -332,16 +332,16 @@ const useFilterReorder = ({
   const chartConfig = getChartConfig(state);
   const locale = useLocale();
   const filters = getChartConfigFilters(chartConfig.cubes, { joined: true });
-  const joinByIris = useMemo(() => {
+  const joinByIds = useMemo(() => {
     return chartConfig.cubes.flatMap((cube) => cube.joinBy).filter(truthy);
   }, [chartConfig.cubes]);
-  const { mappedFiltersIris } = useMemo(() => {
-    return getFiltersByMappingStatus(chartConfig, { joinByIris });
-  }, [chartConfig, joinByIris]);
+  const { mappedFiltersIds } = useMemo(() => {
+    return getFiltersByMappingStatus(chartConfig, { joinByIds });
+  }, [chartConfig, joinByIds]);
 
   const variables = useMemo(() => {
     const cubeFilters = getFilterReorderCubeFilters(chartConfig, {
-      joinByIris,
+      joinByIds,
     });
 
     // This is important for urql not to think that filters
@@ -356,7 +356,7 @@ const useFilterReorder = ({
       cubeFilters,
       requeryKey: requeryKey ? requeryKey : undefined,
     };
-  }, [chartConfig, joinByIris]);
+  }, [chartConfig, joinByIds]);
 
   const [
     { data: componentsData, fetching: componentsFetching },
@@ -466,13 +466,13 @@ const useFilterReorder = ({
       const filterDimensions = sortBy(
         dimensions?.filter(
           (dim) =>
-            !mappedFiltersIris.has(dim.id) && keysOrder[dim.id] !== undefined
+            !mappedFiltersIds.has(dim.id) && keysOrder[dim.id] !== undefined
         ) ?? [],
         [(x) => keysOrder[x.id] ?? Infinity]
       );
       const addableDimensions = dimensions?.filter(
         (dim) =>
-          !mappedFiltersIris.has(dim.id) &&
+          !mappedFiltersIds.has(dim.id) &&
           keysOrder[dim.id] === undefined &&
           !isStandardErrorDimension(dim)
       );
@@ -485,7 +485,7 @@ const useFilterReorder = ({
         addableDimensions,
         missingDimensions,
       };
-    }, [dimensions, filters, mappedFiltersIris]);
+    }, [dimensions, filters, mappedFiltersIds]);
 
   // Technically it's possible to have a key dimension that is not in the filters
   // and not mapped. This could be achieved for example by manually modifying the

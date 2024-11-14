@@ -33,8 +33,8 @@ const filterTreeHelper = <T extends { children?: T[] | null }>(
 };
 
 /**
- * Given a tree and a list of nodes, will remove any parent/onde that do not contain
- * at least of the provided nodes in their descendant
+ * Given a tree and a list of nodes, will remove any parent / node that does not contain
+ * at least of the provided nodes in their descendants.
  */
 export const pruneTree = <T extends { children?: T[] | null }>(
   tree: T[],
@@ -147,7 +147,7 @@ export const regroupTrees = (
           value: t[0].hierarchyName!,
           hasValue: false,
           children: t[0].children,
-          dimensionIri: t[0].dimensionIri,
+          dimensionId: t[0].dimensionId,
           label: t[0].hierarchyName!,
           depth: -1,
         })),

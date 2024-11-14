@@ -121,7 +121,7 @@ const useColumnsStackedState = (
   const formatters = useChartFormatters(chartProps);
   const calculationType = useChartInteractiveFilters((d) => d.calculation.type);
 
-  const xKey = fields.x.componentIri;
+  const xKey = fields.x.componentId;
 
   const segmentsByValue = useMemo(() => {
     const values = segmentDimension?.values || [];
@@ -310,7 +310,7 @@ const useColumnsStackedState = (
     allSegments,
   ]);
 
-  const animationIri = fields.animation?.componentIri;
+  const animationIri = fields.animation?.componentId;
   const getAnimation = useCallback(
     (d: Observation) => {
       return animationIri ? (d[animationIri] as string) : "";
@@ -438,7 +438,7 @@ const useColumnsStackedState = (
       });
       const yValueFormatter = getStackedTooltipValueFormatter({
         normalize,
-        yMeasureIri: yMeasure.id,
+        yMeasureId: yMeasure.id,
         yMeasureUnit: yMeasure.unit,
         formatters,
         formatNumber,

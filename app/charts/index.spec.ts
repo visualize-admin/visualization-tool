@@ -77,7 +77,7 @@ describe("initial config", () => {
 
     expect(
       Object.values(config.fields as TableFields).map((x) => [
-        x["componentIri"],
+        x["componentId"],
         x["index"],
       ])
     ).toEqual([
@@ -105,7 +105,7 @@ describe("initial config", () => {
       measures: forestAreaData.data.dataCubeByIri.measures as any as Measure[],
     }) as ColumnConfig;
 
-    expect(config.fields.x.componentIri).toEqual(
+    expect(config.fields.x.componentId).toEqual(
       "temporal-ordinal-dimension-iri"
     );
   });
@@ -124,7 +124,7 @@ describe("initial config", () => {
       measures: forestAreaData.data.dataCubeByIri.measures as any as Measure[],
     }) as ColumnConfig;
 
-    expect(config.fields.x.componentIri).toEqual("temporal-dimension-iri");
+    expect(config.fields.x.componentId).toEqual("temporal-dimension-iri");
   });
 
   it("should create an initial scatterplot config having segment correctly defined", () => {
@@ -225,21 +225,21 @@ describe("chart type switch", () => {
       },
       fields: {
         x: {
-          componentIri:
+          componentId:
             "https://environment.ld.admin.ch/foen/ubd0104/parametertype",
         },
         y: {
-          componentIri: "https://environment.ld.admin.ch/foen/ubd0104/value",
+          componentId: "https://environment.ld.admin.ch/foen/ubd0104/value",
         },
       },
       interactiveFiltersConfig: {
         legend: {
           active: false,
-          componentIri: "",
+          componentId: "",
         },
         timeRange: {
           active: false,
-          componentIri: "",
+          componentId: "",
           presets: {
             type: "range",
             from: "",
@@ -248,7 +248,7 @@ describe("chart type switch", () => {
         },
         dataFilters: {
           active: true,
-          componentIris: [
+          componentIds: [
             "https://environment.ld.admin.ch/foen/ubd0104/dateofprobing",
           ],
         },
@@ -271,7 +271,7 @@ describe("chart type switch", () => {
       false
     );
     expect(
-      newConfig.interactiveFiltersConfig?.dataFilters.componentIris
+      newConfig.interactiveFiltersConfig?.dataFilters.componentIds
     ).toEqual([]);
   });
 
@@ -314,11 +314,11 @@ describe("chart type switch", () => {
       interactiveFiltersConfig: {
         legend: {
           active: false,
-          componentIri: "",
+          componentId: "",
         },
         timeRange: {
           active: false,
-          componentIri: "https://environment.ld.admin.ch/foen/ubd000502/jahr",
+          componentId: "https://environment.ld.admin.ch/foen/ubd000502/jahr",
           presets: {
             type: "range",
             from: "",
@@ -327,7 +327,7 @@ describe("chart type switch", () => {
         },
         dataFilters: {
           active: false,
-          componentIris: [],
+          componentIds: [],
         },
         calculation: {
           active: false,
@@ -336,14 +336,14 @@ describe("chart type switch", () => {
       },
       fields: {
         x: {
-          componentIri: "https://environment.ld.admin.ch/foen/ubd000502/werte",
+          componentId: "https://environment.ld.admin.ch/foen/ubd000502/werte",
         },
         y: {
-          componentIri:
+          componentId:
             "https://environment.ld.admin.ch/foen/ubd000502/werteNichtGerundet",
         },
         segment: {
-          componentIri: "https://environment.ld.admin.ch/foen/ubd000502/jahr",
+          componentId: "https://environment.ld.admin.ch/foen/ubd000502/jahr",
           palette: "category10",
           sorting: {
             sortingType: "byAuto",
@@ -408,8 +408,8 @@ describe("chart type switch", () => {
     }) as ColumnConfig;
 
     expect(newChartConfig.fields.segment).toBeUndefined();
-    expect(newChartConfig.fields.x.componentIri).not.toEqual(
-      oldChartConfig.fields.x.componentIri
+    expect(newChartConfig.fields.x.componentId).not.toEqual(
+      oldChartConfig.fields.x.componentId
     );
   });
 });

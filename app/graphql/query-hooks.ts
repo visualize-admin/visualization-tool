@@ -230,7 +230,7 @@ export type QueryDataCubeDimensionGeoShapesArgs = {
 export type RelatedDimension = {
   __typename: 'RelatedDimension';
   type: Scalars['String'];
-  iri: Scalars['String'];
+  id: Scalars['String'];
 };
 
 export enum ScaleType {

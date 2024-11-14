@@ -35,7 +35,7 @@ export type DimensionValue = {
 
 export type HierarchyValue = {
   depth: number;
-  dimensionIri: string;
+  dimensionId: string;
   value: string;
   /** In other words, is selectable? */
   hasValue: boolean;
@@ -617,7 +617,7 @@ export const findRelatedErrorDimension = (
   dimensions: Component[]
 ) => {
   return dimensions.find((x) =>
-    x.related?.some((r) => r.iri === dimIri && r.type === "StandardError")
+    x.related?.some((r) => r.id === dimIri && r.type === "StandardError")
   );
 };
 

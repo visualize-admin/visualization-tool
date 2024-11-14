@@ -268,7 +268,7 @@ const ColorPaletteControls = ({
               value: {
                 field,
                 colorConfigPath,
-                dimensionIri: component.id,
+                dimensionId: component.id,
                 values: component.values,
                 random: true,
               },

@@ -303,21 +303,21 @@ describe("getFiltersByMappingStatus", () => {
       ],
       fields: {
         areaLayer: {
-          componentIri: "areaIri",
-          color: { type: "categorical", componentIri: "areaColorIri" },
+          componentId: "areaIri",
+          color: { type: "categorical", componentId: "areaColorIri" },
         },
         symbolLayer: {
-          componentIri: "symbolIri",
-          color: { type: "categorical", componentIri: "symbolColorIri" },
+          componentId: "symbolIri",
+          color: { type: "categorical", componentId: "symbolColorIri" },
         },
       },
     } as any as MapConfig;
 
-    const { mappedFiltersIris } = getFiltersByMappingStatus(config, {
+    const { mappedFiltersIds } = getFiltersByMappingStatus(config, {
       cubeIri: "foo",
     });
 
-    expect([...mappedFiltersIris]).toEqual(
+    expect([...mappedFiltersIds]).toEqual(
       expect.arrayContaining(["areaColorIri", "symbolColorIri"])
     );
   });
@@ -339,21 +339,19 @@ describe("getFiltersByMappingStatus", () => {
       ],
       fields: {
         x: {
-          componentIri: "joinBy",
+          componentId: "joinBy",
         },
       },
     } as any as ComboLineDualConfig;
 
-    const { mappedFiltersIris } = getFiltersByMappingStatus(config, {
+    const { mappedFiltersIds } = getFiltersByMappingStatus(config, {
       cubeIri: "foo",
-      joinByIris: ["X1", "X2"],
+      joinByIds: ["X1", "X2"],
     });
 
     // If the joinBy dimensions are treated as being mapped, we won't apply
     // single filters to them when deriving filters from fields.
-    expect([...mappedFiltersIris]).toEqual(
-      expect.arrayContaining(["X1", "X2"])
-    );
+    expect([...mappedFiltersIds]).toEqual(expect.arrayContaining(["X1", "X2"]));
   });
 });
 
@@ -412,7 +410,7 @@ describe("getFilterValue", () => {
   } as any as ConfiguratorState;
   const dimension = {
     isJoinByDimension: true,
-    originalIris: [{ dimensionIri: "first" }, { dimensionIri: "second" }],
+    originalIds: [{ dimensionId: "first" }, { dimensionId: "second" }],
   } as any as Dimension;
 
   it("should correctly retrieve filters for joinBy dimension", () => {

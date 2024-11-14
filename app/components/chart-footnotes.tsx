@@ -4,7 +4,7 @@ import { makeStyles } from "@mui/styles";
 import uniqBy from "lodash/uniqBy";
 import { useMemo } from "react";
 
-import { extractChartConfigComponentIris } from "@/charts/shared/chart-helpers";
+import { extractChartConfigComponentIds } from "@/charts/shared/chart-helpers";
 import { LegendItem } from "@/charts/shared/legend-color";
 import { ChartFiltersList } from "@/components/chart-filters-list";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
@@ -57,7 +57,7 @@ export const ChartFootnotes = ({
 }) => {
   const locale = useLocale();
   const usedComponents = useMemo(() => {
-    const componentIds = extractChartConfigComponentIris({
+    const componentIds = extractChartConfigComponentIds({
       chartConfig,
       includeFilters: false,
     });
@@ -172,16 +172,17 @@ const ChartFootnotesComboLineColumn = ({
   components: Component[];
 }) => {
   const {
-    y: { columnComponentIri, lineComponentIri, lineAxisOrientation },
+    y: { columnComponentId, lineComponentId, lineAxisOrientation },
   } = chartConfig.fields;
   const columnAxisComponent = components.find(
-    (d) => d.id === columnComponentIri
+    (d) => d.id === columnComponentId
   );
-  const lineAxisComponent = components.find((d) => d.id === lineComponentIri);
+  const lineAxisComponent = components.find((d) => d.id === lineComponentId);
   const firstComponent =
     lineAxisOrientation === "left" ? lineAxisComponent : columnAxisComponent;
   const secondComponent =
     lineAxisOrientation === "left" ? columnAxisComponent : lineAxisComponent;
+
   return firstComponent || secondComponent ? (
     <ChartFootnotesLegendContainer>
       {firstComponent && (
@@ -214,14 +215,15 @@ const ChartFootnotesComboLineDual = ({
   components: Component[];
 }) => {
   const {
-    y: { leftAxisComponentIri, rightAxisComponentIri },
+    y: { leftAxisComponentId, rightAxisComponentId },
   } = chartConfig.fields;
   const leftAxisComponent = components.find(
-    (d) => d.id === leftAxisComponentIri
+    (d) => d.id === leftAxisComponentId
   );
   const rightAxisComponent = components.find(
-    (d) => d.id === rightAxisComponentIri
+    (d) => d.id === rightAxisComponentId
   );
+
   return leftAxisComponent || rightAxisComponent ? (
     <ChartFootnotesLegendContainer>
       {leftAxisComponent && (
@@ -254,11 +256,12 @@ const ChartFootnotesComboLineSingle = ({
   components: Component[];
 }) => {
   const {
-    y: { componentIris },
+    y: { componentIds },
   } = chartConfig.fields;
-  return componentIris.length ? (
+
+  return componentIds.length ? (
     <ChartFootnotesLegendContainer>
-      {componentIris.map((id) => {
+      {componentIds.map((id) => {
         const component = components.find((d) => d.id === id);
         return component ? (
           <LegendItem

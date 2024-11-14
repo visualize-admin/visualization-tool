@@ -1,5 +1,5 @@
 import { line } from "d3-shape";
-import React, { memo } from "react";
+import { memo } from "react";
 
 import { ComboLineSingleState } from "@/charts/combo/combo-line-single-state";
 import { useChartState } from "@/charts/shared/chart-state";
@@ -11,7 +11,7 @@ export const ComboLineSingle = () => {
 
   return (
     <g transform={`translate(${bounds.margins.left} ${bounds.margins.top})`}>
-      {y.lines.map(({ iri, label, getY }) => {
+      {y.lines.map(({ id, label, getY }) => {
         const pathGenerator = line<Observation>()
           .defined((d) => {
             const y = getY(d);
@@ -22,7 +22,7 @@ export const ComboLineSingle = () => {
 
         return (
           <Line
-            key={iri}
+            key={id}
             path={pathGenerator(chartData) as string}
             color={colors(label)}
           />

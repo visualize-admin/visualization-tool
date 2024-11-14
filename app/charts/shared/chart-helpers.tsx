@@ -67,7 +67,7 @@ export const prepareCubeQueryFilters = (
     )) {
       if (
         k in cubeFilters &&
-        dashboardFiltersConfig?.dataFilters.componentIris?.includes(k)
+        dashboardFiltersConfig?.dataFilters.componentIds?.includes(k)
       ) {
         queryFilters[k] = v;
       }
@@ -75,7 +75,7 @@ export const prepareCubeQueryFilters = (
     for (const [k, v] of Object.entries(interactiveDataFilters)) {
       if (
         interactiveFiltersConfig?.dataFilters.active ||
-        dashboardFiltersConfig?.dataFilters.componentIris?.includes(k)
+        dashboardFiltersConfig?.dataFilters.componentIds?.includes(k)
       ) {
         queryFilters[k] = v;
       }
@@ -150,29 +150,29 @@ export const useQueryFilters = ({
 
 type IFKey = keyof NonNullable<InteractiveFiltersConfig>;
 
-const getChartConfigFilterComponentIris = ({ cubes }: ChartConfig) => {
+const getChartConfigFilterComponentIds = ({ cubes }: ChartConfig) => {
   return Object.keys(getChartConfigFilters(cubes)).filter(
     (d) => !isJoinById(d)
   );
 };
 
-const getMapChartConfigAdditionalFields = ({ fields }: MapConfig) => {
+const getMapChartConfigAdditionalFieldIds = ({ fields }: MapConfig) => {
   const { areaLayer, symbolLayer } = fields;
   const additionalFields = [];
 
   if (areaLayer) {
-    additionalFields.push(areaLayer.color.componentIri);
+    additionalFields.push(areaLayer.color.componentId);
   }
 
   if (symbolLayer) {
-    if (symbolLayer.measureIri !== FIELD_VALUE_NONE) {
-      additionalFields.push(symbolLayer.measureIri);
+    if (symbolLayer.measureId !== FIELD_VALUE_NONE) {
+      additionalFields.push(symbolLayer.measureId);
     }
 
     if (["categorical", "numerical"].includes(symbolLayer.color.type)) {
       additionalFields.push(
         (symbolLayer.color as CategoricalColorField | NumericalColorField)
-          .componentIri
+          .componentId
       );
     }
   }
@@ -183,16 +183,16 @@ const getMapChartConfigAdditionalFields = ({ fields }: MapConfig) => {
 const getComboChartConfigAdditionalFields = (chartConfig: ComboChartConfig) => {
   switch (chartConfig.chartType) {
     case "comboLineSingle":
-      return chartConfig.fields.y.componentIris;
+      return chartConfig.fields.y.componentIds;
     case "comboLineDual":
       return [
-        chartConfig.fields.y.leftAxisComponentIri,
-        chartConfig.fields.y.rightAxisComponentIri,
+        chartConfig.fields.y.leftAxisComponentId,
+        chartConfig.fields.y.rightAxisComponentId,
       ];
     case "comboLineColumn":
       return [
-        chartConfig.fields.y.columnComponentIri,
-        chartConfig.fields.y.lineComponentIri,
+        chartConfig.fields.y.columnComponentId,
+        chartConfig.fields.y.lineComponentId,
       ];
     default:
       const _exhaustiveCheck: never = chartConfig;
@@ -200,17 +200,17 @@ const getComboChartConfigAdditionalFields = (chartConfig: ComboChartConfig) => {
   }
 };
 
-export const extractChartConfigsComponentIris = (
+export const extractChartConfigsComponentIds = (
   chartConfigs: ChartConfig[]
 ) => {
   return uniq(
     chartConfigs
-      .map((chartConfig) => extractChartConfigComponentIris({ chartConfig }))
+      .map((chartConfig) => extractChartConfigComponentIds({ chartConfig }))
       .flat()
   );
 };
 
-export const extractChartConfigComponentIris = ({
+export const extractChartConfigComponentIds = ({
   chartConfig,
   includeFilters = true,
 }: {
@@ -218,15 +218,18 @@ export const extractChartConfigComponentIris = ({
   includeFilters?: boolean;
 }): string[] => {
   const { fields, interactiveFiltersConfig } = chartConfig;
-  const fieldIris = Object.values(fields).map((field) => field.componentIri);
-  const additionalFieldIris =
+  const fieldIds = Object.values<GenericField>(
+    // @ts-ignore - we are only interested in component ids
+    fields
+  ).map((field) => field.componentId);
+  const additionalFieldIds =
     chartConfig.chartType === "map"
-      ? getMapChartConfigAdditionalFields(chartConfig)
+      ? getMapChartConfigAdditionalFieldIds(chartConfig)
       : isComboChartConfig(chartConfig)
         ? getComboChartConfigAdditionalFields(chartConfig)
         : [];
-  const filterIris = includeFilters
-    ? getChartConfigFilterComponentIris(chartConfig)
+  const filterIds = includeFilters
+    ? getChartConfigFilterComponentIds(chartConfig)
     : [];
   const IFKeys = interactiveFiltersConfig
     ? (Object.keys(interactiveFiltersConfig) as IFKey[])
@@ -240,21 +243,21 @@ export const extractChartConfigComponentIris = ({
         case "legend": {
           const legend = v as InteractiveFiltersLegend;
           if (legend.active) {
-            IFIris.push(legend.componentIri);
+            IFIris.push(legend.componentId);
           }
           break;
         }
         case "timeRange": {
           const timeRange = v as InteractiveFiltersTimeRange;
           if (timeRange.active) {
-            IFIris.push(timeRange.componentIri);
+            IFIris.push(timeRange.componentId);
           }
           break;
         }
         case "dataFilters": {
           const dataFilters = v as InteractiveFiltersDataConfig;
           if (dataFilters.active) {
-            IFIris.push(...dataFilters.componentIris);
+            IFIris.push(...dataFilters.componentIds);
           }
           break;
         }
@@ -269,14 +272,14 @@ export const extractChartConfigComponentIris = ({
 
   return (
     uniq(
-      [...fieldIris, ...additionalFieldIris, ...filterIris, ...IFIris].filter(
+      [...fieldIds, ...additionalFieldIds, ...filterIds, ...IFIris].filter(
         Boolean
       )
     )
-      .flatMap((iri) =>
-        isJoinById(iri) ? getOriginalIds(iri, chartConfig) : [iri]
+      .flatMap((id) =>
+        isJoinById(id) ? getOriginalIds(id, chartConfig) : [id]
       )
-      .filter((iri) => !isJoinById(iri))
+      .filter((id) => !isJoinById(id))
       // Important so the order is consistent when querying.
       .sort()
   );
@@ -322,7 +325,7 @@ export const useDimensionWithAbbreviations = (
   const { getAbbreviationOrLabelByValue, abbreviationOrLabelLookup } =
     useMaybeAbbreviations({
       useAbbreviations: field?.useAbbreviations,
-      dimensionIri: dimension?.id,
+      dimensionId: dimension?.id,
       dimensionValues: dimension?.values,
     });
 

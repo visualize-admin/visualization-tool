@@ -55,21 +55,21 @@ export const states: ConfiguratorState[] = [
         chartType: "column",
         fields: {
           x: {
-            componentIri: "foo",
+            componentId: "foo",
             sorting: { sortingType: "byDimensionLabel", sortingOrder: "asc" },
           },
           y: {
-            componentIri: "foo",
+            componentId: "foo",
           },
         },
         interactiveFiltersConfig: {
           legend: {
             active: false,
-            componentIri: "",
+            componentId: "",
           },
           timeRange: {
             active: false,
-            componentIri: "",
+            componentId: "",
             presets: {
               type: "range",
               from: "",
@@ -78,7 +78,7 @@ export const states: ConfiguratorState[] = [
           },
           dataFilters: {
             active: false,
-            componentIris: [],
+            componentIds: [],
           },
           calculation: {
             active: false,
@@ -99,7 +99,7 @@ export const states: ConfiguratorState[] = [
         },
       },
       dataFilters: {
-        componentIris: [],
+        componentIds: [],
         filters: {},
       },
     },
@@ -143,12 +143,12 @@ export const observations = [
 
 export const fields: ColumnFields = {
   x: {
-    componentIri:
+    componentId:
       "http://environment.ld.admin.ch/foen/px/0703030000_124/dimension/0",
     sorting: { sortingType: "byDimensionLabel", sortingOrder: "asc" },
   },
   y: {
-    componentIri:
+    componentId:
       "http://environment.ld.admin.ch/foen/px/0703030000_124/measure/0",
   },
 };
@@ -907,13 +907,13 @@ export const tableConfig: TableConfig = {
   settings: { showSearch: true, showAllRows: true },
   sorting: [
     {
-      componentIri:
+      componentId:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2",
       componentType: "NominalDimension",
       sortingOrder: "desc",
     },
     {
-      componentIri:
+      componentId:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/5",
       componentType: "NumericalMeasure",
       sortingOrder: "asc",
@@ -921,7 +921,7 @@ export const tableConfig: TableConfig = {
   ],
   fields: {
     "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/0": {
-      componentIri:
+      componentId:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/0",
       index: 1,
       isGroup: false,
@@ -935,7 +935,7 @@ export const tableConfig: TableConfig = {
       },
     },
     "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/1": {
-      componentIri:
+      componentId:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/1",
       index: 7,
       isGroup: false,
@@ -962,7 +962,7 @@ export const tableConfig: TableConfig = {
       },
     },
     "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2": {
-      componentIri:
+      componentId:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2",
       index: 3,
       isGroup: false,
@@ -976,7 +976,7 @@ export const tableConfig: TableConfig = {
       },
     },
     "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/3": {
-      componentIri:
+      componentId:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/3",
       index: 4,
       isGroup: false,
@@ -990,7 +990,7 @@ export const tableConfig: TableConfig = {
       },
     },
     "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/4": {
-      componentIri:
+      componentId:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/4",
       index: 5,
       isGroup: false,
@@ -1004,7 +1004,7 @@ export const tableConfig: TableConfig = {
       },
     },
     "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/0": {
-      componentIri:
+      componentId:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/0",
       index: 6,
       isGroup: false,
@@ -1018,7 +1018,7 @@ export const tableConfig: TableConfig = {
       },
     },
     "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/1": {
-      componentIri:
+      componentId:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/1",
       index: 2,
       isGroup: false,
@@ -1031,7 +1031,7 @@ export const tableConfig: TableConfig = {
       },
     },
     "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/2": {
-      componentIri:
+      componentId:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/2",
       index: 8,
       isGroup: false,
@@ -1045,7 +1045,7 @@ export const tableConfig: TableConfig = {
       },
     },
     "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/3": {
-      componentIri:
+      componentId:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/3",
       index: 9,
       isGroup: false,
@@ -1059,7 +1059,7 @@ export const tableConfig: TableConfig = {
       },
     },
     "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/4": {
-      componentIri:
+      componentId:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/4",
       index: 10,
       isGroup: false,
@@ -1075,7 +1075,7 @@ export const tableConfig: TableConfig = {
       },
     },
     "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/5": {
-      componentIri:
+      componentId:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/5",
       index: 11,
       isGroup: false,
@@ -1084,7 +1084,7 @@ export const tableConfig: TableConfig = {
       columnStyle: { type: "heatmap", palette: "PRGn", textStyle: "regular" },
     },
     "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/6": {
-      componentIri:
+      componentId:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/6",
       index: 12,
       isGroup: false,
@@ -1097,7 +1097,7 @@ export const tableConfig: TableConfig = {
       },
     },
     "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/7": {
-      componentIri:
+      componentId:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/7",
       index: 13,
       isGroup: false,
@@ -1111,7 +1111,7 @@ export const tableConfig: TableConfig = {
       },
     },
     "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/8": {
-      componentIri:
+      componentId:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/8",
       index: 14,
       isGroup: false,

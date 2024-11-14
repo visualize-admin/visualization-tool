@@ -100,9 +100,9 @@ export type TableChartState = CommonChartState & {
   showSearch: boolean;
   tableColumns: Column<Observation>[];
   tableColumnsMeta: Record<string, ColumnMeta>;
-  groupingIris: string[];
-  hiddenIris: string[];
-  sortingIris: { id: string; desc: boolean }[];
+  groupingIds: string[];
+  hiddenIds: string[];
+  sortingIds: { id: string; desc: boolean }[];
 };
 
 const useTableState = (
@@ -194,12 +194,10 @@ const useTableState = (
     const allComponents = [...dimensions, ...measures];
 
     return orderedTableColumns.map((c) => {
-      const headerComponent = allComponents.find(
-        (d) => d.id === c.componentIri
-      );
+      const headerComponent = allComponents.find((d) => d.id === c.componentId);
 
       if (!headerComponent) {
-        throw Error(`No dimension <${c.componentIri}> in cube!`);
+        throw Error(`No dimension <${c.componentId}> in cube!`);
       }
 
       const sorters = makeDimensionValueSorters(headerComponent, {
@@ -210,7 +208,7 @@ const useTableState = (
 
       // The column width depends on the estimated width of the
       // longest value in the column, with a minimum of 150px.
-      const columnItems = [...new Set(chartData.map((d) => d[c.componentIri]))];
+      const columnItems = [...new Set(chartData.map((d) => d[c.componentId]))];
       const columnItemSizes = [
         ...columnItems.map((item) => {
           const itemAsString =
@@ -230,9 +228,8 @@ const useTableState = (
 
       return {
         Header: headerLabel,
-        // Slugify accessor to avoid IRI's "." to be parsed as JS object notation.
-        accessor: getSlugifiedId(c.componentIri),
-
+        // Slugify accessor to avoid id's "." to be parsed as JS object notation.
+        accessor: getSlugifiedId(c.componentId),
         width,
         sortType: (
           rowA: Row<Observation>,
@@ -257,43 +254,38 @@ const useTableState = (
   }, [orderedTableColumns, chartData, dimensions, measures, formatNumber]);
 
   // Groupings used by react-table
-  const groupingIris = useMemo(
+  const groupingIds = useMemo(
     () =>
       orderedTableColumns
         .filter((c) => c.isGroup)
-        .map((c) => getSlugifiedId(c.componentIri)),
+        .map((c) => getSlugifiedId(c.componentId)),
     [orderedTableColumns]
   );
 
   // Sorting used by react-table
-  const sortingIris = useMemo(() => {
+  const sortingIds = useMemo(() => {
     return [
       // Prioritize the configured sorting
       ...sorting.map((s) => ({
-        id: getSlugifiedId(s.componentIri),
+        id: getSlugifiedId(s.componentId),
         desc: s.sortingOrder === "desc",
       })),
       // Add the remaining table columns to the sorting
       ...orderedTableColumns.flatMap((c) => {
-        return sorting.some((s) => s.componentIri === c.componentIri)
+        return sorting.some((s) => s.componentId === c.componentId)
           ? []
-          : [
-              {
-                id: getSlugifiedId(c.componentIri),
-                desc: false,
-              },
-            ];
+          : [{ id: getSlugifiedId(c.componentId), desc: false }];
       }),
     ];
   }, [sorting, orderedTableColumns]);
 
   const formatters = useDimensionFormatters([...dimensions, ...measures]);
 
-  const hiddenIris = useMemo(
+  const hiddenIds = useMemo(
     () =>
       orderedTableColumns
         .filter((c) => c.isHidden)
-        .map((c) => getSlugifiedId(c.componentIri)),
+        .map((c) => getSlugifiedId(c.componentId)),
     [orderedTableColumns]
   );
 
@@ -410,9 +402,9 @@ const useTableState = (
     showSearch: settings.showSearch,
     tableColumns,
     tableColumnsMeta,
-    groupingIris,
-    hiddenIris,
-    sortingIris,
+    groupingIds,
+    hiddenIds,
+    sortingIds,
     ...variables,
   };
 };

@@ -42,7 +42,7 @@ export const useMapStateVariables = (
 
   // TODO: add abbreviations
   const areaLayerDimension = dimensions.find(
-    (d) => d.id === areaLayer?.componentIri
+    (d) => d.id === areaLayer?.componentId
   );
 
   if (areaLayerDimension && !isGeoShapesDimension(areaLayerDimension)) {
@@ -52,7 +52,7 @@ export const useMapStateVariables = (
   }
 
   const symbolLayerDimension = dimensions.find(
-    (d) => d.id === symbolLayer?.componentIri
+    (d) => d.id === symbolLayer?.componentId
   );
 
   // Symbol layer dimension can be either GeoShapes or GeoCoordinates dimension.
@@ -98,17 +98,17 @@ export const useMapStateData = (
   });
 
   const areaLayer = useMemo(() => {
-    const iri = areaLayerDimension?.id;
+    const id = areaLayerDimension?.id;
 
-    if (!(iri && shapes)) {
+    if (!(id && shapes)) {
       return;
     }
 
     const { topology } = shapes;
     const featureCollection = prepareFeatureCollection({
-      dimensionIri: iri,
+      dimensionId: id,
       topology,
-      filters: filters[iri],
+      filters: filters[id],
       observations: data.chartData,
     });
 
@@ -150,7 +150,7 @@ export const useMapStateData = (
       const { topology } = shapes;
       const id = symbolLayerDimension.id;
       const { features } = prepareFeatureCollection({
-        dimensionIri: id,
+        dimensionId: id,
         topology,
         filters: filters[id],
         observations: data.chartData,

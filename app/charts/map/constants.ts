@@ -29,7 +29,7 @@ export const getDefaultCategoricalColorField = ({
   dimensionValues: DimensionValue[];
 }): CategoricalColorField => ({
   type: "categorical",
-  componentIri: id,
+  componentId: id,
   palette,
   colorMapping: mapValueIrisToColor({
     palette,
@@ -46,7 +46,7 @@ export const getDefaultNumericalColorField = ({
   colorPalette?: PaletteType;
 }): NumericalColorField => ({
   type: "numerical",
-  componentIri: id,
+  componentId: id,
   palette: colorPalette,
   scaleType: "continuous",
   interpolationType: "linear",

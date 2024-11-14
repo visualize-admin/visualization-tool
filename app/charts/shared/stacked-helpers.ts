@@ -49,26 +49,25 @@ export const getStackedYScale = (
   return yScale;
 };
 
-type StackedTooltipValueFormattersProps = {
+export const getStackedTooltipValueFormatter = ({
+  normalize,
+  yMeasureId,
+  yMeasureUnit,
+  formatters,
+  formatNumber,
+}: {
   normalize: boolean;
-  yMeasureIri: string;
+  yMeasureId: string;
   yMeasureUnit: NumericalMeasure["unit"];
   formatters: { [k: string]: (s: any) => string };
   formatNumber: (d: NumberValue | null | undefined) => string;
-};
-
-export const getStackedTooltipValueFormatter = (
-  props: StackedTooltipValueFormattersProps
-) => {
-  const { normalize, yMeasureIri, yMeasureUnit, formatters, formatNumber } =
-    props;
-
+}) => {
   return (d: number | null, dIdentity: number | null) => {
     if (d === null && dIdentity === null) {
       return "-";
     }
 
-    const format = formatters[yMeasureIri] ?? formatNumber;
+    const format = formatters[yMeasureId] ?? formatNumber;
 
     if (normalize) {
       const rounded = Math.round(d as number);

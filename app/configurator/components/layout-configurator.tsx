@@ -173,8 +173,8 @@ const LayoutSharedFiltersConfigurator = () => {
         dispatch({
           type: "DASHBOARD_DATA_FILTERS_SET",
           value: {
-            componentIris: dataFilters?.componentIris
-              ? [...dataFilters.componentIris, componentId].sort((a, b) => {
+            componentIds: dataFilters?.componentIds
+              ? [...dataFilters.componentIds, componentId].sort((a, b) => {
                   const aIndex =
                     dimensions.find((d) => d.id === a)?.order ??
                     dimensions.findIndex((d) => d.id === a) ??
@@ -202,7 +202,7 @@ const LayoutSharedFiltersConfigurator = () => {
         dispatch({
           type: "DASHBOARD_DATA_FILTER_REMOVE",
           value: {
-            dimensionIri: componentId,
+            dimensionId: componentId,
           },
         });
         dispatch({
@@ -276,7 +276,7 @@ const LayoutSharedFiltersConfigurator = () => {
                     if (!dimension) {
                       return null;
                     }
-                    const checked = dataFilters.componentIris.includes(
+                    const checked = dataFilters.componentIds.includes(
                       dimension.id
                     );
 
@@ -383,7 +383,7 @@ const DashboardTimeRangeFilterOptions = ({
           const interactiveFiltersState = getInteractiveFiltersState();
           const { from, to } = interactiveFiltersState.timeRange;
           const setTimeRangeFilter = interactiveFiltersState.setTimeRange;
-          if (from && to && interactiveFiltersConfig?.timeRange.componentIri) {
+          if (from && to && interactiveFiltersConfig?.timeRange.componentId) {
             setTimeRangeFilter(newDate, to);
           }
         }
@@ -400,7 +400,7 @@ const DashboardTimeRangeFilterOptions = ({
           const interactiveFiltersState = getInteractiveFiltersState();
           const { from, to } = interactiveFiltersState.timeRange;
           const setTimeRangeFilter = interactiveFiltersState.setTimeRange;
-          if (from && to && interactiveFiltersConfig?.timeRange.componentIri) {
+          if (from && to && interactiveFiltersConfig?.timeRange.componentId) {
             setTimeRangeFilter(from, newDate);
           }
         }

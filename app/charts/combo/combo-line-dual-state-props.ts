@@ -51,40 +51,41 @@ export const useComboLineDualStateVariables = (
     { dimensionsById }
   );
 
-  const leftIri = chartConfig.fields.y.leftAxisComponentIri;
-  const rightIri = chartConfig.fields.y.rightAxisComponentIri;
+  const leftId = chartConfig.fields.y.leftAxisComponentId;
+  const rightId = chartConfig.fields.y.rightAxisComponentId;
   const numericalYVariables: NumericalYComboLineDualVariables = {
     y: {
       left: {
         orientation: "left",
-        dimension: measuresById[leftIri],
-        iri: leftIri,
-        label: getLabelWithUnit(measuresById[leftIri]),
-        color: fields.y.colorMapping[leftIri],
-        getY: (d) => (d[leftIri] !== null ? Number(d[leftIri]) : null),
+        dimension: measuresById[leftId],
+        id: leftId,
+        label: getLabelWithUnit(measuresById[leftId]),
+        color: fields.y.colorMapping[leftId],
+        getY: (d) => (d[leftId] !== null ? Number(d[leftId]) : null),
         getMinY: (data) => {
           const minY =
-            min(data, (d) =>
-              d[leftIri] !== null ? Number(d[leftIri]) : null
-            ) ?? 0;
-          return shouldUseDynamicMinScaleValue(measuresById[leftIri].scaleType)
+            min(data, (d) => (d[leftId] !== null ? Number(d[leftId]) : null)) ??
+            0;
+
+          return shouldUseDynamicMinScaleValue(measuresById[leftId].scaleType)
             ? minY
             : Math.min(0, minY);
         },
       },
       right: {
         orientation: "right",
-        dimension: measuresById[rightIri],
-        iri: rightIri,
-        label: getLabelWithUnit(measuresById[rightIri]),
-        color: fields.y.colorMapping[rightIri],
-        getY: (d) => (d[rightIri] !== null ? Number(d[rightIri]) : null),
+        dimension: measuresById[rightId],
+        id: rightId,
+        label: getLabelWithUnit(measuresById[rightId]),
+        color: fields.y.colorMapping[rightId],
+        getY: (d) => (d[rightId] !== null ? Number(d[rightId]) : null),
         getMinY: (data) => {
           const minY =
             min(data, (d) =>
-              d[rightIri] !== null ? Number(d[rightIri]) : null
+              d[rightId] !== null ? Number(d[rightId]) : null
             ) ?? 0;
-          return shouldUseDynamicMinScaleValue(measuresById[rightIri].scaleType)
+
+          return shouldUseDynamicMinScaleValue(measuresById[rightId].scaleType)
             ? minY
             : Math.min(0, minY);
         },

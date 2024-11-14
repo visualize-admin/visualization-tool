@@ -1768,7 +1768,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Appenzeller mild",
             value: "https://agriculture.ld.admin.ch/foag/product/257",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -1779,7 +1779,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Appenzeller surchoix",
             value: "https://agriculture.ld.admin.ch/foag/product/292",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -1790,7 +1790,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Bratbutter",
             value: "https://agriculture.ld.admin.ch/foag/product/294",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -1801,7 +1801,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Brie CH 45%",
             value: "https://agriculture.ld.admin.ch/foag/product/304",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -1812,7 +1812,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Camembert 60%",
             value: "https://agriculture.ld.admin.ch/foag/product/302",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -1823,7 +1823,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Edamer CH",
             value: "https://agriculture.ld.admin.ch/foag/product/301",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -1834,7 +1834,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Emmentaler",
             value: "https://agriculture.ld.admin.ch/foag/product/265",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -1845,7 +1845,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Emmentaler mild",
             value: "https://agriculture.ld.admin.ch/foag/product/287",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -1856,7 +1856,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Emmentaler surchoix",
             value: "https://agriculture.ld.admin.ch/foag/product/289",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -1867,7 +1867,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Fruchtjoghurt",
             value: "https://agriculture.ld.admin.ch/foag/product/258",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -1878,7 +1878,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Gruyère",
             value: "https://agriculture.ld.admin.ch/foag/product/268",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -1889,7 +1889,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Gruyère mild",
             value: "https://agriculture.ld.admin.ch/foag/product/290",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -1900,7 +1900,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Gruyère surchoix",
             value: "https://agriculture.ld.admin.ch/foag/product/291",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -1911,7 +1911,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Halbrahm UHT 25%",
             value: "https://agriculture.ld.admin.ch/foag/product/255",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -1922,7 +1922,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Hüttenkäse nature 15%",
             value: "https://agriculture.ld.admin.ch/foag/product/288",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -1933,7 +1933,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Joghurt nature",
             value: "https://agriculture.ld.admin.ch/foag/product/267",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -1944,7 +1944,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Kaffeerahm UHT 15%",
             value: "https://agriculture.ld.admin.ch/foag/product/256",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -1955,7 +1955,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Kochbutter (Die Butter)",
             value: "https://agriculture.ld.admin.ch/foag/product/241",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -1966,7 +1966,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Magermilch UHT",
             value: "https://agriculture.ld.admin.ch/foag/product/293",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -1977,7 +1977,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Milch Drink Past",
             value: "https://agriculture.ld.admin.ch/foag/product/266",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -1988,7 +1988,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Milch Drink UHT",
             value: "https://agriculture.ld.admin.ch/foag/product/240",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -1999,7 +1999,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Mozzarella",
             value: "https://agriculture.ld.admin.ch/foag/product/282",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -2010,7 +2010,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Raclettekäse",
             value: "https://agriculture.ld.admin.ch/foag/product/264",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -2021,7 +2021,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Sbrinz",
             value: "https://agriculture.ld.admin.ch/foag/product/295",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -2032,7 +2032,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Tilsiter",
             value: "https://agriculture.ld.admin.ch/foag/product/305",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -2043,7 +2043,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Tilsiter mild",
             value: "https://agriculture.ld.admin.ch/foag/product/296",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -2054,7 +2054,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Tilsiter surchoix",
             value: "https://agriculture.ld.admin.ch/foag/product/297",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -2065,7 +2065,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Tomme",
             value: "https://agriculture.ld.admin.ch/foag/product/272",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -2076,7 +2076,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Tête de Moine",
             value: "https://agriculture.ld.admin.ch/foag/product/298",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -2087,7 +2087,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Vacherin fribourgeois",
             value: "https://agriculture.ld.admin.ch/foag/product/300",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -2098,7 +2098,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Vollmilch Past",
             value: "https://agriculture.ld.admin.ch/foag/product/263",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -2109,7 +2109,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Vollmilch UHT",
             value: "https://agriculture.ld.admin.ch/foag/product/239",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -2120,7 +2120,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Vollrahm UHT 35%",
             value: "https://agriculture.ld.admin.ch/foag/product/254",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -2131,7 +2131,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Vorzugsbutter",
             value: "https://agriculture.ld.admin.ch/foag/product/299",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -2142,7 +2142,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Weichkäse Croûte-mixte",
             value: "https://agriculture.ld.admin.ch/foag/product/303",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -2275,7 +2275,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Appenzeller",
             value: "https://agriculture.ld.admin.ch/foag/product-subgroup/1",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-subgroup",
             hasValue: true,
             position: -1,
@@ -2286,7 +2286,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Bratbutter",
             value: "https://agriculture.ld.admin.ch/foag/product-subgroup/3",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-subgroup",
             hasValue: true,
             position: -1,
@@ -2297,7 +2297,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Brie CH 45%",
             value: "https://agriculture.ld.admin.ch/foag/product-subgroup/4",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-subgroup",
             hasValue: true,
             position: -1,
@@ -2308,7 +2308,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Camembert 60%",
             value: "https://agriculture.ld.admin.ch/foag/product-subgroup/8",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-subgroup",
             hasValue: true,
             position: -1,
@@ -2319,7 +2319,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Edamer CH",
             value: "https://agriculture.ld.admin.ch/foag/product-subgroup/9",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-subgroup",
             hasValue: true,
             position: -1,
@@ -2330,7 +2330,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Emmentaler",
             value: "https://agriculture.ld.admin.ch/foag/product-subgroup/16",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-subgroup",
             hasValue: true,
             position: -1,
@@ -2341,7 +2341,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Gruyère",
             value: "https://agriculture.ld.admin.ch/foag/product-subgroup/18",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-subgroup",
             hasValue: true,
             position: -1,
@@ -2352,7 +2352,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Halbrahm",
             value: "https://agriculture.ld.admin.ch/foag/product-subgroup/19",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-subgroup",
             hasValue: true,
             position: -1,
@@ -2363,7 +2363,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Hüttenkäse",
             value: "https://agriculture.ld.admin.ch/foag/product-subgroup/20",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-subgroup",
             hasValue: true,
             position: -1,
@@ -2374,7 +2374,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Joghurt andere Früchte",
             value: "https://agriculture.ld.admin.ch/foag/product-subgroup/23",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-subgroup",
             hasValue: true,
             position: -1,
@@ -2385,7 +2385,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Joghurt nature",
             value: "https://agriculture.ld.admin.ch/foag/product-subgroup/24",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-subgroup",
             hasValue: true,
             position: -1,
@@ -2396,7 +2396,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Kaffeerahm",
             value: "https://agriculture.ld.admin.ch/foag/product-subgroup/25",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-subgroup",
             hasValue: true,
             position: -1,
@@ -2407,7 +2407,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Kochbutter",
             value: "https://agriculture.ld.admin.ch/foag/product-subgroup/29",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-subgroup",
             hasValue: true,
             position: -1,
@@ -2418,7 +2418,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Magermilch",
             value: "https://agriculture.ld.admin.ch/foag/product-subgroup/39",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-subgroup",
             hasValue: true,
             position: -1,
@@ -2429,7 +2429,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Milch Drink",
             value: "https://agriculture.ld.admin.ch/foag/product-subgroup/41",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-subgroup",
             hasValue: true,
             position: -1,
@@ -2440,7 +2440,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Mozzarella",
             value: "https://agriculture.ld.admin.ch/foag/product-subgroup/42",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-subgroup",
             hasValue: true,
             position: -1,
@@ -2451,7 +2451,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Raclettekäse",
             value: "https://agriculture.ld.admin.ch/foag/product-subgroup/43",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-subgroup",
             hasValue: true,
             position: -1,
@@ -2462,7 +2462,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Sbrinz",
             value: "https://agriculture.ld.admin.ch/foag/product-subgroup/47",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-subgroup",
             hasValue: true,
             position: -1,
@@ -2473,7 +2473,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Tilsiter",
             value: "https://agriculture.ld.admin.ch/foag/product-subgroup/64",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-subgroup",
             hasValue: true,
             position: -1,
@@ -2484,7 +2484,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Tomme",
             value: "https://agriculture.ld.admin.ch/foag/product-subgroup/65",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-subgroup",
             hasValue: true,
             position: -1,
@@ -2495,7 +2495,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Tête de Moine",
             value: "https://agriculture.ld.admin.ch/foag/product-subgroup/63",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-subgroup",
             hasValue: true,
             position: -1,
@@ -2506,7 +2506,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Vacherin fribourgeois",
             value: "https://agriculture.ld.admin.ch/foag/product-subgroup/66",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-subgroup",
             hasValue: true,
             position: -1,
@@ -2517,7 +2517,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Vollmilch",
             value: "https://agriculture.ld.admin.ch/foag/product-subgroup/71",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-subgroup",
             hasValue: true,
             position: -1,
@@ -2528,7 +2528,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Vollrahm",
             value: "https://agriculture.ld.admin.ch/foag/product-subgroup/73",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-subgroup",
             hasValue: true,
             position: -1,
@@ -2539,7 +2539,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Vorzugsbutter",
             value: "https://agriculture.ld.admin.ch/foag/product-subgroup/74",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-subgroup",
             hasValue: true,
             position: -1,
@@ -2550,7 +2550,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Weichkäse Croûte-mixte",
             value: "https://agriculture.ld.admin.ch/foag/product-subgroup/75",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-subgroup",
             hasValue: true,
             position: -1,
@@ -2599,7 +2599,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Butter",
             value: "https://agriculture.ld.admin.ch/foag/product-group/2",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-group",
             hasValue: true,
             position: -1,
@@ -2610,7 +2610,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Joghurt",
             value: "https://agriculture.ld.admin.ch/foag/product-group/4",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-group",
             hasValue: true,
             position: -1,
@@ -2621,7 +2621,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Konsummilch",
             value: "https://agriculture.ld.admin.ch/foag/product-group/7",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-group",
             hasValue: true,
             position: -1,
@@ -2632,7 +2632,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Käse",
             value: "https://agriculture.ld.admin.ch/foag/product-group/6",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-group",
             hasValue: true,
             position: -1,
@@ -2643,7 +2643,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Rahm",
             value: "https://agriculture.ld.admin.ch/foag/product-group/10",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-group",
             hasValue: true,
             position: -1,
@@ -2748,13 +2748,13 @@ describe("useCombinedTemporalDimension", () => {
                   "https://agriculture.ld.admin.ch/foag/value-chain-detail/18",
                 children: [],
                 depth: 1,
-                dimensionIri:
+                dimensionId:
                   "https://agriculture.ld.admin.ch/foag/dimension/value-chain-detail",
                 hasValue: true,
               },
             ],
             depth: 0,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/value-chain-detail",
             hasValue: false,
             hierarchyName: "Value Chain - Detail",
@@ -4682,7 +4682,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Appenzeller mild",
             value: "https://agriculture.ld.admin.ch/foag/product/257",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -4693,7 +4693,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Appenzeller surchoix",
             value: "https://agriculture.ld.admin.ch/foag/product/292",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -4704,7 +4704,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Bratbutter",
             value: "https://agriculture.ld.admin.ch/foag/product/294",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -4715,7 +4715,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Brie CH 45%",
             value: "https://agriculture.ld.admin.ch/foag/product/304",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -4726,7 +4726,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Camembert 60%",
             value: "https://agriculture.ld.admin.ch/foag/product/302",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -4737,7 +4737,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Edamer CH",
             value: "https://agriculture.ld.admin.ch/foag/product/301",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -4748,7 +4748,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Emmentaler",
             value: "https://agriculture.ld.admin.ch/foag/product/265",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -4759,7 +4759,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Emmentaler mild",
             value: "https://agriculture.ld.admin.ch/foag/product/287",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -4770,7 +4770,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Emmentaler surchoix",
             value: "https://agriculture.ld.admin.ch/foag/product/289",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -4781,7 +4781,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Fruchtjoghurt",
             value: "https://agriculture.ld.admin.ch/foag/product/258",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -4792,7 +4792,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Gruyère",
             value: "https://agriculture.ld.admin.ch/foag/product/268",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -4803,7 +4803,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Gruyère mild",
             value: "https://agriculture.ld.admin.ch/foag/product/290",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -4814,7 +4814,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Gruyère surchoix",
             value: "https://agriculture.ld.admin.ch/foag/product/291",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -4825,7 +4825,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Halbrahm UHT 25%",
             value: "https://agriculture.ld.admin.ch/foag/product/255",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -4836,7 +4836,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Hüttenkäse nature 15%",
             value: "https://agriculture.ld.admin.ch/foag/product/288",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -4847,7 +4847,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Joghurt nature",
             value: "https://agriculture.ld.admin.ch/foag/product/267",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -4858,7 +4858,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Kaffeerahm UHT 15%",
             value: "https://agriculture.ld.admin.ch/foag/product/256",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -4869,7 +4869,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Kochbutter (Die Butter)",
             value: "https://agriculture.ld.admin.ch/foag/product/241",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -4880,7 +4880,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Magermilch UHT",
             value: "https://agriculture.ld.admin.ch/foag/product/293",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -4891,7 +4891,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Milch Drink Past",
             value: "https://agriculture.ld.admin.ch/foag/product/266",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -4902,7 +4902,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Milch Drink UHT",
             value: "https://agriculture.ld.admin.ch/foag/product/240",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -4913,7 +4913,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Mozzarella",
             value: "https://agriculture.ld.admin.ch/foag/product/282",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -4924,7 +4924,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Raclettekäse",
             value: "https://agriculture.ld.admin.ch/foag/product/264",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -4935,7 +4935,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Sbrinz",
             value: "https://agriculture.ld.admin.ch/foag/product/295",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -4946,7 +4946,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Tilsiter",
             value: "https://agriculture.ld.admin.ch/foag/product/305",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -4957,7 +4957,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Tilsiter mild",
             value: "https://agriculture.ld.admin.ch/foag/product/296",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -4968,7 +4968,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Tilsiter surchoix",
             value: "https://agriculture.ld.admin.ch/foag/product/297",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -4979,7 +4979,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Tomme",
             value: "https://agriculture.ld.admin.ch/foag/product/272",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -4990,7 +4990,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Tête de Moine",
             value: "https://agriculture.ld.admin.ch/foag/product/298",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -5001,7 +5001,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Vacherin fribourgeois",
             value: "https://agriculture.ld.admin.ch/foag/product/300",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -5012,7 +5012,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Vollmilch Past",
             value: "https://agriculture.ld.admin.ch/foag/product/263",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -5023,7 +5023,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Vollmilch UHT",
             value: "https://agriculture.ld.admin.ch/foag/product/239",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -5034,7 +5034,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Vollrahm UHT 35%",
             value: "https://agriculture.ld.admin.ch/foag/product/254",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -5045,7 +5045,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Vorzugsbutter",
             value: "https://agriculture.ld.admin.ch/foag/product/299",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -5056,7 +5056,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Weichkäse Croûte-mixte",
             value: "https://agriculture.ld.admin.ch/foag/product/303",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product",
             hasValue: true,
             position: -1,
@@ -5189,7 +5189,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Appenzeller",
             value: "https://agriculture.ld.admin.ch/foag/product-subgroup/1",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-subgroup",
             hasValue: true,
             position: -1,
@@ -5200,7 +5200,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Bratbutter",
             value: "https://agriculture.ld.admin.ch/foag/product-subgroup/3",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-subgroup",
             hasValue: true,
             position: -1,
@@ -5211,7 +5211,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Brie CH 45%",
             value: "https://agriculture.ld.admin.ch/foag/product-subgroup/4",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-subgroup",
             hasValue: true,
             position: -1,
@@ -5222,7 +5222,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Camembert 60%",
             value: "https://agriculture.ld.admin.ch/foag/product-subgroup/8",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-subgroup",
             hasValue: true,
             position: -1,
@@ -5233,7 +5233,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Edamer CH",
             value: "https://agriculture.ld.admin.ch/foag/product-subgroup/9",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-subgroup",
             hasValue: true,
             position: -1,
@@ -5244,7 +5244,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Emmentaler",
             value: "https://agriculture.ld.admin.ch/foag/product-subgroup/16",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-subgroup",
             hasValue: true,
             position: -1,
@@ -5255,7 +5255,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Gruyère",
             value: "https://agriculture.ld.admin.ch/foag/product-subgroup/18",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-subgroup",
             hasValue: true,
             position: -1,
@@ -5266,7 +5266,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Halbrahm",
             value: "https://agriculture.ld.admin.ch/foag/product-subgroup/19",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-subgroup",
             hasValue: true,
             position: -1,
@@ -5277,7 +5277,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Hüttenkäse",
             value: "https://agriculture.ld.admin.ch/foag/product-subgroup/20",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-subgroup",
             hasValue: true,
             position: -1,
@@ -5288,7 +5288,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Joghurt andere Früchte",
             value: "https://agriculture.ld.admin.ch/foag/product-subgroup/23",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-subgroup",
             hasValue: true,
             position: -1,
@@ -5299,7 +5299,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Joghurt nature",
             value: "https://agriculture.ld.admin.ch/foag/product-subgroup/24",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-subgroup",
             hasValue: true,
             position: -1,
@@ -5310,7 +5310,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Kaffeerahm",
             value: "https://agriculture.ld.admin.ch/foag/product-subgroup/25",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-subgroup",
             hasValue: true,
             position: -1,
@@ -5321,7 +5321,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Kochbutter",
             value: "https://agriculture.ld.admin.ch/foag/product-subgroup/29",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-subgroup",
             hasValue: true,
             position: -1,
@@ -5332,7 +5332,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Magermilch",
             value: "https://agriculture.ld.admin.ch/foag/product-subgroup/39",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-subgroup",
             hasValue: true,
             position: -1,
@@ -5343,7 +5343,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Milch Drink",
             value: "https://agriculture.ld.admin.ch/foag/product-subgroup/41",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-subgroup",
             hasValue: true,
             position: -1,
@@ -5354,7 +5354,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Mozzarella",
             value: "https://agriculture.ld.admin.ch/foag/product-subgroup/42",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-subgroup",
             hasValue: true,
             position: -1,
@@ -5365,7 +5365,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Raclettekäse",
             value: "https://agriculture.ld.admin.ch/foag/product-subgroup/43",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-subgroup",
             hasValue: true,
             position: -1,
@@ -5376,7 +5376,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Sbrinz",
             value: "https://agriculture.ld.admin.ch/foag/product-subgroup/47",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-subgroup",
             hasValue: true,
             position: -1,
@@ -5387,7 +5387,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Tilsiter",
             value: "https://agriculture.ld.admin.ch/foag/product-subgroup/64",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-subgroup",
             hasValue: true,
             position: -1,
@@ -5398,7 +5398,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Tomme",
             value: "https://agriculture.ld.admin.ch/foag/product-subgroup/65",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-subgroup",
             hasValue: true,
             position: -1,
@@ -5409,7 +5409,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Tête de Moine",
             value: "https://agriculture.ld.admin.ch/foag/product-subgroup/63",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-subgroup",
             hasValue: true,
             position: -1,
@@ -5420,7 +5420,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Vacherin fribourgeois",
             value: "https://agriculture.ld.admin.ch/foag/product-subgroup/66",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-subgroup",
             hasValue: true,
             position: -1,
@@ -5431,7 +5431,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Vollmilch",
             value: "https://agriculture.ld.admin.ch/foag/product-subgroup/71",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-subgroup",
             hasValue: true,
             position: -1,
@@ -5442,7 +5442,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Vollrahm",
             value: "https://agriculture.ld.admin.ch/foag/product-subgroup/73",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-subgroup",
             hasValue: true,
             position: -1,
@@ -5453,7 +5453,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Vorzugsbutter",
             value: "https://agriculture.ld.admin.ch/foag/product-subgroup/74",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-subgroup",
             hasValue: true,
             position: -1,
@@ -5464,7 +5464,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Weichkäse Croûte-mixte",
             value: "https://agriculture.ld.admin.ch/foag/product-subgroup/75",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-subgroup",
             hasValue: true,
             position: -1,
@@ -5513,7 +5513,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Butter",
             value: "https://agriculture.ld.admin.ch/foag/product-group/2",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-group",
             hasValue: true,
             position: -1,
@@ -5524,7 +5524,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Joghurt",
             value: "https://agriculture.ld.admin.ch/foag/product-group/4",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-group",
             hasValue: true,
             position: -1,
@@ -5535,7 +5535,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Konsummilch",
             value: "https://agriculture.ld.admin.ch/foag/product-group/7",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-group",
             hasValue: true,
             position: -1,
@@ -5546,7 +5546,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Käse",
             value: "https://agriculture.ld.admin.ch/foag/product-group/6",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-group",
             hasValue: true,
             position: -1,
@@ -5557,7 +5557,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Rahm",
             value: "https://agriculture.ld.admin.ch/foag/product-group/10",
             depth: -1,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/product-group",
             hasValue: true,
             position: -1,
@@ -5662,13 +5662,13 @@ describe("useCombinedTemporalDimension", () => {
                   "https://agriculture.ld.admin.ch/foag/value-chain-detail/18",
                 children: [],
                 depth: 1,
-                dimensionIri:
+                dimensionId:
                   "https://agriculture.ld.admin.ch/foag/dimension/value-chain-detail",
                 hasValue: true,
               },
             ],
             depth: 0,
-            dimensionIri:
+            dimensionId:
               "https://agriculture.ld.admin.ch/foag/dimension/value-chain-detail",
             hasValue: false,
             hierarchyName: "Value Chain - Detail",

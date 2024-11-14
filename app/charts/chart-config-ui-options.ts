@@ -129,23 +129,23 @@ type EncodingOption<T extends ChartConfig = ChartConfig> =
       onChange: OnEncodingOptionChange<"left" | "right", ComboLineColumnConfig>;
     }
   | {
-      field: "componentIris";
+      field: "componentIds";
       onChange: OnEncodingOptionChange<string[], ComboLineSingleConfig>;
     }
   | {
-      field: "leftAxisComponentIri";
+      field: "leftAxisComponentId";
       onChange: OnEncodingOptionChange<string, ComboLineDualConfig>;
     }
   | {
-      field: "rightAxisComponentIri";
+      field: "rightAxisComponentId";
       onChange: OnEncodingOptionChange<string, ComboLineDualConfig>;
     }
   | {
-      field: "lineComponentIri";
+      field: "lineComponentId";
       onChange: OnEncodingOptionChange<string, ComboLineColumnConfig>;
     }
   | {
-      field: "columnComponentIri";
+      field: "columnComponentId";
       onChange: OnEncodingOptionChange<string, ComboLineColumnConfig>;
     };
 
@@ -176,7 +176,7 @@ const onColorComponentIdChange: OnEncodingOptionChange<string, MapConfig> = (
   const component = components.find((d) => d.id === id);
   const currentColorComponentId = get(
     chartConfig,
-    `${basePath}.color.componentIri`
+    `${basePath}.color.componentId`
   );
 
   if (component) {
@@ -218,7 +218,7 @@ type EncodingOptionColorComponent = {
   optional: boolean;
   componentTypes: ComponentType[];
   enableUseAbbreviations: boolean;
-  onComponentIriChange: OnEncodingOptionChange<string, MapConfig>;
+  onComponentIdChange: OnEncodingOptionChange<string, MapConfig>;
   onScaleTypeChange: OnEncodingOptionChange<ColorScaleType, MapConfig>;
 };
 
@@ -255,7 +255,7 @@ export interface EncodingSpec<T extends ChartConfig = ChartConfig> {
   field: EncodingFieldType;
   optional: boolean;
   componentTypes: ComponentType[];
-  /** Used to find component iri inside the encoding. Particularly useful for fields that may contain several components. */
+  /** Used to find component id inside the encoding. Particularly useful for fields that may contain several components. */
   idAttributes: string[];
   /** If true, won't use the ChartFieldOption component, but a custom one. Needs to be handled then in ChartOptionsSelector. */
   customComponent?: boolean;
@@ -371,14 +371,14 @@ export const ANIMATION_FIELD_SPEC: EncodingSpec<
   onChange: (id, { chartConfig, initializing }) => {
     if (initializing || !chartConfig.fields.animation) {
       chartConfig.fields.animation = {
-        componentIri: id,
+        componentId: id,
         showPlayButton: true,
         duration: 30,
         type: "continuous",
         dynamicScales: false,
       };
     } else {
-      chartConfig.fields.animation.componentIri = id;
+      chartConfig.fields.animation.componentId = id;
     }
   },
   getDisabledState: (
@@ -410,7 +410,7 @@ export const ANIMATION_FIELD_SPEC: EncodingSpec<
     const fieldComponentsMap = Object.fromEntries(
       Object.entries<GenericField>(chartConfig.fields)
         .filter((d) => d[0] !== "animation")
-        .map(([k, v]) => [v.componentIri, k])
+        .map(([k, v]) => [v.componentId, k])
     );
     const temporalFieldComponentIds = temporalDimensions.filter((d) => {
       return fieldComponentsMap[d.id];
@@ -454,13 +454,13 @@ const isMissingDataPresent = (chartConfig: AreaConfig, data: Observation[]) => {
   const { fields } = chartConfig;
   const grouped = group(
     data.filter((d) => {
-      const y = d[fields.y.componentIri];
+      const y = d[fields.y.componentId];
       return y !== null && y !== undefined;
     }),
-    (d) => d[fields.x.componentIri] as string
+    (d) => d[fields.x.componentId] as string
   );
   const segments = Array.from(
-    new Set(data.map((d) => getSegment(fields.segment?.componentIri)(d)))
+    new Set(data.map((d) => getSegment(fields.segment?.componentId)(d)))
   );
 
   return checkForMissingValuesInSegments(grouped, segments);
@@ -492,11 +492,11 @@ export const defaultSegmentOnChange: OnEncodingChange<
   });
 
   if (chartConfig.fields.segment && "palette" in chartConfig.fields.segment) {
-    chartConfig.fields.segment.componentIri = id;
+    chartConfig.fields.segment.componentId = id;
     chartConfig.fields.segment.colorMapping = colorMapping;
   } else {
     chartConfig.fields.segment = {
-      componentIri: id,
+      componentId: id,
       palette,
       sorting: DEFAULT_SORTING,
       colorMapping,
@@ -522,7 +522,7 @@ const onMapFieldChange: OnEncodingChange<MapConfig> = (
   initializeMapLayerField({
     chartConfig,
     field,
-    componentIri: id,
+    componentId: id,
     dimensions,
     measures,
   });
@@ -540,7 +540,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
     encodings: [
       {
         field: "y",
-        idAttributes: ["componentIri"],
+        idAttributes: ["componentId"],
         optional: false,
         componentTypes: ["NumericalMeasure"],
         filters: false,
@@ -554,7 +554,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
       },
       {
         field: "x",
-        idAttributes: ["componentIri"],
+        idAttributes: ["componentId"],
         optional: false,
         componentTypes: ["TemporalDimension", "TemporalEntityDimension"],
         filters: true,
@@ -562,13 +562,13 @@ const chartConfigOptionsUISpec: ChartSpecs = {
       {
         field: "segment",
         optional: true,
-        idAttributes: ["componentIri"],
+        idAttributes: ["componentId"],
         componentTypes: SEGMENT_ENABLED_COMPONENTS,
         filters: true,
         sorting: AREA_SEGMENT_SORTING,
         onChange: defaultSegmentOnChange,
         getDisabledState: (chartConfig, components, data) => {
-          const yId = chartConfig.fields.y.componentIri;
+          const yId = chartConfig.fields.y.componentId;
           const yDimension = components.find((d) => d.id === yId);
           const disabledStacked = disableStacked(yDimension);
 
@@ -620,7 +620,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
       {
         field: "y",
         optional: false,
-        idAttributes: ["componentIri"],
+        idAttributes: ["componentId"],
         componentTypes: ["NumericalMeasure"],
         filters: false,
         onChange: (id, { chartConfig, measures }) => {
@@ -648,7 +648,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
       {
         field: "x",
         optional: false,
-        idAttributes: ["componentIri"],
+        idAttributes: ["componentId"],
         componentTypes: [
           "TemporalDimension",
           "TemporalEntityDimension",
@@ -683,7 +683,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
       {
         field: "segment",
         optional: true,
-        idAttributes: ["componentIri"],
+        idAttributes: ["componentId"],
         componentTypes: SEGMENT_ENABLED_COMPONENTS,
         filters: true,
         sorting: COLUMN_SEGMENT_SORTING,
@@ -697,7 +697,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
             "fields.segment"
           );
           const yComponent = components.find(
-            (d) => d.id === chartConfig.fields.y.componentIri
+            (d) => d.id === chartConfig.fields.y.componentId
           );
           setWith(
             chartConfig,
@@ -728,7 +728,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
           },
           chartSubType: {
             getValues: (chartConfig, dimensions) => {
-              const yId = chartConfig.fields.y.componentIri;
+              const yId = chartConfig.fields.y.componentId;
               const yDimension = dimensions.find((d) => d.id === yId);
               const disabledStacked = disableStacked(yDimension);
 
@@ -769,7 +769,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
     chartType: "line",
     encodings: [
       {
-        idAttributes: ["componentIri"],
+        idAttributes: ["componentId"],
         field: "y",
         optional: false,
         componentTypes: ["NumericalMeasure"],
@@ -779,14 +779,14 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         },
       },
       {
-        idAttributes: ["componentIri"],
+        idAttributes: ["componentId"],
         field: "x",
         optional: false,
         componentTypes: ["TemporalDimension", "TemporalEntityDimension"],
         filters: true,
       },
       {
-        idAttributes: ["componentIri"],
+        idAttributes: ["componentId"],
         field: "segment",
         optional: true,
         componentTypes: SEGMENT_ENABLED_COMPONENTS,
@@ -806,14 +806,14 @@ const chartConfigOptionsUISpec: ChartSpecs = {
     encodings: [
       // Should this even be an encoding when it's not mapped to a component?
       {
-        idAttributes: ["componentIri"],
+        idAttributes: ["componentId"],
         field: "baseLayer",
         optional: true,
         componentTypes: [],
         filters: false,
       },
       {
-        idAttributes: ["componentIri", "color.componentIri"],
+        idAttributes: ["componentId", "color.componentId"],
         field: "areaLayer",
         optional: true,
         componentTypes: ["GeoShapesDimension"],
@@ -829,13 +829,13 @@ const chartConfigOptionsUISpec: ChartSpecs = {
             ],
             optional: false,
             enableUseAbbreviations: true,
-            onComponentIriChange: onColorComponentIdChange,
+            onComponentIdChange: onColorComponentIdChange,
             onScaleTypeChange: onColorComponentScaleTypeChange,
           },
         },
       },
       {
-        idAttributes: ["componentIri", "color.componentIri"],
+        idAttributes: ["componentId", "color.componentId"],
         field: "symbolLayer",
         optional: true,
         componentTypes: ["GeoCoordinatesDimension", "GeoShapesDimension"],
@@ -855,7 +855,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
             ],
             optional: true,
             enableUseAbbreviations: true,
-            onComponentIriChange: onColorComponentIdChange,
+            onComponentIdChange: onColorComponentIdChange,
             onScaleTypeChange: onColorComponentScaleTypeChange,
           },
           size: {
@@ -872,14 +872,14 @@ const chartConfigOptionsUISpec: ChartSpecs = {
     chartType: "pie",
     encodings: [
       {
-        idAttributes: ["componentIri"],
+        idAttributes: ["componentId"],
         field: "y",
         optional: false,
         componentTypes: ["NumericalMeasure"],
         filters: false,
       },
       {
-        idAttributes: ["componentIri"],
+        idAttributes: ["componentId"],
         field: "segment",
         optional: false,
         componentTypes: SEGMENT_ENABLED_COMPONENTS,
@@ -899,21 +899,21 @@ const chartConfigOptionsUISpec: ChartSpecs = {
     chartType: "scatterplot",
     encodings: [
       {
-        idAttributes: ["componentIri"],
+        idAttributes: ["componentId"],
         field: "x",
         optional: false,
         componentTypes: ["NumericalMeasure"],
         filters: false,
       },
       {
-        idAttributes: ["componentIri"],
+        idAttributes: ["componentId"],
         field: "y",
         optional: false,
         componentTypes: ["NumericalMeasure"],
         filters: false,
       },
       {
-        idAttributes: ["componentIri"],
+        idAttributes: ["componentId"],
         field: "segment",
         optional: true,
         componentTypes: SEGMENT_ENABLED_COMPONENTS,
@@ -938,7 +938,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
     chartType: "comboLineSingle",
     encodings: [
       {
-        idAttributes: ["componentIris"],
+        idAttributes: ["componentIds"],
         field: "y",
         optional: false,
         // TODO: maybe we should even create the components here?
@@ -946,7 +946,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         componentTypes: ["NumericalMeasure"],
         filters: false,
         options: {
-          componentIris: {
+          componentIds: {
             onChange: (ids, options) => {
               const { chartConfig } = options;
               const { fields } = chartConfig;
@@ -961,7 +961,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         },
       },
       {
-        idAttributes: ["componentIri"],
+        idAttributes: ["componentId"],
         field: "x",
         optional: false,
         componentTypes: ["TemporalDimension", "TemporalEntityDimension"],
@@ -975,40 +975,39 @@ const chartConfigOptionsUISpec: ChartSpecs = {
     encodings: [
       {
         field: "y",
-        idAttributes: ["leftAxisComponentIri", "rightAxisComponentIri"],
+        idAttributes: ["leftAxisComponentId", "rightAxisComponentId"],
         optional: false,
         customComponent: true,
         componentTypes: ["NumericalMeasure"],
         filters: false,
         options: {
-          leftAxisComponentIri: {
+          leftAxisComponentId: {
             onChange: (id, options) => {
               const { chartConfig } = options;
               const { fields } = chartConfig;
               const { y } = fields;
               chartConfig.fields.y.colorMapping = {
-                [id]: y.colorMapping[y.leftAxisComponentIri],
-                [y.rightAxisComponentIri]:
-                  y.colorMapping[y.rightAxisComponentIri],
+                [id]: y.colorMapping[y.leftAxisComponentId],
+                [y.rightAxisComponentId]:
+                  y.colorMapping[y.rightAxisComponentId],
               };
             },
           },
-          rightAxisComponentIri: {
+          rightAxisComponentId: {
             onChange: (id, options) => {
               const { chartConfig } = options;
               const { fields } = chartConfig;
               const { y } = fields;
               chartConfig.fields.y.colorMapping = {
-                [y.leftAxisComponentIri]:
-                  y.colorMapping[y.leftAxisComponentIri],
-                [id]: y.colorMapping[y.rightAxisComponentIri],
+                [y.leftAxisComponentId]: y.colorMapping[y.leftAxisComponentId],
+                [id]: y.colorMapping[y.rightAxisComponentId],
               };
             },
           },
         },
       },
       {
-        idAttributes: ["componentIri"],
+        idAttributes: ["componentId"],
         field: "x",
         optional: false,
         componentTypes: ["TemporalDimension", "TemporalEntityDimension"],
@@ -1024,36 +1023,36 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         field: "y",
         optional: false,
         customComponent: true,
-        idAttributes: ["lineComponentIri", "columnComponentIri"],
+        idAttributes: ["lineComponentId", "columnComponentId"],
         componentTypes: ["NumericalMeasure"],
         filters: false,
         options: {
-          lineComponentIri: {
+          lineComponentId: {
             onChange: (id, options) => {
               const { chartConfig } = options;
               const { fields } = chartConfig;
               const { y } = fields;
-              const lineColor = y.colorMapping[y.lineComponentIri];
-              const columnColor = y.colorMapping[y.columnComponentIri];
+              const lineColor = y.colorMapping[y.lineComponentId];
+              const columnColor = y.colorMapping[y.columnComponentId];
 
               chartConfig.fields.y.colorMapping =
                 y.lineAxisOrientation === "left"
-                  ? { [id]: lineColor, [y.columnComponentIri]: columnColor }
-                  : { [y.columnComponentIri]: columnColor, [id]: lineColor };
+                  ? { [id]: lineColor, [y.columnComponentId]: columnColor }
+                  : { [y.columnComponentId]: columnColor, [id]: lineColor };
             },
           },
-          columnComponentIri: {
+          columnComponentId: {
             onChange: (id, options) => {
               const { chartConfig } = options;
               const { fields } = chartConfig;
               const { y } = fields;
-              const columnColor = y.colorMapping[y.columnComponentIri];
-              const lineColor = y.colorMapping[y.lineComponentIri];
+              const columnColor = y.colorMapping[y.columnComponentId];
+              const lineColor = y.colorMapping[y.lineComponentId];
 
               chartConfig.fields.y.colorMapping =
                 y.lineAxisOrientation === "left"
-                  ? { [y.lineComponentIri]: lineColor, [id]: columnColor }
-                  : { [id]: columnColor, [y.lineComponentIri]: lineColor };
+                  ? { [y.lineComponentId]: lineColor, [id]: columnColor }
+                  : { [id]: columnColor, [y.lineComponentId]: lineColor };
             },
           },
           lineAxisOrientation: {
@@ -1063,16 +1062,16 @@ const chartConfigOptionsUISpec: ChartSpecs = {
               const { y } = fields;
               const lineAxisLeft = y.lineAxisOrientation === "left";
               // Need the correct order to not enable "Reset color palette" button.
-              const firstIri = lineAxisLeft
-                ? y.columnComponentIri
-                : y.lineComponentIri;
-              const secondIri = lineAxisLeft
-                ? y.lineComponentIri
-                : y.columnComponentIri;
+              const firstId = lineAxisLeft
+                ? y.columnComponentId
+                : y.lineComponentId;
+              const secondId = lineAxisLeft
+                ? y.lineComponentId
+                : y.columnComponentId;
 
               chartConfig.fields.y.colorMapping = {
-                [firstIri]: y.colorMapping[secondIri],
-                [secondIri]: y.colorMapping[firstIri],
+                [firstId]: y.colorMapping[secondId],
+                [secondId]: y.colorMapping[firstId],
               };
             },
           },
@@ -1080,7 +1079,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
       },
       {
         field: "x",
-        idAttributes: ["componentIri"],
+        idAttributes: ["componentId"],
         optional: false,
         componentTypes: ["TemporalDimension", "TemporalEntityDimension"],
         filters: true,
@@ -1111,23 +1110,23 @@ export const getChartFieldOptionChangeSideEffect = (
   switch (`${field}.${path}`) {
     case "segment.type":
       return get(encoding, "options.chartSubType.onChange");
-    case "areaLayer.color.componentIri":
-    case "symbolLayer.color.componentIri":
-      return get(encoding, "options.colorComponent.onComponentIriChange");
+    case "areaLayer.color.componentId":
+    case "symbolLayer.color.componentId":
+      return get(encoding, "options.colorComponent.onComponentIdChange");
     case "areaLayer.color.scaleType":
     case "symbolLayer.color.scaleType":
       return get(encoding, "options.colorComponent.onScaleTypeChange");
-    case "y.componentIris":
-      return get(encoding, "options.componentIris.onChange");
+    case "y.componentIds":
+      return get(encoding, "options.componentIds.onChange");
     case "y.lineAxisOrientation":
       return get(encoding, "options.lineAxisOrientation.onChange");
-    case "y.leftAxisComponentIri":
-      return get(encoding, "options.leftAxisComponentIri.onChange");
-    case "y.rightAxisComponentIri":
-      return get(encoding, "options.rightAxisComponentIri.onChange");
-    case "y.lineComponentIri":
-      return get(encoding, "options.lineComponentIri.onChange");
-    case "y.columnComponentIri":
-      return get(encoding, "options.columnComponentIri.onChange");
+    case "y.leftAxisComponentId":
+      return get(encoding, "options.leftAxisComponentId.onChange");
+    case "y.rightAxisComponentId":
+      return get(encoding, "options.rightAxisComponentId.onChange");
+    case "y.lineComponentId":
+      return get(encoding, "options.lineComponentId.onChange");
+    case "y.columnComponentId":
+      return get(encoding, "options.columnComponentId.onChange");
   }
 };

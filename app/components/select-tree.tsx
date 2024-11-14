@@ -252,15 +252,15 @@ const TreeItem = (props: TreeItemProps) => {
   return <MUITreeItem {...props} ContentComponent={TreeItemContent} />;
 };
 
-export type TreeHierachyValue = Omit<
+export type TreeHierarchyValue = Omit<
   HierarchyValue,
-  "depth" | "dimensionIri" | "children"
+  "depth" | "dimensionId" | "children"
 > & {
   selectable?: boolean;
-  children?: TreeHierachyValue[];
+  children?: TreeHierarchyValue[];
 };
 
-type Tree = TreeHierachyValue[];
+export type Tree = TreeHierarchyValue[];
 
 type NodeId = string;
 

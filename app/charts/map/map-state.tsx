@@ -75,7 +75,7 @@ export type MapState = CommonChartState &
     lockedBBox: BBox | undefined;
     featuresBBox: BBox | undefined;
     showBaseLayer: boolean;
-    identicalLayerComponentIris: boolean;
+    identicalLayerComponentIds: boolean;
     areaLayer:
       | {
           data: Observation[];
@@ -112,8 +112,8 @@ const useMapState = (
   const { areaLayer, symbolLayer } = fields;
 
   const areaLayerState = useLayerState({
-    componentIri: fields.areaLayer?.componentIri,
-    measureIri: fields.areaLayer?.color.componentIri,
+    componentId: fields.areaLayer?.componentId,
+    measureId: fields.areaLayer?.color.componentId,
     data: scalesData,
     features,
     dimensions,
@@ -128,7 +128,7 @@ const useMapState = (
   });
 
   const preparedAreaLayerState: MapState["areaLayer"] = useMemo(() => {
-    if (areaLayer?.componentIri === undefined) {
+    if (areaLayer?.componentId === undefined) {
       return undefined;
     }
 
@@ -141,8 +141,8 @@ const useMapState = (
   }, [areaColors, areaLayer, areaLayerState]);
 
   const symbolLayerState = useLayerState({
-    componentIri: symbolLayer?.componentIri,
-    measureIri: symbolLayer?.measureIri,
+    componentId: symbolLayer?.componentId,
+    measureId: symbolLayer?.measureId,
     data: scalesData,
     features,
     dimensions,
@@ -169,7 +169,7 @@ const useMapState = (
   }, [symbolLayerState.dataDomain]) as ScalePower<number, number>;
 
   const preparedSymbolLayerState: MapState["symbolLayer"] = useMemo(() => {
-    if (symbolLayer?.componentIri === undefined) {
+    if (symbolLayer?.componentId === undefined) {
       return undefined;
     }
 
@@ -178,12 +178,12 @@ const useMapState = (
       colors: symbolColors as SymbolLayerColors,
       radiusScale,
     };
-  }, [symbolLayer?.componentIri, symbolLayerState, radiusScale, symbolColors]);
+  }, [symbolLayer?.componentId, symbolLayerState, radiusScale, symbolColors]);
 
-  const identicalLayerComponentIris =
-    areaLayer?.componentIri !== undefined &&
-    symbolLayer?.componentIri !== undefined &&
-    areaLayer.componentIri === symbolLayer.componentIri;
+  const identicalLayerComponentIds =
+    areaLayer?.componentId !== undefined &&
+    symbolLayer?.componentId !== undefined &&
+    areaLayer.componentId === symbolLayer.componentId;
 
   const height = width * 0.5;
   const bounds = {
@@ -202,22 +202,22 @@ const useMapState = (
 
   const featuresBBox = useMemo(() => {
     return getBBox(
-      areaLayer?.componentIri !== undefined
+      areaLayer?.componentId !== undefined
         ? filterFeatureCollection(
             features.areaLayer?.shapes,
             (f) => f?.properties?.observation !== undefined
           )
         : undefined,
-      symbolLayer?.componentIri !== undefined
+      symbolLayer?.componentId !== undefined
         ? features.symbolLayer?.points.filter(
             (p) => p?.properties?.observation !== undefined
           )
         : undefined
     );
   }, [
-    areaLayer?.componentIri,
+    areaLayer?.componentId,
     features.areaLayer?.shapes,
-    symbolLayer?.componentIri,
+    symbolLayer?.componentId,
     features.symbolLayer?.points,
   ]);
 
@@ -231,7 +231,7 @@ const useMapState = (
     locked: baseLayer.locked || false,
     lockedBBox: baseLayer.bbox,
     featuresBBox,
-    identicalLayerComponentIris,
+    identicalLayerComponentIds,
     areaLayer: preparedAreaLayerState,
     symbolLayer: preparedSymbolLayerState,
     ...variables,
@@ -328,7 +328,7 @@ const getCategoricalColors = (
   measures: Measure[]
 ) => {
   const component = [...dimensions, ...measures].find(
-    (d) => d.id === color.componentIri
+    (d) => d.id === color.componentId
   ) as Component;
   const valuesByLabel = keyBy(component.values, (d) => d.label);
   const valuesByAbbreviationOrLabel = keyBy(
@@ -340,7 +340,7 @@ const getCategoricalColors = (
     colorToRgbArray(c, color.opacity * 2.55)
   );
   const getDimensionValue = (d: Observation) => {
-    const abbreviationOrLabel = d[color.componentIri] as string;
+    const abbreviationOrLabel = d[color.componentId] as string;
 
     return (
       valuesByAbbreviationOrLabel[abbreviationOrLabel] ??
@@ -377,15 +377,13 @@ const getNumericalColors = (
   measures: Measure[],
   { formatNumber }: { formatNumber: ReturnType<typeof useFormatNumber> }
 ) => {
-  const component = measures.find(
-    (d) => d.id === color.componentIri
-  ) as Measure;
+  const component = measures.find((d) => d.id === color.componentId) as Measure;
   const domain = extent(
-    data.map((d) => d[color.componentIri]),
+    data.map((d) => d[color.componentId]),
     (d) => +d!
   ) as [number, number];
   const getValue = (d: Observation) =>
-    d[color.componentIri] !== null ? Number(d[color.componentIri]) : null;
+    d[color.componentId] !== null ? Number(d[color.componentId]) : null;
   const colorScale = getNumericalColorScale({
     color,
     getValue,
@@ -393,12 +391,12 @@ const getNumericalColors = (
     dataDomain: domain,
   });
   const errorDimension = findRelatedErrorDimension(
-    color.componentIri,
+    color.componentId,
     dimensions
   );
   const errorMeasure = getErrorMeasure(
     { dimensions, measures },
-    color.componentIri
+    color.componentId
   );
   const getError = errorMeasure ? (d: Observation) => d[errorMeasure.id] : null;
   const getFormattedError = makeErrorFormatter(
@@ -415,7 +413,7 @@ const getNumericalColors = (
     interpolationType: color.interpolationType,
     getValue,
     getColor: (d: Observation) => {
-      const c = colorScale(+d[color.componentIri]!);
+      const c = colorScale(+d[color.componentId]!);
 
       if (c) {
         return colorToRgbArray(c, color.opacity * 2.55);
@@ -475,24 +473,24 @@ const makeErrorFormatter = (
 };
 
 const usePreparedData = ({
-  geoDimensionIri,
+  geoDimensionId,
   getLabel,
   data,
   dimensions,
   features,
 }: {
-  geoDimensionIri: string;
+  geoDimensionId: string;
   getLabel: (d: Observation) => string;
   data: Observation[];
   dimensions: Dimension[];
   features: GeoData;
 }) => {
   return useMemo(() => {
-    if (geoDimensionIri === "") {
+    if (geoDimensionId === "") {
       return [];
     }
 
-    const dimension = dimensions.find((d) => d.id === geoDimensionIri);
+    const dimension = dimensions.find((d) => d.id === geoDimensionId);
 
     if (
       isGeoShapesDimension(dimension) &&
@@ -507,7 +505,7 @@ const usePreparedData = ({
 
     return data;
   }, [
-    geoDimensionIri,
+    geoDimensionId,
     getLabel,
     data,
     dimensions,
@@ -516,15 +514,15 @@ const usePreparedData = ({
 };
 
 const useLayerState = ({
-  componentIri = "",
-  measureIri = "",
+  componentId = "",
+  measureId = "",
   data,
   features,
   dimensions,
   measures,
 }: {
-  componentIri: string | undefined;
-  measureIri: string | undefined;
+  componentId: string | undefined;
+  measureId: string | undefined;
   data: Observation[];
   features: GeoData;
   dimensions: Dimension[];
@@ -532,13 +530,13 @@ const useLayerState = ({
 }) => {
   const formatNumber = useFormatNumber();
 
-  const getLabel = useStringVariable(componentIri);
-  const getValue = useOptionalNumericVariable(measureIri);
+  const getLabel = useStringVariable(componentId);
+  const getValue = useOptionalNumericVariable(measureId);
 
-  const measureDimension = measures.find((d) => d.id === measureIri);
+  const measureDimension = measures.find((d) => d.id === measureId);
 
-  const errorDimension = findRelatedErrorDimension(measureIri, dimensions);
-  const errorMeasure = useErrorMeasure(measureIri, {
+  const errorDimension = findRelatedErrorDimension(measureId, dimensions);
+  const errorMeasure = useErrorMeasure(measureId, {
     dimensions,
     measures,
   });
@@ -550,7 +548,7 @@ const useLayerState = ({
   );
 
   const preparedData = usePreparedData({
-    geoDimensionIri: componentIri,
+    geoDimensionId: componentId,
     getLabel,
     data,
     dimensions,

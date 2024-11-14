@@ -9,16 +9,16 @@ import { CHART_CONFIG_VERSION } from "@/utils/chart-config/constants";
 const interactiveFiltersConfig: InteractiveFiltersConfig = {
   legend: {
     active: true,
-    componentIri: "",
+    componentId: "",
   },
   timeRange: {
     active: true,
-    componentIri: "",
+    componentId: "",
     presets: { type: "range", from: "", to: "" },
   },
   dataFilters: {
     active: false,
-    componentIris: [],
+    componentIds: [],
   },
   calculation: {
     active: false,
@@ -27,15 +27,15 @@ const interactiveFiltersConfig: InteractiveFiltersConfig = {
 };
 export const fields = {
   x: {
-    componentIri:
+    componentId:
       "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/0",
   },
   y: {
-    componentIri:
+    componentId:
       "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/0",
   },
   segment: {
-    componentIri:
+    componentId:
       "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/3",
     palette: "category10",
     type: "stacked",
@@ -63,6 +63,7 @@ export const fields = {
     },
   },
 };
+
 export const chartConfig: LineConfig = {
   key: "line",
   version: CHART_CONFIG_VERSION,
@@ -92,6 +93,7 @@ export const chartConfig: LineConfig = {
   fields,
   activeField: undefined,
 };
+
 export const measures = [
   {
     id: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/0",

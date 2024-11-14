@@ -205,12 +205,12 @@ const PivotTable = ({ dataset }: { dataset: (typeof datasets)[string] }) => {
   };
 
   const handleToggleMeasure = useEvent((ev: ChangeEvent<HTMLInputElement>) => {
-    const measureIri = ev.currentTarget.getAttribute("name");
-    if (!measureIri) {
+    const measureId = ev.currentTarget.getAttribute("name");
+    if (!measureId) {
       return;
     }
     setActiveMeasures((am) =>
-      am ? { ...am, [measureIri]: !am[measureIri] } : {}
+      am ? { ...am, [measureId]: !am[measureId] } : {}
     );
   });
 

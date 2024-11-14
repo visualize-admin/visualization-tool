@@ -54,7 +54,8 @@ export const DashboardInteractiveFilters = (props: BoxProps) => {
     dataFilters: undefined,
   };
   const showTimeRange = !!timeRange?.active;
-  const showDataFilters = !!dataFilters?.componentIris.length;
+  const showDataFilters = !!dataFilters?.componentIds.length;
+
   useEffect(() => {
     if (layouting && (showTimeRange || showDataFilters)) {
       ref.current?.scrollIntoView({
@@ -63,6 +64,7 @@ export const DashboardInteractiveFilters = (props: BoxProps) => {
       });
     }
   }, [layouting, showDataFilters, showTimeRange]);
+
   return showTimeRange || showDataFilters ? (
     <Box ref={ref} {...rest} sx={{ ...sx, mb: 4 }}>
       {showTimeRange ? (
@@ -72,7 +74,7 @@ export const DashboardInteractiveFilters = (props: BoxProps) => {
         />
       ) : null}
       {showDataFilters ? (
-        <DashboardDataFilters componentIris={dataFilters.componentIris} />
+        <DashboardDataFilters componentIds={dataFilters.componentIds} />
       ) : null}
     </Box>
   ) : null;
@@ -266,12 +268,12 @@ export type Stores = ReturnType<
 export const saveDataFiltersSnapshot = (
   chartConfigs: ChartConfig[],
   stores: Stores,
-  componentIri: string
+  componentId: string
 ) => {
   const snapshot = Object.fromEntries(
     Object.entries(stores).map(([key, [_getState, _useStore, store]]) => {
       const state = store.getState();
-      const filterValue = state.dataFilters[componentIri];
+      const filterValue = state.dataFilters[componentId];
       return [key, filterValue];
     })
   );
@@ -284,10 +286,10 @@ export const saveDataFiltersSnapshot = (
         const dataFilters = store.getState().dataFilters;
         const filterValue = snapshot[chartKey];
         if (filterValue) {
-          dataFilters[componentIri] = filterValue;
+          dataFilters[componentId] = filterValue;
           store.setState({ dataFilters });
         } else {
-          delete dataFilters[componentIri];
+          delete dataFilters[componentId];
           store.setState({ dataFilters });
         }
       }
@@ -295,43 +297,37 @@ export const saveDataFiltersSnapshot = (
   };
 };
 
-const DashboardDataFilters = ({
-  componentIris,
-}: {
-  componentIris: string[];
-}) => {
+const DashboardDataFilters = ({ componentIds }: { componentIds: string[] }) => {
   const classes = useDataFilterStyles();
   return (
     <div className={classes.wrapper}>
-      {componentIris.map((componentIri) => (
-        <DataFilter key={componentIri} componentIri={componentIri} />
+      {componentIds.map((componentId) => (
+        <DataFilter key={componentId} componentId={componentId} />
       ))}
     </div>
   );
 };
 
-const DataFilter = ({ componentIri }: { componentIri: string }) => {
+const DataFilter = ({ componentId }: { componentId: string }) => {
   const locale = useLocale();
   const classes = useDataFilterStyles();
   const [{ chartConfigs, dataSource, dashboardFilters }] =
     useConfiguratorState(hasChartConfigs);
   const dashboardInteractiveFilters = useDashboardInteractiveFilters();
   const relevantChartConfigs = chartConfigs.filter((config) =>
-    config.cubes.some((cube) =>
-      Object.keys(cube.filters).includes(componentIri)
-    )
+    config.cubes.some((cube) => Object.keys(cube.filters).includes(componentId))
   );
   const cubeIris = uniq(
     chartConfigs.flatMap((config) =>
       config.cubes
-        .filter((cube) => Object.keys(cube.filters).includes(componentIri))
+        .filter((cube) => Object.keys(cube.filters).includes(componentId))
         .map((cube) => cube.iri)
     )
   );
 
   if (cubeIris.length > 1) {
     console.error(
-      `Data filter ${componentIri} is used in multiple cubes: ${cubeIris.join(", ")}`
+      `Data filter ${componentId} is used in multiple cubes: ${cubeIris.join(", ")}`
     );
   }
 
@@ -343,7 +339,11 @@ const DataFilter = ({ componentIri }: { componentIri: string }) => {
       sourceUrl: dataSource.url,
       locale,
       cubeFilters: [
-        { iri: cubeIri, componentIris: [componentIri], loadValues: true },
+        {
+          iri: cubeIri,
+          componentIris: [componentId],
+          loadValues: true,
+        },
       ],
     },
     keepPreviousData: true,
@@ -368,7 +368,7 @@ const DataFilter = ({ componentIri }: { componentIri: string }) => {
         if (
           relevantChartConfigs.map((config) => config.key).includes(chartKey)
         ) {
-          setDataFilter(store, componentIri, newValue);
+          setDataFilter(store, componentId, newValue);
         }
       }
     }
@@ -376,22 +376,22 @@ const DataFilter = ({ componentIri }: { componentIri: string }) => {
 
   // Syncs the interactive filter value with the config value
   useEffect(() => {
-    const value = dashboardFilters?.dataFilters.filters[componentIri].value as
+    const value = dashboardFilters?.dataFilters.filters[componentId].value as
       | string
       | undefined;
     if (value) {
       handleChange({ target: { value } });
     }
-  }, [componentIri, handleChange, dashboardFilters?.dataFilters.filters]);
+  }, [componentId, handleChange, dashboardFilters?.dataFilters.filters]);
 
   useEffect(() => {
     const restoreSnapshot = saveDataFiltersSnapshot(
       relevantChartConfigs,
       dashboardInteractiveFilters.stores,
-      componentIri
+      componentId
     );
 
-    const value = dashboardFilters?.dataFilters.filters[componentIri]?.value as
+    const value = dashboardFilters?.dataFilters.filters[componentId]?.value as
       | string
       | undefined;
 

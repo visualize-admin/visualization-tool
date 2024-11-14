@@ -2,7 +2,6 @@ import {
   ConfiguratorStateConfiguringChart,
   decodeChartConfig,
   LineConfig,
-  MapConfig,
 } from "@/config-types";
 import {
   CHART_CONFIG_VERSION,
@@ -126,7 +125,7 @@ describe("config migrations", () => {
 
     const migratedOldConfig = (await migrateChartConfig(decodedConfig, {
       toVersion: "1.0.0",
-    })) as MapConfig;
+    })) as any;
     expect(migratedOldConfig.version).toEqual("1.0.0");
     const symbolLayer = migratedOldConfig.fields.symbolLayer!;
     // @ts-ignore - show does not existing in the newer version of the types
@@ -161,7 +160,7 @@ describe("config migrations", () => {
     expect(decodedConfig).toBeDefined();
     expect(
       (decodedConfig as LineConfig).interactiveFiltersConfig?.timeRange
-        .componentIri === oldLineConfig.fields.x.componentIri
+        .componentId === oldLineConfig.fields.x.componentIri
     ).toBeDefined();
 
     const migratedOldConfig = (await migrateChartConfig(decodedConfig, {
@@ -169,7 +168,7 @@ describe("config migrations", () => {
     })) as LineConfig;
 
     expect(
-      migratedOldConfig.interactiveFiltersConfig?.timeRange.componentIri
+      migratedOldConfig.interactiveFiltersConfig?.timeRange.componentId
     ).toEqual("");
   });
 });

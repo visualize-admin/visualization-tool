@@ -957,67 +957,79 @@ export const chartConfigMigrations: Migration[] = [
 
       for (const [k, v] of Object.entries<any>(newConfig.fields)) {
         if ("componentIris" in v) {
-          v.componentIris = v.componentIris.map((iri: string) =>
+          v.componentIds = v.componentIris.map((iri: string) =>
             makeComponentId({
               unversionedCubeIri,
               unversionedComponentIri: iri,
             })
           );
+          delete v.componentIris;
         } else if ("componentIri" in v) {
-          v.componentIri = makeComponentId({
+          v.componentId = makeComponentId({
             unversionedCubeIri,
             unversionedComponentIri: v.componentIri,
           });
+          delete v.componentIri;
         }
 
         if ("measureIri" in v && v.measureIri !== FIELD_VALUE_NONE) {
-          v.measureIri = makeComponentId({
+          v.measureId = makeComponentId({
             unversionedCubeIri,
             unversionedComponentIri: v.measureIri,
           });
+          delete v.measureIri;
         }
 
         // Maps
         if (v.color && "componentIri" in v.color) {
-          v.color.componentIri = makeComponentId({
+          v.color.componentId = makeComponentId({
             unversionedCubeIri,
             unversionedComponentIri: v.color.componentIri,
           });
+          delete v.color.componentIri;
         }
 
         if ("leftAxisComponentIri" in v) {
-          v.leftAxisComponentIri = makeComponentId({
+          v.leftAxisComponentId = makeComponentId({
             unversionedCubeIri,
             unversionedComponentIri: v.leftAxisComponentIri,
           });
+          delete v.leftAxisComponentIri;
         }
 
         if ("rightAxisComponentIri" in v) {
-          v.rightAxisComponentIri = makeComponentId({
+          v.rightAxisComponentId = makeComponentId({
             unversionedCubeIri,
             unversionedComponentIri: v.rightAxisComponentIri,
           });
+          delete v.rightAxisComponentIri;
         }
 
         if ("columnComponentIri" in v) {
-          v.columnComponentIri = makeComponentId({
+          v.columnComponentId = makeComponentId({
             unversionedCubeIri,
             unversionedComponentIri: v.columnComponentIri,
           });
+          delete v.columnComponentIri;
         }
 
         if ("lineComponentIri" in v) {
-          v.lineComponentIri = makeComponentId({
+          v.lineComponentId = makeComponentId({
             unversionedCubeIri,
             unversionedComponentIri: v.lineComponentIri,
           });
+          delete v.lineComponentIri;
         }
 
         if (newConfig.chartType === "table") {
+          const componentId = makeComponentId({
+            unversionedCubeIri,
+            unversionedComponentIri: k,
+          });
+          v.componentId = componentId;
+          delete v.componentIri;
+          newConfig.fields[componentId] = v;
           delete newConfig.fields[k];
-          newConfig.fields[
-            makeComponentId({ unversionedCubeIri, unversionedComponentIri: k })
-          ] = v;
         }
       }
 
@@ -1025,17 +1037,19 @@ export const chartConfigMigrations: Migration[] = [
         newConfig.interactiveFiltersConfig ?? {}
       )) {
         if ("componentIris" in v) {
-          v.componentIris = v.componentIris.map((iri: string) =>
+          v.componentIds = v.componentIris.map((iri: string) =>
             makeComponentId({
               unversionedCubeIri,
               unversionedComponentIri: iri,
             })
           );
+          delete v.componentIris;
         } else if ("componentIri" in v) {
-          v.componentIri = makeComponentId({
+          v.componentId = makeComponentId({
             unversionedCubeIri,
             unversionedComponentIri: v.componentIri,
           });
+          delete v.componentIri;
         }
       }
 
