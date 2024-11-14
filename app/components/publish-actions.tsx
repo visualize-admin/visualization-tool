@@ -56,12 +56,13 @@ export const TriggeredPopover = (props: TriggeredPopoverProps) => {
     setAnchorEl(trigger);
   }, [trigger]);
 
-  const [ref, width, height] = useResizeObserver<HTMLElement>();
+  const [ref, width, height] = useResizeObserver<HTMLDivElement>();
 
   return (
     <>
       {renderTrigger && renderTrigger(setAnchorEl)}
       <Popover
+        ref={ref}
         open={!!anchorEl}
         anchorEl={anchorEl}
         {...popoverProps}
@@ -75,7 +76,7 @@ export const TriggeredPopover = (props: TriggeredPopoverProps) => {
         }
         onClose={() => setAnchorEl(undefined)}
       >
-        <Box ref={ref}>{children}</Box>
+        {children}
       </Popover>
     </>
   );
