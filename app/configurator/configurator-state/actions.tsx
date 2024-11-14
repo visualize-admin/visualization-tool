@@ -143,7 +143,7 @@ export type ConfiguratorStateAction =
       value: {
         filters: {
           cubeIri: string;
-          dimensionIri: string;
+          dimensionId: string;
         }[];
         value: string;
       };
@@ -153,7 +153,7 @@ export type ConfiguratorStateAction =
       value: {
         filters: {
           cubeIri: string;
-          dimensionIri: string;
+          dimensionId: string;
         }[];
       };
     }

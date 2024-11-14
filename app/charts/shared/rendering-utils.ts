@@ -49,7 +49,7 @@ export const useRenderingKeyVariable = (
 
     return dimensions
       .filter((d) => !isStandardErrorDimension(d))
-      .map((d) => d.iri)
+      .map((d) => d.id)
       .filter((d) => !keysToRemove.includes(d));
   }, [dimensions, filters, interactiveFiltersConfig, animationField]);
 

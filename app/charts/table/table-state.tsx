@@ -16,7 +16,7 @@ import { Cell, Column, Row } from "react-table";
 
 import {
   getLabelWithUnit,
-  getSlugifiedIri,
+  getSlugifiedId,
 } from "@/charts/shared/chart-helpers";
 import {
   ChartContext,
@@ -51,8 +51,8 @@ import { ChartProps } from "../shared/ChartProps";
 
 export type MKColumnMeta<T> = {
   dim: Component;
-  iri: string;
-  slugifiedIri: string;
+  id: string;
+  slugifiedId: string;
   description?: string;
   columnComponentType: ComponentType;
   formatter: (cell: Cell<Observation, any>) => string;
@@ -158,7 +158,7 @@ const useTableState = (
    */
 
   const types = [...dimensions, ...measures].reduce(
-    (obj, c) => ({ ...obj, [getSlugifiedIri(c.iri)]: c.__typename }),
+    (obj, c) => ({ ...obj, [getSlugifiedId(c.id)]: c.__typename }),
     {} as { [x: string]: ComponentType }
   );
   // Data used by react-table
@@ -167,7 +167,7 @@ const useTableState = (
       // Only read keys once
       const keys = Object.keys(chartData[0] ?? []);
       const lkey = keys.length;
-      const slugifiedKeys = keys.map(getSlugifiedIri);
+      const slugifiedKeys = keys.map(getSlugifiedId);
 
       return chartData.map((d, index) => {
         const o = { id: index } as $IntentionalAny;
@@ -195,7 +195,7 @@ const useTableState = (
 
     return orderedTableColumns.map((c) => {
       const headerComponent = allComponents.find(
-        (d) => d.iri === c.componentIri
+        (d) => d.id === c.componentIri
       );
 
       if (!headerComponent) {
@@ -231,7 +231,7 @@ const useTableState = (
       return {
         Header: headerLabel,
         // Slugify accessor to avoid IRI's "." to be parsed as JS object notation.
-        accessor: getSlugifiedIri(c.componentIri),
+        accessor: getSlugifiedId(c.componentIri),
 
         width,
         sortType: (
@@ -261,7 +261,7 @@ const useTableState = (
     () =>
       orderedTableColumns
         .filter((c) => c.isGroup)
-        .map((c) => getSlugifiedIri(c.componentIri)),
+        .map((c) => getSlugifiedId(c.componentIri)),
     [orderedTableColumns]
   );
 
@@ -270,7 +270,7 @@ const useTableState = (
     return [
       // Prioritize the configured sorting
       ...sorting.map((s) => ({
-        id: getSlugifiedIri(s.componentIri),
+        id: getSlugifiedId(s.componentIri),
         desc: s.sortingOrder === "desc",
       })),
       // Add the remaining table columns to the sorting
@@ -279,7 +279,7 @@ const useTableState = (
           ? []
           : [
               {
-                id: getSlugifiedIri(c.componentIri),
+                id: getSlugifiedId(c.componentIri),
                 desc: false,
               },
             ];
@@ -293,7 +293,7 @@ const useTableState = (
     () =>
       orderedTableColumns
         .filter((c) => c.isHidden)
-        .map((c) => getSlugifiedIri(c.componentIri)),
+        .map((c) => getSlugifiedId(c.componentIri)),
     [orderedTableColumns]
   );
 
@@ -303,23 +303,23 @@ const useTableState = (
    * It is not used by react-table, only for custom styling.
    */
   const tableColumnsMeta = useMemo<TableChartState["tableColumnsMeta"]>(() => {
-    const allColumnsByIri = Object.fromEntries(
-      [...dimensions, ...measures].map((x) => [x.iri, x])
+    const allColumnsById = Object.fromEntries(
+      [...dimensions, ...measures].map((x) => [x.id, x])
     );
     return mapKeys(
-      mapValues(fields, (columnMeta, iri) => {
-        const slugifiedIri = getSlugifiedIri(iri);
+      mapValues(fields, (columnMeta, id) => {
+        const slugifiedId = getSlugifiedId(id);
         const columnStyle = columnMeta.columnStyle;
         const columnStyleType = columnStyle.type;
         const columnComponentType = columnMeta.componentType;
-        const formatter = formatters[iri];
+        const formatter = formatters[id];
         const cellFormatter = (x: Cell<Observation>) => formatter(x.value);
         const common = {
-          dim: allColumnsByIri[iri],
-          iri,
-          slugifiedIri,
+          dim: allColumnsById[id],
+          id,
+          slugifiedId,
           columnComponentType,
-          description: allColumnsByIri[iri]?.description || undefined,
+          description: allColumnsById[id]?.description || undefined,
           formatter: cellFormatter,
           ...columnStyle,
         } as const;
@@ -327,7 +327,7 @@ const useTableState = (
           return common as TextColumnMeta;
         } else if (columnStyleType === "category") {
           const { colorMapping } = columnStyle as ColumnStyleCategory;
-          const dimension = allColumnsByIri[iri];
+          const dimension = allColumnsById[id];
 
           // Color scale (always from colorMappings)
           const colorScale = scaleOrdinal<string>();
@@ -358,11 +358,11 @@ const useTableState = (
         } else if (columnStyleType === "heatmap") {
           const absMinValue =
             min(chartData, (d) =>
-              d[iri] !== null ? Math.abs(d[iri] as number) : 0
+              d[id] !== null ? Math.abs(d[id] as number) : 0
             ) || 0;
           const absMaxValue =
             max(chartData, (d) =>
-              d[iri] !== null ? Math.abs(d[iri] as number) : 1
+              d[id] !== null ? Math.abs(d[id] as number) : 1
             ) || 1;
           const maxAbsoluteValue = Math.max(absMinValue, absMaxValue);
           const colorScale = scaleDiverging(
@@ -378,7 +378,7 @@ const useTableState = (
           const columnItems = [
             ...new Set(
               chartData.map((d) =>
-                d !== null && d[iri] !== null ? mkNumber(d[iri]) : NaN
+                d !== null && d[id] !== null ? mkNumber(d[id]) : NaN
               )
             ),
           ];
@@ -397,7 +397,7 @@ const useTableState = (
           return null as never;
         }
       }),
-      (v) => v.slugifiedIri
+      (v) => v.slugifiedId
     );
   }, [chartData, dimensions, fields, formatters, measures]);
 

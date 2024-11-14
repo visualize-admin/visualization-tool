@@ -308,7 +308,7 @@ export const dataCubeComponents: NonNullable<
       const baseComponent: BaseComponent = {
         // We need to use original iri here, as the cube iri might have changed.
         cubeIri: iri,
-        iri: joinIris({ unversionedCubeIri, dimensionIri: data.iri }),
+        id: joinIris({ unversionedCubeIri, dimensionIri: data.iri }),
         label: data.name,
         description: data.description,
         unit: data.unit,

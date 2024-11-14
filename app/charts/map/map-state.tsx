@@ -328,7 +328,7 @@ const getCategoricalColors = (
   measures: Measure[]
 ) => {
   const component = [...dimensions, ...measures].find(
-    (d) => d.iri === color.componentIri
+    (d) => d.id === color.componentIri
   ) as Component;
   const valuesByLabel = keyBy(component.values, (d) => d.label);
   const valuesByAbbreviationOrLabel = keyBy(
@@ -378,7 +378,7 @@ const getNumericalColors = (
   { formatNumber }: { formatNumber: ReturnType<typeof useFormatNumber> }
 ) => {
   const component = measures.find(
-    (d) => d.iri === color.componentIri
+    (d) => d.id === color.componentIri
   ) as Measure;
   const domain = extent(
     data.map((d) => d[color.componentIri]),
@@ -400,9 +400,7 @@ const getNumericalColors = (
     { dimensions, measures },
     color.componentIri
   );
-  const getError = errorMeasure
-    ? (d: Observation) => d[errorMeasure.iri]
-    : null;
+  const getError = errorMeasure ? (d: Observation) => d[errorMeasure.id] : null;
   const getFormattedError = makeErrorFormatter(
     getError,
     formatNumber,
@@ -494,7 +492,7 @@ const usePreparedData = ({
       return [];
     }
 
-    const dimension = dimensions.find((d) => d.iri === geoDimensionIri);
+    const dimension = dimensions.find((d) => d.id === geoDimensionIri);
 
     if (
       isGeoShapesDimension(dimension) &&
@@ -537,7 +535,7 @@ const useLayerState = ({
   const getLabel = useStringVariable(componentIri);
   const getValue = useOptionalNumericVariable(measureIri);
 
-  const measureDimension = measures.find((d) => d.iri === measureIri);
+  const measureDimension = measures.find((d) => d.id === measureIri);
 
   const errorDimension = findRelatedErrorDimension(measureIri, dimensions);
   const errorMeasure = useErrorMeasure(measureIri, {

@@ -99,7 +99,7 @@ const prepareData = ({
   dimensionParsers: DimensionParsers;
 }) => {
   const sortedComponents = getSortedColumns(components);
-  const columns = keyBy(sortedComponents, (d) => d.iri);
+  const columns = keyBy(sortedComponents, (d) => d.id);
   // Sort the data from left to right, keeping the order of the columns.
   const sorting: SortingField["sorting"] = {
     sortingType: "byAuto",
@@ -108,7 +108,7 @@ const prepareData = ({
   const sorters = sortedComponents.map<
     [string, ReturnType<typeof makeDimensionValueSorters>]
   >((d) => {
-    return [d.iri, makeDimensionValueSorters(d, { sorting })];
+    return [d.id, makeDimensionValueSorters(d, { sorting })];
   });
   // We need to sort before parsing, to access raw observation values, where
   // dates are formatted in the format of YYYY-MM-DD, etc.
@@ -458,15 +458,15 @@ const getDimensionParsers = (
         case "OrdinalDimension":
         case "TemporalEntityDimension":
         case "TemporalOrdinalDimension":
-          return [d.iri, (d) => d];
+          return [d.id, (d) => d];
         case "NumericalMeasure":
         case "StandardErrorDimension":
-          return [d.iri, (d) => +d];
+          return [d.id, (d) => +d];
         case "OrdinalMeasure":
-          return d.isNumerical ? [d.iri, (d) => +d] : [d.iri, (d) => d];
+          return d.isNumerical ? [d.id, (d) => +d] : [d.id, (d) => d];
         case "TemporalDimension": {
           if (d.timeUnit === "Year") {
-            return [d.iri, (d) => +d];
+            return [d.id, (d) => +d];
           }
 
           // We do not want to parse dates as dates, but strings (for easier
@@ -475,7 +475,7 @@ const getDimensionParsers = (
           const formatDateAuto = getFormatFullDateAuto(dateFormatters);
 
           return [
-            d.iri,
+            d.id,
             dateFormatterFromDimension(d, dateFormatters, formatDateAuto),
           ];
         }

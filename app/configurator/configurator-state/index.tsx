@@ -156,8 +156,8 @@ export const getFilterValue = (
 
   return isJoinByComponent(dimension)
     ? // As filters are mirrored between the cubes, we can just pick the first one.
-      filters[dimension.originalIris[0].dimensionIri]
-    : filters[dimension.iri];
+      filters[dimension.originalIds[0].dimensionId]
+    : filters[dimension.id];
 };
 
 export const moveFilterField = produce(
@@ -185,7 +185,7 @@ export const moveFilterField = produce(
     // the order of the keys received is in insertion order
     // https://262.ecma-international.org/6.0/#sec-ordinary-object-internal-methods-and-internal-slots-ownpropertykeys
     const keys = Object.getOwnPropertyNames(cube.filters);
-    const fieldIndex = Object.keys(cube.filters).indexOf(dimension.iri);
+    const fieldIndex = Object.keys(cube.filters).indexOf(dimension.id);
 
     if (fieldIndex === 0 && delta === -1) {
       return;
@@ -202,7 +202,7 @@ export const moveFilterField = produce(
     const replacedIndex =
       fieldIndex === -1 ? keys.length - 1 : fieldIndex + delta;
     const replaced = keys[replacedIndex];
-    keys[replacedIndex] = dimension.iri;
+    keys[replacedIndex] = dimension.id;
 
     if (fieldIndex === -1) {
       keys.push(replaced);
@@ -296,11 +296,11 @@ export const addDatasetInConfig = function (
     if (!field) {
       continue;
     }
-    for (const iriAttribute of encoding.iriAttributes) {
-      const value = get(field, iriAttribute);
+    for (const idAttribute of encoding.idAttributes) {
+      const value = get(field, idAttribute);
       const index = joinBy.left.indexOf(value) ?? joinBy.right.indexOf(value);
       if (index > -1) {
-        set(field, iriAttribute, mkJoinById(index));
+        set(field, idAttribute, mkJoinById(index));
       }
     }
   }

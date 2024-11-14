@@ -7,7 +7,7 @@ export const getCachedComponentsMock = {
       {
         __typename: "GeoShapesDimension",
         cubeIri: "https://energy.ld.admin.ch/elcom/electricityprice-canton",
-        iri: "https://energy.ld.admin.ch/elcom/electricityprice/dimension/canton",
+        id: "https://energy.ld.admin.ch/elcom/electricityprice/dimension/canton",
         label: "Kanton",
         scaleType: "Nominal" as ScaleType,
         isNumerical: false,
@@ -176,7 +176,7 @@ export const getCachedComponentsMock = {
       {
         __typename: "NominalDimension",
         cubeIri: "https://energy.ld.admin.ch/elcom/electricityprice-canton",
-        iri: "https://energy.ld.admin.ch/elcom/electricityprice/dimension/category",
+        id: "https://energy.ld.admin.ch/elcom/electricityprice/dimension/category",
         label: "Verbrauchsprofile typischer Haushalte",
         scaleType: "Nominal" as ScaleType,
         isNumerical: false,
@@ -292,7 +292,7 @@ export const getCachedComponentsMock = {
       {
         __typename: "NominalDimension",
         cubeIri: "https://energy.ld.admin.ch/elcom/electricityprice-canton",
-        iri: "https://energy.ld.admin.ch/elcom/electricityprice/dimension/product",
+        id: "https://energy.ld.admin.ch/elcom/electricityprice/dimension/product",
         label: "Produkt",
         scaleType: "Nominal" as ScaleType,
         isNumerical: false,
@@ -319,7 +319,7 @@ export const getCachedComponentsMock = {
         isCurrency: false,
         isDecimal: false,
         cubeIri: "https://energy.ld.admin.ch/elcom/electricityprice-canton",
-        iri: "https://energy.ld.admin.ch/elcom/electricityprice/dimension/total",
+        id: "https://energy.ld.admin.ch/elcom/electricityprice/dimension/total",
         label: "Total exkl. MWST",
         description:
           "Total electricity costs in rappen per kWH. Includes all variable costs, but not fix costs",
@@ -337,7 +337,7 @@ export const getCachedComponentsMock = {
         isCurrency: false,
         isDecimal: false,
         cubeIri: "https://energy.ld.admin.ch/elcom/electricityprice-canton",
-        iri: "https://energy.ld.admin.ch/elcom/electricityprice/dimension/gridusage",
+        id: "https://energy.ld.admin.ch/elcom/electricityprice/dimension/gridusage",
         label: "Netznutzung",
         scaleType: "Ratio" as ScaleType,
         isNumerical: false,
@@ -353,7 +353,7 @@ export const getCachedComponentsMock = {
         isCurrency: false,
         isDecimal: false,
         cubeIri: "https://energy.ld.admin.ch/elcom/electricityprice-canton",
-        iri: "https://energy.ld.admin.ch/elcom/electricityprice/dimension/energy",
+        id: "https://energy.ld.admin.ch/elcom/electricityprice/dimension/energy",
         label: "Energielieferungkosten",
         scaleType: "Ratio" as ScaleType,
         isNumerical: false,
@@ -369,7 +369,7 @@ export const getCachedComponentsMock = {
         isCurrency: false,
         isDecimal: false,
         cubeIri: "https://energy.ld.admin.ch/elcom/electricityprice-canton",
-        iri: "https://energy.ld.admin.ch/elcom/electricityprice/dimension/charge",
+        id: "https://energy.ld.admin.ch/elcom/electricityprice/dimension/charge",
         label: "Abgaben an das Gemeinwesen",
         scaleType: "Ratio" as ScaleType,
         isNumerical: false,
@@ -385,7 +385,7 @@ export const getCachedComponentsMock = {
         isCurrency: false,
         isDecimal: false,
         cubeIri: "https://energy.ld.admin.ch/elcom/electricityprice-canton",
-        iri: "https://energy.ld.admin.ch/elcom/electricityprice/dimension/aidfee",
+        id: "https://energy.ld.admin.ch/elcom/electricityprice/dimension/aidfee",
         label: "Förderabgaben (KEV)",
         scaleType: "Ratio" as ScaleType,
         isNumerical: false,
@@ -403,7 +403,7 @@ export const getCachedComponentsMock = {
       {
         __typename: "GeoShapesDimension",
         cubeIri: "mapDataset",
-        iri: "newAreaLayerColorIri",
+        id: "newAreaLayerColorIri",
         label: "Geo shapes dimension",
         isNumerical: false,
         isKeyDimension: true,
@@ -417,7 +417,7 @@ export const getCachedComponentsMock = {
       },
       {
         __typename: "GeoCoordinatesDimension",
-        iri: "symbolLayerIri",
+        id: "symbolLayerIri",
         cubeIri: "mapDataset",
         label: "Geo coordinates dimension",
         isNumerical: false,
@@ -431,7 +431,7 @@ export const getCachedComponentsMock = {
     measures: [
       {
         __typename: "NumericalMeasure",
-        iri: "measure",
+        id: "measure",
         cubeIri: "mapDataset",
         label: "Numerical dimension",
         isNumerical: true,

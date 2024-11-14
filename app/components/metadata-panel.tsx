@@ -494,12 +494,12 @@ const DataPanel = ({
         isJoinByDimension: boolean;
       }[] => {
         if (isJoinByComponent(component)) {
-          return (component.originalIris ?? []).map((x) => ({
+          return (component.originalIds ?? []).map((x) => ({
             label: getComponentLabel(component, { cubeIri: x.cubeIri }),
             value: {
-              ...omit(component, "originalIris"),
+              ...omit(component, "originalIds"),
               cubeIri: x.cubeIri,
-              iri: x.dimensionIri,
+              id: x.dimensionId,
             } as Component,
             isJoinByDimension: true,
           }));
@@ -516,12 +516,12 @@ const DataPanel = ({
     );
     const groupedComponents = groupBy(
       components.flatMap((component): Component[] => {
-        if ("originalIris" in component && component.originalIris) {
+        if ("originalIds" in component && component.originalIds) {
           return (
-            component.originalIris.map((originalIri) => ({
+            component.originalIds.map((originalId) => ({
               ...component,
-              cubeIri: originalIri.cubeIri,
-              iri: originalIri.dimensionIri,
+              cubeIri: originalId.cubeIri,
+              id: originalId.dimensionId,
             })) ?? []
           );
         } else {
@@ -660,7 +660,7 @@ const DataPanel = ({
                       <Stack spacing={2}>
                         {components.map((component) => (
                           <ComponentTabPanel
-                            key={component.iri}
+                            key={component.id}
                             component={component}
                             cubeIri={cubeIri}
                             expanded={false}
@@ -708,7 +708,7 @@ const ComponentTabPanel = ({
   const locale = useLocale();
   const cubesIri = useMemo(() => {
     return isJoinByComponent(component)
-      ? component.originalIris.map((x) => x.cubeIri)
+      ? component.originalIds.map((x) => x.cubeIri)
       : [component.cubeIri];
   }, [component]);
   const [cubesQuery] = useDataCubesMetadataQuery({
@@ -730,7 +730,7 @@ const ComponentTabPanel = ({
         {
           iri: component.cubeIri,
           loadValues: true,
-          componentIris: [component.iri],
+          componentIris: [component.id],
         },
       ],
       locale,
@@ -742,11 +742,11 @@ const ComponentTabPanel = ({
     return [
       ...(componentsQuery.data?.dataCubesComponents.dimensions ?? []),
       ...(componentsQuery.data?.dataCubesComponents.measures ?? []),
-    ].find((d) => component.iri === d.iri);
+    ].find((d) => component.id === d.id);
   }, [
     componentsQuery.data?.dataCubesComponents.dimensions,
     componentsQuery.data?.dataCubesComponents.measures,
-    component.iri,
+    component.id,
   ]);
 
   const handleClick = useCallback(() => {
@@ -812,7 +812,7 @@ const ComponentTabPanel = ({
                 <Typography variant="h5" gutterBottom>
                   Joined with
                 </Typography>
-                {component.originalIris.map((x) =>
+                {component.originalIds.map((x) =>
                   x.cubeIri === loadedComponent.cubeIri ? null : (
                     <div key={x.cubeIri}>
                       <Typography variant="body2">
@@ -929,8 +929,9 @@ const DimensionValuesTemporal = ({
   values: DimensionValue[];
 }) => {
   const formatters = useDimensionFormatters([dim]);
-  const format = formatters[dim.iri];
+  const format = formatters[dim.id];
   const [min, max] = [values[0].value, values[values.length - 1].value];
+
   return (
     <>
       <Typography variant="body2">Min: {format(min)}</Typography>

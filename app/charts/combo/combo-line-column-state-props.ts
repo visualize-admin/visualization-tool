@@ -49,8 +49,8 @@ export const useComboLineColumnStateVariables = (
   const {
     chartConfig,
     dimensions,
-    dimensionsByIri,
-    measuresByIri,
+    dimensionsById,
+    measuresById,
     observations,
   } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
@@ -59,12 +59,12 @@ export const useComboLineColumnStateVariables = (
 
   const baseVariables = useBaseVariables(chartConfig);
   const bandXVariables = useBandXVariables(x, {
-    dimensionsByIri,
+    dimensionsById,
     observations,
   });
   const interactiveFiltersVariables = useInteractiveFiltersVariables(
     chartConfig.interactiveFiltersConfig,
-    { dimensionsByIri }
+    { dimensionsById }
   );
 
   const lineIri = chartConfig.fields.y.lineComponentIri;
@@ -74,16 +74,16 @@ export const useComboLineColumnStateVariables = (
   const lineYGetter: YGetter = {
     chartType: "line",
     orientation: lineAxisOrientation,
-    dimension: measuresByIri[lineIri],
+    dimension: measuresById[lineIri],
     iri: lineIri,
-    label: getLabelWithUnit(measuresByIri[lineIri]),
+    label: getLabelWithUnit(measuresById[lineIri]),
     color: fields.y.colorMapping[lineIri],
     getY: (d) => (d[lineIri] !== null ? Number(d[lineIri]) : null),
     getMinY: (data) => {
       const minY =
         min(data, (d) => (d[lineIri] !== null ? Number(d[lineIri]) : null)) ??
         0;
-      return shouldUseDynamicMinScaleValue(measuresByIri[lineIri].scaleType)
+      return shouldUseDynamicMinScaleValue(measuresById[lineIri].scaleType)
         ? minY
         : Math.min(0, minY);
     },
@@ -91,9 +91,9 @@ export const useComboLineColumnStateVariables = (
   const columnYGetter: YGetter = {
     chartType: "column",
     orientation: lineAxisOrientation === "left" ? "right" : "left",
-    dimension: measuresByIri[columnIri],
+    dimension: measuresById[columnIri],
     iri: columnIri,
-    label: getLabelWithUnit(measuresByIri[columnIri]),
+    label: getLabelWithUnit(measuresById[columnIri]),
     color: fields.y.colorMapping[columnIri],
     getY: (d) => (d[columnIri] !== null ? Number(d[columnIri]) : null),
     getMinY: (data) => {
@@ -171,7 +171,7 @@ export const useComboLineColumnStateData = (
   }, [sortData, plottableData]);
   const data = useChartData(sortedPlottableData, {
     chartConfig,
-    timeRangeDimensionIri: xDimension.iri,
+    timeRangeDimensionId: xDimension.id,
     getXAsDate,
     getTimeRangeDate,
   });

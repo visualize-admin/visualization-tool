@@ -5,7 +5,7 @@ export const dimensions: Dimension[] = [
   {
     cubeIri: "https://cube",
     isNumerical: false,
-    iri: "https://environment.ld.admin.ch/foen/ubd0104/dateofprobing",
+    id: "https://environment.ld.admin.ch/foen/ubd0104/dateofprobing",
     label: "Date",
     isKeyDimension: true,
     values: [
@@ -19,7 +19,7 @@ export const dimensions: Dimension[] = [
   {
     cubeIri: "https://cube",
     isNumerical: false,
-    iri: "https://environment.ld.admin.ch/foen/ubd0104/parametertype",
+    id: "https://environment.ld.admin.ch/foen/ubd0104/parametertype",
     label: "Parameter",
     isKeyDimension: true,
     values: [
@@ -31,7 +31,7 @@ export const dimensions: Dimension[] = [
   {
     cubeIri: "https://cube",
     isNumerical: false,
-    iri: "https://environment.ld.admin.ch/foen/ubd0104/monitoringprogramm",
+    id: "https://environment.ld.admin.ch/foen/ubd0104/monitoringprogramm",
     label: "Monitoring Programme",
     isKeyDimension: false,
     values: [
@@ -58,7 +58,7 @@ export const dimensions: Dimension[] = [
   {
     cubeIri: "https://cube",
     isNumerical: false,
-    iri: "https://environment.ld.admin.ch/foen/ubd0104/station",
+    id: "https://environment.ld.admin.ch/foen/ubd0104/station",
     label: "Bathing site",
     isKeyDimension: true,
     values: [
@@ -827,7 +827,7 @@ export const measures: Measure[] = [
   {
     cubeIri: "https://cube",
     isNumerical: false,
-    iri: "https://environment.ld.admin.ch/foen/ubd0104/value",
+    id: "https://environment.ld.admin.ch/foen/ubd0104/value",
     label: "Concentration",
     isKeyDimension: false,
     values: [

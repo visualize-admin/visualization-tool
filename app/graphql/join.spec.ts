@@ -22,7 +22,7 @@ describe("mergeObservations", () => {
         data: {
           dataCubeObservations: {
             data: [
-              { year: 2010, amount: 2010 }, // mergeable
+              { year: 2010, amount: 2010 }, // merge-able
               { year: 2011, amount: 2011 },
             ],
           },
@@ -212,12 +212,12 @@ describe("joinDimensions", () => {
           dimensions: [
             {
               cubeIri: "population",
-              iri: "population",
+              id: "population",
               label: "Population",
             } as Dimension,
             {
               cubeIri: "population",
-              iri: "year",
+              id: "year",
               label: "Year",
             } as Dimension,
             {
@@ -236,12 +236,12 @@ describe("joinDimensions", () => {
           dimensions: [
             {
               cubeIri: "elec",
-              iri: "electricalConsumption",
+              id: "electricalConsumption",
               label: "Electrical Consumption",
             } as Dimension,
             {
               cubeIri: "elec",
-              iri: "YEAR",
+              id: "YEAR",
               label: "Year",
             } as Dimension,
             {
@@ -273,13 +273,13 @@ describe("joinDimensions", () => {
             Object {
               "cubeIri": "population",
               "description": "",
-              "dimensionIri": "year",
+              "dimensionId": "year",
               "label": "Year",
             },
             Object {
               "cubeIri": "elec",
               "description": "",
-              "dimensionIri": "YEAR",
+              "dimensionId": "YEAR",
               "label": "Year",
             },
           ],
@@ -287,20 +287,20 @@ describe("joinDimensions", () => {
         },
         Object {
           "cubeIri": "joinBy",
-          "iri": "joinBy__1",
+          "id": "joinBy__1",
           "isJoinByDimension": true,
           "label": "Canton",
           "originalIris": Array [
             Object {
               "cubeIri": "population",
               "description": "",
-              "dimensionIri": "canton",
+              "dimensionId": "canton",
               "label": "Canton",
             },
             Object {
               "cubeIri": "elec",
               "description": "",
-              "dimensionIri": "CANTON",
+              "dimensionId": "CANTON",
               "label": "Canton",
             },
           ],
@@ -318,12 +318,12 @@ describe("joinDimensions", () => {
         },
         Object {
           "cubeIri": "population",
-          "iri": "population",
+          "id": "population",
           "label": "Population",
         },
         Object {
           "cubeIri": "elec",
-          "iri": "electricalConsumption",
+          "id": "electricalConsumption",
           "label": "Electrical Consumption",
         },
       ]
@@ -341,7 +341,7 @@ describe("joinDimensions", () => {
               timeUnit: TimeUnit.Year,
               cubeIri:
                 "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9",
-              iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
+              id: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
               label: "Jahr der Vergütung",
               description: "Jahr, in welchem die EIV ausbezahlt wurde",
               unit: "yr",
@@ -368,7 +368,7 @@ describe("joinDimensions", () => {
               __typename: "GeoShapesDimension",
               cubeIri:
                 "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9",
-              iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton",
+              id: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton",
               label: "Kanton",
               description: "Kanton, in welchem die geförderten Anlagen stehen",
               scaleType: ScaleType.Nominal,
@@ -597,7 +597,7 @@ describe("joinDimensions", () => {
               resolution: 0,
               cubeIri:
                 "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9",
-              iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/AnzahlAnlagen",
+              id: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/AnzahlAnlagen",
               label: "Anzahl geförderter EIV-Anlagen",
               description: "Anzahl geförderter EIV-Anlagen",
               unit: "#",
@@ -626,7 +626,7 @@ describe("joinDimensions", () => {
               __typename: "NominalDimension" as const,
               cubeIri:
                 "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_co2wirkung/4",
-              iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_co2wirkung/region",
+              id: "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_co2wirkung/region",
               label: "Region",
               scaleType: ScaleType.Nominal,
               order: 2,
@@ -650,7 +650,7 @@ describe("joinDimensions", () => {
               __typename: "NominalDimension",
               cubeIri:
                 "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_co2wirkung/4",
-              iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_co2wirkung/massnahmenbereich",
+              id: "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_co2wirkung/massnahmenbereich",
               label: "Massnahmenbereich",
               scaleType: ScaleType.Nominal,
               order: 3,
@@ -701,7 +701,7 @@ describe("joinDimensions", () => {
               resolution: 0,
               cubeIri:
                 "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_co2wirkung/4",
-              iri: "http://schema.org/amount",
+              id: "http://schema.org/amount",
               label: "CO2-Wirkungen (Tonnen CO2)",
               scaleType: ScaleType.Ratio,
               dataType: "http://www.w3.org/2001/XMLSchema#integer",
@@ -723,7 +723,7 @@ describe("joinDimensions", () => {
     ];
 
     const result = joinDimensions(fetchedDataCubeComponents);
-    expect(result.map((x) => x.iri)).toMatchInlineSnapshot(`
+    expect(result.map((x) => x.id)).toMatchInlineSnapshot(`
       Array [
         "joinBy__0",
         "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton",

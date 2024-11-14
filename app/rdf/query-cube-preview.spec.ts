@@ -86,11 +86,11 @@ describe("dataset preview", () => {
     );
     const dim = dimensions.find(
       (d) =>
-        d.iri ===
+        d.id ===
         "https://environment.ld.admin.ch/foen/gefahren-waldbrand-warnung/region"
     );
 
-    expect(dim?.iri).toEqual(
+    expect(dim?.id).toEqual(
       "https://environment.ld.admin.ch/foen/gefahren-waldbrand-warnung/region"
     );
     expect(dim?.label).toEqual("Region");
@@ -99,7 +99,7 @@ describe("dataset preview", () => {
 
     const measure = measures[0];
 
-    expect(measure.iri).toEqual(
+    expect(measure.id).toEqual(
       "https://environment.ld.admin.ch/foen/gefahren-waldbrand-warnung/level"
     );
     expect(measure.label).toEqual("Danger ratings");
@@ -107,7 +107,7 @@ describe("dataset preview", () => {
     expect(observations).toHaveLength(1);
     const obs = observations[0];
 
-    expect(obs[dim?.iri ?? ""]).toEqual("Bern");
-    expect(obs[measure.iri]).toEqual("considerable danger");
+    expect(obs[dim?.id ?? ""]).toEqual("Bern");
+    expect(obs[measure.id]).toEqual("considerable danger");
   });
 });

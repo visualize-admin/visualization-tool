@@ -68,7 +68,7 @@ export const TimeSlider = (props: TimeSliderProps) => {
 
   const [state] = useConfiguratorState(hasChartConfigs);
   const dimension = useMemo(() => {
-    return dimensions.find((d) => d.iri === componentIri);
+    return dimensions.find((d) => d.id === componentIri);
   }, [componentIri, dimensions]);
   const temporal = isTemporalDimension(dimension);
   const temporalEntity = isTemporalEntityDimension(dimension);
@@ -85,7 +85,7 @@ export const TimeSlider = (props: TimeSliderProps) => {
   const chartState = useChartState() as NonNullable<
     Exclude<ChartState, TableChartState>
   >;
-  const dimensionFilter = filters[dimension.iri];
+  const dimensionFilter = filters[dimension.id];
   const timelineProps: TimelineProps = useMemo(() => {
     const commonProps = {
       animationType,
@@ -94,7 +94,7 @@ export const TimeSlider = (props: TimeSliderProps) => {
     const uniqueValues = Array.from(
       new Set(
         chartState.allData
-          .map((d) => d[dimension.iri])
+          .map((d) => d[dimension.id])
           .filter(truthy) as string[]
       )
     );

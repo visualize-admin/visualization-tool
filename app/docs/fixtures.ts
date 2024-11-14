@@ -156,7 +156,7 @@ export const fields: ColumnFields = {
 export const dimensions: Dimension[] = [
   {
     cubeIri: "http://environment.ld.admin.ch/foen/px/0703030000_124",
-    iri: "http://environment.ld.admin.ch/foen/px/0703030000_124/dimension/0",
+    id: "http://environment.ld.admin.ch/foen/px/0703030000_124/dimension/0",
     label: "Jahr",
     __typename: "TemporalDimension",
     timeUnit: TimeUnit.Year,
@@ -170,7 +170,7 @@ export const dimensions: Dimension[] = [
   },
   {
     cubeIri: "http://environment.ld.admin.ch/foen/px/0703030000_124",
-    iri: "http://environment.ld.admin.ch/foen/px/0703030000_124/dimension/1",
+    id: "http://environment.ld.admin.ch/foen/px/0703030000_124/dimension/1",
     label: "Kanton",
     __typename: "NominalDimension",
     isNumerical: false,
@@ -179,7 +179,7 @@ export const dimensions: Dimension[] = [
   },
   {
     cubeIri: "http://environment.ld.admin.ch/foen/px/0703030000_124",
-    iri: "http://environment.ld.admin.ch/foen/px/0703030000_124/dimension/2",
+    id: "http://environment.ld.admin.ch/foen/px/0703030000_124/dimension/2",
     label: "Forstzone",
     __typename: "NominalDimension",
     isNumerical: false,
@@ -191,7 +191,7 @@ export const dimensions: Dimension[] = [
 export const measures: Measure[] = [
   {
     cubeIri: "http://environment.ld.admin.ch/foen/px/0703030000_124",
-    iri: "http://environment.ld.admin.ch/foen/px/0703030000_124/measure/0",
+    id: "http://environment.ld.admin.ch/foen/px/0703030000_124/measure/0",
     label: "Investitionen: Einnahmen - Total",
     __typename: "NumericalMeasure",
     isNumerical: true,
@@ -200,7 +200,7 @@ export const measures: Measure[] = [
   },
   {
     cubeIri: "http://environment.ld.admin.ch/foen/px/0703030000_124",
-    iri: "http://environment.ld.admin.ch/foen/px/0703030000_124/measure/1",
+    id: "http://environment.ld.admin.ch/foen/px/0703030000_124/measure/1",
     label: "Investitionen: Einnahmen aus Beiträgen Bund und Kantone",
     __typename: "NumericalMeasure",
     isNumerical: true,
@@ -209,7 +209,7 @@ export const measures: Measure[] = [
   },
   {
     cubeIri: "http://environment.ld.admin.ch/foen/px/0703030000_124",
-    iri: "http://environment.ld.admin.ch/foen/px/0703030000_124/measure/2",
+    id: "http://environment.ld.admin.ch/foen/px/0703030000_124/measure/2",
     label: "Investitionen: Einnahmen aus Beiträgen von Gemeinden und Dritten",
     __typename: "NumericalMeasure",
     isNumerical: true,
@@ -218,7 +218,7 @@ export const measures: Measure[] = [
   },
   {
     cubeIri: "http://environment.ld.admin.ch/foen/px/0703030000_124",
-    iri: "http://environment.ld.admin.ch/foen/px/0703030000_124/measure/3",
+    id: "http://environment.ld.admin.ch/foen/px/0703030000_124/measure/3",
     label: "Investitionen: übrige Einnahmen",
     __typename: "NumericalMeasure",
     isNumerical: true,
@@ -227,7 +227,7 @@ export const measures: Measure[] = [
   },
   {
     cubeIri: "http://environment.ld.admin.ch/foen/px/0703030000_124",
-    iri: "http://environment.ld.admin.ch/foen/px/0703030000_124/measure/4",
+    id: "http://environment.ld.admin.ch/foen/px/0703030000_124/measure/4",
     label: "Investitionen - Total",
     __typename: "NumericalMeasure",
     isNumerical: true,
@@ -236,7 +236,7 @@ export const measures: Measure[] = [
   },
   {
     cubeIri: "http://environment.ld.admin.ch/foen/px/0703030000_124",
-    iri: "http://environment.ld.admin.ch/foen/px/0703030000_124/measure/5",
+    id: "http://environment.ld.admin.ch/foen/px/0703030000_124/measure/5",
     label: "Investitionen für Wirtschaftsgebäude",
     __typename: "NumericalMeasure",
     isNumerical: true,
@@ -245,7 +245,7 @@ export const measures: Measure[] = [
   },
   {
     cubeIri: "http://environment.ld.admin.ch/foen/px/0703030000_124",
-    iri: "http://environment.ld.admin.ch/foen/px/0703030000_124/measure/6",
+    id: "http://environment.ld.admin.ch/foen/px/0703030000_124/measure/6",
     label: "Investitionen für Maschinen",
     __typename: "NumericalMeasure",
     isNumerical: true,
@@ -254,7 +254,7 @@ export const measures: Measure[] = [
   },
   {
     cubeIri: "http://environment.ld.admin.ch/foen/px/0703030000_124",
-    iri: "http://environment.ld.admin.ch/foen/px/0703030000_124/measure/7",
+    id: "http://environment.ld.admin.ch/foen/px/0703030000_124/measure/7",
     label: "Übrige Ausgaben für Investitionen",
     __typename: "NumericalMeasure",
     isNumerical: true,
@@ -263,7 +263,7 @@ export const measures: Measure[] = [
   },
   {
     cubeIri: "http://environment.ld.admin.ch/foen/px/0703030000_124",
-    iri: "http://environment.ld.admin.ch/foen/px/0703030000_124/measure/8",
+    id: "http://environment.ld.admin.ch/foen/px/0703030000_124/measure/8",
     label: "Investitionen für Erschliessungsanlagen",
     __typename: "NumericalMeasure",
     isNumerical: true,
@@ -272,7 +272,7 @@ export const measures: Measure[] = [
   },
   {
     cubeIri: "http://environment.ld.admin.ch/foen/px/0703030000_124",
-    iri: "http://environment.ld.admin.ch/foen/px/0703030000_124/measure/9",
+    id: "http://environment.ld.admin.ch/foen/px/0703030000_124/measure/9",
     label: "Netto-Investitionen",
     __typename: "NumericalMeasure",
     isNumerical: true,
@@ -493,7 +493,7 @@ export const tableObservations = [
 
 export const tableMeasures: Measure[] = [
   {
-    iri: "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/0",
+    id: "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/0",
     label: "Anzahl Betriebe",
     __typename: "NumericalMeasure",
     cubeIri: "https://cube",
@@ -502,7 +502,7 @@ export const tableMeasures: Measure[] = [
     values: [],
   },
   {
-    iri: "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/1",
+    id: "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/1",
     label: "Anzahl Waldeigentümer",
     __typename: "NumericalMeasure",
     cubeIri: "https://cube",
@@ -511,7 +511,7 @@ export const tableMeasures: Measure[] = [
     values: [],
   },
   {
-    iri: "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/2",
+    id: "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/2",
     label: "Gesamte Waldflächen (ha)",
     __typename: "NumericalMeasure",
     cubeIri: "https://cube",
@@ -520,7 +520,7 @@ export const tableMeasures: Measure[] = [
     values: [],
   },
   {
-    iri: "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/3",
+    id: "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/3",
     label: "Produktive Waldflächen (ha)",
     __typename: "NumericalMeasure",
     cubeIri: "https://cube",
@@ -529,7 +529,7 @@ export const tableMeasures: Measure[] = [
     values: [],
   },
   {
-    iri: "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/4",
+    id: "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/4",
     label: "Holzernte Total (m3)",
     __typename: "NumericalMeasure",
     cubeIri: "https://cube",
@@ -538,7 +538,7 @@ export const tableMeasures: Measure[] = [
     values: [],
   },
   {
-    iri: "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/5",
+    id: "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/5",
     label: "Stammholz (m3)",
     __typename: "NumericalMeasure",
     cubeIri: "https://cube",
@@ -547,7 +547,7 @@ export const tableMeasures: Measure[] = [
     values: [],
   },
   {
-    iri: "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/6",
+    id: "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/6",
     label: "Industrieholz (m3)",
     __typename: "NumericalMeasure",
     cubeIri: "https://cube",
@@ -556,7 +556,7 @@ export const tableMeasures: Measure[] = [
     values: [],
   },
   {
-    iri: "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/7",
+    id: "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/7",
     label: "Energieholz (m3)",
     __typename: "NumericalMeasure",
     cubeIri: "https://cube",
@@ -565,7 +565,7 @@ export const tableMeasures: Measure[] = [
     values: [],
   },
   {
-    iri: "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/8",
+    id: "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/8",
     label: "Übrige Sortimente (m3)",
     __typename: "NumericalMeasure",
     cubeIri: "https://cube",
@@ -577,7 +577,7 @@ export const tableMeasures: Measure[] = [
 
 export const tableDimensions: Dimension[] = [
   {
-    iri: "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/0",
+    id: "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/0",
     label: "Jahr",
     values: [
       { value: "2015", label: "2015" },
@@ -593,7 +593,7 @@ export const tableDimensions: Dimension[] = [
     timeFormat: "%Y",
   },
   {
-    iri: "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/1",
+    id: "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/1",
     label: "Forstzone",
     cubeIri: "https://cube",
     isNumerical: false,
@@ -633,7 +633,7 @@ export const tableDimensions: Dimension[] = [
     __typename: "NominalDimension",
   },
   {
-    iri: "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2",
+    id: "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2",
     label: "Kanton",
     cubeIri: "https://cube",
     isNumerical: false,
@@ -778,7 +778,7 @@ export const tableDimensions: Dimension[] = [
     __typename: "NominalDimension",
   },
   {
-    iri: "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/3",
+    id: "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/3",
     label: "Grössenklasse",
     cubeIri: "https://cube",
     isNumerical: false,
@@ -818,7 +818,7 @@ export const tableDimensions: Dimension[] = [
     __typename: "NominalDimension",
   },
   {
-    iri: "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/4",
+    id: "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/4",
     label: "Steuerhoheit",
     cubeIri: "https://cube",
     isNumerical: false,

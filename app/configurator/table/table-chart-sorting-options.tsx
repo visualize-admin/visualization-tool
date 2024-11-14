@@ -111,7 +111,7 @@ const TableSortingOptionItem = ({
   const [, dispatch] = useConfiguratorState();
   const classes = useStyles();
   const component = [...dimensions, ...measures].find(
-    ({ iri }) => iri === componentIri
+    ({ id }) => id === componentIri
   );
 
   const onRemove = useEvent(() => {
@@ -208,7 +208,7 @@ const AddTableSortingOption = ({
     (e: SelectChangeEvent<unknown>) => {
       const { value } = e.target;
       const component = [...dimensions, ...measures].find(
-        ({ iri }) => iri === value
+        ({ id }) => id === value
       );
 
       if (component) {
@@ -216,7 +216,7 @@ const AddTableSortingOption = ({
           type: "CHART_CONFIG_REPLACED",
           value: {
             chartConfig: addSortingOption(chartConfig, {
-              componentIri: component.iri,
+              componentIri: component.id,
               componentType: component.__typename,
               sortingOrder: "asc",
             }),
@@ -253,16 +253,11 @@ const AddTableSortingOption = ({
         }
 
         const component = [...dimensions, ...measures].find(
-          ({ iri }) => iri === c.componentIri
+          ({ id }) => id === c.componentIri
         );
 
         return component
-          ? [
-              {
-                value: component.iri,
-                label: component.label,
-              },
-            ]
+          ? [{ value: component.id, label: component.label }]
           : [];
       })
       .sort((a, b) => ascending(a.label, b.label)),
@@ -300,7 +295,7 @@ const ChangeTableSortingOption = ({
     (e: SelectChangeEvent<unknown>) => {
       const { value } = e.target;
       const component = [...dimensions, ...measures].find(
-        ({ iri }) => iri === value
+        ({ id }) => id === value
       );
 
       if (component) {
@@ -310,7 +305,7 @@ const ChangeTableSortingOption = ({
             chartConfig: changeSortingOption(chartConfig, {
               index,
               option: {
-                componentIri: component.iri,
+                componentIri: component.id,
                 componentType: component.__typename,
                 sortingOrder: "asc",
               },
@@ -330,17 +325,10 @@ const ChangeTableSortingOption = ({
   const { componentIri } = chartConfig.sorting[index];
   const options = columns.flatMap((c) => {
     const component = [...dimensions, ...measures].find(
-      ({ iri }) => iri === c.componentIri
+      ({ id }) => id === c.componentIri
     );
 
-    return component
-      ? [
-          {
-            value: component.iri,
-            label: component.label,
-          },
-        ]
-      : [];
+    return component ? [{ value: component.id, label: component.label }] : [];
   });
   return (
     <Select

@@ -38,17 +38,17 @@ export type ComboLineDualStateVariables = BaseVariables &
 export const useComboLineDualStateVariables = (
   props: ChartProps<ComboLineDualConfig>
 ): ComboLineDualStateVariables => {
-  const { chartConfig, dimensionsByIri, measuresByIri } = props;
+  const { chartConfig, dimensionsById, measuresById } = props;
   const { fields } = chartConfig;
   const { x } = fields;
 
   const baseVariables = useBaseVariables(chartConfig);
   const temporalXVariables = useTemporalXVariables(x, {
-    dimensionsByIri,
+    dimensionsById,
   });
   const interactiveFiltersVariables = useInteractiveFiltersVariables(
     chartConfig.interactiveFiltersConfig,
-    { dimensionsByIri }
+    { dimensionsById }
   );
 
   const leftIri = chartConfig.fields.y.leftAxisComponentIri;
@@ -57,9 +57,9 @@ export const useComboLineDualStateVariables = (
     y: {
       left: {
         orientation: "left",
-        dimension: measuresByIri[leftIri],
+        dimension: measuresById[leftIri],
         iri: leftIri,
-        label: getLabelWithUnit(measuresByIri[leftIri]),
+        label: getLabelWithUnit(measuresById[leftIri]),
         color: fields.y.colorMapping[leftIri],
         getY: (d) => (d[leftIri] !== null ? Number(d[leftIri]) : null),
         getMinY: (data) => {
@@ -67,16 +67,16 @@ export const useComboLineDualStateVariables = (
             min(data, (d) =>
               d[leftIri] !== null ? Number(d[leftIri]) : null
             ) ?? 0;
-          return shouldUseDynamicMinScaleValue(measuresByIri[leftIri].scaleType)
+          return shouldUseDynamicMinScaleValue(measuresById[leftIri].scaleType)
             ? minY
             : Math.min(0, minY);
         },
       },
       right: {
         orientation: "right",
-        dimension: measuresByIri[rightIri],
+        dimension: measuresById[rightIri],
         iri: rightIri,
-        label: getLabelWithUnit(measuresByIri[rightIri]),
+        label: getLabelWithUnit(measuresById[rightIri]),
         color: fields.y.colorMapping[rightIri],
         getY: (d) => (d[rightIri] !== null ? Number(d[rightIri]) : null),
         getMinY: (data) => {
@@ -84,9 +84,7 @@ export const useComboLineDualStateVariables = (
             min(data, (d) =>
               d[rightIri] !== null ? Number(d[rightIri]) : null
             ) ?? 0;
-          return shouldUseDynamicMinScaleValue(
-            measuresByIri[rightIri].scaleType
-          )
+          return shouldUseDynamicMinScaleValue(measuresById[rightIri].scaleType)
             ? minY
             : Math.min(0, minY);
         },
@@ -136,7 +134,7 @@ export const useComboLineDualStateData = (
   }, [sortData, plottableData]);
   const data = useChartData(sortedPlottableData, {
     chartConfig,
-    timeRangeDimensionIri: xDimension.iri,
+    timeRangeDimensionId: xDimension.id,
     getXAsDate: getX,
     getTimeRangeDate,
   });

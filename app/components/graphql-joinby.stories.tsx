@@ -204,7 +204,7 @@ export const JoinBy = () => {
           ...(componentsData?.dataCubesComponents.dimensions ?? []),
           ...(componentsData?.dataCubesComponents.measures ?? []),
         ].filter(truthy),
-        (x) => x.iri
+        (x) => x.id
       ),
     [componentsData]
   );

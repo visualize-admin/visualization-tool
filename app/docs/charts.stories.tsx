@@ -90,9 +90,9 @@ const ColumnsStory = {
           <ColumnChart
             observations={columnObservations}
             measures={columnMeasures}
-            measuresByIri={keyBy(columnMeasures, (d: Measure) => d.iri)}
+            measuresById={keyBy(columnMeasures, (d: Measure) => d.id)}
             dimensions={columnDimensions}
-            dimensionsByIri={keyBy(columnDimensions, (d: Dimension) => d.iri)}
+            dimensionsById={keyBy(columnDimensions, (d: Dimension) => d.id)}
             chartConfig={chartConfig}
           >
             <ChartContainer>
@@ -154,9 +154,9 @@ const ScatterplotStory = {
           <ScatterplotChart
             observations={scatterplotObservations}
             dimensions={scatterplotDimensions}
-            dimensionsByIri={keyBy(scatterplotDimensions, (d) => d.iri)}
+            dimensionsById={keyBy(scatterplotDimensions, (d) => d.id)}
             measures={scatterplotMeasures}
-            measuresByIri={keyBy(scatterplotMeasures, (d) => d.iri)}
+            measuresById={keyBy(scatterplotMeasures, (d) => d.id)}
             chartConfig={scatterplotChartConfig}
           >
             <ChartContainer>

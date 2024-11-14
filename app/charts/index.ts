@@ -210,7 +210,7 @@ export const DEFAULT_SORTING: SortingOption = {
 };
 
 /**
- * Finds bottomost layer for the first hierarchy
+ * Finds bottommost layer for the first hierarchy
  */
 const findBottommostLayers = (dimension: Dimension) => {
   const leaves = [] as HierarchyValue[];
@@ -240,7 +240,7 @@ const makeInitialFiltersForArea = (dimension: Dimension) => {
   if (dimension?.hierarchy) {
     const leaves = findBottommostLayers(dimension);
     if (leaves.length > 0) {
-      filters[dimension.iri] = {
+      filters[dimension.id] = {
         type: "multi",
         values: Object.fromEntries(leaves.map((x) => [x.value, true])),
       };
@@ -267,14 +267,14 @@ export const initializeMapLayerField = ({
     chartConfig.fields.areaLayer = getInitialAreaLayer({
       component: dimensions
         .filter(isGeoShapesDimension)
-        .find((d) => d.iri === componentIri)!,
+        .find((d) => d.id === componentIri)!,
       measure: measures[0],
     });
   } else if (field === "symbolLayer") {
     chartConfig.fields.symbolLayer = getInitialSymbolLayer({
       component: dimensions
         .filter(isGeoDimension)
-        .find((d) => d.iri === componentIri)!,
+        .find((d) => d.id === componentIri)!,
       measure: measures.find(isNumericalMeasure),
     });
   }
@@ -290,13 +290,13 @@ const getInitialAreaLayer = ({
   const palette = getDefaultCategoricalPaletteName(measure);
 
   return {
-    componentIri: component.iri,
+    componentIri: component.id,
     color: isNumericalMeasure(measure)
       ? getDefaultNumericalColorField({
-          iri: measure.iri,
+          id: measure.id,
         })
       : getDefaultCategoricalColorField({
-          iri: measure.iri,
+          id: measure.id,
           palette,
           dimensionValues: measure.values,
         }),
@@ -311,8 +311,8 @@ const getInitialSymbolLayer = ({
   measure: NumericalMeasure | undefined;
 }): MapSymbolLayer => {
   return {
-    componentIri: component.iri,
-    measureIri: measure?.iri ?? FIELD_VALUE_NONE,
+    componentIri: component.id,
+    measureIri: measure?.id ?? FIELD_VALUE_NONE,
     color: DEFAULT_FIXED_COLOR_FIELD,
   };
 };
@@ -385,7 +385,7 @@ export const getInitialConfig = (
 
   switch (chartType) {
     case "area":
-      const areaXComponentIri = temporalDimensions[0].iri;
+      const areaXComponentIri = temporalDimensions[0].id;
 
       return {
         ...getGenericConfigProps(),
@@ -395,7 +395,7 @@ export const getInitialConfig = (
         }),
         fields: {
           x: { componentIri: areaXComponentIri },
-          y: { componentIri: numericalMeasures[0].iri, imputationType: "none" },
+          y: { componentIri: numericalMeasures[0].id, imputationType: "none" },
         },
       };
     case "column":
@@ -406,7 +406,7 @@ export const getInitialConfig = (
           "TemporalEntityDimension",
           "TemporalOrdinalDimension",
         ]
-      ).iri;
+      ).id;
 
       return {
         ...getGenericConfigProps(),
@@ -419,11 +419,11 @@ export const getInitialConfig = (
             componentIri: columnXComponentIri,
             sorting: DEFAULT_SORTING,
           },
-          y: { componentIri: numericalMeasures[0].iri },
+          y: { componentIri: numericalMeasures[0].id },
         },
       };
     case "line":
-      const lineXComponentIri = temporalDimensions[0].iri;
+      const lineXComponentIri = temporalDimensions[0].id;
 
       return {
         ...getGenericConfigProps(),
@@ -433,7 +433,7 @@ export const getInitialConfig = (
         }),
         fields: {
           x: { componentIri: lineXComponentIri },
-          y: { componentIri: numericalMeasures[0].iri },
+          y: { componentIri: numericalMeasures[0].id },
         },
       };
     case "map":
@@ -482,9 +482,9 @@ export const getInitialConfig = (
         chartType,
         interactiveFiltersConfig: getInitialInteractiveFiltersConfig(),
         fields: {
-          y: { componentIri: numericalMeasures[0].iri },
+          y: { componentIri: numericalMeasures[0].id },
           segment: {
-            componentIri: pieSegmentComponent.iri,
+            componentIri: pieSegmentComponent.id,
             palette: piePalette,
             sorting: { sortingType: "byMeasure", sortingOrder: "asc" },
             colorMapping: mapValueIrisToColor({
@@ -507,17 +507,17 @@ export const getInitialConfig = (
         chartType: "scatterplot",
         interactiveFiltersConfig: getInitialInteractiveFiltersConfig(),
         fields: {
-          x: { componentIri: numericalMeasures[0].iri },
+          x: { componentIri: numericalMeasures[0].id },
           y: {
             componentIri:
               numericalMeasures.length > 1
-                ? numericalMeasures[1].iri
-                : numericalMeasures[0].iri,
+                ? numericalMeasures[1].id
+                : numericalMeasures[0].id,
           },
           ...(scatterplotSegmentComponent
             ? {
                 segment: {
-                  componentIri: scatterplotSegmentComponent.iri,
+                  componentIri: scatterplotSegmentComponent.id,
                   palette: scatterplotPalette,
                   colorMapping: mapValueIrisToColor({
                     palette: scatterplotPalette,
@@ -544,9 +544,9 @@ export const getInitialConfig = (
         sorting: [],
         fields: Object.fromEntries<TableColumn>(
           allDimensionsSorted.map((d, i) => [
-            d.iri,
+            d.id,
             {
-              componentIri: d.iri,
+              componentIri: d.id,
               componentType: d.__typename,
               index: i,
               isGroup: false,
@@ -568,27 +568,27 @@ export const getInitialConfig = (
         (v) => v.length,
         (d) => d.unit
       ).sort((a, b) => descending(a[1], b[1]))[0][0];
-      const yComponentIris = numericalMeasures
+      const yComponentIds = numericalMeasures
         .filter((d) => d.unit === mostCommonUnit)
-        .map((d) => d.iri);
+        .map((d) => d.id);
 
       return {
         ...getGenericConfigProps(),
         chartType: "comboLineSingle",
         interactiveFiltersConfig: getInitialInteractiveFiltersConfig({
-          timeRangeComponentIri: temporalDimensions[0].iri,
+          timeRangeComponentIri: temporalDimensions[0].id,
         }),
         fields: {
-          x: { componentIri: temporalDimensions[0].iri },
+          x: { componentIri: temporalDimensions[0].id },
           // Use all measures with the most common unit.
           y: {
-            componentIris: yComponentIris,
+            componentIris: yComponentIds,
             palette: DEFAULT_CATEGORICAL_PALETTE_NAME,
             colorMapping: mapValueIrisToColor({
               palette: DEFAULT_CATEGORICAL_PALETTE_NAME,
-              dimensionValues: yComponentIris.map((iri) => ({
-                value: iri,
-                label: iri,
+              dimensionValues: yComponentIds.map((id) => ({
+                value: id,
+                label: id,
               })),
             }),
           },
@@ -600,34 +600,33 @@ export const getInitialConfig = (
       const [firstUnit, secondUnit] = Array.from(
         new Set(numericalMeasures.filter((d) => d.unit).map((d) => d.unit))
       );
-      const leftAxisComponentIri = numericalMeasures.find(
+      const leftAxisComponentId = numericalMeasures.find(
         (d) => d.unit === firstUnit
-      )!.iri;
-      const rightAxisComponentIri = numericalMeasures.find(
+      )!.id;
+      const rightAxisComponentId = numericalMeasures.find(
         (d) => d.unit === secondUnit
-      )!.iri;
+      )!.id;
 
       return {
         ...getGenericConfigProps(),
         chartType: "comboLineDual",
         interactiveFiltersConfig: getInitialInteractiveFiltersConfig({
-          timeRangeComponentIri: temporalDimensions[0].iri,
+          timeRangeComponentIri: temporalDimensions[0].id,
         }),
         fields: {
-          x: { componentIri: temporalDimensions[0].iri },
+          x: { componentIri: temporalDimensions[0].id },
           y: {
-            leftAxisComponentIri,
-            rightAxisComponentIri,
+            leftAxisComponentIri: leftAxisComponentId,
+            rightAxisComponentIri: rightAxisComponentId,
             palette: DEFAULT_CATEGORICAL_PALETTE_NAME,
             colorMapping: mapValueIrisToColor({
               palette: DEFAULT_CATEGORICAL_PALETTE_NAME,
-              dimensionValues: [
-                leftAxisComponentIri,
-                rightAxisComponentIri,
-              ].map((iri) => ({
-                value: iri,
-                label: iri,
-              })),
+              dimensionValues: [leftAxisComponentId, rightAxisComponentId].map(
+                (id) => ({
+                  value: id,
+                  label: id,
+                })
+              ),
             }),
           },
         },
@@ -638,32 +637,32 @@ export const getInitialConfig = (
       const [firstUnit, secondUnit] = Array.from(
         new Set(numericalMeasures.filter((d) => d.unit).map((d) => d.unit))
       );
-      const lineComponentIri = numericalMeasures.find(
+      const lineComponentId = numericalMeasures.find(
         (d) => d.unit === firstUnit
-      )!.iri;
-      const columnComponentIri = numericalMeasures.find(
+      )!.id;
+      const columnComponentId = numericalMeasures.find(
         (d) => d.unit === secondUnit
-      )!.iri;
+      )!.id;
 
       return {
         ...getGenericConfigProps(),
         chartType: "comboLineColumn",
         interactiveFiltersConfig: getInitialInteractiveFiltersConfig({
-          timeRangeComponentIri: temporalDimensions[0].iri,
+          timeRangeComponentIri: temporalDimensions[0].id,
         }),
         fields: {
-          x: { componentIri: temporalDimensions[0].iri },
+          x: { componentIri: temporalDimensions[0].id },
           y: {
-            lineComponentIri,
+            lineComponentIri: lineComponentId,
             lineAxisOrientation: "right",
-            columnComponentIri,
+            columnComponentIri: columnComponentId,
             palette: DEFAULT_CATEGORICAL_PALETTE_NAME,
             colorMapping: mapValueIrisToColor({
               palette: DEFAULT_CATEGORICAL_PALETTE_NAME,
-              dimensionValues: [lineComponentIri, columnComponentIri].map(
-                (iri) => ({
-                  value: iri,
-                  label: iri,
+              dimensionValues: [lineComponentId, columnComponentId].map(
+                (id) => ({
+                  value: id,
+                  label: id,
                 })
               ),
             }),
@@ -901,7 +900,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
       x: {
         componentIri: ({ oldValue, newChartConfig, dimensions }) => {
           // When switching from a scatterplot, x is a measure.
-          if (dimensions.find((d) => d.iri === oldValue)) {
+          if (dimensions.find((d) => d.id === oldValue)) {
             return produce(newChartConfig, (draft) => {
               draft.fields.x.componentIri = oldValue;
             });
@@ -926,7 +925,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
       }) => {
         let newSegment: ColumnSegmentField | undefined;
         const yMeasure = measures.find(
-          (d) => d.iri === newChartConfig.fields.y.componentIri
+          (d) => d.id === newChartConfig.fields.y.componentIri
         );
 
         // When switching from a table chart, a whole fields object is passed as oldValue.
@@ -953,7 +952,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           const oldSegment = oldValue as Exclude<typeof oldValue, TableFields>;
           newSegment = {
             ...oldSegment,
-            // We could encouner byMeasure sorting type (Pie chart); we should
+            // We could encounter byMeasure sorting type (Pie chart); we should
             // switch to byTotalSize sorting then.
             sorting: adjustSegmentSorting({
               segment: oldSegment,
@@ -992,7 +991,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
       x: {
         componentIri: ({ oldValue, newChartConfig, dimensions }) => {
           const ok = dimensions.find(
-            (d) => isTemporalDimension(d) && d.iri === oldValue
+            (d) => isTemporalDimension(d) && d.id === oldValue
           );
 
           if (ok) {
@@ -1033,7 +1032,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         } else {
           const oldSegment = oldValue as Exclude<typeof oldValue, TableFields>;
           const segmentDimension = dimensions.find(
-            (d) => d.iri === oldValue.componentIri
+            (d) => d.id === oldValue.componentIri
           );
 
           if (!isTemporalDimension(segmentDimension)) {
@@ -1070,7 +1069,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
       x: {
         componentIri: ({ oldValue, newChartConfig, dimensions }) => {
           const ok = dimensions.find(
-            (d) => isTemporalDimension(d) && d.iri === oldValue
+            (d) => isTemporalDimension(d) && d.id === oldValue
           );
 
           if (ok) {
@@ -1097,7 +1096,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         measures,
       }) => {
         const yMeasure = measures.find(
-          (d) => d.iri === newChartConfig.fields.y.componentIri
+          (d) => d.id === newChartConfig.fields.y.componentIri
         );
 
         if (disableStacked(yMeasure)) {
@@ -1124,7 +1123,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         } else {
           const oldSegment = oldValue as Exclude<typeof oldValue, TableFields>;
           const segmentDimension = dimensions.find(
-            (d) => d.iri === oldValue.componentIri
+            (d) => d.id === oldValue.componentIri
           );
 
           if (!isTemporalDimension(segmentDimension)) {
@@ -1323,7 +1322,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
       areaLayer: {
         componentIri: ({ oldValue, newChartConfig, dimensions }) => {
           const areaDimension = dimensions.find(
-            (d) => d.__typename === "GeoShapesDimension" && d.iri === oldValue
+            (d) => d.__typename === "GeoShapesDimension" && d.id === oldValue
           );
 
           if (areaDimension) {
@@ -1368,7 +1367,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
       x: {
         componentIri: ({ oldValue, newChartConfig, dimensions }) => {
           const ok = dimensions.find(
-            (d) => isTemporalDimension(d) && d.iri === oldValue
+            (d) => isTemporalDimension(d) && d.id === oldValue
           );
 
           if (ok) {
@@ -1391,11 +1390,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
             (d) => isNumericalMeasure(d) && d.unit
           );
           const { unit } =
-            numericalMeasures.find((d) => d.iri === oldValue) ??
+            numericalMeasures.find((d) => d.id === oldValue) ??
             numericalMeasures[0];
           const componentIris = numericalMeasures
             .filter((d) => d.unit === unit)
-            .map((d) => d.iri);
+            .map((d) => d.id);
           const palette = isSegmentInConfig(oldChartConfig)
             ? oldChartConfig.fields.segment?.palette ??
               DEFAULT_CATEGORICAL_PALETTE_NAME
@@ -1431,7 +1430,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
       x: {
         componentIri: ({ oldValue, newChartConfig, dimensions }) => {
           const ok = dimensions.find(
-            (d) => isTemporalDimension(d) && d.iri === oldValue
+            (d) => isTemporalDimension(d) && d.id === oldValue
           );
 
           if (ok) {
@@ -1445,26 +1444,24 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
       },
       y: ({ newChartConfig, oldChartConfig, measures }) => {
         const numericalMeasures = measures.filter(isNumericalMeasure);
-        const numericalMeasureIris = numericalMeasures.map((d) => d.iri);
+        const numericalMeasureIds = numericalMeasures.map((d) => d.id);
         let leftMeasure = numericalMeasures.find(
-          (d) => d.iri === numericalMeasureIris[0]
+          (d) => d.id === numericalMeasureIds[0]
         ) as NumericalMeasure;
-        let rightMeasureIri: string | undefined;
-        const getMeasure = (iri: string) => {
-          return numericalMeasures.find(
-            (d) => d.iri === iri
-          ) as NumericalMeasure;
+        let rightMeasureId: string | undefined;
+        const getMeasure = (id: string) => {
+          return numericalMeasures.find((d) => d.id === id) as NumericalMeasure;
         };
 
         if (isComboLineColumnConfig(oldChartConfig)) {
           const {
-            lineComponentIri: lineIri,
+            lineComponentIri: lineId,
             lineAxisOrientation: lineOrientation,
-            columnComponentIri: columnIri,
+            columnComponentIri: columnId,
           } = oldChartConfig.fields.y;
-          const leftAxisIri = lineOrientation === "left" ? lineIri : columnIri;
-          leftMeasure = getMeasure(leftAxisIri);
-          rightMeasureIri = lineOrientation === "left" ? columnIri : lineIri;
+          const leftAxisId = lineOrientation === "left" ? lineId : columnId;
+          leftMeasure = getMeasure(leftAxisId);
+          rightMeasureId = lineOrientation === "left" ? columnId : lineId;
         } else if (isComboLineSingleConfig(oldChartConfig)) {
           leftMeasure = getMeasure(oldChartConfig.fields.y.componentIris[0]);
         } else if (
@@ -1485,13 +1482,13 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           }
         }
 
-        const rightAxisComponentIri = (
+        const rightAxisComponentId = (
           numericalMeasures.find((d) =>
-            rightMeasureIri
-              ? d.iri === rightMeasureIri
+            rightMeasureId
+              ? d.id === rightMeasureId
               : d.unit !== leftMeasure.unit
           ) as NumericalMeasure
-        ).iri;
+        ).id;
 
         const palette = isSegmentInConfig(oldChartConfig)
           ? oldChartConfig.fields.segment?.palette ??
@@ -1502,15 +1499,15 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
 
         return produce(newChartConfig, (draft) => {
           draft.fields.y = {
-            leftAxisComponentIri: leftMeasure.iri,
-            rightAxisComponentIri,
+            leftAxisComponentIri: leftMeasure.id,
+            rightAxisComponentIri: rightAxisComponentId,
             palette,
             colorMapping: mapValueIrisToColor({
               palette,
-              dimensionValues: [leftMeasure.iri, rightAxisComponentIri].map(
-                (iri) => ({
-                  value: iri,
-                  label: iri,
+              dimensionValues: [leftMeasure.id, rightAxisComponentId].map(
+                (id) => ({
+                  value: id,
+                  label: id,
                 })
               ),
             }),
@@ -1530,7 +1527,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
       x: {
         componentIri: ({ oldValue, newChartConfig, dimensions }) => {
           const ok = dimensions.find(
-            (d) => isTemporalDimension(d) && d.iri === oldValue
+            (d) => isTemporalDimension(d) && d.id === oldValue
           );
 
           if (ok) {
@@ -1544,21 +1541,21 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
       },
       y: ({ newChartConfig, oldChartConfig, measures }) => {
         const numericalMeasures = measures.filter(isNumericalMeasure);
-        const numericalMeasureIris = numericalMeasures.map((d) => d.iri);
+        const numericalMeasureIris = numericalMeasures.map((d) => d.id);
         let leftMeasure = numericalMeasures.find(
-          (d) => d.iri === numericalMeasureIris[0]
+          (d) => d.id === numericalMeasureIris[0]
         ) as NumericalMeasure;
-        let rightAxisMeasureIri: string | undefined;
+        let rightAxisMeasureId: string | undefined;
         const getMeasure = (iri: string) => {
           return numericalMeasures.find(
-            (d) => d.iri === iri
+            (d) => d.id === iri
           ) as NumericalMeasure;
         };
 
         if (isComboLineDualConfig(oldChartConfig)) {
-          const leftAxisIri = oldChartConfig.fields.y.leftAxisComponentIri;
-          leftMeasure = getMeasure(leftAxisIri);
-          rightAxisMeasureIri = oldChartConfig.fields.y.rightAxisComponentIri;
+          const leftAxisId = oldChartConfig.fields.y.leftAxisComponentIri;
+          leftMeasure = getMeasure(leftAxisId);
+          rightAxisMeasureId = oldChartConfig.fields.y.rightAxisComponentIri;
         } else if (isComboLineSingleConfig(oldChartConfig)) {
           leftMeasure = getMeasure(oldChartConfig.fields.y.componentIris[0]);
         } else if (
@@ -1571,21 +1568,21 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           leftMeasure = getMeasure(oldChartConfig.fields.y.componentIri);
         } else if (isMapConfig(oldChartConfig)) {
           const { areaLayer, symbolLayer } = oldChartConfig.fields;
-          const leftAxisIri =
+          const leftAxisId =
             areaLayer?.color.componentIri ?? symbolLayer?.measureIri;
 
-          if (leftAxisIri) {
-            leftMeasure = getMeasure(leftAxisIri);
+          if (leftAxisId) {
+            leftMeasure = getMeasure(leftAxisId);
           }
         }
 
-        const lineComponentIri = (
+        const lineComponentId = (
           numericalMeasures.find((d) =>
-            rightAxisMeasureIri
-              ? d.iri === rightAxisMeasureIri
+            rightAxisMeasureId
+              ? d.id === rightAxisMeasureId
               : d.unit !== leftMeasure.unit
           ) as NumericalMeasure
-        ).iri;
+        ).id;
 
         const palette = isSegmentInConfig(oldChartConfig)
           ? oldChartConfig.fields.segment?.palette ??
@@ -1596,18 +1593,16 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
 
         return produce(newChartConfig, (draft) => {
           draft.fields.y = {
-            columnComponentIri: leftMeasure.iri,
-            lineComponentIri,
+            columnComponentIri: leftMeasure.id,
+            lineComponentIri: lineComponentId,
             lineAxisOrientation: "right",
             palette,
             colorMapping: mapValueIrisToColor({
               palette,
-              dimensionValues: [leftMeasure.iri, lineComponentIri].map(
-                (iri) => ({
-                  value: iri,
-                  label: iri,
-                })
-              ),
+              dimensionValues: [leftMeasure.id, lineComponentId].map((iri) => ({
+                value: iri,
+                label: iri,
+              })),
             }),
           };
         });
@@ -2032,7 +2027,7 @@ export const getHiddenFieldIris = (fields: GenericFields) => {
   );
 };
 
-export const getFieldComponentIri = (
+export const getFieldComponentId = (
   fields: ChartConfig["fields"],
   field: string
 ): string | undefined => {
@@ -2061,7 +2056,7 @@ const convertTableFieldsToSegmentField = ({
 
   const { componentIri } = component;
   const actualComponent = [...dimensions, ...measures].find(
-    (d) => d.iri === componentIri
+    (d) => d.id === componentIri
   ) as Component;
   const palette = getDefaultCategoricalPaletteName(actualComponent);
 

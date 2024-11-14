@@ -109,7 +109,7 @@ export const TabDropZone = (props: TabDropZoneProps) => {
                             <DraggableTabField
                               key={componentIri}
                               component={
-                                components.find((d) => d.iri === componentIri)!
+                                components.find((d) => d.id === componentIri)!
                               }
                               value={`${componentIri}`}
                               upperLabel={

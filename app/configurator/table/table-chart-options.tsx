@@ -179,9 +179,9 @@ export const TableColumnOptions = ({
     return null;
   }
 
-  // Active field is always a component IRI, like in filters
+  // Active field is always a component id, like in filters
   const allComponents = [...dimensions, ...measures];
-  const component = allComponents.find((d) => d.iri === activeField);
+  const component = allComponents.find((d) => d.id === activeField);
 
   if (!component) {
     return (
@@ -353,7 +353,7 @@ export const TableColumnOptions = ({
               />
             ) : (
               <TimeFilter
-                key={component.iri}
+                key={component.id}
                 dimension={component}
                 disableInteractiveFilters
               />
@@ -373,7 +373,7 @@ export const TableColumnOptions = ({
               <DimensionValuesSingleFilter dimension={component} />
             ) : (
               <DimensionValuesMultiFilter
-                field={component.iri}
+                field={component.id}
                 dimension={component}
                 colorComponent={component}
                 colorConfigPath="columnStyle"

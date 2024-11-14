@@ -19,7 +19,7 @@ import {
   dimensionValuesToGeoCoordinates,
 } from "@/domain/data";
 import { useDataCubesComponentsQuery } from "@/graphql/hooks";
-import { getResolvedJoinByIri, isJoinById } from "@/graphql/join";
+import { getResolvedJoinById, isJoinById } from "@/graphql/join";
 import { useDataCubeDimensionGeoShapesQuery } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 
@@ -47,38 +47,41 @@ export const ChartMapVisualization = (props: VisualizationProps<MapConfig>) => {
   const getLayerIris = useCallback(
     (layer: keyof typeof fields) => {
       const layerComponent = fields[layer];
+
       if (layerComponent) {
         const cubeIri =
           componentsQuery.data?.dataCubesComponents.dimensions.find(
-            // FIXME: We should probably introduce cubeIri to fields,
-            // as otherwise we can't distinguish between cubes
-            (d) => d.iri === layerComponent.componentIri
-          )?.cubeIri ?? chartConfig.cubes[0].iri;
+            (d) => d.id === layerComponent.componentIri
+          )?.cubeIri;
         const cube = chartConfig.cubes.find((c) => c.iri === cubeIri) as Cube;
+
         if (isJoinById(layerComponent.componentIri)) {
           return {
-            dimensionIri:
-              getResolvedJoinByIri(cube, layerComponent.componentIri) ??
+            dimensionId:
+              getResolvedJoinById(cube, layerComponent.componentIri) ??
               layerComponent.componentIri,
             cubeIri: cube.iri,
           };
         } else {
           return {
-            dimensionIri: layerComponent.componentIri,
+            dimensionId: layerComponent.componentIri,
             cubeIri,
           };
         }
       }
 
-      return { dimensionIri: "", cubeIri: chartConfig.cubes[0].iri };
+      return {
+        dimensionId: "",
+        cubeIri: chartConfig.cubes[0].iri,
+      };
     },
     [chartConfig.cubes, componentsQuery.data, fields]
   );
-  const { dimensionIri: areaDimensionIri, cubeIri: areaCubeIri } = useMemo(
+  const { dimensionId: areaDimensionIri, cubeIri: areaCubeIri } = useMemo(
     () => getLayerIris("areaLayer"),
     [getLayerIris]
   );
-  const { dimensionIri: symbolDimensionIri, cubeIri: symbolCubeIri } = useMemo(
+  const { dimensionId: symbolDimensionIri, cubeIri: symbolCubeIri } = useMemo(
     () => getLayerIris("symbolLayer"),
     [getLayerIris]
   );
@@ -92,7 +95,7 @@ export const ChartMapVisualization = (props: VisualizationProps<MapConfig>) => {
     variables: {
       cubeFilters: [
         {
-          iri: symbolCubeIri,
+          iri: symbolCubeIri!,
           componentIris: [symbolDimensionIri],
           loadValues: true,
         },
@@ -101,7 +104,7 @@ export const ChartMapVisualization = (props: VisualizationProps<MapConfig>) => {
       sourceUrl: dataSource.url,
       locale,
     },
-    pause: !symbolDimensionIri,
+    pause: !symbolDimensionIri || !symbolCubeIri,
   });
 
   const geoCoordinatesDimensionValues =
@@ -124,11 +127,11 @@ export const ChartMapVisualization = (props: VisualizationProps<MapConfig>) => {
       sourceUrl: dataSource.url,
       locale,
       cubeFilter: {
-        iri: areaCubeIri,
+        iri: areaCubeIri!,
         dimensionIri: geoShapesIri,
       },
     },
-    pause: !geoShapesIri,
+    pause: !geoShapesIri || !areaCubeIri,
   });
 
   const shapes = fetchedGeoShapes?.dataCubeDimensionGeoShapes;

@@ -84,7 +84,7 @@ export const MapTooltip = () => {
         const valueFormatter = (d: number | null) =>
           formatNumberWithUnit(
             d,
-            formatters[colors.component.iri] || formatNumber,
+            formatters[colors.component.id] ?? formatNumber,
             colors.component.unit
           );
         const formattedValue =
@@ -94,7 +94,7 @@ export const MapTooltip = () => {
           show,
           value: formattedValue,
           error,
-          componentIri: colors.component.iri,
+          componentIri: colors.component.id,
           label: colors.component.label,
           color,
           textColor,
@@ -124,8 +124,8 @@ export const MapTooltip = () => {
         const valueFormatter = (d: number | null) =>
           formatNumberWithUnit(
             d,
-            symbolLayer.measureDimension?.iri
-              ? formatters[symbolLayer.measureDimension.iri] || formatNumber
+            symbolLayer.measureDimension?.id
+              ? formatters[symbolLayer.measureDimension.id] ?? formatNumber
               : formatNumber,
             symbolLayer.measureDimension?.unit
           );
@@ -152,7 +152,7 @@ export const MapTooltip = () => {
             sameAsValue: false,
           };
         } else {
-          const rawValue = obs[colors.component.iri] as number;
+          const rawValue = obs[colors.component.id] as number;
           const rawError = colors.getFormattedError?.(obs);
           preparedColors = {
             type: "continuous",
@@ -166,7 +166,7 @@ export const MapTooltip = () => {
             color,
             textColor,
             sameAsValue:
-              colors.component.iri === symbolLayer.measureDimension?.iri,
+              colors.component.id === symbolLayer.measureDimension?.id,
           };
         }
 
@@ -196,17 +196,17 @@ export const MapTooltip = () => {
     symbolTooltipState?.show &&
     (showAreaColorTooltip
       ? areaTooltipState!.componentIri !==
-        symbolTooltipState.measureDimension?.iri
+        symbolTooltipState.measureDimension?.id
       : true);
   const showSymbolColorTooltip =
     symbolTooltipState &&
     symbolTooltipState.colors.type !== "fixed" &&
     (showSymbolMeasureTooltip
-      ? symbolTooltipState.measureDimension?.iri !==
-        symbolTooltipState.colors.component?.iri
+      ? symbolTooltipState.measureDimension?.id !==
+        symbolTooltipState.colors.component?.id
       : showAreaColorTooltip &&
         areaTooltipState!.componentIri !==
-          symbolTooltipState.colors.component?.iri);
+          symbolTooltipState.colors.component?.id);
 
   return (
     <>

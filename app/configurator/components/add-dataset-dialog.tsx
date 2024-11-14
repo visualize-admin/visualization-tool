@@ -292,10 +292,6 @@ const inferJoinBy = (
 
 export type JoinBy = ReturnType<typeof inferJoinBy>;
 
-/** Makes a unique identifier for a column */
-const columnId = (col: { iri: string; cubeIri: string }) =>
-  `${col.cubeIri}/${col.iri}`;
-
 const PreviewDataTable = ({
   existingCubes,
   otherCube,
@@ -432,7 +428,7 @@ const PreviewDataTable = ({
       otherCubeComponents.measures &&
       selectedColumnsRaw === undefined
     ) {
-      setSelectedColumns(allColumns.map((x) => columnId(x)));
+      setSelectedColumns(allColumns.map((x) => x.id));
     }
   }, [
     allColumns,
@@ -445,7 +441,7 @@ const PreviewDataTable = ({
     [selectedColumnsRaw]
   );
 
-  const selectedColumnsByIri = useMemo(
+  const selectedColumnsById = useMemo(
     () => Object.fromEntries(selectedColumns.map((x) => [x, true])),
     [selectedColumns]
   );
@@ -453,7 +449,7 @@ const PreviewDataTable = ({
   const previewObservations = useMemo(() => {
     const data = observations.data?.dataCubesObservations.data ?? [];
     const bestObservation = maxBy(data, (obs) => {
-      return allColumns.reduce((acc, dim) => acc + (obs[dim.iri] ? 1 : 0), 0);
+      return allColumns.reduce((acc, dim) => acc + (obs[dim.id] ? 1 : 0), 0);
     });
 
     const amount = 8;
@@ -520,9 +516,9 @@ const PreviewDataTable = ({
                     <TableHead>
                       <TableRow>
                         {allColumns.map((column) =>
-                          !!selectedColumnsByIri[columnId(column)] ? (
+                          !!selectedColumnsById[column.id] ? (
                             <TableCell
-                              key={column.iri}
+                              key={column.id}
                               sx={{ minWidth: 200, maxWidth: 300 }}
                             >
                               {column.cubeIri === otherCube.iri && (
@@ -534,7 +530,7 @@ const PreviewDataTable = ({
                                     arrow
                                     title={
                                       <>
-                                        {column.originalIris
+                                        {column.originalIds
                                           .map((o) => o.description)
                                           .join(", ")}
                                       </>
@@ -558,9 +554,9 @@ const PreviewDataTable = ({
                       {previewObservations.map((observation, index) => (
                         <TableRow key={index}>
                           {allColumns.map((column) =>
-                            !!selectedColumnsByIri[columnId(column)] ? (
-                              <TableCell key={column.iri}>
-                                {observation[column.iri]}
+                            !!selectedColumnsById[column.id] ? (
+                              <TableCell key={column.id}>
+                                {observation[column.id]}
                               </TableCell>
                             ) : null
                           )}
@@ -658,11 +654,12 @@ export const DatasetDialog = ({
       ) ?? [];
     const sharedDimensions =
       cubeComponentTermsets.data?.dataCubeComponentTermsets ?? [];
+
     return [
       ...temporalDimensions.map((x) => {
         return {
           type: "temporal" as const,
-          iri: x.iri,
+          iri: x.id,
           label: x.label,
           timeUnit: x.timeUnit,
         };

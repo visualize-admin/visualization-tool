@@ -776,13 +776,13 @@ describe("retainChartConfigWhenSwitchingChartType", () => {
     (d) => ({
       ...d,
       // Adding cube prefix.
-      iri: `foo___${d.iri}`,
+      iri: `foo___${d.id}`,
     })
   );
   const measures = (dataSetMetadata.measures as any as Measure[]).map((m) => ({
     ...m,
     // Adding cube prefix.
-    iri: `foo___${m.iri}`,
+    iri: `foo___${m.id}`,
   }));
 
   const deriveNewChartConfig = (

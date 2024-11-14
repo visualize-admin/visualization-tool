@@ -102,7 +102,7 @@ export const Table = () => {
   const searchIndex = useMemo(() => {
     // Don't index measure columns
     const searchFields = Object.values(tableColumnsMeta).flatMap((m) =>
-      m.columnComponentType === "NumericalMeasure" ? [] : [m.slugifiedIri]
+      m.columnComponentType === "NumericalMeasure" ? [] : [m.slugifiedId]
     );
 
     const index = FlexSearch.create({

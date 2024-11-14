@@ -40,29 +40,29 @@ export const useColumnsStackedStateVariables = (
     chartConfig,
     observations,
     dimensions,
-    dimensionsByIri,
-    measuresByIri,
+    dimensionsById,
+    measuresById,
   } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
   const { x, y, segment, animation } = fields;
-  const xDimension = dimensionsByIri[x.componentIri];
+  const xDimension = dimensionsById[x.componentIri];
   const filters = useChartConfigFilters(chartConfig);
 
   const baseVariables = useBaseVariables(chartConfig);
   const bandXVariables = useBandXVariables(x, {
-    dimensionsByIri,
+    dimensionsById,
     observations,
   });
   const numericalYVariables = useNumericalYVariables("column", y, {
-    measuresByIri,
+    measuresById,
   });
   const segmentVariables = useSegmentVariables(segment, {
-    dimensionsByIri,
+    dimensionsById,
     observations,
   });
   const interactiveFiltersVariables = useInteractiveFiltersVariables(
     interactiveFiltersConfig,
-    { dimensionsByIri }
+    { dimensionsById }
   );
 
   const { getX, getXAsDate } = bandXVariables;
@@ -154,7 +154,7 @@ export const useColumnsStackedStateData = (
   }, [plottableData, getX, x.componentIri, getY, getSegment, sortData]);
   const data = useChartData(sortedPlottableData, {
     chartConfig,
-    timeRangeDimensionIri: xDimension.iri,
+    timeRangeDimensionId: xDimension.id,
     getXAsDate,
     getSegmentAbbreviationOrLabel,
     getTimeRangeDate,

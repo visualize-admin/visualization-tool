@@ -109,7 +109,7 @@ const LayoutLayoutConfigurator = () => {
 const LayoutSharedFiltersConfigurator = () => {
   const [state, dispatch] = useConfiguratorState(isLayouting);
   const { layout } = state;
-  const { potentialTimeRangeFilterIris, potentialDataFilterIris } =
+  const { potentialTimeRangeFilterIds, potentialDataFilterIds } =
     useDashboardInteractiveFilters();
   const { timeRange, dataFilters } = state.dashboardFilters ?? {};
 
@@ -168,34 +168,33 @@ const LayoutSharedFiltersConfigurator = () => {
   );
 
   const handleDataFiltersToggle = useEventCallback(
-    (checked: boolean, componentIri: string) => {
+    (checked: boolean, componentId: string) => {
       if (checked) {
         dispatch({
           type: "DASHBOARD_DATA_FILTERS_SET",
           value: {
             componentIris: dataFilters?.componentIris
-              ? [...dataFilters.componentIris, componentIri].sort((a, b) => {
+              ? [...dataFilters.componentIris, componentId].sort((a, b) => {
                   const aIndex =
-                    dimensions.find((d) => d.iri === a)?.order ??
-                    dimensions.findIndex((d) => d.iri === a) ??
+                    dimensions.find((d) => d.id === a)?.order ??
+                    dimensions.findIndex((d) => d.id === a) ??
                     0;
                   const bIndex =
-                    dimensions.find((d) => d.iri === b)?.order ??
-                    dimensions.findIndex((d) => d.iri === b) ??
+                    dimensions.find((d) => d.id === b)?.order ??
+                    dimensions.findIndex((d) => d.id === b) ??
                     0;
                   return aIndex - bIndex;
                 })
-              : [componentIri],
+              : [componentId],
             filters: dataFilters?.filters ?? {},
           },
         });
-        const value = dimensions.find((d) => d.iri === componentIri)?.values[0]
+        const value = dimensions.find((d) => d.id === componentId)?.values[0]
           .value as string;
         dispatch({
           type: "FILTER_SET_SINGLE",
           value: {
-            // FIXME: shared filters should be scoped per cube
-            filters: [{ cubeIri: "", dimensionIri: componentIri }],
+            filters: [{ cubeIri: "", dimensionId: componentId }],
             value,
           },
         });
@@ -203,14 +202,13 @@ const LayoutSharedFiltersConfigurator = () => {
         dispatch({
           type: "DASHBOARD_DATA_FILTER_REMOVE",
           value: {
-            dimensionIri: componentIri,
+            dimensionIri: componentId,
           },
         });
         dispatch({
           type: "FILTER_REMOVE_SINGLE",
           value: {
-            // FIXME: shared filters should be scoped per cube
-            filters: [{ cubeIri: "", dimensionIri: componentIri }],
+            filters: [{ cubeIri: "", dimensionId: componentId }],
           },
         });
       }
@@ -221,8 +219,8 @@ const LayoutSharedFiltersConfigurator = () => {
     case "tab":
     case "dashboard":
       if (
-        (!timeRange || potentialTimeRangeFilterIris.length === 0) &&
-        (!dataFilters || potentialDataFilterIris.length === 0)
+        (!timeRange || potentialTimeRangeFilterIds.length === 0) &&
+        (!dataFilters || potentialDataFilterIds.length === 0)
       ) {
         return null;
       }
@@ -271,19 +269,20 @@ const LayoutSharedFiltersConfigurator = () => {
               ) : null}
               {dataFilters ? (
                 <>
-                  {potentialDataFilterIris.map((componentIri, i) => {
+                  {potentialDataFilterIds.map((id, i) => {
                     const dimension = dimensions.find(
-                      (dimension) => dimension.iri === componentIri
+                      (dimension) => dimension.id === id
                     );
                     if (!dimension) {
                       return null;
                     }
                     const checked = dataFilters.componentIris.includes(
-                      dimension.iri
+                      dimension.id
                     );
+
                     return (
                       <Box
-                        key={dimension.iri}
+                        key={dimension.id}
                         sx={{ display: "flex", flexDirection: "column" }}
                       >
                         <Box
@@ -299,16 +298,16 @@ const LayoutSharedFiltersConfigurator = () => {
                           <Switch
                             checked={checked}
                             onChange={(_, checked) => {
-                              handleDataFiltersToggle(checked, dimension.iri);
+                              handleDataFiltersToggle(checked, dimension.id);
                             }}
                           />
                         </Box>
                         {checked ? (
                           <Box sx={{ mb: 1 }}>
                             <DataFilterSelectGeneric
-                              key={dimension.iri}
+                              key={dimension.id}
                               rawDimension={dimension}
-                              filterDimensionIris={[]}
+                              filterDimensionIds={[]}
                               index={i}
                               disabled={fetching}
                               disableLabel

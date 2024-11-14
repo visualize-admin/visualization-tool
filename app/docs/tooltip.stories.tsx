@@ -64,9 +64,9 @@ const TooltipBoxStory = () => (
       <ColumnChart
         observations={observations}
         measures={measures}
-        measuresByIri={keyBy(measures, (d) => d.iri)}
+        measuresById={keyBy(measures, (d) => d.id)}
         dimensions={dimensions}
-        dimensionsByIri={keyBy(dimensions, (d) => d.iri)}
+        dimensionsById={keyBy(dimensions, (d) => d.id)}
         chartConfig={{
           key: "column-chart",
           version: CHART_CONFIG_VERSION,
@@ -229,9 +229,9 @@ const TooltipContentStory = {
       <ColumnChart
         observations={observations}
         measures={measures}
-        measuresByIri={keyBy(measures, (d) => d.iri)}
+        measuresById={keyBy(measures, (d) => d.id)}
         dimensions={dimensions}
-        dimensionsByIri={keyBy(dimensions, (d) => d.iri)}
+        dimensionsById={keyBy(dimensions, (d) => d.id)}
         chartConfig={{
           key: "column-chart",
           version: CHART_CONFIG_VERSION,
@@ -297,9 +297,9 @@ export const TooltipContentStory2 = {
       <ColumnChart
         observations={observations}
         measures={measures}
-        measuresByIri={keyBy(measures, (d) => d.iri)}
+        measuresById={keyBy(measures, (d) => d.id)}
         dimensions={dimensions}
-        dimensionsByIri={keyBy(dimensions, (d) => d.iri)}
+        dimensionsById={keyBy(dimensions, (d) => d.id)}
         chartConfig={{
           key: "column-chart",
           version: CHART_CONFIG_VERSION,

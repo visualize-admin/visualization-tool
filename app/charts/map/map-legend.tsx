@@ -118,7 +118,7 @@ export const MapLegend = ({
                   palette={areaLayer.colors.palette}
                   domain={areaLayer.dataDomain}
                   getValue={areaLayer.colors.getValue}
-                  valueFormatter={formatters[areaLayer.colors.component.iri]}
+                  valueFormatter={formatters[areaLayer.colors.component.id]}
                 />
               ) : areaLayer.colors.interpolationType === "quantize" ? (
                 <QuantizeColorLegend
@@ -160,9 +160,7 @@ export const MapLegend = ({
                       // @ts-ignore
                       return d[symbolLayer.colors.component.iri] as number;
                     }}
-                    valueFormatter={
-                      formatters[symbolLayer.colors.component.iri]
-                    }
+                    valueFormatter={formatters[symbolLayer.colors.component.id]}
                   />
                 ) : symbolLayer.colors.interpolationType === "quantize" ? (
                   <QuantizeColorLegend
@@ -198,7 +196,7 @@ export const MapLegend = ({
                   {symbolLayer.measureLabel}
                 </Typography>
                 <CircleLegend
-                  valueFormatter={formatters[symbolLayer.measureDimension.iri]}
+                  valueFormatter={formatters[symbolLayer.measureDimension.id]}
                 />
               </Box>
             )}
@@ -217,8 +215,7 @@ export const MapLegend = ({
       )}
 
       {symbolLayer?.colors.type === "categorical" &&
-        symbolLayer.colors.component.iri !==
-          areaLayer?.colors.component.iri && (
+        symbolLayer.colors.component.id !== areaLayer?.colors.component.id && (
           <MapLegendColor
             chartConfig={chartConfig}
             component={symbolLayer.colors.component}

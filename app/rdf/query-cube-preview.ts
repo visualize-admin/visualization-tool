@@ -17,6 +17,7 @@ import {
 } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { resolveDimensionType, resolveMeasureType } from "@/graphql/resolvers";
+import { joinIris } from "@/graphql/resolvers/rdf";
 
 import * as ns from "./namespace";
 import {
@@ -222,7 +223,23 @@ CONSTRUCT {
       dimMetadataByDimIri[dimIri].values.push(dimensionValue);
     });
 
-    observations.push(observation);
+    observations.push(
+      Object.fromEntries(
+        Object.entries(observation).map(([k, v]) => {
+          return [
+            joinIris({
+              // TODO
+              // Technically we don't need to unversion the cube iri here, as
+              // cube preview is temporary and dimensions coming from here
+              // aren't stored in chart config, but would be nice to be consistent.
+              unversionedCubeIri: iri,
+              dimensionIri: k,
+            }),
+            v,
+          ];
+        })
+      )
+    );
   });
 
   for (const dimIri in dimMetadataByDimIri) {
@@ -265,7 +282,14 @@ CONSTRUCT {
 
     const baseComponent: BaseComponent = {
       cubeIri: iri,
-      iri: dimIri,
+      // TODO
+      // Technically we don't need to unversion the cube iri here, as
+      // cube preview is temporary and dimensions coming from here
+      // aren't stored in chart config, but would be nice to be consistent.
+      id: joinIris({
+        unversionedCubeIri: iri,
+        dimensionIri: dimIri,
+      }),
       label: qLabel?.object.value ?? "",
       description: qDesc?.object.value,
       scaleType,

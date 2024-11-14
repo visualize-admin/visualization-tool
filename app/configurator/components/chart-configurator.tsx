@@ -101,7 +101,7 @@ import { DatasetsControlSection } from "./dataset-control-section";
 
 export const DataFilterSelectGeneric = ({
   rawDimension,
-  filterDimensionIris,
+  filterDimensionIds,
   index,
   disabled,
   onRemove,
@@ -109,7 +109,7 @@ export const DataFilterSelectGeneric = ({
   disableLabel,
 }: {
   rawDimension: Dimension;
-  filterDimensionIris: string[];
+  filterDimensionIds: string[];
   index: number;
   disabled?: boolean;
   onRemove?: () => void;
@@ -126,12 +126,13 @@ export const DataFilterSelectGeneric = ({
       locale,
       cubeFilters: chartConfig.cubes.map((cube) => {
         const rawFilters = pickBy(cube.filters, (_, key) =>
-          filterDimensionIris.includes(key)
+          filterDimensionIds.includes(key)
         );
+
         return {
           iri: cube.iri,
           joinBy: cube.joinBy,
-          componentIris: [rawDimension.iri],
+          componentIris: [rawDimension.id],
           filters: Object.keys(rawFilters).length > 0 ? rawFilters : undefined,
           loadValues: true,
         };
@@ -391,12 +392,12 @@ const useFilterReorder = ({
   const measures = componentsData?.dataCubesComponents?.measures;
 
   // Handlers
-  const handleMove = useEvent((dimensionIri: string, delta: number) => {
+  const handleMove = useEvent((dimensionId: string, delta: number) => {
     if (!dimensions || !measures) {
       return;
     }
 
-    const dimension = dimensions.find((d) => d.iri === dimensionIri);
+    const dimension = dimensions.find((d) => d.id === dimensionId);
 
     if (dimension) {
       const newChartConfig = moveFilterField(chartConfig, {
@@ -465,14 +466,14 @@ const useFilterReorder = ({
       const filterDimensions = sortBy(
         dimensions?.filter(
           (dim) =>
-            !mappedFiltersIris.has(dim.iri) && keysOrder[dim.iri] !== undefined
+            !mappedFiltersIris.has(dim.id) && keysOrder[dim.id] !== undefined
         ) ?? [],
-        [(x) => keysOrder[x.iri] ?? Infinity]
+        [(x) => keysOrder[x.id] ?? Infinity]
       );
       const addableDimensions = dimensions?.filter(
         (dim) =>
-          !mappedFiltersIris.has(dim.iri) &&
-          keysOrder[dim.iri] === undefined &&
+          !mappedFiltersIris.has(dim.id) &&
+          keysOrder[dim.id] === undefined &&
           !isStandardErrorDimension(dim)
       );
       const missingDimensions = dimensions?.filter(
@@ -553,8 +554,8 @@ const useStyles = makeStyles<Theme, { fetching: boolean }>((theme) => ({
   },
 }));
 
-const InteractiveDataFilterToggle = ({ iri }: { iri: string }) => {
-  const { checked, toggle } = useInteractiveDataFilterToggle(iri);
+const InteractiveDataFilterToggle = ({ id }: { id: string }) => {
+  const { checked, toggle } = useInteractiveDataFilterToggle(id);
   return <InteractiveFilterToggle checked={checked} toggle={toggle} />;
 };
 
@@ -679,10 +680,10 @@ export const ChartConfigurator = ({
                   <Box {...provided.droppableProps} ref={provided.innerRef}>
                     {filterDimensions.map((dimension, i) => (
                       <Draggable
+                        key={dimension.id}
                         isDragDisabled={fetching}
-                        draggableId={dimension.iri}
+                        draggableId={dimension.id}
                         index={i}
-                        key={dimension.iri}
                       >
                         {(provided) => (
                           <div
@@ -692,16 +693,14 @@ export const ChartConfigurator = ({
                             {...provided.draggableProps}
                           >
                             <div>
-                              <InteractiveDataFilterToggle
-                                iri={dimension.iri}
-                              />
+                              <InteractiveDataFilterToggle id={dimension.id} />
                             </div>
                             <DataFilterSelectGeneric
-                              key={dimension.iri}
+                              key={dimension.id}
                               rawDimension={dimension}
-                              filterDimensionIris={filterDimensions
+                              filterDimensionIds={filterDimensions
                                 .slice(0, i)
-                                .map((d) => d.iri)}
+                                .map((d) => d.id)}
                               index={i}
                               disabled={fetching}
                               onRemove={() =>
@@ -737,8 +736,8 @@ export const ChartConfigurator = ({
                 >
                   {addableDimensions.map((dim) => (
                     <MenuItem
+                      key={dim.id}
                       onClick={() => handleAddDimensionFilter(dim)}
-                      key={dim.iri}
                     >
                       {dim.label}
                     </MenuItem>
@@ -794,12 +793,12 @@ const ChartFields = (props: ChartFieldsProps) => {
       {getChartSpec(chartConfig)
         .encodings.filter((d) => !d.hide)
         .map((encoding) => {
-          const { field, getDisabledState, iriAttributes } = encoding;
-          const componentIris = iriAttributes
+          const { field, getDisabledState, idAttributes } = encoding;
+          const componentIds = idAttributes
             .map((x) => (chartConfig.fields as any)[field]?.[x])
             .filter(truthy) as string[];
-          const fieldComponents = componentIris
-            .map((cIri) => components.find((d) => cIri === d.iri))
+          const fieldComponents = componentIds
+            .map((cId) => components.find((d) => cId === d.id))
             .filter(truthy);
           const baseLayer = isMapConfig(chartConfig) && field === "baseLayer";
 

@@ -40,7 +40,7 @@ import {
   ObservationValue,
 } from "@/domain/data";
 import { truthy } from "@/domain/types";
-import { getOriginalIris, isJoinById } from "@/graphql/join";
+import { getOriginalIds, isJoinById } from "@/graphql/join";
 import { DataCubeObservationFilter } from "@/graphql/resolver-types";
 import {
   InteractiveFiltersState,
@@ -274,7 +274,7 @@ export const extractChartConfigComponentIris = ({
       )
     )
       .flatMap((iri) =>
-        isJoinById(iri) ? getOriginalIris(iri, chartConfig) : [iri]
+        isJoinById(iri) ? getOriginalIds(iri, chartConfig) : [iri]
       )
       .filter((iri) => !isJoinById(iri))
       // Important so the order is consistent when querying.
@@ -322,14 +322,14 @@ export const useDimensionWithAbbreviations = (
   const { getAbbreviationOrLabelByValue, abbreviationOrLabelLookup } =
     useMaybeAbbreviations({
       useAbbreviations: field?.useAbbreviations,
-      dimensionIri: dimension?.iri,
+      dimensionIri: dimension?.id,
       dimensionValues: dimension?.values,
     });
 
   const { getValue, getLabel } = useObservationLabels(
     observations,
     getAbbreviationOrLabelByValue,
-    dimension?.iri
+    dimension?.id
   );
 
   return {
@@ -528,13 +528,13 @@ const getBaseWideData = ({
   return wideData;
 };
 
-const getIdentityIri = (iri: string) => `${iri}/__identity__`;
-export const useGetIdentityY = (iri: string) => {
+const getIdentityId = (id: string) => `${id}/__identity__`;
+export const useGetIdentityY = (id: string) => {
   return useCallback(
     (d: Observation) => {
-      return (d[getIdentityIri(iri)] as number | null) ?? null;
+      return (d[getIdentityId(id)] as number | null) ?? null;
     },
-    [iri]
+    [id]
   );
 };
 
@@ -557,13 +557,13 @@ export const normalizeData = (
     return {
       ...d,
       [yKey]: 100 * (y ? y / totalGroupValue : y ?? 0),
-      [getIdentityIri(yKey)]: y,
+      [getIdentityId(yKey)]: y,
     };
   });
 };
 
 const SlugRe = /\W+/g;
-export const getSlugifiedIri = (iri: string) => iri.replace(SlugRe, "_");
+export const getSlugifiedId = (id: string) => id.replace(SlugRe, "_");
 
 export const getLabelWithUnit = (dimension: Component): string => {
   return dimension.unit

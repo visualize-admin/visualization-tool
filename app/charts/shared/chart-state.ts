@@ -15,7 +15,7 @@ import { LinesState } from "@/charts/line/lines-state";
 import { MapState } from "@/charts/map/map-state";
 import { PieState } from "@/charts/pie/pie-state";
 import { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
-import { DimensionsByIri, MeasuresByIri } from "@/charts/shared/ChartProps";
+import { DimensionsById, MeasuresById } from "@/charts/shared/ChartProps";
 import {
   getLabelWithUnit,
   useDimensionWithAbbreviations,
@@ -152,14 +152,14 @@ export type BandXVariables = {
 export const useBandXVariables = (
   x: GenericField,
   {
-    dimensionsByIri,
+    dimensionsById,
     observations,
   }: {
-    dimensionsByIri: DimensionsByIri;
+    dimensionsById: DimensionsById;
     observations: Observation[];
   }
 ): BandXVariables => {
-  const xDimension = dimensionsByIri[x.componentIri];
+  const xDimension = dimensionsById[x.componentIri];
   if (!xDimension) {
     throw Error(
       `No dimension <${x.componentIri}> in cube! (useBandXVariables)`
@@ -181,7 +181,7 @@ export const useBandXVariables = (
 
   const getXAsDate = useTemporalVariable(x.componentIri);
   const getXTemporalEntity = useTemporalEntityVariable(
-    dimensionsByIri[x.componentIri].values
+    dimensionsById[x.componentIri].values
   )(x.componentIri);
 
   return {
@@ -204,9 +204,9 @@ export type TemporalXVariables = {
 
 export const useTemporalXVariables = (
   x: GenericField,
-  { dimensionsByIri }: { dimensionsByIri: DimensionsByIri }
+  { dimensionsById }: { dimensionsById: DimensionsById }
 ): TemporalXVariables => {
-  const xDimension = dimensionsByIri[x.componentIri];
+  const xDimension = dimensionsById[x.componentIri];
   if (!xDimension) {
     throw Error(
       `No dimension <${x.componentIri}> in cube! (useTemporalXVariables)`
@@ -222,7 +222,7 @@ export const useTemporalXVariables = (
 
   const getXTemporal = useTemporalVariable(x.componentIri);
   const getXTemporalEntity = useTemporalEntityVariable(
-    dimensionsByIri[x.componentIri].values
+    dimensionsById[x.componentIri].values
   )(x.componentIri);
   const getXAsString = useStringVariable(x.componentIri);
 
@@ -249,9 +249,9 @@ export type NumericalXVariables = {
 export const useNumericalXVariables = (
   chartType: "scatterplot",
   x: GenericField,
-  { measuresByIri }: { measuresByIri: MeasuresByIri }
+  { measuresById }: { measuresById: MeasuresById }
 ): NumericalXVariables => {
-  const xMeasure = measuresByIri[x.componentIri];
+  const xMeasure = measuresById[x.componentIri];
   if (!xMeasure) {
     throw Error(
       `No dimension <${x.componentIri}> in cube! (useNumericalXVariables)`
@@ -300,9 +300,9 @@ export const useNumericalYVariables = (
   // Combo charts have their own logic for y scales.
   chartType: "area" | "column" | "line" | "pie" | "scatterplot",
   y: GenericField,
-  { measuresByIri }: { measuresByIri: MeasuresByIri }
+  { measuresById }: { measuresById: MeasuresById }
 ): NumericalYVariables => {
-  const yMeasure = measuresByIri[y.componentIri];
+  const yMeasure = measuresById[y.componentIri];
   if (!yMeasure) {
     throw Error(
       `No dimension <${y.componentIri}> in cube! (useNumericalYVariables)`
@@ -389,14 +389,14 @@ export type SegmentVariables = {
 export const useSegmentVariables = (
   segment: GenericField | undefined,
   {
-    dimensionsByIri,
+    dimensionsById,
     observations,
   }: {
-    dimensionsByIri: DimensionsByIri;
+    dimensionsById: DimensionsById;
     observations: Observation[];
   }
 ): SegmentVariables => {
-  const segmentDimension = dimensionsByIri[segment?.componentIri ?? ""];
+  const segmentDimension = dimensionsById[segment?.componentIri ?? ""];
   const {
     getAbbreviationOrLabelByValue: getSegmentAbbreviationOrLabel,
     abbreviationOrLabelLookup: segmentsByAbbreviationOrLabel,
@@ -422,10 +422,10 @@ export type InteractiveFiltersVariables = {
 
 export const useInteractiveFiltersVariables = (
   interactiveFiltersConfig: ChartConfig["interactiveFiltersConfig"],
-  { dimensionsByIri }: { dimensionsByIri: DimensionsByIri }
+  { dimensionsById }: { dimensionsById: DimensionsById }
 ): InteractiveFiltersVariables => {
   const iri = interactiveFiltersConfig?.timeRange.componentIri ?? "";
-  const dimension = dimensionsByIri[iri];
+  const dimension = dimensionsById[iri];
   const getTimeRangeDate = useTemporalVariable(iri);
   const getTimeRangeEntityDate = useTemporalEntityVariable(
     dimension?.values ?? []
@@ -480,13 +480,13 @@ export const useChartData = (
   observations: Observation[],
   {
     chartConfig,
-    timeRangeDimensionIri,
+    timeRangeDimensionId,
     getXAsDate,
     getSegmentAbbreviationOrLabel,
     getTimeRangeDate,
   }: {
     chartConfig: ChartConfig;
-    timeRangeDimensionIri: string | undefined;
+    timeRangeDimensionId: string | undefined;
     getXAsDate?: (d: Observation) => Date;
     getSegmentAbbreviationOrLabel?: (d: Observation) => string;
     getTimeRangeDate?: (d: Observation) => Date;
@@ -521,7 +521,7 @@ export const useChartData = (
   const interactiveFromTime = timeRange.from?.getTime();
   const interactiveToTime = timeRange.to?.getTime();
   const [{ dashboardFilters }] = useConfiguratorState(hasChartConfigs);
-  const { potentialTimeRangeFilterIris } = useDashboardInteractiveFilters();
+  const { potentialTimeRangeFilterIds } = useDashboardInteractiveFilters();
   const interactiveTimeRangeFilters = useMemo(() => {
     const interactiveTimeRangeFilter: ValuePredicate | null =
       getXAsDate &&
@@ -529,8 +529,8 @@ export const useChartData = (
       interactiveToTime &&
       (interactiveTimeRange?.active ||
         (dashboardFilters?.timeRange.active &&
-          timeRangeDimensionIri &&
-          potentialTimeRangeFilterIris.includes(timeRangeDimensionIri)))
+          timeRangeDimensionId &&
+          potentialTimeRangeFilterIds.includes(timeRangeDimensionId)))
         ? (d: Observation) => {
             const time = getXAsDate(d).getTime();
             return time >= interactiveFromTime && time <= interactiveToTime;
@@ -544,8 +544,8 @@ export const useChartData = (
     interactiveToTime,
     interactiveTimeRange?.active,
     dashboardFilters?.timeRange.active,
-    timeRangeDimensionIri,
-    potentialTimeRangeFilterIris,
+    timeRangeDimensionId,
+    potentialTimeRangeFilterIds,
   ]);
 
   // interactive time slider

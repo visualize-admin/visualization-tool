@@ -298,12 +298,12 @@ const DataFilter = ({
     }
   );
 
-  const configFilter = dimension ? filters[dimension.iri] : undefined;
+  const configFilter = dimension ? filters[dimension.id] : undefined;
   const configFilterValue =
     configFilter && configFilter.type === "single"
       ? configFilter.value
       : undefined;
-  const dataFilterValue = dimension ? dataFilters[dimension.iri]?.value : null;
+  const dataFilterValue = dimension ? dataFilters[dimension.id]?.value : null;
   const value = dataFilterValue ?? configFilterValue ?? FIELD_VALUE_NONE;
 
   useEffect(() => {
@@ -533,7 +533,7 @@ export const DataFilterTemporalDimension = ({
 
   return canRenderDatePickerField(timeUnit) ? (
     <DatePickerField
-      name={`interactive-date-picker-${dimension.iri}`}
+      name={`interactive-date-picker-${dimension.id}`}
       label={
         <FieldLabel
           label={

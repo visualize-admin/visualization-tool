@@ -95,9 +95,9 @@ export const deriveFiltersFromFields = produce(
       const hiddenFieldIris = getHiddenFieldIris(draft.fields);
       const groupedDimensionIris = getGroupedFieldIris(draft.fields);
       const isHidden = (dimension: Dimension) =>
-        hiddenFieldIris.has(dimension.iri);
+        hiddenFieldIris.has(dimension.id);
       const isGrouped = (dimension: Dimension) =>
-        groupedDimensionIris.has(dimension.iri);
+        groupedDimensionIris.has(dimension.id);
       draft.cubes.forEach((cube) => {
         const cubeDimensions = getCubeDimensions(dimensions, cube.iri);
         cubeDimensions.forEach((dimension) => {
@@ -108,7 +108,7 @@ export const deriveFiltersFromFields = produce(
             isHidden: isHidden(dimension),
             isGrouped: isGrouped(dimension),
             possibleFilter: possibleFilters?.find(
-              (f) => f.iri === dimension.iri
+              (f) => f.iri === dimension.id
             ),
           });
         });
@@ -116,7 +116,7 @@ export const deriveFiltersFromFields = produce(
     } else {
       const fieldDimensionIris = getFieldComponentIris(draft.fields);
       const isField = (dimension: Dimension) =>
-        fieldDimensionIris.has(dimension.iri);
+        fieldDimensionIris.has(dimension.id);
       draft.cubes.forEach((cube) => {
         const cubeDimensions = getCubeDimensions(dimensions, cube.iri);
         const sortedCubeDimensions = sortBy(
@@ -133,7 +133,7 @@ export const deriveFiltersFromFields = produce(
               : dimension,
             isField: isField(dimension),
             possibleFilter: possibleFilters?.find(
-              (f) => f.iri === dimension.iri
+              (f) => f.iri === dimension.id
             ),
           });
         });
@@ -153,8 +153,8 @@ export const applyTableDimensionToFilters = (props: {
   const { filters, dimension, isHidden, isGrouped, possibleFilter, cubeIri } =
     props;
   const originalIri = isJoinByComponent(dimension)
-    ? dimension.originalIris.find((c) => c.cubeIri === cubeIri)?.dimensionIri
-    : dimension.iri;
+    ? dimension.originalIds.find((c) => c.cubeIri === cubeIri)?.dimensionId
+    : dimension.id;
   assert(originalIri !== undefined, "Dimension should have an IRI");
   const currentFilter = filters[originalIri];
   const shouldBecomeSingleFilter = isHidden && !isGrouped;
@@ -206,8 +206,8 @@ export const applyNonTableDimensionToFilters = (props: {
 }) => {
   const { filters, dimension, isField, possibleFilter, cubeIri } = props;
   const originalIri = isJoinByComponent(dimension)
-    ? dimension.originalIris.find((c) => c.cubeIri === cubeIri)?.dimensionIri
-    : dimension.iri;
+    ? dimension.originalIds.find((c) => c.cubeIri === cubeIri)?.dimensionId
+    : dimension.id;
   assert(originalIri !== undefined, "Dimension should have an IRI");
   const currentFilter = filters[originalIri];
 
@@ -260,7 +260,7 @@ export const applyNonTableDimensionToFilters = (props: {
       : possibleFilter?.value ?? dimension.values[0]?.value;
 
     if (filterValue) {
-      filters[dimension.iri] = {
+      filters[dimension.id] = {
         type: "single",
         value: filterValue,
       };
@@ -377,7 +377,7 @@ export const handleChartFieldChanged = (
   const dimensions = dataCubesComponents?.dimensions ?? [];
   const measures = dataCubesComponents?.measures ?? [];
   const components = [...dimensions, ...measures];
-  const component = components.find((d) => d.iri === componentIri);
+  const component = components.find((d) => d.id === componentIri);
   const selectedValues = actionSelectedValues ?? component?.values ?? [];
 
   if (f) {
@@ -542,16 +542,16 @@ export const setRangeFilter = (
   };
 
   if (dimension.isJoinByDimension) {
-    for (const { cubeIri, dimensionIri } of dimension.originalIris) {
-      adjustFilter(cubeIri, dimensionIri);
+    for (const { cubeIri, dimensionId } of dimension.originalIds) {
+      adjustFilter(cubeIri, dimensionId);
     }
   } else {
-    adjustFilter(dimension.cubeIri, dimension.iri);
+    adjustFilter(dimension.cubeIri, dimension.id);
   }
 
   if (chartConfig.interactiveFiltersConfig) {
     chartConfig.interactiveFiltersConfig.timeRange = {
-      componentIri: dimension.iri,
+      componentIri: dimension.id,
       active: chartConfig.interactiveFiltersConfig.timeRange.active,
       presets: {
         type: "range",
@@ -756,11 +756,11 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
          * configuration.
          */
         for (const filter of filters) {
-          const { cubeIri, dimensionIri } = filter;
+          const { cubeIri, dimensionId } = filter;
           const cube = chartConfig.cubes.find((cube) => cube.iri === cubeIri);
 
           if (cube) {
-            cube.filters[dimensionIri] = {
+            cube.filters[dimensionId] = {
               type: "single",
               value,
             };
@@ -772,9 +772,9 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         }
       } else if (isLayouting(draft)) {
         const { filters, value } = action.value;
-        const { dimensionIri } = filters[0];
+        const { dimensionId } = filters[0];
         if (draft.dashboardFilters) {
-          draft.dashboardFilters.dataFilters.filters[dimensionIri] = {
+          draft.dashboardFilters.dataFilters.filters[dimensionId] = {
             type: "single",
             value,
           };
@@ -789,14 +789,14 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         const chartConfig = getChartConfig(draft);
 
         for (const filter of filters) {
-          const { cubeIri, dimensionIri } = filter;
+          const { cubeIri, dimensionId } = filter;
           const cube = chartConfig.cubes.find((cube) => cube.iri === cubeIri);
 
           if (cube) {
-            delete cube.filters[dimensionIri];
+            delete cube.filters[dimensionId];
             const newIFConfig = toggleInteractiveFilterDataDimension(
               chartConfig.interactiveFiltersConfig,
-              dimensionIri,
+              dimensionId,
               false
             );
             chartConfig.interactiveFiltersConfig = newIFConfig;
@@ -804,9 +804,9 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         }
       } else if (isLayouting(draft)) {
         const { filters } = action.value;
-        const { dimensionIri } = filters[0];
+        const { dimensionId } = filters[0];
         if (draft.dashboardFilters) {
-          delete draft.dashboardFilters.dataFilters.filters[dimensionIri];
+          delete draft.dashboardFilters.dataFilters.filters[dimensionId];
         }
       }
 

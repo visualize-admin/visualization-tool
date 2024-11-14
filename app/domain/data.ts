@@ -207,7 +207,7 @@ export type Component = Dimension | Measure;
 
 export type BaseComponent = {
   cubeIri: string;
-  iri: string;
+  id: string;
   label: string;
   description?: string;
   unit?: string;
@@ -225,16 +225,16 @@ export type BaseDimension = BaseComponent & {
 } & (
     | {
         isJoinByDimension: true;
-        originalIris: {
+        originalIds: {
           cubeIri: string;
-          dimensionIri: string;
+          dimensionId: string;
           label: string;
           description: string;
         }[];
       }
     | {
         isJoinByDimension?: never;
-        originalIris?: never;
+        originalIds?: never;
       }
   );
 
@@ -244,7 +244,7 @@ export const isJoinByComponent = (d: Component): d is JoinByComponent => {
   return !!(
     "isJoinByDimension" in d &&
     d.isJoinByDimension &&
-    "originalIris" in d
+    "originalIds" in d
   );
 };
 

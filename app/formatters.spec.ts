@@ -38,7 +38,7 @@ describe("useDimensionFormatters", () => {
     } = renderHook(() =>
       useDimensionFormatters([
         {
-          iri: "iri-monthly",
+          id: "iri-monthly",
           timeFormat: "%Y-%m",
           timeUnit: TimeUnit.Month,
           isNumerical: false,
@@ -46,7 +46,7 @@ describe("useDimensionFormatters", () => {
           __typename: "TemporalDimension",
         } as Component,
         {
-          iri: "iri-yearly",
+          id: "iri-yearly",
           timeFormat: "%Y",
           timeUnit: TimeUnit.Year,
           isNumerical: false,
@@ -54,12 +54,12 @@ describe("useDimensionFormatters", () => {
           __typename: "TemporalDimension",
         } as Component,
         {
-          iri: "iri-number",
+          id: "iri-number",
           isNumerical: true,
           isKeyDimension: false,
         } as Component,
         {
-          iri: "iri-currency",
+          id: "iri-currency",
           isNumerical: true,
           isKeyDimension: false,
           isCurrency: true,
@@ -67,7 +67,7 @@ describe("useDimensionFormatters", () => {
           __typename: "NumericalMeasure",
         } as Component,
         {
-          iri: "iri-currency-int",
+          id: "iri-currency-int",
           isNumerical: true,
           isKeyDimension: false,
           isCurrency: true,
@@ -76,7 +76,7 @@ describe("useDimensionFormatters", () => {
           __typename: "NumericalMeasure",
         } as Component,
         {
-          iri: "iri-decimal",
+          id: "iri-decimal",
           isNumerical: true,
           isKeyDimension: false,
           isDecimal: true,
@@ -84,7 +84,7 @@ describe("useDimensionFormatters", () => {
           __typename: "NumericalMeasure",
         } as Component,
         {
-          iri: "iri-decimal-resolution",
+          id: "iri-decimal-resolution",
           isNumerical: true,
           isKeyDimension: false,
           isDecimal: true,

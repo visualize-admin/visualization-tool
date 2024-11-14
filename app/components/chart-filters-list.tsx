@@ -76,13 +76,13 @@ export const ChartFiltersList = ({
     return queryFilters.flatMap((filter) => {
       const namedFilters = Object.entries<FilterValue>(
         filter.filters ?? {}
-      ).flatMap(([iri, f]) => {
+      ).flatMap(([id, f]) => {
         if (f?.type !== "single") {
           return [];
         }
 
         const dimension = data.dataCubesComponents.dimensions.find(
-          (d) => d.iri === iri && d.cubeIri === filter.iri
+          (d) => d.id === id && d.cubeIri === filter.iri
         );
 
         if (!dimension) {
@@ -105,7 +105,7 @@ export const ChartFiltersList = ({
       if (animationField) {
         const dimension = components.find(
           (d) =>
-            d.iri === animationField.componentIri && d.cubeIri === filter.iri
+            d.id === animationField.componentIri && d.cubeIri === filter.iri
         );
 
         if (timeSlider.value) {
@@ -171,7 +171,7 @@ export const ChartFiltersList = ({
         <Trans id="controls.section.data.filters">Filters</Trans>:
       </Typography>
       {allFilters.map(({ dimension, value }, i) => (
-        <Fragment key={dimension.iri}>
+        <Fragment key={dimension.id}>
           <span>
             <OpenMetadataPanelWrapper component={dimension}>
               <span>{dimension.label}</span>

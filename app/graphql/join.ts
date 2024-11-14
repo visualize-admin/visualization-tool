@@ -35,10 +35,11 @@ const getJoinByIdIndex = (joinById: string) => {
 
 export const getOriginalDimension = (dim: JoinByComponent, cube: Cube) => {
   assert(isJoinByComponent(dim), "Dimension should be a join by at this point");
-  const originalIri = dim.originalIris.find(
+  const originalIri = dim.originalIds.find(
     (o) => o.cubeIri === cube.iri
-  )?.dimensionIri;
+  )?.dimensionId;
   assert(!!originalIri, "Original iri should have been found");
+
   return {
     ...dim,
     iri: originalIri,
@@ -65,7 +66,7 @@ export const joinDimensions = (
       true: queryJoinByDimensions = [],
     } = groupBy(
       queryDimensions.map((d) => {
-        return { ...d, joinByIndex: joinBy?.indexOf(d.iri) };
+        return { ...d, joinByIndex: joinBy?.indexOf(d.id) };
       }),
       (d) => d.joinByIndex !== undefined && d.joinByIndex >= 0
     );
@@ -93,15 +94,15 @@ export const joinDimensions = (
             ),
           (x) => x.value
         ),
-        iri: mkJoinById(Number(index)),
+        id: mkJoinById(Number(index)),
         // Non-relevant, as we rely on the originalIris property.
         cubeIri: JOIN_BY_CUBE_IRI,
         // FIXME: adapt to design
         label: uniq(joinedDimensions.map((d) => d.label)).join(", "),
         isJoinByDimension: true,
-        originalIris: joinedDimensions.map((d) => ({
+        originalIds: joinedDimensions.map((d) => ({
           cubeIri: d.cubeIri,
-          dimensionIri: d.iri,
+          dimensionId: d.id,
           label: d.label,
           description: d.description ?? "",
         })),
@@ -113,20 +114,24 @@ export const joinDimensions = (
   return dimensions;
 };
 
-export const getOriginalIris = (joinById: string, chartConfig: ChartConfig) => {
+export const getOriginalIds = (joinById: string, chartConfig: ChartConfig) => {
   const index = getJoinByIdIndex(joinById);
-  return chartConfig.cubes.map((x) => {
-    const joinBy = x.joinBy;
-    assert(joinBy !== undefined, "Found joinBy iri and cube has no join by");
+
+  return chartConfig.cubes.map((cube) => {
+    const joinBy = cube.joinBy;
+    assert(joinBy !== undefined, "Found joinBy id and cube has no join by");
+
     return joinBy[index];
   });
 };
 
-export const getResolvedJoinByIri = (cube: Cube, joinById: string) => {
+export const getResolvedJoinById = (cube: Cube, joinById: string) => {
   if (!cube.joinBy) {
     return;
   }
+
   const index = getJoinByIdIndex(joinById);
+
   return cube.joinBy[index];
 };
 

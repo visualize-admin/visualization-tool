@@ -9,7 +9,7 @@ import {
   FilterValueSingle,
 } from "@/configurator";
 import { truthy } from "@/domain/types";
-import { getOriginalIris, isJoinById } from "@/graphql/join";
+import { getOriginalIds, isJoinById } from "@/graphql/join";
 import {
   createBoundUseStoreWithSelector,
   ExtractState,
@@ -53,8 +53,8 @@ export type InteractiveFiltersStateActions = {
   resetTimeSlider: () => void;
   setDataFilters: (dataFilters: InteractiveFiltersState["dataFilters"]) => void;
   updateDataFilter: (
-    dimensionIri: string,
-    dimensionValueIri: FilterValueSingle["value"]
+    dimensionId: string,
+    dimensionValue: FilterValueSingle["value"]
   ) => void;
   resetDataFilters: () => void;
   setCalculationType: (calculationType: CalculationType) => void;
@@ -109,15 +109,15 @@ const interactiveFiltersStoreCreator: StateCreator<State> = (set) => {
       set({ dataFilters });
     },
     updateDataFilter: (
-      dimensionIri: string,
-      dimensionValueIri: FilterValueSingle["value"]
+      dimensionId: string,
+      dimensionValue: FilterValueSingle["value"]
     ) => {
       set((state) => ({
         dataFilters: {
           ...state.dataFilters,
-          [dimensionIri]: {
+          [dimensionId]: {
             type: "single",
-            value: dimensionValueIri,
+            value: dimensionValue,
           },
         },
       }));
@@ -143,14 +143,14 @@ export type InteractiveFiltersContextValue = [
 
 const InteractiveFiltersContext = createContext<
   | {
-      potentialTimeRangeFilterIris: string[];
-      potentialDataFilterIris: string[];
+      potentialTimeRangeFilterIds: string[];
+      potentialDataFilterIds: string[];
       stores: Record<ChartConfig["key"], InteractiveFiltersContextValue>;
     }
   | undefined
 >(undefined);
 
-const getPotentialTimeRangeFilterIris = (chartConfigs: ChartConfig[]) => {
+const getPotentialTimeRangeFilterIds = (chartConfigs: ChartConfig[]) => {
   const temporalDimensions = chartConfigs.flatMap((config) => {
     const chartSpec = getChartSpec(config);
     const temporalEncodings = chartSpec.encodings.filter((x) =>
@@ -165,12 +165,12 @@ const getPotentialTimeRangeFilterIris = (chartConfigs: ChartConfig[]) => {
             ? // @ts-expect-error ts(7053) - Not possible to narrow down here, but we check for undefined below
               config.fields[encoding.field]
             : undefined;
-        if (field && "componentIri" in field) {
+        if (field && "componentId" in field) {
           return {
             /** Unjoined dimension */
-            componentIri: isJoinById(field.componentIri as string)
-              ? getOriginalIris(field.componentIri, config)[0]
-              : field.componentIri,
+            componentId: isJoinById(field.componentId as string)
+              ? getOriginalIds(field.componentId, config)[0]
+              : field.componentId,
             chartKey: config.key,
           };
         }
@@ -180,10 +180,10 @@ const getPotentialTimeRangeFilterIris = (chartConfigs: ChartConfig[]) => {
     return chartTemporalDimensions;
   });
 
-  return temporalDimensions.map((dimension) => dimension.componentIri);
+  return temporalDimensions.map((dimension) => dimension.componentId);
 };
 
-const getPotentialDataFilterIris = (chartConfigs: ChartConfig[]) => {
+const getPotentialDataFilterIds = (chartConfigs: ChartConfig[]) => {
   return uniq(
     chartConfigs.flatMap((config) => {
       return config.cubes
@@ -191,7 +191,7 @@ const getPotentialDataFilterIris = (chartConfigs: ChartConfig[]) => {
         .flatMap((filters) => {
           return Object.entries(filters)
             .filter(([_, filter]) => filter.type === "single")
-            .map(([dimensionIri]) => dimensionIri);
+            .map(([dimensionId]) => dimensionId);
         });
     })
   );
@@ -208,11 +208,11 @@ export const InteractiveFiltersProvider = ({
 }>) => {
   const storeRefs = useRef<Record<ChartConfig["key"], StoreApi<State>>>({});
 
-  const potentialTimeRangeFilterIris = useMemo(() => {
-    return getPotentialTimeRangeFilterIris(chartConfigs);
+  const potentialTimeRangeFilterIds = useMemo(() => {
+    return getPotentialTimeRangeFilterIds(chartConfigs);
   }, [chartConfigs]);
-  const potentialDataFilterIris = useMemo(() => {
-    return getPotentialDataFilterIris(chartConfigs);
+  const potentialDataFilterIds = useMemo(() => {
+    return getPotentialDataFilterIds(chartConfigs);
   }, [chartConfigs]);
 
   const stores = useMemo<
@@ -235,11 +235,11 @@ export const InteractiveFiltersProvider = ({
 
   const ctxValue = useMemo(
     () => ({
-      potentialTimeRangeFilterIris,
-      potentialDataFilterIris,
+      potentialTimeRangeFilterIds,
+      potentialDataFilterIds,
       stores,
     }),
-    [potentialTimeRangeFilterIris, potentialDataFilterIris, stores]
+    [potentialTimeRangeFilterIds, potentialDataFilterIds, stores]
   );
 
   return (

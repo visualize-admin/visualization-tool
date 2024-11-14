@@ -14,7 +14,7 @@ describe("useCombinedTemporalDimension", () => {
         __typename: "NominalDimension",
         cubeIri:
           "https://agriculture.ld.admin.ch/foag/cube/MilkDairyProducts/Consumption_Price_Month",
-        iri: "https://agriculture.ld.admin.ch/foag/dimension/unit",
+        id: "https://agriculture.ld.admin.ch/foag/dimension/unit",
         label: "Unit",
         description: "Unit of measure that defines the product.",
         scaleType: "Nominal",
@@ -38,7 +38,7 @@ describe("useCombinedTemporalDimension", () => {
         __typename: "NominalDimension",
         cubeIri:
           "https://agriculture.ld.admin.ch/foag/cube/MilkDairyProducts/Consumption_Price_Month",
-        iri: "https://agriculture.ld.admin.ch/foag/dimension/currency",
+        id: "https://agriculture.ld.admin.ch/foag/dimension/currency",
         label: "Currency",
         description:
           "Official means of payment with which a product is bought or sold. Currency is only relevant for the key indicator price.",
@@ -59,7 +59,7 @@ describe("useCombinedTemporalDimension", () => {
         __typename: "NominalDimension",
         cubeIri:
           "https://agriculture.ld.admin.ch/foag/cube/MilkDairyProducts/Consumption_Price_Month",
-        iri: "https://agriculture.ld.admin.ch/foag/dimension/key-indicator-type",
+        id: "https://agriculture.ld.admin.ch/foag/dimension/key-indicator-type",
         label: "Key indicator",
         description: "Statement of the key figure used for this data set.",
         scaleType: "Nominal",
@@ -81,7 +81,7 @@ describe("useCombinedTemporalDimension", () => {
         timeUnit: "Month",
         cubeIri:
           "https://agriculture.ld.admin.ch/foag/cube/MilkDairyProducts/Consumption_Price_Month",
-        iri: "https://agriculture.ld.admin.ch/foag/dimension/date",
+        id: "https://agriculture.ld.admin.ch/foag/dimension/date",
         label: "Date",
         description: "Statement of the date for the present data point",
         scaleType: "Ordinal",
@@ -1577,7 +1577,7 @@ describe("useCombinedTemporalDimension", () => {
         __typename: "NominalDimension",
         cubeIri:
           "https://agriculture.ld.admin.ch/foag/cube/MilkDairyProducts/Consumption_Price_Month",
-        iri: "https://agriculture.ld.admin.ch/foag/dimension/product",
+        id: "https://agriculture.ld.admin.ch/foag/dimension/product",
         label: "Product",
         description:
           "Products or goods that are the subject of market monitoring.",
@@ -2155,7 +2155,7 @@ describe("useCombinedTemporalDimension", () => {
         __typename: "NominalDimension",
         cubeIri:
           "https://agriculture.ld.admin.ch/foag/cube/MilkDairyProducts/Consumption_Price_Month",
-        iri: "https://agriculture.ld.admin.ch/foag/dimension/product-subgroup",
+        id: "https://agriculture.ld.admin.ch/foag/dimension/product-subgroup",
         label: "Product subgroup",
         description:
           "Products or goods grouped together in subgroups that are the subject of market observation.",
@@ -2563,7 +2563,7 @@ describe("useCombinedTemporalDimension", () => {
         __typename: "NominalDimension",
         cubeIri:
           "https://agriculture.ld.admin.ch/foag/cube/MilkDairyProducts/Consumption_Price_Month",
-        iri: "https://agriculture.ld.admin.ch/foag/dimension/product-group",
+        id: "https://agriculture.ld.admin.ch/foag/dimension/product-group",
         label: "Product group",
         description:
           "Products or goods grouped together that are the subject of market monitoring.",
@@ -2656,7 +2656,7 @@ describe("useCombinedTemporalDimension", () => {
         __typename: "NominalDimension",
         cubeIri:
           "https://agriculture.ld.admin.ch/foag/cube/MilkDairyProducts/Consumption_Price_Month",
-        iri: "https://agriculture.ld.admin.ch/foag/dimension/market",
+        id: "https://agriculture.ld.admin.ch/foag/dimension/market",
         label: "Market",
         description: "Agricultural or food market of the product.",
         scaleType: "Nominal",
@@ -2676,7 +2676,7 @@ describe("useCombinedTemporalDimension", () => {
         __typename: "NominalDimension",
         cubeIri:
           "https://agriculture.ld.admin.ch/foag/cube/MilkDairyProducts/Consumption_Price_Month",
-        iri: "https://agriculture.ld.admin.ch/foag/dimension/production-system",
+        id: "https://agriculture.ld.admin.ch/foag/dimension/production-system",
         label: "Production system",
         description:
           "Method of cultivation or husbandry according to which a product is produced.",
@@ -2701,7 +2701,7 @@ describe("useCombinedTemporalDimension", () => {
         __typename: "NominalDimension",
         cubeIri:
           "https://agriculture.ld.admin.ch/foag/cube/MilkDairyProducts/Consumption_Price_Month",
-        iri: "https://agriculture.ld.admin.ch/foag/dimension/value-chain",
+        id: "https://agriculture.ld.admin.ch/foag/dimension/value-chain",
         label: "Value chain",
         description:
           "Simplified statement on the processing and trade stage of a product.",
@@ -2722,7 +2722,7 @@ describe("useCombinedTemporalDimension", () => {
         __typename: "NominalDimension",
         cubeIri:
           "https://agriculture.ld.admin.ch/foag/cube/MilkDairyProducts/Consumption_Price_Month",
-        iri: "https://agriculture.ld.admin.ch/foag/dimension/value-chain-detail",
+        id: "https://agriculture.ld.admin.ch/foag/dimension/value-chain-detail",
         label: "Value chain detail",
         description:
           "Detailed information on the processing and trade stage of a product.",
@@ -2765,7 +2765,7 @@ describe("useCombinedTemporalDimension", () => {
         __typename: "NominalDimension",
         cubeIri:
           "https://agriculture.ld.admin.ch/foag/cube/MilkDairyProducts/Consumption_Price_Month",
-        iri: "https://agriculture.ld.admin.ch/foag/dimension/data-source",
+        id: "https://agriculture.ld.admin.ch/foag/dimension/data-source",
         label: "Data source",
         description: "Source to be indicated when using the data.",
         scaleType: "Nominal",
@@ -2785,7 +2785,7 @@ describe("useCombinedTemporalDimension", () => {
         __typename: "NominalDimension",
         cubeIri:
           "https://agriculture.ld.admin.ch/foag/cube/MilkDairyProducts/Consumption_Price_Month",
-        iri: "https://agriculture.ld.admin.ch/foag/dimension/data-method",
+        id: "https://agriculture.ld.admin.ch/foag/dimension/data-method",
         label: "Data method",
         description: "Method used to compile / create the data.",
         scaleType: "Nominal",
@@ -2805,7 +2805,7 @@ describe("useCombinedTemporalDimension", () => {
         __typename: "NominalDimension",
         cubeIri:
           "https://agriculture.ld.admin.ch/foag/cube/MilkDairyProducts/Consumption_Price_Month",
-        iri: "https://agriculture.ld.admin.ch/foag/dimension/product-properties",
+        id: "https://agriculture.ld.admin.ch/foag/dimension/product-properties",
         label: "Product properties",
         description:
           "Characteristics of the product that describe its quality or condition.",
@@ -2826,7 +2826,7 @@ describe("useCombinedTemporalDimension", () => {
         __typename: "NominalDimension",
         cubeIri:
           "https://agriculture.ld.admin.ch/foag/cube/MilkDairyProducts/Consumption_Price_Month",
-        iri: "https://agriculture.ld.admin.ch/foag/dimension/product-origin",
+        id: "https://agriculture.ld.admin.ch/foag/dimension/product-origin",
         label: "Product origin",
         description: "Geographical area from which the product originates.",
         scaleType: "Nominal",
@@ -2846,7 +2846,7 @@ describe("useCombinedTemporalDimension", () => {
         __typename: "NominalDimension",
         cubeIri:
           "https://agriculture.ld.admin.ch/foag/cube/MilkDairyProducts/Consumption_Price_Month",
-        iri: "https://agriculture.ld.admin.ch/foag/dimension/sales-region",
+        id: "https://agriculture.ld.admin.ch/foag/dimension/sales-region",
         label: "Sales region",
         description: "Geographical area in which a product is sold.",
         scaleType: "Nominal",
@@ -2866,7 +2866,7 @@ describe("useCombinedTemporalDimension", () => {
         __typename: "NominalDimension",
         cubeIri:
           "https://agriculture.ld.admin.ch/foag/cube/MilkDairyProducts/Consumption_Price_Month",
-        iri: "https://agriculture.ld.admin.ch/foag/dimension/foreign-trade",
+        id: "https://agriculture.ld.admin.ch/foag/dimension/foreign-trade",
         label: "Foreign trade",
         description:
           "Direction of foreign trade (import/export) and information on import or export quota.",
@@ -2887,7 +2887,7 @@ describe("useCombinedTemporalDimension", () => {
         __typename: "NominalDimension",
         cubeIri:
           "https://agriculture.ld.admin.ch/foag/cube/MilkDairyProducts/Consumption_Price_Month",
-        iri: "https://agriculture.ld.admin.ch/foag/dimension/usage",
+        id: "https://agriculture.ld.admin.ch/foag/dimension/usage",
         label: "Usage",
         description: "Statement of the use for which the product is intended.",
         scaleType: "Nominal",
@@ -2907,7 +2907,7 @@ describe("useCombinedTemporalDimension", () => {
         __typename: "NominalDimension",
         cubeIri:
           "https://agriculture.ld.admin.ch/foag/cube/MilkDairyProducts/Consumption_Price_Month",
-        iri: "https://agriculture.ld.admin.ch/foag/dimension/cost-component",
+        id: "https://agriculture.ld.admin.ch/foag/dimension/cost-component",
         label: "Cost component",
         description:
           "Indication of whether currency details are with or without VAT.",
@@ -2928,7 +2928,7 @@ describe("useCombinedTemporalDimension", () => {
         __typename: "NominalDimension",
         cubeIri:
           "https://agriculture.ld.admin.ch/foag/cube/MilkDairyProducts/Consumption_Price_Month",
-        iri: "https://agriculture.ld.admin.ch/foag/dimension/unit",
+        id: "https://agriculture.ld.admin.ch/foag/dimension/unit",
         label: "Unit",
         description: "Unit of measure that defines the product.",
         scaleType: "Nominal",
@@ -2952,7 +2952,7 @@ describe("useCombinedTemporalDimension", () => {
         __typename: "NominalDimension",
         cubeIri:
           "https://agriculture.ld.admin.ch/foag/cube/MilkDairyProducts/Consumption_Price_Month",
-        iri: "https://agriculture.ld.admin.ch/foag/dimension/currency",
+        id: "https://agriculture.ld.admin.ch/foag/dimension/currency",
         label: "Currency",
         description:
           "Official means of payment with which a product is bought or sold. Currency is only relevant for the key indicator price.",
@@ -2973,7 +2973,7 @@ describe("useCombinedTemporalDimension", () => {
         __typename: "NominalDimension",
         cubeIri:
           "https://agriculture.ld.admin.ch/foag/cube/MilkDairyProducts/Consumption_Price_Month",
-        iri: "https://agriculture.ld.admin.ch/foag/dimension/key-indicator-type",
+        id: "https://agriculture.ld.admin.ch/foag/dimension/key-indicator-type",
         label: "Key indicator",
         description: "Statement of the key figure used for this data set.",
         scaleType: "Nominal",
@@ -2995,7 +2995,7 @@ describe("useCombinedTemporalDimension", () => {
         timeUnit: "Month",
         cubeIri:
           "https://agriculture.ld.admin.ch/foag/cube/MilkDairyProducts/Consumption_Price_Month",
-        iri: "https://agriculture.ld.admin.ch/foag/dimension/date",
+        id: "https://agriculture.ld.admin.ch/foag/dimension/date",
         label: "Date",
         description: "Statement of the date for the present data point",
         scaleType: "Ordinal",
@@ -4491,7 +4491,7 @@ describe("useCombinedTemporalDimension", () => {
         __typename: "NominalDimension",
         cubeIri:
           "https://agriculture.ld.admin.ch/foag/cube/MilkDairyProducts/Consumption_Price_Month",
-        iri: "https://agriculture.ld.admin.ch/foag/dimension/product",
+        id: "https://agriculture.ld.admin.ch/foag/dimension/product",
         label: "Product",
         description:
           "Products or goods that are the subject of market monitoring.",
@@ -5069,7 +5069,7 @@ describe("useCombinedTemporalDimension", () => {
         __typename: "NominalDimension",
         cubeIri:
           "https://agriculture.ld.admin.ch/foag/cube/MilkDairyProducts/Consumption_Price_Month",
-        iri: "https://agriculture.ld.admin.ch/foag/dimension/product-subgroup",
+        id: "https://agriculture.ld.admin.ch/foag/dimension/product-subgroup",
         label: "Product subgroup",
         description:
           "Products or goods grouped together in subgroups that are the subject of market observation.",
@@ -5477,7 +5477,7 @@ describe("useCombinedTemporalDimension", () => {
         __typename: "NominalDimension",
         cubeIri:
           "https://agriculture.ld.admin.ch/foag/cube/MilkDairyProducts/Consumption_Price_Month",
-        iri: "https://agriculture.ld.admin.ch/foag/dimension/product-group",
+        id: "https://agriculture.ld.admin.ch/foag/dimension/product-group",
         label: "Product group",
         description:
           "Products or goods grouped together that are the subject of market monitoring.",
@@ -5570,7 +5570,7 @@ describe("useCombinedTemporalDimension", () => {
         __typename: "NominalDimension",
         cubeIri:
           "https://agriculture.ld.admin.ch/foag/cube/MilkDairyProducts/Consumption_Price_Month",
-        iri: "https://agriculture.ld.admin.ch/foag/dimension/market",
+        id: "https://agriculture.ld.admin.ch/foag/dimension/market",
         label: "Market",
         description: "Agricultural or food market of the product.",
         scaleType: "Nominal",
@@ -5590,7 +5590,7 @@ describe("useCombinedTemporalDimension", () => {
         __typename: "NominalDimension",
         cubeIri:
           "https://agriculture.ld.admin.ch/foag/cube/MilkDairyProducts/Consumption_Price_Month",
-        iri: "https://agriculture.ld.admin.ch/foag/dimension/production-system",
+        id: "https://agriculture.ld.admin.ch/foag/dimension/production-system",
         label: "Production system",
         description:
           "Method of cultivation or husbandry according to which a product is produced.",
@@ -5615,7 +5615,7 @@ describe("useCombinedTemporalDimension", () => {
         __typename: "NominalDimension",
         cubeIri:
           "https://agriculture.ld.admin.ch/foag/cube/MilkDairyProducts/Consumption_Price_Month",
-        iri: "https://agriculture.ld.admin.ch/foag/dimension/value-chain",
+        id: "https://agriculture.ld.admin.ch/foag/dimension/value-chain",
         label: "Value chain",
         description:
           "Simplified statement on the processing and trade stage of a product.",
@@ -5636,7 +5636,7 @@ describe("useCombinedTemporalDimension", () => {
         __typename: "NominalDimension",
         cubeIri:
           "https://agriculture.ld.admin.ch/foag/cube/MilkDairyProducts/Consumption_Price_Month",
-        iri: "https://agriculture.ld.admin.ch/foag/dimension/value-chain-detail",
+        id: "https://agriculture.ld.admin.ch/foag/dimension/value-chain-detail",
         label: "Value chain detail",
         description:
           "Detailed information on the processing and trade stage of a product.",
@@ -5679,7 +5679,7 @@ describe("useCombinedTemporalDimension", () => {
         __typename: "NominalDimension",
         cubeIri:
           "https://agriculture.ld.admin.ch/foag/cube/MilkDairyProducts/Consumption_Price_Month",
-        iri: "https://agriculture.ld.admin.ch/foag/dimension/data-source",
+        id: "https://agriculture.ld.admin.ch/foag/dimension/data-source",
         label: "Data source",
         description: "Source to be indicated when using the data.",
         scaleType: "Nominal",
@@ -5699,7 +5699,7 @@ describe("useCombinedTemporalDimension", () => {
         __typename: "NominalDimension",
         cubeIri:
           "https://agriculture.ld.admin.ch/foag/cube/MilkDairyProducts/Consumption_Price_Month",
-        iri: "https://agriculture.ld.admin.ch/foag/dimension/data-method",
+        id: "https://agriculture.ld.admin.ch/foag/dimension/data-method",
         label: "Data method",
         description: "Method used to compile / create the data.",
         scaleType: "Nominal",
@@ -5719,7 +5719,7 @@ describe("useCombinedTemporalDimension", () => {
         __typename: "NominalDimension",
         cubeIri:
           "https://agriculture.ld.admin.ch/foag/cube/MilkDairyProducts/Consumption_Price_Month",
-        iri: "https://agriculture.ld.admin.ch/foag/dimension/product-properties",
+        id: "https://agriculture.ld.admin.ch/foag/dimension/product-properties",
         label: "Product properties",
         description:
           "Characteristics of the product that describe its quality or condition.",
@@ -5740,7 +5740,7 @@ describe("useCombinedTemporalDimension", () => {
         __typename: "NominalDimension",
         cubeIri:
           "https://agriculture.ld.admin.ch/foag/cube/MilkDairyProducts/Consumption_Price_Month",
-        iri: "https://agriculture.ld.admin.ch/foag/dimension/product-origin",
+        id: "https://agriculture.ld.admin.ch/foag/dimension/product-origin",
         label: "Product origin",
         description: "Geographical area from which the product originates.",
         scaleType: "Nominal",
@@ -5760,7 +5760,7 @@ describe("useCombinedTemporalDimension", () => {
         __typename: "NominalDimension",
         cubeIri:
           "https://agriculture.ld.admin.ch/foag/cube/MilkDairyProducts/Consumption_Price_Month",
-        iri: "https://agriculture.ld.admin.ch/foag/dimension/sales-region",
+        id: "https://agriculture.ld.admin.ch/foag/dimension/sales-region",
         label: "Sales region",
         description: "Geographical area in which a product is sold.",
         scaleType: "Nominal",
@@ -5780,7 +5780,7 @@ describe("useCombinedTemporalDimension", () => {
         __typename: "NominalDimension",
         cubeIri:
           "https://agriculture.ld.admin.ch/foag/cube/MilkDairyProducts/Consumption_Price_Month",
-        iri: "https://agriculture.ld.admin.ch/foag/dimension/foreign-trade",
+        id: "https://agriculture.ld.admin.ch/foag/dimension/foreign-trade",
         label: "Foreign trade",
         description:
           "Direction of foreign trade (import/export) and information on import or export quota.",
@@ -5801,7 +5801,7 @@ describe("useCombinedTemporalDimension", () => {
         __typename: "NominalDimension",
         cubeIri:
           "https://agriculture.ld.admin.ch/foag/cube/MilkDairyProducts/Consumption_Price_Month",
-        iri: "https://agriculture.ld.admin.ch/foag/dimension/usage",
+        id: "https://agriculture.ld.admin.ch/foag/dimension/usage",
         label: "Usage",
         description: "Statement of the use for which the product is intended.",
         scaleType: "Nominal",
@@ -5821,7 +5821,7 @@ describe("useCombinedTemporalDimension", () => {
         __typename: "NominalDimension",
         cubeIri:
           "https://agriculture.ld.admin.ch/foag/cube/MilkDairyProducts/Consumption_Price_Month",
-        iri: "https://agriculture.ld.admin.ch/foag/dimension/cost-component",
+        id: "https://agriculture.ld.admin.ch/foag/dimension/cost-component",
         label: "Cost component",
         description:
           "Indication of whether currency details are with or without VAT.",
@@ -5839,13 +5839,13 @@ describe("useCombinedTemporalDimension", () => {
         hierarchy: null,
       },
     ] as Dimension[];
-    const potentialTimeRangeFilterIris = [
+    const potentialTimeRangeFilterIds = [
       "https://agriculture.ld.admin.ch/foag/dimension/date",
     ];
     const formatLocale = getD3TimeFormatLocale("en");
     const result = getCombinedTemporalDimension({
       dimensions,
-      potentialTimeRangeFilterIris,
+      potentialTimeRangeFilterIds,
       formatLocale,
     });
     expect(result.values.length).toBeGreaterThan(2);

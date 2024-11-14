@@ -55,7 +55,7 @@ const useComboLineSingleState = (
   variables: ComboLineSingleStateVariables,
   data: ChartStateData
 ): ComboLineSingleState => {
-  const { chartConfig, measuresByIri } = chartProps;
+  const { chartConfig, measuresById } = chartProps;
   const { xDimension, getX, getXAsString } = variables;
   const { chartData, scalesData, timeRangeData, paddingData, allData } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
@@ -63,7 +63,7 @@ const useComboLineSingleState = (
   const yUnits = Array.from(
     new Set(
       variables.y.lines.map((d) => {
-        return measuresByIri[d.iri].unit;
+        return measuresById[d.iri].unit;
       })
     )
   );
