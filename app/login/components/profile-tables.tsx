@@ -197,8 +197,8 @@ const ProfileVisualizationsRow = (props: {
   const removeConfigMut = useMutate(removeConfig);
   const updateConfigMut = useMutate(updateConfig);
 
-  const [openShare, setOpenShare] = useState<HTMLElement | undefined>();
-  const [openEmbed, setOpenEmbed] = useState<HTMLElement | undefined>();
+  const [shareEl, setShareEl] = useState<HTMLElement | undefined>();
+  const [embedEl, setEmbedEl] = useState<HTMLElement | undefined>();
 
   const {
     isOpen: isRenameOpen,
@@ -263,14 +263,14 @@ const ProfileVisualizationsRow = (props: {
         : null,
       {
         type: "button",
-        onClick: (e) => setOpenShare(e?.currentTarget),
+        onClick: (e) => setShareEl(e?.currentTarget),
         label: t({ id: "login.chart.share", message: "Share" }),
         leadingIconName: "linkExternal",
         stayOpen: true,
       },
       {
         type: "button",
-        onClick: (e) => setOpenEmbed(e?.currentTarget),
+        onClick: (e) => setEmbedEl(e?.currentTarget),
         label: t({ id: "login.chart.embed", message: "Embed" }),
         leadingIconName: "embed",
         stayOpen: true,
@@ -423,21 +423,21 @@ const ProfileVisualizationsRow = (props: {
         <RowActions actions={actions} />
         <TriggeredPopover
           popoverProps={{
-            anchorPosition: { ...adjustPopoverPosition(openEmbed) },
+            anchorPosition: { ...getAdjustedPopoverPosition(embedEl) },
             anchorReference: "anchorPosition",
           }}
-          trigger={openEmbed}
+          trigger={embedEl}
         >
           <EmbedContent locale={locale} configKey={config.key} />
         </TriggeredPopover>
         <TriggeredPopover
           popoverProps={{
             anchorPosition: {
-              ...adjustPopoverPosition(openShare),
+              ...getAdjustedPopoverPosition(shareEl),
             },
             anchorReference: "anchorPosition",
           }}
-          trigger={openShare}
+          trigger={shareEl}
         >
           <ShareContent locale={locale} configKey={config.key} />
         </TriggeredPopover>
@@ -453,7 +453,7 @@ const ProfileVisualizationsRow = (props: {
   );
 };
 
-const adjustPopoverPosition = (
+const getAdjustedPopoverPosition = (
   element: HTMLElement | undefined
 ): PopoverPosition => {
   if (element) {

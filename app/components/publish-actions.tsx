@@ -56,7 +56,7 @@ export const TriggeredPopover = (props: TriggeredPopoverProps) => {
     setAnchorEl(trigger);
   }, [trigger]);
 
-  const [ref, width, height] = useResizeObserver<HTMLElement>();
+  const [ref, width, height] = useResizeObserver<HTMLDivElement>();
 
   return (
     <>
