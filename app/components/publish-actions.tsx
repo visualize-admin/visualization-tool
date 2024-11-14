@@ -21,6 +21,7 @@ import { ConfiguratorStatePublished } from "@/configurator";
 import { Icon } from "@/icons";
 import useEvent from "@/utils/use-event";
 import { useI18n } from "@/utils/use-i18n";
+import { useResizeObserver } from "@/utils/use-resize-observer";
 
 type PublishActionProps = {
   chartWrapperRef: RefObject<HTMLDivElement>;
@@ -44,11 +45,19 @@ type TriggeredPopoverProps = {
     setAnchorEl: (el: HTMLElement | undefined) => void
   ) => React.ReactNode;
   popoverProps: Omit<PopoverProps, "open" | "anchorEl" | "onClose">;
+  trigger?: HTMLElement;
 };
 
 export const TriggeredPopover = (props: TriggeredPopoverProps) => {
-  const { children, renderTrigger, popoverProps } = props;
+  const { children, renderTrigger, popoverProps, trigger } = props;
   const [anchorEl, setAnchorEl] = useState<Element | undefined>();
+
+  useEffect(() => {
+    setAnchorEl(trigger);
+  }, [trigger]);
+
+  const [ref, width, height] = useResizeObserver<HTMLDivElement>();
+
   return (
     <>
       {renderTrigger && renderTrigger(setAnchorEl)}
@@ -56,9 +65,17 @@ export const TriggeredPopover = (props: TriggeredPopoverProps) => {
         open={!!anchorEl}
         anchorEl={anchorEl}
         {...popoverProps}
+        anchorPosition={
+          popoverProps.anchorPosition
+            ? {
+                top: popoverProps.anchorPosition?.top - height / 2,
+                left: popoverProps.anchorPosition?.left - width,
+              }
+            : undefined
+        }
         onClose={() => setAnchorEl(undefined)}
       >
-        {children}
+        <Box ref={ref}>{children}</Box>
       </Popover>
     </>
   );
@@ -208,7 +225,7 @@ const Share = ({ configKey, locale }: PublishActionProps) => {
 };
 
 type EmbedContentProps = {
-  iframeHeight: number;
+  iframeHeight?: number;
 } & Omit<PublishActionProps, "chartWrapperRef">;
 
 export const EmbedContent = ({

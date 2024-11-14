@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   Link,
+  PopoverPosition,
   Skeleton,
   styled,
   Table,
@@ -18,10 +19,15 @@ import {
 import { PUBLISHED_STATE } from "@prisma/client";
 import sortBy from "lodash/sortBy";
 import NextLink from "next/link";
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 
 import { MenuActionProps } from "@/components/menu-action-item";
 import { OverflowTooltip } from "@/components/overflow-tooltip";
+import {
+  EmbedContent,
+  ShareContent,
+  TriggeredPopover,
+} from "@/components/publish-actions";
 import { RenameDialog } from "@/components/rename-dialog";
 import { RowActions } from "@/components/row-actions";
 import useDisclosure from "@/components/use-disclosure";
@@ -37,6 +43,7 @@ import { removeConfig, updateConfig } from "@/utils/chart-config/api";
 import { useMutate } from "@/utils/use-fetch-data";
 
 const PREVIEW_LIMIT = 3;
+const POPOVER_PADDING = 8;
 
 const SectionContent = ({
   children,
@@ -190,6 +197,9 @@ const ProfileVisualizationsRow = (props: {
   const removeConfigMut = useMutate(removeConfig);
   const updateConfigMut = useMutate(updateConfig);
 
+  const [shareEl, setShareEl] = useState<HTMLElement | undefined>();
+  const [embedEl, setEmbedEl] = useState<HTMLElement | undefined>();
+
   const {
     isOpen: isRenameOpen,
     open: openRename,
@@ -251,6 +261,20 @@ const ProfileVisualizationsRow = (props: {
             },
           }
         : null,
+      {
+        type: "button",
+        onClick: (e) => setShareEl(e?.currentTarget),
+        label: t({ id: "login.chart.share", message: "Share" }),
+        leadingIconName: "linkExternal",
+        stayOpen: true,
+      },
+      {
+        type: "button",
+        onClick: (e) => setEmbedEl(e?.currentTarget),
+        label: t({ id: "login.chart.embed", message: "Embed" }),
+        leadingIconName: "embed",
+        stayOpen: true,
+      },
       {
         type: "button",
         label: t({ id: "login.chart.rename", message: "Rename" }),
@@ -397,6 +421,26 @@ const ProfileVisualizationsRow = (props: {
       </TableCell>
       <TableCell width="20%" align="right">
         <RowActions actions={actions} />
+        <TriggeredPopover
+          popoverProps={{
+            anchorPosition: { ...getAdjustedPopoverPosition(embedEl) },
+            anchorReference: "anchorPosition",
+          }}
+          trigger={embedEl}
+        >
+          <EmbedContent locale={locale} configKey={config.key} />
+        </TriggeredPopover>
+        <TriggeredPopover
+          popoverProps={{
+            anchorPosition: {
+              ...getAdjustedPopoverPosition(shareEl),
+            },
+            anchorReference: "anchorPosition",
+          }}
+          trigger={shareEl}
+        >
+          <ShareContent locale={locale} configKey={config.key} />
+        </TriggeredPopover>
         <RenameDialog
           config={config}
           open={isRenameOpen}
@@ -407,4 +451,19 @@ const ProfileVisualizationsRow = (props: {
       </TableCell>
     </TableRow>
   );
+};
+
+const getAdjustedPopoverPosition = (
+  element: HTMLElement | undefined
+): PopoverPosition => {
+  if (element) {
+    const { x, y } = element.getBoundingClientRect();
+
+    return {
+      top: y,
+      left: x - POPOVER_PADDING,
+    };
+  } else {
+    return { top: 0, left: 0 };
+  }
 };
