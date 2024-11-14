@@ -38,17 +38,22 @@ export default function Preview() {
   i18n.activate(locale);
   const state = useStore(chartStateStore, (d) => d.state);
 
-  return state ? (
+  return (
     <LocaleProvider value={locale}>
       <I18nProvider i18n={i18n}>
         <GraphqlProvider>
           <ThemeProvider theme={federalTheme.theme}>
-            <ConfiguratorStateProvider chartId="published" initialState={state}>
-              <ChartPublished configKey="preview" {...state} />
-            </ConfiguratorStateProvider>
+            {state ? (
+              <ConfiguratorStateProvider
+                chartId="published"
+                initialState={state}
+              >
+                <ChartPublished configKey="preview" {...state} />
+              </ConfiguratorStateProvider>
+            ) : null}
           </ThemeProvider>
         </GraphqlProvider>
       </I18nProvider>
     </LocaleProvider>
-  ) : null;
+  );
 }

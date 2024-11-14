@@ -67,11 +67,11 @@ export const getCubeDimensions = async ({
       .filter(isObservationDimension)
       .filter((d) => {
         if (componentIris) {
+          const iri = d.path?.value;
+
           return (
-            componentIris.includes(d.path.value) ||
-            parseRelatedDimensions(d).some((r) =>
-              componentIris?.includes(r.iri)
-            )
+            componentIris.includes(iri) ||
+            parseRelatedDimensions(d).some((r) => componentIris.includes(r.iri))
           );
         }
 
@@ -288,6 +288,7 @@ const getRegularDimensionsValues = async (
   // `cube` and `locale` are the same for all dimensions
   const { cube, locale } = resolvedDimensions[0];
   const cubeIri = cube.term?.value!;
+
   return await loadDimensionsValuesWithMetadata(cubeIri, {
     dimensionIris: resolvedDimensions.map((d) => d.data.iri),
     cubeDimensions: cube.dimensions,
