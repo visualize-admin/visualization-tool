@@ -105,8 +105,10 @@ function buildSearchCubes(
           const dim = bySubjectAndPredicate.get(x.object.value);
           return {
             iri: joinIris({
-              // We don't need to unversion the cube iri here, as search cubes are
-              // temporary and dimensions coming from here aren't stored in chart config.
+              // TODO
+              // Technically we don't need to unversion the cube iri here, as
+              // search cubes are temporary and dimensions coming from here
+              // aren't stored in chart config, but would be nice to be consistent.
               unversionedCubeIri: iri,
               dimensionIri: x.object.value,
             }),
