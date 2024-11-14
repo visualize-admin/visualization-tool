@@ -955,14 +955,7 @@ export const chartConfigMigrations: Migration[] = [
         })
       );
 
-      for (const v of Object.values<any>(config.fields)) {
-        if ("componentIri" in v) {
-          v.componentIri = joinIris({
-            unversionedCubeIri,
-            dimensionIri: v.componentIri,
-          });
-        }
-
+      for (const [k, v] of Object.entries<any>(newConfig.fields)) {
         if ("componentIris" in v) {
           v.componentIris = v.componentIris.map((iri: string) =>
             joinIris({
@@ -970,6 +963,11 @@ export const chartConfigMigrations: Migration[] = [
               dimensionIri: iri,
             })
           );
+        } else if ("componentIri" in v) {
+          v.componentIri = joinIris({
+            unversionedCubeIri,
+            dimensionIri: v.componentIri,
+          });
         }
 
         if ("measureIri" in v && v.measureIri !== FIELD_VALUE_NONE) {
@@ -1014,16 +1012,17 @@ export const chartConfigMigrations: Migration[] = [
             dimensionIri: v.lineComponentIri,
           });
         }
+
+        if (newConfig.chartType === "table") {
+          delete newConfig.fields[k];
+          newConfig.fields[joinIris({ unversionedCubeIri, dimensionIri: k })] =
+            v;
+        }
       }
 
-      for (const v of Object.values<any>(config.interactiveFiltersConfig)) {
-        if ("componentIri" in v) {
-          v.componentIri = joinIris({
-            unversionedCubeIri,
-            dimensionIri: v.componentIri,
-          });
-        }
-
+      for (const v of Object.values<any>(
+        newConfig.interactiveFiltersConfig ?? {}
+      )) {
         if ("componentIris" in v) {
           v.componentIris = v.componentIris.map((iri: string) =>
             joinIris({
@@ -1031,6 +1030,11 @@ export const chartConfigMigrations: Migration[] = [
               dimensionIri: iri,
             })
           );
+        } else if ("componentIri" in v) {
+          v.componentIri = joinIris({
+            unversionedCubeIri,
+            dimensionIri: v.componentIri,
+          });
         }
       }
 
