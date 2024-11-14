@@ -161,7 +161,9 @@ export const useBandXVariables = (
 ): BandXVariables => {
   const xDimension = dimensionsByIri[x.componentIri];
   if (!xDimension) {
-    throw Error(`No dimension <${x.componentIri}> in cube!`);
+    throw Error(
+      `No dimension <${x.componentIri}> in cube! (useBandXVariables)`
+    );
   }
 
   const xTimeUnit = isTemporalDimension(xDimension)
@@ -206,7 +208,9 @@ export const useTemporalXVariables = (
 ): TemporalXVariables => {
   const xDimension = dimensionsByIri[x.componentIri];
   if (!xDimension) {
-    throw Error(`No dimension <${x.componentIri}> in cube!`);
+    throw Error(
+      `No dimension <${x.componentIri}> in cube! (useTemporalXVariables)`
+    );
   }
 
   if (
@@ -249,7 +253,9 @@ export const useNumericalXVariables = (
 ): NumericalXVariables => {
   const xMeasure = measuresByIri[x.componentIri];
   if (!xMeasure) {
-    throw Error(`No dimension <${x.componentIri}> in cube!`);
+    throw Error(
+      `No dimension <${x.componentIri}> in cube! (useNumericalXVariables)`
+    );
   }
 
   if (!isNumericalMeasure(xMeasure)) {
@@ -298,7 +304,9 @@ export const useNumericalYVariables = (
 ): NumericalYVariables => {
   const yMeasure = measuresByIri[y.componentIri];
   if (!yMeasure) {
-    throw Error(`No dimension <${y.componentIri}> in cube!`);
+    throw Error(
+      `No dimension <${y.componentIri}> in cube! (useNumericalYVariables)`
+    );
   }
 
   if (!isNumericalMeasure(yMeasure)) {
