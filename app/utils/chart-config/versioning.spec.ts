@@ -165,10 +165,10 @@ describe("config migrations", () => {
 
     const migratedOldConfig = (await migrateChartConfig(decodedConfig, {
       toVersion: "1.4.0",
-    })) as LineConfig;
+    })) as any;
 
     expect(
-      migratedOldConfig.interactiveFiltersConfig?.timeRange.componentId
+      migratedOldConfig.interactiveFiltersConfig?.timeRange.componentIri
     ).toEqual("");
   });
 });

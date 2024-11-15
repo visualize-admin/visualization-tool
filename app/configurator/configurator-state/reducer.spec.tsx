@@ -70,12 +70,11 @@ jest.mock("@/urql-cache", () => {
   };
 });
 
-export type getCachedComponents = typeof getCachedComponentsOriginal;
-export const getCachedComponents =
-  getCachedComponentsOriginal as unknown as jest.Mock<
-    ReturnType<getCachedComponents>,
-    Parameters<getCachedComponents>
-  >;
+type getCachedComponents = typeof getCachedComponentsOriginal;
+const getCachedComponents = getCachedComponentsOriginal as unknown as jest.Mock<
+  ReturnType<getCachedComponents>,
+  Parameters<getCachedComponents>
+>;
 
 afterEach(() => {
   jest.restoreAllMocks();
@@ -302,7 +301,7 @@ describe("applyDimensionToFilters", () => {
     it("should select top-most hierarchy value by default when no filter was present", () => {
       const initialFilters = {};
       const expectedFilters = {
-        nominalDimensionId: {
+        nominalDimensionIri: {
           type: "single",
           value: "switzerland",
         },
@@ -320,7 +319,7 @@ describe("applyDimensionToFilters", () => {
 
     it("should select top-most hierarchy value by default when multi-filter was present", () => {
       const initialFilters: Filters = {
-        nominalDimensionId: {
+        nominalDimensionIri: {
           type: "multi",
           values: {
             brienz: true,
@@ -329,7 +328,7 @@ describe("applyDimensionToFilters", () => {
         },
       };
       const expectedFilters = {
-        nominalDimensionId: {
+        nominalDimensionIri: {
           type: "single",
           value: "switzerland",
         },
@@ -571,7 +570,7 @@ describe("deriveFiltersFromFields", () => {
             "it": "",
           },
         },
-        "version": "3.1.0",
+        "version": "4.0.0",
       }
     `);
   });
@@ -1023,19 +1022,21 @@ describe("retainChartConfigWhenSwitchingChartType", () => {
   });
 
   it("should retain appropriate segment fields and discard the others", async () => {
-    runChecks(
-      await migrateChartConfig(covid19TableChartConfig, {
-        migrationProps: {
-          meta: {},
-          dataSet: "foo",
-          dataSource: {
-            type: "sparql",
-            url: "",
-          },
+    getCachedComponents.mockImplementation(() => ({
+      dimensions,
+      measures,
+    }));
+    const config = await migrateChartConfig(covid19TableChartConfig, {
+      migrationProps: {
+        meta: {},
+        dataSet: "foo",
+        dataSource: {
+          type: "sparql",
+          url: "",
         },
-      }),
-      segmentChecks
-    );
+      },
+    });
+    runChecks(config, segmentChecks);
   });
 });
 

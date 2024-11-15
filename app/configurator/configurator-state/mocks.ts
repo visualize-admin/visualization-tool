@@ -71,7 +71,7 @@ export const configStateMock = {
     },
   },
   groupedColumnChart: {
-    version: "3.1.0",
+    version: CONFIGURATOR_STATE_VERSION,
     state: "CONFIGURING_CHART",
     dataSource: {
       type: "sparql",
@@ -104,7 +104,7 @@ export const configStateMock = {
     chartConfigs: [
       {
         key: "2of7iJAjccuj",
-        version: CONFIGURATOR_STATE_VERSION,
+        version: CHART_CONFIG_VERSION,
         meta: {
           title: {
             en: "",
@@ -1114,7 +1114,7 @@ export const configJoinedCubes: Partial<
 > = {
   table: {
     key: "NF9PKwRtOaOI",
-    version: "3.1.0",
+    version: CHART_CONFIG_VERSION,
     activeField: undefined,
     interactiveFiltersConfig: undefined,
     meta: {
@@ -1369,7 +1369,7 @@ export const configJoinedCubes: Partial<
   pie: {
     activeField: undefined,
     key: "ydBHrv26xvUg",
-    version: "3.1.0",
+    version: CHART_CONFIG_VERSION,
     meta: {
       title: { en: "", de: "", fr: "", it: "" },
       description: { en: "", de: "", fr: "", it: "" },

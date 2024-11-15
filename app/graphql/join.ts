@@ -35,14 +35,14 @@ const getJoinByIdIndex = (joinById: string) => {
 
 export const getOriginalDimension = (dim: JoinByComponent, cube: Cube) => {
   assert(isJoinByComponent(dim), "Dimension should be a join by at this point");
-  const originalIri = dim.originalIds.find(
+  const originalId = dim.originalIds.find(
     (o) => o.cubeIri === cube.iri
   )?.dimensionId;
-  assert(!!originalIri, "Original iri should have been found");
+  assert(!!originalId, "Original id should have been found");
 
   return {
     ...dim,
-    iri: originalIri,
+    id: originalId,
   };
 };
 

@@ -275,7 +275,7 @@ describe("useQueryFilters", () => {
   });
 });
 
-describe("getChartConfigComponentIris", () => {
+describe("getChartConfigComponentsIds", () => {
   const migrationOptions = {
     migrationProps: {
       dataSet: "foo",
@@ -289,7 +289,7 @@ describe("getChartConfigComponentIris", () => {
   let lineConfig: ChartConfig;
   let mapConfig: ChartConfig;
 
-  it("should return correct componentIris for line chart", async () => {
+  it("should return correct componentsIds for line chart", async () => {
     lineConfig = await migrateChartConfig(
       line1Fixture.data.chartConfig,
       migrationOptions
@@ -298,10 +298,10 @@ describe("getChartConfigComponentIris", () => {
       map1Fixture.data.chartConfig,
       migrationOptions
     );
-    const componentsIris = extractChartConfigComponentIds({
+    const componentsIds = extractChartConfigComponentIds({
       chartConfig: lineConfig,
     });
-    expect(componentsIris).toEqual([
+    expect(componentsIds).toEqual([
       "foo___http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/0",
       "foo___http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/1",
       "foo___http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2",
@@ -311,11 +311,11 @@ describe("getChartConfigComponentIris", () => {
     ]);
   });
 
-  it("should return correct componentIris for map chart", () => {
-    const componentsIris = extractChartConfigComponentIds({
+  it("should return correct componentsIds for map chart", () => {
+    const componentsIds = extractChartConfigComponentIds({
       chartConfig: mapConfig,
     });
-    expect(componentsIris).toEqual([
+    expect(componentsIds).toEqual([
       "foo___https://environment.ld.admin.ch/foen/nfi/Topic/3",
       "foo___https://environment.ld.admin.ch/foen/nfi/Topic/3r",
       "foo___https://environment.ld.admin.ch/foen/nfi/classificationUnit",
@@ -327,15 +327,19 @@ describe("getChartConfigComponentIris", () => {
     ]);
   });
 
-  it("should return correct componentIris for dual line chart (join by)", () => {
-    const componentIris = extractChartConfigComponentIds({
-      chartConfig: dualLine1Fixture as unknown as ChartConfig,
+  it("should return correct componentsIds for dual line chart (join by)", async () => {
+    const dualLineConfig = await migrateChartConfig(
+      dualLine1Fixture,
+      migrationOptions
+    );
+    const componentIds = extractChartConfigComponentIds({
+      chartConfig: dualLineConfig,
     });
     expect(
-      componentIris.includes(
-        "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr"
+      componentIds.includes(
+        "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9___https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr"
       )
     ).toBe(true);
-    expect(componentIris.includes(mkJoinById(0))).toBe(false);
+    expect(componentIds.includes(mkJoinById(0))).toBe(false);
   });
 });

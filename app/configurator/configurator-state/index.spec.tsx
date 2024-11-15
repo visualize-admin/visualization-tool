@@ -207,7 +207,7 @@ describe("moveField", () => {
 
   it("should be possible to move an existing field up", () => {
     const newChartConfig = moveFilterField(chartConfig, {
-      dimension: { iri: "date", cubeIri: "" } as any as Dimension,
+      dimension: { id: "date", cubeIri: "" } as any as Dimension,
       delta: -1,
       possibleValues: ["2020.11.20", "2020.11.10"],
     });
@@ -223,7 +223,7 @@ describe("moveField", () => {
 
   it("should be possible to move an existing field down", () => {
     const newChartConfig = moveFilterField(chartConfig, {
-      dimension: { iri: "species", cubeIri: "" } as any as Dimension,
+      dimension: { id: "species", cubeIri: "" } as any as Dimension,
       delta: 1,
       possibleValues: ["penguins", "tigers"],
     });
@@ -239,7 +239,7 @@ describe("moveField", () => {
 
   it("should be possible to move an absent field up", () => {
     const newChartConfig = moveFilterField(chartConfig, {
-      dimension: { iri: "color", cubeIri: "" } as any as Dimension,
+      dimension: { id: "color", cubeIri: "" } as any as Dimension,
       delta: -1,
       possibleValues: ["red", "blue"],
     });
@@ -257,7 +257,7 @@ describe("moveField", () => {
 
   it("should not be possible to move an existing field too much above", () => {
     const newChartConfig = moveFilterField(chartConfig, {
-      dimension: { iri: "species", cubeIri: "" } as any as Dimension,
+      dimension: { id: "species", cubeIri: "" } as any as Dimension,
       delta: -1,
       possibleValues: ["penguins", "tigers"],
     });
@@ -273,7 +273,7 @@ describe("moveField", () => {
 
   it("should not be possible to move an existing field too much below", () => {
     const newChartConfig = moveFilterField(chartConfig, {
-      dimension: { iri: "date", cubeIri: "" } as any as Dimension,
+      dimension: { id: "date", cubeIri: "" } as any as Dimension,
       delta: 1,
       possibleValues: ["penguins", "tigers"],
     });

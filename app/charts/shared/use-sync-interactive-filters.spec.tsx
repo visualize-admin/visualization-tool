@@ -3,11 +3,7 @@ import { useState } from "react";
 import { Client, Provider } from "urql";
 
 import useSyncInteractiveFilters from "@/charts/shared/use-sync-interactive-filters";
-import {
-  ChartConfig,
-  ConfiguratorStateConfiguringChart,
-  InteractiveFiltersConfig,
-} from "@/config-types";
+import { ChartConfig, ConfiguratorStateConfiguringChart } from "@/config-types";
 import { ConfiguratorStateProvider } from "@/src";
 import {
   InteractiveFiltersChartProvider,
@@ -48,32 +44,31 @@ jest.mock("next-auth/react", () => {
   };
 });
 
-const getInteractiveFiltersConfig = () =>
-  ({
-    legend: {
-      componentId: "https://fake-iri/dimension/0",
-      active: false,
+const getLegacyInteractiveFiltersConfig = () => ({
+  legend: {
+    componentIri: "https://fake-iri/dimension/0",
+    active: false,
+  },
+  dataFilters: {
+    active: true,
+    componentIris: [
+      "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1",
+    ],
+  },
+  timeRange: {
+    active: false,
+    componentIri: "https://fake-iri/dimension/2",
+    presets: {
+      type: "range",
+      from: "2021-01-01",
+      to: "2021-01-12",
     },
-    dataFilters: {
-      active: true,
-      componentIds: [
-        "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1",
-      ],
-    },
-    timeRange: {
-      active: false,
-      componentId: "https://fake-iri/dimension/2",
-      presets: {
-        type: "range",
-        from: "2021-01-01",
-        to: "2021-01-12",
-      },
-    },
-    calculation: {
-      active: false,
-      type: "identity",
-    },
-  }) as InteractiveFiltersConfig;
+  },
+  calculation: {
+    active: false,
+    type: "identity",
+  },
+});
 
 const setup = async ({
   modifiedChartConfig,
@@ -83,7 +78,7 @@ const setup = async ({
   const chartConfig = (await migrateChartConfig(
     {
       ...fixture.data.chartConfig,
-      interactiveFiltersConfig: getInteractiveFiltersConfig(),
+      interactiveFiltersConfig: getLegacyInteractiveFiltersConfig(),
     },
     {
       migrationProps: {
@@ -156,7 +151,7 @@ describe("useSyncInteractiveFilters", () => {
     const chartConfig = (await migrateChartConfig(
       {
         ...fixture.data.chartConfig,
-        interactiveFiltersConfig: getInteractiveFiltersConfig(),
+        interactiveFiltersConfig: getLegacyInteractiveFiltersConfig(),
       },
       {
         migrationProps: {

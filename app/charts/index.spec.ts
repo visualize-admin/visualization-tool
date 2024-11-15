@@ -106,7 +106,7 @@ describe("initial config", () => {
     }) as ColumnConfig;
 
     expect(config.fields.x.componentId).toEqual(
-      "temporal-ordinal-dimension-iri"
+      "https://cube-iri___temporal-ordinal-dimension-iri"
     );
   });
 
@@ -124,7 +124,9 @@ describe("initial config", () => {
       measures: forestAreaData.data.dataCubeByIri.measures as any as Measure[],
     }) as ColumnConfig;
 
-    expect(config.fields.x.componentId).toEqual("temporal-dimension-iri");
+    expect(config.fields.x.componentId).toEqual(
+      "https://cube-iri___temporal-dimension-iri"
+    );
   });
 
   it("should create an initial scatterplot config having segment correctly defined", () => {
@@ -391,18 +393,18 @@ describe("chart type switch", () => {
       chartConfig: oldChartConfig,
       newChartType: "column",
       dimensions: [
-        { iri: "https://environment.ld.admin.ch/foen/ubd000502/jahr" },
-        { iri: "https://environment.ld.admin.ch/foen/ubd000502/gas" },
-        { iri: "https://environment.ld.admin.ch/foen/ubd000502/sektorid" },
+        { id: "https://environment.ld.admin.ch/foen/ubd000502/jahr" },
+        { id: "https://environment.ld.admin.ch/foen/ubd000502/gas" },
+        { id: "https://environment.ld.admin.ch/foen/ubd000502/sektorid" },
       ] as any as Dimension[],
       measures: [
         {
           __typename: "NumericalMeasure",
-          iri: "https://environment.ld.admin.ch/foen/ubd000502/werte",
+          id: "https://environment.ld.admin.ch/foen/ubd000502/werte",
         },
         {
           __typename: "NumericalMeasure",
-          iri: "https://environment.ld.admin.ch/foen/ubd000502/werteNichtGerundet",
+          id: "https://environment.ld.admin.ch/foen/ubd000502/werteNichtGerundet",
         },
       ] as any as Measure[],
     }) as ColumnConfig;

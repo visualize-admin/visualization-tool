@@ -222,7 +222,7 @@ describe("joinDimensions", () => {
             } as Dimension,
             {
               cubeIri: "population",
-              iri: "canton",
+              id: "canton",
               label: "Canton",
               values: [{ value: "Bern" }, { value: "Zürich" }],
             } as unknown as Dimension,
@@ -246,7 +246,7 @@ describe("joinDimensions", () => {
             } as Dimension,
             {
               cubeIri: "elec",
-              iri: "CANTON",
+              id: "CANTON",
               label: "Canton",
               values: [
                 { value: "Bern" },
@@ -266,10 +266,10 @@ describe("joinDimensions", () => {
       Array [
         Object {
           "cubeIri": "joinBy",
-          "iri": "joinBy__0",
+          "id": "joinBy__0",
           "isJoinByDimension": true,
           "label": "Year",
-          "originalIris": Array [
+          "originalIds": Array [
             Object {
               "cubeIri": "population",
               "description": "",
@@ -290,7 +290,7 @@ describe("joinDimensions", () => {
           "id": "joinBy__1",
           "isJoinByDimension": true,
           "label": "Canton",
-          "originalIris": Array [
+          "originalIds": Array [
             Object {
               "cubeIri": "population",
               "description": "",
