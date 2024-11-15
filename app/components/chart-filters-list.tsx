@@ -82,7 +82,8 @@ export const ChartFiltersList = ({
         }
 
         const dimension = data.dataCubesComponents.dimensions.find(
-          (d) => d.id === id && d.cubeIri === filter.iri
+          (d) =>
+            d.id === id && d.cubeIri === filter.iri && d.cubeIri === cubeIri
         );
 
         if (!dimension) {
@@ -145,6 +146,7 @@ export const ChartFiltersList = ({
     queryFilters,
     animationField,
     timeFormatUnit,
+    cubeIri,
     timeSlider.value,
     timeSlider.type,
   ]);
