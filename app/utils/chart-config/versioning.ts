@@ -7,7 +7,7 @@ import {
   PROD_DATA_SOURCE_URL,
 } from "@/domain/datasource/constants";
 import { client } from "@/graphql/client";
-import { makeComponentId } from "@/graphql/resolvers/rdf";
+import { makeComponentId, splitComponentId } from "@/graphql/resolvers/rdf";
 import { DEFAULT_CATEGORICAL_PALETTE_NAME } from "@/palettes";
 import {
   CHART_CONFIG_VERSION,
@@ -965,18 +965,22 @@ export const chartConfigMigrations: Migration[] = [
           );
           delete v.componentIris;
         } else if ("componentIri" in v) {
-          v.componentId = makeComponentId({
+          v.componentId = v.componentIri
+            ? makeComponentId({
             unversionedCubeIri,
             unversionedComponentIri: v.componentIri,
-          });
+              })
+            : "";
           delete v.componentIri;
         }
 
         if ("measureIri" in v && v.measureIri !== FIELD_VALUE_NONE) {
-          v.measureId = makeComponentId({
+          v.measureId = v.measureIri
+            ? makeComponentId({
             unversionedCubeIri,
             unversionedComponentIri: v.measureIri,
-          });
+              })
+            : "";
           delete v.measureIri;
         }
 
@@ -1045,10 +1049,12 @@ export const chartConfigMigrations: Migration[] = [
           );
           delete v.componentIris;
         } else if ("componentIri" in v) {
-          v.componentId = makeComponentId({
+          v.componentId = v.componentIri
+            ? makeComponentId({
             unversionedCubeIri,
             unversionedComponentIri: v.componentIri,
-          });
+              })
+            : "";
           delete v.componentIri;
         }
       }
@@ -1057,10 +1063,101 @@ export const chartConfigMigrations: Migration[] = [
     },
     down: async (config) => {
       const newConfig = { ...config, version: "3.4.0" };
-      newConfig.cubes = newConfig.cubes.map((cube: any) => ({
+
+      newConfig.cubes = newConfig.cubes.map(async (cube: any) => {
+        return {
         ...cube,
-        publishIri: cube.unversionedIri,
-      }));
+          publishIri: cube.iri,
+          filters: Object.fromEntries(
+            Object.entries(cube.filters).map(([k, v]) => [
+              splitComponentId(k).unversionedComponentIri,
+              v,
+            ])
+          ),
+        };
+      });
+
+      for (const [k, v] of Object.entries<any>(newConfig.fields)) {
+        if ("componentIds" in v) {
+          v.componentIris = v.componentIds.map(
+            (id: string) => splitComponentId(id).unversionedComponentIri
+          );
+          delete v.componentIds;
+        } else if ("componentId" in v) {
+          v.componentIri = v.componentId
+            ? splitComponentId(v.componentId).unversionedComponentIri
+            : "";
+          delete v.componentId;
+        }
+
+        if ("measureId" in v && v.measureId !== FIELD_VALUE_NONE) {
+          v.measureIri = v.measureId
+            ? splitComponentId(v.measureId).unversionedComponentIri
+            : "";
+          delete v.measureId;
+        }
+
+        // Maps
+        if (v.color && "componentId" in v.color) {
+          v.color.componentIri = splitComponentId(
+            v.color.componentId
+          ).unversionedComponentIri;
+          delete v.color.componentId;
+        }
+
+        if ("leftAxisComponentId" in v) {
+          v.leftAxisComponentIri = splitComponentId(
+            v.leftAxisComponentId
+          ).unversionedComponentIri;
+          delete v.leftAxisComponentId;
+        }
+
+        if ("rightAxisComponentId" in v) {
+          v.rightAxisComponentIri = splitComponentId(
+            v.rightAxisComponentId
+          ).unversionedComponentIri;
+          delete v.rightAxisComponentId;
+        }
+
+        if ("columnComponentId" in v) {
+          v.columnComponentIri = splitComponentId(
+            v.columnComponentId
+          ).unversionedComponentIri;
+          delete v.columnComponentId;
+        }
+
+        if ("lineComponentId" in v) {
+          v.lineComponentIri = splitComponentId(
+            v.lineComponentId
+          ).unversionedComponentIri;
+          delete v.lineComponentId;
+        }
+
+        if (newConfig.chartType === "table") {
+          const componentIri = splitComponentId(k)
+            .unversionedComponentIri as string;
+          v.componentIri = componentIri;
+          delete v.componentId;
+          newConfig.fields[componentIri] = v;
+          delete newConfig.fields[k];
+        }
+      }
+
+      for (const v of Object.values<any>(
+        newConfig.interactiveFiltersConfig ?? {}
+      )) {
+        if ("componentIds" in v) {
+          v.componentIris = v.componentIds.map(
+            (id: string) => splitComponentId(id).unversionedComponentIri
+          );
+          delete v.componentIds;
+        } else if ("componentId" in v) {
+          v.componentIri = v.componentId
+            ? splitComponentId(v.componentId).unversionedComponentIri
+            : "";
+          delete v.componentId;
+        }
+      }
 
       return newConfig;
     },
