@@ -2055,7 +2055,6 @@ const convertTableFieldsToSegmentField = ({
   }
 
   const { componentId } = component;
-  console.log("ComponentId (convert)", componentId, dimensions);
   const actualComponent = [...dimensions, ...measures].find(
     (d) => d.id === componentId
   ) as Component;
