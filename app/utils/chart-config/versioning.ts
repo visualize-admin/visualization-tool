@@ -963,6 +963,10 @@ export const chartConfigMigrations: Migration[] = [
       );
 
       for (const [k, v] of Object.entries<any>(newConfig.fields)) {
+        if (typeof v !== "object") {
+          continue;
+        }
+
         if ("componentIris" in v) {
           v.componentIds = v.componentIris.map((iri: string) =>
             isJoinById(iri)
@@ -1127,6 +1131,10 @@ export const chartConfigMigrations: Migration[] = [
       });
 
       for (const [k, v] of Object.entries<any>(newConfig.fields)) {
+        if (typeof v !== "object") {
+          continue;
+        }
+
         if ("componentIds" in v) {
           v.componentIris = v.componentIds.map(
             (id: string) => splitComponentId(id).unversionedComponentIri
