@@ -1,3 +1,5 @@
+import stringSimilarity from "string-similarity-js";
+
 import { DEFAULT_OTHER_COLOR_FIELD_OPACITY } from "@/charts/map/constants";
 import { ChartConfig, ConfiguratorState } from "@/config-types";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
@@ -916,11 +918,26 @@ export const chartConfigMigrations: Migration[] = [
     from: "3.4.0",
     to: "4.0.0",
     up: async (config, configuratorState) => {
-      let unversionedCubeIri = "";
+      const unversionedCubeIris: string[] = [];
+      const getClosestUnversionedCubeIri = (id: string) => {
+        let score = 0;
+        let unversionedIri = "";
+
+        for (const iri of unversionedCubeIris) {
+          const s = stringSimilarity(id, iri);
+
+          if (s > score) {
+            score = s;
+            unversionedIri = iri;
+          }
+        }
+
+        return unversionedIri;
+      };
 
       const newConfig = { ...config, version: "4.0.0" };
       newConfig.cubes = await Promise.all(
-        newConfig.cubes.map(async (cube: any, i: number) => {
+        newConfig.cubes.map(async (cube: any) => {
           const { publishIri, ...rest } = cube;
           const isServerSide = typeof window === "undefined";
           const fn = isServerSide
@@ -937,15 +954,13 @@ export const chartConfigMigrations: Migration[] = [
               };
           const unversionedIri = await fn();
 
-          if (i === 0) {
-            unversionedCubeIri = unversionedIri;
-          }
+          unversionedCubeIris.push(unversionedIri);
 
           return {
             ...rest,
             joinBy: rest.joinBy?.map((joinBy: string) =>
               makeComponentId({
-                unversionedCubeIri,
+                unversionedCubeIri: unversionedIri,
                 unversionedComponentIri: joinBy,
               })
             ),
@@ -972,7 +987,7 @@ export const chartConfigMigrations: Migration[] = [
             isJoinById(iri)
               ? iri
               : makeComponentId({
-              unversionedCubeIri,
+                  unversionedCubeIri: getClosestUnversionedCubeIri(iri),
               unversionedComponentIri: iri,
             })
           );
@@ -982,7 +997,9 @@ export const chartConfigMigrations: Migration[] = [
             ? v.componentIri
             : v.componentIri
             ? makeComponentId({
-            unversionedCubeIri,
+                  unversionedCubeIri: getClosestUnversionedCubeIri(
+                    v.componentIri
+                  ),
             unversionedComponentIri: v.componentIri,
               })
             : "";
@@ -994,7 +1011,9 @@ export const chartConfigMigrations: Migration[] = [
             ? v.measureIri
             : v.measureIri
             ? makeComponentId({
-            unversionedCubeIri,
+                  unversionedCubeIri: getClosestUnversionedCubeIri(
+                    v.measureIri
+                  ),
             unversionedComponentIri: v.measureIri,
               })
             : "";
@@ -1010,7 +1029,7 @@ export const chartConfigMigrations: Migration[] = [
           v.colorMapping = Object.fromEntries(
             Object.entries(v.colorMapping).map(([k, v]) => [
               makeComponentId({
-                unversionedCubeIri,
+                unversionedCubeIri: getClosestUnversionedCubeIri(k),
                 unversionedComponentIri: k,
               }),
               v,
@@ -1023,7 +1042,9 @@ export const chartConfigMigrations: Migration[] = [
           v.color.componentId = isJoinById(v.color.componentIri)
             ? v.color.componentIri
             : makeComponentId({
-            unversionedCubeIri,
+                unversionedCubeIri: getClosestUnversionedCubeIri(
+                  v.color.componentIri
+                ),
             unversionedComponentIri: v.color.componentIri,
           });
           delete v.color.componentIri;
@@ -1033,7 +1054,9 @@ export const chartConfigMigrations: Migration[] = [
           v.leftAxisComponentId = isJoinById(v.leftAxisComponentIri)
             ? v.leftAxisComponentIri
             : makeComponentId({
-            unversionedCubeIri,
+                unversionedCubeIri: getClosestUnversionedCubeIri(
+                  v.leftAxisComponentIri
+                ),
             unversionedComponentIri: v.leftAxisComponentIri,
           });
           delete v.leftAxisComponentIri;
@@ -1043,7 +1066,9 @@ export const chartConfigMigrations: Migration[] = [
           v.rightAxisComponentId = isJoinById(v.rightAxisComponentIri)
             ? v.rightAxisComponentIri
             : makeComponentId({
-            unversionedCubeIri,
+                unversionedCubeIri: getClosestUnversionedCubeIri(
+                  v.rightAxisComponentIri
+                ),
             unversionedComponentIri: v.rightAxisComponentIri,
           });
           delete v.rightAxisComponentIri;
@@ -1053,7 +1078,9 @@ export const chartConfigMigrations: Migration[] = [
           v.columnComponentId = isJoinById(v.columnComponentIri)
             ? v.columnComponentIri
             : makeComponentId({
-            unversionedCubeIri,
+                unversionedCubeIri: getClosestUnversionedCubeIri(
+                  v.columnComponentIri
+                ),
             unversionedComponentIri: v.columnComponentIri,
           });
           delete v.columnComponentIri;
@@ -1063,7 +1090,9 @@ export const chartConfigMigrations: Migration[] = [
           v.lineComponentId = isJoinById(v.lineComponentIri)
             ? v.lineComponentIri
             : makeComponentId({
-            unversionedCubeIri,
+                unversionedCubeIri: getClosestUnversionedCubeIri(
+                  v.lineComponentIri
+                ),
             unversionedComponentIri: v.lineComponentIri,
           });
           delete v.lineComponentIri;
@@ -1073,7 +1102,7 @@ export const chartConfigMigrations: Migration[] = [
           const componentId = isJoinById(k)
             ? k
             : makeComponentId({
-            unversionedCubeIri,
+                unversionedCubeIri: getClosestUnversionedCubeIri(k),
             unversionedComponentIri: k,
           });
           v.componentId = componentId;
@@ -1091,7 +1120,7 @@ export const chartConfigMigrations: Migration[] = [
             isJoinById(iri)
               ? iri
               : makeComponentId({
-              unversionedCubeIri,
+                  unversionedCubeIri: getClosestUnversionedCubeIri(iri),
               unversionedComponentIri: iri,
             })
           );
@@ -1101,7 +1130,9 @@ export const chartConfigMigrations: Migration[] = [
             ? v.componentIri
             : v.componentIri
             ? makeComponentId({
-            unversionedCubeIri,
+                  unversionedCubeIri: getClosestUnversionedCubeIri(
+                    v.componentIri
+                  ),
             unversionedComponentIri: v.componentIri,
               })
             : "";
