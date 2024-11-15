@@ -997,6 +997,23 @@ export const chartConfigMigrations: Migration[] = [
           delete v.measureIri;
         }
 
+        if (
+          (newConfig.chartType === "comboLineColumn" ||
+            newConfig.chartType === "comboLineDual" ||
+            newConfig.chartType === "comboLineSingle") &&
+          k === "y"
+        ) {
+          v.colorMapping = Object.fromEntries(
+            Object.entries(v.colorMapping).map(([k, v]) => [
+              makeComponentId({
+                unversionedCubeIri,
+                unversionedComponentIri: k,
+              }),
+              v,
+            ])
+          );
+        }
+
         // Maps
         if (v.color && "componentIri" in v.color) {
           v.color.componentId = isJoinById(v.color.componentIri)
@@ -1127,6 +1144,20 @@ export const chartConfigMigrations: Migration[] = [
             ? splitComponentId(v.measureId).unversionedComponentIri
             : "";
           delete v.measureId;
+        }
+
+        if (
+          (newConfig.chartType === "comboLineColumn" ||
+            newConfig.chartType === "comboLineDual" ||
+            newConfig.chartType === "comboLineSingle") &&
+          k === "y"
+        ) {
+          v.colorMapping = Object.fromEntries(
+            Object.entries(v.colorMapping).map(([k, v]) => [
+              splitComponentId(k).unversionedComponentIri,
+              v,
+            ])
+          );
         }
 
         // Maps

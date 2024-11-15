@@ -3,6 +3,7 @@ import {
   decodeChartConfig,
   LineConfig,
 } from "@/config-types";
+import dualLine1Fixture from "@/test/__fixtures/config/dev/chartConfig-photovoltaik-und-gebaudeprogramm.json";
 import {
   CHART_CONFIG_VERSION,
   CONFIGURATOR_STATE_VERSION,
@@ -170,6 +171,21 @@ describe("config migrations", () => {
     expect(
       migratedOldConfig.interactiveFiltersConfig?.timeRange.componentIri
     ).toEqual("");
+  });
+
+  it("should correctly migrate colorMapping in v4.0.0 for combo charts", async () => {
+    const migratedConfig = await migrateChartConfig(dualLine1Fixture, {
+      toVersion: "4.0.0",
+      migrationProps: CONFIGURATOR_STATE,
+    });
+    const decodedConfig = decodeChartConfig(migratedConfig);
+    expect(decodedConfig).toBeDefined();
+    expect((decodedConfig as any).fields.y.colorMapping).toMatchObject({
+      "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9___http://schema.org/amount":
+        "#ff7f0e",
+      "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9___https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/AnzahlAnlagen":
+        "#1f77b4",
+    });
   });
 });
 
