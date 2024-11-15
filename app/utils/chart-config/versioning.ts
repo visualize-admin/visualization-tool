@@ -988,21 +988,21 @@ export const chartConfigMigrations: Migration[] = [
               ? iri
               : makeComponentId({
                   unversionedCubeIri: getClosestUnversionedCubeIri(iri),
-              unversionedComponentIri: iri,
-            })
+                  unversionedComponentIri: iri,
+                })
           );
           delete v.componentIris;
         } else if ("componentIri" in v) {
           v.componentId = isJoinById(v.componentIri)
             ? v.componentIri
             : v.componentIri
-            ? makeComponentId({
+              ? makeComponentId({
                   unversionedCubeIri: getClosestUnversionedCubeIri(
                     v.componentIri
                   ),
-            unversionedComponentIri: v.componentIri,
-              })
-            : "";
+                  unversionedComponentIri: v.componentIri,
+                })
+              : "";
           delete v.componentIri;
         }
 
@@ -1010,13 +1010,13 @@ export const chartConfigMigrations: Migration[] = [
           v.measureId = isJoinById(v.measureIri)
             ? v.measureIri
             : v.measureIri
-            ? makeComponentId({
+              ? makeComponentId({
                   unversionedCubeIri: getClosestUnversionedCubeIri(
                     v.measureIri
                   ),
-            unversionedComponentIri: v.measureIri,
-              })
-            : "";
+                  unversionedComponentIri: v.measureIri,
+                })
+              : "";
           delete v.measureIri;
         }
 
@@ -1045,8 +1045,8 @@ export const chartConfigMigrations: Migration[] = [
                 unversionedCubeIri: getClosestUnversionedCubeIri(
                   v.color.componentIri
                 ),
-            unversionedComponentIri: v.color.componentIri,
-          });
+                unversionedComponentIri: v.color.componentIri,
+              });
           delete v.color.componentIri;
         }
 
@@ -1057,8 +1057,8 @@ export const chartConfigMigrations: Migration[] = [
                 unversionedCubeIri: getClosestUnversionedCubeIri(
                   v.leftAxisComponentIri
                 ),
-            unversionedComponentIri: v.leftAxisComponentIri,
-          });
+                unversionedComponentIri: v.leftAxisComponentIri,
+              });
           delete v.leftAxisComponentIri;
         }
 
@@ -1069,8 +1069,8 @@ export const chartConfigMigrations: Migration[] = [
                 unversionedCubeIri: getClosestUnversionedCubeIri(
                   v.rightAxisComponentIri
                 ),
-            unversionedComponentIri: v.rightAxisComponentIri,
-          });
+                unversionedComponentIri: v.rightAxisComponentIri,
+              });
           delete v.rightAxisComponentIri;
         }
 
@@ -1081,8 +1081,8 @@ export const chartConfigMigrations: Migration[] = [
                 unversionedCubeIri: getClosestUnversionedCubeIri(
                   v.columnComponentIri
                 ),
-            unversionedComponentIri: v.columnComponentIri,
-          });
+                unversionedComponentIri: v.columnComponentIri,
+              });
           delete v.columnComponentIri;
         }
 
@@ -1093,8 +1093,8 @@ export const chartConfigMigrations: Migration[] = [
                 unversionedCubeIri: getClosestUnversionedCubeIri(
                   v.lineComponentIri
                 ),
-            unversionedComponentIri: v.lineComponentIri,
-          });
+                unversionedComponentIri: v.lineComponentIri,
+              });
           delete v.lineComponentIri;
         }
 
@@ -1103,8 +1103,8 @@ export const chartConfigMigrations: Migration[] = [
             ? k
             : makeComponentId({
                 unversionedCubeIri: getClosestUnversionedCubeIri(k),
-            unversionedComponentIri: k,
-          });
+                unversionedComponentIri: k,
+              });
           v.componentId = componentId;
           delete v.componentIri;
           newConfig.fields[componentId] = v;
@@ -1121,21 +1121,21 @@ export const chartConfigMigrations: Migration[] = [
               ? iri
               : makeComponentId({
                   unversionedCubeIri: getClosestUnversionedCubeIri(iri),
-              unversionedComponentIri: iri,
-            })
+                  unversionedComponentIri: iri,
+                })
           );
           delete v.componentIris;
         } else if ("componentIri" in v) {
           v.componentId = isJoinById(v.componentIri)
             ? v.componentIri
             : v.componentIri
-            ? makeComponentId({
+              ? makeComponentId({
                   unversionedCubeIri: getClosestUnversionedCubeIri(
                     v.componentIri
                   ),
-            unversionedComponentIri: v.componentIri,
-              })
-            : "";
+                  unversionedComponentIri: v.componentIri,
+                })
+              : "";
           delete v.componentIri;
         }
       }
@@ -1147,7 +1147,7 @@ export const chartConfigMigrations: Migration[] = [
 
       newConfig.cubes = newConfig.cubes.map(async (cube: any) => {
         return {
-        ...cube,
+          ...cube,
           joinBy: cube.joinBy?.map(
             (joinBy: string) => splitComponentId(joinBy).unversionedComponentIri
           ),
@@ -1785,6 +1785,30 @@ export const configuratorStateMigrations: Migration[] = [
 
       newConfig.chartConfigs = chartConfigs;
 
+      const dataFilters = newConfig.dashboardFilters.dataFilters;
+
+      for (const cIri of dataFilters.componentIris) {
+        cubeLoop: for (const cube of newConfig.chartConfigs.flatMap(
+          (c: any) => c.cubes
+        )) {
+          for (const fId of Object.keys(cube.filters)) {
+            if (fId.includes(cIri)) {
+              dataFilters.componentIris = [
+                ...dataFilters.componentIris.filter((c: string) => c !== cIri),
+                fId,
+              ];
+              dataFilters.filters[fId] = dataFilters.filters[cIri];
+              delete dataFilters.filters[cIri];
+              break cubeLoop;
+            }
+          }
+        }
+      }
+
+      dataFilters.componentIds = dataFilters.componentIris;
+      delete dataFilters.componentIris;
+      newConfig.dashboardFilters.dataFilters = dataFilters;
+
       return newConfig;
     },
     down: async (config) => {
@@ -1800,6 +1824,26 @@ export const configuratorStateMigrations: Migration[] = [
       }
 
       newConfig.chartConfigs = chartConfigs;
+
+      const dataFilters = newConfig.dashboardFilters.dataFilters;
+
+      for (const cId of dataFilters.componentIds) {
+        dataFilters.componentIds = [
+          ...dataFilters.componentIds.filter((c: string) => c !== cId),
+          splitComponentId(cId).unversionedComponentIri,
+        ];
+      }
+
+      for (const fId of Object.keys(dataFilters.filters)) {
+        dataFilters.filters[
+          splitComponentId(fId).unversionedComponentIri as string
+        ] = dataFilters.filters[fId];
+        delete dataFilters.filters[fId];
+      }
+
+      dataFilters.componentIris = dataFilters.componentIds;
+      delete dataFilters.componentIds;
+      newConfig.dashboardFilters.dataFilters = dataFilters;
 
       return newConfig;
     },
