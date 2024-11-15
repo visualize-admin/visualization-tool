@@ -11,6 +11,7 @@ import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { theme } from "@/themes/federal";
 import { getTextWidth } from "@/utils/get-text-width";
+import { splitTextByWidth } from "@/utils/text-adjustments";
 
 import { TITLE_VPADDING } from "./combo-line-container";
 const TITLE_HPADDING = 8;
@@ -90,7 +91,13 @@ export const AxisHeightLinearDual = (props: AxisHeightLinearDualProps) => {
               borderRadius: 4,
             }}
           >
-            {axisTitle}
+            {splitTextByWidth(
+              axisTitle,
+              axisTitleWidth / overLappingAmount - TITLE_HPADDING * 2,
+              {
+                fontSize: axisLabelFontSize,
+              }
+            )}
           </span>
         </OpenMetadataPanelWrapper>
       </foreignObject>

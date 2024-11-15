@@ -45,6 +45,8 @@ import { useIsMobile } from "@/utils/use-is-mobile";
 
 import { ChartProps } from "../shared/ChartProps";
 
+import { TITLE_VPADDING } from "./combo-line-container";
+
 export type ComboLineColumnState = CommonChartState &
   ComboLineColumnStateVariables &
   InteractiveXTimeRangeState & {
@@ -147,8 +149,31 @@ const useComboLineColumnState = (
         TICK_PADDING
     )
   );
+
+  const axisTitleLeft = variables.y.left.label;
+  const axisTitleRight = variables.y.right.label;
+  const axisTitleWidthLeft =
+    getTextWidth(axisTitleLeft, { fontSize: TICK_FONT_SIZE }) + TICK_PADDING;
+  const axisTitleWidthRight =
+    getTextWidth(axisTitleRight, { fontSize: TICK_FONT_SIZE }) + TICK_PADDING;
+  const overLappingTitles = axisTitleWidthLeft + axisTitleWidthRight > width;
+  const overLappingAmount = (axisTitleWidthLeft + axisTitleWidthRight) / width;
+
+  const axisTitleAdjustment =
+    (overLappingTitles
+      ? TICK_FONT_SIZE * Math.ceil(overLappingAmount)
+      : TICK_FONT_SIZE + TITLE_VPADDING) *
+      2 -
+    TICK_FONT_SIZE * 2;
+
+  const topMarginAxisTitleAdjustment = 50 + axisTitleAdjustment;
   const right = Math.max(maxRightTickWidth, 40);
-  const margins = getMargins({ left, right, bottom });
+  const margins = getMargins({
+    left,
+    right,
+    bottom,
+    top: topMarginAxisTitleAdjustment,
+  });
   const bounds = useChartBounds(width, margins, height);
   const { chartWidth, chartHeight } = bounds;
   const xScales = [xScale, xScaleTime, xScaleTimeRange];
