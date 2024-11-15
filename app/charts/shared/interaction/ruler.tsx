@@ -17,23 +17,35 @@ import { useIsMobile } from "@/utils/use-is-mobile";
 
 type RulerProps = {
   rotate?: boolean;
+  axisTitleAdjustment?: number;
 };
 
 export const Ruler = (props: RulerProps) => {
-  const { rotate = false } = props;
+  const { rotate = false, axisTitleAdjustment } = props;
   const [state] = useInteraction();
   const { visible, d } = state.interaction;
 
-  return <>{visible && d && <RulerInner d={d} rotate={rotate} />}</>;
+  return (
+    <>
+      {visible && d && (
+        <RulerInner
+          d={d}
+          rotate={rotate}
+          axisTitleAdjustment={axisTitleAdjustment}
+        />
+      )}
+    </>
+  );
 };
 
 type RulerInnerProps = {
   d: Observation;
   rotate: boolean;
+  axisTitleAdjustment?: number;
 };
 
 const RulerInner = (props: RulerInnerProps) => {
-  const { d, rotate } = props;
+  const { d, rotate, axisTitleAdjustment } = props;
   const { getAnnotationInfo, bounds } = useChartState() as
     | LinesState
     | ComboLineSingleState
@@ -51,6 +63,7 @@ const RulerInner = (props: RulerInnerProps) => {
       xAnchor={xAnchor}
       datum={datum}
       placement={placement}
+      axisTitleAdjustment={axisTitleAdjustment}
     />
   );
 };
@@ -65,6 +78,7 @@ type RulerContentProps = {
   datum: TooltipValue;
   placement: TooltipPlacement;
   showXValue?: boolean;
+  axisTitleAdjustment?: number;
 };
 
 const useStyles = makeStyles<Theme, { rotate: boolean }>((theme: Theme) => ({
@@ -93,7 +107,14 @@ const useStyles = makeStyles<Theme, { rotate: boolean }>((theme: Theme) => ({
 }));
 
 export const RulerContent = (props: RulerContentProps) => {
-  const { rotate, xValue, chartHeight, margins, xAnchor } = props;
+  const {
+    rotate,
+    xValue,
+    chartHeight,
+    margins,
+    xAnchor,
+    axisTitleAdjustment = 0,
+  } = props;
   const classes = useStyles({ rotate });
 
   const isMobile = useIsMobile();
@@ -105,7 +126,7 @@ export const RulerContent = (props: RulerContentProps) => {
         style={{
           height: chartHeight,
           left: xAnchor + margins.left,
-          top: margins.top,
+          top: margins.top + axisTitleAdjustment,
         }}
       />
       {!isMobile && (
