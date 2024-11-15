@@ -87,6 +87,7 @@ export const ChartFootnotes = ({
           <ChartFootnotesLegend
             chartConfig={chartConfig}
             components={components}
+            cubeIri={metadata.iri}
           />
           <ChartFiltersList
             dataSource={dataSource}
@@ -122,9 +123,11 @@ export const ChartFootnotes = ({
 const ChartFootnotesLegend = ({
   chartConfig,
   components,
+  cubeIri,
 }: {
   chartConfig: ChartConfig;
   components: Component[];
+  cubeIri: string;
 }) => {
   switch (chartConfig.chartType) {
     case "comboLineColumn": {
@@ -132,6 +135,7 @@ const ChartFootnotesLegend = ({
         <ChartFootnotesComboLineColumn
           chartConfig={chartConfig}
           components={components}
+          cubeIri={cubeIri}
         />
       );
     }
@@ -140,6 +144,7 @@ const ChartFootnotesLegend = ({
         <ChartFootnotesComboLineDual
           chartConfig={chartConfig}
           components={components}
+          cubeIri={cubeIri}
         />
       );
     }
@@ -167,17 +172,21 @@ const ChartFootnotesLegendContainer = ({
 const ChartFootnotesComboLineColumn = ({
   chartConfig,
   components,
+  cubeIri,
 }: {
   chartConfig: ComboLineColumnConfig;
   components: Component[];
+  cubeIri: string;
 }) => {
   const {
     y: { columnComponentId, lineComponentId, lineAxisOrientation },
   } = chartConfig.fields;
   const columnAxisComponent = components.find(
-    (d) => d.id === columnComponentId
+    (d) => d.id === columnComponentId && d.cubeIri === cubeIri
   );
-  const lineAxisComponent = components.find((d) => d.id === lineComponentId);
+  const lineAxisComponent = components.find(
+    (d) => d.id === lineComponentId && d.cubeIri === cubeIri
+  );
   const firstComponent =
     lineAxisOrientation === "left" ? lineAxisComponent : columnAxisComponent;
   const secondComponent =
@@ -210,18 +219,20 @@ const ChartFootnotesComboLineColumn = ({
 const ChartFootnotesComboLineDual = ({
   chartConfig,
   components,
+  cubeIri,
 }: {
   chartConfig: ComboLineDualConfig;
   components: Component[];
+  cubeIri: string;
 }) => {
   const {
     y: { leftAxisComponentId, rightAxisComponentId },
   } = chartConfig.fields;
   const leftAxisComponent = components.find(
-    (d) => d.id === leftAxisComponentId
+    (d) => d.id === leftAxisComponentId && d.cubeIri === cubeIri
   );
   const rightAxisComponent = components.find(
-    (d) => d.id === rightAxisComponentId
+    (d) => d.id === rightAxisComponentId && d.cubeIri === cubeIri
   );
 
   return leftAxisComponent || rightAxisComponent ? (
