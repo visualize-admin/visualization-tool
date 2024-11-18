@@ -184,7 +184,7 @@ describe("useQueryFilters", () => {
     expect(queryFilters.current).toEqual([
       {
         iri: "A",
-        componentIris: undefined,
+        componentIds: undefined,
         filters: {
           A_1: { type: "single", value: "A_1_1" },
           A_2: { type: "single", value: "A_2_1" },
@@ -193,7 +193,7 @@ describe("useQueryFilters", () => {
       },
       {
         iri: "B",
-        componentIris: undefined,
+        componentIds: undefined,
         filters: { B_1: { type: "single", value: "B_1_1" } },
         joinBy: undefined,
       },
@@ -258,7 +258,7 @@ describe("useQueryFilters", () => {
     expect(queryFilters.current).toEqual([
       {
         iri: "A",
-        componentIris: undefined,
+        componentIds: undefined,
         filters: {
           A_1: { type: "single", value: "A_1_Data_Filter" },
           A_2: { type: "single", value: "A_2_1" },
@@ -267,7 +267,7 @@ describe("useQueryFilters", () => {
       },
       {
         iri: "B",
-        componentIris: undefined,
+        componentIds: undefined,
         filters: { B_1: { type: "single", value: "B_1_1" } },
         joinBy: undefined,
       },

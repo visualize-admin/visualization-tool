@@ -132,7 +132,7 @@ export const DataFilterSelectGeneric = ({
         return {
           iri: cube.iri,
           joinBy: cube.joinBy,
-          componentIris: [rawDimension.id],
+          componentIds: [rawDimension.id],
           filters: Object.keys(rawFilters).length > 0 ? rawFilters : undefined,
           loadValues: true,
         };

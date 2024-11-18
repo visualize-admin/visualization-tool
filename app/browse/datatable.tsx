@@ -245,7 +245,7 @@ export const DataSetTable = ({
   sx?: SxProps<Theme>;
 }) => {
   const locale = useLocale();
-  const componentIris = extractChartConfigComponentIds({ chartConfig });
+  const componentIds = extractChartConfigComponentIds({ chartConfig });
   const commonQueryVariables = {
     sourceType: dataSource.type,
     sourceUrl: dataSource.url,
@@ -263,7 +263,7 @@ export const DataSetTable = ({
         ...commonQueryVariables,
         cubeFilters: chartConfig.cubes.map((cube) => ({
           iri: cube.iri,
-          componentIris,
+          componentIds,
           joinBy: cube.joinBy,
         })),
       },
@@ -281,7 +281,7 @@ export const DataSetTable = ({
   const queryFilters = useQueryFilters({
     chartConfig,
     dashboardFilters,
-    componentIris,
+    componentIds,
   });
   const [{ data: observationsData }] = useDataCubesObservationsQuery({
     variables: {

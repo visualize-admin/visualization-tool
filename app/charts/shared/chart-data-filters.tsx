@@ -91,7 +91,7 @@ export const useChartDataFiltersState = ({
     chartConfig,
     dashboardFilters,
     allowNoneValues: true,
-    componentIris: componentIds,
+    componentIds,
   });
   const preparedFilters = useMemo(() => {
     return chartConfig.cubes.map((cube) => {
@@ -279,7 +279,7 @@ const DataFilter = ({
       cubeFilters: [
         {
           iri: cubeIri,
-          componentIris: [dimensionId],
+          componentIds: [dimensionId],
           filters: queryFilters,
           loadValues: true,
         },

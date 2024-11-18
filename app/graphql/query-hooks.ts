@@ -49,7 +49,7 @@ export type Scalars = {
 export type DataCubeComponentFilter = {
   iri: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
-  componentIris?: Maybe<Array<Scalars['String']>>;
+  componentIds?: Maybe<Array<Scalars['String']>>;
   joinBy?: Maybe<Array<Scalars['String']>>;
   loadValues?: Maybe<Scalars['Boolean']>;
 };
@@ -57,7 +57,7 @@ export type DataCubeComponentFilter = {
 
 export type DataCubeDimensionGeoShapesCubeFilter = {
   iri: Scalars['String'];
-  dimensionIri: Scalars['String'];
+  dimensionId: Scalars['String'];
 };
 
 export type DataCubeLatestIriFilter = {
@@ -72,7 +72,7 @@ export type DataCubeMetadataFilter = {
 export type DataCubeObservationFilter = {
   iri: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
-  componentIris?: Maybe<Array<Scalars['String']>>;
+  componentIds?: Maybe<Array<Scalars['String']>>;
   joinBy?: Maybe<Array<Scalars['String']>>;
 };
 

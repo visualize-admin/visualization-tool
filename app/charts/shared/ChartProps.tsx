@@ -22,7 +22,7 @@ export type ChartProps<TChartConfig extends ChartConfig> = BaseChartProps & {
 
 export type VisualizationProps<TChartConfig extends ChartConfig> = {
   dataSource: DataSource;
-  componentIris: string[] | undefined;
+  componentIds: string[] | undefined;
   chartConfig: TChartConfig;
   observationQueryFilters: DataCubeObservationFilter[];
 };

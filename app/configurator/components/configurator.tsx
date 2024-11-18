@@ -176,7 +176,7 @@ const NextStepButton = (props: React.PropsWithChildren<{}>) => {
   const locale = useLocale();
   const [state, dispatch] = useConfiguratorState(hasChartConfigs);
   const chartConfig = getChartConfig(state);
-  const componentIris = extractChartConfigComponentIds({ chartConfig });
+  const componentIds = extractChartConfigComponentIds({ chartConfig });
   const [{ data: components }] = useDataCubesComponentsQuery({
     variables: {
       sourceType: state.dataSource.type,
@@ -184,7 +184,7 @@ const NextStepButton = (props: React.PropsWithChildren<{}>) => {
       locale,
       cubeFilters: chartConfig.cubes.map((cube) => ({
         iri: cube.iri,
-        componentIris,
+        componentIds,
         filters: cube.filters,
         joinBy: cube.joinBy,
         loadValues: true,

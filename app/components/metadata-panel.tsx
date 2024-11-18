@@ -424,7 +424,7 @@ const CubesPanel = ({
   const queryFilters = useQueryFilters({
     chartConfig,
     dashboardFilters,
-    componentIris: extractChartConfigComponentIds({ chartConfig }),
+    componentIds: extractChartConfigComponentIds({ chartConfig }),
   });
   const [
     { data: dataCubesObservationsData, error: dataCubesObservationsError },
@@ -730,7 +730,7 @@ const ComponentTabPanel = ({
         {
           iri: component.cubeIri,
           loadValues: true,
-          componentIris: [component.id],
+          componentIds: [component.id],
         },
       ],
       locale,

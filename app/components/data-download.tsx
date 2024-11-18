@@ -267,7 +267,7 @@ const DataDownloadInnerMenu = ({
 };
 
 /** We need to include every cube column in full dataset download (client's
- * request), so we do not pass any componentIris here
+ * request), so we do not pass any component ids here
  * */
 export const getFullDataDownloadFilters = (
   filters: DataCubeObservationFilter

@@ -94,12 +94,12 @@ export const useQueryFilters = ({
   chartConfig,
   dashboardFilters,
   allowNoneValues,
-  componentIris,
+  componentIds,
 }: {
   chartConfig: ChartConfig;
   dashboardFilters: DashboardFiltersConfig | undefined;
   allowNoneValues?: boolean;
-  componentIris?: string[];
+  componentIds?: string[];
 }): DataCubeObservationFilter[] => {
   const chartInteractiveFilters = useChartInteractiveFilters(
     (d) => d.dataFilters
@@ -130,19 +130,21 @@ export const useQueryFilters = ({
         allowNoneValues
       );
 
-      return {
+      const filters: DataCubeObservationFilter = {
         iri: cube.iri,
-        componentIris,
+        componentIds,
         filters: preparedFilters,
         joinBy: cube.joinBy,
       };
+
+      return filters;
     });
   }, [
     chartConfig.cubes,
     chartConfig.chartType,
     chartConfig.interactiveFiltersConfig,
     chartInteractiveFilters,
-    componentIris,
+    componentIds,
     dashboardFilters,
     allowNoneValues,
   ]);

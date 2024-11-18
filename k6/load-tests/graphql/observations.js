@@ -9,7 +9,7 @@ const query = `query DataCubeObservations(
   $sourceType: String!
   $sourceUrl: String!
   $locale: String!
-  $componentIris: [String!]
+  $componentIds: [String!]
   $filters: Filters
   $limit: Int
 ) {
@@ -22,7 +22,7 @@ const query = `query DataCubeObservations(
     observations(
       sourceType: $sourceType
       sourceUrl: $sourceUrl
-      componentIris: $componentIris
+      componentIds: $componentIds
       filters: $filters
       limit: $limit
     ) {
@@ -39,7 +39,7 @@ const variables = {
   sourceType: "sparql",
   sourceUrl: "https://lindas.admin.ch/query",
   locale: "en",
-  componentIris: [
+  componentIds: [
     "http://www.w3.org/2006/time#Year",
     "http://schema.org/amount",
     "https://culture.ld.admin.ch/sfa/StateAccounts_Office/operationcharacter",

@@ -26,7 +26,7 @@ import { useLocale } from "@/locales/use-locale";
 import { ChartProps, VisualizationProps } from "../shared/ChartProps";
 
 export const ChartMapVisualization = (props: VisualizationProps<MapConfig>) => {
-  const { dataSource, chartConfig, componentIris } = props;
+  const { dataSource, chartConfig, componentIds } = props;
   const { fields } = chartConfig;
   const locale = useLocale();
   const [componentsQuery] = useDataCubesComponentsQuery({
@@ -36,7 +36,7 @@ export const ChartMapVisualization = (props: VisualizationProps<MapConfig>) => {
       locale,
       cubeFilters: chartConfig.cubes.map((cube) => ({
         iri: cube.iri,
-        componentIris,
+        componentIds,
         joinBy: cube.joinBy,
         loadValues: true,
       })),
@@ -96,7 +96,7 @@ export const ChartMapVisualization = (props: VisualizationProps<MapConfig>) => {
       cubeFilters: [
         {
           iri: symbolCubeIri!,
-          componentIris: [symbolDimensionId],
+          componentIds: [symbolDimensionId],
           loadValues: true,
         },
       ],
@@ -128,7 +128,7 @@ export const ChartMapVisualization = (props: VisualizationProps<MapConfig>) => {
       locale,
       cubeFilter: {
         iri: areaCubeIri!,
-        dimensionIri: geoShapesId,
+        dimensionId: geoShapesId,
       },
     },
     pause: !geoShapesId || !areaCubeIri,

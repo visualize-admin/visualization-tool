@@ -98,7 +98,7 @@ input DataCubeTermsetFilter {
 input DataCubeComponentFilter {
   iri: String!
   filters: Filters
-  componentIris: [String!]
+  componentIds: [String!]
   joinBy: [String!]
   loadValues: Boolean
 }
@@ -110,7 +110,7 @@ input DataCubeMetadataFilter {
 input DataCubeObservationFilter {
   iri: String!
   filters: Filters
-  componentIris: [String!]
+  componentIds: [String!]
   joinBy: [String!]
 }
 
@@ -133,7 +133,7 @@ input DataCubePossibleFiltersCubeFilter {
 
 input DataCubeDimensionGeoShapesCubeFilter {
   iri: String!
-  dimensionIri: String!
+  dimensionId: String!
 }
 
 # The "Query" type is special: it lists all of the available queries that

@@ -1113,7 +1113,7 @@ const useAddDataset = () => {
           cubeFilters: chartConfig.cubes.map((cube) => ({
             iri: cube.iri,
             joinBy: cube.joinBy,
-            componentIris: undefined,
+            componentIds: undefined,
             loadValues: true,
           })),
         });

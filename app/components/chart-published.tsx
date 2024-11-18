@@ -293,13 +293,13 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
     },
   });
   const metadata = metadataData?.dataCubesMetadata;
-  const componentIris = extractChartConfigsComponentIds(state.chartConfigs);
+  const componentIds = extractChartConfigsComponentIds(state.chartConfigs);
   const [{ data: componentsData }] = useDataCubesComponentsQuery({
     variables: {
       ...commonQueryVariables,
       cubeFilters: chartConfig.cubes.map((cube) => ({
         iri: cube.iri,
-        componentIris,
+        componentIds,
         joinBy: cube.joinBy,
       })),
     },
@@ -435,7 +435,7 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
               ) : (
                 <ChartWithFilters
                   dataSource={dataSource}
-                  componentIris={componentIris}
+                  componentIds={componentIds}
                   chartConfig={chartConfig}
                   dashboardFilters={state.dashboardFilters}
                 />

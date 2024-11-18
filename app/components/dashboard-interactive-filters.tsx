@@ -341,7 +341,7 @@ const DataFilter = ({ componentId }: { componentId: string }) => {
       cubeFilters: [
         {
           iri: cubeIri,
-          componentIris: [componentId],
+          componentIds: [componentId],
           loadValues: true,
         },
       ],

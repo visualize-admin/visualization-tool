@@ -51,7 +51,7 @@ const getLegacyInteractiveFiltersConfig = () => ({
   },
   dataFilters: {
     active: true,
-    componentIris: [
+    componentIds: [
       "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1",
     ],
   },

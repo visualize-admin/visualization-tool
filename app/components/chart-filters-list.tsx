@@ -45,7 +45,7 @@ export const ChartFiltersList = ({
   const queryFilters = useQueryFilters({
     chartConfig,
     dashboardFilters,
-    componentIris: extractChartConfigComponentIds({ chartConfig }),
+    componentIds: extractChartConfigComponentIds({ chartConfig }),
   });
   const cubeQueryFilters = useMemo(() => {
     return queryFilters.filter((d) => d.iri === cubeIri);
@@ -60,7 +60,7 @@ export const ChartFiltersList = ({
         const f = cubeQueryFilters.find((f) => f.iri === cube.iri);
         return {
           iri: f?.iri ?? cube.iri,
-          componentIris: f?.componentIris,
+          componentIds: f?.componentIds,
           filters: f?.filters,
           joinBy: f?.joinBy,
           loadValues: true,
