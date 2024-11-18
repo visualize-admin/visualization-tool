@@ -13,6 +13,19 @@ You can also check the
 
 Nothing yet.
 
+# [4.9.5] - 2024-11-18
+
+- Features
+  - Added Newsletter, Bug Report and Feature Request sections to the home page
+  - Moved the datasets section to the top of the sidebar
+  - It's now possible to embed charts and get share links directly from the user
+    profile
+  - It's now possible to enable or disable single chart embed border using UI
+- Fixes
+  - visualize.admin.ch links are now again visible in chart footnotes
+  - Improved chart tooltips on small screens
+  - % mode toggle no longer overlaps with the Y axis title
+
 # [4.9.4] - 2024-11-06
 
 - Features
