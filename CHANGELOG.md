@@ -11,7 +11,8 @@ You can also check the
 
 # Unreleased
 
-Nothing yet.
+- Performance
+  - We no longer load non-key dimensions when initializing a chart
 
 # [4.9.5] - 2024-11-18
 
