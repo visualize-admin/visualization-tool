@@ -51,6 +51,7 @@ module.exports = withPreconstruct(
               key: "Content-Security-Policy",
               value: [
                 `default-src 'self'${process.env.NODE_ENV === "development" ? ` 'unsafe-eval' 'unsafe-inline'` : ""}`,
+                `form-action 'self'`,
                 `require-trusted-types-for 'script'`,
               ].join("; "),
             },
