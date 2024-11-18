@@ -4,7 +4,7 @@ const { test, expect } = setup();
 
 test("Filters should be sorted by position", async ({ selectors, actions }) => {
   await actions.chart.createFrom({
-    iri: "https://environment.ld.admin.ch/foen/ubd003001/14",
+    iri: "https://environment.ld.admin.ch/foen/ubd003001_colors_jan2024",
     dataSource: "Int",
   });
 

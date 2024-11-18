@@ -75,7 +75,7 @@ export const getEnv = (name: string) => {
 };
 
 /**
- * HAR traces have been saved on http://localhost:3000. Even if we are targetting
+ * HAR traces have been saved on http://localhost:3000. Even if we are targeting
  * our E2E tests on a Vercel Preview URL, we still want the client to make the
  * request to http://localhost:3000 so that Playwrights' HAR replay is used.
  */

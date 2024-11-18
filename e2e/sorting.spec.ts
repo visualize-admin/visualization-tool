@@ -91,7 +91,7 @@ test("Segment sorting with hierarchy", async ({
   await replayFromHAR();
 
   await actions.chart.createFrom({
-    iri: "https://environment.ld.admin.ch/foen/nfi/nfi_C-1029/cube/2023-1",
+    iri: "https://environment.ld.admin.ch/foen/nfi/nfi_T-changes/cube/2024-1",
     dataSource: "Prod",
     createURLParams: harReplayGraphqlEndpointQueryParam,
   });

@@ -33,7 +33,7 @@ describe("Filters", () => {
 
     // Hierarchical dimensions should come first.
     expect(texts[0]).toEqual("1. Region ");
-    expect(texts[1]).toEqual("2. tree status ");
+    expect(texts[1]).toEqual("2. tree condition ");
 
     const productionRegionFilter =
       selectors.edition.dataFilterInput("1. Region ");
@@ -44,7 +44,7 @@ describe("Filters", () => {
     expect(productionRegionFilterValue).toEqual("Switzerland");
 
     const treeStatusFilter =
-      selectors.edition.dataFilterInput("2. tree status ");
+      selectors.edition.dataFilterInput("2. tree condition ");
     const treeStatusFilterValue = await treeStatusFilter
       .locator("input[name^=select-single-filter]")
       .inputValue();

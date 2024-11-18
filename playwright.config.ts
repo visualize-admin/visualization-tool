@@ -34,7 +34,7 @@ const config: PlaywrightTestConfig = {
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     contextOptions: {
-      // Decomment this if you want to save a HAR for a test
+      // De-comment this if you want to save a HAR for a test
       // recordHar: { path: "example.zip", urlFilter: "**/api/graphql" },
     },
     /* Maximum time each action such as `click()` can take. Defaults to 0 (no limit). */
