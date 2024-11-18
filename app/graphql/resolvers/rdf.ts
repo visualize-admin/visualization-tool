@@ -334,10 +334,6 @@ export const dataCubeComponents: NonNullable<
         })),
       };
 
-      if (baseComponent.related && baseComponent.related.length) {
-        console.log("baseComponent.related", baseComponent.related);
-      }
-
       if (data.isMeasureDimension) {
         const measure: Measure = {
           __typename: resolveMeasureType(component.data.scaleType),
