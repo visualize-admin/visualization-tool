@@ -49,14 +49,8 @@ module.exports = withPreconstruct(
             {
               key: "Content-Security-Policy",
               value: [
-                `default-src 'self' 'unsafe-inline'${process.env.NODE_ENV === "development" ? ` 'unsafe-eval'` : ""}`,
-                `style-src 'self' 'unsafe-inline' https://visualize.admin.ch`,
-                `font-src https://visualize.admin.ch`,
-                `connect-src 'self' blob: ${process.env.NODE_ENV === "development" ? "http://localhost:3000" : ""} wss://*.admin.ch https://visualize.admin.ch`,
-                `img-src 'self' blob: data: ${process.env.NODE_ENV === "development" ? "http://localhost:3000" : ""} https://visualize.admin.ch`,
-                `script-src-elem 'self' 'unsafe-inline' https://visualize.admin.ch`,
-                `worker-src 'self' blob:`,
-                `media-src 'self' blob: https://visualize.admin.ch`,
+                `default-src 'self'${process.env.NODE_ENV === "development" ? ` 'unsafe-eval' 'unsafe-inline'` : ""}`,
+                `require-trusted-types-for 'script'`,
               ].join("; "),
             },
           ],
