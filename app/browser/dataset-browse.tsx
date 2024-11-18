@@ -21,7 +21,7 @@ import uniqBy from "lodash/uniqBy";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { stringify } from "qs";
-import React, { ComponentProps, useMemo, useState } from "react";
+import React, { ComponentProps, ReactNode, useMemo, useState } from "react";
 
 import Flex, { FlexProps } from "@/components/flex";
 import {
@@ -32,6 +32,7 @@ import {
 } from "@/components/form";
 import { Loading, LoadingDataError } from "@/components/hint";
 import MaybeLink from "@/components/maybe-link";
+import { MaybeTooltip } from "@/components/maybe-tooltip";
 import {
   accordionPresenceProps,
   MotionBox,
@@ -40,15 +41,14 @@ import {
 } from "@/components/presence";
 import Tag from "@/components/tag";
 import useDisclosure from "@/components/use-disclosure";
-import { SearchCube, Termset } from "@/domain/data";
+import { SearchCube } from "@/domain/data";
 import { truthy } from "@/domain/types";
-import { useFlag } from "@/flags";
 import { useFormatDate } from "@/formatters";
 import {
   DataCubeOrganization,
+  DataCubeTermset,
   DataCubeTheme,
   SearchCubeResultOrder,
-  TermsetCount,
 } from "@/graphql/query-hooks";
 import {
   DataCubePublicationStatus,
@@ -57,7 +57,6 @@ import {
 import SvgIcCategories from "@/icons/components/IcCategories";
 import SvgIcClose from "@/icons/components/IcClose";
 import SvgIcOrganisations from "@/icons/components/IcOrganisations";
-import { MaybeTooltip } from "@/utils/maybe-tooltip";
 import useEvent from "@/utils/use-event";
 
 import {
@@ -355,7 +354,7 @@ const encodeFilter = (filter: BrowseFilter) => {
         return "organization";
       case "DataCubeAbout":
         return "topic";
-      case "Termset":
+      case "DataCubeTermset":
         return "termset";
       default:
         const check: never = __typename;
@@ -375,7 +374,7 @@ const NavItem = ({
   level = 1,
   disableLink,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
   filters: BrowseFilter[];
   next: BrowseFilter;
   count?: number;
@@ -611,10 +610,10 @@ const NavSection = ({
 }: {
   label: React.ReactNode;
   icon: React.ReactNode;
-  items: (DataCubeTheme | DataCubeOrganization | Termset)[];
+  items: (DataCubeTheme | DataCubeOrganization | DataCubeTermset)[];
   theme: { backgroundColor: string; borderColor: string };
   navItemTheme: NavItemTheme;
-  currentFilter?: DataCubeTheme | DataCubeOrganization | Termset;
+  currentFilter?: DataCubeTheme | DataCubeOrganization | DataCubeTermset;
   filters: BrowseFilter[];
   counts: Record<string, number>;
   extra?: React.ReactNode;
@@ -626,8 +625,7 @@ const NavSection = ({
       (item) => item.label
     );
   }, [counts, items]);
-  const { isOpen, open, close } = useDisclosure();
-
+  const { isOpen, open, close } = useDisclosure(!!currentFilter);
   return (
     <div>
       <NavSectionTitle theme={theme} sx={{ mb: "block" }}>
@@ -703,48 +701,10 @@ const NavSection = ({
   );
 };
 
-const TermsetNavSection = ({
-  currentFilter,
-  termsetCounts,
-  disableLinks,
-}: {
-  currentFilter: Termset | undefined;
-  termsetCounts: { termset: Termset; count: number }[];
-  disableLinks: boolean;
-}) => {
-  const { counts, termsets } = useMemo(() => {
-    const termsets = termsetCounts.map((x) => x.termset) ?? [];
-    const counts = Object.fromEntries(
-      termsetCounts.map((x) => [x.termset.iri, x.count])
-    );
-    return {
-      counts,
-      termsets: sortBy(termsets, (t) => t.label),
-    };
-  }, [termsetCounts]);
-
-  return (
-    <NavSection
-      items={termsets}
-      theme={{
-        backgroundColor: "grey.300",
-        borderColor: "grey.800",
-      }}
-      navItemTheme={termsetNavItemTheme}
-      currentFilter={currentFilter}
-      icon={<SvgIcOrganisations width={20} height={20} />}
-      label={<Trans id="browse-panel.termsets">Concepts</Trans>}
-      filters={[]}
-      counts={counts}
-      disableLinks={disableLinks}
-    />
-  );
-};
-
 const navOrder: Record<BrowseFilter["__typename"], number> = {
   DataCubeTheme: 1,
   DataCubeOrganization: 2,
-  Termset: 3,
+  DataCubeTermset: 3,
   // Not used in the nav
   DataCubeAbout: 4,
 };
@@ -753,13 +713,13 @@ export const SearchFilters = ({
   cubes,
   themes,
   orgs,
-  termsets: termsetCounts,
+  termsets,
   disableNavLinks = false,
 }: {
   cubes: SearchCubeResult[];
   themes: DataCubeTheme[];
   orgs: DataCubeOrganization[];
-  termsets: TermsetCount[];
+  termsets: DataCubeTermset[];
   disableNavLinks?: boolean;
 }) => {
   const { filters } = useBrowseContext();
@@ -767,13 +727,14 @@ export const SearchFilters = ({
     const result: Record<string, number> = {};
 
     for (const { cube } of cubes) {
-      const countables = [
+      const countable = [
         ...cube.themes,
         ...cube.subthemes,
+        ...cube.termsets,
         cube.creator,
       ].filter(truthy);
 
-      for (const { iri } of countables) {
+      for (const { iri } of countable) {
         if (iri) {
           result[iri] = (result[iri] ?? 0) + 1;
         }
@@ -786,12 +747,17 @@ export const SearchFilters = ({
   const {
     DataCubeTheme: themeFilter,
     DataCubeOrganization: orgFilter,
-    Termset: termsetFilter,
+    DataCubeTermset: termsetFilter,
   } = useMemo(() => {
-    return keyBy(filters, (f) => f.__typename) as {
-      DataCubeTheme?: DataCubeTheme;
-      DataCubeOrganization?: DataCubeOrganization;
-      Termset?: Termset;
+    const result = keyBy(filters, (f) => f.__typename) as {
+      [K in BrowseFilter["__typename"]]?: BrowseFilter;
+    };
+    return {
+      DataCubeTheme: result.DataCubeTheme as DataCubeTheme | undefined,
+      DataCubeOrganization: result.DataCubeOrganization as
+        | DataCubeOrganization
+        | undefined,
+      DataCubeTermset: result.DataCubeTermset as DataCubeTermset | undefined,
     };
   }, [filters]);
 
@@ -821,6 +787,22 @@ export const SearchFilters = ({
     }
 
     if (orgFilter && orgFilter.iri !== org.iri) {
+      return false;
+    }
+
+    return true;
+  });
+
+  const displayedTermsets = termsets.filter((termset) => {
+    if (!termset.label) {
+      return false;
+    }
+
+    if (!counts[termset.iri] && termsetFilter?.iri !== termset.iri) {
+      return false;
+    }
+
+    if (termsetFilter && termsetFilter.iri !== termset.iri) {
       return false;
     }
 
@@ -886,27 +868,41 @@ export const SearchFilters = ({
       />
     ) : null;
 
-  const termsetFlag = useFlag("search.termsets");
   const termsetNav =
-    termsetCounts.length === 0 || !termsetFlag ? null : (
-      <TermsetNavSection
+    termsets.length === 0 ? null : (
+      <NavSection
         key="termsets"
-        termsetCounts={termsetCounts ?? []}
+        items={displayedTermsets}
+        theme={{
+          backgroundColor: "grey.300",
+          borderColor: "grey.800",
+        }}
+        navItemTheme={termsetNavItemTheme}
         currentFilter={termsetFilter}
+        counts={counts}
+        filters={filters}
+        icon={<SvgIcOrganisations width={20} height={20} />}
+        label={<Trans id="browse-panel.termsets">Concepts</Trans>}
+        extra={null}
         disableLinks={disableNavLinks}
       />
     );
-  const navs = sortBy(
-    [
-      { element: themeNav, __typename: "DataCubeTheme" },
-      { element: orgNav, __typename: "DataCubeOrganization" },
-      { element: termsetNav, __typename: "Termset" },
-    ],
-    (x) =>
-      x.__typename === filters[0]?.__typename
-        ? 0
-        : navOrder[x.__typename as keyof typeof navOrder]
-  );
+  const baseNavs: {
+    element: ReactNode;
+    __typename: BrowseFilter["__typename"];
+  }[] = [
+    { element: themeNav, __typename: "DataCubeTheme" },
+    { element: orgNav, __typename: "DataCubeOrganization" },
+    { element: termsetNav, __typename: "DataCubeTermset" },
+  ];
+  const navs = sortBy(baseNavs, (x) => {
+    const i = filters.findIndex((f) => f.__typename === x.__typename);
+    return i === -1
+      ? // If the filter is not in the list, we want to put it at the end
+        navOrder[x.__typename as BrowseFilter["__typename"]] +
+          Object.keys(navOrder).length
+      : i;
+  });
 
   return (
     <Flex

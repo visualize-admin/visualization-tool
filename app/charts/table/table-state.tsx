@@ -25,6 +25,7 @@ import {
 } from "@/charts/shared/chart-state";
 import { useSize } from "@/charts/shared/use-size";
 import { BAR_CELL_PADDING, TABLE_HEIGHT } from "@/charts/table/constants";
+import { getTableUIElementsOffset } from "@/charts/table/table";
 import {
   TableStateVariables,
   useTableStateData,
@@ -128,9 +129,17 @@ const useTableState = (
     left: 10,
   };
   const chartWidth = width - margins.left - margins.right; // We probably don't need this
-  const chartHeight = Math.min(TABLE_HEIGHT, chartData.length * rowHeight);
+  const chartHeight = Math.min(
+    TABLE_HEIGHT,
+    // + 1 for the header row
+    (chartData.length + 1) * rowHeight
+  );
 
-  const height = chartHeight + margins.top + margins.bottom;
+  const height =
+    chartHeight +
+    margins.top +
+    margins.bottom +
+    getTableUIElementsOffset({ showSearch: settings.showSearch, width });
   const bounds = {
     width,
     height,

@@ -30,7 +30,6 @@ msgstr "No results"
 msgid "annotation.add.description"
 msgstr "[ No Description ]"
 
-#: app/components/rename-dialog.tsx
 #: app/configurator/components/annotators.tsx
 #: app/login/components/profile-tables.tsx
 msgid "annotation.add.title"
@@ -107,7 +106,7 @@ msgstr "Click to copy"
 msgid "button.hint.copied"
 msgstr "Copied!"
 
-#: app/components/chart-selection-tabs.tsx
+#: app/configurator/components/configurator.tsx
 msgid "button.layout"
 msgstr "Proceed to layout options"
 
@@ -115,19 +114,19 @@ msgstr "Proceed to layout options"
 msgid "button.new.visualization"
 msgstr "Create New Visualization"
 
-#: app/components/chart-selection-tabs.tsx
+#: app/configurator/components/configurator.tsx
 msgid "button.publish"
 msgstr "Publish"
 
-#: app/components/chart-selection-tabs.tsx
+#: app/configurator/components/configurator.tsx
 msgid "button.save-draft"
 msgstr "Save draft"
 
-#: app/components/chart-selection-tabs.tsx
+#: app/configurator/components/configurator.tsx
 msgid "button.save-draft.error"
 msgstr "Could not save draft"
 
-#: app/components/chart-selection-tabs.tsx
+#: app/configurator/components/configurator.tsx
 msgid "button.save-draft.saved"
 msgstr "Draft saved in [My visualisations](/profile)"
 
@@ -136,11 +135,11 @@ msgstr "Draft saved in [My visualisations](/profile)"
 msgid "button.share"
 msgstr "Share"
 
-#: app/components/chart-selection-tabs.tsx
+#: app/configurator/components/configurator.tsx
 msgid "button.update"
 msgstr "Update this visualization"
 
-#: app/components/chart-selection-tabs.tsx
+#: app/configurator/components/configurator.tsx
 msgid "button.update.warning"
 msgstr "Keep in mind that updating this visualization will affect all the places where it might be already embedded!"
 
@@ -173,6 +172,10 @@ msgstr "Duplicate"
 msgid "chart-controls.edit"
 msgstr "Edit"
 
+#: app/components/chart-selection-tabs.tsx
+msgid "chart-controls.edit-tab-label"
+msgstr "Edit tab label"
+
 #: app/components/dataset-metadata.tsx
 msgid "chart-controls.sparql-query"
 msgstr "SPARQL query"
@@ -180,6 +183,10 @@ msgstr "SPARQL query"
 #: app/components/chart-shared.tsx
 msgid "chart-controls.table-view"
 msgstr "Table view"
+
+#: app/components/chart-selection-tabs.tsx
+msgid "chart-selection-tabs.add-chart"
+msgstr "Add chart"
 
 #: app/components/chart-selection-tabs.tsx
 msgid "chart-selection-tabs.add-chart-different-dataset.button"
@@ -192,6 +199,10 @@ msgstr "Add chart based on a different dataset"
 #: app/components/chart-selection-tabs.tsx
 msgid "chart-selection-tabs.add-chart-same-dataset.caption"
 msgstr "Add chart based on the same dataset"
+
+#: app/components/chart-selection-tabs.tsx
+msgid "chart-selection-tabs.no-label"
+msgstr "No label"
 
 #: app/configurator/components/dataset-control-section.tsx
 msgid "chart.datasets.add"
@@ -289,6 +300,10 @@ msgstr "Animation"
 #: app/configurator/components/annotators.tsx
 msgid "controls.annotator.add-description-warning"
 msgstr "Please add a description"
+
+#: app/configurator/components/annotators.tsx
+msgid "controls.annotator.add-tab-label-warning"
+msgstr "Please add a tab label"
 
 #: app/configurator/components/annotators.tsx
 #: app/configurator/components/annotators.tsx
@@ -501,12 +516,10 @@ msgstr "No Filter"
 msgid "controls.filter.nb-elements"
 msgstr "{0} of {1}"
 
-#: app/configurator/components/add-dataset-dialog.tsx
 #: app/configurator/components/filters.tsx
 msgid "controls.filter.select.all"
 msgstr "Select all"
 
-#: app/configurator/components/add-dataset-dialog.tsx
 #: app/configurator/components/filters.tsx
 msgid "controls.filter.select.none"
 msgstr "Select none"
@@ -585,6 +598,10 @@ msgstr "-"
 msgid "controls.imputation.type.zeros"
 msgstr "Zeros"
 
+#: app/configurator/components/field-i18n.ts
+msgid "controls.label"
+msgstr "Tab label"
+
 #: app/components/rename-dialog.tsx
 #: app/configurator/components/field-i18n.ts
 msgid "controls.language.english"
@@ -609,9 +626,30 @@ msgstr "Italian"
 msgid "controls.layout.canvas"
 msgstr "Free canvas"
 
+#: app/login/components/profile-tables.tsx
+msgid "controls.layout.chart"
+msgstr "Chart"
+
 #: app/configurator/components/field-i18n.ts
+#: app/login/components/profile-tables.tsx
 msgid "controls.layout.dashboard"
 msgstr "Dashboard"
+
+#: app/configurator/components/preview-breakpoint.tsx
+msgid "controls.layout.preview-lg"
+msgstr "Preview using large width"
+
+#: app/configurator/components/preview-breakpoint.tsx
+msgid "controls.layout.preview-md"
+msgstr "Preview using tablet"
+
+#: app/configurator/components/preview-breakpoint.tsx
+msgid "controls.layout.preview-sm"
+msgstr "Preview using mobile"
+
+#: app/configurator/components/preview-breakpoint.tsx
+msgid "controls.layout.preview-xl"
+msgstr "Preview using extra large width"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.layout.singleURLs"
@@ -770,7 +808,7 @@ msgstr "An error happened while fetching possible filters, please retry later or
 
 #: app/configurator/components/dataset-control-section.tsx
 msgid "controls.section.datasets.title"
-msgstr "Data Sources"
+msgstr "Datasets"
 
 #: app/configurator/components/annotators.tsx
 #: app/configurator/components/annotators.tsx
@@ -814,13 +852,9 @@ msgstr "Layout Options"
 msgid "controls.section.shared-filters"
 msgstr "Shared filters"
 
-#: app/configurator/components/layout-configurator.tsx
+#: app/charts/shared/use-combined-temporal-dimension.ts
 msgid "controls.section.shared-filters.date"
 msgstr "Date"
-
-#: app/configurator/components/layout-configurator.tsx
-msgid "controls.section.shared-filters.shared-switch"
-msgstr "Shared"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.show-standard-error"
@@ -1074,6 +1108,10 @@ msgid "dataset-result.shared-dimensions"
 msgstr "Shared dimensions:"
 
 #: app/components/chart-footnotes.tsx
+msgid "dataset.footnotes.dataset"
+msgstr "Dataset"
+
+#: app/components/chart-footnotes.tsx
 msgid "dataset.footnotes.updated"
 msgstr "Latest data update"
 
@@ -1171,15 +1209,7 @@ msgstr "Datasets"
 
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.preview.description"
-msgstr "Review data preview of new available dimensions and continue to edit visualization."
-
-#: app/configurator/components/add-dataset-dialog.tsx
-msgid "dataset.search.preview.dimensions"
-msgstr "Dimensions"
-
-#: app/configurator/components/add-dataset-dialog.tsx
-msgid "dataset.search.preview.dimensions-shown"
-msgstr "{0} shown in this view"
+msgstr "Review data preview of available dimensions and continue to edit visualization."
 
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.preview.new-dimension"
@@ -1187,7 +1217,7 @@ msgstr "New"
 
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.preview.title"
-msgstr "Review available dimensions"
+msgstr "Available dimensions"
 
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.search-options.more-2-options-selected"
@@ -1339,21 +1369,29 @@ msgid "login.chart.actions.unpublish"
 msgstr "Unpublish"
 
 #: app/login/components/profile-tables.tsx
-msgid "login.chart.copy"
-msgstr "Copy"
-
-#: app/login/components/profile-tables.tsx
 msgid "login.chart.delete"
 msgstr "Delete"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.chart.delete-draft.confirmation"
+msgstr "Are you sure you want to delete this draft?"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.delete.confirmation"
 msgstr "Are you sure you want to delete this chart?"
 
 #: app/login/components/profile-tables.tsx
+msgid "login.chart.duplicate"
+msgstr "Duplicate"
+
+#: app/login/components/profile-tables.tsx
 #: app/pages/v/[chartId].tsx
 msgid "login.chart.edit"
 msgstr "Edit"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.chart.embed"
+msgstr "Embed"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.preview"
@@ -1379,13 +1417,29 @@ msgstr "create one"
 msgid "login.no-charts"
 msgstr "No charts yet"
 
+#: app/login/components/login-menu.tsx
+msgid "login.profile.bug-report"
+msgstr "Report a Bug"
+
 #: app/components/confirmation-dialog.tsx
 msgid "login.profile.chart.confirmation.default"
 msgstr "Are you sure you want to perform this action?"
 
 #: app/login/components/profile-tables.tsx
+msgid "login.profile.chart.delete-draft.warning"
+msgstr "This action cannot be undone."
+
+#: app/login/components/profile-tables.tsx
 msgid "login.profile.chart.delete.warning"
 msgstr "Keep in mind that removing this visualization will affect all the places where it might be already embedded!"
+
+#: app/login/components/login-menu.tsx
+msgid "login.profile.feature-request"
+msgstr "Request a Feature"
+
+#: app/login/components/login-menu.tsx
+msgid "login.profile.feedback"
+msgstr "Feedback"
 
 #: app/login/components/profile-content-tabs.tsx
 msgid "login.profile.home"
@@ -1395,13 +1449,17 @@ msgstr "Home"
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
 msgid "login.profile.my-drafts"
-msgstr "My draft visualisations"
+msgstr "Drafts"
 
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
 msgid "login.profile.my-published-visualizations"
 msgstr "My published visualizations"
+
+#: app/login/components/login-menu.tsx
+msgid "login.profile.my-visualizations"
+msgstr "My visualizations"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.my-visualizations.chart-actions"
@@ -1427,6 +1485,15 @@ msgstr "Dataset"
 msgid "login.profile.my-visualizations.multiple-datasets"
 msgstr "Multiple datasets"
 
+#: app/login/components/login-menu.tsx
+msgid "login.sign-in"
+msgstr "Sign in"
+
+#: app/login/components/login-menu.tsx
+#: app/login/components/profile-header.tsx
+msgid "login.sign-out"
+msgstr "Sign out"
+
 #: app/components/header.tsx
 #: app/components/header.tsx
 msgid "logo.swiss.confederation"
@@ -1449,12 +1516,12 @@ msgid "profile.chart.rename-dialog.title"
 msgstr "Rename the visualization"
 
 #: app/components/publish-actions.tsx
-msgid "publication.embed.AEM"
-msgstr "Embed Code for AEM \"External Application\""
+msgid "publication.embed.external-application"
+msgstr "Embed Code for \"External Application\""
 
 #: app/components/publish-actions.tsx
-msgid "publication.embed.AEM.caption"
-msgstr "Use this link to embed the chart into Adobe Experience Manager assets."
+msgid "publication.embed.external-application.caption"
+msgstr "Use this link to embed the chart without iframe tags."
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe"
@@ -1463,6 +1530,30 @@ msgstr "Embed Code"
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.caption"
 msgstr "Use this link to embed the chart in any webpage."
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.remove-border"
+msgstr "Remove border"
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.remove-border.warn"
+msgstr "For embedding visualizations in systems without a border."
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.responsive"
+msgstr "Responsive iframe"
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.responsive.warn"
+msgstr "For embedding visualizations in web pages without CMS support. The iframe will be responsive. The JavaScript part of the embed code ensures that the iframe always maintains the correct size."
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.static"
+msgstr "Static iframe"
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.static.warn"
+msgstr "For embedding visualizations in systems without Web Components or JavaScript support. (e.g. WordPress)"
 
 #: app/components/publish-actions.tsx
 msgid "publication.popup.share"
@@ -1537,10 +1628,6 @@ msgstr "Week"
 #: app/configurator/components/ui-helpers.ts
 msgid "time-units.Year"
 msgstr "Year"
-
-#: app/components/chart-footnotes.tsx
-msgid "typography.colon"
-msgstr ": "
 
 #: app/components/confirmation-dialog.tsx
 msgid "yes"

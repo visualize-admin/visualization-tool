@@ -1,10 +1,10 @@
 import { extent, group, rollup, sum } from "d3-array";
 import {
   ScaleLinear,
-  ScaleOrdinal,
-  ScaleTime,
   scaleLinear,
+  ScaleOrdinal,
   scaleOrdinal,
+  ScaleTime,
   scaleTime,
 } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
@@ -23,6 +23,7 @@ import {
   useAreasStateVariables,
 } from "@/charts/area/areas-state-props";
 import {
+  useAxisLabelHeightOffset,
   useChartBounds,
   useChartPadding,
 } from "@/charts/shared/chart-dimensions";
@@ -39,7 +40,10 @@ import {
   InteractiveXTimeRangeState,
 } from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
-import { getCenteredTooltipPlacement } from "@/charts/shared/interaction/tooltip-box";
+import {
+  getCenteredTooltipPlacement,
+  MOBILE_TOOLTIP_PLACEMENT,
+} from "@/charts/shared/interaction/tooltip-box";
 import {
   getStackedTooltipValueFormatter,
   getStackedYScale,
@@ -57,6 +61,7 @@ import {
   getSortingOrders,
   makeDimensionValueSorters,
 } from "@/utils/sorting-values";
+import { useIsMobile } from "@/utils/use-is-mobile";
 
 import { ChartProps } from "../shared/ChartProps";
 
@@ -330,9 +335,16 @@ const useAreasState = (
     formatNumber,
     normalize,
   });
+  const right = 40;
+  const { offset: yAxisLabelMargin } = useAxisLabelHeightOffset({
+    label: yMeasure.label,
+    width,
+    marginLeft: left,
+    marginRight: right,
+  });
   const margins = {
-    top: 50,
-    right: 40,
+    top: 50 + yAxisLabelMargin,
+    right,
     bottom,
     left,
   };
@@ -343,6 +355,8 @@ const useAreasState = (
   xScale.range([0, chartWidth]);
   xScaleTimeRange.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
+
+  const isMobile = useIsMobile();
 
   /** Tooltip */
   const getAnnotationInfo = useCallback(
@@ -364,18 +378,22 @@ const useAreasState = (
         formatNumber,
       });
       const xAnchor = xScale(getX(datum));
-      const yAnchor = normalize
+      const yDesktopAnchor = normalize
         ? yScale.range()[0] * 0.5
         : yScale(sum(yValues) * (fields.segment ? 0.5 : 1));
+      const yAnchor = isMobile ? chartHeight : yDesktopAnchor;
+      const placement = isMobile
+        ? MOBILE_TOOLTIP_PLACEMENT
+        : getCenteredTooltipPlacement({
+            chartWidth,
+            xAnchor,
+            topAnchor: !fields.segment,
+          });
 
       return {
         xAnchor,
         yAnchor,
-        placement: getCenteredTooltipPlacement({
-          chartWidth,
-          xAnchor,
-          topAnchor: !fields.segment,
-        }),
+        placement,
         xValue: timeFormatUnit(getX(datum), xDimension.timeUnit),
         datum: {
           label: fields.segment && getSegmentAbbreviationOrLabel(datum),
@@ -412,6 +430,8 @@ const useAreasState = (
       normalize,
       getIdentityY,
       chartWidth,
+      chartHeight,
+      isMobile,
     ]
   );
 

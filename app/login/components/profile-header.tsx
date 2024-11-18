@@ -55,7 +55,7 @@ export const ProfileHeader = (props: { user: User }) => {
           size="small"
           onClick={async () => await signOut()}
         >
-          Log out
+          <Trans id="login.sign-out">Sign out</Trans>
         </Button>
       </Box>
     </Box>

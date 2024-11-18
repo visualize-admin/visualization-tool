@@ -1,7 +1,9 @@
+import { ParsedUrlQuery } from "querystring";
+
 import { PUBLISHED_STATE } from "@prisma/client";
 import { NextRouter, useRouter } from "next/router";
 import { Dispatch, createContext, useContext, useEffect, useMemo } from "react";
-import { useClient } from "urql";
+import { Client, useClient } from "urql";
 import { useImmerReducer } from "use-immer";
 
 import {
@@ -155,6 +157,30 @@ const handlePublishSuccess = async (
   });
 };
 
+async function initializeChartState(
+  chartId: string,
+  query: ParsedUrlQuery,
+  client: Client,
+  dataSource: { type: "sql" | "sparql"; url: string },
+  locale: string
+) {
+  if (chartId === "new") {
+    if (query.copy && typeof query.copy === "string") {
+      return initChartStateFromChartCopy(client, query.copy);
+    } else if (query.edit && typeof query.edit === "string") {
+      return initChartStateFromChartEdit(
+        client,
+        query.edit,
+        typeof query.state === "string" ? query.state : undefined
+      );
+    } else if (query.cube && typeof query.cube === "string") {
+      return initChartStateFromCube(client, query.cube, dataSource, locale);
+    }
+  } else if (chartId !== "published") {
+    return initChartStateFromLocalStorage(client, chartId);
+  }
+}
+
 export async function publishState(
   user: ReturnType<typeof useUser>,
   key: string,
@@ -260,35 +286,17 @@ const ConfiguratorStateProviderInternal = (
     let stateToInitialize = initialStateWithDataSource;
     const initialize = async () => {
       try {
-        let newChartState;
+        const newChartState = await initializeChartState(
+          chartId,
+          query,
+          client,
+          dataSource,
+          locale
+        );
 
-        if (chartId === "new") {
-          if (query.copy && typeof query.copy === "string") {
-            newChartState = await initChartStateFromChartCopy(
-              client,
-              query.copy
-            );
-          } else if (query.edit && typeof query.edit === "string") {
-            newChartState = await initChartStateFromChartEdit(
-              client,
-              query.edit,
-              typeof query.state === "string" ? query.state : undefined
-            );
-          } else if (query.cube && typeof query.cube === "string") {
-            newChartState = await initChartStateFromCube(
-              client,
-              query.cube,
-              dataSource,
-              locale
-            );
-          }
-        } else if (chartId !== "published") {
-          newChartState = await initChartStateFromLocalStorage(client, chartId);
-          if (!newChartState && allowDefaultRedirect) {
-            replace(`/create/new`);
-          }
+        if (!newChartState && allowDefaultRedirect && chartId !== "published") {
+          replace(`/create/new`);
         }
-
         stateToInitialize = newChartState ?? stateToInitialize;
       } finally {
         dispatch({ type: "INITIALIZED", value: stateToInitialize });

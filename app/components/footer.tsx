@@ -127,9 +127,13 @@ export const Footer = ({ sx }: { sx?: FlexProps["sx"] }) => {
           >
             <Version />
           </Typography>
+          <FooterLinkBottom href="https://github.com/visualize-admin/visualization-tool/blob/main/CHANGELOG.md">
+            Changelog
+          </FooterLinkBottom>
           <FooterLinkBottom href="https://www.youtube.com/channel/UCNK0uJTJ74kbv3jmNtZfgOw">
             <Trans id="footer.tutorials">Tutorials</Trans>
           </FooterLinkBottom>
+
           <FooterLinkBottom href="https://visualization-tool.status.interactivethings.io/">
             <Trans id="footer.status">Status</Trans>
           </FooterLinkBottom>

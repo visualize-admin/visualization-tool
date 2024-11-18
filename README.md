@@ -69,7 +69,8 @@ yarn dev:ssl # If you are working with the login process
 > experience an SSL error when the authentication provider redirects you back to
 > the app after login. You can either remove the trailing s in the URL after the
 > redirection, or use the `yarn dev:ssl` command to use HTTPs for the
-> development server.
+> development server. Also, make sure to set the `NEXTAUTH_URL` environment
+> variable to `https://localhost:3000` in your `.env.local` file.
 
 > 👉 In [Visual Studio Code](https://code.visualstudio.com/), you also can run
 > the **default build task** (CMD-SHIFT-B) to start the dev server, database
@@ -351,6 +352,9 @@ You can use the ref eIAM. ADFS environment variables should be configured in
 your `.env.local` file. You'll find those secret variables in our shared
 1Password in the "Visualize.admin .env.local" entry.
 
+Make sure to set the `NEXTAUTH_URL` environment variable to
+`https://localhost:3000` and run the dev server with `yarn dev:ssl`.
+
 ## 10. <a name='Translations'></a>Translations
 
 Translations are managed via [Accent](https://accent.interactivethings.io).
@@ -366,3 +370,8 @@ goes:
 
 In the future, we might want to integrate further Accent so that it opens pull
 requests.
+
+> ℹ️ To automatically authenticate with Accent, you can set the `ACCENT_API_KEY`
+> environment variable in your `.env` file in the root of the project. You can
+> find the API key in the Accent web UI. Otherwise, you can add the key inline
+> when running the command, e.g. `ACCENT_API_KEY=your_key yarn locales:push`.

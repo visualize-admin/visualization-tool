@@ -1,32 +1,21 @@
 import { t, Trans } from "@lingui/macro";
 import { TabContext } from "@mui/lab";
 import {
-  Box,
   Button,
   Divider,
-  Grow,
-  Popover,
   Stack,
   tabClasses,
   Theme,
-  Tooltip,
   Typography,
-  useEventCallback,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { PUBLISHED_STATE } from "@prisma/client";
 import clsx from "clsx";
-import { useSession } from "next-auth/react";
-import Link from "next/link";
-import { useRouter } from "next/router";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
-import { useClient } from "urql";
-import { useDebounce } from "use-debounce";
 
-import { extractChartConfigComponentIris } from "@/charts/shared/chart-helpers";
 import { ArrowMenuTopCenter } from "@/components/arrow-menu";
 import { DuplicateChartMenuActionItem } from "@/components/chart-shared";
+import { DragHandle } from "@/components/drag-handle";
 import Flex from "@/components/flex";
 import { MenuActionItem } from "@/components/menu-action-item";
 import { VisualizeTab, VisualizeTabList } from "@/components/tabs";
@@ -35,33 +24,20 @@ import {
   ChartType,
   ConfiguratorStatePublished,
   ConfiguratorStateWithChartConfigs,
-  enableLayouting,
   getChartConfig,
   hasChartConfigs,
-  initChartStateFromChartEdit,
   isConfiguring,
   isLayouting,
   isPublished,
   isPublishing,
-  saveChartLocally,
   useConfiguratorState,
 } from "@/configurator";
 import { useSearchDatasetPanelStore } from "@/configurator/components/add-new-dataset-panel";
 import { ChartTypeSelector } from "@/configurator/components/chart-type-selector";
 import { getIconName } from "@/configurator/components/ui-helpers";
-import { useUserConfig } from "@/domain/user-configs";
-import { useFlag } from "@/flags";
-import { useDataCubesComponentsQuery } from "@/graphql/hooks";
 import { Icon, IconName } from "@/icons";
-import { defaultLocale, useLocale } from "@/locales";
-import { createConfig, updateConfig } from "@/utils/chart-config/api";
-import { getRouterChartId } from "@/utils/router/helpers";
-import { replaceLinks } from "@/utils/ui-strings";
+import { useLocale } from "@/locales";
 import useEvent from "@/utils/use-event";
-import { useMutate } from "@/utils/use-fetch-data";
-
-import { DragHandle } from "./drag-handle";
-import { useLocalSnack } from "./use-local-snack";
 
 type TabsState = {
   popoverOpen: boolean;
@@ -113,19 +89,16 @@ export const ChartSelectionTabs = () => {
   }
 
   const chartConfig = getChartConfig(state);
-  const data: TabDatum[] = state.chartConfigs.map((d) => {
-    return {
-      key: d.key,
-      chartType: d.chartType,
-      active: d.key === chartConfig.key,
-      label:
-        d.meta.title[locale] !== ""
-          ? d.meta.title[locale]
-          : d.meta.title[defaultLocale] !== ""
-            ? d.meta.title[defaultLocale]
-            : undefined,
-    };
-  });
+  const data: TabDatum[] = state.chartConfigs.map(
+    ({ key, chartType, meta }) => {
+      return {
+        key,
+        chartType,
+        active: key === chartConfig.key,
+        label: meta.label[locale] !== "" ? meta.label[locale] : undefined,
+      };
+    }
+  );
 
   return (
     <TabsStateProvider>
@@ -169,7 +142,12 @@ const TabsEditable = (props: TabsEditableProps) => {
 
   const { open: openAddDatasetPanel } = useSearchDatasetPanelStore();
 
-  const addNewDatasetFlag = useFlag("configurator.add-dataset.new");
+  const switchChart = (key: string) => {
+    dispatch({
+      type: "SWITCH_ACTIVE_CHART",
+      value: key,
+    });
+  };
 
   return (
     <>
@@ -194,27 +172,31 @@ const TabsEditable = (props: TabsEditableProps) => {
             activeChartKey: key,
           });
         }}
-        onChartSwitch={(key) => {
-          dispatch({
-            type: "SWITCH_ACTIVE_CHART",
-            value: key,
-          });
-        }}
+        onChartSwitch={switchChart}
       />
 
       {tabsState.popoverType === "add" ? (
-        <Popover
+        <ArrowMenuTopCenter
           id="chart-selection-popover"
           open={tabsState.popoverOpen}
           anchorEl={popoverAnchorEl}
           anchorOrigin={{
-            horizontal: "left",
+            horizontal: "center",
             vertical: "bottom",
+          }}
+          transformOrigin={{
+            horizontal: "center",
+            vertical: "top",
           }}
           onClose={handleClose}
           PaperProps={{
             sx: {
+              width: "calc(320px + 2rem)",
+              mt: 3,
               py: "1rem",
+              "& > .MuiList-root": {
+                py: 0,
+              },
             },
           }}
         >
@@ -224,55 +206,51 @@ const TabsEditable = (props: TabsEditableProps) => {
             direction="column"
           >
             <Stack direction="column" gap="0.5rem" m="1rem">
-              {addNewDatasetFlag ? (
-                <Typography
-                  variant="body2"
-                  color="text.secondary"
-                  textAlign="center"
-                  gutterBottom
-                >
-                  <Trans id="chart-selection-tabs.add-chart-same-dataset.caption">
-                    Add chart based on the same dataset
-                  </Trans>
-                </Typography>
-              ) : null}
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                textAlign="center"
+                gutterBottom
+              >
+                <Trans id="chart-selection-tabs.add-chart-same-dataset.caption">
+                  Add chart based on the same dataset
+                </Trans>
+              </Typography>
               <ChartTypeSelector
                 state={state}
                 type="add"
                 showHelp={false}
                 showComparisonCharts={false}
                 chartKey={tabsState.activeChartKey ?? chartConfig.key}
-                sx={{ width: 320, px: 3, pb: 3 }}
+                sx={{ pb: 3 }}
               />
             </Stack>
-            {addNewDatasetFlag ? (
-              <Stack direction="column" gap="0.5rem" mx="1.5rem" my="1rem">
-                <Typography
-                  variant="body2"
-                  color="text.secondary"
-                  textAlign="center"
-                  gutterBottom
-                >
-                  <Trans id="chart-selection-tabs.add-chart-different-dataset.caption">
-                    Add chart based on a different dataset
-                  </Trans>
-                </Typography>
-                <Button
-                  fullWidth
-                  sx={{ justifyContent: "center" }}
-                  onClick={() => {
-                    setTabsState({ ...tabsState, popoverOpen: false });
-                    openAddDatasetPanel();
-                  }}
-                >
-                  <Trans id="chart-selection-tabs.add-chart-different-dataset.button">
-                    Select dataset
-                  </Trans>
-                </Button>
-              </Stack>
-            ) : null}
+            <Stack direction="column" gap="0.5rem" mx="1.5rem" my="1rem">
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                textAlign="center"
+                gutterBottom
+              >
+                <Trans id="chart-selection-tabs.add-chart-different-dataset.caption">
+                  Add chart based on a different dataset
+                </Trans>
+              </Typography>
+              <Button
+                fullWidth
+                sx={{ justifyContent: "center" }}
+                onClick={() => {
+                  setTabsState({ ...tabsState, popoverOpen: false });
+                  openAddDatasetPanel();
+                }}
+              >
+                <Trans id="chart-selection-tabs.add-chart-different-dataset.button">
+                  Select dataset
+                </Trans>
+              </Button>
+            </Stack>
           </Stack>
-        </Popover>
+        </ArrowMenuTopCenter>
       ) : null}
 
       {tabsState.popoverType === "edit" ? (
@@ -290,6 +268,23 @@ const TabsEditable = (props: TabsEditableProps) => {
           }}
           onClose={handleClose}
         >
+          {isConfiguringChart && (
+            <MenuActionItem
+              as="menuitem"
+              type="button"
+              leadingIconName="text"
+              label={
+                <Trans id="chart-controls.edit-tab-label">Edit tab label</Trans>
+              }
+              onClick={() => {
+                switchChart(tabsState.activeChartKey);
+                dispatch({
+                  type: "CHART_ACTIVE_FIELD_CHANGED",
+                  value: "label",
+                });
+              }}
+            />
+          )}
           <DuplicateChartMenuActionItem
             chartConfig={getChartConfig(state, tabsState.activeChartKey)}
             onSuccess={handleClose}
@@ -299,7 +294,7 @@ const TabsEditable = (props: TabsEditableProps) => {
             <MenuActionItem
               as="menuitem"
               type="button"
-              iconName="trash"
+              leadingIconName="trash"
               label={<Trans id="chart-controls.delete">Delete</Trans>}
               color="error"
               requireConfirmation
@@ -335,14 +330,8 @@ type TabDatum = {
   label?: string | undefined;
 };
 
-type TabsFixedProps = {
-  data: TabDatum[];
-};
-
-const TabsFixed = (props: TabsFixedProps) => {
-  const { data } = props;
+const TabsFixed = ({ data }: { data: TabDatum[] }) => {
   const [, dispatch] = useConfiguratorState(isPublished);
-
   return (
     <TabsInner
       data={data}
@@ -357,240 +346,6 @@ const TabsFixed = (props: TabsFixedProps) => {
       }}
     />
   );
-};
-
-const NextStepButton = (props: React.PropsWithChildren<{}>) => {
-  const { children } = props;
-  const locale = useLocale();
-  const [state, dispatch] = useConfiguratorState(hasChartConfigs);
-  const chartConfig = getChartConfig(state);
-  const componentIris = extractChartConfigComponentIris({ chartConfig });
-  const [{ data: components }] = useDataCubesComponentsQuery({
-    variables: {
-      sourceType: state.dataSource.type,
-      sourceUrl: state.dataSource.url,
-      locale,
-      cubeFilters: chartConfig.cubes.map((cube) => ({
-        iri: cube.iri,
-        componentIris,
-        filters: cube.filters,
-        joinBy: cube.joinBy,
-        loadValues: true,
-      })),
-    },
-  });
-  const handleClick = useEvent(() => {
-    if (components?.dataCubesComponents) {
-      dispatch({
-        type: "STEP_NEXT",
-        dataCubesComponents: components.dataCubesComponents,
-      });
-    }
-  });
-
-  return (
-    <Button
-      color="primary"
-      variant="contained"
-      onClick={handleClick}
-      sx={{ minWidth: "fit-content" }}
-    >
-      {children}
-    </Button>
-  );
-};
-
-const LayoutChartButton = () => {
-  return (
-    <NextStepButton>
-      <Trans id="button.layout">Proceed to layout options</Trans>
-    </NextStepButton>
-  );
-};
-
-export const SaveDraftButton = ({
-  chartId,
-}: {
-  chartId: string | undefined;
-}) => {
-  const { data: config, invalidate: invalidateConfig } = useUserConfig(chartId);
-  const session = useSession();
-  const client = useClient();
-
-  const [state, dispatch] = useConfiguratorState();
-
-  const [snack, enqueueSnackbar, dismissSnack] = useLocalSnack();
-  const [debouncedSnack] = useDebounce(snack, 500);
-  const { asPath, replace } = useRouter();
-
-  const createConfigMut = useMutate(createConfig);
-  const updatePublishedStateMut = useMutate(updateConfig);
-  const loggedInId = session.data?.user.id;
-
-  const handleClick = useEventCallback(async () => {
-    try {
-      if (config?.user_id && loggedInId) {
-        const updated = await updatePublishedStateMut.mutate({
-          data: state,
-          published_state: PUBLISHED_STATE.DRAFT,
-          key: config.key,
-        });
-
-        if (updated) {
-          if (asPath !== `/create/${updated.key}`) {
-            replace(`/create/new?edit=${updated.key}`);
-          }
-        } else {
-          throw new Error("Could not update draft");
-        }
-      } else if (state) {
-        const saved = await createConfigMut.mutate({
-          data: state,
-          user_id: loggedInId,
-          published_state: PUBLISHED_STATE.DRAFT,
-        });
-        if (saved) {
-          const config = await initChartStateFromChartEdit(
-            client,
-            saved.key,
-            state.state
-          );
-
-          if (!config) {
-            return;
-          }
-
-          dispatch({ type: "INITIALIZED", value: config });
-          saveChartLocally(saved.key, config);
-          replace(`/create/${saved.key}`, undefined, {
-            shallow: true,
-          });
-        } else {
-          throw new Error("Could not save draft");
-        }
-      }
-
-      enqueueSnackbar({
-        message: (
-          <>
-            {replaceLinks(
-              t({
-                id: "button.save-draft.saved",
-                message: "Draft saved in [My visualisations](/profile)",
-              }),
-              (label, href) => {
-                return (
-                  <div>
-                    <Link href={href}>{label}</Link>
-                  </div>
-                );
-              }
-            )}
-          </>
-        ),
-        variant: "success",
-      });
-
-      invalidateConfig();
-    } catch (e) {
-      console.log(
-        `Error while saving draft: ${e instanceof Error ? e.message : e}`
-      );
-      enqueueSnackbar({
-        message: t({
-          id: "button.save-draft.error",
-          message: "Could not save draft",
-        }),
-        variant: "error",
-      });
-    }
-
-    setTimeout(() => {
-      updatePublishedStateMut.reset();
-      createConfigMut.reset();
-    }, 2000);
-  });
-
-  const hasUpdated = !!(updatePublishedStateMut.data || createConfigMut.data);
-  const [debouncedHasUpdated] = useDebounce(hasUpdated, 300);
-
-  if (!loggedInId) {
-    return null;
-  }
-
-  return (
-    <Tooltip
-      arrow
-      title={debouncedSnack?.message ?? ""}
-      open={!!snack}
-      disableFocusListener
-      disableHoverListener
-      disableTouchListener
-      onClose={() => dismissSnack()}
-    >
-      <Button
-        endIcon={
-          hasUpdated || debouncedHasUpdated ? (
-            <Grow in={hasUpdated}>
-              <span>
-                <Icon name="check" />
-              </span>
-            </Grow>
-          ) : null
-        }
-        variant="outlined"
-        onClick={handleClick}
-      >
-        <Trans id="button.save-draft">Save draft</Trans>
-      </Button>
-    </Tooltip>
-  );
-};
-
-export const PublishChartButton = ({
-  chartId,
-}: {
-  chartId: string | undefined;
-}) => {
-  const session = useSession();
-  const { data: config } = useUserConfig(chartId);
-  const editingPublishedChart =
-    session.data?.user.id &&
-    config?.user_id === session.data.user.id &&
-    config.published_state === "PUBLISHED";
-
-  return (
-    <NextStepButton>
-      {editingPublishedChart ? (
-        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-          <Tooltip
-            title={t({
-              id: "button.update.warning",
-              message:
-                "Keep in mind that updating this visualization will affect all the places where it might be already embedded!",
-            })}
-          >
-            <div>
-              <Icon name="hintWarning" />
-            </div>
-          </Tooltip>
-          <Trans id="button.update">Update this visualization</Trans>
-        </Box>
-      ) : (
-        <Trans id="button.publish">Publish</Trans>
-      )}
-    </NextStepButton>
-  );
-};
-
-type TabsInnerProps = {
-  data: TabDatum[];
-  addable: boolean;
-  editable: boolean;
-  draggable: boolean;
-  onChartAdd?: (e: React.MouseEvent<HTMLElement>) => void;
-  onChartEdit?: (e: React.MouseEvent<HTMLElement>, key: string) => void;
-  onChartSwitch?: (key: string) => void;
 };
 
 /**
@@ -612,24 +367,11 @@ const useTabsInnerStyles = makeStyles<Theme>((theme) => ({
   root: {
     display: "flex",
     alignItems: "center",
-    justifyContent: "space-between",
     gap: 1,
   },
   tab: {
     zIndex: 1,
     maxWidth: "auto",
-    "&:first-child": {
-      // We need to add a negative margin to the first tab so that its left margin
-      // goes "under" the border of the tab list.
-      marginLeft: -1,
-    },
-  },
-  // :last-child does not work when the tabs are not scrollable
-  // MUI seems to add an empty element at the end, thus we cannot use :last-child
-  lastTab: {
-    // We need to add a negative margin to the last tab so that its right margin
-    // goes "under" the border of the tab list.
-    marginRight: -1,
   },
   tabList: {
     top: 1,
@@ -644,47 +386,45 @@ const useTabsInnerStyles = makeStyles<Theme>((theme) => ({
     [`& .${tabClasses.root}`]: {
       maxWidth: "max-content",
     },
-
-    "&:before, &:after": {
-      top: 1,
-      content: '""',
-      bottom: 1,
-      position: "absolute",
-      width: "var(--cut-off-width)",
-      zIndex: 10,
+  },
+  scrollButton: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    width: "2.5rem",
+    minWidth: "2.5rem",
+    padding: 0,
+    minHeight: 0,
+    color: theme.palette.text.primary,
+    "&:hover": {
+      backgroundColor: "transparent",
     },
-    "&:before": {
-      borderBottom: 0,
-      left: 0,
-      right: "auto",
-      backgroundImage: "linear-gradient(to left, transparent, var(--bg))",
-    },
-    "&:after": {
-      left: "auto",
-      right: 0,
-      backgroundImage: "linear-gradient(to right, transparent, var(--bg))",
+    "& > svg": {
+      pointerEvents: "none",
     },
   },
 }));
 
-const TabsInner = (props: TabsInnerProps) => {
+const TabsInner = ({
+  data,
+  addable,
+  editable,
+  draggable,
+  onChartEdit,
+  onChartAdd,
+  onChartSwitch,
+}: {
+  data: TabDatum[];
+  addable: boolean;
+  editable: boolean;
+  draggable: boolean;
+  onChartAdd?: (e: React.MouseEvent<HTMLElement>) => void;
+  onChartEdit?: (e: React.MouseEvent<HTMLElement>, key: string) => void;
+  onChartSwitch?: (key: string) => void;
+}) => {
   const classes = useTabsInnerStyles();
-  const {
-    data,
-    addable,
-    editable,
-    draggable,
-    onChartEdit,
-    onChartAdd,
-    onChartSwitch,
-  } = props;
-  const [state, dispatch] = useConfiguratorState(hasChartConfigs);
-
-  const { asPath } = useRouter();
-  const chartId = getRouterChartId(asPath);
-
+  const [_, dispatch] = useConfiguratorState(hasChartConfigs);
   const activeTabIndex = data.findIndex((x) => x.active);
-
   return (
     <div className={classes.root}>
       <TabContext value={`${activeTabIndex}`}>
@@ -706,8 +446,23 @@ const TabsInner = (props: TabsInnerProps) => {
               <VisualizeTabList
                 ref={provided.innerRef}
                 variant="scrollable"
-                scrollButtons={false}
                 className={classes.tabList}
+                ScrollButtonComponent={({ direction, disabled, onClick }) => (
+                  <Button
+                    className={classes.scrollButton}
+                    onClick={onClick}
+                    style={{ cursor: disabled ? "auto" : "pointer" }}
+                    variant="text"
+                  >
+                    {disabled ? null : (
+                      <Icon
+                        name={
+                          direction === "left" ? "chevronLeft" : "chevronRight"
+                        }
+                      />
+                    )}
+                  </Button>
+                )}
               >
                 {data.map((d, i) => (
                   <PassthroughTab key={d.key} value={`${i}`}>
@@ -731,14 +486,11 @@ const TabsInner = (props: TabsInnerProps) => {
                               classes.tab,
                               // We need to add the "selected" class ourselves since we are wrapping
                               // the tabs by Draggable.
-                              i === activeTabIndex ? "Mui-selected" : "",
-                              i === data.length - 1 ? classes.lastTab : ""
+                              i === activeTabIndex ? "Mui-selected" : ""
                             )}
                             sx={{
                               px: 0,
-                              flexShrink: 1,
                               minWidth: d.label ? 180 : 0,
-                              flexBasis: "100%",
                             }}
                             label={
                               <TabContent
@@ -771,36 +523,17 @@ const TabsInner = (props: TabsInnerProps) => {
           </Droppable>
         </DragDropContext>
       </TabContext>
-
       {addable && (
-        <VisualizeTab
-          component="div"
-          className={classes.tab}
-          sx={{
-            px: 0,
-            pt: "2px",
-            top: 1,
-            margin: "0 1rem",
-            height: "100%",
-            border: "1px solid",
-            borderColor: "divider",
-            minWidth: "fit-content",
-          }}
+        <Button
+          color="primary"
+          variant="contained"
+          startIcon={<Icon name="add" />}
           onClick={onChartAdd}
-          label={<TabContent iconName="add" chartKey="" />}
-        />
+          sx={{ minWidth: "fit-content", ml: "0.5rem", px: 3 }}
+        >
+          <Trans id="chart-selection-tabs.add-chart">Add chart</Trans>
+        </Button>
       )}
-      <Box flexGrow={1} />
-      <Box gap="0.5rem" display="flex" flexShrink={0}>
-        {isConfiguring(state) ? <SaveDraftButton chartId={chartId} /> : null}
-        {editable &&
-          isConfiguring(state) &&
-          (enableLayouting(state) ? (
-            <LayoutChartButton />
-          ) : (
-            <PublishChartButton chartId={chartId} />
-          ))}
-      </Box>
     </div>
   );
 };
@@ -829,6 +562,7 @@ export const useIconStyles = makeStyles<
     flexWrap: "nowrap",
     whiteSpace: "nowrap",
     minWidth: 0,
+    maxWidth: 400,
     overflow: "hidden",
     minHeight: "100%",
     position: "relative",
@@ -851,6 +585,9 @@ export const useIconStyles = makeStyles<
   },
   chartIconWrapper: {
     minWidth: "fit-content",
+    display: "flex",
+    alignItems: "center",
+    gap: spacing(2),
     color: (d) => (d.active ? palette.primary.main : palette.secondary.active),
   },
   editIconWrapper: {
@@ -876,7 +613,7 @@ export const useIconStyles = makeStyles<
   },
 }));
 
-type TabContentProps = {
+const TabContent = (props: {
   iconName: IconName;
   chartKey: string;
   editable?: boolean;
@@ -889,9 +626,7 @@ type TabContentProps = {
     activeChartKey: string
   ) => void;
   onSwitchClick?: () => void;
-};
-
-const TabContent = (props: TabContentProps) => {
+}) => {
   const {
     iconName,
     chartKey,
@@ -904,41 +639,49 @@ const TabContent = (props: TabContentProps) => {
     onSwitchClick,
   } = props;
   const classes = useIconStyles({ active, dragging });
-
+  const [_, dispatch] = useConfiguratorState();
+  const showAddLabel = editable && !label;
+  const addLabel = t({
+    id: "chart-selection-tabs.no-label",
+    message: "No label",
+  });
   return (
     <Flex className={classes.root}>
       <Button
-        className={classes.chartIconWrapper}
         variant="text"
-        onClick={onSwitchClick}
+        className={classes.chartIconWrapper}
+        onClick={() => {
+          onSwitchClick?.();
+          if (editable) {
+            dispatch({
+              type: "CHART_ACTIVE_FIELD_CHANGED",
+              value: undefined,
+            });
+          }
+        }}
       >
         <Icon name={iconName} />
+        <Typography
+          variant="body2"
+          sx={{
+            color: (t) =>
+              label || !editable
+                ? "inherit"
+                : `${t.palette.grey[500]} !important`,
+          }}
+        >
+          {label || showAddLabel ? label || `[ ${addLabel} ]` : null}
+        </Typography>
       </Button>
-
-      {label ? (
-        <Tooltip title={label} enterDelay={750}>
-          <Button
-            variant="text"
-            color="primary"
-            className={classes.label}
-            onClick={onSwitchClick}
-          >
-            {label}
-          </Button>
-        </Tooltip>
-      ) : null}
       {editable && (
         <Button
           variant="text"
-          onClick={(e) => {
-            onChevronDownClick?.(e, chartKey);
-          }}
+          onClick={(e) => onChevronDownClick?.(e, chartKey)}
           className={classes.editIconWrapper}
         >
           <Icon name="chevronDown" />
         </Button>
       )}
-
       {draggable && <DragHandle dragging={dragging} />}
     </Flex>
   );

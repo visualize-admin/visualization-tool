@@ -30,7 +30,6 @@ msgstr "Kein Ergebnis"
 msgid "annotation.add.description"
 msgstr "[ Ohne Beschreibung ]"
 
-#: app/components/rename-dialog.tsx
 #: app/configurator/components/annotators.tsx
 #: app/login/components/profile-tables.tsx
 msgid "annotation.add.title"
@@ -54,7 +53,7 @@ msgstr "Kategorien"
 
 #: app/login/components/profile-header.tsx
 msgid "browse.dataset.all"
-msgstr "Alle Datensätze durchsuchen"
+msgstr "Datensatz suchen"
 
 #: app/browser/dataset-preview.tsx
 #: app/browser/dataset-preview.tsx
@@ -107,7 +106,7 @@ msgstr "Kopieren"
 msgid "button.hint.copied"
 msgstr "Kopiert!"
 
-#: app/components/chart-selection-tabs.tsx
+#: app/configurator/components/configurator.tsx
 msgid "button.layout"
 msgstr "Weiter zu den Layout-Optionen"
 
@@ -115,32 +114,32 @@ msgstr "Weiter zu den Layout-Optionen"
 msgid "button.new.visualization"
 msgstr "Neue Visualisierung erstellen"
 
-#: app/components/chart-selection-tabs.tsx
+#: app/configurator/components/configurator.tsx
 msgid "button.publish"
 msgstr "Veröffentlichen"
 
-#: app/components/chart-selection-tabs.tsx
+#: app/configurator/components/configurator.tsx
 msgid "button.save-draft"
 msgstr "Entwurf speichern"
 
-#: app/components/chart-selection-tabs.tsx
+#: app/configurator/components/configurator.tsx
 msgid "button.save-draft.error"
 msgstr "Entwurf konnte nicht gespeichert werden"
 
-#: app/components/chart-selection-tabs.tsx
+#: app/configurator/components/configurator.tsx
 msgid "button.save-draft.saved"
-msgstr "Entwurf gespeichert in [Meine veröffentlichten Visualisierungen](/profile)"
+msgstr "Entwurf gespeichert in [Meine Visualisierungen](/profile)"
 
 #: app/components/chart-shared.tsx
 #: app/components/publish-actions.tsx
 msgid "button.share"
 msgstr "Teilen"
 
-#: app/components/chart-selection-tabs.tsx
+#: app/configurator/components/configurator.tsx
 msgid "button.update"
 msgstr "Diese Visualisierung aktualisieren"
 
-#: app/components/chart-selection-tabs.tsx
+#: app/configurator/components/configurator.tsx
 msgid "button.update.warning"
 msgstr "Denken Sie daran, dass sich die Aktualisierung dieser Visualisierung auf alle Stellen auswirkt, an denen sie bereits eingebettet ist!"
 
@@ -173,6 +172,10 @@ msgstr "Duplizieren"
 msgid "chart-controls.edit"
 msgstr "Bearbeiten"
 
+#: app/components/chart-selection-tabs.tsx
+msgid "chart-controls.edit-tab-label"
+msgstr "Tab-Titel editieren"
+
 #: app/components/dataset-metadata.tsx
 msgid "chart-controls.sparql-query"
 msgstr "SPARQL-Abfrage"
@@ -180,6 +183,10 @@ msgstr "SPARQL-Abfrage"
 #: app/components/chart-shared.tsx
 msgid "chart-controls.table-view"
 msgstr "Tabellenansicht"
+
+#: app/components/chart-selection-tabs.tsx
+msgid "chart-selection-tabs.add-chart"
+msgstr "Diagramm hinzufügen"
 
 #: app/components/chart-selection-tabs.tsx
 msgid "chart-selection-tabs.add-chart-different-dataset.button"
@@ -193,13 +200,17 @@ msgstr "Fügen Sie ein Diagramm basierend auf einem anderen Datensatz hinzu"
 msgid "chart-selection-tabs.add-chart-same-dataset.caption"
 msgstr "Fügen Sie ein Diagramm basierend auf demselben Datensatz hinzu"
 
+#: app/components/chart-selection-tabs.tsx
+msgid "chart-selection-tabs.no-label"
+msgstr "Kein Tab-Titel"
+
 #: app/configurator/components/dataset-control-section.tsx
 msgid "chart.datasets.add"
 msgstr "Hinzufügen"
 
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "chart.datasets.add-dataset-dialog.description"
-msgstr "Sie können nur Datensätze kombinieren, die Dimensionen mit derselben Einheit und Auflösung teilen. Standardmäßig werden Dimensionen ausgewählt, die zum aktuellen Diagramm passen."
+msgstr "Sie können nur Datensätze kombinieren, die Dimensionen mit derselben Einheit und Auflösung teilen. Standardmässig werden Dimensionen ausgewählt, die zum aktuellen Diagramm passen."
 
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "chart.datasets.add-dataset-dialog.title"
@@ -289,6 +300,10 @@ msgstr "Animation"
 #: app/configurator/components/annotators.tsx
 msgid "controls.annotator.add-description-warning"
 msgstr "Fügen Sie eine Beschreibung hinzu"
+
+#: app/configurator/components/annotators.tsx
+msgid "controls.annotator.add-tab-label-warning"
+msgstr "Bitte fügen Sie eine Tab-Titel hinzu"
 
 #: app/configurator/components/annotators.tsx
 #: app/configurator/components/annotators.tsx
@@ -501,12 +516,10 @@ msgstr "Kein Filter"
 msgid "controls.filter.nb-elements"
 msgstr "{0} von {1}"
 
-#: app/configurator/components/add-dataset-dialog.tsx
 #: app/configurator/components/filters.tsx
 msgid "controls.filter.select.all"
 msgstr "Alle auswählen"
 
-#: app/configurator/components/add-dataset-dialog.tsx
 #: app/configurator/components/filters.tsx
 msgid "controls.filter.select.none"
 msgstr "Alle abwählen"
@@ -585,6 +598,10 @@ msgstr "-"
 msgid "controls.imputation.type.zeros"
 msgstr "Nullen"
 
+#: app/configurator/components/field-i18n.ts
+msgid "controls.label"
+msgstr "Tab-Titel"
+
 #: app/components/rename-dialog.tsx
 #: app/configurator/components/field-i18n.ts
 msgid "controls.language.english"
@@ -609,9 +626,30 @@ msgstr "Italienisch"
 msgid "controls.layout.canvas"
 msgstr "Freies Layout"
 
+#: app/login/components/profile-tables.tsx
+msgid "controls.layout.chart"
+msgstr "Diagramm"
+
 #: app/configurator/components/field-i18n.ts
+#: app/login/components/profile-tables.tsx
 msgid "controls.layout.dashboard"
 msgstr "Dashboard"
+
+#: app/configurator/components/preview-breakpoint.tsx
+msgid "controls.layout.preview-lg"
+msgstr "Vorschau in grosser Breite"
+
+#: app/configurator/components/preview-breakpoint.tsx
+msgid "controls.layout.preview-md"
+msgstr "Vorschau mit Tablet"
+
+#: app/configurator/components/preview-breakpoint.tsx
+msgid "controls.layout.preview-sm"
+msgstr "Vorschau mit Phone-Breite"
+
+#: app/configurator/components/preview-breakpoint.tsx
+msgid "controls.layout.preview-xl"
+msgstr "Vorschau in extra grosser Breite"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.layout.singleURLs"
@@ -695,7 +733,7 @@ msgstr "Suche zurücksetzen"
 
 #: app/charts/chart-config-ui-options.ts
 msgid "controls.section.animation.disabled-by-sorting"
-msgstr "Die Animation ist bei der Sortierung nach Gesamtgröße deaktiviert."
+msgstr "Die Animation ist bei der Sortierung nach Gesamtgrösse deaktiviert."
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.animation.duration"
@@ -735,7 +773,7 @@ msgstr "Kontinuierlich"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.animation.type.explanation"
-msgstr "Verwenden Sie den Typ Abgestuft, um die Animation in festen Abständen zwischen Datenpunkten springen zu lassen. Dieser Modus ist nützlich, wenn Sie Daten mit einer Zeitdimension mit einer ungleichmäßigen Verteilung der Daten animieren möchten."
+msgstr "Verwenden Sie den Typ Abgestuft, um die Animation in festen Abständen zwischen Datenpunkten springen zu lassen. Dieser Modus ist nützlich, wenn Sie Daten mit einer Zeitdimension mit einer ungleichmässigen Verteilung der Daten animieren möchten."
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.animation.type.stepped"
@@ -770,7 +808,7 @@ msgstr "Beim Abrufen möglicher Filter ist ein Fehler aufgetreten. Bitte versuch
 
 #: app/configurator/components/dataset-control-section.tsx
 msgid "controls.section.datasets.title"
-msgstr "Datenquellen"
+msgstr "Datensätze"
 
 #: app/configurator/components/annotators.tsx
 #: app/configurator/components/annotators.tsx
@@ -814,13 +852,9 @@ msgstr "Layout-Optionen"
 msgid "controls.section.shared-filters"
 msgstr "Geteilte Filter"
 
-#: app/configurator/components/layout-configurator.tsx
+#: app/charts/shared/use-combined-temporal-dimension.ts
 msgid "controls.section.shared-filters.date"
 msgstr "Datum"
-
-#: app/configurator/components/layout-configurator.tsx
-msgid "controls.section.shared-filters.shared-switch"
-msgstr "Geteilt"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.show-standard-error"
@@ -925,7 +959,7 @@ msgstr "Messwert auswählen"
 #: app/configurator/components/field.tsx
 #: app/configurator/components/field.tsx
 msgid "controls.select.optional"
-msgstr ""
+msgstr "optional"
 
 #: app/configurator/components/filters.tsx
 #: app/configurator/components/filters.tsx
@@ -989,7 +1023,7 @@ msgstr "Kleinste zuerst"
 
 #: app/charts/chart-config-ui-options.ts
 msgid "controls.sorting.byTotalSize.disabled-by-animation"
-msgstr "Die Sortierung nach Gesamtgröße ist während der Animation deaktiviert."
+msgstr "Die Sortierung nach Gesamtgrösse ist während der Animation deaktiviert."
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.sorting.byTotalSize.largestBottom"
@@ -1074,6 +1108,10 @@ msgid "dataset-result.shared-dimensions"
 msgstr "Geteilte Dimensionen"
 
 #: app/components/chart-footnotes.tsx
+msgid "dataset.footnotes.dataset"
+msgstr "Datensatz"
+
+#: app/components/chart-footnotes.tsx
 msgid "dataset.footnotes.updated"
 msgstr "Neuestes Datenupdate"
 
@@ -1083,7 +1121,7 @@ msgstr "Einige Daten in diesem Datensatz fehlen und wurden interpoliert, um die 
 
 #: app/browser/dataset-browse.tsx
 msgid "dataset.includeDrafts"
-msgstr "Entwürfe einschließen"
+msgstr "Entwürfe einschliessen"
 
 #: app/components/dataset-metadata.tsx
 msgid "dataset.metadata.date.created"
@@ -1171,23 +1209,15 @@ msgstr "Datensätze"
 
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.preview.description"
-msgstr "Überprüfen Sie alle verfügbaren Dimensionen, bevor Sie mit der Bearbeitung Ihrer Visualisierung fortfahren."
-
-#: app/configurator/components/add-dataset-dialog.tsx
-msgid "dataset.search.preview.dimensions"
-msgstr "Dimensionen"
-
-#: app/configurator/components/add-dataset-dialog.tsx
-msgid "dataset.search.preview.dimensions-shown"
-msgstr "{0} angezeigt in dieser Ansicht"
+msgstr "Überprüfen Sie die verfügbaren Dimensionen."
 
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.preview.new-dimension"
-msgstr "Neue"
+msgstr "Neu"
 
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.preview.title"
-msgstr "Überprüfen Sie die verfügbaren Abmessungen"
+msgstr "Verfügbare Dimensionen"
 
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.search-options.more-2-options-selected"
@@ -1244,11 +1274,11 @@ msgstr "Tutorials"
 
 #: app/components/hint.tsx
 msgid "hint.chartunexpected.message"
-msgstr ""
+msgstr "Beim Anzeigen dieses Diagramms ist ein unerwarteter Fehler aufgetreten."
 
 #: app/components/hint.tsx
 msgid "hint.chartunexpected.title"
-msgstr ""
+msgstr "Unerwarteter Fehler"
 
 #: app/components/hint.tsx
 msgid "hint.coordinatesloadingerror.message"
@@ -1339,21 +1369,29 @@ msgid "login.chart.actions.unpublish"
 msgstr "Veröffentlichung aufheben"
 
 #: app/login/components/profile-tables.tsx
-msgid "login.chart.copy"
-msgstr "Kopieren"
-
-#: app/login/components/profile-tables.tsx
 msgid "login.chart.delete"
 msgstr "Löschen"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.chart.delete-draft.confirmation"
+msgstr "Möchten Sie diesen Entwurf wirklich löschen?"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.delete.confirmation"
 msgstr "Sind Sie sicher, dass Sie diese Grafik löschen wollen?"
 
 #: app/login/components/profile-tables.tsx
+msgid "login.chart.duplicate"
+msgstr "Duplizieren"
+
+#: app/login/components/profile-tables.tsx
 #: app/pages/v/[chartId].tsx
 msgid "login.chart.edit"
 msgstr "Bearbeiten"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.chart.embed"
+msgstr "Einbetten"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.preview"
@@ -1369,7 +1407,7 @@ msgstr "Teilen"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.view"
-msgstr "Vorschau"
+msgstr "Anzeigen"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.create-chart"
@@ -1377,15 +1415,31 @@ msgstr "erstellen Sie einen"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.no-charts"
-msgstr "Noch keine Charts"
+msgstr "Noch keine Diagramme"
+
+#: app/login/components/login-menu.tsx
+msgid "login.profile.bug-report"
+msgstr "Fehler melden"
 
 #: app/components/confirmation-dialog.tsx
 msgid "login.profile.chart.confirmation.default"
 msgstr "Sind Sie sicher, dass Sie diese Aktion durchführen wollen?"
 
 #: app/login/components/profile-tables.tsx
+msgid "login.profile.chart.delete-draft.warning"
+msgstr "Diese Aktion kann nicht rückgängig gemacht werden."
+
+#: app/login/components/profile-tables.tsx
 msgid "login.profile.chart.delete.warning"
 msgstr "Denken Sie daran, dass das Entfernen dieser Visualisierung sich auf alle Stellen auswirkt, an denen sie möglicherweise bereits eingebettet ist!"
+
+#: app/login/components/login-menu.tsx
+msgid "login.profile.feature-request"
+msgstr "Funktion wünschen"
+
+#: app/login/components/login-menu.tsx
+msgid "login.profile.feedback"
+msgstr ""
 
 #: app/login/components/profile-content-tabs.tsx
 msgid "login.profile.home"
@@ -1401,7 +1455,11 @@ msgstr "Entwürfe"
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
 msgid "login.profile.my-published-visualizations"
-msgstr "Meine veröffentlichten Visualisierungen"
+msgstr "Veröffentlichte Visualisierungen"
+
+#: app/login/components/login-menu.tsx
+msgid "login.profile.my-visualizations"
+msgstr "Meine Visualisierungen"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.my-visualizations.chart-actions"
@@ -1425,7 +1483,16 @@ msgstr "Datensatz"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.my-visualizations.multiple-datasets"
-msgstr ""
+msgstr "Mehrere Datensätze"
+
+#: app/login/components/login-menu.tsx
+msgid "login.sign-in"
+msgstr "Einloggen"
+
+#: app/login/components/login-menu.tsx
+#: app/login/components/profile-header.tsx
+msgid "login.sign-out"
+msgstr "Abmelden"
 
 #: app/components/header.tsx
 #: app/components/header.tsx
@@ -1449,12 +1516,12 @@ msgid "profile.chart.rename-dialog.title"
 msgstr "Benennen Sie die Visualisierung um"
 
 #: app/components/publish-actions.tsx
-msgid "publication.embed.AEM"
-msgstr "Einbett-Code für AEM «Externe Applikation»"
+msgid "publication.embed.external-application"
+msgstr "Einbett-Code für «Externe Applikation»"
 
 #: app/components/publish-actions.tsx
-msgid "publication.embed.AEM.caption"
-msgstr "Verwenden Sie diesen Code, um das Diagramm in Adobe Experience Manager einzubetten"
+msgid "publication.embed.external-application.caption"
+msgstr "Verwenden Sie diesen Link, um das Diagramm ohne Iframe-Tags einzubetten."
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe"
@@ -1463,6 +1530,30 @@ msgstr "Einbett-Code"
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.caption"
 msgstr "Verwenden Sie diesen Code, um das Diagramm auf einer Webseite einzubetten"
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.remove-border"
+msgstr "Rand entfernen"
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.remove-border.warn"
+msgstr "Zur Einbettung von Visualisierungen in Systeme ohne Rand."
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.responsive"
+msgstr "Anpassungsfähiges iframe"
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.responsive.warn"
+msgstr "Zum Einbetten von Visualisierungen in Webseiten ohne CMS-Unterstützung. Der iframe wird responsiv sein. Der JavaScript-Teil des Einbettungscodes sorgt dafür, dass der iframe immer die richtige Größe beibehält."
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.static"
+msgstr "Statisches Iframe"
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.static.warn"
+msgstr "Zum Einbetten von Visualisierungen in Systeme ohne Webkomponenten oder JavaScript-Unterstützung. (z. B. WordPress)"
 
 #: app/components/publish-actions.tsx
 msgid "publication.popup.share"
@@ -1537,10 +1628,6 @@ msgstr "Woche"
 #: app/configurator/components/ui-helpers.ts
 msgid "time-units.Year"
 msgstr "Jahr"
-
-#: app/components/chart-footnotes.tsx
-msgid "typography.colon"
-msgstr ": "
 
 #: app/components/confirmation-dialog.tsx
 msgid "yes"

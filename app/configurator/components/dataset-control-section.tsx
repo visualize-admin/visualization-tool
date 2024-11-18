@@ -14,6 +14,8 @@ import uniqBy from "lodash/uniqBy";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useClient } from "urql";
 
+import Flex from "@/components/flex";
+import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { useMetadataPanelStoreActions } from "@/components/metadata-panel-store";
 import useDisclosure from "@/components/use-disclosure";
 import { getChartConfig } from "@/configurator";
@@ -40,7 +42,6 @@ import SvgIcChecked from "@/icons/components/IcChecked";
 import SvgIcTrash from "@/icons/components/IcTrash";
 import { useLocale } from "@/locales/use-locale";
 import { useEventEmitter } from "@/utils/eventEmitter";
-import { MaybeTooltip } from "@/utils/maybe-tooltip";
 
 const useStyles = makeStyles((theme: Theme) => ({
   row: {
@@ -135,7 +136,7 @@ const DatasetRow = ({
             component="span"
             onClick={handleDatasetClick}
           >
-            Dataset
+            Datasets
           </MuiLink>
           <br />
           <Typography variant="caption">{cube.title}</Typography>
@@ -231,9 +232,9 @@ export const DatasetsControlSection = () => {
   }
 
   return (
-    <ControlSection collapse defaultExpanded={false}>
+    <ControlSection collapse defaultExpanded={true}>
       <SubsectionTitle titleId="controls-data" gutterBottom={false}>
-        <Trans id="controls.section.datasets.title">Data Sources</Trans>{" "}
+        <Trans id="controls.section.datasets.title">Datasets</Trans>{" "}
         <BetaTag
           tagProps={{
             sx: {
@@ -268,18 +269,18 @@ export const DatasetsControlSection = () => {
             );
           })}
         </Box>
-        <Box>
+        <Flex sx={{ justifyContent: "end" }}>
           {cubes.length === 1 ? (
             <Button
               onClick={openDatasetDialog}
               startIcon={<SvgIcAdd />}
-              variant="outlined"
+              variant="text"
               size="small"
             >
               {t({ id: "chart.datasets.add", message: "Add dataset" })}
             </Button>
           ) : null}
-        </Box>
+        </Flex>
         <DatasetDialog
           state={state}
           open={isDatasetDialogOpen}

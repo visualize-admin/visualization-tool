@@ -63,6 +63,7 @@ const ColumnsStory = {
           meta: {
             title: { en: "", de: "", fr: "", it: "" },
             description: { en: "", de: "", fr: "", it: "" },
+            label: { en: "", de: "", fr: "", it: "" },
           },
           activeField: undefined,
         },
@@ -76,6 +77,10 @@ const ColumnsStory = {
               from: "",
               to: "",
             },
+          },
+          dataFilters: {
+            componentIris: [],
+            filters: {},
           },
         },
       }}
@@ -122,6 +127,7 @@ const ScatterplotStory = {
           meta: {
             title: { en: "", de: "", fr: "", it: "" },
             description: { en: "", de: "", fr: "", it: "" },
+            label: { en: "", de: "", fr: "", it: "" },
           },
           activeField: undefined,
         },
@@ -135,6 +141,10 @@ const ScatterplotStory = {
               from: "",
               to: "",
             },
+          },
+          dataFilters: {
+            componentIris: [],
+            filters: {},
           },
         },
       }}

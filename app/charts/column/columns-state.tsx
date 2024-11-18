@@ -1,8 +1,8 @@
 import { extent, max, rollup, sum } from "d3-array";
 import {
   ScaleBand,
-  ScaleLinear,
   scaleBand,
+  ScaleLinear,
   scaleLinear,
   scaleTime,
 } from "d3-scale";
@@ -16,6 +16,7 @@ import {
 } from "@/charts/column/columns-state-props";
 import { PADDING_INNER, PADDING_OUTER } from "@/charts/column/constants";
 import {
+  useAxisLabelHeightOffset,
   useChartBounds,
   useChartPadding,
 } from "@/charts/shared/chart-dimensions";
@@ -26,7 +27,10 @@ import {
   InteractiveXTimeRangeState,
 } from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
-import { getCenteredTooltipPlacement } from "@/charts/shared/interaction/tooltip-box";
+import {
+  getCenteredTooltipPlacement,
+  MOBILE_TOOLTIP_PLACEMENT,
+} from "@/charts/shared/interaction/tooltip-box";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useSize } from "@/charts/shared/use-size";
@@ -41,6 +45,7 @@ import {
   getSortingOrders,
   makeDimensionValueSorters,
 } from "@/utils/sorting-values";
+import { useIsMobile } from "@/utils/use-is-mobile";
 
 import { ChartProps } from "../shared/ChartProps";
 
@@ -190,11 +195,20 @@ const useColumnsState = (
     interactiveFiltersConfig,
     animationPresent: !!fields.animation,
     formatNumber,
-    bandDomain: xTimeRangeDomainLabels,
+    bandDomain: xTimeRangeDomainLabels.every((d) => d === undefined)
+      ? xScale.domain()
+      : xTimeRangeDomainLabels,
+  });
+  const right = 40;
+  const { offset: yAxisLabelMargin } = useAxisLabelHeightOffset({
+    label: yMeasure.label,
+    width,
+    marginLeft: left,
+    marginRight: right,
   });
   const margins = {
-    top: 50,
-    right: 40,
+    top: 50 + yAxisLabelMargin,
+    right,
     bottom,
     left,
   };
@@ -207,10 +221,22 @@ const useColumnsState = (
   xScaleTimeRange.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
 
+  const isMobile = useIsMobile();
+
   // Tooltip
   const getAnnotationInfo = (d: Observation): TooltipInfo => {
     const xAnchor = (xScale(getX(d)) as number) + xScale.bandwidth() * 0.5;
-    const yAnchor = yScale(Math.max(getY(d) ?? NaN, 0));
+    const yAnchor = isMobile
+      ? chartHeight
+      : yScale(Math.max(getY(d) ?? NaN, 0));
+    const placement = isMobile
+      ? MOBILE_TOOLTIP_PLACEMENT
+      : getCenteredTooltipPlacement({
+          chartWidth,
+          xAnchor,
+          topAnchor: !fields.segment,
+        });
+
     const xLabel = getXAbbreviationOrLabel(d);
 
     const yValueFormatter = (value: number | null) =>
@@ -233,11 +259,7 @@ const useColumnsState = (
     return {
       xAnchor,
       yAnchor,
-      placement: getCenteredTooltipPlacement({
-        chartWidth,
-        xAnchor,
-        topAnchor: !fields.segment,
-      }),
+      placement,
       xValue: xTimeUnit ? timeFormatUnit(xLabel, xTimeUnit) : xLabel,
       datum: {
         label: undefined,

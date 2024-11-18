@@ -4,7 +4,7 @@ import { replaceLinks } from "@/utils/ui-strings";
 
 it("should work", () => {
   const root = replaceLinks(
-    "Draft saved in [My visualisations](/profile)",
+    "Draft saved in [My visualizations](/profile)",
     (label, link) => {
       return <Link href={link}>{label}</Link>;
     }
@@ -15,7 +15,7 @@ it("should work", () => {
       <ForwardRef(LinkComponent)
         href="/profile"
       >
-        My visualisations
+        My visualizations
       </ForwardRef(LinkComponent)>,
       "",
     ]

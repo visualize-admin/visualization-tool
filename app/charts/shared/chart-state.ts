@@ -32,6 +32,8 @@ import {
   GenericField,
   InteractiveFiltersConfig,
   getAnimationField,
+  hasChartConfigs,
+  useConfiguratorState,
 } from "@/configurator";
 import {
   parseDate,
@@ -470,11 +472,13 @@ export const useChartData = (
   observations: Observation[],
   {
     chartConfig,
+    timeRangeDimensionIri,
     getXAsDate,
     getSegmentAbbreviationOrLabel,
     getTimeRangeDate,
   }: {
     chartConfig: ChartConfig;
+    timeRangeDimensionIri: string | undefined;
     getXAsDate?: (d: Observation) => Date;
     getSegmentAbbreviationOrLabel?: (d: Observation) => string;
     getTimeRangeDate?: (d: Observation) => Date;
@@ -508,13 +512,17 @@ export const useChartData = (
   // interactive time range
   const interactiveFromTime = timeRange.from?.getTime();
   const interactiveToTime = timeRange.to?.getTime();
-  const dashboardFilters = useDashboardInteractiveFilters();
+  const [{ dashboardFilters }] = useConfiguratorState(hasChartConfigs);
+  const { potentialTimeRangeFilterIris } = useDashboardInteractiveFilters();
   const interactiveTimeRangeFilters = useMemo(() => {
     const interactiveTimeRangeFilter: ValuePredicate | null =
       getXAsDate &&
       interactiveFromTime &&
       interactiveToTime &&
-      (interactiveTimeRange?.active || dashboardFilters.timeRange?.active)
+      (interactiveTimeRange?.active ||
+        (dashboardFilters?.timeRange.active &&
+          timeRangeDimensionIri &&
+          potentialTimeRangeFilterIris.includes(timeRangeDimensionIri)))
         ? (d: Observation) => {
             const time = getXAsDate(d).getTime();
             return time >= interactiveFromTime && time <= interactiveToTime;
@@ -523,11 +531,13 @@ export const useChartData = (
 
     return interactiveTimeRangeFilter ? [interactiveTimeRangeFilter] : [];
   }, [
-    dashboardFilters.timeRange,
     getXAsDate,
     interactiveFromTime,
     interactiveToTime,
     interactiveTimeRange?.active,
+    dashboardFilters?.timeRange.active,
+    timeRangeDimensionIri,
+    potentialTimeRangeFilterIris,
   ]);
 
   // interactive time slider

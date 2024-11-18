@@ -1,29 +1,32 @@
 import { t, Trans } from "@lingui/macro";
 import {
   Box,
-  FormControlLabel,
   Stack,
   Switch,
   SwitchProps,
   Typography,
   useEventCallback,
 } from "@mui/material";
-import { ascending, descending } from "d3-array";
 import capitalize from "lodash/capitalize";
 import omit from "lodash/omit";
-import uniqBy from "lodash/uniqBy";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 
 import { DataFilterGenericDimensionProps } from "@/charts/shared/chart-data-filters";
+import { useCombinedTemporalDimension } from "@/charts/shared/use-combined-temporal-dimension";
 import { Select } from "@/components/form";
-import { generateLayout } from "@/components/react-grid";
+import {
+  FREE_CANVAS_BREAKPOINTS,
+  generateLayout,
+} from "@/components/react-grid";
 import {
   ChartConfig,
   DashboardTimeRangeFilter,
   getChartConfig,
   LayoutDashboard,
+  ReactGridLayoutType,
 } from "@/config-types";
 import { LayoutAnnotator } from "@/configurator/components/annotators";
+import { DataFilterSelectGeneric } from "@/configurator/components/chart-configurator";
 import {
   ControlSection,
   ControlSectionContent,
@@ -46,26 +49,21 @@ import {
 import {
   canDimensionBeTimeFiltered,
   Dimension,
-  isTemporalDimensionWithTimeUnit,
   TemporalDimension,
   TemporalEntityDimension,
 } from "@/domain/data";
-import { useFlag } from "@/flags";
 import { useTimeFormatLocale, useTimeFormatUnit } from "@/formatters";
 import { useConfigsCubeComponents } from "@/graphql/hooks";
-import { TimeUnit } from "@/graphql/resolver-types";
-import { timeUnitFormats, timeUnitOrder } from "@/rdf/mappings";
 import { useLocale } from "@/src";
 import { useDashboardInteractiveFilters } from "@/stores/interactive-filters";
 import { getTimeFilterOptions } from "@/utils/time-filter-options";
 
 export const LayoutConfigurator = () => {
-  const sharedFiltersFlag = useFlag("layouter.dashboard.shared-filters");
   return (
     <>
       <LayoutAnnotator />
       <LayoutLayoutConfigurator />
-      {sharedFiltersFlag ? <LayoutSharedFiltersConfigurator /> : null}
+      <LayoutSharedFiltersConfigurator />
     </>
   );
 };
@@ -73,9 +71,6 @@ export const LayoutConfigurator = () => {
 const LayoutLayoutConfigurator = () => {
   const [state] = useConfiguratorState(isLayouting);
   const { layout } = state;
-
-  const freeCanvasFlag = useFlag("layouter.dashboard.free-canvas");
-
   switch (layout.type) {
     case "dashboard":
       return (
@@ -99,11 +94,9 @@ const LayoutLayoutConfigurator = () => {
                 m: 2,
               }}
             >
-              <LayoutButton type="tall" layout={layout} />
-              <LayoutButton type="vertical" layout={layout} />
-              {freeCanvasFlag ? (
-                <LayoutButton type="canvas" layout={layout} />
-              ) : null}
+              <DashboardLayoutButton type="tall" layout={layout} />
+              <DashboardLayoutButton type="vertical" layout={layout} />
+              <DashboardLayoutButton type="canvas" layout={layout} />
             </Box>
           </ControlSectionContent>
         </ControlSection>
@@ -116,87 +109,40 @@ const LayoutLayoutConfigurator = () => {
 const LayoutSharedFiltersConfigurator = () => {
   const [state, dispatch] = useConfiguratorState(isLayouting);
   const { layout } = state;
-  const { timeRange, potentialTimeRangeFilterIris } =
+  const { potentialTimeRangeFilterIris, potentialDataFilterIris } =
     useDashboardInteractiveFilters();
+  const { timeRange, dataFilters } = state.dashboardFilters ?? {};
 
   const locale = useLocale();
-  const [{ data }] = useConfigsCubeComponents({
+  const [{ data, fetching }] = useConfigsCubeComponents({
     variables: {
       state,
-      locale: locale,
+      locale,
     },
   });
+  const dimensions = useMemo(
+    () => data?.dataCubesComponents.dimensions ?? [],
+    [data?.dataCubesComponents.dimensions]
+  );
 
   const formatLocale = useTimeFormatLocale();
   const timeFormatUnit = useTimeFormatUnit();
 
-  const combinedDimension = useMemo(() => {
-    const dimensions = data?.dataCubesComponents.dimensions ?? [];
-    const timeUnitDimensions = dimensions.filter(
-      (dimension) =>
-        isTemporalDimensionWithTimeUnit(dimension) &&
-        potentialTimeRangeFilterIris.includes(dimension.iri)
-    ) as (TemporalDimension | TemporalEntityDimension)[];
-    // We want to use lowest time unit for combined dimension filtering,
-    // so in case we have year and day, we'd filter both by day
-    const timeUnit = timeUnitDimensions.sort((a, b) =>
-      descending(
-        timeUnitOrder.get(a.timeUnit) ?? 0,
-        timeUnitOrder.get(b.timeUnit) ?? 0
-      )
-    )[0]?.timeUnit as TimeUnit;
-    const timeFormat = timeUnitFormats.get(timeUnit) as string;
-    const values = timeUnitDimensions.flatMap((dimension) => {
-      const formatDate = formatLocale.format(timeFormat);
-      const parseDate = formatLocale.parse(dimension.timeFormat);
-      // Standardize values to have same date format
-      return dimension.values.map((dimensionValue) => {
-        const value = formatDate(
-          parseDate(dimensionValue.value as string) as Date
-        );
-        return {
-          ...dimensionValue,
-          value,
-          label: value,
-        };
-      });
-    });
-    const combinedDimension: TemporalDimension = {
-      __typename: "TemporalDimension",
-      cubeIri: "all",
-      iri: "combined-date-filter",
-      label: t({
-        id: "controls.section.shared-filters.date",
-        message: "Date",
-      }),
-      isKeyDimension: true,
-      isNumerical: false,
-      values: uniqBy(values, "value").sort((a, b) =>
-        ascending(a.value, b.value)
-      ),
-      timeUnit,
-      timeFormat,
-    };
+  const combinedTemporalDimension = useCombinedTemporalDimension();
 
-    return combinedDimension;
-  }, [
-    data?.dataCubesComponents.dimensions,
-    formatLocale,
-    potentialTimeRangeFilterIris,
-  ]);
-
-  const handleToggle: SwitchProps["onChange"] = useEventCallback(
+  const handleTimeRangeFilterToggle: SwitchProps["onChange"] = useEventCallback(
     (_, checked) => {
       if (checked) {
         const options = getTimeFilterOptions({
-          dimension: combinedDimension,
+          dimension: combinedTemporalDimension,
           formatLocale,
           timeFormatUnit,
         });
 
-        const from = options.sortedOptions[0].date;
+        const from = options.sortedOptions[0]?.date;
         const to = options.sortedOptions.at(-1)?.date;
-        const formatDate = timeUnitToFormatter[combinedDimension.timeUnit];
+        const formatDate =
+          timeUnitToFormatter[combinedTemporalDimension.timeUnit];
 
         if (!from || !to) {
           return;
@@ -206,7 +152,7 @@ const LayoutSharedFiltersConfigurator = () => {
           type: "DASHBOARD_TIME_RANGE_FILTER_UPDATE",
           value: {
             active: true,
-            timeUnit: combinedDimension.timeUnit,
+            timeUnit: combinedTemporalDimension.timeUnit,
             presets: {
               from: formatDate(from),
               to: formatDate(to),
@@ -221,10 +167,63 @@ const LayoutSharedFiltersConfigurator = () => {
     }
   );
 
+  const handleDataFiltersToggle = useEventCallback(
+    (checked: boolean, componentIri: string) => {
+      if (checked) {
+        dispatch({
+          type: "DASHBOARD_DATA_FILTERS_SET",
+          value: {
+            componentIris: dataFilters?.componentIris
+              ? [...dataFilters.componentIris, componentIri].sort((a, b) => {
+                  const aIndex =
+                    dimensions.find((d) => d.iri === a)?.order ??
+                    dimensions.findIndex((d) => d.iri === a) ??
+                    0;
+                  const bIndex =
+                    dimensions.find((d) => d.iri === b)?.order ??
+                    dimensions.findIndex((d) => d.iri === b) ??
+                    0;
+                  return aIndex - bIndex;
+                })
+              : [componentIri],
+            filters: dataFilters?.filters ?? {},
+          },
+        });
+        const value = dimensions.find((d) => d.iri === componentIri)?.values[0]
+          .value as string;
+        dispatch({
+          type: "FILTER_SET_SINGLE",
+          value: {
+            // FIXME: shared filters should be scoped per cube
+            filters: [{ cubeIri: "", dimensionIri: componentIri }],
+            value,
+          },
+        });
+      } else {
+        dispatch({
+          type: "DASHBOARD_DATA_FILTER_REMOVE",
+          value: {
+            dimensionIri: componentIri,
+          },
+        });
+        dispatch({
+          type: "FILTER_REMOVE_SINGLE",
+          value: {
+            // FIXME: shared filters should be scoped per cube
+            filters: [{ cubeIri: "", dimensionIri: componentIri }],
+          },
+        });
+      }
+    }
+  );
+
   switch (layout.type) {
     case "tab":
     case "dashboard":
-      if (!timeRange || potentialTimeRangeFilterIris.length === 0) {
+      if (
+        (!timeRange || potentialTimeRangeFilterIris.length === 0) &&
+        (!dataFilters || potentialDataFilterIris.length === 0)
+      ) {
         return null;
       }
 
@@ -243,39 +242,83 @@ const LayoutSharedFiltersConfigurator = () => {
           </SubsectionTitle>
           <ControlSectionContent>
             <Stack gap="0.5rem">
-              <Box
-                display="flex"
-                alignItems="center"
-                justifyContent="space-between"
-                width="100%"
-              >
-                <Typography variant="body2" flexGrow={1}>
-                  {combinedDimension.label}
-                </Typography>
-                <FormControlLabel
-                  sx={{ mr: 0 }}
-                  labelPlacement="start"
-                  disableTypography
-                  label={
+              {/* TODO: allow TemporalOrdinalDimensions to work here */}
+              {timeRange && combinedTemporalDimension.values.length ? (
+                <>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      width: "100%",
+                    }}
+                  >
                     <Typography variant="body2">
-                      <Trans id="controls.section.shared-filters.shared-switch">
-                        Shared
-                      </Trans>
+                      {combinedTemporalDimension.label}
                     </Typography>
-                  }
-                  control={
                     <Switch
                       checked={timeRange.active}
-                      onChange={handleToggle}
+                      onChange={handleTimeRangeFilterToggle}
                     />
-                  }
-                />
-              </Box>
-              {timeRange.active ? (
-                <DashboardFiltersOptions
-                  dimension={combinedDimension}
-                  timeRangeFilter={timeRange}
-                />
+                  </Box>
+                  {timeRange.active ? (
+                    <DashboardFiltersOptions
+                      timeRangeFilter={timeRange}
+                      timeRangeCombinedDimension={combinedTemporalDimension}
+                    />
+                  ) : null}
+                </>
+              ) : null}
+              {dataFilters ? (
+                <>
+                  {potentialDataFilterIris.map((componentIri, i) => {
+                    const dimension = dimensions.find(
+                      (dimension) => dimension.iri === componentIri
+                    );
+                    if (!dimension) {
+                      return null;
+                    }
+                    const checked = dataFilters.componentIris.includes(
+                      dimension.iri
+                    );
+                    return (
+                      <Box
+                        key={dimension.iri}
+                        sx={{ display: "flex", flexDirection: "column" }}
+                      >
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Typography variant="body2">
+                            {dimension.label}
+                          </Typography>
+                          <Switch
+                            checked={checked}
+                            onChange={(_, checked) => {
+                              handleDataFiltersToggle(checked, dimension.iri);
+                            }}
+                          />
+                        </Box>
+                        {checked ? (
+                          <Box sx={{ mb: 1 }}>
+                            <DataFilterSelectGeneric
+                              key={dimension.iri}
+                              rawDimension={dimension}
+                              filterDimensionIris={[]}
+                              index={i}
+                              disabled={fetching}
+                              disableLabel
+                            />
+                          </Box>
+                        ) : null}
+                      </Box>
+                    );
+                  })}
+                </>
               ) : null}
             </Stack>
           </ControlSectionContent>
@@ -288,35 +331,35 @@ const LayoutSharedFiltersConfigurator = () => {
 
 const DashboardFiltersOptions = ({
   timeRangeFilter,
-  dimension,
+  timeRangeCombinedDimension,
 }: {
   timeRangeFilter: DashboardTimeRangeFilter | undefined;
-  dimension: Dimension;
+  timeRangeCombinedDimension: Dimension;
 }) => {
   if (!timeRangeFilter) {
     return null;
   }
 
   if (
-    !canDimensionBeTimeFiltered(dimension) ||
-    !canRenderDatePickerField(dimension.timeUnit)
+    !canDimensionBeTimeFiltered(timeRangeCombinedDimension) ||
+    !canRenderDatePickerField(timeRangeCombinedDimension.timeUnit)
   ) {
     return null;
   }
 
   return (
     <DashboardTimeRangeFilterOptions
-      timeRangeFilter={timeRangeFilter}
-      dimension={dimension}
+      filter={timeRangeFilter}
+      dimension={timeRangeCombinedDimension}
     />
   );
 };
 
 const DashboardTimeRangeFilterOptions = ({
-  timeRangeFilter,
+  filter,
   dimension,
 }: {
-  timeRangeFilter: DashboardTimeRangeFilter;
+  filter: DashboardTimeRangeFilter;
   dimension: TemporalDimension | TemporalEntityDimension;
 }) => {
   const { timeUnit, timeFormat } = dimension;
@@ -375,9 +418,9 @@ const DashboardTimeRangeFilterOptions = ({
     dispatch({
       type: "DASHBOARD_TIME_RANGE_FILTER_UPDATE",
       value: {
-        ...timeRangeFilter,
+        ...filter,
         presets: {
-          ...timeRangeFilter.presets,
+          ...filter.presets,
           from: formatDate(newDate),
         },
       },
@@ -391,9 +434,9 @@ const DashboardTimeRangeFilterOptions = ({
     dispatch({
       type: "DASHBOARD_TIME_RANGE_FILTER_UPDATE",
       value: {
-        ...timeRangeFilter,
+        ...filter,
         presets: {
-          ...timeRangeFilter.presets,
+          ...filter.presets,
           from: ev.target.value as string,
         },
       },
@@ -412,9 +455,9 @@ const DashboardTimeRangeFilterOptions = ({
     dispatch({
       type: "DASHBOARD_TIME_RANGE_FILTER_UPDATE",
       value: {
-        ...timeRangeFilter,
+        ...filter,
         presets: {
-          ...timeRangeFilter.presets,
+          ...filter.presets,
           to: formatDate(newDate),
         },
       },
@@ -428,9 +471,9 @@ const DashboardTimeRangeFilterOptions = ({
     dispatch({
       type: "DASHBOARD_TIME_RANGE_FILTER_UPDATE",
       value: {
-        ...timeRangeFilter,
+        ...filter,
         presets: {
-          ...timeRangeFilter.presets,
+          ...filter.presets,
           to: ev.target.value as string,
         },
       },
@@ -456,7 +499,7 @@ const DashboardTimeRangeFilterOptions = ({
         {canRenderDatePickerField(timeUnit) ? (
           <DatePickerField
             name="dashboard-time-range-filter-from"
-            value={parseDate(timeRangeFilter.presets.from) as Date}
+            value={parseDate(filter.presets.from) as Date}
             onChange={handleChangeFromDate}
             isDateDisabled={(date) => !optionValues.includes(formatDate(date))}
             timeUnit={timeUnit}
@@ -464,20 +507,21 @@ const DashboardTimeRangeFilterOptions = ({
             minDate={minDate}
             maxDate={maxDate}
             label={t({ id: "controls.filters.select.from", message: "From" })}
+            parseDate={parseDate}
           />
         ) : (
           <Select
             id="dashboard-time-range-filter-from"
             label={t({ id: "controls.filters.select.from", message: "From" })}
             options={options}
-            value={timeRangeFilter.presets.from}
+            value={filter.presets.from}
             onChange={handleChangeFromGeneric}
           />
         )}
         {canRenderDatePickerField(timeUnit) ? (
           <DatePickerField
             name="dashboard-time-range-filter-to"
-            value={parseDate(timeRangeFilter.presets.to) as Date}
+            value={parseDate(filter.presets.to) as Date}
             onChange={handleChangeToDate}
             isDateDisabled={(date) => !optionValues.includes(formatDate(date))}
             timeUnit={timeUnit}
@@ -485,13 +529,14 @@ const DashboardTimeRangeFilterOptions = ({
             minDate={minDate}
             maxDate={maxDate}
             label={t({ id: "controls.filters.select.to", message: "To" })}
+            parseDate={parseDate}
           />
         ) : (
           <Select
             id="dashboard-time-range-filter-to"
             label={t({ id: "controls.filters.select.to", message: "To" })}
             options={options}
-            value={timeRangeFilter.presets.to}
+            value={filter.presets.to}
             onChange={handleChangeToGeneric}
           />
         )}
@@ -500,32 +545,35 @@ const DashboardTimeRangeFilterOptions = ({
   );
 };
 
-type LayoutButtonProps = {
-  type: LayoutDashboard["layout"];
-  layout: LayoutDashboard;
-};
-
 const migrateLayout = (
   layout: LayoutDashboard,
   newLayoutType: LayoutDashboard["layout"],
   chartConfigs: ChartConfig[]
 ): LayoutDashboard => {
   if (newLayoutType === "canvas") {
-    const generated = generateLayout({
+    const defaultLayout = generateLayout({
       count: chartConfigs.length,
       layout: "tiles",
-    });
+    }).map((l, i) => ({
+      ...l,
+      i: chartConfigs[i].key,
+    }));
+    const layouts: Record<
+      keyof typeof FREE_CANVAS_BREAKPOINTS,
+      ReactGridLayoutType[]
+    > = {
+      xl: defaultLayout,
+      lg: defaultLayout,
+      md: defaultLayout,
+      sm: defaultLayout,
+    };
     return {
       ...layout,
       layout: newLayoutType,
-      layouts: {
-        lg: generated.map((l, i) => ({
-          ...l,
-          // We must pay attention to correctly change the i value to
-          // chart config key, as it is used to identify the layout
-          i: chartConfigs[i].key,
-        })),
-      },
+      layouts,
+      layoutsMetadata: Object.fromEntries(
+        chartConfigs.map(({ key }) => [key, { initialized: false }])
+      ),
     };
   } else {
     return {
@@ -535,20 +583,40 @@ const migrateLayout = (
   }
 };
 
-const LayoutButton = (props: LayoutButtonProps) => {
-  const { type, layout } = props;
+const DashboardLayoutButton = ({
+  type,
+  layout,
+}: {
+  type: LayoutDashboard["layout"];
+  layout: LayoutDashboard;
+}) => {
   const [config, dispatch] = useConfiguratorState(isLayouting);
+  const ref = useRef<LayoutDashboard>();
+  const checked = layout.layout === type;
+  useEffect(() => {
+    if (checked) {
+      ref.current = layout;
+    }
+  }, [layout, checked]);
+  const handleClick = useEventCallback(() => {
+    if (ref.current?.layout === type) {
+      dispatch({
+        type: "LAYOUT_CHANGED",
+        value: ref.current,
+      });
+    } else {
+      dispatch({
+        type: "LAYOUT_CHANGED",
+        value: migrateLayout(layout, type, config.chartConfigs),
+      });
+    }
+  });
 
   return (
     <IconButton
       label={`layout${capitalize(type)}`}
-      checked={layout.layout === type}
-      onClick={() => {
-        dispatch({
-          type: "LAYOUT_CHANGED",
-          value: migrateLayout(layout, type, config.chartConfigs),
-        });
-      }}
+      checked={checked}
+      onClick={handleClick}
     />
   );
 };

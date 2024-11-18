@@ -1,55 +1,52 @@
 import { Box, IconButton } from "@mui/material";
-import { useRef } from "react";
 
-import useDisclosure from "@/components/use-disclosure";
+import { MenuActionItem, MenuActionProps } from "@/components/menu-action-item";
+import { useFlipMenu } from "@/components/use-flip-menu";
 import { Icon } from "@/icons";
 
-import { ArrowMenuTopBottom } from "./arrow-menu";
-import { MenuActionItem, MenuActionProps } from "./menu-action-item";
-
-type ActionsProps = {
-  actions: MenuActionProps[];
-};
-
-export const RowActions = (props: ActionsProps) => {
+export const RowActions = (props: { actions: MenuActionProps[] }) => {
   const { actions } = props;
-  const buttonRef = useRef<HTMLButtonElement>(null);
-  const menuDisclosure = useDisclosure();
-  const { isOpen, open, close } = menuDisclosure;
+  const [primaryAction, ...otherActions] = actions;
+  const {
+    buttonRef,
+    handleOpenElClick,
+    handleClose,
+    anchorEl,
+    anchorOrigin,
+    transformOrigin,
+    Wrapper,
+  } = useFlipMenu({ itemsCount: actions.length });
+  const additionalProps =
+    primaryAction.type === "button" ? { onDialogClose: handleClose } : {};
 
-  const [primaryAction, ...rest] = actions;
   return (
     <Box gap="0.5rem" display="flex" alignItems="center">
-      <MenuActionItem
-        as="button"
-        {...primaryAction}
-        {...(primaryAction.type === "button" ? { onDialogClose: close } : {})}
-      />
-      <IconButton ref={buttonRef} onClick={isOpen ? close : open}>
+      <MenuActionItem as="button" {...primaryAction} {...additionalProps} />
+      <IconButton ref={buttonRef} onClick={handleOpenElClick}>
         <Icon name="more" size={16} />
       </IconButton>
-      <ArrowMenuTopBottom
-        onClose={close}
-        open={isOpen}
-        anchorEl={buttonRef.current}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        transformOrigin={{ horizontal: "center", vertical: "top" }}
+      <Wrapper
+        onClose={handleClose}
+        open={!!anchorEl}
+        anchorEl={anchorEl}
+        anchorOrigin={anchorOrigin}
+        transformOrigin={transformOrigin}
       >
-        {rest.map((props, i) => (
+        {otherActions.map((actionProps, i) => (
           <MenuActionItem
-            as="menuitem"
             key={i}
-            {...props}
-            onClick={() => {
-              if (!props.stayOpen) {
-                menuDisclosure.close();
+            as="menuitem"
+            {...actionProps}
+            onClick={(e) => {
+              if (!actionProps.stayOpen) {
+                handleClose();
               }
-              return props.onClick?.();
+              actionProps.onClick?.(e);
             }}
-            {...(props.type === "button" ? { onDialogClose: close } : {})}
+            {...additionalProps}
           />
         ))}
-      </ArrowMenuTopBottom>
+      </Wrapper>
     </Box>
   );
 };

@@ -15,6 +15,7 @@ import { useTransitionStore } from "@/stores/transition";
 
 export const useStyles = makeStyles<{}, {}, "chartContainer">(() => ({
   chartContainer: {
+    overflow: "hidden",
     position: "relative",
     width: "100%",
     flexGrow: 1,
@@ -38,8 +39,6 @@ export const ChartContainer = ({ children }: { children: ReactNode }) => {
     </div>
   );
 };
-
-export const CHART_CLASS_NAME = "chart";
 
 export const ChartSvg = ({ children }: { children: ReactNode }) => {
   const ref = useRef<SVGSVGElement>(null);
@@ -66,15 +65,15 @@ export const ChartSvg = ({ children }: { children: ReactNode }) => {
   return (
     <svg
       ref={ref}
-      className={CHART_CLASS_NAME}
       width={width}
       style={{ position: "absolute", left: 0, top: 0 }}
     >
       {interactiveFiltersConfig?.calculation.active && (
         <foreignObject
           width={width - margins.right}
-          height="24"
-          style={{ textAlign: "right" }}
+          y={20}
+          height="26"
+          style={{ display: "flex", textAlign: "right" }}
         >
           <CalculationToggle />
         </foreignObject>

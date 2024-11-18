@@ -83,11 +83,19 @@ export const updateConfig = async ({
  * @param key Key of the config to be updated
  */
 export const removeConfig = async ({ key }: { key: string }) => {
-  return await prisma.config.delete({
-    where: {
-      key,
-    },
-  });
+  await prisma.configView
+    .deleteMany({
+      where: {
+        config_key: key,
+      },
+    })
+    .then(() => {
+      return prisma.config.delete({
+        where: {
+          key,
+        },
+      });
+    });
 };
 
 const migrateCubeIri = (iri: string): string => {

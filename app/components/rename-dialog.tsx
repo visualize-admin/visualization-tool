@@ -1,19 +1,18 @@
 import { t, Trans } from "@lingui/macro";
-import { LoadingButton, TabContext, TabList, TabPanel } from "@mui/lab";
+import { LoadingButton } from "@mui/lab";
 import {
+  Box,
   Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogProps,
   DialogTitle,
-  Divider,
-  Tab,
   TextField,
   Typography,
   useEventCallback,
 } from "@mui/material";
-import { FormEvent, useState } from "react";
+import { FormEvent } from "react";
 
 import { ParsedConfig } from "@/db/config";
 import { useUserConfigs } from "@/domain/user-configs";
@@ -34,42 +33,58 @@ export const RenameDialog = ({
   userId: number;
 } & Omit<DialogProps, "onClose">) => {
   const { invalidate: invalidateUserConfigs } = useUserConfigs();
-  const [renameIndex, setRenameIndex] = useState(0);
-
   const updateConfigMut = useMutate(updateConfig);
-
+  const isSingleChart = config.data.chartConfigs.length === 1;
   const handleRename = useEventCallback(
     async (ev: FormEvent<HTMLFormElement>) => {
-      const formData = Array.from(new FormData(ev.currentTarget)).reduce(
-        (acc, [key, value]) => {
-          const [_field, indexS, lang] = key.split(".");
-          const index = Number(indexS);
-          acc[index] = acc[index] || ({} as Record<string, string>);
-          acc[index][lang as Locale] = `${value}`;
-          return acc;
-        },
-        [] as Record<Locale, string>[]
-      );
       ev.preventDefault();
 
-      await updateConfigMut.mutate({
-        key: config.key,
-        data: {
-          ...config.data,
-          chartConfigs: config.data.chartConfigs.map((x, i) => ({
-            ...x,
-            meta: {
-              ...x.meta,
-              title: formData[i] ?? x.meta.title,
+      const formData = Object.fromEntries(
+        new FormData(ev.currentTarget).entries()
+      ) as Record<Locale, string>;
+
+      if (isSingleChart) {
+        const chartConfig = config.data.chartConfigs[0];
+        await updateConfigMut.mutate({
+          key: config.key,
+          data: {
+            ...config.data,
+            chartConfigs: [
+              {
+                ...chartConfig,
+                meta: {
+                  ...chartConfig.meta,
+                  title: formData ?? chartConfig.meta.title,
+                },
+              },
+            ],
+          },
+        });
+      } else {
+        const layout = config.data.layout;
+        await updateConfigMut.mutate({
+          key: config.key,
+          data: {
+            ...config.data,
+            layout: {
+              ...layout,
+              meta: {
+                ...layout.meta,
+                title: formData ?? layout.meta.title,
+              },
             },
-          })),
-        },
-      });
+          },
+        });
+      }
 
       invalidateUserConfigs();
       onClose?.();
     }
   );
+
+  const meta = isSingleChart
+    ? config.data.chartConfigs[0].meta
+    : config.data.layout.meta;
 
   return (
     <Dialog {...props} fullWidth>
@@ -86,65 +101,35 @@ export const RenameDialog = ({
               understanding chart content.
             </Trans>
           </Typography>
-          <TabContext value={`${renameIndex}`}>
-            <TabList onChange={(_ev, newTab) => setRenameIndex(newTab)}>
-              {config.data.chartConfigs.map((x, i) => {
-                return (
-                  <Tab
-                    key={i}
-                    value={`${i}`}
-                    label={
-                      <span>
-                        {/*
-                         * Optional chaining operator due to a wrong saving & no way to repair the database,
-                         * can be removed. Once we have deployed and the problematic chart has been saved
-                         * again, we can remove the optional chaining.
-                         */}
-                        {x.meta.title?.[locale] && x.meta.title?.[locale] !== ""
-                          ? x.meta.title?.[locale]
-                          : t({ id: "annotation.add.title" })}
-                      </span>
-                    }
-                  />
-                );
-              })}
-            </TabList>
-            <Divider sx={{ mb: "1rem" }} />
-            {config.data.chartConfigs.map((x, i) => {
-              return (
-                <TabPanel
-                  value={`${i}`}
-                  key={i}
-                  sx={{
-                    gap: "1rem",
-                    display: "flex",
-                    flexDirection: "column",
-                  }}
-                >
-                  <TextField
-                    name={`title.${i}.de`}
-                    label={t({ id: "controls.language.german" })}
-                    defaultValue={x.meta.title?.de}
-                  />
-                  <TextField
-                    name={`title.${i}.fr`}
-                    label={t({ id: "controls.language.french" })}
-                    defaultValue={x.meta.title?.fr}
-                  />
-                  <TextField
-                    name={`title.${i}.it`}
-                    label={t({ id: "controls.language.italian" })}
-                    defaultValue={x.meta.title?.it}
-                  />
-                  <TextField
-                    name={`title.${i}.en`}
-                    label={t({ id: "controls.language.english" })}
-                    defaultValue={x.meta.title?.en}
-                  />
-                </TabPanel>
-              );
-            })}
-          </TabContext>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "1rem",
+              mt: 3,
+            }}
+          >
+            <TextField
+              name="de"
+              label={t({ id: "controls.language.german" })}
+              defaultValue={meta.title.de}
+            />
+            <TextField
+              name="fr"
+              label={t({ id: "controls.language.french" })}
+              defaultValue={meta.title.fr}
+            />
+            <TextField
+              name="it"
+              label={t({ id: "controls.language.italian" })}
+              defaultValue={meta.title.it}
+            />
+            <TextField
+              name="en"
+              label={t({ id: "controls.language.english" })}
+              defaultValue={meta.title.en}
+            />
+          </Box>
         </DialogContent>
         <DialogActions sx={{ pb: 6, pr: 6 }}>
           <Button variant="outlined" onClick={onClose}>

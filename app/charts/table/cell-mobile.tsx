@@ -25,6 +25,7 @@ export const DDContent = ({
   const {
     columnComponentType,
     textColor,
+    textStyle,
     barShowBackground,
     barColorBackground,
     barColorNegative,
@@ -32,8 +33,7 @@ export const DDContent = ({
   } = columnMeta;
 
   switch (columnMeta.type) {
-    case "text":
-      const { textStyle } = columnMeta;
+    case "text": {
       return (
         <Box
           component="div"
@@ -48,39 +48,41 @@ export const DDContent = ({
             : cell.render("Cell")}
         </Box>
       );
-    case "category":
-      const { colorScale: cColorScale } = columnMeta;
+    }
+    case "category": {
+      const { colorScale } = columnMeta;
       return (
-        <Tag tagColor={cColorScale(cell.value)} small>
+        <Tag tagColor={colorScale(cell.value)} small>
           {cell.render("Cell")}
         </Tag>
       );
-    case "heatmap":
+    }
+    case "heatmap": {
+      const { colorScale } = columnMeta;
       const isNull = cell.value === null;
-      const hColorScale = columnMeta.colorScale;
       return (
         <Box
           sx={{
+            width: "fit-content",
+            px: 1,
+            borderRadius: "2px",
+            backgroundColor: isNull ? "grey.100" : colorScale(cell.value),
             color: isNull
               ? textColor
-              : hcl(hColorScale(cell.value)).l < 55
+              : hcl(colorScale(cell.value)).l < 55
                 ? "#fff"
                 : "#000",
-            backgroundColor: isNull ? "grey.100" : hColorScale(cell.value),
             fontWeight: textStyle,
-            px: 1,
-            width: "fit-content",
-            borderRadius: "2px",
           }}
         >
           {formatNumber(cell.value)}
         </Box>
       );
-    case "bar":
+    }
+    case "bar": {
       const { widthScale } = columnMeta;
-      // Reset widthscale range based on current viewport
-      widthScale?.range([0, chartWidth / 2]);
-
+      // Reset width scale range based on current viewport
+      widthScale.range([0, chartWidth / 2]);
       return (
         <Flex
           sx={{
@@ -90,12 +92,12 @@ export const DDContent = ({
           }}
         >
           <Box sx={{ width: chartWidth / 2 }}>{formatNumber(cell.value)}</Box>
-          {cell.value !== null && widthScale && (
+          {cell.value !== null && (
             <Box
               sx={{
+                position: "relative",
                 width: chartWidth / 2,
                 height: 14,
-                position: "relative",
                 backgroundColor: barShowBackground
                   ? barColorBackground
                   : "grey.100",
@@ -130,20 +132,15 @@ export const DDContent = ({
           )}
         </Flex>
       );
-
-    default:
+    }
+    default: {
       return (
-        <Box
-          component="span"
-          sx={{
-            color: textColor,
-            fontWeight: textStyle,
-          }}
-        >
+        <Box component="span" sx={{ color: textColor, fontWeight: textStyle }}>
           {columnComponentType === "NumericalMeasure"
             ? formatNumber(cell.value)
             : cell.render("Cell")}
         </Box>
       );
+    }
   }
 };

@@ -9,8 +9,8 @@ const config = {
     },
   },
   moduleNameMapper: {
-    "^@/(.*)$": "<rootDir>/$1",
     "\\.(css)$": "<rootDir>/test/style-mock.js",
+    "^@/(.*)$": "<rootDir>/$1",
   },
   transform: {
     "node_modules/@rdf*": "ts-jest",

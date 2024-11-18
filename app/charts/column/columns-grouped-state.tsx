@@ -1,10 +1,10 @@
 import { extent, group, max, rollup, sum } from "d3-array";
 import {
   ScaleBand,
-  ScaleLinear,
-  ScaleOrdinal,
   scaleBand,
+  ScaleLinear,
   scaleLinear,
+  ScaleOrdinal,
   scaleOrdinal,
   scaleTime,
 } from "d3-scale";
@@ -23,6 +23,7 @@ import {
   PADDING_WITHIN,
 } from "@/charts/column/constants";
 import {
+  useAxisLabelHeightOffset,
   useChartBounds,
   useChartPadding,
 } from "@/charts/shared/chart-dimensions";
@@ -33,7 +34,10 @@ import {
   InteractiveXTimeRangeState,
 } from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
-import { getCenteredTooltipPlacement } from "@/charts/shared/interaction/tooltip-box";
+import {
+  getCenteredTooltipPlacement,
+  MOBILE_TOOLTIP_PLACEMENT,
+} from "@/charts/shared/interaction/tooltip-box";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useSize } from "@/charts/shared/use-size";
@@ -46,6 +50,7 @@ import {
   getSortingOrders,
   makeDimensionValueSorters,
 } from "@/utils/sorting-values";
+import { useIsMobile } from "@/utils/use-is-mobile";
 
 import { ChartProps } from "../shared/ChartProps";
 
@@ -331,11 +336,20 @@ const useColumnsGroupedState = (
     interactiveFiltersConfig,
     animationPresent: !!fields.animation,
     formatNumber,
-    bandDomain: xTimeRangeDomainLabels,
+    bandDomain: xTimeRangeDomainLabels.every((d) => d === undefined)
+      ? xScale.domain()
+      : xTimeRangeDomainLabels,
+  });
+  const right = 40;
+  const { offset: yAxisLabelMargin } = useAxisLabelHeightOffset({
+    label: yMeasure.label,
+    width,
+    marginLeft: left,
+    marginRight: right,
   });
   const margins = {
-    top: 50,
-    right: 40,
+    top: 50 + yAxisLabelMargin,
+    right,
     bottom,
     left,
   };
@@ -348,6 +362,8 @@ const useColumnsGroupedState = (
   xScaleIn.range([0, xScale.bandwidth()]);
   xScaleTimeRange.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
+
+  const isMobile = useIsMobile();
 
   // Tooltip
   const getAnnotationInfo = (datum: Observation): TooltipInfo => {
@@ -373,12 +389,14 @@ const useColumnsGroupedState = (
 
     const xAnchorRaw = (xScale(x) as number) + bw * 0.5;
     const [yMin, yMax] = extent(yValues, (d) => d ?? 0) as [number, number];
-    const yAnchor = yScale((yMin + yMax) * 0.5);
-    const placement = getCenteredTooltipPlacement({
-      chartWidth,
-      xAnchor: xAnchorRaw,
-      topAnchor: !fields.segment,
-    });
+    const yAnchor = isMobile ? chartHeight : yScale((yMin + yMax) * 0.5);
+    const placement = isMobile
+      ? MOBILE_TOOLTIP_PLACEMENT
+      : getCenteredTooltipPlacement({
+          chartWidth,
+          xAnchor: xAnchorRaw,
+          topAnchor: !fields.segment,
+        });
 
     const getError = (d: Observation) => {
       if (!showYStandardError || !getYError || getYError(d) == null) {

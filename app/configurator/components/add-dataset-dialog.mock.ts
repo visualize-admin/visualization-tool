@@ -23,6 +23,12 @@ export const photovoltaikChartStateMock: ConfiguratorStateConfiguringChart = {
         fr: "",
         it: "",
       },
+      label: {
+        de: "",
+        en: "",
+        fr: "",
+        it: "",
+      },
     },
   },
   chartConfigs: [
@@ -38,6 +44,12 @@ export const photovoltaikChartStateMock: ConfiguratorStateConfiguringChart = {
           it: "",
         },
         description: {
+          en: "",
+          de: "",
+          fr: "",
+          it: "",
+        },
+        label: {
           en: "",
           de: "",
           fr: "",
@@ -108,6 +120,10 @@ export const photovoltaikChartStateMock: ConfiguratorStateConfiguringChart = {
         from: "",
         to: "",
       },
+    },
+    dataFilters: {
+      componentIris: [],
+      filters: {},
     },
   },
 };

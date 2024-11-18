@@ -40,6 +40,7 @@ import {
   ChartConfig,
   ConfiguratorStateConfiguringChart,
   ConfiguratorStatePublishing,
+  DashboardFiltersConfig,
   DataSource,
   Filters,
   getChartConfig,
@@ -98,24 +99,23 @@ import useEvent from "@/utils/use-event";
 import { FiltersBadge } from "./badges";
 import { DatasetsControlSection } from "./dataset-control-section";
 
-type DataFilterSelectGenericProps = {
+export const DataFilterSelectGeneric = ({
+  rawDimension,
+  filterDimensionIris,
+  index,
+  disabled,
+  onRemove,
+  sideControls,
+  disableLabel,
+}: {
   rawDimension: Dimension;
   filterDimensionIris: string[];
   index: number;
   disabled?: boolean;
-  onRemove: () => void;
+  onRemove?: () => void;
   sideControls?: React.ReactNode;
-};
-
-const DataFilterSelectGeneric = (props: DataFilterSelectGenericProps) => {
-  const {
-    rawDimension,
-    filterDimensionIris,
-    index,
-    disabled,
-    onRemove,
-    sideControls,
-  } = props;
+  disableLabel?: boolean;
+}) => {
   const locale = useLocale();
   const [state] = useConfiguratorState();
   const chartConfig = getChartConfig(state);
@@ -156,7 +156,7 @@ const DataFilterSelectGeneric = (props: DataFilterSelectGenericProps) => {
 
   const sharedProps = {
     dimension,
-    label: (
+    label: disableLabel ? null : (
       <OpenMetadataPanelWrapper component={dimension}>
         <span>{`${index + 1}. ${dimension.label}`}</span>
       </OpenMetadataPanelWrapper>
@@ -422,7 +422,7 @@ const useFilterReorder = ({
     onAddDimensionFilter?.();
     const filterValue = dimension.values[0];
     dispatch({
-      type: "CHART_CONFIG_FILTER_SET_SINGLE",
+      type: "FILTER_SET_SINGLE",
       value: {
         filters: dimensionToFieldProps(dimension),
         value: `${filterValue.value}`,
@@ -432,7 +432,7 @@ const useFilterReorder = ({
 
   const handleRemoveDimensionFilter = useEvent((dimension: Dimension) => {
     dispatch({
-      type: "CHART_CONFIG_FILTER_REMOVE_SINGLE",
+      type: "FILTER_REMOVE_SINGLE",
       value: {
         filters: dimensionToFieldProps(dimension),
       },
@@ -603,6 +603,7 @@ export const ChartConfigurator = ({
 
   return (
     <InteractiveFiltersChartProvider chartConfigKey={chartConfig.key}>
+      <DatasetsControlSection />
       <ControlSection collapse>
         <SubsectionTitle titleId="controls-design" gutterBottom={false}>
           <Trans id="controls.select.chart.type">Chart Type</Trans>
@@ -629,6 +630,7 @@ export const ChartConfigurator = ({
           <ChartFields
             dataSource={state.dataSource}
             chartConfig={chartConfig}
+            dashboardFilters={state.dashboardFilters}
             dimensions={dimensions}
             measures={measures}
           />
@@ -751,10 +753,10 @@ export const ChartConfigurator = ({
       {chartConfig.chartType !== "table" && (
         <InteractiveFiltersConfigurator state={state} />
       )}
-      <DatasetsControlSection />
       <MetadataPanel
         dataSource={state.dataSource}
         chartConfig={chartConfig}
+        dashboardFilters={state.dashboardFilters}
         components={components}
         top={HEADER_HEIGHT}
         renderToggle={false}
@@ -766,14 +768,16 @@ export const ChartConfigurator = ({
 type ChartFieldsProps = {
   dataSource: DataSource;
   chartConfig: ChartConfig;
+  dashboardFilters: DashboardFiltersConfig | undefined;
   dimensions?: Dimension[];
   measures?: Measure[];
 };
 
 const ChartFields = (props: ChartFieldsProps) => {
-  const { dataSource, chartConfig, dimensions, measures } = props;
+  const { dataSource, chartConfig, dashboardFilters, dimensions, measures } =
+    props;
   const components = [...(dimensions ?? []), ...(measures ?? [])];
-  const queryFilters = useQueryFilters({ chartConfig });
+  const queryFilters = useQueryFilters({ chartConfig, dashboardFilters });
   const locale = useLocale();
   const [{ data: observationsData }] = useDataCubesObservationsQuery({
     variables: {

@@ -41,6 +41,7 @@ import React, {
 } from "react";
 
 import { useBrowseContext } from "@/browser/context";
+import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { BANNER_MARGIN_TOP } from "@/components/presence";
 import VisuallyHidden from "@/components/visually-hidden";
 import {
@@ -52,7 +53,6 @@ import {
 import { Icon } from "@/icons";
 import SvgIcExclamation from "@/icons/components/IcExclamation";
 import { useLocale } from "@/locales/use-locale";
-import { MaybeTooltip } from "@/utils/maybe-tooltip";
 import { valueComparator } from "@/utils/sorting-values";
 
 export const Label = ({
@@ -88,10 +88,12 @@ export const Radio = ({
   disabled,
   onChange,
   warnMessage,
+  formLabelProps,
 }: {
   label: string;
   disabled?: boolean;
   warnMessage?: string;
+  formLabelProps?: Partial<FormControlLabelProps>;
 } & FieldProps) => {
   const color = checked
     ? disabled
@@ -128,6 +130,7 @@ export const Radio = ({
           />
         }
         disabled={disabled}
+        {...formLabelProps}
       />
     </MaybeTooltip>
   );

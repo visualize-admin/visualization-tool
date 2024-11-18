@@ -18,7 +18,7 @@ type Migration = {
   down: (config: any, migrationProps?: any) => any;
 };
 
-export const CHART_CONFIG_VERSION = "3.3.0";
+export const CHART_CONFIG_VERSION = "3.4.0";
 
 export const chartConfigMigrations: Migration[] = [
   {
@@ -922,6 +922,34 @@ export const chartConfigMigrations: Migration[] = [
       });
     },
   },
+  {
+    description: `ALL {
+      meta {
+        + label
+      }
+    }`,
+    from: "3.3.0",
+    to: "3.4.0",
+    up: (config) => {
+      const newConfig = { ...config, version: "3.4.0" };
+
+      return produce(newConfig, (draft: any) => {
+        draft.meta.label = {
+          de: "",
+          fr: "",
+          it: "",
+          en: "",
+        };
+      });
+    },
+    down: (config) => {
+      const newConfig = { ...config, version: "3.3.0" };
+
+      return produce(newConfig, (draft: any) => {
+        delete draft.meta.label;
+      });
+    },
+  },
 ];
 
 export const migrateChartConfig = makeMigrate<ChartConfig>(
@@ -931,7 +959,7 @@ export const migrateChartConfig = makeMigrate<ChartConfig>(
   }
 );
 
-export const CONFIGURATOR_STATE_VERSION = "3.5.0";
+export const CONFIGURATOR_STATE_VERSION = "3.8.0";
 
 export const configuratorStateMigrations: Migration[] = [
   {
@@ -1282,6 +1310,148 @@ export const configuratorStateMigrations: Migration[] = [
         },
       };
       return newConfig;
+    },
+  },
+  {
+    description: "ALL (modify dashboardFilters)",
+    from: "3.5.0",
+    to: "3.6.0",
+    up: (config) => {
+      const newConfig = {
+        ...config,
+        version: "3.6.0",
+        dashboardFilters: {
+          ...config.dashboardFilters,
+          dataFilters: {
+            componentIris: [],
+            filters: {},
+          },
+        },
+      };
+      return newConfig;
+    },
+    down: (config) => {
+      const newConfig = {
+        ...config,
+        version: "3.5.0",
+        dashboardFilters: {
+          timeRange: config.dashboardFilters.timeRange,
+        },
+      };
+      return newConfig;
+    },
+  },
+  {
+    description: `ALL {
+      meta {
+        + label
+      }
+    } & bump ChartConfig version`,
+    from: "3.6.0",
+    to: "3.7.0",
+    up: (config) => {
+      const { layout, ...rest } = config;
+      const { meta, ...restLayout } = layout;
+      const newConfig = {
+        ...rest,
+        version: "3.7.0",
+        layout: {
+          ...restLayout,
+          meta: {
+            ...meta,
+            label: {
+              de: "",
+              fr: "",
+              it: "",
+              en: "",
+            },
+          },
+        },
+      };
+
+      return produce(newConfig, (draft: any) => {
+        const chartConfigs: any[] = [];
+
+        for (const chartConfig of draft.chartConfigs) {
+          const migratedChartConfig = migrateChartConfig(chartConfig, {
+            migrationProps: draft,
+            toVersion: "3.4.0",
+          });
+          chartConfigs.push(migratedChartConfig);
+        }
+
+        draft.chartConfigs = chartConfigs;
+      });
+    },
+    down: (config) => {
+      const { layout, ...rest } = config;
+      const { meta, ...restLayout } = layout.meta;
+      const { label, ...restMeta } = meta;
+      const newConfig = {
+        ...rest,
+        version: "3.6.0",
+        layout: {
+          ...restLayout,
+          meta: restMeta,
+        },
+      };
+
+      return produce(newConfig, (draft: any) => {
+        const chartConfigs: any[] = [];
+
+        for (const chartConfig of draft.chartConfigs) {
+          const migratedChartConfig = migrateChartConfig(chartConfig, {
+            migrationProps: draft,
+            toVersion: "3.3.0",
+          });
+          chartConfigs.push(migratedChartConfig);
+        }
+
+        draft.chartConfigs = chartConfigs;
+      });
+    },
+  },
+  {
+    description: "ALL (add layoutsMetadata to free canvas layout)",
+    from: "3.7.0",
+    to: "3.8.0",
+    up: (config) => {
+      const newConfig = {
+        ...config,
+        version: "3.8.0",
+      };
+
+      return produce(newConfig, (draft: any) => {
+        if (
+          draft.layout.type === "dashboard" &&
+          draft.layout.layout === "canvas"
+        ) {
+          draft.layout.layoutsMetadata = draft.chartConfigs.reduce(
+            (acc: any, chartConfig: any) => {
+              acc[chartConfig.key] = {
+                initialized: true,
+              };
+              return acc;
+            },
+            {}
+          );
+        }
+      });
+    },
+    down: (config) => {
+      const newConfig = {
+        ...config,
+        version: "3.7.0",
+      };
+
+      return produce(newConfig, (draft: any) => {
+        if (
+          draft.layout.type === "dashboard" &&
+          draft.layout.layout === "canvas"
+        ) {
+          delete draft.layout.layoutsMetadata;
+        }
+      });
     },
   },
 ];

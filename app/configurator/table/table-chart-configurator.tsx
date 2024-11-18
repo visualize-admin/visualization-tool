@@ -70,6 +70,7 @@ export const ChartConfiguratorTable = ({
 
   return (
     <>
+      <DatasetsControlSection />
       <ControlSection collapse>
         <SubsectionTitle titleId="controls-design" gutterBottom={false}>
           <Trans id="controls.select.chart.type">Chart Type</Trans>
@@ -134,7 +135,6 @@ export const ChartConfiguratorTable = ({
           items={columnFields}
         />
       </DragDropContext>
-      <DatasetsControlSection />
     </>
   );
 };

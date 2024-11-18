@@ -10,6 +10,7 @@ import {
   useScatterplotStateVariables,
 } from "@/charts/scatterplot//scatterplot-state-props";
 import {
+  useAxisLabelHeightOffset,
   useChartBounds,
   useChartPadding,
 } from "@/charts/shared/chart-dimensions";
@@ -30,8 +31,10 @@ import {
   getSortingOrders,
   makeDimensionValueSorters,
 } from "@/utils/sorting-values";
+import { useIsMobile } from "@/utils/use-is-mobile";
 
 import { ChartProps } from "../shared/ChartProps";
+import { TooltipPlacement } from "../shared/interaction/tooltip-box";
 
 export type ScatterplotState = CommonChartState &
   ScatterplotStateVariables & {
@@ -152,10 +155,23 @@ const useScatterplotState = (
     animationPresent: !!fields.animation,
     formatNumber,
   });
+  const right = 40;
+  const { offset: xAxisLabelMargin } = useAxisLabelHeightOffset({
+    label: xAxisLabel,
+    width,
+    marginLeft: left,
+    marginRight: right,
+  });
+  const { offset: yAxisLabelMargin } = useAxisLabelHeightOffset({
+    label: yAxisLabel,
+    width,
+    marginLeft: left,
+    marginRight: right,
+  });
   const margins = {
-    top: 50,
-    right: 40,
-    bottom,
+    top: 50 + yAxisLabelMargin,
+    right,
+    bottom: bottom + xAxisLabelMargin,
     left,
   };
   const bounds = useChartBounds(width, margins, height);
@@ -164,12 +180,14 @@ const useScatterplotState = (
   xScale.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
 
+  const isMobile = useIsMobile();
+
   // Tooltip
   const getAnnotationInfo = (datum: Observation): TooltipInfo => {
     const xRef = xScale(getX(datum) ?? NaN);
     const yRef = yScale(getY(datum) ?? NaN);
     const xAnchor = xRef;
-    const yAnchor = yRef;
+    const yAnchor = isMobile ? 0 : yRef;
 
     const xPlacement =
       xAnchor < chartWidth * 0.33
@@ -185,10 +203,14 @@ const useScatterplotState = (
           ? "bottom"
           : "middle";
 
+    const placement: TooltipPlacement = isMobile
+      ? { x: "center", y: "top" }
+      : { x: xPlacement, y: yPlacement };
+
     return {
       xAnchor,
       yAnchor,
-      placement: { x: xPlacement, y: yPlacement },
+      placement,
       xValue: formatNumber(getX(datum)),
       tooltipContent: (
         <TooltipScatterplot

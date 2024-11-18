@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   Link,
+  PopoverPosition,
   Skeleton,
   styled,
   Table,
@@ -18,9 +19,15 @@ import {
 import { PUBLISHED_STATE } from "@prisma/client";
 import sortBy from "lodash/sortBy";
 import NextLink from "next/link";
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 
 import { MenuActionProps } from "@/components/menu-action-item";
+import { OverflowTooltip } from "@/components/overflow-tooltip";
+import {
+  EmbedContent,
+  ShareContent,
+  TriggeredPopover,
+} from "@/components/publish-actions";
 import { RenameDialog } from "@/components/rename-dialog";
 import { RowActions } from "@/components/row-actions";
 import useDisclosure from "@/components/use-disclosure";
@@ -36,6 +43,7 @@ import { removeConfig, updateConfig } from "@/utils/chart-config/api";
 import { useMutate } from "@/utils/use-fetch-data";
 
 const PREVIEW_LIMIT = 3;
+const POPOVER_PADDING = 8;
 
 const SectionContent = ({
   children,
@@ -163,12 +171,10 @@ export const ProfileVisualizationsTable = (
   );
 };
 
-type ProfileVisualizationsRowProps = {
+const ProfileVisualizationsRow = (props: {
   userId: number;
   config: ParsedConfig;
-};
-
-const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
+}) => {
   const { userId, config } = props;
   const { dataSource } = config.data;
   const dataSets = Array.from(
@@ -191,55 +197,53 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
   const removeConfigMut = useMutate(removeConfig);
   const updateConfigMut = useMutate(updateConfig);
 
+  const [shareEl, setShareEl] = useState<HTMLElement | undefined>();
+  const [embedEl, setEmbedEl] = useState<HTMLElement | undefined>();
+
   const {
     isOpen: isRenameOpen,
     open: openRename,
     close: closeRename,
   } = useDisclosure();
 
+  const isPublished = config.published_state === PUBLISHED_STATE.PUBLISHED;
+  const publishLink = `/${locale}/v/${config.key}`;
+  const editLink = `/${locale}/create/new?edit=${config.key}${config.data.chartConfigs.length > 1 ? `&state=${CONFIGURATOR_STATE_LAYOUTING}` : ""}`;
+
   const actions = useMemo(() => {
     const actions: (MenuActionProps | null)[] = [
       {
         type: "link",
-        href: `/${locale}/v/${config.key}`,
-        label:
-          config.published_state === PUBLISHED_STATE.PUBLISHED
-            ? t({ id: "login.chart.view", message: "View" })
-            : t({ id: "login.chart.preview", message: "Preview" }),
-        iconName: "eye",
-        priority:
-          config.published_state === PUBLISHED_STATE.PUBLISHED ? 0 : undefined,
+        href: publishLink,
+        label: isPublished
+          ? t({ id: "login.chart.view", message: "View" })
+          : t({ id: "login.chart.preview", message: "Preview" }),
+        leadingIconName: "eye",
+        priority: isPublished ? 0 : undefined,
       },
       {
         type: "link",
         href: `/${locale}/create/new?copy=${config.key}`,
-        label: t({ id: "login.chart.copy", message: "Copy" }),
-        iconName: "copy",
+        label: t({ id: "login.chart.duplicate", message: "Duplicate" }),
+        leadingIconName: "copy",
       },
       {
         type: "link",
-        href: `/${locale}/create/new?edit=${config.key}${config.data.chartConfigs.length > 1 ? `&state=${CONFIGURATOR_STATE_LAYOUTING}` : ""}`,
+        href: editLink,
         label: t({ id: "login.chart.edit", message: "Edit" }),
-        iconName: "edit",
-        priority:
-          config.published_state === PUBLISHED_STATE.DRAFT ? 0 : undefined,
+        leadingIconName: "edit",
+        priority: !isPublished ? 0 : undefined,
       },
-      {
-        type: "link",
-        href: `/${locale}/v/${config.key}`,
-        label: t({ id: "login.chart.share", message: "Share" }),
-        iconName: "linkExternal",
-      },
-      config.published_state === PUBLISHED_STATE.PUBLISHED
+      isPublished
         ? {
             type: "button",
             label: t({
               id: "login.chart.actions.unpublish",
               message: "Unpublish",
             }),
-            iconName: (updateConfigMut.status === "fetching"
+            leadingIconName: (updateConfigMut.status === "fetching"
               ? "loading"
-              : "unpublish") as MenuActionProps["iconName"],
+              : "unpublish") as MenuActionProps["leadingIconName"],
 
             onClick: async () => {
               await updateConfigMut.mutate({
@@ -259,8 +263,22 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
         : null,
       {
         type: "button",
+        onClick: (e) => setShareEl(e?.currentTarget),
+        label: t({ id: "login.chart.share", message: "Share" }),
+        leadingIconName: "linkExternal",
+        stayOpen: true,
+      },
+      {
+        type: "button",
+        onClick: (e) => setEmbedEl(e?.currentTarget),
+        label: t({ id: "login.chart.embed", message: "Embed" }),
+        leadingIconName: "embed",
+        stayOpen: true,
+      },
+      {
+        type: "button",
         label: t({ id: "login.chart.rename", message: "Rename" }),
-        iconName: "text",
+        leadingIconName: "text",
         onClick: () => {
           openRename();
         },
@@ -269,17 +287,28 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
         type: "button",
         label: t({ id: "login.chart.delete", message: "Delete" }),
         color: "error",
-        iconName: removeConfigMut.status === "fetching" ? "loading" : "trash",
+        leadingIconName:
+          removeConfigMut.status === "fetching" ? "loading" : "trash",
         requireConfirmation: true,
-        confirmationTitle: t({
-          id: "login.chart.delete.confirmation",
-          message: "Are you sure you want to delete this chart?",
-        }),
-        confirmationText: t({
-          id: "login.profile.chart.delete.warning",
-          message:
-            "Keep in mind that removing this visualization will affect all the places where it might be already embedded!",
-        }),
+        confirmationTitle: isPublished
+          ? t({
+              id: "login.chart.delete.confirmation",
+              message: "Are you sure you want to delete this chart?",
+            })
+          : t({
+              id: "login.chart.delete-draft.confirmation",
+              message: "Are you sure you want to delete this draft?",
+            }),
+        confirmationText: isPublished
+          ? t({
+              id: "login.profile.chart.delete.warning",
+              message:
+                "This action cannot be undone. Removing this chart will affect all the places where it's embedded!",
+            })
+          : t({
+              id: "login.profile.chart.delete-draft.warning",
+              message: "This action cannot be undone.",
+            }),
         onClick: () => {
           return removeConfigMut.mutate({ key: config.key });
         },
@@ -291,40 +320,60 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
 
     return sortBy(actions.filter(truthy), (x) => x.priority);
   }, [
+    publishLink,
+    isPublished,
     locale,
-    config.data,
     config.key,
-    config.published_state,
+    config.data,
+    editLink,
+    updateConfigMut,
+    removeConfigMut,
     invalidateUserConfigs,
     openRename,
-    removeConfigMut,
-    updateConfigMut,
   ]);
 
+  const isSingleChart = config.data.chartConfigs.length === 1;
   const chartTitle = useMemo(() => {
-    const title =
-      config.data.layout.meta.title?.[locale] ??
-      config.data.chartConfigs
-        .map((d) => d.meta.title?.[locale] ?? false)
-        .filter(truthy)
-        .join(", ");
+    const title = isSingleChart
+      ? config.data.chartConfigs[0].meta.title[locale]
+      : config.data.layout.meta.title[locale];
+    return title || t({ id: "annotation.add.title", message: "[ No Title ]" });
+  }, [
+    config.data.chartConfigs,
+    config.data.layout.meta.title,
+    isSingleChart,
+    locale,
+  ]);
 
-    return title
-      ? title
-      : t({ id: "annotation.add.title", message: "[ No Title ]" });
-  }, [config.data.chartConfigs, config.data.layout.meta.title, locale]);
+  const rootClasses = useRootStyles();
 
   return (
     <TableRow>
       <TableCell width="10%">
         <Typography variant="body2">
-          {config.data.chartConfigs.length > 1 ? "dashboard" : "single"}
+          {isSingleChart
+            ? t({ id: "controls.layout.chart", message: "Chart" })
+            : t({ id: "controls.layout.dashboard", message: "Dashboard" })}
         </Typography>
       </TableCell>
       <TableCell width="30%">
-        <Typography variant="body2" noWrap title={chartTitle}>
-          {chartTitle}
-        </Typography>
+        <NextLink
+          href={isPublished ? publishLink : editLink}
+          passHref
+          legacyBehavior
+        >
+          <Link color="primary">
+            <OverflowTooltip arrow title={chartTitle} color="primary">
+              <Typography
+                className={rootClasses.noTooltip}
+                variant="body2"
+                noWrap
+              >
+                {chartTitle}
+              </Typography>
+            </OverflowTooltip>
+          </Link>
+        </NextLink>
       </TableCell>
       <TableCell width="30%">
         {fetching ? (
@@ -338,9 +387,19 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
             legacyBehavior
           >
             <Link color="primary">
-              <Typography variant="body2" noWrap>
-                {data?.dataCubesMetadata[0]?.title ?? ""}
-              </Typography>
+              <OverflowTooltip
+                arrow
+                title={data?.dataCubesMetadata[0]?.title ?? ""}
+                color="primary"
+              >
+                <Typography
+                  className={rootClasses.noTooltip}
+                  variant="body2"
+                  noWrap
+                >
+                  {data?.dataCubesMetadata[0]?.title ?? ""}
+                </Typography>
+              </OverflowTooltip>
             </Link>
           </NextLink>
         ) : (
@@ -354,11 +413,34 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
       </TableCell>
       <TableCell width="10%">
         <Typography width="auto" variant="body2">
-          {config.updated_at.toLocaleDateString("de")}
+          {config.updated_at.toLocaleString("de", {
+            dateStyle: "medium",
+            timeStyle: "short",
+          })}
         </Typography>
       </TableCell>
       <TableCell width="20%" align="right">
         <RowActions actions={actions} />
+        <TriggeredPopover
+          popoverProps={{
+            anchorPosition: { ...getAdjustedPopoverPosition(embedEl) },
+            anchorReference: "anchorPosition",
+          }}
+          trigger={embedEl}
+        >
+          <EmbedContent locale={locale} configKey={config.key} />
+        </TriggeredPopover>
+        <TriggeredPopover
+          popoverProps={{
+            anchorPosition: {
+              ...getAdjustedPopoverPosition(shareEl),
+            },
+            anchorReference: "anchorPosition",
+          }}
+          trigger={shareEl}
+        >
+          <ShareContent locale={locale} configKey={config.key} />
+        </TriggeredPopover>
         <RenameDialog
           config={config}
           open={isRenameOpen}
@@ -369,4 +451,19 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
       </TableCell>
     </TableRow>
   );
+};
+
+const getAdjustedPopoverPosition = (
+  element: HTMLElement | undefined
+): PopoverPosition => {
+  if (element) {
+    const { x, y } = element.getBoundingClientRect();
+
+    return {
+      top: y,
+      left: x - POPOVER_PADDING,
+    };
+  } else {
+    return { top: 0, left: 0 };
+  }
 };

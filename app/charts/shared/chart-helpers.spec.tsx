@@ -14,7 +14,10 @@ import {
 } from "@/configurator";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { mkJoinById } from "@/graphql/join";
-import { InteractiveFiltersState } from "@/stores/interactive-filters";
+import {
+  InteractiveFiltersState,
+  useChartInteractiveFilters,
+} from "@/stores/interactive-filters";
 import dualLine1Fixture from "@/test/__fixtures/config/dev/chartConfig-photovoltaik-und-gebaudeprogramm.json";
 import map1Fixture from "@/test/__fixtures/config/int/map-nfi.json";
 import line1Fixture from "@/test/__fixtures/config/prod/line-1.json";
@@ -93,6 +96,7 @@ describe("useQueryFilters", () => {
       line1Fixture.data.chartConfig.chartType as ChartType,
       line1Fixture.data.chartConfig.filters as Filters,
       commonInteractiveFiltersConfig,
+      undefined,
       commonInteractiveFiltersState.dataFilters
     );
     expect(queryFilters[col("3")]).toEqual({
@@ -110,6 +114,7 @@ describe("useQueryFilters", () => {
           active: true,
         },
       }),
+      undefined,
       commonInteractiveFiltersState.dataFilters
     );
 
@@ -128,6 +133,7 @@ describe("useQueryFilters", () => {
           active: true,
         },
       }),
+      undefined,
       merge({}, commonInteractiveFiltersState, {
         dataFilters: {
           [col("3")]: {
@@ -171,7 +177,7 @@ describe("useQueryFilters", () => {
     >(
       (props: Parameters<typeof useQueryFilters>[0]) => useQueryFilters(props),
       {
-        initialProps: { chartConfig },
+        initialProps: { chartConfig, dashboardFilters: undefined },
       }
     );
 
@@ -181,6 +187,80 @@ describe("useQueryFilters", () => {
         componentIris: undefined,
         filters: {
           A_1: { type: "single", value: "A_1_1" },
+          A_2: { type: "single", value: "A_2_1" },
+        },
+        joinBy: undefined,
+      },
+      {
+        iri: "B",
+        componentIris: undefined,
+        filters: { B_1: { type: "single", value: "B_1_1" } },
+        joinBy: undefined,
+      },
+    ]);
+  });
+
+  it("should handle correctly dashboard filters", () => {
+    (useChartInteractiveFilters as jest.Mock).mockImplementation(() => ({}));
+
+    const chartConfig = {
+      chartType: "line",
+      interactiveFiltersConfig: {
+        dataFilters: {
+          active: true,
+        },
+      },
+      cubes: [
+        {
+          iri: "A",
+          filters: {
+            A_1: { type: "single", value: "A_1_5" },
+            A_2: { type: "single", value: "A_2_1" },
+          },
+        },
+        {
+          iri: "B",
+          filters: {
+            B_1: { type: "single", value: "B_1_1" },
+          },
+        },
+      ],
+    } as any as ChartConfig;
+    const { result: queryFilters } = renderHook<
+      ReturnType<typeof useQueryFilters>,
+      Parameters<typeof useQueryFilters>[0]
+    >(
+      (props: Parameters<typeof useQueryFilters>[0]) => useQueryFilters(props),
+      {
+        initialProps: {
+          chartConfig,
+          dashboardFilters: {
+            timeRange: {
+              active: false,
+              timeUnit: "ms",
+              presets: {
+                from: "2021-01-01",
+                to: "2021-12-31",
+              },
+            },
+            dataFilters: {
+              componentIris: ["A_1"],
+              filters: {
+                A_1: { type: "single", value: "A_1_Data_Filter" },
+                A_2: { type: "single", value: "A_2_3" },
+              },
+            },
+          },
+        },
+      }
+    );
+
+    expect(queryFilters.current).toEqual([
+      {
+        iri: "A",
+        componentIris: undefined,
+        filters: {
+          A_1: { type: "single", value: "A_1_Data_Filter" },
           A_2: { type: "single", value: "A_2_1" },
         },
         joinBy: undefined,

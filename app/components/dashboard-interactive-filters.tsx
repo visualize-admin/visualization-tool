@@ -1,38 +1,95 @@
 import {
-  Collapse,
+  Box,
+  BoxProps,
+  SelectChangeEvent,
   Slider,
   sliderClasses,
   useEventCallback,
 } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import { makeStyles } from "@mui/styles";
-import { useEffect, useMemo, useState } from "react";
+import uniq from "lodash/uniq";
+import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 
 import {
+  DataFilterGenericDimension,
+  DataFilterHierarchyDimension,
+  DataFilterTemporalDimension,
+} from "@/charts/shared/chart-data-filters";
+import { useCombinedTemporalDimension } from "@/charts/shared/use-combined-temporal-dimension";
+import {
+  ChartConfig,
   DashboardTimeRangeFilter,
+  hasChartConfigs,
   InteractiveFiltersTimeRange,
+  isLayouting,
+  useConfiguratorState,
 } from "@/configurator";
 import {
+  parseDate,
   timeUnitToFormatter,
   timeUnitToParser,
 } from "@/configurator/components/ui-helpers";
+import { isTemporalDimension } from "@/domain/data";
+import { useDataCubesComponentsQuery } from "@/graphql/hooks";
 import { TimeUnit } from "@/graphql/query-hooks";
-import { useDashboardInteractiveFilters } from "@/stores/interactive-filters";
+import { useTimeout } from "@/hooks/use-timeout";
+import { useLocale } from "@/locales/use-locale";
+import {
+  setDataFilter,
+  useDashboardInteractiveFilters,
+} from "@/stores/interactive-filters";
 import { useTransitionStore } from "@/stores/transition";
 import { assert } from "@/utils/assert";
+import useEvent from "@/utils/use-event";
 
-import { useTimeout } from "../hooks/use-timeout";
+export const DashboardInteractiveFilters = (props: BoxProps) => {
+  const { sx, ...rest } = props;
+  const ref = useRef<HTMLDivElement>(null);
+  const [state] = useConfiguratorState(hasChartConfigs);
+  const layouting = isLayouting(state);
+  const { dashboardFilters } = state;
+  const { timeRange, dataFilters } = dashboardFilters ?? {
+    timeRange: undefined,
+    dataFilters: undefined,
+  };
+  const showTimeRange = !!timeRange?.active;
+  const showDataFilters = !!dataFilters?.componentIris.length;
+  useEffect(() => {
+    if (layouting && (showTimeRange || showDataFilters)) {
+      ref.current?.scrollIntoView({
+        block: "nearest",
+        behavior: "smooth",
+      });
+    }
+  }, [layouting, showDataFilters, showTimeRange]);
+  return showTimeRange || showDataFilters ? (
+    <Box ref={ref} {...rest} sx={{ ...sx, mb: 4 }}>
+      {showTimeRange ? (
+        <DashboardTimeRangeSlider
+          filter={timeRange}
+          mounted={timeRange.active}
+        />
+      ) : null}
+      {showDataFilters ? (
+        <DashboardDataFilters componentIris={dataFilters.componentIris} />
+      ) : null}
+    </Box>
+  ) : null;
+};
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useTimeRangeRangeStyles = makeStyles((theme: Theme) => ({
   slider: {
-    maxWidth: 800,
+    maxWidth: `calc(100% - ${theme.spacing(6)})`,
     margin: theme.spacing(6, 4, 2),
-
     [`& .${sliderClasses.track}`]: {
       height: 1,
     },
     [`& .${sliderClasses.rail}.${sliderClasses.rail}`]: {
       backgroundColor: theme.palette.grey[600],
+    },
+    [`& .${sliderClasses.valueLabel}`]: {
+      padding: theme.spacing(1, 2),
     },
   },
 }));
@@ -78,7 +135,7 @@ const DashboardTimeRangeSlider = ({
   filter: DashboardTimeRangeFilter;
   mounted: boolean;
 }) => {
-  const classes = useStyles();
+  const classes = useTimeRangeRangeStyles();
   const dashboardInteractiveFilters = useDashboardInteractiveFilters();
   const setEnableTransition = useTransitionStore((state) => state.setEnable);
   const presets = filter.presets;
@@ -88,25 +145,10 @@ const DashboardTimeRangeSlider = ({
   );
 
   const timeUnit = filter.timeUnit as TimeUnit;
-
-  // In Unix timestamp
   const [timeRange, setTimeRange] = useState(() =>
     // timeUnit can still be an empty string
     timeUnit ? presetToTimeRange(presets, timeUnit) : undefined
   );
-
-  const { min, max } = useMemo(() => {
-    if (!timeUnit) {
-      return { min: 0, max: 0 };
-    }
-    const parser = timeUnitToParser[timeUnit];
-    return {
-      min: toUnixSeconds(parser(presets.from)),
-      max: toUnixSeconds(parser(presets.to)),
-    };
-  }, [timeUnit, presets]);
-
-  const step = stepFromTimeUnit(timeUnit);
 
   const valueLabelFormat = useEventCallback((value: number) => {
     if (!timeUnit) {
@@ -159,8 +201,23 @@ const DashboardTimeRangeSlider = ({
   }, [presets.from, presets.to, timeUnit]);
 
   const mountedForSomeTime = useTimeout(500, mounted);
+  const combinedTemporalDimension = useCombinedTemporalDimension();
+  const sliderRange = useMemo(() => {
+    const { values } = combinedTemporalDimension;
+    const min = values[0]?.value;
+    const max = values[values.length - 1]?.value;
 
-  if (!timeRange || !filter.active) {
+    if (!min || !max) {
+      return;
+    }
+
+    return [
+      toUnixSeconds(parseDate(min as string)),
+      toUnixSeconds(parseDate(max as string)),
+    ];
+  }, [combinedTemporalDimension]);
+
+  if (!timeRange || !filter.active || !sliderRange) {
     return null;
   }
 
@@ -169,50 +226,216 @@ const DashboardTimeRangeSlider = ({
       className={classes.slider}
       onChange={(_ev, value) => handleChangeSlider(value)}
       onChangeCommitted={() => setEnableTransition(true)}
-      min={min}
-      max={max}
       valueLabelFormat={valueLabelFormat}
-      step={step}
+      step={null}
+      min={sliderRange[0]}
+      max={sliderRange[1]}
       valueLabelDisplay={mountedForSomeTime ? "on" : "off"}
       value={timeRange}
-      marks={(max - min) / (step ?? 1) < 50}
+      marks={combinedTemporalDimension.values.map(({ value }) => ({
+        value: toUnixSeconds(parseDate(value as string)),
+      }))}
     />
   );
 };
 
-export const DashboardInteractiveFilters = () => {
-  const { timeRange } = useDashboardInteractiveFilters();
-  return timeRange?.active ? (
-    <Collapse in={timeRange.active}>
-      <div>
-        <DashboardTimeRangeSlider
-          filter={timeRange}
-          mounted={timeRange.active}
-        />
-      </div>
-    </Collapse>
-  ) : null;
+const useDataFilterStyles = makeStyles((theme: Theme) => ({
+  wrapper: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
+    gap: theme.spacing(2),
+  },
+  filter: {
+    display: "flex",
+    flex: "1 1 100%",
+    width: "100%",
+    marginRight: theme.spacing(3),
+    "&:last-of-type": {
+      marginRight: 0,
+    },
+    "& > div": {
+      width: "100%",
+    },
+  },
+}));
+
+export type Stores = ReturnType<
+  typeof useDashboardInteractiveFilters
+>["stores"];
+
+export const saveDataFiltersSnapshot = (
+  chartConfigs: ChartConfig[],
+  stores: Stores,
+  componentIri: string
+) => {
+  const snapshot = Object.fromEntries(
+    Object.entries(stores).map(([key, [_getState, _useStore, store]]) => {
+      const state = store.getState();
+      const filterValue = state.dataFilters[componentIri];
+      return [key, filterValue];
+    })
+  );
+
+  return () => {
+    for (const [chartKey, [_getState, _useStore, store]] of Object.entries(
+      stores
+    )) {
+      if (chartConfigs.map((config) => config.key).includes(chartKey)) {
+        const dataFilters = store.getState().dataFilters;
+        const filterValue = snapshot[chartKey];
+        if (filterValue) {
+          dataFilters[componentIri] = filterValue;
+          store.setState({ dataFilters });
+        } else {
+          delete dataFilters[componentIri];
+          store.setState({ dataFilters });
+        }
+      }
+    }
+  };
 };
 
-function stepFromTimeUnit(timeUnit: TimeUnit | undefined) {
-  if (!timeUnit) {
-    return 0;
+const DashboardDataFilters = ({
+  componentIris,
+}: {
+  componentIris: string[];
+}) => {
+  const classes = useDataFilterStyles();
+  return (
+    <div className={classes.wrapper}>
+      {componentIris.map((componentIri) => (
+        <DataFilter key={componentIri} componentIri={componentIri} />
+      ))}
+    </div>
+  );
+};
+
+const DataFilter = ({ componentIri }: { componentIri: string }) => {
+  const locale = useLocale();
+  const classes = useDataFilterStyles();
+  const [{ chartConfigs, dataSource, dashboardFilters }] =
+    useConfiguratorState(hasChartConfigs);
+  const dashboardInteractiveFilters = useDashboardInteractiveFilters();
+  const relevantChartConfigs = chartConfigs.filter((config) =>
+    config.cubes.some((cube) =>
+      Object.keys(cube.filters).includes(componentIri)
+    )
+  );
+  const cubeIris = uniq(
+    chartConfigs.flatMap((config) =>
+      config.cubes
+        .filter((cube) => Object.keys(cube.filters).includes(componentIri))
+        .map((cube) => cube.iri)
+    )
+  );
+
+  if (cubeIris.length > 1) {
+    console.error(
+      `Data filter ${componentIri} is used in multiple cubes: ${cubeIris.join(", ")}`
+    );
   }
 
-  switch (timeUnit) {
-    case "Year":
-      return 1 * 60 * 60 * 24 * 365;
-    case "Month":
-      return 1 * 60 * 60 * 24 * 30;
-    case "Week":
-      return 1 * 60 * 60 * 24 * 7;
-    case "Day":
-      return 1 * 60 * 60 * 24;
-    case "Hour":
-      return 1 * 60 * 60;
-    case "Minute":
-      return 1 * 60;
-    case "Second":
-      return 1;
-  }
-}
+  const cubeIri = cubeIris[0];
+
+  const [{ data }] = useDataCubesComponentsQuery({
+    variables: {
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+      cubeFilters: [
+        { iri: cubeIri, componentIris: [componentIri], loadValues: true },
+      ],
+    },
+    keepPreviousData: true,
+  });
+
+  const dimension = data?.dataCubesComponents.dimensions[0];
+
+  const [value, setValue] = useState<string>();
+  const handleChange = useEvent(
+    (
+      e:
+        | SelectChangeEvent<unknown>
+        | ChangeEvent<HTMLSelectElement>
+        | { target: { value: string } }
+    ) => {
+      const newValue = e.target.value as string;
+      setValue(newValue);
+
+      for (const [chartKey, [_getState, _useStore, store]] of Object.entries(
+        dashboardInteractiveFilters.stores
+      )) {
+        if (
+          relevantChartConfigs.map((config) => config.key).includes(chartKey)
+        ) {
+          setDataFilter(store, componentIri, newValue);
+        }
+      }
+    }
+  );
+
+  // Syncs the interactive filter value with the config value
+  useEffect(() => {
+    const value = dashboardFilters?.dataFilters.filters[componentIri].value as
+      | string
+      | undefined;
+    if (value) {
+      handleChange({ target: { value } });
+    }
+  }, [componentIri, handleChange, dashboardFilters?.dataFilters.filters]);
+
+  useEffect(() => {
+    const restoreSnapshot = saveDataFiltersSnapshot(
+      relevantChartConfigs,
+      dashboardInteractiveFilters.stores,
+      componentIri
+    );
+
+    const value = dashboardFilters?.dataFilters.filters[componentIri]?.value as
+      | string
+      | undefined;
+
+    if (value) {
+      handleChange({ target: { value } } as ChangeEvent<HTMLSelectElement>);
+    } else if (dimension?.values.length) {
+      handleChange({
+        target: { value: dimension.values[0].value as string },
+      } as ChangeEvent<HTMLSelectElement>);
+    }
+
+    return () => {
+      restoreSnapshot();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dimension?.values]);
+  const disabled = !dimension?.values.length;
+  const hierarchy = dimension?.hierarchy;
+
+  return dimension && value ? (
+    <div className={classes.filter}>
+      {isTemporalDimension(dimension) ? (
+        <DataFilterTemporalDimension
+          value={value}
+          dimension={dimension}
+          onChange={handleChange}
+          disabled={disabled}
+        />
+      ) : hierarchy ? (
+        <DataFilterHierarchyDimension
+          value={value}
+          dimension={dimension}
+          onChange={handleChange}
+          hierarchy={hierarchy}
+          disabled={disabled}
+        />
+      ) : (
+        <DataFilterGenericDimension
+          value={value}
+          dimension={dimension}
+          onChange={handleChange}
+          disabled={disabled}
+        />
+      )}
+    </div>
+  ) : null;
+};

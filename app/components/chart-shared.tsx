@@ -15,6 +15,7 @@ import { MenuActionItem } from "@/components/menu-action-item";
 import { MetadataPanel } from "@/components/metadata-panel";
 import {
   ChartConfig,
+  DashboardFiltersConfig,
   DataSource,
   getChartConfig,
   hasChartConfigs,
@@ -28,41 +29,51 @@ import { useLocale } from "@/src";
 import { createChartId } from "@/utils/create-chart-id";
 
 /** Generic styles shared between `ChartPreview` and `ChartPublished`. */
-export const useChartStyles = makeStyles<Theme>((theme) => ({
-  root: {
-    display: "grid",
-    gridTemplateRows: "subgrid",
-    /** Should stay in sync with the number of rows contained in a chart */
-    gridRow: "span 7",
-    height: "100%",
-    padding: theme.spacing(6),
-    backgroundColor: theme.palette.background.paper,
-    border: "1px solid",
-    borderColor: theme.palette.divider,
-    color: theme.palette.grey[800],
-    [`.${chartPanelLayoutGridClasses.root} &`]: {
-      display: "flex",
-      flexDirection: "column",
+export const useChartStyles = makeStyles<Theme, { disableBorder?: boolean }>(
+  (theme) => ({
+    root: {
+      flexGrow: 1,
+      display: "grid",
+      gridTemplateRows: "subgrid",
+      /** Should stay in sync with the number of rows contained in a chart */
+      gridRow: "span 7",
+      padding: theme.spacing(6),
+      backgroundColor: theme.palette.background.paper,
+      border: ({ disableBorder }) =>
+        disableBorder ? "none" : `1px solid ${theme.palette.divider}`,
+      color: theme.palette.grey[800],
+      [`.${chartPanelLayoutGridClasses.root} &`]: {
+        display: "flex",
+        flexDirection: "column",
+      },
     },
-  },
-}));
+  })
+);
 
 export const ChartControls = ({
   dataSource,
   chartConfig,
+  dashboardFilters,
   metadataPanelProps,
 }: {
   dataSource: DataSource;
   chartConfig: ChartConfig;
+  dashboardFilters: DashboardFiltersConfig | undefined;
   metadataPanelProps: Omit<
     ComponentProps<typeof MetadataPanel>,
-    "dataSource" | "chartConfig"
+    "dataSource" | "chartConfig" | "dashboardFilters"
   >;
 }) => {
-  const showFilters = chartConfig.interactiveFiltersConfig?.dataFilters.active;
+  const showFilters =
+    chartConfig.interactiveFiltersConfig?.dataFilters.active &&
+    chartConfig.interactiveFiltersConfig.dataFilters.componentIris.some(
+      (componentIri) =>
+        !dashboardFilters?.dataFilters.componentIris.includes(componentIri)
+    );
   const chartFiltersState = useChartDataFiltersState({
     dataSource,
     chartConfig,
+    dashboardFilters,
   });
   return (
     <Box
@@ -87,6 +98,7 @@ export const ChartControls = ({
         <MetadataPanel
           dataSource={dataSource}
           chartConfig={chartConfig}
+          dashboardFilters={dashboardFilters}
           {...metadataPanelProps}
         />
       </Box>
@@ -113,8 +125,12 @@ export const ChartMoreButton = ({
   useEffect(() => {
     setIsTableRaw(false);
   }, [chartConfig.chartType, setIsTableRaw]);
+  const disableButton =
+    isPublished(state) &&
+    state.layout.type === "dashboard" &&
+    chartConfig.chartType === "table";
 
-  return (
+  return disableButton ? null : (
     <>
       <IconButton
         color="secondary"
@@ -155,7 +171,7 @@ export const ChartMoreButton = ({
                   dispatch({ type: "CONFIGURE_CHART", value: { chartKey } });
                   handleClose();
                 }}
-                iconName="edit"
+                leadingIconName="edit"
                 label={<Trans id="chart-controls.edit">Edit</Trans>}
               />
             )}
@@ -163,6 +179,12 @@ export const ChartMoreButton = ({
               chartConfig={chartConfig}
               onSuccess={handleClose}
             />
+            {chartConfig.chartType !== "table" ? (
+              <TableViewChartMenuActionItem
+                chartType={chartConfig.chartType}
+                onSuccess={handleClose}
+              />
+            ) : null}
             {state.chartConfigs.length > 1 ? (
               <MenuActionItem
                 type="button"
@@ -184,14 +206,8 @@ export const ChartMoreButton = ({
                   });
                   handleClose();
                 }}
-                iconName="trash"
+                leadingIconName="trash"
                 label={<Trans id="chart-controls.delete">Delete</Trans>}
-              />
-            ) : null}
-            {chartConfig.chartType !== "table" ? (
-              <TableViewChartMenuActionItem
-                chartType={chartConfig.chartType}
-                onSuccess={handleClose}
               />
             ) : null}
           </div>
@@ -216,7 +232,7 @@ const CopyChartMenuActionItem = ({ configKey }: { configKey: string }) => {
       href={copyUrl}
       target="_blank"
       rel="noopener noreferrer"
-      iconName="edit"
+      leadingIconName="edit"
       label={<Trans id="chart-controls.copy-and-edit">Copy and edit</Trans>}
     />
   );
@@ -235,7 +251,7 @@ const ShareChartMenuActionItem = ({ configKey }: { configKey: string }) => {
       href={shareUrl}
       target="_blank"
       rel="noopener noreferrer"
-      iconName="share"
+      leadingIconName="share"
       label={<Trans id="button.share">Share</Trans>}
     />
   );
@@ -264,7 +280,7 @@ export const DuplicateChartMenuActionItem = ({
         });
         onSuccess();
       }}
-      iconName="duplicate"
+      leadingIconName="duplicate"
       label={<Trans id="chart-controls.duplicate">Duplicate</Trans>}
     />
   );
@@ -286,7 +302,7 @@ const TableViewChartMenuActionItem = ({
         setIsTable(!isTable);
         onSuccess();
       }}
-      iconName={isTable ? getChartIcon(chartType) : "table"}
+      leadingIconName={isTable ? getChartIcon(chartType) : "table"}
       label={
         isTable ? (
           <Trans id="chart-controls.chart-view">Chart view</Trans>

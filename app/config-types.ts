@@ -112,7 +112,6 @@ export const extractSingleFilters = (filters: Filters): SingleFilters => {
   ) as SingleFilters;
 };
 
-// Meta
 const Title = t.type({
   de: t.string,
   fr: t.string,
@@ -126,7 +125,19 @@ const Description = t.type({
   it: t.string,
   en: t.string,
 });
-const Meta = t.type({ title: Title, description: Description });
+export type Description = t.TypeOf<typeof Description>;
+const Label = t.type({
+  de: t.string,
+  fr: t.string,
+  it: t.string,
+  en: t.string,
+});
+export type Label = t.TypeOf<typeof Label>;
+const Meta = t.type({
+  title: Title,
+  description: Description,
+  label: Label,
+});
 export type Meta = t.TypeOf<typeof Meta>;
 export type MetaKey = keyof Meta;
 
@@ -1108,11 +1119,26 @@ const ReactGridLayoutType = t.type({
   i: t.string,
   resizeHandles: t.union([t.array(ResizeHandle), t.undefined]),
 });
+export type ReactGridLayoutType = t.TypeOf<typeof ReactGridLayoutType>;
 
 export const ReactGridLayoutsType = t.record(
   t.string,
   t.array(ReactGridLayoutType)
 );
+export type ReactGridLayoutsType = t.TypeOf<typeof ReactGridLayoutsType>;
+
+const ReactGridLayoutMetadata = t.type({
+  initialized: t.boolean,
+});
+export type ReactGridLayoutMetadata = t.TypeOf<typeof ReactGridLayoutMetadata>;
+
+const ReactGridLayoutsMetadataType = t.record(
+  t.string,
+  ReactGridLayoutMetadata
+);
+export type ReactGridLayoutsMetadataType = t.TypeOf<
+  typeof ReactGridLayoutsMetadataType
+>;
 
 const Layout = t.intersection([
   t.type({
@@ -1131,6 +1157,7 @@ const Layout = t.intersection([
       type: t.literal("dashboard"),
       layout: t.literal("canvas"),
       layouts: ReactGridLayoutsType,
+      layoutsMetadata: ReactGridLayoutsMetadataType,
     }),
     t.type({
       type: t.literal("singleURLs"),
@@ -1141,6 +1168,10 @@ const Layout = t.intersection([
 export type Layout = t.TypeOf<typeof Layout>;
 export type LayoutType = Layout["type"];
 export type LayoutDashboard = Extract<Layout, { type: "dashboard" }>;
+export type LayoutDashboardFreeCanvas = Extract<
+  Layout,
+  { type: "dashboard"; layout: "canvas" }
+>;
 
 const DashboardTimeRangeFilter = t.type({
   active: t.boolean,
@@ -1150,15 +1181,29 @@ const DashboardTimeRangeFilter = t.type({
     to: t.string,
   }),
 });
-
 export type DashboardTimeRangeFilter = t.TypeOf<
   typeof DashboardTimeRangeFilter
 >;
 
+const DashboardDataFiltersConfig = t.type({
+  componentIris: t.array(t.string),
+  filters: SingleFilters,
+});
+export type DashboardDataFiltersConfig = t.TypeOf<
+  typeof DashboardDataFiltersConfig
+>;
+
 const DashboardFiltersConfig = t.type({
   timeRange: DashboardTimeRangeFilter,
+  dataFilters: DashboardDataFiltersConfig,
 });
 export type DashboardFiltersConfig = t.TypeOf<typeof DashboardFiltersConfig>;
+
+export const areDataFiltersActive = (
+  dashboardFilters: DashboardFiltersConfig | undefined
+) => {
+  return dashboardFilters?.dataFilters.componentIris.length;
+};
 
 const Config = t.intersection([
   t.type(

@@ -9,6 +9,7 @@ import type { ColumnsState } from "@/charts/column/columns-state";
 import { ComboLineSingleState } from "@/charts/combo/combo-line-single-state";
 import type { LinesState } from "@/charts/line/lines-state";
 import type { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
+import { useAxisLabelHeightOffset } from "@/charts/shared/chart-dimensions";
 import { useChartState } from "@/charts/shared/chart-state";
 import {
   maybeTransition,
@@ -51,6 +52,13 @@ export const AxisHeightLinear = () => {
     textColor: labelColor,
   });
 
+  const { height } = useAxisLabelHeightOffset({
+    label: state.yAxisLabel,
+    width: state.bounds.chartWidth,
+    marginLeft: state.bounds.margins.left,
+    marginRight: state.bounds.margins.right,
+  });
+
   return (
     <>
       {state.chartType === "comboLineSingle" ? (
@@ -61,7 +69,11 @@ export const AxisHeightLinear = () => {
           {state.yAxisLabel}
         </text>
       ) : (
-        <foreignObject width={axisTitleWidth} height={axisLabelFontSize * 2}>
+        <foreignObject
+          width={Math.min(axisTitleWidth, state.bounds.chartWidth)}
+          height={height}
+          style={{ display: "flex" }}
+        >
           <OpenMetadataPanelWrapper component={state.yMeasure}>
             <span style={{ fontSize: axisLabelFontSize }}>
               {state.yAxisLabel}

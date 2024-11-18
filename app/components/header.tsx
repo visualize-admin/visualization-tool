@@ -81,8 +81,6 @@ export const Header = ({
 
 const MetadataMenu = ({ contentId }: { contentId?: string }) => {
   return (
-    // Disable no large sx for responsive properties
-    // eslint-disable-next-line visualize-admin/no-large-sx
     <Flex
       sx={{
         flexDirection: ["row", "column"],
@@ -173,6 +171,7 @@ const LogoMobile = () => (
     </g>
   </svg>
 );
+
 const LogoDesktop = () => (
   <svg width={224} height={56}>
     <title id="logo">

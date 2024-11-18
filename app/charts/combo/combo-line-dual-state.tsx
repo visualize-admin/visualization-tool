@@ -26,16 +26,22 @@ import {
   InteractiveXTimeRangeState,
 } from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
-import { getCenteredTooltipPlacement } from "@/charts/shared/interaction/tooltip-box";
+import {
+  getCenteredTooltipPlacement,
+  MOBILE_TOOLTIP_PLACEMENT,
+} from "@/charts/shared/interaction/tooltip-box";
 import { getTickNumber } from "@/charts/shared/ticks";
-import { TICK_FONT_SIZE } from "@/charts/shared/use-chart-theme";
+import { TICK_FONT_SIZE, useChartTheme } from "@/charts/shared/use-chart-theme";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { ComboLineDualConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { getTextWidth } from "@/utils/get-text-width";
+import { useIsMobile } from "@/utils/use-is-mobile";
 
 import { ChartProps } from "../shared/ChartProps";
+
+import { TITLE_VPADDING } from "./combo-line-container";
 
 export type ComboLineDualState = CommonChartState &
   ComboLineDualStateVariables &
@@ -134,6 +140,8 @@ const useComboLineDualState = (
   const yScales = [yScale, yScaleLeft, yScaleRight];
   adjustScales(xScales, yScales, { chartWidth, chartHeight });
 
+  const isMobile = useIsMobile();
+
   // Tooltip
   const getAnnotationInfo = (d: Observation): TooltipInfo => {
     const x = getX(d);
@@ -157,18 +165,23 @@ const useComboLineDualState = (
         };
       })
       .filter(truthy);
-    const yAnchor = mean(values.map((d) => d.yPos));
+    const yAnchor = isMobile
+      ? chartHeight + margins.bottom
+      : mean(values.map((d) => d.yPos));
+    const placement = isMobile
+      ? MOBILE_TOOLTIP_PLACEMENT
+      : getCenteredTooltipPlacement({
+          chartWidth,
+          xAnchor: xScaled,
+          topAnchor: false,
+        });
 
     return {
       datum: { label: "", value: "0", color: schemeCategory10[0] },
       xAnchor: xScaled,
       yAnchor: yAnchor,
       xValue: timeFormatUnit(x, xDimension.timeUnit),
-      placement: getCenteredTooltipPlacement({
-        chartWidth,
-        xAnchor: xScaled,
-        topAnchor: false,
-      }),
+      placement,
       values,
     } as TooltipInfo;
   };
@@ -199,6 +212,22 @@ const ComboLineDualChartProvider = (
   const variables = useComboLineDualStateVariables(chartProps);
   const data = useComboLineDualStateData(chartProps, variables);
   const state = useComboLineDualState(chartProps, variables, data);
+  const { bounds, y } = state;
+
+  const { axisLabelFontSize } = useChartTheme();
+  const axisTitle = y["left"].label;
+  const axisTitleWidth =
+    getTextWidth(axisTitle, { fontSize: axisLabelFontSize }) + TICK_PADDING;
+  const otherAxisTitle = y["right"].label;
+  const otherAxisTitleWidth =
+    getTextWidth(otherAxisTitle, { fontSize: axisLabelFontSize }) +
+    TICK_PADDING;
+  const overLappingTitles =
+    axisTitleWidth + otherAxisTitleWidth > bounds.chartWidth;
+
+  if (overLappingTitles) {
+    bounds.height += axisLabelFontSize + TITLE_VPADDING; // Add space for the legend if titles are overlapping
+  }
 
   return (
     <ChartContext.Provider value={state}>{children}</ChartContext.Provider>

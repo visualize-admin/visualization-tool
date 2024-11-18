@@ -219,9 +219,3 @@ export const dataCubePreview: NonNullable<
     observations: [],
   };
 };
-
-export const allTermsets: NonNullable<
-  QueryResolvers["allTermsets"]
-> = async () => {
-  return [];
-};

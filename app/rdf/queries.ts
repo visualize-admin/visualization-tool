@@ -755,9 +755,11 @@ async function fetchViewObservations({
   }
 
   const fullQuery = observationsView.observationsQuery({ disableDistinct });
-  const query = (
-    preview && limit ? fullQuery.previewQuery({ limit }) : fullQuery.query
-  ).toString();
+  const query = pragmas
+    .concat(
+      preview && limit ? fullQuery.previewQuery({ limit }) : fullQuery.query
+    )
+    .toString();
 
   let observationsRaw: PromiseValue<ObservationRaw[]> | undefined;
 

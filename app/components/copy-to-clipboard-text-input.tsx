@@ -50,7 +50,7 @@ const useCopyToClipboardTextInputStyles = makeStyles((theme: Theme) => ({
     padding: `${theme.spacing(0)} ${theme.spacing(2)}`,
     flexGrow: 1,
     fontSize: "1rem",
-    minWidth: 160,
+    minWidth: 250,
     overflowX: "auto",
     borderTopLeftRadius: "default",
     borderBottomLeftRadius: "default",
@@ -120,7 +120,7 @@ export const CopyToClipboardTextInput = ({ content }: { content: string }) => {
   const classes = useCopyToClipboardTextInputStyles();
 
   return (
-    <Flex sx={{ alignItems: "stretch", height: 48, mt: 1, mb: 2 }}>
+    <Flex sx={{ alignItems: "stretch", height: 48, mt: 1 }}>
       <Input className={classes.input} type="text" value={content} readOnly />
       <Button
         variant="text"

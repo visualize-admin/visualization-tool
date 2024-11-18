@@ -101,7 +101,10 @@ const setup = ({
       calculation: d.calculation,
     }));
     const [useModified, setUseModified] = useState(false);
-    useSyncInteractiveFilters(useModified ? modifiedChartConfig : chartConfig);
+    useSyncInteractiveFilters(
+      useModified ? modifiedChartConfig : chartConfig,
+      undefined
+    );
 
     return (
       <div>

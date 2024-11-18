@@ -20,8 +20,12 @@ import {
   DashboardTimeRangeFilter,
   LineConfig,
 } from "@/configurator";
-import { Observation } from "@/domain/data";
-import { useFormatFullDateAuto } from "@/formatters";
+import {
+  Observation,
+  TemporalDimension,
+  TemporalEntityDimension,
+} from "@/domain/data";
+import { useTimeFormatUnit } from "@/formatters";
 import {
   useChartInteractiveFilters,
   useInteractiveFiltersGetState,
@@ -56,7 +60,6 @@ export const BrushTime = () => {
   const setTimeRange = useChartInteractiveFilters((d) => d.setTimeRange);
   const getInteractiveFiltersState = useInteractiveFiltersGetState();
   const setEnableTransition = useTransitionStore((d) => d.setEnable);
-  const formatDateAuto = useFormatFullDateAuto();
   const [brushedIsEnded, updateBrushEndedStatus] = useState(true);
   const [selectionExtent, setSelectionExtent] = useState(0);
   const updateSelectionExtent = (selection: [number, number] | undefined) => {
@@ -75,8 +78,15 @@ export const BrushTime = () => {
     brushHandleFillColor,
     labelFontSize,
   } = useChartTheme();
-  const { chartType, bounds, xScaleTimeRange } =
+  const { chartType, bounds, xScaleTimeRange, xDimension } =
     useChartState() as ChartWithInteractiveXTimeRangeState;
+  const formatDateUnit = useTimeFormatUnit();
+  const formatDate = (date: Date) => {
+    return formatDateUnit(
+      date,
+      (xDimension as TemporalDimension | TemporalEntityDimension).timeUnit
+    );
+  };
   const { getX } = useChartState() as LinesState | AreasState;
   const { getXAsDate, allData } = useChartState() as ColumnsState;
   const getDate = chartType === "column" ? getXAsDate : getX;
@@ -85,11 +95,14 @@ export const BrushTime = () => {
   // Brush dimensions
   const { width, margins, chartHeight } = bounds;
   const brushLabelsWidth =
-    getTextWidth(formatDateAuto(xScaleTimeRange.domain()[0]), {
+    getTextWidth(formatDate(xScaleTimeRange.domain()[0]), {
       fontSize: labelFontSize,
-    }) *
-      2 +
-    20;
+    }) +
+    getTextWidth(" - ", { fontSize: labelFontSize }) +
+    getTextWidth(formatDate(xScaleTimeRange.domain()[1]), {
+      fontSize: labelFontSize,
+    }) +
+    HANDLE_HEIGHT;
   const brushWidth = width - brushLabelsWidth - margins.right;
   const brushWidthScale = xScaleTimeRange.copy();
 
@@ -370,9 +383,9 @@ export const BrushTime = () => {
             textAnchor="start"
             x={0}
             y={0}
-            dy={labelFontSize / 2}
+            dy={labelFontSize * 0.4}
           >
-            {`${formatDateAuto(closestFrom)} - ${formatDateAuto(closestTo)}`}
+            {`${formatDate(closestFrom)} - ${formatDate(closestTo)}`}
           </text>
         )}
       </g>

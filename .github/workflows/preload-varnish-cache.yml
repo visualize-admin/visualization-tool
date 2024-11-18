@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: 18.x
           cache: "yarn"
@@ -18,4 +18,4 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps chromium
       - name: Run Playwright test to preload Varnish cache
-        run: yarn e2e -- e2e/varnish-cache-preload.spec.ts
+        run: ./node_modules/.bin/ts-node ./e2e/varnish-cache-preload.ts

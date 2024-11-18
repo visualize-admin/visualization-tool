@@ -238,6 +238,7 @@ export const renderWhiskers = (
                   .attr("x", (d) => d.x)
                   .attr("y", (d) => d.y2)
                   .attr("width", (d) => d.width)
+                  .attr("fill", (d) => d.fill ?? "black")
               )
               .call((g) =>
                 g
@@ -245,6 +246,7 @@ export const renderWhiskers = (
                   .attr("x", (d) => d.x + (d.width - ERROR_WHISKER_SIZE) / 2)
                   .attr("y", (d) => d.y2)
                   .attr("height", (d) => Math.max(0, d.y1 - d.y2))
+                  .attr("fill", (d) => d.fill ?? "black")
               )
               .call((g) =>
                 g
@@ -252,6 +254,7 @@ export const renderWhiskers = (
                   .attr("x", (d) => d.x)
                   .attr("y", (d) => d.y1)
                   .attr("width", (d) => d.width)
+                  .attr("fill", (d) => d.fill ?? "black")
               )
               .call((g) =>
                 g

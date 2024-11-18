@@ -11,11 +11,115 @@ You can also check the
 
 # Unreleased
 
+Nothing yet.
+
+# [4.9.5] - 2024-11-18
+
+- Features
+  - Added Newsletter, Bug Report and Feature Request sections to the home page
+  - Moved the datasets section to the top of the sidebar
+  - It's now possible to embed charts and get share links directly from the user
+    profile
+  - It's now possible to enable or disable single chart embed border using UI
+- Fixes
+  - visualize.admin.ch links are now again visible in chart footnotes
+  - Improved chart tooltips on small screens
+  - % mode toggle no longer overlaps with the Y axis title
+
+# [4.9.4] - 2024-11-06
+
+- Features
+  - Removed a flag for shared dashboard filters
+
+# [4.9.3] - 2024-10-29
+
+- Fixes
+  - Last table row is no longer cut
+
+# [4.9.2] - 2024-10-04
+
+- Features
+  - Added most recent charts (all time and last 30 days) to the the Statistics
+    page
+  - Made the Delete chart menu action always the last one across all Menu items
+- Fixes
+  - Fixed inconsistent text style behavior in title and description fields
+  - Fixed positioning of Menu Popover in the login profile row actions on small
+    screens
+
+# [4.9.1] - 2024-10-03
+
+- Performance
+  - Added pragmas to the SPARQL query button
+
+# [4.9.0] - 2024-10-01
+
+- Features
+  - Added a new preview option (xl) in the layouting step
+  - Changes made in the preview mode are now persisted in the free canvas
+    layout, so that the user can tailor the dashboard's layout in every
+    breakpoint size
+  - Preview mode now takes the real size of the breakpoint, making the area
+    horizontally scrollable in case the screen size is smaller than the
+    breakpoint
+  - Responsive embed mode has been introduced, which allows the user to embed
+    the chart that will adapt its height to the content
+  - It's now possible to simultaneously select browse filters from every panel
+    (themes, organizations, concepts)
+- Fixes
+  - Interactive filters in the published mode and now only showing combinations
+    of filters that are actually present in the data, taking configurator
+    filters into account
+  - Compact table view now works again with heatmap cells
+  - Compact table view margins were improved so rows do not overlap
+  - Chart title and dataset tooltips in the user profile now only shows when the
+    title is truncated
+  - Concepts navigation on the browse page now shows the correct number of
+    results
+  - Shared time slider now works correctly in cases of applied to charts from
+    different cubes, where one cube has a temporal dimension and the other does
+    not
+  - Adding a new chart when the free canvas layout has already been initialized
+    is not breaking the application anymore
+  - Axis titles now wrap
+  - Metadata panel is not longer shared between separate charts in a dashboard
+  - Segmented line charts' whiskers have now the same color as the line
+
+# [4.8.0] - 2024-09-11
+
+- Features
+  - It's now possible to label individual chart tabs
+  - Time is now displayed in addition to date in `Last edit` column in user
+    profile
+  - Free canvas layout option now includes a 3-column layout, depending on the
+    screen width
+  - Added a new popover login menu
+  - The page is now scrolled to the top when toggling shared filters in the
+    layouting step
+  - Past layouts are now preserved when switching between layouts in the
+    layouting step
+  - It's now possible to preview a chart in different sizes before publishing
+    (in the layout step)
+  - Clicking on a chart title in the user profile now opens the chart
 - Fixes
   - Map is now correctly centered after copying a chart or switching to layout
     mode
   - Table single filters now correctly display selected state
   - Drag handles are now centered in table configurator
+  - Single chart titles are now correctly displayed in user profile
+  - Renaming of charts through user profile now works correctly
+  - Manually entering dates in date pickers works correctly again
+  - Improved scrolling behavior in the chart tabs
+  - Shared time range filter now correctly positions the marks in the time
+    slider
+  - Single interactive filters are now constrained by config filters
+- Style
+  - Aligned editor and layouting page layouts
+  - Removed dimension selection from modal when merging cubes
+  - Updated styles of confirmation dialog
+  - Various small style improvements
+- Maintenance
+  - Updated cube-hierarchy-query library to 3.0.0
 
 # [4.7.4] - 2024-07-23
 

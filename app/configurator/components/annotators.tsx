@@ -51,7 +51,7 @@ export const Title = (props: Props) => {
       className={clsx(classes.text, className)}
       onClick={onClick}
       sx={{
-        color: text ? text : getEmptyColor(lighterColor),
+        color: text ? "text.primary" : getEmptyColor(lighterColor),
         wordBreak: "break-word",
         fontWeight: "normal",
         ...sx,
@@ -73,7 +73,7 @@ export const Description = (props: Props) => {
       className={clsx(classes.text, className)}
       onClick={onClick}
       sx={{
-        color: text ? text : getEmptyColor(lighterColor),
+        color: text ? "text.primary" : getEmptyColor(lighterColor),
         wordBreak: "break-word",
         ...sx,
       }}
@@ -135,6 +135,16 @@ export const ChartAnnotator = () => {
             </Trans>
           }
           mainLabel={getFieldLabel("description")}
+        />
+        <ChartAnnotatorTabField
+          value="label"
+          icon="layoutTab"
+          emptyValueWarning={
+            <Trans id="controls.annotator.add-tab-label-warning">
+              Please add a tab label
+            </Trans>
+          }
+          mainLabel={getFieldLabel("label")}
         />
       </ControlSectionContent>
     </ControlSection>

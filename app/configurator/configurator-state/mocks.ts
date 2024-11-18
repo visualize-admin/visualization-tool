@@ -70,6 +70,10 @@ export const configStateMock = {
           to: "",
         },
       },
+      dataFilters: {
+        componentIris: [],
+        filters: {},
+      },
     },
   },
   groupedColumnChart: {
@@ -95,6 +99,12 @@ export const configStateMock = {
           fr: "",
           it: "",
         },
+        label: {
+          de: "",
+          en: "",
+          fr: "",
+          it: "",
+        },
       },
     },
     chartConfigs: [
@@ -109,6 +119,12 @@ export const configStateMock = {
             it: "",
           },
           description: {
+            en: "",
+            de: "",
+            fr: "",
+            it: "",
+          },
+          label: {
             en: "",
             de: "",
             fr: "",
@@ -212,6 +228,10 @@ export const configStateMock = {
           from: "",
           to: "",
         },
+      },
+      dataFilters: {
+        componentIris: [],
+        filters: {},
       },
     },
   },
@@ -1108,6 +1128,7 @@ export const configJoinedCubes: Partial<
     meta: {
       title: { en: "", de: "", fr: "", it: "" },
       description: { en: "", de: "", fr: "", it: "" },
+      label: { en: "", de: "", fr: "", it: "" },
     },
     cubes: [
       {
@@ -1363,6 +1384,7 @@ export const configJoinedCubes: Partial<
     meta: {
       title: { en: "", de: "", fr: "", it: "" },
       description: { en: "", de: "", fr: "", it: "" },
+      label: { en: "", de: "", fr: "", it: "" },
     },
     cubes: [
       {

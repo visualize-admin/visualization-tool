@@ -19,7 +19,12 @@ import {
   getChartFieldChangeSideEffect,
   getChartFieldOptionChangeSideEffect,
 } from "@/charts/chart-config-ui-options";
-import { COLS, MIN_H } from "@/components/react-grid";
+import {
+  COLS,
+  FREE_CANVAS_BREAKPOINTS,
+  getInitialTileHeight,
+  getInitialTileWidth,
+} from "@/components/react-grid";
 import {
   ChartConfig,
   ColorMapping,
@@ -186,7 +191,7 @@ export const applyTableDimensionToFilters = (props: {
     filters[originalIri] = {
       type: "single",
       // TODO, possibly in case of join by dimensions, we could get a value that is not part
-      // of of the full range of values
+      // of the full range of values
       value: possibleFilter?.value ?? dimension.values[0].value,
     };
   }
@@ -740,7 +745,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
       return draft;
 
-    case "CHART_CONFIG_FILTER_SET_SINGLE":
+    case "FILTER_SET_SINGLE":
       if (isConfiguring(draft)) {
         const { filters, value } = action.value;
         const chartConfig = getChartConfig(draft);
@@ -765,11 +770,20 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
             );
           }
         }
+      } else if (isLayouting(draft)) {
+        const { filters, value } = action.value;
+        const { dimensionIri } = filters[0];
+        if (draft.dashboardFilters) {
+          draft.dashboardFilters.dataFilters.filters[dimensionIri] = {
+            type: "single",
+            value,
+          };
+        }
       }
 
       return draft;
 
-    case "CHART_CONFIG_FILTER_REMOVE_SINGLE":
+    case "FILTER_REMOVE_SINGLE":
       if (isConfiguring(draft)) {
         const { filters } = action.value;
         const chartConfig = getChartConfig(draft);
@@ -787,6 +801,12 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
             );
             chartConfig.interactiveFiltersConfig = newIFConfig;
           }
+        }
+      } else if (isLayouting(draft)) {
+        const { filters } = action.value;
+        const { dimensionIri } = filters[0];
+        if (draft.dashboardFilters) {
+          delete draft.dashboardFilters.dataFilters.filters[dimensionIri];
         }
       }
 
@@ -869,7 +889,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       return draft;
 
     case "CHART_CONFIG_ADD":
-      if (isConfiguring(draft)) {
+      if (isConfiguring(draft) || isLayouting(draft)) {
         const chartConfig =
           createDraft(action.value.chartConfig) ?? getChartConfig(draft);
         const dataCubesComponents = getCachedComponents({
@@ -895,7 +915,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
           draft.activeChartKey = action.value.chartConfig.key;
         }
 
-        ensureDashboardLayoutAreCorrect(draft);
+        ensureDashboardLayoutIsCorrect(draft);
       }
 
       return draft;
@@ -953,7 +973,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
           iris,
           dimensions,
           measures,
-          meta: chartConfig.meta,
+          meta: current(chartConfig.meta), // Cast proxy to object
         });
         const newChartConfig = deriveFiltersFromFields(initialConfig, {
           dimensions,
@@ -993,7 +1013,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         console.log(current(draft));
       }
 
-      ensureDashboardLayoutAreCorrect(draft);
+      ensureDashboardLayoutIsCorrect(draft);
 
       return draft;
 
@@ -1085,6 +1105,46 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       }
       return draft;
 
+    case "DASHBOARD_DATA_FILTER_ADD":
+      if (isLayouting(draft) && draft.dashboardFilters) {
+        const { dimensionIri } = action.value;
+        const newFilters = {
+          ...draft.dashboardFilters,
+          dataFilters: {
+            ...draft.dashboardFilters.dataFilters,
+            componentIris: [
+              ...draft.dashboardFilters.dataFilters.componentIris,
+              dimensionIri,
+            ],
+          },
+        };
+        draft.dashboardFilters = newFilters;
+      }
+      return draft;
+
+    case "DASHBOARD_DATA_FILTERS_SET":
+      if (isLayouting(draft) && draft.dashboardFilters) {
+        draft.dashboardFilters.dataFilters = action.value;
+      }
+      return draft;
+
+    case "DASHBOARD_DATA_FILTER_REMOVE":
+      if (isLayouting(draft) && draft.dashboardFilters) {
+        const { dimensionIri } = action.value;
+        const newFilters = {
+          ...draft.dashboardFilters,
+          dataFilters: {
+            ...draft.dashboardFilters.dataFilters,
+            componentIris:
+              draft.dashboardFilters.dataFilters.componentIris.filter(
+                (d) => d !== dimensionIri
+              ),
+          },
+        };
+        draft.dashboardFilters = newFilters;
+      }
+      return draft;
+
     default:
       throw unreachableError(action);
   }
@@ -1107,7 +1167,7 @@ const withLogging = <TState, TAction extends { type: unknown }>(
 };
 export const reducer = reducerLogging ? withLogging(reducer_) : reducer_;
 
-export function ensureDashboardLayoutAreCorrect(
+export function ensureDashboardLayoutIsCorrect(
   draft: WritableDraft<ConfiguratorState>
 ) {
   if (
@@ -1115,48 +1175,51 @@ export function ensureDashboardLayoutAreCorrect(
     draft.layout.type === "dashboard" &&
     draft.layout.layout === "canvas"
   ) {
+    const layouts = draft.layout.layouts;
     const chartConfigKeys = draft.chartConfigs.map((c) => c.key).sort();
 
-    const canvasLayouts = draft.layout.layouts["lg"];
-    const layoutConfigKeys = canvasLayouts.map((c) => c.i).sort();
+    const breakpoints = Object.keys(FREE_CANVAS_BREAKPOINTS);
+    const layoutConfigKeys = Array.from(
+      new Set(breakpoints.flatMap((bp) => layouts[bp].map((c) => c.i)))
+    ).sort();
+
+    const newConfigs = draft.chartConfigs.filter(
+      (x) => !layoutConfigKeys.includes(x.key)
+    );
 
     if (!isEqual(chartConfigKeys, layoutConfigKeys)) {
-      // remove charts that are no longer in the chartConfigs
-      draft.layout.layouts["lg"] = canvasLayouts.filter((c) =>
-        chartConfigKeys.includes(c.i)
-      );
+      for (const bp of breakpoints) {
+        const canvasLayouts = draft.layout.layouts[bp].filter((c) =>
+          chartConfigKeys.includes(c.i)
+        );
 
-      // add new charts
-      const newConfigs = draft.chartConfigs.filter(
-        (x) => !layoutConfigKeys.includes(x.key)
-      );
+        let curX =
+          (Math.max(...canvasLayouts.map((c) => c.x + c.w)) ?? 0) % COLS.lg;
+        let curY = Math.max(...canvasLayouts.map((c) => c.y + c.h)) ?? 0;
 
-      let curX =
-        (Math.max(...canvasLayouts.map((c) => c.x + c.w)) ?? 0) % COLS.lg;
-      let curY = Math.max(...canvasLayouts.map((c) => c.y + c.h)) ?? 0;
-
-      for (const chartConfig of newConfigs) {
-        let chartX = curX;
-        let chartY = curY;
-        let chartW = 1;
-        let chartH = MIN_H;
-        canvasLayouts.push({
-          i: chartConfig.key,
-          x: chartX,
-          y: chartY,
-          w: chartW,
-          h: chartH,
-          // Is initialized later
-          resizeHandles: [],
-        });
-        curX += chartW;
-        if (curX > COLS.lg) {
-          curX = 0;
-          curY += chartH;
+        for (const chartConfig of newConfigs) {
+          let chartX = curX;
+          let chartY = curY;
+          let chartW = getInitialTileWidth();
+          let chartH = getInitialTileHeight();
+          canvasLayouts.push({
+            i: chartConfig.key,
+            x: chartX,
+            y: chartY,
+            w: chartW,
+            h: chartH,
+            // Is initialized later
+            resizeHandles: [],
+          });
+          curX += chartW;
+          if (curX > COLS.lg) {
+            curX = 0;
+            curY += chartH;
+          }
         }
+
+        draft.layout.layouts[bp] = canvasLayouts;
       }
     }
-
-    draft.layout.layouts["lg"] = canvasLayouts;
   }
 }

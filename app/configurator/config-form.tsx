@@ -2,8 +2,8 @@ import { SelectChangeEvent, SelectProps } from "@mui/material";
 import get from "lodash/get";
 import React, {
   ChangeEvent,
-  InputHTMLAttributes,
   createContext,
+  InputHTMLAttributes,
   useCallback,
   useContext,
   useMemo,
@@ -20,8 +20,8 @@ import {
   isComboChartConfig,
 } from "@/config-types";
 import {
-  GetConfiguratorStateAction,
   getChartOptionField,
+  GetConfiguratorStateAction,
   getFilterValue,
   isConfiguring,
   isLayouting,
@@ -33,8 +33,8 @@ import {
   Dimension,
   DimensionValue,
   HierarchyValue,
-  Measure,
   isMeasure,
+  Measure,
 } from "@/domain/data";
 import { useLocale } from "@/locales/use-locale";
 import { bfs } from "@/utils/bfs";
@@ -451,7 +451,7 @@ export const useAddOrEditChartType = (
 
 // Used in the configurator filters
 export const useSingleFilterSelect = (
-  filters: GetConfiguratorStateAction<"CHART_CONFIG_FILTER_SET_SINGLE">["value"]["filters"]
+  filters: GetConfiguratorStateAction<"FILTER_SET_SINGLE">["value"]["filters"]
 ) => {
   const [state, dispatch] = useConfiguratorState();
   const onChange = useCallback<
@@ -466,14 +466,14 @@ export const useSingleFilterSelect = (
 
       if (value === FIELD_VALUE_NONE) {
         dispatch({
-          type: "CHART_CONFIG_FILTER_REMOVE_SINGLE",
+          type: "FILTER_REMOVE_SINGLE",
           value: {
             filters,
           },
         });
       } else {
         dispatch({
-          type: "CHART_CONFIG_FILTER_SET_SINGLE",
+          type: "FILTER_SET_SINGLE",
           value: {
             filters,
             value: value === "" ? FIELD_VALUE_NONE : value,
@@ -496,6 +496,12 @@ export const useSingleFilterSelect = (
         value = get(cube, ["filters", dimensionIri, "value"], FIELD_VALUE_NONE);
       }
     }
+  } else if (isLayouting(state)) {
+    value = get(
+      state.dashboardFilters,
+      ["dataFilters", "filters", filters[0].dimensionIri, "value"],
+      FIELD_VALUE_NONE
+    ) as string;
   }
 
   return {
@@ -509,14 +515,14 @@ export const useSingleFilterField = ({
   filters,
   value,
 }: {
-  filters: GetConfiguratorStateAction<"CHART_CONFIG_FILTER_SET_SINGLE">["value"]["filters"];
+  filters: GetConfiguratorStateAction<"FILTER_SET_SINGLE">["value"]["filters"];
   value: string;
 }): FieldProps => {
   const [state, dispatch] = useConfiguratorState();
   const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
     (e) => {
       dispatch({
-        type: "CHART_CONFIG_FILTER_SET_SINGLE",
+        type: "FILTER_SET_SINGLE",
         value: {
           filters: filters,
           value: e.currentTarget.value,

@@ -5,6 +5,8 @@ import clsx from "clsx";
 import { HEADER_HEIGHT } from "@/components/header-constants";
 import { DRAWER_WIDTH } from "@/configurator/components/drawer";
 
+export const LAYOUT_HEADER_HEIGHT = 96;
+
 const useStyles = makeStyles<Theme>((theme) => ({
   panelLayout: {
     position: "fixed",
@@ -43,11 +45,12 @@ const useStyles = makeStyles<Theme>((theme) => ({
   panelHeaderLayout: {
     gridArea: "header",
     background: theme.palette.background.paper,
+    height: LAYOUT_HEADER_HEIGHT,
   },
   LMRPanelHeaderLayout: {
     width: "100%",
     display: "grid",
-    gridTemplateColumns: `${DRAWER_WIDTH}px minmax(22rem, 1fr) auto`,
+    gridTemplateColumns: `${DRAWER_WIDTH}px minmax(22rem, 1fr) minmax(${DRAWER_WIDTH}px, auto)`,
     gridTemplateAreas: `
     "left middle right"
     `,
@@ -63,6 +66,8 @@ const useStyles = makeStyles<Theme>((theme) => ({
   },
   RPanelHeaderWrapper: {
     gridArea: "right",
+    display: "flex",
+    alignItems: "center",
     padding: theme.spacing(5),
   },
   LPanelBodyWrapper: {
@@ -76,9 +81,6 @@ const useStyles = makeStyles<Theme>((theme) => ({
     gridArea: "left",
   },
   MPanelBodyWrapper: {
-    overflowX: "hidden",
-    overflowY: "auto",
-    padding: theme.spacing(5),
     gridArea: "middle",
   },
   RPanelBodyWrapper: {
@@ -159,11 +161,11 @@ export const PanelLayout = (props: PanelLayoutProps) => {
   );
 };
 
-type PanelBodyWrapperProps = BoxProps & {
-  type: "L" | "M" | "R";
-};
-
-export const PanelBodyWrapper = (props: PanelBodyWrapperProps) => {
+export const PanelBodyWrapper = (
+  props: BoxProps & {
+    type: "L" | "M" | "R";
+  }
+) => {
   const { children, type, ...rest } = props;
   const classes = useStyles();
 

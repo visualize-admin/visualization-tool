@@ -26,6 +26,7 @@ console.log("Commit", process.env.NEXT_PUBLIC_COMMIT);
 console.log("GitHub Repo", process.env.NEXT_PUBLIC_GITHUB_REPO);
 
 console.log("Extra Certs", process.env.NODE_EXTRA_CA_CERTS);
+console.log("Prevent search bots", process.env.PREVENT_SEARCH_BOTS);
 
 module.exports = withPreconstruct(
   withBundleAnalyzer(

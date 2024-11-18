@@ -1,26 +1,43 @@
-import { Trans } from "@lingui/macro";
-import { Box, SxProps, Typography } from "@mui/material";
+import { t, Trans } from "@lingui/macro";
+import {
+  Box,
+  Grow,
+  Link,
+  SxProps,
+  Tooltip,
+  Typography,
+  useEventCallback,
+} from "@mui/material";
 import Button, { ButtonProps } from "@mui/material/Button";
+import { PUBLISHED_STATE } from "@prisma/client";
+import { useSession } from "next-auth/react";
+import NextLink from "next/link";
 import { useRouter } from "next/router";
-import React, { useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
+import { useClient } from "urql";
+import { useDebounce } from "use-debounce";
 
 import { SelectDatasetStep } from "@/browser/select-dataset-step";
-import { META } from "@/charts";
+import { extractChartConfigComponentIris } from "@/charts/shared/chart-helpers";
 import { ChartPreview } from "@/components/chart-preview";
-import {
-  PublishChartButton,
-  SaveDraftButton,
-} from "@/components/chart-selection-tabs";
 import { HEADER_HEIGHT } from "@/components/header-constants";
 import { Loading } from "@/components/hint";
 import {
-  MetadataPanelStoreContext,
   createMetadataPanelStore,
+  MetadataPanelStoreContext,
 } from "@/components/metadata-panel-store";
+import { useLocalSnack } from "@/components/use-local-snack";
 import {
   ConfiguratorState,
+  ConfiguratorStateLayouting,
+  enableLayouting,
   getChartConfig,
+  hasChartConfigs,
+  initChartStateFromChartEdit,
   isConfiguring,
+  isLayouting,
+  MetaKey,
+  saveChartLocally,
   useConfiguratorState,
 } from "@/configurator";
 import {
@@ -36,13 +53,23 @@ import {
 } from "@/configurator/components/drawer";
 import { IconButton } from "@/configurator/components/icon-button";
 import {
+  LAYOUT_HEADER_HEIGHT,
   PanelBodyWrapper,
   PanelHeaderLayout,
   PanelHeaderWrapper,
   PanelLayout,
 } from "@/configurator/components/layout";
 import { LayoutConfigurator } from "@/configurator/components/layout-configurator";
+import {
+  PreviewBreakpointToggleMenu,
+  PreviewContainer,
+  usePreviewBreakpoint,
+} from "@/configurator/components/preview-breakpoint";
+import { ShowDrawerButton } from "@/configurator/components/show-drawer-button";
 import { ChartConfiguratorTable } from "@/configurator/table/table-chart-configurator";
+import { useUserConfig } from "@/domain/user-configs";
+import { useDataCubesComponentsQuery } from "@/graphql/hooks";
+import { Icon } from "@/icons";
 import SvgIcChevronLeft from "@/icons/components/IcChevronLeft";
 import { useLocale } from "@/locales/use-locale";
 import { useDataSourceStore } from "@/stores/data-source";
@@ -50,19 +77,22 @@ import {
   InteractiveFiltersChartProvider,
   InteractiveFiltersProvider,
 } from "@/stores/interactive-filters";
+import { createConfig, updateConfig } from "@/utils/chart-config/api";
 import { getRouterChartId } from "@/utils/router/helpers";
+import { replaceLinks } from "@/utils/ui-strings";
 import useEvent from "@/utils/use-event";
+import { useMutate } from "@/utils/use-fetch-data";
 
 const BackContainer = (props: React.PropsWithChildren<{ sx?: SxProps }>) => {
   const { children, sx } = props;
-
   return (
     <Box
       sx={{
-        px: 2,
-        minHeight: 78,
         display: "flex",
         alignItems: "center",
+        height: LAYOUT_HEADER_HEIGHT,
+        flexGrow: 1,
+        px: 2,
         ...sx,
       }}
     >
@@ -94,8 +124,8 @@ export const BackButton = ({
 
 export const isAnnotationField = (
   field: string | undefined
-): field is "title" | "description" => {
-  return field === "title" || field === "description";
+): field is MetaKey => {
+  return field === "title" || field === "description" || field === "label";
 };
 
 const useAssureCorrectDataSource = (stateGuard: ConfiguratorState["state"]) => {
@@ -141,6 +171,229 @@ const BackToMainButton = (props: BackToMainButtonProps) => {
   );
 };
 
+const NextStepButton = (props: React.PropsWithChildren<{}>) => {
+  const { children } = props;
+  const locale = useLocale();
+  const [state, dispatch] = useConfiguratorState(hasChartConfigs);
+  const chartConfig = getChartConfig(state);
+  const componentIris = extractChartConfigComponentIris({ chartConfig });
+  const [{ data: components }] = useDataCubesComponentsQuery({
+    variables: {
+      sourceType: state.dataSource.type,
+      sourceUrl: state.dataSource.url,
+      locale,
+      cubeFilters: chartConfig.cubes.map((cube) => ({
+        iri: cube.iri,
+        componentIris,
+        filters: cube.filters,
+        joinBy: cube.joinBy,
+        loadValues: true,
+      })),
+    },
+  });
+
+  const handleClick = useEvent(() => {
+    if (components?.dataCubesComponents) {
+      dispatch({
+        type: "STEP_NEXT",
+        dataCubesComponents: components.dataCubesComponents,
+      });
+    }
+  });
+
+  return (
+    <Button
+      color="primary"
+      variant="contained"
+      onClick={handleClick}
+      sx={{ minWidth: "fit-content" }}
+    >
+      {children}
+    </Button>
+  );
+};
+
+export const SaveDraftButton = ({
+  chartId,
+}: {
+  chartId: string | undefined;
+}) => {
+  const { data: config, invalidate: invalidateConfig } = useUserConfig(chartId);
+  const session = useSession();
+  const client = useClient();
+
+  const [state, dispatch] = useConfiguratorState();
+
+  const [snack, enqueueSnackbar, dismissSnack] = useLocalSnack();
+  const [debouncedSnack] = useDebounce(snack, 500);
+  const { asPath, replace } = useRouter();
+
+  const createConfigMut = useMutate(createConfig);
+  const updatePublishedStateMut = useMutate(updateConfig);
+  const loggedInId = session.data?.user.id;
+
+  const handleClick = useEventCallback(async () => {
+    try {
+      if (config?.user_id && loggedInId) {
+        const updated = await updatePublishedStateMut.mutate({
+          data: state,
+          published_state: PUBLISHED_STATE.DRAFT,
+          key: config.key,
+        });
+
+        if (updated) {
+          if (asPath !== `/create/${updated.key}`) {
+            replace(`/create/new?edit=${updated.key}`);
+          }
+        } else {
+          throw new Error("Could not update draft");
+        }
+      } else if (state) {
+        const saved = await createConfigMut.mutate({
+          data: state,
+          user_id: loggedInId,
+          published_state: PUBLISHED_STATE.DRAFT,
+        });
+        if (saved) {
+          const config = await initChartStateFromChartEdit(
+            client,
+            saved.key,
+            state.state
+          );
+
+          if (!config) {
+            return;
+          }
+
+          dispatch({ type: "INITIALIZED", value: config });
+          saveChartLocally(saved.key, config);
+          replace(`/create/${saved.key}`, undefined, {
+            shallow: true,
+          });
+        } else {
+          throw new Error("Could not save draft");
+        }
+      }
+
+      enqueueSnackbar({
+        message: (
+          <>
+            {replaceLinks(
+              t({
+                id: "button.save-draft.saved",
+                message: "Draft saved in [My visualizations](/profile)",
+              }),
+              (label, href) => {
+                return (
+                  <div>
+                    <NextLink href={href} passHref legacyBehavior>
+                      <Link sx={{ color: "primary.main" }}>{label}</Link>
+                    </NextLink>
+                  </div>
+                );
+              }
+            )}
+          </>
+        ),
+        variant: "success",
+      });
+
+      invalidateConfig();
+    } catch (e) {
+      console.log(
+        `Error while saving draft: ${e instanceof Error ? e.message : e}`
+      );
+      enqueueSnackbar({
+        message: t({
+          id: "button.save-draft.error",
+          message: "Could not save draft",
+        }),
+        variant: "error",
+      });
+    }
+
+    setTimeout(() => {
+      updatePublishedStateMut.reset();
+      createConfigMut.reset();
+    }, 2000);
+  });
+
+  const hasUpdated = !!(updatePublishedStateMut.data || createConfigMut.data);
+  const [debouncedHasUpdated] = useDebounce(hasUpdated, 300);
+
+  if (!loggedInId) {
+    return null;
+  }
+
+  return (
+    <Tooltip
+      arrow
+      title={debouncedSnack?.message ?? ""}
+      open={!!snack}
+      disableFocusListener
+      disableHoverListener
+      disableTouchListener
+      onClose={() => dismissSnack()}
+    >
+      <Button
+        endIcon={
+          hasUpdated || debouncedHasUpdated ? (
+            <Grow in={hasUpdated}>
+              <span>
+                <Icon name="check" />
+              </span>
+            </Grow>
+          ) : null
+        }
+        variant="outlined"
+        onClick={handleClick}
+      >
+        <Trans id="button.save-draft">Save draft</Trans>
+      </Button>
+    </Tooltip>
+  );
+};
+
+const LayoutChartButton = () => {
+  return (
+    <NextStepButton>
+      <Trans id="button.layout">Proceed to layout options</Trans>
+    </NextStepButton>
+  );
+};
+
+const PublishChartButton = ({ chartId }: { chartId: string | undefined }) => {
+  const session = useSession();
+  const { data: config } = useUserConfig(chartId);
+  const editingPublishedChart =
+    session.data?.user.id &&
+    config?.user_id === session.data.user.id &&
+    config.published_state === "PUBLISHED";
+
+  return (
+    <NextStepButton>
+      {editingPublishedChart ? (
+        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+          <Tooltip
+            title={t({
+              id: "button.update.warning",
+              message:
+                "Keep in mind that updating this visualization will affect all the places where it might be already embedded!",
+            })}
+          >
+            <div>
+              <Icon name="hintWarning" />
+            </div>
+          </Tooltip>
+          <Trans id="button.update">Update this visualization</Trans>
+        </Box>
+      ) : (
+        <Trans id="button.publish">Publish</Trans>
+      )}
+    </NextStepButton>
+  );
+};
+
 const ConfigureChartStep = () => {
   const [state, dispatch] = useConfiguratorState();
   const configuring = isConfiguring(state);
@@ -172,23 +425,46 @@ const ConfigureChartStep = () => {
     return null;
   }
 
+  const chartId = getRouterChartId(router.asPath);
+
   return (
     <InteractiveFiltersChartProvider chartConfigKey={chartConfig.key}>
-      <PanelLayout type="LM">
+      <PanelLayout type="LM" sx={{ background: (t) => t.palette.muted.main }}>
+        <PanelHeaderLayout type="LMR">
+          <PanelHeaderWrapper type="L">
+            <BackContainer>
+              <BackButton onClick={handlePrevious}>
+                <Trans id="controls.nav.back-to-preview">Back to preview</Trans>
+              </BackButton>
+            </BackContainer>
+          </PanelHeaderWrapper>
+          <PanelHeaderWrapper
+            type="R"
+            sx={{
+              display: "flex",
+              flexShrink: 0,
+              alignItems: "start",
+              justifyContent: "flex-end",
+              gap: "0.5rem",
+            }}
+          >
+            <SaveDraftButton chartId={chartId} />
+            {enableLayouting(state) ? (
+              <LayoutChartButton />
+            ) : (
+              <PublishChartButton chartId={chartId} />
+            )}
+          </PanelHeaderWrapper>
+        </PanelHeaderLayout>
         <PanelBodyWrapper
           type="L"
-          sx={{
+          style={{
             flexGrow: 1,
             display: "flex",
             height: "100%",
             flexDirection: "column",
           }}
         >
-          <BackContainer>
-            <BackButton onClick={handlePrevious}>
-              <Trans id="controls.nav.back-to-preview">Back to preview</Trans>
-            </BackButton>
-          </BackContainer>
           {chartConfig.chartType === "table" ? (
             <ChartConfiguratorTable state={state} />
           ) : (
@@ -200,7 +476,10 @@ const ConfigureChartStep = () => {
             />
           )}
         </PanelBodyWrapper>
-        <PanelBodyWrapper type="M">
+        <PanelBodyWrapper
+          type="M"
+          sx={{ overflowX: "hidden", overflowY: "auto", p: 6 }}
+        >
           <ChartPreview dataSource={state.dataSource} />
         </PanelBodyWrapper>
         <ConfiguratorDrawer
@@ -225,7 +504,7 @@ const ConfigureChartStep = () => {
 
 const LayoutingStep = () => {
   const locale = useLocale();
-  const [state, dispatch] = useConfiguratorState();
+  const [state, dispatch] = useConfiguratorState(isLayouting);
   const handleClosePanel = useEvent(() => {
     dispatch({ type: "LAYOUT_ACTIVE_FIELD_CHANGED", value: undefined });
   });
@@ -239,6 +518,42 @@ const LayoutingStep = () => {
   useAssureCorrectDataSource("LAYOUTING");
   const { asPath } = useRouter();
 
+  const layoutRef = useRef(state.layout);
+  useEffect(() => {
+    if (layoutRef.current?.type === state.layout.type) {
+      layoutRef.current = state.layout;
+    }
+  }, [state.layout]);
+
+  const { previewBreakpoint, setPreviewBreakpoint } = usePreviewBreakpoint();
+
+  const handleLayoutChange = useCallback(
+    (
+      newLayoutType: ConfiguratorStateLayouting["layout"]["type"],
+      newLayoutCallback: () => void
+    ) => {
+      if (newLayoutType === state.layout.type) {
+        return;
+      }
+
+      if (layoutRef.current?.type === newLayoutType) {
+        dispatch({
+          type: "LAYOUT_CHANGED",
+          value: {
+            ...layoutRef.current,
+            meta: state.layout.meta,
+            activeField: undefined,
+          },
+        });
+      } else {
+        newLayoutCallback();
+      }
+
+      setPreviewBreakpoint(null);
+    },
+    [dispatch, setPreviewBreakpoint, state.layout.meta, state.layout.type]
+  );
+
   if (state.state !== "LAYOUTING") {
     return null;
   }
@@ -246,10 +561,11 @@ const LayoutingStep = () => {
   const isSingleURLs = state.layout.type === "singleURLs";
   const chartId = getRouterChartId(asPath);
 
+  const centerLayout = !!(isSingleURLs || previewBreakpoint);
+
   return (
     <PanelLayout
-      // SingleURLs layout doesn't have an options panel
-      type={isSingleURLs ? "M" : "LM"}
+      type={centerLayout ? "M" : "LM"}
       sx={{ background: (t) => t.palette.muted.main }}
     >
       <PanelHeaderLayout type="LMR">
@@ -275,62 +591,54 @@ const LayoutingStep = () => {
           <IconButton
             label="layoutTab"
             checked={state.layout.type === "tab"}
-            onClick={() => {
-              if (state.layout.type === "tab") {
-                return;
-              }
-
-              dispatch({
-                type: "LAYOUT_CHANGED",
-                value: {
-                  type: "tab",
-                  meta: state.layout.meta,
-                  activeField: undefined,
-                },
-              });
-            }}
+            onClick={() =>
+              handleLayoutChange("tab", () => {
+                dispatch({
+                  type: "LAYOUT_CHANGED",
+                  value: {
+                    type: "tab",
+                    meta: state.layout.meta,
+                    activeField: undefined,
+                  },
+                });
+              })
+            }
           />
           <IconButton
             label="layoutDashboard"
             checked={state.layout.type === "dashboard"}
-            onClick={() => {
-              if (state.layout.type === "dashboard") {
-                return;
-              }
-
-              dispatch({
-                type: "LAYOUT_CHANGED",
-                value: {
-                  type: "dashboard",
-                  meta: state.layout.meta,
-                  layout: "tall",
-                  activeField: undefined,
-                },
-              });
-            }}
+            onClick={() =>
+              handleLayoutChange("dashboard", () => {
+                dispatch({
+                  type: "LAYOUT_CHANGED",
+                  value: {
+                    type: "dashboard",
+                    meta: state.layout.meta,
+                    layout: "tall",
+                    activeField: undefined,
+                  },
+                });
+              })
+            }
           />
           <IconButton
             label="layoutSingleURLs"
             checked={state.layout.type === "singleURLs"}
-            onClick={() => {
-              if (state.layout.type === "singleURLs") {
-                return;
-              }
-
-              dispatch({
-                type: "LAYOUT_CHANGED",
-                value: {
-                  type: "singleURLs",
-                  publishableChartKeys: state.chartConfigs.map(
-                    (chartConfig) => chartConfig.key
-                  ),
-                  // Clear the meta data, as it's not used in singleURLs layout,
-                  // but makes the types more consistent
-                  meta: META,
-                  activeField: undefined,
-                },
-              });
-            }}
+            onClick={() =>
+              handleLayoutChange("singleURLs", () => {
+                dispatch({
+                  type: "LAYOUT_CHANGED",
+                  value: {
+                    type: "singleURLs",
+                    publishableChartKeys: state.chartConfigs.map(
+                      (chartConfig) => chartConfig.key
+                    ),
+                    meta: state.layout.meta,
+                    activeField: undefined,
+                  },
+                });
+              })
+            }
           />
         </PanelHeaderWrapper>
         <PanelHeaderWrapper
@@ -346,22 +654,45 @@ const LayoutingStep = () => {
           <PublishChartButton chartId={chartId} />
         </PanelHeaderWrapper>
       </PanelHeaderLayout>
-      {!isSingleURLs && (
-        <PanelBodyWrapper type="L">
-          <LayoutConfigurator />
-        </PanelBodyWrapper>
-      )}
-      <PanelBodyWrapper type="M">
-        <Box
-          sx={
-            isSingleURLs
-              ? {
-                  width: "100%",
-                  maxWidth: { xs: "100%", lg: 1280 },
-                  mx: "auto",
-                }
-              : {}
-          }
+      <PanelBodyWrapper
+        type="L"
+        sx={{
+          zIndex: 2,
+          position: "absolute",
+          left: centerLayout ? -DRAWER_WIDTH : 0,
+          top: centerLayout ? LAYOUT_HEADER_HEIGHT : 0,
+          width: DRAWER_WIDTH,
+          height: "100%",
+          transition: "left 0.3s",
+        }}
+      >
+        <LayoutConfigurator />
+      </PanelBodyWrapper>
+      <PanelBodyWrapper
+        type="M"
+        style={{ overflowY: "hidden", overflowX: "auto" }}
+      >
+        <Box sx={{ display: "flex", px: 6, py: 4 }}>
+          {!isSingleURLs && previewBreakpoint && (
+            <ShowDrawerButton onClick={() => setPreviewBreakpoint(null)} />
+          )}
+          <PreviewBreakpointToggleMenu
+            value={previewBreakpoint}
+            onChange={(value) => {
+              dispatch({
+                type: "LAYOUT_CHANGED",
+                value: {
+                  ...state.layout,
+                  activeField: undefined,
+                },
+              });
+              setPreviewBreakpoint(previewBreakpoint === value ? null : value);
+            }}
+          />
+        </Box>
+        <PreviewContainer
+          breakpoint={previewBreakpoint}
+          singleColumn={isSingleURLs}
         >
           <Box
             sx={{
@@ -410,8 +741,9 @@ const LayoutingStep = () => {
               </>
             )}
           </Box>
-          <ChartPreview dataSource={state.dataSource} />
-        </Box>
+          {/* We need to reset the key to prevent overwriting of the layout */}
+          <ChartPreview key={previewBreakpoint} dataSource={state.dataSource} />
+        </PreviewContainer>
       </PanelBodyWrapper>
       <ConfiguratorDrawer
         anchor="left"
@@ -439,7 +771,7 @@ const PublishStep = () => {
 
   return (
     <PanelLayout type="LM">
-      <PanelBodyWrapper type="M">
+      <PanelBodyWrapper type="M" sx={{ p: 6 }}>
         <ChartPreview dataSource={state.dataSource} />
       </PanelBodyWrapper>
     </PanelLayout>

@@ -45,7 +45,12 @@ import {
   useMetadataPanelStoreActions,
 } from "@/components/metadata-panel-store";
 import { MotionBox } from "@/components/presence";
-import { BackButton, ChartConfig, DataSource } from "@/configurator";
+import {
+  BackButton,
+  ChartConfig,
+  DashboardFiltersConfig,
+  DataSource,
+} from "@/configurator";
 import { DRAWER_WIDTH } from "@/configurator/components/drawer";
 import {
   getComponentDescription,
@@ -170,7 +175,7 @@ const useOtherStyles = makeStyles<Theme>((theme) => {
         borderBottom: "none",
       },
     },
-    openDimension: {
+    openComponent: {
       minHeight: 0,
       verticalAlign: "baseline",
       padding: 0,
@@ -206,18 +211,24 @@ export const OpenMetadataPanelWrapper = ({
   component,
 }: {
   children: ReactNode;
-  component: Component;
+  component?: Component;
 }) => {
   const classes = useOtherStyles();
-  const { openDimension } = useMetadataPanelStoreActions();
+  const { openComponent, setOpen, setActiveSection } =
+    useMetadataPanelStoreActions();
   const handleClick = useEvent((e: React.MouseEvent) => {
     e.stopPropagation();
-    openDimension(component);
+    if (component) {
+      openComponent(component);
+    } else {
+      setActiveSection("general");
+      setOpen(true);
+    }
   });
 
   return (
     <Button
-      className={classes.openDimension}
+      className={classes.openComponent}
       variant="text"
       size="small"
       onClick={handleClick}
@@ -229,6 +240,7 @@ export const OpenMetadataPanelWrapper = ({
 
 export const MetadataPanel = ({
   chartConfig,
+  dashboardFilters,
   dataSource,
   components,
   container,
@@ -237,6 +249,7 @@ export const MetadataPanel = ({
   renderToggle = true,
 }: {
   chartConfig: ChartConfig;
+  dashboardFilters: DashboardFiltersConfig | undefined;
   dataSource: DataSource;
   components: Component[];
   container?: HTMLDivElement | null;
@@ -327,7 +340,11 @@ export const MetadataPanel = ({
           <AnimatePresence>
             {activeSection === "general" ? (
               <MotionBox key="cubes-panel" {...animationProps}>
-                <CubesPanel dataSource={dataSource} chartConfig={chartConfig} />
+                <CubesPanel
+                  dataSource={dataSource}
+                  chartConfig={chartConfig}
+                  dashboardFilters={dashboardFilters}
+                />
               </MotionBox>
             ) : activeSection === "data" ? (
               <MotionBox key="data-panel" {...animationProps}>
@@ -380,9 +397,11 @@ const Header = ({ onClose }: { onClose: () => void }) => {
 const CubesPanel = ({
   dataSource,
   chartConfig,
+  dashboardFilters,
 }: {
   dataSource: DataSource;
   chartConfig: ChartConfig;
+  dashboardFilters: DashboardFiltersConfig | undefined;
 }) => {
   const classes = useOtherStyles();
   const locale = useLocale();
@@ -404,6 +423,7 @@ const CubesPanel = ({
   const cubesMetadata = dataCubesMetadataData?.dataCubesMetadata;
   const queryFilters = useQueryFilters({
     chartConfig,
+    dashboardFilters,
     componentIris: extractChartConfigComponentIris({ chartConfig }),
   });
   const [
@@ -459,9 +479,9 @@ const DataPanel = ({
   const locale = useLocale();
   const classes = useOtherStyles();
   const selectedDimension = useMetadataPanelStore(
-    (state) => state.selectedDimension
+    (state) => state.selectedComponent
   );
-  const { setSelectedDimension, clearSelectedDimension } =
+  const { setSelectedComponent, clearSelectedComponent } =
     useMetadataPanelStoreActions();
   const [inputValue, setInputValue] = useState("");
   const { options, groupedComponents } = useMemo(() => {
@@ -538,7 +558,7 @@ const DataPanel = ({
         {selectedDimension ? (
           <MotionBox key="dimension-selected" {...animationProps}>
             <BackButton
-              onClick={() => clearSelectedDimension()}
+              onClick={() => clearSelectedComponent()}
               sx={{ color: "primary.main" }}
             >
               <Trans id="button.back">Back</Trans>
@@ -560,7 +580,7 @@ const DataPanel = ({
             <Autocomplete
               className={classes.search}
               disablePortal
-              onChange={(_, v) => v && setSelectedDimension(v.value)}
+              onChange={(_, v) => v && setSelectedComponent(v.value)}
               inputValue={inputValue}
               onInputChange={(_, v) => setInputValue(v.toLowerCase())}
               options={sortedOptions}
@@ -672,7 +692,7 @@ const ComponentTabPanel = ({
   cubeIri?: string;
 }) => {
   const classes = useOtherStyles();
-  const { setSelectedDimension } = useMetadataPanelStoreActions();
+  const { setSelectedComponent } = useMetadataPanelStoreActions();
   const label = useMemo(
     () => getComponentLabel(component, { cubeIri }),
     [cubeIri, component]
@@ -731,9 +751,9 @@ const ComponentTabPanel = ({
 
   const handleClick = useCallback(() => {
     if (!expanded) {
-      setSelectedDimension(component);
+      setSelectedComponent(component);
     }
-  }, [expanded, component, setSelectedDimension]);
+  }, [expanded, component, setSelectedComponent]);
 
   return (
     <div>

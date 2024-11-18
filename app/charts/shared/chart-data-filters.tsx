@@ -2,6 +2,8 @@ import { t, Trans } from "@lingui/macro";
 import { Box, Button, SelectChangeEvent, Typography } from "@mui/material";
 import isEmpty from "lodash/isEmpty";
 import isEqual from "lodash/isEqual";
+import mapValues from "lodash/mapValues";
+import pickBy from "lodash/pickBy";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useClient } from "urql";
 
@@ -17,7 +19,9 @@ import { Loading } from "@/components/hint";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import SelectTree from "@/components/select-tree";
 import {
+  areDataFiltersActive,
   ChartConfig,
+  DashboardFiltersConfig,
   DataSource,
   Filters,
   getFiltersByMappingStatus,
@@ -66,9 +70,11 @@ type PreparedFilter = {
 export const useChartDataFiltersState = ({
   dataSource,
   chartConfig,
+  dashboardFilters,
 }: {
   dataSource: DataSource;
   chartConfig: ChartConfig;
+  dashboardFilters: DashboardFiltersConfig | undefined;
 }) => {
   const componentIris =
     chartConfig.interactiveFiltersConfig?.dataFilters.componentIris;
@@ -81,6 +87,7 @@ export const useChartDataFiltersState = ({
   const { loading } = useLoadingState();
   const queryFilters = useQueryFilters({
     chartConfig,
+    dashboardFilters,
     allowNoneValues: true,
     componentIris,
   });
@@ -111,7 +118,9 @@ export const useChartDataFiltersState = ({
     dataSource,
     chartConfig,
     preparedFilters,
+    dashboardFilters,
   });
+
   return {
     open,
     setOpen,
@@ -254,9 +263,9 @@ const DataFilter = ({
   const updateDataFilter = useChartInteractiveFilters(
     (d) => d.updateDataFilter
   );
-  const otherKeys = Object.keys(interactiveFilters).filter(
-    (key) => key !== dimensionIri
-  );
+  const queryFilters = useMemo(() => {
+    return getInteractiveQueryFilters({ filters, interactiveFilters });
+  }, [filters, interactiveFilters]);
   const [{ data, fetching }] = useDataCubesComponentsQuery({
     variables: {
       sourceType: dataSource.type,
@@ -266,7 +275,7 @@ const DataFilter = ({
         {
           iri: cubeIri,
           componentIris: [dimensionIri],
-          filters: otherKeys.length > 0 ? interactiveFilters : undefined,
+          filters: queryFilters,
           loadValues: true,
         },
       ],
@@ -275,7 +284,7 @@ const DataFilter = ({
       // If this is not present, we'll have outdated dimension
       // values after we change the filter order.
       // @ts-ignore
-      filterKeys: otherKeys.join(", "),
+      filterKeys: Object.keys(queryFilters).join(", "),
     },
     keepPreviousData: true,
   });
@@ -363,6 +372,26 @@ const DataFilter = ({
   );
 };
 
+// We need to include filters that are not interactive filters, to only
+// show values that make sense in the context of the current filters.
+export const getInteractiveQueryFilters = ({
+  filters,
+  interactiveFilters,
+}: {
+  filters: Filters;
+  interactiveFilters: Filters;
+}) => {
+  const nonInteractiveFilters = pickBy(
+    filters,
+    (_, k) => !(k in interactiveFilters)
+  );
+  let i = 0;
+  return mapValues(
+    { ...nonInteractiveFilters, ...interactiveFilters },
+    (v) => ({ ...v, position: i++ })
+  );
+};
+
 export type DataFilterGenericDimensionProps = {
   dimension: Dimension;
   value: string;
@@ -371,7 +400,9 @@ export type DataFilterGenericDimensionProps = {
   disabled: boolean;
 };
 
-const DataFilterGenericDimension = (props: DataFilterGenericDimensionProps) => {
+export const DataFilterGenericDimension = (
+  props: DataFilterGenericDimensionProps
+) => {
   const { dimension, value, onChange, options: propOptions, disabled } = props;
   const { label, isKeyDimension } = dimension;
   const noneLabel = t({
@@ -420,7 +451,7 @@ type DataFilterHierarchyDimensionProps = {
   disabled: boolean;
 };
 
-const DataFilterHierarchyDimension = (
+export const DataFilterHierarchyDimension = (
   props: DataFilterHierarchyDimensionProps
 ) => {
   const { dimension, value, onChange, hierarchy, disabled } = props;
@@ -475,7 +506,7 @@ const DataFilterHierarchyDimension = (
   );
 };
 
-const DataFilterTemporalDimension = ({
+export const DataFilterTemporalDimension = ({
   dimension,
   value,
   onChange,
@@ -520,6 +551,7 @@ const DataFilterTemporalDimension = ({
       minDate={minDate}
       maxDate={maxDate}
       disabled={disabled}
+      parseDate={parseDate}
     />
   ) : (
     <DataFilterGenericDimension
@@ -532,20 +564,19 @@ const DataFilterTemporalDimension = ({
   );
 };
 
-type EnsurePossibleInteractiveFiltersProps = {
-  dataSource: DataSource;
-  chartConfig: ChartConfig;
-  preparedFilters?: PreparedFilter[];
-};
-
 /**
  * This runs every time the state changes and it ensures that the selected interactive
  * filters return at least 1 observation. Otherwise they are reloaded.
+ *
+ * This behavior is disabled when the dashboard filters are active.
  */
-const useEnsurePossibleInteractiveFilters = (
-  props: EnsurePossibleInteractiveFiltersProps
-) => {
-  const { dataSource, chartConfig, preparedFilters } = props;
+const useEnsurePossibleInteractiveFilters = (props: {
+  dataSource: DataSource;
+  chartConfig: ChartConfig;
+  dashboardFilters: DashboardFiltersConfig | undefined;
+  preparedFilters?: PreparedFilter[];
+}) => {
+  const { dataSource, chartConfig, dashboardFilters, preparedFilters } = props;
   const [, dispatch] = useConfiguratorState();
   const loadingState = useLoadingState();
   const [error, setError] = useState<Error>();
@@ -560,9 +591,11 @@ const useEnsurePossibleInteractiveFilters = (
     }, {});
   }, [preparedFilters]);
 
+  const dataFiltersActive = areDataFiltersActive(dashboardFilters);
+
   useEffect(() => {
     const run = async () => {
-      if (!filtersByCubeIri) {
+      if (!filtersByCubeIri || dataFiltersActive) {
         return;
       }
 
@@ -660,6 +693,7 @@ const useEnsurePossibleInteractiveFilters = (
     loadingState,
     filtersByCubeIri,
     getInteractiveFiltersState,
+    dataFiltersActive,
   ]);
 
   return { error };

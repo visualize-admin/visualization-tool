@@ -10,6 +10,7 @@ import { rgbArrayToHex } from "@/charts/shared/colors";
 import { getLegendGroups } from "@/charts/shared/legend-color-helpers";
 import Flex from "@/components/flex";
 import { Checkbox, CheckboxProps } from "@/components/form";
+import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import {
   ChartConfig,
@@ -30,7 +31,6 @@ import {
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import { useChartInteractiveFilters } from "@/stores/interactive-filters";
 import { interlace } from "@/utils/interlace";
-import { MaybeTooltip } from "@/utils/maybe-tooltip";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
 

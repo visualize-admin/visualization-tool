@@ -7,11 +7,13 @@ import { useMemo } from "react";
 import { extractChartConfigComponentIris } from "@/charts/shared/chart-helpers";
 import { LegendItem } from "@/charts/shared/legend-color";
 import { ChartFiltersList } from "@/components/chart-filters-list";
+import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import {
   ChartConfig,
   ComboLineColumnConfig,
   ComboLineDualConfig,
   ComboLineSingleConfig,
+  DashboardFiltersConfig,
   DataSource,
 } from "@/configurator";
 import { Component, Measure } from "@/domain/data";
@@ -43,11 +45,13 @@ export const useFootnotesStyles = makeStyles<Theme, { useMarginTop: boolean }>(
 export const ChartFootnotes = ({
   dataSource,
   chartConfig,
+  dashboardFilters,
   components,
   showVisualizeLink = false,
 }: {
   dataSource: DataSource;
   chartConfig: ChartConfig;
+  dashboardFilters: DashboardFiltersConfig | undefined;
   components: Component[];
   showVisualizeLink?: boolean;
 }) => {
@@ -89,13 +93,22 @@ export const ChartFootnotes = ({
           <ChartFiltersList
             dataSource={dataSource}
             chartConfig={chartConfig}
+            dashboardFilters={dashboardFilters}
             components={components}
             cubeIri={metadata.iri}
           />
+          <Typography component="span" variant="caption" color="grey.600">
+            <OpenMetadataPanelWrapper>
+              <Trans id="dataset.footnotes.dataset">Dataset</Trans>
+            </OpenMetadataPanelWrapper>
+            : {metadata.title}
+          </Typography>
           {metadata.dateModified ? (
             <Typography component="span" variant="caption" color="grey.600">
-              <Trans id="dataset.footnotes.updated">Latest data update</Trans>
-              <Trans id="typography.colon">: </Trans>
+              {", "}
+              <Trans id="dataset.footnotes.updated">
+                Latest data update
+              </Trans>:{" "}
               {formatLocale.format("%d.%m.%Y %H:%M")(
                 new Date(metadata.dateModified)
               )}
@@ -279,7 +292,7 @@ const ChartFootnotesComboLineSingle = ({
   ) : null;
 };
 
-const VisualizeLink = () => {
+export const VisualizeLink = () => {
   const locale = useLocale();
   return (
     <Typography variant="caption" color="grey.600">

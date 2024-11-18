@@ -9,14 +9,14 @@ type MetadataPanelSection = "general" | "data";
 type MetadataPanelState = {
   open: boolean;
   activeSection: MetadataPanelSection;
-  selectedDimension: Component | undefined;
+  selectedComponent: Component | undefined;
   actions: {
-    setOpen: (d: boolean) => void;
+    setOpen: (open: boolean) => void;
     toggle: () => void;
-    setActiveSection: (d: MetadataPanelSection) => void;
-    setSelectedDimension: (d: Component) => void;
-    clearSelectedDimension: () => void;
-    openDimension: (d: Component) => void;
+    setActiveSection: (activeSection: MetadataPanelSection) => void;
+    setSelectedComponent: (component: Component) => void;
+    clearSelectedComponent: () => void;
+    openComponent: (component: Component) => void;
     reset: () => void;
   };
 };
@@ -25,28 +25,32 @@ export const createMetadataPanelStore = () =>
   createStore<MetadataPanelState>((set, get) => ({
     open: false,
     activeSection: "general",
-    selectedDimension: undefined,
+    selectedComponent: undefined,
     actions: {
-      setOpen: (d: boolean) => {
-        set({ open: d });
+      setOpen: (open: boolean) => {
+        set({ open });
       },
       toggle: () => {
         set({ open: !get().open });
       },
-      setActiveSection: (d: MetadataPanelSection) => {
-        set({ activeSection: d });
+      setActiveSection: (section: MetadataPanelSection) => {
+        set({ activeSection: section });
       },
-      setSelectedDimension: (d: Component) => {
-        set({ selectedDimension: d });
+      setSelectedComponent: (component: Component) => {
+        set({ selectedComponent: component });
       },
-      clearSelectedDimension: () => {
-        set({ selectedDimension: undefined });
+      clearSelectedComponent: () => {
+        set({ selectedComponent: undefined });
       },
-      openDimension: (d: Component) => {
-        set({ open: true, activeSection: "data", selectedDimension: d });
+      openComponent: (component: Component) => {
+        set({
+          open: true,
+          activeSection: "data",
+          selectedComponent: component,
+        });
       },
       reset: () => {
-        set({ activeSection: "general", selectedDimension: undefined });
+        set({ activeSection: "general", selectedComponent: undefined });
       },
     },
   }));

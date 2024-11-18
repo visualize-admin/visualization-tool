@@ -10,18 +10,17 @@ import {
   useSortBy,
   useTable,
 } from "react-table";
+import AutoSizer from "react-virtualized-auto-sizer";
 import { FixedSizeList, VariableSizeList } from "react-window";
 
 import { useChartState } from "@/charts/shared/chart-state";
 import { CellDesktop } from "@/charts/table/cell-desktop";
 import { DDContent } from "@/charts/table/cell-mobile";
-import { TABLE_HEIGHT } from "@/charts/table/constants";
 import { GroupHeader } from "@/charts/table/group-header";
 import {
   TableContent,
   TableContentProvider,
 } from "@/charts/table/table-content";
-import { scrollbarWidth } from "@/charts/table/table-helpers";
 import { TableChartState } from "@/charts/table/table-state";
 import Flex from "@/components/flex";
 import { Input, Switch } from "@/components/form";
@@ -63,6 +62,23 @@ const useStyles = makeStyles(() => {
   };
 });
 
+const shouldShowCompactMobileView = (width: number) => {
+  return width < MOBILE_VIEW_THRESHOLD;
+};
+
+/** Use to make sure we don't cut the table off by having other UI elements enabled */
+export const getTableUIElementsOffset = ({
+  showSearch,
+  width,
+}: {
+  showSearch: boolean;
+  width: number;
+}) => {
+  return (
+    (showSearch ? 48 : 0) + (shouldShowCompactMobileView(width) ? 48 : 0) + 4
+  );
+};
+
 export const Table = () => {
   const {
     bounds,
@@ -79,8 +95,7 @@ export const Table = () => {
 
   const [compactMobileViewEnabled, setCompactMobileView] = useState(false);
 
-  const showCompactMobileView =
-    bounds.width < MOBILE_VIEW_THRESHOLD && compactMobileViewEnabled;
+  const showCompactMobileView = shouldShowCompactMobileView(bounds.width);
 
   // Search & filter data
   const [searchTerm, setSearchTerm] = useState("");
@@ -209,7 +224,11 @@ export const Table = () => {
           <Box
             className={classes.mobileRow}
             {...row.getRowProps({
-              style: { ...style, flexDirection: "column" },
+              style: {
+                ...style,
+                flexDirection: "column",
+                width: "100%",
+              },
             })}
           >
             {row.subRows.length === 0 ? (
@@ -219,29 +238,37 @@ export const Table = () => {
                     key={i}
                     component="dl"
                     sx={{
-                      color: "grey.800",
-                      fontSize: "0.75rem",
-                      width: "100%",
-                      height: MOBILE_ROW_HEIGHT,
                       justifyContent: "space-between",
                       alignItems: "center",
+                      color: "grey.800",
+                      fontSize: "0.75rem",
+                      my: 1,
                     }}
                   >
                     <Box
                       component="dt"
-                      sx={{ flex: "1 1 100%", fontWeight: "bold", mr: 2 }}
+                      sx={{
+                        fontWeight: "bold",
+                        mr: 2,
+                        whiteSpace: "nowrap",
+                      }}
                     >
                       {cell.column.Header}
                     </Box>
-                    <Box
+                    <Flex
                       component="dd"
-                      sx={{ flex: "1 1 100%", ml: 2, position: "relative" }}
+                      sx={{
+                        position: "relative",
+                        justifyContent: "flex-end",
+                        textAlign: "right",
+                        ml: 2,
+                      }}
                     >
                       <DDContent
                         cell={cell}
                         columnMeta={tableColumnsMeta[cell.column.id]}
                       />
-                    </Box>
+                    </Flex>
                   </Flex>
                 );
               })
@@ -270,6 +297,10 @@ export const Table = () => {
       tableColumnsMeta,
     ]
   );
+  const defaultListHeightOffset = getTableUIElementsOffset({
+    showSearch,
+    width: bounds.width,
+  });
 
   return (
     <>
@@ -300,26 +331,31 @@ export const Table = () => {
         />
       </Box>
 
-      {showCompactMobileView ? (
+      {showCompactMobileView && compactMobileViewEnabled ? (
         /* Compact Mobile View */
         <Box
           sx={{
             width: "100%",
+            height: "100%",
             position: "relative",
             backgroundColor: "grey.100",
             mb: 4,
             fontSize: "0.875rem",
           }}
         >
-          <VariableSizeList
-            key={rows.length} // Reset when groups are toggled because itemSize remains cached per index
-            height={TABLE_HEIGHT}
-            itemCount={rows.length}
-            itemSize={getMobileItemSize}
-            width={bounds.width}
-          >
-            {renderMobileRow}
-          </VariableSizeList>
+          <AutoSizer>
+            {({ width, height }: { width: number; height: number }) => (
+              <VariableSizeList
+                key={rows.length} // Reset when groups are toggled because itemSize remains cached per index
+                height={height - defaultListHeightOffset}
+                itemCount={rows.length}
+                itemSize={getMobileItemSize}
+                width={width}
+              >
+                {renderMobileRow}
+              </VariableSizeList>
+            )}
+          </AutoSizer>
         </Box>
       ) : (
         /* Regular table view */
@@ -330,27 +366,29 @@ export const Table = () => {
             mb: 4,
             fontSize: "0.875rem",
           }}
-          {...getTableProps({ style: { minWidth: "100%" } })}
+          {...getTableProps({ style: { minWidth: "100%", height: "100%" } })}
         >
-          <div {...getTableBodyProps()}>
+          <div {...getTableBodyProps()} style={{ height: "100%" }}>
             <TableContentProvider
               headerGroups={headerGroups}
               tableColumnsMeta={tableColumnsMeta}
               customSortCount={customSortCount}
               totalColumnsWidth={totalColumnsWidth}
             >
-              <FixedSizeList
-                outerElementType={TableContentWrapper}
-                height={Math.min(
-                  TABLE_HEIGHT,
-                  rows.length * rowHeight + scrollbarWidth()
+              <AutoSizer disableWidth>
+                {({ height }: { height: number }) => (
+                  <FixedSizeList
+                    outerElementType={TableContentWrapper}
+                    // row height = header row height
+                    height={height - defaultListHeightOffset - rowHeight}
+                    itemCount={rows.length}
+                    itemSize={rowHeight} // depends on whether a column has bars (40px or 56px)
+                    width="100%"
+                  >
+                    {renderDesktopRow}
+                  </FixedSizeList>
                 )}
-                itemCount={rows.length}
-                itemSize={rowHeight} // depends on whether a column has bars (40px or 56px)
-                width="100%"
-              >
-                {renderDesktopRow}
-              </FixedSizeList>
+              </AutoSizer>
             </TableContentProvider>
           </div>
         </Box>

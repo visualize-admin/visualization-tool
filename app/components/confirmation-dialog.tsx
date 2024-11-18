@@ -9,7 +9,7 @@ import {
   DialogProps,
   DialogTitle,
 } from "@mui/material";
-import React, { useState } from "react";
+import { MouseEvent, useState } from "react";
 
 const ConfirmationDialog = ({
   title,
@@ -23,51 +23,54 @@ const ConfirmationDialog = ({
   text?: string;
   onSuccess?: () => Promise<unknown> | void;
   onConfirm?: () => Promise<unknown> | void;
-  onClick: () => Promise<unknown> | void;
+  onClick: (e: MouseEvent<HTMLElement>) => Promise<unknown> | void;
   onClose: NonNullable<DialogProps["onClose"]>;
 }) => {
   const [loading, setLoading] = useState(false);
-
   return (
     <Dialog
-      // To prevent the click away listener from closing the dialog.
-      onClick={(e) => e.stopPropagation()}
       maxWidth="xs"
+      PaperProps={{ sx: { gap: 4, width: "100%", p: 6 } }}
       {...props}
     >
-      <DialogTitle sx={{ typography: "h3" }}>
-        {title ??
+      <DialogTitle sx={{ p: 0, typography: "h4" }}>
+        {title ||
           t({
             id: "login.profile.chart.confirmation.default",
             message: "Are you sure you want to perform this action?",
           })}
       </DialogTitle>
       {text && (
-        <DialogContent>
-          <DialogContentText>{text}</DialogContentText>
+        <DialogContent sx={{ p: 0 }}>
+          <DialogContentText sx={{ typography: "body2" }}>
+            {text}
+          </DialogContentText>
         </DialogContent>
       )}
       <DialogActions
         sx={{
+          p: 0,
           "& > .MuiButton-root": {
             justifyContent: "center",
+            minWidth: 76,
+            minHeight: "fit-content",
             pointerEvents: loading ? "none" : "auto",
           },
         }}
       >
         <Button
-          variant="text"
+          variant="outlined"
           onClick={() => props.onClose({}, "escapeKeyDown")}
         >
           <Trans id="no">No</Trans>
         </Button>
         <Button
-          variant="text"
+          variant="contained"
           onClick={async (e) => {
             e.stopPropagation();
             setLoading(true);
 
-            await onClick();
+            await onClick(e);
             await new Promise((r) => setTimeout(r, 100));
 
             props.onClose({}, "escapeKeyDown");
