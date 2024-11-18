@@ -39,15 +39,33 @@ module.exports = withPreconstruct(
       headers: async () => {
         const headers = [];
 
+        headers.push({
+          source: "/:path*",
+          headers: [
+            {
+              key: "X-Content-Type-Options",
+              value: "nosniff",
+            },
+            {
+              key: "Content-Security-Policy",
+              value: [
+                `default-src 'self' 'unsafe-inline'${process.env.NODE_ENV === "development" ? ` 'unsafe-eval'` : ""}`,
+                `style-src 'self' 'unsafe-inline' https://visualize.admin.ch`,
+                `font-src https://visualize.admin.ch`,
+                `connect-src 'self' blob: ${process.env.NODE_ENV === "development" ? "http://localhost:3000" : ""} wss://*.admin.ch https://visualize.admin.ch`,
+                `img-src 'self' blob: data: ${process.env.NODE_ENV === "development" ? "http://localhost:3000" : ""} https://visualize.admin.ch`,
+                `script-src-elem 'self' 'unsafe-inline' https://visualize.admin.ch`,
+                `worker-src 'self' blob:`,
+                `media-src 'self' blob: https://visualize.admin.ch`,
+              ].join("; "),
+            },
+          ],
+        });
+
         if (process.env.ALLOW_SEARCH_BOTS !== "true") {
-          headers.push({
-            source: "/:path*",
-            headers: [
-              {
-                key: "X-Robots-Tag",
-                value: "noindex, nofollow",
-              },
-            ],
+          headers[0].headers.push({
+            key: "X-Robots-Tag",
+            value: "noindex, nofollow",
           });
         }
 
