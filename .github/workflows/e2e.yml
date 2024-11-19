@@ -31,6 +31,7 @@ jobs:
         env:
           E2E_BASE_URL: ${{ github.event.deployment_status.target_url }}
           PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
+          E2E_HAR: ${{ secrets.E2E_HAR }}
       - name: Upload blob report to GitHub Actions Artifacts
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
