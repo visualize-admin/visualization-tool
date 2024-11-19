@@ -53,6 +53,7 @@ export type DataCubeComponents = {
 
 export type DataCubeMetadata = {
   iri: string;
+  unversionedIri?: string;
   identifier?: string;
   title: string;
   description: string;
@@ -62,7 +63,6 @@ export type DataCubeMetadata = {
   publicationStatus: DataCubePublicationStatus;
   themes?: DataCubeTheme[];
   creator?: DataCubeOrganization;
-  versionHistory?: string;
   contactPoint?: {
     name?: string;
     email?: string;

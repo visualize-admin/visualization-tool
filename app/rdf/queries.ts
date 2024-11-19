@@ -1,6 +1,7 @@
 import { ascending, index } from "d3-array";
 import { Maybe } from "graphql-tools";
 import keyBy from "lodash/keyBy";
+import mapKeys from "lodash/mapKeys";
 import { CubeDimension, Filter, LookupSource, View } from "rdf-cube-view-query";
 import rdf from "rdf-ext";
 import { Literal, NamedNode } from "rdf-js";
@@ -29,7 +30,7 @@ import { createSource, pragmas } from "@/rdf/create-source";
 import { ExtendedCube } from "@/rdf/extended-cube";
 import * as ns from "@/rdf/namespace";
 import { parseCubeDimension, parseRelatedDimensions } from "@/rdf/parse";
-import { queryCubeVersionHistory } from "@/rdf/query-cube-version-history";
+import { queryCubeUnversionedIri } from "@/rdf/query-cube-unversioned-iri";
 import {
   loadDimensionsValuesWithMetadata,
   loadMaxDimensionValue,
@@ -352,7 +353,7 @@ export const getCubeObservations = async ({
   const cubeView = View.fromCube(cube, false);
   const [unversionedCubeIri = cubeIri, allResolvedDimensions] =
     await Promise.all([
-      queryCubeVersionHistory(sparqlClient, cubeIri),
+      queryCubeUnversionedIri(sparqlClient, cubeIri),
       getCubeDimensions({
         cube,
         locale,
@@ -482,17 +483,14 @@ export const getCubeObservations = async ({
 
   return {
     query,
-    observations: observations.map((obs) => {
-      return Object.fromEntries(
-        Object.entries(obs).map(([dimensionIri, value]) => [
-          stringifyComponentId({
-            unversionedCubeIri,
-            unversionedComponentIri: dimensionIri,
-          }),
-          value,
-        ])
-      );
-    }),
+    observations: observations.map((obs) =>
+      mapKeys(obs, (_, iri) =>
+        stringifyComponentId({
+          unversionedCubeIri,
+          unversionedComponentIri: iri,
+        })
+      )
+    ),
   };
 };
 

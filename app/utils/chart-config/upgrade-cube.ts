@@ -8,11 +8,11 @@ import {
   DataCubeLatestIriDocument,
   DataCubeLatestIriQuery,
   DataCubeLatestIriQueryVariables,
-  DataCubeVersionHistoryDocument,
-  DataCubeVersionHistoryQuery,
-  DataCubeVersionHistoryQueryVariables,
+  DataCubeUnversionedIriDocument,
+  DataCubeUnversionedIriQuery,
+  DataCubeUnversionedIriQueryVariables,
 } from "@/graphql/query-hooks";
-import { queryCubeVersionHistory } from "@/rdf/query-cube-version-history";
+import { queryCubeUnversionedIri } from "@/rdf/query-cube-unversioned-iri";
 import { queryLatestCubeIri } from "@/rdf/query-latest-cube-iri";
 
 const makeUpgradeConfiguratorState =
@@ -73,8 +73,8 @@ export const getUnversionedCubeIri = async (
 ) => {
   const { client, dataSource } = options;
   const { data } = await client
-    .query<DataCubeVersionHistoryQuery, DataCubeVersionHistoryQueryVariables>(
-      DataCubeVersionHistoryDocument,
+    .query<DataCubeUnversionedIriQuery, DataCubeUnversionedIriQueryVariables>(
+      DataCubeUnversionedIriDocument,
       {
         sourceUrl: dataSource.url,
         sourceType: dataSource.type,
@@ -83,7 +83,7 @@ export const getUnversionedCubeIri = async (
     )
     .toPromise();
 
-  return data?.dataCubeVersionHistory ?? iri;
+  return data?.dataCubeUnversionedIri ?? iri;
 };
 
 export const upgradeConfiguratorState = makeUpgradeConfiguratorState({
@@ -119,7 +119,7 @@ export const getUnversionedCubeIriServerSide = async (
       cubeIri,
     }),
   });
-  const iri = await queryCubeVersionHistory(client, cubeIri);
+  const iri = await queryCubeUnversionedIri(client, cubeIri);
   return iri ?? cubeIri;
 };
 

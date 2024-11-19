@@ -118,7 +118,7 @@ input DataCubeLatestIriFilter {
   iri: String!
 }
 
-input DataCubeVersionHistoryFilter {
+input DataCubeUnversionedIriFilter {
   iri: String!
 }
 
@@ -144,10 +144,10 @@ type Query {
     sourceUrl: String!
     cubeFilter: DataCubeLatestIriFilter!
   ): String!
-  dataCubeVersionHistory(
+  dataCubeUnversionedIri(
     sourceType: String!
     sourceUrl: String!
-    cubeFilter: DataCubeVersionHistoryFilter!
+    cubeFilter: DataCubeUnversionedIriFilter!
   ): String
   dataCubeComponents(
     sourceType: String!

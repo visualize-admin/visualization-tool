@@ -8,7 +8,7 @@ import { SingleFilters } from "@/config-types";
 import { isMostRecentValue } from "@/domain/most-recent-value";
 import { stringifyComponentId } from "@/graphql/make-component-id";
 import * as ns from "@/rdf/namespace";
-import { queryCubeVersionHistory } from "@/rdf/query-cube-version-history";
+import { queryCubeUnversionedIri } from "@/rdf/query-cube-unversioned-iri";
 import { loadMaxDimensionValue } from "@/rdf/query-dimension-values";
 import { iriToNode } from "@/rdf/query-utils";
 
@@ -29,7 +29,7 @@ export const getPossibleFilters = async (
   }
 
   const [unversionedCubeIri = cubeIri, dimensionsMetadata] = await Promise.all([
-    queryCubeVersionHistory(sparqlClient, cubeIri),
+    queryCubeUnversionedIri(sparqlClient, cubeIri),
     getDimensionsMetadata(cubeIri, dimensionIris, sparqlClient),
   ]);
   const queryFilters = await getQueryFilters(filters, {

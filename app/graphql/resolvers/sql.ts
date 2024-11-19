@@ -72,8 +72,8 @@ export const dataCubeLatestIri: NonNullable<
   return "";
 };
 
-export const dataCubeVersionHistory: NonNullable<
-  QueryResolvers["dataCubeVersionHistory"]
+export const dataCubeUnversionedIri: NonNullable<
+  QueryResolvers["dataCubeUnversionedIri"]
 > = async () => {
   return "";
 };

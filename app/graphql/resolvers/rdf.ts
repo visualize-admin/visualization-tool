@@ -37,7 +37,7 @@ import {
   getCubeDimensions,
   getCubeObservations,
 } from "@/rdf/queries";
-import { queryCubeVersionHistory } from "@/rdf/query-cube-version-history";
+import { queryCubeUnversionedIri } from "@/rdf/query-cube-unversioned-iri";
 import { GeoShape } from "@/rdf/query-geo-shapes";
 import { parseHierarchy, queryHierarchies } from "@/rdf/query-hierarchies";
 import { queryLatestCubeIri } from "@/rdf/query-latest-cube-iri";
@@ -54,12 +54,12 @@ export const dataCubeLatestIri: NonNullable<
   );
 };
 
-export const dataCubeVersionHistory: NonNullable<
-  QueryResolvers["dataCubeVersionHistory"]
+export const dataCubeUnversionedIri: NonNullable<
+  QueryResolvers["dataCubeUnversionedIri"]
 > = async (_, { cubeFilter }, { setup }, info) => {
   const { iri } = cubeFilter;
   const { sparqlClient } = await setup(info);
-  return (await queryCubeVersionHistory(sparqlClient, iri)) ?? iri;
+  return (await queryCubeUnversionedIri(sparqlClient, iri)) ?? iri;
 };
 
 const sortResults = (
@@ -249,7 +249,7 @@ export const dataCubeComponents: NonNullable<
   );
 
   const [unversionedCubeIri = iri, rawComponents] = await Promise.all([
-    queryCubeVersionHistory(sparqlClient, iri),
+    queryCubeUnversionedIri(sparqlClient, iri),
     getCubeDimensions({
       cube,
       locale,

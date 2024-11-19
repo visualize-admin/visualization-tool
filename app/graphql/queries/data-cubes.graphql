@@ -36,12 +36,12 @@ query DataCubeLatestIri(
   )
 }
 
-query DataCubeVersionHistory(
+query DataCubeUnversionedIri(
   $sourceType: String!
   $sourceUrl: String!
-  $cubeFilter: DataCubeVersionHistoryFilter!
+  $cubeFilter: DataCubeUnversionedIriFilter!
 ) {
-  dataCubeVersionHistory(
+  dataCubeUnversionedIri(
     sourceType: $sourceType
     sourceUrl: $sourceUrl
     cubeFilter: $cubeFilter

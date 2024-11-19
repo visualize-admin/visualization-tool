@@ -3,7 +3,7 @@ import ParsingClient from "sparql-http-client/ParsingClient";
 
 import { ComponentTermsets, Termset } from "@/domain/data";
 import { stringifyComponentId } from "@/graphql/make-component-id";
-import { queryCubeVersionHistory } from "@/rdf/query-cube-version-history";
+import { queryCubeUnversionedIri } from "@/rdf/query-cube-unversioned-iri";
 import { buildLocalizedSubQuery } from "@/rdf/query-utils";
 
 export const getCubeTermsets = async (
@@ -58,7 +58,7 @@ SELECT DISTINCT ?dimensionIri ?dimensionLabel ?termsetIri ?termsetLabel WHERE {
   ${buildLocalizedSubQuery("termsetIri", "schema:name", "termsetLabel", { locale })}
 }`;
   const [unversionedCubeIri = iri, qs] = await Promise.all([
-    queryCubeVersionHistory(sparqlClient, iri),
+    queryCubeUnversionedIri(sparqlClient, iri),
     sparqlClient.query.select(query, {
       operation: "postUrlencoded",
     }),

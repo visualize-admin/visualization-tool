@@ -17,10 +17,6 @@ export const isCubePublished = (cube: ExtendedCube): boolean =>
       t.equals(ns.adminVocabulary("CreativeWorkStatus/Published"))
     );
 
-export const parseVersionHistory = (cube: ExtendedCube) => {
-  return cube.in(ns.schema.hasPart)?.value;
-};
-
 export const getScaleType = (
   scaleTypeTerm: Term | undefined
 ): ScaleType | undefined => {

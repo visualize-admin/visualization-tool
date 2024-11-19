@@ -19,9 +19,9 @@ export const Query: QueryResolvers = {
     const source = getSource(args.sourceType);
     return await source.dataCubeLatestIri(parent, args, context, info);
   },
-  dataCubeVersionHistory: async (parent, args, context, info) => {
+  dataCubeUnversionedIri: async (parent, args, context, info) => {
     const source = getSource(args.sourceType);
-    return await source.dataCubeVersionHistory(parent, args, context, info);
+    return await source.dataCubeUnversionedIri(parent, args, context, info);
   },
   dataCubeComponents: async (parent, args, context, info) => {
     const source = getSource(args.sourceType);
