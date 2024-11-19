@@ -34,8 +34,11 @@ export const Examples = (props: ExamplesProps) => {
 
   useEffect(() => {
     const run = async () => {
-      setState1(await getExampleState1());
-      setState2(await getExampleState2());
+      (await Promise.all([getExampleState1(), getExampleState2()])).forEach(
+        (state, i) => {
+          i === 0 ? setState1(state) : setState2(state);
+        }
+      );
     };
 
     run();
