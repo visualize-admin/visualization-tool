@@ -131,7 +131,7 @@ export const possibleFilters: NonNullable<
     }
 
     const result = Object.keys(filters).map((d) => ({
-      iri: d,
+      id: d,
       type: "single",
       value: observations[0][d as ComponentId],
     }));
