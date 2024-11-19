@@ -1,5 +1,6 @@
 import { ColumnConfig, ScatterPlotConfig, TableFields } from "@/configurator";
 import { Dimension, Measure } from "@/domain/data";
+import { stringifyComponentId } from "@/graphql/make-component-id";
 import { TimeUnit } from "@/graphql/resolver-types";
 
 import bathingWaterData from "../test/__fixtures/data/DataCubeMetadataWithComponentValues-bathingWater.json";
@@ -106,7 +107,10 @@ describe("initial config", () => {
     }) as ColumnConfig;
 
     expect(config.fields.x.componentId).toEqual(
-      "https://cube-iri___temporal-ordinal-dimension-iri"
+      stringifyComponentId({
+        unversionedCubeIri: "https://cube-iri",
+        unversionedComponentIri: "temporal-ordinal-dimension-iri",
+      })
     );
   });
 
@@ -125,7 +129,10 @@ describe("initial config", () => {
     }) as ColumnConfig;
 
     expect(config.fields.x.componentId).toEqual(
-      "https://cube-iri___temporal-dimension-iri"
+      stringifyComponentId({
+        unversionedCubeIri: "https://cube-iri",
+        unversionedComponentIri: "temporal-dimension-iri",
+      })
     );
   });
 

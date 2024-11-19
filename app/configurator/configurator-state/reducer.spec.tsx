@@ -34,6 +34,7 @@ import {
   updateColorMapping,
 } from "@/configurator/configurator-state/reducer";
 import { Dimension, Measure, NominalDimension } from "@/domain/data";
+import { stringifyComponentId } from "@/graphql/make-component-id";
 import covid19ColumnChartConfig from "@/test/__fixtures/config/dev/chartConfig-column-covid19.json";
 import covid19TableChartConfig from "@/test/__fixtures/config/dev/chartConfig-table-covid19.json";
 import covid19Metadata from "@/test/__fixtures/data/DataCubeMetadataWithComponentValues-covid19.json";
@@ -774,14 +775,18 @@ describe("retainChartConfigWhenSwitchingChartType", () => {
   const dimensions = (dataSetMetadata.dimensions as any as Dimension[]).map(
     (d) => ({
       ...d,
-      // Adding cube prefix.
-      id: `foo___${d.id}`,
+      id: stringifyComponentId({
+        unversionedCubeIri: "foo",
+        unversionedComponentIri: d.id,
+      }),
     })
   );
   const measures = (dataSetMetadata.measures as any as Measure[]).map((m) => ({
     ...m,
-    // Adding cube prefix.
-    id: `foo___${m.id}`,
+    id: stringifyComponentId({
+      unversionedCubeIri: "foo",
+      unversionedComponentIri: m.id,
+    }),
   }));
 
   const deriveNewChartConfig = (
