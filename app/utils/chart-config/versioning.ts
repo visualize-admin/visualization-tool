@@ -10,7 +10,7 @@ import {
 } from "@/domain/datasource/constants";
 import { client } from "@/graphql/client";
 import { isJoinById } from "@/graphql/join";
-import { makeComponentId, splitComponentId } from "@/graphql/resolvers/rdf";
+import { makeComponentId, splitComponentId } from "@/graphql/make-component-id";
 import { DEFAULT_CATEGORICAL_PALETTE_NAME } from "@/palettes";
 import {
   CHART_CONFIG_VERSION,

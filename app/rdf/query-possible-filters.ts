@@ -6,7 +6,7 @@ import { LRUCache } from "typescript-lru-cache";
 
 import { SingleFilters } from "@/config-types";
 import { isMostRecentValue } from "@/domain/most-recent-value";
-import { makeComponentId } from "@/graphql/resolvers/rdf";
+import { makeComponentId } from "@/graphql/make-component-id";
 import * as ns from "@/rdf/namespace";
 import { queryCubeVersionHistory } from "@/rdf/query-cube-version-history";
 import { loadMaxDimensionValue } from "@/rdf/query-dimension-values";

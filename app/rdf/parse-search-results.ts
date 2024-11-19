@@ -2,8 +2,8 @@ import { group } from "d3-array";
 import { Quad } from "rdf-js";
 
 import { SearchCube } from "@/domain/data";
+import { makeComponentId } from "@/graphql/make-component-id";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
-import { makeComponentId } from "@/graphql/resolvers/rdf";
 import * as ns from "@/rdf/namespace";
 import { GROUP_SEPARATOR } from "@/rdf/query-utils";
 

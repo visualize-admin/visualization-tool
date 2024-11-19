@@ -5,7 +5,7 @@ import { topology } from "topojson-server";
 import { LRUCache } from "typescript-lru-cache";
 import { parse as parseWKT } from "wellknown";
 
-import { Filters, SingleFilters } from "@/config-types";
+import { Filters } from "@/config-types";
 import {
   BaseComponent,
   BaseDimension,
@@ -20,6 +20,11 @@ import {
 } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { Loaders } from "@/graphql/context";
+import {
+  getFiltersByComponentIris,
+  makeComponentId,
+  splitComponentId,
+} from "@/graphql/make-component-id";
 import {
   QueryResolvers,
   SearchCubeResultOrder,
@@ -39,36 +44,6 @@ import { queryLatestCubeIri } from "@/rdf/query-latest-cube-iri";
 import { getPossibleFilters } from "@/rdf/query-possible-filters";
 import { SearchResult, searchCubes as _searchCubes } from "@/rdf/query-search";
 import { getSparqlEditorUrl } from "@/rdf/sparql-utils";
-
-const ID_SEPARATOR = "___";
-
-export const makeComponentId = ({
-  unversionedCubeIri,
-  unversionedComponentIri,
-}: {
-  unversionedCubeIri: string;
-  unversionedComponentIri: string;
-}) => `${unversionedCubeIri}${ID_SEPARATOR}${unversionedComponentIri}`;
-
-export const splitComponentId = (iri: string) => {
-  const [unversionedCubeIri, unversionedComponentIri] = iri.split(ID_SEPARATOR);
-
-  return {
-    unversionedCubeIri,
-    unversionedComponentIri: unversionedComponentIri || undefined,
-  };
-};
-
-export const getFiltersByComponentIris = <T extends Filters | SingleFilters>(
-  filters: T
-) => {
-  return Object.fromEntries(
-    Object.entries(filters).map(([k, v]) => [
-      splitComponentId(k).unversionedComponentIri ?? k,
-      v,
-    ])
-  ) as T;
-};
 
 export const dataCubeLatestIri: NonNullable<
   QueryResolvers["dataCubeLatestIri"]

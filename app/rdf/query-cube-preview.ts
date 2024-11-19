@@ -16,8 +16,8 @@ import {
   TemporalEntityDimension,
 } from "@/domain/data";
 import { truthy } from "@/domain/types";
+import { makeComponentId } from "@/graphql/make-component-id";
 import { resolveDimensionType, resolveMeasureType } from "@/graphql/resolvers";
-import { makeComponentId } from "@/graphql/resolvers/rdf";
 
 import * as ns from "./namespace";
 import {

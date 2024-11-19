@@ -16,8 +16,8 @@ import {
 } from "@/domain/data";
 import { isMostRecentValue } from "@/domain/most-recent-value";
 import { PromiseValue, truthy } from "@/domain/types";
+import { makeComponentId, splitComponentId } from "@/graphql/make-component-id";
 import { resolveDimensionType } from "@/graphql/resolvers";
-import { makeComponentId, splitComponentId } from "@/graphql/resolvers/rdf";
 import {
   ResolvedDimension,
   ResolvedObservationsQuery,
