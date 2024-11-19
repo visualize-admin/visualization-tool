@@ -9,7 +9,7 @@ export const BASELINE_SUFFIX = "-baseline";
 export const TO_COMPARE_SUFFIX = "-to-compare";
 
 const compareScreenshots = async () => {
-  const files = readdirSync("screenshots");
+  const files = readdirSync(SCREENSHOTS_FOLDER);
   const uniqueChartConfigKeys = Array.from(
     new Set(
       files.map((file) =>
