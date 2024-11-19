@@ -2,6 +2,7 @@ import { OperationResult } from "urql";
 
 import { Dimension } from "@/domain/data";
 import { joinDimensions, mergeObservations } from "@/graphql/join";
+import { stringifyComponentId } from "@/graphql/make-component-id";
 import {
   DataCubeObservationsQuery,
   DataCubeObservationsQueryVariables,
@@ -341,7 +342,12 @@ describe("joinDimensions", () => {
               timeUnit: TimeUnit.Year,
               cubeIri:
                 "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9",
-              id: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
+              id: stringifyComponentId({
+                unversionedCubeIri:
+                  "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen",
+                unversionedComponentIri:
+                  "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
+              }),
               label: "Jahr der Vergütung",
               description: "Jahr, in welchem die EIV ausbezahlt wurde",
               unit: "yr",
@@ -368,7 +374,12 @@ describe("joinDimensions", () => {
               __typename: "GeoShapesDimension",
               cubeIri:
                 "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9",
-              id: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton",
+              id: stringifyComponentId({
+                unversionedCubeIri:
+                  "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen",
+                unversionedComponentIri:
+                  "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton",
+              }),
               label: "Kanton",
               description: "Kanton, in welchem die geförderten Anlagen stehen",
               scaleType: ScaleType.Nominal,
@@ -597,7 +608,12 @@ describe("joinDimensions", () => {
               resolution: 0,
               cubeIri:
                 "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9",
-              id: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/AnzahlAnlagen",
+              id: stringifyComponentId({
+                unversionedCubeIri:
+                  "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen",
+                unversionedComponentIri:
+                  "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/AnzahlAnlagen",
+              }),
               label: "Anzahl geförderter EIV-Anlagen",
               description: "Anzahl geförderter EIV-Anlagen",
               unit: "#",
@@ -615,7 +631,12 @@ describe("joinDimensions", () => {
           ],
         },
         joinBy: [
-          "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
+          stringifyComponentId({
+            unversionedCubeIri:
+              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen",
+            unversionedComponentIri:
+              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
+          }),
         ],
       },
       {
@@ -626,7 +647,12 @@ describe("joinDimensions", () => {
               __typename: "NominalDimension" as const,
               cubeIri:
                 "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_co2wirkung/4",
-              id: "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_co2wirkung/region",
+              id: stringifyComponentId({
+                unversionedCubeIri:
+                  "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_co2wirkung",
+                unversionedComponentIri:
+                  "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_co2wirkung/region",
+              }),
               label: "Region",
               scaleType: ScaleType.Nominal,
               order: 2,
@@ -650,7 +676,12 @@ describe("joinDimensions", () => {
               __typename: "NominalDimension",
               cubeIri:
                 "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_co2wirkung/4",
-              id: "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_co2wirkung/massnahmenbereich",
+              id: stringifyComponentId({
+                unversionedCubeIri:
+                  "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_co2wirkung",
+                unversionedComponentIri:
+                  "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_co2wirkung/massnahmenbereich",
+              }),
               label: "Massnahmenbereich",
               scaleType: ScaleType.Nominal,
               order: 3,
@@ -701,7 +732,11 @@ describe("joinDimensions", () => {
               resolution: 0,
               cubeIri:
                 "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_co2wirkung/4",
-              id: "http://schema.org/amount",
+              id: stringifyComponentId({
+                unversionedCubeIri:
+                  "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_co2wirkung",
+                unversionedComponentIri: "http://schema.org/amount",
+              }),
               label: "CO2-Wirkungen (Tonnen CO2)",
               scaleType: ScaleType.Ratio,
               dataType: "http://www.w3.org/2001/XMLSchema#integer",
@@ -717,7 +752,12 @@ describe("joinDimensions", () => {
           ],
         },
         joinBy: [
-          "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_co2wirkung/Jahr",
+          stringifyComponentId({
+            unversionedCubeIri:
+              "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_co2wirkung",
+            unversionedComponentIri:
+              "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_co2wirkung/Jahr",
+          }),
         ],
       },
     ];
@@ -726,9 +766,9 @@ describe("joinDimensions", () => {
     expect(result.map((x) => x.id)).toMatchInlineSnapshot(`
       Array [
         "joinBy__0",
-        "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton",
-        "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_co2wirkung/region",
-        "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_co2wirkung/massnahmenbereich",
+        "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen___https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton",
+        "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_co2wirkung___https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_co2wirkung/region",
+        "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_co2wirkung___https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_co2wirkung/massnahmenbereich",
       ]
     `);
   });

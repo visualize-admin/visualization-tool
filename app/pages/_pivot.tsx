@@ -205,7 +205,8 @@ const PivotTable = ({ dataset }: { dataset: (typeof datasets)[string] }) => {
   };
 
   const handleToggleMeasure = useEvent((ev: ChangeEvent<HTMLInputElement>) => {
-    const measureId = ev.currentTarget.getAttribute("name");
+    const measureId = ev.currentTarget.getAttribute("name") as Measure["id"];
+
     if (!measureId) {
       return;
     }

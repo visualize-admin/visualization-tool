@@ -124,11 +124,11 @@ export type DataCubeUnversionedIriFilter = {
 
 
 
-export type ObservationFilter = {
-  __typename: 'ObservationFilter';
+export type PossibleFilterValue = {
+  __typename: 'PossibleFilterValue';
   type: Scalars['String'];
+  id: Scalars['String'];
   value?: Maybe<Scalars['FilterValue']>;
-  iri: Scalars['String'];
 };
 
 export type Query = {
@@ -140,7 +140,7 @@ export type Query = {
   dataCubeMetadata: Scalars['DataCubeMetadata'];
   dataCubeObservations: Scalars['DataCubeObservations'];
   dataCubePreview: Scalars['DataCubePreview'];
-  possibleFilters: Array<ObservationFilter>;
+  possibleFilters: Array<PossibleFilterValue>;
   searchCubes: Array<SearchCubeResult>;
   dataCubeDimensionGeoShapes?: Maybe<Scalars['GeoShapes']>;
 };
@@ -382,7 +382,7 @@ export type PossibleFiltersQueryVariables = Exact<{
 }>;
 
 
-export type PossibleFiltersQuery = { __typename: 'Query', possibleFilters: Array<{ __typename: 'ObservationFilter', iri: string, type: string, value?: Maybe<any> }> };
+export type PossibleFiltersQuery = { __typename: 'Query', possibleFilters: Array<{ __typename: 'PossibleFilterValue', type: string, id: string, value?: Maybe<any> }> };
 
 
 export const SearchCubesDocument = gql`
@@ -524,8 +524,8 @@ export const PossibleFiltersDocument = gql`
     sourceUrl: $sourceUrl
     cubeFilter: $cubeFilter
   ) {
-    iri
     type
+    id
     value
   }
 }

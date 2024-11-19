@@ -11,6 +11,7 @@ import {
 import { client } from "@/graphql/client";
 import { isJoinById } from "@/graphql/join";
 import {
+  ComponentId,
   parseComponentId,
   stringifyComponentId,
 } from "@/graphql/make-component-id";
@@ -1152,26 +1153,29 @@ export const chartConfigMigrations: Migration[] = [
         return {
           ...cube,
           joinBy: cube.joinBy?.map(
-            (joinBy: string) => parseComponentId(joinBy).unversionedComponentIri
+            (joinBy: ComponentId) =>
+              parseComponentId(joinBy).unversionedComponentIri
           ),
           publishIri: cube.iri,
           filters: Object.fromEntries(
             Object.entries(cube.filters).map(([k, v]) => [
-              parseComponentId(k).unversionedComponentIri,
+              parseComponentId(k as ComponentId).unversionedComponentIri,
               v,
             ])
           ),
         };
       });
 
-      for (const [k, v] of Object.entries<any>(newConfig.fields)) {
+      for (const [_k, v] of Object.entries<any>(newConfig.fields)) {
         if (typeof v !== "object") {
           continue;
         }
 
+        const k = _k as ComponentId;
+
         if ("componentIds" in v) {
           v.componentIris = v.componentIds.map(
-            (id: string) => parseComponentId(id).unversionedComponentIri
+            (id: ComponentId) => parseComponentId(id).unversionedComponentIri
           );
           delete v.componentIds;
         } else if ("componentId" in v) {
@@ -1196,7 +1200,7 @@ export const chartConfigMigrations: Migration[] = [
         ) {
           v.colorMapping = Object.fromEntries(
             Object.entries(v.colorMapping).map(([k, v]) => [
-              parseComponentId(k).unversionedComponentIri,
+              parseComponentId(k as ComponentId).unversionedComponentIri,
               v,
             ])
           );
@@ -1253,7 +1257,7 @@ export const chartConfigMigrations: Migration[] = [
       )) {
         if ("componentIds" in v) {
           v.componentIris = v.componentIds.map(
-            (id: string) => parseComponentId(id).unversionedComponentIri
+            (id: ComponentId) => parseComponentId(id).unversionedComponentIri
           );
           delete v.componentIds;
         } else if ("componentId" in v) {
@@ -1839,7 +1843,7 @@ export const configuratorStateMigrations: Migration[] = [
 
       for (const fId of Object.keys(dataFilters.filters)) {
         dataFilters.filters[
-          parseComponentId(fId).unversionedComponentIri as string
+          parseComponentId(fId as ComponentId).unversionedComponentIri as string
         ] = dataFilters.filters[fId];
         delete dataFilters.filters[fId];
       }

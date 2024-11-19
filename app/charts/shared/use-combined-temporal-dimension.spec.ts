@@ -1,5 +1,6 @@
 import { getCombinedTemporalDimension } from "@/charts/shared/use-combined-temporal-dimension";
 import { Dimension } from "@/domain/data";
+import { stringifyComponentId } from "@/graphql/make-component-id";
 import { getD3TimeFormatLocale } from "@/locales/locales";
 
 jest.mock("@lingui/macro", () => ({
@@ -5838,9 +5839,27 @@ describe("useCombinedTemporalDimension", () => {
         related: [],
         hierarchy: null,
       },
-    ] as Dimension[];
+    ].map((d) => ({
+      ...d,
+      id: stringifyComponentId({
+        unversionedCubeIri: d.cubeIri,
+        unversionedComponentIri: d.id,
+      }),
+      hierarchy: d.hierarchy?.map((h) => ({
+        ...h,
+        dimensionId: stringifyComponentId({
+          unversionedCubeIri: d.cubeIri,
+          unversionedComponentIri: h.value,
+        }),
+      })),
+    })) as Dimension[];
     const potentialTimeRangeFilterIds = [
-      "https://agriculture.ld.admin.ch/foag/dimension/date",
+      stringifyComponentId({
+        unversionedCubeIri:
+          "https://agriculture.ld.admin.ch/foag/cube/MilkDairyProducts/Consumption_Price_Month",
+        unversionedComponentIri:
+          "https://agriculture.ld.admin.ch/foag/dimension/date",
+      }),
     ];
     const formatLocale = getD3TimeFormatLocale("en");
     const result = getCombinedTemporalDimension({

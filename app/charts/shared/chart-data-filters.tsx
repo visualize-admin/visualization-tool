@@ -645,9 +645,9 @@ const useEnsurePossibleInteractiveFilters = (props: {
         const filters = Object.assign(
           Object.fromEntries(
             data.possibleFilters.map((d) => {
-              const interactiveFilter = interactiveFilters[d.iri];
+              const interactiveFilter = interactiveFilters[d.id];
               return [
-                d.iri,
+                d.id,
                 {
                   type: d.type,
                   value:

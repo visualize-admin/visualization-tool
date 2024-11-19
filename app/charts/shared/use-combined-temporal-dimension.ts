@@ -18,6 +18,7 @@ import {
 } from "@/domain/data";
 import { useTimeFormatLocale } from "@/formatters";
 import { useConfigsCubeComponents } from "@/graphql/hooks";
+import { stringifyComponentId } from "@/graphql/make-component-id";
 import { TimeUnit } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 import { timeUnitFormats, timeUnitOrder } from "@/rdf/mappings";
@@ -92,7 +93,10 @@ export const getCombinedTemporalDimension = ({
   const combinedDimension: TemporalDimension = {
     __typename: "TemporalDimension",
     cubeIri: "all",
-    id: "all___combined-date-filter",
+    id: stringifyComponentId({
+      unversionedCubeIri: "all",
+      unversionedComponentIri: "combined-date-filter",
+    }),
     label: t({
       id: "controls.section.shared-filters.date",
       message: "Date",

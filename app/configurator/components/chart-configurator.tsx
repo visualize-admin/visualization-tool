@@ -252,7 +252,7 @@ const useEnsurePossibleFilters = ({
         const filters = Object.assign(
           Object.fromEntries(
             data.possibleFilters.map((x) => [
-              x.iri,
+              x.id,
               { type: x.type, value: x.value },
             ])
           ) as Filters,

@@ -500,7 +500,7 @@ const DataPanel = ({
               ...omit(component, "originalIds"),
               cubeIri: x.cubeIri,
               id: x.dimensionId,
-            } as Component,
+            } as unknown as Component,
             isJoinByDimension: true,
           }));
         } else {

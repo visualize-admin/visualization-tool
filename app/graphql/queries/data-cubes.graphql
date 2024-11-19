@@ -142,8 +142,8 @@ query PossibleFilters(
     sourceUrl: $sourceUrl
     cubeFilter: $cubeFilter
   ) {
-    iri
     type
+    id
     value
   }
 }

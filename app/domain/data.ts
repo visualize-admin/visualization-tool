@@ -1,6 +1,7 @@
 import { Literal, Term } from "rdf-js";
 
 import { ComponentType } from "@/config-types";
+import { ComponentId } from "@/graphql/make-component-id";
 import {
   DataCubeOrganization,
   DataCubePublicationStatus,
@@ -73,7 +74,9 @@ export type DataCubeMetadata = {
   workExamples?: string[];
 };
 
-export type Observation = Record<string, ObservationValue>;
+// String in case of joinBy dimensions.
+// TODO: we could also use a branded type here.
+export type Observation = Record<ComponentId | string, ObservationValue>;
 
 export type DataCubeObservations = {
   data: Observation[];
@@ -207,7 +210,7 @@ export type Component = Dimension | Measure;
 
 export type BaseComponent = {
   cubeIri: string;
-  id: string;
+  id: ComponentId;
   label: string;
   description?: string;
   unit?: string;
@@ -220,19 +223,21 @@ export type BaseComponent = {
   related?: RelatedDimension[];
 };
 
-export type BaseDimension = BaseComponent & {
+export type BaseDimension = Omit<BaseComponent, "id"> & {
   hierarchy?: HierarchyValue[] | null;
 } & (
     | {
+        id: string;
         isJoinByDimension: true;
         originalIds: {
           cubeIri: string;
-          dimensionId: string;
+          dimensionId: ComponentId;
           label: string;
           description: string;
         }[];
       }
     | {
+        id: ComponentId;
         isJoinByDimension?: never;
         originalIds?: never;
       }
@@ -462,7 +467,7 @@ export const parseTerm = (term?: Term) => {
 };
 
 /**
- * Parse observation values (values returnd from query.execute()) to native JS types
+ * Parse observation values (values returned from query.execute()) to native JS types
  *
  * @param observationValue
  */

@@ -7,6 +7,7 @@ import { LRUCache } from "typescript-lru-cache";
 import { SingleFilters } from "@/config-types";
 import { isMostRecentValue } from "@/domain/most-recent-value";
 import { stringifyComponentId } from "@/graphql/make-component-id";
+import { PossibleFilterValue } from "@/graphql/query-hooks";
 import * as ns from "@/rdf/namespace";
 import { queryCubeUnversionedIri } from "@/rdf/query-cube-unversioned-iri";
 import { loadMaxDimensionValue } from "@/rdf/query-dimension-values";
@@ -232,10 +233,11 @@ const parsePossibleFilters = (
     unversionedCubeIri: string;
     queryFilters: QueryFilter[];
   }
-) => {
+): PossibleFilterValue[] => {
   return queryFilters.map(({ i, iri, isVersioned }) => ({
+    __typename: "PossibleFilterValue",
     type: "single",
-    iri: stringifyComponentId({
+    id: stringifyComponentId({
       unversionedCubeIri,
       unversionedComponentIri: iri,
     }),

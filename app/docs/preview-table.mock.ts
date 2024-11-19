@@ -1,11 +1,16 @@
 import { DataCubeObservations, Dimension, Measure } from "@/domain/data";
+import { stringifyComponentId } from "@/graphql/make-component-id";
 import { TimeUnit } from "@/graphql/query-hooks";
 
 export const dimensions: Dimension[] = [
   {
     cubeIri: "https://cube",
+    id: stringifyComponentId({
+      unversionedCubeIri: "https://cube",
+      unversionedComponentIri:
+        "https://environment.ld.admin.ch/foen/ubd0104/dateofprobing",
+    }),
     isNumerical: false,
-    id: "https://environment.ld.admin.ch/foen/ubd0104/dateofprobing",
     label: "Date",
     isKeyDimension: true,
     values: [
@@ -18,8 +23,12 @@ export const dimensions: Dimension[] = [
   },
   {
     cubeIri: "https://cube",
+    id: stringifyComponentId({
+      unversionedCubeIri: "https://cube",
+      unversionedComponentIri:
+        "https://environment.ld.admin.ch/foen/ubd0104/parametertype",
+    }),
     isNumerical: false,
-    id: "https://environment.ld.admin.ch/foen/ubd0104/parametertype",
     label: "Parameter",
     isKeyDimension: true,
     values: [
@@ -30,8 +39,12 @@ export const dimensions: Dimension[] = [
   },
   {
     cubeIri: "https://cube",
+    id: stringifyComponentId({
+      unversionedCubeIri: "https://cube",
+      unversionedComponentIri:
+        "https://environment.ld.admin.ch/foen/ubd0104/monitoringprogramm",
+    }),
     isNumerical: false,
-    id: "https://environment.ld.admin.ch/foen/ubd0104/monitoringprogramm",
     label: "Monitoring Programme",
     isKeyDimension: false,
     values: [
@@ -57,8 +70,12 @@ export const dimensions: Dimension[] = [
   },
   {
     cubeIri: "https://cube",
+    id: stringifyComponentId({
+      unversionedCubeIri: "https://cube",
+      unversionedComponentIri:
+        "https://environment.ld.admin.ch/foen/ubd0104/station",
+    }),
     isNumerical: false,
-    id: "https://environment.ld.admin.ch/foen/ubd0104/station",
     label: "Bathing site",
     isKeyDimension: true,
     values: [
@@ -826,8 +843,12 @@ export const dimensions: Dimension[] = [
 export const measures: Measure[] = [
   {
     cubeIri: "https://cube",
+    id: stringifyComponentId({
+      unversionedCubeIri: "https://cube",
+      unversionedComponentIri:
+        "https://environment.ld.admin.ch/foen/ubd0104/value",
+    }),
     isNumerical: false,
-    id: "https://environment.ld.admin.ch/foen/ubd0104/value",
     label: "Concentration",
     isKeyDimension: false,
     values: [

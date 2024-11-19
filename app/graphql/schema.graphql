@@ -33,10 +33,10 @@ type RelatedDimension {
   id: String!
 }
 
-type ObservationFilter {
+type PossibleFilterValue {
   type: String!
+  id: String!
   value: FilterValue
-  iri: String!
 }
 
 enum TimeUnit {
@@ -185,7 +185,7 @@ type Query {
     sourceType: String!
     sourceUrl: String!
     cubeFilter: DataCubePossibleFiltersCubeFilter!
-  ): [ObservationFilter!]!
+  ): [PossibleFilterValue!]!
   searchCubes(
     sourceType: String!
     sourceUrl: String!

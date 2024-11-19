@@ -133,7 +133,8 @@ describe("add dataset", () => {
       expect(
         options.cubeFilters.map((x) => x.joinBy).every((x) => x === undefined)
       ).toBe(true);
-      return getCachedComponentsMock.electricyPricePerCantonDimensions;
+
+      return getCachedComponentsMock.electricityPricePerCantonDimensions;
     });
     const newState2 = runReducer(
       newState,
@@ -179,7 +180,12 @@ describe("add chart", () => {
     ) as ConfiguratorStateConfiguringChart;
     const config = newState.chartConfigs[1];
     expect(Object.keys(config.cubes[0].filters)).toEqual([
-      "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton",
+      stringifyComponentId({
+        unversionedCubeIri:
+          "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen",
+        unversionedComponentIri:
+          "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton",
+      }),
     ]);
   });
 });
@@ -460,40 +466,40 @@ describe("deriveFiltersFromFields", () => {
         "cubes": Array [
           Object {
             "filters": Object {
-              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr": Object {
+              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen___https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr": Object {
                 "type": "single",
                 "value": "2011",
               },
-              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton": Object {
+              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen___https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton": Object {
                 "type": "single",
                 "value": "https://ld.admin.ch/canton/1",
               },
             },
             "iri": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9",
             "joinBy": Array [
-              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
-              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton",
+              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen___https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
+              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen___https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton",
             ],
           },
           Object {
             "filters": Object {
-              "https://energy.ld.admin.ch/elcom/electricityprice/dimension/canton": Object {
+              "https://energy.ld.admin.ch/elcom/electricityprice-canton___https://energy.ld.admin.ch/elcom/electricityprice/dimension/canton": Object {
                 "type": "single",
                 "value": "https://ld.admin.ch/canton/1",
               },
-              "https://energy.ld.admin.ch/elcom/electricityprice/dimension/period": Object {
+              "https://energy.ld.admin.ch/elcom/electricityprice-canton___https://energy.ld.admin.ch/elcom/electricityprice/dimension/period": Object {
                 "type": "single",
                 "value": "2011",
               },
-              "https://energy.ld.admin.ch/elcom/electricityprice/dimension/product": Object {
+              "https://energy.ld.admin.ch/elcom/electricityprice-canton___https://energy.ld.admin.ch/elcom/electricityprice/dimension/product": Object {
                 "type": "single",
                 "value": "https://energy.ld.admin.ch/elcom/electricityprice/product/cheapest",
               },
             },
             "iri": "https://energy.ld.admin.ch/elcom/electricityprice-canton",
             "joinBy": Array [
-              "https://energy.ld.admin.ch/elcom/electricityprice/dimension/period",
-              "https://energy.ld.admin.ch/elcom/electricityprice/dimension/canton",
+              "https://energy.ld.admin.ch/elcom/electricityprice-canton___https://energy.ld.admin.ch/elcom/electricityprice/dimension/period",
+              "https://energy.ld.admin.ch/elcom/electricityprice-canton___https://energy.ld.admin.ch/elcom/electricityprice/dimension/canton",
             ],
           },
         ],
@@ -516,7 +522,7 @@ describe("deriveFiltersFromFields", () => {
               "https://energy.ld.admin.ch/elcom/electricityprice/category/H7": "#d62728",
               "https://energy.ld.admin.ch/elcom/electricityprice/category/H8": "#9467bd",
             },
-            "componentId": "https://energy.ld.admin.ch/elcom/electricityprice/dimension/category",
+            "componentId": "https://energy.ld.admin.ch/elcom/electricityprice-canton___https://energy.ld.admin.ch/elcom/electricityprice/dimension/category",
             "palette": "category10",
             "sorting": Object {
               "sortingOrder": "asc",
@@ -524,7 +530,7 @@ describe("deriveFiltersFromFields", () => {
             },
           },
           "y": Object {
-            "componentId": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/AnzahlAnlagen",
+            "componentId": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen___https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/AnzahlAnlagen",
           },
         },
         "interactiveFiltersConfig": Object {
@@ -603,7 +609,7 @@ describe("handleChartFieldChanged", () => {
         value: {
           locale: "en",
           field: "symbolLayer",
-          componentId: "symbolLayerIri",
+          componentId: "mapDataset___symbolLayerIri",
         },
       })
     );
@@ -679,13 +685,16 @@ describe("colorMapping", () => {
       value: {
         locale: "en",
         field: "segment",
-        componentId: "newAreaLayerColorIri",
+        componentId: "mapDataset___newAreaLayerColorIri",
       },
     });
 
     const chartConfig = state.chartConfigs[0] as ColumnConfig;
 
-    expect(chartConfig.fields.segment?.componentId === "newAreaLayerColorIri");
+    expect(
+      chartConfig.fields.segment?.componentId ===
+        "mapDataset___newAreaLayerColorIri"
+    );
     expect(chartConfig.fields.segment?.palette === "dimension");
     expect(chartConfig.fields.segment?.colorMapping).toEqual({
       orange: "rgb(255, 153, 0)",

@@ -13,6 +13,7 @@ import {
   ObservationValue,
   isJoinByComponent,
 } from "@/domain/data";
+import { ComponentId } from "@/graphql/make-component-id";
 import {
   DataCubeComponentsQuery,
   DataCubeObservationsQuery,
@@ -102,7 +103,7 @@ export const joinDimensions = (
         isJoinByDimension: true,
         originalIds: joinedDimensions.map((d) => ({
           cubeIri: d.cubeIri,
-          dimensionId: d.id,
+          dimensionId: d.id as ComponentId,
           label: d.label,
           description: d.description ?? "",
         })),
@@ -177,7 +178,6 @@ export const mergeObservations = (
         }
       }
       const existing: Observation | undefined = acc[key];
-      // TODO: handle cases of same column names across merged observations
       acc[key] = Object.assign(existing ?? {}, om);
     }
 

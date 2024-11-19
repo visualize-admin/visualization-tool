@@ -21,6 +21,7 @@ import {
 import { truthy } from "@/domain/types";
 import { Loaders } from "@/graphql/context";
 import {
+  ComponentId,
   getFiltersByComponentIris,
   parseComponentId,
   stringifyComponentId,
@@ -116,8 +117,9 @@ export const dataCubeDimensionGeoShapes: NonNullable<
   QueryResolvers["dataCubeDimensionGeoShapes"]
 > = async (_, { locale, cubeFilter }, { setup }, info) => {
   const { iri, dimensionId } = cubeFilter;
-  const { unversionedComponentIri = dimensionId } =
-    parseComponentId(dimensionId);
+  const { unversionedComponentIri = dimensionId } = parseComponentId(
+    dimensionId as ComponentId
+  );
   const { loaders, sparqlClient, cache } = await setup(info);
   const dimension = await getResolvedDimension(unversionedComponentIri, {
     cubeIri: iri,
@@ -245,7 +247,7 @@ export const dataCubeComponents: NonNullable<
 
   const filters = _filters ? getFiltersByComponentIris(_filters) : undefined;
   const componentIris = componentIds?.map(
-    (id) => parseComponentId(id).unversionedComponentIri ?? id
+    (id) => parseComponentId(id as ComponentId).unversionedComponentIri ?? id
   );
 
   const [unversionedCubeIri = iri, rawComponents] = await Promise.all([
@@ -414,7 +416,7 @@ export const dataCubeObservations: NonNullable<
 
   const filters = _filters ? getFiltersByComponentIris(_filters) : undefined;
   const componentIris = componentIds?.map(
-    (id) => parseComponentId(id).unversionedComponentIri ?? id
+    (id) => parseComponentId(id as ComponentId).unversionedComponentIri ?? id
   );
 
   const { query, observations } = await getCubeObservations({

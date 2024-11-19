@@ -46,7 +46,7 @@ import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { toggleInteractiveFilterDataDimension } from "@/configurator/interactive-filters/interactive-filters-config-state";
 import { Dimension, isGeoDimension, isJoinByComponent } from "@/domain/data";
 import { getOriginalDimension, JOIN_BY_CUBE_IRI } from "@/graphql/join";
-import { ObservationFilter } from "@/graphql/query-hooks";
+import { PossibleFilterValue } from "@/graphql/query-hooks";
 import { findInHierarchy } from "@/rdf/tree-utils";
 import { getCachedComponents } from "@/urql-cache";
 import { assert } from "@/utils/assert";
@@ -79,7 +79,7 @@ export const deriveFiltersFromFields = produce(
     options: {
       /** Possibly joined dimensions */
       dimensions: Dimension[];
-      possibleFilters?: ObservationFilter[];
+      possibleFilters?: PossibleFilterValue[];
     }
   ) => {
     const { dimensions, possibleFilters } = options;
@@ -106,7 +106,7 @@ export const deriveFiltersFromFields = produce(
             dimension: dim,
             isHidden: isHidden(dim),
             isGrouped: isGrouped(dim),
-            possibleFilter: possibleFilters?.find((f) => f.iri === dim.id),
+            possibleFilter: possibleFilters?.find((f) => f.id === dim.id),
           });
         });
       });
@@ -128,7 +128,7 @@ export const deriveFiltersFromFields = produce(
               ? getOriginalDimension(dim, cube)
               : dim,
             isField: isField(dim),
-            possibleFilter: possibleFilters?.find((f) => f.iri === dim.id),
+            possibleFilter: possibleFilters?.find((f) => f.id === dim.id),
           });
         });
       });
@@ -142,7 +142,7 @@ export const applyTableDimensionToFilters = (props: {
   dimension: Dimension;
   isHidden: boolean;
   isGrouped: boolean;
-  possibleFilter?: ObservationFilter;
+  possibleFilter?: PossibleFilterValue;
 }) => {
   const { filters, dimension, isHidden, isGrouped, possibleFilter, cubeIri } =
     props;
@@ -196,7 +196,7 @@ export const applyNonTableDimensionToFilters = (props: {
   filters: Filters;
   dimension: Dimension;
   isField: boolean;
-  possibleFilter?: ObservationFilter;
+  possibleFilter?: PossibleFilterValue;
 }) => {
   const { filters, dimension, isField, possibleFilter, cubeIri } = props;
   const originalIri = isJoinByComponent(dimension)

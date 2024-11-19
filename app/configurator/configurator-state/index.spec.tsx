@@ -22,7 +22,8 @@ import {
 } from "@/configurator/configurator-state/init";
 import { getLocalStorageKey } from "@/configurator/configurator-state/localstorage";
 import { Dimension } from "@/domain/data";
-import { ObservationFilter } from "@/graphql/query-hooks";
+import { stringifyComponentId } from "@/graphql/make-component-id";
+import { PossibleFilterValue } from "@/graphql/query-hooks";
 import { data as fakeVizFixture } from "@/test/__fixtures/config/prod/line-1.json";
 import { getCachedComponentsMock } from "@/urql-cache.mock";
 import * as api from "@/utils/chart-config/api";
@@ -39,10 +40,13 @@ jest.mock("@/utils/chart-config/api", () => ({
   fetchChartConfig: jest.fn(),
 }));
 
-const possibleFilters: ObservationFilter[] = [
+const possibleFilters: PossibleFilterValue[] = [
   {
-    __typename: "ObservationFilter",
-    iri: "symbolLayerIri",
+    __typename: "PossibleFilterValue",
+    id: stringifyComponentId({
+      unversionedCubeIri: "mapDataset",
+      unversionedComponentIri: "symbolLayerIri",
+    }),
     type: "single",
     value: "xPossible",
   },
@@ -177,7 +181,10 @@ describe("initChartStateFromCube", () => {
       "en"
     )) as ConfiguratorStateConfiguringChart;
     expect(res.chartConfigs[0].cubes[0].filters).toEqual({
-      symbolLayerIri: {
+      [stringifyComponentId({
+        unversionedCubeIri: "mapDataset",
+        unversionedComponentIri: "symbolLayerIri",
+      })]: {
         type: "single",
         value: "xPossible",
       },

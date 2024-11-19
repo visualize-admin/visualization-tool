@@ -18,6 +18,7 @@ import {
 import { isMostRecentValue } from "@/domain/most-recent-value";
 import { PromiseValue, truthy } from "@/domain/types";
 import {
+  ComponentId,
   parseComponentId,
   stringifyComponentId,
 } from "@/graphql/make-component-id";
@@ -619,9 +620,10 @@ const buildFilters = async ({
   lookupSource.queryPrefix = pragmas;
 
   return await Promise.all(
-    Object.entries(filters).flatMap(async ([filterIri, filter]) => {
+    Object.entries(filters).flatMap(async ([filterComponentId, filter]) => {
       const iri =
-        parseComponentId(filterIri).unversionedComponentIri ?? filterIri;
+        parseComponentId(filterComponentId as ComponentId)
+          .unversionedComponentIri ?? filterComponentId;
       const cubeDimension = cube.dimensions.find((d) => d.path?.value === iri);
 
       if (!cubeDimension) {
