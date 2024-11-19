@@ -255,7 +255,7 @@ const getMinMaxDimensionValues = async (
   if (cube.term && dimension.path) {
     const result = await loadMinMaxDimensionValues({
       datasetIri: cube.term.value,
-      dimensionIri: dimension.path,
+      dimensionIri: dimension.path.value,
       sparqlClient,
       cache,
     });
