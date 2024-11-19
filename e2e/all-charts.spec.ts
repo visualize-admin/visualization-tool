@@ -62,19 +62,19 @@ test.skip("all charts", async ({ page }) => {
       fullPage: true,
     });
 
-    const errorDialog = await page.$(
+    const errorDialogCloseButton = await page.$(
       "[data-nextjs-errors-dialog-left-right-close-button='true']"
     );
 
-    if (errorDialog) {
-      await errorDialog.click();
+    if (errorDialogCloseButton) {
+      await errorDialogCloseButton.click();
       await sleep(1_000);
-      const errorToast = await page.$(
+      const errorToastCloseButton = await page.$(
         "[data-nextjs-toast-errors-hide-button='true']"
       );
 
-      if (errorToast) {
-        await errorToast.click();
+      if (errorToastCloseButton) {
+        await errorToastCloseButton.click();
         await sleep(1_000);
       }
     }
