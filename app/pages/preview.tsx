@@ -21,7 +21,7 @@ const chartStateStore = create<{
 
 if (typeof window !== "undefined") {
   window.addEventListener("message", async (event) => {
-    if (event.data.state === "CONFIGURING_CHART") {
+    if (event.data.key) {
       chartStateStore.setState({
         state: {
           ...(await migrateConfiguratorState(event.data)),
