@@ -82,7 +82,7 @@ describe("dataset preview", () => {
   it("should return correct preview", async () => {
     const { dimensions, measures, observations } = await getCubePreview(
       "awesome iri",
-      { sparqlClient, locale: "en" }
+      { sparqlClient, locale: "en", unversionedIri: "awesome iri" }
     );
     const dim = dimensions.find(
       (d) =>
