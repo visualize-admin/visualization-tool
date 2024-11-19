@@ -38,7 +38,7 @@ const LoadingStateContext = createContext<LoadingState | undefined>(undefined);
 
 /** Used to consolidate loading state across different components.
  *
- * It was primarly implemented to avoid being in "data loaded" state,
+ * It was primarily implemented to avoid being in "data loaded" state,
  * which displays a `<NoDataHint>`, when interactive filters are still
  * being fetched.
  */
