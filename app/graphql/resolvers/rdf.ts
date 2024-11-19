@@ -388,7 +388,10 @@ export const dataCubeComponentTermsets: NonNullable<
 > = async (_, { locale, cubeFilter }, { setup }, info) => {
   const { sparqlClient } = await setup(info);
   const { iri } = cubeFilter;
-  const cube = new LightCube({ iri, locale, sparqlClient });
+  const unversionedIri =
+    (await queryCubeUnversionedIri(sparqlClient, iri)) ?? iri;
+  const cube = new LightCube({ iri, unversionedIri, locale, sparqlClient });
+
   return await cube.fetchComponentTermsets();
 };
 
@@ -397,7 +400,10 @@ export const dataCubeMetadata: NonNullable<
 > = async (_, { locale, cubeFilter }, { setup }, info) => {
   const { sparqlClient } = await setup(info);
   const { iri } = cubeFilter;
-  const cube = new LightCube({ iri, locale, sparqlClient });
+  const unversionedIri =
+    (await queryCubeUnversionedIri(sparqlClient, iri)) ?? iri;
+  const cube = new LightCube({ iri, unversionedIri, locale, sparqlClient });
+
   return await cube.fetchMetadata();
 };
 
@@ -445,7 +451,10 @@ export const dataCubePreview: NonNullable<
 > = async (_, { locale, cubeFilter }, { setup }, info) => {
   const { sparqlClient } = await setup(info);
   const { iri } = cubeFilter;
-  const cube = new LightCube({ iri, locale, sparqlClient });
+  const unversionedIri =
+    (await queryCubeUnversionedIri(sparqlClient, iri)) ?? iri;
+  const cube = new LightCube({ iri, unversionedIri, locale, sparqlClient });
+
   return await cube.fetchPreview();
 };
 

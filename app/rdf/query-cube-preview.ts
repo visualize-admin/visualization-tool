@@ -34,11 +34,12 @@ import { buildLocalizedSubQuery } from "./query-utils";
 export const getCubePreview = async (
   iri: string,
   options: {
+    unversionedIri: string;
     locale: string;
     sparqlClient: ParsingClient;
   }
 ): Promise<DataCubePreview> => {
-  const { sparqlClient, locale } = options;
+  const { unversionedIri, sparqlClient, locale } = options;
   const qs = await sparqlClient.query.construct(
     `PREFIX cube: <https://cube.link/>
 PREFIX meta: <https://cube.link/meta/>
@@ -228,11 +229,7 @@ CONSTRUCT {
         Object.entries(observation).map(([k, v]) => {
           return [
             stringifyComponentId({
-              // TODO
-              // Technically we don't need to unversion the cube iri here, as
-              // cube preview is temporary and dimensions coming from here
-              // aren't stored in chart config, but would be nice to be consistent.
-              unversionedCubeIri: iri,
+              unversionedCubeIri: unversionedIri,
               unversionedComponentIri: k,
             }),
             v,
@@ -282,12 +279,8 @@ CONSTRUCT {
 
     const baseComponent: BaseComponent = {
       cubeIri: iri,
-      // TODO
-      // Technically we don't need to unversion the cube iri here, as
-      // cube preview is temporary and dimensions coming from here
-      // aren't stored in chart config, but would be nice to be consistent.
       id: stringifyComponentId({
-        unversionedCubeIri: iri,
+        unversionedCubeIri: unversionedIri,
         unversionedComponentIri: dimIri,
       }),
       label: qLabel?.object.value ?? "",

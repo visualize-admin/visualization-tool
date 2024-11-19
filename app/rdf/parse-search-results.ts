@@ -105,10 +105,10 @@ function buildSearchCubes(
           const dim = bySubjectAndPredicate.get(x.object.value);
           return {
             iri: stringifyComponentId({
-              // TODO
               // Technically we don't need to unversion the cube iri here, as
               // search cubes are temporary and dimensions coming from here
-              // aren't stored in chart config, but would be nice to be consistent.
+              // aren't stored in chart config.
+              // We don't do it due to performance reasons.
               unversionedCubeIri: iri,
               unversionedComponentIri: x.object.value,
             }),
