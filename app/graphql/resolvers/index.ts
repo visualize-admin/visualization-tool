@@ -73,7 +73,7 @@ export const resolveDimensionType = (
         if (timeUnit === TimeUnit.Month || timeUnit === TimeUnit.Year) {
           return "TemporalEntityDimension";
         } else {
-          throw new Error(
+          throw Error(
             `Unsupported time unit for TemporalEntityDimension: ${timeUnit}`
           );
         }

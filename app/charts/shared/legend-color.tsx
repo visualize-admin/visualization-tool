@@ -141,9 +141,7 @@ const useLegendGroups = ({
     configState.state === "INITIAL" ||
     configState.state === "SELECTING_DATASET"
   ) {
-    throw new Error(
-      `Cannot call useLegendGroups from state ${configState.state}`
-    );
+    throw Error(`Cannot call useLegendGroups from state ${configState.state}`);
   }
 
   const segmentField = (

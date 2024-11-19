@@ -135,7 +135,7 @@ CONSTRUCT {
   );
 
   if (qs.length === 0) {
-    throw new Error(`No cube found for ${iri}!`);
+    throw Error(`No cube found for ${iri}!`);
   }
 
   const sQs = groupBy(qs, (q) => q.subject.value);
@@ -329,7 +329,7 @@ CONSTRUCT {
           const timeFormat = getTimeFormat(dataType, timeUnit);
 
           if (!timeFormat || !timeUnit) {
-            throw new Error(
+            throw Error(
               `Temporal dimension ${dimIri} has no timeFormat or timeUnit!`
             );
           }

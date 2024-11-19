@@ -69,9 +69,7 @@ const useComboLineSingleState = (
   );
 
   if (yUnits.length > 1) {
-    throw new Error(
-      "Multiple units are not supported in ComboLineSingle chart!"
-    );
+    throw Error("Multiple units are not supported in ComboLineSingle chart!");
   }
 
   const yAxisLabel = yUnits[0] ?? "";

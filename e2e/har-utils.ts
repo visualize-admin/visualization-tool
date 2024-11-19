@@ -68,7 +68,7 @@ export const getEnv = (name: string) => {
   const found = envs.find((x) => x.name === name);
 
   if (!found) {
-    throw new Error(`Could not find environment ${name}`);
+    throw Error(`Could not find environment ${name}`);
   }
 
   return found;

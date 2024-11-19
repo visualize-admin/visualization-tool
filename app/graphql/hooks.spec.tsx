@@ -97,7 +97,7 @@ describe("useComponentsQuery - keepPreviousData: false", () => {
       options: RequestInit | undefined
     ) => {
       if (!options?.body) {
-        throw new Error("Must receive a body");
+        throw Error("Must receive a body");
       }
 
       const reqBody = JSON.parse(options.body.toString());
@@ -223,7 +223,7 @@ describe("useComponentsQuery - keepPreviousData: true", () => {
       options: RequestInit | undefined
     ) => {
       if (!options?.body) {
-        throw new Error("Must receive a body");
+        throw Error("Must receive a body");
       }
 
       const reqBody = JSON.parse(options.body.toString());

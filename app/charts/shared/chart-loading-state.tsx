@@ -46,7 +46,7 @@ export const useLoadingState = () => {
   const ctx = useContext(LoadingStateContext);
 
   if (!ctx) {
-    throw new Error(
+    throw Error(
       "useLoadingState must be called inside a LoadingStateContext.Provider!"
     );
   }

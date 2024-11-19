@@ -135,7 +135,7 @@ export const dataCubeDimensionGeoShapes: NonNullable<
   const geometries = dimensionValues.map((d) => d.geometry).filter(truthy);
 
   if (geometries.length === 0) {
-    throw new Error(
+    throw Error(
       `No geometries found for dimension ${unversionedComponentIri}!`
     );
   }
@@ -191,7 +191,7 @@ const getResolvedDimension = async (
   const cube = await loaders.cube.load(cubeIri);
 
   if (!cube) {
-    throw new Error(`Cube ${cubeIri} not found!`);
+    throw Error(`Cube ${cubeIri} not found!`);
   }
 
   await cube.fetchShape();
@@ -206,7 +206,7 @@ const getResolvedDimension = async (
   const dimension = dimensions.find((d) => iri === d.data.iri);
 
   if (!dimension) {
-    throw new Error(`Dimension ${iri} not found!`);
+    throw Error(`Dimension ${iri} not found!`);
   }
 
   return dimension;
@@ -238,7 +238,7 @@ export const dataCubeComponents: NonNullable<
   const cube = await loaders.cube.load(iri);
 
   if (!cube) {
-    throw new Error(`Cube ${iri} not found!`);
+    throw Error(`Cube ${iri} not found!`);
   }
 
   await cube.fetchShape();
@@ -344,7 +344,7 @@ export const dataCubeComponents: NonNullable<
           case "TemporalDimension":
           case "TemporalEntityDimension": {
             if (!data.timeFormat || !data.timeUnit) {
-              throw new Error(
+              throw Error(
                 `${dimensionType} ${data.iri} is missing timeFormat or timeUnit!`
               );
             }
@@ -407,7 +407,7 @@ export const dataCubeObservations: NonNullable<
   const cube = await loaders.cube.load(iri);
 
   if (!cube) {
-    throw new Error("Cube not found!");
+    throw Error("Cube not found!");
   }
 
   await cube.fetchShape();

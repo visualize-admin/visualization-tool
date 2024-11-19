@@ -55,7 +55,7 @@ const showCubeInfo = async ({
     .toPromise();
 
   if (res.error) {
-    throw new Error(res.error.message);
+    throw Error(res.error.message);
   }
 
   const cube = res.data?.dataCubeMetadata;
@@ -83,7 +83,7 @@ const showCubeComponents = async ({
     .toPromise();
 
   if (res.error) {
-    throw new Error(res.error.message);
+    throw Error(res.error.message);
   }
 
   report(res.data?.dataCubeComponents);
@@ -110,11 +110,11 @@ const previewCube = async ({
     .toPromise();
 
   if (error) {
-    throw new Error(error.message);
+    throw Error(error.message);
   }
 
   if (!info || !info.dataCubeMetadata) {
-    throw new Error(`Could not find cube with iri of ${iri}`);
+    throw Error(`Could not find cube with iri of ${iri}`);
   }
 
   const res = await client
@@ -130,7 +130,7 @@ const previewCube = async ({
     .toPromise();
 
   if (res.error) {
-    throw new Error(res.error.message);
+    throw Error(res.error.message);
   }
 
   report(res.data?.dataCubePreview?.observations);

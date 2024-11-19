@@ -67,12 +67,18 @@ const preloadChartsPool = async (
   const fetchPage = async ({ locale, key }: Config & { locale: string }) => {
     i++;
     const page = ready.pop();
-    if (!page) throw new Error("No pages available");
+
+    if (!page) {
+      throw Error("No pages available");
+    }
+
     await preloadChart(page, locale, key);
     ready.push(page);
+
     if (i % 10 !== 0) {
       return;
     }
+
     console.log(`Progress: ${i}/${withLocales.length}`);
   };
 

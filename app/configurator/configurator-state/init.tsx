@@ -52,7 +52,7 @@ export const initChartStateFromCube = async (
   });
 
   if (!components?.dataCubesComponents) {
-    throw new Error(`Could not fetch components for ${latestCubeIri}!`);
+    throw Error(`Could not fetch components for ${latestCubeIri}!`);
   }
 
   const { dimensions, measures } = components.dataCubesComponents;
@@ -87,7 +87,7 @@ export const initChartStateFromCube = async (
     .toPromise();
 
   if (!possibleFilters?.possibleFilters && shouldFetchPossibleFilters) {
-    throw new Error(`Could not fetch possible filters for ${latestCubeIri}!`);
+    throw Error(`Could not fetch possible filters for ${latestCubeIri}!`);
   }
 
   const chartConfig = deriveFiltersFromFields(initialChartConfig, {

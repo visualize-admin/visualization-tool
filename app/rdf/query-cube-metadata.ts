@@ -144,11 +144,11 @@ export const getCubeMetadata = async (
   })) as RawDataCubeMetadata[];
 
   if (results.length === 0) {
-    throw new Error(`No cube found for ${iri}!`);
+    throw Error(`No cube found for ${iri}!`);
   }
 
   if (results.length > 1) {
-    throw new Error(`Multiple cubes found for ${iri}!`);
+    throw Error(`Multiple cubes found for ${iri}!`);
   }
 
   const result = results[0];

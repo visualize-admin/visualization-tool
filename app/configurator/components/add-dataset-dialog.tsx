@@ -95,7 +95,6 @@ import SvgIcRemove from "@/icons/components/IcRemove";
 import SvgIcSearch from "@/icons/components/IcSearch";
 import { useLocale } from "@/locales/use-locale";
 import { useEventEmitter } from "@/utils/eventEmitter";
-import { exhaustiveCheck } from "@/utils/exhaustiveCheck";
 import useLocalState from "@/utils/use-local-state";
 
 const DialogCloseButton = (props: IconButtonProps) => {
@@ -269,10 +268,8 @@ const inferJoinBy = (
             )?.iri,
           };
         default:
-          return exhaustiveCheck(
-            type,
-            `Unknown search cube join by dimension ${type}`
-          );
+          const exhaustiveCheck: never = type;
+          return exhaustiveCheck;
       }
     })
     .filter((x): x is { left: string; right: string } => !!(x.left && x.right));
@@ -617,7 +614,7 @@ export const DatasetDialog = ({
     (x) => x.key === state.activeChartKey
   );
   if (!activeChartConfig) {
-    throw new Error("Could not find active chart config");
+    throw Error("Could not find active chart config");
   }
 
   const relevantCubes = activeChartConfig.cubes.slice(0, 1);
@@ -1119,7 +1116,7 @@ const useAddDataset = () => {
         });
 
         if (res.error || !res.data) {
-          throw new Error("Could not fetch dimensions and measures");
+          throw Error("Could not fetch dimensions and measures");
         }
 
         dispatch({

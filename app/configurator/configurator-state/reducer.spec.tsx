@@ -49,7 +49,7 @@ afterEach(() => {
   try {
     expect(configStateMock).toEqual(pristineConfigStateMock);
   } catch (e) {
-    throw new Error(
+    throw Error(
       "One of the tests is dirtying the configStateMock. Please ensure that the configStateMock is not modified in the tests by using produce from immer."
     );
   }

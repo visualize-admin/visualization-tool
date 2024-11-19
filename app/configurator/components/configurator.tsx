@@ -246,7 +246,7 @@ export const SaveDraftButton = ({
             replace(`/create/new?edit=${updated.key}`);
           }
         } else {
-          throw new Error("Could not update draft");
+          throw Error("Could not update draft");
         }
       } else if (state) {
         const saved = await createConfigMut.mutate({
@@ -271,7 +271,7 @@ export const SaveDraftButton = ({
             shallow: true,
           });
         } else {
-          throw new Error("Could not save draft");
+          throw Error("Could not save draft");
         }
       }
 

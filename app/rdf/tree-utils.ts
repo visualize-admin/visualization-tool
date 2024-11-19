@@ -136,9 +136,7 @@ export const regroupTrees = (
     const goodTrees = trees.filter((x) => !!x[0] && !!x[0].hierarchyName);
     const roots = new Set(goodTrees.map((x) => x[0].value));
     if (roots.size > 1) {
-      throw new Error(
-        "Cannot have multiple hierarchies not sharing the same root"
-      );
+      throw Error("Cannot have multiple hierarchies not sharing the same root");
     }
     return [
       {

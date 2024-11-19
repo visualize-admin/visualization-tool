@@ -1326,7 +1326,7 @@ export const getChartConfig = (
   chartKey?: string | null
 ): ChartConfig => {
   if (state.state === "INITIAL" || state.state === "SELECTING_DATASET") {
-    throw new Error("No chart config available!");
+    throw Error("No chart config available!");
   }
 
   const { chartConfigs, activeChartKey } = state;

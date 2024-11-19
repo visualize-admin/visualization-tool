@@ -670,7 +670,7 @@ const buildFilters = async ({
       );
 
       if (ns.rdf.langString.value === dataType) {
-        throw new Error(
+        throw Error(
           `Dimension <${iri}> has dataType 'langString', which is not supported by Visualize. In order to fix it, change the dataType to 'string' in the cube definition.`
         );
       }
@@ -795,7 +795,7 @@ async function fetchViewObservations({
       : observationsView.observations({ disableDistinct }));
   } catch (e) {
     console.warn("Observations query failed!", query);
-    throw new Error(
+    throw Error(
       `Could not retrieve data: ${e instanceof Error ? e.message : e}`
     );
   }

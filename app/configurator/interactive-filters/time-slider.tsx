@@ -41,7 +41,7 @@ const useTimeline = () => {
   const timeline = useContext(TimelineContext);
 
   if (!timeline) {
-    throw new Error(
+    throw Error(
       "useTimeline must be called inside a TimelineContext.Provider!"
     );
   }
@@ -75,7 +75,7 @@ export const TimeSlider = (props: TimeSliderProps) => {
   const temporalOrdinal = isTemporalOrdinalDimension(dimension);
 
   if (!(temporal || temporalEntity || temporalOrdinal)) {
-    throw new Error("You can only use TimeSlider with temporal dimensions!");
+    throw Error("You can only use TimeSlider with temporal dimensions!");
   }
 
   const timeFormatUnit = useTimeFormatUnit();

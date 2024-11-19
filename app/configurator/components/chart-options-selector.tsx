@@ -616,9 +616,7 @@ const ChartComboLineSingleYField = (
     );
 
     if (uniqueUnits.length > 1) {
-      throw new Error(
-        "ChartComboYField can only be used with single-unit charts!"
-      );
+      throw Error("ChartComboYField can only be used with single-unit charts!");
     }
 
     return uniqueUnits[0];
@@ -805,7 +803,7 @@ const ChartComboLineDualYField = (
   }, [numericalMeasures, y.leftAxisComponentId, y.rightAxisComponentId]);
 
   if (leftAxisMeasure.unit === rightAxisMeasure.unit) {
-    throw new Error("ChartComboYField can only be used with dual-unit charts!");
+    throw Error("ChartComboYField can only be used with dual-unit charts!");
   }
 
   const getOptionGroups = useCallback(
@@ -920,7 +918,7 @@ const ChartComboLineColumnYField = (
   }, [numericalMeasures, y.columnComponentId, y.lineComponentId]);
 
   if (lineMeasure.unit === columnMeasure.unit) {
-    throw new Error("ChartComboYField can only be used with dual-unit charts!");
+    throw Error("ChartComboYField can only be used with dual-unit charts!");
   }
 
   const getOptionGroups = useCallback(

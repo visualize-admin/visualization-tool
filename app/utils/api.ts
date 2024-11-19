@@ -27,6 +27,6 @@ export const apiFetch = async <T>(
       ? (SuperJSON.deserialize(json.data) as T)
       : (json.data as T);
   } else {
-    throw new Error(json.message);
+    throw Error(json.message);
   }
 };

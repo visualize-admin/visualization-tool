@@ -80,7 +80,7 @@ const getDimensionHierarchies = async (
   const cubeIri = cube.term?.value;
 
   if (!cubeIri) {
-    throw new Error("Cube must have an iri!");
+    throw Error("Cube must have an iri!");
   }
 
   // Can't rely on the cube here, because sometimes it might contain duplicate

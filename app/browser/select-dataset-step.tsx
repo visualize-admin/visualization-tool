@@ -304,7 +304,7 @@ const SelectDatasetStepContent = ({
               return [];
             default:
               const check: never = type;
-              throw new Error(`Invalid search cube filter type ${check}`);
+              throw Error(`Invalid search cube filter type ${check}`);
           }
         })();
         const item = (searchList as { iri: string; label?: string }[]).find(

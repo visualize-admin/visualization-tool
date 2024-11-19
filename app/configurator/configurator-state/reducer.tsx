@@ -948,7 +948,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         });
 
         if (!dataCubesComponents) {
-          throw new Error(
+          throw Error(
             "Error while removing dataset: Could not find cached dataCubesComponents"
           );
         }

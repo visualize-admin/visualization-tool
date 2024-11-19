@@ -238,7 +238,7 @@ const mkScoresQuery = (
             const value = filter.value as TimeUnit;
             const unitNode = unitsToNode.get(value);
             if (!unitNode) {
-              throw new Error(`Invalid temporal unit used ${value}`);
+              throw Error(`Invalid temporal unit used ${value}`);
             }
 
             return `
