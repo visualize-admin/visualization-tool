@@ -5,6 +5,7 @@ import {
 } from "@/config-types";
 import { stringifyComponentId } from "@/graphql/make-component-id";
 import dualLine1Fixture from "@/test/__fixtures/config/dev/chartConfig-photovoltaik-und-gebaudeprogramm.json";
+import tableFixture from "@/test/__fixtures/config/dev/chartConfig-table-covid19.json";
 import {
   CHART_CONFIG_VERSION,
   CONFIGURATOR_STATE_VERSION,
@@ -194,6 +195,15 @@ describe("config migrations", () => {
           "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/AnzahlAnlagen",
       })]: "#1f77b4",
     });
+  });
+
+  it("should correctly migrate table charts to v4.0.0", async () => {
+    const migratedConfig = await migrateChartConfig(tableFixture, {
+      toVersion: "4.0.0",
+      migrationProps: CONFIGURATOR_STATE,
+    });
+    const decodedConfig = decodeChartConfig(migratedConfig);
+    expect(decodedConfig).toBeDefined();
   });
 });
 
