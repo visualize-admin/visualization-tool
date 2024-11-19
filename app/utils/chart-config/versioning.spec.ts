@@ -2,7 +2,9 @@ import {
   ConfiguratorStateConfiguringChart,
   decodeChartConfig,
   LineConfig,
+  TableConfig,
 } from "@/config-types";
+import { configJoinedCubes } from "@/configurator/configurator-state/mocks";
 import { stringifyComponentId } from "@/graphql/make-component-id";
 import dualLine1Fixture from "@/test/__fixtures/config/dev/chartConfig-photovoltaik-und-gebaudeprogramm.json";
 import tableFixture from "@/test/__fixtures/config/dev/chartConfig-table-covid19.json";
@@ -197,13 +199,24 @@ describe("config migrations", () => {
     });
   });
 
-  it("should correctly migrate table charts to v4.0.0", async () => {
+  it("should correctly migrate table charts", async () => {
     const migratedConfig = await migrateChartConfig(tableFixture, {
-      toVersion: "4.0.0",
+      toVersion: CHART_CONFIG_VERSION,
       migrationProps: CONFIGURATOR_STATE,
     });
     const decodedConfig = decodeChartConfig(migratedConfig);
     expect(decodedConfig).toBeDefined();
+  });
+
+  it("should not migrate joinBy iris", async () => {
+    const migratedConfig = await migrateChartConfig(configJoinedCubes.table, {
+      toVersion: CHART_CONFIG_VERSION,
+      migrationProps: CONFIGURATOR_STATE,
+    });
+    const decodedConfig = decodeChartConfig(migratedConfig) as TableConfig;
+    expect(decodedConfig).toBeDefined();
+    expect(Object.keys(decodedConfig.fields)[0]).toBe("joinBy__0");
+    expect(decodedConfig.fields["joinBy__0"].componentId).toBe("joinBy__0");
   });
 });
 
