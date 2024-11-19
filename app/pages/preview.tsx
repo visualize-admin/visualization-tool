@@ -45,6 +45,7 @@ export default function Preview() {
           <ThemeProvider theme={federalTheme.theme}>
             {state ? (
               <ConfiguratorStateProvider
+                key={state.key}
                 chartId="published"
                 initialState={state}
               >
