@@ -3,6 +3,7 @@ import {
   decodeChartConfig,
   LineConfig,
 } from "@/config-types";
+import { stringifyComponentId } from "@/graphql/make-component-id";
 import dualLine1Fixture from "@/test/__fixtures/config/dev/chartConfig-photovoltaik-und-gebaudeprogramm.json";
 import {
   CHART_CONFIG_VERSION,
@@ -181,10 +182,17 @@ describe("config migrations", () => {
     const decodedConfig = decodeChartConfig(migratedConfig);
     expect(decodedConfig).toBeDefined();
     expect((decodedConfig as any).fields.y.colorMapping).toMatchObject({
-      "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_co2wirkung/4___http://schema.org/amount":
-        "#ff7f0e",
-      "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9___https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/AnzahlAnlagen":
-        "#1f77b4",
+      [stringifyComponentId({
+        unversionedCubeIri:
+          "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_co2wirkung/4",
+        unversionedComponentIri: "http://schema.org/amount",
+      })]: "#ff7f0e",
+      [stringifyComponentId({
+        unversionedCubeIri:
+          "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9",
+        unversionedComponentIri:
+          "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/AnzahlAnlagen",
+      })]: "#1f77b4",
     });
   });
 });
