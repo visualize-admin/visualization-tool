@@ -22,8 +22,8 @@ import { truthy } from "@/domain/types";
 import { Loaders } from "@/graphql/context";
 import {
   getFiltersByComponentIris,
-  makeComponentId,
-  splitComponentId,
+  parseComponentId,
+  stringifyComponentId,
 } from "@/graphql/make-component-id";
 import {
   QueryResolvers,
@@ -117,7 +117,7 @@ export const dataCubeDimensionGeoShapes: NonNullable<
 > = async (_, { locale, cubeFilter }, { setup }, info) => {
   const { iri, dimensionId } = cubeFilter;
   const { unversionedComponentIri = dimensionId } =
-    splitComponentId(dimensionId);
+    parseComponentId(dimensionId);
   const { loaders, sparqlClient, cache } = await setup(info);
   const dimension = await getResolvedDimension(unversionedComponentIri, {
     cubeIri: iri,
@@ -245,7 +245,7 @@ export const dataCubeComponents: NonNullable<
 
   const filters = _filters ? getFiltersByComponentIris(_filters) : undefined;
   const componentIris = componentIds?.map(
-    (id) => splitComponentId(id).unversionedComponentIri ?? id
+    (id) => parseComponentId(id).unversionedComponentIri ?? id
   );
 
   const [unversionedCubeIri = iri, rawComponents] = await Promise.all([
@@ -287,7 +287,7 @@ export const dataCubeComponents: NonNullable<
       const baseComponent: BaseComponent = {
         // We need to use original iri here, as the cube iri might have changed.
         cubeIri: iri,
-        id: makeComponentId({
+        id: stringifyComponentId({
           unversionedCubeIri,
           unversionedComponentIri: data.iri,
         }),
@@ -302,7 +302,7 @@ export const dataCubeComponents: NonNullable<
         values,
         related: data.related.map((r) => ({
           type: r.type,
-          id: makeComponentId({
+          id: stringifyComponentId({
             unversionedCubeIri,
             unversionedComponentIri: r.iri,
           }),
@@ -414,7 +414,7 @@ export const dataCubeObservations: NonNullable<
 
   const filters = _filters ? getFiltersByComponentIris(_filters) : undefined;
   const componentIris = componentIds?.map(
-    (id) => splitComponentId(id).unversionedComponentIri ?? id
+    (id) => parseComponentId(id).unversionedComponentIri ?? id
   );
 
   const { query, observations } = await getCubeObservations({

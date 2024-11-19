@@ -16,7 +16,7 @@ import {
   TemporalEntityDimension,
 } from "@/domain/data";
 import { truthy } from "@/domain/types";
-import { makeComponentId } from "@/graphql/make-component-id";
+import { stringifyComponentId } from "@/graphql/make-component-id";
 import { resolveDimensionType, resolveMeasureType } from "@/graphql/resolvers";
 
 import * as ns from "./namespace";
@@ -227,7 +227,7 @@ CONSTRUCT {
       Object.fromEntries(
         Object.entries(observation).map(([k, v]) => {
           return [
-            makeComponentId({
+            stringifyComponentId({
               // TODO
               // Technically we don't need to unversion the cube iri here, as
               // cube preview is temporary and dimensions coming from here
@@ -286,7 +286,7 @@ CONSTRUCT {
       // Technically we don't need to unversion the cube iri here, as
       // cube preview is temporary and dimensions coming from here
       // aren't stored in chart config, but would be nice to be consistent.
-      id: makeComponentId({
+      id: stringifyComponentId({
         unversionedCubeIri: iri,
         unversionedComponentIri: dimIri,
       }),

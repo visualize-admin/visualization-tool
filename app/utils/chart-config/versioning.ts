@@ -10,7 +10,10 @@ import {
 } from "@/domain/datasource/constants";
 import { client } from "@/graphql/client";
 import { isJoinById } from "@/graphql/join";
-import { makeComponentId, splitComponentId } from "@/graphql/make-component-id";
+import {
+  parseComponentId,
+  stringifyComponentId,
+} from "@/graphql/make-component-id";
 import { DEFAULT_CATEGORICAL_PALETTE_NAME } from "@/palettes";
 import {
   CHART_CONFIG_VERSION,
@@ -959,14 +962,14 @@ export const chartConfigMigrations: Migration[] = [
           return {
             ...rest,
             joinBy: rest.joinBy?.map((joinBy: string) =>
-              makeComponentId({
+              stringifyComponentId({
                 unversionedCubeIri: unversionedIri,
                 unversionedComponentIri: joinBy,
               })
             ),
             filters: Object.fromEntries(
               Object.entries(cube.filters).map(([k, v]) => [
-                makeComponentId({
+                stringifyComponentId({
                   unversionedCubeIri: unversionedIri,
                   unversionedComponentIri: k,
                 }),
@@ -986,7 +989,7 @@ export const chartConfigMigrations: Migration[] = [
           v.componentIds = v.componentIris.map((iri: string) =>
             isJoinById(iri)
               ? iri
-              : makeComponentId({
+              : stringifyComponentId({
                   unversionedCubeIri: getClosestUnversionedCubeIri(iri),
                   unversionedComponentIri: iri,
                 })
@@ -996,7 +999,7 @@ export const chartConfigMigrations: Migration[] = [
           v.componentId = isJoinById(v.componentIri)
             ? v.componentIri
             : v.componentIri
-              ? makeComponentId({
+              ? stringifyComponentId({
                   unversionedCubeIri: getClosestUnversionedCubeIri(
                     v.componentIri
                   ),
@@ -1010,7 +1013,7 @@ export const chartConfigMigrations: Migration[] = [
           v.measureId = isJoinById(v.measureIri)
             ? v.measureIri
             : v.measureIri
-              ? makeComponentId({
+              ? stringifyComponentId({
                   unversionedCubeIri: getClosestUnversionedCubeIri(
                     v.measureIri
                   ),
@@ -1028,7 +1031,7 @@ export const chartConfigMigrations: Migration[] = [
         ) {
           v.colorMapping = Object.fromEntries(
             Object.entries(v.colorMapping).map(([k, v]) => [
-              makeComponentId({
+              stringifyComponentId({
                 unversionedCubeIri: getClosestUnversionedCubeIri(k),
                 unversionedComponentIri: k,
               }),
@@ -1041,7 +1044,7 @@ export const chartConfigMigrations: Migration[] = [
         if (v.color && "componentIri" in v.color) {
           v.color.componentId = isJoinById(v.color.componentIri)
             ? v.color.componentIri
-            : makeComponentId({
+            : stringifyComponentId({
                 unversionedCubeIri: getClosestUnversionedCubeIri(
                   v.color.componentIri
                 ),
@@ -1053,7 +1056,7 @@ export const chartConfigMigrations: Migration[] = [
         if ("leftAxisComponentIri" in v) {
           v.leftAxisComponentId = isJoinById(v.leftAxisComponentIri)
             ? v.leftAxisComponentIri
-            : makeComponentId({
+            : stringifyComponentId({
                 unversionedCubeIri: getClosestUnversionedCubeIri(
                   v.leftAxisComponentIri
                 ),
@@ -1065,7 +1068,7 @@ export const chartConfigMigrations: Migration[] = [
         if ("rightAxisComponentIri" in v) {
           v.rightAxisComponentId = isJoinById(v.rightAxisComponentIri)
             ? v.rightAxisComponentIri
-            : makeComponentId({
+            : stringifyComponentId({
                 unversionedCubeIri: getClosestUnversionedCubeIri(
                   v.rightAxisComponentIri
                 ),
@@ -1077,7 +1080,7 @@ export const chartConfigMigrations: Migration[] = [
         if ("columnComponentIri" in v) {
           v.columnComponentId = isJoinById(v.columnComponentIri)
             ? v.columnComponentIri
-            : makeComponentId({
+            : stringifyComponentId({
                 unversionedCubeIri: getClosestUnversionedCubeIri(
                   v.columnComponentIri
                 ),
@@ -1089,7 +1092,7 @@ export const chartConfigMigrations: Migration[] = [
         if ("lineComponentIri" in v) {
           v.lineComponentId = isJoinById(v.lineComponentIri)
             ? v.lineComponentIri
-            : makeComponentId({
+            : stringifyComponentId({
                 unversionedCubeIri: getClosestUnversionedCubeIri(
                   v.lineComponentIri
                 ),
@@ -1101,7 +1104,7 @@ export const chartConfigMigrations: Migration[] = [
         if (newConfig.chartType === "table") {
           const componentId = isJoinById(k)
             ? k
-            : makeComponentId({
+            : stringifyComponentId({
                 unversionedCubeIri: getClosestUnversionedCubeIri(k),
                 unversionedComponentIri: k,
               });
@@ -1119,7 +1122,7 @@ export const chartConfigMigrations: Migration[] = [
           v.componentIds = v.componentIris.map((iri: string) =>
             isJoinById(iri)
               ? iri
-              : makeComponentId({
+              : stringifyComponentId({
                   unversionedCubeIri: getClosestUnversionedCubeIri(iri),
                   unversionedComponentIri: iri,
                 })
@@ -1129,7 +1132,7 @@ export const chartConfigMigrations: Migration[] = [
           v.componentId = isJoinById(v.componentIri)
             ? v.componentIri
             : v.componentIri
-              ? makeComponentId({
+              ? stringifyComponentId({
                   unversionedCubeIri: getClosestUnversionedCubeIri(
                     v.componentIri
                   ),
@@ -1149,12 +1152,12 @@ export const chartConfigMigrations: Migration[] = [
         return {
           ...cube,
           joinBy: cube.joinBy?.map(
-            (joinBy: string) => splitComponentId(joinBy).unversionedComponentIri
+            (joinBy: string) => parseComponentId(joinBy).unversionedComponentIri
           ),
           publishIri: cube.iri,
           filters: Object.fromEntries(
             Object.entries(cube.filters).map(([k, v]) => [
-              splitComponentId(k).unversionedComponentIri,
+              parseComponentId(k).unversionedComponentIri,
               v,
             ])
           ),
@@ -1168,19 +1171,19 @@ export const chartConfigMigrations: Migration[] = [
 
         if ("componentIds" in v) {
           v.componentIris = v.componentIds.map(
-            (id: string) => splitComponentId(id).unversionedComponentIri
+            (id: string) => parseComponentId(id).unversionedComponentIri
           );
           delete v.componentIds;
         } else if ("componentId" in v) {
           v.componentIri = v.componentId
-            ? splitComponentId(v.componentId).unversionedComponentIri
+            ? parseComponentId(v.componentId).unversionedComponentIri
             : "";
           delete v.componentId;
         }
 
         if ("measureId" in v && v.measureId !== FIELD_VALUE_NONE) {
           v.measureIri = v.measureId
-            ? splitComponentId(v.measureId).unversionedComponentIri
+            ? parseComponentId(v.measureId).unversionedComponentIri
             : "";
           delete v.measureId;
         }
@@ -1193,7 +1196,7 @@ export const chartConfigMigrations: Migration[] = [
         ) {
           v.colorMapping = Object.fromEntries(
             Object.entries(v.colorMapping).map(([k, v]) => [
-              splitComponentId(k).unversionedComponentIri,
+              parseComponentId(k).unversionedComponentIri,
               v,
             ])
           );
@@ -1201,42 +1204,42 @@ export const chartConfigMigrations: Migration[] = [
 
         // Maps
         if (v.color && "componentId" in v.color) {
-          v.color.componentIri = splitComponentId(
+          v.color.componentIri = parseComponentId(
             v.color.componentId
           ).unversionedComponentIri;
           delete v.color.componentId;
         }
 
         if ("leftAxisComponentId" in v) {
-          v.leftAxisComponentIri = splitComponentId(
+          v.leftAxisComponentIri = parseComponentId(
             v.leftAxisComponentId
           ).unversionedComponentIri;
           delete v.leftAxisComponentId;
         }
 
         if ("rightAxisComponentId" in v) {
-          v.rightAxisComponentIri = splitComponentId(
+          v.rightAxisComponentIri = parseComponentId(
             v.rightAxisComponentId
           ).unversionedComponentIri;
           delete v.rightAxisComponentId;
         }
 
         if ("columnComponentId" in v) {
-          v.columnComponentIri = splitComponentId(
+          v.columnComponentIri = parseComponentId(
             v.columnComponentId
           ).unversionedComponentIri;
           delete v.columnComponentId;
         }
 
         if ("lineComponentId" in v) {
-          v.lineComponentIri = splitComponentId(
+          v.lineComponentIri = parseComponentId(
             v.lineComponentId
           ).unversionedComponentIri;
           delete v.lineComponentId;
         }
 
         if (newConfig.chartType === "table") {
-          const componentIri = splitComponentId(k)
+          const componentIri = parseComponentId(k)
             .unversionedComponentIri as string;
           v.componentIri = componentIri;
           delete v.componentId;
@@ -1250,12 +1253,12 @@ export const chartConfigMigrations: Migration[] = [
       )) {
         if ("componentIds" in v) {
           v.componentIris = v.componentIds.map(
-            (id: string) => splitComponentId(id).unversionedComponentIri
+            (id: string) => parseComponentId(id).unversionedComponentIri
           );
           delete v.componentIds;
         } else if ("componentId" in v) {
           v.componentIri = v.componentId
-            ? splitComponentId(v.componentId).unversionedComponentIri
+            ? parseComponentId(v.componentId).unversionedComponentIri
             : "";
           delete v.componentId;
         }
@@ -1830,13 +1833,13 @@ export const configuratorStateMigrations: Migration[] = [
       for (const cId of dataFilters.componentIds) {
         dataFilters.componentIds = [
           ...dataFilters.componentIds.filter((c: string) => c !== cId),
-          splitComponentId(cId).unversionedComponentIri,
+          parseComponentId(cId).unversionedComponentIri,
         ];
       }
 
       for (const fId of Object.keys(dataFilters.filters)) {
         dataFilters.filters[
-          splitComponentId(fId).unversionedComponentIri as string
+          parseComponentId(fId).unversionedComponentIri as string
         ] = dataFilters.filters[fId];
         delete dataFilters.filters[fId];
       }

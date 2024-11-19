@@ -2,7 +2,7 @@ import { group } from "d3-array";
 import { Quad } from "rdf-js";
 
 import { SearchCube } from "@/domain/data";
-import { makeComponentId } from "@/graphql/make-component-id";
+import { stringifyComponentId } from "@/graphql/make-component-id";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import * as ns from "@/rdf/namespace";
 import { GROUP_SEPARATOR } from "@/rdf/query-utils";
@@ -104,7 +104,7 @@ function buildSearchCubes(
         dimensions: dimensions?.map((x) => {
           const dim = bySubjectAndPredicate.get(x.object.value);
           return {
-            iri: makeComponentId({
+            iri: stringifyComponentId({
               // TODO
               // Technically we don't need to unversion the cube iri here, as
               // search cubes are temporary and dimensions coming from here
