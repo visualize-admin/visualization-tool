@@ -126,7 +126,7 @@ const Embed = ({
         iframeHeight={iframeHeight}
         configKey={configKey}
         locale={locale}
-        shouldAllowDisablingBorder={state?.chartConfigs?.length === 1}
+        shouldAllowDisablingBorder={shouldAllowDisablingBorder(state)}
       />
     </TriggeredPopover>
   );
@@ -418,4 +418,10 @@ export const ShareContent = ({
       </Box>
     </Box>
   );
+};
+
+export const shouldAllowDisablingBorder = (
+  state?: ConfiguratorStatePublished
+) => {
+  return state?.chartConfigs?.length === 1 && state?.layout.type === "tab";
 };
