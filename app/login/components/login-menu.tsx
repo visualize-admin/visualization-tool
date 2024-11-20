@@ -90,7 +90,7 @@ export const LoginMenu = () => {
           <Feedback
             anchorEl={anchorEl}
             open={feedbackMenuOpen}
-            handleClose={() => setFeedbackMenuOpen(true)}
+            handleClose={() => setFeedbackMenuOpen(false)}
           />
         </>
       ) : (
