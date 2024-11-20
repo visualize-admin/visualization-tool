@@ -41,11 +41,10 @@ import { useFormatFullDateAuto } from "@/formatters";
 import { TimeUnit } from "@/graphql/resolver-types";
 import { getTimeInterval } from "@/intervals";
 import { getTextWidth } from "@/utils/get-text-width";
+import { useAxisTitleAdjustments } from "@/utils/use-axis-title-adjustments";
 import { useIsMobile } from "@/utils/use-is-mobile";
 
 import { ChartProps } from "../shared/ChartProps";
-
-import { TITLE_VPADDING } from "./combo-line-container";
 
 export type ComboLineColumnState = CommonChartState &
   ComboLineColumnStateVariables &
@@ -150,23 +149,12 @@ const useComboLineColumnState = (
     )
   );
 
-  const axisTitleLeft = variables.y.left.label;
-  const axisTitleRight = variables.y.right.label;
-  const axisTitleWidthLeft =
-    getTextWidth(axisTitleLeft, { fontSize: TICK_FONT_SIZE }) + TICK_PADDING;
-  const axisTitleWidthRight =
-    getTextWidth(axisTitleRight, { fontSize: TICK_FONT_SIZE }) + TICK_PADDING;
-  const overLappingTitles = axisTitleWidthLeft + axisTitleWidthRight > width;
-  const overLappingAmount = (axisTitleWidthLeft + axisTitleWidthRight) / width;
+  const { topMarginAxisTitleAdjustment } = useAxisTitleAdjustments({
+    leftAxisTitle: variables.y.left.label,
+    rightAxisTitle: variables.y.right.label,
+    containerWidth: width,
+  });
 
-  const axisTitleAdjustment =
-    (overLappingTitles
-      ? TICK_FONT_SIZE * Math.ceil(overLappingAmount)
-      : TICK_FONT_SIZE + TITLE_VPADDING) *
-      2 -
-    TICK_FONT_SIZE * 2;
-
-  const topMarginAxisTitleAdjustment = 50 + axisTitleAdjustment;
   const right = Math.max(maxRightTickWidth, 40);
   const margins = getMargins({
     left,
