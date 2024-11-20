@@ -101,7 +101,7 @@ import { DatasetsControlSection } from "./dataset-control-section";
 
 export const DataFilterSelectGeneric = ({
   rawDimension,
-  filterDimensionIris,
+  filterDimensionIds,
   index,
   disabled,
   onRemove,
@@ -109,7 +109,7 @@ export const DataFilterSelectGeneric = ({
   disableLabel,
 }: {
   rawDimension: Dimension;
-  filterDimensionIris: string[];
+  filterDimensionIds: string[];
   index: number;
   disabled?: boolean;
   onRemove?: () => void;
@@ -126,12 +126,13 @@ export const DataFilterSelectGeneric = ({
       locale,
       cubeFilters: chartConfig.cubes.map((cube) => {
         const rawFilters = pickBy(cube.filters, (_, key) =>
-          filterDimensionIris.includes(key)
+          filterDimensionIds.includes(key)
         );
+
         return {
           iri: cube.iri,
           joinBy: cube.joinBy,
-          componentIris: [rawDimension.iri],
+          componentIds: [rawDimension.id],
           filters: Object.keys(rawFilters).length > 0 ? rawFilters : undefined,
           loadValues: true,
         };
@@ -202,7 +203,7 @@ const useEnsurePossibleFilters = ({
   const [error, setError] = useState<Error>();
   const lastFilters = useRef<Record<string, Filters>>({});
   const client = useClient();
-  const joinByIris = useMemo(() => {
+  const joinByIds = useMemo(() => {
     return chartConfig.cubes.flatMap((cube) => cube.joinBy).filter(truthy);
   }, [chartConfig.cubes]);
 
@@ -211,7 +212,7 @@ const useEnsurePossibleFilters = ({
       chartConfig.cubes.forEach(async (cube) => {
         const { mappedFilters, unmappedFilters } = getFiltersByMappingStatus(
           chartConfig,
-          { cubeIri: cube.iri, joinByIris }
+          { cubeIri: cube.iri, joinByIds }
         );
 
         if (
@@ -251,7 +252,7 @@ const useEnsurePossibleFilters = ({
         const filters = Object.assign(
           Object.fromEntries(
             data.possibleFilters.map((x) => [
-              x.iri,
+              x.id,
               { type: x.type, value: x.value },
             ])
           ) as Filters,
@@ -296,7 +297,7 @@ const useEnsurePossibleFilters = ({
     chartConfig,
     chartConfig.cubes,
     state.dataSource,
-    joinByIris,
+    joinByIds,
   ]);
 
   return { error, fetching };
@@ -304,12 +305,12 @@ const useEnsurePossibleFilters = ({
 
 export const getFilterReorderCubeFilters = (
   chartConfig: ChartConfig,
-  { joinByIris }: { joinByIris: string[] }
+  { joinByIds }: { joinByIds: string[] }
 ) => {
   return chartConfig.cubes.map(({ iri, joinBy }) => {
     const { unmappedFilters } = getFiltersByMappingStatus(chartConfig, {
       cubeIri: iri,
-      joinByIris,
+      joinByIds,
     });
 
     return {
@@ -331,16 +332,16 @@ const useFilterReorder = ({
   const chartConfig = getChartConfig(state);
   const locale = useLocale();
   const filters = getChartConfigFilters(chartConfig.cubes, { joined: true });
-  const joinByIris = useMemo(() => {
+  const joinByIds = useMemo(() => {
     return chartConfig.cubes.flatMap((cube) => cube.joinBy).filter(truthy);
   }, [chartConfig.cubes]);
-  const { mappedFiltersIris } = useMemo(() => {
-    return getFiltersByMappingStatus(chartConfig, { joinByIris });
-  }, [chartConfig, joinByIris]);
+  const { mappedFiltersIds } = useMemo(() => {
+    return getFiltersByMappingStatus(chartConfig, { joinByIds });
+  }, [chartConfig, joinByIds]);
 
   const variables = useMemo(() => {
     const cubeFilters = getFilterReorderCubeFilters(chartConfig, {
-      joinByIris,
+      joinByIds,
     });
 
     // This is important for urql not to think that filters
@@ -355,7 +356,7 @@ const useFilterReorder = ({
       cubeFilters,
       requeryKey: requeryKey ? requeryKey : undefined,
     };
-  }, [chartConfig, joinByIris]);
+  }, [chartConfig, joinByIds]);
 
   const [
     { data: componentsData, fetching: componentsFetching },
@@ -391,12 +392,12 @@ const useFilterReorder = ({
   const measures = componentsData?.dataCubesComponents?.measures;
 
   // Handlers
-  const handleMove = useEvent((dimensionIri: string, delta: number) => {
+  const handleMove = useEvent((dimensionId: string, delta: number) => {
     if (!dimensions || !measures) {
       return;
     }
 
-    const dimension = dimensions.find((d) => d.iri === dimensionIri);
+    const dimension = dimensions.find((d) => d.id === dimensionId);
 
     if (dimension) {
       const newChartConfig = moveFilterField(chartConfig, {
@@ -465,14 +466,14 @@ const useFilterReorder = ({
       const filterDimensions = sortBy(
         dimensions?.filter(
           (dim) =>
-            !mappedFiltersIris.has(dim.iri) && keysOrder[dim.iri] !== undefined
+            !mappedFiltersIds.has(dim.id) && keysOrder[dim.id] !== undefined
         ) ?? [],
-        [(x) => keysOrder[x.iri] ?? Infinity]
+        [(x) => keysOrder[x.id] ?? Infinity]
       );
       const addableDimensions = dimensions?.filter(
         (dim) =>
-          !mappedFiltersIris.has(dim.iri) &&
-          keysOrder[dim.iri] === undefined &&
+          !mappedFiltersIds.has(dim.id) &&
+          keysOrder[dim.id] === undefined &&
           !isStandardErrorDimension(dim)
       );
       const missingDimensions = dimensions?.filter(
@@ -484,7 +485,7 @@ const useFilterReorder = ({
         addableDimensions,
         missingDimensions,
       };
-    }, [dimensions, filters, mappedFiltersIris]);
+    }, [dimensions, filters, mappedFiltersIds]);
 
   // Technically it's possible to have a key dimension that is not in the filters
   // and not mapped. This could be achieved for example by manually modifying the
@@ -553,8 +554,8 @@ const useStyles = makeStyles<Theme, { fetching: boolean }>((theme) => ({
   },
 }));
 
-const InteractiveDataFilterToggle = ({ iri }: { iri: string }) => {
-  const { checked, toggle } = useInteractiveDataFilterToggle(iri);
+const InteractiveDataFilterToggle = ({ id }: { id: string }) => {
+  const { checked, toggle } = useInteractiveDataFilterToggle(id);
   return <InteractiveFilterToggle checked={checked} toggle={toggle} />;
 };
 
@@ -679,10 +680,10 @@ export const ChartConfigurator = ({
                   <Box {...provided.droppableProps} ref={provided.innerRef}>
                     {filterDimensions.map((dimension, i) => (
                       <Draggable
+                        key={dimension.id}
                         isDragDisabled={fetching}
-                        draggableId={dimension.iri}
+                        draggableId={dimension.id}
                         index={i}
-                        key={dimension.iri}
                       >
                         {(provided) => (
                           <div
@@ -692,16 +693,14 @@ export const ChartConfigurator = ({
                             {...provided.draggableProps}
                           >
                             <div>
-                              <InteractiveDataFilterToggle
-                                iri={dimension.iri}
-                              />
+                              <InteractiveDataFilterToggle id={dimension.id} />
                             </div>
                             <DataFilterSelectGeneric
-                              key={dimension.iri}
+                              key={dimension.id}
                               rawDimension={dimension}
-                              filterDimensionIris={filterDimensions
+                              filterDimensionIds={filterDimensions
                                 .slice(0, i)
-                                .map((d) => d.iri)}
+                                .map((d) => d.id)}
                               index={i}
                               disabled={fetching}
                               onRemove={() =>
@@ -737,8 +736,8 @@ export const ChartConfigurator = ({
                 >
                   {addableDimensions.map((dim) => (
                     <MenuItem
+                      key={dim.id}
                       onClick={() => handleAddDimensionFilter(dim)}
-                      key={dim.iri}
                     >
                       {dim.label}
                     </MenuItem>
@@ -794,12 +793,12 @@ const ChartFields = (props: ChartFieldsProps) => {
       {getChartSpec(chartConfig)
         .encodings.filter((d) => !d.hide)
         .map((encoding) => {
-          const { field, getDisabledState, iriAttributes } = encoding;
-          const componentIris = iriAttributes
+          const { field, getDisabledState, idAttributes } = encoding;
+          const componentIds = idAttributes
             .map((x) => (chartConfig.fields as any)[field]?.[x])
             .filter(truthy) as string[];
-          const fieldComponents = componentIris
-            .map((cIri) => components.find((d) => cIri === d.iri))
+          const fieldComponents = componentIds
+            .map((cId) => components.find((d) => cId === d.id))
             .filter(truthy);
           const baseLayer = isMapConfig(chartConfig) && field === "baseLayer";
 

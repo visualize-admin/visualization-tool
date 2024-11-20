@@ -6,7 +6,13 @@
     "showSearch": true,
     "showAllRows": false
   },
-  "sorting": [],
+  "sorting": [
+    {
+      "componentIri": "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/date",
+      "componentType": "TemporalDimension",
+      "sortingOrder": "asc"
+    }
+  ],
   "fields": {
     "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/date": {
       "componentIri": "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/date",

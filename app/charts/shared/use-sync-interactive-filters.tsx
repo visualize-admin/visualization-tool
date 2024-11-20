@@ -56,16 +56,16 @@ const useSyncInteractiveFilters = (
   }, [setTimeRange, presetFromStr, presetToStr]);
 
   // Data Filters
-  const componentIris = interactiveFiltersConfig?.dataFilters.componentIris;
-  const dashboardComponentIris = dashboardFilters?.dataFilters.componentIris;
+  const componentIds = interactiveFiltersConfig?.dataFilters.componentIds;
+  const dashboardComponentIds = dashboardFilters?.dataFilters.componentIds;
   const newPotentialInteractiveDataFilters = useMemo(() => {
-    if (componentIris) {
+    if (componentIds) {
       // If dimension is already in use as interactive filter, use it,
       // otherwise, default to editor config filter dimension value (only
       // if dashboard filters are not set).
-      return componentIris.concat(dashboardComponentIris ?? []);
+      return componentIds.concat(dashboardComponentIds ?? []);
     }
-  }, [componentIris, dashboardComponentIris]);
+  }, [componentIds, dashboardComponentIds]);
 
   useEffect(() => {
     if (newPotentialInteractiveDataFilters) {
@@ -85,7 +85,7 @@ const useSyncInteractiveFilters = (
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     newPotentialInteractiveDataFilters,
-    dashboardComponentIris,
+    dashboardComponentIds,
     dashboardFilters?.dataFilters.filters,
   ]);
 
@@ -116,10 +116,10 @@ const useSyncInteractiveFilters = (
       return;
     }
 
-    const [dimensionIri, prev, next] = changes[0];
+    const [dimensionId, prev, next] = changes[0];
     if (prev?.type === "single" || next?.type === "single") {
       updateDataFilter(
-        dimensionIri,
+        dimensionId,
         next?.type === "single" ? next.value : FIELD_VALUE_NONE
       );
     }

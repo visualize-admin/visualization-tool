@@ -30,7 +30,7 @@ const ConfigController = controller({
 
     const config = await getConfig(key);
     if (sessionUserId !== config?.user_id) {
-      throw new Error("Unauthorized!");
+      throw Error("Unauthorized!");
     }
 
     return await removeConfig({ key });
@@ -42,18 +42,18 @@ const ConfigController = controller({
 
     const { key, data, published_state } = req.body;
     if (!sessionUserId) {
-      throw new Error(
-        "Could not update config: Unlogged users cannot update a chart"
+      throw Error(
+        "Could not update config: Not logged in users cannot update a chart"
       );
     }
 
     const config = await getConfig(key);
     if (!config) {
-      throw new Error("Could not update config: config not found");
+      throw Error("Could not update config: config not found");
     }
 
     if (config.user_id !== sessionUserId) {
-      throw new Error(
+      throw Error(
         `Could not update config: config must be edited by its author (config user id: ${config?.user_id}, server user id: ${sessionUserId})`
       );
     }

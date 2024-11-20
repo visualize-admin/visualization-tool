@@ -34,22 +34,22 @@ export const useRenderingKeyVariable = (
     if (interactiveFiltersConfig) {
       const { dataFilters, legend } = interactiveFiltersConfig;
 
-      if (dataFilters.componentIris.length > 0) {
-        keysToRemove.push(...dataFilters.componentIris);
+      if (dataFilters.componentIds.length > 0) {
+        keysToRemove.push(...dataFilters.componentIds);
       }
 
-      if (legend.componentIri) {
-        keysToRemove.push(legend.componentIri);
+      if (legend.componentId) {
+        keysToRemove.push(legend.componentId);
       }
     }
 
     if (animationField) {
-      keysToRemove.push(animationField.componentIri);
+      keysToRemove.push(animationField.componentId);
     }
 
     return dimensions
       .filter((d) => !isStandardErrorDimension(d))
-      .map((d) => d.iri)
+      .map((d) => d.id)
       .filter((d) => !keysToRemove.includes(d));
   }, [dimensions, filters, interactiveFiltersConfig, animationField]);
 

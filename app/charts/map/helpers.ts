@@ -184,12 +184,12 @@ export const getBBox = (
 };
 
 export const prepareFeatureCollection = ({
-  dimensionIri,
+  dimensionId,
   topology,
   filters,
   observations,
 }: {
-  dimensionIri: string;
+  dimensionId: string;
   topology: GeoShapes["topology"];
   filters: Filters[string];
   observations: Observation[];
@@ -216,8 +216,8 @@ export const prepareFeatureCollection = ({
 
   featureCollection.features.forEach((f) => {
     const observation = observations.find((o) => {
-      const iri = o[`${dimensionIri}/__iri__`];
-      const label = o[dimensionIri];
+      const iri = o[`${dimensionId}/__iri__`];
+      const label = o[dimensionId];
 
       return iri ? iri === f.properties.iri : label === f.properties.label;
     });
@@ -244,19 +244,20 @@ export function DeckGLOverlay(
   return null;
 }
 
-type ShouldRenderMapProps = {
-  areaDimensionIri: string | undefined;
-  symbolDimensionIri: string | undefined;
+export const shouldRenderMap = ({
+  areaDimensionId,
+  symbolDimensionId,
+  geometries,
+  coordinates,
+}: {
+  areaDimensionId: string | undefined;
+  symbolDimensionId: string | undefined;
   geometries: any[] | undefined;
   coordinates: GeoCoordinates | undefined;
-};
-
-export const shouldRenderMap = (props: ShouldRenderMapProps) => {
-  const { areaDimensionIri, symbolDimensionIri, geometries, coordinates } =
-    props;
-  const areaLayerPresent = !!(areaDimensionIri !== "" && geometries);
+}) => {
+  const areaLayerPresent = !!(areaDimensionId !== "" && geometries);
   const symbolLayerPresent = !!(
-    symbolDimensionIri !== "" &&
+    symbolDimensionId !== "" &&
     (coordinates || geometries)
   );
   const rawMap =

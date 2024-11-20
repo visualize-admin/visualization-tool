@@ -18,6 +18,7 @@ import {
 } from "@/domain/data";
 import { useTimeFormatLocale } from "@/formatters";
 import { useConfigsCubeComponents } from "@/graphql/hooks";
+import { stringifyComponentId } from "@/graphql/make-component-id";
 import { TimeUnit } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 import { timeUnitFormats, timeUnitOrder } from "@/rdf/mappings";
@@ -28,7 +29,7 @@ export const useCombinedTemporalDimension = () => {
   const locale = useLocale();
   const formatLocale = useTimeFormatLocale();
   const [state] = useConfiguratorState(hasChartConfigs);
-  const { potentialTimeRangeFilterIris } = useDashboardInteractiveFilters();
+  const { potentialTimeRangeFilterIds } = useDashboardInteractiveFilters();
   const [{ data }] = useConfigsCubeComponents({
     variables: {
       state,
@@ -40,28 +41,28 @@ export const useCombinedTemporalDimension = () => {
     return getCombinedTemporalDimension({
       formatLocale,
       dimensions: data?.dataCubesComponents.dimensions ?? [],
-      potentialTimeRangeFilterIris,
+      potentialTimeRangeFilterIds,
     });
   }, [
     data?.dataCubesComponents.dimensions,
     formatLocale,
-    potentialTimeRangeFilterIris,
+    potentialTimeRangeFilterIds,
   ]);
 };
 
 export const getCombinedTemporalDimension = ({
   formatLocale,
   dimensions,
-  potentialTimeRangeFilterIris,
+  potentialTimeRangeFilterIds,
 }: {
   formatLocale: TimeLocaleObject;
   dimensions: Dimension[];
-  potentialTimeRangeFilterIris: string[];
+  potentialTimeRangeFilterIds: string[];
 }) => {
   const timeUnitDimensions = dimensions.filter(
     (dimension) =>
       isTemporalDimensionWithTimeUnit(dimension) &&
-      potentialTimeRangeFilterIris.includes(dimension.iri)
+      potentialTimeRangeFilterIds.includes(dimension.id)
   ) as (TemporalDimension | TemporalEntityDimension)[];
   // We want to use lowest time unit for combined dimension filtering,
   // so in case we have year and day, we'd filter both by day
@@ -92,7 +93,10 @@ export const getCombinedTemporalDimension = ({
   const combinedDimension: TemporalDimension = {
     __typename: "TemporalDimension",
     cubeIri: "all",
-    iri: "combined-date-filter",
+    id: stringifyComponentId({
+      unversionedCubeIri: "all",
+      unversionedComponentIri: "combined-date-filter",
+    }),
     label: t({
       id: "controls.section.shared-filters.date",
       message: "Date",

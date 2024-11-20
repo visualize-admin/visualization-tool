@@ -1,5 +1,6 @@
 import { ColumnConfig, ScatterPlotConfig, TableFields } from "@/configurator";
 import { Dimension, Measure } from "@/domain/data";
+import { stringifyComponentId } from "@/graphql/make-component-id";
 import { TimeUnit } from "@/graphql/resolver-types";
 
 import bathingWaterData from "../test/__fixtures/data/DataCubeMetadataWithComponentValues-bathingWater.json";
@@ -19,47 +20,62 @@ const mockDimensions: Record<string, Dimension> = {
   geoCoordinates: {
     __typename: "GeoCoordinatesDimension",
     cubeIri: "https://cube-iri",
+    id: stringifyComponentId({
+      unversionedCubeIri: "https://cube-iri",
+      unversionedComponentIri: "geo-coordinates-dimension-iri",
+    }),
     isKeyDimension: true,
     values: [],
-    iri: "geo-coordinates-dimension-iri",
     isNumerical: false,
     label: "Geo coordinates dimension",
   },
   ordinal: {
     __typename: "OrdinalDimension",
     cubeIri: "https://cube-iri",
+    id: stringifyComponentId({
+      unversionedCubeIri: "https://cube-iri",
+      unversionedComponentIri: "ordinal-dimension-iri",
+    }),
     isKeyDimension: true,
     values: [],
-    iri: "ordinal-dimension-iri",
     isNumerical: true,
     label: "Ordinal dimension",
   },
   temporal: {
     __typename: "TemporalDimension",
     cubeIri: "https://cube-iri",
+    id: stringifyComponentId({
+      unversionedCubeIri: "https://cube-iri",
+      unversionedComponentIri: "temporal-dimension-iri",
+    }),
     isKeyDimension: true,
     values: [],
     timeFormat: "%Y",
     timeUnit: TimeUnit.Year,
-    iri: "temporal-dimension-iri",
     isNumerical: true,
     label: "Temporal dimension",
   },
   temporalOrdinal: {
     __typename: "TemporalOrdinalDimension",
     cubeIri: "https://cube-iri",
+    id: stringifyComponentId({
+      unversionedCubeIri: "https://cube-iri",
+      unversionedComponentIri: "temporal-ordinal-dimension-iri",
+    }),
     isKeyDimension: true,
     values: [],
-    iri: "temporal-ordinal-dimension-iri",
     isNumerical: true,
     label: "Temporal ordinal dimension",
   },
   ordinal2: {
     __typename: "OrdinalDimension",
     cubeIri: "https://cube-iri",
+    id: stringifyComponentId({
+      unversionedCubeIri: "https://cube-iri",
+      unversionedComponentIri: "ordinal-dimension-2-iri",
+    }),
     isKeyDimension: true,
     values: [],
-    iri: "ordinal-dimension-2-iri",
     isNumerical: false,
     label: "Ordinal dimension 2",
   },
@@ -69,12 +85,7 @@ describe("initial config", () => {
   it("should create an initial table config with column order based on dimension order", () => {
     const config = getInitialConfig({
       chartType: "table",
-      iris: [
-        {
-          iri: "https://environment.ld.admin.ch/foen/nfi",
-          publishIri: "https://environment.ld.admin.ch/foen/nfi",
-        },
-      ],
+      iris: [{ iri: "https://environment.ld.admin.ch/foen/nfi" }],
       dimensions: forestAreaData.data.dataCubeByIri
         .dimensions as any as Dimension[],
       measures: forestAreaData.data.dataCubeByIri.measures as any as Measure[],
@@ -82,7 +93,7 @@ describe("initial config", () => {
 
     expect(
       Object.values(config.fields as TableFields).map((x) => [
-        x["componentIri"],
+        x["componentId"],
         x["index"],
       ])
     ).toEqual([
@@ -100,12 +111,7 @@ describe("initial config", () => {
   it("should create an initial column config having x axis correctly inferred (temporal ordinal)", () => {
     const config = getInitialConfig({
       chartType: "column",
-      iris: [
-        {
-          iri: "https://environment.ld.admin.ch/foen/nfi",
-          publishIri: "https://environment.ld.admin.ch/foen/nfi",
-        },
-      ],
+      iris: [{ iri: "https://environment.ld.admin.ch/foen/nfi" }],
       dimensions: [
         mockDimensions.geoCoordinates,
         mockDimensions.ordinal,
@@ -115,20 +121,18 @@ describe("initial config", () => {
       measures: forestAreaData.data.dataCubeByIri.measures as any as Measure[],
     }) as ColumnConfig;
 
-    expect(config.fields.x.componentIri).toEqual(
-      "temporal-ordinal-dimension-iri"
+    expect(config.fields.x.componentId).toEqual(
+      stringifyComponentId({
+        unversionedCubeIri: "https://cube-iri",
+        unversionedComponentIri: "temporal-ordinal-dimension-iri",
+      })
     );
   });
 
   it("should create an initial column config having x axis correctly inferred (temporal > temporal ordinal)", () => {
     const config = getInitialConfig({
       chartType: "column",
-      iris: [
-        {
-          iri: "https://environment.ld.admin.ch/foen/nfi",
-          publishIri: "https://environment.ld.admin.ch/foen/nfi",
-        },
-      ],
+      iris: [{ iri: "https://environment.ld.admin.ch/foen/nfi" }],
       dimensions: [
         mockDimensions.geoCoordinates,
         mockDimensions.ordinal,
@@ -139,18 +143,18 @@ describe("initial config", () => {
       measures: forestAreaData.data.dataCubeByIri.measures as any as Measure[],
     }) as ColumnConfig;
 
-    expect(config.fields.x.componentIri).toEqual("temporal-dimension-iri");
+    expect(config.fields.x.componentId).toEqual(
+      stringifyComponentId({
+        unversionedCubeIri: "https://cube-iri",
+        unversionedComponentIri: "temporal-dimension-iri",
+      })
+    );
   });
 
   it("should create an initial scatterplot config having segment correctly defined", () => {
     const config = getInitialConfig({
       chartType: "scatterplot",
-      iris: [
-        {
-          iri: "https://environment.ld.admin.ch/foen/nfi",
-          publishIri: "https://environment.ld.admin.ch/foen/nfi",
-        },
-      ],
+      iris: [{ iri: "https://environment.ld.admin.ch/foen/nfi" }],
       dimensions: [
         mockDimensions.geoCoordinates,
         mockDimensions.ordinal,
@@ -221,11 +225,7 @@ describe("chart type switch", () => {
       version: "1.4.0",
       chartType: "column",
       cubes: [
-        {
-          iri: "https://environment.ld.admin.ch/foen/ubd0104",
-          publishIri: "https://environment.ld.admin.ch/foen/ubd0104",
-          filters: {},
-        },
+        { iri: "https://environment.ld.admin.ch/foen/ubd0104", filters: {} },
       ],
       meta: {
         title: {
@@ -249,21 +249,21 @@ describe("chart type switch", () => {
       },
       fields: {
         x: {
-          componentIri:
+          componentId:
             "https://environment.ld.admin.ch/foen/ubd0104/parametertype",
         },
         y: {
-          componentIri: "https://environment.ld.admin.ch/foen/ubd0104/value",
+          componentId: "https://environment.ld.admin.ch/foen/ubd0104/value",
         },
       },
       interactiveFiltersConfig: {
         legend: {
           active: false,
-          componentIri: "",
+          componentId: "",
         },
         timeRange: {
           active: false,
-          componentIri: "",
+          componentId: "",
           presets: {
             type: "range",
             from: "",
@@ -272,7 +272,7 @@ describe("chart type switch", () => {
         },
         dataFilters: {
           active: true,
-          componentIris: [
+          componentIds: [
             "https://environment.ld.admin.ch/foen/ubd0104/dateofprobing",
           ],
         },
@@ -295,7 +295,7 @@ describe("chart type switch", () => {
       false
     );
     expect(
-      newConfig.interactiveFiltersConfig?.dataFilters.componentIris
+      newConfig.interactiveFiltersConfig?.dataFilters.componentIds
     ).toEqual([]);
   });
 
@@ -338,11 +338,11 @@ describe("chart type switch", () => {
       interactiveFiltersConfig: {
         legend: {
           active: false,
-          componentIri: "",
+          componentId: "",
         },
         timeRange: {
           active: false,
-          componentIri: "https://environment.ld.admin.ch/foen/ubd000502/jahr",
+          componentId: "https://environment.ld.admin.ch/foen/ubd000502/jahr",
           presets: {
             type: "range",
             from: "",
@@ -351,7 +351,7 @@ describe("chart type switch", () => {
         },
         dataFilters: {
           active: false,
-          componentIris: [],
+          componentIds: [],
         },
         calculation: {
           active: false,
@@ -360,14 +360,14 @@ describe("chart type switch", () => {
       },
       fields: {
         x: {
-          componentIri: "https://environment.ld.admin.ch/foen/ubd000502/werte",
+          componentId: "https://environment.ld.admin.ch/foen/ubd000502/werte",
         },
         y: {
-          componentIri:
+          componentId:
             "https://environment.ld.admin.ch/foen/ubd000502/werteNichtGerundet",
         },
         segment: {
-          componentIri: "https://environment.ld.admin.ch/foen/ubd000502/jahr",
+          componentId: "https://environment.ld.admin.ch/foen/ubd000502/jahr",
           palette: "category10",
           sorting: {
             sortingType: "byAuto",
@@ -415,25 +415,25 @@ describe("chart type switch", () => {
       chartConfig: oldChartConfig,
       newChartType: "column",
       dimensions: [
-        { iri: "https://environment.ld.admin.ch/foen/ubd000502/jahr" },
-        { iri: "https://environment.ld.admin.ch/foen/ubd000502/gas" },
-        { iri: "https://environment.ld.admin.ch/foen/ubd000502/sektorid" },
+        { id: "https://environment.ld.admin.ch/foen/ubd000502/jahr" },
+        { id: "https://environment.ld.admin.ch/foen/ubd000502/gas" },
+        { id: "https://environment.ld.admin.ch/foen/ubd000502/sektorid" },
       ] as any as Dimension[],
       measures: [
         {
           __typename: "NumericalMeasure",
-          iri: "https://environment.ld.admin.ch/foen/ubd000502/werte",
+          id: "https://environment.ld.admin.ch/foen/ubd000502/werte",
         },
         {
           __typename: "NumericalMeasure",
-          iri: "https://environment.ld.admin.ch/foen/ubd000502/werteNichtGerundet",
+          id: "https://environment.ld.admin.ch/foen/ubd000502/werteNichtGerundet",
         },
       ] as any as Measure[],
     }) as ColumnConfig;
 
     expect(newChartConfig.fields.segment).toBeUndefined();
-    expect(newChartConfig.fields.x.componentIri).not.toEqual(
-      oldChartConfig.fields.x.componentIri
+    expect(newChartConfig.fields.x.componentId).not.toEqual(
+      oldChartConfig.fields.x.componentId
     );
   });
 });

@@ -15,7 +15,7 @@ import { LinesState } from "@/charts/line/lines-state";
 import { MapState } from "@/charts/map/map-state";
 import { PieState } from "@/charts/pie/pie-state";
 import { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
-import { DimensionsByIri, MeasuresByIri } from "@/charts/shared/ChartProps";
+import { DimensionsById, MeasuresById } from "@/charts/shared/ChartProps";
 import {
   getLabelWithUnit,
   useDimensionWithAbbreviations,
@@ -152,16 +152,16 @@ export type BandXVariables = {
 export const useBandXVariables = (
   x: GenericField,
   {
-    dimensionsByIri,
+    dimensionsById,
     observations,
   }: {
-    dimensionsByIri: DimensionsByIri;
+    dimensionsById: DimensionsById;
     observations: Observation[];
   }
 ): BandXVariables => {
-  const xDimension = dimensionsByIri[x.componentIri];
+  const xDimension = dimensionsById[x.componentId];
   if (!xDimension) {
-    throw Error(`No dimension <${x.componentIri}> in cube!`);
+    throw Error(`No dimension <${x.componentId}> in cube! (useBandXVariables)`);
   }
 
   const xTimeUnit = isTemporalDimension(xDimension)
@@ -177,10 +177,10 @@ export const useBandXVariables = (
     field: x,
   });
 
-  const getXAsDate = useTemporalVariable(x.componentIri);
+  const getXAsDate = useTemporalVariable(x.componentId);
   const getXTemporalEntity = useTemporalEntityVariable(
-    dimensionsByIri[x.componentIri].values
-  )(x.componentIri);
+    dimensionsById[x.componentId].values
+  )(x.componentId);
 
   return {
     xDimension,
@@ -202,25 +202,27 @@ export type TemporalXVariables = {
 
 export const useTemporalXVariables = (
   x: GenericField,
-  { dimensionsByIri }: { dimensionsByIri: DimensionsByIri }
+  { dimensionsById }: { dimensionsById: DimensionsById }
 ): TemporalXVariables => {
-  const xDimension = dimensionsByIri[x.componentIri];
+  const xDimension = dimensionsById[x.componentId];
   if (!xDimension) {
-    throw Error(`No dimension <${x.componentIri}> in cube!`);
+    throw Error(
+      `No dimension <${x.componentId}> in cube! (useTemporalXVariables)`
+    );
   }
 
   if (
     !isTemporalDimension(xDimension) &&
     !isTemporalEntityDimension(xDimension)
   ) {
-    throw Error(`Dimension <${x.componentIri}> is not temporal!`);
+    throw Error(`Dimension <${x.componentId}> is not temporal!`);
   }
 
-  const getXTemporal = useTemporalVariable(x.componentIri);
+  const getXTemporal = useTemporalVariable(x.componentId);
   const getXTemporalEntity = useTemporalEntityVariable(
-    dimensionsByIri[x.componentIri].values
-  )(x.componentIri);
-  const getXAsString = useStringVariable(x.componentIri);
+    dimensionsById[x.componentId].values
+  )(x.componentId);
+  const getXAsString = useStringVariable(x.componentId);
 
   return {
     xDimension,
@@ -245,18 +247,20 @@ export type NumericalXVariables = {
 export const useNumericalXVariables = (
   chartType: "scatterplot",
   x: GenericField,
-  { measuresByIri }: { measuresByIri: MeasuresByIri }
+  { measuresById }: { measuresById: MeasuresById }
 ): NumericalXVariables => {
-  const xMeasure = measuresByIri[x.componentIri];
+  const xMeasure = measuresById[x.componentId];
   if (!xMeasure) {
-    throw Error(`No dimension <${x.componentIri}> in cube!`);
+    throw Error(
+      `No dimension <${x.componentId}> in cube! (useNumericalXVariables)`
+    );
   }
 
   if (!isNumericalMeasure(xMeasure)) {
-    throw Error(`Measure <${x.componentIri}> is not numerical!`);
+    throw Error(`Measure <${x.componentId}> is not numerical!`);
   }
 
-  const getX = useOptionalNumericVariable(x.componentIri);
+  const getX = useOptionalNumericVariable(x.componentId);
   const xAxisLabel = getLabelWithUnit(xMeasure);
   const getMinX = useCallback(
     (data: Observation[], _getX: NumericalValueGetter) => {
@@ -294,18 +298,20 @@ export const useNumericalYVariables = (
   // Combo charts have their own logic for y scales.
   chartType: "area" | "column" | "line" | "pie" | "scatterplot",
   y: GenericField,
-  { measuresByIri }: { measuresByIri: MeasuresByIri }
+  { measuresById }: { measuresById: MeasuresById }
 ): NumericalYVariables => {
-  const yMeasure = measuresByIri[y.componentIri];
+  const yMeasure = measuresById[y.componentId];
   if (!yMeasure) {
-    throw Error(`No dimension <${y.componentIri}> in cube!`);
+    throw Error(
+      `No dimension <${y.componentId}> in cube! (useNumericalYVariables)`
+    );
   }
 
   if (!isNumericalMeasure(yMeasure)) {
-    throw Error(`Measure <${y.componentIri}> is not numerical!`);
+    throw Error(`Measure <${y.componentId}> is not numerical!`);
   }
 
-  const getY = useOptionalNumericVariable(y.componentIri);
+  const getY = useOptionalNumericVariable(y.componentId);
   const yAxisLabel = getLabelWithUnit(yMeasure);
   const getMinY = useCallback(
     (data: Observation[], _getY: NumericalValueGetter) => {
@@ -355,7 +361,7 @@ export const useNumericalYErrorVariables = (
   }
 ): NumericalYErrorVariables => {
   const showYStandardError = get(y, ["showStandardError"], true);
-  const yErrorMeasure = useErrorMeasure(y.componentIri, {
+  const yErrorMeasure = useErrorMeasure(y.componentId, {
     dimensions,
     measures,
   });
@@ -381,14 +387,14 @@ export type SegmentVariables = {
 export const useSegmentVariables = (
   segment: GenericField | undefined,
   {
-    dimensionsByIri,
+    dimensionsById,
     observations,
   }: {
-    dimensionsByIri: DimensionsByIri;
+    dimensionsById: DimensionsById;
     observations: Observation[];
   }
 ): SegmentVariables => {
-  const segmentDimension = dimensionsByIri[segment?.componentIri ?? ""];
+  const segmentDimension = dimensionsById[segment?.componentId ?? ""];
   const {
     getAbbreviationOrLabelByValue: getSegmentAbbreviationOrLabel,
     abbreviationOrLabelLookup: segmentsByAbbreviationOrLabel,
@@ -414,14 +420,14 @@ export type InteractiveFiltersVariables = {
 
 export const useInteractiveFiltersVariables = (
   interactiveFiltersConfig: ChartConfig["interactiveFiltersConfig"],
-  { dimensionsByIri }: { dimensionsByIri: DimensionsByIri }
+  { dimensionsById }: { dimensionsById: DimensionsById }
 ): InteractiveFiltersVariables => {
-  const iri = interactiveFiltersConfig?.timeRange.componentIri ?? "";
-  const dimension = dimensionsByIri[iri];
-  const getTimeRangeDate = useTemporalVariable(iri);
+  const id = interactiveFiltersConfig?.timeRange.componentId ?? "";
+  const dimension = dimensionsById[id];
+  const getTimeRangeDate = useTemporalVariable(id);
   const getTimeRangeEntityDate = useTemporalEntityVariable(
     dimension?.values ?? []
-  )(iri);
+  )(id);
 
   return {
     getTimeRangeDate: isTemporalDimension(dimension)
@@ -472,13 +478,13 @@ export const useChartData = (
   observations: Observation[],
   {
     chartConfig,
-    timeRangeDimensionIri,
+    timeRangeDimensionId,
     getXAsDate,
     getSegmentAbbreviationOrLabel,
     getTimeRangeDate,
   }: {
     chartConfig: ChartConfig;
-    timeRangeDimensionIri: string | undefined;
+    timeRangeDimensionId: string | undefined;
     getXAsDate?: (d: Observation) => Date;
     getSegmentAbbreviationOrLabel?: (d: Observation) => string;
     getTimeRangeDate?: (d: Observation) => Date;
@@ -513,7 +519,7 @@ export const useChartData = (
   const interactiveFromTime = timeRange.from?.getTime();
   const interactiveToTime = timeRange.to?.getTime();
   const [{ dashboardFilters }] = useConfiguratorState(hasChartConfigs);
-  const { potentialTimeRangeFilterIris } = useDashboardInteractiveFilters();
+  const { potentialTimeRangeFilterIds } = useDashboardInteractiveFilters();
   const interactiveTimeRangeFilters = useMemo(() => {
     const interactiveTimeRangeFilter: ValuePredicate | null =
       getXAsDate &&
@@ -521,8 +527,8 @@ export const useChartData = (
       interactiveToTime &&
       (interactiveTimeRange?.active ||
         (dashboardFilters?.timeRange.active &&
-          timeRangeDimensionIri &&
-          potentialTimeRangeFilterIris.includes(timeRangeDimensionIri)))
+          timeRangeDimensionId &&
+          potentialTimeRangeFilterIds.includes(timeRangeDimensionId)))
         ? (d: Observation) => {
             const time = getXAsDate(d).getTime();
             return time >= interactiveFromTime && time <= interactiveToTime;
@@ -536,19 +542,19 @@ export const useChartData = (
     interactiveToTime,
     interactiveTimeRange?.active,
     dashboardFilters?.timeRange.active,
-    timeRangeDimensionIri,
-    potentialTimeRangeFilterIris,
+    timeRangeDimensionId,
+    potentialTimeRangeFilterIds,
   ]);
 
   // interactive time slider
   const animationField = getAnimationField(chartConfig);
   const dynamicScales = animationField?.dynamicScales ?? true;
-  const animationComponentIri = animationField?.componentIri ?? "";
-  const getAnimationDate = useTemporalVariable(animationComponentIri);
-  const getAnimationOrdinalDate = useStringVariable(animationComponentIri);
+  const animationComponentId = animationField?.componentId ?? "";
+  const getAnimationDate = useTemporalVariable(animationComponentId);
+  const getAnimationOrdinalDate = useStringVariable(animationComponentId);
   const interactiveTimeSliderFilters = useMemo(() => {
     const interactiveTimeSliderFilter: ValuePredicate | null =
-      animationField?.componentIri && timeSlider.value
+      animationField?.componentId && timeSlider.value
         ? (d: Observation) => {
             if (timeSlider.type === "interval") {
               return (
@@ -563,7 +569,7 @@ export const useChartData = (
 
     return interactiveTimeSliderFilter ? [interactiveTimeSliderFilter] : [];
   }, [
-    animationField?.componentIri,
+    animationField?.componentId,
     timeSlider.type,
     timeSlider.value,
     getAnimationDate,

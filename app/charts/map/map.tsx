@@ -94,7 +94,7 @@ export const MapComponent = () => {
     showBaseLayer,
     locked,
     features,
-    identicalLayerComponentIris,
+    identicalLayerComponentIds,
     areaLayer,
     symbolLayer,
     bounds: { width, height },
@@ -326,7 +326,7 @@ export const MapComponent = () => {
 
     return new ScatterplotLayer({
       id: "symbolLayer",
-      pickable: identicalLayerComponentIris ? !areaLayer : true,
+      pickable: identicalLayerComponentIds ? !areaLayer : true,
       autoHighlight: true,
       filled: true,
       stroked: true,
@@ -358,7 +358,7 @@ export const MapComponent = () => {
   }, [
     areaLayer,
     features.symbolLayer,
-    identicalLayerComponentIris,
+    identicalLayerComponentIds,
     onHover,
     symbolLayer,
   ]);

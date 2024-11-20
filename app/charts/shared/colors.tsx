@@ -15,7 +15,7 @@ export const rgbArrayToHex = (rgbArray: number[]): string => {
     case 4:
       return `rgba(${rgbArray.join(",")})`;
     default:
-      throw new Error(
+      throw Error(
         `You need to pass 3 or 4 arguments when converting RGB array to HEX, while ${rgbArray.length} were provided.`
       );
   }

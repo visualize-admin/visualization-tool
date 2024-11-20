@@ -29,7 +29,7 @@ export const useTableStateData = (
   const plottableData = usePlottableData(observations, {});
   const data = useChartData(plottableData, {
     chartConfig,
-    timeRangeDimensionIri: undefined,
+    timeRangeDimensionId: undefined,
   });
 
   return {

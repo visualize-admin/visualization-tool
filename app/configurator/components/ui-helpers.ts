@@ -112,13 +112,13 @@ export const getErrorMeasure = (
 ) => {
   return [...dimensions, ...measures].find((m) => {
     return m.related?.some(
-      (r) => r.type === "StandardError" && r.iri === valueIri
+      (r) => r.type === "StandardError" && r.id === valueIri
     );
   });
 };
 
 export const useErrorMeasure = (
-  componentIri: string,
+  componentId: string,
   {
     dimensions,
     measures,
@@ -128,15 +128,15 @@ export const useErrorMeasure = (
   }
 ) => {
   return useMemo(() => {
-    return getErrorMeasure({ dimensions, measures }, componentIri);
-  }, [componentIri, dimensions, measures]);
+    return getErrorMeasure({ dimensions, measures }, componentId);
+  }, [componentId, dimensions, measures]);
 };
 
 export const useErrorVariable = (errorMeasure?: Component) => {
   return useMemo(() => {
     return errorMeasure
       ? (d: Observation) => {
-          return d[errorMeasure.iri];
+          return d[errorMeasure.id];
         }
       : null;
   }, [errorMeasure]);
@@ -150,7 +150,7 @@ export const useErrorRange = (
     return errorMeasure
       ? (d: Observation) => {
           const v = valueGetter(d) as number;
-          const errorIri = errorMeasure.iri;
+          const errorIri = errorMeasure.id;
           let error =
             d[errorIri] !== null ? parseFloat(d[errorIri] as string) : null;
           if (errorMeasure.unit === "%" && error !== null) {
@@ -320,7 +320,8 @@ export const getComponentLabel = (
 ) => {
   if (isJoinByComponent(component)) {
     const original =
-      cubeIri && component.originalIris.find((i) => i.cubeIri === cubeIri);
+      cubeIri && component.originalIds.find((i) => i.cubeIri === cubeIri);
+
     if (original) {
       return original.label;
     }
@@ -344,7 +345,7 @@ export const getComponentLabel = (
       }
     }
 
-    return component.originalIris[0].label ?? "NO LABEL";
+    return component.originalIds[0].label ?? "NO LABEL";
   }
 
   return component.label;
@@ -356,11 +357,12 @@ export const getComponentLabel = (
 export const getComponentDescription = (dim: Component, cubeIri?: string) => {
   if (isJoinByComponent(dim)) {
     const original =
-      cubeIri && dim.originalIris.find((i) => i.cubeIri === cubeIri);
+      cubeIri && dim.originalIds.find((i) => i.cubeIri === cubeIri);
+
     if (original) {
       return original.description;
     }
-    return dim.originalIris[0].description ?? "";
+    return dim.originalIds[0].description ?? "";
   } else {
     return dim.description;
   }

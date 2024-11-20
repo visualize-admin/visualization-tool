@@ -143,7 +143,7 @@ export type MetaKey = keyof Meta;
 
 const InteractiveFiltersLegend = t.type({
   active: t.boolean,
-  componentIri: t.string,
+  componentId: t.string,
 });
 export type InteractiveFiltersLegend = t.TypeOf<
   typeof InteractiveFiltersLegend
@@ -151,7 +151,7 @@ export type InteractiveFiltersLegend = t.TypeOf<
 
 const InteractiveFiltersTimeRange = t.type({
   active: t.boolean,
-  componentIri: t.string,
+  componentId: t.string,
   presets: t.type({
     type: t.literal("range"),
     from: t.string,
@@ -164,7 +164,7 @@ export type InteractiveFiltersTimeRange = t.TypeOf<
 
 const InteractiveFiltersDataConfig = t.type({
   active: t.boolean,
-  componentIris: t.array(t.string),
+  componentIds: t.array(t.string),
 });
 export type InteractiveFiltersDataConfig = t.TypeOf<
   typeof InteractiveFiltersDataConfig
@@ -210,7 +210,7 @@ const ColorMapping = t.record(t.string, t.string);
 export type ColorMapping = t.TypeOf<typeof ColorMapping>;
 
 const GenericField = t.intersection([
-  t.type({ componentIri: t.string }),
+  t.type({ componentId: t.string }),
   t.partial({ useAbbreviations: t.boolean }),
 ]);
 export type GenericField = t.TypeOf<typeof GenericField>;
@@ -253,10 +253,8 @@ export type SortingField = t.TypeOf<typeof SortingField>;
 
 const Cube = t.intersection([
   t.type({
-    /** The IRI of the cube, used for querying */
+    /** * Cube iri at publish time (stored in the database) and latest one on the client side. */
     iri: t.string,
-    /** The IRI of the cube used when first published */
-    publishIri: t.string,
     filters: Filters,
   }),
   t.partial({
@@ -505,7 +503,7 @@ export type ColumnStyleHeatmap = t.TypeOf<typeof ColumnStyleHeatmap>;
 export type ColumnStyleBar = t.TypeOf<typeof ColumnStyleBar>;
 
 const TableColumn = t.type({
-  componentIri: t.string,
+  componentId: t.string,
   componentType: ComponentType,
   index: t.number,
   isGroup: t.boolean,
@@ -521,7 +519,7 @@ export type TableSettings = t.TypeOf<typeof TableSettings>;
 const TableFields = t.record(t.string, TableColumn);
 
 const TableSortingOption = t.type({
-  componentIri: t.string,
+  componentId: t.string,
   componentType: ComponentType,
   sortingOrder: SortingOrder,
 });
@@ -573,7 +571,7 @@ export type FixedColorField = t.TypeOf<typeof FixedColorField>;
 const CategoricalColorField = t.intersection([
   t.type({
     type: t.literal("categorical"),
-    componentIri: t.string,
+    componentId: t.string,
     palette: t.string,
     colorMapping: ColorMapping,
   }),
@@ -586,7 +584,7 @@ export type CategoricalColorField = t.TypeOf<typeof CategoricalColorField>;
 const NumericalColorField = t.intersection([
   t.type({
     type: t.literal("numerical"),
-    componentIri: t.string,
+    componentId: t.string,
     palette: t.union([DivergingPaletteType, SequentialPaletteType]),
   }),
   t.union([
@@ -614,15 +612,15 @@ export type ColorField =
   | NumericalColorField;
 
 const MapAreaLayer = t.type({
-  componentIri: t.string,
+  componentId: t.string,
   color: t.union([CategoricalColorField, NumericalColorField]),
 });
 export type MapAreaLayer = t.TypeOf<typeof MapAreaLayer>;
 
 const MapSymbolLayer = t.type({
-  componentIri: t.string,
+  componentId: t.string,
   // symbol radius (size)
-  measureIri: t.string,
+  measureId: t.string,
   color: t.union([FixedColorField, CategoricalColorField, NumericalColorField]),
 });
 export type MapSymbolLayer = t.TypeOf<typeof MapSymbolLayer>;
@@ -658,7 +656,7 @@ export type MapConfig = t.TypeOf<typeof MapConfig>;
 const ComboLineSingleFields = t.type({
   x: GenericField,
   y: t.type({
-    componentIris: t.array(t.string),
+    componentIds: t.array(t.string),
     palette: t.string,
     colorMapping: ColorMapping,
   }),
@@ -681,8 +679,8 @@ export type ComboLineSingleConfig = t.TypeOf<typeof ComboLineSingleConfig>;
 const ComboLineDualFields = t.type({
   x: GenericField,
   y: t.type({
-    leftAxisComponentIri: t.string,
-    rightAxisComponentIri: t.string,
+    leftAxisComponentId: t.string,
+    rightAxisComponentId: t.string,
     palette: t.string,
     colorMapping: ColorMapping,
   }),
@@ -705,9 +703,9 @@ export type ComboLineDualConfig = t.TypeOf<typeof ComboLineDualConfig>;
 const ComboLineColumnFields = t.type({
   x: GenericField,
   y: t.type({
-    lineComponentIri: t.string,
+    lineComponentId: t.string,
     lineAxisOrientation: t.union([t.literal("left"), t.literal("right")]),
-    columnComponentIri: t.string,
+    columnComponentId: t.string,
     palette: t.string,
     colorMapping: ColorMapping,
   }),
@@ -922,7 +920,7 @@ type _InteractiveFiltersAdjusters = {
   legend: FieldAdjuster<ChartConfig, InteractiveFiltersLegend>;
   timeRange: {
     active: FieldAdjuster<ChartConfig, boolean>;
-    componentIri: FieldAdjuster<ChartConfig, string>;
+    componentId: FieldAdjuster<ChartConfig, string>;
     presets: {
       type: FieldAdjuster<ChartConfig, "range">;
       from: FieldAdjuster<ChartConfig, string>;
@@ -940,8 +938,8 @@ type BaseAdjusters<NewChartConfigType extends ChartConfig> = {
 
 type ColumnAdjusters = BaseAdjusters<ColumnConfig> & {
   fields: {
-    x: { componentIri: FieldAdjuster<ColumnConfig, string> };
-    y: { componentIri: FieldAdjuster<ColumnConfig, string> };
+    x: { componentId: FieldAdjuster<ColumnConfig, string> };
+    y: { componentId: FieldAdjuster<ColumnConfig, string> };
     segment: FieldAdjuster<
       ColumnConfig,
       | LineSegmentField
@@ -956,8 +954,8 @@ type ColumnAdjusters = BaseAdjusters<ColumnConfig> & {
 
 type LineAdjusters = BaseAdjusters<LineConfig> & {
   fields: {
-    x: { componentIri: FieldAdjuster<LineConfig, string> };
-    y: { componentIri: FieldAdjuster<LineConfig, string> };
+    x: { componentId: FieldAdjuster<LineConfig, string> };
+    y: { componentId: FieldAdjuster<LineConfig, string> };
     segment: FieldAdjuster<
       LineConfig,
       | ColumnSegmentField
@@ -971,8 +969,8 @@ type LineAdjusters = BaseAdjusters<LineConfig> & {
 
 type AreaAdjusters = BaseAdjusters<AreaConfig> & {
   fields: {
-    x: { componentIri: FieldAdjuster<AreaConfig, string> };
-    y: { componentIri: FieldAdjuster<AreaConfig, string> };
+    x: { componentId: FieldAdjuster<AreaConfig, string> };
+    y: { componentId: FieldAdjuster<AreaConfig, string> };
     segment: FieldAdjuster<
       AreaConfig,
       | ColumnSegmentField
@@ -986,7 +984,7 @@ type AreaAdjusters = BaseAdjusters<AreaConfig> & {
 
 type ScatterPlotAdjusters = BaseAdjusters<ScatterPlotConfig> & {
   fields: {
-    y: { componentIri: FieldAdjuster<ScatterPlotConfig, string> };
+    y: { componentId: FieldAdjuster<ScatterPlotConfig, string> };
     segment: FieldAdjuster<
       ScatterPlotConfig,
       | ColumnSegmentField
@@ -1001,7 +999,7 @@ type ScatterPlotAdjusters = BaseAdjusters<ScatterPlotConfig> & {
 
 type PieAdjusters = BaseAdjusters<PieConfig> & {
   fields: {
-    y: { componentIri: FieldAdjuster<PieConfig, string> };
+    y: { componentId: FieldAdjuster<PieConfig, string> };
     segment: FieldAdjuster<
       PieConfig,
       | ColumnSegmentField
@@ -1029,9 +1027,9 @@ type TableAdjusters = {
 type MapAdjusters = BaseAdjusters<MapConfig> & {
   fields: {
     areaLayer: {
-      componentIri: FieldAdjuster<MapConfig, string>;
+      componentId: FieldAdjuster<MapConfig, string>;
       color: {
-        componentIri: FieldAdjuster<MapConfig, string>;
+        componentId: FieldAdjuster<MapConfig, string>;
       };
     };
     animation: FieldAdjuster<MapConfig, AnimationField | undefined>;
@@ -1040,14 +1038,14 @@ type MapAdjusters = BaseAdjusters<MapConfig> & {
 
 type ComboLineSingleAdjusters = BaseAdjusters<ComboLineSingleConfig> & {
   fields: {
-    x: { componentIri: FieldAdjuster<ComboLineSingleConfig, string> };
-    y: { componentIris: FieldAdjuster<ComboLineSingleConfig, string> };
+    x: { componentId: FieldAdjuster<ComboLineSingleConfig, string> };
+    y: { componentIds: FieldAdjuster<ComboLineSingleConfig, string> };
   };
 };
 
 type ComboLineDualAdjusters = BaseAdjusters<ComboLineDualConfig> & {
   fields: {
-    x: { componentIri: FieldAdjuster<ComboLineDualConfig, string> };
+    x: { componentId: FieldAdjuster<ComboLineDualConfig, string> };
     y: FieldAdjuster<
       ComboLineDualConfig,
       | AreaFields
@@ -1065,7 +1063,7 @@ type ComboLineDualAdjusters = BaseAdjusters<ComboLineDualConfig> & {
 
 type ComboLineColumnAdjusters = BaseAdjusters<ComboLineColumnConfig> & {
   fields: {
-    x: { componentIri: FieldAdjuster<ComboLineColumnConfig, string> };
+    x: { componentId: FieldAdjuster<ComboLineColumnConfig, string> };
     y: FieldAdjuster<
       ComboLineColumnConfig,
       | AreaFields
@@ -1186,7 +1184,7 @@ export type DashboardTimeRangeFilter = t.TypeOf<
 >;
 
 const DashboardDataFiltersConfig = t.type({
-  componentIris: t.array(t.string),
+  componentIds: t.array(t.string),
   filters: SingleFilters,
 });
 export type DashboardDataFiltersConfig = t.TypeOf<
@@ -1202,7 +1200,7 @@ export type DashboardFiltersConfig = t.TypeOf<typeof DashboardFiltersConfig>;
 export const areDataFiltersActive = (
   dashboardFilters: DashboardFiltersConfig | undefined
 ) => {
-  return dashboardFilters?.dataFilters.componentIris.length;
+  return dashboardFilters?.dataFilters.componentIds.length;
 };
 
 const Config = t.intersection([
@@ -1328,7 +1326,7 @@ export const getChartConfig = (
   chartKey?: string | null
 ): ChartConfig => {
   if (state.state === "INITIAL" || state.state === "SELECTING_DATASET") {
-    throw new Error("No chart config available!");
+    throw Error("No chart config available!");
   }
 
   const { chartConfigs, activeChartKey } = state;
@@ -1358,7 +1356,7 @@ export const getChartConfigFilters = (
   const relevantCubes = cubes.filter((c) =>
     cubeIri ? c.iri === cubeIri : true
   );
-  const dimIriToJoinId = joined
+  const dimIdToJoinId = joined
     ? Object.fromEntries(
         relevantCubes.flatMap((x) =>
           (x.joinBy ?? []).map(
@@ -1367,10 +1365,11 @@ export const getChartConfigFilters = (
         )
       )
     : {};
+
   return Object.fromEntries(
     relevantCubes.flatMap((c) =>
-      Object.entries(c.filters).map(([iri, value]) => [
-        dimIriToJoinId[iri] ?? iri,
+      Object.entries(c.filters).map(([id, value]) => [
+        dimIdToJoinId[id] ?? id,
         value,
       ])
     )

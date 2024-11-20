@@ -27,8 +27,8 @@ export const usePieStateVariables = (
     chartConfig,
     observations,
     dimensions,
-    dimensionsByIri,
-    measuresByIri,
+    dimensionsById,
+    measuresById,
   } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
   const { y, segment, animation } = fields;
@@ -36,10 +36,10 @@ export const usePieStateVariables = (
 
   const baseVariables = useBaseVariables(chartConfig);
   const numericalYVariables = useNumericalYVariables("pie", y, {
-    measuresByIri,
+    measuresById,
   });
   const segmentVariables = useSegmentVariables(segment, {
-    dimensionsByIri,
+    dimensionsById,
     observations,
   });
 
@@ -70,7 +70,7 @@ export const usePieStateData = (
   });
   const data = useChartData(plottableData, {
     chartConfig,
-    timeRangeDimensionIri: undefined,
+    timeRangeDimensionId: undefined,
     getSegmentAbbreviationOrLabel,
   });
 

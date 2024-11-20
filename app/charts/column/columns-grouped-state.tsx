@@ -127,9 +127,9 @@ const useColumnsGroupedState = (
     );
   }, [segmentData, getY, getSegment]);
 
-  const segmentFilter = segmentDimension?.iri
+  const segmentFilter = segmentDimension?.id
     ? chartConfig.cubes.find((d) => d.iri === segmentDimension.cubeIri)
-        ?.filters[segmentDimension.iri]
+        ?.filters[segmentDimension.id]
     : undefined;
   const { allSegments, segments } = useMemo(() => {
     const allUniqueSegments = Array.from(
@@ -168,7 +168,7 @@ const useColumnsGroupedState = (
 
   /* Scales */
   const xFilter = chartConfig.cubes.find((d) => d.iri === xDimension.cubeIri)
-    ?.filters[xDimension.iri];
+    ?.filters[xDimension.id];
   const sumsByX = useMemo(() => {
     return Object.fromEntries(
       rollup(
@@ -382,7 +382,7 @@ const useColumnsGroupedState = (
     const yValueFormatter = (value: number | null) => {
       return formatNumberWithUnit(
         value,
-        formatters[yMeasure.iri] ?? formatNumber,
+        formatters[yMeasure.id] ?? formatNumber,
         yMeasure.unit
       );
     };

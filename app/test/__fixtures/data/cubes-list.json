@@ -17,7 +17,7 @@
       "iri": "https://register.ld.admin.ch/opendataswiss/org/bundesamt-fur-umwelt-bafu",
       "label": "Federal Office for the Environment FOEN"
     },
-    "versionHistory": "https://environment.ld.admin.ch/foen/ub001",
+    "unversionedIri": "https://environment.ld.admin.ch/foen/ub001",
     "contactPoint": {
       "name": "Abteilung Lärm und NIS",
       "email": "noise@bafu.admin.ch"
@@ -42,7 +42,7 @@
         "label": "Education and science"
       }
     ],
-    "versionHistory": "https://environment.ld.admin.ch/foen/palmer-penguins",
+    "unversionedIri": "https://environment.ld.admin.ch/foen/palmer-penguins",
     "contactPoint": {
       "name": "Jeremy Stucki",
       "email": "jeremy@interactivethings.com"
@@ -68,7 +68,7 @@
       "iri": "https://register.ld.admin.ch/opendataswiss/org/schweizerisches-bundesarchiv-bar",
       "label": "Swiss Federal Archives SFA"
     },
-    "versionHistory": "https://environment.ld.admin.ch/foen/Peaks-BR-AK",
+    "unversionedIri": "https://environment.ld.admin.ch/foen/Peaks-BR-AK",
     "contactPoint": {
       "name": "info@bar.admin.ch",
       "email": "info@bar.admin.ch"
@@ -95,7 +95,7 @@
       "iri": "https://register.ld.admin.ch/opendataswiss/org/schweizerisches-bundesarchiv-bar",
       "label": "Swiss Federal Archives SFA"
     },
-    "versionHistory": "https://environment.ld.admin.ch/foen/Peaks-BR-AK-WY",
+    "unversionedIri": "https://environment.ld.admin.ch/foen/Peaks-BR-AK-WY",
     "contactPoint": {
       "name": "info@bar.admin.ch",
       "email": "info@bar.admin.ch"
@@ -130,7 +130,7 @@
       "iri": "https://register.ld.admin.ch/opendataswiss/org/schweizerisches-bundesarchiv-bar",
       "label": "Swiss Federal Archives SFA"
     },
-    "versionHistory": "https://culture.ld.admin.ch/sfa/StateAccounts_Function",
+    "unversionedIri": "https://culture.ld.admin.ch/sfa/StateAccounts_Function",
     "contactPoint": {
       "name": "Schweizerisches Bundesarchiv",
       "email": "bundesarchiv@bar.admin.ch"
@@ -165,7 +165,7 @@
       "iri": "https://register.ld.admin.ch/opendataswiss/org/schweizerisches-bundesarchiv-bar",
       "label": "Swiss Federal Archives SFA"
     },
-    "versionHistory": "https://culture.ld.admin.ch/sfa/StateAccounts_Category",
+    "unversionedIri": "https://culture.ld.admin.ch/sfa/StateAccounts_Category",
     "contactPoint": {
       "name": "Schweizerisches Bundesarchiv",
       "email": "bundesarchiv@bar.admin.ch"
@@ -200,7 +200,7 @@
       "iri": "https://register.ld.admin.ch/opendataswiss/org/schweizerisches-bundesarchiv-bar",
       "label": "Swiss Federal Archives SFA"
     },
-    "versionHistory": "https://culture.ld.admin.ch/sfa/StateAccounts_Domain",
+    "unversionedIri": "https://culture.ld.admin.ch/sfa/StateAccounts_Domain",
     "contactPoint": {
       "name": "Schweizerisches Bundesarchiv",
       "email": "bundesarchiv@bar.admin.ch"
@@ -227,7 +227,7 @@
       "iri": "https://register.ld.admin.ch/opendataswiss/org/bundesamt-fur-umwelt-bafu",
       "label": "Federal Office for the Environment FOEN"
     },
-    "versionHistory": "https://environment.ld.admin.ch/foen/ubd0104",
+    "unversionedIri": "https://environment.ld.admin.ch/foen/ubd0104",
     "contactPoint": {
       "name": "Païvi Rinta, Sektion Hydr. Grundlagen Gewässerzustand",
       "email": "baqua@bafu.admin.ch"
@@ -258,7 +258,7 @@
       "iri": "https://register.ld.admin.ch/opendataswiss/org/bundesamt-fur-umwelt-bafu",
       "label": "Federal Office for the Environment FOEN"
     },
-    "versionHistory": "https://environment.ld.admin.ch/foen/ubd0066",
+    "unversionedIri": "https://environment.ld.admin.ch/foen/ubd0066",
     "contactPoint": {
       "name": "Nationale Bodenbeobachtung NABO",
       "email": "nabo@bafu.admin.ch"
@@ -285,7 +285,7 @@
       "iri": "https://register.ld.admin.ch/opendataswiss/org/bundesamt-fur-umwelt-bafu",
       "label": "Federal Office for the Environment FOEN"
     },
-    "versionHistory": "https://environment.ld.admin.ch/foen/ubd0037",
+    "unversionedIri": "https://environment.ld.admin.ch/foen/ubd0037",
     "contactPoint": {
       "name": "Abteilung Lärm und NIS",
       "email": "noise@bafu.admin.ch"
@@ -325,7 +325,7 @@
       "iri": "https://register.ld.admin.ch/opendataswiss/org/bundesamt-fur-energie-bfe",
       "label": "Swiss Federal Office of Energy SFOE"
     },
-    "versionHistory": "https://energy.ld.admin.ch/sfoe/bfe_ogd10_energieforschungsstatistik_ch",
+    "unversionedIri": "https://energy.ld.admin.ch/sfoe/bfe_ogd10_energieforschungsstatistik_ch",
     "contactPoint": {
       "name": "OGD Fachstelle",
       "email": "ogd@bfe.admin.ch"
@@ -359,7 +359,7 @@
       "iri": "https://register.ld.admin.ch/opendataswiss/org/bundesamt-fur-energie-bfe",
       "label": "Swiss Federal Office of Energy SFOE"
     },
-    "versionHistory": "https://energy.ld.admin.ch/sfoe/bfe_ogd10_energieforschungsstatistik_iea",
+    "unversionedIri": "https://energy.ld.admin.ch/sfoe/bfe_ogd10_energieforschungsstatistik_iea",
     "contactPoint": {
       "name": "OGD Fachstelle",
       "email": "ogd@bfe.admin.ch"
@@ -393,7 +393,7 @@
       "iri": "https://register.ld.admin.ch/opendataswiss/org/bundesamt-fur-energie-bfe",
       "label": "Swiss Federal Office of Energy SFOE"
     },
-    "versionHistory": "https://environment.ld.admin.ch/foen/test_ogd10",
+    "unversionedIri": "https://environment.ld.admin.ch/foen/test_ogd10",
     "contactPoint": {
       "name": "OGD Fachstelle",
       "email": "ogd@bfe.admin.ch"
@@ -419,7 +419,7 @@
       "iri": "https://register.ld.admin.ch/opendataswiss/org/bundesamt-fur-umwelt-bafu",
       "label": "Federal Office for the Environment FOEN"
     },
-    "versionHistory": "https://environment.ld.admin.ch/foen/UBD003002",
+    "unversionedIri": "https://environment.ld.admin.ch/foen/UBD003002",
     "contactPoint": {
       "name": "Abteilung Biodiversität und Landschaft",
       "email": "aoel@bafu.admin.ch"
@@ -454,7 +454,7 @@
       "iri": "https://register.ld.admin.ch/opendataswiss/org/schweizerisches-bundesarchiv-bar",
       "label": "Swiss Federal Archives SFA"
     },
-    "versionHistory": "https://culture.ld.admin.ch/sfa/StateAccounts_Office",
+    "unversionedIri": "https://culture.ld.admin.ch/sfa/StateAccounts_Office",
     "contactPoint": {
       "name": "Schweizerisches Bundesarchiv",
       "email": "bundesarchiv@bar.admin.ch"
@@ -481,7 +481,7 @@
       "iri": "https://register.ld.admin.ch/opendataswiss/org/bundesamt-fur-umwelt-bafu",
       "label": "Federal Office for the Environment FOEN"
     },
-    "versionHistory": "https://environment.ld.admin.ch/foen/ubd003001",
+    "unversionedIri": "https://environment.ld.admin.ch/foen/ubd003001",
     "contactPoint": {
       "name": "Abteilung Biodiversität und Landschaft",
       "email": "aoel@bafu.admin.ch"
@@ -507,7 +507,7 @@
       "iri": "https://register.ld.admin.ch/opendataswiss/org/bundesamt-fur-energie-bfe",
       "label": "Swiss Federal Office of Energy SFOE"
     },
-    "versionHistory": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen",
+    "unversionedIri": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen",
     "contactPoint": {
       "name": "Bundesamt für Energie BFE",
       "email": "ogd@bfe.admin.ch"

@@ -6,7 +6,10 @@ import { LRUCache } from "typescript-lru-cache";
 
 import { SingleFilters } from "@/config-types";
 import { isMostRecentValue } from "@/domain/most-recent-value";
+import { stringifyComponentId } from "@/graphql/make-component-id";
+import { PossibleFilterValue } from "@/graphql/query-hooks";
 import * as ns from "@/rdf/namespace";
+import { queryCubeUnversionedIri } from "@/rdf/query-cube-unversioned-iri";
 import { loadMaxDimensionValue } from "@/rdf/query-dimension-values";
 import { iriToNode } from "@/rdf/query-utils";
 
@@ -26,11 +29,10 @@ export const getPossibleFilters = async (
     return [];
   }
 
-  const dimensionsMetadata = await getDimensionsMetadata(
-    cubeIri,
-    dimensionIris,
-    sparqlClient
-  );
+  const [unversionedCubeIri = cubeIri, dimensionsMetadata] = await Promise.all([
+    queryCubeUnversionedIri(sparqlClient, cubeIri),
+    getDimensionsMetadata(cubeIri, dimensionIris, sparqlClient),
+  ]);
   const queryFilters = await getQueryFilters(filters, {
     cubeIri,
     dimensionsMetadata,
@@ -42,7 +44,10 @@ export const getPossibleFilters = async (
     operation: "postUrlencoded",
   });
 
-  return parsePossibleFilters(observation, queryFilters);
+  return parsePossibleFilters(observation, {
+    unversionedCubeIri,
+    queryFilters,
+  });
 };
 
 export type DimensionMetadata = {
@@ -221,11 +226,21 @@ export const getQueryFilters = async (
 
 const parsePossibleFilters = (
   observation: ResultRow,
-  queryFilters: QueryFilter[]
-) => {
+  {
+    unversionedCubeIri,
+    queryFilters,
+  }: {
+    unversionedCubeIri: string;
+    queryFilters: QueryFilter[];
+  }
+): PossibleFilterValue[] => {
   return queryFilters.map(({ i, iri, isVersioned }) => ({
+    __typename: "PossibleFilterValue",
     type: "single",
-    iri,
+    id: stringifyComponentId({
+      unversionedCubeIri,
+      unversionedComponentIri: iri,
+    }),
     value: observation[getQueryDimension(i, isVersioned)].value,
   }));
 };

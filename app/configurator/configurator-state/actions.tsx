@@ -67,7 +67,7 @@ export type ConfiguratorStateAction =
       value: {
         locale: Locale;
         field: EncodingFieldType;
-        componentIri: string;
+        componentId: string;
         selectedValues?: $FixMe[];
       };
     }
@@ -143,7 +143,7 @@ export type ConfiguratorStateAction =
       value: {
         filters: {
           cubeIri: string;
-          dimensionIri: string;
+          dimensionId: string;
         }[];
         value: string;
       };
@@ -153,7 +153,7 @@ export type ConfiguratorStateAction =
       value: {
         filters: {
           cubeIri: string;
-          dimensionIri: string;
+          dimensionId: string;
         }[];
       };
     }
@@ -168,7 +168,7 @@ export type ConfiguratorStateAction =
       type: "CHART_CONFIG_FILTER_SET_MULTI";
       value: {
         cubeIri: string;
-        dimensionIri: string;
+        dimensionId: string;
         values: string[];
       };
     }
@@ -177,7 +177,7 @@ export type ConfiguratorStateAction =
       value: {
         field: string;
         colorConfigPath: string | undefined;
-        dimensionIri: string;
+        dimensionId: string;
         values: DimensionValue[];
         random: boolean;
       };
@@ -194,7 +194,7 @@ export type ConfiguratorStateAction =
       type: "CHART_CONFIG_FILTER_RESET_RANGE";
       value: {
         cubeIri: string;
-        dimensionIri: string;
+        dimensionId: string;
       };
     }
   | {
@@ -279,7 +279,7 @@ export type ConfiguratorStateAction =
   | {
       type: "DASHBOARD_DATA_FILTER_ADD";
       value: {
-        dimensionIri: string;
+        dimensionId: string;
       };
     }
   | {
@@ -289,6 +289,6 @@ export type ConfiguratorStateAction =
   | {
       type: "DASHBOARD_DATA_FILTER_REMOVE";
       value: {
-        dimensionIri: string;
+        dimensionId: string;
       };
     };

@@ -3,6 +3,7 @@ import { topology } from "topojson-server";
 import { Filters } from "@/configurator";
 import { GeoProperties, GeoShapes, Observation } from "@/domain/data";
 import { SQL_ENDPOINT } from "@/domain/env";
+import { ComponentId } from "@/graphql/make-component-id";
 import {
   DataCubePublicationStatus,
   QueryResolvers,
@@ -72,6 +73,12 @@ export const dataCubeLatestIri: NonNullable<
   return "";
 };
 
+export const dataCubeUnversionedIri: NonNullable<
+  QueryResolvers["dataCubeUnversionedIri"]
+> = async () => {
+  return "";
+};
+
 export const searchCubes: NonNullable<
   QueryResolvers["searchCubes"]
 > = async () => {
@@ -124,9 +131,9 @@ export const possibleFilters: NonNullable<
     }
 
     const result = Object.keys(filters).map((d) => ({
-      iri: d,
+      id: d,
       type: "single",
-      value: observations[0][d],
+      value: observations[0][d as ComponentId],
     }));
 
     return result;
@@ -168,14 +175,17 @@ const filterObservations = (
         const filter = filtersEntries[index];
         // TODO: implement multi & range filters.
         if (filter[1].type === "single") {
-          const [k, { value }] = filter;
+          const [_k, { value }] = filter;
+          const k = _k as ComponentId;
+
           if (d[k] === value) {
             acc.push(true);
           }
 
           acc.push(false);
         } else if (filter[1].type === "range") {
-          const [k, { from, to }] = filter;
+          const [_k, { from, to }] = filter;
+          const k = _k as ComponentId;
           const v = d[k];
 
           if (v !== null) {

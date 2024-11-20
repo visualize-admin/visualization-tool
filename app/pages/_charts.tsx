@@ -2,6 +2,8 @@ import { Box, Link } from "@mui/material";
 import { NextPage } from "next";
 import NextLink from "next/link";
 import React, { useEffect, useRef, useState } from "react";
+import SuperJSON from "superjson";
+import { SuperJSONResult } from "superjson/dist/types";
 
 import { ChartPublished } from "@/components/chart-published";
 import Flex from "@/components/flex";
@@ -14,10 +16,7 @@ import {
 import { getAllConfigs } from "@/db/config";
 
 type PageProps = {
-  configs: {
-    key: string;
-    data: Config;
-  }[];
+  serializedConfigs: SuperJSONResult;
 };
 
 const useVisible = (
@@ -79,17 +78,22 @@ export const getServerSideProps = async () => {
 
   return {
     props: {
-      configs: configs.filter((c: $Unexpressable) => c.data),
+      serializedConfigs: SuperJSON.serialize(configs.filter((c) => c.data)),
     },
   };
 };
 
-const Page: NextPage<PageProps> = ({ configs }) => {
+const Page: NextPage<PageProps> = ({ serializedConfigs }) => {
+  const deserializedConfigs = SuperJSON.deserialize(serializedConfigs) as {
+    key: string;
+    data: Config;
+  }[];
+
   return (
     <ContentLayout>
       <Box px={4} sx={{ backgroundColor: "muted.main" }} mb="auto">
         <Flex sx={{ pt: 4, flexWrap: "wrap" }}>
-          {configs.map((config, i) => {
+          {deserializedConfigs.map((config, i) => {
             return (
               <Box
                 key={config.key}
@@ -98,7 +102,12 @@ const Page: NextPage<PageProps> = ({ configs }) => {
               >
                 <ConfiguratorStateProvider
                   chartId="published"
-                  initialState={config.data as ConfiguratorStatePublished}
+                  initialState={
+                    {
+                      ...config.data,
+                      state: "PUBLISHED",
+                    } as ConfiguratorStatePublished
+                  }
                 >
                   <HiddenUntilScrolledTo
                     initialVisible={i < 5}

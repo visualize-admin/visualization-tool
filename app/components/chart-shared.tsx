@@ -66,9 +66,9 @@ export const ChartControls = ({
 }) => {
   const showFilters =
     chartConfig.interactiveFiltersConfig?.dataFilters.active &&
-    chartConfig.interactiveFiltersConfig.dataFilters.componentIris.some(
-      (componentIri) =>
-        !dashboardFilters?.dataFilters.componentIris.includes(componentIri)
+    chartConfig.interactiveFiltersConfig.dataFilters.componentIds.some(
+      (componentId) =>
+        !dashboardFilters?.dataFilters.componentIds.includes(componentId)
     );
   const chartFiltersState = useChartDataFiltersState({
     dataSource,

@@ -12,8 +12,8 @@ SELECT ?iri WHERE {
     # Versioned cube.
     SELECT ?iri ?version WHERE {
       VALUES ?oldIri { <${cubeIri}> }
-      ?versionHistory schema:hasPart ?oldIri .
-      ?versionHistory schema:hasPart ?iri .
+      ?unversionedIri schema:hasPart ?oldIri .
+      ?unversionedIri schema:hasPart ?iri .
       ?iri schema:version ?version .
       ?iri schema:creativeWorkStatus ?status .
       ?oldIri schema:creativeWorkStatus ?oldStatus .
@@ -24,8 +24,8 @@ SELECT ?iri WHERE {
     {
       # Version history of a cube.
       SELECT ?iri ?status ?version WHERE {
-        VALUES ?versionHistory { <${cubeIri}> }
-        ?versionHistory schema:hasPart ?iri .
+        VALUES ?unversionedIri { <${cubeIri}> }
+        ?unversionedIri schema:hasPart ?iri .
         ?iri schema:version ?version .
         ?iri schema:creativeWorkStatus ?status .
         FILTER(NOT EXISTS { ?iri schema:expires ?expires . })
@@ -39,7 +39,7 @@ SELECT ?iri WHERE {
         VALUES ?iri { <${cubeIri}> }
         ?iri cube:observationConstraint ?shape .
         ?iri schema:creativeWorkStatus ?status .
-        FILTER(NOT EXISTS { ?iri schema:expires ?expires . } && NOT EXISTS { ?versionHistory schema:hasPart ?iri . })
+        FILTER(NOT EXISTS { ?iri schema:expires ?expires . } && NOT EXISTS { ?unversionedIri schema:hasPart ?iri . })
       }
       ORDER BY DESC(?status)
     }

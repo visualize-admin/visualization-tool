@@ -97,7 +97,7 @@ const useAreasState = (
     getSegmentAbbreviationOrLabel,
     getSegmentLabel,
   } = variables;
-  const getIdentityY = useGetIdentityY(yMeasure.iri);
+  const getIdentityY = useGetIdentityY(yMeasure.id);
   const {
     chartData,
     scalesData,
@@ -125,9 +125,9 @@ const useAreasState = (
   const segmentSortingType = segmentSorting?.sortingType;
   const segmentSortingOrder = segmentSorting?.sortingOrder;
 
-  const segmentFilter = segmentDimension?.iri
+  const segmentFilter = segmentDimension?.id
     ? chartConfig.cubes.find((d) => d.iri === segmentDimension.cubeIri)
-        ?.filters[segmentDimension.iri]
+        ?.filters[segmentDimension.id]
     : undefined;
 
   const sumsBySegment = useMemo(() => {
@@ -174,7 +174,7 @@ const useAreasState = (
     fields.segment?.useAbbreviations,
   ]);
 
-  const xKey = fields.x.componentIri;
+  const xKey = fields.x.componentId;
   const sumsByX = useMemo(() => {
     return Object.fromEntries(
       rollup(
@@ -190,7 +190,7 @@ const useAreasState = (
     if (normalize) {
       return group(
         normalizeData(chartData, {
-          yKey: yMeasure.iri,
+          yKey: yMeasure.id,
           getY,
           getTotalGroupValue: (d) => {
             return sumsByX[getXAsString(d)];
@@ -201,7 +201,7 @@ const useAreasState = (
     }
 
     return group(chartData, getXAsString);
-  }, [chartData, getXAsString, sumsByX, getY, yMeasure.iri, normalize]);
+  }, [chartData, getXAsString, sumsByX, getY, yMeasure.id, normalize]);
 
   const chartWideData = useMemo(() => {
     return getWideData({
@@ -372,7 +372,7 @@ const useAreasState = (
       });
       const yValueFormatter = getStackedTooltipValueFormatter({
         normalize,
-        yMeasureIri: yMeasure.iri,
+        yMeasureId: yMeasure.id,
         yMeasureUnit: yMeasure.unit,
         formatters,
         formatNumber,
@@ -425,7 +425,7 @@ const useAreasState = (
       timeFormatUnit,
       xDimension.timeUnit,
       xScale,
-      yMeasure.iri,
+      yMeasure.id,
       yMeasure.unit,
       normalize,
       getIdentityY,

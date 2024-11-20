@@ -18,7 +18,7 @@ import { useClient } from "urql";
 import { useDebounce } from "use-debounce";
 
 import { SelectDatasetStep } from "@/browser/select-dataset-step";
-import { extractChartConfigComponentIris } from "@/charts/shared/chart-helpers";
+import { extractChartConfigComponentIds } from "@/charts/shared/chart-helpers";
 import { ChartPreview } from "@/components/chart-preview";
 import { HEADER_HEIGHT } from "@/components/header-constants";
 import { Loading } from "@/components/hint";
@@ -176,7 +176,7 @@ const NextStepButton = (props: React.PropsWithChildren<{}>) => {
   const locale = useLocale();
   const [state, dispatch] = useConfiguratorState(hasChartConfigs);
   const chartConfig = getChartConfig(state);
-  const componentIris = extractChartConfigComponentIris({ chartConfig });
+  const componentIds = extractChartConfigComponentIds({ chartConfig });
   const [{ data: components }] = useDataCubesComponentsQuery({
     variables: {
       sourceType: state.dataSource.type,
@@ -184,7 +184,7 @@ const NextStepButton = (props: React.PropsWithChildren<{}>) => {
       locale,
       cubeFilters: chartConfig.cubes.map((cube) => ({
         iri: cube.iri,
-        componentIris,
+        componentIds,
         filters: cube.filters,
         joinBy: cube.joinBy,
         loadValues: true,
@@ -246,7 +246,7 @@ export const SaveDraftButton = ({
             replace(`/create/new?edit=${updated.key}`);
           }
         } else {
-          throw new Error("Could not update draft");
+          throw Error("Could not update draft");
         }
       } else if (state) {
         const saved = await createConfigMut.mutate({
@@ -271,7 +271,7 @@ export const SaveDraftButton = ({
             shallow: true,
           });
         } else {
-          throw new Error("Could not save draft");
+          throw Error("Could not save draft");
         }
       }
 

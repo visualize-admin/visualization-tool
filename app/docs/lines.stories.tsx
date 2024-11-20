@@ -13,7 +13,7 @@ import {
   InteractiveFiltersChartProvider,
   InteractiveFiltersProvider,
 } from "@/stores/interactive-filters";
-import { CONFIGURATOR_STATE_VERSION } from "@/utils/chart-config/versioning";
+import { CONFIGURATOR_STATE_VERSION } from "@/utils/chart-config/constants";
 
 import {
   chartConfig,
@@ -57,7 +57,7 @@ const LineChartStory = () => (
           },
         },
         dataFilters: {
-          componentIris: [],
+          componentIds: [],
           filters: {},
         },
       },
@@ -68,9 +68,9 @@ const LineChartStory = () => (
         <LineChart
           observations={observations}
           dimensions={dimensions}
-          dimensionsByIri={keyBy(dimensions, (d) => d.iri)}
+          dimensionsById={keyBy(dimensions, (d) => d.id)}
           measures={measures}
-          measuresByIri={keyBy(measures, (d) => d.iri)}
+          measuresById={keyBy(measures, (d) => d.id)}
           chartConfig={chartConfig}
         >
           <ChartContainer>

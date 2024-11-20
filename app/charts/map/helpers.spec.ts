@@ -90,48 +90,48 @@ describe("shouldRenderMap", () => {
   it("should work", () => {
     expect(
       shouldRenderMap({
-        areaDimensionIri: undefined,
-        symbolDimensionIri: undefined,
+        areaDimensionId: undefined,
+        symbolDimensionId: undefined,
         geometries: [],
         coordinates: [{ iri: "", label: "", latitude: 0, longitude: 0 }],
       })
     ).toBe(true);
     expect(
       shouldRenderMap({
-        areaDimensionIri: undefined,
-        symbolDimensionIri: undefined,
+        areaDimensionId: undefined,
+        symbolDimensionId: undefined,
         geometries: undefined,
         coordinates: undefined,
       })
     ).toBe(false);
     expect(
       shouldRenderMap({
-        areaDimensionIri: "ABC",
-        symbolDimensionIri: undefined,
+        areaDimensionId: "ABC",
+        symbolDimensionId: undefined,
         geometries: undefined,
         coordinates: undefined,
       })
     ).toBe(false);
     expect(
       shouldRenderMap({
-        areaDimensionIri: undefined,
-        symbolDimensionIri: "ABC",
+        areaDimensionId: undefined,
+        symbolDimensionId: "ABC",
         geometries: undefined,
         coordinates: undefined,
       })
     ).toBe(false);
     expect(
       shouldRenderMap({
-        areaDimensionIri: undefined,
-        symbolDimensionIri: "ABC",
+        areaDimensionId: undefined,
+        symbolDimensionId: "ABC",
         geometries: undefined,
         coordinates: [{ iri: "", label: "", latitude: 0, longitude: 0 }],
       })
     ).toBe(true);
     expect(
       shouldRenderMap({
-        areaDimensionIri: undefined,
-        symbolDimensionIri: "ABC",
+        areaDimensionId: undefined,
+        symbolDimensionId: "ABC",
         geometries: [],
         coordinates: undefined,
       })

@@ -28,9 +28,9 @@ const DataTableStory: StoryObj = {
           <TableChart
             observations={tableObservations}
             dimensions={tableDimensions}
-            dimensionsByIri={keyBy(tableDimensions, (d) => d.iri)}
+            dimensionsById={keyBy(tableDimensions, (d) => d.id)}
             measures={tableMeasures}
-            measuresByIri={keyBy(tableMeasures, (d) => d.iri)}
+            measuresById={keyBy(tableMeasures, (d) => d.id)}
             chartConfig={tableConfig}
           >
             <ChartContainer>

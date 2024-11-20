@@ -25,7 +25,7 @@
     "filters": {
       "https://environment.ld.admin.ch/foen/nfi/classificationUnit": {
         "type": "single",
-        "value": "https://environment.ld.admin.ch/foen/nfi/ClassificationUnit/98/Total"
+        "value": "https://environment.ld.admin.ch/foen/nfi/ClassificationUnit/98/2"
       },
       "https://environment.ld.admin.ch/foen/nfi/inventory": {
         "type": "single",

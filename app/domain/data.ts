@@ -1,6 +1,7 @@
 import { Literal, Term } from "rdf-js";
 
 import { ComponentType } from "@/config-types";
+import { ComponentId } from "@/graphql/make-component-id";
 import {
   DataCubeOrganization,
   DataCubePublicationStatus,
@@ -35,7 +36,7 @@ export type DimensionValue = {
 
 export type HierarchyValue = {
   depth: number;
-  dimensionIri: string;
+  dimensionId: string;
   value: string;
   /** In other words, is selectable? */
   hasValue: boolean;
@@ -53,6 +54,7 @@ export type DataCubeComponents = {
 
 export type DataCubeMetadata = {
   iri: string;
+  unversionedIri?: string;
   identifier?: string;
   title: string;
   description: string;
@@ -62,7 +64,6 @@ export type DataCubeMetadata = {
   publicationStatus: DataCubePublicationStatus;
   themes?: DataCubeTheme[];
   creator?: DataCubeOrganization;
-  versionHistory?: string;
   contactPoint?: {
     name?: string;
     email?: string;
@@ -73,7 +74,9 @@ export type DataCubeMetadata = {
   workExamples?: string[];
 };
 
-export type Observation = Record<string, ObservationValue>;
+// String in case of joinBy dimensions.
+// TODO: we could also use a branded type here.
+export type Observation = Record<ComponentId | string, ObservationValue>;
 
 export type DataCubeObservations = {
   data: Observation[];
@@ -207,7 +210,7 @@ export type Component = Dimension | Measure;
 
 export type BaseComponent = {
   cubeIri: string;
-  iri: string;
+  id: ComponentId;
   label: string;
   description?: string;
   unit?: string;
@@ -220,21 +223,23 @@ export type BaseComponent = {
   related?: RelatedDimension[];
 };
 
-export type BaseDimension = BaseComponent & {
+export type BaseDimension = Omit<BaseComponent, "id"> & {
   hierarchy?: HierarchyValue[] | null;
 } & (
     | {
+        id: string;
         isJoinByDimension: true;
-        originalIris: {
+        originalIds: {
           cubeIri: string;
-          dimensionIri: string;
+          dimensionId: ComponentId;
           label: string;
           description: string;
         }[];
       }
     | {
+        id: ComponentId;
         isJoinByDimension?: never;
-        originalIris?: never;
+        originalIds?: never;
       }
   );
 
@@ -244,7 +249,7 @@ export const isJoinByComponent = (d: Component): d is JoinByComponent => {
   return !!(
     "isJoinByDimension" in d &&
     d.isJoinByDimension &&
-    "originalIris" in d
+    "originalIds" in d
   );
 };
 
@@ -390,6 +395,7 @@ export type GeoData = {
 // Extracted for performance reasons.
 export type SearchCube = {
   iri: string;
+  unversionedIri: string;
   title: string;
   description: string | null;
   publicationStatus: DataCubePublicationStatus;
@@ -411,7 +417,7 @@ export type SearchCube = {
     label: string;
   }[];
   dimensions?: {
-    iri: string;
+    id: ComponentId;
     label: string;
     timeUnit?: string;
     termsets: {
@@ -462,7 +468,7 @@ export const parseTerm = (term?: Term) => {
 };
 
 /**
- * Parse observation values (values returnd from query.execute()) to native JS types
+ * Parse observation values (values returned from query.execute()) to native JS types
  *
  * @param observationValue
  */
@@ -617,7 +623,7 @@ export const findRelatedErrorDimension = (
   dimensions: Component[]
 ) => {
   return dimensions.find((x) =>
-    x.related?.some((r) => r.iri === dimIri && r.type === "StandardError")
+    x.related?.some((r) => r.id === dimIri && r.type === "StandardError")
   );
 };
 

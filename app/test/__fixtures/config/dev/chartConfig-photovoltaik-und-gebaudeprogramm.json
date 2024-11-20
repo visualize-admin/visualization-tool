@@ -1,5 +1,7 @@
 {
   "key": "I9KvAcIimui6",
+  "version": "3.1.0",
+  "chartType": "comboLineDual",
   "meta": {
     "title": { "de": "", "en": "", "fr": "", "it": "" },
     "description": { "de": "", "en": "", "fr": "", "it": "" }
@@ -46,8 +48,6 @@
       "rightAxisComponentIri": "http://schema.org/amount"
     }
   },
-  "version": "3.1.0",
-  "chartType": "comboLineDual",
   "activeField": "y",
   "interactiveFiltersConfig": {
     "legend": { "active": false, "componentIri": "" },

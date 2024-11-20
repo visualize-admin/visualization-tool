@@ -44,14 +44,14 @@ export const useInteractiveFiltersToggle = (target: "legend") => {
 /**
  * Toggles a single data filter
  */
-export const useInteractiveDataFilterToggle = (dimensionIri: string) => {
+export const useInteractiveDataFilterToggle = (dimensionId: string) => {
   const [state, dispatch] = useConfiguratorState(isConfiguring);
   const chartConfig = getChartConfig(state);
   const toggle = useEvent(() => {
     const { interactiveFiltersConfig } = chartConfig;
     const newIFConfig = toggleInteractiveFilterDataDimension(
       interactiveFiltersConfig,
-      dimensionIri
+      dimensionId
     );
 
     dispatch({
@@ -60,37 +60,41 @@ export const useInteractiveDataFilterToggle = (dimensionIri: string) => {
     });
   });
   const checked =
-    chartConfig.interactiveFiltersConfig?.dataFilters.componentIris?.includes(
-      dimensionIri
+    chartConfig.interactiveFiltersConfig?.dataFilters.componentIds?.includes(
+      dimensionId
     );
 
   return { checked, toggle };
 };
 
-// Add or remove a dimension from the interactive
-// data filters dimensions list
+// Add or remove a dimension from the interactive  data filters dimensions list
 export const toggleInteractiveFilterDataDimension = produce(
   (
     config: InteractiveFiltersConfig,
-    iri: string,
+    id: string,
     newValue?: boolean
   ): InteractiveFiltersConfig => {
-    if (!config?.dataFilters.componentIris) {
+    if (!config?.dataFilters.componentIds) {
       return config;
     }
 
-    const currentComponentIris = config.dataFilters.componentIris;
+    const currentComponentIds = config.dataFilters.componentIds;
     const shouldAdd =
-      newValue === undefined ? !currentComponentIris.includes(iri) : newValue;
-    const newComponentIris = shouldAdd
-      ? [...currentComponentIris, iri]
-      : config.dataFilters.componentIris.filter((d) => d !== iri);
-    const newDataFilters = {
-      ...config.dataFilters,
-      componentIris: newComponentIris,
+      newValue === undefined ? !currentComponentIds.includes(id) : newValue;
+    const newComponentIds = shouldAdd
+      ? [...currentComponentIds, id]
+      : config.dataFilters.componentIds.filter((d) => d !== id);
+    const newDataFilters: NonNullable<InteractiveFiltersConfig>["dataFilters"] =
+      {
+        ...config.dataFilters,
+        componentIds: newComponentIds,
+      };
+    newDataFilters.active = newComponentIds.length > 0;
+
+    return {
+      ...config,
+      dataFilters: newDataFilters,
     };
-    newDataFilters.active = newComponentIris.length > 0;
-    return { ...config, dataFilters: newDataFilters };
   }
 );
 

@@ -11,7 +11,19 @@ You can also check the
 
 # Unreleased
 
-Nothing yet.
+- Features
+  - Allowed previewing of charts in states different than CONFIGURING_CHART
+    (iframe `/preview` page)
+- Fixes
+  - Introduced a `componentId` concept which makes the dimensions and measures
+    unique by adding an unversioned cube iri to the unversioned component iri on
+    the server-side. With this we correctly handle multiple dimensions with the
+    same iri that come from different cubes (when merging cubes)
+  - Map legend is now correctly updated (in some cases it was rendered
+    incorrectly on the initial render)
+- Maintenance
+  - Added a way to do local visual regression testing of charts between
+    different branches
 
 # [4.9.5] - 2024-11-18
 
