@@ -2,7 +2,7 @@ import {
   BASELINE_SUFFIX,
   SCREENSHOTS_FOLDER,
   TO_COMPARE_SUFFIX,
-} from "../scripts/compare-screenshots";
+} from "../scripts/compare-screenshots-utils";
 
 import { setup, sleep } from "./common";
 

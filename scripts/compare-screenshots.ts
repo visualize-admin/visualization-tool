@@ -4,9 +4,11 @@ import { existsSync, readFileSync, readdirSync, writeFileSync } from "fs";
 import pixelmatch from "pixelmatch";
 import { PNG } from "pngjs";
 
-export const SCREENSHOTS_FOLDER = "screenshots";
-export const BASELINE_SUFFIX = "-baseline";
-export const TO_COMPARE_SUFFIX = "-to-compare";
+import {
+  BASELINE_SUFFIX,
+  SCREENSHOTS_FOLDER,
+  TO_COMPARE_SUFFIX,
+} from "./compare-screenshots-utils";
 
 const compareScreenshots = async () => {
   const files = readdirSync(SCREENSHOTS_FOLDER);
