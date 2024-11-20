@@ -428,7 +428,11 @@ const ProfileVisualizationsRow = (props: {
           }}
           trigger={embedEl}
         >
-          <EmbedContent locale={locale} configKey={config.key} />
+          <EmbedContent
+            isSingleChart={isSingleChart}
+            locale={locale}
+            configKey={config.key}
+          />
         </TriggeredPopover>
         <TriggeredPopover
           popoverProps={{

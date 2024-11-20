@@ -127,6 +127,7 @@ const Embed = ({
         configKey={configKey}
         locale={locale}
         state={state}
+        isSingleChart={state?.chartConfigs?.length === 1}
       />
     </TriggeredPopover>
   );
@@ -232,13 +233,14 @@ const Share = ({ configKey, locale }: PublishActionProps) => {
 
 type EmbedContentProps = {
   iframeHeight?: number;
+  isSingleChart?: boolean;
 } & Omit<PublishActionProps, "chartWrapperRef">;
 
 export const EmbedContent = ({
   locale,
   configKey,
   iframeHeight,
-  state,
+  isSingleChart,
 }: EmbedContentProps) => {
   const [embedUrl, setEmbedUrl] = useState("");
   const [embedAEMUrl, setEmbedAEMUrl] = useState("");
@@ -304,7 +306,7 @@ export const EmbedContent = ({
                 "For embedding visualizations in systems without JavaScript support (e.g. WordPress).",
             })}
           />
-          {state?.layout.type !== "tab" && (
+          {isSingleChart && (
             <EmbedToggleSwitch
               value="remove-border"
               checked={isWithoutBorder}
