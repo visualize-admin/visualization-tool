@@ -80,6 +80,7 @@ import {
   useDataCubesObservationsQuery,
 } from "@/graphql/hooks";
 import { joinDimensions } from "@/graphql/join";
+import { ComponentId } from "@/graphql/make-component-id";
 import {
   DataCubeComponentsQuery,
   DataCubeComponentsQueryVariables,
@@ -228,13 +229,14 @@ const CautionAlert = ({
 export type SearchOptions =
   | {
       type: "temporal";
-      iri: string;
+      id: ComponentId;
       label: string;
       timeUnit: string;
     }
   | {
       type: "shared";
-      iri: string;
+      /** Technically it's an iri, but we keep the id name for the sake of type consistency. */
+      id: string;
       label: string;
       termsets: Termset[];
     };
@@ -250,29 +252,32 @@ const inferJoinBy = (
       switch (type) {
         case "temporal":
           return {
-            left: leftOption.iri,
+            left: leftOption.id,
             right: rightCube?.dimensions?.find(
               (d) =>
                 // TODO Find out why this is necessary
                 d.timeUnit ===
                 `http://www.w3.org/2006/time#unit${leftOption.timeUnit}`
-            )?.iri,
+            )?.id,
           };
         case "shared":
           return {
-            left: leftOption.iri,
+            left: leftOption.id,
             right: rightCube?.dimensions?.find((d) =>
               d.termsets.some((t) =>
                 leftOption.termsets.map((t) => t.iri).includes(t.iri)
               )
-            )?.iri,
+            )?.id,
           };
         default:
           const exhaustiveCheck: never = type;
           return exhaustiveCheck;
       }
     })
-    .filter((x): x is { left: string; right: string } => !!(x.left && x.right));
+    .filter(
+      (x): x is { left: ComponentId; right: ComponentId } =>
+        !!(x.left && x.right)
+    );
 
   return possibleJoinBys.reduce<{
     left: string[];
@@ -656,7 +661,7 @@ export const DatasetDialog = ({
       ...temporalDimensions.map((x) => {
         return {
           type: "temporal" as const,
-          iri: x.id,
+          id: x.id as ComponentId,
           label: x.label,
           timeUnit: x.timeUnit,
         };
@@ -664,7 +669,7 @@ export const DatasetDialog = ({
       ...sharedDimensions.map((x) => {
         return {
           type: "shared" as const,
-          iri: x.iri,
+          id: x.iri,
           label: x.label,
           termsets: x.termsets,
         };
@@ -675,10 +680,7 @@ export const DatasetDialog = ({
     cubesComponentQuery.data?.dataCubesComponents.dimensions,
   ]);
 
-  const searchDimensionOptionsByIri = keyBy(
-    searchDimensionOptions,
-    (x) => x.iri
-  );
+  const searchDimensionOptionsById = keyBy(searchDimensionOptions, (x) => x.id);
 
   const [selectedSearchDimensions, setSelectedSearchDimensions] = useState<
     typeof searchDimensionOptions | undefined
@@ -692,7 +694,7 @@ export const DatasetDialog = ({
       // On autofill we get a stringified value.
       (typeof value === "string" ? value.split(",") : value)
         ?.map((x) => {
-          return searchDimensionOptionsByIri[x];
+          return searchDimensionOptionsById[x];
         })
         .filter(truthy)
     );
@@ -904,7 +906,7 @@ export const DatasetDialog = ({
               />
               <Select
                 multiple
-                value={(selectedSearchDimensions ?? []).map((x) => x.iri)}
+                value={(selectedSearchDimensions ?? []).map((x) => x.id)}
                 onChange={handleChangeSearchDimensions}
                 MenuProps={{
                   PaperProps: {
@@ -939,10 +941,10 @@ export const DatasetDialog = ({
                       })}
                     </Typography>
                   ) : (
-                    selected.map((iri, i) => {
-                      const value = searchDimensionOptionsByIri[iri];
+                    selected.map((id, i) => {
+                      const value = searchDimensionOptionsById[id];
                       return i < 2 ? (
-                        <Tag key={value.iri} type="dimension" sx={{ mr: 1 }}>
+                        <Tag key={value.id} type="dimension" sx={{ mr: 1 }}>
                           {value.label}
                         </Tag>
                       ) : i === 2 ? (
@@ -959,13 +961,13 @@ export const DatasetDialog = ({
                 {searchDimensionOptions.map((sd) => (
                   <MenuItem
                     key={sd.label}
-                    value={sd.iri}
+                    value={sd.id}
                     sx={{ gap: 2, alignItems: "start" }}
                   >
                     <Checkbox
                       checked={
                         selectedSearchDimensions &&
-                        !!selectedSearchDimensions.find((x) => x.iri === sd.iri)
+                        !!selectedSearchDimensions.find((x) => x.id === sd.id)
                       }
                     />
                     <ListItemText

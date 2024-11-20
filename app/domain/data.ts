@@ -395,6 +395,7 @@ export type GeoData = {
 // Extracted for performance reasons.
 export type SearchCube = {
   iri: string;
+  unversionedIri: string;
   title: string;
   description: string | null;
   publicationStatus: DataCubePublicationStatus;
@@ -416,7 +417,7 @@ export type SearchCube = {
     label: string;
   }[];
   dimensions?: {
-    iri: string;
+    id: ComponentId;
     label: string;
     timeUnit?: string;
     termsets: {

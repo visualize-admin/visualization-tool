@@ -1201,7 +1201,7 @@ export const DatasetResult = ({
                 {sortBy(dimensions, (t) => t.label).map((dimension) => {
                   return (
                     <MaybeTooltip
-                      key={dimension.iri}
+                      key={dimension.id}
                       title={
                         dimension.termsets.length > 0 ? (
                           <>
