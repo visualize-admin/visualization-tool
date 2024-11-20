@@ -58,6 +58,7 @@ Object.assign(mockClient, {
   query: jest.fn().mockImplementation(() => ({
     toPromise: jest.fn().mockResolvedValue({
       data: {
+        dataCubePreview: getCachedComponentsMock.geoAndNumerical,
         possibleFilters,
       },
     }),

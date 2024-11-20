@@ -21,6 +21,8 @@ You can also check the
     same iri that come from different cubes (when merging cubes)
   - Map legend is now correctly updated (in some cases it was rendered
     incorrectly on the initial render)
+- Performance
+  - We no longer load non-key dimensions when initializing a chart
 - Maintenance
   - Added a way to do local visual regression testing of charts between
     different branches

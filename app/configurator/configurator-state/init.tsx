@@ -11,6 +11,9 @@ import {
 import { SELECTING_DATASET_STATE } from "@/configurator/configurator-state/initial";
 import { executeDataCubesComponentsQuery } from "@/graphql/hooks";
 import {
+  DataCubePreviewDocument,
+  DataCubePreviewQuery,
+  DataCubePreviewQueryVariables,
   PossibleFiltersDocument,
   PossibleFiltersQuery,
   PossibleFiltersQueryVariables,
@@ -44,11 +47,40 @@ export const initChartStateFromCube = async (
       dataSource,
     });
 
+  const { data: dataCubePreview } = await client
+    .query<DataCubePreviewQuery, DataCubePreviewQueryVariables>(
+      DataCubePreviewDocument,
+      {
+        sourceType: dataSource.type,
+        sourceUrl: dataSource.url,
+        locale,
+        cubeFilter: { iri: cubeIri },
+      }
+    )
+    .toPromise();
+
+  const previewDimensions = dataCubePreview?.dataCubePreview.dimensions ?? [];
+  const previewMeasures = dataCubePreview?.dataCubePreview.measures ?? [];
+  const componentIds = previewDimensions.some((d) => !d.isKeyDimension)
+    ? [
+        ...previewDimensions.filter((d) => d.isKeyDimension).map((d) => d.id),
+        ...previewMeasures.map((d) => d.id),
+      ]
+    : // As the query with undefined component ids is also used in other parts of the app,
+      // we want to benefit from the cache and not refetch the data if we already have it.
+      undefined;
+
   const { data: components } = await executeDataCubesComponentsQuery(client, {
     sourceType: dataSource.type,
     sourceUrl: dataSource.url,
     locale,
-    cubeFilters: [{ iri: latestCubeIri, loadValues: true }],
+    cubeFilters: [
+      {
+        iri: latestCubeIri,
+        componentIds,
+        loadValues: true,
+      },
+    ],
   });
 
   if (!components?.dataCubesComponents) {
