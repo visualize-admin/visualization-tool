@@ -6,7 +6,7 @@ import { forwardRef, useCallback, useEffect, useMemo, useRef } from "react";
 import { useStore } from "zustand";
 
 import { DataSetTable } from "@/browse/datatable";
-import { extractChartConfigsComponentIris } from "@/charts/shared/chart-helpers";
+import { extractChartConfigsComponentIds } from "@/charts/shared/chart-helpers";
 import { LoadingStateProvider } from "@/charts/shared/chart-loading-state";
 import { isUsingImputation } from "@/charts/shared/imputation";
 import { CHART_RESIZE_EVENT_TYPE } from "@/charts/shared/use-size";
@@ -293,13 +293,13 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
     },
   });
   const metadata = metadataData?.dataCubesMetadata;
-  const componentIris = extractChartConfigsComponentIris(state.chartConfigs);
+  const componentIds = extractChartConfigsComponentIds(state.chartConfigs);
   const [{ data: componentsData }] = useDataCubesComponentsQuery({
     variables: {
       ...commonQueryVariables,
       cubeFilters: chartConfig.cubes.map((cube) => ({
         iri: cube.iri,
-        componentIris,
+        componentIds,
         joinBy: cube.joinBy,
       })),
     },
@@ -435,7 +435,7 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
               ) : (
                 <ChartWithFilters
                   dataSource={dataSource}
-                  componentIris={componentIris}
+                  componentIds={componentIds}
                   chartConfig={chartConfig}
                   dashboardFilters={state.dashboardFilters}
                 />

@@ -14,6 +14,7 @@ import {
 
 type LightCubeOptions = {
   iri: string;
+  unversionedIri: string;
   locale: string;
   sparqlClient: ParsingClient;
 };
@@ -23,6 +24,7 @@ type LightCubeOptions = {
  */
 export class LightCube {
   public iri: string;
+  public unversionedIri: string;
   private locale: string;
   public metadata: DataCubeMetadata | undefined;
   public preview: DataCubePreview | undefined;
@@ -30,8 +32,9 @@ export class LightCube {
   private sparqlClient: ParsingClient;
 
   constructor(options: LightCubeOptions) {
-    const { iri, locale, sparqlClient } = options;
+    const { iri, unversionedIri, locale, sparqlClient } = options;
     this.iri = iri;
+    this.unversionedIri = unversionedIri;
     this.locale = locale;
     this.sparqlClient = sparqlClient;
   }
@@ -61,6 +64,7 @@ export class LightCube {
 
   public async fetchPreview() {
     this.preview = await getCubePreview(this.iri, {
+      unversionedIri: this.unversionedIri,
       locale: this.locale,
       sparqlClient: this.sparqlClient,
     });

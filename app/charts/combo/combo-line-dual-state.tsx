@@ -70,7 +70,7 @@ const useComboLineDualState = (
   const { xDimension, getX, getXAsString } = variables;
   const { chartData, scalesData, timeRangeData, paddingData, allData } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
-  const xKey = fields.x.componentIri;
+  const xKey = fields.x.componentId;
   const {
     width,
     height,

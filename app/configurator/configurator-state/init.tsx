@@ -20,8 +20,8 @@ import {
 } from "@/graphql/query-hooks";
 import { fetchChartConfig } from "@/utils/chart-config/api";
 import {
+  getLatestCubeIri,
   upgradeConfiguratorState,
-  upgradeCubePublishIri,
 } from "@/utils/chart-config/upgrade-cube";
 import { migrateConfiguratorState } from "@/utils/chart-config/versioning";
 
@@ -35,16 +35,17 @@ import {
 
 export const initChartStateFromCube = async (
   client: Client,
-  cubePublishIri: string,
+  cubeIri: string,
   dataSource: DataSource,
   locale: string
 ): Promise<ConfiguratorState | undefined> => {
-  // Technically we already have most recent iri assured by useRedirectToLatestCube, but
-  // just to be extra sure, we fetch it again here.
-  const cubeIri = await upgradeCubePublishIri(cubePublishIri, {
-    client,
-    dataSource,
-  });
+  const latestCubeIri =
+    await // Technically we already have most recent iri assured by useRedirectToLatestCube, but
+    // just to be extra sure, we fetch it again here.
+    getLatestCubeIri(cubeIri, {
+      client,
+      dataSource,
+    });
 
   const { data: dataCubePreview } = await client
     .query<DataCubePreviewQuery, DataCubePreviewQueryVariables>(
@@ -60,12 +61,12 @@ export const initChartStateFromCube = async (
 
   const previewDimensions = dataCubePreview?.dataCubePreview.dimensions ?? [];
   const previewMeasures = dataCubePreview?.dataCubePreview.measures ?? [];
-  const componentIris = previewDimensions.some((d) => !d.isKeyDimension)
+  const componentIds = previewDimensions.some((d) => !d.isKeyDimension)
     ? [
-        ...previewDimensions.filter((d) => d.isKeyDimension).map((d) => d.iri),
-        ...previewMeasures.map((d) => d.iri),
+        ...previewDimensions.filter((d) => d.isKeyDimension).map((d) => d.id),
+        ...previewMeasures.map((d) => d.id),
       ]
-    : // As the query with undefined componentIris is also used in other parts of the app,
+    : // As the query with undefined component ids is also used in other parts of the app,
       // we want to benefit from the cache and not refetch the data if we already have it.
       undefined;
 
@@ -75,15 +76,15 @@ export const initChartStateFromCube = async (
     locale,
     cubeFilters: [
       {
-        iri: cubeIri,
-        componentIris,
+        iri: latestCubeIri,
+        componentIds,
         loadValues: true,
       },
     ],
   });
 
   if (!components?.dataCubesComponents) {
-    throw new Error(`Could not fetch components for ${cubeIri}!`);
+    throw Error(`Could not fetch components for ${latestCubeIri}!`);
   }
 
   const { dimensions, measures } = components.dataCubesComponents;
@@ -94,7 +95,7 @@ export const initChartStateFromCube = async (
   });
   const initialChartConfig = getInitialConfig({
     chartType: possibleChartTypes[0],
-    iris: [{ iri: cubeIri, publishIri: cubePublishIri }],
+    iris: [{ iri: latestCubeIri }],
     dimensions,
     measures,
   });
@@ -102,11 +103,11 @@ export const initChartStateFromCube = async (
     dimensions,
   });
   const { unmappedFilters } = getFiltersByMappingStatus(temporaryChartConfig, {
-    cubeIri,
+    cubeIri: latestCubeIri,
   });
   const shouldFetchPossibleFilters = Object.keys(unmappedFilters).length > 0;
   const variables = getPossibleFiltersQueryVariables({
-    cubeIri,
+    cubeIri: latestCubeIri,
     dataSource,
     unmappedFilters,
   });
@@ -118,7 +119,7 @@ export const initChartStateFromCube = async (
     .toPromise();
 
   if (!possibleFilters?.possibleFilters && shouldFetchPossibleFilters) {
-    throw new Error(`Could not fetch possible filters for ${cubeIri}!`);
+    throw Error(`Could not fetch possible filters for ${latestCubeIri}!`);
   }
 
   const chartConfig = deriveFiltersFromFields(initialChartConfig, {
@@ -149,7 +150,7 @@ export const initChartStateFromLocalStorage = async (
   let state: ConfiguratorState | undefined;
   try {
     const rawState = JSON.parse(storedState);
-    const migratedState = migrateConfiguratorState(rawState);
+    const migratedState = await migrateConfiguratorState(rawState);
     state = decodeConfiguratorState(migratedState);
   } catch (e) {
     console.error("Error while parsing stored state", e);
@@ -178,10 +179,10 @@ export const initChartStateFromChartCopy = async (
   if (config?.data) {
     // Do not keep the previous chart key
     delete config.data.key;
-    const state = migrateConfiguratorState({
+    const state = (await migrateConfiguratorState({
       ...config.data,
       state: "CONFIGURING_CHART",
-    }) as ConfiguratorStateConfiguringChart;
+    })) as ConfiguratorStateConfiguringChart;
     return await upgradeConfiguratorState(state, {
       client,
       dataSource: state.dataSource,
@@ -197,10 +198,10 @@ export const initChartStateFromChartEdit = async (
   const config = await fetchChartConfig(fromChartId);
 
   if (config?.data) {
-    const configState = migrateConfiguratorState({
+    const configState = (await migrateConfiguratorState({
       ...config.data,
       state: state ?? "CONFIGURING_CHART",
-    }) as ConfiguratorStateConfiguringChart;
+    })) as ConfiguratorStateConfiguringChart;
     return await upgradeConfiguratorState(configState, {
       client,
       dataSource: configState.dataSource,

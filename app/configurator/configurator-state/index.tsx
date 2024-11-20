@@ -14,6 +14,7 @@ import {
   enableLayouting,
   extractSingleFilters,
   FilterValue,
+  GenericField,
   getChartConfig,
   getChartConfigFilters,
   isColorFieldInConfig,
@@ -70,19 +71,19 @@ export const getPreviousState = (
 // FIXME: should by handled better, as color is a subfield and not actual field.
 // Side effects in ui encodings?
 const getNonGenericFieldValues = (chartConfig: ChartConfig): string[] => {
-  const iris: string[] = [];
+  const ids: string[] = [];
 
   if (isColorFieldInConfig(chartConfig)) {
     if (chartConfig.fields.areaLayer?.color.type === "categorical") {
-      iris.push(chartConfig.fields.areaLayer.color.componentIri);
+      ids.push(chartConfig.fields.areaLayer.color.componentId);
     }
 
     if (chartConfig.fields.symbolLayer?.color.type === "categorical") {
-      iris.push(chartConfig.fields.symbolLayer.color.componentIri);
+      ids.push(chartConfig.fields.symbolLayer.color.componentId);
     }
   }
 
-  return iris;
+  return ids;
 };
 
 /** Get all filters by mapping status.
@@ -99,23 +100,24 @@ export const getFiltersByMappingStatus = (
      *
      * This ensures that we won't apply single filters to original joinBy dimensions.
      *  */
-    joinByIris?: string[];
+    joinByIds?: string[];
     cubeIri?: string;
   }
 ) => {
-  const { joinByIris, cubeIri } = options;
-  const genericFieldValues = Object.values(chartConfig.fields).map(
-    (d) => d.componentIri
-  );
+  const { joinByIds, cubeIri } = options;
+  const genericFieldValues = Object.values<GenericField>(
+    // @ts-ignore - we are only interested in component ids
+    chartConfig.fields
+  ).map((d) => d.componentId);
   const nonGenericFieldValues = getNonGenericFieldValues(chartConfig);
-  const iris = new Set([
+  const ids = new Set([
     ...genericFieldValues,
     ...nonGenericFieldValues,
-    ...(joinByIris ?? []),
+    ...(joinByIds ?? []),
   ]);
   const filters = getChartConfigFilters(chartConfig.cubes, { cubeIri });
-  const mappedFilters = pickBy(filters, (_, iri) => iris.has(iri));
-  const unmappedFilters = pickBy(filters, (_, iri) => !iris.has(iri));
+  const mappedFilters = pickBy(filters, (_, id) => ids.has(id));
+  const unmappedFilters = pickBy(filters, (_, id) => !ids.has(id));
 
   if (!isSingleFilters(unmappedFilters)) {
     console.warn("Unmapped filters must be single filters!");
@@ -123,7 +125,7 @@ export const getFiltersByMappingStatus = (
 
   return {
     mappedFilters,
-    mappedFiltersIris: iris,
+    mappedFiltersIds: ids,
     unmappedFilters: extractSingleFilters(unmappedFilters),
   };
 };
@@ -156,8 +158,8 @@ export const getFilterValue = (
 
   return isJoinByComponent(dimension)
     ? // As filters are mirrored between the cubes, we can just pick the first one.
-      filters[dimension.originalIris[0].dimensionIri]
-    : filters[dimension.iri];
+      filters[dimension.originalIds[0].dimensionId]
+    : filters[dimension.id];
 };
 
 export const moveFilterField = produce(
@@ -185,7 +187,7 @@ export const moveFilterField = produce(
     // the order of the keys received is in insertion order
     // https://262.ecma-international.org/6.0/#sec-ordinary-object-internal-methods-and-internal-slots-ownpropertykeys
     const keys = Object.getOwnPropertyNames(cube.filters);
-    const fieldIndex = Object.keys(cube.filters).indexOf(dimension.iri);
+    const fieldIndex = Object.keys(cube.filters).indexOf(dimension.id);
 
     if (fieldIndex === 0 && delta === -1) {
       return;
@@ -202,7 +204,7 @@ export const moveFilterField = produce(
     const replacedIndex =
       fieldIndex === -1 ? keys.length - 1 : fieldIndex + delta;
     const replaced = keys[replacedIndex];
-    keys[replacedIndex] = dimension.iri;
+    keys[replacedIndex] = dimension.id;
 
     if (fieldIndex === -1) {
       keys.push(replaced);
@@ -278,8 +280,7 @@ export const addDatasetInConfig = function (
   const { iri, joinBy } = options;
   chartConfig.cubes[0].joinBy = joinBy.left;
   chartConfig.cubes.push({
-    iri: iri,
-    publishIri: iri,
+    iri,
     joinBy: joinBy.right,
     filters: {},
   });
@@ -297,11 +298,11 @@ export const addDatasetInConfig = function (
     if (!field) {
       continue;
     }
-    for (const iriAttribute of encoding.iriAttributes) {
-      const value = get(field, iriAttribute);
+    for (const idAttribute of encoding.idAttributes) {
+      const value = get(field, idAttribute);
       const index = joinBy.left.indexOf(value) ?? joinBy.right.indexOf(value);
       if (index > -1) {
-        set(field, iriAttribute, mkJoinById(index));
+        set(field, idAttribute, mkJoinById(index));
       }
     }
   }

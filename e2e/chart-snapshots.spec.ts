@@ -26,9 +26,9 @@ for (let [viewportName, viewportSize] of Object.entries(viewports)) {
     test(`Chart Snapshots ${slug} ${env} ${viewportName}`, async ({
       page,
       selectors,
-      replayFromHAR
+      replayFromHAR,
     }) => {
-      await replayFromHAR()
+      await replayFromHAR();
       await page.setViewportSize(viewportSize);
       await page.goto(
         `/en/__test/${env}/${slug}?dataSource=Int&${harReplayGraphqlEndpointQueryParam}`

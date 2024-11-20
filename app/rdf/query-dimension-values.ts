@@ -102,7 +102,7 @@ export async function loadDimensionsValuesWithMetadata(
     );
 
     if (!cubeDimensions.find((d) => d.path?.value === dimensionIri)) {
-      throw new Error(`Dimension not found: ${dimensionIri}`);
+      throw Error(`Dimension not found: ${dimensionIri}`);
     }
 
     return `${
@@ -296,7 +296,7 @@ export const loadDimensionValuesWithMetadata = async (
   );
 
   if (!cubeDimension) {
-    throw new Error(`Dimension not found: ${dimensionIri}`);
+    throw Error(`Dimension not found: ${dimensionIri}`);
   }
 
   const isDimensionVersioned = dimensionIsVersioned(cubeDimension);
@@ -457,7 +457,7 @@ ${getQueryFilters(filterList, cubeDimensions, dimensionIri)}`
       cache
     );
   } catch {
-    throw new Error(
+    throw Error(
       `Failed to fetch max dimension value for ${cubeIri}, ${dimensionIri}!`
     );
   }
@@ -539,7 +539,7 @@ export const loadMinMaxDimensionValues = async ({
   cache,
 }: {
   datasetIri: string;
-  dimensionIri: Term;
+  dimensionIri: string;
   sparqlClient: ParsingClient;
   cache: LRUCache | undefined;
 }) => {

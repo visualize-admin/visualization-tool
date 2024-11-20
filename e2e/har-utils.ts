@@ -68,14 +68,14 @@ export const getEnv = (name: string) => {
   const found = envs.find((x) => x.name === name);
 
   if (!found) {
-    throw new Error(`Could not find environment ${name}`);
+    throw Error(`Could not find environment ${name}`);
   }
 
   return found;
 };
 
 /**
- * HAR traces have been saved on http://localhost:3000. Even if we are targetting
+ * HAR traces have been saved on http://localhost:3000. Even if we are targeting
  * our E2E tests on a Vercel Preview URL, we still want the client to make the
  * request to http://localhost:3000 so that Playwrights' HAR replay is used.
  */

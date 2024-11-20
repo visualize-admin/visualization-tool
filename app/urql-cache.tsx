@@ -35,7 +35,7 @@ export const getCachedComponents = ({
         sourceUrl: dataSource.url,
         cubeFilter: {
           iri: cubeFilter.iri,
-          componentIris: undefined,
+          componentIds: undefined,
           joinBy: cubeFilter.joinBy,
           loadValues: true,
         },

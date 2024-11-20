@@ -2,18 +2,18 @@ import { ChartConfig, DataSource } from "@/config-types";
 import { Dimension, Measure, Observation } from "@/domain/data";
 import { DataCubeObservationFilter } from "@/graphql/query-hooks";
 
-export type ComponentsByIri = Record<string, Dimension | Measure>;
+export type ComponentsById = Record<string, Dimension | Measure>;
 
-export type DimensionsByIri = Record<string, Dimension>;
+export type DimensionsById = Record<string, Dimension>;
 
-export type MeasuresByIri = Record<string, Measure>;
+export type MeasuresById = Record<string, Measure>;
 
 export type BaseChartProps = {
   observations: Observation[];
   dimensions: Dimension[];
-  dimensionsByIri: DimensionsByIri;
+  dimensionsById: DimensionsById;
   measures: Measure[];
-  measuresByIri: MeasuresByIri;
+  measuresById: MeasuresById;
 };
 
 export type ChartProps<TChartConfig extends ChartConfig> = BaseChartProps & {
@@ -22,7 +22,7 @@ export type ChartProps<TChartConfig extends ChartConfig> = BaseChartProps & {
 
 export type VisualizationProps<TChartConfig extends ChartConfig> = {
   dataSource: DataSource;
-  componentIris: string[] | undefined;
+  componentIds: string[] | undefined;
   chartConfig: TChartConfig;
   observationQueryFilters: DataCubeObservationFilter[];
 };

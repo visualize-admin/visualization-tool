@@ -4,7 +4,7 @@ import { makeStyles } from "@mui/styles";
 import uniqBy from "lodash/uniqBy";
 import { useMemo } from "react";
 
-import { extractChartConfigComponentIris } from "@/charts/shared/chart-helpers";
+import { extractChartConfigComponentIds } from "@/charts/shared/chart-helpers";
 import { LegendItem } from "@/charts/shared/legend-color";
 import { ChartFiltersList } from "@/components/chart-filters-list";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
@@ -57,14 +57,13 @@ export const ChartFootnotes = ({
 }) => {
   const locale = useLocale();
   const usedComponents = useMemo(() => {
-    const componentIris = extractChartConfigComponentIris({
+    const componentIds = extractChartConfigComponentIds({
       chartConfig,
       includeFilters: false,
     });
-    return componentIris
-      .map((componentIri) => {
-        return components.find((component) => component.iri === componentIri);
-      })
+
+    return componentIds
+      .map((id) => components.find((component) => component.id === id))
       .filter(truthy); // exclude potential joinBy components
   }, [chartConfig, components]);
   const [{ data }] = useDataCubesMetadataQuery({
@@ -86,9 +85,9 @@ export const ChartFootnotes = ({
       {data?.dataCubesMetadata.map((metadata) => (
         <div key={metadata.iri}>
           <ChartFootnotesLegend
-            cubeIri={metadata.iri}
             chartConfig={chartConfig}
             components={components}
+            cubeIri={metadata.iri}
           />
           <ChartFiltersList
             dataSource={dataSource}
@@ -122,37 +121,36 @@ export const ChartFootnotes = ({
 };
 
 const ChartFootnotesLegend = ({
-  cubeIri,
   chartConfig,
   components,
+  cubeIri,
 }: {
-  cubeIri: string;
   chartConfig: ChartConfig;
   components: Component[];
+  cubeIri: string;
 }) => {
   switch (chartConfig.chartType) {
     case "comboLineColumn": {
       return (
         <ChartFootnotesComboLineColumn
-          cubeIri={cubeIri}
           chartConfig={chartConfig}
           components={components}
+          cubeIri={cubeIri}
         />
       );
     }
     case "comboLineDual": {
       return (
         <ChartFootnotesComboLineDual
-          cubeIri={cubeIri}
           chartConfig={chartConfig}
           components={components}
+          cubeIri={cubeIri}
         />
       );
     }
     case "comboLineSingle": {
       return (
         <ChartFootnotesComboLineSingle
-          cubeIri={cubeIri}
           chartConfig={chartConfig}
           components={components}
         />
@@ -172,33 +170,34 @@ const ChartFootnotesLegendContainer = ({
 };
 
 const ChartFootnotesComboLineColumn = ({
-  cubeIri,
   chartConfig,
   components,
+  cubeIri,
 }: {
-  cubeIri: string;
   chartConfig: ComboLineColumnConfig;
   components: Component[];
+  cubeIri: string;
 }) => {
   const {
-    y: { columnComponentIri, lineComponentIri, lineAxisOrientation },
+    y: { columnComponentId, lineComponentId, lineAxisOrientation },
   } = chartConfig.fields;
   const columnAxisComponent = components.find(
-    (d) => d.iri === columnComponentIri && d.cubeIri === cubeIri
+    (d) => d.id === columnComponentId && d.cubeIri === cubeIri
   );
   const lineAxisComponent = components.find(
-    (d) => d.iri === lineComponentIri && d.cubeIri === cubeIri
+    (d) => d.id === lineComponentId && d.cubeIri === cubeIri
   );
   const firstComponent =
     lineAxisOrientation === "left" ? lineAxisComponent : columnAxisComponent;
   const secondComponent =
     lineAxisOrientation === "left" ? columnAxisComponent : lineAxisComponent;
+
   return firstComponent || secondComponent ? (
     <ChartFootnotesLegendContainer>
       {firstComponent && (
         <LegendItem
           item={firstComponent.label}
-          color={chartConfig.fields.y.colorMapping[firstComponent.iri]}
+          color={chartConfig.fields.y.colorMapping[firstComponent.id]}
           symbol={lineAxisOrientation === "left" ? "line" : "square"}
           usage="tooltip"
           dimension={firstComponent as Measure}
@@ -207,7 +206,7 @@ const ChartFootnotesComboLineColumn = ({
       {secondComponent && (
         <LegendItem
           item={secondComponent.label}
-          color={chartConfig.fields.y.colorMapping[secondComponent.iri]}
+          color={chartConfig.fields.y.colorMapping[secondComponent.id]}
           symbol={lineAxisOrientation === "left" ? "square" : "line"}
           usage="tooltip"
           dimension={secondComponent as Measure}
@@ -218,29 +217,30 @@ const ChartFootnotesComboLineColumn = ({
 };
 
 const ChartFootnotesComboLineDual = ({
-  cubeIri,
   chartConfig,
   components,
+  cubeIri,
 }: {
-  cubeIri: string;
   chartConfig: ComboLineDualConfig;
   components: Component[];
+  cubeIri: string;
 }) => {
   const {
-    y: { leftAxisComponentIri, rightAxisComponentIri },
+    y: { leftAxisComponentId, rightAxisComponentId },
   } = chartConfig.fields;
   const leftAxisComponent = components.find(
-    (d) => d.iri === leftAxisComponentIri && d.cubeIri === cubeIri
+    (d) => d.id === leftAxisComponentId && d.cubeIri === cubeIri
   );
   const rightAxisComponent = components.find(
-    (d) => d.iri === rightAxisComponentIri && d.cubeIri === cubeIri
+    (d) => d.id === rightAxisComponentId && d.cubeIri === cubeIri
   );
+
   return leftAxisComponent || rightAxisComponent ? (
     <ChartFootnotesLegendContainer>
       {leftAxisComponent && (
         <LegendItem
           item={leftAxisComponent.label}
-          color={chartConfig.fields.y.colorMapping[leftAxisComponent.iri]}
+          color={chartConfig.fields.y.colorMapping[leftAxisComponent.id]}
           symbol="line"
           usage="tooltip"
           dimension={leftAxisComponent as Measure}
@@ -249,7 +249,7 @@ const ChartFootnotesComboLineDual = ({
       {rightAxisComponent && (
         <LegendItem
           item={rightAxisComponent.label}
-          color={chartConfig.fields.y.colorMapping[rightAxisComponent.iri]}
+          color={chartConfig.fields.y.colorMapping[rightAxisComponent.id]}
           symbol="line"
           usage="tooltip"
           dimension={rightAxisComponent as Measure}
@@ -260,28 +260,25 @@ const ChartFootnotesComboLineDual = ({
 };
 
 const ChartFootnotesComboLineSingle = ({
-  cubeIri,
   chartConfig,
   components,
 }: {
-  cubeIri: string;
   chartConfig: ComboLineSingleConfig;
   components: Component[];
 }) => {
   const {
-    y: { componentIris },
+    y: { componentIds },
   } = chartConfig.fields;
-  return componentIris.length ? (
+
+  return componentIds.length ? (
     <ChartFootnotesLegendContainer>
-      {componentIris.map((componentIri) => {
-        const component = components.find(
-          (d) => d.iri === componentIri && d.cubeIri === cubeIri
-        );
+      {componentIds.map((id) => {
+        const component = components.find((d) => d.id === id);
         return component ? (
           <LegendItem
-            key={component.iri}
+            key={component.id}
             item={component.label}
-            color={chartConfig.fields.y.colorMapping[component.iri]}
+            color={chartConfig.fields.y.colorMapping[component.id]}
             symbol="line"
             usage="tooltip"
             dimension={component as Measure}

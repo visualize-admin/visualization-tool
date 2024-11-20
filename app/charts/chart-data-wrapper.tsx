@@ -53,7 +53,7 @@ const ChartDataWrapperInner = <
   LoadingOverlayComponent = LoadingOverlay,
   Component,
   ComponentProps,
-  componentIris,
+  componentIds,
   dataSource,
   observationQueryFilters,
   fetching: fetchingProp = false,
@@ -66,7 +66,7 @@ const ChartDataWrapperInner = <
     ElementProps<TChartComponent>,
     keyof ChartProps<TChartConfig>
   >;
-  componentIris?: string[];
+  componentIds?: string[];
   dataSource: DataSource;
   observationQueryFilters: DataCubeObservationFilter[];
   fetching?: boolean;
@@ -94,7 +94,7 @@ const ChartDataWrapperInner = <
       ...commonQueryVariables,
       cubeFilters: chartConfig.cubes.map((cube) => ({
         iri: cube.iri,
-        componentIris,
+        componentIds,
         joinBy: cube.joinBy,
         loadValues: true,
       })),
@@ -142,10 +142,10 @@ const ChartDataWrapperInner = <
     chartLoadingState.set("data", fetching);
   }, [chartLoadingState, fetching]);
 
-  const { dimensionsByIri, measuresByIri } = useMemo(() => {
+  const { dimensionsById, measuresById } = useMemo(() => {
     return {
-      dimensionsByIri: keyBy(dimensions ?? [], (d) => d.iri),
-      measuresByIri: keyBy(measures ?? [], (d) => d.iri),
+      dimensionsById: keyBy(dimensions ?? [], (d) => d.id),
+      measuresById: keyBy(measures ?? [], (d) => d.id),
     };
   }, [dimensions, measures]);
 
@@ -184,9 +184,9 @@ const ChartDataWrapperInner = <
         {createElement(Component, {
           observations,
           dimensions,
-          dimensionsByIri,
+          dimensionsById,
           measures,
-          measuresByIri,
+          measuresById,
           chartConfig,
           ...ComponentProps,
         } as ChartProps<TChartConfig> & TOtherProps)}

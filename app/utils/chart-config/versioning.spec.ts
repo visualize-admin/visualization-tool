@@ -2,19 +2,29 @@ import {
   ConfiguratorStateConfiguringChart,
   decodeChartConfig,
   LineConfig,
-  MapConfig,
+  TableConfig,
 } from "@/config-types";
+import { configJoinedCubes } from "@/configurator/configurator-state/mocks";
+import { stringifyComponentId } from "@/graphql/make-component-id";
+import dualLine1Fixture from "@/test/__fixtures/config/dev/chartConfig-photovoltaik-und-gebaudeprogramm.json";
+import tableFixture from "@/test/__fixtures/config/dev/chartConfig-table-covid19.json";
+import {
+  CHART_CONFIG_VERSION,
+  CONFIGURATOR_STATE_VERSION,
+} from "@/utils/chart-config/constants";
 
 import {
   chartConfigMigrations,
-  CHART_CONFIG_VERSION,
   configuratorStateMigrations,
-  CONFIGURATOR_STATE_VERSION,
   migrateChartConfig,
   upOrDown,
 } from "./versioning";
 
 const CONFIGURATOR_STATE = {
+  dataSource: {
+    type: "sparql",
+    url: "",
+  },
   meta: {
     title: {
       de: "",
@@ -110,17 +120,17 @@ describe("config migrations", () => {
     },
   };
 
-  it("should migrate to newest config and back (but might lost some info for major version changes", () => {
-    const migratedConfig = migrateChartConfig(oldMapConfig, {
+  it("should migrate to newest config and back (but might lost some info for major version changes", async () => {
+    const migratedConfig = await migrateChartConfig(oldMapConfig, {
       migrationProps: CONFIGURATOR_STATE,
     });
     const decodedConfig = decodeChartConfig(migratedConfig);
 
     expect(decodedConfig).toBeDefined();
 
-    const migratedOldConfig = migrateChartConfig(decodedConfig, {
+    const migratedOldConfig = (await migrateChartConfig(decodedConfig, {
       toVersion: "1.0.0",
-    }) as MapConfig;
+    })) as any;
     expect(migratedOldConfig.version).toEqual("1.0.0");
     const symbolLayer = migratedOldConfig.fields.symbolLayer!;
     // @ts-ignore - show does not existing in the newer version of the types
@@ -135,19 +145,19 @@ describe("config migrations", () => {
     expect(symbolLayer.color).toEqual("#1f77b4");
   });
 
-  it("should migrate to initial config from migrated config for minor version changes", () => {
-    const migratedConfig = migrateChartConfig(oldMapConfig, {
+  it("should migrate to initial config from migrated config for minor version changes", async () => {
+    const migratedConfig = await migrateChartConfig(oldMapConfig, {
       toVersion: "1.0.2",
     });
-    const migratedOldConfig = migrateChartConfig(migratedConfig, {
+    const migratedOldConfig = await migrateChartConfig(migratedConfig, {
       toVersion: "1.0.0",
     });
 
     expect(migratedOldConfig).toEqual(oldMapConfig);
   });
 
-  it("should correctly migrate interactiveFiltersConfig", () => {
-    const migratedConfig = migrateChartConfig(oldLineConfig, {
+  it("should correctly migrate interactiveFiltersConfig", async () => {
+    const migratedConfig = await migrateChartConfig(oldLineConfig, {
       migrationProps: CONFIGURATOR_STATE,
     });
     const decodedConfig = decodeChartConfig(migratedConfig);
@@ -155,16 +165,58 @@ describe("config migrations", () => {
     expect(decodedConfig).toBeDefined();
     expect(
       (decodedConfig as LineConfig).interactiveFiltersConfig?.timeRange
-        .componentIri === oldLineConfig.fields.x.componentIri
+        .componentId === oldLineConfig.fields.x.componentIri
     ).toBeDefined();
 
-    const migratedOldConfig = migrateChartConfig(decodedConfig, {
+    const migratedOldConfig = (await migrateChartConfig(decodedConfig, {
       toVersion: "1.4.0",
-    }) as LineConfig;
+    })) as any;
 
     expect(
       migratedOldConfig.interactiveFiltersConfig?.timeRange.componentIri
     ).toEqual("");
+  });
+
+  it("should correctly migrate colorMapping in v4.0.0 for combo charts", async () => {
+    const migratedConfig = await migrateChartConfig(dualLine1Fixture, {
+      toVersion: "4.0.0",
+      migrationProps: CONFIGURATOR_STATE,
+    });
+    const decodedConfig = decodeChartConfig(migratedConfig);
+    expect(decodedConfig).toBeDefined();
+    expect((decodedConfig as any).fields.y.colorMapping).toMatchObject({
+      [stringifyComponentId({
+        unversionedCubeIri:
+          "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_co2wirkung/4",
+        unversionedComponentIri: "http://schema.org/amount",
+      })]: "#ff7f0e",
+      [stringifyComponentId({
+        unversionedCubeIri:
+          "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9",
+        unversionedComponentIri:
+          "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/AnzahlAnlagen",
+      })]: "#1f77b4",
+    });
+  });
+
+  it("should correctly migrate table charts", async () => {
+    const migratedConfig = await migrateChartConfig(tableFixture, {
+      toVersion: CHART_CONFIG_VERSION,
+      migrationProps: CONFIGURATOR_STATE,
+    });
+    const decodedConfig = decodeChartConfig(migratedConfig);
+    expect(decodedConfig).toBeDefined();
+  });
+
+  it("should not migrate joinBy iris", async () => {
+    const migratedConfig = await migrateChartConfig(configJoinedCubes.table, {
+      toVersion: CHART_CONFIG_VERSION,
+      migrationProps: CONFIGURATOR_STATE,
+    });
+    const decodedConfig = decodeChartConfig(migratedConfig) as TableConfig;
+    expect(decodedConfig).toBeDefined();
+    expect(Object.keys(decodedConfig.fields)[0]).toBe("joinBy__0");
+    expect(decodedConfig.fields["joinBy__0"].componentId).toBe("joinBy__0");
   });
 });
 

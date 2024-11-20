@@ -16,7 +16,7 @@ import { Cell, Column, Row } from "react-table";
 
 import {
   getLabelWithUnit,
-  getSlugifiedIri,
+  getSlugifiedId,
 } from "@/charts/shared/chart-helpers";
 import {
   ChartContext,
@@ -51,8 +51,8 @@ import { ChartProps } from "../shared/ChartProps";
 
 export type MKColumnMeta<T> = {
   dim: Component;
-  iri: string;
-  slugifiedIri: string;
+  id: string;
+  slugifiedId: string;
   description?: string;
   columnComponentType: ComponentType;
   formatter: (cell: Cell<Observation, any>) => string;
@@ -100,9 +100,9 @@ export type TableChartState = CommonChartState & {
   showSearch: boolean;
   tableColumns: Column<Observation>[];
   tableColumnsMeta: Record<string, ColumnMeta>;
-  groupingIris: string[];
-  hiddenIris: string[];
-  sortingIris: { id: string; desc: boolean }[];
+  groupingIds: string[];
+  hiddenIds: string[];
+  sortingIds: { id: string; desc: boolean }[];
 };
 
 const useTableState = (
@@ -158,7 +158,7 @@ const useTableState = (
    */
 
   const types = [...dimensions, ...measures].reduce(
-    (obj, c) => ({ ...obj, [getSlugifiedIri(c.iri)]: c.__typename }),
+    (obj, c) => ({ ...obj, [getSlugifiedId(c.id)]: c.__typename }),
     {} as { [x: string]: ComponentType }
   );
   // Data used by react-table
@@ -167,7 +167,7 @@ const useTableState = (
       // Only read keys once
       const keys = Object.keys(chartData[0] ?? []);
       const lkey = keys.length;
-      const slugifiedKeys = keys.map(getSlugifiedIri);
+      const slugifiedKeys = keys.map(getSlugifiedId);
 
       return chartData.map((d, index) => {
         const o = { id: index } as $IntentionalAny;
@@ -194,12 +194,10 @@ const useTableState = (
     const allComponents = [...dimensions, ...measures];
 
     return orderedTableColumns.map((c) => {
-      const headerComponent = allComponents.find(
-        (d) => d.iri === c.componentIri
-      );
+      const headerComponent = allComponents.find((d) => d.id === c.componentId);
 
       if (!headerComponent) {
-        throw Error(`No dimension <${c.componentIri}> in cube!`);
+        throw Error(`No dimension <${c.componentId}> in cube!`);
       }
 
       const sorters = makeDimensionValueSorters(headerComponent, {
@@ -210,7 +208,7 @@ const useTableState = (
 
       // The column width depends on the estimated width of the
       // longest value in the column, with a minimum of 150px.
-      const columnItems = [...new Set(chartData.map((d) => d[c.componentIri]))];
+      const columnItems = [...new Set(chartData.map((d) => d[c.componentId]))];
       const columnItemSizes = [
         ...columnItems.map((item) => {
           const itemAsString =
@@ -230,9 +228,8 @@ const useTableState = (
 
       return {
         Header: headerLabel,
-        // Slugify accessor to avoid IRI's "." to be parsed as JS object notation.
-        accessor: getSlugifiedIri(c.componentIri),
-
+        // Slugify accessor to avoid id's "." to be parsed as JS object notation.
+        accessor: getSlugifiedId(c.componentId),
         width,
         sortType: (
           rowA: Row<Observation>,
@@ -257,43 +254,38 @@ const useTableState = (
   }, [orderedTableColumns, chartData, dimensions, measures, formatNumber]);
 
   // Groupings used by react-table
-  const groupingIris = useMemo(
+  const groupingIds = useMemo(
     () =>
       orderedTableColumns
         .filter((c) => c.isGroup)
-        .map((c) => getSlugifiedIri(c.componentIri)),
+        .map((c) => getSlugifiedId(c.componentId)),
     [orderedTableColumns]
   );
 
   // Sorting used by react-table
-  const sortingIris = useMemo(() => {
+  const sortingIds = useMemo(() => {
     return [
       // Prioritize the configured sorting
       ...sorting.map((s) => ({
-        id: getSlugifiedIri(s.componentIri),
+        id: getSlugifiedId(s.componentId),
         desc: s.sortingOrder === "desc",
       })),
       // Add the remaining table columns to the sorting
       ...orderedTableColumns.flatMap((c) => {
-        return sorting.some((s) => s.componentIri === c.componentIri)
+        return sorting.some((s) => s.componentId === c.componentId)
           ? []
-          : [
-              {
-                id: getSlugifiedIri(c.componentIri),
-                desc: false,
-              },
-            ];
+          : [{ id: getSlugifiedId(c.componentId), desc: false }];
       }),
     ];
   }, [sorting, orderedTableColumns]);
 
   const formatters = useDimensionFormatters([...dimensions, ...measures]);
 
-  const hiddenIris = useMemo(
+  const hiddenIds = useMemo(
     () =>
       orderedTableColumns
         .filter((c) => c.isHidden)
-        .map((c) => getSlugifiedIri(c.componentIri)),
+        .map((c) => getSlugifiedId(c.componentId)),
     [orderedTableColumns]
   );
 
@@ -303,23 +295,23 @@ const useTableState = (
    * It is not used by react-table, only for custom styling.
    */
   const tableColumnsMeta = useMemo<TableChartState["tableColumnsMeta"]>(() => {
-    const allColumnsByIri = Object.fromEntries(
-      [...dimensions, ...measures].map((x) => [x.iri, x])
+    const allColumnsById = Object.fromEntries(
+      [...dimensions, ...measures].map((x) => [x.id, x])
     );
     return mapKeys(
-      mapValues(fields, (columnMeta, iri) => {
-        const slugifiedIri = getSlugifiedIri(iri);
+      mapValues(fields, (columnMeta, id) => {
+        const slugifiedId = getSlugifiedId(id);
         const columnStyle = columnMeta.columnStyle;
         const columnStyleType = columnStyle.type;
         const columnComponentType = columnMeta.componentType;
-        const formatter = formatters[iri];
+        const formatter = formatters[id];
         const cellFormatter = (x: Cell<Observation>) => formatter(x.value);
         const common = {
-          dim: allColumnsByIri[iri],
-          iri,
-          slugifiedIri,
+          dim: allColumnsById[id],
+          id,
+          slugifiedId,
           columnComponentType,
-          description: allColumnsByIri[iri]?.description || undefined,
+          description: allColumnsById[id]?.description || undefined,
           formatter: cellFormatter,
           ...columnStyle,
         } as const;
@@ -327,7 +319,7 @@ const useTableState = (
           return common as TextColumnMeta;
         } else if (columnStyleType === "category") {
           const { colorMapping } = columnStyle as ColumnStyleCategory;
-          const dimension = allColumnsByIri[iri];
+          const dimension = allColumnsById[id];
 
           // Color scale (always from colorMappings)
           const colorScale = scaleOrdinal<string>();
@@ -358,16 +350,16 @@ const useTableState = (
         } else if (columnStyleType === "heatmap") {
           const absMinValue =
             min(chartData, (d) =>
-              d[iri] !== null ? Math.abs(d[iri] as number) : 0
+              d[id] !== null ? Math.abs(d[id] as number) : 0
             ) || 0;
           const absMaxValue =
             max(chartData, (d) =>
-              d[iri] !== null ? Math.abs(d[iri] as number) : 1
+              d[id] !== null ? Math.abs(d[id] as number) : 1
             ) || 1;
           const maxAbsoluteValue = Math.max(absMinValue, absMaxValue);
           const colorScale = scaleDiverging(
             getColorInterpolator((columnStyle as ColumnStyleHeatmap).palette)
-          ).domain([-maxAbsoluteValue, 0, maxAbsoluteValue] || [-1, 0, 1]);
+          ).domain([-maxAbsoluteValue, 0, maxAbsoluteValue]);
           return {
             ...common,
             colorScale,
@@ -378,7 +370,7 @@ const useTableState = (
           const columnItems = [
             ...new Set(
               chartData.map((d) =>
-                d !== null && d[iri] !== null ? mkNumber(d[iri]) : NaN
+                d !== null && d[id] !== null ? mkNumber(d[id]) : NaN
               )
             ),
           ];
@@ -397,7 +389,7 @@ const useTableState = (
           return null as never;
         }
       }),
-      (v) => v.slugifiedIri
+      (v) => v.slugifiedId
     );
   }, [chartData, dimensions, fields, formatters, measures]);
 
@@ -410,9 +402,9 @@ const useTableState = (
     showSearch: settings.showSearch,
     tableColumns,
     tableColumnsMeta,
-    groupingIris,
-    hiddenIris,
-    sortingIris,
+    groupingIds,
+    hiddenIds,
+    sortingIds,
     ...variables,
   };
 };

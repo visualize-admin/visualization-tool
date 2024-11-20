@@ -72,6 +72,7 @@ describe("parse-search-results", () => {
             },
           ],
           "title": "Einmalvergütung für Photovoltaikanlagen",
+          "unversionedIri": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/10",
         },
       ]
     `);
@@ -95,7 +96,7 @@ describe("parse-search-results", () => {
           "description": "Median electricity tariff per region & consumption profiles",
           "dimensions": Array [
             Object {
-              "iri": "https://energy.ld.admin.ch/elcom/electricityprice/dimension/canton",
+              "id": "https://energy.ld.admin.ch/elcom/electricityprice-canton___https://energy.ld.admin.ch/elcom/electricityprice/dimension/canton",
               "label": "Canton",
               "termsets": Array [
                 Object {
@@ -112,6 +113,7 @@ describe("parse-search-results", () => {
           "termsets": Array [],
           "themes": Array [],
           "title": "Median electricity tariff per canton",
+          "unversionedIri": "https://energy.ld.admin.ch/elcom/electricityprice-canton",
         },
         Object {
           "creator": Object {
@@ -122,7 +124,7 @@ describe("parse-search-results", () => {
           "description": "Seit 2014 werden Photovoltaikanlagen mit einer Einmalvergütung (EIV) gefördert. Dabei wird abhängig von der Leistung, der Anlagenkategorie und dem Inbetriebnahmedatum ein einmaliger Beitrag an die Anlagenbetreiber ausbezahlt. Hier finden Sie pro Kanton und Auszahlungsjahr einen Überblick über die Anzahl geförderter EIV-Anlagen, die installierte Leistung in Kilowatt (kW) sowie den ausbezahlten EIV-Förderbeitrag. Die dargestellten Daten entsprechen nicht vollständig der offiziellen Statistik der erneuerbaren Energien durch das BFE. Da der Abbau der Wartelisten zeitverzögert stattfindet, können Abweichungen entstehen.",
           "dimensions": Array [
             Object {
-              "iri": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton",
+              "id": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/14___https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton",
               "label": "Kanton",
               "termsets": Array [
                 Object {
@@ -148,6 +150,7 @@ describe("parse-search-results", () => {
             },
           ],
           "title": "Einmalvergütung für Photovoltaikanlagen",
+          "unversionedIri": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/14",
         },
         Object {
           "creator": Object {
@@ -158,7 +161,7 @@ describe("parse-search-results", () => {
           "description": "Anhaltende CO2-Wirkungen je Massnahmenbereich (Haustechnik, Wärmedämmung, Systemsanierung, Neubau, Zentrale Wärmeversorgung, Indirekte Massnahmen), seit Start des Gebäudeprogramms (berechnet auf Basis des HFM 2015)",
           "dimensions": Array [
             Object {
-              "iri": "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_co2wirkung/region",
+              "id": "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_co2wirkung/4___https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_co2wirkung/region",
               "label": "Region",
               "termsets": Array [
                 Object {
@@ -192,6 +195,7 @@ describe("parse-search-results", () => {
             },
           ],
           "title": "Gebäudeprogramm - CO2-Wirkungen je Massnahmenbereich",
+          "unversionedIri": "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_co2wirkung/4",
         },
       ]
     `);
@@ -214,7 +218,7 @@ describe("parse-search-results", () => {
           "description": "Strompreise per Stromnetzbetreiber und Gemeinde in der Schweiz",
           "dimensions": Array [
             Object {
-              "iri": "https://energy.ld.admin.ch/elcom/electricityprice/dimension/period",
+              "id": "https://energy.ld.admin.ch/elcom/electricityprice___https://energy.ld.admin.ch/elcom/electricityprice/dimension/period",
               "label": "",
               "termsets": Array [],
               "timeUnit": "http://www.w3.org/2006/time#unitYear",
@@ -226,6 +230,7 @@ describe("parse-search-results", () => {
           "termsets": Array [],
           "themes": Array [],
           "title": "Strompreis per Stromnetzbetreiber",
+          "unversionedIri": "https://energy.ld.admin.ch/elcom/electricityprice",
         },
         Object {
           "creator": Object {
@@ -236,7 +241,7 @@ describe("parse-search-results", () => {
           "description": "Seit 2014 werden Photovoltaikanlagen mit einer Einmalvergütung (EIV) gefördert. Dabei wird abhängig von der Leistung, der Anlagenkategorie und dem Inbetriebnahmedatum ein einmaliger Beitrag an die Anlagenbetreiber ausbezahlt. Hier finden Sie pro Kanton und Auszahlungsjahr einen Überblick über die Anzahl geförderter EIV-Anlagen, die installierte Leistung in Kilowatt (kW) sowie den ausbezahlten EIV-Förderbeitrag. Die dargestellten Daten entsprechen nicht vollständig der offiziellen Statistik der erneuerbaren Energien durch das BFE. Da der Abbau der Wartelisten zeitverzögert stattfindet, können Abweichungen entstehen.",
           "dimensions": Array [
             Object {
-              "iri": "https://energy.ld.admin.ch/sfoe/OGD84GebTest/Jahr",
+              "id": "https://energy.ld.admin.ch/sfoe/OGD84GebTest/1___https://energy.ld.admin.ch/sfoe/OGD84GebTest/Jahr",
               "label": "",
               "termsets": Array [],
               "timeUnit": "http://www.w3.org/2006/time#unitYear",
@@ -257,6 +262,7 @@ describe("parse-search-results", () => {
             },
           ],
           "title": "GEB - Einmalvergütung für Photovoltaikanlagen",
+          "unversionedIri": "https://energy.ld.admin.ch/sfoe/OGD84GebTest/1",
         },
         Object {
           "creator": Object {
@@ -267,7 +273,7 @@ describe("parse-search-results", () => {
           "description": "Die «Statistik der Wasserkraftanlagen (WASTA)» enthält Daten zu den Zentralen der schweizerischen Wasserkraftanlagen mit einer Leistung von mindestens 300 kW. Enthalten sind unter anderem technische Daten wie Leistung und Produktionserwartung.",
           "dimensions": Array [
             Object {
-              "iri": "https://energy.ld.admin.ch/sfoe/bfe_ogd40_wasta/YearOfStatistic",
+              "id": "https://energy.ld.admin.ch/sfoe/bfe_ogd40_wasta/7___https://energy.ld.admin.ch/sfoe/bfe_ogd40_wasta/YearOfStatistic",
               "label": "",
               "termsets": Array [],
               "timeUnit": "http://www.w3.org/2006/time#unitYear",
@@ -329,6 +335,7 @@ describe("parse-search-results", () => {
             },
           ],
           "title": "Statistik der Wasserkraftanlagen (WASTA)",
+          "unversionedIri": "https://energy.ld.admin.ch/sfoe/bfe_ogd40_wasta/7",
         },
       ]
 `);

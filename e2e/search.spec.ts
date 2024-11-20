@@ -60,7 +60,7 @@ test("search results count coherence", async ({
     await selectors.search.resultsCount();
 
     const panelLeft = await selectors.panels.left();
-    await (await within(panelLeft).findByText("Show all")).click();
+    await (await within(panelLeft).getAllByText("Show all")[0]).click();
 
     await within(panelLeft).findByText(t, undefined, { timeout: 10_000 });
 
@@ -243,7 +243,7 @@ test("sort language consistency", async ({
 test("no results", async ({ page, replayFromHAR }) => {
   await replayFromHAR();
   await page.goto(
-    `/en/browse?dataSource=Int&search=foo&${harReplayGraphqlEndpointQueryParam}`
+    `/en/browse?dataSource=Int&search=foofoo&${harReplayGraphqlEndpointQueryParam}`
   );
   await page.locator(`:text("No results")`).waitFor({ timeout: 10_000 });
 });

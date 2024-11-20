@@ -17,7 +17,7 @@ import Flex from "@/components/flex";
 import { Select } from "@/components/form";
 import { Loading } from "@/components/hint";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
-import SelectTree from "@/components/select-tree";
+import SelectTree, { Tree } from "@/components/select-tree";
 import {
   areDataFiltersActive,
   ChartConfig,
@@ -76,20 +76,22 @@ export const useChartDataFiltersState = ({
   chartConfig: ChartConfig;
   dashboardFilters: DashboardFiltersConfig | undefined;
 }) => {
-  const componentIris =
-    chartConfig.interactiveFiltersConfig?.dataFilters.componentIris;
+  const componentIds =
+    chartConfig.interactiveFiltersConfig?.dataFilters.componentIds;
   const [open, setOpen] = useState(false);
+
   useEffect(() => {
-    if (componentIris?.length === 0) {
+    if (componentIds?.length === 0) {
       setOpen(false);
     }
-  }, [componentIris?.length]);
+  }, [componentIds?.length]);
+
   const { loading } = useLoadingState();
   const queryFilters = useQueryFilters({
     chartConfig,
     dashboardFilters,
     allowNoneValues: true,
-    componentIris,
+    componentIds,
   });
   const preparedFilters = useMemo(() => {
     return chartConfig.cubes.map((cube) => {
@@ -104,8 +106,9 @@ export const useChartDataFiltersState = ({
         cubeQueryFilters.filters as Filters
       ).filter(([k]) => unmappedKeys.includes(k));
       const interactiveFiltersList = unmappedEntries.filter(([k]) =>
-        componentIris?.includes(k)
+        componentIds?.includes(k)
       );
+
       return {
         cubeIri: cube.iri,
         interactiveFilters: Object.fromEntries(interactiveFiltersList),
@@ -113,7 +116,7 @@ export const useChartDataFiltersState = ({
         mappedFilters,
       };
     });
-  }, [chartConfig, componentIris, queryFilters]);
+  }, [chartConfig, componentIds, queryFilters]);
   const { error } = useEnsurePossibleInteractiveFilters({
     dataSource,
     chartConfig,
@@ -129,14 +132,15 @@ export const useChartDataFiltersState = ({
     loading,
     error,
     preparedFilters,
-    componentIris,
+    componentIds,
   };
 };
 
 export const ChartDataFiltersToggle = (
   props: ReturnType<typeof useChartDataFiltersState>
 ) => {
-  const { open, setOpen, loading, error, componentIris } = props;
+  const { open, setOpen, loading, error, componentIds } = props;
+
   return error ? (
     <Typography variant="body2" color="error">
       <Trans id="controls.section.data.filters.possible-filters-error">
@@ -153,7 +157,7 @@ export const ChartDataFiltersToggle = (
           minHeight: 20,
         }}
       >
-        {componentIris && componentIris.length > 0 && (
+        {componentIds && componentIds.length > 0 && (
           <Button
             variant="text"
             color="primary"
@@ -207,10 +211,11 @@ export const ChartDataFiltersList = (
     chartConfig,
     loading,
     preparedFilters,
-    componentIris,
+    componentIds,
   } = props;
   const dataFilters = useChartInteractiveFilters((d) => d.dataFilters);
-  return componentIris && componentIris.length > 0 ? (
+
+  return componentIds && componentIds.length > 0 ? (
     <Box
       data-testid="published-chart-interactive-filters"
       sx={{
@@ -221,12 +226,12 @@ export const ChartDataFiltersList = (
       }}
     >
       {preparedFilters.map(({ cubeIri, interactiveFilters }) => {
-        return Object.keys(interactiveFilters).map((dimensionIri) => {
+        return Object.keys(interactiveFilters).map((dimensionId) => {
           return (
             <DataFilter
-              key={dimensionIri}
+              key={dimensionId}
               cubeIri={cubeIri}
-              dimensionIri={dimensionIri}
+              dimensionId={dimensionId}
               dataSource={dataSource}
               chartConfig={chartConfig}
               dataFilters={dataFilters}
@@ -242,7 +247,7 @@ export const ChartDataFiltersList = (
 
 const DataFilter = ({
   cubeIri,
-  dimensionIri,
+  dimensionId,
   dataSource,
   chartConfig,
   dataFilters,
@@ -250,7 +255,7 @@ const DataFilter = ({
   disabled,
 }: {
   cubeIri: string;
-  dimensionIri: string;
+  dimensionId: string;
   dataSource: DataSource;
   chartConfig: ChartConfig;
   dataFilters: DataFilters;
@@ -274,7 +279,7 @@ const DataFilter = ({
       cubeFilters: [
         {
           iri: cubeIri,
-          componentIris: [dimensionIri],
+          componentIds: [dimensionId],
           filters: queryFilters,
           loadValues: true,
         },
@@ -294,16 +299,16 @@ const DataFilter = ({
 
   const setDataFilter = useEvent(
     (e: SelectChangeEvent<unknown> | { target: { value: string } }) => {
-      updateDataFilter(dimensionIri, e.target.value as string);
+      updateDataFilter(dimensionId, e.target.value as string);
     }
   );
 
-  const configFilter = dimension ? filters[dimension.iri] : undefined;
+  const configFilter = dimension ? filters[dimension.id] : undefined;
   const configFilterValue =
     configFilter && configFilter.type === "single"
       ? configFilter.value
       : undefined;
-  const dataFilterValue = dimension ? dataFilters[dimension.iri]?.value : null;
+  const dataFilterValue = dimension ? dataFilters[dimension.id]?.value : null;
   const value = dataFilterValue ?? configFilterValue ?? FIELD_VALUE_NONE;
 
   useEffect(() => {
@@ -315,16 +320,16 @@ const DataFilter = ({
       (dataFilterValue && values.includes(dataFilterValue)) ||
       dataFilterValue === FIELD_VALUE_NONE
     ) {
-      updateDataFilter(dimensionIri, dataFilterValue);
-      chartLoadingState.set(`interactive-filter-${dimensionIri}`, fetching);
+      updateDataFilter(dimensionId, dataFilterValue);
+      chartLoadingState.set(`interactive-filter-${dimensionId}`, fetching);
     } else if (fetching || values.length === 0) {
-      chartLoadingState.set(`interactive-filter-${dimensionIri}`, fetching);
+      chartLoadingState.set(`interactive-filter-${dimensionId}`, fetching);
     }
   }, [
     chartLoadingState,
     dataFilterValue,
     dimension?.values,
-    dimensionIri,
+    dimensionId,
     fetching,
     setDataFilter,
     configFilterValue,
@@ -460,7 +465,7 @@ export const DataFilterHierarchyDimension = (
     id: "controls.dimensionvalue.none",
     message: `No Filter`,
   });
-  const options = useMemo(() => {
+  const options: Tree = useMemo(() => {
     const opts = (
       hierarchy
         ? hierarchyToOptions(
@@ -533,7 +538,7 @@ export const DataFilterTemporalDimension = ({
 
   return canRenderDatePickerField(timeUnit) ? (
     <DatePickerField
-      name={`interactive-date-picker-${dimension.iri}`}
+      name={`interactive-date-picker-${dimension.id}`}
       label={
         <FieldLabel
           label={
@@ -640,9 +645,9 @@ const useEnsurePossibleInteractiveFilters = (props: {
         const filters = Object.assign(
           Object.fromEntries(
             data.possibleFilters.map((d) => {
-              const interactiveFilter = interactiveFilters[d.iri];
+              const interactiveFilter = interactiveFilters[d.id];
               return [
-                d.iri,
+                d.id,
                 {
                   type: d.type,
                   value:

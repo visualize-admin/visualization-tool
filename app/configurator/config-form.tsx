@@ -9,7 +9,7 @@ import React, {
   useMemo,
 } from "react";
 
-import { getFieldComponentIri, getInitialConfig } from "@/charts";
+import { getFieldComponentId, getInitialConfig } from "@/charts";
 import { EncodingFieldType } from "@/charts/chart-config-ui-options";
 import {
   ChartConfig,
@@ -99,9 +99,9 @@ export const useChartFieldField = ({
   const locale = useLocale();
   const handleChange = useEvent(async (e: SelectChangeEvent<unknown>) => {
     if (e.target.value !== FIELD_VALUE_NONE) {
-      const dimensionIri = e.target.value as string;
+      const dimensionId = e.target.value as string;
       const dimension = components.find(
-        (c) => c.iri === dimensionIri
+        (c) => c.id === dimensionId
       ) as Component;
       const hierarchy = (isMeasure(dimension) ? [] : dimension.hierarchy) ?? [];
 
@@ -131,7 +131,7 @@ export const useChartFieldField = ({
         value: {
           locale,
           field,
-          componentIri: dimensionIri,
+          componentId: dimensionId,
           selectedValues: leaves,
         },
       });
@@ -150,7 +150,7 @@ export const useChartFieldField = ({
 
   if (isConfiguring(state)) {
     const chartConfig = getChartConfig(state);
-    value = getFieldComponentIri(chartConfig.fields, field) ?? FIELD_VALUE_NONE;
+    value = getFieldComponentId(chartConfig.fields, field) ?? FIELD_VALUE_NONE;
   }
 
   return {
@@ -392,11 +392,7 @@ export const getNewChartConfig = ({
 
   return getInitialConfig({
     chartType,
-    iris: cubes.map((cube) => ({
-      iri: cube.iri,
-      publishIri: cube.publishIri,
-      joinBy: cube.joinBy,
-    })),
+    iris: cubes.map((cube) => ({ iri: cube.iri, joinBy: cube.joinBy })),
     dimensions,
     measures,
   });
@@ -489,17 +485,17 @@ export const useSingleFilterSelect = (
   if (isConfiguring(state)) {
     const chartConfig = getChartConfig(state);
     for (const filter of filters) {
-      const { cubeIri, dimensionIri } = filter;
+      const { cubeIri, dimensionId } = filter;
       const cube = chartConfig.cubes.find((cube) => cube.iri === cubeIri);
 
       if (cube) {
-        value = get(cube, ["filters", dimensionIri, "value"], FIELD_VALUE_NONE);
+        value = get(cube, ["filters", dimensionId, "value"], FIELD_VALUE_NONE);
       }
     }
   } else if (isLayouting(state)) {
     value = get(
       state.dashboardFilters,
-      ["dataFilters", "filters", filters[0].dimensionIri, "value"],
+      ["dataFilters", "filters", filters[0].dimensionId, "value"],
       FIELD_VALUE_NONE
     ) as string;
   }
@@ -533,16 +529,16 @@ export const useSingleFilterField = ({
   );
 
   const cubeIri = filters[0].cubeIri;
-  const dimensionIri = filters[0].dimensionIri;
+  const dimensionId = filters[0].dimensionId;
   const chartConfig = getChartConfig(state);
   const cube = chartConfig.cubes.find((cube) => cube.iri === cubeIri);
   const stateValue = isConfiguring(state)
-    ? get(cube, ["filters", dimensionIri, "value"], "")
+    ? get(cube, ["filters", dimensionId, "value"], "")
     : "";
   const checked = stateValue === value;
 
   return {
-    name: dimensionIri,
+    name: dimensionId,
     value: value ? value : stateValue,
     checked,
     onChange,
@@ -551,10 +547,10 @@ export const useSingleFilterField = ({
 
 export const isMultiFilterFieldChecked = (
   filters: Filters,
-  dimensionIri: string,
+  dimensionId: string,
   value: string
 ) => {
-  const filter = filters[dimensionIri];
+  const filter = filters[dimensionId];
   const fieldChecked =
     filter?.type === "multi" ? filter.values?.[value] ?? false : false;
 
@@ -565,7 +561,7 @@ const MultiFilterContext = createContext({
   activeKeys: new Set() as Set<string>,
   allValues: [] as string[],
   cubeIri: "",
-  dimensionIri: "",
+  dimensionId: "",
   colorConfigPath: undefined as string | undefined,
   getValueColor: (_: string) => "" as string,
 });
@@ -606,14 +602,14 @@ export const MultiFilterContextProvider = ({
       allValues,
       activeKeys,
       cubeIri: dimension.cubeIri,
-      dimensionIri: dimension.iri,
+      dimensionId: dimension.id,
       colorConfigPath,
       getValueColor,
     };
   }, [
     allValues,
     dimension.cubeIri,
-    dimension.iri,
+    dimension.id,
     activeKeys,
     colorConfigPath,
     getValueColor,

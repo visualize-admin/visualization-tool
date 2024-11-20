@@ -95,9 +95,9 @@ const useScatterplotState = (
     .nice();
 
   const hasSegment = fields.segment ? true : false;
-  const segmentFilter = segmentDimension?.iri
+  const segmentFilter = segmentDimension?.id
     ? chartConfig.cubes.find((d) => d.iri === segmentDimension.cubeIri)
-        ?.filters[segmentDimension.iri]
+        ?.filters[segmentDimension.id]
     : undefined;
   const allSegments = useMemo(() => {
     const allUniqueSegments = Array.from(new Set(segmentData.map(getSegment)));

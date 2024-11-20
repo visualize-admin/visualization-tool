@@ -409,13 +409,13 @@ const ChartPreviewInner = ({
       cubeFilters: chartConfig.cubes.map((cube) => ({ iri: cube.iri })),
     },
   });
-  const componentIris = undefined;
+  const componentIds = undefined;
   const [{ data: components }] = useDataCubesComponentsQuery({
     variables: {
       ...commonQueryVariables,
       cubeFilters: chartConfig.cubes.map((cube) => ({
         iri: cube.iri,
-        componentIris,
+        componentIds,
         filters: cube.filters,
         joinBy: cube.joinBy,
       })),
@@ -557,7 +557,7 @@ const ChartPreviewInner = ({
                   ) : (
                     <ChartWithFilters
                       dataSource={dataSource}
-                      componentIris={componentIris}
+                      componentIds={componentIds}
                       chartConfig={chartConfig}
                       dashboardFilters={state.dashboardFilters}
                     />

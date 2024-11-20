@@ -101,7 +101,7 @@ const runTest = async ({
     })
     .toPromise();
   if (res.error) {
-    throw new Error(`${res.error.name}: ${res.error.message}`);
+    throw Error(`${res.error.name}: ${res.error.message}`);
   }
   const dimension = res.data.dataCubeByIri.dimensionByIri;
   const {

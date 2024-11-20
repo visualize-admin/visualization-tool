@@ -96,7 +96,7 @@ describe("multiple hierarchy handling", () => {
   it("should select values starting from beginning of the tree", () => {
     const expectedValue: HierarchyValue = {
       depth: 0,
-      dimensionIri: "A",
+      dimensionId: "A",
       value: "A",
       hasValue: true,
       label: "A",
@@ -105,14 +105,14 @@ describe("multiple hierarchy handling", () => {
       expectedValue,
       {
         depth: 0,
-        dimensionIri: "B",
+        dimensionId: "B",
         value: "B",
         hasValue: true,
         label: "B",
       },
       {
         depth: 0,
-        dimensionIri: "C",
+        dimensionId: "C",
         value: "C",
         hasValue: true,
         label: "C",

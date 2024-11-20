@@ -110,9 +110,9 @@ const useColumnsState = (
       sorting: fields.x.sorting,
       measureBySegment: sumsByX,
       useAbbreviations: fields.x.useAbbreviations,
-      dimensionFilter: xDimension?.iri
+      dimensionFilter: xDimension?.id
         ? chartConfig.cubes.find((d) => d.iri === xDimension.cubeIri)?.filters[
-            xDimension.iri
+            xDimension.id
           ]
         : undefined,
     });
@@ -242,7 +242,7 @@ const useColumnsState = (
     const yValueFormatter = (value: number | null) =>
       formatNumberWithUnit(
         value,
-        formatters[yMeasure.iri] || formatNumber,
+        formatters[yMeasure.id] ?? formatNumber,
         yMeasure.unit
       );
 

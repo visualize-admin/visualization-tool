@@ -10,7 +10,7 @@ const query = `query Components(
   $sourceUrl: String!
   $locale: String!
   $filters: Filters
-  $componentIris: [String!]
+  $componentIds: [String!]
 ) {
   dataCubeByIri(
     iri: $iri
@@ -21,7 +21,7 @@ const query = `query Components(
     dimensions(
       sourceType: $sourceType
       sourceUrl: $sourceUrl
-      componentIris: $componentIris
+      componentIds: $componentIds
     ) {
       ...dimensionMetadata
       __typename
@@ -30,7 +30,7 @@ const query = `query Components(
     measures(
       sourceType: $sourceType
       sourceUrl: $sourceUrl
-      componentIris: $componentIris
+      componentIds: $componentIds
     ) {
       ...dimensionMetadata
       __typename
@@ -79,7 +79,7 @@ const variables = {
   sourceType: "sparql",
   sourceUrl: "https://lindas.admin.ch/query",
   locale: "en",
-  componentIris: [
+  componentIds: [
     "https://environment.ld.admin.ch/foen/ubd003701/beurteilung",
     "https://environment.ld.admin.ch/foen/ubd003701/gemeindetype",
     "https://environment.ld.admin.ch/foen/ubd003701/laermbelasteteeinheit",

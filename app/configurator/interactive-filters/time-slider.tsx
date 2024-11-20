@@ -41,7 +41,7 @@ const useTimeline = () => {
   const timeline = useContext(TimelineContext);
 
   if (!timeline) {
-    throw new Error(
+    throw Error(
       "useTimeline must be called inside a TimelineContext.Provider!"
     );
   }
@@ -58,7 +58,7 @@ type TimeSliderProps = {
 
 export const TimeSlider = (props: TimeSliderProps) => {
   const {
-    componentIri,
+    componentId,
     showPlayButton,
     type: animationType,
     duration: animationDuration,
@@ -68,14 +68,14 @@ export const TimeSlider = (props: TimeSliderProps) => {
 
   const [state] = useConfiguratorState(hasChartConfigs);
   const dimension = useMemo(() => {
-    return dimensions.find((d) => d.iri === componentIri);
-  }, [componentIri, dimensions]);
+    return dimensions.find((d) => d.id === componentId);
+  }, [componentId, dimensions]);
   const temporal = isTemporalDimension(dimension);
   const temporalEntity = isTemporalEntityDimension(dimension);
   const temporalOrdinal = isTemporalOrdinalDimension(dimension);
 
   if (!(temporal || temporalEntity || temporalOrdinal)) {
-    throw new Error("You can only use TimeSlider with temporal dimensions!");
+    throw Error("You can only use TimeSlider with temporal dimensions!");
   }
 
   const timeFormatUnit = useTimeFormatUnit();
@@ -85,7 +85,7 @@ export const TimeSlider = (props: TimeSliderProps) => {
   const chartState = useChartState() as NonNullable<
     Exclude<ChartState, TableChartState>
   >;
-  const dimensionFilter = filters[dimension.iri];
+  const dimensionFilter = filters[dimension.id];
   const timelineProps: TimelineProps = useMemo(() => {
     const commonProps = {
       animationType,
@@ -94,7 +94,7 @@ export const TimeSlider = (props: TimeSliderProps) => {
     const uniqueValues = Array.from(
       new Set(
         chartState.allData
-          .map((d) => d[dimension.iri])
+          .map((d) => d[dimension.id])
           .filter(truthy) as string[]
       )
     );

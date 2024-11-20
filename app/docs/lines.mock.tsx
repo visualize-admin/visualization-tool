@@ -4,21 +4,21 @@ import {
   SortingField,
 } from "@/configurator";
 import { Dimension, Measure } from "@/domain/data";
-import { CHART_CONFIG_VERSION } from "@/utils/chart-config/versioning";
+import { CHART_CONFIG_VERSION } from "@/utils/chart-config/constants";
 
 const interactiveFiltersConfig: InteractiveFiltersConfig = {
   legend: {
     active: true,
-    componentIri: "",
+    componentId: "",
   },
   timeRange: {
     active: true,
-    componentIri: "",
+    componentId: "",
     presets: { type: "range", from: "", to: "" },
   },
   dataFilters: {
     active: false,
-    componentIris: [],
+    componentIds: [],
   },
   calculation: {
     active: false,
@@ -27,15 +27,15 @@ const interactiveFiltersConfig: InteractiveFiltersConfig = {
 };
 export const fields = {
   x: {
-    componentIri:
+    componentId:
       "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/0",
   },
   y: {
-    componentIri:
+    componentId:
       "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/0",
   },
   segment: {
-    componentIri:
+    componentId:
       "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/3",
     palette: "category10",
     type: "stacked",
@@ -63,6 +63,7 @@ export const fields = {
     },
   },
 };
+
 export const chartConfig: LineConfig = {
   key: "line",
   version: CHART_CONFIG_VERSION,
@@ -86,103 +87,99 @@ export const chartConfig: LineConfig = {
       it: "",
     },
   },
-  cubes: [
-    {
-      iri: "",
-      publishIri: "",
-      filters: {},
-    },
-  ],
+  cubes: [{ iri: "", filters: {} }],
   chartType: "line",
   interactiveFiltersConfig,
   fields,
   activeField: undefined,
 };
+
 export const measures = [
   {
-    iri: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/0",
+    id: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/0",
     label: "Anzahl Betriebe",
     __typename: "NumericalMeasure",
   },
   {
-    iri: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/1",
+    id: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/1",
     label: "Anzahl Waldeigentümer",
     __typename: "NumericalMeasure",
   },
   {
-    iri: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/2",
+    id: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/2",
     label: "Gesamte Waldflächen in ha",
     __typename: "NumericalMeasure",
   },
   {
-    iri: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/3",
+    id: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/3",
     label: "Produktive Waldflächen in ha",
     __typename: "NumericalMeasure",
   },
   {
-    iri: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/4",
+    id: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/4",
     label: "Zertifizierte Waldflächen in ha",
     __typename: "NumericalMeasure",
   },
   {
-    iri: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/5",
+    id: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/5",
     label: "Bundeswälder in ha",
     __typename: "NumericalMeasure",
   },
   {
-    iri: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/6",
+    id: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/6",
     label: "Staatswälder in ha",
     __typename: "NumericalMeasure",
   },
   {
-    iri: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/7",
+    id: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/7",
     label: "Wälder der politischen Gemeinden in ha",
     __typename: "NumericalMeasure",
   },
   {
-    iri: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/8",
+    id: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/8",
     label: "Bürgerwälder in ha",
     __typename: "NumericalMeasure",
   },
   {
-    iri: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/9",
+    id: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/9",
     label: "Korporationswälder in ha",
     __typename: "NumericalMeasure",
   },
   {
-    iri: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/10",
+    id: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/10",
     label: "Übrige Wälder in ha",
     __typename: "NumericalMeasure",
   },
   {
-    iri: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/11",
+    id: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/11",
     label: "Holzproduktion Total in m3",
     __typename: "NumericalMeasure",
   },
   {
-    iri: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/12",
+    id: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/12",
     label: "Stammholz in m3",
     __typename: "NumericalMeasure",
   },
   {
-    iri: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/13",
+    id: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/13",
     label: "Industrieholz in m3",
     __typename: "NumericalMeasure",
   },
   {
-    iri: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/14",
+    id: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/14",
     label: "Energieholz in m3",
     __typename: "NumericalMeasure",
   },
   {
-    iri: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/15",
+    id: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/15",
     label: "Übrige Sortimente in m3",
     __typename: "NumericalMeasure",
   },
 ] as Measure[];
+
 export const dimensions = [
   {
-    iri: "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/0",
+    id: "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/0",
     label: "Jahr",
     values: [
       { value: "2004", label: "2004", __typename: "DimensionValue" },
@@ -200,7 +197,7 @@ export const dimensions = [
     __typename: "TemporalDimension",
   },
   {
-    iri: "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1",
+    id: "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1",
     label: "Forstzone",
     values: [
       {
@@ -243,7 +240,7 @@ export const dimensions = [
     __typename: "NominalDimension",
   },
   {
-    iri: "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/2",
+    id: "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/2",
     label: "Kanton",
     values: [
       {
@@ -412,7 +409,7 @@ export const dimensions = [
     __typename: "NominalDimension",
   },
   {
-    iri: "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/3",
+    id: "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/3",
     label: "Grössenklasse",
     values: [
       {
@@ -467,6 +464,7 @@ export const dimensions = [
     __typename: "NominalDimension",
   },
 ] as unknown as Dimension[];
+
 export const observations = [
   {
     "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1":

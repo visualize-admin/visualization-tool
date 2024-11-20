@@ -13,7 +13,7 @@ import {
   Select,
   Switch,
 } from "@/components/form";
-import SelectTree, { TreeHierachyValue } from "@/components/select-tree";
+import SelectTree, { TreeHierarchyValue } from "@/components/select-tree";
 
 const meta = {
   default: Switch,
@@ -273,7 +273,7 @@ const SelectTreeStory = {
               selectable: false,
               children: numberOptions,
             },
-          ] as TreeHierachyValue[]
+          ] as TreeHierarchyValue[]
         }
       />
     );

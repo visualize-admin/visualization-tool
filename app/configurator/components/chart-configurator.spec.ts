@@ -5,7 +5,7 @@ describe("getFilterReorderCubeFilters", () => {
   it("should load dimension values", () => {
     const cubeFilters = getFilterReorderCubeFilters(
       { cubes: [{ filters: {} }], fields: {} } as any as ChartConfig,
-      { joinByIris: [] }
+      { joinByIds: [] }
     );
     expect(cubeFilters[0].loadValues).toBe(true);
   });

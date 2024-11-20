@@ -55,7 +55,7 @@ const useComboLineSingleState = (
   variables: ComboLineSingleStateVariables,
   data: ChartStateData
 ): ComboLineSingleState => {
-  const { chartConfig, measuresByIri } = chartProps;
+  const { chartConfig, measuresById } = chartProps;
   const { xDimension, getX, getXAsString } = variables;
   const { chartData, scalesData, timeRangeData, paddingData, allData } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
@@ -63,20 +63,18 @@ const useComboLineSingleState = (
   const yUnits = Array.from(
     new Set(
       variables.y.lines.map((d) => {
-        return measuresByIri[d.iri].unit;
+        return measuresById[d.id].unit;
       })
     )
   );
 
   if (yUnits.length > 1) {
-    throw new Error(
-      "Multiple units are not supported in ComboLineSingle chart!"
-    );
+    throw Error("Multiple units are not supported in ComboLineSingle chart!");
   }
 
   const yAxisLabel = yUnits[0] ?? "";
 
-  const xKey = fields.x.componentIri;
+  const xKey = fields.x.componentId;
   const {
     width,
     height,

@@ -337,13 +337,8 @@ export const MostRecentDateSwitch = (props: MostRecentDateSwitchProps) => {
 
 export const dimensionToFieldProps = (dim: Component) => {
   return isJoinByComponent(dim)
-    ? dim.originalIris.map((o) => pick(o, ["cubeIri", "dimensionIri"]))
-    : [
-        {
-          dimensionIri: dim.iri,
-          cubeIri: dim.cubeIri,
-        },
-      ];
+    ? dim.originalIds.map((o) => pick(o, ["cubeIri", "dimensionId"]))
+    : [{ dimensionId: dim.id, cubeIri: dim.cubeIri }];
 };
 
 export const DataFilterTemporal = ({
@@ -412,7 +407,7 @@ export const DataFilterTemporal = ({
   return (
     <>
       <DatePickerField
-        name={`date-picker-${dimension.iri}`}
+        name={`date-picker-${dimension.id}`}
         label={
           <FieldLabel
             label={
@@ -685,7 +680,7 @@ const useMultiFilterColorPicker = (value: string) => {
   const [state, dispatch] = useConfiguratorState(isConfiguring);
   const chartConfig = getChartConfig(state);
   const filters = useChartConfigFilters(chartConfig);
-  const { dimensionIri, colorConfigPath } = useMultiFilterContext();
+  const { dimensionId, colorConfigPath } = useMultiFilterContext();
   const { activeField } = chartConfig;
   const onChange = useCallback(
     (color: string) => {
@@ -722,8 +717,8 @@ const useMultiFilterColorPicker = (value: string) => {
     );
   }, [chartConfig, colorConfigPath, activeField]);
 
-  const checkedState = dimensionIri
-    ? isMultiFilterFieldChecked(filters, dimensionIri, value)
+  const checkedState = dimensionId
+    ? isMultiFilterFieldChecked(filters, dimensionId, value)
     : null;
 
   return useMemo(
@@ -778,7 +773,7 @@ export const SingleFilterField = ({
   value,
   disabled,
 }: {
-  filters: { cubeIri: string; dimensionIri: string }[];
+  filters: { cubeIri: string; dimensionId: string }[];
   label: string;
   value: string;
   disabled?: boolean;

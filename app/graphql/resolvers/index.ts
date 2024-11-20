@@ -19,6 +19,10 @@ export const Query: QueryResolvers = {
     const source = getSource(args.sourceType);
     return await source.dataCubeLatestIri(parent, args, context, info);
   },
+  dataCubeUnversionedIri: async (parent, args, context, info) => {
+    const source = getSource(args.sourceType);
+    return await source.dataCubeUnversionedIri(parent, args, context, info);
+  },
   dataCubeComponents: async (parent, args, context, info) => {
     const source = getSource(args.sourceType);
     return await source.dataCubeComponents(parent, args, context, info);
@@ -69,7 +73,7 @@ export const resolveDimensionType = (
         if (timeUnit === TimeUnit.Month || timeUnit === TimeUnit.Year) {
           return "TemporalEntityDimension";
         } else {
-          throw new Error(
+          throw Error(
             `Unsupported time unit for TemporalEntityDimension: ${timeUnit}`
           );
         }

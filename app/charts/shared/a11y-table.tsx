@@ -18,7 +18,7 @@ export const A11yTable = memo(
   }) => {
     const headers = useMemo(() => {
       const obsKeys = new Set(Object.keys(observations[0]));
-      return [...dimensions, ...measures].filter((d) => obsKeys.has(d.iri));
+      return [...dimensions, ...measures].filter((d) => obsKeys.has(d.id));
     }, [dimensions, measures, observations]);
 
     return (
@@ -27,9 +27,9 @@ export const A11yTable = memo(
           <caption>{title}</caption>
           <tbody>
             <tr>
-              {headers.map(({ iri, label }) => {
+              {headers.map(({ id, label }) => {
                 return (
-                  <th role="columnheader" scope="col" key={iri}>
+                  <th key={id} role="columnheader" scope="col">
                     <Box>{label}</Box>
                   </th>
                 );
@@ -38,8 +38,8 @@ export const A11yTable = memo(
             {observations.map((obs, i) => {
               return (
                 <tr key={i}>
-                  {headers.map(({ iri }) => (
-                    <td key={iri}>{obs[iri]}</td>
+                  {headers.map(({ id }) => (
+                    <td key={id}>{obs[id]}</td>
                   ))}
                 </tr>
               );
