@@ -1116,6 +1116,22 @@ export const chartConfigMigrations: Migration[] = [
         }
       }
 
+      if (newConfig.chartType === "table") {
+        newConfig.sorting = newConfig.sorting.map((sorting: any) => {
+          const { componentIri, ...rest } = sorting;
+          return {
+            ...rest,
+            componentId: isJoinById(componentIri)
+              ? componentIri
+              : stringifyComponentId({
+                  unversionedCubeIri:
+                    getClosestUnversionedCubeIri(componentIri),
+                  unversionedComponentIri: componentIri,
+                }),
+          };
+        });
+      }
+
       for (const v of Object.values<any>(
         newConfig.interactiveFiltersConfig ?? {}
       )) {
