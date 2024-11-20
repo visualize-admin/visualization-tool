@@ -429,7 +429,7 @@ const ProfileVisualizationsRow = (props: {
           trigger={embedEl}
         >
           <EmbedContent
-            isSingleChart={isSingleChart}
+            shouldAllowDisablingBorder={isSingleChart}
             locale={locale}
             configKey={config.key}
           />
