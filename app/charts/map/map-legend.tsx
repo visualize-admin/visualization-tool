@@ -437,7 +437,7 @@ const JenksColorLegend = ({
   const legendAxisRef = useRef<SVGGElement>(null);
   const { axisLabelColor, labelColor, fontFamily } = useChartTheme();
   const formatNumber = useFormatInteger();
-  const thresholds = useMemo(() => colorScale.domain(), [colorScale]);
+  const thresholds = colorScale.domain();
   const [min, max] = domain;
 
   // From color index to threshold value
@@ -513,12 +513,7 @@ const QuantileColorLegend = ({
 
   const { axisLabelColor, labelColor, fontFamily } = useChartTheme();
   const formatNumber = useFormatInteger();
-
-  const thresholds = useMemo(
-    // @ts-ignore
-    () => (colorScale.quantiles ? colorScale.quantiles() : []),
-    [colorScale]
-  );
+  const thresholds = colorScale.quantiles();
 
   const [min, max] = domain;
 
@@ -601,12 +596,7 @@ const QuantizeColorLegend = ({
   const scale = scaleLinear()
     .domain(domain)
     .range([MARGIN.left, width - MARGIN.right]);
-
-  const thresholds: number[] = useMemo(
-    // @ts-ignore
-    () => (colorScale.thresholds ? colorScale.thresholds() : []),
-    [colorScale]
-  );
+  const thresholds = colorScale.thresholds();
 
   useEffect(
     () =>
