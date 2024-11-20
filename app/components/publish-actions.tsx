@@ -81,7 +81,12 @@ export const TriggeredPopover = (props: TriggeredPopoverProps) => {
   );
 };
 
-const Embed = ({ chartWrapperRef, configKey, locale }: PublishActionProps) => {
+const Embed = ({
+  chartWrapperRef,
+  configKey,
+  locale,
+  state,
+}: PublishActionProps) => {
   const [iframeHeight, setIframeHeight] = useState(0);
 
   const handlePopoverOpen = useEvent(() => {
@@ -121,6 +126,7 @@ const Embed = ({ chartWrapperRef, configKey, locale }: PublishActionProps) => {
         iframeHeight={iframeHeight}
         configKey={configKey}
         locale={locale}
+        state={state}
       />
     </TriggeredPopover>
   );
@@ -232,6 +238,7 @@ export const EmbedContent = ({
   locale,
   configKey,
   iframeHeight,
+  state,
 }: EmbedContentProps) => {
   const [embedUrl, setEmbedUrl] = useState("");
   const [embedAEMUrl, setEmbedAEMUrl] = useState("");
@@ -297,20 +304,22 @@ export const EmbedContent = ({
                 "For embedding visualizations in systems without JavaScript support (e.g. WordPress).",
             })}
           />
-          <EmbedToggleSwitch
-            value="remove-border"
-            checked={isWithoutBorder}
-            onChange={handleStylingChange}
-            label={t({
-              id: "publication.embed.iframe.remove-border",
-              message: "Remove border",
-            })}
-            infoMessage={t({
-              id: "publication.embed.iframe.remove-border.warn",
-              message:
-                "For embedding visualizations in systems without a border.",
-            })}
-          />
+          {state?.layout.type !== "tab" && (
+            <EmbedToggleSwitch
+              value="remove-border"
+              checked={isWithoutBorder}
+              onChange={handleStylingChange}
+              label={t({
+                id: "publication.embed.iframe.remove-border",
+                message: "Remove border",
+              })}
+              infoMessage={t({
+                id: "publication.embed.iframe.remove-border.warn",
+                message:
+                  "For embedding visualizations in systems without a border.",
+              })}
+            />
+          )}
         </Flex>
         <CopyToClipboardTextInput
           content={`<iframe src="${embedUrl}" width="100%" style="${isResponsive ? "" : `height: ${iframeHeight || 640}px; `}border: 0px #ffffff none;"  name="visualize.admin.ch"></iframe>${isResponsive ? `<script type="text/javascript">!function(){window.addEventListener("message", function (e) { if (e.data.type === "${CHART_RESIZE_EVENT_TYPE}") { document.querySelectorAll("iframe").forEach((iframe) => { if (iframe.contentWindow === e.source) { iframe.style.height = e.data.height + "px"; } }); } })}();</script>` : ""}`}
