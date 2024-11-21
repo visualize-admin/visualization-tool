@@ -692,8 +692,6 @@ export const DatasetDialog = ({
     typeof searchDimensionOptions | undefined
   >(undefined);
 
-  console.log("selectedSearchDimensions", selectedSearchDimensions);
-
   const handleChangeSearchDimensions = (ev: SelectChangeEvent<string[]>) => {
     const {
       target: { value },
@@ -1118,6 +1116,7 @@ const useAddDataset = () => {
             locale,
             chartKey: state.activeChartKey,
             chartType: possibleType[0],
+            isAddingNewCube: true,
           },
         });
       } finally {

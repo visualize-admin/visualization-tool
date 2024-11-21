@@ -905,6 +905,7 @@ export type FieldAdjuster<
   newChartConfig: NewChartConfigType;
   dimensions: Dimension[];
   measures: Measure[];
+  isAddingNewCube?: boolean;
 }) => NewChartConfigType;
 
 type AssureKeys<T, U extends { [K in keyof T]: unknown }> = {

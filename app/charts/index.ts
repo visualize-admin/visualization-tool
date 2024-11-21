@@ -684,11 +684,13 @@ export const getChartConfigAdjustedToChartType = ({
   newChartType,
   dimensions,
   measures,
+  isAddingNewCube,
 }: {
   chartConfig: ChartConfig;
   newChartType: ChartType;
   dimensions: Dimension[];
   measures: Measure[];
+  isAddingNewCube?: boolean;
 }): ChartConfig => {
   const oldChartType = chartConfig.chartType;
   const initialConfig = getInitialConfig({
@@ -715,6 +717,7 @@ export const getChartConfigAdjustedToChartType = ({
     newChartConfig: initialConfig,
     dimensions,
     measures,
+    isAddingNewCube,
   });
 };
 
@@ -727,6 +730,7 @@ const getAdjustedChartConfig = ({
   newChartConfig,
   dimensions,
   measures,
+  isAddingNewCube,
 }: {
   path: string;
   field: Object;
@@ -736,6 +740,7 @@ const getAdjustedChartConfig = ({
   newChartConfig: ChartConfig;
   dimensions: Dimension[];
   measures: Measure[];
+  isAddingNewCube?: boolean;
 }) => {
   // For filters & segments we can't reach a primitive level as we need to
   // pass the whole object. Table fields have an [id: TableColumn] structure,
@@ -785,6 +790,7 @@ const getAdjustedChartConfig = ({
               oldChartConfig,
               dimensions,
               measures,
+              isAddingNewCube,
             });
           }
         } else {
@@ -1444,15 +1450,32 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           return newChartConfig;
         },
       },
-      y: ({ newChartConfig, oldChartConfig, measures }) => {
+      y: ({ newChartConfig, oldChartConfig, measures, isAddingNewCube }) => {
         const numericalMeasures = measures.filter(isNumericalMeasure);
         const numericalMeasureIds = numericalMeasures.map((d) => d.id);
         let leftMeasure = numericalMeasures.find(
           (d) => d.id === numericalMeasureIds[0]
         ) as NumericalMeasure;
         let rightMeasureId: string | undefined;
-        const getMeasure = (id: string) => {
-          return numericalMeasures.find((d) => d.id === id) as NumericalMeasure;
+        const getLeftMeasure = (id: string) => {
+          if (isAddingNewCube) {
+            const rightMeasure = numericalMeasures.find(
+              (d) => d.id === rightMeasureId
+            );
+
+            // We're trying to find a measure that comes from a different cube,
+            // to better showcase the fact that we have two cubes now.
+            return (numericalMeasures.find(
+              (d) =>
+                d.cubeIri !== rightMeasure?.cubeIri &&
+                d.unit !== rightMeasure?.unit
+            ) ??
+              numericalMeasures.find((d) => d.id === id)) as NumericalMeasure;
+          } else {
+            return numericalMeasures.find(
+              (d) => d.id === id
+            ) as NumericalMeasure;
+          }
         };
 
         if (isComboLineColumnConfig(oldChartConfig)) {
@@ -1462,10 +1485,10 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
             columnComponentId: columnId,
           } = oldChartConfig.fields.y;
           const leftAxisId = lineOrientation === "left" ? lineId : columnId;
-          leftMeasure = getMeasure(leftAxisId);
           rightMeasureId = lineOrientation === "left" ? columnId : lineId;
+          leftMeasure = getLeftMeasure(leftAxisId);
         } else if (isComboLineSingleConfig(oldChartConfig)) {
-          leftMeasure = getMeasure(oldChartConfig.fields.y.componentIds[0]);
+          leftMeasure = getLeftMeasure(oldChartConfig.fields.y.componentIds[0]);
         } else if (
           isAreaConfig(oldChartConfig) ||
           isColumnConfig(oldChartConfig) ||
@@ -1473,24 +1496,25 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           isPieConfig(oldChartConfig) ||
           isScatterPlotConfig(oldChartConfig)
         ) {
-          leftMeasure = getMeasure(oldChartConfig.fields.y.componentId);
+          leftMeasure = getLeftMeasure(oldChartConfig.fields.y.componentId);
         } else if (isMapConfig(oldChartConfig)) {
           const { areaLayer, symbolLayer } = oldChartConfig.fields;
           const leftAxisId =
             areaLayer?.color.componentId ?? symbolLayer?.measureId;
 
           if (leftAxisId) {
-            leftMeasure = getMeasure(leftAxisId);
+            leftMeasure = getLeftMeasure(leftAxisId);
           }
         }
 
-        const rightAxisComponentId = (
+        rightMeasureId = (
           numericalMeasures.find((d) =>
             rightMeasureId
               ? d.id === rightMeasureId
               : d.unit !== leftMeasure.unit
           ) as NumericalMeasure
         ).id;
+        leftMeasure = getLeftMeasure(leftMeasure.id);
 
         const palette = isSegmentInConfig(oldChartConfig)
           ? oldChartConfig.fields.segment?.palette ??
@@ -1502,16 +1526,14 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         return produce(newChartConfig, (draft) => {
           draft.fields.y = {
             leftAxisComponentId: leftMeasure.id,
-            rightAxisComponentId: rightAxisComponentId,
+            rightAxisComponentId: rightMeasureId,
             palette,
             colorMapping: mapValueIrisToColor({
               palette,
-              dimensionValues: [leftMeasure.id, rightAxisComponentId].map(
-                (id) => ({
-                  value: id,
-                  label: id,
-                })
-              ),
+              dimensionValues: [leftMeasure.id, rightMeasureId].map((id) => ({
+                value: id,
+                label: id,
+              })),
             }),
           };
         });
