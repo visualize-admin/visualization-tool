@@ -954,14 +954,14 @@ const ChartComboLineColumnYField = (
             })}
             value={y.columnComponentId}
             onChange={(e) => {
-              const newIri = e.target.value as string;
+              const newId = e.target.value as string;
               dispatch({
                 type: "CHART_OPTION_CHANGED",
                 value: {
                   locale,
                   field: "y",
                   path: "columnComponentId",
-                  value: newIri,
+                  value: newId,
                 },
               });
             }}
@@ -979,14 +979,14 @@ const ChartComboLineColumnYField = (
             })}
             value={y.lineComponentId}
             onChange={(e) => {
-              const newIri = e.target.value as string;
+              const newId = e.target.value as string;
               dispatch({
                 type: "CHART_OPTION_CHANGED",
                 value: {
                   locale,
                   field: "y",
                   path: "lineComponentId",
-                  value: newIri,
+                  value: newId,
                 },
               });
             }}
