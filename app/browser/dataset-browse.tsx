@@ -584,7 +584,6 @@ const NavSectionTitle = ({
       sx={{
         alignItems: "center",
         p: 3,
-        cursor: "pointer",
         backgroundColor: theme.backgroundColor,
         borderRadius: 2,
         height: "2.5rem",
