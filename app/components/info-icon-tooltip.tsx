@@ -4,28 +4,27 @@ import React from "react";
 
 import { Icon } from "@/icons";
 
-type InfoIconTooltipProps = {
-  title: NonNullable<React.ReactNode>;
-};
-
-const useStyles = makeStyles((theme: Theme) => ({
-  tooltip: { width: 180, padding: theme.spacing(1, 2), lineHeight: "18px" },
-  icon: {
-    color: theme.palette.primary.main,
-    pointerEvents: "auto",
-  },
-}));
+type InfoIconTooltipVariant = "primary" | "secondary";
 
 export const InfoIconTooltip = (
-  props: InfoIconTooltipProps & Omit<TooltipProps, "children">
+  props: {
+    title: NonNullable<React.ReactNode>;
+    variant?: InfoIconTooltipVariant;
+  } & Omit<TooltipProps, "children" | "title">
 ) => {
-  const classes = useStyles();
-  const { title, componentsProps, ...rest } = props;
+  const {
+    title,
+    componentsProps,
+    variant = "primary",
+    placement = "top",
+    ...rest
+  } = props;
+  const classes = useStyles({ variant });
 
   return (
     <Tooltip
       arrow
-      placement="top"
+      placement={placement}
       title={
         <Typography variant="caption" color="secondary">
           {title}
@@ -33,7 +32,9 @@ export const InfoIconTooltip = (
       }
       componentsProps={{
         ...componentsProps,
-        tooltip: { className: classes.tooltip },
+        tooltip: {
+          className: classes.tooltip,
+        },
       }}
       {...rest}
     >
@@ -43,3 +44,17 @@ export const InfoIconTooltip = (
     </Tooltip>
   );
 };
+
+const useStyles = makeStyles<Theme, { variant: "primary" | "secondary" }>(
+  (theme) => ({
+    tooltip: {
+      width: 150,
+      padding: theme.spacing(1, 2),
+      lineHeight: "18px",
+    },
+    icon: {
+      color: ({ variant }) => theme.palette[variant].main,
+      pointerEvents: "auto",
+    },
+  })
+);
