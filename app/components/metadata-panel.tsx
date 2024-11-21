@@ -405,7 +405,7 @@ const CubesPanel = ({
 }) => {
   const classes = useOtherStyles();
   const locale = useLocale();
-  const cubes = chartConfig.cubes.map((x) => ({ iri: x.iri }));
+  const cubes = chartConfig.cubes.map((cube) => ({ iri: cube.iri }));
   const [
     {
       data: dataCubesMetadataData,
