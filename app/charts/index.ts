@@ -1526,14 +1526,16 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         return produce(newChartConfig, (draft) => {
           draft.fields.y = {
             leftAxisComponentId: leftMeasure.id,
-            rightAxisComponentId: rightMeasureId,
+            rightAxisComponentId: rightMeasureId as string,
             palette,
             colorMapping: mapValueIrisToColor({
               palette,
-              dimensionValues: [leftMeasure.id, rightMeasureId].map((id) => ({
-                value: id,
-                label: id,
-              })),
+              dimensionValues: [leftMeasure.id, rightMeasureId as string].map(
+                (id) => ({
+                  value: id,
+                  label: id,
+                })
+              ),
             }),
           };
         });
