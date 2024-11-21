@@ -95,6 +95,7 @@ import { useLocale } from "@/locales/use-locale";
 import { getPalette } from "@/palettes";
 import { hierarchyToOptions } from "@/utils/hierarchy";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
+import useEvent from "@/utils/use-event";
 
 const useStyles = makeStyles<Theme>((theme) => ({
   root: {
@@ -189,12 +190,12 @@ export const DataFilterSelect = ({
   loading,
 }: {
   dimension: Dimension;
-  label: React.ReactNode;
+  label: ReactNode;
   id: string;
   disabled?: boolean;
   isOptional?: boolean;
-  topControls?: React.ReactNode;
-  sideControls?: React.ReactNode;
+  topControls?: ReactNode;
+  sideControls?: ReactNode;
   hierarchy?: HierarchyValue[] | null;
   onOpen?: () => void;
   loading?: boolean;
@@ -202,7 +203,7 @@ export const DataFilterSelect = ({
   const fieldProps = useSingleFilterSelect(dimensionToFieldProps(dimension));
   const noneLabel = t({
     id: "controls.dimensionvalue.none",
-    message: `No Filter`,
+    message: "No Filter",
   });
   const sortedValues = useMemo(() => {
     const sorters = makeDimensionValueSorters(dimension);
@@ -230,6 +231,7 @@ export const DataFilterSelect = ({
     if (!hierarchy) {
       return;
     }
+
     return hierarchyToOptions(
       hierarchy,
       dimension.values.map((v) => v.value)
@@ -237,14 +239,13 @@ export const DataFilterSelect = ({
   }, [hierarchy, dimension.values]);
 
   const { open, close, isOpen } = useDisclosure();
-  const handleOpen = () => {
+  const handleOpen = useEvent(() => {
     open();
     onOpen?.();
-  };
-
-  const handleClose = () => {
+  });
+  const handleClose = useEvent(() => {
     close();
-  };
+  });
 
   if (hierarchy && hierarchyOptions) {
     return (
