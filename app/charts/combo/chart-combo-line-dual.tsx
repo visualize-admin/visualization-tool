@@ -36,7 +36,7 @@ const ChartComboLineDual = memo((props: ChartProps<ComboLineDualConfig>) => {
     <ComboLineDualChart {...props}>
       <ChartContainer>
         <ChartSvg>
-          <ComboLineContainer getYAdjustment={(y) => setYAdjustment(y)}>
+          <ComboLineContainer setYAdjustment={setYAdjustment}>
             <AxisHeightLinearDual orientation="left" />
             <AxisHeightLinearDual orientation="right" />
             <AxisTime />

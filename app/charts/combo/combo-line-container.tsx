@@ -1,4 +1,4 @@
-import { ReactNode, useMemo } from "react";
+import { Dispatch, ReactNode, SetStateAction, useEffect } from "react";
 
 import { getTextWidth } from "@/utils/get-text-width";
 
@@ -13,10 +13,10 @@ export const TITLE_VPADDING = 4;
 
 export const ComboLineContainer = ({
   children,
-  getYAdjustment,
+  setYAdjustment,
 }: {
   children: ReactNode;
-  getYAdjustment?: (y: number) => void;
+  setYAdjustment?: Dispatch<SetStateAction<number>>;
 }) => {
   const { axisLabelFontSize } = useChartTheme();
   const { y, bounds } = useChartState() as
@@ -36,9 +36,9 @@ export const ComboLineContainer = ({
     ? (axisLabelFontSize + TITLE_VPADDING) * 2
     : 0;
 
-  useMemo(() => {
-    getYAdjustment?.(yAdjustment);
-  }, [yAdjustment, getYAdjustment]);
+  useEffect(() => {
+    setYAdjustment?.(yAdjustment);
+  }, [yAdjustment, setYAdjustment]);
 
   return <g transform={`translate(0, ${yAdjustment})`}>{children}</g>;
 };
