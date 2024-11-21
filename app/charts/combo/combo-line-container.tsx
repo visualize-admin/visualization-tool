@@ -1,4 +1,4 @@
-import { Dispatch, ReactNode, SetStateAction, useEffect } from "react";
+import { ReactNode } from "react";
 
 import { getTextWidth } from "@/utils/get-text-width";
 
@@ -11,13 +11,7 @@ import { ComboLineDualState } from "./combo-line-dual-state";
 
 export const TITLE_VPADDING = 4;
 
-export const ComboLineContainer = ({
-  children,
-  setYAdjustment,
-}: {
-  children: ReactNode;
-  setYAdjustment?: Dispatch<SetStateAction<number>>;
-}) => {
+export const ComboLineContainer = ({ children }: { children: ReactNode }) => {
   const { axisLabelFontSize } = useChartTheme();
   const { y, bounds } = useChartState() as
     | ComboLineDualState
@@ -35,10 +29,5 @@ export const ComboLineContainer = ({
   const yAdjustment = overLappingTitles
     ? (axisLabelFontSize + TITLE_VPADDING) * 2
     : 0;
-
-  useEffect(() => {
-    setYAdjustment?.(yAdjustment);
-  }, [yAdjustment, setYAdjustment]);
-
   return <g transform={`translate(0, ${yAdjustment})`}>{children}</g>;
 };

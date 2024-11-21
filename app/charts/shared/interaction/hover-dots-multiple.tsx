@@ -8,22 +8,12 @@ import { useChartState } from "@/charts/shared/chart-state";
 import { useInteraction } from "@/charts/shared/use-interaction";
 import { Observation } from "@/domain/data";
 
-export const HoverDotMultiple = ({
-  axisTitleAdjustment,
-}: {
-  axisTitleAdjustment?: number;
-}) => {
+export const HoverDotMultiple = () => {
   const [state] = useInteraction();
 
   const { visible, d } = state.interaction;
 
-  return (
-    <>
-      {visible && d && (
-        <HoverDots axisTitleAdjustment={axisTitleAdjustment} d={d} />
-      )}
-    </>
-  );
+  return <>{visible && d && <HoverDots d={d} />}</>;
 };
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -40,13 +30,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-const HoverDots = ({
-  d,
-  axisTitleAdjustment = 0,
-}: {
-  d: Observation;
-  axisTitleAdjustment?: number;
-}) => {
+const HoverDots = ({ d }: { d: Observation }) => {
   const { getAnnotationInfo, bounds } = useChartState() as
     | LinesState
     | ComboLineSingleState;
@@ -63,7 +47,10 @@ const HoverDots = ({
                 style={{
                   backgroundColor: value.color,
                   left: xAnchor + bounds.margins.left,
-                  top: value.yPos! + bounds.margins.top + axisTitleAdjustment,
+                  top:
+                    value.yPos! +
+                    bounds.margins.top +
+                    (bounds.yAxisTitleHeight || 0),
                 }}
                 className={classes.dot}
               />

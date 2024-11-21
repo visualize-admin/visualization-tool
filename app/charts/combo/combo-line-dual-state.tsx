@@ -134,7 +134,10 @@ const useComboLineDualState = (
   );
   const right = Math.max(maxRightTickWidth, 40);
   const margins = getMargins({ left, right, bottom });
-  const bounds = useChartBounds(width, margins, height);
+  const bounds = useChartBounds(width, margins, height, {
+    leftLabel: variables.y.left.label,
+    rightLabel: variables.y.right.label,
+  });
   const { chartWidth, chartHeight } = bounds;
   const xScales = [xScale, xScaleTimeRange];
   const yScales = [yScale, yScaleLeft, yScaleRight];

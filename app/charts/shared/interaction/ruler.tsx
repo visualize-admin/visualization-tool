@@ -17,35 +17,23 @@ import { useIsMobile } from "@/utils/use-is-mobile";
 
 type RulerProps = {
   rotate?: boolean;
-  axisTitleAdjustment?: number;
 };
 
 export const Ruler = (props: RulerProps) => {
-  const { rotate = false, axisTitleAdjustment } = props;
+  const { rotate = false } = props;
   const [state] = useInteraction();
   const { visible, d } = state.interaction;
 
-  return (
-    <>
-      {visible && d && (
-        <RulerInner
-          d={d}
-          rotate={rotate}
-          axisTitleAdjustment={axisTitleAdjustment}
-        />
-      )}
-    </>
-  );
+  return <>{visible && d && <RulerInner d={d} rotate={rotate} />}</>;
 };
 
 type RulerInnerProps = {
   d: Observation;
   rotate: boolean;
-  axisTitleAdjustment?: number;
 };
 
 const RulerInner = (props: RulerInnerProps) => {
-  const { d, rotate, axisTitleAdjustment } = props;
+  const { d, rotate } = props;
   const { getAnnotationInfo, bounds } = useChartState() as
     | LinesState
     | ComboLineSingleState
@@ -63,7 +51,7 @@ const RulerInner = (props: RulerInnerProps) => {
       xAnchor={xAnchor}
       datum={datum}
       placement={placement}
-      axisTitleAdjustment={axisTitleAdjustment}
+      yAxisTitleHeight={bounds.yAxisTitleHeight}
     />
   );
 };
@@ -78,7 +66,7 @@ type RulerContentProps = {
   datum: TooltipValue;
   placement: TooltipPlacement;
   showXValue?: boolean;
-  axisTitleAdjustment?: number;
+  yAxisTitleHeight?: number;
 };
 
 const useStyles = makeStyles<Theme, { rotate: boolean }>((theme: Theme) => ({
@@ -113,7 +101,7 @@ export const RulerContent = (props: RulerContentProps) => {
     chartHeight,
     margins,
     xAnchor,
-    axisTitleAdjustment = 0,
+    yAxisTitleHeight = 0,
   } = props;
   const classes = useStyles({ rotate });
 
@@ -126,7 +114,7 @@ export const RulerContent = (props: RulerContentProps) => {
         style={{
           height: chartHeight,
           left: xAnchor + margins.left,
-          top: margins.top + axisTitleAdjustment,
+          top: margins.top + yAxisTitleHeight,
         }}
       />
       {!isMobile && (

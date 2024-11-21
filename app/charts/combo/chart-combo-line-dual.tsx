@@ -1,4 +1,4 @@
-import { memo, useState } from "react";
+import { memo } from "react";
 
 import { ChartDataWrapper } from "@/charts/chart-data-wrapper";
 import { AxisHeightLinearDual } from "@/charts/combo/axis-height-linear-dual";
@@ -30,13 +30,11 @@ const ChartComboLineDual = memo((props: ChartProps<ComboLineDualConfig>) => {
   const { interactiveFiltersConfig } = chartConfig;
   const [{ dashboardFilters }] = useConfiguratorState(hasChartConfigs);
 
-  const [yAdjustment, setYAdjustment] = useState(0);
-
   return (
     <ComboLineDualChart {...props}>
       <ChartContainer>
         <ChartSvg>
-          <ComboLineContainer setYAdjustment={setYAdjustment}>
+          <ComboLineContainer>
             <AxisHeightLinearDual orientation="left" />
             <AxisHeightLinearDual orientation="right" />
             <AxisTime />
@@ -49,8 +47,8 @@ const ChartComboLineDual = memo((props: ChartProps<ComboLineDualConfig>) => {
             ) && <BrushTime />}
           </ComboLineContainer>
         </ChartSvg>
-        <HoverDotMultiple axisTitleAdjustment={yAdjustment} />
-        <Ruler axisTitleAdjustment={yAdjustment} />
+        <HoverDotMultiple />
+        <Ruler />
         <Tooltip type="multiple" />
       </ChartContainer>
     </ComboLineDualChart>
