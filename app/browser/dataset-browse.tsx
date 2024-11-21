@@ -358,7 +358,7 @@ const encodeFilter = (filter: BrowseFilter) => {
         return "termset";
       default:
         const check: never = __typename;
-        throw new Error('Unknown filter type "' + check + '"');
+        throw Error('Unknown filter type "' + check + '"');
     }
   })();
   return `${folder}/${encodeURIComponent(iri)}`;
@@ -1201,7 +1201,7 @@ export const DatasetResult = ({
                 {sortBy(dimensions, (t) => t.label).map((dimension) => {
                   return (
                     <MaybeTooltip
-                      key={dimension.iri}
+                      key={dimension.id}
                       title={
                         dimension.termsets.length > 0 ? (
                           <>

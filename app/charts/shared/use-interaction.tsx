@@ -67,7 +67,7 @@ const InteractionStateReducer = (
       };
 
     default:
-      throw new Error();
+      throw Error();
   }
 };
 

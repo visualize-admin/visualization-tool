@@ -21,7 +21,7 @@ import {
   observations,
 } from "@/docs/fixtures";
 import { InteractiveFiltersChartProvider } from "@/stores/interactive-filters";
-import { CHART_CONFIG_VERSION } from "@/utils/chart-config/versioning";
+import { CHART_CONFIG_VERSION } from "@/utils/chart-config/constants";
 
 import { ReactSpecimen } from "./catalog";
 
@@ -64,9 +64,9 @@ const TooltipBoxStory = () => (
       <ColumnChart
         observations={observations}
         measures={measures}
-        measuresByIri={keyBy(measures, (d) => d.iri)}
+        measuresById={keyBy(measures, (d) => d.id)}
         dimensions={dimensions}
-        dimensionsByIri={keyBy(dimensions, (d) => d.iri)}
+        dimensionsById={keyBy(dimensions, (d) => d.id)}
         chartConfig={{
           key: "column-chart",
           version: CHART_CONFIG_VERSION,
@@ -90,23 +90,17 @@ const TooltipBoxStory = () => (
               it: "",
             },
           },
-          cubes: [
-            {
-              iri: "",
-              publishIri: "",
-              filters: {},
-            },
-          ],
+          cubes: [{ iri: "", filters: {} }],
           chartType: "column",
           fields,
           interactiveFiltersConfig: {
-            legend: { active: false, componentIri: "" },
+            legend: { active: false, componentId: "" },
             timeRange: {
               active: false,
-              componentIri: "",
+              componentId: "",
               presets: { type: "range", from: "", to: "" },
             },
-            dataFilters: { active: false, componentIris: [] },
+            dataFilters: { active: false, componentIds: [] },
             calculation: { active: false, type: "identity" },
           },
           activeField: undefined,
@@ -235,9 +229,9 @@ const TooltipContentStory = {
       <ColumnChart
         observations={observations}
         measures={measures}
-        measuresByIri={keyBy(measures, (d) => d.iri)}
+        measuresById={keyBy(measures, (d) => d.id)}
         dimensions={dimensions}
-        dimensionsByIri={keyBy(dimensions, (d) => d.iri)}
+        dimensionsById={keyBy(dimensions, (d) => d.id)}
         chartConfig={{
           key: "column-chart",
           version: CHART_CONFIG_VERSION,
@@ -261,23 +255,17 @@ const TooltipContentStory = {
               it: "",
             },
           },
-          cubes: [
-            {
-              iri: "",
-              publishIri: "",
-              filters: {},
-            },
-          ],
+          cubes: [{ iri: "", filters: {} }],
           chartType: "column",
           fields,
           interactiveFiltersConfig: {
-            legend: { active: false, componentIri: "" },
+            legend: { active: false, componentId: "" },
             timeRange: {
               active: false,
-              componentIri: "",
+              componentId: "",
               presets: { type: "range", from: "", to: "" },
             },
-            dataFilters: { active: false, componentIris: [] },
+            dataFilters: { active: false, componentIds: [] },
             calculation: { active: false, type: "identity" },
           },
           activeField: undefined,
@@ -309,9 +297,9 @@ export const TooltipContentStory2 = {
       <ColumnChart
         observations={observations}
         measures={measures}
-        measuresByIri={keyBy(measures, (d) => d.iri)}
+        measuresById={keyBy(measures, (d) => d.id)}
         dimensions={dimensions}
-        dimensionsByIri={keyBy(dimensions, (d) => d.iri)}
+        dimensionsById={keyBy(dimensions, (d) => d.id)}
         chartConfig={{
           key: "column-chart",
           version: CHART_CONFIG_VERSION,
@@ -335,23 +323,17 @@ export const TooltipContentStory2 = {
               it: "",
             },
           },
-          cubes: [
-            {
-              iri: "",
-              publishIri: "",
-              filters: {},
-            },
-          ],
+          cubes: [{ iri: "", filters: {} }],
           chartType: "column",
           fields,
           interactiveFiltersConfig: {
-            legend: { active: false, componentIri: "" },
+            legend: { active: false, componentId: "" },
             timeRange: {
               active: false,
-              componentIri: "",
+              componentId: "",
               presets: { type: "range", from: "", to: "" },
             },
-            dataFilters: { active: false, componentIris: [] },
+            dataFilters: { active: false, componentIds: [] },
             calculation: { active: false, type: "identity" },
           },
           activeField: undefined,

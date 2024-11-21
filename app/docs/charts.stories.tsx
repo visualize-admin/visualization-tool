@@ -27,7 +27,7 @@ import {
   InteractiveFiltersChartProvider,
   InteractiveFiltersProvider,
 } from "@/stores/interactive-filters";
-import { CONFIGURATOR_STATE_VERSION } from "@/utils/chart-config/versioning";
+import { CONFIGURATOR_STATE_VERSION } from "@/utils/chart-config/constants";
 
 import {
   chartConfig,
@@ -79,7 +79,7 @@ const ColumnsStory = {
             },
           },
           dataFilters: {
-            componentIris: [],
+            componentIds: [],
             filters: {},
           },
         },
@@ -90,9 +90,9 @@ const ColumnsStory = {
           <ColumnChart
             observations={columnObservations}
             measures={columnMeasures}
-            measuresByIri={keyBy(columnMeasures, (d: Measure) => d.iri)}
+            measuresById={keyBy(columnMeasures, (d: Measure) => d.id)}
             dimensions={columnDimensions}
-            dimensionsByIri={keyBy(columnDimensions, (d: Dimension) => d.iri)}
+            dimensionsById={keyBy(columnDimensions, (d: Dimension) => d.id)}
             chartConfig={chartConfig}
           >
             <ChartContainer>
@@ -143,7 +143,7 @@ const ScatterplotStory = {
             },
           },
           dataFilters: {
-            componentIris: [],
+            componentIds: [],
             filters: {},
           },
         },
@@ -154,9 +154,9 @@ const ScatterplotStory = {
           <ScatterplotChart
             observations={scatterplotObservations}
             dimensions={scatterplotDimensions}
-            dimensionsByIri={keyBy(scatterplotDimensions, (d) => d.iri)}
+            dimensionsById={keyBy(scatterplotDimensions, (d) => d.id)}
             measures={scatterplotMeasures}
-            measuresByIri={keyBy(scatterplotMeasures, (d) => d.iri)}
+            measuresById={keyBy(scatterplotMeasures, (d) => d.id)}
             chartConfig={scatterplotChartConfig}
           >
             <ChartContainer>

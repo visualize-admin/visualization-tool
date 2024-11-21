@@ -30,24 +30,24 @@ export type AreasStateVariables = BaseVariables &
 export const useAreasStateVariables = (
   props: ChartProps<AreaConfig>
 ): AreasStateVariables => {
-  const { chartConfig, observations, dimensionsByIri, measuresByIri } = props;
+  const { chartConfig, observations, dimensionsById, measuresById } = props;
   const { fields } = chartConfig;
   const { x, y, segment } = fields;
 
   const baseVariables = useBaseVariables(chartConfig);
   const temporalXVariables = useTemporalXVariables(x, {
-    dimensionsByIri,
+    dimensionsById,
   });
   const numericalYVariables = useNumericalYVariables("area", y, {
-    measuresByIri,
+    measuresById,
   });
   const segmentVariables = useSegmentVariables(segment, {
-    dimensionsByIri,
+    dimensionsById,
     observations,
   });
   const interactiveFiltersVariables = useInteractiveFiltersVariables(
     chartConfig.interactiveFiltersConfig,
-    { dimensionsByIri }
+    { dimensionsById }
   );
 
   const { getX } = temporalXVariables;
@@ -92,7 +92,7 @@ export const useAreasStateData = (
   }, [sortData, plottableData]);
   const data = useChartData(sortedPlottableData, {
     chartConfig,
-    timeRangeDimensionIri: xDimension.iri,
+    timeRangeDimensionId: xDimension.id,
     getXAsDate: getX,
     getSegmentAbbreviationOrLabel,
     getTimeRangeDate,

@@ -297,7 +297,7 @@ export const BrowseStateProvider = ({
 export const useBrowseContext = () => {
   const ctx = useContext(BrowseContext);
   if (!ctx) {
-    throw new Error(
+    throw Error(
       "To be able useBrowseContext, you must wrap it into a BrowseStateProvider"
     );
   }

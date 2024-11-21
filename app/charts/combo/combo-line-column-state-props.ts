@@ -49,8 +49,8 @@ export const useComboLineColumnStateVariables = (
   const {
     chartConfig,
     dimensions,
-    dimensionsByIri,
-    measuresByIri,
+    dimensionsById,
+    measuresById,
     observations,
   } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
@@ -59,31 +59,31 @@ export const useComboLineColumnStateVariables = (
 
   const baseVariables = useBaseVariables(chartConfig);
   const bandXVariables = useBandXVariables(x, {
-    dimensionsByIri,
+    dimensionsById,
     observations,
   });
   const interactiveFiltersVariables = useInteractiveFiltersVariables(
     chartConfig.interactiveFiltersConfig,
-    { dimensionsByIri }
+    { dimensionsById }
   );
 
-  const lineIri = chartConfig.fields.y.lineComponentIri;
+  const lineId = chartConfig.fields.y.lineComponentId;
   const lineAxisOrientation = chartConfig.fields.y.lineAxisOrientation;
-  const columnIri = chartConfig.fields.y.columnComponentIri;
+  const columnId = chartConfig.fields.y.columnComponentId;
   let numericalYVariables: NumericalYComboLineColumnVariables;
   const lineYGetter: YGetter = {
     chartType: "line",
     orientation: lineAxisOrientation,
-    dimension: measuresByIri[lineIri],
-    iri: lineIri,
-    label: getLabelWithUnit(measuresByIri[lineIri]),
-    color: fields.y.colorMapping[lineIri],
-    getY: (d) => (d[lineIri] !== null ? Number(d[lineIri]) : null),
+    dimension: measuresById[lineId],
+    id: lineId,
+    label: getLabelWithUnit(measuresById[lineId]),
+    color: fields.y.colorMapping[lineId],
+    getY: (d) => (d[lineId] !== null ? Number(d[lineId]) : null),
     getMinY: (data) => {
       const minY =
-        min(data, (d) => (d[lineIri] !== null ? Number(d[lineIri]) : null)) ??
-        0;
-      return shouldUseDynamicMinScaleValue(measuresByIri[lineIri].scaleType)
+        min(data, (d) => (d[lineId] !== null ? Number(d[lineId]) : null)) ?? 0;
+
+      return shouldUseDynamicMinScaleValue(measuresById[lineId].scaleType)
         ? minY
         : Math.min(0, minY);
     },
@@ -91,16 +91,16 @@ export const useComboLineColumnStateVariables = (
   const columnYGetter: YGetter = {
     chartType: "column",
     orientation: lineAxisOrientation === "left" ? "right" : "left",
-    dimension: measuresByIri[columnIri],
-    iri: columnIri,
-    label: getLabelWithUnit(measuresByIri[columnIri]),
-    color: fields.y.colorMapping[columnIri],
-    getY: (d) => (d[columnIri] !== null ? Number(d[columnIri]) : null),
+    dimension: measuresById[columnId],
+    id: columnId,
+    label: getLabelWithUnit(measuresById[columnId]),
+    color: fields.y.colorMapping[columnId],
+    getY: (d) => (d[columnId] !== null ? Number(d[columnId]) : null),
     getMinY: (data) => {
       const minY =
-        min(data, (d) =>
-          d[columnIri] !== null ? Number(d[columnIri]) : null
-        ) ?? 0;
+        min(data, (d) => (d[columnId] !== null ? Number(d[columnId]) : null)) ??
+        0;
+
       return Math.min(0, minY);
     },
   };
@@ -171,7 +171,7 @@ export const useComboLineColumnStateData = (
   }, [sortData, plottableData]);
   const data = useChartData(sortedPlottableData, {
     chartConfig,
-    timeRangeDimensionIri: xDimension.iri,
+    timeRangeDimensionId: xDimension.id,
     getXAsDate,
     getTimeRangeDate,
   });

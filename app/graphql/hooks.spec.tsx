@@ -97,7 +97,7 @@ describe("useComponentsQuery - keepPreviousData: false", () => {
       options: RequestInit | undefined
     ) => {
       if (!options?.body) {
-        throw new Error("Must receive a body");
+        throw Error("Must receive a body");
       }
 
       const reqBody = JSON.parse(options.body.toString());
@@ -112,21 +112,21 @@ describe("useComponentsQuery - keepPreviousData: false", () => {
               dimensions: isGebaudeCube
                 ? [
                     {
-                      iri: "https://gebaude",
+                      id: "https://gebaude",
                       label: "Gebaude",
                     },
                     {
-                      iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_energiewirkung/Jahr",
+                      id: "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_energiewirkung/Jahr",
                       label: "Year",
                     },
                   ]
                 : [
                     {
-                      iri: "https://eletrik",
+                      id: "https://eletrik",
                       label: "Electrik",
                     },
                     {
-                      iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
+                      id: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
                       label: "Year",
                     },
                   ],
@@ -165,31 +165,31 @@ describe("useComponentsQuery - keepPreviousData: false", () => {
         Array [
           Object {
             "cubeIri": "joinBy",
-            "iri": "joinBy__0",
+            "id": "joinBy__0",
             "isJoinByDimension": true,
             "label": "Year",
-            "originalIris": Array [
+            "originalIds": Array [
               Object {
                 "cubeIri": undefined,
                 "description": "",
-                "dimensionIri": "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_energiewirkung/Jahr",
+                "dimensionId": "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_energiewirkung/Jahr",
                 "label": "Year",
               },
               Object {
                 "cubeIri": undefined,
                 "description": "",
-                "dimensionIri": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
+                "dimensionId": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
                 "label": "Year",
               },
             ],
             "values": Array [],
           },
           Object {
-            "iri": "https://gebaude",
+            "id": "https://gebaude",
             "label": "Gebaude",
           },
           Object {
-            "iri": "https://eletrik",
+            "id": "https://eletrik",
             "label": "Electrik",
           },
         ]
@@ -203,9 +203,9 @@ describe("useComponentsQuery - keepPreviousData: false", () => {
       expect(hook.result.current[0].data).toEqual({
         dataCubesComponents: {
           dimensions: [
-            { iri: "https://gebaude", label: "Gebaude" },
+            { id: "https://gebaude", label: "Gebaude" },
             {
-              iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_energiewirkung/Jahr",
+              id: "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_energiewirkung/Jahr",
               label: "Year",
             },
           ],
@@ -223,7 +223,7 @@ describe("useComponentsQuery - keepPreviousData: true", () => {
       options: RequestInit | undefined
     ) => {
       if (!options?.body) {
-        throw new Error("Must receive a body");
+        throw Error("Must receive a body");
       }
 
       const reqBody = JSON.parse(options.body.toString());
@@ -238,18 +238,18 @@ describe("useComponentsQuery - keepPreviousData: true", () => {
               dimensions: isGebaudeCube
                 ? [
                     {
-                      iri: "https://gebaude",
+                      id: "https://gebaude",
                     },
                     {
-                      iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_energiewirkung/Jahr",
+                      id: "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_energiewirkung/Jahr",
                     },
                   ]
                 : [
                     {
-                      iri: "https://eletrik",
+                      id: "https://eletrik",
                     },
                     {
-                      iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
+                      id: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
                     },
                   ],
               measures: [],
@@ -284,31 +284,31 @@ describe("useComponentsQuery - keepPreviousData: true", () => {
         Array [
           Object {
             "cubeIri": "joinBy",
-            "iri": "joinBy__0",
+            "id": "joinBy__0",
             "isJoinByDimension": true,
             "label": "Year",
-            "originalIris": Array [
+            "originalIds": Array [
               Object {
                 "cubeIri": undefined,
                 "description": "",
-                "dimensionIri": "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_energiewirkung/Jahr",
+                "dimensionId": "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_energiewirkung/Jahr",
                 "label": "Year",
               },
               Object {
                 "cubeIri": undefined,
                 "description": "",
-                "dimensionIri": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
+                "dimensionId": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
                 "label": "Year",
               },
             ],
             "values": Array [],
           },
           Object {
-            "iri": "https://gebaude",
+            "id": "https://gebaude",
             "label": "Gebaude",
           },
           Object {
-            "iri": "https://eletrik",
+            "id": "https://eletrik",
             "label": "Electrik",
           },
         ]
@@ -323,9 +323,9 @@ describe("useComponentsQuery - keepPreviousData: true", () => {
       expect(hook.result.current[0].data).toEqual({
         dataCubesComponents: {
           dimensions: [
-            { iri: "https://gebaude", label: "Gebaude" },
+            { id: "https://gebaude", label: "Gebaude" },
             {
-              iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_energiewirkung/Jahr",
+              id: "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_energiewirkung/Jahr",
               label: "Year",
             },
           ],

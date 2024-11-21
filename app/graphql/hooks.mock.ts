@@ -11,7 +11,7 @@ export const useDataCubesComponentsQueryVariables: Record<
     cubeFilters: [
       {
         iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_energiewirkung/6",
-        componentIris: [
+        componentIds: [
           "http://schema.org/amount",
           "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_energiewirkung/Jahr",
           "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_energiewirkung/massnahmenbereich",
@@ -38,7 +38,7 @@ export const useDataCubesComponentsQueryVariables: Record<
     cubeFilters: [
       {
         iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_energiewirkung/6",
-        componentIris: [
+        componentIds: [
           "http://schema.org/amount",
           "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_energiewirkung/Jahr",
           "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_energiewirkung/massnahmenbereich",
@@ -61,7 +61,7 @@ export const useDataCubesComponentsQueryVariables: Record<
       },
       {
         iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9",
-        componentIris: [
+        componentIds: [
           "http://schema.org/amount",
           "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_energiewirkung/Jahr",
           "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_energiewirkung/massnahmenbereich",

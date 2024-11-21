@@ -9,6 +9,6 @@ export const assert: Assert = (
   msg: string
 ): asserts condition => {
   if (!condition) {
-    throw new Error(`AssertionError: ${msg}`);
+    throw Error(`AssertionError: ${msg}`);
   }
 };

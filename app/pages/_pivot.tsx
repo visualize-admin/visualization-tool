@@ -156,12 +156,12 @@ const Bar = ({ percent }: { percent: number }) => {
 
 const PivotTable = ({ dataset }: { dataset: (typeof datasets)[string] }) => {
   const [activeMeasures, setActiveMeasures] = useState<
-    Record<Measure["iri"], boolean>
+    Record<Measure["id"], boolean>
   >({});
   const [pivotDimension, setPivotDimension] = useState<Dimension>();
   const [hierarchyDimension, setHierarchyDimension] = useState<Dimension>();
   const [ignoredDimensions, setIgnoredDimensions] = useState<
-    Record<Dimension["iri"], boolean>
+    Record<Dimension["id"], boolean>
   >({});
 
   const [{ data: componentsData, fetching: fetchingComponents }] =
@@ -187,7 +187,7 @@ const PivotTable = ({ dataset }: { dataset: (typeof datasets)[string] }) => {
 
   const allDimensions = componentsData?.dataCubesComponents?.dimensions;
   const dimensions = useMemo(() => {
-    return allDimensions?.filter((d) => !ignoredDimensions[d.iri]);
+    return allDimensions?.filter((d) => !ignoredDimensions[d.id]);
   }, [allDimensions, ignoredDimensions]);
   const measures = componentsData?.dataCubesComponents?.measures;
   const observations = useMemo(() => {
@@ -196,21 +196,22 @@ const PivotTable = ({ dataset }: { dataset: (typeof datasets)[string] }) => {
 
   const handleChangePivot = (ev: ChangeEvent<HTMLSelectElement>) => {
     const name = ev.currentTarget.value;
-    setPivotDimension(dimensions?.find((d) => d.iri === name));
+    setPivotDimension(dimensions?.find((d) => d.id === name));
   };
 
   const handleChangeHierarchy = (ev: ChangeEvent<HTMLSelectElement>) => {
     const name = ev.currentTarget.value;
-    setHierarchyDimension(dimensions?.find((d) => d.iri === name));
+    setHierarchyDimension(dimensions?.find((d) => d.id === name));
   };
 
   const handleToggleMeasure = useEvent((ev: ChangeEvent<HTMLInputElement>) => {
-    const measureIri = ev.currentTarget.getAttribute("name");
-    if (!measureIri) {
+    const measureId = ev.currentTarget.getAttribute("name") as Measure["id"];
+
+    if (!measureId) {
       return;
     }
     setActiveMeasures((am) =>
-      am ? { ...am, [measureIri]: !am[measureIri] } : {}
+      am ? { ...am, [measureId]: !am[measureId] } : {}
     );
   });
 
@@ -227,7 +228,7 @@ const PivotTable = ({ dataset }: { dataset: (typeof datasets)[string] }) => {
   );
 
   const hierarchy = componentsData?.dataCubesComponents.dimensions.find(
-    (d) => d.iri === hierarchyDimension?.iri
+    (d) => d.id === hierarchyDimension?.id
   )?.hierarchy;
 
   const hierarchyIndexes = useMemo(() => {
@@ -246,11 +247,11 @@ const PivotTable = ({ dataset }: { dataset: (typeof datasets)[string] }) => {
       const restDimensions =
         dimensions.filter((f) => f !== pivotDimension) || [];
       const rowKey = (row: Observation) => {
-        return restDimensions.map((d) => row[d.iri]).join("/");
+        return restDimensions.map((d) => row[d.id]).join("/");
       };
       const pivotGroups = Object.values(
         groupBy(observations, (x) =>
-          restDimensions?.map((d) => x[d.iri]).join("/")
+          restDimensions?.map((d) => x[d.id]).join("/")
         )
       );
       const pivotUniqueValues = new Set<Observation[string]>();
@@ -261,19 +262,19 @@ const PivotTable = ({ dataset }: { dataset: (typeof datasets)[string] }) => {
       pivotGroups.forEach((g) => {
         // Start from values that are the same within the group
         const row = Object.fromEntries(
-          restDimensions.map((d) => [d.iri, g[0][d.iri]])
+          restDimensions.map((d) => [d.id, g[0][d.id]])
         );
 
         // Add pivoted dimensions
         for (let item of g) {
-          const pivotValueAttr = `${pivotDimension.iri}/${
-            item[pivotDimension.iri]
+          const pivotValueAttr = `${pivotDimension.id}/${
+            item[pivotDimension.id]
           }`;
           // @ts-ignore
           row[pivotValueAttr] = Object.fromEntries(
-            measures.map((m) => [m.iri, item[m.iri]])
+            measures.map((m) => [m.id, item[m.id]])
           );
-          pivotUniqueValues.add(item[pivotDimension.iri]);
+          pivotUniqueValues.add(item[pivotDimension.id]);
         }
         rowIndex.set(rowKey(row), row);
         pivotted.push(row);
@@ -283,14 +284,14 @@ const PivotTable = ({ dataset }: { dataset: (typeof datasets)[string] }) => {
       const tree: PivottedObservation[] = [];
       pivotted.forEach((row) => {
         if (hierarchyDimension && hierarchyIndexes) {
-          const hierarchyLabel = row[hierarchyDimension.iri];
+          const hierarchyLabel = row[hierarchyDimension.id];
           const hierarchyNode = hierarchyIndexes.byLabel.get(hierarchyLabel);
           const parentNode = hierarchyIndexes.parentsByIri.get(
             hierarchyNode?.value!
           );
           const parentKey = rowKey({
             ...row,
-            [hierarchyDimension.iri]: parentNode?.label,
+            [hierarchyDimension.id]: parentNode?.label,
           });
           const parentRow = rowIndex.get(parentKey);
           if (parentRow) {
@@ -325,17 +326,17 @@ const PivotTable = ({ dataset }: { dataset: (typeof datasets)[string] }) => {
       return [];
     } else if (pivotDimension) {
       const dimensionColumns: Column<Observation>[] = dimensions
-        .filter((d) => d.iri !== pivotDimension.iri)
+        .filter((d) => d.id !== pivotDimension.id)
         .sort((a) => {
-          if (a.iri === hierarchyDimension?.iri) {
+          if (a.id === hierarchyDimension?.id) {
             return 1;
           } else {
             return 0;
           }
         })
         .map((d) => ({
-          id: d.iri,
-          accessor: (x: Observation) => x[d.iri],
+          id: d.id,
+          accessor: (x: Observation) => x[d.id],
           Header: d.label,
         }));
 
@@ -343,7 +344,7 @@ const PivotTable = ({ dataset }: { dataset: (typeof datasets)[string] }) => {
         (uv) => ({
           Header: uv,
           columns: measures
-            .filter((m) => activeMeasures?.[m.iri] !== false)
+            .filter((m) => activeMeasures?.[m.id] !== false)
             .map((m) => {
               const showBars = m.label.includes("%");
               return {
@@ -358,9 +359,9 @@ const PivotTable = ({ dataset }: { dataset: (typeof datasets)[string] }) => {
                     </>
                   );
                 },
-                id: `${pivotDimension.iri}/${uv}/${m.iri}`,
+                id: `${pivotDimension.id}/${uv}/${m.id}`,
                 accessor: (x) => {
-                  return x[`${pivotDimension.iri}/${uv}`]?.[m.iri] || "";
+                  return x[`${pivotDimension.id}/${uv}`]?.[m.id] || "";
                 },
               };
             }),
@@ -368,7 +369,7 @@ const PivotTable = ({ dataset }: { dataset: (typeof datasets)[string] }) => {
       );
 
       const dimensionAndHierarchyColumns = dimensionColumns.map((d) => {
-        if (d.id === hierarchyDimension?.iri) {
+        if (d.id === hierarchyDimension?.id) {
           const col: Column<Observation> = {
             ...d,
             Cell: ({ cell, row }) => {
@@ -407,7 +408,7 @@ const PivotTable = ({ dataset }: { dataset: (typeof datasets)[string] }) => {
       const all = [...dimensions, ...measures];
       return all.map((d) => {
         return {
-          accessor: (x) => x[d.iri],
+          accessor: (x) => x[d.id],
           Header: d.label,
         };
       });
@@ -417,7 +418,7 @@ const PivotTable = ({ dataset }: { dataset: (typeof datasets)[string] }) => {
     measures,
     pivotDimension,
     pivotUniqueValues,
-    hierarchyDimension?.iri,
+    hierarchyDimension?.id,
     activeMeasures,
   ]);
 
@@ -439,7 +440,7 @@ const PivotTable = ({ dataset }: { dataset: (typeof datasets)[string] }) => {
   console.log(expandedDepth);
   useEffect(() => {
     if (!Object.keys(activeMeasures).length && measures) {
-      setActiveMeasures(Object.fromEntries(measures.map((m) => [m.iri, true])));
+      setActiveMeasures(Object.fromEntries(measures.map((m) => [m.id, true])));
     }
   }, [activeMeasures, measures]);
 
@@ -452,12 +453,12 @@ const PivotTable = ({ dataset }: { dataset: (typeof datasets)[string] }) => {
           </Typography>
           <select
             onChange={handleChangePivot}
-            value={pivotDimension?.iri || "-"}
+            value={pivotDimension?.id || "-"}
           >
             <option value="-">-</option>
             {dimensions?.map((d) => {
               return (
-                <option key={d.iri} value={d.iri}>
+                <option key={d.id} value={d.id}>
                   {d.label}
                 </option>
               );
@@ -470,12 +471,12 @@ const PivotTable = ({ dataset }: { dataset: (typeof datasets)[string] }) => {
           </Typography>
           <select
             onChange={handleChangeHierarchy}
-            value={hierarchyDimension?.iri || "-"}
+            value={hierarchyDimension?.id || "-"}
           >
             <option value="-">-</option>
             {dimensions?.map((d) => {
               return (
-                <option key={d.iri} value={d.iri}>
+                <option key={d.id} value={d.id}>
                   {d.label}
                 </option>
               );
@@ -493,15 +494,15 @@ const PivotTable = ({ dataset }: { dataset: (typeof datasets)[string] }) => {
           {measures?.map((m) => {
             return (
               <FormControlLabel
-                key={m.iri}
+                key={m.id}
                 label={m.label}
                 componentsProps={{ typography: { variant: "caption" } }}
                 control={
                   <Switch
                     size="small"
-                    checked={activeMeasures?.[m.iri]}
+                    checked={activeMeasures?.[m.id]}
                     onChange={handleToggleMeasure}
-                    name={m.iri}
+                    name={m.id}
                   />
                 }
               />
@@ -522,15 +523,15 @@ const PivotTable = ({ dataset }: { dataset: (typeof datasets)[string] }) => {
           {allDimensions?.map((d) => {
             return (
               <FormControlLabel
-                key={d.iri}
+                key={d.id}
                 label={d.label}
                 componentsProps={{ typography: { variant: "caption" } }}
                 control={
                   <Switch
                     size="small"
-                    checked={ignoredDimensions?.[d.iri]}
+                    checked={ignoredDimensions?.[d.id]}
                     onChange={handleToggleIgnoredDimension}
-                    name={d.iri}
+                    name={d.id}
                   />
                 }
               />
@@ -552,11 +553,11 @@ const PivotTable = ({ dataset }: { dataset: (typeof datasets)[string] }) => {
             </Typography>
             <Inspector data={columns} table={false} />
             <Typography variant="overline" display="block">
-              Pivotted
+              Pivoted
             </Typography>
             <Inspector data={pivotted} table={false} />
             <Typography variant="overline" display="block">
-              Pivotted tree
+              Pivoted tree
             </Typography>
             <Inspector data={tree} table={false} />
             <Typography variant="overline" display="block">

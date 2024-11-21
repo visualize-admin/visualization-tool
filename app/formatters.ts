@@ -181,7 +181,7 @@ const getDimensionFormatters = ({
         formatter = formatIdentity;
       }
 
-      return [d.iri, formatter];
+      return [d.id, formatter];
     })
   );
 };

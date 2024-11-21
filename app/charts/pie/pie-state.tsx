@@ -74,7 +74,7 @@ const usePieState = (
   // Map ordered segments to colors
   const segmentFilter = chartConfig.cubes.find(
     (d) => d.iri === segmentDimension.cubeIri
-  )?.filters[segmentDimension.iri];
+  )?.filters[segmentDimension.id];
   const { colors, allSegments, segments, ySum } = useMemo(() => {
     const colors = scaleOrdinal<string, string>();
     const measureBySegment = Object.fromEntries(
@@ -197,7 +197,7 @@ const usePieState = (
 
     const fValue = formatNumberWithUnit(
       value,
-      formatters[yMeasure.iri] ?? formatNumber,
+      formatters[yMeasure.id] ?? formatNumber,
       yMeasure.unit
     );
     const percentage = value / ySum;
@@ -252,12 +252,12 @@ const usePieState = (
         .filter((d) => !segments.includes(d))
         .map((d) => {
           return {
-            [segmentDimension!.iri]: d,
-            [yMeasure.iri]: 0,
+            [segmentDimension!.id]: d,
+            [yMeasure.id]: 0,
           } as Observation;
         })
     );
-  }, [chartData, allSegments, segmentDimension, segments, yMeasure.iri]);
+  }, [chartData, allSegments, segmentDimension, segments, yMeasure.id]);
 
   return {
     chartType: "pie",

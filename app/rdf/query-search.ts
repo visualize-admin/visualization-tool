@@ -171,6 +171,7 @@ const mkScoresQuery = (
   CONSTRUCT {
     ?iri
       a cube:Cube ;
+      schema:hasPart ?unversionedIri ;
       cube:observationConstraint ?shape ;
       dcterms:publisher ?publisher ;
       schema:about ?subthemeIri;
@@ -203,6 +204,7 @@ const mkScoresQuery = (
   } WHERE {
     SELECT
       ?iri
+      ?unversionedIri
       ?shape
       (GROUP_CONCAT(DISTINCT ?themeIri; SEPARATOR="${GROUP_SEPARATOR}") as ?themeIris)
       (GROUP_CONCAT(DISTINCT ?themeLabel; SEPARATOR="${GROUP_SEPARATOR}") as ?themeLabels)
@@ -225,6 +227,9 @@ const mkScoresQuery = (
       ?subthemeLabel
     WHERE {
       ?iri a cube:Cube .
+      OPTIONAL {
+        ?unversionedIri schema:hasPart ?iri .
+      }
       ${buildLocalizedSubQuery("iri", "schema:name", "title", {
         locale,
       })}
@@ -238,7 +243,7 @@ const mkScoresQuery = (
             const value = filter.value as TimeUnit;
             const unitNode = unitsToNode.get(value);
             if (!unitNode) {
-              throw new Error(`Invalid temporal unit used ${value}`);
+              throw Error(`Invalid temporal unit used ${value}`);
             }
 
             return `
@@ -408,6 +413,7 @@ const mkScoresQuery = (
     }
     GROUP BY
       ?iri
+      ?unversionedIri
       ?shape
       ?publisher
       ?status

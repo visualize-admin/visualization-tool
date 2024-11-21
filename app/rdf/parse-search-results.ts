@@ -2,6 +2,7 @@ import { group } from "d3-array";
 import { Quad } from "rdf-js";
 
 import { SearchCube } from "@/domain/data";
+import { stringifyComponentId } from "@/graphql/make-component-id";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import * as ns from "@/rdf/namespace";
 import { GROUP_SEPARATOR } from "@/rdf/query-utils";
@@ -36,6 +37,8 @@ function buildSearchCubes(
   for (const iri of iriList) {
     const cubeQuads = bySubjectAndPredicate.get(iri);
     if (cubeQuads) {
+      const unversionedIri =
+        cubeQuads.get(ns.schema.hasPart.value)?.[0].object.value ?? iri;
       const themeQuads = cubeQuads.get("tag:/themeIris")?.[0];
       const themeIris = themeQuads?.object.value.split(GROUP_SEPARATOR);
       const themeLabelQuads = cubeQuads.get("tag:/themeLabels")?.[0];
@@ -53,6 +56,7 @@ function buildSearchCubes(
 
       const cubeSearchCube: SearchCube = {
         iri,
+        unversionedIri,
         title: cubeQuads.get(ns.schema.name.value)?.[0].object.value ?? "",
         description:
           cubeQuads.get(ns.schema.description.value)?.[0].object.value ?? null,
@@ -103,7 +107,10 @@ function buildSearchCubes(
         dimensions: dimensions?.map((x) => {
           const dim = bySubjectAndPredicate.get(x.object.value);
           return {
-            iri: x.object.value,
+            id: stringifyComponentId({
+              unversionedCubeIri: unversionedIri,
+              unversionedComponentIri: x.object.value,
+            }),
             label: dim?.get(ns.schema.name.value)?.[0].object.value ?? "",
             timeUnit:
               dim?.get(visualizePredicates.hasTimeUnit)?.[0].object.value ?? "",

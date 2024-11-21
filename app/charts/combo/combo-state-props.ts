@@ -5,7 +5,7 @@ import { Measure, Observation } from "@/domain/data";
 
 export type BaseYGetter = {
   dimension: Measure;
-  iri: string;
+  id: string;
   label: string;
   color: string;
   getY: (d: Observation) => number | null;

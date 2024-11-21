@@ -70,7 +70,7 @@ const useComboLineDualState = (
   const { xDimension, getX, getXAsString } = variables;
   const { chartData, scalesData, timeRangeData, paddingData, allData } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
-  const xKey = fields.x.componentIri;
+  const xKey = fields.x.componentId;
   const {
     width,
     height,
@@ -132,12 +132,39 @@ const useComboLineDualState = (
         TICK_PADDING
     )
   );
+
+  const axisTitleLeft = variables.y.left.label;
+  const axisTitleRight = variables.y.right.label;
+  const axisTitleWidthLeft =
+    getTextWidth(axisTitleLeft, { fontSize: TICK_FONT_SIZE }) + TICK_PADDING;
+  const axisTitleWidthRight =
+    getTextWidth(axisTitleRight, { fontSize: TICK_FONT_SIZE }) + TICK_PADDING;
+  const overLappingTitles = axisTitleWidthLeft + axisTitleWidthRight > width;
+  const overLappingAmount = (axisTitleWidthLeft + axisTitleWidthRight) / width;
+
+  const axisTitleAdjustment =
+    (overLappingTitles
+      ? TICK_FONT_SIZE * Math.ceil(overLappingAmount)
+      : TICK_FONT_SIZE + TITLE_VPADDING) *
+      2 -
+    TICK_FONT_SIZE * 2;
+
+  const topMarginAxisTitleAdjustment = 50 + axisTitleAdjustment;
+
   const right = Math.max(maxRightTickWidth, 40);
-  const margins = getMargins({ left, right, bottom });
+
+  const margins = getMargins({
+    left,
+    right,
+    bottom,
+    top: topMarginAxisTitleAdjustment,
+  });
+  
   const bounds = useChartBounds(width, margins, height, {
     leftLabel: variables.y.left.label,
     rightLabel: variables.y.right.label,
   });
+        
   const { chartWidth, chartHeight } = bounds;
   const xScales = [xScale, xScaleTimeRange];
   const yScales = [yScale, yScaleLeft, yScaleRight];

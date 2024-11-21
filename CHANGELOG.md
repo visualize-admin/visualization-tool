@@ -11,7 +11,34 @@ You can also check the
 
 # Unreleased
 
-Nothing yet.
+- Features
+  - Allowed previewing of charts in states different than CONFIGURING_CHART
+    (iframe `/preview` page)
+- Fixes
+  - Introduced a `componentId` concept which makes the dimensions and measures
+    unique by adding an unversioned cube iri to the unversioned component iri on
+    the server-side. With this we correctly handle multiple dimensions with the
+    same iri that come from different cubes (when merging cubes)
+  - Map legend is now correctly updated (in some cases it was rendered
+    incorrectly on the initial render)
+- Performance
+  - We no longer load non-key dimensions when initializing a chart
+- Maintenance
+  - Added a way to do local visual regression testing of charts between
+    different branches
+
+# [4.9.5] - 2024-11-18
+
+- Features
+  - Added Newsletter, Bug Report and Feature Request sections to the home page
+  - Moved the datasets section to the top of the sidebar
+  - It's now possible to embed charts and get share links directly from the user
+    profile
+  - It's now possible to enable or disable single chart embed border using UI
+- Fixes
+  - visualize.admin.ch links are now again visible in chart footnotes
+  - Improved chart tooltips on small screens
+  - % mode toggle no longer overlaps with the Y axis title
 
 # [4.9.4] - 2024-11-06
 

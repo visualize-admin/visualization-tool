@@ -4,11 +4,11 @@ import { DimensionValue, Observation, ObservationValue } from "@/domain/data";
 
 export const useMaybeAbbreviations = ({
   useAbbreviations,
-  dimensionIri,
+  dimensionId,
   dimensionValues,
 }: {
   useAbbreviations: boolean | undefined;
-  dimensionIri: string | undefined;
+  dimensionId: string | undefined;
   dimensionValues: DimensionValue[] | undefined;
 }) => {
   const { valueLookup, labelLookup, abbreviationOrLabelLookup } =
@@ -42,12 +42,12 @@ export const useMaybeAbbreviations = ({
 
   const getAbbreviationOrLabelByValue = useCallback(
     (d: Observation) => {
-      if (!dimensionIri) {
+      if (!dimensionId) {
         return "";
       }
 
-      const value = d[`${dimensionIri}/__iri__`] as string | undefined;
-      const label = d[dimensionIri] as string | undefined;
+      const value = d[`${dimensionId}/__iri__`] as string | undefined;
+      const label = d[dimensionId] as string | undefined;
 
       if (value === undefined && label === undefined) {
         return "";
@@ -63,7 +63,7 @@ export const useMaybeAbbreviations = ({
         ? lookedUpObservation?.alternateName ?? lookedUpLabel
         : lookedUpLabel;
     },
-    [dimensionIri, valueLookup, labelLookup, useAbbreviations]
+    [dimensionId, valueLookup, labelLookup, useAbbreviations]
   );
 
   return {

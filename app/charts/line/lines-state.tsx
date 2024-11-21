@@ -105,7 +105,7 @@ const useLinesState = (
   const formatNumber = useFormatNumber({ decimals: "auto" });
   const timeFormatUnit = useTimeFormatUnit();
   const formatters = useChartFormatters(chartProps);
-  const xKey = xDimension.iri;
+  const xKey = xDimension.id;
 
   const segmentsByValue = useMemo(() => {
     const values = segmentDimension?.values || [];
@@ -161,9 +161,9 @@ const useLinesState = (
     .nice();
 
   // segments
-  const segmentFilter = segmentDimension?.iri
+  const segmentFilter = segmentDimension?.id
     ? chartConfig.cubes.find((d) => d.iri === segmentDimension.cubeIri)
-        ?.filters[segmentDimension.iri]
+        ?.filters[segmentDimension.id]
     : undefined;
   const { allSegments, segments } = useMemo(() => {
     const allUniqueSegments = Array.from(new Set(segmentData.map(getSegment)));
@@ -275,7 +275,7 @@ const useLinesState = (
     const yValueFormatter = (value: number | null) =>
       formatNumberWithUnit(
         value,
-        formatters[yMeasure.iri] || formatNumber,
+        formatters[yMeasure.id] ?? formatNumber,
         yMeasure.unit
       );
 

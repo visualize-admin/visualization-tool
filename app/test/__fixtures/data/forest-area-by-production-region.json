@@ -6,7 +6,7 @@
       "description": "FOREST AREA: The forest area is the total sum of all areas classified as forest according to NFI’s forest definition. The forest definition includes shrub forest. This theme is also used to assess the total area when forest and non-forest need to be distinguished. PRODUCTION REGION: Produktionsregionen der Schweiz.\nDas Merkmal wurde für alle Stichproben aus einem GIS-Datensatz bestimmt. Für das LFI zählen alle Punkte zur Landesfläche der Schweiz, für die gilt: PRODREG >0. Ob ein bestimmter Punkt zur Landesfläche der Schweiz oder zu einer bestimmten Produktionsregion gehört, kann auch davon abhängen, in welcher räumlichen Auflösung die z.B. mit Polygonen nachgebildete Grenze in einem GIS-Datensatz vorliegt. Grenzen gelten gemeinhin als feststehend. Je nach Lage im Gelände unterliegen sie jedoch den jeweiligen Klima- und Naturereignissen, sodass sich ihr Verlauf verändern kann. So sind Grenzen teilweise dynamisch definiert z.B. als die Mitte eines Flussverlaufs (z.B. Doubs), oder international nicht abschliessend festgelegt (Obersee des Bodensees). Die Gesamtlänge der Aussengrenze der Schweiz beträgt laut Landestopograpie (Stand 2014) insgesamt 1899 km. Die Werte der PRODREG sind für alle LFIs gleichermassen gültig und werden im LFI bis auf weiteres als konstant betrachtet. STAND STRUCTURE: Vertikaler Aufbau (der Schichtung) des massgebenden Bestandes innerhalb der Interpretationsfläche. Die Bestandesstruktur wird durch die Anteile der verschiedenen Schichten definiert. Die Abgrenzung der drei Schichten, Oberschicht, Mittelschicht und Unterschicht bezieht sich auf die Oberhöhe Hdom = mittlere Höhe der 100 stärksten Bäume/ha).\nDer minimale Deckungsgrad pro Schicht beträgt 20%.\n",
       "dimensions": [
         {
-          "iri": "https://environment.ld.admin.ch/foen/nfi/struk",
+          "id": "https://environment.ld.admin.ch/foen/nfi/struk",
           "label": "stand structure",
           "isNumerical": false,
           "isKeyDimension": true,
@@ -42,7 +42,7 @@
           "__typename": "NominalDimension"
         },
         {
-          "iri": "https://environment.ld.admin.ch/foen/nfi/inventory",
+          "id": "https://environment.ld.admin.ch/foen/nfi/inventory",
           "label": "Inventory",
           "isNumerical": false,
           "isKeyDimension": true,
@@ -70,7 +70,7 @@
           "__typename": "NominalDimension"
         },
         {
-          "iri": "https://environment.ld.admin.ch/foen/nfi/unitOfEvaluation",
+          "id": "https://environment.ld.admin.ch/foen/nfi/unitOfEvaluation",
           "label": "unit of evaluation",
           "isNumerical": false,
           "isKeyDimension": true,
@@ -94,7 +94,7 @@
           "__typename": "NominalDimension"
         },
         {
-          "iri": "https://environment.ld.admin.ch/foen/nfi/standardErrorForestArea",
+          "id": "https://environment.ld.admin.ch/foen/nfi/standardErrorForestArea",
           "label": "Standard error (SE) of estimate",
           "isNumerical": true,
           "isKeyDimension": false,
@@ -103,7 +103,7 @@
           "unit": "%",
           "related": [
             {
-              "iri": "https://environment.ld.admin.ch/foen/nfi/forestArea",
+              "id": "https://environment.ld.admin.ch/foen/nfi/forestArea",
               "type": "StandardError",
               "__typename": "RelatedDimension"
             }
@@ -111,7 +111,7 @@
           "__typename": "NominalDimension"
         },
         {
-          "iri": "https://environment.ld.admin.ch/foen/nfi/grid",
+          "id": "https://environment.ld.admin.ch/foen/nfi/grid",
           "label": "grid",
           "isNumerical": false,
           "isKeyDimension": true,
@@ -127,7 +127,7 @@
           "__typename": "NominalDimension"
         },
         {
-          "iri": "https://environment.ld.admin.ch/foen/nfi/evaluationType",
+          "id": "https://environment.ld.admin.ch/foen/nfi/evaluationType",
           "label": "evaluation type",
           "isNumerical": false,
           "isKeyDimension": true,
@@ -143,7 +143,7 @@
           "__typename": "NominalDimension"
         },
         {
-          "iri": "https://environment.ld.admin.ch/foen/nfi/prodreg",
+          "id": "https://environment.ld.admin.ch/foen/nfi/prodreg",
           "label": "production region",
           "isNumerical": false,
           "isKeyDimension": true,
@@ -181,7 +181,7 @@
       ],
       "measures": [
         {
-          "iri": "https://environment.ld.admin.ch/foen/nfi/forestArea",
+          "id": "https://environment.ld.admin.ch/foen/nfi/forestArea",
           "label": "forest area",
           "isNumerical": true,
           "isKeyDimension": false,

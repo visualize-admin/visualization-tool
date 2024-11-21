@@ -178,7 +178,7 @@ const createContextContent = async ({
       get(target, prop, receiver) {
         if (prop === "sparqlClient" || prop === "sparqlClientStream") {
           if (!sourceUrl) {
-            throw new Error(
+            throw Error(
               'To use sparqlClient or sparqlClientStream from the GraphQL context, your query must have a "sourceUrl" variable'
             );
           }

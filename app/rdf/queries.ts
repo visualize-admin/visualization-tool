@@ -1,6 +1,7 @@
 import { ascending, index } from "d3-array";
 import { Maybe } from "graphql-tools";
 import keyBy from "lodash/keyBy";
+import mapKeys from "lodash/mapKeys";
 import { CubeDimension, Filter, LookupSource, View } from "rdf-cube-view-query";
 import rdf from "rdf-ext";
 import { Literal, NamedNode } from "rdf-js";
@@ -16,6 +17,11 @@ import {
 } from "@/domain/data";
 import { isMostRecentValue } from "@/domain/most-recent-value";
 import { PromiseValue, truthy } from "@/domain/types";
+import {
+  ComponentId,
+  parseComponentId,
+  stringifyComponentId,
+} from "@/graphql/make-component-id";
 import { resolveDimensionType } from "@/graphql/resolvers";
 import {
   ResolvedDimension,
@@ -25,6 +31,7 @@ import { createSource, pragmas } from "@/rdf/create-source";
 import { ExtendedCube } from "@/rdf/extended-cube";
 import * as ns from "@/rdf/namespace";
 import { parseCubeDimension, parseRelatedDimensions } from "@/rdf/parse";
+import { queryCubeUnversionedIri } from "@/rdf/query-cube-unversioned-iri";
 import {
   loadDimensionsValuesWithMetadata,
   loadMaxDimensionValue,
@@ -65,11 +72,11 @@ export const getCubeDimensions = async ({
       .filter(isObservationDimension)
       .filter((d) => {
         if (componentIris) {
+          const iri = d.path?.value;
+
           return (
-            componentIris.includes(d.path.value) ||
-            parseRelatedDimensions(d).some((r) =>
-              componentIris?.includes(r.iri)
-            )
+            componentIris.includes(iri) ||
+            parseRelatedDimensions(d).some((r) => componentIris.includes(r.iri))
           );
         }
 
@@ -248,7 +255,7 @@ const getMinMaxDimensionValues = async (
   if (cube.term && dimension.path) {
     const result = await loadMinMaxDimensionValues({
       datasetIri: cube.term.value,
-      dimensionIri: dimension.path,
+      dimensionIri: dimension.path.value,
       sparqlClient,
       cache,
     });
@@ -286,6 +293,7 @@ const getRegularDimensionsValues = async (
   // `cube` and `locale` are the same for all dimensions
   const { cube, locale } = resolvedDimensions[0];
   const cubeIri = cube.term?.value!;
+
   return await loadDimensionsValuesWithMetadata(cubeIri, {
     dimensionIris: resolvedDimensions.map((d) => d.data.iri),
     cubeDimensions: cube.dimensions,
@@ -342,13 +350,18 @@ export const getCubeObservations = async ({
   componentIris?: Maybe<string[]>;
   cache: LRUCache | undefined;
 }): Promise<ResolvedObservationsQuery["data"]> => {
+  const cubeIri = cube.term?.value!;
   const cubeView = View.fromCube(cube, false);
-  const allResolvedDimensions = await getCubeDimensions({
-    cube,
-    locale,
-    sparqlClient,
-    cache,
-  });
+  const [unversionedCubeIri = cubeIri, allResolvedDimensions] =
+    await Promise.all([
+      queryCubeUnversionedIri(sparqlClient, cubeIri),
+      getCubeDimensions({
+        cube,
+        locale,
+        sparqlClient,
+        cache,
+      }),
+    ]);
   const resolvedDimensions = allResolvedDimensions.filter((d) => {
     if (componentIris) {
       return (
@@ -365,7 +378,7 @@ export const getCubeObservations = async ({
   const serverFilters: Record<string, FilterValueMulti> = {};
   let dbFilters: typeof filters = {};
 
-  for (const [k, v] of Object.entries(filters || {})) {
+  for (const [k, v] of Object.entries(filters ?? {})) {
     if (v.type !== "multi") {
       dbFilters[k] = v;
     } else {
@@ -469,7 +482,17 @@ export const getCubeObservations = async ({
     }
   }
 
-  return { query, observations };
+  return {
+    query,
+    observations: observations.map((obs) =>
+      mapKeys(obs, (_, iri) =>
+        stringifyComponentId({
+          unversionedCubeIri,
+          unversionedComponentIri: iri,
+        })
+      )
+    ),
+  };
 };
 
 const makeServerFilter = (filters: Record<string, FilterValueMulti>) => {
@@ -597,7 +620,10 @@ const buildFilters = async ({
   lookupSource.queryPrefix = pragmas;
 
   return await Promise.all(
-    Object.entries(filters).flatMap(async ([iri, filter]) => {
+    Object.entries(filters).flatMap(async ([filterComponentId, filter]) => {
+      const iri =
+        parseComponentId(filterComponentId as ComponentId)
+          .unversionedComponentIri ?? filterComponentId;
       const cubeDimension = cube.dimensions.find((d) => d.path?.value === iri);
 
       if (!cubeDimension) {
@@ -644,7 +670,7 @@ const buildFilters = async ({
       );
 
       if (ns.rdf.langString.value === dataType) {
-        throw new Error(
+        throw Error(
           `Dimension <${iri}> has dataType 'langString', which is not supported by Visualize. In order to fix it, change the dataType to 'string' in the cube definition.`
         );
       }
@@ -769,7 +795,7 @@ async function fetchViewObservations({
       : observationsView.observations({ disableDistinct }));
   } catch (e) {
     console.warn("Observations query failed!", query);
-    throw new Error(
+    throw Error(
       `Could not retrieve data: ${e instanceof Error ? e.message : e}`
     );
   }

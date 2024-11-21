@@ -1,7 +1,7 @@
 import { Trans } from "@lingui/macro";
 import { FormControlLabel, Switch, Tooltip, Typography } from "@mui/material";
 
-import { getFieldComponentIri } from "@/charts";
+import { getFieldComponentId } from "@/charts";
 import { ANIMATION_FIELD_SPEC } from "@/charts/chart-config-ui-options";
 import {
   ConfiguratorStateConfiguringChart,
@@ -48,7 +48,7 @@ export const InteractiveFiltersConfigurator = ({
     const allComponents = [...dimensions, ...measures];
 
     const animationComponent = allComponents.find(
-      (d) => d.iri === getFieldComponentIri(fields, "animation")
+      (d) => d.id === getFieldComponentId(fields, "animation")
     );
     const canFilterAnimation = isAnimationInConfig(chartConfig);
 

@@ -41,6 +41,7 @@ import { useFormatFullDateAuto } from "@/formatters";
 import { TimeUnit } from "@/graphql/resolver-types";
 import { getTimeInterval } from "@/intervals";
 import { getTextWidth } from "@/utils/get-text-width";
+import { useAxisTitleAdjustments } from "@/utils/use-axis-title-adjustments";
 import { useIsMobile } from "@/utils/use-is-mobile";
 
 import { ChartProps } from "../shared/ChartProps";
@@ -74,7 +75,7 @@ const useComboLineColumnState = (
   const { getX, getXAsDate } = variables;
   const { chartData, scalesData, timeRangeData, paddingData, allData } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
-  const xKey = fields.x.componentIri;
+  const xKey = fields.x.componentId;
   const {
     width,
     height,
@@ -147,8 +148,20 @@ const useComboLineColumnState = (
         TICK_PADDING
     )
   );
+
+  const { topMarginAxisTitleAdjustment } = useAxisTitleAdjustments({
+    leftAxisTitle: variables.y.left.label,
+    rightAxisTitle: variables.y.right.label,
+    containerWidth: width,
+  });
+
   const right = Math.max(maxRightTickWidth, 40);
-  const margins = getMargins({ left, right, bottom });
+  const margins = getMargins({
+    left,
+    right,
+    bottom,
+    top: topMarginAxisTitleAdjustment,
+  });
   const bounds = useChartBounds(width, margins, height);
   const { chartWidth, chartHeight } = bounds;
   const xScales = [xScale, xScaleTime, xScaleTimeRange];

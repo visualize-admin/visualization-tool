@@ -24,7 +24,7 @@ const ChartPie = memo((props: ChartProps<PieConfig>) => {
   const { chartConfig, observations, dimensions } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
   const somePositive = observations.some(
-    (d) => (d[fields?.y?.componentIri] as number) > 0
+    (d) => (d[fields?.y?.componentId] as number) > 0
   );
   const filters = useChartConfigFilters(chartConfig);
 

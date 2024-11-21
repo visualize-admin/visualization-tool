@@ -7,7 +7,7 @@
       "publicationStatus": "PUBLISHED",
       "dimensions": [
         {
-          "iri": "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/date",
+          "id": "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/date",
           "label": "Date",
           "isNumerical": false,
           "isKeyDimension": true,
@@ -1376,7 +1376,7 @@
           "__typename": "TemporalDimension"
         },
         {
-          "iri": "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/georegion",
+          "id": "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/georegion",
           "label": "Canton",
           "isNumerical": false,
           "isKeyDimension": true,
@@ -1491,7 +1491,7 @@
           "__typename": "GeoShapesDimension"
         },
         {
-          "iri": "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/pop",
+          "id": "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/pop",
           "label": "Population",
           "isNumerical": true,
           "isKeyDimension": false,
@@ -1510,7 +1510,7 @@
           "__typename": "NominalDimension"
         },
         {
-          "iri": "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/type",
+          "id": "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/type",
           "label": "Type",
           "isNumerical": false,
           "isKeyDimension": true,
@@ -1535,7 +1535,7 @@
       ],
       "measures": [
         {
-          "iri": "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/entries",
+          "id": "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/entries",
           "label": "Vaccinations",
           "isNumerical": true,
           "isKeyDimension": false,
@@ -1554,7 +1554,7 @@
           "__typename": "NumericalMeasure"
         },
         {
-          "iri": "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/sumtotal",
+          "id": "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/sumtotal",
           "label": "Sum",
           "isNumerical": true,
           "isKeyDimension": false,
@@ -1573,7 +1573,7 @@
           "__typename": "NumericalMeasure"
         },
         {
-          "iri": "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/mean7d",
+          "id": "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/mean7d",
           "label": "Rolling 7 day average",
           "isNumerical": true,
           "isKeyDimension": false,

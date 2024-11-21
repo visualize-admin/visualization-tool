@@ -10,6 +10,7 @@ import { GROUP_SEPARATOR, buildLocalizedSubQuery } from "@/rdf/query-utils";
 
 type RawDataCubeMetadata = {
   iri: NamedNode;
+  unversionedIri: NamedNode;
   identifier: NamedNode;
   title: Literal;
   description: Literal;
@@ -21,7 +22,6 @@ type RawDataCubeMetadata = {
   themeLabels: Literal;
   creatorIri: NamedNode;
   creatorLabel: Literal;
-  versionHistory: NamedNode;
   contactPointEmail: Literal;
   contactPointName: Literal;
   publisher: NamedNode;
@@ -36,6 +36,7 @@ const parseRawMetadata = (cube: RawDataCubeMetadata): DataCubeMetadata => {
 
   return {
     iri: cube.iri.value,
+    unversionedIri: cube.unversionedIri?.value,
     identifier: cube.identifier?.value,
     title: cube.title.value,
     description: cube.description?.value,
@@ -58,7 +59,6 @@ const parseRawMetadata = (cube: RawDataCubeMetadata): DataCubeMetadata => {
       cube.creatorIri && cube.creatorLabel
         ? { iri: cube.creatorIri.value, label: cube.creatorLabel.value }
         : undefined,
-    versionHistory: cube.versionHistory?.value,
     contactPoint: {
       email: cube.contactPointEmail?.value,
       name: cube.contactPointName?.value,
@@ -75,7 +75,7 @@ export const getCubeMetadata = async (
   { locale, sparqlClient }: { locale: string; sparqlClient: ParsingClient }
 ): Promise<DataCubeMetadata> => {
   const query = SELECT`
-    ?iri ?identifier ?title ?description ?version ?datePublished ?dateModified ?status ?creatorIri ?creatorLabel ?versionHistory ?contactPointName ?contactPointEmail ?publisher ?landingPage ?expires
+    ?iri ?identifier ?title ?description ?version ?datePublished ?dateModified ?status ?creatorIri ?creatorLabel ?unversionedIri ?contactPointName ?contactPointEmail ?publisher ?landingPage ?expires
     (GROUP_CONCAT(DISTINCT ?themeIri; SEPARATOR="${GROUP_SEPARATOR}") AS ?themeIris) (GROUP_CONCAT(DISTINCT ?themeLabel; SEPARATOR="${GROUP_SEPARATOR}") AS ?themeLabels)
     (GROUP_CONCAT(DISTINCT ?subthemeIri; SEPARATOR="${GROUP_SEPARATOR}") AS ?subthemeIris) (GROUP_CONCAT(DISTINCT ?subthemeLabel; SEPARATOR="${GROUP_SEPARATOR}") AS ?subthemeLabels)
     (GROUP_CONCAT(DISTINCT ?workExample; SEPARATOR="${GROUP_SEPARATOR}") AS ?workExamples)
@@ -119,7 +119,7 @@ export const getCubeMetadata = async (
         })}
       }
     }
-    OPTIONAL { ?versionHistory ${ns.schema.hasPart} ?iri . }
+    OPTIONAL { ?unversionedIri ${ns.schema.hasPart} ?iri . }
     OPTIONAL {
       ?iri ${ns.dcat.contactPoint} ?contactPoint .
       ?contactPoint ${ns.vcard.fn} ?contactPointName .
@@ -135,7 +135,7 @@ export const getCubeMetadata = async (
   `.GROUP().BY`?iri`.THEN.BY`?identifier`.THEN.BY`?title`.THEN.BY`?description`
     .THEN.BY`?version`.THEN.BY`?datePublished`.THEN.BY`?dateModified`.THEN
     .BY`?status`.THEN.BY`?creatorIri`.THEN.BY`?creatorLabel`.THEN
-    .BY`?versionHistory`.THEN.BY`?contactPointName`.THEN.BY`?contactPointEmail`
+    .BY`?unversionedIri`.THEN.BY`?contactPointName`.THEN.BY`?contactPointEmail`
     .THEN.BY`?publisher`.THEN.BY`?landingPage`.THEN.BY`?expires`
     .prologue`${pragmas}`;
 
@@ -144,11 +144,11 @@ export const getCubeMetadata = async (
   })) as RawDataCubeMetadata[];
 
   if (results.length === 0) {
-    throw new Error(`No cube found for ${iri}!`);
+    throw Error(`No cube found for ${iri}!`);
   }
 
   if (results.length > 1) {
-    throw new Error(`Multiple cubes found for ${iri}!`);
+    throw Error(`Multiple cubes found for ${iri}!`);
   }
 
   const result = results[0];

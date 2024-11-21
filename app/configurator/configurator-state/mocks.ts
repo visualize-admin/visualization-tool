@@ -5,11 +5,12 @@ import {
   ConfiguratorStateConfiguringChart,
 } from "@/configurator";
 import { Dimension, Measure } from "@/domain/data";
+import { stringifyComponentId } from "@/graphql/make-component-id";
 import { ScaleType, TimeUnit } from "@/graphql/resolver-types";
 import {
   CHART_CONFIG_VERSION,
   CONFIGURATOR_STATE_VERSION,
-} from "@/utils/chart-config/versioning";
+} from "@/utils/chart-config/constants";
 
 export const configStateMock = {
   map: {
@@ -35,19 +36,13 @@ export const configStateMock = {
           { chartType: "map" }
         >["baseLayer"],
         activeField: "",
-        cubes: [
-          {
-            iri: "https://first-dataset",
-            publishIri: "https://first-dataset",
-            filters: {},
-          },
-        ],
+        cubes: [{ iri: "https://first-dataset", filters: {} }],
         fields: {
           areaLayer: {
-            componentIri: "year-period-1",
+            componentId: "year-period-1",
             color: {
               type: "categorical",
-              componentIri: "year-period-1",
+              componentId: "year-period-1",
               palette: "dimension",
               colorMapping: {
                 red: "green",
@@ -71,13 +66,13 @@ export const configStateMock = {
         },
       },
       dataFilters: {
-        componentIris: [],
+        componentIds: [],
         filters: {},
       },
     },
   },
   groupedColumnChart: {
-    version: "3.1.0",
+    version: CONFIGURATOR_STATE_VERSION,
     state: "CONFIGURING_CHART",
     dataSource: {
       type: "sparql",
@@ -110,7 +105,7 @@ export const configStateMock = {
     chartConfigs: [
       {
         key: "2of7iJAjccuj",
-        version: CONFIGURATOR_STATE_VERSION,
+        version: CHART_CONFIG_VERSION,
         meta: {
           title: {
             en: "",
@@ -134,8 +129,6 @@ export const configStateMock = {
         cubes: [
           {
             iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/2",
-            publishIri:
-              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/2",
             filters: {},
           },
         ],
@@ -143,11 +136,11 @@ export const configStateMock = {
         interactiveFiltersConfig: {
           legend: {
             active: false,
-            componentIri: "",
+            componentId: "",
           },
           timeRange: {
             active: false,
-            componentIri:
+            componentId:
               "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
             presets: {
               type: "range",
@@ -157,7 +150,7 @@ export const configStateMock = {
           },
           dataFilters: {
             active: false,
-            componentIris: [],
+            componentIds: [],
           },
           calculation: {
             active: false,
@@ -166,7 +159,7 @@ export const configStateMock = {
         },
         fields: {
           x: {
-            componentIri:
+            componentId:
               "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
             sorting: {
               sortingType: "byAuto",
@@ -174,11 +167,11 @@ export const configStateMock = {
             },
           },
           y: {
-            componentIri:
+            componentId:
               "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/anzahlanlagen",
           },
           segment: {
-            componentIri:
+            componentId:
               "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton",
             palette: "category10",
             sorting: {
@@ -230,7 +223,7 @@ export const configStateMock = {
         },
       },
       dataFilters: {
-        componentIris: [],
+        componentIds: [],
         filters: {},
       },
     },
@@ -244,7 +237,12 @@ export const groupedColumnChartDimensions: Dimension[] = [
     timeUnit: TimeUnit.Year,
     cubeIri:
       "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/2",
-    iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
+    id: stringifyComponentId({
+      unversionedCubeIri:
+        "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen",
+      unversionedComponentIri:
+        "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
+    }),
     label: "Jahr",
     description: "Jahr",
     unit: "yr",
@@ -269,7 +267,12 @@ export const groupedColumnChartDimensions: Dimension[] = [
     __typename: "GeoShapesDimension",
     cubeIri:
       "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/2",
-    iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton",
+    id: stringifyComponentId({
+      unversionedCubeIri:
+        "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen",
+      unversionedComponentIri:
+        "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton",
+    }),
     label: "Kanton",
     description: "Kanton",
     scaleType: ScaleType.Nominal,
@@ -497,7 +500,12 @@ export const groupedColumnChartMeasures: Measure[] = [
     isDecimal: false,
     cubeIri:
       "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/2",
-    iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/anzahlanlagen",
+    id: stringifyComponentId({
+      unversionedCubeIri:
+        "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen",
+      unversionedComponentIri:
+        "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/anzahlanlagen",
+    }),
     label: "Anzahl Anlagen",
     description: "Anzahl Anlagen pro Jahr",
     scaleType: ScaleType.Ratio,
@@ -685,7 +693,12 @@ export const groupedColumnChartMeasures: Measure[] = [
     isDecimal: false,
     cubeIri:
       "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/2",
-    iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/installierteleistungKw",
+    id: stringifyComponentId({
+      unversionedCubeIri:
+        "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen",
+      unversionedComponentIri:
+        "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/installierteleistungKw",
+    }),
     label: "Installierte Leistung Kw",
     description: "Installierte Leistung in Kw",
     unit: "kW",
@@ -902,7 +915,12 @@ export const groupedColumnChartMeasures: Measure[] = [
     isDecimal: false,
     cubeIri:
       "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/2",
-    iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/verguetungchf",
+    id: stringifyComponentId({
+      unversionedCubeIri:
+        "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen",
+      unversionedComponentIri:
+        "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/verguetungchf",
+    }),
     label: "Vergütung",
     description: "Vergütung in CHF",
     scaleType: ScaleType.Ratio,
@@ -1122,7 +1140,7 @@ export const configJoinedCubes: Partial<
 > = {
   table: {
     key: "NF9PKwRtOaOI",
-    version: "3.1.0",
+    version: CHART_CONFIG_VERSION,
     activeField: undefined,
     interactiveFiltersConfig: undefined,
     meta: {
@@ -1133,42 +1151,75 @@ export const configJoinedCubes: Partial<
     cubes: [
       {
         iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9",
-        publishIri:
-          "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9",
         filters: {
-          "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr":
-            { type: "single", value: "2020" },
+          [stringifyComponentId({
+            unversionedCubeIri:
+              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen",
+            unversionedComponentIri:
+              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
+          })]: { type: "single", value: "2020" },
         },
         joinBy: [
-          "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
-          "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton",
+          stringifyComponentId({
+            unversionedCubeIri:
+              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen",
+            unversionedComponentIri:
+              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
+          }),
+          stringifyComponentId({
+            unversionedCubeIri:
+              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen",
+            unversionedComponentIri:
+              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton",
+          }),
         ],
       },
       {
         iri: "https://energy.ld.admin.ch/elcom/electricityprice-canton",
-        publishIri: "https://energy.ld.admin.ch/elcom/electricityprice-canton",
         filters: {
-          "https://energy.ld.admin.ch/elcom/electricityprice/dimension/period":
-            {
-              type: "single",
-              value: "2020",
-            },
-          "https://energy.ld.admin.ch/elcom/electricityprice/dimension/category":
-            {
-              type: "single",
-              value:
-                "https://energy.ld.admin.ch/elcom/electricityprice/category/C1",
-            },
-          "https://energy.ld.admin.ch/elcom/electricityprice/dimension/product":
-            {
-              type: "single",
-              value:
-                "https://energy.ld.admin.ch/elcom/electricityprice/product/cheapest",
-            },
+          [stringifyComponentId({
+            unversionedCubeIri:
+              "https://energy.ld.admin.ch/elcom/electricityprice-canton",
+            unversionedComponentIri:
+              "https://energy.ld.admin.ch/elcom/electricityprice/dimension/period",
+          })]: {
+            type: "single",
+            value: "2020",
+          },
+          [stringifyComponentId({
+            unversionedCubeIri:
+              "https://energy.ld.admin.ch/elcom/electricityprice-canton",
+            unversionedComponentIri:
+              "https://energy.ld.admin.ch/elcom/electricityprice/dimension/category",
+          })]: {
+            type: "single",
+            value:
+              "https://energy.ld.admin.ch/elcom/electricityprice/category/C1",
+          },
+          [stringifyComponentId({
+            unversionedCubeIri:
+              "https://energy.ld.admin.ch/elcom/electricityprice-canton",
+            unversionedComponentIri:
+              "https://energy.ld.admin.ch/elcom/electricityprice/dimension/product",
+          })]: {
+            type: "single",
+            value:
+              "https://energy.ld.admin.ch/elcom/electricityprice/product/cheapest",
+          },
         },
         joinBy: [
-          "https://energy.ld.admin.ch/elcom/electricityprice/dimension/period",
-          "https://energy.ld.admin.ch/elcom/electricityprice/dimension/canton",
+          stringifyComponentId({
+            unversionedCubeIri:
+              "https://energy.ld.admin.ch/elcom/electricityprice-canton",
+            unversionedComponentIri:
+              "https://energy.ld.admin.ch/elcom/electricityprice/dimension/period",
+          }),
+          stringifyComponentId({
+            unversionedCubeIri:
+              "https://energy.ld.admin.ch/elcom/electricityprice-canton",
+            unversionedComponentIri:
+              "https://energy.ld.admin.ch/elcom/electricityprice/dimension/canton",
+          }),
         ],
       },
     ],
@@ -1177,7 +1228,7 @@ export const configJoinedCubes: Partial<
     sorting: [],
     fields: {
       joinBy__0: {
-        componentIri: "joinBy__0",
+        componentId: "joinBy__0",
         componentType: "TemporalDimension",
         index: 0,
         isGroup: false,
@@ -1190,7 +1241,7 @@ export const configJoinedCubes: Partial<
         },
       },
       joinBy__1: {
-        componentIri: "joinBy__1",
+        componentId: "joinBy__1",
         componentType: "GeoShapesDimension",
         index: 1,
         isGroup: false,
@@ -1202,84 +1253,133 @@ export const configJoinedCubes: Partial<
           columnColor: "#fff",
         },
       },
-      "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/AnzahlAnlagen":
-        {
-          componentIri:
+      [stringifyComponentId({
+        unversionedCubeIri:
+          "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen",
+        unversionedComponentIri:
+          "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/AnzahlAnlagen",
+      })]: {
+        componentId: stringifyComponentId({
+          unversionedCubeIri:
+            "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen",
+          unversionedComponentIri:
             "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/AnzahlAnlagen",
-          componentType: "NumericalMeasure",
-          index: 2,
-          isGroup: false,
-          isHidden: false,
-          columnStyle: {
-            textStyle: "regular",
-            type: "text",
-            textColor: "#000",
-            columnColor: "#fff",
-          },
+        }),
+        componentType: "NumericalMeasure",
+        index: 2,
+        isGroup: false,
+        isHidden: false,
+        columnStyle: {
+          textStyle: "regular",
+          type: "text",
+          textColor: "#000",
+          columnColor: "#fff",
         },
-      "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/InstallierteLeistungkW":
-        {
-          componentIri:
+      },
+      [stringifyComponentId({
+        unversionedCubeIri:
+          "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen",
+        unversionedComponentIri:
+          "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/InstallierteLeistungkW",
+      })]: {
+        componentId: stringifyComponentId({
+          unversionedCubeIri:
+            "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen",
+          unversionedComponentIri:
             "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/InstallierteLeistungkW",
-          componentType: "NumericalMeasure",
-          index: 3,
-          isGroup: false,
-          isHidden: false,
-          columnStyle: {
-            textStyle: "regular",
-            type: "text",
-            textColor: "#000",
-            columnColor: "#fff",
-          },
+        }),
+        componentType: "NumericalMeasure",
+        index: 3,
+        isGroup: false,
+        isHidden: false,
+        columnStyle: {
+          textStyle: "regular",
+          type: "text",
+          textColor: "#000",
+          columnColor: "#fff",
         },
-      "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/VerguetungCHF":
-        {
-          componentIri:
+      },
+      [stringifyComponentId({
+        unversionedCubeIri:
+          "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen",
+        unversionedComponentIri:
+          "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/VerguetungCHF",
+      })]: {
+        componentId: stringifyComponentId({
+          unversionedCubeIri:
+            "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen",
+          unversionedComponentIri:
             "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/VerguetungCHF",
-          componentType: "NumericalMeasure",
-          index: 4,
-          isGroup: false,
-          isHidden: false,
-          columnStyle: {
-            textStyle: "regular",
-            type: "text",
-            textColor: "#000",
-            columnColor: "#fff",
-          },
+        }),
+        componentType: "NumericalMeasure",
+        index: 4,
+        isGroup: false,
+        isHidden: false,
+        columnStyle: {
+          textStyle: "regular",
+          type: "text",
+          textColor: "#000",
+          columnColor: "#fff",
         },
-      "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/AnzahlAnlagenPro100000Einwohner":
-        {
-          componentIri:
+      },
+      [stringifyComponentId({
+        unversionedCubeIri:
+          "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen",
+        unversionedComponentIri:
+          "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/AnzahlAnlagenPro100000Einwohner",
+      })]: {
+        componentId: stringifyComponentId({
+          unversionedCubeIri:
+            "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen",
+          unversionedComponentIri:
             "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/AnzahlAnlagenPro100000Einwohner",
-          componentType: "NumericalMeasure",
-          index: 5,
-          isGroup: false,
-          isHidden: false,
-          columnStyle: {
-            textStyle: "regular",
-            type: "text",
-            textColor: "#000",
-            columnColor: "#fff",
-          },
+        }),
+        componentType: "NumericalMeasure",
+        index: 5,
+        isGroup: false,
+        isHidden: false,
+        columnStyle: {
+          textStyle: "regular",
+          type: "text",
+          textColor: "#000",
+          columnColor: "#fff",
         },
-      "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/InstallierteLeistungkWPro100000Einwohner":
-        {
-          componentIri:
+      },
+      [stringifyComponentId({
+        unversionedCubeIri:
+          "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen",
+        unversionedComponentIri:
+          "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/InstallierteLeistungkWPro100000Einwohner",
+      })]: {
+        componentId: stringifyComponentId({
+          unversionedCubeIri:
+            "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen",
+          unversionedComponentIri:
             "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/InstallierteLeistungkWPro100000Einwohner",
-          componentType: "NumericalMeasure",
-          index: 6,
-          isGroup: false,
-          isHidden: false,
-          columnStyle: {
-            textStyle: "regular",
-            type: "text",
-            textColor: "#000",
-            columnColor: "#fff",
-          },
+        }),
+        componentType: "NumericalMeasure",
+        index: 6,
+        isGroup: false,
+        isHidden: false,
+        columnStyle: {
+          textStyle: "regular",
+          type: "text",
+          textColor: "#000",
+          columnColor: "#fff",
         },
-      "https://energy.ld.admin.ch/elcom/electricityprice/dimension/category": {
-        componentIri:
+      },
+      [stringifyComponentId({
+        unversionedCubeIri:
+          "https://energy.ld.admin.ch/elcom/electricityprice-canton",
+        unversionedComponentIri:
           "https://energy.ld.admin.ch/elcom/electricityprice/dimension/category",
+      })]: {
+        componentId: stringifyComponentId({
+          unversionedCubeIri:
+            "https://energy.ld.admin.ch/elcom/electricityprice-canton",
+          unversionedComponentIri:
+            "https://energy.ld.admin.ch/elcom/electricityprice/dimension/category",
+        }),
         componentType: "NominalDimension",
         index: 7,
         isGroup: false,
@@ -1291,9 +1391,18 @@ export const configJoinedCubes: Partial<
           columnColor: "#fff",
         },
       },
-      "https://energy.ld.admin.ch/elcom/electricityprice/dimension/product": {
-        componentIri:
+      [stringifyComponentId({
+        unversionedCubeIri:
+          "https://energy.ld.admin.ch/elcom/electricityprice-canton",
+        unversionedComponentIri:
           "https://energy.ld.admin.ch/elcom/electricityprice/dimension/product",
+      })]: {
+        componentId: stringifyComponentId({
+          unversionedCubeIri:
+            "https://energy.ld.admin.ch/elcom/electricityprice-canton",
+          unversionedComponentIri:
+            "https://energy.ld.admin.ch/elcom/electricityprice/dimension/product",
+        }),
         componentType: "NominalDimension",
         index: 8,
         isGroup: false,
@@ -1305,9 +1414,18 @@ export const configJoinedCubes: Partial<
           columnColor: "#fff",
         },
       },
-      "https://energy.ld.admin.ch/elcom/electricityprice/dimension/total": {
-        componentIri:
+      [stringifyComponentId({
+        unversionedCubeIri:
+          "https://energy.ld.admin.ch/elcom/electricityprice-canton",
+        unversionedComponentIri:
           "https://energy.ld.admin.ch/elcom/electricityprice/dimension/total",
+      })]: {
+        componentId: stringifyComponentId({
+          unversionedCubeIri:
+            "https://energy.ld.admin.ch/elcom/electricityprice-canton",
+          unversionedComponentIri:
+            "https://energy.ld.admin.ch/elcom/electricityprice/dimension/total",
+        }),
         componentType: "NumericalMeasure",
         index: 9,
         isGroup: false,
@@ -1319,9 +1437,18 @@ export const configJoinedCubes: Partial<
           columnColor: "#fff",
         },
       },
-      "https://energy.ld.admin.ch/elcom/electricityprice/dimension/gridusage": {
-        componentIri:
+      [stringifyComponentId({
+        unversionedCubeIri:
+          "https://energy.ld.admin.ch/elcom/electricityprice-canton",
+        unversionedComponentIri:
           "https://energy.ld.admin.ch/elcom/electricityprice/dimension/gridusage",
+      })]: {
+        componentId: stringifyComponentId({
+          unversionedCubeIri:
+            "https://energy.ld.admin.ch/elcom/electricityprice-canton",
+          unversionedComponentIri:
+            "https://energy.ld.admin.ch/elcom/electricityprice/dimension/gridusage",
+        }),
         componentType: "NumericalMeasure",
         index: 10,
         isGroup: false,
@@ -1333,9 +1460,18 @@ export const configJoinedCubes: Partial<
           columnColor: "#fff",
         },
       },
-      "https://energy.ld.admin.ch/elcom/electricityprice/dimension/energy": {
-        componentIri:
+      [stringifyComponentId({
+        unversionedCubeIri:
+          "https://energy.ld.admin.ch/elcom/electricityprice-canton",
+        unversionedComponentIri:
           "https://energy.ld.admin.ch/elcom/electricityprice/dimension/energy",
+      })]: {
+        componentId: stringifyComponentId({
+          unversionedCubeIri:
+            "https://energy.ld.admin.ch/elcom/electricityprice-canton",
+          unversionedComponentIri:
+            "https://energy.ld.admin.ch/elcom/electricityprice/dimension/energy",
+        }),
         componentType: "NumericalMeasure",
         index: 11,
         isGroup: false,
@@ -1347,9 +1483,18 @@ export const configJoinedCubes: Partial<
           columnColor: "#fff",
         },
       },
-      "https://energy.ld.admin.ch/elcom/electricityprice/dimension/charge": {
-        componentIri:
+      [stringifyComponentId({
+        unversionedCubeIri:
+          "https://energy.ld.admin.ch/elcom/electricityprice-canton",
+        unversionedComponentIri:
           "https://energy.ld.admin.ch/elcom/electricityprice/dimension/charge",
+      })]: {
+        componentId: stringifyComponentId({
+          unversionedCubeIri:
+            "https://energy.ld.admin.ch/elcom/electricityprice-canton",
+          unversionedComponentIri:
+            "https://energy.ld.admin.ch/elcom/electricityprice/dimension/charge",
+        }),
         componentType: "NumericalMeasure",
         index: 12,
         isGroup: false,
@@ -1361,9 +1506,18 @@ export const configJoinedCubes: Partial<
           columnColor: "#fff",
         },
       },
-      "https://energy.ld.admin.ch/elcom/electricityprice/dimension/aidfee": {
-        componentIri:
+      [stringifyComponentId({
+        unversionedCubeIri:
+          "https://energy.ld.admin.ch/elcom/electricityprice-canton",
+        unversionedComponentIri:
           "https://energy.ld.admin.ch/elcom/electricityprice/dimension/aidfee",
+      })]: {
+        componentId: stringifyComponentId({
+          unversionedCubeIri:
+            "https://energy.ld.admin.ch/elcom/electricityprice-canton",
+          unversionedComponentIri:
+            "https://energy.ld.admin.ch/elcom/electricityprice/dimension/aidfee",
+        }),
         componentType: "NumericalMeasure",
         index: 13,
         isGroup: false,
@@ -1380,7 +1534,7 @@ export const configJoinedCubes: Partial<
   pie: {
     activeField: undefined,
     key: "ydBHrv26xvUg",
-    version: "3.1.0",
+    version: CHART_CONFIG_VERSION,
     meta: {
       title: { en: "", de: "", fr: "", it: "" },
       description: { en: "", de: "", fr: "", it: "" },
@@ -1389,55 +1543,89 @@ export const configJoinedCubes: Partial<
     cubes: [
       {
         iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9",
-        publishIri: "https://energy.ld.admin.ch/elcom/electricityprice-canton",
         filters: {},
         joinBy: [
-          "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
-          "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton",
+          stringifyComponentId({
+            unversionedCubeIri:
+              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen",
+            unversionedComponentIri:
+              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
+          }),
+          stringifyComponentId({
+            unversionedCubeIri:
+              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen",
+            unversionedComponentIri:
+              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton",
+          }),
         ],
       },
       {
         iri: "https://energy.ld.admin.ch/elcom/electricityprice-canton",
-        publishIri: "https://energy.ld.admin.ch/elcom/electricityprice-canton",
         filters: {
-          "https://energy.ld.admin.ch/elcom/electricityprice/dimension/category":
-            {
-              type: "single",
-              value:
-                "https://energy.ld.admin.ch/elcom/electricityprice/category/C1",
-            },
-          "https://energy.ld.admin.ch/elcom/electricityprice/dimension/product":
-            {
-              type: "single",
-              value:
-                "https://energy.ld.admin.ch/elcom/electricityprice/product/cheapest",
-            },
+          [stringifyComponentId({
+            unversionedCubeIri:
+              "https://energy.ld.admin.ch/elcom/electricityprice-canton",
+            unversionedComponentIri:
+              "https://energy.ld.admin.ch/elcom/electricityprice/dimension/category",
+          })]: {
+            type: "single",
+            value:
+              "https://energy.ld.admin.ch/elcom/electricityprice/category/C1",
+          },
+          [stringifyComponentId({
+            unversionedCubeIri:
+              "https://energy.ld.admin.ch/elcom/electricityprice-canton",
+            unversionedComponentIri:
+              "https://energy.ld.admin.ch/elcom/electricityprice/dimension/product",
+          })]: {
+            type: "single",
+            value:
+              "https://energy.ld.admin.ch/elcom/electricityprice/product/cheapest",
+          },
         },
         joinBy: [
-          "https://energy.ld.admin.ch/elcom/electricityprice/dimension/period",
-          "https://energy.ld.admin.ch/elcom/electricityprice/dimension/canton",
+          stringifyComponentId({
+            unversionedCubeIri:
+              "https://energy.ld.admin.ch/elcom/electricityprice-canton",
+            unversionedComponentIri:
+              "https://energy.ld.admin.ch/elcom/electricityprice/dimension/period",
+          }),
+          stringifyComponentId({
+            unversionedCubeIri:
+              "https://energy.ld.admin.ch/elcom/electricityprice-canton",
+            unversionedComponentIri:
+              "https://energy.ld.admin.ch/elcom/electricityprice/dimension/canton",
+          }),
         ],
       },
     ],
     chartType: "pie",
     interactiveFiltersConfig: {
-      legend: { active: false, componentIri: "" },
+      legend: { active: false, componentId: "" },
       timeRange: {
         active: false,
-        componentIri: "",
+        componentId: "",
         presets: { type: "range", from: "", to: "" },
       },
-      dataFilters: { active: false, componentIris: [] },
+      dataFilters: { active: false, componentIds: [] },
       calculation: { active: false, type: "identity" },
     },
     fields: {
       y: {
-        componentIri:
-          "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/AnzahlAnlagen",
+        componentId: stringifyComponentId({
+          unversionedCubeIri:
+            "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen",
+          unversionedComponentIri:
+            "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/AnzahlAnlagen",
+        }),
       },
       segment: {
-        componentIri:
-          "https://energy.ld.admin.ch/elcom/electricityprice/dimension/category",
+        componentId: stringifyComponentId({
+          unversionedCubeIri:
+            "https://energy.ld.admin.ch/elcom/electricityprice-canton",
+          unversionedComponentIri:
+            "https://energy.ld.admin.ch/elcom/electricityprice/dimension/category",
+        }),
         palette: "category10",
         sorting: { sortingType: "byMeasure", sortingOrder: "asc" },
         colorMapping: {
@@ -1483,7 +1671,7 @@ export const dimensionsJoinedCubes: Dimension[] = [
     timeFormat: "%Y",
     timeUnit: TimeUnit.Year,
     cubeIri: "joinBy",
-    iri: "joinBy__0",
+    id: "joinBy__0",
     label: "Jahr der Vergütung, Period",
     description: "Jahr, in welchem die EIV ausbezahlt wurde",
     unit: "yr",
@@ -1511,19 +1699,27 @@ export const dimensionsJoinedCubes: Dimension[] = [
     related: [],
     hierarchy: null,
     isJoinByDimension: true,
-    originalIris: [
+    originalIds: [
       {
         cubeIri:
           "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9",
-        dimensionIri:
-          "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
+        dimensionId: stringifyComponentId({
+          unversionedCubeIri:
+            "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen",
+          unversionedComponentIri:
+            "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
+        }),
         label: "Jahr der Vergütung",
         description: "Beschreibung Jahr der Vergütung",
       },
       {
         cubeIri: "https://energy.ld.admin.ch/elcom/electricityprice-canton",
-        dimensionIri:
-          "https://energy.ld.admin.ch/elcom/electricityprice/dimension/period",
+        dimensionId: stringifyComponentId({
+          unversionedCubeIri:
+            "https://energy.ld.admin.ch/elcom/electricityprice-canton",
+          unversionedComponentIri:
+            "https://energy.ld.admin.ch/elcom/electricityprice/dimension/period",
+        }),
         label: "Period",
         description: "Description Period",
       },
@@ -1532,7 +1728,7 @@ export const dimensionsJoinedCubes: Dimension[] = [
   {
     __typename: "GeoShapesDimension",
     cubeIri: "joinBy",
-    iri: "joinBy__1",
+    id: "joinBy__1",
     label: "Kanton, Canton",
     description: "Kanton, in welchem die geförderten Anlagen stehen",
     scaleType: ScaleType.Nominal,
@@ -1752,19 +1948,28 @@ export const dimensionsJoinedCubes: Dimension[] = [
     related: [],
     hierarchy: null,
     isJoinByDimension: true,
-    originalIris: [
+    originalIds: [
       {
         cubeIri:
           "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9",
-        dimensionIri:
-          "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton",
+        dimensionId: stringifyComponentId({
+          unversionedCubeIri:
+            "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen",
+          unversionedComponentIri:
+            "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton",
+        }),
         label: "Kanton",
         description: "Description Kanton",
       },
       {
         cubeIri: "https://energy.ld.admin.ch/elcom/electricityprice-canton",
-        dimensionIri:
-          "https://energy.ld.admin.ch/elcom/electricityprice/dimension/canton",
+        dimensionId: stringifyComponentId({
+          unversionedCubeIri:
+            "https://energy.ld.admin.ch/elcom/electricityprice-canton",
+          unversionedComponentIri:
+            "https://energy.ld.admin.ch/elcom/electricityprice/dimension/canton",
+        }),
+
         label: "Canton",
         description: "Description Canton",
       },
@@ -1773,7 +1978,12 @@ export const dimensionsJoinedCubes: Dimension[] = [
   {
     __typename: "NominalDimension",
     cubeIri: "https://energy.ld.admin.ch/elcom/electricityprice-canton",
-    iri: "https://energy.ld.admin.ch/elcom/electricityprice/dimension/category",
+    id: stringifyComponentId({
+      unversionedCubeIri:
+        "https://energy.ld.admin.ch/elcom/electricityprice-canton",
+      unversionedComponentIri:
+        "https://energy.ld.admin.ch/elcom/electricityprice/dimension/category",
+    }),
     label: "Consumption profiles of typical households",
     scaleType: ScaleType.Nominal,
     isNumerical: false,
@@ -1874,7 +2084,12 @@ export const dimensionsJoinedCubes: Dimension[] = [
   {
     __typename: "NominalDimension",
     cubeIri: "https://energy.ld.admin.ch/elcom/electricityprice-canton",
-    iri: "https://energy.ld.admin.ch/elcom/electricityprice/dimension/product",
+    id: stringifyComponentId({
+      unversionedCubeIri:
+        "https://energy.ld.admin.ch/elcom/electricityprice-canton",
+      unversionedComponentIri:
+        "https://energy.ld.admin.ch/elcom/electricityprice/dimension/product",
+    }),
     label: "Product",
     scaleType: ScaleType.Nominal,
     isNumerical: false,

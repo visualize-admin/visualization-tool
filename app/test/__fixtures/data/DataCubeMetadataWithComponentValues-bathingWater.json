@@ -6,7 +6,7 @@
       "publisher": "bafu",
       "dimensions": [
         {
-          "iri": "https://environment.ld.admin.ch/foen/ubd0104/dateofprobing",
+          "id": "https://environment.ld.admin.ch/foen/ubd0104/dateofprobing",
           "label": "Date",
           "isKeyDimension": true,
           "values": [
@@ -19,7 +19,7 @@
           "__typename": "TemporalDimension"
         },
         {
-          "iri": "https://environment.ld.admin.ch/foen/ubd0104/parametertype",
+          "id": "https://environment.ld.admin.ch/foen/ubd0104/parametertype",
           "label": "Parameter",
           "isKeyDimension": true,
           "values": [
@@ -30,7 +30,7 @@
           "__typename": "NominalDimension"
         },
         {
-          "iri": "https://environment.ld.admin.ch/foen/ubd0104/monitoringprogramm",
+          "id": "https://environment.ld.admin.ch/foen/ubd0104/monitoringprogramm",
           "label": "Monitoring Programme",
           "isKeyDimension": false,
           "values": [
@@ -56,7 +56,7 @@
           "__typename": "NominalDimension"
         },
         {
-          "iri": "https://environment.ld.admin.ch/foen/ubd0104/station",
+          "id": "https://environment.ld.admin.ch/foen/ubd0104/station",
           "label": "Bathing site",
           "isKeyDimension": true,
           "values": [
@@ -823,7 +823,7 @@
       ],
       "measures": [
         {
-          "iri": "https://environment.ld.admin.ch/foen/ubd0104/value",
+          "id": "https://environment.ld.admin.ch/foen/ubd0104/value",
           "label": "Concentration",
           "isKeyDimension": false,
           "values": [

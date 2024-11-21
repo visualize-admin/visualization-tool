@@ -32,7 +32,7 @@ export type ResolvedDimension = {
     name: string;
     description?: string;
     dataKind?: "Time" | "GeoCoordinates" | "GeoShape";
-    related: Omit<RelatedDimension, "__typename">[];
+    related: (Omit<RelatedDimension, "__typename" | "id"> & { iri: string })[];
     timeUnit?: TimeUnit;
     timeFormat?: string;
     scaleType?: ScaleType;

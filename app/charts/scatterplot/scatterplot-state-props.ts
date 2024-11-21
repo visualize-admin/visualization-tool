@@ -30,8 +30,8 @@ export const useScatterplotStateVariables = (
     chartConfig,
     observations,
     dimensions,
-    dimensionsByIri,
-    measuresByIri,
+    dimensionsById,
+    measuresById,
   } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
   const { x, y, segment, animation } = fields;
@@ -39,13 +39,13 @@ export const useScatterplotStateVariables = (
 
   const baseVariables = useBaseVariables(chartConfig);
   const numericalXVariables = useNumericalXVariables("scatterplot", x, {
-    measuresByIri,
+    measuresById,
   });
   const numericalYVariables = useNumericalYVariables("scatterplot", y, {
-    measuresByIri,
+    measuresById,
   });
   const segmentVariables = useSegmentVariables(segment, {
-    dimensionsByIri,
+    dimensionsById,
     observations,
   });
 
@@ -78,7 +78,7 @@ export const useScatterplotStateData = (
   });
   const data = useChartData(plottableData, {
     chartConfig,
-    timeRangeDimensionIri: undefined,
+    timeRangeDimensionId: undefined,
     getSegmentAbbreviationOrLabel,
   });
 
