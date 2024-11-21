@@ -972,33 +972,6 @@ export const DatasetDialog = ({
                     />
                     <ListItemText
                       primary={<Tag type="dimension">{sd.label}</Tag>}
-                      classes={{ secondary: classes.listItemSecondary }}
-                      secondary={
-                        sd.type === "temporal" ? (
-                          <Tag type="termset">{sd.timeUnit}</Tag>
-                        ) : (
-                          <>
-                            <Typography
-                              variant="caption"
-                              color="grey.600"
-                              mr={2}
-                              gutterBottom
-                              component="div"
-                            >
-                              <Trans id="dataset-result.dimension-termset-contains" />
-                            </Typography>
-                            {sd.termsets.map((t) => (
-                              <Tag
-                                key={t.iri}
-                                type="termset"
-                                className={classes.listTag}
-                              >
-                                {t.label}
-                              </Tag>
-                            ))}
-                          </>
-                        )
-                      }
                     />
                   </MenuItem>
                 ))}
