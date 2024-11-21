@@ -45,7 +45,7 @@ import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { toggleInteractiveFilterDataDimension } from "@/configurator/interactive-filters/interactive-filters-config-state";
 import { Dimension, isGeoDimension, isJoinByComponent } from "@/domain/data";
-import { getOriginalDimension, JOIN_BY_CUBE_IRI } from "@/graphql/join";
+import { getOriginalDimension, isJoinByCube } from "@/graphql/join";
 import { PossibleFilterValue } from "@/graphql/query-hooks";
 import { findInHierarchy } from "@/rdf/tree-utils";
 import { getCachedComponents } from "@/urql-cache";
@@ -86,7 +86,7 @@ export const deriveFiltersFromFields = produce(
 
     const getCubeDimensions = (dimensions: Dimension[], cubeIri: string) => {
       return dimensions.filter(
-        (d) => d.cubeIri === cubeIri || d.cubeIri === JOIN_BY_CUBE_IRI
+        (d) => d.cubeIri === cubeIri || isJoinByCube(d.cubeIri)
       );
     };
 
