@@ -1100,7 +1100,7 @@ msgstr "Mots clés"
 
 #: app/browser/dataset-browse.tsx
 #: app/configurator/components/add-dataset-dialog.tsx
-msgid "dataset-result.dimension-termset-contains"
+msgid "dataset-result.dimension-joined-by"
 msgstr "Contient des valeurs de"
 
 #: app/browser/dataset-browse.tsx

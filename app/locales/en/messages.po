@@ -1100,8 +1100,8 @@ msgstr "Keywords"
 
 #: app/browser/dataset-browse.tsx
 #: app/configurator/components/add-dataset-dialog.tsx
-msgid "dataset-result.dimension-termset-contains"
-msgstr "Contains values from"
+msgid "dataset-result.dimension-joined-by"
+msgstr "Joined by"
 
 #: app/browser/dataset-browse.tsx
 msgid "dataset-result.shared-dimensions"

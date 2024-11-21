@@ -1206,8 +1206,8 @@ export const DatasetResult = ({
                         dimension.termsets.length > 0 ? (
                           <>
                             <Typography variant="body2">
-                              <Trans id="dataset-result.dimension-termset-contains">
-                                Contains values from
+                              <Trans id="dataset-result.dimension-joined-by">
+                                Joined by
                               </Trans>
                               <Stack gap={1} flexDirection="row" mt={1}>
                                 {dimension.termsets.map((termset) => {
