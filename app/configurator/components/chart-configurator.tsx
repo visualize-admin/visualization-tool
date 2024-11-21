@@ -866,7 +866,11 @@ const ChartFields = (props: ChartFieldsProps) => {
         .map((encoding) => {
           const { field, getDisabledState, idAttributes } = encoding;
           const componentIds = idAttributes
-            .map((x) => (chartConfig.fields as any)[field]?.[x])
+            .flatMap(
+              (x) =>
+                // componentId or componentIds
+                (chartConfig.fields as any)[field]?.[x] as string | string[]
+            )
             .filter(truthy) as string[];
           const fieldComponents = componentIds
             .map((cId) => components.find((d) => cId === d.id))
