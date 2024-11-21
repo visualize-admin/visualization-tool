@@ -169,7 +169,7 @@ export const DataFilterSelectGeneric = ({
     sideControls,
     id: `select-single-filter-${index}`,
     disabled: fetching || disabled,
-    isOptional: !dimension.isKeyDimension,
+    optional: !dimension.isKeyDimension,
     loading: fetching,
   };
 

@@ -50,7 +50,7 @@ import VisuallyHidden from "@/components/visually-hidden";
 import {
   FieldProps,
   Option,
-  OptionGroup,
+  OptionGroupKey,
   useChartOptionSliderField,
 } from "@/configurator";
 import { Icon } from "@/icons";
@@ -320,17 +320,19 @@ export type SelectOption = Option & {
   disabledMessage?: string;
 };
 
+export type SelectOptionGroup = [OptionGroupKey, SelectOption[]];
+
 export const Select = ({
   label,
   id,
   value,
   disabled,
   options,
+  optionGroups,
   onChange,
   sortOptions = true,
   topControls,
   sideControls,
-  optionGroups,
   open,
   onClose,
   onOpen,
@@ -340,12 +342,12 @@ export const Select = ({
 }: {
   id: string;
   options: SelectOption[];
+  optionGroups?: SelectOptionGroup[];
   label?: ReactNode;
   disabled?: boolean;
   sortOptions?: boolean;
-  topControls?: React.ReactNode;
-  sideControls?: React.ReactNode;
-  optionGroups?: [OptionGroup, SelectOption[]][];
+  topControls?: ReactNode;
+  sideControls?: ReactNode;
   loading?: boolean;
   hint?: string;
 } & SelectProps) => {
