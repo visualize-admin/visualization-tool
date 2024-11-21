@@ -136,9 +136,9 @@ function getChartTypeOrder({ cubeCount }: { cubeCount: number }): ChartOrder {
     pie: 4,
     map: 5,
     table: 6,
-    comboLineSingle: 7 + multiCubeBoost,
-    comboLineDual: 8 + multiCubeBoost,
-    comboLineColumn: 9 + multiCubeBoost,
+    comboLineDual: 7 + multiCubeBoost,
+    comboLineColumn: 8 + multiCubeBoost,
+    comboLineSingle: 9 + multiCubeBoost,
   };
 }
 
@@ -1924,7 +1924,6 @@ const adjustSegmentSorting = ({
   return newSorting;
 };
 
-// Helpers
 export const getPossibleChartTypes = ({
   dimensions,
   measures,
@@ -1994,6 +1993,7 @@ export const getPossibleChartTypes = ({
   }
 
   const chartTypesOrder = getChartTypeOrder({ cubeCount });
+
   return chartTypes
     .filter(
       (d) =>
