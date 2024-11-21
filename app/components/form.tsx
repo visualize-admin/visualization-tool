@@ -33,11 +33,14 @@ import flatten from "lodash/flatten";
 import React, {
   ComponentProps,
   ReactNode,
+  SyntheticEvent,
   createContext,
   forwardRef,
   useCallback,
   useContext,
   useMemo,
+  useRef,
+  useState,
 } from "react";
 
 import { useBrowseContext } from "@/browser/context";
@@ -54,6 +57,7 @@ import { Icon } from "@/icons";
 import SvgIcExclamation from "@/icons/components/IcExclamation";
 import { useLocale } from "@/locales/use-locale";
 import { valueComparator } from "@/utils/sorting-values";
+import useEvent from "@/utils/use-event";
 
 export const Label = ({
   htmlFor,
@@ -312,11 +316,28 @@ const LoadingMenuPaper = forwardRef<HTMLDivElement>(
   }
 );
 
-type SelectOption = Option & {
+export type SelectOption = Option & {
   disabledMessage?: string;
 };
 
-type FormSelectProps = {
+export const Select = ({
+  label,
+  id,
+  value,
+  disabled,
+  options,
+  onChange,
+  sortOptions = true,
+  topControls,
+  sideControls,
+  optionGroups,
+  open,
+  onClose,
+  onOpen,
+  loading,
+  hint,
+  sx,
+}: {
   id: string;
   options: SelectOption[];
   label?: ReactNode;
@@ -327,27 +348,9 @@ type FormSelectProps = {
   optionGroups?: [OptionGroup, SelectOption[]][];
   loading?: boolean;
   hint?: string;
-} & SelectProps;
-
-export const Select = (props: FormSelectProps) => {
-  const {
-    label,
-    id,
-    value,
-    disabled,
-    options,
-    onChange,
-    sortOptions = true,
-    topControls,
-    sideControls,
-    optionGroups,
-    open,
-    onClose,
-    onOpen,
-    loading,
-    hint,
-    sx,
-  } = props;
+} & SelectProps) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const [width, setWidth] = useState(0);
   const locale = useLocale();
   const sortedOptions = useMemo(() => {
     if (optionGroups) {
@@ -355,7 +358,7 @@ export const Select = (props: FormSelectProps) => {
         optionGroups.map(
           ([group, values]) =>
             [
-              { type: "group", ...group },
+              { type: group ? "group" : "", ...group },
               ...getSelectOptions(values, sortOptions, locale),
             ] as const
         )
@@ -364,10 +367,14 @@ export const Select = (props: FormSelectProps) => {
       return getSelectOptions(options, sortOptions, locale);
     }
   }, [optionGroups, sortOptions, locale, options]);
+  const handleOpen = useEvent((e: SyntheticEvent) => {
+    setWidth(ref.current?.getBoundingClientRect().width ?? 0);
+    onOpen?.(e);
+  });
 
   return (
     <LoadingMenuPaperContext.Provider value={loading}>
-      <Box sx={{ width: "100%", ...sx }}>
+      <Box ref={ref} sx={{ width: "100%", ...sx }}>
         {label && (
           <Label
             htmlFor={id}
@@ -405,7 +412,7 @@ export const Select = (props: FormSelectProps) => {
             value={value}
             disabled={disabled}
             open={open}
-            onOpen={onOpen}
+            onOpen={handleOpen}
             onClose={onClose}
             MenuProps={{
               PaperProps: {
@@ -452,7 +459,16 @@ export const Select = (props: FormSelectProps) => {
 
               return opt.type === "group" ? (
                 opt.label && (
-                  <ListSubheader key={opt.label}>{opt.label}</ListSubheader>
+                  <ListSubheader key={opt.label}>
+                    <Typography
+                      variant="caption"
+                      component="p"
+                      color="secondary.hover"
+                      style={{ maxWidth: width }}
+                    >
+                      {opt.label}
+                    </Typography>
+                  </ListSubheader>
                 )
               ) : (
                 <MenuItem
