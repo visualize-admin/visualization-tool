@@ -48,6 +48,10 @@ msgid "browse-panel.termsets"
 msgstr "Concepts"
 
 #: app/browser/dataset-browse.tsx
+msgid "browse-panel.termsets.explanation"
+msgstr "Les concepts représentent des valeurs qui peuvent être partagées entre différentes dimensions et ensembles de données."
+
+#: app/browser/dataset-browse.tsx
 msgid "browse-panel.themes"
 msgstr "Catégories"
 
@@ -1099,7 +1103,6 @@ msgid "dataset-preview.keywords"
 msgstr "Mots clés"
 
 #: app/browser/dataset-browse.tsx
-#: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset-result.dimension-joined-by"
 msgstr "Contient des valeurs de"
 

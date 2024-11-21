@@ -31,6 +31,7 @@ import {
   SearchFieldProps,
 } from "@/components/form";
 import { Loading, LoadingDataError } from "@/components/hint";
+import { InfoIconTooltip } from "@/components/info-icon-tooltip";
 import MaybeLink from "@/components/maybe-link";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
 import {
@@ -625,6 +626,7 @@ const NavSection = ({
     );
   }, [counts, items]);
   const { isOpen, open, close } = useDisclosure(!!currentFilter);
+
   return (
     <div>
       <NavSectionTitle theme={theme} sx={{ mb: "block" }}>
@@ -881,7 +883,21 @@ export const SearchFilters = ({
         counts={counts}
         filters={filters}
         icon={<SvgIcOrganisations width={20} height={20} />}
-        label={<Trans id="browse-panel.termsets">Concepts</Trans>}
+        label={
+          <Stack direction="row" gap={2} alignItems="center">
+            <Trans id="browse-panel.termsets">Concepts</Trans>
+            <InfoIconTooltip
+              variant="secondary"
+              placement="right"
+              title={
+                <Trans id="browse-panel.termsets.explanation">
+                  Concepts represent values that can be shared across different
+                  dimensions and datasets.
+                </Trans>
+              }
+            />
+          </Stack>
+        }
         extra={null}
         disableLinks={disableNavLinks}
       />
