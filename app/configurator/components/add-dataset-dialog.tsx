@@ -52,7 +52,7 @@ import { useClient } from "urql";
 
 import { DatasetResults, PartialSearchCube } from "@/browser/dataset-browse";
 import { FirstTenRowsCaption } from "@/browser/dataset-preview";
-import { getPossibleChartTypes } from "@/charts";
+import { getEnabledChartTypes } from "@/charts";
 import { Error as ErrorHint, Loading } from "@/components/hint";
 import Tag from "@/components/tag";
 import {
@@ -1105,9 +1105,9 @@ const useAddDataset = () => {
           value: addDatasetOptions,
         });
         const { dimensions, measures } = res.data.dataCubesComponents;
-        const possibleType = getPossibleChartTypes({
-          dimensions: dimensions,
-          measures: measures,
+        const { enabledChartTypes } = getEnabledChartTypes({
+          dimensions,
+          measures,
           cubeCount: chartConfig.cubes.length,
         });
         dispatch({
@@ -1115,7 +1115,7 @@ const useAddDataset = () => {
           value: {
             locale,
             chartKey: state.activeChartKey,
-            chartType: possibleType[0],
+            chartType: enabledChartTypes[0],
             isAddingNewCube: true,
           },
         });

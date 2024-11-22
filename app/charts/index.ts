@@ -1,3 +1,4 @@
+import { t } from "@lingui/macro";
 import { ascending, descending, group, rollup, rollups } from "d3-array";
 import produce from "immer";
 import get from "lodash/get";
@@ -563,7 +564,7 @@ export const getInitialConfig = (
         ) as TableFields,
       };
     case "comboLineSingle": {
-      // It's guaranteed by getPossibleChartTypes that there are at least two units.
+      // It's guaranteed by getEnabledChartTypes that there are at least two units.
       const mostCommonUnit = rollups(
         numericalMeasures.filter((d) => d.unit),
         (v) => v.length,
@@ -597,7 +598,7 @@ export const getInitialConfig = (
       };
     }
     case "comboLineDual": {
-      // It's guaranteed by getPossibleChartTypes that there are at least two units.
+      // It's guaranteed by getEnabledChartTypes that there are at least two units.
       const [firstUnit, secondUnit] = Array.from(
         new Set(numericalMeasures.filter((d) => d.unit).map((d) => d.unit))
       );
@@ -634,7 +635,7 @@ export const getInitialConfig = (
       };
     }
     case "comboLineColumn": {
-      // It's guaranteed by getPossibleChartTypes that there are at least two units.
+      // It's guaranteed by getEnabledChartTypes that there are at least two units.
       const [firstUnit, secondUnit] = Array.from(
         new Set(numericalMeasures.filter((d) => d.unit).map((d) => d.unit))
       );
@@ -1948,17 +1949,22 @@ const adjustSegmentSorting = ({
   return newSorting;
 };
 
-export const getPossibleChartTypes = ({
+const categoricalEnabledChartTypes: RegularChartType[] = ["column", "pie"];
+const geoEnabledChartTypes: RegularChartType[] = ["column", "map", "pie"];
+const multipleNumericalMeasuresEnabledChartTypes: RegularChartType[] = [
+  "scatterplot",
+];
+const timeEnabledChartTypes: RegularChartType[] = ["area", "column", "line"];
+
+export const getEnabledChartTypes = ({
   dimensions,
   measures,
-  allowedChartTypes,
   cubeCount,
 }: {
   dimensions: Dimension[];
   measures: Measure[];
-  allowedChartTypes?: ChartType[];
   cubeCount: number;
-}): ChartType[] => {
+}) => {
   const numericalMeasures = measures.filter(isNumericalMeasure);
   const ordinalMeasures = measures.filter(isOrdinalMeasure);
   const categoricalDimensions = getCategoricalDimensions(dimensions);
@@ -1967,23 +1973,76 @@ export const getPossibleChartTypes = ({
     (d) => isTemporalDimension(d) || isTemporalEntityDimension(d)
   );
 
-  const categoricalEnabled: RegularChartType[] = ["column", "pie"];
-  const geoEnabled: RegularChartType[] = ["column", "map", "pie"];
-  const multipleNumericalMeasuresEnabled: RegularChartType[] = ["scatterplot"];
-  const timeEnabled: RegularChartType[] = ["area", "column", "line"];
+  const possibleChartTypesDict = Object.fromEntries(
+    chartTypes.map((chartType) => [
+      chartType,
+      {
+        enabled: chartType === "table",
+        message: undefined,
+      },
+    ])
+  ) as Record<
+    ChartType,
+    {
+      enabled: boolean;
+      message: string | undefined;
+    }
+  >;
+  const enableChartType = (chartType: ChartType) => {
+    possibleChartTypesDict[chartType] = {
+      enabled: true,
+      message: undefined,
+    };
+  };
+  const enableChartTypes = (chartTypes: ChartType[]) => {
+    for (const chartType of chartTypes) {
+      enableChartType(chartType);
+    }
+  };
+  const maybeDisableChartType = (chartType: ChartType, message: string) => {
+    if (
+      !possibleChartTypesDict[chartType].enabled &&
+      !possibleChartTypesDict[chartType].message
+    ) {
+      possibleChartTypesDict[chartType] = {
+        enabled: false,
+        message,
+      };
+    }
+  };
+  const maybeDisableChartTypes = (chartTypes: ChartType[], message: string) => {
+    for (const chartType of chartTypes) {
+      maybeDisableChartType(chartType, message);
+    }
+  };
 
-  const possibles: ChartType[] = ["table"];
   if (numericalMeasures.length > 0) {
     if (categoricalDimensions.length > 0) {
-      possibles.push(...categoricalEnabled);
+      enableChartTypes(categoricalEnabledChartTypes);
+    } else {
+      maybeDisableChartTypes(
+        categoricalEnabledChartTypes,
+        t({
+          id: "controls.chart.disabled.categorical",
+          message: "At least one categorical dimension is required.",
+        })
+      );
     }
 
     if (geoDimensions.length > 0) {
-      possibles.push(...geoEnabled);
+      enableChartTypes(geoEnabledChartTypes);
+    } else {
+      maybeDisableChartTypes(
+        geoEnabledChartTypes,
+        t({
+          id: "controls.chart.disabled.geographical",
+          message: "At least one geographical dimension is required.",
+        })
+      );
     }
 
     if (numericalMeasures.length > 1) {
-      possibles.push(...multipleNumericalMeasuresEnabled);
+      enableChartTypes(multipleNumericalMeasuresEnabledChartTypes);
 
       if (temporalDimensions.length > 0) {
         const measuresWithUnit = numericalMeasures.filter((d) => d.unit);
@@ -1992,7 +2051,16 @@ export const getPossibleChartTypes = ({
         );
 
         if (uniqueUnits.length > 1) {
-          possibles.push(...comboDifferentUnitChartTypes);
+          enableChartTypes(comboDifferentUnitChartTypes);
+        } else {
+          maybeDisableChartTypes(
+            comboDifferentUnitChartTypes,
+            t({
+              id: "controls.chart.disabled.different-unit",
+              message:
+                "At least two numerical measures with different units are required.",
+            })
+          );
         }
 
         const unitCounts = rollup(
@@ -2002,29 +2070,75 @@ export const getPossibleChartTypes = ({
         );
 
         if (Array.from(unitCounts.values()).some((d) => d > 1)) {
-          possibles.push(...comboSameUnitChartTypes);
+          enableChartTypes(comboSameUnitChartTypes);
+        } else {
+          maybeDisableChartTypes(
+            comboSameUnitChartTypes,
+            t({
+              id: "controls.chart.disabled.same-unit",
+              message:
+                "At least two numerical measures with the same unit are required.",
+            })
+          );
         }
+      } else {
+        maybeDisableChartTypes(
+          comboChartTypes,
+          t({
+            id: "controls.chart.disabled.temporal",
+            message: "At least one temporal dimension is required.",
+          })
+        );
       }
+    } else {
+      maybeDisableChartTypes(
+        [...multipleNumericalMeasuresEnabledChartTypes, ...comboChartTypes],
+        t({
+          id: "controls.chart.disabled.multiple-measures",
+          message: "At least two numerical measures are required.",
+        })
+      );
     }
 
     if (temporalDimensions.length > 0) {
-      possibles.push(...timeEnabled);
+      enableChartTypes(timeEnabledChartTypes);
+    } else {
+      maybeDisableChartTypes(
+        timeEnabledChartTypes,
+        t({
+          id: "controls.chart.disabled.temporal",
+          message: "At least one temporal dimension is required.",
+        })
+      );
     }
+  } else {
+    maybeDisableChartTypes(
+      chartTypes.filter((d) => d !== "table"),
+      t({
+        id: "controls.chart.disabled.numerical",
+        message: "At least one numerical measure is required.",
+      })
+    );
   }
 
   if (ordinalMeasures.length > 0 && geoDimensions.length > 0) {
-    possibles.push("map");
+    enableChartType("map");
+  } else {
+    maybeDisableChartType(
+      "map",
+      "At least one ordinal measure and one geographical dimension are required."
+    );
   }
 
   const chartTypesOrder = getChartTypeOrder({ cubeCount });
-
-  return chartTypes
-    .filter(
-      (d) =>
-        possibles.includes(d) &&
-        (!allowedChartTypes || allowedChartTypes.includes(d))
-    )
+  const enabledChartTypes = chartTypes
+    .filter((d) => possibleChartTypesDict[d].enabled)
     .sort((a, b) => chartTypesOrder[a] - chartTypesOrder[b]);
+
+  return {
+    enabledChartTypes,
+    possibleChartTypesDict,
+  };
 };
 
 export const getFieldComponentIds = (fields: ChartConfig["fields"]) => {

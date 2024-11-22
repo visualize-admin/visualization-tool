@@ -178,7 +178,7 @@ msgstr "Modifica"
 
 #: app/components/chart-selection-tabs.tsx
 msgid "chart-controls.edit-tab-label"
-msgstr "Modifica etichetta scheda"
+msgstr "Modifica l'etichetta della scheda"
 
 #: app/components/dataset-metadata.tsx
 msgid "chart-controls.sparql-query"
@@ -190,7 +190,7 @@ msgstr "Visualizzazione tabella"
 
 #: app/components/chart-selection-tabs.tsx
 msgid "chart-selection-tabs.add-chart"
-msgstr "Aggiungere grafico"
+msgstr "Aggiungi grafico"
 
 #: app/components/chart-selection-tabs.tsx
 msgid "chart-selection-tabs.add-chart-different-dataset.button"
@@ -307,7 +307,7 @@ msgstr "Aggiungi una descrizione"
 
 #: app/configurator/components/annotators.tsx
 msgid "controls.annotator.add-tab-label-warning"
-msgstr "Aggiungi un'etichetta di scheda"
+msgstr "Aggiungi un'etichetta alla scheda"
 
 #: app/configurator/components/annotators.tsx
 #: app/configurator/components/annotators.tsx
@@ -386,6 +386,34 @@ msgstr "Nessuna unità"
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.chart.combo.y.right-axis-measure"
 msgstr "Misura dell'asse destro"
+
+#: app/charts/index.ts
+msgid "controls.chart.disabled.categorical"
+msgstr "È richiesta almeno una dimensione categoriale."
+
+#: app/charts/index.ts
+msgid "controls.chart.disabled.different-unit"
+msgstr "Sono necessarie almeno due misure numeriche con unità diverse."
+
+#: app/charts/index.ts
+msgid "controls.chart.disabled.geographical"
+msgstr "È richiesta almeno una dimensione geografica."
+
+#: app/charts/index.ts
+msgid "controls.chart.disabled.multiple-measures"
+msgstr "Sono necessarie almeno due misure numeriche."
+
+#: app/charts/index.ts
+msgid "controls.chart.disabled.numerical"
+msgstr "È richiesta almeno una misura numerica."
+
+#: app/charts/index.ts
+msgid "controls.chart.disabled.same-unit"
+msgstr "Sono necessarie almeno due misure numeriche con la stessa unità."
+
+#: app/charts/index.ts
+msgid "controls.chart.disabled.temporal"
+msgstr "È richiesta almeno una dimensione temporale."
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.chart.type.area"
@@ -641,15 +669,15 @@ msgstr "Dashboard"
 
 #: app/configurator/components/preview-breakpoint.tsx
 msgid "controls.layout.preview-lg"
-msgstr "Anteprima con larghezza elevata"
+msgstr "Anteprima su un piccolo desktop"
 
 #: app/configurator/components/preview-breakpoint.tsx
 msgid "controls.layout.preview-md"
-msgstr "Anteprima utilizzando la larghezza media"
+msgstr "Anteprima sul tablet"
 
 #: app/configurator/components/preview-breakpoint.tsx
 msgid "controls.layout.preview-sm"
-msgstr "Anteprima utilizzando una larghezza ridotta"
+msgstr "Anteprima sul telefono"
 
 #: app/configurator/components/preview-breakpoint.tsx
 msgid "controls.layout.preview-xl"
@@ -1212,7 +1240,7 @@ msgstr "Set di dati"
 
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.preview.description"
-msgstr "Esamina tutte le dimensioni disponibili prima di continuare a modificare la visualizzazione."
+msgstr "Esamina le dimensioni disponibili prima di continuare a modificare la visualizzazione."
 
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.preview.new-dimension"
@@ -1244,6 +1272,7 @@ msgstr "Sono mostrate soltanto le prime 10 righe"
 
 #: app/components/metadata-panel.tsx
 #: app/components/metadata-panel.tsx
+#: app/configurator/components/chart-options-selector.tsx
 msgid "dimension.joined"
 msgstr "Unita"
 
@@ -1377,7 +1406,7 @@ msgstr "Cancellare"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.delete-draft.confirmation"
-msgstr "Sei sicuro di voler eliminare questa bozza?"
+msgstr "Sei sicuro di voler cancellare questa bozza?"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.delete.confirmation"
@@ -1452,7 +1481,7 @@ msgstr "Accoglienza"
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
 msgid "login.profile.my-drafts"
-msgstr "Le mie bozze"
+msgstr "Bozze"
 
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
@@ -1495,7 +1524,7 @@ msgstr "Accedi"
 #: app/login/components/login-menu.tsx
 #: app/login/components/profile-header.tsx
 msgid "login.sign-out"
-msgstr "Disconnessione"
+msgstr "Esci"
 
 #: app/components/header.tsx
 #: app/components/header.tsx
@@ -1524,7 +1553,7 @@ msgstr "Codice da incorporare su come \"External Application\""
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.external-application.caption"
-msgstr "Utilizza questo link per incorporare il grafico senza tag iframe."
+msgstr "Utilizzare questo link per incorporare il grafico senza tag iframe."
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe"

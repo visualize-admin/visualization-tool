@@ -9,11 +9,11 @@ import { Reducer } from "use-immer";
 
 import {
   getChartConfigAdjustedToChartType,
+  getEnabledChartTypes,
   getFieldComponentIds,
   getGroupedFieldIds,
   getHiddenFieldIds,
   getInitialConfig,
-  getPossibleChartTypes,
 } from "@/charts";
 import {
   getChartFieldChangeSideEffect,
@@ -958,19 +958,19 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         const iris = chartConfig.cubes
           .filter((c) => c.iri !== removedCubeIri)
           .map(({ iri }) => ({ iri }));
-        const possibleChartTypes = getPossibleChartTypes({
+        const { enabledChartTypes } = getEnabledChartTypes({
           dimensions,
           measures,
           cubeCount: iris.length,
         });
         const initialConfig = getInitialConfig({
-          chartType: possibleChartTypes.includes(chartConfig.chartType)
+          chartType: enabledChartTypes.includes(chartConfig.chartType)
             ? chartConfig.chartType
-            : possibleChartTypes[0],
+            : enabledChartTypes[0],
           iris,
           dimensions,
           measures,
-          meta: current(chartConfig.meta), // Cast proxy to object
+          meta: current(chartConfig.meta),
         });
         const newChartConfig = deriveFiltersFromFields(initialConfig, {
           dimensions,

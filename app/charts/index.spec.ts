@@ -13,12 +13,17 @@ import forestAreaData from "../test/__fixtures/data/forest-area-by-production-re
 
 import {
   getChartConfigAdjustedToChartType,
+  getEnabledChartTypes,
   getInitialConfig,
-  getPossibleChartTypes,
 } from "./index";
 
 jest.mock("../rdf/extended-cube", () => ({
   ExtendedCube: jest.fn(),
+}));
+
+jest.mock("@lingui/macro", () => ({
+  defineMessage: (str: string) => str,
+  t: (str: string) => str,
 }));
 
 const mockDimensions: Record<string, Dimension> = {
@@ -175,42 +180,51 @@ describe("initial config", () => {
   });
 });
 
-describe("possible chart types", () => {
+describe("enabled chart types", () => {
   it("should allow appropriate chart types based on available dimensions", () => {
     const expectedChartTypes = ["area", "column", "line", "pie", "table"];
-    const possibleChartTypes = getPossibleChartTypes({
+    const { enabledChartTypes, possibleChartTypesDict } = getEnabledChartTypes({
       dimensions: bathingWaterData.data.dataCubeByIri
         .dimensions as any as Dimension[],
       measures: bathingWaterData.data.dataCubeByIri
         .measures as any as Measure[],
       cubeCount: 1,
-    }).sort();
+    });
 
-    expect(possibleChartTypes).toEqual(expectedChartTypes);
+    expect(enabledChartTypes.sort()).toEqual(expectedChartTypes);
+    expect(possibleChartTypesDict["comboLineSingle"].message).toBeDefined();
+    expect(possibleChartTypesDict["comboLineDual"].message).toBeDefined();
+    expect(possibleChartTypesDict["map"].message).toBeDefined();
   });
 
   it("should only allow table if there are only measures available", () => {
-    const possibleChartTypes = getPossibleChartTypes({
+    const { enabledChartTypes, possibleChartTypesDict } = getEnabledChartTypes({
       dimensions: [],
       measures: [{ __typename: "NumericalMeasure" }] as any,
       cubeCount: 1,
     });
 
-    expect(possibleChartTypes).toEqual(["table"]);
+    expect(enabledChartTypes).toEqual(["table"]);
+    expect(
+      Object.entries(possibleChartTypesDict)
+        .filter(([k]) => k !== "table")
+        .every(([, { message }]) => !!message)
+    ).toBe(true);
   });
 
   it("should only allow column, map, pie and table if only geo dimensions are available", () => {
-    const possibleChartTypes = getPossibleChartTypes({
+    const { enabledChartTypes, possibleChartTypesDict } = getEnabledChartTypes({
       dimensions: [{ __typename: "GeoShapesDimension" }] as any,
       measures: [{ __typename: "NumericalMeasure" }] as any,
       cubeCount: 1,
-    }).sort();
+    });
 
-    expect(possibleChartTypes).toEqual(["column", "map", "pie", "table"]);
+    expect(enabledChartTypes.sort()).toEqual(["column", "map", "pie", "table"]);
+    expect(possibleChartTypesDict["line"].message).toBeDefined();
   });
 
   it("should not allow multiline chart if there are no several measures of the same unit", () => {
-    const possibleChartTypes = getPossibleChartTypes({
+    const { enabledChartTypes, possibleChartTypesDict } = getEnabledChartTypes({
       dimensions: [],
       measures: [
         { __typename: "NumericalMeasure", unit: "m" },
@@ -219,7 +233,8 @@ describe("possible chart types", () => {
       cubeCount: 1,
     });
 
-    expect(possibleChartTypes).not.toContain("comboLineSingle");
+    expect(enabledChartTypes).not.toContain("comboLineSingle");
+    expect(possibleChartTypesDict["comboLineSingle"].message).toBeDefined();
   });
 });
 

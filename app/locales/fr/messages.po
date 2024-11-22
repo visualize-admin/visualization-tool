@@ -307,7 +307,7 @@ msgstr "Ajoutez une description au graphique"
 
 #: app/configurator/components/annotators.tsx
 msgid "controls.annotator.add-tab-label-warning"
-msgstr "Veuillez ajouter une étiquette d'onglet"
+msgstr "Veuillez ajouter un nom à l'onglet"
 
 #: app/configurator/components/annotators.tsx
 #: app/configurator/components/annotators.tsx
@@ -386,6 +386,35 @@ msgstr "Aucune unité"
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.chart.combo.y.right-axis-measure"
 msgstr "Mesure de l'axe droit"
+
+#: app/charts/index.ts
+msgid "controls.chart.disabled.categorical"
+msgstr "Au moins une dimension catégorielle est requise."
+
+#: app/charts/index.ts
+msgid "controls.chart.disabled.different-unit"
+msgstr "Au moins deux mesures numériques avec des unités différentes sont requises."
+
+#: app/charts/index.ts
+msgid "controls.chart.disabled.geographical"
+msgstr "Au moins une dimension géographique est requise."
+
+#: app/charts/index.ts
+msgid "controls.chart.disabled.multiple-measures"
+msgstr "Au moins deux mesures numériques sont requises."
+
+#: app/charts/index.ts
+msgid "controls.chart.disabled.numerical"
+msgstr "Au moins une mesure numérique est requise."
+
+#: app/charts/index.ts
+msgid "controls.chart.disabled.same-unit"
+msgstr "Au moins deux mesures numériques avec la même unité sont requises."
+
+#: app/charts/index.ts
+#: app/charts/index.ts
+msgid "controls.chart.disabled.temporal"
+msgstr "Au moins une dimension temporelle est requise."
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.chart.type.area"
@@ -604,7 +633,7 @@ msgstr "Zéros"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.label"
-msgstr "Étiquette de l'onglet"
+msgstr "Nom de l'onglet"
 
 #: app/components/rename-dialog.tsx
 #: app/configurator/components/field-i18n.ts
@@ -641,15 +670,15 @@ msgstr "Dashboard"
 
 #: app/configurator/components/preview-breakpoint.tsx
 msgid "controls.layout.preview-lg"
-msgstr "Aperçu en utilisant une grande largeur"
+msgstr "Aperçu petit écran de bureau"
 
 #: app/configurator/components/preview-breakpoint.tsx
 msgid "controls.layout.preview-md"
-msgstr "Aperçu en utilisant une largeur moyenne"
+msgstr "Aperçu tablette"
 
 #: app/configurator/components/preview-breakpoint.tsx
 msgid "controls.layout.preview-sm"
-msgstr "Aperçu en utilisant une petite largeur"
+msgstr "Aperçu mobile"
 
 #: app/configurator/components/preview-breakpoint.tsx
 msgid "controls.layout.preview-xl"
@@ -1112,7 +1141,7 @@ msgstr "Dimensions partagées"
 
 #: app/components/chart-footnotes.tsx
 msgid "dataset.footnotes.dataset"
-msgstr "Ensemble de données"
+msgstr "Jeu de données"
 
 #: app/components/chart-footnotes.tsx
 msgid "dataset.footnotes.updated"
@@ -1244,6 +1273,7 @@ msgstr "Seules les 10 premières lignes sont affichées"
 
 #: app/components/metadata-panel.tsx
 #: app/components/metadata-panel.tsx
+#: app/configurator/components/chart-options-selector.tsx
 msgid "dimension.joined"
 msgstr "Jointe"
 
@@ -1377,7 +1407,7 @@ msgstr "Supprimer"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.delete-draft.confirmation"
-msgstr "Etes-vous sûr de vouloir supprimer ce brouillon ?"
+msgstr "Voulez-vous vraiment supprimer ce brouillon ?"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.delete.confirmation"
@@ -1430,7 +1460,7 @@ msgstr "Êtes-vous sûr de vouloir effectuer cette action ?"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.chart.delete-draft.warning"
-msgstr "Cette action ne peut pas être annulée."
+msgstr "Cette action ne peut être annulée."
 
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.chart.delete.warning"
@@ -1452,7 +1482,7 @@ msgstr "Accueil"
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
 msgid "login.profile.my-drafts"
-msgstr "Mes visualisations en brouillon"
+msgstr "Brouillons"
 
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
@@ -1520,11 +1550,11 @@ msgstr "Renommer la visualisation"
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.external-application"
-msgstr "Code pour intégrer sur comme \"External Application\""
+msgstr "Code pour intégration dans une \"Application Externe\""
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.external-application.caption"
-msgstr "Utilisez ce lien pour intégrer le graphique sans balises iframe."
+msgstr "Utilisez ce lien pour intégrer le graphique sans balise iframe."
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe"
@@ -1544,11 +1574,11 @@ msgstr "Pour intégrer des visualisations dans des systèmes sans frontière."
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.responsive"
-msgstr "Iframe réactif"
+msgstr "Iframe réactive"
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.responsive.warn"
-msgstr "Pour intégrer des visualisations dans des pages web sans support CMS. L'iframe sera réactive. La partie JavaScript du code d'intégration garantit que l'iframe conserve toujours la taille correcte."
+msgstr "Pour intégrer des visualisations dans des pages web sans support CMS. L'iframe sera réactive: le code d'intégration garantit que l'iframe conserve toujours la taille correcte."
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.static"

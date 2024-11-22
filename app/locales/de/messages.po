@@ -307,7 +307,7 @@ msgstr "Fügen Sie eine Beschreibung hinzu"
 
 #: app/configurator/components/annotators.tsx
 msgid "controls.annotator.add-tab-label-warning"
-msgstr "Bitte fügen Sie eine Tab-Titel hinzu"
+msgstr "Bitte fügen Sie einen Tab-Titel hinzu"
 
 #: app/configurator/components/annotators.tsx
 #: app/configurator/components/annotators.tsx
@@ -386,6 +386,34 @@ msgstr "Keine Einheit"
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.chart.combo.y.right-axis-measure"
 msgstr "Messung der rechten Achse"
+
+#: app/charts/index.ts
+msgid "controls.chart.disabled.categorical"
+msgstr "Es ist mindestens eine kategorische Dimension erforderlich."
+
+#: app/charts/index.ts
+msgid "controls.chart.disabled.different-unit"
+msgstr "Es werden mindestens zwei Masszahlen mit unterschiedlichen Einheiten benötigt."
+
+#: app/charts/index.ts
+msgid "controls.chart.disabled.geographical"
+msgstr "Es ist mindestens eine geografische Dimension erforderlich."
+
+#: app/charts/index.ts
+msgid "controls.chart.disabled.multiple-measures"
+msgstr "Es sind mindestens zwei numerische Messungen erforderlich."
+
+#: app/charts/index.ts
+msgid "controls.chart.disabled.numerical"
+msgstr "Es ist mindestens eine numerische Massnahme erforderlich."
+
+#: app/charts/index.ts
+msgid "controls.chart.disabled.same-unit"
+msgstr "Es sind mindestens zwei Zahlenwerte mit gleicher Einheit erforderlich."
+
+#: app/charts/index.ts
+msgid "controls.chart.disabled.temporal"
+msgstr "Es ist mindestens eine zeitliche Dimension erforderlich."
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.chart.type.area"
@@ -641,7 +669,7 @@ msgstr "Dashboard"
 
 #: app/configurator/components/preview-breakpoint.tsx
 msgid "controls.layout.preview-lg"
-msgstr "Vorschau in grosser Breite"
+msgstr "Vorschau mit kleinem Desktop-Bildschirm"
 
 #: app/configurator/components/preview-breakpoint.tsx
 msgid "controls.layout.preview-md"
@@ -1116,7 +1144,7 @@ msgstr "Datensatz"
 
 #: app/components/chart-footnotes.tsx
 msgid "dataset.footnotes.updated"
-msgstr "Neuestes Datenupdate"
+msgstr "Neuestes Update"
 
 #: app/components/chart-published.tsx
 msgid "dataset.hasImputedValues"
@@ -1244,6 +1272,7 @@ msgstr "Die ersten 10 Zeilen werden angezeigt"
 
 #: app/components/metadata-panel.tsx
 #: app/components/metadata-panel.tsx
+#: app/configurator/components/chart-options-selector.tsx
 msgid "dimension.joined"
 msgstr "Verbunden"
 
@@ -1520,7 +1549,7 @@ msgstr "Benennen Sie die Visualisierung um"
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.external-application"
-msgstr "Einbett-Code für «Externe Applikation»"
+msgstr "Embed-Code für «Externe Applikation»"
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.external-application.caption"
@@ -1528,7 +1557,7 @@ msgstr "Verwenden Sie diesen Link, um das Diagramm ohne Iframe-Tags einzubetten.
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe"
-msgstr "Einbett-Code"
+msgstr "Embed-Code"
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.caption"
@@ -1544,11 +1573,11 @@ msgstr "Zur Einbettung von Visualisierungen in Systeme ohne Rand."
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.responsive"
-msgstr "Anpassungsfähiges iframe"
+msgstr "Flexibles Iframe"
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.responsive.warn"
-msgstr "Zum Einbetten von Visualisierungen in Webseiten ohne CMS-Unterstützung. Der iframe wird responsiv sein. Der JavaScript-Teil des Einbettungscodes sorgt dafür, dass der iframe immer die richtige Größe beibehält."
+msgstr "Zum Einbetten von Visualisierungen in Webseiten ohne CMS-Unterstützung. Der Iframe wird sich anpassen. Der JavaScript-Teil des Einbettungscodes sorgt dafür, dass der Iframe immer die richtige Grösse beibehält."
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.static"

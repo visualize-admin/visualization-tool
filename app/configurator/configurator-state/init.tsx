@@ -1,6 +1,6 @@
 import { Client } from "urql";
 
-import { getInitialConfig, getPossibleChartTypes } from "@/charts";
+import { getEnabledChartTypes, getInitialConfig } from "@/charts";
 import { getPossibleFiltersQueryVariables } from "@/charts/shared/ensure-possible-filters";
 import {
   ConfiguratorState,
@@ -88,13 +88,13 @@ export const initChartStateFromCube = async (
   }
 
   const { dimensions, measures } = components.dataCubesComponents;
-  const possibleChartTypes = getPossibleChartTypes({
+  const { enabledChartTypes } = getEnabledChartTypes({
     dimensions,
     measures,
     cubeCount: 1,
   });
   const initialChartConfig = getInitialConfig({
-    chartType: possibleChartTypes[0],
+    chartType: enabledChartTypes[0],
     iris: [{ iri: latestCubeIri }],
     dimensions,
     measures,

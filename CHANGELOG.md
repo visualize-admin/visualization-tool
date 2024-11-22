@@ -21,6 +21,7 @@ You can also check the
   - Improved default chart selection when adding a new cube (by default the
     application will try to use dual-line chart with measures from different
     cubes)
+  - Added tooltip that explains why a given chart type can't be selected
 - Fixes
   - Introduced a `componentId` concept which makes the dimensions and measures
     unique by adding an unversioned cube iri to the unversioned component iri on
