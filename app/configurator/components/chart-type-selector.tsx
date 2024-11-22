@@ -1,14 +1,16 @@
 import { t, Trans } from "@lingui/macro";
 import { Box, BoxProps, Divider, Typography } from "@mui/material";
-import React, { useCallback } from "react";
+import { SyntheticEvent, useCallback } from "react";
 
 import {
   comboChartTypes,
-  getPossibleChartTypes,
+  getEnabledChartTypes,
   regularChartTypes,
 } from "@/charts";
 import Flex from "@/components/flex";
 import { Hint } from "@/components/hint";
+import { MaybeTooltip } from "@/components/maybe-tooltip";
+import { TooltipTitle } from "@/components/tooltip-utils";
 import {
   ChartType,
   ConfiguratorStatePublished,
@@ -64,7 +66,7 @@ export const ChartTypeSelector = (props: ChartTypeSelectorProps) => {
   );
 
   const handleClick = useCallback(
-    (e: React.SyntheticEvent<HTMLButtonElement, Event>) => {
+    (e: SyntheticEvent<HTMLButtonElement, Event>) => {
       const newChartType = e.currentTarget.value as ChartType;
 
       // Disable triggering the change event if the chart type is the same,
@@ -81,7 +83,7 @@ export const ChartTypeSelector = (props: ChartTypeSelectorProps) => {
     return <ControlSectionSkeleton />;
   }
 
-  const possibleChartTypes = getPossibleChartTypes({
+  const { enabledChartTypes, possibleChartTypesDict } = getEnabledChartTypes({
     dimensions,
     measures,
     cubeCount: chartConfig.cubes.length,
@@ -106,9 +108,8 @@ export const ChartTypeSelector = (props: ChartTypeSelectorProps) => {
           </Typography>
         </Box>
       )}
-
       <div>
-        {!possibleChartTypes ? (
+        {enabledChartTypes.length === 0 ? (
           <Hint>
             <Trans id="hint.no.visualization.with.dataset">
               No visualization can be created with the selected dataset.
@@ -122,9 +123,9 @@ export const ChartTypeSelector = (props: ChartTypeSelectorProps) => {
                 id: "controls.chart.category.regular",
                 message: "Regular",
               })}
-              chartType={chartType}
+              currentChartType={chartType}
               chartTypes={regularChartTypes}
-              possibleChartTypes={possibleChartTypes}
+              possibleChartTypesDict={possibleChartTypesDict}
               onClick={handleClick}
               testId="chart-type-selector-regular"
             />
@@ -142,9 +143,9 @@ export const ChartTypeSelector = (props: ChartTypeSelectorProps) => {
                     message:
                       "Comparison chart types combine several measures in a chart, helping to visualize their relationships or correlations, even when they have different units or scales.",
                   })}
-                  chartType={chartType}
+                  currentChartType={chartType}
                   chartTypes={comboChartTypes}
-                  possibleChartTypes={possibleChartTypes}
+                  possibleChartTypesDict={possibleChartTypesDict}
                   onClick={handleClick}
                   testId="chart-type-selector-combo"
                 />
@@ -157,29 +158,27 @@ export const ChartTypeSelector = (props: ChartTypeSelectorProps) => {
   );
 };
 
-type ChartTypeSelectorMenuProps = {
+const ChartTypeSelectorMenu = ({
+  type,
+  title,
+  titleHint,
+  currentChartType,
+  chartTypes,
+  possibleChartTypesDict,
+  onClick,
+  testId,
+}: {
   type: "add" | "edit";
   title: string;
   titleHint?: string;
-  chartType: ChartType;
+  currentChartType: ChartType;
   chartTypes: ChartType[];
-  possibleChartTypes: ChartType[];
-  onClick: (e: React.SyntheticEvent<HTMLButtonElement, Event>) => void;
+  possibleChartTypesDict: ReturnType<
+    typeof getEnabledChartTypes
+  >["possibleChartTypesDict"];
+  onClick: (e: SyntheticEvent<HTMLButtonElement, Event>) => void;
   testId?: string;
-};
-
-const ChartTypeSelectorMenu = (props: ChartTypeSelectorMenuProps) => {
-  const {
-    type,
-    title,
-    titleHint,
-    chartType,
-    chartTypes,
-    possibleChartTypes,
-    onClick,
-    testId,
-  } = props;
-
+}) => {
   return (
     <Flex sx={{ flexDirection: "column", gap: 2 }}>
       <Typography
@@ -205,16 +204,32 @@ const ChartTypeSelectorMenu = (props: ChartTypeSelectorMenuProps) => {
           mx: 2,
         }}
       >
-        {chartTypes.map((d) => (
-          <IconButton
-            key={d}
-            label={d}
-            value={d}
-            checked={type === "edit" ? chartType === d : false}
-            disabled={!possibleChartTypes.includes(d)}
-            onClick={onClick}
-          />
-        ))}
+        {chartTypes.map((chartType) => {
+          const { enabled, message } = possibleChartTypesDict[chartType];
+          return (
+            <MaybeTooltip
+              key={chartType}
+              title={
+                !enabled && message ? (
+                  <TooltipTitle text={message} />
+                ) : undefined
+              }
+              tooltipProps={{ placement: "right" }}
+            >
+              <div>
+                <IconButton
+                  label={chartType}
+                  value={chartType}
+                  checked={
+                    type === "edit" ? currentChartType === chartType : false
+                  }
+                  disabled={!enabled}
+                  onClick={onClick}
+                />
+              </div>
+            </MaybeTooltip>
+          );
+        })}
       </Box>
     </Flex>
   );

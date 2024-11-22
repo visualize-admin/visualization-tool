@@ -387,6 +387,34 @@ msgstr "Aucune unité"
 msgid "controls.chart.combo.y.right-axis-measure"
 msgstr "Mesure de l'axe droit"
 
+#: app/charts/index.ts
+msgid "controls.chart.disabled.categorical"
+msgstr "Au moins une dimension catégorielle est requise."
+
+#: app/charts/index.ts
+msgid "controls.chart.disabled.different-unit"
+msgstr "Au moins deux mesures numériques avec des unités différentes sont requises."
+
+#: app/charts/index.ts
+msgid "controls.chart.disabled.geographical"
+msgstr "Au moins une dimension géographique est requise."
+
+#: app/charts/index.ts
+msgid "controls.chart.disabled.multiple-measures"
+msgstr "Au moins deux mesures numériques sont requises."
+
+#: app/charts/index.ts
+msgid "controls.chart.disabled.numerical"
+msgstr "Au moins une mesure numérique est requise."
+
+#: app/charts/index.ts
+msgid "controls.chart.disabled.same-unit"
+msgstr "Au moins deux mesures numériques avec la même unité sont requises."
+
+#: app/charts/index.ts
+msgid "controls.chart.disabled.temporal"
+msgstr "Au moins une dimension temporelle est requise."
+
 #: app/configurator/components/field-i18n.ts
 msgid "controls.chart.type.area"
 msgstr "Surfaces"
@@ -1244,6 +1272,7 @@ msgstr "Seules les 10 premières lignes sont affichées"
 
 #: app/components/metadata-panel.tsx
 #: app/components/metadata-panel.tsx
+#: app/configurator/components/chart-options-selector.tsx
 msgid "dimension.joined"
 msgstr "Jointe"
 

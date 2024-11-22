@@ -387,6 +387,34 @@ msgstr "Keine Einheit"
 msgid "controls.chart.combo.y.right-axis-measure"
 msgstr "Messung der rechten Achse"
 
+#: app/charts/index.ts
+msgid "controls.chart.disabled.categorical"
+msgstr "Es ist mindestens eine kategorische Dimension erforderlich."
+
+#: app/charts/index.ts
+msgid "controls.chart.disabled.different-unit"
+msgstr "Es werden mindestens zwei Masszahlen mit unterschiedlichen Einheiten benötigt."
+
+#: app/charts/index.ts
+msgid "controls.chart.disabled.geographical"
+msgstr "Es ist mindestens eine geografische Dimension erforderlich."
+
+#: app/charts/index.ts
+msgid "controls.chart.disabled.multiple-measures"
+msgstr "Es sind mindestens zwei numerische Messungen erforderlich."
+
+#: app/charts/index.ts
+msgid "controls.chart.disabled.numerical"
+msgstr "Es ist mindestens eine numerische Massnahme erforderlich."
+
+#: app/charts/index.ts
+msgid "controls.chart.disabled.same-unit"
+msgstr "Es sind mindestens zwei Zahlenwerte mit gleicher Einheit erforderlich."
+
+#: app/charts/index.ts
+msgid "controls.chart.disabled.temporal"
+msgstr "Es ist mindestens eine zeitliche Dimension erforderlich."
+
 #: app/configurator/components/field-i18n.ts
 msgid "controls.chart.type.area"
 msgstr "Flächen"
@@ -1244,6 +1272,7 @@ msgstr "Die ersten 10 Zeilen werden angezeigt"
 
 #: app/components/metadata-panel.tsx
 #: app/components/metadata-panel.tsx
+#: app/configurator/components/chart-options-selector.tsx
 msgid "dimension.joined"
 msgstr "Verbunden"
 

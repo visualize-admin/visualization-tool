@@ -13,8 +13,8 @@ import forestAreaData from "../test/__fixtures/data/forest-area-by-production-re
 
 import {
   getChartConfigAdjustedToChartType,
+  getEnabledChartTypes,
   getInitialConfig,
-  getPossibleChartTypes,
 } from "./index";
 
 jest.mock("../rdf/extended-cube", () => ({
@@ -175,42 +175,42 @@ describe("initial config", () => {
   });
 });
 
-describe("possible chart types", () => {
+describe("enabled chart types", () => {
   it("should allow appropriate chart types based on available dimensions", () => {
     const expectedChartTypes = ["area", "column", "line", "pie", "table"];
-    const possibleChartTypes = getPossibleChartTypes({
+    const { enabledChartTypes } = getEnabledChartTypes({
       dimensions: bathingWaterData.data.dataCubeByIri
         .dimensions as any as Dimension[],
       measures: bathingWaterData.data.dataCubeByIri
         .measures as any as Measure[],
       cubeCount: 1,
-    }).sort();
+    });
 
-    expect(possibleChartTypes).toEqual(expectedChartTypes);
+    expect(enabledChartTypes.sort()).toEqual(expectedChartTypes);
   });
 
   it("should only allow table if there are only measures available", () => {
-    const possibleChartTypes = getPossibleChartTypes({
+    const { enabledChartTypes } = getEnabledChartTypes({
       dimensions: [],
       measures: [{ __typename: "NumericalMeasure" }] as any,
       cubeCount: 1,
     });
 
-    expect(possibleChartTypes).toEqual(["table"]);
+    expect(enabledChartTypes).toEqual(["table"]);
   });
 
   it("should only allow column, map, pie and table if only geo dimensions are available", () => {
-    const possibleChartTypes = getPossibleChartTypes({
+    const { enabledChartTypes } = getEnabledChartTypes({
       dimensions: [{ __typename: "GeoShapesDimension" }] as any,
       measures: [{ __typename: "NumericalMeasure" }] as any,
       cubeCount: 1,
-    }).sort();
+    });
 
-    expect(possibleChartTypes).toEqual(["column", "map", "pie", "table"]);
+    expect(enabledChartTypes.sort()).toEqual(["column", "map", "pie", "table"]);
   });
 
   it("should not allow multiline chart if there are no several measures of the same unit", () => {
-    const possibleChartTypes = getPossibleChartTypes({
+    const { enabledChartTypes } = getEnabledChartTypes({
       dimensions: [],
       measures: [
         { __typename: "NumericalMeasure", unit: "m" },
@@ -219,7 +219,7 @@ describe("possible chart types", () => {
       cubeCount: 1,
     });
 
-    expect(possibleChartTypes).not.toContain("comboLineSingle");
+    expect(enabledChartTypes).not.toContain("comboLineSingle");
   });
 });
 

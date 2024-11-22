@@ -387,6 +387,34 @@ msgstr "Nessuna unità"
 msgid "controls.chart.combo.y.right-axis-measure"
 msgstr "Misura dell'asse destro"
 
+#: app/charts/index.ts
+msgid "controls.chart.disabled.categorical"
+msgstr "È richiesta almeno una dimensione categoriale."
+
+#: app/charts/index.ts
+msgid "controls.chart.disabled.different-unit"
+msgstr "Sono necessarie almeno due misure numeriche con unità diverse."
+
+#: app/charts/index.ts
+msgid "controls.chart.disabled.geographical"
+msgstr "È richiesta almeno una dimensione geografica."
+
+#: app/charts/index.ts
+msgid "controls.chart.disabled.multiple-measures"
+msgstr "Sono necessarie almeno due misure numeriche."
+
+#: app/charts/index.ts
+msgid "controls.chart.disabled.numerical"
+msgstr "È richiesta almeno una misura numerica."
+
+#: app/charts/index.ts
+msgid "controls.chart.disabled.same-unit"
+msgstr "Sono necessarie almeno due misure numeriche con la stessa unità."
+
+#: app/charts/index.ts
+msgid "controls.chart.disabled.temporal"
+msgstr "È richiesta almeno una dimensione temporale."
+
 #: app/configurator/components/field-i18n.ts
 msgid "controls.chart.type.area"
 msgstr "Aree"
@@ -1244,6 +1272,7 @@ msgstr "Sono mostrate soltanto le prime 10 righe"
 
 #: app/components/metadata-panel.tsx
 #: app/components/metadata-panel.tsx
+#: app/configurator/components/chart-options-selector.tsx
 msgid "dimension.joined"
 msgstr "Unita"
 
