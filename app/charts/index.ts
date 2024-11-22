@@ -1948,6 +1948,13 @@ const adjustSegmentSorting = ({
   return newSorting;
 };
 
+const categoricalEnabledChartTypes: RegularChartType[] = ["column", "pie"];
+const geoEnabledChartTypes: RegularChartType[] = ["column", "map", "pie"];
+const multipleNumericalMeasuresEnabledChartTypes: RegularChartType[] = [
+  "scatterplot",
+];
+const timeEnabledChartTypes: RegularChartType[] = ["area", "column", "line"];
+
 export const getPossibleChartTypes = ({
   dimensions,
   measures,
@@ -1965,23 +1972,19 @@ export const getPossibleChartTypes = ({
     (d) => isTemporalDimension(d) || isTemporalEntityDimension(d)
   );
 
-  const categoricalEnabled: RegularChartType[] = ["column", "pie"];
-  const geoEnabled: RegularChartType[] = ["column", "map", "pie"];
-  const multipleNumericalMeasuresEnabled: RegularChartType[] = ["scatterplot"];
-  const timeEnabled: RegularChartType[] = ["area", "column", "line"];
+  const possibleChartTypes: ChartType[] = ["table"];
 
-  const possibles: ChartType[] = ["table"];
   if (numericalMeasures.length > 0) {
     if (categoricalDimensions.length > 0) {
-      possibles.push(...categoricalEnabled);
+      possibleChartTypes.push(...categoricalEnabledChartTypes);
     }
 
     if (geoDimensions.length > 0) {
-      possibles.push(...geoEnabled);
+      possibleChartTypes.push(...geoEnabledChartTypes);
     }
 
     if (numericalMeasures.length > 1) {
-      possibles.push(...multipleNumericalMeasuresEnabled);
+      possibleChartTypes.push(...multipleNumericalMeasuresEnabledChartTypes);
 
       if (temporalDimensions.length > 0) {
         const measuresWithUnit = numericalMeasures.filter((d) => d.unit);
@@ -1990,7 +1993,7 @@ export const getPossibleChartTypes = ({
         );
 
         if (uniqueUnits.length > 1) {
-          possibles.push(...comboDifferentUnitChartTypes);
+          possibleChartTypes.push(...comboDifferentUnitChartTypes);
         }
 
         const unitCounts = rollup(
@@ -2000,24 +2003,28 @@ export const getPossibleChartTypes = ({
         );
 
         if (Array.from(unitCounts.values()).some((d) => d > 1)) {
-          possibles.push(...comboSameUnitChartTypes);
+          possibleChartTypes.push(...comboSameUnitChartTypes);
         }
       }
     }
 
     if (temporalDimensions.length > 0) {
-      possibles.push(...timeEnabled);
+      possibleChartTypes.push(...timeEnabledChartTypes);
     }
   }
 
-  if (ordinalMeasures.length > 0 && geoDimensions.length > 0) {
-    possibles.push("map");
+  if (
+    ordinalMeasures.length > 0 &&
+    geoDimensions.length > 0 &&
+    !possibleChartTypes.includes("map")
+  ) {
+    possibleChartTypes.push("map");
   }
 
   const chartTypesOrder = getChartTypeOrder({ cubeCount });
 
   return chartTypes
-    .filter((d) => possibles.includes(d))
+    .filter((d) => possibleChartTypes.includes(d))
     .sort((a, b) => chartTypesOrder[a] - chartTypesOrder[b]);
 };
 
