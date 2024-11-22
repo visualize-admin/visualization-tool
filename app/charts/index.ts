@@ -1457,24 +1457,24 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           (d) => d.id === numericalMeasureIds[0]
         ) as NumericalMeasure;
         let rightMeasureId: string | undefined;
-        const getLeftMeasure = (id: string) => {
+        const getLeftMeasure = (preferredId: string) => {
+          const preferredLeftMeasure = numericalMeasures.find(
+            (d) => d.id === preferredId
+          ) as NumericalMeasure;
+
           if (isAddingNewCube) {
             const rightMeasure = numericalMeasures.find(
               (d) => d.id === rightMeasureId
             );
-
-            // We're trying to find a measure that comes from a different cube,
-            // to better showcase the fact that we have two cubes now.
-            return (numericalMeasures.find(
+            const overrideLeftMeasure = numericalMeasures.find(
               (d) =>
                 d.cubeIri !== rightMeasure?.cubeIri &&
                 d.unit !== rightMeasure?.unit
-            ) ??
-              numericalMeasures.find((d) => d.id === id)) as NumericalMeasure;
+            );
+
+            return overrideLeftMeasure ?? preferredLeftMeasure;
           } else {
-            return numericalMeasures.find(
-              (d) => d.id === id
-            ) as NumericalMeasure;
+            return preferredLeftMeasure;
           }
         };
 
