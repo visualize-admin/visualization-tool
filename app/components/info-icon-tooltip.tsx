@@ -28,6 +28,7 @@ export const InfoIconTooltip = (
       arrow
       placement={placement}
       title={<TooltipTitle text={title} />}
+      disableInteractive
       componentsProps={{
         ...componentsProps,
         tooltip: {

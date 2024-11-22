@@ -17,6 +17,7 @@ export const MaybeTooltip = ({
     <Tooltip
       arrow
       title={title}
+      disableInteractive
       componentsProps={{
         tooltip: {
           className: classes.tooltip,
