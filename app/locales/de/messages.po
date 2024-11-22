@@ -307,7 +307,7 @@ msgstr "Fügen Sie eine Beschreibung hinzu"
 
 #: app/configurator/components/annotators.tsx
 msgid "controls.annotator.add-tab-label-warning"
-msgstr "Bitte fügen Sie eine Tab-Titel hinzu"
+msgstr "Bitte fügen Sie einen Tab-Titel hinzu"
 
 #: app/configurator/components/annotators.tsx
 #: app/configurator/components/annotators.tsx
@@ -669,7 +669,7 @@ msgstr "Dashboard"
 
 #: app/configurator/components/preview-breakpoint.tsx
 msgid "controls.layout.preview-lg"
-msgstr "Vorschau in grosser Breite"
+msgstr "Vorschau mit kleinem Desktop-Bildschirm"
 
 #: app/configurator/components/preview-breakpoint.tsx
 msgid "controls.layout.preview-md"
@@ -1144,7 +1144,7 @@ msgstr "Datensatz"
 
 #: app/components/chart-footnotes.tsx
 msgid "dataset.footnotes.updated"
-msgstr "Neuestes Datenupdate"
+msgstr "Neuestes Update"
 
 #: app/components/chart-published.tsx
 msgid "dataset.hasImputedValues"
@@ -1549,7 +1549,7 @@ msgstr "Benennen Sie die Visualisierung um"
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.external-application"
-msgstr "Einbett-Code für «Externe Applikation»"
+msgstr "Embed-Code für «Externe Applikation»"
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.external-application.caption"
@@ -1557,7 +1557,7 @@ msgstr "Verwenden Sie diesen Link, um das Diagramm ohne Iframe-Tags einzubetten.
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe"
-msgstr "Einbett-Code"
+msgstr "Embed-Code"
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.caption"
@@ -1573,11 +1573,11 @@ msgstr "Zur Einbettung von Visualisierungen in Systeme ohne Rand."
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.responsive"
-msgstr "Anpassungsfähiges iframe"
+msgstr "Flexibles Iframe"
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.responsive.warn"
-msgstr "Zum Einbetten von Visualisierungen in Webseiten ohne CMS-Unterstützung. Der iframe wird responsiv sein. Der JavaScript-Teil des Einbettungscodes sorgt dafür, dass der iframe immer die richtige Größe beibehält."
+msgstr "Zum Einbetten von Visualisierungen in Webseiten ohne CMS-Unterstützung. Der Iframe wird sich anpassen. Der JavaScript-Teil des Einbettungscodes sorgt dafür, dass der Iframe immer die richtige Grösse beibehält."
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.static"
