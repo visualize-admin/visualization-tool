@@ -2130,8 +2130,6 @@ export const getEnabledChartTypes = ({
     );
   }
 
-  console.log({ possibleChartTypesDict });
-
   const chartTypesOrder = getChartTypeOrder({ cubeCount });
   const enabledChartTypes = chartTypes
     .filter((d) => possibleChartTypesDict[d].enabled)

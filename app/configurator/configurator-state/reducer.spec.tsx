@@ -71,6 +71,11 @@ jest.mock("@/urql-cache", () => {
   };
 });
 
+jest.mock("@lingui/macro", () => ({
+  defineMessage: (str: string) => str,
+  t: (str: string) => str,
+}));
+
 type getCachedComponents = typeof getCachedComponentsOriginal;
 const getCachedComponents = getCachedComponentsOriginal as unknown as jest.Mock<
   ReturnType<getCachedComponents>,

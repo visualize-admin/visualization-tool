@@ -40,6 +40,11 @@ jest.mock("@/utils/chart-config/api", () => ({
   fetchChartConfig: jest.fn(),
 }));
 
+jest.mock("@lingui/macro", () => ({
+  defineMessage: (str: string) => str,
+  t: (str: string) => str,
+}));
+
 const possibleFilters: PossibleFilterValue[] = [
   {
     __typename: "PossibleFilterValue",

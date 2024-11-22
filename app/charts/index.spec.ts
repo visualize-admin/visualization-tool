@@ -21,6 +21,11 @@ jest.mock("../rdf/extended-cube", () => ({
   ExtendedCube: jest.fn(),
 }));
 
+jest.mock("@lingui/macro", () => ({
+  defineMessage: (str: string) => str,
+  t: (str: string) => str,
+}));
+
 const mockDimensions: Record<string, Dimension> = {
   geoCoordinates: {
     __typename: "GeoCoordinatesDimension",
