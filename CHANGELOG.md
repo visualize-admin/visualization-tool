@@ -27,7 +27,7 @@ You can also check the
   - Added a way to do local visual regression testing of charts between
     different branches
 
-# [4.9.5] - 2024-11-18
+# [4.9.5] - 2024-11-22
 
 - Features
   - Added Newsletter, Bug Report and Feature Request sections to the home page
@@ -39,6 +39,7 @@ You can also check the
   - visualize.admin.ch links are now again visible in chart footnotes
   - Improved chart tooltips on small screens
   - % mode toggle no longer overlaps with the Y axis title
+  - Merging of cubes beta tag has been removed
 
 # [4.9.4] - 2024-11-06
 
