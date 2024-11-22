@@ -183,7 +183,7 @@ describe("initial config", () => {
 describe("enabled chart types", () => {
   it("should allow appropriate chart types based on available dimensions", () => {
     const expectedChartTypes = ["area", "column", "line", "pie", "table"];
-    const { enabledChartTypes } = getEnabledChartTypes({
+    const { enabledChartTypes, possibleChartTypesDict } = getEnabledChartTypes({
       dimensions: bathingWaterData.data.dataCubeByIri
         .dimensions as any as Dimension[],
       measures: bathingWaterData.data.dataCubeByIri
@@ -192,30 +192,39 @@ describe("enabled chart types", () => {
     });
 
     expect(enabledChartTypes.sort()).toEqual(expectedChartTypes);
+    expect(possibleChartTypesDict["comboLineSingle"].message).toBeDefined();
+    expect(possibleChartTypesDict["comboLineDual"].message).toBeDefined();
+    expect(possibleChartTypesDict["map"].message).toBeDefined();
   });
 
   it("should only allow table if there are only measures available", () => {
-    const { enabledChartTypes } = getEnabledChartTypes({
+    const { enabledChartTypes, possibleChartTypesDict } = getEnabledChartTypes({
       dimensions: [],
       measures: [{ __typename: "NumericalMeasure" }] as any,
       cubeCount: 1,
     });
 
     expect(enabledChartTypes).toEqual(["table"]);
+    expect(
+      Object.entries(possibleChartTypesDict)
+        .filter(([k]) => k !== "table")
+        .every(([, { message }]) => !!message)
+    ).toBe(true);
   });
 
   it("should only allow column, map, pie and table if only geo dimensions are available", () => {
-    const { enabledChartTypes } = getEnabledChartTypes({
+    const { enabledChartTypes, possibleChartTypesDict } = getEnabledChartTypes({
       dimensions: [{ __typename: "GeoShapesDimension" }] as any,
       measures: [{ __typename: "NumericalMeasure" }] as any,
       cubeCount: 1,
     });
 
     expect(enabledChartTypes.sort()).toEqual(["column", "map", "pie", "table"]);
+    expect(possibleChartTypesDict["line"].message).toBeDefined();
   });
 
   it("should not allow multiline chart if there are no several measures of the same unit", () => {
-    const { enabledChartTypes } = getEnabledChartTypes({
+    const { enabledChartTypes, possibleChartTypesDict } = getEnabledChartTypes({
       dimensions: [],
       measures: [
         { __typename: "NumericalMeasure", unit: "m" },
@@ -225,6 +234,7 @@ describe("enabled chart types", () => {
     });
 
     expect(enabledChartTypes).not.toContain("comboLineSingle");
+    expect(possibleChartTypesDict["comboLineSingle"].message).toBeDefined();
   });
 });
 
