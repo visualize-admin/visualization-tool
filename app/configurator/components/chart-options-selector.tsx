@@ -29,6 +29,8 @@ import {
   SelectOption,
   SelectOptionGroup,
 } from "@/components/form";
+import { MaybeTooltip } from "@/components/maybe-tooltip";
+import { TooltipTitle } from "@/components/tooltip-utils";
 import { GenericField } from "@/config-types";
 import {
   AnimationField,
@@ -1395,14 +1397,16 @@ const ChartFieldCalculation = ({
         </Flex>
         <ChartOptionSwitchField
           label={
-            <Tooltip
-              enterDelay={600}
+            <MaybeTooltip
+              tooltipProps={{ enterDelay: 600 }}
               title={
-                <Typography variant="body2">
-                  <Trans id="controls.filters.interactive.calculation">
-                    Allow users to change chart mode
-                  </Trans>
-                </Typography>
+                <TooltipTitle
+                  text={
+                    <Trans id="controls.filters.interactive.calculation">
+                      Allow users to change chart mode
+                    </Trans>
+                  }
+                />
               }
             >
               <div>
@@ -1410,7 +1414,7 @@ const ChartFieldCalculation = ({
                   Interactive
                 </Trans>
               </div>
-            </Tooltip>
+            </MaybeTooltip>
           }
           field={null}
           path="interactiveFiltersConfig.calculation.active"

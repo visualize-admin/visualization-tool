@@ -46,6 +46,7 @@ import React, {
 import { useBrowseContext } from "@/browser/context";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { BANNER_MARGIN_TOP } from "@/components/presence";
+import { TooltipTitle } from "@/components/tooltip-utils";
 import VisuallyHidden from "@/components/visually-hidden";
 import {
   FieldProps,
@@ -107,11 +108,7 @@ export const Radio = ({
 
   return (
     <MaybeTooltip
-      title={
-        warnMessage ? (
-          <Typography variant="body2">{warnMessage}</Typography>
-        ) : undefined
-      }
+      title={warnMessage ? <TooltipTitle text={warnMessage} /> : undefined}
     >
       <FormControlLabel
         label={label || "-"}

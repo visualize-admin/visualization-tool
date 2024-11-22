@@ -17,6 +17,7 @@ import { useClient } from "urql";
 import Flex from "@/components/flex";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { useMetadataPanelStoreActions } from "@/components/metadata-panel-store";
+import { TooltipTitle } from "@/components/tooltip-utils";
 import useDisclosure from "@/components/use-disclosure";
 import { getChartConfig } from "@/configurator";
 import { DatasetDialog } from "@/configurator/components/add-dataset-dialog";
@@ -99,11 +100,13 @@ const DatasetRow = ({
           <Box color="success.main">
             <SvgIcChecked width={24} height={24} />
           </Box>
-          {t({
-            id: "dataset.search.preview.added-dataset",
-            message:
-              "New dataset added. You can now use its data in the chart(s).",
-          })}
+          <TooltipTitle
+            text={t({
+              id: "dataset.search.preview.added-dataset",
+              message:
+                "New dataset added. You can now use its data in the chart(s).",
+            })}
+          />
         </Box>
       }
       tooltipProps={{

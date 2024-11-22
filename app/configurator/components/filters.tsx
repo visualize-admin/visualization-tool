@@ -42,6 +42,8 @@ import { useFootnotesStyles } from "@/components/chart-footnotes";
 import Flex from "@/components/flex";
 import { Select } from "@/components/form";
 import { Loading } from "@/components/hint";
+import { MaybeTooltip } from "@/components/maybe-tooltip";
+import { TooltipTitle } from "@/components/tooltip-utils";
 import {
   ChartConfig,
   getChartConfig,
@@ -342,12 +344,16 @@ const MultiFilterContent = ({
               componentsProps={{ typography: { variant: "body2" } }}
               control={<Switch {...interactiveFilterProps} />}
               label={
-                <Tooltip
-                  enterDelay={600}
+                <MaybeTooltip
+                  tooltipProps={{ enterDelay: 600 }}
                   title={
-                    <Trans id="controls.filters.interactive.tooltip">
-                      Allow users to change filters
-                    </Trans>
+                    <TooltipTitle
+                      text={
+                        <Trans id="controls.filters.interactive.tooltip">
+                          Allow users to change filters
+                        </Trans>
+                      }
+                    />
                   }
                 >
                   <div>
@@ -355,7 +361,7 @@ const MultiFilterContent = ({
                       Interactive
                     </Trans>
                   </div>
-                </Tooltip>
+                </MaybeTooltip>
               }
             />
           ) : null}

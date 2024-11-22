@@ -8,7 +8,6 @@ import {
   TableRow,
   TableSortLabel,
   Theme,
-  Tooltip,
   TooltipProps,
 } from "@mui/material";
 import { ascending, descending } from "d3-array";
@@ -19,7 +18,9 @@ import {
   useQueryFilters,
 } from "@/charts/shared/chart-helpers";
 import { Loading } from "@/components/hint";
+import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
+import { TooltipTitle } from "@/components/tooltip-utils";
 import {
   ChartConfig,
   DashboardFiltersConfig,
@@ -59,11 +60,14 @@ const ComponentLabel = (props: ComponentLabelProps) => {
       <span style={{ fontWeight: "bold" }}>{label}</span>
     </OpenMetadataPanelWrapper>
   ) : component.description ? (
-    <Tooltip title={component.description} arrow {...tooltipProps}>
+    <MaybeTooltip
+      title={<TooltipTitle text={component.description} />}
+      tooltipProps={tooltipProps}
+    >
       <span style={{ fontWeight: "bold", textDecoration: "underline" }}>
         {label}
       </span>
-    </Tooltip>
+    </MaybeTooltip>
   ) : (
     <span style={{ fontWeight: "bold" }}>{label}</span>
   );

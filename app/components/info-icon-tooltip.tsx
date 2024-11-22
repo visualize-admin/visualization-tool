@@ -1,15 +1,17 @@
-import { Theme, Tooltip, TooltipProps, Typography } from "@mui/material";
-import { makeStyles } from "@mui/styles";
-import React from "react";
+import { Tooltip, TooltipProps, Typography } from "@mui/material";
+import { ReactNode } from "react";
 
+import {
+  TooltipTitle,
+  TooltipVariant,
+  useTooltipStyles,
+} from "@/components/tooltip-utils";
 import { Icon } from "@/icons";
-
-type InfoIconTooltipVariant = "primary" | "secondary";
 
 export const InfoIconTooltip = (
   props: {
-    title: NonNullable<React.ReactNode>;
-    variant?: InfoIconTooltipVariant;
+    title: NonNullable<ReactNode>;
+    variant?: TooltipVariant;
   } & Omit<TooltipProps, "children" | "title">
 ) => {
   const {
@@ -19,17 +21,13 @@ export const InfoIconTooltip = (
     placement = "top",
     ...rest
   } = props;
-  const classes = useStyles({ variant });
+  const classes = useTooltipStyles({ variant });
 
   return (
     <Tooltip
       arrow
       placement={placement}
-      title={
-        <Typography variant="caption" color="secondary">
-          {title}
-        </Typography>
-      }
+      title={<TooltipTitle text={title} />}
       componentsProps={{
         ...componentsProps,
         tooltip: {
@@ -44,17 +42,3 @@ export const InfoIconTooltip = (
     </Tooltip>
   );
 };
-
-const useStyles = makeStyles<Theme, { variant: "primary" | "secondary" }>(
-  (theme) => ({
-    tooltip: {
-      width: 150,
-      padding: theme.spacing(1, 2),
-      lineHeight: "18px",
-    },
-    icon: {
-      color: ({ variant }) => theme.palette[variant].main,
-      pointerEvents: "auto",
-    },
-  })
-);
