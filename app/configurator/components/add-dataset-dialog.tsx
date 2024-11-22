@@ -63,7 +63,6 @@ import {
   isConfiguring,
   useConfiguratorState,
 } from "@/configurator";
-import { BetaTag } from "@/configurator/components/beta-tag";
 import {
   Dimension,
   isJoinByComponent,
@@ -865,11 +864,6 @@ export const DatasetDialog = ({
               id: "chart.datasets.add-dataset-dialog.title",
               message: "Select dataset with shared dimensions",
             })}
-            <BetaTag
-              tagProps={{
-                sx: { ml: 2, position: "relative", top: "-1rem" },
-              }}
-            />
           </DialogTitle>
           <DialogContent>
             <Collapse in={isOpen}>
