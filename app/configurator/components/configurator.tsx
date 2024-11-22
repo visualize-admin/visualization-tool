@@ -780,8 +780,6 @@ const PublishStep = () => {
 
 export const Configurator = () => {
   const { pathname } = useRouter();
-  // Local state, the dataset preview doesn't need to be persistent.
-  // FIXME: for a11y, "updateDataSetPreviewIri" should also move focus to "Weiter" button (?)
   const [configuratorState] = useConfiguratorState();
   const isLoadingConfigureChartStep =
     configuratorState.state === "INITIAL" && pathname === "/create/[chartId]";

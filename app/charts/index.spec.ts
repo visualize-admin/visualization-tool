@@ -1,4 +1,9 @@
-import { ColumnConfig, ScatterPlotConfig, TableFields } from "@/configurator";
+import {
+  ColumnConfig,
+  ComboLineDualConfig,
+  ScatterPlotConfig,
+  TableFields,
+} from "@/configurator";
 import { Dimension, Measure } from "@/domain/data";
 import { stringifyComponentId } from "@/graphql/make-component-id";
 import { TimeUnit } from "@/graphql/resolver-types";
@@ -435,5 +440,63 @@ describe("chart type switch", () => {
     expect(newChartConfig.fields.x.componentId).not.toEqual(
       oldChartConfig.fields.x.componentId
     );
+  });
+
+  it("should prefer to use components from different cubes if merging cubes, otherwise not", () => {
+    const oldChartConfig = {
+      chartType: "column",
+      cubes: [{ iri: "A" }],
+      fields: {
+        x: {
+          componentId: "A_D1",
+        },
+        y: {
+          componentId: "A_M1",
+        },
+      },
+    } as any as ColumnConfig;
+    const dimensions = [
+      { id: "A_D1", cubeIri: "A" },
+      { __typename: "TemporalDimension", id: "B_D1", cubeIri: "B" },
+    ] as any as Dimension[];
+    const measures = [
+      { __typename: "NumericalMeasure", id: "A_M1", cubeIri: "A", unit: "X" },
+      { __typename: "NumericalMeasure", id: "A_M2", cubeIri: "A", unit: "Y" },
+      { __typename: "NumericalMeasure", id: "B_M1", cubeIri: "B", unit: "Z" },
+    ] as any as Measure[];
+
+    const newChartConfigMergingOfCubes = getChartConfigAdjustedToChartType({
+      chartConfig: oldChartConfig,
+      newChartType: "comboLineDual",
+      dimensions,
+      measures,
+      isAddingNewCube: true,
+    }) as ComboLineDualConfig;
+
+    expect(
+      newChartConfigMergingOfCubes.fields.y.rightAxisComponentId.startsWith("A")
+    ).toEqual(true);
+    expect(
+      newChartConfigMergingOfCubes.fields.y.leftAxisComponentId.startsWith("B")
+    ).toEqual(true);
+
+    const newChartConfigNotMergingOfCubes = getChartConfigAdjustedToChartType({
+      chartConfig: oldChartConfig,
+      newChartType: "comboLineDual",
+      dimensions,
+      measures,
+      isAddingNewCube: false,
+    }) as ComboLineDualConfig;
+
+    expect(
+      newChartConfigNotMergingOfCubes.fields.y.rightAxisComponentId.startsWith(
+        "A"
+      )
+    ).toEqual(true);
+    expect(
+      newChartConfigNotMergingOfCubes.fields.y.leftAxisComponentId.startsWith(
+        "A"
+      )
+    ).toEqual(true);
   });
 });

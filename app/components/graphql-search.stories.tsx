@@ -248,7 +248,7 @@ export const Search = () => {
                                 component="div"
                                 mb={1}
                               >
-                                Contains values from{" "}
+                                Joined by{" "}
                               </Typography>
                               {sd.termsets.map((t) => (
                                 <Tag

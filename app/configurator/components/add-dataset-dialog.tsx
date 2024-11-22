@@ -655,16 +655,22 @@ export const DatasetDialog = ({
       ) ?? [];
     const sharedDimensions =
       cubeComponentTermsets.data?.dataCubeComponentTermsets ?? [];
+    const sharedDimensionIds = sharedDimensions.map((dim) => dim.iri);
 
     return [
-      ...temporalDimensions.map((x) => {
-        return {
-          type: "temporal" as const,
-          id: x.id as ComponentId,
-          label: x.label,
-          timeUnit: x.timeUnit,
-        };
-      }),
+      ...temporalDimensions
+        // There are cases, e.g. for AMDP cubes, that a temporal dimension contains
+        // termsets (TemporalEntityDimension). When this happens, we prefer to show
+        // the dimension as a shared dimension.
+        .filter((dim) => !sharedDimensionIds.includes(dim.id))
+        .map((x) => {
+          return {
+            type: "temporal" as const,
+            id: x.id as ComponentId,
+            label: x.label,
+            timeUnit: x.timeUnit,
+          };
+        }),
       ...sharedDimensions.map((x) => {
         return {
           type: "shared" as const,
@@ -966,33 +972,6 @@ export const DatasetDialog = ({
                     />
                     <ListItemText
                       primary={<Tag type="dimension">{sd.label}</Tag>}
-                      classes={{ secondary: classes.listItemSecondary }}
-                      secondary={
-                        sd.type === "temporal" ? (
-                          <Tag type="termset">{sd.timeUnit}</Tag>
-                        ) : (
-                          <>
-                            <Typography
-                              variant="caption"
-                              color="grey.600"
-                              mr={2}
-                              gutterBottom
-                              component="div"
-                            >
-                              <Trans id="dataset-result.dimension-termset-contains" />
-                            </Typography>
-                            {sd.termsets.map((t) => (
-                              <Tag
-                                key={t.iri}
-                                type="termset"
-                                className={classes.listTag}
-                              >
-                                {t.label}
-                              </Tag>
-                            ))}
-                          </>
-                        )
-                      }
                     />
                   </MenuItem>
                 ))}
@@ -1131,6 +1110,7 @@ const useAddDataset = () => {
             locale,
             chartKey: state.activeChartKey,
             chartType: possibleType[0],
+            isAddingNewCube: true,
           },
         });
       } finally {

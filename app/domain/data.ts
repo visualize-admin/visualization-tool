@@ -533,7 +533,7 @@ export const getCategoricalDimensions = (dimensions: Component[]) =>
 export const getGeoDimensions = (dimensions: Component[]) =>
   dimensions.filter(isGeoDimension);
 
-export const getDimensionsByDimensionType = ({
+export const getComponentsFilteredByType = ({
   dimensionTypes,
   dimensions,
   measures,
@@ -541,10 +541,11 @@ export const getDimensionsByDimensionType = ({
   dimensionTypes: ComponentType[];
   dimensions: Component[];
   measures: Component[];
-}) =>
-  [...measures, ...dimensions].filter((component) =>
-    dimensionTypes.includes(component.__typename)
+}) => {
+  return [...measures, ...dimensions].filter((c) =>
+    dimensionTypes.includes(c.__typename)
   );
+};
 
 const isNominalDimension = (
   dimension?: Component | null

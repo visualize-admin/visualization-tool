@@ -11,7 +11,7 @@ import { Theme } from "@mui/material/styles";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 import uniqBy from "lodash/uniqBy";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { useClient } from "urql";
 
 import Flex from "@/components/flex";
@@ -85,18 +85,11 @@ const DatasetRow = ({
   added?: boolean;
   onRemoveAdded?: () => void;
 }) => {
-  const ref = useRef<HTMLDivElement>(null);
   const locale = useLocale();
   const client = useClient();
   const classes = useStyles();
   const [state, dispatch] = useConfiguratorState(isConfiguring);
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (added && ref.current) {
-      ref.current?.scrollIntoView({ behavior: "smooth" });
-    }
-  });
 
   return (
     <MaybeTooltip
@@ -122,9 +115,8 @@ const DatasetRow = ({
       }}
     >
       <div
-        ref={ref}
-        className={clsx(classes.row, { [classes.added]: added })}
         key={cube.iri}
+        className={clsx(classes.row, { [classes.added]: added })}
       >
         <div>
           <MuiLink

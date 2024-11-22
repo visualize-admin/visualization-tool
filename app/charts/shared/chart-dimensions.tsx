@@ -16,6 +16,8 @@ import {
 } from "@/configurator";
 import { getTextWidth } from "@/utils/get-text-width";
 
+import { TITLE_VPADDING } from "../combo/combo-line-container";
+
 type ComputeChartPaddingProps = {
   yScale: d3.ScaleLinear<number, number>;
   width: number;
@@ -115,15 +117,42 @@ export const useChartPadding = (props: ComputeChartPaddingProps) => {
 
 const ASPECT_RATIO = 2 / 5;
 
+type YAxisLabels = {
+  leftLabel?: string;
+  rightLabel?: string;
+};
+
 export const useChartBounds = (
   width: number,
   margins: Margins,
-  height: number
-): Bounds => {
+  height: number,
+  yAxisLabels?: YAxisLabels
+): Bounds & { yAxisTitleHeight: number } => {
   const [state] = useConfiguratorState(hasChartConfigs);
+  const { axisLabelFontSize } = useChartTheme();
   const { left, top, right, bottom } = margins;
 
   const chartWidth = width - left - right;
+
+  const yAxisTitleHeight = useMemo(() => {
+    if (!yAxisLabels?.leftLabel && !yAxisLabels?.rightLabel) {
+      return 0;
+    }
+
+    const leftTitleWidth = yAxisLabels.leftLabel
+      ? getTextWidth(yAxisLabels.leftLabel, { fontSize: axisLabelFontSize }) +
+        TICK_PADDING
+      : 0;
+
+    const rightTitleWidth = yAxisLabels.rightLabel
+      ? getTextWidth(yAxisLabels.rightLabel, { fontSize: axisLabelFontSize }) +
+        TICK_PADDING
+      : 0;
+
+    const overLappingTitles = leftTitleWidth + rightTitleWidth > chartWidth;
+    return overLappingTitles ? (axisLabelFontSize + TITLE_VPADDING) * 2 : 0;
+  }, [chartWidth, yAxisLabels, axisLabelFontSize]);
+
   const chartHeight = isLayoutingFreeCanvas(state)
     ? Math.max(
         Math.max(40, CHART_GRID_MIN_HEIGHT - top - bottom),
@@ -138,6 +167,7 @@ export const useChartBounds = (
     margins,
     chartWidth,
     chartHeight,
+    yAxisTitleHeight,
   };
 };
 
