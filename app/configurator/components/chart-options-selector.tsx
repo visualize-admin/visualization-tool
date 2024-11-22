@@ -389,11 +389,26 @@ const EncodingOptionsPanel = ({
   }, [components, fields, encoding.field]);
 
   const hasStandardError = useMemo(() => {
-    return components.find((d) =>
+    return !!components.find((d) =>
       d.related?.some(
         (r) => r.type === "StandardError" && r.id === component?.id
       )
     );
+  }, [components, component]);
+
+  const hasConfidenceInterval = useMemo(() => {
+    const upperBoundComponent = components.find((d) =>
+      d.related?.some(
+        (r) => r.type === "ConfidenceUpperBound" && r.id === component?.id
+      )
+    );
+    const lowerBoundComponent = components.find((d) =>
+      d.related?.some(
+        (r) => r.type === "ConfidenceLowerBound" && r.id === component?.id
+      )
+    );
+
+    return !!upperBoundComponent && !!lowerBoundComponent;
   }, [components, component]);
 
   const hasColorPalette = !!encoding.options?.colorPalette;
@@ -436,7 +451,7 @@ const EncodingOptionsPanel = ({
                 <ChartOptionSwitchField
                   path="showStandardError"
                   field={encoding.field}
-                  defaultValue={true}
+                  defaultValue
                   label={t({ id: "controls.section.show-standard-error" })}
                   sx={{ marginRight: 0 }}
                 />
@@ -456,6 +471,41 @@ const EncodingOptionsPanel = ({
                 />
               </Box>
             )}
+            {encoding.options?.showConfidenceInterval &&
+              hasConfidenceInterval && (
+                <Box
+                  sx={{
+                    display: "flex",
+                    gap: 1,
+                    alignItems: "center",
+                    mt: 3,
+                  }}
+                >
+                  <ChartOptionSwitchField
+                    path="showConfidenceInterval"
+                    field={encoding.field}
+                    defaultValue
+                    label={t({
+                      id: "controls.section.show-confidence-interval",
+                    })}
+                    sx={{ marginRight: 0 }}
+                  />
+                  <InfoIconTooltip
+                    enterDelay={600}
+                    PopperProps={{ sx: { maxWidth: 160 } }}
+                    title={
+                      <TooltipTitle
+                        text={
+                          <Trans id="controls.section.show-confidence-interval.explanation">
+                            Show uncertainties extending from data points to
+                            represent confidence intervals
+                          </Trans>
+                        }
+                      />
+                    }
+                  />
+                </Box>
+              )}
             {encoding.options?.useAbbreviations && (
               <ControlSectionContent
                 component="fieldset"

@@ -287,6 +287,7 @@ export type ColumnSegmentField = t.TypeOf<typeof ColumnSegmentField>;
 
 const UncertaintyFieldExtension = t.partial({
   showStandardError: t.boolean,
+  showConfidenceInterval: t.boolean,
 });
 export type UncertaintyFieldExtension = t.TypeOf<
   typeof UncertaintyFieldExtension
