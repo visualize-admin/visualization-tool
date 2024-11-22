@@ -29,6 +29,7 @@ import {
   SelectOption,
   SelectOptionGroup,
 } from "@/components/form";
+import { InfoIconTooltip } from "@/components/info-icon-tooltip";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { TooltipTitle } from "@/components/tooltip-utils";
 import { GenericField } from "@/config-types";
@@ -439,20 +440,20 @@ const EncodingOptionsPanel = ({
                   label={t({ id: "controls.section.show-standard-error" })}
                   sx={{ marginRight: 0 }}
                 />
-                <Tooltip
+                <InfoIconTooltip
                   enterDelay={600}
                   PopperProps={{ sx: { maxWidth: 160 } }}
                   title={
-                    <Trans id="controls.section.show-standard-error.explanation">
-                      Show uncertainties extending from data points to represent
-                      standard errors
-                    </Trans>
+                    <TooltipTitle
+                      text={
+                        <Trans id="controls.section.show-standard-error.explanation">
+                          Show uncertainties extending from data points to
+                          represent standard errors
+                        </Trans>
+                      }
+                    />
                   }
-                >
-                  <Box sx={{ color: "primary.main" }}>
-                    <SvgIcInfoOutline width={16} height={16} />
-                  </Box>
-                </Tooltip>
+                />
               </Box>
             )}
             {encoding.options?.useAbbreviations && (
