@@ -28,8 +28,14 @@ enum ScaleType {
   Ratio
 }
 
+enum RelatedDimensionType {
+  StandardError
+  ConfidenceUpperBound
+  ConfidenceLowerBound
+}
+
 type RelatedDimension {
-  type: String!
+  type: RelatedDimensionType!
   id: String!
 }
 

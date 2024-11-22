@@ -229,9 +229,15 @@ export type QueryDataCubeDimensionGeoShapesArgs = {
 
 export type RelatedDimension = {
   __typename?: 'RelatedDimension';
-  type: Scalars['String'];
+  type: RelatedDimensionType;
   id: Scalars['String'];
 };
+
+export enum RelatedDimensionType {
+  StandardError = 'StandardError',
+  ConfidenceUpperBound = 'ConfidenceUpperBound',
+  ConfidenceLowerBound = 'ConfidenceLowerBound'
+}
 
 export enum ScaleType {
   Ordinal = 'Ordinal',
@@ -379,6 +385,7 @@ export type ResolversTypes = ResolversObject<{
   Query: ResolverTypeWrapper<{}>;
   RawObservation: ResolverTypeWrapper<Scalars['RawObservation']>;
   RelatedDimension: ResolverTypeWrapper<RelatedDimension>;
+  RelatedDimensionType: RelatedDimensionType;
   ScaleType: ScaleType;
   SearchCube: ResolverTypeWrapper<Scalars['SearchCube']>;
   SearchCubeFilter: SearchCubeFilter;
@@ -521,7 +528,7 @@ export interface RawObservationScalarConfig extends GraphQLScalarTypeConfig<Reso
 }
 
 export type RelatedDimensionResolvers<ContextType = VisualizeGraphQLContext, ParentType extends ResolversParentTypes['RelatedDimension'] = ResolversParentTypes['RelatedDimension']> = ResolversObject<{
-  type?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  type?: Resolver<ResolversTypes['RelatedDimensionType'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;

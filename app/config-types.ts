@@ -16,6 +16,8 @@ const DimensionType = t.union([
   t.literal("GeoCoordinatesDimension"),
   t.literal("GeoShapesDimension"),
   t.literal("StandardErrorDimension"),
+  t.literal("ConfidenceUpperBoundDimension"),
+  t.literal("ConfidenceLowerBoundDimension"),
 ]);
 export type DimensionType = t.TypeOf<typeof DimensionType>;
 

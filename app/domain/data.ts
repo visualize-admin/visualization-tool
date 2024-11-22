@@ -180,6 +180,18 @@ const ComponentsRenderingConfig: {
     enableMultiFilter: false,
     enableSegment: false,
   },
+  ConfidenceUpperBoundDimension: {
+    enableAnimation: false,
+    enableCustomSort: false,
+    enableMultiFilter: false,
+    enableSegment: false,
+  },
+  ConfidenceLowerBoundDimension: {
+    enableAnimation: false,
+    enableCustomSort: false,
+    enableMultiFilter: false,
+    enableSegment: false,
+  },
 };
 
 export const ANIMATION_ENABLED_COMPONENTS = Object.entries(
@@ -261,7 +273,9 @@ export type Dimension =
   | TemporalOrdinalDimension
   | GeoCoordinatesDimension
   | GeoShapesDimension
-  | StandardErrorDimension;
+  | StandardErrorDimension
+  | ConfidenceUpperBoundDimension
+  | ConfidenceLowerBoundDimension;
 
 export type DimensionType = Dimension["__typename"];
 
@@ -314,6 +328,14 @@ export type GeoShapesDimension = BaseDimension & {
 
 export type StandardErrorDimension = BaseDimension & {
   __typename: "StandardErrorDimension";
+};
+
+export type ConfidenceUpperBoundDimension = BaseDimension & {
+  __typename: "ConfidenceUpperBoundDimension";
+};
+
+export type ConfidenceLowerBoundDimension = BaseDimension & {
+  __typename: "ConfidenceLowerBoundDimension";
 };
 
 export type Measure = NumericalMeasure | OrdinalMeasure;
@@ -610,13 +632,33 @@ export const isTemporalDimensionWithTimeUnit = (
 };
 
 const isStandardErrorResolvedDimension = (dim: ResolvedDimension) => {
-  return dim.data?.related.some((x) => x.type === "StandardError");
+  return dim.data?.related.some((r) => r.type === "StandardError");
+};
+
+const isConfidenceLowerBoundResolvedDimension = (dim: ResolvedDimension) => {
+  return dim.data?.related.some((r) => r.type === "ConfidenceLowerBound");
+};
+
+const isConfidenceUpperBoundResolvedDimension = (dim: ResolvedDimension) => {
+  return dim.data?.related.some((r) => r.type === "ConfidenceUpperBound");
 };
 
 export const isStandardErrorDimension = (
   dim: Component
 ): dim is StandardErrorDimension => {
   return dim.__typename === "StandardErrorDimension";
+};
+
+export const isConfidenceUpperBoundDimension = (
+  dim: Component
+): dim is ConfidenceUpperBoundDimension => {
+  return dim.__typename === "ConfidenceUpperBoundDimension";
+};
+
+export const isConfidenceLowerBoundDimension = (
+  dim: Component
+): dim is ConfidenceLowerBoundDimension => {
+  return dim.__typename === "ConfidenceLowerBoundDimension";
 };
 
 export const findRelatedErrorDimension = (
@@ -632,8 +674,11 @@ export const shouldLoadMinMaxValues = (dim: ResolvedDimension) => {
   const {
     data: { isNumerical, scaleType, dataKind },
   } = dim;
+
   return (
     (isNumerical && scaleType !== "Ordinal" && dataKind !== "Time") ||
-    isStandardErrorResolvedDimension(dim)
+    isStandardErrorResolvedDimension(dim) ||
+    isConfidenceUpperBoundResolvedDimension(dim) ||
+    isConfidenceLowerBoundResolvedDimension(dim)
   );
 };
