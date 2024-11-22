@@ -1951,12 +1951,10 @@ const adjustSegmentSorting = ({
 export const getPossibleChartTypes = ({
   dimensions,
   measures,
-  allowedChartTypes,
   cubeCount,
 }: {
   dimensions: Dimension[];
   measures: Measure[];
-  allowedChartTypes?: ChartType[];
   cubeCount: number;
 }): ChartType[] => {
   const numericalMeasures = measures.filter(isNumericalMeasure);
@@ -2019,11 +2017,7 @@ export const getPossibleChartTypes = ({
   const chartTypesOrder = getChartTypeOrder({ cubeCount });
 
   return chartTypes
-    .filter(
-      (d) =>
-        possibles.includes(d) &&
-        (!allowedChartTypes || allowedChartTypes.includes(d))
-    )
+    .filter((d) => possibles.includes(d))
     .sort((a, b) => chartTypesOrder[a] - chartTypesOrder[b]);
 };
 
