@@ -56,6 +56,7 @@ export type ConfiguratorStateAction =
         locale: Locale;
         chartKey: string;
         chartType: ChartType;
+        isAddingNewCube?: boolean;
       };
     }
   | {

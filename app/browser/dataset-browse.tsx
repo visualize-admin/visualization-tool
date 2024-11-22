@@ -31,6 +31,7 @@ import {
   SearchFieldProps,
 } from "@/components/form";
 import { Loading, LoadingDataError } from "@/components/hint";
+import { InfoIconTooltip } from "@/components/info-icon-tooltip";
 import MaybeLink from "@/components/maybe-link";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
 import {
@@ -584,7 +585,6 @@ const NavSectionTitle = ({
       sx={{
         alignItems: "center",
         p: 3,
-        cursor: "pointer",
         backgroundColor: theme.backgroundColor,
         borderRadius: 2,
         height: "2.5rem",
@@ -626,6 +626,7 @@ const NavSection = ({
     );
   }, [counts, items]);
   const { isOpen, open, close } = useDisclosure(!!currentFilter);
+
   return (
     <div>
       <NavSectionTitle theme={theme} sx={{ mb: "block" }}>
@@ -882,7 +883,21 @@ export const SearchFilters = ({
         counts={counts}
         filters={filters}
         icon={<SvgIcOrganisations width={20} height={20} />}
-        label={<Trans id="browse-panel.termsets">Concepts</Trans>}
+        label={
+          <Stack direction="row" gap={2} alignItems="center">
+            <Trans id="browse-panel.termsets">Concepts</Trans>
+            <InfoIconTooltip
+              variant="secondary"
+              placement="right"
+              title={
+                <Trans id="browse-panel.termsets.explanation">
+                  Concepts represent values that can be shared across different
+                  dimensions and datasets.
+                </Trans>
+              }
+            />
+          </Stack>
+        }
         extra={null}
         disableLinks={disableNavLinks}
       />
@@ -1206,8 +1221,8 @@ export const DatasetResult = ({
                         dimension.termsets.length > 0 ? (
                           <>
                             <Typography variant="body2">
-                              <Trans id="dataset-result.dimension-termset-contains">
-                                Contains values from
+                              <Trans id="dataset-result.dimension-joined-by">
+                                Joined by
                               </Trans>
                               <Stack gap={1} flexDirection="row" mt={1}>
                                 {dimension.termsets.map((termset) => {

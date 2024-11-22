@@ -22,13 +22,14 @@ import {
 } from "@/graphql/query-hooks";
 import { assert } from "@/utils/assert";
 
-export const JOIN_BY_CUBE_IRI = "joinBy";
+const JOIN_BY_CUBE_IRI = "joinBy";
 
 const keyJoiner = "$/$/$/";
 const joinByPrefix = `joinBy__`;
 
 export const mkJoinById = (index: number) => `${joinByPrefix}${index}`;
-export const isJoinById = (iri: string) => iri.startsWith(joinByPrefix);
+export const isJoinById = (id: string) => id.startsWith(joinByPrefix);
+export const isJoinByCube = (cubeIri: string) => cubeIri === JOIN_BY_CUBE_IRI;
 
 const getJoinByIdIndex = (joinById: string) => {
   return Number(joinById.slice(joinByPrefix.length));

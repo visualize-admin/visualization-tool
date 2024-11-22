@@ -58,12 +58,10 @@ export const createActions = ({
     createFrom: async ({
       iri,
       dataSource,
-      chartLoadedOptions,
       createURLParams,
     }: {
       iri: string;
       dataSource: "Int" | "Prod";
-      chartLoadedOptions?: Parameters<typeof selectors.chart.loaded>[0];
       createURLParams?: string;
     }) => {
       await page.goto(
@@ -72,7 +70,7 @@ export const createActions = ({
         )}&dataSource=${dataSource}&${createURLParams ?? ""}`
       );
 
-      await selectors.chart.loaded(chartLoadedOptions);
+      await selectors.chart.loaded();
     },
     switchToTableView: async () => {
       await (await selectors.chart.tablePreviewSwitch()).click();

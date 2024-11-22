@@ -211,7 +211,7 @@ const PlayButton = () => {
   );
 };
 
-const useStyles = makeStyles<{ playing: boolean }>(() => ({
+const useStyles = makeStyles(() => ({
   root: {
     width: "100%",
 

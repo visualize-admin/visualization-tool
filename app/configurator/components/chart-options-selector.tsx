@@ -2,6 +2,7 @@ import { t, Trans } from "@lingui/macro";
 import { Box, Stack, Tooltip, Typography } from "@mui/material";
 import { groups } from "d3-array";
 import get from "lodash/get";
+import groupBy from "lodash/groupBy";
 import { useCallback, useEffect, useMemo } from "react";
 
 import { DEFAULT_SORTING, getFieldComponentId } from "@/charts";
@@ -21,7 +22,13 @@ import { getMap } from "@/charts/map/ref";
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import { LegendSymbol } from "@/charts/shared/legend-color";
 import Flex from "@/components/flex";
-import { FieldSetLegend, Radio, Select } from "@/components/form";
+import {
+  FieldSetLegend,
+  Radio,
+  Select,
+  SelectOption,
+  SelectOptionGroup,
+} from "@/components/form";
 import { GenericField } from "@/config-types";
 import {
   AnimationField,
@@ -42,7 +49,6 @@ import {
   isConfiguring,
   isTableConfig,
   MapConfig,
-  Option,
   SortingType,
   useConfiguratorState,
 } from "@/configurator";
@@ -78,8 +84,9 @@ import { TableColumnOptions } from "@/configurator/table/table-chart-options";
 import {
   Component,
   CUSTOM_SORT_ENABLED_COMPONENTS,
+  DataCubeMetadata,
   Dimension,
-  getDimensionsByDimensionType,
+  getComponentsFilteredByType,
   isMeasure,
   isNumericalMeasure,
   isStandardErrorDimension,
@@ -91,8 +98,10 @@ import {
 } from "@/domain/data";
 import {
   useDataCubesComponentsQuery,
+  useDataCubesMetadataQuery,
   useDataCubesObservationsQuery,
 } from "@/graphql/hooks";
+import { isJoinByCube } from "@/graphql/join";
 import SvgIcInfoOutline from "@/icons/components/IcInfoOutline";
 import { useLocale } from "@/locales/use-locale";
 
@@ -105,6 +114,16 @@ export const ChartOptionsSelector = ({
   const { dataSource } = state;
   const { activeField } = chartConfig;
   const locale = useLocale();
+  const [{ data: metadataData, fetching: fetchingMetadata }] =
+    useDataCubesMetadataQuery({
+      variables: {
+        locale,
+        sourceType: dataSource.type,
+        sourceUrl: dataSource.url,
+        cubeFilters: chartConfig.cubes.map((cube) => ({ iri: cube.iri })),
+      },
+    });
+  const cubesMetadata = metadataData?.dataCubesMetadata;
   const [{ data: componentsData, fetching: fetchingComponents }] =
     useDataCubesComponentsQuery({
       variables: {
@@ -137,12 +156,14 @@ export const ChartOptionsSelector = ({
       keepPreviousData: true,
     });
   const observations = observationsData?.dataCubesObservations?.data;
-  const fetching = fetchingComponents || fetchingObservations;
 
-  return dimensions && measures && observations ? (
+  const fetching =
+    fetchingMetadata || fetchingComponents || fetchingObservations;
+
+  return cubesMetadata && dimensions && measures && observations ? (
     <Box
       sx={{
-        // we need these overflow parameters to allow iOS scrolling
+        // We need these overflow parameters to allow iOS scrolling.
         overflowX: "hidden",
         overflowY: "auto",
         pointerEvents: fetching ? "none" : "auto",
@@ -163,6 +184,7 @@ export const ChartOptionsSelector = ({
             dimensions={dimensions}
             measures={measures}
             observations={observations}
+            cubesMetadata={cubesMetadata}
           />
         )
       ) : null}
@@ -175,15 +197,19 @@ export const ChartOptionsSelector = ({
   );
 };
 
-type ActiveFieldSwitchProps = {
+const ActiveFieldSwitch = ({
+  dimensions,
+  measures,
+  chartConfig,
+  observations,
+  cubesMetadata,
+}: {
   chartConfig: ChartConfig;
   dimensions: Dimension[];
   measures: Measure[];
   observations: Observation[];
-};
-
-const ActiveFieldSwitch = (props: ActiveFieldSwitchProps) => {
-  const { dimensions, measures, chartConfig, observations } = props;
+  cubesMetadata: DataCubeMetadata[];
+}) => {
   const activeField = chartConfig.activeField as EncodingFieldType | undefined;
 
   if (!activeField) {
@@ -209,9 +235,9 @@ const ActiveFieldSwitch = (props: ActiveFieldSwitchProps) => {
     chartConfig.fields,
     activeField
   );
-
-  const components = [...dimensions, ...measures];
-  const component = components.find((d) => d.id === activeFieldComponentId);
+  const component = [...dimensions, ...measures].find(
+    (d) => d.id === activeFieldComponentId
+  );
 
   return (
     <EncodingOptionsPanel
@@ -222,11 +248,45 @@ const ActiveFieldSwitch = (props: ActiveFieldSwitchProps) => {
       dimensions={dimensions}
       measures={measures}
       observations={observations}
+      cubesMetadata={cubesMetadata}
     />
   );
 };
 
-type EncodingOptionsPanelProps = {
+const makeGetFieldOptionGroups =
+  ({ cubesMetadata }: { cubesMetadata: DataCubeMetadata[] }) =>
+  ({
+    fieldComponents,
+    getOption,
+  }: {
+    fieldComponents: Component[];
+    getOption: (dim: Component) => SelectOption;
+  }): SelectOptionGroup[] => {
+    const fieldComponentsByCubeIri = groupBy(fieldComponents, (d) => d.cubeIri);
+
+    return Object.entries(fieldComponentsByCubeIri).map(([cubeIri, dims]) => {
+      return [
+        {
+          label: isJoinByCube(cubeIri)
+            ? t({ id: "dimension.joined" })
+            : cubesMetadata.find((d) => d.iri === cubeIri)?.title,
+          value: cubeIri,
+        },
+        dims.map(getOption),
+      ];
+    });
+  };
+
+const EncodingOptionsPanel = ({
+  encoding,
+  field,
+  chartConfig,
+  component,
+  dimensions,
+  measures,
+  observations,
+  cubesMetadata,
+}: {
   encoding: EncodingSpec;
   chartConfig: ChartConfig;
   field: EncodingFieldType;
@@ -234,19 +294,10 @@ type EncodingOptionsPanelProps = {
   dimensions: Dimension[];
   measures: Measure[];
   observations: Observation[];
-};
-
-const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
-  const {
-    encoding,
-    field,
-    chartConfig,
-    component,
-    dimensions,
-    measures,
-    observations,
-  } = props;
+  cubesMetadata: DataCubeMetadata[];
+}) => {
   const { chartType } = chartConfig;
+  const { fields } = chartConfig;
   const fieldLabelHint: Record<EncodingFieldType, string> = {
     animation: t({
       id: "controls.select.dimension",
@@ -277,53 +328,70 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
       message: "Select a dimension",
     }),
   };
-
-  const { fields } = chartConfig;
   const otherFields = Object.keys(fields).filter(
     (f) => (fields as any)[f].hasOwnProperty("componentId") && field !== f
   );
   const otherFieldsIds = otherFields.map((f) => (fields as any)[f].componentId);
 
-  const options = useMemo(() => {
-    return getDimensionsByDimensionType({
+  const fieldComponents = useMemo(() => {
+    return getComponentsFilteredByType({
       dimensionTypes: encoding.componentTypes,
       dimensions,
       measures,
-    }).map((d) => ({
-      value: d.id,
-      label: getComponentLabel(d),
-      disabled:
-        ((encoding.exclusive === undefined || encoding.exclusive === true) &&
-          otherFieldsIds.includes(d.id)) ||
-        isStandardErrorDimension(d),
-    }));
+    });
+  }, [dimensions, encoding.componentTypes, measures]);
+
+  const getFieldOptionGroups = useMemo(() => {
+    return makeGetFieldOptionGroups({ cubesMetadata });
+  }, [cubesMetadata]);
+
+  const getOption = useCallback(
+    (c: Component) => {
+      return {
+        value: c.id,
+        label: getComponentLabel(c),
+        disabled:
+          ((encoding.exclusive === undefined || encoding.exclusive === true) &&
+            otherFieldsIds.includes(c.id)) ||
+          isStandardErrorDimension(c),
+      } as SelectOption;
+    },
+    [encoding.exclusive, otherFieldsIds]
+  );
+
+  const options = useMemo(() => {
+    return chartConfig.cubes.length === 1 ? fieldComponents.map(getOption) : [];
+  }, [chartConfig.cubes.length, fieldComponents, getOption]);
+  const optionGroups = useMemo(() => {
+    return chartConfig.cubes.length > 1
+      ? getFieldOptionGroups({ fieldComponents, getOption })
+      : undefined;
   }, [
-    dimensions,
-    encoding.componentTypes,
-    encoding.exclusive,
-    measures,
-    otherFieldsIds,
+    chartConfig.cubes.length,
+    fieldComponents,
+    getFieldOptionGroups,
+    getOption,
   ]);
 
-  const allComponents = useMemo(() => {
+  const components = useMemo(() => {
     return [...measures, ...dimensions];
   }, [measures, dimensions]);
 
-  const fieldDimension = useMemo(() => {
+  const fieldComponent = useMemo(() => {
     const encodingId = (
       (fields as any)?.[encoding.field] as GenericField | undefined
     )?.componentId;
 
-    return allComponents.find((d) => d.id === encodingId);
-  }, [allComponents, fields, encoding.field]);
+    return components.find((d) => d.id === encodingId);
+  }, [components, fields, encoding.field]);
 
   const hasStandardError = useMemo(() => {
-    return allComponents.find((d) =>
+    return components.find((d) =>
       d.related?.some(
         (r) => r.type === "StandardError" && r.id === component?.id
       )
     );
-  }, [allComponents, component]);
+  }, [components, component]);
 
   const hasColorPalette = !!encoding.options?.colorPalette;
 
@@ -349,7 +417,8 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
                 label={fieldLabelHint[encoding.field]}
                 optional={encoding.optional}
                 options={options}
-                components={allComponents}
+                optionGroups={optionGroups}
+                components={components}
               />
             )}
             {encoding.options?.showStandardError && hasStandardError && (
@@ -393,7 +462,7 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
               >
                 <ChartFieldAbbreviations
                   field={field}
-                  dimension={fieldDimension}
+                  component={fieldComponent}
                 />
               </ControlSectionContent>
             )}
@@ -403,14 +472,14 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
       {isComboChartConfig(chartConfig) && encoding.field === "y" && (
         <ChartComboYField chartConfig={chartConfig} measures={measures} />
       )}
-      {fieldDimension &&
+      {fieldComponent &&
         encoding.field === "segment" &&
         (hasSubOptions || hasColorPalette) && (
           <ChartLayoutOptions
             encoding={encoding}
             component={component}
             chartConfig={chartConfig}
-            components={allComponents}
+            components={components}
             hasColorPalette={hasColorPalette}
             hasSubOptions={hasSubOptions}
           />
@@ -438,11 +507,13 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
         )}
       {encoding.options?.size && component && (
         <ChartFieldSize
+          chartConfig={chartConfig}
           field={field}
           componentTypes={encoding.options.size.componentTypes}
           optional={encoding.options.size.optional}
           dimensions={dimensions}
           measures={measures}
+          getFieldOptionGroups={getFieldOptionGroups}
         />
       )}
       {encoding.options?.colorComponent && component && (
@@ -457,6 +528,7 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
           enableUseAbbreviations={
             encoding.options.colorComponent.enableUseAbbreviations
           }
+          getFieldOptionGroups={getFieldOptionGroups}
         />
       )}
       <ChartFieldMultiFilter
@@ -467,7 +539,7 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
         dimensions={dimensions}
         measures={measures}
       />
-      {fieldDimension &&
+      {fieldComponent &&
         field === "animation" &&
         isAnimationInConfig(chartConfig) &&
         chartConfig.fields.animation && (
@@ -477,25 +549,21 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
   );
 };
 
-type ChartLayoutOptionsProps = {
+const ChartLayoutOptions = ({
+  encoding,
+  component,
+  chartConfig,
+  components,
+  hasColorPalette,
+  hasSubOptions,
+}: {
   encoding: EncodingSpec;
   component: Component | undefined;
   chartConfig: ChartConfig;
   components: Component[];
   hasColorPalette: boolean;
   hasSubOptions: boolean;
-};
-
-const ChartLayoutOptions = (props: ChartLayoutOptionsProps) => {
-  const {
-    encoding,
-    component,
-    chartConfig,
-    components,
-    hasColorPalette,
-    hasSubOptions,
-  } = props;
-
+}) => {
   return encoding.options || hasColorPalette ? (
     <ControlSection collapse>
       <SubsectionTitle iconName="color">
@@ -525,15 +593,15 @@ const ChartLayoutOptions = (props: ChartLayoutOptionsProps) => {
 const ChartFieldAbbreviations = ({
   field,
   path,
-  dimension,
+  component,
 }: {
   field: EncodingFieldType;
   path?: string;
-  dimension: Component | undefined;
+  component: Component | undefined;
 }) => {
   const disabled = useMemo(() => {
-    return !canUseAbbreviations(dimension);
-  }, [dimension]);
+    return !canUseAbbreviations(component);
+  }, [component]);
 
   return (
     <ChartOptionCheckboxField
@@ -551,21 +619,36 @@ type ChartComboYFieldProps<T extends ComboChartConfig> = {
   measures: Measure[];
 };
 
-const ChartComboYField = (props: ChartComboYFieldProps<ComboChartConfig>) => {
-  switch (props.chartConfig.chartType) {
+const ChartComboYField = <T extends ComboChartConfig>({
+  chartConfig,
+  measures,
+}: ChartComboYFieldProps<T>) => {
+  switch (chartConfig.chartType) {
     case "comboLineSingle": {
-      const { chartConfig, ...rest } = props;
-      return <ChartComboLineSingleYField chartConfig={chartConfig} {...rest} />;
+      return (
+        <ChartComboLineSingleYField
+          chartConfig={chartConfig}
+          measures={measures}
+        />
+      );
     }
     case "comboLineDual": {
-      const { chartConfig, ...rest } = props;
-      return <ChartComboLineDualYField chartConfig={chartConfig} {...rest} />;
+      return (
+        <ChartComboLineDualYField
+          chartConfig={chartConfig}
+          measures={measures}
+        />
+      );
     }
     case "comboLineColumn":
-      const { chartConfig, ...rest } = props;
-      return <ChartComboLineColumnYField chartConfig={chartConfig} {...rest} />;
+      return (
+        <ChartComboLineColumnYField
+          chartConfig={chartConfig}
+          measures={measures}
+        />
+      );
     default:
-      const _exhaustiveCheck: never = props.chartConfig;
+      const _exhaustiveCheck: never = chartConfig;
       return _exhaustiveCheck;
   }
 };
@@ -578,10 +661,10 @@ const getComboOptionGroups = (
     measures,
     (d) =>
       d.unit ?? t({ id: "controls.chart.combo.y.no-unit", message: "No unit" })
-  ).map(([k, v]) => {
+  ).map(([unit, ms]) => {
     return [
-      { label: k, value: k },
-      v.map((m) => {
+      { label: unit, value: unit },
+      ms.map((m) => {
         return {
           value: m.id,
           label: m.label,
@@ -589,15 +672,15 @@ const getComboOptionGroups = (
         };
       }),
     ];
-  }) as [Option, Option[]][];
+  }) as SelectOptionGroup[];
 };
 
-const ChartComboLineSingleYField = (
-  props: ChartComboYFieldProps<ComboLineSingleConfig>
-) => {
+const ChartComboLineSingleYField = ({
+  chartConfig,
+  measures,
+}: ChartComboYFieldProps<ComboLineSingleConfig>) => {
   const locale = useLocale();
   const [, dispatch] = useConfiguratorState(isConfiguring);
-  const { chartConfig, measures } = props;
   const { fields } = chartConfig;
   const { y } = fields;
 
@@ -775,12 +858,12 @@ const ChartComboLineSingleYField = (
   );
 };
 
-const ChartComboLineDualYField = (
-  props: ChartComboYFieldProps<ComboLineDualConfig>
-) => {
+const ChartComboLineDualYField = ({
+  chartConfig,
+  measures,
+}: ChartComboYFieldProps<ComboLineDualConfig>) => {
   const locale = useLocale();
   const [, dispatch] = useConfiguratorState(isConfiguring);
-  const { chartConfig, measures } = props;
   const { fields } = chartConfig;
   const { y } = fields;
 
@@ -890,12 +973,12 @@ const ChartComboLineDualYField = (
   );
 };
 
-const ChartComboLineColumnYField = (
-  props: ChartComboYFieldProps<ComboLineColumnConfig>
-) => {
+const ChartComboLineColumnYField = ({
+  chartConfig,
+  measures,
+}: ChartComboYFieldProps<ComboLineColumnConfig>) => {
   const locale = useLocale();
   const [, dispatch] = useConfiguratorState(isConfiguring);
-  const { chartConfig, measures } = props;
   const { fields } = chartConfig;
   const { y } = fields;
 
@@ -954,14 +1037,14 @@ const ChartComboLineColumnYField = (
             })}
             value={y.columnComponentId}
             onChange={(e) => {
-              const newIri = e.target.value as string;
+              const newId = e.target.value as string;
               dispatch({
                 type: "CHART_OPTION_CHANGED",
                 value: {
                   locale,
                   field: "y",
                   path: "columnComponentId",
-                  value: newIri,
+                  value: newId,
                 },
               });
             }}
@@ -979,14 +1062,14 @@ const ChartComboLineColumnYField = (
             })}
             value={y.lineComponentId}
             onChange={(e) => {
-              const newIri = e.target.value as string;
+              const newId = e.target.value as string;
               dispatch({
                 type: "CHART_OPTION_CHANGED",
                 value: {
                   locale,
                   field: "y",
                   path: "lineComponentId",
-                  value: newIri,
+                  value: newId,
                 },
               });
             }}
@@ -1171,18 +1254,21 @@ const ChartFieldAnimation = ({ field }: { field: AnimationField }) => {
   );
 };
 
-type ChartFieldMultiFilterProps = {
+const ChartFieldMultiFilter = ({
+  chartConfig,
+  component,
+  encoding,
+  field,
+  dimensions,
+  measures,
+}: {
   chartConfig: ChartConfig;
   component: Component | undefined;
   encoding: EncodingSpec;
   field: EncodingFieldType;
   dimensions: Dimension[];
   measures: Measure[];
-};
-
-const ChartFieldMultiFilter = (props: ChartFieldMultiFilterProps) => {
-  const { chartConfig, component, encoding, field, dimensions, measures } =
-    props;
+}) => {
   const colorComponentId = get(
     chartConfig,
     `fields["${field}"].color.componentId`
@@ -1233,15 +1319,17 @@ const ChartFieldMultiFilter = (props: ChartFieldMultiFilterProps) => {
   ) : null;
 };
 
-type ChartFieldOptionsProps = {
+const ChartFieldOptions = ({
+  encoding,
+  chartConfig,
+  components,
+  disabled,
+}: {
   encoding: EncodingSpec;
   chartConfig: ChartConfig;
   components: Component[];
   disabled?: boolean;
-};
-
-const ChartFieldOptions = (props: ChartFieldOptionsProps) => {
-  const { encoding, chartConfig, components, disabled } = props;
+}) => {
   const chartSubType = encoding.options
     ?.chartSubType as EncodingOptionChartSubType;
   const values = chartSubType.getValues(chartConfig, components);
@@ -1272,14 +1360,13 @@ const ChartFieldOptions = (props: ChartFieldOptionsProps) => {
   );
 };
 
-type ChartFieldCalculationProps = {
+const ChartFieldCalculation = ({
+  disabled,
+  warnMessage,
+}: {
   disabled?: boolean;
   warnMessage?: string;
-};
-
-const ChartFieldCalculation = (props: ChartFieldCalculationProps) => {
-  const { disabled, warnMessage } = props;
-
+}) => {
   return (
     <ControlSection collapse>
       <SubsectionTitle
@@ -1365,7 +1452,6 @@ const ChartFieldSorting = ({
     }
   };
 
-  // Always update BOTH
   const updateSortingOption = useCallback<
     (args: {
       sortingType: EncodingSortingOption["sortingType"];
@@ -1469,25 +1555,46 @@ const ChartFieldSorting = ({
 };
 
 const ChartFieldSize = ({
+  chartConfig,
   field,
   componentTypes,
   dimensions,
   measures,
+  getFieldOptionGroups,
   optional,
 }: {
+  chartConfig: ChartConfig;
   field: EncodingFieldType;
   componentTypes: ComponentType[];
   dimensions: Dimension[];
   measures: Measure[];
+  getFieldOptionGroups: ReturnType<typeof makeGetFieldOptionGroups>;
   optional: boolean;
 }) => {
-  const measuresOptions = useMemo(() => {
-    return getDimensionsByDimensionType({
+  const fieldComponents = useMemo(() => {
+    return getComponentsFilteredByType({
       dimensionTypes: componentTypes,
       dimensions,
       measures,
-    }).map(({ id, label }) => ({ value: id, label }));
-  }, [dimensions, measures, componentTypes]);
+    });
+  }, [componentTypes, dimensions, measures]);
+  const getOption = useCallback(
+    (c: Component) => ({ value: c.id, label: c.label }),
+    []
+  );
+  const options = useMemo(() => {
+    return chartConfig.cubes.length === 1 ? fieldComponents.map(getOption) : [];
+  }, [chartConfig.cubes.length, fieldComponents, getOption]);
+  const optionGroups = useMemo(() => {
+    return chartConfig.cubes.length > 1
+      ? getFieldOptionGroups({ fieldComponents, getOption })
+      : undefined;
+  }, [
+    chartConfig.cubes.length,
+    fieldComponents,
+    getFieldOptionGroups,
+    getOption,
+  ]);
 
   return (
     <ControlSection collapse>
@@ -1506,45 +1613,64 @@ const ChartFieldSize = ({
           })}
           field={field}
           path="measureId"
-          options={measuresOptions}
-          isOptional={optional}
+          options={options}
+          optionGroups={optionGroups}
+          optional={optional}
         />
       </ControlSectionContent>
     </ControlSection>
   );
 };
 
-type ChartFieldColorComponentProps = {
+const ChartFieldColorComponent = ({
+  chartConfig,
+  encoding,
+  component,
+  componentTypes,
+  dimensions,
+  measures,
+  getFieldOptionGroups,
+  optional,
+  enableUseAbbreviations,
+}: {
   chartConfig: ChartConfig;
   encoding: EncodingSpec;
   component: Component;
   componentTypes: ComponentType[];
   dimensions: Dimension[];
   measures: Measure[];
+  getFieldOptionGroups: ReturnType<typeof makeGetFieldOptionGroups>;
   optional: boolean;
   enableUseAbbreviations: boolean;
-};
-
-const ChartFieldColorComponent = (props: ChartFieldColorComponentProps) => {
-  const {
-    chartConfig,
-    encoding,
-    component,
-    componentTypes,
-    dimensions,
-    measures,
-    optional,
-    enableUseAbbreviations,
-  } = props;
+}) => {
   const field = encoding.field;
   const nbOptions = component.values.length;
-  const measuresOptions = useMemo(() => {
-    return getDimensionsByDimensionType({
+
+  const fieldComponents = useMemo(() => {
+    return getComponentsFilteredByType({
       dimensionTypes: componentTypes,
       dimensions,
       measures,
-    }).map(({ id, label }) => ({ value: id, label }));
-  }, [dimensions, measures, componentTypes]);
+    });
+  }, [componentTypes, dimensions, measures]);
+  const getOption = useCallback(
+    (c: Component) => ({ value: c.id, label: c.label }),
+    []
+  );
+  const options = useMemo(() => {
+    return chartConfig.cubes.length === 1 ? fieldComponents.map(getOption) : [];
+  }, [chartConfig.cubes.length, fieldComponents, getOption]);
+  const optionGroups = useMemo(() => {
+    return chartConfig.cubes.length > 1
+      ? getFieldOptionGroups({ fieldComponents, getOption })
+      : undefined;
+  }, [
+    chartConfig.cubes.length,
+    fieldComponents,
+    getFieldOptionGroups,
+    getOption,
+  ]);
+
   const nbColorOptions = useMemo(() => {
     return Array.from(
       { length: Math.min(7, Math.max(0, nbOptions - 2)) },
@@ -1591,15 +1717,16 @@ const ChartFieldColorComponent = (props: ChartFieldColorComponentProps) => {
           })}
           field={field}
           path="color.componentId"
-          options={measuresOptions}
-          isOptional={optional}
+          options={options}
+          optionGroups={optionGroups}
+          optional={optional}
         />
         {enableUseAbbreviations && (
           <Box sx={{ mt: 1 }}>
             <ChartFieldAbbreviations
               field={field}
               path="color"
-              dimension={colorComponent}
+              component={colorComponent}
             />
           </Box>
         )}
@@ -1738,12 +1865,7 @@ const ChartFieldColorComponent = (props: ChartFieldColorComponentProps) => {
   );
 };
 
-type ChartImputationProps = {
-  chartConfig: ChartConfig;
-};
-
-const ChartImputation = (props: ChartImputationProps) => {
-  const { chartConfig } = props;
+const ChartImputation = ({ chartConfig }: { chartConfig: ChartConfig }) => {
   const [, dispatch] = useConfiguratorState();
   const getImputationTypeLabel = (type: ImputationType) => {
     switch (type) {

@@ -14,6 +14,13 @@ You can also check the
 - Features
   - Allowed previewing of charts in states different than CONFIGURING_CHART
     (iframe `/preview` page)
+  - Improved some wording and added an explanation to the `Concepts` navigation
+    menu
+  - Filters and components are now grouped in the left panel and dropdowns in
+    case of working with merged cubes
+  - Improved default chart selection when adding a new cube (by default the
+    application will try to use dual-line chart with measures from different
+    cubes)
 - Fixes
   - Introduced a `componentId` concept which makes the dimensions and measures
     unique by adding an unversioned cube iri to the unversioned component iri on
@@ -21,6 +28,7 @@ You can also check the
     same iri that come from different cubes (when merging cubes)
   - Map legend is now correctly updated (in some cases it was rendered
     incorrectly on the initial render)
+  - Vertical Axis measure names are now correctly displayed in the left panel
 - Performance
   - We no longer load non-key dimensions when initializing a chart
 - Maintenance
