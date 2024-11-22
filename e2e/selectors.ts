@@ -113,7 +113,8 @@ export const createSelectors = ({ screen, page, within }: Ctx) => {
       legendTicks: async () => {},
       loaded: async () => {
         await page.waitForLoadState("networkidle");
-        await sleep(1000);
+        // Let the map tiles fade in and enter animations finish
+        await sleep(1_000);
       },
       tablePreviewSwitch: async () => {
         return await screen.findByText("Table view");
