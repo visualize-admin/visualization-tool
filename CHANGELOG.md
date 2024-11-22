@@ -39,6 +39,7 @@ You can also check the
   - visualize.admin.ch links are now again visible in chart footnotes
   - Improved chart tooltips on small screens
   - % mode toggle no longer overlaps with the Y axis title
+  - Dual line Chart Tooltip indicators are now fixed for smaller screens
 
 # [4.9.4] - 2024-11-06
 

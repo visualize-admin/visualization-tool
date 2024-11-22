@@ -51,6 +51,7 @@ const RulerInner = (props: RulerInnerProps) => {
       xAnchor={xAnchor}
       datum={datum}
       placement={placement}
+      yAxisTitleHeight={bounds.yAxisTitleHeight}
     />
   );
 };
@@ -65,6 +66,7 @@ type RulerContentProps = {
   datum: TooltipValue;
   placement: TooltipPlacement;
   showXValue?: boolean;
+  yAxisTitleHeight?: number;
 };
 
 const useStyles = makeStyles<Theme, { rotate: boolean }>((theme: Theme) => ({
@@ -93,7 +95,14 @@ const useStyles = makeStyles<Theme, { rotate: boolean }>((theme: Theme) => ({
 }));
 
 export const RulerContent = (props: RulerContentProps) => {
-  const { rotate, xValue, chartHeight, margins, xAnchor } = props;
+  const {
+    rotate,
+    xValue,
+    chartHeight,
+    margins,
+    xAnchor,
+    yAxisTitleHeight = 0,
+  } = props;
   const classes = useStyles({ rotate });
 
   const isMobile = useIsMobile();
@@ -105,7 +114,7 @@ export const RulerContent = (props: RulerContentProps) => {
         style={{
           height: chartHeight,
           left: xAnchor + margins.left,
-          top: margins.top,
+          top: margins.top + yAxisTitleHeight,
         }}
       />
       {!isMobile && (
