@@ -50,7 +50,9 @@ You can also check the
   - % mode toggle no longer overlaps with the Y axis title
   - Merging of cubes beta tag has been removed
   - Dual line Chart Tooltip indicators are now fixed for smaller screens
-
+  - Fixes Tooltip position for Pie Charts for smaller screens
+  - Ensures undefined / unavailable data is represent as "-" for exported Data
+    files
 
 # [4.9.4] - 2024-11-06
 
