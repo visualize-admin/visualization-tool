@@ -661,15 +661,6 @@ export const isConfidenceLowerBoundDimension = (
   return dim.__typename === "ConfidenceLowerBoundDimension";
 };
 
-export const findRelatedErrorDimension = (
-  dimIri: string,
-  dimensions: Component[]
-) => {
-  return dimensions.find((x) =>
-    x.related?.some((r) => r.id === dimIri && r.type === "StandardError")
-  );
-};
-
 export const shouldLoadMinMaxValues = (dim: ResolvedDimension) => {
   const {
     data: { isNumerical, scaleType, dataKind },
