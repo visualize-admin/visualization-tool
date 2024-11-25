@@ -9,6 +9,7 @@ import { useInteraction } from "@/charts/shared/use-interaction";
 import { Observation } from "@/domain/data";
 import { useTransitionStore } from "@/stores/transition";
 import useEvent from "@/utils/use-event";
+import { useIsMobile } from "@/utils/use-is-mobile";
 
 export const Pie = () => {
   const { chartData, getPieData, getSegment, colors, bounds, getRenderingKey } =
@@ -19,7 +20,11 @@ export const Pie = () => {
   const [, dispatch] = useInteraction();
   const ref = useRef<SVGGElement>(null);
 
-  const maxSide = Math.min(chartWidth, chartHeight) / 2;
+  const isMobile = useIsMobile();
+
+  const maxSide = isMobile
+    ? Math.min(chartWidth, chartHeight)
+    : Math.min(chartWidth, chartHeight) / 2;
 
   const innerRadius = 0;
   const outerRadius = maxSide;
