@@ -11,6 +11,13 @@ You can also check the
 
 # Unreleased
 
+Nothing yet.
+
+# [5.0.0] - 2024-11-25
+
+Bumped to a new major version to celebrate all the improvements and new features
+introduced since v4.0.0 🎉
+
 - Features
   - Allowed previewing of charts in states different than CONFIGURING_CHART
     (iframe `/preview` page)
@@ -52,7 +59,6 @@ You can also check the
   - % mode toggle no longer overlaps with the Y axis title
   - Merging of cubes beta tag has been removed
   - Dual line Chart Tooltip indicators are now fixed for smaller screens
-
 
 # [4.9.4] - 2024-11-06
 
