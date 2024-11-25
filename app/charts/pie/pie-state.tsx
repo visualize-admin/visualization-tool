@@ -219,7 +219,7 @@ const usePieState = (
     const xTranslate = chartWidth / 2;
     const yTranslate = chartHeight / 2;
 
-    const xAnchor = x + xTranslate;
+    const xAnchor = isMobile ? chartWidth / 2 : x + xTranslate;
     const yAnchor = isMobile ? -chartHeight : y + yTranslate;
 
     const xPlacement = isMobile
