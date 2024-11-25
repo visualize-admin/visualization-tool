@@ -14,6 +14,7 @@ import { useTransitionStore } from "@/stores/transition";
 export const ErrorWhiskers = () => {
   const {
     getX,
+    getY,
     getYErrorPresent,
     getYErrorRange,
     chartData,
@@ -37,10 +38,12 @@ export const ErrorWhiskers = () => {
       const x0 = xScale(getX(d)) as number;
       const segment = getSegment(d);
       const barWidth = 15;
+      const y = getY(d) as number;
       const [y1, y2] = getYErrorRange(d);
       return {
         key: `${i}`,
         x: x0 - barWidth / 2,
+        y: yScale(y),
         y1: yScale(y1),
         y2: yScale(y2),
         width: barWidth,
@@ -53,6 +56,7 @@ export const ErrorWhiskers = () => {
     colors,
     getSegment,
     getX,
+    getY,
     getYErrorPresent,
     getYErrorRange,
     showYUncertainty,
