@@ -242,8 +242,8 @@ const LayoutSharedFiltersConfigurator = () => {
             <Stack gap="0.5rem">
               {timeRange && combinedTemporalDimension.values.length ? (
                 <>
-                  <Box
-                    sx={{
+                  <div
+                    style={{
                       display: "flex",
                       justifyContent: "space-between",
                       alignItems: "center",
@@ -257,7 +257,7 @@ const LayoutSharedFiltersConfigurator = () => {
                       checked={timeRange.active}
                       onChange={handleTimeRangeFilterToggle}
                     />
-                  </Box>
+                  </div>
                   {timeRange.active ? (
                     <DashboardFiltersOptions
                       timeRangeFilter={timeRange}
@@ -269,43 +269,38 @@ const LayoutSharedFiltersConfigurator = () => {
               {dataFilters ? (
                 <>
                   {potentialDataFilterIds.map((id, i) => {
-                    const dimension = dimensions.find(
-                      (dimension) => dimension.id === id
-                    );
-                    if (!dimension) {
+                    const dim = dimensions.find((d) => d.id === id);
+
+                    if (!dim) {
                       return null;
                     }
-                    const checked = dataFilters.componentIds.includes(
-                      dimension.id
-                    );
+
+                    const checked = dataFilters.componentIds.includes(dim.id);
 
                     return (
-                      <Box
-                        key={dimension.id}
-                        sx={{ display: "flex", flexDirection: "column" }}
+                      <div
+                        key={dim.id}
+                        style={{ display: "flex", flexDirection: "column" }}
                       >
-                        <Box
-                          sx={{
+                        <div
+                          style={{
                             display: "flex",
                             justifyContent: "space-between",
                             alignItems: "center",
                           }}
                         >
-                          <Typography variant="body2">
-                            {dimension.label}
-                          </Typography>
+                          <Typography variant="body2">{dim.label}</Typography>
                           <Switch
                             checked={checked}
                             onChange={(_, checked) => {
-                              handleDataFiltersToggle(checked, dimension.id);
+                              handleDataFiltersToggle(checked, dim.id);
                             }}
                           />
-                        </Box>
+                        </div>
                         {checked ? (
                           <Box sx={{ mb: 1 }}>
                             <DataFilterSelectGeneric
-                              key={dimension.id}
-                              rawDimension={dimension}
+                              rawDimension={dim}
                               filterDimensionIds={[]}
                               index={i}
                               disabled={fetching}
@@ -313,7 +308,7 @@ const LayoutSharedFiltersConfigurator = () => {
                             />
                           </Box>
                         ) : null}
-                      </Box>
+                      </div>
                     );
                   })}
                 </>

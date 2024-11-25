@@ -3,7 +3,8 @@ import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 import React, { HTMLProps, forwardRef } from "react";
 
-import ChartPanelLayoutCanvas, {
+import {
+  ChartPanelLayoutCanvas,
   chartPanelLayoutGridClasses,
 } from "@/components/chart-panel-layout-grid";
 import { ChartPanelLayoutTall } from "@/components/chart-panel-layout-tall";
