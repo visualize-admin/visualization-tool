@@ -29,6 +29,7 @@ import {
   SelectOption,
   SelectOptionGroup,
 } from "@/components/form";
+import { InfoIconTooltip } from "@/components/info-icon-tooltip";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { TooltipTitle } from "@/components/tooltip-utils";
 import { GenericField } from "@/config-types";
@@ -388,11 +389,26 @@ const EncodingOptionsPanel = ({
   }, [components, fields, encoding.field]);
 
   const hasStandardError = useMemo(() => {
-    return components.find((d) =>
+    return !!components.find((d) =>
       d.related?.some(
         (r) => r.type === "StandardError" && r.id === component?.id
       )
     );
+  }, [components, component]);
+
+  const hasConfidenceInterval = useMemo(() => {
+    const upperBoundComponent = components.find((d) =>
+      d.related?.some(
+        (r) => r.type === "ConfidenceUpperBound" && r.id === component?.id
+      )
+    );
+    const lowerBoundComponent = components.find((d) =>
+      d.related?.some(
+        (r) => r.type === "ConfidenceLowerBound" && r.id === component?.id
+      )
+    );
+
+    return !!upperBoundComponent && !!lowerBoundComponent;
   }, [components, component]);
 
   const hasColorPalette = !!encoding.options?.colorPalette;
@@ -435,26 +451,61 @@ const EncodingOptionsPanel = ({
                 <ChartOptionSwitchField
                   path="showStandardError"
                   field={encoding.field}
-                  defaultValue={true}
+                  defaultValue
                   label={t({ id: "controls.section.show-standard-error" })}
                   sx={{ marginRight: 0 }}
                 />
-                <Tooltip
+                <InfoIconTooltip
                   enterDelay={600}
                   PopperProps={{ sx: { maxWidth: 160 } }}
                   title={
-                    <Trans id="controls.section.show-standard-error.explanation">
-                      Show uncertainties extending from data points to represent
-                      standard errors
-                    </Trans>
+                    <TooltipTitle
+                      text={
+                        <Trans id="controls.section.show-standard-error.explanation">
+                          Show uncertainties extending from data points to
+                          represent standard errors
+                        </Trans>
+                      }
+                    />
                   }
-                >
-                  <Box sx={{ color: "primary.main" }}>
-                    <SvgIcInfoOutline width={16} height={16} />
-                  </Box>
-                </Tooltip>
+                />
               </Box>
             )}
+            {encoding.options?.showConfidenceInterval &&
+              hasConfidenceInterval && (
+                <Box
+                  sx={{
+                    display: "flex",
+                    gap: 1,
+                    alignItems: "center",
+                    mt: 3,
+                  }}
+                >
+                  <ChartOptionSwitchField
+                    path="showConfidenceInterval"
+                    field={encoding.field}
+                    defaultValue
+                    label={t({
+                      id: "controls.section.show-confidence-interval",
+                    })}
+                    sx={{ marginRight: 0 }}
+                  />
+                  <InfoIconTooltip
+                    enterDelay={600}
+                    PopperProps={{ sx: { maxWidth: 160 } }}
+                    title={
+                      <TooltipTitle
+                        text={
+                          <Trans id="controls.section.show-confidence-interval.explanation">
+                            Show uncertainties extending from data points to
+                            represent confidence intervals
+                          </Trans>
+                        }
+                      />
+                    }
+                  />
+                </Box>
+              )}
             {encoding.options?.useAbbreviations && (
               <ControlSectionContent
                 component="fieldset"

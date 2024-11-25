@@ -412,6 +412,7 @@ msgid "controls.chart.disabled.same-unit"
 msgstr "Es sind mindestens zwei Zahlenwerte mit gleicher Einheit erforderlich."
 
 #: app/charts/index.ts
+#: app/charts/index.ts
 msgid "controls.chart.disabled.temporal"
 msgstr "Es ist mindestens eine zeitliche Dimension erforderlich."
 
@@ -887,6 +888,14 @@ msgstr "Geteilte Filter"
 #: app/charts/shared/use-combined-temporal-dimension.ts
 msgid "controls.section.shared-filters.date"
 msgstr "Datum"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.show-confidence-interval"
+msgstr "Konfidenzintervall anzeigen"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.show-confidence-interval.explanation"
+msgstr "Zeigen Sie Unsicherheiten an, die sich aus Datenpunkten ergeben, um Konfidenzintervalle darzustellen"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.show-standard-error"

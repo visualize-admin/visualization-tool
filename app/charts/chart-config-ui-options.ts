@@ -112,6 +112,9 @@ type EncodingOption<T extends ChartConfig = ChartConfig> =
       field: "showStandardError";
     }
   | {
+      field: "showConfidenceInterval";
+    }
+  | {
       field: "sorting";
     }
   | {
@@ -643,6 +646,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         },
         options: {
           showStandardError: {},
+          showConfidenceInterval: {},
         },
       },
       {
@@ -776,6 +780,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         filters: false,
         options: {
           showStandardError: {},
+          showConfidenceInterval: {},
         },
       },
       {
