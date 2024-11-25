@@ -14,7 +14,6 @@ import { getChartWrapperId } from "@/components/chart-panel";
 import {
   hasChartConfigs,
   isLayouting,
-  LayoutDashboardFreeCanvas,
   ReactGridLayoutType,
 } from "@/configurator";
 import { useTimeout } from "@/hooks/use-timeout";
@@ -227,11 +226,11 @@ export const ChartGridLayout = ({
 } & ComponentProps<typeof ResponsiveReactGridLayout>) => {
   const classes = useStyles();
   const [state, dispatch] = useConfiguratorState(hasChartConfigs);
+  const configLayout = state.layout;
   assert(
-    state.layout.type === "dashboard" && state.layout.layout === "canvas",
+    configLayout.type === "dashboard" && configLayout.layout === "canvas",
     "ChartGridLayout can only be used in a canvas layout!"
   );
-  const configLayout = state.layout as LayoutDashboardFreeCanvas;
   const allowHeightInitialization = isLayouting(state);
   const [mounted, setMounted] = useState(false);
   const mountedForSomeTime = useTimeout(500, mounted);
@@ -430,5 +429,3 @@ export const generateLayout = function ({
       .exhaustive();
   });
 };
-
-export default ChartGridLayout;

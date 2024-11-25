@@ -5,7 +5,8 @@ import { useState } from "react";
 import { Layouts } from "react-grid-layout";
 
 import { ChartPanelLayoutTypeProps } from "@/components/chart-panel";
-import ChartGridLayout, {
+import {
+  ChartGridLayout,
   FREE_CANVAS_BREAKPOINTS,
 } from "@/components/react-grid";
 import { ReactGridLayoutsType, hasChartConfigs } from "@/configurator";
@@ -32,8 +33,8 @@ const decodeLayouts = (layouts: Layouts) => {
   );
 };
 
-const ChartPanelLayoutCanvas = (props: ChartPanelLayoutTypeProps) => {
-  const { chartConfigs } = props;
+export const ChartPanelLayoutCanvas = (props: ChartPanelLayoutTypeProps) => {
+  const { chartConfigs, renderChart, className } = props;
   const [state, dispatch] = useConfiguratorState(hasChartConfigs);
   const [layouts, setLayouts] = useState<Layouts>(() => {
     assert(
@@ -69,16 +70,14 @@ const ChartPanelLayoutCanvas = (props: ChartPanelLayoutTypeProps) => {
   return (
     <ChartGridLayout
       key={state.state}
-      className={clsx(chartPanelLayoutGridClasses.root, props.className)}
+      className={clsx(chartPanelLayoutGridClasses.root, className)}
       layouts={layouts}
       resize={state.state === "LAYOUTING"}
       draggableHandle={`.${chartPanelLayoutGridClasses.dragHandle}`}
-      onLayoutChange={(_l, allLayouts) => handleChangeLayouts(allLayouts)}
+      onLayoutChange={(_, allLayouts) => handleChangeLayouts(allLayouts)}
       breakpoints={FREE_CANVAS_BREAKPOINTS}
     >
-      {chartConfigs.map((chartConfig) => props.renderChart(chartConfig))}
+      {chartConfigs.map(renderChart)}
     </ChartGridLayout>
   );
 };
-
-export default ChartPanelLayoutCanvas;
