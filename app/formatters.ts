@@ -117,8 +117,8 @@ export const dateFormatterFromDimension = (
 
 type Formatter = (x: string) => string;
 
-const formatIdentity = (x: string | Date | null) => {
-  return x !== DIMENSION_VALUE_UNDEFINED ? `${x}` : "–";
+export const formatIdentity = (x: string | number | Date | null) => {
+  return x !== DIMENSION_VALUE_UNDEFINED && x !== null ? `${x}` : "–";
 };
 
 const decimalFormatter = (dim: NumericalMeasure, formatNumber: Formatter) => {
