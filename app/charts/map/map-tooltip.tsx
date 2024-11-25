@@ -264,7 +264,7 @@ export const MapTooltip = () => {
                             color: "#000",
                           })}
                       value={symbolTooltipState.value}
-                      error={symbolTooltipState.colors.error}
+                      error={symbolTooltipState.error}
                     />
                   )}
 
