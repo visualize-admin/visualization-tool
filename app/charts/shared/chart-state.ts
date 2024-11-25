@@ -350,11 +350,11 @@ export type NumericalYErrorVariables = {
 export const useNumericalYErrorVariables = (
   y: GenericField,
   {
-    numericalYVariables,
+    getValue,
     dimensions,
     measures,
   }: {
-    numericalYVariables: NumericalYVariables;
+    getValue: NumericalYVariables["getY"];
     dimensions: Dimension[];
     measures: Measure[];
   }
@@ -409,7 +409,7 @@ export const useNumericalYErrorVariables = (
     showYStandardError && yStandardErrorMeasure
       ? yStandardErrorMeasure
       : yConfidenceIntervalLowerMeasure,
-    numericalYVariables.getY
+    getValue
   );
   const getFormattedYUncertainty = useCallback(
     (d: Observation) => {
