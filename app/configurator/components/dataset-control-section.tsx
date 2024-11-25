@@ -22,7 +22,6 @@ import useDisclosure from "@/components/use-disclosure";
 import { getChartConfig } from "@/configurator";
 import { DatasetDialog } from "@/configurator/components/add-dataset-dialog";
 import { DatasetsBadge } from "@/configurator/components/badges";
-import { BetaTag } from "@/configurator/components/beta-tag";
 import {
   ControlSection,
   ControlSectionContent,
@@ -230,14 +229,6 @@ export const DatasetsControlSection = () => {
     <ControlSection collapse defaultExpanded={true}>
       <SubsectionTitle titleId="controls-data" gutterBottom={false}>
         <Trans id="controls.section.datasets.title">Datasets</Trans>{" "}
-        <BetaTag
-          tagProps={{
-            sx: {
-              ml: 2,
-              fontWeight: "normal",
-            },
-          }}
-        />
         <DatasetsBadge sx={{ ml: "auto", mr: 4 }} />
       </SubsectionTitle>
       <ControlSectionContent
