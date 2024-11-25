@@ -11,7 +11,6 @@ import {
   Component,
   isStandardErrorDimension,
   Observation,
-  ObservationValue,
 } from "@/domain/data";
 import { TransitionStore } from "@/stores/transition";
 
@@ -273,10 +272,4 @@ export const renderWhiskers = (
           s: (g) => g.attr("opacity", 0).remove(),
         })
     );
-};
-
-export const filterWithoutErrors = (
-  getError: ((d: Observation) => ObservationValue) | null
-) => {
-  return (d: Observation): boolean => !!getError?.(d);
 };

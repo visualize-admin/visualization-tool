@@ -34,7 +34,7 @@ export const TooltipSingle = ({
       {yValue && (
         <Typography component="div" variant="caption">
           {yValue}
-          {yError ? <> ± {yError}</> : null}
+          {yError ?? null}
         </Typography>
       )}
     </Box>
@@ -62,7 +62,7 @@ export const TooltipMultiple = ({
       {segmentValues.map((d, i) => (
         <LegendItem
           key={i}
-          item={`${d.label}: ${d.value}${d.error ? ` ± ${d.error}` : ""}`}
+          item={`${d.label}: ${d.value}${d.error ?? ""}`}
           color={d.color}
           symbol={d.symbol ?? "square"}
           usage="tooltip"
