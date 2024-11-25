@@ -11,7 +11,6 @@ import {
   Component,
   isStandardErrorDimension,
   Observation,
-  ObservationValue,
 } from "@/domain/data";
 import { TransitionStore } from "@/stores/transition";
 
@@ -156,6 +155,7 @@ const ERROR_WHISKER_MIDDLE_CIRCLE_RADIUS = 3.5;
 export type RenderWhiskerDatum = {
   key: string;
   x: number;
+  y: number;
   y1: number;
   y2: number;
   width: number;
@@ -216,7 +216,7 @@ export const renderWhiskers = (
               .append("circle")
               .attr("class", "middle-circle")
               .attr("cx", (d) => d.x + d.width / 2)
-              .attr("cy", (d) => (d.y1 + d.y2) / 2)
+              .attr("cy", (d) => d.y)
               .attr("r", ERROR_WHISKER_MIDDLE_CIRCLE_RADIUS)
               .attr("fill", (d) => d.fill ?? "black")
               .attr("stroke", "none")
@@ -260,7 +260,7 @@ export const renderWhiskers = (
                 g
                   .select(".middle-circle")
                   .attr("cx", (d) => d.x + d.width / 2)
-                  .attr("cy", (d) => (d.y1 + d.y2) / 2)
+                  .attr("cy", (d) => d.y)
                   .attr("r", ERROR_WHISKER_MIDDLE_CIRCLE_RADIUS)
                   .attr("fill", (d) => d.fill ?? "black")
                   .attr("stroke", "none")
@@ -273,10 +273,4 @@ export const renderWhiskers = (
           s: (g) => g.attr("opacity", 0).remove(),
         })
     );
-};
-
-export const filterWithoutErrors = (
-  getError: ((d: Observation) => ObservationValue) | null
-) => {
-  return (d: Observation): boolean => !!getError?.(d);
 };

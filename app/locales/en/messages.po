@@ -412,6 +412,7 @@ msgid "controls.chart.disabled.same-unit"
 msgstr "At least two numerical measures with the same unit are required."
 
 #: app/charts/index.ts
+#: app/charts/index.ts
 msgid "controls.chart.disabled.temporal"
 msgstr "At least one temporal dimension is required."
 
@@ -887,6 +888,14 @@ msgstr "Shared filters"
 #: app/charts/shared/use-combined-temporal-dimension.ts
 msgid "controls.section.shared-filters.date"
 msgstr "Date"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.show-confidence-interval"
+msgstr "Show confidence interval"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.show-confidence-interval.explanation"
+msgstr "Show uncertainties extending from data points to represent confidence intervals"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.show-standard-error"

@@ -11,6 +11,13 @@ You can also check the
 
 # Unreleased
 
+Nothing yet.
+
+# [5.0.0] - 2024-11-25
+
+Bumped to a new major version to celebrate all the improvements and new features
+introduced since v4.0.0 🎉
+
 - Features
   - Allowed previewing of charts in states different than CONFIGURING_CHART
     (iframe `/preview` page)
@@ -22,6 +29,7 @@ You can also check the
     application will try to use dual-line chart with measures from different
     cubes)
   - Added tooltip that explains why a given chart type can't be selected
+  - Added support for confidence intervals
 - Fixes
   - Introduced a `componentId` concept which makes the dimensions and measures
     unique by adding an unversioned cube iri to the unversioned component iri on
@@ -30,6 +38,7 @@ You can also check the
   - Map legend is now correctly updated (in some cases it was rendered
     incorrectly on the initial render)
   - Vertical Axis measure names are now correctly displayed in the left panel
+  - Uncertainties are now correctly displayed in map symbol layer tooltip
 - Performance
   - We no longer load non-key dimensions when initializing a chart
 - Maintenance

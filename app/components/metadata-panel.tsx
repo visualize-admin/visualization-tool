@@ -59,6 +59,8 @@ import {
 import {
   Component,
   DimensionValue,
+  isConfidenceLowerBoundDimension,
+  isConfidenceUpperBoundDimension,
   isJoinByComponent,
   isStandardErrorDimension,
   TemporalDimension,
@@ -862,7 +864,11 @@ const ComponentValues = ({ component }: { component: Component }) => {
     ) as DimensionValue[];
   }, [component]);
 
-  if (isStandardErrorDimension(component)) {
+  if (
+    isStandardErrorDimension(component) ||
+    isConfidenceUpperBoundDimension(component) ||
+    isConfidenceLowerBoundDimension(component)
+  ) {
     return <MeasureValuesNumeric values={sortedValues} />;
   }
 

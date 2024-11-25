@@ -75,10 +75,8 @@ const useColumnsState = (
     yMeasure,
     getY,
     getMinY,
-    showYStandardError,
-    yErrorMeasure,
-    getYError,
     getYErrorRange,
+    getFormattedYUncertainty,
   } = variables;
   const { chartData, scalesData, timeRangeData, paddingData, allData } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
@@ -245,15 +243,6 @@ const useColumnsState = (
         formatters[yMeasure.id] ?? formatNumber,
         yMeasure.unit
       );
-
-    const getError = (d: Observation) => {
-      if (!showYStandardError || !getYError || getYError(d) === null) {
-        return;
-      }
-
-      return `${getYError(d)}${yErrorMeasure?.unit ?? ""}`;
-    };
-
     const y = getY(d);
 
     return {
@@ -264,7 +253,7 @@ const useColumnsState = (
       datum: {
         label: undefined,
         value: y !== null && isNaN(y) ? "-" : `${yValueFormatter(getY(d))}`,
-        error: getError(d),
+        error: getFormattedYUncertainty(d),
         color: "",
       },
       values: undefined,

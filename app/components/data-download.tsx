@@ -480,6 +480,8 @@ const getDimensionParsers = (
           return [d.id, (d) => d];
         case "NumericalMeasure":
         case "StandardErrorDimension":
+        case "ConfidenceUpperBoundDimension":
+        case "ConfidenceLowerBoundDimension":
           return [d.id, (d) => +d];
         case "OrdinalMeasure":
           return d.isNumerical ? [d.id, (d) => +d] : [d.id, (d) => d];

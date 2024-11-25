@@ -63,8 +63,21 @@ export const resolveDimensionType = (
   timeUnit: ResolvedDimension["data"]["timeUnit"] | undefined,
   related: ResolvedDimension["data"]["related"]
 ): DimensionType => {
+  const relatedTypes = Array.from(new Set(related.map((d) => d.type)));
+
+  if (relatedTypes.length > 1) {
+    console.warn(
+      `WARNING: dimension has more than 1 related type`,
+      relatedTypes
+    );
+  }
+
   if (related.some((d) => d.type === "StandardError")) {
     return "StandardErrorDimension";
+  } else if (related.some((d) => d.type === "ConfidenceUpperBound")) {
+    return "ConfidenceUpperBoundDimension";
+  } else if (related.some((d) => d.type === "ConfidenceLowerBound")) {
+    return "ConfidenceLowerBoundDimension";
   }
 
   if (dataKind === "Time") {

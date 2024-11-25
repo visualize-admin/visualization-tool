@@ -229,9 +229,15 @@ export type QueryDataCubeDimensionGeoShapesArgs = {
 
 export type RelatedDimension = {
   __typename: 'RelatedDimension';
-  type: Scalars['String'];
+  type: RelatedDimensionType;
   id: Scalars['String'];
 };
+
+export enum RelatedDimensionType {
+  StandardError = 'StandardError',
+  ConfidenceUpperBound = 'ConfidenceUpperBound',
+  ConfidenceLowerBound = 'ConfidenceLowerBound'
+}
 
 export enum ScaleType {
   Ordinal = 'Ordinal',
