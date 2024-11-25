@@ -30,6 +30,7 @@ export interface TooltipBoxProps {
   x: number | undefined;
   y: number | undefined;
   placement: TooltipPlacement;
+  withTriangle?: boolean;
   margins: Margins;
   children: ReactNode;
 }
@@ -128,8 +129,9 @@ export const TooltipBox = ({
   placement,
   margins,
   children,
+  withTriangle = true,
 }: TooltipBoxProps) => {
-  const triangle = mkTriangle(placement);
+  const triangle = withTriangle ? mkTriangle(placement) : null;
   const [pos, posRef] = usePosition();
 
   const [tooltipRef, tooltipWidth] = useResizeObserver<HTMLDivElement>();
@@ -145,8 +147,8 @@ export const TooltipBox = ({
   const mobileTriangleXPosition = getTriangleXPos(x!, tooltipWidth, chartWidth);
 
   const desktopTriangleXPosition = {
-    left: triangle.left,
-    right: triangle.right,
+    left: triangle?.left,
+    right: triangle?.right,
   };
 
   const triangleXPosition = isMobile
@@ -181,21 +183,21 @@ export const TooltipBox = ({
 
               "&::before": {
                 content: "''",
-                display: "block",
+                display: withTriangle ? "block" : "none",
                 position: "absolute",
                 pointerEvents: "none",
                 zIndex: -1,
                 width: 0,
                 height: 0,
                 borderStyle: "solid",
-                top: triangle.top,
-                bottom: triangle.bottom,
+                top: triangle?.top,
+                bottom: triangle?.bottom,
                 ...triangleXPosition,
-                borderWidth: triangle.borderWidth,
-                borderTopColor: triangle.borderTopColor,
-                borderRightColor: triangle.borderRightColor,
-                borderBottomColor: triangle.borderBottomColor,
-                borderLeftColor: triangle.borderLeftColor,
+                borderWidth: triangle?.borderWidth,
+                borderTopColor: triangle?.borderTopColor,
+                borderRightColor: triangle?.borderRightColor,
+                borderBottomColor: triangle?.borderBottomColor,
+                borderLeftColor: triangle?.borderLeftColor,
               },
             }}
           >
