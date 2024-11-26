@@ -53,6 +53,7 @@ import { useClient } from "urql";
 import {
   DatasetResults,
   PartialSearchCube,
+  SearchDatasetDraftsControl,
   SearchDatasetResultsCount,
   SearchDatasetSortControl,
 } from "@/browser/dataset-browse";
@@ -611,12 +612,14 @@ export const DatasetDialog = ({
   state,
   ...props
 }: { state: ConfiguratorStateConfiguringChart } & DialogProps) => {
+  const locale = useLocale();
+  const classes = useStyles();
+
   const [query, setQuery] = useState("");
   const [order, setOrder] = useState<SearchCubeResultOrder>(
     SearchCubeResultOrder.Score
   );
-  const locale = useLocale();
-  const classes = useStyles();
+  const [includeDrafts, setIncludeDrafts] = useState(false);
 
   const commonQueryVariables = {
     sourceType: state.dataSource.type,
@@ -737,7 +740,7 @@ export const DatasetDialog = ({
       locale,
       query,
       order,
-      includeDrafts: false,
+      includeDrafts,
       fetchDimensionTermsets: true,
       filters: [
         selectedTemporalDimension
@@ -1000,7 +1003,13 @@ export const DatasetDialog = ({
               style={{ alignItems: "center", justifyContent: "space-between" }}
             >
               <SearchDatasetResultsCount cubes={searchCubes} />
-              <SearchDatasetSortControl value={order} onChange={setOrder} />
+              <Flex style={{ alignItems: "center" }}>
+                <SearchDatasetDraftsControl
+                  checked={includeDrafts}
+                  onChange={setIncludeDrafts}
+                />
+                <SearchDatasetSortControl value={order} onChange={setOrder} />
+              </Flex>
             </Flex>
 
             {selectedSearchDimensions?.length === 0 ? (
