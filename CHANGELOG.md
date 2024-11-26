@@ -13,6 +13,15 @@ You can also check the
 
 Nothing yet.
 
+# [5.0.1] - 2024-11-26
+
+- Features
+  - Improved formatting of confidence intervals in tooltips
+    (`, [-lower bound], [+upper bound]`)
+- Fixes
+  - Ensured undefined / unavailable data is represented as "-" for downloaded
+    data files
+
 # [5.0.0] - 2024-11-25
 
 Bumped to a new major version to celebrate all the improvements and new features
@@ -59,9 +68,7 @@ introduced since v4.0.0 🎉
   - % mode toggle no longer overlaps with the Y axis title
   - Merging of cubes beta tag has been removed
   - Dual line Chart Tooltip indicators are now fixed for smaller screens
-  - Fixes Tooltip position for Pie Charts for smaller screens
-  - Ensures undefined / unavailable data is represent as "-" for exported Data
-    files
+  - Fixed tooltip position for pie charts for smaller screens
 
 # [4.9.4] - 2024-11-06
 
