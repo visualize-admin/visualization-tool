@@ -95,6 +95,7 @@ import SvgIcRemove from "@/icons/components/IcRemove";
 import SvgIcSearch from "@/icons/components/IcSearch";
 import { useLocale } from "@/locales/use-locale";
 import { useEventEmitter } from "@/utils/eventEmitter";
+import useEvent from "@/utils/use-event";
 import useLocalState from "@/utils/use-local-state";
 
 const DialogCloseButton = (props: IconButtonProps) => {
@@ -615,8 +616,9 @@ export const DatasetDialog = ({
   };
 
   const activeChartConfig = state.chartConfigs.find(
-    (x) => x.key === state.activeChartKey
+    (chartConfig) => chartConfig.key === state.activeChartKey
   );
+
   if (!activeChartConfig) {
     throw Error("Could not find active chart config");
   }
@@ -752,13 +754,13 @@ export const DatasetDialog = ({
 
   const currentComponents = cubesComponentQuery.data?.dataCubesComponents;
 
-  const handleSubmit = (ev: FormEvent<HTMLFormElement>) => {
-    ev.preventDefault();
+  const handleSubmit = useEvent((e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     const formData = Object.fromEntries(
-      new FormData(ev.currentTarget).entries()
+      new FormData(e.currentTarget).entries()
     );
     setQuery(formData.search as string);
-  };
+  });
 
   const handleClose: DialogProps["onClose"] = useEventCallback((ev, reason) => {
     props.onClose?.(ev, reason);
@@ -894,7 +896,6 @@ export const DatasetDialog = ({
               <TextField
                 size="small"
                 name="search"
-                sx={{ width: 400 }}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -919,17 +920,17 @@ export const DatasetDialog = ({
                 }}
                 input={
                   <OutlinedInput
+                    id="select-multiple-chip"
+                    label="Chip"
                     notched={false}
                     startAdornment={
                       <InputAdornment position="start" sx={{ mr: 0 }}>
                         <SvgIcFilter />
                       </InputAdornment>
                     }
-                    id="select-multiple-chip"
-                    label="Chip"
+                    style={{ width: "100%" }}
                   />
                 }
-                sx={{ minWidth: 300 }}
                 renderValue={(selected) =>
                   cubeComponentTermsets.fetching ||
                   cubesComponentQuery.fetching ? (
@@ -976,7 +977,12 @@ export const DatasetDialog = ({
                   </MenuItem>
                 ))}
               </Select>
-              <Button color="primary" type="submit" variant="contained">
+              <Button
+                color="primary"
+                type="submit"
+                variant="contained"
+                style={{ minWidth: "fit-content" }}
+              >
                 {t({ id: "dataset.search.label" })}
               </Button>
             </Box>
@@ -989,7 +995,7 @@ export const DatasetDialog = ({
               </Typography>
             ) : (
               <DatasetResults
-                cubes={searchCubes ?? []}
+                cubes={searchCubes}
                 fetching={
                   searchQuery.fetching ||
                   cubeComponentTermsets.fetching ||
@@ -1000,7 +1006,6 @@ export const DatasetDialog = ({
                   disableTitleLink: true,
                   showDimensions: true,
                   showTags: true,
-
                   rowActions: () => {
                     return (
                       <Box display="flex" justifyContent="flex-end">

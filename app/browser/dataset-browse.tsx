@@ -199,7 +199,7 @@ export const SearchDatasetControls = ({
     onSetOrder,
   } = browseState;
 
-  const order = stateOrder || SearchCubeResultOrder.CreatedDesc;
+  const order = stateOrder ?? SearchCubeResultOrder.CreatedDesc;
   const options = [
     {
       value: SearchCubeResultOrder.Score,
