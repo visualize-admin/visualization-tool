@@ -65,6 +65,7 @@ const ColumnsStory = {
             description: { en: "", de: "", fr: "", it: "" },
             label: { en: "", de: "", fr: "", it: "" },
           },
+          blocks: [{ type: "chart", key: chartConfig.key, initialized: true }],
           activeField: undefined,
         },
         chartConfigs: [chartConfig],
@@ -129,6 +130,13 @@ const ScatterplotStory = {
             description: { en: "", de: "", fr: "", it: "" },
             label: { en: "", de: "", fr: "", it: "" },
           },
+          blocks: [
+            {
+              type: "chart",
+              key: scatterplotChartConfig.key,
+              initialized: true,
+            },
+          ],
           activeField: undefined,
         },
         chartConfigs: [chartConfig],

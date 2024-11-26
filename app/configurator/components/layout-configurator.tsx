@@ -1,6 +1,7 @@
 import { t, Trans } from "@lingui/macro";
 import {
   Box,
+  IconButton as MUIIconButton,
   Stack,
   Switch,
   SwitchProps,
@@ -55,8 +56,10 @@ import {
 } from "@/domain/data";
 import { useTimeFormatLocale, useTimeFormatUnit } from "@/formatters";
 import { useConfigsCubeComponents } from "@/graphql/hooks";
+import { Icon } from "@/icons";
 import { useLocale } from "@/src";
 import { useDashboardInteractiveFilters } from "@/stores/interactive-filters";
+import { createId } from "@/utils/create-id";
 import { getTimeFilterOptions } from "@/utils/time-filter-options";
 
 export const LayoutConfigurator = () => {
@@ -540,8 +543,38 @@ const DashboardTimeRangeFilterOptions = ({
 };
 
 const LayoutBlocksConfigurator = () => {
-  const [state] = useConfiguratorState(isLayouting);
+  const [state, dispatch] = useConfiguratorState(isLayouting);
   const { layout } = state;
+  const { blocks } = layout;
+
+  const handleAddTextBlock = useEventCallback(() => {
+    dispatch({
+      type: "LAYOUT_CHANGED",
+      value: {
+        ...layout,
+        blocks: [
+          ...layout.blocks,
+          {
+            type: "text",
+            key: createId(),
+            title: "",
+            description: "",
+            initialized: false,
+          },
+        ],
+      },
+    });
+  });
+
+  const handleRemoveBlock = useEventCallback((key: string) => {
+    dispatch({
+      type: "LAYOUT_CHANGED",
+      value: {
+        ...layout,
+        blocks: layout.blocks.filter((b) => b.key !== key),
+      },
+    });
+  });
 
   return layout.type === "dashboard" && layout.layout === "canvas" ? (
     <ControlSection role="tablist" aria-labelledby="controls-blocks" collapse>
@@ -549,7 +582,31 @@ const LayoutBlocksConfigurator = () => {
         <Trans id="controls.section.block-options">Text elements</Trans>
       </SubsectionTitle>
       <ControlSectionContent px="small" gap="none">
-        <AddButton>
+        <Box sx={{ mb: 4 }}>
+          {blocks
+            .filter((b) => b.type === "text")
+            .map((block) => (
+              <Box
+                key={block.key}
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  height: 40,
+                  px: 2,
+                }}
+              >
+                <Typography variant="body2">{block.key}</Typography>
+                <MUIIconButton
+                  size="small"
+                  onClick={() => handleRemoveBlock(block.key)}
+                >
+                  <Icon name="trash" size={16} />
+                </MUIIconButton>
+              </Box>
+            ))}
+        </Box>
+        <AddButton onClick={handleAddTextBlock}>
           <Trans id="controls.section.block-options.text-block-add">
             Add text
           </Trans>
@@ -585,9 +642,13 @@ const migrateLayout = (
       ...layout,
       layout: newLayoutType,
       layouts,
-      layoutsMetadata: Object.fromEntries(
-        chartConfigs.map(({ key }) => [key, { initialized: false }])
-      ),
+      blocks: chartConfigs.map(({ key }) => {
+        return {
+          type: "chart",
+          key,
+          initialized: false,
+        };
+      }),
     };
   } else {
     return {

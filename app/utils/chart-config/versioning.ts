@@ -1871,6 +1871,63 @@ export const configuratorStateMigrations: Migration[] = [
       return newConfig;
     },
   },
+  {
+    description: `ALL {
+      layout {
+        + blocks
+        - layoutsMetadata
+      }
+    }`,
+    from: "4.0.0",
+    to: "4.1.0",
+    up: async (config) => {
+      const newConfig = { ...config, version: "4.1.0" };
+
+      if (newConfig.layout.layoutsMetadata) {
+        newConfig.layout.blocks = Object.entries(
+          newConfig.layout.layoutsMetadata
+        ).map(([k, v]) => {
+          return {
+            type: "chart",
+            key: k,
+            ...(v as object),
+          };
+        });
+        delete newConfig.layout.layoutsMetadata;
+      } else {
+        newConfig.layout.blocks = newConfig.chartConfigs.map(
+          (chartConfig: any) => {
+            return {
+              type: "chart",
+              key: chartConfig.key,
+              initialized: false,
+            };
+          }
+        );
+      }
+
+      return newConfig;
+    },
+    down: async (config) => {
+      const newConfig = { ...config, version: "4.0.0" };
+
+      if (
+        newConfig.layout.type === "dashboard" &&
+        newConfig.layout.layout === "canvas"
+      ) {
+        newConfig.layout.layoutsMetadata = Object.fromEntries(
+          newConfig.layout.blocks.map((block: any) => {
+            const { key, initialized } = block;
+            return [key, { initialized }];
+          })
+        );
+      }
+
+      delete newConfig.layout.blocks;
+
+      return newConfig;
+    },
+  },
 ];
 
 export const migrateConfiguratorState = makeMigrate<ConfiguratorState>(

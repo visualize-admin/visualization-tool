@@ -39,6 +39,7 @@ export const getInitialConfiguringConfigBasedOnCube = (props: {
           it: "",
         },
       },
+      blocks: [{ type: "chart", key: chartConfig.key, initialized: false }],
       activeField: undefined,
     },
     chartConfigs: [chartConfig],

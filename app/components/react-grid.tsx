@@ -226,9 +226,9 @@ export const ChartGridLayout = ({
 } & ComponentProps<typeof ResponsiveReactGridLayout>) => {
   const classes = useStyles();
   const [state, dispatch] = useConfiguratorState(hasChartConfigs);
-  const configLayout = state.layout;
+  const layout = state.layout;
   assert(
-    configLayout.type === "dashboard" && configLayout.layout === "canvas",
+    layout.type === "dashboard" && layout.layout === "canvas",
     "ChartGridLayout can only be used in a canvas layout!"
   );
   const allowHeightInitialization = isLayouting(state);
@@ -268,7 +268,10 @@ export const ChartGridLayout = ({
         return [
           breakpoint,
           chartLayouts.map((chartLayout) => {
-            if (configLayout.layoutsMetadata[chartLayout.i]?.initialized) {
+            if (
+              layout.blocks.find((block) => block.key === chartLayout.i)
+                ?.initialized
+            ) {
               return chartLayout;
             }
 
@@ -315,14 +318,15 @@ export const ChartGridLayout = ({
       dispatch({
         type: "LAYOUT_CHANGED",
         value: {
-          ...configLayout,
+          ...layout,
           layouts: newLayouts,
-          layoutsMetadata: Object.fromEntries(
-            state.chartConfigs.map(({ key }) => {
-              const layoutMetadata = configLayout.layoutsMetadata[key];
-              return [key, { ...layoutMetadata, initialized: true }];
-            })
-          ),
+          blocks: layout.blocks.map((block) => {
+            return {
+              ...block,
+              // TODO: initialize other block types
+              initialized: block.type === "chart" ? true : block.initialized,
+            };
+          }),
         },
       });
     }
@@ -333,7 +337,7 @@ export const ChartGridLayout = ({
     enhancedLayouts,
     mountedForSomeTime,
     resize,
-    configLayout,
+    layout,
     state.chartConfigs,
   ]);
 

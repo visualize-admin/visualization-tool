@@ -1217,23 +1217,31 @@ export const ReactGridLayoutsType = t.record(
 );
 export type ReactGridLayoutsType = t.TypeOf<typeof ReactGridLayoutsType>;
 
-const ReactGridLayoutMetadata = t.type({
-  initialized: t.boolean,
+const LayoutChartBlock = t.type({
+  type: t.literal("chart"),
+  key: t.string,
 });
-export type ReactGridLayoutMetadata = t.TypeOf<typeof ReactGridLayoutMetadata>;
+export type LayoutChartBlock = t.TypeOf<typeof LayoutChartBlock>;
 
-const ReactGridLayoutsMetadataType = t.record(
-  t.string,
-  ReactGridLayoutMetadata
-);
-export type ReactGridLayoutsMetadataType = t.TypeOf<
-  typeof ReactGridLayoutsMetadataType
->;
+const LayoutTextBlock = t.type({
+  type: t.literal("text"),
+  key: t.string,
+  title: t.string,
+  description: t.string,
+});
+export type LayoutTextBlock = t.TypeOf<typeof LayoutTextBlock>;
+
+const LayoutBlock = t.intersection([
+  t.union([LayoutChartBlock, LayoutTextBlock]),
+  t.type({ initialized: t.boolean }),
+]);
+export type LayoutBlock = t.TypeOf<typeof LayoutBlock>;
 
 const Layout = t.intersection([
   t.type({
     activeField: t.union([t.undefined, t.string]),
     meta: Meta,
+    blocks: t.array(LayoutBlock),
   }),
   t.union([
     t.type({
@@ -1247,7 +1255,6 @@ const Layout = t.intersection([
       type: t.literal("dashboard"),
       layout: t.literal("canvas"),
       layouts: ReactGridLayoutsType,
-      layoutsMetadata: ReactGridLayoutsMetadataType,
     }),
     t.type({
       type: t.literal("singleURLs"),
