@@ -8,7 +8,7 @@ import { ParsedConfig } from "@/db/config";
 
 import { ConfiguratorState } from "../../config-types";
 import { apiFetch } from "../api";
-import { createChartId } from "../create-chart-id";
+import { createId } from "../create-id";
 
 import type apiConfigCreate from "../../pages/api/config-create";
 import type apiConfigUpdate from "../../pages/api/config-update";
@@ -49,7 +49,7 @@ export const createConfig = async (options: CreateConfigOptions) => {
         data: {
           // Create a new chart ID, as the one in the state could be already
           // used by a chart that has been published.
-          key: createChartId(),
+          key: createId(),
           ...options.data,
         },
         user_id: options.user_id,
