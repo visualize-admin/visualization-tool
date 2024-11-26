@@ -50,7 +50,11 @@ import uniq from "lodash/uniq";
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { useClient } from "urql";
 
-import { DatasetResults, PartialSearchCube } from "@/browser/dataset-browse";
+import {
+  DatasetResults,
+  PartialSearchCube,
+  SearchDatasetSortControl,
+} from "@/browser/dataset-browse";
 import { FirstTenRowsCaption } from "@/browser/dataset-preview";
 import { getEnabledChartTypes } from "@/charts";
 import { Error as ErrorHint, Loading } from "@/components/hint";
@@ -606,6 +610,9 @@ export const DatasetDialog = ({
   ...props
 }: { state: ConfiguratorStateConfiguringChart } & DialogProps) => {
   const [query, setQuery] = useState("");
+  const [order, setOrder] = useState<SearchCubeResultOrder>(
+    SearchCubeResultOrder.Score
+  );
   const locale = useLocale();
   const classes = useStyles();
 
@@ -726,8 +733,8 @@ export const DatasetDialog = ({
       sourceType: state.dataSource.type,
       sourceUrl: state.dataSource.url,
       locale,
-      query: query,
-      order: SearchCubeResultOrder.Score,
+      query,
+      order,
       includeDrafts: false,
       fetchDimensionTermsets: true,
       filters: [
@@ -890,7 +897,7 @@ export const DatasetDialog = ({
               alignItems="center"
               component="form"
               gap="0.25rem"
-              mb="1.5rem"
+              mb="1rem"
               onSubmit={handleSubmit}
             >
               <TextField
@@ -986,6 +993,10 @@ export const DatasetDialog = ({
                 {t({ id: "dataset.search.label" })}
               </Button>
             </Box>
+
+            <div style={{ display: "flex", justifyContent: "flex-end" }}>
+              <SearchDatasetSortControl value={order} onChange={setOrder} />
+            </div>
 
             {selectedSearchDimensions?.length === 0 ? (
               <Typography variant="body1">
