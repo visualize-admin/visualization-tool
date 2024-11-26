@@ -215,13 +215,7 @@ export const SearchDatasetControls = ({
     <Flex sx={{ justifyContent: "space-between", alignItems: "center", mb: 2 }}>
       <SearchDatasetResultsCount cubes={cubes} />
       <Flex sx={{ alignItems: "center" }}>
-        <Checkbox
-          label={t({
-            id: "dataset.includeDrafts",
-            message: "Include draft datasets",
-          })}
-          name="dataset-include-drafts"
-          value="dataset-include-drafts"
+        <SearchDatasetDraftsControl
           checked={includeDrafts}
           onChange={onToggleIncludeDrafts}
         />
@@ -258,6 +252,27 @@ export const SearchDatasetResultsCount = ({
         />
       )}
     </Typography>
+  );
+};
+
+export const SearchDatasetDraftsControl = ({
+  checked,
+  onChange,
+}: {
+  checked: boolean;
+  onChange: (value: boolean) => void;
+}) => {
+  return (
+    <Checkbox
+      label={t({
+        id: "dataset.includeDrafts",
+        message: "Include draft datasets",
+      })}
+      name="dataset-include-drafts"
+      value="dataset-include-drafts"
+      checked={checked}
+      onChange={() => onChange(!checked)}
+    />
   );
 };
 
