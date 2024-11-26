@@ -5,7 +5,8 @@ import { useState } from "react";
 import { Layouts } from "react-grid-layout";
 
 import { ChartPanelLayoutTypeProps } from "@/components/chart-panel";
-import ChartGridLayout, {
+import {
+  ChartGridLayout,
   FREE_CANVAS_BREAKPOINTS,
 } from "@/components/react-grid";
 import { ReactGridLayoutsType, hasChartConfigs } from "@/configurator";

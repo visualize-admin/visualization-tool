@@ -8,7 +8,7 @@ import {
 import { useMemo, useState } from "react";
 import { Layouts } from "react-grid-layout";
 
-import ShowcaseLayout, {
+import {
   ChartGridLayout,
   GridLayout,
   availableHandles,
@@ -100,7 +100,7 @@ export const Example = () => {
 
 const meta = {
   title: "Components/ReactGrid",
-  component: ShowcaseLayout,
+  component: ChartGridLayout,
 };
 
 export default meta;
