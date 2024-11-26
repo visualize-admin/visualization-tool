@@ -433,7 +433,7 @@ export const useNumericalYErrorVariables = (
         const cil = getYConfidenceIntervalLower(d);
         const ciu = getYConfidenceIntervalUpper(d);
         const unit = yConfidenceIntervalUpperMeasure?.unit ?? "";
-        return ` -${cil}${unit}, +${ciu}${unit}`;
+        return `, [-${cil}${unit}, +${ciu}${unit}]`;
       }
     },
     [
