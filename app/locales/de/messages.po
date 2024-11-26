@@ -818,7 +818,7 @@ msgstr "Abgestuft"
 
 #: app/configurator/components/layout-configurator.tsx
 msgid "controls.section.block-options"
-msgstr "Textelemente"
+msgstr "Objekte"
 
 #: app/configurator/components/layout-configurator.tsx
 msgid "controls.section.block-options.text-block-add"

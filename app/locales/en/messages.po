@@ -818,7 +818,7 @@ msgstr "Stepped"
 
 #: app/configurator/components/layout-configurator.tsx
 msgid "controls.section.block-options"
-msgstr "Text elements"
+msgstr "Objects"
 
 #: app/configurator/components/layout-configurator.tsx
 msgid "controls.section.block-options.text-block-add"
