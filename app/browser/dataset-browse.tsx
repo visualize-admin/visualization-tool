@@ -213,23 +213,7 @@ export const SearchDatasetControls = ({
 
   return (
     <Flex sx={{ justifyContent: "space-between", alignItems: "center", mb: 2 }}>
-      <Typography
-        variant="body2"
-        fontWeight={700}
-        aria-live="polite"
-        data-testid="search-results-count"
-      >
-        {cubes.length > 0 && (
-          <Plural
-            id="dataset.results"
-            value={cubes.length}
-            zero="No datasets"
-            one="# dataset"
-            other="# datasets"
-          />
-        )}
-      </Typography>
-
+      <SearchDatasetResultsCount cubes={cubes} />
       <Flex sx={{ alignItems: "center" }}>
         <Checkbox
           label={t({
@@ -248,6 +232,32 @@ export const SearchDatasetControls = ({
         />
       </Flex>
     </Flex>
+  );
+};
+
+export const SearchDatasetResultsCount = ({
+  cubes,
+}: {
+  cubes: SearchCubeResult[];
+}) => {
+  return (
+    <Typography
+      variant="body2"
+      fontWeight={700}
+      aria-live="polite"
+      data-testid="search-results-count"
+      color="secondary.main"
+    >
+      {cubes.length > 0 && (
+        <Plural
+          id="dataset.results"
+          value={cubes.length}
+          zero="No datasets"
+          one="# dataset"
+          other="# datasets"
+        />
+      )}
+    </Typography>
   );
 };
 
