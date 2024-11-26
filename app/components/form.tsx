@@ -548,6 +548,7 @@ export const MinimalisticSelect = (props: MinimalisticSelectProps) => {
     onChange,
     smaller = false,
     disabled,
+    sx,
     ...rest
   } = props;
 
@@ -559,21 +560,6 @@ export const MinimalisticSelect = (props: MinimalisticSelectProps) => {
         </Label>
       )}
       <MUISelect
-        sx={{
-          borderColor: "transparent",
-          fontSize: smaller ? ["0.625rem", "0.75rem", "0.75rem"] : "inherit",
-          lineHeight: "normal !important",
-
-          backgroundColor: "transparent",
-          p: 0,
-          pr: 2,
-          pl: 1,
-          mr: 1, // Fix for Chrome which cuts of the label otherwise
-          ":focus": {
-            outline: "none",
-            borderColor: "primary.main",
-          },
-        }}
         size={smaller ? "small" : "medium"}
         variant="standard"
         id={id}
@@ -586,13 +572,28 @@ export const MinimalisticSelect = (props: MinimalisticSelectProps) => {
             {...props}
             style={{
               ...props.style,
-              right: 12,
               transition: "transform 0.1s",
             }}
           >
             <Icon name="chevronDown" size={16} />
           </span>
         )}
+        sx={{
+          borderColor: "transparent",
+          fontSize: smaller ? ["0.625rem", "0.75rem", "0.75rem"] : "inherit",
+          lineHeight: "normal !important",
+          backgroundColor: "transparent",
+          p: 0,
+          pl: 1,
+          ":focus": {
+            outline: "none",
+            borderColor: "primary.main",
+          },
+          "& .MuiInput-input": {
+            paddingRight: "1.25rem !important",
+          },
+          ...sx,
+        }}
         {...rest}
       >
         {options.map((opt) => (

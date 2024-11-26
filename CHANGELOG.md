@@ -11,7 +11,9 @@ You can also check the
 
 # Unreleased
 
-Nothing yet.
+- Features
+  - Made it possible to sort the cube search results and filter by draft
+    datasets when looking for a cube to merge
 
 # [5.0.1] - 2024-11-26
 

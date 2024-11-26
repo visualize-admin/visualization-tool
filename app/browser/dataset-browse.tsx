@@ -199,22 +199,7 @@ export const SearchDatasetControls = ({
     onSetOrder,
   } = browseState;
 
-  const order = stateOrder || SearchCubeResultOrder.CreatedDesc;
-  const options = [
-    {
-      value: SearchCubeResultOrder.Score,
-      label: t({ id: "dataset.order.relevance", message: `Relevance` }),
-    },
-    {
-      value: SearchCubeResultOrder.TitleAsc,
-      label: t({ id: "dataset.order.title", message: `Title` }),
-    },
-    {
-      value: SearchCubeResultOrder.CreatedDesc,
-      label: t({ id: "dataset.order.newest", message: `Newest` }),
-    },
-  ];
-
+  const order = stateOrder ?? SearchCubeResultOrder.CreatedDesc;
   const isSearching = search !== "" && search !== undefined;
 
   const onToggleIncludeDrafts = useEvent(async () => {
@@ -228,53 +213,118 @@ export const SearchDatasetControls = ({
 
   return (
     <Flex sx={{ justifyContent: "space-between", alignItems: "center", mb: 2 }}>
-      <Typography
-        variant="body2"
-        fontWeight={700}
-        aria-live="polite"
-        data-testid="search-results-count"
-      >
-        {cubes.length > 0 && (
-          <Plural
-            id="dataset.results"
-            value={cubes.length}
-            zero="No datasets"
-            one="# dataset"
-            other="# datasets"
-          />
-        )}
-      </Typography>
-
+      <SearchDatasetResultsCount cubes={cubes} />
       <Flex sx={{ alignItems: "center" }}>
-        <Checkbox
-          label={t({
-            id: "dataset.includeDrafts",
-            message: "Include draft datasets",
-          })}
-          name="dataset-include-drafts"
-          value="dataset-include-drafts"
+        <SearchDatasetDraftsControl
           checked={includeDrafts}
           onChange={onToggleIncludeDrafts}
         />
-        <label htmlFor="datasetSort">
-          <Typography variant="body2" fontWeight={700}>
-            <Trans id="dataset.sortby">Sort by</Trans>
-          </Typography>
-        </label>
-
-        <MinimalisticSelect
-          id="datasetSort"
-          smaller
-          autoWidth
+        <SearchDatasetSortControl
           value={order}
-          data-testid="datasetSort"
-          options={isSearching ? options : options.slice(1)}
-          onChange={(e) => {
-            onSetOrder(e.target.value as SearchCubeResultOrder);
-          }}
+          onChange={onSetOrder}
+          disableScore={isSearching}
         />
       </Flex>
     </Flex>
+  );
+};
+
+export const SearchDatasetResultsCount = ({
+  cubes,
+}: {
+  cubes: SearchCubeResult[];
+}) => {
+  return (
+    <Typography
+      variant="body2"
+      fontWeight={700}
+      aria-live="polite"
+      data-testid="search-results-count"
+      color="secondary.main"
+    >
+      {cubes.length > 0 && (
+        <Plural
+          id="dataset.results"
+          value={cubes.length}
+          zero="No datasets"
+          one="# dataset"
+          other="# datasets"
+        />
+      )}
+    </Typography>
+  );
+};
+
+export const SearchDatasetDraftsControl = ({
+  checked,
+  onChange,
+}: {
+  checked: boolean;
+  onChange: (value: boolean) => void;
+}) => {
+  return (
+    <Checkbox
+      label={t({
+        id: "dataset.includeDrafts",
+        message: "Include draft datasets",
+      })}
+      name="dataset-include-drafts"
+      value="dataset-include-drafts"
+      checked={checked}
+      onChange={() => onChange(!checked)}
+    />
+  );
+};
+
+export const SearchDatasetSortControl = ({
+  value,
+  onChange,
+  disableScore,
+}: {
+  value: SearchCubeResultOrder;
+  onChange: (order: SearchCubeResultOrder) => void;
+  disableScore?: boolean;
+}) => {
+  const options = useMemo(() => {
+    const options = [
+      {
+        value: SearchCubeResultOrder.Score,
+        label: t({ id: "dataset.order.relevance", message: "Relevance" }),
+      },
+      {
+        value: SearchCubeResultOrder.TitleAsc,
+        label: t({ id: "dataset.order.title", message: "Title" }),
+      },
+      {
+        value: SearchCubeResultOrder.CreatedDesc,
+        label: t({ id: "dataset.order.newest", message: "Newest" }),
+      },
+    ];
+
+    return disableScore
+      ? options.filter((o) => o.value !== SearchCubeResultOrder.Score)
+      : options;
+  }, [disableScore]);
+
+  return (
+    <Box style={{ display: "flex", alignItems: "center", gap: 1 }}>
+      <label htmlFor="datasetSort">
+        <Typography variant="body2" fontWeight={700}>
+          <Trans id="dataset.sortby">Sort by</Trans>
+        </Typography>
+      </label>
+      <MinimalisticSelect
+        id="datasetSort"
+        data-testid="datasetSort"
+        smaller
+        autoWidth
+        value={value}
+        options={options}
+        onChange={(e) => {
+          onChange(e.target.value as SearchCubeResultOrder);
+        }}
+      />
+    </Box>
   );
 };
 
@@ -980,7 +1030,7 @@ export const DatasetResults = ({
   }
 
   return (
-    <>
+    <div>
       {cubes.map(({ cube, highlightedTitle, highlightedDescription }) => (
         <DatasetResult
           key={cube.iri}
@@ -990,7 +1040,7 @@ export const DatasetResults = ({
           {...datasetResultProps?.({ cube })}
         />
       ))}
-    </>
+    </div>
   );
 };
 
@@ -1002,10 +1052,11 @@ const useResultStyles = makeStyles((theme: Theme) => ({
     color: theme.palette.grey[700],
     textAlign: "left",
     padding: `${theme.spacing(4)} 0`,
-    borderTopColor: theme.palette.grey[300],
-    borderTopStyle: "solid",
-    borderTopWidth: 1,
     boxShadow: "none",
+
+    "&:not(:first-child)": {
+      borderTop: `1px solid ${theme.palette.grey[300]}`,
+    },
   },
 
   titleClickable: {

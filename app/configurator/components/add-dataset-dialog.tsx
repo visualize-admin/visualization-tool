@@ -50,9 +50,16 @@ import uniq from "lodash/uniq";
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { useClient } from "urql";
 
-import { DatasetResults, PartialSearchCube } from "@/browser/dataset-browse";
+import {
+  DatasetResults,
+  PartialSearchCube,
+  SearchDatasetDraftsControl,
+  SearchDatasetResultsCount,
+  SearchDatasetSortControl,
+} from "@/browser/dataset-browse";
 import { FirstTenRowsCaption } from "@/browser/dataset-preview";
 import { getEnabledChartTypes } from "@/charts";
+import Flex from "@/components/flex";
 import { Error as ErrorHint, Loading } from "@/components/hint";
 import Tag from "@/components/tag";
 import {
@@ -95,6 +102,7 @@ import SvgIcRemove from "@/icons/components/IcRemove";
 import SvgIcSearch from "@/icons/components/IcSearch";
 import { useLocale } from "@/locales/use-locale";
 import { useEventEmitter } from "@/utils/eventEmitter";
+import useEvent from "@/utils/use-event";
 import useLocalState from "@/utils/use-local-state";
 
 const DialogCloseButton = (props: IconButtonProps) => {
@@ -604,9 +612,14 @@ export const DatasetDialog = ({
   state,
   ...props
 }: { state: ConfiguratorStateConfiguringChart } & DialogProps) => {
-  const [query, setQuery] = useState("");
   const locale = useLocale();
   const classes = useStyles();
+
+  const [query, setQuery] = useState("");
+  const [order, setOrder] = useState<SearchCubeResultOrder>(
+    SearchCubeResultOrder.Score
+  );
+  const [includeDrafts, setIncludeDrafts] = useState(false);
 
   const commonQueryVariables = {
     sourceType: state.dataSource.type,
@@ -615,8 +628,9 @@ export const DatasetDialog = ({
   };
 
   const activeChartConfig = state.chartConfigs.find(
-    (x) => x.key === state.activeChartKey
+    (chartConfig) => chartConfig.key === state.activeChartKey
   );
+
   if (!activeChartConfig) {
     throw Error("Could not find active chart config");
   }
@@ -724,9 +738,9 @@ export const DatasetDialog = ({
       sourceType: state.dataSource.type,
       sourceUrl: state.dataSource.url,
       locale,
-      query: query,
-      order: SearchCubeResultOrder.Score,
-      includeDrafts: false,
+      query,
+      order,
+      includeDrafts,
       fetchDimensionTermsets: true,
       filters: [
         selectedTemporalDimension
@@ -752,13 +766,13 @@ export const DatasetDialog = ({
 
   const currentComponents = cubesComponentQuery.data?.dataCubesComponents;
 
-  const handleSubmit = (ev: FormEvent<HTMLFormElement>) => {
-    ev.preventDefault();
+  const handleSubmit = useEvent((e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     const formData = Object.fromEntries(
-      new FormData(ev.currentTarget).entries()
+      new FormData(e.currentTarget).entries()
     );
     setQuery(formData.search as string);
-  };
+  });
 
   const handleClose: DialogProps["onClose"] = useEventCallback((ev, reason) => {
     props.onClose?.(ev, reason);
@@ -887,14 +901,13 @@ export const DatasetDialog = ({
               display="flex"
               alignItems="center"
               component="form"
-              gap="0.25rem"
-              mb="1.5rem"
+              gap="0.5rem"
+              mb="1rem"
               onSubmit={handleSubmit}
             >
               <TextField
                 size="small"
                 name="search"
-                sx={{ width: 400 }}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -919,17 +932,17 @@ export const DatasetDialog = ({
                 }}
                 input={
                   <OutlinedInput
+                    id="select-multiple-chip"
+                    label="Chip"
                     notched={false}
                     startAdornment={
                       <InputAdornment position="start" sx={{ mr: 0 }}>
                         <SvgIcFilter />
                       </InputAdornment>
                     }
-                    id="select-multiple-chip"
-                    label="Chip"
+                    style={{ width: "100%" }}
                   />
                 }
-                sx={{ minWidth: 300 }}
                 renderValue={(selected) =>
                   cubeComponentTermsets.fetching ||
                   cubesComponentQuery.fetching ? (
@@ -976,10 +989,28 @@ export const DatasetDialog = ({
                   </MenuItem>
                 ))}
               </Select>
-              <Button color="primary" type="submit" variant="contained">
+              <Button
+                color="primary"
+                type="submit"
+                variant="contained"
+                style={{ minWidth: "fit-content" }}
+              >
                 {t({ id: "dataset.search.label" })}
               </Button>
             </Box>
+
+            <Flex
+              style={{ alignItems: "center", justifyContent: "space-between" }}
+            >
+              <SearchDatasetResultsCount cubes={searchCubes} />
+              <Flex style={{ alignItems: "center" }}>
+                <SearchDatasetDraftsControl
+                  checked={includeDrafts}
+                  onChange={setIncludeDrafts}
+                />
+                <SearchDatasetSortControl value={order} onChange={setOrder} />
+              </Flex>
+            </Flex>
 
             {selectedSearchDimensions?.length === 0 ? (
               <Typography variant="body1">
@@ -989,7 +1020,7 @@ export const DatasetDialog = ({
               </Typography>
             ) : (
               <DatasetResults
-                cubes={searchCubes ?? []}
+                cubes={searchCubes}
                 fetching={
                   searchQuery.fetching ||
                   cubeComponentTermsets.fetching ||
@@ -1000,7 +1031,6 @@ export const DatasetDialog = ({
                   disableTitleLink: true,
                   showDimensions: true,
                   showTags: true,
-
                   rowActions: () => {
                     return (
                       <Box display="flex" justifyContent="flex-end">
