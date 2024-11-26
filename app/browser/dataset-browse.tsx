@@ -1015,7 +1015,7 @@ export const DatasetResults = ({
   }
 
   return (
-    <>
+    <div>
       {cubes.map(({ cube, highlightedTitle, highlightedDescription }) => (
         <DatasetResult
           key={cube.iri}
@@ -1025,7 +1025,7 @@ export const DatasetResults = ({
           {...datasetResultProps?.({ cube })}
         />
       ))}
-    </>
+    </div>
   );
 };
 
@@ -1037,10 +1037,11 @@ const useResultStyles = makeStyles((theme: Theme) => ({
     color: theme.palette.grey[700],
     textAlign: "left",
     padding: `${theme.spacing(4)} 0`,
-    borderTopColor: theme.palette.grey[300],
-    borderTopStyle: "solid",
-    borderTopWidth: 1,
     boxShadow: "none",
+
+    "&:not(:first-child)": {
+      borderTop: `1px solid ${theme.palette.grey[300]}`,
+    },
   },
 
   titleClickable: {
