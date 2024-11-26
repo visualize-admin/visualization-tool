@@ -7,10 +7,7 @@ import {
 } from "@/domain/data";
 import { getCubeMetadata } from "@/rdf/query-cube-metadata";
 import { getCubePreview } from "@/rdf/query-cube-preview";
-import {
-  getCubeComponentTermsets,
-  getCubeTermsets,
-} from "@/rdf/query-termsets";
+import { getCubeComponentTermsets } from "@/rdf/query-termsets";
 
 type LightCubeOptions = {
   iri: string;
@@ -46,13 +43,6 @@ export class LightCube {
     });
 
     return this.metadata;
-  }
-
-  public async fetchTermsets() {
-    return await getCubeTermsets(this.iri, {
-      locale: this.locale,
-      sparqlClient: this.sparqlClient,
-    });
   }
 
   public async fetchComponentTermsets() {
