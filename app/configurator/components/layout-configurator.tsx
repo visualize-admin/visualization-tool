@@ -76,12 +76,11 @@ const LayoutLayoutConfigurator = () => {
       return (
         <ControlSection
           role="tablist"
-          aria-labelledby="controls-design"
+          aria-labelledby="controls-layout-options"
           collapse
         >
           <SubsectionTitle
-            titleId="controls-design"
-            disabled={false}
+            titleId="controls-layout-options"
             gutterBottom={false}
           >
             <Trans id="controls.section.layout-options">Layout Options</Trans>
@@ -228,11 +227,11 @@ const LayoutSharedFiltersConfigurator = () => {
       return (
         <ControlSection
           role="tablist"
-          aria-labelledby="controls-design"
+          aria-labelledby="controls-shared-filters"
           collapse
         >
           <SubsectionTitle
-            titleId="controls-design"
+            titleId="controls-shared-filters"
             disabled={false}
             gutterBottom={false}
           >
