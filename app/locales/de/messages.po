@@ -820,6 +820,10 @@ msgstr "Abgestuft"
 msgid "controls.section.block-options"
 msgstr "Textelemente"
 
+#: app/configurator/components/layout-configurator.tsx
+msgid "controls.section.block-options.text-block-add"
+msgstr "Text hinzufügen"
+
 #: app/configurator/components/chart-configurator.tsx
 msgid "controls.section.chart.options"
 msgstr "Diagramm-Einstellungen"
