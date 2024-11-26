@@ -53,10 +53,12 @@ import { useClient } from "urql";
 import {
   DatasetResults,
   PartialSearchCube,
+  SearchDatasetResultsCount,
   SearchDatasetSortControl,
 } from "@/browser/dataset-browse";
 import { FirstTenRowsCaption } from "@/browser/dataset-preview";
 import { getEnabledChartTypes } from "@/charts";
+import Flex from "@/components/flex";
 import { Error as ErrorHint, Loading } from "@/components/hint";
 import Tag from "@/components/tag";
 import {
@@ -994,9 +996,12 @@ export const DatasetDialog = ({
               </Button>
             </Box>
 
-            <div style={{ display: "flex", justifyContent: "flex-end" }}>
+            <Flex
+              style={{ alignItems: "center", justifyContent: "space-between" }}
+            >
+              <SearchDatasetResultsCount cubes={searchCubes} />
               <SearchDatasetSortControl value={order} onChange={setOrder} />
-            </div>
+            </Flex>
 
             {selectedSearchDimensions?.length === 0 ? (
               <Typography variant="body1">
