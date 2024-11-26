@@ -901,7 +901,7 @@ export const DatasetDialog = ({
               display="flex"
               alignItems="center"
               component="form"
-              gap="0.25rem"
+              gap="0.5rem"
               mb="1rem"
               onSubmit={handleSubmit}
             >
