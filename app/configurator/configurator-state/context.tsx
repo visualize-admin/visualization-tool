@@ -191,7 +191,7 @@ export async function publishState(
 ) {
   switch (state.layout.type) {
     case "singleURLs":
-      const { publishableChartKeys, meta } = state.layout;
+      const { publishableChartKeys, meta, blocks } = state.layout;
       const reversedChartKeys = publishableChartKeys.slice().reverse();
 
       // Charts are published in order, keep the current tab open with first chart
@@ -203,7 +203,8 @@ export async function publishState(
             // Ensure that the layout is reset to single-chart mode
             layout: {
               type: "tab",
-              meta: meta,
+              meta,
+              blocks,
               activeField: undefined,
             },
           },

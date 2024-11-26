@@ -28,6 +28,7 @@ export const states: ConfiguratorState[] = [
         description: { en: "", de: "", fr: "", it: "" },
         label: { en: "", de: "", fr: "", it: "" },
       },
+      blocks: [{ type: "chart", key: "column", initialized: true }],
       activeField: undefined,
     },
     chartConfigs: [

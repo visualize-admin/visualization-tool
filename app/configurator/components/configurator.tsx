@@ -598,6 +598,7 @@ const LayoutingStep = () => {
                   value: {
                     type: "tab",
                     meta: state.layout.meta,
+                    blocks: state.layout.blocks,
                     activeField: undefined,
                   },
                 });
@@ -614,6 +615,7 @@ const LayoutingStep = () => {
                   value: {
                     type: "dashboard",
                     meta: state.layout.meta,
+                    blocks: state.layout.blocks,
                     layout: "tall",
                     activeField: undefined,
                   },
@@ -634,6 +636,7 @@ const LayoutingStep = () => {
                       (chartConfig) => chartConfig.key
                     ),
                     meta: state.layout.meta,
+                    blocks: state.layout.blocks,
                     activeField: undefined,
                   },
                 });

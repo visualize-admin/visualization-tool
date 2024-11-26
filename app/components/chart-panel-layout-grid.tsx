@@ -33,26 +33,30 @@ const decodeLayouts = (layouts: Layouts) => {
   );
 };
 
-export const ChartPanelLayoutCanvas = (props: ChartPanelLayoutTypeProps) => {
-  const { chartConfigs, renderChart, className } = props;
+export const ChartPanelLayoutCanvas = ({
+  chartConfigs,
+  renderChart,
+  className,
+}: ChartPanelLayoutTypeProps) => {
   const [state, dispatch] = useConfiguratorState(hasChartConfigs);
+  const layout = state.layout;
   const [layouts, setLayouts] = useState<Layouts>(() => {
     assert(
-      state.layout.type === "dashboard" && state.layout.layout === "canvas",
+      layout.type === "dashboard" && layout.layout === "canvas",
       "ChartPanelLayoutGrid should be rendered only for dashboard layout with canvas"
     );
 
-    return state.layout.layouts;
+    return layout.layouts;
   });
 
   const handleChangeLayouts = (layouts: Layouts) => {
-    const layout = state.layout;
     assert(
       layout.type === "dashboard" && layout.layout === "canvas",
       "ChartPanelLayoutGrid should be rendered only for dashboard layout with canvas"
     );
 
     const parsedLayouts = decodeLayouts(layouts);
+
     if (!parsedLayouts) {
       return;
     }
