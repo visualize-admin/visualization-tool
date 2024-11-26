@@ -818,7 +818,7 @@ msgstr "A gradini"
 
 #: app/configurator/components/layout-configurator.tsx
 msgid "controls.section.block-options"
-msgstr "Elementi di testo"
+msgstr "Oggetti"
 
 #: app/configurator/components/layout-configurator.tsx
 msgid "controls.section.block-options.text-block-add"

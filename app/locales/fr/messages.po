@@ -818,7 +818,7 @@ msgstr "En escalier"
 
 #: app/configurator/components/layout-configurator.tsx
 msgid "controls.section.block-options"
-msgstr "Éléments de texte"
+msgstr "Objets"
 
 #: app/configurator/components/layout-configurator.tsx
 msgid "controls.section.block-options.text-block-add"
