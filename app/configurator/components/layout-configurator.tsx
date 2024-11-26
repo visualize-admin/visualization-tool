@@ -540,7 +540,10 @@ const DashboardTimeRangeFilterOptions = ({
 };
 
 const LayoutBlocksConfigurator = () => {
-  return (
+  const [state] = useConfiguratorState(isLayouting);
+  const { layout } = state;
+
+  return layout.type === "dashboard" && layout.layout === "canvas" ? (
     <ControlSection role="tablist" aria-labelledby="controls-blocks" collapse>
       <SubsectionTitle titleId="controls-blocks" gutterBottom={false}>
         <Trans id="controls.section.block-options">Text elements</Trans>
@@ -553,7 +556,7 @@ const LayoutBlocksConfigurator = () => {
         </AddButton>
       </ControlSectionContent>
     </ControlSection>
-  );
+  ) : null;
 };
 
 const migrateLayout = (
