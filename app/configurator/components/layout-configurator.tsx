@@ -13,6 +13,7 @@ import { useCallback, useEffect, useMemo, useRef } from "react";
 
 import { DataFilterGenericDimensionProps } from "@/charts/shared/chart-data-filters";
 import { useCombinedTemporalDimension } from "@/charts/shared/use-combined-temporal-dimension";
+import { AddButton } from "@/components/add-button";
 import { Select } from "@/components/form";
 import {
   FREE_CANVAS_BREAKPOINTS,
@@ -545,7 +546,11 @@ const LayoutBlocksConfigurator = () => {
         <Trans id="controls.section.block-options">Text elements</Trans>
       </SubsectionTitle>
       <ControlSectionContent px="small" gap="none">
-        <></>
+        <AddButton>
+          <Trans id="controls.section.block-options.text-block-add">
+            Add text
+          </Trans>
+        </AddButton>
       </ControlSectionContent>
     </ControlSection>
   );

@@ -820,6 +820,10 @@ msgstr "Stepped"
 msgid "controls.section.block-options"
 msgstr "Text elements"
 
+#: app/configurator/components/layout-configurator.tsx
+msgid "controls.section.block-options.text-block-add"
+msgstr "Add text"
+
 #: app/configurator/components/chart-configurator.tsx
 msgid "controls.section.chart.options"
 msgstr "Chart Options"
