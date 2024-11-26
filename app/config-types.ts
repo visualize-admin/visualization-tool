@@ -307,6 +307,37 @@ const ColumnConfig = t.intersection([
 export type ColumnFields = t.TypeOf<typeof ColumnFields>;
 export type ColumnConfig = t.TypeOf<typeof ColumnConfig>;
 
+const BarSegmentField = t.intersection([
+  GenericSegmentField,
+  SortingField,
+  t.type({ type: ChartSubType }),
+]);
+export type BarSegmentField = t.TypeOf<typeof BarSegmentField>;
+
+const BarFields = t.intersection([
+  t.type({
+    x: t.intersection([GenericField, SortingField]),
+    y: GenericField,
+  }),
+  t.partial({
+    segment: BarSegmentField,
+    animation: AnimationField,
+  }),
+]);
+const BarConfig = t.intersection([
+  GenericChartConfig,
+  t.type(
+    {
+      chartType: t.literal("bar"),
+      interactiveFiltersConfig: InteractiveFiltersConfig,
+      fields: BarFields,
+    },
+    "BarConfig"
+  ),
+]);
+export type BarFields = t.TypeOf<typeof BarFields>;
+export type BarConfig = t.TypeOf<typeof BarConfig>;
+
 const LineSegmentField = t.intersection([GenericSegmentField, SortingField]);
 export type LineSegmentField = t.TypeOf<typeof LineSegmentField>;
 
@@ -726,9 +757,36 @@ const ComboLineColumnConfig = t.intersection([
 ]);
 export type ComboLineColumnConfig = t.TypeOf<typeof ComboLineColumnConfig>;
 
+const ComboLineBarFields = t.type({
+  x: GenericField,
+  y: t.type({
+    lineComponentId: t.string,
+    lineAxisOrientation: t.union([t.literal("left"), t.literal("right")]),
+    barComponentId: t.string,
+    palette: t.string,
+    colorMapping: ColorMapping,
+  }),
+});
+
+export type ComboLineBarFields = t.TypeOf<typeof ComboLineBarFields>;
+
+const ComboLineBarConfig = t.intersection([
+  GenericChartConfig,
+  t.type(
+    {
+      chartType: t.literal("comboLineBar"),
+      fields: ComboLineBarFields,
+      interactiveFiltersConfig: InteractiveFiltersConfig,
+    },
+    "ComboLineBarConfig"
+  ),
+]);
+export type ComboLineBarConfig = t.TypeOf<typeof ComboLineBarConfig>;
+
 export type ChartSegmentField =
   | AreaSegmentField
   | ColumnSegmentField
+  | BarSegmentField
   | LineSegmentField
   | PieSegmentField
   | ScatterPlotSegmentField;
@@ -736,6 +794,7 @@ export type ChartSegmentField =
 const RegularChartConfig = t.union([
   AreaConfig,
   ColumnConfig,
+  BarConfig,
   LineConfig,
   MapConfig,
   PieConfig,
@@ -795,6 +854,12 @@ export const isColumnConfig = (
   return chartConfig.chartType === "column";
 };
 
+export const isBarConfig = (
+  chartConfig: ChartConfig
+): chartConfig is BarConfig => {
+  return chartConfig.chartType === "bar";
+};
+
 export const isComboLineSingleConfig = (
   chartConfig: ChartConfig
 ): chartConfig is ComboLineSingleConfig => {
@@ -845,10 +910,13 @@ export const isMapConfig = (
 
 export const canBeNormalized = (
   chartConfig: ChartConfig
-): chartConfig is AreaConfig | ColumnConfig => {
+): chartConfig is AreaConfig | ColumnConfig | BarConfig => {
   return (
     chartConfig.chartType === "area" ||
     (chartConfig.chartType === "column" &&
+      chartConfig.fields.segment !== undefined &&
+      chartConfig.fields.segment.type === "stacked") ||
+    (chartConfig.chartType === "bar" &&
       chartConfig.fields.segment !== undefined &&
       chartConfig.fields.segment.type === "stacked")
   );
@@ -859,10 +927,11 @@ export const isSegmentInConfig = (
 ): chartConfig is
   | AreaConfig
   | ColumnConfig
+  | BarConfig
   | LineConfig
   | PieConfig
   | ScatterPlotConfig => {
-  return ["area", "column", "line", "pie", "scatterplot"].includes(
+  return ["area", "column", "bar", "line", "pie", "scatterplot"].includes(
     chartConfig.chartType
   );
 };
@@ -870,13 +939,15 @@ export const isSegmentInConfig = (
 export const isSortingInConfig = (
   chartConfig: ChartConfig
 ): chartConfig is AreaConfig | ColumnConfig | LineConfig | PieConfig => {
-  return ["area", "column", "line", "pie"].includes(chartConfig.chartType);
+  return ["area", "column", "bar", "line", "pie"].includes(
+    chartConfig.chartType
+  );
 };
 
 export const isAnimationInConfig = (
   chartConfig: ChartConfig
 ): chartConfig is ColumnConfig | MapConfig | PieConfig | ScatterPlotConfig => {
-  return ["column", "map", "pie", "scatterplot"].includes(
+  return ["column", "bar", "map", "pie", "scatterplot"].includes(
     chartConfig.chartType
   );
 };
@@ -949,6 +1020,22 @@ type ColumnAdjusters = BaseAdjusters<ColumnConfig> & {
       | TableFields
     >;
     animation: FieldAdjuster<ColumnConfig, AnimationField | undefined>;
+  };
+};
+
+type BarAdjusters = BaseAdjusters<BarConfig> & {
+  fields: {
+    x: { componentId: FieldAdjuster<BarConfig, string> };
+    y: { componentId: FieldAdjuster<BarConfig, string> };
+    segment: FieldAdjuster<
+      BarConfig,
+      | LineSegmentField
+      | AreaSegmentField
+      | ScatterPlotSegmentField
+      | PieSegmentField
+      | TableFields
+    >;
+    animation: FieldAdjuster<BarConfig, AnimationField | undefined>;
   };
 };
 
@@ -1081,6 +1168,7 @@ type ComboLineColumnAdjusters = BaseAdjusters<ComboLineColumnConfig> & {
 
 export type ChartConfigsAdjusters = {
   column: ColumnAdjusters;
+  bar: BarAdjusters;
   line: LineAdjusters;
   area: AreaAdjusters;
   scatterplot: ScatterPlotAdjusters;

@@ -23,6 +23,12 @@ const ChartColumnsVisualization = dynamic(
     () => null as never
   )
 );
+const ChartBarsVisualization = dynamic(
+  import("@/charts/bar/chart-bar").then(
+    (mod) => mod.ChartBarsVisualization,
+    () => null as never
+  )
+);
 const ChartComboLineSingleVisualization = dynamic(
   import("@/charts/combo/chart-combo-line-single").then(
     (mod) => mod.ChartComboLineSingleVisualization,
@@ -97,6 +103,10 @@ const GenericChart = (props: GenericChartProps) => {
     case "column":
       return (
         <ChartColumnsVisualization {...commonProps} chartConfig={chartConfig} />
+      );
+    case "bar":
+      return (
+        <ChartBarsVisualization {...commonProps} chartConfig={chartConfig} />
       );
     case "line":
       return (

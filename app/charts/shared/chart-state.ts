@@ -5,6 +5,9 @@ import overEvery from "lodash/overEvery";
 import { createContext, useCallback, useContext, useMemo } from "react";
 
 import { AreasState } from "@/charts/area/areas-state";
+import { GroupedBarsState } from "@/charts/bar/bars-grouped-state";
+import { StackedBarsState } from "@/charts/bar/bars-stacked-state";
+import { BarsState } from "@/charts/bar/bars-state";
 import { GroupedColumnsState } from "@/charts/column/columns-grouped-state";
 import { StackedColumnsState } from "@/charts/column/columns-stacked-state";
 import { ColumnsState } from "@/charts/column/columns-state";
@@ -69,6 +72,9 @@ export type ChartState =
   | ColumnsState
   | StackedColumnsState
   | GroupedColumnsState
+  | BarsState
+  | StackedBarsState
+  | GroupedBarsState
   | ComboLineSingleState
   | ComboLineColumnState
   | ComboLineDualState
@@ -103,6 +109,7 @@ export const useChartState = () => {
 export type ChartWithInteractiveXTimeRangeState =
   | AreasState
   | ColumnsState
+  | BarsState
   | LinesState;
 
 export type NumericalValueGetter = (d: Observation) => number | null;
@@ -296,7 +303,7 @@ export type NumericalYVariables = {
 
 export const useNumericalYVariables = (
   // Combo charts have their own logic for y scales.
-  chartType: "area" | "column" | "line" | "pie" | "scatterplot",
+  chartType: "area" | "column" | "bar" | "line" | "pie" | "scatterplot",
   y: GenericField,
   { measuresById }: { measuresById: MeasuresById }
 ): NumericalYVariables => {
@@ -318,6 +325,7 @@ export const useNumericalYVariables = (
       switch (chartType) {
         case "area":
         case "column":
+        case "bar":
         case "pie":
           return Math.min(0, min(data, _getY) ?? 0);
         case "line":

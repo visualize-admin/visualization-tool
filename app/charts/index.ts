@@ -92,6 +92,7 @@ import { unreachableError } from "@/utils/unreachable";
 
 const chartTypes: ChartType[] = [
   "column",
+  "bar",
   "line",
   "area",
   "scatterplot",
@@ -105,6 +106,7 @@ const chartTypes: ChartType[] = [
 
 export const regularChartTypes: RegularChartType[] = [
   "column",
+  "bar",
   "line",
   "area",
   "scatterplot",
@@ -130,15 +132,16 @@ function getChartTypeOrder({ cubeCount }: { cubeCount: number }): ChartOrder {
   const multiCubeBoost = cubeCount > 1 ? -100 : 0;
   return {
     column: 0,
-    line: 1,
-    area: 2,
-    scatterplot: 3,
-    pie: 4,
-    map: 5,
-    table: 6,
-    comboLineSingle: 7 + multiCubeBoost,
-    comboLineDual: 8 + multiCubeBoost,
-    comboLineColumn: 9 + multiCubeBoost,
+    bar: 1,
+    line: 2,
+    area: 3,
+    scatterplot: 4,
+    pie: 5,
+    map: 6,
+    table: 7,
+    comboLineSingle: 8 + multiCubeBoost,
+    comboLineDual: 9 + multiCubeBoost,
+    comboLineColumn: 10 + multiCubeBoost,
   };
 }
 
@@ -418,6 +421,31 @@ export const getInitialConfig = (
         fields: {
           x: {
             componentId: columnXComponentId,
+            sorting: DEFAULT_SORTING,
+          },
+          y: { componentId: numericalMeasures[0].id },
+        },
+      };
+
+    case "bar":
+      const barXComponentId = findPreferredDimension(
+        sortBy(dimensions, (d) => (isGeoDimension(d) ? 1 : -1)),
+        [
+          "TemporalDimension",
+          "TemporalEntityDimension",
+          "TemporalOrdinalDimension",
+        ]
+      ).id;
+
+      return {
+        ...getGenericConfigProps(),
+        chartType,
+        interactiveFiltersConfig: getInitialInteractiveFiltersConfig({
+          timeRangeComponentId: barXComponentId,
+        }),
+        fields: {
+          x: {
+            componentId: barXComponentId,
             sorting: DEFAULT_SORTING,
           },
           y: { componentId: numericalMeasures[0].id },
@@ -893,6 +921,97 @@ const interactiveFiltersAdjusters: InteractiveFiltersAdjusters = {
 
 const chartConfigsAdjusters: ChartConfigsAdjusters = {
   column: {
+    cubes: ({ oldValue, newChartConfig }) => {
+      return produce(newChartConfig, (draft) => {
+        draft.cubes = oldValue;
+      });
+    },
+    fields: {
+      x: {
+        componentId: ({ oldValue, newChartConfig, dimensions }) => {
+          // When switching from a scatterplot, x is a measure.
+          if (dimensions.find((d) => d.id === oldValue)) {
+            return produce(newChartConfig, (draft) => {
+              draft.fields.x.componentId = oldValue;
+            });
+          }
+
+          return newChartConfig;
+        },
+      },
+      y: {
+        componentId: ({ oldValue, newChartConfig }) => {
+          return produce(newChartConfig, (draft) => {
+            draft.fields.y.componentId = oldValue;
+          });
+        },
+      },
+      segment: ({
+        oldValue,
+        oldChartConfig,
+        newChartConfig,
+        dimensions,
+        measures,
+      }) => {
+        let newSegment: ColumnSegmentField | undefined;
+        const yMeasure = measures.find(
+          (d) => d.id === newChartConfig.fields.y.componentId
+        );
+
+        // When switching from a table chart, a whole fields object is passed as oldValue.
+        if (oldChartConfig.chartType === "table") {
+          const tableSegment = convertTableFieldsToSegmentField({
+            fields: oldValue as TableFields,
+            dimensions,
+            measures,
+          });
+
+          if (tableSegment) {
+            newSegment = {
+              ...tableSegment,
+              sorting: DEFAULT_SORTING,
+              type: disableStacked(yMeasure) ? "grouped" : "stacked",
+            };
+          }
+          // Otherwise we are dealing with a segment field. We shouldn't take
+          // the segment from oldValue if the component has already been used as
+          // x axis.
+        } else if (
+          newChartConfig.fields.x.componentId !== oldValue.componentId
+        ) {
+          const oldSegment = oldValue as Exclude<typeof oldValue, TableFields>;
+          newSegment = {
+            ...oldSegment,
+            // We could encounter byMeasure sorting type (Pie chart); we should
+            // switch to byTotalSize sorting then.
+            sorting: adjustSegmentSorting({
+              segment: oldSegment,
+              acceptedValues: COLUMN_SEGMENT_SORTING.map((d) => d.sortingType),
+              defaultValue: "byTotalSize",
+            }),
+            type: disableStacked(yMeasure) ? "grouped" : "stacked",
+          };
+        }
+
+        return produce(newChartConfig, (draft) => {
+          if (newSegment) {
+            draft.fields.segment = newSegment;
+          }
+        });
+      },
+      animation: ({ oldValue, newChartConfig }) => {
+        return produce(newChartConfig, (draft) => {
+          // Temporal dimension could be used as X axis, in this case we need to
+          // remove the animation.
+          if (newChartConfig.fields.x.componentId !== oldValue?.componentId) {
+            draft.fields.animation = oldValue;
+          }
+        });
+      },
+    },
+    interactiveFiltersConfig: interactiveFiltersAdjusters,
+  },
+  bar: {
     cubes: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
         draft.cubes = oldValue;
@@ -1652,6 +1771,34 @@ const chartConfigsPathOverrides: {
       },
     },
   },
+  bar: {
+    map: {
+      "fields.areaLayer.componentId": { path: "fields.x.componentId" },
+      "fields.areaLayer.color.componentId": { path: "fields.y.componentId" },
+    },
+    table: {
+      fields: { path: "fields.segment" },
+    },
+    comboLineSingle: {
+      "fields.y.componentIds": {
+        path: "fields.y.componentId",
+        oldValue: (d: ComboLineSingleFields["y"]["componentIds"]) => d[0],
+      },
+    },
+    comboLineDual: {
+      "fields.y.leftAxisComponentId": { path: "fields.y.componentId" },
+    },
+    comboLineColumn: {
+      "fields.y": {
+        path: "fields.y.componentId",
+        oldValue: (d: ComboLineColumnFields["y"]) => {
+          return d.lineAxisOrientation === "left"
+            ? d.lineComponentId
+            : d.columnComponentId;
+        },
+      },
+    },
+  },
   line: {
     map: {
       "fields.areaLayer.color.componentId": { path: "fields.y.componentId" },
@@ -1944,10 +2091,10 @@ export const getPossibleChartTypes = ({
     (d) => isTemporalDimension(d) || isTemporalEntityDimension(d)
   );
 
-  const categoricalEnabled: RegularChartType[] = ["column", "pie"];
-  const geoEnabled: RegularChartType[] = ["column", "map", "pie"];
+  const categoricalEnabled: RegularChartType[] = ["column", "bar", "pie"];
+  const geoEnabled: RegularChartType[] = ["column", "bar", "map", "pie"];
   const multipleNumericalMeasuresEnabled: RegularChartType[] = ["scatterplot"];
-  const timeEnabled: RegularChartType[] = ["area", "column", "line"];
+  const timeEnabled: RegularChartType[] = ["area", "column", "bar", "line"];
 
   const possibles: ChartType[] = ["table"];
   if (numericalMeasures.length > 0) {
@@ -2076,6 +2223,7 @@ export const getChartSymbol = (
   switch (chartType) {
     case "area":
     case "column":
+    case "bar":
     case "comboLineColumn":
     case "pie":
     case "map":
