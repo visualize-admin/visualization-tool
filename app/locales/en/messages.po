@@ -816,6 +816,10 @@ msgstr "Use the Stepped type to make the animation jump between data points at f
 msgid "controls.section.animation.type.stepped"
 msgstr "Stepped"
 
+#: app/configurator/components/layout-configurator.tsx
+msgid "controls.section.block-options"
+msgstr "Text elements"
+
 #: app/configurator/components/chart-configurator.tsx
 msgid "controls.section.chart.options"
 msgstr "Chart Options"

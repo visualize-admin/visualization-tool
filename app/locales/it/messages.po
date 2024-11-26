@@ -816,6 +816,10 @@ msgstr "Usare il tipo a gradini per far saltare l'animazione tra i punti di dati
 msgid "controls.section.animation.type.stepped"
 msgstr "A gradini"
 
+#: app/configurator/components/layout-configurator.tsx
+msgid "controls.section.block-options"
+msgstr "Elementi di testo"
+
 #: app/configurator/components/chart-configurator.tsx
 msgid "controls.section.chart.options"
 msgstr "Opzioni del grafico"

@@ -64,6 +64,7 @@ export const LayoutConfigurator = () => {
       <LayoutAnnotator />
       <LayoutLayoutConfigurator />
       <LayoutSharedFiltersConfigurator />
+      <LayoutBlocksConfigurator />
     </>
   );
 };
@@ -534,6 +535,19 @@ const DashboardTimeRangeFilterOptions = ({
         )}
       </Stack>
     </div>
+  );
+};
+
+const LayoutBlocksConfigurator = () => {
+  return (
+    <ControlSection role="tablist" aria-labelledby="controls-blocks" collapse>
+      <SubsectionTitle titleId="controls-blocks" gutterBottom={false}>
+        <Trans id="controls.section.block-options">Text elements</Trans>
+      </SubsectionTitle>
+      <ControlSectionContent px="small" gap="none">
+        <></>
+      </ControlSectionContent>
+    </ControlSection>
   );
 };
 
