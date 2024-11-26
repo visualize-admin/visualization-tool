@@ -816,6 +816,10 @@ msgstr "Verwenden Sie den Typ Abgestuft, um die Animation in festen Abständen z
 msgid "controls.section.animation.type.stepped"
 msgstr "Abgestuft"
 
+#: app/configurator/components/layout-configurator.tsx
+msgid "controls.section.block-options"
+msgstr "Textelemente"
+
 #: app/configurator/components/chart-configurator.tsx
 msgid "controls.section.chart.options"
 msgstr "Diagramm-Einstellungen"

@@ -816,6 +816,10 @@ msgstr "Utilisez le type en escalier pour que l'animation passe d'un point de do
 msgid "controls.section.animation.type.stepped"
 msgstr "En escalier"
 
+#: app/configurator/components/layout-configurator.tsx
+msgid "controls.section.block-options"
+msgstr "Éléments de texte"
+
 #: app/configurator/components/chart-configurator.tsx
 msgid "controls.section.chart.options"
 msgstr "Paramètres graphiques"
