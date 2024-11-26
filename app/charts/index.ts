@@ -87,7 +87,7 @@ import {
 } from "@/palettes";
 import { bfs } from "@/utils/bfs";
 import { CHART_CONFIG_VERSION } from "@/utils/chart-config/constants";
-import { createChartId } from "@/utils/create-chart-id";
+import { createId } from "@/utils/create-id";
 import { isMultiHierarchyNode } from "@/utils/hierarchy";
 import { unreachableError } from "@/utils/unreachable";
 
@@ -369,7 +369,7 @@ export const getInitialConfig = (
     activeField: string | undefined;
   } => {
     return {
-      key: key ?? createChartId(),
+      key: key ?? createId(),
       version: CHART_CONFIG_VERSION,
       meta: meta ?? META,
       // Technically, we should scope filters per cube; but as we only set initial

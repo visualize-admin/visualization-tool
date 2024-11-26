@@ -30,7 +30,7 @@ import {
   fetchChartConfig,
   updateConfig,
 } from "@/utils/chart-config/api";
-import { createChartId } from "@/utils/create-chart-id";
+import { createId } from "@/utils/create-id";
 import { getRouterChartId } from "@/utils/router/helpers";
 
 const ConfiguratorStateContext = createContext<
@@ -322,7 +322,7 @@ const ConfiguratorStateProviderInternal = (
             chartId === "new"
               ? query.edit && typeof query.edit === "string"
                 ? query.edit
-                : createChartId()
+                : createId()
               : chartId;
           if (chartId === "new") {
             replace(`/create/${savedChartId}`);

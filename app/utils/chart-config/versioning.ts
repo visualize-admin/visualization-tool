@@ -24,7 +24,7 @@ import {
   getUnversionedCubeIri,
   getUnversionedCubeIriServerSide,
 } from "@/utils/chart-config/upgrade-cube";
-import { createChartId } from "@/utils/create-chart-id";
+import { createId } from "@/utils/create-id";
 
 type Migration = {
   description: string;
@@ -616,7 +616,7 @@ export const chartConfigMigrations: Migration[] = [
     to: "2.0.0",
     up: (config, configuratorState) => {
       const newConfig = { ...config, version: "2.0.0" };
-      newConfig.key = createChartId();
+      newConfig.key = createId();
       newConfig.meta = configuratorState.meta;
       newConfig.activeField = configuratorState.activeField;
 

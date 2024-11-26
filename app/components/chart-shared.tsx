@@ -56,7 +56,7 @@ import { getChartIcon } from "@/icons";
 import SvgIcMore from "@/icons/components/IcMore";
 import { useLocale } from "@/src";
 import { animationFrame } from "@/utils/animation-frame";
-import { createChartId } from "@/utils/create-chart-id";
+import { createId } from "@/utils/create-id";
 import {
   DISABLE_SCREENSHOT_ATTR,
   useScreenshot,
@@ -346,7 +346,7 @@ export const DuplicateChartMenuActionItem = ({
         dispatch({
           type: "CHART_CONFIG_ADD",
           value: {
-            chartConfig: { ...chartConfig, key: createChartId() },
+            chartConfig: { ...chartConfig, key: createId() },
             locale,
           },
         });
