@@ -471,40 +471,40 @@ describe("deriveFiltersFromFields", () => {
         "cubes": Array [
           Object {
             "filters": Object {
-              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen___https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr": Object {
+              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr": Object {
                 "type": "single",
                 "value": "2011",
               },
-              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen___https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton": Object {
+              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton": Object {
                 "type": "single",
                 "value": "https://ld.admin.ch/canton/1",
               },
             },
             "iri": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9",
             "joinBy": Array [
-              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen___https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
-              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen___https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton",
+              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
+              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton",
             ],
           },
           Object {
             "filters": Object {
-              "https://energy.ld.admin.ch/elcom/electricityprice-canton___https://energy.ld.admin.ch/elcom/electricityprice/dimension/canton": Object {
+              "https://energy.ld.admin.ch/elcom/electricityprice-canton(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/elcom/electricityprice/dimension/canton": Object {
                 "type": "single",
                 "value": "https://ld.admin.ch/canton/1",
               },
-              "https://energy.ld.admin.ch/elcom/electricityprice-canton___https://energy.ld.admin.ch/elcom/electricityprice/dimension/period": Object {
+              "https://energy.ld.admin.ch/elcom/electricityprice-canton(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/elcom/electricityprice/dimension/period": Object {
                 "type": "single",
                 "value": "2011",
               },
-              "https://energy.ld.admin.ch/elcom/electricityprice-canton___https://energy.ld.admin.ch/elcom/electricityprice/dimension/product": Object {
+              "https://energy.ld.admin.ch/elcom/electricityprice-canton(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/elcom/electricityprice/dimension/product": Object {
                 "type": "single",
                 "value": "https://energy.ld.admin.ch/elcom/electricityprice/product/cheapest",
               },
             },
             "iri": "https://energy.ld.admin.ch/elcom/electricityprice-canton",
             "joinBy": Array [
-              "https://energy.ld.admin.ch/elcom/electricityprice-canton___https://energy.ld.admin.ch/elcom/electricityprice/dimension/period",
-              "https://energy.ld.admin.ch/elcom/electricityprice-canton___https://energy.ld.admin.ch/elcom/electricityprice/dimension/canton",
+              "https://energy.ld.admin.ch/elcom/electricityprice-canton(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/elcom/electricityprice/dimension/period",
+              "https://energy.ld.admin.ch/elcom/electricityprice-canton(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/elcom/electricityprice/dimension/canton",
             ],
           },
         ],
@@ -527,7 +527,7 @@ describe("deriveFiltersFromFields", () => {
               "https://energy.ld.admin.ch/elcom/electricityprice/category/H7": "#d62728",
               "https://energy.ld.admin.ch/elcom/electricityprice/category/H8": "#9467bd",
             },
-            "componentId": "https://energy.ld.admin.ch/elcom/electricityprice-canton___https://energy.ld.admin.ch/elcom/electricityprice/dimension/category",
+            "componentId": "https://energy.ld.admin.ch/elcom/electricityprice-canton(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/elcom/electricityprice/dimension/category",
             "palette": "category10",
             "sorting": Object {
               "sortingOrder": "asc",
@@ -535,7 +535,7 @@ describe("deriveFiltersFromFields", () => {
             },
           },
           "y": Object {
-            "componentId": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen___https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/AnzahlAnlagen",
+            "componentId": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/AnzahlAnlagen",
           },
         },
         "interactiveFiltersConfig": Object {
@@ -614,7 +614,8 @@ describe("handleChartFieldChanged", () => {
         value: {
           locale: "en",
           field: "symbolLayer",
-          componentId: "mapDataset___symbolLayerIri",
+          componentId:
+            "mapDataset(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)symbolLayerIri",
         },
       })
     );
@@ -690,7 +691,8 @@ describe("colorMapping", () => {
       value: {
         locale: "en",
         field: "segment",
-        componentId: "mapDataset___newAreaLayerColorIri",
+        componentId:
+          "mapDataset(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)newAreaLayerColorIri",
       },
     });
 
@@ -698,7 +700,7 @@ describe("colorMapping", () => {
 
     expect(
       chartConfig.fields.segment?.componentId ===
-        "mapDataset___newAreaLayerColorIri"
+        "mapDataset(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)newAreaLayerColorIri"
     );
     expect(chartConfig.fields.segment?.palette === "dimension");
     expect(chartConfig.fields.segment?.colorMapping).toEqual({
@@ -878,11 +880,11 @@ describe("retainChartConfigWhenSwitchingChartType", () => {
           {
             oldFieldGetterPath: [
               "filters",
-              "foo___https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/type",
+              "foo(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/type",
             ],
             newFieldGetterPath: [
               "filters",
-              "foo___https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/type",
+              "foo(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/type",
             ],
             equal: true,
           },
@@ -923,7 +925,7 @@ describe("retainChartConfigWhenSwitchingChartType", () => {
           {
             oldFieldGetterPath: [
               "fields",
-              "foo___https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/date",
+              "foo(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/date",
               "componentId",
             ],
             newFieldGetterPath: "fields.segment.componentId",
@@ -935,7 +937,7 @@ describe("retainChartConfigWhenSwitchingChartType", () => {
           {
             fieldGetterPath: [
               "fields",
-              "foo___https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/date",
+              "foo(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/date",
               "isGroup",
             ],
             expectedValue: true,
@@ -943,7 +945,7 @@ describe("retainChartConfigWhenSwitchingChartType", () => {
           {
             fieldGetterPath: [
               "fields",
-              "foo___https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/georegion",
+              "foo(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/georegion",
               "isGroup",
             ],
             expectedValue: true,
@@ -959,7 +961,7 @@ describe("retainChartConfigWhenSwitchingChartType", () => {
             oldFieldGetterPath: "fields.segment.componentId",
             newFieldGetterPath: [
               "fields",
-              "foo___https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/date",
+              "foo(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/date",
               "componentId",
             ],
             equal: true,
@@ -970,7 +972,7 @@ describe("retainChartConfigWhenSwitchingChartType", () => {
           {
             fieldGetterPath: [
               "fields",
-              "foo___https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/date",
+              "foo(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/date",
               "isGroup",
             ],
             expectedValue: true,
