@@ -1,7 +1,7 @@
 import { Client } from "urql";
 
 import { getEnabledChartTypes, getInitialConfig } from "@/charts";
-import { getPossibleFiltersQueryVariables } from "@/charts/shared/ensure-possible-filters";
+import { getPossibleFiltersQueryVariables } from "@/charts/shared/possible-filters";
 import {
   ConfiguratorState,
   ConfiguratorStateConfiguringChart,
