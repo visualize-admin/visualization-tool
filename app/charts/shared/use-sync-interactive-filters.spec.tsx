@@ -172,7 +172,7 @@ describe("useSyncInteractiveFilters", () => {
             ...chartConfig.cubes[0],
             filters: {
               ...chartConfig.cubes[0].filters,
-              "foo___http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1":
+              "foo(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1":
                 {
                   type: "single",
                   value:
@@ -189,7 +189,7 @@ describe("useSyncInteractiveFilters", () => {
 
     expect(
       initIfState.dataFilters[
-        "foo___http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1"
+        "foo(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1"
       ]
     ).toEqual({
       type: "single",
@@ -202,7 +202,7 @@ describe("useSyncInteractiveFilters", () => {
     const IFState2 = getIFState();
     expect(
       IFState2.dataFilters[
-        "foo___http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1"
+        "foo(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1"
       ]
     ).toEqual({
       type: "single",

@@ -30,7 +30,7 @@ import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import {
   getPossibleFiltersQueryVariables,
   skipPossibleFiltersQuery,
-} from "@/charts/shared/ensure-possible-filters";
+} from "@/charts/shared/possible-filters";
 import { HEADER_HEIGHT } from "@/components/header-constants";
 import {
   MetadataPanel,

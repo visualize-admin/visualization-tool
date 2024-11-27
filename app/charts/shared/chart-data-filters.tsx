@@ -12,7 +12,7 @@ import { useLoadingState } from "@/charts/shared/chart-loading-state";
 import {
   getPossibleFiltersQueryVariables,
   skipPossibleFiltersQuery,
-} from "@/charts/shared/ensure-possible-filters";
+} from "@/charts/shared/possible-filters";
 import Flex from "@/components/flex";
 import { Select } from "@/components/form";
 import { Loading } from "@/components/hint";

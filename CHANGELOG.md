@@ -14,6 +14,9 @@ You can also check the
 - Features
   - Made it possible to sort the cube search results and filter by draft
     datasets when looking for a cube to merge
+- Fixes
+  - Changed component id separator text to be more unique, as it was causing
+    issues with some cubes that had iris ending with "-"
 
 # [5.0.1] - 2024-11-26
 
