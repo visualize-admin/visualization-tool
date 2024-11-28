@@ -34,8 +34,8 @@ const decodeLayouts = (layouts: Layouts) => {
 };
 
 export const ChartPanelLayoutCanvas = ({
-  chartConfigs,
-  renderChart,
+  blocks,
+  renderBlock,
   className,
 }: ChartPanelLayoutTypeProps) => {
   const [state, dispatch] = useConfiguratorState(hasChartConfigs);
@@ -81,7 +81,7 @@ export const ChartPanelLayoutCanvas = ({
       onLayoutChange={(_, allLayouts) => handleChangeLayouts(allLayouts)}
       breakpoints={FREE_CANVAS_BREAKPOINTS}
     >
-      {chartConfigs.map(renderChart)}
+      {blocks.map(renderBlock)}
     </ChartGridLayout>
   );
 };
