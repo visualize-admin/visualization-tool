@@ -32,7 +32,6 @@ import {
   useConfiguratorState,
 } from "@/configurator/configurator-state";
 import { DataCubeMetadata } from "@/domain/data";
-import useFlag from "@/flags/useFlag";
 import {
   executeDataCubesComponentsQuery,
   useDataCubesMetadataQuery,
@@ -219,11 +218,6 @@ export const DatasetsControlSection = () => {
     setOpen(true);
     setActiveSection("general");
   };
-
-  const addDatasetFlag = useFlag("configurator.add-dataset.shared");
-  if (!addDatasetFlag) {
-    return null;
-  }
 
   return (
     <ControlSection collapse defaultExpanded={true}>
