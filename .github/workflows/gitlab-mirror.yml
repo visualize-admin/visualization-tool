@@ -8,7 +8,7 @@ jobs:
     steps: # <-- must use actions/checkout@v4 before mirroring!
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 1 # <-- shallow clone to speed up the process
       - uses: pixta-dev/repository-mirroring-action@v1
         with:
           target_repo_url: git@gitlab.ldbar.ch:interactivethings/visualization-tool.git
