@@ -17,6 +17,7 @@ You can also check the
 - Fixes
   - Changed component id separator text to be more unique, as it was causing
     issues with some cubes that had iris ending with "-"
+  - Datasets section in the sidebar is now correctly shown at all times
 
 # [5.0.1] - 2024-11-26
 
