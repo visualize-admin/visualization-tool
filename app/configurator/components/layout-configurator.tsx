@@ -21,7 +21,6 @@ import {
   generateLayout,
 } from "@/components/react-grid";
 import {
-  ChartConfig,
   DashboardTimeRangeFilter,
   getChartConfig,
   LayoutDashboard,
@@ -557,8 +556,8 @@ const LayoutBlocksConfigurator = () => {
           {
             type: "text",
             key: createId(),
-            title: "",
-            description: "",
+            title: "Example title.",
+            description: "Example description.",
             initialized: false,
           },
         ],
@@ -619,15 +618,15 @@ const LayoutBlocksConfigurator = () => {
 const migrateLayout = (
   layout: LayoutDashboard,
   newLayoutType: LayoutDashboard["layout"],
-  chartConfigs: ChartConfig[]
+  blocks: LayoutDashboard["blocks"]
 ): LayoutDashboard => {
   if (newLayoutType === "canvas") {
     const defaultLayout = generateLayout({
-      count: chartConfigs.length,
+      count: blocks.length,
       layout: "tiles",
     }).map((l, i) => ({
       ...l,
-      i: chartConfigs[i].key,
+      i: blocks[i].key,
     }));
     const layouts: Record<
       keyof typeof FREE_CANVAS_BREAKPOINTS,
@@ -642,10 +641,9 @@ const migrateLayout = (
       ...layout,
       layout: newLayoutType,
       layouts,
-      blocks: chartConfigs.map(({ key }) => {
+      blocks: blocks.map((block) => {
         return {
-          type: "chart",
-          key,
+          ...block,
           initialized: false,
         };
       }),
@@ -682,7 +680,7 @@ const DashboardLayoutButton = ({
     } else {
       dispatch({
         type: "LAYOUT_CHANGED",
-        value: migrateLayout(layout, type, config.chartConfigs),
+        value: migrateLayout(layout, type, config.layout.blocks),
       });
     }
   });

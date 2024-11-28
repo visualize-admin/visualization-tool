@@ -1,7 +1,7 @@
-import { Box, BoxProps, Theme } from "@mui/material";
+import { Box, BoxProps, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
-import React, { HTMLProps, forwardRef } from "react";
+import { forwardRef, HTMLProps, PropsWithChildren, useCallback } from "react";
 
 import {
   ChartPanelLayoutCanvas,
@@ -12,7 +12,7 @@ import { ChartPanelLayoutVertical } from "@/components/chart-panel-layout-vertic
 import { ChartSelectionTabs } from "@/components/chart-selection-tabs";
 import { DashboardInteractiveFilters } from "@/components/dashboard-interactive-filters";
 import { ChartConfig, Layout, LayoutDashboard } from "@/config-types";
-import { hasChartConfigs } from "@/configurator";
+import { hasChartConfigs, LayoutBlock, LayoutTextBlock } from "@/configurator";
 import { useConfiguratorState } from "@/src";
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -75,7 +75,7 @@ export const ChartWrapper = forwardRef<HTMLDivElement, ChartWrapperProps>(
   }
 );
 
-type ChartPanelLayoutProps = React.PropsWithChildren<{
+type ChartPanelLayoutProps = PropsWithChildren<{
   layoutType: LayoutDashboard["layout"];
   chartConfigs: ChartConfig[];
   renderChart: (chartConfig: ChartConfig) => JSX.Element;
@@ -83,8 +83,8 @@ type ChartPanelLayoutProps = React.PropsWithChildren<{
   HTMLProps<HTMLDivElement>;
 
 export type ChartPanelLayoutTypeProps = {
-  chartConfigs: ChartConfig[];
-  renderChart: (chartConfig: ChartConfig) => JSX.Element;
+  blocks: LayoutBlock[];
+  renderBlock: (block: LayoutBlock) => JSX.Element;
   className?: string;
 };
 
@@ -109,15 +109,46 @@ export const ChartPanelLayout = (props: ChartPanelLayoutProps) => {
   const classes = useStyles();
   const Wrapper = Wrappers[layoutType];
   const [state] = useConfiguratorState(hasChartConfigs);
+  const { layout } = state;
+  const { blocks } = layout;
+
+  const renderTextBlock = useCallback((textBlock: LayoutTextBlock) => {
+    return (
+      // Important, otherwise ReactGrid breaks
+      <div key={textBlock.key}>
+        <Typography variant="h6">{textBlock.title}</Typography>
+        <Typography>{textBlock.description}</Typography>
+      </div>
+    );
+  }, []);
+
+  const renderBlock = useCallback(
+    (block: LayoutBlock) => {
+      switch (block.type) {
+        case "chart":
+          const chartConfig = chartConfigs.find(
+            (c) => c.key === block.key
+          ) as ChartConfig;
+          return renderChart(chartConfig);
+        case "text":
+          return renderTextBlock(block);
+        default:
+          const _exhaustiveCheck: never = block;
+          return _exhaustiveCheck;
+      }
+    },
+    [chartConfigs, renderChart, renderTextBlock]
+  );
+
   return (
     <div className={clsx(classes.panelLayout, className)} {...rest}>
-      {/** We want to completely remount this component if chartConfigs change */}
       {state.layout.type === "dashboard" ? (
         <DashboardInteractiveFilters
+          // We want to completely remount this component if chartConfigs change
           key={chartConfigs.map((x) => x.key).join(",")}
         />
       ) : null}
-      <Wrapper chartConfigs={chartConfigs} renderChart={renderChart} />
+      <Wrapper blocks={blocks} renderBlock={renderBlock} />
     </div>
   );
 };

@@ -1,20 +1,18 @@
 import { Box, useMediaQuery } from "@mui/material";
 import { useMemo } from "react";
 
+import { ChartPanelLayoutTypeProps } from "@/components/chart-panel";
 import classes from "@/components/chart-panel-layout-tall.module.css";
-import { ChartConfig } from "@/config-types";
+import { LayoutBlock } from "@/config-types";
 import { useTheme } from "@/themes";
 
-type ChartPanelLayoutTallProps = {
-  chartConfigs: ChartConfig[];
-  renderChart: (chartConfig: ChartConfig) => JSX.Element;
-};
-
-export const ChartPanelLayoutTall = (props: ChartPanelLayoutTallProps) => {
-  const { chartConfigs, renderChart } = props;
+export const ChartPanelLayoutTall = ({
+  blocks,
+  renderBlock,
+}: ChartPanelLayoutTypeProps) => {
   const rows = useMemo(() => {
-    return getChartPanelLayoutTallRows(chartConfigs, renderChart);
-  }, [chartConfigs, renderChart]);
+    return getChartPanelLayoutTallRows({ blocks, renderBlock });
+  }, [blocks, renderBlock]);
 
   return (
     <>
@@ -24,67 +22,61 @@ export const ChartPanelLayoutTall = (props: ChartPanelLayoutTallProps) => {
     </>
   );
 };
-type ChartPanelLayoutTallRowProps = {
-  row: ChartPanelLayoutTallRow;
-};
 
-const ChartPanelLayoutTallRow = (props: ChartPanelLayoutTallRowProps) => {
-  const { row } = props;
+const ChartPanelLayoutTallRow = ({ row }: { row: ChartPanelLayoutTallRow }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   switch (row.type) {
     case "wide":
-      return row.renderChart(row.chartConfig);
+      return row.renderBlock(row.block);
     case "narrow":
       if (isMobile) {
-        return <>{row.chartConfigs.map(row.renderChart)}</>;
+        return <>{row.chartConfigs.map(row.renderBlock)}</>;
       }
 
       return (
         <Box className={classes.root}>
-          {row.chartConfigs.map(row.renderChart)}
+          {row.chartConfigs.map(row.renderBlock)}
         </Box>
       );
   }
 };
 type ChartPanelLayoutTallRow = {
-  renderChart: (chartConfig: ChartConfig) => JSX.Element;
+  renderBlock: (block: LayoutBlock) => JSX.Element;
 } & (
   | {
       type: "wide";
-      chartConfig: ChartConfig;
+      block: LayoutBlock;
     }
   | {
       type: "narrow";
-      chartConfigs: [ChartConfig] | [ChartConfig, ChartConfig];
+      chartConfigs: [LayoutBlock] | [LayoutBlock, LayoutBlock];
     }
 );
 
-export const getChartPanelLayoutTallRows = (
-  chartConfigs: ChartConfig[],
-  renderChart: (chartConfig: ChartConfig) => JSX.Element
-): ChartPanelLayoutTallRow[] => {
+export const getChartPanelLayoutTallRows = ({
+  blocks,
+  renderBlock,
+}: ChartPanelLayoutTypeProps): ChartPanelLayoutTallRow[] => {
   const rows: ChartPanelLayoutTallRow[] = [];
 
-  for (let i = 0; i < chartConfigs.length; i += 1) {
+  for (let i = 0; i < blocks.length; i += 1) {
     if (i % 3 === 0) {
       rows.push({
         type: "wide",
-        chartConfig: chartConfigs[i],
-        renderChart,
+        block: blocks[i],
+        renderBlock,
       });
     }
 
     if (i % 3 === 1) {
-      const currentConfig = chartConfigs[i];
-      const nextConfig = chartConfigs[i + 1];
+      const block = blocks[i];
+      const nextBlock = blocks[i + 1];
       rows.push({
         type: "narrow",
-        chartConfigs: nextConfig
-          ? [currentConfig, nextConfig]
-          : [currentConfig],
-        renderChart,
+        chartConfigs: nextBlock ? [block, nextBlock] : [block],
+        renderBlock,
       });
     }
   }
