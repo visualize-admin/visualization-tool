@@ -5,8 +5,10 @@ on: [push, delete]
 jobs:
   to_gitlab:
     runs-on: ubuntu-latest
-    steps: # <-- must use actions/checkout@v1 before mirroring!
-      - uses: actions/checkout@v1
+    steps: # <-- must use actions/checkout@v4 before mirroring!
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: pixta-dev/repository-mirroring-action@v1
         with:
           target_repo_url: git@gitlab.ldbar.ch:interactivethings/visualization-tool.git
