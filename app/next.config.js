@@ -56,14 +56,14 @@ module.exports = withPreconstruct(
                 `form-action 'self'`,
                 `connect-src 'self' ${process.env.NODE_ENV === "development" ? "http://localhost:3000" : ""} https//*.sentry.io https://*.vercel.app`,
                 `img-src 'self' blob: data: ${process.env.NODE_ENV === "development" ? "http://localhost:3000" : ""} https://visualize.admin.ch`,
-                `script-src-elem 'self' 'unsafe-inline' https://visualize.admin.ch`,
+                `script-src-elem 'self' 'unsafe-inline' https://visualize.admin.ch https://*.vercel.live`,
                 `worker-src 'self' blob: https://visualize.admin.ch`,
               ].join("; "),
             },
           ],
         });
 
-        if (process.env.ALLOW_SEARCH_BOTS !== "true") {
+        if (process.env.PREVENT_SEARCH_BOTS === "true") {
           headers[0].headers.push({
             key: "X-Robots-Tag",
             value: "noindex, nofollow",
