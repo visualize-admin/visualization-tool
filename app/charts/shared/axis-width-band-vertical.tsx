@@ -24,14 +24,13 @@ export const AxisWidthBand = () => {
 
   useEffect(() => {
     if (ref.current) {
-      const rotation = true;
       const hasNegativeValues = xScale.domain()[0] < 0;
       const fontSize =
         yScale.bandwidth() > labelFontSize ? labelFontSize : yScale.bandwidth();
       const axis = axisLeft(yScale)
         .tickSizeOuter(0)
-        .tickSizeInner(hasNegativeValues ? -chartHeight : 6)
-        .tickPadding(rotation ? -10 : 0);
+        .tickSizeInner(hasNegativeValues ? -chartHeight : 6);
+      // .tickPadding(rotation ? -10 : 0);
 
       if (yTimeUnit) {
         axis.tickFormat((d) => formatDate(d, yTimeUnit));
@@ -57,12 +56,11 @@ export const AxisWidthBand = () => {
         hasNegativeValues ? gridColor : domainColor
       );
       g.selectAll(".tick text")
-        .attr("transform", rotation ? "rotate(90)" : "rotate(0)")
-        .attr("x", rotation ? fontSize : 0)
+        .attr("x", 0)
         .attr("font-size", fontSize)
         .attr("font-family", fontFamily)
         .attr("fill", labelColor)
-        .attr("text-anchor", rotation ? "start" : "unset");
+        .attr("text-anchor", "unset");
     }
   }, [
     chartHeight,
