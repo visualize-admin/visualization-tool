@@ -130,7 +130,8 @@ const useBarsState = (
       .paddingInner(PADDING_INNER)
       .paddingOuter(PADDING_OUTER);
     const yScaleInteraction = scaleBand()
-      .domain(bandDomain)
+      //NOTE: not sure if this is the right way to go here
+      .domain(bandDomain.reverse())
       .paddingInner(0)
       .paddingOuter(0);
 
