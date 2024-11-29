@@ -11,11 +11,11 @@ import { StackedBarsChart } from "@/charts/bar/bars-stacked-state";
 import { BarChart } from "@/charts/bar/bars-state";
 import { InteractionBars } from "@/charts/bar/overlay-bars";
 import { ChartDataWrapper } from "@/charts/chart-data-wrapper";
-import { AxisHeightLinear } from "@/charts/shared/axis-height-linear";
 import {
   AxisWidthBand,
   AxisWidthBandDomain,
-} from "@/charts/shared/axis-width-band";
+} from "@/charts/shared/axis-width-band-vertical";
+import { AxisWidthLinear } from "@/charts/shared/axis-width-linear";
 import { BrushTime, shouldShowBrush } from "@/charts/shared/brush";
 import {
   ChartContainer,
@@ -53,7 +53,7 @@ const ChartBars = memo((props: ChartProps<BarConfig>) => {
         <StackedBarsChart {...props}>
           <ChartContainer>
             <ChartSvg>
-              <AxisHeightLinear />
+              <AxisWidthLinear />
               <AxisWidthBand />
               <BarsStacked />
               <AxisWidthBandDomain />
@@ -83,7 +83,7 @@ const ChartBars = memo((props: ChartProps<BarConfig>) => {
         <GroupedBarChart {...props}>
           <ChartContainer>
             <ChartSvg>
-              <AxisHeightLinear />
+              <AxisWidthLinear />
               <AxisWidthBand />
               <BarsGrouped />
               <ErrorWhiskersGrouped />
@@ -114,7 +114,7 @@ const ChartBars = memo((props: ChartProps<BarConfig>) => {
         <BarChart {...props}>
           <ChartContainer>
             <ChartSvg>
-              <AxisHeightLinear />
+              <AxisWidthLinear />
               <AxisWidthBand />
               <Bars />
               <ErrorWhiskers />

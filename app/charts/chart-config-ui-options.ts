@@ -773,7 +773,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
     chartType: "bar",
     encodings: [
       {
-        field: "y",
+        field: "x",
         optional: false,
         idAttributes: ["componentId"],
         componentTypes: ["NumericalMeasure"],
@@ -801,7 +801,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         },
       },
       {
-        field: "x",
+        field: "y",
         optional: false,
         idAttributes: ["componentId"],
         componentTypes: [

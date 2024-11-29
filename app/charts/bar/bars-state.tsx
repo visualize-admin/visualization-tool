@@ -24,9 +24,9 @@ import {
   ChartContext,
   ChartStateData,
   CommonChartState,
-  InteractiveXTimeRangeState,
+  InteractiveYTimeRangeState,
 } from "@/charts/shared/chart-state";
-import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
+import { TooltipInfoInverted } from "@/charts/shared/interaction/tooltip";
 import {
   getCenteredTooltipPlacement,
   MOBILE_TOOLTIP_PLACEMENT,
@@ -51,12 +51,13 @@ import { ChartProps } from "../shared/ChartProps";
 
 export type BarsState = CommonChartState &
   BarsStateVariables &
-  InteractiveXTimeRangeState & {
+  InteractiveYTimeRangeState & {
     chartType: "bar";
-    xScale: ScaleBand<string>;
-    xScaleInteraction: ScaleBand<string>;
-    yScale: ScaleLinear<number, number>;
-    getAnnotationInfo: (d: Observation) => TooltipInfo;
+    xScale: ScaleLinear<number, number>;
+    yScaleInteraction: ScaleBand<string>;
+    yScale: ScaleBand<string>;
+    minY: string;
+    getAnnotationInfo: (d: Observation) => TooltipInfoInverted;
   };
 
 const useBarsState = (
@@ -66,19 +67,19 @@ const useBarsState = (
 ): BarsState => {
   const { chartConfig } = chartProps;
   const {
-    xDimension,
+    yDimension,
     getX,
-    getXAsDate,
-    getXAbbreviationOrLabel,
-    getXLabel,
-    xTimeUnit,
-    yMeasure,
+    getYAsDate,
+    getYAbbreviationOrLabel,
+    getYLabel,
+    yTimeUnit,
+    xMeasure,
     getY,
-    getMinY,
-    showYStandardError,
-    yErrorMeasure,
-    getYError,
-    getYErrorRange,
+    getMinX,
+    showXStandardError,
+    xErrorMeasure,
+    getXError,
+    getXErrorRange,
   } = variables;
   const { chartData, scalesData, timeRangeData, paddingData, allData } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
@@ -88,12 +89,12 @@ const useBarsState = (
   const formatters = useChartFormatters(chartProps);
   const timeFormatUnit = useTimeFormatUnit();
 
-  const sumsByX = useMemo(() => {
+  const sumsByY = useMemo(() => {
     return Object.fromEntries(
       rollup(
         chartData,
-        (v) => sum(v, (x) => getY(x)),
-        (x) => getX(x)
+        (v) => sum(v, (x) => getX(x)),
+        (x) => getY(x)
       )
     );
   }, [chartData, getX, getY]);
@@ -101,61 +102,62 @@ const useBarsState = (
   const {
     xScale,
     yScale,
+    minY,
     paddingYScale,
-    xScaleTimeRange,
-    xScaleInteraction,
-    xTimeRangeDomainLabels,
+    yScaleTimeRange,
+    yScaleInteraction,
+    yTimeRangeDomainLabels,
   } = useMemo(() => {
-    const sorters = makeDimensionValueSorters(xDimension, {
-      sorting: fields.x.sorting,
-      measureBySegment: sumsByX,
-      useAbbreviations: fields.x.useAbbreviations,
-      dimensionFilter: xDimension?.id
-        ? chartConfig.cubes.find((d) => d.iri === xDimension.cubeIri)?.filters[
-            xDimension.id
+    const sorters = makeDimensionValueSorters(yDimension, {
+      sorting: fields.y.sorting,
+      measureBySegment: sumsByY,
+      useAbbreviations: fields.y.useAbbreviations,
+      dimensionFilter: yDimension?.id
+        ? chartConfig.cubes.find((d) => d.iri === yDimension.cubeIri)?.filters[
+            yDimension.id
           ]
         : undefined,
     });
-    const sortingOrders = getSortingOrders(sorters, fields.x.sorting);
+    const sortingOrders = getSortingOrders(sorters, fields.y.sorting);
     const bandDomain = orderBy(
-      [...new Set(scalesData.map(getX))],
+      [...new Set(scalesData.map(getY))],
       sorters,
       sortingOrders
     );
-    const xTimeRangeValues = [...new Set(timeRangeData.map(getX))];
-    const xTimeRangeDomainLabels = xTimeRangeValues.map(getXLabel);
-    const xScale = scaleBand()
+    const yTimeRangeValues = [...new Set(timeRangeData.map(getY))];
+    const yTimeRangeDomainLabels = yTimeRangeValues.map(getYLabel);
+    const yScale = scaleBand()
       .domain(bandDomain)
       .paddingInner(PADDING_INNER)
       .paddingOuter(PADDING_OUTER);
-    const xScaleInteraction = scaleBand()
+    const yScaleInteraction = scaleBand()
       .domain(bandDomain)
       .paddingInner(0)
       .paddingOuter(0);
 
-    const xScaleTimeRangeDomain = extent(timeRangeData, (d) =>
-      getXAsDate(d)
+    const yScaleTimeRangeDomain = extent(timeRangeData, (d) =>
+      getYAsDate(d)
     ) as [Date, Date];
 
-    const xScaleTimeRange = scaleTime().domain(xScaleTimeRangeDomain);
+    const yScaleTimeRange = scaleTime().domain(yScaleTimeRangeDomain);
 
-    const minValue = getMinY(scalesData, (d) =>
-      getYErrorRange ? getYErrorRange(d)[0] : getY(d)
+    const minValue = getMinX(scalesData, (d) =>
+      getXErrorRange ? getXErrorRange(d)[0] : getX(d)
     );
     const maxValue = Math.max(
       max(scalesData, (d) =>
-        getYErrorRange ? getYErrorRange(d)[1] : getY(d)
+        getXErrorRange ? getXErrorRange(d)[1] : getX(d)
       ) ?? 0,
       0
     );
-    const yScale = scaleLinear().domain([minValue, maxValue]).nice();
+    const xScale = scaleLinear().domain([minValue, maxValue]).nice();
 
-    const paddingMinValue = getMinY(paddingData, (d) =>
-      getYErrorRange ? getYErrorRange(d)[0] : getY(d)
+    const paddingMinValue = getMinX(paddingData, (d) =>
+      getXErrorRange ? getXErrorRange(d)[0] : getX(d)
     );
     const paddingMaxValue = Math.max(
       max(paddingData, (d) =>
-        getYErrorRange ? getYErrorRange(d)[1] : getY(d)
+        getXErrorRange ? getXErrorRange(d)[1] : getX(d)
       ) ?? 0,
       0
     );
@@ -166,26 +168,27 @@ const useBarsState = (
     return {
       xScale,
       yScale,
+      minY: bandDomain[0],
       paddingYScale,
-      xScaleTimeRange,
-      xScaleInteraction,
-      xTimeRangeDomainLabels,
+      yScaleTimeRange,
+      yScaleInteraction,
+      yTimeRangeDomainLabels,
     };
   }, [
     getX,
-    getXLabel,
-    getXAsDate,
+    getYLabel,
+    getYAsDate,
     getY,
-    getYErrorRange,
+    getXErrorRange,
     scalesData,
     paddingData,
     timeRangeData,
-    fields.x.sorting,
-    fields.x.useAbbreviations,
-    xDimension,
+    fields.y.sorting,
+    fields.y.useAbbreviations,
+    yDimension,
     chartConfig.cubes,
-    sumsByX,
-    getMinY,
+    sumsByY,
+    getMinX,
   ]);
 
   const { left, bottom } = useChartPadding({
@@ -195,19 +198,19 @@ const useBarsState = (
     interactiveFiltersConfig,
     animationPresent: !!fields.animation,
     formatNumber,
-    bandDomain: xTimeRangeDomainLabels.every((d) => d === undefined)
-      ? xScale.domain()
-      : xTimeRangeDomainLabels,
+    bandDomain: yTimeRangeDomainLabels.every((d) => d === undefined)
+      ? yScale.domain()
+      : yTimeRangeDomainLabels,
   });
   const right = 40;
-  const { offset: yAxisLabelMargin } = useAxisLabelHeightOffset({
-    label: yMeasure.label,
+  const { offset: xAxisLabelMargin } = useAxisLabelHeightOffset({
+    label: xMeasure.label,
     width,
     marginLeft: left,
     marginRight: right,
   });
   const margins = {
-    top: 50 + yAxisLabelMargin,
+    top: 50 + xAxisLabelMargin,
     right,
     bottom,
     left,
@@ -217,53 +220,53 @@ const useBarsState = (
   const { chartWidth, chartHeight } = bounds;
 
   xScale.range([0, chartWidth]);
-  xScaleInteraction.range([0, chartWidth]);
-  xScaleTimeRange.range([0, chartWidth]);
+  yScaleInteraction.range([0, chartHeight]);
+  yScaleTimeRange.range([0, chartHeight]);
   yScale.range([chartHeight, 0]);
 
   const isMobile = useIsMobile();
 
   // Tooltip
-  const getAnnotationInfo = (d: Observation): TooltipInfo => {
-    const xAnchor = (xScale(getX(d)) as number) + xScale.bandwidth() * 0.5;
-    const yAnchor = isMobile
+  const getAnnotationInfo = (d: Observation): TooltipInfoInverted => {
+    const yAnchor = (yScale(getY(d)) as number) + yScale.bandwidth() * 0.5;
+    const xAnchor = isMobile
       ? chartHeight
-      : yScale(Math.max(getY(d) ?? NaN, 0));
+      : xScale(Math.max(getX(d) ?? NaN, 0));
     const placement = isMobile
       ? MOBILE_TOOLTIP_PLACEMENT
       : getCenteredTooltipPlacement({
           chartWidth,
-          xAnchor,
+          xAnchor: yAnchor,
           topAnchor: !fields.segment,
         });
 
-    const xLabel = getXAbbreviationOrLabel(d);
+    const yLabel = getYAbbreviationOrLabel(d);
 
-    const yValueFormatter = (value: number | null) =>
+    const xValueFormatter = (value: number | null) =>
       formatNumberWithUnit(
         value,
-        formatters[yMeasure.id] ?? formatNumber,
-        yMeasure.unit
+        formatters[xMeasure.id] ?? formatNumber,
+        xMeasure.unit
       );
 
     const getError = (d: Observation) => {
-      if (!showYStandardError || !getYError || getYError(d) === null) {
+      if (!showXStandardError || !getXError || getXError(d) === null) {
         return;
       }
 
-      return `${getYError(d)}${yErrorMeasure?.unit ?? ""}`;
+      return `${getXError(d)}${xErrorMeasure?.unit ?? ""}`;
     };
 
-    const y = getY(d);
+    const x = getX(d);
 
     return {
       xAnchor,
       yAnchor,
       placement,
-      xValue: xTimeUnit ? timeFormatUnit(xLabel, xTimeUnit) : xLabel,
+      yValue: yTimeUnit ? timeFormatUnit(yLabel, yTimeUnit) : yLabel,
       datum: {
         label: undefined,
-        value: y !== null && isNaN(y) ? "-" : `${yValueFormatter(getY(d))}`,
+        value: x !== null && isNaN(x) ? "-" : `${xValueFormatter(getX(d))}`,
         error: getError(d),
         color: "",
       },
@@ -277,8 +280,9 @@ const useBarsState = (
     chartData,
     allData,
     xScale,
-    xScaleTimeRange,
-    xScaleInteraction,
+    minY,
+    yScaleTimeRange,
+    yScaleInteraction,
     yScale,
     getAnnotationInfo,
     ...variables,

@@ -88,6 +88,59 @@ export const imputeTemporalLinearSeries = ({
   return dataSortedByX as Array<TemporalSeriesAfterImputationEntry>;
 };
 
+export const imputeTemporalLinearSeriesInverted = ({
+  dataSortedByY,
+}: {
+  dataSortedByY: Array<TemporalSeriesBeforeImputationEntry>;
+}): Array<TemporalSeriesAfterImputationEntry> => {
+  const presentDataIndexes = [];
+  const missingDataIndexes = [];
+
+  for (let i = 0; i < dataSortedByY.length; i++) {
+    if (dataSortedByY[i].value !== null) {
+      presentDataIndexes.push(i);
+    } else {
+      missingDataIndexes.push(i);
+    }
+  }
+
+  for (const missingDataIndex of missingDataIndexes) {
+    const nextPresentDataIndex = presentDataIndexes.findIndex(
+      (d) => d > missingDataIndex
+    );
+
+    if (nextPresentDataIndex) {
+      const previousPresentDataIndex = nextPresentDataIndex - 1;
+
+      if (previousPresentDataIndex >= 0) {
+        const previous =
+          dataSortedByY[presentDataIndexes[previousPresentDataIndex]];
+        const next = dataSortedByY[presentDataIndexes[nextPresentDataIndex]];
+
+        dataSortedByY[missingDataIndex] = {
+          date: dataSortedByY[missingDataIndex].date,
+          value: interpolateTemporalLinearValue({
+            previousValue: previous.value!,
+            nextValue: next.value!,
+            previousTime: previous.date.getTime(),
+            nextTime: next.date.getTime(),
+            currentTime: dataSortedByY[missingDataIndex].date.getTime(),
+          }),
+        };
+
+        continue;
+      }
+    }
+
+    dataSortedByY[missingDataIndex] = {
+      date: dataSortedByY[missingDataIndex].date,
+      value: 0,
+    };
+  }
+
+  return dataSortedByY as Array<TemporalSeriesAfterImputationEntry>;
+};
+
 export const isUsingImputation = (chartConfig: ChartConfig): boolean => {
   if (isAreaConfig(chartConfig)) {
     const imputationType = chartConfig.fields.y.imputationType || "";

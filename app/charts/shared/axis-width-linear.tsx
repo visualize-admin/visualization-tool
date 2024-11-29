@@ -1,6 +1,7 @@
 import { axisBottom } from "d3-axis";
 import { useEffect, useRef } from "react";
 
+import { BarsState } from "@/charts/bar/bars-state";
 import { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
 import { useAxisLabelHeightOffset } from "@/charts/shared/chart-dimensions";
 import { useChartState } from "@/charts/shared/chart-state";
@@ -16,8 +17,9 @@ import { getTextWidth } from "@/utils/get-text-width";
 
 export const AxisWidthLinear = () => {
   const formatNumber = useFormatNumber();
-  const { xScale, bounds, xAxisLabel, xMeasure } =
-    useChartState() as ScatterplotState;
+  const { xScale, bounds, xAxisLabel, xMeasure } = useChartState() as
+    | ScatterplotState
+    | BarsState;
   const { chartWidth, chartHeight, margins } = bounds;
   const {
     labelColor,

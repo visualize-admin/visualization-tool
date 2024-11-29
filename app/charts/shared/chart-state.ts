@@ -109,7 +109,7 @@ export const useChartState = () => {
 export type ChartWithInteractiveXTimeRangeState =
   | AreasState
   | ColumnsState
-  | BarsState
+  // | BarsState
   | LinesState;
 
 export type NumericalValueGetter = (d: Observation) => number | null;
@@ -147,6 +147,15 @@ export const useBaseVariables = (chartConfig: ChartConfig): BaseVariables => {
   };
 };
 
+export type BandYVariables = {
+  yDimension: Dimension;
+  getY: StringValueGetter;
+  getYLabel: (d: string) => string;
+  getYAbbreviationOrLabel: (d: Observation) => string;
+  yTimeUnit: TimeUnit | undefined;
+  getYAsDate: TemporalValueGetter;
+};
+
 export type BandXVariables = {
   xDimension: Dimension;
   getX: StringValueGetter;
@@ -154,6 +163,51 @@ export type BandXVariables = {
   getXAbbreviationOrLabel: (d: Observation) => string;
   xTimeUnit: TimeUnit | undefined;
   getXAsDate: TemporalValueGetter;
+};
+
+export const useBandYVariables = (
+  y: GenericField,
+  {
+    dimensionsById,
+    observations,
+  }: {
+    dimensionsById: DimensionsById;
+    observations: Observation[];
+  }
+): BandYVariables => {
+  const yDimension = dimensionsById[y.componentId];
+  if (!yDimension) {
+    throw Error(`No dimension <${y.componentId}> in cube! (useBandXVariables)`);
+  }
+
+  const yTimeUnit = isTemporalDimension(yDimension)
+    ? yDimension.timeUnit
+    : undefined;
+
+  const {
+    getAbbreviationOrLabelByValue: getYAbbreviationOrLabel,
+    getValue: getY,
+    getLabel: getYLabel,
+  } = useDimensionWithAbbreviations(yDimension, {
+    observations,
+    field: y,
+  });
+
+  const getYAsDate = useTemporalVariable(y.componentId);
+  const getYTemporalEntity = useTemporalEntityVariable(
+    dimensionsById[y.componentId].values
+  )(y.componentId);
+
+  return {
+    yDimension,
+    getY,
+    getYLabel,
+    getYAbbreviationOrLabel,
+    yTimeUnit,
+    getYAsDate: isTemporalDimension(yDimension)
+      ? getYAsDate
+      : getYTemporalEntity,
+  };
 };
 
 export const useBandXVariables = (
@@ -252,7 +306,7 @@ export type NumericalXVariables = {
 };
 
 export const useNumericalXVariables = (
-  chartType: "scatterplot",
+  chartType: "scatterplot" | "bar",
   x: GenericField,
   { measuresById }: { measuresById: MeasuresById }
 ): NumericalXVariables => {
@@ -273,6 +327,7 @@ export const useNumericalXVariables = (
     (data: Observation[], _getX: NumericalValueGetter) => {
       switch (chartType) {
         case "scatterplot":
+        case "bar":
           return shouldUseDynamicMinScaleValue(xMeasure.scaleType)
             ? min(data, _getX) ?? 0
             : Math.min(0, min(data, _getX) ?? 0);
@@ -356,6 +411,13 @@ export type NumericalYErrorVariables = {
   getYErrorRange: null | ((d: Observation) => [number, number]);
 };
 
+export type NumericalXErrorVariables = {
+  showXStandardError: boolean;
+  xErrorMeasure: Component | undefined;
+  getXError: ((d: Observation) => ObservationValue) | null;
+  getXErrorRange: null | ((d: Observation) => [number, number]);
+};
+
 export const useNumericalYErrorVariables = (
   y: GenericField,
   {
@@ -381,6 +443,34 @@ export const useNumericalYErrorVariables = (
     yErrorMeasure,
     getYError,
     getYErrorRange,
+  };
+};
+
+export const useNumericalXErrorVariables = (
+  x: GenericField,
+  {
+    numericalXVariables,
+    dimensions,
+    measures,
+  }: {
+    numericalXVariables: NumericalXVariables;
+    dimensions: Dimension[];
+    measures: Measure[];
+  }
+): NumericalXErrorVariables => {
+  const showXStandardError = get(x, ["showStandardError"], true);
+  const xErrorMeasure = useErrorMeasure(x.componentId, {
+    dimensions,
+    measures,
+  });
+  const getXErrorRange = useErrorRange(xErrorMeasure, numericalXVariables.getX);
+  const getXError = useErrorVariable(xErrorMeasure);
+
+  return {
+    showXStandardError,
+    xErrorMeasure,
+    getXError,
+    getXErrorRange,
   };
 };
 
@@ -657,7 +747,186 @@ export const useChartData = (
   };
 };
 
+export const useBarChartData = (
+  observations: Observation[],
+  {
+    chartConfig,
+    timeRangeDimensionId,
+    getYAsDate,
+    getSegmentAbbreviationOrLabel,
+    getTimeRangeDate,
+  }: {
+    chartConfig: ChartConfig;
+    timeRangeDimensionId: string | undefined;
+    getYAsDate?: (d: Observation) => Date;
+    getSegmentAbbreviationOrLabel?: (d: Observation) => string;
+    getTimeRangeDate?: (d: Observation) => Date;
+  }
+): Omit<ChartStateData, "allData"> => {
+  const { interactiveFiltersConfig } = chartConfig;
+  const categories = useChartInteractiveFilters((d) => d.categories);
+  const timeRange = useChartInteractiveFilters((d) => d.timeRange);
+  const timeSlider = useChartInteractiveFilters((d) => d.timeSlider);
+
+  // time range
+  const interactiveTimeRange = interactiveFiltersConfig?.timeRange;
+  const timeRangeFromTime = interactiveTimeRange?.presets.from
+    ? parseDate(interactiveTimeRange?.presets.from).getTime()
+    : undefined;
+  const timeRangeToTime = interactiveTimeRange?.presets.to
+    ? parseDate(interactiveTimeRange?.presets.to).getTime()
+    : undefined;
+  const timeRangeFilters = useMemo(() => {
+    const timeRangeFilter: ValuePredicate | null =
+      getTimeRangeDate && timeRangeFromTime && timeRangeToTime
+        ? (d: Observation) => {
+            const time = getTimeRangeDate(d).getTime();
+            return time >= timeRangeFromTime && time <= timeRangeToTime;
+          }
+        : null;
+
+    return timeRangeFilter ? [timeRangeFilter] : [];
+  }, [timeRangeFromTime, timeRangeToTime, getTimeRangeDate]);
+
+  // interactive time range
+  const interactiveFromTime = timeRange.from?.getTime();
+  const interactiveToTime = timeRange.to?.getTime();
+  const [{ dashboardFilters }] = useConfiguratorState(hasChartConfigs);
+  const { potentialTimeRangeFilterIds } = useDashboardInteractiveFilters();
+  const interactiveTimeRangeFilters = useMemo(() => {
+    const interactiveTimeRangeFilter: ValuePredicate | null =
+      getYAsDate &&
+      interactiveFromTime &&
+      interactiveToTime &&
+      (interactiveTimeRange?.active ||
+        (dashboardFilters?.timeRange.active &&
+          timeRangeDimensionId &&
+          potentialTimeRangeFilterIds.includes(timeRangeDimensionId)))
+        ? (d: Observation) => {
+            const time = getYAsDate(d).getTime();
+            return time >= interactiveFromTime && time <= interactiveToTime;
+          }
+        : null;
+
+    return interactiveTimeRangeFilter ? [interactiveTimeRangeFilter] : [];
+  }, [
+    getYAsDate,
+    interactiveFromTime,
+    interactiveToTime,
+    interactiveTimeRange?.active,
+    dashboardFilters?.timeRange.active,
+    timeRangeDimensionId,
+    potentialTimeRangeFilterIds,
+  ]);
+
+  // interactive time slider
+  const animationField = getAnimationField(chartConfig);
+  const dynamicScales = animationField?.dynamicScales ?? true;
+  const animationComponentId = animationField?.componentId ?? "";
+  const getAnimationDate = useTemporalVariable(animationComponentId);
+  const getAnimationOrdinalDate = useStringVariable(animationComponentId);
+  const interactiveTimeSliderFilters = useMemo(() => {
+    const interactiveTimeSliderFilter: ValuePredicate | null =
+      animationField?.componentId && timeSlider.value
+        ? (d: Observation) => {
+            if (timeSlider.type === "interval") {
+              return (
+                getAnimationDate(d).getTime() === timeSlider.value!.getTime()
+              );
+            }
+
+            const ordinalDate = getAnimationOrdinalDate(d);
+            return ordinalDate === timeSlider.value!;
+          }
+        : null;
+
+    return interactiveTimeSliderFilter ? [interactiveTimeSliderFilter] : [];
+  }, [
+    animationField?.componentId,
+    timeSlider.type,
+    timeSlider.value,
+    getAnimationDate,
+    getAnimationOrdinalDate,
+  ]);
+
+  // interactive legend
+  const interactiveLegendFilters = useMemo(() => {
+    const legendItems = Object.keys(categories);
+    const interactiveLegendFilter: ValuePredicate | null =
+      interactiveFiltersConfig?.legend?.active && getSegmentAbbreviationOrLabel
+        ? (d: Observation) => {
+            return !legendItems.includes(getSegmentAbbreviationOrLabel(d));
+          }
+        : null;
+
+    return interactiveLegendFilter ? [interactiveLegendFilter] : [];
+  }, [
+    categories,
+    getSegmentAbbreviationOrLabel,
+    interactiveFiltersConfig?.legend?.active,
+  ]);
+
+  const chartData = useMemo(() => {
+    return observations.filter(
+      overEvery([
+        ...interactiveLegendFilters,
+        ...interactiveTimeRangeFilters,
+        ...interactiveTimeSliderFilters,
+      ])
+    );
+  }, [
+    observations,
+    interactiveLegendFilters,
+    interactiveTimeRangeFilters,
+    interactiveTimeSliderFilters,
+  ]);
+
+  const scalesData = useMemo(() => {
+    if (dynamicScales) {
+      return chartData;
+    } else {
+      return observations.filter(
+        overEvery([...interactiveLegendFilters, ...interactiveTimeRangeFilters])
+      );
+    }
+  }, [
+    dynamicScales,
+    chartData,
+    observations,
+    interactiveLegendFilters,
+    interactiveTimeRangeFilters,
+  ]);
+
+  const segmentData = useMemo(() => {
+    return observations.filter(overEvery(interactiveTimeRangeFilters));
+  }, [observations, interactiveTimeRangeFilters]);
+
+  const timeRangeData = useMemo(() => {
+    return observations.filter(overEvery(timeRangeFilters));
+  }, [observations, timeRangeFilters]);
+
+  const paddingData = useMemo(() => {
+    if (dynamicScales) {
+      return chartData;
+    } else {
+      return observations.filter(overEvery(interactiveLegendFilters));
+    }
+  }, [dynamicScales, chartData, observations, interactiveLegendFilters]);
+
+  return {
+    chartData,
+    scalesData,
+    segmentData,
+    timeRangeData,
+    paddingData,
+  };
+};
+
 // TODO: base this on UI encodings?
 export type InteractiveXTimeRangeState = {
   xScaleTimeRange: ScaleTime<number, number>;
+};
+
+export type InteractiveYTimeRangeState = {
+  yScaleTimeRange: ScaleTime<number, number>;
 };

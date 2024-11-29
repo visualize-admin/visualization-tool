@@ -316,8 +316,8 @@ export type BarSegmentField = t.TypeOf<typeof BarSegmentField>;
 
 const BarFields = t.intersection([
   t.type({
-    x: t.intersection([GenericField, SortingField]),
-    y: GenericField,
+    x: GenericField,
+    y: t.intersection([GenericField, SortingField]),
   }),
   t.partial({
     segment: BarSegmentField,

@@ -4,10 +4,10 @@ import { GroupedBarsState } from "@/charts/bar/bars-grouped-state";
 import { RenderBarDatum, renderBars } from "@/charts/bar/rendering-utils";
 import { useChartState } from "@/charts/shared/chart-state";
 import {
-  RenderWhiskerDatum,
   filterWithoutErrors,
+  renderBarWhiskers,
   renderContainer,
-  renderWhiskers,
+  RenderWhiskerBarDatum,
 } from "@/charts/shared/rendering-utils";
 import { useTransitionStore } from "@/stores/transition";
 
@@ -15,49 +15,49 @@ export const ErrorWhiskers = () => {
   const {
     bounds,
     xScale,
-    xScaleIn,
-    getYErrorRange,
-    getYError,
+    yScaleIn,
+    getXErrorRange,
+    getXError,
     yScale,
     getSegment,
     grouped,
-    showYStandardError,
+    showXStandardError,
   } = useChartState() as GroupedBarsState;
   const { margins, width, height } = bounds;
   const ref = useRef<SVGGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
-  const renderData: RenderWhiskerDatum[] = useMemo(() => {
-    if (!getYErrorRange || !showYStandardError) {
+  const renderData: RenderWhiskerBarDatum[] = useMemo(() => {
+    if (!getXErrorRange || !showXStandardError) {
       return [];
     }
 
-    const bandwidth = xScaleIn.bandwidth();
+    const bandwidth = yScaleIn.bandwidth();
     return grouped
-      .filter((d) => d[1].some(filterWithoutErrors(getYError)))
+      .filter((d) => d[1].some(filterWithoutErrors(getXError)))
       .flatMap(([segment, observations]) =>
         observations.map((d) => {
-          const x0 = xScaleIn(getSegment(d)) as number;
+          const y0 = yScaleIn(getSegment(d)) as number;
           const barWidth = Math.min(bandwidth, 15);
-          const [y1, y2] = getYErrorRange(d);
+          const [x1, x2] = getXErrorRange(d);
           return {
             key: `${segment}-${getSegment(d)}`,
-            x: (xScale(segment) as number) + x0 + bandwidth / 2 - barWidth / 2,
-            y1: yScale(y1),
-            y2: yScale(y2),
+            y: (yScale(segment) as number) + y0 + bandwidth / 2 - barWidth / 2,
+            x1: xScale(x1),
+            x2: xScale(x2),
             width: barWidth,
-          } as RenderWhiskerDatum;
+          } as RenderWhiskerBarDatum;
         })
       );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     getSegment,
-    getYErrorRange,
-    getYError,
+    getXErrorRange,
+    getXError,
     grouped,
-    showYStandardError,
+    showXStandardError,
     xScale,
-    xScaleIn,
+    yScaleIn,
     yScale,
     width,
     height,
@@ -69,7 +69,7 @@ export const ErrorWhiskers = () => {
         id: "bars-grouped-error-whiskers",
         transform: `translate(${margins.left} ${margins.top})`,
         transition: { enable: enableTransition, duration: transitionDuration },
-        render: (g, opts) => renderWhiskers(g, renderData, opts),
+        render: (g, opts) => renderBarWhiskers(g, renderData, opts),
       });
     }
   }, [
@@ -87,8 +87,8 @@ export const BarsGrouped = () => {
   const {
     bounds,
     xScale,
-    xScaleIn,
-    getY,
+    yScaleIn,
+    getX,
     yScale,
     getSegment,
     colors,
@@ -99,22 +99,22 @@ export const BarsGrouped = () => {
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
   const { margins, height } = bounds;
-  const bandwidth = xScaleIn.bandwidth();
-  const y0 = yScale(0);
+  const bandwidth = yScaleIn.bandwidth();
+  const x0 = xScale(0);
   const renderData: RenderBarDatum[] = useMemo(() => {
     return grouped.flatMap(([segment, observations]) => {
       return observations.map((d) => {
         const key = getRenderingKey(d, getSegment(d));
-        const x = getSegment(d);
-        const y = getY(d) ?? NaN;
+        const y = getSegment(d);
+        const x = getX(d) ?? NaN;
 
         return {
           key,
-          x: (xScale(segment) as number) + (xScaleIn(x) as number),
-          y: yScale(Math.max(y, 0)),
-          width: bandwidth,
-          height: Math.max(0, Math.abs(yScale(y) - y0)),
-          color: colors(x),
+          y: (yScale(segment) as number) + (yScaleIn(y) as number),
+          x: xScale(Math.max(x, 0)),
+          width: Math.max(0, Math.abs(xScale(x) - x0)),
+          height: bandwidth,
+          color: colors(y),
         };
       });
     });
@@ -123,12 +123,12 @@ export const BarsGrouped = () => {
     colors,
     getSegment,
     bandwidth,
-    getY,
+    getX,
     grouped,
-    xScaleIn,
+    yScaleIn,
     xScale,
     yScale,
-    y0,
+    x0,
     getRenderingKey,
     height,
   ]);
@@ -139,7 +139,7 @@ export const BarsGrouped = () => {
         id: "bars-grouped",
         transform: `translate(${margins.left} ${margins.top})`,
         transition: { enable: enableTransition, duration: transitionDuration },
-        render: (g, opts) => renderBars(g, renderData, { ...opts, y0 }),
+        render: (g, opts) => renderBars(g, renderData, { ...opts, x0 }),
       });
     }
   }, [
@@ -148,7 +148,7 @@ export const BarsGrouped = () => {
     margins.top,
     renderData,
     transitionDuration,
-    y0,
+    x0,
   ]);
 
   return <g ref={ref} />;

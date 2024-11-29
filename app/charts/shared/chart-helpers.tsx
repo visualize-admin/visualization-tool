@@ -6,6 +6,7 @@ import { useCallback, useMemo } from "react";
 import { useMaybeAbbreviations } from "@/charts/shared/abbreviations";
 import {
   imputeTemporalLinearSeries,
+  imputeTemporalLinearSeriesInverted,
   interpolateZerosValue,
 } from "@/charts/shared/imputation";
 import { useObservationLabels } from "@/charts/shared/observation-labels";
@@ -486,6 +487,88 @@ export const getWideData = ({
   }
 };
 
+export const getWideDataInverted = ({
+  dataGroupedByY,
+  yKey,
+  getX,
+  allSegments,
+  getSegment,
+  imputationType = "none",
+}: {
+  dataGroupedByY: InternMap<string, Array<Observation>>;
+  yKey: string;
+  getX: (d: Observation) => number | null;
+  allSegments?: Array<string>;
+  getSegment: (d: Observation) => string;
+  imputationType?: ImputationType;
+}) => {
+  switch (imputationType) {
+    case "linear":
+      if (allSegments) {
+        const dataGroupedByYEntries = [...dataGroupedByY.entries()];
+        const dataGroupedByYWithImputedValues: Array<{
+          [key: string]: number;
+        }> = Array.from({ length: dataGroupedByY.size }, () => ({}));
+
+        for (const segment of allSegments) {
+          const imputedSeriesValues = imputeTemporalLinearSeriesInverted({
+            dataSortedByY: dataGroupedByYEntries.map(([date, values]) => {
+              const observation = values.find((d) => getSegment(d) === segment);
+
+              return {
+                date: new Date(date),
+                value: observation ? getX(observation) : null,
+              };
+            }),
+          });
+
+          for (let i = 0; i < imputedSeriesValues.length; i++) {
+            dataGroupedByYWithImputedValues[i][segment] =
+              imputedSeriesValues[i].value;
+          }
+        }
+
+        return getBaseWideDataInverted({
+          dataGroupedByY,
+          yKey,
+          getX,
+          getSegment,
+          getOptionalObservationProps: (i) => {
+            return allSegments.map((d) => {
+              return {
+                [d]: dataGroupedByYWithImputedValues[i][d],
+              };
+            });
+          },
+        });
+      }
+    case "zeros":
+      if (allSegments) {
+        return getBaseWideDataInverted({
+          dataGroupedByY,
+          yKey,
+          getX,
+          getSegment,
+          getOptionalObservationProps: () => {
+            return allSegments.map((d) => {
+              return {
+                [d]: interpolateZerosValue(),
+              };
+            });
+          },
+        });
+      }
+    case "none":
+    default:
+      return getBaseWideDataInverted({
+        dataGroupedByY,
+        yKey,
+        getX,
+        getSegment,
+      });
+  }
+};
+
 const getBaseWideData = ({
   dataGroupedByX,
   xKey,
@@ -533,8 +616,63 @@ const getBaseWideData = ({
   return wideData;
 };
 
+const getBaseWideDataInverted = ({
+  dataGroupedByY,
+  yKey,
+  getX,
+  getSegment,
+  getOptionalObservationProps = () => [],
+}: {
+  dataGroupedByY: InternMap<string, Array<Observation>>;
+  yKey: string;
+  getX: (d: Observation) => number | null;
+  getSegment: (d: Observation) => string;
+  getOptionalObservationProps?: (
+    datumIndex: number
+  ) => Array<{ [key: string]: number }>;
+}): Array<Observation> => {
+  const wideData = [];
+  const dataGroupedByYEntries = [...dataGroupedByY.entries()];
+
+  for (let i = 0; i < dataGroupedByY.size; i++) {
+    const [k, v] = dataGroupedByYEntries[i];
+
+    const observation: Observation = Object.assign(
+      {
+        [yKey]: k,
+        [`${yKey}/__iri__`]: v[0][`${yKey}/__iri__`],
+        total: sum(v, getX),
+      },
+      ...getOptionalObservationProps(i),
+      ...v
+        // Sorting the values in case of multiple values for the same segment
+        // (desired behavior for getting the domain when time slider is active).
+        .sort((a, b) => {
+          return (getX(a) ?? 0) - (getX(b) ?? 0);
+        })
+        .map((d) => {
+          return {
+            [getSegment(d)]: getX(d),
+          };
+        })
+    );
+
+    wideData.push(observation);
+  }
+
+  return wideData;
+};
+
 const getIdentityId = (id: string) => `${id}/__identity__`;
 export const useGetIdentityY = (id: string) => {
+  return useCallback(
+    (d: Observation) => {
+      return (d[getIdentityId(id)] as number | null) ?? null;
+    },
+    [id]
+  );
+};
+export const useGetIdentityX = (id: string) => {
   return useCallback(
     (d: Observation) => {
       return (d[getIdentityId(id)] as number | null) ?? null;
@@ -563,6 +701,30 @@ export const normalizeData = (
       ...d,
       [yKey]: 100 * (y ? y / totalGroupValue : y ?? 0),
       [getIdentityId(yKey)]: y,
+    };
+  });
+};
+
+export const normalizeDataInverted = (
+  sortedData: Observation[],
+  {
+    xKey,
+    getX,
+    getTotalGroupValue,
+  }: {
+    xKey: string;
+    getX: (d: Observation) => number | null;
+    getTotalGroupValue: (d: Observation) => number;
+  }
+): Observation[] => {
+  return sortedData.map((d) => {
+    const totalGroupValue = getTotalGroupValue(d);
+    const x = getX(d);
+
+    return {
+      ...d,
+      [xKey]: 100 * (x ? x / totalGroupValue : x ?? 0),
+      [getIdentityId(xKey)]: x,
     };
   });
 };

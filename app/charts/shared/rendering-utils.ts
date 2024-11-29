@@ -163,6 +163,16 @@ export type RenderWhiskerDatum = {
   renderMiddleCircle?: boolean;
 };
 
+export type RenderWhiskerBarDatum = {
+  key: string;
+  y: number;
+  x1: number;
+  x2: number;
+  width: number;
+  fill?: string;
+  renderMiddleCircle?: boolean;
+};
+
 export const renderWhiskers = (
   g: Selection<SVGGElement, null, SVGGElement, unknown>,
   data: RenderWhiskerDatum[],
@@ -261,6 +271,118 @@ export const renderWhiskers = (
                   .select(".middle-circle")
                   .attr("cx", (d) => d.x + d.width / 2)
                   .attr("cy", (d) => (d.y1 + d.y2) / 2)
+                  .attr("r", ERROR_WHISKER_MIDDLE_CIRCLE_RADIUS)
+                  .attr("fill", (d) => d.fill ?? "black")
+                  .attr("stroke", "none")
+              ),
+          transition,
+        }),
+      (exit) =>
+        maybeTransition(exit, {
+          transition,
+          s: (g) => g.attr("opacity", 0).remove(),
+        })
+    );
+};
+
+export const renderBarWhiskers = (
+  g: Selection<SVGGElement, null, SVGGElement, unknown>,
+  data: RenderWhiskerBarDatum[],
+  options: RenderOptions
+) => {
+  const { transition } = options;
+
+  g.selectAll<SVGGElement, RenderWhiskerDatum>("g")
+    .data(data, (d) => d.key)
+    .join(
+      (enter) =>
+        enter
+          .append("g")
+          .attr("opacity", 0)
+          .call((g) =>
+            g
+              .append("rect")
+              .attr("class", "top")
+              .attr("y", (d) => d.y)
+              .attr("x", (d) => d.x2)
+              .attr("width", (d) => d.width)
+              .attr("height", ERROR_WHISKER_SIZE)
+              .attr("fill", (d) => d.fill ?? "black")
+              .attr("stroke", "none")
+          )
+          .call((g) =>
+            g
+              .append("rect")
+              .attr("class", "middle")
+              .attr("y", (d) => d.y + (d.width - ERROR_WHISKER_SIZE) / 2)
+              .attr("x", (d) => d.x2)
+              .attr("width", ERROR_WHISKER_SIZE)
+              .attr("height", (d) => Math.max(0, d.x1 - d.x2))
+              .attr("fill", (d) => d.fill ?? "black")
+              .attr("stroke", "none")
+          )
+          .call((g) =>
+            g
+              .append("rect")
+              .attr("class", "bottom")
+              .attr("y", (d) => d.y)
+              .attr("x", (d) => d.x1)
+              .attr("width", (d) => d.width)
+              .attr("height", ERROR_WHISKER_SIZE)
+              .attr("fill", (d) => d.fill ?? "black")
+              .attr("stroke", "none")
+          )
+          .call((g) =>
+            g
+              .filter((d) => d.renderMiddleCircle ?? false)
+              .append("circle")
+              .attr("class", "middle-circle")
+              .attr("cy", (d) => d.y + d.width / 2)
+              .attr("cx", (d) => (d.x1 + d.x2) / 2)
+              .attr("r", ERROR_WHISKER_MIDDLE_CIRCLE_RADIUS)
+              .attr("fill", (d) => d.fill ?? "black")
+              .attr("stroke", "none")
+          )
+          .call((enter) =>
+            maybeTransition(enter, {
+              s: (g) => g.attr("opacity", 1),
+              transition,
+            })
+          ),
+      (update) =>
+        maybeTransition(update, {
+          s: (g) =>
+            g
+              .attr("opacity", 1)
+              .call((g) =>
+                g
+                  .select(".top")
+                  .attr("y", (d) => d.y)
+                  .attr("x", (d) => d.x2)
+                  .attr("width", (d) => d.width)
+                  .attr("fill", (d) => d.fill ?? "black")
+              )
+              .call((g) =>
+                g
+                  .select(".middle")
+                  .attr("y", (d) => d.y + (d.width - ERROR_WHISKER_SIZE) / 2)
+                  .attr("x", (d) => d.x2)
+                  .attr("height", (d) => Math.max(0, d.x1 - d.x2))
+                  .attr("fill", (d) => d.fill ?? "black")
+              )
+              .call((g) =>
+                g
+                  .select(".bottom")
+                  .attr("y", (d) => d.y)
+                  .attr("x", (d) => d.x1)
+                  .attr("width", (d) => d.width)
+                  .attr("fill", (d) => d.fill ?? "black")
+              )
+              .call((g) =>
+                g
+                  .select(".middle-circle")
+                  .attr("cy", (d) => d.y + d.width / 2)
+                  .attr("cx", (d) => (d.x1 + d.x2) / 2)
                   .attr("r", ERROR_WHISKER_MIDDLE_CIRCLE_RADIUS)
                   .attr("fill", (d) => d.fill ?? "black")
                   .attr("stroke", "none")

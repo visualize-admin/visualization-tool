@@ -1,5 +1,4 @@
-import { ColumnsState } from "@/charts/column/columns-state";
-import { ComboLineColumnState } from "@/charts/combo/combo-line-column-state";
+import { BarsState } from "@/charts/bar/bars-state";
 import { useChartState } from "@/charts/shared/chart-state";
 import { useInteraction } from "@/charts/shared/use-interaction";
 import { Observation } from "@/domain/data";
@@ -7,10 +6,9 @@ import { Observation } from "@/domain/data";
 export const InteractionBars = () => {
   const [, dispatch] = useInteraction();
 
-  const { chartData, bounds, getX, xScaleInteraction } = useChartState() as
-    | ColumnsState
-    | ComboLineColumnState;
-  const { margins, chartHeight } = bounds;
+  const { chartData, bounds, getY, yScaleInteraction } =
+    useChartState() as BarsState;
+  const { margins, chartWidth } = bounds;
 
   const showTooltip = (d: Observation) => {
     dispatch({
@@ -28,10 +26,10 @@ export const InteractionBars = () => {
       {chartData.map((d, i) => (
         <rect
           key={i}
-          x={xScaleInteraction(getX(d)) as number}
-          y={0}
-          width={xScaleInteraction.bandwidth()}
-          height={Math.max(0, chartHeight)}
+          x={0}
+          y={yScaleInteraction(getY(d)) as number}
+          height={yScaleInteraction.bandwidth()}
+          width={Math.max(0, chartWidth)}
           fill="hotpink"
           fillOpacity={0}
           stroke="none"

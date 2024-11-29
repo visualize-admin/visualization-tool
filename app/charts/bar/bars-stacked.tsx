@@ -10,11 +10,11 @@ export const BarsStacked = () => {
   const ref = useRef<SVGGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
-  const { bounds, getX, xScale, yScale, colors, series, getRenderingKey } =
+  const { bounds, getY, xScale, yScale, colors, series, getRenderingKey } =
     useChartState() as StackedBarsState;
   const { margins, height } = bounds;
-  const bandwidth = xScale.bandwidth();
-  const y0 = yScale(0);
+  const bandwidth = yScale.bandwidth();
+  const x0 = xScale(0);
   const renderData: RenderBarDatum[] = useMemo(() => {
     return series.flatMap((d) => {
       const color = colors(d.key);
@@ -24,10 +24,10 @@ export const BarsStacked = () => {
 
         return {
           key: getRenderingKey(observation, d.key),
-          x: xScale(getX(observation)) as number,
-          y: yScale(segment[1]),
-          width: bandwidth,
-          height: Math.max(0, yScale(segment[0]) - yScale(segment[1])),
+          y: yScale(getY(observation)) as number,
+          x: xScale(segment[1]),
+          height: bandwidth,
+          width: Math.max(0, xScale(segment[0]) - xScale(segment[1])),
           color,
         };
       });
@@ -36,7 +36,7 @@ export const BarsStacked = () => {
   }, [
     bandwidth,
     colors,
-    getX,
+    getY,
     series,
     xScale,
     yScale,
@@ -51,7 +51,7 @@ export const BarsStacked = () => {
         id: "bars-stacked",
         transform: `translate(${margins.left} ${margins.top})`,
         transition: { enable: enableTransition, duration: transitionDuration },
-        render: (g, opts) => renderBars(g, renderData, { ...opts, y0 }),
+        render: (g, opts) => renderBars(g, renderData, { ...opts, x0 }),
       });
     }
   }, [
@@ -60,7 +60,7 @@ export const BarsStacked = () => {
     margins.top,
     renderData,
     transitionDuration,
-    y0,
+    x0,
   ]);
 
   return <g ref={ref} />;

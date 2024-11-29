@@ -5,54 +5,54 @@ import { BarsState } from "@/charts/bar/bars-state";
 import { RenderBarDatum, renderBars } from "@/charts/bar/rendering-utils";
 import { useChartState } from "@/charts/shared/chart-state";
 import {
-  RenderWhiskerDatum,
+  RenderWhiskerBarDatum,
   filterWithoutErrors,
+  renderBarWhiskers,
   renderContainer,
-  renderWhiskers,
 } from "@/charts/shared/rendering-utils";
 import { useTransitionStore } from "@/stores/transition";
 import { useTheme } from "@/themes";
 
 export const ErrorWhiskers = () => {
   const {
-    getX,
-    getYError,
-    getYErrorRange,
+    getY,
+    getXError,
+    getXErrorRange,
     chartData,
     yScale,
     xScale,
-    showYStandardError,
+    showXStandardError,
     bounds,
   } = useChartState() as BarsState;
   const { margins, width, height } = bounds;
   const ref = useRef<SVGGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
-  const renderData: RenderWhiskerDatum[] = useMemo(() => {
-    if (!getYErrorRange || !showYStandardError) {
+  const renderData: RenderWhiskerBarDatum[] = useMemo(() => {
+    if (!getXErrorRange || !showXStandardError) {
       return [];
     }
 
-    const bandwidth = xScale.bandwidth();
-    return chartData.filter(filterWithoutErrors(getYError)).map((d, i) => {
-      const x0 = xScale(getX(d)) as number;
+    const bandwidth = yScale.bandwidth();
+    return chartData.filter(filterWithoutErrors(getXError)).map((d, i) => {
+      const y0 = yScale(getY(d)) as number;
       const barWidth = Math.min(bandwidth, 15);
-      const [y1, y2] = getYErrorRange(d);
+      const [x1, x2] = getXErrorRange(d);
       return {
         key: `${i}`,
-        x: x0 + bandwidth / 2 - barWidth / 2,
-        y1: yScale(y1),
-        y2: yScale(y2),
+        y: y0 + bandwidth / 2 - barWidth / 2,
+        x1: xScale(x1),
+        x2: xScale(x2),
         width: barWidth,
-      } as RenderWhiskerDatum;
+      } as RenderWhiskerBarDatum;
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     chartData,
-    getX,
-    getYError,
-    getYErrorRange,
-    showYStandardError,
+    getY,
+    getXError,
+    getXErrorRange,
+    showXStandardError,
     xScale,
     yScale,
     width,
@@ -65,7 +65,7 @@ export const ErrorWhiskers = () => {
         id: "bars-error-whiskers",
         transform: `translate(${margins.left} ${margins.top})`,
         transition: { enable: enableTransition, duration: transitionDuration },
-        render: (g, opts) => renderWhiskers(g, renderData, opts),
+        render: (g, opts) => renderBarWhiskers(g, renderData, opts),
       });
     }
   }, [
@@ -87,8 +87,8 @@ export const Bars = () => {
   const ref = useRef<SVGGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
-  const bandwidth = xScale.bandwidth();
-  const y0 = yScale(0);
+  const bandwidth = yScale.bandwidth();
+  const x0 = xScale(0);
   const renderData: RenderBarDatum[] = useMemo(() => {
     const getColor = (d: number) => {
       return d <= 0 ? theme.palette.secondary.main : schemeCategory10[0];
@@ -96,20 +96,20 @@ export const Bars = () => {
 
     return chartData.map((d) => {
       const key = getRenderingKey(d);
-      const xScaled = xScale(getX(d)) as number;
-      const yRaw = getY(d);
-      const y = yRaw === null || isNaN(yRaw) ? 0 : yRaw;
-      const yScaled = yScale(y);
-      const yRender = yScale(Math.max(y, 0));
-      const height = Math.max(0, Math.abs(yScaled - y0));
-      const color = getColor(y);
+      const yScaled = yScale(getY(d)) as number;
+      const xRaw = getX(d);
+      const x = xRaw === null || isNaN(xRaw) ? 0 : xRaw;
+      const xScaled = xScale(x);
+      const xRender = xScale(Math.min(x, 0));
+      const width = Math.max(0, Math.abs(xScaled - x0));
+      const color = getColor(x);
 
       return {
         key,
-        x: xScaled,
-        y: yRender,
-        width: bandwidth,
-        height,
+        x: xRender,
+        y: yScaled,
+        width,
+        height: bandwidth,
         color,
       };
     });
@@ -120,7 +120,7 @@ export const Bars = () => {
     getY,
     xScale,
     yScale,
-    y0,
+    x0,
     theme.palette.secondary.main,
     getRenderingKey,
   ]);
@@ -131,7 +131,7 @@ export const Bars = () => {
         id: "bars",
         transform: `translate(${margins.left} ${margins.top})`,
         transition: { enable: enableTransition, duration: transitionDuration },
-        render: (g, opts) => renderBars(g, renderData, { ...opts, y0 }),
+        render: (g, opts) => renderBars(g, renderData, { ...opts, x0 }),
       });
     }
   }, [
@@ -140,7 +140,7 @@ export const Bars = () => {
     margins.top,
     renderData,
     transitionDuration,
-    y0,
+    x0,
   ]);
 
   return <g ref={ref} />;

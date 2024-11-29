@@ -444,11 +444,11 @@ export const getInitialConfig = (
           timeRangeComponentId: barXComponentId,
         }),
         fields: {
-          x: {
+          y: {
             componentId: barXComponentId,
             sorting: DEFAULT_SORTING,
           },
-          y: { componentId: numericalMeasures[0].id },
+          x: { componentId: numericalMeasures[0].id },
         },
       };
     case "line":
@@ -1019,7 +1019,8 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     },
     fields: {
       x: {
-        componentId: ({ oldValue, newChartConfig, dimensions }) => {
+        componentId: ({ oldValue, newChartConfig, dimensions, measures }) => {
+          measures[0];
           // When switching from a scatterplot, x is a measure.
           if (dimensions.find((d) => d.id === oldValue)) {
             return produce(newChartConfig, (draft) => {
@@ -1031,7 +1032,8 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         },
       },
       y: {
-        componentId: ({ oldValue, newChartConfig }) => {
+        componentId: ({ oldValue, newChartConfig, dimensions }) => {
+          dimensions[0];
           return produce(newChartConfig, (draft) => {
             draft.fields.y.componentId = oldValue;
           });

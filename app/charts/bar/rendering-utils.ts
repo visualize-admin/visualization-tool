@@ -15,7 +15,7 @@ export type RenderBarDatum = {
 };
 
 type RenderBarOptions = RenderOptions & {
-  y0: number;
+  x0: number;
 };
 
 export const renderBars = (
@@ -23,7 +23,7 @@ export const renderBars = (
   data: RenderBarDatum[],
   options: RenderBarOptions
 ) => {
-  const { transition, y0 } = options;
+  const { transition, x0 } = options;
 
   g.selectAll<SVGRectElement, RenderBarDatum>("rect")
     .data(data, (d) => d.key)
@@ -32,15 +32,15 @@ export const renderBars = (
         enter
           .append("rect")
           .attr("data-index", (_, i) => i)
-          .attr("x", (d) => d.x)
-          .attr("y", y0)
+          .attr("y", (d) => d.y)
+          .attr("x", x0)
           .attr("width", (d) => d.width)
           .attr("height", 0)
           .attr("fill", (d) => d.color)
           .call((enter) =>
             maybeTransition(enter, {
               transition,
-              s: (g) => g.attr("y", (d) => d.y).attr("height", (d) => d.height),
+              s: (g) => g.attr("x", (d) => d.x).attr("width", (d) => d.width),
             })
           ),
       (update) =>
@@ -57,7 +57,7 @@ export const renderBars = (
       (exit) =>
         maybeTransition(exit, {
           transition,
-          s: (g) => g.attr("y", y0).attr("height", 0).remove(),
+          s: (g) => g.attr("x", x0).attr("height", 0).remove(),
         })
     );
 };
