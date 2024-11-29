@@ -16,7 +16,6 @@ import {
 } from "@/charts/bar/bars-state-props";
 import { PADDING_INNER, PADDING_OUTER } from "@/charts/bar/constants";
 import {
-  useAxisLabelHeightOffset,
   useChartBounds,
   useChartPadding,
 } from "@/charts/shared/chart-dimensions";
@@ -203,17 +202,12 @@ const useBarsState = (
       : yTimeRangeDomainLabels,
   });
   const right = 40;
-  const { offset: xAxisLabelMargin } = useAxisLabelHeightOffset({
-    label: xMeasure.label,
-    width,
-    marginLeft: left,
-    marginRight: right,
-  });
   const margins = {
-    top: 50 + xAxisLabelMargin,
+    top: 0,
     right,
     bottom,
-    left,
+    //NOTE: hardcoded for the moment
+    left: 50 + left,
   };
 
   const bounds = useChartBounds(width, margins, height);

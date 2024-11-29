@@ -27,7 +27,6 @@ import {
 } from "@/charts/bar/bars-stacked-state-props";
 import { PADDING_INNER, PADDING_OUTER } from "@/charts/bar/constants";
 import {
-  useAxisLabelHeightOffset,
   useChartBounds,
   useChartPadding,
 } from "@/charts/shared/chart-dimensions";
@@ -401,17 +400,11 @@ const useBarsStackedState = (
     normalize,
   });
   const right = 40;
-  const { offset: yAxisLabelMargin } = useAxisLabelHeightOffset({
-    label: xMeasure.label,
-    width,
-    marginLeft: left,
-    marginRight: right,
-  });
   const margins = {
-    top: 50 + yAxisLabelMargin,
+    top: 0,
     right,
     bottom,
-    left,
+    left: 50 + left,
   };
   const bounds = useChartBounds(width, margins, height);
   const { chartWidth, chartHeight } = bounds;
