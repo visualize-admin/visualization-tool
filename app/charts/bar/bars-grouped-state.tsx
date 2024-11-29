@@ -252,7 +252,7 @@ const useBarsGroupedState = (
       ) ?? 0,
       0
     );
-    const xScale = scaleLinear().domain([minValue, maxValue]).nice();
+    const xScale = scaleLinear().domain([maxValue, minValue]).nice();
 
     const minPaddingValue = getMinX(paddingData, (d) =>
       getXErrorRange ? getXErrorRange(d)[0] : getX(d)

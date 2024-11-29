@@ -111,7 +111,7 @@ export const BarsGrouped = () => {
         return {
           key,
           y: (yScale(segment) as number) + (yScaleIn(y) as number),
-          x: xScale(Math.max(x, 0)),
+          x: xScale(Math.min(x, 0)),
           width: Math.max(0, Math.abs(xScale(x) - x0)),
           height: bandwidth,
           color: colors(y),
