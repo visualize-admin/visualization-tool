@@ -350,11 +350,11 @@ const useBarsGroupedState = (
   const { chartWidth, chartHeight } = bounds;
 
   // Adjust of scales based on chart dimensions
-  yScale.range([0, chartWidth]);
-  yScaleInteraction.range([0, chartWidth]);
+  yScale.range([0, chartHeight]);
+  yScaleInteraction.range([0, chartHeight]);
   yScaleIn.range([0, yScale.bandwidth()]);
-  yScaleTimeRange.range([0, chartWidth]);
-  xScale.range([chartHeight, 0]);
+  yScaleTimeRange.range([0, chartHeight]);
+  xScale.range([chartWidth, 0]);
 
   const isMobile = useIsMobile();
 

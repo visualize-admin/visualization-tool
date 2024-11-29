@@ -409,10 +409,10 @@ const useBarsStackedState = (
   const bounds = useChartBounds(width, margins, height);
   const { chartWidth, chartHeight } = bounds;
 
-  yScale.range([0, chartWidth]);
-  yScaleInteraction.range([0, chartWidth]);
-  yScaleTimeRange.range([0, chartWidth]);
-  xScale.range([chartHeight, 0]);
+  yScale.range([0, chartHeight]);
+  yScaleInteraction.range([0, chartHeight]);
+  yScaleTimeRange.range([0, chartHeight]);
+  xScale.range([chartWidth, 0]);
 
   const isMobile = useIsMobile();
 
