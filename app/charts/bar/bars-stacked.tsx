@@ -25,9 +25,9 @@ export const BarsStacked = () => {
         return {
           key: getRenderingKey(observation, d.key),
           y: yScale(getY(observation)) as number,
-          x: xScale(segment[1]),
+          x: xScale(segment[0]),
           height: bandwidth,
-          width: Math.max(0, xScale(segment[0]) - xScale(segment[1])),
+          width: Math.min(0, xScale(segment[0]) - xScale(segment[1])) * -1,
           color,
         };
       });
