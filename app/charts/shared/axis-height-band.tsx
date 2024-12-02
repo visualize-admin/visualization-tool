@@ -38,7 +38,7 @@ export const AxisHeightBand = () => {
       }
 
       const g = renderContainer(ref.current, {
-        id: "axis-width-band-vertical",
+        id: "axis-height-band",
         transform: `translate(${margins.left} ${margins.top})`,
         transition: { enable: enableTransition, duration: transitionDuration },
         render: (g) => g.attr("data-testid", "axis-width-band").call(axis),
