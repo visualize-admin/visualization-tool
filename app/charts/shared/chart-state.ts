@@ -109,7 +109,6 @@ export const useChartState = () => {
 export type ChartWithInteractiveXTimeRangeState =
   | AreasState
   | ColumnsState
-  // | BarsState
   | LinesState;
 
 export type NumericalValueGetter = (d: Observation) => number | null;

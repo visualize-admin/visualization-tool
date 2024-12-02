@@ -12,9 +12,9 @@ import { BarChart } from "@/charts/bar/bars-state";
 import { InteractionBars } from "@/charts/bar/overlay-bars";
 import { ChartDataWrapper } from "@/charts/chart-data-wrapper";
 import {
-  AxisWidthBand,
-  AxisWidthBandDomain,
-} from "@/charts/shared/axis-width-band-vertical";
+  AxisHeightBand,
+  AxisHeightBandDomain,
+} from "@/charts/shared/axis-height-band";
 import { AxisWidthLinear } from "@/charts/shared/axis-width-linear";
 import { BrushTime, shouldShowBrush } from "@/charts/shared/brush";
 import {
@@ -54,9 +54,9 @@ const ChartBars = memo((props: ChartProps<BarConfig>) => {
           <ChartContainer>
             <ChartSvg>
               <AxisWidthLinear />
-              <AxisWidthBand />
+              <AxisHeightBand />
               <BarsStacked />
-              <AxisWidthBandDomain />
+              <AxisHeightBandDomain />
               <InteractionBars />
               {showTimeBrush && <BrushTime />}
             </ChartSvg>
@@ -84,10 +84,10 @@ const ChartBars = memo((props: ChartProps<BarConfig>) => {
           <ChartContainer>
             <ChartSvg>
               <AxisWidthLinear />
-              <AxisWidthBand />
+              <AxisHeightBand />
               <BarsGrouped />
               <ErrorWhiskersGrouped />
-              <AxisWidthBandDomain />
+              <AxisHeightBandDomain />
               <InteractionBars />
               {showTimeBrush && <BrushTime />}
             </ChartSvg>
@@ -115,10 +115,10 @@ const ChartBars = memo((props: ChartProps<BarConfig>) => {
           <ChartContainer>
             <ChartSvg>
               <AxisWidthLinear />
-              <AxisWidthBand />
+              <AxisHeightBand />
               <Bars />
               <ErrorWhiskers />
-              <AxisWidthBandDomain />
+              <AxisHeightBandDomain />
               <InteractionBars />
               {showTimeBrush && <BrushTime />}
             </ChartSvg>

@@ -8,8 +8,7 @@ import {
 import { NumericalMeasure, Observation } from "@/domain/data";
 import { formatNumberWithUnit } from "@/formatters";
 
-const NORMALIZED_Y_DOMAIN = [0, 100];
-const NORMALIZED_X_DOMAIN = [0, 100];
+const NORMALIZED_VALUE_DOMAIN = [0, 100];
 
 export const getStackedYScale = (
   data: Observation[],
@@ -24,7 +23,7 @@ export const getStackedYScale = (
   const yScale = scaleLinear();
 
   if (normalize) {
-    yScale.domain(NORMALIZED_Y_DOMAIN);
+    yScale.domain(NORMALIZED_VALUE_DOMAIN);
   } else {
     const grouped = group(data, (d) => getX(d) + getTime?.(d));
     let yMin = 0;
@@ -63,7 +62,7 @@ export const getStackedXScale = (
   const xScale = scaleLinear();
 
   if (normalize) {
-    xScale.domain(NORMALIZED_X_DOMAIN);
+    xScale.domain(NORMALIZED_VALUE_DOMAIN);
   } else {
     const grouped = group(data, (d) => getY(d) + getTime?.(d));
     let xMin = 0;

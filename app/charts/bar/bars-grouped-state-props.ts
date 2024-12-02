@@ -61,7 +61,7 @@ export const useBarsGroupedStateVariables = (
     dimensionsById,
     observations,
   });
-  const numericalYErrorVariables = useNumericalXErrorVariables(x, {
+  const numericalXErrorVariables = useNumericalXErrorVariables(x, {
     numericalXVariables,
     dimensions,
     measures,
@@ -116,7 +116,7 @@ export const useBarsGroupedStateVariables = (
     sortData,
     ...bandYVariables,
     ...numericalXVariables,
-    ...numericalYErrorVariables,
+    ...numericalXErrorVariables,
     ...segmentVariables,
     ...interactiveFiltersVariables,
     getRenderingKey,

@@ -11,7 +11,7 @@ import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { useTimeFormatUnit } from "@/formatters";
 import { useTransitionStore } from "@/stores/transition";
 
-export const AxisWidthBand = () => {
+export const AxisHeightBand = () => {
   const ref = useRef<SVGGElement>(null);
   const state = useChartState() as BarsState;
   const { xScale, getYLabel, yTimeUnit, yScale, bounds } = state;
@@ -30,7 +30,6 @@ export const AxisWidthBand = () => {
       const axis = axisLeft(yScale)
         .tickSizeOuter(0)
         .tickSizeInner(hasNegativeValues ? -chartHeight : 6);
-      // .tickPadding(rotation ? -10 : 0);
 
       if (yTimeUnit) {
         axis.tickFormat((d) => formatDate(d, yTimeUnit));
@@ -83,7 +82,7 @@ export const AxisWidthBand = () => {
   return <g ref={ref} />;
 };
 
-export const AxisWidthBandDomain = () => {
+export const AxisHeightBandDomain = () => {
   const ref = useRef<SVGGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
@@ -95,7 +94,7 @@ export const AxisWidthBandDomain = () => {
     if (ref.current) {
       const axis = axisLeft(yScale).tickSizeOuter(0);
       const g = renderContainer(ref.current, {
-        id: "axis-width-band-vertical-domain",
+        id: "axis-height-band-domain",
         transform: `translate(${margins.left} ${margins.top})`,
         transition: { enable: enableTransition, duration: transitionDuration },
         render: (g) => g.call(axis),

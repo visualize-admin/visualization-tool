@@ -4,10 +4,10 @@ import { Fragment, memo, useEffect, useMemo, useRef } from "react";
 import { LinesState } from "@/charts/line/lines-state";
 import { useChartState } from "@/charts/shared/chart-state";
 import {
-  RenderWhiskerDatum,
+  RenderVerticalWhiskerDatum,
   filterWithoutErrors,
   renderContainer,
-  renderWhiskers,
+  renderVerticalWhiskers,
 } from "@/charts/shared/rendering-utils";
 import { Observation } from "@/domain/data";
 import { useTransitionStore } from "@/stores/transition";
@@ -29,7 +29,7 @@ export const ErrorWhiskers = () => {
   const ref = useRef<SVGGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
-  const renderData: RenderWhiskerDatum[] = useMemo(() => {
+  const renderData: RenderVerticalWhiskerDatum[] = useMemo(() => {
     if (!getYErrorRange || !showYStandardError) {
       return [];
     }
@@ -47,7 +47,7 @@ export const ErrorWhiskers = () => {
         width: barWidth,
         fill: colors(segment),
         renderMiddleCircle: true,
-      } as RenderWhiskerDatum;
+      } as RenderVerticalWhiskerDatum;
     });
   }, [
     chartData,
@@ -67,7 +67,7 @@ export const ErrorWhiskers = () => {
         id: "lines-error-whiskers",
         transform: `translate(${margins.left} ${margins.top})`,
         transition: { enable: enableTransition, duration: transitionDuration },
-        render: (g, opts) => renderWhiskers(g, renderData, opts),
+        render: (g, opts) => renderVerticalWhiskers(g, renderData, opts),
       });
     }
   }, [

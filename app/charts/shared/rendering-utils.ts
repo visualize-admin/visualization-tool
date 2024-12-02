@@ -153,7 +153,7 @@ type AnyTransition = Transition<any, any, any, any>;
 const ERROR_WHISKER_SIZE = 1;
 const ERROR_WHISKER_MIDDLE_CIRCLE_RADIUS = 3.5;
 
-export type RenderWhiskerDatum = {
+export type RenderVerticalWhiskerDatum = {
   key: string;
   x: number;
   y1: number;
@@ -163,7 +163,7 @@ export type RenderWhiskerDatum = {
   renderMiddleCircle?: boolean;
 };
 
-export type RenderWhiskerBarDatum = {
+export type RenderHorizontalWhiskerDatum = {
   key: string;
   y: number;
   x1: number;
@@ -173,14 +173,14 @@ export type RenderWhiskerBarDatum = {
   renderMiddleCircle?: boolean;
 };
 
-export const renderWhiskers = (
+export const renderVerticalWhiskers = (
   g: Selection<SVGGElement, null, SVGGElement, unknown>,
-  data: RenderWhiskerDatum[],
+  data: RenderVerticalWhiskerDatum[],
   options: RenderOptions
 ) => {
   const { transition } = options;
 
-  g.selectAll<SVGGElement, RenderWhiskerDatum>("g")
+  g.selectAll<SVGGElement, RenderVerticalWhiskerDatum>("g")
     .data(data, (d) => d.key)
     .join(
       (enter) =>
@@ -285,14 +285,14 @@ export const renderWhiskers = (
     );
 };
 
-export const renderBarWhiskers = (
+export const renderHorizontalWhisker = (
   g: Selection<SVGGElement, null, SVGGElement, unknown>,
-  data: RenderWhiskerBarDatum[],
+  data: RenderHorizontalWhiskerDatum[],
   options: RenderOptions
 ) => {
   const { transition } = options;
 
-  g.selectAll<SVGGElement, RenderWhiskerDatum>("g")
+  g.selectAll<SVGGElement, RenderHorizontalWhiskerDatum>("g")
     .data(data, (d) => d.key)
     .join(
       (enter) =>

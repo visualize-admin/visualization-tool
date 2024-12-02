@@ -5,10 +5,10 @@ import { BarsState } from "@/charts/bar/bars-state";
 import { RenderBarDatum, renderBars } from "@/charts/bar/rendering-utils";
 import { useChartState } from "@/charts/shared/chart-state";
 import {
-  RenderWhiskerBarDatum,
+  RenderHorizontalWhiskerDatum,
   filterWithoutErrors,
-  renderBarWhiskers,
   renderContainer,
+  renderHorizontalWhisker,
 } from "@/charts/shared/rendering-utils";
 import { useTransitionStore } from "@/stores/transition";
 import { useTheme } from "@/themes";
@@ -28,7 +28,7 @@ export const ErrorWhiskers = () => {
   const ref = useRef<SVGGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
-  const renderData: RenderWhiskerBarDatum[] = useMemo(() => {
+  const renderData: RenderHorizontalWhiskerDatum[] = useMemo(() => {
     if (!getXErrorRange || !showXStandardError) {
       return [];
     }
@@ -44,7 +44,7 @@ export const ErrorWhiskers = () => {
         x1: xScale(x1),
         x2: xScale(x2),
         width: barWidth,
-      } as RenderWhiskerBarDatum;
+      } as RenderHorizontalWhiskerDatum;
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -65,7 +65,7 @@ export const ErrorWhiskers = () => {
         id: "bars-error-whiskers",
         transform: `translate(${margins.left} ${margins.top})`,
         transition: { enable: enableTransition, duration: transitionDuration },
-        render: (g, opts) => renderBarWhiskers(g, renderData, opts),
+        render: (g, opts) => renderHorizontalWhisker(g, renderData, opts),
       });
     }
   }, [

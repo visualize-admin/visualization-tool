@@ -172,7 +172,7 @@ const useBarsGroupedState = (
     return Object.fromEntries(
       rollup(
         chartData,
-        (v) => sum(v, (y) => getX(y)),
+        (v) => sum(v, (d) => getX(d)),
         (y) => getY(y)
       )
     );

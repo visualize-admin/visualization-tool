@@ -173,7 +173,7 @@ const useColumnsGroupedState = (
     return Object.fromEntries(
       rollup(
         chartData,
-        (v) => sum(v, (x) => getY(x)),
+        (v) => sum(v, (d) => getY(d)),
         (x) => getX(x)
       )
     );
