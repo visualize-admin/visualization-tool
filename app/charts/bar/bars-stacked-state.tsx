@@ -328,7 +328,7 @@ const useBarsStackedState = (
 
   const paddingXScale = useMemo(() => {
     //  When the user can toggle between absolute and relative values, we use the
-    // absolute values to calculate the yScale domain, so that the yScale doesn't
+    // absolute values to calculate the xScale domain, so that the xScale doesn't
     // change when the user toggles between absolute and relative values.
     if (interactiveFiltersConfig?.calculation.active) {
       const scale = getStackedXScale(paddingData, {
