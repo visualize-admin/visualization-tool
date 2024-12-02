@@ -246,7 +246,6 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
     measures,
     observations,
   } = props;
-  const { chartType } = chartConfig;
   const fieldLabelHint: Record<EncodingFieldType, string> = {
     animation: t({
       id: "controls.select.dimension",
@@ -327,8 +326,7 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
 
   const hasColorPalette = !!encoding.options?.colorPalette;
 
-  const hasSubOptions =
-    (encoding.options?.chartSubType && chartType === "column") ?? false;
+  const hasSubOptions = encoding.options?.chartSubType ?? false;
 
   return (
     <div
@@ -412,7 +410,7 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
             chartConfig={chartConfig}
             components={allComponents}
             hasColorPalette={hasColorPalette}
-            hasSubOptions={hasSubOptions}
+            hasSubOptions={!!hasSubOptions}
           />
         )}
       {encoding.options?.imputation?.shouldShow(chartConfig, observations) && (

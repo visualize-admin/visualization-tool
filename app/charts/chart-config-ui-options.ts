@@ -780,9 +780,9 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         filters: false,
         onChange: (id, { chartConfig, measures }) => {
           if (chartConfig.fields.segment?.type === "stacked") {
-            const yMeasure = measures.find((d) => d.id === id);
+            const xMeasure = measures.find((d) => d.id === id);
 
-            if (disableStacked(yMeasure)) {
+            if (disableStacked(xMeasure)) {
               setWith(chartConfig, "fields.segment.type", "grouped", Object);
 
               if (chartConfig.interactiveFiltersConfig?.calculation) {
@@ -851,15 +851,15 @@ const chartConfigOptionsUISpec: ChartSpecs = {
             chartConfig,
             "fields.segment"
           );
-          const yComponent = components.find(
-            (d) => d.id === chartConfig.fields.y.componentId
+          const xComponent = components.find(
+            (d) => d.id === chartConfig.fields.x.componentId
           );
           setWith(
             chartConfig,
             "fields.segment",
             {
               ...segment,
-              type: disableStacked(yComponent) ? "grouped" : "stacked",
+              type: disableStacked(xComponent) ? "grouped" : "stacked",
             },
             Object
           );
@@ -883,9 +883,9 @@ const chartConfigOptionsUISpec: ChartSpecs = {
           },
           chartSubType: {
             getValues: (chartConfig, dimensions) => {
-              const yId = chartConfig.fields.y.componentId;
-              const yDimension = dimensions.find((d) => d.id === yId);
-              const disabledStacked = disableStacked(yDimension);
+              const xId = chartConfig.fields.x.componentId;
+              const xDimension = dimensions.find((d) => d.id === xId);
+              const disabledStacked = disableStacked(xDimension);
 
               return [
                 {
