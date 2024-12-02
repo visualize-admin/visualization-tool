@@ -9,11 +9,11 @@ import { Reducer } from "use-immer";
 
 import {
   getChartConfigAdjustedToChartType,
+  getEnabledChartTypes,
   getFieldComponentIds,
   getGroupedFieldIds,
   getHiddenFieldIds,
   getInitialConfig,
-  getPossibleChartTypes,
 } from "@/charts";
 import {
   getChartFieldChangeSideEffect,
@@ -45,7 +45,7 @@ import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { toggleInteractiveFilterDataDimension } from "@/configurator/interactive-filters/interactive-filters-config-state";
 import { Dimension, isGeoDimension, isJoinByComponent } from "@/domain/data";
-import { getOriginalDimension, JOIN_BY_CUBE_IRI } from "@/graphql/join";
+import { getOriginalDimension, isJoinByCube } from "@/graphql/join";
 import { PossibleFilterValue } from "@/graphql/query-hooks";
 import { findInHierarchy } from "@/rdf/tree-utils";
 import { getCachedComponents } from "@/urql-cache";
@@ -86,7 +86,7 @@ export const deriveFiltersFromFields = produce(
 
     const getCubeDimensions = (dimensions: Dimension[], cubeIri: string) => {
       return dimensions.filter(
-        (d) => d.cubeIri === cubeIri || d.cubeIri === JOIN_BY_CUBE_IRI
+        (d) => d.cubeIri === cubeIri || isJoinByCube(d.cubeIri)
       );
     };
 
@@ -574,7 +574,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
     case "CHART_TYPE_CHANGED":
       if (isConfiguring(draft)) {
-        const { locale, chartKey, chartType } = action.value;
+        const { locale, chartKey, chartType, isAddingNewCube } = action.value;
         const chartConfig = getChartConfig(draft, chartKey);
         const dataCubesComponents = getCachedComponents({
           locale,
@@ -594,6 +594,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
               newChartType: chartType,
               dimensions,
               measures,
+              isAddingNewCube,
             }),
             { dimensions }
           );
@@ -957,19 +958,19 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         const iris = chartConfig.cubes
           .filter((c) => c.iri !== removedCubeIri)
           .map(({ iri }) => ({ iri }));
-        const possibleChartTypes = getPossibleChartTypes({
+        const { enabledChartTypes } = getEnabledChartTypes({
           dimensions,
           measures,
           cubeCount: iris.length,
         });
         const initialConfig = getInitialConfig({
-          chartType: possibleChartTypes.includes(chartConfig.chartType)
+          chartType: enabledChartTypes.includes(chartConfig.chartType)
             ? chartConfig.chartType
-            : possibleChartTypes[0],
+            : enabledChartTypes[0],
           iris,
           dimensions,
           measures,
-          meta: current(chartConfig.meta), // Cast proxy to object
+          meta: current(chartConfig.meta),
         });
         const newChartConfig = deriveFiltersFromFields(initialConfig, {
           dimensions,

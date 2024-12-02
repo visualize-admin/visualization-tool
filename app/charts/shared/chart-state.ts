@@ -45,7 +45,6 @@ import {
   useErrorVariable,
 } from "@/configurator/components/ui-helpers";
 import {
-  Component,
   Dimension,
   DimensionValue,
   GeoCoordinatesDimension,
@@ -53,7 +52,6 @@ import {
   Measure,
   NumericalMeasure,
   Observation,
-  ObservationValue,
   TemporalDimension,
   TemporalEntityDimension,
   isNumericalMeasure,
@@ -61,6 +59,7 @@ import {
   isTemporalEntityDimension,
 } from "@/domain/data";
 import { Has } from "@/domain/types";
+import { RelatedDimensionType } from "@/graphql/query-hooks";
 import { ScaleType, TimeUnit } from "@/graphql/resolver-types";
 import {
   useChartInteractiveFilters,
@@ -404,10 +403,10 @@ export const useNumericalYVariables = (
 };
 
 export type NumericalYErrorVariables = {
-  showYStandardError: boolean;
-  yErrorMeasure: Component | undefined;
-  getYError: ((d: Observation) => ObservationValue) | null;
+  showYUncertainty: boolean;
+  getYErrorPresent: (d: Observation) => boolean;
   getYErrorRange: null | ((d: Observation) => [number, number]);
+  getFormattedYUncertainty: (d: Observation) => string | undefined;
 };
 
 export type NumericalXErrorVariables = {
@@ -420,28 +419,112 @@ export type NumericalXErrorVariables = {
 export const useNumericalYErrorVariables = (
   y: GenericField,
   {
-    numericalYVariables,
+    getValue,
     dimensions,
     measures,
   }: {
-    numericalYVariables: NumericalYVariables;
+    getValue: NumericalYVariables["getY"];
     dimensions: Dimension[];
     measures: Measure[];
   }
 ): NumericalYErrorVariables => {
   const showYStandardError = get(y, ["showStandardError"], true);
-  const yErrorMeasure = useErrorMeasure(y.componentId, {
+  const yStandardErrorMeasure = useErrorMeasure(y.componentId, {
     dimensions,
     measures,
+    type: RelatedDimensionType.StandardError,
   });
-  const getYErrorRange = useErrorRange(yErrorMeasure, numericalYVariables.getY);
-  const getYError = useErrorVariable(yErrorMeasure);
+  const getYStandardError = useErrorVariable(yStandardErrorMeasure);
+
+  const showYConfidenceInterval = get(y, ["showConfidenceInterval"], true);
+  const yConfidenceIntervalUpperMeasure = useErrorMeasure(y.componentId, {
+    dimensions,
+    measures,
+    type: RelatedDimensionType.ConfidenceUpperBound,
+  });
+  const getYConfidenceIntervalUpper = useErrorVariable(
+    yConfidenceIntervalUpperMeasure
+  );
+  const yConfidenceIntervalLowerMeasure = useErrorMeasure(y.componentId, {
+    dimensions,
+    measures,
+    type: RelatedDimensionType.ConfidenceLowerBound,
+  });
+  const getYConfidenceIntervalLower = useErrorVariable(
+    yConfidenceIntervalLowerMeasure
+  );
+
+  const getYErrorPresent = useCallback(
+    (d: Observation) => {
+      return (
+        (showYStandardError && getYStandardError?.(d) !== null) ||
+        (showYConfidenceInterval &&
+          getYConfidenceIntervalUpper?.(d) !== null &&
+          getYConfidenceIntervalLower?.(d) !== null)
+      );
+    },
+    [
+      showYStandardError,
+      getYStandardError,
+      showYConfidenceInterval,
+      getYConfidenceIntervalUpper,
+      getYConfidenceIntervalLower,
+    ]
+  );
+  const getYErrorRange = useErrorRange(
+    showYStandardError && yStandardErrorMeasure
+      ? yStandardErrorMeasure
+      : yConfidenceIntervalUpperMeasure,
+    showYStandardError && yStandardErrorMeasure
+      ? yStandardErrorMeasure
+      : yConfidenceIntervalLowerMeasure,
+    getValue
+  );
+  const getFormattedYUncertainty = useCallback(
+    (d: Observation) => {
+      if (
+        showYStandardError &&
+        getYStandardError &&
+        getYStandardError(d) !== null
+      ) {
+        const sd = getYStandardError(d);
+        const unit = yStandardErrorMeasure?.unit ?? "";
+        return ` ± ${sd}${unit}`;
+      }
+
+      if (
+        showYConfidenceInterval &&
+        getYConfidenceIntervalUpper &&
+        getYConfidenceIntervalLower &&
+        getYConfidenceIntervalUpper(d) !== null &&
+        getYConfidenceIntervalLower(d) !== null
+      ) {
+        const cil = getYConfidenceIntervalLower(d);
+        const ciu = getYConfidenceIntervalUpper(d);
+        const unit = yConfidenceIntervalUpperMeasure?.unit ?? "";
+        return `, [-${cil}${unit}, +${ciu}${unit}]`;
+      }
+    },
+    [
+      showYStandardError,
+      getYStandardError,
+      showYConfidenceInterval,
+      getYConfidenceIntervalUpper,
+      getYConfidenceIntervalLower,
+      yStandardErrorMeasure?.unit,
+      yConfidenceIntervalUpperMeasure?.unit,
+    ]
+  );
 
   return {
-    showYStandardError,
-    yErrorMeasure,
-    getYError,
+    showYUncertainty:
+      (showYStandardError && !!yStandardErrorMeasure) ||
+      (showYConfidenceInterval &&
+        !!yConfidenceIntervalUpperMeasure &&
+        !!yConfidenceIntervalLowerMeasure),
+    getYErrorPresent,
     getYErrorRange,
+    getFormattedYUncertainty,
   };
 };
 

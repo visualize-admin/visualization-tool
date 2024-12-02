@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   CircularProgress,
+  Divider,
   IconButton,
   Menu,
   MenuItem,
@@ -10,6 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import groupBy from "lodash/groupBy";
 import isEmpty from "lodash/isEmpty";
 import isEqual from "lodash/isEqual";
 import pickBy from "lodash/pickBy";
@@ -28,7 +30,7 @@ import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import {
   getPossibleFiltersQueryVariables,
   skipPossibleFiltersQuery,
-} from "@/charts/shared/ensure-possible-filters";
+} from "@/charts/shared/possible-filters";
 import { HEADER_HEIGHT } from "@/components/header-constants";
 import {
   MetadataPanel,
@@ -84,6 +86,7 @@ import { isMostRecentValue } from "@/domain/most-recent-value";
 import { truthy } from "@/domain/types";
 import {
   useDataCubesComponentsQuery,
+  useDataCubesMetadataQuery,
   useDataCubesObservationsQuery,
 } from "@/graphql/hooks";
 import {
@@ -166,7 +169,7 @@ export const DataFilterSelectGeneric = ({
     sideControls,
     id: `select-single-filter-${index}`,
     disabled: fetching || disabled,
-    isOptional: !dimension.isKeyDimension,
+    optional: !dimension.isKeyDimension,
     loading: fetching,
   };
 
@@ -327,7 +330,7 @@ const useFilterReorder = ({
   onAddDimensionFilter,
 }: {
   onAddDimensionFilter?: () => void;
-}) => {
+} = {}) => {
   const [state, dispatch] = useConfiguratorState(isConfiguring);
   const chartConfig = getChartConfig(state);
   const locale = useLocale();
@@ -348,13 +351,13 @@ const useFilterReorder = ({
     // are the same  while the order of the keys has changed.
     // If this is not present, we'll have outdated dimension
     // values after we change the filter order
-    const requeryKey = cubeFilters.reduce((acc, d) => {
+    const reQueryKey = cubeFilters.reduce((acc, d) => {
       return `${acc}${d.iri}${JSON.stringify(d.filters)}`;
     }, "");
 
     return {
       cubeFilters,
-      requeryKey: requeryKey ? requeryKey : undefined,
+      reQueryKey: reQueryKey ? reQueryKey : undefined,
     };
   }, [chartConfig, joinByIds]);
 
@@ -458,34 +461,50 @@ const useFilterReorder = ({
     state,
   });
   const fetching = possibleFiltersFetching || componentsFetching;
-  const { filterDimensions, addableDimensions, missingDimensions } =
-    useMemo(() => {
-      const keysOrder = Object.fromEntries(
-        Object.keys(filters).map((k, i) => [k, i])
-      );
-      const filterDimensions = sortBy(
-        dimensions?.filter(
-          (dim) =>
-            !mappedFiltersIds.has(dim.id) && keysOrder[dim.id] !== undefined
-        ) ?? [],
-        [(x) => keysOrder[x.id] ?? Infinity]
-      );
-      const addableDimensions = dimensions?.filter(
+  const {
+    filterDimensions,
+    filterDimensionsByCubeIri,
+    addableDimensions,
+    addableDimensionsByCubeIri,
+    missingDimensions,
+  } = useMemo(() => {
+    const keysOrder = Object.fromEntries(
+      Object.keys(filters).map((k, i) => [k, i])
+    );
+    const filterDimensions = sortBy(
+      dimensions?.filter(
+        (dim) =>
+          !mappedFiltersIds.has(dim.id) && keysOrder[dim.id] !== undefined
+      ) ?? [],
+      [(x) => keysOrder[x.id] ?? Infinity]
+    );
+    const filterDimensionsByCubeIri = groupBy(
+      filterDimensions,
+      (d) => d.cubeIri
+    );
+    const addableDimensions =
+      dimensions?.filter(
         (dim) =>
           !mappedFiltersIds.has(dim.id) &&
           keysOrder[dim.id] === undefined &&
           !isStandardErrorDimension(dim)
-      );
-      const missingDimensions = dimensions?.filter(
-        (d) => d.isKeyDimension && addableDimensions?.includes(d)
-      );
+      ) ?? [];
+    const addableDimensionsByCubeIri = groupBy(
+      addableDimensions,
+      (d) => d.cubeIri
+    );
+    const missingDimensions = dimensions?.filter(
+      (d) => d.isKeyDimension && addableDimensions?.includes(d)
+    );
 
-      return {
-        filterDimensions,
-        addableDimensions,
-        missingDimensions,
-      };
-    }, [dimensions, filters, mappedFiltersIds]);
+    return {
+      filterDimensions,
+      filterDimensionsByCubeIri,
+      addableDimensions,
+      addableDimensionsByCubeIri,
+      missingDimensions,
+    };
+  }, [dimensions, filters, mappedFiltersIds]);
 
   // Technically it's possible to have a key dimension that is not in the filters
   // and not mapped. This could be achieved for example by manually modifying the
@@ -505,7 +524,9 @@ const useFilterReorder = ({
     dimensions,
     measures,
     filterDimensions,
+    filterDimensionsByCubeIri,
     addableDimensions,
+    addableDimensionsByCubeIri,
   };
 };
 
@@ -564,30 +585,42 @@ export const ChartConfigurator = ({
 }: {
   state: ConfiguratorStateConfiguringChart;
 }) => {
+  const locale = useLocale();
   const chartConfig = getChartConfig(state);
+  const [
+    {
+      data: dataCubesMetadataData,
+      fetching: fetchingDataCubesMetadata,
+      error: dataCubesMetadataError,
+    },
+  ] = useDataCubesMetadataQuery({
+    variables: {
+      sourceType: state.dataSource.type,
+      sourceUrl: state.dataSource.url,
+      locale,
+      cubeFilters: chartConfig.cubes.map((cube) => ({ iri: cube.iri })),
+    },
+    pause: chartConfig.cubes.length === 1,
+  });
+  const cubes = dataCubesMetadataData?.dataCubesMetadata;
   const {
-    isOpen: isFilterMenuOpen,
-    open: openFilterMenu,
-    close: closeFilterMenu,
-  } = useDisclosure();
-  const {
-    fetching: dataFetching,
-    handleAddDimensionFilter,
+    fetching: fetchingData,
     handleRemoveDimensionFilter,
     handleDragEnd,
     dimensions,
     measures,
     filterDimensions,
+    filterDimensionsByCubeIri,
     addableDimensions,
-  } = useFilterReorder({
-    onAddDimensionFilter: () => closeFilterMenu(),
-  });
-  const { fetching: possibleFiltersFetching, error: possibleFiltersError } =
+    addableDimensionsByCubeIri,
+  } = useFilterReorder();
+  const { fetching: fetchingPossibleFilters, error: possibleFiltersError } =
     useEnsurePossibleFilters({
       state,
     });
-  const fetching = possibleFiltersFetching || dataFetching;
-  const filterMenuButtonRef = useRef(null);
+  const error = dataCubesMetadataError || possibleFiltersError;
+  const fetching =
+    fetchingPossibleFilters || fetchingData || fetchingDataCubesMetadata;
   const classes = useStyles({ fetching });
   const components = useMemo(() => {
     return [...(dimensions ?? []), ...(measures ?? [])];
@@ -655,7 +688,7 @@ export const ChartConfigurator = ({
             aria-labelledby="controls-data"
             data-testid="configurator-filters"
           >
-            {possibleFiltersError ? (
+            {error ? (
               <Typography variant="body2" color="error">
                 <Trans id="controls.section.data.filters.possible-filters-error">
                   An error happened while fetching possible filters, please
@@ -674,77 +707,80 @@ export const ChartConfigurator = ({
                 </Trans>
               </Typography>
             ) : null}
-            <DragDropContext onDragEnd={handleDragEnd}>
-              <Droppable droppableId="filters">
-                {(provided) => (
-                  <Box {...provided.droppableProps} ref={provided.innerRef}>
-                    {filterDimensions.map((dimension, i) => (
-                      <Draggable
-                        key={dimension.id}
-                        isDragDisabled={fetching}
-                        draggableId={dimension.id}
-                        index={i}
-                      >
-                        {(provided) => (
-                          <div
-                            ref={provided.innerRef}
-                            className={classes.filterRow}
-                            {...provided.dragHandleProps}
-                            {...provided.draggableProps}
-                          >
-                            <div>
-                              <InteractiveDataFilterToggle id={dimension.id} />
-                            </div>
-                            <DataFilterSelectGeneric
-                              key={dimension.id}
-                              rawDimension={dimension}
-                              filterDimensionIds={filterDimensions
-                                .slice(0, i)
-                                .map((d) => d.id)}
-                              index={i}
-                              disabled={fetching}
-                              onRemove={() =>
-                                handleRemoveDimensionFilter(dimension)
-                              }
-                              sideControls={<MoveDragButton />}
-                            />
-                          </div>
-                        )}
-                      </Draggable>
-                    ))}
-                    {provided.placeholder}
-                  </Box>
-                )}
-              </Droppable>
-            </DragDropContext>
-            {addableDimensions && addableDimensions.length > 0 ? (
-              <Box className={classes.addDimensionContainer}>
-                <Button
-                  ref={filterMenuButtonRef}
-                  onClick={openFilterMenu}
-                  variant="contained"
-                  className={classes.addDimensionButton}
-                  color="primary"
-                >
-                  <Icon name="add" size={24} />
-                  <Trans>Add filter</Trans>
-                </Button>
-                <Menu
-                  anchorEl={filterMenuButtonRef.current}
-                  open={isFilterMenuOpen}
-                  onClose={closeFilterMenu}
-                >
-                  {addableDimensions.map((dim) => (
-                    <MenuItem
-                      key={dim.id}
-                      onClick={() => handleAddDimensionFilter(dim)}
-                    >
-                      {dim.label}
-                    </MenuItem>
-                  ))}
-                </Menu>
-              </Box>
-            ) : null}
+            {Object.entries(filterDimensionsByCubeIri).map(
+              ([cubeIri, dims], i) => {
+                const cubeTitle = cubes?.find(
+                  (cube) => cube.iri === cubeIri
+                )?.title;
+                const cubeAddableDims = addableDimensionsByCubeIri[cubeIri];
+
+                return (
+                  <React.Fragment key={cubeIri}>
+                    <div>
+                      {cubeTitle ? (
+                        <Typography variant="caption" component="p" mb={3}>
+                          {cubeTitle}
+                        </Typography>
+                      ) : null}
+                      <DragDropContext onDragEnd={handleDragEnd}>
+                        <Droppable droppableId="filters">
+                          {(provided) => (
+                            <Box
+                              {...provided.droppableProps}
+                              ref={provided.innerRef}
+                            >
+                              {dims.map((dim, i) => (
+                                <Draggable
+                                  key={dim.id}
+                                  isDragDisabled={fetching}
+                                  draggableId={dim.id}
+                                  index={i}
+                                >
+                                  {(provided) => (
+                                    <div
+                                      ref={provided.innerRef}
+                                      className={classes.filterRow}
+                                      {...provided.dragHandleProps}
+                                      {...provided.draggableProps}
+                                    >
+                                      <div>
+                                        <InteractiveDataFilterToggle
+                                          id={dim.id}
+                                        />
+                                      </div>
+                                      <DataFilterSelectGeneric
+                                        key={dim.id}
+                                        rawDimension={dim}
+                                        filterDimensionIds={filterDimensions
+                                          .slice(0, i)
+                                          .map((d) => d.id)}
+                                        index={i}
+                                        disabled={fetching}
+                                        onRemove={() =>
+                                          handleRemoveDimensionFilter(dim)
+                                        }
+                                        sideControls={<MoveDragButton />}
+                                      />
+                                    </div>
+                                  )}
+                                </Draggable>
+                              ))}
+                              {provided.placeholder}
+                            </Box>
+                          )}
+                        </Droppable>
+                      </DragDropContext>
+                    </div>
+                    {cubeAddableDims && cubeAddableDims.length > 0 ? (
+                      <AddFilterButton dims={cubeAddableDims} />
+                    ) : null}
+                    {cubes && i < cubes.length - 1 ? (
+                      <Divider sx={{ my: 4, mr: 6 }} />
+                    ) : null}
+                  </React.Fragment>
+                );
+              }
+            )}
           </ControlSectionContent>
         </ControlSection>
       )}
@@ -761,6 +797,41 @@ export const ChartConfigurator = ({
         renderToggle={false}
       />
     </InteractiveFiltersChartProvider>
+  );
+};
+
+const AddFilterButton = ({ dims }: { dims: Dimension[] }) => {
+  const ref = useRef<HTMLButtonElement>(null);
+  const {
+    isOpen: isMenuOpen,
+    open: openMenu,
+    close: closeMenu,
+  } = useDisclosure();
+  const { handleAddDimensionFilter } = useFilterReorder({
+    onAddDimensionFilter: () => closeMenu(),
+  });
+  const classes = useStyles({ fetching: false });
+
+  return (
+    <Box className={classes.addDimensionContainer}>
+      <Button
+        ref={ref}
+        onClick={openMenu}
+        variant="contained"
+        className={classes.addDimensionButton}
+        color="primary"
+      >
+        <Icon name="add" size={24} />
+        <Trans>Add filter</Trans>
+      </Button>
+      <Menu anchorEl={ref.current} open={isMenuOpen} onClose={closeMenu}>
+        {dims.map((dim) => (
+          <MenuItem key={dim.id} onClick={() => handleAddDimensionFilter(dim)}>
+            {dim.label}
+          </MenuItem>
+        ))}
+      </Menu>
+    </Box>
   );
 };
 
@@ -795,7 +866,11 @@ const ChartFields = (props: ChartFieldsProps) => {
         .map((encoding) => {
           const { field, getDisabledState, idAttributes } = encoding;
           const componentIds = idAttributes
-            .map((x) => (chartConfig.fields as any)[field]?.[x])
+            .flatMap(
+              (x) =>
+                // componentId or componentIds
+                (chartConfig.fields as any)[field]?.[x] as string | string[]
+            )
             .filter(truthy) as string[];
           const fieldComponents = componentIds
             .map((cId) => components.find((d) => cId === d.id))

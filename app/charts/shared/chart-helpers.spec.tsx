@@ -302,12 +302,12 @@ describe("getChartConfigComponentsIds", () => {
       chartConfig: lineConfig,
     });
     expect(componentsIds).toEqual([
-      "foo___http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/0",
-      "foo___http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/1",
-      "foo___http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2",
-      "foo___http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/3",
-      "foo___http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/4",
-      "foo___http://environment.ld.admin.ch/foen/px/0703010000_105/measure/0",
+      "foo(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/0",
+      "foo(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/1",
+      "foo(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2",
+      "foo(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/3",
+      "foo(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/4",
+      "foo(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)http://environment.ld.admin.ch/foen/px/0703010000_105/measure/0",
     ]);
   });
 
@@ -316,14 +316,14 @@ describe("getChartConfigComponentsIds", () => {
       chartConfig: mapConfig,
     });
     expect(componentsIds).toEqual([
-      "foo___https://environment.ld.admin.ch/foen/nfi/Topic/3",
-      "foo___https://environment.ld.admin.ch/foen/nfi/Topic/3r",
-      "foo___https://environment.ld.admin.ch/foen/nfi/classificationUnit",
-      "foo___https://environment.ld.admin.ch/foen/nfi/evaluationType",
-      "foo___https://environment.ld.admin.ch/foen/nfi/grid",
-      "foo___https://environment.ld.admin.ch/foen/nfi/inventory",
-      "foo___https://environment.ld.admin.ch/foen/nfi/unitOfEvaluation",
-      "foo___https://environment.ld.admin.ch/foen/nfi/unitOfReference",
+      "foo(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://environment.ld.admin.ch/foen/nfi/Topic/3",
+      "foo(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://environment.ld.admin.ch/foen/nfi/Topic/3r",
+      "foo(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://environment.ld.admin.ch/foen/nfi/classificationUnit",
+      "foo(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://environment.ld.admin.ch/foen/nfi/evaluationType",
+      "foo(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://environment.ld.admin.ch/foen/nfi/grid",
+      "foo(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://environment.ld.admin.ch/foen/nfi/inventory",
+      "foo(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://environment.ld.admin.ch/foen/nfi/unitOfEvaluation",
+      "foo(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://environment.ld.admin.ch/foen/nfi/unitOfReference",
     ]);
   });
 
@@ -337,7 +337,7 @@ describe("getChartConfigComponentsIds", () => {
     });
     expect(
       componentIds.includes(
-        "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9___https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr"
+        "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr"
       )
     ).toBe(true);
     expect(componentIds.includes(mkJoinById(0))).toBe(false);

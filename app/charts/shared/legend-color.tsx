@@ -12,6 +12,7 @@ import Flex from "@/components/flex";
 import { Checkbox, CheckboxProps } from "@/components/form";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
+import { TooltipTitle } from "@/components/tooltip-utils";
 import {
   ChartConfig,
   GenericSegmentField,
@@ -396,12 +397,12 @@ export const LegendItem = (props: LegendItemProps) => {
     <MaybeTooltip
       title={
         disabled ? (
-          <Typography variant="body2">
-            {t({
+          <TooltipTitle
+            text={t({
               id: "controls.filters.interactive.color.min-1-filter",
               message: "At least one filter must be selected.",
             })}
-          </Typography>
+          />
         ) : undefined
       }
     >

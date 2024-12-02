@@ -11,17 +11,17 @@ import { Theme } from "@mui/material/styles";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 import uniqBy from "lodash/uniqBy";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { useClient } from "urql";
 
 import Flex from "@/components/flex";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { useMetadataPanelStoreActions } from "@/components/metadata-panel-store";
+import { TooltipTitle } from "@/components/tooltip-utils";
 import useDisclosure from "@/components/use-disclosure";
 import { getChartConfig } from "@/configurator";
 import { DatasetDialog } from "@/configurator/components/add-dataset-dialog";
 import { DatasetsBadge } from "@/configurator/components/badges";
-import { BetaTag } from "@/configurator/components/beta-tag";
 import {
   ControlSection,
   ControlSectionContent,
@@ -32,7 +32,6 @@ import {
   useConfiguratorState,
 } from "@/configurator/configurator-state";
 import { DataCubeMetadata } from "@/domain/data";
-import useFlag from "@/flags/useFlag";
 import {
   executeDataCubesComponentsQuery,
   useDataCubesMetadataQuery,
@@ -86,18 +85,11 @@ const DatasetRow = ({
   added?: boolean;
   onRemoveAdded?: () => void;
 }) => {
-  const ref = useRef<HTMLDivElement>(null);
   const locale = useLocale();
   const client = useClient();
   const classes = useStyles();
   const [state, dispatch] = useConfiguratorState(isConfiguring);
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (added && ref.current) {
-      ref.current?.scrollIntoView({ behavior: "smooth" });
-    }
-  });
 
   return (
     <MaybeTooltip
@@ -106,11 +98,13 @@ const DatasetRow = ({
           <Box color="success.main">
             <SvgIcChecked width={24} height={24} />
           </Box>
-          {t({
-            id: "dataset.search.preview.added-dataset",
-            message:
-              "New dataset added. You can now use its data in the chart(s).",
-          })}
+          <TooltipTitle
+            text={t({
+              id: "dataset.search.preview.added-dataset",
+              message:
+                "New dataset added. You can now use its data in the chart(s).",
+            })}
+          />
         </Box>
       }
       tooltipProps={{
@@ -123,9 +117,8 @@ const DatasetRow = ({
       }}
     >
       <div
-        ref={ref}
-        className={clsx(classes.row, { [classes.added]: added })}
         key={cube.iri}
+        className={clsx(classes.row, { [classes.added]: added })}
       >
         <div>
           <MuiLink
@@ -226,23 +219,10 @@ export const DatasetsControlSection = () => {
     setActiveSection("general");
   };
 
-  const addDatasetFlag = useFlag("configurator.add-dataset.shared");
-  if (!addDatasetFlag) {
-    return null;
-  }
-
   return (
     <ControlSection collapse defaultExpanded={true}>
       <SubsectionTitle titleId="controls-data" gutterBottom={false}>
         <Trans id="controls.section.datasets.title">Datasets</Trans>{" "}
-        <BetaTag
-          tagProps={{
-            sx: {
-              ml: 2,
-              fontWeight: "normal",
-            },
-          }}
-        />
         <DatasetsBadge sx={{ ml: "auto", mr: 4 }} />
       </SubsectionTitle>
       <ControlSectionContent

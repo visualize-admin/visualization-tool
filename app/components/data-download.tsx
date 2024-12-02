@@ -35,6 +35,7 @@ import {
 } from "@/domain/data";
 import {
   dateFormatterFromDimension,
+  formatIdentity,
   getFormatFullDateAuto,
   getFormattersForLocale,
 } from "@/formatters";
@@ -105,6 +106,7 @@ const prepareData = ({
     sortingType: "byAuto",
     sortingOrder: "asc",
   };
+
   const sorters = sortedComponents.map<
     [string, ReturnType<typeof makeDimensionValueSorters>]
   >((d) => {
@@ -126,23 +128,39 @@ const prepareData = ({
         }
       }
     }
-
     return 0;
   });
 
   const parsedData = sortedData.map((obs) => {
-    return Object.keys(obs).reduce<Observation>((acc, key) => {
+    const formattedObs = Object.keys(obs).reduce<Observation>((acc, key) => {
+      return {
+        ...acc,
+        [key]: formatIdentity(obs[key]),
+      };
+    }, {});
+
+    return Object.keys(formattedObs).reduce<Observation>((acc, key) => {
       const col = columns[key];
       const parser = dimensionParsers[key];
 
-      return col
-        ? {
-            ...acc,
-            ...{ [makeColumnLabel(col)]: parser(obs[key] as string) },
-          }
-        : acc;
+      if (!col) return acc;
+
+      const value = formattedObs[key];
+      let parsedValue;
+
+      if (value?.toString() === "–") {
+        parsedValue = "-";
+      } else {
+        parsedValue = parser(value as string);
+      }
+
+      return {
+        ...acc,
+        [makeColumnLabel(col)]: parsedValue,
+      };
     }, {});
   });
+
   const columnKeys = Object.values(columns).map(makeColumnLabel);
 
   return {
@@ -343,6 +361,7 @@ const DownloadMenuItem = ({
       const components = [...dimensions, ...measures];
       const dimensionParsers = getDimensionParsers(components, { locale });
       const observations = observationsData.dataCubesObservations.data;
+
       const { columnKeys, data } = prepareData({
         components,
         observations,
@@ -461,6 +480,8 @@ const getDimensionParsers = (
           return [d.id, (d) => d];
         case "NumericalMeasure":
         case "StandardErrorDimension":
+        case "ConfidenceUpperBoundDimension":
+        case "ConfidenceLowerBoundDimension":
           return [d.id, (d) => +d];
         case "OrdinalMeasure":
           return d.isNumerical ? [d.id, (d) => +d] : [d.id, (d) => d];

@@ -49,7 +49,7 @@ export type Option = {
   disabled?: boolean;
 };
 
-export type OptionGroup = $FixMe;
+export type OptionGroupKey = $FixMe;
 
 export type FieldProps = Pick<
   InputHTMLAttributes<HTMLInputElement>,

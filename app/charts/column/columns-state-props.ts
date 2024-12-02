@@ -57,7 +57,7 @@ export const useColumnsStateVariables = (
     measuresById,
   });
   const numericalYErrorVariables = useNumericalYErrorVariables(y, {
-    numericalYVariables,
+    getValue: numericalYVariables.getY,
     dimensions,
     measures,
   });

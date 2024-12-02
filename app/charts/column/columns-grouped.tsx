@@ -8,7 +8,6 @@ import {
 import { useChartState } from "@/charts/shared/chart-state";
 import {
   RenderVerticalWhiskerDatum,
-  filterWithoutErrors,
   renderContainer,
   renderVerticalWhiskers,
 } from "@/charts/shared/rendering-utils";
@@ -20,24 +19,24 @@ export const ErrorWhiskers = () => {
     xScale,
     xScaleIn,
     getYErrorRange,
-    getYError,
+    getYErrorPresent,
     yScale,
     getSegment,
     grouped,
-    showYStandardError,
+    showYUncertainty,
   } = useChartState() as GroupedColumnsState;
   const { margins, width, height } = bounds;
   const ref = useRef<SVGGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
   const renderData: RenderVerticalWhiskerDatum[] = useMemo(() => {
-    if (!getYErrorRange || !showYStandardError) {
+    if (!getYErrorRange || !showYUncertainty) {
       return [];
     }
 
     const bandwidth = xScaleIn.bandwidth();
     return grouped
-      .filter((d) => d[1].some(filterWithoutErrors(getYError)))
+      .filter((d) => d[1].some(getYErrorPresent))
       .flatMap(([segment, observations]) =>
         observations.map((d) => {
           const x0 = xScaleIn(getSegment(d)) as number;
@@ -56,9 +55,9 @@ export const ErrorWhiskers = () => {
   }, [
     getSegment,
     getYErrorRange,
-    getYError,
+    getYErrorPresent,
     grouped,
-    showYStandardError,
+    showYUncertainty,
     xScale,
     xScaleIn,
     yScale,

@@ -240,7 +240,6 @@ const LayoutSharedFiltersConfigurator = () => {
           </SubsectionTitle>
           <ControlSectionContent>
             <Stack gap="0.5rem">
-              {/* TODO: allow TemporalOrdinalDimensions to work here */}
               {timeRange && combinedTemporalDimension.values.length ? (
                 <>
                   <Box

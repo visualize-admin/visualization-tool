@@ -4,7 +4,6 @@ import {
   Collapse,
   Skeleton,
   Theme,
-  Tooltip,
   Typography,
   TypographyProps,
 } from "@mui/material";
@@ -14,13 +13,15 @@ import React, {
   ElementType,
   HTMLProps,
   ReactNode,
+  createContext,
   forwardRef,
   useContext,
   useEffect,
   useMemo,
-  createContext,
 } from "react";
 
+import { MaybeTooltip } from "@/components/maybe-tooltip";
+import { TooltipTitle } from "@/components/tooltip-utils";
 import { Icon, IconName } from "@/icons";
 import SvgIcAdd from "@/icons/components/IcAdd";
 import SvgIcExclamation from "@/icons/components/IcExclamation";
@@ -313,10 +314,10 @@ const Warning = (props: WarningProps) => {
   const { title } = props;
 
   return (
-    <Tooltip arrow title={<Typography variant="body2">{title}</Typography>}>
+    <MaybeTooltip title={<TooltipTitle text={title} />}>
       <Typography color="warning.main" sx={{ mr: 2 }}>
         <SvgIcExclamation width={18} height={18} />
       </Typography>
-    </Tooltip>
+    </MaybeTooltip>
   );
 };

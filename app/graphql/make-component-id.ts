@@ -2,7 +2,7 @@ import mapKeys from "lodash/mapKeys";
 
 import { Filters, SingleFilters } from "@/config-types";
 
-const ID_SEPARATOR = "___";
+const ID_SEPARATOR = "(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)";
 
 export type ComponentId = string & { __componentId: true };
 

@@ -47,7 +47,10 @@ const HoverDots = ({ d }: { d: Observation }) => {
                 style={{
                   backgroundColor: value.color,
                   left: xAnchor + bounds.margins.left,
-                  top: value.yPos! + bounds.margins.top,
+                  top:
+                    value.yPos! +
+                    bounds.margins.top +
+                    (bounds.yAxisTitleHeight || 0),
                 }}
                 className={classes.dot}
               />

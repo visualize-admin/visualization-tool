@@ -84,10 +84,8 @@ const useColumnsGroupedState = (
     yMeasure,
     getY,
     getMinY,
-    showYStandardError,
-    yErrorMeasure,
-    getYError,
     getYErrorRange,
+    getFormattedYUncertainty,
     segmentDimension,
     segmentsByAbbreviationOrLabel,
     getSegment,
@@ -398,14 +396,6 @@ const useColumnsGroupedState = (
           topAnchor: !fields.segment,
         });
 
-    const getError = (d: Observation) => {
-      if (!showYStandardError || !getYError || getYError(d) == null) {
-        return;
-      }
-
-      return `${getYError(d)}${yErrorMeasure?.unit ?? ""}`;
-    };
-
     return {
       xAnchor: xAnchorRaw + (placement.x === "right" ? 0.5 : -0.5) * bw,
       yAnchor,
@@ -414,7 +404,7 @@ const useColumnsGroupedState = (
       datum: {
         label: fields.segment && getSegmentAbbreviationOrLabel(datum),
         value: yValueFormatter(getY(datum)),
-        error: getError(datum),
+        error: getFormattedYUncertainty(datum),
         color: colors(getSegment(datum)) as string,
       },
       values: sortedTooltipValues.map((td) => ({
@@ -422,7 +412,7 @@ const useColumnsGroupedState = (
         value: yMeasure.unit
           ? `${formatNumber(getY(td))} ${yMeasure.unit}`
           : formatNumber(getY(td)),
-        error: getError(td),
+        error: getFormattedYUncertainty(td),
         color: colors(getSegment(td)) as string,
       })),
     };

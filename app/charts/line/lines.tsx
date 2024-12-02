@@ -5,7 +5,6 @@ import { LinesState } from "@/charts/line/lines-state";
 import { useChartState } from "@/charts/shared/chart-state";
 import {
   RenderVerticalWhiskerDatum,
-  filterWithoutErrors,
   renderContainer,
   renderVerticalWhiskers,
 } from "@/charts/shared/rendering-utils";
@@ -15,12 +14,13 @@ import { useTransitionStore } from "@/stores/transition";
 export const ErrorWhiskers = () => {
   const {
     getX,
-    getYError,
+    getY,
+    getYErrorPresent,
     getYErrorRange,
     chartData,
     yScale,
     xScale,
-    showYStandardError,
+    showYUncertainty,
     colors,
     getSegment,
     bounds,
@@ -30,18 +30,20 @@ export const ErrorWhiskers = () => {
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
   const renderData: RenderVerticalWhiskerDatum[] = useMemo(() => {
-    if (!getYErrorRange || !showYStandardError) {
+    if (!getYErrorRange || !showYUncertainty) {
       return [];
     }
 
-    return chartData.filter(filterWithoutErrors(getYError)).map((d, i) => {
+    return chartData.filter(getYErrorPresent).map((d, i) => {
       const x0 = xScale(getX(d)) as number;
       const segment = getSegment(d);
       const barWidth = 15;
+      const y = getY(d) as number;
       const [y1, y2] = getYErrorRange(d);
       return {
         key: `${i}`,
         x: x0 - barWidth / 2,
+        y: yScale(y),
         y1: yScale(y1),
         y2: yScale(y2),
         width: barWidth,
@@ -54,9 +56,10 @@ export const ErrorWhiskers = () => {
     colors,
     getSegment,
     getX,
-    getYError,
+    getY,
+    getYErrorPresent,
     getYErrorRange,
-    showYStandardError,
+    showYUncertainty,
     xScale,
     yScale,
   ]);

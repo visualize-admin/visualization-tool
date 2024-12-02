@@ -9,7 +9,6 @@ import {
 import { useChartState } from "@/charts/shared/chart-state";
 import {
   RenderVerticalWhiskerDatum,
-  filterWithoutErrors,
   renderContainer,
   renderVerticalWhiskers,
 } from "@/charts/shared/rendering-utils";
@@ -19,12 +18,12 @@ import { useTheme } from "@/themes";
 export const ErrorWhiskers = () => {
   const {
     getX,
-    getYError,
+    getYErrorPresent,
     getYErrorRange,
     chartData,
     yScale,
     xScale,
-    showYStandardError,
+    showYUncertainty,
     bounds,
   } = useChartState() as ColumnsState;
   const { margins, width, height } = bounds;
@@ -32,12 +31,12 @@ export const ErrorWhiskers = () => {
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
   const renderData: RenderVerticalWhiskerDatum[] = useMemo(() => {
-    if (!getYErrorRange || !showYStandardError) {
+    if (!getYErrorRange || !showYUncertainty) {
       return [];
     }
 
     const bandwidth = xScale.bandwidth();
-    return chartData.filter(filterWithoutErrors(getYError)).map((d, i) => {
+    return chartData.filter(getYErrorPresent).map((d, i) => {
       const x0 = xScale(getX(d)) as number;
       const barWidth = Math.min(bandwidth, 15);
       const [y1, y2] = getYErrorRange(d);
@@ -53,9 +52,9 @@ export const ErrorWhiskers = () => {
   }, [
     chartData,
     getX,
-    getYError,
+    getYErrorPresent,
     getYErrorRange,
-    showYStandardError,
+    showYUncertainty,
     xScale,
     yScale,
     width,

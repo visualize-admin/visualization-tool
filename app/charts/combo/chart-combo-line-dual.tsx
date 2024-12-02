@@ -29,22 +29,22 @@ const ChartComboLineDual = memo((props: ChartProps<ComboLineDualConfig>) => {
   const { chartConfig } = props;
   const { interactiveFiltersConfig } = chartConfig;
   const [{ dashboardFilters }] = useConfiguratorState(hasChartConfigs);
-  
+
   return (
     <ComboLineDualChart {...props}>
       <ChartContainer>
         <ChartSvg>
           <ComboLineContainer>
-              <AxisHeightLinearDual orientation="left" />
-              <AxisHeightLinearDual orientation="right" /> 
-              <AxisTime />
-              <AxisTimeDomain />
-              <ComboLineDual />
-              <InteractionHorizontal />
-              {shouldShowBrush(
-                interactiveFiltersConfig,
-                dashboardFilters?.timeRange
-              ) && <BrushTime />}
+            <AxisHeightLinearDual orientation="left" />
+            <AxisHeightLinearDual orientation="right" />
+            <AxisTime />
+            <AxisTimeDomain />
+            <ComboLineDual />
+            <InteractionHorizontal />
+            {shouldShowBrush(
+              interactiveFiltersConfig,
+              dashboardFilters?.timeRange
+            ) && <BrushTime />}
           </ComboLineContainer>
         </ChartSvg>
         <HoverDotMultiple />

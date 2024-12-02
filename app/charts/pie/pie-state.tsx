@@ -31,6 +31,7 @@ import {
   getSortingOrders,
   makeDimensionValueSorters,
 } from "@/utils/sorting-values";
+import { useIsMobile } from "@/utils/use-is-mobile";
 
 import { ChartProps } from "../shared/ChartProps";
 
@@ -206,6 +207,8 @@ const usePieState = (
     return `${rounded}% (${fValue})`;
   };
 
+  const isMobile = useIsMobile();
+
   // Tooltip
   const getAnnotationInfo = (
     arcDatum: PieArcDatum<Observation>
@@ -216,13 +219,18 @@ const usePieState = (
     const xTranslate = chartWidth / 2;
     const yTranslate = chartHeight / 2;
 
-    const xAnchor = x + xTranslate;
-    const yAnchor = y + yTranslate;
+    const xAnchor = isMobile ? chartWidth / 2 : x + xTranslate;
+    const yAnchor = isMobile ? -chartHeight : y + yTranslate;
 
-    const xPlacement = xAnchor < chartWidth * 0.5 ? "right" : "left";
+    const xPlacement = isMobile
+      ? "center"
+      : xAnchor < chartWidth * 0.5
+        ? "right"
+        : "left";
 
-    const yPlacement =
-      yAnchor > chartHeight * 0.2
+    const yPlacement = isMobile
+      ? "top"
+      : yAnchor > chartHeight * 0.2
         ? "top"
         : yAnchor < chartHeight * 0.8
           ? "bottom"
@@ -238,6 +246,7 @@ const usePieState = (
         color: colors(getSegment(datum)) as string,
       },
       values: undefined,
+      withTriangle: !isMobile,
     };
   };
 

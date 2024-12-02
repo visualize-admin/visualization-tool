@@ -12,7 +12,7 @@ const store = new FlagStore();
 /**
  * Public API to use flags
  */
-const flag = function flag(...args: [FlagName] | [FlagName, FlagValue]) {
+export const flag = function flag(...args: [FlagName] | [FlagName, FlagValue]) {
   if (args.length === 1) {
     return store.get(args[0]);
   } else {
@@ -80,18 +80,20 @@ const isVercelPreviewHost = (host: string) => {
 };
 
 const initFromHost = (host: string) => {
+  // @ts-ignore
   const setDefaultFlag = (name: FlagName, value: FlagValue) => {
     const flagValue = flag(name);
+
     if (flagValue === null) {
       flag(name, value);
     }
   };
-  if (
+  const shouldSetDefaultFlags =
     host.includes("localhost") ||
     host.includes("test.visualize.admin.ch") ||
-    isVercelPreviewHost(host)
-  ) {
-    setDefaultFlag("configurator.add-dataset.shared", true);
+    isVercelPreviewHost(host);
+
+  if (shouldSetDefaultFlags) {
   }
 };
 
@@ -101,5 +103,3 @@ if (isRunningInBrowser()) {
   initFromSearchParams(window.location.search);
   initFromHost(window.location.host);
 }
-
-export { flag };

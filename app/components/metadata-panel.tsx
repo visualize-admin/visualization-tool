@@ -59,6 +59,8 @@ import {
 import {
   Component,
   DimensionValue,
+  isConfidenceLowerBoundDimension,
+  isConfidenceUpperBoundDimension,
   isJoinByComponent,
   isStandardErrorDimension,
   TemporalDimension,
@@ -405,7 +407,7 @@ const CubesPanel = ({
 }) => {
   const classes = useOtherStyles();
   const locale = useLocale();
-  const cubes = chartConfig.cubes.map((x) => ({ iri: x.iri }));
+  const cubes = chartConfig.cubes.map((cube) => ({ iri: cube.iri }));
   const [
     {
       data: dataCubesMetadataData,
@@ -862,7 +864,11 @@ const ComponentValues = ({ component }: { component: Component }) => {
     ) as DimensionValue[];
   }, [component]);
 
-  if (isStandardErrorDimension(component)) {
+  if (
+    isStandardErrorDimension(component) ||
+    isConfidenceUpperBoundDimension(component) ||
+    isConfidenceLowerBoundDimension(component)
+  ) {
     return <MeasureValuesNumeric values={sortedValues} />;
   }
 

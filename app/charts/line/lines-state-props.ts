@@ -53,7 +53,7 @@ export const useLinesStateVariables = (
     measuresById,
   });
   const numericalYErrorVariables = useNumericalYErrorVariables(y, {
-    numericalYVariables,
+    getValue: numericalYVariables.getY,
     dimensions,
     measures,
   });

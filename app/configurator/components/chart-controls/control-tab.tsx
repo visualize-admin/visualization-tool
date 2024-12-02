@@ -1,9 +1,11 @@
 import { Trans } from "@lingui/macro";
-import { Box, Button, Theme, Tooltip, Typography } from "@mui/material";
+import { Box, Button, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React, { ReactNode } from "react";
 
 import Flex from "@/components/flex";
+import { MaybeTooltip } from "@/components/maybe-tooltip";
+import { TooltipTitle } from "@/components/tooltip-utils";
 import {
   ChartConfig,
   FieldProps,
@@ -136,11 +138,11 @@ const WarnIconTooltip = (props: WarnIconTooltipProps) => {
   const iconStyles = useIconStyles({ isActive: false });
 
   return (
-    <Tooltip arrow title={<Typography variant="body2">{title}</Typography>}>
+    <MaybeTooltip title={<TooltipTitle text={title} />}>
       <Typography>
         <SvgIcExclamation className={iconStyles.warn} />
       </Typography>
-    </Tooltip>
+    </MaybeTooltip>
   );
 };
 
