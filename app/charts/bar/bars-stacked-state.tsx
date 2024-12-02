@@ -177,7 +177,7 @@ const useBarsStackedState = (
     return Object.fromEntries(
       rollup(
         chartData,
-        (v) => sum(v, (x) => getX(x)),
+        (v) => sum(v, (d) => getX(d)),
         (x) => getY(x)
       )
     );
