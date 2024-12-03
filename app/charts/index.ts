@@ -1819,9 +1819,13 @@ const chartConfigsPathOverrides: {
       "fields.x.componentId": { path: "fields.y.componentId" },
       "fields.y.componentId": { path: "fields.x.componentId" },
     },
+    pie: {
+      "fields.segment.componentId": { path: "fields.y.componentId" },
+      "fields.y.componentId": { path: "fields.x.componentId" },
+    },
     map: {
-      "fields.areaLayer.componentId": { path: "fields.x.componentId" },
-      "fields.areaLayer.color.componentId": { path: "fields.y.componentId" },
+      "fields.areaLayer.componentId": { path: "fields.y.componentId" },
+      "fields.areaLayer.color.componentId": { path: "fields.x.componentId" },
     },
     table: {
       fields: { path: "fields.segment" },
@@ -1940,6 +1944,10 @@ const chartConfigsPathOverrides: {
     },
   },
   pie: {
+    bar: {
+      "fields.segment.componentId": { path: "fields.y.componentId" },
+      "fields.y.componentId": { path: "fields.x.componentId" },
+    },
     map: {
       "fields.areaLayer.componentId": { path: "fields.x.componentId" },
       "fields.areaLayer.color.componentId": { path: "fields.y.componentId" },
@@ -1988,6 +1996,10 @@ const chartConfigsPathOverrides: {
     column: {
       "fields.x.componentId": { path: "fields.areaLayer.componentId" },
       "fields.y.componentId": { path: "fields.areaLayer.color.componentId" },
+    },
+    bar: {
+      "fields.x.componentId": { path: "fields.areaLayer.color.componentId" },
+      "fields.y.componentId": { path: "fields.areaLayer.componentId" },
     },
     line: {
       "fields.y.componentId": { path: "fields.areaLayer.color.componentId" },
