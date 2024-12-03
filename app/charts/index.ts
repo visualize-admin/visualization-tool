@@ -1771,6 +1771,10 @@ const chartConfigsPathOverrides: {
   };
 } = {
   column: {
+    bar: {
+      "fields.x.componentId": { path: "fields.y.componentId" },
+      "fields.y.componentId": { path: "fields.x.componentId" },
+    },
     map: {
       "fields.areaLayer.componentId": { path: "fields.x.componentId" },
       "fields.areaLayer.color.componentId": { path: "fields.y.componentId" },
@@ -1799,6 +1803,22 @@ const chartConfigsPathOverrides: {
     },
   },
   bar: {
+    column: {
+      "fields.x.componentId": { path: "fields.y.componentId" },
+      "fields.y.componentId": { path: "fields.x.componentId" },
+    },
+    line: {
+      "fields.x.componentId": { path: "fields.y.componentId" },
+      "fields.y.componentId": { path: "fields.x.componentId" },
+    },
+    area: {
+      "fields.x.componentId": { path: "fields.y.componentId" },
+      "fields.y.componentId": { path: "fields.x.componentId" },
+    },
+    scatterplot: {
+      "fields.x.componentId": { path: "fields.y.componentId" },
+      "fields.y.componentId": { path: "fields.x.componentId" },
+    },
     map: {
       "fields.areaLayer.componentId": { path: "fields.x.componentId" },
       "fields.areaLayer.color.componentId": { path: "fields.y.componentId" },
@@ -1827,6 +1847,10 @@ const chartConfigsPathOverrides: {
     },
   },
   line: {
+    bar: {
+      "fields.x.componentId": { path: "fields.y.componentId" },
+      "fields.y.componentId": { path: "fields.x.componentId" },
+    },
     map: {
       "fields.areaLayer.color.componentId": { path: "fields.y.componentId" },
     },
@@ -1854,6 +1878,10 @@ const chartConfigsPathOverrides: {
     },
   },
   area: {
+    bar: {
+      "fields.x.componentId": { path: "fields.y.componentId" },
+      "fields.y.componentId": { path: "fields.x.componentId" },
+    },
     map: {
       "fields.areaLayer.color.componentId": { path: "fields.y.componentId" },
     },
@@ -1881,6 +1909,10 @@ const chartConfigsPathOverrides: {
     },
   },
   scatterplot: {
+    bar: {
+      "fields.x.componentId": { path: "fields.y.componentId" },
+      "fields.y.componentId": { path: "fields.x.componentId" },
+    },
     map: {
       "fields.areaLayer.color.componentId": { path: "fields.y.componentId" },
     },
