@@ -1821,6 +1821,7 @@ const chartConfigsPathOverrides: {
     },
     pie: {
       "fields.segment.componentId": { path: "fields.y.componentId" },
+      "fields.x.componentId": { path: "fields.y.componentId" },
       "fields.y.componentId": { path: "fields.x.componentId" },
     },
     map: {
@@ -1946,6 +1947,7 @@ const chartConfigsPathOverrides: {
   pie: {
     bar: {
       "fields.segment.componentId": { path: "fields.y.componentId" },
+      "fields.x.componentId": { path: "fields.y.componentId" },
       "fields.y.componentId": { path: "fields.x.componentId" },
     },
     map: {
