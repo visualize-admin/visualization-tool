@@ -317,8 +317,8 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
 
   return (
     <Box
-      className={clsx(chartClasses.root, publishedChartClasses.root, className)}
       ref={rootRef}
+      className={clsx(chartClasses.root, publishedChartClasses.root, className)}
     >
       {children}
       <ChartErrorBoundary resetKeys={[chartConfig]}>
@@ -392,6 +392,7 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
                 <ChartMoreButton
                   configKey={configKey}
                   chartKey={chartConfig.key}
+                  chartWrapperNode={rootRef.current}
                 />
               </Box>
             </Flex>
