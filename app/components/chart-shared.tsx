@@ -76,8 +76,10 @@ export const ChartControls = ({
     chartConfig,
     dashboardFilters,
   });
+
   return (
     <Box
+      {...DISABLE_SCREENSHOT_ATTR}
       sx={{
         display: "grid",
         gridTemplateAreas: `
