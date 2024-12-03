@@ -27,7 +27,7 @@ import { getChartIcon } from "@/icons";
 import SvgIcMore from "@/icons/components/IcMore";
 import { useLocale } from "@/src";
 import { createChartId } from "@/utils/create-chart-id";
-import { DISABLE_SCREENSHOT_ATTR } from "@/utils/use-screenshot";
+import { DISABLE_SCREENSHOT_ATTR, useScreenshot } from "@/utils/use-screenshot";
 
 /** Generic styles shared between `ChartPreview` and `ChartPublished`. */
 export const useChartStyles = makeStyles<Theme, { disableBorder?: boolean }>(
@@ -113,19 +113,23 @@ export const ChartControls = ({
 export const ChartMoreButton = ({
   configKey,
   chartKey,
+  chartWrapperNode,
 }: {
   configKey?: string;
   chartKey: string;
+  chartWrapperNode?: HTMLElement | null;
 }) => {
   const [state, dispatch] = useConfiguratorState(hasChartConfigs);
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
   const handleClose = useEventCallback(() => setAnchor(null));
   const chartConfig = getChartConfig(state, chartKey);
   const { setIsTableRaw } = useChartTablePreview();
+
   // Reset back to chart view when switching chart type.
   useEffect(() => {
     setIsTableRaw(false);
   }, [chartConfig.chartType, setIsTableRaw]);
+
   const disableButton =
     isPublished(state) &&
     state.layout.type === "dashboard" &&
@@ -151,10 +155,22 @@ export const ChartMoreButton = ({
         {isPublished(state) ? (
           <div>
             {chartConfig.chartType !== "table" ? (
-              <TableViewChartMenuActionItem
-                chartType={chartConfig.chartType}
-                onSuccess={handleClose}
-              />
+              <>
+                <TableViewChartMenuActionItem
+                  chartType={chartConfig.chartType}
+                  onSuccess={handleClose}
+                />
+                <DownloadImageMenuActionItem
+                  type="png"
+                  screenshotName={chartKey}
+                  screenshotNode={chartWrapperNode}
+                />
+                <DownloadImageMenuActionItem
+                  type="svg"
+                  screenshotName={chartKey}
+                  screenshotNode={chartWrapperNode}
+                />
+              </>
             ) : null}
             {state.layout.type !== "dashboard" && configKey ? (
               <>
@@ -182,10 +198,22 @@ export const ChartMoreButton = ({
               onSuccess={handleClose}
             />
             {chartConfig.chartType !== "table" ? (
-              <TableViewChartMenuActionItem
-                chartType={chartConfig.chartType}
-                onSuccess={handleClose}
-              />
+              <>
+                <TableViewChartMenuActionItem
+                  chartType={chartConfig.chartType}
+                  onSuccess={handleClose}
+                />
+                <DownloadImageMenuActionItem
+                  type="png"
+                  screenshotName={chartKey}
+                  screenshotNode={chartWrapperNode}
+                />
+                <DownloadImageMenuActionItem
+                  type="svg"
+                  screenshotName={chartKey}
+                  screenshotNode={chartWrapperNode}
+                />
+              </>
             ) : null}
             {state.chartConfigs.length > 1 ? (
               <MenuActionItem
@@ -312,6 +340,36 @@ const TableViewChartMenuActionItem = ({
           <Trans id="chart-controls.table-view">Table view</Trans>
         )
       }
+    />
+  );
+};
+
+const DownloadImageMenuActionItem = ({
+  type,
+  screenshotName,
+  screenshotNode,
+  modifyNode,
+}: {
+  type: "png" | "svg";
+  screenshotName: string;
+  screenshotNode?: HTMLElement | null;
+  modifyNode?: (node: HTMLElement) => void;
+}) => {
+  const { loading, screenshot } = useScreenshot({
+    type,
+    screenshotName,
+    screenshotNode,
+    modifyNode,
+  });
+
+  return (
+    <MenuActionItem
+      type="button"
+      as="menuitem"
+      onClick={screenshot}
+      disabled={loading}
+      leadingIconName="download"
+      label={type.toUpperCase()}
     />
   );
 };

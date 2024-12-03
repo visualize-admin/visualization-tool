@@ -10,7 +10,14 @@ import { Trans } from "@lingui/macro";
 import { Box } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import Head from "next/head";
-import { forwardRef, ReactNode, useCallback, useMemo, useState } from "react";
+import {
+  forwardRef,
+  ReactNode,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import { DataSetTable } from "@/browse/datatable";
 import { LoadingStateProvider } from "@/charts/shared/chart-loading-state";
@@ -394,6 +401,7 @@ const ChartPreviewInner = ({
   chartKey?: string | null;
   actionElementSlot?: ReactNode;
 }) => {
+  const ref = useRef<HTMLDivElement>(null);
   const [state, dispatch] = useConfiguratorState();
   const configuring = isConfiguring(state);
   const chartConfig = getChartConfig(state, chartKey);
@@ -434,7 +442,7 @@ const ChartPreviewInner = ({
   }, [dimensions, measures]);
 
   return (
-    <Box className={chartClasses.root}>
+    <Box ref={ref} className={chartClasses.root}>
       {children}
       <ChartErrorBoundary resetKeys={[state]}>
         {hasChartConfigs(state) && (
@@ -493,7 +501,10 @@ const ChartPreviewInner = ({
                       mt: "-0.33rem",
                     }}
                   >
-                    <ChartMoreButton chartKey={chartConfig.key} />
+                    <ChartMoreButton
+                      chartKey={chartConfig.key}
+                      chartWrapperNode={ref.current}
+                    />
                     {actionElementSlot}
                   </Box>
                 </Flex>
