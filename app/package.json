@@ -81,6 +81,7 @@
     "lodash": "^4.17.21",
     "make-plural": "6.2.2",
     "maplibre-gl": "^3.6.2",
+    "meta-png": "^1.0.6",
     "micro": "^9.3.4",
     "microee": "^0.0.6",
     "mitt": "^3.0.1",
