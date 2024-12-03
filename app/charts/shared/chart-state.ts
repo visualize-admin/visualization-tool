@@ -356,7 +356,7 @@ export type NumericalYVariables = {
 
 export const useNumericalYVariables = (
   // Combo charts have their own logic for y scales.
-  chartType: "area" | "column" | "bar" | "line" | "pie" | "scatterplot",
+  chartType: "area" | "column" | "line" | "pie" | "scatterplot",
   y: GenericField,
   { measuresById }: { measuresById: MeasuresById }
 ): NumericalYVariables => {
@@ -378,7 +378,6 @@ export const useNumericalYVariables = (
       switch (chartType) {
         case "area":
         case "column":
-        case "bar":
         case "pie":
           return Math.min(0, min(data, _getY) ?? 0);
         case "line":

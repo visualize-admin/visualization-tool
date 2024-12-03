@@ -1008,6 +1008,7 @@ type ColumnAdjusters = BaseAdjusters<ColumnConfig> & {
     y: { componentId: FieldAdjuster<ColumnConfig, string> };
     segment: FieldAdjuster<
       ColumnConfig,
+      | BarSegmentField
       | LineSegmentField
       | AreaSegmentField
       | ScatterPlotSegmentField
@@ -1042,6 +1043,7 @@ type LineAdjusters = BaseAdjusters<LineConfig> & {
     segment: FieldAdjuster<
       LineConfig,
       | ColumnSegmentField
+      | BarSegmentField
       | AreaSegmentField
       | ScatterPlotSegmentField
       | PieSegmentField
@@ -1057,6 +1059,7 @@ type AreaAdjusters = BaseAdjusters<AreaConfig> & {
     segment: FieldAdjuster<
       AreaConfig,
       | ColumnSegmentField
+      | BarSegmentField
       | LineSegmentField
       | ScatterPlotSegmentField
       | PieSegmentField
@@ -1071,6 +1074,7 @@ type ScatterPlotAdjusters = BaseAdjusters<ScatterPlotConfig> & {
     segment: FieldAdjuster<
       ScatterPlotConfig,
       | ColumnSegmentField
+      | BarSegmentField
       | LineSegmentField
       | AreaSegmentField
       | PieSegmentField
@@ -1086,6 +1090,7 @@ type PieAdjusters = BaseAdjusters<PieConfig> & {
     segment: FieldAdjuster<
       PieConfig,
       | ColumnSegmentField
+      | BarSegmentField
       | LineSegmentField
       | AreaSegmentField
       | ScatterPlotSegmentField
@@ -1100,6 +1105,7 @@ type TableAdjusters = {
   fields: FieldAdjuster<
     TableConfig,
     | ColumnSegmentField
+    | BarSegmentField
     | LineSegmentField
     | AreaSegmentField
     | ScatterPlotSegmentField
