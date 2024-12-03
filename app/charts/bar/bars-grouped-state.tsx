@@ -83,10 +83,8 @@ const useBarsGroupedState = (
     xMeasure,
     getY,
     getMinX,
-    showXStandardError,
-    xErrorMeasure,
-    getXError,
     getXErrorRange,
+    getFormattedXUncertainty,
     segmentDimension,
     segmentsByAbbreviationOrLabel,
     getSegment,
@@ -391,14 +389,6 @@ const useBarsGroupedState = (
           topAnchor: !fields.segment,
         });
 
-    const getError = (d: Observation) => {
-      if (!showXStandardError || !getXError || getXError(d) == null) {
-        return;
-      }
-
-      return `${getXError(d)}${xErrorMeasure?.unit ?? ""}`;
-    };
-
     return {
       yAnchor: yAnchorRaw + (placement.y === "bottom" ? 0.5 : -0.5) * bw,
       xAnchor,
@@ -407,7 +397,7 @@ const useBarsGroupedState = (
       datum: {
         label: fields.segment && getSegmentAbbreviationOrLabel(datum),
         value: xValueFormatter(getX(datum)),
-        error: getError(datum),
+        error: getFormattedXUncertainty(datum),
         color: colors(getSegment(datum)) as string,
       },
       values: sortedTooltipValues.map((td) => ({
@@ -415,7 +405,7 @@ const useBarsGroupedState = (
         value: xMeasure.unit
           ? `${formatNumber(getX(td))} ${xMeasure.unit}`
           : formatNumber(getX(td)),
-        error: getError(td),
+        error: getFormattedXUncertainty(td),
         color: colors(getSegment(td)) as string,
       })),
     };

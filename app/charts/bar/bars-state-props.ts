@@ -57,7 +57,7 @@ export const useBarsStateVariables = (
     observations,
   });
   const numericalXErrorVariables = useNumericalXErrorVariables(x, {
-    numericalXVariables,
+    getValue: numericalXVariables.getX,
     dimensions,
     measures,
   });

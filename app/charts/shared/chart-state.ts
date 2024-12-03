@@ -410,10 +410,10 @@ export type NumericalYErrorVariables = {
 };
 
 export type NumericalXErrorVariables = {
-  showXStandardError: boolean;
-  xErrorMeasure: Component | undefined;
-  getXError: ((d: Observation) => ObservationValue) | null;
+  showXUncertainty: boolean;
+  getXErrorPresent: (d: Observation) => boolean;
   getXErrorRange: null | ((d: Observation) => [number, number]);
+  getFormattedXUncertainty: (d: Observation) => string | undefined;
 };
 
 export const useNumericalYErrorVariables = (
@@ -531,28 +531,112 @@ export const useNumericalYErrorVariables = (
 export const useNumericalXErrorVariables = (
   x: GenericField,
   {
-    numericalXVariables,
+    getValue,
     dimensions,
     measures,
   }: {
-    numericalXVariables: NumericalXVariables;
+    getValue: NumericalXVariables["getX"];
     dimensions: Dimension[];
     measures: Measure[];
   }
 ): NumericalXErrorVariables => {
   const showXStandardError = get(x, ["showStandardError"], true);
-  const xErrorMeasure = useErrorMeasure(x.componentId, {
+  const xStandardErrorMeasure = useErrorMeasure(x.componentId, {
     dimensions,
     measures,
+    type: RelatedDimensionType.StandardError,
   });
-  const getXErrorRange = useErrorRange(xErrorMeasure, numericalXVariables.getX);
-  const getXError = useErrorVariable(xErrorMeasure);
+  const getXStandardError = useErrorVariable(xStandardErrorMeasure);
+
+  const showXConfidenceInterval = get(x, ["showConfidenceInterval"], true);
+  const xConfidenceIntervalUpperMeasure = useErrorMeasure(x.componentId, {
+    dimensions,
+    measures,
+    type: RelatedDimensionType.ConfidenceUpperBound,
+  });
+  const getXConfidenceIntervalUpper = useErrorVariable(
+    xConfidenceIntervalUpperMeasure
+  );
+  const xConfidenceIntervalLowerMeasure = useErrorMeasure(x.componentId, {
+    dimensions,
+    measures,
+    type: RelatedDimensionType.ConfidenceLowerBound,
+  });
+  const getXConfidenceIntervalLower = useErrorVariable(
+    xConfidenceIntervalLowerMeasure
+  );
+
+  const getXErrorPresent = useCallback(
+    (d: Observation) => {
+      return (
+        (showXStandardError && getXStandardError?.(d) !== null) ||
+        (showXConfidenceInterval &&
+          getXConfidenceIntervalUpper?.(d) !== null &&
+          getXConfidenceIntervalLower?.(d) !== null)
+      );
+    },
+    [
+      showXStandardError,
+      getXStandardError,
+      showXConfidenceInterval,
+      getXConfidenceIntervalUpper,
+      getXConfidenceIntervalLower,
+    ]
+  );
+  const getXErrorRange = useErrorRange(
+    showXStandardError && xStandardErrorMeasure
+      ? xStandardErrorMeasure
+      : xConfidenceIntervalUpperMeasure,
+    showXStandardError && xStandardErrorMeasure
+      ? xStandardErrorMeasure
+      : xConfidenceIntervalLowerMeasure,
+    getValue
+  );
+  const getFormattedXUncertainty = useCallback(
+    (d: Observation) => {
+      if (
+        showXStandardError &&
+        getXStandardError &&
+        getXStandardError(d) !== null
+      ) {
+        const sd = getXStandardError(d);
+        const unit = xStandardErrorMeasure?.unit ?? "";
+        return ` ± ${sd}${unit}`;
+      }
+
+      if (
+        showXConfidenceInterval &&
+        getXConfidenceIntervalUpper &&
+        getXConfidenceIntervalLower &&
+        getXConfidenceIntervalUpper(d) !== null &&
+        getXConfidenceIntervalLower(d) !== null
+      ) {
+        const cil = getXConfidenceIntervalLower(d);
+        const ciu = getXConfidenceIntervalUpper(d);
+        const unit = xConfidenceIntervalUpperMeasure?.unit ?? "";
+        return `, [-${cil}${unit}, +${ciu}${unit}]`;
+      }
+    },
+    [
+      showXStandardError,
+      getXStandardError,
+      showXConfidenceInterval,
+      getXConfidenceIntervalUpper,
+      getXConfidenceIntervalLower,
+      xStandardErrorMeasure?.unit,
+      xConfidenceIntervalUpperMeasure?.unit,
+    ]
+  );
 
   return {
-    showXStandardError,
-    xErrorMeasure,
-    getXError,
+    showXUncertainty:
+      (showXStandardError && !!xStandardErrorMeasure) ||
+      (showXConfidenceInterval &&
+        !!xConfidenceIntervalUpperMeasure &&
+        !!xConfidenceIntervalLowerMeasure),
+    getXErrorPresent,
     getXErrorRange,
+    getFormattedXUncertainty,
   };
 };
 

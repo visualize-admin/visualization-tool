@@ -6,7 +6,6 @@ import { RenderBarDatum, renderBars } from "@/charts/bar/rendering-utils";
 import { useChartState } from "@/charts/shared/chart-state";
 import {
   RenderHorizontalWhiskerDatum,
-  filterWithoutErrors,
   renderContainer,
   renderHorizontalWhisker,
 } from "@/charts/shared/rendering-utils";
@@ -16,12 +15,12 @@ import { useTheme } from "@/themes";
 export const ErrorWhiskers = () => {
   const {
     getY,
-    getXError,
+    getXErrorPresent,
     getXErrorRange,
     chartData,
     yScale,
     xScale,
-    showXStandardError,
+    showXUncertainty,
     bounds,
   } = useChartState() as BarsState;
   const { margins, width, height } = bounds;
@@ -29,12 +28,12 @@ export const ErrorWhiskers = () => {
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
   const renderData: RenderHorizontalWhiskerDatum[] = useMemo(() => {
-    if (!getXErrorRange || !showXStandardError) {
+    if (!getXErrorRange || !showXUncertainty) {
       return [];
     }
 
     const bandwidth = yScale.bandwidth();
-    return chartData.filter(filterWithoutErrors(getXError)).map((d, i) => {
+    return chartData.filter(getXErrorPresent).map((d, i) => {
       const y0 = yScale(getY(d)) as number;
       const barWidth = Math.min(bandwidth, 15);
       const [x1, x2] = getXErrorRange(d);
@@ -50,9 +49,9 @@ export const ErrorWhiskers = () => {
   }, [
     chartData,
     getY,
-    getXError,
+    getXErrorPresent,
     getXErrorRange,
-    showXStandardError,
+    showXUncertainty,
     xScale,
     yScale,
     width,

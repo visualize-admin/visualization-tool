@@ -62,7 +62,7 @@ export const useBarsGroupedStateVariables = (
     observations,
   });
   const numericalXErrorVariables = useNumericalXErrorVariables(x, {
-    numericalXVariables,
+    getValue: numericalXVariables.getX,
     dimensions,
     measures,
   });

@@ -75,10 +75,8 @@ const useBarsState = (
     xMeasure,
     getY,
     getMinX,
-    showXStandardError,
-    xErrorMeasure,
-    getXError,
     getXErrorRange,
+    getFormattedXUncertainty,
   } = variables;
   const { chartData, scalesData, timeRangeData, paddingData, allData } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
@@ -244,14 +242,6 @@ const useBarsState = (
         xMeasure.unit
       );
 
-    const getError = (d: Observation) => {
-      if (!showXStandardError || !getXError || getXError(d) === null) {
-        return;
-      }
-
-      return `${getXError(d)}${xErrorMeasure?.unit ?? ""}`;
-    };
-
     const x = getX(d);
 
     return {
@@ -262,7 +252,7 @@ const useBarsState = (
       datum: {
         label: undefined,
         value: x !== null && isNaN(x) ? "-" : `${xValueFormatter(getX(d))}`,
-        error: getError(d),
+        error: getFormattedXUncertainty(d),
         color: "",
       },
       values: undefined,

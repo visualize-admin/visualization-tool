@@ -4,9 +4,8 @@ import { GroupedBarsState } from "@/charts/bar/bars-grouped-state";
 import { RenderBarDatum, renderBars } from "@/charts/bar/rendering-utils";
 import { useChartState } from "@/charts/shared/chart-state";
 import {
-  filterWithoutErrors,
-  renderHorizontalWhisker,
   renderContainer,
+  renderHorizontalWhisker,
   RenderHorizontalWhiskerDatum,
 } from "@/charts/shared/rendering-utils";
 import { useTransitionStore } from "@/stores/transition";
@@ -17,24 +16,24 @@ export const ErrorWhiskers = () => {
     xScale,
     yScaleIn,
     getXErrorRange,
-    getXError,
+    getXErrorPresent,
     yScale,
     getSegment,
     grouped,
-    showXStandardError,
+    showXUncertainty,
   } = useChartState() as GroupedBarsState;
   const { margins, width, height } = bounds;
   const ref = useRef<SVGGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
   const renderData: RenderHorizontalWhiskerDatum[] = useMemo(() => {
-    if (!getXErrorRange || !showXStandardError) {
+    if (!getXErrorRange || !showXUncertainty) {
       return [];
     }
 
     const bandwidth = yScaleIn.bandwidth();
     return grouped
-      .filter((d) => d[1].some(filterWithoutErrors(getXError)))
+      .filter((d) => d[1].some(getXErrorPresent))
       .flatMap(([segment, observations]) =>
         observations.map((d) => {
           const y0 = yScaleIn(getSegment(d)) as number;
@@ -53,9 +52,9 @@ export const ErrorWhiskers = () => {
   }, [
     getSegment,
     getXErrorRange,
-    getXError,
+    getXErrorPresent,
     grouped,
-    showXStandardError,
+    showXUncertainty,
     xScale,
     yScaleIn,
     yScale,
