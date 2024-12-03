@@ -403,6 +403,8 @@ export const MapComponent = () => {
           initialViewState={defaultViewState}
           mapLib={maplibregl}
           mapStyle={mapStyle}
+          // Important so we can take a screenshot of the map
+          preserveDrawingBuffer
           style={{
             position: "absolute",
             left: 0,

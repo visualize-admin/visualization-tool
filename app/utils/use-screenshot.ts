@@ -1,3 +1,4 @@
+import { select } from "d3-selection";
 import { toPng, toSvg } from "html-to-image";
 import { useCallback, useState } from "react";
 
@@ -65,7 +66,24 @@ const makeScreenshot = async ({
   const wrapperNode = document.createElement("div");
   wrapperNode.style.width = `${node.offsetWidth}px`;
   document.body.appendChild(wrapperNode);
+
   const clonedNode = node.cloneNode(true) as HTMLElement;
+
+  const canvasNodes = select(node)
+    .selectAll<HTMLCanvasElement, unknown>("canvas")
+    .nodes();
+  const clonedCanvasNodes = select(clonedNode)
+    .selectAll<HTMLCanvasElement, unknown>("canvas")
+    .nodes();
+
+  for (const canvasNode of canvasNodes) {
+    const clonedCanvasNode = clonedCanvasNodes[canvasNodes.indexOf(canvasNode)];
+    // Cloning the canvas element does not copy the content, so we need to
+    // manually copy it.
+    const ctx = clonedCanvasNode.getContext("2d") as CanvasRenderingContext2D;
+    ctx.drawImage(canvasNode, 0, 0);
+  }
+
   wrapperNode.appendChild(clonedNode);
   modifyNode?.(clonedNode);
 
