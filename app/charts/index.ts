@@ -1026,8 +1026,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     },
     fields: {
       x: {
-        componentId: ({ oldValue, newChartConfig, dimensions, measures }) => {
-          measures[0];
+        componentId: ({ oldValue, newChartConfig, dimensions }) => {
           // When switching from a scatterplot, x is a measure.
           if (dimensions.find((d) => d.id === oldValue)) {
             return produce(newChartConfig, (draft) => {
@@ -1039,8 +1038,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         },
       },
       y: {
-        componentId: ({ oldValue, newChartConfig, dimensions }) => {
-          dimensions[0];
+        componentId: ({ oldValue, newChartConfig }) => {
           return produce(newChartConfig, (draft) => {
             draft.fields.y.componentId = oldValue;
           });
@@ -1054,8 +1052,8 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         measures,
       }) => {
         let newSegment: ColumnSegmentField | undefined;
-        const yMeasure = measures.find(
-          (d) => d.id === newChartConfig.fields.y.componentId
+        const xMeasure = measures.find(
+          (d) => d.id === newChartConfig.fields.x.componentId
         );
 
         // When switching from a table chart, a whole fields object is passed as oldValue.
@@ -1070,14 +1068,14 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
             newSegment = {
               ...tableSegment,
               sorting: DEFAULT_SORTING,
-              type: disableStacked(yMeasure) ? "grouped" : "stacked",
+              type: disableStacked(xMeasure) ? "grouped" : "stacked",
             };
           }
           // Otherwise we are dealing with a segment field. We shouldn't take
           // the segment from oldValue if the component has already been used as
-          // x axis.
+          // y axis.
         } else if (
-          newChartConfig.fields.x.componentId !== oldValue.componentId
+          newChartConfig.fields.y.componentId !== oldValue.componentId
         ) {
           const oldSegment = oldValue as Exclude<typeof oldValue, TableFields>;
           newSegment = {
@@ -1089,7 +1087,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
               acceptedValues: COLUMN_SEGMENT_SORTING.map((d) => d.sortingType),
               defaultValue: "byTotalSize",
             }),
-            type: disableStacked(yMeasure) ? "grouped" : "stacked",
+            type: disableStacked(xMeasure) ? "grouped" : "stacked",
           };
         }
 
@@ -1820,8 +1818,6 @@ const chartConfigsPathOverrides: {
       "fields.y.componentId": { path: "fields.x.componentId" },
     },
     pie: {
-      "fields.segment.componentId": { path: "fields.y.componentId" },
-      "fields.x.componentId": { path: "fields.y.componentId" },
       "fields.y.componentId": { path: "fields.x.componentId" },
     },
     map: {
