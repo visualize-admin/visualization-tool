@@ -73,6 +73,7 @@
     "graphql-tag": "^2.11.0",
     "graphql-tools": "^7.0.5",
     "graphql-type-json": "^0.3.2",
+    "html-to-image": "^1.11.11",
     "iframe-resizer": "^4.2.11",
     "immer": "^9.0.6",
     "io-ts": "^2.2.21",
