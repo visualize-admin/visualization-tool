@@ -27,6 +27,7 @@ import { getChartIcon } from "@/icons";
 import SvgIcMore from "@/icons/components/IcMore";
 import { useLocale } from "@/src";
 import { createChartId } from "@/utils/create-chart-id";
+import { DISABLE_SCREENSHOT_ATTR } from "@/utils/use-screenshot";
 
 /** Generic styles shared between `ChartPreview` and `ChartPublished`. */
 export const useChartStyles = makeStyles<Theme, { disableBorder?: boolean }>(
@@ -136,6 +137,7 @@ export const ChartMoreButton = ({
         color="secondary"
         onClick={(ev) => setAnchor(ev.currentTarget)}
         sx={{ height: "fit-content" }}
+        {...DISABLE_SCREENSHOT_ATTR}
       >
         <SvgIcMore />
       </IconButton>

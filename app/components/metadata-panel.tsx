@@ -80,6 +80,7 @@ import { assert } from "@/utils/assert";
 import { useEventEmitter } from "@/utils/eventEmitter";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
+import { DISABLE_SCREENSHOT_ATTR } from "@/utils/use-screenshot";
 
 import Flex from "./flex";
 import { JoinByChip } from "./JoinByChip";
@@ -370,6 +371,7 @@ const ToggleButton = ({ onClick }: { onClick: () => void }) => {
       color="primary"
       size="small"
       onClick={onClick}
+      {...DISABLE_SCREENSHOT_ATTR}
     >
       <Typography variant="body2">
         <Trans id="controls.metadata-panel.metadata">Details</Trans>

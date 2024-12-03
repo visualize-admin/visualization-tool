@@ -63,6 +63,7 @@ import { InteractiveFiltersChartProvider } from "@/stores/interactive-filters";
 import { useTransitionStore } from "@/stores/transition";
 import { useTheme } from "@/themes";
 import { createSnapCornerToCursor } from "@/utils/dnd";
+import { DISABLE_SCREENSHOT_ATTR_KEY } from "@/utils/use-screenshot";
 
 export const ChartPreview = ({ dataSource }: { dataSource: DataSource }) => {
   const [state] = useConfiguratorState(hasChartConfigs);
@@ -474,6 +475,10 @@ const ChartPreviewInner = ({
                               })
                           : undefined
                       }
+                      {...{
+                        [DISABLE_SCREENSHOT_ATTR_KEY]:
+                          !chartConfig.meta.title[locale],
+                      }}
                     />
                   ) : (
                     // We need to have a span here to keep the space between the
@@ -507,6 +512,10 @@ const ChartPreviewInner = ({
                           }
                         : undefined
                     }
+                    {...{
+                      [DISABLE_SCREENSHOT_ATTR_KEY]:
+                        !chartConfig.meta.description[locale],
+                    }}
                   />
                 ) : (
                   // We need to have a span here to keep the space between the
