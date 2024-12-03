@@ -700,8 +700,12 @@ describe("colorMapping", () => {
       chartConfig.fields.segment?.componentId ===
         "mapDataset___newAreaLayerColorIri"
     );
-    expect(chartConfig.fields.segment?.palette === "dimension");
-    expect(chartConfig.fields.segment?.colorMapping).toEqual({
+    expect(chartConfig.fields.color.paletteId === "dimension");
+    expect(
+      chartConfig.fields.color.type === "single"
+        ? chartConfig.fields.color.color
+        : chartConfig.fields.color.colorMapping
+    ).toEqual({
       orange: "rgb(255, 153, 0)",
     });
   });

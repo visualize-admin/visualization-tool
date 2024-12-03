@@ -275,6 +275,11 @@ describe("chart type switch", () => {
         y: {
           componentId: "https://environment.ld.admin.ch/foen/ubd0104/value",
         },
+        color: {
+          type: "segment",
+          paletteId: "category10",
+          colorMapping: {},
+        },
       },
       interactiveFiltersConfig: {
         legend: {

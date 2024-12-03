@@ -77,7 +77,7 @@ export const useComboLineColumnStateVariables = (
     dimension: measuresById[lineId],
     id: lineId,
     label: getLabelWithUnit(measuresById[lineId]),
-    color: fields.y.colorMapping[lineId],
+    color: fields.color.colorMapping[lineId],
     getY: (d) => (d[lineId] !== null ? Number(d[lineId]) : null),
     getMinY: (data) => {
       const minY =
@@ -94,7 +94,7 @@ export const useComboLineColumnStateVariables = (
     dimension: measuresById[columnId],
     id: columnId,
     label: getLabelWithUnit(measuresById[columnId]),
-    color: fields.y.colorMapping[columnId],
+    color: fields.color.colorMapping[columnId],
     getY: (d) => (d[columnId] !== null ? Number(d[columnId]) : null),
     getMinY: (data) => {
       const minY =

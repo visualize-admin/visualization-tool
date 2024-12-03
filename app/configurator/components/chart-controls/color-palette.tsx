@@ -95,9 +95,8 @@ export const ColorPalette = ({
     dispatch({
       type: "CHART_PALETTE_CHANGED",
       value: {
-        field,
-        colorConfigPath,
-        palette: palette.value,
+        type: chartConfig.fields.color.type,
+        paletteId: palette.value,
         colorMapping: mapValueIrisToColor({
           palette: palette.value,
           dimensionValues: component.values,

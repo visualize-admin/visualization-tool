@@ -657,22 +657,16 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         const chartConfig = getChartConfig(draft);
         setWith(
           chartConfig,
-          `fields["${action.value.field}"].${
-            action.value.colorConfigPath
-              ? `${action.value.colorConfigPath}.`
-              : ""
-          }palette`,
-          action.value.palette,
+          `fields.color.paletteId`,
+          action.value.paletteId,
           Object
         );
         setWith(
           chartConfig,
-          `fields["${action.value.field}"].${
-            action.value.colorConfigPath
-              ? `${action.value.colorConfigPath}.`
-              : ""
-          }colorMapping`,
-          action.value.colorMapping,
+          `fields.color.${action.value.type === "single" ? "color" : "colorMapping"}`,
+          action.value.type === "single"
+            ? action.value.color
+            : action.value.colorMapping,
           Object
         );
       }

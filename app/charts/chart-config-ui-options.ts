@@ -485,8 +485,8 @@ export const defaultSegmentOnChange: OnEncodingChange<
   const component = components.find((d) => d.id === id);
   const palette = getDefaultCategoricalPaletteName(
     component,
-    chartConfig.fields.segment && "palette" in chartConfig.fields.segment
-      ? chartConfig.fields.segment.palette
+    chartConfig.fields.color && "palette" in chartConfig.fields.color
+      ? chartConfig.fields.color.paletteId
       : undefined
   );
   const colorMapping = mapValueIrisToColor({
@@ -496,12 +496,14 @@ export const defaultSegmentOnChange: OnEncodingChange<
 
   if (chartConfig.fields.segment && "palette" in chartConfig.fields.segment) {
     chartConfig.fields.segment.componentId = id;
-    chartConfig.fields.segment.colorMapping = colorMapping;
   } else {
     chartConfig.fields.segment = {
       componentId: id,
-      palette,
       sorting: DEFAULT_SORTING,
+    };
+    chartConfig.fields.color = {
+      type: "segment",
+      paletteId: palette,
       colorMapping,
     };
   }
@@ -955,12 +957,12 @@ const chartConfigOptionsUISpec: ChartSpecs = {
             onChange: (ids, options) => {
               const { chartConfig } = options;
               const { fields } = chartConfig;
-              const { y } = fields;
-              const palette = getPalette(y.palette);
+              const { color } = fields;
+              const palette = getPalette(color.paletteId);
               const newColorMapping = Object.fromEntries(
-                ids.map((id, i) => [id, y.colorMapping[i] ?? palette[i]])
+                ids.map((id, i) => [id, color.colorMapping[i] ?? palette[i]])
               );
-              chartConfig.fields.y.colorMapping = newColorMapping;
+              chartConfig.fields.color.colorMapping = newColorMapping;
             },
           },
         },
@@ -990,11 +992,11 @@ const chartConfigOptionsUISpec: ChartSpecs = {
             onChange: (id, options) => {
               const { chartConfig } = options;
               const { fields } = chartConfig;
-              const { y } = fields;
-              chartConfig.fields.y.colorMapping = {
-                [id]: y.colorMapping[y.leftAxisComponentId],
+              const { y, color } = fields;
+              chartConfig.fields.color.colorMapping = {
+                [id]: color.colorMapping[y.leftAxisComponentId],
                 [y.rightAxisComponentId]:
-                  y.colorMapping[y.rightAxisComponentId],
+                  color.colorMapping[y.rightAxisComponentId],
               };
             },
           },
@@ -1002,10 +1004,11 @@ const chartConfigOptionsUISpec: ChartSpecs = {
             onChange: (id, options) => {
               const { chartConfig } = options;
               const { fields } = chartConfig;
-              const { y } = fields;
-              chartConfig.fields.y.colorMapping = {
-                [y.leftAxisComponentId]: y.colorMapping[y.leftAxisComponentId],
-                [id]: y.colorMapping[y.rightAxisComponentId],
+              const { y, color } = fields;
+              chartConfig.fields.color.colorMapping = {
+                [y.leftAxisComponentId]:
+                  color.colorMapping[y.leftAxisComponentId],
+                [id]: color.colorMapping[y.rightAxisComponentId],
               };
             },
           },
@@ -1036,11 +1039,11 @@ const chartConfigOptionsUISpec: ChartSpecs = {
             onChange: (id, options) => {
               const { chartConfig } = options;
               const { fields } = chartConfig;
-              const { y } = fields;
-              const lineColor = y.colorMapping[y.lineComponentId];
-              const columnColor = y.colorMapping[y.columnComponentId];
+              const { y, color } = fields;
+              const lineColor = color.colorMapping[y.lineComponentId];
+              const columnColor = color.colorMapping[y.columnComponentId];
 
-              chartConfig.fields.y.colorMapping =
+              chartConfig.fields.color.colorMapping =
                 y.lineAxisOrientation === "left"
                   ? { [id]: lineColor, [y.columnComponentId]: columnColor }
                   : { [y.columnComponentId]: columnColor, [id]: lineColor };
@@ -1050,11 +1053,11 @@ const chartConfigOptionsUISpec: ChartSpecs = {
             onChange: (id, options) => {
               const { chartConfig } = options;
               const { fields } = chartConfig;
-              const { y } = fields;
-              const columnColor = y.colorMapping[y.columnComponentId];
-              const lineColor = y.colorMapping[y.lineComponentId];
+              const { y, color } = fields;
+              const columnColor = color.colorMapping[y.columnComponentId];
+              const lineColor = color.colorMapping[y.lineComponentId];
 
-              chartConfig.fields.y.colorMapping =
+              chartConfig.fields.color.colorMapping =
                 y.lineAxisOrientation === "left"
                   ? { [y.lineComponentId]: lineColor, [id]: columnColor }
                   : { [id]: columnColor, [y.lineComponentId]: lineColor };
@@ -1064,7 +1067,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
             onChange: (_, options) => {
               const { chartConfig } = options;
               const { fields } = chartConfig;
-              const { y } = fields;
+              const { y, color } = fields;
               const lineAxisLeft = y.lineAxisOrientation === "left";
               // Need the correct order to not enable "Reset color palette" button.
               const firstId = lineAxisLeft
@@ -1074,9 +1077,9 @@ const chartConfigOptionsUISpec: ChartSpecs = {
                 ? y.lineComponentId
                 : y.columnComponentId;
 
-              chartConfig.fields.y.colorMapping = {
-                [firstId]: y.colorMapping[secondId],
-                [secondId]: y.colorMapping[firstId],
+              chartConfig.fields.color.colorMapping = {
+                [firstId]: color.colorMapping[secondId],
+                [secondId]: color.colorMapping[firstId],
               };
             },
           },

@@ -9,6 +9,7 @@ import {
   ImputationType,
   InteractiveFiltersConfig,
   Layout,
+  NewColorField,
 } from "@/config-types";
 import { DataCubeComponents, Dimension, DimensionValue } from "@/domain/data";
 import { Locale } from "@/locales/locales";
@@ -90,12 +91,7 @@ export type ConfiguratorStateAction =
     }
   | {
       type: "CHART_PALETTE_CHANGED";
-      value: {
-        field: string;
-        colorConfigPath?: string;
-        palette: string;
-        colorMapping: Record<string, string>;
-      };
+      value: NewColorField;
     }
   | {
       type: "CHART_PALETTE_RESET";
