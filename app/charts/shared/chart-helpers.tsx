@@ -287,6 +287,20 @@ export const extractChartConfigComponentIds = ({
   );
 };
 
+export const extractChartConfigUsedCubes = (
+  chartConfig: ChartConfig,
+  { components }: { components: Component[] }
+) => {
+  const componentIds = extractChartConfigComponentIds({
+    chartConfig,
+    includeFilters: false,
+  });
+
+  return componentIds
+    .map((id) => components.find((component) => component.id === id))
+    .filter(truthy); // exclude potential joinBy components
+};
+
 /** Use to remove missing values from chart data. */
 export const usePlottableData = (
   data: Observation[],

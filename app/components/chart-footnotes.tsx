@@ -4,7 +4,7 @@ import { makeStyles } from "@mui/styles";
 import uniqBy from "lodash/uniqBy";
 import { useMemo } from "react";
 
-import { extractChartConfigComponentIds } from "@/charts/shared/chart-helpers";
+import { extractChartConfigUsedCubes } from "@/charts/shared/chart-helpers";
 import { LegendItem } from "@/charts/shared/legend-color";
 import { ChartFiltersList } from "@/components/chart-filters-list";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
@@ -17,7 +17,6 @@ import {
   DataSource,
 } from "@/configurator";
 import { Component, Measure } from "@/domain/data";
-import { truthy } from "@/domain/types";
 import { useTimeFormatLocale } from "@/formatters";
 import { useDataCubesMetadataQuery } from "@/graphql/hooks";
 import { useLocale } from "@/locales/use-locale";
@@ -57,14 +56,7 @@ export const ChartFootnotes = ({
 }) => {
   const locale = useLocale();
   const usedComponents = useMemo(() => {
-    const componentIds = extractChartConfigComponentIds({
-      chartConfig,
-      includeFilters: false,
-    });
-
-    return componentIds
-      .map((id) => components.find((component) => component.id === id))
-      .filter(truthy); // exclude potential joinBy components
+    return extractChartConfigUsedCubes(chartConfig, { components });
   }, [chartConfig, components]);
   const [{ data }] = useDataCubesMetadataQuery({
     variables: {
