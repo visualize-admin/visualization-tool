@@ -1,4 +1,4 @@
-import { Trans, t } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
 import { Box, IconButton, Theme, useEventCallback } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { ComponentProps, useEffect, useState } from "react";
@@ -27,7 +27,11 @@ import { getChartIcon } from "@/icons";
 import SvgIcMore from "@/icons/components/IcMore";
 import { useLocale } from "@/src";
 import { createChartId } from "@/utils/create-chart-id";
-import { DISABLE_SCREENSHOT_ATTR, useScreenshot } from "@/utils/use-screenshot";
+import {
+  DISABLE_SCREENSHOT_ATTR,
+  useScreenshot,
+  UseScreenshotProps,
+} from "@/utils/use-screenshot";
 
 /** Generic styles shared between `ChartPreview` and `ChartPublished`. */
 export const useChartStyles = makeStyles<Theme, { disableBorder?: boolean }>(
@@ -351,17 +355,14 @@ const DownloadImageMenuActionItem = ({
   screenshotName,
   screenshotNode,
   modifyNode,
-}: {
-  type: "png" | "svg";
-  screenshotName: string;
-  screenshotNode?: HTMLElement | null;
-  modifyNode?: (node: HTMLElement) => void;
-}) => {
+  pngMetadata,
+}: UseScreenshotProps) => {
   const { loading, screenshot } = useScreenshot({
     type,
     screenshotName,
     screenshotNode,
     modifyNode,
+    pngMetadata,
   });
 
   return (

@@ -1,20 +1,25 @@
 import { select } from "d3-selection";
 import { toPng, toSvg } from "html-to-image";
+import { addMetadata } from "meta-png";
 import { useCallback, useState } from "react";
 
 type ScreenshotFileFormat = "png" | "svg";
+
+export type UseScreenshotProps = {
+  type: ScreenshotFileFormat;
+  screenshotName: string;
+  screenshotNode?: HTMLElement | null;
+  modifyNode?: (d: HTMLElement) => void;
+  pngMetadata?: { key: PNG_METADATA_KEY; value: string }[];
+};
 
 export const useScreenshot = ({
   type,
   screenshotName,
   screenshotNode,
   modifyNode: _modifyNode,
-}: {
-  type: ScreenshotFileFormat;
-  screenshotName: string;
-  screenshotNode?: HTMLElement | null;
-  modifyNode?: (d: HTMLElement) => void;
-}) => {
+  pngMetadata,
+}: UseScreenshotProps) => {
   const [loading, setLoading] = useState(false);
   const modifyNode = useCallback(
     (node: HTMLElement) => {
@@ -35,6 +40,7 @@ export const useScreenshot = ({
           name: screenshotName,
           node: screenshotNode,
           modifyNode,
+          pngMetadata,
         });
       } catch (error) {
         console.error(error);
@@ -42,21 +48,41 @@ export const useScreenshot = ({
         setLoading(false);
       }
     }
-  }, [type, screenshotName, screenshotNode, modifyNode]);
+  }, [screenshotNode, type, screenshotName, modifyNode, pngMetadata]);
 
-  return { loading, screenshot };
+  return {
+    loading,
+    screenshot,
+  };
 };
+
+// https://dev.exiv2.org/projects/exiv2/wiki/The_Metadata_in_PNG_files#2-Textual-information-chunks-the-metadata-in-PNG
+// We can use custom keys, but we should avoid using keys that are already used
+// by other software.
+type PNG_METADATA_KEY =
+  | "Title"
+  | "Author"
+  | "Description"
+  | "Copyright"
+  | "Creation Time"
+  | "Software"
+  | "Disclaimer"
+  | "Warning"
+  | "Source"
+  | "Comment";
 
 const makeScreenshot = async ({
   type,
   name,
   node,
   modifyNode,
+  pngMetadata,
 }: {
   type: "png" | "svg";
   name: string;
   node: HTMLElement;
   modifyNode?: (d: HTMLElement) => void;
+  pngMetadata?: { key: PNG_METADATA_KEY; value: string }[];
 }) => {
   const isUsingSafari =
     typeof window !== "undefined"
@@ -97,10 +123,35 @@ const makeScreenshot = async ({
 
   await (type === "png" ? toPng : toSvg)(wrapperNode)
     .then((dataUrl) => {
-      const a = document.createElement("a");
-      a.href = dataUrl;
-      a.download = `${name}.${type}`;
-      a.click();
+      const download = (dataUrl: string) => {
+        const a = document.createElement("a");
+        a.href = dataUrl;
+        a.download = `${name}.${type}`;
+        a.click();
+      };
+
+      switch (type) {
+        case "png": {
+          let arrayBuffer = Uint8Array.from(atob(dataUrl.split(",")[1]), (c) =>
+            c.charCodeAt(0)
+          );
+
+          pngMetadata?.forEach(({ key, value }) => {
+            arrayBuffer = addMetadata(arrayBuffer, key, value);
+          });
+
+          const dataUrlWithMetadata = `data:image/png;base64,${Buffer.from(
+            arrayBuffer
+          ).toString("base64")}`;
+
+          return download(dataUrlWithMetadata);
+        }
+        case "svg":
+          return download(dataUrl);
+        default:
+          const _exhaustiveCheck: never = type;
+          return _exhaustiveCheck;
+      }
     })
     .catch((error) => console.error(error))
     .finally(() => wrapperNode.remove());
