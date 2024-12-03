@@ -34,8 +34,8 @@ export const renderBars = (
           .attr("data-index", (_, i) => i)
           .attr("y", (d) => d.y)
           .attr("x", x0)
-          .attr("width", (d) => d.width)
-          .attr("height", 0)
+          .attr("width", 0)
+          .attr("height", (d) => d.height)
           .attr("fill", (d) => d.color)
           .call((enter) =>
             maybeTransition(enter, {
