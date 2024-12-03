@@ -485,7 +485,7 @@ export const defaultSegmentOnChange: OnEncodingChange<
   const component = components.find((d) => d.id === id);
   const palette = getDefaultCategoricalPaletteName(
     component,
-    chartConfig.fields.color && "palette" in chartConfig.fields.color
+    chartConfig.fields.color && "paletteId" in chartConfig.fields.color
       ? chartConfig.fields.color.paletteId
       : undefined
   );
@@ -494,7 +494,7 @@ export const defaultSegmentOnChange: OnEncodingChange<
     dimensionValues: component ? component.values : selectedValues,
   });
 
-  if (chartConfig.fields.segment && "palette" in chartConfig.fields.segment) {
+  if (chartConfig.fields.segment) {
     chartConfig.fields.segment.componentId = id;
   } else {
     chartConfig.fields.segment = {
