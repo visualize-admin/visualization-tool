@@ -11,7 +11,8 @@ You can also check the
 
 # Unreleased
 
-Nothing yet.
+- Features
+  - It's now possible to export charts as images
 
 # [5.0.2] - 2024-11-28
 
