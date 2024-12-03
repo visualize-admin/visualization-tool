@@ -1026,9 +1026,8 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     },
     fields: {
       x: {
-        componentId: ({ oldValue, newChartConfig, dimensions }) => {
-          // When switching from a scatterplot, x is a measure.
-          if (dimensions.find((d) => d.id === oldValue)) {
+        componentId: ({ oldValue, newChartConfig, measures }) => {
+          if (measures.find((d) => d.id === oldValue)) {
             return produce(newChartConfig, (draft) => {
               draft.fields.x.componentId = oldValue;
             });
@@ -1038,10 +1037,15 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         },
       },
       y: {
-        componentId: ({ oldValue, newChartConfig }) => {
-          return produce(newChartConfig, (draft) => {
-            draft.fields.y.componentId = oldValue;
-          });
+        componentId: ({ oldValue, newChartConfig, dimensions }) => {
+          // For most charts, y is a measure.
+          if (dimensions.find((d) => d.id === oldValue)) {
+            return produce(newChartConfig, (draft) => {
+              draft.fields.y.componentId = oldValue;
+            });
+          }
+
+          return newChartConfig;
         },
       },
       segment: ({
@@ -1829,16 +1833,16 @@ const chartConfigsPathOverrides: {
     },
     comboLineSingle: {
       "fields.y.componentIds": {
-        path: "fields.y.componentId",
+        path: "fields.x.componentId",
         oldValue: (d: ComboLineSingleFields["y"]["componentIds"]) => d[0],
       },
     },
     comboLineDual: {
-      "fields.y.leftAxisComponentId": { path: "fields.y.componentId" },
+      "fields.y.leftAxisComponentId": { path: "fields.x.componentId" },
     },
     comboLineColumn: {
       "fields.y": {
-        path: "fields.y.componentId",
+        path: "fields.x.componentId",
         oldValue: (d: ComboLineColumnFields["y"]) => {
           return d.lineAxisOrientation === "left"
             ? d.lineComponentId
@@ -2038,6 +2042,9 @@ const chartConfigsPathOverrides: {
     column: {
       "fields.y.componentId": { path: "fields.y.componentIds" },
     },
+    bar: {
+      "fields.x.componentId": { path: "fields.y.componentIds" },
+    },
     line: {
       "fields.y.componentId": { path: "fields.y.componentIds" },
     },
@@ -2068,6 +2075,9 @@ const chartConfigsPathOverrides: {
     column: {
       "fields.y": { path: "fields.y" },
     },
+    bar: {
+      "fields.x": { path: "fields.y" },
+    },
     line: {
       "fields.y": { path: "fields.y" },
     },
@@ -2093,6 +2103,9 @@ const chartConfigsPathOverrides: {
   comboLineColumn: {
     column: {
       "fields.y": { path: "fields.y" },
+    },
+    bar: {
+      "fields.x": { path: "fields.y" },
     },
     line: {
       "fields.y": { path: "fields.y" },
