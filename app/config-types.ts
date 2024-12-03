@@ -211,6 +211,35 @@ export type SortingType = t.TypeOf<typeof SortingType>;
 const ColorMapping = t.record(t.string, t.string);
 export type ColorMapping = t.TypeOf<typeof ColorMapping>;
 
+const SingleColorField = t.type({
+  type: t.literal("single"),
+  paletteId: t.string,
+  color: t.string,
+});
+export type SingleColorField = t.TypeOf<typeof SingleColorField>;
+
+const SegmentColorField = t.type({
+  type: t.literal("segment"),
+  paletteId: t.string,
+  colorMapping: ColorMapping,
+});
+export type SegmentColorField = t.TypeOf<typeof SegmentColorField>;
+
+const MeasuresColorField = t.type({
+  type: t.literal("measures"),
+  paletteId: t.string,
+  colorMapping: ColorMapping,
+});
+export type MeasuresColorField = t.TypeOf<typeof MeasuresColorField>;
+
+const ColorField = t.union([
+  SingleColorField,
+  SegmentColorField,
+  MeasuresColorField,
+]);
+//FIXME: Remove current type called ColorField and replace it with the new one
+export type NewColorField = t.TypeOf<typeof ColorField>;
+
 const GenericField = t.intersection([
   t.type({ componentId: t.string }),
   t.partial({ useAbbreviations: t.boolean }),
@@ -220,15 +249,7 @@ export type GenericField = t.TypeOf<typeof GenericField>;
 const GenericFields = t.record(t.string, t.union([GenericField, t.undefined]));
 export type GenericFields = t.TypeOf<typeof GenericFields>;
 
-const GenericSegmentField = t.intersection([
-  GenericField,
-  t.type({
-    palette: t.string,
-  }),
-  t.partial({
-    colorMapping: ColorMapping,
-  }),
-]);
+const GenericSegmentField = GenericField;
 export type GenericSegmentField = t.TypeOf<typeof GenericSegmentField>;
 
 const AnimationType = t.union([t.literal("continuous"), t.literal("stepped")]);
@@ -297,6 +318,7 @@ const ColumnFields = t.intersection([
   t.type({
     x: t.intersection([GenericField, SortingField]),
     y: t.intersection([GenericField, UncertaintyFieldExtension]),
+    color: t.union([SegmentColorField, SingleColorField]),
   }),
   t.partial({
     segment: ColumnSegmentField,
@@ -324,6 +346,7 @@ const LineFields = t.intersection([
   t.type({
     x: GenericField,
     y: t.intersection([GenericField, UncertaintyFieldExtension]),
+    color: t.union([SegmentColorField, SingleColorField]),
   }),
   t.partial({
     segment: LineSegmentField,
@@ -361,6 +384,7 @@ const AreaFields = t.intersection([
       GenericField,
       t.partial({ imputationType: ImputationType }),
     ]),
+    color: t.union([SegmentColorField, SingleColorField]),
   }),
   t.partial({
     segment: AreaSegmentField,
@@ -387,6 +411,7 @@ const ScatterPlotFields = t.intersection([
   t.type({
     x: GenericField,
     y: GenericField,
+    color: t.union([SegmentColorField, SingleColorField]),
   }),
   t.partial({
     segment: ScatterPlotSegmentField,
@@ -414,6 +439,7 @@ const PieFields = t.intersection([
   t.type({
     y: GenericField,
     segment: PieSegmentField,
+    color: SegmentColorField,
   }),
   t.partial({ animation: AnimationField }),
 ]);
@@ -582,7 +608,7 @@ const CategoricalColorField = t.intersection([
   t.type({
     type: t.literal("categorical"),
     componentId: t.string,
-    palette: t.string,
+    paletteId: t.string,
     colorMapping: ColorMapping,
   }),
   t.partial({ useAbbreviations: t.boolean }),
@@ -595,7 +621,7 @@ const NumericalColorField = t.intersection([
   t.type({
     type: t.literal("numerical"),
     componentId: t.string,
-    palette: t.union([DivergingPaletteType, SequentialPaletteType]),
+    paletteId: t.union([DivergingPaletteType, SequentialPaletteType]),
   }),
   t.union([
     t.type({
@@ -623,6 +649,7 @@ export type ColorField =
 
 const MapAreaLayer = t.type({
   componentId: t.string,
+  //FIXME:  convert to new color field type
   color: t.union([CategoricalColorField, NumericalColorField]),
 });
 export type MapAreaLayer = t.TypeOf<typeof MapAreaLayer>;
@@ -631,6 +658,7 @@ const MapSymbolLayer = t.type({
   componentId: t.string,
   // symbol radius (size)
   measureId: t.string,
+  //FIXME:  convert to new color field type
   color: t.union([FixedColorField, CategoricalColorField, NumericalColorField]),
 });
 export type MapSymbolLayer = t.TypeOf<typeof MapSymbolLayer>;
@@ -667,9 +695,8 @@ const ComboLineSingleFields = t.type({
   x: GenericField,
   y: t.type({
     componentIds: t.array(t.string),
-    palette: t.string,
-    colorMapping: ColorMapping,
   }),
+  color: MeasuresColorField,
 });
 export type ComboLineSingleFields = t.TypeOf<typeof ComboLineSingleFields>;
 
@@ -691,9 +718,8 @@ const ComboLineDualFields = t.type({
   y: t.type({
     leftAxisComponentId: t.string,
     rightAxisComponentId: t.string,
-    palette: t.string,
-    colorMapping: ColorMapping,
   }),
+  color: MeasuresColorField,
 });
 export type ComboLineDualFields = t.TypeOf<typeof ComboLineDualFields>;
 
@@ -716,9 +742,8 @@ const ComboLineColumnFields = t.type({
     lineComponentId: t.string,
     lineAxisOrientation: t.union([t.literal("left"), t.literal("right")]),
     columnComponentId: t.string,
-    palette: t.string,
-    colorMapping: ColorMapping,
   }),
+  color: MeasuresColorField,
 });
 
 export type ComboLineColumnFields = t.TypeOf<typeof ComboLineColumnFields>;
