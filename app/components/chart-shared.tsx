@@ -1,7 +1,20 @@
 import { t, Trans } from "@lingui/macro";
-import { Box, IconButton, Theme, useEventCallback } from "@mui/material";
+import {
+  Box,
+  IconButton,
+  Theme,
+  useEventCallback,
+  useTheme,
+} from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { ComponentProps, useEffect, useState } from "react";
+import { select } from "d3-selection";
+import {
+  ComponentProps,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
 import {
   ChartDataFiltersList,
@@ -125,6 +138,7 @@ export const ChartMoreButton = ({
   chartKey: string;
   chartWrapperNode?: HTMLElement | null;
 }) => {
+  const theme = useTheme();
   const [state, dispatch] = useConfiguratorState(hasChartConfigs);
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
   const handleClose = useEventCallback(() => setAnchor(null));
@@ -140,6 +154,19 @@ export const ChartMoreButton = ({
     isPublished(state) &&
     state.layout.type === "dashboard" &&
     chartConfig.chartType === "table";
+
+  const modifyNode = useCallback(
+    (node: HTMLElement) => {
+      // Every text element should be dark-grey (currently we use primary.main to
+      // indicate interactive elements, which doesn't make sense for screenshots).
+      const color = theme.palette.grey[700];
+      select(node).selectAll("*").style("color", color);
+      // SVG elements have fill instead of color. Here we only target text elements,
+      // to avoid changing the color of other SVG elements (charts).
+      select(node).selectAll("text").style("fill", color);
+    },
+    [theme.palette.grey]
+  );
 
   return disableButton ? null : (
     <>
@@ -170,6 +197,7 @@ export const ChartMoreButton = ({
                   type="png"
                   screenshotName={chartKey}
                   screenshotNode={chartWrapperNode}
+                  modifyNode={modifyNode}
                 />
               </>
             ) : null}
@@ -208,6 +236,7 @@ export const ChartMoreButton = ({
                   type="png"
                   screenshotName={chartKey}
                   screenshotNode={chartWrapperNode}
+                  modifyNode={modifyNode}
                 />
               </>
             ) : null}
