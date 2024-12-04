@@ -171,11 +171,6 @@ export const ChartMoreButton = ({
                   screenshotName={chartKey}
                   screenshotNode={chartWrapperNode}
                 />
-                <DownloadImageMenuActionItem
-                  type="svg"
-                  screenshotName={chartKey}
-                  screenshotNode={chartWrapperNode}
-                />
               </>
             ) : null}
             {state.layout.type !== "dashboard" && configKey ? (
@@ -211,11 +206,6 @@ export const ChartMoreButton = ({
                 />
                 <DownloadImageMenuActionItem
                   type="png"
-                  screenshotName={chartKey}
-                  screenshotNode={chartWrapperNode}
-                />
-                <DownloadImageMenuActionItem
-                  type="svg"
                   screenshotName={chartKey}
                   screenshotNode={chartWrapperNode}
                 />
