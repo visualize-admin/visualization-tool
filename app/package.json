@@ -43,6 +43,7 @@
     "@tpluscode/rdf-ns-builders": "2.0.1",
     "@tpluscode/sparql-builder": "^0.3.31",
     "@types/react-grid-layout": "^1.3.5",
+    "@uiw/react-color": "^2.3.2",
     "@urql/devtools": "^2.0.3",
     "@visx/group": "^2.10.0",
     "@visx/text": "^2.12.2",

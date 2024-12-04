@@ -56,7 +56,7 @@ import { useSize } from "@/charts/shared/use-size";
 import { ColumnConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
 import { useFormatNumber } from "@/formatters";
-import { getPalette } from "@/palettes";
+import { getPaletteId } from "@/palettes";
 import { useChartInteractiveFilters } from "@/stores/interactive-filters";
 import { sortByIndex } from "@/utils/array";
 import {
@@ -224,7 +224,12 @@ const useColumnsStackedState = (
   } = useMemo(() => {
     const colors = scaleOrdinal<string, string>();
 
-    if (fields.segment && segmentsByAbbreviationOrLabel && fields.color) {
+    if (
+      fields.segment &&
+      segmentsByAbbreviationOrLabel &&
+      fields.color.type === "segment"
+    ) {
+      const segmentColor = fields.color;
       const orderedSegmentLabelsAndColors = allSegments.map((segment) => {
         // FIXME: Labels in observations can differ from dimension values because the latter can be concatenated to only appear once per value
         // See https://github.com/visualize-admin/visualization-tool/issues/97
@@ -240,10 +245,7 @@ const useColumnsStackedState = (
 
         return {
           label: segment,
-          color:
-            fields.color.type === "segment"
-              ? fields.color.colorMapping![dvIri] ?? schemeCategory10[0]
-              : schemeCategory10[0],
+          color: segmentColor.colorMapping![dvIri] ?? schemeCategory10[0],
         };
       });
 
@@ -251,7 +253,7 @@ const useColumnsStackedState = (
       colors.range(orderedSegmentLabelsAndColors.map((s) => s.color));
     } else {
       colors.domain(allSegments);
-      colors.range(getPalette(fields.color.paletteId));
+      colors.range(getPaletteId(fields.color.paletteId));
     }
 
     colors.unknown(() => undefined);

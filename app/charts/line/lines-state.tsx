@@ -43,7 +43,7 @@ import {
   useFormatNumber,
   useTimeFormatUnit,
 } from "@/formatters";
-import { getPalette } from "@/palettes";
+import { getPaletteId } from "@/palettes";
 import { sortByIndex } from "@/utils/array";
 import {
   getSortingOrders,
@@ -215,7 +215,7 @@ const useLinesState = (
     colors.range(orderedSegmentLabelsAndColors.map((s) => s.color));
   } else {
     colors.domain(allSegments);
-    colors.range(getPalette(fields.color.paletteId));
+    colors.range(getPaletteId(fields.color.paletteId));
   }
 
   // Dimensions

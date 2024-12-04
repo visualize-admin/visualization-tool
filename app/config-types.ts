@@ -238,7 +238,7 @@ const ColorField = t.union([
   MeasuresColorField,
 ]);
 //FIXME: Remove current type called ColorField and replace it with the new one
-export type NewColorField = t.TypeOf<typeof ColorField>;
+export type ColorField = t.TypeOf<typeof ColorField>;
 
 const GenericField = t.intersection([
   t.type({ componentId: t.string }),
@@ -248,9 +248,6 @@ export type GenericField = t.TypeOf<typeof GenericField>;
 
 const GenericFields = t.record(t.string, t.union([GenericField, t.undefined]));
 export type GenericFields = t.TypeOf<typeof GenericFields>;
-
-const GenericSegmentField = GenericField;
-export type GenericSegmentField = t.TypeOf<typeof GenericSegmentField>;
 
 const AnimationType = t.union([t.literal("continuous"), t.literal("stepped")]);
 export type AnimationType = t.TypeOf<typeof AnimationType>;
@@ -300,7 +297,7 @@ const ChartSubType = t.union([t.literal("stacked"), t.literal("grouped")]);
 export type ChartSubType = t.TypeOf<typeof ChartSubType>;
 
 const ColumnSegmentField = t.intersection([
-  GenericSegmentField,
+  GenericField,
   SortingField,
   t.type({ type: ChartSubType }),
 ]);
@@ -339,7 +336,7 @@ const ColumnConfig = t.intersection([
 export type ColumnFields = t.TypeOf<typeof ColumnFields>;
 export type ColumnConfig = t.TypeOf<typeof ColumnConfig>;
 
-const LineSegmentField = t.intersection([GenericSegmentField, SortingField]);
+const LineSegmentField = t.intersection([GenericField, SortingField]);
 export type LineSegmentField = t.TypeOf<typeof LineSegmentField>;
 
 const LineFields = t.intersection([
@@ -366,7 +363,7 @@ const LineConfig = t.intersection([
 export type LineFields = t.TypeOf<typeof LineFields>;
 export type LineConfig = t.TypeOf<typeof LineConfig>;
 
-const AreaSegmentField = t.intersection([GenericSegmentField, SortingField]);
+const AreaSegmentField = t.intersection([GenericField, SortingField]);
 export type AreaSegmentField = t.TypeOf<typeof AreaSegmentField>;
 
 const ImputationType = t.union([
@@ -404,7 +401,7 @@ const AreaConfig = t.intersection([
 export type AreaFields = t.TypeOf<typeof AreaFields>;
 export type AreaConfig = t.TypeOf<typeof AreaConfig>;
 
-const ScatterPlotSegmentField = GenericSegmentField;
+const ScatterPlotSegmentField = GenericField;
 export type ScatterPlotSegmentField = t.TypeOf<typeof ScatterPlotSegmentField>;
 
 const ScatterPlotFields = t.intersection([
@@ -432,7 +429,7 @@ const ScatterPlotConfig = t.intersection([
 export type ScatterPlotFields = t.TypeOf<typeof ScatterPlotFields>;
 export type ScatterPlotConfig = t.TypeOf<typeof ScatterPlotConfig>;
 
-const PieSegmentField = t.intersection([GenericSegmentField, SortingField]);
+const PieSegmentField = t.intersection([GenericField, SortingField]);
 export type PieSegmentField = t.TypeOf<typeof PieSegmentField>;
 
 const PieFields = t.intersection([
@@ -642,7 +639,7 @@ const NumericalColorField = t.intersection([
 ]);
 export type NumericalColorField = t.TypeOf<typeof NumericalColorField>;
 
-export type ColorField =
+export type MapColorField =
   | FixedColorField
   | CategoricalColorField
   | NumericalColorField;
@@ -890,6 +887,19 @@ export const canBeNormalized = (
 };
 
 export const isSegmentInConfig = (
+  chartConfig: ChartConfig
+): chartConfig is
+  | AreaConfig
+  | ColumnConfig
+  | LineConfig
+  | PieConfig
+  | ScatterPlotConfig => {
+  return ["area", "column", "line", "pie", "scatterplot"].includes(
+    chartConfig.chartType
+  );
+};
+
+export const isColorInConfig = (
   chartConfig: ChartConfig
 ): chartConfig is
   | AreaConfig

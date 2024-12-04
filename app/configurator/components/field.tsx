@@ -94,7 +94,7 @@ import {
 import { useTimeFormatLocale } from "@/formatters";
 import { TimeUnit } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
-import { getPalette } from "@/palettes";
+import { getPaletteId } from "@/palettes";
 import { hierarchyToOptions } from "@/utils/hierarchy";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
@@ -710,7 +710,7 @@ const useMultiFilterColorPicker = (value: string) => {
   );
 
   const palette = useMemo(() => {
-    return getPalette(
+    return getPaletteId(
       get(
         chartConfig,
         `fields["${activeField}"].${
@@ -817,7 +817,7 @@ export const ColorPickerField = ({
   );
 
   const color = get(chartConfig, `fields["${field}"].${path}`);
-  const palette = getPalette(get(chartConfig, `fields["${field}"].palette`));
+  const palette = getPaletteId(get(chartConfig, `fields["${field}"].palette`));
 
   return (
     <Flex

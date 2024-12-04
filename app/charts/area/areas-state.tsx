@@ -54,7 +54,7 @@ import { useSize } from "@/charts/shared/use-size";
 import { AreaConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
 import { useFormatNumber, useTimeFormatUnit } from "@/formatters";
-import { getPalette } from "@/palettes";
+import { getPaletteId } from "@/palettes";
 import { useChartInteractiveFilters } from "@/stores/interactive-filters";
 import { sortByIndex } from "@/utils/array";
 import {
@@ -248,7 +248,8 @@ const useAreasState = (
     const xScaleTimeRange = scaleTime().domain(xScaleTimeRangeDomain);
     const colors = scaleOrdinal<string, string>();
 
-    if (segmentDimension && fields.color) {
+    if (segmentDimension && fields.color.type === "segment") {
+      const segmentColor = fields.color;
       const orderedSegmentLabelsAndColors = allSegments.map((segment) => {
         const dvIri =
           segmentsByAbbreviationOrLabel.get(segment)?.value ??
@@ -257,10 +258,7 @@ const useAreasState = (
 
         return {
           label: segment,
-          color:
-            fields.color.type === "segment"
-              ? fields.color.colorMapping![dvIri] ?? schemeCategory10[0]
-              : schemeCategory10[0],
+          color: segmentColor.colorMapping[dvIri] ?? schemeCategory10[0],
         };
       });
 
@@ -268,7 +266,7 @@ const useAreasState = (
       colors.range(orderedSegmentLabelsAndColors.map((s) => s.color));
     } else {
       colors.domain(allSegments);
-      colors.range(getPalette(fields.color.paletteId));
+      colors.range(getPaletteId(fields.color.paletteId));
     }
 
     colors.unknown(() => undefined);

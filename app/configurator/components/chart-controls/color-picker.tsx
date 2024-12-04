@@ -1,12 +1,19 @@
 import { Trans } from "@lingui/macro";
 import { Box, Button, Popover, styled, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import { HsvaColor } from "@uiw/react-color";
 import { color as d3Color } from "d3-color";
-import { MouseEventHandler, useRef } from "react";
+import dynamic from "next/dynamic";
+import { MouseEventHandler, useCallback, useRef, useState } from "react";
 
 import useDisclosure from "@/components/use-disclosure";
 import VisuallyHidden from "@/components/visually-hidden";
 import { Icon } from "@/icons";
+
+const CustomColorPicker = dynamic(
+  () => import("../../components/color-picker"),
+  { ssr: false }
+);
 
 const useStyles = makeStyles(() => ({
   swatch: {
@@ -119,6 +126,13 @@ export const ColorPickerMenu = (props: Props) => {
   const { disabled } = props;
   const { isOpen, open, close } = useDisclosure();
   const buttonRef = useRef(null);
+  const popoverRef = useRef<HTMLDivElement>(null);
+
+  const [color, setColor] = useState<HsvaColor | undefined>(undefined);
+
+  const handleColorChange = useCallback((color) => {
+    setColor(color);
+  }, []);
 
   return (
     <ColorPickerBox
@@ -139,8 +153,21 @@ export const ColorPickerMenu = (props: Props) => {
           <Icon name="color" size={16} />
         </Typography>
       </ColorPickerButton>
-      <Popover anchorEl={buttonRef.current} open={isOpen} onClose={close}>
-        <ColorPicker {...props} />
+      <Popover
+        anchorEl={buttonRef.current}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "center",
+        }}
+        open={isOpen}
+        onClose={close}
+      >
+        <Box ref={popoverRef}>
+          <CustomColorPicker
+            onChange={handleColorChange}
+            colorSwatches={props.colors}
+          />
+        </Box>
       </Popover>
     </ColorPickerBox>
   );

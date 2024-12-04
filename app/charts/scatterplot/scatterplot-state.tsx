@@ -26,7 +26,7 @@ import { useSize } from "@/charts/shared/use-size";
 import { ScatterPlotConfig, SortingField } from "@/configurator";
 import { Observation } from "@/domain/data";
 import { useFormatNumber } from "@/formatters";
-import { getPalette } from "@/palettes";
+import { getPaletteId } from "@/palettes";
 import {
   getSortingOrders,
   makeDimensionValueSorters,
@@ -147,7 +147,7 @@ const useScatterplotState = (
     colors.range(orderedSegmentLabelsAndColors.map((s) => s.color));
   } else {
     colors.domain(allSegments);
-    colors.range(getPalette(fields.color.paletteId));
+    colors.range(getPaletteId(fields.color.paletteId));
   }
   // Dimensions
   const { left, bottom } = useChartPadding({

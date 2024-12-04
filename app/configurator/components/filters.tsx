@@ -102,7 +102,7 @@ import {
 import { valueComparator } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
 
-import { GenericSegmentField } from "../../config-types";
+import { GenericField } from "../../config-types";
 import { interlace } from "../../utils/interlace";
 import { getTimeFilterOptions } from "../../utils/time-filter-options";
 
@@ -188,7 +188,7 @@ const getColorConfig = (
     ? [chartConfig.activeField, colorConfigPath]
     : [chartConfig.activeField];
 
-  return get(chartConfig.fields, path) as GenericSegmentField | undefined;
+  return get(chartConfig.fields, path) as GenericField | undefined;
 };
 
 const FilterControls = ({

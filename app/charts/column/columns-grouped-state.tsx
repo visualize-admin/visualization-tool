@@ -44,7 +44,7 @@ import { useSize } from "@/charts/shared/use-size";
 import { ColumnConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
 import { formatNumberWithUnit, useFormatNumber } from "@/formatters";
-import { getPalette } from "@/palettes";
+import { getPaletteId } from "@/palettes";
 import { sortByIndex } from "@/utils/array";
 import {
   getSortingOrders,
@@ -189,7 +189,8 @@ const useColumnsGroupedState = (
   } = useMemo(() => {
     const colors = scaleOrdinal<string, string>();
 
-    if (fields.segment && segmentDimension && fields.color) {
+    if (fields.segment && segmentDimension && fields.color.type === "segment") {
+      const segmentColor = fields.color;
       const orderedSegmentLabelsAndColors = allSegments.map((segment) => {
         const dvIri =
           segmentsByAbbreviationOrLabel.get(segment)?.value ||
@@ -198,10 +199,7 @@ const useColumnsGroupedState = (
 
         return {
           label: segment,
-          color:
-            fields.color.type === "segment"
-              ? fields.color.colorMapping![dvIri] ?? schemeCategory10[0]
-              : schemeCategory10[0],
+          color: segmentColor.colorMapping![dvIri] ?? schemeCategory10[0],
         };
       });
 
@@ -209,7 +207,7 @@ const useColumnsGroupedState = (
       colors.range(orderedSegmentLabelsAndColors.map((s) => s.color));
     } else {
       colors.domain(allSegments);
-      colors.range(getPalette(fields.color.paletteId));
+      colors.range(getPaletteId(fields.color.paletteId));
     }
 
     colors.unknown(() => undefined);

@@ -2,6 +2,7 @@ import { Trans } from "@lingui/macro";
 import {
   Box,
   Button,
+  Divider,
   MenuItem,
   Select,
   SelectProps,
@@ -18,6 +19,7 @@ import { Label } from "@/components/form";
 import {
   ConfiguratorStateConfiguringChart,
   getChartConfig,
+  isColorInConfig,
   isConfiguring,
   useConfiguratorState,
 } from "@/configurator";
@@ -28,7 +30,7 @@ import {
   categoricalPalettes,
   divergingSteppedPalettes,
   getDefaultCategoricalPalette,
-  getPalette,
+  getPaletteId,
 } from "@/palettes";
 import useEvent from "@/utils/use-event";
 
@@ -76,12 +78,14 @@ export const ColorPalette = ({
       ? [defaultPalette, ...categoricalPalettes]
       : categoricalPalettes;
 
-  const currentPaletteName = get(
-    chartConfig,
-    `fields["${chartConfig.activeField}"].${
-      colorConfigPath ? `${colorConfigPath}.` : ""
-    }palette`
-  );
+  const currentPaletteName = isColorInConfig(chartConfig)
+    ? get(chartConfig, `fields.color.paletteId`)
+    : get(
+        chartConfig,
+        `fields["${chartConfig.activeField}"].${
+          colorConfigPath ? `${colorConfigPath}.` : ""
+        }palette`
+      );
 
   const currentPalette =
     palettes.find((p) => p.value === currentPaletteName) ?? palettes[0];
@@ -91,18 +95,39 @@ export const ColorPalette = ({
     if (!component || !palette) {
       return;
     }
-
-    dispatch({
-      type: "CHART_PALETTE_CHANGED",
-      value: {
-        type: chartConfig.fields.color.type,
-        paletteId: palette.value,
-        colorMapping: mapValueIrisToColor({
+    if (isColorInConfig(chartConfig)) {
+      dispatch({
+        type: "CHART_PALETTE_CHANGED_NEW",
+        value:
+          chartConfig.fields.color.type === "single"
+            ? {
+                type: chartConfig.fields.color.type,
+                paletteId: palette.value,
+                color: palette.colors[0],
+              }
+            : {
+                type: chartConfig.fields.color.type,
+                paletteId: palette.value,
+                colorMapping: mapValueIrisToColor({
+                  palette: palette.value,
+                  dimensionValues: component.values,
+                }),
+              },
+      });
+    } else {
+      dispatch({
+        type: "CHART_PALETTE_CHANGED",
+        value: {
+          field,
+          colorConfigPath,
           palette: palette.value,
-          dimensionValues: component.values,
-        }),
-      },
-    });
+          colorMapping: mapValueIrisToColor({
+            palette: palette.value,
+            dimensionValues: component.values,
+          }),
+        },
+      });
+    }
   });
 
   return (
@@ -125,13 +150,41 @@ export const ColorPalette = ({
         value={currentPalette.value}
         onChange={handleChangePalette}
       >
+        <Button
+          variant="text"
+          sx={{
+            width: "100%",
+            paddingY: "12px",
+            paddingX: "16px",
+          }}
+        >
+          Add color palette
+        </Button>
+        <Box
+          sx={{
+            paddingTop: "12px",
+            paddingX: "16px",
+            display: "flex",
+            gap: "8px",
+            flexDirection: "column",
+          }}
+        >
+          <Typography variant="caption" fontWeight={700} align="left">
+            Visualize color palattes
+          </Typography>
+          <Divider sx={{ width: "100%", paddingY: "4px" }} />
+        </Box>
         {palettes.map((palette, index) => (
-          <MenuItem key={`${palette.value}${index}`} value={palette.value}>
-            <div>
+          <MenuItem
+            sx={{ paddingY: "8px" }}
+            key={`${palette.value}${index}`}
+            value={palette.value}
+          >
+            <Flex sx={{ flexDirection: "column", gap: "4px" }}>
               <Typography component="div" variant="caption">
                 {palette.label}
               </Typography>
-              <div>
+              <Flex>
                 {palette.colors.map((color) => (
                   <ColorSquare
                     key={`option-${color}`}
@@ -139,8 +192,8 @@ export const ColorPalette = ({
                     disabled={false}
                   />
                 ))}
-              </div>
-            </div>
+              </Flex>
+            </Flex>
           </MenuItem>
         ))}
       </Select>
@@ -177,7 +230,7 @@ const useColorSquareStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-const ColorSquare = ({
+export const ColorSquare = ({
   disabled,
   color,
 }: {
@@ -240,7 +293,7 @@ const ColorPaletteControls = ({
 
   if (colorMapping) {
     // Compare palette colors & colorMapping colors
-    const currentPalette = getPalette(palette);
+    const currentPalette = getPaletteId(palette);
     const colorMappingColors = Object.values(colorMapping);
 
     const nbMatchedColors = colorMappingColors.length;

@@ -1181,7 +1181,7 @@ const ComboChartYColorSection = ({
             return (
               <Box key={id}>
                 <ColorPickerField
-                  field="y"
+                  field="color"
                   path={`colorMapping["${id}"]`}
                   label={measures.find((d) => d.id === id)!.label}
                   symbol={symbol}

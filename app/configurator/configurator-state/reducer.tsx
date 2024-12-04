@@ -652,7 +652,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
     case "CHART_OPTION_CHANGED":
       return handleChartOptionChanged(draft, action);
 
-    case "CHART_PALETTE_CHANGED":
+    case "CHART_PALETTE_CHANGED_NEW":
       if (isConfiguring(draft)) {
         const chartConfig = getChartConfig(draft);
         setWith(
@@ -667,6 +667,32 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
           action.value.type === "single"
             ? action.value.color
             : action.value.colorMapping,
+          Object
+        );
+      }
+
+      return draft;
+    case "CHART_PALETTE_CHANGED":
+      if (isConfiguring(draft)) {
+        const chartConfig = getChartConfig(draft);
+        setWith(
+          chartConfig,
+          `fields["${action.value.field}"].${
+            action.value.colorConfigPath
+              ? `${action.value.colorConfigPath}.`
+              : ""
+          }palette`,
+          action.value.palette,
+          Object
+        );
+        setWith(
+          chartConfig,
+          `fields["${action.value.field}"].${
+            action.value.colorConfigPath
+              ? `${action.value.colorConfigPath}.`
+              : ""
+          }colorMapping`,
+          action.value.colorMapping,
           Object
         );
       }

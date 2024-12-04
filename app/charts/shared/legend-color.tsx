@@ -15,7 +15,7 @@ import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { TooltipTitle } from "@/components/tooltip-utils";
 import {
   ChartConfig,
-  GenericSegmentField,
+  GenericField,
   MapConfig,
   isSegmentInConfig,
   useChartConfigFilters,
@@ -147,7 +147,7 @@ const useLegendGroups = ({
 
   const segmentField = (
     isSegmentInConfig(chartConfig) ? chartConfig.fields.segment : null
-  ) as GenericSegmentField | null | undefined;
+  ) as GenericField | null | undefined;
   const segmentFilters = segmentField?.componentId
     ? filters[segmentField.componentId]
     : null;

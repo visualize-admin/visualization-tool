@@ -24,7 +24,7 @@ import {
 import { RelatedDimensionType, TimeUnit } from "@/graphql/query-hooks";
 import { IconName } from "@/icons";
 import { getTimeInterval } from "@/intervals";
-import { getPalette } from "@/palettes";
+import { getPaletteId } from "@/palettes";
 
 // FIXME: We should cover more time formats
 export const timeUnitToParser: Record<
@@ -280,7 +280,7 @@ export const mapValueIrisToColor = ({
     return {};
   }
 
-  const paletteValues = getPalette(palette);
+  const paletteValues = getPaletteId(palette);
   const colors = dimensionValues.map(
     (d, i) =>
       (palette === "dimension" && d.color) ||

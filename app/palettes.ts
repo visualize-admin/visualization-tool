@@ -29,7 +29,7 @@ import { DivergingPaletteType, SequentialPaletteType } from "./config-types";
 import { Component } from "./domain/data";
 
 // Colors
-export const getDefaultCategoricalPaletteName = (
+export const getDefaultCategoricalPaletteId = (
   d?: Component,
   previousPaletteName?: string
 ): string => {
@@ -53,7 +53,7 @@ export const getDefaultCategoricalPalette = (
   }
 };
 
-export const getPalette = (
+export const getPaletteId = (
   palette?: string,
   colors?: string[]
 ): ReadonlyArray<string> => {
@@ -96,16 +96,16 @@ export const categoricalPalettes: Array<CategoricalPalette> = [
   {
     label: "category10",
     value: "category10",
-    colors: getPalette("category10"),
+    colors: getPaletteId("category10"),
   },
-  { label: "accent", value: "accent", colors: getPalette("accent") },
-  { label: "dark2", value: "dark2", colors: getPalette("dark2") },
-  { label: "paired", value: "paired", colors: getPalette("paired") },
-  { label: "pastel1", value: "pastel1", colors: getPalette("pastel1") },
-  { label: "pastel2", value: "pastel2", colors: getPalette("pastel2") },
-  { label: "set1", value: "set1", colors: getPalette("set1") },
-  { label: "set2", value: "set2", colors: getPalette("set2") },
-  { label: "set3", value: "set3", colors: getPalette("set3") },
+  { label: "accent", value: "accent", colors: getPaletteId("accent") },
+  { label: "dark2", value: "dark2", colors: getPaletteId("dark2") },
+  { label: "paired", value: "paired", colors: getPaletteId("paired") },
+  { label: "pastel1", value: "pastel1", colors: getPaletteId("pastel1") },
+  { label: "pastel2", value: "pastel2", colors: getPaletteId("pastel2") },
+  { label: "set1", value: "set1", colors: getPaletteId("set1") },
+  { label: "set2", value: "set2", colors: getPaletteId("set2") },
+  { label: "set3", value: "set3", colors: getPaletteId("set3") },
 ];
 
 export const DEFAULT_CATEGORICAL_PALETTE_NAME = categoricalPalettes[0].value;

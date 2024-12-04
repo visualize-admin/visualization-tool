@@ -705,9 +705,11 @@ describe("colorMapping", () => {
       chartConfig.fields.color.type === "single"
         ? chartConfig.fields.color.color
         : chartConfig.fields.color.colorMapping
-    ).toEqual({
-      orange: "rgb(255, 153, 0)",
-    });
+    ).toEqual(
+      chartConfig.fields.color.type === "single"
+        ? "rgb(255, 153, 0)"
+        : { orange: "rgb(255, 153, 0)" }
+    );
   });
 });
 

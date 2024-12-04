@@ -2,6 +2,7 @@ import { EncodingFieldType } from "@/charts/chart-config-ui-options";
 import {
   ChartConfig,
   ChartType,
+  ColorField,
   ConfiguratorState,
   DashboardFiltersConfig,
   DataSource,
@@ -9,7 +10,6 @@ import {
   ImputationType,
   InteractiveFiltersConfig,
   Layout,
-  NewColorField,
 } from "@/config-types";
 import { DataCubeComponents, Dimension, DimensionValue } from "@/domain/data";
 import { Locale } from "@/locales/locales";
@@ -91,7 +91,16 @@ export type ConfiguratorStateAction =
     }
   | {
       type: "CHART_PALETTE_CHANGED";
-      value: NewColorField;
+      value: {
+        field: string;
+        colorConfigPath?: string;
+        palette: string;
+        colorMapping: Record<string, string>;
+      };
+    }
+  | {
+      type: "CHART_PALETTE_CHANGED_NEW";
+      value: ColorField;
     }
   | {
       type: "CHART_PALETTE_RESET";

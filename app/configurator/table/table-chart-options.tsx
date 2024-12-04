@@ -51,7 +51,7 @@ import {
 } from "@/domain/data";
 import {
   getDefaultCategoricalPalette,
-  getDefaultCategoricalPaletteName,
+  getDefaultCategoricalPaletteId,
   getDefaultDivergingSteppedPalette,
 } from "@/palettes";
 
@@ -284,7 +284,7 @@ export const TableColumnOptions = ({
                       columnColor: "#fff",
                     };
                   case "category":
-                    const palette = getDefaultCategoricalPaletteName(component);
+                    const palette = getDefaultCategoricalPaletteId(component);
 
                     return {
                       type: "category",

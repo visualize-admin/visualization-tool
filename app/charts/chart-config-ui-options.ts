@@ -19,7 +19,6 @@ import {
   ChartConfig,
   ChartSubType,
   ChartType,
-  ColorField,
   ColorScaleType,
   ColumnConfig,
   ColumnSegmentField,
@@ -29,6 +28,7 @@ import {
   ComponentType,
   GenericField,
   LineConfig,
+  MapColorField,
   MapConfig,
   PaletteType,
   PieConfig,
@@ -56,7 +56,7 @@ import {
   isTemporalEntityDimension,
   isTemporalOrdinalDimension,
 } from "@/domain/data";
-import { getDefaultCategoricalPaletteName, getPalette } from "@/palettes";
+import { getDefaultCategoricalPaletteId, getPaletteId } from "@/palettes";
 
 /**
  * This module controls chart controls displayed in the UI.
@@ -65,7 +65,7 @@ import { getDefaultCategoricalPaletteName, getPalette } from "@/palettes";
 
 type BaseEncodingFieldType = "animation";
 type MapEncodingFieldType = "baseLayer" | "areaLayer" | "symbolLayer";
-type XYEncodingFieldType = "x" | "y" | "segment";
+type XYEncodingFieldType = "x" | "y" | "segment" | "color";
 export type EncodingFieldType =
   | BaseEncodingFieldType
   | MapEncodingFieldType
@@ -175,7 +175,7 @@ const onColorComponentIdChange: OnEncodingOptionChange<string, MapConfig> = (
 ) => {
   const basePath = `fields["${field}"]`;
   const components = [...dimensions, ...measures];
-  let newField: ColorField = DEFAULT_FIXED_COLOR_FIELD;
+  let newField: MapColorField = DEFAULT_FIXED_COLOR_FIELD;
   const component = components.find((d) => d.id === id);
   const currentColorComponentId = get(
     chartConfig,
@@ -192,7 +192,7 @@ const onColorComponentIdChange: OnEncodingOptionChange<string, MapConfig> = (
       MULTI_FILTER_ENABLED_COMPONENTS.includes(component.__typename) ||
       isOrdinalMeasure(component)
     ) {
-      const palette = getDefaultCategoricalPaletteName(component, colorPalette);
+      const palette = getDefaultCategoricalPaletteId(component, colorPalette);
       newField = getDefaultCategoricalColorField({
         id,
         palette,
@@ -483,7 +483,7 @@ export const defaultSegmentOnChange: OnEncodingChange<
 > = (id, { chartConfig, dimensions, measures, selectedValues }) => {
   const components = [...dimensions, ...measures];
   const component = components.find((d) => d.id === id);
-  const palette = getDefaultCategoricalPaletteName(
+  const palette = getDefaultCategoricalPaletteId(
     component,
     chartConfig.fields.color && "paletteId" in chartConfig.fields.color
       ? chartConfig.fields.color.paletteId
@@ -958,7 +958,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
               const { chartConfig } = options;
               const { fields } = chartConfig;
               const { color } = fields;
-              const palette = getPalette(color.paletteId);
+              const palette = getPaletteId(color.paletteId);
               const newColorMapping = Object.fromEntries(
                 ids.map((id, i) => [id, color.colorMapping[i] ?? palette[i]])
               );
