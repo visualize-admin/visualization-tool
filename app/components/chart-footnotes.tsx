@@ -107,7 +107,9 @@ export const ChartFootnotes = ({
           ) : null}
         </div>
       ))}
-      {showVisualizeLink ? <VisualizeLink /> : null}
+      {showVisualizeLink ? (
+        <VisualizeLink createdWith={t({ id: "metadata.link.created.with" })} />
+      ) : null}
     </Box>
   );
 };
@@ -281,11 +283,12 @@ const ChartFootnotesComboLineSingle = ({
   ) : null;
 };
 
-export const VisualizeLink = () => {
+export const VisualizeLink = ({ createdWith }: { createdWith: ReactNode }) => {
   const locale = useLocale();
+
   return (
     <Typography variant="caption" color="grey.600">
-      <Trans id="metadata.link.created.with">Created with</Trans>
+      {createdWith}
       <Link
         href={`https://visualize.admin.ch/${locale}/`}
         target="_blank"

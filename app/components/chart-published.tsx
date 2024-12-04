@@ -27,8 +27,8 @@ import { DashboardInteractiveFilters } from "@/components/dashboard-interactive-
 import Flex from "@/components/flex";
 import { HintBlue, HintRed, HintYellow } from "@/components/hint";
 import {
-  MetadataPanelStoreContext,
   createMetadataPanelStore,
+  MetadataPanelStoreContext,
 } from "@/components/metadata-panel-store";
 import {
   ChartConfig,
@@ -155,7 +155,11 @@ export const ChartPublished = ({
                 chartConfigs={state.chartConfigs}
                 renderChart={renderChart}
               />
-              {state.chartConfigs.length !== 1 && <VisualizeLink />}
+              {state.chartConfigs.length !== 1 && (
+                <VisualizeLink
+                  createdWith={t({ id: "metadata.link.created.with" })}
+                />
+              )}
             </Box>
           ) : (
             <>
