@@ -8,13 +8,8 @@ import {
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { select } from "d3-selection";
-import {
-  ComponentProps,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { ComponentProps, useCallback, useEffect, useState } from "react";
+import ReactDOM from "react-dom";
 
 import {
   ChartDataFiltersList,
@@ -22,6 +17,10 @@ import {
   useChartDataFiltersState,
 } from "@/charts/shared/chart-data-filters";
 import { ArrowMenuTopBottom } from "@/components/arrow-menu";
+import {
+  CHART_FOOTNOTES_CLASS_NAME,
+  VisualizeLink,
+} from "@/components/chart-footnotes";
 import { chartPanelLayoutGridClasses } from "@/components/chart-panel-layout-grid";
 import { useChartTablePreview } from "@/components/chart-table-preview";
 import { MenuActionItem } from "@/components/menu-action-item";
@@ -157,10 +156,26 @@ export const ChartMoreButton = ({
 
   const modifyNode = useCallback(
     (node: HTMLElement) => {
+      const footnotes = node.querySelector(`.${CHART_FOOTNOTES_CLASS_NAME}`);
+
+      if (footnotes) {
+        const container = footnotes.appendChild(document.createElement("div"));
+        ReactDOM.render(
+          <VisualizeLink
+            createdWith={t({ id: "metadata.link.created.with" })}
+          />,
+          container
+        );
+      }
+
       // Every text element should be dark-grey (currently we use primary.main to
-      // indicate interactive elements, which doesn't make sense for screenshots).
+      // indicate interactive elements, which doesn't make sense for screenshots)
+      // and not have underlines.
       const color = theme.palette.grey[700];
-      select(node).selectAll("*").style("color", color);
+      select(node)
+        .selectAll("*")
+        .style("color", color)
+        .style("text-decoration", "none");
       // SVG elements have fill instead of color. Here we only target text elements,
       // to avoid changing the color of other SVG elements (charts).
       select(node).selectAll("text").style("fill", color);

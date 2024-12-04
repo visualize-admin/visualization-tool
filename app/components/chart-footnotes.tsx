@@ -1,8 +1,8 @@
-import { Trans } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
 import { Box, Link, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import uniqBy from "lodash/uniqBy";
-import { useMemo } from "react";
+import { ReactNode, useMemo } from "react";
 
 import { extractChartConfigUsedCubes } from "@/charts/shared/chart-helpers";
 import { LegendItem } from "@/charts/shared/legend-color";
@@ -41,6 +41,8 @@ export const useFootnotesStyles = makeStyles<Theme, { useMarginTop: boolean }>(
   })
 );
 
+export const CHART_FOOTNOTES_CLASS_NAME = "chart-footnotes";
+
 export const ChartFootnotes = ({
   dataSource,
   chartConfig,
@@ -73,7 +75,10 @@ export const ChartFootnotes = ({
   const formatLocale = useTimeFormatLocale();
 
   return (
-    <Box sx={{ mt: 1, "& > :not(:last-child)": { mb: 3 } }}>
+    <Box
+      className={CHART_FOOTNOTES_CLASS_NAME}
+      sx={{ mt: 1, "& > :not(:last-child)": { mb: 3 } }}
+    >
       {data?.dataCubesMetadata.map((metadata) => (
         <div key={metadata.iri}>
           <ChartFootnotesLegend
