@@ -372,7 +372,7 @@ const DownloadImageMenuActionItem = ({
       onClick={screenshot}
       disabled={loading}
       leadingIconName="download"
-      label={type.toUpperCase()}
+      label={`${t({ id: "chart-controls.export", message: "Export" })} ${type.toUpperCase()}`}
     />
   );
 };
