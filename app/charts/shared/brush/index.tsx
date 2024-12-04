@@ -32,6 +32,7 @@ import {
 } from "@/stores/interactive-filters";
 import { useTransitionStore } from "@/stores/transition";
 import { getTextWidth } from "@/utils/get-text-width";
+import { DISABLE_SCREENSHOT_ATTR } from "@/utils/use-screenshot";
 
 // Brush constants
 const HANDLE_HEIGHT = 14;
@@ -371,6 +372,7 @@ export const BrushTime = () => {
 
   return fullData.length ? (
     <g
+      {...DISABLE_SCREENSHOT_ATTR}
       transform={`translate(0, ${
         chartHeight + margins.top + margins.bottom - HEIGHT * 1.5
       })`}
