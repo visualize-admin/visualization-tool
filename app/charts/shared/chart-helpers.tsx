@@ -554,47 +554,23 @@ export const useGetIdentityX = (id: string) => {
 export const normalizeData = (
   sortedData: Observation[],
   {
-    yKey,
-    getY,
+    key,
+    getAxisValue,
     getTotalGroupValue,
   }: {
-    yKey: string;
-    getY: (d: Observation) => number | null;
+    key: string;
+    getAxisValue: (d: Observation) => number | null;
     getTotalGroupValue: (d: Observation) => number;
   }
 ): Observation[] => {
   return sortedData.map((d) => {
     const totalGroupValue = getTotalGroupValue(d);
-    const y = getY(d);
+    const axisValue = getAxisValue(d);
 
     return {
       ...d,
-      [yKey]: 100 * (y ? y / totalGroupValue : y ?? 0),
-      [getIdentityId(yKey)]: y,
-    };
-  });
-};
-
-export const normalizeDataInverted = (
-  sortedData: Observation[],
-  {
-    xKey,
-    getX,
-    getTotalGroupValue,
-  }: {
-    xKey: string;
-    getX: (d: Observation) => number | null;
-    getTotalGroupValue: (d: Observation) => number;
-  }
-): Observation[] => {
-  return sortedData.map((d) => {
-    const totalGroupValue = getTotalGroupValue(d);
-    const x = getX(d);
-
-    return {
-      ...d,
-      [xKey]: 100 * (x ? x / totalGroupValue : x ?? 0),
-      [getIdentityId(xKey)]: x,
+      [key]: 100 * (axisValue ? axisValue / totalGroupValue : axisValue ?? 0),
+      [getIdentityId(key)]: axisValue,
     };
   });
 };

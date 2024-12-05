@@ -190,8 +190,8 @@ const useAreasState = (
     if (normalize) {
       return group(
         normalizeData(chartData, {
-          yKey: yMeasure.id,
-          getY,
+          key: yMeasure.id,
+          getAxisValue: getY,
           getTotalGroupValue: (d) => {
             return sumsByX[getXAsString(d)];
           },

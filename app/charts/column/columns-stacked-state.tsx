@@ -189,8 +189,8 @@ const useColumnsStackedState = (
     if (normalize) {
       return group(
         normalizeData(chartData, {
-          yKey: yMeasure.id,
-          getY,
+          key: yMeasure.id,
+          getAxisValue: getY,
           getTotalGroupValue: (d) => sumsByX[getX(d)],
         }),
         getX

@@ -32,7 +32,7 @@ import {
 } from "@/charts/shared/chart-dimensions";
 import {
   getWideData,
-  normalizeDataInverted,
+  normalizeData,
   useGetIdentityX,
 } from "@/charts/shared/chart-helpers";
 import {
@@ -187,9 +187,9 @@ const useBarsStackedState = (
   const chartDataGroupedByY = useMemo(() => {
     if (normalize) {
       return group(
-        normalizeDataInverted(chartData, {
-          xKey: xMeasure.id,
-          getX,
+        normalizeData(chartData, {
+          key: xMeasure.id,
+          getAxisValue: getX,
           getTotalGroupValue: (d) => sumsByY[getY(d)],
         }),
         getY
