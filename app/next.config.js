@@ -51,8 +51,8 @@ module.exports = withPreconstruct(
             {
               key: "Content-Security-Policy",
               value: [
-                `default-src 'self' 'unsafe-inline'${process.env.NODE_ENV === "development" ? " unsafe-eval" : ""}`,
-                `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === "development" ? " localhost:*" : ""} https://*.sentry.io https://vercel.live/ https://vercel.com https://*.googletagmanager.com`,
+                `default-src 'self' 'unsafe-inline'${process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""}`,
+                `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === "development" ? " 'unsafe-eval' localhost:*" : ""} https://*.sentry.io https://vercel.live/ https://vercel.com https://*.googletagmanager.com`,
                 `style-src 'self' 'unsafe-inline'`,
                 `font-src 'self'`,
                 `form-action 'self'`,
