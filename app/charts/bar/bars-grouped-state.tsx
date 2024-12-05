@@ -32,7 +32,7 @@ import {
   CommonChartState,
   InteractiveYTimeRangeState,
 } from "@/charts/shared/chart-state";
-import { TooltipInfoInverted } from "@/charts/shared/interaction/tooltip";
+import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import {
   getCenteredTooltipPlacement,
   MOBILE_TOOLTIP_PLACEMENT,
@@ -65,7 +65,7 @@ export type GroupedBarsState = CommonChartState &
     colors: ScaleOrdinal<string, string>;
     getColorLabel: (segment: string) => string;
     grouped: [string, Observation[]][];
-    getAnnotationInfo: (d: Observation) => TooltipInfoInverted;
+    getAnnotationInfo: (d: Observation) => TooltipInfo;
   };
 
 const useBarsGroupedState = (
@@ -357,7 +357,7 @@ const useBarsGroupedState = (
   const isMobile = useIsMobile();
 
   // Tooltip
-  const getAnnotationInfo = (datum: Observation): TooltipInfoInverted => {
+  const getAnnotationInfo = (datum: Observation): TooltipInfo => {
     const bw = yScale.bandwidth();
     const y = getY(datum);
 
@@ -393,7 +393,7 @@ const useBarsGroupedState = (
       yAnchor: yAnchorRaw + (placement.y === "bottom" ? 0.5 : -0.5) * bw,
       xAnchor,
       placement,
-      yValue: getYAbbreviationOrLabel(datum),
+      value: getYAbbreviationOrLabel(datum),
       datum: {
         label: fields.segment && getSegmentAbbreviationOrLabel(datum),
         value: xValueFormatter(getX(datum)),

@@ -281,7 +281,7 @@ const useLinesState = (
       xAnchor,
       yAnchor,
       placement,
-      xValue: timeFormatUnit(getX(datum), xDimension.timeUnit),
+      value: timeFormatUnit(getX(datum), xDimension.timeUnit),
       datum: {
         label: fields.segment && getSegmentAbbreviationOrLabel(datum),
         value: yValueFormatter(getY(datum)),

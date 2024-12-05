@@ -25,7 +25,7 @@ import {
   CommonChartState,
   InteractiveYTimeRangeState,
 } from "@/charts/shared/chart-state";
-import { TooltipInfoInverted } from "@/charts/shared/interaction/tooltip";
+import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import {
   getCenteredTooltipPlacement,
   MOBILE_TOOLTIP_PLACEMENT,
@@ -56,7 +56,7 @@ export type BarsState = CommonChartState &
     yScaleInteraction: ScaleBand<string>;
     yScale: ScaleBand<string>;
     minY: string;
-    getAnnotationInfo: (d: Observation) => TooltipInfoInverted;
+    getAnnotationInfo: (d: Observation) => TooltipInfo;
   };
 
 const useBarsState = (
@@ -220,7 +220,7 @@ const useBarsState = (
   const isMobile = useIsMobile();
 
   // Tooltip
-  const getAnnotationInfo = (d: Observation): TooltipInfoInverted => {
+  const getAnnotationInfo = (d: Observation): TooltipInfo => {
     const yAnchor = (yScale(getY(d)) as number) + yScale.bandwidth() * 0.5;
     const xAnchor = isMobile
       ? chartHeight
@@ -248,7 +248,7 @@ const useBarsState = (
       xAnchor,
       yAnchor,
       placement,
-      yValue: yTimeUnit ? timeFormatUnit(yLabel, yTimeUnit) : yLabel,
+      value: yTimeUnit ? timeFormatUnit(yLabel, yTimeUnit) : yLabel,
       datum: {
         label: undefined,
         value: x !== null && isNaN(x) ? "-" : `${xValueFormatter(getX(d))}`,

@@ -40,7 +40,7 @@ import {
   CommonChartState,
   InteractiveYTimeRangeState,
 } from "@/charts/shared/chart-state";
-import { TooltipInfoInverted } from "@/charts/shared/interaction/tooltip";
+import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import {
   getCenteredTooltipPlacement,
   MOBILE_TOOLTIP_PLACEMENT,
@@ -81,7 +81,7 @@ export type StackedBarsState = CommonChartState &
     getAnnotationInfo: (
       d: Observation,
       orderedSegments: string[]
-    ) => TooltipInfoInverted;
+    ) => TooltipInfo;
   };
 
 const useBarsStackedState = (
@@ -418,7 +418,7 @@ const useBarsStackedState = (
 
   // Tooltips
   const getAnnotationInfo = useCallback(
-    (datum: Observation): TooltipInfoInverted => {
+    (datum: Observation): TooltipInfo => {
       const bw = yScale.bandwidth();
       const y = getY(datum);
 
@@ -455,7 +455,7 @@ const useBarsStackedState = (
         yAnchor: yAnchorRaw + (placement.y === "top" ? 0.5 : -0.5) * bw,
         xAnchor,
         placement,
-        yValue: getYAbbreviationOrLabel(datum),
+        value: getYAbbreviationOrLabel(datum),
         datum: {
           label: fields.segment && getSegmentAbbreviationOrLabel(datum),
           value: xValueFormatter(getX(datum), getIdentityX(datum)),

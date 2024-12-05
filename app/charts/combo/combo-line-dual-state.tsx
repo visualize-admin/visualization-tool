@@ -159,12 +159,12 @@ const useComboLineDualState = (
     bottom,
     top: topMarginAxisTitleAdjustment,
   });
-  
+
   const bounds = useChartBounds(width, margins, height, {
     leftLabel: variables.y.left.label,
     rightLabel: variables.y.right.label,
   });
-        
+
   const { chartWidth, chartHeight } = bounds;
   const xScales = [xScale, xScaleTimeRange];
   const yScales = [yScale, yScaleLeft, yScaleRight];
@@ -210,7 +210,7 @@ const useComboLineDualState = (
       datum: { label: "", value: "0", color: schemeCategory10[0] },
       xAnchor: xScaled,
       yAnchor: yAnchor,
-      xValue: timeFormatUnit(x, xDimension.timeUnit),
+      value: timeFormatUnit(x, xDimension.timeUnit),
       placement,
       values,
     } as TooltipInfo;
