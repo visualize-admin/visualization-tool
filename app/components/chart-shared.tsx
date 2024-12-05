@@ -8,6 +8,7 @@ import {
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { select } from "d3-selection";
+import deburr from "lodash/deburr";
 import uniqBy from "lodash/uniqBy";
 import {
   ComponentProps,
@@ -500,6 +501,6 @@ const usePNGMetadata = ({
       .map(({ key, value }) => `${key}: ${value}`)
       .join(" | ");
 
-    return metadata ? [{ key: "Comment", value: metadata }] : [];
+    return metadata ? [{ key: "Comment", value: deburr(metadata) }] : [];
   }, [configKey, data?.dataCubesMetadata, locale]);
 };
