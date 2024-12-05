@@ -139,9 +139,9 @@ export const useColumnsStackedStateData = (
   const { sortedPlottableData, plottableDataWide } = useMemo(() => {
     const plottableDataByX = group(plottableData, getX);
     const plottableDataWide = getWideData({
-      dataGroupedByX: plottableDataByX,
-      xKey: x.componentId,
-      getY,
+      dataGrouped: plottableDataByX,
+      key: x.componentId,
+      getAxisValue: getY,
       getSegment,
     });
 

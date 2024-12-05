@@ -6,7 +6,6 @@ import { useCallback, useMemo } from "react";
 import { useMaybeAbbreviations } from "@/charts/shared/abbreviations";
 import {
   imputeTemporalLinearSeries,
-  imputeTemporalLinearSeriesInverted,
   interpolateZerosValue,
 } from "@/charts/shared/imputation";
 import { useObservationLabels } from "@/charts/shared/observation-labels";
@@ -406,16 +405,16 @@ export const stackOffsetDivergingPositiveZeros = (
 // Helper to pivot a dataset to a wider format.
 // Currently, imputation is only applicable to temporal charts (specifically, stacked area charts).
 export const getWideData = ({
-  dataGroupedByX,
-  xKey,
-  getY,
+  dataGrouped,
+  key,
+  getAxisValue,
   allSegments,
   getSegment,
   imputationType = "none",
 }: {
-  dataGroupedByX: InternMap<string, Array<Observation>>;
-  xKey: string;
-  getY: (d: Observation) => number | null;
+  dataGrouped: InternMap<string, Array<Observation>>;
+  key: string;
+  getAxisValue: (d: Observation) => number | null;
   allSegments?: Array<string>;
   getSegment: (d: Observation) => string;
   imputationType?: ImputationType;
@@ -423,38 +422,38 @@ export const getWideData = ({
   switch (imputationType) {
     case "linear":
       if (allSegments) {
-        const dataGroupedByXEntries = [...dataGroupedByX.entries()];
-        const dataGroupedByXWithImputedValues: Array<{
+        const dataGroupedEntries = [...dataGrouped.entries()];
+        const dataGroupedWithImputedValues: Array<{
           [key: string]: number;
-        }> = Array.from({ length: dataGroupedByX.size }, () => ({}));
+        }> = Array.from({ length: dataGrouped.size }, () => ({}));
 
         for (const segment of allSegments) {
           const imputedSeriesValues = imputeTemporalLinearSeries({
-            dataSortedByX: dataGroupedByXEntries.map(([date, values]) => {
+            dataSortedByX: dataGroupedEntries.map(([date, values]) => {
               const observation = values.find((d) => getSegment(d) === segment);
 
               return {
                 date: new Date(date),
-                value: observation ? getY(observation) : null,
+                value: observation ? getAxisValue(observation) : null,
               };
             }),
           });
 
           for (let i = 0; i < imputedSeriesValues.length; i++) {
-            dataGroupedByXWithImputedValues[i][segment] =
+            dataGroupedWithImputedValues[i][segment] =
               imputedSeriesValues[i].value;
           }
         }
 
         return getBaseWideData({
-          dataGroupedByX,
-          xKey,
-          getY,
+          dataGrouped,
+          key,
+          getAxisValue,
           getSegment,
           getOptionalObservationProps: (i) => {
             return allSegments.map((d) => {
               return {
-                [d]: dataGroupedByXWithImputedValues[i][d],
+                [d]: dataGroupedWithImputedValues[i][d],
               };
             });
           },
@@ -463,9 +462,9 @@ export const getWideData = ({
     case "zeros":
       if (allSegments) {
         return getBaseWideData({
-          dataGroupedByX,
-          xKey,
-          getY,
+          dataGrouped,
+          key,
+          getAxisValue,
           getSegment,
           getOptionalObservationProps: () => {
             return allSegments.map((d) => {
@@ -479,180 +478,51 @@ export const getWideData = ({
     case "none":
     default:
       return getBaseWideData({
-        dataGroupedByX,
-        xKey,
-        getY,
-        getSegment,
-      });
-  }
-};
-
-export const getWideDataInverted = ({
-  dataGroupedByY,
-  yKey,
-  getX,
-  allSegments,
-  getSegment,
-  imputationType = "none",
-}: {
-  dataGroupedByY: InternMap<string, Array<Observation>>;
-  yKey: string;
-  getX: (d: Observation) => number | null;
-  allSegments?: Array<string>;
-  getSegment: (d: Observation) => string;
-  imputationType?: ImputationType;
-}) => {
-  switch (imputationType) {
-    case "linear":
-      if (allSegments) {
-        const dataGroupedByYEntries = [...dataGroupedByY.entries()];
-        const dataGroupedByYWithImputedValues: Array<{
-          [key: string]: number;
-        }> = Array.from({ length: dataGroupedByY.size }, () => ({}));
-
-        for (const segment of allSegments) {
-          const imputedSeriesValues = imputeTemporalLinearSeriesInverted({
-            dataSortedByY: dataGroupedByYEntries.map(([date, values]) => {
-              const observation = values.find((d) => getSegment(d) === segment);
-
-              return {
-                date: new Date(date),
-                value: observation ? getX(observation) : null,
-              };
-            }),
-          });
-
-          for (let i = 0; i < imputedSeriesValues.length; i++) {
-            dataGroupedByYWithImputedValues[i][segment] =
-              imputedSeriesValues[i].value;
-          }
-        }
-
-        return getBaseWideDataInverted({
-          dataGroupedByY,
-          yKey,
-          getX,
-          getSegment,
-          getOptionalObservationProps: (i) => {
-            return allSegments.map((d) => {
-              return {
-                [d]: dataGroupedByYWithImputedValues[i][d],
-              };
-            });
-          },
-        });
-      }
-    case "zeros":
-      if (allSegments) {
-        return getBaseWideDataInverted({
-          dataGroupedByY,
-          yKey,
-          getX,
-          getSegment,
-          getOptionalObservationProps: () => {
-            return allSegments.map((d) => {
-              return {
-                [d]: interpolateZerosValue(),
-              };
-            });
-          },
-        });
-      }
-    case "none":
-    default:
-      return getBaseWideDataInverted({
-        dataGroupedByY,
-        yKey,
-        getX,
+        dataGrouped,
+        key,
+        getAxisValue,
         getSegment,
       });
   }
 };
 
 const getBaseWideData = ({
-  dataGroupedByX,
-  xKey,
-  getY,
+  dataGrouped,
+  key,
+  getAxisValue,
   getSegment,
   getOptionalObservationProps = () => [],
 }: {
-  dataGroupedByX: InternMap<string, Array<Observation>>;
-  xKey: string;
-  getY: (d: Observation) => number | null;
+  dataGrouped: InternMap<string, Array<Observation>>;
+  key: string;
+  getAxisValue: (d: Observation) => number | null;
   getSegment: (d: Observation) => string;
   getOptionalObservationProps?: (
     datumIndex: number
   ) => Array<{ [key: string]: number }>;
 }): Array<Observation> => {
   const wideData = [];
-  const dataGroupedByXEntries = [...dataGroupedByX.entries()];
+  const dataGroupedByXEntries = [...dataGrouped.entries()];
 
-  for (let i = 0; i < dataGroupedByX.size; i++) {
+  for (let i = 0; i < dataGrouped.size; i++) {
     const [k, v] = dataGroupedByXEntries[i];
 
     const observation: Observation = Object.assign(
       {
-        [xKey]: k,
-        [`${xKey}/__iri__`]: v[0][`${xKey}/__iri__`],
-        total: sum(v, getY),
+        [key]: k,
+        [`${key}/__iri__`]: v[0][`${key}/__iri__`],
+        total: sum(v, getAxisValue),
       },
       ...getOptionalObservationProps(i),
       ...v
         // Sorting the values in case of multiple values for the same segment
         // (desired behavior for getting the domain when time slider is active).
         .sort((a, b) => {
-          return (getY(a) ?? 0) - (getY(b) ?? 0);
+          return (getAxisValue(a) ?? 0) - (getAxisValue(b) ?? 0);
         })
         .map((d) => {
           return {
-            [getSegment(d)]: getY(d),
-          };
-        })
-    );
-
-    wideData.push(observation);
-  }
-
-  return wideData;
-};
-
-const getBaseWideDataInverted = ({
-  dataGroupedByY,
-  yKey,
-  getX,
-  getSegment,
-  getOptionalObservationProps = () => [],
-}: {
-  dataGroupedByY: InternMap<string, Array<Observation>>;
-  yKey: string;
-  getX: (d: Observation) => number | null;
-  getSegment: (d: Observation) => string;
-  getOptionalObservationProps?: (
-    datumIndex: number
-  ) => Array<{ [key: string]: number }>;
-}): Array<Observation> => {
-  const wideData = [];
-  const dataGroupedByYEntries = [...dataGroupedByY.entries()];
-
-  for (let i = 0; i < dataGroupedByY.size; i++) {
-    const [k, v] = dataGroupedByYEntries[i];
-
-    const observation: Observation = Object.assign(
-      {
-        [yKey]: k,
-        [`${yKey}/__iri__`]: v[0][`${yKey}/__iri__`],
-        total: sum(v, getX),
-      },
-      ...getOptionalObservationProps(i),
-      ...v
-        // Sorting the values in case of multiple values for the same segment
-        // (desired behavior for getting the domain when time slider is active).
-        .sort((a, b) => {
-          return (getX(a) ?? 0) - (getX(b) ?? 0);
-        })
-        .map((d) => {
-          return {
-            [getSegment(d)]: getX(d),
+            [getSegment(d)]: getAxisValue(d),
           };
         })
     );

@@ -31,7 +31,7 @@ import {
   useChartPadding,
 } from "@/charts/shared/chart-dimensions";
 import {
-  getWideDataInverted,
+  getWideData,
   normalizeDataInverted,
   useGetIdentityX,
 } from "@/charts/shared/chart-helpers";
@@ -200,10 +200,10 @@ const useBarsStackedState = (
   }, [chartData, getX, sumsByY, getY, xMeasure.id, normalize]);
 
   const chartWideData = useMemo(() => {
-    return getWideDataInverted({
-      dataGroupedByY: chartDataGroupedByY,
-      yKey,
-      getX,
+    return getWideData({
+      dataGrouped: chartDataGroupedByY,
+      key: yKey,
+      getAxisValue: getX,
       getSegment,
       allSegments: segments,
       imputationType: "zeros",

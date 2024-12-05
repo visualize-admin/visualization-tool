@@ -205,9 +205,9 @@ const useAreasState = (
 
   const chartWideData = useMemo(() => {
     return getWideData({
-      dataGroupedByX: chartDataGroupedByX,
-      xKey,
-      getY,
+      dataGrouped: chartDataGroupedByX,
+      key: xKey,
+      getAxisValue: getY,
       getSegment,
       allSegments: segments,
       imputationType: fields.y.imputationType,

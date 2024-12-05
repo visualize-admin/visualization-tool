@@ -122,9 +122,9 @@ const useLinesState = (
   );
 
   const chartWideData = getWideData({
-    dataGroupedByX: preparedDataGroupedByX,
-    xKey,
-    getY,
+    dataGrouped: preparedDataGroupedByX,
+    key: xKey,
+    getAxisValue: getY,
     getSegment,
   });
 
