@@ -438,8 +438,8 @@ const useColumnsStackedState = (
       });
       const yValueFormatter = getStackedTooltipValueFormatter({
         normalize,
-        yMeasureId: yMeasure.id,
-        yMeasureUnit: yMeasure.unit,
+        measureId: yMeasure.id,
+        measureUnit: yMeasure.unit,
         formatters,
         formatNumber,
       });

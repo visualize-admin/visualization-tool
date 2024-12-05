@@ -90,14 +90,14 @@ export const getStackedXScale = (
 
 export const getStackedTooltipValueFormatter = ({
   normalize,
-  yMeasureId,
-  yMeasureUnit,
+  measureId,
+  measureUnit,
   formatters,
   formatNumber,
 }: {
   normalize: boolean;
-  yMeasureId: string;
-  yMeasureUnit: NumericalMeasure["unit"];
+  measureId: string;
+  measureUnit: NumericalMeasure["unit"];
   formatters: { [k: string]: (s: any) => string };
   formatNumber: (d: NumberValue | null | undefined) => string;
 }) => {
@@ -106,46 +106,15 @@ export const getStackedTooltipValueFormatter = ({
       return "-";
     }
 
-    const format = formatters[yMeasureId] ?? formatNumber;
+    const format = formatters[measureId] ?? formatNumber;
 
     if (normalize) {
       const rounded = Math.round(d as number);
-      const fValue = formatNumberWithUnit(dIdentity, format, yMeasureUnit);
+      const fValue = formatNumberWithUnit(dIdentity, format, measureUnit);
 
       return `${rounded}% (${fValue})`;
     }
 
-    return formatNumberWithUnit(d, format, yMeasureUnit);
-  };
-};
-
-export const getStackedTooltipValueFormatterInverted = ({
-  normalize,
-  xMeasureId,
-  xMeasureUnit,
-  formatters,
-  formatNumber,
-}: {
-  normalize: boolean;
-  xMeasureId: string;
-  xMeasureUnit: NumericalMeasure["unit"];
-  formatters: { [k: string]: (s: any) => string };
-  formatNumber: (d: NumberValue | null | undefined) => string;
-}) => {
-  return (d: number | null, dIdentity: number | null) => {
-    if (d === null && dIdentity === null) {
-      return "-";
-    }
-
-    const format = formatters[xMeasureId] ?? formatNumber;
-
-    if (normalize) {
-      const rounded = Math.round(d as number);
-      const fValue = formatNumberWithUnit(dIdentity, format, xMeasureUnit);
-
-      return `${rounded}% (${fValue})`;
-    }
-
-    return formatNumberWithUnit(d, format, xMeasureUnit);
+    return formatNumberWithUnit(d, format, measureUnit);
   };
 };

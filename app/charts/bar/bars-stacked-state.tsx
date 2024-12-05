@@ -46,7 +46,7 @@ import {
   MOBILE_TOOLTIP_PLACEMENT,
 } from "@/charts/shared/interaction/tooltip-box";
 import {
-  getStackedTooltipValueFormatterInverted,
+  getStackedTooltipValueFormatter,
   getStackedXScale,
 } from "@/charts/shared/stacked-helpers";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
@@ -430,10 +430,10 @@ const useBarsStackedState = (
         getCategory: getSegment,
         sortingOrder: "asc",
       });
-      const xValueFormatter = getStackedTooltipValueFormatterInverted({
+      const xValueFormatter = getStackedTooltipValueFormatter({
         normalize,
-        xMeasureId: xMeasure.id,
-        xMeasureUnit: xMeasure.unit,
+        measureId: xMeasure.id,
+        measureUnit: xMeasure.unit,
         formatters,
         formatNumber,
       });
