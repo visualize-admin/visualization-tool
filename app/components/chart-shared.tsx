@@ -137,7 +137,6 @@ export const ChartMoreButton = ({
   chartKey: string;
   chartWrapperNode?: HTMLElement | null;
 }) => {
-  const theme = useTheme();
   const [state, dispatch] = useConfiguratorState(hasChartConfigs);
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
   const handleClose = useEventCallback(() => setAnchor(null));
@@ -153,38 +152,6 @@ export const ChartMoreButton = ({
     isPublished(state) &&
     state.layout.type === "dashboard" &&
     chartConfig.chartType === "table";
-
-  const modifyNode = useCallback(
-    async (node: HTMLElement) => {
-      const footnotes = node.querySelector(`.${CHART_FOOTNOTES_CLASS_NAME}`);
-
-      if (footnotes) {
-        const container = document.createElement("div");
-        footnotes.appendChild(container);
-        const root = createRoot(container);
-        root.render(
-          <VisualizeLink
-            createdWith={t({ id: "metadata.link.created.with" })}
-          />
-        );
-        // Wait for the component to render before taking the screenshot.
-        await new Promise((resolve) => setTimeout(resolve, 0));
-      }
-
-      // Every text element should be dark-grey (currently we use primary.main to
-      // indicate interactive elements, which doesn't make sense for screenshots)
-      // and not have underlines.
-      const color = theme.palette.grey[700];
-      select(node)
-        .selectAll("*")
-        .style("color", color)
-        .style("text-decoration", "none");
-      // SVG elements have fill instead of color. Here we only target text elements,
-      // to avoid changing the color of other SVG elements (charts).
-      select(node).selectAll("text").style("fill", color);
-    },
-    [theme.palette.grey]
-  );
 
   return disableButton ? null : (
     <>
@@ -215,7 +182,6 @@ export const ChartMoreButton = ({
                   type="png"
                   screenshotName={chartKey}
                   screenshotNode={chartWrapperNode}
-                  modifyNode={modifyNode}
                 />
               </>
             ) : null}
@@ -254,7 +220,6 @@ export const ChartMoreButton = ({
                   type="png"
                   screenshotName={chartKey}
                   screenshotNode={chartWrapperNode}
-                  modifyNode={modifyNode}
                 />
               </>
             ) : null}
@@ -391,9 +356,40 @@ const DownloadImageMenuActionItem = ({
   type,
   screenshotName,
   screenshotNode,
-  modifyNode,
   pngMetadata,
-}: UseScreenshotProps) => {
+}: Omit<UseScreenshotProps, "modifyNode">) => {
+  const theme = useTheme();
+  const modifyNode = useCallback(
+    async (node: HTMLElement) => {
+      const footnotes = node.querySelector(`.${CHART_FOOTNOTES_CLASS_NAME}`);
+
+      if (footnotes) {
+        const container = document.createElement("div");
+        footnotes.appendChild(container);
+        const root = createRoot(container);
+        root.render(
+          <VisualizeLink
+            createdWith={t({ id: "metadata.link.created.with" })}
+          />
+        );
+        // Wait for the component to render before taking the screenshot.
+        await new Promise((resolve) => setTimeout(resolve, 0));
+      }
+
+      // Every text element should be dark-grey (currently we use primary.main to
+      // indicate interactive elements, which doesn't make sense for screenshots)
+      // and not have underlines.
+      const color = theme.palette.grey[700];
+      select(node)
+        .selectAll("*")
+        .style("color", color)
+        .style("text-decoration", "none");
+      // SVG elements have fill instead of color. Here we only target text elements,
+      // to avoid changing the color of other SVG elements (charts).
+      select(node).selectAll("text").style("fill", color);
+    },
+    [theme.palette.grey]
+  );
   const { loading, screenshot } = useScreenshot({
     type,
     screenshotName,
