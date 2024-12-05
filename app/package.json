@@ -175,7 +175,7 @@
     "@types/rdfjs__data-model": "2.0.7",
     "@types/rdfjs__namespace": "^2.0.10",
     "@types/react-beautiful-dnd": "^13.1.4",
-    "@types/react-table": "^7.7.15",
+    "@types/react-table": "^7.7.20",
     "@types/react-window": "^1.8.2",
     "@types/sparql-http-client": "^2.2.5",
     "@types/topojson-client": "^3.1.0",
