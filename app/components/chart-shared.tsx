@@ -463,6 +463,11 @@ const useModifyNode = () => {
         await new Promise((resolve) => setTimeout(resolve, 0));
       }
 
+      // Remove some elements that should not be included in the screenshot.
+      // For maps, we can't apply custom classes to internal elements, so we need
+      // to remove them here.
+      clonedNode.querySelector(".maplibregl-ctrl")?.remove();
+
       // Every text element should be dark-grey (currently we use primary.main to
       // indicate interactive elements, which doesn't make sense for screenshots)
       // and not have underlines.
