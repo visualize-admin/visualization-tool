@@ -287,7 +287,7 @@ export const extractChartConfigComponentIds = ({
   );
 };
 
-export const extractChartConfigUsedCubes = (
+export const extractChartConfigUsedComponents = (
   chartConfig: ChartConfig,
   { components }: { components: Component[] }
 ) => {

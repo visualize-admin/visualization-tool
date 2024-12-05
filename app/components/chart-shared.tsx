@@ -24,7 +24,7 @@ import {
   ChartDataFiltersToggle,
   useChartDataFiltersState,
 } from "@/charts/shared/chart-data-filters";
-import { extractChartConfigUsedCubes } from "@/charts/shared/chart-helpers";
+import { extractChartConfigUsedComponents } from "@/charts/shared/chart-helpers";
 import { ArrowMenuTopBottom } from "@/components/arrow-menu";
 import {
   CHART_FOOTNOTES_CLASS_NAME,
@@ -498,7 +498,7 @@ const usePNGMetadata = ({
   const chartConfig = getChartConfig(state, chartKey);
 
   const usedComponents = useMemo(() => {
-    return extractChartConfigUsedCubes(chartConfig, { components });
+    return extractChartConfigUsedComponents(chartConfig, { components });
   }, [chartConfig, components]);
 
   const [{ data }] = useDataCubesMetadataQuery({

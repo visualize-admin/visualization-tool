@@ -62,8 +62,7 @@ export const useScreenshot = ({
 };
 
 // https://dev.exiv2.org/projects/exiv2/wiki/The_Metadata_in_PNG_files#2-Textual-information-chunks-the-metadata-in-PNG
-// We can use custom keys, but we should avoid using keys that are already used
-// by other software.
+// We can use custom keys, but we should use keys already used by other software.
 type PNG_METADATA_KEY =
   | "Title"
   | "Author"

@@ -4,7 +4,7 @@ import { makeStyles } from "@mui/styles";
 import uniqBy from "lodash/uniqBy";
 import { ReactNode, useMemo } from "react";
 
-import { extractChartConfigUsedCubes } from "@/charts/shared/chart-helpers";
+import { extractChartConfigUsedComponents } from "@/charts/shared/chart-helpers";
 import { LegendItem } from "@/charts/shared/legend-color";
 import { ChartFiltersList } from "@/components/chart-filters-list";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
@@ -58,7 +58,7 @@ export const ChartFootnotes = ({
 }) => {
   const locale = useLocale();
   const usedComponents = useMemo(() => {
-    return extractChartConfigUsedCubes(chartConfig, { components });
+    return extractChartConfigUsedComponents(chartConfig, { components });
   }, [chartConfig, components]);
   const [{ data }] = useDataCubesMetadataQuery({
     variables: {
