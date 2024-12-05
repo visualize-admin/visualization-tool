@@ -20,6 +20,7 @@ import {
 } from "@/components/chart-shared";
 import {
   ChartTablePreviewProvider,
+  TablePreviewWrapper,
   useChartTablePreview,
 } from "@/components/chart-table-preview";
 import { ChartWithFilters } from "@/components/chart-with-filters";
@@ -256,8 +257,7 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
   } = props;
   const { meta } = chartConfig;
   const rootRef = useRef<HTMLDivElement>(null);
-  const { isTable, containerRef, containerHeight, computeContainerHeight } =
-    useChartTablePreview();
+  const { isTable, computeContainerHeight } = useChartTablePreview();
   const metadataPanelOpen = useStore(metadataPanelStore, (state) => state.open);
   const shouldShrink = useMemo(() => {
     const rootWidth = rootRef.current?.getBoundingClientRect().width;
@@ -421,16 +421,7 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
                 allowMultipleOpen: true,
               }}
             />
-
-            <div
-              ref={containerRef}
-              style={{
-                minWidth: 0,
-                height: containerHeight,
-                marginTop: 16,
-                flexGrow: 1,
-              }}
-            >
+            <TablePreviewWrapper>
               {isTable ? (
                 <DataSetTable
                   dataSource={dataSource}
@@ -446,7 +437,7 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
                   dashboardFilters={state.dashboardFilters}
                 />
               )}
-            </div>
+            </TablePreviewWrapper>
             <ChartFootnotes
               dataSource={dataSource}
               chartConfig={chartConfig}

@@ -36,6 +36,7 @@ import {
 } from "@/components/chart-shared";
 import {
   ChartTablePreviewProvider,
+  TablePreviewWrapper,
   useChartTablePreview,
 } from "@/components/chart-table-preview";
 import { ChartWithFilters } from "@/components/chart-with-filters";
@@ -430,7 +431,7 @@ const ChartPreviewInner = ({
       })),
     },
   });
-  const { isTable, containerRef, containerHeight } = useChartTablePreview();
+  const { isTable } = useChartTablePreview();
   const dimensions = components?.dataCubesComponents.dimensions;
   const measures = components?.dataCubesComponents.measures;
   const allComponents = useMemo(() => {
@@ -559,15 +560,7 @@ const ChartPreviewInner = ({
                     top: BANNER_MARGIN_TOP,
                   }}
                 />
-                <div
-                  ref={containerRef}
-                  style={{
-                    minWidth: 0,
-                    height: containerHeight,
-                    paddingTop: 16,
-                    flexGrow: 1,
-                  }}
-                >
+                <TablePreviewWrapper>
                   {isTable ? (
                     <DataSetTable
                       dataSource={dataSource}
@@ -583,7 +576,7 @@ const ChartPreviewInner = ({
                       dashboardFilters={state.dashboardFilters}
                     />
                   )}
-                </div>
+                </TablePreviewWrapper>
                 <ChartFootnotes
                   dataSource={dataSource}
                   chartConfig={chartConfig}
