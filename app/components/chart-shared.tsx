@@ -35,6 +35,7 @@ import {
   isPublished,
   useConfiguratorState,
 } from "@/configurator";
+import { timeUnitToFormatter } from "@/configurator/components/ui-helpers";
 import { getChartIcon } from "@/icons";
 import SvgIcMore from "@/icons/components/IcMore";
 import { useLocale } from "@/src";
@@ -137,6 +138,7 @@ export const ChartMoreButton = ({
   chartKey: string;
   chartWrapperNode?: HTMLElement | null;
 }) => {
+  const locale = useLocale();
   const [state, dispatch] = useConfiguratorState(hasChartConfigs);
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
   const handleClose = useEventCallback(() => setAnchor(null));
@@ -152,6 +154,12 @@ export const ChartMoreButton = ({
     isPublished(state) &&
     state.layout.type === "dashboard" &&
     chartConfig.chartType === "table";
+
+  const screenshotName = useMemo(() => {
+    const date = timeUnitToFormatter.Day(new Date());
+    const label = chartConfig.meta.title[locale] || chartConfig.chartType;
+    return `${date}_${label}`;
+  }, [chartConfig.meta.title, chartConfig.chartType, locale]);
 
   return disableButton ? null : (
     <>
@@ -180,7 +188,7 @@ export const ChartMoreButton = ({
                 />
                 <DownloadImageMenuActionItem
                   type="png"
-                  screenshotName={chartKey}
+                  screenshotName={screenshotName}
                   screenshotNode={chartWrapperNode}
                 />
               </>
@@ -218,7 +226,7 @@ export const ChartMoreButton = ({
                 />
                 <DownloadImageMenuActionItem
                   type="png"
-                  screenshotName={chartKey}
+                  screenshotName={screenshotName}
                   screenshotNode={chartWrapperNode}
                 />
               </>
