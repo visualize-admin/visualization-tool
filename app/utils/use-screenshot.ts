@@ -9,7 +9,7 @@ export type UseScreenshotProps = {
   type: ScreenshotFileFormat;
   screenshotName: string;
   screenshotNode?: HTMLElement | null;
-  modifyNode?: (d: HTMLElement) => void;
+  modifyNode?: (clonedNode: HTMLElement, originalNode: HTMLElement) => void;
   pngMetadata?: { key: PNG_METADATA_KEY; value: string }[];
 };
 
@@ -22,11 +22,11 @@ export const useScreenshot = ({
 }: UseScreenshotProps) => {
   const [loading, setLoading] = useState(false);
   const modifyNode = useCallback(
-    (node: HTMLElement) => {
-      removeDisabledElements(node);
+    (clonedNode: HTMLElement, originalNode: HTMLElement) => {
+      removeDisabledElements(clonedNode);
 
       if (_modifyNode) {
-        _modifyNode(node);
+        _modifyNode(clonedNode, originalNode);
       }
     },
     [_modifyNode]
@@ -81,7 +81,7 @@ const makeScreenshot = async ({
   type: "png" | "svg";
   name: string;
   node: HTMLElement;
-  modifyNode?: (d: HTMLElement) => void;
+  modifyNode?: (clonedNode: HTMLElement, originalNode: HTMLElement) => void;
   pngMetadata?: { key: PNG_METADATA_KEY; value: string }[];
 }) => {
   const isUsingSafari =
@@ -110,8 +110,8 @@ const makeScreenshot = async ({
     ctx.drawImage(canvasNode, 0, 0);
   }
 
-  wrapperNode.appendChild(clonedNode);
-  modifyNode?.(clonedNode);
+  const mountedClonedNode = wrapperNode.appendChild(clonedNode);
+  modifyNode?.(mountedClonedNode, node);
 
   // There's a bug with embedding the fonts in Safari, which appears only when
   // downloading the image for the first time. On subsequent downloads, the
