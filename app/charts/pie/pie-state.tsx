@@ -26,7 +26,7 @@ import { useSize } from "@/charts/shared/use-size";
 import { PieConfig } from "@/configurator";
 import { Dimension, Observation } from "@/domain/data";
 import { formatNumberWithUnit, useFormatNumber } from "@/formatters";
-import { getPaletteId } from "@/palettes";
+import { getPalette } from "@/palettes";
 import {
   getSortingOrders,
   makeDimensionValueSorters,
@@ -121,7 +121,7 @@ const usePieState = (
       colors.range(orderedSegmentLabelsAndColors.map((s) => s.color));
     } else {
       colors.domain(allSegments);
-      colors.range(getPaletteId(fields.color.paletteId));
+      colors.range(getPalette(fields.color.paletteId));
     }
     // Do not let the scale be implicitly extended by children calling it
     // on unknown values

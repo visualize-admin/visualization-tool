@@ -463,7 +463,6 @@ const DivergingPaletteType = t.union([
   t.literal("RdYlBu"),
   t.literal("RdYlGn"),
 ]);
-
 export type DivergingPaletteType = t.TypeOf<typeof DivergingPaletteType>;
 
 const SequentialPaletteType = t.union([
@@ -474,10 +473,62 @@ const SequentialPaletteType = t.union([
   t.literal("purples"),
   t.literal("reds"),
 ]);
-
 export type SequentialPaletteType = t.TypeOf<typeof SequentialPaletteType>;
 
-export type PaletteType = DivergingPaletteType | SequentialPaletteType;
+const CategoricalPaletteType = t.union([
+  t.literal("dimension"),
+  t.literal("accent"),
+  t.literal("category10"),
+  t.literal("dark2"),
+  t.literal("paired"),
+  t.literal("pastel1"),
+  t.literal("pastel2"),
+  t.literal("set1"),
+  t.literal("set2"),
+  t.literal("set3"),
+  t.literal("tableau10"),
+]);
+
+export type CategoricalPaletteType = t.TypeOf<typeof CategoricalPaletteType>;;
+
+const DivergingPalette =
+  t.type({
+    type: t.literal("diverging"),
+    paletteId: DivergingPaletteType,
+    name: DivergingPaletteType,
+  })
+
+// Define the Sequential Palette Structure
+const SequentialPalette = 
+  t.type({
+    type: t.literal("sequential"),
+    paletteId: SequentialPaletteType,
+    name: SequentialPaletteType,
+  })
+
+const CategoricalPalette =
+  t.type({
+    type: t.literal("categorical"),
+    paletteId: CategoricalPaletteType, 
+    name: CategoricalPaletteType, 
+  })
+
+const CustomPalette = 
+t.type({
+  type: t.union([t.literal("diverging"), t.literal("sequential"), t.literal("categorical")]),
+  paletteId: t.string,
+  name: t.string,
+  colors: t.array(t.string),
+})
+
+export const PaletteType = t.union([
+  DivergingPalette,
+  SequentialPalette,
+  CategoricalPalette,
+  CustomPalette
+]);
+
+export type PaletteType = t.TypeOf<typeof PaletteType>;
 
 const ColorScaleType = t.union([
   t.literal("continuous"),
@@ -506,13 +557,13 @@ const ColumnStyleText = t.type({
 const ColumnStyleCategory = t.type({
   type: t.literal("category"),
   textStyle: ColumnTextStyle,
-  palette: t.string,
+  paletteId: t.string,
   colorMapping: ColorMapping,
 });
 const ColumnStyleHeatmap = t.type({
   type: t.literal("heatmap"),
   textStyle: ColumnTextStyle,
-  palette: DivergingPaletteType,
+  paletteId: DivergingPaletteType,
 });
 const ColumnStyleBar = t.type({
   type: t.literal("bar"),
@@ -618,7 +669,7 @@ const NumericalColorField = t.intersection([
   t.type({
     type: t.literal("numerical"),
     componentId: t.string,
-    paletteId: t.union([DivergingPaletteType, SequentialPaletteType]),
+    paletteId: t.string,
   }),
   t.union([
     t.type({
@@ -637,6 +688,7 @@ const NumericalColorField = t.intersection([
   ]),
   ColorFieldOpacity,
 ]);
+
 export type NumericalColorField = t.TypeOf<typeof NumericalColorField>;
 
 export type MapColorField =
@@ -907,8 +959,9 @@ export const isColorInConfig = (
   | LineConfig
   | PieConfig
   | ScatterPlotConfig => {
-  return ["area", "column", "line", "pie", "scatterplot"].includes(
-    chartConfig.chartType
+  return (
+    !isTableConfig(chartConfig) &&
+    !isMapConfig(chartConfig)
   );
 };
 

@@ -26,11 +26,11 @@ import {
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import { Component, isNumericalMeasure } from "@/domain/data";
 import {
-  DEFAULT_CATEGORICAL_PALETTE_NAME,
+  DEFAULT_CATEGORICAL_PALETTE_ID,
   categoricalPalettes,
   divergingSteppedPalettes,
   getDefaultCategoricalPalette,
-  getPaletteId,
+  getPalette,
 } from "@/palettes";
 import useEvent from "@/utils/use-event";
 
@@ -97,7 +97,7 @@ export const ColorPalette = ({
     }
     if (isColorInConfig(chartConfig)) {
       dispatch({
-        type: "CHART_PALETTE_CHANGED_NEW",
+        type: "COLOR_FIELD_SET",
         value:
           chartConfig.fields.color.type === "single"
             ? {
@@ -109,7 +109,7 @@ export const ColorPalette = ({
                 type: chartConfig.fields.color.type,
                 paletteId: palette.value,
                 colorMapping: mapValueIrisToColor({
-                  palette: palette.value,
+                  paletteId: palette.value,
                   dimensionValues: component.values,
                 }),
               },
@@ -120,9 +120,9 @@ export const ColorPalette = ({
         value: {
           field,
           colorConfigPath,
-          palette: palette.value,
+          paletteId: palette.value,
           colorMapping: mapValueIrisToColor({
-            palette: palette.value,
+            paletteId: palette.value,
             dimensionValues: component.values,
           }),
         },
@@ -248,7 +248,7 @@ export const ColorSquare = ({
   );
 };
 
-const ColorPaletteControls = ({
+export const ColorPaletteControls = ({
   field,
   colorConfigPath,
   component,
@@ -262,13 +262,13 @@ const ColorPaletteControls = ({
   const [, dispatch] = useConfiguratorState();
   const chartConfig = getChartConfig(state);
 
-  const palette = get(
+  const paletteId = isColorInConfig(chartConfig) ?  get(chartConfig, `fields.color.paletteId`) :  get(
     chartConfig,
-    `fields["${field}"].${colorConfigPath ? `${colorConfigPath}.` : ""}palette`,
-    DEFAULT_CATEGORICAL_PALETTE_NAME
+    `fields["${field}"].${colorConfigPath ? `${colorConfigPath}.` : ""}paletteId`,
+    DEFAULT_CATEGORICAL_PALETTE_ID
   ) as string;
 
-  const colorMapping = get(
+  const colorMapping = isColorInConfig(chartConfig) ? get(chartConfig, `fields.color.colorMapping`) :  get(
     chartConfig,
     `fields["${field}"].${
       colorConfigPath ? `${colorConfigPath}.` : ""
@@ -283,24 +283,23 @@ const ColorPaletteControls = ({
           field,
           colorConfigPath,
           colorMapping: mapValueIrisToColor({
-            palette,
+            paletteId,
             dimensionValues: component.values,
           }),
         },
       }),
-    [colorConfigPath, component, dispatch, field, palette]
+    [colorConfigPath, component, dispatch, field, paletteId]
   );
 
   if (colorMapping) {
-    // Compare palette colors & colorMapping colors
-    const currentPalette = getPaletteId(palette);
+    const currentPalette = getPalette(paletteId);
     const colorMappingColors = Object.values(colorMapping);
 
     const nbMatchedColors = colorMappingColors.length;
     const matchedColorsInPalette = currentPalette.slice(0, nbMatchedColors);
     const same =
       matchedColorsInPalette.every((d, i) => d === colorMappingColors[i]) ||
-      palette === "dimension";
+      paletteId === "dimension";
 
     return (
       <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1 }}>

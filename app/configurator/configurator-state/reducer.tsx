@@ -413,7 +413,7 @@ export const handleChartFieldChanged = (
 
 export const handleChartOptionChanged = (
   draft: ConfiguratorState,
-  action: Extract<ConfiguratorStateAction, { type: "CHART_OPTION_CHANGED" }>
+  action: Extract<ConfiguratorStateAction, { type: "COLOR_MAPPING_UPDATED" }>
 ) => {
   if (isConfiguring(draft)) {
     const { locale, path, field, value } = action.value;
@@ -474,7 +474,7 @@ export const updateColorMapping = (
 
       if (fieldValue) {
         colorMapping = mapValueIrisToColor({
-          palette: fieldValue.palette,
+          paletteId: fieldValue.paletteId,
           dimensionValues: values,
           random,
         });
@@ -487,7 +487,7 @@ export const updateColorMapping = (
 
       if (fieldValue?.componentId === dimensionId) {
         colorMapping = mapValueIrisToColor({
-          palette: fieldValue.palette,
+          paletteId: fieldValue.palette,
           dimensionValues: values,
           random,
         });
@@ -649,10 +649,10 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
       return draft;
 
-    case "CHART_OPTION_CHANGED":
+    case "COLOR_MAPPING_UPDATED":
       return handleChartOptionChanged(draft, action);
 
-    case "CHART_PALETTE_CHANGED_NEW":
+    case "COLOR_FIELD_SET":
       if (isConfiguring(draft)) {
         const chartConfig = getChartConfig(draft);
         setWith(
@@ -675,23 +675,19 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
     case "CHART_PALETTE_CHANGED":
       if (isConfiguring(draft)) {
         const chartConfig = getChartConfig(draft);
+        const commonPath = `fields["${action.value.field}"].${
+          action.value.colorConfigPath ? `${action.value.colorConfigPath}.` : ""
+        }`;
+
         setWith(
           chartConfig,
-          `fields["${action.value.field}"].${
-            action.value.colorConfigPath
-              ? `${action.value.colorConfigPath}.`
-              : ""
-          }palette`,
-          action.value.palette,
+          `${commonPath}palette`,
+          action.value.paletteId,
           Object
         );
         setWith(
           chartConfig,
-          `fields["${action.value.field}"].${
-            action.value.colorConfigPath
-              ? `${action.value.colorConfigPath}.`
-              : ""
-          }colorMapping`,
+          `${commonPath}colorMapping`,
           action.value.colorMapping,
           Object
         );

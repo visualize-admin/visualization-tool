@@ -56,7 +56,7 @@ import {
   isTemporalEntityDimension,
   isTemporalOrdinalDimension,
 } from "@/domain/data";
-import { getDefaultCategoricalPaletteId, getPaletteId } from "@/palettes";
+import { getDefaultCategoricalPaletteId, getPalette } from "@/palettes";
 
 /**
  * This module controls chart controls displayed in the UI.
@@ -192,10 +192,13 @@ const onColorComponentIdChange: OnEncodingOptionChange<string, MapConfig> = (
       MULTI_FILTER_ENABLED_COMPONENTS.includes(component.__typename) ||
       isOrdinalMeasure(component)
     ) {
-      const palette = getDefaultCategoricalPaletteId(component, colorPalette);
+      const paletteId = getDefaultCategoricalPaletteId(
+        component,
+        colorPalette?.paletteId
+      );
       newField = getDefaultCategoricalColorField({
         id,
-        palette,
+        paletteId,
         dimensionValues: component.values,
       });
     } else if (isNumericalMeasure(component)) {
@@ -483,14 +486,14 @@ export const defaultSegmentOnChange: OnEncodingChange<
 > = (id, { chartConfig, dimensions, measures, selectedValues }) => {
   const components = [...dimensions, ...measures];
   const component = components.find((d) => d.id === id);
-  const palette = getDefaultCategoricalPaletteId(
+  const paletteId = getDefaultCategoricalPaletteId(
     component,
     chartConfig.fields.color && "paletteId" in chartConfig.fields.color
       ? chartConfig.fields.color.paletteId
       : undefined
   );
   const colorMapping = mapValueIrisToColor({
-    palette,
+    paletteId,
     dimensionValues: component ? component.values : selectedValues,
   });
 
@@ -503,7 +506,7 @@ export const defaultSegmentOnChange: OnEncodingChange<
     };
     chartConfig.fields.color = {
       type: "segment",
-      paletteId: palette,
+      paletteId: paletteId,
       colorMapping,
     };
   }
@@ -607,7 +610,11 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         },
         options: {
           calculation: {},
-          colorPalette: {},
+          colorPalette: {
+            type: "single",
+            paletteId: "dimension",
+            colorMapping: {},
+          },
           imputation: {
             shouldShow: (chartConfig, data) => {
               return isMissingDataPresent(chartConfig, data);
@@ -763,7 +770,11 @@ const chartConfigOptionsUISpec: ChartSpecs = {
               }
             },
           },
-          colorPalette: {},
+          colorPalette: {
+            type: "single",
+            paletteId: "dimension",
+            colorMapping: {},
+          },
           useAbbreviations: {},
         },
       },
@@ -781,6 +792,11 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         componentTypes: ["NumericalMeasure"],
         filters: false,
         options: {
+          colorPalette: {
+            type: "single",
+            paletteId: "dimension",
+            colorMapping: {},
+          },
           showStandardError: {},
           showConfidenceInterval: {},
         },
@@ -801,7 +817,11 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         sorting: LINE_SEGMENT_SORTING,
         onChange: defaultSegmentOnChange,
         options: {
-          colorPalette: {},
+          colorPalette: {
+            type: "single",
+            paletteId: "dimension",
+            colorMapping: {},
+          },
           useAbbreviations: {},
         },
       },
@@ -894,7 +914,11 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         sorting: PIE_SEGMENT_SORTING,
         onChange: defaultSegmentOnChange,
         options: {
-          colorPalette: {},
+          colorPalette: {
+            type: "single",
+            paletteId: "dimension",
+            colorMapping: {},
+          },
           useAbbreviations: {},
         },
       },
@@ -927,7 +951,11 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         filters: true,
         onChange: defaultSegmentOnChange,
         options: {
-          colorPalette: {},
+          colorPalette: {
+            type: "single",
+            paletteId: "dimension",
+            colorMapping: {},
+          },
           useAbbreviations: {},
         },
       },
@@ -958,7 +986,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
               const { chartConfig } = options;
               const { fields } = chartConfig;
               const { color } = fields;
-              const palette = getPaletteId(color.paletteId);
+              const palette = getPalette(color.paletteId);
               const newColorMapping = Object.fromEntries(
                 ids.map((id, i) => [id, color.colorMapping[i] ?? palette[i]])
               );

@@ -24,7 +24,7 @@ import {
 import { RelatedDimensionType, TimeUnit } from "@/graphql/query-hooks";
 import { IconName } from "@/icons";
 import { getTimeInterval } from "@/intervals";
-import { getPaletteId } from "@/palettes";
+import { getPalette } from "@/palettes";
 
 // FIXME: We should cover more time formats
 export const timeUnitToParser: Record<
@@ -268,11 +268,11 @@ export const getIconName = (name: string): IconName => {
 const randomComparator = () => (Math.random() > 0.5 ? 1 : -1);
 
 export const mapValueIrisToColor = ({
-  palette,
+  paletteId,
   dimensionValues,
   random,
 }: {
-  palette: string;
+  paletteId: string;
   dimensionValues: DimensionValue[];
   random?: boolean;
 }) => {
@@ -280,10 +280,10 @@ export const mapValueIrisToColor = ({
     return {};
   }
 
-  const paletteValues = getPaletteId(palette);
+  const paletteValues = getPalette(paletteId);
   const colors = dimensionValues.map(
     (d, i) =>
-      (palette === "dimension" && d.color) ||
+      (paletteId === "dimension" && d.color) ||
       paletteValues[i % paletteValues.length]
   );
   const colorScale = scaleOrdinal<string, string>()

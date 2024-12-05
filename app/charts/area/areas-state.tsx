@@ -54,7 +54,7 @@ import { useSize } from "@/charts/shared/use-size";
 import { AreaConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
 import { useFormatNumber, useTimeFormatUnit } from "@/formatters";
-import { getPaletteId } from "@/palettes";
+import { getPalette } from "@/palettes";
 import { useChartInteractiveFilters } from "@/stores/interactive-filters";
 import { sortByIndex } from "@/utils/array";
 import {
@@ -248,7 +248,7 @@ const useAreasState = (
     const xScaleTimeRange = scaleTime().domain(xScaleTimeRangeDomain);
     const colors = scaleOrdinal<string, string>();
 
-    if (segmentDimension && fields.color.type === "segment") {
+    if (segmentDimension && fields.color?.type === "segment") {
       const segmentColor = fields.color;
       const orderedSegmentLabelsAndColors = allSegments.map((segment) => {
         const dvIri =
@@ -266,7 +266,7 @@ const useAreasState = (
       colors.range(orderedSegmentLabelsAndColors.map((s) => s.color));
     } else {
       colors.domain(allSegments);
-      colors.range(getPaletteId(fields.color.paletteId));
+      colors.range(getPalette(fields.color?.paletteId));
     }
 
     colors.unknown(() => undefined);

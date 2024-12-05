@@ -1,8 +1,7 @@
+"use client";
 import { Box } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import {
-  Chrome,
-  EditableInput,
   hexToHsva,
   HsvaColor,
   hsvaToHex,
@@ -10,9 +9,21 @@ import {
   Saturation,
 } from "@uiw/react-color";
 import { color as d3Color } from "d3-color";
+import dynamic from "next/dynamic";
 import { MouseEventHandler, useEffect, useState } from "react";
 
 import Flex from "@/components/flex";
+
+const ChromePicker = dynamic(
+  () => import("@uiw/react-color").then((mod) => ({ default: mod.Chrome })),
+  { ssr: false }
+);
+
+const EditableInputComponent = dynamic(
+  () =>
+    import("@uiw/react-color").then((mod) => ({ default: mod.EditableInput })),
+  { ssr: false }
+);
 
 const useColorPickerStyles = makeStyles(() => ({
   swatches: {
@@ -34,12 +45,34 @@ const CustomColorPicker = ({
   colorSwatches,
   defaultSelection = { h: 0, s: 0, v: 68, a: 1 },
 }: CustomColorPickerProps) => {
+  // Remove the isBrowser check since we're using client-side only rendering
   const [hsva, setHsva] = useState(defaultSelection);
   const classes = useColorPickerStyles();
 
   useEffect(() => {
     onChange(hsva);
   }, [hsva, onChange]);
+
+  // Wrap the entire component in a client-side only check
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  if (!isClient) {
+    // Return a placeholder while server-side rendering
+    return (
+      <Box
+        sx={{
+          width: "162px",
+          height: "200px",
+          backgroundColor: "#f5f5f5",
+          borderRadius: "3px",
+        }}
+      />
+    );
+  }
 
   return (
     <Flex
@@ -87,19 +120,17 @@ const CustomColorPicker = ({
         </Flex>
 
         <Box display="grid" className={classes.swatches}>
-          {colorSwatches?.map((color) => {
-            return (
-              <Swatch
-                key={color}
-                color={color}
-                selected={hsvaToHex(hsva) === color}
-                onClick={() => setHsva(hexToHsva(color))}
-              />
-            );
-          })}
+          {colorSwatches?.map((color) => (
+            <Swatch
+              key={color}
+              color={color}
+              selected={hsvaToHex(hsva) === color}
+              onClick={() => setHsva(hexToHsva(color))}
+            />
+          ))}
         </Box>
         <Flex sx={{ marginTop: "8px", alignItems: "center", gap: "8px" }}>
-          <EditableInput
+          <EditableInputComponent
             prefix="#"
             prefixCls="#"
             value={hsvaToHex(hsva)}
@@ -117,9 +148,8 @@ const CustomColorPicker = ({
             }}
             onChange={(_, value) => setHsva(hexToHsva(`#${value}`))}
           />
-          <Chrome
+          <ChromePicker
             showAlpha={false}
-            showEyeDropper
             showHue={false}
             showColorPreview={false}
             showEditableInput={false}

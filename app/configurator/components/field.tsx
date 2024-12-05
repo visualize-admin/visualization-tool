@@ -13,6 +13,7 @@ import { TimeLocaleObject } from "d3-time-format";
 import get from "lodash/get";
 import orderBy from "lodash/orderBy";
 import pick from "lodash/pick";
+import dynamic from "next/dynamic";
 import React, {
   ChangeEvent,
   ComponentProps,
@@ -43,7 +44,6 @@ import {
   getChartConfig,
   useChartConfigFilters,
 } from "@/config-types";
-import { ColorPickerMenu } from "@/configurator/components/chart-controls/color-picker";
 import {
   AnnotatorTab,
   AnnotatorTabProps,
@@ -94,10 +94,16 @@ import {
 import { useTimeFormatLocale } from "@/formatters";
 import { TimeUnit } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
-import { getPaletteId } from "@/palettes";
+import { getPalette } from "@/palettes";
 import { hierarchyToOptions } from "@/utils/hierarchy";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
+
+const ColorPickerMenu = dynamic(
+  () =>
+    import("./chart-controls/color-picker").then((mod) => mod.ColorPickerMenu),
+  { ssr: false }
+);
 
 const useStyles = makeStyles<Theme>((theme) => ({
   root: {
@@ -710,7 +716,7 @@ const useMultiFilterColorPicker = (value: string) => {
   );
 
   const palette = useMemo(() => {
-    return getPaletteId(
+    return getPalette(
       get(
         chartConfig,
         `fields["${activeField}"].${
@@ -805,7 +811,7 @@ export const ColorPickerField = ({
   const updateColor = useCallback(
     (value: string) =>
       dispatch({
-        type: "CHART_OPTION_CHANGED",
+        type: "COLOR_MAPPING_UPDATED",
         value: {
           locale,
           field,
@@ -817,7 +823,7 @@ export const ColorPickerField = ({
   );
 
   const color = get(chartConfig, `fields["${field}"].${path}`);
-  const palette = getPaletteId(get(chartConfig, `fields["${field}"].palette`));
+  const palette = getPalette(get(chartConfig, `fields["${field}"].paletteId`));
 
   return (
     <Flex

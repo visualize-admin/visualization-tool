@@ -284,14 +284,14 @@ export const TableColumnOptions = ({
                       columnColor: "#fff",
                     };
                   case "category":
-                    const palette = getDefaultCategoricalPaletteId(component);
+                    const paletteId = getDefaultCategoricalPaletteId(component);
 
                     return {
                       type: "category",
                       textStyle: "regular",
-                      palette,
+                      paletteId,
                       colorMapping: mapValueIrisToColor({
-                        palette,
+                        paletteId,
                         dimensionValues: component.values,
                       }),
                     };
@@ -299,7 +299,7 @@ export const TableColumnOptions = ({
                     return {
                       type: "heatmap",
                       textStyle: "regular",
-                      palette: getDefaultDivergingSteppedPalette().value,
+                      paletteId: getDefaultDivergingSteppedPalette().value,
                     };
                   case "bar":
                     return {

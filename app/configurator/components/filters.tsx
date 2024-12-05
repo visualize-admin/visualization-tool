@@ -381,7 +381,7 @@ const MultiFilterContent = ({
             <Trans id="controls.filters.select.selected-filters">
               Selected filters
             </Trans>
-            {hasColorMapping && colorConfig?.palette === "dimension" && (
+            {hasColorMapping && colorConfig?.paletteId === "dimension" && (
               <Tooltip
                 title={
                   <Trans id="controls.filters.select.reset-colors">

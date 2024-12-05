@@ -56,7 +56,7 @@ import { useSize } from "@/charts/shared/use-size";
 import { ColumnConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
 import { useFormatNumber } from "@/formatters";
-import { getPaletteId } from "@/palettes";
+import { getPalette } from "@/palettes";
 import { useChartInteractiveFilters } from "@/stores/interactive-filters";
 import { sortByIndex } from "@/utils/array";
 import {
@@ -253,7 +253,7 @@ const useColumnsStackedState = (
       colors.range(orderedSegmentLabelsAndColors.map((s) => s.color));
     } else {
       colors.domain(allSegments);
-      colors.range(getPaletteId(fields.color.paletteId));
+      colors.range(getPalette(fields.color.paletteId));
     }
 
     colors.unknown(() => undefined);

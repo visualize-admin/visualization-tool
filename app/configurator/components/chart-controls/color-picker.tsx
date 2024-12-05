@@ -1,10 +1,10 @@
 import { Trans } from "@lingui/macro";
 import { Box, Button, Popover, styled, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { HsvaColor } from "@uiw/react-color";
+import { hexToHsva, hsvaToHex } from "@uiw/react-color";
 import { color as d3Color } from "d3-color";
 import dynamic from "next/dynamic";
-import { MouseEventHandler, useCallback, useRef, useState } from "react";
+import { MouseEventHandler, useCallback, useRef } from "react";
 
 import useDisclosure from "@/components/use-disclosure";
 import VisuallyHidden from "@/components/visually-hidden";
@@ -123,16 +123,17 @@ const ColorPickerBox = styled(Box)({
 });
 
 export const ColorPickerMenu = (props: Props) => {
-  const { disabled } = props;
+  const { disabled, onChange, selectedColor } = props;
   const { isOpen, open, close } = useDisclosure();
   const buttonRef = useRef(null);
   const popoverRef = useRef<HTMLDivElement>(null);
 
-  const [color, setColor] = useState<HsvaColor | undefined>(undefined);
-
-  const handleColorChange = useCallback((color) => {
-    setColor(color);
-  }, []);
+  const handleColorChange = useCallback(
+    (color) => {
+      onChange?.(hsvaToHex(color));
+    },
+    [onChange]
+  );
 
   return (
     <ColorPickerBox
@@ -164,6 +165,7 @@ export const ColorPickerMenu = (props: Props) => {
       >
         <Box ref={popoverRef}>
           <CustomColorPicker
+            defaultSelection={hexToHsva(selectedColor)}
             onChange={handleColorChange}
             colorSwatches={props.colors}
           />

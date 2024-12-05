@@ -1102,7 +1102,7 @@ describe("handleChartOptionChanged", () => {
     } as unknown as ConfiguratorStateConfiguringChart;
 
     handleChartOptionChanged(state, {
-      type: "CHART_OPTION_CHANGED",
+      type: "COLOR_MAPPING_UPDATED",
       value: {
         locale: "en",
         field: "areaLayer",
@@ -1162,7 +1162,7 @@ describe("handleChartOptionChanged", () => {
     } as unknown as ConfiguratorStateConfiguringChart;
 
     handleChartOptionChanged(state, {
-      type: "CHART_OPTION_CHANGED",
+      type: "COLOR_MAPPING_UPDATED",
       value: {
         locale: "en",
         field: "areaLayer",

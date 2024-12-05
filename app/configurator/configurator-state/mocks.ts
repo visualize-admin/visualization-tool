@@ -43,7 +43,7 @@ export const configStateMock = {
             color: {
               type: "categorical",
               componentId: "year-period-1",
-              palette: "dimension",
+              paletteId: "dimension",
               colorMapping: {
                 red: "green",
                 green: "blue",

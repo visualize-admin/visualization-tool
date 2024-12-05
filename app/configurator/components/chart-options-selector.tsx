@@ -525,18 +525,17 @@ const EncodingOptionsPanel = ({
       {isComboChartConfig(chartConfig) && encoding.field === "y" && (
         <ChartComboYField chartConfig={chartConfig} measures={measures} />
       )}
-      {fieldComponent &&
-        encoding.field === "segment" &&
-        (hasSubOptions || hasColorPalette) && (
-          <ChartLayoutOptions
-            encoding={encoding}
-            component={component}
-            chartConfig={chartConfig}
-            components={components}
-            hasColorPalette={hasColorPalette}
-            hasSubOptions={hasSubOptions}
-          />
-        )}
+      {fieldComponent && (hasSubOptions || hasColorPalette) && (
+        <ChartLayoutOptions
+          encoding={encoding}
+          component={component}
+          chartConfig={chartConfig}
+          components={components}
+          hasColorPalette={hasColorPalette}
+          hasSubOptions={hasSubOptions}
+          measures={measures}
+        />
+      )}
       {encoding.options?.imputation?.shouldShow(chartConfig, observations) && (
         <ChartImputation chartConfig={chartConfig} />
       )}
@@ -609,6 +608,7 @@ const ChartLayoutOptions = ({
   components,
   hasColorPalette,
   hasSubOptions,
+  measures,
 }: {
   encoding: EncodingSpec;
   component: Component | undefined;
@@ -616,7 +616,13 @@ const ChartLayoutOptions = ({
   components: Component[];
   hasColorPalette: boolean;
   hasSubOptions: boolean;
+  measures: Measure[];
 }) => {
+  const { fields } = chartConfig;
+  const values: { id: string; symbol: LegendSymbol }[] = [
+    { id: fields.y.componentId, symbol: "line" },
+  ];
+
   return encoding.options || hasColorPalette ? (
     <ControlSection collapse>
       <SubsectionTitle iconName="color">
@@ -632,11 +638,39 @@ const ChartLayoutOptions = ({
           />
         )}
         {hasColorPalette && (
-          <ColorPalette
-            disabled={!component}
-            field={encoding.field}
-            component={component}
-          />
+          <>
+            <ColorPalette
+              field="y"
+              // Faking a component here, because we don't have a real one.
+              // We use measure iris as dimension values, because that's how
+              // the color mapping is done.
+              component={
+                {
+                  __typename: "",
+                  values: values.map(({ id }) => ({
+                    value: id,
+                    label: id,
+                  })),
+                } as any as Component
+              }
+            />
+            <Box
+              sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 5 }}
+            >
+              {values.map(({ id, symbol }) => {
+                return (
+                  <Box key={id}>
+                    <ColorPickerField
+                      field="color"
+                      path={`${chartConfig.fields.color.type === "single" ? "color" : `colorMapping["${id}"]`}`}
+                      label={measures.find((d) => d.id === id)!.label}
+                      symbol={symbol}
+                    />
+                  </Box>
+                );
+              })}
+            </Box>
+          </>
         )}
       </ControlSectionContent>
     </ControlSection>
@@ -860,7 +894,7 @@ const ChartComboLineSingleYField = ({
                   }
 
                   dispatch({
-                    type: "CHART_OPTION_CHANGED",
+                    type: "COLOR_MAPPING_UPDATED",
                     value: {
                       locale,
                       field: "y",
@@ -888,7 +922,7 @@ const ChartComboLineSingleYField = ({
 
                 if (id !== FIELD_VALUE_NONE) {
                   dispatch({
-                    type: "CHART_OPTION_CHANGED",
+                    type: "COLOR_MAPPING_UPDATED",
                     value: {
                       locale,
                       field: "y",
@@ -903,7 +937,7 @@ const ChartComboLineSingleYField = ({
           )}
         </ControlSectionContent>
       </ControlSection>
-      <ComboChartYColorSection
+      <ColorSelection
         values={y.componentIds.map((id) => ({ id, symbol: "line" }))}
         measures={measures}
       />
@@ -977,7 +1011,7 @@ const ChartComboLineDualYField = ({
             onChange={(e) => {
               const newId = e.target.value as string;
               dispatch({
-                type: "CHART_OPTION_CHANGED",
+                type: "COLOR_MAPPING_UPDATED",
                 value: {
                   locale,
                   field: "y",
@@ -1002,7 +1036,7 @@ const ChartComboLineDualYField = ({
             onChange={(e) => {
               const newId = e.target.value as string;
               dispatch({
-                type: "CHART_OPTION_CHANGED",
+                type: "COLOR_MAPPING_UPDATED",
                 value: {
                   locale,
                   field: "y",
@@ -1015,7 +1049,7 @@ const ChartComboLineDualYField = ({
           />
         </ControlSectionContent>
       </ControlSection>
-      <ComboChartYColorSection
+      <ColorSelection
         values={[
           { id: y.leftAxisComponentId, symbol: "line" },
           { id: y.rightAxisComponentId, symbol: "line" },
@@ -1092,7 +1126,7 @@ const ChartComboLineColumnYField = ({
             onChange={(e) => {
               const newId = e.target.value as string;
               dispatch({
-                type: "CHART_OPTION_CHANGED",
+                type: "COLOR_MAPPING_UPDATED",
                 value: {
                   locale,
                   field: "y",
@@ -1117,7 +1151,7 @@ const ChartComboLineColumnYField = ({
             onChange={(e) => {
               const newId = e.target.value as string;
               dispatch({
-                type: "CHART_OPTION_CHANGED",
+                type: "COLOR_MAPPING_UPDATED",
                 value: {
                   locale,
                   field: "y",
@@ -1130,7 +1164,7 @@ const ChartComboLineColumnYField = ({
           />
         </ControlSectionContent>
       </ControlSection>
-      <ComboChartYColorSection
+      <ColorSelection
         values={
           y.lineAxisOrientation === "left"
             ? [
@@ -1148,7 +1182,7 @@ const ChartComboLineColumnYField = ({
   );
 };
 
-const ComboChartYColorSection = ({
+const ColorSelection = ({
   values,
   measures,
 }: {
@@ -1515,7 +1549,7 @@ const ChartFieldSorting = ({
   >(
     ({ sortingType, sortingOrder }) => {
       dispatch({
-        type: "CHART_OPTION_CHANGED",
+        type: "COLOR_MAPPING_UPDATED",
         value: {
           locale,
           field,
@@ -2010,7 +2044,7 @@ const ChartMapBaseLayerSettings = ({
     if (chartConfig.baseLayer.locked) {
       if (map !== null) {
         dispatch({
-          type: "CHART_OPTION_CHANGED",
+          type: "COLOR_MAPPING_UPDATED",
           value: {
             locale,
             field: null,
@@ -2022,7 +2056,7 @@ const ChartMapBaseLayerSettings = ({
       }
     } else {
       dispatch({
-        type: "CHART_OPTION_CHANGED",
+        type: "COLOR_MAPPING_UPDATED",
         value: {
           locale,
           field: null,

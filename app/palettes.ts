@@ -25,7 +25,7 @@ import {
 } from "d3-scale-chromatic";
 
 import { hasDimensionColors } from "./charts/shared/colors";
-import { DivergingPaletteType, SequentialPaletteType } from "./config-types";
+import { DivergingPaletteType, PaletteType, SequentialPaletteType } from "./config-types";
 import { Component } from "./domain/data";
 
 // Colors
@@ -36,7 +36,7 @@ export const getDefaultCategoricalPaletteId = (
   const hasColors = hasDimensionColors(d);
   return hasColors
     ? "dimension"
-    : previousPaletteName || DEFAULT_CATEGORICAL_PALETTE_NAME;
+    : previousPaletteName || DEFAULT_CATEGORICAL_PALETTE_ID;
 };
 
 export const getDefaultCategoricalPalette = (
@@ -53,7 +53,7 @@ export const getDefaultCategoricalPalette = (
   }
 };
 
-export const getPaletteId = (
+export const getPalette = (
   palette?: string,
   colors?: string[]
 ): ReadonlyArray<string> => {
@@ -96,19 +96,19 @@ export const categoricalPalettes: Array<CategoricalPalette> = [
   {
     label: "category10",
     value: "category10",
-    colors: getPaletteId("category10"),
+    colors: getPalette("category10"),
   },
-  { label: "accent", value: "accent", colors: getPaletteId("accent") },
-  { label: "dark2", value: "dark2", colors: getPaletteId("dark2") },
-  { label: "paired", value: "paired", colors: getPaletteId("paired") },
-  { label: "pastel1", value: "pastel1", colors: getPaletteId("pastel1") },
-  { label: "pastel2", value: "pastel2", colors: getPaletteId("pastel2") },
-  { label: "set1", value: "set1", colors: getPaletteId("set1") },
-  { label: "set2", value: "set2", colors: getPaletteId("set2") },
-  { label: "set3", value: "set3", colors: getPaletteId("set3") },
+  { label: "accent", value: "accent", colors: getPalette("accent") },
+  { label: "dark2", value: "dark2", colors: getPalette("dark2") },
+  { label: "paired", value: "paired", colors: getPalette("paired") },
+  { label: "pastel1", value: "pastel1", colors: getPalette("pastel1") },
+  { label: "pastel2", value: "pastel2", colors: getPalette("pastel2") },
+  { label: "set1", value: "set1", colors: getPalette("set1") },
+  { label: "set2", value: "set2", colors: getPalette("set2") },
+  { label: "set3", value: "set3", colors: getPalette("set3") },
 ];
 
-export const DEFAULT_CATEGORICAL_PALETTE_NAME = categoricalPalettes[0].value;
+export const DEFAULT_CATEGORICAL_PALETTE_ID = categoricalPalettes[0].value;
 
 export type Palette<T> = {
   label: string;
@@ -136,7 +136,7 @@ const sequentialPaletteKeys: SequentialPaletteType[] = [
   "purples",
   "reds",
 ];
-const interpolatorByName = {
+const interpolatorByName: Record<string, (t: number) => string> = {
   RdBu: interpolateRdBu,
   RdYlBu: interpolateRdYlBu,
   RdYlGn: interpolateRdYlGn,
@@ -154,14 +154,13 @@ const interpolatorByName = {
 const defaultInterpolator = interpolatorByName["oranges"];
 
 export const getColorInterpolator = (
-  palette: SequentialPaletteType | DivergingPaletteType
+  paletteId: PaletteType["paletteId"]
 ): ((t: number) => string) => {
-  const interpolator = interpolatorByName[palette] ?? defaultInterpolator;
+  const interpolator = interpolatorByName[paletteId] ?? defaultInterpolator;
   // If the palette is sequential, we artificially clamp the value not to display too
   // white a value
-  const isSequential = palette
-    ? // @ts-ignore
-      sequentialPaletteKeys.includes(palette)
+  const isSequential = paletteId
+    ? sequentialPaletteKeys.includes(paletteId as any)
     : false;
   return isSequential
     ? (n: number) => interpolator(n * 0.8 + 0.2)

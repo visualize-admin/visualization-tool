@@ -11,6 +11,11 @@ export const columnFields = {
     componentId:
       "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/1",
   },
+  color: {
+    type: "segment" as const,
+    paletteId: "dimension",
+    colorMapping: {},
+  }
 };
 
 export const chartConfig: ColumnConfig = {

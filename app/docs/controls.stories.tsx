@@ -9,7 +9,7 @@ import {
   ControlSection,
   SectionTitle,
 } from "@/configurator/components/chart-controls/section";
-import { getPaletteId } from "@/palettes";
+import { getPalette } from "@/palettes";
 
 import { IconButton } from "../configurator/components/icon-button";
 
@@ -175,7 +175,7 @@ const ColorPickerStory = {
           Current (valid) color: {currentColor}
         </Box>
         <ColorPicker
-          colors={getPaletteId("accent")}
+          colors={getPalette("accent")}
           selectedColor={currentColor}
           onChange={(color) => setCurrentColor(color)}
         />

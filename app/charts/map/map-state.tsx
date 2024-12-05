@@ -129,7 +129,7 @@ const useMapState = (
       data: areaLayerState.data,
       dataDomain: areaLayerState.dataDomain,
       getLabel: areaLayerState.getLabel,
-      colors: areaColors as AreaLayerColors,
+      colors: areaColors as unknown as AreaLayerColors,
     };
   }, [areaColors, areaLayer, areaLayerState]);
 
@@ -234,7 +234,7 @@ const useMapState = (
 type AreaLayerColors =
   | {
       type: "categorical";
-      palette: string;
+      paletteId: string;
       component: Dimension;
       domain: string[];
       getValue: (d: Observation) => string;
@@ -243,7 +243,7 @@ type AreaLayerColors =
     }
   | {
       type: "continuous";
-      palette: string;
+      paletteId: string;
       component: Measure;
       domain: [number, number];
       // Needed for the legend.
@@ -274,7 +274,7 @@ const getNumericalColorScale = ({
   data: Observation[];
   dataDomain: [number, number];
 }) => {
-  const interpolator = getColorInterpolator(color.palette);
+  const interpolator = getColorInterpolator(color.paletteId);
 
   switch (color.scaleType) {
     case "continuous":
@@ -365,7 +365,7 @@ const useCategoricalColors = (
 
     return {
       type: "categorical" as const,
-      palette: colorSpec.palette,
+      paletteId: colorSpec.paletteId,
       component,
       domain,
       getValue: colorSpec.useAbbreviations
@@ -434,7 +434,7 @@ const useNumericalColors = (
 
     return {
       type: "continuous" as const,
-      palette: colorSpec.palette,
+      paletteId: colorSpec.paletteId,
       component,
       scale: colorScale,
       interpolationType: colorSpec.interpolationType,

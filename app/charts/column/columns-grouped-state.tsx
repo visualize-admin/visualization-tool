@@ -44,7 +44,7 @@ import { useSize } from "@/charts/shared/use-size";
 import { ColumnConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
 import { formatNumberWithUnit, useFormatNumber } from "@/formatters";
-import { getPaletteId } from "@/palettes";
+import { getPalette } from "@/palettes";
 import { sortByIndex } from "@/utils/array";
 import {
   getSortingOrders,
@@ -189,7 +189,11 @@ const useColumnsGroupedState = (
   } = useMemo(() => {
     const colors = scaleOrdinal<string, string>();
 
-    if (fields.segment && segmentDimension && fields.color.type === "segment") {
+    if (
+      fields.segment &&
+      segmentDimension &&
+      fields.color?.type === "segment"
+    ) {
       const segmentColor = fields.color;
       const orderedSegmentLabelsAndColors = allSegments.map((segment) => {
         const dvIri =
@@ -207,7 +211,7 @@ const useColumnsGroupedState = (
       colors.range(orderedSegmentLabelsAndColors.map((s) => s.color));
     } else {
       colors.domain(allSegments);
-      colors.range(getPaletteId(fields.color.paletteId));
+      colors.range(getPalette(fields.color?.paletteId));
     }
 
     colors.unknown(() => undefined);

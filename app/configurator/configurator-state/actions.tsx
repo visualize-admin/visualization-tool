@@ -74,7 +74,7 @@ export type ConfiguratorStateAction =
       };
     }
   | {
-      type: "CHART_OPTION_CHANGED";
+      type: "COLOR_MAPPING_UPDATED";
       value: {
         locale: Locale;
         path: string;
@@ -94,12 +94,12 @@ export type ConfiguratorStateAction =
       value: {
         field: string;
         colorConfigPath?: string;
-        palette: string;
+        paletteId: string;
         colorMapping: Record<string, string>;
       };
     }
   | {
-      type: "CHART_PALETTE_CHANGED_NEW";
+      type: "COLOR_FIELD_SET";
       value: ColorField;
     }
   | {

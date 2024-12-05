@@ -15,7 +15,7 @@ import {
   parseComponentId,
   stringifyComponentId,
 } from "@/graphql/make-component-id";
-import { DEFAULT_CATEGORICAL_PALETTE_NAME } from "@/palettes";
+import { DEFAULT_CATEGORICAL_PALETTE_ID } from "@/palettes";
 import {
   CHART_CONFIG_VERSION,
   CONFIGURATOR_STATE_VERSION,
@@ -676,17 +676,17 @@ export const chartConfigMigrations: Migration[] = [
       const newConfig = { ...config, version: "2.2.0" };
 
       if (newConfig.chartType === "comboLineSingle") {
-        newConfig.fields.y.palette = DEFAULT_CATEGORICAL_PALETTE_NAME;
+        newConfig.fields.y.palette = DEFAULT_CATEGORICAL_PALETTE_ID;
         newConfig.fields.y.colorMapping = mapValueIrisToColor({
-          palette: DEFAULT_CATEGORICAL_PALETTE_NAME,
+          paletteId: DEFAULT_CATEGORICAL_PALETTE_ID,
           dimensionValues: newConfig.fields.y.componentIris.map(
             (iri: string) => ({ value: iri, label: iri })
           ),
         });
       } else if (newConfig.chartType === "comboLineDual") {
-        newConfig.fields.y.palette = DEFAULT_CATEGORICAL_PALETTE_NAME;
+        newConfig.fields.y.palette = DEFAULT_CATEGORICAL_PALETTE_ID;
         newConfig.fields.y.colorMapping = mapValueIrisToColor({
-          palette: DEFAULT_CATEGORICAL_PALETTE_NAME,
+          paletteId: DEFAULT_CATEGORICAL_PALETTE_ID,
           dimensionValues: [
             newConfig.fields.y.leftAxisComponentIri,
             newConfig.fields.y.rightAxisComponentIri,
@@ -696,9 +696,9 @@ export const chartConfigMigrations: Migration[] = [
           })),
         });
       } else if (newConfig.chartType === "comboLineColumn") {
-        newConfig.fields.y.palette = DEFAULT_CATEGORICAL_PALETTE_NAME;
+        newConfig.fields.y.palette = DEFAULT_CATEGORICAL_PALETTE_ID;
         newConfig.fields.y.colorMapping = mapValueIrisToColor({
-          palette: DEFAULT_CATEGORICAL_PALETTE_NAME,
+          paletteId: DEFAULT_CATEGORICAL_PALETTE_ID,
           dimensionValues: [
             newConfig.fields.y.lineComponentIri,
             newConfig.fields.y.columnComponentIri,
