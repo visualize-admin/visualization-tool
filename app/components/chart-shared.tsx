@@ -55,6 +55,7 @@ import { useDataCubesMetadataQuery } from "@/graphql/hooks";
 import { getChartIcon } from "@/icons";
 import SvgIcMore from "@/icons/components/IcMore";
 import { useLocale } from "@/src";
+import { animationFrame } from "@/utils/animation-frame";
 import { createChartId } from "@/utils/create-chart-id";
 import {
   DISABLE_SCREENSHOT_ATTR,
@@ -459,8 +460,7 @@ const useModifyNode = () => {
             createdWith={t({ id: "metadata.link.created.with" })}
           />
         );
-        // Wait for the component to render before taking the screenshot.
-        await new Promise((resolve) => setTimeout(resolve, 0));
+        await animationFrame();
       }
 
       // Remove some elements that should not be included in the screenshot.

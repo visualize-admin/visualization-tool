@@ -3,13 +3,18 @@ import { toPng, toSvg } from "html-to-image";
 import { addMetadata } from "meta-png";
 import { useCallback, useState } from "react";
 
+import { animationFrame } from "@/utils/animation-frame";
+
 type ScreenshotFileFormat = "png" | "svg";
 
 export type UseScreenshotProps = {
   type: ScreenshotFileFormat;
   screenshotName: string;
   screenshotNode?: HTMLElement | null;
-  modifyNode?: (clonedNode: HTMLElement, originalNode: HTMLElement) => void;
+  modifyNode?: (
+    clonedNode: HTMLElement,
+    originalNode: HTMLElement
+  ) => Promise<void>;
   pngMetadata?: { key: PNG_METADATA_KEY; value: string }[];
 };
 
@@ -22,11 +27,11 @@ export const useScreenshot = ({
 }: UseScreenshotProps) => {
   const [loading, setLoading] = useState(false);
   const modifyNode = useCallback(
-    (clonedNode: HTMLElement, originalNode: HTMLElement) => {
+    async (clonedNode: HTMLElement, originalNode: HTMLElement) => {
       removeDisabledElements(clonedNode);
 
       if (_modifyNode) {
-        _modifyNode(clonedNode, originalNode);
+        await _modifyNode(clonedNode, originalNode);
       }
     },
     [_modifyNode]
@@ -81,7 +86,10 @@ const makeScreenshot = async ({
   type: "png" | "svg";
   name: string;
   node: HTMLElement;
-  modifyNode?: (clonedNode: HTMLElement, originalNode: HTMLElement) => void;
+  modifyNode?: (
+    clonedNode: HTMLElement,
+    originalNode: HTMLElement
+  ) => Promise<void>;
   pngMetadata?: { key: PNG_METADATA_KEY; value: string }[];
 }) => {
   const isUsingSafari =
@@ -108,10 +116,12 @@ const makeScreenshot = async ({
     // manually copy it.
     const ctx = clonedCanvasNode.getContext("2d") as CanvasRenderingContext2D;
     ctx.drawImage(canvasNode, 0, 0);
+    await animationFrame();
   }
 
-  const mountedClonedNode = wrapperNode.appendChild(clonedNode);
-  modifyNode?.(mountedClonedNode, node);
+  await modifyNode?.(clonedNode, node);
+  wrapperNode.appendChild(clonedNode);
+  await animationFrame();
 
   // There's a bug with embedding the fonts in Safari, which appears only when
   // downloading the image for the first time. On subsequent downloads, the
