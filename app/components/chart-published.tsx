@@ -397,6 +397,7 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
                   configKey={configKey}
                   chartKey={chartConfig.key}
                   chartWrapperNode={rootRef.current}
+                  components={allComponents}
                 />
               </Box>
             </Flex>

@@ -504,6 +504,7 @@ const ChartPreviewInner = ({
                     <ChartMoreButton
                       chartKey={chartConfig.key}
                       chartWrapperNode={ref.current}
+                      components={allComponents}
                     />
                     {actionElementSlot}
                   </Box>

@@ -8,7 +8,14 @@ import {
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { select } from "d3-selection";
-import { ComponentProps, useCallback, useEffect, useState } from "react";
+import uniqBy from "lodash/uniqBy";
+import {
+  ComponentProps,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { createRoot } from "react-dom/client";
 
 import {
@@ -16,6 +23,7 @@ import {
   ChartDataFiltersToggle,
   useChartDataFiltersState,
 } from "@/charts/shared/chart-data-filters";
+import { extractChartConfigUsedCubes } from "@/charts/shared/chart-helpers";
 import { ArrowMenuTopBottom } from "@/components/arrow-menu";
 import {
   CHART_FOOTNOTES_CLASS_NAME,
@@ -36,6 +44,9 @@ import {
   useConfiguratorState,
 } from "@/configurator";
 import { timeUnitToFormatter } from "@/configurator/components/ui-helpers";
+import { Component } from "@/domain/data";
+import { truthy } from "@/domain/types";
+import { useDataCubesMetadataQuery } from "@/graphql/hooks";
 import { getChartIcon } from "@/icons";
 import SvgIcMore from "@/icons/components/IcMore";
 import { useLocale } from "@/src";
@@ -133,10 +144,12 @@ export const ChartMoreButton = ({
   configKey,
   chartKey,
   chartWrapperNode,
+  components,
 }: {
   configKey?: string;
   chartKey: string;
   chartWrapperNode?: HTMLElement | null;
+  components: Component[];
 }) => {
   const locale = useLocale();
   const [state, dispatch] = useConfiguratorState(hasChartConfigs);
@@ -186,8 +199,10 @@ export const ChartMoreButton = ({
                   chartType={chartConfig.chartType}
                   onSuccess={handleClose}
                 />
-                <DownloadImageMenuActionItem
-                  type="png"
+                <DownloadPNGImageMenuActionItem
+                  configKey={configKey}
+                  chartKey={chartKey}
+                  components={components}
                   screenshotName={screenshotName}
                   screenshotNode={chartWrapperNode}
                 />
@@ -224,8 +239,10 @@ export const ChartMoreButton = ({
                   chartType={chartConfig.chartType}
                   onSuccess={handleClose}
                 />
-                <DownloadImageMenuActionItem
-                  type="png"
+                <DownloadPNGImageMenuActionItem
+                  configKey={configKey}
+                  chartKey={chartKey}
+                  components={components}
                   screenshotName={screenshotName}
                   screenshotNode={chartWrapperNode}
                 />
@@ -271,6 +288,7 @@ const CopyChartMenuActionItem = ({ configKey }: { configKey: string }) => {
       `${window.location.origin}/${locale}/create/new?copy=${configKey}`
     );
   }, [configKey, locale]);
+
   return (
     <MenuActionItem
       type="link"
@@ -290,6 +308,7 @@ const ShareChartMenuActionItem = ({ configKey }: { configKey: string }) => {
   useEffect(() => {
     setShareUrl(`${window.location.origin}/${locale}/v/${configKey}`);
   }, [configKey, locale]);
+
   return (
     <MenuActionItem
       type="link"
@@ -312,6 +331,7 @@ export const DuplicateChartMenuActionItem = ({
 }) => {
   const locale = useLocale();
   const [_, dispatch] = useConfiguratorState(hasChartConfigs);
+
   return (
     <MenuActionItem
       type="button"
@@ -340,6 +360,7 @@ const TableViewChartMenuActionItem = ({
   onSuccess: () => void;
 }) => {
   const { isTable, setIsTable } = useChartTablePreview();
+
   return (
     <MenuActionItem
       type="button"
@@ -360,12 +381,17 @@ const TableViewChartMenuActionItem = ({
   );
 };
 
-const DownloadImageMenuActionItem = ({
-  type,
+const DownloadPNGImageMenuActionItem = ({
+  configKey,
+  chartKey,
+  components,
   screenshotName,
   screenshotNode,
-  pngMetadata,
-}: Omit<UseScreenshotProps, "modifyNode">) => {
+}: {
+  configKey?: string;
+  chartKey: string;
+  components: Component[];
+} & Omit<UseScreenshotProps, "type" | "modifyNode" | "pngMetadata">) => {
   const theme = useTheme();
   const modifyNode = useCallback(
     async (node: HTMLElement) => {
@@ -398,12 +424,13 @@ const DownloadImageMenuActionItem = ({
     },
     [theme.palette.grey]
   );
+  const metadata = usePNGMetadata({ configKey, chartKey, components });
   const { loading, screenshot } = useScreenshot({
-    type,
+    type: "png",
     screenshotName,
     screenshotNode,
     modifyNode,
-    pngMetadata,
+    pngMetadata: metadata,
   });
 
   return (
@@ -413,7 +440,66 @@ const DownloadImageMenuActionItem = ({
       onClick={screenshot}
       disabled={loading}
       leadingIconName="download"
-      label={`${t({ id: "chart-controls.export", message: "Export" })} ${type.toUpperCase()}`}
+      label={`${t({ id: "chart-controls.export", message: "Export" })} PNG`}
     />
   );
+};
+
+const usePNGMetadata = ({
+  chartKey,
+  configKey,
+  components,
+}: {
+  chartKey: string;
+  configKey?: string;
+  components: Component[];
+}): UseScreenshotProps["pngMetadata"] => {
+  const locale = useLocale();
+  const [state] = useConfiguratorState(hasChartConfigs);
+  const chartConfig = getChartConfig(state, chartKey);
+
+  const usedComponents = useMemo(() => {
+    return extractChartConfigUsedCubes(chartConfig, { components });
+  }, [chartConfig, components]);
+
+  const [{ data }] = useDataCubesMetadataQuery({
+    variables: {
+      sourceType: state.dataSource.type,
+      sourceUrl: state.dataSource.url,
+      locale,
+      cubeFilters: uniqBy(
+        usedComponents.map((component) => ({ iri: component.cubeIri })),
+        "iri"
+      ),
+    },
+    pause: !usedComponents.length,
+  });
+
+  return useMemo(() => {
+    const publisher = data?.dataCubesMetadata
+      .map((cube) => cube.publisher)
+      .join(", ");
+    const publisherMetadata = publisher
+      ? { key: "Publisher", value: publisher }
+      : null;
+    const publishURL = configKey
+      ? `${window.location.origin}/${locale}/v/${configKey}`
+      : null;
+    const publishURLMetadata = publishURL
+      ? { key: "Publish URL", value: publishURL }
+      : null;
+    const datasets = data?.dataCubesMetadata
+      .map((cube) => `${cube.title} ${cube.version ? `(${cube.version})` : ""}`)
+      .join(", ");
+    const datasetsMetadata = datasets
+      ? { key: "Dataset", value: datasets }
+      : null;
+
+    const metadata = [publisherMetadata, publishURLMetadata, datasetsMetadata]
+      .filter(truthy)
+      .map(({ key, value }) => `${key}: ${value}`)
+      .join(" | ");
+
+    return metadata ? [{ key: "Comment", value: metadata }] : [];
+  }, [configKey, data?.dataCubesMetadata, locale]);
 };
