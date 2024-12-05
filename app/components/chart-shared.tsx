@@ -9,7 +9,7 @@ import {
 import { makeStyles } from "@mui/styles";
 import { select } from "d3-selection";
 import { ComponentProps, useCallback, useEffect, useState } from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 
 import {
   ChartDataFiltersList,
@@ -155,17 +155,20 @@ export const ChartMoreButton = ({
     chartConfig.chartType === "table";
 
   const modifyNode = useCallback(
-    (node: HTMLElement) => {
+    async (node: HTMLElement) => {
       const footnotes = node.querySelector(`.${CHART_FOOTNOTES_CLASS_NAME}`);
 
       if (footnotes) {
-        const container = footnotes.appendChild(document.createElement("div"));
-        ReactDOM.render(
+        const container = document.createElement("div");
+        footnotes.appendChild(container);
+        const root = createRoot(container);
+        root.render(
           <VisualizeLink
             createdWith={t({ id: "metadata.link.created.with" })}
-          />,
-          container
+          />
         );
+        // Wait for the component to render before taking the screenshot.
+        await new Promise((resolve) => setTimeout(resolve, 0));
       }
 
       // Every text element should be dark-grey (currently we use primary.main to
