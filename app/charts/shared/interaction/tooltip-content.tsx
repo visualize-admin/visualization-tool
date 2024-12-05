@@ -41,43 +41,6 @@ export const TooltipSingle = ({
   );
 };
 
-export const TooltipSingleInverted = ({
-  yValue,
-  segment,
-  xValue,
-  xError,
-}: {
-  yValue?: string;
-  segment?: string;
-  xValue?: string;
-  xError?: string;
-}) => {
-  return (
-    <Box>
-      {yValue && (
-        <Typography
-          component="div"
-          variant="caption"
-          sx={{ fontWeight: "bold" }}
-        >
-          {yValue}
-        </Typography>
-      )}
-      {segment && (
-        <Typography component="div" variant="caption">
-          {segment}
-        </Typography>
-      )}
-      {xValue && (
-        <Typography component="div" variant="caption">
-          {xValue}
-          {xError ? <> ± {xError}</> : null}
-        </Typography>
-      )}
-    </Box>
-  );
-};
-
 export const TooltipMultiple = ({
   xValue,
   segmentValues,
@@ -100,37 +63,6 @@ export const TooltipMultiple = ({
         <LegendItem
           key={i}
           item={`${d.label}: ${d.value}${d.error ?? ""}`}
-          color={d.color}
-          symbol={d.symbol ?? "square"}
-          usage="tooltip"
-        />
-      ))}
-    </Box>
-  );
-};
-
-export const TooltipMultipleInverted = ({
-  yValue,
-  segmentValues,
-}: {
-  yValue?: string;
-  segmentValues: TooltipValue[];
-}) => {
-  return (
-    <Box>
-      {yValue && (
-        <Typography
-          component="div"
-          variant="caption"
-          sx={{ fontWeight: "bold" }}
-        >
-          {yValue}
-        </Typography>
-      )}
-      {segmentValues.map((d, i) => (
-        <LegendItem
-          key={i}
-          item={`${d.label}: ${d.value}${d.error ? ` ± ${d.error}` : ""}`}
           color={d.color}
           symbol={d.symbol ?? "square"}
           usage="tooltip"

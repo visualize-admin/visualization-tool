@@ -15,12 +15,7 @@ import { LegendSymbol } from "@/charts/shared/legend-color";
 import { useInteraction } from "@/charts/shared/use-interaction";
 import { Observation } from "@/domain/data";
 
-export const Tooltip = ({
-  type = "single",
-}: {
-  type: TooltipType;
-  inverted?: boolean;
-}) => {
+export const Tooltip = ({ type = "single" }: { type: TooltipType }) => {
   const [state] = useInteraction();
   const { visible, d } = state.interaction;
 
