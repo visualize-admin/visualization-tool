@@ -16,6 +16,10 @@ scalar ComponentTermsets
 scalar GeoShapes
 scalar SearchCube
 
+directive @safeUrl(
+  pattern: String
+) on INPUT_FIELD_DEFINITION | ARGUMENT_DEFINITION | FIELD_DEFINITION
+
 enum DataCubePublicationStatus {
   DRAFT
   PUBLISHED
@@ -156,7 +160,7 @@ type Query {
   ): [ComponentTermsets!]!
   dataCubeMetadata(
     sourceType: String!
-    sourceUrl: String!
+    sourceUrl: String! @safeUrl(pattern: "^(https?)://.*\\.admin\\.ch$")
     locale: String!
     cubeFilter: DataCubeMetadataFilter!
   ): DataCubeMetadata!
