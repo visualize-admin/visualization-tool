@@ -31,7 +31,11 @@ import {
   VisualizeLink,
 } from "@/components/chart-footnotes";
 import { chartPanelLayoutGridClasses } from "@/components/chart-panel-layout-grid";
-import { useChartTablePreview } from "@/components/chart-table-preview";
+import {
+  TABLE_PREVIEW_WRAPPER_CLASS_NAME,
+  useChartTablePreview,
+} from "@/components/chart-table-preview";
+import { useChartWithFiltersClasses } from "@/components/chart-with-filters";
 import { MenuActionItem } from "@/components/menu-action-item";
 import { MetadataPanel } from "@/components/metadata-panel";
 import {
@@ -393,10 +397,58 @@ const DownloadPNGImageMenuActionItem = ({
   chartKey: string;
   components: Component[];
 } & Omit<UseScreenshotProps, "type" | "modifyNode" | "pngMetadata">) => {
+  const modifyNode = useModifyNode();
+  const metadata = usePNGMetadata({
+    configKey,
+    chartKey,
+    components,
+  });
+  const { loading, screenshot } = useScreenshot({
+    type: "png",
+    screenshotName,
+    screenshotNode,
+    modifyNode,
+    pngMetadata: metadata,
+  });
+
+  return (
+    <MenuActionItem
+      type="button"
+      as="menuitem"
+      onClick={screenshot}
+      disabled={loading}
+      leadingIconName="download"
+      label={`${t({ id: "chart-controls.export", message: "Export" })} PNG`}
+    />
+  );
+};
+
+const useModifyNode = () => {
   const theme = useTheme();
-  const modifyNode = useCallback(
-    async (node: HTMLElement) => {
-      const footnotes = node.querySelector(`.${CHART_FOOTNOTES_CLASS_NAME}`);
+  const chartWithFiltersClasses = useChartWithFiltersClasses();
+
+  return useCallback(
+    async (clonedNode: HTMLElement, originalNode: HTMLElement) => {
+      // We need to explicitly set the height of the chart container to the height
+      // of the chart, as otherwise the screenshot won't work for free canvas charts.
+      const tablePreviewWrapper = clonedNode.querySelector(
+        `.${TABLE_PREVIEW_WRAPPER_CLASS_NAME}`
+      ) as HTMLElement | null;
+
+      if (tablePreviewWrapper) {
+        const chart = originalNode.querySelector(
+          `.${chartWithFiltersClasses.chartWithFilters}`
+        );
+
+        if (chart) {
+          const height = chart.clientHeight;
+          tablePreviewWrapper.style.height = `${height}px`;
+        }
+      }
+
+      const footnotes = clonedNode.querySelector(
+        `.${CHART_FOOTNOTES_CLASS_NAME}`
+      );
 
       if (footnotes) {
         const container = document.createElement("div");
@@ -415,34 +467,15 @@ const DownloadPNGImageMenuActionItem = ({
       // indicate interactive elements, which doesn't make sense for screenshots)
       // and not have underlines.
       const color = theme.palette.grey[700];
-      select(node)
+      select(clonedNode)
         .selectAll("*")
         .style("color", color)
         .style("text-decoration", "none");
       // SVG elements have fill instead of color. Here we only target text elements,
       // to avoid changing the color of other SVG elements (charts).
-      select(node).selectAll("text").style("fill", color);
+      select(clonedNode).selectAll("text").style("fill", color);
     },
-    [theme.palette.grey]
-  );
-  const metadata = usePNGMetadata({ configKey, chartKey, components });
-  const { loading, screenshot } = useScreenshot({
-    type: "png",
-    screenshotName,
-    screenshotNode,
-    modifyNode,
-    pngMetadata: metadata,
-  });
-
-  return (
-    <MenuActionItem
-      type="button"
-      as="menuitem"
-      onClick={screenshot}
-      disabled={loading}
-      leadingIconName="download"
-      label={`${t({ id: "chart-controls.export", message: "Export" })} PNG`}
-    />
+    [chartWithFiltersClasses.chartWithFilters, theme.palette.grey]
   );
 };
 
