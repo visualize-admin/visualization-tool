@@ -25,7 +25,12 @@ import {
 } from "d3-scale-chromatic";
 
 import { hasDimensionColors } from "./charts/shared/colors";
-import { DivergingPaletteType, PaletteType, SequentialPaletteType } from "./config-types";
+import {
+  ColorField,
+  DivergingPaletteType,
+  PaletteType,
+  SequentialPaletteType,
+} from "./config-types";
 import { Component } from "./domain/data";
 
 // Colors
@@ -53,36 +58,45 @@ export const getDefaultCategoricalPalette = (
   }
 };
 
-export const getPalette = (
-  palette?: string,
-  colors?: string[]
-): ReadonlyArray<string> => {
-  switch (palette) {
-    case "dimension":
-      return getDefaultCategoricalPalette(colors).colors;
-    case "accent":
-      return schemeAccent;
-    case "category10":
-      return schemeCategory10;
-    case "dark2":
-      return schemeDark2;
-    case "paired":
-      return schemePaired;
-    case "pastel1":
-      return schemePastel1;
-    case "pastel2":
-      return schemePastel2;
-    case "set1":
-      return schemeSet1;
-    case "set2":
-      return schemeSet2;
-    case "set3":
-      return schemeSet3;
-    case "tableau10":
-      return schemeTableau10;
+export const getPalette = ({
+  paletteId,
+  colorField,
+  colors,
+}: {
+  paletteId?: string;
+  colorField?: ColorField;
+  colors?: string[];
+}): ReadonlyArray<string> => {
+  if (colorField?.type === "single") {
+    return [colorField.color];
+  } else {
+    switch (paletteId) {
+      case "dimension":
+        return getDefaultCategoricalPalette(colors).colors;
+      case "accent":
+        return schemeAccent;
+      case "category10":
+        return schemeCategory10;
+      case "dark2":
+        return schemeDark2;
+      case "paired":
+        return schemePaired;
+      case "pastel1":
+        return schemePastel1;
+      case "pastel2":
+        return schemePastel2;
+      case "set1":
+        return schemeSet1;
+      case "set2":
+        return schemeSet2;
+      case "set3":
+        return schemeSet3;
+      case "tableau10":
+        return schemeTableau10;
 
-    default:
-      return schemeCategory10;
+      default:
+        return schemeCategory10;
+    }
   }
 };
 
@@ -96,16 +110,36 @@ export const categoricalPalettes: Array<CategoricalPalette> = [
   {
     label: "category10",
     value: "category10",
-    colors: getPalette("category10"),
+    colors: getPalette({ paletteId: "category10" }),
   },
-  { label: "accent", value: "accent", colors: getPalette("accent") },
-  { label: "dark2", value: "dark2", colors: getPalette("dark2") },
-  { label: "paired", value: "paired", colors: getPalette("paired") },
-  { label: "pastel1", value: "pastel1", colors: getPalette("pastel1") },
-  { label: "pastel2", value: "pastel2", colors: getPalette("pastel2") },
-  { label: "set1", value: "set1", colors: getPalette("set1") },
-  { label: "set2", value: "set2", colors: getPalette("set2") },
-  { label: "set3", value: "set3", colors: getPalette("set3") },
+  {
+    label: "accent",
+    value: "accent",
+    colors: getPalette({ paletteId: "accent" }),
+  },
+  {
+    label: "dark2",
+    value: "dark2",
+    colors: getPalette({ paletteId: "dark2" }),
+  },
+  {
+    label: "paired",
+    value: "paired",
+    colors: getPalette({ paletteId: "paired" }),
+  },
+  {
+    label: "pastel1",
+    value: "pastel1",
+    colors: getPalette({ paletteId: "pastel1" }),
+  },
+  {
+    label: "pastel2",
+    value: "pastel2",
+    colors: getPalette({ paletteId: "pastel2" }),
+  },
+  { label: "set1", value: "set1", colors: getPalette({ paletteId: "set1" }) },
+  { label: "set2", value: "set2", colors: getPalette({ paletteId: "set2" }) },
+  { label: "set3", value: "set3", colors: getPalette({ paletteId: "set3" }) },
 ];
 
 export const DEFAULT_CATEGORICAL_PALETTE_ID = categoricalPalettes[0].value;

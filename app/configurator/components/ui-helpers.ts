@@ -280,7 +280,7 @@ export const mapValueIrisToColor = ({
     return {};
   }
 
-  const paletteValues = getPalette(paletteId);
+  const paletteValues = getPalette({ paletteId });
   const colors = dimensionValues.map(
     (d, i) =>
       (paletteId === "dimension" && d.color) ||

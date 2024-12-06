@@ -57,6 +57,7 @@ import {
   isTemporalOrdinalDimension,
 } from "@/domain/data";
 import { getDefaultCategoricalPaletteId, getPalette } from "@/palettes";
+import { theme } from "@/themes/federal";
 
 /**
  * This module controls chart controls displayed in the UI.
@@ -559,6 +560,13 @@ const chartConfigOptionsUISpec: ChartSpecs = {
             delete chartConfig.fields.segment;
           }
         },
+        options: {
+          colorPalette: {
+            type: "single",
+            paletteId: "dimension",
+            color: theme.palette.primary.main,
+          },
+        },
       },
       {
         field: "x",
@@ -613,7 +621,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
           colorPalette: {
             type: "single",
             paletteId: "dimension",
-            colorMapping: {},
+            color: theme.palette.primary.main,
           },
           imputation: {
             shouldShow: (chartConfig, data) => {
@@ -654,6 +662,11 @@ const chartConfigOptionsUISpec: ChartSpecs = {
           }
         },
         options: {
+          colorPalette: {
+            type: "single",
+            paletteId: "dimension",
+            color: theme.palette.primary.main,
+          },
           showStandardError: {},
           showConfidenceInterval: {},
         },
@@ -773,7 +786,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
           colorPalette: {
             type: "single",
             paletteId: "dimension",
-            colorMapping: {},
+            color: theme.palette.primary.main,
           },
           useAbbreviations: {},
         },
@@ -795,7 +808,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
           colorPalette: {
             type: "single",
             paletteId: "dimension",
-            colorMapping: {},
+            color: theme.palette.primary.main,
           },
           showStandardError: {},
           showConfidenceInterval: {},
@@ -820,7 +833,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
           colorPalette: {
             type: "single",
             paletteId: "dimension",
-            colorMapping: {},
+            color: theme.palette.primary.main,
           },
           useAbbreviations: {},
         },
@@ -917,7 +930,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
           colorPalette: {
             type: "single",
             paletteId: "dimension",
-            colorMapping: {},
+            color: theme.palette.primary.main,
           },
           useAbbreviations: {},
         },
@@ -954,7 +967,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
           colorPalette: {
             type: "single",
             paletteId: "dimension",
-            colorMapping: {},
+            color: theme.palette.primary.main,
           },
           useAbbreviations: {},
         },
@@ -986,7 +999,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
               const { chartConfig } = options;
               const { fields } = chartConfig;
               const { color } = fields;
-              const palette = getPalette(color.paletteId);
+              const palette = getPalette({ paletteId: color.paletteId });
               const newColorMapping = Object.fromEntries(
                 ids.map((id, i) => [id, color.colorMapping[i] ?? palette[i]])
               );

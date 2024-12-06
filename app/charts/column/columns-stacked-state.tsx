@@ -254,6 +254,7 @@ const useColumnsStackedState = (
     } else {
       colors.domain(allSegments);
       colors.range(getPalette(fields.color.paletteId));
+      colors.range(
     }
 
     colors.unknown(() => undefined);

@@ -823,7 +823,10 @@ export const ColorPickerField = ({
   );
 
   const color = get(chartConfig, `fields["${field}"].${path}`);
-  const palette = getPalette(get(chartConfig, `fields["${field}"].paletteId`));
+  const palette = getPalette({
+    paletteId: get(chartConfig, `fields["${field}"].paletteId`),
+  });
+
 
   return (
     <Flex

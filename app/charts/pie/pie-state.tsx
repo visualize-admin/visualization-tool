@@ -121,7 +121,12 @@ const usePieState = (
       colors.range(orderedSegmentLabelsAndColors.map((s) => s.color));
     } else {
       colors.domain(allSegments);
-      colors.range(getPalette(fields.color.paletteId));
+      colors.range(
+        getPalette({
+          paletteId: fields.color.paletteId,
+          colorField: fields.color,
+        })
+      );
     }
     // Do not let the scale be implicitly extended by children calling it
     // on unknown values

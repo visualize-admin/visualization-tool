@@ -266,7 +266,12 @@ const useAreasState = (
       colors.range(orderedSegmentLabelsAndColors.map((s) => s.color));
     } else {
       colors.domain(allSegments);
-      colors.range(getPalette(fields.color?.paletteId));
+      colors.range(
+        getPalette({
+          paletteId: fields.color?.paletteId,
+          colorField: fields.color,
+        })
+      );
     }
 
     colors.unknown(() => undefined);
