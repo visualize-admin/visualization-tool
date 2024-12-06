@@ -40,7 +40,7 @@ export const useAxisTitleAdjustments = ({
       2 -
     fontSize * 2;
 
-  const topMarginAxisTitleAdjustment = 50 + axisTitleAdjustment;
+  const topMarginAxisTitleAdjustment = 60 + axisTitleAdjustment;
 
   return {
     axisTitleAdjustment,
