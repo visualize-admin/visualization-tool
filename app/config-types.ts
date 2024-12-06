@@ -489,43 +489,43 @@ const CategoricalPaletteType = t.union([
   t.literal("tableau10"),
 ]);
 
-export type CategoricalPaletteType = t.TypeOf<typeof CategoricalPaletteType>;;
+export type CategoricalPaletteType = t.TypeOf<typeof CategoricalPaletteType>;
 
-const DivergingPalette =
-  t.type({
-    type: t.literal("diverging"),
-    paletteId: DivergingPaletteType,
-    name: DivergingPaletteType,
-  })
+const DivergingPalette = t.type({
+  type: t.literal("diverging"),
+  paletteId: DivergingPaletteType,
+  name: DivergingPaletteType,
+});
 
 // Define the Sequential Palette Structure
-const SequentialPalette = 
-  t.type({
-    type: t.literal("sequential"),
-    paletteId: SequentialPaletteType,
-    name: SequentialPaletteType,
-  })
+const SequentialPalette = t.type({
+  type: t.literal("sequential"),
+  paletteId: SequentialPaletteType,
+  name: SequentialPaletteType,
+});
 
-const CategoricalPalette =
-  t.type({
-    type: t.literal("categorical"),
-    paletteId: CategoricalPaletteType, 
-    name: CategoricalPaletteType, 
-  })
+const CategoricalPalette = t.type({
+  type: t.literal("categorical"),
+  paletteId: CategoricalPaletteType,
+  name: CategoricalPaletteType,
+});
 
-const CustomPalette = 
-t.type({
-  type: t.union([t.literal("diverging"), t.literal("sequential"), t.literal("categorical")]),
+const CustomPalette = t.type({
+  type: t.union([
+    t.literal("diverging"),
+    t.literal("sequential"),
+    t.literal("categorical"),
+  ]),
   paletteId: t.string,
   name: t.string,
   colors: t.array(t.string),
-})
+});
 
 export const PaletteType = t.union([
   DivergingPalette,
   SequentialPalette,
   CategoricalPalette,
-  CustomPalette
+  CustomPalette,
 ]);
 
 export type PaletteType = t.TypeOf<typeof PaletteType>;
@@ -959,10 +959,7 @@ export const isColorInConfig = (
   | LineConfig
   | PieConfig
   | ScatterPlotConfig => {
-  return (
-    !isTableConfig(chartConfig) &&
-    !isMapConfig(chartConfig)
-  );
+  return !isTableConfig(chartConfig) && !isMapConfig(chartConfig);
 };
 
 export const isSortingInConfig = (
