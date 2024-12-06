@@ -619,9 +619,13 @@ const ChartLayoutOptions = ({
   measures: Measure[];
 }) => {
   const { fields } = chartConfig;
-  const values: { id: string; symbol: LegendSymbol }[] = [
-    { id: fields.y.componentId, symbol: "line" },
-  ];
+  const values: { id: string; symbol: LegendSymbol }[] =
+    chartConfig.fields.color.type === "single"
+      ? [{ id: fields.y.componentId, symbol: "line" }]
+      : Object.keys(chartConfig.fields.color.colorMapping).map((key) => ({
+          id: key,
+          symbol: "line",
+        }));
 
   return encoding.options || hasColorPalette ? (
     <ControlSection collapse>
@@ -662,8 +666,12 @@ const ChartLayoutOptions = ({
                   <Box key={id}>
                     <ColorPickerField
                       field="color"
-                      path={`${chartConfig.fields.color.type === "single" ? "color" : `colorMapping["${id}"]`}`}
-                      label={measures.find((d) => d.id === id)!.label}
+                      path={
+                        chartConfig.fields.color.type === "single"
+                          ? "color"
+                          : `colorMapping["${id}"]`
+                      }
+                      label={measures.find((d) => d.id === id)?.label ?? ""}
                       symbol={symbol}
                     />
                   </Box>

@@ -262,18 +262,22 @@ export const ColorPaletteControls = ({
   const [, dispatch] = useConfiguratorState();
   const chartConfig = getChartConfig(state);
 
-  const paletteId = isColorInConfig(chartConfig) ?  get(chartConfig, `fields.color.paletteId`) :  get(
-    chartConfig,
-    `fields["${field}"].${colorConfigPath ? `${colorConfigPath}.` : ""}paletteId`,
-    DEFAULT_CATEGORICAL_PALETTE_ID
-  ) as string;
+  const paletteId = isColorInConfig(chartConfig)
+    ? get(chartConfig, `fields.color.paletteId`)
+    : (get(
+        chartConfig,
+        `fields["${field}"].${colorConfigPath ? `${colorConfigPath}.` : ""}paletteId`,
+        DEFAULT_CATEGORICAL_PALETTE_ID
+      ) as string);
 
-  const colorMapping = isColorInConfig(chartConfig) ? get(chartConfig, `fields.color.colorMapping`) :  get(
-    chartConfig,
-    `fields["${field}"].${
-      colorConfigPath ? `${colorConfigPath}.` : ""
-    }colorMapping`
-  ) as Record<string, string> | undefined;
+  const colorMapping = isColorInConfig(chartConfig)
+    ? get(chartConfig, `fields.color.colorMapping`)
+    : (get(
+        chartConfig,
+        `fields["${field}"].${
+          colorConfigPath ? `${colorConfigPath}.` : ""
+        }colorMapping`
+      ) as Record<string, string> | undefined);
 
   const resetColorPalette = useCallback(
     () =>
@@ -292,7 +296,7 @@ export const ColorPaletteControls = ({
   );
 
   if (colorMapping) {
-    const currentPalette = getPalette(paletteId);
+    const currentPalette = getPalette({ paletteId });
     const colorMappingColors = Object.values(colorMapping);
 
     const nbMatchedColors = colorMappingColors.length;
