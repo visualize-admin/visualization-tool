@@ -1,6 +1,6 @@
 query SearchCubes(
   $sourceType: String!
-  $sourceUrl: String!
+  $sourceUrl: DataSourceUrl!
   $locale: String!
   $query: String
   $order: SearchCubeResultOrder
@@ -26,7 +26,7 @@ query SearchCubes(
 
 query DataCubeLatestIri(
   $sourceType: String!
-  $sourceUrl: String!
+  $sourceUrl: DataSourceUrl!
   $cubeFilter: DataCubeLatestIriFilter!
 ) {
   dataCubeLatestIri(
@@ -38,7 +38,7 @@ query DataCubeLatestIri(
 
 query DataCubeComponents(
   $sourceType: String!
-  $sourceUrl: String!
+  $sourceUrl: DataSourceUrl!
   $locale: String!
   $cubeFilter: DataCubeComponentFilter!
 ) {
@@ -52,7 +52,7 @@ query DataCubeComponents(
 
 query DataCubeDimensionGeoShapes(
   $sourceType: String!
-  $sourceUrl: String!
+  $sourceUrl: DataSourceUrl!
   $locale: String!
   $cubeFilter: DataCubeDimensionGeoShapesCubeFilter!
 ) {
@@ -66,7 +66,7 @@ query DataCubeDimensionGeoShapes(
 
 query DataCubeMetadata(
   $sourceType: String!
-  $sourceUrl: String!
+  $sourceUrl: DataSourceUrl!
   $locale: String!
   $cubeFilter: DataCubeMetadataFilter!
 ) {
@@ -80,7 +80,7 @@ query DataCubeMetadata(
 
 query DataCubeComponentTermsets(
   $sourceType: String!
-  $sourceUrl: String!
+  $sourceUrl: DataSourceUrl!
   $locale: String!
   $cubeFilter: DataCubeTermsetFilter!
 ) {
@@ -94,7 +94,7 @@ query DataCubeComponentTermsets(
 
 query DataCubeObservations(
   $sourceType: String!
-  $sourceUrl: String!
+  $sourceUrl: DataSourceUrl!
   $locale: String!
   $cubeFilter: DataCubeObservationFilter!
 ) {
@@ -108,7 +108,7 @@ query DataCubeObservations(
 
 query DataCubePreview(
   $sourceType: String!
-  $sourceUrl: String!
+  $sourceUrl: DataSourceUrl!
   $locale: String!
   $cubeFilter: DataCubePreviewFilter!
 ) {
@@ -122,7 +122,7 @@ query DataCubePreview(
 
 query PossibleFilters(
   $sourceType: String!
-  $sourceUrl: String!
+  $sourceUrl: DataSourceUrl!
   $cubeFilter: DataCubePossibleFiltersCubeFilter!
 ) {
   possibleFilters(

@@ -15,6 +15,7 @@ scalar Termset
 scalar ComponentTermsets
 scalar GeoShapes
 scalar SearchCube
+scalar DataSourceUrl
 
 directive @safeUrl(
   pattern: String
@@ -141,12 +142,12 @@ input DataCubeDimensionGeoShapesCubeFilter {
 type Query {
   dataCubeLatestIri(
     sourceType: String!
-    sourceUrl: String!
+    sourceUrl: DataSourceUrl!
     cubeFilter: DataCubeLatestIriFilter!
   ): String!
   dataCubeComponents(
     sourceType: String!
-    sourceUrl: String!
+    sourceUrl: DataSourceUrl!
     locale: String!
     # In case of changing this variable name, or any other `cubeFilter` down below,
     # make sure to update GraphQL context to keep the caching-per-cube behavior working.
@@ -154,36 +155,36 @@ type Query {
   ): DataCubeComponents!
   dataCubeComponentTermsets(
     sourceType: String!
-    sourceUrl: String!
+    sourceUrl: DataSourceUrl!
     locale: String!
     cubeFilter: DataCubeTermsetFilter!
   ): [ComponentTermsets!]!
   dataCubeMetadata(
     sourceType: String!
-    sourceUrl: String! @safeUrl(pattern: "^(https?)://.*\\.admin\\.ch$")
+    sourceUrl: DataSourceUrl!
     locale: String!
     cubeFilter: DataCubeMetadataFilter!
   ): DataCubeMetadata!
   dataCubeObservations(
     sourceType: String!
-    sourceUrl: String!
+    sourceUrl: DataSourceUrl!
     locale: String!
     cubeFilter: DataCubeObservationFilter!
   ): DataCubeObservations!
   dataCubePreview(
     sourceType: String!
-    sourceUrl: String!
+    sourceUrl: DataSourceUrl!
     locale: String!
     cubeFilter: DataCubePreviewFilter!
   ): DataCubePreview!
   possibleFilters(
     sourceType: String!
-    sourceUrl: String!
+    sourceUrl: DataSourceUrl!
     cubeFilter: DataCubePossibleFiltersCubeFilter!
   ): [ObservationFilter!]!
   searchCubes(
     sourceType: String!
-    sourceUrl: String!
+    sourceUrl: DataSourceUrl!
     locale: String
     query: String
     order: SearchCubeResultOrder
@@ -193,7 +194,7 @@ type Query {
   ): [SearchCubeResult!]!
   dataCubeDimensionGeoShapes(
     sourceType: String!
-    sourceUrl: String!
+    sourceUrl: DataSourceUrl!
     locale: String!
     cubeFilter: DataCubeDimensionGeoShapesCubeFilter!
   ): GeoShapes
