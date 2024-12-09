@@ -33,6 +33,15 @@ Please complete the following information.
 Additional context
 Add any other context about the problem here.
 Please describe...
+
+Contact Information
+Title: 
+Last Name:
+First Name:
+Position:
+Organization:
+Email:
+Phone Number (for any questions):
 `,
 
   de: `
@@ -70,6 +79,15 @@ Bitte vervollständigen Sie die folgenden Informationen.
 Zusätzlicher Kontext
 Fügen Sie hier weitere Kontextinformationen zum Problem hinzu.
 Bitte beschreiben Sie...
+
+Kontakt Information
+Anrede:
+Name:
+Vorname:
+Funktion:
+Organisation:
+Mail:
+Telefonnummer (für Rückfragen):
 `,
 
   fr: `
@@ -106,6 +124,15 @@ Veuillez compléter les informations suivantes.
 Contexte supplémentaire
 Ajoutez ici tout autre contexte concernant le problème.
 Veuillez décrire...
+
+Informations de contact
+Civilité:
+Nom:
+Prénom:
+Fonction:
+Organisation:
+E-mail:
+Numéro de téléphone (pour d'éventuelles questions):
 `,
 
   it: `
@@ -142,5 +169,14 @@ Si prega di completare le seguenti informazioni.
 Contesto aggiuntivo
 Aggiungere qui qualsiasi altro contesto sul problema.
 Si prega di descrivere...
+
+Informazioni di contatto
+Titolo:
+Cognome:
+Nome:
+Ruolo:
+Organizzazione:
+E-mail:
+Numero di telefono (per eventuali domande):
 `,
 };
