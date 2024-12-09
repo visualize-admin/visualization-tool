@@ -48,6 +48,8 @@ import { useIsMobile } from "@/utils/use-is-mobile";
 
 import { ChartProps } from "../shared/ChartProps";
 
+export const MIN_BAR_HEIGHT = 16;
+
 export type BarsState = CommonChartState &
   BarsStateVariables &
   InteractiveYTimeRangeState & {
@@ -128,7 +130,6 @@ const useBarsState = (
       .paddingInner(PADDING_INNER)
       .paddingOuter(PADDING_OUTER);
     const yScaleInteraction = scaleBand()
-      //NOTE: not sure if this is the right way to go here
       .domain(bandDomain.reverse())
       .paddingInner(0)
       .paddingOuter(0);
@@ -204,18 +205,29 @@ const useBarsState = (
   const margins = {
     top: 0,
     right,
-    bottom,
-    //NOTE: hardcoded for the moment
-    left: 50 + left,
+    /**
+     * Here we have to switch the left and bottom margins because the margins are calculated
+     * based on the "regular" positioning of the axis
+     * */
+    bottom: left,
+    left: bottom,
   };
 
-  const bounds = useChartBounds(width, margins, height);
+  const barCount = yScale.domain().length;
+
+  // Here we adjust the height to make sure the bars have a minimum height and are legible
+  const adjustedHeight =
+    barCount * MIN_BAR_HEIGHT > height
+      ? barCount * MIN_BAR_HEIGHT
+      : height - margins.bottom;
+
+  const bounds = useChartBounds(width, margins, adjustedHeight);
   const { chartWidth, chartHeight } = bounds;
 
   xScale.range([0, chartWidth]);
-  yScaleInteraction.range([0, chartHeight]);
-  yScaleTimeRange.range([0, chartHeight]);
-  yScale.range([chartHeight, 0]);
+  yScaleInteraction.range([0, adjustedHeight]);
+  yScaleTimeRange.range([0, adjustedHeight]);
+  yScale.range([adjustedHeight, 0]);
 
   const isMobile = useIsMobile();
 
@@ -261,7 +273,10 @@ const useBarsState = (
 
   return {
     chartType: "bar",
-    bounds,
+    bounds: {
+      ...bounds,
+      chartHeight: adjustedHeight,
+    },
     chartData,
     allData,
     xScale,
