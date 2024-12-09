@@ -21,6 +21,12 @@ import {
 import { truthy } from "@/domain/types";
 import { Loaders } from "@/graphql/context";
 import {
+  ComponentId,
+  getFiltersByComponentIris,
+  parseComponentId,
+  stringifyComponentId,
+} from "@/graphql/make-component-id";
+import {
   QueryResolvers,
   SearchCubeResultOrder,
 } from "@/graphql/resolver-types";
@@ -32,6 +38,7 @@ import {
   getCubeDimensions,
   getCubeObservations,
 } from "@/rdf/queries";
+import { queryCubeUnversionedIri } from "@/rdf/query-cube-unversioned-iri";
 import { GeoShape } from "@/rdf/query-geo-shapes";
 import { parseHierarchy, queryHierarchies } from "@/rdf/query-hierarchies";
 import { queryLatestCubeIri } from "@/rdf/query-latest-cube-iri";
@@ -46,6 +53,14 @@ export const dataCubeLatestIri: NonNullable<
   return (
     (await queryLatestCubeIri(sparqlClient, cubeFilter.iri)) ?? cubeFilter.iri
   );
+};
+
+export const dataCubeUnversionedIri: NonNullable<
+  QueryResolvers["dataCubeUnversionedIri"]
+> = async (_, { cubeFilter }, { setup }, info) => {
+  const { iri } = cubeFilter;
+  const { sparqlClient } = await setup(info);
+  return (await queryCubeUnversionedIri(sparqlClient, iri)) ?? iri;
 };
 
 const sortResults = (
@@ -101,9 +116,12 @@ export const searchCubes: NonNullable<QueryResolvers["searchCubes"]> = async (
 export const dataCubeDimensionGeoShapes: NonNullable<
   QueryResolvers["dataCubeDimensionGeoShapes"]
 > = async (_, { locale, cubeFilter }, { setup }, info) => {
-  const { iri, dimensionIri } = cubeFilter;
+  const { iri, dimensionId } = cubeFilter;
+  const { unversionedComponentIri = dimensionId } = parseComponentId(
+    dimensionId as ComponentId
+  );
   const { loaders, sparqlClient, cache } = await setup(info);
-  const dimension = await getResolvedDimension(dimensionIri, {
+  const dimension = await getResolvedDimension(unversionedComponentIri, {
     cubeIri: iri,
     locale,
     sparqlClient,
@@ -119,7 +137,9 @@ export const dataCubeDimensionGeoShapes: NonNullable<
   const geometries = dimensionValues.map((d) => d.geometry).filter(truthy);
 
   if (geometries.length === 0) {
-    throw new Error(`No geometries found for dimension ${dimensionIri}!`);
+    throw Error(
+      `No geometries found for dimension ${unversionedComponentIri}!`
+    );
   }
 
   const dimensionValuesByGeometry = new Map(
@@ -173,7 +193,7 @@ const getResolvedDimension = async (
   const cube = await loaders.cube.load(cubeIri);
 
   if (!cube) {
-    throw new Error(`Cube ${cubeIri} not found!`);
+    throw Error(`Cube ${cubeIri} not found!`);
   }
 
   await cube.fetchShape();
@@ -188,7 +208,7 @@ const getResolvedDimension = async (
   const dimension = dimensions.find((d) => iri === d.data.iri);
 
   if (!dimension) {
-    throw new Error(`Dimension ${iri} not found!`);
+    throw Error(`Dimension ${iri} not found!`);
   }
 
   return dimension;
@@ -197,7 +217,7 @@ const getResolvedDimension = async (
 export const possibleFilters: NonNullable<
   QueryResolvers["possibleFilters"]
 > = async (_, { cubeFilter }, { setup }, info) => {
-  const { iri, filters } = cubeFilter;
+  const { iri, filters: _filters } = cubeFilter;
   const { sparqlClient, loaders, cache } = await setup(info);
   const cube = await loaders.cube.load(iri);
   const cubeIri = cube.term?.value;
@@ -205,6 +225,8 @@ export const possibleFilters: NonNullable<
   if (!cubeIri) {
     return [];
   }
+
+  const filters = getFiltersByComponentIris(_filters);
 
   return await getPossibleFilters(cubeIri, { filters, sparqlClient, cache });
 };
@@ -214,21 +236,30 @@ export const dataCubeComponents: NonNullable<
 > = async (_, { locale, cubeFilter }, { setup }, info) => {
   const { loaders, sparqlClient, sparqlClientStream, cache } =
     await setup(info);
-  const { iri, componentIris, filters, loadValues } = cubeFilter;
+  const { iri, componentIds, filters: _filters, loadValues } = cubeFilter;
   const cube = await loaders.cube.load(iri);
 
   if (!cube) {
-    throw new Error(`Cube ${iri} not found!`);
+    throw Error(`Cube ${iri} not found!`);
   }
 
   await cube.fetchShape();
-  const rawComponents = await getCubeDimensions({
-    cube,
-    locale,
-    sparqlClient,
-    componentIris,
-    cache,
-  });
+
+  const filters = _filters ? getFiltersByComponentIris(_filters) : undefined;
+  const componentIris = componentIds?.map(
+    (id) => parseComponentId(id as ComponentId).unversionedComponentIri ?? id
+  );
+
+  const [unversionedCubeIri = iri, rawComponents] = await Promise.all([
+    queryCubeUnversionedIri(sparqlClient, iri),
+    getCubeDimensions({
+      cube,
+      locale,
+      sparqlClient,
+      componentIris,
+      cache,
+    }),
+  ]);
   const components = await Promise.all(
     rawComponents.map(async (component) => {
       const { data } = component;
@@ -258,7 +289,10 @@ export const dataCubeComponents: NonNullable<
       const baseComponent: BaseComponent = {
         // We need to use original iri here, as the cube iri might have changed.
         cubeIri: iri,
-        iri: data.iri,
+        id: stringifyComponentId({
+          unversionedCubeIri,
+          unversionedComponentIri: data.iri,
+        }),
         label: data.name,
         description: data.description,
         unit: data.unit,
@@ -268,7 +302,13 @@ export const dataCubeComponents: NonNullable<
         isNumerical: data.isNumerical,
         isKeyDimension: data.isKeyDimension,
         values,
-        related: data.related,
+        related: data.related.map((r) => ({
+          type: r.type,
+          id: stringifyComponentId({
+            unversionedCubeIri,
+            unversionedComponentIri: r.iri,
+          }),
+        })),
       };
 
       if (data.isMeasureDimension) {
@@ -291,7 +331,7 @@ export const dataCubeComponents: NonNullable<
         );
         const hierarchy = rawHierarchies
           ? parseHierarchy(rawHierarchies, {
-              dimensionIri: data.iri,
+              dimensionId: data.iri,
               locale,
               dimensionValues: values,
             })
@@ -306,7 +346,7 @@ export const dataCubeComponents: NonNullable<
           case "TemporalDimension":
           case "TemporalEntityDimension": {
             if (!data.timeFormat || !data.timeUnit) {
-              throw new Error(
+              throw Error(
                 `${dimensionType} ${data.iri} is missing timeFormat or timeUnit!`
               );
             }
@@ -348,7 +388,10 @@ export const dataCubeComponentTermsets: NonNullable<
 > = async (_, { locale, cubeFilter }, { setup }, info) => {
   const { sparqlClient } = await setup(info);
   const { iri } = cubeFilter;
-  const cube = new LightCube({ iri, locale, sparqlClient });
+  const unversionedIri =
+    (await queryCubeUnversionedIri(sparqlClient, iri)) ?? iri;
+  const cube = new LightCube({ iri, unversionedIri, locale, sparqlClient });
+
   return await cube.fetchComponentTermsets();
 };
 
@@ -357,7 +400,10 @@ export const dataCubeMetadata: NonNullable<
 > = async (_, { locale, cubeFilter }, { setup }, info) => {
   const { sparqlClient } = await setup(info);
   const { iri } = cubeFilter;
-  const cube = new LightCube({ iri, locale, sparqlClient });
+  const unversionedIri =
+    (await queryCubeUnversionedIri(sparqlClient, iri)) ?? iri;
+  const cube = new LightCube({ iri, unversionedIri, locale, sparqlClient });
+
   return await cube.fetchMetadata();
 };
 
@@ -365,14 +411,20 @@ export const dataCubeObservations: NonNullable<
   QueryResolvers["dataCubeObservations"]
 > = async (_, { locale, cubeFilter }, { setup }, info) => {
   const { loaders, sparqlClient, cache } = await setup(info);
-  const { iri, filters, componentIris } = cubeFilter;
+  const { iri, filters: _filters, componentIds } = cubeFilter;
   const cube = await loaders.cube.load(iri);
 
   if (!cube) {
-    throw new Error("Cube not found!");
+    throw Error("Cube not found!");
   }
 
   await cube.fetchShape();
+
+  const filters = _filters ? getFiltersByComponentIris(_filters) : undefined;
+  const componentIris = componentIds?.map(
+    (id) => parseComponentId(id as ComponentId).unversionedComponentIri ?? id
+  );
+
   const { query, observations } = await getCubeObservations({
     cube,
     locale,
@@ -399,7 +451,10 @@ export const dataCubePreview: NonNullable<
 > = async (_, { locale, cubeFilter }, { setup }, info) => {
   const { sparqlClient } = await setup(info);
   const { iri } = cubeFilter;
-  const cube = new LightCube({ iri, locale, sparqlClient });
+  const unversionedIri =
+    (await queryCubeUnversionedIri(sparqlClient, iri)) ?? iri;
+  const cube = new LightCube({ iri, unversionedIri, locale, sparqlClient });
+
   return await cube.fetchPreview();
 };
 

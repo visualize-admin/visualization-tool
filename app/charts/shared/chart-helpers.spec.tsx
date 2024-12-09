@@ -2,7 +2,7 @@ import { renderHook } from "@testing-library/react";
 import merge from "lodash/merge";
 
 import {
-  extractChartConfigComponentIris,
+  extractChartConfigComponentIds,
   prepareCubeQueryFilters,
   useQueryFilters,
 } from "@/charts/shared/chart-helpers";
@@ -47,11 +47,11 @@ const { col, val } = makeCubeNsGetters(
 const commonInteractiveFiltersConfig: InteractiveFiltersConfig = {
   legend: {
     active: false,
-    componentIri: col("2"),
+    componentId: col("2"),
   },
   timeRange: {
     active: false,
-    componentIri: col("1"),
+    componentId: col("1"),
     presets: {
       type: "range",
       from: "2010-01-01",
@@ -59,7 +59,7 @@ const commonInteractiveFiltersConfig: InteractiveFiltersConfig = {
     },
   },
   dataFilters: {
-    componentIris: [col("3"), col("4")],
+    componentIds: [col("3"), col("4")],
     active: false,
   },
   calculation: {
@@ -184,7 +184,7 @@ describe("useQueryFilters", () => {
     expect(queryFilters.current).toEqual([
       {
         iri: "A",
-        componentIris: undefined,
+        componentIds: undefined,
         filters: {
           A_1: { type: "single", value: "A_1_1" },
           A_2: { type: "single", value: "A_2_1" },
@@ -193,7 +193,7 @@ describe("useQueryFilters", () => {
       },
       {
         iri: "B",
-        componentIris: undefined,
+        componentIds: undefined,
         filters: { B_1: { type: "single", value: "B_1_1" } },
         joinBy: undefined,
       },
@@ -244,7 +244,7 @@ describe("useQueryFilters", () => {
               },
             },
             dataFilters: {
-              componentIris: ["A_1"],
+              componentIds: ["A_1"],
               filters: {
                 A_1: { type: "single", value: "A_1_Data_Filter" },
                 A_2: { type: "single", value: "A_2_3" },
@@ -258,7 +258,7 @@ describe("useQueryFilters", () => {
     expect(queryFilters.current).toEqual([
       {
         iri: "A",
-        componentIris: undefined,
+        componentIds: undefined,
         filters: {
           A_1: { type: "single", value: "A_1_Data_Filter" },
           A_2: { type: "single", value: "A_2_1" },
@@ -267,7 +267,7 @@ describe("useQueryFilters", () => {
       },
       {
         iri: "B",
-        componentIris: undefined,
+        componentIds: undefined,
         filters: { B_1: { type: "single", value: "B_1_1" } },
         joinBy: undefined,
       },
@@ -275,58 +275,71 @@ describe("useQueryFilters", () => {
   });
 });
 
-describe("getChartConfigComponentIris", () => {
+describe("getChartConfigComponentsIds", () => {
   const migrationOptions = {
-    migrationProps: { dataSet: "foo", meta: {} },
+    migrationProps: {
+      dataSet: "foo",
+      meta: {},
+      dataSource: {
+        type: "sparql",
+        url: "",
+      },
+    },
   };
-  const lineConfig = migrateChartConfig(
-    line1Fixture.data.chartConfig,
-    migrationOptions
-  );
-  const mapConfig = migrateChartConfig(
-    map1Fixture.data.chartConfig,
-    migrationOptions
-  );
+  let lineConfig: ChartConfig;
+  let mapConfig: ChartConfig;
 
-  it("should return correct componentIris for line chart", () => {
-    const componentsIris = extractChartConfigComponentIris({
+  it("should return correct componentsIds for line chart", async () => {
+    lineConfig = await migrateChartConfig(
+      line1Fixture.data.chartConfig,
+      migrationOptions
+    );
+    mapConfig = await migrateChartConfig(
+      map1Fixture.data.chartConfig,
+      migrationOptions
+    );
+    const componentsIds = extractChartConfigComponentIds({
       chartConfig: lineConfig,
     });
-    expect(componentsIris).toEqual([
-      "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/0",
-      "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/1",
-      "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2",
-      "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/3",
-      "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/4",
-      "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/0",
+    expect(componentsIds).toEqual([
+      "foo(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/0",
+      "foo(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/1",
+      "foo(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2",
+      "foo(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/3",
+      "foo(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/4",
+      "foo(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)http://environment.ld.admin.ch/foen/px/0703010000_105/measure/0",
     ]);
   });
 
-  it("should return correct componentIris for map chart", () => {
-    const componentsIris = extractChartConfigComponentIris({
+  it("should return correct componentsIds for map chart", () => {
+    const componentsIds = extractChartConfigComponentIds({
       chartConfig: mapConfig,
     });
-    expect(componentsIris).toEqual([
-      "https://environment.ld.admin.ch/foen/nfi/Topic/3",
-      "https://environment.ld.admin.ch/foen/nfi/Topic/3r",
-      "https://environment.ld.admin.ch/foen/nfi/classificationUnit",
-      "https://environment.ld.admin.ch/foen/nfi/evaluationType",
-      "https://environment.ld.admin.ch/foen/nfi/grid",
-      "https://environment.ld.admin.ch/foen/nfi/inventory",
-      "https://environment.ld.admin.ch/foen/nfi/unitOfEvaluation",
-      "https://environment.ld.admin.ch/foen/nfi/unitOfReference",
+    expect(componentsIds).toEqual([
+      "foo(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://environment.ld.admin.ch/foen/nfi/Topic/3",
+      "foo(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://environment.ld.admin.ch/foen/nfi/Topic/3r",
+      "foo(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://environment.ld.admin.ch/foen/nfi/classificationUnit",
+      "foo(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://environment.ld.admin.ch/foen/nfi/evaluationType",
+      "foo(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://environment.ld.admin.ch/foen/nfi/grid",
+      "foo(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://environment.ld.admin.ch/foen/nfi/inventory",
+      "foo(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://environment.ld.admin.ch/foen/nfi/unitOfEvaluation",
+      "foo(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://environment.ld.admin.ch/foen/nfi/unitOfReference",
     ]);
   });
 
-  it("should return correct componentIris for dual line chart (join by)", () => {
-    const componentIris = extractChartConfigComponentIris({
-      chartConfig: dualLine1Fixture as unknown as ChartConfig,
+  it("should return correct componentsIds for dual line chart (join by)", async () => {
+    const dualLineConfig = await migrateChartConfig(
+      dualLine1Fixture,
+      migrationOptions
+    );
+    const componentIds = extractChartConfigComponentIds({
+      chartConfig: dualLineConfig,
     });
     expect(
-      componentIris.includes(
-        "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr"
+      componentIds.includes(
+        "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr"
       )
     ).toBe(true);
-    expect(componentIris.includes(mkJoinById(0))).toBe(false);
+    expect(componentIds.includes(mkJoinById(0))).toBe(false);
   });
 });

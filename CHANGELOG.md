@@ -13,7 +13,59 @@ You can also check the
 
 Nothing yet.
 
-# [4.9.5] - 2024-11-18
+# [5.0.2] - 2024-11-28
+
+- Features
+  - Made it possible to sort the cube search results and filter by draft
+    datasets when looking for a cube to merge
+- Fixes
+  - Changed component id separator text to be more unique, as it was causing
+    issues with some cubes that had iris ending with "-"
+  - Datasets section in the sidebar is now correctly shown at all times
+  - Improved Preventation of overlapping axis titles for combo charts
+
+# [5.0.1] - 2024-11-26
+
+- Features
+  - Improved formatting of confidence intervals in tooltips
+    (`, [-lower bound], [+upper bound]`)
+- Fixes
+  - Ensured undefined / unavailable data is represented as "-" for downloaded
+    data files
+
+# [5.0.0] - 2024-11-25
+
+Bumped to a new major version to celebrate all the improvements and new features
+introduced since v4.0.0 🎉
+
+- Features
+  - Allowed previewing of charts in states different than CONFIGURING_CHART
+    (iframe `/preview` page)
+  - Improved some wording and added an explanation to the `Concepts` navigation
+    menu
+  - Filters and components are now grouped in the left panel and dropdowns in
+    case of working with merged cubes
+  - Improved default chart selection when adding a new cube (by default the
+    application will try to use dual-line chart with measures from different
+    cubes)
+  - Added tooltip that explains why a given chart type can't be selected
+  - Added support for confidence intervals
+- Fixes
+  - Introduced a `componentId` concept which makes the dimensions and measures
+    unique by adding an unversioned cube iri to the unversioned component iri on
+    the server-side. With this we correctly handle multiple dimensions with the
+    same iri that come from different cubes (when merging cubes)
+  - Map legend is now correctly updated (in some cases it was rendered
+    incorrectly on the initial render)
+  - Vertical Axis measure names are now correctly displayed in the left panel
+  - Uncertainties are now correctly displayed in map symbol layer tooltip
+- Performance
+  - We no longer load non-key dimensions when initializing a chart
+- Maintenance
+  - Added a way to do local visual regression testing of charts between
+    different branches
+
+# [4.9.5] - 2024-11-22
 
 - Features
   - Added Newsletter, Bug Report and Feature Request sections to the home page
@@ -25,6 +77,9 @@ Nothing yet.
   - visualize.admin.ch links are now again visible in chart footnotes
   - Improved chart tooltips on small screens
   - % mode toggle no longer overlaps with the Y axis title
+  - Merging of cubes beta tag has been removed
+  - Dual line Chart Tooltip indicators are now fixed for smaller screens
+  - Fixed tooltip position for pie charts for smaller screens
 
 # [4.9.4] - 2024-11-06
 

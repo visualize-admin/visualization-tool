@@ -21,7 +21,7 @@ import {
   TemporalDimension,
   TemporalEntityDimension,
 } from "@/domain/data";
-import { TimeUnit } from "@/graphql/query-hooks";
+import { RelatedDimensionType, TimeUnit } from "@/graphql/query-hooks";
 import { IconName } from "@/icons";
 import { getTimeInterval } from "@/intervals";
 import { getPalette } from "@/palettes";
@@ -107,62 +107,80 @@ export const getTimeIntervalFormattedSelectOptions = ({
 };
 
 export const getErrorMeasure = (
-  { dimensions, measures }: Pick<BaseChartProps, "dimensions" | "measures">,
+  {
+    dimensions,
+    measures,
+    type,
+  }: Pick<BaseChartProps, "dimensions" | "measures"> & {
+    type: RelatedDimensionType;
+  },
   valueIri: string
 ) => {
   return [...dimensions, ...measures].find((m) => {
-    return m.related?.some(
-      (r) => r.type === "StandardError" && r.iri === valueIri
-    );
+    return m.related?.some((r) => r.type === type && r.id === valueIri);
   });
 };
 
 export const useErrorMeasure = (
-  componentIri: string,
+  componentId: string,
   {
     dimensions,
     measures,
+    type,
   }: {
     dimensions: Dimension[];
     measures: Measure[];
+    type: RelatedDimensionType;
   }
 ) => {
   return useMemo(() => {
-    return getErrorMeasure({ dimensions, measures }, componentIri);
-  }, [componentIri, dimensions, measures]);
+    return getErrorMeasure({ dimensions, measures, type }, componentId);
+  }, [componentId, dimensions, measures, type]);
 };
 
 export const useErrorVariable = (errorMeasure?: Component) => {
   return useMemo(() => {
     return errorMeasure
       ? (d: Observation) => {
-          return d[errorMeasure.iri];
+          return d[errorMeasure.id];
         }
       : null;
   }, [errorMeasure]);
 };
 
 export const useErrorRange = (
-  errorMeasure: Component | undefined,
+  upperErrorMeasure: Component | undefined,
+  lowerErrorMeasure: Component | undefined,
   valueGetter: (d: Observation) => number | null
 ) => {
   return useMemo(() => {
-    return errorMeasure
+    return upperErrorMeasure && lowerErrorMeasure
       ? (d: Observation) => {
           const v = valueGetter(d) as number;
-          const errorIri = errorMeasure.iri;
-          let error =
-            d[errorIri] !== null ? parseFloat(d[errorIri] as string) : null;
-          if (errorMeasure.unit === "%" && error !== null) {
-            error = (error * v) / 100;
+          const upperId = upperErrorMeasure.id;
+          let upperError =
+            d[upperId] !== null ? parseFloat(d[upperId] as string) : null;
+
+          if (upperErrorMeasure.unit === "%" && upperError !== null) {
+            upperError = (upperError * v) / 100;
           }
-          return (error === null ? [v, v] : [v - error, v + error]) as [
-            number,
-            number,
-          ];
+
+          const lowerId = lowerErrorMeasure.id;
+          let lowerError =
+            d[lowerId] !== null ? parseFloat(d[lowerId] as string) : null;
+
+          if (lowerErrorMeasure.unit === "%" && lowerError !== null) {
+            lowerError = (lowerError * v) / 100;
+          }
+
+          return (
+            upperError === null || lowerError === null
+              ? [v, v]
+              : [v - lowerError, v + upperError]
+          ) as [number, number];
         }
       : null;
-  }, [errorMeasure, valueGetter]);
+  }, [lowerErrorMeasure, upperErrorMeasure, valueGetter]);
 };
 
 export const getIconName = (name: string): IconName => {
@@ -320,7 +338,8 @@ export const getComponentLabel = (
 ) => {
   if (isJoinByComponent(component)) {
     const original =
-      cubeIri && component.originalIris.find((i) => i.cubeIri === cubeIri);
+      cubeIri && component.originalIds.find((i) => i.cubeIri === cubeIri);
+
     if (original) {
       return original.label;
     }
@@ -344,7 +363,7 @@ export const getComponentLabel = (
       }
     }
 
-    return component.originalIris[0].label ?? "NO LABEL";
+    return component.originalIds[0].label ?? "NO LABEL";
   }
 
   return component.label;
@@ -356,11 +375,12 @@ export const getComponentLabel = (
 export const getComponentDescription = (dim: Component, cubeIri?: string) => {
   if (isJoinByComponent(dim)) {
     const original =
-      cubeIri && dim.originalIris.find((i) => i.cubeIri === cubeIri);
+      cubeIri && dim.originalIds.find((i) => i.cubeIri === cubeIri);
+
     if (original) {
       return original.description;
     }
-    return dim.originalIris[0].description ?? "";
+    return dim.originalIds[0].description ?? "";
   } else {
     return dim.description;
   }

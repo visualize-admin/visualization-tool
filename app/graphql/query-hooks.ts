@@ -52,7 +52,7 @@ export type Scalars = {
 export type DataCubeComponentFilter = {
   iri: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
-  componentIris?: Maybe<Array<Scalars['String']>>;
+  componentIds?: Maybe<Array<Scalars['String']>>;
   joinBy?: Maybe<Array<Scalars['String']>>;
   loadValues?: Maybe<Scalars['Boolean']>;
 };
@@ -60,7 +60,7 @@ export type DataCubeComponentFilter = {
 
 export type DataCubeDimensionGeoShapesCubeFilter = {
   iri: Scalars['String'];
-  dimensionIri: Scalars['String'];
+  dimensionId: Scalars['String'];
 };
 
 export type DataCubeLatestIriFilter = {
@@ -75,7 +75,7 @@ export type DataCubeMetadataFilter = {
 export type DataCubeObservationFilter = {
   iri: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
-  componentIris?: Maybe<Array<Scalars['String']>>;
+  componentIds?: Maybe<Array<Scalars['String']>>;
   joinBy?: Maybe<Array<Scalars['String']>>;
 };
 
@@ -117,29 +117,34 @@ export type DataCubeTheme = {
   label?: Maybe<Scalars['String']>;
 };
 
-
-
-
-
-
-
-
-export type ObservationFilter = {
-  __typename: 'ObservationFilter';
-  type: Scalars['String'];
-  value?: Maybe<Scalars['FilterValue']>;
+export type DataCubeUnversionedIriFilter = {
   iri: Scalars['String'];
+};
+
+
+
+
+
+
+
+
+export type PossibleFilterValue = {
+  __typename: 'PossibleFilterValue';
+  type: Scalars['String'];
+  id: Scalars['String'];
+  value?: Maybe<Scalars['FilterValue']>;
 };
 
 export type Query = {
   __typename: 'Query';
   dataCubeLatestIri: Scalars['String'];
+  dataCubeUnversionedIri?: Maybe<Scalars['String']>;
   dataCubeComponents: Scalars['DataCubeComponents'];
   dataCubeComponentTermsets: Array<Scalars['ComponentTermsets']>;
   dataCubeMetadata: Scalars['DataCubeMetadata'];
   dataCubeObservations: Scalars['DataCubeObservations'];
   dataCubePreview: Scalars['DataCubePreview'];
-  possibleFilters: Array<ObservationFilter>;
+  possibleFilters: Array<PossibleFilterValue>;
   searchCubes: Array<SearchCubeResult>;
   dataCubeDimensionGeoShapes?: Maybe<Scalars['GeoShapes']>;
 };
@@ -149,6 +154,13 @@ export type QueryDataCubeLatestIriArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['DataSourceUrl'];
   cubeFilter: DataCubeLatestIriFilter;
+};
+
+
+export type QueryDataCubeUnversionedIriArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
+  cubeFilter: DataCubeUnversionedIriFilter;
 };
 
 
@@ -221,9 +233,15 @@ export type QueryDataCubeDimensionGeoShapesArgs = {
 
 export type RelatedDimension = {
   __typename: 'RelatedDimension';
-  type: Scalars['String'];
-  iri: Scalars['String'];
+  type: RelatedDimensionType;
+  id: Scalars['String'];
 };
+
+export enum RelatedDimensionType {
+  StandardError = 'StandardError',
+  ConfidenceUpperBound = 'ConfidenceUpperBound',
+  ConfidenceLowerBound = 'ConfidenceLowerBound'
+}
 
 export enum ScaleType {
   Ordinal = 'Ordinal',
@@ -298,6 +316,15 @@ export type DataCubeLatestIriQueryVariables = Exact<{
 
 export type DataCubeLatestIriQuery = { __typename: 'Query', dataCubeLatestIri: string };
 
+export type DataCubeUnversionedIriQueryVariables = Exact<{
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
+  cubeFilter: DataCubeUnversionedIriFilter;
+}>;
+
+
+export type DataCubeUnversionedIriQuery = { __typename: 'Query', dataCubeUnversionedIri?: Maybe<string> };
+
 export type DataCubeComponentsQueryVariables = Exact<{
   sourceType: Scalars['String'];
   sourceUrl: Scalars['DataSourceUrl'];
@@ -365,7 +392,7 @@ export type PossibleFiltersQueryVariables = Exact<{
 }>;
 
 
-export type PossibleFiltersQuery = { __typename: 'Query', possibleFilters: Array<{ __typename: 'ObservationFilter', iri: string, type: string, value?: Maybe<any> }> };
+export type PossibleFiltersQuery = { __typename: 'Query', possibleFilters: Array<{ __typename: 'PossibleFilterValue', type: string, id: string, value?: Maybe<any> }> };
 
 
 export const SearchCubesDocument = gql`
@@ -402,6 +429,19 @@ export const DataCubeLatestIriDocument = gql`
 
 export function useDataCubeLatestIriQuery(options: Omit<Urql.UseQueryArgs<DataCubeLatestIriQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<DataCubeLatestIriQuery>({ query: DataCubeLatestIriDocument, ...options });
+};
+export const DataCubeUnversionedIriDocument = gql`
+    query DataCubeUnversionedIri($sourceType: String!, $sourceUrl: String!, $cubeFilter: DataCubeUnversionedIriFilter!) {
+  dataCubeUnversionedIri(
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    cubeFilter: $cubeFilter
+  )
+}
+    `;
+
+export function useDataCubeUnversionedIriQuery(options: Omit<Urql.UseQueryArgs<DataCubeUnversionedIriQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<DataCubeUnversionedIriQuery>({ query: DataCubeUnversionedIriDocument, ...options });
 };
 export const DataCubeComponentsDocument = gql`
     query DataCubeComponents($sourceType: String!, $sourceUrl: DataSourceUrl!, $locale: String!, $cubeFilter: DataCubeComponentFilter!) {
@@ -494,8 +534,8 @@ export const PossibleFiltersDocument = gql`
     sourceUrl: $sourceUrl
     cubeFilter: $cubeFilter
   ) {
-    iri
     type
+    id
     value
   }
 }

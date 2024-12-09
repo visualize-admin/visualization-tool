@@ -82,16 +82,16 @@ describe("dataset preview", () => {
   it("should return correct preview", async () => {
     const { dimensions, measures, observations } = await getCubePreview(
       "awesome iri",
-      { sparqlClient, locale: "en" }
+      { sparqlClient, locale: "en", unversionedIri: "awesome iri" }
     );
     const dim = dimensions.find(
       (d) =>
-        d.iri ===
-        "https://environment.ld.admin.ch/foen/gefahren-waldbrand-warnung/region"
+        d.id ===
+        "awesome iri(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://environment.ld.admin.ch/foen/gefahren-waldbrand-warnung/region"
     );
 
-    expect(dim?.iri).toEqual(
-      "https://environment.ld.admin.ch/foen/gefahren-waldbrand-warnung/region"
+    expect(dim?.id).toEqual(
+      "awesome iri(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://environment.ld.admin.ch/foen/gefahren-waldbrand-warnung/region"
     );
     expect(dim?.label).toEqual("Region");
     expect(dim?.values).toHaveLength(1);
@@ -99,15 +99,15 @@ describe("dataset preview", () => {
 
     const measure = measures[0];
 
-    expect(measure.iri).toEqual(
-      "https://environment.ld.admin.ch/foen/gefahren-waldbrand-warnung/level"
+    expect(measure.id).toEqual(
+      "awesome iri(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://environment.ld.admin.ch/foen/gefahren-waldbrand-warnung/level"
     );
     expect(measure.label).toEqual("Danger ratings");
 
     expect(observations).toHaveLength(1);
     const obs = observations[0];
 
-    expect(obs[dim?.iri ?? ""]).toEqual("Bern");
-    expect(obs[measure.iri]).toEqual("considerable danger");
+    expect(obs[dim?.id ?? ""]).toEqual("Bern");
+    expect(obs[measure.id]).toEqual("considerable danger");
   });
 });

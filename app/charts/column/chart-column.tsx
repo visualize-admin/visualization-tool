@@ -46,9 +46,10 @@ const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
     interactiveFiltersConfig,
     dashboardFilters?.timeRange
   );
+
   return (
     <>
-      {fields.segment?.componentIri && fields.segment.type === "stacked" ? (
+      {fields.segment?.componentId && fields.segment.type === "stacked" ? (
         <StackedColumnsChart {...props}>
           <ChartContainer>
             <ChartSvg>
@@ -76,7 +77,7 @@ const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
             />
           </ChartControlsContainer>
         </StackedColumnsChart>
-      ) : fields.segment?.componentIri && fields.segment.type === "grouped" ? (
+      ) : fields.segment?.componentId && fields.segment.type === "grouped" ? (
         <GroupedColumnChart {...props}>
           <ChartContainer>
             <ChartSvg>

@@ -42,24 +42,22 @@ export const useMapStateVariables = (
 
   // TODO: add abbreviations
   const areaLayerDimension = dimensions.find(
-    (d) => d.iri === areaLayer?.componentIri
+    (d) => d.id === areaLayer?.componentId
   );
 
   if (areaLayerDimension && !isGeoShapesDimension(areaLayerDimension)) {
     throw Error(
-      `Dimension <${areaLayerDimension.iri}> is not geo shapes dimension!`
+      `Dimension <${areaLayerDimension.id}> is not geo shapes dimension!`
     );
   }
 
   const symbolLayerDimension = dimensions.find(
-    (d) => d.iri === symbolLayer?.componentIri
+    (d) => d.id === symbolLayer?.componentId
   );
 
   // Symbol layer dimension can be either GeoShapes or GeoCoordinates dimension.
   if (symbolLayerDimension && !isGeoDimension(symbolLayerDimension)) {
-    throw Error(
-      `Dimension <${symbolLayerDimension.iri}> is not geo dimension!`
-    );
+    throw Error(`Dimension <${symbolLayerDimension.id}> is not geo dimension!`);
   }
 
   const { getValue: getSymbol, getLabel: getSymbolLabel } =
@@ -96,28 +94,28 @@ export const useMapStateData = (
   const plottableData = usePlottableData(observations, {});
   const data = useChartData(plottableData, {
     chartConfig,
-    timeRangeDimensionIri: undefined,
+    timeRangeDimensionId: undefined,
   });
 
   const areaLayer = useMemo(() => {
-    const iri = areaLayerDimension?.iri;
+    const id = areaLayerDimension?.id;
 
-    if (!(iri && shapes)) {
+    if (!(id && shapes)) {
       return;
     }
 
     const { topology } = shapes;
     const featureCollection = prepareFeatureCollection({
-      dimensionIri: iri,
+      dimensionId: id,
       topology,
-      filters: filters[iri],
+      filters: filters[id],
       observations: data.chartData,
     });
 
     return {
       shapes: featureCollection,
     };
-  }, [areaLayerDimension?.iri, shapes, filters, data.chartData]);
+  }, [areaLayerDimension?.id, shapes, filters, data.chartData]);
 
   const symbolLayer = useMemo(() => {
     if (isGeoCoordinatesDimension(symbolLayerDimension) && coordinates) {
@@ -150,11 +148,11 @@ export const useMapStateData = (
       };
     } else if (isGeoShapesDimension(symbolLayerDimension) && shapes) {
       const { topology } = shapes;
-      const iri = symbolLayerDimension.iri;
+      const id = symbolLayerDimension.id;
       const { features } = prepareFeatureCollection({
-        dimensionIri: iri,
+        dimensionId: id,
         topology,
-        filters: filters[iri],
+        filters: filters[id],
         observations: data.chartData,
       });
 

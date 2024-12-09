@@ -38,32 +38,32 @@ export const useLinesStateVariables = (
     chartConfig,
     observations,
     dimensions,
-    dimensionsByIri,
+    dimensionsById,
     measures,
-    measuresByIri,
+    measuresById,
   } = props;
   const { fields } = chartConfig;
   const { x, y, segment } = fields;
 
   const baseVariables = useBaseVariables(chartConfig);
   const temporalXVariables = useTemporalXVariables(x, {
-    dimensionsByIri,
+    dimensionsById,
   });
   const numericalYVariables = useNumericalYVariables("line", y, {
-    measuresByIri,
+    measuresById,
   });
   const numericalYErrorVariables = useNumericalYErrorVariables(y, {
-    numericalYVariables,
+    getValue: numericalYVariables.getY,
     dimensions,
     measures,
   });
   const segmentVariables = useSegmentVariables(segment, {
-    dimensionsByIri,
+    dimensionsById,
     observations,
   });
   const interactiveFiltersVariables = useInteractiveFiltersVariables(
     chartConfig.interactiveFiltersConfig,
-    { dimensionsByIri }
+    { dimensionsById }
   );
 
   const { getX } = temporalXVariables;
@@ -110,7 +110,7 @@ export const useLinesStateData = (
   }, [sortData, plottableData]);
   const data = useChartData(sortedPlottableData, {
     chartConfig,
-    timeRangeDimensionIri: xDimension.iri,
+    timeRangeDimensionId: xDimension.id,
     getXAsDate: getX,
     getSegmentAbbreviationOrLabel,
     getTimeRangeDate,

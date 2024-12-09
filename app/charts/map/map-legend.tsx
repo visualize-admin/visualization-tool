@@ -118,7 +118,7 @@ export const MapLegend = ({
                   palette={areaLayer.colors.palette}
                   domain={areaLayer.dataDomain}
                   getValue={areaLayer.colors.getValue}
-                  valueFormatter={formatters[areaLayer.colors.component.iri]}
+                  valueFormatter={formatters[areaLayer.colors.component.id]}
                 />
               ) : areaLayer.colors.interpolationType === "quantize" ? (
                 <QuantizeColorLegend
@@ -160,9 +160,7 @@ export const MapLegend = ({
                       // @ts-ignore
                       return d[symbolLayer.colors.component.iri] as number;
                     }}
-                    valueFormatter={
-                      formatters[symbolLayer.colors.component.iri]
-                    }
+                    valueFormatter={formatters[symbolLayer.colors.component.id]}
                   />
                 ) : symbolLayer.colors.interpolationType === "quantize" ? (
                   <QuantizeColorLegend
@@ -198,7 +196,7 @@ export const MapLegend = ({
                   {symbolLayer.measureLabel}
                 </Typography>
                 <CircleLegend
-                  valueFormatter={formatters[symbolLayer.measureDimension.iri]}
+                  valueFormatter={formatters[symbolLayer.measureDimension.id]}
                 />
               </Box>
             )}
@@ -217,8 +215,7 @@ export const MapLegend = ({
       )}
 
       {symbolLayer?.colors.type === "categorical" &&
-        symbolLayer.colors.component.iri !==
-          areaLayer?.colors.component.iri && (
+        symbolLayer.colors.component.id !== areaLayer?.colors.component.id && (
           <MapLegendColor
             chartConfig={chartConfig}
             component={symbolLayer.colors.component}
@@ -440,7 +437,7 @@ const JenksColorLegend = ({
   const legendAxisRef = useRef<SVGGElement>(null);
   const { axisLabelColor, labelColor, fontFamily } = useChartTheme();
   const formatNumber = useFormatInteger();
-  const thresholds = useMemo(() => colorScale.domain(), [colorScale]);
+  const thresholds = colorScale.domain();
   const [min, max] = domain;
 
   // From color index to threshold value
@@ -516,12 +513,7 @@ const QuantileColorLegend = ({
 
   const { axisLabelColor, labelColor, fontFamily } = useChartTheme();
   const formatNumber = useFormatInteger();
-
-  const thresholds = useMemo(
-    // @ts-ignore
-    () => (colorScale.quantiles ? colorScale.quantiles() : []),
-    [colorScale]
-  );
+  const thresholds = colorScale.quantiles();
 
   const [min, max] = domain;
 
@@ -604,12 +596,7 @@ const QuantizeColorLegend = ({
   const scale = scaleLinear()
     .domain(domain)
     .range([MARGIN.left, width - MARGIN.right]);
-
-  const thresholds: number[] = useMemo(
-    // @ts-ignore
-    () => (colorScale.thresholds ? colorScale.thresholds() : []),
-    [colorScale]
-  );
+  const thresholds = colorScale.thresholds();
 
   useEffect(
     () =>

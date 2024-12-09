@@ -4,12 +4,12 @@ import { getFullDataDownloadFilters } from "@/components/data-download";
 import { DataCubeObservationFilter } from "@/graphql/query-hooks";
 
 describe("getFullDataDownloadFilters", () => {
-  it("should not have componentIris", () => {
+  it("should not have componentIds", () => {
     const rawFilters: DataCubeObservationFilter = {
       iri: "ABC",
-      componentIris: ["DEF"],
+      componentIds: ["DEF"],
     };
     const filters = getFullDataDownloadFilters(rawFilters);
-    expect(get(filters, "componentIris")).toBeFalsy();
+    expect(get(filters, "componentIds")).toBeFalsy();
   });
 });

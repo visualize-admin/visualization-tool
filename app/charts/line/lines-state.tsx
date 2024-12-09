@@ -80,10 +80,8 @@ const useLinesState = (
     getXAsString,
     yMeasure,
     getY,
-    showYStandardError,
-    getYError,
     getYErrorRange,
-    yErrorMeasure,
+    getFormattedYUncertainty,
     getMinY,
     segmentDimension,
     segmentsByAbbreviationOrLabel,
@@ -105,7 +103,7 @@ const useLinesState = (
   const formatNumber = useFormatNumber({ decimals: "auto" });
   const timeFormatUnit = useTimeFormatUnit();
   const formatters = useChartFormatters(chartProps);
-  const xKey = xDimension.iri;
+  const xKey = xDimension.id;
 
   const segmentsByValue = useMemo(() => {
     const values = segmentDimension?.values || [];
@@ -161,9 +159,9 @@ const useLinesState = (
     .nice();
 
   // segments
-  const segmentFilter = segmentDimension?.iri
+  const segmentFilter = segmentDimension?.id
     ? chartConfig.cubes.find((d) => d.iri === segmentDimension.cubeIri)
-        ?.filters[segmentDimension.iri]
+        ?.filters[segmentDimension.id]
     : undefined;
   const { allSegments, segments } = useMemo(() => {
     const allUniqueSegments = Array.from(new Set(segmentData.map(getSegment)));
@@ -275,17 +273,9 @@ const useLinesState = (
     const yValueFormatter = (value: number | null) =>
       formatNumberWithUnit(
         value,
-        formatters[yMeasure.iri] || formatNumber,
+        formatters[yMeasure.id] ?? formatNumber,
         yMeasure.unit
       );
-
-    const getError = (d: Observation) => {
-      if (!showYStandardError || !getYError || getYError(d) === null) {
-        return;
-      }
-
-      return `${getYError(d)}${yErrorMeasure?.unit ?? ""}`;
-    };
 
     return {
       xAnchor,
@@ -295,7 +285,7 @@ const useLinesState = (
       datum: {
         label: fields.segment && getSegmentAbbreviationOrLabel(datum),
         value: yValueFormatter(getY(datum)),
-        error: getError(datum),
+        error: getFormattedYUncertainty(datum),
         color: colors(getSegment(datum)) as string,
       },
       values: sortedTooltipValues.map((td) => ({

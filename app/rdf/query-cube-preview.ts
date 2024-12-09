@@ -16,6 +16,7 @@ import {
   TemporalEntityDimension,
 } from "@/domain/data";
 import { truthy } from "@/domain/types";
+import { stringifyComponentId } from "@/graphql/make-component-id";
 import { resolveDimensionType, resolveMeasureType } from "@/graphql/resolvers";
 
 import * as ns from "./namespace";
@@ -33,11 +34,12 @@ import { buildLocalizedSubQuery } from "./query-utils";
 export const getCubePreview = async (
   iri: string,
   options: {
+    unversionedIri: string;
     locale: string;
     sparqlClient: ParsingClient;
   }
 ): Promise<DataCubePreview> => {
-  const { sparqlClient, locale } = options;
+  const { unversionedIri, sparqlClient, locale } = options;
   const qs = await sparqlClient.query.construct(
     `PREFIX cube: <https://cube.link/>
 PREFIX meta: <https://cube.link/meta/>
@@ -134,7 +136,7 @@ CONSTRUCT {
   );
 
   if (qs.length === 0) {
-    throw new Error(`No cube found for ${iri}!`);
+    throw Error(`No cube found for ${iri}!`);
   }
 
   const sQs = groupBy(qs, (q) => q.subject.value);
@@ -222,7 +224,19 @@ CONSTRUCT {
       dimMetadataByDimIri[dimIri].values.push(dimensionValue);
     });
 
-    observations.push(observation);
+    observations.push(
+      Object.fromEntries(
+        Object.entries(observation).map(([k, v]) => {
+          return [
+            stringifyComponentId({
+              unversionedCubeIri: unversionedIri,
+              unversionedComponentIri: k,
+            }),
+            v,
+          ];
+        })
+      )
+    );
   });
 
   for (const dimIri in dimMetadataByDimIri) {
@@ -265,7 +279,10 @@ CONSTRUCT {
 
     const baseComponent: BaseComponent = {
       cubeIri: iri,
-      iri: dimIri,
+      id: stringifyComponentId({
+        unversionedCubeIri: unversionedIri,
+        unversionedComponentIri: dimIri,
+      }),
       label: qLabel?.object.value ?? "",
       description: qDesc?.object.value,
       scaleType,
@@ -305,7 +322,7 @@ CONSTRUCT {
           const timeFormat = getTimeFormat(dataType, timeUnit);
 
           if (!timeFormat || !timeUnit) {
-            throw new Error(
+            throw Error(
               `Temporal dimension ${dimIri} has no timeFormat or timeUnit!`
             );
           }

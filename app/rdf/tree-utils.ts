@@ -33,8 +33,8 @@ const filterTreeHelper = <T extends { children?: T[] | null }>(
 };
 
 /**
- * Given a tree and a list of nodes, will remove any parent/onde that do not contain
- * at least of the provided nodes in their descendant
+ * Given a tree and a list of nodes, will remove any parent / node that does not contain
+ * at least of the provided nodes in their descendants.
  */
 export const pruneTree = <T extends { children?: T[] | null }>(
   tree: T[],
@@ -136,9 +136,7 @@ export const regroupTrees = (
     const goodTrees = trees.filter((x) => !!x[0] && !!x[0].hierarchyName);
     const roots = new Set(goodTrees.map((x) => x[0].value));
     if (roots.size > 1) {
-      throw new Error(
-        "Cannot have multiple hierarchies not sharing the same root"
-      );
+      throw Error("Cannot have multiple hierarchies not sharing the same root");
     }
     return [
       {
@@ -147,7 +145,7 @@ export const regroupTrees = (
           value: t[0].hierarchyName!,
           hasValue: false,
           children: t[0].children,
-          dimensionIri: t[0].dimensionIri,
+          dimensionId: t[0].dimensionId,
           label: t[0].hierarchyName!,
           depth: -1,
         })),

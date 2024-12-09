@@ -21,6 +21,7 @@ import { parseDate } from "./configurator/components/ui-helpers";
 import { getD3FormatLocale, getD3TimeFormatLocale } from "./locales/locales";
 
 const DIMENSION_VALUE_UNDEFINED = "https://cube.link/Undefined";
+const NO_AVAILABLE_VALUE_RETURN_REPLACEMENT = "–";
 
 export type DateFormatter = (d: string | Date | null) => string;
 
@@ -117,8 +118,10 @@ export const dateFormatterFromDimension = (
 
 type Formatter = (x: string) => string;
 
-const formatIdentity = (x: string | Date | null) => {
-  return x !== DIMENSION_VALUE_UNDEFINED ? `${x}` : "–";
+export const formatIdentity = (x: string | number | Date | null) => {
+  return x !== DIMENSION_VALUE_UNDEFINED && x !== null
+    ? `${x}`
+    : NO_AVAILABLE_VALUE_RETURN_REPLACEMENT;
 };
 
 const decimalFormatter = (dim: NumericalMeasure, formatNumber: Formatter) => {
@@ -181,7 +184,7 @@ const getDimensionFormatters = ({
         formatter = formatIdentity;
       }
 
-      return [d.iri, formatter];
+      return [d.id, formatter];
     })
   );
 };

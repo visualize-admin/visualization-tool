@@ -111,15 +111,10 @@ export const createSelectors = ({ screen, page, within }: Ctx) => {
       colorLegendItems: async () =>
         (await selectors.chart.colorLegend()).locator("div"),
       legendTicks: async () => {},
-      loaded: async (options: { timeout?: number } = {}) => {
-        await page
-          .locator(`[data-chart-loaded="true"]`)
-          .waitFor({ timeout: 40 * 1000, ...options });
-        const hasMap = (await page.locator("[data-map-loaded]").count()) > 0;
-        if (hasMap) {
-          await page.locator('[data-map-loaded="true"]');
-          await sleep(500); // Waits for tile to fade in
-        }
+      loaded: async () => {
+        await page.waitForLoadState("networkidle");
+        // Let the map tiles fade in and enter animations finish
+        await sleep(1_000);
       },
       tablePreviewSwitch: async () => {
         return await screen.findByText("Table view");

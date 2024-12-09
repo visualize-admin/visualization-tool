@@ -22,6 +22,10 @@ export const Query: QueryResolvers = {
     const source = getSource(args.sourceType);
     return await source.dataCubeLatestIri(parent, args, context, info);
   },
+  dataCubeUnversionedIri: async (parent, args, context, info) => {
+    const source = getSource(args.sourceType);
+    return await source.dataCubeUnversionedIri(parent, args, context, info);
+  },
   dataCubeComponents: async (parent, args, context, info) => {
     const source = getSource(args.sourceType);
     return await source.dataCubeComponents(parent, args, context, info);
@@ -62,8 +66,21 @@ export const resolveDimensionType = (
   timeUnit: ResolvedDimension["data"]["timeUnit"] | undefined,
   related: ResolvedDimension["data"]["related"]
 ): DimensionType => {
+  const relatedTypes = Array.from(new Set(related.map((d) => d.type)));
+
+  if (relatedTypes.length > 1) {
+    console.warn(
+      `WARNING: dimension has more than 1 related type`,
+      relatedTypes
+    );
+  }
+
   if (related.some((d) => d.type === "StandardError")) {
     return "StandardErrorDimension";
+  } else if (related.some((d) => d.type === "ConfidenceUpperBound")) {
+    return "ConfidenceUpperBoundDimension";
+  } else if (related.some((d) => d.type === "ConfidenceLowerBound")) {
+    return "ConfidenceLowerBoundDimension";
   }
 
   if (dataKind === "Time") {
@@ -72,7 +89,7 @@ export const resolveDimensionType = (
         if (timeUnit === TimeUnit.Month || timeUnit === TimeUnit.Year) {
           return "TemporalEntityDimension";
         } else {
-          throw new Error(
+          throw Error(
             `Unsupported time unit for TemporalEntityDimension: ${timeUnit}`
           );
         }

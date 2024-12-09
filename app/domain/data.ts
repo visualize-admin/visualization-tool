@@ -1,6 +1,7 @@
 import { Literal, Term } from "rdf-js";
 
 import { ComponentType } from "@/config-types";
+import { ComponentId } from "@/graphql/make-component-id";
 import {
   DataCubeOrganization,
   DataCubePublicationStatus,
@@ -35,7 +36,7 @@ export type DimensionValue = {
 
 export type HierarchyValue = {
   depth: number;
-  dimensionIri: string;
+  dimensionId: string;
   value: string;
   /** In other words, is selectable? */
   hasValue: boolean;
@@ -53,6 +54,7 @@ export type DataCubeComponents = {
 
 export type DataCubeMetadata = {
   iri: string;
+  unversionedIri?: string;
   identifier?: string;
   title: string;
   description: string;
@@ -62,7 +64,6 @@ export type DataCubeMetadata = {
   publicationStatus: DataCubePublicationStatus;
   themes?: DataCubeTheme[];
   creator?: DataCubeOrganization;
-  versionHistory?: string;
   contactPoint?: {
     name?: string;
     email?: string;
@@ -73,7 +74,9 @@ export type DataCubeMetadata = {
   workExamples?: string[];
 };
 
-export type Observation = Record<string, ObservationValue>;
+// String in case of joinBy dimensions.
+// TODO: we could also use a branded type here.
+export type Observation = Record<ComponentId | string, ObservationValue>;
 
 export type DataCubeObservations = {
   data: Observation[];
@@ -177,6 +180,18 @@ const ComponentsRenderingConfig: {
     enableMultiFilter: false,
     enableSegment: false,
   },
+  ConfidenceUpperBoundDimension: {
+    enableAnimation: false,
+    enableCustomSort: false,
+    enableMultiFilter: false,
+    enableSegment: false,
+  },
+  ConfidenceLowerBoundDimension: {
+    enableAnimation: false,
+    enableCustomSort: false,
+    enableMultiFilter: false,
+    enableSegment: false,
+  },
 };
 
 export const ANIMATION_ENABLED_COMPONENTS = Object.entries(
@@ -207,7 +222,7 @@ export type Component = Dimension | Measure;
 
 export type BaseComponent = {
   cubeIri: string;
-  iri: string;
+  id: ComponentId;
   label: string;
   description?: string;
   unit?: string;
@@ -220,21 +235,23 @@ export type BaseComponent = {
   related?: RelatedDimension[];
 };
 
-export type BaseDimension = BaseComponent & {
+export type BaseDimension = Omit<BaseComponent, "id"> & {
   hierarchy?: HierarchyValue[] | null;
 } & (
     | {
+        id: string;
         isJoinByDimension: true;
-        originalIris: {
+        originalIds: {
           cubeIri: string;
-          dimensionIri: string;
+          dimensionId: ComponentId;
           label: string;
           description: string;
         }[];
       }
     | {
+        id: ComponentId;
         isJoinByDimension?: never;
-        originalIris?: never;
+        originalIds?: never;
       }
   );
 
@@ -244,7 +261,7 @@ export const isJoinByComponent = (d: Component): d is JoinByComponent => {
   return !!(
     "isJoinByDimension" in d &&
     d.isJoinByDimension &&
-    "originalIris" in d
+    "originalIds" in d
   );
 };
 
@@ -256,7 +273,9 @@ export type Dimension =
   | TemporalOrdinalDimension
   | GeoCoordinatesDimension
   | GeoShapesDimension
-  | StandardErrorDimension;
+  | StandardErrorDimension
+  | ConfidenceUpperBoundDimension
+  | ConfidenceLowerBoundDimension;
 
 export type DimensionType = Dimension["__typename"];
 
@@ -309,6 +328,14 @@ export type GeoShapesDimension = BaseDimension & {
 
 export type StandardErrorDimension = BaseDimension & {
   __typename: "StandardErrorDimension";
+};
+
+export type ConfidenceUpperBoundDimension = BaseDimension & {
+  __typename: "ConfidenceUpperBoundDimension";
+};
+
+export type ConfidenceLowerBoundDimension = BaseDimension & {
+  __typename: "ConfidenceLowerBoundDimension";
 };
 
 export type Measure = NumericalMeasure | OrdinalMeasure;
@@ -390,6 +417,7 @@ export type GeoData = {
 // Extracted for performance reasons.
 export type SearchCube = {
   iri: string;
+  unversionedIri: string;
   title: string;
   description: string | null;
   publicationStatus: DataCubePublicationStatus;
@@ -411,7 +439,7 @@ export type SearchCube = {
     label: string;
   }[];
   dimensions?: {
-    iri: string;
+    id: ComponentId;
     label: string;
     timeUnit?: string;
     termsets: {
@@ -462,7 +490,7 @@ export const parseTerm = (term?: Term) => {
 };
 
 /**
- * Parse observation values (values returnd from query.execute()) to native JS types
+ * Parse observation values (values returned from query.execute()) to native JS types
  *
  * @param observationValue
  */
@@ -527,7 +555,7 @@ export const getCategoricalDimensions = (dimensions: Component[]) =>
 export const getGeoDimensions = (dimensions: Component[]) =>
   dimensions.filter(isGeoDimension);
 
-export const getDimensionsByDimensionType = ({
+export const getComponentsFilteredByType = ({
   dimensionTypes,
   dimensions,
   measures,
@@ -535,10 +563,11 @@ export const getDimensionsByDimensionType = ({
   dimensionTypes: ComponentType[];
   dimensions: Component[];
   measures: Component[];
-}) =>
-  [...measures, ...dimensions].filter((component) =>
-    dimensionTypes.includes(component.__typename)
+}) => {
+  return [...measures, ...dimensions].filter((c) =>
+    dimensionTypes.includes(c.__typename)
   );
+};
 
 const isNominalDimension = (
   dimension?: Component | null
@@ -603,7 +632,15 @@ export const isTemporalDimensionWithTimeUnit = (
 };
 
 const isStandardErrorResolvedDimension = (dim: ResolvedDimension) => {
-  return dim.data?.related.some((x) => x.type === "StandardError");
+  return dim.data?.related.some((r) => r.type === "StandardError");
+};
+
+const isConfidenceLowerBoundResolvedDimension = (dim: ResolvedDimension) => {
+  return dim.data?.related.some((r) => r.type === "ConfidenceLowerBound");
+};
+
+const isConfidenceUpperBoundResolvedDimension = (dim: ResolvedDimension) => {
+  return dim.data?.related.some((r) => r.type === "ConfidenceUpperBound");
 };
 
 export const isStandardErrorDimension = (
@@ -612,21 +649,27 @@ export const isStandardErrorDimension = (
   return dim.__typename === "StandardErrorDimension";
 };
 
-export const findRelatedErrorDimension = (
-  dimIri: string,
-  dimensions: Component[]
-) => {
-  return dimensions.find((x) =>
-    x.related?.some((r) => r.iri === dimIri && r.type === "StandardError")
-  );
+export const isConfidenceUpperBoundDimension = (
+  dim: Component
+): dim is ConfidenceUpperBoundDimension => {
+  return dim.__typename === "ConfidenceUpperBoundDimension";
+};
+
+export const isConfidenceLowerBoundDimension = (
+  dim: Component
+): dim is ConfidenceLowerBoundDimension => {
+  return dim.__typename === "ConfidenceLowerBoundDimension";
 };
 
 export const shouldLoadMinMaxValues = (dim: ResolvedDimension) => {
   const {
     data: { isNumerical, scaleType, dataKind },
   } = dim;
+
   return (
     (isNumerical && scaleType !== "Ordinal" && dataKind !== "Time") ||
-    isStandardErrorResolvedDimension(dim)
+    isStandardErrorResolvedDimension(dim) ||
+    isConfidenceUpperBoundResolvedDimension(dim) ||
+    isConfidenceLowerBoundResolvedDimension(dim)
   );
 };

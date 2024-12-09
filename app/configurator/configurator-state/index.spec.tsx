@@ -22,7 +22,8 @@ import {
 } from "@/configurator/configurator-state/init";
 import { getLocalStorageKey } from "@/configurator/configurator-state/localstorage";
 import { Dimension } from "@/domain/data";
-import { ObservationFilter } from "@/graphql/query-hooks";
+import { stringifyComponentId } from "@/graphql/make-component-id";
+import { PossibleFilterValue } from "@/graphql/query-hooks";
 import { data as fakeVizFixture } from "@/test/__fixtures/config/prod/line-1.json";
 import { getCachedComponentsMock } from "@/urql-cache.mock";
 import * as api from "@/utils/chart-config/api";
@@ -39,10 +40,18 @@ jest.mock("@/utils/chart-config/api", () => ({
   fetchChartConfig: jest.fn(),
 }));
 
-const possibleFilters: ObservationFilter[] = [
+jest.mock("@lingui/macro", () => ({
+  defineMessage: (str: string) => str,
+  t: (str: string) => str,
+}));
+
+const possibleFilters: PossibleFilterValue[] = [
   {
-    __typename: "ObservationFilter",
-    iri: "symbolLayerIri",
+    __typename: "PossibleFilterValue",
+    id: stringifyComponentId({
+      unversionedCubeIri: "mapDataset",
+      unversionedComponentIri: "symbolLayerIri",
+    }),
     type: "single",
     value: "xPossible",
   },
@@ -54,6 +63,7 @@ Object.assign(mockClient, {
   query: jest.fn().mockImplementation(() => ({
     toPromise: jest.fn().mockResolvedValue({
       data: {
+        dataCubePreview: getCachedComponentsMock.geoAndNumerical,
         possibleFilters,
       },
     }),
@@ -81,6 +91,7 @@ describe("initChartStateFromChart", () => {
       chartConfig as ReturnType<typeof api.fetchChartConfig>
     );
   };
+
   it("should fetch work if existing chart is valid", async () => {
     setup({
       chartConfig: {
@@ -97,9 +108,9 @@ describe("initChartStateFromChart", () => {
       activeChartKey: migratedActiveChartKey,
       chartConfigs: migratedChartsConfigs,
       ...migratedRest
-    } = migrateConfiguratorState(
+    } = (await migrateConfiguratorState(
       fakeVizFixture
-    ) as ConfiguratorStateConfiguringChart;
+    )) as ConfiguratorStateConfiguringChart;
     const { key: migratedChartConfigKey, ...migratedChartConfig } =
       migratedChartsConfigs[0];
 
@@ -176,7 +187,10 @@ describe("initChartStateFromCube", () => {
       "en"
     )) as ConfiguratorStateConfiguringChart;
     expect(res.chartConfigs[0].cubes[0].filters).toEqual({
-      symbolLayerIri: {
+      [stringifyComponentId({
+        unversionedCubeIri: "mapDataset",
+        unversionedComponentIri: "symbolLayerIri",
+      })]: {
         type: "single",
         value: "xPossible",
       },
@@ -206,7 +220,7 @@ describe("moveField", () => {
 
   it("should be possible to move an existing field up", () => {
     const newChartConfig = moveFilterField(chartConfig, {
-      dimension: { iri: "date", cubeIri: "" } as any as Dimension,
+      dimension: { id: "date", cubeIri: "" } as any as Dimension,
       delta: -1,
       possibleValues: ["2020.11.20", "2020.11.10"],
     });
@@ -222,7 +236,7 @@ describe("moveField", () => {
 
   it("should be possible to move an existing field down", () => {
     const newChartConfig = moveFilterField(chartConfig, {
-      dimension: { iri: "species", cubeIri: "" } as any as Dimension,
+      dimension: { id: "species", cubeIri: "" } as any as Dimension,
       delta: 1,
       possibleValues: ["penguins", "tigers"],
     });
@@ -238,7 +252,7 @@ describe("moveField", () => {
 
   it("should be possible to move an absent field up", () => {
     const newChartConfig = moveFilterField(chartConfig, {
-      dimension: { iri: "color", cubeIri: "" } as any as Dimension,
+      dimension: { id: "color", cubeIri: "" } as any as Dimension,
       delta: -1,
       possibleValues: ["red", "blue"],
     });
@@ -256,7 +270,7 @@ describe("moveField", () => {
 
   it("should not be possible to move an existing field too much above", () => {
     const newChartConfig = moveFilterField(chartConfig, {
-      dimension: { iri: "species", cubeIri: "" } as any as Dimension,
+      dimension: { id: "species", cubeIri: "" } as any as Dimension,
       delta: -1,
       possibleValues: ["penguins", "tigers"],
     });
@@ -272,7 +286,7 @@ describe("moveField", () => {
 
   it("should not be possible to move an existing field too much below", () => {
     const newChartConfig = moveFilterField(chartConfig, {
-      dimension: { iri: "date", cubeIri: "" } as any as Dimension,
+      dimension: { id: "date", cubeIri: "" } as any as Dimension,
       delta: 1,
       possibleValues: ["penguins", "tigers"],
     });
@@ -302,21 +316,21 @@ describe("getFiltersByMappingStatus", () => {
       ],
       fields: {
         areaLayer: {
-          componentIri: "areaIri",
-          color: { type: "categorical", componentIri: "areaColorIri" },
+          componentId: "areaIri",
+          color: { type: "categorical", componentId: "areaColorIri" },
         },
         symbolLayer: {
-          componentIri: "symbolIri",
-          color: { type: "categorical", componentIri: "symbolColorIri" },
+          componentId: "symbolIri",
+          color: { type: "categorical", componentId: "symbolColorIri" },
         },
       },
     } as any as MapConfig;
 
-    const { mappedFiltersIris } = getFiltersByMappingStatus(config, {
+    const { mappedFiltersIds } = getFiltersByMappingStatus(config, {
       cubeIri: "foo",
     });
 
-    expect([...mappedFiltersIris]).toEqual(
+    expect([...mappedFiltersIds]).toEqual(
       expect.arrayContaining(["areaColorIri", "symbolColorIri"])
     );
   });
@@ -338,21 +352,19 @@ describe("getFiltersByMappingStatus", () => {
       ],
       fields: {
         x: {
-          componentIri: "joinBy",
+          componentId: "joinBy",
         },
       },
     } as any as ComboLineDualConfig;
 
-    const { mappedFiltersIris } = getFiltersByMappingStatus(config, {
+    const { mappedFiltersIds } = getFiltersByMappingStatus(config, {
       cubeIri: "foo",
-      joinByIris: ["X1", "X2"],
+      joinByIds: ["X1", "X2"],
     });
 
     // If the joinBy dimensions are treated as being mapped, we won't apply
     // single filters to them when deriving filters from fields.
-    expect([...mappedFiltersIris]).toEqual(
-      expect.arrayContaining(["X1", "X2"])
-    );
+    expect([...mappedFiltersIds]).toEqual(expect.arrayContaining(["X1", "X2"]));
   });
 });
 
@@ -411,7 +423,7 @@ describe("getFilterValue", () => {
   } as any as ConfiguratorState;
   const dimension = {
     isJoinByDimension: true,
-    originalIris: [{ dimensionIri: "first" }, { dimensionIri: "second" }],
+    originalIds: [{ dimensionId: "first" }, { dimensionId: "second" }],
   } as any as Dimension;
 
   it("should correctly retrieve filters for joinBy dimension", () => {

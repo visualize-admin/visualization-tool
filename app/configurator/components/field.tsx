@@ -30,6 +30,8 @@ import {
   Input,
   Radio,
   Select,
+  SelectOption,
+  SelectOptionGroup,
   Slider,
   Switch,
 } from "@/components/form";
@@ -95,6 +97,7 @@ import { useLocale } from "@/locales/use-locale";
 import { getPalette } from "@/palettes";
 import { hierarchyToOptions } from "@/utils/hierarchy";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
+import useEvent from "@/utils/use-event";
 
 const useStyles = makeStyles<Theme>((theme) => ({
   root: {
@@ -181,7 +184,7 @@ export const DataFilterSelect = ({
   label,
   id,
   disabled,
-  isOptional,
+  optional,
   topControls,
   sideControls,
   hierarchy,
@@ -189,12 +192,12 @@ export const DataFilterSelect = ({
   loading,
 }: {
   dimension: Dimension;
-  label: React.ReactNode;
+  label: ReactNode;
   id: string;
   disabled?: boolean;
-  isOptional?: boolean;
-  topControls?: React.ReactNode;
-  sideControls?: React.ReactNode;
+  optional?: boolean;
+  topControls?: ReactNode;
+  sideControls?: ReactNode;
   hierarchy?: HierarchyValue[] | null;
   onOpen?: () => void;
   loading?: boolean;
@@ -202,7 +205,7 @@ export const DataFilterSelect = ({
   const fieldProps = useSingleFilterSelect(dimensionToFieldProps(dimension));
   const noneLabel = t({
     id: "controls.dimensionvalue.none",
-    message: `No Filter`,
+    message: "No Filter",
   });
   const sortedValues = useMemo(() => {
     const sorters = makeDimensionValueSorters(dimension);
@@ -214,7 +217,7 @@ export const DataFilterSelect = ({
   }, [dimension]);
 
   const allValues = useMemo(() => {
-    return isOptional
+    return optional
       ? [
           {
             value: FIELD_VALUE_NONE,
@@ -224,12 +227,13 @@ export const DataFilterSelect = ({
           ...sortedValues,
         ]
       : sortedValues;
-  }, [isOptional, sortedValues, noneLabel]);
+  }, [optional, sortedValues, noneLabel]);
 
   const hierarchyOptions = useMemo(() => {
     if (!hierarchy) {
       return;
     }
+
     return hierarchyToOptions(
       hierarchy,
       dimension.values.map((v) => v.value)
@@ -237,19 +241,18 @@ export const DataFilterSelect = ({
   }, [hierarchy, dimension.values]);
 
   const { open, close, isOpen } = useDisclosure();
-  const handleOpen = () => {
+  const handleOpen = useEvent(() => {
     open();
     onOpen?.();
-  };
-
-  const handleClose = () => {
+  });
+  const handleClose = useEvent(() => {
     close();
-  };
+  });
 
   if (hierarchy && hierarchyOptions) {
     return (
       <SelectTree
-        label={<FieldLabel label={label} isOptional={isOptional} />}
+        label={<FieldLabel label={label} optional={optional} />}
         id={id}
         options={hierarchyOptions}
         onClose={handleClose}
@@ -286,7 +289,7 @@ export const DataFilterSelect = ({
           }
         />
       ) : (
-        <FieldLabel label={label} isOptional={isOptional} />
+        <FieldLabel label={label} optional={optional} />
       )}
       <Select
         id={id}
@@ -337,13 +340,8 @@ export const MostRecentDateSwitch = (props: MostRecentDateSwitchProps) => {
 
 export const dimensionToFieldProps = (dim: Component) => {
   return isJoinByComponent(dim)
-    ? dim.originalIris.map((o) => pick(o, ["cubeIri", "dimensionIri"]))
-    : [
-        {
-          dimensionIri: dim.iri,
-          cubeIri: dim.cubeIri,
-        },
-      ];
+    ? dim.originalIds.map((o) => pick(o, ["cubeIri", "dimensionId"]))
+    : [{ dimensionId: dim.id, cubeIri: dim.cubeIri }];
 };
 
 export const DataFilterTemporal = ({
@@ -412,7 +410,7 @@ export const DataFilterTemporal = ({
   return (
     <>
       <DatePickerField
-        name={`date-picker-${dimension.iri}`}
+        name={`date-picker-${dimension.id}`}
         label={
           <FieldLabel
             label={
@@ -685,7 +683,7 @@ const useMultiFilterColorPicker = (value: string) => {
   const [state, dispatch] = useConfiguratorState(isConfiguring);
   const chartConfig = getChartConfig(state);
   const filters = useChartConfigFilters(chartConfig);
-  const { dimensionIri, colorConfigPath } = useMultiFilterContext();
+  const { dimensionId, colorConfigPath } = useMultiFilterContext();
   const { activeField } = chartConfig;
   const onChange = useCallback(
     (color: string) => {
@@ -722,8 +720,8 @@ const useMultiFilterColorPicker = (value: string) => {
     );
   }, [chartConfig, colorConfigPath, activeField]);
 
-  const checkedState = dimensionIri
-    ? isMultiFilterFieldChecked(filters, dimensionIri, value)
+  const checkedState = dimensionId
+    ? isMultiFilterFieldChecked(filters, dimensionId, value)
     : null;
 
   return useMemo(
@@ -778,7 +776,7 @@ export const SingleFilterField = ({
   value,
   disabled,
 }: {
-  filters: { cubeIri: string; dimensionIri: string }[];
+  filters: { cubeIri: string; dimensionId: string }[];
   label: string;
   value: string;
   disabled?: boolean;
@@ -853,11 +851,11 @@ export const LoadingIndicator = () => {
 
 export const FieldLabel = ({
   label,
-  isOptional,
+  optional,
   isFetching,
 }: {
   label: React.ReactNode;
-  isOptional?: boolean;
+  optional?: boolean;
   isFetching?: boolean;
 }) => {
   const classes = useStyles();
@@ -869,16 +867,60 @@ export const FieldLabel = ({
   return (
     <div className={classes.root}>
       {label}
-      {isOptional ? <span>({optionalLabel})</span> : null}
+      {optional ? <span>({optionalLabel})</span> : null}
       {isFetching ? <LoadingIndicator /> : null}
     </div>
   );
+};
+
+const getOptionsWithMaybeOptional = (
+  options: SelectOption[],
+  optional: boolean
+): SelectOption[] => {
+  return optional
+    ? [
+        {
+          value: FIELD_VALUE_NONE,
+          label: t({
+            id: "controls.none",
+            message: "None",
+          }),
+          isNoneValue: true,
+        },
+        ...options,
+      ]
+    : options;
+};
+
+const getOptionGroupsWithMaybeOptional = (
+  optionGroups: SelectOptionGroup[],
+  optional: boolean
+): SelectOptionGroup[] | undefined => {
+  return optional
+    ? [
+        [
+          undefined,
+          [
+            {
+              value: FIELD_VALUE_NONE,
+              label: t({
+                id: "controls.none",
+                message: "None",
+              }),
+              isNoneValue: true,
+            },
+          ],
+        ],
+        ...optionGroups,
+      ]
+    : optionGroups;
 };
 
 export const ChartFieldField = ({
   label = "",
   field,
   options,
+  optionGroups,
   optional,
   disabled,
   components,
@@ -886,34 +928,29 @@ export const ChartFieldField = ({
   label?: string;
   field: EncodingFieldType;
   options: Option[];
+  optionGroups?: SelectOptionGroup[];
   optional?: boolean;
   disabled?: boolean;
   components: Component[];
 }) => {
   const props = useChartFieldField({ field, components });
-  const noneLabel = t({
-    id: "controls.none",
-    message: "None",
-  });
+  const allOptions = useMemo(() => {
+    return getOptionsWithMaybeOptional(options, !!optional);
+  }, [options, optional]);
+  const allOptionGroups = useMemo(() => {
+    return optionGroups
+      ? getOptionGroupsWithMaybeOptional(optionGroups, !!optional)
+      : undefined;
+  }, [optionGroups, optional]);
 
   return (
     <Select
       key={`select-${field}-dimension`}
       id={field}
-      label={<FieldLabel isOptional={optional} label={label} />}
+      label={<FieldLabel optional={optional} label={label} />}
       disabled={disabled}
-      options={
-        optional
-          ? [
-              {
-                value: FIELD_VALUE_NONE,
-                label: noneLabel,
-                isNoneValue: true,
-              },
-              ...options,
-            ]
-          : options
-      }
+      options={allOptions}
+      optionGroups={allOptionGroups}
       {...props}
     />
   );
@@ -1033,9 +1070,10 @@ type ChartOptionSelectFieldProps<V> = {
   path: string;
   disabled?: boolean;
   options: Option[];
+  optionGroups?: SelectOptionGroup[];
   getValue?: (x: string) => V | undefined;
   getKey?: (x: V) => string;
-  isOptional?: boolean;
+  optional?: boolean;
 };
 
 export const ChartOptionSelectField = <V extends {} = string>(
@@ -1048,9 +1086,10 @@ export const ChartOptionSelectField = <V extends {} = string>(
     path,
     disabled = false,
     options,
+    optionGroups,
     getValue,
     getKey,
-    isOptional,
+    optional,
   } = props;
   const fieldProps = useChartOptionSelectField({
     field,
@@ -1058,32 +1097,25 @@ export const ChartOptionSelectField = <V extends {} = string>(
     getValue,
     getKey,
   });
-  const noneLabel = t({
-    id: "controls.none",
-    message: "None",
-  });
 
-  const allOptions = useMemo(() => {
-    return isOptional
-      ? [
-          {
-            value: FIELD_VALUE_NONE,
-            label: noneLabel,
-            isNoneValue: true,
-          },
-          ...options,
-        ]
-      : options;
-  }, [isOptional, options, noneLabel]);
+  const allOptions: SelectOption[] = useMemo(() => {
+    return getOptionsWithMaybeOptional(options, !!optional);
+  }, [optional, options]);
+  const allOptionGroups: SelectOptionGroup[] | undefined = useMemo(() => {
+    return optionGroups
+      ? getOptionGroupsWithMaybeOptional(optionGroups, !!optional)
+      : undefined;
+  }, [optional, optionGroups]);
 
   return (
     <Select
       id={id}
       disabled={disabled}
       label={
-        <FieldLabel isOptional={isOptional} isFetching={false} label={label} />
+        <FieldLabel optional={optional} isFetching={false} label={label} />
       }
       options={allOptions}
+      optionGroups={allOptionGroups}
       {...fieldProps}
     />
   );

@@ -98,7 +98,7 @@ const useStyles = makeStyles<Theme>((theme) => ({
 const TableSortingOptionItem = ({
   dimensions,
   measures,
-  componentIri,
+  componentId,
   index,
   chartConfig,
   sortingOrder,
@@ -111,7 +111,7 @@ const TableSortingOptionItem = ({
   const [, dispatch] = useConfiguratorState();
   const classes = useStyles();
   const component = [...dimensions, ...measures].find(
-    ({ iri }) => iri === componentIri
+    ({ id }) => id === componentId
   );
 
   const onRemove = useEvent(() => {
@@ -161,14 +161,14 @@ const TableSortingOptionItem = ({
       </Typography>
       <Flex className={classes.metaOptionsContainer}>
         <Radio
-          name={`${componentIri}-sortingOrder`}
+          name={`${componentId}-sortingOrder`}
           value="asc"
           checked={sortingOrder === "asc"}
           onChange={onChangeSortingOrder}
           label={getFieldLabel(`sorting.${sortingType}.asc`)}
         />
         <Radio
-          name={`${componentIri}-sortingOrder`}
+          name={`${componentId}-sortingOrder`}
           value="desc"
           checked={sortingOrder === "desc"}
           onChange={onChangeSortingOrder}
@@ -208,7 +208,7 @@ const AddTableSortingOption = ({
     (e: SelectChangeEvent<unknown>) => {
       const { value } = e.target;
       const component = [...dimensions, ...measures].find(
-        ({ iri }) => iri === value
+        ({ id }) => id === value
       );
 
       if (component) {
@@ -216,7 +216,7 @@ const AddTableSortingOption = ({
           type: "CHART_CONFIG_REPLACED",
           value: {
             chartConfig: addSortingOption(chartConfig, {
-              componentIri: component.iri,
+              componentId: component.id,
               componentType: component.__typename,
               sortingOrder: "asc",
             }),
@@ -246,23 +246,18 @@ const AddTableSortingOption = ({
       .flatMap((c) => {
         if (
           chartConfig.sorting.some(
-            ({ componentIri }) => componentIri === c.componentIri
+            ({ componentId }) => componentId === c.componentId
           )
         ) {
           return [];
         }
 
         const component = [...dimensions, ...measures].find(
-          ({ iri }) => iri === c.componentIri
+          ({ id }) => id === c.componentId
         );
 
         return component
-          ? [
-              {
-                value: component.iri,
-                label: component.label,
-              },
-            ]
+          ? [{ value: component.id, label: component.label }]
           : [];
       })
       .sort((a, b) => ascending(a.label, b.label)),
@@ -300,7 +295,7 @@ const ChangeTableSortingOption = ({
     (e: SelectChangeEvent<unknown>) => {
       const { value } = e.target;
       const component = [...dimensions, ...measures].find(
-        ({ iri }) => iri === value
+        ({ id }) => id === value
       );
 
       if (component) {
@@ -310,7 +305,7 @@ const ChangeTableSortingOption = ({
             chartConfig: changeSortingOption(chartConfig, {
               index,
               option: {
-                componentIri: component.iri,
+                componentId: component.id,
                 componentType: component.__typename,
                 sortingOrder: "asc",
               },
@@ -327,25 +322,18 @@ const ChangeTableSortingOption = ({
   );
 
   const columns = useOrderedTableColumns(chartConfig.fields);
-  const { componentIri } = chartConfig.sorting[index];
+  const { componentId } = chartConfig.sorting[index];
   const options = columns.flatMap((c) => {
     const component = [...dimensions, ...measures].find(
-      ({ iri }) => iri === c.componentIri
+      ({ id }) => id === c.componentId
     );
 
-    return component
-      ? [
-          {
-            value: component.iri,
-            label: component.label,
-          },
-        ]
-      : [];
+    return component ? [{ value: component.id, label: component.label }] : [];
   });
   return (
     <Select
       id={`change-sorting-option-${index}`}
-      value={componentIri}
+      value={componentId}
       options={options}
       label={t({ id: "controls.sorting.sortBy", message: `Sort by` })}
       onChange={onChange}
@@ -410,8 +398,8 @@ export const TableSortingOptions = ({
                   {sorting.map((option, i) => {
                     return (
                       <Draggable
-                        key={option.componentIri}
-                        draggableId={option.componentIri}
+                        key={option.componentId}
+                        draggableId={option.componentId}
                         index={i}
                       >
                         {(

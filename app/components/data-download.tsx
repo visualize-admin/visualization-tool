@@ -35,6 +35,7 @@ import {
 } from "@/domain/data";
 import {
   dateFormatterFromDimension,
+  formatIdentity,
   getFormatFullDateAuto,
   getFormattersForLocale,
 } from "@/formatters";
@@ -99,16 +100,17 @@ const prepareData = ({
   dimensionParsers: DimensionParsers;
 }) => {
   const sortedComponents = getSortedColumns(components);
-  const columns = keyBy(sortedComponents, (d) => d.iri);
+  const columns = keyBy(sortedComponents, (d) => d.id);
   // Sort the data from left to right, keeping the order of the columns.
   const sorting: SortingField["sorting"] = {
     sortingType: "byAuto",
     sortingOrder: "asc",
   };
+
   const sorters = sortedComponents.map<
     [string, ReturnType<typeof makeDimensionValueSorters>]
   >((d) => {
-    return [d.iri, makeDimensionValueSorters(d, { sorting })];
+    return [d.id, makeDimensionValueSorters(d, { sorting })];
   });
   // We need to sort before parsing, to access raw observation values, where
   // dates are formatted in the format of YYYY-MM-DD, etc.
@@ -126,23 +128,39 @@ const prepareData = ({
         }
       }
     }
-
     return 0;
   });
 
   const parsedData = sortedData.map((obs) => {
-    return Object.keys(obs).reduce<Observation>((acc, key) => {
+    const formattedObs = Object.keys(obs).reduce<Observation>((acc, key) => {
+      return {
+        ...acc,
+        [key]: formatIdentity(obs[key]),
+      };
+    }, {});
+
+    return Object.keys(formattedObs).reduce<Observation>((acc, key) => {
       const col = columns[key];
       const parser = dimensionParsers[key];
 
-      return col
-        ? {
-            ...acc,
-            ...{ [makeColumnLabel(col)]: parser(obs[key] as string) },
-          }
-        : acc;
+      if (!col) return acc;
+
+      const value = formattedObs[key];
+      let parsedValue;
+
+      if (value?.toString() === "–") {
+        parsedValue = "-";
+      } else {
+        parsedValue = parser(value as string);
+      }
+
+      return {
+        ...acc,
+        [makeColumnLabel(col)]: parsedValue,
+      };
     }, {});
   });
+
   const columnKeys = Object.values(columns).map(makeColumnLabel);
 
   return {
@@ -267,7 +285,7 @@ const DataDownloadInnerMenu = ({
 };
 
 /** We need to include every cube column in full dataset download (client's
- * request), so we do not pass any componentIris here
+ * request), so we do not pass any component ids here
  * */
 export const getFullDataDownloadFilters = (
   filters: DataCubeObservationFilter
@@ -343,6 +361,7 @@ const DownloadMenuItem = ({
       const components = [...dimensions, ...measures];
       const dimensionParsers = getDimensionParsers(components, { locale });
       const observations = observationsData.dataCubesObservations.data;
+
       const { columnKeys, data } = prepareData({
         components,
         observations,
@@ -458,15 +477,17 @@ const getDimensionParsers = (
         case "OrdinalDimension":
         case "TemporalEntityDimension":
         case "TemporalOrdinalDimension":
-          return [d.iri, (d) => d];
+          return [d.id, (d) => d];
         case "NumericalMeasure":
         case "StandardErrorDimension":
-          return [d.iri, (d) => +d];
+        case "ConfidenceUpperBoundDimension":
+        case "ConfidenceLowerBoundDimension":
+          return [d.id, (d) => +d];
         case "OrdinalMeasure":
-          return d.isNumerical ? [d.iri, (d) => +d] : [d.iri, (d) => d];
+          return d.isNumerical ? [d.id, (d) => +d] : [d.id, (d) => d];
         case "TemporalDimension": {
           if (d.timeUnit === "Year") {
-            return [d.iri, (d) => +d];
+            return [d.id, (d) => +d];
           }
 
           // We do not want to parse dates as dates, but strings (for easier
@@ -475,7 +496,7 @@ const getDimensionParsers = (
           const formatDateAuto = getFormatFullDateAuto(dateFormatters);
 
           return [
-            d.iri,
+            d.id,
             dateFormatterFromDimension(d, dateFormatters, formatDateAuto),
           ];
         }

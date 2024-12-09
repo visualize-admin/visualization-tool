@@ -172,16 +172,16 @@ export const TableColumnOptions = ({
     );
   }
 
-  const activeFieldComponentIri = chartConfig.fields[activeField]?.componentIri;
+  const activeFieldComponentId = chartConfig.fields[activeField]?.componentId;
   // It's a dimension which is not mapped to an encoding field, so we show the filter!
   // FIXME: activeField and encodingField should match? to remove type assertion
-  if (!activeFieldComponentIri) {
+  if (!activeFieldComponentId) {
     return null;
   }
 
-  // Active field is always a component IRI, like in filters
+  // Active field is always a component id, like in filters
   const allComponents = [...dimensions, ...measures];
-  const component = allComponents.find((d) => d.iri === activeField);
+  const component = allComponents.find((d) => d.id === activeField);
 
   if (!component) {
     return (
@@ -353,7 +353,7 @@ export const TableColumnOptions = ({
               />
             ) : (
               <TimeFilter
-                key={component.iri}
+                key={component.id}
                 dimension={component}
                 disableInteractiveFilters
               />
@@ -373,7 +373,7 @@ export const TableColumnOptions = ({
               <DimensionValuesSingleFilter dimension={component} />
             ) : (
               <DimensionValuesMultiFilter
-                field={component.iri}
+                field={component.id}
                 dimension={component}
                 colorComponent={component}
                 colorConfigPath="columnStyle"

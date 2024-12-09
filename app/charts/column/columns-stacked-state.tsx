@@ -105,7 +105,7 @@ const useColumnsStackedState = (
     getSegmentAbbreviationOrLabel,
     getSegmentLabel,
   } = variables;
-  const getIdentityY = useGetIdentityY(yMeasure.iri);
+  const getIdentityY = useGetIdentityY(yMeasure.id);
   const {
     chartData,
     scalesData,
@@ -121,7 +121,7 @@ const useColumnsStackedState = (
   const formatters = useChartFormatters(chartProps);
   const calculationType = useChartInteractiveFilters((d) => d.calculation.type);
 
-  const xKey = fields.x.componentIri;
+  const xKey = fields.x.componentId;
 
   const segmentsByValue = useMemo(() => {
     const values = segmentDimension?.values || [];
@@ -139,9 +139,9 @@ const useColumnsStackedState = (
     );
   }, [getSegment, getY, scalesData]);
 
-  const segmentFilter = segmentDimension?.iri
+  const segmentFilter = segmentDimension?.id
     ? chartConfig.cubes.find((d) => d.iri === segmentDimension.cubeIri)
-        ?.filters[segmentDimension.iri]
+        ?.filters[segmentDimension.id]
     : undefined;
   const { allSegments, segments } = useMemo(() => {
     const allUniqueSegments = Array.from(new Set(segmentData.map(getSegment)));
@@ -189,7 +189,7 @@ const useColumnsStackedState = (
     if (normalize) {
       return group(
         normalizeData(chartData, {
-          yKey: yMeasure.iri,
+          yKey: yMeasure.id,
           getY,
           getTotalGroupValue: (d) => sumsByX[getX(d)],
         }),
@@ -198,7 +198,7 @@ const useColumnsStackedState = (
     }
 
     return group(chartData, getX);
-  }, [chartData, getX, sumsByX, getY, yMeasure.iri, normalize]);
+  }, [chartData, getX, sumsByX, getY, yMeasure.id, normalize]);
 
   const chartWideData = useMemo(() => {
     return getWideData({
@@ -212,7 +212,8 @@ const useColumnsStackedState = (
   }, [getSegment, getY, chartDataGroupedByX, segments, xKey]);
 
   const xFilter = chartConfig.cubes.find((d) => d.iri === xDimension.cubeIri)
-    ?.filters[xDimension.iri];
+    ?.filters[xDimension.id];
+
   // Map ordered segments labels to colors
   const {
     colors,
@@ -309,7 +310,7 @@ const useColumnsStackedState = (
     allSegments,
   ]);
 
-  const animationIri = fields.animation?.componentIri;
+  const animationIri = fields.animation?.componentId;
   const getAnimation = useCallback(
     (d: Observation) => {
       return animationIri ? (d[animationIri] as string) : "";
@@ -437,7 +438,7 @@ const useColumnsStackedState = (
       });
       const yValueFormatter = getStackedTooltipValueFormatter({
         normalize,
-        yMeasureIri: yMeasure.iri,
+        yMeasureId: yMeasure.id,
         yMeasureUnit: yMeasure.unit,
         formatters,
         formatNumber,
@@ -478,7 +479,7 @@ const useColumnsStackedState = (
       chartDataGroupedByX,
       segments,
       getSegment,
-      yMeasure.iri,
+      yMeasure.id,
       yMeasure.unit,
       formatters,
       formatNumber,

@@ -34,6 +34,7 @@ import {
   updateColorMapping,
 } from "@/configurator/configurator-state/reducer";
 import { Dimension, Measure, NominalDimension } from "@/domain/data";
+import { stringifyComponentId } from "@/graphql/make-component-id";
 import covid19ColumnChartConfig from "@/test/__fixtures/config/dev/chartConfig-column-covid19.json";
 import covid19TableChartConfig from "@/test/__fixtures/config/dev/chartConfig-table-covid19.json";
 import covid19Metadata from "@/test/__fixtures/data/DataCubeMetadataWithComponentValues-covid19.json";
@@ -49,7 +50,7 @@ afterEach(() => {
   try {
     expect(configStateMock).toEqual(pristineConfigStateMock);
   } catch (e) {
-    throw new Error(
+    throw Error(
       "One of the tests is dirtying the configStateMock. Please ensure that the configStateMock is not modified in the tests by using produce from immer."
     );
   }
@@ -70,12 +71,16 @@ jest.mock("@/urql-cache", () => {
   };
 });
 
-export type getCachedComponents = typeof getCachedComponentsOriginal;
-export const getCachedComponents =
-  getCachedComponentsOriginal as unknown as jest.Mock<
-    ReturnType<getCachedComponents>,
-    Parameters<getCachedComponents>
-  >;
+jest.mock("@lingui/macro", () => ({
+  defineMessage: (str: string) => str,
+  t: (str: string) => str,
+}));
+
+type getCachedComponents = typeof getCachedComponentsOriginal;
+const getCachedComponents = getCachedComponentsOriginal as unknown as jest.Mock<
+  ReturnType<getCachedComponents>,
+  Parameters<getCachedComponents>
+>;
 
 afterEach(() => {
   jest.restoreAllMocks();
@@ -116,8 +121,8 @@ describe("add dataset", () => {
 
     const config = newState.chartConfigs[0] as MapConfig;
 
-    expect(config.fields["areaLayer"]?.componentIri).toEqual("joinBy__0");
-    expect(config.fields["areaLayer"]?.color.componentIri).toEqual("joinBy__0");
+    expect(config.fields["areaLayer"]?.componentId).toEqual("joinBy__0");
+    expect(config.fields["areaLayer"]?.color.componentId).toEqual("joinBy__0");
     expect(config.cubes.length).toBe(2);
   });
 
@@ -133,7 +138,8 @@ describe("add dataset", () => {
       expect(
         options.cubeFilters.map((x) => x.joinBy).every((x) => x === undefined)
       ).toBe(true);
-      return getCachedComponentsMock.electricyPricePerCantonDimensions;
+
+      return getCachedComponentsMock.electricityPricePerCantonDimensions;
     });
     const newState2 = runReducer(
       newState,
@@ -179,14 +185,19 @@ describe("add chart", () => {
     ) as ConfiguratorStateConfiguringChart;
     const config = newState.chartConfigs[1];
     expect(Object.keys(config.cubes[0].filters)).toEqual([
-      "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton",
+      stringifyComponentId({
+        unversionedCubeIri:
+          "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen",
+        unversionedComponentIri:
+          "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton",
+      }),
     ]);
   });
 });
 
 describe("applyDimensionToFilters", () => {
   const keyDimension = {
-    iri: "https://environment.ld.admin.ch/foen/ubd0104/parametertype",
+    id: "https://environment.ld.admin.ch/foen/ubd0104/parametertype",
     label: "Parameter",
     isKeyDimension: true,
     values: [
@@ -199,7 +210,7 @@ describe("applyDimensionToFilters", () => {
 
   const keyDimensionWithHierarchy = {
     __typename: "NominalDimension",
-    iri: "nominalDimensionIri",
+    id: "nominalDimensionIri",
     label: "Nominal Dimension with Hierarchy",
     isKeyDimension: true,
     isNumerical: false,
@@ -210,7 +221,7 @@ describe("applyDimensionToFilters", () => {
     hierarchy: [
       {
         __typename: "HierarchyValue",
-        dimensionIri: "nominalDimensionIri",
+        dimensionId: "nominalDimensionIri",
         value: "switzerland",
         label: "Switzerland",
         depth: 0,
@@ -219,7 +230,7 @@ describe("applyDimensionToFilters", () => {
       },
       {
         __typename: "HierarchyValue",
-        dimensionIri: "nominalDimensionIri",
+        dimensionId: "nominalDimensionIri",
         value: "brienz",
         label: "Brienz",
         depth: -1,
@@ -230,7 +241,7 @@ describe("applyDimensionToFilters", () => {
   } as any as NominalDimension;
 
   const optionalDimension = {
-    iri: "https://environment.ld.admin.ch/foen/ubd0104/parametertype",
+    id: "https://environment.ld.admin.ch/foen/ubd0104/parametertype",
     label: "Parameter",
     isKeyDimension: false,
     values: [
@@ -460,43 +471,41 @@ describe("deriveFiltersFromFields", () => {
         "cubes": Array [
           Object {
             "filters": Object {
-              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr": Object {
+              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr": Object {
                 "type": "single",
                 "value": "2011",
               },
-              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton": Object {
+              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton": Object {
                 "type": "single",
                 "value": "https://ld.admin.ch/canton/1",
               },
             },
             "iri": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9",
             "joinBy": Array [
-              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
-              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton",
+              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
+              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton",
             ],
-            "publishIri": "https://energy.ld.admin.ch/elcom/electricityprice-canton",
           },
           Object {
             "filters": Object {
-              "https://energy.ld.admin.ch/elcom/electricityprice/dimension/canton": Object {
+              "https://energy.ld.admin.ch/elcom/electricityprice-canton(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/elcom/electricityprice/dimension/canton": Object {
                 "type": "single",
                 "value": "https://ld.admin.ch/canton/1",
               },
-              "https://energy.ld.admin.ch/elcom/electricityprice/dimension/period": Object {
+              "https://energy.ld.admin.ch/elcom/electricityprice-canton(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/elcom/electricityprice/dimension/period": Object {
                 "type": "single",
                 "value": "2011",
               },
-              "https://energy.ld.admin.ch/elcom/electricityprice/dimension/product": Object {
+              "https://energy.ld.admin.ch/elcom/electricityprice-canton(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/elcom/electricityprice/dimension/product": Object {
                 "type": "single",
                 "value": "https://energy.ld.admin.ch/elcom/electricityprice/product/cheapest",
               },
             },
             "iri": "https://energy.ld.admin.ch/elcom/electricityprice-canton",
             "joinBy": Array [
-              "https://energy.ld.admin.ch/elcom/electricityprice/dimension/period",
-              "https://energy.ld.admin.ch/elcom/electricityprice/dimension/canton",
+              "https://energy.ld.admin.ch/elcom/electricityprice-canton(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/elcom/electricityprice/dimension/period",
+              "https://energy.ld.admin.ch/elcom/electricityprice-canton(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/elcom/electricityprice/dimension/canton",
             ],
-            "publishIri": "https://energy.ld.admin.ch/elcom/electricityprice-canton",
           },
         ],
         "fields": Object {
@@ -518,7 +527,7 @@ describe("deriveFiltersFromFields", () => {
               "https://energy.ld.admin.ch/elcom/electricityprice/category/H7": "#d62728",
               "https://energy.ld.admin.ch/elcom/electricityprice/category/H8": "#9467bd",
             },
-            "componentIri": "https://energy.ld.admin.ch/elcom/electricityprice/dimension/category",
+            "componentId": "https://energy.ld.admin.ch/elcom/electricityprice-canton(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/elcom/electricityprice/dimension/category",
             "palette": "category10",
             "sorting": Object {
               "sortingOrder": "asc",
@@ -526,7 +535,7 @@ describe("deriveFiltersFromFields", () => {
             },
           },
           "y": Object {
-            "componentIri": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/AnzahlAnlagen",
+            "componentId": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/AnzahlAnlagen",
           },
         },
         "interactiveFiltersConfig": Object {
@@ -536,15 +545,15 @@ describe("deriveFiltersFromFields", () => {
           },
           "dataFilters": Object {
             "active": false,
-            "componentIris": Array [],
+            "componentIds": Array [],
           },
           "legend": Object {
             "active": false,
-            "componentIri": "",
+            "componentId": "",
           },
           "timeRange": Object {
             "active": false,
-            "componentIri": "",
+            "componentId": "",
             "presets": Object {
               "from": "",
               "to": "",
@@ -573,7 +582,7 @@ describe("deriveFiltersFromFields", () => {
             "it": "",
           },
         },
-        "version": "3.1.0",
+        "version": "4.0.0",
       }
     `);
   });
@@ -605,7 +614,8 @@ describe("handleChartFieldChanged", () => {
         value: {
           locale: "en",
           field: "symbolLayer",
-          componentIri: "symbolLayerIri",
+          componentId:
+            "mapDataset(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)symbolLayerIri",
         },
       })
     );
@@ -626,7 +636,7 @@ describe("colorMapping", () => {
         value: {
           field: "areaLayer",
           colorConfigPath: "color",
-          dimensionIri: "year-period-1",
+          dimensionId: "year-period-1",
           values: [
             { value: "red", label: "red", color: "red" },
             { value: "green", label: "green", color: "green" },
@@ -662,7 +672,7 @@ describe("colorMapping", () => {
           chartType: "column",
           fields: {
             y: {
-              componentIri: "measure",
+              componentId: "measure",
             },
           },
           cubes: [
@@ -681,13 +691,17 @@ describe("colorMapping", () => {
       value: {
         locale: "en",
         field: "segment",
-        componentIri: "newAreaLayerColorIri",
+        componentId:
+          "mapDataset(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)newAreaLayerColorIri",
       },
     });
 
     const chartConfig = state.chartConfigs[0] as ColumnConfig;
 
-    expect(chartConfig.fields.segment?.componentIri === "newAreaLayerColorIri");
+    expect(
+      chartConfig.fields.segment?.componentId ===
+        "mapDataset(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)newAreaLayerColorIri"
+    );
     expect(chartConfig.fields.segment?.palette === "dimension");
     expect(chartConfig.fields.segment?.colorMapping).toEqual({
       orange: "rgb(255, 153, 0)",
@@ -707,7 +721,7 @@ describe("filtering", () => {
     > = {
       type: "CHART_CONFIG_FILTER_SET_RANGE",
       value: {
-        dimension: { cubeIri: "foo", iri: "time" } as any as Dimension,
+        dimension: { cubeIri: "foo", id: "time" } as any as Dimension,
         from: "2010",
         to: "2014",
       },
@@ -742,18 +756,18 @@ describe("filtering", () => {
       value: {
         dimension: {
           isJoinByDimension: true,
-          originalIris: [
+          originalIds: [
             {
               cubeIri: "foo1",
-              dimensionIri: "time1",
+              dimensionId: "time1",
             },
             {
               cubeIri: "foo2",
-              dimensionIri: "time2",
+              dimensionId: "time2",
             },
             {
               cubeIri: "foo3",
-              dimensionIri: "time3",
+              dimensionId: "time3",
             },
           ],
         } as any as Dimension,
@@ -774,6 +788,22 @@ describe("filtering", () => {
 
 describe("retainChartConfigWhenSwitchingChartType", () => {
   const dataSetMetadata = covid19Metadata.data.dataCubeByIri;
+  const dimensions = (dataSetMetadata.dimensions as any as Dimension[]).map(
+    (d) => ({
+      ...d,
+      id: stringifyComponentId({
+        unversionedCubeIri: "foo",
+        unversionedComponentIri: d.id,
+      }),
+    })
+  );
+  const measures = (dataSetMetadata.measures as any as Measure[]).map((m) => ({
+    ...m,
+    id: stringifyComponentId({
+      unversionedCubeIri: "foo",
+      unversionedComponentIri: m.id,
+    }),
+  }));
 
   const deriveNewChartConfig = (
     oldConfig: ChartConfig,
@@ -783,12 +813,12 @@ describe("retainChartConfigWhenSwitchingChartType", () => {
       getChartConfigAdjustedToChartType({
         chartConfig: oldConfig,
         newChartType,
-        dimensions: dataSetMetadata.dimensions as any as Dimension[],
-        measures: dataSetMetadata.measures as any as Measure[],
+        dimensions,
+        measures,
       })
     );
     deriveFiltersFromFields(newConfig, {
-      dimensions: dataSetMetadata.dimensions as any as Dimension[],
+      dimensions,
     });
 
     return current(newConfig);
@@ -819,8 +849,8 @@ describe("retainChartConfigWhenSwitchingChartType", () => {
       checks: {
         comparisonChecks: [
           {
-            oldFieldGetterPath: "fields.y.componentIri",
-            newFieldGetterPath: "fields.y.componentIri",
+            oldFieldGetterPath: "fields.y.componentId",
+            newFieldGetterPath: "fields.y.componentId",
             equal: true,
           },
         ],
@@ -831,8 +861,8 @@ describe("retainChartConfigWhenSwitchingChartType", () => {
       checks: {
         comparisonChecks: [
           {
-            oldFieldGetterPath: "fields.segment.componentIri",
-            newFieldGetterPath: "fields.segment.componentIri",
+            oldFieldGetterPath: "fields.segment.componentId",
+            newFieldGetterPath: "fields.segment.componentId",
             equal: true,
           },
         ],
@@ -843,18 +873,18 @@ describe("retainChartConfigWhenSwitchingChartType", () => {
       checks: {
         comparisonChecks: [
           {
-            oldFieldGetterPath: "fields.x.componentIri",
-            newFieldGetterPath: "fields.areaLayer.componentIri",
+            oldFieldGetterPath: "fields.x.componentId",
+            newFieldGetterPath: "fields.areaLayer.componentId",
             equal: false,
           },
           {
             oldFieldGetterPath: [
               "filters",
-              "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/type",
+              "foo(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/type",
             ],
             newFieldGetterPath: [
               "filters",
-              "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/type",
+              "foo(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/type",
             ],
             equal: true,
           },
@@ -866,8 +896,8 @@ describe("retainChartConfigWhenSwitchingChartType", () => {
       checks: {
         comparisonChecks: [
           {
-            oldFieldGetterPath: "fields.areaLayer.componentIri",
-            newFieldGetterPath: "fields.x.componentIri",
+            oldFieldGetterPath: "fields.areaLayer.componentId",
+            newFieldGetterPath: "fields.x.componentId",
             equal: true,
           },
         ],
@@ -878,8 +908,8 @@ describe("retainChartConfigWhenSwitchingChartType", () => {
       checks: {
         comparisonChecks: [
           {
-            oldFieldGetterPath: "fields.x.componentIri",
-            newFieldGetterPath: "fields.x.componentIri",
+            oldFieldGetterPath: "fields.x.componentId",
+            newFieldGetterPath: "fields.x.componentId",
             equal: false,
           },
         ],
@@ -895,10 +925,10 @@ describe("retainChartConfigWhenSwitchingChartType", () => {
           {
             oldFieldGetterPath: [
               "fields",
-              "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/date",
-              "componentIri",
+              "foo(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/date",
+              "componentId",
             ],
-            newFieldGetterPath: "fields.segment.componentIri",
+            newFieldGetterPath: "fields.segment.componentId",
             equal: true,
           },
         ],
@@ -907,7 +937,7 @@ describe("retainChartConfigWhenSwitchingChartType", () => {
           {
             fieldGetterPath: [
               "fields",
-              "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/date",
+              "foo(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/date",
               "isGroup",
             ],
             expectedValue: true,
@@ -915,7 +945,7 @@ describe("retainChartConfigWhenSwitchingChartType", () => {
           {
             fieldGetterPath: [
               "fields",
-              "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/georegion",
+              "foo(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/georegion",
               "isGroup",
             ],
             expectedValue: true,
@@ -928,11 +958,11 @@ describe("retainChartConfigWhenSwitchingChartType", () => {
       checks: {
         comparisonChecks: [
           {
-            oldFieldGetterPath: "fields.segment.componentIri",
+            oldFieldGetterPath: "fields.segment.componentId",
             newFieldGetterPath: [
               "fields",
-              "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/date",
-              "componentIri",
+              "foo(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/date",
+              "componentId",
             ],
             equal: true,
           },
@@ -942,7 +972,7 @@ describe("retainChartConfigWhenSwitchingChartType", () => {
           {
             fieldGetterPath: [
               "fields",
-              "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/date",
+              "foo(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/date",
               "isGroup",
             ],
             expectedValue: true,
@@ -996,22 +1026,38 @@ describe("retainChartConfigWhenSwitchingChartType", () => {
     }
   };
 
-  it("should retain appropriate x & y fields and discard the others", () => {
+  it("should retain appropriate x & y fields and discard the others", async () => {
     runChecks(
-      migrateChartConfig(covid19ColumnChartConfig, {
-        migrationProps: { meta: {}, dataSet: "foo" },
+      await migrateChartConfig(covid19ColumnChartConfig, {
+        migrationProps: {
+          meta: {},
+          dataSet: "foo",
+          dataSource: {
+            type: "sparql",
+            url: "",
+          },
+        },
       }),
       xyChecks
     );
   });
 
-  it("should retain appropriate segment fields and discard the others", () => {
-    runChecks(
-      migrateChartConfig(covid19TableChartConfig, {
-        migrationProps: { meta: {}, dataSet: "foo" },
-      }),
-      segmentChecks
-    );
+  it("should retain appropriate segment fields and discard the others", async () => {
+    getCachedComponents.mockImplementation(() => ({
+      dimensions,
+      measures,
+    }));
+    const config = await migrateChartConfig(covid19TableChartConfig, {
+      migrationProps: {
+        meta: {},
+        dataSet: "foo",
+        dataSource: {
+          type: "sparql",
+          url: "",
+        },
+      },
+    });
+    runChecks(config, segmentChecks);
   });
 });
 
@@ -1035,10 +1081,10 @@ describe("handleChartOptionChanged", () => {
           ],
           fields: {
             areaLayer: {
-              componentIri: "areaLayerIri",
+              componentId: "areaLayerIri",
               color: {
                 type: "numerical",
-                componentIri: "areaLayerColorIri",
+                componentId: "areaLayerColorIri",
                 palette: "oranges",
                 scaleType: "continuous",
                 interpolationType: "linear",
@@ -1079,10 +1125,10 @@ describe("handleChartOptionChanged", () => {
           chartType: "map",
           fields: {
             areaLayer: {
-              componentIri: "areaLayerIri",
+              componentId: "areaLayerIri",
               color: {
                 type: "categorical",
-                componentIri: "areaLayerColorIri",
+                componentId: "areaLayerColorIri",
                 palette: "dimension",
                 colorMapping: {
                   red: "green",
@@ -1096,7 +1142,7 @@ describe("handleChartOptionChanged", () => {
             {
               iri: "mapDataset",
               filters: {
-                areaLayerColorIri: {
+                areaLayerColorId: {
                   type: "multi",
                   values: {
                     red: true,
@@ -1116,7 +1162,7 @@ describe("handleChartOptionChanged", () => {
       value: {
         locale: "en",
         field: "areaLayer",
-        path: "color.componentIri",
+        path: "color.componentId",
         value: "newAreaLayerColorIri",
       },
     });

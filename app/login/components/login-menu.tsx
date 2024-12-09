@@ -90,7 +90,7 @@ export const LoginMenu = () => {
           <Feedback
             anchorEl={anchorEl}
             open={feedbackMenuOpen}
-            handleClose={() => setFeedbackMenuOpen(true)}
+            handleClose={() => setFeedbackMenuOpen(false)}
           />
         </>
       ) : (
@@ -153,7 +153,7 @@ const Feedback = ({
         href={createMailtoLink(locale, {
           recipients: {
             to: OWNER_ORGANIZATION_EMAIL,
-            cc: SUPPORT_EMAIL,
+            bcc: SUPPORT_EMAIL,
           },
           template: bugReportTemplates,
           subject: "Visualize Bug Report",
@@ -170,7 +170,7 @@ const Feedback = ({
         href={createMailtoLink(locale, {
           recipients: {
             to: OWNER_ORGANIZATION_EMAIL,
-            cc: SUPPORT_EMAIL,
+            bcc: SUPPORT_EMAIL,
           },
           template: featureRequestTemplates,
           subject: "Visualize Feature Request",

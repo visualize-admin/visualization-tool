@@ -52,7 +52,7 @@ export type Scalars = {
 export type DataCubeComponentFilter = {
   iri: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
-  componentIris?: Maybe<Array<Scalars['String']>>;
+  componentIds?: Maybe<Array<Scalars['String']>>;
   joinBy?: Maybe<Array<Scalars['String']>>;
   loadValues?: Maybe<Scalars['Boolean']>;
 };
@@ -60,7 +60,7 @@ export type DataCubeComponentFilter = {
 
 export type DataCubeDimensionGeoShapesCubeFilter = {
   iri: Scalars['String'];
-  dimensionIri: Scalars['String'];
+  dimensionId: Scalars['String'];
 };
 
 export type DataCubeLatestIriFilter = {
@@ -75,7 +75,7 @@ export type DataCubeMetadataFilter = {
 export type DataCubeObservationFilter = {
   iri: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
-  componentIris?: Maybe<Array<Scalars['String']>>;
+  componentIds?: Maybe<Array<Scalars['String']>>;
   joinBy?: Maybe<Array<Scalars['String']>>;
 };
 
@@ -117,29 +117,34 @@ export type DataCubeTheme = {
   label?: Maybe<Scalars['String']>;
 };
 
-
-
-
-
-
-
-
-export type ObservationFilter = {
-  __typename?: 'ObservationFilter';
-  type: Scalars['String'];
-  value?: Maybe<Scalars['FilterValue']>;
+export type DataCubeUnversionedIriFilter = {
   iri: Scalars['String'];
+};
+
+
+
+
+
+
+
+
+export type PossibleFilterValue = {
+  __typename?: 'PossibleFilterValue';
+  type: Scalars['String'];
+  id: Scalars['String'];
+  value?: Maybe<Scalars['FilterValue']>;
 };
 
 export type Query = {
   __typename?: 'Query';
   dataCubeLatestIri: Scalars['String'];
+  dataCubeUnversionedIri?: Maybe<Scalars['String']>;
   dataCubeComponents: Scalars['DataCubeComponents'];
   dataCubeComponentTermsets: Array<Scalars['ComponentTermsets']>;
   dataCubeMetadata: Scalars['DataCubeMetadata'];
   dataCubeObservations: Scalars['DataCubeObservations'];
   dataCubePreview: Scalars['DataCubePreview'];
-  possibleFilters: Array<ObservationFilter>;
+  possibleFilters: Array<PossibleFilterValue>;
   searchCubes: Array<SearchCubeResult>;
   dataCubeDimensionGeoShapes?: Maybe<Scalars['GeoShapes']>;
 };
@@ -149,6 +154,13 @@ export type QueryDataCubeLatestIriArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['DataSourceUrl'];
   cubeFilter: DataCubeLatestIriFilter;
+};
+
+
+export type QueryDataCubeUnversionedIriArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
+  cubeFilter: DataCubeUnversionedIriFilter;
 };
 
 
@@ -221,9 +233,15 @@ export type QueryDataCubeDimensionGeoShapesArgs = {
 
 export type RelatedDimension = {
   __typename?: 'RelatedDimension';
-  type: Scalars['String'];
-  iri: Scalars['String'];
+  type: RelatedDimensionType;
+  id: Scalars['String'];
 };
+
+export enum RelatedDimensionType {
+  StandardError = 'StandardError',
+  ConfidenceUpperBound = 'ConfidenceUpperBound',
+  ConfidenceLowerBound = 'ConfidenceLowerBound'
+}
 
 export enum ScaleType {
   Ordinal = 'Ordinal',
@@ -360,6 +378,7 @@ export type ResolversTypes = ResolversObject<{
   DataCubeTermset: ResolverTypeWrapper<DataCubeTermset>;
   DataCubeTermsetFilter: DataCubeTermsetFilter;
   DataCubeTheme: ResolverTypeWrapper<DataCubeTheme>;
+  DataCubeUnversionedIriFilter: DataCubeUnversionedIriFilter;
   DataSourceUrl: ResolverTypeWrapper<Scalars['DataSourceUrl']>;
   DimensionValue: ResolverTypeWrapper<Scalars['DimensionValue']>;
   FilterValue: ResolverTypeWrapper<Scalars['FilterValue']>;
@@ -367,10 +386,11 @@ export type ResolversTypes = ResolversObject<{
   GeoShapes: ResolverTypeWrapper<Scalars['GeoShapes']>;
   HierarchyValue: ResolverTypeWrapper<Scalars['HierarchyValue']>;
   Observation: ResolverTypeWrapper<Scalars['Observation']>;
-  ObservationFilter: ResolverTypeWrapper<ObservationFilter>;
+  PossibleFilterValue: ResolverTypeWrapper<PossibleFilterValue>;
   Query: ResolverTypeWrapper<{}>;
   RawObservation: ResolverTypeWrapper<Scalars['RawObservation']>;
   RelatedDimension: ResolverTypeWrapper<RelatedDimension>;
+  RelatedDimensionType: RelatedDimensionType;
   ScaleType: ScaleType;
   SearchCube: ResolverTypeWrapper<Scalars['SearchCube']>;
   SearchCubeFilter: SearchCubeFilter;
@@ -405,6 +425,7 @@ export type ResolversParentTypes = ResolversObject<{
   DataCubeTermset: DataCubeTermset;
   DataCubeTermsetFilter: DataCubeTermsetFilter;
   DataCubeTheme: DataCubeTheme;
+  DataCubeUnversionedIriFilter: DataCubeUnversionedIriFilter;
   DataSourceUrl: Scalars['DataSourceUrl'];
   DimensionValue: Scalars['DimensionValue'];
   FilterValue: Scalars['FilterValue'];
@@ -412,7 +433,7 @@ export type ResolversParentTypes = ResolversObject<{
   GeoShapes: Scalars['GeoShapes'];
   HierarchyValue: Scalars['HierarchyValue'];
   Observation: Scalars['Observation'];
-  ObservationFilter: ObservationFilter;
+  PossibleFilterValue: PossibleFilterValue;
   Query: {};
   RawObservation: Scalars['RawObservation'];
   RelatedDimension: RelatedDimension;
@@ -496,21 +517,22 @@ export interface ObservationScalarConfig extends GraphQLScalarTypeConfig<Resolve
   name: 'Observation';
 }
 
-export type ObservationFilterResolvers<ContextType = VisualizeGraphQLContext, ParentType extends ResolversParentTypes['ObservationFilter'] = ResolversParentTypes['ObservationFilter']> = ResolversObject<{
+export type PossibleFilterValueResolvers<ContextType = VisualizeGraphQLContext, ParentType extends ResolversParentTypes['PossibleFilterValue'] = ResolversParentTypes['PossibleFilterValue']> = ResolversObject<{
   type?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   value?: Resolver<Maybe<ResolversTypes['FilterValue']>, ParentType, ContextType>;
-  iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type QueryResolvers<ContextType = VisualizeGraphQLContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   dataCubeLatestIri?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<QueryDataCubeLatestIriArgs, 'sourceType' | 'sourceUrl' | 'cubeFilter'>>;
+  dataCubeUnversionedIri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<QueryDataCubeUnversionedIriArgs, 'sourceType' | 'sourceUrl' | 'cubeFilter'>>;
   dataCubeComponents?: Resolver<ResolversTypes['DataCubeComponents'], ParentType, ContextType, RequireFields<QueryDataCubeComponentsArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'cubeFilter'>>;
   dataCubeComponentTermsets?: Resolver<Array<ResolversTypes['ComponentTermsets']>, ParentType, ContextType, RequireFields<QueryDataCubeComponentTermsetsArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'cubeFilter'>>;
   dataCubeMetadata?: Resolver<ResolversTypes['DataCubeMetadata'], ParentType, ContextType, RequireFields<QueryDataCubeMetadataArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'cubeFilter'>>;
   dataCubeObservations?: Resolver<ResolversTypes['DataCubeObservations'], ParentType, ContextType, RequireFields<QueryDataCubeObservationsArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'cubeFilter'>>;
   dataCubePreview?: Resolver<ResolversTypes['DataCubePreview'], ParentType, ContextType, RequireFields<QueryDataCubePreviewArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'cubeFilter'>>;
-  possibleFilters?: Resolver<Array<ResolversTypes['ObservationFilter']>, ParentType, ContextType, RequireFields<QueryPossibleFiltersArgs, 'sourceType' | 'sourceUrl' | 'cubeFilter'>>;
+  possibleFilters?: Resolver<Array<ResolversTypes['PossibleFilterValue']>, ParentType, ContextType, RequireFields<QueryPossibleFiltersArgs, 'sourceType' | 'sourceUrl' | 'cubeFilter'>>;
   searchCubes?: Resolver<Array<ResolversTypes['SearchCubeResult']>, ParentType, ContextType, RequireFields<QuerySearchCubesArgs, 'sourceType' | 'sourceUrl'>>;
   dataCubeDimensionGeoShapes?: Resolver<Maybe<ResolversTypes['GeoShapes']>, ParentType, ContextType, RequireFields<QueryDataCubeDimensionGeoShapesArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'cubeFilter'>>;
 }>;
@@ -520,8 +542,8 @@ export interface RawObservationScalarConfig extends GraphQLScalarTypeConfig<Reso
 }
 
 export type RelatedDimensionResolvers<ContextType = VisualizeGraphQLContext, ParentType extends ResolversParentTypes['RelatedDimension'] = ResolversParentTypes['RelatedDimension']> = ResolversObject<{
-  type?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  type?: Resolver<ResolversTypes['RelatedDimensionType'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -569,7 +591,7 @@ export type Resolvers<ContextType = VisualizeGraphQLContext> = ResolversObject<{
   GeoShapes?: GraphQLScalarType;
   HierarchyValue?: GraphQLScalarType;
   Observation?: GraphQLScalarType;
-  ObservationFilter?: ObservationFilterResolvers<ContextType>;
+  PossibleFilterValue?: PossibleFilterValueResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   RawObservation?: GraphQLScalarType;
   RelatedDimension?: RelatedDimensionResolvers<ContextType>;

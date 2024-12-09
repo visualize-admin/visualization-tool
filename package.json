@@ -1,6 +1,6 @@
 {
   "name": "@visualize-admin/visualization-tool",
-  "version": "4.9.5",
+  "version": "5.0.2",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/visualize-admin/visualization-tool.git"
@@ -43,7 +43,8 @@
     "github:codegen": "node k6/performance-tests/generate-github-actions.mjs",
     "storybook": "storybook dev -p 6006",
     "storybook:build": "storybook build -o app/public/storybook",
-    "chromatic": "npx chromatic --build-script-name storybook:build -o app/public/storybook"
+    "chromatic": "npx chromatic --build-script-name storybook:build -o app/public/storybook",
+    "compare-screenshots": "npx tsx scripts/compare-screenshots.ts"
   },
   "dependencies": {
     "@babel/runtime": "^7.11.2",
@@ -97,6 +98,7 @@
     "rollup-plugin-terser": "^7.0.2",
     "start-server-and-test": "^1.11.4",
     "storybook": "^7.6.17",
+    "tsx": "^4.19.2",
     "typescript": "4"
   },
   "workspaces": [

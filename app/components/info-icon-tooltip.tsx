@@ -1,39 +1,39 @@
-import { Theme, Tooltip, TooltipProps, Typography } from "@mui/material";
-import { makeStyles } from "@mui/styles";
-import React from "react";
+import { Tooltip, TooltipProps, Typography } from "@mui/material";
+import { ReactNode } from "react";
 
+import {
+  TooltipTitle,
+  TooltipVariant,
+  useTooltipStyles,
+} from "@/components/tooltip-utils";
 import { Icon } from "@/icons";
 
-type InfoIconTooltipProps = {
-  title: NonNullable<React.ReactNode>;
-};
-
-const useStyles = makeStyles((theme: Theme) => ({
-  tooltip: { width: 180, padding: theme.spacing(1, 2), lineHeight: "18px" },
-  icon: {
-    color: theme.palette.primary.main,
-    pointerEvents: "auto",
-  },
-}));
-
 export const InfoIconTooltip = (
-  props: InfoIconTooltipProps & Omit<TooltipProps, "children">
+  props: {
+    title: NonNullable<ReactNode>;
+    variant?: TooltipVariant;
+  } & Omit<TooltipProps, "children" | "title">
 ) => {
-  const classes = useStyles();
-  const { title, componentsProps, ...rest } = props;
+  const {
+    title,
+    componentsProps,
+    variant = "primary",
+    placement = "top",
+    ...rest
+  } = props;
+  const classes = useTooltipStyles({ variant });
 
   return (
     <Tooltip
       arrow
-      placement="top"
-      title={
-        <Typography variant="caption" color="secondary">
-          {title}
-        </Typography>
-      }
+      placement={placement}
+      title={<TooltipTitle text={title} />}
+      disableInteractive
       componentsProps={{
         ...componentsProps,
-        tooltip: { className: classes.tooltip },
+        tooltip: {
+          className: classes.tooltip,
+        },
       }}
       {...rest}
     >

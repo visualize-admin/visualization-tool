@@ -39,31 +39,31 @@ export const useColumnsStateVariables = (
     chartConfig,
     observations,
     dimensions,
-    dimensionsByIri,
+    dimensionsById,
     measures,
-    measuresByIri,
+    measuresById,
   } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
   const { x, y, animation } = fields;
-  const xDimension = dimensionsByIri[x.componentIri];
+  const xDimension = dimensionsById[x.componentId];
   const filters = useChartConfigFilters(chartConfig);
 
   const baseVariables = useBaseVariables(chartConfig);
   const bandXVariables = useBandXVariables(x, {
-    dimensionsByIri,
+    dimensionsById,
     observations,
   });
   const numericalYVariables = useNumericalYVariables("column", y, {
-    measuresByIri,
+    measuresById,
   });
   const numericalYErrorVariables = useNumericalYErrorVariables(y, {
-    numericalYVariables,
+    getValue: numericalYVariables.getY,
     dimensions,
     measures,
   });
   const interactiveFiltersVariables = useInteractiveFiltersVariables(
     interactiveFiltersConfig,
-    { dimensionsByIri }
+    { dimensionsById }
   );
 
   const { getX, getXAsDate } = bandXVariables;
@@ -124,7 +124,7 @@ export const useColumnsStateData = (
   }, [sortData, plottableData]);
   const data = useChartData(sortedPlottableData, {
     chartConfig,
-    timeRangeDimensionIri: xDimension.iri,
+    timeRangeDimensionId: xDimension.id,
     getXAsDate,
     getTimeRangeDate,
   });

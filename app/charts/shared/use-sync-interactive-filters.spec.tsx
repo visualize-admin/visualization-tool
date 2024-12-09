@@ -3,11 +3,7 @@ import { useState } from "react";
 import { Client, Provider } from "urql";
 
 import useSyncInteractiveFilters from "@/charts/shared/use-sync-interactive-filters";
-import {
-  ChartConfig,
-  ConfiguratorStateConfiguringChart,
-  InteractiveFiltersConfig,
-} from "@/config-types";
+import { ChartConfig, ConfiguratorStateConfiguringChart } from "@/config-types";
 import { ConfiguratorStateProvider } from "@/src";
 import {
   InteractiveFiltersChartProvider,
@@ -48,7 +44,7 @@ jest.mock("next-auth/react", () => {
   };
 });
 
-const interactiveFiltersConfig: InteractiveFiltersConfig = {
+const getLegacyInteractiveFiltersConfig = () => ({
   legend: {
     componentIri: "https://fake-iri/dimension/0",
     active: false,
@@ -72,26 +68,30 @@ const interactiveFiltersConfig: InteractiveFiltersConfig = {
     active: false,
     type: "identity",
   },
-};
+});
 
-const chartConfig = migrateChartConfig(
-  {
-    ...fixture.data.chartConfig,
-    interactiveFiltersConfig,
-  },
-  {
-    migrationProps: {
-      meta: {},
-      dataSet: "foo",
-    },
-  }
-) as ChartConfig;
-
-const setup = ({
+const setup = async ({
   modifiedChartConfig,
 }: {
   modifiedChartConfig: ChartConfig;
 }) => {
+  const chartConfig = (await migrateChartConfig(
+    {
+      ...fixture.data.chartConfig,
+      interactiveFiltersConfig: getLegacyInteractiveFiltersConfig(),
+    },
+    {
+      migrationProps: {
+        meta: {},
+        dataSet: "foo",
+        dataSource: {
+          type: "sparql",
+          url: "",
+        },
+      },
+    }
+  )) as ChartConfig;
+
   const Component = () => {
     const IFState = useChartInteractiveFilters((d) => ({
       categories: d.categories,
@@ -148,7 +148,23 @@ const setup = ({
 
 describe("useSyncInteractiveFilters", () => {
   it("should keep interactive filters in sync with values from chart config", async () => {
-    const { getIFState, clickUseModified } = setup({
+    const chartConfig = (await migrateChartConfig(
+      {
+        ...fixture.data.chartConfig,
+        interactiveFiltersConfig: getLegacyInteractiveFiltersConfig(),
+      },
+      {
+        migrationProps: {
+          meta: {},
+          dataSet: "foo",
+          dataSource: {
+            type: "sparql",
+            url: "",
+          },
+        },
+      }
+    )) as ChartConfig;
+    const { getIFState, clickUseModified } = await setup({
       modifiedChartConfig: {
         ...chartConfig,
         cubes: [
@@ -156,7 +172,7 @@ describe("useSyncInteractiveFilters", () => {
             ...chartConfig.cubes[0],
             filters: {
               ...chartConfig.cubes[0].filters,
-              "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1":
+              "foo(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1":
                 {
                   type: "single",
                   value:
@@ -173,7 +189,7 @@ describe("useSyncInteractiveFilters", () => {
 
     expect(
       initIfState.dataFilters[
-        "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1"
+        "foo(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1"
       ]
     ).toEqual({
       type: "single",
@@ -186,7 +202,7 @@ describe("useSyncInteractiveFilters", () => {
     const IFState2 = getIFState();
     expect(
       IFState2.dataFilters[
-        "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1"
+        "foo(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1"
       ]
     ).toEqual({
       type: "single",

@@ -11,8 +11,8 @@ import { setup } from "./common";
 const { test, expect } = setup();
 
 const cubeIri = "https://environment.ld.admin.ch/foen/BFS_cofog_national/2";
-const versionedDimensionIri =
-  "https://environment.ld.admin.ch/foen/BFS_cofog_national/sector";
+const dimensionId =
+  "https://environment.ld.admin.ch/foen/BFS_cofog_national(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://environment.ld.admin.ch/foen/BFS_cofog_national/sector";
 
 test("@noci it should be possible to query dimension values from versioned dimension correctly", async ({
   page,
@@ -34,9 +34,8 @@ test("@noci it should be possible to query dimension values from versioned dimen
 
   expect(error).toBe(undefined);
   const identifiers = (
-    data?.dataCubeComponents?.dimensions?.find(
-      (d) => d.iri === versionedDimensionIri
-    )?.values ?? []
+    data?.dataCubeComponents?.dimensions?.find((d) => d.id === dimensionId)
+      ?.values ?? []
   ).map((v) => v.identifier);
 
   expect(

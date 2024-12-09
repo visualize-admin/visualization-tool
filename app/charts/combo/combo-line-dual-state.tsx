@@ -37,6 +37,7 @@ import { ComboLineDualConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { getTextWidth } from "@/utils/get-text-width";
+import { useAxisTitleAdjustments } from "@/utils/use-axis-title-adjustments";
 import { useIsMobile } from "@/utils/use-is-mobile";
 
 import { ChartProps } from "../shared/ChartProps";
@@ -70,7 +71,7 @@ const useComboLineDualState = (
   const { xDimension, getX, getXAsString } = variables;
   const { chartData, scalesData, timeRangeData, paddingData, allData } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
-  const xKey = fields.x.componentIri;
+  const xKey = fields.x.componentId;
   const {
     width,
     height,
@@ -132,9 +133,27 @@ const useComboLineDualState = (
         TICK_PADDING
     )
   );
+
+  const { topMarginAxisTitleAdjustment } = useAxisTitleAdjustments({
+    leftAxisTitle: variables.y.left.label,
+    rightAxisTitle: variables.y.right.label,
+    containerWidth: width,
+  });
+
   const right = Math.max(maxRightTickWidth, 40);
-  const margins = getMargins({ left, right, bottom });
-  const bounds = useChartBounds(width, margins, height);
+
+  const margins = getMargins({
+    left,
+    right,
+    bottom,
+    top: topMarginAxisTitleAdjustment,
+  });
+
+  const bounds = useChartBounds(width, margins, height, {
+    leftLabel: variables.y.left.label,
+    rightLabel: variables.y.right.label,
+  });
+
   const { chartWidth, chartHeight } = bounds;
   const xScales = [xScale, xScaleTimeRange];
   const yScales = [yScale, yScaleLeft, yScaleRight];

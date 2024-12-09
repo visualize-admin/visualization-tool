@@ -7,13 +7,11 @@ import {
 } from "@/domain/data";
 import { getCubeMetadata } from "@/rdf/query-cube-metadata";
 import { getCubePreview } from "@/rdf/query-cube-preview";
-import {
-  getCubeComponentTermsets,
-  getCubeTermsets,
-} from "@/rdf/query-termsets";
+import { getCubeComponentTermsets } from "@/rdf/query-termsets";
 
 type LightCubeOptions = {
   iri: string;
+  unversionedIri: string;
   locale: string;
   sparqlClient: ParsingClient;
 };
@@ -23,6 +21,7 @@ type LightCubeOptions = {
  */
 export class LightCube {
   public iri: string;
+  public unversionedIri: string;
   private locale: string;
   public metadata: DataCubeMetadata | undefined;
   public preview: DataCubePreview | undefined;
@@ -30,8 +29,9 @@ export class LightCube {
   private sparqlClient: ParsingClient;
 
   constructor(options: LightCubeOptions) {
-    const { iri, locale, sparqlClient } = options;
+    const { iri, unversionedIri, locale, sparqlClient } = options;
     this.iri = iri;
+    this.unversionedIri = unversionedIri;
     this.locale = locale;
     this.sparqlClient = sparqlClient;
   }
@@ -45,13 +45,6 @@ export class LightCube {
     return this.metadata;
   }
 
-  public async fetchTermsets() {
-    return await getCubeTermsets(this.iri, {
-      locale: this.locale,
-      sparqlClient: this.sparqlClient,
-    });
-  }
-
   public async fetchComponentTermsets() {
     return await getCubeComponentTermsets(this.iri, {
       locale: this.locale,
@@ -61,6 +54,7 @@ export class LightCube {
 
   public async fetchPreview() {
     this.preview = await getCubePreview(this.iri, {
+      unversionedIri: this.unversionedIri,
       locale: this.locale,
       sparqlClient: this.sparqlClient,
     });

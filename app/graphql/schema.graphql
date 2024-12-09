@@ -33,15 +33,21 @@ enum ScaleType {
   Ratio
 }
 
-type RelatedDimension {
-  type: String!
-  iri: String!
+enum RelatedDimensionType {
+  StandardError
+  ConfidenceUpperBound
+  ConfidenceLowerBound
 }
 
-type ObservationFilter {
+type RelatedDimension {
+  type: RelatedDimensionType!
+  id: String!
+}
+
+type PossibleFilterValue {
   type: String!
+  id: String!
   value: FilterValue
-  iri: String!
 }
 
 enum TimeUnit {
@@ -103,7 +109,7 @@ input DataCubeTermsetFilter {
 input DataCubeComponentFilter {
   iri: String!
   filters: Filters
-  componentIris: [String!]
+  componentIds: [String!]
   joinBy: [String!]
   loadValues: Boolean
 }
@@ -115,11 +121,15 @@ input DataCubeMetadataFilter {
 input DataCubeObservationFilter {
   iri: String!
   filters: Filters
-  componentIris: [String!]
+  componentIds: [String!]
   joinBy: [String!]
 }
 
 input DataCubeLatestIriFilter {
+  iri: String!
+}
+
+input DataCubeUnversionedIriFilter {
   iri: String!
 }
 
@@ -134,7 +144,7 @@ input DataCubePossibleFiltersCubeFilter {
 
 input DataCubeDimensionGeoShapesCubeFilter {
   iri: String!
-  dimensionIri: String!
+  dimensionId: String!
 }
 
 # The "Query" type is special: it lists all of the available queries that
@@ -145,6 +155,11 @@ type Query {
     sourceUrl: DataSourceUrl!
     cubeFilter: DataCubeLatestIriFilter!
   ): String!
+  dataCubeUnversionedIri(
+    sourceType: String!
+    sourceUrl: String!
+    cubeFilter: DataCubeUnversionedIriFilter!
+  ): String
   dataCubeComponents(
     sourceType: String!
     sourceUrl: DataSourceUrl!
@@ -181,7 +196,7 @@ type Query {
     sourceType: String!
     sourceUrl: DataSourceUrl!
     cubeFilter: DataCubePossibleFiltersCubeFilter!
-  ): [ObservationFilter!]!
+  ): [PossibleFilterValue!]!
   searchCubes(
     sourceType: String!
     sourceUrl: DataSourceUrl!

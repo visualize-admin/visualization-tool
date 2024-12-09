@@ -59,8 +59,6 @@ export const photovoltaikChartStateMock: ConfiguratorStateConfiguringChart = {
       cubes: [
         {
           iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/14",
-          publishIri:
-            "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/14",
           filters: {
             "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton":
               {
@@ -74,11 +72,11 @@ export const photovoltaikChartStateMock: ConfiguratorStateConfiguringChart = {
       interactiveFiltersConfig: {
         legend: {
           active: false,
-          componentIri: "",
+          componentId: "",
         },
         timeRange: {
           active: false,
-          componentIri:
+          componentId:
             "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
           presets: {
             type: "range",
@@ -88,7 +86,7 @@ export const photovoltaikChartStateMock: ConfiguratorStateConfiguringChart = {
         },
         dataFilters: {
           active: false,
-          componentIris: [],
+          componentIds: [],
         },
         calculation: {
           active: false,
@@ -97,7 +95,7 @@ export const photovoltaikChartStateMock: ConfiguratorStateConfiguringChart = {
       },
       fields: {
         x: {
-          componentIri:
+          componentId:
             "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
           sorting: {
             sortingType: "byAuto",
@@ -105,7 +103,7 @@ export const photovoltaikChartStateMock: ConfiguratorStateConfiguringChart = {
           },
         },
         y: {
-          componentIri:
+          componentId:
             "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/AnzahlAnlagen",
         },
       },
@@ -122,7 +120,7 @@ export const photovoltaikChartStateMock: ConfiguratorStateConfiguringChart = {
       },
     },
     dataFilters: {
-      componentIris: [],
+      componentIds: [],
       filters: {},
     },
   },

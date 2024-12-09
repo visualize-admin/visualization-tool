@@ -12,6 +12,7 @@ import Flex from "@/components/flex";
 import { Checkbox, CheckboxProps } from "@/components/form";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
+import { TooltipTitle } from "@/components/tooltip-utils";
 import {
   ChartConfig,
   GenericSegmentField,
@@ -141,16 +142,14 @@ const useLegendGroups = ({
     configState.state === "INITIAL" ||
     configState.state === "SELECTING_DATASET"
   ) {
-    throw new Error(
-      `Cannot call useLegendGroups from state ${configState.state}`
-    );
+    throw Error(`Cannot call useLegendGroups from state ${configState.state}`);
   }
 
   const segmentField = (
     isSegmentInConfig(chartConfig) ? chartConfig.fields.segment : null
   ) as GenericSegmentField | null | undefined;
-  const segmentFilters = segmentField?.componentIri
-    ? filters[segmentField.componentIri]
+  const segmentFilters = segmentField?.componentId
+    ? filters[segmentField.componentId]
     : null;
   const segmentValues =
     segmentFilters?.type === "multi" ? segmentFilters.values : emptyObj;
@@ -217,7 +216,7 @@ export const MapLegendColor = memo(function LegendColor(
   const { component, getColor, useAbbreviations, chartConfig, observations } =
     props;
   const filters = useChartConfigFilters(chartConfig);
-  const dimensionFilter = filters[component.iri];
+  const dimensionFilter = filters[component.id];
   const sortedValues = useMemo(() => {
     const sorters = makeDimensionValueSorters(component, {
       sorting: { sortingType: "byAuto", sortingOrder: "asc" },
@@ -240,9 +239,7 @@ export const MapLegendColor = memo(function LegendColor(
     [component, useAbbreviations]
   );
   const legendValues = useMemo(() => {
-    const observationLabels = new Set(
-      observations.map((o) => o[component.iri])
-    );
+    const observationLabels = new Set(observations.map((o) => o[component.id]));
     const sortedStringValues = sortedValues.map((d) => `${d.value}`);
     // If the component is a measure or an ordinal dimension, we want to show all
     // values for comparison purposes
@@ -261,7 +258,7 @@ export const MapLegendColor = memo(function LegendColor(
       groups={groups}
       getColor={(v) => {
         const label = getLabel(v);
-        const rgb = getColor({ [component.iri]: label });
+        const rgb = getColor({ [component.id]: label });
         return rgbArrayToHex(removeOpacity(rgb));
       }}
       getLabel={getLabel}
@@ -400,12 +397,12 @@ export const LegendItem = (props: LegendItemProps) => {
     <MaybeTooltip
       title={
         disabled ? (
-          <Typography variant="body2">
-            {t({
+          <TooltipTitle
+            text={t({
               id: "controls.filters.interactive.color.min-1-filter",
               message: "At least one filter must be selected.",
             })}
-          </Typography>
+          />
         ) : undefined
       }
     >

@@ -1,34 +1,10 @@
 import groupBy from "lodash/groupBy";
 import ParsingClient from "sparql-http-client/ParsingClient";
 
-import { ComponentTermsets, Termset } from "@/domain/data";
+import { ComponentTermsets } from "@/domain/data";
+import { stringifyComponentId } from "@/graphql/make-component-id";
+import { queryCubeUnversionedIri } from "@/rdf/query-cube-unversioned-iri";
 import { buildLocalizedSubQuery } from "@/rdf/query-utils";
-
-export const getCubeTermsets = async (
-  iri: string,
-  options: {
-    locale: string;
-    sparqlClient: ParsingClient;
-  }
-): Promise<Termset[]> => {
-  const { sparqlClient, locale } = options;
-  const qs = await sparqlClient.query.select(
-    `PREFIX meta: <https://cube.link/meta/>
-PREFIX schema: <http://schema.org/>
-
-SELECT DISTINCT ?termsetIri ?termsetLabel WHERE {
-  ?termsetIri meta:isUsedIn <${iri}> .
-  ${buildLocalizedSubQuery("termsetIri", "schema:name", "termsetLabel", { locale })}
-}`,
-    { operation: "postUrlencoded" }
-  );
-
-  return qs.map((result) => ({
-    iri: result.termsetIri.value,
-    label: result.termsetLabel.value,
-    __typename: "Termset",
-  }));
-};
 
 export const getCubeComponentTermsets = async (
   iri: string,
@@ -55,12 +31,18 @@ SELECT DISTINCT ?dimensionIri ?dimensionLabel ?termsetIri ?termsetLabel WHERE {
   ${buildLocalizedSubQuery("dimension", "schema:name", "dimensionLabel", { locale })}
   ${buildLocalizedSubQuery("termsetIri", "schema:name", "termsetLabel", { locale })}
 }`;
-  const qs = await sparqlClient.query.select(query, {
-    operation: "postUrlencoded",
-  });
+  const [unversionedCubeIri = iri, qs] = await Promise.all([
+    queryCubeUnversionedIri(sparqlClient, iri),
+    sparqlClient.query.select(query, {
+      operation: "postUrlencoded",
+    }),
+  ]);
 
   const parsed = qs.map((result) => ({
-    dimensionIri: result.dimensionIri.value,
+    dimensionIri: stringifyComponentId({
+      unversionedCubeIri,
+      unversionedComponentIri: result.dimensionIri.value,
+    }),
     dimensionLabel: result.dimensionLabel.value,
     iri: result.termsetIri.value,
     label: result.termsetLabel.value,

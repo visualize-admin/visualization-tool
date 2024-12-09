@@ -1,11 +1,13 @@
-import hierarchy from "../../test/__fixtures/data/tarrifs-hierarchy.json";
+import _hierarchy from "../../test/__fixtures/data/tarrifs-hierarchy.json";
 
 import { groupByParents } from "./use-hierarchy-parents";
 
 describe("grouping hierarchy by parents", () => {
   it("should work", () => {
-    const archy = hierarchy as Parameters<typeof groupByParents>[0];
-    const groups = groupByParents(archy);
+    const hierarchy = _hierarchy as unknown as Parameters<
+      typeof groupByParents
+    >[0];
+    const groups = groupByParents(hierarchy);
     const iri =
       "https://ld.admin.ch/cube/dimension/aussenhandel_warenkoerbe/1_listZT";
     const ztGroups = groups.filter(

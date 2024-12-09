@@ -2,9 +2,10 @@ import { I18nProvider } from "@lingui/react";
 import { ThemeProvider } from "@mui/material";
 import configureCors from "cors";
 import { GetServerSideProps } from "next";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { ChartPublished } from "@/components/chart-published";
+import { ConfiguratorState } from "@/configurator";
 import { GraphqlProvider } from "@/graphql/GraphqlProvider";
 import { Locale, defaultLocale, i18n } from "@/locales/locales";
 import { LocaleProvider } from "@/locales/use-locale";
@@ -28,7 +29,7 @@ const streamToString = async (stream: any) => {
       chunks.push(Buffer.from(chunk));
     }
 
-    return Buffer.concat(chunks).toString("utf-8");
+    return Buffer.concat(chunks as unknown as Uint8Array[]).toString("utf-8");
   }
 
   return null;
@@ -58,20 +59,31 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
 
 export default function Preview({ configuratorState, locale }: PageProps) {
   i18n.activate(locale);
-  const [migrated] = useState(() =>
-    migrateConfiguratorState({ ...configuratorState, state: "PUBLISHED" })
-  );
+  const [migrated, setMigrated] = useState<ConfiguratorState>();
+  useEffect(() => {
+    const run = async () => {
+      setMigrated({
+        ...(await migrateConfiguratorState(configuratorState)),
+        state: "PUBLISHED",
+      } as ConfiguratorState);
+    };
+
+    run();
+  }, [configuratorState]);
+
   return (
     <LocaleProvider value={locale}>
       <I18nProvider i18n={i18n}>
         <GraphqlProvider>
           <ThemeProvider theme={federalTheme.theme}>
-            <ConfiguratorStateProvider
-              chartId="published"
-              initialState={migrated}
-            >
-              <ChartPublished configKey="preview" {...migrated} />
-            </ConfiguratorStateProvider>
+            {migrated ? (
+              <ConfiguratorStateProvider
+                chartId="published"
+                initialState={migrated}
+              >
+                <ChartPublished configKey="preview" {...migrated} />
+              </ConfiguratorStateProvider>
+            ) : null}
           </ThemeProvider>
         </GraphqlProvider>
       </I18nProvider>

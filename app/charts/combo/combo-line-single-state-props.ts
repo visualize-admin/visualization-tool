@@ -34,31 +34,32 @@ export type ComboLineSingleStateVariables = BaseVariables &
 export const useComboLineSingleStateVariables = (
   props: ChartProps<ComboLineSingleConfig>
 ): ComboLineSingleStateVariables => {
-  const { chartConfig, dimensionsByIri, measuresByIri } = props;
+  const { chartConfig, dimensionsById, measuresById } = props;
   const { fields } = chartConfig;
   const { x } = fields;
 
   const baseVariables = useBaseVariables(chartConfig);
   const temporalXVariables = useTemporalXVariables(x, {
-    dimensionsByIri,
+    dimensionsById,
   });
   const interactiveFiltersVariables = useInteractiveFiltersVariables(
     chartConfig.interactiveFiltersConfig,
-    { dimensionsByIri }
+    { dimensionsById }
   );
 
   const numericalYVariables: NumericalYComboLineSingleVariables = {
     y: {
-      lines: chartConfig.fields.y.componentIris.map((iri) => ({
-        dimension: measuresByIri[iri],
-        iri,
-        label: measuresByIri[iri].label,
-        color: fields.y.colorMapping[iri],
-        getY: (d) => (d[iri] !== null ? Number(d[iri]) : null),
+      lines: chartConfig.fields.y.componentIds.map((id) => ({
+        dimension: measuresById[id],
+        id,
+        label: measuresById[id].label,
+        color: fields.y.colorMapping[id],
+        getY: (d) => (d[id] !== null ? Number(d[id]) : null),
         getMinY: (data) => {
           const minY =
-            min(data, (d) => (d[iri] !== null ? Number(d[iri]) : null)) ?? 0;
-          return shouldUseDynamicMinScaleValue(measuresByIri[iri].scaleType)
+            min(data, (d) => (d[id] !== null ? Number(d[id]) : null)) ?? 0;
+
+          return shouldUseDynamicMinScaleValue(measuresById[id].scaleType)
             ? minY
             : Math.min(0, minY);
         },
@@ -108,7 +109,7 @@ export const useComboLineSingleStateData = (
   }, [sortData, plottableData]);
   const data = useChartData(sortedPlottableData, {
     chartConfig,
-    timeRangeDimensionIri: xDimension.iri,
+    timeRangeDimensionId: xDimension.id,
     getXAsDate: getX,
     getTimeRangeDate,
   });

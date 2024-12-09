@@ -74,23 +74,23 @@ const ChartTableVisualization = dynamic(
 
 type GenericChartProps = {
   dataSource: DataSource;
-  componentIris: string[] | undefined;
+  componentIds: string[] | undefined;
   chartConfig: ChartConfig;
   dashboardFilters: DashboardFiltersConfig | undefined;
 };
 
 const GenericChart = (props: GenericChartProps) => {
-  const { dataSource, componentIris, chartConfig, dashboardFilters } = props;
+  const { dataSource, componentIds, chartConfig, dashboardFilters } = props;
   const observationQueryFilters = useQueryFilters({
     chartConfig,
     dashboardFilters,
-    componentIris,
+    componentIds,
   });
 
   const commonProps = {
     dataSource,
     observationQueryFilters,
-    componentIris,
+    componentIds,
   };
 
   switch (chartConfig.chartType) {
@@ -155,7 +155,7 @@ const GenericChart = (props: GenericChartProps) => {
 
 type ChartWithFiltersProps = {
   dataSource: DataSource;
-  componentIris: string[] | undefined;
+  componentIds: string[] | undefined;
   chartConfig: ChartConfig;
   dashboardFilters: DashboardFiltersConfig | undefined;
 };

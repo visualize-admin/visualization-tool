@@ -28,13 +28,13 @@ const config: PlaywrightTestConfig = {
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
   retries: process.env.CI ? 1 : 0,
-  workers: 4,
+  workers: process.env.CI ? 1 : 4,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: process.env.CI ? "list" : "line",
+  reporter: process.env.CI ? "blob" : "html",
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     contextOptions: {
-      // Decomment this if you want to save a HAR for a test
+      // De-comment this if you want to save a HAR for a test
       // recordHar: { path: "example.zip", urlFilter: "**/api/graphql" },
     },
     /* Maximum time each action such as `click()` can take. Defaults to 0 (no limit). */

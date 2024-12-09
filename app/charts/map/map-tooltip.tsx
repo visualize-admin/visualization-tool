@@ -49,11 +49,11 @@ export const MapTooltipProvider = ({ children }: { children: ReactNode }) => {
 export const MapTooltip = () => {
   const [hoverObjectType] = useMapTooltip();
   const [{ interaction }] = useInteraction();
-  const { identicalLayerComponentIris, areaLayer, symbolLayer } =
+  const { identicalLayerComponentIds, areaLayer, symbolLayer } =
     useChartState() as MapState;
   const formatNumber = useFormatNumber();
 
-  const { getFormattedError: formatSymbolError } = symbolLayer || {};
+  const { getFormattedError: formatSymbolError } = symbolLayer ?? {};
   const formatters = useChartFormatters({
     dimensions: [
       areaLayer?.colors.type === "continuous"
@@ -70,21 +70,20 @@ export const MapTooltip = () => {
 
   const areaTooltipState = useMemo(() => {
     const obs = interaction.d;
+
     if (areaLayer && obs) {
       const { colors } = areaLayer;
       const value = colors.getValue(obs);
       if (value !== null) {
-        const error =
-          colors.type === "continuous" && colors.getFormattedError
-            ? ` ± ${colors.getFormattedError(obs)}`
-            : null;
-        const show = identicalLayerComponentIris || hoverObjectType === "area";
+        const formattedError =
+          colors.type === "continuous" ? colors.getFormattedError?.(obs) : null;
+        const show = identicalLayerComponentIds || hoverObjectType === "area";
         const color = rgbArrayToHex(colors.getColor(obs));
         const textColor = getTooltipTextColor(color);
         const valueFormatter = (d: number | null) =>
           formatNumberWithUnit(
             d,
-            formatters[colors.component.iri] || formatNumber,
+            formatters[colors.component.id] ?? formatNumber,
             colors.component.unit
           );
         const formattedValue =
@@ -93,8 +92,8 @@ export const MapTooltip = () => {
         return {
           show,
           value: formattedValue,
-          error,
-          componentIri: colors.component.iri,
+          error: formattedError,
+          componentId: colors.component.id,
           label: colors.component.label,
           color,
           textColor,
@@ -104,7 +103,7 @@ export const MapTooltip = () => {
   }, [
     areaLayer,
     interaction.d,
-    identicalLayerComponentIris,
+    identicalLayerComponentIds,
     hoverObjectType,
     formatNumber,
     formatters,
@@ -112,20 +111,21 @@ export const MapTooltip = () => {
 
   const symbolTooltipState = useMemo(() => {
     const obs = interaction.d;
+
     if (symbolLayer && obs) {
       const { colors } = symbolLayer;
       const value = symbolLayer.getValue(obs);
+
       if (value !== null) {
-        const error = formatSymbolError ? ` ± ${formatSymbolError(obs)}` : null;
-        const show =
-          identicalLayerComponentIris || hoverObjectType === "symbol";
+        const formattedError = formatSymbolError?.(obs);
+        const show = identicalLayerComponentIds || hoverObjectType === "symbol";
         const color = rgbArrayToHex(colors.getColor(obs));
         const textColor = getTooltipTextColor(color);
         const valueFormatter = (d: number | null) =>
           formatNumberWithUnit(
             d,
-            symbolLayer.measureDimension?.iri
-              ? formatters[symbolLayer.measureDimension.iri] || formatNumber
+            symbolLayer.measureDimension?.id
+              ? formatters[symbolLayer.measureDimension.id] ?? formatNumber
               : formatNumber,
             symbolLayer.measureDimension?.unit
           );
@@ -152,8 +152,8 @@ export const MapTooltip = () => {
             sameAsValue: false,
           };
         } else {
-          const rawValue = obs[colors.component.iri] as number;
-          const rawError = colors.getFormattedError?.(obs);
+          const rawValue = obs[colors.component.id] as number;
+          const formattedError = colors.getFormattedError?.(obs);
           preparedColors = {
             type: "continuous",
             component: colors.component,
@@ -162,17 +162,17 @@ export const MapTooltip = () => {
               formatNumber,
               colors.component.unit
             ),
-            error: rawError ? ` ± ${rawError}` : null,
+            error: formattedError,
             color,
             textColor,
             sameAsValue:
-              colors.component.iri === symbolLayer.measureDimension?.iri,
+              colors.component.id === symbolLayer.measureDimension?.id,
           };
         }
 
         return {
           value: formattedValue,
-          error,
+          error: formattedError,
           measureDimension: symbolLayer.measureDimension,
           show,
           color,
@@ -185,7 +185,7 @@ export const MapTooltip = () => {
     symbolLayer,
     interaction.d,
     formatSymbolError,
-    identicalLayerComponentIris,
+    identicalLayerComponentIds,
     hoverObjectType,
     formatNumber,
     formatters,
@@ -195,18 +195,18 @@ export const MapTooltip = () => {
   const showSymbolMeasureTooltip =
     symbolTooltipState?.show &&
     (showAreaColorTooltip
-      ? areaTooltipState!.componentIri !==
-        symbolTooltipState.measureDimension?.iri
+      ? areaTooltipState!.componentId !==
+        symbolTooltipState.measureDimension?.id
       : true);
   const showSymbolColorTooltip =
     symbolTooltipState &&
     symbolTooltipState.colors.type !== "fixed" &&
     (showSymbolMeasureTooltip
-      ? symbolTooltipState.measureDimension?.iri !==
-        symbolTooltipState.colors.component?.iri
+      ? symbolTooltipState.measureDimension?.id !==
+        symbolTooltipState.colors.component?.id
       : showAreaColorTooltip &&
-        areaTooltipState!.componentIri !==
-          symbolTooltipState.colors.component?.iri);
+        areaTooltipState!.componentId !==
+          symbolTooltipState.colors.component?.id);
 
   return (
     <>
@@ -264,7 +264,7 @@ export const MapTooltip = () => {
                             color: "#000",
                           })}
                       value={symbolTooltipState.value}
-                      error={symbolTooltipState.colors.error}
+                      error={symbolTooltipState.error}
                     />
                   )}
 
@@ -287,17 +287,21 @@ export const MapTooltip = () => {
   );
 };
 
-type TooltipRowProps = {
+const TooltipRow = ({
+  title,
+  background,
+  color,
+  value,
+  error,
+  border = "none",
+}: {
   title: string;
   background: string;
   color: string;
   value: string;
-  error: string | null;
+  error?: string | null;
   border?: string;
-};
-
-const TooltipRow = (props: TooltipRowProps) => {
-  const { title, background, color, value, error, border = "none" } = props;
+}) => {
   return (
     <>
       <Typography component="div" variant="caption">

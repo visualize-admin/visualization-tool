@@ -13,6 +13,7 @@ import {
   ObservationValue,
   isJoinByComponent,
 } from "@/domain/data";
+import { ComponentId } from "@/graphql/make-component-id";
 import {
   DataCubeComponentsQuery,
   DataCubeObservationsQuery,
@@ -21,13 +22,14 @@ import {
 } from "@/graphql/query-hooks";
 import { assert } from "@/utils/assert";
 
-export const JOIN_BY_CUBE_IRI = "joinBy";
+const JOIN_BY_CUBE_IRI = "joinBy";
 
 const keyJoiner = "$/$/$/";
 const joinByPrefix = `joinBy__`;
 
 export const mkJoinById = (index: number) => `${joinByPrefix}${index}`;
-export const isJoinById = (iri: string) => iri.startsWith(joinByPrefix);
+export const isJoinById = (id: string) => id.startsWith(joinByPrefix);
+export const isJoinByCube = (cubeIri: string) => cubeIri === JOIN_BY_CUBE_IRI;
 
 const getJoinByIdIndex = (joinById: string) => {
   return Number(joinById.slice(joinByPrefix.length));
@@ -35,13 +37,14 @@ const getJoinByIdIndex = (joinById: string) => {
 
 export const getOriginalDimension = (dim: JoinByComponent, cube: Cube) => {
   assert(isJoinByComponent(dim), "Dimension should be a join by at this point");
-  const originalIri = dim.originalIris.find(
+  const originalId = dim.originalIds.find(
     (o) => o.cubeIri === cube.iri
-  )?.dimensionIri;
-  assert(!!originalIri, "Original iri should have been found");
+  )?.dimensionId;
+  assert(!!originalId, "Original id should have been found");
+
   return {
     ...dim,
-    iri: originalIri,
+    id: originalId,
   };
 };
 
@@ -65,7 +68,7 @@ export const joinDimensions = (
       true: queryJoinByDimensions = [],
     } = groupBy(
       queryDimensions.map((d) => {
-        return { ...d, joinByIndex: joinBy?.indexOf(d.iri) };
+        return { ...d, joinByIndex: joinBy?.indexOf(d.id) };
       }),
       (d) => d.joinByIndex !== undefined && d.joinByIndex >= 0
     );
@@ -93,15 +96,15 @@ export const joinDimensions = (
             ),
           (x) => x.value
         ),
-        iri: mkJoinById(Number(index)),
+        id: mkJoinById(Number(index)),
         // Non-relevant, as we rely on the originalIris property.
         cubeIri: JOIN_BY_CUBE_IRI,
         // FIXME: adapt to design
         label: uniq(joinedDimensions.map((d) => d.label)).join(", "),
         isJoinByDimension: true,
-        originalIris: joinedDimensions.map((d) => ({
+        originalIds: joinedDimensions.map((d) => ({
           cubeIri: d.cubeIri,
-          dimensionIri: d.iri,
+          dimensionId: d.id as ComponentId,
           label: d.label,
           description: d.description ?? "",
         })),
@@ -113,20 +116,24 @@ export const joinDimensions = (
   return dimensions;
 };
 
-export const getOriginalIris = (joinById: string, chartConfig: ChartConfig) => {
+export const getOriginalIds = (joinById: string, chartConfig: ChartConfig) => {
   const index = getJoinByIdIndex(joinById);
-  return chartConfig.cubes.map((x) => {
-    const joinBy = x.joinBy;
-    assert(joinBy !== undefined, "Found joinBy iri and cube has no join by");
+
+  return chartConfig.cubes.map((cube) => {
+    const joinBy = cube.joinBy;
+    assert(joinBy !== undefined, "Found joinBy id and cube has no join by");
+
     return joinBy[index];
   });
 };
 
-export const getResolvedJoinByIri = (cube: Cube, joinById: string) => {
+export const getResolvedJoinById = (cube: Cube, joinById: string) => {
   if (!cube.joinBy) {
     return;
   }
+
   const index = getJoinByIdIndex(joinById);
+
   return cube.joinBy[index];
 };
 
@@ -172,7 +179,6 @@ export const mergeObservations = (
         }
       }
       const existing: Observation | undefined = acc[key];
-      // TODO: handle cases of same column names across merged observations
       acc[key] = Object.assign(existing ?? {}, om);
     }
 

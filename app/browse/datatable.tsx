@@ -8,18 +8,19 @@ import {
   TableRow,
   TableSortLabel,
   Theme,
-  Tooltip,
   TooltipProps,
 } from "@mui/material";
 import { ascending, descending } from "d3-array";
-import { useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 
 import {
-  extractChartConfigComponentIris,
+  extractChartConfigComponentIds,
   useQueryFilters,
 } from "@/charts/shared/chart-helpers";
 import { Loading } from "@/components/hint";
+import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
+import { TooltipTitle } from "@/components/tooltip-utils";
 import {
   ChartConfig,
   DashboardFiltersConfig,
@@ -59,11 +60,14 @@ const ComponentLabel = (props: ComponentLabelProps) => {
       <span style={{ fontWeight: "bold" }}>{label}</span>
     </OpenMetadataPanelWrapper>
   ) : component.description ? (
-    <Tooltip title={component.description} arrow {...tooltipProps}>
+    <MaybeTooltip
+      title={<TooltipTitle text={component.description} />}
+      tooltipProps={tooltipProps}
+    >
       <span style={{ fontWeight: "bold", textDecoration: "underline" }}>
         {label}
       </span>
-    </Tooltip>
+    </MaybeTooltip>
   ) : (
     <span style={{ fontWeight: "bold" }}>{label}</span>
   );
@@ -92,47 +96,51 @@ export const PreviewTable = ({
     const valuesIndex = uniqueMapBy(sortBy.values, (d) => d.label);
     const convert =
       isNumericalMeasure(sortBy) || sortBy.isNumerical
-        ? (value: string) => +value
-        : (value: string) => valuesIndex.get(value)?.position ?? value;
+        ? (v: string) => +v
+        : (v: string) => valuesIndex.get(v)?.position ?? v;
 
     return [...observations].sort((a, b) =>
-      compare(
-        convert(a[sortBy.iri] as string),
-        convert(b[sortBy.iri] as string)
-      )
+      compare(convert(a[sortBy.id] as string), convert(b[sortBy.id] as string))
     );
   }, [observations, sortBy, sortDirection]);
 
-  const tooltipContainerRef = useRef(null);
+  const tooltipContainerRef = useRef<HTMLDivElement>(null);
+  const tooltipProps = useMemo(() => {
+    return {
+      PopperProps: {
+        // Tooltip contained inside the table so as not to overflow when table is scrolled
+        container: tooltipContainerRef.current,
+      },
+    };
+  }, []);
 
-  // Tooltip contained inside the table so as not to overflow when table is scrolled
-  const tooltipProps = useMemo(
-    () => ({ PopperProps: { container: tooltipContainerRef.current } }),
-    []
+  const handleSort = useCallback(
+    (header: Component) => {
+      if (sortBy?.id === header.id) {
+        setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+      } else {
+        setSortBy(header);
+        setSortDirection("asc");
+      }
+    },
+    [sortBy, sortDirection]
   );
 
   return (
     <div ref={tooltipContainerRef}>
       <Table>
         <caption style={{ display: "none" }}>{title}</caption>
-        <TableHead sx={{ position: "sticky", top: 0, background: "white" }}>
+        <TableHead
+          sx={{ position: "sticky", top: 0, background: "background.paper" }}
+        >
           <TableRow sx={{ borderBottom: "none" }}>
             {headers.map((header) => {
               return (
                 <TableCell
-                  key={header.iri}
+                  key={header.id}
                   component="th"
                   role="columnheader"
-                  onClick={() => {
-                    if (sortBy?.iri === header.iri) {
-                      setSortDirection(
-                        sortDirection === "asc" ? "desc" : "asc"
-                      );
-                    } else {
-                      setSortBy(header);
-                      setSortDirection("asc");
-                    }
-                  }}
+                  onClick={() => handleSort(header)}
                   sx={{
                     textAlign: isNumericalMeasure(header) ? "right" : "left",
                     borderBottom: "none",
@@ -140,14 +148,12 @@ export const PreviewTable = ({
                   }}
                 >
                   <TableSortLabel
-                    active={sortBy === undefined || sortBy.iri === header.iri}
-                    direction={sortBy === undefined ? "desc" : sortDirection}
+                    active={!sortBy || sortBy.id === header.id}
+                    direction={!sortBy ? "desc" : sortDirection}
                     IconComponent={SvgIcChevronDown}
                     sx={{
                       "&:hover > svg": {
-                        ...(sortBy === undefined
-                          ? { transform: "translateY(-15%)" }
-                          : {}),
+                        ...(!sortBy ? { transform: "translateY(-15%)" } : {}),
                       },
                     }}
                   >
@@ -168,10 +174,11 @@ export const PreviewTable = ({
             return (
               <TableRow key={i}>
                 {headers.map((header) => {
-                  const formatter = formatters[header.iri];
+                  const format = formatters[header.id];
+
                   return (
                     <TableCell
-                      key={header.iri}
+                      key={header.id}
                       component="td"
                       sx={{
                         textAlign: isNumericalMeasure(header)
@@ -179,7 +186,7 @@ export const PreviewTable = ({
                           : "left",
                       }}
                     >
-                      {formatter(obs[header.iri])}
+                      {format(obs[header.id])}
                     </TableCell>
                   );
                 })}
@@ -242,7 +249,7 @@ export const DataSetTable = ({
   sx?: SxProps<Theme>;
 }) => {
   const locale = useLocale();
-  const componentIris = extractChartConfigComponentIris({ chartConfig });
+  const componentIds = extractChartConfigComponentIds({ chartConfig });
   const commonQueryVariables = {
     sourceType: dataSource.type,
     sourceUrl: dataSource.url,
@@ -260,7 +267,7 @@ export const DataSetTable = ({
         ...commonQueryVariables,
         cubeFilters: chartConfig.cubes.map((cube) => ({
           iri: cube.iri,
-          componentIris,
+          componentIds,
           joinBy: cube.joinBy,
         })),
       },
@@ -278,7 +285,7 @@ export const DataSetTable = ({
   const queryFilters = useQueryFilters({
     chartConfig,
     dashboardFilters,
-    componentIris,
+    componentIds,
   });
   const [{ data: observationsData }] = useDataCubesObservationsQuery({
     variables: {

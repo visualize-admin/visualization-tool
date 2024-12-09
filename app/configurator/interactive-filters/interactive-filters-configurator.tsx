@@ -1,8 +1,10 @@
 import { Trans } from "@lingui/macro";
-import { FormControlLabel, Switch, Tooltip, Typography } from "@mui/material";
+import { FormControlLabel, Switch, Typography } from "@mui/material";
 
-import { getFieldComponentIri } from "@/charts";
+import { getFieldComponentId } from "@/charts";
 import { ANIMATION_FIELD_SPEC } from "@/charts/chart-config-ui-options";
+import { MaybeTooltip } from "@/components/maybe-tooltip";
+import { TooltipTitle } from "@/components/tooltip-utils";
 import {
   ConfiguratorStateConfiguringChart,
   getChartConfig,
@@ -48,7 +50,7 @@ export const InteractiveFiltersConfigurator = ({
     const allComponents = [...dimensions, ...measures];
 
     const animationComponent = allComponents.find(
-      (d) => d.iri === getFieldComponentIri(fields, "animation")
+      (d) => d.id === getFieldComponentId(fields, "animation")
     );
     const canFilterAnimation = isAnimationInConfig(chartConfig);
 
@@ -122,21 +124,22 @@ export const InteractiveFilterToggle = (
       }}
       control={<Switch checked={checked} onChange={() => toggle()} />}
       label={
-        <Tooltip
-          enterDelay={600}
-          arrow
+        <MaybeTooltip
+          tooltipProps={{ enterDelay: 600 }}
           title={
-            <span>
-              <Trans id="controls.filters.interactive.tooltip">
-                Allow users to change filters
-              </Trans>
-            </span>
+            <TooltipTitle
+              text={
+                <Trans id="controls.filters.interactive.tooltip">
+                  Allow users to change filters
+                </Trans>
+              }
+            />
           }
         >
           <Typography variant="body2">
             <Trans id="controls.filters.interactive.toggle">Interactive</Trans>
           </Typography>
-        </Tooltip>
+        </MaybeTooltip>
       }
     />
   );

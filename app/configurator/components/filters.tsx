@@ -42,6 +42,8 @@ import { useFootnotesStyles } from "@/components/chart-footnotes";
 import Flex from "@/components/flex";
 import { Select } from "@/components/form";
 import { Loading } from "@/components/hint";
+import { MaybeTooltip } from "@/components/maybe-tooltip";
+import { TooltipTitle } from "@/components/tooltip-utils";
 import {
   ChartConfig,
   getChartConfig,
@@ -232,10 +234,10 @@ const MultiFilterContent = ({
 }) => {
   const [config, dispatch] = useConfiguratorState(isConfiguring);
   const chartConfig = getChartConfig(config);
-  const { cubeIri, dimensionIri, activeKeys, allValues, colorConfigPath } =
+  const { cubeIri, dimensionId, activeKeys, allValues, colorConfigPath } =
     useMultiFilterContext();
   const filters = useChartConfigFilters(chartConfig);
-  const rawValues = filters[dimensionIri];
+  const rawValues = filters[dimensionId];
   const classes = useStyles();
   const { sortedTree, flatOptions, optionsByValue } = useMemo(() => {
     const sortedTree = sortHierarchy(tree);
@@ -298,7 +300,7 @@ const MultiFilterContent = ({
       type: "CHART_CONFIG_FILTER_SET_MULTI",
       value: {
         cubeIri,
-        dimensionIri,
+        dimensionId,
         values: newValues,
       },
     });
@@ -312,7 +314,7 @@ const MultiFilterContent = ({
       value: {
         field,
         colorConfigPath,
-        dimensionIri,
+        dimensionId,
         values,
         random: false,
       },
@@ -326,11 +328,9 @@ const MultiFilterContent = ({
   const hasColorMapping = useMemo(() => {
     return (
       !!colorConfig?.colorMapping &&
-      (colorComponent !== undefined
-        ? dimensionIri === colorComponent.iri
-        : true)
+      (colorComponent !== undefined ? dimensionId === colorComponent.id : true)
     );
-  }, [colorConfig?.colorMapping, dimensionIri, colorComponent]);
+  }, [colorConfig?.colorMapping, dimensionId, colorComponent]);
 
   const interactiveFilterProps = useInteractiveFiltersToggle("legend");
   const chartSymbol = getChartSymbol(chartConfig.chartType);
@@ -344,12 +344,16 @@ const MultiFilterContent = ({
               componentsProps={{ typography: { variant: "body2" } }}
               control={<Switch {...interactiveFilterProps} />}
               label={
-                <Tooltip
-                  enterDelay={600}
+                <MaybeTooltip
+                  tooltipProps={{ enterDelay: 600 }}
                   title={
-                    <Trans id="controls.filters.interactive.tooltip">
-                      Allow users to change filters
-                    </Trans>
+                    <TooltipTitle
+                      text={
+                        <Trans id="controls.filters.interactive.tooltip">
+                          Allow users to change filters
+                        </Trans>
+                      }
+                    />
                   }
                 >
                   <div>
@@ -357,7 +361,7 @@ const MultiFilterContent = ({
                       Interactive
                     </Trans>
                   </div>
-                </Tooltip>
+                </MaybeTooltip>
               }
             />
           ) : null}
@@ -1179,6 +1183,7 @@ export const DimensionValuesSingleFilter = ({
     const values = dimension.values;
     return [...values].sort(valueComparator(locale));
   }, [dimension?.values, locale]);
+
   return dimension ? (
     <>
       {sortedDimensionValues.map((dv) => {

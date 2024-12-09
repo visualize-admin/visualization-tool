@@ -2,7 +2,11 @@ import { CubeDimension } from "rdf-cube-view-query";
 import { Term } from "rdf-js";
 
 import { truthy } from "@/domain/types";
-import { ScaleType, TimeUnit } from "@/graphql/query-hooks";
+import {
+  RelatedDimensionType,
+  ScaleType,
+  TimeUnit,
+} from "@/graphql/query-hooks";
 import { ResolvedDimension } from "@/graphql/shared-types";
 import { ExtendedCube } from "@/rdf/extended-cube";
 import { timeFormats, timeUnitFormats, timeUnits } from "@/rdf/mappings";
@@ -16,10 +20,6 @@ export const isCubePublished = (cube: ExtendedCube): boolean =>
     .terms.some((t) =>
       t.equals(ns.adminVocabulary("CreativeWorkStatus/Published"))
     );
-
-export const parseVersionHistory = (cube: ExtendedCube) => {
-  return cube.in(ns.schema.hasPart)?.value;
-};
 
 export const getScaleType = (
   scaleTypeTerm: Term | undefined
@@ -78,34 +78,30 @@ export const parseDimensionDatatype = (dim: CubeDimension) => {
   return { isLiteral, dataType, hasUndefinedValues };
 };
 
-type RelationType = "StandardError";
-
 const sparqlRelationToVisualizeRelation = {
   "https://cube.link/relation/StandardError": "StandardError",
-} as Record<string, RelationType>;
+  "https://cube.link/relation/ConfidenceUpperBound": "ConfidenceUpperBound",
+  "https://cube.link/relation/ConfidenceLowerBound": "ConfidenceLowerBound",
+} as Record<string, RelatedDimensionType>;
 
 export const parseRelatedDimensions = (dim: CubeDimension) => {
   const relatedDimensionNodes = dim.out(ns.cube`meta/dimensionRelation`);
 
-  const res = relatedDimensionNodes
+  return relatedDimensionNodes
     .map((n) => {
       const rawType = n.out(ns.rdf("type")).value;
       const type = rawType
         ? sparqlRelationToVisualizeRelation[rawType]
         : undefined;
       const iri = n.out(ns.cube`meta/relatesTo`)?.value;
+
       if (!iri || !type) {
         return null;
       }
 
-      return {
-        type: type,
-        iri,
-      };
+      return { type, iri };
     })
     .filter(truthy);
-
-  return res;
 };
 
 export const parseCubeDimension = ({

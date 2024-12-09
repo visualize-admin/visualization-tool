@@ -36,6 +36,18 @@ query DataCubeLatestIri(
   )
 }
 
+query DataCubeUnversionedIri(
+  $sourceType: String!
+  $sourceUrl: String!
+  $cubeFilter: DataCubeUnversionedIriFilter!
+) {
+  dataCubeUnversionedIri(
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    cubeFilter: $cubeFilter
+  )
+}
+
 query DataCubeComponents(
   $sourceType: String!
   $sourceUrl: DataSourceUrl!
@@ -130,8 +142,8 @@ query PossibleFilters(
     sourceUrl: $sourceUrl
     cubeFilter: $cubeFilter
   ) {
-    iri
     type
+    id
     value
   }
 }

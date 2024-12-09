@@ -41,6 +41,7 @@ export interface TooltipInfo {
   tooltipContent?: ReactNode;
   datum: TooltipValue;
   values: TooltipValue[] | undefined;
+  withTriangle?: boolean;
 }
 
 const TooltipInner = ({ d, type }: { d: Observation; type: TooltipType }) => {
@@ -48,15 +49,29 @@ const TooltipInner = ({ d, type }: { d: Observation; type: TooltipType }) => {
     | LinesState
     | PieState;
   const { margins } = bounds;
-  const { xAnchor, yAnchor, placement, xValue, tooltipContent, datum, values } =
-    getAnnotationInfo(d as any);
+  const {
+    xAnchor,
+    yAnchor,
+    placement,
+    xValue,
+    tooltipContent,
+    datum,
+    values,
+    withTriangle,
+  } = getAnnotationInfo(d as any);
 
   if (Number.isNaN(yAnchor)) {
     return null;
   }
 
   return (
-    <TooltipBox x={xAnchor} y={yAnchor} placement={placement} margins={margins}>
+    <TooltipBox
+      x={xAnchor}
+      y={yAnchor}
+      placement={placement}
+      withTriangle={withTriangle}
+      margins={margins}
+    >
       {tooltipContent ? (
         tooltipContent
       ) : type === "multiple" && values ? (

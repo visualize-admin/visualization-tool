@@ -11,9 +11,12 @@ import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { theme } from "@/themes/federal";
 import { getTextWidth } from "@/utils/get-text-width";
+import { useAxisTitleAdjustments } from "@/utils/use-axis-title-adjustments";
 
 import { TITLE_VPADDING } from "./combo-line-container";
+
 const TITLE_HPADDING = 8;
+const TOP_MARGIN = 4;
 
 type AxisHeightLinearDualProps = {
   orientation?: "left" | "right";
@@ -22,24 +25,25 @@ type AxisHeightLinearDualProps = {
 export const AxisHeightLinearDual = (props: AxisHeightLinearDualProps) => {
   const { orientation = "left" } = props;
   const leftAligned = orientation === "left";
+
   const { gridColor, labelColor, axisLabelFontSize } = useChartTheme();
   const [ref, setRef] = useState<SVGGElement | null>(null);
   const { y, yOrientationScales, colors, bounds, maxRightTickWidth } =
     useChartState() as ComboLineDualState | ComboLineColumnState;
+
   const yScale = yOrientationScales[orientation];
   const { margins } = bounds;
   const axisTitle = y[orientation].label;
   const axisTitleWidth =
     getTextWidth(axisTitle, { fontSize: axisLabelFontSize }) + TICK_PADDING;
   const color = colors(axisTitle);
-  const otherAxisTitle = y[leftAligned ? "right" : "left"].label;
-  const otherAxisTitleWidth =
-    getTextWidth(otherAxisTitle, { fontSize: axisLabelFontSize }) +
-    TICK_PADDING;
-  const overLappingTitles =
-    axisTitleWidth + otherAxisTitleWidth > bounds.chartWidth;
-  const overLappingAmount =
-    (axisTitleWidth + otherAxisTitleWidth) / bounds.chartWidth;
+
+  const { isOverlapping, overlapAmount } = useAxisTitleAdjustments({
+    leftAxisTitle: y.left.label,
+    rightAxisTitle: y.right.label,
+    containerWidth: bounds.chartWidth,
+    fontSize: axisLabelFontSize,
+  });
 
   useRenderAxisHeightLinear(ref, {
     id: `axis-height-linear-${orientation}`,
@@ -55,11 +59,12 @@ export const AxisHeightLinearDual = (props: AxisHeightLinearDualProps) => {
   const rightXAlignment =
     bounds.chartWidth +
     margins.left -
-    (overLappingTitles ? axisTitleWidth / overLappingAmount : axisTitleWidth) +
-    // Align the title with the rightmost tick.
+    (isOverlapping ? axisTitleWidth / overlapAmount : axisTitleWidth) +
     maxRightTickWidth +
     TICK_PADDING -
-    TITLE_HPADDING * (overLappingTitles ? Math.floor(overLappingAmount) : 2);
+    TITLE_HPADDING * (isOverlapping ? Math.floor(overlapAmount) : 2);
+
+  const titleWidth = isOverlapping ? axisTitleWidth / overlapAmount : "auto";
 
   return (
     <>
@@ -67,9 +72,11 @@ export const AxisHeightLinearDual = (props: AxisHeightLinearDualProps) => {
         x={leftAligned ? 0 : rightXAlignment}
         width={axisTitleWidth + TITLE_HPADDING * 2}
         height={
-          (overLappingTitles
-            ? axisLabelFontSize * Math.ceil(overLappingAmount)
-            : axisLabelFontSize + TITLE_VPADDING) * 2
+          (isOverlapping
+            ? axisLabelFontSize * Math.ceil(overlapAmount) + TITLE_VPADDING
+            : axisLabelFontSize + TITLE_VPADDING) *
+            2 +
+          TOP_MARGIN
         }
         color={theme.palette.getContrastText(color)}
         style={{ display: "flex" }}
@@ -77,17 +84,13 @@ export const AxisHeightLinearDual = (props: AxisHeightLinearDualProps) => {
         <OpenMetadataPanelWrapper component={y[orientation].dimension}>
           <span
             style={{
-              width: overLappingTitles
-                ? axisTitleWidth / overLappingAmount
-                : "auto",
+              width: titleWidth,
               fontSize: axisLabelFontSize,
               backgroundColor: color,
               color: theme.palette.getContrastText(color),
-              paddingTop: TITLE_VPADDING,
-              paddingBottom: TITLE_VPADDING,
-              paddingLeft: TITLE_HPADDING,
-              paddingRight: TITLE_HPADDING,
+              padding: `${TITLE_VPADDING}px ${TITLE_HPADDING}px`,
               borderRadius: 4,
+              wordBreak: "break-word",
             }}
           >
             {axisTitle}
