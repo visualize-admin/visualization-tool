@@ -200,17 +200,14 @@ const useBarsState = (
     bandDomain: yTimeRangeDomainLabels.every((d) => d === undefined)
       ? yScale.domain()
       : yTimeRangeDomainLabels,
+    isFlipped: true,
   });
   const right = 40;
   const margins = {
     top: 0,
     right,
-    /**
-     * Here we have to switch the left and bottom margins because the margins are calculated
-     * based on the "regular" positioning of the axis
-     * */
-    bottom: left,
-    left: bottom,
+    bottom,
+    left,
   };
 
   const barCount = yScale.domain().length;
