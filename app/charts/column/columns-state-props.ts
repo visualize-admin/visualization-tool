@@ -125,7 +125,7 @@ export const useColumnsStateData = (
   const data = useChartData(sortedPlottableData, {
     chartConfig,
     timeRangeDimensionId: xDimension.id,
-    getXAsDate,
+    getAxisValueAsDate: getXAsDate,
     getTimeRangeDate,
   });
 

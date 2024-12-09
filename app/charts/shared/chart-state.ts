@@ -742,13 +742,13 @@ export const useChartData = (
   {
     chartConfig,
     timeRangeDimensionId,
-    getXAsDate,
+    getAxisValueAsDate,
     getSegmentAbbreviationOrLabel,
     getTimeRangeDate,
   }: {
     chartConfig: ChartConfig;
     timeRangeDimensionId: string | undefined;
-    getXAsDate?: (d: Observation) => Date;
+    getAxisValueAsDate?: (d: Observation) => Date;
     getSegmentAbbreviationOrLabel?: (d: Observation) => string;
     getTimeRangeDate?: (d: Observation) => Date;
   }
@@ -785,7 +785,7 @@ export const useChartData = (
   const { potentialTimeRangeFilterIds } = useDashboardInteractiveFilters();
   const interactiveTimeRangeFilters = useMemo(() => {
     const interactiveTimeRangeFilter: ValuePredicate | null =
-      getXAsDate &&
+      getAxisValueAsDate &&
       interactiveFromTime &&
       interactiveToTime &&
       (interactiveTimeRange?.active ||
@@ -793,189 +793,14 @@ export const useChartData = (
           timeRangeDimensionId &&
           potentialTimeRangeFilterIds.includes(timeRangeDimensionId)))
         ? (d: Observation) => {
-            const time = getXAsDate(d).getTime();
+            const time = getAxisValueAsDate(d).getTime();
             return time >= interactiveFromTime && time <= interactiveToTime;
           }
         : null;
 
     return interactiveTimeRangeFilter ? [interactiveTimeRangeFilter] : [];
   }, [
-    getXAsDate,
-    interactiveFromTime,
-    interactiveToTime,
-    interactiveTimeRange?.active,
-    dashboardFilters?.timeRange.active,
-    timeRangeDimensionId,
-    potentialTimeRangeFilterIds,
-  ]);
-
-  // interactive time slider
-  const animationField = getAnimationField(chartConfig);
-  const dynamicScales = animationField?.dynamicScales ?? true;
-  const animationComponentId = animationField?.componentId ?? "";
-  const getAnimationDate = useTemporalVariable(animationComponentId);
-  const getAnimationOrdinalDate = useStringVariable(animationComponentId);
-  const interactiveTimeSliderFilters = useMemo(() => {
-    const interactiveTimeSliderFilter: ValuePredicate | null =
-      animationField?.componentId && timeSlider.value
-        ? (d: Observation) => {
-            if (timeSlider.type === "interval") {
-              return (
-                getAnimationDate(d).getTime() === timeSlider.value!.getTime()
-              );
-            }
-
-            const ordinalDate = getAnimationOrdinalDate(d);
-            return ordinalDate === timeSlider.value!;
-          }
-        : null;
-
-    return interactiveTimeSliderFilter ? [interactiveTimeSliderFilter] : [];
-  }, [
-    animationField?.componentId,
-    timeSlider.type,
-    timeSlider.value,
-    getAnimationDate,
-    getAnimationOrdinalDate,
-  ]);
-
-  // interactive legend
-  const interactiveLegendFilters = useMemo(() => {
-    const legendItems = Object.keys(categories);
-    const interactiveLegendFilter: ValuePredicate | null =
-      interactiveFiltersConfig?.legend?.active && getSegmentAbbreviationOrLabel
-        ? (d: Observation) => {
-            return !legendItems.includes(getSegmentAbbreviationOrLabel(d));
-          }
-        : null;
-
-    return interactiveLegendFilter ? [interactiveLegendFilter] : [];
-  }, [
-    categories,
-    getSegmentAbbreviationOrLabel,
-    interactiveFiltersConfig?.legend?.active,
-  ]);
-
-  const chartData = useMemo(() => {
-    return observations.filter(
-      overEvery([
-        ...interactiveLegendFilters,
-        ...interactiveTimeRangeFilters,
-        ...interactiveTimeSliderFilters,
-      ])
-    );
-  }, [
-    observations,
-    interactiveLegendFilters,
-    interactiveTimeRangeFilters,
-    interactiveTimeSliderFilters,
-  ]);
-
-  const scalesData = useMemo(() => {
-    if (dynamicScales) {
-      return chartData;
-    } else {
-      return observations.filter(
-        overEvery([...interactiveLegendFilters, ...interactiveTimeRangeFilters])
-      );
-    }
-  }, [
-    dynamicScales,
-    chartData,
-    observations,
-    interactiveLegendFilters,
-    interactiveTimeRangeFilters,
-  ]);
-
-  const segmentData = useMemo(() => {
-    return observations.filter(overEvery(interactiveTimeRangeFilters));
-  }, [observations, interactiveTimeRangeFilters]);
-
-  const timeRangeData = useMemo(() => {
-    return observations.filter(overEvery(timeRangeFilters));
-  }, [observations, timeRangeFilters]);
-
-  const paddingData = useMemo(() => {
-    if (dynamicScales) {
-      return chartData;
-    } else {
-      return observations.filter(overEvery(interactiveLegendFilters));
-    }
-  }, [dynamicScales, chartData, observations, interactiveLegendFilters]);
-
-  return {
-    chartData,
-    scalesData,
-    segmentData,
-    timeRangeData,
-    paddingData,
-  };
-};
-
-export const useBarChartData = (
-  observations: Observation[],
-  {
-    chartConfig,
-    timeRangeDimensionId,
-    getYAsDate,
-    getSegmentAbbreviationOrLabel,
-    getTimeRangeDate,
-  }: {
-    chartConfig: ChartConfig;
-    timeRangeDimensionId: string | undefined;
-    getYAsDate?: (d: Observation) => Date;
-    getSegmentAbbreviationOrLabel?: (d: Observation) => string;
-    getTimeRangeDate?: (d: Observation) => Date;
-  }
-): Omit<ChartStateData, "allData"> => {
-  const { interactiveFiltersConfig } = chartConfig;
-  const categories = useChartInteractiveFilters((d) => d.categories);
-  const timeRange = useChartInteractiveFilters((d) => d.timeRange);
-  const timeSlider = useChartInteractiveFilters((d) => d.timeSlider);
-
-  // time range
-  const interactiveTimeRange = interactiveFiltersConfig?.timeRange;
-  const timeRangeFromTime = interactiveTimeRange?.presets.from
-    ? parseDate(interactiveTimeRange?.presets.from).getTime()
-    : undefined;
-  const timeRangeToTime = interactiveTimeRange?.presets.to
-    ? parseDate(interactiveTimeRange?.presets.to).getTime()
-    : undefined;
-  const timeRangeFilters = useMemo(() => {
-    const timeRangeFilter: ValuePredicate | null =
-      getTimeRangeDate && timeRangeFromTime && timeRangeToTime
-        ? (d: Observation) => {
-            const time = getTimeRangeDate(d).getTime();
-            return time >= timeRangeFromTime && time <= timeRangeToTime;
-          }
-        : null;
-
-    return timeRangeFilter ? [timeRangeFilter] : [];
-  }, [timeRangeFromTime, timeRangeToTime, getTimeRangeDate]);
-
-  // interactive time range
-  const interactiveFromTime = timeRange.from?.getTime();
-  const interactiveToTime = timeRange.to?.getTime();
-  const [{ dashboardFilters }] = useConfiguratorState(hasChartConfigs);
-  const { potentialTimeRangeFilterIds } = useDashboardInteractiveFilters();
-  const interactiveTimeRangeFilters = useMemo(() => {
-    const interactiveTimeRangeFilter: ValuePredicate | null =
-      getYAsDate &&
-      interactiveFromTime &&
-      interactiveToTime &&
-      (interactiveTimeRange?.active ||
-        (dashboardFilters?.timeRange.active &&
-          timeRangeDimensionId &&
-          potentialTimeRangeFilterIds.includes(timeRangeDimensionId)))
-        ? (d: Observation) => {
-            const time = getYAsDate(d).getTime();
-            return time >= interactiveFromTime && time <= interactiveToTime;
-          }
-        : null;
-
-    return interactiveTimeRangeFilter ? [interactiveTimeRangeFilter] : [];
-  }, [
-    getYAsDate,
+    getAxisValueAsDate,
     interactiveFromTime,
     interactiveToTime,
     interactiveTimeRange?.active,

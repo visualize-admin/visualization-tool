@@ -12,8 +12,8 @@ import {
   RenderingVariables,
   SortingVariables,
   useBandYVariables,
-  useBarChartData,
   useBaseVariables,
+  useChartData,
   useInteractiveFiltersVariables,
   useNumericalXErrorVariables,
   useNumericalXVariables,
@@ -122,10 +122,10 @@ export const useBarsStateData = (
   const sortedPlottableData = useMemo(() => {
     return sortData(plottableData);
   }, [sortData, plottableData]);
-  const data = useBarChartData(sortedPlottableData, {
+  const data = useChartData(sortedPlottableData, {
     chartConfig,
     timeRangeDimensionId: yDimension.id,
-    getYAsDate,
+    getAxisValueAsDate: getYAsDate,
     getTimeRangeDate,
   });
 

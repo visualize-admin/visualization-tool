@@ -155,7 +155,7 @@ export const useBarsStackedStateData = (
   const data = useChartData(sortedPlottableData, {
     chartConfig,
     timeRangeDimensionId: yDimension.id,
-    getXAsDate: getYAsDate,
+    getAxisValueAsDate: getYAsDate,
     getSegmentAbbreviationOrLabel,
     getTimeRangeDate,
   });

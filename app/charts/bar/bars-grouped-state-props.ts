@@ -145,7 +145,7 @@ export const useBarsGroupedStateData = (
   const data = useChartData(sortedPlottableData, {
     chartConfig,
     timeRangeDimensionId: yDimension.id,
-    getXAsDate: getYAsDate,
+    getAxisValueAsDate: getYAsDate,
     getSegmentAbbreviationOrLabel,
     getTimeRangeDate,
   });

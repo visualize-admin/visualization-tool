@@ -155,7 +155,7 @@ export const useColumnsStackedStateData = (
   const data = useChartData(sortedPlottableData, {
     chartConfig,
     timeRangeDimensionId: xDimension.id,
-    getXAsDate,
+    getAxisValueAsDate: getXAsDate,
     getSegmentAbbreviationOrLabel,
     getTimeRangeDate,
   });
