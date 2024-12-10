@@ -250,7 +250,7 @@ const useBarsGroupedState = (
       ) ?? 0,
       0
     );
-    const xScale = scaleLinear().domain([maxValue, minValue]).nice();
+    const xScale = scaleLinear().domain([minValue, maxValue]).nice();
 
     const minPaddingValue = getMinX(paddingData, (d) =>
       getXErrorRange ? getXErrorRange(d)[0] : getX(d)
@@ -352,7 +352,7 @@ const useBarsGroupedState = (
   yScaleInteraction.range([0, chartHeight]);
   yScaleIn.range([0, yScale.bandwidth()]);
   yScaleTimeRange.range([0, chartHeight]);
-  xScale.range([chartWidth, 0]);
+  xScale.range([0, chartWidth]);
 
   const isMobile = useIsMobile();
 
