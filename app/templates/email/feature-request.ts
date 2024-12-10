@@ -26,6 +26,7 @@ Additional context
 Add any other context or screenshots about the feature request here.
 Please describe...
 
+----------------------------------------------
 Contact Information
 Title: 
 Last Name:
@@ -63,6 +64,7 @@ Zusätzlicher Kontext
 Fügen Sie hier weitere Kontextinformationen oder Screenshots zur Feature-Anfrage hinzu.
 Bitte beschreiben Sie...
 
+----------------------------------------------
 Kontakt Information
 Anrede:
 Name:
@@ -100,6 +102,7 @@ Contexte supplémentaire
 Ajoutez ici tout autre contexte ou captures d'écran concernant la demande de fonctionnalité.
 Veuillez décrire...
 
+----------------------------------------------
 Informations de contact
 Civilité:
 Nom:
@@ -137,6 +140,7 @@ Contesto aggiuntivo
 Aggiunga qui qualsiasi altro contesto o screenshot sulla richiesta di funzionalità.
 Si prega di descrivere...
 
+----------------------------------------------
 Informazioni di contatto
 Titolo:
 Cognome:
