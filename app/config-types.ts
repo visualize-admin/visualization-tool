@@ -1139,6 +1139,7 @@ type ComboLineDualAdjusters = BaseAdjusters<ComboLineDualConfig> & {
       ComboLineDualConfig,
       | AreaFields
       | ColumnFields
+      | BarFields
       | LineFields
       | MapFields
       | PieFields
@@ -1157,6 +1158,7 @@ type ComboLineColumnAdjusters = BaseAdjusters<ComboLineColumnConfig> & {
       ComboLineColumnConfig,
       | AreaFields
       | ColumnFields
+      | BarFields
       | LineFields
       | MapFields
       | PieFields
