@@ -1105,7 +1105,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         return produce(newChartConfig, (draft) => {
           // Temporal dimension could be used as X axis, in this case we need to
           // remove the animation.
-          if (newChartConfig.fields.x.componentId !== oldValue?.componentId) {
+          if (newChartConfig.fields.y.componentId !== oldValue?.componentId) {
             draft.fields.animation = oldValue;
           }
         });
