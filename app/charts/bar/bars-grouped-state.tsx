@@ -336,13 +336,14 @@ const useBarsGroupedState = (
     bandDomain: yTimeRangeDomainLabels.every((d) => d === undefined)
       ? yScale.domain()
       : yTimeRangeDomainLabels,
+    isFlipped: true,
   });
   const right = 40;
   const margins = {
     top: 0,
     right,
-    bottom,
-    left: 50 + left,
+    bottom: bottom + 30,
+    left,
   };
   const bounds = useChartBounds(width, margins, height);
   const { chartWidth, chartHeight } = bounds;
