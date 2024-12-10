@@ -17,9 +17,8 @@ import { getTextWidth } from "@/utils/get-text-width";
 
 export const AxisWidthLinear = () => {
   const formatNumber = useFormatNumber();
-  const { xScale, bounds, xAxisLabel, xMeasure } = useChartState() as
-    | ScatterplotState
-    | BarsState;
+  const { xScale, bounds, xAxisLabel, xMeasure, chartType } =
+    useChartState() as ScatterplotState | BarsState;
   const { chartWidth, chartHeight, margins } = bounds;
   const {
     labelColor,
@@ -41,7 +40,7 @@ export const AxisWidthLinear = () => {
       const tickValues = xScale.ticks(ticks);
       const axis = axisBottom(xScale)
         .tickValues(tickValues)
-        .tickSizeInner(-chartHeight)
+        .tickSizeInner(-chartHeight - 10)
         .tickSizeOuter(-chartHeight)
         .tickFormat(formatNumber);
       const g = renderContainer(ref.current, {
@@ -57,17 +56,21 @@ export const AxisWidthLinear = () => {
       });
 
       g.selectAll(".tick line")
-        .attr("stroke", gridColor)
+        .attr("y1", 10)
+        .attr("stroke", (_, i) => (i === 0 ? "#000000" : gridColor))
         .attr("stroke-width", 1);
       g.selectAll(".tick text")
         .attr("font-size", labelFontSize)
         .attr("font-family", fontFamily)
         .attr("fill", labelColor)
-        .attr("dy", labelFontSize)
+        .attr("dy", labelFontSize + 10)
         .attr("text-anchor", "middle");
-      g.select("path.domain").attr("stroke", gridColor);
+      g.select("path.domain")
+        .attr("stroke", gridColor)
+        .attr("opacity", chartType === "bar" ? 0 : 1);
     }
   }, [
+    chartType,
     bounds.chartWidth,
     chartHeight,
     enableTransition,
@@ -93,7 +96,7 @@ export const AxisWidthLinear = () => {
     <>
       <foreignObject
         x={margins.left}
-        y={margins.top + chartHeight + 24}
+        y={margins.top + chartHeight + 34}
         width={chartWidth}
         height={height}
         style={{ display: "flex", textAlign: "right" }}
