@@ -36,7 +36,7 @@ import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { ComboLineDualConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
 import { truthy } from "@/domain/types";
-import { getTextWidth } from "@/utils/get-text-width";
+import { getTextHeight, getTextWidth } from "@/utils/get-text-width";
 import { useAxisTitleAdjustments } from "@/utils/use-axis-title-adjustments";
 import { useIsMobile } from "@/utils/use-is-mobile";
 
@@ -244,8 +244,12 @@ const ComboLineDualChartProvider = (
   const overLappingTitles =
     axisTitleWidth + otherAxisTitleWidth > bounds.chartWidth;
 
+  const axisLabelHeight = getTextHeight(axisTitle, {
+    fontSize: axisLabelFontSize,
+  });
+
   if (overLappingTitles) {
-    bounds.height += axisLabelFontSize + TITLE_VPADDING; // Add space for the legend if titles are overlapping
+    bounds.height += axisLabelHeight + TITLE_VPADDING; // Add space for the legend if titles are overlapping
   }
 
   return (

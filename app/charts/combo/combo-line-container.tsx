@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 
-import { getTextWidth } from "@/utils/get-text-width";
+import { getTextHeight, getTextWidth } from "@/utils/get-text-width";
 
 import { TICK_PADDING } from "../shared/axis-height-linear";
 import { useChartState } from "../shared/chart-state";
@@ -26,8 +26,12 @@ export const ComboLineContainer = ({ children }: { children: ReactNode }) => {
   const overLappingTitles =
     axisTitleWidth + otherAxisTitleWidth > bounds.chartWidth;
 
+  const axisLabelHeight = getTextHeight(axisTitle, {
+    fontSize: axisLabelFontSize,
+  });
+
   const yAdjustment = overLappingTitles
-    ? (axisLabelFontSize + TITLE_VPADDING) * 2
+    ? (axisLabelHeight + TITLE_VPADDING) * 2
     : 0;
   return <g transform={`translate(0, ${yAdjustment})`}>{children}</g>;
 };
