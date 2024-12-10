@@ -35,14 +35,14 @@ export const ErrorWhiskers = () => {
     const bandwidth = yScale.bandwidth();
     return chartData.filter(getXErrorPresent).map((d, i) => {
       const y0 = yScale(getY(d)) as number;
-      const barWidth = Math.min(bandwidth, 15);
+      const barHeight = Math.min(bandwidth, 15);
       const [x1, x2] = getXErrorRange(d);
       return {
         key: `${i}`,
-        y: y0 + bandwidth / 2 - barWidth / 2,
+        y: y0 + bandwidth / 2 - barHeight / 2,
         x1: xScale(x1),
         x2: xScale(x2),
-        width: barWidth,
+        height: barHeight,
       } as RenderHorizontalWhiskerDatum;
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps

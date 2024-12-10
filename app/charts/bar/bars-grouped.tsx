@@ -37,14 +37,14 @@ export const ErrorWhiskers = () => {
       .flatMap(([segment, observations]) =>
         observations.map((d) => {
           const y0 = yScaleIn(getSegment(d)) as number;
-          const barWidth = Math.min(bandwidth, 15);
+          const barHeight = Math.min(bandwidth, 15);
           const [x1, x2] = getXErrorRange(d);
           return {
             key: `${segment}-${getSegment(d)}`,
-            y: (yScale(segment) as number) + y0 + bandwidth / 2 - barWidth / 2,
+            y: (yScale(segment) as number) + y0 + bandwidth / 2 - barHeight / 2,
             x1: xScale(x1),
             x2: xScale(x2),
-            width: barWidth,
+            height: barHeight,
           } as RenderHorizontalWhiskerDatum;
         })
       );

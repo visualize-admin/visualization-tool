@@ -168,7 +168,7 @@ export type RenderHorizontalWhiskerDatum = {
   y: number;
   x1: number;
   x2: number;
-  width: number;
+  height: number;
   fill?: string;
   renderMiddleCircle?: boolean;
 };
@@ -305,8 +305,8 @@ export const renderHorizontalWhisker = (
               .attr("class", "top")
               .attr("y", (d) => d.y)
               .attr("x", (d) => d.x2)
-              .attr("width", (d) => d.width)
-              .attr("height", ERROR_WHISKER_SIZE)
+              .attr("width", ERROR_WHISKER_SIZE)
+              .attr("height", (d) => d.height)
               .attr("fill", (d) => d.fill ?? "black")
               .attr("stroke", "none")
           )
@@ -314,10 +314,10 @@ export const renderHorizontalWhisker = (
             g
               .append("rect")
               .attr("class", "middle")
-              .attr("y", (d) => d.y + (d.width - ERROR_WHISKER_SIZE) / 2)
-              .attr("x", (d) => d.x2)
-              .attr("width", ERROR_WHISKER_SIZE)
-              .attr("height", (d) => Math.max(0, d.x1 - d.x2))
+              .attr("y", (d) => d.y + (d.height - ERROR_WHISKER_SIZE) / 2)
+              .attr("x", (d) => d.x1)
+              .attr("width", (d) => Math.abs(Math.min(0, d.x1 - d.x2)))
+              .attr("height", ERROR_WHISKER_SIZE)
               .attr("fill", (d) => d.fill ?? "black")
               .attr("stroke", "none")
           )
@@ -327,8 +327,8 @@ export const renderHorizontalWhisker = (
               .attr("class", "bottom")
               .attr("y", (d) => d.y)
               .attr("x", (d) => d.x1)
-              .attr("width", (d) => d.width)
-              .attr("height", ERROR_WHISKER_SIZE)
+              .attr("width", ERROR_WHISKER_SIZE)
+              .attr("height", (d) => d.height)
               .attr("fill", (d) => d.fill ?? "black")
               .attr("stroke", "none")
           )
@@ -359,15 +359,15 @@ export const renderHorizontalWhisker = (
                   .select(".top")
                   .attr("y", (d) => d.y)
                   .attr("x", (d) => d.x2)
-                  .attr("width", (d) => d.width)
+                  .attr("height", (d) => d.height)
                   .attr("fill", (d) => d.fill ?? "black")
               )
               .call((g) =>
                 g
                   .select(".middle")
-                  .attr("y", (d) => d.y + (d.width - ERROR_WHISKER_SIZE) / 2)
-                  .attr("x", (d) => d.x2)
-                  .attr("height", (d) => Math.max(0, d.x1 - d.x2))
+                  .attr("y", (d) => d.y + (d.height - ERROR_WHISKER_SIZE) / 2)
+                  .attr("x", (d) => d.x1)
+                  .attr("width", (d) => Math.abs(Math.min(0, d.x1 - d.x2)))
                   .attr("fill", (d) => d.fill ?? "black")
               )
               .call((g) =>
@@ -375,7 +375,7 @@ export const renderHorizontalWhisker = (
                   .select(".bottom")
                   .attr("y", (d) => d.y)
                   .attr("x", (d) => d.x1)
-                  .attr("width", (d) => d.width)
+                  .attr("height", (d) => d.height)
                   .attr("fill", (d) => d.fill ?? "black")
               )
               .call((g) =>
