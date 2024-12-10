@@ -55,7 +55,6 @@ export const AxisHeightBand = () => {
         hasNegativeValues ? gridColor : domainColor
       );
       g.selectAll(".tick text")
-        .attr("x", -fontSize)
         .attr("font-size", fontSize)
         .attr("font-family", fontFamily)
         .attr("fill", labelColor)
