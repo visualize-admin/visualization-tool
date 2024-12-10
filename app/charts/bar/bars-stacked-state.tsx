@@ -25,7 +25,11 @@ import {
   useBarsStackedStateData,
   useBarsStackedStateVariables,
 } from "@/charts/bar/bars-stacked-state-props";
-import { PADDING_INNER, PADDING_OUTER } from "@/charts/bar/constants";
+import {
+  MIN_BAR_HEIGHT,
+  PADDING_INNER,
+  PADDING_OUTER,
+} from "@/charts/bar/constants";
 import {
   useChartBounds,
   useChartPadding,
@@ -387,7 +391,6 @@ const useBarsStackedState = (
 
   /** Chart dimensions */
   const { left, bottom } = useChartPadding({
-    //TODO: This is wrong, need to fix
     yScale: paddingXScale,
     width,
     height,
@@ -398,20 +401,29 @@ const useBarsStackedState = (
       ? yScale.domain()
       : yTimeRangeDomainLabels,
     normalize,
+    isFlipped: true,
   });
   const right = 40;
   const margins = {
     top: 0,
     right,
-    bottom,
-    left: 50 + left,
+    bottom: bottom + 30,
+    left,
   };
-  const bounds = useChartBounds(width, margins, height);
+
+  const barCount = yScale.domain().length;
+  // Here we adjust the height to make sure the bars have a minimum height and are legible
+  const adjustedHeight =
+    barCount * MIN_BAR_HEIGHT > height
+      ? barCount * MIN_BAR_HEIGHT
+      : height - margins.bottom;
+
+  const bounds = useChartBounds(width, margins, adjustedHeight);
   const { chartWidth, chartHeight } = bounds;
 
-  yScale.range([0, chartHeight]);
-  yScaleInteraction.range([0, chartHeight]);
-  yScaleTimeRange.range([0, chartHeight]);
+  yScale.range([0, adjustedHeight]);
+  yScaleInteraction.range([0, adjustedHeight]);
+  yScaleTimeRange.range([0, adjustedHeight]);
   xScale.range([0, chartWidth]);
 
   const isMobile = useIsMobile();
@@ -494,7 +506,10 @@ const useBarsStackedState = (
 
   return {
     chartType: "bar",
-    bounds,
+    bounds: {
+      ...bounds,
+      chartHeight: adjustedHeight,
+    },
     chartData,
     allData,
     xScale,
