@@ -14,7 +14,11 @@ import {
   useBarsStateData,
   useBarsStateVariables,
 } from "@/charts/bar/bars-state-props";
-import { PADDING_INNER, PADDING_OUTER } from "@/charts/bar/constants";
+import {
+  MIN_BAR_HEIGHT,
+  PADDING_INNER,
+  PADDING_OUTER,
+} from "@/charts/bar/constants";
 import {
   useChartBounds,
   useChartPadding,
@@ -47,8 +51,6 @@ import {
 import { useIsMobile } from "@/utils/use-is-mobile";
 
 import { ChartProps } from "../shared/ChartProps";
-
-export const MIN_BAR_HEIGHT = 16;
 
 export type BarsState = CommonChartState &
   BarsStateVariables &
