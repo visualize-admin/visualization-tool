@@ -41,7 +41,7 @@ export const AxisHeightBand = () => {
         id: "axis-height-band",
         transform: `translate(${margins.left} ${margins.top})`,
         transition: { enable: enableTransition, duration: transitionDuration },
-        render: (g) => g.attr("data-testid", "axis-width-band").call(axis),
+        render: (g) => g.attr("data-testid", "axis-height-band").call(axis),
         renderUpdate: (g, opts) =>
           maybeTransition(g, {
             transition: opts.transition,
