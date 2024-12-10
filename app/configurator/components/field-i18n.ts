@@ -297,6 +297,7 @@ export function getFieldLabel(field: string): string {
     case "line..byDimensionLabel.asc":
     case "sorting.byDimensionLabel.asc":
       return i18n._(fieldLabels["controls.sorting.byDimensionLabel.ascending"]);
+    case "bar..byAuto.asc":
     case "bar.stacked.byAuto.asc":
     case "bar.grouped.byAuto.asc":
     case "column..byAuto.asc":
@@ -306,6 +307,7 @@ export function getFieldLabel(field: string): string {
     case "line..byAuto.asc":
     case "area..byAuto.asc":
       return i18n._(fieldLabels["controls.sorting.byAuto.ascending"]);
+    case "bar..byAuto.desc":
     case "bar.stacked.byAuto.desc":
     case "bar.grouped.byAuto.desc":
     case "column..byAuto.desc":
