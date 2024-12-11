@@ -23,7 +23,7 @@ export const ErrorWhiskers = () => {
     showXUncertainty,
     bounds,
   } = useChartState() as BarsState;
-  const { margins, width, height } = bounds;
+  const { margins, width, chartHeight } = bounds;
   const ref = useRef<SVGGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
@@ -55,7 +55,7 @@ export const ErrorWhiskers = () => {
     xScale,
     yScale,
     width,
-    bounds.chartHeight,
+    chartHeight,
   ]);
 
   useEffect(() => {
