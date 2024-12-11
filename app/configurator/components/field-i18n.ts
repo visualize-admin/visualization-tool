@@ -40,6 +40,14 @@ const fieldLabels = {
     id: "controls.column.grouped",
     message: "Grouped",
   }),
+  "controls.bar.stacked": defineMessage({
+    id: "controls.bar.stacked",
+    message: "Stacked",
+  }),
+  "controls.bar.grouped": defineMessage({
+    id: "controls.bar.grouped",
+    message: "Grouped",
+  }),
   "chart.map.layers.base": defineMessage({
     id: "chart.map.layers.base",
     message: "Map Display",
@@ -214,6 +222,7 @@ export function getFieldLabel(field: string): string {
   switch (field) {
     // Visual encodings (left column)
     case "column.x":
+    case "bar.x":
     case "line.x":
     case "area.x":
     case "scatterplot.x":
@@ -228,6 +237,7 @@ export function getFieldLabel(field: string): string {
       return i18n._(fieldLabels["controls.measure"]);
     case "scatterplot.y":
     case "column.y":
+    case "bar.y":
     case "line.y":
     case "area.y":
     case "bar.y":
@@ -236,8 +246,8 @@ export function getFieldLabel(field: string): string {
     case "comboLineColumn.y":
     case "y":
       return i18n._(fieldLabels["controls.axis.vertical"]);
-    case "bar.animation":
     case "column.animation":
+    case "bar.animation":
     case "line.animation":
     case "area.animation":
     case "scatterplot.animation":
@@ -245,8 +255,8 @@ export function getFieldLabel(field: string): string {
     case "map.animation":
     case "animation":
       return i18n._(fieldLabels["controls.animation"]);
-    case "bar.segment":
     case "column.segment":
+    case "bar.segment":
     case "line.segment":
     case "area.segment":
     case "scatterplot.segment":
@@ -285,11 +295,12 @@ export function getFieldLabel(field: string): string {
     case "percent":
       return i18n._(fieldLabels["controls.calculation.percent"]);
 
-    case "bar.stacked.byDimensionLabel.asc":
-    case "bar.grouped.byDimensionLabel.asc":
     case "column..byDimensionLabel.asc":
     case "column.stacked.byDimensionLabel.asc":
     case "column.grouped.byDimensionLabel.asc":
+    case "bar..byDimensionLabel.asc":
+    case "bar.stacked.byDimensionLabel.asc":
+    case "bar.grouped.byDimensionLabel.asc":
     case "area..byDimensionLabel.asc":
     // for existing charts compatibility
     case "area.stacked.byDimensionLabel.asc":
@@ -297,31 +308,32 @@ export function getFieldLabel(field: string): string {
     case "line..byDimensionLabel.asc":
     case "sorting.byDimensionLabel.asc":
       return i18n._(fieldLabels["controls.sorting.byDimensionLabel.ascending"]);
-    case "bar..byAuto.asc":
-    case "bar.stacked.byAuto.asc":
-    case "bar.grouped.byAuto.asc":
     case "column..byAuto.asc":
     case "column.stacked.byAuto.asc":
     case "column.grouped.byAuto.asc":
+    case "bar..byAuto.asc":
+    case "bar.stacked.byAuto.asc":
+    case "bar.grouped.byAuto.asc":
     case "pie..byAuto.asc":
     case "line..byAuto.asc":
     case "area..byAuto.asc":
       return i18n._(fieldLabels["controls.sorting.byAuto.ascending"]);
-    case "bar..byAuto.desc":
-    case "bar.stacked.byAuto.desc":
-    case "bar.grouped.byAuto.desc":
     case "column..byAuto.desc":
     case "column.stacked.byAuto.desc":
     case "column.grouped.byAuto.desc":
+    case "bar..byAuto.desc":
+    case "bar.stacked.byAuto.desc":
+    case "bar.grouped.byAuto.desc":
     case "pie..byAuto.desc":
     case "line..byAuto.desc":
     case "area..byAuto.desc":
       return i18n._(fieldLabels["controls.sorting.byAuto.descending"]);
-    case "bar.stacked.byDimensionLabel.desc":
-    case "bar.grouped.byDimensionLabel.desc":
     case "column..byDimensionLabel.desc":
     case "column.stacked.byDimensionLabel.desc":
     case "column.grouped.byDimensionLabel.desc":
+    case "bar..byDimensionLabel.desc":
+    case "bar.stacked.byDimensionLabel.desc":
+    case "bar.grouped.byDimensionLabel.desc":
     case "area..byDimensionLabel.desc":
     // for existing charts compatibility
     case "area.stacked.byDimensionLabel.desc":
@@ -331,33 +343,39 @@ export function getFieldLabel(field: string): string {
       return i18n._(
         fieldLabels["controls.sorting.byDimensionLabel.descending"]
       );
-    case "bar.stacked.byTotalSize.desc":
-    case "bar.grouped.byTotalSize.desc":
     case "column.grouped.byTotalSize.asc":
+    case "bar.grouped.byTotalSize.asc":
       return i18n._(fieldLabels["controls.sorting.byTotalSize.ascending"]);
     case "column.grouped.byTotalSize.desc":
-    case "bar.stacked.byTotalSize.asc":
-    case "bar.grouped.byTotalSize.asc":
+    case "bar.grouped.byTotalSize.desc":
       return i18n._(fieldLabels["controls.sorting.byTotalSize.largestFirst"]);
     case "area..byTotalSize.asc":
     // for existing charts compatibility
     case "area.stacked.byTotalSize.asc":
     case "column.stacked.byTotalSize.asc":
+    case "bar.stacked.byTotalSize.asc":
       return i18n._(fieldLabels["controls.sorting.byTotalSize.largestTop"]);
     case "area..byTotalSize.desc":
     // for existing charts compatibility
     case "area.stacked.byTotalSize.desc":
     case "column.stacked.byTotalSize.desc":
+    case "bar.stacked.byTotalSize.desc":
       return i18n._(fieldLabels["controls.sorting.byTotalSize.largestBottom"]);
     case "column..byMeasure.asc":
     case "column.stacked.byMeasure.asc":
     case "column.grouped.byMeasure.asc":
+    case "bar..byMeasure.asc":
+    case "bar.stacked.byMeasure.asc":
+    case "bar.grouped.byMeasure.asc":
     case "pie..byMeasure.asc":
     case "sorting.byMeasure.asc":
       return i18n._(fieldLabels["controls.sorting.byMeasure.ascending"]);
     case "column..byMeasure.desc":
     case "column.stacked.byMeasure.desc":
     case "column.grouped.byMeasure.desc":
+    case "bar..byMeasure.desc":
+    case "bar.stacked.byMeasure.desc":
+    case "bar.grouped.byMeasure.desc":
     case "pie..byMeasure.desc":
     case "sorting.byMeasure.desc":
       return i18n._(fieldLabels["controls.sorting.byMeasure.descending"]);
