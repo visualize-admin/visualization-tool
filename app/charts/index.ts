@@ -1102,8 +1102,15 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         });
       },
       animation: ({ oldValue, newChartConfig }) => {
+        if (newChartConfig.chartType !== "bar") {
+          return produce(newChartConfig, (draft) => {
+            if (newChartConfig.fields.x.componentId !== oldValue?.componentId) {
+              draft.fields.animation = oldValue;
+            }
+          });
+        }
         return produce(newChartConfig, (draft) => {
-          // Temporal dimension could be used as X axis, in this case we need to
+          // Temporal dimension could be used as Y axis, in this case we need to
           // remove the animation.
           if (newChartConfig.fields.y.componentId !== oldValue?.componentId) {
             draft.fields.animation = oldValue;
