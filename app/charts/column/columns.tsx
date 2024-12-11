@@ -1,4 +1,3 @@
-import { schemeCategory10 } from "d3-scale-chromatic";
 import { useEffect, useMemo, useRef } from "react";
 
 import { ColumnsState } from "@/charts/column/columns-state";
@@ -82,8 +81,16 @@ export const ErrorWhiskers = () => {
 };
 
 export const Columns = () => {
-  const { chartData, bounds, getX, xScale, getY, yScale, getRenderingKey } =
-    useChartState() as ColumnsState;
+  const {
+    chartData,
+    bounds,
+    getX,
+    xScale,
+    getY,
+    yScale,
+    getRenderingKey,
+    colors,
+  } = useChartState() as ColumnsState;
   const theme = useTheme();
   const { margins } = bounds;
   const ref = useRef<SVGGElement>(null);
@@ -92,10 +99,6 @@ export const Columns = () => {
   const bandwidth = xScale.bandwidth();
   const y0 = yScale(0);
   const renderData: RenderColumnDatum[] = useMemo(() => {
-    const getColor = (d: number) => {
-      return d <= 0 ? theme.palette.secondary.main : schemeCategory10[0];
-    };
-
     return chartData.map((d) => {
       const key = getRenderingKey(d);
       const xScaled = xScale(getX(d)) as number;
@@ -104,7 +107,7 @@ export const Columns = () => {
       const yScaled = yScale(y);
       const yRender = yScale(Math.max(y, 0));
       const height = Math.max(0, Math.abs(yScaled - y0));
-      const color = getColor(y);
+      const color = colors(key);
 
       return {
         key,
@@ -123,7 +126,7 @@ export const Columns = () => {
     xScale,
     yScale,
     y0,
-    theme.palette.secondary.main,
+    colors,
     getRenderingKey,
   ]);
 
