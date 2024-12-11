@@ -45,9 +45,9 @@ import {
 } from "@/config-types";
 import { ColorPickerMenu } from "@/configurator/components/chart-controls/color-picker";
 import {
-  AnnotatorTab,
-  AnnotatorTabProps,
   ControlTab,
+  ControlTabFieldInner,
+  ControlTabProps,
   OnOffControlTab,
 } from "@/configurator/components/chart-controls/control-tab";
 import {
@@ -121,28 +121,25 @@ const useStyles = makeStyles<Theme>((theme) => ({
   },
 }));
 
-type ControlTabFieldProps = {
+export const ControlTabField = ({
+  chartConfig,
+  fieldComponents,
+  value,
+  labelId,
+  disabled,
+  warnMessage,
+}: {
   chartConfig: ChartConfig;
   fieldComponents?: Component[];
   value: string;
   labelId: string | null;
   disabled?: boolean;
   warnMessage?: string;
-};
-
-export const ControlTabField = (props: ControlTabFieldProps) => {
-  const {
-    chartConfig,
-    fieldComponents,
-    value,
-    labelId,
-    disabled,
-    warnMessage,
-  } = props;
+}) => {
   const field = useActiveChartField({ value });
 
   return (
-    <ControlTab
+    <ControlTabFieldInner
       chartConfig={chartConfig}
       fieldComponents={fieldComponents}
       value={`${field.value}`}
@@ -609,7 +606,7 @@ export const TimeInput = ({
 type AnnotatorTabFieldProps<T extends string = string> = {
   value: T;
   emptyValueWarning?: React.ReactNode;
-} & Omit<AnnotatorTabProps, "onClick" | "value">;
+} & Omit<ControlTabProps, "onClick" | "value">;
 
 export const ChartAnnotatorTabField = (props: AnnotatorTabFieldProps) => {
   const { value, emptyValueWarning, ...tabProps } = props;
@@ -619,7 +616,7 @@ export const ChartAnnotatorTabField = (props: AnnotatorTabFieldProps) => {
   const locale = useLocale();
 
   return (
-    <AnnotatorTab
+    <ControlTab
       {...tabProps}
       lowerLabel={
         (chartConfig.meta as any)[value]?.[locale] ? null : (
@@ -644,7 +641,7 @@ export const LayoutAnnotatorTabField = (
   const locale = useLocale();
 
   return (
-    <AnnotatorTab
+    <ControlTab
       {...tabProps}
       lowerLabel={
         state.layout.meta[value][locale] ? null : (
