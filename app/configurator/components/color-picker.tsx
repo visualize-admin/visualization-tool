@@ -53,27 +53,6 @@ const CustomColorPicker = ({
     onChange(hsva);
   }, [hsva, onChange]);
 
-  // Wrap the entire component in a client-side only check
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  if (!isClient) {
-    // Return a placeholder while server-side rendering
-    return (
-      <Box
-        sx={{
-          width: "162px",
-          height: "200px",
-          backgroundColor: "#f5f5f5",
-          borderRadius: "3px",
-        }}
-      />
-    );
-  }
-
   return (
     <Flex
       sx={{
