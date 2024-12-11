@@ -35,7 +35,7 @@ export const ErrorWhiskers = () => {
     const bandwidth = yScale.bandwidth();
     return chartData.filter(getXErrorPresent).map((d, i) => {
       const y0 = yScale(getY(d)) as number;
-      const barHeight = Math.min(bandwidth, 15);
+      const barHeight = Math.min(bandwidth, 16);
       const [x1, x2] = getXErrorRange(d);
       return {
         key: `${i}`,
@@ -55,7 +55,7 @@ export const ErrorWhiskers = () => {
     xScale,
     yScale,
     width,
-    height,
+    bounds.chartHeight,
   ]);
 
   useEffect(() => {
