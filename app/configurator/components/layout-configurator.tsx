@@ -1,16 +1,26 @@
 import { t, Trans } from "@lingui/macro";
 import {
   Box,
+  Menu,
+  MenuItem,
   IconButton as MUIIconButton,
   Stack,
   Switch,
   SwitchProps,
   Typography,
-  useEventCallback,
 } from "@mui/material";
+import { Theme } from "@mui/material/styles";
+import { makeStyles } from "@mui/styles";
 import capitalize from "lodash/capitalize";
 import omit from "lodash/omit";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import {
+  MouseEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import { DataFilterGenericDimensionProps } from "@/charts/shared/chart-data-filters";
 import { useCombinedTemporalDimension } from "@/charts/shared/use-combined-temporal-dimension";
@@ -60,6 +70,7 @@ import { useLocale } from "@/src";
 import { useDashboardInteractiveFilters } from "@/stores/interactive-filters";
 import { createId } from "@/utils/create-id";
 import { getTimeFilterOptions } from "@/utils/time-filter-options";
+import useEvent from "@/utils/use-event";
 
 export const LayoutConfigurator = () => {
   return (
@@ -133,7 +144,7 @@ const LayoutSharedFiltersConfigurator = () => {
 
   const combinedTemporalDimension = useCombinedTemporalDimension();
 
-  const handleTimeRangeFilterToggle: SwitchProps["onChange"] = useEventCallback(
+  const handleTimeRangeFilterToggle: SwitchProps["onChange"] = useEvent(
     (_, checked) => {
       if (checked) {
         const options = getTimeFilterOptions({
@@ -170,7 +181,7 @@ const LayoutSharedFiltersConfigurator = () => {
     }
   );
 
-  const handleDataFiltersToggle = useEventCallback(
+  const handleDataFiltersToggle = useEvent(
     (checked: boolean, componentId: string) => {
       if (checked) {
         dispatch({
@@ -546,26 +557,7 @@ const LayoutBlocksConfigurator = () => {
   const { layout } = state;
   const { blocks } = layout;
 
-  const handleAddTextBlock = useEventCallback(() => {
-    dispatch({
-      type: "LAYOUT_CHANGED",
-      value: {
-        ...layout,
-        blocks: [
-          ...layout.blocks,
-          {
-            type: "text",
-            key: createId(),
-            title: "Example title.",
-            description: "Example description.",
-            initialized: false,
-          },
-        ],
-      },
-    });
-  });
-
-  const handleRemoveBlock = useEventCallback((key: string) => {
+  const handleRemoveBlock = useEvent((key: string) => {
     dispatch({
       type: "LAYOUT_CHANGED",
       value: {
@@ -581,7 +573,7 @@ const LayoutBlocksConfigurator = () => {
         <Trans id="controls.section.block-options">Objects</Trans>
       </SubsectionTitle>
       <ControlSectionContent px="small" gap="none">
-        <Box sx={{ mb: 4 }}>
+        <Box sx={{ mb: 5 }}>
           {blocks
             .filter((b) => b.type === "text")
             .map((block) => (
@@ -605,15 +597,74 @@ const LayoutBlocksConfigurator = () => {
               </Box>
             ))}
         </Box>
-        <AddButton onClick={handleAddTextBlock}>
-          <Trans id="controls.section.block-options.block-add">
-            Add object
-          </Trans>
-        </AddButton>
+        <AddLayoutBlocks />
       </ControlSectionContent>
     </ControlSection>
   ) : null;
 };
+
+const AddLayoutBlocks = () => {
+  const [state, dispatch] = useConfiguratorState(isLayouting);
+  const { layout } = state;
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const handleOpen = useEvent((e: MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(e.currentTarget);
+  });
+  const handleClose = useEvent(() => {
+    setAnchorEl(null);
+  });
+  const handleAddTextBlock = useEvent(() => {
+    dispatch({
+      type: "LAYOUT_CHANGED",
+      value: {
+        ...layout,
+        blocks: [
+          ...layout.blocks,
+          {
+            type: "text",
+            key: createId(),
+            title: "Example title.",
+            description: "Example description.",
+            initialized: false,
+          },
+        ],
+      },
+    });
+    handleClose();
+  });
+  const classes = useAddTextBlocksStyles();
+
+  return (
+    <>
+      <AddButton onClick={handleOpen}>
+        <Trans id="controls.section.block-options.block-add">Add object</Trans>
+      </AddButton>
+      <Menu anchorEl={anchorEl} open={!!anchorEl} onClose={handleClose}>
+        <MenuItem className={classes.menuItem} onClick={handleAddTextBlock}>
+          <Icon name="text" className={classes.menuItemIcon} />
+          <Typography className={classes.menuItemText} variant="body2">
+            <Trans id="controls.section.block-options.block-add.text">
+              Add text
+            </Trans>
+          </Typography>
+        </MenuItem>
+      </Menu>
+    </>
+  );
+};
+
+const useAddTextBlocksStyles = makeStyles<Theme>((theme) => ({
+  menuItem: {
+    minWidth: 200,
+    padding: theme.spacing(3),
+  },
+  menuItemIcon: {
+    marginRight: "0.75rem",
+  },
+  menuItemText: {
+    color: theme.palette.grey[700],
+  },
+}));
 
 const migrateLayout = (
   layout: LayoutDashboard,
@@ -671,7 +722,7 @@ const DashboardLayoutButton = ({
       ref.current = layout;
     }
   }, [layout, checked]);
-  const handleClick = useEventCallback(() => {
+  const handleClick = useEvent(() => {
     if (ref.current?.layout === type) {
       dispatch({
         type: "LAYOUT_CHANGED",
