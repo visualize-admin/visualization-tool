@@ -65,9 +65,10 @@ export const AxisWidthLinear = () => {
         .attr("fill", labelColor)
         .attr("dy", labelFontSize + 10)
         .attr("text-anchor", "middle");
-      g.select("path.domain")
-        .attr("stroke", gridColor)
-        .attr("opacity", chartType === "bar" ? 0 : 1);
+      g.select("path.domain").attr("stroke", gridColor);
+      if (chartType === "bar") {
+        g.select("path.domain").remove();
+      }
     }
   }, [
     chartType,
