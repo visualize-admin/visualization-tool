@@ -3,7 +3,6 @@ import {
   Box,
   Menu,
   MenuItem,
-  IconButton as MUIIconButton,
   Stack,
   Switch,
   SwitchProps,
@@ -38,6 +37,7 @@ import {
 } from "@/config-types";
 import { LayoutAnnotator } from "@/configurator/components/annotators";
 import { DataFilterSelectGeneric } from "@/configurator/components/chart-configurator";
+import { ControlTab } from "@/configurator/components/chart-controls/control-tab";
 import {
   ControlSection,
   ControlSectionContent,
@@ -557,14 +557,8 @@ const LayoutBlocksConfigurator = () => {
   const { layout } = state;
   const { blocks } = layout;
 
-  const handleRemoveBlock = useEvent((key: string) => {
-    dispatch({
-      type: "LAYOUT_CHANGED",
-      value: {
-        ...layout,
-        blocks: layout.blocks.filter((b) => b.key !== key),
-      },
-    });
+  const onClick = useEvent((blockKey: string) => {
+    dispatch({ type: "LAYOUT_ACTIVE_FIELD_CHANGED", value: blockKey });
   });
 
   return layout.type === "dashboard" && layout.layout === "canvas" ? (
@@ -577,24 +571,20 @@ const LayoutBlocksConfigurator = () => {
           {blocks
             .filter((b) => b.type === "text")
             .map((block) => (
-              <Box
+              <ControlTab
                 key={block.key}
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  height: 40,
-                  px: 2,
-                }}
-              >
-                <Typography variant="body2">{block.key}</Typography>
-                <MUIIconButton
-                  size="small"
-                  onClick={() => handleRemoveBlock(block.key)}
-                >
-                  <Icon name="trash" size={16} />
-                </MUIIconButton>
-              </Box>
+                mainLabel="123"
+                upperLabel={
+                  <Typography variant="body2">{block.key}</Typography>
+                }
+                lowerLabel={
+                  <Typography variant="body2">{block.text}</Typography>
+                }
+                checked={state.layout.activeField === block.key}
+                onClick={() => onClick(block.key)}
+                value={state.layout.activeField ?? ""}
+                icon="text"
+              />
             ))}
         </Box>
         <AddLayoutBlocks />

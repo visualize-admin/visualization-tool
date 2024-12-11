@@ -45,6 +45,7 @@ import {
   LayoutAnnotationsSelector,
 } from "@/configurator/components/annotation-options";
 import { Description, Title } from "@/configurator/components/annotators";
+import { LayoutBlocksSelector } from "@/configurator/components/block-options";
 import { ChartConfigurator } from "@/configurator/components/chart-configurator";
 import { ChartOptionsSelector } from "@/configurator/components/chart-options-selector";
 import {
@@ -756,8 +757,10 @@ const LayoutingStep = () => {
       >
         <div style={{ width: DRAWER_WIDTH }} data-testid="panel-drawer">
           <BackToMainButton onClick={handleClosePanel} />
-          {isAnnotationField(state.layout.activeField) && (
+          {isAnnotationField(state.layout.activeField) ? (
             <LayoutAnnotationsSelector />
+          ) : (
+            <LayoutBlocksSelector />
           )}
         </div>
       </ConfiguratorDrawer>
