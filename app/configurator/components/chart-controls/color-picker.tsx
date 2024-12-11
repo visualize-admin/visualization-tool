@@ -4,7 +4,7 @@ import { makeStyles } from "@mui/styles";
 import { hexToHsva, hsvaToHex } from "@uiw/react-color";
 import { color as d3Color } from "d3-color";
 import dynamic from "next/dynamic";
-import { MouseEventHandler, useCallback, useRef } from "react";
+import { MouseEventHandler, useCallback, useMemo, useRef } from "react";
 
 import useDisclosure from "@/components/use-disclosure";
 import VisuallyHidden from "@/components/visually-hidden";
@@ -128,11 +128,19 @@ export const ColorPickerMenu = (props: Props) => {
   const buttonRef = useRef(null);
   const popoverRef = useRef<HTMLDivElement>(null);
 
+  const initalSelected = useMemo(
+    () => hexToHsva(selectedColor),
+    [selectedColor]
+  );
+
   const handleColorChange = useCallback(
     (color) => {
-      onChange?.(hsvaToHex(color));
+      const newHex = hsvaToHex(color);
+      if (newHex !== selectedColor) {
+        onChange?.(newHex);
+      }
     },
-    [onChange]
+    [onChange, selectedColor]
   );
 
   return (
@@ -165,7 +173,7 @@ export const ColorPickerMenu = (props: Props) => {
       >
         <Box ref={popoverRef}>
           <CustomColorPicker
-            defaultSelection={hexToHsva(selectedColor)}
+            defaultSelection={initalSelected}
             onChange={handleColorChange}
             colorSwatches={props.colors}
           />
