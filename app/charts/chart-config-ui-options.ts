@@ -66,11 +66,11 @@ import { theme } from "@/themes/federal";
 
 type BaseEncodingFieldType = "animation";
 type MapEncodingFieldType = "baseLayer" | "areaLayer" | "symbolLayer";
-type XYEncodingFieldType = "x" | "y" | "segment" | "color";
+type RegularChartEncodingType = "x" | "y" | "segment" | "color";
 export type EncodingFieldType =
   | BaseEncodingFieldType
   | MapEncodingFieldType
-  | XYEncodingFieldType;
+  | RegularChartEncodingType;
 
 type OnEncodingOptionChange<V, T extends ChartConfig = ChartConfig> = (
   value: V,
