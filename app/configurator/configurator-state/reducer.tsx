@@ -38,6 +38,7 @@ import {
   GenericFields,
   getChartConfig,
   isAreaConfig,
+  isColorInConfig,
   isTableConfig,
   makeMultiFilter,
 } from "@/config-types";
@@ -48,6 +49,7 @@ import { Dimension, isGeoDimension, isJoinByComponent } from "@/domain/data";
 import { getOriginalDimension, isJoinByCube } from "@/graphql/join";
 import { PossibleFilterValue } from "@/graphql/query-hooks";
 import { findInHierarchy } from "@/rdf/tree-utils";
+import { theme } from "@/themes/federal";
 import { getCachedComponents } from "@/urql-cache";
 import { assert } from "@/utils/assert";
 import { unreachableError } from "@/utils/unreachable";
@@ -310,7 +312,6 @@ const transitionStepPrevious = (
   if (draft.state === "INITIAL" || draft.state === "SELECTING_DATASET") {
     return draft;
   }
-
   switch (stepTo) {
     case "SELECTING_DATASET":
       return {
@@ -644,6 +645,12 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         ) {
           chartConfig.interactiveFiltersConfig.calculation.active = false;
           chartConfig.interactiveFiltersConfig.calculation.type = "identity";
+          if (isColorInConfig(chartConfig)) {
+            chartConfig.fields.color.type = "single";
+            if (chartConfig.fields.color.type === "single") {
+              chartConfig.fields.color.color = theme.palette.primary.main;
+            }
+          }
         }
       }
 
