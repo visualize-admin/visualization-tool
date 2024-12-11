@@ -302,7 +302,7 @@ export const renderHorizontalWhisker = (
           .call((g) =>
             g
               .append("rect")
-              .attr("class", "top")
+              .attr("class", "right")
               .attr("y", (d) => d.y)
               .attr("x", (d) => d.x2)
               .attr("width", ERROR_WHISKER_SIZE)
@@ -324,7 +324,7 @@ export const renderHorizontalWhisker = (
           .call((g) =>
             g
               .append("rect")
-              .attr("class", "bottom")
+              .attr("class", "left")
               .attr("y", (d) => d.y)
               .attr("x", (d) => d.x1)
               .attr("width", ERROR_WHISKER_SIZE)
@@ -345,7 +345,7 @@ export const renderHorizontalWhisker = (
               .attr("opacity", 1)
               .call((g) =>
                 g
-                  .select(".top")
+                  .select(".right")
                   .attr("y", (d) => d.y)
                   .attr("x", (d) => d.x2)
                   .attr("height", (d) => d.height)
@@ -361,7 +361,7 @@ export const renderHorizontalWhisker = (
               )
               .call((g) =>
                 g
-                  .select(".bottom")
+                  .select(".left")
                   .attr("y", (d) => d.y)
                   .attr("x", (d) => d.x1)
                   .attr("height", (d) => d.height)
