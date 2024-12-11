@@ -10,6 +10,7 @@ import useDisclosure from "@/components/use-disclosure";
 import VisuallyHidden from "@/components/visually-hidden";
 import { Icon } from "@/icons";
 
+//have to import dynamically to avoid @uiw/react-color dependency issues with the server
 const CustomColorPicker = dynamic(
   () => import("../../components/color-picker"),
   { ssr: false }
