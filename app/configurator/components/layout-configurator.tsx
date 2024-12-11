@@ -556,6 +556,7 @@ const LayoutBlocksConfigurator = () => {
   const [state, dispatch] = useConfiguratorState(isLayouting);
   const { layout } = state;
   const { blocks } = layout;
+  const classes = useLayoutBlocksStyles();
 
   const onClick = useEvent((blockKey: string) => {
     dispatch({ type: "LAYOUT_ACTIVE_FIELD_CHANGED", value: blockKey });
@@ -567,31 +568,37 @@ const LayoutBlocksConfigurator = () => {
         <Trans id="controls.section.block-options">Objects</Trans>
       </SubsectionTitle>
       <ControlSectionContent px="small" gap="none">
-        <Box sx={{ mb: 5 }}>
+        <div className={classes.root}>
           {blocks
             .filter((b) => b.type === "text")
             .map((block) => (
               <ControlTab
                 key={block.key}
-                mainLabel="123"
-                upperLabel={
-                  <Typography variant="body2">{block.key}</Typography>
-                }
-                lowerLabel={
-                  <Typography variant="body2">{block.text}</Typography>
-                }
+                mainLabel={block.text}
                 checked={state.layout.activeField === block.key}
                 onClick={() => onClick(block.key)}
                 value={state.layout.activeField ?? ""}
                 icon="text"
+                rightIcon={
+                  <Icon className={classes.tabRightIcon} name="edit" />
+                }
               />
             ))}
-        </Box>
+        </div>
         <AddLayoutBlocks />
       </ControlSectionContent>
     </ControlSection>
   ) : null;
 };
+
+const useLayoutBlocksStyles = makeStyles<Theme>((theme) => ({
+  root: {
+    marginBottom: theme.spacing(5),
+  },
+  tabRightIcon: {
+    color: theme.palette.primary.main,
+  },
+}));
 
 const AddLayoutBlocks = () => {
   const [state, dispatch] = useConfiguratorState(isLayouting);
