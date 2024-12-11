@@ -12,7 +12,6 @@ import {
   renderWhiskers,
 } from "@/charts/shared/rendering-utils";
 import { useTransitionStore } from "@/stores/transition";
-import { useTheme } from "@/themes";
 
 export const ErrorWhiskers = () => {
   const {
@@ -91,7 +90,6 @@ export const Columns = () => {
     getRenderingKey,
     colors,
   } = useChartState() as ColumnsState;
-  const theme = useTheme();
   const { margins } = bounds;
   const ref = useRef<SVGGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
