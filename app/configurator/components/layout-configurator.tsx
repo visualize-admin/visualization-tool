@@ -606,8 +606,8 @@ const LayoutBlocksConfigurator = () => {
             ))}
         </Box>
         <AddButton onClick={handleAddTextBlock}>
-          <Trans id="controls.section.block-options.text-block-add">
-            Add text
+          <Trans id="controls.section.block-options.block-add">
+            Add object
           </Trans>
         </AddButton>
       </ControlSectionContent>
