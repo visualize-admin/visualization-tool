@@ -821,8 +821,8 @@ msgid "controls.section.block-options"
 msgstr "Objects"
 
 #: app/configurator/components/layout-configurator.tsx
-msgid "controls.section.block-options.text-block-add"
-msgstr "Add text"
+msgid "controls.section.block-options.block-add"
+msgstr "Add object"
 
 #: app/configurator/components/chart-configurator.tsx
 msgid "controls.section.chart.options"
