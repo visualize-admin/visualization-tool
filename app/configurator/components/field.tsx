@@ -42,6 +42,7 @@ import useDisclosure from "@/components/use-disclosure";
 import {
   ChartConfig,
   getChartConfig,
+  isColorInConfig,
   useChartConfigFilters,
 } from "@/config-types";
 import {
@@ -691,14 +692,17 @@ const useMultiFilterColorPicker = (value: string) => {
   const filters = useChartConfigFilters(chartConfig);
   const { dimensionId, colorConfigPath } = useMultiFilterContext();
   const { activeField } = chartConfig;
+
+  const colorField = isColorInConfig(chartConfig) ? "color" : activeField;
+
   const onChange = useCallback(
     (color: string) => {
-      if (activeField) {
+      if (colorField) {
         dispatch({
           type: "CHART_COLOR_CHANGED",
           value: {
-            field: activeField,
-            colorConfigPath,
+            field: colorField,
+            colorConfigPath: isColorInConfig(chartConfig) ? "" : colorField,
             color,
             value,
           },
@@ -706,25 +710,23 @@ const useMultiFilterColorPicker = (value: string) => {
       }
     },
 
-    [colorConfigPath, dispatch, activeField, value]
+    [dispatch, colorField, value, chartConfig]
   );
 
   const path = colorConfigPath ? `${colorConfigPath}.` : "";
-  const color = get(
-    chartConfig,
-    `fields["${activeField}"].${path}colorMapping["${value}"]`
-  );
+
+  const color = get(chartConfig, `fields["${colorField}"].${path}["${value}"]`);
 
   const palette = useMemo(() => {
-    return getPalette(
-      get(
+    return getPalette({
+      paletteId: get(
         chartConfig,
-        `fields["${activeField}"].${
+        `fields["${colorField}"].${
           colorConfigPath ? `${colorConfigPath}.` : ""
-        }palette`
-      )
-    );
-  }, [chartConfig, colorConfigPath, activeField]);
+        }paletteId`
+      ),
+    });
+  }, [chartConfig, colorConfigPath, colorField]);
 
   const checkedState = dimensionId
     ? isMultiFilterFieldChecked(filters, dimensionId, value)
@@ -826,7 +828,6 @@ export const ColorPickerField = ({
   const palette = getPalette({
     paletteId: get(chartConfig, `fields["${field}"].paletteId`),
   });
-
 
   return (
     <Flex

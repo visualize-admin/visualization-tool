@@ -48,6 +48,7 @@ import {
   ImputationType,
   imputationTypes,
   isAnimationInConfig,
+  isColorInConfig,
   isComboChartConfig,
   isConfiguring,
   isTableConfig,
@@ -313,6 +314,10 @@ const EncodingOptionsPanel = ({
     y: t({
       id: "controls.select.measure",
       message: "Select a measure",
+    }),
+    color: t({
+      id: "controls.select.color",
+      message: "Select a color",
     }),
     segment: t({
       id: "controls.select.dimension",
@@ -618,14 +623,15 @@ const ChartLayoutOptions = ({
   hasSubOptions: boolean;
   measures: Measure[];
 }) => {
-  const { fields } = chartConfig;
-  const values: { id: string; symbol: LegendSymbol }[] =
-    chartConfig.fields.color.type === "single"
-      ? [{ id: fields.y.componentId, symbol: "line" }]
+  const withColorField = isColorInConfig(chartConfig);
+  const values: { id: string; symbol: LegendSymbol }[] = withColorField
+    ? chartConfig.fields.color.type === "single"
+      ? [{ id: chartConfig.fields.y.componentId, symbol: "line" }]
       : Object.keys(chartConfig.fields.color.colorMapping).map((key) => ({
           id: key,
           symbol: "line",
-        }));
+        }))
+    : [];
 
   return encoding.options || hasColorPalette ? (
     <ControlSection collapse>
@@ -641,45 +647,30 @@ const ChartLayoutOptions = ({
             disabled={!component}
           />
         )}
-        {hasColorPalette && (
-          <>
-            <ColorPalette
-              field="y"
-              // Faking a component here, because we don't have a real one.
-              // We use measure iris as dimension values, because that's how
-              // the color mapping is done.
-              component={
-                {
-                  __typename: "",
-                  values: values.map(({ id }) => ({
-                    value: id,
-                    label: id,
-                  })),
-                } as any as Component
-              }
+        <>
+          <ColorPalette
+            field="y"
+            // Faking a component here, because we don't have a real one.
+            // We use measure iris as dimension values, because that's how
+            // the color mapping is done.
+            component={
+              {
+                __typename: "",
+                values: values.map(({ id }) => ({
+                  value: id,
+                  label: id,
+                })),
+              } as any as Component
+            }
+          />
+          {withColorField && chartConfig.fields.color.type === "single" && (
+            <ColorPickerField
+              field="color"
+              path="color"
+              label={measures.find((d) => d.id === values[0].id)!.label}
             />
-            <Box
-              sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 5 }}
-            >
-              {values.map(({ id, symbol }) => {
-                return (
-                  <Box key={id}>
-                    <ColorPickerField
-                      field="color"
-                      path={
-                        chartConfig.fields.color.type === "single"
-                          ? "color"
-                          : `colorMapping["${id}"]`
-                      }
-                      label={measures.find((d) => d.id === id)?.label ?? ""}
-                      symbol={symbol}
-                    />
-                  </Box>
-                );
-              })}
-            </Box>
-          </>
-        )}
+          )}
+        </>
       </ControlSectionContent>
     </ControlSection>
   ) : null;
@@ -1405,7 +1396,7 @@ const ChartFieldMultiFilter = ({
               colorComponent={colorComponent ?? component}
               // If colorType is defined, we are dealing with color field and
               // not segment.
-              colorConfigPath={colorType ? "color" : undefined}
+              colorConfigPath={colorType ? "color" : "colorMapping"}
             />
           )
         )}

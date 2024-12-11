@@ -46,6 +46,7 @@ import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { TooltipTitle } from "@/components/tooltip-utils";
 import {
   ChartConfig,
+  ColorField,
   getChartConfig,
   getFilterValue,
   isConfiguring,
@@ -102,7 +103,6 @@ import {
 import { valueComparator } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
 
-import { GenericField } from "../../config-types";
 import { interlace } from "../../utils/interlace";
 import { getTimeFilterOptions } from "../../utils/time-filter-options";
 
@@ -176,19 +176,8 @@ const groupByParent = (node: { parents: HierarchyValue[] }) => {
   return joinParents(node?.parents);
 };
 
-const getColorConfig = (
-  chartConfig: ChartConfig,
-  colorConfigPath: string | undefined
-) => {
-  if (!chartConfig.activeField) {
-    return;
-  }
-
-  const path = colorConfigPath
-    ? [chartConfig.activeField, colorConfigPath]
-    : [chartConfig.activeField];
-
-  return get(chartConfig.fields, path) as GenericField | undefined;
+const getColorConfig = (chartConfig: ChartConfig) => {
+  return get(chartConfig.fields, ["color"]) as ColorField | undefined;
 };
 
 const FilterControls = ({
@@ -322,15 +311,17 @@ const MultiFilterContent = ({
   });
 
   const colorConfig = useMemo(() => {
-    return getColorConfig(chartConfig, colorConfigPath);
-  }, [chartConfig, colorConfigPath]);
+    return getColorConfig(chartConfig);
+  }, [chartConfig]);
 
   const hasColorMapping = useMemo(() => {
-    return (
-      !!colorConfig?.colorMapping &&
+    return !!(
+      (colorConfig?.type === "single"
+        ? colorConfig.color
+        : colorConfig?.colorMapping) &&
       (colorComponent !== undefined ? dimensionId === colorComponent.id : true)
     );
-  }, [colorConfig?.colorMapping, dimensionId, colorComponent]);
+  }, [colorConfig, dimensionId, colorComponent]);
 
   const interactiveFilterProps = useInteractiveFiltersToggle("legend");
   const chartSymbol = getChartSymbol(chartConfig.chartType);
