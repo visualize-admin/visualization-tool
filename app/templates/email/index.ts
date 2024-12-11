@@ -2,7 +2,7 @@ import { bugReportTemplates } from "./bug-report";
 
 type EmailRecipients = {
   to: string;
-  cc: string;
+  bcc: string;
 };
 
 export const createMailtoLink = (
@@ -14,8 +14,8 @@ export const createMailtoLink = (
   }
 ) => {
   const template = options.template[lang];
-  return `mailto:${options.recipients.to}?cc=${
-    options.recipients.cc
+  return `mailto:${options.recipients.to}?bcc=${
+    options.recipients.bcc
   }&subject=${encodeURIComponent(options.subject)}&body=${encodeURIComponent(
     template
   )}`;

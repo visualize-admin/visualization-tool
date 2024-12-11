@@ -170,7 +170,7 @@ type ChartWithFiltersProps = {
   dashboardFilters: DashboardFiltersConfig | undefined;
 };
 
-const useStyles = makeStyles(() => ({
+export const useChartWithFiltersClasses = makeStyles(() => ({
   chartWithFilters: {
     width: "100%",
     height: "100%",
@@ -182,7 +182,8 @@ export const ChartWithFilters = forwardRef<
   ChartWithFiltersProps
 >((props, ref) => {
   useSyncInteractiveFilters(props.chartConfig, props.dashboardFilters);
-  const classes = useStyles();
+  const classes = useChartWithFiltersClasses();
+
   return (
     <div className={classes.chartWithFilters} ref={ref}>
       <Observer>

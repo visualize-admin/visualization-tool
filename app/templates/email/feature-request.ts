@@ -25,6 +25,16 @@ Please describe...
 Additional context
 Add any other context or screenshots about the feature request here.
 Please describe...
+
+----------------------------------------------
+Contact Information
+Title: 
+Last Name:
+First Name:
+Position:
+Organization:
+Email:
+Phone Number (for any questions):
 `,
 
   de: `
@@ -53,6 +63,16 @@ Bitte beschreiben Sie...
 Zusätzlicher Kontext
 Fügen Sie hier weitere Kontextinformationen oder Screenshots zur Feature-Anfrage hinzu.
 Bitte beschreiben Sie...
+
+----------------------------------------------
+Kontakt Information
+Anrede:
+Name:
+Vorname:
+Funktion:
+Organisation:
+Mail:
+Telefonnummer (für Rückfragen):
 `,
 
   fr: `
@@ -81,6 +101,16 @@ Veuillez décrire...
 Contexte supplémentaire
 Ajoutez ici tout autre contexte ou captures d'écran concernant la demande de fonctionnalité.
 Veuillez décrire...
+
+----------------------------------------------
+Informations de contact
+Civilité:
+Nom:
+Prénom:
+Fonction:
+Organisation:
+E-mail:
+Numéro de téléphone (pour d'éventuelles questions):
 `,
 
   it: `
@@ -109,5 +139,15 @@ Si prega di descrivere...
 Contesto aggiuntivo
 Aggiunga qui qualsiasi altro contesto o screenshot sulla richiesta di funzionalità.
 Si prega di descrivere...
+
+----------------------------------------------
+Informazioni di contatto
+Titolo:
+Cognome:
+Nome:
+Ruolo:
+Organizzazione:
+E-mail:
+Numero di telefono (per eventuali domande):
 `,
 };

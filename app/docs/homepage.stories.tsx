@@ -75,7 +75,7 @@ const HomepageStory = {
             buttonUrl={createMailtoLink("en", {
               recipients: {
                 to: "visualize@bafu.admin.ch",
-                cc: "supprt@interactivethings.com",
+                bcc: "supprt@interactivethings.com",
               },
               template: bugReportTemplates,
               subject: "Visualize Bug Report",
@@ -89,7 +89,7 @@ const HomepageStory = {
             buttonUrl={createMailtoLink("en", {
               recipients: {
                 to: "visualize@bafu.admin.ch",
-                cc: "supprt@interactivethings.com",
+                bcc: "supprt@interactivethings.com",
               },
               template: featureRequestTemplates,
               subject: "Visualize Feature Request",

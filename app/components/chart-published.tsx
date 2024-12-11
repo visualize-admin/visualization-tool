@@ -1,4 +1,4 @@
-import { Trans } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
 import { Box, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
@@ -20,6 +20,7 @@ import {
 } from "@/components/chart-shared";
 import {
   ChartTablePreviewProvider,
+  TablePreviewWrapper,
   useChartTablePreview,
 } from "@/components/chart-table-preview";
 import { ChartWithFilters } from "@/components/chart-with-filters";
@@ -27,8 +28,8 @@ import { DashboardInteractiveFilters } from "@/components/dashboard-interactive-
 import Flex from "@/components/flex";
 import { HintBlue, HintRed, HintYellow } from "@/components/hint";
 import {
-  MetadataPanelStoreContext,
   createMetadataPanelStore,
+  MetadataPanelStoreContext,
 } from "@/components/metadata-panel-store";
 import {
   ChartConfig,
@@ -155,7 +156,11 @@ export const ChartPublished = ({
                 chartConfigs={state.chartConfigs}
                 renderChart={renderChart}
               />
-              {state.chartConfigs.length !== 1 && <VisualizeLink />}
+              {state.chartConfigs.length !== 1 && (
+                <VisualizeLink
+                  createdWith={t({ id: "metadata.link.created.with" })}
+                />
+              )}
             </Box>
           ) : (
             <>
@@ -252,8 +257,7 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
   } = props;
   const { meta } = chartConfig;
   const rootRef = useRef<HTMLDivElement>(null);
-  const { isTable, containerRef, containerHeight, computeContainerHeight } =
-    useChartTablePreview();
+  const { isTable, computeContainerHeight } = useChartTablePreview();
   const metadataPanelOpen = useStore(metadataPanelStore, (state) => state.open);
   const shouldShrink = useMemo(() => {
     const rootWidth = rootRef.current?.getBoundingClientRect().width;
@@ -317,8 +321,8 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
 
   return (
     <Box
-      className={clsx(chartClasses.root, publishedChartClasses.root, className)}
       ref={rootRef}
+      className={clsx(chartClasses.root, publishedChartClasses.root, className)}
     >
       {children}
       <ChartErrorBoundary resetKeys={[chartConfig]}>
@@ -392,6 +396,8 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
                 <ChartMoreButton
                   configKey={configKey}
                   chartKey={chartConfig.key}
+                  chartWrapperNode={rootRef.current}
+                  components={allComponents}
                 />
               </Box>
             </Flex>
@@ -415,16 +421,7 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
                 allowMultipleOpen: true,
               }}
             />
-
-            <div
-              ref={containerRef}
-              style={{
-                minWidth: 0,
-                height: containerHeight,
-                marginTop: 16,
-                flexGrow: 1,
-              }}
-            >
+            <TablePreviewWrapper>
               {isTable ? (
                 <DataSetTable
                   dataSource={dataSource}
@@ -440,7 +437,7 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
                   dashboardFilters={state.dashboardFilters}
                 />
               )}
-            </div>
+            </TablePreviewWrapper>
             <ChartFootnotes
               dataSource={dataSource}
               chartConfig={chartConfig}

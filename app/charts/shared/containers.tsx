@@ -12,6 +12,7 @@ import {
   useConfiguratorState,
 } from "@/configurator";
 import { useTransitionStore } from "@/stores/transition";
+import { DISABLE_SCREENSHOT_ATTR } from "@/utils/use-screenshot";
 
 export const useStyles = makeStyles<{}, {}, "chartContainer">(() => ({
   chartContainer: {
@@ -84,6 +85,7 @@ export const ChartSvg = ({ children }: { children: ReactNode }) => {
     >
       {interactiveFiltersConfig?.calculation.active && (
         <foreignObject
+          {...DISABLE_SCREENSHOT_ATTR}
           width={width - margins.right}
           y={20}
           height="26"

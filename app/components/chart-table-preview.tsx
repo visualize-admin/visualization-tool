@@ -95,3 +95,24 @@ export const ChartTablePreviewProvider = ({
     </ChartTablePreviewContext.Provider>
   );
 };
+
+export const TABLE_PREVIEW_WRAPPER_CLASS_NAME = "table-preview-wrapper";
+
+export const TablePreviewWrapper = ({ children }: { children: ReactNode }) => {
+  const { containerRef, containerHeight } = useChartTablePreview();
+
+  return (
+    <div
+      ref={containerRef}
+      className={TABLE_PREVIEW_WRAPPER_CLASS_NAME}
+      style={{
+        minWidth: 0,
+        height: containerHeight,
+        marginTop: 16,
+        flexGrow: 1,
+      }}
+    >
+      {children}
+    </div>
+  );
+};
