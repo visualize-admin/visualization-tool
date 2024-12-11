@@ -65,6 +65,7 @@ import {
   Component,
   Dimension,
   DimensionType,
+  DimensionValue,
   GeoCoordinatesDimension,
   GeoShapesDimension,
   getCategoricalDimensions,
@@ -622,7 +623,7 @@ export const getInitialConfig = (
               dimensionValues: yComponentIds.map((id) => ({
                 value: id,
                 label: id,
-              })),
+              })) as DimensionValue[],
             }),
           },
         },
@@ -1626,7 +1627,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
               dimensionValues: [leftMeasure.id, rightMeasureId].map((id) => ({
                 value: id,
                 label: id,
-              })),
+              })) as DimensionValue[],
             }),
           };
         });
@@ -1720,7 +1721,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
               dimensionValues: [leftMeasure.id, lineComponentId].map((id) => ({
                 value: id,
                 label: id,
-              })),
+              })) as DimensionValue[],
             }),
           };
         });
