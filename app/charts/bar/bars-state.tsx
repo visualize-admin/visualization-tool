@@ -132,7 +132,7 @@ const useBarsState = (
       .paddingInner(PADDING_INNER)
       .paddingOuter(PADDING_OUTER);
     const yScaleInteraction = scaleBand()
-      .domain(bandDomain.reverse())
+      .domain(bandDomain)
       .paddingInner(0)
       .paddingOuter(0);
 
@@ -226,7 +226,7 @@ const useBarsState = (
   xScale.range([0, chartWidth]);
   yScaleInteraction.range([0, adjustedHeight]);
   yScaleTimeRange.range([0, adjustedHeight]);
-  yScale.range([adjustedHeight, 0]);
+  yScale.range([0, adjustedHeight]);
 
   const isMobile = useIsMobile();
 
