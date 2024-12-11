@@ -1,7 +1,8 @@
-import { Box, BoxProps, Theme, Typography } from "@mui/material";
+import { Box, BoxProps, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 import { forwardRef, HTMLProps, PropsWithChildren, useCallback } from "react";
+import Markdown from "react-markdown";
 
 import {
   ChartPanelLayoutCanvas,
@@ -114,10 +115,9 @@ export const ChartPanelLayout = (props: ChartPanelLayoutProps) => {
 
   const renderTextBlock = useCallback((textBlock: LayoutTextBlock) => {
     return (
-      // Important, otherwise ReactGrid breaks
-      <div key={textBlock.key}>
-        <Typography variant="h6">{textBlock.title}</Typography>
-        <Typography>{textBlock.description}</Typography>
+      // Important, otherwise ReactGrid breaks.
+      <div key={textBlock.key} style={{ padding: "0 0.75rem" }}>
+        <Markdown>{textBlock.text}</Markdown>
       </div>
     );
   }, []);
