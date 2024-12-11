@@ -36,6 +36,7 @@ import {
   SortingOrder,
   SortingType,
   TableConfig,
+  fieldHasComponentId,
   getAnimationField,
   isSortingInConfig,
   makeMultiFilter,
@@ -415,7 +416,7 @@ export const ANIMATION_FIELD_SPEC: EncodingSpec<
     }
 
     const fieldComponentsMap = Object.fromEntries(
-      Object.entries<GenericField>(chartConfig.fields)
+      Object.entries<GenericField>(fieldHasComponentId(chartConfig))
         .filter((d) => d[0] !== "animation")
         .map(([k, v]) => [v.componentId, k])
     );

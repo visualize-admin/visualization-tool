@@ -867,6 +867,24 @@ export const isComboChartConfig = (
   );
 };
 
+export const fieldHasComponentId = (chartConfig: ChartConfig) => {
+  const validFields = Object.entries(chartConfig.fields).reduce(
+    (acc, [key, field]) => {
+      if (field && typeof field.componentId === "string") {
+        acc[key] = field;
+      }
+      return acc;
+    },
+    {} as { [key: string]: { componentId: string; useAbbreviations?: boolean } }
+  );
+
+  return validFields as {
+    [s: string]: { componentId: string } & {
+      useAbbreviations?: boolean | undefined;
+    };
+  };
+};
+
 export const isAreaConfig = (
   chartConfig: ChartConfig
 ): chartConfig is AreaConfig => {
