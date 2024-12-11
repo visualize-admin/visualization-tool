@@ -405,6 +405,13 @@ const ControlTabButtonInner = ({
           <Typography
             variant="h5"
             sx={{
+              // --- Puts ellipsis on the second line.
+              display: "-webkit-box",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              "-webkit-box-orient": "vertical",
+              "-webkit-line-clamp": "2",
+              // ---
               color: optional && !checked ? "grey.500" : "grey.800",
               textAlign: "left",
             }}
