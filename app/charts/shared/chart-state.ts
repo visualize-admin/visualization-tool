@@ -324,8 +324,9 @@ export const useNumericalXVariables = (
   const getMinX = useCallback(
     (data: Observation[], _getX: NumericalValueGetter) => {
       switch (chartType) {
-        case "scatterplot":
         case "bar":
+          return Math.min(0, min(data, _getX) ?? 0);
+        case "scatterplot":
           return shouldUseDynamicMinScaleValue(xMeasure.scaleType)
             ? min(data, _getX) ?? 0
             : Math.min(0, min(data, _getX) ?? 0);
