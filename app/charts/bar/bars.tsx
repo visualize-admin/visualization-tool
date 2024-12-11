@@ -112,7 +112,9 @@ export const Bars = () => {
         color,
       };
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
+    bounds.width,
     chartData,
     bandwidth,
     getX,
