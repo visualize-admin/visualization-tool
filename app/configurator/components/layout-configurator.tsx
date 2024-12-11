@@ -574,6 +574,8 @@ const LayoutBlocksConfigurator = () => {
             .map((block) => (
               <ControlTab
                 key={block.key}
+                // todo: standardize the id with block options selector
+                id={`tab-block-${block.key}`}
                 mainLabel={block.text}
                 checked={state.layout.activeField === block.key}
                 onClick={() => onClick(block.key)}
