@@ -86,7 +86,7 @@ export type CommonChartState = {
   interactiveFiltersConfig: InteractiveFiltersConfig;
 };
 
-export type ColorsChartState = Has<ChartState, "colors">;
+export type ColorsChartState = Has<ChartState, "colors" | "getColorLabel">;
 export const ChartContext = createContext<ChartState>(undefined);
 
 export const useChartState = () => {

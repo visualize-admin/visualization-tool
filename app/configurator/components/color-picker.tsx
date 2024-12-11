@@ -45,7 +45,6 @@ const CustomColorPicker = ({
   colorSwatches,
   defaultSelection = { h: 0, s: 0, v: 68, a: 1 },
 }: CustomColorPickerProps) => {
-  // Remove the isBrowser check since we're using client-side only rendering
   const [hsva, setHsva] = useState(defaultSelection);
   const classes = useColorPickerStyles();
 
