@@ -332,17 +332,6 @@ export const renderHorizontalWhisker = (
               .attr("fill", (d) => d.fill ?? "black")
               .attr("stroke", "none")
           )
-          .call((g) =>
-            g
-              .filter((d) => d.renderMiddleCircle ?? false)
-              .append("circle")
-              .attr("class", "middle-circle")
-              .attr("cy", (d) => d.y + d.width / 2)
-              .attr("cx", (d) => (d.x1 + d.x2) / 2)
-              .attr("r", ERROR_WHISKER_MIDDLE_CIRCLE_RADIUS)
-              .attr("fill", (d) => d.fill ?? "black")
-              .attr("stroke", "none")
-          )
           .call((enter) =>
             maybeTransition(enter, {
               s: (g) => g.attr("opacity", 1),
@@ -377,15 +366,6 @@ export const renderHorizontalWhisker = (
                   .attr("x", (d) => d.x1)
                   .attr("height", (d) => d.height)
                   .attr("fill", (d) => d.fill ?? "black")
-              )
-              .call((g) =>
-                g
-                  .select(".middle-circle")
-                  .attr("cy", (d) => d.y + d.width / 2)
-                  .attr("cx", (d) => (d.x1 + d.x2) / 2)
-                  .attr("r", ERROR_WHISKER_MIDDLE_CIRCLE_RADIUS)
-                  .attr("fill", (d) => d.fill ?? "black")
-                  .attr("stroke", "none")
               ),
           transition,
         }),
