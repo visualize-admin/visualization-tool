@@ -14,7 +14,7 @@ import { ChartSelectionTabs } from "@/components/chart-selection-tabs";
 import { DashboardInteractiveFilters } from "@/components/dashboard-interactive-filters";
 import { ChartConfig, Layout, LayoutDashboard } from "@/config-types";
 import { hasChartConfigs, LayoutBlock, LayoutTextBlock } from "@/configurator";
-import { useConfiguratorState } from "@/src";
+import { useConfiguratorState, useLocale } from "@/src";
 
 const useStyles = makeStyles((theme: Theme) => ({
   panelLayout: {
@@ -98,29 +98,32 @@ const Wrappers: Record<
   canvas: ChartPanelLayoutCanvas,
 };
 
-export const ChartPanelLayout = (props: ChartPanelLayoutProps) => {
-  const {
-    children,
-    renderChart,
-    chartConfigs,
-    className,
-    layoutType,
-    ...rest
-  } = props;
+export const ChartPanelLayout = ({
+  children,
+  renderChart,
+  chartConfigs,
+  className,
+  layoutType,
+  ...rest
+}: ChartPanelLayoutProps) => {
+  const locale = useLocale();
   const classes = useStyles();
   const Wrapper = Wrappers[layoutType];
   const [state] = useConfiguratorState(hasChartConfigs);
   const { layout } = state;
   const { blocks } = layout;
 
-  const renderTextBlock = useCallback((textBlock: LayoutTextBlock) => {
-    return (
-      // Important, otherwise ReactGrid breaks.
-      <div key={textBlock.key} style={{ padding: "0 0.75rem" }}>
-        <Markdown>{textBlock.text}</Markdown>
-      </div>
-    );
-  }, []);
+  const renderTextBlock = useCallback(
+    (textBlock: LayoutTextBlock) => {
+      return (
+        // Important, otherwise ReactGrid breaks.
+        <div key={textBlock.key} style={{ padding: "0 0.75rem" }}>
+          <Markdown>{textBlock.text[locale]}</Markdown>
+        </div>
+      );
+    },
+    [locale]
+  );
 
   const renderBlock = useCallback(
     (block: LayoutBlock) => {

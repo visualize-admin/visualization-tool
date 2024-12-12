@@ -7,7 +7,6 @@ import {
   SectionTitle,
 } from "@/configurator/components/chart-controls/section";
 import { TextBlockInputField } from "@/configurator/components/field";
-import { getFieldLabel } from "@/configurator/components/field-i18n";
 import { isLayouting } from "@/configurator/configurator-state";
 import { useOrderedLocales } from "@/locales/use-locale";
 import { useConfiguratorState } from "@/src";
@@ -53,7 +52,7 @@ export const LayoutBlocksSelector = () => {
         <SectionTitle>Text object</SectionTitle>
         <ControlSectionContent gap="none">
           {orderedLocales.map((locale) => (
-            <TextBlockInputField key={locale} label={getFieldLabel(locale)} />
+            <TextBlockInputField key={locale} locale={locale} />
           ))}
         </ControlSectionContent>
       </ControlSection>
