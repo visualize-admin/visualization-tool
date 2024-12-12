@@ -280,16 +280,7 @@ const makeGetFieldOptionGroups =
     });
   };
 
-const EncodingOptionsPanel = ({
-  encoding,
-  field,
-  chartConfig,
-  component,
-  dimensions,
-  measures,
-  observations,
-  cubesMetadata,
-}: {
+interface EncodingOptionsPanelProps {
   encoding: EncodingSpec;
   chartConfig: ChartConfig;
   field: EncodingFieldType;
@@ -298,8 +289,20 @@ const EncodingOptionsPanel = ({
   measures: Measure[];
   observations: Observation[];
   cubesMetadata: DataCubeMetadata[];
-}) => {
-  const { chartType } = chartConfig;
+}
+
+const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
+  const {
+    encoding,
+    field,
+    chartConfig,
+    component,
+    dimensions,
+    measures,
+    observations,
+    cubesMetadata,
+  } = props;
+
   const { fields } = chartConfig;
   const fieldLabelHint: Record<EncodingFieldType, string> = {
     animation: t({
@@ -413,8 +416,7 @@ const EncodingOptionsPanel = ({
 
   const hasColorPalette = !!encoding.options?.colorPalette;
 
-  const hasSubOptions =
-    (encoding.options?.chartSubType && chartType === "column") ?? false;
+  const hasSubOptions = encoding.options?.chartSubType ?? false;
 
   return (
     <div
@@ -534,7 +536,7 @@ const EncodingOptionsPanel = ({
             chartConfig={chartConfig}
             components={components}
             hasColorPalette={hasColorPalette}
-            hasSubOptions={hasSubOptions}
+            hasSubOptions={!!hasSubOptions}
           />
         )}
       {encoding.options?.imputation?.shouldShow(chartConfig, observations) && (

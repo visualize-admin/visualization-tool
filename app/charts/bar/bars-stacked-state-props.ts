@@ -3,39 +3,39 @@ import { useCallback, useMemo } from "react";
 
 import { getWideData, usePlottableData } from "@/charts/shared/chart-helpers";
 import {
-  BandXVariables,
+  BandYVariables,
   BaseVariables,
   ChartStateData,
   InteractiveFiltersVariables,
-  NumericalYVariables,
+  NumericalXVariables,
   RenderingVariables,
   SegmentVariables,
   SortingVariables,
-  useBandXVariables,
+  useBandYVariables,
   useBaseVariables,
   useChartData,
   useInteractiveFiltersVariables,
-  useNumericalYVariables,
+  useNumericalXVariables,
   useSegmentVariables,
 } from "@/charts/shared/chart-state";
 import { useRenderingKeyVariable } from "@/charts/shared/rendering-utils";
-import { ColumnConfig, useChartConfigFilters } from "@/configurator";
+import { BarConfig, useChartConfigFilters } from "@/configurator";
 import { Observation, isTemporalEntityDimension } from "@/domain/data";
 import { sortByIndex } from "@/utils/array";
 
 import { ChartProps } from "../shared/ChartProps";
 
-export type ColumnsStackedStateVariables = BaseVariables &
+export type BarsStackedStateVariables = BaseVariables &
   SortingVariables<{ plottableDataWide: Observation[] }> &
-  BandXVariables &
-  NumericalYVariables &
+  BandYVariables &
+  NumericalXVariables &
   SegmentVariables &
   RenderingVariables &
   InteractiveFiltersVariables;
 
-export const useColumnsStackedStateVariables = (
-  props: ChartProps<ColumnConfig>
-): ColumnsStackedStateVariables => {
+export const useBarsStackedStateVariables = (
+  props: ChartProps<BarConfig>
+): BarsStackedStateVariables => {
   const {
     chartConfig,
     observations,
@@ -45,16 +45,16 @@ export const useColumnsStackedStateVariables = (
   } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
   const { x, y, segment, animation } = fields;
-  const xDimension = dimensionsById[x.componentId];
+  const yDimension = dimensionsById[y.componentId];
   const filters = useChartConfigFilters(chartConfig);
 
   const baseVariables = useBaseVariables(chartConfig);
-  const bandXVariables = useBandXVariables(x, {
+  const numericalXVariables = useNumericalXVariables("bar", x, {
+    measuresById,
+  });
+  const bandYVariables = useBandYVariables(y, {
     dimensionsById,
     observations,
-  });
-  const numericalYVariables = useNumericalYVariables("column", y, {
-    measuresById,
   });
   const segmentVariables = useSegmentVariables(segment, {
     dimensionsById,
@@ -65,33 +65,33 @@ export const useColumnsStackedStateVariables = (
     { dimensionsById }
   );
 
-  const { getX, getXAsDate } = bandXVariables;
-  const sortData: ColumnsStackedStateVariables["sortData"] = useCallback(
+  const { getY, getYAsDate } = bandYVariables;
+  const sortData: BarsStackedStateVariables["sortData"] = useCallback(
     (data, { plottableDataWide }) => {
-      const { sortingOrder, sortingType } = x.sorting ?? {};
-      const xGetter = isTemporalEntityDimension(xDimension)
-        ? (d: Observation) => getXAsDate(d).getTime().toString()
-        : getX;
-      const xOrder = plottableDataWide
+      const { sortingOrder, sortingType } = y.sorting ?? {};
+      const yGetter = isTemporalEntityDimension(yDimension)
+        ? (d: Observation) => getYAsDate(d).getTime().toString()
+        : getY;
+      const yOrder = plottableDataWide
         .sort((a, b) => ascending(a.total ?? undefined, b.total ?? undefined))
-        .map(xGetter);
+        .map(yGetter);
 
       if (sortingOrder === "desc" && sortingType === "byDimensionLabel") {
-        return [...data].sort((a, b) => descending(xGetter(a), xGetter(b)));
+        return [...data].sort((a, b) => descending(yGetter(a), yGetter(b)));
       } else if (sortingOrder === "asc" && sortingType === "byDimensionLabel") {
-        return [...data].sort((a, b) => ascending(xGetter(a), xGetter(b)));
+        return [...data].sort((a, b) => ascending(yGetter(a), yGetter(b)));
       } else if (sortingType === "byMeasure") {
         return sortByIndex({
           data,
-          order: xOrder,
-          getCategory: xGetter,
+          order: yOrder,
+          getCategory: yGetter,
           sortingOrder,
         });
       } else {
-        return [...data].sort((a, b) => ascending(xGetter(a), xGetter(b)));
+        return [...data].sort((a, b) => ascending(yGetter(a), yGetter(b)));
       }
     },
-    [getX, getXAsDate, x.sorting, xDimension]
+    [getY, getYAsDate, y.sorting, yDimension]
   );
 
   const getRenderingKey = useRenderingKeyVariable(
@@ -104,44 +104,44 @@ export const useColumnsStackedStateVariables = (
   return {
     ...baseVariables,
     sortData,
-    ...bandXVariables,
-    ...numericalYVariables,
+    ...bandYVariables,
+    ...numericalXVariables,
     ...segmentVariables,
     ...interactiveFiltersVariables,
     getRenderingKey,
   };
 };
 
-export type ColumnsStackedStateData = ChartStateData & {
+export type BarsStackedStateData = ChartStateData & {
   plottableDataWide: Observation[];
 };
 
-export const useColumnsStackedStateData = (
-  chartProps: ChartProps<ColumnConfig>,
-  variables: ColumnsStackedStateVariables
-): ColumnsStackedStateData => {
+export const useBarsStackedStateData = (
+  chartProps: ChartProps<BarConfig>,
+  variables: BarsStackedStateVariables
+): BarsStackedStateData => {
   const { chartConfig, observations } = chartProps;
   const { fields } = chartConfig;
-  const { x } = fields;
+  const { y } = fields;
   const {
     sortData,
-    xDimension,
+    yDimension,
     getX,
-    getXAsDate,
+    getYAsDate,
     getY,
     getSegment,
     getSegmentAbbreviationOrLabel,
     getTimeRangeDate,
   } = variables;
   const plottableData = usePlottableData(observations, {
-    getY,
+    getX,
   });
   const { sortedPlottableData, plottableDataWide } = useMemo(() => {
-    const plottableDataByX = group(plottableData, getX);
+    const plottableDataByY = group(plottableData, getY);
     const plottableDataWide = getWideData({
-      dataGrouped: plottableDataByX,
-      key: x.componentId,
-      getAxisValue: getY,
+      dataGrouped: plottableDataByY,
+      key: y.componentId,
+      getAxisValue: getX,
       getSegment,
     });
 
@@ -151,11 +151,11 @@ export const useColumnsStackedStateData = (
       }),
       plottableDataWide,
     };
-  }, [plottableData, getX, x.componentId, getY, getSegment, sortData]);
+  }, [plottableData, getX, y.componentId, getY, getSegment, sortData]);
   const data = useChartData(sortedPlottableData, {
     chartConfig,
-    timeRangeDimensionId: xDimension.id,
-    getAxisValueAsDate: getXAsDate,
+    timeRangeDimensionId: yDimension.id,
+    getAxisValueAsDate: getYAsDate,
     getSegmentAbbreviationOrLabel,
     getTimeRangeDate,
   });

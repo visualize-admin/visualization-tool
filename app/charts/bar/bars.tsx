@@ -1,73 +1,70 @@
 import { schemeCategory10 } from "d3-scale-chromatic";
 import { useEffect, useMemo, useRef } from "react";
 
-import { ColumnsState } from "@/charts/column/columns-state";
-import {
-  RenderColumnDatum,
-  renderColumns,
-} from "@/charts/column/rendering-utils";
+import { BarsState } from "@/charts/bar/bars-state";
+import { RenderBarDatum, renderBars } from "@/charts/bar/rendering-utils";
 import { useChartState } from "@/charts/shared/chart-state";
 import {
-  RenderVerticalWhiskerDatum,
+  RenderHorizontalWhiskerDatum,
   renderContainer,
-  renderVerticalWhiskers,
+  renderHorizontalWhisker,
 } from "@/charts/shared/rendering-utils";
 import { useTransitionStore } from "@/stores/transition";
 import { useTheme } from "@/themes";
 
 export const ErrorWhiskers = () => {
   const {
-    getX,
-    getYErrorPresent,
-    getYErrorRange,
+    getY,
+    getXErrorPresent,
+    getXErrorRange,
     chartData,
     yScale,
     xScale,
-    showYUncertainty,
+    showXUncertainty,
     bounds,
-  } = useChartState() as ColumnsState;
-  const { margins, width, height } = bounds;
+  } = useChartState() as BarsState;
+  const { margins, width, chartHeight } = bounds;
   const ref = useRef<SVGGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
-  const renderData: RenderVerticalWhiskerDatum[] = useMemo(() => {
-    if (!getYErrorRange || !showYUncertainty) {
+  const renderData: RenderHorizontalWhiskerDatum[] = useMemo(() => {
+    if (!getXErrorRange || !showXUncertainty) {
       return [];
     }
 
-    const bandwidth = xScale.bandwidth();
-    return chartData.filter(getYErrorPresent).map((d, i) => {
-      const x0 = xScale(getX(d)) as number;
-      const barWidth = Math.min(bandwidth, 15);
-      const [y1, y2] = getYErrorRange(d);
+    const bandwidth = yScale.bandwidth();
+    return chartData.filter(getXErrorPresent).map((d, i) => {
+      const y0 = yScale(getY(d)) as number;
+      const barHeight = Math.min(bandwidth, 16);
+      const [x1, x2] = getXErrorRange(d);
       return {
         key: `${i}`,
-        x: x0 + bandwidth / 2 - barWidth / 2,
-        y1: yScale(y1),
-        y2: yScale(y2),
-        width: barWidth,
-      } as RenderVerticalWhiskerDatum;
+        y: y0 + bandwidth / 2 - barHeight / 2,
+        x1: xScale(x1),
+        x2: xScale(x2),
+        height: barHeight,
+      } as RenderHorizontalWhiskerDatum;
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     chartData,
-    getX,
-    getYErrorPresent,
-    getYErrorRange,
-    showYUncertainty,
+    getY,
+    getXErrorPresent,
+    getXErrorRange,
+    showXUncertainty,
     xScale,
     yScale,
     width,
-    height,
+    chartHeight,
   ]);
 
   useEffect(() => {
     if (ref.current) {
       renderContainer(ref.current, {
-        id: "columns-error-whiskers",
+        id: "bars-error-whiskers",
         transform: `translate(${margins.left} ${margins.top})`,
         transition: { enable: enableTransition, duration: transitionDuration },
-        render: (g, opts) => renderVerticalWhiskers(g, renderData, opts),
+        render: (g, opts) => renderHorizontalWhisker(g, renderData, opts),
       });
     }
   }, [
@@ -81,48 +78,50 @@ export const ErrorWhiskers = () => {
   return <g ref={ref} />;
 };
 
-export const Columns = () => {
+export const Bars = () => {
   const { chartData, bounds, getX, xScale, getY, yScale, getRenderingKey } =
-    useChartState() as ColumnsState;
+    useChartState() as BarsState;
   const theme = useTheme();
   const { margins } = bounds;
   const ref = useRef<SVGGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
-  const bandwidth = xScale.bandwidth();
-  const y0 = yScale(0);
-  const renderData: RenderColumnDatum[] = useMemo(() => {
+  const bandwidth = yScale.bandwidth();
+  const x0 = xScale(0);
+  const renderData: RenderBarDatum[] = useMemo(() => {
     const getColor = (d: number) => {
       return d <= 0 ? theme.palette.secondary.main : schemeCategory10[0];
     };
 
     return chartData.map((d) => {
       const key = getRenderingKey(d);
-      const xScaled = xScale(getX(d)) as number;
-      const yRaw = getY(d);
-      const y = yRaw === null || isNaN(yRaw) ? 0 : yRaw;
-      const yScaled = yScale(y);
-      const yRender = yScale(Math.max(y, 0));
-      const height = Math.max(0, Math.abs(yScaled - y0));
-      const color = getColor(y);
+      const yScaled = yScale(getY(d)) as number;
+      const xRaw = getX(d);
+      const x = xRaw === null || isNaN(xRaw) ? 0 : xRaw;
+      const xScaled = xScale(x);
+      const xRender = xScale(Math.min(x, 0));
+      const width = Math.max(0, Math.abs(xScaled - x0));
+      const color = getColor(x);
 
       return {
         key,
-        x: xScaled,
-        y: yRender,
-        width: bandwidth,
-        height,
+        x: xRender,
+        y: yScaled,
+        width,
+        height: bandwidth,
         color,
       };
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
+    bounds.width,
     chartData,
     bandwidth,
     getX,
     getY,
     xScale,
     yScale,
-    y0,
+    x0,
     theme.palette.secondary.main,
     getRenderingKey,
   ]);
@@ -130,10 +129,10 @@ export const Columns = () => {
   useEffect(() => {
     if (ref.current) {
       renderContainer(ref.current, {
-        id: "columns",
+        id: "bars",
         transform: `translate(${margins.left} ${margins.top})`,
         transition: { enable: enableTransition, duration: transitionDuration },
-        render: (g, opts) => renderColumns(g, renderData, { ...opts, y0 }),
+        render: (g, opts) => renderBars(g, renderData, { ...opts, x0 }),
       });
     }
   }, [
@@ -142,7 +141,7 @@ export const Columns = () => {
     margins.top,
     renderData,
     transitionDuration,
-    y0,
+    x0,
   ]);
 
   return <g ref={ref} />;

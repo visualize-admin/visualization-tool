@@ -34,7 +34,10 @@ export const ChartContainer = ({ children }: { children: ReactNode }) => {
       ref={ref}
       aria-hidden="true"
       className={classes.chartContainer}
-      style={{ height: isFreeCanvas ? "initial" : bounds.height }}
+      style={{
+        height: isFreeCanvas ? "initial" : bounds.height,
+        overflow: "scroll",
+      }}
     >
       {children}
     </div>
@@ -45,23 +48,34 @@ export const ChartSvg = ({ children }: { children: ReactNode }) => {
   const ref = useRef<SVGSVGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
-  const { bounds, interactiveFiltersConfig } = useChartState();
-  const { width, height, margins } = bounds;
+  const chartState = useChartState();
+  const { bounds, interactiveFiltersConfig } = chartState;
+
+  const { width, margins, chartHeight } = bounds;
 
   useEffect(() => {
     if (ref.current) {
       // Initialize height on mount.
       if (!ref.current.getAttribute("height")) {
-        ref.current.setAttribute("height", height.toString());
+        ref.current.setAttribute(
+          "height",
+          `${chartHeight + margins.bottom + margins.top}`
+        );
       }
 
       const sel = select(ref.current);
       (enableTransition
         ? sel.transition().duration(transitionDuration)
         : sel
-      ).attr("height", height);
+      ).attr("height", `${chartHeight + margins.bottom + margins.top}`);
     }
-  }, [height, enableTransition, transitionDuration]);
+  }, [
+    chartHeight,
+    margins.bottom,
+    margins.top,
+    enableTransition,
+    transitionDuration,
+  ]);
 
   return (
     <svg

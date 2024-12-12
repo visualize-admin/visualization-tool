@@ -240,7 +240,7 @@ const usePieState = (
       xAnchor,
       yAnchor,
       placement: { x: xPlacement, y: yPlacement },
-      xValue: getSegmentAbbreviationOrLabel(datum),
+      value: getSegmentAbbreviationOrLabel(datum),
       datum: {
         value: valueFormatter(getY(datum)),
         color: colors(getSegment(datum)) as string,

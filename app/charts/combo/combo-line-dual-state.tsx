@@ -199,7 +199,7 @@ const useComboLineDualState = (
       datum: { label: "", value: "0", color: schemeCategory10[0] },
       xAnchor: xScaled,
       yAnchor: yAnchor,
-      xValue: timeFormatUnit(x, xDimension.timeUnit),
+      value: timeFormatUnit(x, xDimension.timeUnit),
       placement,
       values,
     } as TooltipInfo;
