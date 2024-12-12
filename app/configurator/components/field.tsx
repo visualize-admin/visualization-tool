@@ -95,6 +95,7 @@ import { useTimeFormatLocale } from "@/formatters";
 import { TimeUnit } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 import { getPalette } from "@/palettes";
+import { assert } from "@/utils/assert";
 import { hierarchyToOptions } from "@/utils/hierarchy";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
@@ -674,6 +675,48 @@ export const MetaInputField = ({
 }) => {
   const field = useMetaField({ type, metaKey, locale, value });
   return <Input label={label} {...field} disabled={disabled} />;
+};
+
+export const TextBlockInputField = ({ label }: { label: string }) => {
+  const [state, dispatch] = useConfiguratorState(isLayouting);
+  const { layout } = state;
+  const { blocks } = layout;
+  const activeBlock = useMemo(() => {
+    const activeBlock = blocks.find(
+      (block) => block.key === layout.activeField
+    );
+
+    assert(
+      activeBlock?.type === "text",
+      "We can only edit text blocks from TextBlockInputField"
+    );
+
+    return activeBlock;
+  }, [blocks, layout.activeField]);
+  const handleChanged = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      const text = e.currentTarget.value;
+      dispatch({
+        type: "LAYOUT_CHANGED",
+        value: {
+          ...layout,
+          blocks: blocks.map((b) =>
+            b.key === layout.activeField ? { ...b, text } : b
+          ),
+        },
+      });
+    },
+    [dispatch, layout, blocks]
+  );
+
+  return (
+    <Input
+      name={label}
+      label={label}
+      value={activeBlock.text}
+      onChange={handleChanged}
+    />
+  );
 };
 
 const useMultiFilterColorPicker = (value: string) => {
