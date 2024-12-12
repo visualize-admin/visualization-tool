@@ -54,6 +54,7 @@ import {
   DatePickerField,
   DatePickerTimeUnit,
 } from "@/configurator/components/field-date-picker";
+import { getFieldLabel } from "@/configurator/components/field-i18n";
 import {
   getTimeIntervalFormattedSelectOptions,
   getTimeIntervalWithProps,
@@ -93,6 +94,7 @@ import {
 } from "@/domain/most-recent-value";
 import { useTimeFormatLocale } from "@/formatters";
 import { TimeUnit } from "@/graphql/query-hooks";
+import { Locale } from "@/locales/locales";
 import { useLocale } from "@/locales/use-locale";
 import { getPalette } from "@/palettes";
 import { assert } from "@/utils/assert";
@@ -677,7 +679,7 @@ export const MetaInputField = ({
   return <Input label={label} {...field} disabled={disabled} />;
 };
 
-export const TextBlockInputField = ({ label }: { label: string }) => {
+export const TextBlockInputField = ({ locale }: { locale: Locale }) => {
   const [state, dispatch] = useConfiguratorState(isLayouting);
   const { layout } = state;
   const { blocks } = layout;
@@ -701,19 +703,28 @@ export const TextBlockInputField = ({ label }: { label: string }) => {
         value: {
           ...layout,
           blocks: blocks.map((b) =>
-            b.key === layout.activeField ? { ...b, text } : b
+            b.key === activeBlock.key
+              ? {
+                  ...b,
+                  text: {
+                    ...activeBlock.text,
+                    [locale]: text,
+                  },
+                }
+              : b
           ),
         },
       });
     },
-    [dispatch, layout, blocks]
+    [dispatch, layout, blocks, activeBlock.key, activeBlock.text, locale]
   );
+  const label = getFieldLabel(locale);
 
   return (
     <Input
       name={label}
       label={label}
-      value={activeBlock.text}
+      value={activeBlock.text[locale]}
       onChange={handleChanged}
     />
   );

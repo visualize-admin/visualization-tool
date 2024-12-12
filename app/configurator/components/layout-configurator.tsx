@@ -553,6 +553,7 @@ const DashboardTimeRangeFilterOptions = ({
 };
 
 const LayoutBlocksConfigurator = () => {
+  const locale = useLocale();
   const [state, dispatch] = useConfiguratorState(isLayouting);
   const { layout } = state;
   const { blocks } = layout;
@@ -576,7 +577,7 @@ const LayoutBlocksConfigurator = () => {
                 key={block.key}
                 // todo: standardize the id with block options selector
                 id={`tab-block-${block.key}`}
-                mainLabel={block.text}
+                mainLabel={block.text[locale]}
                 checked={state.layout.activeField === block.key}
                 onClick={() => onClick(block.key)}
                 value={state.layout.activeField ?? ""}
@@ -622,7 +623,8 @@ const AddLayoutBlocks = () => {
           {
             type: "text",
             key: createId(),
-            text: `# Heading 1!
+            text: {
+              de: `# Heading 1!
 ## Heading 2!
 ### Heading 3!
 #### Heading 4!
@@ -631,6 +633,10 @@ const AddLayoutBlocks = () => {
 **Bold text**
 *Italic text*
 [Link](https://example.com)`,
+              fr: "",
+              it: "",
+              en: "",
+            },
             initialized: false,
           },
         ],

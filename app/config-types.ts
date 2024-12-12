@@ -1226,7 +1226,12 @@ export type LayoutChartBlock = t.TypeOf<typeof LayoutChartBlock>;
 const LayoutTextBlock = t.type({
   type: t.literal("text"),
   key: t.string,
-  text: t.string,
+  text: t.type({
+    de: t.string,
+    fr: t.string,
+    it: t.string,
+    en: t.string,
+  }),
 });
 export type LayoutTextBlock = t.TypeOf<typeof LayoutTextBlock>;
 
