@@ -6,12 +6,16 @@ import {
   ControlSectionContent,
   SectionTitle,
 } from "@/configurator/components/chart-controls/section";
+import { TextBlockInputField } from "@/configurator/components/field";
+import { getFieldLabel } from "@/configurator/components/field-i18n";
 import { isLayouting } from "@/configurator/configurator-state";
+import { useOrderedLocales } from "@/locales/use-locale";
 import { useConfiguratorState } from "@/src";
 import { assert } from "@/utils/assert";
 import useEvent from "@/utils/use-event";
 
 export const LayoutBlocksSelector = () => {
+  const orderedLocales = useOrderedLocales();
   const [state, dispatch] = useConfiguratorState(isLayouting);
   const { layout } = state;
   const { blocks } = layout;
@@ -48,9 +52,16 @@ export const LayoutBlocksSelector = () => {
       <ControlSection hideTopBorder>
         <SectionTitle>Text object</SectionTitle>
         <ControlSectionContent gap="none">
+          {orderedLocales.map((locale) => (
+            <TextBlockInputField key={locale} label={getFieldLabel(locale)} />
+          ))}
+        </ControlSectionContent>
+      </ControlSection>
+      <ControlSection>
+        <ControlSectionContent>
           <Button
             onClick={() => handleRemoveBlock(activeBlock.key)}
-            sx={{ width: "fit-content" }}
+            sx={{ width: "fit-content", mt: 5 }}
           >
             <Typography>Remove object</Typography>
           </Button>

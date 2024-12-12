@@ -45,7 +45,7 @@ import {
   LayoutAnnotationsSelector,
 } from "@/configurator/components/annotation-options";
 import { Description, Title } from "@/configurator/components/annotators";
-import { LayoutBlocksSelector } from "@/configurator/components/block-options";
+import { LayoutBlocksSelector } from "@/configurator/components/block-options-selector";
 import { ChartConfigurator } from "@/configurator/components/chart-configurator";
 import { ChartOptionsSelector } from "@/configurator/components/chart-options-selector";
 import {
