@@ -2,8 +2,8 @@ import { Trans } from "@lingui/macro";
 import { Theme, Typography, TypographyProps } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
-import Markdown from "react-markdown";
 
+import { Markdown } from "@/components/markdown";
 import { getChartConfig } from "@/config-types";
 import {
   ControlSection,
@@ -41,10 +41,17 @@ type Props = TypographyProps & {
   smaller?: boolean;
 };
 
-export const Title = (props: Props) => {
-  const { text, lighterColor, smaller, onClick, className, sx, ...rest } =
-    props;
+export const Title = ({
+  text,
+  lighterColor,
+  smaller,
+  onClick,
+  className,
+  sx,
+  ...rest
+}: Props) => {
   const classes = useStyles({ interactive: !!onClick });
+
   return (
     <Typography
       {...rest}
@@ -67,9 +74,15 @@ export const Title = (props: Props) => {
   );
 };
 
-export const Description = (props: Props) => {
-  const { text, lighterColor, smaller, onClick, className, sx, ...rest } =
-    props;
+export const Description = ({
+  text,
+  lighterColor,
+  smaller,
+  onClick,
+  className,
+  sx,
+  ...rest
+}: Props) => {
   const classes = useStyles({ interactive: !!onClick });
 
   return (

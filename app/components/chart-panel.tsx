@@ -2,7 +2,6 @@ import { Box, BoxProps, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 import { forwardRef, HTMLProps, PropsWithChildren, useCallback } from "react";
-import Markdown from "react-markdown";
 
 import {
   ChartPanelLayoutCanvas,
@@ -12,6 +11,7 @@ import { ChartPanelLayoutTall } from "@/components/chart-panel-layout-tall";
 import { ChartPanelLayoutVertical } from "@/components/chart-panel-layout-vertical";
 import { ChartSelectionTabs } from "@/components/chart-selection-tabs";
 import { DashboardInteractiveFilters } from "@/components/dashboard-interactive-filters";
+import { Markdown } from "@/components/markdown";
 import { ChartConfig, Layout, LayoutDashboard } from "@/config-types";
 import { hasChartConfigs, LayoutBlock, LayoutTextBlock } from "@/configurator";
 import { useConfiguratorState, useLocale } from "@/src";
