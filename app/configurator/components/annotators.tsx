@@ -2,6 +2,7 @@ import { Trans } from "@lingui/macro";
 import { Theme, Typography, TypographyProps } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
+import Markdown from "react-markdown";
 
 import { getChartConfig } from "@/config-types";
 import {
@@ -57,7 +58,11 @@ export const Title = (props: Props) => {
         ...sx,
       }}
     >
-      {text ? text : <Trans id="annotation.add.title">[ Title ]</Trans>}
+      {text ? (
+        <Markdown>{text}</Markdown>
+      ) : (
+        <Trans id="annotation.add.title">[ Title ]</Trans>
+      )}
     </Typography>
   );
 };
@@ -66,6 +71,7 @@ export const Description = (props: Props) => {
   const { text, lighterColor, smaller, onClick, className, sx, ...rest } =
     props;
   const classes = useStyles({ interactive: !!onClick });
+
   return (
     <Typography
       {...rest}
@@ -79,7 +85,7 @@ export const Description = (props: Props) => {
       }}
     >
       {text ? (
-        text
+        <Markdown>{text}</Markdown>
       ) : (
         <Trans id="annotation.add.description">[ Description ]</Trans>
       )}
