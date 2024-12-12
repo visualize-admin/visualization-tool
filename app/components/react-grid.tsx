@@ -181,7 +181,7 @@ const useStyles = makeStyles((theme: Theme) => ({
       transform: "rotate(45deg)",
     },
     "& .react-grid-item:not(.react-grid-placeholder)": {
-      background: "#eee",
+      background: theme.palette.background.paper,
       border: theme.palette.divider,
       boxShadow: theme.shadows[1],
     },
