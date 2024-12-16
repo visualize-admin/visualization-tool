@@ -1,3 +1,4 @@
+import { Trans } from "@lingui/macro";
 import { Button, Typography } from "@mui/material";
 import { useMemo } from "react";
 
@@ -49,7 +50,11 @@ export const LayoutBlocksSelector = () => {
       tabIndex={-1}
     >
       <ControlSection hideTopBorder>
-        <SectionTitle>Text object</SectionTitle>
+        <SectionTitle>
+          <Trans id="controls.section.block-options.block.text">
+            Text object
+          </Trans>
+        </SectionTitle>
         <ControlSectionContent gap="none">
           {orderedLocales.map((locale) => (
             <TextBlockInputField key={locale} locale={locale} />

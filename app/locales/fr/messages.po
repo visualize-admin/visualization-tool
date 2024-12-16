@@ -837,6 +837,10 @@ msgstr "Ajouter un objet"
 msgid "controls.section.block-options.block-add.text"
 msgstr "Texte"
 
+#: app/configurator/components/block-options-selector.tsx
+msgid "controls.section.block-options.block.text"
+msgstr "Objet texte"
+
 #: app/configurator/components/chart-configurator.tsx
 msgid "controls.section.chart.options"
 msgstr "Paramètres graphiques"
