@@ -41,7 +41,7 @@ export const availableHandles: ResizeHandle[] = [
 const MAX_H = 10;
 
 const INITIAL_H = 7;
-const MIN_H = 1;
+export const MIN_H = 1;
 
 /** In grid unit */
 const MAX_W = 4;
@@ -381,6 +381,7 @@ export const generateLayout = function ({
           y: i * h,
           w: maxWidth,
           h,
+          minH: MIN_H,
           i: i.toString(),
           resizeHandles,
         };
@@ -392,6 +393,7 @@ export const generateLayout = function ({
           y: 0,
           w: w,
           h: maxHeight,
+          minH: MIN_H,
           i: i.toString(),
           resizeHandles,
         };
@@ -403,6 +405,7 @@ export const generateLayout = function ({
           y: i === 0 ? 0 : h * (i - 1),
           w: maxWidth / 2,
           h: i === 0 ? maxHeight : h,
+          minH: MIN_H,
           i: i.toString(),
           resizeHandles,
         };
@@ -413,6 +416,7 @@ export const generateLayout = function ({
           y: Math.floor(i / 2) * INITIAL_H,
           w: getInitialTileWidth(),
           h: getInitialTileHeight(),
+          minH: MIN_H,
           i: i.toString(),
           resizeHandles: [],
         };
@@ -424,6 +428,7 @@ export const generateLayout = function ({
           y: i === 0 ? 0 : maxHeight / 2,
           w: i === 0 ? maxWidth : w,
           h: maxHeight / 2,
+          minH: MIN_H,
           i: i.toString(),
           resizeHandles,
         };
