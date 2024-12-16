@@ -36,6 +36,7 @@ export const theme = createTheme({
     primary: {
       light: "#d8e8ef",
       main: "#006699",
+      // @ts-expect-error it works
       hover: "#004B70",
       active: "#00334D",
       disabled: "#599cbd",
@@ -46,6 +47,7 @@ export const theme = createTheme({
     },
     secondary: {
       main: "#757575",
+      // @ts-expect-error it works
       hover: "#616161",
       active: "#4F4F4F",
       disabled: "#A5A5A5",
@@ -53,6 +55,7 @@ export const theme = createTheme({
     success: {
       main: "#3c763d",
       light: "#DFF0D8",
+      // @ts-expect-error it works
       hover: "#3c763d",
       active: "#3c763d",
       disabled: "#DFF0D8",
