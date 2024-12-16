@@ -11,6 +11,7 @@ import { ChartPanelLayoutTall } from "@/components/chart-panel-layout-tall";
 import { ChartPanelLayoutVertical } from "@/components/chart-panel-layout-vertical";
 import { ChartSelectionTabs } from "@/components/chart-selection-tabs";
 import { DashboardInteractiveFilters } from "@/components/dashboard-interactive-filters";
+import { DragHandle } from "@/components/drag-handle";
 import { Markdown } from "@/components/markdown";
 import { ChartConfig, Layout, LayoutDashboard } from "@/config-types";
 import {
@@ -49,6 +50,7 @@ const useStyles = makeStyles<Theme, { editable?: boolean }>((theme) => ({
     height: "100%",
   },
   textBlockWrapper: {
+    display: "flex",
     padding: "0.75rem",
     cursor: ({ editable }) => (editable ? "pointer" : "default"),
     "&:hover": {
@@ -142,13 +144,28 @@ export const ChartPanelLayout = ({
           // Important, otherwise ReactGrid breaks.
           key={block.key}
           className={classes.textBlockWrapper}
-          onClick={() => handleTextBlockClick(block)}
+          onClick={(e) => {
+            if (e.isPropagationStopped()) {
+              return;
+            }
+
+            handleTextBlockClick(block);
+          }}
         >
-          <Markdown>{block.text[locale]}</Markdown>
+          <div style={{ flexGrow: 1 }}>
+            <Markdown>{block.text[locale]}</Markdown>
+          </div>
+          {layouting ? (
+            <DragHandle
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+            />
+          ) : null}
         </div>
       );
     },
-    [classes.textBlockWrapper, handleTextBlockClick, locale]
+    [classes.textBlockWrapper, handleTextBlockClick, layouting, locale]
   );
 
   const renderBlock = useCallback(
