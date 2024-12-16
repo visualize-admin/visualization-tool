@@ -15,9 +15,9 @@ import {
   hasChartConfigs,
   isLayouting,
   ReactGridLayoutType,
+  useConfiguratorState,
 } from "@/configurator";
 import { useTimeout } from "@/hooks/use-timeout";
-import { useConfiguratorState } from "@/src";
 import { theme } from "@/themes/federal";
 import { assert } from "@/utils/assert";
 
@@ -53,7 +53,7 @@ export const FREE_CANVAS_BREAKPOINTS = {
   md: 480,
   sm: 0,
 };
-const ROW_HEIGHT = 100;
+export const ROW_HEIGHT = 100;
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -69,7 +69,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
     "& .react-grid-item": {
       transition: "all 200ms ease",
-      transitionProperty: "left, top, width, height",
+      transitionProperty: "none",
 
       // Customization
       boxSizing: "border-box",
@@ -79,7 +79,7 @@ const useStyles = makeStyles((theme: Theme) => ({
       userSelect: "none",
     },
     "& .react-grid-item.cssTransforms": {
-      transitionProperty: "transform, width, height",
+      transitionProperty: "none",
     },
     "& .react-grid-item.resizing": {
       transition: "none",
@@ -220,10 +220,10 @@ export const ChartGridLayout = ({
   ...rest
 }: {
   className: string;
-  onLayoutChange: Function;
   resize?: boolean;
 } & ComponentProps<typeof ResponsiveReactGridLayout>) => {
   const classes = useStyles();
+
   const [state, dispatch] = useConfiguratorState(hasChartConfigs);
   const layout = state.layout;
   assert(
@@ -343,12 +343,11 @@ export const ChartGridLayout = ({
   return (
     <ResponsiveReactGridLayout
       {...rest}
-      layouts={enhancedLayouts}
+      layouts={layouts}
       className={clsx(classes.root, className)}
       cols={COLS}
       rowHeight={ROW_HEIGHT}
-      measureBeforeMount={false}
-      useCSSTransforms={mounted}
+      useCSSTransforms={false}
       compactType="vertical"
       preventCollision={false}
     >

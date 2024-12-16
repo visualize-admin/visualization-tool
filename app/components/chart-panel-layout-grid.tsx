@@ -1,7 +1,6 @@
 import clsx from "clsx";
 import { fold } from "fp-ts/lib/Either";
 import { pipe } from "fp-ts/lib/function";
-import { useState } from "react";
 import { Layouts } from "react-grid-layout";
 
 import { ChartPanelLayoutTypeProps } from "@/components/chart-panel";
@@ -40,15 +39,10 @@ export const ChartPanelLayoutCanvas = ({
 }: ChartPanelLayoutTypeProps) => {
   const [state, dispatch] = useConfiguratorState(hasChartConfigs);
   const layout = state.layout;
-  const [layouts, setLayouts] = useState<Layouts>(() => {
-    assert(
-      layout.type === "dashboard" && layout.layout === "canvas",
-      "ChartPanelLayoutGrid should be rendered only for dashboard layout with canvas"
-    );
-
-    return layout.layouts;
-  });
-
+  assert(
+    layout.type === "dashboard" && layout.layout === "canvas",
+    "ChartPanelLayoutGrid should be rendered only for dashboard layout with canvas"
+  );
   const handleChangeLayouts = (layouts: Layouts) => {
     assert(
       layout.type === "dashboard" && layout.layout === "canvas",
@@ -68,14 +62,13 @@ export const ChartPanelLayoutCanvas = ({
         layouts: parsedLayouts,
       },
     });
-    setLayouts(layouts);
   };
 
   return (
     <ChartGridLayout
       key={state.state}
       className={clsx(chartPanelLayoutGridClasses.root, className)}
-      layouts={layouts}
+      layouts={layout.layouts}
       resize={state.state === "LAYOUTING"}
       draggableHandle={`.${chartPanelLayoutGridClasses.dragHandle}`}
       onLayoutChange={(_, allLayouts) => handleChangeLayouts(allLayouts)}
