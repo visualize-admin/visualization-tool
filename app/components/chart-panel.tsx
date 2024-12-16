@@ -50,6 +50,7 @@ const useStyles = makeStyles<Theme, { editable?: boolean }>((theme) => ({
   },
   textBlockWrapper: {
     padding: "0.75rem",
+    cursor: ({ editable }) => (editable ? "pointer" : "default"),
     "&:hover": {
       textDecoration: ({ editable }) => (editable ? "underline" : "none"),
     },
