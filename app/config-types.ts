@@ -1204,6 +1204,7 @@ const ResizeHandle = t.keyof({
 const ReactGridLayoutType = t.type({
   w: t.number,
   h: t.number,
+  minH: t.union([t.number, t.undefined]),
   x: t.number,
   y: t.number,
   i: t.string,
