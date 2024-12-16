@@ -13,10 +13,16 @@ import { ChartSelectionTabs } from "@/components/chart-selection-tabs";
 import { DashboardInteractiveFilters } from "@/components/dashboard-interactive-filters";
 import { Markdown } from "@/components/markdown";
 import { ChartConfig, Layout, LayoutDashboard } from "@/config-types";
-import { hasChartConfigs, LayoutBlock, LayoutTextBlock } from "@/configurator";
+import {
+  hasChartConfigs,
+  isLayouting,
+  LayoutBlock,
+  LayoutTextBlock,
+} from "@/configurator";
 import { useConfiguratorState, useLocale } from "@/src";
+import useEvent from "@/utils/use-event";
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles<Theme, { editable?: boolean }>((theme) => ({
   panelLayout: {
     containerType: "inline-size",
     display: "flex",
@@ -42,6 +48,12 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: "auto",
     height: "100%",
   },
+  textBlockWrapper: {
+    padding: "0.75rem",
+    "&:hover": {
+      textDecoration: ({ editable }) => (editable ? "underline" : "none"),
+    },
+  },
 }));
 
 export const getChartWrapperId = (chartKey: string) =>
@@ -56,7 +68,8 @@ export type ChartWrapperProps = BoxProps & {
 export const ChartWrapper = forwardRef<HTMLDivElement, ChartWrapperProps>(
   (props, ref) => {
     const { children, editing, layoutType, ...rest } = props;
-    const classes = useStyles();
+    const classes = useStyles({});
+
     return (
       <Box
         ref={ref}
@@ -107,22 +120,34 @@ export const ChartPanelLayout = ({
   ...rest
 }: ChartPanelLayoutProps) => {
   const locale = useLocale();
-  const classes = useStyles();
+  const [state, dispatch] = useConfiguratorState(hasChartConfigs);
+  const layouting = isLayouting(state);
+  const classes = useStyles({ editable: layouting });
   const Wrapper = Wrappers[layoutType];
-  const [state] = useConfiguratorState(hasChartConfigs);
   const { layout } = state;
   const { blocks } = layout;
 
+  const handleTextBlockClick = useEvent((block: LayoutTextBlock) => {
+    dispatch({
+      type: "LAYOUT_ACTIVE_FIELD_CHANGED",
+      value: block.key,
+    });
+  });
+
   const renderTextBlock = useCallback(
-    (textBlock: LayoutTextBlock) => {
+    (block: LayoutTextBlock) => {
       return (
-        // Key is important, otherwise ReactGrid breaks.
-        <div key={textBlock.key} style={{ padding: "0.75rem" }}>
-          <Markdown>{textBlock.text[locale]}</Markdown>
+        <div
+          // Important, otherwise ReactGrid breaks.
+          key={block.key}
+          className={classes.textBlockWrapper}
+          onClick={() => handleTextBlockClick(block)}
+        >
+          <Markdown>{block.text[locale]}</Markdown>
         </div>
       );
     },
-    [locale]
+    [classes.textBlockWrapper, handleTextBlockClick, locale]
   );
 
   const renderBlock = useCallback(
