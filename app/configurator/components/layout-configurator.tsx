@@ -33,6 +33,7 @@ import {
   DashboardTimeRangeFilter,
   getChartConfig,
   LayoutDashboard,
+  LayoutTextBlock,
   ReactGridLayoutType,
 } from "@/config-types";
 import { LayoutAnnotator } from "@/configurator/components/annotators";
@@ -571,7 +572,10 @@ const LayoutBlocksConfigurator = () => {
       <ControlSectionContent px="small" gap="none">
         <div className={classes.root}>
           {blocks
-            .filter((b) => b.type === "text")
+            .filter(
+              (block): block is LayoutTextBlock & { initialized: boolean } =>
+                block.type === "text"
+            )
             .map((block) => (
               <ControlTab
                 key={block.key}

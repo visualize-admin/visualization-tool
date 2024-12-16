@@ -141,8 +141,9 @@ const makeScreenshot = async ({
 
       switch (type) {
         case "png": {
-          let arrayBuffer = Uint8Array.from(atob(dataUrl.split(",")[1]), (c) =>
-            c.charCodeAt(0)
+          let arrayBuffer: Uint8Array = Uint8Array.from(
+            atob(dataUrl.split(",")[1]),
+            (c) => c.charCodeAt(0)
           );
 
           pngMetadata?.forEach(({ key, value }) => {
