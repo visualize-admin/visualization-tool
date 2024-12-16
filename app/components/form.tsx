@@ -732,7 +732,7 @@ export const FieldSetLegend = ({
     component="legend"
     sx={{
       lineHeight: ["1rem", "1.125rem", "1.125rem"],
-      fontWeight: "regular",
+      fontWeight: "normal",
       fontSize: ["0.625rem", "0.75rem", "0.75rem"],
       pl: 0,
       mb: 1,
