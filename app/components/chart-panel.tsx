@@ -1,7 +1,15 @@
 import { Box, BoxProps, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import cx from "classnames";
 import clsx from "clsx";
-import { forwardRef, HTMLProps, PropsWithChildren, useCallback } from "react";
+import { selectAll } from "d3-selection";
+import {
+  forwardRef,
+  HTMLProps,
+  PropsWithChildren,
+  useCallback,
+  useEffect,
+} from "react";
 
 import {
   ChartPanelLayoutCanvas,
@@ -13,6 +21,7 @@ import { ChartSelectionTabs } from "@/components/chart-selection-tabs";
 import { DashboardInteractiveFilters } from "@/components/dashboard-interactive-filters";
 import { DragHandle } from "@/components/drag-handle";
 import { Markdown } from "@/components/markdown";
+import { ROW_HEIGHT } from "@/components/react-grid";
 import { ChartConfig, Layout, LayoutDashboard } from "@/config-types";
 import {
   hasChartConfigs,
@@ -21,6 +30,7 @@ import {
   LayoutTextBlock,
 } from "@/configurator";
 import { useConfiguratorState, useLocale } from "@/src";
+import { assert } from "@/utils/assert";
 import useEvent from "@/utils/use-event";
 
 const useStyles = makeStyles<Theme, { editable?: boolean }>((theme) => ({
@@ -114,6 +124,9 @@ const Wrappers: Record<
   canvas: ChartPanelLayoutCanvas,
 };
 
+const TEXT_BLOCK_WRAPPER_CLASS = "text-block-wrapper";
+const TEXT_BLOCK_CONTENT_CLASS = "text-block-content";
+
 export const ChartPanelLayout = ({
   children,
   renderChart,
@@ -143,7 +156,8 @@ export const ChartPanelLayout = ({
         <div
           // Important, otherwise ReactGrid breaks.
           key={block.key}
-          className={classes.textBlockWrapper}
+          id={block.key}
+          className={cx(classes.textBlockWrapper, TEXT_BLOCK_WRAPPER_CLASS)}
           onClick={(e) => {
             if (e.isPropagationStopped()) {
               return;
@@ -152,7 +166,10 @@ export const ChartPanelLayout = ({
             handleTextBlockClick(block);
           }}
         >
-          <div style={{ flexGrow: 1 }}>
+          <div
+            className={TEXT_BLOCK_CONTENT_CLASS}
+            style={{ flexGrow: 1, height: "fit-content" }}
+          >
             <Markdown>{block.text[locale]}</Markdown>
           </div>
           {layouting ? (
@@ -167,6 +184,8 @@ export const ChartPanelLayout = ({
     },
     [classes.textBlockWrapper, handleTextBlockClick, layouting, locale]
   );
+
+  useSyncTextBlockHeight();
 
   const renderBlock = useCallback(
     (block: LayoutBlock) => {
@@ -197,4 +216,56 @@ export const ChartPanelLayout = ({
       <Wrapper blocks={blocks} renderBlock={renderBlock} />
     </div>
   );
+};
+
+const useSyncTextBlockHeight = () => {
+  const [state, dispatch] = useConfiguratorState(hasChartConfigs);
+  const layout = state.layout;
+  const layouting = isLayouting(state);
+
+  useEffect(() => {
+    // Only adjust the height when not in published mode.
+    if (!layouting) {
+      return;
+    }
+
+    assert(
+      layout.type === "dashboard" && layout.layout === "canvas",
+      "useSyncTextBlockHeight can only be used with free canvas layout"
+    );
+
+    selectAll<HTMLDivElement, unknown>(`.${TEXT_BLOCK_WRAPPER_CLASS}`).each(
+      function () {
+        const wrapperEl = this;
+        const contentEl = wrapperEl.querySelector<HTMLDivElement>(
+          `.${TEXT_BLOCK_CONTENT_CLASS}`
+        );
+
+        if (!contentEl) {
+          return;
+        }
+
+        const key = wrapperEl.id;
+        const h = Math.ceil(contentEl.clientHeight / ROW_HEIGHT) || 1;
+        // TODO: how to get current layout?
+        const bp = "xl";
+        const blockLayout = layout.layouts[bp].find((b) => b.i === key);
+
+        if (blockLayout && blockLayout.minH !== h) {
+          dispatch({
+            type: "LAYOUT_CHANGED",
+            value: {
+              ...layout,
+              layouts: {
+                ...layout.layouts,
+                [bp]: layout.layouts[bp].map((b) => {
+                  return b.i === key ? { ...b, h, minH: h } : b;
+                }),
+              },
+            },
+          });
+        }
+      }
+    );
+  }, [dispatch, layout, layouting]);
 };
