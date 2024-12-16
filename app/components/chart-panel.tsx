@@ -30,7 +30,6 @@ import {
   LayoutTextBlock,
 } from "@/configurator";
 import { useConfiguratorState, useLocale } from "@/src";
-import { assert } from "@/utils/assert";
 import useEvent from "@/utils/use-event";
 
 const useStyles = makeStyles<Theme, { editable?: boolean }>((theme) => ({
@@ -225,14 +224,13 @@ const useSyncTextBlockHeight = () => {
 
   useEffect(() => {
     // Only adjust the height when not in published mode.
-    if (!layouting) {
+    if (
+      !layouting ||
+      layout.type !== "dashboard" ||
+      layout.layout !== "canvas"
+    ) {
       return;
     }
-
-    assert(
-      layout.type === "dashboard" && layout.layout === "canvas",
-      "useSyncTextBlockHeight can only be used with free canvas layout"
-    );
 
     selectAll<HTMLDivElement, unknown>(`.${TEXT_BLOCK_WRAPPER_CLASS}`).each(
       function () {
