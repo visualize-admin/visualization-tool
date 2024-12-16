@@ -32,13 +32,11 @@ const ChartPanelLayoutTallRow = ({ row }: { row: ChartPanelLayoutTallRow }) => {
       return row.renderBlock(row.block);
     case "narrow":
       if (isMobile) {
-        return <>{row.chartConfigs.map(row.renderBlock)}</>;
+        return <>{row.blocks.map(row.renderBlock)}</>;
       }
 
       return (
-        <Box className={classes.root}>
-          {row.chartConfigs.map(row.renderBlock)}
-        </Box>
+        <Box className={classes.root}>{row.blocks.map(row.renderBlock)}</Box>
       );
   }
 };
@@ -51,7 +49,7 @@ type ChartPanelLayoutTallRow = {
     }
   | {
       type: "narrow";
-      chartConfigs: [LayoutBlock] | [LayoutBlock, LayoutBlock];
+      blocks: [LayoutBlock] | [LayoutBlock, LayoutBlock];
     }
 );
 
@@ -75,7 +73,7 @@ export const getChartPanelLayoutTallRows = ({
       const nextBlock = blocks[i + 1];
       rows.push({
         type: "narrow",
-        chartConfigs: nextBlock ? [block, nextBlock] : [block],
+        blocks: nextBlock ? [block, nextBlock] : [block],
         renderBlock,
       });
     }
