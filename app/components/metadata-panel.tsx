@@ -806,7 +806,6 @@ const ComponentTabPanel = ({
           <MotionBox
             key="dimension-values"
             className={classes.dimensionValues}
-            component={Flex}
             {...animationProps}
           >
             {isJoinByComponent(component) ? (

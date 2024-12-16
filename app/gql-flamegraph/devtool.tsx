@@ -497,15 +497,10 @@ const DebugPanel = () => {
           </IconButton>
         </Grow>
       </Box>
-      <Drawer
-        open={isOpen}
-        anchor="bottom"
-        elevation={2}
-        onBackdropClick={close}
-      >
+      <Drawer open={isOpen} anchor="bottom" elevation={2} onClose={close}>
         <TabContext value={tab}>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            <TabList value={tab} onChange={(_ev, tab) => setTab(tab)}>
+            <TabList onChange={(_, tab) => setTab(tab)}>
               <Tab value="graphql" label="graphql" />
               <Tab value="flags" label="flags" />
             </TabList>

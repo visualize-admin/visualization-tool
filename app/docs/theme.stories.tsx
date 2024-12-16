@@ -28,10 +28,9 @@ import {
   rgbToHex,
   useTheme,
 } from "@mui/material";
-import { BoxProps } from "@mui/system";
 import { Meta } from "@storybook/react";
 import { useSnackbar } from "notistack";
-import { ComponentProps, useState } from "react";
+import { ComponentProps, ReactNode, useState } from "react";
 
 import SvgIcChevronLeft from "@/icons/components/IcChevronLeft";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
@@ -46,19 +45,22 @@ const meta: Meta = {
 const StorybookBody = ({
   children,
   ...props
-}: { children: React.ReactNode } & BoxProps) => (
+}: { children: ReactNode } & Omit<ComponentProps<typeof Box>, "children">) => (
   <Box {...props}>{children}</Box>
 );
 const StorybookSection = ({
   children,
   ...props
-}: { children: React.ReactNode } & BoxProps) => (
+}: { children: ReactNode } & Omit<ComponentProps<typeof Box>, "children">) => (
   <Box {...props}>{children}</Box>
 );
 const StorybookSectionTitle = ({
   children,
   ...props
-}: { children: React.ReactNode } & ComponentProps<typeof Typography>) => (
+}: { children: ReactNode } & Omit<
+  ComponentProps<typeof Typography>,
+  "children"
+>) => (
   <Typography variant="h2" {...props}>
     {children}
   </Typography>

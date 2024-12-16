@@ -92,6 +92,7 @@ const sleep = (duration: number) =>
 
 describe("useComponentsQuery - keepPreviousData: false", () => {
   it("should work", async () => {
+    // @ts-ignore
     global.fetch = async (
       _url: RequestInfo | URL,
       options: RequestInit | undefined
@@ -218,6 +219,7 @@ describe("useComponentsQuery - keepPreviousData: false", () => {
 
 describe("useComponentsQuery - keepPreviousData: true", () => {
   it("should work", async () => {
+    // @ts-ignore
     global.fetch = async (
       _url: RequestInfo | URL,
       options: RequestInit | undefined
