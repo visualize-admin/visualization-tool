@@ -31,7 +31,9 @@ import {
 import { useId } from "@reach/auto-id";
 import flatten from "lodash/flatten";
 import React, {
+  ChangeEvent,
   ComponentProps,
+  KeyboardEvent,
   ReactNode,
   SyntheticEvent,
   createContext,
@@ -606,6 +608,68 @@ export const MinimalisticSelect = (props: MinimalisticSelectProps) => {
   );
 };
 
+const makeKeyDownHandler =
+  ({
+    key,
+    wrapStart,
+    wrapEnd,
+  }: {
+    key: string;
+    wrapStart: string;
+    wrapEnd: string;
+  }) =>
+  (
+    e: KeyboardEvent<HTMLInputElement>,
+    {
+      input,
+      onChange,
+      value,
+    }: {
+      input: HTMLInputElement;
+      onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+      value: string;
+    }
+  ) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === key) {
+      e.preventDefault();
+
+      const { selectionStart: start, selectionEnd: end } = input;
+
+      if (start === null || end === null || start === end) {
+        return;
+      }
+
+      const text = value.slice(start, end);
+      const wrappedText = `${wrapStart}${text}${wrapEnd}`;
+      const newValue = `${value.slice(0, start)}${wrappedText}${value.slice(end)}`;
+
+      // Keep the change in the undo stack, so we can use CMD+Z as expected.
+      // Even though it's deprecated, it still works in most browsers.
+      document.execCommand("insertText", false, wrappedText);
+
+      onChange({
+        currentTarget: { value: newValue },
+      } as ChangeEvent<HTMLInputElement>);
+
+      input.selectionStart = start + wrapStart.length;
+      input.selectionEnd = start + text.length + wrapStart.length;
+
+      return true;
+    }
+  };
+
+const keyDownHandlers = [
+  { key: "b", wrapStart: "**", wrapEnd: "**" },
+  { key: "i", wrapStart: "_", wrapEnd: "_" },
+  { key: "u", wrapStart: "<ins>", wrapEnd: "</ins>" },
+].map(({ key, wrapStart, wrapEnd }) => {
+  return makeKeyDownHandler({
+    key,
+    wrapStart,
+    wrapEnd,
+  });
+});
+
 export const Input = ({
   label,
   name,
@@ -615,30 +679,45 @@ export const Input = ({
 }: {
   label?: string | ReactNode;
   disabled?: boolean;
-} & FieldProps) => (
-  <Box sx={{ fontSize: "1rem", pb: 2 }}>
-    {label && name && (
-      <Label htmlFor={name} smaller sx={{ mb: 1 }}>
-        {label}
-      </Label>
-    )}
-    <MUIInput
-      id={name}
-      size="small"
-      color="secondary"
-      multiline
-      name={name}
-      value={value}
-      disabled={disabled}
-      onChange={onChange}
-      sx={{
-        borderColor: "grey.500",
-        backgroundColor: "grey.100",
-        width: "100%",
-      }}
-    />
-  </Box>
-);
+} & FieldProps) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const handleKeyDown = useEvent((e: KeyboardEvent<HTMLInputElement>) => {
+    const input = inputRef.current;
+
+    if (!input || !onChange || typeof value !== "string") {
+      return;
+    }
+
+    return keyDownHandlers.some((cb) => cb(e, { input, onChange, value }));
+  });
+
+  return (
+    <Box sx={{ fontSize: "1rem", pb: 2 }}>
+      {label && name ? (
+        <Label htmlFor={name} smaller sx={{ mb: 1 }}>
+          {label}
+        </Label>
+      ) : null}
+      <MUIInput
+        id={name}
+        size="small"
+        color="secondary"
+        multiline
+        name={name}
+        value={value}
+        disabled={disabled}
+        onChange={onChange}
+        onKeyDown={handleKeyDown}
+        inputRef={inputRef}
+        sx={{
+          width: "100%",
+          borderColor: "grey.500",
+          backgroundColor: "grey.100",
+        }}
+      />
+    </Box>
+  );
+};
 
 export const SearchField = ({
   id,
