@@ -641,18 +641,38 @@ const makeKeyDownHandler =
 
       const text = value.slice(start, end);
       const wrappedText = `${wrapStart}${text}${wrapEnd}`;
+      const maybeWrappedText = value.slice(
+        start - wrapStart.length,
+        end + wrapEnd.length
+      );
+
+      if (maybeWrappedText === wrappedText) {
+        const newValue = `${value.slice(0, start - wrapStart.length)}${text}${value.slice(
+          end + wrapEnd.length
+        )}`;
+        // Keep the change in the undo stack, so we can use CMD+Z as expected.
+        // Even though it's deprecated, it still works in most browsers.
+        document.execCommand("insertText", false, text);
+        onChange({
+          currentTarget: { value: newValue },
+        } as ChangeEvent<HTMLInputElement>);
+        setTimeout(() => {
+          input.selectionStart = start - wrapStart.length;
+          input.selectionEnd = start + text.length - wrapStart.length;
+        }, 0);
+
+        return true;
+      }
+
       const newValue = `${value.slice(0, start)}${wrappedText}${value.slice(end)}`;
-
-      // Keep the change in the undo stack, so we can use CMD+Z as expected.
-      // Even though it's deprecated, it still works in most browsers.
       document.execCommand("insertText", false, wrappedText);
-
       onChange({
         currentTarget: { value: newValue },
       } as ChangeEvent<HTMLInputElement>);
-
-      input.selectionStart = start + wrapStart.length;
-      input.selectionEnd = start + text.length + wrapStart.length;
+      setTimeout(() => {
+        input.selectionStart = start + wrapStart.length;
+        input.selectionEnd = start + text.length + wrapStart.length;
+      }, 0);
 
       return true;
     }
