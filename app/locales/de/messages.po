@@ -181,8 +181,8 @@ msgid "chart-controls.edit-tab-label"
 msgstr "Tab-Titel editieren"
 
 #: app/components/chart-shared.tsx
-msgid "chart-controls.export"
-msgstr "Export"
+msgid "chart-controls.export-png"
+msgstr "PNG exportieren"
 
 #: app/components/dataset-metadata.tsx
 msgid "chart-controls.sparql-query"
@@ -326,6 +326,15 @@ msgstr "Horizontale Achse"
 msgid "controls.axis.vertical"
 msgstr "Vertikale Achse"
 
+#: app/configurator/components/field-i18n.ts
+msgid "controls.bar.grouped"
+msgstr "Gruppiert"
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.bar.stacked"
+msgstr "Gestapelt"
+
+#: app/charts/chart-config-ui-options.ts
 #: app/charts/chart-config-ui-options.ts
 msgid "controls.calculation.disabled-by-grouped"
 msgstr "Der 100%-Modus kann nicht mit einem gruppierten Layout verwendet werden."
@@ -409,11 +418,11 @@ msgstr "Es sind mindestens zwei numerische Messungen erforderlich."
 
 #: app/charts/index.ts
 msgid "controls.chart.disabled.numerical"
-msgstr "Es ist mindestens eine numerische Massnahme erforderlich."
+msgstr "Es ist mindestens eine numerische Mass erforderlich."
 
 #: app/charts/index.ts
 msgid "controls.chart.disabled.same-unit"
-msgstr "Es sind mindestens zwei Zahlenwerte mit gleicher Einheit erforderlich."
+msgstr "Es sind mindestens zwei numerische Masse mit der gleichen Einheit erforderlich."
 
 #: app/charts/index.ts
 #: app/charts/index.ts
@@ -911,7 +920,7 @@ msgstr "Konfidenzintervall anzeigen"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.show-confidence-interval.explanation"
-msgstr "Zeigen Sie Unsicherheiten an, die sich aus Datenpunkten ergeben, um Konfidenzintervalle darzustellen"
+msgstr "Unsicherheiten, die sich aus Datenpunkten ergeben anzeigen, um Konfidenzintervalle darzustellen"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.show-standard-error"
@@ -946,6 +955,7 @@ msgstr "Fügen Sie einen Titel oder eine Beschreibung hinzu"
 msgid "controls.segment"
 msgstr "Segmentierung"
 
+#: app/charts/chart-config-ui-options.ts
 #: app/charts/chart-config-ui-options.ts
 #: app/charts/chart-config-ui-options.ts
 msgid "controls.segment.stacked.disabled-by-scale-type"
@@ -1557,6 +1567,8 @@ msgid "logo.swiss.confederation"
 msgstr "Logo der Schweizerischen Eidgenossenschaft"
 
 #: app/components/chart-footnotes.tsx
+#: app/components/chart-published.tsx
+#: app/components/chart-shared.tsx
 msgid "metadata.link.created.with"
 msgstr "Erstellt mit"
 

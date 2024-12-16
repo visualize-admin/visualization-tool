@@ -181,8 +181,8 @@ msgid "chart-controls.edit-tab-label"
 msgstr "Edit tab label"
 
 #: app/components/chart-shared.tsx
-msgid "chart-controls.export"
-msgstr "Export"
+msgid "chart-controls.export-png"
+msgstr "Export PNG"
 
 #: app/components/dataset-metadata.tsx
 msgid "chart-controls.sparql-query"
@@ -326,6 +326,15 @@ msgstr "Horizontal Axis"
 msgid "controls.axis.vertical"
 msgstr "Vertical Axis"
 
+#: app/configurator/components/field-i18n.ts
+msgid "controls.bar.grouped"
+msgstr "Grouped"
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.bar.stacked"
+msgstr "Stacked"
+
+#: app/charts/chart-config-ui-options.ts
 #: app/charts/chart-config-ui-options.ts
 msgid "controls.calculation.disabled-by-grouped"
 msgstr "100% mode can't be used with grouped layout."
@@ -948,6 +957,7 @@ msgstr "Segmentation"
 
 #: app/charts/chart-config-ui-options.ts
 #: app/charts/chart-config-ui-options.ts
+#: app/charts/chart-config-ui-options.ts
 msgid "controls.segment.stacked.disabled-by-scale-type"
 msgstr "Stacked layout can only be enabled if the vertical axis dimension has a ratio scale."
 
@@ -1157,7 +1167,7 @@ msgstr "Keywords"
 
 #: app/browser/dataset-browse.tsx
 msgid "dataset-result.dimension-joined-by"
-msgstr "Joined by"
+msgstr "Contains value of"
 
 #: app/browser/dataset-browse.tsx
 msgid "dataset-result.shared-dimensions"
@@ -1557,6 +1567,8 @@ msgid "logo.swiss.confederation"
 msgstr "Logo of the Swiss Confederation"
 
 #: app/components/chart-footnotes.tsx
+#: app/components/chart-published.tsx
+#: app/components/chart-shared.tsx
 msgid "metadata.link.created.with"
 msgstr "Created with"
 

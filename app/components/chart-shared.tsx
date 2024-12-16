@@ -419,7 +419,7 @@ const DownloadPNGImageMenuActionItem = ({
       onClick={screenshot}
       disabled={loading}
       leadingIconName="download"
-      label={`${t({ id: "chart-controls.export", message: "Export" })} PNG`}
+      label={t({ id: "chart-controls.export-png", message: "Export PNG" })}
     />
   );
 };
