@@ -12,7 +12,12 @@ You can also check the
 # Unreleased
 
 - Features
+  - Added a new chart type - bar
   - It's now possible to export charts as images
+- Fixes
+  - Themes fetching is now done by using standard SPARQL iris (starting with
+    https://), so that it behaves consistently across different SPARQL database
+    engines
 
 # [5.0.2] - 2024-11-28
 
