@@ -97,7 +97,7 @@
     "start-server-and-test": "^1.11.4",
     "storybook": "^7.6.17",
     "tsx": "^4.19.2",
-    "typescript": "4"
+    "typescript": "5.7.2"
   },
   "workspaces": [
     ".",
