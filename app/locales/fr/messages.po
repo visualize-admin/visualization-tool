@@ -181,8 +181,8 @@ msgid "chart-controls.edit-tab-label"
 msgstr "Modifier le nom de l'onglet"
 
 #: app/components/chart-shared.tsx
-msgid "chart-controls.export"
-msgstr "Exporter"
+msgid "chart-controls.export-png"
+msgstr "Exporter PNG"
 
 #: app/components/dataset-metadata.tsx
 msgid "chart-controls.sparql-query"
@@ -326,6 +326,15 @@ msgstr "Axe horizontal"
 msgid "controls.axis.vertical"
 msgstr "Axe vertical"
 
+#: app/configurator/components/field-i18n.ts
+msgid "controls.bar.grouped"
+msgstr "groupées"
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.bar.stacked"
+msgstr "empilées"
+
+#: app/charts/chart-config-ui-options.ts
 #: app/charts/chart-config-ui-options.ts
 msgid "controls.calculation.disabled-by-grouped"
 msgstr "Le mode 100% ne peut pas être utilisé avec une mise en page groupée."
@@ -911,7 +920,7 @@ msgstr "Afficher l'intervalle de confiance"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.show-confidence-interval.explanation"
-msgstr "Afficher les incertitudes s'étendant des points de données pour représenter les intervalles de confiance"
+msgstr "Afficher les incertitudes"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.show-standard-error"
@@ -946,6 +955,7 @@ msgstr "Ajoutez un titre et une description"
 msgid "controls.segment"
 msgstr "Segmentation"
 
+#: app/charts/chart-config-ui-options.ts
 #: app/charts/chart-config-ui-options.ts
 #: app/charts/chart-config-ui-options.ts
 msgid "controls.segment.stacked.disabled-by-scale-type"
@@ -1157,7 +1167,7 @@ msgstr "Mots clés"
 
 #: app/browser/dataset-browse.tsx
 msgid "dataset-result.dimension-joined-by"
-msgstr "Contient des valeurs de"
+msgstr "Rejoint via"
 
 #: app/browser/dataset-browse.tsx
 msgid "dataset-result.shared-dimensions"
@@ -1492,7 +1502,7 @@ msgstr "Gardez à l'esprit que la suppression de cette visualisation affectera t
 
 #: app/login/components/login-menu.tsx
 msgid "login.profile.feature-request"
-msgstr "Requête de fonctionnalité"
+msgstr "Demande de fonctionnalité"
 
 #: app/login/components/login-menu.tsx
 msgid "login.profile.feedback"
@@ -1557,6 +1567,8 @@ msgid "logo.swiss.confederation"
 msgstr "Logo de la Confédération Suisse"
 
 #: app/components/chart-footnotes.tsx
+#: app/components/chart-published.tsx
+#: app/components/chart-shared.tsx
 msgid "metadata.link.created.with"
 msgstr "Créé avec"
 
@@ -1594,7 +1606,7 @@ msgstr "Supprimer la bordure"
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.remove-border.warn"
-msgstr "Pour intégrer des visualisations dans des systèmes sans frontière."
+msgstr "Pour intégrer des visualisations sans bordure dans des systèmes externes."
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.responsive"
