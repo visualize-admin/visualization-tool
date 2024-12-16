@@ -681,7 +681,9 @@ const keyDownHandlers = (
     { key: "b", wrapStart: "**", wrapEnd: "**" },
     { key: "i", wrapStart: "_", wrapEnd: "_" },
     { key: "u", wrapStart: "<ins>", wrapEnd: "</ins>" },
-  ] satisfies KeyDownHandlerProps[]
+    { key: "s", wrapStart: "~~", wrapEnd: "~~" },
+    // Would be better to use `satisfies` here, but it's resulting in syntax errors
+  ] as KeyDownHandlerProps[]
 ).map(({ key, wrapStart, wrapEnd }) => {
   return makeKeyDownHandler({
     key,
