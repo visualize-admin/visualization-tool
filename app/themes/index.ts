@@ -12,6 +12,7 @@ declare module "@mui/material" {
 }
 
 declare module "@mui/material" {
+  // @ts-expect-error it works
   interface PaletteColorOptions {
     light?: string;
     main: string;
