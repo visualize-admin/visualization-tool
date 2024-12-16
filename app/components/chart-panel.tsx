@@ -116,8 +116,8 @@ export const ChartPanelLayout = ({
   const renderTextBlock = useCallback(
     (textBlock: LayoutTextBlock) => {
       return (
-        // Important, otherwise ReactGrid breaks.
-        <div key={textBlock.key} style={{ padding: "0 0.75rem" }}>
+        // Key is important, otherwise ReactGrid breaks.
+        <div key={textBlock.key} style={{ padding: "0.75rem" }}>
           <Markdown>{textBlock.text[locale]}</Markdown>
         </div>
       );
