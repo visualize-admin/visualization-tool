@@ -22,18 +22,24 @@ import {
 } from "@/configurator/configurator-state";
 import { useLocale } from "@/locales/use-locale";
 
-const useStyles = makeStyles<Theme, { interactive?: boolean }>({
+const useStyles = makeStyles<
+  Theme,
+  { interactive?: boolean; empty: boolean; lighterColor?: boolean }
+>((theme) => ({
   text: {
+    wordBreak: "break-word",
+    color: ({ empty, lighterColor }) =>
+      !empty
+        ? theme.palette.text.primary
+        : lighterColor
+          ? theme.palette.grey[500]
+          : theme.palette.secondary.main,
     cursor: ({ interactive }) => (interactive ? "pointer" : "text"),
     "&:hover": {
       textDecoration: ({ interactive }) => (interactive ? "underline" : "none"),
     },
   },
-});
-
-const getEmptyColor = (lighterColor?: boolean) => {
-  return lighterColor ? "grey.500" : "secondary.main";
-};
+}));
 
 type Props = TypographyProps & {
   text: string;
@@ -50,7 +56,11 @@ export const Title = ({
   sx,
   ...rest
 }: Props) => {
-  const classes = useStyles({ interactive: !!onClick });
+  const classes = useStyles({
+    interactive: !!onClick,
+    empty: !text,
+    lighterColor,
+  });
 
   return (
     <Typography
@@ -59,12 +69,6 @@ export const Title = ({
       component="span"
       className={clsx(classes.text, className)}
       onClick={onClick}
-      sx={{
-        color: text ? "text.primary" : getEmptyColor(lighterColor),
-        wordBreak: "break-word",
-        fontWeight: "normal",
-        ...sx,
-      }}
     >
       {text ? (
         <Markdown>{text}</Markdown>
@@ -84,7 +88,11 @@ export const Description = ({
   sx,
   ...rest
 }: Props) => {
-  const classes = useStyles({ interactive: !!onClick });
+  const classes = useStyles({
+    interactive: !!onClick,
+    empty: !text,
+    lighterColor,
+  });
 
   return (
     <Typography
@@ -93,11 +101,6 @@ export const Description = ({
       component="span"
       className={clsx(classes.text, className)}
       onClick={onClick}
-      sx={{
-        color: text ? "text.primary" : getEmptyColor(lighterColor),
-        wordBreak: "break-word",
-        ...sx,
-      }}
     >
       {text ? (
         <Markdown>{text}</Markdown>
