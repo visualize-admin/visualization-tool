@@ -28,7 +28,6 @@ import {
   ChartWrapper,
   ChartWrapperProps,
 } from "@/components/chart-panel";
-import { chartPanelLayoutGridClasses } from "@/components/chart-panel-layout-grid";
 import {
   ChartControls,
   ChartMoreButton,
@@ -263,12 +262,7 @@ const ReactGridChartPreview = forwardRef<
         <ChartPreviewInner
           dataSource={dataSource}
           chartKey={chartKey}
-          actionElementSlot={
-            <DragHandle
-              className={chartPanelLayoutGridClasses.dragHandle}
-              dragging
-            />
-          }
+          actionElementSlot={<DragHandle dragging />}
         >
           {children}
         </ChartPreviewInner>
@@ -324,7 +318,6 @@ const DndChartPreview = (props: CommonChartPreviewProps) => {
           actionElementSlot={
             <DragHandle
               ref={setActivatorNodeRef}
-              className={chartPanelLayoutGridClasses.dragHandle}
               dragging={isDragging}
               {...listeners}
             />
