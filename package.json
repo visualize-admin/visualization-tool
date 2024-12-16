@@ -87,7 +87,6 @@
     "fs-extra": "^10.0.0",
     "import-move-codemod": "^0.0.3",
     "madge": "^6.1.0",
-    "prettier": "^2.1.2",
     "rollup": "^2.52.2",
     "rollup-plugin-analyzer": "^4.0.0",
     "rollup-plugin-babel": "^4.3.3",
