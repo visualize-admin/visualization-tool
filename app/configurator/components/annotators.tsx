@@ -38,6 +38,9 @@ const useStyles = makeStyles<
     "&:hover": {
       textDecoration: ({ interactive }) => (interactive ? "underline" : "none"),
     },
+    "& > :last-child": {
+      marginBottom: 0,
+    },
   },
 }));
 
