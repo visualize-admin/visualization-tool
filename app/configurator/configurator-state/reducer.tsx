@@ -24,6 +24,7 @@ import {
   FREE_CANVAS_BREAKPOINTS,
   getInitialTileHeight,
   getInitialTileWidth,
+  MIN_H,
 } from "@/components/react-grid";
 import {
   ChartConfig,
@@ -1206,6 +1207,7 @@ export function ensureDashboardLayoutIsCorrect(
             y: chartY,
             w: chartW,
             h: chartH,
+              minH: MIN_H,
             // Is initialized later
             resizeHandles: [],
           });
