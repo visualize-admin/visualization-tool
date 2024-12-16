@@ -56,6 +56,7 @@ export const Title = ({
     <Typography
       {...rest}
       variant={smaller ? "h3" : "h2"}
+      component="span"
       className={clsx(classes.text, className)}
       onClick={onClick}
       sx={{
@@ -89,6 +90,7 @@ export const Description = ({
     <Typography
       {...rest}
       variant={smaller ? "body2" : "body1"}
+      component="span"
       className={clsx(classes.text, className)}
       onClick={onClick}
       sx={{
