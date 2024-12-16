@@ -733,6 +733,7 @@ export const Input = ({
         inputRef={inputRef}
         sx={{
           width: "100%",
+          padding: "10px 6px",
           borderColor: "grey.500",
           backgroundColor: "grey.100",
         }}

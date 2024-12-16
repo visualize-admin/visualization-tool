@@ -72,6 +72,7 @@ export const Title = ({
       component="span"
       className={clsx(classes.text, className)}
       onClick={onClick}
+      style={{ marginBottom: "0.5rem" }}
     >
       {text ? (
         <Markdown>{text}</Markdown>

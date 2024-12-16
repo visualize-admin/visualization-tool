@@ -465,7 +465,7 @@ theme.components = {
         border: "1px solid",
         borderColor: theme.palette.divider,
         borderRadius: (theme.shape.borderRadius as number) * 2,
-        padding: "10px 6px",
+        padding: "0 6px",
         minHeight: 48,
       },
       sizeSmall: {
