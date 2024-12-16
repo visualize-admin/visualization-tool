@@ -628,15 +628,7 @@ const AddLayoutBlocks = () => {
             type: "text",
             key: createId(),
             text: {
-              de: `# Heading 1!
-## Heading 2!
-### Heading 3!
-#### Heading 4!
-##### Heading 5!
-###### Heading 6!
-**Bold text**
-*Italic text*
-[Link](https://example.com)`,
+              de: "",
               fr: "",
               it: "",
               en: "",
