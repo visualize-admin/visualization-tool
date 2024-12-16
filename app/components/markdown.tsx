@@ -1,5 +1,8 @@
 import { ComponentProps } from "react";
 import ReactMarkdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
+import rehypeSanitize from "rehype-sanitize";
+import remarkGfm from "remark-gfm";
 
 const components: ComponentProps<typeof ReactMarkdown>["components"] = {
   h1: ({ children }) => <h1 style={{ marginTop: 0 }}>{children}</h1>,
@@ -15,5 +18,12 @@ const components: ComponentProps<typeof ReactMarkdown>["components"] = {
 export const Markdown = (
   props: Omit<ComponentProps<typeof ReactMarkdown>, "components">
 ) => {
-  return <ReactMarkdown components={components} {...props} />;
+  return (
+    <ReactMarkdown
+      components={components}
+      remarkPlugins={[remarkGfm]}
+      rehypePlugins={[rehypeRaw, rehypeSanitize]}
+      {...props}
+    />
+  );
 };
