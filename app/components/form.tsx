@@ -608,16 +608,14 @@ export const MinimalisticSelect = (props: MinimalisticSelectProps) => {
   );
 };
 
+type KeyDownHandlerProps = {
+  key: string;
+  wrapStart: string;
+  wrapEnd: string;
+};
+
 const makeKeyDownHandler =
-  ({
-    key,
-    wrapStart,
-    wrapEnd,
-  }: {
-    key: string;
-    wrapStart: string;
-    wrapEnd: string;
-  }) =>
+  ({ key, wrapStart, wrapEnd }: KeyDownHandlerProps) =>
   (
     e: KeyboardEvent<HTMLInputElement>,
     {
@@ -678,11 +676,13 @@ const makeKeyDownHandler =
     }
   };
 
-const keyDownHandlers = [
-  { key: "b", wrapStart: "**", wrapEnd: "**" },
-  { key: "i", wrapStart: "_", wrapEnd: "_" },
-  { key: "u", wrapStart: "<ins>", wrapEnd: "</ins>" },
-].map(({ key, wrapStart, wrapEnd }) => {
+const keyDownHandlers = (
+  [
+    { key: "b", wrapStart: "**", wrapEnd: "**" },
+    { key: "i", wrapStart: "_", wrapEnd: "_" },
+    { key: "u", wrapStart: "<ins>", wrapEnd: "</ins>" },
+  ] satisfies KeyDownHandlerProps[]
+).map(({ key, wrapStart, wrapEnd }) => {
   return makeKeyDownHandler({
     key,
     wrapStart,
