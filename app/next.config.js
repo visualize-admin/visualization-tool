@@ -60,7 +60,7 @@ module.exports = withPreconstruct(
               `style-src 'self' 'unsafe-inline'`,
               `font-src 'self'`,
               `form-action 'self'`,
-              `connect-src 'self' https://*.sentry.io https://*.vercel.app https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com wss://*.pusher.com`,
+              `connect-src 'self' https://*.sentry.io https://*.vercel.app https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com wss://*.pusher.com https://*.ldbar.ch`,
               `img-src 'self' https://vercel.live https://vercel.com *.pusher.com *.pusherapp.com https://*.admin.ch https://*.opendataswiss.org https://*.google-analytics.com https://*.googletagmanager.com data: blob:`,
               `script-src-elem 'self' 'unsafe-inline' https://*.admin.ch https://vercel.live https://vercel.com`,
               `worker-src 'self' blob: https://*.admin.ch`,
