@@ -37,7 +37,6 @@ module.exports = withPreconstruct(
         defaultLocale,
       },
 
-      // See https://content-security-policy.com/ & https://developers.google.com/tag-platform/security/guides/csp
       headers: async () => {
         const headers = [];
 
@@ -48,22 +47,26 @@ module.exports = withPreconstruct(
               key: "X-Content-Type-Options",
               value: "nosniff",
             },
-            {
-              key: "Content-Security-Policy",
-              value: [
-                `default-src 'self' 'unsafe-inline'${process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""} https://*.sentry.io https://vercel.live/ https://vercel.com https://*.googletagmanager.com`,
-                `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""} https://*.sentry.io https://vercel.live/ https://vercel.com https://*.googletagmanager.com`,
-                `style-src 'self' 'unsafe-inline'`,
-                `font-src 'self'`,
-                `form-action 'self'`,
-                `connect-src 'self' https://*.sentry.io https://*.vercel.app https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com`,
-                `img-src 'self' https://vercel.live https://vercel.com *.pusher.com *.pusherapp.com https://*.admin.ch https://*.opendataswiss.org https://*.google-analytics.com https://*.googletagmanager.com data: blob:`,
-                `script-src-elem 'self' 'unsafe-inline' https://*.admin.ch https://vercel.live https://vercel.com`,
-                `worker-src 'self' blob: https://*.admin.ch`,
-              ].join("; "),
-            },
           ],
         });
+
+        // See https://content-security-policy.com/ & https://developers.google.com/tag-platform/security/guides/csp
+        if (!(process.env.DISABLE_CSP && process.env.DISABLE_CSP === "true")) {
+          headers[0].headers.push({
+            key: "Content-Security-Policy",
+            value: [
+              `default-src 'self' 'unsafe-inline'${process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""} https://*.sentry.io https://vercel.live/ https://vercel.com https://*.googletagmanager.com`,
+              `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""} https://*.sentry.io https://vercel.live/ https://vercel.com https://*.googletagmanager.com`,
+              `style-src 'self' 'unsafe-inline'`,
+              `font-src 'self'`,
+              `form-action 'self'`,
+              `connect-src 'self' https://*.sentry.io https://*.vercel.app https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com wss://*.pusher.com`,
+              `img-src 'self' https://vercel.live https://vercel.com *.pusher.com *.pusherapp.com https://*.admin.ch https://*.opendataswiss.org https://*.google-analytics.com https://*.googletagmanager.com data: blob:`,
+              `script-src-elem 'self' 'unsafe-inline' https://*.admin.ch https://vercel.live https://vercel.com`,
+              `worker-src 'self' blob: https://*.admin.ch`,
+            ].join("; "),
+          });
+        }
 
         if (process.env.PREVENT_SEARCH_BOTS === "true") {
           headers[0].headers.push({
