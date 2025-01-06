@@ -7,6 +7,7 @@ import { useChartState } from "@/charts/shared/chart-state";
 import { CalculationToggle } from "@/charts/shared/interactive-filter-calculation-toggle";
 import { useObserverRef } from "@/charts/shared/use-size";
 import {
+  getChartConfig,
   hasChartConfigs,
   isLayoutingFreeCanvas,
   useConfiguratorState,
@@ -25,12 +26,15 @@ export const useStyles = makeStyles<{}, {}, "chartContainer">(() => ({
 
 export const ChartContainer = ({ children }: { children: ReactNode }) => {
   const [state] = useConfiguratorState(hasChartConfigs);
+  const chartConfig = getChartConfig(state);
   const isFreeCanvas = isLayoutingFreeCanvas(state);
   const ref = useObserverRef();
   const { bounds } = useChartState();
   const classes = useStyles();
+
   return (
     <div
+      key={chartConfig.chartType}
       ref={ref}
       aria-hidden="true"
       className={classes.chartContainer}
