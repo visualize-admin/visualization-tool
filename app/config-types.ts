@@ -980,6 +980,10 @@ export const isColorInConfig = (
   return !isTableConfig(chartConfig) && !isMapConfig(chartConfig);
 };
 
+export const isNotTableOrMap = (chartConfig: ChartConfig) => {
+  return !isTableConfig(chartConfig) && !isMapConfig(chartConfig);
+};
+
 export const isSortingInConfig = (
   chartConfig: ChartConfig
 ): chartConfig is AreaConfig | ColumnConfig | LineConfig | PieConfig => {

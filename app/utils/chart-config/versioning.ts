@@ -1,7 +1,12 @@
+import { schemeCategory10 } from "d3-scale-chromatic";
 import stringSimilarity from "string-similarity-js";
 
 import { DEFAULT_OTHER_COLOR_FIELD_OPACITY } from "@/charts/map/constants";
-import { ChartConfig, ConfiguratorState } from "@/config-types";
+import {
+  ChartConfig,
+  ConfiguratorState,
+  isNotTableOrMap,
+} from "@/config-types";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import {
@@ -1790,6 +1795,67 @@ export const configuratorStateMigrations: Migration[] = [
       return newConfig;
     },
   },
+  {
+    description: "ALL (add color field to Chart)",
+    from: "4.0.0",
+    to: "4.1.0",
+    up: (config) => {
+      const newConfig = {
+        ...config,
+        version: "4.1.0",
+      };
+
+      if (!Array.isArray(newConfig.chartConfigs)) {
+        return newConfig;
+      }
+
+      newConfig.chartConfigs = newConfig.chartConfigs.map(
+        (chartConfig: any) => {
+          const updatedConfig = { ...chartConfig };
+
+          if (!isNotTableOrMap(updatedConfig)) {
+            return updatedConfig;
+          }
+
+          const hasNoColorMapping = !(
+            updatedConfig.fields?.y?.colorMapping ||
+            updatedConfig.fields?.segment?.colorMapping
+          );
+
+          if (hasNoColorMapping) {
+            updatedConfig.fields.color = {
+              type: "single",
+              paletteId: "category10",
+              color: schemeCategory10[0],
+            };
+          }
+
+          if (updatedConfig.fields?.segment?.colorMapping) {
+            updatedConfig.fields.color = {
+              type: "segment",
+              paletteId: updatedConfig.fields.segment.palette,
+              colorMapping: updatedConfig.fields.segment.colorMapping,
+            };
+            delete updatedConfig.fields.segment.colorMapping;
+            delete updatedConfig.fields.segment.palette;
+          }
+
+          if (updatedConfig.fields?.y?.colorMapping) {
+            updatedConfig.fields.color = {
+              type: "measures",
+              paletteId: updatedConfig.fields.y.palette,
+              colorMapping: updatedConfig.fields.y.colorMapping,
+            };
+            delete updatedConfig.fields.y.colorMapping;
+            delete updatedConfig.fields.y.palette;
+          }
+
+          return updatedConfig;
+        }
+      );
+
+      return newConfig;
+    },
   {
     description: "ALL (bump ChartConfig version)",
     from: "3.8.0",
