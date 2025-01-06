@@ -19,6 +19,8 @@ export const useStyles = makeStyles<{}, {}, "chartContainer">(() => ({
   chartContainer: {
     overflow: "hidden",
     position: "relative",
+    display: "flex",
+    flexDirection: "column",
     width: "100%",
     flexGrow: 1,
   },
