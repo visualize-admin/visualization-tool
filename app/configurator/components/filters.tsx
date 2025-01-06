@@ -432,7 +432,7 @@ const MultiFilterContent = ({
                     />
                   ) : (
                     <>
-                      <Typography variant="body2" sx={{ flexGrow: 1 }}>
+                      <Typography variant="body2" style={{ flexGrow: 1 }}>
                         {label}
                       </Typography>
                       <SvgIcCheck />

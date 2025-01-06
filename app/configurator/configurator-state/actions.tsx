@@ -2,6 +2,7 @@ import { EncodingFieldType } from "@/charts/chart-config-ui-options";
 import {
   ChartConfig,
   ChartType,
+  ColorMapping,
   ConfiguratorState,
   DashboardFiltersConfig,
   DataSource,
@@ -178,6 +179,7 @@ export type ConfiguratorStateAction =
       value: {
         field: string;
         colorConfigPath: string | undefined;
+        colorMapping?: ColorMapping;
         dimensionId: string;
         values: DimensionValue[];
         random: boolean;
