@@ -458,8 +458,14 @@ export const updateColorMapping = (
   >
 ) => {
   if (isConfiguring(draft)) {
-    const { field, colorConfigPath, dimensionId, values, random } =
-      action.value;
+    const {
+      field,
+      colorConfigPath,
+      colorMapping: oldColorMapping,
+      dimensionId,
+      values,
+      random,
+    } = action.value;
     const chartConfig = getChartConfig(draft);
     const path = colorConfigPath
       ? ["fields", field, colorConfigPath]
@@ -476,6 +482,7 @@ export const updateColorMapping = (
         colorMapping = mapValueIrisToColor({
           palette: fieldValue.palette,
           dimensionValues: values,
+          colorMapping: oldColorMapping,
           random,
         });
       }
@@ -489,6 +496,7 @@ export const updateColorMapping = (
         colorMapping = mapValueIrisToColor({
           palette: fieldValue.palette,
           dimensionValues: values,
+          colorMapping: oldColorMapping,
           random,
         });
       }

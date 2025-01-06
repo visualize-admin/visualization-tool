@@ -14,6 +14,9 @@ You can also check the
 - Features
   - It's now possible to export charts as images
 - Fixes
+  - Color mapping is now correctly kept up to date in case of editing an old
+    chart and the cube has been updated in the meantime and contains new values
+    in the color dimension
   - Fixed preview via API (iframe)
 
 # [5.0.2] - 2024-11-28
@@ -25,7 +28,7 @@ You can also check the
   - Changed component id separator text to be more unique, as it was causing
     issues with some cubes that had iris ending with "-"
   - Datasets section in the sidebar is now correctly shown at all times
-  - Improved Preventation of overlapping axis titles for combo charts
+  - Improved prevention of overlapping axis titles for combo charts
 
 # [5.0.1] - 2024-11-26
 
