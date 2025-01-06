@@ -36,6 +36,8 @@ export const ChartContainer = ({ children }: { children: ReactNode }) => {
 
   return (
     <div
+      // Re-mount to prevent issues with useSize hook when switching between
+      // chart types (that might have different sizes).
       key={chartConfig.chartType}
       ref={ref}
       aria-hidden="true"
