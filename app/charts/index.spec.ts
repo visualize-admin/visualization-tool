@@ -393,7 +393,7 @@ describe("chart type switch", () => {
         },
         segment: {
           componentId: "https://environment.ld.admin.ch/foen/ubd000502/jahr",
-          palette: "category10",
+          paletteId: "category10",
           sorting: {
             sortingType: "byAuto",
             sortingOrder: "asc",
