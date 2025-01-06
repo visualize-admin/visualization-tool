@@ -17,6 +17,7 @@ You can also check the
   - Color mapping is now correctly kept up to date in case of editing an old
     chart and the cube has been updated in the meantime and contains new values
     in the color dimension
+  - Fixed preview via API (iframe)
 
 # [5.0.2] - 2024-11-28
 
