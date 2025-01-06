@@ -1856,6 +1856,51 @@ export const configuratorStateMigrations: Migration[] = [
 
       return newConfig;
     },
+    down: (config) => {
+      const oldConfig = {
+        ...config,
+        version: "4.0.0",
+      };
+
+      if (!Array.isArray(oldConfig.chartConfigs)) {
+        return oldConfig;
+      }
+
+      oldConfig.chartConfigs = oldConfig.chartConfigs.map(
+        (chartConfig: any) => {
+          const revertedConfig = { ...chartConfig };
+
+          if (!isNotTableOrMap(revertedConfig)) {
+            return revertedConfig;
+          }
+
+          if (revertedConfig.fields?.color) {
+            if (revertedConfig.fields.color.type === "segment") {
+              revertedConfig.fields.segment = {
+                ...revertedConfig.fields.segment,
+                colorMapping: revertedConfig.fields.color.colorMapping,
+                palette: revertedConfig.fields.color.paletteId,
+              };
+            }
+
+            if (revertedConfig.fields.color.type === "measures") {
+              revertedConfig.fields.y = {
+                ...revertedConfig.fields.y,
+                colorMapping: revertedConfig.fields.color.colorMapping,
+                palette: revertedConfig.fields.color.paletteId,
+              };
+            }
+
+            delete revertedConfig.fields.color;
+          }
+
+          return revertedConfig;
+        }
+      );
+
+      return oldConfig;
+    },
+  },
   {
     description: "ALL (bump ChartConfig version)",
     from: "3.8.0",
