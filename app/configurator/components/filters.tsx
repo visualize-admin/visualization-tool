@@ -46,6 +46,7 @@ import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { TooltipTitle } from "@/components/tooltip-utils";
 import {
   ChartConfig,
+  ColorMapping,
   getChartConfig,
   getFilterValue,
   isConfiguring,
@@ -77,6 +78,7 @@ import { InteractiveFilterToggle } from "@/configurator/interactive-filters/inte
 import {
   Component,
   Dimension,
+  DimensionValue,
   HierarchyValue,
   TemporalDimension,
   TemporalEntityDimension,
@@ -332,6 +334,11 @@ const MultiFilterContent = ({
     );
   }, [colorConfig?.colorMapping, dimensionId, colorComponent]);
 
+  useEnsureUpToDateColorMapping({
+    colorComponentValues: colorComponent?.values,
+    colorMapping: colorConfig?.colorMapping,
+  });
+
   const interactiveFilterProps = useInteractiveFiltersToggle("legend");
   const chartSymbol = getChartSymbol(chartConfig.chartType);
 
@@ -458,6 +465,40 @@ const MultiFilterContent = ({
       </ConfiguratorDrawer>
     </Box>
   );
+};
+
+/**
+ * Fixes situations where an old chart is being edited and the cube has changed
+ * and contains new values in the color dimension.
+ * */
+const useEnsureUpToDateColorMapping = ({
+  colorComponentValues,
+  colorMapping,
+}: {
+  colorComponentValues?: DimensionValue[];
+  colorMapping?: ColorMapping;
+}) => {
+  const [state, dispatch] = useConfiguratorState(isConfiguring);
+  const chartConfig = getChartConfig(state);
+  const { dimensionId, colorConfigPath } = useMultiFilterContext();
+  const { activeField } = chartConfig;
+
+  if (
+    activeField &&
+    colorComponentValues?.some((v) => !colorMapping?.[v.value])
+  ) {
+    dispatch({
+      type: "CHART_CONFIG_UPDATE_COLOR_MAPPING",
+      value: {
+        field: activeField,
+        dimensionId,
+        colorConfigPath,
+        colorMapping,
+        values: colorComponentValues,
+        random: false,
+      },
+    });
+  }
 };
 
 const useBreadcrumbStyles = makeStyles({
