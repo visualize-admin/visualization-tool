@@ -13,6 +13,8 @@ You can also check the
 
 - Features
   - It's now possible to export charts as images
+- Fixes
+  - Fixed preview via API (iframe)
 
 # [5.0.2] - 2024-11-28
 
