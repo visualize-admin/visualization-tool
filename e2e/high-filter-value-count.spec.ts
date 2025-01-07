@@ -1,4 +1,4 @@
-import percySnapshot from "@percy/playwright";
+import { argosScreenshot } from "@argos-ci/playwright";
 
 import { setup, sleep } from "./common";
 
@@ -19,9 +19,9 @@ testFn(
     });
     await selectors.edition.drawerLoaded();
     await actions.editor.changeChartType("Map");
-    await selectors.chart.loaded({ timeout: 240_000 });
+    await selectors.chart.loaded();
 
     await sleep(2_000);
-    await percySnapshot(page, "chart-map-high-filter-value-count");
+    argosScreenshot(page, `chart-map-high-filter-value-count`);
   }
 );

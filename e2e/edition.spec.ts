@@ -1,4 +1,4 @@
-import percySnapshot from "@percy/playwright";
+import { argosScreenshot } from "@argos-ci/playwright";
 
 import { loadChartInLocalStorage } from "./charts-utils";
 import { setup, sleep } from "./common";
@@ -39,7 +39,7 @@ test("should be possible to edit filters of a hierarchy", async ({
   });
 
   await sleep(2_000);
-  await percySnapshot(page, `chart-edition-${key}`, {
-    scope: "[data-testid='panel-middle']",
+  await argosScreenshot(page, `chart-edition-${key}`, {
+    element: "[data-testid='panel-middle']",
   });
 });
