@@ -202,7 +202,7 @@ test("Sorting with values with same label as other values in the tree", async ({
   const config = hierarchyTest13;
   await loadChartInLocalStorage(page, key, config);
   page.goto(`/en/create/${key}?${harReplayGraphqlEndpointQueryParam}`);
-  await selectors.chart.loaded({ timeout: 30_000 });
+  await selectors.chart.loaded();
 
   const texts = await Promise.all(
     await (

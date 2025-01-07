@@ -16,7 +16,6 @@ testFn(
     await actions.chart.createFrom({
       iri: "https://environment.ld.admin.ch/foen/fab_hierarchy_test13_switzerland_canton_municipality/3",
       dataSource: "Int",
-      chartLoadedOptions: { timeout: 60 * 1000 },
     });
     await selectors.edition.drawerLoaded();
     await actions.editor.changeChartType("Map");
