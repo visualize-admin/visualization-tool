@@ -20,8 +20,12 @@ You can also check the
   - Fixed preview via API (iframe)
   - Fixed cut table scroll-bars and unnecessary scroll of bar charts when
     switching between chart types
-  - Fixed map dimension symbols to increase the elements size for small values, whilst preventing any 0 and undefined values from displaying
+  - Fixed map dimension symbols to increase the elements size for small values,
+    whilst preventing any 0 and undefined values from displaying
   - Added Footer to the Profile Page
+- Docs
+  - Added auto-generated JSON Schema files for configurator state and chart
+    config and improved preview charts via API documentation
 
 # [5.0.2] - 2024-11-28
 
