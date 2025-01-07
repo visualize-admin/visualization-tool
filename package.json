@@ -18,7 +18,7 @@
     "dev:rollup": "rollup -c rollup.config.js --watch",
     "db:migrate:dev": "DATABASE_URL=postgres://postgres:password@localhost:5432/visualization_tool prisma db push",
     "db:migrate": "[ -z \"$DATABASE_URL\" ] && echo 'Bypassing database migration, DATABASE_URL not set' || prisma db push",
-    "build": "yarn graphql:codegen && lingui compile && rollup -c rollup.config.js && yarn storybook:build && next build ./app",
+    "build": "yarn graphql:codegen && lingui compile && rollup -c rollup.config.js && yarn storybook:build && yarn generate-json-schema && next build ./app",
     "build:npm": "yarn graphql:codegen && lingui compile && BABEL_ENV=NPM_PACKAGE preconstruct build",
     "start": "yarn db:migrate && GLOBAL_AGENT_ENVIRONMENT_VARIABLE_NAMESPACE='' NO_PROXY='localhost,127.0.0.1' next start ./app -p $PORT",
     "typecheck": "lingui compile && tsc --noEmit -p ./app && tsc --noEmit -p ./embed",
@@ -42,7 +42,8 @@
     "storybook": "storybook dev -p 6006",
     "storybook:build": "storybook build -o app/public/storybook",
     "chromatic": "npx chromatic --build-script-name storybook:build -o app/public/storybook",
-    "compare-screenshots": "npx tsx scripts/compare-screenshots.ts"
+    "compare-screenshots": "npx tsx scripts/compare-screenshots.ts",
+    "generate-json-schema": "tsx -r dotenv/config app/scripts/generate-json-schema.ts"
   },
   "dependencies": {
     "@babel/runtime": "^7.11.2",

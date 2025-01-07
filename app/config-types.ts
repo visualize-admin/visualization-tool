@@ -1132,7 +1132,7 @@ export type ConfiguratorStatePublished = t.TypeOf<
   typeof ConfiguratorStatePublished
 >;
 
-const ConfiguratorState = t.union([
+export const ConfiguratorState = t.union([
   ConfiguratorStateInitial,
   ConfiguratorStateSelectingDataSet,
   ConfiguratorStateConfiguringChart,
