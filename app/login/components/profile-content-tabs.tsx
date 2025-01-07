@@ -1,6 +1,6 @@
 import { t } from "@lingui/macro";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
-import { Box, Tab, Theme } from "@mui/material";
+import { Box, Tab, Theme, useTheme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 import groupBy from "lodash/groupBy";
@@ -12,9 +12,6 @@ import { useRootStyles } from "@/login/utils";
 import useEvent from "@/utils/use-event";
 
 const useStyles = makeStyles<Theme>((theme) => ({
-  section: {
-    marginTop: theme.spacing(6),
-  },
   tabList: {
     minHeight: "fit-content",
 
@@ -49,6 +46,7 @@ export const ProfileContentTabs = (props: ProfileContentTabsProps) => {
   const handleChange = useEvent((_: React.SyntheticEvent, v: string) => {
     setValue(v);
   });
+  const theme = useTheme();
   const rootClasses = useRootStyles();
   const classes = useStyles();
 
@@ -66,9 +64,15 @@ export const ProfileContentTabs = (props: ProfileContentTabsProps) => {
 
   return (
     <TabContext value={value}>
-      <Box className={clsx(rootClasses.section, classes.section)}>
+      <Box className={clsx(rootClasses.section)}>
         <Box className={rootClasses.sectionContent}>
-          <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+          <Box
+            sx={{
+              borderBottom: 1,
+              borderColor: "divider",
+              marginTop: theme.spacing(6),
+            }}
+          >
             <TabList className={classes.tabList} onChange={handleChange}>
               <Tab
                 className={classes.tab}
