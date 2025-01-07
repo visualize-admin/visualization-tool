@@ -10,13 +10,11 @@ const { test, expect } = setup();
  * - For each type of chart, changes the sorting between Name and Automatic
  * - Checks that the legend item order is coherent.
  */
-// FIX: works without Browser, some bug with Browser closed error
-test.skip("Segment sorting", async ({
+test("Segment sorting", async ({
   selectors,
   actions,
   within,
   screen,
-  page,
   replayFromHAR,
 }) => {
   test.setTimeout(60_000);
@@ -24,8 +22,8 @@ test.skip("Segment sorting", async ({
   await replayFromHAR();
 
   await actions.chart.createFrom({
-    iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/13",
-    dataSource: "Int",
+    iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/10",
+    dataSource: "Prod",
     createURLParams: harReplayGraphqlEndpointQueryParam,
   });
 
@@ -153,18 +151,6 @@ test("Segment sorting with hierarchy", async ({
     [...expectedLegendItems].reverse()
   );
 });
-
-const uniqueWithoutSorting = <T>(arr: T[]) => {
-  const res: T[] = [];
-  for (let i = 0; i < arr.length; i++) {
-    const prev = i > 0 ? arr[i - 1] : undefined;
-    const cur = arr[i];
-    if (prev !== cur) {
-      res.push(cur);
-    }
-  }
-  return res;
-};
 
 test("Map legend preview table sorting", async ({
   actions,
