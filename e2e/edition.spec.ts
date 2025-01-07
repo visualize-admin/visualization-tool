@@ -39,7 +39,5 @@ test("should be possible to edit filters of a hierarchy", async ({
   });
 
   await sleep(2_000);
-  await argosScreenshot(page, `chart-edition-${key}`, {
-    element: "[data-testid='panel-middle']",
-  });
+  await argosScreenshot(page, `chart-edition-${key}`);
 });
