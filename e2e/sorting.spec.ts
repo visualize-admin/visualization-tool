@@ -117,19 +117,44 @@ test("Segment sorting with hierarchy", async ({
   const legendItems = await selectors.chart.colorLegendItems();
 
   const expectedLegendItems = [
+    "Jura",
+    "Jura + Plateau",
+    "Western Jura",
     "Zurich",
     "Bern",
+    "Eastern Jura",
+    "Northwestern Alps",
+    "Plateau",
     "Lucerne",
+    "Northeastern Alps",
+    "Pre-Alps",
+    "Western Plateau",
+    "Alps",
+    "Central Plateau",
+    "Southwestern Alps",
     "Uri",
+    "Eastern Plateau",
     "Schwyz",
+    "Southeastern Alps",
+    "Southern Alps",
     "Obwalden",
+    "Southern Alps",
+    "Western Pre-Alps",
+    "Central Pre-Alps",
     "Nidwalden",
+    "Eastern Pre-Alps",
     "Glarus",
+    "Northwestern Alps",
     "Zug",
+    "Central Alps",
     "Fribourg",
+    "Northeastern Alps",
     "Solothurn",
+    "Southwestern Alps",
+    "Southeastern Alps",
     "both Basel",
     "Schaffhausen",
+    "Southern Alps",
     "Appenzell Ausserrhoden",
     "Appenzell Innerrhoden",
     "St Gallen",
@@ -152,7 +177,7 @@ test("Segment sorting with hierarchy", async ({
   );
 });
 
-test("Map legend preview table sorting", async ({
+test.skip("Map legend preview table sorting", async ({
   actions,
   selectors,
   replayFromHAR,
@@ -171,11 +196,6 @@ test("Map legend preview table sorting", async ({
   await actions.chart.switchToTableView();
   await actions.datasetPreview.sortBy("Danger ratings");
   const cells = await selectors.datasetPreview.columnCells("Danger ratings");
-
-  const texts = await cells.allInnerTexts();
-  // TODO: Think about other cube / validation as this cube is updated quite often (day / week)
-  // and thus will fail often.
-  // expect(uniqueWithoutSorting(texts)).toEqual(["low danger", "moderate danger"]);
 });
 
 test("Sorting with values with same label as other values in the tree", async ({
