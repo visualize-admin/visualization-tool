@@ -21,6 +21,9 @@ You can also check the
   - Fixed cut table scroll-bars and unnecessary scroll of bar charts when
     switching between chart types
   - Sorting dataset results by score option is now correctly available to select
+- Maintenance
+  - Re-enabled screenshot tests using Argos CI
+  - Fixed E2E HAR-based tests
 
 # [5.0.2] - 2024-11-28
 
