@@ -113,9 +113,19 @@ You can set the desired language for the chart preview by adding a `/de`, `/fr`,
 ## Configurator and chart config schemas
 
 As the application constantly evolves, the configurator and chart config schemas
-will change. You can find their latest versions in the
+will change. You can find their latest TypeScript definitions in the
 [config-types.ts](https://github.com/visualize-admin/visualization-tool/blob/main/app/config-types.ts)
-file.
+file and according JSON Schema definitions and examples in the
+[json-schema folder](https://github.com/visualize-admin/visualization-tool/tree/main/app/public/json-schema).
+
+JSON Schema examples can be opened e.g. in Visual Studio Code, where you will
+have an autocomplete feature to help you fill in the configuration.
+
+Note that the types are very complex and it's encouraged to visit the Visualize
+application with `&flag\_\_debug=true` added to the end of the URL to enable the
+debug mode. You will then see the configurator state directly below the chart
+that is being edited. It also enables the `Dump to console` button, which will
+log the state to the browser console, for easier re-use.
 
 An example configurator state is shown below.
 
@@ -195,9 +205,3 @@ An example configurator state is shown below.
   },
 }`}
 />
-
-Note that it's encouraged to visit the Visualize application with
-`&flag\_\_debug=true` added to the end of the URL to enable the debug mode,
-which will show the chart config directly below the chart that is being edited.
-It also enables the `Dump to console` button, which will log the chart config to
-the browser console, for easier re-use.
