@@ -12,15 +12,16 @@ import {
   ChartStateData,
   InteractiveFiltersVariables,
   RenderingVariables,
-  SortingVariables,
   shouldUseDynamicMinScaleValue,
+  SortingVariables,
   useBandXVariables,
   useBaseVariables,
   useChartData,
   useInteractiveFiltersVariables,
 } from "@/charts/shared/chart-state";
 import { useRenderingKeyVariable } from "@/charts/shared/rendering-utils";
-import { ComboLineColumnConfig, useChartConfigFilters } from "@/configurator";
+import { useChartConfigFilters } from "@/config-utils";
+import { ComboLineColumnConfig } from "@/configurator";
 
 import { ChartProps } from "../shared/ChartProps";
 

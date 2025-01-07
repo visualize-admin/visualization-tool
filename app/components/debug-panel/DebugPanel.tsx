@@ -15,11 +15,8 @@ import { makeStyles } from "@mui/styles";
 import { useState } from "react";
 import { Inspector } from "react-inspector";
 
-import {
-  DataSource,
-  getChartConfig,
-  useConfiguratorState,
-} from "@/configurator";
+import { getChartConfig } from "@/config-utils";
+import { DataSource, useConfiguratorState } from "@/configurator";
 import { dataSourceToSparqlEditorUrl } from "@/domain/datasource";
 import { useDataCubesComponentsQuery } from "@/graphql/hooks";
 import { Icon } from "@/icons";

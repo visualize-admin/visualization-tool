@@ -2,10 +2,6 @@
 import { fold } from "fp-ts/lib/Either";
 import { pipe } from "fp-ts/lib/function";
 import * as t from "io-ts";
-import { useMemo } from "react";
-
-import { ObservationValue } from "@/domain/data";
-import { mkJoinById } from "@/graphql/join";
 
 const DimensionType = t.union([
   t.literal("NominalDimension"),
@@ -31,29 +27,6 @@ const ComponentType = t.union([DimensionType, MeasureType]);
 export type ComponentType = t.TypeOf<typeof ComponentType>;
 
 // Filters
-const FilterValueMulti = t.intersection([
-  t.type(
-    {
-      type: t.literal("multi"),
-      values: t.record(t.string, t.literal(true)), // undefined values will be removed when serializing to JSON
-    },
-    "FilterValueMulti"
-  ),
-  t.partial({
-    position: t.number,
-  }),
-]);
-export type FilterValueMulti = t.TypeOf<typeof FilterValueMulti>;
-
-export const makeMultiFilter = (
-  values: ObservationValue[]
-): FilterValueMulti => {
-  return {
-    type: "multi",
-    values: Object.fromEntries(values.map((d) => [d, true])),
-  };
-};
-
 const FilterValueSingle = t.intersection([
   t.type(
     {
@@ -68,11 +41,19 @@ const FilterValueSingle = t.intersection([
 ]);
 export type FilterValueSingle = t.TypeOf<typeof FilterValueSingle>;
 
-const isFilterValueSingle = (
-  filterValue: FilterValue
-): filterValue is FilterValueSingle => {
-  return filterValue.type === "single";
-};
+const FilterValueMulti = t.intersection([
+  t.type(
+    {
+      type: t.literal("multi"),
+      values: t.record(t.string, t.literal(true)), // undefined values will be removed when serializing to JSON
+    },
+    "FilterValueMulti"
+  ),
+  t.partial({
+    position: t.number,
+  }),
+]);
+export type FilterValueMulti = t.TypeOf<typeof FilterValueMulti>;
 
 const FilterValueRange = t.intersection([
   t.type(
@@ -105,15 +86,6 @@ export type Filters = t.TypeOf<typeof Filters>;
 const SingleFilters = t.record(t.string, FilterValueSingle, "SingleFilters");
 export type SingleFilters = t.TypeOf<typeof SingleFilters>;
 
-export const isSingleFilters = (filters: Filters): filters is SingleFilters => {
-  return Object.values(filters).every(isFilterValueSingle);
-};
-export const extractSingleFilters = (filters: Filters): SingleFilters => {
-  return Object.fromEntries(
-    Object.entries(filters).filter(([, value]) => value.type === "single")
-  ) as SingleFilters;
-};
-
 const Title = t.type({
   de: t.string,
   fr: t.string,
@@ -121,6 +93,7 @@ const Title = t.type({
   en: t.string,
 });
 export type Title = t.TypeOf<typeof Title>;
+
 const Description = t.type({
   de: t.string,
   fr: t.string,
@@ -128,6 +101,7 @@ const Description = t.type({
   en: t.string,
 });
 export type Description = t.TypeOf<typeof Description>;
+
 const Label = t.type({
   de: t.string,
   fr: t.string,
@@ -135,6 +109,7 @@ const Label = t.type({
   en: t.string,
 });
 export type Label = t.TypeOf<typeof Label>;
+
 const Meta = t.type({
   title: Title,
   description: Description,
@@ -660,7 +635,7 @@ export type MapAreaLayer = t.TypeOf<typeof MapAreaLayer>;
 
 const MapSymbolLayer = t.type({
   componentId: t.string,
-  // symbol radius (size)
+  /** symbol radius (size) */
   measureId: t.string,
   color: t.union([FixedColorField, CategoricalColorField, NumericalColorField]),
 });
@@ -794,7 +769,7 @@ const ComboChartConfig = t.union([
 ]);
 export type ComboChartConfig = t.TypeOf<typeof ComboChartConfig>;
 
-const ChartConfig = t.union([RegularChartConfig, ComboChartConfig]);
+export const ChartConfig = t.union([RegularChartConfig, ComboChartConfig]);
 export type ChartConfig = t.TypeOf<typeof ChartConfig>;
 
 export const decodeChartConfig = (
@@ -1068,7 +1043,7 @@ export type DashboardFiltersConfig = t.TypeOf<typeof DashboardFiltersConfig>;
 export const areDataFiltersActive = (
   dashboardFilters: DashboardFiltersConfig | undefined
 ) => {
-  return dashboardFilters?.dataFilters.componentIds.length;
+  return !!dashboardFilters?.dataFilters.componentIds.length;
 };
 
 const Config = t.intersection([
@@ -1180,78 +1155,4 @@ export const decodeConfiguratorState = (
       (d) => d
     )
   );
-};
-
-/** Use to extract the chart config from configurator state. Handy in the editor mode,
- * where the is a need to edit the active chart config.
- *
- * @param state configurator state
- * @param chartKey optional chart key. If not provided, the active chart config will be returned.
- *
- */
-export const getChartConfig = (
-  state: ConfiguratorState,
-  chartKey?: string | null
-): ChartConfig => {
-  if (state.state === "INITIAL" || state.state === "SELECTING_DATASET") {
-    throw Error("No chart config available!");
-  }
-
-  const { chartConfigs, activeChartKey } = state;
-  const key = chartKey ?? activeChartKey;
-
-  return chartConfigs.find((d) => d.key === key) ?? chartConfigs[0];
-};
-
-/**
- * Get all filters from cubes and returns an object containing all values.
- */
-export const getChartConfigFilters = (
-  cubes: Cube[],
-  {
-    cubeIri,
-    joined,
-  }: {
-    /** If passed, only filters for a particular cube will be considered */
-    cubeIri?: string;
-    /**
-     * If true, filters for joined dimensions will be deduped. Useful in contexts where filters
-     * for multiple join dimensions should be considered unique (for example, in the left data filters).
-     */
-    joined?: boolean;
-  } = {}
-): Filters => {
-  const relevantCubes = cubes.filter((c) =>
-    cubeIri ? c.iri === cubeIri : true
-  );
-  const dimIdToJoinId = joined
-    ? Object.fromEntries(
-        relevantCubes.flatMap((x) =>
-          (x.joinBy ?? []).map(
-            (iri, index) => [iri, mkJoinById(index)] as const
-          )
-        )
-      )
-    : {};
-
-  return Object.fromEntries(
-    relevantCubes.flatMap((c) =>
-      Object.entries(c.filters).map(([id, value]) => [
-        dimIdToJoinId[id] ?? id,
-        value,
-      ])
-    )
-  );
-};
-
-export const useChartConfigFilters = (
-  chartConfig: ChartConfig,
-  options?: Parameters<typeof getChartConfigFilters>[1]
-): Filters => {
-  return useMemo(() => {
-    return getChartConfigFilters(chartConfig.cubes, {
-      cubeIri: options?.cubeIri,
-      joined: options?.joined,
-    });
-  }, [chartConfig.cubes, options?.cubeIri, options?.joined]);
 };

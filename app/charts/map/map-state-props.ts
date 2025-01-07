@@ -16,7 +16,8 @@ import {
   useBaseVariables,
   useChartData,
 } from "@/charts/shared/chart-state";
-import { MapConfig, useChartConfigFilters } from "@/configurator";
+import { useChartConfigFilters } from "@/config-utils";
+import { MapConfig } from "@/configurator";
 import {
   GeoData,
   GeoPoint,

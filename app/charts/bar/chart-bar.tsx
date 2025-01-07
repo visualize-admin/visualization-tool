@@ -24,7 +24,8 @@ import {
 } from "@/charts/shared/containers";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
-import { BarConfig, useChartConfigFilters } from "@/config-types";
+import { BarConfig } from "@/config-types";
+import { useChartConfigFilters } from "@/config-utils";
 import { hasChartConfigs } from "@/configurator";
 import { TimeSlider } from "@/configurator/interactive-filters/time-slider";
 import { useConfiguratorState } from "@/src";

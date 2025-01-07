@@ -38,11 +38,11 @@ import {
 import { useChartWithFiltersClasses } from "@/components/chart-with-filters";
 import { MenuActionItem } from "@/components/menu-action-item";
 import { MetadataPanel } from "@/components/metadata-panel";
+import { getChartConfig } from "@/config-utils";
 import {
   ChartConfig,
   DashboardFiltersConfig,
   DataSource,
-  getChartConfig,
   hasChartConfigs,
   isConfiguring,
   isPublished,

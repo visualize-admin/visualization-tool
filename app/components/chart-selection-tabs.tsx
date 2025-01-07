@@ -19,12 +19,12 @@ import { DragHandle } from "@/components/drag-handle";
 import Flex from "@/components/flex";
 import { MenuActionItem } from "@/components/menu-action-item";
 import { VisualizeTab, VisualizeTabList } from "@/components/tabs";
+import { getChartConfig } from "@/config-utils";
 import {
   ChartConfig,
   ChartType,
   ConfiguratorStatePublished,
   ConfiguratorStateWithChartConfigs,
-  getChartConfig,
   hasChartConfigs,
   isConfiguring,
   isLayouting,

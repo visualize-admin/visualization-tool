@@ -13,7 +13,8 @@ import {
   useSegmentVariables,
 } from "@/charts/shared/chart-state";
 import { useRenderingKeyVariable } from "@/charts/shared/rendering-utils";
-import { ScatterPlotConfig, useChartConfigFilters } from "@/configurator";
+import { useChartConfigFilters } from "@/config-utils";
+import { ScatterPlotConfig } from "@/configurator";
 
 import { ChartProps } from "../shared/ChartProps";
 

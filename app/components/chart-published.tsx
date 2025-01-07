@@ -31,11 +31,11 @@ import {
   createMetadataPanelStore,
   MetadataPanelStoreContext,
 } from "@/components/metadata-panel-store";
+import { getChartConfig } from "@/config-utils";
 import {
   ChartConfig,
   ConfiguratorStatePublished,
   DataSource,
-  getChartConfig,
   isPublished,
   useConfiguratorState,
 } from "@/configurator";
