@@ -80,6 +80,9 @@ export const getEnv = (name: string) => {
  * request to http://localhost:3000 so that Playwrights' HAR replay is used.
  */
 
-export const harReplayGraphqlEndpointQueryParam = `flag__graphql.endpoint=${encodeURIComponent(
-  JSON.stringify(`http://localhost:3000/api/graphql`)
-)}`;
+export const harReplayGraphqlEndpointQueryParam =
+  process.env.E2E_HAR !== "false"
+    ? `flag__graphql.endpoint=${encodeURIComponent(
+        JSON.stringify(`http://localhost:3000/api/graphql`)
+      )}`
+    : "";
