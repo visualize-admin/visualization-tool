@@ -20,6 +20,7 @@ You can also check the
   - Fixed preview via API (iframe)
   - Fixed cut table scroll-bars and unnecessary scroll of bar charts when
     switching between chart types
+  - Sorting dataset results by score option is now correctly available to select
 
 # [5.0.2] - 2024-11-28
 
