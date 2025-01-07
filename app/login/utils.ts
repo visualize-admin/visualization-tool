@@ -7,12 +7,20 @@ import { HEADER_HEIGHT } from "@/components/header-constants";
 export const useRootStyles = makeStyles<Theme>((theme) => ({
   root: {
     marginTop: `${HEADER_HEIGHT}px`,
-    backgroundColor: theme.palette.muted.main,
+    minHeight: `calc(100vh - ${HEADER_HEIGHT}px)`,
+    display: "flex",
+    flexDirection: "column",
+  },
+  content: {
+    flexGrow: 1,
+    display: "flex",
+    flexDirection: "column",
   },
   section: {
     display: "flex",
     flexDirection: "column",
     padding: `0 ${theme.spacing(6)}`,
+    backgroundColor: theme.palette.muted.main,
   },
   sectionContent: {
     width: "100%",
@@ -20,7 +28,6 @@ export const useRootStyles = makeStyles<Theme>((theme) => ({
     margin: "0 auto",
   },
   noTooltip: {
-    // Disable native tooltip in Safari
     "&::after": {
       content: "''",
       display: "block",
