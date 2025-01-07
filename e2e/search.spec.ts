@@ -193,22 +193,22 @@ test("sort language consistency", async ({
 }) => {
   test.slow();
   await replayFromHAR();
-  const count1 = await getResultCountForSearch("wasser", {
+  const count1 = await getResultCountForSearch("badegewässer", {
     locale: "en",
     page,
     selectors,
   });
-  const count2 = await getResultCountForSearch("wasser", {
+  const count2 = await getResultCountForSearch("badegewässer", {
     locale: "de",
     page,
     selectors,
   });
-  const count3 = await getResultCountForSearch("wasser", {
+  const count3 = await getResultCountForSearch("badegewässer", {
     locale: "fr",
     page,
     selectors,
   });
-  const count4 = await getResultCountForSearch("wasser", {
+  const count4 = await getResultCountForSearch("badegewässer", {
     locale: "it",
     page,
     selectors,
@@ -218,12 +218,12 @@ test("sort language consistency", async ({
   expect(count1).toEqual(count3);
   expect(count1).toEqual(count4);
 
-  const count5 = await getResultCountForSearch("water", {
+  const count5 = await getResultCountForSearch("bathing water", {
     locale: "en",
     page,
     selectors,
   });
-  const count6 = await getResultCountForSearch("eaux", {
+  const count6 = await getResultCountForSearch("baignade", {
     locale: "de",
     page,
     selectors,
@@ -233,7 +233,7 @@ test("sort language consistency", async ({
     page,
     selectors,
   });
-  const count8 = await getResultCountForSearch("water", {
+  const count8 = await getResultCountForSearch("bathing water", {
     locale: "it",
     page,
     selectors,
