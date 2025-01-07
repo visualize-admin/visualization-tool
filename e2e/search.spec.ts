@@ -43,7 +43,7 @@ test("search results count coherence", async ({
   const categories = [
     "Administration",
     "Agriculture, forestry",
-    "Finances",
+    "National economy",
     "Territory and environment",
   ];
 
@@ -57,10 +57,14 @@ test("search results count coherence", async ({
     await page.goto(
       `/en/browse?dataSource=Int&${harReplayGraphqlEndpointQueryParam}`
     );
+
     await selectors.search.resultsCount();
 
     const panelLeft = await selectors.panels.left();
-    await (await within(panelLeft).getAllByText("Show all")[0]).click();
+
+    await (
+      await within(panelLeft).locator(`button:has-text("Show all")`).first()
+    ).click();
 
     await within(panelLeft).findByText(t, undefined, { timeout: 10_000 });
 
@@ -71,7 +75,7 @@ test("search results count coherence", async ({
 
     await page
       .locator(`:text("${count} datasets")`)
-      .waitFor({ timeout: 10000 });
+      .waitFor({ timeout: 10_000 });
   }
 });
 
