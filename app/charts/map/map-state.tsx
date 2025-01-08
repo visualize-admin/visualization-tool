@@ -150,6 +150,8 @@ const useMapState = (
   });
 
   const radiusScale = useMemo(() => {
+    // Measure dimension is undefined. Can be useful when the user wants to
+    // encode only the color of symbols, and the size is irrelevant.
     if (symbolLayerState.dataDomain[1] === undefined) {
       return scaleSqrt().range([0, 12]).unknown(12);
     }
