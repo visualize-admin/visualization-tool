@@ -81,7 +81,7 @@ export const getEnv = (name: string) => {
  */
 
 export const harReplayGraphqlEndpointQueryParam =
-  process.env.E2E_HAR !== undefined && process.env.E2E_HAR !== "false"
+  process.env.E2E_HAR && process.env.E2E_HAR !== "false"
     ? `flag__graphql.endpoint=${encodeURIComponent(
         JSON.stringify(`http://localhost:3000/api/graphql`)
       )}`

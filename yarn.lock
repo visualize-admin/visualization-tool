@@ -16848,6 +16848,13 @@ invariant@^2.2.1, invariant@^2.2.4:
   dependencies:
     loose-envify "^1.0.0"
 
+io-ts-to-json-schema@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/io-ts-to-json-schema/-/io-ts-to-json-schema-0.2.0.tgz#658a65d8e96995a036eae7d8b0ca4ee3be5bf26f"
+  integrity sha512-M+mxEfbLAKM5U15eRAffDFjigp3y9GpSRYPEIX4r1v0KmnSeXZGrRDgfCrS9wOgXoaXlfG+/McfYZlWxIuWx4A==
+  dependencies:
+    "@types/json-schema" "^7.0.9"
+
 io-ts@^2.2.21:
   version "2.2.21"
   resolved "https://registry.yarnpkg.com/io-ts/-/io-ts-2.2.21.tgz#4ef754176f7082a1099d04c7d5c4ea53267c530a"

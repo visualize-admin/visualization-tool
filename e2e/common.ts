@@ -34,10 +34,7 @@ const setup = (contextOptions?: PlaywrightTestOptions["contextOptions"]) => {
           .map((x) => x.replace(/@[^\s]+$/, ""))
           .map(slugify)
           .join(" > ")} ${index++}`;
-        if (
-          process.env.E2E_HAR !== undefined &&
-          process.env.E2E_HAR !== "false"
-        ) {
+        if (process.env.E2E_HAR && process.env.E2E_HAR !== "false") {
           await page.routeFromHAR(`./e2e/har/${name}.zip`, {
             url: /api\/graphql/,
             notFound: "abort",

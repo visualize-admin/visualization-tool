@@ -19,7 +19,7 @@ import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { useMetadataPanelStoreActions } from "@/components/metadata-panel-store";
 import { TooltipTitle } from "@/components/tooltip-utils";
 import useDisclosure from "@/components/use-disclosure";
-import { getChartConfig } from "@/configurator";
+import { getChartConfig } from "@/config-utils";
 import { DatasetDialog } from "@/configurator/components/add-dataset-dialog";
 import { DatasetsBadge } from "@/configurator/components/badges";
 import {

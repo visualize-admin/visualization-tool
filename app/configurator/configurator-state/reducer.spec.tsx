@@ -10,9 +10,9 @@ import {
   ConfiguratorStateConfiguringChart,
   ConfiguratorStatePublishing,
   Filters,
-  getChartConfig,
   MapConfig,
 } from "@/config-types";
+import { getChartConfig } from "@/config-utils";
 import { getNewChartConfig } from "@/configurator/config-form";
 import { ConfiguratorStateAction } from "@/configurator/configurator-state/actions";
 import {
