@@ -1054,8 +1054,11 @@ const useResultStyles = makeStyles((theme: Theme) => ({
     padding: `${theme.spacing(4)} 0`,
     boxShadow: "none",
 
-    "&:not(:first-child)": {
+    "&:first-child": {
       borderTop: `1px solid ${theme.palette.grey[300]}`,
+    },
+    "&:not(:first-child)": {
+      borderTop: `2px solid ${theme.palette.grey[300]}`,
     },
   },
 
