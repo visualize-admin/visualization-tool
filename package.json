@@ -35,7 +35,7 @@
     "postversion": "git push --follow-tags",
     "release:npm": "yarn build:npm && yarn publish app",
     "e2e:dev": "E2E_BASE_URL=http://localhost:3000 yarn playwright test",
-    "e2e": "percy exec -- playwright test",
+    "e2e": "playwright test",
     "cube": "NODE_ENV=development ts-node app/scripts/cube.ts",
     "dev:circular-deps": "madge --warning --extensions js,jsx,ts,tsx -b ./app -c ./app/pages/ --ts-config ./app/tsconfig.json | bun scripts/circular-deps-analysis.ts -",
     "github:codegen": "node k6/performance-tests/generate-github-actions.mjs",
@@ -56,6 +56,7 @@
     "ts-node": "^10.9.2"
   },
   "devDependencies": {
+    "@argos-ci/playwright": "^3.9.4",
     "@babel/core": "^7.12.9",
     "@preconstruct/cli": "^2.7.0",
     "@rollup/plugin-json": "^4.1.0",
