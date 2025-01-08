@@ -6,8 +6,8 @@ import { ReactNode, useEffect, useRef } from "react";
 import { useChartState } from "@/charts/shared/chart-state";
 import { CalculationToggle } from "@/charts/shared/interactive-filter-calculation-toggle";
 import { useObserverRef } from "@/charts/shared/use-size";
+import { getChartConfig } from "@/config-utils";
 import {
-  getChartConfig,
   hasChartConfigs,
   isLayoutingFreeCanvas,
   useConfiguratorState,

@@ -2,13 +2,13 @@ import {
   locatorFixtures as fixtures,
   LocatorFixtures as TestingLibraryFixtures,
 } from "@playwright-testing-library/test/fixture";
-import { test as base, Page, PlaywrightTestOptions } from "@playwright/test";
+import { Page, PlaywrightTestOptions, test as base } from "@playwright/test";
 
-import { Actions, createActions, } from "./actions";
+import { Actions, createActions } from "./actions";
 import { createSelectors, Selectors } from "./selectors";
 import slugify from "./slugify";
 
-type RouteFromHAROptions = Parameters<Page['routeFromHAR']>[1];
+type RouteFromHAROptions = Parameters<Page["routeFromHAR"]>[1];
 
 const setup = (contextOptions?: PlaywrightTestOptions["contextOptions"]) => {
   const test = base.extend<TestingLibraryFixtures>(fixtures).extend<{
@@ -28,18 +28,17 @@ const setup = (contextOptions?: PlaywrightTestOptions["contextOptions"]) => {
     },
     replayFromHAR: async ({ page }, use, testInfo) => {
       let index = 0;
-      const replay = async (routeFromHAROptions?: RouteFromHAROptions
-      ) => {
+      const replay = async (routeFromHAROptions?: RouteFromHAROptions) => {
         const name = `${testInfo.titlePath
           .map((x) => x.replace(/\.spec\.ts$/, ""))
           .map((x) => x.replace(/@[^\s]+$/, ""))
           .map(slugify)
           .join(" > ")} ${index++}`;
-        if (process.env.E2E_HAR !== "false") {
+        if (process.env.E2E_HAR && process.env.E2E_HAR !== "false") {
           await page.routeFromHAR(`./e2e/har/${name}.zip`, {
             url: /api\/graphql/,
             notFound: "abort",
-            ...routeFromHAROptions
+            ...routeFromHAROptions,
           });
         }
       };

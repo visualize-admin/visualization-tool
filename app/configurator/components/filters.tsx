@@ -44,14 +44,12 @@ import { Select } from "@/components/form";
 import { Loading } from "@/components/hint";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { TooltipTitle } from "@/components/tooltip-utils";
+import { ChartConfig, ColorMapping } from "@/config-types";
+import { getChartConfig, useChartConfigFilters } from "@/config-utils";
 import {
-  ChartConfig,
-  ColorMapping,
-  getChartConfig,
   getFilterValue,
   isConfiguring,
   MultiFilterContextProvider,
-  useChartConfigFilters,
   useConfiguratorState,
   useMultiFilterContext,
 } from "@/configurator";

@@ -21,10 +21,10 @@ import {
 import {
   ChartConfig,
   DashboardTimeRangeFilter,
-  getChartConfig,
   LayoutDashboard,
   ReactGridLayoutType,
 } from "@/config-types";
+import { getChartConfig } from "@/config-utils";
 import { LayoutAnnotator } from "@/configurator/components/annotators";
 import { DataFilterSelectGeneric } from "@/configurator/components/chart-configurator";
 import {

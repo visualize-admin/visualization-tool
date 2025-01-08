@@ -5,8 +5,8 @@ import {
   DashboardFiltersConfig,
   FilterValueSingle,
   isSegmentInConfig,
-  useChartConfigFilters,
 } from "@/config-types";
+import { useChartConfigFilters } from "@/config-utils";
 import { parseDate } from "@/configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import useFilterChanges from "@/configurator/use-filter-changes";

@@ -1,0 +1,21 @@
+{
+  "$schema": "https://visualize.admin.ch/json-schema/chart-config.json",
+  "type": "object",
+  "schema": {
+    "key": "",
+    "version": "",
+    "chartType": "pie",
+    "meta": {
+      "title": { "de": "", "en": "", "fr": "", "it": "" },
+      "description": { "de": "", "en": "", "fr": "", "it": "" },
+      "label": { "de": "", "en": "", "fr": "", "it": "" }
+    },
+    "cubes": [],
+    "fields": {
+      "y": { "componentId": "" },
+      "segment": { "componentId": "", "palette": "" }
+    },
+    "interactiveFiltersConfig": {},
+    "activeField": ""
+  }
+}

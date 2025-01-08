@@ -62,14 +62,13 @@ import { getEnabledChartTypes } from "@/charts";
 import Flex from "@/components/flex";
 import { Error as ErrorHint, Loading } from "@/components/hint";
 import Tag from "@/components/tag";
+import { ConfiguratorStateConfiguringChart, DataSource } from "@/config-types";
+import { getChartConfig } from "@/config-utils";
 import {
   addDatasetInConfig,
-  ConfiguratorStateConfiguringChart,
-  DataSource,
-  getChartConfig,
   isConfiguring,
   useConfiguratorState,
-} from "@/configurator";
+} from "@/configurator/configurator-state";
 import {
   Dimension,
   isJoinByComponent,

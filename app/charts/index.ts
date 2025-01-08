@@ -17,10 +17,14 @@ import {
   getDefaultNumericalColorField,
 } from "@/charts/map/constants";
 import {
+  ChartConfigsAdjusters,
+  FieldAdjuster,
+  InteractiveFiltersAdjusters,
+} from "@/config-adjusters";
+import {
   AreaSegmentField,
   canBeNormalized,
   ChartConfig,
-  ChartConfigsAdjusters,
   ChartSegmentField,
   ChartType,
   ColumnSegmentField,
@@ -28,12 +32,10 @@ import {
   ComboLineColumnFields,
   ComboLineSingleFields,
   Cube,
-  FieldAdjuster,
   Filters,
   GenericField,
   GenericFields,
   GenericSegmentField,
-  InteractiveFiltersAdjusters,
   InteractiveFiltersConfig,
   isAreaConfig,
   isColumnConfig,

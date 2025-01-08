@@ -1,6 +1,4 @@
-import { devices } from "@playwright/test";
-
-import type { PlaywrightTestConfig } from "@playwright/test";
+import { defineConfig, devices } from "@playwright/test";
 
 /**
  * Read environment variables from file.
@@ -11,7 +9,7 @@ import type { PlaywrightTestConfig } from "@playwright/test";
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
-const config: PlaywrightTestConfig = {
+export default defineConfig({
   testDir: "./e2e",
   /* Maximum time one test can run for. */
   timeout: 45 * 1000,
@@ -30,7 +28,10 @@ const config: PlaywrightTestConfig = {
   retries: process.env.CI ? 1 : 0,
   workers: process.env.CI ? 1 : 4,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: process.env.CI ? "blob" : "html",
+  reporter: [
+    process.env.CI ? ["blob"] : ["html"],
+    ["@argos-ci/playwright/reporter", { uploadToArgos: !!process.env.CI }],
+  ],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     contextOptions: {
@@ -43,6 +44,13 @@ const config: PlaywrightTestConfig = {
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: "on-first-retry",
+
+    /* Capture screenshot after each test failure. */
+    screenshot: "only-on-failure",
+
+    extraHTTPHeaders: {
+      "x-vercel-skip-toolbar": "1",
+    },
   },
 
   /* Configure projects for major browsers */
@@ -96,6 +104,4 @@ const config: PlaywrightTestConfig = {
   //   command: 'npm run start',
   //   port: 3000,
   // },
-};
-
-export default config;
+});

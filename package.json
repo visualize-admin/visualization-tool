@@ -18,7 +18,7 @@
     "dev:rollup": "rollup -c rollup.config.js --watch",
     "db:migrate:dev": "DATABASE_URL=postgres://postgres:password@localhost:5432/visualization_tool prisma db push",
     "db:migrate": "[ -z \"$DATABASE_URL\" ] && echo 'Bypassing database migration, DATABASE_URL not set' || prisma db push",
-    "build": "yarn graphql:codegen && lingui compile && rollup -c rollup.config.js && yarn storybook:build && next build ./app",
+    "build": "yarn graphql:codegen && lingui compile && rollup -c rollup.config.js && yarn storybook:build && yarn generate-json-schema && next build ./app",
     "build:npm": "yarn graphql:codegen && lingui compile && BABEL_ENV=NPM_PACKAGE preconstruct build",
     "start": "yarn db:migrate && GLOBAL_AGENT_ENVIRONMENT_VARIABLE_NAMESPACE='' NO_PROXY='localhost,127.0.0.1' next start ./app -p $PORT",
     "typecheck": "lingui compile && tsc --noEmit -p ./app && tsc --noEmit -p ./embed",
@@ -35,14 +35,15 @@
     "postversion": "git push --follow-tags",
     "release:npm": "yarn build:npm && yarn publish app",
     "e2e:dev": "E2E_BASE_URL=http://localhost:3000 yarn playwright test",
-    "e2e": "percy exec -- playwright test",
+    "e2e": "playwright test",
     "cube": "NODE_ENV=development ts-node app/scripts/cube.ts",
     "dev:circular-deps": "madge --warning --extensions js,jsx,ts,tsx -b ./app -c ./app/pages/ --ts-config ./app/tsconfig.json | bun scripts/circular-deps-analysis.ts -",
     "github:codegen": "node k6/performance-tests/generate-github-actions.mjs",
     "storybook": "storybook dev -p 6006",
     "storybook:build": "storybook build -o app/public/storybook",
     "chromatic": "npx chromatic --build-script-name storybook:build -o app/public/storybook",
-    "compare-screenshots": "npx tsx scripts/compare-screenshots.ts"
+    "compare-screenshots": "npx tsx scripts/compare-screenshots.ts",
+    "generate-json-schema": "tsx -r dotenv/config app/scripts/generate-json-schema.ts"
   },
   "dependencies": {
     "@babel/runtime": "^7.11.2",
@@ -55,6 +56,7 @@
     "ts-node": "^10.9.2"
   },
   "devDependencies": {
+    "@argos-ci/playwright": "^3.9.4",
     "@babel/core": "^7.12.9",
     "@preconstruct/cli": "^2.7.0",
     "@rollup/plugin-json": "^4.1.0",

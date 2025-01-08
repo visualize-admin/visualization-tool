@@ -19,7 +19,8 @@ import {
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
 import { InteractionVoronoi } from "@/charts/shared/overlay-voronoi";
-import { ScatterPlotConfig, useChartConfigFilters } from "@/config-types";
+import { ScatterPlotConfig } from "@/config-types";
+import { useChartConfigFilters } from "@/config-utils";
 import { TimeSlider } from "@/configurator/interactive-filters/time-slider";
 
 import { ChartProps, VisualizationProps } from "../shared/ChartProps";
@@ -35,6 +36,7 @@ const ChartScatterplot = memo((props: ChartProps<ScatterPlotConfig>) => {
   const { chartConfig, dimensions } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
   const filters = useChartConfigFilters(chartConfig);
+
   return (
     <ScatterplotChart {...props}>
       <ChartContainer>
