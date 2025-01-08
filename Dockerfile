@@ -1,4 +1,4 @@
-FROM node:18
+FROM node:20
 
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
@@ -54,6 +54,6 @@ RUN yarn build
 
 # Install only prod dependencies and start app
 RUN yarn install --frozen-lockfile --production && yarn cache clean
-CMD npm start
+CMD yarn start
 
 EXPOSE 3000
