@@ -21,6 +21,8 @@ You can also check the
   - Fixed cut table scroll-bars and unnecessary scroll of bar charts when
     switching between chart types
   - Sorting dataset results by score option is now correctly available to select
+  - Created with visualize.admin.ch footnote is only displayed once, not twice,
+    when downloading an image of a published chart
 - Styles
   - Updated dataset result borders to match the design
 - Maintenance
