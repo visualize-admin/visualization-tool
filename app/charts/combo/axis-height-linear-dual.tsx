@@ -16,6 +16,7 @@ import { useAxisTitleAdjustments } from "@/utils/use-axis-title-adjustments";
 import { TITLE_VPADDING } from "./combo-line-container";
 
 const TITLE_HPADDING = 8;
+const TOP_MARGIN = 4;
 
 type AxisHeightLinearDualProps = {
   orientation?: "left" | "right";
@@ -72,8 +73,10 @@ export const AxisHeightLinearDual = (props: AxisHeightLinearDualProps) => {
         width={axisTitleWidth + TITLE_HPADDING * 2}
         height={
           (isOverlapping
-            ? axisLabelFontSize * Math.ceil(overlapAmount) + TITLE_VPADDING 
-            : axisLabelFontSize + TITLE_VPADDING) * 2
+            ? axisLabelFontSize * Math.ceil(overlapAmount) + TITLE_VPADDING
+            : axisLabelFontSize + TITLE_VPADDING) *
+            2 +
+          TOP_MARGIN
         }
         color={theme.palette.getContrastText(color)}
         style={{ display: "flex" }}

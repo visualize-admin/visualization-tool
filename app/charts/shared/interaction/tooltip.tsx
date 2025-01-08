@@ -33,11 +33,12 @@ export interface TooltipValue {
   yPos?: number;
   symbol?: LegendSymbol;
 }
+
 export interface TooltipInfo {
   xAnchor: number;
   yAnchor: number | undefined;
   placement: TooltipPlacement;
-  xValue: string;
+  value: string;
   tooltipContent?: ReactNode;
   datum: TooltipValue;
   values: TooltipValue[] | undefined;
@@ -53,7 +54,7 @@ const TooltipInner = ({ d, type }: { d: Observation; type: TooltipType }) => {
     xAnchor,
     yAnchor,
     placement,
-    xValue,
+    value,
     tooltipContent,
     datum,
     values,
@@ -75,10 +76,10 @@ const TooltipInner = ({ d, type }: { d: Observation; type: TooltipType }) => {
       {tooltipContent ? (
         tooltipContent
       ) : type === "multiple" && values ? (
-        <TooltipMultiple xValue={xValue} segmentValues={values} />
+        <TooltipMultiple xValue={value} segmentValues={values} />
       ) : (
         <TooltipSingle
-          xValue={xValue}
+          xValue={value}
           segment={datum.label}
           yValue={datum.value}
           yError={datum.error}

@@ -8,7 +8,7 @@ import {
 import { NumericalMeasure, Observation } from "@/domain/data";
 import { formatNumberWithUnit } from "@/formatters";
 
-const NORMALIZED_Y_DOMAIN = [0, 100];
+const NORMALIZED_VALUE_DOMAIN = [0, 100];
 
 export const getStackedYScale = (
   data: Observation[],
@@ -23,7 +23,7 @@ export const getStackedYScale = (
   const yScale = scaleLinear();
 
   if (normalize) {
-    yScale.domain(NORMALIZED_Y_DOMAIN);
+    yScale.domain(NORMALIZED_VALUE_DOMAIN);
   } else {
     const grouped = group(data, (d) => getX(d) + getTime?.(d));
     let yMin = 0;
@@ -49,16 +49,55 @@ export const getStackedYScale = (
   return yScale;
 };
 
+export const getStackedXScale = (
+  data: Observation[],
+  options: {
+    normalize: boolean;
+    getY: StringValueGetter;
+    getX: NumericalValueGetter;
+    getTime?: StringValueGetter;
+  }
+): ScaleLinear<number, number> => {
+  const { normalize, getX, getY, getTime } = options;
+  const xScale = scaleLinear();
+
+  if (normalize) {
+    xScale.domain(NORMALIZED_VALUE_DOMAIN);
+  } else {
+    const grouped = group(data, (d) => getY(d) + getTime?.(d));
+    let xMin = 0;
+    let xMax = 0;
+
+    for (const [, v] of grouped) {
+      const values = v.map(getX).filter((d) => d !== null) as number[];
+      const newXMin = sum(values.filter((d) => d < 0));
+      const newXMax = sum(values.filter((d) => d >= 0));
+
+      if (xMin === undefined || newXMin < xMin) {
+        xMin = newXMin;
+      }
+
+      if (xMax === undefined || newXMax > xMax) {
+        xMax = newXMax;
+      }
+    }
+
+    xScale.domain([xMin, xMax]).nice();
+  }
+
+  return xScale;
+};
+
 export const getStackedTooltipValueFormatter = ({
   normalize,
-  yMeasureId,
-  yMeasureUnit,
+  measureId,
+  measureUnit,
   formatters,
   formatNumber,
 }: {
   normalize: boolean;
-  yMeasureId: string;
-  yMeasureUnit: NumericalMeasure["unit"];
+  measureId: string;
+  measureUnit: NumericalMeasure["unit"];
   formatters: { [k: string]: (s: any) => string };
   formatNumber: (d: NumberValue | null | undefined) => string;
 }) => {
@@ -67,15 +106,15 @@ export const getStackedTooltipValueFormatter = ({
       return "-";
     }
 
-    const format = formatters[yMeasureId] ?? formatNumber;
+    const format = formatters[measureId] ?? formatNumber;
 
     if (normalize) {
       const rounded = Math.round(d as number);
-      const fValue = formatNumberWithUnit(dIdentity, format, yMeasureUnit);
+      const fValue = formatNumberWithUnit(dIdentity, format, measureUnit);
 
       return `${rounded}% (${fValue})`;
     }
 
-    return formatNumberWithUnit(d, format, yMeasureUnit);
+    return formatNumberWithUnit(d, format, measureUnit);
   };
 };

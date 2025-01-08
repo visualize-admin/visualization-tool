@@ -16,9 +16,9 @@ import { useCallback } from "react";
 import { hasDimensionColors } from "@/charts/shared/colors";
 import Flex from "@/components/flex";
 import { Label } from "@/components/form";
+import { getChartConfig } from "@/config-utils";
 import {
   ConfiguratorStateConfiguringChart,
-  getChartConfig,
   isColorInConfig,
   isConfiguring,
   useConfiguratorState,
@@ -26,8 +26,8 @@ import {
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import { Component, isNumericalMeasure } from "@/domain/data";
 import {
-  DEFAULT_CATEGORICAL_PALETTE_ID,
   categoricalPalettes,
+  DEFAULT_CATEGORICAL_PALETTE_ID,
   divergingSteppedPalettes,
   getDefaultCategoricalPalette,
   getPalette,

@@ -12,7 +12,7 @@ const { test, expect } = setup();
 
 const cubeIri = "https://environment.ld.admin.ch/foen/BFS_cofog_national/2";
 const dimensionId =
-  "https://environment.ld.admin.ch/foen/BFS_cofog_national___https://environment.ld.admin.ch/foen/BFS_cofog_national/sector";
+  "https://environment.ld.admin.ch/foen/BFS_cofog_national(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://environment.ld.admin.ch/foen/BFS_cofog_national/sector";
 
 test("@noci it should be possible to query dimension values from versioned dimension correctly", async ({
   page,

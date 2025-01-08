@@ -222,7 +222,7 @@ export const SearchDatasetControls = ({
         <SearchDatasetSortControl
           value={order}
           onChange={onSetOrder}
-          disableScore={isSearching}
+          disableScore={!isSearching}
         />
       </Flex>
     </Flex>

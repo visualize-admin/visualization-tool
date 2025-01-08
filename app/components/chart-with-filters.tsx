@@ -23,6 +23,12 @@ const ChartColumnsVisualization = dynamic(
     () => null as never
   )
 );
+const ChartBarsVisualization = dynamic(
+  import("@/charts/bar/chart-bar").then(
+    (mod) => mod.ChartBarsVisualization,
+    () => null as never
+  )
+);
 const ChartComboLineSingleVisualization = dynamic(
   import("@/charts/combo/chart-combo-line-single").then(
     (mod) => mod.ChartComboLineSingleVisualization,
@@ -98,6 +104,10 @@ const GenericChart = (props: GenericChartProps) => {
       return (
         <ChartColumnsVisualization {...commonProps} chartConfig={chartConfig} />
       );
+    case "bar":
+      return (
+        <ChartBarsVisualization {...commonProps} chartConfig={chartConfig} />
+      );
     case "line":
       return (
         <ChartLinesVisualization {...commonProps} chartConfig={chartConfig} />
@@ -160,7 +170,7 @@ type ChartWithFiltersProps = {
   dashboardFilters: DashboardFiltersConfig | undefined;
 };
 
-const useStyles = makeStyles(() => ({
+export const useChartWithFiltersClasses = makeStyles(() => ({
   chartWithFilters: {
     width: "100%",
     height: "100%",
@@ -172,7 +182,8 @@ export const ChartWithFilters = forwardRef<
   ChartWithFiltersProps
 >((props, ref) => {
   useSyncInteractiveFilters(props.chartConfig, props.dashboardFilters);
-  const classes = useStyles();
+  const classes = useChartWithFiltersClasses();
+
   return (
     <div className={classes.chartWithFilters} ref={ref}>
       <Observer>

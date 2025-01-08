@@ -16,9 +16,9 @@ import {
   ChartType,
   ConfiguratorState,
   Filters,
-  getChartConfig,
   isComboChartConfig,
 } from "@/config-types";
+import { getChartConfig } from "@/config-utils";
 import {
   getChartOptionField,
   GetConfiguratorStateAction,

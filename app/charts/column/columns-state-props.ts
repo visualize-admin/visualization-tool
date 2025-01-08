@@ -19,7 +19,8 @@ import {
   useNumericalYVariables,
 } from "@/charts/shared/chart-state";
 import { useRenderingKeyVariable } from "@/charts/shared/rendering-utils";
-import { ColumnConfig, useChartConfigFilters } from "@/configurator";
+import { useChartConfigFilters } from "@/config-utils";
+import { ColumnConfig } from "@/configurator";
 import { isTemporalEntityDimension } from "@/domain/data";
 
 import { ChartProps } from "../shared/ChartProps";
@@ -125,7 +126,7 @@ export const useColumnsStateData = (
   const data = useChartData(sortedPlottableData, {
     chartConfig,
     timeRangeDimensionId: xDimension.id,
-    getXAsDate,
+    getAxisValueAsDate: getXAsDate,
     getTimeRangeDate,
   });
 

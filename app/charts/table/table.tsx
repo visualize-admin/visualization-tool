@@ -25,6 +25,7 @@ import { TableChartState } from "@/charts/table/table-state";
 import Flex from "@/components/flex";
 import { Input, Switch } from "@/components/form";
 import { Observation } from "@/domain/data";
+import { DISABLE_SCREENSHOT_ATTR } from "@/utils/use-screenshot";
 
 const MOBILE_VIEW_THRESHOLD = 384;
 
@@ -299,7 +300,10 @@ export const Table = () => {
   return (
     <>
       {showSearch && (
-        <Box sx={{ mb: 4, width: "min(100%, 300px)" }}>
+        <Box
+          sx={{ mb: 4, width: "min(100%, 300px)" }}
+          {...DISABLE_SCREENSHOT_ATTR}
+        >
           <Input
             type="text"
             name="search-input"

@@ -267,7 +267,7 @@ const useColumnsState = (
       xAnchor,
       yAnchor,
       placement,
-      xValue: xTimeUnit ? timeFormatUnit(xLabel, xTimeUnit) : xLabel,
+      value: xTimeUnit ? timeFormatUnit(xLabel, xTimeUnit) : xLabel,
       datum: {
         label: undefined,
         value: y !== null && isNaN(y) ? "-" : `${yValueFormatter(getY(d))}`,

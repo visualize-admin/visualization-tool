@@ -111,7 +111,7 @@ export const useLinesStateData = (
   const data = useChartData(sortedPlottableData, {
     chartConfig,
     timeRangeDimensionId: xDimension.id,
-    getXAsDate: getX,
+    getAxisValueAsDate: getX,
     getSegmentAbbreviationOrLabel,
     getTimeRangeDate,
   });

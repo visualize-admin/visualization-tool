@@ -178,7 +178,7 @@ const useColumnsStackedState = (
     return Object.fromEntries(
       rollup(
         chartData,
-        (v) => sum(v, (x) => getY(x)),
+        (v) => sum(v, (d) => getY(d)),
         (x) => getX(x)
       )
     );
@@ -189,8 +189,8 @@ const useColumnsStackedState = (
     if (normalize) {
       return group(
         normalizeData(chartData, {
-          yKey: yMeasure.id,
-          getY,
+          key: yMeasure.id,
+          getAxisValue: getY,
           getTotalGroupValue: (d) => sumsByX[getX(d)],
         }),
         getX
@@ -202,9 +202,9 @@ const useColumnsStackedState = (
 
   const chartWideData = useMemo(() => {
     return getWideData({
-      dataGroupedByX: chartDataGroupedByX,
-      xKey,
-      getY,
+      dataGrouped: chartDataGroupedByX,
+      key: xKey,
+      getAxisValue: getY,
       getSegment,
       allSegments: segments,
       imputationType: "zeros",
@@ -445,8 +445,8 @@ const useColumnsStackedState = (
       });
       const yValueFormatter = getStackedTooltipValueFormatter({
         normalize,
-        yMeasureId: yMeasure.id,
-        yMeasureUnit: yMeasure.unit,
+        measureId: yMeasure.id,
+        measureUnit: yMeasure.unit,
         formatters,
         formatNumber,
       });
@@ -467,7 +467,7 @@ const useColumnsStackedState = (
         xAnchor: xAnchorRaw + (placement.x === "right" ? 0.5 : -0.5) * bw,
         yAnchor,
         placement,
-        xValue: getXAbbreviationOrLabel(datum),
+        value: getXAbbreviationOrLabel(datum),
         datum: {
           label: fields.segment && getSegmentAbbreviationOrLabel(datum),
           value: yValueFormatter(getY(datum), getIdentityY(datum)),

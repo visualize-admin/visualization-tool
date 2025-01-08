@@ -12,7 +12,7 @@ test("should not have literal undefined values inside a table preview", async ({
   const iri =
     "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/13";
 
-  await actions.datasetPreview.load(iri, "Int");
+  await actions.datasetPreview.load({ iri, dataSource: "Int" });
 
   await selectors.datasetPreview.loaded();
 

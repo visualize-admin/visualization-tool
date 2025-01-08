@@ -13,21 +13,21 @@ import { Checkbox, CheckboxProps } from "@/components/form";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { TooltipTitle } from "@/components/tooltip-utils";
+import { useChartConfigFilters } from "@/config-utils";
 import {
   ChartConfig,
   GenericField,
-  MapConfig,
   isSegmentInConfig,
-  useChartConfigFilters,
+  MapConfig,
   useReadOnlyConfiguratorState,
 } from "@/configurator";
 import {
   Component,
   Dimension,
-  Measure,
-  Observation,
   isOrdinalDimension,
   isOrdinalMeasure,
+  Measure,
+  Observation,
 } from "@/domain/data";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import { useChartInteractiveFilters } from "@/stores/interactive-filters";

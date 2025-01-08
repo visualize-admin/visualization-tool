@@ -3,6 +3,7 @@ import clsx from "clsx";
 import { forwardRef, Ref } from "react";
 
 import { Icon } from "@/icons";
+import { DISABLE_SCREENSHOT_ATTR } from "@/utils/use-screenshot";
 
 import { useIconStyles } from "./chart-selection-tabs";
 
@@ -18,6 +19,7 @@ export const DragHandle = forwardRef<HTMLDivElement, DragHandleProps>(
 
     return (
       <Box
+        {...DISABLE_SCREENSHOT_ATTR}
         ref={ref}
         {...rest}
         className={clsx(classes.dragIconWrapper, props.className)}

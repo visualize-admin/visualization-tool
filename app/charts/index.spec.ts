@@ -182,7 +182,14 @@ describe("initial config", () => {
 
 describe("enabled chart types", () => {
   it("should allow appropriate chart types based on available dimensions", () => {
-    const expectedChartTypes = ["area", "column", "line", "pie", "table"];
+    const expectedChartTypes = [
+      "area",
+      "bar",
+      "column",
+      "line",
+      "pie",
+      "table",
+    ];
     const { enabledChartTypes, possibleChartTypesDict } = getEnabledChartTypes({
       dimensions: bathingWaterData.data.dataCubeByIri
         .dimensions as any as Dimension[],
@@ -212,14 +219,20 @@ describe("enabled chart types", () => {
     ).toBe(true);
   });
 
-  it("should only allow column, map, pie and table if only geo dimensions are available", () => {
+  it("should only allow column, bar, map, pie and table if only geo dimensions are available", () => {
     const { enabledChartTypes, possibleChartTypesDict } = getEnabledChartTypes({
       dimensions: [{ __typename: "GeoShapesDimension" }] as any,
       measures: [{ __typename: "NumericalMeasure" }] as any,
       cubeCount: 1,
     });
 
-    expect(enabledChartTypes.sort()).toEqual(["column", "map", "pie", "table"]);
+    expect(enabledChartTypes.sort()).toEqual([
+      "bar",
+      "column",
+      "map",
+      "pie",
+      "table",
+    ]);
     expect(possibleChartTypesDict["line"].message).toBeDefined();
   });
 

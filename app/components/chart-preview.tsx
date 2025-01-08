@@ -10,7 +10,14 @@ import { Trans } from "@lingui/macro";
 import { Box } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import Head from "next/head";
-import { forwardRef, ReactNode, useCallback, useMemo, useState } from "react";
+import {
+  forwardRef,
+  ReactNode,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import { DataSetTable } from "@/browse/datatable";
 import { LoadingStateProvider } from "@/charts/shared/chart-loading-state";
@@ -29,6 +36,7 @@ import {
 } from "@/components/chart-shared";
 import {
   ChartTablePreviewProvider,
+  TablePreviewWrapper,
   useChartTablePreview,
 } from "@/components/chart-table-preview";
 import { ChartWithFilters } from "@/components/chart-with-filters";
@@ -43,10 +51,10 @@ import {
   MetadataPanelStoreContext,
 } from "@/components/metadata-panel-store";
 import { BANNER_MARGIN_TOP } from "@/components/presence";
+import { getChartConfig } from "@/config-utils";
 import {
   ChartConfig,
   DataSource,
-  getChartConfig,
   hasChartConfigs,
   isConfiguring,
   Layout,
@@ -63,6 +71,7 @@ import { InteractiveFiltersChartProvider } from "@/stores/interactive-filters";
 import { useTransitionStore } from "@/stores/transition";
 import { useTheme } from "@/themes";
 import { createSnapCornerToCursor } from "@/utils/dnd";
+import { DISABLE_SCREENSHOT_ATTR_KEY } from "@/utils/use-screenshot";
 
 export const ChartPreview = ({ dataSource }: { dataSource: DataSource }) => {
   const [state] = useConfiguratorState(hasChartConfigs);
@@ -393,6 +402,7 @@ const ChartPreviewInner = ({
   chartKey?: string | null;
   actionElementSlot?: ReactNode;
 }) => {
+  const ref = useRef<HTMLDivElement>(null);
   const [state, dispatch] = useConfiguratorState();
   const configuring = isConfiguring(state);
   const chartConfig = getChartConfig(state, chartKey);
@@ -421,7 +431,7 @@ const ChartPreviewInner = ({
       })),
     },
   });
-  const { isTable, containerRef, containerHeight } = useChartTablePreview();
+  const { isTable } = useChartTablePreview();
   const dimensions = components?.dataCubesComponents.dimensions;
   const measures = components?.dataCubesComponents.measures;
   const allComponents = useMemo(() => {
@@ -433,7 +443,7 @@ const ChartPreviewInner = ({
   }, [dimensions, measures]);
 
   return (
-    <Box className={chartClasses.root}>
+    <Box ref={ref} className={chartClasses.root}>
       {children}
       <ChartErrorBoundary resetKeys={[state]}>
         {hasChartConfigs(state) && (
@@ -474,6 +484,10 @@ const ChartPreviewInner = ({
                               })
                           : undefined
                       }
+                      {...{
+                        [DISABLE_SCREENSHOT_ATTR_KEY]:
+                          !chartConfig.meta.title[locale],
+                      }}
                     />
                   ) : (
                     // We need to have a span here to keep the space between the
@@ -488,7 +502,11 @@ const ChartPreviewInner = ({
                       mt: "-0.33rem",
                     }}
                   >
-                    <ChartMoreButton chartKey={chartConfig.key} />
+                    <ChartMoreButton
+                      chartKey={chartConfig.key}
+                      chartWrapperNode={ref.current}
+                      components={allComponents}
+                    />
                     {actionElementSlot}
                   </Box>
                 </Flex>
@@ -507,6 +525,10 @@ const ChartPreviewInner = ({
                           }
                         : undefined
                     }
+                    {...{
+                      [DISABLE_SCREENSHOT_ATTR_KEY]:
+                        !chartConfig.meta.description[locale],
+                    }}
                   />
                 ) : (
                   // We need to have a span here to keep the space between the
@@ -538,15 +560,7 @@ const ChartPreviewInner = ({
                     top: BANNER_MARGIN_TOP,
                   }}
                 />
-                <div
-                  ref={containerRef}
-                  style={{
-                    minWidth: 0,
-                    height: containerHeight,
-                    paddingTop: 16,
-                    flexGrow: 1,
-                  }}
-                >
+                <TablePreviewWrapper>
                   {isTable ? (
                     <DataSetTable
                       dataSource={dataSource}
@@ -562,7 +576,7 @@ const ChartPreviewInner = ({
                       dashboardFilters={state.dashboardFilters}
                     />
                   )}
-                </div>
+                </TablePreviewWrapper>
                 <ChartFootnotes
                   dataSource={dataSource}
                   chartConfig={chartConfig}

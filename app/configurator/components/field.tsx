@@ -39,12 +39,8 @@ import {
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import SelectTree from "@/components/select-tree";
 import useDisclosure from "@/components/use-disclosure";
-import {
-  ChartConfig,
-  getChartConfig,
-  isColorInConfig,
-  useChartConfigFilters,
-} from "@/config-types";
+import { ChartConfig, isColorInConfig } from "@/config-types";
+import { getChartConfig, useChartConfigFilters } from "@/config-utils";
 import {
   AnnotatorTab,
   AnnotatorTabProps,

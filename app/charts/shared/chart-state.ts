@@ -5,6 +5,9 @@ import overEvery from "lodash/overEvery";
 import { createContext, useCallback, useContext, useMemo } from "react";
 
 import { AreasState } from "@/charts/area/areas-state";
+import { GroupedBarsState } from "@/charts/bar/bars-grouped-state";
+import { StackedBarsState } from "@/charts/bar/bars-stacked-state";
+import { BarsState } from "@/charts/bar/bars-state";
 import { GroupedColumnsState } from "@/charts/column/columns-grouped-state";
 import { StackedColumnsState } from "@/charts/column/columns-stacked-state";
 import { ColumnsState } from "@/charts/column/columns-state";
@@ -68,6 +71,9 @@ export type ChartState =
   | ColumnsState
   | StackedColumnsState
   | GroupedColumnsState
+  | BarsState
+  | StackedBarsState
+  | GroupedBarsState
   | ComboLineSingleState
   | ComboLineColumnState
   | ComboLineDualState
@@ -139,6 +145,15 @@ export const useBaseVariables = (chartConfig: ChartConfig): BaseVariables => {
   };
 };
 
+export type BandYVariables = {
+  yDimension: Dimension;
+  getY: StringValueGetter;
+  getYLabel: (d: string) => string;
+  getYAbbreviationOrLabel: (d: Observation) => string;
+  yTimeUnit: TimeUnit | undefined;
+  getYAsDate: TemporalValueGetter;
+};
+
 export type BandXVariables = {
   xDimension: Dimension;
   getX: StringValueGetter;
@@ -146,6 +161,51 @@ export type BandXVariables = {
   getXAbbreviationOrLabel: (d: Observation) => string;
   xTimeUnit: TimeUnit | undefined;
   getXAsDate: TemporalValueGetter;
+};
+
+export const useBandYVariables = (
+  y: GenericField,
+  {
+    dimensionsById,
+    observations,
+  }: {
+    dimensionsById: DimensionsById;
+    observations: Observation[];
+  }
+): BandYVariables => {
+  const yDimension = dimensionsById[y.componentId];
+  if (!yDimension) {
+    throw Error(`No dimension <${y.componentId}> in cube! (useBandXVariables)`);
+  }
+
+  const yTimeUnit = isTemporalDimension(yDimension)
+    ? yDimension.timeUnit
+    : undefined;
+
+  const {
+    getAbbreviationOrLabelByValue: getYAbbreviationOrLabel,
+    getValue: getY,
+    getLabel: getYLabel,
+  } = useDimensionWithAbbreviations(yDimension, {
+    observations,
+    field: y,
+  });
+
+  const getYAsDate = useTemporalVariable(y.componentId);
+  const getYTemporalEntity = useTemporalEntityVariable(
+    dimensionsById[y.componentId].values
+  )(y.componentId);
+
+  return {
+    yDimension,
+    getY,
+    getYLabel,
+    getYAbbreviationOrLabel,
+    yTimeUnit,
+    getYAsDate: isTemporalDimension(yDimension)
+      ? getYAsDate
+      : getYTemporalEntity,
+  };
 };
 
 export const useBandXVariables = (
@@ -244,7 +304,7 @@ export type NumericalXVariables = {
 };
 
 export const useNumericalXVariables = (
-  chartType: "scatterplot",
+  chartType: "scatterplot" | "bar",
   x: GenericField,
   { measuresById }: { measuresById: MeasuresById }
 ): NumericalXVariables => {
@@ -264,6 +324,8 @@ export const useNumericalXVariables = (
   const getMinX = useCallback(
     (data: Observation[], _getX: NumericalValueGetter) => {
       switch (chartType) {
+        case "bar":
+          return Math.min(0, min(data, _getX) ?? 0);
         case "scatterplot":
           return shouldUseDynamicMinScaleValue(xMeasure.scaleType)
             ? min(data, _getX) ?? 0
@@ -345,6 +407,13 @@ export type NumericalYErrorVariables = {
   getYErrorPresent: (d: Observation) => boolean;
   getYErrorRange: null | ((d: Observation) => [number, number]);
   getFormattedYUncertainty: (d: Observation) => string | undefined;
+};
+
+export type NumericalXErrorVariables = {
+  showXUncertainty: boolean;
+  getXErrorPresent: (d: Observation) => boolean;
+  getXErrorRange: null | ((d: Observation) => [number, number]);
+  getFormattedXUncertainty: (d: Observation) => string | undefined;
 };
 
 export const useNumericalYErrorVariables = (
@@ -459,6 +528,118 @@ export const useNumericalYErrorVariables = (
   };
 };
 
+export const useNumericalXErrorVariables = (
+  x: GenericField,
+  {
+    getValue,
+    dimensions,
+    measures,
+  }: {
+    getValue: NumericalXVariables["getX"];
+    dimensions: Dimension[];
+    measures: Measure[];
+  }
+): NumericalXErrorVariables => {
+  const showXStandardError = get(x, ["showStandardError"], true);
+  const xStandardErrorMeasure = useErrorMeasure(x.componentId, {
+    dimensions,
+    measures,
+    type: RelatedDimensionType.StandardError,
+  });
+  const getXStandardError = useErrorVariable(xStandardErrorMeasure);
+
+  const showXConfidenceInterval = get(x, ["showConfidenceInterval"], true);
+  const xConfidenceIntervalUpperMeasure = useErrorMeasure(x.componentId, {
+    dimensions,
+    measures,
+    type: RelatedDimensionType.ConfidenceUpperBound,
+  });
+  const getXConfidenceIntervalUpper = useErrorVariable(
+    xConfidenceIntervalUpperMeasure
+  );
+  const xConfidenceIntervalLowerMeasure = useErrorMeasure(x.componentId, {
+    dimensions,
+    measures,
+    type: RelatedDimensionType.ConfidenceLowerBound,
+  });
+  const getXConfidenceIntervalLower = useErrorVariable(
+    xConfidenceIntervalLowerMeasure
+  );
+
+  const getXErrorPresent = useCallback(
+    (d: Observation) => {
+      return (
+        (showXStandardError && getXStandardError?.(d) !== null) ||
+        (showXConfidenceInterval &&
+          getXConfidenceIntervalUpper?.(d) !== null &&
+          getXConfidenceIntervalLower?.(d) !== null)
+      );
+    },
+    [
+      showXStandardError,
+      getXStandardError,
+      showXConfidenceInterval,
+      getXConfidenceIntervalUpper,
+      getXConfidenceIntervalLower,
+    ]
+  );
+  const getXErrorRange = useErrorRange(
+    showXStandardError && xStandardErrorMeasure
+      ? xStandardErrorMeasure
+      : xConfidenceIntervalUpperMeasure,
+    showXStandardError && xStandardErrorMeasure
+      ? xStandardErrorMeasure
+      : xConfidenceIntervalLowerMeasure,
+    getValue
+  );
+  const getFormattedXUncertainty = useCallback(
+    (d: Observation) => {
+      if (
+        showXStandardError &&
+        getXStandardError &&
+        getXStandardError(d) !== null
+      ) {
+        const sd = getXStandardError(d);
+        const unit = xStandardErrorMeasure?.unit ?? "";
+        return ` ± ${sd}${unit}`;
+      }
+
+      if (
+        showXConfidenceInterval &&
+        getXConfidenceIntervalUpper &&
+        getXConfidenceIntervalLower &&
+        getXConfidenceIntervalUpper(d) !== null &&
+        getXConfidenceIntervalLower(d) !== null
+      ) {
+        const cil = getXConfidenceIntervalLower(d);
+        const ciu = getXConfidenceIntervalUpper(d);
+        const unit = xConfidenceIntervalUpperMeasure?.unit ?? "";
+        return `, [-${cil}${unit}, +${ciu}${unit}]`;
+      }
+    },
+    [
+      showXStandardError,
+      getXStandardError,
+      showXConfidenceInterval,
+      getXConfidenceIntervalUpper,
+      getXConfidenceIntervalLower,
+      xStandardErrorMeasure?.unit,
+      xConfidenceIntervalUpperMeasure?.unit,
+    ]
+  );
+
+  return {
+    showXUncertainty:
+      (showXStandardError && !!xStandardErrorMeasure) ||
+      (showXConfidenceInterval &&
+        !!xConfidenceIntervalUpperMeasure &&
+        !!xConfidenceIntervalLowerMeasure),
+    getXErrorPresent,
+    getXErrorRange,
+    getFormattedXUncertainty,
+  };
+};
+
 export type SegmentVariables = {
   segmentDimension: Dimension | undefined;
   segmentsByAbbreviationOrLabel: Map<string, DimensionValue>;
@@ -562,13 +743,13 @@ export const useChartData = (
   {
     chartConfig,
     timeRangeDimensionId,
-    getXAsDate,
+    getAxisValueAsDate,
     getSegmentAbbreviationOrLabel,
     getTimeRangeDate,
   }: {
     chartConfig: ChartConfig;
     timeRangeDimensionId: string | undefined;
-    getXAsDate?: (d: Observation) => Date;
+    getAxisValueAsDate?: (d: Observation) => Date;
     getSegmentAbbreviationOrLabel?: (d: Observation) => string;
     getTimeRangeDate?: (d: Observation) => Date;
   }
@@ -605,7 +786,7 @@ export const useChartData = (
   const { potentialTimeRangeFilterIds } = useDashboardInteractiveFilters();
   const interactiveTimeRangeFilters = useMemo(() => {
     const interactiveTimeRangeFilter: ValuePredicate | null =
-      getXAsDate &&
+      getAxisValueAsDate &&
       interactiveFromTime &&
       interactiveToTime &&
       (interactiveTimeRange?.active ||
@@ -613,14 +794,14 @@ export const useChartData = (
           timeRangeDimensionId &&
           potentialTimeRangeFilterIds.includes(timeRangeDimensionId)))
         ? (d: Observation) => {
-            const time = getXAsDate(d).getTime();
+            const time = getAxisValueAsDate(d).getTime();
             return time >= interactiveFromTime && time <= interactiveToTime;
           }
         : null;
 
     return interactiveTimeRangeFilter ? [interactiveTimeRangeFilter] : [];
   }, [
-    getXAsDate,
+    getAxisValueAsDate,
     interactiveFromTime,
     interactiveToTime,
     interactiveTimeRange?.active,
@@ -735,4 +916,8 @@ export const useChartData = (
 // TODO: base this on UI encodings?
 export type InteractiveXTimeRangeState = {
   xScaleTimeRange: ScaleTime<number, number>;
+};
+
+export type InteractiveYTimeRangeState = {
+  yScaleTimeRange: ScaleTime<number, number>;
 };

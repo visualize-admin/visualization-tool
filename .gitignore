@@ -24,3 +24,4 @@ playwright-report
 app/public/storybook
 
 certificates
+.vercel

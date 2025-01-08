@@ -16,6 +16,7 @@ import {
 } from "@/charts/shared/chart-helpers";
 import {
   AreaConfig,
+  BarConfig,
   ChartConfig,
   ChartSubType,
   ChartType,
@@ -26,8 +27,12 @@ import {
   ComboLineDualConfig,
   ComboLineSingleConfig,
   ComponentType,
+  fieldHasComponentId,
   GenericField,
+  getAnimationField,
+  isSortingInConfig,
   LineConfig,
+  makeMultiFilter,
   MapColorField,
   MapConfig,
   PaletteType,
@@ -36,10 +41,6 @@ import {
   SortingOrder,
   SortingType,
   TableConfig,
-  fieldHasComponentId,
-  getAnimationField,
-  isSortingInConfig,
-  makeMultiFilter,
 } from "@/config-types";
 import { getFieldLabel } from "@/configurator/components/field-i18n";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
@@ -47,15 +48,15 @@ import {
   ANIMATION_ENABLED_COMPONENTS,
   Component,
   Dimension,
-  MULTI_FILTER_ENABLED_COMPONENTS,
-  Measure,
-  Observation,
-  SEGMENT_ENABLED_COMPONENTS,
   isNumericalMeasure,
   isOrdinalMeasure,
   isTemporalDimension,
   isTemporalEntityDimension,
   isTemporalOrdinalDimension,
+  Measure,
+  MULTI_FILTER_ENABLED_COMPONENTS,
+  Observation,
+  SEGMENT_ENABLED_COMPONENTS,
 } from "@/domain/data";
 import { getDefaultCategoricalPaletteId, getPalette } from "@/palettes";
 import { theme } from "@/themes/federal";
@@ -302,6 +303,7 @@ export interface ChartSpec<T extends ChartConfig = ChartConfig> {
 interface ChartSpecs {
   area: ChartSpec<AreaConfig>;
   column: ChartSpec<ColumnConfig>;
+  bar: ChartSpec<BarConfig>;
   line: ChartSpec<LineConfig>;
   map: ChartSpec<MapConfig>;
   pie: ChartSpec<PieConfig>;
@@ -359,6 +361,7 @@ const LINE_SEGMENT_SORTING: EncodingSortingOption<LineConfig>[] = [
 ];
 
 export const COLUMN_SEGMENT_SORTING = getDefaultSegmentSorting<ColumnConfig>();
+export const BAR_SEGMENT_SORTING = getDefaultSegmentSorting<BarConfig>();
 
 export const PIE_SEGMENT_SORTING: EncodingSortingOption<PieConfig>[] = [
   { sortingType: "byAuto", sortingOrder: ["asc", "desc"] },
@@ -367,7 +370,7 @@ export const PIE_SEGMENT_SORTING: EncodingSortingOption<PieConfig>[] = [
 ];
 
 export const ANIMATION_FIELD_SPEC: EncodingSpec<
-  ColumnConfig | MapConfig | ScatterPlotConfig | PieConfig
+  ColumnConfig | BarConfig | MapConfig | ScatterPlotConfig | PieConfig
 > = {
   field: "animation",
   optional: true,
@@ -481,6 +484,7 @@ export const disableStacked = (d?: Component): boolean => {
 export const defaultSegmentOnChange: OnEncodingChange<
   | AreaConfig
   | ColumnConfig
+  | BarConfig
   | LineConfig
   | ScatterPlotConfig
   | PieConfig
@@ -796,6 +800,158 @@ const chartConfigOptionsUISpec: ChartSpecs = {
     ],
     interactiveFilters: ["legend", "timeRange", "animation"],
   },
+  bar: {
+    chartType: "bar",
+    encodings: [
+      {
+        field: "x",
+        optional: false,
+        idAttributes: ["componentId"],
+        componentTypes: ["NumericalMeasure"],
+        filters: false,
+        onChange: (id, { chartConfig, measures }) => {
+          if (chartConfig.fields.segment?.type === "stacked") {
+            const xMeasure = measures.find((d) => d.id === id);
+
+            if (disableStacked(xMeasure)) {
+              setWith(chartConfig, "fields.segment.type", "grouped", Object);
+
+              if (chartConfig.interactiveFiltersConfig?.calculation) {
+                setWith(
+                  chartConfig,
+                  "interactiveFiltersConfig.calculation",
+                  { active: false, type: "identity" },
+                  Object
+                );
+              }
+            }
+          }
+        },
+        options: {
+          showStandardError: {},
+        },
+      },
+      {
+        field: "y",
+        optional: false,
+        idAttributes: ["componentId"],
+        componentTypes: [
+          "TemporalDimension",
+          "TemporalEntityDimension",
+          "TemporalOrdinalDimension",
+          "NominalDimension",
+          "OrdinalDimension",
+          "GeoCoordinatesDimension",
+          "GeoShapesDimension",
+        ],
+        filters: true,
+        sorting: [
+          { sortingType: "byAuto", sortingOrder: ["asc", "desc"] },
+          { sortingType: "byMeasure", sortingOrder: ["asc", "desc"] },
+          { sortingType: "byDimensionLabel", sortingOrder: ["asc", "desc"] },
+        ],
+        onChange: (id, { chartConfig, dimensions }) => {
+          const component = dimensions.find((d) => d.id === id);
+
+          if (!isTemporalDimension(component)) {
+            setWith(
+              chartConfig,
+              "interactiveFiltersConfig.timeRange.active",
+              false,
+              Object
+            );
+          }
+        },
+        options: {
+          useAbbreviations: {},
+        },
+      },
+      {
+        field: "segment",
+        optional: true,
+        idAttributes: ["componentId"],
+        componentTypes: SEGMENT_ENABLED_COMPONENTS,
+        filters: true,
+        sorting: BAR_SEGMENT_SORTING,
+        onChange: (id, options) => {
+          const { chartConfig, dimensions, measures } = options;
+          defaultSegmentOnChange(id, options);
+
+          const components = [...dimensions, ...measures];
+          const segment: ColumnSegmentField = get(
+            chartConfig,
+            "fields.segment"
+          );
+          const xComponent = components.find(
+            (d) => d.id === chartConfig.fields.x.componentId
+          );
+          setWith(
+            chartConfig,
+            "fields.segment",
+            {
+              ...segment,
+              type: disableStacked(xComponent) ? "grouped" : "stacked",
+            },
+            Object
+          );
+        },
+        options: {
+          calculation: {
+            getDisabledState: (chartConfig) => {
+              const grouped = chartConfig.fields.segment?.type === "grouped";
+
+              return {
+                disabled: grouped,
+                warnMessage: grouped
+                  ? t({
+                      id: "controls.calculation.disabled-by-grouped",
+                      message:
+                        "100% mode cannot be used with a grouped layout.",
+                    })
+                  : undefined,
+              };
+            },
+          },
+          chartSubType: {
+            getValues: (chartConfig, dimensions) => {
+              const xId = chartConfig.fields.x.componentId;
+              const xDimension = dimensions.find((d) => d.id === xId);
+              const disabledStacked = disableStacked(xDimension);
+
+              return [
+                {
+                  value: "stacked",
+                  disabled: disabledStacked,
+                  warnMessage: disabledStacked
+                    ? t({
+                        id: "controls.segment.stacked.disabled-by-scale-type",
+                        message:
+                          "Stacked layout can only be enabled if the vertical axis dimension has a ratio scale.",
+                      })
+                    : undefined,
+                },
+                {
+                  value: "grouped",
+                  disabled: false,
+                },
+              ];
+            },
+            onChange: (d, { chartConfig }) => {
+              if (chartConfig.interactiveFiltersConfig && d === "grouped") {
+                const path = "interactiveFiltersConfig.calculation";
+                setWith(chartConfig, path, { active: false, type: "identity" });
+              }
+            },
+          },
+          colorPalette: {},
+          useAbbreviations: {},
+        },
+      },
+      ANIMATION_FIELD_SPEC,
+    ],
+    interactiveFilters: ["legend", "timeRange", "animation"],
+  },
+
   line: {
     chartType: "line",
     encodings: [

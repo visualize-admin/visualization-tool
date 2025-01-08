@@ -1,4 +1,4 @@
-import percySnapshot from "@percy/playwright";
+import { argosScreenshot } from "@argos-ci/playwright";
 
 import { setup, sleep } from "./common";
 
@@ -16,13 +16,12 @@ testFn(
     await actions.chart.createFrom({
       iri: "https://environment.ld.admin.ch/foen/fab_hierarchy_test13_switzerland_canton_municipality/3",
       dataSource: "Int",
-      chartLoadedOptions: { timeout: 60 * 1000 },
     });
     await selectors.edition.drawerLoaded();
     await actions.editor.changeChartType("Map");
-    await selectors.chart.loaded({ timeout: 240_000 });
+    await selectors.chart.loaded();
 
     await sleep(2_000);
-    await percySnapshot(page, "chart-map-high-filter-value-count");
+    argosScreenshot(page, `chart-map-high-filter-value-count`);
   }
 );

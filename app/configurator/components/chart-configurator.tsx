@@ -30,7 +30,7 @@ import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import {
   getPossibleFiltersQueryVariables,
   skipPossibleFiltersQuery,
-} from "@/charts/shared/ensure-possible-filters";
+} from "@/charts/shared/possible-filters";
 import { HEADER_HEIGHT } from "@/components/header-constants";
 import {
   MetadataPanel,
@@ -45,10 +45,9 @@ import {
   DashboardFiltersConfig,
   DataSource,
   Filters,
-  getChartConfig,
-  getChartConfigFilters,
   isMapConfig,
-} from "@/configurator";
+} from "@/config-types";
+import { getChartConfig, getChartConfigFilters } from "@/config-utils";
 import { ChartAnnotator } from "@/configurator/components/annotators";
 import {
   ControlSection,
@@ -61,8 +60,8 @@ import {
   ControlTabField,
   DataFilterSelect,
   DataFilterTemporal,
-  OnOffControlTabField,
   dimensionToFieldProps,
+  OnOffControlTabField,
 } from "@/configurator/components/field";
 import { canRenderDatePickerField } from "@/configurator/components/field-date-picker";
 import {
@@ -73,14 +72,14 @@ import {
 } from "@/configurator/configurator-state";
 import { useInteractiveDataFilterToggle } from "@/configurator/interactive-filters/interactive-filters-config-state";
 import {
-  InteractiveFilterToggle,
   InteractiveFiltersConfigurator,
+  InteractiveFilterToggle,
 } from "@/configurator/interactive-filters/interactive-filters-configurator";
 import {
   Dimension,
-  Measure,
   isStandardErrorDimension,
   isTemporalDimension,
+  Measure,
 } from "@/domain/data";
 import { isMostRecentValue } from "@/domain/most-recent-value";
 import { truthy } from "@/domain/types";

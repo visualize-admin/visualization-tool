@@ -3,6 +3,7 @@ import {
   ChartConfig,
   ChartType,
   ColorField,
+  ColorMapping,
   ConfiguratorState,
   DashboardFiltersConfig,
   DataSource,
@@ -183,6 +184,7 @@ export type ConfiguratorStateAction =
       value: {
         field: string;
         colorConfigPath: string | undefined;
+        colorMapping?: ColorMapping;
         dimensionId: string;
         values: DimensionValue[];
         random: boolean;

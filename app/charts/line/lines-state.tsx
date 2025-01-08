@@ -122,9 +122,9 @@ const useLinesState = (
   );
 
   const chartWideData = getWideData({
-    dataGroupedByX: preparedDataGroupedByX,
-    xKey,
-    getY,
+    dataGrouped: preparedDataGroupedByX,
+    key: xKey,
+    getAxisValue: getY,
     getSegment,
   });
 
@@ -289,7 +289,7 @@ const useLinesState = (
       xAnchor,
       yAnchor,
       placement,
-      xValue: timeFormatUnit(getX(datum), xDimension.timeUnit),
+      value: timeFormatUnit(getX(datum), xDimension.timeUnit),
       datum: {
         label: fields.segment && getSegmentAbbreviationOrLabel(datum),
         value: yValueFormatter(getY(datum)),

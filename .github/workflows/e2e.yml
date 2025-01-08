@@ -3,7 +3,6 @@ name: E2E
 on: [deployment_status]
 jobs:
   e2e:
-    # only runs this job on successful deploy
     if: github.event.deployment_status.state == 'success'
     runs-on: ubuntu-latest
     strategy:
@@ -29,9 +28,12 @@ jobs:
           yarn e2e -- --grep-invert @noci --shard=${{ matrix.shardIndex }}/${{
           matrix.shardTotal }}
         env:
+          ARGOS_BRANCH:
+            ${{ github.event.deployment_status.environment == 'Production' &&
+            'main' || '' }}
           E2E_BASE_URL: ${{ github.event.deployment_status.target_url }}
-          PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
           E2E_HAR: ${{ secrets.E2E_HAR }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload blob report to GitHub Actions Artifacts
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
@@ -39,14 +41,6 @@ jobs:
           name: blob-report-${{ matrix.shardIndex }}
           path: blob-report
           retention-days: 1
-      - name: Upload E2E artifacts to job
-        uses: actions/upload-artifact@v3
-        if: failure()
-        with:
-          name: e2e-screenshots
-          path: |
-            e2e-screenshots
-            playwright-report
   merge-reports:
     if: ${{ !cancelled() }}
     needs: [e2e]
@@ -57,7 +51,7 @@ jobs:
         with:
           # fetch all commits so we can find the branch
           fetch-depth: 0
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: 18.x
           cache: "yarn"

@@ -12,12 +12,13 @@ import { useLoadingState } from "@/charts/shared/chart-loading-state";
 import {
   getPossibleFiltersQueryVariables,
   skipPossibleFiltersQuery,
-} from "@/charts/shared/ensure-possible-filters";
+} from "@/charts/shared/possible-filters";
 import Flex from "@/components/flex";
 import { Select } from "@/components/form";
 import { Loading } from "@/components/hint";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import SelectTree, { Tree } from "@/components/select-tree";
+import { useChartConfigFilters } from "@/config-utils";
 import {
   areDataFiltersActive,
   ChartConfig,
@@ -26,7 +27,6 @@ import {
   Filters,
   getFiltersByMappingStatus,
   SingleFilters,
-  useChartConfigFilters,
   useConfiguratorState,
 } from "@/configurator";
 import { FieldLabel, LoadingIndicator } from "@/configurator/components/field";

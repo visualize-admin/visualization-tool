@@ -12,14 +12,16 @@ import {
   ConfiguratorStatePublished,
   ConfiguratorStatePublishing,
   enableLayouting,
-  extractSingleFilters,
   FilterValue,
   GenericField,
+  isColorFieldInConfig,
+} from "@/config-types";
+import {
+  extractSingleFilters,
   getChartConfig,
   getChartConfigFilters,
-  isColorFieldInConfig,
   isSingleFilters,
-} from "@/config-types";
+} from "@/config-utils";
 import { Dimension, isJoinByComponent, ObservationValue } from "@/domain/data";
 import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
 import { mkJoinById } from "@/graphql/join";

@@ -180,6 +180,10 @@ msgstr "Bearbeiten"
 msgid "chart-controls.edit-tab-label"
 msgstr "Tab-Titel editieren"
 
+#: app/components/chart-shared.tsx
+msgid "chart-controls.export"
+msgstr "Export"
+
 #: app/components/dataset-metadata.tsx
 msgid "chart-controls.sparql-query"
 msgstr "SPARQL-Abfrage"

@@ -39,12 +39,12 @@ const RulerInner = (props: RulerInnerProps) => {
     | ComboLineSingleState
     | ComboLineDualState
     | ComboLineColumnState;
-  const { xAnchor, xValue, datum, placement, values } = getAnnotationInfo(d);
+  const { xAnchor, value, datum, placement, values } = getAnnotationInfo(d);
 
   return (
     <RulerContent
       rotate={rotate}
-      xValue={xValue}
+      xValue={value}
       values={values}
       chartHeight={bounds.chartHeight}
       margins={bounds.margins}

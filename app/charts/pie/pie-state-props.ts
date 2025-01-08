@@ -11,7 +11,8 @@ import {
   useSegmentVariables,
 } from "@/charts/shared/chart-state";
 import { useRenderingKeyVariable } from "@/charts/shared/rendering-utils";
-import { PieConfig, useChartConfigFilters } from "@/configurator";
+import { useChartConfigFilters } from "@/config-utils";
+import { PieConfig } from "@/configurator";
 
 import { ChartProps } from "../shared/ChartProps";
 

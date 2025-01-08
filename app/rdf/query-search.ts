@@ -182,8 +182,8 @@ const mkScoresQuery = (
       schema:name ?title ;
       schema:workExample <https://ld.admin.ch/application/visualize> ;
       visualize:hasDimension ?dimensionIri ;
-      <themeIris> ?themeIris ;
-      <themeLabels> ?themeLabels .
+      visualize:hasThemeIris ?themeIris ;
+      visualize:hasThemeLabels ?themeLabels .
 
     ?dimensionIri
       visualize:hasTimeUnit ?unitType ;
