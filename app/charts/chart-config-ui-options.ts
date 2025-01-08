@@ -29,6 +29,8 @@ import {
   ComboLineSingleConfig,
   ComponentType,
   GenericField,
+  getAnimationField,
+  isSortingInConfig,
   LineConfig,
   MapConfig,
   PaletteType,
@@ -37,25 +39,23 @@ import {
   SortingOrder,
   SortingType,
   TableConfig,
-  getAnimationField,
-  isSortingInConfig,
-  makeMultiFilter,
 } from "@/config-types";
+import { makeMultiFilter } from "@/config-utils";
 import { getFieldLabel } from "@/configurator/components/field-i18n";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import {
   ANIMATION_ENABLED_COMPONENTS,
   Component,
   Dimension,
-  MULTI_FILTER_ENABLED_COMPONENTS,
-  Measure,
-  Observation,
-  SEGMENT_ENABLED_COMPONENTS,
   isNumericalMeasure,
   isOrdinalMeasure,
   isTemporalDimension,
   isTemporalEntityDimension,
   isTemporalOrdinalDimension,
+  Measure,
+  MULTI_FILTER_ENABLED_COMPONENTS,
+  Observation,
+  SEGMENT_ENABLED_COMPONENTS,
 } from "@/domain/data";
 import { getDefaultCategoricalPaletteName, getPalette } from "@/palettes";
 

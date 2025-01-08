@@ -7,9 +7,9 @@ import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { TooltipTitle } from "@/components/tooltip-utils";
 import {
   ConfiguratorStateConfiguringChart,
-  getChartConfig,
   isAnimationInConfig,
 } from "@/config-types";
+import { getChartConfig } from "@/config-utils";
 import {
   ControlSection,
   ControlSectionContent,

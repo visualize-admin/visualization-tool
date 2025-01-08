@@ -36,11 +36,10 @@ import {
   Filters,
   GenericField,
   GenericFields,
-  getChartConfig,
   isAreaConfig,
   isTableConfig,
-  makeMultiFilter,
 } from "@/config-types";
+import { getChartConfig, makeMultiFilter } from "@/config-utils";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { toggleInteractiveFilterDataDimension } from "@/configurator/interactive-filters/interactive-filters-config-state";
