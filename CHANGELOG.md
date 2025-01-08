@@ -23,6 +23,8 @@ You can also check the
   - Sorting dataset results by score option is now correctly available to select
   - Created with visualize.admin.ch footnote is only displayed once, not twice,
     when downloading an image of a published chart
+  - Changing dates manually using keyboard works correctly now in date picker
+    inputs
 - Styles
   - Updated dataset result borders to match the design
 - Maintenance
