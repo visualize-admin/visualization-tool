@@ -97,10 +97,6 @@ const useStyles = makeStyles<
   },
   panelBannerWrapper: {
     position: "static",
-    display: "grid",
-    gridTemplateColumns:
-      "minmax(12rem, 20rem) minmax(22rem, 1fr) minmax(12rem, 20rem)",
-    gridTemplateAreas: `". banner ."`,
     minHeight: BANNER_HEIGHT,
     marginTop: BANNER_MARGIN_TOP,
     backgroundColor: theme.palette.primary.light,
@@ -109,7 +105,6 @@ const useStyles = makeStyles<
     maxWidth: 1400,
     margin: "auto",
     padding: theme.spacing(4),
-    gridArea: "banner",
   },
   panelBannerContent: {
     flexDirection: "column",
