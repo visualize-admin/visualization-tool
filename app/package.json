@@ -85,7 +85,7 @@
     "micro": "^9.3.4",
     "microee": "^0.0.6",
     "mitt": "^3.0.1",
-    "nanoid": "^3.1.12",
+    "nanoid": "^5.0.9",
     "next-auth": "4.24.11",
     "nextkit": "^3.4.3",
     "notistack": "^3.0.1",
