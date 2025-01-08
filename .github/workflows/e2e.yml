@@ -21,7 +21,7 @@ jobs:
           cache: "yarn"
           cache-dependency-path: "**/yarn.lock"
       - name: Install dependencies
-        run: yarn install --immutable
+        run: yarn install --immutable --prefer-offline
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps chromium
       - name: Run Playwright tests
@@ -58,7 +58,7 @@ jobs:
           cache: "yarn"
           cache-dependency-path: "**/yarn.lock"
       - name: Install dependencies
-        run: yarn install --immutable
+        run: yarn install --immutable --prefer-offline
 
       - name: Download blob reports from GitHub Actions Artifacts
         uses: actions/download-artifact@v4

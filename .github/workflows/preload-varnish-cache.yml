@@ -15,7 +15,7 @@ jobs:
           cache: "yarn"
           cache-dependency-path: "**/yarn.lock"
       - name: Install dependencies
-        run: yarn install --immutable
+        run: yarn install --immutable --prefer-offline
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps chromium
       - name: Run Playwright test to preload Varnish cache
