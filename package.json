@@ -23,7 +23,7 @@
     "start": "yarn db:migrate && GLOBAL_AGENT_ENVIRONMENT_VARIABLE_NAMESPACE='' NO_PROXY='localhost,127.0.0.1' next start ./app -p $PORT",
     "typecheck": "tsc --noEmit -p ./app && tsc --noEmit -p ./embed",
     "lint": "eslint app -c .eslintrc.json",
-    "knip": "npx knip",
+    "knip": "npx knip --tags=-internal",
     "locales:extract": "NODE_ENV=development lingui extract --clean; ./scripts/strip-locale-line-numbers.sh",
     "locales:compile": "lingui compile --verbose",
     "locales:sync": "dotenv -- accent sync --add-translations --merge-type=passive --order-by=key; yarn locales:extract # putting back file location comments",
