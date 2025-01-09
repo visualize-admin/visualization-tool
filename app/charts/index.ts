@@ -464,6 +464,11 @@ export const getInitialConfig = (
             sorting: DEFAULT_SORTING,
           },
           x: { componentId: numericalMeasures[0].id },
+          color: {
+            type: "single",
+            paletteId: DEFAULT_CATEGORICAL_PALETTE_ID,
+            color: theme.palette.primary.main,
+          },
         },
       };
     case "line":
@@ -1111,24 +1116,28 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         measures,
       }) => {
         let newSegment: ColumnSegmentField | undefined;
+        let newColor: ColorField | undefined;
+
         const xMeasure = measures.find(
           (d) => d.id === newChartConfig.fields.x.componentId
         );
 
         // When switching from a table chart, a whole fields object is passed as oldValue.
         if (oldChartConfig.chartType === "table") {
-          const tableSegment = convertTableFieldsToSegmentField({
-            fields: oldValue as TableFields,
-            dimensions,
-            measures,
-          });
+          const maybeSegmentAndColorFields =
+            convertTableFieldsToSegmentAndColorFields({
+              fields: oldValue as TableFields,
+              dimensions,
+              measures,
+            });
 
-          if (tableSegment) {
+          if (maybeSegmentAndColorFields) {
             newSegment = {
-              ...tableSegment,
+              ...maybeSegmentAndColorFields.segment,
               sorting: DEFAULT_SORTING,
               type: disableStacked(xMeasure) ? "grouped" : "stacked",
             };
+            newColor = maybeSegmentAndColorFields.color;
           }
           // Otherwise we are dealing with a segment field. We shouldn't take
           // the segment from oldValue if the component has already been used as
@@ -1148,11 +1157,22 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
             }),
             type: disableStacked(xMeasure) ? "grouped" : "stacked",
           };
+          newColor = {
+            type: "segment",
+            paletteId: DEFAULT_CATEGORICAL_PALETTE_ID,
+            colorMapping: mapValueIrisToColor({
+              paletteId: DEFAULT_CATEGORICAL_PALETTE_ID,
+              dimensionValues:
+                dimensions.find((d) => d.id === oldValue.componentId)?.values ||
+                [],
+            }),
+          };
         }
 
         return produce(newChartConfig, (draft) => {
-          if (newSegment) {
+          if (newSegment && newColor?.type === "segment") {
             draft.fields.segment = newSegment;
+            draft.fields.color = newColor;
           }
         });
       },

@@ -541,7 +541,7 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
           chartConfig={chartConfig}
           components={components}
           hasColorPalette={hasColorPalette}
-          hasSubOptions={hasSubOptions}
+          hasSubOptions={!!hasSubOptions}
           measures={measures}
         />
       )}

@@ -314,6 +314,7 @@ export type ColumnConfig = t.TypeOf<typeof ColumnConfig>;
 const LineSegmentField = t.intersection([GenericField, SortingField]);
 
 const BarSegmentField = t.intersection([
+  GenericField,
   SortingField,
   t.type({ type: ChartSubType }),
 ]);
@@ -323,6 +324,7 @@ const BarFields = t.intersection([
   t.type({
     x: GenericField,
     y: t.intersection([GenericField, SortingField]),
+    color: t.union([SegmentColorField, SingleColorField]),
   }),
   t.partial({
     segment: BarSegmentField,

@@ -32,7 +32,6 @@ import {
   getAnimationField,
   isSortingInConfig,
   LineConfig,
-  makeMultiFilter,
   MapColorField,
   MapConfig,
   PaletteType,
@@ -42,6 +41,7 @@ import {
   SortingType,
   TableConfig,
 } from "@/config-types";
+import { makeMultiFilter } from "@/config-utils";
 import { getFieldLabel } from "@/configurator/components/field-i18n";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import {
