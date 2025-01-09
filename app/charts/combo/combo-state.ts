@@ -1,5 +1,12 @@
 import { extent, groups, max, min, sum } from "d3-array";
-import { scaleLinear, scaleOrdinal, scaleTime } from "d3-scale";
+import {
+  ScaleBand,
+  ScaleLinear,
+  scaleLinear,
+  scaleOrdinal,
+  ScaleTime,
+  scaleTime,
+} from "d3-scale";
 import { useMemo } from "react";
 
 import { useSize } from "@/charts/shared/use-size";
@@ -107,7 +114,7 @@ export const useYScales = (options: UseLeftRightYScalesOptions) => {
   const { scalesData, paddingData, getY, getMinY: _getMinY } = options;
   const getMinY = (data: Observation[]) => {
     return Array.isArray(_getMinY)
-      ? min(_getMinY.map((gmy) => gmy(data))) ?? 0
+      ? (min(_getMinY.map((gmy) => gmy(data))) ?? 0)
       : _getMinY(data);
   };
   const getMaxY = (o: Observation) => {
@@ -140,9 +147,9 @@ export const getMargins = (options: GetMarginsOptions) => {
 };
 
 type Scale =
-  | d3.ScaleTime<number, number>
-  | d3.ScaleBand<string>
-  | d3.ScaleLinear<number, number>;
+  | ScaleTime<number, number>
+  | ScaleBand<string>
+  | ScaleLinear<number, number>;
 
 export const adjustScales = (
   xScales: Scale[],
