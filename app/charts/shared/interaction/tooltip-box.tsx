@@ -23,14 +23,14 @@ export type TooltipPlacement = {
   y: YPlacement;
 };
 
-export interface TooltipBoxProps {
+type TooltipBoxProps = {
   x: number | undefined;
   y: number | undefined;
   placement: TooltipPlacement;
   withTriangle?: boolean;
   margins: Margins;
   children: ReactNode;
-}
+};
 
 const Portal = ({ children }: { children: ReactNode }) => {
   return ReactDOM.createPortal(children, document.body);

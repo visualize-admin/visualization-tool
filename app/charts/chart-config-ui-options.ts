@@ -289,13 +289,13 @@ export interface EncodingSpec<T extends ChartConfig = ChartConfig> {
 // dataFilters is enabled by default
 type InteractiveFilterType = "legend" | "timeRange" | "animation";
 
-export interface ChartSpec<T extends ChartConfig = ChartConfig> {
+type ChartSpec<T extends ChartConfig = ChartConfig> = {
   chartType: ChartType;
   encodings: EncodingSpec<T>[];
   interactiveFilters: InteractiveFilterType[];
-}
+};
 
-interface ChartSpecs {
+type ChartSpecs = {
   area: ChartSpec<AreaConfig>;
   column: ChartSpec<ColumnConfig>;
   bar: ChartSpec<BarConfig>;
@@ -307,7 +307,7 @@ interface ChartSpecs {
   comboLineSingle: ChartSpec<ComboLineSingleConfig>;
   comboLineDual: ChartSpec<ComboLineDualConfig>;
   comboLineColumn: ChartSpec<ComboLineColumnConfig>;
-}
+};
 
 const getDefaultSegmentSorting = <
   T extends ChartConfig = ChartConfig,

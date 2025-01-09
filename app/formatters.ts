@@ -228,7 +228,7 @@ export const getFormatFullDateAuto = (formatters: LocalDateFormatters) => {
   };
 };
 
-export type LocalDateFormatters = ReturnType<typeof getFormattersForLocale>;
+type LocalDateFormatters = ReturnType<typeof getFormattersForLocale>;
 
 /**
  * Formats dates automatically based on their precision in LONG form.

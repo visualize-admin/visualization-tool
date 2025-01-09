@@ -8,9 +8,8 @@ import {
   ControlSection,
   SectionTitle,
 } from "@/configurator/components/chart-controls/section";
+import { IconButton } from "@/configurator/components/icon-button";
 import { getPalette } from "@/palettes";
-
-import { IconButton } from "../configurator/components/icon-button";
 
 import type { Meta, StoryObj } from "@storybook/react";
 

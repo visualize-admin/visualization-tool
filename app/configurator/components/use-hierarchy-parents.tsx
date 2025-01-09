@@ -18,6 +18,7 @@ export const groupByParents = (hierarchy: HierarchyValue[]) => {
  * to graphviz.
  *
  * @see https://dreampuf.github.io/GraphvizOnline/
+ * @internal
  */
 export const hierarchyToGraphviz = (hierarchy: HierarchyValue[]) => {
   const lines = [] as string[];

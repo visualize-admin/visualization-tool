@@ -60,7 +60,7 @@ type InteractiveFiltersStateActions = {
   setCalculationType: (calculationType: CalculationType) => void;
 };
 
-export type State = InteractiveFiltersState & InteractiveFiltersStateActions;
+type State = InteractiveFiltersState & InteractiveFiltersStateActions;
 
 const interactiveFiltersStoreCreator: StateCreator<State> = (set) => {
   return {
@@ -134,7 +134,7 @@ const interactiveFiltersStoreCreator: StateCreator<State> = (set) => {
   };
 };
 
-export type InteractiveFiltersStore = StoreApi<State>;
+type InteractiveFiltersStore = StoreApi<State>;
 export type InteractiveFiltersContextValue = [
   UseBoundStore<StoreApi<State>>["getState"],
   UseBoundStoreWithSelector<StoreApi<State>>,

@@ -123,7 +123,7 @@ const comboDifferentUnitChartTypes: ComboChartType[] = [
   "comboLineColumn",
 ];
 
-export const comboSameUnitChartTypes: ComboChartType[] = ["comboLineSingle"];
+const comboSameUnitChartTypes: ComboChartType[] = ["comboLineSingle"];
 
 export const comboChartTypes: ComboChartType[] = [
   ...comboSameUnitChartTypes,
@@ -1185,7 +1185,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
                 "sorting" in oldSegment &&
                 oldSegment.sorting &&
                 "sortingOrder" in oldSegment.sorting
-                  ? oldSegment.sorting ?? DEFAULT_FIXED_COLOR_FIELD
+                  ? (oldSegment.sorting ?? DEFAULT_FIXED_COLOR_FIELD)
                   : DEFAULT_SORTING,
             };
           }
@@ -1537,8 +1537,8 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
             .filter((d) => d.unit === unit)
             .map((d) => d.id);
           const palette = isSegmentInConfig(oldChartConfig)
-            ? oldChartConfig.fields.segment?.palette ??
-              DEFAULT_CATEGORICAL_PALETTE_NAME
+            ? (oldChartConfig.fields.segment?.palette ??
+              DEFAULT_CATEGORICAL_PALETTE_NAME)
             : isComboChartConfig(oldChartConfig)
               ? oldChartConfig.fields.y.palette
               : DEFAULT_CATEGORICAL_PALETTE_NAME;
@@ -1650,8 +1650,8 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         leftMeasure = getLeftMeasure(leftMeasure.id);
 
         const palette = isSegmentInConfig(oldChartConfig)
-          ? oldChartConfig.fields.segment?.palette ??
-            DEFAULT_CATEGORICAL_PALETTE_NAME
+          ? (oldChartConfig.fields.segment?.palette ??
+            DEFAULT_CATEGORICAL_PALETTE_NAME)
           : isComboChartConfig(oldChartConfig)
             ? oldChartConfig.fields.y.palette
             : DEFAULT_CATEGORICAL_PALETTE_NAME;
@@ -1742,8 +1742,8 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         ).id;
 
         const palette = isSegmentInConfig(oldChartConfig)
-          ? oldChartConfig.fields.segment?.palette ??
-            DEFAULT_CATEGORICAL_PALETTE_NAME
+          ? (oldChartConfig.fields.segment?.palette ??
+            DEFAULT_CATEGORICAL_PALETTE_NAME)
           : isComboChartConfig(oldChartConfig)
             ? oldChartConfig.fields.y.palette
             : DEFAULT_CATEGORICAL_PALETTE_NAME;
