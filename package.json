@@ -89,6 +89,7 @@
     "eslint-plugin-visualize-admin": "link:./eslint/visualize-admin",
     "fs-extra": "^10.0.0",
     "import-move-codemod": "^0.0.3",
+    "knip": "^5.42.0",
     "madge": "^6.1.0",
     "prettier": "^2.1.2",
     "rollup": "^2.52.2",
