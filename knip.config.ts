@@ -12,6 +12,7 @@ const config: KnipConfig = {
     "./app/graphql/resolver-types.ts",
     "./app/pages/docs/**/*",
     "./app/static-pages/**/*",
+    "./app/templates/email/**/*",
     "./app/typings/**/*",
     "./codemods/**/*",
     "./e2e/**/*",
