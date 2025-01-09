@@ -1,4 +1,4 @@
-name: Lint & Typecheck & Test
+name: Basic checks (lint, typecheck, unit tests)
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  lint-typecheck-test:
+  basic-checks:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
