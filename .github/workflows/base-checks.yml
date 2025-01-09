@@ -22,4 +22,5 @@ jobs:
           cache: "yarn"
           cache-dependency-path: "**/yarn.lock"
       - run: yarn install --immutable --prefer-offline
+      - run: yarn lingui compile
       - run: yarn ${{ matrix.job }}
