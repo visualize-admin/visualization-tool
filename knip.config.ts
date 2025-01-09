@@ -1,4 +1,5 @@
 import { KnipConfig } from "knip";
+import mdx from "knip/dist/compilers/mdx";
 
 const config: KnipConfig = {
   paths: {
@@ -56,7 +57,6 @@ const config: KnipConfig = {
     "@types/fs-extra",
     // Used in Storybook.
     "storybook",
-    "@storybook/blocks",
     "@storybook/nextjs",
     // Used in e2e and scripts. Not sure why it's not detected.
     "isomorphic-unfetch",
@@ -78,6 +78,9 @@ const config: KnipConfig = {
   rules: {
     binaries: "warn",
     unresolved: "warn",
+  },
+  compilers: {
+    mdx: mdx.compiler,
   },
 };
 
