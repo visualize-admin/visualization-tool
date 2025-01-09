@@ -1,8 +1,8 @@
-import { useMemo } from "react";
-
 import { max } from "d3-array";
 import { ScaleLinear } from "d3-scale";
+import { useMemo } from "react";
 
+import { TITLE_VPADDING } from "@/charts/combo/combo-line-container";
 import { TICK_PADDING } from "@/charts/shared/axis-height-linear";
 import { BRUSH_BOTTOM_SPACE } from "@/charts/shared/brush/constants";
 import { getTickNumber } from "@/charts/shared/ticks";
@@ -17,8 +17,6 @@ import {
   useConfiguratorState,
 } from "@/configurator";
 import { getTextWidth } from "@/utils/get-text-width";
-
-import { TITLE_VPADDING } from "@/charts/combo/combo-line-container";
 
 type ComputeChartPaddingProps = {
   yScale: ScaleLinear<number, number>;

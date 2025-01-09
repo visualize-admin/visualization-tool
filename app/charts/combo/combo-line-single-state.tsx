@@ -1,4 +1,5 @@
 import { mean } from "d3-array";
+import { ScaleLinear, ScaleOrdinal, ScaleTime } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
 import { PropsWithChildren } from "react";
 
@@ -34,7 +35,6 @@ import { Observation } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { useIsMobile } from "@/utils/use-is-mobile";
 
-import { ScaleLinear, ScaleOrdinal, ScaleTime } from "d3-scale";
 import { ChartProps } from "../shared/ChartProps";
 
 export type ComboLineSingleState = CommonChartState &
