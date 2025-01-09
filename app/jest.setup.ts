@@ -9,6 +9,12 @@ import * as ns from "@/rdf/namespace";
 
 import { GRAPHQL_ENDPOINT } from "./domain/env";
 
+jest.mock("nanoid", () => {
+  return {
+    nanoid: () => "nanoid",
+  };
+});
+
 // @ts-ignore Ignoring cannot be compiled as isolated module warning. It's working.
 jest.mock("@lingui/macro", () => {
   return {

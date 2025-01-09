@@ -3,11 +3,6 @@ import { groups } from "d3-array";
 import { HierarchyValue } from "@/domain/data";
 import { bfs } from "@/utils/bfs";
 
-export type HierarchyParents = [
-  HierarchyValue[],
-  { node: HierarchyValue; parents: HierarchyValue[] }[],
-][];
-
 export const groupByParents = (hierarchy: HierarchyValue[]) => {
   const allHierarchyValues = bfs(hierarchy, (node, { depth, parents }) => ({
     node,

@@ -356,7 +356,7 @@ const LINE_SEGMENT_SORTING: EncodingSortingOption<LineConfig>[] = [
 ];
 
 export const COLUMN_SEGMENT_SORTING = getDefaultSegmentSorting<ColumnConfig>();
-export const BAR_SEGMENT_SORTING = getDefaultSegmentSorting<BarConfig>();
+const BAR_SEGMENT_SORTING = getDefaultSegmentSorting<BarConfig>();
 
 export const PIE_SEGMENT_SORTING: EncodingSortingOption<PieConfig>[] = [
   { sortingType: "byAuto", sortingOrder: ["asc", "desc"] },

@@ -232,7 +232,7 @@ const CautionAlert = ({
   );
 };
 
-export type SearchOptions =
+type SearchOptions =
   | {
       type: "temporal";
       id: ComponentId;
@@ -298,7 +298,7 @@ const inferJoinBy = (
   );
 };
 
-export type JoinBy = ReturnType<typeof inferJoinBy>;
+type JoinBy = ReturnType<typeof inferJoinBy>;
 
 const PreviewDataTable = ({
   existingCubes,

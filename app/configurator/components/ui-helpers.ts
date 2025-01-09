@@ -106,7 +106,7 @@ export const getTimeIntervalFormattedSelectOptions = ({
   });
 };
 
-export const getErrorMeasure = (
+const getErrorMeasure = (
   {
     dimensions,
     measures,

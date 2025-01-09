@@ -21,8 +21,6 @@ import { ControlTabField } from "@/configurator/components/field";
 import { useDataCubesComponentsQuery } from "@/graphql/hooks";
 import { useLocale } from "@/locales/use-locale";
 
-export type InteractiveFilterType = "legend" | "timeRange" | "dataFilters";
-
 export const InteractiveFiltersConfigurator = ({
   state,
 }: {
