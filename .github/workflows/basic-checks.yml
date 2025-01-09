@@ -9,6 +9,9 @@ on:
 jobs:
   basic-checks:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        job: [lint, typecheck, test]
     steps:
       - uses: actions/checkout@v4
       - name: Setup node
@@ -18,6 +21,4 @@ jobs:
           cache: "yarn"
           cache-dependency-path: "**/yarn.lock"
       - run: yarn install --immutable --prefer-offline
-      - run: yarn lint
-      - run: yarn typecheck
-      - run: yarn test
+      - run: yarn ${{ matrix.job }}
