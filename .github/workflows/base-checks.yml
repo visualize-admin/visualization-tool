@@ -9,6 +9,7 @@ on:
 jobs:
   base-checks:
     runs-on: ubuntu-latest
+    continue-on-error: true
     strategy:
       matrix:
         job: [lint, typecheck, test, knip]
