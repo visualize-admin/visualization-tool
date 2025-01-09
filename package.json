@@ -84,7 +84,7 @@
     "babel-core": "^7.0.0-bridge.0",
     "babel-plugin-macros": "^3.0.0",
     "chromatic": "^11.4.0",
-    "eslint": "^7.29.0",
+    "eslint": "^8.57.1",
     "eslint-config-next": "^14.2.23",
     "eslint-plugin-deprecate": "^0.8.5",
     "eslint-plugin-import": "^2.31.0",
