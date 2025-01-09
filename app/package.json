@@ -13,6 +13,7 @@
     "build": "yarn workspace @visualize-admin/visualization-tool run build"
   },
   "dependencies": {
+    "@apollo/client": "^3.3.20",
     "@apollo/server-plugin-landing-page-graphql-playground": "^4.0.1",
     "@babel/standalone": "^7.11.6",
     "@deck.gl/core": "^8.9.35",
@@ -49,6 +50,7 @@
     "@visx/text": "^2.12.2",
     "@zazuko/cube-hierarchy-query": "^3.0.0",
     "apollo-server-micro": "^3.0.0",
+    "apollo-server-plugin-base": "3.7.2",
     "autosuggest-highlight": "^3.3.4",
     "catalog": "^4.0.1-canary.2",
     "clipboard-polyfill": "^3.0.1",
@@ -82,6 +84,7 @@
     "flexsearch": "^0.6.32",
     "fp-ts": "^2.8.2",
     "framer-motion": "^7.10.3",
+    "geojson": "^0.5.0",
     "github-slugger": "^1.4.0",
     "global-agent": "^2.1.12",
     "graphql": "^15.5.1",
@@ -137,6 +140,7 @@
     "use-sync-external-store": "^1.2.0",
     "vite": "^5.1.5",
     "wellknown": "^0.5.0",
+    "wonka": "4.0.15",
     "zustand": "^4.1.1"
   },
   "peerDependencies": {
