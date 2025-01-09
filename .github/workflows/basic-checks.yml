@@ -1,4 +1,4 @@
-name: Basic checks (lint, typecheck, unit tests)
+name: Basic checks (lint, typecheck, unit tests, knip)
 
 on:
   push:
@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        job: [lint, typecheck, test]
+        job: [lint, typecheck, test, knip]
     steps:
       - uses: actions/checkout@v4
       - name: Setup node
