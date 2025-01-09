@@ -430,5 +430,3 @@ export const generateLayout = function ({
       .exhaustive();
   });
 };
-
-export default ChartGridLayout;

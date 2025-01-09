@@ -44,7 +44,7 @@ type TimeSlider =
       value: string | undefined;
     };
 
-export type InteractiveFiltersStateActions = {
+type InteractiveFiltersStateActions = {
   addCategory: (category: string) => void;
   removeCategory: (category: string) => void;
   resetCategories: () => void;

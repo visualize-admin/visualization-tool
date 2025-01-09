@@ -2,7 +2,14 @@ import { ParsedUrlQuery } from "querystring";
 
 import { PUBLISHED_STATE } from "@prisma/client";
 import { NextRouter, useRouter } from "next/router";
-import { Dispatch, createContext, useContext, useEffect, useMemo } from "react";
+import {
+  createContext,
+  Dispatch,
+  PropsWithChildren,
+  useContext,
+  useEffect,
+  useMemo,
+} from "react";
 import { Client, useClient } from "urql";
 import { useImmerReducer } from "use-immer";
 
@@ -37,7 +44,7 @@ const ConfiguratorStateContext = createContext<
   [ConfiguratorState, Dispatch<ConfiguratorStateAction>] | undefined
 >(undefined);
 
-export type ConfiguratorStateProviderProps = React.PropsWithChildren<{
+export type ConfiguratorStateProviderProps = PropsWithChildren<{
   chartId: string;
   initialState?: ConfiguratorState;
   allowDefaultRedirect?: boolean;

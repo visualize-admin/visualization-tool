@@ -6,24 +6,21 @@ import keyBy from "lodash/keyBy";
 import memoize from "lodash/memoize";
 import { useMemo } from "react";
 
+import { parseDate } from "@/configurator/components/ui-helpers";
 import {
   Component,
+  isNumericalMeasure,
+  isTemporalDimension,
   NumericalMeasure,
   TemporalDimension,
   TemporalEntityDimension,
-  isNumericalMeasure,
-  isTemporalDimension,
 } from "@/domain/data";
 import { TimeUnit } from "@/graphql/query-hooks";
+import { getD3FormatLocale, getD3TimeFormatLocale } from "@/locales/locales";
 import { useLocale } from "@/locales/use-locale";
-
-import { parseDate } from "./configurator/components/ui-helpers";
-import { getD3FormatLocale, getD3TimeFormatLocale } from "./locales/locales";
 
 const DIMENSION_VALUE_UNDEFINED = "https://cube.link/Undefined";
 const NO_AVAILABLE_VALUE_RETURN_REPLACEMENT = "–";
-
-export type DateFormatter = (d: string | Date | null) => string;
 
 const isNamedNodeDimension = (d: Component) => {
   const first = d.values?.[0];

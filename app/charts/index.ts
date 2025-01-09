@@ -324,7 +324,7 @@ const getInitialSymbolLayer = ({
   };
 };
 
-export const META: Meta = {
+const META: Meta = {
   title: {
     en: "",
     de: "",

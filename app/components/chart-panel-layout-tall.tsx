@@ -61,7 +61,7 @@ type ChartPanelLayoutTallRow = {
     }
 );
 
-export const getChartPanelLayoutTallRows = (
+const getChartPanelLayoutTallRows = (
   chartConfigs: ChartConfig[],
   renderChart: (chartConfig: ChartConfig) => JSX.Element
 ): ChartPanelLayoutTallRow[] => {
