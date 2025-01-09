@@ -1,4 +1,4 @@
-name: Basic checks (lint, typecheck, unit tests, knip)
+name: Validate
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  basic-checks:
+  base-checks:
     runs-on: ubuntu-latest
     strategy:
       matrix:
