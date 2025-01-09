@@ -325,7 +325,8 @@ const MultiFilterContent = ({
 
   useEnsureUpToDateColorMapping({
     colorComponentValues: colorComponent?.values,
-    colorMapping: colorConfig?.colorMapping,
+    colorMapping:
+      colorConfig?.type !== "single" ? colorConfig?.colorMapping : {},
   });
 
   const interactiveFilterProps = useInteractiveFiltersToggle("legend");
