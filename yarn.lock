@@ -9244,13 +9244,6 @@
   dependencies:
     "@types/node" "*"
 
-"@types/graphql-type-json@^0.3.2":
-  version "0.3.2"
-  resolved "https://registry.npmjs.org/@types/graphql-type-json/-/graphql-type-json-0.3.2.tgz"
-  integrity sha512-c1cq4o8EhY0Z39ua8UXwG8uBs23xBYA/Uw0tXFl6SuTUpkVv/IJqf6pHQbfdC7nwFRhX2ifTOV/UIg0Q/IJsbg==
-  dependencies:
-    graphql "^14.5.3"
-
 "@types/hammerjs@^2.0.41":
   version "2.0.41"
   resolved "https://registry.yarnpkg.com/@types/hammerjs/-/hammerjs-2.0.41.tgz#f6ecf57d1b12d2befcce00e928a6a097c22980aa"
@@ -9505,15 +9498,6 @@
   version "3.0.5"
   resolved "https://registry.yarnpkg.com/@types/pbf/-/pbf-3.0.5.tgz#a9495a58d8c75be4ffe9a0bd749a307715c07404"
   integrity sha512-j3pOPiEcWZ34R6a6mN07mUkM4o4Lwf6hPNt8eilOeZhTFbxFXmKhvXl9Y28jotFPaI1bpPDJsbCprUoNke6OrA==
-
-"@types/pg@^8.6.0":
-  version "8.6.0"
-  resolved "https://registry.npmjs.org/@types/pg/-/pg-8.6.0.tgz"
-  integrity sha512-3JXFrsl8COoqVB1+2Pqelx6soaiFVXzkT3fkuSNe7GB40ysfT0FHphZFPiqIXpMyTHSFRdLTyZzrFBrJRPAArA==
-  dependencies:
-    "@types/node" "*"
-    pg-protocol "*"
-    pg-types "^2.2.0"
 
 "@types/pixelmatch@^5.2.6":
   version "5.2.6"
@@ -11815,11 +11799,6 @@ buffer-indexof-polyfill@~1.0.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/buffer-indexof-polyfill/-/buffer-indexof-polyfill-1.0.2.tgz#d2732135c5999c64b277fcf9b1abe3498254729c"
   integrity sha512-I7wzHwA3t1/lwXQh+A5PbNvJxgfo5r3xulgpYDB5zckTu/Z9oUK9biouBKQUjEqzaz3HnAT6TYoovmE+GqSf7A==
-
-buffer-writer@2.0.0:
-  version "2.0.0"
-  resolved "https://registry.npmjs.org/buffer-writer/-/buffer-writer-2.0.0.tgz"
-  integrity sha512-a7ZpuTZU1TRtnwyCNW3I5dc0wWNC3VR9S++Ewyk2HHZdrO3CQJqSpd+95Us590V6AL7JqUAH2IwZ/398PmNFgw==
 
 buffer-xor@^1.0.3:
   version "1.0.3"
@@ -16276,22 +16255,10 @@ graphql-tools@^7.0.5:
   optionalDependencies:
     "@apollo/client" "~3.2.5 || ~3.3.0"
 
-graphql-type-json@^0.3.2:
-  version "0.3.2"
-  resolved "https://registry.npmjs.org/graphql-type-json/-/graphql-type-json-0.3.2.tgz"
-  integrity sha512-J+vjof74oMlCWXSvt0DOf2APEdZOCdubEvGDUAlqH//VBYcOYsGgRW7Xzorr44LvkjiuvecWc8fChxuZZbChtg==
-
 graphql-ws@^4.4.1:
   version "4.9.0"
   resolved "https://registry.npmjs.org/graphql-ws/-/graphql-ws-4.9.0.tgz"
   integrity sha512-sHkK9+lUm20/BGawNEWNtVAeJzhZeBg21VmvmLoT5NdGVeZWv5PdIhkcayQIAgjSyyQ17WMKmbDijIPG2On+Ag==
-
-graphql@^14.5.3:
-  version "14.7.0"
-  resolved "https://registry.npmjs.org/graphql/-/graphql-14.7.0.tgz"
-  integrity sha512-l0xWZpoPKpppFzMfvVyFmp9vLN7w/ZZJPefUicMCepfJeQ8sMcztloGYY9DfjVPo6tIUDzU5Hw3MUbIjj9AVVA==
-  dependencies:
-    iterall "^1.2.2"
 
 graphql@^15.5.1:
   version "15.5.1"
@@ -17639,7 +17606,7 @@ istanbul-reports@^3.0.2:
     html-escaper "^2.0.0"
     istanbul-lib-report "^3.0.0"
 
-iterall@^1.2.1, iterall@^1.2.2:
+iterall@^1.2.1:
   version "1.3.0"
   resolved "https://registry.npmjs.org/iterall/-/iterall-1.3.0.tgz"
   integrity sha512-QZ9qOMdF+QLHxy1QIpUHUU1D5pS2CG2P69LF6L6CPjPYA/XMOmKV3PZpawHoAjHNyB0swdVTRxdYT4tbBbxqwg==
@@ -20521,11 +20488,6 @@ package-json@^6.3.0:
     registry-url "^5.0.0"
     semver "^6.2.0"
 
-packet-reader@1.0.0:
-  version "1.0.0"
-  resolved "https://registry.npmjs.org/packet-reader/-/packet-reader-1.0.0.tgz"
-  integrity sha512-HAKu/fG3HpHFO0AA8WE8q2g+gBJaZ9MG7fcKk+IJPLTGAD6Psw4443l+9DGRbOIh3/aXr7Phy0TjilYivJo5XQ==
-
 pako@~0.2.0:
   version "0.2.9"
   resolved "https://registry.yarnpkg.com/pako/-/pako-0.2.9.tgz#f3f7522f4ef782348da8161bad9ecfd51bf83a75"
@@ -20781,57 +20743,6 @@ performance-now@^2.1.0:
   version "2.1.0"
   resolved "https://registry.npmjs.org/performance-now/-/performance-now-2.1.0.tgz"
   integrity sha1-Ywn04OX6kT7BxpMHrjZLSzd8nns=
-
-pg-connection-string@^2.5.0:
-  version "2.5.0"
-  resolved "https://registry.npmjs.org/pg-connection-string/-/pg-connection-string-2.5.0.tgz"
-  integrity sha512-r5o/V/ORTA6TmUnyWZR9nCj1klXCO2CEKNRlVuJptZe85QuhFayC7WeMic7ndayT5IRIR0S0xFxFi2ousartlQ==
-
-pg-int8@1.0.1:
-  version "1.0.1"
-  resolved "https://registry.npmjs.org/pg-int8/-/pg-int8-1.0.1.tgz"
-  integrity sha512-WCtabS6t3c8SkpDBUlb1kjOs7l66xsGdKpIPZsg4wR+B3+u9UAum2odSsF9tnvxg80h4ZxLWMy4pRjOsFIqQpw==
-
-pg-pool@^3.3.0:
-  version "3.3.0"
-  resolved "https://registry.npmjs.org/pg-pool/-/pg-pool-3.3.0.tgz"
-  integrity sha512-0O5huCql8/D6PIRFAlmccjphLYWC+JIzvUhSzXSpGaf+tjTZc4nn+Lr7mLXBbFJfvwbP0ywDv73EiaBsxn7zdg==
-
-pg-protocol@*, pg-protocol@^1.5.0:
-  version "1.5.0"
-  resolved "https://registry.npmjs.org/pg-protocol/-/pg-protocol-1.5.0.tgz"
-  integrity sha512-muRttij7H8TqRNu/DxrAJQITO4Ac7RmX3Klyr/9mJEOBeIpgnF8f9jAfRz5d3XwQZl5qBjF9gLsUtMPJE0vezQ==
-
-pg-types@^2.1.0, pg-types@^2.2.0:
-  version "2.2.0"
-  resolved "https://registry.npmjs.org/pg-types/-/pg-types-2.2.0.tgz"
-  integrity sha512-qTAAlrEsl8s4OiEQY69wDvcMIdQN6wdz5ojQiOy6YRMuynxenON0O5oCpJI6lshc6scgAY8qvJ2On/p+CXY0GA==
-  dependencies:
-    pg-int8 "1.0.1"
-    postgres-array "~2.0.0"
-    postgres-bytea "~1.0.0"
-    postgres-date "~1.0.4"
-    postgres-interval "^1.1.0"
-
-pg@^8.3.3, pg@^8.6.0:
-  version "8.6.0"
-  resolved "https://registry.npmjs.org/pg/-/pg-8.6.0.tgz"
-  integrity sha512-qNS9u61lqljTDFvmk/N66EeGq3n6Ujzj0FFyNMGQr6XuEv4tgNTXvJQTfJdcvGit5p5/DWPu+wj920hAJFI+QQ==
-  dependencies:
-    buffer-writer "2.0.0"
-    packet-reader "1.0.0"
-    pg-connection-string "^2.5.0"
-    pg-pool "^3.3.0"
-    pg-protocol "^1.5.0"
-    pg-types "^2.1.0"
-    pgpass "1.x"
-
-pgpass@1.x:
-  version "1.0.4"
-  resolved "https://registry.npmjs.org/pgpass/-/pgpass-1.0.4.tgz"
-  integrity sha512-YmuA56alyBq7M59vxVBfPJrGSozru8QAdoNlWuW3cz8l+UX3cWge0vTvjKhsSHSJpo3Bom8/Mm6hf0TR5GY0+w==
-  dependencies:
-    split2 "^3.1.1"
 
 picocolors@^1.0.0:
   version "1.0.0"
@@ -21100,36 +21011,6 @@ postcss@^8.4.38:
     nanoid "^3.3.7"
     picocolors "^1.0.0"
     source-map-js "^1.2.0"
-
-postgres-array@~2.0.0:
-  version "2.0.0"
-  resolved "https://registry.npmjs.org/postgres-array/-/postgres-array-2.0.0.tgz"
-  integrity sha512-VpZrUqU5A69eQyW2c5CA1jtLecCsN2U/bD6VilrFDWq5+5UIEVO7nazS3TEcHf1zuPYO/sqGvUvW62g86RXZuA==
-
-postgres-bytea@~1.0.0:
-  version "1.0.0"
-  resolved "https://registry.npmjs.org/postgres-bytea/-/postgres-bytea-1.0.0.tgz"
-  integrity sha1-AntTPAqokOJtFy1Hz5zOzFIazTU=
-
-postgres-date@~1.0.4:
-  version "1.0.7"
-  resolved "https://registry.npmjs.org/postgres-date/-/postgres-date-1.0.7.tgz"
-  integrity sha512-suDmjLVQg78nMK2UZ454hAG+OAW+HQPZ6n++TNDUX+L0+uUlLywnoxJKDou51Zm+zTCjrCl0Nq6J9C5hP9vK/Q==
-
-postgres-interval@^1.1.0:
-  version "1.2.0"
-  resolved "https://registry.npmjs.org/postgres-interval/-/postgres-interval-1.2.0.tgz"
-  integrity sha512-9ZhXKM/rw350N1ovuWHbGxnGh/SNJ4cnxHiM0rxE4VN41wsg8P8zWn9hv/buK00RP4WvlOyr/RBDiptyxVbkZQ==
-  dependencies:
-    xtend "^4.0.0"
-
-postgres-migrations@^5.2.0:
-  version "5.2.0"
-  resolved "https://registry.npmjs.org/postgres-migrations/-/postgres-migrations-5.2.0.tgz"
-  integrity sha512-/qeCRAxKzdE6/g76xiyav8QhGigqCrpqIPhMWzWAMyjG3gSkQpNlbm7PeOxQETZ9wOGRoBeYEKBDBBbMCm34vA==
-  dependencies:
-    pg "^8.6.0"
-    sql-template-strings "^2.2.2"
 
 potpack@^2.0.0:
   version "2.0.0"
@@ -22052,7 +21933,7 @@ readable-error@^1.0.0:
   dependencies:
     readable-stream "^2.3.3"
 
-"readable-stream@2 || 3", readable-stream@^3.0.0, readable-stream@^3.1.1, readable-stream@^3.4.0, readable-stream@^3.5.0, readable-stream@^3.6.0:
+"readable-stream@2 || 3", readable-stream@^3.1.1, readable-stream@^3.4.0, readable-stream@^3.5.0, readable-stream@^3.6.0:
   version "3.6.0"
   resolved "https://registry.npmjs.org/readable-stream/-/readable-stream-3.6.0.tgz"
   integrity sha512-BViHy7LKeTz4oNnkcLJ+lVSL6vpiFeX6/d3oSH8zCW7UxP2onchk+vTGB143xuFjHS3deTgkKoXXymXqymiIdA==
@@ -23468,13 +23349,6 @@ split-string@^3.0.1:
   dependencies:
     extend-shallow "^3.0.0"
 
-split2@^3.1.1:
-  version "3.2.2"
-  resolved "https://registry.npmjs.org/split2/-/split2-3.2.2.tgz"
-  integrity sha512-9NThjpgZnifTkJpzTZ7Eue85S49QwpNhZTq6GRJwObb6jnLFNGB7Qm73V5HewTROPyxD0C29xqmaI68bQtV+hg==
-  dependencies:
-    readable-stream "^3.0.0"
-
 split@0.3:
   version "0.3.3"
   resolved "https://registry.npmjs.org/split/-/split-0.3.3.tgz"
@@ -23498,11 +23372,6 @@ sprintf-js@~1.0.2:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/sprintf-js/-/sprintf-js-1.0.3.tgz#04e6926f662895354f3dd015203633b857297e2c"
   integrity sha512-D9cPgkvLlV3t3IzL0D0YLvGA9Ahk4PcvVwUbN0dSGr1aP0Nrt4AEnTUbuGvquEC0mA64Gqt1fzirlRs5ibXx8g==
-
-sql-template-strings@^2.2.2:
-  version "2.2.2"
-  resolved "https://registry.npmjs.org/sql-template-strings/-/sql-template-strings-2.2.2.tgz"
-  integrity sha1-PxFQiiWt384hejBCqdMAwxk7lv8=
 
 srcset@^2.0.0:
   version "2.0.1"
