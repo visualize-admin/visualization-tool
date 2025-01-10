@@ -120,7 +120,7 @@ test("hierarchies: it should be possible to enable abbreviations for colors", as
   ]);
 });
 
-test("@noci localized abbreviations", async ({
+test("localized abbreviations", async ({
   actions,
   selectors,
   replayFromHAR,
