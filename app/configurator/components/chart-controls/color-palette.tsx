@@ -150,16 +150,6 @@ export const ColorPalette = ({
         value={currentPalette.value}
         onChange={handleChangePalette}
       >
-        <Button
-          variant="text"
-          sx={{
-            width: "100%",
-            paddingY: "12px",
-            paddingX: "16px",
-          }}
-        >
-          Add color palette
-        </Button>
         <Box
           sx={{
             paddingTop: "12px",
