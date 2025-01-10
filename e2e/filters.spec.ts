@@ -1,5 +1,5 @@
 import { setup } from "./common";
-import mapNFIconfig from "./fixtures/map-nfi-chart-config.json";
+import configuratorState from "./fixtures/map-nfi-chart-config.json";
 
 const { test, describe, expect } = setup();
 
@@ -9,7 +9,7 @@ describe("Filters", () => {
     selectors,
   }) => {
     await page.goto(
-      `/en/create/new?cube=${mapNFIconfig.dataSet}&dataSource=Prod`
+      `/en/create/new?cube=${configuratorState.dataSet}&dataSource=Prod`
     );
     await selectors.chart.loaded();
     await selectors.edition.drawerLoaded();
