@@ -39,7 +39,7 @@ const CONFIGURATOR_STATE = {
     "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/2",
   dataSource: {
     type: "sparql",
-    url: "https://lindas.admin.ch/query",
+    url: "https://lindas-cached.cluster.ldbar.ch/query",
   },
   meta: {
     title: { de: "", fr: "", it: "", en: "" },

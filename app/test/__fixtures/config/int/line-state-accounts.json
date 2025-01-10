@@ -5,7 +5,7 @@
     "dataSet": "https://culture.ld.admin.ch/sfa/StateAccounts_Office/1",
     "dataSource": {
       "type": "sparql",
-      "url": "https://int.lindas.admin.ch/query"
+      "url": "https://lindas-cached.int.cluster.ldbar.ch/query"
     },
     "meta": {
       "title": {
