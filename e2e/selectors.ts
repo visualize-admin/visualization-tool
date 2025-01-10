@@ -114,6 +114,10 @@ export const createSelectors = ({ screen, page, within }: Ctx) => {
       },
       colorLegendItems: async () =>
         (await selectors.chart.colorLegend()).locator("div"),
+      moreButton: () =>
+        screen.findByTestId("chart-more-button", undefined, {
+          timeout: 10_000,
+        }),
       legendTicks: async () => {},
       loaded: async () => {
         await page.waitForLoadState("networkidle");
@@ -122,6 +126,9 @@ export const createSelectors = ({ screen, page, within }: Ctx) => {
       },
       tablePreviewSwitch: async () => {
         return await screen.findByText("Table view");
+      },
+      tabs: async () => {
+        return await screen.findAllByTestId("chart-selection-tab");
       },
     },
   };
