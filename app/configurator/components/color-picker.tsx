@@ -46,6 +46,7 @@ const CustomColorPicker = ({
   defaultSelection = { h: 0, s: 0, v: 68, a: 1 },
 }: CustomColorPickerProps) => {
   const [hsva, setHsva] = useState(defaultSelection);
+  const [hexInput, setHexInput] = useState(hsvaToHex(defaultSelection));
   const classes = useColorPickerStyles();
 
   useEffect(() => {
@@ -111,7 +112,7 @@ const CustomColorPicker = ({
           <EditableInputComponent
             prefix="#"
             prefixCls="#"
-            value={hsvaToHex(hsva)}
+            value={hexInput}
             inputStyle={{
               paddingTop: "6px",
               paddingBottom: "3px",
@@ -124,7 +125,12 @@ const CustomColorPicker = ({
               outline: "none",
               borderRadius: "4px",
             }}
-            onChange={(_, value) => setHsva(hexToHsva(`#${value}`))}
+            onChange={(_, value) => {
+              setHexInput(`#${value}`);
+              if (String(value).length >= 3) {
+                setHsva(hexToHsva(`#${value}`));
+              }
+            }}
           />
           <ChromePicker
             showAlpha={false}
