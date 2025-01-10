@@ -124,6 +124,11 @@ export const createSelectors = ({ screen, page, within }: Ctx) => {
         // Let the map tiles fade in and enter animations finish
         await sleep(1_000);
       },
+      screenshot: {
+        png: async () => {
+          return await screen.findByTestId("screenshot-png");
+        },
+      },
       tablePreviewSwitch: async () => {
         return await screen.findByText("Table view");
       },
