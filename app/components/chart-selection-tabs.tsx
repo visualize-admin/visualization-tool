@@ -282,6 +282,7 @@ const TabsEditable = (props: TabsEditableProps) => {
                   type: "CHART_ACTIVE_FIELD_CHANGED",
                   value: "label",
                 });
+                handleClose();
               }}
             />
           )}
