@@ -10,18 +10,19 @@ import {
 } from "@uiw/react-color";
 import { color as d3Color } from "d3-color";
 import dynamic from "next/dynamic";
-import { MouseEventHandler, useEffect, useState } from "react";
+import {
+  ChangeEvent,
+  MouseEventHandler,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 
 import Flex from "@/components/flex";
+import { Input } from "@/components/form";
 
 const ChromePicker = dynamic(
   () => import("@uiw/react-color").then((mod) => ({ default: mod.Chrome })),
-  { ssr: false }
-);
-
-const EditableInputComponent = dynamic(
-  () =>
-    import("@uiw/react-color").then((mod) => ({ default: mod.EditableInput })),
   { ssr: false }
 );
 
@@ -52,6 +53,18 @@ const CustomColorPicker = ({
   useEffect(() => {
     onChange(hsva);
   }, [hsva, onChange]);
+
+  const updateColorInput = useCallback<
+    (e: ChangeEvent<HTMLInputElement>) => void
+  >((e) => {
+    const value = e.target.value;
+    if (String(value).length <= 7) {
+      setHexInput(value);
+      if (String(value).length >= 3) {
+        setHsva(hexToHsva(`${value}`));
+      }
+    }
+  }, []);
 
   return (
     <Flex
@@ -109,28 +122,10 @@ const CustomColorPicker = ({
           ))}
         </Box>
         <Flex sx={{ marginTop: "8px", alignItems: "center", gap: "8px" }}>
-          <EditableInputComponent
-            prefix="#"
-            prefixCls="#"
+          <Input
+            name="color-picker-input"
             value={hexInput}
-            inputStyle={{
-              paddingTop: "6px",
-              paddingBottom: "3px",
-              paddingLeft: "8px",
-              paddingRight: "8px",
-              fontSize: "14px",
-              lineHeight: "150%",
-              border: "1px solid #ccc",
-              boxShadow: "none",
-              outline: "none",
-              borderRadius: "4px",
-            }}
-            onChange={(_, value) => {
-              setHexInput(`#${value}`);
-              if (String(value).length >= 3) {
-                setHsva(hexToHsva(`#${value}`));
-              }
-            }}
+            onChange={updateColorInput}
           />
           <ChromePicker
             showAlpha={false}
