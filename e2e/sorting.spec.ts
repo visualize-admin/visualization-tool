@@ -29,7 +29,7 @@ test("Segment sorting", async ({
 
   for (const chartType of ["Columns", "Pie"] as const) {
     await selectors.edition.drawerLoaded();
-    await actions.editor.changeChartType(chartType);
+    await actions.editor.changeRegularChartType(chartType);
     await actions.editor.selectActiveField("Segmentation");
 
     // Switch color on the first chart
@@ -190,7 +190,7 @@ test.skip("Map legend preview table sorting", async ({
   });
   await selectors.edition.drawerLoaded();
 
-  await actions.editor.changeChartType("Map");
+  await actions.editor.changeRegularChartType("Map");
   await selectors.chart.loaded();
 
   await actions.chart.switchToTableView();

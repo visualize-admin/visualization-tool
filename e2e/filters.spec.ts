@@ -66,7 +66,7 @@ describe("Filters", () => {
     await selectors.chart.loaded();
     await selectors.edition.drawerLoaded();
 
-    await actions.editor.changeChartType("Map");
+    await actions.editor.changeRegularChartType("Map");
 
     const filters = await selectors.edition.configFilters();
 
