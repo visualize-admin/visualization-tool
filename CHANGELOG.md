@@ -13,6 +13,8 @@ You can also check the
 
 - Features
   - It's now possible to export charts as images
+	- Added support for custom colors in single and multi-colored charts, enabling enhanced visual customization.
+	- Introduced a new Color Picker, offering greater flexibility and precision in chart color selection.
 - Fixes
   - Color mapping is now correctly kept up to date in case of editing an old
     chart and the cube has been updated in the meantime and contains new values
