@@ -34,6 +34,9 @@ You can also check the
 - Maintenance
   - Re-enabled screenshot tests using Argos CI
   - Fixed E2E HAR-based tests
+  - Added two new E2E tests for chart actions (duplication, image download)
+  - Improved performance of E2E tests by using cached LINDAS endpoints in chart
+    config fixtures
   - Fixed map dimension symbols to increase the elements size for small values,
     whilst preventing any 0 and undefined values from displaying
   - Updated Next.js to v14
