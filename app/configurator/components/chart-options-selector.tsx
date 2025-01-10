@@ -627,8 +627,8 @@ const ChartLayoutOptions = ({
   hasSubOptions: boolean;
   measures: Measure[];
 }) => {
-  const withColorField = isColorInConfig(chartConfig);
-  const values: { id: string; symbol: LegendSymbol }[] = withColorField
+  const hasColorField = isColorInConfig(chartConfig);
+  const values: { id: string; symbol: LegendSymbol }[] = hasColorField
     ? chartConfig.fields.color.type === "single"
       ? [{ id: chartConfig.fields.y.componentId, symbol: "line" }]
       : Object.keys(chartConfig.fields.color.colorMapping).map((key) => ({
@@ -667,7 +667,7 @@ const ChartLayoutOptions = ({
               } as any as Component
             }
           />
-          {withColorField && chartConfig.fields.color.type === "single" && (
+          {hasColorField && chartConfig.fields.color.type === "single" && (
             <ColorPickerField
               field="color"
               path="color"
