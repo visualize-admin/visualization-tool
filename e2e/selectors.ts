@@ -70,6 +70,10 @@ export const createSelectors = ({ screen, page, within }: Ctx) => {
         screen.findByTestId("chart-type-selector-regular", undefined, {
           timeout: 10_000,
         }),
+      chartTypeSelectorCombo: () =>
+        screen.findByTestId("chart-type-selector-combo", undefined, {
+          timeout: 10_000,
+        }),
       filtersLoaded: () =>
         screen.findByText("Selected filters", undefined, { timeout: 10_000 }),
       controlSectionBySubtitle: (title: string) =>

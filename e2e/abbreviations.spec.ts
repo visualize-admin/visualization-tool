@@ -134,7 +134,7 @@ test("@noci localized abbreviations", async ({
   });
 
   await selectors.edition.drawerLoaded();
-  await actions.editor.changeChartType("Map");
+  await actions.editor.changeRegularChartType("Map");
   await actions.editor.selectActiveField("Warning region");
 
   await selectors.edition.drawerLoaded();
