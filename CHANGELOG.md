@@ -27,6 +27,8 @@ You can also check the
     when downloading an image of a published chart
   - Changing dates manually using keyboard works correctly now in date picker
     inputs
+  - Opening a temporal dimension with timezone in table chart configurator
+    doesn't crash the application anymore
 - Styles
   - Updated dataset result borders to match the design
 - Maintenance

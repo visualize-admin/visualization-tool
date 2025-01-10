@@ -46,6 +46,7 @@ export const getTimeFilterOptions = ({
     if (date) {
       sortedOptions.push({
         // By formatting the date, we remove potential timezone.
+        // FIXME: This might lead to issues with SPARQL filtering.
         value: formatDate(date),
         label: timeFormatUnit(date, timeUnit),
         date,
