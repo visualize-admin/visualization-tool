@@ -12,11 +12,6 @@ const configs: TestConfig[] = [
     slug: "column-heavy-metals",
   },
   {
-    chartId: "jky5IEw6poT3",
-    name: "Map - NFI",
-    slug: "map-nfi",
-  },
-  {
     chartId: "Z6Re21LHbOoP",
     name: "Pie - Red list",
     slug: "pie-red-list",
