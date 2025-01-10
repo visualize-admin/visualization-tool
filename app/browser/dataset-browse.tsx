@@ -117,7 +117,7 @@ const useNavItemStyles = makeStyles<
     backgroundColor: level === 1 ? navItemTheme.activeBg : "transparent",
     color:
       level === 1
-        ? navItemTheme.closeColor ?? navItemTheme.activeTextColor
+        ? (navItemTheme.closeColor ?? navItemTheme.activeTextColor)
         : navItemTheme.activeBg,
   }),
 }));
@@ -1311,7 +1311,7 @@ export const DatasetResult = ({
   );
 };
 
-export type DatasetResultProps = ComponentProps<typeof DatasetResult>;
+type DatasetResultProps = ComponentProps<typeof DatasetResult>;
 
 DatasetResult.defaultProps = {
   showTags: true,

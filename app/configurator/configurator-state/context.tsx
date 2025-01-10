@@ -44,7 +44,7 @@ const ConfiguratorStateContext = createContext<
   [ConfiguratorState, Dispatch<ConfiguratorStateAction>] | undefined
 >(undefined);
 
-export type ConfiguratorStateProviderProps = PropsWithChildren<{
+type ConfiguratorStateProviderProps = PropsWithChildren<{
   chartId: string;
   initialState?: ConfiguratorState;
   allowDefaultRedirect?: boolean;

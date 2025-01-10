@@ -37,7 +37,7 @@ import useEvent from "@/utils/use-event";
 
 export type LegendSymbol = "square" | "line" | "circle";
 
-export type LegendItemUsage = "legend" | "tooltip" | "colorPicker";
+type LegendItemUsage = "legend" | "tooltip" | "colorPicker";
 
 const useStyles = makeStyles<Theme>((theme) => ({
   legendContainer: {

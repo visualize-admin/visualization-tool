@@ -1,6 +1,6 @@
 import { HierarchyValue } from "@/domain/data";
 
-export const IGNORE = {};
+const IGNORE = {};
 
 /**
  * TODO check if can be deduplicated with visitHierarchy

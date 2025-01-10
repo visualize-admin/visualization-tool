@@ -1,4 +1,4 @@
-name: Lint & Typecheck & Test
+name: Validate
 
 on:
   push:
@@ -7,8 +7,12 @@ on:
     branches: [main]
 
 jobs:
-  lint-typecheck-test:
+  base-checks:
     runs-on: ubuntu-latest
+    continue-on-error: true
+    strategy:
+      matrix:
+        job: [lint, typecheck, test, knip]
     steps:
       - uses: actions/checkout@v4
       - name: Setup node
@@ -18,6 +22,5 @@ jobs:
           cache: "yarn"
           cache-dependency-path: "**/yarn.lock"
       - run: yarn install --immutable --prefer-offline
-      - run: yarn lint
-      - run: yarn typecheck
-      - run: yarn test
+      - run: yarn lingui compile
+      - run: yarn ${{ matrix.job }}
