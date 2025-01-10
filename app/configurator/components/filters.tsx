@@ -31,6 +31,7 @@ import React, {
   MutableRefObject,
   ReactNode,
   useCallback,
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -462,8 +463,8 @@ const MultiFilterContent = ({
  * and contains new values in the color dimension.
  * */
 const useEnsureUpToDateColorMapping = ({
-  colorComponentValues,
-  colorMapping,
+  colorComponentValues = [],
+  colorMapping = {},
 }: {
   colorComponentValues?: DimensionValue[];
   colorMapping?: ColorMapping;
@@ -473,22 +474,33 @@ const useEnsureUpToDateColorMapping = ({
   const { dimensionId, colorConfigPath } = useMultiFilterContext();
   const { activeField } = chartConfig;
 
-  if (
-    activeField &&
-    colorComponentValues?.some((v) => !colorMapping?.[v.value])
-  ) {
-    dispatch({
-      type: "CHART_CONFIG_UPDATE_COLOR_MAPPING",
-      value: {
-        field: activeField,
-        dimensionId,
-        colorConfigPath,
-        colorMapping,
-        values: colorComponentValues,
-        random: false,
-      },
-    });
-  }
+  const hasOutdatedMapping = useMemo(() => {
+    return colorComponentValues.some((value) => !colorMapping[value.value]);
+  }, [colorComponentValues, colorMapping]);
+
+  useEffect(() => {
+    if (activeField && hasOutdatedMapping) {
+      dispatch({
+        type: "CHART_CONFIG_UPDATE_COLOR_MAPPING",
+        value: {
+          dimensionId,
+          colorConfigPath,
+          colorMapping,
+          field: activeField,
+          values: colorComponentValues,
+          random: false,
+        },
+      });
+    }
+  }, [
+    hasOutdatedMapping,
+    dispatch,
+    dimensionId,
+    colorConfigPath,
+    colorMapping,
+    colorComponentValues,
+    activeField,
+  ]);
 };
 
 const useBreadcrumbStyles = makeStyles({
