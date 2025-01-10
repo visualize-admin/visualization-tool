@@ -20,6 +20,7 @@ You can also check the
   - Fixed preview via API (iframe)
   - Fixed cut table scroll-bars and unnecessary scroll of bar charts when
     switching between chart types
+  - Improved Readability for dataset selection and preview
   - Sorting dataset results by score option is now correctly available to select
   - Created with visualize.admin.ch footnote is only displayed once, not twice,
     when downloading an image of a published chart
