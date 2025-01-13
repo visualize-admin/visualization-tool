@@ -119,6 +119,12 @@ type EncodingOption<T extends ChartConfig = ChartConfig> =
       field: "sorting";
     }
   | {
+      field: "showDots";
+    }
+  | {
+      field: "showDotsSize";
+    }
+  | {
       field: "size";
       componentTypes: ComponentType[];
       optional: boolean;
@@ -802,6 +808,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         },
         options: {
           showStandardError: {},
+          showConfidenceInterval: {},
         },
       },
       {
@@ -937,6 +944,8 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         options: {
           showStandardError: {},
           showConfidenceInterval: {},
+          showDots: {},
+          showDotsSize: {},
         },
       },
       {

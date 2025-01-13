@@ -329,7 +329,18 @@ export type LineSegmentField = t.TypeOf<typeof LineSegmentField>;
 const LineFields = t.intersection([
   t.type({
     x: GenericField,
-    y: t.intersection([GenericField, UncertaintyFieldExtension]),
+    y: t.intersection([
+      GenericField,
+      UncertaintyFieldExtension,
+      t.partial({
+        showDots: t.boolean,
+        showDotsSize: t.union([
+          t.literal("Small"),
+          t.literal("Medium"),
+          t.literal("Large"),
+        ]),
+      }),
+    ]),
   }),
   t.partial({
     segment: LineSegmentField,

@@ -326,6 +326,15 @@ msgstr "Horizontale Achse"
 msgid "controls.axis.vertical"
 msgstr "Vertikale Achse"
 
+#: app/configurator/components/field-i18n.ts
+msgid "controls.bar.grouped"
+msgstr ""
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.bar.stacked"
+msgstr ""
+
+#: app/charts/chart-config-ui-options.ts
 #: app/charts/chart-config-ui-options.ts
 msgid "controls.calculation.disabled-by-grouped"
 msgstr "Der 100%-Modus kann nicht mit einem gruppierten Layout verwendet werden."
@@ -828,6 +837,10 @@ msgstr "Spalten"
 msgid "controls.section.columnstyle"
 msgstr "Spaltenstil"
 
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.data-points"
+msgstr "Datenpunkte"
+
 #: app/components/chart-filters-list.tsx
 #: app/components/chart-filters-list.tsx
 #: app/configurator/components/chart-configurator.tsx
@@ -851,6 +864,10 @@ msgstr "Datensätze"
 #: app/configurator/components/annotators.tsx
 msgid "controls.section.description"
 msgstr "Titel & Beschreibung"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.dots-size"
+msgstr "Wählen Sie eine Größe"
 
 #: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/chart-options-selector.tsx
@@ -902,6 +919,10 @@ msgid "controls.section.show-confidence-interval.explanation"
 msgstr "Zeigen Sie Unsicherheiten an, die sich aus Datenpunkten ergeben, um Konfidenzintervalle darzustellen"
 
 #: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.show-dots"
+msgstr "Datenpunkte anzeigen"
+
+#: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.show-standard-error"
 msgstr "Standardfehler anzeigen"
 
@@ -934,6 +955,7 @@ msgstr "Fügen Sie einen Titel oder eine Beschreibung hinzu"
 msgid "controls.segment"
 msgstr "Segmentierung"
 
+#: app/charts/chart-config-ui-options.ts
 #: app/charts/chart-config-ui-options.ts
 #: app/charts/chart-config-ui-options.ts
 msgid "controls.segment.stacked.disabled-by-scale-type"
@@ -1545,6 +1567,8 @@ msgid "logo.swiss.confederation"
 msgstr "Logo der Schweizerischen Eidgenossenschaft"
 
 #: app/components/chart-footnotes.tsx
+#: app/components/chart-published.tsx
+#: app/components/chart-shared.tsx
 msgid "metadata.link.created.with"
 msgstr "Erstellt mit"
 

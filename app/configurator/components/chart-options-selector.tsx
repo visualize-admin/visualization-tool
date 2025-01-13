@@ -526,6 +526,43 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
           </ControlSectionContent>
         </ControlSection>
       )}
+      {encoding.options?.showDots && (
+        <ControlSection collapse>
+          <SubsectionTitle iconName="chartLine">
+            <Trans id="controls.section.data-points">Data Points</Trans>
+          </SubsectionTitle>
+          <ControlSectionContent>
+            <Stack direction="column" gap={4}>
+              <ChartOptionSwitchField
+                path="showDots"
+                field={encoding.field}
+                defaultValue
+                label={t({ id: "controls.section.show-dots" })}
+                sx={{ mt: 2 }}
+              />
+              <Typography variant="caption" sx={{ mt: 2 }}>
+                <Trans id="controls.section.dots-size">Select a Size</Trans>
+              </Typography>
+              <Flex justifyContent="flex-start">
+                {["Small", "Medium", "Large"].map((d) => (
+                  <ChartOptionRadioField
+                    key={d}
+                    label={`${d}`}
+                    field="y"
+                    path="showDotsSize"
+                    value={d}
+                    disabled={
+                      "y" in fields &&
+                      "showDots" in fields.y &&
+                      !fields.y.showDots
+                    }
+                  />
+                ))}
+              </Flex>
+            </Stack>
+          </ControlSectionContent>
+        </ControlSection>
+      )}
       {isComboChartConfig(chartConfig) && encoding.field === "y" && (
         <ChartComboYField chartConfig={chartConfig} measures={measures} />
       )}
