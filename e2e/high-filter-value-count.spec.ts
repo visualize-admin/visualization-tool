@@ -18,7 +18,7 @@ testFn(
       dataSource: "Int",
     });
     await selectors.edition.drawerLoaded();
-    await actions.editor.changeChartType("Map");
+    await actions.editor.changeRegularChartType("Map");
     await selectors.chart.loaded();
 
     await sleep(2_000);

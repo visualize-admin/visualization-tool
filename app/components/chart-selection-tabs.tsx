@@ -282,6 +282,7 @@ const TabsEditable = (props: TabsEditableProps) => {
                   type: "CHART_ACTIVE_FIELD_CHANGED",
                   value: "label",
                 });
+                handleClose();
               }}
             />
           )}
@@ -482,6 +483,7 @@ const TabsInner = ({
                             component="div"
                             key={d.key}
                             value={`${i}`}
+                            data-testid="chart-selection-tab"
                             className={clsx(
                               classes.tab,
                               // We need to add the "selected" class ourselves since we are wrapping

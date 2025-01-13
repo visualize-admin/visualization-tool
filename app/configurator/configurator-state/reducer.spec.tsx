@@ -35,8 +35,8 @@ import {
 } from "@/configurator/configurator-state/reducer";
 import { Dimension, Measure, NominalDimension } from "@/domain/data";
 import { stringifyComponentId } from "@/graphql/make-component-id";
-import covid19ColumnChartConfig from "@/test/__fixtures/config/dev/chartConfig-column-covid19.json";
-import covid19TableChartConfig from "@/test/__fixtures/config/dev/chartConfig-table-covid19.json";
+import covid19ColumnChartConfig from "@/test/__fixtures/config/test/chartConfig-column-covid19.json";
+import covid19TableChartConfig from "@/test/__fixtures/config/test/chartConfig-table-covid19.json";
 import covid19Metadata from "@/test/__fixtures/data/DataCubeMetadataWithComponentValues-covid19.json";
 import { getCachedComponents as getCachedComponentsOriginal } from "@/urql-cache";
 import { getCachedComponentsMock } from "@/urql-cache.mock";

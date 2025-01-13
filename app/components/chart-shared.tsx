@@ -187,6 +187,7 @@ export const ChartMoreButton = ({
         onClick={(ev) => setAnchor(ev.currentTarget)}
         sx={{ height: "fit-content" }}
         {...DISABLE_SCREENSHOT_ATTR}
+        data-testid="chart-more-button"
       >
         <SvgIcMore />
       </IconButton>
@@ -519,7 +520,7 @@ const usePNGMetadata = ({
       .map((cube) =>
         cube.contactPoint
           ? `${cube.contactPoint.name} (${cube.contactPoint.email})`
-          : cube.creator?.label ?? cube.publisher
+          : (cube.creator?.label ?? cube.publisher)
       )
       .join(", ");
     const publisherMetadata = publisher

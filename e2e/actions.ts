@@ -89,17 +89,24 @@ export const createActions = ({
     },
   },
   editor: {
-    changeChartType: async (
+    changeRegularChartType: async (
       type:
-        | "Map"
-        | "Table"
-        | "Scatterplot"
-        | "Pie"
+        | "Columns"
+        | "Bars"
         | "Lines"
         | "Areas"
-        | "Columns"
+        | "Scatterplot"
+        | "Pie"
+        | "Table"
+        | "Map"
     ) => {
       const btns = await selectors.edition.chartTypeSelectorRegular();
+      await btns.locator("button", { hasText: type }).click();
+    },
+    changeComboChartType: async (
+      type: "Multi-line" | "Dual-axis line" | "Column-line"
+    ) => {
+      const btns = await selectors.edition.chartTypeSelectorCombo();
       await btns.locator("button", { hasText: type }).click();
     },
     selectActiveField: selectActiveEditorField({
