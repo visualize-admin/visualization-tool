@@ -1292,6 +1292,129 @@ export const chartConfigMigrations: Migration[] = [
       return newConfig;
     },
   },
+  {
+    description: `ALL {
+        fields {
+            segment {
+              - colorMapping
+            },
+            y {
+              - colorMapping
+            }
+            + color {
+                + type
+                + paletteId
+                + colorMapping / color
+            }
+        }
+    }`,
+    from: "4.0.0",
+    to: "4.1.0",
+
+    up: (config) => {
+      const newConfig = {
+        ...config,
+        version: "4.1.0",
+      };
+
+      if (!isNotTableOrMap(newConfig)) {
+        return newConfig;
+      }
+
+      // Only set default color if no existing color configurations
+      if (!newConfig.fields?.color) {
+        const hasNoColorMapping = !(
+          newConfig.fields?.y?.colorMapping ||
+          newConfig.fields?.segment?.colorMapping
+        );
+
+        if (hasNoColorMapping) {
+          newConfig.fields = {
+            ...newConfig.fields,
+            color: {
+              type: "single",
+              paletteId: "category10",
+              color: schemeCategory10[0],
+            },
+          };
+        }
+      }
+
+      if (newConfig.fields?.segment?.colorMapping) {
+        newConfig.fields = {
+          ...newConfig.fields,
+          color: {
+            type: "segment",
+            paletteId: newConfig.fields.segment.palette || "category10",
+            colorMapping: { ...newConfig.fields.segment.colorMapping },
+          },
+          segment: {
+            ...newConfig.fields.segment,
+          },
+        };
+        delete newConfig.fields.segment.colorMapping;
+        delete newConfig.fields.segment.palette;
+      }
+
+      if (newConfig.fields?.y?.colorMapping) {
+        newConfig.fields = {
+          ...newConfig.fields,
+          color: {
+            type: "measures",
+            paletteId: newConfig.fields.y.palette || "category10",
+            colorMapping: { ...newConfig.fields.y.colorMapping },
+          },
+          y: {
+            ...newConfig.fields.y,
+          },
+        };
+        delete newConfig.fields.y.colorMapping;
+        delete newConfig.fields.y.palette;
+      }
+
+      return newConfig;
+    },
+    down: (config) => {
+      const oldConfig = {
+        ...config,
+        version: "4.0.0",
+      };
+
+      if (!isNotTableOrMap(oldConfig)) {
+        return oldConfig;
+      }
+
+      if (oldConfig.fields?.color) {
+        if (oldConfig.fields.color.type === "segment") {
+          oldConfig.fields = {
+            ...oldConfig.fields,
+            segment: {
+              ...oldConfig.fields.segment,
+              colorMapping: { ...oldConfig.fields.color.colorMapping },
+              palette: oldConfig.fields.color.paletteId,
+            },
+          };
+        }
+
+        if (oldConfig.fields.color.type === "measures") {
+          oldConfig.fields = {
+            ...oldConfig.fields,
+            y: {
+              ...oldConfig.fields.y,
+              colorMapping: { ...oldConfig.fields.color.colorMapping },
+              palette: oldConfig.fields.color.paletteId,
+            },
+          };
+        }
+
+        // Create a new fields object without the color property
+        const { color, ...fieldsWithoutColor } = oldConfig.fields;
+        oldConfig.fields = fieldsWithoutColor;
+      }
+
+      return oldConfig;
+    },
+  },
 ];
 
 export const migrateChartConfig = makeMigrate<ChartConfig>(
@@ -1796,112 +1919,6 @@ export const configuratorStateMigrations: Migration[] = [
     },
   },
   {
-    description: "ALL (add color field to Chart)",
-    from: "4.0.0",
-    to: "4.1.0",
-    up: (config) => {
-      const newConfig = {
-        ...config,
-        version: "4.1.0",
-      };
-
-      if (!Array.isArray(newConfig.chartConfigs)) {
-        return newConfig;
-      }
-
-      newConfig.chartConfigs = newConfig.chartConfigs.map(
-        (chartConfig: any) => {
-          const updatedConfig = { ...chartConfig };
-
-          if (!isNotTableOrMap(updatedConfig)) {
-            return updatedConfig;
-          }
-
-          const hasNoColorMapping = !(
-            updatedConfig.fields?.y?.colorMapping ||
-            updatedConfig.fields?.segment?.colorMapping
-          );
-
-          if (hasNoColorMapping) {
-            updatedConfig.fields.color = {
-              type: "single",
-              paletteId: "category10",
-              color: schemeCategory10[0],
-            };
-          }
-
-          if (updatedConfig.fields?.segment?.colorMapping) {
-            updatedConfig.fields.color = {
-              type: "segment",
-              paletteId: updatedConfig.fields.segment.palette,
-              colorMapping: updatedConfig.fields.segment.colorMapping,
-            };
-            delete updatedConfig.fields.segment.colorMapping;
-            delete updatedConfig.fields.segment.palette;
-          }
-
-          if (updatedConfig.fields?.y?.colorMapping) {
-            updatedConfig.fields.color = {
-              type: "measures",
-              paletteId: updatedConfig.fields.y.palette,
-              colorMapping: updatedConfig.fields.y.colorMapping,
-            };
-            delete updatedConfig.fields.y.colorMapping;
-            delete updatedConfig.fields.y.palette;
-          }
-
-          return updatedConfig;
-        }
-      );
-
-      return newConfig;
-    },
-    down: (config) => {
-      const oldConfig = {
-        ...config,
-        version: "4.0.0",
-      };
-
-      if (!Array.isArray(oldConfig.chartConfigs)) {
-        return oldConfig;
-      }
-
-      oldConfig.chartConfigs = oldConfig.chartConfigs.map(
-        (chartConfig: any) => {
-          const revertedConfig = { ...chartConfig };
-
-          if (!isNotTableOrMap(revertedConfig)) {
-            return revertedConfig;
-          }
-
-          if (revertedConfig.fields?.color) {
-            if (revertedConfig.fields.color.type === "segment") {
-              revertedConfig.fields.segment = {
-                ...revertedConfig.fields.segment,
-                colorMapping: revertedConfig.fields.color.colorMapping,
-                palette: revertedConfig.fields.color.paletteId,
-              };
-            }
-
-            if (revertedConfig.fields.color.type === "measures") {
-              revertedConfig.fields.y = {
-                ...revertedConfig.fields.y,
-                colorMapping: revertedConfig.fields.color.colorMapping,
-                palette: revertedConfig.fields.color.paletteId,
-              };
-            }
-
-            delete revertedConfig.fields.color;
-          }
-
-          return revertedConfig;
-        }
-      );
-
-      return oldConfig;
-    },
-  },
-  {
     description: "ALL (bump ChartConfig version)",
     from: "3.8.0",
     to: "4.0.0",
@@ -1978,6 +1995,43 @@ export const configuratorStateMigrations: Migration[] = [
       dataFilters.componentIris = dataFilters.componentIds;
       delete dataFilters.componentIds;
       newConfig.dashboardFilters.dataFilters = dataFilters;
+
+      return newConfig;
+    },
+  },
+  {
+    description: "ALL (bump ChartConfig version)",
+    from: "4.0.0",
+    to: "4.1.0",
+    up: async (config) => {
+      const newConfig = { ...config, version: "4.1.0" };
+      const chartConfigs: any[] = [];
+
+      for (const chartConfig of newConfig.chartConfigs) {
+        const migratedChartConfig = await migrateChartConfig(chartConfig, {
+          migrationProps: newConfig,
+          toVersion: "4.1.0",
+        });
+        chartConfigs.push(migratedChartConfig);
+      }
+
+      newConfig.chartConfigs = chartConfigs;
+
+      return newConfig;
+    },
+    down: async (config) => {
+      const newConfig = { ...config, version: "4.0.0" };
+      const chartConfigs: any[] = [];
+
+      for (const chartConfig of newConfig.chartConfigs) {
+        const migratedChartConfig = await migrateChartConfig(chartConfig, {
+          migrationProps: newConfig,
+          toVersion: "3.8.0",
+        });
+        chartConfigs.push(migratedChartConfig);
+      }
+
+      newConfig.chartConfigs = chartConfigs;
 
       return newConfig;
     },
