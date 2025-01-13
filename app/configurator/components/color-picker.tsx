@@ -8,18 +8,17 @@ import {
   Hue,
   Saturation,
 } from "@uiw/react-color";
-import { color as d3Color } from "d3-color";
 import dynamic from "next/dynamic";
 import {
   ChangeEvent,
-  MouseEventHandler,
   useCallback,
   useEffect,
-  useState,
+  useState
 } from "react";
 
 import Flex from "@/components/flex";
 import { Input } from "@/components/form";
+import { Swatch } from "./chart-controls/color-picker";
 
 const ChromePicker = dynamic(
   () => import("@uiw/react-color").then((mod) => ({ default: mod.Chrome })),
@@ -155,29 +154,3 @@ const useStyles = makeStyles(() => ({
     cursor: "pointer",
   },
 }));
-
-export const Swatch = ({
-  color,
-  selected,
-  onClick,
-}: {
-  color: string;
-  selected: boolean;
-  onClick: MouseEventHandler<HTMLDivElement>;
-}) => {
-  const classes = useStyles();
-  const boxShadow = d3Color(color)?.darker().toString();
-
-  return (
-    <Box
-      className={classes.swatch}
-      sx={{
-        boxShadow: selected ? `0 0 0.5rem 0 ${boxShadow}` : undefined,
-        ":hover": { boxShadow: `0 0 0.5rem 0 ${boxShadow}` },
-        backgroundColor: color,
-      }}
-      role="button"
-      onClick={onClick}
-    />
-  );
-};

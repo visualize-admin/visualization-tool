@@ -29,7 +29,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const Swatch = ({
+export const Swatch = ({
   color,
   selected,
   onClick,
