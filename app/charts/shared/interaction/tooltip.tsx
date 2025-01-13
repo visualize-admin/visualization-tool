@@ -23,8 +23,9 @@ export const Tooltip = ({ type = "single" }: { type: TooltipType }) => {
 };
 export type { TooltipPlacement };
 
-export type TooltipType = "single" | "multiple";
-export interface TooltipValue {
+type TooltipType = "single" | "multiple";
+
+export type TooltipValue = {
   hide?: boolean;
   label?: string;
   value: string;
@@ -32,9 +33,9 @@ export interface TooltipValue {
   color: string;
   yPos?: number;
   symbol?: LegendSymbol;
-}
+};
 
-export interface TooltipInfo {
+export type TooltipInfo = {
   xAnchor: number;
   yAnchor: number | undefined;
   placement: TooltipPlacement;
@@ -43,7 +44,7 @@ export interface TooltipInfo {
   datum: TooltipValue;
   values: TooltipValue[] | undefined;
   withTriangle?: boolean;
-}
+};
 
 const TooltipInner = ({ d, type }: { d: Observation; type: TooltipType }) => {
   const { bounds, getAnnotationInfo } = useChartState() as

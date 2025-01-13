@@ -1,4 +1,4 @@
-import { Trans, t } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
 import {
   Button,
   CircularProgress,
@@ -12,11 +12,11 @@ import { Workbook } from "exceljs";
 import { saveAs } from "file-saver";
 import keyBy from "lodash/keyBy";
 import {
+  createContext,
   Dispatch,
+  memo,
   PropsWithChildren,
   ReactNode,
-  createContext,
-  memo,
   useCallback,
   useContext,
   useState,
@@ -84,7 +84,7 @@ const DataDownloadStateProvider = ({ children }: { children: ReactNode }) => {
 };
 
 const FILE_FORMATS = ["csv", "xlsx"] as const;
-export type FileFormat = (typeof FILE_FORMATS)[number];
+type FileFormat = (typeof FILE_FORMATS)[number];
 
 const makeColumnLabel = (dim: Component) => {
   return `${dim.label}${dim.unit ? ` (${dim.unit})` : ""}`;

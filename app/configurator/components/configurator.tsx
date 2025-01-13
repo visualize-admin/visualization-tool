@@ -215,11 +215,7 @@ const NextStepButton = (props: React.PropsWithChildren<{}>) => {
   );
 };
 
-export const SaveDraftButton = ({
-  chartId,
-}: {
-  chartId: string | undefined;
-}) => {
+const SaveDraftButton = ({ chartId }: { chartId: string | undefined }) => {
   const { data: config, invalidate: invalidateConfig } = useUserConfig(chartId);
   const session = useSession();
   const client = useClient();

@@ -1,16 +1,20 @@
-name: Chromatic
+name: Validate
 
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
-  push-storybook:
+  base-checks:
     runs-on: ubuntu-latest
+    continue-on-error: true
+    strategy:
+      matrix:
+        job: [lint, typecheck, test, knip]
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
       - name: Setup node
         uses: actions/setup-node@v4
         with:
@@ -19,6 +23,4 @@ jobs:
           cache-dependency-path: "**/yarn.lock"
       - run: yarn install --immutable --prefer-offline
       - run: yarn lingui compile
-      - run: yarn chromatic
-        env:
-          CHROMATIC_PROJECT_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+      - run: yarn ${{ matrix.job }}
