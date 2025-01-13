@@ -7,10 +7,6 @@
       {
         "name": "lodash",
         "message": "Please use direct imports instead, ex: lodash/mapValues, lodash/groupBy."
-      },
-      {
-        "name": "d3",
-        "message": "Please use imports from individual d3 libraries, e.g. import { ascending } from 'd3-array'."
       }
     ],
     "react/display-name": "off",
@@ -59,7 +55,7 @@
   },
   "overrides": [
     {
-      "files": ["**/*.docs.tsx"], // Or *.test.js
+      "files": ["**/*.docs.tsx"],
       "rules": {
         "import/no-anonymous-default-export": "off"
       }

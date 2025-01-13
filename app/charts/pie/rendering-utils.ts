@@ -1,11 +1,11 @@
 import { interpolate } from "d3-interpolate";
 import { select } from "d3-selection";
-import { PieArcDatum } from "d3-shape";
+import { Arc, PieArcDatum } from "d3-shape";
 import { Transition } from "d3-transition";
 
 import {
-  RenderOptions,
   maybeTransition,
+  RenderOptions,
 } from "@/charts/shared/rendering-utils";
 import { Observation } from "@/domain/data";
 
@@ -18,7 +18,7 @@ export type RenderDatum = {
 };
 
 type RenderPieOptions = RenderOptions & {
-  arcGenerator: d3.Arc<any, any>;
+  arcGenerator: Arc<any, any>;
   handleMouseEnter: (d: PieArcDatum<Observation>) => void;
   handleMouseLeave: () => void;
 };
@@ -93,7 +93,7 @@ export const renderPies = (
 
 const animatePath = (
   g: Transition<SVGPathElement, RenderDatum, SVGGElement, unknown>,
-  arcGenerator: d3.Arc<any, any>
+  arcGenerator: Arc<any, any>
 ) => {
   return g.attrTween("d", function (d) {
     const that = this as any;

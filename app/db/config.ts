@@ -3,9 +3,9 @@
  */
 
 import {
-  PUBLISHED_STATE,
-  Prisma,
   Config as PrismaConfig,
+  Prisma,
+  PUBLISHED_STATE,
   User,
 } from "@prisma/client";
 
@@ -206,6 +206,7 @@ export const getAllConfigs = async ({
   return await Promise.all(parsedConfigs.map(upgradeDbConfig));
 };
 
+/** @internal */
 export const getConfigViewCount = async (configKey: string) => {
   return await prisma.config
     .findFirstOrThrow({

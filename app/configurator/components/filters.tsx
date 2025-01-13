@@ -1192,19 +1192,23 @@ export const TimeFilter = (props: TimeFilterProps) => {
   }
 };
 
-type LeftRightFormContainerProps = {
+const LeftRightFormContainer = ({
+  left,
+  right,
+}: {
   left: ReactNode;
   right: ReactNode;
-};
+}) => {
+  const columnGap = 12;
+  const middleElementSize = 8;
+  const sideElementSize = DRAWER_WIDTH / 2 - columnGap * 2 - middleElementSize;
 
-const LeftRightFormContainer = (props: LeftRightFormContainerProps) => {
-  const { left, right } = props;
   return (
     <Box
       sx={{
         display: "grid",
-        columnGap: "0.75rem",
-        gridTemplateColumns: "1fr auto 1fr",
+        columnGap: `${columnGap}px`,
+        gridTemplateColumns: `${sideElementSize}px ${middleElementSize}px ${sideElementSize}px`,
         alignItems: "center",
       }}
     >

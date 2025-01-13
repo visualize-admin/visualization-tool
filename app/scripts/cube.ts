@@ -1,7 +1,6 @@
 // @ts-ignore
 import { build, completionHandler } from "@cozy/cli-tree";
 import { config } from "dotenv";
-// @ts-ignore
 import fetch from "node-fetch";
 import { Client } from "urql";
 

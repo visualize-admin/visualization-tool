@@ -125,7 +125,7 @@ const comboDifferentUnitChartTypes: ComboChartType[] = [
   "comboLineColumn",
 ];
 
-export const comboSameUnitChartTypes: ComboChartType[] = ["comboLineSingle"];
+const comboSameUnitChartTypes: ComboChartType[] = ["comboLineSingle"];
 
 export const comboChartTypes: ComboChartType[] = [
   ...comboSameUnitChartTypes,
@@ -326,7 +326,7 @@ const getInitialSymbolLayer = ({
   };
 };
 
-export const META: Meta = {
+const META: Meta = {
   title: {
     en: "",
     de: "",
@@ -1259,7 +1259,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
                 "sorting" in oldSegment &&
                 oldSegment.sorting &&
                 "sortingOrder" in oldSegment.sorting
-                  ? oldSegment.sorting ?? DEFAULT_FIXED_COLOR_FIELD
+                  ? (oldSegment.sorting ?? DEFAULT_FIXED_COLOR_FIELD)
                   : DEFAULT_SORTING,
             };
             newColor = {

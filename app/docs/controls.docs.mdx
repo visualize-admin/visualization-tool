@@ -8,7 +8,6 @@ import {
   ColorPickerMenu,
 } from "@/configurator/components/chart-controls/color-picker";
 import { OnOffControlTab } from "@/configurator/components/chart-controls/control-tab";
-import { ControlList } from "@/configurator/components/chart-controls/list";
 import {
   ControlSection,
   SectionTitle,
@@ -20,7 +19,7 @@ import { Canvas, Meta } from "@storybook/blocks";
 import * as ControlsStories from "./controls.stories";
 
 > Controls are a composition of layout components and form elements, used
-> throughout the application to configurate charts.
+> throughout the application to configure charts.
 
 <Meta of={ControlsStories} />
 
@@ -43,10 +42,6 @@ A section is a styling container, it has a title and a note (displayed on the
 right). Any component can be given as child component.
 
 <Canvas of={ControlsStories.ControlSection} />
-
-## Controls list
-
-<Canvas of={ControlsStories.ControlList} />
 
 ## Color Picker
 

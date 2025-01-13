@@ -14,7 +14,7 @@ import {
 import { resolveDimensionType } from "@/graphql/resolvers";
 import { ResolvedDimension } from "@/graphql/shared-types";
 
-export type RawObservationValue = Term;
+type RawObservationValue = Term;
 
 export type RawObservation = Record<string, RawObservationValue>;
 
@@ -283,7 +283,7 @@ export type NominalDimension = BaseDimension & {
   __typename: "NominalDimension";
 };
 
-export type OrdinalDimension = BaseDimension & {
+type OrdinalDimension = BaseDimension & {
   __typename: "OrdinalDimension";
 };
 
@@ -314,7 +314,7 @@ export const getTemporalEntityValue = (value: DimensionValue) => {
   return value.position ?? value.value;
 };
 
-export type TemporalOrdinalDimension = BaseDimension & {
+type TemporalOrdinalDimension = BaseDimension & {
   __typename: "TemporalOrdinalDimension";
 };
 
@@ -326,15 +326,15 @@ export type GeoShapesDimension = BaseDimension & {
   __typename: "GeoShapesDimension";
 };
 
-export type StandardErrorDimension = BaseDimension & {
+type StandardErrorDimension = BaseDimension & {
   __typename: "StandardErrorDimension";
 };
 
-export type ConfidenceUpperBoundDimension = BaseDimension & {
+type ConfidenceUpperBoundDimension = BaseDimension & {
   __typename: "ConfidenceUpperBoundDimension";
 };
 
-export type ConfidenceLowerBoundDimension = BaseDimension & {
+type ConfidenceLowerBoundDimension = BaseDimension & {
   __typename: "ConfidenceLowerBoundDimension";
 };
 
@@ -351,7 +351,7 @@ export type NumericalMeasure = BaseMeasure & {
   __typename: "NumericalMeasure";
 };
 
-export type OrdinalMeasure = BaseMeasure & {
+type OrdinalMeasure = BaseMeasure & {
   __typename: "OrdinalMeasure";
 };
 

@@ -10,7 +10,7 @@ import {
 import { isRunningInBrowser } from "@/utils/is-running-in-browser";
 import { getURLParam, setURLParam } from "@/utils/router/helpers";
 
-export type DataSourceStore = {
+type DataSourceStore = {
   dataSource: DataSource;
   setDataSource: (value: DataSource) => void;
 };

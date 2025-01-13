@@ -376,9 +376,3 @@ export const renderHorizontalWhisker = (
         })
     );
 };
-
-export const filterWithoutErrors = (
-  getError: ((d: Observation) => Observation) | null
-) => {
-  return (d: Observation): boolean => !!getError?.(d);
-};

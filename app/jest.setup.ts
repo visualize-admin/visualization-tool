@@ -5,9 +5,14 @@ import DefaultGraphExt from "rdf-ext/lib/DefaultGraph";
 import { NamedNode, Term } from "rdf-js";
 import { createClient, defaultExchanges } from "urql";
 
+import { GRAPHQL_ENDPOINT } from "@/domain/env";
 import * as ns from "@/rdf/namespace";
 
-import { GRAPHQL_ENDPOINT } from "./domain/env";
+jest.mock("nanoid", () => {
+  return {
+    nanoid: () => "nanoid",
+  };
+});
 
 // @ts-ignore Ignoring cannot be compiled as isolated module warning. It's working.
 jest.mock("@lingui/macro", () => {
