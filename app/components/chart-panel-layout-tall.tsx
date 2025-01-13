@@ -53,7 +53,7 @@ type ChartPanelLayoutTallRow = {
     }
 );
 
-export const getChartPanelLayoutTallRows = ({
+const getChartPanelLayoutTallRows = ({
   blocks,
   renderBlock,
 }: ChartPanelLayoutTypeProps): ChartPanelLayoutTallRow[] => {
