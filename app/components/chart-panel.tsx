@@ -1,6 +1,5 @@
 import { Box, BoxProps, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import cx from "classnames";
 import clsx from "clsx";
 import { selectAll } from "d3-selection";
 import {
@@ -156,7 +155,7 @@ export const ChartPanelLayout = ({
           // Important, otherwise ReactGrid breaks.
           key={block.key}
           id={block.key}
-          className={cx(classes.textBlockWrapper, TEXT_BLOCK_WRAPPER_CLASS)}
+          className={clsx(classes.textBlockWrapper, TEXT_BLOCK_WRAPPER_CLASS)}
           onClick={(e) => {
             if (e.isPropagationStopped()) {
               return;
