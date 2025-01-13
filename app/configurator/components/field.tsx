@@ -689,7 +689,8 @@ const useMultiFilterColorPicker = (value: string) => {
   const { dimensionId, colorConfigPath } = useMultiFilterContext();
   const { activeField } = chartConfig;
 
-  const colorField = isColorInConfig(chartConfig) ? "color" : activeField;
+  const hasColorField = isColorInConfig(chartConfig);
+  const colorField = hasColorField ? "color" : activeField;
 
   const onChange = useCallback(
     (color: string) => {
@@ -698,7 +699,7 @@ const useMultiFilterColorPicker = (value: string) => {
           type: "CHART_COLOR_CHANGED",
           value: {
             field: colorField,
-            colorConfigPath: isColorInConfig(chartConfig) ? "" : colorField,
+            colorConfigPath: hasColorField ? "" : colorField,
             color,
             value,
           },
@@ -706,19 +707,24 @@ const useMultiFilterColorPicker = (value: string) => {
       }
     },
 
-    [dispatch, colorField, value, chartConfig]
+    [dispatch, colorField, value, hasColorField]
   );
 
-  const path = colorConfigPath ? `${colorConfigPath}.` : "";
+  const path = colorConfigPath ? colorConfigPath : "";
 
-  const color = get(chartConfig, `fields["${colorField}"].${path}["${value}"]`);
+  const color = get(
+    chartConfig,
+    `fields["${colorField}"].${path}${!hasColorField ? ".colorMapping" : ""}["${value}"]`
+  );
 
   const palette = useMemo(() => {
     return getPalette({
       paletteId: get(
         chartConfig,
         `fields["${colorField}"].${
-          colorConfigPath ? `${colorConfigPath}.` : ""
+          colorConfigPath
+            ? `${colorConfigPath}${!hasColorField ? ".colorMapping" : ""}`
+            : ""
         }paletteId`
       ),
     });

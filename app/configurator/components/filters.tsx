@@ -45,7 +45,7 @@ import { Select } from "@/components/form";
 import { Loading } from "@/components/hint";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { TooltipTitle } from "@/components/tooltip-utils";
-import { ChartConfig, ColorMapping } from "@/config-types";
+import { ChartConfig, ColorMapping, isColorInConfig } from "@/config-types";
 import { getChartConfig, useChartConfigFilters } from "@/config-utils";
 import {
   ColorField,
@@ -178,7 +178,14 @@ const groupByParent = (node: { parents: HierarchyValue[] }) => {
 };
 
 const getColorConfig = (chartConfig: ChartConfig) => {
-  return get(chartConfig.fields, ["color"]) as ColorField | undefined;
+  if (isColorInConfig(chartConfig)) {
+    return get(chartConfig.fields, ["color"]) as ColorField | undefined;
+  } else {
+    return get(chartConfig.fields, [
+      chartConfig.activeField ?? "symbolLayer",
+      "color",
+    ]) as ColorField | undefined;
+  }
 };
 
 const FilterControls = ({
