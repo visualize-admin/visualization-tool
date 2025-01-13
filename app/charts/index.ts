@@ -38,6 +38,7 @@ import {
   GenericFields,
   InteractiveFiltersConfig,
   isAreaConfig,
+  isColorInConfig,
   isColumnConfig,
   isComboChartConfig,
   isComboLineColumnConfig,
@@ -1643,7 +1644,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           const componentIds = numericalMeasures
             .filter((d) => d.unit === unit)
             .map((d) => d.id);
-          const paletteId = isSegmentInConfig(oldChartConfig)
+          const paletteId = isColorInConfig(oldChartConfig)
             ? oldChartConfig.fields.color.paletteId ??
               DEFAULT_CATEGORICAL_PALETTE_ID
             : isComboChartConfig(oldChartConfig)
@@ -1759,7 +1760,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         ).id;
         leftMeasure = getLeftMeasure(leftMeasure.id);
 
-        const paletteId = isSegmentInConfig(oldChartConfig)
+        const paletteId = isColorInConfig(oldChartConfig)
           ? oldChartConfig.fields.color.paletteId ??
             DEFAULT_CATEGORICAL_PALETTE_ID
           : isComboChartConfig(oldChartConfig)
@@ -1852,7 +1853,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           ) as NumericalMeasure
         ).id;
 
-        const paletteId = isSegmentInConfig(oldChartConfig)
+        const paletteId = isColorInConfig(oldChartConfig)
           ? oldChartConfig.fields.color.paletteId ??
             DEFAULT_CATEGORICAL_PALETTE_ID
           : isComboChartConfig(oldChartConfig)

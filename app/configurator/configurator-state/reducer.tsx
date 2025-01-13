@@ -487,14 +487,12 @@ export const updateColorMapping = (
         });
       }
     } else {
-      const fieldValue: (GenericField & { palette: string }) | undefined = get(
-        chartConfig,
-        path
-      );
+      const fieldValue: (GenericField & { paletteId: string }) | undefined =
+        get(chartConfig, path);
 
       if (fieldValue?.componentId === dimensionId) {
         colorMapping = mapValueIrisToColor({
-          paletteId: fieldValue.palette,
+          paletteId: fieldValue.paletteId,
           dimensionValues: values,
           colorMapping: oldColorMapping,
           random,

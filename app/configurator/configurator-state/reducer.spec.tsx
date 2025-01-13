@@ -509,7 +509,7 @@ describe("deriveFiltersFromFields", () => {
           },
         ],
         "fields": Object {
-          "segment": Object {
+          "color": Object {
             "colorMapping": Object {
               "https://energy.ld.admin.ch/elcom/electricityprice/category/C1": "#1f77b4",
               "https://energy.ld.admin.ch/elcom/electricityprice/category/C2": "#ff7f0e",
@@ -527,8 +527,11 @@ describe("deriveFiltersFromFields", () => {
               "https://energy.ld.admin.ch/elcom/electricityprice/category/H7": "#d62728",
               "https://energy.ld.admin.ch/elcom/electricityprice/category/H8": "#9467bd",
             },
+            "paletteId": "category10",
+            "type": "segment",
+          },
+          "segment": Object {
             "componentId": "https://energy.ld.admin.ch/elcom/electricityprice-canton(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/elcom/electricityprice/dimension/category",
-            "palette": "category10",
             "sorting": Object {
               "sortingOrder": "asc",
               "sortingType": "byMeasure",
@@ -582,7 +585,7 @@ describe("deriveFiltersFromFields", () => {
             "it": "",
           },
         },
-        "version": "4.0.0",
+        "version": "4.1.0",
       }
     `);
   });

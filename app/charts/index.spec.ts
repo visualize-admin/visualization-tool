@@ -1,3 +1,5 @@
+import { schemeCategory10 } from "d3-scale-chromatic";
+
 import {
   ColumnConfig,
   ComboLineDualConfig,
@@ -485,6 +487,11 @@ describe("chart type switch", () => {
         },
         y: {
           componentId: "A_M1",
+        },
+        color: {
+          paletteId: "category10",
+          color: schemeCategory10[0],
+          type: "single",
         },
       },
     } as any as ColumnConfig;

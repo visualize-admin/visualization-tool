@@ -124,11 +124,10 @@ describe("config migrations", () => {
     const migratedConfig = await migrateChartConfig(oldMapConfig, {
       migrationProps: CONFIGURATOR_STATE,
     });
-    const decodedConfig = decodeChartConfig(migratedConfig);
 
-    expect(decodedConfig).toBeDefined();
+    expect(migratedConfig).toBeDefined();
 
-    const migratedOldConfig = (await migrateChartConfig(decodedConfig, {
+    const migratedOldConfig = (await migrateChartConfig(migratedConfig, {
       toVersion: "1.0.0",
     })) as any;
     expect(migratedOldConfig.version).toEqual("1.0.0");
@@ -182,9 +181,8 @@ describe("config migrations", () => {
       toVersion: "4.0.0",
       migrationProps: CONFIGURATOR_STATE,
     });
-    const decodedConfig = decodeChartConfig(migratedConfig);
-    expect(decodedConfig).toBeDefined();
-    expect((decodedConfig as any).fields.y.colorMapping).toMatchObject({
+    expect(migratedConfig).toBeDefined();
+    expect((migratedConfig as any).fields.y.colorMapping).toMatchObject({
       [stringifyComponentId({
         unversionedCubeIri:
           "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_co2wirkung/4",
