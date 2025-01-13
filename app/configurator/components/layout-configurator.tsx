@@ -618,6 +618,7 @@ const AddLayoutBlocks = () => {
     setAnchorEl(null);
   });
   const handleAddTextBlock = useEvent(() => {
+    const key = createId();
     dispatch({
       type: "LAYOUT_CHANGED",
       value: {
@@ -626,7 +627,7 @@ const AddLayoutBlocks = () => {
           ...layout.blocks,
           {
             type: "text",
-            key: createId(),
+            key,
             text: {
               de: "",
               fr: "",
@@ -637,6 +638,10 @@ const AddLayoutBlocks = () => {
           },
         ],
       },
+    });
+    dispatch({
+      type: "LAYOUT_ACTIVE_FIELD_CHANGED",
+      value: key,
     });
     handleClose();
   });
