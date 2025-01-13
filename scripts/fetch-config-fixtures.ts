@@ -11,7 +11,7 @@ import { build, completionHandler } from "@cozy/cli-tree";
 import fs from "fs-extra";
 import fetch from "isomorphic-unfetch";
 
-import testConfigs from "../app/test/__fixtures/config/int/configs";
+import intConfigs from "../app/test/__fixtures/config/int/configs";
 
 const pullConfigs = async ({
   baseUrl,
@@ -32,10 +32,11 @@ const pullConfigs = async ({
   const cyFixuresDir = path.join(__dirname, "..", "cypress", "fixtures", env);
   console.log(`Pull configs from ${baseUrl}`);
   const configs = await Promise.all(
-    testConfigs.map(async (testConfig) => {
-      const url = `${baseUrl}/api/config/${testConfig.chartId}`;
+    intConfigs.map(async ({ chartId, slug }) => {
+      const url = `${baseUrl}/api/config/${chartId}`;
       const config = await (await fetch(url)).json();
-      return { slug: testConfig.slug, config };
+
+      return { slug, config };
     })
   );
 

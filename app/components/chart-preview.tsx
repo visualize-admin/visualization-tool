@@ -50,10 +50,10 @@ import {
   MetadataPanelStoreContext,
 } from "@/components/metadata-panel-store";
 import { BANNER_MARGIN_TOP } from "@/components/presence";
+import { getChartConfig } from "@/config-utils";
 import {
   ChartConfig,
   DataSource,
-  getChartConfig,
   hasChartConfigs,
   isConfiguring,
   Layout,

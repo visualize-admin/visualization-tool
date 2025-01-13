@@ -43,7 +43,7 @@ test("search results count coherence", async ({
   const categories = [
     "Administration",
     "Agriculture, forestry",
-    "Finances",
+    "National economy",
     "Territory and environment",
   ];
 
@@ -57,10 +57,14 @@ test("search results count coherence", async ({
     await page.goto(
       `/en/browse?dataSource=Int&${harReplayGraphqlEndpointQueryParam}`
     );
+
     await selectors.search.resultsCount();
 
     const panelLeft = await selectors.panels.left();
-    await (await within(panelLeft).getAllByText("Show all")[0]).click();
+
+    await (
+      await within(panelLeft).locator(`button:has-text("Show all")`).first()
+    ).click();
 
     await within(panelLeft).findByText(t, undefined, { timeout: 10_000 });
 
@@ -71,7 +75,7 @@ test("search results count coherence", async ({
 
     await page
       .locator(`:text("${count} datasets")`)
-      .waitFor({ timeout: 10000 });
+      .waitFor({ timeout: 10_000 });
   }
 });
 
@@ -189,22 +193,22 @@ test("sort language consistency", async ({
 }) => {
   test.slow();
   await replayFromHAR();
-  const count1 = await getResultCountForSearch("wasser", {
+  const count1 = await getResultCountForSearch("badegewässer", {
     locale: "en",
     page,
     selectors,
   });
-  const count2 = await getResultCountForSearch("wasser", {
+  const count2 = await getResultCountForSearch("badegewässer", {
     locale: "de",
     page,
     selectors,
   });
-  const count3 = await getResultCountForSearch("wasser", {
+  const count3 = await getResultCountForSearch("badegewässer", {
     locale: "fr",
     page,
     selectors,
   });
-  const count4 = await getResultCountForSearch("wasser", {
+  const count4 = await getResultCountForSearch("badegewässer", {
     locale: "it",
     page,
     selectors,
@@ -214,12 +218,12 @@ test("sort language consistency", async ({
   expect(count1).toEqual(count3);
   expect(count1).toEqual(count4);
 
-  const count5 = await getResultCountForSearch("water", {
+  const count5 = await getResultCountForSearch("bathing water", {
     locale: "en",
     page,
     selectors,
   });
-  const count6 = await getResultCountForSearch("eaux", {
+  const count6 = await getResultCountForSearch("baignade", {
     locale: "de",
     page,
     selectors,
@@ -229,7 +233,7 @@ test("sort language consistency", async ({
     page,
     selectors,
   });
-  const count8 = await getResultCountForSearch("water", {
+  const count8 = await getResultCountForSearch("bathing water", {
     locale: "it",
     page,
     selectors,

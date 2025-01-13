@@ -11,6 +11,7 @@ const config = {
   moduleNameMapper: {
     "\\.(css)$": "<rootDir>/test/style-mock.js",
     "^@/(.*)$": "<rootDir>/$1",
+    "^d3-(.+)$": "<rootDir>/../node_modules/d3-$1/dist/d3-$1.js",
   },
   transform: {
     "node_modules/@rdf*": "ts-jest",

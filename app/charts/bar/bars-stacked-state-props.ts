@@ -19,8 +19,9 @@ import {
   useSegmentVariables,
 } from "@/charts/shared/chart-state";
 import { useRenderingKeyVariable } from "@/charts/shared/rendering-utils";
-import { BarConfig, useChartConfigFilters } from "@/configurator";
-import { Observation, isTemporalEntityDimension } from "@/domain/data";
+import { useChartConfigFilters } from "@/config-utils";
+import { BarConfig } from "@/configurator";
+import { isTemporalEntityDimension, Observation } from "@/domain/data";
 import { sortByIndex } from "@/utils/array";
 
 import { ChartProps } from "../shared/ChartProps";

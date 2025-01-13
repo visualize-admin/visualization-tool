@@ -28,7 +28,7 @@
 
 While usually you'll want to publish your chart, sometimes you might want to
 simply preview it, without going through the publishing process. This could be
-especially helpful to programatically generate charts based on many different
+especially helpful to programmatically generate charts based on many different
 configuration options. Visualize offers a way to preview charts without
 publishing them, by using a custom API.
 
@@ -47,7 +47,7 @@ message with the chart state to the iframe window on load.
 iframe.onload = () => {
   const iframeWindow = iframe?.contentWindow;
   if (iframeWindow) {
-    iframeWindow.postMessage(chartState, "*");
+    iframeWindow.postMessage(configuratorState, "*");
   }
 };
 `}
@@ -55,8 +55,8 @@ iframe.onload = () => {
 
 ### Controlling the language
 
-You can set the desired language for the chart preview by adding a /de, /fr, /it
-or /en part to the iframe URL, like so:
+You can set the desired language for the chart preview by adding a `/de`, `/fr`,
+`/it` or `/en` part to the iframe URL, like so:
 
 ```html
 <iframe
@@ -87,7 +87,7 @@ It's important to only use one input inside a form (as we split the string by
   rawBody={`<form method="post" action="/preview_post" target="_blank">
   <input
     type="hidden"
-    name="chartState"
+    name="configuratorState"
     value={JSON.stringify(photovoltaikanlagenState)}
   />
   <input type="submit" value="☀️ Preview a Photovoltaikanlagen chart" />
@@ -96,28 +96,38 @@ It's important to only use one input inside a form (as we split the string by
 
 ### Controlling the language
 
-You can set the desired language for the chart preview by adding a /de, /fr, /it
-or /en part to the form action parameter, like so:
+You can set the desired language for the chart preview by adding a `/de`, `/fr`,
+`/it` or `/en` part to the form action parameter, like so:
 
 ```html
 <form method="post" action="/it/preview_post" target="_blank">
   <input
     type="hidden"
-    name="chartState"
+    name="configuratorState"
     value="{JSON.stringify(photovoltaikanlagenState)}"
   />
   <input type="submit" value="☀️ Preview a Photovoltaikanlagen chart" />
 </form>
 ```
 
-## Chart config schema
+## Configurator and chart config schemas
 
-As the application constantly evolves, the chart config schema might change. You
-can find the latest version of the schema in the
+As the application constantly evolves, the configurator and chart config schemas
+will change. You can find their latest TypeScript definitions in the
 [config-types.ts](https://github.com/visualize-admin/visualization-tool/blob/main/app/config-types.ts)
-file.
+file and according JSON Schema definitions and examples in the
+[json-schema folder](https://github.com/visualize-admin/visualization-tool/tree/main/app/public/json-schema).
 
-An example chart config is shown below.
+JSON Schema examples can be opened e.g. in Visual Studio Code, where you will
+have an autocomplete feature to help you fill in the configuration.
+
+Note that the types are very complex and it's encouraged to visit the Visualize
+application with `&flag\_\_debug=true` added to the end of the URL to enable the
+debug mode. You will then see the configurator state directly below the chart
+that is being edited. It also enables the `Dump to console` button, which will
+log the state to the browser console, for easier re-use.
+
+An example configurator state is shown below.
 
 <CodeSpecimen
   lang="json"
@@ -128,7 +138,7 @@ An example chart config is shown below.
     "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/7",
   dataSource: {
     type: "sparql",
-    url: "https://lindas.admin.ch/query",
+    url: "https://lindas-cached.cluster.ldbar.ch/query",
   },
   meta: {
     title: {
@@ -195,9 +205,3 @@ An example chart config is shown below.
   },
 }`}
 />
-
-Note that it's encouraged to visit the Visualize application with
-&flag\_\_debug=true added to the URL to enable the debug mode, which will show
-the chart config directly below the chart that is being edited. It also enables
-the "Dump to console" button, which will log the chart config to the browser
-console, for easier re-use.

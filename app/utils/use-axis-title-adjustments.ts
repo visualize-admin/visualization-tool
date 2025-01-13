@@ -3,19 +3,19 @@ import { TICK_PADDING } from "@/charts/shared/axis-height-linear";
 import { TICK_FONT_SIZE } from "@/charts/shared/use-chart-theme";
 import { getTextWidth } from "@/utils/get-text-width";
 
-export interface AxisTitleAdjustments {
+type AxisTitleAdjustments = {
   axisTitleAdjustment: number;
   topMarginAxisTitleAdjustment: number;
   isOverlapping: boolean;
   overlapAmount: number;
-}
+};
 
-interface UseAxisTitleAdjustmentsProps {
+type UseAxisTitleAdjustmentsProps = {
   leftAxisTitle: string;
   rightAxisTitle: string;
   containerWidth: number;
   fontSize?: number;
-}
+};
 
 export const useAxisTitleAdjustments = ({
   leftAxisTitle,

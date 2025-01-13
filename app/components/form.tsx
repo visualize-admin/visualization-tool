@@ -3,41 +3,41 @@ import {
   Box,
   BoxProps,
   ButtonBase,
+  Checkbox as MUICheckbox,
   CircularProgress,
   FormControlLabel,
   FormControlLabelProps,
+  Input as MUIInput,
   InputLabel,
   InputProps,
   ListSubheader,
-  Checkbox as MUICheckbox,
-  Input as MUIInput,
-  Radio as MUIRadio,
-  Select as MUISelect,
-  Slider as MUISlider,
-  Switch as MUISwitch,
   MenuItem,
   Paper,
   PaperProps,
+  Radio as MUIRadio,
+  Select as MUISelect,
   SelectProps,
   Skeleton,
+  Slider as MUISlider,
   SliderProps,
   Stack,
+  styled,
+  Switch as MUISwitch,
   SxProps,
   Tooltip,
   Typography,
   TypographyProps,
-  styled,
 } from "@mui/material";
 import { useId } from "@reach/auto-id";
 import flatten from "lodash/flatten";
 import React, {
   ChangeEvent,
   ComponentProps,
+  createContext,
+  forwardRef,
   KeyboardEvent,
   ReactNode,
   SyntheticEvent,
-  createContext,
-  forwardRef,
   useCallback,
   useContext,
   useMemo,
@@ -267,11 +267,6 @@ const getSelectOptions = (
   }
 
   return [...noneOptions, ...restOptions];
-};
-
-export type Group = {
-  label: string;
-  value: string;
 };
 
 // Copied over from https://github.com/mui/material-ui/blob/master/packages/mui-material/src/Menu/Menu.js

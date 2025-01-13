@@ -38,11 +38,11 @@ import {
 import { useChartWithFiltersClasses } from "@/components/chart-with-filters";
 import { MenuActionItem } from "@/components/menu-action-item";
 import { MetadataPanel } from "@/components/metadata-panel";
+import { getChartConfig } from "@/config-utils";
 import {
   ChartConfig,
   DashboardFiltersConfig,
   DataSource,
-  getChartConfig,
   hasChartConfigs,
   isConfiguring,
   isPublished,
@@ -187,6 +187,7 @@ export const ChartMoreButton = ({
         onClick={(ev) => setAnchor(ev.currentTarget)}
         sx={{ height: "fit-content" }}
         {...DISABLE_SCREENSHOT_ATTR}
+        data-testid="chart-more-button"
       >
         <SvgIcMore />
       </IconButton>
@@ -519,7 +520,7 @@ const usePNGMetadata = ({
       .map((cube) =>
         cube.contactPoint
           ? `${cube.contactPoint.name} (${cube.contactPoint.email})`
-          : cube.creator?.label ?? cube.publisher
+          : (cube.creator?.label ?? cube.publisher)
       )
       .join(", ");
     const publisherMetadata = publisher

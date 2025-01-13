@@ -2,10 +2,6 @@
 import { fold } from "fp-ts/lib/Either";
 import { pipe } from "fp-ts/lib/function";
 import * as t from "io-ts";
-import { useMemo } from "react";
-
-import { Dimension, Measure, ObservationValue } from "@/domain/data";
-import { mkJoinById } from "@/graphql/join";
 
 const DimensionType = t.union([
   t.literal("NominalDimension"),
@@ -31,29 +27,6 @@ const ComponentType = t.union([DimensionType, MeasureType]);
 export type ComponentType = t.TypeOf<typeof ComponentType>;
 
 // Filters
-const FilterValueMulti = t.intersection([
-  t.type(
-    {
-      type: t.literal("multi"),
-      values: t.record(t.string, t.literal(true)), // undefined values will be removed when serializing to JSON
-    },
-    "FilterValueMulti"
-  ),
-  t.partial({
-    position: t.number,
-  }),
-]);
-export type FilterValueMulti = t.TypeOf<typeof FilterValueMulti>;
-
-export const makeMultiFilter = (
-  values: ObservationValue[]
-): FilterValueMulti => {
-  return {
-    type: "multi",
-    values: Object.fromEntries(values.map((d) => [d, true])),
-  };
-};
-
 const FilterValueSingle = t.intersection([
   t.type(
     {
@@ -68,11 +41,19 @@ const FilterValueSingle = t.intersection([
 ]);
 export type FilterValueSingle = t.TypeOf<typeof FilterValueSingle>;
 
-const isFilterValueSingle = (
-  filterValue: FilterValue
-): filterValue is FilterValueSingle => {
-  return filterValue.type === "single";
-};
+const FilterValueMulti = t.intersection([
+  t.type(
+    {
+      type: t.literal("multi"),
+      values: t.record(t.string, t.literal(true)), // undefined values will be removed when serializing to JSON
+    },
+    "FilterValueMulti"
+  ),
+  t.partial({
+    position: t.number,
+  }),
+]);
+export type FilterValueMulti = t.TypeOf<typeof FilterValueMulti>;
 
 const FilterValueRange = t.intersection([
   t.type(
@@ -105,15 +86,6 @@ export type Filters = t.TypeOf<typeof Filters>;
 const SingleFilters = t.record(t.string, FilterValueSingle, "SingleFilters");
 export type SingleFilters = t.TypeOf<typeof SingleFilters>;
 
-export const isSingleFilters = (filters: Filters): filters is SingleFilters => {
-  return Object.values(filters).every(isFilterValueSingle);
-};
-export const extractSingleFilters = (filters: Filters): SingleFilters => {
-  return Object.fromEntries(
-    Object.entries(filters).filter(([, value]) => value.type === "single")
-  ) as SingleFilters;
-};
-
 const Title = t.type({
   de: t.string,
   fr: t.string,
@@ -121,6 +93,7 @@ const Title = t.type({
   en: t.string,
 });
 export type Title = t.TypeOf<typeof Title>;
+
 const Description = t.type({
   de: t.string,
   fr: t.string,
@@ -128,6 +101,7 @@ const Description = t.type({
   en: t.string,
 });
 export type Description = t.TypeOf<typeof Description>;
+
 const Label = t.type({
   de: t.string,
   fr: t.string,
@@ -135,6 +109,7 @@ const Label = t.type({
   en: t.string,
 });
 export type Label = t.TypeOf<typeof Label>;
+
 const Meta = t.type({
   title: Title,
   description: Description,
@@ -660,7 +635,7 @@ export type MapAreaLayer = t.TypeOf<typeof MapAreaLayer>;
 
 const MapSymbolLayer = t.type({
   componentId: t.string,
-  // symbol radius (size)
+  /** symbol radius (size) */
   measureId: t.string,
   color: t.union([FixedColorField, CategoricalColorField, NumericalColorField]),
 });
@@ -794,7 +769,7 @@ const ComboChartConfig = t.union([
 ]);
 export type ComboChartConfig = t.TypeOf<typeof ComboChartConfig>;
 
-const ChartConfig = t.union([RegularChartConfig, ComboChartConfig]);
+export const ChartConfig = t.union([RegularChartConfig, ComboChartConfig]);
 export type ChartConfig = t.TypeOf<typeof ChartConfig>;
 
 export const decodeChartConfig = (
@@ -960,230 +935,6 @@ export const isColorFieldInConfig = (
   return isMapConfig(chartConfig);
 };
 
-// Chart Config Adjusters
-export type FieldAdjuster<
-  NewChartConfigType extends ChartConfig,
-  OldValueType extends unknown,
-> = (params: {
-  oldValue: OldValueType;
-  oldChartConfig: ChartConfig;
-  newChartConfig: NewChartConfigType;
-  dimensions: Dimension[];
-  measures: Measure[];
-  isAddingNewCube?: boolean;
-}) => NewChartConfigType;
-
-type AssureKeys<T, U extends { [K in keyof T]: unknown }> = {
-  [K in keyof T]: U[K];
-};
-
-export type InteractiveFiltersAdjusters = AssureKeys<
-  InteractiveFiltersConfig,
-  _InteractiveFiltersAdjusters
->;
-
-type _InteractiveFiltersAdjusters = {
-  legend: FieldAdjuster<ChartConfig, InteractiveFiltersLegend>;
-  timeRange: {
-    active: FieldAdjuster<ChartConfig, boolean>;
-    componentId: FieldAdjuster<ChartConfig, string>;
-    presets: {
-      type: FieldAdjuster<ChartConfig, "range">;
-      from: FieldAdjuster<ChartConfig, string>;
-      to: FieldAdjuster<ChartConfig, string>;
-    };
-  };
-  dataFilters: FieldAdjuster<ChartConfig, InteractiveFiltersDataConfig>;
-  calculation: FieldAdjuster<ChartConfig, InteractiveFiltersCalculation>;
-};
-
-type BaseAdjusters<NewChartConfigType extends ChartConfig> = {
-  cubes: FieldAdjuster<NewChartConfigType, GenericChartConfig["cubes"]>;
-  interactiveFiltersConfig: InteractiveFiltersAdjusters;
-};
-
-type ColumnAdjusters = BaseAdjusters<ColumnConfig> & {
-  fields: {
-    x: { componentId: FieldAdjuster<ColumnConfig, string> };
-    y: { componentId: FieldAdjuster<ColumnConfig, string> };
-    segment: FieldAdjuster<
-      ColumnConfig,
-      | BarSegmentField
-      | LineSegmentField
-      | AreaSegmentField
-      | ScatterPlotSegmentField
-      | PieSegmentField
-      | TableFields
-    >;
-    animation: FieldAdjuster<ColumnConfig, AnimationField | undefined>;
-  };
-};
-
-type BarAdjusters = BaseAdjusters<BarConfig> & {
-  fields: {
-    x: { componentId: FieldAdjuster<BarConfig, string> };
-    y: { componentId: FieldAdjuster<BarConfig, string> };
-    segment: FieldAdjuster<
-      BarConfig,
-      | ColumnSegmentField
-      | LineSegmentField
-      | AreaSegmentField
-      | ScatterPlotSegmentField
-      | PieSegmentField
-      | TableFields
-    >;
-    animation: FieldAdjuster<BarConfig, AnimationField | undefined>;
-  };
-};
-
-type LineAdjusters = BaseAdjusters<LineConfig> & {
-  fields: {
-    x: { componentId: FieldAdjuster<LineConfig, string> };
-    y: { componentId: FieldAdjuster<LineConfig, string> };
-    segment: FieldAdjuster<
-      LineConfig,
-      | ColumnSegmentField
-      | BarSegmentField
-      | AreaSegmentField
-      | ScatterPlotSegmentField
-      | PieSegmentField
-      | TableFields
-    >;
-  };
-};
-
-type AreaAdjusters = BaseAdjusters<AreaConfig> & {
-  fields: {
-    x: { componentId: FieldAdjuster<AreaConfig, string> };
-    y: { componentId: FieldAdjuster<AreaConfig, string> };
-    segment: FieldAdjuster<
-      AreaConfig,
-      | ColumnSegmentField
-      | BarSegmentField
-      | LineSegmentField
-      | ScatterPlotSegmentField
-      | PieSegmentField
-      | TableFields
-    >;
-  };
-};
-
-type ScatterPlotAdjusters = BaseAdjusters<ScatterPlotConfig> & {
-  fields: {
-    y: { componentId: FieldAdjuster<ScatterPlotConfig, string> };
-    segment: FieldAdjuster<
-      ScatterPlotConfig,
-      | ColumnSegmentField
-      | BarSegmentField
-      | LineSegmentField
-      | AreaSegmentField
-      | PieSegmentField
-      | TableFields
-    >;
-    animation: FieldAdjuster<ScatterPlotConfig, AnimationField | undefined>;
-  };
-};
-
-type PieAdjusters = BaseAdjusters<PieConfig> & {
-  fields: {
-    y: { componentId: FieldAdjuster<PieConfig, string> };
-    segment: FieldAdjuster<
-      PieConfig,
-      | ColumnSegmentField
-      | BarSegmentField
-      | LineSegmentField
-      | AreaSegmentField
-      | ScatterPlotSegmentField
-      | TableFields
-    >;
-    animation: FieldAdjuster<PieConfig, AnimationField | undefined>;
-  };
-};
-
-type TableAdjusters = {
-  cubes: FieldAdjuster<TableConfig, GenericChartConfig["cubes"]>;
-  fields: FieldAdjuster<
-    TableConfig,
-    | ColumnSegmentField
-    | BarSegmentField
-    | LineSegmentField
-    | AreaSegmentField
-    | ScatterPlotSegmentField
-    | PieSegmentField
-  >;
-};
-
-type MapAdjusters = BaseAdjusters<MapConfig> & {
-  fields: {
-    areaLayer: {
-      componentId: FieldAdjuster<MapConfig, string>;
-      color: {
-        componentId: FieldAdjuster<MapConfig, string>;
-      };
-    };
-    animation: FieldAdjuster<MapConfig, AnimationField | undefined>;
-  };
-};
-
-type ComboLineSingleAdjusters = BaseAdjusters<ComboLineSingleConfig> & {
-  fields: {
-    x: { componentId: FieldAdjuster<ComboLineSingleConfig, string> };
-    y: { componentIds: FieldAdjuster<ComboLineSingleConfig, string> };
-  };
-};
-
-type ComboLineDualAdjusters = BaseAdjusters<ComboLineDualConfig> & {
-  fields: {
-    x: { componentId: FieldAdjuster<ComboLineDualConfig, string> };
-    y: FieldAdjuster<
-      ComboLineDualConfig,
-      | AreaFields
-      | ColumnFields
-      | BarFields
-      | LineFields
-      | MapFields
-      | PieFields
-      | ScatterPlotFields
-      | TableFields
-      | ComboLineSingleFields
-      | ComboLineColumnFields
-    >;
-  };
-};
-
-type ComboLineColumnAdjusters = BaseAdjusters<ComboLineColumnConfig> & {
-  fields: {
-    x: { componentId: FieldAdjuster<ComboLineColumnConfig, string> };
-    y: FieldAdjuster<
-      ComboLineColumnConfig,
-      | AreaFields
-      | ColumnFields
-      | BarFields
-      | LineFields
-      | MapFields
-      | PieFields
-      | ScatterPlotFields
-      | TableFields
-      | ComboLineSingleFields
-      | ComboLineDualFields
-    >;
-  };
-};
-
-export type ChartConfigsAdjusters = {
-  column: ColumnAdjusters;
-  bar: BarAdjusters;
-  line: LineAdjusters;
-  area: AreaAdjusters;
-  scatterplot: ScatterPlotAdjusters;
-  pie: PieAdjusters;
-  table: TableAdjusters;
-  map: MapAdjusters;
-  comboLineSingle: ComboLineSingleAdjusters;
-  comboLineDual: ComboLineDualAdjusters;
-  comboLineColumn: ComboLineColumnAdjusters;
-};
-
 const DataSource = t.type({
   type: t.union([t.literal("sql"), t.literal("sparql")]),
   url: t.string,
@@ -1304,7 +1055,7 @@ export type DashboardFiltersConfig = t.TypeOf<typeof DashboardFiltersConfig>;
 export const areDataFiltersActive = (
   dashboardFilters: DashboardFiltersConfig | undefined
 ) => {
-  return dashboardFilters?.dataFilters.componentIds.length;
+  return !!dashboardFilters?.dataFilters.componentIds.length;
 };
 
 const Config = t.intersection([
@@ -1393,7 +1144,7 @@ export type ConfiguratorStatePublished = t.TypeOf<
   typeof ConfiguratorStatePublished
 >;
 
-const ConfiguratorState = t.union([
+export const ConfiguratorState = t.union([
   ConfiguratorStateInitial,
   ConfiguratorStateSelectingDataSet,
   ConfiguratorStateConfiguringChart,
@@ -1416,78 +1167,4 @@ export const decodeConfiguratorState = (
       (d) => d
     )
   );
-};
-
-/** Use to extract the chart config from configurator state. Handy in the editor mode,
- * where the is a need to edit the active chart config.
- *
- * @param state configurator state
- * @param chartKey optional chart key. If not provided, the active chart config will be returned.
- *
- */
-export const getChartConfig = (
-  state: ConfiguratorState,
-  chartKey?: string | null
-): ChartConfig => {
-  if (state.state === "INITIAL" || state.state === "SELECTING_DATASET") {
-    throw Error("No chart config available!");
-  }
-
-  const { chartConfigs, activeChartKey } = state;
-  const key = chartKey ?? activeChartKey;
-
-  return chartConfigs.find((d) => d.key === key) ?? chartConfigs[0];
-};
-
-/**
- * Get all filters from cubes and returns an object containing all values.
- */
-export const getChartConfigFilters = (
-  cubes: Cube[],
-  {
-    cubeIri,
-    joined,
-  }: {
-    /** If passed, only filters for a particular cube will be considered */
-    cubeIri?: string;
-    /**
-     * If true, filters for joined dimensions will be deduped. Useful in contexts where filters
-     * for multiple join dimensions should be considered unique (for example, in the left data filters).
-     */
-    joined?: boolean;
-  } = {}
-): Filters => {
-  const relevantCubes = cubes.filter((c) =>
-    cubeIri ? c.iri === cubeIri : true
-  );
-  const dimIdToJoinId = joined
-    ? Object.fromEntries(
-        relevantCubes.flatMap((x) =>
-          (x.joinBy ?? []).map(
-            (iri, index) => [iri, mkJoinById(index)] as const
-          )
-        )
-      )
-    : {};
-
-  return Object.fromEntries(
-    relevantCubes.flatMap((c) =>
-      Object.entries(c.filters).map(([id, value]) => [
-        dimIdToJoinId[id] ?? id,
-        value,
-      ])
-    )
-  );
-};
-
-export const useChartConfigFilters = (
-  chartConfig: ChartConfig,
-  options?: Parameters<typeof getChartConfigFilters>[1]
-): Filters => {
-  return useMemo(() => {
-    return getChartConfigFilters(chartConfig.cubes, {
-      cubeIri: options?.cubeIri,
-      joined: options?.joined,
-    });
-  }, [chartConfig.cubes, options?.cubeIri, options?.joined]);
 };

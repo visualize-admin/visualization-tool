@@ -7,7 +7,7 @@ import { useIconStyles } from "@/components/chart-selection-tabs";
 import { Icon } from "@/icons";
 import { DISABLE_SCREENSHOT_ATTR } from "@/utils/use-screenshot";
 
-export type DragHandleProps = Omit<BoxProps, "ref"> & {
+type DragHandleProps = Omit<BoxProps, "ref"> & {
   ref?: Ref<HTMLDivElement>;
   dragging?: boolean;
 };

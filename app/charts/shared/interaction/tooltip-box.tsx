@@ -1,12 +1,6 @@
 import { Box } from "@mui/material";
 import throttle from "lodash/throttle";
-import React, {
-  ReactNode,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import ReactDOM from "react-dom";
 
 import { Margins, useSize } from "@/charts/shared/use-size";
@@ -22,20 +16,23 @@ export const MOBILE_TOOLTIP_PLACEMENT: TooltipPlacement = {
   y: "bottom",
 };
 
-export type Xplacement = "left" | "center" | "right";
-export type Yplacement = "top" | "middle" | "bottom";
-export type TooltipPlacement = { x: Xplacement; y: Yplacement };
+type XPlacement = "left" | "center" | "right";
+type YPlacement = "top" | "middle" | "bottom";
+export type TooltipPlacement = {
+  x: XPlacement;
+  y: YPlacement;
+};
 
-export interface TooltipBoxProps {
+type TooltipBoxProps = {
   x: number | undefined;
   y: number | undefined;
   placement: TooltipPlacement;
   withTriangle?: boolean;
   margins: Margins;
   children: ReactNode;
-}
+};
 
-const Portal = ({ children }: { children: React.ReactNode }) => {
+const Portal = ({ children }: { children: ReactNode }) => {
   return ReactDOM.createPortal(children, document.body);
 };
 
@@ -96,9 +93,11 @@ const foldContainerSize =
     if (lg && containerWidth >= 900) {
       return lg(containerWidth);
     }
+
     if (md && containerWidth >= 600) {
       return md(containerWidth);
     }
+
     return xs(containerWidth);
   };
 
@@ -115,7 +114,7 @@ export const getCenteredTooltipPlacement = (props: {
         y: "top",
       }
     : {
-        x: foldContainerSize<Xplacement>(chartWidth)({
+        x: foldContainerSize<XPlacement>(chartWidth)({
           xs: (w) => (xAnchor < w * 0.5 ? "right" : "left"),
           md: (w) => (xAnchor < w * 0.25 ? "right" : "left"),
         }),
@@ -209,22 +208,6 @@ export const TooltipBox = ({
   );
 };
 
-// PLACEMENT ---------------------------------------------------------------------------------------------------
-export interface TooltipAnchorAndPlacementProps {
-  xRef: number;
-  xOffset: number;
-  yRef: number;
-  chartWidth: number;
-  chartHeight: number;
-}
-export interface TooltipAnchorAndPlacement {
-  xAnchor: number;
-  yAnchor: number;
-  xPlacement: Xplacement;
-  yPlacement: Yplacement;
-}
-
-// tooltip anchor position
 const mxYOffset = (yAnchor: number, p: TooltipPlacement) =>
   p.y === "top"
     ? yAnchor - TRIANGLE_SIZE - TOOLTIP_OFFSET
@@ -232,13 +215,14 @@ const mxYOffset = (yAnchor: number, p: TooltipPlacement) =>
       ? yAnchor + TRIANGLE_SIZE + TOOLTIP_OFFSET
       : yAnchor;
 
-// tooltip translation
 const mkTranslation = (p: TooltipPlacement) =>
   `translate3d(${mkXTranslation(p.x, p.y)}, ${mkYTranslation(p.y)}, 0)`;
 
-type Xtranslation = "-100%" | "-50%" | 0 | string;
+type XTranslation = "-100%" | "-50%" | 0 | string;
+
 type YTranslation = "-100%" | "-50%" | 0;
-const mkXTranslation = (xP: Xplacement, yP: Yplacement): Xtranslation => {
+
+const mkXTranslation = (xP: XPlacement, yP: YPlacement): XTranslation => {
   if (yP !== "middle") {
     return xP === "left" ? "-100%" : xP === "center" ? "-50%" : 0;
   } else {
@@ -250,10 +234,9 @@ const mkXTranslation = (xP: Xplacement, yP: Yplacement): Xtranslation => {
   }
 };
 
-const mkYTranslation = (yP: Yplacement): YTranslation =>
+const mkYTranslation = (yP: YPlacement): YTranslation =>
   yP === "top" ? "-100%" : yP === "middle" ? "-50%" : 0;
 
-// triangle position
 const mkTriangle = (p: TooltipPlacement) => {
   switch (true) {
     case p.x === "right" && p.y === "bottom":

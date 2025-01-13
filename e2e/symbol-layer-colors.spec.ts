@@ -1,19 +1,18 @@
 import { loadChartInLocalStorage } from "./charts-utils";
 import { setup } from "./common";
-import mapNFIChartConfigFixture from "./fixtures/map-nfi-chart-config.json";
+import configuratorState from "./fixtures/map-nfi-chart-config.json";
 
 const { test, expect } = setup();
 
 // FIX: works locally, sometimes fails in CI
-test.skip("Selecting SymbolLayer colors> should be possible to select geo dimension and see a legend", async ({
+test.skip("Selecting SymbolLayer colors > should be possible to select geo dimension and see a legend", async ({
   page,
   selectors,
   actions,
   within,
 }) => {
   const key = "jky5IEw6poT3";
-  const config = mapNFIChartConfigFixture;
-  await loadChartInLocalStorage(page, key, config);
+  await loadChartInLocalStorage(page, key, configuratorState);
   await page.goto(`/en/create/${key}`);
   await selectors.edition.drawerLoaded();
 

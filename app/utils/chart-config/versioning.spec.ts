@@ -6,8 +6,8 @@ import {
 } from "@/config-types";
 import { configJoinedCubes } from "@/configurator/configurator-state/mocks";
 import { stringifyComponentId } from "@/graphql/make-component-id";
-import dualLine1Fixture from "@/test/__fixtures/config/dev/chartConfig-photovoltaik-und-gebaudeprogramm.json";
-import tableFixture from "@/test/__fixtures/config/dev/chartConfig-table-covid19.json";
+import dualLine1Fixture from "@/test/__fixtures/config/test/chartConfig-photovoltaik-und-gebaudeprogramm.json";
+import tableFixture from "@/test/__fixtures/config/test/chartConfig-table-covid19.json";
 import {
   CHART_CONFIG_VERSION,
   CONFIGURATOR_STATE_VERSION,

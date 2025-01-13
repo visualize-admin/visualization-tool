@@ -8,7 +8,6 @@ import {
   ColorPickerMenu,
 } from "@/configurator/components/chart-controls/color-picker";
 import { OnOffControlTab } from "@/configurator/components/chart-controls/control-tab";
-import { ControlList } from "@/configurator/components/chart-controls/list";
 import {
   ControlSection,
   SectionTitle,
@@ -16,10 +15,11 @@ import {
 import { IconButton } from "@/configurator/components/icon-button";
 import { getPalette } from "@/palettes";
 
-import { Canvas, Meta } from '@storybook/blocks';
-import * as ControlsStories from './controls.stories';
+import { Canvas, Meta } from "@storybook/blocks";
+import * as ControlsStories from "./controls.stories";
 
-> Controls are a composition of layout components and form elements, used throughout the application to configurate charts.
+> Controls are a composition of layout components and form elements, used
+> throughout the application to configure charts.
 
 <Meta of={ControlsStories} />
 
@@ -29,27 +29,20 @@ import * as ControlsStories from './controls.stories';
 
 ## OnOffControlTab
 
-OnOffControlTab (and OnOffControlTabField) are elements which are supposed to be used on the left panel in the app as category "switches"
-(like for BaseLayer in case of maps or InteractiveFilters for... interactive filters). They display either "on" or "off" to indicate component state.
+OnOffControlTab (and OnOffControlTabField) are elements which are supposed to be
+used on the left panel in the app as category "switches" (like for BaseLayer in
+case of maps or InteractiveFilters for... interactive filters). They display
+either "on" or "off" to indicate component state.
 
 <Canvas of={ControlsStories.OnOffControlTab} />
 
-
-
-
 ## Controls section
 
-A section is a styling container, it has a title and a note (displayed on the right). Any component can be given as child component.
+A section is a styling container, it has a title and a note (displayed on the
+right). Any component can be given as child component.
 
 <Canvas of={ControlsStories.ControlSection} />
 
-
-## Controls list
-
-<Canvas of={ControlsStories.ControlList} />
-
-
-  ## Color Picker
-
+## Color Picker
 
 <Canvas of={ControlsStories.ColorPicker} />
