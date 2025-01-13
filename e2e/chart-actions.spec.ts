@@ -37,6 +37,7 @@ test("it should be possible to make a screenshot of a chart", async ({
   const download = await downloadPromise;
   expect((await promises.stat(await download.path())).size).toBeGreaterThan(
     // Assuring the file is not empty.
+    // We don't compare with 0, because empty images can still have some bytes.
     4000
   );
 });
