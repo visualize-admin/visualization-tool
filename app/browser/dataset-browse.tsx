@@ -117,7 +117,7 @@ const useNavItemStyles = makeStyles<
     backgroundColor: level === 1 ? navItemTheme.activeBg : "transparent",
     color:
       level === 1
-        ? navItemTheme.closeColor ?? navItemTheme.activeTextColor
+        ? (navItemTheme.closeColor ?? navItemTheme.activeTextColor)
         : navItemTheme.activeBg,
   }),
 }));
@@ -222,7 +222,7 @@ export const SearchDatasetControls = ({
         <SearchDatasetSortControl
           value={order}
           onChange={onSetOrder}
-          disableScore={isSearching}
+          disableScore={!isSearching}
         />
       </Flex>
     </Flex>
@@ -1054,8 +1054,11 @@ const useResultStyles = makeStyles((theme: Theme) => ({
     padding: `${theme.spacing(4)} 0`,
     boxShadow: "none",
 
-    "&:not(:first-child)": {
+    "&:first-child": {
       borderTop: `1px solid ${theme.palette.grey[300]}`,
+    },
+    "&:not(:first-child)": {
+      borderTop: `2px solid ${theme.palette.grey[300]}`,
     },
   },
 
@@ -1308,7 +1311,7 @@ export const DatasetResult = ({
   );
 };
 
-export type DatasetResultProps = ComponentProps<typeof DatasetResult>;
+type DatasetResultProps = ComponentProps<typeof DatasetResult>;
 
 DatasetResult.defaultProps = {
   showTags: true,

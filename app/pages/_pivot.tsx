@@ -1,12 +1,12 @@
 import {
   Box,
+  Card as MUICard,
   CircularProgress,
   FormControlLabel,
-  Card as MUICard,
+  lighten,
   Switch,
   Theme,
   Typography,
-  lighten,
 } from "@mui/material";
 import { makeStyles, styled } from "@mui/styles";
 import clsx from "clsx";
@@ -34,7 +34,7 @@ const Card = styled(MUICard)({
 });
 
 const intDatasource = {
-  sourceUrl: "https://int.lindas.admin.ch/query",
+  sourceUrl: "https://lindas-cached.int.cluster.ldbar.ch/query",
   sourceType: "sparql",
 };
 
@@ -167,8 +167,7 @@ const PivotTable = ({ dataset }: { dataset: (typeof datasets)[string] }) => {
   const [{ data: componentsData, fetching: fetchingComponents }] =
     useDataCubesComponentsQuery({
       variables: {
-        sourceUrl: "https://int.lindas.admin.ch/query",
-        sourceType: "sparql",
+        ...intDatasource,
         locale: "en",
         cubeFilters: [{ iri: dataset.iri }],
       },
@@ -176,8 +175,7 @@ const PivotTable = ({ dataset }: { dataset: (typeof datasets)[string] }) => {
   const [{ data: observationsData, fetching: fetchingObservations }] =
     useDataCubesObservationsQuery({
       variables: {
-        sourceUrl: "https://int.lindas.admin.ch/query",
-        sourceType: "sparql",
+        ...intDatasource,
         locale: "en",
         cubeFilters: [{ iri: dataset.iri }],
       },

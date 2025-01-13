@@ -115,7 +115,7 @@ type DataCubesMetadataData = {
   dataCubesMetadata: DataCubeMetadata[];
 };
 
-export const executeDataCubesMetadataQuery = async (
+const executeDataCubesMetadataQuery = async (
   client: Client,
   variables: DataCubesMetadataOptions["variables"],
   /** Callback triggered when data fetching starts (cache miss). */
@@ -359,11 +359,12 @@ type FetchAllUsedCubeComponentsOptions = {
   state: ConfiguratorState;
   locale: Locale;
 };
+
 /**
  * Fetches all cubes components in one go. Is useful in contexts where we deal
  * with all the cubes at once, for example the shared dashboard filters.
  */
-export const executeFetchAllUsedCubeComponents = async (
+const executeFetchAllUsedCubeComponents = async (
   client: Client,
   variables: FetchAllUsedCubeComponentsOptions
 ) => {

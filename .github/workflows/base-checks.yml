@@ -1,0 +1,26 @@
+name: Validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  base-checks:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    strategy:
+      matrix:
+        job: [lint, typecheck, test, knip]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: "yarn"
+          cache-dependency-path: "**/yarn.lock"
+      - run: yarn install --immutable --prefer-offline
+      - run: yarn lingui compile
+      - run: yarn ${{ matrix.job }}

@@ -1,6 +1,6 @@
 import { OAuthConfig, OAuthUserConfig } from "next-auth/providers";
 
-export interface ADFSProfile extends Record<string, any> {
+interface ADFSProfile extends Record<string, any> {
   /**
    * The subject of the JWT (user)
    */

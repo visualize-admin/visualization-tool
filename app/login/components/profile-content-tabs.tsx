@@ -13,6 +13,8 @@ import useEvent from "@/utils/use-event";
 
 const useStyles = makeStyles<Theme>((theme) => ({
   section: {
+    borderBottom: 1,
+    borderColor: "divider",
     marginTop: theme.spacing(6),
   },
   tabList: {
@@ -49,6 +51,7 @@ export const ProfileContentTabs = (props: ProfileContentTabsProps) => {
   const handleChange = useEvent((_: React.SyntheticEvent, v: string) => {
     setValue(v);
   });
+
   const rootClasses = useRootStyles();
   const classes = useStyles();
 
@@ -66,9 +69,9 @@ export const ProfileContentTabs = (props: ProfileContentTabsProps) => {
 
   return (
     <TabContext value={value}>
-      <Box className={clsx(rootClasses.section, classes.section)}>
+      <Box className={clsx(rootClasses.section)}>
         <Box className={rootClasses.sectionContent}>
-          <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+          <Box className={classes.section}>
             <TabList className={classes.tabList} onChange={handleChange}>
               <Tab
                 className={classes.tab}

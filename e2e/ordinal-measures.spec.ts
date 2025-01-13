@@ -61,7 +61,7 @@ describe("viewing a dataset with only ordinal measures", () => {
     await selectors.chart.loaded();
     await selectors.edition.drawerLoaded();
 
-    await actions.editor.changeChartType("Map");
+    await actions.editor.changeRegularChartType("Map");
 
     await selectors.chart.loaded();
 

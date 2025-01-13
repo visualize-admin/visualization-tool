@@ -3,7 +3,10 @@ import { ThemeProvider } from "@mui/material";
 import create, { useStore } from "zustand";
 
 import { ChartPublished } from "@/components/chart-published";
-import { ConfiguratorStatePublished } from "@/config-types";
+import {
+  ConfiguratorStatePublished,
+  decodeConfiguratorState,
+} from "@/config-types";
 import { GraphqlProvider } from "@/graphql/GraphqlProvider";
 import { i18n } from "@/locales/locales";
 import { LocaleProvider, useLocale } from "@/locales/use-locale";
@@ -20,15 +23,23 @@ const chartStateStore = create<{
 }));
 
 if (typeof window !== "undefined") {
-  window.addEventListener("message", async (event) => {
-    if (event.data.key) {
-      chartStateStore.setState({
-        state: {
-          ...(await migrateConfiguratorState(event.data)),
-          // Force state published for <ChartPublished /> to work correctly
-          state: "PUBLISHED",
-        } as ConfiguratorStatePublished,
-      });
+  window.addEventListener("message", async (e) => {
+    try {
+      const state = decodeConfiguratorState(
+        await migrateConfiguratorState(e.data)
+      );
+
+      if (state) {
+        chartStateStore.setState({
+          state: {
+            ...state,
+            // Force state published for <ChartPublished /> to work correctly
+            state: "PUBLISHED",
+          } as ConfiguratorStatePublished,
+        });
+      }
+    } catch (e) {
+      console.error(e);
     }
   });
 }

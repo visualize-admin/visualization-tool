@@ -19,7 +19,8 @@ import {
   useNumericalXVariables,
 } from "@/charts/shared/chart-state";
 import { useRenderingKeyVariable } from "@/charts/shared/rendering-utils";
-import { BarConfig, useChartConfigFilters } from "@/configurator";
+import { useChartConfigFilters } from "@/config-utils";
+import { BarConfig } from "@/configurator";
 import { isTemporalEntityDimension } from "@/domain/data";
 
 import { ChartProps } from "../shared/ChartProps";

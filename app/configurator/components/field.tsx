@@ -38,11 +38,8 @@ import {
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import SelectTree from "@/components/select-tree";
 import useDisclosure from "@/components/use-disclosure";
-import {
-  ChartConfig,
-  getChartConfig,
-  useChartConfigFilters,
-} from "@/config-types";
+import { ChartConfig } from "@/config-types";
+import { getChartConfig, useChartConfigFilters } from "@/config-utils";
 import { ColorPickerMenu } from "@/configurator/components/chart-controls/color-picker";
 import {
   ControlTab,

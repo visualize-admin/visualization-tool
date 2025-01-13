@@ -211,7 +211,6 @@ theme.components = {
     styleOverrides: {
       root: {
         textAlign: "left",
-        pr: 1,
         WebkitLineClamp: 2,
         WebkitBoxOrient: "vertical",
         display: "-webkit-box",

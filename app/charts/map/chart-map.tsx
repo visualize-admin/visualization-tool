@@ -11,12 +11,13 @@ import {
   ChartControlsContainer,
 } from "@/charts/shared/containers";
 import { NoGeometriesHint } from "@/components/hint";
-import { Cube, MapConfig, useChartConfigFilters } from "@/config-types";
+import { Cube, MapConfig } from "@/config-types";
+import { useChartConfigFilters } from "@/config-utils";
 import { TimeSlider } from "@/configurator/interactive-filters/time-slider";
 import {
+  dimensionValuesToGeoCoordinates,
   GeoCoordinates,
   GeoShapes,
-  dimensionValuesToGeoCoordinates,
 } from "@/domain/data";
 import { useDataCubesComponentsQuery } from "@/graphql/hooks";
 import { getResolvedJoinById, isJoinById } from "@/graphql/join";
@@ -180,6 +181,7 @@ const ChartMap = memo((props: ChartMapProps) => {
   const { chartConfig, dimensions, observations } = props;
   const { fields } = chartConfig;
   const filters = useChartConfigFilters(chartConfig);
+
   return (
     <MapChart {...props}>
       <ChartContainer>

@@ -91,8 +91,11 @@ export const DatePickerField = (props: DatePickerFieldProps) => {
             views={getViews(timeUnit)}
             value={value}
             onAccept={handleChange}
-            // Need to pass onChange to avoid type error.
-            onChange={() => {}}
+            onChange={(date, keyboardInputValue) => {
+              if (keyboardInputValue) {
+                handleChange(date);
+              }
+            }}
             // We need to render the day picker ourselves to correctly highlight
             // the selected day. It's broken in the MUI date picker.
             renderDay={(day, _, dayPickerProps) => {

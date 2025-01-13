@@ -18,6 +18,7 @@ import { Select } from "@/components/form";
 import { Loading } from "@/components/hint";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import SelectTree, { Tree } from "@/components/select-tree";
+import { useChartConfigFilters } from "@/config-utils";
 import {
   areDataFiltersActive,
   ChartConfig,
@@ -26,7 +27,6 @@ import {
   Filters,
   getFiltersByMappingStatus,
   SingleFilters,
-  useChartConfigFilters,
   useConfiguratorState,
 } from "@/configurator";
 import { FieldLabel, LoadingIndicator } from "@/configurator/components/field";

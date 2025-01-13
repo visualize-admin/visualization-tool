@@ -21,10 +21,10 @@ import { Radio, Select } from "@/components/form";
 import VisuallyHidden from "@/components/visually-hidden";
 import {
   ConfiguratorStateConfiguringChart,
-  getChartConfig,
   TableConfig,
   TableSortingOption,
 } from "@/config-types";
+import { getChartConfig } from "@/config-utils";
 import {
   ControlSection,
   SectionTitle,

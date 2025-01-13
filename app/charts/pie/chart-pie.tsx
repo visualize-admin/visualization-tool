@@ -11,7 +11,8 @@ import {
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
 import { OnlyNegativeDataHint } from "@/components/hint";
-import { PieConfig, useChartConfigFilters } from "@/config-types";
+import { PieConfig } from "@/config-types";
+import { useChartConfigFilters } from "@/config-utils";
 import { TimeSlider } from "@/configurator/interactive-filters/time-slider";
 
 import { ChartProps, VisualizationProps } from "../shared/ChartProps";

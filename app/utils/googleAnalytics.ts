@@ -17,6 +17,7 @@ export const analyticsPageView = (path: string) => {
 };
 
 // https://developers.google.com/analytics/devguides/collection/gtagjs/events
+/** @internal */
 export const analyticsEvent = ({
   action,
   category,

@@ -18,9 +18,9 @@ import {
   InteractiveFiltersState,
   useChartInteractiveFilters,
 } from "@/stores/interactive-filters";
-import dualLine1Fixture from "@/test/__fixtures/config/dev/chartConfig-photovoltaik-und-gebaudeprogramm.json";
 import map1Fixture from "@/test/__fixtures/config/int/map-nfi.json";
 import line1Fixture from "@/test/__fixtures/config/prod/line-1.json";
+import dualLine1Fixture from "@/test/__fixtures/config/test/chartConfig-photovoltaik-und-gebaudeprogramm.json";
 import { migrateChartConfig } from "@/utils/chart-config/versioning";
 
 jest.mock("../../rdf/extended-cube", () => ({

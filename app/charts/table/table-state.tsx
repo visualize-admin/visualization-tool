@@ -1,12 +1,12 @@
 import { ascending, extent, max, min } from "d3-array";
 import {
   ScaleDiverging,
-  ScaleLinear,
-  ScaleOrdinal,
-  ScaleSequential,
   scaleDiverging,
+  ScaleLinear,
   scaleLinear,
+  ScaleOrdinal,
   scaleOrdinal,
+  ScaleSequential,
 } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
 import mapKeys from "lodash/mapKeys";
@@ -49,7 +49,7 @@ import { makeDimensionValueSorters } from "@/utils/sorting-values";
 
 import { ChartProps } from "../shared/ChartProps";
 
-export type MKColumnMeta<T> = {
+type MKColumnMeta<T> = {
   dim: Component;
   id: string;
   slugifiedId: string;

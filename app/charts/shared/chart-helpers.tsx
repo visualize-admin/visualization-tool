@@ -20,12 +20,12 @@ import {
   InteractiveFiltersTimeRange,
   MapConfig,
 } from "@/config-types";
+import { getChartConfigFilters } from "@/config-utils";
 import {
   CategoricalColorField,
   ComboChartConfig,
   DashboardFiltersConfig,
   GenericField,
-  getChartConfigFilters,
   isComboChartConfig,
   NumericalColorField,
 } from "@/configurator";

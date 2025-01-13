@@ -1,0 +1,12 @@
+{
+  "$schema": "https://visualize.admin.ch/json-schema/configurator-state.json",
+  "type": "object",
+  "schema": {
+    "state": "INITIAL",
+    "version": "",
+    "dataSource": {
+      "type": "sparql",
+      "url": ""
+    }
+  }
+}

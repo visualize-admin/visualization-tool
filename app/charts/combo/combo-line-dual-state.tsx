@@ -1,7 +1,6 @@
 import { max, mean, min } from "d3-array";
-import { scaleLinear } from "d3-scale";
+import { ScaleLinear, scaleLinear, ScaleOrdinal, ScaleTime } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
-import React from "react";
 
 import {
   ComboLineDualStateVariables,
@@ -49,13 +48,13 @@ export type ComboLineDualState = CommonChartState &
   InteractiveXTimeRangeState & {
     chartType: "comboLineDual";
     xKey: string;
-    xScale: d3.ScaleTime<number, number>;
-    yScale: d3.ScaleLinear<number, number>;
+    xScale: ScaleTime<number, number>;
+    yScale: ScaleLinear<number, number>;
     yOrientationScales: {
-      left: d3.ScaleLinear<number, number>;
-      right: d3.ScaleLinear<number, number>;
+      left: ScaleLinear<number, number>;
+      right: ScaleLinear<number, number>;
     };
-    colors: d3.ScaleOrdinal<string, string>;
+    colors: ScaleOrdinal<string, string>;
     getColorLabel: (label: string) => string;
     chartWideData: ArrayLike<Observation>;
     getAnnotationInfo: (d: Observation) => TooltipInfo;

@@ -1,11 +1,8 @@
 import { useCallback, useState } from "react";
 import { DraggableLocation, OnDragStartResponder } from "react-beautiful-dnd";
 
-import { TableFields } from "@/config-types";
-import {
-  ConfiguratorStateConfiguringChart,
-  getChartConfig,
-} from "@/configurator";
+import { ConfiguratorStateConfiguringChart, TableFields } from "@/config-types";
+import { getChartConfig } from "@/config-utils";
 import {
   isConfiguring,
   useConfiguratorState,

@@ -1,4 +1,4 @@
-import { getChartConfigFilters } from "./config-types";
+import { getChartConfigFilters } from "./config-utils";
 
 describe("getChartConfigFilters", () => {
   it("should return filters for a specific cube with joinBy (joined = true)", () => {

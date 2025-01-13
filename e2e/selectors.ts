@@ -70,6 +70,10 @@ export const createSelectors = ({ screen, page, within }: Ctx) => {
         screen.findByTestId("chart-type-selector-regular", undefined, {
           timeout: 10_000,
         }),
+      chartTypeSelectorCombo: () =>
+        screen.findByTestId("chart-type-selector-combo", undefined, {
+          timeout: 10_000,
+        }),
       filtersLoaded: () =>
         screen.findByText("Selected filters", undefined, { timeout: 10_000 }),
       controlSectionBySubtitle: (title: string) =>
@@ -110,14 +114,26 @@ export const createSelectors = ({ screen, page, within }: Ctx) => {
       },
       colorLegendItems: async () =>
         (await selectors.chart.colorLegend()).locator("div"),
+      moreButton: () =>
+        screen.findByTestId("chart-more-button", undefined, {
+          timeout: 10_000,
+        }),
       legendTicks: async () => {},
       loaded: async () => {
         await page.waitForLoadState("networkidle");
         // Let the map tiles fade in and enter animations finish
         await sleep(1_000);
       },
+      screenshot: {
+        png: async () => {
+          return await screen.findByTestId("screenshot-png");
+        },
+      },
       tablePreviewSwitch: async () => {
         return await screen.findByText("Table view");
+      },
+      tabs: async () => {
+        return await screen.findAllByTestId("chart-selection-tab");
       },
     },
   };

@@ -21,7 +21,7 @@ test("@noci should be possible to de-select options from color component in maps
 
   await selectors.chart.loaded();
 
-  await actions.editor.changeChartType("Map");
+  await actions.editor.changeRegularChartType("Map");
 
   await selectors.chart.loaded();
 

@@ -1,10 +1,6 @@
 import type {} from "@mui/lab/themeAugmentation";
-import { Theme, useTheme } from "@mui/material";
+import { useTheme } from "@mui/material";
 
-export interface ThemeModule {
-  theme: Theme;
-  preloadFonts?: string[];
-}
 declare module "@mui/material" {
   interface Theme {
     dashed: true;

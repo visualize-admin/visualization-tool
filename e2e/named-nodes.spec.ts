@@ -18,14 +18,14 @@ test("@noci it should be possible to query dimension values from versioned dimen
   page,
 }) => {
   await page.goto("/");
-  const pageUrl = page.url().split("?")[0]; // remove query params
+  const pageUrl = page.url().split("?")[0];
   const client = createClient({ url: pageUrl + "/api/graphql" });
   const { data, error } = await client
     .query<DataCubeComponentsQuery, DataCubeComponentsQueryVariables>(
       DataCubeComponentsDocument,
       {
         sourceType: "sparql",
-        sourceUrl: "https://lindas.admin.ch/query",
+        sourceUrl: "https://lindas-cached.cluster.ldbar.ch/query",
         locale: "en",
         cubeFilter: { iri: cubeIri, loadValues: true },
       }

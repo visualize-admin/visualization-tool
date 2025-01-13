@@ -119,15 +119,6 @@ starts. In _development_, you'll have to run them manually:
 yarn db:migrate:dev
 ```
 
-Migrations are located in `db-migrations/`. Write SQL or JS migrations and
-follow the naming convention of the existing files
-`XXXXX-name-of-migration.{sql|js}`. Migrations are _immutable_, you will get an
-error if you change an already-run migration.
-
-For detailed instructions, please refer to the
-[postgres-migrations](https://github.com/thomwright/postgres-migrations)
-documentation.
-
 > [!WARNING]
 >
 > On Vercel environments like "preview" and "production", "production", database

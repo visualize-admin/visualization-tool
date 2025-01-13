@@ -11,11 +11,8 @@ import Flex from "@/components/flex";
 import { Hint } from "@/components/hint";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { TooltipTitle } from "@/components/tooltip-utils";
-import {
-  ChartType,
-  ConfiguratorStatePublished,
-  getChartConfig,
-} from "@/config-types";
+import { ChartType, ConfiguratorStatePublished } from "@/config-types";
+import { getChartConfig } from "@/config-utils";
 import { ControlSectionSkeleton } from "@/configurator/components/chart-controls/section";
 import { IconButton } from "@/configurator/components/icon-button";
 import { useAddOrEditChartType } from "@/configurator/config-form";

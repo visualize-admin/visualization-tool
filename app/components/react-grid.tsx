@@ -23,7 +23,7 @@ import { assert } from "@/utils/assert";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
-export type ResizeHandle = NonNullable<Layout["resizeHandles"]>[number];
+type ResizeHandle = NonNullable<Layout["resizeHandles"]>[number];
 export type GridLayout = "horizontal" | "vertical" | "wide" | "tall";
 
 export const availableHandles: ResizeHandle[] = [

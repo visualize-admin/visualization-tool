@@ -20,6 +20,7 @@ import { Component, Measure } from "@/domain/data";
 import { useTimeFormatLocale } from "@/formatters";
 import { useDataCubesMetadataQuery } from "@/graphql/hooks";
 import { useLocale } from "@/locales/use-locale";
+import { DISABLE_SCREENSHOT_ATTR } from "@/utils/use-screenshot";
 
 export const useFootnotesStyles = makeStyles<Theme, { useMarginTop: boolean }>(
   (theme) => ({
@@ -292,7 +293,7 @@ export const VisualizeLink = ({ createdWith }: { createdWith: ReactNode }) => {
   const locale = useLocale();
 
   return (
-    <Typography variant="caption" color="grey.600">
+    <Typography variant="caption" color="grey.600" {...DISABLE_SCREENSHOT_ATTR}>
       {createdWith}
       <Link
         href={`https://visualize.admin.ch/${locale}/`}

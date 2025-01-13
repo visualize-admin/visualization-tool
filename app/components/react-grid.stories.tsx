@@ -9,10 +9,10 @@ import { useMemo, useState } from "react";
 import { Layouts } from "react-grid-layout";
 
 import {
-  ChartGridLayout,
-  GridLayout,
   availableHandles,
+  ChartGridLayout,
   generateLayout,
+  GridLayout,
 } from "@/components/react-grid";
 import useLocalState from "@/utils/use-local-state";
 

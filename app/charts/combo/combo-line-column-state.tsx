@@ -1,7 +1,14 @@
 import { max, mean, min } from "d3-array";
-import { scaleBand, scaleLinear } from "d3-scale";
+import {
+  ScaleBand,
+  scaleBand,
+  ScaleLinear,
+  scaleLinear,
+  ScaleOrdinal,
+  ScaleTime,
+} from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
-import React from "react";
+import { PropsWithChildren } from "react";
 
 import { PADDING_INNER, PADDING_OUTER } from "@/charts/column/constants";
 import {
@@ -51,15 +58,15 @@ export type ComboLineColumnState = CommonChartState &
   InteractiveXTimeRangeState & {
     chartType: "comboLineColumn";
     xKey: string;
-    xScale: d3.ScaleBand<string>;
-    xScaleTime: d3.ScaleTime<number, number>;
-    xScaleInteraction: d3.ScaleBand<string>;
-    yScale: d3.ScaleLinear<number, number>;
+    xScale: ScaleBand<string>;
+    xScaleTime: ScaleTime<number, number>;
+    xScaleInteraction: ScaleBand<string>;
+    yScale: ScaleLinear<number, number>;
     yOrientationScales: {
-      left: d3.ScaleLinear<number, number>;
-      right: d3.ScaleLinear<number, number>;
+      left: ScaleLinear<number, number>;
+      right: ScaleLinear<number, number>;
     };
-    colors: d3.ScaleOrdinal<string, string>;
+    colors: ScaleOrdinal<string, string>;
     getColorLabel: (label: string) => string;
     chartWideData: ArrayLike<Observation>;
     getAnnotationInfo: (d: Observation) => TooltipInfo;
@@ -232,7 +239,7 @@ const useComboLineColumnState = (
 };
 
 const ComboLineColumnChartProvider = (
-  props: React.PropsWithChildren<ChartProps<ComboLineColumnConfig>>
+  props: PropsWithChildren<ChartProps<ComboLineColumnConfig>>
 ) => {
   const { children, ...chartProps } = props;
   const variables = useComboLineColumnStateVariables(chartProps);
@@ -245,7 +252,7 @@ const ComboLineColumnChartProvider = (
 };
 
 export const ComboLineColumnChart = (
-  props: React.PropsWithChildren<ChartProps<ComboLineColumnConfig>>
+  props: PropsWithChildren<ChartProps<ComboLineColumnConfig>>
 ) => {
   return (
     <InteractionProvider>

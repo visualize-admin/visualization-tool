@@ -14,13 +14,6 @@ import * as ns from "@/rdf/namespace";
 import { hasHierarchy } from "@/rdf/queries";
 import { getQueryLocales } from "@/rdf/query-utils";
 
-export const isCubePublished = (cube: ExtendedCube): boolean =>
-  cube
-    .out(ns.schema.creativeWorkStatus)
-    .terms.some((t) =>
-      t.equals(ns.adminVocabulary("CreativeWorkStatus/Published"))
-    );
-
 export const getScaleType = (
   scaleTypeTerm: Term | undefined
 ): ScaleType | undefined => {

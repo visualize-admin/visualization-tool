@@ -261,9 +261,7 @@ const useDataFilterStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-export type Stores = ReturnType<
-  typeof useDashboardInteractiveFilters
->["stores"];
+type Stores = ReturnType<typeof useDashboardInteractiveFilters>["stores"];
 
 export const saveDataFiltersSnapshot = (
   chartConfigs: ChartConfig[],

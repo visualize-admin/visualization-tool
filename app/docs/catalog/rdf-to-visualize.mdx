@@ -182,13 +182,20 @@ checked one after the other.
   `isMeasureDimension = true and scaleType != "Ordinal"`, else
 - **Standard Error Dimension** if any of the related dimensions has
   `StandardError` type, else
+- **Confidence Upper Bound Dimension** if any of the related dimensions has
+  `ConfidenceUpperBound` type, else
+- **Confidence Lower Bound Dimension** if any of the related dimensions has
+  `ConfidenceLowerBound` type, else
+- **Temporal Entity Dimension** if
+  `dataKind = "Time" and scaleType = "Ordinal" and (timeUnit = "Month" or timeUnit = "Year")`,
+  else
 - **Temporal Ordinal Dimension** if
   `dataKind = "Time" and scaleType = "Ordinal"`, else
 - **Temporal Dimension** if `dataKind = "Time" and scaleType != "Ordinal"`, else
 - **GeoCoordinates Dimension** if `dataKind = "GeoCoordinates"`, else
 - **GeoShapes Dimension** if `dataKind = "GeoShape"`, else
 - **Ordinal Dimension** if `scaleType = "Ordinal"`, else
-- **Nominal Dimension** if none of the above condition have been fullfilled
+- **Nominal Dimension** if none of the above condition have been fulfilled
 
 We can regroup some of these dimensions, for easier business logic:
 

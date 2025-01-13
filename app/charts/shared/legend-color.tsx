@@ -13,21 +13,21 @@ import { Checkbox, CheckboxProps } from "@/components/form";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { TooltipTitle } from "@/components/tooltip-utils";
+import { useChartConfigFilters } from "@/config-utils";
 import {
   ChartConfig,
   GenericSegmentField,
-  MapConfig,
   isSegmentInConfig,
-  useChartConfigFilters,
+  MapConfig,
   useReadOnlyConfiguratorState,
 } from "@/configurator";
 import {
   Component,
   Dimension,
-  Measure,
-  Observation,
   isOrdinalDimension,
   isOrdinalMeasure,
+  Measure,
+  Observation,
 } from "@/domain/data";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import { useChartInteractiveFilters } from "@/stores/interactive-filters";
@@ -37,7 +37,7 @@ import useEvent from "@/utils/use-event";
 
 export type LegendSymbol = "square" | "line" | "circle";
 
-export type LegendItemUsage = "legend" | "tooltip" | "colorPicker";
+type LegendItemUsage = "legend" | "tooltip" | "colorPicker";
 
 const useStyles = makeStyles<Theme>((theme) => ({
   legendContainer: {

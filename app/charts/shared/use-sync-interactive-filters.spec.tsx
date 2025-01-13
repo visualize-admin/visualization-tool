@@ -10,7 +10,7 @@ import {
   InteractiveFiltersProvider,
   useChartInteractiveFilters,
 } from "@/stores/interactive-filters";
-import fixture from "@/test/__fixtures/config/dev/4YL1p4QTFQS4.json";
+import fixture from "@/test/__fixtures/config/test/4YL1p4QTFQS4.json";
 import { migrateChartConfig } from "@/utils/chart-config/versioning";
 
 jest.mock("next/router", () => {

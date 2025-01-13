@@ -59,7 +59,7 @@ export const Intro = ({
   );
 };
 
-export const Title = ({ children }: { children: ReactNode }) => (
+const Title = ({ children }: { children: ReactNode }) => (
   <Typography
     component="h1"
     sx={{
@@ -77,7 +77,7 @@ export const Title = ({ children }: { children: ReactNode }) => (
   </Typography>
 );
 
-export const Teaser = ({ children }: { children: ReactNode }) => (
+const Teaser = ({ children }: { children: ReactNode }) => (
   <Box sx={{ mb: [6, 5] }}>
     <Typography
       variant="body1"

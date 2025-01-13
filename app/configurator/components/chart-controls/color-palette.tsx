@@ -15,17 +15,17 @@ import { useCallback } from "react";
 import { hasDimensionColors } from "@/charts/shared/colors";
 import Flex from "@/components/flex";
 import { Label } from "@/components/form";
+import { getChartConfig } from "@/config-utils";
 import {
   ConfiguratorStateConfiguringChart,
-  getChartConfig,
   isConfiguring,
   useConfiguratorState,
 } from "@/configurator";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import { Component, isNumericalMeasure } from "@/domain/data";
 import {
-  DEFAULT_CATEGORICAL_PALETTE_NAME,
   categoricalPalettes,
+  DEFAULT_CATEGORICAL_PALETTE_NAME,
   divergingSteppedPalettes,
   getDefaultCategoricalPalette,
   getPalette,

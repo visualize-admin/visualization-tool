@@ -4,7 +4,7 @@
     "dataSet": "https://environment.ld.admin.ch/foen/UBD003002/5",
     "dataSource": {
       "type": "sparql",
-      "url": "https://int.lindas.admin.ch/query"
+      "url": "https://lindas-cached.int.cluster.ldbar.ch/query"
     },
     "meta": {
       "title": {

@@ -1,4 +1,4 @@
-import percySnapshot from "@percy/playwright";
+import { argosScreenshot } from "@argos-ci/playwright";
 
 import intConfigs from "../app/test/__fixtures/config/int/configs";
 
@@ -36,7 +36,7 @@ for (let [viewportName, viewportSize] of Object.entries(viewports)) {
       await selectors.chart.loaded();
 
       await sleep(2_000);
-      await percySnapshot(page, `chart-snapshot-${viewportName}-${slug}`);
+      await argosScreenshot(page, `chart-snapshot-${viewportName}-${slug}`);
     });
   }
 }

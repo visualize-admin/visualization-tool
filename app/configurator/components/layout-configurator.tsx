@@ -31,11 +31,11 @@ import {
 } from "@/components/react-grid";
 import {
   DashboardTimeRangeFilter,
-  getChartConfig,
   LayoutDashboard,
   LayoutTextBlock,
   ReactGridLayoutType,
 } from "@/config-types";
+import { getChartConfig } from "@/config-utils";
 import { LayoutAnnotator } from "@/configurator/components/annotators";
 import { DataFilterSelectGeneric } from "@/configurator/components/chart-configurator";
 import { ControlTab } from "@/configurator/components/chart-controls/control-tab";

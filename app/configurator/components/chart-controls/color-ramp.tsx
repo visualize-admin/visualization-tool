@@ -11,15 +11,15 @@ import { useEffect, useMemo, useRef } from "react";
 
 import { EncodingFieldType } from "@/charts/chart-config-ui-options";
 import { Label } from "@/components/form";
+import { getChartConfig } from "@/config-utils";
 import {
   DivergingPaletteType,
-  SequentialPaletteType,
-  getChartConfig,
   isConfiguring,
+  SequentialPaletteType,
   useConfiguratorState,
 } from "@/configurator";
 import { useLocale } from "@/locales/use-locale";
-import { Palette, divergingPalettes, sequentialPalettes } from "@/palettes";
+import { divergingPalettes, Palette, sequentialPalettes } from "@/palettes";
 import useEvent from "@/utils/use-event";
 
 // Adapted from https://observablehq.com/@mbostock/color-ramp

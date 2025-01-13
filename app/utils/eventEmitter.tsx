@@ -32,9 +32,7 @@ export const EventEmitterProvider = ({
   );
 };
 
-export type EventEmitterHandler<T extends keyof Events> = (
-  ev: Events[T]
-) => void;
+type EventEmitterHandler<T extends keyof Events> = (ev: Events[T]) => void;
 
 export const useEventEmitter = <T extends keyof Events>(
   event?: T,

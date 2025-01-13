@@ -1,6 +1,6 @@
 import { Delaunay } from "d3-delaunay";
 import { pointer } from "d3-selection";
-import { MouseEvent as ReactMouseEvent, memo, useRef } from "react";
+import { memo, MouseEvent as ReactMouseEvent, useRef } from "react";
 
 import { AreasState } from "@/charts/area/areas-state";
 import { LinesState } from "@/charts/line/lines-state";
@@ -22,7 +22,7 @@ export const InteractionVoronoi = memo(function InteractionVoronoi({
 
   const { chartWidth, chartHeight, margins } = bounds;
 
-  // FIXME: delaunay/voronoi calculation could be memoized
+  // FIXME: delaunay / voronoi calculation could be memoized
   const delaunay = Delaunay.from(
     chartData,
     (d) => xScale(getX(d) ?? NaN),

@@ -29,6 +29,8 @@ import {
   ComboLineSingleConfig,
   ComponentType,
   GenericField,
+  getAnimationField,
+  isSortingInConfig,
   LineConfig,
   MapConfig,
   PaletteType,
@@ -37,25 +39,23 @@ import {
   SortingOrder,
   SortingType,
   TableConfig,
-  getAnimationField,
-  isSortingInConfig,
-  makeMultiFilter,
 } from "@/config-types";
+import { makeMultiFilter } from "@/config-utils";
 import { getFieldLabel } from "@/configurator/components/field-i18n";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import {
   ANIMATION_ENABLED_COMPONENTS,
   Component,
   Dimension,
-  MULTI_FILTER_ENABLED_COMPONENTS,
-  Measure,
-  Observation,
-  SEGMENT_ENABLED_COMPONENTS,
   isNumericalMeasure,
   isOrdinalMeasure,
   isTemporalDimension,
   isTemporalEntityDimension,
   isTemporalOrdinalDimension,
+  Measure,
+  MULTI_FILTER_ENABLED_COMPONENTS,
+  Observation,
+  SEGMENT_ENABLED_COMPONENTS,
 } from "@/domain/data";
 import { getDefaultCategoricalPaletteName, getPalette } from "@/palettes";
 
@@ -289,13 +289,13 @@ export interface EncodingSpec<T extends ChartConfig = ChartConfig> {
 // dataFilters is enabled by default
 type InteractiveFilterType = "legend" | "timeRange" | "animation";
 
-export interface ChartSpec<T extends ChartConfig = ChartConfig> {
+type ChartSpec<T extends ChartConfig = ChartConfig> = {
   chartType: ChartType;
   encodings: EncodingSpec<T>[];
   interactiveFilters: InteractiveFilterType[];
-}
+};
 
-interface ChartSpecs {
+type ChartSpecs = {
   area: ChartSpec<AreaConfig>;
   column: ChartSpec<ColumnConfig>;
   bar: ChartSpec<BarConfig>;
@@ -307,7 +307,7 @@ interface ChartSpecs {
   comboLineSingle: ChartSpec<ComboLineSingleConfig>;
   comboLineDual: ChartSpec<ComboLineDualConfig>;
   comboLineColumn: ChartSpec<ComboLineColumnConfig>;
-}
+};
 
 const getDefaultSegmentSorting = <
   T extends ChartConfig = ChartConfig,
@@ -356,7 +356,7 @@ const LINE_SEGMENT_SORTING: EncodingSortingOption<LineConfig>[] = [
 ];
 
 export const COLUMN_SEGMENT_SORTING = getDefaultSegmentSorting<ColumnConfig>();
-export const BAR_SEGMENT_SORTING = getDefaultSegmentSorting<BarConfig>();
+const BAR_SEGMENT_SORTING = getDefaultSegmentSorting<BarConfig>();
 
 export const PIE_SEGMENT_SORTING: EncodingSortingOption<PieConfig>[] = [
   { sortingType: "byAuto", sortingOrder: ["asc", "desc"] },

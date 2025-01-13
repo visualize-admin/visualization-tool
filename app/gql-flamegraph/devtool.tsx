@@ -42,7 +42,7 @@ type Timings = Record<
   { start: number; end: number; children?: Timings }
 >;
 
-export type VisualizeOperationResult<TData = any, TVariables = any> = Omit<
+type VisualizeOperationResult<TData = any, TVariables = any> = Omit<
   OperationResult<TData, TVariables>,
   "extensions"
 > & {
@@ -471,6 +471,7 @@ const urqlEE = mitt<{
   "urql-received-result": VisualizeOperationResult<any, any>;
 }>();
 
+/** @internal */
 export const gqlFlamegraphExchange: Exchange = ({ forward }) => {
   return (ops$) =>
     pipe(

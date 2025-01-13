@@ -18,7 +18,7 @@ import {
   makeVisualizeDatasetFilter,
 } from "@/rdf/query-utils";
 
-export const makeInFilter = (name: string, values: string[]) => {
+const makeInFilter = (name: string, values: string[]) => {
   return `
     ${
       values.length > 0

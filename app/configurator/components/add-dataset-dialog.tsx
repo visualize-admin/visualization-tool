@@ -62,14 +62,13 @@ import { getEnabledChartTypes } from "@/charts";
 import Flex from "@/components/flex";
 import { Error as ErrorHint, Loading } from "@/components/hint";
 import Tag from "@/components/tag";
+import { ConfiguratorStateConfiguringChart, DataSource } from "@/config-types";
+import { getChartConfig } from "@/config-utils";
 import {
   addDatasetInConfig,
-  ConfiguratorStateConfiguringChart,
-  DataSource,
-  getChartConfig,
   isConfiguring,
   useConfiguratorState,
-} from "@/configurator";
+} from "@/configurator/configurator-state";
 import {
   Dimension,
   isJoinByComponent,
@@ -233,7 +232,7 @@ const CautionAlert = ({
   );
 };
 
-export type SearchOptions =
+type SearchOptions =
   | {
       type: "temporal";
       id: ComponentId;
@@ -299,7 +298,7 @@ const inferJoinBy = (
   );
 };
 
-export type JoinBy = ReturnType<typeof inferJoinBy>;
+type JoinBy = ReturnType<typeof inferJoinBy>;
 
 const PreviewDataTable = ({
   existingCubes,

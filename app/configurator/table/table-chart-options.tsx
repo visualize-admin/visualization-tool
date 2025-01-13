@@ -8,10 +8,10 @@ import { Checkbox } from "@/components/form";
 import {
   ColumnStyle,
   ConfiguratorStateConfiguringChart,
-  getChartConfig,
   isTableConfig,
   TableConfig,
 } from "@/config-types";
+import { getChartConfig } from "@/config-utils";
 import { ColorPalette } from "@/configurator/components/chart-controls/color-palette";
 import {
   ControlSection,

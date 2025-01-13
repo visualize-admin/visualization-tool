@@ -3,7 +3,7 @@ import { MapboxOverlay, MapboxOverlayProps } from "@deck.gl/mapbox/typed";
 import { extent } from "d3-array";
 import { geoBounds } from "d3-geo";
 import { useEffect, useMemo, useState } from "react";
-import { ViewState, useControl } from "react-map-gl";
+import { useControl, ViewState } from "react-map-gl";
 import { feature } from "topojson-client";
 
 import { BBox, Filters } from "@/config-types";
@@ -16,7 +16,7 @@ import {
 } from "@/domain/data";
 import useEvent from "@/utils/use-event";
 
-export type MinMaxZoomViewState = Pick<
+type MinMaxZoomViewState = Pick<
   ViewState,
   "zoom" | "latitude" | "longitude"
 > & {
