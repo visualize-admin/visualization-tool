@@ -23,6 +23,7 @@
     "@dnd-kit/utilities": "3.2.2",
     "@emotion/react": "^11.8.2",
     "@emotion/styled": "^11.8.1",
+    "@graphql-tools/schema": "^7.1.5",
     "@juggle/resize-observer": "^3.4.0",
     "@lingui/core": "^3.17.2",
     "@lingui/react": "^3.17.2",
