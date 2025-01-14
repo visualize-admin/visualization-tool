@@ -13,8 +13,5 @@ const allowedDataSourceUrls = allowedSources.map((o) => o.value.split("+")[1]);
 export type DataSourceUrl = string & {};
 
 export const isDataSourceUrlAllowed = (url: string): url is DataSourceUrl => {
-  if (typeof url === "string" && allowedDataSourceUrls.includes(url)) {
-    return true;
-  }
-  return false;
+  return typeof url === "string" && allowedDataSourceUrls.includes(url);
 };
