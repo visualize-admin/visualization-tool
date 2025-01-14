@@ -32,7 +32,6 @@ import {
 import { InfoIconTooltip } from "@/components/info-icon-tooltip";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { TooltipTitle } from "@/components/tooltip-utils";
-import { GenericField } from "@/config-types";
 import {
   AnimationField,
   ChartConfig,
@@ -44,17 +43,16 @@ import {
   ComboLineSingleConfig,
   ComponentType,
   ConfiguratorStateConfiguringChart,
-  getChartConfig,
+  GenericField,
   ImputationType,
   imputationTypes,
   isAnimationInConfig,
   isComboChartConfig,
-  isConfiguring,
   isTableConfig,
   MapConfig,
   SortingType,
-  useConfiguratorState,
-} from "@/configurator";
+} from "@/config-types";
+import { getChartConfig } from "@/config-utils";
 import { ColorPalette } from "@/configurator/components/chart-controls/color-palette";
 import { ColorRampField } from "@/configurator/components/chart-controls/color-ramp";
 import {
@@ -82,6 +80,10 @@ import {
   canUseAbbreviations,
   getComponentLabel,
 } from "@/configurator/components/ui-helpers";
+import {
+  isConfiguring,
+  useConfiguratorState,
+} from "@/configurator/configurator-state";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { TableColumnOptions } from "@/configurator/table/table-chart-options";
 import {
@@ -280,16 +282,7 @@ const makeGetFieldOptionGroups =
     });
   };
 
-const EncodingOptionsPanel = ({
-  encoding,
-  field,
-  chartConfig,
-  component,
-  dimensions,
-  measures,
-  observations,
-  cubesMetadata,
-}: {
+interface EncodingOptionsPanelProps {
   encoding: EncodingSpec;
   chartConfig: ChartConfig;
   field: EncodingFieldType;
@@ -298,8 +291,20 @@ const EncodingOptionsPanel = ({
   measures: Measure[];
   observations: Observation[];
   cubesMetadata: DataCubeMetadata[];
-}) => {
-  const { chartType } = chartConfig;
+}
+
+const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
+  const {
+    encoding,
+    field,
+    chartConfig,
+    component,
+    dimensions,
+    measures,
+    observations,
+    cubesMetadata,
+  } = props;
+
   const { fields } = chartConfig;
   const fieldLabelHint: Record<EncodingFieldType, string> = {
     animation: t({
@@ -413,8 +418,7 @@ const EncodingOptionsPanel = ({
 
   const hasColorPalette = !!encoding.options?.colorPalette;
 
-  const hasSubOptions =
-    (encoding.options?.chartSubType && chartType === "column") ?? false;
+  const hasSubOptions = encoding.options?.chartSubType ?? false;
 
   return (
     <div
@@ -534,7 +538,7 @@ const EncodingOptionsPanel = ({
             chartConfig={chartConfig}
             components={components}
             hasColorPalette={hasColorPalette}
-            hasSubOptions={hasSubOptions}
+            hasSubOptions={!!hasSubOptions}
           />
         )}
       {encoding.options?.imputation?.shouldShow(chartConfig, observations) && (

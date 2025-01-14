@@ -11,6 +11,8 @@ const visualizePredicates = {
   hasDimension: ns.visualizeAdmin`hasDimension`.value,
   hasTermset: ns.visualizeAdmin`hasTermset`.value,
   hasTimeUnit: ns.visualizeAdmin`hasTimeUnit`.value,
+  hasThemeIris: ns.visualizeAdmin`hasThemeIris`.value,
+  hasThemeLabels: ns.visualizeAdmin`hasThemeLabels`.value,
 };
 
 function buildSearchCubes(
@@ -39,9 +41,9 @@ function buildSearchCubes(
     if (cubeQuads) {
       const unversionedIri =
         cubeQuads.get(ns.schema.hasPart.value)?.[0].object.value ?? iri;
-      const themeQuads = cubeQuads.get("tag:/themeIris")?.[0];
+      const themeQuads = cubeQuads.get(visualizePredicates.hasThemeIris)?.[0];
       const themeIris = themeQuads?.object.value.split(GROUP_SEPARATOR);
-      const themeLabelQuads = cubeQuads.get("tag:/themeLabels")?.[0];
+      const themeLabelQuads = cubeQuads.get(visualizePredicates.hasThemeLabels)?.[0];
       const themeLabels = themeLabelQuads?.object.value.split(GROUP_SEPARATOR);
       const subthemesQuads = cubeQuads.get(ns.schema.about.value);
       const dimensions = cubeQuads.get(visualizePredicates.hasDimension);

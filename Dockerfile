@@ -1,10 +1,10 @@
-FROM node:18
+FROM node:20
 
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
 # build with
-# docker build \
+# docker build . \
 #   --build-arg PREVENT_SEARCH_BOTS=<true/false> \
 #   --build-arg COMMIT=$(git rev-parse HEAD) \
 #   --build-arg VECTOR_TILE_URL=<url of the vector service> \
@@ -54,6 +54,6 @@ RUN yarn build
 
 # Install only prod dependencies and start app
 RUN yarn install --frozen-lockfile --production && yarn cache clean
-CMD npm start
+CMD yarn start
 
 EXPOSE 3000

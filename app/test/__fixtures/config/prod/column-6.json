@@ -13,7 +13,7 @@
     "dataSet": "http://environment.ld.admin.ch/foen/px/0703010000_106/dataset",
     "dataSource": {
       "type": "sparql",
-      "url": "https://lindas.admin.ch/query"
+      "url": "https://lindas-cached.cluster.ldbar.ch/query"
     },
     "chartConfig": {
       "version": "1.2.1",

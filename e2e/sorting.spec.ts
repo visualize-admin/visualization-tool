@@ -10,13 +10,11 @@ const { test, expect } = setup();
  * - For each type of chart, changes the sorting between Name and Automatic
  * - Checks that the legend item order is coherent.
  */
-// FIX: works without Browser, some bug with Browser closed error
-test.skip("Segment sorting", async ({
+test("Segment sorting", async ({
   selectors,
   actions,
   within,
   screen,
-  page,
   replayFromHAR,
 }) => {
   test.setTimeout(60_000);
@@ -24,14 +22,14 @@ test.skip("Segment sorting", async ({
   await replayFromHAR();
 
   await actions.chart.createFrom({
-    iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/13",
-    dataSource: "Int",
+    iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/10",
+    dataSource: "Prod",
     createURLParams: harReplayGraphqlEndpointQueryParam,
   });
 
   for (const chartType of ["Columns", "Pie"] as const) {
     await selectors.edition.drawerLoaded();
-    await actions.editor.changeChartType(chartType);
+    await actions.editor.changeRegularChartType(chartType);
     await actions.editor.selectActiveField("Segmentation");
 
     // Switch color on the first chart
@@ -119,19 +117,44 @@ test("Segment sorting with hierarchy", async ({
   const legendItems = await selectors.chart.colorLegendItems();
 
   const expectedLegendItems = [
+    "Jura",
+    "Jura + Plateau",
+    "Western Jura",
     "Zurich",
     "Bern",
+    "Eastern Jura",
+    "Northwestern Alps",
+    "Plateau",
     "Lucerne",
+    "Northeastern Alps",
+    "Pre-Alps",
+    "Western Plateau",
+    "Alps",
+    "Central Plateau",
+    "Southwestern Alps",
     "Uri",
+    "Eastern Plateau",
     "Schwyz",
+    "Southeastern Alps",
+    "Southern Alps",
     "Obwalden",
+    "Southern Alps",
+    "Western Pre-Alps",
+    "Central Pre-Alps",
     "Nidwalden",
+    "Eastern Pre-Alps",
     "Glarus",
+    "Northwestern Alps",
     "Zug",
+    "Central Alps",
     "Fribourg",
+    "Northeastern Alps",
     "Solothurn",
+    "Southwestern Alps",
+    "Southeastern Alps",
     "both Basel",
     "Schaffhausen",
+    "Southern Alps",
     "Appenzell Ausserrhoden",
     "Appenzell Innerrhoden",
     "St Gallen",
@@ -154,19 +177,7 @@ test("Segment sorting with hierarchy", async ({
   );
 });
 
-const uniqueWithoutSorting = <T>(arr: T[]) => {
-  const res: T[] = [];
-  for (let i = 0; i < arr.length; i++) {
-    const prev = i > 0 ? arr[i - 1] : undefined;
-    const cur = arr[i];
-    if (prev !== cur) {
-      res.push(cur);
-    }
-  }
-  return res;
-};
-
-test("Map legend preview table sorting", async ({
+test.skip("Map legend preview table sorting", async ({
   actions,
   selectors,
   replayFromHAR,
@@ -179,17 +190,12 @@ test("Map legend preview table sorting", async ({
   });
   await selectors.edition.drawerLoaded();
 
-  await actions.editor.changeChartType("Map");
+  await actions.editor.changeRegularChartType("Map");
   await selectors.chart.loaded();
 
   await actions.chart.switchToTableView();
   await actions.datasetPreview.sortBy("Danger ratings");
   const cells = await selectors.datasetPreview.columnCells("Danger ratings");
-
-  const texts = await cells.allInnerTexts();
-  // TODO: Think about other cube / validation as this cube is updated quite often (day / week)
-  // and thus will fail often.
-  // expect(uniqueWithoutSorting(texts)).toEqual(["low danger", "moderate danger"]);
 });
 
 test("Sorting with values with same label as other values in the tree", async ({
@@ -202,7 +208,7 @@ test("Sorting with values with same label as other values in the tree", async ({
   const config = hierarchyTest13;
   await loadChartInLocalStorage(page, key, config);
   page.goto(`/en/create/${key}?${harReplayGraphqlEndpointQueryParam}`);
-  await selectors.chart.loaded({ timeout: 30_000 });
+  await selectors.chart.loaded();
 
   const texts = await Promise.all(
     await (

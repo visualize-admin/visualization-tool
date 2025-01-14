@@ -1,10 +1,10 @@
-import { Trans } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
 import { Box, Link, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import uniqBy from "lodash/uniqBy";
-import { useMemo } from "react";
+import { ReactNode, useMemo } from "react";
 
-import { extractChartConfigComponentIds } from "@/charts/shared/chart-helpers";
+import { extractChartConfigUsedComponents } from "@/charts/shared/chart-helpers";
 import { LegendItem } from "@/charts/shared/legend-color";
 import { ChartFiltersList } from "@/components/chart-filters-list";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
@@ -17,10 +17,10 @@ import {
   DataSource,
 } from "@/configurator";
 import { Component, Measure } from "@/domain/data";
-import { truthy } from "@/domain/types";
 import { useTimeFormatLocale } from "@/formatters";
 import { useDataCubesMetadataQuery } from "@/graphql/hooks";
 import { useLocale } from "@/locales/use-locale";
+import { DISABLE_SCREENSHOT_ATTR } from "@/utils/use-screenshot";
 
 export const useFootnotesStyles = makeStyles<Theme, { useMarginTop: boolean }>(
   (theme) => ({
@@ -42,6 +42,8 @@ export const useFootnotesStyles = makeStyles<Theme, { useMarginTop: boolean }>(
   })
 );
 
+export const CHART_FOOTNOTES_CLASS_NAME = "chart-footnotes";
+
 export const ChartFootnotes = ({
   dataSource,
   chartConfig,
@@ -57,14 +59,7 @@ export const ChartFootnotes = ({
 }) => {
   const locale = useLocale();
   const usedComponents = useMemo(() => {
-    const componentIds = extractChartConfigComponentIds({
-      chartConfig,
-      includeFilters: false,
-    });
-
-    return componentIds
-      .map((id) => components.find((component) => component.id === id))
-      .filter(truthy); // exclude potential joinBy components
+    return extractChartConfigUsedComponents(chartConfig, { components });
   }, [chartConfig, components]);
   const [{ data }] = useDataCubesMetadataQuery({
     variables: {
@@ -81,7 +76,10 @@ export const ChartFootnotes = ({
   const formatLocale = useTimeFormatLocale();
 
   return (
-    <Box sx={{ mt: 1, "& > :not(:last-child)": { mb: 3 } }}>
+    <Box
+      className={CHART_FOOTNOTES_CLASS_NAME}
+      sx={{ mt: 1, "& > :not(:last-child)": { mb: 3 } }}
+    >
       {data?.dataCubesMetadata.map((metadata) => (
         <div key={metadata.iri}>
           <ChartFootnotesLegend
@@ -115,7 +113,9 @@ export const ChartFootnotes = ({
           ) : null}
         </div>
       ))}
-      {showVisualizeLink ? <VisualizeLink /> : null}
+      {showVisualizeLink ? (
+        <VisualizeLink createdWith={t({ id: "metadata.link.created.with" })} />
+      ) : null}
     </Box>
   );
 };
@@ -289,11 +289,12 @@ const ChartFootnotesComboLineSingle = ({
   ) : null;
 };
 
-export const VisualizeLink = () => {
+export const VisualizeLink = ({ createdWith }: { createdWith: ReactNode }) => {
   const locale = useLocale();
+
   return (
-    <Typography variant="caption" color="grey.600">
-      <Trans id="metadata.link.created.with">Created with</Trans>
+    <Typography variant="caption" color="grey.600" {...DISABLE_SCREENSHOT_ATTR}>
+      {createdWith}
       <Link
         href={`https://visualize.admin.ch/${locale}/`}
         target="_blank"

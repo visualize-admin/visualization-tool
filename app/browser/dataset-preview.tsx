@@ -28,15 +28,28 @@ const useStyles = makeStyles<Theme, { descriptionPresent: boolean }>(
       paddingLeft: theme.spacing(4),
     },
     header: {
-      alignItems: "center",
       justifyContent: "space-between",
       marginBottom: theme.spacing(5),
+      [theme.breakpoints.up("md")]: {
+        flexDirection: "row",
+        alignItems: "center",
+      },
+      [theme.breakpoints.down("md")]: {
+        flexDirection: "column",
+        gap: theme.spacing(4),
+        alignItems: "start",
+      },
     },
     title: {
       color: theme.palette.grey[800],
     },
     createChartButton: {
-      marginLeft: theme.spacing(6),
+      [theme.breakpoints.up("md")]: {
+        marginLeft: theme.spacing(6),
+      },
+      [theme.breakpoints.down("md")]: {
+        marginLeft: 0,
+      },
       whiteSpace: "nowrap",
       flexShrink: 0,
     },
@@ -80,11 +93,6 @@ const useStyles = makeStyles<Theme, { descriptionPresent: boolean }>(
     },
   })
 );
-
-export interface Preview {
-  iri: string;
-  label: string;
-}
 
 export const DataSetPreview = ({
   dataSetIri,

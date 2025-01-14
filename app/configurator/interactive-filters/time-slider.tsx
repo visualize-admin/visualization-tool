@@ -34,6 +34,7 @@ import {
   makeDimensionValueSorters,
 } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
+import { DISABLE_SCREENSHOT_ATTR } from "@/utils/use-screenshot";
 
 const TimelineContext = createContext<Timeline | undefined>(undefined);
 
@@ -159,6 +160,7 @@ const Root = ({ showPlayButton }: { showPlayButton: boolean }) => {
 
   return (
     <Box
+      {...DISABLE_SCREENSHOT_ATTR}
       sx={{
         display: "flex",
         alignItems: "center",

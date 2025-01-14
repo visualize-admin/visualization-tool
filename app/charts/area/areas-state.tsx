@@ -190,8 +190,8 @@ const useAreasState = (
     if (normalize) {
       return group(
         normalizeData(chartData, {
-          yKey: yMeasure.id,
-          getY,
+          key: yMeasure.id,
+          getAxisValue: getY,
           getTotalGroupValue: (d) => {
             return sumsByX[getXAsString(d)];
           },
@@ -205,9 +205,9 @@ const useAreasState = (
 
   const chartWideData = useMemo(() => {
     return getWideData({
-      dataGroupedByX: chartDataGroupedByX,
-      xKey,
-      getY,
+      dataGrouped: chartDataGroupedByX,
+      key: xKey,
+      getAxisValue: getY,
       getSegment,
       allSegments: segments,
       imputationType: fields.y.imputationType,
@@ -372,8 +372,8 @@ const useAreasState = (
       });
       const yValueFormatter = getStackedTooltipValueFormatter({
         normalize,
-        yMeasureId: yMeasure.id,
-        yMeasureUnit: yMeasure.unit,
+        measureId: yMeasure.id,
+        measureUnit: yMeasure.unit,
         formatters,
         formatNumber,
       });
@@ -394,7 +394,7 @@ const useAreasState = (
         xAnchor,
         yAnchor,
         placement,
-        xValue: timeFormatUnit(getX(datum), xDimension.timeUnit),
+        value: timeFormatUnit(getX(datum), xDimension.timeUnit),
         datum: {
           label: fields.segment && getSegmentAbbreviationOrLabel(datum),
           value: yValueFormatter(getY(datum), getIdentityY(datum)),

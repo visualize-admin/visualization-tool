@@ -7,9 +7,9 @@ import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { TooltipTitle } from "@/components/tooltip-utils";
 import {
   ConfiguratorStateConfiguringChart,
-  getChartConfig,
   isAnimationInConfig,
 } from "@/config-types";
+import { getChartConfig } from "@/config-utils";
 import {
   ControlSection,
   ControlSectionContent,
@@ -20,8 +20,6 @@ import {
 import { ControlTabField } from "@/configurator/components/field";
 import { useDataCubesComponentsQuery } from "@/graphql/hooks";
 import { useLocale } from "@/locales/use-locale";
-
-export type InteractiveFilterType = "legend" | "timeRange" | "dataFilters";
 
 export const InteractiveFiltersConfigurator = ({
   state,

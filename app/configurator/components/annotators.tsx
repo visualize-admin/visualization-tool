@@ -3,7 +3,7 @@ import { Theme, Typography, TypographyProps } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 
-import { getChartConfig } from "@/config-types";
+import { getChartConfig } from "@/config-utils";
 import {
   ControlSection,
   ControlSectionContent,

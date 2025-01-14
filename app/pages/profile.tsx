@@ -3,6 +3,7 @@ import { User } from "@prisma/client";
 import { GetServerSideProps } from "next";
 import { getServerSession } from "next-auth";
 
+import { Footer } from "@/components/footer";
 import { AppLayout } from "@/components/layout";
 import { getUserConfigs, ParsedConfig } from "@/db/config";
 import { deserializeProps, Serialized, serializeProps } from "@/db/serialize";
@@ -57,7 +58,10 @@ const ProfilePage = (props: Serialized<PageProps>) => {
     <AppLayout>
       <Box className={rootClasses.root}>
         <ProfileHeader user={user} />
-        <ProfileContentTabs userId={user.id} />
+        <Box sx={{ flexGrow: 1, display: "flex", flexDirection: "column" }}>
+          <ProfileContentTabs userId={user.id} />
+        </Box>
+        <Footer />
       </Box>
     </AppLayout>
   );

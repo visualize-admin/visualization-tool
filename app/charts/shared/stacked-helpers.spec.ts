@@ -69,8 +69,8 @@ describe("getStackedYScales", () => {
 
 describe("getStackedTooltipValueFormatter", () => {
   const commonStackedTooltipFormatProps = {
-    yMeasureId: "y",
-    yMeasureUnit: "ABC",
+    measureId: "y",
+    measureUnit: "ABC",
     formatters: {},
     formatNumber: (d: NumberValue | null | undefined) => `${d}`,
   };

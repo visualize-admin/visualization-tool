@@ -1,7 +1,8 @@
 import { Box, Button, Typography } from "@mui/material";
 import { useEffect, useRef } from "react";
 
-import { Meta, getChartConfig } from "@/config-types";
+import { Meta } from "@/config-types";
+import { getChartConfig } from "@/config-utils";
 import {
   isAnnotationField,
   isConfiguring,
@@ -22,6 +23,7 @@ import useEvent from "@/utils/use-event";
 export const ChartAnnotationsSelector = () => {
   const [state] = useConfiguratorState(isConfiguring);
   const chartConfig = getChartConfig(state);
+
   return (
     <AnnotationOptions
       type="chart"
@@ -33,6 +35,7 @@ export const ChartAnnotationsSelector = () => {
 
 export const LayoutAnnotationsSelector = () => {
   const [state] = useConfiguratorState(isLayouting);
+
   return (
     <AnnotationOptions
       type="layout"

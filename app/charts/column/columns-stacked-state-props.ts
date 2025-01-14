@@ -19,8 +19,9 @@ import {
   useSegmentVariables,
 } from "@/charts/shared/chart-state";
 import { useRenderingKeyVariable } from "@/charts/shared/rendering-utils";
-import { ColumnConfig, useChartConfigFilters } from "@/configurator";
-import { Observation, isTemporalEntityDimension } from "@/domain/data";
+import { useChartConfigFilters } from "@/config-utils";
+import { ColumnConfig } from "@/configurator";
+import { isTemporalEntityDimension, Observation } from "@/domain/data";
 import { sortByIndex } from "@/utils/array";
 
 import { ChartProps } from "../shared/ChartProps";
@@ -139,9 +140,9 @@ export const useColumnsStackedStateData = (
   const { sortedPlottableData, plottableDataWide } = useMemo(() => {
     const plottableDataByX = group(plottableData, getX);
     const plottableDataWide = getWideData({
-      dataGroupedByX: plottableDataByX,
-      xKey: x.componentId,
-      getY,
+      dataGrouped: plottableDataByX,
+      key: x.componentId,
+      getAxisValue: getY,
       getSegment,
     });
 
@@ -155,7 +156,7 @@ export const useColumnsStackedStateData = (
   const data = useChartData(sortedPlottableData, {
     chartConfig,
     timeRangeDimensionId: xDimension.id,
-    getXAsDate,
+    getAxisValueAsDate: getXAsDate,
     getSegmentAbbreviationOrLabel,
     getTimeRangeDate,
   });

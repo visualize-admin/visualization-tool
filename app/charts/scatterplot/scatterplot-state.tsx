@@ -211,7 +211,7 @@ const useScatterplotState = (
       xAnchor,
       yAnchor,
       placement,
-      xValue: formatNumber(getX(datum)),
+      value: formatNumber(getX(datum)),
       tooltipContent: (
         <TooltipScatterplot
           firstLine={fields.segment && getSegmentAbbreviationOrLabel(datum)}

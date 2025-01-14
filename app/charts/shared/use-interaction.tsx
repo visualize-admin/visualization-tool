@@ -9,15 +9,15 @@ import {
 
 import { Observation } from "@/domain/data";
 
-export interface InteractionElement {
+type InteractionElement = {
   visible: boolean;
   mouse?: { x: number; y: number } | undefined;
   d: Observation | undefined;
-}
+};
 
-interface InteractionState {
+type InteractionState = {
   interaction: InteractionElement;
-}
+};
 
 type InteractionStateAction =
   | {
@@ -36,7 +36,6 @@ const INTERACTION_INITIAL_STATE: InteractionState = {
   },
 };
 
-// Reducer
 const InteractionStateReducer = (
   state: InteractionState,
   action: InteractionStateAction
@@ -65,28 +64,27 @@ const InteractionStateReducer = (
           mouse: undefined,
         },
       };
-
     default:
       throw Error();
   }
 };
 
-// Provider
 const InteractionStateContext = createContext<
   [InteractionState, Dispatch<InteractionStateAction>] | undefined
 >(undefined);
 
 export const useInteraction = () => {
   const ctx = useContext(InteractionStateContext);
+
   if (ctx === undefined) {
     throw Error(
       "You need to wrap your component in <InteractionProvider /> to useInteraction()"
     );
   }
+
   return ctx;
 };
 
-// Component
 export const InteractionProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer<
     Reducer<InteractionState, InteractionStateAction>

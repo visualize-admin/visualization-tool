@@ -17,6 +17,7 @@ const StyledMenuItem = styled(MenuItem)(({ theme, color }) => ({
   whiteSpace: "normal",
 })) as typeof MenuItem;
 export type MenuActionProps = {
+  disabled?: boolean;
   label: string | NonNullable<React.ReactNode>;
   trailingIconName?: IconName;
   leadingIconName?: IconName;
@@ -50,7 +51,7 @@ export type MenuActionProps = {
 export const MenuActionItem = (
   props: MenuActionProps & { as: "menuitem" | "button" }
 ) => {
-  const { label, trailingIconName, leadingIconName } = props;
+  const { disabled, label, trailingIconName, leadingIconName } = props;
   const {
     isOpen: isConfirmationOpen,
     open: openConfirmation,
@@ -97,6 +98,7 @@ export const MenuActionItem = (
       return (
         <Button
           size="xsmall"
+          disabled={disabled}
           color={color}
           variant="contained"
           {...forwardedProps}
@@ -111,11 +113,10 @@ export const MenuActionItem = (
       <>
         <StyledMenuItem
           color={color}
+          disabled={disabled}
           component={props.type === "link" ? Link : "div"}
           {...forwardedProps}
-          sx={{
-            minHeight: 0,
-          }}
+          sx={{ minHeight: 0 }}
         >
           {leadingIcon && (
             <Icon

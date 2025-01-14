@@ -1,6 +1,6 @@
 import { useEventCallback } from "@mui/material";
 import { bisector } from "d3-array";
-import { brushX } from "d3-brush";
+import { BrushSelection, brushX } from "d3-brush";
 import { pointer, pointers, select, Selection } from "d3-selection";
 import { Transition } from "d3-transition";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -32,6 +32,7 @@ import {
 } from "@/stores/interactive-filters";
 import { useTransitionStore } from "@/stores/transition";
 import { getTextWidth } from "@/utils/get-text-width";
+import { DISABLE_SCREENSHOT_ATTR } from "@/utils/use-screenshot";
 
 // Brush constants
 const HANDLE_HEIGHT = 14;
@@ -350,7 +351,7 @@ export const BrushTime = () => {
   // without transition
   useEffect(() => {
     const g = select(ref.current);
-    const defaultSelection = [0, selectionExtent];
+    const defaultSelection: BrushSelection = [0, selectionExtent];
     (g as Selection<SVGGElement, unknown, null, undefined>).call(
       brush.move,
       defaultSelection
@@ -362,7 +363,10 @@ export const BrushTime = () => {
   // This effect makes the brush responsive
   useEffect(() => {
     if (ref.current) {
-      const coord = [brushWidthScale(closestFrom), brushWidthScale(closestTo)];
+      const coord: BrushSelection = [
+        brushWidthScale(closestFrom),
+        brushWidthScale(closestTo),
+      ];
       select<SVGGElement, unknown>(ref.current).call(brush.move, coord);
     }
 
@@ -371,6 +375,7 @@ export const BrushTime = () => {
 
   return fullData.length ? (
     <g
+      {...DISABLE_SCREENSHOT_ATTR}
       transform={`translate(0, ${
         chartHeight + margins.top + margins.bottom - HEIGHT * 1.5
       })`}

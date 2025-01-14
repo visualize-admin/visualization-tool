@@ -1,32 +1,67 @@
-import { Trans, t } from "@lingui/macro";
-import { Box, IconButton, Theme, useEventCallback } from "@mui/material";
+import { t, Trans } from "@lingui/macro";
+import {
+  Box,
+  IconButton,
+  Theme,
+  useEventCallback,
+  useTheme,
+} from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { ComponentProps, useEffect, useState } from "react";
+import { select } from "d3-selection";
+import deburr from "lodash/deburr";
+import uniqBy from "lodash/uniqBy";
+import {
+  ComponentProps,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import { createRoot } from "react-dom/client";
 
 import {
   ChartDataFiltersList,
   ChartDataFiltersToggle,
   useChartDataFiltersState,
 } from "@/charts/shared/chart-data-filters";
+import { extractChartConfigUsedComponents } from "@/charts/shared/chart-helpers";
 import { ArrowMenuTopBottom } from "@/components/arrow-menu";
+import {
+  CHART_FOOTNOTES_CLASS_NAME,
+  VisualizeLink,
+} from "@/components/chart-footnotes";
 import { chartPanelLayoutGridClasses } from "@/components/chart-panel-layout-grid";
-import { useChartTablePreview } from "@/components/chart-table-preview";
+import {
+  TABLE_PREVIEW_WRAPPER_CLASS_NAME,
+  useChartTablePreview,
+} from "@/components/chart-table-preview";
+import { useChartWithFiltersClasses } from "@/components/chart-with-filters";
 import { MenuActionItem } from "@/components/menu-action-item";
 import { MetadataPanel } from "@/components/metadata-panel";
+import { getChartConfig } from "@/config-utils";
 import {
   ChartConfig,
   DashboardFiltersConfig,
   DataSource,
-  getChartConfig,
   hasChartConfigs,
   isConfiguring,
   isPublished,
   useConfiguratorState,
 } from "@/configurator";
+import { timeUnitToFormatter } from "@/configurator/components/ui-helpers";
+import { Component } from "@/domain/data";
+import { truthy } from "@/domain/types";
+import { useDataCubesMetadataQuery } from "@/graphql/hooks";
 import { getChartIcon } from "@/icons";
 import SvgIcMore from "@/icons/components/IcMore";
 import { useLocale } from "@/src";
+import { animationFrame } from "@/utils/animation-frame";
 import { createChartId } from "@/utils/create-chart-id";
+import {
+  DISABLE_SCREENSHOT_ATTR,
+  useScreenshot,
+  UseScreenshotProps,
+} from "@/utils/use-screenshot";
 
 /** Generic styles shared between `ChartPreview` and `ChartPublished`. */
 export const useChartStyles = makeStyles<Theme, { disableBorder?: boolean }>(
@@ -75,8 +110,10 @@ export const ChartControls = ({
     chartConfig,
     dashboardFilters,
   });
+
   return (
     <Box
+      {...DISABLE_SCREENSHOT_ATTR}
       sx={{
         display: "grid",
         gridTemplateAreas: `
@@ -112,23 +149,36 @@ export const ChartControls = ({
 export const ChartMoreButton = ({
   configKey,
   chartKey,
+  chartWrapperNode,
+  components,
 }: {
   configKey?: string;
   chartKey: string;
+  chartWrapperNode?: HTMLElement | null;
+  components: Component[];
 }) => {
+  const locale = useLocale();
   const [state, dispatch] = useConfiguratorState(hasChartConfigs);
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
   const handleClose = useEventCallback(() => setAnchor(null));
   const chartConfig = getChartConfig(state, chartKey);
   const { setIsTableRaw } = useChartTablePreview();
+
   // Reset back to chart view when switching chart type.
   useEffect(() => {
     setIsTableRaw(false);
   }, [chartConfig.chartType, setIsTableRaw]);
+
   const disableButton =
     isPublished(state) &&
     state.layout.type === "dashboard" &&
     chartConfig.chartType === "table";
+
+  const screenshotName = useMemo(() => {
+    const date = timeUnitToFormatter.Day(new Date());
+    const label = chartConfig.meta.title[locale] || chartConfig.chartType;
+    return `${date}_${label}`;
+  }, [chartConfig.meta.title, chartConfig.chartType, locale]);
 
   return disableButton ? null : (
     <>
@@ -136,6 +186,8 @@ export const ChartMoreButton = ({
         color="secondary"
         onClick={(ev) => setAnchor(ev.currentTarget)}
         sx={{ height: "fit-content" }}
+        {...DISABLE_SCREENSHOT_ATTR}
+        data-testid="chart-more-button"
       >
         <SvgIcMore />
       </IconButton>
@@ -149,10 +201,19 @@ export const ChartMoreButton = ({
         {isPublished(state) ? (
           <div>
             {chartConfig.chartType !== "table" ? (
-              <TableViewChartMenuActionItem
-                chartType={chartConfig.chartType}
-                onSuccess={handleClose}
-              />
+              <>
+                <TableViewChartMenuActionItem
+                  chartType={chartConfig.chartType}
+                  onSuccess={handleClose}
+                />
+                <DownloadPNGImageMenuActionItem
+                  configKey={configKey}
+                  chartKey={chartKey}
+                  components={components}
+                  screenshotName={screenshotName}
+                  screenshotNode={chartWrapperNode}
+                />
+              </>
             ) : null}
             {state.layout.type !== "dashboard" && configKey ? (
               <>
@@ -180,10 +241,19 @@ export const ChartMoreButton = ({
               onSuccess={handleClose}
             />
             {chartConfig.chartType !== "table" ? (
-              <TableViewChartMenuActionItem
-                chartType={chartConfig.chartType}
-                onSuccess={handleClose}
-              />
+              <>
+                <TableViewChartMenuActionItem
+                  chartType={chartConfig.chartType}
+                  onSuccess={handleClose}
+                />
+                <DownloadPNGImageMenuActionItem
+                  configKey={configKey}
+                  chartKey={chartKey}
+                  components={components}
+                  screenshotName={screenshotName}
+                  screenshotNode={chartWrapperNode}
+                />
+              </>
             ) : null}
             {state.chartConfigs.length > 1 ? (
               <MenuActionItem
@@ -225,6 +295,7 @@ const CopyChartMenuActionItem = ({ configKey }: { configKey: string }) => {
       `${window.location.origin}/${locale}/create/new?copy=${configKey}`
     );
   }, [configKey, locale]);
+
   return (
     <MenuActionItem
       type="link"
@@ -244,6 +315,7 @@ const ShareChartMenuActionItem = ({ configKey }: { configKey: string }) => {
   useEffect(() => {
     setShareUrl(`${window.location.origin}/${locale}/v/${configKey}`);
   }, [configKey, locale]);
+
   return (
     <MenuActionItem
       type="link"
@@ -266,6 +338,7 @@ export const DuplicateChartMenuActionItem = ({
 }) => {
   const locale = useLocale();
   const [_, dispatch] = useConfiguratorState(hasChartConfigs);
+
   return (
     <MenuActionItem
       type="button"
@@ -294,6 +367,7 @@ const TableViewChartMenuActionItem = ({
   onSuccess: () => void;
 }) => {
   const { isTable, setIsTable } = useChartTablePreview();
+
   return (
     <MenuActionItem
       type="button"
@@ -312,4 +386,164 @@ const TableViewChartMenuActionItem = ({
       }
     />
   );
+};
+
+const DownloadPNGImageMenuActionItem = ({
+  configKey,
+  chartKey,
+  components,
+  screenshotName,
+  screenshotNode,
+}: {
+  configKey?: string;
+  chartKey: string;
+  components: Component[];
+} & Omit<UseScreenshotProps, "type" | "modifyNode" | "pngMetadata">) => {
+  const modifyNode = useModifyNode();
+  const metadata = usePNGMetadata({
+    configKey,
+    chartKey,
+    components,
+  });
+  const { loading, screenshot } = useScreenshot({
+    type: "png",
+    screenshotName,
+    screenshotNode,
+    modifyNode,
+    pngMetadata: metadata,
+  });
+
+  return (
+    <MenuActionItem
+      type="button"
+      as="menuitem"
+      onClick={screenshot}
+      disabled={loading}
+      leadingIconName="download"
+      label={`${t({ id: "chart-controls.export", message: "Export" })} PNG`}
+    />
+  );
+};
+
+const useModifyNode = () => {
+  const theme = useTheme();
+  const chartWithFiltersClasses = useChartWithFiltersClasses();
+
+  return useCallback(
+    async (clonedNode: HTMLElement, originalNode: HTMLElement) => {
+      // We need to explicitly set the height of the chart container to the height
+      // of the chart, as otherwise the screenshot won't work for free canvas charts.
+      const tablePreviewWrapper = clonedNode.querySelector(
+        `.${TABLE_PREVIEW_WRAPPER_CLASS_NAME}`
+      ) as HTMLElement | null;
+
+      if (tablePreviewWrapper) {
+        const chart = originalNode.querySelector(
+          `.${chartWithFiltersClasses.chartWithFilters}`
+        );
+
+        if (chart) {
+          const height = chart.clientHeight;
+          tablePreviewWrapper.style.height = `${height}px`;
+        }
+      }
+
+      const footnotes = clonedNode.querySelector(
+        `.${CHART_FOOTNOTES_CLASS_NAME}`
+      );
+
+      if (footnotes) {
+        const container = document.createElement("div");
+        footnotes.appendChild(container);
+        const root = createRoot(container);
+        root.render(
+          <VisualizeLink
+            createdWith={t({ id: "metadata.link.created.with" })}
+          />
+        );
+        await animationFrame();
+      }
+
+      // Remove some elements that should not be included in the screenshot.
+      // For maps, we can't apply custom classes to internal elements, so we need
+      // to remove them here.
+      clonedNode.querySelector(".maplibregl-ctrl")?.remove();
+
+      // Every text element should be dark-grey (currently we use primary.main to
+      // indicate interactive elements, which doesn't make sense for screenshots)
+      // and not have underlines.
+      const color = theme.palette.grey[700];
+      select(clonedNode)
+        .selectAll("*")
+        .style("color", color)
+        .style("text-decoration", "none");
+      // SVG elements have fill instead of color. Here we only target text elements,
+      // to avoid changing the color of other SVG elements (charts).
+      select(clonedNode).selectAll("text").style("fill", color);
+    },
+    [chartWithFiltersClasses.chartWithFilters, theme.palette.grey]
+  );
+};
+
+const usePNGMetadata = ({
+  chartKey,
+  configKey,
+  components,
+}: {
+  chartKey: string;
+  configKey?: string;
+  components: Component[];
+}): UseScreenshotProps["pngMetadata"] => {
+  const locale = useLocale();
+  const [state] = useConfiguratorState(hasChartConfigs);
+  const chartConfig = getChartConfig(state, chartKey);
+
+  const usedComponents = useMemo(() => {
+    return extractChartConfigUsedComponents(chartConfig, { components });
+  }, [chartConfig, components]);
+
+  const [{ data }] = useDataCubesMetadataQuery({
+    variables: {
+      sourceType: state.dataSource.type,
+      sourceUrl: state.dataSource.url,
+      locale,
+      cubeFilters: uniqBy(
+        usedComponents.map((component) => ({ iri: component.cubeIri })),
+        "iri"
+      ),
+    },
+    pause: !usedComponents.length,
+  });
+
+  return useMemo(() => {
+    const publisher = data?.dataCubesMetadata
+      .map((cube) =>
+        cube.contactPoint
+          ? `${cube.contactPoint.name} (${cube.contactPoint.email})`
+          : (cube.creator?.label ?? cube.publisher)
+      )
+      .join(", ");
+    const publisherMetadata = publisher
+      ? { key: "Publisher", value: publisher }
+      : null;
+    const publishURL = configKey
+      ? `${window.location.origin}/${locale}/v/${configKey}`
+      : null;
+    const publishURLMetadata = publishURL
+      ? { key: "Publish URL", value: publishURL }
+      : null;
+    const datasets = data?.dataCubesMetadata
+      .map((cube) => `${cube.title} ${cube.version ? `(${cube.version})` : ""}`)
+      .join(", ");
+    const datasetsMetadata = datasets
+      ? { key: "Dataset", value: datasets }
+      : null;
+
+    const metadata = [publisherMetadata, publishURLMetadata, datasetsMetadata]
+      .filter(truthy)
+      .map(({ key, value }) => `${key}: ${value}`)
+      .join(" | ");
+
+    return metadata ? [{ key: "Comment", value: deburr(metadata) }] : [];
+  }, [configKey, data?.dataCubesMetadata, locale]);
 };

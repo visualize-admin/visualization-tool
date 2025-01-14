@@ -15,11 +15,8 @@ import { makeStyles } from "@mui/styles";
 import { useState } from "react";
 import { Inspector } from "react-inspector";
 
-import {
-  DataSource,
-  getChartConfig,
-  useConfiguratorState,
-} from "@/configurator";
+import { getChartConfig } from "@/config-utils";
+import { DataSource, useConfiguratorState } from "@/configurator";
 import { dataSourceToSparqlEditorUrl } from "@/domain/datasource";
 import { useDataCubesComponentsQuery } from "@/graphql/hooks";
 import { Icon } from "@/icons";
@@ -27,6 +24,7 @@ import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import { useLocale } from "@/src";
 import { useInteractiveFiltersGetState } from "@/stores/interactive-filters";
 import useEvent from "@/utils/use-event";
+import { DISABLE_SCREENSHOT_ATTR } from "@/utils/use-screenshot";
 
 const DebugInteractiveFilters = () => {
   const getInteractiveFiltersState = useInteractiveFiltersGetState();
@@ -200,7 +198,12 @@ const DebugPanel = (props: DebugPanelProps) => {
   const classes = useStyles();
 
   return (
-    <Accordion disableGutters className={classes.debugPanel} square>
+    <Accordion
+      disableGutters
+      className={classes.debugPanel}
+      square
+      {...DISABLE_SCREENSHOT_ATTR}
+    >
       <AccordionSummary
         expandIcon={
           <Box p={2}>

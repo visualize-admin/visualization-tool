@@ -7,9 +7,9 @@ import {
 } from "@/charts/column/rendering-utils";
 import { useChartState } from "@/charts/shared/chart-state";
 import {
-  RenderWhiskerDatum,
+  RenderVerticalWhiskerDatum,
   renderContainer,
-  renderWhiskers,
+  renderVerticalWhiskers,
 } from "@/charts/shared/rendering-utils";
 import { useTransitionStore } from "@/stores/transition";
 
@@ -29,7 +29,7 @@ export const ErrorWhiskers = () => {
   const ref = useRef<SVGGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
-  const renderData: RenderWhiskerDatum[] = useMemo(() => {
+  const renderData: RenderVerticalWhiskerDatum[] = useMemo(() => {
     if (!getYErrorRange || !showYUncertainty) {
       return [];
     }
@@ -48,7 +48,7 @@ export const ErrorWhiskers = () => {
             y1: yScale(y1),
             y2: yScale(y2),
             width: barWidth,
-          } as RenderWhiskerDatum;
+          } as RenderVerticalWhiskerDatum;
         })
       );
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -71,7 +71,7 @@ export const ErrorWhiskers = () => {
         id: "columns-grouped-error-whiskers",
         transform: `translate(${margins.left} ${margins.top})`,
         transition: { enable: enableTransition, duration: transitionDuration },
-        render: (g, opts) => renderWhiskers(g, renderData, opts),
+        render: (g, opts) => renderVerticalWhiskers(g, renderData, opts),
       });
     }
   }, [

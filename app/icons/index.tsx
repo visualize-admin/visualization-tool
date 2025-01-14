@@ -41,6 +41,8 @@ export const getChartIcon = (chartType: ChartType): IconName => {
       return "chartArea";
     case "column":
       return "chartColumn";
+    case "bar":
+      return "chartBar";
     case "line":
       return "chartLine";
     case "map":

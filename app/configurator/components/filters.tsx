@@ -44,13 +44,12 @@ import { Select } from "@/components/form";
 import { Loading } from "@/components/hint";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { TooltipTitle } from "@/components/tooltip-utils";
+import { ChartConfig, ColorMapping } from "@/config-types";
+import { getChartConfig, useChartConfigFilters } from "@/config-utils";
 import {
-  ChartConfig,
-  getChartConfig,
   getFilterValue,
   isConfiguring,
   MultiFilterContextProvider,
-  useChartConfigFilters,
   useConfiguratorState,
   useMultiFilterContext,
 } from "@/configurator";
@@ -77,6 +76,7 @@ import { InteractiveFilterToggle } from "@/configurator/interactive-filters/inte
 import {
   Component,
   Dimension,
+  DimensionValue,
   HierarchyValue,
   TemporalDimension,
   TemporalEntityDimension,
@@ -332,6 +332,11 @@ const MultiFilterContent = ({
     );
   }, [colorConfig?.colorMapping, dimensionId, colorComponent]);
 
+  useEnsureUpToDateColorMapping({
+    colorComponentValues: colorComponent?.values,
+    colorMapping: colorConfig?.colorMapping,
+  });
+
   const interactiveFilterProps = useInteractiveFiltersToggle("legend");
   const chartSymbol = getChartSymbol(chartConfig.chartType);
 
@@ -432,7 +437,7 @@ const MultiFilterContent = ({
                     />
                   ) : (
                     <>
-                      <Typography variant="body2" sx={{ flexGrow: 1 }}>
+                      <Typography variant="body2" style={{ flexGrow: 1 }}>
                         {label}
                       </Typography>
                       <SvgIcCheck />
@@ -458,6 +463,40 @@ const MultiFilterContent = ({
       </ConfiguratorDrawer>
     </Box>
   );
+};
+
+/**
+ * Fixes situations where an old chart is being edited and the cube has changed
+ * and contains new values in the color dimension.
+ * */
+const useEnsureUpToDateColorMapping = ({
+  colorComponentValues,
+  colorMapping,
+}: {
+  colorComponentValues?: DimensionValue[];
+  colorMapping?: ColorMapping;
+}) => {
+  const [state, dispatch] = useConfiguratorState(isConfiguring);
+  const chartConfig = getChartConfig(state);
+  const { dimensionId, colorConfigPath } = useMultiFilterContext();
+  const { activeField } = chartConfig;
+
+  if (
+    activeField &&
+    colorComponentValues?.some((v) => !colorMapping?.[v.value])
+  ) {
+    dispatch({
+      type: "CHART_CONFIG_UPDATE_COLOR_MAPPING",
+      value: {
+        field: activeField,
+        dimensionId,
+        colorConfigPath,
+        colorMapping,
+        values: colorComponentValues,
+        random: false,
+      },
+    });
+  }
 };
 
 const useBreadcrumbStyles = makeStyles({
@@ -1142,19 +1181,23 @@ export const TimeFilter = (props: TimeFilterProps) => {
   }
 };
 
-type LeftRightFormContainerProps = {
+const LeftRightFormContainer = ({
+  left,
+  right,
+}: {
   left: ReactNode;
   right: ReactNode;
-};
+}) => {
+  const columnGap = 12;
+  const middleElementSize = 8;
+  const sideElementSize = DRAWER_WIDTH / 2 - columnGap * 2 - middleElementSize;
 
-const LeftRightFormContainer = (props: LeftRightFormContainerProps) => {
-  const { left, right } = props;
   return (
     <Box
       sx={{
         display: "grid",
-        columnGap: "0.75rem",
-        gridTemplateColumns: "1fr auto 1fr",
+        columnGap: `${columnGap}px`,
+        gridTemplateColumns: `${sideElementSize}px ${middleElementSize}px ${sideElementSize}px`,
         alignItems: "center",
       }}
     >

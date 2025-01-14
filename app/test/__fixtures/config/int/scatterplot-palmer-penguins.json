@@ -5,7 +5,7 @@
     "dataSet": "https://environment.ld.admin.ch/foen/palmer-penguins/18",
     "dataSource": {
       "type": "sparql",
-      "url": "https://int.lindas.admin.ch/query"
+      "url": "https://lindas-cached.int.cluster.ldbar.ch/query"
     },
     "meta": {
       "title": {

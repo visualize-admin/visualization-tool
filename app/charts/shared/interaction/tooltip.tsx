@@ -23,8 +23,9 @@ export const Tooltip = ({ type = "single" }: { type: TooltipType }) => {
 };
 export type { TooltipPlacement };
 
-export type TooltipType = "single" | "multiple";
-export interface TooltipValue {
+type TooltipType = "single" | "multiple";
+
+export type TooltipValue = {
   hide?: boolean;
   label?: string;
   value: string;
@@ -32,17 +33,18 @@ export interface TooltipValue {
   color: string;
   yPos?: number;
   symbol?: LegendSymbol;
-}
-export interface TooltipInfo {
+};
+
+export type TooltipInfo = {
   xAnchor: number;
   yAnchor: number | undefined;
   placement: TooltipPlacement;
-  xValue: string;
+  value: string;
   tooltipContent?: ReactNode;
   datum: TooltipValue;
   values: TooltipValue[] | undefined;
   withTriangle?: boolean;
-}
+};
 
 const TooltipInner = ({ d, type }: { d: Observation; type: TooltipType }) => {
   const { bounds, getAnnotationInfo } = useChartState() as
@@ -53,7 +55,7 @@ const TooltipInner = ({ d, type }: { d: Observation; type: TooltipType }) => {
     xAnchor,
     yAnchor,
     placement,
-    xValue,
+    value,
     tooltipContent,
     datum,
     values,
@@ -75,10 +77,10 @@ const TooltipInner = ({ d, type }: { d: Observation; type: TooltipType }) => {
       {tooltipContent ? (
         tooltipContent
       ) : type === "multiple" && values ? (
-        <TooltipMultiple xValue={xValue} segmentValues={values} />
+        <TooltipMultiple xValue={value} segmentValues={values} />
       ) : (
         <TooltipSingle
-          xValue={xValue}
+          xValue={value}
           segment={datum.label}
           yValue={datum.value}
           yError={datum.error}

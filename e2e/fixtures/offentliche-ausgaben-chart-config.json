@@ -3,7 +3,7 @@
   "dataSet": "https://environment.ld.admin.ch/foen/fab_Offentliche_Ausgaben_test3/7",
   "dataSource": {
     "type": "sparql",
-    "url": "https://int.lindas.admin.ch/query"
+    "url": "https://lindas-cached.int.cluster.ldbar.ch/query"
   },
   "meta": {
     "title": { "de": "", "fr": "", "it": "", "en": "" },

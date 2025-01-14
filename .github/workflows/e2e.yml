@@ -1,9 +1,9 @@
 name: E2E
 
 on: [deployment_status]
+
 jobs:
   e2e:
-    # only runs this job on successful deploy
     if: github.event.deployment_status.state == 'success'
     runs-on: ubuntu-latest
     strategy:
@@ -18,10 +18,11 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
-          node-version: 18.x
+          node-version: 20.x
           cache: "yarn"
+          cache-dependency-path: "**/yarn.lock"
       - name: Install dependencies
-        run: yarn install --immutable
+        run: yarn install --immutable --prefer-offline
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps chromium
       - name: Run Playwright tests
@@ -29,9 +30,12 @@ jobs:
           yarn e2e -- --grep-invert @noci --shard=${{ matrix.shardIndex }}/${{
           matrix.shardTotal }}
         env:
+          ARGOS_BRANCH:
+            ${{ github.event.deployment_status.environment == 'Production' &&
+            'main' || '' }}
           E2E_BASE_URL: ${{ github.event.deployment_status.target_url }}
-          PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
           E2E_HAR: ${{ secrets.E2E_HAR }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload blob report to GitHub Actions Artifacts
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
@@ -39,44 +43,3 @@ jobs:
           name: blob-report-${{ matrix.shardIndex }}
           path: blob-report
           retention-days: 1
-      - name: Upload E2E artifacts to job
-        uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: e2e-screenshots
-          path: |
-            e2e-screenshots
-            playwright-report
-  merge-reports:
-    if: ${{ !cancelled() }}
-    needs: [e2e]
-
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          # fetch all commits so we can find the branch
-          fetch-depth: 0
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 18.x
-          cache: "yarn"
-      - name: Install dependencies
-        run: yarn install --immutable
-
-      - name: Download blob reports from GitHub Actions Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: all-blob-reports
-          pattern: blob-report-*
-          merge-multiple: true
-
-      - name: Merge into HTML Report
-        run: npx playwright merge-reports --reporter html ./all-blob-reports
-
-      - name: Upload HTML report
-        uses: actions/upload-artifact@v4
-        with:
-          name: html-report--attempt-${{ github.run_attempt }}
-          path: playwright-report
-          retention-days: 14

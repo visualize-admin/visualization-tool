@@ -152,7 +152,7 @@ type AnyTransition = Transition<any, any, any, any>;
 const ERROR_WHISKER_SIZE = 1;
 const ERROR_WHISKER_MIDDLE_CIRCLE_RADIUS = 3.5;
 
-export type RenderWhiskerDatum = {
+export type RenderVerticalWhiskerDatum = {
   key: string;
   x: number;
   y: number;
@@ -163,14 +163,24 @@ export type RenderWhiskerDatum = {
   renderMiddleCircle?: boolean;
 };
 
-export const renderWhiskers = (
+export type RenderHorizontalWhiskerDatum = {
+  key: string;
+  y: number;
+  x1: number;
+  x2: number;
+  height: number;
+  fill?: string;
+  renderMiddleCircle?: boolean;
+};
+
+export const renderVerticalWhiskers = (
   g: Selection<SVGGElement, null, SVGGElement, unknown>,
-  data: RenderWhiskerDatum[],
+  data: RenderVerticalWhiskerDatum[],
   options: RenderOptions
 ) => {
   const { transition } = options;
 
-  g.selectAll<SVGGElement, RenderWhiskerDatum>("g")
+  g.selectAll<SVGGElement, RenderVerticalWhiskerDatum>("g")
     .data(data, (d) => d.key)
     .join(
       (enter) =>
@@ -264,6 +274,98 @@ export const renderWhiskers = (
                   .attr("r", ERROR_WHISKER_MIDDLE_CIRCLE_RADIUS)
                   .attr("fill", (d) => d.fill ?? "black")
                   .attr("stroke", "none")
+              ),
+          transition,
+        }),
+      (exit) =>
+        maybeTransition(exit, {
+          transition,
+          s: (g) => g.attr("opacity", 0).remove(),
+        })
+    );
+};
+
+export const renderHorizontalWhisker = (
+  g: Selection<SVGGElement, null, SVGGElement, unknown>,
+  data: RenderHorizontalWhiskerDatum[],
+  options: RenderOptions
+) => {
+  const { transition } = options;
+
+  g.selectAll<SVGGElement, RenderHorizontalWhiskerDatum>("g")
+    .data(data, (d) => d.key)
+    .join(
+      (enter) =>
+        enter
+          .append("g")
+          .attr("opacity", 0)
+          .call((g) =>
+            g
+              .append("rect")
+              .attr("class", "right")
+              .attr("y", (d) => d.y)
+              .attr("x", (d) => d.x2)
+              .attr("width", ERROR_WHISKER_SIZE)
+              .attr("height", (d) => d.height)
+              .attr("fill", (d) => d.fill ?? "black")
+              .attr("stroke", "none")
+          )
+          .call((g) =>
+            g
+              .append("rect")
+              .attr("class", "middle")
+              .attr("y", (d) => d.y + (d.height - ERROR_WHISKER_SIZE) / 2)
+              .attr("x", (d) => d.x1)
+              .attr("width", (d) => Math.abs(Math.min(0, d.x1 - d.x2)))
+              .attr("height", ERROR_WHISKER_SIZE)
+              .attr("fill", (d) => d.fill ?? "black")
+              .attr("stroke", "none")
+          )
+          .call((g) =>
+            g
+              .append("rect")
+              .attr("class", "left")
+              .attr("y", (d) => d.y)
+              .attr("x", (d) => d.x1)
+              .attr("width", ERROR_WHISKER_SIZE)
+              .attr("height", (d) => d.height)
+              .attr("fill", (d) => d.fill ?? "black")
+              .attr("stroke", "none")
+          )
+          .call((enter) =>
+            maybeTransition(enter, {
+              s: (g) => g.attr("opacity", 1),
+              transition,
+            })
+          ),
+      (update) =>
+        maybeTransition(update, {
+          s: (g) =>
+            g
+              .attr("opacity", 1)
+              .call((g) =>
+                g
+                  .select(".right")
+                  .attr("y", (d) => d.y)
+                  .attr("x", (d) => d.x2)
+                  .attr("height", (d) => d.height)
+                  .attr("fill", (d) => d.fill ?? "black")
+              )
+              .call((g) =>
+                g
+                  .select(".middle")
+                  .attr("y", (d) => d.y + (d.height - ERROR_WHISKER_SIZE) / 2)
+                  .attr("x", (d) => d.x1)
+                  .attr("width", (d) => Math.abs(Math.min(0, d.x1 - d.x2)))
+                  .attr("fill", (d) => d.fill ?? "black")
+              )
+              .call((g) =>
+                g
+                  .select(".left")
+                  .attr("y", (d) => d.y)
+                  .attr("x", (d) => d.x1)
+                  .attr("height", (d) => d.height)
+                  .attr("fill", (d) => d.fill ?? "black")
               ),
           transition,
         }),

@@ -1,6 +1,8 @@
 import { max } from "d3-array";
+import { ScaleLinear } from "d3-scale";
 import { useMemo } from "react";
 
+import { TITLE_VPADDING } from "@/charts/combo/combo-line-container";
 import { TICK_PADDING } from "@/charts/shared/axis-height-linear";
 import { BRUSH_BOTTOM_SPACE } from "@/charts/shared/brush/constants";
 import { getTickNumber } from "@/charts/shared/ticks";
@@ -16,10 +18,8 @@ import {
 } from "@/configurator";
 import { getTextWidth } from "@/utils/get-text-width";
 
-import { TITLE_VPADDING } from "../combo/combo-line-container";
-
 type ComputeChartPaddingProps = {
-  yScale: d3.ScaleLinear<number, number>;
+  yScale: ScaleLinear<number, number>;
   width: number;
   height: number;
   interactiveFiltersConfig: ChartConfig["interactiveFiltersConfig"];
@@ -27,6 +27,8 @@ type ComputeChartPaddingProps = {
   formatNumber: (n: number) => string;
   bandDomain?: string[];
   normalize?: boolean;
+  //Chart is flipped in the case of bar charts where the position of the axes is inverted
+  isFlipped?: boolean;
 };
 
 const computeChartPadding = (
@@ -43,6 +45,7 @@ const computeChartPadding = (
     bandDomain,
     normalize,
     dashboardFilters,
+    isFlipped,
   } = props;
 
   // Fake ticks to compute maximum tick length as
@@ -67,7 +70,9 @@ const computeChartPadding = (
       !!interactiveFiltersConfig?.timeRange.active) ||
     animationPresent
       ? BRUSH_BOTTOM_SPACE
-      : 48;
+      : isFlipped
+        ? 15 // Eyeballed value
+        : 48;
 
   if (bandDomain?.length) {
     bottom +=
@@ -75,7 +80,7 @@ const computeChartPadding = (
       70;
   }
 
-  return { left, bottom };
+  return isFlipped ? { bottom: left, left: bottom } : { left, bottom };
 };
 
 export const useChartPadding = (props: ComputeChartPaddingProps) => {
@@ -88,6 +93,7 @@ export const useChartPadding = (props: ComputeChartPaddingProps) => {
     formatNumber,
     bandDomain,
     normalize,
+    isFlipped,
   } = props;
   const [{ dashboardFilters }] = useConfiguratorState(hasChartConfigs);
   return useMemo(() => {
@@ -101,6 +107,7 @@ export const useChartPadding = (props: ComputeChartPaddingProps) => {
       bandDomain,
       normalize,
       dashboardFilters,
+      isFlipped,
     });
   }, [
     yScale,
@@ -112,6 +119,7 @@ export const useChartPadding = (props: ComputeChartPaddingProps) => {
     bandDomain,
     normalize,
     dashboardFilters,
+    isFlipped,
   ]);
 };
 

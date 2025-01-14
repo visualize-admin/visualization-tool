@@ -31,15 +31,9 @@ import {
   ConfiguratorState,
   ConfiguratorStateLayouting,
   enableLayouting,
-  getChartConfig,
-  hasChartConfigs,
-  initChartStateFromChartEdit,
-  isConfiguring,
-  isLayouting,
   MetaKey,
-  saveChartLocally,
-  useConfiguratorState,
-} from "@/configurator";
+} from "@/config-types";
+import { getChartConfig } from "@/config-utils";
 import {
   ChartAnnotationsSelector,
   LayoutAnnotationsSelector,
@@ -66,6 +60,14 @@ import {
   usePreviewBreakpoint,
 } from "@/configurator/components/preview-breakpoint";
 import { ShowDrawerButton } from "@/configurator/components/show-drawer-button";
+import {
+  hasChartConfigs,
+  initChartStateFromChartEdit,
+  isConfiguring,
+  isLayouting,
+  saveChartLocally,
+  useConfiguratorState,
+} from "@/configurator/configurator-state";
 import { ChartConfiguratorTable } from "@/configurator/table/table-chart-configurator";
 import { useUserConfig } from "@/domain/user-configs";
 import { useDataCubesComponentsQuery } from "@/graphql/hooks";
@@ -213,11 +215,7 @@ const NextStepButton = (props: React.PropsWithChildren<{}>) => {
   );
 };
 
-export const SaveDraftButton = ({
-  chartId,
-}: {
-  chartId: string | undefined;
-}) => {
+const SaveDraftButton = ({ chartId }: { chartId: string | undefined }) => {
   const { data: config, invalidate: invalidateConfig } = useUserConfig(chartId);
   const session = useSession();
   const client = useClient();

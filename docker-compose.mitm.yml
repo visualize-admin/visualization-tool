@@ -3,7 +3,7 @@ version: "3"
 services:
   ## Running in Docker slows down development a lot, so this is only kept for reference here.
   # nextjs:
-  #   image: "node:18"
+  #   image: "node:20"
   #   ports:
   #     - "3000:3000"
   #   volumes:
@@ -53,8 +53,12 @@ services:
     volumes:
       - "mitmproxy-config:/root/.mitmproxy/"
     user: root:root
-    command: ["sh", "-c", "cd && pwd && whoami && mitmweb --web-host 0.0.0.0 --no-web-open-browser"]
-
+    command:
+      [
+        "sh",
+        "-c",
+        "cd && pwd && whoami && mitmweb --web-host 0.0.0.0 --no-web-open-browser",
+      ]
 
 volumes:
   mitmproxy-config:

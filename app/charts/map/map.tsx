@@ -32,6 +32,7 @@ import { GeoFeature, GeoPoint } from "@/domain/data";
 import { Icon, IconName } from "@/icons";
 import { useLocale } from "@/src";
 import useEvent from "@/utils/use-event";
+import { DISABLE_SCREENSHOT_ATTR } from "@/utils/use-screenshot";
 
 // supported was removed as of maplibre-gl v3.0.0, so we need to add it back
 const maplibregl = { ...maplibreglraw, supported };
@@ -391,7 +392,7 @@ export const MapComponent = () => {
   return (
     <>
       {locked ? null : (
-        <div className={classes.controlButtons}>
+        <div className={classes.controlButtons} {...DISABLE_SCREENSHOT_ATTR}>
           <ControlButton iconName="refresh" onClick={reset} />
           <ControlButton iconName="add" onClick={zoomIn} />
           <ControlButton iconName="minus" onClick={zoomOut} />
@@ -403,6 +404,8 @@ export const MapComponent = () => {
           initialViewState={defaultViewState}
           mapLib={maplibregl}
           mapStyle={mapStyle}
+          // Important so we can take a screenshot of the map
+          preserveDrawingBuffer
           style={{
             position: "absolute",
             left: 0,

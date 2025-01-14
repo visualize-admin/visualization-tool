@@ -36,11 +36,10 @@ import {
   Filters,
   GenericField,
   GenericFields,
-  getChartConfig,
   isAreaConfig,
   isTableConfig,
-  makeMultiFilter,
 } from "@/config-types";
+import { getChartConfig, makeMultiFilter } from "@/config-utils";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { toggleInteractiveFilterDataDimension } from "@/configurator/interactive-filters/interactive-filters-config-state";
@@ -458,8 +457,14 @@ export const updateColorMapping = (
   >
 ) => {
   if (isConfiguring(draft)) {
-    const { field, colorConfigPath, dimensionId, values, random } =
-      action.value;
+    const {
+      field,
+      colorConfigPath,
+      colorMapping: oldColorMapping,
+      dimensionId,
+      values,
+      random,
+    } = action.value;
     const chartConfig = getChartConfig(draft);
     const path = colorConfigPath
       ? ["fields", field, colorConfigPath]
@@ -476,6 +481,7 @@ export const updateColorMapping = (
         colorMapping = mapValueIrisToColor({
           palette: fieldValue.palette,
           dimensionValues: values,
+          colorMapping: oldColorMapping,
           random,
         });
       }
@@ -489,6 +495,7 @@ export const updateColorMapping = (
         colorMapping = mapValueIrisToColor({
           palette: fieldValue.palette,
           dimensionValues: values,
+          colorMapping: oldColorMapping,
           random,
         });
       }

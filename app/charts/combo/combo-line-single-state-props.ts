@@ -110,7 +110,7 @@ export const useComboLineSingleStateData = (
   const data = useChartData(sortedPlottableData, {
     chartConfig,
     timeRangeDimensionId: xDimension.id,
-    getXAsDate: getX,
+    getAxisValueAsDate: getX,
     getTimeRangeDate,
   });
 

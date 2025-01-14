@@ -13,9 +13,47 @@ You can also check the
 
 - Features
   - Implemented Content Security Policy (CSP)
+  - It's now possible to export charts as images
+  - Added Footer to the Profile Page
 - Fixes
   - Addressed security flaw allowing the injection of arbitrary URLs
     in the `sourceUrl` parameter in the GraphQL API
+  - Color mapping is now correctly kept up to date in case of editing an old
+    chart and the cube has been updated in the meantime and contains new values
+    in the color dimension
+  - Fixed preview via API (iframe)
+  - Fixed cut table scroll-bars and unnecessary scroll of bar charts when
+    switching between chart types
+  - Improved Readability for dataset selection and preview
+  - Sorting dataset results by score option is now correctly available to select
+  - Created with visualize.admin.ch footnote is only displayed once, not twice,
+    when downloading an image of a published chart
+  - Changing dates manually using keyboard works correctly now in date picker
+    inputs
+  - Opening a temporal dimension with timezone in table chart configurator
+    doesn't crash the application anymore
+- Styles
+  - Updated dataset result borders to match the design
+- Maintenance
+  - Re-enabled screenshot tests using Argos CI
+  - Fixed E2E HAR-based tests
+  - Added two new E2E tests for chart actions (duplication, image download)
+  - Improved performance of E2E tests by using cached LINDAS endpoints in chart
+    config fixtures
+  - Fixed map dimension symbols to increase the elements size for small values,
+    whilst preventing any 0 and undefined values from displaying
+  - Updated Next.js to v14
+  - Updated Node.js to v20
+  - Removed unused dependencies and dead code
+  - Updated several outdated packages
+  - Added knip as a new CI task
+- Performance
+  - Introduced sharding to improve performance of basic CI checks (unit tests,
+    type checks, linting, knip)
+- Docs
+  - Added auto-generated JSON Schema files for configurator state and chart
+    config and improved preview charts via API documentation
+
 
 # [5.0.2] - 2024-11-28
 
@@ -26,7 +64,7 @@ You can also check the
   - Changed component id separator text to be more unique, as it was causing
     issues with some cubes that had iris ending with "-"
   - Datasets section in the sidebar is now correctly shown at all times
-  - Improved Preventation of overlapping axis titles for combo charts
+  - Improved prevention of overlapping axis titles for combo charts
 
 # [5.0.1] - 2024-11-26
 
