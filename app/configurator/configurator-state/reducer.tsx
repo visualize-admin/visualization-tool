@@ -1,4 +1,10 @@
-import produce, { createDraft, current, Draft, isDraft } from "immer";
+import produce, {
+  createDraft,
+  current,
+  Draft,
+  isDraft,
+  setAutoFreeze,
+} from "immer";
 import { WritableDraft } from "immer/dist/types/types-external";
 import get from "lodash/get";
 import isEqual from "lodash/isEqual";
@@ -65,11 +71,20 @@ import { assert } from "@/utils/assert";
 import { unreachableError } from "@/utils/unreachable";
 
 /**
+ * Setting auto-freeze behavior to false, to prevent hard-to-trace bugs.
+ * It looks like the state is sometimes being mutated in a way that is not
+ * expected by immer - I'd prefer to not be constrained by the auto-freeze
+ * behavior.
+ *
+ * Also see https://immerjs.github.io/immer/freezing.
+ */
+setAutoFreeze(false);
+
+/**
  * Is responsible for inferring filters when changing chart type, or when
  * changing some chart fields. Makes sure that we are always showing the
  * non-"duplicated" data (with the correct filters for key dimensions).
  */
-
 export const deriveFiltersFromFields = produce(
   (
     draft: ChartConfig,
