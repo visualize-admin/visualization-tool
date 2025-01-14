@@ -1,20 +1,39 @@
 import { Box, BoxProps, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
-import React, { HTMLProps, forwardRef } from "react";
+import { selectAll } from "d3-selection";
+import isEqual from "lodash/isEqual";
+import {
+  forwardRef,
+  HTMLProps,
+  PropsWithChildren,
+  useCallback,
+  useEffect,
+} from "react";
 
-import ChartPanelLayoutCanvas, {
+import {
+  ChartPanelLayoutCanvas,
   chartPanelLayoutGridClasses,
 } from "@/components/chart-panel-layout-grid";
 import { ChartPanelLayoutTall } from "@/components/chart-panel-layout-tall";
 import { ChartPanelLayoutVertical } from "@/components/chart-panel-layout-vertical";
 import { ChartSelectionTabs } from "@/components/chart-selection-tabs";
+import { CHART_GRID_ROW_COUNT } from "@/components/chart-shared";
 import { DashboardInteractiveFilters } from "@/components/dashboard-interactive-filters";
+import { DragHandle } from "@/components/drag-handle";
+import { Markdown } from "@/components/markdown";
+import { ROW_HEIGHT } from "@/components/react-grid";
 import { ChartConfig, Layout, LayoutDashboard } from "@/config-types";
-import { hasChartConfigs } from "@/configurator";
-import { useConfiguratorState } from "@/src";
+import {
+  hasChartConfigs,
+  isLayouting,
+  LayoutBlock,
+  LayoutTextBlock,
+} from "@/configurator";
+import { useConfiguratorState, useLocale } from "@/src";
+import useEvent from "@/utils/use-event";
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles<Theme, { editable?: boolean }>((theme) => ({
   panelLayout: {
     containerType: "inline-size",
     display: "flex",
@@ -40,6 +59,16 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: "auto",
     height: "100%",
   },
+  textBlockWrapper: {
+    // Make sure the text block doesn't cause the grid to grow.
+    gridRow: `span ${CHART_GRID_ROW_COUNT + 1}`,
+    display: "flex",
+    padding: "0.75rem",
+    cursor: ({ editable }) => (editable ? "pointer" : "default"),
+    "&:hover": {
+      textDecoration: ({ editable }) => (editable ? "underline" : "none"),
+    },
+  },
 }));
 
 export const getChartWrapperId = (chartKey: string) =>
@@ -54,7 +83,8 @@ export type ChartWrapperProps = BoxProps & {
 export const ChartWrapper = forwardRef<HTMLDivElement, ChartWrapperProps>(
   (props, ref) => {
     const { children, editing, layoutType, ...rest } = props;
-    const classes = useStyles();
+    const classes = useStyles({});
+
     return (
       <Box
         ref={ref}
@@ -74,7 +104,7 @@ export const ChartWrapper = forwardRef<HTMLDivElement, ChartWrapperProps>(
   }
 );
 
-type ChartPanelLayoutProps = React.PropsWithChildren<{
+type ChartPanelLayoutProps = PropsWithChildren<{
   layoutType: LayoutDashboard["layout"];
   chartConfigs: ChartConfig[];
   renderChart: (chartConfig: ChartConfig) => JSX.Element;
@@ -82,8 +112,8 @@ type ChartPanelLayoutProps = React.PropsWithChildren<{
   HTMLProps<HTMLDivElement>;
 
 export type ChartPanelLayoutTypeProps = {
-  chartConfigs: ChartConfig[];
-  renderChart: (chartConfig: ChartConfig) => JSX.Element;
+  blocks: LayoutBlock[];
+  renderBlock: (block: LayoutBlock) => JSX.Element;
   className?: string;
 };
 
@@ -96,27 +126,148 @@ const Wrappers: Record<
   canvas: ChartPanelLayoutCanvas,
 };
 
-export const ChartPanelLayout = (props: ChartPanelLayoutProps) => {
-  const {
-    children,
-    renderChart,
-    chartConfigs,
-    className,
-    layoutType,
-    ...rest
-  } = props;
-  const classes = useStyles();
+const TEXT_BLOCK_WRAPPER_CLASS = "text-block-wrapper";
+const TEXT_BLOCK_CONTENT_CLASS = "text-block-content";
+
+export const ChartPanelLayout = ({
+  children,
+  renderChart,
+  chartConfigs,
+  className,
+  layoutType,
+  ...rest
+}: ChartPanelLayoutProps) => {
+  const locale = useLocale();
+  const [state, dispatch] = useConfiguratorState(hasChartConfigs);
+  const layouting = isLayouting(state);
+  const classes = useStyles({ editable: layouting });
   const Wrapper = Wrappers[layoutType];
-  const [state] = useConfiguratorState(hasChartConfigs);
+  const { layout } = state;
+  const { blocks } = layout;
+
+  const handleTextBlockClick = useEvent((block: LayoutTextBlock) => {
+    dispatch({
+      type: "LAYOUT_ACTIVE_FIELD_CHANGED",
+      value: block.key,
+    });
+  });
+
+  const renderTextBlock = useCallback(
+    (block: LayoutTextBlock) => {
+      return (
+        <div
+          // Important, otherwise ReactGrid breaks.
+          key={block.key}
+          id={block.key}
+          className={clsx(classes.textBlockWrapper, TEXT_BLOCK_WRAPPER_CLASS)}
+          onClick={(e) => {
+            if (e.isPropagationStopped()) {
+              return;
+            }
+
+            handleTextBlockClick(block);
+          }}
+        >
+          <div
+            className={TEXT_BLOCK_CONTENT_CLASS}
+            style={{ flexGrow: 1, height: "fit-content" }}
+          >
+            <Markdown>{block.text[locale]}</Markdown>
+          </div>
+          {layouting ? (
+            <DragHandle
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+            />
+          ) : null}
+        </div>
+      );
+    },
+    [classes.textBlockWrapper, handleTextBlockClick, layouting, locale]
+  );
+
+  useSyncTextBlockHeight();
+
+  const renderBlock = useCallback(
+    (block: LayoutBlock) => {
+      switch (block.type) {
+        case "chart":
+          const chartConfig = chartConfigs.find(
+            (c) => c.key === block.key
+          ) as ChartConfig;
+          return renderChart(chartConfig);
+        case "text":
+          return renderTextBlock(block);
+        default:
+          const _exhaustiveCheck: never = block;
+          return _exhaustiveCheck;
+      }
+    },
+    [chartConfigs, renderChart, renderTextBlock]
+  );
+
   return (
     <div className={clsx(classes.panelLayout, className)} {...rest}>
-      {/** We want to completely remount this component if chartConfigs change */}
       {state.layout.type === "dashboard" ? (
         <DashboardInteractiveFilters
+          // We want to completely remount this component if chartConfigs change
           key={chartConfigs.map((x) => x.key).join(",")}
         />
       ) : null}
-      <Wrapper chartConfigs={chartConfigs} renderChart={renderChart} />
+      <Wrapper blocks={blocks} renderBlock={renderBlock} />
     </div>
   );
+};
+
+const useSyncTextBlockHeight = () => {
+  const [state, dispatch] = useConfiguratorState(hasChartConfigs);
+  const layout = state.layout;
+  const layouting = isLayouting(state);
+
+  useEffect(() => {
+    // Only adjust the height when not in published mode.
+    if (
+      !layouting ||
+      layout.type !== "dashboard" ||
+      layout.layout !== "canvas"
+    ) {
+      return;
+    }
+
+    selectAll<HTMLDivElement, unknown>(`.${TEXT_BLOCK_WRAPPER_CLASS}`).each(
+      function () {
+        const wrapperEl = this;
+        const contentEl = wrapperEl.querySelector<HTMLDivElement>(
+          `.${TEXT_BLOCK_CONTENT_CLASS}`
+        );
+
+        if (!contentEl) {
+          return;
+        }
+
+        const key = wrapperEl.id;
+        const h = Math.ceil(contentEl.clientHeight / ROW_HEIGHT) || 1;
+
+        const newLayouts = Object.fromEntries(
+          Object.entries(layout.layouts).map(([bp, layouts]) => [
+            bp,
+            layouts.map((b) => {
+              return b.i === key ? { ...b, h, minH: h } : b;
+            }),
+          ])
+        );
+
+        if (!isEqual(newLayouts, layout.layouts)) {
+          dispatch({
+            type: "LAYOUT_CHANGED",
+            value: {
+              ...layout,
+              layouts: newLayouts,
+            },
+          });
+        }
+      }
+    );
+  }, [dispatch, layout, layouting]);
 };

@@ -3,6 +3,7 @@ import { Theme, Typography, TypographyProps } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 
+import { Markdown } from "@/components/markdown";
 import { getChartConfig } from "@/config-utils";
 import {
   ControlSection,
@@ -21,18 +22,27 @@ import {
 } from "@/configurator/configurator-state";
 import { useLocale } from "@/locales/use-locale";
 
-const useStyles = makeStyles<Theme, { interactive?: boolean }>({
+const useStyles = makeStyles<
+  Theme,
+  { interactive?: boolean; empty: boolean; lighterColor?: boolean }
+>((theme) => ({
   text: {
+    wordBreak: "break-word",
+    color: ({ empty, lighterColor }) =>
+      !empty
+        ? theme.palette.text.primary
+        : lighterColor
+          ? theme.palette.grey[500]
+          : theme.palette.secondary.main,
     cursor: ({ interactive }) => (interactive ? "pointer" : "text"),
     "&:hover": {
       textDecoration: ({ interactive }) => (interactive ? "underline" : "none"),
     },
+    "& > :last-child": {
+      marginBottom: 0,
+    },
   },
-});
-
-const getEmptyColor = (lighterColor?: boolean) => {
-  return lighterColor ? "grey.500" : "secondary.main";
-};
+}));
 
 type Props = TypographyProps & {
   text: string;
@@ -40,46 +50,64 @@ type Props = TypographyProps & {
   smaller?: boolean;
 };
 
-export const Title = (props: Props) => {
-  const { text, lighterColor, smaller, onClick, className, sx, ...rest } =
-    props;
-  const classes = useStyles({ interactive: !!onClick });
+export const Title = ({
+  text,
+  lighterColor,
+  smaller,
+  onClick,
+  className,
+  sx,
+  ...rest
+}: Props) => {
+  const classes = useStyles({
+    interactive: !!onClick,
+    empty: !text,
+    lighterColor,
+  });
+
   return (
     <Typography
       {...rest}
       variant={smaller ? "h3" : "h2"}
+      component="span"
       className={clsx(classes.text, className)}
       onClick={onClick}
-      sx={{
-        color: text ? "text.primary" : getEmptyColor(lighterColor),
-        wordBreak: "break-word",
-        fontWeight: "normal",
-        ...sx,
-      }}
+      style={{ marginBottom: "0.5rem" }}
     >
-      {text ? text : <Trans id="annotation.add.title">[ Title ]</Trans>}
+      {text ? (
+        <Markdown>{text}</Markdown>
+      ) : (
+        <Trans id="annotation.add.title">[ Title ]</Trans>
+      )}
     </Typography>
   );
 };
 
-export const Description = (props: Props) => {
-  const { text, lighterColor, smaller, onClick, className, sx, ...rest } =
-    props;
-  const classes = useStyles({ interactive: !!onClick });
+export const Description = ({
+  text,
+  lighterColor,
+  smaller,
+  onClick,
+  className,
+  sx,
+  ...rest
+}: Props) => {
+  const classes = useStyles({
+    interactive: !!onClick,
+    empty: !text,
+    lighterColor,
+  });
+
   return (
     <Typography
       {...rest}
       variant={smaller ? "body2" : "body1"}
+      component="span"
       className={clsx(classes.text, className)}
       onClick={onClick}
-      sx={{
-        color: text ? "text.primary" : getEmptyColor(lighterColor),
-        wordBreak: "break-word",
-        ...sx,
-      }}
     >
       {text ? (
-        text
+        <Markdown>{text}</Markdown>
       ) : (
         <Trans id="annotation.add.description">[ Description ]</Trans>
       )}

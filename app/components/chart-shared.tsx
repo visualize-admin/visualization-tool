@@ -56,12 +56,14 @@ import { getChartIcon } from "@/icons";
 import SvgIcMore from "@/icons/components/IcMore";
 import { useLocale } from "@/src";
 import { animationFrame } from "@/utils/animation-frame";
-import { createChartId } from "@/utils/create-chart-id";
+import { createId } from "@/utils/create-id";
 import {
   DISABLE_SCREENSHOT_ATTR,
   useScreenshot,
   UseScreenshotProps,
 } from "@/utils/use-screenshot";
+
+export const CHART_GRID_ROW_COUNT = 7;
 
 /** Generic styles shared between `ChartPreview` and `ChartPublished`. */
 export const useChartStyles = makeStyles<Theme, { disableBorder?: boolean }>(
@@ -71,7 +73,7 @@ export const useChartStyles = makeStyles<Theme, { disableBorder?: boolean }>(
       display: "grid",
       gridTemplateRows: "subgrid",
       /** Should stay in sync with the number of rows contained in a chart */
-      gridRow: "span 7",
+      gridRow: `span ${CHART_GRID_ROW_COUNT}`,
       padding: theme.spacing(6),
       backgroundColor: theme.palette.background.paper,
       border: ({ disableBorder }) =>
@@ -347,7 +349,7 @@ export const DuplicateChartMenuActionItem = ({
         dispatch({
           type: "CHART_CONFIG_ADD",
           value: {
-            chartConfig: { ...chartConfig, key: createChartId() },
+            chartConfig: { ...chartConfig, key: createId() },
             locale,
           },
         });
@@ -420,7 +422,7 @@ const DownloadPNGImageMenuActionItem = ({
       onClick={screenshot}
       disabled={loading}
       leadingIconName="download"
-      label={`${t({ id: "chart-controls.export", message: "Export" })} PNG`}
+      label={t({ id: "chart-controls.export-png", message: "Export PNG" })}
     />
   );
 };

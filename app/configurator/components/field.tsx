@@ -42,15 +42,16 @@ import useDisclosure from "@/components/use-disclosure";
 import { ChartConfig, isColorInConfig } from "@/config-types";
 import { getChartConfig, useChartConfigFilters } from "@/config-utils";
 import {
-  AnnotatorTab,
-  AnnotatorTabProps,
   ControlTab,
+  ControlTabFieldInner,
+  ControlTabProps,
   OnOffControlTab,
 } from "@/configurator/components/chart-controls/control-tab";
 import {
   DatePickerField,
   DatePickerTimeUnit,
 } from "@/configurator/components/field-date-picker";
+import { getFieldLabel } from "@/configurator/components/field-i18n";
 import {
   getTimeIntervalFormattedSelectOptions,
   getTimeIntervalWithProps,
@@ -90,8 +91,10 @@ import {
 } from "@/domain/most-recent-value";
 import { useTimeFormatLocale } from "@/formatters";
 import { TimeUnit } from "@/graphql/query-hooks";
+import { Locale } from "@/locales/locales";
 import { useLocale } from "@/locales/use-locale";
 import { getPalette } from "@/palettes";
+import { assert } from "@/utils/assert";
 import { hierarchyToOptions } from "@/utils/hierarchy";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
@@ -124,28 +127,25 @@ const useStyles = makeStyles<Theme>((theme) => ({
   },
 }));
 
-type ControlTabFieldProps = {
+export const ControlTabField = ({
+  chartConfig,
+  fieldComponents,
+  value,
+  labelId,
+  disabled,
+  warnMessage,
+}: {
   chartConfig: ChartConfig;
   fieldComponents?: Component[];
   value: string;
   labelId: string | null;
   disabled?: boolean;
   warnMessage?: string;
-};
-
-export const ControlTabField = (props: ControlTabFieldProps) => {
-  const {
-    chartConfig,
-    fieldComponents,
-    value,
-    labelId,
-    disabled,
-    warnMessage,
-  } = props;
+}) => {
   const field = useActiveChartField({ value });
 
   return (
-    <ControlTab
+    <ControlTabFieldInner
       chartConfig={chartConfig}
       fieldComponents={fieldComponents}
       value={`${field.value}`}
@@ -612,7 +612,7 @@ export const TimeInput = ({
 type AnnotatorTabFieldProps<T extends string = string> = {
   value: T;
   emptyValueWarning?: React.ReactNode;
-} & Omit<AnnotatorTabProps, "onClick" | "value">;
+} & Omit<ControlTabProps, "onClick" | "value">;
 
 export const ChartAnnotatorTabField = (props: AnnotatorTabFieldProps) => {
   const { value, emptyValueWarning, ...tabProps } = props;
@@ -622,7 +622,7 @@ export const ChartAnnotatorTabField = (props: AnnotatorTabFieldProps) => {
   const locale = useLocale();
 
   return (
-    <AnnotatorTab
+    <ControlTab
       {...tabProps}
       lowerLabel={
         (chartConfig.meta as any)[value]?.[locale] ? null : (
@@ -647,7 +647,7 @@ export const LayoutAnnotatorTabField = (
   const locale = useLocale();
 
   return (
-    <AnnotatorTab
+    <ControlTab
       {...tabProps}
       lowerLabel={
         state.layout.meta[value][locale] ? null : (
@@ -680,6 +680,57 @@ export const MetaInputField = ({
 }) => {
   const field = useMetaField({ type, metaKey, locale, value });
   return <Input label={label} {...field} disabled={disabled} />;
+};
+
+export const TextBlockInputField = ({ locale }: { locale: Locale }) => {
+  const [state, dispatch] = useConfiguratorState(isLayouting);
+  const { layout } = state;
+  const { blocks } = layout;
+  const activeBlock = useMemo(() => {
+    const activeBlock = blocks.find(
+      (block) => block.key === layout.activeField
+    );
+
+    assert(
+      activeBlock?.type === "text",
+      "We can only edit text blocks from TextBlockInputField"
+    );
+
+    return activeBlock;
+  }, [blocks, layout.activeField]);
+  const handleChanged = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      const text = e.currentTarget.value;
+      dispatch({
+        type: "LAYOUT_CHANGED",
+        value: {
+          ...layout,
+          blocks: blocks.map((b) =>
+            b.key === activeBlock.key
+              ? {
+                  ...b,
+                  text: {
+                    ...activeBlock.text,
+                    [locale]: text,
+                  },
+                }
+              : b
+          ),
+        },
+      });
+    },
+    [dispatch, layout, blocks, activeBlock.key, activeBlock.text, locale]
+  );
+  const label = getFieldLabel(locale);
+
+  return (
+    <Input
+      name={label}
+      label={label}
+      value={activeBlock.text[locale]}
+      onChange={handleChanged}
+    />
+  );
 };
 
 const useMultiFilterColorPicker = (value: string) => {

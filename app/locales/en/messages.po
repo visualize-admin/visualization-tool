@@ -181,8 +181,8 @@ msgid "chart-controls.edit-tab-label"
 msgstr "Edit tab label"
 
 #: app/components/chart-shared.tsx
-msgid "chart-controls.export"
-msgstr "Export"
+msgid "chart-controls.export-png"
+msgstr "Export PNG"
 
 #: app/components/dataset-metadata.tsx
 msgid "chart-controls.sparql-query"
@@ -326,6 +326,15 @@ msgstr "Horizontal Axis"
 msgid "controls.axis.vertical"
 msgstr "Vertical Axis"
 
+#: app/configurator/components/field-i18n.ts
+msgid "controls.bar.grouped"
+msgstr "Grouped"
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.bar.stacked"
+msgstr "Stacked"
+
+#: app/charts/chart-config-ui-options.ts
 #: app/charts/chart-config-ui-options.ts
 msgid "controls.calculation.disabled-by-grouped"
 msgstr "100% mode can't be used with grouped layout."
@@ -816,6 +825,22 @@ msgstr "Use the Stepped type to make the animation jump between data points at f
 msgid "controls.section.animation.type.stepped"
 msgstr "Stepped"
 
+#: app/configurator/components/layout-configurator.tsx
+msgid "controls.section.block-options"
+msgstr "Objects"
+
+#: app/configurator/components/layout-configurator.tsx
+msgid "controls.section.block-options.block-add"
+msgstr "Add object"
+
+#: app/configurator/components/layout-configurator.tsx
+msgid "controls.section.block-options.block-add.text"
+msgstr "Text"
+
+#: app/configurator/components/block-options-selector.tsx
+msgid "controls.section.block-options.block.text"
+msgstr "Text object"
+
 #: app/configurator/components/chart-configurator.tsx
 msgid "controls.section.chart.options"
 msgstr "Chart Options"
@@ -934,6 +959,7 @@ msgstr "Please add a title or description."
 msgid "controls.segment"
 msgstr "Segmentation"
 
+#: app/charts/chart-config-ui-options.ts
 #: app/charts/chart-config-ui-options.ts
 #: app/charts/chart-config-ui-options.ts
 msgid "controls.segment.stacked.disabled-by-scale-type"
@@ -1149,7 +1175,7 @@ msgstr "Keywords"
 
 #: app/browser/dataset-browse.tsx
 msgid "dataset-result.dimension-joined-by"
-msgstr "Joined by"
+msgstr "Contains value of"
 
 #: app/browser/dataset-browse.tsx
 msgid "dataset-result.shared-dimensions"
@@ -1549,6 +1575,8 @@ msgid "logo.swiss.confederation"
 msgstr "Logo of the Swiss Confederation"
 
 #: app/components/chart-footnotes.tsx
+#: app/components/chart-published.tsx
+#: app/components/chart-shared.tsx
 msgid "metadata.link.created.with"
 msgstr "Created with"
 

@@ -14,6 +14,27 @@ jest.mock("nanoid", () => {
   };
 });
 
+jest.mock("react-markdown", () => {
+  return {
+    ReactMarkdown: () => null,
+  };
+});
+jest.mock("rehype-raw", () => {
+  return {
+    rehypeRaw: () => null,
+  };
+});
+jest.mock("rehype-sanitize", () => {
+  return {
+    rehypeSanitize: () => null,
+  };
+});
+jest.mock("remark-gfm", () => {
+  return {
+    remarkGfm: () => null,
+  };
+});
+
 // @ts-ignore Ignoring cannot be compiled as isolated module warning. It's working.
 jest.mock("@lingui/macro", () => {
   return {

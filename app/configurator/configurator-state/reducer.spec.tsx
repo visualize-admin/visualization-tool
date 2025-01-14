@@ -1201,8 +1201,15 @@ describe("ensureDashboardLayoutIsCorrect", () => {
       ...state.chartConfigs[0],
       key: "newKey",
     });
+    state.layout.blocks.push({
+      type: "chart",
+      key: "newKey",
+      initialized: false,
+    });
     ensureDashboardLayoutIsCorrect(state);
+
     return state;
   });
+
   expect((newState as any).layout.layouts.lg.length).toBe(2);
 });

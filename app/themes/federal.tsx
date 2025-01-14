@@ -166,17 +166,17 @@ theme.typography = merge(theme.typography, {
   body1: createTypographyVariant(theme, {
     fontSize: [14, 16],
     lineHeight: [22, 24],
-    fontWeight: "regular",
+    fontWeight: "normal",
   }),
   body2: createTypographyVariant(theme, {
     fontSize: [12, 14],
     lineHeight: [18, 20],
-    fontWeight: "regular",
+    fontWeight: "normal",
   }),
   caption: createTypographyVariant(theme, {
     fontSize: [12],
     lineHeight: [18],
-    fontWeight: "regular",
+    fontWeight: "normal",
   }),
 });
 
@@ -465,7 +465,6 @@ theme.components = {
         minHeight: 48,
       },
       sizeSmall: {
-        height: 40,
         minHeight: 40,
         fontSize: `${theme.typography.body2.fontSize} !important`,
         lineHeight: `${theme.typography.body2.lineHeight} !important`,

@@ -9,7 +9,7 @@ import { useMemo, useState } from "react";
 import { Layouts } from "react-grid-layout";
 
 import {
-  availableHandles,
+  availableHandlesByBlockType,
   ChartGridLayout,
   generateLayout,
   GridLayout,
@@ -32,7 +32,7 @@ export const Example = () => {
   const [allowResize, setAllowResize] = useState(false);
 
   const resizeHandles = useMemo(
-    () => (allowResize ? availableHandles : []),
+    () => (allowResize ? availableHandlesByBlockType.chart : []),
     [allowResize]
   );
   const [layouts, setLayouts] = useLocalState<Layouts>(
