@@ -2,6 +2,7 @@ import { Box, BoxProps, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 import { selectAll } from "d3-selection";
+import isEqual from "lodash/isEqual";
 import {
   forwardRef,
   HTMLProps,
@@ -247,21 +248,22 @@ const useSyncTextBlockHeight = () => {
 
         const key = wrapperEl.id;
         const h = Math.ceil(contentEl.clientHeight / ROW_HEIGHT) || 1;
-        // TODO: how to get current layout?
-        const bp = "xl";
-        const blockLayout = layout.layouts[bp].find((b) => b.i === key);
 
-        if (blockLayout && blockLayout.minH !== h) {
+        const newLayouts = Object.fromEntries(
+          Object.entries(layout.layouts).map(([bp, layouts]) => [
+            bp,
+            layouts.map((b) => {
+              return b.i === key ? { ...b, h, minH: h } : b;
+            }),
+          ])
+        );
+
+        if (!isEqual(newLayouts, layout.layouts)) {
           dispatch({
             type: "LAYOUT_CHANGED",
             value: {
               ...layout,
-              layouts: {
-                ...layout.layouts,
-                [bp]: layout.layouts[bp].map((b) => {
-                  return b.i === key ? { ...b, h, minH: h } : b;
-                }),
-              },
+              layouts: newLayouts,
             },
           });
         }
