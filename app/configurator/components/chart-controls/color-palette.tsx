@@ -2,7 +2,6 @@ import { Trans } from "@lingui/macro";
 import {
   Box,
   Button,
-  Divider,
   MenuItem,
   Select,
   SelectProps,
