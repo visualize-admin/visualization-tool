@@ -86,7 +86,7 @@ export const AxisWidthLinear = () => {
     xScale,
   ]);
 
-  const { height } = useAxisLabelHeightOffset({
+  const { height, labelWidth } = useAxisLabelHeightOffset({
     label: xAxisLabel,
     width: chartWidth,
     marginLeft: margins.left,
@@ -96,7 +96,7 @@ export const AxisWidthLinear = () => {
   return (
     <>
       <foreignObject
-        x={margins.left}
+        x={margins.left + chartWidth / 2 - labelWidth / 2}
         y={margins.top + chartHeight + 34}
         width={chartWidth}
         height={height}
