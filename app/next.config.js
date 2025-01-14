@@ -66,7 +66,7 @@ module.exports = withPreconstruct(
               `form-action 'self'`,
               `connect-src 'self' https://*.admin.ch https://*.sentry.io https://*.vercel.app https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com wss://*.pusher.com https://*.ldbar.ch`,
               `img-src 'self' https://vercel.live https://vercel.com *.pusher.com *.pusherapp.com https://*.admin.ch https://*.opendataswiss.org https://*.google-analytics.com https://*.googletagmanager.com data: blob:`,
-              `script-src-elem 'self' 'unsafe-inline' https://*.admin.ch https://vercel.live https://vercel.com`,
+              `script-src-elem 'self' 'unsafe-inline' https://*.admin.ch https://vercel.live https://vercel.com https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com`,
               `worker-src 'self' blob: https://*.admin.ch`,
             ].join("; "),
           });
