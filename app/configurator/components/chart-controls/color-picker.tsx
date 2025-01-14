@@ -18,8 +18,8 @@ const CustomColorPicker = dynamic(
 
 const useStyles = makeStyles(() => ({
   swatch: {
-    width: "1.5rem",
-    height: "1.5rem",
+    width: "1rem",
+    height: "1rem",
     borderWidth: 1,
     borderStyle: "solid",
     borderColor: "transparent",

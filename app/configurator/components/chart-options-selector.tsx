@@ -1870,7 +1870,7 @@ const ChartFieldColorComponent = ({
           <div>
             <ColorRampField
               field={field}
-              path="color.palette"
+              path="color.paletteId"
               nSteps={nbClass}
             />
             <FieldSetLegend
