@@ -914,11 +914,17 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
             },
             { dimensions: dataCubesComponents.dimensions }
           );
+          const key = action.value.chartConfig.key;
           draft.chartConfigs.push(newConfig);
-          draft.activeChartKey = action.value.chartConfig.key;
-        }
+          draft.activeChartKey = key;
+          draft.layout.blocks.push({
+            key,
+            type: "chart",
+            initialized: false,
+          });
 
-        ensureDashboardLayoutIsCorrect(draft);
+          ensureDashboardLayoutIsCorrect(draft);
+        }
       }
 
       return draft;
@@ -1007,6 +1013,9 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         );
         const removedKey = draft.chartConfigs[index].key;
         draft.chartConfigs.splice(index, 1);
+        draft.layout.blocks = draft.layout.blocks.filter(
+          (block) => block.key !== removedKey
+        );
 
         if (removedKey === draft.activeChartKey) {
           draft.activeChartKey = draft.chartConfigs[Math.max(index - 1, 0)].key;
@@ -1219,17 +1228,17 @@ export function ensureDashboardLayoutIsCorrect(
           y,
           w,
           h,
-              minH: MIN_H,
-            resizeHandles: [],
-          });
+          minH: MIN_H,
+          resizeHandles: [],
+        });
 
         x += w;
 
         if (x > cols) {
           x = 0;
           y += h;
-          }
         }
+      }
 
       draft.layout.layouts = {
         ...draft.layout.layouts,
