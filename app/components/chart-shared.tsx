@@ -63,6 +63,8 @@ import {
   UseScreenshotProps,
 } from "@/utils/use-screenshot";
 
+export const CHART_GRID_ROW_COUNT = 7;
+
 /** Generic styles shared between `ChartPreview` and `ChartPublished`. */
 export const useChartStyles = makeStyles<Theme, { disableBorder?: boolean }>(
   (theme) => ({
@@ -71,7 +73,7 @@ export const useChartStyles = makeStyles<Theme, { disableBorder?: boolean }>(
       display: "grid",
       gridTemplateRows: "subgrid",
       /** Should stay in sync with the number of rows contained in a chart */
-      gridRow: "span 7",
+      gridRow: `span ${CHART_GRID_ROW_COUNT}`,
       padding: theme.spacing(6),
       backgroundColor: theme.palette.background.paper,
       border: ({ disableBorder }) =>

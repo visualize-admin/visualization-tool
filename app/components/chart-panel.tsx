@@ -17,6 +17,7 @@ import {
 import { ChartPanelLayoutTall } from "@/components/chart-panel-layout-tall";
 import { ChartPanelLayoutVertical } from "@/components/chart-panel-layout-vertical";
 import { ChartSelectionTabs } from "@/components/chart-selection-tabs";
+import { CHART_GRID_ROW_COUNT } from "@/components/chart-shared";
 import { DashboardInteractiveFilters } from "@/components/dashboard-interactive-filters";
 import { DragHandle } from "@/components/drag-handle";
 import { Markdown } from "@/components/markdown";
@@ -58,6 +59,8 @@ const useStyles = makeStyles<Theme, { editable?: boolean }>((theme) => ({
     height: "100%",
   },
   textBlockWrapper: {
+    // Make sure the text block doesn't cause the grid to grow.
+    gridRow: `span ${CHART_GRID_ROW_COUNT + 1}`,
     display: "flex",
     padding: "0.75rem",
     cursor: ({ editable }) => (editable ? "pointer" : "default"),
