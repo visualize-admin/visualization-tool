@@ -8,25 +8,38 @@ import {
   renderContainer,
 } from "@/charts/shared/rendering-utils";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
+import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { useTimeFormatUnit } from "@/formatters";
 import { useTransitionStore } from "@/stores/transition";
+import { getTextWidth } from "@/utils/get-text-width";
 
 export const AxisHeightBand = () => {
   const ref = useRef<SVGGElement>(null);
   const state = useChartState() as BarsState;
-  const { xScale, getYLabel, yTimeUnit, yScale, bounds } = state;
+  const { xScale, getYLabel, yTimeUnit, yScale, bounds, yDimension } = state;
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
   const formatDate = useTimeFormatUnit();
   const { chartHeight, margins } = bounds;
-  const { labelColor, gridColor, labelFontSize, fontFamily, domainColor } =
-    useChartTheme();
+  const {
+    labelColor,
+    axisLabelFontSize,
+    gridColor,
+    labelFontSize,
+    fontFamily,
+    domainColor,
+  } = useChartTheme();
+
+  const fontSize =
+    yScale.bandwidth() > labelFontSize ? labelFontSize : yScale.bandwidth();
+
+  const labelLength = getTextWidth(yDimension.label, {
+    fontSize,
+  });
 
   useEffect(() => {
     if (ref.current) {
       const hasNegativeValues = xScale.domain()[0] < 0;
-      const fontSize =
-        yScale.bandwidth() > labelFontSize ? labelFontSize : yScale.bandwidth();
       const axis = axisLeft(yScale)
         .tickSizeOuter(0)
         .tickSizeInner(hasNegativeValues ? -chartHeight : 6);
@@ -78,7 +91,18 @@ export const AxisHeightBand = () => {
     yScale,
   ]);
 
-  return <g ref={ref} />;
+  return (
+    <>
+      <g ref={ref} />
+      <foreignObject x={0} y={0} width={labelLength} height={20}>
+        <OpenMetadataPanelWrapper>
+          <span style={{ fontSize: `${axisLabelFontSize}px` }}>
+            {yDimension.label}
+          </span>
+        </OpenMetadataPanelWrapper>
+      </foreignObject>
+    </>
+  );
 };
 
 export const AxisHeightBandDomain = () => {
