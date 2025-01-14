@@ -12,9 +12,12 @@ You can also check the
 # Unreleased
 
 - Features
+  - Implemented Content Security Policy (CSP)
   - It's now possible to export charts as images
   - Added Footer to the Profile Page
 - Fixes
+  - Addressed security flaw allowing the injection of arbitrary URLs
+    in the `sourceUrl` parameter in the GraphQL API
   - Color mapping is now correctly kept up to date in case of editing an old
     chart and the cube has been updated in the meantime and contains new values
     in the color dimension
@@ -50,6 +53,7 @@ You can also check the
 - Docs
   - Added auto-generated JSON Schema files for configurator state and chart
     config and improved preview charts via API documentation
+
 
 # [5.0.2] - 2024-11-28
 
