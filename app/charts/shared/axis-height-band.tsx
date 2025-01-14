@@ -107,10 +107,7 @@ export const AxisHeightBandDomain = () => {
       g.selectAll(".tick line").remove();
       g.selectAll(".tick text").remove();
       g.select(".domain")
-        .attr(
-          "transform",
-          `translate(0, -${chartHeight - (yScale(minY) || 0)})`
-        )
+        .attr("transform", `translate(0, 0)`)
         .attr("stroke", domainColor);
     }
   }, [
