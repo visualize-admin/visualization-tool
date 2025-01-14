@@ -1,5 +1,5 @@
 import produce, { createDraft, current, Draft, isDraft } from "immer";
-import { WritableDraft } from "immer/dist/internal";
+import { WritableDraft } from "immer/dist/types/types-external";
 import get from "lodash/get";
 import isEqual from "lodash/isEqual";
 import setWith from "lodash/setWith";
@@ -21,7 +21,6 @@ import {
 } from "@/charts/chart-config-ui-options";
 import {
   COLS,
-  FREE_CANVAS_BREAKPOINTS,
   getInitialTileHeight,
   getInitialTileWidth,
   MIN_H,
@@ -42,6 +41,19 @@ import {
 } from "@/config-types";
 import { getChartConfig, makeMultiFilter } from "@/config-utils";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
+import {
+  addDatasetInConfig,
+  getPreviousState,
+  getStateWithCurrentDataSource,
+  hasChartConfigs,
+  isConfiguring,
+  isLayouting,
+} from "@/configurator/configurator-state";
+import { ConfiguratorStateAction } from "@/configurator/configurator-state/actions";
+import {
+  getInitialConfiguringConfigBasedOnCube,
+  SELECTING_DATASET_STATE,
+} from "@/configurator/configurator-state/initial";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { toggleInteractiveFilterDataDimension } from "@/configurator/interactive-filters/interactive-filters-config-state";
 import { Dimension, isGeoDimension, isJoinByComponent } from "@/domain/data";
@@ -51,21 +63,6 @@ import { findInHierarchy } from "@/rdf/tree-utils";
 import { getCachedComponents } from "@/urql-cache";
 import { assert } from "@/utils/assert";
 import { unreachableError } from "@/utils/unreachable";
-
-import { ConfiguratorStateAction } from "./actions";
-import {
-  getInitialConfiguringConfigBasedOnCube,
-  SELECTING_DATASET_STATE,
-} from "./initial";
-
-import {
-  addDatasetInConfig,
-  getPreviousState,
-  getStateWithCurrentDataSource,
-  hasChartConfigs,
-  isConfiguring,
-  isLayouting,
-} from "./index";
 
 /**
  * Is responsible for inferring filters when changing chart type, or when
@@ -221,7 +218,8 @@ export const applyNonTableDimensionToFilters = (props: {
             : undefined;
           const filterValue = hierarchyTopMost
             ? hierarchyTopMost.value
-            : Object.keys(currentFilter.values)[0] ?? dimension.values[0].value;
+            : (Object.keys(currentFilter.values)[0] ??
+              dimension.values[0].value);
           filters[originalIri] = {
             type: "single",
             value: filterValue,
@@ -251,7 +249,7 @@ export const applyNonTableDimensionToFilters = (props: {
       : undefined;
     const filterValue = hierarchyTopMost
       ? hierarchyTopMost.value
-      : possibleFilter?.value ?? dimension.values[0]?.value;
+      : (possibleFilter?.value ?? dimension.values[0]?.value);
 
     if (filterValue) {
       filters[dimension.id] = {
@@ -1185,52 +1183,58 @@ export function ensureDashboardLayoutIsCorrect(
     draft.layout.type === "dashboard" &&
     draft.layout.layout === "canvas"
   ) {
-    const layouts = draft.layout.layouts;
-    const chartConfigKeys = draft.chartConfigs.map((c) => c.key).sort();
+    const { blocks, layouts } = draft.layout;
 
-    const breakpoints = Object.keys(FREE_CANVAS_BREAKPOINTS);
-    const layoutConfigKeys = Array.from(
-      new Set(breakpoints.flatMap((bp) => layouts[bp].map((c) => c.i)))
-    ).sort();
+    for (const [breakpoint, _breakpointLayouts] of Object.entries(layouts)) {
+      const breakpointLayouts = [..._breakpointLayouts];
+      const breakpointLayoutKeys = breakpointLayouts.map((l) => l.i);
+      const newBlocks = blocks.filter((block) => {
+        return !breakpointLayoutKeys.includes(block.key);
+      });
+      const cols = COLS[breakpoint as keyof typeof COLS];
 
-    const newConfigs = draft.chartConfigs.filter(
-      (x) => !layoutConfigKeys.includes(x.key)
-    );
+      let x = Math.max(...breakpointLayouts.map((c) => c.x + c.w)) % cols;
+      let y = Math.max(...breakpointLayouts.map((c) => c.y + c.h));
+      let w = 0;
+      let h = 0;
 
-    if (!isEqual(chartConfigKeys, layoutConfigKeys)) {
-      for (const bp of breakpoints) {
-        const canvasLayouts = draft.layout.layouts[bp].filter((c) =>
-          chartConfigKeys.includes(c.i)
-        );
+      for (const block of newBlocks) {
+        switch (block.type) {
+          case "chart":
+            w = getInitialTileWidth();
+            h = getInitialTileHeight();
+            break;
+          case "text":
+            w = 1;
+            h = 1;
+            break;
+          default:
+            const _exhaustiveCheck: never = block;
+            return _exhaustiveCheck;
+        }
 
-        let curX =
-          (Math.max(...canvasLayouts.map((c) => c.x + c.w)) ?? 0) % COLS.lg;
-        let curY = Math.max(...canvasLayouts.map((c) => c.y + c.h)) ?? 0;
-
-        for (const chartConfig of newConfigs) {
-          let chartX = curX;
-          let chartY = curY;
-          let chartW = getInitialTileWidth();
-          let chartH = getInitialTileHeight();
-          canvasLayouts.push({
-            i: chartConfig.key,
-            x: chartX,
-            y: chartY,
-            w: chartW,
-            h: chartH,
+        breakpointLayouts.push({
+          i: block.key,
+          x,
+          y,
+          w,
+          h,
               minH: MIN_H,
-            // Is initialized later
             resizeHandles: [],
           });
-          curX += chartW;
-          if (curX > COLS.lg) {
-            curX = 0;
-            curY += chartH;
+
+        x += w;
+
+        if (x > cols) {
+          x = 0;
+          y += h;
           }
         }
 
-        draft.layout.layouts[bp] = canvasLayouts;
-      }
+      draft.layout.layouts = {
+        ...draft.layout.layouts,
+        [breakpoint]: breakpointLayouts,
+      };
     }
   }
 }
