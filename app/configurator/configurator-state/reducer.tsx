@@ -26,6 +26,7 @@ import {
   getChartFieldOptionChangeSideEffect,
 } from "@/charts/chart-config-ui-options";
 import {
+  availableHandlesByBlockType,
   COLS,
   getInitialTileHeight,
   getInitialTileWidth,
@@ -1221,9 +1222,9 @@ const withLogging = <TState, TAction extends { type: unknown }>(
 };
 export const reducer = reducerLogging ? withLogging(reducer_) : reducer_;
 
-export function ensureDashboardLayoutIsCorrect(
+export const ensureDashboardLayoutIsCorrect = (
   draft: WritableDraft<ConfiguratorState>
-) {
+) => {
   if (
     hasChartConfigs(draft) &&
     draft.layout.type === "dashboard" &&
@@ -1267,7 +1268,7 @@ export function ensureDashboardLayoutIsCorrect(
           w,
           h,
           minH: MIN_H,
-          resizeHandles: [],
+          resizeHandles: availableHandlesByBlockType[block.type],
         });
       }
 
@@ -1277,7 +1278,7 @@ export function ensureDashboardLayoutIsCorrect(
       };
     }
   }
-}
+};
 
 const getPreferredEmptyCellCoords = ({
   layouts,
