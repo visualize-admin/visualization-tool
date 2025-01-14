@@ -10,19 +10,21 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 
+import { SnackbarProvider } from "@/components/snackbar";
 import { PUBLIC_URL } from "@/domain/env";
 import { flag } from "@/flags/flag";
 import { GraphqlProvider } from "@/graphql/GraphqlProvider";
 import { i18n, parseLocaleString } from "@/locales/locales";
 import { LocaleProvider } from "@/locales/use-locale";
 import * as federalTheme from "@/themes/federal";
+import { EventEmitterProvider } from "@/utils/eventEmitter";
 import Flashes from "@/utils/flashes";
 import { analyticsPageView } from "@/utils/googleAnalytics";
 import AsyncLocalizationProvider from "@/utils/l10n-provider";
 import "@/utils/nprogress.css";
 import { useNProgress } from "@/utils/use-nprogress";
-import { EventEmitterProvider } from "@/utils/eventEmitter";
-import { SnackbarProvider } from "@/components/snackbar";
+
+import "@/configurator/components/color-picker.css";
 
 const GQLDebugPanel = dynamic(() => import("@/gql-flamegraph/devtool"), {
   ssr: false,

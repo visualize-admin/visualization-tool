@@ -1,0 +1,28 @@
+.w-color-alpha-fill {
+  width: 10px !important;
+  height: 10px !important;
+}
+
+.w-color-chrome .w-color-saturation {
+  display: none !important;
+}
+
+.w-color-chrome {
+  --github-background-color: transparent !important;
+  --github-arrow-border-color: transparent !important;
+  --github-border: none !important;
+  --github-box-shadow: none !important;
+  width: auto !important;
+  background: transparent !important;
+  padding: 0 !important;
+}
+
+.w-color-chrome div {
+  padding: 0 !important;
+  gap: 0 !important;
+  padding: 4px !important;
+}
+
+.w-color-chrome div div {
+  display: none !important;
+}

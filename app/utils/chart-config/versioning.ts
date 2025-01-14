@@ -1,3 +1,4 @@
+import { schemeCategory10 } from "d3-scale-chromatic";
 import stringSimilarity from "string-similarity-js";
 
 import { DEFAULT_OTHER_COLOR_FIELD_OPACITY } from "@/charts/map/constants";
@@ -15,7 +16,7 @@ import {
   parseComponentId,
   stringifyComponentId,
 } from "@/graphql/make-component-id";
-import { DEFAULT_CATEGORICAL_PALETTE_NAME } from "@/palettes";
+import { DEFAULT_CATEGORICAL_PALETTE_ID } from "@/palettes";
 import {
   CHART_CONFIG_VERSION,
   CONFIGURATOR_STATE_VERSION,
@@ -676,17 +677,17 @@ export const chartConfigMigrations: Migration[] = [
       const newConfig = { ...config, version: "2.2.0" };
 
       if (newConfig.chartType === "comboLineSingle") {
-        newConfig.fields.y.palette = DEFAULT_CATEGORICAL_PALETTE_NAME;
+        newConfig.fields.y.palette = DEFAULT_CATEGORICAL_PALETTE_ID;
         newConfig.fields.y.colorMapping = mapValueIrisToColor({
-          palette: DEFAULT_CATEGORICAL_PALETTE_NAME,
+          paletteId: DEFAULT_CATEGORICAL_PALETTE_ID,
           dimensionValues: newConfig.fields.y.componentIris.map(
             (iri: string) => ({ value: iri, label: iri })
           ),
         });
       } else if (newConfig.chartType === "comboLineDual") {
-        newConfig.fields.y.palette = DEFAULT_CATEGORICAL_PALETTE_NAME;
+        newConfig.fields.y.palette = DEFAULT_CATEGORICAL_PALETTE_ID;
         newConfig.fields.y.colorMapping = mapValueIrisToColor({
-          palette: DEFAULT_CATEGORICAL_PALETTE_NAME,
+          paletteId: DEFAULT_CATEGORICAL_PALETTE_ID,
           dimensionValues: [
             newConfig.fields.y.leftAxisComponentIri,
             newConfig.fields.y.rightAxisComponentIri,
@@ -696,9 +697,9 @@ export const chartConfigMigrations: Migration[] = [
           })),
         });
       } else if (newConfig.chartType === "comboLineColumn") {
-        newConfig.fields.y.palette = DEFAULT_CATEGORICAL_PALETTE_NAME;
+        newConfig.fields.y.palette = DEFAULT_CATEGORICAL_PALETTE_ID;
         newConfig.fields.y.colorMapping = mapValueIrisToColor({
-          palette: DEFAULT_CATEGORICAL_PALETTE_NAME,
+          paletteId: DEFAULT_CATEGORICAL_PALETTE_ID,
           dimensionValues: [
             newConfig.fields.y.lineComponentIri,
             newConfig.fields.y.columnComponentIri,
@@ -1287,6 +1288,129 @@ export const chartConfigMigrations: Migration[] = [
       return newConfig;
     },
   },
+  {
+    description: `ALL {
+        fields {
+            segment {
+              - colorMapping
+            },
+            y {
+              - colorMapping
+            }
+            + color {
+                + type
+                + paletteId
+                + colorMapping / color
+            }
+        }
+    }`,
+    from: "4.0.0",
+    to: "4.1.0",
+
+    up: (config) => {
+      const newConfig = {
+        ...config,
+        version: "4.1.0",
+      };
+
+      if (newConfig.chartType === "table" || newConfig.chartType === "map") {
+        return newConfig;
+      }
+
+      // Only set default color if no existing color configurations
+      if (!newConfig.fields?.color) {
+        const hasNoColorMapping = !(
+          newConfig.fields?.y?.colorMapping ||
+          newConfig.fields?.segment?.colorMapping
+        );
+
+        if (hasNoColorMapping) {
+          newConfig.fields = {
+            ...newConfig.fields,
+            color: {
+              type: "single",
+              paletteId: "category10",
+              color: schemeCategory10[0],
+            },
+          };
+        }
+      }
+
+      if (newConfig.fields?.segment?.colorMapping) {
+        newConfig.fields = {
+          ...newConfig.fields,
+          color: {
+            type: "segment",
+            paletteId: newConfig.fields.segment.palette || "category10",
+            colorMapping: { ...newConfig.fields.segment.colorMapping },
+          },
+          segment: {
+            ...newConfig.fields.segment,
+          },
+        };
+        delete newConfig.fields.segment.colorMapping;
+        delete newConfig.fields.segment.palette;
+      }
+
+      if (newConfig.fields?.y?.colorMapping) {
+        newConfig.fields = {
+          ...newConfig.fields,
+          color: {
+            type: "measures",
+            paletteId: newConfig.fields.y.palette || "category10",
+            colorMapping: { ...newConfig.fields.y.colorMapping },
+          },
+          y: {
+            ...newConfig.fields.y,
+          },
+        };
+        delete newConfig.fields.y.colorMapping;
+        delete newConfig.fields.y.palette;
+      }
+
+      return newConfig;
+    },
+    down: (config) => {
+      const oldConfig = {
+        ...config,
+        version: "4.0.0",
+      };
+
+      if (oldConfig.chartType === "table" || oldConfig.chartType === "map") {
+        return oldConfig;
+      }
+
+      if (oldConfig.fields?.color) {
+        if (oldConfig.fields.color.type === "segment") {
+          oldConfig.fields = {
+            ...oldConfig.fields,
+            segment: {
+              ...oldConfig.fields.segment,
+              colorMapping: { ...oldConfig.fields.color.colorMapping },
+              palette: oldConfig.fields.color.paletteId,
+            },
+          };
+        }
+
+        if (oldConfig.fields.color.type === "measures") {
+          oldConfig.fields = {
+            ...oldConfig.fields,
+            y: {
+              ...oldConfig.fields.y,
+              colorMapping: { ...oldConfig.fields.color.colorMapping },
+              palette: oldConfig.fields.color.paletteId,
+            },
+          };
+        }
+
+        // Create a new fields object without the color property
+        const { color, ...fieldsWithoutColor } = oldConfig.fields;
+        oldConfig.fields = fieldsWithoutColor;
+      }
+
+      return oldConfig;
+    },
+  },
 ];
 
 export const migrateChartConfig = makeMigrate<ChartConfig>(
@@ -1872,16 +1996,55 @@ export const configuratorStateMigrations: Migration[] = [
     },
   },
   {
+    description: "ALL (bump ChartConfig version)",
+    from: "4.0.0",
+    to: "4.1.0",
+    up: async (config) => {
+      const newConfig = { ...config, version: "4.1.0" };
+
+      const chartConfigs: any[] = [];
+
+      for (const chartConfig of newConfig.chartConfigs) {
+        const migratedChartConfig = await migrateChartConfig(chartConfig, {
+          migrationProps: newConfig,
+          toVersion: "4.1.0",
+        });
+        chartConfigs.push(migratedChartConfig);
+      }
+
+      newConfig.chartConfigs = chartConfigs;
+
+      return newConfig;
+    },
+    down: async (config) => {
+      const newConfig = { ...config, version: "4.0.0" };
+
+      const chartConfigs: any[] = [];
+
+      for (const chartConfig of newConfig.chartConfigs) {
+        const migratedChartConfig = await migrateChartConfig(chartConfig, {
+          migrationProps: newConfig,
+          toVersion: "4.0.0",
+        });
+        chartConfigs.push(migratedChartConfig);
+      }
+
+      newConfig.chartConfigs = chartConfigs;
+
+      return newConfig;
+    },
+  },
+  {
     description: `ALL {
       layout {
         + blocks
         - layoutsMetadata
       }
     }`,
-    from: "4.0.0",
-    to: "4.1.0",
+    from: "4.1.0",
+    to: "4.2.0",
     up: async (config) => {
-      const newConfig = { ...config, version: "4.1.0" };
+      const newConfig = { ...config, version: "4.2.0" };
 
       if (newConfig.layout.layoutsMetadata) {
         newConfig.layout.blocks = Object.entries(
@@ -1909,7 +2072,7 @@ export const configuratorStateMigrations: Migration[] = [
       return newConfig;
     },
     down: async (config) => {
-      const newConfig = { ...config, version: "4.0.0" };
+      const newConfig = { ...config, version: "4.1.0" };
 
       if (
         newConfig.layout.type === "dashboard" &&

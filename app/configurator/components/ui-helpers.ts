@@ -268,12 +268,12 @@ export const getIconName = (name: string): IconName => {
 const randomComparator = () => (Math.random() > 0.5 ? 1 : -1);
 
 export const mapValueIrisToColor = ({
-  palette,
+  paletteId,
   dimensionValues,
   colorMapping: oldColorMapping,
   random,
 }: {
-  palette: string;
+  paletteId: string;
   dimensionValues: DimensionValue[];
   colorMapping?: ColorMapping;
   random?: boolean;
@@ -282,10 +282,10 @@ export const mapValueIrisToColor = ({
     return {};
   }
 
-  const paletteValues = getPalette(palette);
+  const paletteValues = getPalette({ paletteId });
   const colors = dimensionValues.map(
     (d, i) =>
-      (palette === "dimension" && d.color) ||
+      (paletteId === "dimension" && d.color) ||
       oldColorMapping?.[`${d.value}`] ||
       paletteValues[i % paletteValues.length]
   );

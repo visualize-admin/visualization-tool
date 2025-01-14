@@ -91,7 +91,7 @@ const getNonGenericFieldValues = (chartConfig: ChartConfig): string[] => {
 /** Get all filters by mapping status.
  *
  * We need to handle some fields differently due to the way the chart config
- * is structured at the moment (colorField) is a subfield of areaLayer and
+ * is structured at the moment (MapColorField) is a subfield of areaLayer and
  * symbolLayer fields.
  */
 export const getFiltersByMappingStatus = (

@@ -28,7 +28,6 @@ export const useRootStyles = makeStyles<Theme>((theme) => ({
     margin: "0 auto",
   },
   noTooltip: {
-    // Disable native tooltip in Safari
     "&::after": {
       content: "''",
       display: "block",

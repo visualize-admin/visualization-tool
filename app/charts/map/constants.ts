@@ -21,18 +21,18 @@ export const DEFAULT_FIXED_COLOR_FIELD: FixedColorField = {
 
 export const getDefaultCategoricalColorField = ({
   id,
-  palette,
+  paletteId,
   dimensionValues,
 }: {
   id: string;
-  palette: string;
+  paletteId: string;
   dimensionValues: DimensionValue[];
 }): CategoricalColorField => ({
   type: "categorical",
   componentId: id,
-  palette,
+  paletteId,
   colorMapping: mapValueIrisToColor({
-    palette,
+    paletteId,
     dimensionValues,
   }),
   opacity: DEFAULT_OTHER_COLOR_FIELD_OPACITY,
@@ -40,14 +40,18 @@ export const getDefaultCategoricalColorField = ({
 
 export const getDefaultNumericalColorField = ({
   id,
-  colorPalette = "oranges",
+  colorPalette = {
+    type: "sequential",
+    paletteId: "oranges",
+    name: "oranges",
+  },
 }: {
   id: string;
   colorPalette?: PaletteType;
 }): NumericalColorField => ({
   type: "numerical",
   componentId: id,
-  palette: colorPalette,
+  paletteId: colorPalette.paletteId,
   scaleType: "continuous",
   interpolationType: "linear",
   opacity: 100,

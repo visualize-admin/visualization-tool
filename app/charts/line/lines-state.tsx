@@ -195,7 +195,7 @@ const useLinesState = (
   // Map ordered segments to colors
   const colors = scaleOrdinal<string, string>();
 
-  if (fields.segment && segmentDimension && fields.segment.colorMapping) {
+  if (fields.segment && segmentDimension && fields.color) {
     const orderedSegmentLabelsAndColors = allSegments.map((segment) => {
       const dvIri =
         segmentsByAbbreviationOrLabel.get(segment)?.value ||
@@ -204,7 +204,10 @@ const useLinesState = (
 
       return {
         label: segment,
-        color: fields.segment?.colorMapping![dvIri] ?? schemeCategory10[0],
+        color:
+          fields.color.type === "segment"
+            ? fields.color.colorMapping![dvIri] ?? schemeCategory10[0]
+            : schemeCategory10[0],
       };
     });
 
@@ -212,7 +215,12 @@ const useLinesState = (
     colors.range(orderedSegmentLabelsAndColors.map((s) => s.color));
   } else {
     colors.domain(allSegments);
-    colors.range(getPalette(fields.segment?.palette));
+    colors.range(
+      getPalette({
+        paletteId: fields.color?.paletteId,
+        colorField: fields.color,
+      })
+    );
   }
 
   // Dimensions

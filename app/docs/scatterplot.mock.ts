@@ -35,10 +35,9 @@ export const scatterplotFields: ScatterPlotFields = {
     componentId:
       "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/1",
   },
-  segment: {
-    componentId:
-      "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1",
-    palette: "category10",
+  color: {
+    type: "segment",
+    paletteId: "category10",
     colorMapping: {
       "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1/0":
         "#1f77b4",
@@ -53,6 +52,11 @@ export const scatterplotFields: ScatterPlotFields = {
       "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1/5":
         "#8c564b",
     },
+  },
+  segment: {
+    componentId:
+      "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1",
+  
   },
 };
 

@@ -21,7 +21,7 @@ import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { useInteraction } from "@/charts/shared/use-interaction";
 import { useSize } from "@/charts/shared/use-size";
 import Flex from "@/components/flex";
-import { MapConfig } from "@/configurator";
+import { MapConfig, PaletteType } from "@/configurator";
 import { ColorRamp } from "@/configurator/components/chart-controls/color-ramp";
 import { Observation } from "@/domain/data";
 import { truthy } from "@/domain/types";
@@ -115,7 +115,7 @@ export const MapLegend = ({
             {areaLayer.colors.type === "continuous" ? (
               areaLayer.colors.interpolationType === "linear" ? (
                 <ContinuousColorLegend
-                  palette={areaLayer.colors.palette}
+                  paletteId={areaLayer.colors.paletteId}
                   domain={areaLayer.dataDomain}
                   getValue={areaLayer.colors.getValue}
                   valueFormatter={formatters[areaLayer.colors.component.id]}
@@ -154,7 +154,7 @@ export const MapLegend = ({
                 </Typography>
                 {symbolLayer.colors.interpolationType === "linear" ? (
                   <ContinuousColorLegend
-                    palette={symbolLayer.colors.palette}
+                    paletteId={symbolLayer.colors.paletteId}
                     domain={symbolLayer.colors.domain}
                     getValue={(d: Observation) => {
                       // @ts-ignore
@@ -645,12 +645,12 @@ const QuantizeColorLegend = ({
 };
 
 const ContinuousColorLegend = ({
-  palette,
+  paletteId,
   domain,
   getValue,
   valueFormatter,
 }: {
-  palette: string;
+  paletteId: PaletteType["paletteId"];
   domain: [number, number];
   getValue: (d: Observation) => number | null;
   valueFormatter: (v: Observation[string]) => string;
@@ -677,7 +677,7 @@ const ContinuousColorLegend = ({
         <ColorRamp
           width={width - MARGIN.left - MARGIN.right}
           height={COLOR_RAMP_HEIGHT}
-          colorInterpolator={getColorInterpolator(palette as any)}
+          colorInterpolator={getColorInterpolator(paletteId)}
           nSteps={width - MARGIN.left - MARGIN.right}
           rx={0}
         />

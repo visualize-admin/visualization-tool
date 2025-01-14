@@ -1,7 +1,6 @@
 import { defaultSegmentOnChange } from "@/charts/chart-config-ui-options";
 import { ColumnConfig, ScatterPlotConfig } from "@/configurator";
 import { stringifyComponentId } from "@/graphql/make-component-id";
-import { DEFAULT_CATEGORICAL_PALETTE_NAME } from "@/palettes";
 
 jest.mock("../rdf/extended-cube", () => ({
   ExtendedCube: jest.fn(),
@@ -41,11 +40,14 @@ describe("defaultSegmentOnChange", () => {
       initializing: false,
       selectedValues: [],
     });
-    expect(Object.keys(chartConfig.fields)).toEqual(["segment"]);
+    expect(Object.keys(chartConfig.fields)).toEqual(["segment", "color"]);
     expect(chartConfig.fields.segment).toEqual(
       expect.objectContaining({
         componentId,
-        palette: DEFAULT_CATEGORICAL_PALETTE_NAME,
+        sorting: {
+          sortingOrder: "asc",
+          sortingType: "byAuto",
+        },
       })
     );
   });

@@ -31,6 +31,7 @@ import React, {
   MutableRefObject,
   ReactNode,
   useCallback,
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -44,9 +45,10 @@ import { Select } from "@/components/form";
 import { Loading } from "@/components/hint";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { TooltipTitle } from "@/components/tooltip-utils";
-import { ChartConfig, ColorMapping } from "@/config-types";
+import { ChartConfig, ColorMapping, isColorInConfig } from "@/config-types";
 import { getChartConfig, useChartConfigFilters } from "@/config-utils";
 import {
+  ColorField,
   getFilterValue,
   isConfiguring,
   MultiFilterContextProvider,
@@ -102,7 +104,6 @@ import {
 import { valueComparator } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
 
-import { GenericSegmentField } from "../../config-types";
 import { interlace } from "../../utils/interlace";
 import { getTimeFilterOptions } from "../../utils/time-filter-options";
 
@@ -176,19 +177,15 @@ const groupByParent = (node: { parents: HierarchyValue[] }) => {
   return joinParents(node?.parents);
 };
 
-const getColorConfig = (
-  chartConfig: ChartConfig,
-  colorConfigPath: string | undefined
-) => {
-  if (!chartConfig.activeField) {
-    return;
+const getColorConfig = (chartConfig: ChartConfig) => {
+  if (isColorInConfig(chartConfig)) {
+    return get(chartConfig.fields, ["color"]) as ColorField | undefined;
+  } else {
+    return get(chartConfig.fields, [
+      chartConfig.activeField ?? "symbolLayer",
+      "color",
+    ]) as ColorField | undefined;
   }
-
-  const path = colorConfigPath
-    ? [chartConfig.activeField, colorConfigPath]
-    : [chartConfig.activeField];
-
-  return get(chartConfig.fields, path) as GenericSegmentField | undefined;
 };
 
 const FilterControls = ({
@@ -322,19 +319,22 @@ const MultiFilterContent = ({
   });
 
   const colorConfig = useMemo(() => {
-    return getColorConfig(chartConfig, colorConfigPath);
-  }, [chartConfig, colorConfigPath]);
+    return getColorConfig(chartConfig);
+  }, [chartConfig]);
 
   const hasColorMapping = useMemo(() => {
-    return (
-      !!colorConfig?.colorMapping &&
+    return !!(
+      (colorConfig?.type === "single"
+        ? colorConfig.color
+        : colorConfig?.colorMapping) &&
       (colorComponent !== undefined ? dimensionId === colorComponent.id : true)
     );
-  }, [colorConfig?.colorMapping, dimensionId, colorComponent]);
+  }, [colorConfig, dimensionId, colorComponent]);
 
   useEnsureUpToDateColorMapping({
     colorComponentValues: colorComponent?.values,
-    colorMapping: colorConfig?.colorMapping,
+    colorMapping:
+      colorConfig?.type !== "single" ? colorConfig?.colorMapping : undefined,
   });
 
   const interactiveFilterProps = useInteractiveFiltersToggle("legend");
@@ -386,7 +386,7 @@ const MultiFilterContent = ({
             <Trans id="controls.filters.select.selected-filters">
               Selected filters
             </Trans>
-            {hasColorMapping && colorConfig?.palette === "dimension" && (
+            {hasColorMapping && colorConfig?.paletteId === "dimension" && (
               <Tooltip
                 title={
                   <Trans id="controls.filters.select.reset-colors">
@@ -470,8 +470,8 @@ const MultiFilterContent = ({
  * and contains new values in the color dimension.
  * */
 const useEnsureUpToDateColorMapping = ({
-  colorComponentValues,
-  colorMapping,
+  colorComponentValues = [],
+  colorMapping = {},
 }: {
   colorComponentValues?: DimensionValue[];
   colorMapping?: ColorMapping;
@@ -481,22 +481,33 @@ const useEnsureUpToDateColorMapping = ({
   const { dimensionId, colorConfigPath } = useMultiFilterContext();
   const { activeField } = chartConfig;
 
-  if (
-    activeField &&
-    colorComponentValues?.some((v) => !colorMapping?.[v.value])
-  ) {
-    dispatch({
-      type: "CHART_CONFIG_UPDATE_COLOR_MAPPING",
-      value: {
-        field: activeField,
-        dimensionId,
-        colorConfigPath,
-        colorMapping,
-        values: colorComponentValues,
-        random: false,
-      },
-    });
-  }
+  const hasOutdatedMapping = useMemo(() => {
+    return colorComponentValues.some((value) => !colorMapping[value.value]);
+  }, [colorComponentValues, colorMapping]);
+
+  useEffect(() => {
+    if (activeField && hasOutdatedMapping) {
+      dispatch({
+        type: "CHART_CONFIG_UPDATE_COLOR_MAPPING",
+        value: {
+          dimensionId,
+          colorConfigPath,
+          colorMapping,
+          field: activeField,
+          values: colorComponentValues,
+          random: false,
+        },
+      });
+    }
+  }, [
+    hasOutdatedMapping,
+    dispatch,
+    dimensionId,
+    colorConfigPath,
+    colorMapping,
+    colorComponentValues,
+    activeField,
+  ]);
 };
 
 const useBreadcrumbStyles = makeStyles({

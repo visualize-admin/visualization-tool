@@ -34,15 +34,9 @@ export const fields = {
     componentId:
       "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/0",
   },
-  segment: {
-    componentId:
-      "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/3",
-    palette: "category10",
-    type: "stacked",
-    sorting: {
-      sortingType: "byDimensionLabel",
-      sortingOrder: "asc",
-    } as SortingField["sorting"],
+  color: {
+    type: "segment" as const,
+    paletteId: "dimension",
     colorMapping: {
       "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/3/0":
         "#1f77b4",
@@ -61,6 +55,15 @@ export const fields = {
       "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/3/7":
         "#7f7f7f",
     },
+  },
+  segment: {
+    componentId:
+      "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/3",
+    type: "stacked",
+    sorting: {
+      sortingType: "byDimensionLabel",
+      sortingOrder: "asc",
+    } as SortingField["sorting"],
   },
 };
 

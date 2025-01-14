@@ -227,11 +227,7 @@ const useBarsStackedState = (
   } = useMemo(() => {
     const colors = scaleOrdinal<string, string>();
 
-    if (
-      fields.segment &&
-      segmentsByAbbreviationOrLabel &&
-      fields.segment.colorMapping
-    ) {
+    if (fields.segment && segmentsByAbbreviationOrLabel && fields.color) {
       const orderedSegmentLabelsAndColors = allSegments.map((segment) => {
         // FIXME: Labels in observations can differ from dimension values because the latter can be concatenated to only appear once per value
         // See https://github.com/visualize-admin/visualization-tool/issues/97
@@ -247,7 +243,10 @@ const useBarsStackedState = (
 
         return {
           label: segment,
-          color: fields.segment?.colorMapping![dvIri] ?? schemeCategory10[0],
+          color:
+            fields.color.type === "segment"
+              ? fields.color.colorMapping![dvIri] ?? schemeCategory10[0]
+              : schemeCategory10[0],
         };
       });
 
@@ -255,7 +254,12 @@ const useBarsStackedState = (
       colors.range(orderedSegmentLabelsAndColors.map((s) => s.color));
     } else {
       colors.domain(allSegments);
-      colors.range(getPalette(fields.segment?.palette));
+      colors.range(
+        getPalette({
+          paletteId: fields.color.paletteId,
+          colorField: fields.color,
+        })
+      );
     }
 
     colors.unknown(() => undefined);
@@ -297,6 +301,7 @@ const useBarsStackedState = (
       yScaleInteraction,
     };
   }, [
+    fields.color,
     fields.segment,
     fields.y.sorting,
     fields.y.useAbbreviations,

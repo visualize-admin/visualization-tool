@@ -1,3 +1,5 @@
+import { schemeCategory10 } from "d3-scale-chromatic";
+
 import {
   ColumnConfig,
   ComboLineDualConfig,
@@ -288,6 +290,11 @@ describe("chart type switch", () => {
         y: {
           componentId: "https://environment.ld.admin.ch/foen/ubd0104/value",
         },
+        color: {
+          type: "segment",
+          paletteId: "category10",
+          colorMapping: {},
+        },
       },
       interactiveFiltersConfig: {
         legend: {
@@ -401,7 +408,7 @@ describe("chart type switch", () => {
         },
         segment: {
           componentId: "https://environment.ld.admin.ch/foen/ubd000502/jahr",
-          palette: "category10",
+          paletteId: "category10",
           sorting: {
             sortingType: "byAuto",
             sortingOrder: "asc",
@@ -480,6 +487,11 @@ describe("chart type switch", () => {
         },
         y: {
           componentId: "A_M1",
+        },
+        color: {
+          paletteId: "category10",
+          color: schemeCategory10[0],
+          type: "single",
         },
       },
     } as any as ColumnConfig;

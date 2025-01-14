@@ -60,7 +60,7 @@ export const useComboLineDualStateVariables = (
         dimension: measuresById[leftId],
         id: leftId,
         label: getLabelWithUnit(measuresById[leftId]),
-        color: fields.y.colorMapping[leftId],
+        color: fields.color.colorMapping[leftId],
         getY: (d) => (d[leftId] !== null ? Number(d[leftId]) : null),
         getMinY: (data) => {
           const minY =
@@ -77,7 +77,7 @@ export const useComboLineDualStateVariables = (
         dimension: measuresById[rightId],
         id: rightId,
         label: getLabelWithUnit(measuresById[rightId]),
-        color: fields.y.colorMapping[rightId],
+        color: fields.color.colorMapping[rightId],
         getY: (d) => (d[rightId] !== null ? Number(d[rightId]) : null),
         getMinY: (data) => {
           const minY =

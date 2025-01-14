@@ -16,7 +16,7 @@ import { TooltipTitle } from "@/components/tooltip-utils";
 import { useChartConfigFilters } from "@/config-utils";
 import {
   ChartConfig,
-  GenericSegmentField,
+  GenericField,
   isSegmentInConfig,
   MapConfig,
   useReadOnlyConfiguratorState,
@@ -147,7 +147,7 @@ const useLegendGroups = ({
 
   const segmentField = (
     isSegmentInConfig(chartConfig) ? chartConfig.fields.segment : null
-  ) as GenericSegmentField | null | undefined;
+  ) as GenericField | null | undefined;
   const segmentFilters = segmentField?.componentId
     ? filters[segmentField.componentId]
     : null;

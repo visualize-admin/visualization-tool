@@ -44,7 +44,7 @@ export const configStateMock = {
             color: {
               type: "categorical",
               componentId: "year-period-1",
-              palette: "dimension",
+              paletteId: "dimension",
               colorMapping: {
                 red: "green",
                 green: "blue",
@@ -172,14 +172,9 @@ export const configStateMock = {
             componentId:
               "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/anzahlanlagen",
           },
-          segment: {
-            componentId:
-              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton",
-            palette: "category10",
-            sorting: {
-              sortingType: "byAuto",
-              sortingOrder: "asc",
-            },
+          color: {
+            type: "segment",
+            paletteId: "category10",
             colorMapping: {
               "https://ld.admin.ch/canton/1": "#1f77b4",
               "https://ld.admin.ch/canton/10": "#ff7f0e",
@@ -208,6 +203,16 @@ export const configStateMock = {
               "https://ld.admin.ch/canton/8": "#9467bd",
               "https://ld.admin.ch/canton/9": "#8c564b",
             },
+          },
+          segment: {
+            componentId:
+              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton",
+
+            sorting: {
+              sortingType: "byAuto",
+              sortingOrder: "asc",
+            },
+
             type: "stacked",
           },
         },
@@ -1621,15 +1626,9 @@ export const configJoinedCubes: Partial<
             "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/AnzahlAnlagen",
         }),
       },
-      segment: {
-        componentId: stringifyComponentId({
-          unversionedCubeIri:
-            "https://energy.ld.admin.ch/elcom/electricityprice-canton",
-          unversionedComponentIri:
-            "https://energy.ld.admin.ch/elcom/electricityprice/dimension/category",
-        }),
-        palette: "category10",
-        sorting: { sortingType: "byMeasure", sortingOrder: "asc" },
+      color: {
+        type: "segment",
+        paletteId: "category10",
         colorMapping: {
           "https://energy.ld.admin.ch/elcom/electricityprice/category/C1":
             "#1f77b4",
@@ -1662,6 +1661,16 @@ export const configJoinedCubes: Partial<
           "https://energy.ld.admin.ch/elcom/electricityprice/category/H8":
             "#9467bd",
         },
+      },
+      segment: {
+        componentId: stringifyComponentId({
+          unversionedCubeIri:
+            "https://energy.ld.admin.ch/elcom/electricityprice-canton",
+          unversionedComponentIri:
+            "https://energy.ld.admin.ch/elcom/electricityprice/dimension/category",
+        }),
+
+        sorting: { sortingType: "byMeasure", sortingOrder: "asc" },
       },
     },
   },
