@@ -44,6 +44,7 @@ import {
   GenericFields,
   isAreaConfig,
   isTableConfig,
+  ReactGridLayoutType,
 } from "@/config-types";
 import { getChartConfig, makeMultiFilter } from "@/config-utils";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
@@ -1216,9 +1217,10 @@ export function ensureDashboardLayoutIsCorrect(
         return !breakpointLayoutKeys.includes(block.key);
       });
       const cols = COLS[breakpoint as keyof typeof COLS];
-
-      let x = Math.max(...breakpointLayouts.map((c) => c.x + c.w)) % cols;
-      let y = Math.max(...breakpointLayouts.map((c) => c.y + c.h));
+      const { x, y } = getPreferredEmptyCellCoords({
+        layouts: breakpointLayouts,
+        cols,
+      });
       let w = 0;
       let h = 0;
 
@@ -1246,13 +1248,6 @@ export function ensureDashboardLayoutIsCorrect(
           minH: MIN_H,
           resizeHandles: [],
         });
-
-        x += w;
-
-        if (x > cols) {
-          x = 0;
-          y += h;
-        }
       }
 
       draft.layout.layouts = {
@@ -1262,3 +1257,40 @@ export function ensureDashboardLayoutIsCorrect(
     }
   }
 }
+
+const getPreferredEmptyCellCoords = ({
+  layouts,
+  cols,
+}: {
+  layouts: ReactGridLayoutType[];
+  cols: number;
+}) => {
+  const makeKey = (x: number, y: number) => `${x},${y}`;
+  const occupiedCells = new Set<string>();
+
+  for (const layout of layouts) {
+    for (let dx = 0; dx < layout.w; dx++) {
+      for (let dy = 0; dy < layout.h; dy++) {
+        occupiedCells.add(makeKey(layout.x + dx, layout.y + dy));
+      }
+    }
+  }
+
+  let x = 0;
+  let y = 0;
+
+  while (true) {
+    const key = makeKey(x, y);
+
+    if (!occupiedCells.has(key)) {
+      return { x, y };
+    }
+
+    x++;
+
+    if (x >= cols) {
+      x = 0;
+      y++;
+    }
+  }
+};
