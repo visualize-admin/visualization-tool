@@ -127,7 +127,7 @@ const ColorPickerStory = {
           Current (valid) color: {currentColor}
         </Box>
         <ColorPicker
-          colors={getPalette("accent")}
+          colors={getPalette({ paletteId: "accent" })}
           selectedColor={currentColor}
           onChange={(color) => setCurrentColor(color)}
         />

@@ -15,7 +15,13 @@ You can also check the
   - Added a new chart type - bar
   - It's now possible to export charts as images
   - Added footer to the profile page
+  - Added support for custom colors in single and multi-colored charts, enabling
+    enhanced visual customization
+  - Introduced a new color picker, offering greater flexibility and precision in
+    chart color selection
 - Fixes
+  - Addressed security flaw allowing the injection of arbitrary URLs in the
+    `sourceUrl` parameter in the GraphQL API
   - Color mapping is now correctly kept up to date in case of editing an old
     chart and the cube has been updated in the meantime and contains new values
     in the color dimension
@@ -48,6 +54,7 @@ You can also check the
   - Removed unused dependencies and dead code
   - Updated several outdated packages
   - Added knip as a new CI task
+  - Implemented Content Security Policy (CSP)
 - Performance
   - Introduced sharding to improve performance of basic CI checks (unit tests,
     type checks, linting, knip)

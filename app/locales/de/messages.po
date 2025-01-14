@@ -976,6 +976,10 @@ msgid "controls.select.chart.type"
 msgstr "Diagrammtyp"
 
 #: app/configurator/components/chart-options-selector.tsx
+msgid "controls.select.color"
+msgstr "Farbe auswählen"
+
+#: app/configurator/components/chart-options-selector.tsx
 msgid "controls.select.column.layout"
 msgstr "Spaltenstil"
 

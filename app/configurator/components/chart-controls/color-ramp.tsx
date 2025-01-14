@@ -106,7 +106,7 @@ export const ColorRampField = (props: ColorRampFieldProps) => {
       const value = ev.target.value as (typeof currentPalette)["value"];
       if (value) {
         dispatch({
-          type: "CHART_OPTION_CHANGED",
+          type: "COLOR_MAPPING_UPDATED",
           value: {
             locale,
             field,

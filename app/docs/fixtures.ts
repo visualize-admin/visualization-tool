@@ -65,6 +65,11 @@ export const states: ConfiguratorState[] = [
           y: {
             componentId: "foo",
           },
+          color: {
+            type: "single",
+            paletteId: "oranges",
+            color: "#ff7f0e",
+          }
         },
         interactiveFiltersConfig: {
           legend: {
@@ -171,6 +176,11 @@ export const fields: ColumnFields = {
         "http://environment.ld.admin.ch/foen/px/0703030000_124/measure/0",
     }),
   },
+  color: {
+    type: "single",
+    paletteId: "oranges",
+    color: "#ff7f0e",
+  }
 };
 
 export const dimensions: Dimension[] = [
@@ -1092,7 +1102,7 @@ export const tableConfig: TableConfig = {
       componentType: "NominalDimension",
       columnStyle: {
         type: "category",
-        palette: "set3",
+        paletteId: "set3",
         textStyle: "bold",
         colorMapping: {
           "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/1/0":
@@ -1175,7 +1185,7 @@ export const tableConfig: TableConfig = {
       componentType: "NumericalMeasure",
       columnStyle: {
         type: "heatmap",
-        palette: "BrBG",
+        paletteId: "BrBG",
         textStyle: "regular",
       },
     },
@@ -1230,7 +1240,7 @@ export const tableConfig: TableConfig = {
       isGroup: false,
       isHidden: false,
       componentType: "NumericalMeasure",
-      columnStyle: { type: "heatmap", palette: "PRGn", textStyle: "regular" },
+      columnStyle: { type: "heatmap", paletteId: "PRGn", textStyle: "regular" },
     },
     "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/6": {
       componentId:
@@ -1242,7 +1252,7 @@ export const tableConfig: TableConfig = {
       columnStyle: {
         type: "heatmap",
         textStyle: "regular",
-        palette: "PiYG",
+        paletteId: "PiYG",
       },
     },
     "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/7": {

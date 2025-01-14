@@ -53,7 +53,7 @@ export const useComboLineSingleStateVariables = (
         dimension: measuresById[id],
         id,
         label: measuresById[id].label,
-        color: fields.y.colorMapping[id],
+        color: fields.color.colorMapping[id],
         getY: (d) => (d[id] !== null ? Number(d[id]) : null),
         getMinY: (data) => {
           const minY =

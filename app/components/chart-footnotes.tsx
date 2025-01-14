@@ -197,7 +197,7 @@ const ChartFootnotesComboLineColumn = ({
       {firstComponent && (
         <LegendItem
           item={firstComponent.label}
-          color={chartConfig.fields.y.colorMapping[firstComponent.id]}
+          color={chartConfig.fields.color.colorMapping[firstComponent.id]}
           symbol={lineAxisOrientation === "left" ? "line" : "square"}
           usage="tooltip"
           dimension={firstComponent as Measure}
@@ -206,7 +206,7 @@ const ChartFootnotesComboLineColumn = ({
       {secondComponent && (
         <LegendItem
           item={secondComponent.label}
-          color={chartConfig.fields.y.colorMapping[secondComponent.id]}
+          color={chartConfig.fields.color.colorMapping[secondComponent.id]}
           symbol={lineAxisOrientation === "left" ? "square" : "line"}
           usage="tooltip"
           dimension={secondComponent as Measure}
@@ -240,7 +240,7 @@ const ChartFootnotesComboLineDual = ({
       {leftAxisComponent && (
         <LegendItem
           item={leftAxisComponent.label}
-          color={chartConfig.fields.y.colorMapping[leftAxisComponent.id]}
+          color={chartConfig.fields.color.colorMapping[leftAxisComponent.id]}
           symbol="line"
           usage="tooltip"
           dimension={leftAxisComponent as Measure}
@@ -249,7 +249,7 @@ const ChartFootnotesComboLineDual = ({
       {rightAxisComponent && (
         <LegendItem
           item={rightAxisComponent.label}
-          color={chartConfig.fields.y.colorMapping[rightAxisComponent.id]}
+          color={chartConfig.fields.color.colorMapping[rightAxisComponent.id]}
           symbol="line"
           usage="tooltip"
           dimension={rightAxisComponent as Measure}
@@ -278,7 +278,7 @@ const ChartFootnotesComboLineSingle = ({
           <LegendItem
             key={component.id}
             item={component.label}
-            color={chartConfig.fields.y.colorMapping[component.id]}
+            color={chartConfig.fields.color.colorMapping[component.id]}
             symbol="line"
             usage="tooltip"
             dimension={component as Measure}
