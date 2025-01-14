@@ -564,7 +564,7 @@ const LayoutBlocksConfigurator = () => {
     dispatch({ type: "LAYOUT_ACTIVE_FIELD_CHANGED", value: blockKey });
   });
 
-  return layout.type === "dashboard" && layout.layout === "canvas" ? (
+  return layout.type === "dashboard" ? (
     <ControlSection role="tablist" aria-labelledby="controls-blocks" collapse>
       <SubsectionTitle titleId="controls-blocks" gutterBottom={false}>
         <Trans id="controls.section.block-options">Objects</Trans>
