@@ -11,7 +11,11 @@ You can also check the
 
 # Unreleased
 
-Nothing yet.
+- Features
+  - Implemented Content Security Policy (CSP)
+- Fixes
+  - Addressed security flaw allowing the injection of arbitrary URLs
+    in the `sourceUrl` parameter in the GraphQL API
 
 # [5.0.2] - 2024-11-28
 
