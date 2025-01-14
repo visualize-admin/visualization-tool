@@ -999,7 +999,9 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
         return draft;
       }
+
       break;
+
     case "CHART_CONFIG_REMOVE":
       if (isConfiguring(draft) || isLayouting(draft)) {
         const index = draft.chartConfigs.findIndex(
@@ -1059,6 +1061,8 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
           draft.layout = action.value;
         }
       }
+
+      ensureDashboardLayoutIsCorrect(draft);
 
       return draft;
 
