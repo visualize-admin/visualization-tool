@@ -10,6 +10,7 @@ import { extractChartConfigsComponentIds } from "@/charts/shared/chart-helpers";
 import { LoadingStateProvider } from "@/charts/shared/chart-loading-state";
 import { isUsingImputation } from "@/charts/shared/imputation";
 import { CHART_RESIZE_EVENT_TYPE } from "@/charts/shared/use-size";
+import { ActionElementsContainer } from "@/components/action-elements-container";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
 import { ChartFootnotes, VisualizeLink } from "@/components/chart-footnotes";
 import { ChartPanelLayout, ChartWrapper } from "@/components/chart-panel";
@@ -392,14 +393,14 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
                 // title and the chart (subgrid layout)
                 <span style={{ height: 1 }} />
               )}
-              <Box sx={{ mt: "-0.33rem" }}>
+              <ActionElementsContainer>
                 <ChartMoreButton
                   configKey={configKey}
                   chartKey={chartConfig.key}
                   chartWrapperNode={rootRef.current}
                   components={allComponents}
                 />
-              </Box>
+              </ActionElementsContainer>
             </Flex>
             {meta.description[locale] ? (
               <Description
