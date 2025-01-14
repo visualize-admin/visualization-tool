@@ -220,7 +220,7 @@ const useColorSquareStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-export const ColorSquare = ({
+const ColorSquare = ({
   disabled,
   color,
 }: {
@@ -238,7 +238,7 @@ export const ColorSquare = ({
   );
 };
 
-export const ColorPaletteControls = ({
+const ColorPaletteControls = ({
   field,
   colorConfigPath,
   component,
