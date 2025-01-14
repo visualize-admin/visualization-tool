@@ -322,8 +322,7 @@ export const ChartGridLayout = ({
           blocks: layout.blocks.map((block) => {
             return {
               ...block,
-              // TODO: initialize other block types
-              initialized: block.type === "chart" ? true : block.initialized,
+              initialized: true,
             };
           }),
         },
