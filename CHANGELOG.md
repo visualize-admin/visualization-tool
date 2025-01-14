@@ -11,22 +11,28 @@ You can also check the
 
 # Unreleased
 
+Nothing yet.
+
+# [5.1.0] - 2025-01-14
+
 - Features
-  - Implemented Content Security Policy (CSP)
+  - Added a new chart type - bar
   - It's now possible to export charts as images
-	- Added support for custom colors in single and multi-colored charts, enabling enhanced visual customization.
-	- Introduced a new Color Picker, offering greater flexibility and precision in chart color selection.
-  - Added Footer to the Profile Page
+  - Added support for custom colors in single and multi-colored charts, enabling
+    enhanced visual customization
+  - Introduced a new color picker, offering greater flexibility and precision in
+    chart color selection
+  - Added footer to the profile page
 - Fixes
-  - Addressed security flaw allowing the injection of arbitrary URLs
-    in the `sourceUrl` parameter in the GraphQL API
+  - Addressed security flaw allowing the injection of arbitrary URLs in the
+    `sourceUrl` parameter in the GraphQL API
   - Color mapping is now correctly kept up to date in case of editing an old
     chart and the cube has been updated in the meantime and contains new values
     in the color dimension
   - Fixed preview via API (iframe)
   - Fixed cut table scroll-bars and unnecessary scroll of bar charts when
     switching between chart types
-  - Improved Readability for dataset selection and preview
+  - Improved readability for dataset selection and preview
   - Sorting dataset results by score option is now correctly available to select
   - Created with visualize.admin.ch footnote is only displayed once, not twice,
     when downloading an image of a published chart
@@ -37,6 +43,7 @@ You can also check the
 - Styles
   - Updated dataset result borders to match the design
 - Maintenance
+  - Implemented Content Security Policy (CSP)
   - Re-enabled screenshot tests using Argos CI
   - Fixed E2E HAR-based tests
   - Added two new E2E tests for chart actions (duplication, image download)
@@ -55,7 +62,6 @@ You can also check the
 - Docs
   - Added auto-generated JSON Schema files for configurator state and chart
     config and improved preview charts via API documentation
-
 
 # [5.0.2] - 2024-11-28
 
