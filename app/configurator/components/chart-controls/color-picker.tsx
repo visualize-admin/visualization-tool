@@ -1,17 +1,25 @@
 import { Trans } from "@lingui/macro";
 import { Box, Button, Popover, styled, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import { hexToHsva, hsvaToHex } from "@uiw/react-color";
 import { color as d3Color } from "d3-color";
-import { MouseEventHandler, useRef } from "react";
+import dynamic from "next/dynamic";
+import { MouseEventHandler, useCallback, useMemo, useRef } from "react";
 
 import useDisclosure from "@/components/use-disclosure";
 import VisuallyHidden from "@/components/visually-hidden";
 import { Icon } from "@/icons";
 
+//have to import dynamically to avoid @uiw/react-color dependency issues with the server
+const CustomColorPicker = dynamic(
+  () => import("../../components/color-picker"),
+  { ssr: false }
+);
+
 const useStyles = makeStyles(() => ({
   swatch: {
-    width: "1.5rem",
-    height: "1.5rem",
+    width: "1rem",
+    height: "1rem",
     borderWidth: 1,
     borderStyle: "solid",
     borderColor: "transparent",
@@ -21,7 +29,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const Swatch = ({
+export const Swatch = ({
   color,
   selected,
   onClick,
@@ -116,9 +124,25 @@ const ColorPickerBox = styled(Box)({
 });
 
 export const ColorPickerMenu = (props: Props) => {
-  const { disabled } = props;
+  const { disabled, onChange, selectedColor } = props;
   const { isOpen, open, close } = useDisclosure();
   const buttonRef = useRef(null);
+  const popoverRef = useRef<HTMLDivElement>(null);
+
+  const initialSelected = useMemo(
+    () => hexToHsva(selectedColor),
+    [selectedColor]
+  );
+
+  const handleColorChange = useCallback(
+    (color) => {
+      const newHex = hsvaToHex(color);
+      if (newHex !== selectedColor) {
+        onChange?.(newHex);
+      }
+    },
+    [onChange, selectedColor]
+  );
 
   return (
     <ColorPickerBox
@@ -139,8 +163,22 @@ export const ColorPickerMenu = (props: Props) => {
           <Icon name="color" size={16} />
         </Typography>
       </ColorPickerButton>
-      <Popover anchorEl={buttonRef.current} open={isOpen} onClose={close}>
-        <ColorPicker {...props} />
+      <Popover
+        anchorEl={buttonRef.current}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "center",
+        }}
+        open={isOpen}
+        onClose={close}
+      >
+        <Box ref={popoverRef}>
+          <CustomColorPicker
+            defaultSelection={initialSelected}
+            onChange={handleColorChange}
+            colorSwatches={props.colors}
+          />
+        </Box>
       </Popover>
     </ColorPickerBox>
   );

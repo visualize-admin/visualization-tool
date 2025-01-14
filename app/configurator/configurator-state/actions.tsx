@@ -2,6 +2,7 @@ import { EncodingFieldType } from "@/charts/chart-config-ui-options";
 import {
   ChartConfig,
   ChartType,
+  ColorField,
   ColorMapping,
   ConfiguratorState,
   DashboardFiltersConfig,
@@ -74,7 +75,7 @@ export type ConfiguratorStateAction =
       };
     }
   | {
-      type: "CHART_OPTION_CHANGED";
+      type: "COLOR_MAPPING_UPDATED";
       value: {
         locale: Locale;
         path: string;
@@ -94,9 +95,13 @@ export type ConfiguratorStateAction =
       value: {
         field: string;
         colorConfigPath?: string;
-        palette: string;
+        paletteId: string;
         colorMapping: Record<string, string>;
       };
+    }
+  | {
+      type: "COLOR_FIELD_SET";
+      value: ColorField;
     }
   | {
       type: "CHART_PALETTE_RESET";

@@ -14,6 +14,8 @@ You can also check the
 - Features
   - Implemented Content Security Policy (CSP)
   - It's now possible to export charts as images
+	- Added support for custom colors in single and multi-colored charts, enabling enhanced visual customization.
+	- Introduced a new Color Picker, offering greater flexibility and precision in chart color selection.
   - Added Footer to the Profile Page
 - Fixes
   - Addressed security flaw allowing the injection of arbitrary URLs

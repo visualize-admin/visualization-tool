@@ -950,6 +950,10 @@ msgid "controls.select.chart.type"
 msgstr "Tipo di grafico"
 
 #: app/configurator/components/chart-options-selector.tsx
+msgid "controls.select.color"
+msgstr "Seleziona un colore"
+
+#: app/configurator/components/chart-options-selector.tsx
 msgid "controls.select.column.layout"
 msgstr "Layout a colonne"
 

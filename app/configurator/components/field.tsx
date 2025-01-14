@@ -13,6 +13,7 @@ import { TimeLocaleObject } from "d3-time-format";
 import get from "lodash/get";
 import orderBy from "lodash/orderBy";
 import pick from "lodash/pick";
+import dynamic from "next/dynamic";
 import React, {
   ChangeEvent,
   ComponentProps,
@@ -38,9 +39,8 @@ import {
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import SelectTree from "@/components/select-tree";
 import useDisclosure from "@/components/use-disclosure";
-import { ChartConfig } from "@/config-types";
+import { ChartConfig, isColorInConfig } from "@/config-types";
 import { getChartConfig, useChartConfigFilters } from "@/config-utils";
-import { ColorPickerMenu } from "@/configurator/components/chart-controls/color-picker";
 import {
   AnnotatorTab,
   AnnotatorTabProps,
@@ -95,6 +95,12 @@ import { getPalette } from "@/palettes";
 import { hierarchyToOptions } from "@/utils/hierarchy";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
+
+const ColorPickerMenu = dynamic(
+  () =>
+    import("./chart-controls/color-picker").then((mod) => mod.ColorPickerMenu),
+  { ssr: false }
+);
 
 const useStyles = makeStyles<Theme>((theme) => ({
   root: {
@@ -682,14 +688,18 @@ const useMultiFilterColorPicker = (value: string) => {
   const filters = useChartConfigFilters(chartConfig);
   const { dimensionId, colorConfigPath } = useMultiFilterContext();
   const { activeField } = chartConfig;
+
+  const hasColorField = isColorInConfig(chartConfig);
+  const colorField = hasColorField ? "color" : activeField;
+
   const onChange = useCallback(
     (color: string) => {
-      if (activeField) {
+      if (colorField) {
         dispatch({
           type: "CHART_COLOR_CHANGED",
           value: {
-            field: activeField,
-            colorConfigPath,
+            field: colorField,
+            colorConfigPath: hasColorField ? "" : colorField,
             color,
             value,
           },
@@ -697,25 +707,28 @@ const useMultiFilterColorPicker = (value: string) => {
       }
     },
 
-    [colorConfigPath, dispatch, activeField, value]
+    [dispatch, colorField, value, hasColorField]
   );
 
-  const path = colorConfigPath ? `${colorConfigPath}.` : "";
+  const path = colorConfigPath ? colorConfigPath : "";
+
   const color = get(
     chartConfig,
-    `fields["${activeField}"].${path}colorMapping["${value}"]`
+    `fields["${colorField}"].${path}${!hasColorField ? ".colorMapping" : ""}["${value}"]`
   );
 
   const palette = useMemo(() => {
-    return getPalette(
-      get(
+    return getPalette({
+      paletteId: get(
         chartConfig,
-        `fields["${activeField}"].${
-          colorConfigPath ? `${colorConfigPath}.` : ""
-        }palette`
-      )
-    );
-  }, [chartConfig, colorConfigPath, activeField]);
+        `fields["${colorField}"].${
+          colorConfigPath
+            ? `${colorConfigPath}${!hasColorField ? ".colorMapping" : ""}`
+            : ""
+        }paletteId`
+      ),
+    });
+  }, [chartConfig, colorConfigPath, colorField]);
 
   const checkedState = dimensionId
     ? isMultiFilterFieldChecked(filters, dimensionId, value)
@@ -802,7 +815,7 @@ export const ColorPickerField = ({
   const updateColor = useCallback(
     (value: string) =>
       dispatch({
-        type: "CHART_OPTION_CHANGED",
+        type: "COLOR_MAPPING_UPDATED",
         value: {
           locale,
           field,
@@ -814,7 +827,9 @@ export const ColorPickerField = ({
   );
 
   const color = get(chartConfig, `fields["${field}"].${path}`);
-  const palette = getPalette(get(chartConfig, `fields["${field}"].palette`));
+  const palette = getPalette({
+    paletteId: get(chartConfig, `fields["${field}"].paletteId`),
+  });
 
   return (
     <Flex
