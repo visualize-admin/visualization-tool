@@ -14,6 +14,7 @@ import { getChartWrapperId } from "@/components/chart-panel";
 import {
   hasChartConfigs,
   isLayouting,
+  LayoutBlock,
   ReactGridLayoutType,
   useConfiguratorState,
 } from "@/configurator";
@@ -26,16 +27,13 @@ const ResponsiveReactGridLayout = WidthProvider(Responsive);
 type ResizeHandle = NonNullable<Layout["resizeHandles"]>[number];
 export type GridLayout = "horizontal" | "vertical" | "wide" | "tall";
 
-export const availableHandles: ResizeHandle[] = [
-  "s",
-  "w",
-  "e",
-  "n",
-  "sw",
-  "nw",
-  "se",
-  "ne",
-];
+export const availableHandlesByBlockType: Record<
+  LayoutBlock["type"],
+  ResizeHandle[]
+> = {
+  chart: ["s", "w", "e", "n", "sw", "nw", "se", "ne"],
+  text: ["w", "e"],
+};
 
 /** In grid unit */
 const MAX_H = 10;
@@ -241,11 +239,16 @@ export const ChartGridLayout = ({
 
     return mapValues(layouts, (chartLayouts) => {
       return chartLayouts.map((chartLayout) => {
+        const block = layout.blocks.find(
+          (block) => block.key === chartLayout.i
+        );
+
         return {
           ...chartLayout,
           maxW: MAX_W,
           w: Math.min(MAX_W, chartLayout.w),
-          resizeHandles: resize ? availableHandles : [],
+          resizeHandles:
+            resize && block ? availableHandlesByBlockType[block.type] : [],
           minH: chartLayout.minH ?? MIN_H,
           h: Math.max(MIN_H, chartLayout.h),
         };
@@ -267,10 +270,11 @@ export const ChartGridLayout = ({
         return [
           breakpoint,
           chartLayouts.map((chartLayout) => {
-            if (
-              layout.blocks.find((block) => block.key === chartLayout.i)
-                ?.initialized
-            ) {
+            const block = layout.blocks.find(
+              (block) => block.key === chartLayout.i
+            );
+
+            if (block?.initialized) {
               return chartLayout;
             }
 
@@ -303,7 +307,8 @@ export const ChartGridLayout = ({
               ...chartLayout,
               maxW: MAX_W,
               w: Math.min(MAX_W, chartLayout.w),
-              resizeHandles: resize ? availableHandles : [],
+              resizeHandles:
+                resize && block ? availableHandlesByBlockType[block.type] : [],
               minH,
               h: minH,
             };
