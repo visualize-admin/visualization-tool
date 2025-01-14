@@ -150,20 +150,6 @@ export const ColorPalette = ({
         value={currentPalette.value}
         onChange={handleChangePalette}
       >
-        <Box
-          sx={{
-            paddingTop: "12px",
-            paddingX: "16px",
-            display: "flex",
-            gap: "8px",
-            flexDirection: "column",
-          }}
-        >
-          <Typography variant="caption" fontWeight={700} align="left">
-            Visualize color palattes
-          </Typography>
-          <Divider sx={{ width: "100%", paddingY: "4px" }} />
-        </Box>
         {palettes.map((palette, index) => (
           <MenuItem
             sx={{ paddingY: "8px" }}
