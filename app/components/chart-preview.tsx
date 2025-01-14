@@ -21,6 +21,7 @@ import {
 
 import { DataSetTable } from "@/browse/datatable";
 import { LoadingStateProvider } from "@/charts/shared/chart-loading-state";
+import { ActionElementsContainer } from "@/components/action-elements-container";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
 import { ChartFootnotes } from "@/components/chart-footnotes";
 import {
@@ -487,21 +488,14 @@ const ChartPreviewInner = ({
                     // title and the chart (subgrid layout)
                     <span style={{ height: 1 }} />
                   )}
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 2,
-                      mt: "-0.33rem",
-                    }}
-                  >
+                  <ActionElementsContainer>
                     <ChartMoreButton
                       chartKey={chartConfig.key}
                       chartWrapperNode={ref.current}
                       components={allComponents}
                     />
                     {actionElementSlot}
-                  </Box>
+                  </ActionElementsContainer>
                 </Flex>
                 {configuring || chartConfig.meta.description[locale] ? (
                   <Description
