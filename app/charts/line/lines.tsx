@@ -138,7 +138,7 @@ const getPointRadius = (chartConfig: LineConfig) => {
       return 2;
     default:
       const _check: never = showDotsSize;
-      return 2;
+      return _check;
   }
 };
 
