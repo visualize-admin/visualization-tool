@@ -68,7 +68,7 @@ export const ProfileContentTabs = (props: ProfileContentTabsProps) => {
 
   return (
     <TabContext value={value}>
-      <Box className={clsx(rootClasses.section)}>
+      <Box className={clsx(rootClasses.section, classes.section)}>
         <Box className={rootClasses.sectionContent}>
           <Box className={classes.section}>
             <TabList className={classes.tabList} onChange={handleChange}>

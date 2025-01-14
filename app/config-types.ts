@@ -483,8 +483,9 @@ const SequentialPaletteType = t.union([
 ]);
 export type SequentialPaletteType = t.TypeOf<typeof SequentialPaletteType>;
 
+const DimensionPaletteType = t.literal("dimension");
 const CategoricalPaletteType = t.union([
-  t.literal("dimension"),
+  DimensionPaletteType,
   t.literal("accent"),
   t.literal("category10"),
   t.literal("dark2"),
@@ -505,7 +506,6 @@ const DivergingPalette = t.type({
   name: DivergingPaletteType,
 });
 
-// Define the Sequential Palette Structure
 const SequentialPalette = t.type({
   type: t.literal("sequential"),
   paletteId: SequentialPaletteType,
@@ -885,7 +885,7 @@ export const fieldHasComponentId = (chartConfig: ChartConfig) => {
       }
       return acc;
     },
-    {} as { [key: string]: { componentId: string; useAbbreviations?: boolean } }
+    {} as { [key: string]: GenericField }
   );
 
   return validFields as {

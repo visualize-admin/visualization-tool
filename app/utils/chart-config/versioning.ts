@@ -2,11 +2,7 @@ import { schemeCategory10 } from "d3-scale-chromatic";
 import stringSimilarity from "string-similarity-js";
 
 import { DEFAULT_OTHER_COLOR_FIELD_OPACITY } from "@/charts/map/constants";
-import {
-  ChartConfig,
-  ConfiguratorState,
-  isNotTableOrMap,
-} from "@/config-types";
+import { ChartConfig, ConfiguratorState } from "@/config-types";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import {
@@ -1317,7 +1313,7 @@ export const chartConfigMigrations: Migration[] = [
         version: "4.1.0",
       };
 
-      if (!isNotTableOrMap(newConfig)) {
+      if (newConfig.chartType === "table" || newConfig.chartType === "map") {
         return newConfig;
       }
 
@@ -1380,7 +1376,7 @@ export const chartConfigMigrations: Migration[] = [
         version: "4.0.0",
       };
 
-      if (!isNotTableOrMap(oldConfig)) {
+      if (oldConfig.chartType === "table" || oldConfig.chartType === "map") {
         return oldConfig;
       }
 
@@ -2026,7 +2022,7 @@ export const configuratorStateMigrations: Migration[] = [
       for (const chartConfig of newConfig.chartConfigs) {
         const migratedChartConfig = await migrateChartConfig(chartConfig, {
           migrationProps: newConfig,
-          toVersion: "3.8.0",
+          toVersion: "4.0.0",
         });
         chartConfigs.push(migratedChartConfig);
       }

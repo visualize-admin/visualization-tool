@@ -129,7 +129,7 @@ export const ColorPickerMenu = (props: Props) => {
   const buttonRef = useRef(null);
   const popoverRef = useRef<HTMLDivElement>(null);
 
-  const initalSelected = useMemo(
+  const initialSelected = useMemo(
     () => hexToHsva(selectedColor),
     [selectedColor]
   );
@@ -174,7 +174,7 @@ export const ColorPickerMenu = (props: Props) => {
       >
         <Box ref={popoverRef}>
           <CustomColorPicker
-            defaultSelection={initalSelected}
+            defaultSelection={initialSelected}
             onChange={handleColorChange}
             colorSwatches={props.colors}
           />

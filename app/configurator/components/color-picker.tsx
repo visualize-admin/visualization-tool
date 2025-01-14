@@ -1,4 +1,3 @@
-"use client";
 import { Box } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import {
@@ -9,15 +8,11 @@ import {
   Saturation,
 } from "@uiw/react-color";
 import dynamic from "next/dynamic";
-import {
-  ChangeEvent,
-  useCallback,
-  useEffect,
-  useState
-} from "react";
+import { ChangeEvent, useCallback, useEffect, useState } from "react";
 
 import Flex from "@/components/flex";
 import { Input } from "@/components/form";
+
 import { Swatch } from "./chart-controls/color-picker";
 
 const ChromePicker = dynamic(
@@ -141,16 +136,3 @@ const CustomColorPicker = ({
 };
 
 export default CustomColorPicker;
-
-const useStyles = makeStyles(() => ({
-  swatch: {
-    width: "1rem",
-    height: "1rem",
-    borderWidth: 1,
-    borderStyle: "solid",
-    borderColor: "transparent",
-    borderRadius: 1.5,
-    padding: 0,
-    cursor: "pointer",
-  },
-}));

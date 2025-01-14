@@ -1,5 +1,6 @@
 import { t } from "@lingui/macro";
 import { group } from "d3-array";
+import { schemeCategory10 } from "d3-scale-chromatic";
 import get from "lodash/get";
 import setWith from "lodash/setWith";
 import unset from "lodash/unset";
@@ -568,8 +569,8 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         options: {
           colorPalette: {
             type: "single",
-            paletteId: "dimension",
-            color: theme.palette.primary.main,
+            paletteId: "schemaCategory10",
+            color: schemeCategory10[0],
           },
         },
       },
