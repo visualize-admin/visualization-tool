@@ -160,7 +160,7 @@ export const Points = ({
         (d: Observation, date: Date) => getX(d).getTime() - date.getTime()
       ).center;
 
-      const i = bisectDate(chartData, date, 1);
+      const i = bisectDate(chartData, date, 0);
       const y = yScale(getY(chartData[i]) as number);
 
       const segment = getSegment(chartData[i]);
