@@ -779,7 +779,7 @@ const useMultiFilterColorPicker = (value: string) => {
         }paletteId`
       ),
     });
-  }, [chartConfig, colorConfigPath, colorField]);
+  }, [chartConfig, colorConfigPath, colorField, hasColorField]);
 
   const checkedState = dimensionId
     ? isMultiFilterFieldChecked(filters, dimensionId, value)
