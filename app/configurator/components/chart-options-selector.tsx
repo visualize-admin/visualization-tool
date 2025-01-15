@@ -420,6 +420,10 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
 
   const hasSubOptions = encoding.options?.chartSubType ?? false;
 
+  const locale = useLocale();
+
+  const [, dispatch] = useConfiguratorState(isConfiguring);
+
   return (
     <div
       key={`control-panel-${encoding.field}`}
@@ -536,7 +540,29 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
               <ChartOptionSwitchField
                 path="showDots"
                 field={encoding.field}
-                defaultValue
+                onChange={(e) => {
+                  const { checked } = e.target;
+                  if ("y" in fields && !("showDots" in fields.y)) {
+                    dispatch({
+                      type: "CHART_OPTION_CHANGED",
+                      value: {
+                        locale,
+                        field: "y",
+                        path: "showDotsSize",
+                        value: "Large",
+                      },
+                    });
+                  }
+                  dispatch({
+                    type: "CHART_OPTION_CHANGED",
+                    value: {
+                      locale,
+                      field: encoding.field,
+                      path: "showDots",
+                      value: checked,
+                    },
+                  });
+                }}
                 label={t({ id: "controls.section.show-dots" })}
                 sx={{ mt: 2 }}
               />
