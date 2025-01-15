@@ -11,6 +11,7 @@ import {
   useEffect,
 } from "react";
 
+import { ActionElementsContainer } from "@/components/action-elements-container";
 import {
   ChartPanelLayoutCanvas,
   chartPanelLayoutGridClasses,
@@ -20,6 +21,7 @@ import { ChartPanelLayoutVertical } from "@/components/chart-panel-layout-vertic
 import { ChartSelectionTabs } from "@/components/chart-selection-tabs";
 import { CHART_GRID_ROW_COUNT } from "@/components/chart-shared";
 import { DashboardInteractiveFilters } from "@/components/dashboard-interactive-filters";
+import { BlockMoreButton } from "@/components/dashboard-shared";
 import { DragHandle } from "@/components/drag-handle";
 import { Markdown } from "@/components/markdown";
 import { ROW_HEIGHT } from "@/components/react-grid";
@@ -175,11 +177,14 @@ export const ChartPanelLayout = ({
             <Markdown>{block.text[locale]}</Markdown>
           </div>
           {layouting ? (
-            <DragHandle
-              onClick={(e) => {
-                e.stopPropagation();
-              }}
-            />
+            <ActionElementsContainer>
+              <BlockMoreButton blockKey={block.key} />
+              <DragHandle
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+              />
+            </ActionElementsContainer>
           ) : null}
         </div>
       );

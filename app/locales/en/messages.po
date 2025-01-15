@@ -35,9 +35,21 @@ msgstr "[ No Description ]"
 msgid "annotation.add.title"
 msgstr "[ No Title ]"
 
-#: app/configurator/components/beta-tag.tsx
-msgid "beta-tag.tooltip"
-msgstr "This feature is currently under development, you may encounter bugs and performance problems."
+#: app/components/dashboard-shared.tsx
+msgid "block-controls.delete"
+msgstr "Delete"
+
+#: app/components/dashboard-shared.tsx
+msgid "block-controls.delete.confirmation"
+msgstr "Are you sure you want to delete this block?"
+
+#: app/components/dashboard-shared.tsx
+msgid "block-controls.delete.title"
+msgstr "Delete block?"
+
+#: app/components/dashboard-shared.tsx
+msgid "block-controls.duplicate"
+msgstr "Duplicate"
 
 #: app/browser/dataset-browse.tsx
 msgid "browse-panel.organizations"
