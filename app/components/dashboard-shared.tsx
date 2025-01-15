@@ -64,7 +64,10 @@ export const BlockMoreButton = ({ blockKey }: { blockKey: string }) => {
     <>
       <IconButton
         color="secondary"
-        onClick={(ev) => setAnchor(ev.currentTarget)}
+        onClick={(e) => {
+          e.stopPropagation();
+          setAnchor(e.currentTarget);
+        }}
         sx={{ height: "fit-content" }}
         {...DISABLE_SCREENSHOT_ATTR}
         data-testid="block-more-button"
@@ -74,7 +77,11 @@ export const BlockMoreButton = ({ blockKey }: { blockKey: string }) => {
       <ArrowMenuTopBottom
         open={!!anchor}
         anchorEl={anchor}
-        onClose={handleClose}
+        onClose={(e) => {
+          // @ts-ignore this is correct
+          e.stopPropagation();
+          handleClose();
+        }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
         transformOrigin={{ horizontal: "right", vertical: "top" }}
       >
