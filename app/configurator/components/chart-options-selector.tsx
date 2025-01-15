@@ -549,7 +549,7 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
                   const { checked } = e.target;
                   if ("y" in fields && !("showDots" in fields.y)) {
                     dispatch({
-                      type: "CHART_OPTION_CHANGED",
+                      type: "COLOR_MAPPING_UPDATED",
                       value: {
                         locale,
                         field: "y",
@@ -559,7 +559,7 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
                     });
                   }
                   dispatch({
-                    type: "CHART_OPTION_CHANGED",
+                    type: "COLOR_MAPPING_UPDATED",
                     value: {
                       locale,
                       field: encoding.field,
