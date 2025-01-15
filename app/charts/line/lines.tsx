@@ -125,9 +125,8 @@ const Line = memo(function Line({
   return <path d={path} stroke={color} fill="none" />;
 });
 
-const getPointRadius = (chartConfig: LineConfig) => {
-  const { showDotsSize } = chartConfig.fields.y;
-  switch (showDotsSize) {
+const getPointRadius = (dotSize: LineConfig["fields"]["y"]["showDotsSize"]) => {
+  switch (dotSize) {
     case "Small":
       return 2;
     case "Medium":
@@ -137,16 +136,18 @@ const getPointRadius = (chartConfig: LineConfig) => {
     case undefined:
       return 2;
     default:
-      const _check: never = showDotsSize;
+      const _check: never = dotSize;
       return _check;
   }
 };
 
-export const Points = ({ chartConfig }: { chartConfig: LineConfig }) => {
+export const Points = ({
+  dotSize,
+}: {
+  dotSize: LineConfig["fields"]["y"]["showDotsSize"];
+}) => {
   const { getX, xScale, getY, yScale, bounds, chartData, getSegment, colors } =
     useChartState() as LinesState;
-
-  const { showDots } = chartConfig.fields.y;
 
   const { margins, chartHeight, width } = bounds;
 
@@ -179,11 +180,11 @@ export const Points = ({ chartConfig }: { chartConfig: LineConfig }) => {
     getX,
   ]);
 
-  if (!showDots) {
+  if (!dotSize) {
     return null;
   }
 
-  const radius = getPointRadius(chartConfig);
+  const radius = getPointRadius(dotSize);
 
   return (
     <g transform={`translate(${margins.left} ${margins.top})`}>

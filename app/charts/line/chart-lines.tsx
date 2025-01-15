@@ -37,7 +37,11 @@ const ChartLines = memo((props: ChartProps<LineConfig>) => {
         <ChartSvg>
           <AxisHeightLinear /> <AxisTime /> <AxisTimeDomain />
           <Lines />
-          <Points chartConfig={chartConfig} />
+          {"showDots" in chartConfig.fields.y &&
+          "showDotsSize" in chartConfig.fields.y &&
+          chartConfig.fields.y.showDots ? (
+            <Points dotSize={chartConfig.fields.y.showDotsSize} />
+          ) : null}
           <ErrorWhiskers />
           <InteractionHorizontal />
           {shouldShowBrush(
