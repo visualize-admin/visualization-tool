@@ -3,6 +3,7 @@ import { DataCubeComponents } from '../domain/data';
 import { DataCubeMetadata } from '../domain/data';
 import { DataCubeObservations } from '../domain/data';
 import { DataCubePreview } from '../domain/data';
+import { DataSourceUrl } from '../domain/datasource';
 import { DimensionValue } from '../domain/data';
 import { Filters } from '../configurator';
 import { GeoShapes } from '../domain/data';
@@ -31,6 +32,7 @@ export type Scalars = {
   DataCubeMetadata: DataCubeMetadata;
   DataCubeObservations: DataCubeObservations;
   DataCubePreview: DataCubePreview;
+  DataSourceUrl: DataSourceUrl;
   DimensionValue: DimensionValue;
   FilterValue: any;
   Filters: Filters;
@@ -44,6 +46,7 @@ export type Scalars = {
   ValueIdentifier: any;
   ValuePosition: any;
 };
+
 
 
 export type DataCubeComponentFilter = {
@@ -124,6 +127,7 @@ export type DataCubeUnversionedIriFilter = {
 
 
 
+
 export type PossibleFilterValue = {
   __typename?: 'PossibleFilterValue';
   type: Scalars['String'];
@@ -148,7 +152,7 @@ export type Query = {
 
 export type QueryDataCubeLatestIriArgs = {
   sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
+  sourceUrl: Scalars['DataSourceUrl'];
   cubeFilter: DataCubeLatestIriFilter;
 };
 
@@ -162,7 +166,7 @@ export type QueryDataCubeUnversionedIriArgs = {
 
 export type QueryDataCubeComponentsArgs = {
   sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
+  sourceUrl: Scalars['DataSourceUrl'];
   locale: Scalars['String'];
   cubeFilter: DataCubeComponentFilter;
 };
@@ -170,7 +174,7 @@ export type QueryDataCubeComponentsArgs = {
 
 export type QueryDataCubeComponentTermsetsArgs = {
   sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
+  sourceUrl: Scalars['DataSourceUrl'];
   locale: Scalars['String'];
   cubeFilter: DataCubeTermsetFilter;
 };
@@ -178,7 +182,7 @@ export type QueryDataCubeComponentTermsetsArgs = {
 
 export type QueryDataCubeMetadataArgs = {
   sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
+  sourceUrl: Scalars['DataSourceUrl'];
   locale: Scalars['String'];
   cubeFilter: DataCubeMetadataFilter;
 };
@@ -186,7 +190,7 @@ export type QueryDataCubeMetadataArgs = {
 
 export type QueryDataCubeObservationsArgs = {
   sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
+  sourceUrl: Scalars['DataSourceUrl'];
   locale: Scalars['String'];
   cubeFilter: DataCubeObservationFilter;
 };
@@ -194,7 +198,7 @@ export type QueryDataCubeObservationsArgs = {
 
 export type QueryDataCubePreviewArgs = {
   sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
+  sourceUrl: Scalars['DataSourceUrl'];
   locale: Scalars['String'];
   cubeFilter: DataCubePreviewFilter;
 };
@@ -202,14 +206,14 @@ export type QueryDataCubePreviewArgs = {
 
 export type QueryPossibleFiltersArgs = {
   sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
+  sourceUrl: Scalars['DataSourceUrl'];
   cubeFilter: DataCubePossibleFiltersCubeFilter;
 };
 
 
 export type QuerySearchCubesArgs = {
   sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
+  sourceUrl: Scalars['DataSourceUrl'];
   locale?: Maybe<Scalars['String']>;
   query?: Maybe<Scalars['String']>;
   order?: Maybe<SearchCubeResultOrder>;
@@ -221,7 +225,7 @@ export type QuerySearchCubesArgs = {
 
 export type QueryDataCubeDimensionGeoShapesArgs = {
   sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
+  sourceUrl: Scalars['DataSourceUrl'];
   locale: Scalars['String'];
   cubeFilter: DataCubeDimensionGeoShapesCubeFilter;
 };
@@ -375,6 +379,7 @@ export type ResolversTypes = ResolversObject<{
   DataCubeTermsetFilter: DataCubeTermsetFilter;
   DataCubeTheme: ResolverTypeWrapper<DataCubeTheme>;
   DataCubeUnversionedIriFilter: DataCubeUnversionedIriFilter;
+  DataSourceUrl: ResolverTypeWrapper<Scalars['DataSourceUrl']>;
   DimensionValue: ResolverTypeWrapper<Scalars['DimensionValue']>;
   FilterValue: ResolverTypeWrapper<Scalars['FilterValue']>;
   Filters: ResolverTypeWrapper<Scalars['Filters']>;
@@ -421,6 +426,7 @@ export type ResolversParentTypes = ResolversObject<{
   DataCubeTermsetFilter: DataCubeTermsetFilter;
   DataCubeTheme: DataCubeTheme;
   DataCubeUnversionedIriFilter: DataCubeUnversionedIriFilter;
+  DataSourceUrl: Scalars['DataSourceUrl'];
   DimensionValue: Scalars['DimensionValue'];
   FilterValue: Scalars['FilterValue'];
   Filters: Scalars['Filters'];
@@ -440,6 +446,10 @@ export type ResolversParentTypes = ResolversObject<{
   ValueIdentifier: Scalars['ValueIdentifier'];
   ValuePosition: Scalars['ValuePosition'];
 }>;
+
+export type SafeUrlDirectiveArgs = {   pattern?: Maybe<Scalars['String']>; };
+
+export type SafeUrlDirectiveResolver<Result, Parent, ContextType = VisualizeGraphQLContext, Args = SafeUrlDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
 
 export interface ComponentTermsetsScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['ComponentTermsets'], any> {
   name: 'ComponentTermsets';
@@ -478,6 +488,10 @@ export type DataCubeThemeResolvers<ContextType = VisualizeGraphQLContext, Parent
   label?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
+
+export interface DataSourceUrlScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DataSourceUrl'], any> {
+  name: 'DataSourceUrl';
+}
 
 export interface DimensionValueScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DimensionValue'], any> {
   name: 'DimensionValue';
@@ -570,6 +584,7 @@ export type Resolvers<ContextType = VisualizeGraphQLContext> = ResolversObject<{
   DataCubePreview?: GraphQLScalarType;
   DataCubeTermset?: DataCubeTermsetResolvers<ContextType>;
   DataCubeTheme?: DataCubeThemeResolvers<ContextType>;
+  DataSourceUrl?: GraphQLScalarType;
   DimensionValue?: GraphQLScalarType;
   FilterValue?: GraphQLScalarType;
   Filters?: GraphQLScalarType;
@@ -594,3 +609,13 @@ export type Resolvers<ContextType = VisualizeGraphQLContext> = ResolversObject<{
  * Use "Resolvers" root object instead. If you wish to get "IResolvers", add "typesPrefix: I" to your config.
  */
 export type IResolvers<ContextType = VisualizeGraphQLContext> = Resolvers<ContextType>;
+export type DirectiveResolvers<ContextType = VisualizeGraphQLContext> = ResolversObject<{
+  safeUrl?: SafeUrlDirectiveResolver<any, any, ContextType>;
+}>;
+
+
+/**
+ * @deprecated
+ * Use "DirectiveResolvers" root object instead. If you wish to get "IDirectiveResolvers", add "typesPrefix: I" to your config.
+ */
+export type IDirectiveResolvers<ContextType = VisualizeGraphQLContext> = DirectiveResolvers<ContextType>;

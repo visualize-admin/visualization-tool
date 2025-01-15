@@ -186,6 +186,35 @@ export type SortingType = t.TypeOf<typeof SortingType>;
 const ColorMapping = t.record(t.string, t.string);
 export type ColorMapping = t.TypeOf<typeof ColorMapping>;
 
+const SingleColorField = t.type({
+  type: t.literal("single"),
+  paletteId: t.string,
+  color: t.string,
+});
+export type SingleColorField = t.TypeOf<typeof SingleColorField>;
+
+const SegmentColorField = t.type({
+  type: t.literal("segment"),
+  paletteId: t.string,
+  colorMapping: ColorMapping,
+});
+export type SegmentColorField = t.TypeOf<typeof SegmentColorField>;
+
+const MeasuresColorField = t.type({
+  type: t.literal("measures"),
+  paletteId: t.string,
+  colorMapping: ColorMapping,
+});
+export type MeasuresColorField = t.TypeOf<typeof MeasuresColorField>;
+
+const ColorField = t.union([
+  SingleColorField,
+  SegmentColorField,
+  MeasuresColorField,
+]);
+//FIXME: Remove current type called ColorField and replace it with the new one
+export type ColorField = t.TypeOf<typeof ColorField>;
+
 const GenericField = t.intersection([
   t.type({ componentId: t.string }),
   t.partial({ useAbbreviations: t.boolean }),
@@ -194,17 +223,6 @@ export type GenericField = t.TypeOf<typeof GenericField>;
 
 const GenericFields = t.record(t.string, t.union([GenericField, t.undefined]));
 export type GenericFields = t.TypeOf<typeof GenericFields>;
-
-const GenericSegmentField = t.intersection([
-  GenericField,
-  t.type({
-    palette: t.string,
-  }),
-  t.partial({
-    colorMapping: ColorMapping,
-  }),
-]);
-export type GenericSegmentField = t.TypeOf<typeof GenericSegmentField>;
 
 const AnimationType = t.union([t.literal("continuous"), t.literal("stepped")]);
 export type AnimationType = t.TypeOf<typeof AnimationType>;
@@ -254,7 +272,7 @@ const ChartSubType = t.union([t.literal("stacked"), t.literal("grouped")]);
 export type ChartSubType = t.TypeOf<typeof ChartSubType>;
 
 const ColumnSegmentField = t.intersection([
-  GenericSegmentField,
+  GenericField,
   SortingField,
   t.type({ type: ChartSubType }),
 ]);
@@ -272,6 +290,7 @@ const ColumnFields = t.intersection([
   t.type({
     x: t.intersection([GenericField, SortingField]),
     y: t.intersection([GenericField, UncertaintyFieldExtension]),
+    color: t.union([SegmentColorField, SingleColorField]),
   }),
   t.partial({
     segment: ColumnSegmentField,
@@ -292,8 +311,10 @@ const ColumnConfig = t.intersection([
 export type ColumnFields = t.TypeOf<typeof ColumnFields>;
 export type ColumnConfig = t.TypeOf<typeof ColumnConfig>;
 
+const LineSegmentField = t.intersection([GenericField, SortingField]);
+
 const BarSegmentField = t.intersection([
-  GenericSegmentField,
+  GenericField,
   SortingField,
   t.type({ type: ChartSubType }),
 ]);
@@ -303,6 +324,7 @@ const BarFields = t.intersection([
   t.type({
     x: GenericField,
     y: t.intersection([GenericField, SortingField]),
+    color: t.union([SegmentColorField, SingleColorField]),
   }),
   t.partial({
     segment: BarSegmentField,
@@ -323,7 +345,6 @@ const BarConfig = t.intersection([
 export type BarFields = t.TypeOf<typeof BarFields>;
 export type BarConfig = t.TypeOf<typeof BarConfig>;
 
-const LineSegmentField = t.intersection([GenericSegmentField, SortingField]);
 export type LineSegmentField = t.TypeOf<typeof LineSegmentField>;
 
 const LineFields = t.intersection([
@@ -341,6 +362,7 @@ const LineFields = t.intersection([
         ]),
       }),
     ]),
+    color: t.union([SegmentColorField, SingleColorField]),
   }),
   t.partial({
     segment: LineSegmentField,
@@ -360,7 +382,7 @@ const LineConfig = t.intersection([
 export type LineFields = t.TypeOf<typeof LineFields>;
 export type LineConfig = t.TypeOf<typeof LineConfig>;
 
-const AreaSegmentField = t.intersection([GenericSegmentField, SortingField]);
+const AreaSegmentField = t.intersection([GenericField, SortingField]);
 export type AreaSegmentField = t.TypeOf<typeof AreaSegmentField>;
 
 const ImputationType = t.union([
@@ -378,6 +400,7 @@ const AreaFields = t.intersection([
       GenericField,
       t.partial({ imputationType: ImputationType }),
     ]),
+    color: t.union([SegmentColorField, SingleColorField]),
   }),
   t.partial({
     segment: AreaSegmentField,
@@ -397,13 +420,14 @@ const AreaConfig = t.intersection([
 export type AreaFields = t.TypeOf<typeof AreaFields>;
 export type AreaConfig = t.TypeOf<typeof AreaConfig>;
 
-const ScatterPlotSegmentField = GenericSegmentField;
+const ScatterPlotSegmentField = GenericField;
 export type ScatterPlotSegmentField = t.TypeOf<typeof ScatterPlotSegmentField>;
 
 const ScatterPlotFields = t.intersection([
   t.type({
     x: GenericField,
     y: GenericField,
+    color: t.union([SegmentColorField, SingleColorField]),
   }),
   t.partial({
     segment: ScatterPlotSegmentField,
@@ -424,13 +448,14 @@ const ScatterPlotConfig = t.intersection([
 export type ScatterPlotFields = t.TypeOf<typeof ScatterPlotFields>;
 export type ScatterPlotConfig = t.TypeOf<typeof ScatterPlotConfig>;
 
-const PieSegmentField = t.intersection([GenericSegmentField, SortingField]);
+const PieSegmentField = t.intersection([GenericField, SortingField]);
 export type PieSegmentField = t.TypeOf<typeof PieSegmentField>;
 
 const PieFields = t.intersection([
   t.type({
     y: GenericField,
     segment: PieSegmentField,
+    color: SegmentColorField,
   }),
   t.partial({ animation: AnimationField }),
 ]);
@@ -457,7 +482,6 @@ const DivergingPaletteType = t.union([
   t.literal("RdYlBu"),
   t.literal("RdYlGn"),
 ]);
-
 export type DivergingPaletteType = t.TypeOf<typeof DivergingPaletteType>;
 
 const SequentialPaletteType = t.union([
@@ -468,10 +492,62 @@ const SequentialPaletteType = t.union([
   t.literal("purples"),
   t.literal("reds"),
 ]);
-
 export type SequentialPaletteType = t.TypeOf<typeof SequentialPaletteType>;
 
-export type PaletteType = DivergingPaletteType | SequentialPaletteType;
+const DimensionPaletteType = t.literal("dimension");
+const CategoricalPaletteType = t.union([
+  DimensionPaletteType,
+  t.literal("accent"),
+  t.literal("category10"),
+  t.literal("dark2"),
+  t.literal("paired"),
+  t.literal("pastel1"),
+  t.literal("pastel2"),
+  t.literal("set1"),
+  t.literal("set2"),
+  t.literal("set3"),
+  t.literal("tableau10"),
+]);
+
+export type CategoricalPaletteType = t.TypeOf<typeof CategoricalPaletteType>;
+
+const DivergingPalette = t.type({
+  type: t.literal("diverging"),
+  paletteId: DivergingPaletteType,
+  name: DivergingPaletteType,
+});
+
+const SequentialPalette = t.type({
+  type: t.literal("sequential"),
+  paletteId: SequentialPaletteType,
+  name: SequentialPaletteType,
+});
+
+const CategoricalPalette = t.type({
+  type: t.literal("categorical"),
+  paletteId: CategoricalPaletteType,
+  name: CategoricalPaletteType,
+});
+
+const CustomPalette = t.type({
+  type: t.union([
+    t.literal("diverging"),
+    t.literal("sequential"),
+    t.literal("categorical"),
+  ]),
+  paletteId: t.string,
+  name: t.string,
+  colors: t.array(t.string),
+});
+
+export const PaletteType = t.union([
+  DivergingPalette,
+  SequentialPalette,
+  CategoricalPalette,
+  CustomPalette,
+]);
+
+export type PaletteType = t.TypeOf<typeof PaletteType>;
 
 const ColorScaleType = t.union([
   t.literal("continuous"),
@@ -500,13 +576,13 @@ const ColumnStyleText = t.type({
 const ColumnStyleCategory = t.type({
   type: t.literal("category"),
   textStyle: ColumnTextStyle,
-  palette: t.string,
+  paletteId: t.string,
   colorMapping: ColorMapping,
 });
 const ColumnStyleHeatmap = t.type({
   type: t.literal("heatmap"),
   textStyle: ColumnTextStyle,
-  palette: DivergingPaletteType,
+  paletteId: DivergingPaletteType,
 });
 const ColumnStyleBar = t.type({
   type: t.literal("bar"),
@@ -599,7 +675,7 @@ const CategoricalColorField = t.intersection([
   t.type({
     type: t.literal("categorical"),
     componentId: t.string,
-    palette: t.string,
+    paletteId: t.string,
     colorMapping: ColorMapping,
   }),
   t.partial({ useAbbreviations: t.boolean }),
@@ -612,7 +688,7 @@ const NumericalColorField = t.intersection([
   t.type({
     type: t.literal("numerical"),
     componentId: t.string,
-    palette: t.union([DivergingPaletteType, SequentialPaletteType]),
+    paletteId: t.string,
   }),
   t.union([
     t.type({
@@ -631,15 +707,17 @@ const NumericalColorField = t.intersection([
   ]),
   ColorFieldOpacity,
 ]);
+
 export type NumericalColorField = t.TypeOf<typeof NumericalColorField>;
 
-export type ColorField =
+export type MapColorField =
   | FixedColorField
   | CategoricalColorField
   | NumericalColorField;
 
 const MapAreaLayer = t.type({
   componentId: t.string,
+  //FIXME:  convert to new color field type
   color: t.union([CategoricalColorField, NumericalColorField]),
 });
 export type MapAreaLayer = t.TypeOf<typeof MapAreaLayer>;
@@ -648,6 +726,7 @@ const MapSymbolLayer = t.type({
   componentId: t.string,
   /** symbol radius (size) */
   measureId: t.string,
+  //FIXME:  convert to new color field type
   color: t.union([FixedColorField, CategoricalColorField, NumericalColorField]),
 });
 export type MapSymbolLayer = t.TypeOf<typeof MapSymbolLayer>;
@@ -684,9 +763,8 @@ const ComboLineSingleFields = t.type({
   x: GenericField,
   y: t.type({
     componentIds: t.array(t.string),
-    palette: t.string,
-    colorMapping: ColorMapping,
   }),
+  color: MeasuresColorField,
 });
 export type ComboLineSingleFields = t.TypeOf<typeof ComboLineSingleFields>;
 
@@ -708,9 +786,8 @@ const ComboLineDualFields = t.type({
   y: t.type({
     leftAxisComponentId: t.string,
     rightAxisComponentId: t.string,
-    palette: t.string,
-    colorMapping: ColorMapping,
   }),
+  color: MeasuresColorField,
 });
 export type ComboLineDualFields = t.TypeOf<typeof ComboLineDualFields>;
 
@@ -733,9 +810,8 @@ const ComboLineColumnFields = t.type({
     lineComponentId: t.string,
     lineAxisOrientation: t.union([t.literal("left"), t.literal("right")]),
     columnComponentId: t.string,
-    palette: t.string,
-    colorMapping: ColorMapping,
   }),
+  color: MeasuresColorField,
 });
 
 export type ComboLineColumnFields = t.TypeOf<typeof ComboLineColumnFields>;
@@ -810,6 +886,24 @@ export const isComboChartConfig = (
     isComboLineDualConfig(chartConfig) ||
     isComboLineColumnConfig(chartConfig)
   );
+};
+
+export const fieldHasComponentId = (chartConfig: ChartConfig) => {
+  const validFields = Object.entries(chartConfig.fields).reduce(
+    (acc, [key, field]) => {
+      if (field && typeof field.componentId === "string") {
+        acc[key] = field;
+      }
+      return acc;
+    },
+    {} as { [key: string]: GenericField }
+  );
+
+  return validFields as {
+    [s: string]: { componentId: string } & {
+      useAbbreviations?: boolean | undefined;
+    };
+  };
 };
 
 export const isAreaConfig = (
@@ -904,6 +998,21 @@ export const isSegmentInConfig = (
   return ["area", "column", "bar", "line", "pie", "scatterplot"].includes(
     chartConfig.chartType
   );
+};
+
+export const isColorInConfig = (
+  chartConfig: ChartConfig
+): chartConfig is
+  | AreaConfig
+  | ColumnConfig
+  | LineConfig
+  | PieConfig
+  | ScatterPlotConfig => {
+  return !isTableConfig(chartConfig) && !isMapConfig(chartConfig);
+};
+
+export const isNotTableOrMap = (chartConfig: ChartConfig) => {
+  return !isTableConfig(chartConfig) && !isMapConfig(chartConfig);
 };
 
 export const isSortingInConfig = (
