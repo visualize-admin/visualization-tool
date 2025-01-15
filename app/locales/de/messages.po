@@ -30,6 +30,10 @@ msgstr "Kein Ergebnis"
 msgid "annotation.add.description"
 msgstr "[ Ohne Beschreibung ]"
 
+#: app/components/chart-panel.tsx
+msgid "annotation.add.text"
+msgstr "[ Text hinzufügen ]"
+
 #: app/configurator/components/annotators.tsx
 #: app/login/components/profile-tables.tsx
 msgid "annotation.add.title"

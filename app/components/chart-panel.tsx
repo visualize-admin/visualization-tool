@@ -1,3 +1,4 @@
+import { Trans } from "@lingui/macro";
 import { Box, BoxProps, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
@@ -156,6 +157,8 @@ export const ChartPanelLayout = ({
 
   const renderTextBlock = useCallback(
     (block: LayoutTextBlock) => {
+      const text = block.text[locale];
+
       return (
         <div
           // Important, otherwise ReactGrid breaks.
@@ -174,7 +177,11 @@ export const ChartPanelLayout = ({
             className={TEXT_BLOCK_CONTENT_CLASS}
             style={{ flexGrow: 1, height: "fit-content" }}
           >
-            <Markdown>{block.text[locale]}</Markdown>
+            {text ? (
+              <Markdown>{text}</Markdown>
+            ) : (
+              <Trans id="annotation.add.text">[ Add text ]</Trans>
+            )}
           </div>
           {layouting ? (
             <ActionElementsContainer>
