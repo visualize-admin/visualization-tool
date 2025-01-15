@@ -89,7 +89,8 @@ export const BlockMoreButton = ({ blockKey }: { blockKey: string }) => {
           <MenuActionItem
             type="button"
             as="menuitem"
-            onClick={() => {
+            onClick={(e) => {
+              e.stopPropagation();
               handleDuplicate();
               handleClose();
             }}
@@ -109,7 +110,8 @@ export const BlockMoreButton = ({ blockKey }: { blockKey: string }) => {
               id: "block-controls.delete.confirmation",
               message: "Are you sure you want to delete this block?",
             })}
-            onClick={() => {
+            onClick={(e) => {
+              e.stopPropagation();
               handleRemove();
               handleClose();
             }}
