@@ -1238,6 +1238,9 @@ export const ensureDashboardLayoutIsCorrect = (
       const newBlocks = blocks.filter((block) => {
         return !breakpointLayoutKeys.includes(block.key);
       });
+      const keysToRemove = breakpointLayoutKeys.filter(
+        (key) => !blocks.find((block) => block.key === key)
+      );
       const cols = COLS[breakpoint as keyof typeof COLS];
       const { x, y } = getPreferredEmptyCellCoords({
         layouts: breakpointLayouts,
@@ -1270,6 +1273,11 @@ export const ensureDashboardLayoutIsCorrect = (
           minH: MIN_H,
           resizeHandles: availableHandlesByBlockType[block.type],
         });
+      }
+
+      for (const key of keysToRemove) {
+        const index = breakpointLayouts.findIndex((l) => l.i === key);
+        breakpointLayouts.splice(index, 1);
       }
 
       draft.layout.layouts = {
