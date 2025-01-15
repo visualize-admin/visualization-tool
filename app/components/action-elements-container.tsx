@@ -7,6 +7,7 @@ const useStyles = makeStyles<Theme>((theme) => ({
     display: "flex",
     alignItems: "center",
     gap: theme.spacing(2),
+    height: "fit-content",
     marginTop: "-0.33rem",
   },
 }));
