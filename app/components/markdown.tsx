@@ -6,14 +6,46 @@ import remarkGfm from "remark-gfm";
 
 const components: ComponentProps<typeof ReactMarkdown>["components"] = {
   // TODO: Maybe can be handled by Title and Description components?
-  h1: ({ children }) => <h1 style={{ marginTop: 0 }}>{children}</h1>,
-  h2: ({ children }) => <h2 style={{ marginTop: 0 }}>{children}</h2>,
-  h3: ({ children }) => <h3 style={{ marginTop: 0 }}>{children}</h3>,
-  h4: ({ children }) => <h4 style={{ marginTop: 0 }}>{children}</h4>,
-  h5: ({ children }) => <h5 style={{ marginTop: 0 }}>{children}</h5>,
-  h6: ({ children }) => <h6 style={{ marginTop: 0 }}>{children}</h6>,
-  p: ({ children }) => <p style={{ marginTop: 0 }}>{children}</p>,
-  a: ({ children }) => <a style={{ marginTop: 0 }}>{children}</a>,
+  h1: ({ children, style, ...props }) => (
+    <h1 style={{ ...style, marginTop: 0 }} {...props}>
+      {children}
+    </h1>
+  ),
+  h2: ({ children, style, ...props }) => (
+    <h2 style={{ ...style, marginTop: 0 }} {...props}>
+      {children}
+    </h2>
+  ),
+  h3: ({ children, style, ...props }) => (
+    <h3 style={{ ...style, marginTop: 0 }} {...props}>
+      {children}
+    </h3>
+  ),
+  h4: ({ children, style, ...props }) => (
+    <h4 style={{ ...style, marginTop: 0 }} {...props}>
+      {children}
+    </h4>
+  ),
+  h5: ({ children, style, ...props }) => (
+    <h5 style={{ ...style, marginTop: 0 }} {...props}>
+      {children}
+    </h5>
+  ),
+  h6: ({ children, style, ...props }) => (
+    <h6 style={{ ...style, marginTop: 0 }} {...props}>
+      {children}
+    </h6>
+  ),
+  p: ({ children, style, ...props }) => (
+    <p style={{ ...style, marginTop: 0 }} {...props}>
+      {children}
+    </p>
+  ),
+  a: ({ children, style, ...props }) => (
+    <a style={{ ...style, marginTop: 0 }} {...props}>
+      {children}
+    </a>
+  ),
 };
 
 export const Markdown = (
