@@ -340,7 +340,7 @@ const useBarsGroupedState = (
   });
   const right = 40;
   const margins = {
-    top: 0,
+    top: 35,
     right,
     bottom: bottom + 30,
     left,
