@@ -34,7 +34,7 @@ export const AxisHeightBand = () => {
     yScale.bandwidth() > labelFontSize ? labelFontSize : yScale.bandwidth();
 
   const labelLength = getTextWidth(yDimension.label, {
-    fontSize,
+    fontSize: Math.max(labelFontSize, fontSize),
   });
 
   useEffect(() => {
