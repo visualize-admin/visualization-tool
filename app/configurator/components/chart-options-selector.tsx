@@ -584,8 +584,8 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
                     value={d}
                     disabled={
                       "y" in fields &&
-                      "showDots" in fields.y &&
-                      !fields.y.showDots
+                      (!("showDots" in fields.y) ||
+                        ("showDots" in fields.y && !fields.y.showDots))
                     }
                   />
                 ))}
