@@ -29,6 +29,7 @@
     "@lingui/react": "^3.17.2",
     "@mapbox/mapbox-gl-supported": "^2.0.1",
     "@mdx-js/react": "^1.6.22",
+    "@mdxeditor/editor": "^3.20.0",
     "@mui/lab": "^5.0.0-alpha.74",
     "@mui/material": "^5.5.2",
     "@mui/styles": "5.5.1",
