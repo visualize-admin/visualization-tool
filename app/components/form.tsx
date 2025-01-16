@@ -669,11 +669,6 @@ export const MarkdownInput = ({
 
   return (
     <Box sx={{ fontSize: "1rem", pb: 2 }}>
-      {label && name ? (
-        <Label htmlFor={name} smaller sx={{ mb: 1 }}>
-          {label}
-        </Label>
-      ) : null}
       <MDXEditor
         className={classes.root}
         markdown={value ? `${value}` : ""}
@@ -681,10 +676,17 @@ export const MarkdownInput = ({
           toolbarPlugin({
             toolbarClassName: classes.toolbar,
             toolbarContents: () => (
-              <>
-                <BoldItalicUnderlineToggles />
-                <ListsToggle />
-              </>
+              <div>
+                <Box sx={{ display: "flex", gap: 2 }}>
+                  <BoldItalicUnderlineToggles />
+                  <ListsToggle />
+                </Box>
+                {label && name ? (
+                  <Label htmlFor={name} smaller sx={{ mb: 1 }}>
+                    {label}
+                  </Label>
+                ) : null}
+              </div>
             ),
           }),
           headingsPlugin(),
