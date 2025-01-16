@@ -58,8 +58,8 @@ import React, {
 } from "react";
 
 import { useBrowseContext } from "@/browser/context";
-import { BlockTypeMenu } from "@/components/markdown";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
+import { BlockTypeMenu } from "@/components/mdx-editor/block-type-menu";
 import { BANNER_MARGIN_TOP } from "@/components/presence";
 import { TooltipTitle } from "@/components/tooltip-utils";
 import VisuallyHidden from "@/components/visually-hidden";
