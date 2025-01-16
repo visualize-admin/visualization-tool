@@ -4410,6 +4410,11 @@
   resolved "https://registry.yarnpkg.com/@img/sharp-win32-x64/-/sharp-win32-x64-0.33.5.tgz#56f00962ff0c4e0eb93d34a047d29fa995e3e342"
   integrity sha512-MpY/o8/8kj+EcnxwvrP4aTJSWw/aZ7JIGR4aBeZkZw5B7/Jn+tY9/VNwtcoGmdT7GfggGIU4kygOMSbYnOrAbg==
 
+"@interactivethings/swiss-federal-ci@^2.16.1":
+  version "2.16.1"
+  resolved "https://registry.yarnpkg.com/@interactivethings/swiss-federal-ci/-/swiss-federal-ci-2.16.1.tgz#4f595501f5a3519990958d862d2fff093c1e242a"
+  integrity sha512-2WcZRF28sPX6AO8RhuaPCENG5UPVYZNVRxPlNTvZTnxu+UZmSBFot0RalfDZQLjT/0qcY717pxUDws3/2wz1rg==
+
 "@isaacs/cliui@^8.0.2":
   version "8.0.2"
   resolved "https://registry.yarnpkg.com/@isaacs/cliui/-/cliui-8.0.2.tgz#b37667b7bc181c168782259bab42474fbf52b550"
