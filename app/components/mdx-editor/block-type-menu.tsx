@@ -9,7 +9,6 @@ import {
   usePublisher,
 } from "@mdxeditor/editor";
 import {
-  IconButton,
   ListItemText,
   Menu,
   MenuItem,
@@ -19,6 +18,7 @@ import {
 import { $createParagraphNode } from "lexical";
 import { useState } from "react";
 
+import { ToolbarIconButton } from "@/components/mdx-editor/common";
 import { Icon } from "@/icons";
 
 /**
@@ -78,14 +78,14 @@ export const BlockTypeMenu = () => {
 
   return (
     <>
-      <IconButton
+      <ToolbarIconButton
         onClick={(e) => {
           setAnchor(e.currentTarget);
         }}
-        style={{ padding: "2px", borderRadius: 4 }}
+        sx={{ backgroundColor: anchor ? "grey.300" : "transparent" }}
       >
         <Icon name="fontSize" />
-      </IconButton>
+      </ToolbarIconButton>
       <Menu
         open={!!anchor}
         anchorEl={anchor}
