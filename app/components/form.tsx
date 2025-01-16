@@ -58,6 +58,7 @@ import React, {
 } from "react";
 
 import { useBrowseContext } from "@/browser/context";
+import { BlockTypeMenu } from "@/components/markdown";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { BANNER_MARGIN_TOP } from "@/components/presence";
 import { TooltipTitle } from "@/components/tooltip-utils";
@@ -668,7 +669,7 @@ export const MarkdownInput = ({
   const classes = useMarkdownInputStyles();
 
   return (
-    <Box sx={{ fontSize: "1rem", pb: 2 }}>
+    <Box sx={{ fontSize: "1rem", mb: 5 }}>
       <MDXEditor
         className={classes.root}
         markdown={value ? `${value}` : ""}
@@ -679,10 +680,11 @@ export const MarkdownInput = ({
               <div>
                 <Box sx={{ display: "flex", gap: 2 }}>
                   <BoldItalicUnderlineToggles />
+                  <BlockTypeMenu />
                   <ListsToggle />
                 </Box>
                 {label && name ? (
-                  <Label htmlFor={name} smaller sx={{ mb: 1 }}>
+                  <Label htmlFor={name} smaller sx={{ my: 1 }}>
                     {label}
                   </Label>
                 ) : null}
