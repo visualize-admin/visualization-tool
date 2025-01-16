@@ -29,6 +29,7 @@ import Flex from "@/components/flex";
 import {
   Checkbox,
   Input,
+  MarkdownInput,
   Radio,
   Select,
   SelectOption,
@@ -724,7 +725,7 @@ export const TextBlockInputField = ({ locale }: { locale: Locale }) => {
   const label = getFieldLabel(locale);
 
   return (
-    <Input
+    <MarkdownInput
       name={label}
       label={label}
       value={activeBlock.text[locale]}
