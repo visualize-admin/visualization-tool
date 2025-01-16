@@ -1,6 +1,13 @@
 import { Box } from "@mui/material";
 import throttle from "lodash/throttle";
-import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
+import {
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import ReactDOM from "react-dom";
 
 import { Margins, useSize } from "@/charts/shared/use-size";
@@ -36,21 +43,52 @@ const Portal = ({ children }: { children: ReactNode }) => {
   return ReactDOM.createPortal(children, document.body);
 };
 
-const useScroll = () => {
-  const [state, setState] = useState([0, 0]);
+function usePrevious<T>(value: T): T | undefined {
+  const ref = useRef<T | undefined>(undefined);
+
   useEffect(() => {
-    const handleScroll = throttle(() => {
-      setState([window.scrollX, window.scrollY]);
+    ref.current = value; // Update the ref with the current value after the render
+  }, [value]);
+
+  return ref.current; // Return the previous value
+}
+
+const useScroll = (): [
+  number,
+  number,
+  number,
+  number,
+  "none" | "left" | "right",
+  "none" | "up" | "down",
+] => {
+  const [state, setState] = useState([0, 0, 0, 0]);
+  const prevState = usePrevious(state);
+  useEffect(() => {
+    const handleScroll = throttle((event) => {
+      const target = event.target as HTMLElement;
+      if (target.scrollHeight > target.clientHeight) {
+        const bcr = target.getBoundingClientRect();
+        setState([target.scrollLeft, target.scrollTop, bcr.left, bcr.top]);
+      }
     }, 16);
 
-    document.scrollingElement?.addEventListener("scroll", handleScroll);
-    handleScroll();
+    document?.addEventListener("scroll", handleScroll, { capture: true });
+
     return () => {
-      document.scrollingElement?.removeEventListener("scroll", handleScroll);
+      document?.removeEventListener("scroll", handleScroll, { capture: true });
     };
   }, []);
 
-  return state;
+  const direction: ["none" | "left" | "right", "none" | "up" | "down"] = [
+    "none",
+    "none",
+  ];
+  if (prevState && state) {
+    direction[0] = prevState[0] > state[0] ? "right" : "left";
+    direction[1] = prevState[1] > state[1] ? "down" : "up";
+  }
+
+  return [...(state as [number, number, number, number]), ...direction];
 };
 
 const usePosition = () => {
@@ -67,10 +105,13 @@ const usePosition = () => {
     },
     [bcr]
   );
-  const [scrollX, scrollY] = useScroll();
+  const [scrollX, scrollY, , distanceToTop, , directionY] = useScroll();
   const box = useMemo(() => {
-    return { left: bcrX + scrollX, top: bcrY + scrollY };
-  }, [bcrX, bcrY, scrollX, scrollY]);
+    const top =
+      scrollY === 0 && directionY === "up" ? bcrY : distanceToTop - scrollY;
+    return { left: bcrX + scrollX, top };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bcrX, bcrY, scrollX, scrollY, distanceToTop]);
 
   return [box, handleRef] as const;
 };
