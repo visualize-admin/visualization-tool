@@ -1,5 +1,17 @@
 import { Trans } from "@lingui/macro";
 import {
+  BoldItalicUnderlineToggles,
+  headingsPlugin,
+  linkPlugin,
+  listsPlugin,
+  ListsToggle,
+  markdownShortcutPlugin,
+  MDXEditor,
+  quotePlugin,
+  thematicBreakPlugin,
+  toolbarPlugin,
+} from "@mdxeditor/editor";
+import {
   Box,
   BoxProps,
   ButtonBase,
@@ -24,18 +36,18 @@ import {
   styled,
   Switch as MUISwitch,
   SxProps,
+  Theme,
   Tooltip,
   Typography,
   TypographyProps,
 } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import { useId } from "@reach/auto-id";
 import flatten from "lodash/flatten";
 import React, {
-  ChangeEvent,
   ComponentProps,
   createContext,
   forwardRef,
-  KeyboardEvent,
   ReactNode,
   SyntheticEvent,
   useCallback,
@@ -61,6 +73,8 @@ import SvgIcExclamation from "@/icons/components/IcExclamation";
 import { useLocale } from "@/locales/use-locale";
 import { valueComparator } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
+
+import "@mdxeditor/editor/style.css";
 
 export const Label = ({
   htmlFor,
@@ -603,90 +617,6 @@ export const MinimalisticSelect = (props: MinimalisticSelectProps) => {
   );
 };
 
-type KeyDownHandlerProps = {
-  key: string;
-  wrapStart: string;
-  wrapEnd: string;
-};
-
-const makeKeyDownHandler =
-  ({ key, wrapStart, wrapEnd }: KeyDownHandlerProps) =>
-  (
-    e: KeyboardEvent<HTMLInputElement>,
-    {
-      input,
-      onChange,
-      value,
-    }: {
-      input: HTMLInputElement;
-      onChange: (e: ChangeEvent<HTMLInputElement>) => void;
-      value: string;
-    }
-  ) => {
-    if ((e.metaKey || e.ctrlKey) && e.key === key) {
-      e.preventDefault();
-
-      const { selectionStart: start, selectionEnd: end } = input;
-
-      if (start === null || end === null || start === end) {
-        return;
-      }
-
-      const text = value.slice(start, end);
-      const wrappedText = `${wrapStart}${text}${wrapEnd}`;
-      const maybeWrappedText = value.slice(
-        start - wrapStart.length,
-        end + wrapEnd.length
-      );
-
-      if (maybeWrappedText === wrappedText) {
-        const newValue = `${value.slice(0, start - wrapStart.length)}${text}${value.slice(
-          end + wrapEnd.length
-        )}`;
-        // Keep the change in the undo stack, so we can use CMD+Z as expected.
-        // Even though it's deprecated, it still works in most browsers.
-        document.execCommand("insertText", false, text);
-        onChange({
-          currentTarget: { value: newValue },
-        } as ChangeEvent<HTMLInputElement>);
-        setTimeout(() => {
-          input.selectionStart = start - wrapStart.length;
-          input.selectionEnd = start + text.length - wrapStart.length;
-        }, 0);
-
-        return true;
-      }
-
-      const newValue = `${value.slice(0, start)}${wrappedText}${value.slice(end)}`;
-      document.execCommand("insertText", false, wrappedText);
-      onChange({
-        currentTarget: { value: newValue },
-      } as ChangeEvent<HTMLInputElement>);
-      setTimeout(() => {
-        input.selectionStart = start + wrapStart.length;
-        input.selectionEnd = start + text.length + wrapStart.length;
-      }, 0);
-
-      return true;
-    }
-  };
-
-const keyDownHandlers = (
-  [
-    { key: "b", wrapStart: "**", wrapEnd: "**" },
-    { key: "i", wrapStart: "_", wrapEnd: "_" },
-    { key: "u", wrapStart: "<ins>", wrapEnd: "</ins>" },
-    { key: "s", wrapStart: "~~", wrapEnd: "~~" },
-    // Would be better to use `satisfies` here, but it's resulting in syntax errors
-  ] as KeyDownHandlerProps[]
-).map(({ key, wrapStart, wrapEnd }) => {
-  return makeKeyDownHandler({
-    key,
-    wrapStart,
-    wrapEnd,
-  });
-});
-
 export const Input = ({
   label,
   name,
@@ -698,15 +628,6 @@ export const Input = ({
   disabled?: boolean;
 } & FieldProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
-  const handleKeyDown = useEvent((e: KeyboardEvent<HTMLInputElement>) => {
-    const input = inputRef.current;
-
-    if (!input || !onChange || typeof value !== "string") {
-      return;
-    }
-
-    return keyDownHandlers.some((cb) => cb(e, { input, onChange, value }));
-  });
 
   return (
     <Box sx={{ fontSize: "1rem", pb: 2 }}>
@@ -724,7 +645,6 @@ export const Input = ({
         value={value}
         disabled={disabled}
         onChange={onChange}
-        onKeyDown={handleKeyDown}
         inputRef={inputRef}
         sx={{
           width: "100%",
@@ -736,6 +656,85 @@ export const Input = ({
     </Box>
   );
 };
+
+export const MarkdownInput = ({
+  label,
+  name,
+  value,
+  onChange,
+}: {
+  label?: string | ReactNode;
+} & FieldProps) => {
+  const classes = useMarkdownInputStyles();
+
+  return (
+    <Box sx={{ fontSize: "1rem", pb: 2 }}>
+      {label && name ? (
+        <Label htmlFor={name} smaller sx={{ mb: 1 }}>
+          {label}
+        </Label>
+      ) : null}
+      <MDXEditor
+        className={classes.root}
+        markdown={value ? `${value}` : ""}
+        plugins={[
+          toolbarPlugin({
+            toolbarClassName: classes.toolbar,
+            toolbarContents: () => (
+              <>
+                <BoldItalicUnderlineToggles />
+                <ListsToggle />
+              </>
+            ),
+          }),
+          headingsPlugin(),
+          listsPlugin(),
+          linkPlugin(),
+          quotePlugin(),
+          markdownShortcutPlugin(),
+          thematicBreakPlugin(),
+        ]}
+        onChange={(newValue) => {
+          onChange?.({
+            currentTarget: {
+              value: newValue
+                // <u> is not supported in react-markdown we use for rendering.
+                .replaceAll("<u>", "<ins>")
+                .replace("</u>", "</ins>"),
+            },
+          } as any);
+        }}
+      />
+    </Box>
+  );
+};
+
+const useMarkdownInputStyles = makeStyles<Theme>((theme) => ({
+  root: {
+    "& [data-lexical-editor='true']": {
+      padding: "0.5rem 0.75rem",
+      border: `1px solid ${theme.palette.grey[300]}`,
+      borderRadius: 3,
+      backgroundColor: theme.palette.grey[100],
+      "&:focus": {
+        border: `1px solid ${theme.palette.secondary.main}`,
+      },
+      "& *": {
+        margin: "0.25em 0",
+      },
+      "& :first-child": {
+        marginTop: 0,
+      },
+      "& :last-child": {
+        marginBottom: 0,
+      },
+    },
+  },
+  toolbar: {
+    borderRadius: 0,
+    backgroundColor: theme.palette.background.paper,
+  },
+}));
 
 export const SearchField = ({
   id,
