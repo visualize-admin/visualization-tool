@@ -106,9 +106,17 @@ const usePosition = () => {
     [bcr]
   );
   const [scrollX, scrollY, , distanceToTop, , directionY] = useScroll();
+  const scrollTop = document.scrollingElement?.scrollTop ?? 0;
   const box = useMemo(() => {
-    const top =
-      scrollY === 0 && directionY === "up" ? bcrY : distanceToTop - scrollY;
+    const top = (() => {
+      if (scrollTop !== 0) {
+        return scrollTop + bcrY;
+      }
+      if (scrollY === 0 && directionY === "up") {
+        return bcrY;
+      }
+      return distanceToTop - scrollY;
+    })();
     return { left: bcrX + scrollX, top };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bcrX, bcrY, scrollX, scrollY, distanceToTop]);
