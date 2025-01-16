@@ -14,3 +14,39 @@ export const getTextWidth = (text: string, options: { fontSize: number }) => {
 
   return ctx.measureText(text).width;
 };
+
+export const getTextHeight = (
+  text: string,
+  options: {
+    fontSize: number;
+    width?: number;
+    lineHeight?: number | string;
+  }
+) => {
+  const measureDiv = document.createElement("div");
+
+  measureDiv.style.font = `${options.fontSize}px ${fontFamily}`;
+  measureDiv.style.position = "absolute";
+  measureDiv.style.visibility = "hidden";
+  measureDiv.style.lineHeight = options.lineHeight
+    ? typeof options.lineHeight === "number"
+      ? `${options.lineHeight}px`
+      : options.lineHeight
+    : "normal";
+
+  if (options.width) {
+    measureDiv.style.width = `${options.width}px`;
+  } else {
+    measureDiv.style.whiteSpace = "nowrap";
+  }
+
+  measureDiv.textContent = text;
+
+  document.body.appendChild(measureDiv);
+
+  const height = measureDiv.offsetHeight;
+
+  document.body.removeChild(measureDiv);
+
+  return height;
+};

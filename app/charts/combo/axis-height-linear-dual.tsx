@@ -10,7 +10,7 @@ import { useChartState } from "@/charts/shared/chart-state";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { theme } from "@/themes/federal";
-import { getTextWidth } from "@/utils/get-text-width";
+import { getTextHeight, getTextWidth } from "@/utils/get-text-width";
 import { useAxisTitleAdjustments } from "@/utils/use-axis-title-adjustments";
 
 import { TITLE_VPADDING } from "./combo-line-container";
@@ -65,6 +65,9 @@ export const AxisHeightLinearDual = (props: AxisHeightLinearDualProps) => {
     TITLE_HPADDING * (isOverlapping ? Math.floor(overlapAmount) : 2);
 
   const titleWidth = isOverlapping ? axisTitleWidth / overlapAmount : "auto";
+  const axisLabelHeight = getTextHeight(axisTitle, {
+    fontSize: axisLabelFontSize,
+  });
 
   return (
     <>
@@ -73,8 +76,8 @@ export const AxisHeightLinearDual = (props: AxisHeightLinearDualProps) => {
         width={axisTitleWidth + TITLE_HPADDING * 2}
         height={
           (isOverlapping
-            ? axisLabelFontSize * Math.ceil(overlapAmount) + TITLE_VPADDING
-            : axisLabelFontSize + TITLE_VPADDING) *
+            ? axisLabelHeight * Math.ceil(overlapAmount) + TITLE_VPADDING
+            : axisLabelHeight + TITLE_VPADDING) *
             2 +
           TOP_MARGIN
         }
