@@ -720,7 +720,8 @@ const useMarkdownInputStyles = makeStyles<Theme>((theme) => ({
         border: `1px solid ${theme.palette.secondary.main}`,
       },
       "& *": {
-        margin: "0.25em 0",
+        margin: "1em 0",
+        lineHeight: 1.2,
       },
       "& :first-child": {
         marginTop: 0,
