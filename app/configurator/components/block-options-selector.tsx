@@ -32,6 +32,7 @@ export const LayoutBlocksSelector = () => {
 
   return activeBlock ? (
     <div
+      key={activeBlock.key}
       role="tabpanel"
       id={`control-panel-block-${activeBlock.key}`}
       aria-labelledby={`tab-block-${activeBlock.key}`}
