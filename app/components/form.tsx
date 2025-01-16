@@ -3,7 +3,6 @@ import {
   headingsPlugin,
   linkPlugin,
   listsPlugin,
-  ListsToggle,
   markdownShortcutPlugin,
   MDXEditor,
   quotePlugin,
@@ -60,6 +59,7 @@ import { useBrowseContext } from "@/browser/context";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { BlockTypeMenu } from "@/components/mdx-editor/block-type-menu";
 import { BoldItalicUnderlineToggles } from "@/components/mdx-editor/bold-italic-underline-toggles";
+import { ListToggles } from "@/components/mdx-editor/list-toggles";
 import { BANNER_MARGIN_TOP } from "@/components/presence";
 import { TooltipTitle } from "@/components/tooltip-utils";
 import VisuallyHidden from "@/components/visually-hidden";
@@ -681,7 +681,7 @@ export const MarkdownInput = ({
                 <Box sx={{ display: "flex", gap: 2 }}>
                   <BoldItalicUnderlineToggles />
                   <BlockTypeMenu />
-                  <ListsToggle />
+                  <ListToggles />
                 </Box>
                 {label && name ? (
                   <Label htmlFor={name} smaller sx={{ my: 1 }}>
