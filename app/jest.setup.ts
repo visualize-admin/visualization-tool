@@ -19,19 +19,36 @@ jest.mock("react-markdown", () => {
     ReactMarkdown: () => null,
   };
 });
+
 jest.mock("rehype-raw", () => {
   return {
     rehypeRaw: () => null,
   };
 });
+
 jest.mock("rehype-sanitize", () => {
   return {
     rehypeSanitize: () => null,
   };
 });
+
 jest.mock("remark-gfm", () => {
   return {
     remarkGfm: () => null,
+  };
+});
+
+jest.mock("@mdxeditor/editor", () => {
+  return {
+    realmPlugin: () => {},
+  };
+});
+
+jest.mock("@mdxeditor/gurx", () => {
+  return {
+    Action: () => {},
+    Cell: () => {},
+    Signal: () => {},
   };
 });
 
