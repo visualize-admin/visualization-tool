@@ -1,6 +1,5 @@
 import { Trans } from "@lingui/macro";
 import {
-  BoldItalicUnderlineToggles,
   headingsPlugin,
   linkPlugin,
   listsPlugin,
@@ -60,6 +59,7 @@ import React, {
 import { useBrowseContext } from "@/browser/context";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { BlockTypeMenu } from "@/components/mdx-editor/block-type-menu";
+import { BoldItalicUnderlineToggles } from "@/components/mdx-editor/bold-italic-underline-toggles";
 import { BANNER_MARGIN_TOP } from "@/components/presence";
 import { TooltipTitle } from "@/components/tooltip-utils";
 import VisuallyHidden from "@/components/visually-hidden";
