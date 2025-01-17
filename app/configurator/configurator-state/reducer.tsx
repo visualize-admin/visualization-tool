@@ -37,6 +37,7 @@ import {
   GenericField,
   GenericFields,
   isAreaConfig,
+  isColorInConfig,
   isTableConfig,
 } from "@/config-types";
 import { getChartConfig, makeMultiFilter } from "@/config-utils";
@@ -47,6 +48,7 @@ import { Dimension, isGeoDimension, isJoinByComponent } from "@/domain/data";
 import { getOriginalDimension, isJoinByCube } from "@/graphql/join";
 import { PossibleFilterValue } from "@/graphql/query-hooks";
 import { findInHierarchy } from "@/rdf/tree-utils";
+import { theme } from "@/themes/federal";
 import { getCachedComponents } from "@/urql-cache";
 import { assert } from "@/utils/assert";
 import { unreachableError } from "@/utils/unreachable";
@@ -309,7 +311,6 @@ const transitionStepPrevious = (
   if (draft.state === "INITIAL" || draft.state === "SELECTING_DATASET") {
     return draft;
   }
-
   switch (stepTo) {
     case "SELECTING_DATASET":
       return {
@@ -412,7 +413,7 @@ export const handleChartFieldChanged = (
 
 export const handleChartOptionChanged = (
   draft: ConfiguratorState,
-  action: Extract<ConfiguratorStateAction, { type: "CHART_OPTION_CHANGED" }>
+  action: Extract<ConfiguratorStateAction, { type: "COLOR_MAPPING_UPDATED" }>
 ) => {
   if (isConfiguring(draft)) {
     const { locale, path, field, value } = action.value;
@@ -479,21 +480,19 @@ export const updateColorMapping = (
 
       if (fieldValue) {
         colorMapping = mapValueIrisToColor({
-          palette: fieldValue.palette,
+          paletteId: fieldValue.paletteId,
           dimensionValues: values,
           colorMapping: oldColorMapping,
           random,
         });
       }
     } else {
-      const fieldValue: (GenericField & { palette: string }) | undefined = get(
-        chartConfig,
-        path
-      );
+      const fieldValue: (GenericField & { paletteId: string }) | undefined =
+        get(chartConfig, path);
 
       if (fieldValue?.componentId === dimensionId) {
         colorMapping = mapValueIrisToColor({
-          palette: fieldValue.palette,
+          paletteId: fieldValue.paletteId,
           dimensionValues: values,
           colorMapping: oldColorMapping,
           random,
@@ -651,34 +650,56 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         ) {
           chartConfig.interactiveFiltersConfig.calculation.active = false;
           chartConfig.interactiveFiltersConfig.calculation.type = "identity";
+          if (isColorInConfig(chartConfig)) {
+            chartConfig.fields.color.type = "single";
+            if (chartConfig.fields.color.type === "single") {
+              chartConfig.fields.color.color = theme.palette.primary.main;
+            }
+          }
         }
       }
 
       return draft;
 
-    case "CHART_OPTION_CHANGED":
+    case "COLOR_MAPPING_UPDATED":
       return handleChartOptionChanged(draft, action);
 
-    case "CHART_PALETTE_CHANGED":
+    case "COLOR_FIELD_SET":
       if (isConfiguring(draft)) {
         const chartConfig = getChartConfig(draft);
         setWith(
           chartConfig,
-          `fields["${action.value.field}"].${
-            action.value.colorConfigPath
-              ? `${action.value.colorConfigPath}.`
-              : ""
-          }palette`,
-          action.value.palette,
+          `fields.color.paletteId`,
+          action.value.paletteId,
           Object
         );
         setWith(
           chartConfig,
-          `fields["${action.value.field}"].${
-            action.value.colorConfigPath
-              ? `${action.value.colorConfigPath}.`
-              : ""
-          }colorMapping`,
+          `fields.color.${action.value.type === "single" ? "color" : "colorMapping"}`,
+          action.value.type === "single"
+            ? action.value.color
+            : action.value.colorMapping,
+          Object
+        );
+      }
+
+      return draft;
+    case "CHART_PALETTE_CHANGED":
+      if (isConfiguring(draft)) {
+        const chartConfig = getChartConfig(draft);
+        const commonPath = `fields["${action.value.field}"].${
+          action.value.colorConfigPath ? `${action.value.colorConfigPath}.` : ""
+        }`;
+
+        setWith(
+          chartConfig,
+          `${commonPath}palette`,
+          action.value.paletteId,
+          Object
+        );
+        setWith(
+          chartConfig,
+          `${commonPath}colorMapping`,
           action.value.colorMapping,
           Object
         );

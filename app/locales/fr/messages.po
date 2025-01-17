@@ -326,6 +326,15 @@ msgstr "Axe horizontal"
 msgid "controls.axis.vertical"
 msgstr "Axe vertical"
 
+#: app/configurator/components/field-i18n.ts
+msgid "controls.bar.grouped"
+msgstr ""
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.bar.stacked"
+msgstr ""
+
+#: app/charts/chart-config-ui-options.ts
 #: app/charts/chart-config-ui-options.ts
 msgid "controls.calculation.disabled-by-grouped"
 msgstr "Le mode 100% ne peut pas être utilisé avec une mise en page groupée."
@@ -828,6 +837,10 @@ msgstr "Colonnes"
 msgid "controls.section.columnstyle"
 msgstr "Style de la colonne"
 
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.data-points"
+msgstr "Points de données"
+
 #: app/components/chart-filters-list.tsx
 #: app/components/chart-filters-list.tsx
 #: app/configurator/components/chart-configurator.tsx
@@ -851,6 +864,10 @@ msgstr "Ensembles de données"
 #: app/configurator/components/annotators.tsx
 msgid "controls.section.description"
 msgstr "Titre & description"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.dots-size"
+msgstr "Sélectionner une taille"
 
 #: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/chart-options-selector.tsx
@@ -902,6 +919,10 @@ msgid "controls.section.show-confidence-interval.explanation"
 msgstr "Afficher les incertitudes s'étendant des points de données pour représenter les intervalles de confiance"
 
 #: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.show-dots"
+msgstr "Afficher les points de données"
+
+#: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.show-standard-error"
 msgstr "Afficher l'erreur type"
 
@@ -936,6 +957,7 @@ msgstr "Segmentation"
 
 #: app/charts/chart-config-ui-options.ts
 #: app/charts/chart-config-ui-options.ts
+#: app/charts/chart-config-ui-options.ts
 msgid "controls.segment.stacked.disabled-by-scale-type"
 msgstr "Le graphique en barres empilées ne peut être activé que si la dimension de l'axe vertical a une échelle de type ratio."
 
@@ -948,6 +970,10 @@ msgstr "Mode de visualisation"
 #: app/configurator/table/table-chart-configurator.tsx
 msgid "controls.select.chart.type"
 msgstr "Type de graphique"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.select.color"
+msgstr "Sélectionner une couleur"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.select.column.layout"
@@ -1545,6 +1571,8 @@ msgid "logo.swiss.confederation"
 msgstr "Logo de la Confédération Suisse"
 
 #: app/components/chart-footnotes.tsx
+#: app/components/chart-published.tsx
+#: app/components/chart-shared.tsx
 msgid "metadata.link.created.with"
 msgstr "Créé avec"
 

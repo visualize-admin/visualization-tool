@@ -4,6 +4,8 @@ import {
   scaleBand,
   ScaleLinear,
   scaleLinear,
+  ScaleOrdinal,
+  scaleOrdinal,
   scaleTime,
 } from "d3-scale";
 import orderBy from "lodash/orderBy";
@@ -41,6 +43,7 @@ import {
   useFormatNumber,
   useTimeFormatUnit,
 } from "@/formatters";
+import { getPalette } from "@/palettes";
 import {
   getSortingOrders,
   makeDimensionValueSorters,
@@ -56,6 +59,7 @@ export type ColumnsState = CommonChartState &
     xScale: ScaleBand<string>;
     xScaleInteraction: ScaleBand<string>;
     yScale: ScaleLinear<number, number>;
+    colors: ScaleOrdinal<string, string>;
     getAnnotationInfo: (d: Observation) => TooltipInfo;
   };
 
@@ -98,12 +102,24 @@ const useColumnsState = (
 
   const {
     xScale,
+    colors,
     yScale,
     paddingYScale,
     xScaleTimeRange,
     xScaleInteraction,
     xTimeRangeDomainLabels,
   } = useMemo(() => {
+    const colors = scaleOrdinal<string, string>();
+
+    if (fields.color?.type === "single") {
+      colors.range(
+        getPalette({
+          paletteId: fields.color?.paletteId,
+          colorField: fields.color,
+        })
+      );
+    }
+
     const sorters = makeDimensionValueSorters(xDimension, {
       sorting: fields.x.sorting,
       measureBySegment: sumsByX,
@@ -162,6 +178,7 @@ const useColumnsState = (
       .nice();
 
     return {
+      colors,
       xScale,
       yScale,
       paddingYScale,
@@ -170,6 +187,7 @@ const useColumnsState = (
       xTimeRangeDomainLabels,
     };
   }, [
+    fields.color,
     getX,
     getXLabel,
     getXAsDate,
@@ -261,6 +279,7 @@ const useColumnsState = (
   };
 
   return {
+    colors,
     chartType: "column",
     bounds,
     chartData,

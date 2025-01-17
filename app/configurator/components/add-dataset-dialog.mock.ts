@@ -106,6 +106,11 @@ export const photovoltaikChartStateMock: ConfiguratorStateConfiguringChart = {
           componentId:
             "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/AnzahlAnlagen",
         },
+        color: {
+          type: "single",
+          paletteId: "category10",
+          color: "#1f77b4",
+        },
       },
     },
   ],

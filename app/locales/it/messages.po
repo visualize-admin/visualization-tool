@@ -326,6 +326,15 @@ msgstr "Asse orizzontale"
 msgid "controls.axis.vertical"
 msgstr "Asse verticale"
 
+#: app/configurator/components/field-i18n.ts
+msgid "controls.bar.grouped"
+msgstr ""
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.bar.stacked"
+msgstr ""
+
+#: app/charts/chart-config-ui-options.ts
 #: app/charts/chart-config-ui-options.ts
 msgid "controls.calculation.disabled-by-grouped"
 msgstr "La modalità 100% non può essere utilizzata con un layout raggruppato."
@@ -828,6 +837,10 @@ msgstr "Colonne"
 msgid "controls.section.columnstyle"
 msgstr "Stile della colonna"
 
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.data-points"
+msgstr "Punti dati"
+
 #: app/components/chart-filters-list.tsx
 #: app/components/chart-filters-list.tsx
 #: app/configurator/components/chart-configurator.tsx
@@ -851,6 +864,10 @@ msgstr "Fonti di dati"
 #: app/configurator/components/annotators.tsx
 msgid "controls.section.description"
 msgstr "Titolo e descrizione"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.dots-size"
+msgstr "Selezionare una taglia"
 
 #: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/chart-options-selector.tsx
@@ -902,6 +919,10 @@ msgid "controls.section.show-confidence-interval.explanation"
 msgstr "Mostra le incertezze che si estendono dai punti dati per rappresentare gli intervalli di confidenza"
 
 #: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.show-dots"
+msgstr "Mostra i punti dati"
+
+#: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.show-standard-error"
 msgstr "Mostra l'errore standard"
 
@@ -936,6 +957,7 @@ msgstr "Segmentazione"
 
 #: app/charts/chart-config-ui-options.ts
 #: app/charts/chart-config-ui-options.ts
+#: app/charts/chart-config-ui-options.ts
 msgid "controls.segment.stacked.disabled-by-scale-type"
 msgstr "Il layout impilato può essere abilitato solo se la dimensione mappata sull'asse verticale ha una scala di rapporto."
 
@@ -948,6 +970,10 @@ msgstr "Modalità di visualizzazione"
 #: app/configurator/table/table-chart-configurator.tsx
 msgid "controls.select.chart.type"
 msgstr "Tipo di grafico"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.select.color"
+msgstr "Seleziona un colore"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.select.column.layout"
@@ -1545,6 +1571,8 @@ msgid "logo.swiss.confederation"
 msgstr "Logo della Confederazione svizzera"
 
 #: app/components/chart-footnotes.tsx
+#: app/components/chart-published.tsx
+#: app/components/chart-shared.tsx
 msgid "metadata.link.created.with"
 msgstr "Creato con"
 

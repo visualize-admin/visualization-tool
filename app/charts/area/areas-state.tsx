@@ -248,7 +248,8 @@ const useAreasState = (
     const xScaleTimeRange = scaleTime().domain(xScaleTimeRangeDomain);
     const colors = scaleOrdinal<string, string>();
 
-    if (segmentDimension && fields.segment?.colorMapping) {
+    if (segmentDimension && fields.color?.type === "segment") {
+      const segmentColor = fields.color;
       const orderedSegmentLabelsAndColors = allSegments.map((segment) => {
         const dvIri =
           segmentsByAbbreviationOrLabel.get(segment)?.value ??
@@ -257,7 +258,7 @@ const useAreasState = (
 
         return {
           label: segment,
-          color: fields.segment?.colorMapping![dvIri] ?? schemeCategory10[0],
+          color: segmentColor.colorMapping[dvIri] ?? schemeCategory10[0],
         };
       });
 
@@ -265,7 +266,12 @@ const useAreasState = (
       colors.range(orderedSegmentLabelsAndColors.map((s) => s.color));
     } else {
       colors.domain(allSegments);
-      colors.range(getPalette(fields.segment?.palette));
+      colors.range(
+        getPalette({
+          paletteId: fields.color?.paletteId,
+          colorField: fields.color,
+        })
+      );
     }
 
     colors.unknown(() => undefined);
@@ -276,8 +282,7 @@ const useAreasState = (
       xScaleTimeRange,
     };
   }, [
-    fields.segment?.palette,
-    fields.segment?.colorMapping,
+    fields.color,
     getX,
     scalesData,
     timeRangeData,
