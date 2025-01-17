@@ -326,6 +326,15 @@ msgstr "Horizontal Axis"
 msgid "controls.axis.vertical"
 msgstr "Vertical Axis"
 
+#: app/configurator/components/field-i18n.ts
+msgid "controls.bar.grouped"
+msgstr "Grouped"
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.bar.stacked"
+msgstr "Stacked"
+
+#: app/charts/chart-config-ui-options.ts
 #: app/charts/chart-config-ui-options.ts
 msgid "controls.calculation.disabled-by-grouped"
 msgstr "100% mode can't be used with grouped layout."
@@ -828,6 +837,10 @@ msgstr "Columns"
 msgid "controls.section.columnstyle"
 msgstr "Column Style"
 
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.data-points"
+msgstr "Data Points"
+
 #: app/components/chart-filters-list.tsx
 #: app/components/chart-filters-list.tsx
 #: app/configurator/components/chart-configurator.tsx
@@ -851,6 +864,10 @@ msgstr "Datasets"
 #: app/configurator/components/annotators.tsx
 msgid "controls.section.description"
 msgstr "Title & Description"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.dots-size"
+msgstr "Select a Size"
 
 #: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/chart-options-selector.tsx
@@ -902,6 +919,10 @@ msgid "controls.section.show-confidence-interval.explanation"
 msgstr "Show uncertainties extending from data points to represent confidence intervals"
 
 #: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.show-dots"
+msgstr "Show Data Points"
+
+#: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.show-standard-error"
 msgstr "Show standard error"
 
@@ -934,6 +955,7 @@ msgstr "Please add a title or description."
 msgid "controls.segment"
 msgstr "Segmentation"
 
+#: app/charts/chart-config-ui-options.ts
 #: app/charts/chart-config-ui-options.ts
 #: app/charts/chart-config-ui-options.ts
 msgid "controls.segment.stacked.disabled-by-scale-type"
@@ -1549,6 +1571,8 @@ msgid "logo.swiss.confederation"
 msgstr "Logo of the Swiss Confederation"
 
 #: app/components/chart-footnotes.tsx
+#: app/components/chart-published.tsx
+#: app/components/chart-shared.tsx
 msgid "metadata.link.created.with"
 msgstr "Created with"
 
