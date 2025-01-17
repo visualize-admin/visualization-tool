@@ -35,10 +35,6 @@ msgstr "[ Pas de description ]"
 msgid "annotation.add.title"
 msgstr "[ Pas de titre ]"
 
-#: app/configurator/components/beta-tag.tsx
-msgid "beta-tag.tooltip"
-msgstr "Cette fonctionnalité est actuellement en cours de développement, vous pouvez rencontrer des bugs et des problèmes de performances."
-
 #: app/browser/dataset-browse.tsx
 msgid "browse-panel.organizations"
 msgstr "Organisations"
@@ -683,19 +679,19 @@ msgstr "Dashboard"
 
 #: app/configurator/components/preview-breakpoint.tsx
 msgid "controls.layout.preview-lg"
-msgstr "Aperçu petit écran de bureau"
+msgstr "Aperçu en grande largeur"
 
 #: app/configurator/components/preview-breakpoint.tsx
 msgid "controls.layout.preview-md"
-msgstr "Aperçu tablette"
+msgstr "Aperçu en largeur moyenne"
 
 #: app/configurator/components/preview-breakpoint.tsx
 msgid "controls.layout.preview-sm"
-msgstr "Aperçu mobile"
+msgstr "Aperçu en petite largeur"
 
 #: app/configurator/components/preview-breakpoint.tsx
 msgid "controls.layout.preview-xl"
-msgstr "Prévisualisation en utilisant une largeur extra large"
+msgstr "Aperçu en très grande largeur"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.layout.singleURLs"
@@ -916,7 +912,7 @@ msgstr "Afficher l'intervalle de confiance"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.show-confidence-interval.explanation"
-msgstr "Afficher les incertitudes s'étendant des points de données pour représenter les intervalles de confiance"
+msgstr "Afficher les incertitudes"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.show-dots"
@@ -1171,7 +1167,7 @@ msgstr "Mots clés"
 
 #: app/browser/dataset-browse.tsx
 msgid "dataset-result.dimension-joined-by"
-msgstr "Contient des valeurs de"
+msgstr "Rejoint via"
 
 #: app/browser/dataset-browse.tsx
 msgid "dataset-result.shared-dimensions"
@@ -1328,12 +1324,24 @@ msgid "flashes.couldnt-load-cube.view-cube-checker"
 msgstr "Voir dans Cube Validator"
 
 #: app/components/footer.tsx
-msgid "footer.institution.name"
-msgstr "Office fédéral de l'environnement OFEV"
+msgid "footer.about_us.label"
+msgstr "À propos de ce portail"
 
 #: app/components/footer.tsx
-msgid "footer.institution.url"
-msgstr "https://www.bafu.admin.ch/bafu/fr/home.html"
+msgid "footer.about_us.text"
+msgstr "Le portail visualize.admin.ch permet de visualiser les Open Government Data suisses fournies par le LINDAS Linked Data Service. Les Open Government Data (OGD) sont des données mises gratuitement à la disposition du public dans un format lisible par ordinateur."
+
+#: app/components/footer.tsx
+msgid "footer.button.lindas"
+msgstr "Services de données liées LINDAS"
+
+#: app/components/footer.tsx
+msgid "footer.contact.title"
+msgstr "Rester informé"
+
+#: app/components/footer.tsx
+msgid "footer.information.title"
+msgstr "Plus d'informations"
 
 #: app/components/footer.tsx
 msgid "footer.status"
@@ -1506,7 +1514,7 @@ msgstr "Gardez à l'esprit que la suppression de cette visualisation affectera t
 
 #: app/login/components/login-menu.tsx
 msgid "login.profile.feature-request"
-msgstr "Requête de fonctionnalité"
+msgstr "Demande de fonctionnalité"
 
 #: app/login/components/login-menu.tsx
 msgid "login.profile.feedback"
@@ -1610,7 +1618,7 @@ msgstr "Supprimer la bordure"
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.remove-border.warn"
-msgstr "Pour intégrer des visualisations dans des systèmes sans frontière."
+msgstr "Pour intégrer des visualisations sans bordure dans des systèmes externes."
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.responsive"
