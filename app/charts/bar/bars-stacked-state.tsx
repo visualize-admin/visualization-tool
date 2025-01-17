@@ -405,7 +405,7 @@ const useBarsStackedState = (
   });
   const right = 40;
   const margins = {
-    top: 55,
+    top: 65,
     right,
     bottom: bottom + 30,
     left,

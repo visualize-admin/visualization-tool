@@ -94,7 +94,7 @@ export const AxisHeightBand = () => {
   return (
     <>
       <g ref={ref} />
-      <foreignObject x={0} y={0} width={labelLength} height={20}>
+      <foreignObject x={0} y={25} width={labelLength} height={20}>
         <OpenMetadataPanelWrapper>
           <span style={{ fontSize: `${axisLabelFontSize}px` }}>
             {yDimension.label}
