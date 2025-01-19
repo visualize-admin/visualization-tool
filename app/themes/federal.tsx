@@ -463,14 +463,17 @@ theme.components = {
         borderRadius: (theme.shape.borderRadius as number) * 2,
         padding: "0 6px",
         minHeight: 48,
+        "&.Mui-focused": {
+          borderColor: theme.palette.secondary.main,
+        },
       },
       sizeSmall: {
         minHeight: 40,
         fontSize: `${theme.typography.body2.fontSize} !important`,
         lineHeight: `${theme.typography.body2.lineHeight} !important`,
       },
-      focused: {
-        outline: "3px solid #333333",
+      input: {
+        padding: 0,
       },
     },
   },
