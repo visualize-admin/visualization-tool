@@ -8,7 +8,7 @@ import {
   Footer as SwissFederalCiFooter,
 } from "@interactivethings/swiss-federal-ci/dist/components";
 import { t } from "@lingui/macro";
-import { Link } from "@mui/material";
+import { Link, SxProps } from "@mui/material";
 
 import contentRoutes from "@/content-routes.json";
 import { BUILD_COMMIT, BUILD_GITHUB_REPO, BUILD_VERSION } from "@/domain/env";
@@ -27,7 +27,7 @@ const mkVersionLink = () => {
   return { title: `${BUILD_VERSION} ${commitLink}`, href, external: true };
 };
 
-export const Footer = () => {
+export const Footer = ({ sx }: { sx?: SxProps }) => {
   const locale = useLocale();
   const legalLink = {
     title: contentRoutes.legal[locale].title,
@@ -42,6 +42,7 @@ export const Footer = () => {
   const versionLink = mkVersionLink();
   return (
     <SwissFederalCiFooter
+      ContentWrapperProps={{ sx: sx ?? undefined }}
       bottomLinks={[versionLink, imprintLink, legalLink]}
       nCols={3}
     >
