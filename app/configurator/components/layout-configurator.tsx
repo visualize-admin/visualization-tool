@@ -25,6 +25,7 @@ import { DataFilterGenericDimensionProps } from "@/charts/shared/chart-data-filt
 import { useCombinedTemporalDimension } from "@/charts/shared/use-combined-temporal-dimension";
 import { AddButton } from "@/components/add-button";
 import { Select } from "@/components/form";
+import { Markdown } from "@/components/markdown";
 import {
   FREE_CANVAS_BREAKPOINTS,
   generateLayout,
@@ -581,7 +582,11 @@ const LayoutBlocksConfigurator = () => {
                 key={block.key}
                 // TODO: standardize the id with block options selector
                 id={`tab-block-${block.key}`}
-                mainLabel={block.text[locale]}
+                mainLabel={
+                  <div style={{ pointerEvents: "none" }}>
+                    <Markdown>{block.text[locale]}</Markdown>
+                  </div>
+                }
                 checked={state.layout.activeField === block.key}
                 onClick={() => onClick(block.key)}
                 value={state.layout.activeField ?? ""}
