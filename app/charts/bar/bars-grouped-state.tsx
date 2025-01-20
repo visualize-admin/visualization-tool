@@ -390,12 +390,12 @@ const useBarsGroupedState = (
 
     const yAnchorRaw = (yScale(y) as number) + bw * 0.5;
     const [xMin, xMax] = extent(xValues, (d) => d ?? 0) as [number, number];
-    const xAnchor = isMobile ? chartHeight : xScale((xMin + xMax) * 0.5);
+    const xAnchor = isMobile ? chartHeight : xScale(xMin + xMax);
     const placement = isMobile
       ? MOBILE_TOOLTIP_PLACEMENT
       : getCenteredTooltipPlacement({
           chartWidth,
-          xAnchor: yAnchorRaw,
+          xAnchor,
           topAnchor: !fields.segment,
         });
 
