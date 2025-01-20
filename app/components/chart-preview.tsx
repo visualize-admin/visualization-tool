@@ -7,8 +7,9 @@ import {
   useDroppable,
 } from "@dnd-kit/core";
 import { Trans } from "@lingui/macro";
-import { Box } from "@mui/material";
+import { Box, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import clsx from "clsx";
 import Head from "next/head";
 import {
   forwardRef,
@@ -18,6 +19,7 @@ import {
   useRef,
   useState,
 } from "react";
+import Markdown from "react-markdown";
 
 import { DataSetTable } from "@/browse/datatable";
 import { LoadingStateProvider } from "@/charts/shared/chart-loading-state";
@@ -28,10 +30,13 @@ import {
   ChartPanelLayout,
   ChartWrapper,
   ChartWrapperProps,
+  TEXT_BLOCK_CONTENT_CLASS,
+  TEXT_BLOCK_WRAPPER_CLASS,
 } from "@/components/chart-panel";
 import {
   ChartControls,
   ChartMoreButton,
+  CHART_GRID_ROW_COUNT,
   useChartStyles,
 } from "@/components/chart-shared";
 import {
@@ -41,6 +46,7 @@ import {
 } from "@/components/chart-table-preview";
 import { ChartWithFilters } from "@/components/chart-with-filters";
 import { DashboardInteractiveFilters } from "@/components/dashboard-interactive-filters";
+import { BlockMoreButton } from "@/components/dashboard-shared";
 import DebugPanel from "@/components/debug-panel";
 import { DragHandle } from "@/components/drag-handle";
 import Flex from "@/components/flex";
@@ -57,7 +63,10 @@ import {
   DataSource,
   hasChartConfigs,
   isConfiguring,
+  isLayouting,
   Layout,
+  LayoutBlock,
+  LayoutTextBlock,
   useConfiguratorState,
 } from "@/configurator";
 import { Description, Title } from "@/configurator/components/annotators";
@@ -71,6 +80,7 @@ import { InteractiveFiltersChartProvider } from "@/stores/interactive-filters";
 import { useTransitionStore } from "@/stores/transition";
 import { useTheme } from "@/themes";
 import { createSnapCornerToCursor } from "@/utils/dnd";
+import useEvent from "@/utils/use-event";
 import { DISABLE_SCREENSHOT_ATTR_KEY } from "@/utils/use-screenshot";
 
 export const ChartPreview = ({ dataSource }: { dataSource: DataSource }) => {
@@ -118,11 +128,21 @@ const snapCornerToCursor = createSnapCornerToCursor({
   xOffset: -DRAG_OVERLAY_WIDTH,
 });
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles<Theme, { layouting?: boolean }>(() => ({
   canvasChartPanelLayout: {
     // Provide some space at the bottom of the canvas layout to make it possible
     // to resize vertically the last charts
     paddingBottom: "10rem",
+  },
+  textBlockWrapper: {
+    // Make sure the text block doesn't cause the grid to grow.
+    gridRow: `span ${CHART_GRID_ROW_COUNT + 1}`,
+    display: "flex",
+    padding: "0.75rem",
+    cursor: ({ layouting }) => (layouting ? "pointer" : "default"),
+    "&:hover": {
+      textDecoration: ({ layouting }) => (layouting ? "underline" : "none"),
+    },
   },
 }));
 
@@ -135,13 +155,15 @@ const DashboardPreview = ({
   layoutType: Extract<Layout, { type: "dashboard" }>["layout"];
   editing?: boolean;
 }) => {
+  const locale = useLocale();
   const [state, dispatch] = useConfiguratorState(hasChartConfigs);
+  const layouting = isLayouting(state);
   const theme = useTheme();
   const transition = useTransitionStore();
   const [isDragging, setIsDragging] = useState(false);
   const [activeChartKey, setActiveChartKey] = useState<string | null>(null);
   const [over, setOver] = useState<Over | null>(null);
-  const classes = useStyles();
+  const classes = useStyles({ layouting });
   const renderChart = useCallback(
     (chartConfig: ChartConfig) => {
       return layoutType === "canvas" ? (
@@ -164,6 +186,72 @@ const DashboardPreview = ({
     },
     [dataSource, editing, layoutType, state.layout.type]
   );
+  const handleTextBlockClick = useEvent((block: LayoutTextBlock) => {
+    dispatch({
+      type: "LAYOUT_ACTIVE_FIELD_CHANGED",
+      value: block.key,
+    });
+  });
+  const renderTextBlock = useCallback(
+    (block: LayoutTextBlock) => {
+      const text = block.text[locale];
+
+      return (
+        <div
+          // Important, otherwise ReactGrid breaks.
+          key={block.key}
+          id={block.key}
+          className={clsx(classes.textBlockWrapper, TEXT_BLOCK_WRAPPER_CLASS)}
+          onClick={(e) => {
+            if (e.isPropagationStopped()) {
+              return;
+            }
+
+            handleTextBlockClick(block);
+          }}
+        >
+          <div
+            className={TEXT_BLOCK_CONTENT_CLASS}
+            style={{ flexGrow: 1, height: "fit-content" }}
+          >
+            {text ? (
+              <Markdown>{text}</Markdown>
+            ) : (
+              <Trans id="annotation.add.text">[ Add text ]</Trans>
+            )}
+          </div>
+          {layouting ? (
+            <ActionElementsContainer>
+              <BlockMoreButton blockKey={block.key} />
+              <DragHandle
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+              />
+            </ActionElementsContainer>
+          ) : null}
+        </div>
+      );
+    },
+    [classes.textBlockWrapper, handleTextBlockClick, layouting, locale]
+  );
+  const renderBlock = useCallback(
+    (block: LayoutBlock) => {
+      switch (block.type) {
+        case "chart":
+          const chartConfig = state.chartConfigs.find(
+            (c) => c.key === block.key
+          ) as ChartConfig;
+          return renderChart(chartConfig);
+        case "text":
+          return renderTextBlock(block);
+        default:
+          const _exhaustiveCheck: never = block;
+          return _exhaustiveCheck;
+      }
+    },
+    [state.chartConfigs, renderChart, renderTextBlock]
+  );
 
   if (layoutType === "canvas") {
     return (
@@ -171,8 +259,7 @@ const DashboardPreview = ({
       // to properly initialize the height of the new charts
       <div key={state.chartConfigs.map((c) => c.key).join(",")}>
         <ChartPanelLayout
-          chartConfigs={state.chartConfigs}
-          renderChart={renderChart}
+          renderBlock={renderBlock}
           layoutType={layoutType}
           className={classes.canvasChartPanelLayout}
         />
@@ -215,11 +302,7 @@ const DashboardPreview = ({
         });
       }}
     >
-      <ChartPanelLayout
-        chartConfigs={state.chartConfigs}
-        renderChart={renderChart}
-        layoutType={layoutType}
-      />
+      <ChartPanelLayout renderBlock={renderBlock} layoutType={layoutType} />
       {isDragging && (
         <DragOverlay
           zIndex={1000}
@@ -337,17 +420,22 @@ const SingleURLsPreview = ({
   layout: Extract<Layout, { type: "singleURLs" }>;
 }) => {
   const [state, dispatch] = useConfiguratorState(hasChartConfigs);
-  const renderChart = useCallback(
-    (chartConfig: ChartConfig) => {
-      const checked = layout.publishableChartKeys.includes(chartConfig.key);
+  const renderBlock = useCallback(
+    (block: LayoutBlock) => {
+      if (block.type !== "chart") {
+        return <></>;
+      }
+
+      const { key } = block;
+      const checked = layout.publishableChartKeys.includes(key);
       const { publishableChartKeys: keys } = layout;
-      const { key } = chartConfig;
+
       return (
         <ChartTablePreviewProvider>
           <ChartWrapper chartKey={key}>
             <ChartPreviewInner
               dataSource={dataSource}
-              chartKey={chartConfig.key}
+              chartKey={key}
               actionElementSlot={
                 <Checkbox
                   checked={checked}
@@ -376,13 +464,7 @@ const SingleURLsPreview = ({
     [dataSource, dispatch, layout, state.chartConfigs]
   );
 
-  return (
-    <ChartPanelLayout
-      layoutType="vertical"
-      chartConfigs={state.chartConfigs}
-      renderChart={renderChart}
-    />
-  );
+  return <ChartPanelLayout layoutType="vertical" renderBlock={renderBlock} />;
 };
 
 const ChartPreviewInner = ({

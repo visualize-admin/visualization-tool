@@ -1,18 +1,10 @@
-import { Trans } from "@lingui/macro";
 import { Box, BoxProps, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 import { selectAll } from "d3-selection";
 import isEqual from "lodash/isEqual";
-import {
-  forwardRef,
-  HTMLProps,
-  PropsWithChildren,
-  useCallback,
-  useEffect,
-} from "react";
+import { forwardRef, HTMLProps, PropsWithChildren, useEffect } from "react";
 
-import { ActionElementsContainer } from "@/components/action-elements-container";
 import {
   ChartPanelLayoutCanvas,
   chartPanelLayoutGridClasses,
@@ -22,19 +14,10 @@ import { ChartPanelLayoutVertical } from "@/components/chart-panel-layout-vertic
 import { ChartSelectionTabs } from "@/components/chart-selection-tabs";
 import { CHART_GRID_ROW_COUNT } from "@/components/chart-shared";
 import { DashboardInteractiveFilters } from "@/components/dashboard-interactive-filters";
-import { BlockMoreButton } from "@/components/dashboard-shared";
-import { DragHandle } from "@/components/drag-handle";
-import { Markdown } from "@/components/markdown";
 import { ROW_HEIGHT } from "@/components/react-grid";
-import { ChartConfig, Layout, LayoutDashboard } from "@/config-types";
-import {
-  hasChartConfigs,
-  isLayouting,
-  LayoutBlock,
-  LayoutTextBlock,
-} from "@/configurator";
-import { useConfiguratorState, useLocale } from "@/src";
-import useEvent from "@/utils/use-event";
+import { Layout, LayoutDashboard } from "@/config-types";
+import { hasChartConfigs, isLayouting, LayoutBlock } from "@/configurator";
+import { useConfiguratorState } from "@/src";
 
 const useStyles = makeStyles<Theme, { editable?: boolean }>((theme) => ({
   panelLayout: {
@@ -109,8 +92,7 @@ export const ChartWrapper = forwardRef<HTMLDivElement, ChartWrapperProps>(
 
 type ChartPanelLayoutProps = PropsWithChildren<{
   layoutType: LayoutDashboard["layout"];
-  chartConfigs: ChartConfig[];
-  renderChart: (chartConfig: ChartConfig) => JSX.Element;
+  renderBlock: (block: LayoutBlock) => JSX.Element;
 }> &
   HTMLProps<HTMLDivElement>;
 
@@ -129,102 +111,31 @@ const Wrappers: Record<
   canvas: ChartPanelLayoutCanvas,
 };
 
-const TEXT_BLOCK_WRAPPER_CLASS = "text-block-wrapper";
-const TEXT_BLOCK_CONTENT_CLASS = "text-block-content";
+export const TEXT_BLOCK_WRAPPER_CLASS = "text-block-wrapper";
+export const TEXT_BLOCK_CONTENT_CLASS = "text-block-content";
 
 export const ChartPanelLayout = ({
   children,
-  renderChart,
-  chartConfigs,
+  renderBlock,
   className,
   layoutType,
   ...rest
 }: ChartPanelLayoutProps) => {
-  const locale = useLocale();
-  const [state, dispatch] = useConfiguratorState(hasChartConfigs);
+  const [state] = useConfiguratorState(hasChartConfigs);
   const layouting = isLayouting(state);
   const classes = useStyles({ editable: layouting });
   const Wrapper = Wrappers[layoutType];
   const { layout } = state;
   const { blocks } = layout;
 
-  const handleTextBlockClick = useEvent((block: LayoutTextBlock) => {
-    dispatch({
-      type: "LAYOUT_ACTIVE_FIELD_CHANGED",
-      value: block.key,
-    });
-  });
-
-  const renderTextBlock = useCallback(
-    (block: LayoutTextBlock) => {
-      const text = block.text[locale];
-
-      return (
-        <div
-          // Important, otherwise ReactGrid breaks.
-          key={block.key}
-          id={block.key}
-          className={clsx(classes.textBlockWrapper, TEXT_BLOCK_WRAPPER_CLASS)}
-          onClick={(e) => {
-            if (e.isPropagationStopped()) {
-              return;
-            }
-
-            handleTextBlockClick(block);
-          }}
-        >
-          <div
-            className={TEXT_BLOCK_CONTENT_CLASS}
-            style={{ flexGrow: 1, height: "fit-content" }}
-          >
-            {text ? (
-              <Markdown>{text}</Markdown>
-            ) : (
-              <Trans id="annotation.add.text">[ Add text ]</Trans>
-            )}
-          </div>
-          {layouting ? (
-            <ActionElementsContainer>
-              <BlockMoreButton blockKey={block.key} />
-              <DragHandle
-                onClick={(e) => {
-                  e.stopPropagation();
-                }}
-              />
-            </ActionElementsContainer>
-          ) : null}
-        </div>
-      );
-    },
-    [classes.textBlockWrapper, handleTextBlockClick, layouting, locale]
-  );
-
   useSyncTextBlockHeight();
-
-  const renderBlock = useCallback(
-    (block: LayoutBlock) => {
-      switch (block.type) {
-        case "chart":
-          const chartConfig = chartConfigs.find(
-            (c) => c.key === block.key
-          ) as ChartConfig;
-          return renderChart(chartConfig);
-        case "text":
-          return renderTextBlock(block);
-        default:
-          const _exhaustiveCheck: never = block;
-          return _exhaustiveCheck;
-      }
-    },
-    [chartConfigs, renderChart, renderTextBlock]
-  );
 
   return (
     <div className={clsx(classes.panelLayout, className)} {...rest}>
       {state.layout.type === "dashboard" ? (
         <DashboardInteractiveFilters
           // We want to completely remount this component if chartConfigs change
-          key={chartConfigs.map((x) => x.key).join(",")}
+          key={state.chartConfigs.map((x) => x.key).join(",")}
         />
       ) : null}
       <Wrapper blocks={blocks} renderBlock={renderBlock} />
