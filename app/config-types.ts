@@ -529,6 +529,8 @@ const CustomPalette = t.type({
   colors: t.array(t.string),
 });
 
+export type CustomPaletteType = t.TypeOf<typeof CustomPalette>;
+
 export const PaletteType = t.union([
   DivergingPalette,
   SequentialPalette,
