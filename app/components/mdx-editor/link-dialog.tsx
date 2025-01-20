@@ -191,9 +191,7 @@ const state$ = Cell<InactiveLinkDialog | PreviewLinkDialog | EditLinkDialog>(
           editor?.update(
             () => {
               const linkNode = getLinkNodeInSelection(selection);
-              const textNode = selection ? getSelectedNode(selection) : null;
-              const node = linkNode ?? textNode;
-              node?.remove();
+              linkNode?.remove();
               const newLinkNode = $createLinkNode(url);
               newLinkNode.append($createTextNode(linkContent));
               $insertNodes([newLinkNode]);
@@ -294,14 +292,13 @@ export const openLinkEditDialog$ = Action((r) => {
       editor?.focus(() => {
         editor.getEditorState().read(() => {
           const linkNode = getLinkNodeInSelection(selection);
-          const node = selection ? getSelectedNode(selection) : null;
           const rectangle = getSelectionRectangle(editor) as Rect;
 
-          if (linkNode || node) {
-            const key = linkNode?.getKey() ?? node?.getKey() ?? "";
+          if (selection || linkNode) {
+            const key = linkNode?.getKey() ?? "";
             const url = linkNode?.getURL() ?? "";
             const text =
-              linkNode?.getTextContent() ?? node?.getTextContent() ?? "";
+              selection?.getTextContent() ?? linkNode?.getTextContent() ?? "";
             r.pub(state$, {
               type: "edit",
               initialUrl: url,
