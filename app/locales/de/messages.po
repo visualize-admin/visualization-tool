@@ -869,6 +869,10 @@ msgstr "Spalten"
 msgid "controls.section.columnstyle"
 msgstr "Spaltenstil"
 
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.data-points"
+msgstr "Datenpunkte"
+
 #: app/components/chart-filters-list.tsx
 #: app/components/chart-filters-list.tsx
 #: app/configurator/components/chart-configurator.tsx
@@ -892,6 +896,10 @@ msgstr "Datensätze"
 #: app/configurator/components/annotators.tsx
 msgid "controls.section.description"
 msgstr "Titel & Beschreibung"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.dots-size"
+msgstr "Wählen Sie eine Größe"
 
 #: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/chart-options-selector.tsx
@@ -941,6 +949,10 @@ msgstr "Konfidenzintervall anzeigen"
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.show-confidence-interval.explanation"
 msgstr "Unsicherheiten, die sich aus Datenpunkten ergeben anzeigen, um Konfidenzintervalle darzustellen"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.show-dots"
+msgstr "Datenpunkte anzeigen"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.show-standard-error"

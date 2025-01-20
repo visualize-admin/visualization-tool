@@ -869,6 +869,10 @@ msgstr "Columns"
 msgid "controls.section.columnstyle"
 msgstr "Column Style"
 
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.data-points"
+msgstr "Data Points"
+
 #: app/components/chart-filters-list.tsx
 #: app/components/chart-filters-list.tsx
 #: app/configurator/components/chart-configurator.tsx
@@ -892,6 +896,10 @@ msgstr "Datasets"
 #: app/configurator/components/annotators.tsx
 msgid "controls.section.description"
 msgstr "Title & Description"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.dots-size"
+msgstr "Select a Size"
 
 #: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/chart-options-selector.tsx
@@ -941,6 +949,10 @@ msgstr "Show confidence interval"
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.show-confidence-interval.explanation"
 msgstr "Show uncertainties extending from data points to represent confidence intervals"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.show-dots"
+msgstr "Show Data Points"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.show-standard-error"
