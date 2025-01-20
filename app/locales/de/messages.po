@@ -538,6 +538,26 @@ msgstr "Gruppiert"
 msgid "controls.column.stacked"
 msgstr "Gestapelt"
 
+#: app/configurator/components/chart-controls/color-palette.tsx
+msgid "controls.custom-color-palettes"
+msgstr "Benutzerdefinierte Farbpaletten"
+
+#: app/configurator/components/chart-controls/color-palette.tsx
+msgid "controls.custom-color-palettes.add-color"
+msgstr "Farbe hinzufügen"
+
+#: app/configurator/components/chart-controls/color-palette.tsx
+msgid "controls.custom-color-palettes.caption"
+msgstr "Verwenden Sie klare, kontrastreiche Farben. Vermeiden Sie die Verwendung von zu vielen Farben, maximal 5-7. Verwenden Sie sequenzielle Paletten für geordnete Daten und divergierende Paletten für Extreme."
+
+#: app/configurator/components/chart-controls/color-palette.tsx
+msgid "controls.custom-color-palettes.set-values-apply"
+msgstr "Farbpalette speichern"
+
+#: app/configurator/components/chart-controls/color-palette.tsx
+msgid "controls.custom-color-palettes.title"
+msgstr "Palettentitel"
+
 #: app/configurator/components/field-i18n.ts
 msgid "controls.description"
 msgstr "Beschreibung hinzufügen"
