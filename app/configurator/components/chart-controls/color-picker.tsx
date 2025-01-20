@@ -1,5 +1,5 @@
 import { Trans } from "@lingui/macro";
-import { Box, Button, Popover, styled, Theme, Typography } from "@mui/material";
+import { Box, Button, Popover, styled, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { hexToHsva, hsvaToHex } from "@uiw/react-color";
 import { color as d3Color } from "d3-color";
@@ -61,39 +61,6 @@ type Props = {
   colors: readonly string[];
   onChange?: (color: string) => void;
   disabled?: boolean;
-};
-
-const useColorPickerStyles = makeStyles((theme: Theme) => ({
-  root: {
-    width: 160,
-    backgroundColor: theme.palette.grey[100],
-    borderRadius: 1.5,
-    padding: theme.spacing(3),
-  },
-  swatches: {
-    gridTemplateColumns: "repeat(auto-fill, minmax(1.5rem, 1fr))",
-    gap: 2,
-    marginBottom: 2,
-  },
-}));
-
-export const ColorPicker = ({ selectedColor, colors, onChange }: Props) => {
-  const classes = useColorPickerStyles();
-
-  return (
-    <Box className={classes.root}>
-      <Box display="grid" className={classes.swatches}>
-        {colors.map((color) => (
-          <Swatch
-            key={color}
-            color={color}
-            selected={color === selectedColor}
-            onClick={() => onChange?.(color)}
-          />
-        ))}
-      </Box>
-    </Box>
-  );
 };
 
 const ColorPickerButton = styled(Button)({

@@ -6,13 +6,15 @@ import { InferAPIResponse } from "nextkit";
 
 import { ParsedConfig } from "@/db/config";
 
-import { ConfiguratorState } from "../../config-types";
+import { ConfiguratorState, CustomPaletteType } from "../../config-types";
 import { apiFetch } from "../api";
 import { createChartId } from "../create-chart-id";
 
 import type apiConfigCreate from "../../pages/api/config-create";
 import type apiConfigUpdate from "../../pages/api/config-update";
 import type apiConfig from "../../pages/api/config/[key]";
+
+export type CreateCustomColorPalette = Omit<CustomPaletteType, "paletteId">
 
 type CreateConfigOptions = {
   key?: string;
@@ -100,4 +102,16 @@ export const fetchChartConfig = async (id: string) => {
 
 export const fetchChartConfigs = async () => {
   return await apiFetch<ParsedConfig[]>(`/api/config/list`);
+};
+
+export const createCustomColorPalette = async (
+  options: CreateCustomColorPalette
+) => {
+  await apiFetch<InferAPIResponse<typeof apiConfigCreate, "POST">>(
+    "/api/user/create-color-palette",
+    {
+      method: "POST",
+      data: options,
+    }
+  );
 };
