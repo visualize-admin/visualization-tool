@@ -1590,6 +1590,14 @@ msgstr "Abmelden"
 msgid "logo.swiss.confederation"
 msgstr "Logo der Schweizerischen Eidgenossenschaft"
 
+#: app/components/mdx-editor/link-popover.tsx
+msgid "mdx-editor.link-dialog.label-placeholder"
+msgstr "Etikett..."
+
+#: app/components/mdx-editor/link-popover.tsx
+msgid "mdx-editor.link-dialog.url-placeholder"
+msgstr "URL..."
+
 #: app/components/chart-footnotes.tsx
 #: app/components/chart-published.tsx
 #: app/components/chart-shared.tsx

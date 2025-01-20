@@ -15,6 +15,7 @@ import {
   ButtonBase,
   Checkbox as MUICheckbox,
   CircularProgress,
+  Divider,
   FormControlLabel,
   FormControlLabelProps,
   Input as MUIInput,
@@ -59,6 +60,8 @@ import { useBrowseContext } from "@/browser/context";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { BlockTypeMenu } from "@/components/mdx-editor/block-type-menu";
 import { BoldItalicUnderlineToggles } from "@/components/mdx-editor/bold-italic-underline-toggles";
+import { linkDialogPlugin } from "@/components/mdx-editor/link-dialog";
+import { LinkDialogToggle } from "@/components/mdx-editor/link-dialog-toggle";
 import { ListToggles } from "@/components/mdx-editor/list-toggles";
 import { BANNER_MARGIN_TOP } from "@/components/presence";
 import { TooltipTitle } from "@/components/tooltip-utils";
@@ -628,8 +631,6 @@ export const Input = ({
   label?: string | ReactNode;
   disabled?: boolean;
 } & FieldProps) => {
-  const inputRef = useRef<HTMLInputElement>(null);
-
   return (
     <Box sx={{ fontSize: "1rem", pb: 2 }}>
       {label && name ? (
@@ -646,7 +647,6 @@ export const Input = ({
         value={value}
         disabled={disabled}
         onChange={onChange}
-        inputRef={inputRef}
         sx={{
           width: "100%",
           padding: "10px 6px",
@@ -681,7 +681,10 @@ export const MarkdownInput = ({
                 <Box sx={{ display: "flex", gap: 2 }}>
                   <BoldItalicUnderlineToggles />
                   <BlockTypeMenu />
+                  <Divider flexItem orientation="vertical" />
                   <ListToggles />
+                  <Divider flexItem orientation="vertical" />
+                  <LinkDialogToggle />
                 </Box>
                 {label && name ? (
                   <Label htmlFor={name} smaller sx={{ my: 1 }}>
@@ -694,6 +697,7 @@ export const MarkdownInput = ({
           headingsPlugin(),
           listsPlugin(),
           linkPlugin(),
+          linkDialogPlugin(),
           quotePlugin(),
           markdownShortcutPlugin(),
           thematicBreakPlugin(),
@@ -702,6 +706,8 @@ export const MarkdownInput = ({
           onChange?.({
             currentTarget: {
               value: newValue
+                // Remove backslashes from the string, as they are not supported in react-markdown
+                .replaceAll("\\", "")
                 // <u> is not supported in react-markdown we use for rendering.
                 .replaceAll("<u>", "<ins>")
                 .replace("</u>", "</ins>"),
