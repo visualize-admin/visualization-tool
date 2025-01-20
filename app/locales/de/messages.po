@@ -35,10 +35,6 @@ msgstr "[ Ohne Beschreibung ]"
 msgid "annotation.add.title"
 msgstr "[ Ohne Titel ]"
 
-#: app/configurator/components/beta-tag.tsx
-msgid "beta-tag.tooltip"
-msgstr "Diese Funktion befindet sich derzeit in der Entwicklung. Möglicherweise treten Fehler auf und Leistungsprobleme."
-
 #: app/browser/dataset-browse.tsx
 msgid "browse-panel.organizations"
 msgstr "Organisationen"
@@ -328,11 +324,11 @@ msgstr "Vertikale Achse"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.bar.grouped"
-msgstr ""
+msgstr "Gruppiert"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.bar.stacked"
-msgstr ""
+msgstr "Gestapelt"
 
 #: app/charts/chart-config-ui-options.ts
 #: app/charts/chart-config-ui-options.ts
@@ -418,11 +414,11 @@ msgstr "Es sind mindestens zwei numerische Messungen erforderlich."
 
 #: app/charts/index.ts
 msgid "controls.chart.disabled.numerical"
-msgstr "Es ist mindestens eine numerische Massnahme erforderlich."
+msgstr "Es ist mindestens eine numerische Mass erforderlich."
 
 #: app/charts/index.ts
 msgid "controls.chart.disabled.same-unit"
-msgstr "Es sind mindestens zwei Zahlenwerte mit gleicher Einheit erforderlich."
+msgstr "Es sind mindestens zwei numerische Masse mit der gleichen Einheit erforderlich."
 
 #: app/charts/index.ts
 #: app/charts/index.ts
@@ -683,15 +679,15 @@ msgstr "Dashboard"
 
 #: app/configurator/components/preview-breakpoint.tsx
 msgid "controls.layout.preview-lg"
-msgstr "Vorschau mit kleinem Desktop-Bildschirm"
+msgstr "Vorschau in grosser Breite"
 
 #: app/configurator/components/preview-breakpoint.tsx
 msgid "controls.layout.preview-md"
-msgstr "Vorschau mit Tablet"
+msgstr "Vorschau in mittlerer Breite"
 
 #: app/configurator/components/preview-breakpoint.tsx
 msgid "controls.layout.preview-sm"
-msgstr "Vorschau mit Phone-Breite"
+msgstr "Vorschau in kleiner Breite"
 
 #: app/configurator/components/preview-breakpoint.tsx
 msgid "controls.layout.preview-xl"
@@ -916,7 +912,7 @@ msgstr "Konfidenzintervall anzeigen"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.show-confidence-interval.explanation"
-msgstr "Zeigen Sie Unsicherheiten an, die sich aus Datenpunkten ergeben, um Konfidenzintervalle darzustellen"
+msgstr "Unsicherheiten, die sich aus Datenpunkten ergeben anzeigen, um Konfidenzintervalle darzustellen"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.show-dots"
@@ -1328,12 +1324,24 @@ msgid "flashes.couldnt-load-cube.view-cube-checker"
 msgstr "Ansicht im Cube Validator"
 
 #: app/components/footer.tsx
-msgid "footer.institution.name"
-msgstr "Bundesamt für Umwelt BAFU"
+msgid "footer.about_us.label"
+msgstr "Über dieses Portal"
 
 #: app/components/footer.tsx
-msgid "footer.institution.url"
-msgstr "https://www.bafu.admin.ch/bafu/de/home.html"
+msgid "footer.about_us.text"
+msgstr "Das Portal visualize.admin.ch ermöglicht die Visualisierung von Schweizer Open Government Data, die durch den LINDAS Linked Data Service bereitgestellt werden. Open Government Data (OGD) sind Daten, die der Öffentlichkeit kostenlos in computerlesbarem Format zur Verfügung gestellt werden."
+
+#: app/components/footer.tsx
+msgid "footer.button.lindas"
+msgstr "LINDAS Linked Data Dienste"
+
+#: app/components/footer.tsx
+msgid "footer.contact.title"
+msgstr "Informiert bleiben"
+
+#: app/components/footer.tsx
+msgid "footer.information.title"
+msgstr "Weitere Informationen"
 
 #: app/components/footer.tsx
 msgid "footer.status"
