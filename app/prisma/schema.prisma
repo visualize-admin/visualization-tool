@@ -35,7 +35,7 @@ model User {
   sub    String?  @unique @db.VarChar(64)
   name   String?  @db.VarChar(100)
   Config Config[] @relation()
-  Palettes Palette[]  @relation()
+  Palette Palette[]  @relation()
 
   @@map("users")
 }
@@ -66,7 +66,7 @@ enum PALETTE_TYPE {
 }
 
 model Palette {
-  paletteId          Int       @id @default(autoincrement())
+  paletteId   Int       @id @default(autoincrement())
   name        String    @unique @db.VarChar(100)
   type        PALETTE_TYPE  @default(categorical)
   colors      String[] 

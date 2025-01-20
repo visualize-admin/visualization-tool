@@ -540,11 +540,11 @@ msgstr "impilate"
 
 #: app/configurator/components/chart-controls/color-palette.tsx
 msgid "controls.custom-color-palettes"
-msgstr "Custom color palettes"
+msgstr "Tavolozze di colori personalizzate"
 
 #: app/configurator/components/chart-controls/color-palette.tsx
 msgid "controls.custom-color-palettes.add-color"
-msgstr "Add Color"
+msgstr "Aggiungi colore"
 
 #: app/configurator/components/chart-controls/color-palette.tsx
 msgid "controls.custom-color-palettes.caption"

@@ -2,7 +2,6 @@ import { t, Trans } from "@lingui/macro";
 import {
   Box,
   Button,
-  ClickAwayListener,
   Divider,
   IconButton,
   MenuItem,
@@ -81,7 +80,7 @@ const useStyles = makeStyles({
   },
   textInput: {
     margin: `${theme.spacing(4)} 0px`,
-    padding: "0px 12px",
+    padding: "30px",
     width: "100%",
     height: 40,
     minHeight: 40,
@@ -243,8 +242,8 @@ export const ColorPalette = ({
             variant="text"
             sx={{
               width: "100%",
-              paddingY: "12px",
-              paddingX: "16px",
+              paddingY: 3,
+              paddingX: 4,
             }}
           >
             Add color palette
@@ -252,21 +251,21 @@ export const ColorPalette = ({
         )}
         <Box
           sx={{
-            paddingTop: "12px",
-            paddingX: "16px",
+            paddingTop: 3,
+            paddingX: 4,
             display: "flex",
-            gap: "8px",
+            gap: 2,
             flexDirection: "column",
           }}
         >
           <Typography variant="caption" fontWeight={700} align="left">
             Visualize color palettes
           </Typography>
-          <Divider sx={{ width: "100%", paddingY: "4px" }} />
+          <Divider sx={{ width: "100%", paddingY: 1 }} />
         </Box>
         {palettes.map((palette, index) => (
           <MenuItem
-            sx={{ paddingY: "8px" }}
+            sx={{ paddingY: 2 }}
             key={`${palette.value}${index}`}
             value={palette.value}
           >
@@ -297,9 +296,7 @@ export const ColorPalette = ({
       )}
       {values && (
         <ConfiguratorDrawer open={!!anchorEl} hideBackdrop>
-          <ClickAwayListener onClickAway={() => {}}>
-            <DrawerContent onClose={handleCloseAutocomplete} values={values} />
-          </ClickAwayListener>
+          <DrawerContent onClose={handleCloseAutocomplete} values={values} />
         </ConfiguratorDrawer>
       )}
     </Box>
@@ -469,12 +466,12 @@ const DrawerContent = forwardRef<
   }, []);
 
   const saveColorPalette = useEvent(async () => {
-    const colorMapping: { [x: string]: string } = {};
-
-    values.forEach((value, index) => {
-      const colorIndex = index % colorValues.length;
-      colorMapping[value.id] = colorValues[colorIndex].color;
-    });
+    const colorMapping = Object.fromEntries(
+      values.map((value, index) => [
+        value.id,
+        colorValues[index % colorValues.length].color,
+      ])
+    );
 
     if (isColorInConfig(chartConfig)) {
       dispatch({
@@ -507,14 +504,14 @@ const DrawerContent = forwardRef<
     <div
       className={classes.autocompleteMenuContent}
       ref={ref}
-      data-testid="edition-filters-drawer"
+      data-testid="colors-filters-drawer"
     >
       <Box className={classes.autocompleteHeader}>
         <Flex alignItems="center" justifyContent="space-between">
           <Typography
             variant="h4"
             sx={{
-              py: "15px",
+              py: 4,
             }}
           >
             <Trans id="controls.custom-color-palettes">
