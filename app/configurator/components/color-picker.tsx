@@ -106,9 +106,9 @@ const CustomColorPicker = ({
         </Flex>
 
         <Box display="grid" className={classes.swatches}>
-          {colorSwatches?.map((color) => (
+          {colorSwatches?.map((color, i) => (
             <Swatch
-              key={color}
+              key={`color-picker-swatch-${color}-${i}`}
               color={color}
               selected={hsvaToHex(hsva) === color}
               onClick={() => setHsva(hexToHsva(color))}
