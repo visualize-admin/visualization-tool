@@ -354,6 +354,7 @@ export const ChartGridLayout = ({
       useCSSTransforms={false}
       compactType="vertical"
       preventCollision={false}
+      isResizable={resize}
     >
       {children}
     </ResponsiveReactGridLayout>
