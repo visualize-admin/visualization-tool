@@ -664,23 +664,29 @@ export const LayoutAnnotatorTabField = (
   );
 };
 
-export const MetaInputField = ({
+export const MetaMarkdownInputField = ({
   type,
+  inputType,
   label,
   metaKey,
   locale,
   value,
-  disabled,
 }: {
   type: "chart" | "layout";
+  inputType: "text" | "markdown";
   label: string | ReactNode;
   metaKey: string;
   locale: string;
   value?: string;
-  disabled?: boolean;
 }) => {
   const field = useMetaField({ type, metaKey, locale, value });
-  return <Input label={label} {...field} disabled={disabled} />;
+
+  switch (inputType) {
+    case "text":
+      return <Input label={label} {...field} />;
+    case "markdown":
+      return <MarkdownInput label={label} {...field} />;
+  }
 };
 
 export const TextBlockInputField = ({ locale }: { locale: Locale }) => {
