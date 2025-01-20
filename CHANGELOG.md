@@ -560,7 +560,7 @@ introduced since v3.0.0 🎉
   - Implemented initial version of merging the cubes (not yet exposed through
     UI)
 - Fixes
-  - Conslidated behavior of setting initial filters (top-most hierarchy value)
+  - Consolidated behavior of setting initial filters (top-most hierarchy value)
     when filter was not present and multi-filter was removed
   - Fixed switching between segmentation dimensions in column charts
   - Added UTF-8 formatting to CSV and XLSX files (data download)
@@ -574,7 +574,7 @@ introduced since v3.0.0 🎉
   - We now only fetch hierarchies defined in cube's shape
   - Hierarchy names are now correctly retrieved
 - Performance
-  - We no longer fetch shape when initalizing the cube, as we might need to
+  - We no longer fetch shape when initializing the cube, as we might need to
     re-fetch it again if a newer cube is required
   - Vastly improved performance of dataset preview by using a new version of
     `cube-view-query` library (`View.preview`)
@@ -1070,7 +1070,7 @@ Note: We will try in the future to better follow semantic versioning.
 
 ## [3.7.4] - 2022-05-31
 
-- Do not show "Run SPARQL query" button if SPARL_EDITOR variable not set
+- Do not show "Run SPARQL query" button if SPARQL_EDITOR variable not set
 - Add link top opendata.swiss when the cube is published there (chart
   footnotes + chart preview info panel)
 - Repair homepage examples on test
@@ -1088,7 +1088,7 @@ Note: We will try in the future to better follow semantic versioning.
 - Maps: Use neutral map style
 - Interactive filters: time brush is more stable
 - Tables: Column names contain unit if its there by @ptbrowne in #552
-- Tables: Support for monthtly period formatting
+- Tables: Support for monthly period formatting
 - Tables: Bar chart in cells are fixed
 - Navigation: Back button in editor 1st screen brings back to dataset preview
 - Add status page link in the footer
@@ -1105,7 +1105,7 @@ Note: We will try in the future to better follow semantic versioning.
 - Only the top 7 nav items are shown in the search nav bar (design alignment), a
   button is there to display more
 - Added the footer in the search page
-- Maps chloropleth are shown under map labels. Maps symbols are shown over most
+- Maps choropleth are shown under map labels. Maps symbols are shown over most
   map features. When zooming via the buttons, we now have a smooth transition
 - Removed chart selection step; selection of a chart type can now be done at any
   point when creating a chart (added a new chart selection tabs UI)
@@ -1246,7 +1246,7 @@ not shown at first but can be added via a menu.
   [#265](https://github.com/visualize-admin/visualization-tool/pull/265)
 - _beta_ Hierarchical filters are available behind a flag on the "red list"
   dataset [#233](https://github.com/visualize-admin/visualization-tool/pull/233)
-- 🐛 Links from openswissdata should work correctly
+- 🐛 Links from OpenDataSwiss should work correctly
   [#303](https://github.com/visualize-admin/visualization-tool/pull/303)
   [#314](https://github.com/visualize-admin/visualization-tool/pull/314)
 
