@@ -19,7 +19,6 @@ import {
   useRef,
   useState,
 } from "react";
-import Markdown from "react-markdown";
 
 import { DataSetTable } from "@/browse/datatable";
 import { LoadingStateProvider } from "@/charts/shared/chart-loading-state";
@@ -30,13 +29,10 @@ import {
   ChartPanelLayout,
   ChartWrapper,
   ChartWrapperProps,
-  TEXT_BLOCK_CONTENT_CLASS,
-  TEXT_BLOCK_WRAPPER_CLASS,
 } from "@/components/chart-panel";
 import {
   ChartControls,
   ChartMoreButton,
-  CHART_GRID_ROW_COUNT,
   useChartStyles,
 } from "@/components/chart-shared";
 import {
@@ -46,9 +42,8 @@ import {
 } from "@/components/chart-table-preview";
 import { ChartWithFilters } from "@/components/chart-with-filters";
 import { DashboardInteractiveFilters } from "@/components/dashboard-interactive-filters";
-import { BlockMoreButton } from "@/components/dashboard-shared";
 import DebugPanel from "@/components/debug-panel";
-import { DragHandle } from "@/components/drag-handle";
+import { DragHandle, useDragOverClasses } from "@/components/drag-handle";
 import Flex from "@/components/flex";
 import { Checkbox } from "@/components/form";
 import { HintYellow } from "@/components/hint";
@@ -57,13 +52,17 @@ import {
   MetadataPanelStoreContext,
 } from "@/components/metadata-panel-store";
 import { BANNER_MARGIN_TOP } from "@/components/presence";
+import {
+  DndTextBlock,
+  renderBaseTextBlock,
+  TextBlock,
+} from "@/components/text-block";
 import { getChartConfig } from "@/config-utils";
 import {
   ChartConfig,
   DataSource,
   hasChartConfigs,
   isConfiguring,
-  isLayouting,
   Layout,
   LayoutBlock,
   LayoutTextBlock,
@@ -80,7 +79,6 @@ import { InteractiveFiltersChartProvider } from "@/stores/interactive-filters";
 import { useTransitionStore } from "@/stores/transition";
 import { useTheme } from "@/themes";
 import { createSnapCornerToCursor } from "@/utils/dnd";
-import useEvent from "@/utils/use-event";
 import { DISABLE_SCREENSHOT_ATTR_KEY } from "@/utils/use-screenshot";
 
 export const ChartPreview = ({ dataSource }: { dataSource: DataSource }) => {
@@ -128,38 +126,11 @@ const snapCornerToCursor = createSnapCornerToCursor({
   xOffset: -DRAG_OVERLAY_WIDTH,
 });
 
-const useStyles = makeStyles<
-  Theme,
-  {
-    layouting?: boolean;
-    isDragging?: boolean;
-    isDragActive?: boolean;
-    isDragOver?: boolean;
-  }
->((theme) => ({
+const useStyles = makeStyles<Theme>(() => ({
   canvasChartPanelLayout: {
     // Provide some space at the bottom of the canvas layout to make it possible
     // to resize vertically the last charts
     paddingBottom: "10rem",
-  },
-  textBlockWrapper: {
-    // Make sure the text block doesn't cause the grid to grow.
-    gridRow: `span ${CHART_GRID_ROW_COUNT + 1}`,
-    display: "flex",
-    padding: "0.75rem",
-    cursor: ({ layouting }) => (layouting ? "pointer" : "default"),
-    "&:hover": {
-      textDecoration: ({ layouting }) => (layouting ? "underline" : "none"),
-    },
-  },
-  dragContent: {
-    opacity: ({ isDragging, isDragOver }) =>
-      isDragging ? 0.2 : isDragOver ? 0.8 : 1,
-    outline: ({ isDragging, isDragOver }) =>
-      `2px solid ${
-        isDragOver && !isDragging ? theme.palette.primary.main : "transparent"
-      }`,
-    pointerEvents: ({ isDragActive }) => (isDragActive ? "none" : "auto"),
   },
 }));
 
@@ -172,15 +143,13 @@ const DashboardPreview = ({
   layoutType: Extract<Layout, { type: "dashboard" }>["layout"];
   editing?: boolean;
 }) => {
-  const locale = useLocale();
   const [state, dispatch] = useConfiguratorState(hasChartConfigs);
-  const layouting = isLayouting(state);
   const theme = useTheme();
   const transition = useTransitionStore();
   const [isDragging, setIsDragging] = useState(false);
   const [activeBlock, setActiveBlock] = useState<LayoutBlock | null>(null);
   const [over, setOver] = useState<Over | null>(null);
-  const classes = useStyles({ layouting });
+  const classes = useStyles();
   const renderChart = useCallback(
     (chartConfig: ChartConfig) => {
       return layoutType === "canvas" ? (
@@ -203,51 +172,10 @@ const DashboardPreview = ({
     },
     [dataSource, editing, layoutType, state.layout.type]
   );
-  const handleTextBlockClick = useEvent((block: LayoutTextBlock) => {
-    dispatch({
-      type: "LAYOUT_ACTIVE_FIELD_CHANGED",
-      value: block.key,
-    });
-  });
   const renderTextBlock = useCallback(
     (block: LayoutTextBlock) => {
-      const text = block.text[locale];
-
       return layoutType === "canvas" ? (
-        <div
-          // Important, otherwise ReactGrid breaks.
-          key={block.key}
-          id={block.key}
-          className={clsx(classes.textBlockWrapper, TEXT_BLOCK_WRAPPER_CLASS)}
-          onClick={(e) => {
-            if (e.isPropagationStopped()) {
-              return;
-            }
-
-            handleTextBlockClick(block);
-          }}
-        >
-          <div
-            className={TEXT_BLOCK_CONTENT_CLASS}
-            style={{ flexGrow: 1, height: "fit-content" }}
-          >
-            {text ? (
-              <Markdown>{text}</Markdown>
-            ) : (
-              <Trans id="annotation.add.text">[ Add text ]</Trans>
-            )}
-          </div>
-          {layouting ? (
-            <ActionElementsContainer>
-              <BlockMoreButton blockKey={block.key} />
-              <DragHandle
-                onClick={(e) => {
-                  e.stopPropagation();
-                }}
-              />
-            </ActionElementsContainer>
-          ) : null}
-        </div>
+        renderBaseTextBlock(block)
       ) : (
         <DndTextBlock block={block} />
       );
@@ -349,19 +277,7 @@ const DashboardPreview = ({
                 />
               </ChartWrapper>
             ) : (
-              <div
-                className={TEXT_BLOCK_WRAPPER_CLASS}
-                style={{
-                  padding: "0.75rem",
-                  backgroundColor: theme.palette.background.paper,
-                }}
-              >
-                {activeBlock.text[locale] ? (
-                  <Markdown>{activeBlock.text[locale]}</Markdown>
-                ) : (
-                  <Trans id="annotation.add.text">[ Add text ]</Trans>
-                )}
-              </div>
+              <TextBlock block={activeBlock} />
             )
           ) : null}
         </DragOverlay>
@@ -416,7 +332,7 @@ const DndChartPreview = (props: CommonChartPreviewProps) => {
     },
     [setDraggableNodeRef, setDroppableNodeRef]
   );
-  const classes = useStyles({
+  const dragOverClasses = useDragOverClasses({
     isDragging,
     isDragActive: !!active,
     isDragOver: isOver,
@@ -429,7 +345,7 @@ const DndChartPreview = (props: CommonChartPreviewProps) => {
         ref={setRef}
         {...attributes}
         chartKey={chartKey}
-        className={clsx(className, classes.dragContent)}
+        className={clsx(className, dragOverClasses.root)}
         style={{
           display: active ? "flex" : "contents",
         }}
@@ -447,85 +363,6 @@ const DndChartPreview = (props: CommonChartPreviewProps) => {
         />
       </ChartWrapper>
     </ChartTablePreviewProvider>
-  );
-};
-
-const DndTextBlock = ({ block }: { block: LayoutTextBlock }) => {
-  const locale = useLocale();
-  const [state, dispatch] = useConfiguratorState(hasChartConfigs);
-  const layouting = isLayouting(state);
-  const text = block.text[locale];
-  const handleTextBlockClick = useEvent((block: LayoutTextBlock) => {
-    dispatch({
-      type: "LAYOUT_ACTIVE_FIELD_CHANGED",
-      value: block.key,
-    });
-  });
-  const {
-    setActivatorNodeRef,
-    setNodeRef: setDraggableNodeRef,
-    attributes,
-    listeners,
-    isDragging,
-  } = useDraggable({ id: block.key });
-  const {
-    setNodeRef: setDroppableNodeRef,
-    isOver,
-    active,
-  } = useDroppable({ id: block.key });
-  const setRef = useCallback(
-    (node: HTMLElement | null) => {
-      setDraggableNodeRef(node);
-      setDroppableNodeRef(node);
-    },
-    [setDraggableNodeRef, setDroppableNodeRef]
-  );
-  const classes = useStyles({
-    layouting,
-    isDragging,
-    isDragActive: !!active,
-    isDragOver: isOver,
-  });
-
-  return (
-    <div
-      id={block.key}
-      className={clsx(
-        classes.textBlockWrapper,
-        classes.dragContent,
-        TEXT_BLOCK_WRAPPER_CLASS
-      )}
-      ref={setRef}
-      onClick={(e) => {
-        if (e.isPropagationStopped()) {
-          return;
-        }
-
-        handleTextBlockClick(block);
-      }}
-      {...attributes}
-    >
-      <div
-        className={TEXT_BLOCK_CONTENT_CLASS}
-        style={{ flexGrow: 1, height: "fit-content" }}
-      >
-        {text ? (
-          <Markdown>{text}</Markdown>
-        ) : (
-          <Trans id="annotation.add.text">[ Add text ]</Trans>
-        )}
-      </div>
-      {layouting ? (
-        <ActionElementsContainer>
-          <BlockMoreButton blockKey={block.key} />
-          <DragHandle
-            ref={setActivatorNodeRef}
-            dragging={isDragging}
-            {...listeners}
-          />
-        </ActionElementsContainer>
-      ) : null}
-    </div>
   );
 };
 

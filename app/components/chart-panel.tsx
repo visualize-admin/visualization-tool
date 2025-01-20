@@ -1,9 +1,7 @@
 import { Box, BoxProps, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
-import { selectAll } from "d3-selection";
-import isEqual from "lodash/isEqual";
-import { forwardRef, HTMLProps, PropsWithChildren, useEffect } from "react";
+import { forwardRef, HTMLProps, PropsWithChildren } from "react";
 
 import {
   ChartPanelLayoutCanvas,
@@ -12,9 +10,8 @@ import {
 import { ChartPanelLayoutTall } from "@/components/chart-panel-layout-tall";
 import { ChartPanelLayoutVertical } from "@/components/chart-panel-layout-vertical";
 import { ChartSelectionTabs } from "@/components/chart-selection-tabs";
-import { CHART_GRID_ROW_COUNT } from "@/components/chart-shared";
 import { DashboardInteractiveFilters } from "@/components/dashboard-interactive-filters";
-import { ROW_HEIGHT } from "@/components/react-grid";
+import { useSyncTextBlockHeight } from "@/components/text-block";
 import { Layout, LayoutDashboard } from "@/config-types";
 import { hasChartConfigs, isLayouting, LayoutBlock } from "@/configurator";
 import { useConfiguratorState } from "@/src";
@@ -44,16 +41,6 @@ const useStyles = makeStyles<Theme, { editable?: boolean }>((theme) => ({
     display: "contents",
     width: "auto",
     height: "100%",
-  },
-  textBlockWrapper: {
-    // Make sure the text block doesn't cause the grid to grow.
-    gridRow: `span ${CHART_GRID_ROW_COUNT + 1}`,
-    display: "flex",
-    padding: "0.75rem",
-    cursor: ({ editable }) => (editable ? "pointer" : "default"),
-    "&:hover": {
-      textDecoration: ({ editable }) => (editable ? "underline" : "none"),
-    },
   },
 }));
 
@@ -111,9 +98,6 @@ const Wrappers: Record<
   canvas: ChartPanelLayoutCanvas,
 };
 
-export const TEXT_BLOCK_WRAPPER_CLASS = "text-block-wrapper";
-export const TEXT_BLOCK_CONTENT_CLASS = "text-block-content";
-
 export const ChartPanelLayout = ({
   children,
   renderBlock,
@@ -127,7 +111,6 @@ export const ChartPanelLayout = ({
   const Wrapper = Wrappers[layoutType];
   const { layout } = state;
   const { blocks } = layout;
-
   useSyncTextBlockHeight();
 
   return (
@@ -141,56 +124,4 @@ export const ChartPanelLayout = ({
       <Wrapper blocks={blocks} renderBlock={renderBlock} />
     </div>
   );
-};
-
-const useSyncTextBlockHeight = () => {
-  const [state, dispatch] = useConfiguratorState(hasChartConfigs);
-  const layout = state.layout;
-  const layouting = isLayouting(state);
-
-  useEffect(() => {
-    // Only adjust the height when not in published mode.
-    if (
-      !layouting ||
-      layout.type !== "dashboard" ||
-      layout.layout !== "canvas"
-    ) {
-      return;
-    }
-
-    selectAll<HTMLDivElement, unknown>(`.${TEXT_BLOCK_WRAPPER_CLASS}`).each(
-      function () {
-        const wrapperEl = this;
-        const contentEl = wrapperEl.querySelector<HTMLDivElement>(
-          `.${TEXT_BLOCK_CONTENT_CLASS}`
-        );
-
-        if (!contentEl) {
-          return;
-        }
-
-        const key = wrapperEl.id;
-        const h = Math.ceil(contentEl.clientHeight / ROW_HEIGHT) || 1;
-
-        const newLayouts = Object.fromEntries(
-          Object.entries(layout.layouts).map(([bp, layouts]) => [
-            bp,
-            layouts.map((b) => {
-              return b.i === key ? { ...b, h, minH: h } : b;
-            }),
-          ])
-        );
-
-        if (!isEqual(newLayouts, layout.layouts)) {
-          dispatch({
-            type: "LAYOUT_CHANGED",
-            value: {
-              ...layout,
-              layouts: newLayouts,
-            },
-          });
-        }
-      }
-    );
-  }, [dispatch, layout, layouting]);
 };
