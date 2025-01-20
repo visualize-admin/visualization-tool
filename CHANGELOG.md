@@ -14,6 +14,8 @@ You can also check the
 - Features
   - Added a new option to the vertical axis on the line chart, allowing users to
     display a dot over the line where it intercepts the x-axis ticks
+  - Added a way to add text objects to dashboard layouts
+  - Added Markdown support in chart titles and descriptions
 
 # [5.1.0] - 2025-01-14
 
