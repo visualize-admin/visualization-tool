@@ -1313,11 +1313,10 @@ export const chartConfigMigrations: Migration[] = [
         version: "4.1.0",
       };
 
-      if (newConfig.chartType === "table" || newConfig.chartType === "map") {
+      if (newConfig.chartType === "table") {
         return newConfig;
       }
 
-      // Only set default color if no existing color configurations
       if (!newConfig.fields?.color) {
         const hasNoColorMapping = !(
           newConfig.fields?.y?.colorMapping ||
@@ -1368,47 +1367,86 @@ export const chartConfigMigrations: Migration[] = [
         delete newConfig.fields.y.palette;
       }
 
+      // if (newConfig.chartType === "map") {
+      //   if (
+      //     newConfig.fields.areaLayer?.color &&
+      //     "palette" in newConfig.fields.areaLayer.color
+      //   ) {
+      //     newConfig.fields.areaLayer.color.paletteId =
+      //       newConfig.fields.areaLayer.color.palette;
+      //     delete newConfig.fields.areaLayer.color.palette;
+      //   }
+
+      //   if (
+      //     newConfig.fields.symbolLayer?.color &&
+      //     "palette" in newConfig.fields.symbolLayer.color
+      //   ) {
+      //     newConfig.fields.symbolLayer.color.paletteId =
+      //       newConfig.fields.symbolLayer.color.palette;
+      //     delete newConfig.fields.symbolLayer.color.palette;
+      //   }
+      // }
+
       return newConfig;
     },
     down: (config) => {
-      const oldConfig = {
+      const newConfig = {
         ...config,
         version: "4.0.0",
       };
 
-      if (oldConfig.chartType === "table" || oldConfig.chartType === "map") {
-        return oldConfig;
+      if (newConfig.chartType === "table") {
+        return newConfig;
       }
 
-      if (oldConfig.fields?.color) {
-        if (oldConfig.fields.color.type === "segment") {
-          oldConfig.fields = {
-            ...oldConfig.fields,
+      if (newConfig.fields?.color) {
+        if (newConfig.fields.color.type === "segment") {
+          newConfig.fields = {
+            ...newConfig.fields,
             segment: {
-              ...oldConfig.fields.segment,
-              colorMapping: { ...oldConfig.fields.color.colorMapping },
-              palette: oldConfig.fields.color.paletteId,
+              ...newConfig.fields.segment,
+              colorMapping: { ...newConfig.fields.color.colorMapping },
+              palette: newConfig.fields.color.paletteId,
             },
           };
         }
 
-        if (oldConfig.fields.color.type === "measures") {
-          oldConfig.fields = {
-            ...oldConfig.fields,
+        if (newConfig.fields.color.type === "measures") {
+          newConfig.fields = {
+            ...newConfig.fields,
             y: {
-              ...oldConfig.fields.y,
-              colorMapping: { ...oldConfig.fields.color.colorMapping },
-              palette: oldConfig.fields.color.paletteId,
+              ...newConfig.fields.y,
+              colorMapping: { ...newConfig.fields.color.colorMapping },
+              palette: newConfig.fields.color.paletteId,
             },
           };
         }
 
-        // Create a new fields object without the color property
-        const { color, ...fieldsWithoutColor } = oldConfig.fields;
-        oldConfig.fields = fieldsWithoutColor;
+        const { color, ...fieldsWithoutColor } = newConfig.fields;
+        newConfig.fields = fieldsWithoutColor;
       }
 
-      return oldConfig;
+      // if (newConfig.chartType === "map") {
+      //   if (
+      //     newConfig.fields.areaLayer?.color &&
+      //     "paletteId" in newConfig.fields.areaLayer.color
+      //   ) {
+      //     newConfig.fields.areaLayer.color.palette =
+      //       newConfig.fields.areaLayer.color.paletteId;
+      //     delete newConfig.fields.areaLayer.color.paletteId;
+      //   }
+
+      //   if (
+      //     newConfig.fields.symbolLayer?.color &&
+      //     "paletteId" in newConfig.fields.symbolLayer.color
+      //   ) {
+      //     newConfig.fields.symbolLayer.color.palette =
+      //       newConfig.fields.symbolLayer.color.paletteId;
+      //     delete newConfig.fields.symbolLayer.color.paletteId;
+      //   }
+      // }
+
+      return newConfig;
     },
   },
 ];
