@@ -739,6 +739,11 @@ const DashboardLayoutButton = ({
     if (checked) {
       ref.current = layout;
     }
+
+    if (ref.current) {
+      // Keep blocks in sync, so that they do not get lost when switching layouts.
+      ref.current.blocks = layout.blocks;
+    }
   }, [layout, checked]);
   const handleClick = useEvent(() => {
     if (ref.current?.layout === type) {
