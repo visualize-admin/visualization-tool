@@ -657,6 +657,7 @@ const ChartLayoutOptions = ({
             // Faking a component here, because we don't have a real one.
             // We use measure iris as dimension values, because that's how
             // the color mapping is done.
+            values={values}
             component={
               {
                 __typename: "",
