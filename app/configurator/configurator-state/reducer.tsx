@@ -1078,13 +1078,13 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
       return draft;
 
-    case "CHART_CONFIG_SWAP":
+    case "LAYOUT_BLOCK_SWAP":
       if (isConfiguring(draft) || draft.state === "LAYOUTING") {
         const { oldIndex, newIndex } = action.value;
-        const oldChartConfig = draft.chartConfigs[oldIndex];
-        const newChartConfig = draft.chartConfigs[newIndex];
-        draft.chartConfigs[oldIndex] = newChartConfig;
-        draft.chartConfigs[newIndex] = oldChartConfig;
+        const oldBlock = draft.layout.blocks[oldIndex];
+        const newBlock = draft.layout.blocks[newIndex];
+        draft.layout.blocks[oldIndex] = newBlock;
+        draft.layout.blocks[newIndex] = oldBlock;
       }
 
       return draft;

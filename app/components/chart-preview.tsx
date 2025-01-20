@@ -128,7 +128,15 @@ const snapCornerToCursor = createSnapCornerToCursor({
   xOffset: -DRAG_OVERLAY_WIDTH,
 });
 
-const useStyles = makeStyles<Theme, { layouting?: boolean }>(() => ({
+const useStyles = makeStyles<
+  Theme,
+  {
+    layouting?: boolean;
+    isDragging?: boolean;
+    isDragActive?: boolean;
+    isDragOver?: boolean;
+  }
+>((theme) => ({
   canvasChartPanelLayout: {
     // Provide some space at the bottom of the canvas layout to make it possible
     // to resize vertically the last charts
@@ -143,6 +151,15 @@ const useStyles = makeStyles<Theme, { layouting?: boolean }>(() => ({
     "&:hover": {
       textDecoration: ({ layouting }) => (layouting ? "underline" : "none"),
     },
+  },
+  dragContent: {
+    opacity: ({ isDragging, isDragOver }) =>
+      isDragging ? 0.2 : isDragOver ? 0.8 : 1,
+    outline: ({ isDragging, isDragOver }) =>
+      `2px solid ${
+        isDragOver && !isDragging ? theme.palette.primary.main : "transparent"
+      }`,
+    pointerEvents: ({ isDragActive }) => (isDragActive ? "none" : "auto"),
   },
 }));
 
@@ -161,7 +178,7 @@ const DashboardPreview = ({
   const theme = useTheme();
   const transition = useTransitionStore();
   const [isDragging, setIsDragging] = useState(false);
-  const [activeChartKey, setActiveChartKey] = useState<string | null>(null);
+  const [activeBlock, setActiveBlock] = useState<LayoutBlock | null>(null);
   const [over, setOver] = useState<Over | null>(null);
   const classes = useStyles({ layouting });
   const renderChart = useCallback(
@@ -196,7 +213,7 @@ const DashboardPreview = ({
     (block: LayoutTextBlock) => {
       const text = block.text[locale];
 
-      return (
+      return layoutType === "canvas" ? (
         <div
           // Important, otherwise ReactGrid breaks.
           key={block.key}
@@ -231,9 +248,11 @@ const DashboardPreview = ({
             </ActionElementsContainer>
           ) : null}
         </div>
+      ) : (
+        <DndTextBlock block={block} />
       );
     },
-    [classes.textBlockWrapper, handleTextBlockClick, layouting, locale]
+    [layoutType]
   );
   const renderBlock = useCallback(
     (block: LayoutBlock) => {
@@ -274,17 +293,20 @@ const DashboardPreview = ({
       onDragStart={(e) => {
         transition.setEnable(false);
         setIsDragging(true);
-        setActiveChartKey(`${e.active.id}`);
+        const block = state.layout.blocks.find(
+          (b) => b.key === e.active.id
+        ) as LayoutBlock;
+        setActiveBlock(block);
       }}
       onDragMove={(e) => {
-        if (e.over?.id !== over?.id && e.over?.id !== activeChartKey) {
+        if (e.over?.id !== over?.id && e.over?.id !== activeBlock?.key) {
           setOver(e.over);
         }
       }}
       onDragEnd={(e) => {
         transition.setEnable(true);
         setIsDragging(false);
-        setActiveChartKey(null);
+        setActiveBlock(null);
         setOver(null);
 
         const { active, over } = e;
@@ -294,16 +316,16 @@ const DashboardPreview = ({
         }
 
         dispatch({
-          type: "CHART_CONFIG_SWAP",
+          type: "LAYOUT_BLOCK_SWAP",
           value: {
-            oldIndex: state.chartConfigs.findIndex((c) => c.key === active.id),
-            newIndex: state.chartConfigs.findIndex((c) => c.key === over.id),
+            oldIndex: state.layout.blocks.findIndex((b) => b.key === active.id),
+            newIndex: state.layout.blocks.findIndex((b) => b.key === over.id),
           },
         });
       }}
     >
       <ChartPanelLayout renderBlock={renderBlock} layoutType={layoutType} />
-      {isDragging && (
+      {isDragging ? (
         <DragOverlay
           zIndex={1000}
           modifiers={[snapCornerToCursor]}
@@ -317,15 +339,33 @@ const DashboardPreview = ({
             cursor: "grabbing",
           }}
         >
-          <ChartWrapper chartKey="dragged">
-            <ChartPreviewInner
-              dataSource={dataSource}
-              chartKey={activeChartKey}
-              actionElementSlot={<DragHandle dragging />}
-            />
-          </ChartWrapper>
+          {activeBlock ? (
+            activeBlock.type === "chart" ? (
+              <ChartWrapper chartKey="dragged">
+                <ChartPreviewInner
+                  dataSource={dataSource}
+                  chartKey={activeBlock.key}
+                  actionElementSlot={<DragHandle dragging />}
+                />
+              </ChartWrapper>
+            ) : (
+              <div
+                className={TEXT_BLOCK_WRAPPER_CLASS}
+                style={{
+                  padding: "0.75rem",
+                  backgroundColor: theme.palette.background.paper,
+                }}
+              >
+                {activeBlock.text[locale] ? (
+                  <Markdown>{activeBlock.text[locale]}</Markdown>
+                ) : (
+                  <Trans id="annotation.add.text">[ Add text ]</Trans>
+                )}
+              </div>
+            )
+          ) : null}
         </DragOverlay>
-      )}
+      ) : null}
     </DndContext>
   );
 };
@@ -356,8 +396,7 @@ const ReactGridChartPreview = forwardRef<
 });
 
 const DndChartPreview = (props: CommonChartPreviewProps) => {
-  const { children, chartKey, dataSource, ...rest } = props;
-  const theme = useTheme();
+  const { children, className, chartKey, dataSource, ...rest } = props;
   const {
     setActivatorNodeRef,
     setNodeRef: setDraggableNodeRef,
@@ -365,13 +404,11 @@ const DndChartPreview = (props: CommonChartPreviewProps) => {
     listeners,
     isDragging,
   } = useDraggable({ id: chartKey });
-
   const {
     setNodeRef: setDroppableNodeRef,
     isOver,
     active,
   } = useDroppable({ id: chartKey });
-
   const setRef = useCallback(
     (node: HTMLElement | null) => {
       setDraggableNodeRef(node);
@@ -379,6 +416,11 @@ const DndChartPreview = (props: CommonChartPreviewProps) => {
     },
     [setDraggableNodeRef, setDroppableNodeRef]
   );
+  const classes = useStyles({
+    isDragging,
+    isDragActive: !!active,
+    isDragOver: isOver,
+  });
 
   return (
     <ChartTablePreviewProvider>
@@ -387,13 +429,9 @@ const DndChartPreview = (props: CommonChartPreviewProps) => {
         ref={setRef}
         {...attributes}
         chartKey={chartKey}
+        className={clsx(className, classes.dragContent)}
         style={{
           display: active ? "flex" : "contents",
-          opacity: isDragging ? 0.2 : isOver ? 0.8 : 1,
-          outline: `2px solid ${
-            isOver && !isDragging ? theme.palette.primary.main : "transparent"
-          }`,
-          pointerEvents: active ? "none" : "auto",
         }}
       >
         <ChartPreviewInner
@@ -409,6 +447,85 @@ const DndChartPreview = (props: CommonChartPreviewProps) => {
         />
       </ChartWrapper>
     </ChartTablePreviewProvider>
+  );
+};
+
+const DndTextBlock = ({ block }: { block: LayoutTextBlock }) => {
+  const locale = useLocale();
+  const [state, dispatch] = useConfiguratorState(hasChartConfigs);
+  const layouting = isLayouting(state);
+  const text = block.text[locale];
+  const handleTextBlockClick = useEvent((block: LayoutTextBlock) => {
+    dispatch({
+      type: "LAYOUT_ACTIVE_FIELD_CHANGED",
+      value: block.key,
+    });
+  });
+  const {
+    setActivatorNodeRef,
+    setNodeRef: setDraggableNodeRef,
+    attributes,
+    listeners,
+    isDragging,
+  } = useDraggable({ id: block.key });
+  const {
+    setNodeRef: setDroppableNodeRef,
+    isOver,
+    active,
+  } = useDroppable({ id: block.key });
+  const setRef = useCallback(
+    (node: HTMLElement | null) => {
+      setDraggableNodeRef(node);
+      setDroppableNodeRef(node);
+    },
+    [setDraggableNodeRef, setDroppableNodeRef]
+  );
+  const classes = useStyles({
+    layouting,
+    isDragging,
+    isDragActive: !!active,
+    isDragOver: isOver,
+  });
+
+  return (
+    <div
+      id={block.key}
+      className={clsx(
+        classes.textBlockWrapper,
+        classes.dragContent,
+        TEXT_BLOCK_WRAPPER_CLASS
+      )}
+      ref={setRef}
+      onClick={(e) => {
+        if (e.isPropagationStopped()) {
+          return;
+        }
+
+        handleTextBlockClick(block);
+      }}
+      {...attributes}
+    >
+      <div
+        className={TEXT_BLOCK_CONTENT_CLASS}
+        style={{ flexGrow: 1, height: "fit-content" }}
+      >
+        {text ? (
+          <Markdown>{text}</Markdown>
+        ) : (
+          <Trans id="annotation.add.text">[ Add text ]</Trans>
+        )}
+      </div>
+      {layouting ? (
+        <ActionElementsContainer>
+          <BlockMoreButton blockKey={block.key} />
+          <DragHandle
+            ref={setActivatorNodeRef}
+            dragging={isDragging}
+            {...listeners}
+          />
+        </ActionElementsContainer>
+      ) : null}
+    </div>
   );
 };
 
