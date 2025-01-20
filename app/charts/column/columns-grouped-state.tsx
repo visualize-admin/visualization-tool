@@ -357,7 +357,7 @@ const useColumnsGroupedState = (
     marginRight: right,
   });
   const margins = {
-    top: 50 + yAxisLabelMargin,
+    top: 70 + yAxisLabelMargin,
     right,
     bottom,
     left,

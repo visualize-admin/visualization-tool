@@ -410,7 +410,7 @@ const useBarsStackedState = (
   });
   const right = 40;
   const margins = {
-    top: 0,
+    top: 65,
     right,
     bottom: bottom + 30,
     left,
@@ -455,10 +455,10 @@ const useBarsStackedState = (
         formatNumber,
       });
 
-      const yAnchorRaw = (yScale(y) as number) + bw * 0.5;
+      const yAnchorRaw = (yScale(y) as number) + bw;
       const xAnchor = isMobile
         ? chartHeight
-        : xScale(sum(xValues.map((d) => d ?? 0)) * 0.5);
+        : xScale(sum(xValues.map((d) => d ?? 0)));
       const placement = isMobile
         ? MOBILE_TOOLTIP_PLACEMENT
         : getCenteredTooltipPlacement({

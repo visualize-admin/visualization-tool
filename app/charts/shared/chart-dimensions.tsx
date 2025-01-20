@@ -198,5 +198,6 @@ export const useAxisLabelHeightOffset = ({
   return {
     height: fontSize * LINE_HEIGHT * lines,
     offset: fontSize * LINE_HEIGHT * (lines - 1),
+    labelWidth,
   };
 };
