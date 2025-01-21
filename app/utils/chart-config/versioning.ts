@@ -1313,7 +1313,29 @@ export const chartConfigMigrations: Migration[] = [
         version: "4.1.0",
       };
 
-      if (newConfig.chartType === "table" || newConfig.chartType === "map") {
+      if (newConfig.chartType === "table") {
+        return newConfig;
+      }
+
+      if (newConfig.chartType === "map") {
+        if (
+          newConfig.fields.areaLayer?.color &&
+          "palette" in newConfig.fields.areaLayer.color
+        ) {
+          newConfig.fields.areaLayer.color.paletteId =
+            newConfig.fields.areaLayer.color.palette;
+          delete newConfig.fields.areaLayer.color.palette;
+        }
+
+        if (
+          newConfig.fields.symbolLayer?.color &&
+          "palette" in newConfig.fields.symbolLayer.color
+        ) {
+          newConfig.fields.symbolLayer.color.paletteId =
+            newConfig.fields.symbolLayer.color.palette;
+          delete newConfig.fields.symbolLayer.color.palette;
+        }
+
         return newConfig;
       }
 
@@ -1369,7 +1391,29 @@ export const chartConfigMigrations: Migration[] = [
         version: "4.0.0",
       };
 
-      if (newConfig.chartType === "table" || newConfig.chartType === "map") {
+      if (newConfig.chartType === "table") {
+        return newConfig;
+      }
+
+      if (newConfig.chartType === "map") {
+        if (
+          newConfig.fields.areaLayer?.color &&
+          "paletteId" in newConfig.fields.areaLayer.color
+        ) {
+          newConfig.fields.areaLayer.color.palette =
+            newConfig.fields.areaLayer.color.paletteId;
+          delete newConfig.fields.areaLayer.color.paletteId;
+        }
+
+        if (
+          newConfig.fields.symbolLayer?.color &&
+          "paletteId" in newConfig.fields.symbolLayer.color
+        ) {
+          newConfig.fields.symbolLayer.color.palette =
+            newConfig.fields.symbolLayer.color.paletteId;
+          delete newConfig.fields.symbolLayer.color.paletteId;
+        }
+
         return newConfig;
       }
 
