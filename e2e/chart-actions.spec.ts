@@ -1,5 +1,7 @@
 import { promises } from "fs";
 
+import { PNG } from "pngjs";
+
 import { setup } from "./common";
 
 const { test, expect } = setup();
@@ -26,18 +28,24 @@ test("it should be possible to make a screenshot of a chart", async ({
   selectors,
 }) => {
   await actions.chart.createFrom({
-    iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/10",
+    iri: "https://agriculture.ld.admin.ch/foag/cube/MilkDairyProducts/Consumption_Price_Month",
     dataSource: "Prod",
   });
   await selectors.chart.loaded();
+  await actions.editor.changeRegularChartType("Bars");
   const chartMoreButton = await selectors.chart.moreButton();
   await chartMoreButton.click();
   const downloadPromise = page.waitForEvent("download");
   await (await selectors.mui.popover().findByText("Export PNG")).click();
   const download = await downloadPromise;
-  expect((await promises.stat(await download.path())).size).toBeGreaterThan(
-    // Assuring the file is not empty.
-    // We don't compare with 0, because empty images can still have some bytes.
-    4000
-  );
+
+  const filePath = await download.path();
+  const fileBuffer = await promises.readFile(filePath);
+
+  const png = PNG.sync.read(fileBuffer);
+  const { width, height } = png;
+  expect(width).toBeGreaterThan(0);
+  // Make sure the whole chart was captured in the screenshot, not only the
+  // visible part.
+  expect(height).toBeGreaterThan(4000);
 });
