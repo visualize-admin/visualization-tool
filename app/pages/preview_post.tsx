@@ -5,9 +5,9 @@ import { GetServerSideProps } from "next";
 import { useEffect, useState } from "react";
 
 import { ChartPublished } from "@/components/chart-published";
-import { ConfiguratorState } from "@/configurator";
+import { ConfiguratorState, decodeConfiguratorState } from "@/configurator";
 import { GraphqlProvider } from "@/graphql/GraphqlProvider";
-import { Locale, defaultLocale, i18n } from "@/locales/locales";
+import { defaultLocale, i18n, Locale } from "@/locales/locales";
 import { LocaleProvider } from "@/locales/use-locale";
 import { ConfiguratorStateProvider } from "@/src";
 import * as federalTheme from "@/themes/federal";
@@ -62,8 +62,12 @@ export default function Preview({ configuratorState, locale }: PageProps) {
   const [migrated, setMigrated] = useState<ConfiguratorState>();
   useEffect(() => {
     const run = async () => {
+      const migratedConfiguratorState = decodeConfiguratorState(
+        await migrateConfiguratorState(configuratorState)
+      );
       setMigrated({
-        ...(await migrateConfiguratorState(configuratorState)),
+        ...migratedConfiguratorState,
+        // Force state published for <ChartPublished /> to work correctly
         state: "PUBLISHED",
       } as ConfiguratorState);
     };
