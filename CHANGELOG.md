@@ -12,8 +12,12 @@ You can also check the
 # Unreleased
 
 - Features
+  - Centered x-axis labels
+  - Added y-axis labels
   - Added a new option to the vertical axis on the line chart, allowing users to
     display a dot over the line where it intercepts the x-axis ticks
+  - Downloading images of bar charts now includes the whole chart, not just the
+    visible part
 - Fixes
   - Preview via API now works correctly for map charts
 
@@ -38,8 +42,6 @@ You can also check the
     switching between chart types
   - Improved readability for dataset selection and preview
   - Sorting dataset results by score option is now correctly available to select
-  - Created with visualize.admin.ch footnote is only displayed once, not twice,
-    when downloading an image of a published chart
   - Changing dates manually using keyboard works correctly now in date picker
     inputs
   - Opening a temporal dimension with timezone in table chart configurator
