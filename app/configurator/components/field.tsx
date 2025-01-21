@@ -664,7 +664,7 @@ export const LayoutAnnotatorTabField = (
   );
 };
 
-export const MetaMarkdownInputField = ({
+export const MetaInputField = ({
   type,
   inputType,
   label,

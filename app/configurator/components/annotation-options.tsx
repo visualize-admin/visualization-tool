@@ -14,7 +14,7 @@ import {
   ControlSectionContent,
   SectionTitle,
 } from "@/configurator/components/chart-controls/section";
-import { MetaMarkdownInputField } from "@/configurator/components/field";
+import { MetaInputField } from "@/configurator/components/field";
 import { getFieldLabel } from "@/configurator/components/field-i18n";
 import { useOrderedLocales } from "@/locales/use-locale";
 import useEvent from "@/utils/use-event";
@@ -92,7 +92,7 @@ const AnnotationOptions = (props: AnnotationOptionsProps) => {
               key={`${locale}-${activeField}`}
               sx={{ ":not(:first-of-type)": { mt: 2 } }}
             >
-              <MetaMarkdownInputField
+              <MetaInputField
                 type={type}
                 inputType={activeField === "label" ? "text" : "markdown"}
                 metaKey={activeField}
