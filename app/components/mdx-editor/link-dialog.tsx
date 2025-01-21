@@ -432,7 +432,7 @@ const useLinkEditFormStyles = makeStyles<Theme>((theme) => ({
 
 const TIMEOUT_MS = 350;
 
-export const LinkDialog = () => {
+const LinkDialog = () => {
   const classes = useLinkDialogStyles();
   const [editorRootElementRef, activeEditor, state] = useCellValues(
     editorRootElementRef$,

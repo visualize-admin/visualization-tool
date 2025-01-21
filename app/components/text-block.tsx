@@ -22,23 +22,20 @@ import {
 import { useLocale } from "@/src";
 import useEvent from "@/utils/use-event";
 
-export const useTextBlockStyles = makeStyles<Theme, { layouting?: boolean }>(
-  () => ({
-    root: {
-      // Make sure the text block doesn't cause the grid to grow.
-      gridRow: `span ${CHART_GRID_ROW_COUNT + 1}`,
-      display: "flex",
-      padding: "0.75rem",
-      cursor: ({ layouting }) => (layouting ? "pointer" : "default"),
-      "&:hover": {
-        textDecoration: ({ layouting }) => (layouting ? "underline" : "none"),
-      },
+const useTextBlockStyles = makeStyles<Theme, { layouting?: boolean }>(() => ({
+  root: {
+    // Make sure the text block doesn't cause the grid to grow.
+    gridRow: `span ${CHART_GRID_ROW_COUNT + 1}`,
+    display: "flex",
+    padding: "0.75rem",
+    cursor: ({ layouting }) => (layouting ? "pointer" : "default"),
+    "&:hover": {
+      textDecoration: ({ layouting }) => (layouting ? "underline" : "none"),
     },
-  })
-);
-
-export const TEXT_BLOCK_WRAPPER_CLASS = "text-block-wrapper";
-export const TEXT_BLOCK_CONTENT_CLASS = "text-block-content";
+  },
+}));
+const TEXT_BLOCK_WRAPPER_CLASS = "text-block-wrapper";
+const TEXT_BLOCK_CONTENT_CLASS = "text-block-content";
 
 export const TextBlock = forwardRef<
   HTMLDivElement,
@@ -154,7 +151,7 @@ export const DndTextBlock = ({ block }: { block: LayoutTextBlock }) => {
   );
 };
 
-export const TextBlockActionElements = ({
+const TextBlockActionElements = ({
   block,
   dragHandleProps,
 }: {
