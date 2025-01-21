@@ -1317,14 +1317,13 @@ export const chartConfigMigrations: Migration[] = [
         return newConfig;
       }
 
-      // Only set default color if no existing color configurations
       if (!newConfig.fields?.color) {
-        const hasNoColorMapping = !(
+        const hasColorMapping = !!(
           newConfig.fields?.y?.colorMapping ||
           newConfig.fields?.segment?.colorMapping
         );
 
-        if (hasNoColorMapping) {
+        if (!hasColorMapping) {
           newConfig.fields = {
             ...newConfig.fields,
             color: {
@@ -1342,10 +1341,7 @@ export const chartConfigMigrations: Migration[] = [
           color: {
             type: "segment",
             paletteId: newConfig.fields.segment.palette || "category10",
-            colorMapping: { ...newConfig.fields.segment.colorMapping },
-          },
-          segment: {
-            ...newConfig.fields.segment,
+            colorMapping: newConfig.fields.segment.colorMapping,
           },
         };
         delete newConfig.fields.segment.colorMapping;
@@ -1358,10 +1354,7 @@ export const chartConfigMigrations: Migration[] = [
           color: {
             type: "measures",
             paletteId: newConfig.fields.y.palette || "category10",
-            colorMapping: { ...newConfig.fields.y.colorMapping },
-          },
-          y: {
-            ...newConfig.fields.y,
+            colorMapping: newConfig.fields.y.colorMapping,
           },
         };
         delete newConfig.fields.y.colorMapping;
@@ -1371,44 +1364,42 @@ export const chartConfigMigrations: Migration[] = [
       return newConfig;
     },
     down: (config) => {
-      const oldConfig = {
+      const newConfig = {
         ...config,
         version: "4.0.0",
       };
 
-      if (oldConfig.chartType === "table" || oldConfig.chartType === "map") {
-        return oldConfig;
+      if (newConfig.chartType === "table" || newConfig.chartType === "map") {
+        return newConfig;
       }
 
-      if (oldConfig.fields?.color) {
-        if (oldConfig.fields.color.type === "segment") {
-          oldConfig.fields = {
-            ...oldConfig.fields,
+      if (newConfig.fields?.color) {
+        if (newConfig.fields.color.type === "segment") {
+          newConfig.fields = {
+            ...newConfig.fields,
             segment: {
-              ...oldConfig.fields.segment,
-              colorMapping: { ...oldConfig.fields.color.colorMapping },
-              palette: oldConfig.fields.color.paletteId,
+              ...newConfig.fields.segment,
+              colorMapping: newConfig.fields.color.colorMapping,
+              palette: newConfig.fields.color.paletteId,
             },
           };
         }
 
-        if (oldConfig.fields.color.type === "measures") {
-          oldConfig.fields = {
-            ...oldConfig.fields,
+        if (newConfig.fields.color.type === "measures") {
+          newConfig.fields = {
+            ...newConfig.fields,
             y: {
-              ...oldConfig.fields.y,
-              colorMapping: { ...oldConfig.fields.color.colorMapping },
-              palette: oldConfig.fields.color.paletteId,
+              ...newConfig.fields.y,
+              colorMapping: newConfig.fields.color.colorMapping,
+              palette: newConfig.fields.color.paletteId,
             },
           };
         }
 
-        // Create a new fields object without the color property
-        const { color, ...fieldsWithoutColor } = oldConfig.fields;
-        oldConfig.fields = fieldsWithoutColor;
+        delete newConfig.fields.color;
       }
 
-      return oldConfig;
+      return newConfig;
     },
   },
 ];
