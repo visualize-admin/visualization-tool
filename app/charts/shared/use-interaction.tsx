@@ -13,7 +13,7 @@ type InteractionElement = {
   visible: boolean;
   mouse?: { x: number; y: number } | undefined;
   d: Observation | undefined;
-  isLocked: boolean;
+  isLocked?: boolean;
 };
 
 type InteractionState = {
