@@ -6,12 +6,12 @@ import clsx from "clsx";
 import { selectAll } from "d3-selection";
 import isEqual from "lodash/isEqual";
 import { ComponentProps, forwardRef, useCallback, useEffect } from "react";
-import Markdown from "react-markdown";
 
 import { ActionElementsContainer } from "@/components/action-elements-container";
 import { CHART_GRID_ROW_COUNT } from "@/components/chart-shared";
 import { BlockMoreButton } from "@/components/dashboard-shared";
 import { DragHandle, useDragOverClasses } from "@/components/drag-handle";
+import { Markdown } from "@/components/markdown";
 import { ROW_HEIGHT } from "@/components/react-grid";
 import { LayoutTextBlock } from "@/config-types";
 import {
