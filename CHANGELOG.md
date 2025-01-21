@@ -17,6 +17,8 @@ You can also check the
   - Implemented Content Security Policy (CSP)
   - Added a new option to the vertical axis on the line chart, allowing users to
     display a dot over the line where it intercepts the x-axis ticks
+  - Downloading images of bar charts now includes the whole chart, not just the
+    visible part
 
 # [5.1.0] - 2025-01-14
 

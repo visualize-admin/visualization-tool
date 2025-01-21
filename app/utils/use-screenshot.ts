@@ -3,6 +3,7 @@ import { toPng, toSvg } from "html-to-image";
 import { addMetadata } from "meta-png";
 import { useCallback, useState } from "react";
 
+import { TABLE_PREVIEW_WRAPPER_CLASS_NAME } from "@/components/chart-table-preview";
 import { animationFrame } from "@/utils/animation-frame";
 
 type ScreenshotFileFormat = "png" | "svg";
@@ -120,6 +121,22 @@ const makeScreenshot = async ({
 
   await modifyNode?.(clonedNode, node);
   wrapperNode.appendChild(clonedNode);
+
+  // Make sure the whole chart is visible in the screenshot (currently only an
+  // issue with SVG-based, long bar charts).
+  const tableWrapper = clonedNode.querySelector(
+    `.${TABLE_PREVIEW_WRAPPER_CLASS_NAME}`
+  ) as HTMLElement | null;
+  const svg = tableWrapper?.querySelector("svg");
+  const svgHeight = svg?.getAttribute("height");
+  const svgParent = svg?.parentElement;
+
+  if (tableWrapper && svgHeight && svgParent) {
+    tableWrapper.style.height = "fit-content";
+    svgParent.style.height = `${svgHeight}px`;
+    svgParent.style.overflow = "visible";
+  }
+
   await animationFrame();
 
   // There's a bug with embedding the fonts in Safari, which appears only when
