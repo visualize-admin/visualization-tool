@@ -19,7 +19,15 @@ export const Tooltip = ({ type = "single" }: { type: TooltipType }) => {
   const [state] = useInteraction();
   const { visible, d } = state.interaction;
 
-  return <>{visible && d && <TooltipInner d={d} type={type} />}</>;
+  //FIXME: this is a hack to make the tooltip work when scrolling bar charts. Ideally we find some way of rerendering
+  // the TooltipInner on scroll.
+  return (
+    <>
+      {visible && !state.interaction.isLocked && d && (
+        <TooltipInner d={d} type={type} />
+      )}
+    </>
+  );
 };
 export type { TooltipPlacement };
 

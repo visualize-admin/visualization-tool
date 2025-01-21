@@ -13,6 +13,7 @@ type InteractionElement = {
   visible: boolean;
   mouse?: { x: number; y: number } | undefined;
   d: Observation | undefined;
+  isLocked: boolean;
 };
 
 type InteractionState = {
@@ -26,6 +27,12 @@ type InteractionStateAction =
     }
   | {
       type: "INTERACTION_HIDE";
+    }
+  | {
+      type: "INTERACTION_LOCK";
+    }
+  | {
+      type: "INTERACTION_UNLOCK";
     };
 
 const INTERACTION_INITIAL_STATE: InteractionState = {
@@ -33,6 +40,7 @@ const INTERACTION_INITIAL_STATE: InteractionState = {
     visible: false,
     mouse: undefined,
     d: undefined,
+    isLocked: false,
   },
 };
 
@@ -41,10 +49,27 @@ const InteractionStateReducer = (
   action: InteractionStateAction
 ) => {
   switch (action.type) {
+    case "INTERACTION_LOCK":
+      return {
+        ...state,
+        interaction: {
+          ...state.interaction,
+          isLocked: true,
+        },
+      };
+    case "INTERACTION_UNLOCK":
+      return {
+        ...state,
+        interaction: {
+          ...state.interaction,
+          isLocked: false,
+        },
+      };
     case "INTERACTION_UPDATE":
       return {
         ...state,
         interaction: {
+          ...state.interaction,
           visible: action.value.interaction.visible,
           mouse: action.value.interaction.mouse
             ? {
