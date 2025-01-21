@@ -19,6 +19,8 @@ You can also check the
     display a dot over the line where it intercepts the x-axis ticks
   - Downloading images of bar charts now includes the whole chart, not just the
     visible part
+- Fixes
+  - GraphQL debug panel now displays the queries again when in debug mode
 
 # [5.1.0] - 2025-01-14
 
