@@ -10,6 +10,7 @@ export const photovoltaikChartStateMock: ConfiguratorStateConfiguringChart = {
   layout: {
     activeField: "y",
     type: "tab",
+    blocks: [{ type: "chart", key: "8-5RW138pTDA", initialized: true }],
     meta: {
       title: {
         de: "",

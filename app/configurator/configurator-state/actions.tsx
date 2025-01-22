@@ -246,7 +246,7 @@ export type ConfiguratorStateAction =
       };
     }
   | {
-      type: "CHART_CONFIG_SWAP";
+      type: "LAYOUT_BLOCK_SWAP";
       value: {
         oldIndex: number;
         newIndex: number;

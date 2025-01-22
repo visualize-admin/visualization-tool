@@ -30,14 +30,30 @@ msgstr "Nessun risultato"
 msgid "annotation.add.description"
 msgstr "[ Nessuna descrizione ]"
 
+#: app/components/chart-panel.tsx
+msgid "annotation.add.text"
+msgstr "[ Aggiungi testo ]"
+
 #: app/configurator/components/annotators.tsx
 #: app/login/components/profile-tables.tsx
 msgid "annotation.add.title"
 msgstr "[ Nessun titolo ]"
 
-#: app/configurator/components/beta-tag.tsx
-msgid "beta-tag.tooltip"
-msgstr "Questa funzionalità è attualmente in fase di sviluppo, potresti riscontrare bug e problemi di prestazioni."
+#: app/components/dashboard-shared.tsx
+msgid "block-controls.delete"
+msgstr "Elimina"
+
+#: app/components/dashboard-shared.tsx
+msgid "block-controls.delete.confirmation"
+msgstr "Sei sicuro di voler eliminare questo blocco?"
+
+#: app/components/dashboard-shared.tsx
+msgid "block-controls.delete.title"
+msgstr "Eliminare il blocco?"
+
+#: app/components/dashboard-shared.tsx
+msgid "block-controls.duplicate"
+msgstr "Duplicare"
 
 #: app/browser/dataset-browse.tsx
 msgid "browse-panel.organizations"
@@ -181,8 +197,8 @@ msgid "chart-controls.edit-tab-label"
 msgstr "Modifica l'etichetta della scheda"
 
 #: app/components/chart-shared.tsx
-msgid "chart-controls.export"
-msgstr "Esportare"
+msgid "chart-controls.export-png"
+msgstr "Esporta PNG"
 
 #: app/components/dataset-metadata.tsx
 msgid "chart-controls.sparql-query"
@@ -328,11 +344,11 @@ msgstr "Asse verticale"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.bar.grouped"
-msgstr ""
+msgstr "raggruppate"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.bar.stacked"
-msgstr ""
+msgstr "impilate"
 
 #: app/charts/chart-config-ui-options.ts
 #: app/charts/chart-config-ui-options.ts
@@ -402,11 +418,11 @@ msgstr "Misura dell'asse destro"
 
 #: app/charts/index.ts
 msgid "controls.chart.disabled.categorical"
-msgstr "È richiesta almeno una dimensione categoriale."
+msgstr "È richiesta almeno una dimensione di tipo categoriale."
 
 #: app/charts/index.ts
 msgid "controls.chart.disabled.different-unit"
-msgstr "Sono necessarie almeno due misure numeriche con unità diverse."
+msgstr "Sono richieste almeno due misure numeriche con unità diverse."
 
 #: app/charts/index.ts
 msgid "controls.chart.disabled.geographical"
@@ -414,7 +430,7 @@ msgstr "È richiesta almeno una dimensione geografica."
 
 #: app/charts/index.ts
 msgid "controls.chart.disabled.multiple-measures"
-msgstr "Sono necessarie almeno due misure numeriche."
+msgstr "Sono richieste almeno due misure numeriche."
 
 #: app/charts/index.ts
 msgid "controls.chart.disabled.numerical"
@@ -825,6 +841,22 @@ msgstr "Usare il tipo a gradini per far saltare l'animazione tra i punti di dati
 msgid "controls.section.animation.type.stepped"
 msgstr "A gradini"
 
+#: app/configurator/components/layout-configurator.tsx
+msgid "controls.section.block-options"
+msgstr "Oggetti"
+
+#: app/configurator/components/layout-configurator.tsx
+msgid "controls.section.block-options.block-add"
+msgstr "Aggiungi oggetto"
+
+#: app/configurator/components/layout-configurator.tsx
+msgid "controls.section.block-options.block-add.text"
+msgstr "Testo"
+
+#: app/configurator/components/block-options-selector.tsx
+msgid "controls.section.block-options.block.text"
+msgstr "Oggetto di testo"
+
 #: app/configurator/components/chart-configurator.tsx
 msgid "controls.section.chart.options"
 msgstr "Opzioni del grafico"
@@ -916,7 +948,7 @@ msgstr "Mostra intervallo di confidenza"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.show-confidence-interval.explanation"
-msgstr "Mostra le incertezze che si estendono dai punti dati per rappresentare gli intervalli di confidenza"
+msgstr "Mostra le incertezze"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.show-dots"
@@ -1569,6 +1601,14 @@ msgstr "Esci"
 #: app/components/header.tsx
 msgid "logo.swiss.confederation"
 msgstr "Logo della Confederazione svizzera"
+
+#: app/components/mdx-editor/link-popover.tsx
+msgid "mdx-editor.link-dialog.label-placeholder"
+msgstr "Etichetta..."
+
+#: app/components/mdx-editor/link-popover.tsx
+msgid "mdx-editor.link-dialog.url-placeholder"
+msgstr "URL..."
 
 #: app/components/chart-footnotes.tsx
 #: app/components/chart-published.tsx

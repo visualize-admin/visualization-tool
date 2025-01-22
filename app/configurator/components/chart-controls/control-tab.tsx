@@ -23,7 +23,16 @@ import SvgIcEdit from "@/icons/components/IcEdit";
 import SvgIcExclamation from "@/icons/components/IcExclamation";
 import useEvent from "@/utils/use-event";
 
-type ControlTabProps = {
+export const ControlTabFieldInner = ({
+  chartConfig,
+  fieldComponents,
+  value,
+  onClick,
+  checked,
+  labelId,
+  disabled,
+  warnMessage,
+}: {
   chartConfig: ChartConfig;
   fieldComponents?: Component[];
   value: string;
@@ -31,28 +40,14 @@ type ControlTabProps = {
   labelId: string | null;
   disabled?: boolean;
   warnMessage?: string;
-} & FieldProps;
-
-export const ControlTab = (props: ControlTabProps) => {
-  const {
-    chartConfig,
-    fieldComponents,
-    value,
-    onClick,
-    checked,
-    labelId,
-    disabled,
-    warnMessage,
-  } = props;
+} & FieldProps) => {
   const handleClick = useEvent(() => onClick(value));
 
   const components = fieldComponents;
   const firstComponent = components?.[0];
-  const isActive = overrideChecked(chartConfig, value)
-    ? true
-    : !!firstComponent;
+  const isActive = overrideChecked(chartConfig, value) || !!firstComponent;
 
-  const labels = components?.map((x) => getComponentLabel(x));
+  const labels = components?.map((c) => getComponentLabel(c));
 
   const { upperLabel, mainLabel } = getLabels(
     chartConfig,
@@ -193,7 +188,7 @@ export const OnOffControlTab = ({
   );
 };
 
-export type AnnotatorTabProps = {
+export type ControlTabProps = {
   disabled?: boolean;
   onClick: (x: string) => void;
   value: string;
@@ -204,7 +199,7 @@ export type AnnotatorTabProps = {
   rightIcon?: ReactNode;
 } & FieldProps;
 
-export const AnnotatorTab = ({
+export const ControlTab = ({
   value,
   checked,
   onClick,
@@ -213,7 +208,7 @@ export const AnnotatorTab = ({
   mainLabel,
   lowerLabel,
   rightIcon,
-}: AnnotatorTabProps) => {
+}: ControlTabProps) => {
   return (
     <Box
       sx={{
@@ -293,7 +288,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     minWidth: 160,
     padding: `${theme.spacing(3)} ${theme.spacing(2)}`,
     fontWeight: "normal",
-
     fontSize: "0.875rem",
     transition: "background-color .2s",
     cursor: "pointer",
@@ -309,16 +303,16 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
   },
   controlTabButtonInnerIcon: {
-    width: 32,
-    height: 32,
-    minWidth: 32,
-    borderRadius: 2,
     justifyContent: "center",
     alignItems: "center",
+    width: 32,
+    minWidth: 32,
+    height: 32,
+    borderRadius: 2,
+    color: theme.palette.grey[700],
   },
 }));
 
-// Generic component
 const ControlTabButton = ({
   disabled,
   checked,
@@ -329,20 +323,19 @@ const ControlTabButton = ({
   disabled?: boolean;
   checked?: boolean;
   value: string;
-  onClick: (x: string) => void;
+  onClick: (value: string) => void;
   children: ReactNode;
 }) => {
   const classes = useStyles();
 
   return (
     <Button
-      disabled={disabled}
-      role="tab"
-      aria-selected={checked}
-      aria-controls={`filter-panel-${value}`}
       id={`tab-${value}`}
-      onClick={() => onClick(value)}
       className={classes.controlTabButton}
+      role="tab"
+      disabled={disabled}
+      aria-selected={checked}
+      onClick={() => onClick(value)}
       sx={{ backgroundColor: checked ? "action.hover" : "grey.100" }}
     >
       {children}
@@ -385,10 +378,7 @@ const ControlTabButtonInner = ({
       <Flex sx={{ justifyContent: "flex-start", alignItems: "center" }}>
         <Flex
           className={classes.controlTabButtonInnerIcon}
-          sx={{
-            backgroundColor: checked ? "primary.main" : "grey.100",
-            color: "grey.700",
-          }}
+          sx={{ backgroundColor: checked ? "primary.main" : "grey.100" }}
         >
           <Icon size={24} name={iconName} />
         </Flex>
@@ -415,6 +405,13 @@ const ControlTabButtonInner = ({
           <Typography
             variant="h5"
             sx={{
+              // --- Puts ellipsis on the second line.
+              display: "-webkit-box",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              "-webkit-box-orient": "vertical",
+              "-webkit-line-clamp": "2",
+              // ---
               color: optional && !checked ? "grey.500" : "grey.800",
               textAlign: "left",
             }}

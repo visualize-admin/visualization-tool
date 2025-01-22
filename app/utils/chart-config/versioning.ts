@@ -25,7 +25,7 @@ import {
   getUnversionedCubeIri,
   getUnversionedCubeIriServerSide,
 } from "@/utils/chart-config/upgrade-cube";
-import { createChartId } from "@/utils/create-chart-id";
+import { createId } from "@/utils/create-id";
 
 type Migration = {
   description: string;
@@ -617,7 +617,7 @@ export const chartConfigMigrations: Migration[] = [
     to: "2.0.0",
     up: (config, configuratorState) => {
       const newConfig = { ...config, version: "2.0.0" };
-      newConfig.key = createChartId();
+      newConfig.key = createId();
       newConfig.meta = configuratorState.meta;
       newConfig.activeField = configuratorState.activeField;
 
@@ -2036,6 +2036,7 @@ export const configuratorStateMigrations: Migration[] = [
     to: "4.1.0",
     up: async (config) => {
       const newConfig = { ...config, version: "4.1.0" };
+
       const chartConfigs: any[] = [];
 
       for (const chartConfig of newConfig.chartConfigs) {
@@ -2052,6 +2053,7 @@ export const configuratorStateMigrations: Migration[] = [
     },
     down: async (config) => {
       const newConfig = { ...config, version: "4.0.0" };
+
       const chartConfigs: any[] = [];
 
       for (const chartConfig of newConfig.chartConfigs) {
@@ -2063,6 +2065,63 @@ export const configuratorStateMigrations: Migration[] = [
       }
 
       newConfig.chartConfigs = chartConfigs;
+
+      return newConfig;
+    },
+  },
+  {
+    description: `ALL {
+      layout {
+        + blocks
+        - layoutsMetadata
+      }
+    }`,
+    from: "4.1.0",
+    to: "4.2.0",
+    up: async (config) => {
+      const newConfig = { ...config, version: "4.2.0" };
+
+      if (newConfig.layout.layoutsMetadata) {
+        newConfig.layout.blocks = Object.entries(
+          newConfig.layout.layoutsMetadata
+        ).map(([k, v]) => {
+          return {
+            type: "chart",
+            key: k,
+            ...(v as object),
+          };
+        });
+        delete newConfig.layout.layoutsMetadata;
+      } else {
+        newConfig.layout.blocks = newConfig.chartConfigs.map(
+          (chartConfig: any) => {
+            return {
+              type: "chart",
+              key: chartConfig.key,
+              initialized: false,
+            };
+          }
+        );
+      }
+
+      return newConfig;
+    },
+    down: async (config) => {
+      const newConfig = { ...config, version: "4.1.0" };
+
+      if (
+        newConfig.layout.type === "dashboard" &&
+        newConfig.layout.layout === "canvas"
+      ) {
+        newConfig.layout.layoutsMetadata = Object.fromEntries(
+          newConfig.layout.blocks.map((block: any) => {
+            const { key, initialized } = block;
+            return [key, { initialized }];
+          })
+        );
+      }
+
+      delete newConfig.layout.blocks;
 
       return newConfig;
     },
