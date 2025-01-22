@@ -1,7 +1,7 @@
 import { Resolver, Resolvers } from "@apollo/client/core";
 import { GraphQLResolveInfo } from "graphql";
 
-import { Timing, timed } from "@/utils/timed";
+import { timed, Timing } from "@/utils/timed";
 
 export type Timings = Record<
   string,
@@ -49,7 +49,7 @@ export const setupFlamegraph = (resolvers: Resolvers) => {
           fieldResolver.constructor.name === "AsyncFunction"
         ) {
           typeResolvers[field] = timed(
-            fieldResolver as Resolver,
+            fieldResolver,
             (timing, ...resolverArgs: Parameters<Resolver>) => {
               const [, , context, info] = resolverArgs;
               const path = info
@@ -57,7 +57,7 @@ export const setupFlamegraph = (resolvers: Resolvers) => {
                 : [];
               setTimingInContext(context, path, timing);
             }
-          ) as Resolver;
+          );
         }
       }
     }

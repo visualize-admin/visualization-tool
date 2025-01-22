@@ -37,7 +37,7 @@ import {
   fetchChartConfig,
   updateConfig,
 } from "@/utils/chart-config/api";
-import { createChartId } from "@/utils/create-chart-id";
+import { createId } from "@/utils/create-id";
 import { getRouterChartId } from "@/utils/router/helpers";
 
 const ConfiguratorStateContext = createContext<
@@ -198,7 +198,7 @@ export async function publishState(
 ) {
   switch (state.layout.type) {
     case "singleURLs":
-      const { publishableChartKeys, meta } = state.layout;
+      const { publishableChartKeys, meta, blocks } = state.layout;
       const reversedChartKeys = publishableChartKeys.slice().reverse();
 
       // Charts are published in order, keep the current tab open with first chart
@@ -210,7 +210,8 @@ export async function publishState(
             // Ensure that the layout is reset to single-chart mode
             layout: {
               type: "tab",
-              meta: meta,
+              meta,
+              blocks,
               activeField: undefined,
             },
           },
@@ -329,7 +330,7 @@ const ConfiguratorStateProviderInternal = (
             chartId === "new"
               ? query.edit && typeof query.edit === "string"
                 ? query.edit
-                : createChartId()
+                : createId()
               : chartId;
           if (chartId === "new") {
             replace(`/create/${savedChartId}`);

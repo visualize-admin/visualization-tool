@@ -11,7 +11,6 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 import { SentryPlugin } from "@/graphql/apollo-sentry-plugin";
 
-import { setupFlamegraph } from "../../gql-flamegraph/resolvers";
 import { createContext, VisualizeGraphQLContext } from "../../graphql/context";
 import { resolvers } from "../../graphql/resolvers";
 import typeDefs from "../../graphql/schema.graphql";
@@ -29,8 +28,6 @@ const schema = makeExecutableSchema({
   resolvers,
   schemaTransforms: [constraintDirective()],
 });
-
-setupFlamegraph(resolvers);
 
 const server = new ApolloServer({
   schema,

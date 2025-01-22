@@ -30,10 +30,30 @@ msgstr "Nessun risultato"
 msgid "annotation.add.description"
 msgstr "[ Nessuna descrizione ]"
 
+#: app/components/chart-panel.tsx
+msgid "annotation.add.text"
+msgstr "[ Aggiungi testo ]"
+
 #: app/configurator/components/annotators.tsx
 #: app/login/components/profile-tables.tsx
 msgid "annotation.add.title"
 msgstr "[ Nessun titolo ]"
+
+#: app/components/dashboard-shared.tsx
+msgid "block-controls.delete"
+msgstr "Elimina"
+
+#: app/components/dashboard-shared.tsx
+msgid "block-controls.delete.confirmation"
+msgstr "Sei sicuro di voler eliminare questo blocco?"
+
+#: app/components/dashboard-shared.tsx
+msgid "block-controls.delete.title"
+msgstr "Eliminare il blocco?"
+
+#: app/components/dashboard-shared.tsx
+msgid "block-controls.duplicate"
+msgstr "Duplicare"
 
 #: app/browser/dataset-browse.tsx
 msgid "browse-panel.organizations"
@@ -177,8 +197,8 @@ msgid "chart-controls.edit-tab-label"
 msgstr "Modifica l'etichetta della scheda"
 
 #: app/components/chart-shared.tsx
-msgid "chart-controls.export"
-msgstr "Esportare"
+msgid "chart-controls.export-png"
+msgstr "Esporta PNG"
 
 #: app/components/dataset-metadata.tsx
 msgid "chart-controls.sparql-query"
@@ -324,11 +344,11 @@ msgstr "Asse verticale"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.bar.grouped"
-msgstr "Raggruppate"
+msgstr "raggruppate"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.bar.stacked"
-msgstr "Impilate"
+msgstr "impilate"
 
 #: app/charts/chart-config-ui-options.ts
 #: app/charts/chart-config-ui-options.ts
@@ -820,6 +840,22 @@ msgstr "Usare il tipo a gradini per far saltare l'animazione tra i punti di dati
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.animation.type.stepped"
 msgstr "A gradini"
+
+#: app/configurator/components/layout-configurator.tsx
+msgid "controls.section.block-options"
+msgstr "Oggetti"
+
+#: app/configurator/components/layout-configurator.tsx
+msgid "controls.section.block-options.block-add"
+msgstr "Aggiungi oggetto"
+
+#: app/configurator/components/layout-configurator.tsx
+msgid "controls.section.block-options.block-add.text"
+msgstr "Testo"
+
+#: app/configurator/components/block-options-selector.tsx
+msgid "controls.section.block-options.block.text"
+msgstr "Oggetto di testo"
 
 #: app/configurator/components/chart-configurator.tsx
 msgid "controls.section.chart.options"
@@ -1577,6 +1613,14 @@ msgstr "Esci"
 #: app/components/header.tsx
 msgid "logo.swiss.confederation"
 msgstr "Logo della Confederazione svizzera"
+
+#: app/components/mdx-editor/link-popover.tsx
+msgid "mdx-editor.link-dialog.label-placeholder"
+msgstr "Etichetta..."
+
+#: app/components/mdx-editor/link-popover.tsx
+msgid "mdx-editor.link-dialog.url-placeholder"
+msgstr "URL..."
 
 #: app/components/chart-footnotes.tsx
 #: app/components/chart-published.tsx

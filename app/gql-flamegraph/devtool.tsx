@@ -205,7 +205,7 @@ const AccordionOperation = ({
   }, [result?.extensions?.timings]);
 
   return (
-    <Accordion {...accordionProps}>
+    <Accordion {...accordionProps} data-testid="debug-panel-accordion">
       <AccordionSummary>
         <Box
           sx={{
@@ -493,20 +493,19 @@ const DebugPanel = () => {
     <>
       <Box sx={{ position: "fixed", bottom: 0, right: 0, zIndex: 10 }}>
         <Grow in>
-          <IconButton size="small" onClick={open}>
+          <IconButton
+            data-testid="debug-panel-toggle"
+            size="small"
+            onClick={open}
+          >
             🛠
           </IconButton>
         </Grow>
       </Box>
-      <Drawer
-        open={isOpen}
-        anchor="bottom"
-        elevation={2}
-        onBackdropClick={close}
-      >
+      <Drawer open={isOpen} anchor="bottom" elevation={2} onClose={close}>
         <TabContext value={tab}>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            <TabList value={tab} onChange={(_ev, tab) => setTab(tab)}>
+            <TabList onChange={(_, tab) => setTab(tab)}>
               <Tab value="graphql" label="graphql" />
               <Tab value="flags" label="flags" />
             </TabList>

@@ -22,6 +22,7 @@ export const configStateMock = {
       type: "singleURLs",
       publishableChartKeys: [],
       meta: {} as ConfiguratorStateConfiguringChart["layout"]["meta"],
+      blocks: [{ type: "chart", key: "abc", initialized: true }],
     },
     chartConfigs: [
       {
@@ -101,6 +102,7 @@ export const configStateMock = {
           it: "",
         },
       },
+      blocks: [{ type: "chart", key: "2of7iJAjccuj", initialized: true }],
     },
     chartConfigs: [
       {

@@ -30,10 +30,30 @@ msgstr "No results"
 msgid "annotation.add.description"
 msgstr "[ No Description ]"
 
+#: app/components/chart-panel.tsx
+msgid "annotation.add.text"
+msgstr "[ Add text ]"
+
 #: app/configurator/components/annotators.tsx
 #: app/login/components/profile-tables.tsx
 msgid "annotation.add.title"
 msgstr "[ No Title ]"
+
+#: app/components/dashboard-shared.tsx
+msgid "block-controls.delete"
+msgstr "Delete"
+
+#: app/components/dashboard-shared.tsx
+msgid "block-controls.delete.confirmation"
+msgstr "Are you sure you want to delete this block?"
+
+#: app/components/dashboard-shared.tsx
+msgid "block-controls.delete.title"
+msgstr "Delete block?"
+
+#: app/components/dashboard-shared.tsx
+msgid "block-controls.duplicate"
+msgstr "Duplicate"
 
 #: app/browser/dataset-browse.tsx
 msgid "browse-panel.organizations"
@@ -177,8 +197,8 @@ msgid "chart-controls.edit-tab-label"
 msgstr "Edit tab label"
 
 #: app/components/chart-shared.tsx
-msgid "chart-controls.export"
-msgstr "Export"
+msgid "chart-controls.export-png"
+msgstr "Export PNG"
 
 #: app/components/dataset-metadata.tsx
 msgid "chart-controls.sparql-query"
@@ -821,6 +841,22 @@ msgstr "Use the Stepped type to make the animation jump between data points at f
 msgid "controls.section.animation.type.stepped"
 msgstr "Stepped"
 
+#: app/configurator/components/layout-configurator.tsx
+msgid "controls.section.block-options"
+msgstr "Objects"
+
+#: app/configurator/components/layout-configurator.tsx
+msgid "controls.section.block-options.block-add"
+msgstr "Add object"
+
+#: app/configurator/components/layout-configurator.tsx
+msgid "controls.section.block-options.block-add.text"
+msgstr "Text"
+
+#: app/configurator/components/block-options-selector.tsx
+msgid "controls.section.block-options.block.text"
+msgstr "Text object"
+
 #: app/configurator/components/chart-configurator.tsx
 msgid "controls.section.chart.options"
 msgstr "Chart Options"
@@ -1167,7 +1203,7 @@ msgstr "Keywords"
 
 #: app/browser/dataset-browse.tsx
 msgid "dataset-result.dimension-joined-by"
-msgstr "Joined by"
+msgstr "Contains value of"
 
 #: app/browser/dataset-browse.tsx
 msgid "dataset-result.shared-dimensions"
@@ -1577,6 +1613,14 @@ msgstr "Sign out"
 #: app/components/header.tsx
 msgid "logo.swiss.confederation"
 msgstr "Logo of the Swiss Confederation"
+
+#: app/components/mdx-editor/link-popover.tsx
+msgid "mdx-editor.link-dialog.label-placeholder"
+msgstr "Label..."
+
+#: app/components/mdx-editor/link-popover.tsx
+msgid "mdx-editor.link-dialog.url-placeholder"
+msgstr "URL..."
 
 #: app/components/chart-footnotes.tsx
 #: app/components/chart-published.tsx

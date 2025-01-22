@@ -1,20 +1,22 @@
 import { Box, BoxProps, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
-import React, { HTMLProps, forwardRef } from "react";
+import { forwardRef, HTMLProps, PropsWithChildren } from "react";
 
-import ChartPanelLayoutCanvas, {
+import {
+  ChartPanelLayoutCanvas,
   chartPanelLayoutGridClasses,
 } from "@/components/chart-panel-layout-grid";
 import { ChartPanelLayoutTall } from "@/components/chart-panel-layout-tall";
 import { ChartPanelLayoutVertical } from "@/components/chart-panel-layout-vertical";
 import { ChartSelectionTabs } from "@/components/chart-selection-tabs";
 import { DashboardInteractiveFilters } from "@/components/dashboard-interactive-filters";
-import { ChartConfig, Layout, LayoutDashboard } from "@/config-types";
-import { hasChartConfigs } from "@/configurator";
+import { useSyncTextBlockHeight } from "@/components/text-block";
+import { Layout, LayoutDashboard } from "@/config-types";
+import { hasChartConfigs, isLayouting, LayoutBlock } from "@/configurator";
 import { useConfiguratorState } from "@/src";
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles<Theme, { editable?: boolean }>((theme) => ({
   panelLayout: {
     containerType: "inline-size",
     display: "flex",
@@ -54,7 +56,8 @@ export type ChartWrapperProps = BoxProps & {
 export const ChartWrapper = forwardRef<HTMLDivElement, ChartWrapperProps>(
   (props, ref) => {
     const { children, editing, layoutType, ...rest } = props;
-    const classes = useStyles();
+    const classes = useStyles({});
+
     return (
       <Box
         ref={ref}
@@ -74,16 +77,15 @@ export const ChartWrapper = forwardRef<HTMLDivElement, ChartWrapperProps>(
   }
 );
 
-type ChartPanelLayoutProps = React.PropsWithChildren<{
+type ChartPanelLayoutProps = PropsWithChildren<{
   layoutType: LayoutDashboard["layout"];
-  chartConfigs: ChartConfig[];
-  renderChart: (chartConfig: ChartConfig) => JSX.Element;
+  renderBlock: (block: LayoutBlock) => JSX.Element;
 }> &
   HTMLProps<HTMLDivElement>;
 
 export type ChartPanelLayoutTypeProps = {
-  chartConfigs: ChartConfig[];
-  renderChart: (chartConfig: ChartConfig) => JSX.Element;
+  blocks: LayoutBlock[];
+  renderBlock: (block: LayoutBlock) => JSX.Element;
   className?: string;
 };
 
@@ -96,27 +98,30 @@ const Wrappers: Record<
   canvas: ChartPanelLayoutCanvas,
 };
 
-export const ChartPanelLayout = (props: ChartPanelLayoutProps) => {
-  const {
-    children,
-    renderChart,
-    chartConfigs,
-    className,
-    layoutType,
-    ...rest
-  } = props;
-  const classes = useStyles();
-  const Wrapper = Wrappers[layoutType];
+export const ChartPanelLayout = ({
+  children,
+  renderBlock,
+  className,
+  layoutType,
+  ...rest
+}: ChartPanelLayoutProps) => {
   const [state] = useConfiguratorState(hasChartConfigs);
+  const layouting = isLayouting(state);
+  const classes = useStyles({ editable: layouting });
+  const Wrapper = Wrappers[layoutType];
+  const { layout } = state;
+  const { blocks } = layout;
+  useSyncTextBlockHeight();
+
   return (
     <div className={clsx(classes.panelLayout, className)} {...rest}>
-      {/** We want to completely remount this component if chartConfigs change */}
       {state.layout.type === "dashboard" ? (
         <DashboardInteractiveFilters
-          key={chartConfigs.map((x) => x.key).join(",")}
+          // We want to completely remount this component if chartConfigs change
+          key={state.chartConfigs.map((x) => x.key).join(",")}
         />
       ) : null}
-      <Wrapper chartConfigs={chartConfigs} renderChart={renderChart} />
+      <Wrapper blocks={blocks} renderBlock={renderBlock} />
     </div>
   );
 };

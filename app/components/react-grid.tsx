@@ -14,11 +14,11 @@ import { getChartWrapperId } from "@/components/chart-panel";
 import {
   hasChartConfigs,
   isLayouting,
-  LayoutDashboardFreeCanvas,
+  LayoutBlock,
   ReactGridLayoutType,
+  useConfiguratorState,
 } from "@/configurator";
 import { useTimeout } from "@/hooks/use-timeout";
-import { useConfiguratorState } from "@/src";
 import { theme } from "@/themes/federal";
 import { assert } from "@/utils/assert";
 
@@ -27,22 +27,19 @@ const ResponsiveReactGridLayout = WidthProvider(Responsive);
 type ResizeHandle = NonNullable<Layout["resizeHandles"]>[number];
 export type GridLayout = "horizontal" | "vertical" | "wide" | "tall";
 
-export const availableHandles: ResizeHandle[] = [
-  "s",
-  "w",
-  "e",
-  "n",
-  "sw",
-  "nw",
-  "se",
-  "ne",
-];
+export const availableHandlesByBlockType: Record<
+  LayoutBlock["type"],
+  ResizeHandle[]
+> = {
+  chart: ["s", "w", "e", "n", "sw", "nw", "se", "ne"],
+  text: ["w", "e"],
+};
 
 /** In grid unit */
 const MAX_H = 10;
 
 const INITIAL_H = 7;
-const MIN_H = 1;
+export const MIN_H = 1;
 
 /** In grid unit */
 const MAX_W = 4;
@@ -54,7 +51,7 @@ export const FREE_CANVAS_BREAKPOINTS = {
   md: 480,
   sm: 0,
 };
-const ROW_HEIGHT = 100;
+export const ROW_HEIGHT = 100;
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -70,7 +67,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
     "& .react-grid-item": {
       transition: "all 200ms ease",
-      transitionProperty: "left, top, width, height",
+      transitionProperty: "none",
 
       // Customization
       boxSizing: "border-box",
@@ -80,7 +77,7 @@ const useStyles = makeStyles((theme: Theme) => ({
       userSelect: "none",
     },
     "& .react-grid-item.cssTransforms": {
-      transitionProperty: "transform, width, height",
+      transitionProperty: "none",
     },
     "& .react-grid-item.resizing": {
       transition: "none",
@@ -182,7 +179,6 @@ const useStyles = makeStyles((theme: Theme) => ({
       transform: "rotate(45deg)",
     },
     "& .react-grid-item:not(.react-grid-placeholder)": {
-      background: "#eee",
       border: theme.palette.divider,
       boxShadow: theme.shadows[1],
     },
@@ -222,16 +218,16 @@ export const ChartGridLayout = ({
   ...rest
 }: {
   className: string;
-  onLayoutChange: Function;
   resize?: boolean;
 } & ComponentProps<typeof ResponsiveReactGridLayout>) => {
   const classes = useStyles();
+
   const [state, dispatch] = useConfiguratorState(hasChartConfigs);
+  const layout = state.layout;
   assert(
-    state.layout.type === "dashboard" && state.layout.layout === "canvas",
+    layout.type === "dashboard" && layout.layout === "canvas",
     "ChartGridLayout can only be used in a canvas layout!"
   );
-  const configLayout = state.layout as LayoutDashboardFreeCanvas;
   const allowHeightInitialization = isLayouting(state);
   const [mounted, setMounted] = useState(false);
   const mountedForSomeTime = useTimeout(500, mounted);
@@ -243,11 +239,16 @@ export const ChartGridLayout = ({
 
     return mapValues(layouts, (chartLayouts) => {
       return chartLayouts.map((chartLayout) => {
+        const block = layout.blocks.find(
+          (block) => block.key === chartLayout.i
+        );
+
         return {
           ...chartLayout,
           maxW: MAX_W,
           w: Math.min(MAX_W, chartLayout.w),
-          resizeHandles: resize ? availableHandles : [],
+          resizeHandles:
+            resize && block ? availableHandlesByBlockType[block.type] : [],
           minH: chartLayout.minH ?? MIN_H,
           h: Math.max(MIN_H, chartLayout.h),
         };
@@ -269,7 +270,11 @@ export const ChartGridLayout = ({
         return [
           breakpoint,
           chartLayouts.map((chartLayout) => {
-            if (configLayout.layoutsMetadata[chartLayout.i]?.initialized) {
+            const block = layout.blocks.find(
+              (block) => block.key === chartLayout.i
+            );
+
+            if (block?.initialized) {
               return chartLayout;
             }
 
@@ -302,7 +307,8 @@ export const ChartGridLayout = ({
               ...chartLayout,
               maxW: MAX_W,
               w: Math.min(MAX_W, chartLayout.w),
-              resizeHandles: resize ? availableHandles : [],
+              resizeHandles:
+                resize && block ? availableHandlesByBlockType[block.type] : [],
               minH,
               h: minH,
             };
@@ -316,14 +322,14 @@ export const ChartGridLayout = ({
       dispatch({
         type: "LAYOUT_CHANGED",
         value: {
-          ...configLayout,
+          ...layout,
           layouts: newLayouts,
-          layoutsMetadata: Object.fromEntries(
-            state.chartConfigs.map(({ key }) => {
-              const layoutMetadata = configLayout.layoutsMetadata[key];
-              return [key, { ...layoutMetadata, initialized: true }];
-            })
-          ),
+          blocks: layout.blocks.map((block) => {
+            return {
+              ...block,
+              initialized: true,
+            };
+          }),
         },
       });
     }
@@ -334,21 +340,21 @@ export const ChartGridLayout = ({
     enhancedLayouts,
     mountedForSomeTime,
     resize,
-    configLayout,
+    layout,
     state.chartConfigs,
   ]);
 
   return (
     <ResponsiveReactGridLayout
       {...rest}
-      layouts={enhancedLayouts}
+      layouts={layouts}
       className={clsx(classes.root, className)}
       cols={COLS}
       rowHeight={ROW_HEIGHT}
-      measureBeforeMount={false}
-      useCSSTransforms={mounted}
+      useCSSTransforms={false}
       compactType="vertical"
       preventCollision={false}
+      isResizable={resize}
     >
       {children}
     </ResponsiveReactGridLayout>
@@ -380,6 +386,7 @@ export const generateLayout = function ({
           y: i * h,
           w: maxWidth,
           h,
+          minH: MIN_H,
           i: i.toString(),
           resizeHandles,
         };
@@ -391,6 +398,7 @@ export const generateLayout = function ({
           y: 0,
           w: w,
           h: maxHeight,
+          minH: MIN_H,
           i: i.toString(),
           resizeHandles,
         };
@@ -402,6 +410,7 @@ export const generateLayout = function ({
           y: i === 0 ? 0 : h * (i - 1),
           w: maxWidth / 2,
           h: i === 0 ? maxHeight : h,
+          minH: MIN_H,
           i: i.toString(),
           resizeHandles,
         };
@@ -412,6 +421,7 @@ export const generateLayout = function ({
           y: Math.floor(i / 2) * INITIAL_H,
           w: getInitialTileWidth(),
           h: getInitialTileHeight(),
+          minH: MIN_H,
           i: i.toString(),
           resizeHandles: [],
         };
@@ -423,6 +433,7 @@ export const generateLayout = function ({
           y: i === 0 ? 0 : maxHeight / 2,
           w: i === 0 ? maxWidth : w,
           h: maxHeight / 2,
+          minH: MIN_H,
           i: i.toString(),
           resizeHandles,
         };

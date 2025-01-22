@@ -30,10 +30,30 @@ msgstr "Aucun résultat"
 msgid "annotation.add.description"
 msgstr "[ Pas de description ]"
 
+#: app/components/chart-panel.tsx
+msgid "annotation.add.text"
+msgstr "[ Ajouter du texte ]"
+
 #: app/configurator/components/annotators.tsx
 #: app/login/components/profile-tables.tsx
 msgid "annotation.add.title"
 msgstr "[ Pas de titre ]"
+
+#: app/components/dashboard-shared.tsx
+msgid "block-controls.delete"
+msgstr "Supprimer"
+
+#: app/components/dashboard-shared.tsx
+msgid "block-controls.delete.confirmation"
+msgstr "Etes-vous sûr de vouloir supprimer ce bloc ?"
+
+#: app/components/dashboard-shared.tsx
+msgid "block-controls.delete.title"
+msgstr "Supprimer le bloc ?"
+
+#: app/components/dashboard-shared.tsx
+msgid "block-controls.duplicate"
+msgstr "Dupliquer"
 
 #: app/browser/dataset-browse.tsx
 msgid "browse-panel.organizations"
@@ -177,8 +197,8 @@ msgid "chart-controls.edit-tab-label"
 msgstr "Modifier le nom de l'onglet"
 
 #: app/components/chart-shared.tsx
-msgid "chart-controls.export"
-msgstr "Exporter"
+msgid "chart-controls.export-png"
+msgstr "Exporter PNG"
 
 #: app/components/dataset-metadata.tsx
 msgid "chart-controls.sparql-query"
@@ -324,11 +344,11 @@ msgstr "Axe vertical"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.bar.grouped"
-msgstr ""
+msgstr "groupées"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.bar.stacked"
-msgstr ""
+msgstr "empilées"
 
 #: app/charts/chart-config-ui-options.ts
 #: app/charts/chart-config-ui-options.ts
@@ -820,6 +840,22 @@ msgstr "Utilisez le type en escalier pour que l'animation passe d'un point de do
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.animation.type.stepped"
 msgstr "En escalier"
+
+#: app/configurator/components/layout-configurator.tsx
+msgid "controls.section.block-options"
+msgstr "Objets"
+
+#: app/configurator/components/layout-configurator.tsx
+msgid "controls.section.block-options.block-add"
+msgstr "Ajouter un objet"
+
+#: app/configurator/components/layout-configurator.tsx
+msgid "controls.section.block-options.block-add.text"
+msgstr "Texte"
+
+#: app/configurator/components/block-options-selector.tsx
+msgid "controls.section.block-options.block.text"
+msgstr "Objet texte"
 
 #: app/configurator/components/chart-configurator.tsx
 msgid "controls.section.chart.options"
@@ -1577,6 +1613,14 @@ msgstr "Se déconnecter"
 #: app/components/header.tsx
 msgid "logo.swiss.confederation"
 msgstr "Logo de la Confédération Suisse"
+
+#: app/components/mdx-editor/link-popover.tsx
+msgid "mdx-editor.link-dialog.label-placeholder"
+msgstr "Étiquette..."
+
+#: app/components/mdx-editor/link-popover.tsx
+msgid "mdx-editor.link-dialog.url-placeholder"
+msgstr "URL..."
 
 #: app/components/chart-footnotes.tsx
 #: app/components/chart-published.tsx

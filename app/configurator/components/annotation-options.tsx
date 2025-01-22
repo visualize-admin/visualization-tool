@@ -16,8 +16,7 @@ import {
 } from "@/configurator/components/chart-controls/section";
 import { MetaInputField } from "@/configurator/components/field";
 import { getFieldLabel } from "@/configurator/components/field-i18n";
-import { locales } from "@/locales/locales";
-import { useLocale } from "@/locales/use-locale";
+import { useOrderedLocales } from "@/locales/use-locale";
 import useEvent from "@/utils/use-event";
 
 export const ChartAnnotationsSelector = () => {
@@ -54,10 +53,7 @@ type AnnotationOptionsProps = {
 const AnnotationOptions = (props: AnnotationOptionsProps) => {
   const { type, activeField, meta } = props;
   const [_, dispatch] = useConfiguratorState();
-  const locale = useLocale();
-  // Reorder locales so the input field for
-  // the current locale is on top
-  const orderedLocales = [locale, ...locales.filter((l) => l !== locale)];
+  const orderedLocales = useOrderedLocales();
   const panelRef = useRef<HTMLDivElement>(null);
   const handleClosePanel = useEvent(() => {
     dispatch({
@@ -98,6 +94,7 @@ const AnnotationOptions = (props: AnnotationOptionsProps) => {
             >
               <MetaInputField
                 type={type}
+                inputType={activeField === "label" ? "text" : "markdown"}
                 metaKey={activeField}
                 locale={locale}
                 label={getFieldLabel(locale)}

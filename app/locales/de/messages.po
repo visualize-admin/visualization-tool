@@ -30,10 +30,30 @@ msgstr "Kein Ergebnis"
 msgid "annotation.add.description"
 msgstr "[ Ohne Beschreibung ]"
 
+#: app/components/chart-panel.tsx
+msgid "annotation.add.text"
+msgstr "[ Text hinzufügen ]"
+
 #: app/configurator/components/annotators.tsx
 #: app/login/components/profile-tables.tsx
 msgid "annotation.add.title"
 msgstr "[ Ohne Titel ]"
+
+#: app/components/dashboard-shared.tsx
+msgid "block-controls.delete"
+msgstr "Löschen"
+
+#: app/components/dashboard-shared.tsx
+msgid "block-controls.delete.confirmation"
+msgstr "Möchten Sie diesen Block wirklich löschen?"
+
+#: app/components/dashboard-shared.tsx
+msgid "block-controls.delete.title"
+msgstr "Block löschen?"
+
+#: app/components/dashboard-shared.tsx
+msgid "block-controls.duplicate"
+msgstr "Duplizieren"
 
 #: app/browser/dataset-browse.tsx
 msgid "browse-panel.organizations"
@@ -177,8 +197,8 @@ msgid "chart-controls.edit-tab-label"
 msgstr "Tab-Titel editieren"
 
 #: app/components/chart-shared.tsx
-msgid "chart-controls.export"
-msgstr "Export"
+msgid "chart-controls.export-png"
+msgstr "PNG exportieren"
 
 #: app/components/dataset-metadata.tsx
 msgid "chart-controls.sparql-query"
@@ -820,6 +840,22 @@ msgstr "Verwenden Sie den Typ Abgestuft, um die Animation in festen Abständen z
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.animation.type.stepped"
 msgstr "Abgestuft"
+
+#: app/configurator/components/layout-configurator.tsx
+msgid "controls.section.block-options"
+msgstr "Objekte"
+
+#: app/configurator/components/layout-configurator.tsx
+msgid "controls.section.block-options.block-add"
+msgstr "Objekt hinzufügen"
+
+#: app/configurator/components/layout-configurator.tsx
+msgid "controls.section.block-options.block-add.text"
+msgstr "Text"
+
+#: app/configurator/components/block-options-selector.tsx
+msgid "controls.section.block-options.block.text"
+msgstr "Text Objekt"
 
 #: app/configurator/components/chart-configurator.tsx
 msgid "controls.section.chart.options"
@@ -1577,6 +1613,14 @@ msgstr "Abmelden"
 #: app/components/header.tsx
 msgid "logo.swiss.confederation"
 msgstr "Logo der Schweizerischen Eidgenossenschaft"
+
+#: app/components/mdx-editor/link-popover.tsx
+msgid "mdx-editor.link-dialog.label-placeholder"
+msgstr "Etikett..."
+
+#: app/components/mdx-editor/link-popover.tsx
+msgid "mdx-editor.link-dialog.url-placeholder"
+msgstr "URL..."
 
 #: app/components/chart-footnotes.tsx
 #: app/components/chart-published.tsx
