@@ -3,9 +3,9 @@ import qs from "qs";
 import { isRunningInBrowser } from "@/utils/is-running-in-browser";
 
 import FlagStore from "./store";
-import { FlagName, FlagValue } from "./types";
+import { FlagName, FLAGS, FlagValue } from "./types";
 
-const FLAG_PREFIX = "flag__";
+export const FLAG_PREFIX = "flag__";
 
 const store = new FlagStore();
 
@@ -18,24 +18,34 @@ export const flag = function flag(...args: [FlagName] | [FlagName, FlagValue]) {
   } else {
     const [name, value] = args;
     store.set(name, value);
+
     return value;
   }
 };
 
+/** List all flag names from the store */
+const listFlagNames = () => {
+  return store.keys().sort();
+};
+
 /** List all flags from the store */
 const listFlags = () => {
-  return store.keys().sort();
+  return listFlagNames().map((name) => ({
+    name,
+    description: FLAGS.find((flag) => flag.name === name)?.description,
+    value: store.get(name as FlagName),
+  }));
 };
 
 /** Resets all the flags */
 const resetFlags = () => {
-  listFlags().forEach((name) => store.remove(name as FlagName));
+  listFlagNames().forEach((name) => store.remove(name as FlagName));
 };
 
 /**
  * Enables several flags
  *
- * Supports passing either  object flagName -> flagValue
+ * Supports passing either object flagName -> flagValue
  *
  * @param {Record<string, boolean>} flagsToEnable
  */
@@ -51,7 +61,12 @@ const enable = (flagsToEnable: FlagName[]) => {
   });
 };
 
+export const remove = (name: FlagName) => {
+  store.remove(name);
+};
+
 flag.store = store;
+flag.listNames = listFlagNames;
 flag.list = listFlags;
 flag.reset = resetFlags;
 flag.enable = enable;
@@ -61,6 +76,7 @@ const initFromSearchParams = (locationSearch: string) => {
     ? locationSearch.substr(1)
     : locationSearch;
   const params = qs.parse(locationSearch);
+
   for (const [param, value] of Object.entries(params)) {
     if (param.startsWith(FLAG_PREFIX) && typeof value === "string") {
       try {
