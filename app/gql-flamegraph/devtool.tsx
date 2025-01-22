@@ -27,7 +27,13 @@ import minBy from "lodash/minBy";
 import sortBy from "lodash/sortBy";
 import uniqBy from "lodash/uniqBy";
 import mitt from "mitt";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  ChangeEvent,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { Exchange, Operation, OperationResult } from "urql";
 import { pipe, tap } from "wonka";
 
@@ -526,13 +532,18 @@ const DebugPanel = () => {
 
 const FlagList = () => {
   const flags = useFlags();
+
   return (
     <>
-      {flags.map((f) => {
+      {flags.map((flag) => {
         return (
-          <Box key={f} sx={{ display: "flex", gap: "1rem" }}>
-            <Typography variant="body2">{f}</Typography>
-            <FlagSwitch flagName={f} />
+          <Box
+            key={flag.name}
+            sx={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
+          >
+            <FlagSwitch flagName={flag.name as FlagName} />
+            <Typography variant="body2">{flag.name}</Typography>
+            <Typography variant="caption">{flag.description}</Typography>
           </Box>
         );
       })}
@@ -544,14 +555,14 @@ const FlagSwitch = ({
   flagName,
   onChange,
   ...props
-}: { flagName: FlagName; onChange?: (value: Boolean) => void } & Omit<
-  SwitchProps,
-  "onChange"
->) => {
+}: {
+  flagName: FlagName;
+  onChange?: (value: boolean) => void;
+} & Omit<SwitchProps, "onChange">) => {
   const flagValue = useFlag(flagName);
-  const handleChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
-    flag(flagName, ev.target.checked);
-    onChange?.(ev.target.checked);
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    flag(flagName, e.target.checked);
+    onChange?.(e.target.checked);
   };
 
   return <Switch checked={!!flagValue} onChange={handleChange} {...props} />;

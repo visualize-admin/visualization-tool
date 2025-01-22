@@ -1,15 +1,15 @@
-import { FlagName, FlagValue } from "./types";
+import { FLAG_PREFIX } from "@/flags/flag";
 
-const prefix = "flag__";
+import { FlagName, FlagValue } from "./types";
 
 type FlagNameOrString = FlagName | (string & {});
 
-const getKey = (name: FlagNameOrString) => prefix + name;
+const getKey = (name: FlagNameOrString) => `${FLAG_PREFIX}${name}`;
 
 const listFlagLocalStorage = () => {
   return Object.keys(localStorage)
-    .filter((x) => x.indexOf(prefix) === 0)
-    .map((x) => x.replace(prefix, ""));
+    .filter((x) => x.indexOf(FLAG_PREFIX) === 0)
+    .map((x) => x.replace(FLAG_PREFIX, ""));
 };
 
 /**
