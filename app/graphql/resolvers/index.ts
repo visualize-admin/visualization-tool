@@ -3,6 +3,7 @@ import { GraphQLError, GraphQLScalarType, Kind } from "graphql";
 import { MeasureType } from "@/configurator";
 import { DimensionType } from "@/domain/data";
 import { isDataSourceUrlAllowed } from "@/domain/datasource";
+import { setupFlamegraph } from "@/gql-flamegraph/resolvers";
 import {
   QueryResolvers,
   Resolvers,
@@ -149,7 +150,11 @@ const DataSourceUrlScalar = new GraphQLScalarType({
   },
 });
 
-export const resolvers: Resolvers = {
+const resolvers: Resolvers = {
   DataSourceUrl: DataSourceUrlScalar,
   Query,
 };
+
+setupFlamegraph(resolvers);
+
+export { resolvers };

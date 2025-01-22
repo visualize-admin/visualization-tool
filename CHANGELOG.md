@@ -22,6 +22,7 @@ You can also check the
     visible part
 - Fixes
   - Preview via API now works correctly for map charts
+  - GraphQL debug panel now displays the queries correctly when in debug mode
 
 # [5.1.0] - 2025-01-14
 
