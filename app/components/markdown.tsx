@@ -5,7 +5,6 @@ import rehypeSanitize from "rehype-sanitize";
 import remarkGfm from "remark-gfm";
 
 const components: ComponentProps<typeof ReactMarkdown>["components"] = {
-  // TODO: Maybe can be handled by Title and Description components?
   h1: ({ children, style, ...props }) => (
     <h1 style={{ ...style, marginTop: 0 }} {...props}>
       {children}

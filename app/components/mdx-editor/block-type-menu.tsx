@@ -89,11 +89,7 @@ export const BlockTypeMenu = () => {
       <Menu
         open={!!anchor}
         anchorEl={anchor}
-        onClose={(e) => {
-          // @ts-ignore this is correct
-          e.stopPropagation();
-          handleClose();
-        }}
+        onClose={handleClose}
         anchorOrigin={{ horizontal: "center", vertical: "bottom" }}
         transformOrigin={{ horizontal: "left", vertical: "top" }}
         style={{ transform: "translate(-12px, 8px)" }}

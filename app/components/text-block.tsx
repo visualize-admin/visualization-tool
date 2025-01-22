@@ -41,9 +41,8 @@ export const TextBlock = forwardRef<
   HTMLDivElement,
   {
     block: LayoutTextBlock;
-    className?: string;
     dragHandleProps?: ComponentProps<typeof DragHandle>;
-  } & unknown // ReactGridLayout passes additional props to the component.
+  } & ComponentProps<"div">
 >(({ children, block, className, dragHandleProps, ...rest }, ref) => {
   const locale = useLocale();
   const [state, dispatch] = useConfiguratorState(hasChartConfigs);
@@ -171,19 +170,15 @@ const TextBlockActionElements = ({
   );
 };
 
-/** Makes sure the height of the text block is in sync with the content height. */
 export const useSyncTextBlockHeight = () => {
   const [state, dispatch] = useConfiguratorState(hasChartConfigs);
   const layout = state.layout;
   const layouting = isLayouting(state);
+  const layoutingFreeCanvas =
+    layouting && layout.type === "dashboard" && layout.layout === "canvas";
 
   useEffect(() => {
-    // Only adjust the height when not in published mode.
-    if (
-      !layouting ||
-      layout.type !== "dashboard" ||
-      layout.layout !== "canvas"
-    ) {
+    if (!layoutingFreeCanvas) {
       return;
     }
 
@@ -221,5 +216,5 @@ export const useSyncTextBlockHeight = () => {
         }
       }
     );
-  }, [dispatch, layout, layouting]);
+  }, [dispatch, layout, layoutingFreeCanvas]);
 };

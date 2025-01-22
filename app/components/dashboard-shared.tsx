@@ -78,8 +78,7 @@ export const BlockMoreButton = ({ blockKey }: { blockKey: string }) => {
         open={!!anchor}
         anchorEl={anchor}
         onClose={(e) => {
-          // @ts-ignore this is correct
-          e.stopPropagation();
+          (e as Event).stopPropagation();
           handleClose();
         }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
