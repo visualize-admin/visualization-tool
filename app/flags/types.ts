@@ -24,5 +24,5 @@ export const FLAGS = [
   },
 ];
 export const FLAG_NAMES = FLAGS.map((flag) => flag.name);
-export type Flag = (typeof FLAGS)[number];
+type Flag = (typeof FLAGS)[number];
 export type FlagName = Flag["name"];

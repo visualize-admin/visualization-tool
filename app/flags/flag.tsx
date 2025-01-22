@@ -61,10 +61,6 @@ const enable = (flagsToEnable: FlagName[]) => {
   });
 };
 
-export const remove = (name: FlagName) => {
-  store.remove(name);
-};
-
 flag.store = store;
 flag.listNames = listFlagNames;
 flag.list = listFlags;
