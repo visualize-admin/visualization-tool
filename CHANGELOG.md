@@ -11,6 +11,10 @@ You can also check the
 
 # Unreleased
 
+Nothing yet.
+
+# [5.2.0] - 2025-01-22
+
 - Features
   - Added a way to add text objects to dashboard layouts (hidden behind an
     enable-experimental-features flag)
