@@ -17,6 +17,11 @@ export const FLAGS = [
     name: "easter-eggs" as const,
     description: "Enables easter eggs",
   },
+  {
+    name: "enable-experimental-features" as const,
+    description:
+      "Enables experimental features, including dashboard text blocks, Markdown editor and bar charts.",
+  },
 ];
 export const FLAG_NAMES = FLAGS.map((flag) => flag.name);
 export type Flag = (typeof FLAGS)[number];

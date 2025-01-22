@@ -12,14 +12,17 @@ You can also check the
 # Unreleased
 
 - Features
-  - Added a way to add text objects to dashboard layouts
-  - Added Markdown support in chart titles and descriptions
+  - Added a way to add text objects to dashboard layouts (hidden behind an
+    enable-experimental-features flag)
+  - Added Markdown support in chart titles and descriptions (hidden behind an
+    enable-experimental-features flag)
   - Centered x-axis labels
   - Added y-axis labels
   - Added a new option to the vertical axis on the line chart, allowing users to
     display a dot over the line where it intercepts the x-axis ticks
   - Downloading images of bar charts now includes the whole chart, not just the
     visible part
+  - Bar charts are now hidden behind a an enable-experimental-features flag
 - Fixes
   - Preview via API now works correctly for map charts
   - GraphQL debug panel now displays the queries correctly when in debug mode

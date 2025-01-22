@@ -90,6 +90,7 @@ import {
   isMostRecentValue,
   VISUALIZE_MOST_RECENT_VALUE,
 } from "@/domain/most-recent-value";
+import { useFlag } from "@/flags";
 import { useTimeFormatLocale } from "@/formatters";
 import { TimeUnit } from "@/graphql/query-hooks";
 import { Locale } from "@/locales/locales";
@@ -680,12 +681,17 @@ export const MetaInputField = ({
   value?: string;
 }) => {
   const field = useMetaField({ type, metaKey, locale, value });
+  const enableMarkdown = useFlag("enable-experimental-features");
 
   switch (inputType) {
     case "text":
       return <Input label={label} {...field} />;
     case "markdown":
-      return <MarkdownInput label={label} {...field} />;
+      if (enableMarkdown) {
+        return <MarkdownInput label={label} {...field} />;
+      } else {
+        return <Input label={label} {...field} />;
+      }
   }
 };
 
