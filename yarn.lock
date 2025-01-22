@@ -4304,15 +4304,6 @@
     lodash "4.17.21"
     tslib "~2.2.0"
 
-"@graphql-tools/schema@7.1.5", "@graphql-tools/schema@^7.0.0", "@graphql-tools/schema@^7.1.4", "@graphql-tools/schema@^7.1.5":
-  version "7.1.5"
-  resolved "https://registry.npmjs.org/@graphql-tools/schema/-/schema-7.1.5.tgz"
-  integrity sha512-uyn3HSNSckf4mvQSq0Q07CPaVZMNFCYEVxroApOaw802m9DcZPgf9XVPy/gda5GWj9AhbijfRYVTZQgHnJ4CXA==
-  dependencies:
-    "@graphql-tools/utils" "^7.1.2"
-    tslib "~2.2.0"
-    value-or-promise "1.0.6"
-
 "@graphql-tools/schema@^6.0.9":
   version "6.2.4"
   resolved "https://registry.yarnpkg.com/@graphql-tools/schema/-/schema-6.2.4.tgz#cc4e9f5cab0f4ec48500e666719d99fc5042481d"
@@ -4320,6 +4311,15 @@
   dependencies:
     "@graphql-tools/utils" "^6.2.4"
     tslib "~2.0.1"
+
+"@graphql-tools/schema@^7.0.0", "@graphql-tools/schema@^7.1.4", "@graphql-tools/schema@^7.1.5":
+  version "7.1.5"
+  resolved "https://registry.npmjs.org/@graphql-tools/schema/-/schema-7.1.5.tgz"
+  integrity sha512-uyn3HSNSckf4mvQSq0Q07CPaVZMNFCYEVxroApOaw802m9DcZPgf9XVPy/gda5GWj9AhbijfRYVTZQgHnJ4CXA==
+  dependencies:
+    "@graphql-tools/utils" "^7.1.2"
+    tslib "~2.2.0"
+    value-or-promise "1.0.6"
 
 "@graphql-tools/schema@^8.0.0":
   version "8.5.1"
