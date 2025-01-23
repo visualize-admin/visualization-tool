@@ -19,7 +19,7 @@ export const Tooltip = ({ type = "single" }: { type: TooltipType }) => {
   const [state] = useInteraction();
   const { visible, d } = state.interaction;
 
-  return <>{visible && d && <TooltipInner d={d} type={type} />}</>;
+  return visible && d ? <TooltipInner d={d} type={type} /> : null;
 };
 export type { TooltipPlacement };
 
