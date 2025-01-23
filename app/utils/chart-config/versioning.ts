@@ -2082,17 +2082,9 @@ export const configuratorStateMigrations: Migration[] = [
       const newConfig = { ...config, version: "4.2.0" };
 
       if (newConfig.layout.layoutsMetadata) {
-        newConfig.layout.blocks = Object.entries(
-          newConfig.layout.layoutsMetadata
-        ).map(([k, v]) => {
-          return {
-            type: "chart",
-            key: k,
-            ...(v as object),
-          };
-        });
         delete newConfig.layout.layoutsMetadata;
-      } else {
+      }
+
         newConfig.layout.blocks = newConfig.chartConfigs.map(
           (chartConfig: any) => {
             return {
@@ -2102,7 +2094,6 @@ export const configuratorStateMigrations: Migration[] = [
             };
           }
         );
-      }
 
       return newConfig;
     },
