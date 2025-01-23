@@ -11,7 +11,9 @@ You can also check the
 
 # Unreleased
 
-Nothing yet.
+- Fixes
+  - Preview via API using iframe (`/preview`) now ignores invalid messages sent
+    from the parent window
 
 # [5.2.0] - 2025-01-22
 

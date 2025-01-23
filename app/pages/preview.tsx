@@ -14,6 +14,12 @@ import { ConfiguratorStateProvider } from "@/src";
 import * as federalTheme from "@/themes/federal";
 import { migrateConfiguratorState } from "@/utils/chart-config/versioning";
 
+const isValidMessage = (e: MessageEvent) => {
+  return (
+    e.data && e.data.type !== "connection-init" && e.data.type !== "debug-event"
+  );
+};
+
 const chartStateStore = create<{
   state: ConfiguratorStatePublished | null;
   setState: (state: ConfiguratorStatePublished) => void;
@@ -24,6 +30,10 @@ const chartStateStore = create<{
 
 if (typeof window !== "undefined") {
   window.addEventListener("message", async (e) => {
+    if (!isValidMessage(e)) {
+      return;
+    }
+
     try {
       const state = decodeConfiguratorState(
         await migrateConfiguratorState(e.data)
