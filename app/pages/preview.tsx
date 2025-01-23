@@ -35,18 +35,14 @@ if (typeof window !== "undefined") {
     }
 
     try {
-      const state = decodeConfiguratorState(
-        await migrateConfiguratorState(e.data)
-      );
+      const state = decodeConfiguratorState({
+        ...(await migrateConfiguratorState(e.data)),
+        // Force state published for <ChartPublished /> to work correctly
+        state: "PUBLISHED",
+      }) as ConfiguratorStatePublished;
 
       if (state) {
-        chartStateStore.setState({
-          state: {
-            ...state,
-            // Force state published for <ChartPublished /> to work correctly
-            state: "PUBLISHED",
-          } as ConfiguratorStatePublished,
-        });
+        chartStateStore.setState({ state });
       }
     } catch (e) {
       console.error(e);
