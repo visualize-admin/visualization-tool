@@ -11,7 +11,8 @@ You can also check the
 
 # Unreleased
 
-Nothing yet.
+- Fixes
+  - Bar chart tooltip doesn't go off the screen anymore during scroll
 
 # [5.2.0] - 2025-01-22
 
