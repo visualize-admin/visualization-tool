@@ -13,27 +13,27 @@ import {
   Box,
   BoxProps,
   ButtonBase,
-  Checkbox as MUICheckbox,
   CircularProgress,
   Divider,
   FormControlLabel,
   FormControlLabelProps,
-  Input as MUIInput,
   InputLabel,
   InputProps,
   ListSubheader,
   MenuItem,
-  Paper,
-  PaperProps,
+  Checkbox as MUICheckbox,
+  Input as MUIInput,
   Radio as MUIRadio,
   Select as MUISelect,
+  Slider as MUISlider,
+  Switch as MUISwitch,
+  Paper,
+  PaperProps,
   SelectProps,
   Skeleton,
-  Slider as MUISlider,
   SliderProps,
   Stack,
   styled,
-  Switch as MUISwitch,
   SxProps,
   Theme,
   Tooltip,
@@ -77,7 +77,6 @@ import SvgIcExclamation from "@/icons/components/IcExclamation";
 import { useLocale } from "@/locales/use-locale";
 import { valueComparator } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
-
 import "@mdxeditor/editor/style.css";
 
 export const Label = ({
@@ -568,7 +567,7 @@ export const MinimalisticSelect = (props: MinimalisticSelectProps) => {
   } = props;
 
   return (
-    <Box sx={{ color: "grey.800" }}>
+    <Box display="flex" alignItems="center">
       {label && (
         <Label htmlFor={id} smaller>
           {label}
@@ -588,6 +587,7 @@ export const MinimalisticSelect = (props: MinimalisticSelectProps) => {
             style={{
               ...props.style,
               transition: "transform 0.1s",
+              color: "#F9FAFB", //FIXME: switch this to a proper color once the new colors are in place
             }}
           >
             <Icon name="chevronDown" size={16} />
@@ -595,17 +595,25 @@ export const MinimalisticSelect = (props: MinimalisticSelectProps) => {
         )}
         sx={{
           borderColor: "transparent",
-          fontSize: smaller ? ["0.625rem", "0.75rem", "0.75rem"] : "inherit",
           lineHeight: "normal !important",
           backgroundColor: "transparent",
           p: 0,
           pl: 1,
+          height: "auto",
+          minHeight: "auto",
+          boxSizing: "border-box",
           ":focus": {
             outline: "none",
             borderColor: "primary.main",
           },
           "& .MuiInput-input": {
             paddingRight: "1.25rem !important",
+            color: "muted.colored",
+            fontSize: ["0.875rem", "0.875rem", "1rem", "1rem", "1rem"],
+            marginBottom: "1px",
+            height: "auto",
+            minHeight: "auto",
+            py: 0,
           },
           ...sx,
         }}

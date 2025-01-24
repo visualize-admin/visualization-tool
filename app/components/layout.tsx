@@ -6,7 +6,7 @@ import { Header } from "@/components/header";
 
 export const AppLayout = ({ children }: { children?: ReactNode }) => (
   <Flex sx={{ minHeight: "100vh", flexDirection: "column" }}>
-    <Header pageType="app" contentId={undefined} />
+    <Header contentId={undefined} />
     <Flex
       component="main"
       role="main"
@@ -32,7 +32,7 @@ export const ContentLayout = ({
         backgroundColor: contentId === "home" ? "grey.100" : "muted.main",
       }}
     >
-      <Header pageType="content" contentId={contentId} />
+      <Header contentId={contentId} />
       <Flex
         component="main"
         role="main"
@@ -64,7 +64,7 @@ export const StaticContentLayout = ({
         backgroundColor: "#F5F5F5",
       }}
     >
-      <Header pageType="content" contentId={contentId} />
+      <Header contentId={contentId} />
       <Flex
         component="main"
         role="main"
