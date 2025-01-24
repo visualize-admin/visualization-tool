@@ -27,7 +27,12 @@ export const Header = ({ contentId }: { contentId?: string }) => {
       : undefined;
   return (
     <>
-      <TopBar ContentWrapperProps={{ sx: { justifyContent: "space-between" } }}>
+      <TopBar
+        sx={{
+          zIndex: 2, // So the banner in the browse page does not overlap
+        }}
+        ContentWrapperProps={{ sx: { justifyContent: "space-between" } }}
+      >
         {SOURCE_OPTIONS.length > 1 && <DataSourceMenu />}
         <Box display="flex" alignItems="center" gap={3} marginLeft="auto">
           <LoginMenu />
