@@ -566,6 +566,8 @@ export const MinimalisticSelect = (props: MinimalisticSelectProps) => {
     ...rest
   } = props;
 
+  const classes = useMinimalisticSelectStyles();
+
   return (
     <Box display="flex" alignItems="center">
       {label && (
@@ -593,27 +595,10 @@ export const MinimalisticSelect = (props: MinimalisticSelectProps) => {
             <Icon name="chevronDown" size={16} />
           </span>
         )}
+        className={classes.root}
         sx={{
-          borderColor: "transparent",
-          lineHeight: "normal !important",
-          backgroundColor: "transparent",
-          p: 0,
-          pl: 1,
-          height: "auto",
-          minHeight: "auto",
-          boxSizing: "border-box",
-          ":focus": {
-            outline: "none",
-            borderColor: "primary.main",
-          },
           "& .MuiInput-input": {
-            paddingRight: "1.25rem !important",
-            color: "muted.colored",
             fontSize: ["0.875rem", "0.875rem", "1rem", "1rem", "1rem"],
-            marginBottom: "1px",
-            height: "auto",
-            minHeight: "auto",
-            py: 0,
           },
           ...sx,
         }}
@@ -628,6 +613,34 @@ export const MinimalisticSelect = (props: MinimalisticSelectProps) => {
     </Box>
   );
 };
+
+const useMinimalisticSelectStyles = makeStyles<Theme>((theme) => ({
+  root: {
+    borderColor: "transparent",
+    lineHeight: "normal !important",
+    backgroundColor: "transparent",
+    color: "muted.colored",
+    p: 0,
+    pl: 1,
+    height: "auto",
+    minHeight: "auto",
+    boxSizing: "border-box",
+    ":focus": {
+      outline: "none",
+      borderColor: "primary.main",
+    },
+    "& .MuiInput-input": {
+      paddingRight: "1.25rem !important",
+      //@ts-ignore
+      color: theme.palette.muted.colored, // FIXME: once the new colors are in place
+      marginBottom: "1px",
+      height: "auto",
+      minHeight: "auto",
+      paddingTop: 0,
+      paddingBottom: 0,
+    },
+  },
+}));
 
 export const Input = ({
   label,
