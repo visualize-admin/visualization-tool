@@ -220,6 +220,7 @@ describe("config migrations", () => {
                   value: "E.coli",
                 },
             },
+            joinBy: null,
           },
         ],
         fields: {
