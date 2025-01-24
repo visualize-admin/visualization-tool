@@ -619,15 +619,16 @@ const useMinimalisticSelectStyles = makeStyles<Theme>((theme) => ({
     borderColor: "transparent",
     lineHeight: "normal !important",
     backgroundColor: "transparent",
-    color: "muted.colored",
-    p: 0,
-    pl: 1,
+    //@ts-ignore
+    color: theme.palette.muted.colored, // FIXME: once the new colors are in place
+    padding: 0,
+    paddingLeft: theme.spacing(12),
     height: "auto",
     minHeight: "auto",
     boxSizing: "border-box",
-    ":focus": {
+    "&:focus": {
       outline: "none",
-      borderColor: "primary.main",
+      borderColor: theme.palette.primary.main,
     },
     "& .MuiInput-input": {
       paddingRight: "1.25rem !important",
