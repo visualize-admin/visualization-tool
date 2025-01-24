@@ -13,6 +13,10 @@ You can also check the
 
 - Fixes
   - Bar chart tooltip doesn't go off the screen anymore during scroll
+  - Chart tooltip now wraps in case of long text, instead of going off the
+    screen
+  - Pie chart tooltip is now positioned closer to the chart to prevent it from
+    going off the screen in case of iframe embed
 
 # [5.2.0] - 2025-01-22
 
