@@ -324,9 +324,7 @@ const MultiFilterContent = ({
 
   const hasColorMapping = useMemo(() => {
     return !!(
-      (colorConfig?.type === "single"
-        ? colorConfig.color
-        : colorConfig?.colorMapping) &&
+      (colorConfig?.type === "single" ? false : colorConfig?.colorMapping) &&
       (colorComponent !== undefined ? dimensionId === colorComponent.id : true)
     );
   }, [colorConfig, dimensionId, colorComponent]);
