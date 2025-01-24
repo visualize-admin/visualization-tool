@@ -220,6 +220,23 @@ const FilterControls = ({
   );
 };
 
+export const getHasColorMapping = ({
+  colorConfig,
+  colorComponent,
+  filterDimensionId,
+}: {
+  colorConfig: ColorField | undefined;
+  colorComponent?: Component;
+  filterDimensionId: string;
+}) => {
+  return !!(
+    (colorConfig?.type === "single" ? false : colorConfig?.colorMapping) &&
+    (colorComponent !== undefined
+      ? filterDimensionId === colorComponent.id
+      : true)
+  );
+};
+
 const MultiFilterContent = ({
   field,
   colorComponent,
@@ -323,10 +340,11 @@ const MultiFilterContent = ({
   }, [chartConfig]);
 
   const hasColorMapping = useMemo(() => {
-    return !!(
-      (colorConfig?.type === "single" ? false : colorConfig?.colorMapping) &&
-      (colorComponent !== undefined ? dimensionId === colorComponent.id : true)
-    );
+    return getHasColorMapping({
+      colorConfig,
+      colorComponent,
+      filterDimensionId: dimensionId,
+    });
   }, [colorConfig, dimensionId, colorComponent]);
 
   useEnsureUpToDateColorMapping({
