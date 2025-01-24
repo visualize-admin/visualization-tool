@@ -622,7 +622,6 @@ const useMinimalisticSelectStyles = makeStyles<Theme>((theme) => ({
     //@ts-ignore
     color: theme.palette.muted.colored, // FIXME: once the new colors are in place
     padding: 0,
-    paddingLeft: theme.spacing(12),
     height: "auto",
     minHeight: "auto",
     boxSizing: "border-box",
