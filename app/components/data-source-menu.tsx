@@ -27,9 +27,15 @@ export const DataSourceMenu = () => {
         "& .MuiInput-input.Mui-disabled": {
           textFillColor: "#828E9A", //FIXME: switch this to a proper color once the new colors are in place
         },
+        "& .MuiSelect-icon": {
+          color: "#F9FAFB", //FIXME: switch this to a proper color once the new colors are in place
+        },
+        "& .MuiSelect-icon.Mui-disabled": {
+          color: "#828E9A", //FIXME: switch this to a proper color once the new colors are in place
+        },
         "&:hover": {
           color: "#d1d5db", //FIXME: switch this to a proper color once the new colors are in place
-          "& .MuiTypography-root": {
+          "& .MuiSelect-icon": {
             color: "#d1d5db", //FIXME: switch this to a proper color once the new colors are in place
           },
           "& .MuiInput-input": {

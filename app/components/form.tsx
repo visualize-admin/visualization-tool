@@ -589,7 +589,6 @@ export const MinimalisticSelect = (props: MinimalisticSelectProps) => {
             style={{
               ...props.style,
               transition: "transform 0.1s",
-              color: "#F9FAFB", //FIXME: switch this to a proper color once the new colors are in place
             }}
           >
             <Icon name="chevronDown" size={16} />
