@@ -1,9 +1,8 @@
 import { Box, Typography } from "@mui/material";
 
 import { TooltipValue } from "@/charts/shared/interaction/tooltip";
-import { LegendItem } from "@/charts/shared/legend-color";
+import { TooltipLegendItem } from "@/charts/shared/legend-color";
 
-// Generic
 export const TooltipSingle = ({
   xValue,
   segment,
@@ -59,13 +58,12 @@ export const TooltipMultiple = ({
           {xValue}
         </Typography>
       )}
-      {segmentValues.map((d, i) => (
-        <LegendItem
+      {segmentValues.map(({ value, error, label, color, symbol }, i) => (
+        <TooltipLegendItem
           key={i}
-          item={`${d.label}: ${d.value}${d.error ?? ""}`}
-          color={d.color}
-          symbol={d.symbol ?? "square"}
-          usage="tooltip"
+          item={`${label}: ${value}${error ?? ""}`}
+          color={color}
+          symbol="square"
         />
       ))}
     </Box>

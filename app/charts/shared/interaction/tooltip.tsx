@@ -18,6 +18,7 @@ import { Observation } from "@/domain/data";
 export const Tooltip = ({ type = "single" }: { type: TooltipType }) => {
   const [state] = useInteraction();
   const { visible, d } = state.interaction;
+  console.log("Tooltip");
 
   return visible && d ? <TooltipInner d={d} type={type} /> : null;
 };

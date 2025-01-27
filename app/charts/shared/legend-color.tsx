@@ -1,9 +1,9 @@
 import { t } from "@lingui/macro";
-import { Theme, Typography } from "@mui/material";
+import { Box, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 import orderBy from "lodash/orderBy";
-import { memo, useCallback, useMemo } from "react";
+import { memo, ReactNode, useCallback, useMemo } from "react";
 
 import { ColorsChartState, useChartState } from "@/charts/shared/chart-state";
 import { rgbArrayToHex } from "@/charts/shared/colors";
@@ -69,51 +69,49 @@ const useStyles = makeStyles<Theme>((theme) => ({
   },
 }));
 
-type ItemStyleProps = {
-  symbol: LegendSymbol;
-  color: string;
-  usage: LegendItemUsage;
-};
-
-const useItemStyles = makeStyles<Theme, ItemStyleProps>((theme) => {
+const useItemStyles = makeStyles<Theme>((theme) => {
   return {
-    legendItem: {
+    root: {
       position: "relative",
+      display: "flex",
       justifyContent: "flex-start",
       alignItems: "flex-start",
-      fontSize: ({ usage }) =>
-        ["legend", "colorPicker"].includes(usage)
-          ? theme.typography.body2.fontSize
-          : theme.typography.caption.fontSize,
       fontWeight: theme.typography.fontWeightRegular,
       color: theme.palette.grey[700],
-
+      fontSize: theme.typography.caption.fontSize,
       "&::before": {
         content: "''",
         position: "relative",
         display: "block",
-        width: `calc(0.5rem * var(--size-adjust, 1))`,
-        height: ({ symbol }) =>
-          `calc(${["square", "circle"].includes(symbol) ? "0.5rem" : "2px"} * var(--size-adjust, 1))`,
-        marginTop: ({ symbol, usage }) =>
-          `calc(0.75rem - calc(${
-            ["square", "circle"].includes(symbol)
-              ? usage === "tooltip"
-                ? "0.6rem"
-                : "0.5rem"
-              : usage === "tooltip"
-                ? "0.2rem"
-                : "2px"
-          } * var(--size-adjust, 1)) * 0.5)`,
+        width: "calc(0.5rem * var(--size-adjust, 1))",
+        height: "calc(2px * var(--size-adjust, 1))",
         marginRight: "0.4rem",
         flexShrink: 0,
-        backgroundColor: ({ color }) => color,
-        borderRadius: ({ symbol }) => (symbol === "circle" ? "50%" : 0),
+        borderRadius: 0,
+        marginTop: `calc(0.75rem - calc(0.2rem * var(--size-adjust, 1)) * 0.5)`,
       },
     },
-
-    legendCheckbox: {
-      marginBottom: () => "0.25rem",
+    legendItem: {
+      fontSize: theme.typography.body2.fontSize,
+    },
+    colorPickerItem: {
+      fontSize: theme.typography.body2.fontSize,
+    },
+    circleItem: {
+      "&::before": {
+        borderRadius: "50%",
+        height: `"calc(0.5rem * var(--size-adjust, 1))`,
+        marginTop: `calc(0.75rem - calc(0.6rem * var(--size-adjust, 1)) * 0.5)`,
+      },
+    },
+    squareItem: {
+      "&::before": {
+        height: `calc(0.5rem * var(--size-adjust, 1))`,
+        marginTop: `calc(0.75rem - calc(0.6rem * var(--size-adjust, 1)) * 0.5)`,
+      },
+    },
+    checkbox: {
+      marginBottom: "0.25rem",
       marginRight: 0,
     },
     bigger: {
@@ -366,7 +364,68 @@ const LegendColorContent = (props: LegendColorContentProps) => {
   );
 };
 
-type LegendItemProps = {
+export const TooltipLegendItem = ({
+  item,
+  color,
+  symbol,
+}: {
+  item: ReactNode;
+  color: string;
+  symbol: LegendSymbol;
+}) => {
+  const classes = useItemStyles();
+  const shouldBeBigger = symbol === "circle";
+
+  return (
+    <Box
+      data-testid="legendItem"
+      className={clsx(
+        classes.root,
+        classes[`${symbol}Item`],
+        shouldBeBigger && classes.bigger
+      )}
+      sx={{"&::before": {backgroundColor: color}}}
+    >
+      {item}
+    </Box>
+  );
+};
+
+export const StaticLegendItem = ({
+  item,
+  color,
+  symbol,
+  usage = "legend",
+}: {
+  item: ReactNode;
+  color: string;
+  symbol: LegendSymbol;
+  usage?: LegendItemUsage;
+}) => {
+  const classes = useItemStyles({ symbol, color, usage });
+  const shouldBeBigger = symbol === "circle" || usage === "colorPicker";
+
+  return (
+    <div
+      data-testid="legendItem"
+      className={clsx(classes.root, shouldBeBigger && classes.bigger)}
+    >
+      {item}
+    </div>
+  );
+};
+
+export const LegendItem = ({
+  item,
+  color,
+  dimension,
+  symbol,
+  interactive,
+  onToggle,
+  checked,
+  disabled,
+  usage = "legend",
+}: {
   item: string;
   color: string;
   dimension?: Measure;
@@ -376,20 +435,7 @@ type LegendItemProps = {
   checked?: boolean;
   disabled?: boolean;
   usage?: LegendItemUsage;
-};
-
-export const LegendItem = (props: LegendItemProps) => {
-  const {
-    item,
-    color,
-    dimension,
-    symbol,
-    interactive,
-    onToggle,
-    checked,
-    disabled,
-    usage = "legend",
-  } = props;
+}) => {
   const classes = useItemStyles({ symbol, color, usage });
   const shouldBeBigger = symbol === "circle" || usage === "colorPicker";
 
@@ -415,26 +461,25 @@ export const LegendItem = (props: LegendItemProps) => {
           onChange={onToggle}
           key={item}
           color={color}
-          className={clsx(
-            classes.legendCheckbox,
-            shouldBeBigger && classes.bigger
-          )}
+          className={clsx(classes.checkbox, shouldBeBigger && classes.bigger)}
         />
       </div>
     </MaybeTooltip>
   ) : (
-    <Flex
-      data-testid="legendItem"
-      className={clsx(classes.legendItem, shouldBeBigger && classes.bigger)}
-    >
-      {dimension ? (
-        <OpenMetadataPanelWrapper component={dimension}>
-          {/* Account for the added space, to align the symbol and label. */}
-          <span style={{ marginTop: 3 }}>{item}</span>
-        </OpenMetadataPanelWrapper>
-      ) : (
-        item
-      )}
-    </Flex>
+    <StaticLegendItem
+      item={
+        dimension ? (
+          <OpenMetadataPanelWrapper component={dimension}>
+            {/* Account for the added space, to align the symbol and label. */}
+            <span style={{ marginTop: 3 }}>{item}</span>
+          </OpenMetadataPanelWrapper>
+        ) : (
+          item
+        )
+      }
+      color={color}
+      symbol={symbol}
+      usage={usage}
+    />
   );
 };
