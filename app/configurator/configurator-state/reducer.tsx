@@ -523,6 +523,7 @@ export const updateColorMapping = (
 
   return draft;
 };
+
 const handleInteractiveFilterChanged = (
   draft: ConfiguratorState,
   action: Extract<
@@ -579,6 +580,26 @@ export const setRangeFilter = (
     };
   }
 };
+
+const handleAddNewChartConfig = (
+  draft: ConfiguratorState,
+  chartConfig: ChartConfig
+) => {
+  if (isConfiguring(draft)) {
+    draft.chartConfigs.push(chartConfig);
+    draft.activeChartKey = chartConfig.key;
+    draft.layout.blocks.push({
+      key: chartConfig.key,
+      type: "chart",
+      initialized: false,
+    });
+
+    ensureDashboardLayoutIsCorrect(draft);
+  }
+
+  return draft;
+};
+
 const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
   draft,
   action
@@ -952,16 +973,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
             },
             { dimensions: dataCubesComponents.dimensions }
           );
-          const key = action.value.chartConfig.key;
-          draft.chartConfigs.push(newConfig);
-          draft.activeChartKey = key;
-          draft.layout.blocks.push({
-            key,
-            type: "chart",
-            initialized: false,
-          });
-
-          ensureDashboardLayoutIsCorrect(draft);
+          handleAddNewChartConfig(draft, newConfig);
         }
       }
 
