@@ -1,3 +1,6 @@
+import { rgbToHex } from "@mui/material";
+import { hsl } from "d3-color";
+import { interpolateRgb } from "d3-interpolate";
 import {
   interpolateBlues,
   interpolateBrBG,
@@ -223,6 +226,65 @@ export const sequentialPalettes = sequentialPaletteKeys.map((d) => ({
   value: d,
   interpolator: getColorInterpolator(d),
 })) as Palette<SequentialPaletteType>[];
+
+const LIGHTNESS_INCREASE = 0.9;
+const MIN_SATURATION = 0.15;
+const MAX_LIGHTNESS = 0.95;
+
+type InterpolationOptions = {
+  midColor?: string;
+};
+
+type InterpolatorResult = {
+  interpolator: (t: number) => string;
+  startingColor?: string;
+};
+
+export const createSequentialInterpolator = (
+  endColor: string,
+  startColor?: string
+): InterpolatorResult => {
+  const endHsl = hsl(endColor);
+  const startHsl = startColor
+    ? hsl(startColor)
+    : hsl(
+        endHsl.h,
+        Math.max(MIN_SATURATION, endHsl.s * 0.3),
+        Math.min(MAX_LIGHTNESS, endHsl.l + LIGHTNESS_INCREASE)
+      );
+
+  return {
+    interpolator: interpolateRgb(startHsl.toString(), endColor),
+    startingColor: rgbToHex(startHsl.toString()),
+  };
+};
+
+export const createDivergingInterpolator = (
+  startColor: string,
+  endColor: string,
+  options: InterpolationOptions = {}
+): InterpolatorResult => {
+  const { midColor } = options;
+
+  if (midColor) {
+    const leftInterpolator = interpolateRgb(startColor, midColor);
+    const rightInterpolator = interpolateRgb(midColor, endColor);
+
+    return {
+      interpolator: (t: number): string => {
+        if (t <= 0.5) {
+          return leftInterpolator(t * 2);
+        }
+        return rightInterpolator((t - 0.5) * 2);
+      },
+    };
+  }
+
+  return {
+    interpolator: interpolateRgb(startColor, endColor),
+  };
+};
+
 export type ColorItem = {
   color: string;
   id: string;
