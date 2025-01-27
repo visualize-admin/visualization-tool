@@ -110,16 +110,11 @@ const valueToTimeRange = (value: number[]) => {
 };
 
 const presetToTimeRange = (
-  presets: Pick<InteractiveFiltersTimeRange["presets"], "from" | "to">,
-  timeUnit: TimeUnit
+  presets: Pick<InteractiveFiltersTimeRange["presets"], "from" | "to">
 ) => {
-  if (!timeUnit) {
-    return;
-  }
-  const parser = timeUnitToParser[timeUnit];
   return [
-    toUnixSeconds(parser(presets.from)),
-    toUnixSeconds(parser(presets.to)),
+    toUnixSeconds(parseDate(presets.from)),
+    toUnixSeconds(parseDate(presets.to)),
   ];
 };
 
@@ -149,27 +144,34 @@ const DashboardTimeRangeSlider = ({
   const timeUnit = filter.timeUnit as TimeUnit;
   const [timeRange, setTimeRange] = useState(() =>
     // timeUnit can still be an empty string
-    timeUnit ? presetToTimeRange(presets, timeUnit) : undefined
+    timeUnit ? presetToTimeRange(presets) : undefined
   );
 
   const valueLabelFormat = useEventCallback((value: number) => {
     if (!timeUnit) {
       return "";
     }
+
     const date = new Date(value * 1000);
+
     return timeUnitToFormatter[timeUnit](date);
   });
 
   const handleChangeSlider = useEventCallback((value: number | number[]) => {
     assert(Array.isArray(value), "Value should be an array of two numbers");
+
     if (!timeUnit) {
       return;
     }
+
     const newTimeRange = valueToTimeRange(value);
+
     if (!newTimeRange) {
       return;
     }
+
     setEnableTransition(false);
+
     for (const [_getState, _useStore, store] of Object.values(
       dashboardInteractiveFilters.stores
     )) {
@@ -180,27 +182,28 @@ const DashboardTimeRangeSlider = ({
 
   useEffect(
     function initTimeRangeAfterDataFetch() {
-      if (timeRange || !timeUnit) {
+      if (timeRange) {
         return;
       }
-      const parser = timeUnitToParser[timeUnit];
+
       handleChangeSlider([
-        toUnixSeconds(parser(presets.from)),
-        toUnixSeconds(parser(presets.to)),
+        toUnixSeconds(parseDate(presets.from)),
+        toUnixSeconds(parseDate(presets.to)),
       ]);
     },
     [timeRange, timeUnit, presets, handleChangeSlider]
   );
 
   useEffect(() => {
-    if (presets.from && presets.to && timeUnit) {
-      const parser = timeUnitToParser[timeUnit];
+    if (presets.from && presets.to) {
       setTimeRange([
-        toUnixSeconds(parser(presets.from)),
-        toUnixSeconds(parser(presets.to)),
+        toUnixSeconds(parseDate(presets.from)),
+        toUnixSeconds(parseDate(presets.to)),
       ]);
     }
   }, [presets.from, presets.to, timeUnit]);
+
+  const parser = timeUnitToParser[timeUnit];
 
   const mountedForSomeTime = useTimeout(500, mounted);
   const combinedTemporalDimension = useCombinedTemporalDimension();
@@ -214,10 +217,10 @@ const DashboardTimeRangeSlider = ({
     }
 
     return [
-      toUnixSeconds(parseDate(min as string)),
-      toUnixSeconds(parseDate(max as string)),
+      toUnixSeconds(parser(min as string)),
+      toUnixSeconds(parser(max as string)),
     ];
-  }, [combinedTemporalDimension]);
+  }, [combinedTemporalDimension, parser]);
 
   if (!timeRange || !filter.active || !sliderRange) {
     return null;
@@ -235,7 +238,7 @@ const DashboardTimeRangeSlider = ({
       valueLabelDisplay={mountedForSomeTime ? "on" : "off"}
       value={timeRange}
       marks={combinedTemporalDimension.values.map(({ value }) => ({
-        value: toUnixSeconds(parseDate(value as string)),
+        value: toUnixSeconds(parser(value as string)),
       }))}
     />
   );
