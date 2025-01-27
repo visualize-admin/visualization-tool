@@ -1,15 +1,8 @@
 import { Box } from "@mui/material";
 import { hexToHsva, HsvaColor, hsvaToHex } from "@uiw/react-color";
+import { nanoid } from "nanoid";
 import dynamic from "next/dynamic";
 import { useState } from "react";
-
-//have to import dynamically to avoid @uiw/react-color dependency issues with the server
-const CustomColorPicker = dynamic(
-  () => import("../configurator/components/color-picker"),
-  {
-    ssr: false,
-  }
-);
 
 import { Checkbox, Input, Radio, Select } from "@/components/form";
 import { OnOffControlTab as OnOffControlTabComponent } from "@/configurator/components/chart-controls/control-tab";
@@ -20,6 +13,14 @@ import {
 import { IconButton } from "@/configurator/components/icon-button";
 
 import type { Meta, StoryObj } from "@storybook/react";
+
+//have to import dynamically to avoid @uiw/react-color dependency issues with the server
+const CustomColorPicker = dynamic(
+  () => import("../configurator/components/color-picker"),
+  {
+    ssr: false,
+  }
+);
 
 type Story = StoryObj;
 const meta: Meta = {
@@ -136,7 +137,7 @@ const ColorPickerStory = {
           Current (valid) color: {currentColor}
         </Box>
         <CustomColorPicker
-          defaultSelection={hexToHsva(currentColor)}
+          defaultSelection={{ ...hexToHsva(currentColor), id: nanoid(4) }}
           onChange={(color: HsvaColor) => setCurrentColor(hsvaToHex(color))}
         />
       </div>
