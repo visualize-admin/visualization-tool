@@ -513,7 +513,7 @@ const DashboardTimeRangeFilterOptions = ({
         {canRenderDatePickerField(timeUnit) ? (
           <DatePickerField
             name="dashboard-time-range-filter-from"
-            value={timeRange.from as Date}
+            value={timeRange.from ?? (parseDate(filter.presets.from) as Date)}
             onChange={handleChangeFromDate}
             isDateDisabled={(date) => {
               return !optionValues.includes(formatDate(date));
@@ -537,7 +537,7 @@ const DashboardTimeRangeFilterOptions = ({
         {canRenderDatePickerField(timeUnit) ? (
           <DatePickerField
             name="dashboard-time-range-filter-to"
-            value={timeRange.to as Date}
+            value={timeRange.to ?? (parseDate(filter.presets.to) as Date)}
             onChange={handleChangeToDate}
             isDateDisabled={(date) => {
               return !optionValues.includes(formatDate(date));
