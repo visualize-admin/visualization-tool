@@ -12,8 +12,8 @@ import { default as prisma } from "./client";
 
 export const createPaletteForUser = async (
   data: CreateCustomColorPalette & { user_id?: number }
-) => {
-  await prisma.palette.create({
+): Promise<CustomPaletteType> => {
+  const palette = await prisma.palette.create({
     data: {
       name: data.name,
       type: convertPaletteTypeToDBType(data.type),
@@ -22,6 +22,11 @@ export const createPaletteForUser = async (
       updated_at: new Date(),
     },
   });
+
+  return {
+    ...palette,
+    type: convertDBTypeToPaletteType(palette.type),
+  };
 };
 
 export const getPalettesForUser = async (

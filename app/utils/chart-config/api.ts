@@ -112,13 +112,13 @@ export const fetchChartConfigs = async () => {
 export const createCustomColorPalette = async (
   options: CreateCustomColorPalette
 ) => {
-  await apiFetch<InferAPIResponse<typeof apiConfigCreate, "POST">>(
+  return (await apiFetch<InferAPIResponse<typeof apiConfigCreate, "POST">>(
     "/api/user/color-palette",
     {
       method: "POST",
       data: options,
     }
-  );
+  )) as unknown as CustomPaletteType;
 };
 
 export const getCustomColorPalettes = async (): Promise<
