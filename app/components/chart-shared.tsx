@@ -476,7 +476,7 @@ const useModifyNode = () => {
       // and not have underlines.
       const color = theme.palette.grey[700];
       select(clonedNode)
-        .selectAll("*")
+        .selectAll(`p, button, a, span, div, li, h1, h2, h3, h4, h5, h6`)
         .style("color", color)
         .style("text-decoration", "none");
       // SVG elements have fill instead of color. Here we only target text elements,
