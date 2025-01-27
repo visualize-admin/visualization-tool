@@ -34,7 +34,7 @@ export const navPresenceProps = {
 };
 
 export const BANNER_HEIGHT = 250;
-export const BANNER_MARGIN_TOP = 96;
+export const BANNER_MARGIN_TOP = 61;
 export const bannerPresenceProps: Transition = {
   initial: { marginTop: -(BANNER_HEIGHT + BANNER_MARGIN_TOP) },
   animate: { marginTop: BANNER_MARGIN_TOP },
