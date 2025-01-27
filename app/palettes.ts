@@ -23,10 +23,12 @@ import {
   schemeSet3,
   schemeTableau10,
 } from "d3-scale-chromatic";
+import { nanoid } from "nanoid";
 
 import { hasDimensionColors } from "./charts/shared/colors";
 import {
   ColorField,
+  CustomPaletteType,
   DivergingPaletteType,
   PaletteType,
   SequentialPaletteType,
@@ -221,3 +223,35 @@ export const sequentialPalettes = sequentialPaletteKeys.map((d) => ({
   value: d,
   interpolator: getColorInterpolator(d),
 })) as Palette<SequentialPaletteType>[];
+export type ColorItem = {
+  color: string;
+  id: string;
+};
+
+export type ColorsByType = {
+  categorical: ColorItem[];
+  sequential: ColorItem[];
+  diverging: ColorItem[];
+};
+
+export const defaultColorValues = (
+  type: CustomPaletteType["type"],
+  colors: string[]
+): ColorItem[] => {
+  const colorExist = colors.length > 0;
+
+  switch (type) {
+    case "sequential":
+      return [{ color: colorExist ? colors[0] : "#000000", id: nanoid(4) }];
+    case "diverging":
+      return [
+        { color: colorExist ? colors[0] : "#000000", id: nanoid(4) },
+        { color: colorExist ? colors[1] : "#cccccc", id: nanoid(4) },
+        { color: colorExist ? colors[2] : "#777777", id: nanoid(4) },
+      ];
+    case "categorical":
+      return colorExist
+        ? colors.map((color) => ({ color, id: nanoid(4) }))
+        : [];
+  }
+};
