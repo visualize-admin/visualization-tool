@@ -128,7 +128,9 @@ export const createActions = ({
   },
   common: {
     switchLang: async (lang: "de" | "fr" | "en" | "it") => {
-      await page.locator(`a[hreflang="${lang}"]`).click();
+      await page
+        .locator(`select:has(option[value="${lang}"])`)
+        .selectOption(lang);
     },
   },
 });
