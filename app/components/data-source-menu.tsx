@@ -24,6 +24,9 @@ export const DataSourceMenu = () => {
     <Flex
       alignItems="center"
       sx={{
+        "& .MuiInput-input.Mui-disabled": {
+          textFillColor: "#828E9A", //FIXME: switch this to a proper color once the new colors are in place
+        },
         "&:hover": {
           color: "#d1d5db", //FIXME: switch this to a proper color once the new colors are in place
           "& .MuiTypography-root": {
