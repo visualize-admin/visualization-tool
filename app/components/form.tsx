@@ -595,12 +595,7 @@ export const MinimalisticSelect = (props: MinimalisticSelectProps) => {
           </span>
         )}
         className={classes.root}
-        sx={{
-          "& .MuiInput-input": {
-            fontSize: ["0.875rem", "0.875rem", "1rem", "1rem", "1rem"],
-          },
-          ...sx,
-        }}
+        sx={sx}
         {...rest}
       >
         {options.map((opt) => (
@@ -637,6 +632,10 @@ const useMinimalisticSelectStyles = makeStyles<Theme>((theme) => ({
       minHeight: "auto",
       paddingTop: 0,
       paddingBottom: 0,
+      fontSize: "1em",
+      [theme.breakpoints.down("md")]: {
+        fontSize: "0.875rem",
+      },
     },
   },
 }));
