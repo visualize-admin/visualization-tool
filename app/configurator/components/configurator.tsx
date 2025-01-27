@@ -86,7 +86,9 @@ import { replaceLinks } from "@/utils/ui-strings";
 import useEvent from "@/utils/use-event";
 import { useMutate } from "@/utils/use-fetch-data";
 
-export const BackContainer = (props: React.PropsWithChildren<{ sx?: SxProps }>) => {
+export const BackContainer = (
+  props: React.PropsWithChildren<{ sx?: SxProps }>
+) => {
   const { children, sx } = props;
   return (
     <Box
@@ -104,7 +106,7 @@ export const BackContainer = (props: React.PropsWithChildren<{ sx?: SxProps }>) 
   );
 };
 
-export const BackButton = ({
+const BackButton = ({
   children,
   onClick,
   ...props

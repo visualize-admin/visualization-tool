@@ -149,7 +149,7 @@ export const categoricalPalettes: Array<CategoricalPalette> = [
 
 export const DEFAULT_CATEGORICAL_PALETTE_ID = categoricalPalettes[0].value;
 
-export type Palette<T> = {
+type Palette<T> = {
   label: string;
   value: T;
   interpolator: (t: number) => string;
