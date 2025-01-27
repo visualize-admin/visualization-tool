@@ -3,12 +3,14 @@ import { Box, Button, Popover, styled, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { hexToHsva, hsvaToHex } from "@uiw/react-color";
 import { color as d3Color } from "d3-color";
+import { nanoid } from "nanoid";
 import dynamic from "next/dynamic";
 import { MouseEventHandler, useCallback, useMemo, useRef } from "react";
 
 import useDisclosure from "@/components/use-disclosure";
 import VisuallyHidden from "@/components/visually-hidden";
 import { Icon } from "@/icons";
+import { ColorItem } from "@/palettes";
 
 //have to import dynamically to avoid @uiw/react-color dependency issues with the server
 const CustomColorPicker = dynamic(
@@ -58,9 +60,11 @@ export const Swatch = ({
 
 type Props = {
   selectedColor: string;
-  colors: readonly string[];
+  colors: ColorItem[] | readonly string[];
   onChange?: (color: string) => void;
   disabled?: boolean;
+  colorId?: string;
+  onRemove?: (colorId: string) => void;
 };
 
 const ColorPickerButton = styled(Button)({
@@ -91,15 +95,14 @@ const ColorPickerBox = styled(Box)({
 });
 
 export const ColorPickerMenu = (props: Props) => {
-  const { disabled, onChange, selectedColor } = props;
+  const { disabled, onChange, selectedColor, onRemove, colorId } = props;
   const { isOpen, open, close } = useDisclosure();
   const buttonRef = useRef(null);
   const popoverRef = useRef<HTMLDivElement>(null);
 
-  const initialSelected = useMemo(
-    () => hexToHsva(selectedColor),
-    [selectedColor]
-  );
+  const initialSelected = useMemo(() => {
+    return { ...hexToHsva(selectedColor), id: colorId ?? nanoid(4) };
+  }, [selectedColor, colorId]);
 
   const handleColorChange = useCallback(
     (color) => {
@@ -112,24 +115,46 @@ export const ColorPickerMenu = (props: Props) => {
   );
 
   return (
-    <ColorPickerBox
+    <Box
       sx={{
         opacity: disabled ? 0.5 : 1,
         pointerEvents: disabled ? "none" : "auto",
       }}
     >
-      <ColorPickerButton ref={buttonRef} disabled={disabled} onClick={open}>
-        <VisuallyHidden>
-          <Trans id="controls.colorpicker.open">Open Color Picker</Trans>
-        </VisuallyHidden>
-        <Typography
-          aria-hidden
-          color="primary"
-          sx={{ backgroundColor: "transparent" }}
-        >
-          <Icon name="color" size={16} />
-        </Typography>
-      </ColorPickerButton>
+      <ColorPickerBox
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: 1,
+        }}
+      >
+        <ColorPickerButton ref={buttonRef} disabled={disabled} onClick={open}>
+          <VisuallyHidden>
+            <Trans id="controls.colorpicker.open">Open Color Picker</Trans>
+          </VisuallyHidden>
+          <Typography
+            aria-hidden
+            color="primary"
+            sx={{ backgroundColor: "transparent" }}
+          >
+            <Icon name="color" size={16} />
+          </Typography>
+        </ColorPickerButton>
+        {colorId && onRemove && (
+          <ColorPickerButton onClick={() => onRemove(colorId)}>
+            <VisuallyHidden>
+              <Trans id="controls.colorpicker.remove">Remove Color</Trans>
+            </VisuallyHidden>
+            <Typography
+              aria-hidden
+              color="secondary"
+              sx={{ backgroundColor: "transparent" }}
+            >
+              <Icon name="close" size={24} />
+            </Typography>
+          </ColorPickerButton>
+        )}
+      </ColorPickerBox>
       <Popover
         anchorEl={buttonRef.current}
         anchorOrigin={{
@@ -143,10 +168,17 @@ export const ColorPickerMenu = (props: Props) => {
           <CustomColorPicker
             defaultSelection={initialSelected}
             onChange={handleColorChange}
-            colorSwatches={props.colors}
+            colorSwatches={
+              (typeof props.colors[0] === "string"
+                ? props.colors.map((color) => ({
+                    color: color,
+                    id: nanoid(4),
+                  }))
+                : props.colors) as ColorItem[]
+            }
           />
         </Box>
       </Popover>
-    </ColorPickerBox>
+    </Box>
   );
 };
