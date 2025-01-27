@@ -13,6 +13,7 @@ You can also check the
 
 - Fixes
   - Bar chart tooltip doesn't go off the screen anymore during scroll
+  - Bar chart interactive switch on y axis
 
 # [5.2.0] - 2025-01-22
 
