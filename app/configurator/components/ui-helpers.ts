@@ -26,37 +26,50 @@ import { IconName } from "@/icons";
 import { getTimeInterval } from "@/intervals";
 import { getPalette } from "@/palettes";
 
+export const timeUnitFormatMap: Record<TimeUnit, string> = {
+  Second: "%Y-%m-%dT%H:%M:%S",
+  Minute: "%Y-%m-%dT%H:%M",
+  Hour: "%Y-%m-%dT%H:%M",
+  Day: "%Y-%m-%d",
+  Week: "%Y-%W",
+  Month: "%Y-%m",
+  Year: "%Y",
+};
+
 // FIXME: We should cover more time formats
 export const timeUnitToParser: Record<
   TimeUnit,
   (dateStr: string) => Date | null
 > = {
-  Second: timeParse("%Y-%m-%dT%H:%M:%S"),
-  Hour: timeParse("%Y-%m-%dT%H:%M"), // same as minute
-  Minute: timeParse("%Y-%m-%dT%H:%M"),
-  Week: timeParse("%Y-%m-%d"), // same as day
-  Day: timeParse("%Y-%m-%d"),
-  Month: timeParse("%Y-%m"),
-  Year: timeParse("%Y"),
+  Second: timeParse(timeUnitFormatMap.Second),
+  Hour: timeParse(timeUnitFormatMap.Hour),
+  Minute: timeParse(timeUnitFormatMap.Minute),
+  Week: timeParse(timeUnitFormatMap.Week),
+  Day: timeParse(timeUnitFormatMap.Day),
+  Month: timeParse(timeUnitFormatMap.Month),
+  Year: timeParse(timeUnitFormatMap.Year),
 };
 
 export const parseDate = (dateStr: string): Date =>
   timeUnitToParser.Second(dateStr) ??
   timeUnitToParser.Minute(dateStr) ??
   timeUnitToParser.Day(dateStr) ??
+  // We don't parse weeks, because the data points look the same as for month,
+  // e.g. 2021-04 which results in wrong parsing, as week parser would be always
+  // used first.
   timeUnitToParser.Month(dateStr) ??
   timeUnitToParser.Year(dateStr) ??
   // This should probably not happen
   new Date(dateStr);
 
 export const timeUnitToFormatter: Record<TimeUnit, (date: Date) => string> = {
-  Year: timeFormat("%Y"),
-  Month: timeFormat("%Y-%m"),
-  Week: timeFormat("%Y-%m-%d"),
-  Day: timeFormat("%Y-%m-%d"),
-  Hour: timeFormat("%Y-%m-%dT%H:%M"),
-  Minute: timeFormat("%Y-%m-%dT%H:%M"),
-  Second: timeFormat("%Y-%m-%dT%H:%M:%S"),
+  Second: timeFormat(timeUnitFormatMap.Second),
+  Minute: timeFormat(timeUnitFormatMap.Minute),
+  Hour: timeFormat(timeUnitFormatMap.Hour),
+  Day: timeFormat(timeUnitFormatMap.Day),
+  Week: timeFormat(timeUnitFormatMap.Day), // same as day
+  Month: timeFormat(timeUnitFormatMap.Month),
+  Year: timeFormat(timeUnitFormatMap.Year),
 };
 
 export const mkNumber = (x: $IntentionalAny): number => +x;
