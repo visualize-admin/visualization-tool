@@ -494,6 +494,10 @@ const DashboardTimeRangeFilterOptions = ({
     }
   };
 
+  // As the stores are synced, we can take the first one to get the time range.
+  const firstStore = Object.values(dashboardInteractiveFilters.stores)[0];
+  const { timeRange } = firstStore[0]();
+
   return (
     <div>
       <Stack
@@ -509,9 +513,11 @@ const DashboardTimeRangeFilterOptions = ({
         {canRenderDatePickerField(timeUnit) ? (
           <DatePickerField
             name="dashboard-time-range-filter-from"
-            value={parseDate(filter.presets.from) as Date}
+            value={timeRange.from as Date}
             onChange={handleChangeFromDate}
-            isDateDisabled={(date) => !optionValues.includes(formatDate(date))}
+            isDateDisabled={(date) => {
+              return !optionValues.includes(formatDate(date));
+            }}
             timeUnit={timeUnit}
             dateFormat={formatDate}
             minDate={minDate}
@@ -531,9 +537,11 @@ const DashboardTimeRangeFilterOptions = ({
         {canRenderDatePickerField(timeUnit) ? (
           <DatePickerField
             name="dashboard-time-range-filter-to"
-            value={parseDate(filter.presets.to) as Date}
+            value={timeRange.to as Date}
             onChange={handleChangeToDate}
-            isDateDisabled={(date) => !optionValues.includes(formatDate(date))}
+            isDateDisabled={(date) => {
+              return !optionValues.includes(formatDate(date));
+            }}
             timeUnit={timeUnit}
             dateFormat={formatDate}
             minDate={minDate}
