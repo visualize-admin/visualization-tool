@@ -27,8 +27,8 @@ const ColorPickerMenu = dynamic(
   { ssr: false }
 );
 
-export const CATEGORICAL_MAX_ALLOWED_COLORS = 26;
-export const DIVERGING_MAX_ALLOWED_COLORS = 3;
+const CATEGORICAL_MAX_ALLOWED_COLORS = 26;
+const DIVERGING_MAX_ALLOWED_COLORS = 3;
 
 const useStyles = makeStyles({
   addColorButton: {
@@ -254,7 +254,7 @@ type ColorSelectionRowProps = {
   onRemove?: (id: string) => void;
 } & ColorItem;
 
-export const ColorSelectionRow = (props: ColorSelectionRowProps) => {
+const ColorSelectionRow = (props: ColorSelectionRowProps) => {
   const { id, color, colorValues, onRemove, onUpdate } = props;
   const classes = useStyles();
 
