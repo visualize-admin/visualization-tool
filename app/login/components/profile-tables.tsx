@@ -46,19 +46,21 @@ import { useMutate } from "@/utils/use-fetch-data";
 const PREVIEW_LIMIT = 3;
 const POPOVER_PADDING = 8;
 
-const SectionContent = ({
+export const SectionContent = ({
   children,
   title,
 }: {
   children: React.ReactNode;
-  title: string;
+  title?: string;
 }) => {
   const rootClasses = useRootStyles();
   return (
     <Box className={rootClasses.sectionContent}>
-      <Typography variant="h3" sx={{ mb: 4 }}>
-        {title}
-      </Typography>
+      {title && (
+        <Typography variant="h3" sx={{ mb: 4 }}>
+          {title}
+        </Typography>
+      )}
 
       {children}
     </Box>

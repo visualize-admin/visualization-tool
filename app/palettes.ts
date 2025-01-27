@@ -1,3 +1,6 @@
+import { rgbToHex } from "@mui/material";
+import { hsl } from "d3-color";
+import { interpolateRgb } from "d3-interpolate";
 import {
   interpolateBlues,
   interpolateBrBG,
@@ -23,10 +26,12 @@ import {
   schemeSet3,
   schemeTableau10,
 } from "d3-scale-chromatic";
+import { nanoid } from "nanoid";
 
 import { hasDimensionColors } from "./charts/shared/colors";
 import {
   ColorField,
+  CustomPaletteType,
   DivergingPaletteType,
   PaletteType,
   SequentialPaletteType,
@@ -221,3 +226,94 @@ export const sequentialPalettes = sequentialPaletteKeys.map((d) => ({
   value: d,
   interpolator: getColorInterpolator(d),
 })) as Palette<SequentialPaletteType>[];
+
+const LIGHTNESS_INCREASE = 0.9;
+const MIN_SATURATION = 0.15;
+const MAX_LIGHTNESS = 0.95;
+
+type InterpolationOptions = {
+  midColor?: string;
+};
+
+type InterpolatorResult = {
+  interpolator: (t: number) => string;
+  startingColor?: string;
+};
+
+export const createSequentialInterpolator = (
+  endColor: string,
+  startColor?: string
+): InterpolatorResult => {
+  const endHsl = hsl(endColor);
+  const startHsl = startColor
+    ? hsl(startColor)
+    : hsl(
+        endHsl.h,
+        Math.max(MIN_SATURATION, endHsl.s * 0.3),
+        Math.min(MAX_LIGHTNESS, endHsl.l + LIGHTNESS_INCREASE)
+      );
+
+  return {
+    interpolator: interpolateRgb(startHsl.toString(), endColor),
+    startingColor: rgbToHex(startHsl.toString()),
+  };
+};
+
+export const createDivergingInterpolator = (
+  startColor: string,
+  endColor: string,
+  options: InterpolationOptions = {}
+): InterpolatorResult => {
+  const { midColor } = options;
+
+  if (midColor) {
+    const leftInterpolator = interpolateRgb(startColor, midColor);
+    const rightInterpolator = interpolateRgb(midColor, endColor);
+
+    return {
+      interpolator: (t: number): string => {
+        if (t <= 0.5) {
+          return leftInterpolator(t * 2);
+        }
+        return rightInterpolator((t - 0.5) * 2);
+      },
+    };
+  }
+
+  return {
+    interpolator: interpolateRgb(startColor, endColor),
+  };
+};
+
+export type ColorItem = {
+  color: string;
+  id: string;
+};
+
+export type ColorsByType = {
+  categorical: ColorItem[];
+  sequential: ColorItem[];
+  diverging: ColorItem[];
+};
+
+export const defaultColorValues = (
+  type: CustomPaletteType["type"],
+  colors: string[]
+): ColorItem[] => {
+  const colorExist = colors.length > 0;
+
+  switch (type) {
+    case "sequential":
+      return [{ color: colorExist ? colors[0] : "#000000", id: nanoid(4) }];
+    case "diverging":
+      return [
+        { color: colorExist ? colors[0] : "#000000", id: nanoid(4) },
+        { color: colorExist ? colors[1] : "#cccccc", id: nanoid(4) },
+        { color: colorExist ? colors[2] : "#777777", id: nanoid(4) },
+      ];
+    case "categorical":
+      return colorExist
+        ? colors.map((color) => ({ color, id: nanoid(4) }))
+        : [];
+  }
+};

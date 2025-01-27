@@ -59,7 +59,11 @@ import {
   isGeoShapesDimension,
 } from "@/domain/data";
 import { truthy } from "@/domain/types";
-import { getColorInterpolator } from "@/palettes";
+import {
+  createDivergingInterpolator,
+  createSequentialInterpolator,
+  getColorInterpolator,
+} from "@/palettes";
 
 export type MapState = CommonChartState &
   MapStateVariables & {
@@ -285,7 +289,16 @@ const getNumericalColorScale = ({
   data: Observation[];
   dataDomain: [number, number];
 }) => {
-  const interpolator = getColorInterpolator(color.paletteId);
+  const interpolator = color.colors
+    ? color?.paletteType === "sequential"
+      ? createSequentialInterpolator(color.colors[0], color.colors[1])
+          .interpolator
+      : color?.paletteType === "diverging"
+        ? createDivergingInterpolator(color.colors[0], color.colors[1], {
+            midColor: color.colors[2] ?? undefined,
+          }).interpolator
+        : getColorInterpolator(color.paletteId)
+    : getColorInterpolator(color.paletteId);
 
   switch (color.scaleType) {
     case "continuous":

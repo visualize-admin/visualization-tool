@@ -3,26 +3,26 @@ import {
   Box,
   BoxProps,
   ButtonBase,
-  Checkbox as MUICheckbox,
   CircularProgress,
   FormControlLabel,
   FormControlLabelProps,
-  Input as MUIInput,
   InputLabel,
   InputProps,
   ListSubheader,
   MenuItem,
-  Paper,
-  PaperProps,
+  Checkbox as MUICheckbox,
+  Input as MUIInput,
   Radio as MUIRadio,
   Select as MUISelect,
+  Slider as MUISlider,
+  Switch as MUISwitch,
+  Paper,
+  PaperProps,
   SelectProps,
   Skeleton,
-  Slider as MUISlider,
   SliderProps,
   Stack,
   styled,
-  Switch as MUISwitch,
   SxProps,
   Tooltip,
   Typography,
@@ -502,7 +502,7 @@ type DisabledMessageIconProps = {
   message: string;
 };
 
-const DisabledMessageIcon = (props: DisabledMessageIconProps) => {
+export const DisabledMessageIcon = (props: DisabledMessageIconProps) => {
   const { message } = props;
 
   return (
@@ -607,9 +607,11 @@ export const Input = ({
   value,
   disabled,
   onChange,
+  error,
 }: {
   label?: string | ReactNode;
   disabled?: boolean;
+  error?: boolean;
 } & FieldProps) => (
   <Box sx={{ fontSize: "1rem", pb: 2 }}>
     {label && name && (
@@ -626,7 +628,7 @@ export const Input = ({
       disabled={disabled}
       onChange={onChange}
       sx={{
-        borderColor: "grey.500",
+        borderColor: error ? "error.main" : "grey.500",
         backgroundColor: "grey.100",
         width: "100%",
       }}

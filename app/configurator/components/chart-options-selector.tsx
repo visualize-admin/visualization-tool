@@ -1869,11 +1869,7 @@ const ChartFieldColorComponent = ({
           ) : null
         ) : colorType === "numerical" ? (
           <div>
-            <ColorRampField
-              field={field}
-              path="color.paletteId"
-              nSteps={nbClass}
-            />
+            <ColorRampField field={field} path="color" nSteps={nbClass} />
             <FieldSetLegend
               legendTitle={t({
                 id: "controls.scale.type",

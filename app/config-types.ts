@@ -1,4 +1,5 @@
 /* eslint-disable no-redeclare */
+import { PALETTE_TYPE } from "@prisma/client";
 import { fold } from "fp-ts/lib/Either";
 import { pipe } from "fp-ts/lib/function";
 import * as t from "io-ts";
@@ -530,6 +531,35 @@ const CustomPalette = t.type({
 });
 
 export type CustomPaletteType = t.TypeOf<typeof CustomPalette>;
+export const convertPaletteTypeToDBType = (
+  type: CustomPaletteType["type"]
+): PALETTE_TYPE => {
+  switch (type) {
+    case "diverging":
+      return "DIVERGING";
+    case "sequential":
+      return "SEQUENTIAL";
+    case "categorical":
+      return "CATEGORICAL";
+    default:
+      return "CATEGORICAL";
+  }
+};
+
+export const convertDBTypeToPaletteType = (
+  type: PALETTE_TYPE
+): CustomPaletteType["type"] => {
+  switch (type) {
+    case "DIVERGING":
+      return "diverging";
+    case "SEQUENTIAL":
+      return "sequential";
+    case "CATEGORICAL":
+      return "categorical";
+    default:
+      return "categorical";
+  }
+};
 
 export const PaletteType = t.union([
   DivergingPalette,
@@ -680,6 +710,10 @@ const NumericalColorField = t.intersection([
     type: t.literal("numerical"),
     componentId: t.string,
     paletteId: t.string,
+  }),
+  t.partial({
+    paletteType: t.union([t.literal("sequential"), t.literal("diverging")]),
+    colors: t.array(t.string),
   }),
   t.union([
     t.type({
