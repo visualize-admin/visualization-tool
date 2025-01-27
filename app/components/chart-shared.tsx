@@ -3,6 +3,7 @@ import {
   Box,
   IconButton,
   Theme,
+  ThemeProvider,
   useEventCallback,
   useTheme,
 } from "@mui/material";
@@ -459,9 +460,11 @@ const useModifyNode = () => {
         footnotes.appendChild(container);
         const root = createRoot(container);
         root.render(
-          <VisualizeLink
-            createdWith={t({ id: "metadata.link.created.with" })}
-          />
+          <ThemeProvider theme={theme}>
+            <VisualizeLink
+              createdWith={t({ id: "metadata.link.created.with" })}
+            />
+          </ThemeProvider>
         );
         await animationFrame();
       }
@@ -483,7 +486,7 @@ const useModifyNode = () => {
       // to avoid changing the color of other SVG elements (charts).
       select(clonedNode).selectAll("text").style("fill", color);
     },
-    [chartWithFiltersClasses.chartWithFilters, theme.palette.grey]
+    [chartWithFiltersClasses.chartWithFilters, theme]
   );
 };
 
