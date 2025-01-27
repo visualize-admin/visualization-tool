@@ -151,10 +151,23 @@ describe("add dataset", () => {
   });
 });
 
-describe("add chart", () => {
+describe("add chart based on the same cube", () => {
   const state = configStateMock.groupedColumnChart;
-  const action: ConfiguratorStateAction = {
+  const actionSameCube: ConfiguratorStateAction = {
     type: "CHART_CONFIG_ADD",
+    value: {
+      chartConfig: getNewChartConfig({
+        chartType: "line",
+        chartConfig: state.chartConfigs[0],
+        state,
+        dimensions: groupedColumnChartDimensions,
+        measures: groupedColumnChartMeasures,
+      }),
+      locale: "en",
+    },
+  };
+  const actionNewCube: ConfiguratorStateAction = {
+    type: "CHART_CONFIG_ADD_NEW_DATASET",
     value: {
       chartConfig: getNewChartConfig({
         chartType: "line",
@@ -179,12 +192,12 @@ describe("add chart", () => {
         measures: groupedColumnChartMeasures,
       };
     });
-    const newState = runReducer(
+    const newStateAfterSameCube = runReducer(
       state,
-      action
+      actionSameCube
     ) as ConfiguratorStateConfiguringChart;
-    const config = newState.chartConfigs[1];
-    expect(Object.keys(config.cubes[0].filters)).toEqual([
+    const newConfigSameCube = newStateAfterSameCube.chartConfigs[1];
+    expect(Object.keys(newConfigSameCube.cubes[0].filters)).toEqual([
       stringifyComponentId({
         unversionedCubeIri:
           "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen",
@@ -192,6 +205,16 @@ describe("add chart", () => {
           "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton",
       }),
     ]);
+  });
+
+  it("should keep blocks in sync when adding a new chart based on new cube", () => {
+    const newStateAfterSameCube = runReducer(
+      state,
+      actionNewCube
+    ) as ConfiguratorStateConfiguringChart;
+    expect(newStateAfterSameCube.chartConfigs.map((c) => c.key)).toEqual(
+      newStateAfterSameCube.layout.blocks.map((b) => b.key)
+    );
   });
 });
 

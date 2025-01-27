@@ -981,9 +981,9 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
     case "CHART_CONFIG_ADD_NEW_DATASET":
       if (isConfiguring(draft)) {
-        draft.chartConfigs.push(action.value.chartConfig);
-        draft.activeChartKey = action.value.chartConfig.key;
+        handleAddNewChartConfig(draft, action.value.chartConfig);
       }
+
       return draft;
 
     case "DATASET_ADD":
