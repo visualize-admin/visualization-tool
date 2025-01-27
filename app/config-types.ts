@@ -711,6 +711,10 @@ const NumericalColorField = t.intersection([
     componentId: t.string,
     paletteId: t.string,
   }),
+  t.partial({
+    paletteType: t.union([t.literal("sequential"), t.literal("diverging")]),
+    colors: t.array(t.string),
+  }),
   t.union([
     t.type({
       scaleType: t.literal("continuous"),
