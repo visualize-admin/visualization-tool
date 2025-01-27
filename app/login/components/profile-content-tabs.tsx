@@ -11,6 +11,8 @@ import { ProfileVisualizationsTable } from "@/login/components/profile-tables";
 import { useRootStyles } from "@/login/utils";
 import useEvent from "@/utils/use-event";
 
+import { default as ProfileColorPaletteContent } from "./color-palettes/profile-color-palette-content";
+
 const useStyles = makeStyles<Theme>((theme) => ({
   section: {
     borderBottom: 1,
@@ -161,6 +163,13 @@ export const ProfileContentTabs = (props: ProfileContentTabsProps) => {
       </TabPanel>
       <TabPanel className={classes.tabPanel} value="palettes">
         <Box className={classes.tabPanelContent}>
+          <ProfileColorPaletteContent
+            title={t({
+              id: "login.profile.my-color-palettes",
+              message: "My Color Palettes",
+            })}
+            userId={userId}
+          />
         </Box>
       </TabPanel>
     </TabContext>
