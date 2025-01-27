@@ -35,10 +35,6 @@ msgstr "[ Ohne Beschreibung ]"
 msgid "annotation.add.title"
 msgstr "[ Ohne Titel ]"
 
-#: app/configurator/components/beta-tag.tsx
-msgid "beta-tag.tooltip"
-msgstr "Diese Funktion befindet sich derzeit in der Entwicklung. Möglicherweise treten Fehler auf und Leistungsprobleme."
-
 #: app/browser/dataset-browse.tsx
 msgid "browse-panel.organizations"
 msgstr "Organisationen"
@@ -326,6 +322,15 @@ msgstr "Horizontale Achse"
 msgid "controls.axis.vertical"
 msgstr "Vertikale Achse"
 
+#: app/configurator/components/field-i18n.ts
+msgid "controls.bar.grouped"
+msgstr "Grouppiert"
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.bar.stacked"
+msgstr "Gestapelt"
+
+#: app/charts/chart-config-ui-options.ts
 #: app/charts/chart-config-ui-options.ts
 msgid "controls.calculation.disabled-by-grouped"
 msgstr "Der 100%-Modus kann nicht mit einem gruppierten Layout verwendet werden."
@@ -530,6 +535,10 @@ msgstr "Farbe auswählen"
 msgid "controls.colorpicker.open"
 msgstr "Farbauswahl öffnen"
 
+#: app/configurator/components/chart-controls/color-picker.tsx
+msgid "controls.colorpicker.remove"
+msgstr "Farbe entfernen"
+
 #: app/configurator/components/field-i18n.ts
 msgid "controls.column.grouped"
 msgstr "Gruppiert"
@@ -539,24 +548,63 @@ msgid "controls.column.stacked"
 msgstr "Gestapelt"
 
 #: app/configurator/components/chart-controls/color-palette.tsx
+#: app/configurator/components/chart-controls/color-ramp.tsx
+#: app/configurator/components/chart-controls/color-ramp.tsx
+#: app/configurator/components/chart-controls/create-color-palette.tsx
 msgid "controls.custom-color-palettes"
 msgstr "Benutzerdefinierte Farbpaletten"
 
-#: app/configurator/components/chart-controls/color-palette.tsx
+#: app/login/components/color-palettes/color-palette-types.tsx
+#: app/login/components/color-palettes/color-palette-types.tsx
 msgid "controls.custom-color-palettes.add-color"
 msgstr "Farbe hinzufügen"
 
-#: app/configurator/components/chart-controls/color-palette.tsx
+#: app/login/components/color-palettes/color-palette-types.tsx
+msgid "controls.custom-color-palettes.base"
+msgstr "Basis Farbe"
+
+#: app/configurator/components/chart-controls/create-color-palette.tsx
+#: app/login/components/color-palettes/profile-color-palette-form.tsx
 msgid "controls.custom-color-palettes.caption"
 msgstr "Verwenden Sie klare, kontrastreiche Farben. Vermeiden Sie die Verwendung von zu vielen Farben, maximal 5-7. Verwenden Sie sequenzielle Paletten für geordnete Daten und divergierende Paletten für Extreme."
 
-#: app/configurator/components/chart-controls/color-palette.tsx
+#: app/login/components/color-palettes/color-palette-types.tsx
+msgid "controls.custom-color-palettes.contrast-warning"
+msgstr "Die gewählte Farbe hat nicht genügend Kontrast. Erwägen Sie die Verwendung einer dunkleren Farbe für eine sequenzielle Palette."
+
+#: app/login/components/color-palettes/color-palette-types.tsx
+msgid "controls.custom-color-palettes.end"
+msgstr "Endfarbe"
+
+#: app/login/components/color-palettes/color-palette-examples.tsx
+msgid "controls.custom-color-palettes.example"
+msgstr "Beispiel"
+
+#: app/login/components/color-palettes/color-palette-types.tsx
+msgid "controls.custom-color-palettes.mid"
+msgstr "Mittlere Farbe"
+
+#: app/configurator/components/chart-controls/create-color-palette.tsx
+#: app/login/components/color-palettes/profile-color-palette-form.tsx
 msgid "controls.custom-color-palettes.set-values-apply"
 msgstr "Farbpalette speichern"
 
-#: app/configurator/components/chart-controls/color-palette.tsx
+#: app/login/components/color-palettes/color-palette-types.tsx
+msgid "controls.custom-color-palettes.start"
+msgstr "Anfangsfarbe"
+
+#: app/configurator/components/chart-controls/create-color-palette.tsx
+#: app/login/components/color-palettes/profile-color-palette-form.tsx
 msgid "controls.custom-color-palettes.title"
 msgstr "Palettentitel"
+
+#: app/configurator/components/chart-controls/create-color-palette.tsx
+msgid "controls.custom-color-palettes.title-unavailable"
+msgstr "Dieser Name ist bereits in Gebrauch. Bitte wählen Sie einen eindeutigen Namen für Ihre Farbpalette."
+
+#: app/login/components/color-palettes/profile-color-palette-form.tsx
+msgid "controls.custom-color-palettes.type"
+msgstr "Wähle einen Farbpalette typ"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.description"
@@ -956,6 +1004,7 @@ msgstr "Segmentierung"
 
 #: app/charts/chart-config-ui-options.ts
 #: app/charts/chart-config-ui-options.ts
+#: app/charts/chart-config-ui-options.ts
 msgid "controls.segment.stacked.disabled-by-scale-type"
 msgstr "Das gestapelte Layout kann nur aktiviert werden, wenn die der vertikalen Achse zugeordnete Dimension eine Verhältnis-Skala hat."
 
@@ -1150,6 +1199,12 @@ msgstr "Titel hinzufügen"
 #: app/components/select-tree.tsx
 msgid "controls.tree.select-value"
 msgstr "Auswählen"
+
+#: app/configurator/components/chart-controls/color-palette.tsx
+#: app/configurator/components/chart-controls/color-ramp.tsx
+#: app/configurator/components/chart-controls/color-ramp.tsx
+msgid "controls.visualize-color-palette"
+msgstr "Visualize Farbpaletten"
 
 #: app/components/data-source-menu.tsx
 msgid "data.source"
@@ -1508,7 +1563,7 @@ msgstr "Funktion wünschen"
 
 #: app/login/components/login-menu.tsx
 msgid "login.profile.feedback"
-msgstr ""
+msgstr "Feedback"
 
 #: app/login/components/profile-content-tabs.tsx
 msgid "login.profile.home"
@@ -1516,15 +1571,43 @@ msgstr "Übersicht"
 
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
+msgid "login.profile.my-color-palettes"
+msgstr "Meine Farbpaletten"
+
+#: app/configurator/components/chart-controls/color-palette.tsx
+#: app/configurator/components/chart-controls/color-ramp.tsx
+#: app/configurator/components/chart-controls/color-ramp.tsx
+#: app/login/components/color-palettes/profile-color-palette-content.tsx
+msgid "login.profile.my-color-palettes.add"
+msgstr "Farbpalette hinzufügen"
+
+#: app/login/components/color-palettes/profile-color-palette-form.tsx
+msgid "login.profile.my-color-palettes.create.back-button"
+msgstr "Meine Farbpalette"
+
+#: app/login/components/color-palettes/profile-color-palette-content.tsx
+msgid "login.profile.my-color-palettes.delete"
+msgstr "Farbpalette löschen"
+
+#: app/login/components/color-palettes/profile-color-palette-content.tsx
+msgid "login.profile.my-color-palettes.description"
+msgstr "Speichern Sie Ihre erste benutzerdefinierte Farbpalette, um Ihre Farben bei der Erstellung einer Visualisierung einfach auszuwählen."
+
+#: app/login/components/color-palettes/profile-color-palette-content.tsx
+msgid "login.profile.my-color-palettes.edit"
+msgstr "Farbplatte editieren"
+
+#: app/login/components/profile-content-tabs.tsx
+#: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
 msgid "login.profile.my-drafts"
-msgstr "Entwürfe"
+msgstr "Meine Entwürfe"
 
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
 msgid "login.profile.my-published-visualizations"
-msgstr "Veröffentlichte Visualisierungen"
+msgstr "Meine Visualisierungen"
 
 #: app/login/components/login-menu.tsx
 msgid "login.profile.my-visualizations"
@@ -1569,6 +1652,8 @@ msgid "logo.swiss.confederation"
 msgstr "Logo der Schweizerischen Eidgenossenschaft"
 
 #: app/components/chart-footnotes.tsx
+#: app/components/chart-published.tsx
+#: app/components/chart-shared.tsx
 msgid "metadata.link.created.with"
 msgstr "Erstellt mit"
 
