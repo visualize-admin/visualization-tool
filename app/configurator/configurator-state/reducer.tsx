@@ -222,7 +222,8 @@ export const applyNonTableDimensionToFilters = (props: {
             : undefined;
           const filterValue = hierarchyTopMost
             ? hierarchyTopMost.value
-            : Object.keys(currentFilter.values)[0] ?? dimension.values[0].value;
+            : (Object.keys(currentFilter.values)[0] ??
+              dimension.values[0].value);
           filters[originalIri] = {
             type: "single",
             value: filterValue,
@@ -252,7 +253,7 @@ export const applyNonTableDimensionToFilters = (props: {
       : undefined;
     const filterValue = hierarchyTopMost
       ? hierarchyTopMost.value
-      : possibleFilter?.value ?? dimension.values[0]?.value;
+      : (possibleFilter?.value ?? dimension.values[0]?.value);
 
     if (filterValue) {
       filters[dimension.id] = {
