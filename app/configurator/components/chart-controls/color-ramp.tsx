@@ -271,18 +271,20 @@ export const ColorRampField = (props: ColorRampFieldProps) => {
                 </MenuItem>
               );
             })}
-        <ListSubheader>
-          <Typography
-            variant="subtitle2"
-            fontWeight={700}
-            fontSize={10}
-            align="left"
-          >
-            <Trans id="controls.visualize-color-palette">
-              Visualize color palettes
-            </Trans>
-          </Typography>
-        </ListSubheader>
+        {user && (
+          <ListSubheader>
+            <Typography
+              variant="subtitle2"
+              fontWeight={700}
+              fontSize={10}
+              align="left"
+            >
+              <Trans id="controls.visualize-color-palette">
+                Visualize color palettes
+              </Trans>
+            </Typography>
+          </ListSubheader>
+        )}
         {sequentialPalettes.map(({ value, interpolator }, i) => (
           <MenuItem
             sx={{ flexDirection: "column", alignItems: "flex-start" }}
@@ -353,18 +355,20 @@ export const ColorRampField = (props: ColorRampFieldProps) => {
                 </MenuItem>
               );
             })}
-        <ListSubheader>
-          <Typography
-            variant="subtitle2"
-            fontWeight={700}
-            fontSize={10}
-            align="left"
-          >
-            <Trans id="controls.visualize-color-palette">
-              Visualize color palettes
-            </Trans>
-          </Typography>
-        </ListSubheader>
+        {user && (
+          <ListSubheader>
+            <Typography
+              variant="subtitle2"
+              fontWeight={700}
+              fontSize={10}
+              align="left"
+            >
+              <Trans id="controls.visualize-color-palette">
+                Visualize color palettes
+              </Trans>
+            </Typography>
+          </ListSubheader>
+        )}
         {divergingPalettes.map(({ value, interpolator }, i) => (
           <MenuItem
             sx={{ flexDirection: "column", alignItems: "flex-start" }}
