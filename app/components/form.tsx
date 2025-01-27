@@ -1,9 +1,20 @@
 import { Trans } from "@lingui/macro";
 import {
+  headingsPlugin,
+  linkPlugin,
+  listsPlugin,
+  markdownShortcutPlugin,
+  MDXEditor,
+  quotePlugin,
+  thematicBreakPlugin,
+  toolbarPlugin,
+} from "@mdxeditor/editor";
+import {
   Box,
   BoxProps,
   ButtonBase,
   CircularProgress,
+  Divider,
   FormControlLabel,
   FormControlLabelProps,
   InputLabel,
@@ -24,10 +35,12 @@ import {
   Stack,
   styled,
   SxProps,
+  Theme,
   Tooltip,
   Typography,
   TypographyProps,
 } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import { useId } from "@reach/auto-id";
 import flatten from "lodash/flatten";
 import React, {
@@ -45,6 +58,11 @@ import React, {
 
 import { useBrowseContext } from "@/browser/context";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
+import { BlockTypeMenu } from "@/components/mdx-editor/block-type-menu";
+import { BoldItalicUnderlineToggles } from "@/components/mdx-editor/bold-italic-underline-toggles";
+import { linkDialogPlugin } from "@/components/mdx-editor/link-dialog";
+import { LinkDialogToggle } from "@/components/mdx-editor/link-dialog-toggle";
+import { ListToggles } from "@/components/mdx-editor/list-toggles";
 import { BANNER_MARGIN_TOP } from "@/components/presence";
 import { TooltipTitle } from "@/components/tooltip-utils";
 import VisuallyHidden from "@/components/visually-hidden";
@@ -59,6 +77,8 @@ import SvgIcExclamation from "@/icons/components/IcExclamation";
 import { useLocale } from "@/locales/use-locale";
 import { valueComparator } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
+
+import "@mdxeditor/editor/style.css";
 
 export const Label = ({
   htmlFor,
@@ -631,10 +651,101 @@ export const Input = ({
         borderColor: error ? "error.main" : "grey.500",
         backgroundColor: "grey.100",
         width: "100%",
+        padding: "10px 6px",
       }}
     />
   </Box>
 );
+
+
+export const MarkdownInput = ({
+  label,
+  name,
+  value,
+  onChange,
+}: {
+  label?: string | ReactNode;
+} & FieldProps) => {
+  const classes = useMarkdownInputStyles();
+
+  return (
+    <Box sx={{ fontSize: "1rem", mb: 5 }}>
+      <MDXEditor
+        className={classes.root}
+        markdown={value ? `${value}` : ""}
+        plugins={[
+          toolbarPlugin({
+            toolbarClassName: classes.toolbar,
+            toolbarContents: () => (
+              <div>
+                <Box sx={{ display: "flex", gap: 2 }}>
+                  <BoldItalicUnderlineToggles />
+                  <BlockTypeMenu />
+                  <Divider flexItem orientation="vertical" />
+                  <ListToggles />
+                  <Divider flexItem orientation="vertical" />
+                  <LinkDialogToggle />
+                </Box>
+                {label && name ? (
+                  <Label htmlFor={name} smaller sx={{ my: 1 }}>
+                    {label}
+                  </Label>
+                ) : null}
+              </div>
+            ),
+          }),
+          headingsPlugin(),
+          listsPlugin(),
+          linkPlugin(),
+          linkDialogPlugin(),
+          quotePlugin(),
+          markdownShortcutPlugin(),
+          thematicBreakPlugin(),
+        ]}
+        onChange={(newValue) => {
+          onChange?.({
+            currentTarget: {
+              value: newValue
+                // Remove backslashes from the string, as they are not supported in react-markdown
+                .replaceAll("\\", "")
+                // <u> is not supported in react-markdown we use for rendering.
+                .replaceAll("<u>", "<ins>")
+                .replace("</u>", "</ins>"),
+            },
+          } as any);
+        }}
+      />
+    </Box>
+  );
+};
+
+const useMarkdownInputStyles = makeStyles<Theme>((theme) => ({
+  root: {
+    "& [data-lexical-editor='true']": {
+      padding: "0.5rem 0.75rem",
+      border: `1px solid ${theme.palette.grey[300]}`,
+      borderRadius: 3,
+      backgroundColor: theme.palette.grey[100],
+      "&:focus": {
+        border: `1px solid ${theme.palette.secondary.main}`,
+      },
+      "& *": {
+        margin: "1em 0",
+        lineHeight: 1.2,
+      },
+      "& :first-child": {
+        marginTop: 0,
+      },
+      "& :last-child": {
+        marginBottom: 0,
+      },
+    },
+  },
+  toolbar: {
+    borderRadius: 0,
+    backgroundColor: theme.palette.background.paper,
+  },
+}));
 
 export const SearchField = ({
   id,
@@ -728,7 +839,7 @@ export const FieldSetLegend = ({
     component="legend"
     sx={{
       lineHeight: ["1rem", "1.125rem", "1.125rem"],
-      fontWeight: "regular",
+      fontWeight: "normal",
       fontSize: ["0.625rem", "0.75rem", "0.75rem"],
       pl: 0,
       mb: 1,

@@ -14,7 +14,7 @@ const setup = (contextOptions?: PlaywrightTestOptions["contextOptions"]) => {
   const test = base.extend<TestingLibraryFixtures>(fixtures).extend<{
     selectors: Selectors;
     actions: Actions;
-    replayFromHAR: (routeFromHAROptions?: RouteFromHAROptions) => void;
+    replayFromHAR: (routeFromHAROptions?: RouteFromHAROptions) => Promise<void>;
   }>({
     selectors: async ({ page, screen, within }, use) => {
       const ctx = { page, screen, within };

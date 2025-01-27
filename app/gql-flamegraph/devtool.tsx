@@ -27,7 +27,13 @@ import minBy from "lodash/minBy";
 import sortBy from "lodash/sortBy";
 import uniqBy from "lodash/uniqBy";
 import mitt from "mitt";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  ChangeEvent,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { Exchange, Operation, OperationResult } from "urql";
 import { pipe, tap } from "wonka";
 
@@ -205,7 +211,7 @@ const AccordionOperation = ({
   }, [result?.extensions?.timings]);
 
   return (
-    <Accordion {...accordionProps}>
+    <Accordion {...accordionProps} data-testid="debug-panel-accordion">
       <AccordionSummary>
         <Box
           sx={{
@@ -493,20 +499,19 @@ const DebugPanel = () => {
     <>
       <Box sx={{ position: "fixed", bottom: 0, right: 0, zIndex: 10 }}>
         <Grow in>
-          <IconButton size="small" onClick={open}>
+          <IconButton
+            data-testid="debug-panel-toggle"
+            size="small"
+            onClick={open}
+          >
             🛠
           </IconButton>
         </Grow>
       </Box>
-      <Drawer
-        open={isOpen}
-        anchor="bottom"
-        elevation={2}
-        onBackdropClick={close}
-      >
+      <Drawer open={isOpen} anchor="bottom" elevation={2} onClose={close}>
         <TabContext value={tab}>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            <TabList value={tab} onChange={(_ev, tab) => setTab(tab)}>
+            <TabList onChange={(_, tab) => setTab(tab)}>
               <Tab value="graphql" label="graphql" />
               <Tab value="flags" label="flags" />
             </TabList>
@@ -527,13 +532,18 @@ const DebugPanel = () => {
 
 const FlagList = () => {
   const flags = useFlags();
+
   return (
     <>
-      {flags.map((f) => {
+      {flags.map((flag) => {
         return (
-          <Box key={f} sx={{ display: "flex", gap: "1rem" }}>
-            <Typography variant="body2">{f}</Typography>
-            <FlagSwitch flagName={f} />
+          <Box
+            key={flag.name}
+            sx={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
+          >
+            <FlagSwitch flagName={flag.name as FlagName} />
+            <Typography variant="body2">{flag.name}</Typography>
+            <Typography variant="caption">{flag.description}</Typography>
           </Box>
         );
       })}
@@ -545,14 +555,14 @@ const FlagSwitch = ({
   flagName,
   onChange,
   ...props
-}: { flagName: FlagName; onChange?: (value: Boolean) => void } & Omit<
-  SwitchProps,
-  "onChange"
->) => {
+}: {
+  flagName: FlagName;
+  onChange?: (value: boolean) => void;
+} & Omit<SwitchProps, "onChange">) => {
   const flagValue = useFlag(flagName);
-  const handleChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
-    flag(flagName, ev.target.checked);
-    onChange?.(ev.target.checked);
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    flag(flagName, e.target.checked);
+    onChange?.(e.target.checked);
   };
 
   return <Switch checked={!!flagValue} onChange={handleChange} {...props} />;

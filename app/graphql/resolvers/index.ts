@@ -1,5 +1,9 @@
+import { GraphQLError, GraphQLScalarType, Kind } from "graphql";
+
 import { MeasureType } from "@/configurator";
 import { DimensionType } from "@/domain/data";
+import { isDataSourceUrlAllowed } from "@/domain/datasource";
+import { setupFlamegraph } from "@/gql-flamegraph/resolvers";
 import {
   QueryResolvers,
   Resolvers,
@@ -119,6 +123,38 @@ export const resolveMeasureType = (
   return scaleType === "Ordinal" ? "OrdinalMeasure" : "NumericalMeasure";
 };
 
-export const resolvers: Resolvers = {
+export const datasourceUrlValue = (url: string) => {
+  if (isDataSourceUrlAllowed(url)) {
+    return url;
+  }
+  throw datasourceValidationError();
+};
+
+export const datasourceValidationError = () => {
+  return new GraphQLError(
+    "BAD_USER_INPUT: Provided value is not an allowed data source"
+  );
+};
+
+const DataSourceUrlScalar = new GraphQLScalarType({
+  name: "DataSourceUrl",
+  description: "DataSourceUrl custom scalar type",
+  parseValue: datasourceUrlValue,
+  serialize: datasourceUrlValue,
+  parseLiteral(ast) {
+    if (ast.kind === Kind.INT) {
+      return datasourceUrlValue(ast.value);
+    }
+
+    throw datasourceValidationError();
+  },
+});
+
+const resolvers: Resolvers = {
+  DataSourceUrl: DataSourceUrlScalar,
   Query,
 };
+
+setupFlamegraph(resolvers);
+
+export { resolvers };

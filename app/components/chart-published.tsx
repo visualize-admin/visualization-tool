@@ -10,6 +10,7 @@ import { extractChartConfigsComponentIds } from "@/charts/shared/chart-helpers";
 import { LoadingStateProvider } from "@/charts/shared/chart-loading-state";
 import { isUsingImputation } from "@/charts/shared/imputation";
 import { CHART_RESIZE_EVENT_TYPE } from "@/charts/shared/use-size";
+import { ActionElementsContainer } from "@/components/action-elements-container";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
 import { ChartFootnotes, VisualizeLink } from "@/components/chart-footnotes";
 import { ChartPanelLayout, ChartWrapper } from "@/components/chart-panel";
@@ -31,12 +32,14 @@ import {
   createMetadataPanelStore,
   MetadataPanelStoreContext,
 } from "@/components/metadata-panel-store";
+import { renderBaseTextBlock } from "@/components/text-block";
 import { getChartConfig } from "@/config-utils";
 import {
   ChartConfig,
   ConfiguratorStatePublished,
   DataSource,
   isPublished,
+  LayoutBlock,
   useConfiguratorState,
 } from "@/configurator";
 import { Description, Title } from "@/configurator/components/annotators";
@@ -104,9 +107,7 @@ export const ChartPublished = ({
   const { dataSource } = state;
   const locale = useLocale();
   const metadataPanelStore = useMemo(() => createMetadataPanelStore(), []);
-
   const publishedChartClasses = usePublishedChartStyles({ shrink: true });
-
   const renderChart = useCallback(
     (chartConfig: ChartConfig) => (
       <ChartPublishedIndividualChart
@@ -118,6 +119,23 @@ export const ChartPublished = ({
       />
     ),
     [configKey, dataSource, state]
+  );
+  const renderBlock = useCallback(
+    (block: LayoutBlock) => {
+      switch (block.type) {
+        case "chart":
+          const chartConfig = state.chartConfigs.find(
+            (c) => c.key === block.key
+          ) as ChartConfig;
+          return renderChart(chartConfig);
+        case "text":
+          return renderBaseTextBlock(block);
+        default:
+          const _exhaustiveCheck: never = block;
+          return _exhaustiveCheck;
+      }
+    },
+    [state.chartConfigs, renderChart]
   );
   // Sends out the height of the chart, so the iframe can be resized accordingly.
   const handleHeightChange = useCallback(
@@ -153,8 +171,7 @@ export const ChartPublished = ({
 
               <ChartPanelLayout
                 layoutType={state.layout.layout}
-                chartConfigs={state.chartConfigs}
-                renderChart={renderChart}
+                renderBlock={renderBlock}
               />
               {state.chartConfigs.length !== 1 && (
                 <VisualizeLink
@@ -392,14 +409,14 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
                 // title and the chart (subgrid layout)
                 <span style={{ height: 1 }} />
               )}
-              <Box sx={{ mt: "-0.33rem" }}>
+              <ActionElementsContainer>
                 <ChartMoreButton
                   configKey={configKey}
                   chartKey={chartConfig.key}
                   chartWrapperNode={rootRef.current}
                   components={allComponents}
                 />
-              </Box>
+              </ActionElementsContainer>
             </Flex>
             {meta.description[locale] ? (
               <Description

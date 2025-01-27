@@ -1,41 +1,52 @@
 import mitt, { Emitter } from "mitt";
 
-import lsAdapter from "./ls-adapter";
-import { FlagName, FlagValue } from "./types";
+import localStorageAdapter from "./local-storage-adapter";
+import { FlagName, FlagValue, FLAG_NAMES } from "./types";
 
-type Events = { change: string };
+type Events = {
+  change: string;
+};
 
 /**
  * In memory key value storage.
  *
- * Can potentially be backed by localStorage if present
+ * Can potentially be backed by localStorage if present.
 
- * Emits `change` when a key is set (eventEmitter)
+ * Emits `change` when a key is set (eventEmitter).
  */
 class FlagStore {
-  longtermStore: typeof lsAdapter | null;
-
+  longTermStore: typeof localStorageAdapter | null;
   store: Record<string, any>;
   ee: Emitter<Events>;
 
   constructor() {
     this.store = {};
-    this.longtermStore = null;
+    this.longTermStore = null;
     this.ee = mitt();
+
     if (typeof localStorage !== "undefined") {
-      this.longtermStore = lsAdapter;
+      this.longTermStore = localStorageAdapter;
     }
+
     this.restore();
   }
 
   restore() {
-    if (!this.longtermStore) {
+    const longTermStore = this.longTermStore;
+
+    if (!longTermStore) {
       return;
     }
-    const allValues = this.longtermStore.getAll();
+
+    const allValues = longTermStore.getAll();
+
     Object.entries(allValues).forEach(([flag, val]) => {
-      this.store[flag] = val;
-      this.ee.emit("change", flag);
+      if (FLAG_NAMES.includes(flag as FlagName)) {
+        this.store[flag] = val;
+        this.ee.emit("change", flag);
+      } else {
+        longTermStore.removeItem(flag);
+      }
     });
   }
 
@@ -47,26 +58,29 @@ class FlagStore {
     if (!Object.prototype.hasOwnProperty.call(this.store, name)) {
       this.store[name] = null;
     }
+
     return this.store[name];
   }
 
   set(name: FlagName, value: FlagValue) {
-    if (this.longtermStore) {
-      this.longtermStore.setItem(name, value);
+    if (this.longTermStore) {
+      this.longTermStore.setItem(name, value);
     }
+
     this.store[name] = value;
     this.ee.emit("change", name);
   }
 
   remove(name: FlagName) {
     delete this.store[name];
-    if (this.longtermStore) {
-      this.longtermStore.removeItem(name);
+
+    if (this.longTermStore) {
+      this.longTermStore.removeItem(name);
     }
+
     this.ee.emit("change", name);
   }
 
-  // eslint-disable-next-line class-methods-use-this
   removeListener(_event: string, _fn: (changed: string) => void) {}
 }
 

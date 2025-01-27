@@ -1,32 +1,45 @@
 import { t, Trans } from "@lingui/macro";
 import {
   Box,
+  Menu,
+  MenuItem,
   Stack,
   Switch,
   SwitchProps,
   Typography,
-  useEventCallback,
 } from "@mui/material";
+import { Theme } from "@mui/material/styles";
+import { makeStyles } from "@mui/styles";
 import capitalize from "lodash/capitalize";
 import omit from "lodash/omit";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import {
+  MouseEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import { DataFilterGenericDimensionProps } from "@/charts/shared/chart-data-filters";
 import { useCombinedTemporalDimension } from "@/charts/shared/use-combined-temporal-dimension";
+import { AddButton } from "@/components/add-button";
 import { Select } from "@/components/form";
+import { Markdown } from "@/components/markdown";
 import {
   FREE_CANVAS_BREAKPOINTS,
   generateLayout,
 } from "@/components/react-grid";
 import {
-  ChartConfig,
   DashboardTimeRangeFilter,
   LayoutDashboard,
+  LayoutTextBlock,
   ReactGridLayoutType,
 } from "@/config-types";
 import { getChartConfig } from "@/config-utils";
 import { LayoutAnnotator } from "@/configurator/components/annotators";
 import { DataFilterSelectGeneric } from "@/configurator/components/chart-configurator";
+import { ControlTab } from "@/configurator/components/chart-controls/control-tab";
 import {
   ControlSection,
   ControlSectionContent,
@@ -52,11 +65,15 @@ import {
   TemporalDimension,
   TemporalEntityDimension,
 } from "@/domain/data";
+import { useFlag } from "@/flags";
 import { useTimeFormatLocale, useTimeFormatUnit } from "@/formatters";
 import { useConfigsCubeComponents } from "@/graphql/hooks";
+import { Icon } from "@/icons";
 import { useLocale } from "@/src";
 import { useDashboardInteractiveFilters } from "@/stores/interactive-filters";
+import { createId } from "@/utils/create-id";
 import { getTimeFilterOptions } from "@/utils/time-filter-options";
+import useEvent from "@/utils/use-event";
 
 export const LayoutConfigurator = () => {
   return (
@@ -64,6 +81,7 @@ export const LayoutConfigurator = () => {
       <LayoutAnnotator />
       <LayoutLayoutConfigurator />
       <LayoutSharedFiltersConfigurator />
+      <LayoutBlocksConfigurator />
     </>
   );
 };
@@ -76,12 +94,11 @@ const LayoutLayoutConfigurator = () => {
       return (
         <ControlSection
           role="tablist"
-          aria-labelledby="controls-design"
+          aria-labelledby="controls-layout-options"
           collapse
         >
           <SubsectionTitle
-            titleId="controls-design"
-            disabled={false}
+            titleId="controls-layout-options"
             gutterBottom={false}
           >
             <Trans id="controls.section.layout-options">Layout Options</Trans>
@@ -130,7 +147,7 @@ const LayoutSharedFiltersConfigurator = () => {
 
   const combinedTemporalDimension = useCombinedTemporalDimension();
 
-  const handleTimeRangeFilterToggle: SwitchProps["onChange"] = useEventCallback(
+  const handleTimeRangeFilterToggle: SwitchProps["onChange"] = useEvent(
     (_, checked) => {
       if (checked) {
         const options = getTimeFilterOptions({
@@ -167,7 +184,7 @@ const LayoutSharedFiltersConfigurator = () => {
     }
   );
 
-  const handleDataFiltersToggle = useEventCallback(
+  const handleDataFiltersToggle = useEvent(
     (checked: boolean, componentId: string) => {
       if (checked) {
         dispatch({
@@ -228,11 +245,11 @@ const LayoutSharedFiltersConfigurator = () => {
       return (
         <ControlSection
           role="tablist"
-          aria-labelledby="controls-design"
+          aria-labelledby="controls-shared-filters"
           collapse
         >
           <SubsectionTitle
-            titleId="controls-design"
+            titleId="controls-shared-filters"
             disabled={false}
             gutterBottom={false}
           >
@@ -242,8 +259,8 @@ const LayoutSharedFiltersConfigurator = () => {
             <Stack gap="0.5rem">
               {timeRange && combinedTemporalDimension.values.length ? (
                 <>
-                  <Box
-                    sx={{
+                  <div
+                    style={{
                       display: "flex",
                       justifyContent: "space-between",
                       alignItems: "center",
@@ -257,7 +274,7 @@ const LayoutSharedFiltersConfigurator = () => {
                       checked={timeRange.active}
                       onChange={handleTimeRangeFilterToggle}
                     />
-                  </Box>
+                  </div>
                   {timeRange.active ? (
                     <DashboardFiltersOptions
                       timeRangeFilter={timeRange}
@@ -269,43 +286,38 @@ const LayoutSharedFiltersConfigurator = () => {
               {dataFilters ? (
                 <>
                   {potentialDataFilterIds.map((id, i) => {
-                    const dimension = dimensions.find(
-                      (dimension) => dimension.id === id
-                    );
-                    if (!dimension) {
+                    const dim = dimensions.find((d) => d.id === id);
+
+                    if (!dim) {
                       return null;
                     }
-                    const checked = dataFilters.componentIds.includes(
-                      dimension.id
-                    );
+
+                    const checked = dataFilters.componentIds.includes(dim.id);
 
                     return (
-                      <Box
-                        key={dimension.id}
-                        sx={{ display: "flex", flexDirection: "column" }}
+                      <div
+                        key={dim.id}
+                        style={{ display: "flex", flexDirection: "column" }}
                       >
-                        <Box
-                          sx={{
+                        <div
+                          style={{
                             display: "flex",
                             justifyContent: "space-between",
                             alignItems: "center",
                           }}
                         >
-                          <Typography variant="body2">
-                            {dimension.label}
-                          </Typography>
+                          <Typography variant="body2">{dim.label}</Typography>
                           <Switch
                             checked={checked}
                             onChange={(_, checked) => {
-                              handleDataFiltersToggle(checked, dimension.id);
+                              handleDataFiltersToggle(checked, dim.id);
                             }}
                           />
-                        </Box>
+                        </div>
                         {checked ? (
                           <Box sx={{ mb: 1 }}>
                             <DataFilterSelectGeneric
-                              key={dimension.id}
-                              rawDimension={dimension}
+                              rawDimension={dim}
                               filterDimensionIds={[]}
                               index={i}
                               disabled={fetching}
@@ -313,7 +325,7 @@ const LayoutSharedFiltersConfigurator = () => {
                             />
                           </Box>
                         ) : null}
-                      </Box>
+                      </div>
                     );
                   })}
                 </>
@@ -543,18 +555,153 @@ const DashboardTimeRangeFilterOptions = ({
   );
 };
 
+const LayoutBlocksConfigurator = () => {
+  const locale = useLocale();
+  const [state, dispatch] = useConfiguratorState(isLayouting);
+  const { layout } = state;
+  const { blocks } = layout;
+  const classes = useLayoutBlocksStyles();
+
+  const onClick = useEvent((blockKey: string) => {
+    dispatch({ type: "LAYOUT_ACTIVE_FIELD_CHANGED", value: blockKey });
+  });
+
+  const enabled = useFlag("enable-experimental-features");
+
+  if (!enabled) {
+    return null;
+  }
+
+  return layout.type === "dashboard" ? (
+    <ControlSection role="tablist" aria-labelledby="controls-blocks" collapse>
+      <SubsectionTitle titleId="controls-blocks" gutterBottom={false}>
+        <Trans id="controls.section.block-options">Objects</Trans>
+      </SubsectionTitle>
+      <ControlSectionContent px="small" gap="none">
+        <div className={classes.root}>
+          {blocks
+            .filter(
+              (block): block is LayoutTextBlock & { initialized: boolean } =>
+                block.type === "text"
+            )
+            .map((block) => (
+              <ControlTab
+                key={block.key}
+                id={`tab-block-${block.key}`}
+                mainLabel={
+                  <div style={{ pointerEvents: "none" }}>
+                    <Markdown>{block.text[locale]}</Markdown>
+                  </div>
+                }
+                checked={state.layout.activeField === block.key}
+                onClick={() => onClick(block.key)}
+                value={state.layout.activeField ?? ""}
+                icon="text"
+                rightIcon={
+                  <Icon className={classes.tabRightIcon} name="edit" />
+                }
+              />
+            ))}
+        </div>
+        <AddLayoutBlocks />
+      </ControlSectionContent>
+    </ControlSection>
+  ) : null;
+};
+
+const useLayoutBlocksStyles = makeStyles<Theme>((theme) => ({
+  root: {
+    marginBottom: theme.spacing(5),
+  },
+  tabRightIcon: {
+    color: theme.palette.primary.main,
+  },
+}));
+
+const AddLayoutBlocks = () => {
+  const [state, dispatch] = useConfiguratorState(isLayouting);
+  const { layout } = state;
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const handleOpen = useEvent((e: MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(e.currentTarget);
+  });
+  const handleClose = useEvent(() => {
+    setAnchorEl(null);
+  });
+  const handleAddTextBlock = useEvent(() => {
+    const key = createId();
+    dispatch({
+      type: "LAYOUT_CHANGED",
+      value: {
+        ...layout,
+        blocks: [
+          ...layout.blocks,
+          {
+            type: "text",
+            key,
+            text: {
+              de: "",
+              fr: "",
+              it: "",
+              en: "",
+            },
+            initialized: false,
+          },
+        ],
+      },
+    });
+    dispatch({
+      type: "LAYOUT_ACTIVE_FIELD_CHANGED",
+      value: key,
+    });
+    handleClose();
+  });
+  const classes = useAddTextBlocksStyles();
+
+  return (
+    <>
+      <AddButton onClick={handleOpen}>
+        <Trans id="controls.section.block-options.block-add">Add object</Trans>
+      </AddButton>
+      <Menu anchorEl={anchorEl} open={!!anchorEl} onClose={handleClose}>
+        <MenuItem className={classes.menuItem} onClick={handleAddTextBlock}>
+          <Icon name="text" className={classes.menuItemIcon} />
+          <Typography className={classes.menuItemText} variant="body2">
+            <Trans id="controls.section.block-options.block-add.text">
+              Add text
+            </Trans>
+          </Typography>
+        </MenuItem>
+      </Menu>
+    </>
+  );
+};
+
+const useAddTextBlocksStyles = makeStyles<Theme>((theme) => ({
+  menuItem: {
+    minWidth: 200,
+    padding: theme.spacing(3),
+  },
+  menuItemIcon: {
+    marginRight: "0.75rem",
+  },
+  menuItemText: {
+    color: theme.palette.grey[700],
+  },
+}));
+
 const migrateLayout = (
   layout: LayoutDashboard,
   newLayoutType: LayoutDashboard["layout"],
-  chartConfigs: ChartConfig[]
+  blocks: LayoutDashboard["blocks"]
 ): LayoutDashboard => {
   if (newLayoutType === "canvas") {
     const defaultLayout = generateLayout({
-      count: chartConfigs.length,
+      count: blocks.length,
       layout: "tiles",
     }).map((l, i) => ({
       ...l,
-      i: chartConfigs[i].key,
+      i: blocks[i].key,
     }));
     const layouts: Record<
       keyof typeof FREE_CANVAS_BREAKPOINTS,
@@ -569,9 +716,12 @@ const migrateLayout = (
       ...layout,
       layout: newLayoutType,
       layouts,
-      layoutsMetadata: Object.fromEntries(
-        chartConfigs.map(({ key }) => [key, { initialized: false }])
-      ),
+      blocks: blocks.map((block) => {
+        return {
+          ...block,
+          initialized: false,
+        };
+      }),
     };
   } else {
     return {
@@ -595,8 +745,13 @@ const DashboardLayoutButton = ({
     if (checked) {
       ref.current = layout;
     }
+
+    if (ref.current) {
+      // Keep blocks in sync, so that they do not get lost when switching layouts.
+      ref.current.blocks = layout.blocks;
+    }
   }, [layout, checked]);
-  const handleClick = useEventCallback(() => {
+  const handleClick = useEvent(() => {
     if (ref.current?.layout === type) {
       dispatch({
         type: "LAYOUT_CHANGED",
@@ -605,7 +760,7 @@ const DashboardLayoutButton = ({
     } else {
       dispatch({
         type: "LAYOUT_CHANGED",
-        value: migrateLayout(layout, type, config.chartConfigs),
+        value: migrateLayout(layout, type, config.layout.blocks),
       });
     }
   });

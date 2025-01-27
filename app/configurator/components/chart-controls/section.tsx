@@ -180,7 +180,7 @@ const useControlSectionContentStyles = makeStyles<
 }));
 
 export const ControlSectionContent = ({
-  component,
+  component = "div",
   role,
   ariaLabelledBy,
   children,

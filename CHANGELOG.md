@@ -11,31 +11,64 @@ You can also check the
 
 # Unreleased
 
-- Features
-  - It's now possible to export charts as images
-	- Added support for custom colors in single and multi-colored charts, enabling enhanced visual customization.
-	- Introduced a new Color Picker, offering greater flexibility and precision in chart color selection.
-  - Added Footer to the Profile Page
 - Fixes
+  - Bar chart tooltip doesn't go off the screen anymore during scroll
+
+# [5.2.0] - 2025-01-22
+
+- Features
+  - Added a way to add text objects to dashboard layouts (hidden behind an
+    enable-experimental-features flag)
+  - Added Markdown support in chart titles and descriptions (hidden behind an
+    enable-experimental-features flag)
+  - Centered x-axis labels
+  - Added y-axis labels
+  - Added a new option to the vertical axis on the line chart, allowing users to
+    display a dot over the line where it intercepts the x-axis ticks
+  - Downloading images of bar charts now includes the whole chart, not just the
+    visible part
+  - Bar charts are now hidden behind a an enable-experimental-features flag
+- Fixes
+  - Preview via API now works correctly for map charts
+  - GraphQL debug panel now displays the queries correctly when in debug mode
+
+# [5.1.0] - 2025-01-14
+
+- Features
+  - Added a new chart type - bar
+  - It's now possible to export charts as images
+  - Added support for custom colors in single and multi-colored charts, enabling
+    enhanced visual customization
+  - Introduced a new color picker, offering greater flexibility and precision in
+    chart color selection
+  - Added footer to the profile page
+- Fixes
+  - Addressed security flaw allowing the injection of arbitrary URLs in the
+    `sourceUrl` parameter in the GraphQL API
   - Color mapping is now correctly kept up to date in case of editing an old
     chart and the cube has been updated in the meantime and contains new values
     in the color dimension
   - Fixed preview via API (iframe)
   - Fixed cut table scroll-bars and unnecessary scroll of bar charts when
     switching between chart types
-  - Improved Readability for dataset selection and preview
+  - Improved readability for dataset selection and preview
   - Sorting dataset results by score option is now correctly available to select
-  - Created with visualize.admin.ch footnote is only displayed once, not twice,
-    when downloading an image of a published chart
   - Changing dates manually using keyboard works correctly now in date picker
     inputs
   - Opening a temporal dimension with timezone in table chart configurator
     doesn't crash the application anymore
+  - Themes fetching is now done by using standard SPARQL iris (starting with
+    https://), so that it behaves consistently across different SPARQL database
+    engines
 - Styles
   - Updated dataset result borders to match the design
 - Maintenance
+  - Implemented Content Security Policy (CSP)
   - Re-enabled screenshot tests using Argos CI
   - Fixed E2E HAR-based tests
+  - Added two new E2E tests for chart actions (duplication, image download)
+  - Improved performance of E2E tests by using cached LINDAS endpoints in chart
+    config fixtures
   - Fixed map dimension symbols to increase the elements size for small values,
     whilst preventing any 0 and undefined values from displaying
   - Updated Next.js to v14
@@ -43,6 +76,7 @@ You can also check the
   - Removed unused dependencies and dead code
   - Updated several outdated packages
   - Added knip as a new CI task
+  - Implemented Content Security Policy (CSP)
 - Performance
   - Introduced sharding to improve performance of basic CI checks (unit tests,
     type checks, linting, knip)
@@ -541,7 +575,7 @@ introduced since v3.0.0 🎉
   - Implemented initial version of merging the cubes (not yet exposed through
     UI)
 - Fixes
-  - Conslidated behavior of setting initial filters (top-most hierarchy value)
+  - Consolidated behavior of setting initial filters (top-most hierarchy value)
     when filter was not present and multi-filter was removed
   - Fixed switching between segmentation dimensions in column charts
   - Added UTF-8 formatting to CSV and XLSX files (data download)
@@ -555,7 +589,7 @@ introduced since v3.0.0 🎉
   - We now only fetch hierarchies defined in cube's shape
   - Hierarchy names are now correctly retrieved
 - Performance
-  - We no longer fetch shape when initalizing the cube, as we might need to
+  - We no longer fetch shape when initializing the cube, as we might need to
     re-fetch it again if a newer cube is required
   - Vastly improved performance of dataset preview by using a new version of
     `cube-view-query` library (`View.preview`)
@@ -1051,7 +1085,7 @@ Note: We will try in the future to better follow semantic versioning.
 
 ## [3.7.4] - 2022-05-31
 
-- Do not show "Run SPARQL query" button if SPARL_EDITOR variable not set
+- Do not show "Run SPARQL query" button if SPARQL_EDITOR variable not set
 - Add link top opendata.swiss when the cube is published there (chart
   footnotes + chart preview info panel)
 - Repair homepage examples on test
@@ -1069,7 +1103,7 @@ Note: We will try in the future to better follow semantic versioning.
 - Maps: Use neutral map style
 - Interactive filters: time brush is more stable
 - Tables: Column names contain unit if its there by @ptbrowne in #552
-- Tables: Support for monthtly period formatting
+- Tables: Support for monthly period formatting
 - Tables: Bar chart in cells are fixed
 - Navigation: Back button in editor 1st screen brings back to dataset preview
 - Add status page link in the footer
@@ -1086,7 +1120,7 @@ Note: We will try in the future to better follow semantic versioning.
 - Only the top 7 nav items are shown in the search nav bar (design alignment), a
   button is there to display more
 - Added the footer in the search page
-- Maps chloropleth are shown under map labels. Maps symbols are shown over most
+- Maps choropleth are shown under map labels. Maps symbols are shown over most
   map features. When zooming via the buttons, we now have a smooth transition
 - Removed chart selection step; selection of a chart type can now be done at any
   point when creating a chart (added a new chart selection tabs UI)
@@ -1227,7 +1261,7 @@ not shown at first but can be added via a menu.
   [#265](https://github.com/visualize-admin/visualization-tool/pull/265)
 - _beta_ Hierarchical filters are available behind a flag on the "red list"
   dataset [#233](https://github.com/visualize-admin/visualization-tool/pull/233)
-- 🐛 Links from openswissdata should work correctly
+- 🐛 Links from OpenDataSwiss should work correctly
   [#303](https://github.com/visualize-admin/visualization-tool/pull/303)
   [#314](https://github.com/visualize-admin/visualization-tool/pull/314)
 

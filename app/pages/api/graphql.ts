@@ -1,12 +1,16 @@
 import { ApolloServerPluginLandingPageGraphQLPlayground } from "@apollo/server-plugin-landing-page-graphql-playground";
+import { makeExecutableSchema } from "@graphql-tools/schema";
 import { ApolloServer } from "apollo-server-micro";
 import configureCors from "cors";
 import "global-agent/bootstrap";
+import {
+  constraintDirective,
+  constraintDirectiveTypeDefs,
+} from "graphql-constraint-directive";
 import { NextApiRequest, NextApiResponse } from "next";
 
 import { SentryPlugin } from "@/graphql/apollo-sentry-plugin";
 
-import { setupFlamegraph } from "../../gql-flamegraph/resolvers";
 import { createContext, VisualizeGraphQLContext } from "../../graphql/context";
 import { resolvers } from "../../graphql/resolvers";
 import typeDefs from "../../graphql/schema.graphql";
@@ -19,11 +23,14 @@ export const cors = configureCors({
   origin: corsOrigin,
 });
 
-setupFlamegraph(resolvers);
+const schema = makeExecutableSchema({
+  typeDefs: [constraintDirectiveTypeDefs, typeDefs],
+  resolvers,
+  schemaTransforms: [constraintDirective()],
+});
 
 const server = new ApolloServer({
-  typeDefs,
-  resolvers,
+  schema,
   formatError: (err) => {
     console.error(err, err?.extensions?.exception?.stacktrace);
     return err;

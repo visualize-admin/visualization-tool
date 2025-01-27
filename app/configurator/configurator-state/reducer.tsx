@@ -1,5 +1,11 @@
-import produce, { createDraft, current, Draft, isDraft } from "immer";
-import { WritableDraft } from "immer/dist/internal";
+import produce, {
+  createDraft,
+  current,
+  Draft,
+  isDraft,
+  setAutoFreeze,
+} from "immer";
+import { WritableDraft } from "immer/dist/types/types-external";
 import get from "lodash/get";
 import isEqual from "lodash/isEqual";
 import setWith from "lodash/setWith";
@@ -20,10 +26,11 @@ import {
   getChartFieldOptionChangeSideEffect,
 } from "@/charts/chart-config-ui-options";
 import {
+  availableHandlesByBlockType,
   COLS,
-  FREE_CANVAS_BREAKPOINTS,
   getInitialTileHeight,
   getInitialTileWidth,
+  MIN_H,
 } from "@/components/react-grid";
 import {
   ChartConfig,
@@ -39,9 +46,23 @@ import {
   isAreaConfig,
   isColorInConfig,
   isTableConfig,
+  ReactGridLayoutType,
 } from "@/config-types";
 import { getChartConfig, makeMultiFilter } from "@/config-utils";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
+import {
+  addDatasetInConfig,
+  getPreviousState,
+  getStateWithCurrentDataSource,
+  hasChartConfigs,
+  isConfiguring,
+  isLayouting,
+} from "@/configurator/configurator-state";
+import { ConfiguratorStateAction } from "@/configurator/configurator-state/actions";
+import {
+  getInitialConfiguringConfigBasedOnCube,
+  SELECTING_DATASET_STATE,
+} from "@/configurator/configurator-state/initial";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { toggleInteractiveFilterDataDimension } from "@/configurator/interactive-filters/interactive-filters-config-state";
 import { Dimension, isGeoDimension, isJoinByComponent } from "@/domain/data";
@@ -53,27 +74,21 @@ import { getCachedComponents } from "@/urql-cache";
 import { assert } from "@/utils/assert";
 import { unreachableError } from "@/utils/unreachable";
 
-import { ConfiguratorStateAction } from "./actions";
-import {
-  getInitialConfiguringConfigBasedOnCube,
-  SELECTING_DATASET_STATE,
-} from "./initial";
-
-import {
-  addDatasetInConfig,
-  getPreviousState,
-  getStateWithCurrentDataSource,
-  hasChartConfigs,
-  isConfiguring,
-  isLayouting,
-} from "./index";
+/**
+ * Setting auto-freeze behavior to false, to prevent hard-to-trace bugs.
+ * It looks like the state is sometimes being mutated in a way that is not
+ * expected by immer - I'd prefer to not be constrained by the auto-freeze
+ * behavior.
+ *
+ * Also see https://immerjs.github.io/immer/freezing.
+ */
+setAutoFreeze(false);
 
 /**
  * Is responsible for inferring filters when changing chart type, or when
  * changing some chart fields. Makes sure that we are always showing the
  * non-"duplicated" data (with the correct filters for key dimensions).
  */
-
 export const deriveFiltersFromFields = produce(
   (
     draft: ChartConfig,
@@ -937,11 +952,17 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
             },
             { dimensions: dataCubesComponents.dimensions }
           );
+          const key = action.value.chartConfig.key;
           draft.chartConfigs.push(newConfig);
-          draft.activeChartKey = action.value.chartConfig.key;
-        }
+          draft.activeChartKey = key;
+          draft.layout.blocks.push({
+            key,
+            type: "chart",
+            initialized: false,
+          });
 
-        ensureDashboardLayoutIsCorrect(draft);
+          ensureDashboardLayoutIsCorrect(draft);
+        }
       }
 
       return draft;
@@ -1020,7 +1041,9 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
         return draft;
       }
+
       break;
+
     case "CHART_CONFIG_REMOVE":
       if (isConfiguring(draft) || isLayouting(draft)) {
         const index = draft.chartConfigs.findIndex(
@@ -1028,6 +1051,9 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         );
         const removedKey = draft.chartConfigs[index].key;
         draft.chartConfigs.splice(index, 1);
+        draft.layout.blocks = draft.layout.blocks.filter(
+          (block) => block.key !== removedKey
+        );
 
         if (removedKey === draft.activeChartKey) {
           draft.activeChartKey = draft.chartConfigs[Math.max(index - 1, 0)].key;
@@ -1052,13 +1078,13 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
       return draft;
 
-    case "CHART_CONFIG_SWAP":
+    case "LAYOUT_BLOCK_SWAP":
       if (isConfiguring(draft) || draft.state === "LAYOUTING") {
         const { oldIndex, newIndex } = action.value;
-        const oldChartConfig = draft.chartConfigs[oldIndex];
-        const newChartConfig = draft.chartConfigs[newIndex];
-        draft.chartConfigs[oldIndex] = newChartConfig;
-        draft.chartConfigs[newIndex] = oldChartConfig;
+        const oldBlock = draft.layout.blocks[oldIndex];
+        const newBlock = draft.layout.blocks[newIndex];
+        draft.layout.blocks[oldIndex] = newBlock;
+        draft.layout.blocks[newIndex] = oldBlock;
       }
 
       return draft;
@@ -1080,6 +1106,8 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
           draft.layout = action.value;
         }
       }
+
+      ensureDashboardLayoutIsCorrect(draft);
 
       return draft;
 
@@ -1194,59 +1222,105 @@ const withLogging = <TState, TAction extends { type: unknown }>(
 };
 export const reducer = reducerLogging ? withLogging(reducer_) : reducer_;
 
-export function ensureDashboardLayoutIsCorrect(
+export const ensureDashboardLayoutIsCorrect = (
   draft: WritableDraft<ConfiguratorState>
-) {
+) => {
   if (
     hasChartConfigs(draft) &&
     draft.layout.type === "dashboard" &&
     draft.layout.layout === "canvas"
   ) {
-    const layouts = draft.layout.layouts;
-    const chartConfigKeys = draft.chartConfigs.map((c) => c.key).sort();
+    const { blocks, layouts } = draft.layout;
 
-    const breakpoints = Object.keys(FREE_CANVAS_BREAKPOINTS);
-    const layoutConfigKeys = Array.from(
-      new Set(breakpoints.flatMap((bp) => layouts[bp].map((c) => c.i)))
-    ).sort();
+    for (const [breakpoint, _breakpointLayouts] of Object.entries(layouts)) {
+      const breakpointLayouts = [..._breakpointLayouts];
+      const breakpointLayoutKeys = breakpointLayouts.map((l) => l.i);
+      const newBlocks = blocks.filter((block) => {
+        return !breakpointLayoutKeys.includes(block.key);
+      });
+      const keysToRemove = breakpointLayoutKeys.filter(
+        (key) => !blocks.find((block) => block.key === key)
+      );
+      const cols = COLS[breakpoint as keyof typeof COLS];
+      const { x, y } = getPreferredEmptyCellCoords({
+        layouts: breakpointLayouts,
+        cols,
+      });
+      let w = 0;
+      let h = 0;
 
-    const newConfigs = draft.chartConfigs.filter(
-      (x) => !layoutConfigKeys.includes(x.key)
-    );
-
-    if (!isEqual(chartConfigKeys, layoutConfigKeys)) {
-      for (const bp of breakpoints) {
-        const canvasLayouts = draft.layout.layouts[bp].filter((c) =>
-          chartConfigKeys.includes(c.i)
-        );
-
-        let curX =
-          (Math.max(...canvasLayouts.map((c) => c.x + c.w)) ?? 0) % COLS.lg;
-        let curY = Math.max(...canvasLayouts.map((c) => c.y + c.h)) ?? 0;
-
-        for (const chartConfig of newConfigs) {
-          let chartX = curX;
-          let chartY = curY;
-          let chartW = getInitialTileWidth();
-          let chartH = getInitialTileHeight();
-          canvasLayouts.push({
-            i: chartConfig.key,
-            x: chartX,
-            y: chartY,
-            w: chartW,
-            h: chartH,
-            // Is initialized later
-            resizeHandles: [],
-          });
-          curX += chartW;
-          if (curX > COLS.lg) {
-            curX = 0;
-            curY += chartH;
-          }
+      for (const block of newBlocks) {
+        switch (block.type) {
+          case "chart":
+            w = getInitialTileWidth();
+            h = getInitialTileHeight();
+            break;
+          case "text":
+            w = 1;
+            h = 1;
+            break;
+          default:
+            const _exhaustiveCheck: never = block;
+            return _exhaustiveCheck;
         }
 
-        draft.layout.layouts[bp] = canvasLayouts;
+        breakpointLayouts.push({
+          i: block.key,
+          x,
+          y,
+          w,
+          h,
+          minH: MIN_H,
+          resizeHandles: availableHandlesByBlockType[block.type],
+        });
+      }
+
+      for (const key of keysToRemove) {
+        const index = breakpointLayouts.findIndex((l) => l.i === key);
+        breakpointLayouts.splice(index, 1);
+      }
+
+      draft.layout.layouts = {
+        ...draft.layout.layouts,
+        [breakpoint]: breakpointLayouts,
+      };
+    }
+  }
+};
+
+const getPreferredEmptyCellCoords = ({
+  layouts,
+  cols,
+}: {
+  layouts: ReactGridLayoutType[];
+  cols: number;
+}) => {
+  const makeKey = (x: number, y: number) => `${x},${y}`;
+  const occupiedCells = new Set<string>();
+
+  for (const layout of layouts) {
+    for (let dx = 0; dx < layout.w; dx++) {
+      for (let dy = 0; dy < layout.h; dy++) {
+        occupiedCells.add(makeKey(layout.x + dx, layout.y + dy));
       }
     }
   }
-}
+
+  let x = 0;
+  let y = 0;
+
+  while (true) {
+    const key = makeKey(x, y);
+
+    if (!occupiedCells.has(key)) {
+      return { x, y };
+    }
+
+    x++;
+
+    if (x >= cols) {
+      x = 0;
+      y++;
+    }
+  }
+};

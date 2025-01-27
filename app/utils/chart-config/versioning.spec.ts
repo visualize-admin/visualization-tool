@@ -6,19 +6,19 @@ import {
 } from "@/config-types";
 import { configJoinedCubes } from "@/configurator/configurator-state/mocks";
 import { stringifyComponentId } from "@/graphql/make-component-id";
-import dualLine1Fixture from "@/test/__fixtures/config/dev/chartConfig-photovoltaik-und-gebaudeprogramm.json";
-import tableFixture from "@/test/__fixtures/config/dev/chartConfig-table-covid19.json";
+import mapConfigV3_3_0 from "@/test/__fixtures/config/prod/map-1.json";
+import dualLine1Fixture from "@/test/__fixtures/config/test/chartConfig-photovoltaik-und-gebaudeprogramm.json";
+import tableFixture from "@/test/__fixtures/config/test/chartConfig-table-covid19.json";
 import {
   CHART_CONFIG_VERSION,
   CONFIGURATOR_STATE_VERSION,
 } from "@/utils/chart-config/constants";
-
 import {
   chartConfigMigrations,
   configuratorStateMigrations,
   migrateChartConfig,
   upOrDown,
-} from "./versioning";
+} from "@/utils/chart-config/versioning";
 
 const CONFIGURATOR_STATE = {
   dataSource: {
@@ -43,7 +43,7 @@ const CONFIGURATOR_STATE = {
 } as unknown as ConfiguratorStateConfiguringChart;
 
 describe("config migrations", () => {
-  const oldMapConfig = {
+  const mapConfigV1_0_0 = {
     version: "1.0.0",
     chartType: "map",
     interactiveFiltersConfig: {
@@ -87,7 +87,7 @@ describe("config migrations", () => {
       show: true,
     },
   };
-  const oldLineConfig = {
+  const lineConfigV1_0_0 = {
     version: "1.0.0",
     chartType: "line",
     interactiveFiltersConfig: {
@@ -120,43 +120,41 @@ describe("config migrations", () => {
     },
   };
 
-  it("should migrate to newest config and back (but might lost some info for major version changes", async () => {
-    const migratedConfig = await migrateChartConfig(oldMapConfig, {
+  it("should migrate to newest config and back (but might lost some info for major version changes)", async () => {
+    const migratedConfig = await migrateChartConfig(mapConfigV1_0_0, {
       migrationProps: CONFIGURATOR_STATE,
     });
-
     expect(migratedConfig).toBeDefined();
 
     const migratedOldConfig = (await migrateChartConfig(migratedConfig, {
       toVersion: "1.0.0",
     })) as any;
     expect(migratedOldConfig.version).toEqual("1.0.0");
-    const symbolLayer = migratedOldConfig.fields.symbolLayer!;
-    // @ts-ignore - show does not existing in the newer version of the types
+    const symbolLayer = migratedOldConfig.fields.symbolLayer;
     expect(symbolLayer.show).toEqual(false);
     // Should migrate "GeoCoordinatesDimensionIri" to iri defined in Area Layer.
     expect(symbolLayer.componentIri).toEqual(
-      oldMapConfig.fields.areaLayer.componentIri
+      mapConfigV1_0_0.fields.areaLayer.componentIri
     );
     expect(symbolLayer.measureIri).toEqual(
-      oldMapConfig.fields.areaLayer.measureIri
+      mapConfigV1_0_0.fields.areaLayer.measureIri
     );
     expect(symbolLayer.color).toEqual("#1f77b4");
   });
 
   it("should migrate to initial config from migrated config for minor version changes", async () => {
-    const migratedConfig = await migrateChartConfig(oldMapConfig, {
+    const migratedConfig = await migrateChartConfig(mapConfigV1_0_0, {
       toVersion: "1.0.2",
     });
     const migratedOldConfig = await migrateChartConfig(migratedConfig, {
       toVersion: "1.0.0",
     });
 
-    expect(migratedOldConfig).toEqual(oldMapConfig);
+    expect(migratedOldConfig).toEqual(mapConfigV1_0_0);
   });
 
   it("should correctly migrate interactiveFiltersConfig", async () => {
-    const migratedConfig = await migrateChartConfig(oldLineConfig, {
+    const migratedConfig = await migrateChartConfig(lineConfigV1_0_0, {
       migrationProps: CONFIGURATOR_STATE,
     });
     const decodedConfig = decodeChartConfig(migratedConfig);
@@ -164,7 +162,7 @@ describe("config migrations", () => {
     expect(decodedConfig).toBeDefined();
     expect(
       (decodedConfig as LineConfig).interactiveFiltersConfig?.timeRange
-        .componentId === oldLineConfig.fields.x.componentIri
+        .componentId === lineConfigV1_0_0.fields.x.componentIri
     ).toBeDefined();
 
     const migratedOldConfig = (await migrateChartConfig(decodedConfig, {
@@ -202,6 +200,18 @@ describe("config migrations", () => {
       toVersion: CHART_CONFIG_VERSION,
       migrationProps: CONFIGURATOR_STATE,
     });
+    const decodedConfig = decodeChartConfig(migratedConfig);
+    expect(decodedConfig).toBeDefined();
+  });
+
+  it("should correctly migrate map charts", async () => {
+    const migratedConfig = await migrateChartConfig(
+      mapConfigV3_3_0.chartConfigs[0],
+      {
+        toVersion: CHART_CONFIG_VERSION,
+        migrationProps: CONFIGURATOR_STATE,
+      }
+    );
     const decodedConfig = decodeChartConfig(migratedConfig);
     expect(decodedConfig).toBeDefined();
   });

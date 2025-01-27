@@ -43,10 +43,11 @@ const LineChartStory = () => (
           description: { en: "", de: "", fr: "", it: "" },
           label: { en: "", de: "", fr: "", it: "" },
         },
+        blocks: [{ type: "chart", key: chartConfig.key, initialized: false }],
         activeField: undefined,
       },
       chartConfigs: [chartConfig],
-      activeChartKey: "line",
+      activeChartKey: chartConfig.key,
       dashboardFilters: {
         timeRange: {
           active: false,

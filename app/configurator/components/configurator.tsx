@@ -39,6 +39,7 @@ import {
   LayoutAnnotationsSelector,
 } from "@/configurator/components/annotation-options";
 import { Description, Title } from "@/configurator/components/annotators";
+import { LayoutBlocksSelector } from "@/configurator/components/block-options-selector";
 import { ChartConfigurator } from "@/configurator/components/chart-configurator";
 import { ChartOptionsSelector } from "@/configurator/components/chart-options-selector";
 import {
@@ -596,6 +597,7 @@ const LayoutingStep = () => {
                   value: {
                     type: "tab",
                     meta: state.layout.meta,
+                    blocks: state.layout.blocks,
                     activeField: undefined,
                   },
                 });
@@ -612,6 +614,7 @@ const LayoutingStep = () => {
                   value: {
                     type: "dashboard",
                     meta: state.layout.meta,
+                    blocks: state.layout.blocks,
                     layout: "tall",
                     activeField: undefined,
                   },
@@ -632,6 +635,7 @@ const LayoutingStep = () => {
                       (chartConfig) => chartConfig.key
                     ),
                     meta: state.layout.meta,
+                    blocks: state.layout.blocks,
                     activeField: undefined,
                   },
                 });
@@ -751,8 +755,10 @@ const LayoutingStep = () => {
       >
         <div style={{ width: DRAWER_WIDTH }} data-testid="panel-drawer">
           <BackToMainButton onClick={handleClosePanel} />
-          {isAnnotationField(state.layout.activeField) && (
+          {isAnnotationField(state.layout.activeField) ? (
             <LayoutAnnotationsSelector />
+          ) : (
+            <LayoutBlocksSelector />
           )}
         </div>
       </ConfiguratorDrawer>

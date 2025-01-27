@@ -13,6 +13,7 @@ import clsx from "clsx";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 
+import { AddButton } from "@/components/add-button";
 import { ArrowMenuTopCenter } from "@/components/arrow-menu";
 import { DuplicateChartMenuActionItem } from "@/components/chart-shared";
 import { DragHandle } from "@/components/drag-handle";
@@ -282,6 +283,7 @@ const TabsEditable = (props: TabsEditableProps) => {
                   type: "CHART_ACTIVE_FIELD_CHANGED",
                   value: "label",
                 });
+                handleClose();
               }}
             />
           )}
@@ -482,6 +484,7 @@ const TabsInner = ({
                             component="div"
                             key={d.key}
                             value={`${i}`}
+                            data-testid="chart-selection-tab"
                             className={clsx(
                               classes.tab,
                               // We need to add the "selected" class ourselves since we are wrapping
@@ -524,15 +527,9 @@ const TabsInner = ({
         </DragDropContext>
       </TabContext>
       {addable && (
-        <Button
-          color="primary"
-          variant="contained"
-          startIcon={<Icon name="add" />}
-          onClick={onChartAdd}
-          sx={{ minWidth: "fit-content", ml: "0.5rem", px: 3 }}
-        >
+        <AddButton onClick={onChartAdd}>
           <Trans id="chart-selection-tabs.add-chart">Add chart</Trans>
-        </Button>
+        </AddButton>
       )}
     </div>
   );

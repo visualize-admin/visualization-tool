@@ -5,7 +5,6 @@ const { test, expect } = setup();
 const DIMENSION_VALUE_UNDEFINED = "https://cube.link/Undefined";
 
 test("should not have literal undefined values inside a table preview", async ({
-  page,
   actions,
   selectors,
 }) => {

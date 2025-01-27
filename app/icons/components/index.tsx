@@ -8,6 +8,7 @@ import { default as ArrowLeft } from "@/icons/components/IcArrowLeft";
 import { default as ArrowRight } from "@/icons/components/IcArrowRight";
 import { default as ArrowTop } from "@/icons/components/IcArrowTop";
 import { default as ArrowUp } from "@/icons/components/IcArrowUp";
+import { default as Bold } from "@/icons/components/IcBold";
 import { default as Calendar } from "@/icons/components/IcCalendar";
 import { default as CaretDown } from "@/icons/components/IcCaretDown";
 import { default as CaretLeft } from "@/icons/components/IcCaretLeft";
@@ -62,6 +63,7 @@ import { default as Feed } from "@/icons/components/IcFeed";
 import { default as File } from "@/icons/components/IcFile";
 import { default as Filter } from "@/icons/components/IcFilter";
 import { default as Folder } from "@/icons/components/IcFolder";
+import { default as FontSize } from "@/icons/components/IcFontSize";
 import { default as Formatting } from "@/icons/components/IcFormatting";
 import { default as Forward } from "@/icons/components/IcForward";
 import { default as Geographical } from "@/icons/components/IcGeographical";
@@ -71,6 +73,7 @@ import { default as Image } from "@/icons/components/IcImage";
 import { default as Indeterminate } from "@/icons/components/IcIndeterminate";
 import { default as Info } from "@/icons/components/IcInfo";
 import { default as InfoOutline } from "@/icons/components/IcInfoOutline";
+import { default as Italic } from "@/icons/components/IcItalic";
 import { default as Laptop } from "@/icons/components/IcLaptop";
 import { default as LayoutCanvas } from "@/icons/components/IcLayoutCanvas";
 import { default as LayoutDashboard } from "@/icons/components/IcLayoutDashboard";
@@ -83,6 +86,8 @@ import { default as LeftAligned } from "@/icons/components/IcLeftAligned";
 import { default as Link } from "@/icons/components/IcLink";
 import { default as LinkExternal } from "@/icons/components/IcLinkExternal";
 import { default as List } from "@/icons/components/IcList";
+import { default as ListBulleted } from "@/icons/components/IcListBulleted";
+import { default as ListNumbered } from "@/icons/components/IcListNumbered";
 import { default as Loading } from "@/icons/components/IcLoading";
 import { default as Mail } from "@/icons/components/IcMail";
 import { default as MapMaptype } from "@/icons/components/IcMapMaptype";
@@ -145,6 +150,7 @@ import { default as Tools } from "@/icons/components/IcTools";
 import { default as Trash } from "@/icons/components/IcTrash";
 import { default as Triangle } from "@/icons/components/IcTriangle";
 import { default as Twitter } from "@/icons/components/IcTwitter";
+import { default as Underlined } from "@/icons/components/IcUnderlined";
 import { default as Unfold } from "@/icons/components/IcUnfold";
 import { default as Unpublish } from "@/icons/components/IcUnpublish";
 import { default as Warning } from "@/icons/components/IcWarning";
@@ -164,6 +170,7 @@ export const Icons = {
   arrowRight: ArrowRight,
   arrowTop: ArrowTop,
   arrowUp: ArrowUp,
+  bold: Bold,
   calendar: Calendar,
   caretDown: CaretDown,
   caretLeft: CaretLeft,
@@ -218,6 +225,7 @@ export const Icons = {
   file: File,
   filter: Filter,
   folder: Folder,
+  fontSize: FontSize,
   formatting: Formatting,
   forward: Forward,
   geographical: Geographical,
@@ -227,6 +235,7 @@ export const Icons = {
   indeterminate: Indeterminate,
   info: Info,
   infoOutline: InfoOutline,
+  italic: Italic,
   laptop: Laptop,
   layoutCanvas: LayoutCanvas,
   layoutDashboard: LayoutDashboard,
@@ -239,6 +248,8 @@ export const Icons = {
   linkExternal: LinkExternal,
   link: Link,
   list: List,
+  listBulleted: ListBulleted,
+  listNumbered: ListNumbered,
   loading: Loading,
   mail: Mail,
   mapMaptype: MapMaptype,
@@ -301,6 +312,7 @@ export const Icons = {
   trash: Trash,
   triangle: Triangle,
   twitter: Twitter,
+  underlined: Underlined,
   unfold: Unfold,
   unpublish: Unpublish,
   warning: Warning,

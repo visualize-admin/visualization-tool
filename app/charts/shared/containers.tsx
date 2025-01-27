@@ -95,7 +95,7 @@ export const ChartSvg = ({ children }: { children: ReactNode }) => {
         <foreignObject
           {...DISABLE_SCREENSHOT_ATTR}
           width={width - margins.right}
-          y={20}
+          y={0}
           height="26"
           style={{ display: "flex", textAlign: "right" }}
         >

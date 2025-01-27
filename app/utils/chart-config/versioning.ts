@@ -25,7 +25,7 @@ import {
   getUnversionedCubeIri,
   getUnversionedCubeIriServerSide,
 } from "@/utils/chart-config/upgrade-cube";
-import { createChartId } from "@/utils/create-chart-id";
+import { createId } from "@/utils/create-id";
 
 type Migration = {
   description: string;
@@ -617,7 +617,7 @@ export const chartConfigMigrations: Migration[] = [
     to: "2.0.0",
     up: (config, configuratorState) => {
       const newConfig = { ...config, version: "2.0.0" };
-      newConfig.key = createChartId();
+      newConfig.key = createId();
       newConfig.meta = configuratorState.meta;
       newConfig.activeField = configuratorState.activeField;
 
@@ -1313,18 +1313,39 @@ export const chartConfigMigrations: Migration[] = [
         version: "4.1.0",
       };
 
-      if (newConfig.chartType === "table" || newConfig.chartType === "map") {
+      if (newConfig.chartType === "table") {
         return newConfig;
       }
 
-      // Only set default color if no existing color configurations
+      if (newConfig.chartType === "map") {
+        if (
+          newConfig.fields.areaLayer?.color &&
+          "palette" in newConfig.fields.areaLayer.color
+        ) {
+          newConfig.fields.areaLayer.color.paletteId =
+            newConfig.fields.areaLayer.color.palette;
+          delete newConfig.fields.areaLayer.color.palette;
+        }
+
+        if (
+          newConfig.fields.symbolLayer?.color &&
+          "palette" in newConfig.fields.symbolLayer.color
+        ) {
+          newConfig.fields.symbolLayer.color.paletteId =
+            newConfig.fields.symbolLayer.color.palette;
+          delete newConfig.fields.symbolLayer.color.palette;
+        }
+
+        return newConfig;
+      }
+
       if (!newConfig.fields?.color) {
-        const hasNoColorMapping = !(
+        const hasColorMapping = !!(
           newConfig.fields?.y?.colorMapping ||
           newConfig.fields?.segment?.colorMapping
         );
 
-        if (hasNoColorMapping) {
+        if (!hasColorMapping) {
           newConfig.fields = {
             ...newConfig.fields,
             color: {
@@ -1342,10 +1363,7 @@ export const chartConfigMigrations: Migration[] = [
           color: {
             type: "segment",
             paletteId: newConfig.fields.segment.palette || "category10",
-            colorMapping: { ...newConfig.fields.segment.colorMapping },
-          },
-          segment: {
-            ...newConfig.fields.segment,
+            colorMapping: newConfig.fields.segment.colorMapping,
           },
         };
         delete newConfig.fields.segment.colorMapping;
@@ -1358,10 +1376,7 @@ export const chartConfigMigrations: Migration[] = [
           color: {
             type: "measures",
             paletteId: newConfig.fields.y.palette || "category10",
-            colorMapping: { ...newConfig.fields.y.colorMapping },
-          },
-          y: {
-            ...newConfig.fields.y,
+            colorMapping: newConfig.fields.y.colorMapping,
           },
         };
         delete newConfig.fields.y.colorMapping;
@@ -1371,44 +1386,64 @@ export const chartConfigMigrations: Migration[] = [
       return newConfig;
     },
     down: (config) => {
-      const oldConfig = {
+      const newConfig = {
         ...config,
         version: "4.0.0",
       };
 
-      if (oldConfig.chartType === "table" || oldConfig.chartType === "map") {
-        return oldConfig;
+      if (newConfig.chartType === "table") {
+        return newConfig;
       }
 
-      if (oldConfig.fields?.color) {
-        if (oldConfig.fields.color.type === "segment") {
-          oldConfig.fields = {
-            ...oldConfig.fields,
+      if (newConfig.chartType === "map") {
+        if (
+          newConfig.fields.areaLayer?.color &&
+          "paletteId" in newConfig.fields.areaLayer.color
+        ) {
+          newConfig.fields.areaLayer.color.palette =
+            newConfig.fields.areaLayer.color.paletteId;
+          delete newConfig.fields.areaLayer.color.paletteId;
+        }
+
+        if (
+          newConfig.fields.symbolLayer?.color &&
+          "paletteId" in newConfig.fields.symbolLayer.color
+        ) {
+          newConfig.fields.symbolLayer.color.palette =
+            newConfig.fields.symbolLayer.color.paletteId;
+          delete newConfig.fields.symbolLayer.color.paletteId;
+        }
+
+        return newConfig;
+      }
+
+      if (newConfig.fields?.color) {
+        if (newConfig.fields.color.type === "segment") {
+          newConfig.fields = {
+            ...newConfig.fields,
             segment: {
-              ...oldConfig.fields.segment,
-              colorMapping: { ...oldConfig.fields.color.colorMapping },
-              palette: oldConfig.fields.color.paletteId,
+              ...newConfig.fields.segment,
+              colorMapping: newConfig.fields.color.colorMapping,
+              palette: newConfig.fields.color.paletteId,
             },
           };
         }
 
-        if (oldConfig.fields.color.type === "measures") {
-          oldConfig.fields = {
-            ...oldConfig.fields,
+        if (newConfig.fields.color.type === "measures") {
+          newConfig.fields = {
+            ...newConfig.fields,
             y: {
-              ...oldConfig.fields.y,
-              colorMapping: { ...oldConfig.fields.color.colorMapping },
-              palette: oldConfig.fields.color.paletteId,
+              ...newConfig.fields.y,
+              colorMapping: newConfig.fields.color.colorMapping,
+              palette: newConfig.fields.color.paletteId,
             },
           };
         }
 
-        // Create a new fields object without the color property
-        const { color, ...fieldsWithoutColor } = oldConfig.fields;
-        oldConfig.fields = fieldsWithoutColor;
+        delete newConfig.fields.color;
       }
 
-      return oldConfig;
+      return newConfig;
     },
   },
 ];
@@ -2001,6 +2036,7 @@ export const configuratorStateMigrations: Migration[] = [
     to: "4.1.0",
     up: async (config) => {
       const newConfig = { ...config, version: "4.1.0" };
+
       const chartConfigs: any[] = [];
 
       for (const chartConfig of newConfig.chartConfigs) {
@@ -2017,6 +2053,7 @@ export const configuratorStateMigrations: Migration[] = [
     },
     down: async (config) => {
       const newConfig = { ...config, version: "4.0.0" };
+
       const chartConfigs: any[] = [];
 
       for (const chartConfig of newConfig.chartConfigs) {
@@ -2028,6 +2065,63 @@ export const configuratorStateMigrations: Migration[] = [
       }
 
       newConfig.chartConfigs = chartConfigs;
+
+      return newConfig;
+    },
+  },
+  {
+    description: `ALL {
+      layout {
+        + blocks
+        - layoutsMetadata
+      }
+    }`,
+    from: "4.1.0",
+    to: "4.2.0",
+    up: async (config) => {
+      const newConfig = { ...config, version: "4.2.0" };
+
+      if (newConfig.layout.layoutsMetadata) {
+        newConfig.layout.blocks = Object.entries(
+          newConfig.layout.layoutsMetadata
+        ).map(([k, v]) => {
+          return {
+            type: "chart",
+            key: k,
+            ...(v as object),
+          };
+        });
+        delete newConfig.layout.layoutsMetadata;
+      } else {
+        newConfig.layout.blocks = newConfig.chartConfigs.map(
+          (chartConfig: any) => {
+            return {
+              type: "chart",
+              key: chartConfig.key,
+              initialized: false,
+            };
+          }
+        );
+      }
+
+      return newConfig;
+    },
+    down: async (config) => {
+      const newConfig = { ...config, version: "4.1.0" };
+
+      if (
+        newConfig.layout.type === "dashboard" &&
+        newConfig.layout.layout === "canvas"
+      ) {
+        newConfig.layout.layoutsMetadata = Object.fromEntries(
+          newConfig.layout.blocks.map((block: any) => {
+            const { key, initialized } = block;
+            return [key, { initialized }];
+          })
+        );
+      }
+
+      delete newConfig.layout.blocks;
 
       return newConfig;
     },

@@ -425,6 +425,10 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
 
   const hasSubOptions = encoding.options?.chartSubType ?? false;
 
+  const locale = useLocale();
+
+  const [, dispatch] = useConfiguratorState(isConfiguring);
+
   return (
     <div
       key={`control-panel-${encoding.field}`}
@@ -528,6 +532,65 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
                 />
               </ControlSectionContent>
             )}
+          </ControlSectionContent>
+        </ControlSection>
+      )}
+      {encoding.options?.showDots && (
+        <ControlSection collapse>
+          <SubsectionTitle iconName="chartLine">
+            <Trans id="controls.section.data-points">Data Points</Trans>
+          </SubsectionTitle>
+          <ControlSectionContent>
+            <Stack direction="column" gap={4}>
+              <ChartOptionSwitchField
+                path="showDots"
+                field={encoding.field}
+                onChange={(e) => {
+                  const { checked } = e.target;
+                  if ("y" in fields && !("showDots" in fields.y)) {
+                    dispatch({
+                      type: "COLOR_MAPPING_UPDATED",
+                      value: {
+                        locale,
+                        field: "y",
+                        path: "showDotsSize",
+                        value: "Large",
+                      },
+                    });
+                  }
+                  dispatch({
+                    type: "COLOR_MAPPING_UPDATED",
+                    value: {
+                      locale,
+                      field: encoding.field,
+                      path: "showDots",
+                      value: checked,
+                    },
+                  });
+                }}
+                label={t({ id: "controls.section.show-dots" })}
+                sx={{ mt: 2 }}
+              />
+              <Typography variant="caption" sx={{ mt: 2 }}>
+                <Trans id="controls.section.dots-size">Select a Size</Trans>
+              </Typography>
+              <Flex justifyContent="flex-start">
+                {["Small", "Medium", "Large"].map((d) => (
+                  <ChartOptionRadioField
+                    key={d}
+                    label={`${d}`}
+                    field="y"
+                    path="showDotsSize"
+                    value={d}
+                    disabled={
+                      "y" in fields &&
+                      (!("showDots" in fields.y) ||
+                        ("showDots" in fields.y && !fields.y.showDots))
+                    }
+                  />
+                ))}
+              </Flex>
+            </Stack>
           </ControlSectionContent>
         </ControlSection>
       )}

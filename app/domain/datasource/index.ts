@@ -7,6 +7,8 @@ import {
 } from "@/domain/datasource/constants";
 import { ENDPOINT } from "@/domain/env";
 
+export { isDataSourceUrlAllowed, type DataSourceUrl } from "./urls";
+
 export const parseDataSource = (stringifiedSource: string): DataSource => {
   const [type, url] = stringifiedSource.split("+") as [
     DataSource["type"],
