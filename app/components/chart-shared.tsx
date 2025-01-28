@@ -3,6 +3,7 @@ import {
   Box,
   IconButton,
   Theme,
+  ThemeProvider,
   useEventCallback,
   useTheme,
 } from "@mui/material";
@@ -459,9 +460,11 @@ const useModifyNode = () => {
         footnotes.appendChild(container);
         const root = createRoot(container);
         root.render(
-          <VisualizeLink
-            createdWith={t({ id: "metadata.link.created.with" })}
-          />
+          <ThemeProvider theme={theme}>
+            <VisualizeLink
+              createdWith={t({ id: "metadata.link.created.with" })}
+            />
+          </ThemeProvider>
         );
         await animationFrame();
       }
@@ -476,14 +479,14 @@ const useModifyNode = () => {
       // and not have underlines.
       const color = theme.palette.grey[700];
       select(clonedNode)
-        .selectAll("*")
+        .selectAll(`p, button, a, span, div, li, h1, h2, h3, h4, h5, h6`)
         .style("color", color)
         .style("text-decoration", "none");
       // SVG elements have fill instead of color. Here we only target text elements,
       // to avoid changing the color of other SVG elements (charts).
       select(clonedNode).selectAll("text").style("fill", color);
     },
-    [chartWithFiltersClasses.chartWithFilters, theme.palette.grey]
+    [chartWithFiltersClasses.chartWithFilters, theme]
   );
 };
 

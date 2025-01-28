@@ -165,6 +165,7 @@ export const TooltipBox = ({
             left: tooltipXBoundary! + margins.left + position.left,
             top: mxYOffset(y!, placement) + margins.top + position.top,
             transform: mkTranslation(placement),
+            maxWidth: "100%",
             pointerEvents: "none",
           }}
         >
