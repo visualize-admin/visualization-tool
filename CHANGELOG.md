@@ -13,6 +13,9 @@ You can also check the
 
 - Fixes
   - Bar chart tooltip doesn't go off the screen anymore during scroll
+  - Preview via API using iframe (`/preview`) now ignores invalid messages sent
+    from the parent window
+  - Selected values are now correctly displayed in the filter panel
   - Chart tooltip now wraps in case of long text, instead of going off the
     screen
   - Pie chart tooltip is now positioned closer to the chart to prevent it from
