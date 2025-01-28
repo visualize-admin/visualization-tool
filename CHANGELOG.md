@@ -20,6 +20,7 @@ You can also check the
     screen
   - Pie chart tooltip is now positioned closer to the chart to prevent it from
     going off the screen in case of iframe embed
+  - PNG image download now correctly retains interactive legend's colors
 
 # [5.2.0] - 2025-01-22
 
