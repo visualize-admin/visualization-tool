@@ -21,6 +21,18 @@ process.env.NEXT_PUBLIC_GITHUB_REPO = pkg.repository.url.replace(
   ""
 );
 
+// Dynamic NEXTAUTH_URL logic
+const isProduction = process.env.NODE_ENV === "production";
+const isVercelPreview = !!process.env.VERCEL_URL;
+
+// Dynamically set NEXTAUTH_URL
+process.env.NEXTAUTH_URL = isProduction
+  ? "https://your-production-domain.com"
+  : isVercelPreview
+    ? `https://${process.env.VERCEL_URL}`
+    : "http://localhost:3000";
+
+console.log("NEXTAUTH_URL:", process.env.NEXTAUTH_URL);
 console.log("Version", process.env.NEXT_PUBLIC_VERSION);
 console.log("Commit", process.env.NEXT_PUBLIC_COMMIT);
 console.log("GitHub Repo", process.env.NEXT_PUBLIC_GITHUB_REPO);
