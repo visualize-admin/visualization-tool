@@ -373,20 +373,34 @@ export const getInitialConfig = (
     cubes: Cube[];
     activeField: string | undefined;
   } => {
-    return {
+    const newConfig = {
       key: key ?? createId(),
       version: CHART_CONFIG_VERSION,
       meta: meta ?? META,
       // Technically, we should scope filters per cube; but as we only set initial
       // filters for area charts, and we can only have multi-cubes for combo charts,
       // we can ignore the filters scoping for now.
-      cubes: iris.map(({ iri, joinBy }) => ({
-        iri,
-        filters: filters ?? {},
-        joinBy,
-      })),
+      cubes: iris.map(({ iri, joinBy }) => {
+        if (joinBy) {
+          return {
+            iri,
+            filters: filters ?? {},
+            joinBy,
+          };
+        } else {
+          // We need to completely remove the joinBy if not needed to prevent
+          // implicit conversion to null when saving / retrieving the config
+          // from the backend.
+          return {
+            iri,
+            filters: filters ?? {},
+          };
+        }
+      }),
       activeField: undefined,
     };
+
+    return newConfig;
   };
   const numericalMeasures = measures.filter(isNumericalMeasure);
   const temporalDimensions = dimensions.filter(
@@ -1561,6 +1575,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
               cube.filters[id] = value;
             }
           }
+
           if (oldCube.joinBy !== undefined) {
             cube.joinBy = oldCube.joinBy;
           }
@@ -1645,8 +1660,8 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
             .filter((d) => d.unit === unit)
             .map((d) => d.id);
           const paletteId = isColorInConfig(oldChartConfig)
-            ? oldChartConfig.fields.color.paletteId ??
-              DEFAULT_CATEGORICAL_PALETTE_ID
+            ? (oldChartConfig.fields.color.paletteId ??
+              DEFAULT_CATEGORICAL_PALETTE_ID)
             : isComboChartConfig(oldChartConfig)
               ? oldChartConfig.fields.color.paletteId
               : DEFAULT_CATEGORICAL_PALETTE_ID;
@@ -1761,8 +1776,8 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         leftMeasure = getLeftMeasure(leftMeasure.id);
 
         const paletteId = isColorInConfig(oldChartConfig)
-          ? oldChartConfig.fields.color.paletteId ??
-            DEFAULT_CATEGORICAL_PALETTE_ID
+          ? (oldChartConfig.fields.color.paletteId ??
+            DEFAULT_CATEGORICAL_PALETTE_ID)
           : isComboChartConfig(oldChartConfig)
             ? oldChartConfig.fields.color.paletteId
             : DEFAULT_CATEGORICAL_PALETTE_ID;
@@ -1854,8 +1869,8 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         ).id;
 
         const paletteId = isColorInConfig(oldChartConfig)
-          ? oldChartConfig.fields.color.paletteId ??
-            DEFAULT_CATEGORICAL_PALETTE_ID
+          ? (oldChartConfig.fields.color.paletteId ??
+            DEFAULT_CATEGORICAL_PALETTE_ID)
           : isComboChartConfig(oldChartConfig)
             ? oldChartConfig.fields.color.paletteId
             : DEFAULT_CATEGORICAL_PALETTE_ID;
