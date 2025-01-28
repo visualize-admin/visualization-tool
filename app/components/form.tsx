@@ -591,7 +591,7 @@ export const MinimalisticSelect = (props: MinimalisticSelectProps) => {
               transition: "transform 0.1s",
             }}
           >
-            <Icon name="chevronDown" size={16} />
+            <Icon name="chevronDown2" size={24} />
           </span>
         )}
         className={classes.root}
@@ -622,6 +622,10 @@ const useMinimalisticSelectStyles = makeStyles<Theme>((theme) => ({
     "&:focus": {
       outline: "none",
       borderColor: theme.palette.primary.main,
+    },
+    "& .MuiSelect-icon": {
+      right: -10,
+      top: -2,
     },
     "& .MuiInput-input": {
       paddingRight: "1.25rem !important",

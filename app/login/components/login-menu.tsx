@@ -32,6 +32,7 @@ export const LoginMenu = () => {
               minWidth: 0,
               minHeight: 0,
               padding: 0,
+              gap: 1,
               color: "muted.colored",
               "&:hover": {
                 color: "#d1d5db", // FIXME: once the new colors are in place
@@ -40,7 +41,7 @@ export const LoginMenu = () => {
             }}
           >
             <Typography noWrap>{user.name}</Typography>
-            <Icon name="chevronDown" size={16} />
+            <Icon name="chevronDown2" size={8} />
           </Button>
           <Menu
             anchorEl={anchorEl}
