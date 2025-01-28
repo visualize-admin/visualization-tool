@@ -21,6 +21,7 @@ You can also check the
   - Pie chart tooltip is now positioned closer to the chart to prevent it from
     going off the screen in case of iframe embed
   - PNG image download now correctly retains interactive legend's colors
+  - Charts based on a new cube are not hidden anymore in the layouting step
 
 # [5.2.0] - 2025-01-22
 
