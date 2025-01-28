@@ -1,0 +1,16 @@
+name: GitLab Mirror Test
+
+on: [push, delete]
+
+jobs:
+  git-mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: yesolutions/mirror-action@master
+        with:
+          REMOTE: https://gitlab.ldbar.ch/interactivethings/visualize-mirroring-test.git
+          GIT_USERNAME: gitlab+deploy-token-8
+          GIT_PASSWORD: ${{ secrets.GITLAB_PASSWORD_TEST }}
