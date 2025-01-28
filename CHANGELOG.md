@@ -15,6 +15,7 @@ You can also check the
   - Bar chart tooltip doesn't go off the screen anymore during scroll
   - Preview via API using iframe (`/preview`) now ignores invalid messages sent
     from the parent window
+  - Selected values are now correctly displayed in the filter panel
 
 # [5.2.0] - 2025-01-22
 
