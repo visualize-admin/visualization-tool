@@ -8,7 +8,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: 'refs/heads/main'
           fetch-depth: 0
+          fetch-tags: false
       - uses: yesolutions/mirror-action@master
         with:
           REMOTE: https://gitlab.ldbar.ch/interactivethings/visualize-mirroring-test.git
