@@ -665,7 +665,6 @@ export const Input = ({
         id={name}
         size="small"
         color="secondary"
-        multiline
         name={name}
         value={value}
         disabled={disabled}

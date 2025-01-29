@@ -1,7 +1,7 @@
 import { ascending, sum } from "d3-array";
 import { ScaleOrdinal, scaleOrdinal } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
-import { Pie, PieArcDatum, arc, pie } from "d3-shape";
+import { Pie, pie, PieArcDatum } from "d3-shape";
 import orderBy from "lodash/orderBy";
 import { useMemo } from "react";
 
@@ -31,7 +31,6 @@ import {
   getSortingOrders,
   makeDimensionValueSorters,
 } from "@/utils/sorting-values";
-import { useIsMobile } from "@/utils/use-is-mobile";
 
 import { ChartProps } from "../shared/ChartProps";
 
@@ -112,7 +111,7 @@ const usePieState = (
           label: segment,
           color:
             fields.color.type === "segment"
-              ? fields.color.colorMapping![dvIri] ?? schemeCategory10[0]
+              ? (fields.color.colorMapping![dvIri] ?? schemeCategory10[0])
               : schemeCategory10[0],
         };
       });
@@ -169,17 +168,7 @@ const usePieState = (
     left,
   };
   const bounds = useChartBounds(width, margins, height);
-  const { chartWidth, chartHeight } = bounds;
-
-  // Pie values
-  const maxSide = Math.min(chartWidth, chartHeight) / 2;
-
-  const innerRadius = 0;
-  const outerRadius = Math.min(maxSide, 100);
-
-  const arcGenerator = arc<Observation, PieArcDatum<Observation>>()
-    .innerRadius(innerRadius)
-    .outerRadius(outerRadius);
+  const { chartWidth } = bounds;
 
   // Pie data
   // Sort the pie according to the segments
@@ -216,34 +205,17 @@ const usePieState = (
     return `${rounded}% (${fValue})`;
   };
 
-  const isMobile = useIsMobile();
-
   // Tooltip
   const getAnnotationInfo = (
     arcDatum: PieArcDatum<Observation>
   ): TooltipInfo => {
-    const [x, y] = arcGenerator.centroid(arcDatum);
     const datum = arcDatum.data;
 
-    const xTranslate = chartWidth / 2;
-    const yTranslate = chartHeight / 2;
+    const xAnchor = chartWidth / 2;
+    const yAnchor = -4;
 
-    const xAnchor = isMobile ? chartWidth / 2 : x + xTranslate;
-    const yAnchor = isMobile ? -chartHeight : y + yTranslate;
-
-    const xPlacement = isMobile
-      ? "center"
-      : xAnchor < chartWidth * 0.5
-        ? "right"
-        : "left";
-
-    const yPlacement = isMobile
-      ? "top"
-      : yAnchor > chartHeight * 0.2
-        ? "top"
-        : yAnchor < chartHeight * 0.8
-          ? "bottom"
-          : "middle";
+    const xPlacement = "center";
+    const yPlacement = "top";
 
     return {
       xAnchor,
@@ -255,7 +227,7 @@ const usePieState = (
         color: colors(getSegment(datum)) as string,
       },
       values: undefined,
-      withTriangle: !isMobile,
+      withTriangle: false,
     };
   };
 

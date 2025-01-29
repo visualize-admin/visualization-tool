@@ -12,11 +12,24 @@ You can also check the
 # Unreleased
 
 - Features
-
   - Adds the new header based on the new CI/CD
+
+# [5.2.1] - 2025-01-29
 
 - Fixes
   - Bar chart tooltip doesn't go off the screen anymore during scroll
+  - Preview via API using iframe (`/preview`) now ignores invalid messages sent
+    from the parent window
+  - Selected values are now correctly displayed in the filter panel
+  - Chart tooltip now wraps in case of long text, instead of going off the
+    screen
+  - Pie chart tooltip is now positioned closer to the chart to prevent it from
+    going off the screen in case of iframe embed
+  - PNG image download now correctly retains interactive legend's colors
+  - Charts based on a new cube are not hidden anymore in the layouting step
+  - Scroll bars are not shown in the chart area when not needed
+  - Scatterplot overlap with the y axis label
+  - Input fields do not extend anymore when hitting Enter
 
 # [5.2.0] - 2025-01-22
 
