@@ -208,7 +208,7 @@ const useBarsState = (
   const margins = {
     top: 55,
     right,
-    bottom: bottom + 30,
+    bottom: bottom + 65,
     left,
   };
 
