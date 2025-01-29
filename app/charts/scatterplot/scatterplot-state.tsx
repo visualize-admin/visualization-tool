@@ -177,7 +177,7 @@ const useScatterplotState = (
     marginRight: right,
   });
   const margins = {
-    top: 50 + yAxisLabelMargin,
+    top: 75 + yAxisLabelMargin,
     right,
     bottom: bottom + xAxisLabelMargin,
     left,
