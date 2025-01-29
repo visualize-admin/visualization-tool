@@ -44,7 +44,7 @@ export const ChartContainer = ({ children }: { children: ReactNode }) => {
       className={classes.chartContainer}
       style={{
         height: isFreeCanvas ? "initial" : bounds.height,
-        overflow: "scroll",
+        overflow: "auto",
       }}
     >
       {children}
