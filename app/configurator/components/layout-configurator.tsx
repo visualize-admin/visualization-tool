@@ -268,6 +268,7 @@ const LayoutSharedFiltersConfigurator = () => {
                       {combinedTemporalDimension.label}
                     </Typography>
                     <Switch
+                      data-testid="dashboard-time-range-filter-toggle"
                       checked={timeRange.active}
                       onChange={handleTimeRangeFilterToggle}
                     />
@@ -503,6 +504,7 @@ const DashboardTimeRangeFilterOptions = ({
   return (
     <div>
       <Stack
+        data-testid="dashboard-time-range-filters"
         direction="row"
         gap="0.5rem"
         alignItems="center"
