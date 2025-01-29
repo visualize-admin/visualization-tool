@@ -11,6 +11,10 @@ You can also check the
 
 # Unreleased
 
+Nothing yet.
+
+# [5.2.1] - 2025-01-29
+
 - Fixes
   - Bar chart tooltip doesn't go off the screen anymore during scroll
   - Preview via API using iframe (`/preview`) now ignores invalid messages sent
