@@ -830,7 +830,6 @@ export const chartConfigMigrations: Migration[] = [
     description: `ALL {
       + cubes {
         + publishIri
-        +- joinBy (string) -> joinBy (string[])
       }
     }`,
     from: "3.1.0",
@@ -1290,28 +1289,40 @@ export const chartConfigMigrations: Migration[] = [
   },
   {
     description: `ALL {
-        fields {
-            segment {
-              - colorMapping
-            },
-            y {
-              - colorMapping
-            }
-            + color {
-                + type
-                + paletteId
-                + colorMapping / color
-            }
+      cubes {
+        - joinBy: null
+      }
+      fields {
+        segment {
+          - colorMapping
         }
+        y {
+          - colorMapping
+        }
+        + color {
+          + type
+          + paletteId
+          + colorMapping / color
+        }
+      }
     }`,
     from: "4.0.0",
     to: "4.1.0",
-
     up: (config) => {
       const newConfig = {
         ...config,
         version: "4.1.0",
       };
+
+      // Fixes some rare cases of joinBy being null, when a cube was joined and
+      // un-joined. Previously we kept the undefined field there, which was
+      // converted to null via the database saving / fetching process, now we
+      // remove the property entirely when removing a dataset.
+      newConfig.cubes.forEach((cube: any) => {
+        if (cube.joinBy === null) {
+          delete cube.joinBy;
+        }
+      });
 
       if (newConfig.chartType === "table") {
         return newConfig;
@@ -2082,27 +2093,18 @@ export const configuratorStateMigrations: Migration[] = [
       const newConfig = { ...config, version: "4.2.0" };
 
       if (newConfig.layout.layoutsMetadata) {
-        newConfig.layout.blocks = Object.entries(
-          newConfig.layout.layoutsMetadata
-        ).map(([k, v]) => {
+        delete newConfig.layout.layoutsMetadata;
+      }
+
+      newConfig.layout.blocks = newConfig.chartConfigs.map(
+        (chartConfig: any) => {
           return {
             type: "chart",
-            key: k,
-            ...(v as object),
+            key: chartConfig.key,
+            initialized: false,
           };
-        });
-        delete newConfig.layout.layoutsMetadata;
-      } else {
-        newConfig.layout.blocks = newConfig.chartConfigs.map(
-          (chartConfig: any) => {
-            return {
-              type: "chart",
-              key: chartConfig.key,
-              initialized: false,
-            };
-          }
-        );
-      }
+        }
+      );
 
       return newConfig;
     },
