@@ -11,6 +11,10 @@ You can also check the
 
 # Unreleased
 
+Nothing yet.
+
+# [5.2.1] - 2025-01-29
+
 - Fixes
   - Bar chart tooltip doesn't go off the screen anymore during scroll
   - Preview via API using iframe (`/preview`) now ignores invalid messages sent
@@ -24,6 +28,7 @@ You can also check the
   - Charts based on a new cube are not hidden anymore in the layouting step
   - Scroll bars are not shown in the chart area when not needed
   - Scatterplot overlap with the y axis label
+  - Input fields do not extend anymore when hitting Enter
 
 # [5.2.0] - 2025-01-22
 
