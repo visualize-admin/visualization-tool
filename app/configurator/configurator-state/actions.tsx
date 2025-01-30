@@ -75,7 +75,7 @@ export type ConfiguratorStateAction =
       };
     }
   | {
-      type: "COLOR_MAPPING_UPDATED";
+      type: "COLOR_FIELD_UPDATED";
       value: {
         locale: Locale;
         path: string;

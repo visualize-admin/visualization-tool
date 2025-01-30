@@ -17,6 +17,7 @@ import {
   createSequentialInterpolator,
 } from "@/palettes";
 import { theme } from "@/themes/federal";
+import { assert } from "@/utils/assert";
 import { hasEnoughContrast } from "@/utils/color-palette-utils";
 
 const ColorPickerMenu = dynamic(
@@ -79,6 +80,10 @@ export const ColorPaletteCreator = (props: ColorPaletteCreatorProps) => {
 const SequentialColorPaletteCreator = (props: ColorPaletteCreatorProps) => {
   const { onUpdate, onAdd, colorValues } = props;
 
+  assert(
+    colorValues.length > 0,
+    "Sequential color palette must have at least one color"
+  );
   const baseColor = colorValues[0];
 
   const colorResult = createSequentialInterpolator({

@@ -429,7 +429,7 @@ export const handleChartFieldChanged = (
 
 export const handleChartOptionChanged = (
   draft: ConfiguratorState,
-  action: Extract<ConfiguratorStateAction, { type: "COLOR_MAPPING_UPDATED" }>
+  action: Extract<ConfiguratorStateAction, { type: "COLOR_FIELD_UPDATED" }>
 ) => {
   if (isConfiguring(draft)) {
     const { locale, path, field, value } = action.value;
@@ -677,7 +677,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
       return draft;
 
-    case "COLOR_MAPPING_UPDATED":
+    case "COLOR_FIELD_UPDATED":
       return handleChartOptionChanged(draft, action);
 
     case "COLOR_FIELD_SET":

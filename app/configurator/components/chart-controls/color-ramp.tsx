@@ -151,7 +151,7 @@ export const ColorRampField = (props: ColorRampFieldProps) => {
   ) => {
     if (value) {
       dispatch({
-        type: "COLOR_MAPPING_UPDATED",
+        type: "COLOR_FIELD_UPDATED",
         value: {
           locale,
           field,

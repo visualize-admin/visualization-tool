@@ -300,7 +300,7 @@ export const ColorPalette = ({
             </Trans>
           </Button>
         )}
-        {customColorPalettes && customColorPalettes?.length > 0 && (
+        {customColorPalettes && customColorPalettes.length > 0 && (
           <Box
             sx={{
               paddingTop: 3,
