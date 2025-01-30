@@ -173,7 +173,7 @@ export const ChartPublished = ({
                 layoutType={state.layout.layout}
                 renderBlock={renderBlock}
               />
-              {state.chartConfigs.length !== 1 && (
+              {state.chartConfigs.length !== 1 && configKey && (
                 <VisualizeLink
                   configKey={configKey}
                   createdWith={t({ id: "metadata.link.created.with" })}
