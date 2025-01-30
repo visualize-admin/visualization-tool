@@ -18,6 +18,8 @@ You can also check the
     mode in Chrome
   - Tall dashboard layouts now correctly align chart elements between columns in
     published mode
+- Style
+  - Improved vertical spacing between map legend items
 
 # [5.2.1] - 2025-01-29
 
