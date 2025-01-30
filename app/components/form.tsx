@@ -650,6 +650,7 @@ export const Input = ({
       sx={{
         borderColor: error ? "error.main" : "grey.500",
         backgroundColor: "grey.100",
+        padding: "10px 6px",
         width: "100%",
         padding: "10px 6px",
       }}
