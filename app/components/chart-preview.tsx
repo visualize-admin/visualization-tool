@@ -348,6 +348,7 @@ const DndChartPreview = (props: CommonChartPreviewProps) => {
         className={clsx(className, dragOverClasses.root)}
         style={{
           display: active ? "flex" : "contents",
+          flexDirection: "column",
         }}
       >
         <ChartPreviewInner
@@ -473,7 +474,13 @@ const ChartPreviewInner = ({
   }, [dimensions, measures]);
 
   return (
-    <Box ref={ref} className={chartClasses.root}>
+    <Box
+      ref={ref}
+      className={clsx(
+        chartClasses.root,
+        configuring ? chartClasses.editing : chartClasses.pastEditing
+      )}
+    >
       {children}
       <ChartErrorBoundary resetKeys={[state]}>
         {hasChartConfigs(state) && (

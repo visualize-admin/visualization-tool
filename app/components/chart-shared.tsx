@@ -70,11 +70,6 @@ export const CHART_GRID_ROW_COUNT = 7;
 export const useChartStyles = makeStyles<Theme, { disableBorder?: boolean }>(
   (theme) => ({
     root: {
-      flexGrow: 1,
-      display: "grid",
-      gridTemplateRows: "subgrid",
-      /** Should stay in sync with the number of rows contained in a chart */
-      gridRow: `span ${CHART_GRID_ROW_COUNT}`,
       padding: theme.spacing(6),
       backgroundColor: theme.palette.background.paper,
       border: ({ disableBorder }) =>
@@ -84,6 +79,16 @@ export const useChartStyles = makeStyles<Theme, { disableBorder?: boolean }>(
         display: "flex",
         flexDirection: "column",
       },
+    },
+    editing: {
+      display: "flex",
+      flexDirection: "column",
+    },
+    pastEditing: {
+      display: "grid",
+      gridTemplateRows: "subgrid",
+      /** Should stay in sync with the number of rows contained in a chart */
+      gridRow: `span ${CHART_GRID_ROW_COUNT}`,
     },
   })
 );

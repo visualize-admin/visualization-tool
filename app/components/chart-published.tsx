@@ -241,7 +241,6 @@ const usePublishedChartStyles = makeStyles<Theme, { shrink: boolean }>(
       [theme.breakpoints.up("lg")]: {
         padding: theme.spacing(6),
       },
-
       gap: 16,
       display: "flex",
       flexDirection: "column",
@@ -339,7 +338,12 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
   return (
     <Box
       ref={rootRef}
-      className={clsx(chartClasses.root, publishedChartClasses.root, className)}
+      className={clsx(
+        chartClasses.root,
+        chartClasses.pastEditing,
+        publishedChartClasses.root,
+        className
+      )}
     >
       {children}
       <ChartErrorBoundary resetKeys={[chartConfig]}>

@@ -14,6 +14,10 @@ You can also check the
 - Fixes
   - Weekly-based temporal dimensions now work correctly when used in dashboard
     filters
+  - Chart area doesn't overflow anymore when changing chart types in editing
+    mode in Chrome
+  - Tall dashboard layouts now correctly align chart elements between columns in
+    published mode
 
 # [5.2.1] - 2025-01-29
 
