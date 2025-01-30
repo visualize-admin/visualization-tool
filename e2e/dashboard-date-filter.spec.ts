@@ -5,7 +5,6 @@ const { expect, test } = setup();
 
 test("the application shouldn't crash in case of adding a global, week-based filter", async ({
   page,
-  screen,
   selectors,
 }) => {
   const key = "123";
