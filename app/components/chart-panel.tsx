@@ -24,8 +24,7 @@ const useStyles = makeStyles<Theme>((theme) => ({
     gap: theme.spacing(4),
   },
   chartWrapper: {
-    display: "flex",
-    flexDirection: "column",
+    display: "contents",
     overflow: "hidden",
     [`.${chartPanelLayoutGridClasses.root} &`]: {
       transition: theme.transitions.create(["box-shadow"], {

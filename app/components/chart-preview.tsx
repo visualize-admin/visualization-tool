@@ -348,6 +348,7 @@ const DndChartPreview = (props: CommonChartPreviewProps) => {
         className={clsx(className, dragOverClasses.root)}
         style={{
           display: active ? "flex" : "contents",
+          flexDirection: "column",
         }}
       >
         <ChartPreviewInner
