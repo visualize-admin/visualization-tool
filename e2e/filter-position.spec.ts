@@ -20,12 +20,12 @@ test("Filters should be sorted by position", async ({ selectors, actions }) => {
 
   await actions.mui.selectOption("Status");
 
-  const panelRight = await selectors.panels.drawer().within();
-  await panelRight.findByText("Selected filters", undefined, {
+  const panelLeft = await selectors.panels.drawer().within();
+  await panelLeft.findByText("Selected filters", undefined, {
     timeout: 10_000,
   });
 
-  const filtersValueLocator = await panelRight.findAllByTestId(
+  const filtersValueLocator = await panelLeft.findAllByTestId(
     "chart-filters-value",
     undefined,
     {

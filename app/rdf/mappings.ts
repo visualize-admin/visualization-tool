@@ -26,7 +26,7 @@ export const timeFormats = new Map<string, string>([
 export const timeUnitFormats = new Map<TimeUnit, string>([
   [TimeUnit.Year, "%Y"],
   [TimeUnit.Month, "%Y-%m"],
-  [TimeUnit.Week, "%Y-%W"],
+  [TimeUnit.Week, "%Y-%m-%d"],
   [TimeUnit.Day, "%Y-%m-%d"],
   [TimeUnit.Hour, "%Y-%m-%dT%H"],
   [TimeUnit.Minute, "%Y-%m-%dT%H:%M"],
