@@ -3,22 +3,22 @@ import { t } from "@lingui/macro";
 import { Trans } from "@lingui/react";
 import { Box, Button, capitalize, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { nanoid } from "nanoid";
 import { useCallback, useRef, useState } from "react";
 
 import Flex from "@/components/flex";
 import { Input, Label, Radio } from "@/components/form";
 import { BackButton, CustomPaletteType } from "@/configurator";
-import { ColorItem, ColorsByType, defaultColorValues } from "@/palettes";
+import { ColorItem, ColorsByType, getDefaultColorValues } from "@/palettes";
 import { theme } from "@/themes/federal";
 import {
   createCustomColorPalette,
   updateCustomColorPalette,
 } from "@/utils/chart-config/api";
+import { createColorId } from "@/utils/color-palette-utils";
 import { useMutate } from "@/utils/use-fetch-data";
 
-import ColorPaletteExample from "./color-palette-examples";
-import ColorPaletteCreator from "./color-palette-types";
+import { ColorPaletteExample } from "./color-palette-examples";
+import { ColorPaletteCreator } from "./color-palette-types";
 
 const useStyles = makeStyles({
   root: {
@@ -26,7 +26,7 @@ const useStyles = makeStyles({
     padding: "8px 0px",
   },
   backButton: {
-    color: "#333",
+    color: theme.palette.grey[800],
   },
   colorPickerContainer: {
     gap: theme.spacing(5),
@@ -48,23 +48,25 @@ const useStyles = makeStyles({
 type ProfileColorPaletteProps = {
   onBack: () => void;
   palette?: CustomPaletteType;
+  formMode: "add" | "edit";
 };
 
 const ProfileColorPaletteForm = ({
   onBack,
   palette,
+  formMode,
 }: ProfileColorPaletteProps) => {
   const [type, setType] = useState<CustomPaletteType["type"]>(
     palette?.type || "categorical"
   );
   const [colorValues, setColorValues] = useState<ColorItem[]>(() =>
-    defaultColorValues(type, palette?.colors || [])
+    getDefaultColorValues(type, palette?.colors || [])
   );
 
   const colorsByTypeRef = useRef<ColorsByType>({
-    categorical: defaultColorValues("categorical", palette?.colors || []),
-    sequential: defaultColorValues("sequential", palette?.colors || []),
-    diverging: defaultColorValues("diverging", palette?.colors || []),
+    categorical: getDefaultColorValues("categorical", palette?.colors || []),
+    sequential: getDefaultColorValues("sequential", palette?.colors || []),
+    diverging: getDefaultColorValues("diverging", palette?.colors || []),
   });
 
   const [titleInput, setTitleInput] = useState<string>(palette?.name || "");
@@ -105,7 +107,7 @@ const ProfileColorPaletteForm = ({
       setColorValues((prevColors) => {
         const newColors = [
           ...prevColors,
-          { color: color ?? "#000000", id: nanoid(4) },
+          { color: color ?? "#000000", id: createColorId() },
         ];
         colorsByTypeRef.current[type] = newColors;
         return newColors;
@@ -193,9 +195,15 @@ const ProfileColorPaletteForm = ({
               colorValues.length === 0 || titleInput === "" || noChanges
             }
           >
-            <Trans id="controls.custom-color-palettes.set-values-apply">
-              Save color palette
-            </Trans>
+            {formMode === "add" ? (
+              <Trans id="controls.custom-color-palettes.create-palette">
+                Create color palette
+              </Trans>
+            ) : (
+              <Trans id="controls.custom-color-palettes.update-palette">
+                Update color palette
+              </Trans>
+            )}
           </Button>
         </Box>
       </Flex>

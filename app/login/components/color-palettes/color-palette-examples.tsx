@@ -12,7 +12,7 @@ type ColorPaletteExampleProps = {
   type: CustomPaletteType["type"];
 };
 
-const categoricalExmaplePalette = [
+const categoricalExamplePalette = [
   "#663778",
   "#FF9900",
   "#FF5F55",
@@ -22,12 +22,12 @@ const categoricalExmaplePalette = [
   "#BCBD21",
 ];
 
-const ColorPaletteExample = ({ type }: ColorPaletteExampleProps) => {
-  let exmaple: ReactNode = null;
+export const ColorPaletteExample = ({ type }: ColorPaletteExampleProps) => {
+  let example: ReactNode = null;
 
   switch (type) {
     case "sequential":
-      exmaple = (
+      example = (
         <ColorRamp
           height={20}
           width={146}
@@ -36,7 +36,7 @@ const ColorPaletteExample = ({ type }: ColorPaletteExampleProps) => {
       );
       break;
     case "diverging":
-      exmaple = (
+      example = (
         <ColorRamp
           height={20}
           width={146}
@@ -46,9 +46,9 @@ const ColorPaletteExample = ({ type }: ColorPaletteExampleProps) => {
       break;
 
     case "categorical":
-      exmaple = (
+      example = (
         <Flex gap={"1px"}>
-          {categoricalExmaplePalette.map((color) => (
+          {categoricalExamplePalette.map((color) => (
             <ColorSquare
               key={`option-${color}`}
               color={color}
@@ -60,18 +60,8 @@ const ColorPaletteExample = ({ type }: ColorPaletteExampleProps) => {
       break;
 
     default:
-      exmaple = (
-        <Flex gap={0.5}>
-          {categoricalExmaplePalette.map((color) => (
-            <ColorSquare
-              key={`option-${color}`}
-              color={color}
-              disabled={false}
-            />
-          ))}
-        </Flex>
-      );
-      break;
+      const _exhaustiveCheck: never = type;
+      return _exhaustiveCheck;
   }
 
   return (
@@ -79,9 +69,7 @@ const ColorPaletteExample = ({ type }: ColorPaletteExampleProps) => {
       <Label htmlFor="custom-color-palette-example" smaller sx={{ mb: 1 }}>
         <Trans id="controls.custom-color-palettes.example" />
       </Label>
-      {exmaple}
+      {example}
     </Flex>
   );
 };
-
-export default ColorPaletteExample;

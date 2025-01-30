@@ -16,7 +16,6 @@ import { MouseEventHandler, useCallback, useState } from "react";
 
 import { EncodingFieldType } from "@/charts/chart-config-ui-options";
 import { hasDimensionColors } from "@/charts/shared/colors";
-import { LegendSymbol } from "@/charts/shared/legend-color";
 import Flex from "@/components/flex";
 import { Label } from "@/components/form";
 import { getChartConfig } from "@/config-utils";
@@ -43,7 +42,7 @@ import { useFetchData } from "@/utils/use-fetch-data";
 
 import { ConfiguratorDrawer } from "../drawer";
 
-import { DrawerContent } from "./create-color-palette";
+import { ColorPaletteDrawerContent } from "./drawer-color-palette-content";
 
 const useStyles = makeStyles({
   root: {
@@ -66,7 +65,6 @@ type Props = {
   disabled?: boolean;
   colorConfigPath?: string;
   component?: Component;
-  values?: { id: string; symbol: LegendSymbol }[];
 };
 
 export const ColorPalette = ({
@@ -74,7 +72,6 @@ export const ColorPalette = ({
   disabled,
   colorConfigPath,
   component,
-  values,
 }: Props) => {
   const [state, dispatch] = useConfiguratorState(isConfiguring);
   const chartConfig = getChartConfig(state);
@@ -122,22 +119,21 @@ export const ColorPalette = ({
     value?: string,
     selectedPalette?: CustomPaletteType
   ) => {
+    if (!component) {
+      return;
+    }
+
     const regularPalette = palettes.find((p) => p.value === value);
     const customPalette =
       customColorPalettes?.find((p) => p.paletteId === value) ||
       selectedPalette;
 
-    if (!component) {
-      return;
-    }
-
-    if (customPalette && values) {
-      const colorMapping = Object.fromEntries(
-        values.map((value, index) => [
-          value.id,
-          customPalette.colors[index % customPalette.colors.length],
-        ])
-      );
+    if (customPalette) {
+      const colorMapping = mapValueIrisToColor({
+        paletteId: customPalette.paletteId,
+        dimensionValues: component.values,
+        customPalette,
+      });
 
       if (isColorInConfig(chartConfig)) {
         dispatch({
@@ -241,7 +237,6 @@ export const ColorPalette = ({
               container
               spacing={0.5}
               sx={{
-                display: "flex",
                 alignItems: "center",
                 "& .MuiGrid-item": {
                   display: "flex",
@@ -397,15 +392,13 @@ export const ColorPalette = ({
           colorConfigPath={colorConfigPath}
         />
       )}
-      {values && (
-        <ConfiguratorDrawer open={!!anchorEl} hideBackdrop>
-          <DrawerContent
-            onClose={(palette) => handleCloseCreateColorPalette(palette)}
-            type="categorical"
-            customColorPalettes={customColorPalettes}
-          />
-        </ConfiguratorDrawer>
-      )}
+      <ConfiguratorDrawer open={!!anchorEl} hideBackdrop>
+        <ColorPaletteDrawerContent
+          onClose={(palette) => handleCloseCreateColorPalette(palette)}
+          type="categorical"
+          customColorPalettes={customColorPalettes}
+        />
+      </ConfiguratorDrawer>
     </Box>
   );
 };

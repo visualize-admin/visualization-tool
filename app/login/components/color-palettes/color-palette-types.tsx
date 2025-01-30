@@ -17,7 +17,7 @@ import {
   createSequentialInterpolator,
 } from "@/palettes";
 import { theme } from "@/themes/federal";
-import { checkContrast } from "@/utils/check-contrast";
+import { hasEnoughContrast } from "@/utils/color-palette-utils";
 
 const ColorPickerMenu = dynamic(
   () =>
@@ -60,7 +60,7 @@ type ColorPaletteCreatorProps = {
   type: CustomPaletteType["type"];
 };
 
-const ColorPaletteCreator = (props: ColorPaletteCreatorProps) => {
+export const ColorPaletteCreator = (props: ColorPaletteCreatorProps) => {
   const { type } = props;
   switch (type) {
     case "diverging":
@@ -71,39 +71,40 @@ const ColorPaletteCreator = (props: ColorPaletteCreatorProps) => {
     case "sequential":
       return <SequentialColorPaletteCreator {...props} />;
     default:
-      return <CategoricalColorPaletteCreator {...props} />;
+      const _exhaustiveCheck: never = type;
+      return _exhaustiveCheck;
   }
 };
-
-export default ColorPaletteCreator;
 
 const SequentialColorPaletteCreator = (props: ColorPaletteCreatorProps) => {
   const { onUpdate, onAdd, colorValues } = props;
 
   const baseColor = colorValues[0];
 
-  const colorResult = createSequentialInterpolator(baseColor.color);
+  const colorResult = createSequentialInterpolator({
+    endColorHex: baseColor.color,
+  });
 
-  const lastStartingColorRef = useRef(colorResult.startingColor);
+  const lastStartingColorRef = useRef(colorResult.startingColorHex);
 
   useEffect(() => {
     if (
-      !colorResult.startingColor ||
-      colorResult.startingColor === lastStartingColorRef.current
+      !colorResult.startingColorHex ||
+      colorResult.startingColorHex === lastStartingColorRef.current
     ) {
       return;
     }
 
-    lastStartingColorRef.current = colorResult.startingColor;
+    lastStartingColorRef.current = colorResult.startingColorHex;
 
     if (colorValues[1]) {
-      if (colorValues[1].color !== colorResult.startingColor) {
-        onUpdate(colorResult.startingColor, colorValues[1].id);
+      if (colorValues[1].color !== colorResult.startingColorHex) {
+        onUpdate(colorResult.startingColorHex, colorValues[1].id);
       }
     } else {
-      onAdd(colorResult.startingColor);
+      onAdd(colorResult.startingColorHex);
     }
-  }, [colorResult.startingColor, colorValues, onAdd, onUpdate]);
+  }, [colorResult.startingColorHex, colorValues, onAdd, onUpdate]);
 
   return (
     <Flex flexDirection={"column"} gap={2}>
@@ -137,17 +138,15 @@ const DivergentColorPaletteCreator = (props: ColorPaletteCreatorProps) => {
 
   const addColorCondition = DIVERGING_MAX_ALLOWED_COLORS <= colorValues.length;
 
-  const startColor = colorValues[0];
-  const endColor = colorValues[1];
-  const midColor = colorValues[2];
+  const [startColorHex, endColorHex, midColorHex] = colorValues;
 
-  const colorResult = createDivergingInterpolator(
-    startColor.color,
-    endColor.color,
-    {
-      midColor: midColor?.color,
-    }
-  );
+  const colorResult = createDivergingInterpolator({
+    endColorHex: endColorHex.color,
+    startColorHex: startColorHex.color,
+    options: {
+      midColorHex: midColorHex?.color,
+    },
+  });
 
   return (
     <>
@@ -163,24 +162,24 @@ const DivergentColorPaletteCreator = (props: ColorPaletteCreatorProps) => {
           <Label htmlFor="custom-color-palette-start" smaller sx={{ mb: 1 }}>
             <Trans id="controls.custom-color-palettes.start" />
           </Label>
-          {startColor && (
+          {startColorHex && (
             <ColorSelectionRow
-              key={startColor.id}
-              colorValues={[startColor]}
-              {...startColor}
+              key={startColorHex.id}
+              colorValues={[startColorHex]}
+              {...startColorHex}
               onUpdate={onUpdate}
             />
           )}
         </Box>
-        {midColor && (
+        {midColorHex && (
           <Box sx={{ fontSize: "1rem", pb: 2, maxWidth: 304 }}>
             <Label htmlFor="custom-color-palette-mid" smaller sx={{ mb: 1 }}>
               <Trans id="controls.custom-color-palettes.mid" />
             </Label>
             <ColorSelectionRow
-              key={midColor.id}
-              colorValues={[midColor]}
-              {...midColor}
+              key={midColorHex.id}
+              colorValues={[midColorHex]}
+              {...midColorHex}
               onUpdate={onUpdate}
               onRemove={onRemove}
             />
@@ -190,11 +189,11 @@ const DivergentColorPaletteCreator = (props: ColorPaletteCreatorProps) => {
           <Label htmlFor="custom-color-palette-end" smaller sx={{ mb: 1 }}>
             <Trans id="controls.custom-color-palettes.end" />
           </Label>
-          {endColor && (
+          {endColorHex && (
             <ColorSelectionRow
-              key={endColor.id}
-              colorValues={[endColor]}
-              {...endColor}
+              key={endColorHex.id}
+              colorValues={[endColorHex]}
+              {...endColorHex}
               onUpdate={onUpdate}
             />
           )}
@@ -258,7 +257,7 @@ const ColorSelectionRow = (props: ColorSelectionRowProps) => {
   const { id, color, colorValues, onRemove, onUpdate } = props;
   const classes = useStyles();
 
-  const warningContrast = checkContrast(color);
+  const warningContrast = hasEnoughContrast(color);
 
   return (
     <Box className={classes.colorItem}>

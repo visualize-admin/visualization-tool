@@ -1,6 +1,5 @@
 import { Box } from "@mui/material";
 import { hexToHsva, HsvaColor, hsvaToHex } from "@uiw/react-color";
-import { nanoid } from "nanoid";
 import dynamic from "next/dynamic";
 import { useState } from "react";
 
@@ -11,6 +10,7 @@ import {
   SectionTitle,
 } from "@/configurator/components/chart-controls/section";
 import { IconButton } from "@/configurator/components/icon-button";
+import { createColorId } from "@/utils/color-palette-utils";
 
 import type { Meta, StoryObj } from "@storybook/react";
 
@@ -137,7 +137,7 @@ const ColorPickerStory = {
           Current (valid) color: {currentColor}
         </Box>
         <CustomColorPicker
-          defaultSelection={{ ...hexToHsva(currentColor), id: nanoid(4) }}
+          defaultSelection={{ ...hexToHsva(currentColor), id: createColorId() }}
           onChange={(color: HsvaColor) => setCurrentColor(hsvaToHex(color))}
         />
       </div>

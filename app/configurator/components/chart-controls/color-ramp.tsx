@@ -9,7 +9,16 @@ import {
   Typography,
 } from "@mui/material";
 import get from "lodash/get";
-import { MouseEventHandler, useEffect, useMemo, useRef, useState } from "react";
+import {
+  Dispatch,
+  MouseEvent,
+  MouseEventHandler,
+  SetStateAction,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import { EncodingFieldType } from "@/charts/chart-config-ui-options";
 import { Label } from "@/components/form";
@@ -25,15 +34,17 @@ import {
   createDivergingInterpolator,
   createSequentialInterpolator,
   divergingPalettes,
+  getColorInterpolator,
   sequentialPalettes,
 } from "@/palettes";
 import { getCustomColorPalettes } from "@/utils/chart-config/api";
+import { getFittingColorInterpolator } from "@/utils/color-palette-utils";
 import useEvent from "@/utils/use-event";
 import { useFetchData } from "@/utils/use-fetch-data";
 
 import { ConfiguratorDrawer } from "../drawer";
 
-import { DrawerContent } from "./create-color-palette";
+import { ColorPaletteDrawerContent } from "./drawer-color-palette-content";
 
 // Adapted from https://observablehq.com/@mbostock/color-ramp
 
@@ -113,14 +124,14 @@ export const ColorRampField = (props: ColorRampFieldProps) => {
     return palettes;
   }, []);
 
-  const currentPaletteName = get(
+  const currentPaletteId = get(
     chartConfig,
     `fields["${field}"].${path}.paletteId`
   );
 
-  const currentPalette = palettes.find((d) => d.value === currentPaletteName);
+  const currentPalette = palettes.find((d) => d.value === currentPaletteId);
   const currentCustomPalette = customColorPalettes?.find(
-    (d) => d.paletteId === currentPaletteName
+    (d) => d.paletteId === currentPaletteId
   );
 
   const onSelectedItemChange: SelectProps<typeof currentPalette>["onChange"] =
@@ -135,7 +146,7 @@ export const ColorRampField = (props: ColorRampFieldProps) => {
     });
 
   const handleChartConfigUpdate = (
-    value?: string,
+    value: string,
     selectedPalette?: CustomPaletteType
   ) => {
     if (value) {
@@ -148,7 +159,7 @@ export const ColorRampField = (props: ColorRampFieldProps) => {
           value: {
             ...get(chartConfig, `fields["${field}"].${path}`),
             paletteId: value,
-            paletteType: selectedPalette?.type as string,
+            paletteType: selectedPalette?.type,
             colors: selectedPalette?.colors ?? [],
           },
         },
@@ -167,28 +178,22 @@ export const ColorRampField = (props: ColorRampFieldProps) => {
       invalidate();
       setAnchorEl(undefined);
 
-      handleChartConfigUpdate(palette?.paletteId, palette);
+      if (palette) {
+        handleChartConfigUpdate(palette.paletteId, palette);
+      }
 
       anchorEl?.focus();
     }
   );
 
-  const selectedColorInterpolator = currentPalette?.interpolator
-    ? currentPalette.interpolator
-    : currentCustomPalette?.type === "sequential"
-      ? createSequentialInterpolator(
-          currentCustomPalette.colors[0],
-          currentCustomPalette.colors[1]
-        ).interpolator
-      : currentCustomPalette?.type == "diverging"
-        ? createDivergingInterpolator(
-            currentCustomPalette.colors[0],
-            currentCustomPalette.colors[1],
-            {
-              midColor: currentCustomPalette.colors[2] ?? undefined,
-            }
-          ).interpolator
-        : palettes[0].interpolator;
+  const selectedColorInterpolator = getFittingColorInterpolator(
+    {
+      currentPalette,
+      customPalette: currentCustomPalette,
+      defaultPalette: palettes[0],
+    },
+    getColorInterpolator
+  );
 
   return (
     <Box pb={2} sx={{ pointerEvents: disabled ? "none" : "auto" }}>
@@ -196,7 +201,7 @@ export const ColorRampField = (props: ColorRampFieldProps) => {
         <Trans id="controls.color.palette">Color palette</Trans>
       </Label>
       <Select
-        value={currentPaletteName}
+        value={currentPaletteId}
         disabled={disabled}
         sx={{
           width: "100%",
@@ -213,175 +218,30 @@ export const ColorRampField = (props: ColorRampFieldProps) => {
           );
         }}
       >
-        <ListSubheader>
-          <Trans id="controls.color.palette.sequential">Sequential</Trans>
-        </ListSubheader>
-        {user && (
-          <Button
-            onClick={(e) => {
-              setType("sequential");
-              handleOpenCreateColorPalette(e);
-            }}
-            variant="text"
-            sx={{
-              width: "100%",
-              paddingY: 3,
-              paddingX: 4,
-            }}
-          >
-            <Trans id="login.profile.my-color-palettes.add">
-              Add color palette
-            </Trans>
-          </Button>
-        )}
-        {user && (
-          <ListSubheader>
-            <Typography
-              variant="subtitle2"
-              fontWeight={700}
-              fontSize={10}
-              align="left"
-            >
-              <Trans id="controls.custom-color-palettes">
-                Custom color palettes
-              </Trans>
-            </Typography>
-          </ListSubheader>
-        )}
-        {user &&
-          customColorPalettes
-            ?.filter((palette) => palette.type === "sequential")
-            .map((palette) => {
-              return (
-                <MenuItem
-                  sx={{ flexDirection: "column", alignItems: "flex-start" }}
-                  key={`sequential-${palette.paletteId}`}
-                  value={palette.paletteId}
-                >
-                  <Typography variant="caption">{palette.name}</Typography>
-                  <ColorRamp
-                    colorInterpolator={
-                      createSequentialInterpolator(
-                        palette.colors[0],
-                        palette.colors[1]
-                      ).interpolator
-                    }
-                    nSteps={nSteps}
-                  />
-                </MenuItem>
-              );
-            })}
-        {user && (
-          <ListSubheader>
-            <Typography
-              variant="subtitle2"
-              fontWeight={700}
-              fontSize={10}
-              align="left"
-            >
-              <Trans id="controls.visualize-color-palette">
-                Visualize color palettes
-              </Trans>
-            </Typography>
-          </ListSubheader>
-        )}
-        {sequentialPalettes.map(({ value, interpolator }, i) => (
-          <MenuItem
-            sx={{ flexDirection: "column", alignItems: "flex-start" }}
-            key={`sequential-${i}`}
-            value={value}
-          >
-            <ColorRamp colorInterpolator={interpolator} nSteps={nSteps} />
-          </MenuItem>
-        ))}
-        <ListSubheader>
-          <Trans id="controls.color.palette.diverging">Diverging</Trans>
-        </ListSubheader>
-        {user && (
-          <Button
-            onClick={(e) => {
-              setType("diverging");
-              handleOpenCreateColorPalette(e);
-            }}
-            variant="text"
-            sx={{
-              width: "100%",
-              paddingY: 3,
-              paddingX: 4,
-            }}
-          >
-            <Trans id="login.profile.my-color-palettes.add">
-              Add color palette
-            </Trans>
-          </Button>
-        )}
-        {user && (
-          <ListSubheader>
-            <Typography
-              variant="subtitle2"
-              fontWeight={700}
-              fontSize={10}
-              align="left"
-            >
-              <Trans id="controls.custom-color-palettes">
-                Custom color palettes
-              </Trans>
-            </Typography>
-          </ListSubheader>
-        )}
-        {user &&
-          customColorPalettes
-            ?.filter((palette) => palette.type === "diverging")
-            .map((palette) => {
-              return (
-                <MenuItem
-                  sx={{ flexDirection: "column", alignItems: "flex-start" }}
-                  key={`diverging-${palette.paletteId}`}
-                  value={palette.paletteId}
-                >
-                  <Typography variant="caption">{palette.name}</Typography>
-                  <ColorRamp
-                    colorInterpolator={
-                      createDivergingInterpolator(
-                        palette.colors[0],
-                        palette.colors[1],
-                        {
-                          midColor: palette.colors[2] ?? undefined,
-                        }
-                      ).interpolator
-                    }
-                    nSteps={nSteps}
-                  />
-                </MenuItem>
-              );
-            })}
-        {user && (
-          <ListSubheader>
-            <Typography
-              variant="subtitle2"
-              fontWeight={700}
-              fontSize={10}
-              align="left"
-            >
-              <Trans id="controls.visualize-color-palette">
-                Visualize color palettes
-              </Trans>
-            </Typography>
-          </ListSubheader>
-        )}
-        {divergingPalettes.map(({ value, interpolator }, i) => (
-          <MenuItem
-            sx={{ flexDirection: "column", alignItems: "flex-start" }}
-            key={`diverging-${i}`}
-            value={value}
-          >
-            <ColorRamp colorInterpolator={interpolator} nSteps={nSteps} />
-          </MenuItem>
-        ))}
+        {[
+          ...PaletteSection({
+            type: "sequential",
+            onTypeSelect: setType,
+            nSteps: nSteps,
+            customColorPalettes: customColorPalettes,
+            colorPalettes: sequentialPalettes,
+            handleAddColorPalette: handleOpenCreateColorPalette,
+            customInterpolator: createSequentialInterpolator,
+          }),
+          ...PaletteSection({
+            type: "diverging",
+            onTypeSelect: setType,
+            nSteps: nSteps,
+            customColorPalettes: customColorPalettes,
+            colorPalettes: divergingPalettes,
+            handleAddColorPalette: handleOpenCreateColorPalette,
+            customInterpolator: createDivergingInterpolator,
+          }),
+        ]}
       </Select>
       {type && (
         <ConfiguratorDrawer open={!!anchorEl} hideBackdrop>
-          <DrawerContent
+          <ColorPaletteDrawerContent
             onClose={(palette) => handleCloseCreateColorPalette(palette)}
             type={type}
             customColorPalettes={customColorPalettes}
@@ -390,4 +250,124 @@ export const ColorRampField = (props: ColorRampFieldProps) => {
       )}
     </Box>
   );
+};
+
+type PaletteSectionProps = {
+  nSteps?: number;
+  customColorPalettes?: CustomPaletteType[];
+  colorPalettes: { value: string; interpolator: (t: number) => string }[];
+  handleAddColorPalette: (
+    e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
+  ) => void;
+  onTypeSelect: Dispatch<SetStateAction<CustomPaletteType["type"] | undefined>>;
+  customInterpolator:
+    | typeof createDivergingInterpolator
+    | typeof createSequentialInterpolator;
+  type: CustomPaletteType["type"];
+};
+
+const PaletteSection = (props: PaletteSectionProps) => {
+  const user = useUser();
+  const {
+    type,
+    nSteps,
+    customColorPalettes,
+    colorPalettes,
+    onTypeSelect,
+    customInterpolator,
+    handleAddColorPalette,
+  } = props;
+
+  return [
+    type === "diverging" ? (
+      <ListSubheader>
+        <Trans id="controls.color.palette.diverging">Diverging</Trans>
+      </ListSubheader>
+    ) : (
+      <ListSubheader>
+        <Trans id="controls.color.palette.sequential">Sequential</Trans>
+      </ListSubheader>
+    ),
+    user && (
+      <Button
+        onClick={(e) => {
+          onTypeSelect(type);
+          handleAddColorPalette(e);
+        }}
+        variant="text"
+        sx={{
+          width: "100%",
+          paddingY: 3,
+          paddingX: 4,
+        }}
+      >
+        <Trans id="login.profile.my-color-palettes.add">
+          Add color palette
+        </Trans>
+      </Button>
+    ),
+    user && (
+      <ListSubheader>
+        <Typography
+          variant="subtitle2"
+          fontWeight={700}
+          fontSize={10}
+          align="left"
+        >
+          <Trans id="controls.custom-color-palettes">
+            Custom color palettes
+          </Trans>
+        </Typography>
+      </ListSubheader>
+    ),
+    user &&
+      customColorPalettes
+        ?.filter((palette) => palette.type === type)
+        .map((palette) => {
+          return (
+            <MenuItem
+              sx={{ flexDirection: "column", alignItems: "flex-start" }}
+              key={`${type}-${palette.paletteId}`}
+              value={palette.paletteId}
+            >
+              <Typography variant="caption">{palette.name}</Typography>
+              <ColorRamp
+                colorInterpolator={
+                  customInterpolator({
+                    endColorHex: palette.colors[0],
+                    startColorHex: palette.colors[1],
+                    options: {
+                      midColorHex: palette.colors[2] ?? undefined,
+                    },
+                  }).interpolator
+                }
+                nSteps={nSteps}
+              />
+            </MenuItem>
+          );
+        }),
+    user && (
+      <ListSubheader>
+        <Typography
+          variant="subtitle2"
+          fontWeight={700}
+          fontSize={10}
+          align="left"
+        >
+          <Trans id="controls.visualize-color-palette">
+            Visualize color palettes
+          </Trans>
+        </Typography>
+      </ListSubheader>
+    ),
+    colorPalettes.map(({ value, interpolator }, i) => (
+      <MenuItem
+        sx={{ flexDirection: "column", alignItems: "flex-start" }}
+        key={`${type}-${i}`}
+        value={value}
+      >
+        <ColorRamp colorInterpolator={interpolator} nSteps={nSteps} />
+      </MenuItem>
+    )),
+  ];
 };

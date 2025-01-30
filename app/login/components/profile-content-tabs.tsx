@@ -11,7 +11,7 @@ import { ProfileVisualizationsTable } from "@/login/components/profile-tables";
 import { useRootStyles } from "@/login/utils";
 import useEvent from "@/utils/use-event";
 
-import { default as ProfileColorPaletteContent } from "./color-palettes/profile-color-palette-content";
+import { ProfileColorPaletteContent } from "./color-palettes/profile-color-palette-content";
 
 const useStyles = makeStyles<Theme>((theme) => ({
   section: {

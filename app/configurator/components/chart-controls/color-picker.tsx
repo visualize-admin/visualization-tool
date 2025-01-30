@@ -3,7 +3,6 @@ import { Box, Button, Popover, styled, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { hexToHsva, hsvaToHex } from "@uiw/react-color";
 import { color as d3Color } from "d3-color";
-import { nanoid } from "nanoid";
 import dynamic from "next/dynamic";
 import { MouseEventHandler, useCallback, useMemo, useRef } from "react";
 
@@ -11,6 +10,7 @@ import useDisclosure from "@/components/use-disclosure";
 import VisuallyHidden from "@/components/visually-hidden";
 import { Icon } from "@/icons";
 import { ColorItem } from "@/palettes";
+import { createColorId } from "@/utils/color-palette-utils";
 
 //have to import dynamically to avoid @uiw/react-color dependency issues with the server
 const CustomColorPicker = dynamic(
@@ -101,7 +101,7 @@ export const ColorPickerMenu = (props: Props) => {
   const popoverRef = useRef<HTMLDivElement>(null);
 
   const initialSelected = useMemo(() => {
-    return { ...hexToHsva(selectedColor), id: colorId ?? nanoid(4) };
+    return { ...hexToHsva(selectedColor), id: colorId ?? createColorId() };
   }, [selectedColor, colorId]);
 
   const handleColorChange = useCallback(
@@ -172,7 +172,7 @@ export const ColorPickerMenu = (props: Props) => {
               (typeof props.colors[0] === "string"
                 ? props.colors.map((color) => ({
                     color: color,
-                    id: nanoid(4),
+                    id: createColorId(),
                   }))
                 : props.colors) as ColorItem[]
             }

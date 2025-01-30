@@ -3,17 +3,17 @@ import { t } from "@lingui/macro";
 import { Trans } from "@lingui/react";
 import { Box, Button, IconButton, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { nanoid } from "nanoid";
 import { forwardRef, useState } from "react";
 
 import Flex from "@/components/flex";
 import { Input } from "@/components/form";
 import { CustomPaletteType } from "@/config-types";
 import SvgIcClose from "@/icons/components/IcClose";
-import ColorPaletteCreator from "@/login/components/color-palettes/color-palette-types";
-import { ColorItem, defaultColorValues } from "@/palettes";
+import { ColorPaletteCreator } from "@/login/components/color-palettes/color-palette-types";
+import { ColorItem, getDefaultColorValues } from "@/palettes";
 import { theme } from "@/themes/federal";
 import { createCustomColorPalette } from "@/utils/chart-config/api";
+import { createColorId } from "@/utils/color-palette-utils";
 import { useMutate } from "@/utils/use-fetch-data";
 
 import { DRAWER_WIDTH } from "../drawer";
@@ -44,7 +44,7 @@ const useStyles = makeStyles({
   },
 });
 
-export const DrawerContent = forwardRef<
+export const ColorPaletteDrawerContent = forwardRef<
   HTMLDivElement,
   {
     onClose: (palette?: CustomPaletteType) => void;
@@ -56,7 +56,7 @@ export const DrawerContent = forwardRef<
   const classes = useStyles();
 
   const [colorValues, setColorValues] = useState<ColorItem[]>(() =>
-    defaultColorValues(type, [])
+    getDefaultColorValues(type, [])
   );
 
   const [titleInput, setTitleInput] = useState<string>("");
@@ -84,7 +84,10 @@ export const DrawerContent = forwardRef<
 
   const addColor = useEvent(() => {
     setColorValues((prevColors) => {
-      const newColors = [...prevColors, { color: "#000000", id: nanoid(4) }];
+      const newColors = [
+        ...prevColors,
+        { color: "#000000", id: createColorId() },
+      ];
       return newColors;
     });
   });

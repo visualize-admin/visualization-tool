@@ -7,13 +7,13 @@ import {
   Hue,
   Saturation,
 } from "@uiw/react-color";
-import { nanoid } from "nanoid";
 import dynamic from "next/dynamic";
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
 
 import Flex from "@/components/flex";
 import { Input } from "@/components/form";
 import { ColorItem } from "@/palettes";
+import { createColorId } from "@/utils/color-palette-utils";
 
 import { Swatch } from "./chart-controls/color-picker";
 
@@ -40,9 +40,8 @@ type CustomColorPickerProps = {
 const CustomColorPicker = ({
   onChange,
   colorSwatches,
-  defaultSelection = { h: 0, s: 0, v: 68, a: 1, id: nanoid(4) },
+  defaultSelection = { h: 0, s: 0, v: 68, a: 1, id: createColorId() },
 }: CustomColorPickerProps) => {
-  ("");
   const [hsva, setHsva] = useState(defaultSelection);
   const [hexInput, setHexInput] = useState(hsvaToHex(defaultSelection));
   const classes = useColorPickerStyles();

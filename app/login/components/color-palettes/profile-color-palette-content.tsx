@@ -28,7 +28,10 @@ type ProfileContentProps = {
   userId: number;
 };
 
-const ProfileColorPaletteContent = ({ title, userId }: ProfileContentProps) => {
+export const ProfileColorPaletteContent = ({
+  title,
+  userId,
+}: ProfileContentProps) => {
   const { data: customColorPalettes, invalidate } = useFetchData({
     queryKey: ["colorPalettes", userId],
     queryFn: getCustomColorPalettes,
@@ -37,51 +40,51 @@ const ProfileColorPaletteContent = ({ title, userId }: ProfileContentProps) => {
     },
   });
 
-  const [openColorPaletteConfig, setOpenColorPaletteConifg] = useState(false);
-  const [paletteIdForEdit, setPaletteIdForEdit] = useState<string | null>(null);
+  type FormMode = "add" | "edit" | "view";
+  const [formMode, setFormMode] = useState<FormMode>("view");
+  const [selectedPaletteId, setSelectedPaletteId] = useState<string | null>(
+    null
+  );
 
-  const editPalette = useEvent((paletteId: string) => {
-    setPaletteIdForEdit(paletteId);
-    setOpenColorPaletteConifg(true);
-  });
-  const createPalette = useEvent(() => {
-    setPaletteIdForEdit(null);
-    setOpenColorPaletteConifg(true);
+  const showAddForm = useEvent(() => {
+    setSelectedPaletteId(null);
+    setFormMode("add");
   });
 
-  const completeColorPaletteConfig = useEvent(() => {
+  const showEditForm = useEvent((paletteId: string) => {
+    setSelectedPaletteId(paletteId);
+    setFormMode("edit");
+  });
+
+  const returnToView = useEvent(() => {
     invalidate();
-    setOpenColorPaletteConifg(false);
+    setFormMode("view");
   });
+
+  const selectedPalette = customColorPalettes?.find(
+    (palette) => palette.paletteId === selectedPaletteId
+  );
+
   return (
-    <SectionContent title={openColorPaletteConfig ? undefined : title}>
-      {openColorPaletteConfig ? (
-        <ProfileColorPaletteForm
-          palette={customColorPalettes?.find(
-            (palette) => palette.paletteId === paletteIdForEdit
-          )}
-          onBack={completeColorPaletteConfig}
-        />
-      ) : (
-        <Flex flexDirection={"column"} width={385} gap={"30px"}>
-          {customColorPalettes && customColorPalettes?.length > 0 ? (
-            <Flex flexDirection={"column"} gap={1}>
-              {customColorPalettes.map((palette) => {
-                return (
-                  <ColorPaletteRow
-                    key={palette.paletteId}
-                    paletteId={palette.paletteId}
-                    name={palette.name}
-                    colors={palette.colors}
-                    type={palette.type}
-                    onDelete={invalidate}
-                    onEdit={editPalette}
-                  />
-                );
-              })}
+    <SectionContent title={formMode === "view" ? title : undefined}>
+      {formMode === "view" ? (
+        <Flex flexDirection="column" width={385} gap="30px">
+          {customColorPalettes && customColorPalettes.length > 0 ? (
+            <Flex flexDirection="column" gap={1}>
+              {customColorPalettes.map((palette) => (
+                <ColorPaletteRow
+                  key={palette.paletteId}
+                  paletteId={palette.paletteId}
+                  name={palette.name}
+                  colors={palette.colors}
+                  type={palette.type}
+                  onDelete={invalidate}
+                  onEdit={showEditForm}
+                />
+              ))}
             </Flex>
           ) : (
-            <Typography variant={"body2"}>
+            <Typography variant="body2">
               <Trans id="login.profile.my-color-palettes.description" />
             </Typography>
           )}
@@ -90,17 +93,21 @@ const ProfileColorPaletteContent = ({ title, userId }: ProfileContentProps) => {
             variant="contained"
             startIcon={<Icon name="add" />}
             sx={{ width: "fit-content" }}
-            onClick={createPalette}
+            onClick={showAddForm}
           >
             <Trans id="login.profile.my-color-palettes.add" />
           </Button>
         </Flex>
+      ) : (
+        <ProfileColorPaletteForm
+          formMode={formMode}
+          palette={formMode === "edit" ? selectedPalette : undefined}
+          onBack={returnToView}
+        />
       )}
     </SectionContent>
   );
 };
-
-export default ProfileColorPaletteContent;
 
 const EditButton = styled(Button)({
   padding: 0,
@@ -245,7 +252,10 @@ const ColorPaletteDisplay = ({
           height={20}
           width={240}
           colorInterpolator={
-            createSequentialInterpolator(colors[0], colors[1]).interpolator
+            createSequentialInterpolator({
+              endColorHex: colors[0],
+              startColorHex: colors[1],
+            }).interpolator
           }
         />
       );
@@ -255,21 +265,18 @@ const ColorPaletteDisplay = ({
           height={20}
           width={240}
           colorInterpolator={
-            createDivergingInterpolator(colors[0], colors[1], {
-              midColor: colors[2] ?? undefined,
+            createDivergingInterpolator({
+              endColorHex: colors[0],
+              startColorHex: colors[1],
+              options: {
+                midColorHex: colors[2] ?? undefined,
+              },
             }).interpolator
           }
         />
       );
     default:
-      return (
-        <>
-          {colors.map((color, i) => (
-            <Grid item key={`${paletteId}-${color}-${i}`}>
-              <ColorSquare color={color as string} />
-            </Grid>
-          ))}
-        </>
-      );
+      const _exhaustiveCheck: never = type;
+      return _exhaustiveCheck;
   }
 };
