@@ -402,7 +402,7 @@ const DownloadPNGImageMenuActionItem = ({
   chartKey: string;
   components: Component[];
 } & Omit<UseScreenshotProps, "type" | "modifyNode" | "pngMetadata">) => {
-  const modifyNode = useModifyNode(configKey);
+  const modifyNode = useModifyNode();
   const metadata = usePNGMetadata({
     configKey,
     chartKey,
@@ -428,7 +428,7 @@ const DownloadPNGImageMenuActionItem = ({
   );
 };
 
-const useModifyNode = (configKey?: string) => {
+const useModifyNode = () => {
   const theme = useTheme();
   const chartWithFiltersClasses = useChartWithFiltersClasses();
 
@@ -455,14 +455,13 @@ const useModifyNode = (configKey?: string) => {
         `.${CHART_FOOTNOTES_CLASS_NAME}`
       );
 
-      if (footnotes && configKey) {
+      if (footnotes) {
         const container = document.createElement("div");
         footnotes.appendChild(container);
         const root = createRoot(container);
         root.render(
           <ThemeProvider theme={theme}>
             <VisualizeLink
-              configKey={configKey}
               createdWith={t({ id: "metadata.link.created.with" })}
             />
           </ThemeProvider>
@@ -487,7 +486,7 @@ const useModifyNode = (configKey?: string) => {
       // to avoid changing the color of other SVG elements (charts).
       select(clonedNode).selectAll("text").style("fill", color);
     },
-    [chartWithFiltersClasses.chartWithFilters, theme, configKey]
+    [chartWithFiltersClasses.chartWithFilters, theme]
   );
 };
 

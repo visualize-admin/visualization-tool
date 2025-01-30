@@ -601,7 +601,6 @@ const ChartPreviewInner = ({
                   )}
                 </TablePreviewWrapper>
                 <ChartFootnotes
-                  configKey={state?.key}
                   dataSource={dataSource}
                   chartConfig={chartConfig}
                   dashboardFilters={state.dashboardFilters}

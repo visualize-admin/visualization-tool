@@ -115,7 +115,7 @@ export const ChartFootnotes = ({
           ) : null}
         </div>
       ))}
-      {showVisualizeLink && configKey ? (
+      {showVisualizeLink ? (
         <VisualizeLink
           configKey={configKey}
           createdWith={t({ id: "metadata.link.created.with" })}
@@ -299,11 +299,11 @@ export const VisualizeLink = ({
   configKey,
 }: {
   createdWith: ReactNode;
-  configKey: string;
+  configKey?: string;
 }) => {
   const locale = useLocale();
 
-  return (
+  return configKey ? (
     <Typography variant="caption" color="grey.600" {...DISABLE_SCREENSHOT_ATTR}>
       {createdWith}
       <Link
@@ -317,5 +317,5 @@ export const VisualizeLink = ({
         visualize.admin.ch
       </Link>
     </Typography>
-  );
+  ) : null;
 };
