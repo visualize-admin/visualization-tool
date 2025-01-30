@@ -11,7 +11,9 @@ You can also check the
 
 # Unreleased
 
-Nothing yet.
+- Fixes
+  - Weekly-based temporal dimensions now work correctly when used in dashboard
+    filters
 
 # [5.2.1] - 2025-01-29
 
