@@ -173,8 +173,9 @@ export const ChartPublished = ({
                 layoutType={state.layout.layout}
                 renderBlock={renderBlock}
               />
-              {state.chartConfigs.length !== 1 && (
+              {state.chartConfigs.length !== 1 && state.key && (
                 <VisualizeLink
+                  configKey={state.key}
                   createdWith={t({ id: "metadata.link.created.with" })}
                 />
               )}
@@ -456,6 +457,7 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
               )}
             </TablePreviewWrapper>
             <ChartFootnotes
+              configKey={configKey}
               dataSource={dataSource}
               chartConfig={chartConfig}
               dashboardFilters={state.dashboardFilters}

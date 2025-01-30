@@ -50,12 +50,14 @@ export const ChartFootnotes = ({
   dashboardFilters,
   components,
   showVisualizeLink = false,
+  configKey,
 }: {
   dataSource: DataSource;
   chartConfig: ChartConfig;
   dashboardFilters: DashboardFiltersConfig | undefined;
   components: Component[];
   showVisualizeLink?: boolean;
+  configKey?: string;
 }) => {
   const locale = useLocale();
   const usedComponents = useMemo(() => {
@@ -113,8 +115,11 @@ export const ChartFootnotes = ({
           ) : null}
         </div>
       ))}
-      {showVisualizeLink ? (
-        <VisualizeLink createdWith={t({ id: "metadata.link.created.with" })} />
+      {showVisualizeLink && configKey ? (
+        <VisualizeLink
+          configKey={configKey}
+          createdWith={t({ id: "metadata.link.created.with" })}
+        />
       ) : null}
     </Box>
   );
