@@ -18,6 +18,7 @@ You can also check the
     mode in Chrome
   - Tall dashboard layouts now correctly align chart elements between columns in
     published mode
+  - PNG image download now correctly retains Y axis label colors in combo charts
 
 # [5.2.1] - 2025-01-29
 
