@@ -289,14 +289,20 @@ const ChartFootnotesComboLineSingle = ({
   ) : null;
 };
 
-export const VisualizeLink = ({ createdWith }: { createdWith: ReactNode }) => {
+export const VisualizeLink = ({
+  createdWith,
+  configKey,
+}: {
+  createdWith: ReactNode;
+  configKey: string;
+}) => {
   const locale = useLocale();
 
   return (
     <Typography variant="caption" color="grey.600" {...DISABLE_SCREENSHOT_ATTR}>
       {createdWith}
       <Link
-        href={`https://visualize.admin.ch/${locale}/`}
+        href={`https://visualize.admin.ch/${locale}/v/${configKey}`}
         target="_blank"
         rel="noopener noreferrer"
         color="primary.main"
