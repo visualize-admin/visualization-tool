@@ -18,6 +18,7 @@ You can also check the
     mode in Chrome
   - Tall dashboard layouts now correctly align chart elements between columns in
     published mode
+  - Map legend items do not overlap anymore in PNG image downloads
 - Style
   - Improved vertical spacing between map legend items
 
