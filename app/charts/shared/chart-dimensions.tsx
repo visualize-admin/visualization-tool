@@ -19,6 +19,7 @@ import {
 import { getTextWidth } from "@/utils/get-text-width";
 
 type ComputeChartPaddingProps = {
+  xLabelPresent?: boolean;
   yScale: ScaleLinear<number, number>;
   width: number;
   height: number;
@@ -37,6 +38,7 @@ const computeChartPadding = (
   }
 ) => {
   const {
+    xLabelPresent,
     yScale,
     height,
     interactiveFiltersConfig,
@@ -72,7 +74,7 @@ const computeChartPadding = (
       ? BRUSH_BOTTOM_SPACE
       : isFlipped
         ? 15 // Eyeballed value
-        : 48;
+        : 48 + (xLabelPresent ? 20 : 0);
 
   if (bandDomain?.length) {
     bottom +=
@@ -85,6 +87,7 @@ const computeChartPadding = (
 
 export const useChartPadding = (props: ComputeChartPaddingProps) => {
   const {
+    xLabelPresent,
     yScale,
     width,
     height,
@@ -98,6 +101,7 @@ export const useChartPadding = (props: ComputeChartPaddingProps) => {
   const [{ dashboardFilters }] = useConfiguratorState(hasChartConfigs);
   return useMemo(() => {
     return computeChartPadding({
+      xLabelPresent,
       yScale,
       width,
       height,
@@ -110,6 +114,7 @@ export const useChartPadding = (props: ComputeChartPaddingProps) => {
       isFlipped,
     });
   }, [
+    xLabelPresent,
     yScale,
     width,
     height,

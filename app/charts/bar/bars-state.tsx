@@ -193,6 +193,7 @@ const useBarsState = (
   ]);
 
   const { left, bottom } = useChartPadding({
+    xLabelPresent: !!xMeasure.label,
     yScale: paddingYScale,
     width,
     height,
@@ -208,25 +209,25 @@ const useBarsState = (
   const margins = {
     top: 55,
     right,
-    bottom: bottom + 65,
+    bottom: bottom + 45,
     left,
   };
 
   const barCount = yScale.domain().length;
 
-  // Here we adjust the height to make sure the bars have a minimum height and are legible
-  const adjustedHeight =
-    barCount * MIN_BAR_HEIGHT > height
-      ? barCount * MIN_BAR_HEIGHT
-      : height - margins.bottom;
-
-  const bounds = useChartBounds(width, margins, adjustedHeight);
+  const bounds = useChartBounds(width, margins, height);
   const { chartWidth, chartHeight } = bounds;
 
+  // Here we adjust the height to make sure the bars have a minimum height and are legible
+  const adjustedChartHeight =
+    barCount * MIN_BAR_HEIGHT > chartHeight
+      ? barCount * MIN_BAR_HEIGHT
+      : chartHeight;
+
   xScale.range([0, chartWidth]);
-  yScaleInteraction.range([0, adjustedHeight]);
-  yScaleTimeRange.range([0, adjustedHeight]);
-  yScale.range([0, adjustedHeight]);
+  yScaleInteraction.range([0, adjustedChartHeight]);
+  yScaleTimeRange.range([0, adjustedChartHeight]);
+  yScale.range([0, adjustedChartHeight]);
 
   const isMobile = useIsMobile();
 
@@ -274,7 +275,7 @@ const useBarsState = (
     chartType: "bar",
     bounds: {
       ...bounds,
-      chartHeight: adjustedHeight,
+      chartHeight: adjustedChartHeight,
     },
     chartData,
     allData,
