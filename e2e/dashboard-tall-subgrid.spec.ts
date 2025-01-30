@@ -1,3 +1,5 @@
+import { argosScreenshot } from "@argos-ci/playwright";
+
 import { setup } from "./common";
 
 const { expect, test } = setup();
@@ -19,5 +21,6 @@ test("elements should be aligned with each other in tall dashboard's columns", a
   const secondChartBox = await secondChart.boundingBox();
   const thirdChartBox = await thirdChart.boundingBox();
 
+  await argosScreenshot(page, "dashboard-tall-subgrid");
   expect(secondChartBox.y).toEqual(thirdChartBox.y);
 });
