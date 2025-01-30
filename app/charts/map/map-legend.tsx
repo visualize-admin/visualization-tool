@@ -98,7 +98,7 @@ export const MapLegend = ({
   const formatters = useDimensionFormatters(measureDimensions);
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+    <Box>
       <Flex sx={{ flexWrap: "wrap", gap: 4 }}>
         {areaLayer && showAreaLegend && (
           <Box>

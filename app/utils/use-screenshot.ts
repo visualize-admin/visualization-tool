@@ -3,7 +3,6 @@ import { toPng, toSvg } from "html-to-image";
 import { addMetadata } from "meta-png";
 import { useCallback, useState } from "react";
 
-import { CHART_SVG_ID } from "@/charts/shared/containers";
 import { TABLE_PREVIEW_WRAPPER_CLASS_NAME } from "@/components/chart-table-preview";
 import { animationFrame } from "@/utils/animation-frame";
 
@@ -128,14 +127,14 @@ const makeScreenshot = async ({
   const tableWrapper = clonedNode.querySelector(
     `.${TABLE_PREVIEW_WRAPPER_CLASS_NAME}`
   ) as HTMLElement | null;
-  const chartSvg = tableWrapper?.querySelector(`#${CHART_SVG_ID}`);
-  const chartSvgHeight = chartSvg?.getAttribute("height");
-  const chartSvgParent = chartSvg?.parentElement;
+  const svg = tableWrapper?.querySelector("svg");
+  const svgHeight = svg?.getAttribute("height");
+  const svgParent = svg?.parentElement;
 
-  if (tableWrapper && chartSvgHeight && chartSvgParent) {
+  if (tableWrapper && svgHeight && svgParent) {
     tableWrapper.style.height = "fit-content";
-    chartSvgParent.style.height = `${chartSvgHeight}px`;
-    chartSvgParent.style.overflow = "visible";
+    svgParent.style.height = `${svgHeight}px`;
+    svgParent.style.overflow = "visible";
   }
 
   await animationFrame();
