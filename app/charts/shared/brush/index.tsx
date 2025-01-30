@@ -119,27 +119,19 @@ export const BrushTime = () => {
 
   // Brush dimensions
   const { width, margins, chartHeight } = bounds;
+  const scaleTimeRange =
+    chartType === "bar" ? yScaleTimeRange : xScaleTimeRange;
   const brushLabelsWidth =
-    chartType === "bar"
-      ? getTextWidth(formatDate(yScaleTimeRange.domain()[0]), {
-          fontSize: labelFontSize,
-        }) +
-        getTextWidth(" - ", { fontSize: labelFontSize }) +
-        getTextWidth(formatDate(yScaleTimeRange.domain()[1]), {
-          fontSize: labelFontSize,
-        }) +
-        HANDLE_HEIGHT
-      : getTextWidth(formatDate(xScaleTimeRange.domain()[0]), {
-          fontSize: labelFontSize,
-        }) +
-        getTextWidth(" - ", { fontSize: labelFontSize }) +
-        getTextWidth(formatDate(xScaleTimeRange.domain()[1]), {
-          fontSize: labelFontSize,
-        }) +
-        HANDLE_HEIGHT;
+    getTextWidth(formatDate(scaleTimeRange.domain()[0]), {
+      fontSize: labelFontSize,
+    }) +
+    getTextWidth(" - ", { fontSize: labelFontSize }) +
+    getTextWidth(formatDate(scaleTimeRange.domain()[1]), {
+      fontSize: labelFontSize,
+    }) +
+    HANDLE_HEIGHT;
   const brushWidth = width - brushLabelsWidth - margins.right;
-  const brushWidthScale =
-    chartType === "bar" ? yScaleTimeRange.copy() : xScaleTimeRange.copy();
+  const brushWidthScale = scaleTimeRange.copy();
 
   brushWidthScale.range([0, brushWidth]);
 
