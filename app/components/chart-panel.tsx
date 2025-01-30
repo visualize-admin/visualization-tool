@@ -13,10 +13,10 @@ import { ChartSelectionTabs } from "@/components/chart-selection-tabs";
 import { DashboardInteractiveFilters } from "@/components/dashboard-interactive-filters";
 import { useSyncTextBlockHeight } from "@/components/text-block";
 import { Layout, LayoutDashboard } from "@/config-types";
-import { hasChartConfigs, isLayouting, LayoutBlock } from "@/configurator";
+import { hasChartConfigs, LayoutBlock } from "@/configurator";
 import { useConfiguratorState } from "@/src";
 
-const useStyles = makeStyles<Theme, { editable?: boolean }>((theme) => ({
+const useStyles = makeStyles<Theme>((theme) => ({
   panelLayout: {
     containerType: "inline-size",
     display: "flex",
@@ -56,7 +56,7 @@ export type ChartWrapperProps = BoxProps & {
 export const ChartWrapper = forwardRef<HTMLDivElement, ChartWrapperProps>(
   (props, ref) => {
     const { children, editing, layoutType, ...rest } = props;
-    const classes = useStyles({});
+    const classes = useStyles();
 
     return (
       <Box
@@ -106,8 +106,7 @@ export const ChartPanelLayout = ({
   ...rest
 }: ChartPanelLayoutProps) => {
   const [state] = useConfiguratorState(hasChartConfigs);
-  const layouting = isLayouting(state);
-  const classes = useStyles({ editable: layouting });
+  const classes = useStyles();
   const Wrapper = Wrappers[layoutType];
   const { layout } = state;
   const { blocks } = layout;
