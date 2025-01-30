@@ -473,7 +473,13 @@ const ChartPreviewInner = ({
   }, [dimensions, measures]);
 
   return (
-    <Box ref={ref} className={chartClasses.root}>
+    <Box
+      ref={ref}
+      className={clsx(
+        chartClasses.root,
+        configuring ? chartClasses.editing : chartClasses.pastEditing
+      )}
+    >
       {children}
       <ChartErrorBoundary resetKeys={[state]}>
         {hasChartConfigs(state) && (
