@@ -484,15 +484,24 @@ const useModifyNode = () => {
       // and not have underlines.
       const color = theme.palette.grey[700];
       select(clonedNode)
-        .selectAll(`p, button, a, span, div, li, h1, h2, h3, h4, h5, h6`)
+        .selectAll(
+          `:is(p, button, a, span, div, li, h1, h2, h3, h4, h5, h6):not([${DISABLE_SCREENSHOT_COLOR_WIPE_KEY}='true'])`
+        )
         .style("color", color)
         .style("text-decoration", "none");
       // SVG elements have fill instead of color. Here we only target text elements,
       // to avoid changing the color of other SVG elements (charts).
-      select(clonedNode).selectAll("text").style("fill", color);
+      select(clonedNode)
+        .selectAll(`text:not([${DISABLE_SCREENSHOT_COLOR_WIPE_KEY}='true'])`)
+        .style("fill", color);
     },
     [chartWithFiltersClasses.chartWithFilters, theme]
   );
+};
+
+const DISABLE_SCREENSHOT_COLOR_WIPE_KEY = "data-disable-screenshot-color";
+export const DISABLE_SCREENSHOT_COLOR_WIPE_ATTR = {
+  [DISABLE_SCREENSHOT_COLOR_WIPE_KEY]: true,
 };
 
 const usePNGMetadata = ({
