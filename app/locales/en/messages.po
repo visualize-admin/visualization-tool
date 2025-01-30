@@ -593,6 +593,10 @@ msgstr "Use distinct, high-contrast colors. Avoid using too many colors, maximum
 msgid "controls.custom-color-palettes.contrast-warning"
 msgstr "The selected color lacks sufficient contrast. Consider using a darker color for a sequential palette."
 
+#: app/login/components/color-palettes/profile-color-palette-form.tsx
+msgid "controls.custom-color-palettes.create-palette"
+msgstr "controls.custom-color-palettes.create-palette"
+
 #: app/login/components/color-palettes/color-palette-types.tsx
 msgid "controls.custom-color-palettes.end"
 msgstr "Ending Color"
@@ -606,7 +610,6 @@ msgid "controls.custom-color-palettes.mid"
 msgstr "Middle Color"
 
 #: app/configurator/components/chart-controls/create-color-palette.tsx
-#: app/login/components/color-palettes/profile-color-palette-form.tsx
 msgid "controls.custom-color-palettes.set-values-apply"
 msgstr "Save color palette"
 
@@ -626,6 +629,10 @@ msgstr "This name is already in use. Please choose a unique name for your color 
 #: app/login/components/color-palettes/profile-color-palette-form.tsx
 msgid "controls.custom-color-palettes.type"
 msgstr "Select a color palette type"
+
+#: app/login/components/color-palettes/profile-color-palette-form.tsx
+msgid "controls.custom-color-palettes.update-palette"
+msgstr "controls.custom-color-palettes.update-palette"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.description"

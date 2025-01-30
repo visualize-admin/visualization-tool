@@ -592,6 +592,10 @@ msgstr "Utilizzare colori distinti e ad alto contrasto. Evitare di usare troppi 
 msgid "controls.custom-color-palettes.contrast-warning"
 msgstr "Il colore selezionato non ha un contrasto sufficiente. Considerare l'utilizzo di un colore più scuro per una tavolozza sequenziale."
 
+#: app/login/components/color-palettes/profile-color-palette-form.tsx
+msgid "controls.custom-color-palettes.create-palette"
+msgstr "Creare una tavolozza di colori"
+
 #: app/login/components/color-palettes/color-palette-types.tsx
 msgid "controls.custom-color-palettes.end"
 msgstr "Colore finale"
@@ -605,7 +609,6 @@ msgid "controls.custom-color-palettes.mid"
 msgstr "Colore medio"
 
 #: app/configurator/components/chart-controls/create-color-palette.tsx
-#: app/login/components/color-palettes/profile-color-palette-form.tsx
 msgid "controls.custom-color-palettes.set-values-apply"
 msgstr "Salva tavolozza colori"
 
@@ -625,6 +628,10 @@ msgstr "Questo nome è già in uso. Scegliete un nome unico per la vostra tavolo
 #: app/login/components/color-palettes/profile-color-palette-form.tsx
 msgid "controls.custom-color-palettes.type"
 msgstr "Selezionare un tipo di tavolozza di colori"
+
+#: app/login/components/color-palettes/profile-color-palette-form.tsx
+msgid "controls.custom-color-palettes.update-palette"
+msgstr "Aggiornare la tavolozza dei colori"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.description"

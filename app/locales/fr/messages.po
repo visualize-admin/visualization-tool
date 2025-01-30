@@ -592,6 +592,10 @@ msgstr "Utilisez des couleurs distinctes et contrastées. Évitez d'utiliser tro
 msgid "controls.custom-color-palettes.contrast-warning"
 msgstr "La couleur sélectionnée n'est pas suffisamment contrastée. Envisagez d'utiliser une couleur plus foncée pour une palette séquentielle."
 
+#: app/login/components/color-palettes/profile-color-palette-form.tsx
+msgid "controls.custom-color-palettes.create-palette"
+msgstr "Créer une palette de couleurs"
+
 #: app/login/components/color-palettes/color-palette-types.tsx
 msgid "controls.custom-color-palettes.end"
 msgstr "Couleur finale"
@@ -605,7 +609,6 @@ msgid "controls.custom-color-palettes.mid"
 msgstr "Couleur moyenne"
 
 #: app/configurator/components/chart-controls/create-color-palette.tsx
-#: app/login/components/color-palettes/profile-color-palette-form.tsx
 msgid "controls.custom-color-palettes.set-values-apply"
 msgstr "Enregistrer la palette de couleurs"
 
@@ -625,6 +628,10 @@ msgstr "Ce nom est déjà utilisé. Veuillez choisir un nom unique pour votre pa
 #: app/login/components/color-palettes/profile-color-palette-form.tsx
 msgid "controls.custom-color-palettes.type"
 msgstr "Sélectionner un type de palette de couleurs"
+
+#: app/login/components/color-palettes/profile-color-palette-form.tsx
+msgid "controls.custom-color-palettes.update-palette"
+msgstr "Actualiser la palette de couleurs"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.description"
