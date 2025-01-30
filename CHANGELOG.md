@@ -12,6 +12,8 @@ You can also check the
 # Unreleased
 
 - Fixes
+  - Weekly-based temporal dimensions now work correctly when used in dashboard
+    filters
   - Chart area doesn't overflow anymore when changing chart types in editing
     mode in Chrome
 
