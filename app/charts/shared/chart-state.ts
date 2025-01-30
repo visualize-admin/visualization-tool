@@ -110,6 +110,8 @@ export type ChartWithInteractiveXTimeRangeState =
   | ColumnsState
   | LinesState;
 
+export type ChartWithInteractiveYTimeRangeState = BarsState;
+
 export type NumericalValueGetter = (d: Observation) => number | null;
 
 export type StringValueGetter = (d: Observation) => string;

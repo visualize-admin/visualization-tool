@@ -27,6 +27,7 @@ You can also check the
 
 - Fixes
   - Bar chart tooltip doesn't go off the screen anymore during scroll
+  - Bar chart interactive switch on y axis
   - Preview via API using iframe (`/preview`) now ignores invalid messages sent
     from the parent window
   - Selected values are now correctly displayed in the filter panel
