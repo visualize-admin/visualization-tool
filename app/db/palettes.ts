@@ -30,7 +30,7 @@ export const createPaletteForUser = async (
 };
 
 export const getPalettesForUser = async (
-  user_id: number
+  user_id?: number
 ): Promise<CustomPaletteType[]> => {
   const palettes = await prisma.palette.findMany({
     where: {
@@ -49,7 +49,7 @@ export const getPalettesForUser = async (
 };
 
 export const deletePaletteForUser = async (paletteId: string) => {
-  return await prisma.palette.delete({
+  await prisma.palette.delete({
     where: {
       paletteId,
     },

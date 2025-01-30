@@ -553,7 +553,8 @@ export const convertPaletteTypeToDBType = (
     case "categorical":
       return "CATEGORICAL";
     default:
-      return "CATEGORICAL";
+      const _exhaustiveCheck: never = type;
+      return _exhaustiveCheck;
   }
 };
 
@@ -568,7 +569,8 @@ export const convertDBTypeToPaletteType = (
     case "CATEGORICAL":
       return "categorical";
     default:
-      return "categorical";
+      const _exhaustiveCheck: never = type;
+      return _exhaustiveCheck;
   }
 };
 

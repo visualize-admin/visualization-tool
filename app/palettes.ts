@@ -26,7 +26,6 @@ import {
   schemeSet3,
   schemeTableau10,
 } from "d3-scale-chromatic";
-import { nanoid } from "nanoid";
 
 import { hasDimensionColors } from "./charts/shared/colors";
 import {
@@ -37,6 +36,7 @@ import {
   SequentialPaletteType,
 } from "./config-types";
 import { Component } from "./domain/data";
+import { createColorId } from "./utils/color-palette-utils";
 
 // Colors
 export const getDefaultCategoricalPaletteId = (
@@ -149,7 +149,7 @@ export const categoricalPalettes: Array<CategoricalPalette> = [
 
 export const DEFAULT_CATEGORICAL_PALETTE_ID = categoricalPalettes[0].value;
 
-type Palette<T> = {
+export type Palette<T> = {
   label: string;
   value: T;
   interpolator: (t: number) => string;
@@ -232,43 +232,57 @@ const MIN_SATURATION = 0.15;
 const MAX_LIGHTNESS = 0.95;
 
 type InterpolationOptions = {
-  midColor?: string;
+  midColorHex?: string;
 };
 
 type InterpolatorResult = {
   interpolator: (t: number) => string;
-  startingColor?: string;
+  startingColorHex?: string;
 };
 
-export const createSequentialInterpolator = (
-  endColor: string,
-  startColor?: string
-): InterpolatorResult => {
-  const endHsl = hsl(endColor);
-  const startHsl = startColor
-    ? hsl(startColor)
+type SequentialInterpolatorProps = {
+  endColorHex: string;
+  startColorHex?: string;
+};
+
+type DivergingInterpolatorProps = {
+  endColorHex: string;
+  startColorHex: string;
+  options?: InterpolationOptions;
+};
+
+export const createSequentialInterpolator = ({
+  endColorHex,
+  startColorHex,
+}: SequentialInterpolatorProps): InterpolatorResult => {
+  const endHsl = hsl(endColorHex);
+  const startHsl = startColorHex
+    ? hsl(startColorHex)
     : hsl(
         endHsl.h,
         Math.max(MIN_SATURATION, endHsl.s * 0.3),
         Math.min(MAX_LIGHTNESS, endHsl.l + LIGHTNESS_INCREASE)
       );
 
+  const startColorRgb = startHsl.toString();
+  const startingColorHex = rgbToHex(startColorRgb);
+
   return {
-    interpolator: interpolateRgb(startHsl.toString(), endColor),
-    startingColor: rgbToHex(startHsl.toString()),
+    interpolator: interpolateRgb(startingColorHex, endColorHex),
+    startingColorHex,
   };
 };
 
-export const createDivergingInterpolator = (
-  startColor: string,
-  endColor: string,
-  options: InterpolationOptions = {}
-): InterpolatorResult => {
-  const { midColor } = options;
+export const createDivergingInterpolator = ({
+  startColorHex,
+  endColorHex,
+  options = {},
+}: DivergingInterpolatorProps): InterpolatorResult => {
+  const { midColorHex } = options;
 
-  if (midColor) {
-    const leftInterpolator = interpolateRgb(startColor, midColor);
-    const rightInterpolator = interpolateRgb(midColor, endColor);
+  if (midColorHex) {
+    const leftInterpolator = interpolateRgb(startColorHex, midColorHex);
+    const rightInterpolator = interpolateRgb(midColorHex, endColorHex);
 
     return {
       interpolator: (t: number): string => {
@@ -281,7 +295,7 @@ export const createDivergingInterpolator = (
   }
 
   return {
-    interpolator: interpolateRgb(startColor, endColor),
+    interpolator: interpolateRgb(startColorHex, endColorHex),
   };
 };
 
@@ -296,7 +310,7 @@ export type ColorsByType = {
   diverging: ColorItem[];
 };
 
-export const defaultColorValues = (
+export const getDefaultColorValues = (
   type: CustomPaletteType["type"],
   colors: string[]
 ): ColorItem[] => {
@@ -304,16 +318,21 @@ export const defaultColorValues = (
 
   switch (type) {
     case "sequential":
-      return [{ color: colorExist ? colors[0] : "#000000", id: nanoid(4) }];
+      return [
+        { color: colorExist ? colors[0] : "#000000", id: createColorId() },
+      ];
     case "diverging":
       return [
-        { color: colorExist ? colors[0] : "#000000", id: nanoid(4) },
-        { color: colorExist ? colors[1] : "#cccccc", id: nanoid(4) },
-        { color: colorExist ? colors[2] : "#777777", id: nanoid(4) },
+        { color: colorExist ? colors[0] : "#000000", id: createColorId() },
+        { color: colorExist ? colors[1] : "#cccccc", id: createColorId() },
+        { color: colorExist ? colors[2] : "#777777", id: createColorId() },
       ];
     case "categorical":
       return colorExist
-        ? colors.map((color) => ({ color, id: nanoid(4) }))
+        ? colors.map((color) => ({ color, id: createColorId() }))
         : [];
+    default:
+      const _exhaustiveCheck: never = type;
+      return _exhaustiveCheck;
   }
 };

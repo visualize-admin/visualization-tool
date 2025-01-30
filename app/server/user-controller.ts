@@ -29,10 +29,6 @@ const UserController = controller({
     const session = await getServerSession(req, res, nextAuthOptions);
     const userId = session?.user?.id;
 
-    if (!userId) {
-      return [];
-    }
-
     return await getPalettesForUser(userId);
   },
   deletePalette: async ({ req }) => {
