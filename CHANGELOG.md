@@ -21,7 +21,7 @@ You can also check the
   - Map legend items do not overlap anymore in PNG image downloads
   - PNG image download now correctly retains Y axis label colors in combo charts
   - NaN values are not displayed in map tooltip anymore
-  - Fixed color shuffling to work again with custom color palettes
+  - Fixed color shuffling & resetting to work again with custom color palettes
 - Style
   - Improved vertical spacing between map legend items
 
