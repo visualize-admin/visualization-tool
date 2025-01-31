@@ -26,6 +26,11 @@ You can also check the
 
 # [5.2.1] - 2025-01-29
 
+- Features
+
+  - Created by visualize.admin.ch Link now navigates users to the corresponding
+    Chart
+
 - Fixes
   - Bar chart tooltip doesn't go off the screen anymore during scroll
   - Bar chart interactive switch on y axis

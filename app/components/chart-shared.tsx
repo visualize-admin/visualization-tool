@@ -407,7 +407,7 @@ const DownloadPNGImageMenuActionItem = ({
   chartKey: string;
   components: Component[];
 } & Omit<UseScreenshotProps, "type" | "modifyNode" | "pngMetadata">) => {
-  const modifyNode = useModifyNode();
+  const modifyNode = useModifyNode(configKey);
   const metadata = usePNGMetadata({
     configKey,
     chartKey,
@@ -433,7 +433,7 @@ const DownloadPNGImageMenuActionItem = ({
   );
 };
 
-const useModifyNode = () => {
+const useModifyNode = (configKey?: string) => {
   const theme = useTheme();
   const chartWithFiltersClasses = useChartWithFiltersClasses();
 
@@ -460,13 +460,14 @@ const useModifyNode = () => {
         `.${CHART_FOOTNOTES_CLASS_NAME}`
       );
 
-      if (footnotes) {
+      if (footnotes && configKey) {
         const container = document.createElement("div");
         footnotes.appendChild(container);
         const root = createRoot(container);
         root.render(
           <ThemeProvider theme={theme}>
             <VisualizeLink
+              configKey={configKey}
               createdWith={t({ id: "metadata.link.created.with" })}
             />
           </ThemeProvider>
@@ -495,7 +496,7 @@ const useModifyNode = () => {
         .selectAll(`text:not([${DISABLE_SCREENSHOT_COLOR_WIPE_KEY}='true'])`)
         .style("fill", color);
     },
-    [chartWithFiltersClasses.chartWithFilters, theme]
+    [chartWithFiltersClasses.chartWithFilters, theme, configKey]
   );
 };
 
