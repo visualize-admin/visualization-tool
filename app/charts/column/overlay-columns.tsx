@@ -3,9 +3,11 @@ import { ComboLineColumnState } from "@/charts/combo/combo-line-column-state";
 import { useChartState } from "@/charts/shared/chart-state";
 import { useInteraction } from "@/charts/shared/use-interaction";
 import { Observation } from "@/domain/data";
+import { useFormatFullDateAuto } from "@/formatters";
 
 export const InteractionColumns = () => {
   const [, dispatch] = useInteraction();
+  const formatDate = useFormatFullDateAuto();
 
   const { chartData, bounds, getX, xScaleInteraction } = useChartState() as
     | ColumnsState
@@ -28,7 +30,7 @@ export const InteractionColumns = () => {
       {chartData.map((d, i) => (
         <rect
           key={i}
-          x={xScaleInteraction(getX(d)) as number}
+          x={xScaleInteraction(formatDate(getX(d))) as number}
           y={0}
           width={xScaleInteraction.bandwidth()}
           height={Math.max(0, chartHeight)}
