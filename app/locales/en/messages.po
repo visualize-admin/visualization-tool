@@ -699,19 +699,19 @@ msgstr "Dashboard"
 
 #: app/configurator/components/preview-breakpoint.tsx
 msgid "controls.layout.preview-lg"
-msgstr "Preview using large width"
+msgstr "Preview with large width"
 
 #: app/configurator/components/preview-breakpoint.tsx
 msgid "controls.layout.preview-md"
-msgstr "Preview using tablet"
+msgstr "Preview with medium width"
 
 #: app/configurator/components/preview-breakpoint.tsx
 msgid "controls.layout.preview-sm"
-msgstr "Preview using mobile"
+msgstr "Preview with small width"
 
 #: app/configurator/components/preview-breakpoint.tsx
 msgid "controls.layout.preview-xl"
-msgstr "Preview using extra large width"
+msgstr "Preview with extra large width"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.layout.singleURLs"
@@ -1360,12 +1360,24 @@ msgid "flashes.couldnt-load-cube.view-cube-checker"
 msgstr "View in Cube Validator"
 
 #: app/components/footer.tsx
-msgid "footer.institution.name"
-msgstr "Federal Office for the Environment FOEN"
+msgid "footer.about_us.label"
+msgstr "About Us"
 
 #: app/components/footer.tsx
-msgid "footer.institution.url"
-msgstr "https://www.bafu.admin.ch/bafu/en/home.html"
+msgid "footer.about_us.text"
+msgstr "The portal visualize.admin.ch allows the visualization of Swiss Open Government Data provided by the LINDAS Linked Data Service. Open Government Data (OGD) are data that are made available to the public free of charge in computer-readable format."
+
+#: app/components/footer.tsx
+msgid "footer.button.lindas"
+msgstr "LINDAS Linked Data Services"
+
+#: app/components/footer.tsx
+msgid "footer.contact.title"
+msgstr "Stay informed"
+
+#: app/components/footer.tsx
+msgid "footer.information.title"
+msgstr "Further information"
 
 #: app/components/footer.tsx
 msgid "footer.status"
