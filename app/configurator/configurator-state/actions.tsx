@@ -75,7 +75,7 @@ export type ConfiguratorStateAction =
       };
     }
   | {
-      type: "COLOR_MAPPING_UPDATED";
+      type: "COLOR_FIELD_UPDATED";
       value: {
         locale: Locale;
         path: string;
@@ -84,7 +84,7 @@ export type ConfiguratorStateAction =
           | string
           | number
           | boolean
-          | Record<string, string | number | boolean>
+          | Record<string, string | number | boolean | string[]>
           | (string | number | boolean)[]
           | (string | number | boolean)[][]
           | undefined;

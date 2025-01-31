@@ -1,17 +1,26 @@
 import { Box } from "@mui/material";
+import { hexToHsva, HsvaColor, hsvaToHex } from "@uiw/react-color";
+import dynamic from "next/dynamic";
 import { useState } from "react";
 
 import { Checkbox, Input, Radio, Select } from "@/components/form";
-import { ColorPicker } from "@/configurator/components/chart-controls/color-picker";
 import { OnOffControlTab as OnOffControlTabComponent } from "@/configurator/components/chart-controls/control-tab";
 import {
   ControlSection,
   SectionTitle,
 } from "@/configurator/components/chart-controls/section";
 import { IconButton } from "@/configurator/components/icon-button";
-import { getPalette } from "@/palettes";
+import { createColorId } from "@/utils/color-palette-utils";
 
 import type { Meta, StoryObj } from "@storybook/react";
+
+//have to import dynamically to avoid @uiw/react-color dependency issues with the server
+const CustomColorPicker = dynamic(
+  () => import("../configurator/components/color-picker"),
+  {
+    ssr: false,
+  }
+);
 
 type Story = StoryObj;
 const meta: Meta = {
@@ -119,6 +128,7 @@ const ColorPickerStory = {
   render: () => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const [currentColor, setCurrentColor] = useState("#ff0000");
+
     return (
       <div>
         <Box
@@ -126,10 +136,9 @@ const ColorPickerStory = {
         >
           Current (valid) color: {currentColor}
         </Box>
-        <ColorPicker
-          colors={getPalette({ paletteId: "accent" })}
-          selectedColor={currentColor}
-          onChange={(color) => setCurrentColor(color)}
+        <CustomColorPicker
+          defaultSelection={{ ...hexToHsva(currentColor), id: createColorId() }}
+          onChange={(color: HsvaColor) => setCurrentColor(hsvaToHex(color))}
         />
       </div>
     );

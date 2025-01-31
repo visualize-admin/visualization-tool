@@ -1,3 +1,6 @@
+import { rgbToHex } from "@mui/material";
+import { hsl } from "d3-color";
+import { interpolateRgb } from "d3-interpolate";
 import {
   interpolateBlues,
   interpolateBrBG,
@@ -27,11 +30,13 @@ import {
 import { hasDimensionColors } from "./charts/shared/colors";
 import {
   ColorField,
+  CustomPaletteType,
   DivergingPaletteType,
   PaletteType,
   SequentialPaletteType,
 } from "./config-types";
 import { Component } from "./domain/data";
+import { createColorId } from "./utils/color-palette-utils";
 
 // Colors
 export const getDefaultCategoricalPaletteId = (
@@ -221,3 +226,113 @@ export const sequentialPalettes = sequentialPaletteKeys.map((d) => ({
   value: d,
   interpolator: getColorInterpolator(d),
 })) as Palette<SequentialPaletteType>[];
+
+const LIGHTNESS_INCREASE = 0.9;
+const MIN_SATURATION = 0.15;
+const MAX_LIGHTNESS = 0.95;
+
+type InterpolationOptions = {
+  midColorHex?: string;
+};
+
+type InterpolatorResult = {
+  interpolator: (t: number) => string;
+  startingColorHex?: string;
+};
+
+type SequentialInterpolatorProps = {
+  endColorHex: string;
+  startColorHex?: string;
+};
+
+type DivergingInterpolatorProps = {
+  endColorHex: string;
+  startColorHex: string;
+  options?: InterpolationOptions;
+};
+
+export const createSequentialInterpolator = ({
+  endColorHex,
+  startColorHex,
+}: SequentialInterpolatorProps): InterpolatorResult => {
+  const endHsl = hsl(endColorHex);
+  const startHsl = startColorHex
+    ? hsl(startColorHex)
+    : hsl(
+        endHsl.h,
+        Math.max(MIN_SATURATION, endHsl.s * 0.3),
+        Math.min(MAX_LIGHTNESS, endHsl.l + LIGHTNESS_INCREASE)
+      );
+
+  const startColorRgb = startHsl.toString();
+  const startingColorHex = rgbToHex(startColorRgb);
+
+  return {
+    interpolator: interpolateRgb(startingColorHex, endColorHex),
+    startingColorHex,
+  };
+};
+
+export const createDivergingInterpolator = ({
+  startColorHex,
+  endColorHex,
+  options = {},
+}: DivergingInterpolatorProps): InterpolatorResult => {
+  const { midColorHex } = options;
+
+  if (midColorHex) {
+    const leftInterpolator = interpolateRgb(startColorHex, midColorHex);
+    const rightInterpolator = interpolateRgb(midColorHex, endColorHex);
+
+    return {
+      interpolator: (t: number): string => {
+        if (t <= 0.5) {
+          return leftInterpolator(t * 2);
+        }
+        return rightInterpolator((t - 0.5) * 2);
+      },
+    };
+  }
+
+  return {
+    interpolator: interpolateRgb(startColorHex, endColorHex),
+  };
+};
+
+export type ColorItem = {
+  color: string;
+  id: string;
+};
+
+export type ColorsByType = {
+  categorical: ColorItem[];
+  sequential: ColorItem[];
+  diverging: ColorItem[];
+};
+
+export const getDefaultColorValues = (
+  type: CustomPaletteType["type"],
+  colors: string[]
+): ColorItem[] => {
+  const colorExist = colors.length > 0;
+
+  switch (type) {
+    case "sequential":
+      return [
+        { color: colorExist ? colors[0] : "#000000", id: createColorId() },
+      ];
+    case "diverging":
+      return [
+        { color: colorExist ? colors[0] : "#000000", id: createColorId() },
+        { color: colorExist ? colors[1] : "#cccccc", id: createColorId() },
+        { color: colorExist ? colors[2] : "#777777", id: createColorId() },
+      ];
+    case "categorical":
+      return colorExist
+        ? colors.map((color) => ({ color, id: createColorId() }))
+        : [];
+    default:
+      const _exhaustiveCheck: never = type;
+      return _exhaustiveCheck;
+  }
+};

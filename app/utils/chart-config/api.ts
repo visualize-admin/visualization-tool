@@ -6,13 +6,20 @@ import { InferAPIResponse } from "nextkit";
 
 import { ParsedConfig } from "@/db/config";
 
-import { ConfiguratorState } from "../../config-types";
+import { ConfiguratorState, CustomPaletteType } from "../../config-types";
 import { apiFetch } from "../api";
 import { createId } from "../create-id";
 
 import type apiConfigCreate from "../../pages/api/config-create";
 import type apiConfigUpdate from "../../pages/api/config-update";
 import type apiConfig from "../../pages/api/config/[key]";
+
+export type CreateCustomColorPalette = Omit<CustomPaletteType, "paletteId">;
+export type UpdateCustomColorPalette = Partial<
+  Omit<CustomPaletteType, "paletteId">
+> &
+  Pick<CustomPaletteType, "paletteId">;
+export type DeleteCustomColorPalette = Pick<CustomPaletteType, "paletteId">;
 
 type CreateConfigOptions = {
   key?: string;
@@ -100,4 +107,51 @@ export const fetchChartConfig = async (id: string) => {
 
 export const fetchChartConfigs = async () => {
   return await apiFetch<ParsedConfig[]>(`/api/config/list`);
+};
+
+export const createCustomColorPalette = async (
+  options: CreateCustomColorPalette
+) => {
+  return (await apiFetch<InferAPIResponse<typeof apiConfigCreate, "POST">>(
+    "/api/user/color-palette",
+    {
+      method: "POST",
+      data: options,
+    }
+  )) as unknown as CustomPaletteType;
+};
+
+export const getCustomColorPalettes = async (): Promise<
+  CustomPaletteType[]
+> => {
+  return (await apiFetch<InferAPIResponse<typeof apiConfigCreate, "GET">>(
+    "/api/user/color-palette",
+    {
+      method: "GET",
+    }
+  )) as CustomPaletteType[];
+};
+
+export const deleteCustomColorPalette = async (
+  options: DeleteCustomColorPalette
+) => {
+  await apiFetch<InferAPIResponse<typeof apiConfigCreate, "DELETE">>(
+    "/api/user/color-palette",
+    {
+      method: "DELETE",
+      data: options,
+    }
+  );
+};
+
+export const updateCustomColorPalette = async (
+  options: UpdateCustomColorPalette
+) => {
+  await apiFetch<InferAPIResponse<typeof apiConfigCreate, "PUT">>(
+    "/api/user/color-palette",
+    {
+      method: "PUT",
+      data: options,
+    }
+  );
 };
