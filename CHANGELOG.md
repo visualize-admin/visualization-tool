@@ -31,6 +31,7 @@ You can also check the
   - Scroll bars are not shown in the chart area when not needed
   - Scatterplot overlap with the y axis label
   - Input fields do not extend anymore when hitting Enter
+  - Fixed color changes when changing segment dimension
 
 # [5.2.0] - 2025-01-22
 
