@@ -296,7 +296,7 @@ const ColorPaletteControls = ({
             return dispatch({
               type: "CHART_CONFIG_UPDATE_COLOR_MAPPING",
               value: {
-                field,
+                field: isColorInConfig(chartConfig) ? "color" : field,
                 colorConfigPath,
                 dimensionId: component.id,
                 values: component.values,
