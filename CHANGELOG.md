@@ -15,6 +15,8 @@ You can also check the
   - Weekly-based temporal dimensions now work correctly when used in dashboard
     filters
   - Fixed color changes when changing segment dimension
+  - Fixed Filter selection made it so that color are showing again correctly for
+    selected filters
 
 # [5.2.1] - 2025-01-29
 
