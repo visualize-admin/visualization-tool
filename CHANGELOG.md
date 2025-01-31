@@ -23,6 +23,7 @@ You can also check the
   - NaN values are not displayed in map tooltip anymore
 - Style
   - Improved vertical spacing between map legend items
+  - Fixed the spacing between navigation and header in the /profile view
 
 # [5.2.1] - 2025-01-29
 
