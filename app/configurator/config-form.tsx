@@ -16,7 +16,9 @@ import {
   ChartType,
   ConfiguratorState,
   Filters,
+  isColorInConfig,
   isComboChartConfig,
+  isTableConfig,
 } from "@/config-types";
 import { getChartConfig } from "@/config-utils";
 import {
@@ -37,9 +39,12 @@ import {
   Measure,
 } from "@/domain/data";
 import { useLocale } from "@/locales/use-locale";
+import { categoricalPalettes } from "@/palettes";
 import { bfs } from "@/utils/bfs";
 import { isMultiHierarchyNode } from "@/utils/hierarchy";
 import useEvent from "@/utils/use-event";
+
+import { mapValueIrisToColor } from "./components/ui-helpers";
 
 export type Option = {
   value: string | $FixMe;
@@ -97,6 +102,7 @@ export const useChartFieldField = ({
 }): SelectProps => {
   const [state, dispatch] = useConfiguratorState();
   const locale = useLocale();
+  const chartConfig = getChartConfig(state);
   const handleChange = useEvent(async (e: SelectChangeEvent<unknown>) => {
     if (e.target.value !== FIELD_VALUE_NONE) {
       const dimensionId = e.target.value as string;
@@ -125,6 +131,48 @@ export const useChartFieldField = ({
           }
         },
       });
+
+      if (isColorInConfig(chartConfig)) {
+        const palette =
+          categoricalPalettes.find(
+            (p) => p.value === chartConfig.fields.color.paletteId
+          ) ?? categoricalPalettes[0];
+        dispatch({
+          type: "COLOR_FIELD_SET",
+          value:
+            chartConfig.fields.color.type === "single"
+              ? {
+                  type: chartConfig.fields.color.type,
+                  paletteId: palette.value,
+                  color: palette.colors[0],
+                }
+              : {
+                  type: chartConfig.fields.color.type,
+                  paletteId: palette.value,
+                  colorMapping: mapValueIrisToColor({
+                    paletteId: palette.value,
+                    dimensionValues: dimension.values,
+                  }),
+                },
+        });
+      } else {
+        const palette = categoricalPalettes[0];
+        const colorConfigPath = isTableConfig(chartConfig)
+          ? "columnStyle"
+          : undefined;
+        dispatch({
+          type: "CHART_PALETTE_CHANGED",
+          value: {
+            field,
+            colorConfigPath,
+            paletteId: palette.value,
+            colorMapping: mapValueIrisToColor({
+              paletteId: palette.value,
+              dimensionValues: dimension.values,
+            }),
+          },
+        });
+      }
 
       dispatch({
         type: "CHART_FIELD_CHANGED",
@@ -552,7 +600,7 @@ export const isMultiFilterFieldChecked = (
 ) => {
   const filter = filters[dimensionId];
   const fieldChecked =
-    filter?.type === "multi" ? filter.values?.[value] ?? false : false;
+    filter?.type === "multi" ? (filter.values?.[value] ?? false) : false;
 
   return fieldChecked || !filter;
 };
