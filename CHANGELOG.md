@@ -20,6 +20,7 @@ You can also check the
     published mode
   - Map legend items do not overlap anymore in PNG image downloads
   - PNG image download now correctly retains Y axis label colors in combo charts
+  - NaN values are not displayed in map tooltip anymore
 - Style
   - Improved vertical spacing between map legend items
 
