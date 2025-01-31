@@ -5,12 +5,12 @@ import { axisBottom } from "d3-axis";
 import {
   NumberValue,
   ScaleLinear,
+  scaleLinear,
   ScaleQuantile,
   ScaleQuantize,
   ScaleThreshold,
-  scaleLinear,
 } from "d3-scale";
-import { Selection, select } from "d3-selection";
+import { select, Selection } from "d3-selection";
 import { useEffect, useMemo, useRef } from "react";
 
 import { MapState } from "@/charts/map/map-state";
@@ -98,7 +98,7 @@ export const MapLegend = ({
   const formatters = useDimensionFormatters(measureDimensions);
 
   return (
-    <Box>
+    <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
       <Flex sx={{ flexWrap: "wrap", gap: 4 }}>
         {areaLayer && showAreaLegend && (
           <Box>

@@ -173,8 +173,9 @@ export const ChartPublished = ({
                 layoutType={state.layout.layout}
                 renderBlock={renderBlock}
               />
-              {state.chartConfigs.length !== 1 && (
+              {state.chartConfigs.length !== 1 && configKey && (
                 <VisualizeLink
+                  configKey={configKey}
                   createdWith={t({ id: "metadata.link.created.with" })}
                 />
               )}
@@ -241,7 +242,6 @@ const usePublishedChartStyles = makeStyles<Theme, { shrink: boolean }>(
       [theme.breakpoints.up("lg")]: {
         padding: theme.spacing(6),
       },
-
       gap: 16,
       display: "flex",
       flexDirection: "column",
@@ -339,7 +339,12 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
   return (
     <Box
       ref={rootRef}
-      className={clsx(chartClasses.root, publishedChartClasses.root, className)}
+      className={clsx(
+        chartClasses.root,
+        chartClasses.pastEditing,
+        publishedChartClasses.root,
+        className
+      )}
     >
       {children}
       <ChartErrorBoundary resetKeys={[chartConfig]}>
@@ -456,6 +461,7 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
               )}
             </TablePreviewWrapper>
             <ChartFootnotes
+              configKey={configKey}
               dataSource={dataSource}
               chartConfig={chartConfig}
               dashboardFilters={state.dashboardFilters}

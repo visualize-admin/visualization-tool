@@ -89,6 +89,7 @@ export const AxisHeightBand = () => {
     xScale,
     yTimeUnit,
     yScale,
+    fontSize,
   ]);
 
   return (

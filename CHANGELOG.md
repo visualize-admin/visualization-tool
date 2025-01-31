@@ -15,11 +15,26 @@ You can also check the
   - Weekly-based temporal dimensions now work correctly when used in dashboard
     filters
   - Fixed color changes when changing segment dimension
+  - Chart area doesn't overflow anymore when changing chart types in editing
+    mode in Chrome
+  - Tall dashboard layouts now correctly align chart elements between columns in
+    published mode
+  - Map legend items do not overlap anymore in PNG image downloads
+  - PNG image download now correctly retains Y axis label colors in combo charts
+  - NaN values are not displayed in map tooltip anymore
+- Style
+  - Improved vertical spacing between map legend items
 
 # [5.2.1] - 2025-01-29
 
+- Features
+
+  - Created by visualize.admin.ch Link now navigates users to the corresponding
+    Chart
+
 - Fixes
   - Bar chart tooltip doesn't go off the screen anymore during scroll
+  - Bar chart interactive switch on y axis
   - Preview via API using iframe (`/preview`) now ignores invalid messages sent
     from the parent window
   - Selected values are now correctly displayed in the filter panel

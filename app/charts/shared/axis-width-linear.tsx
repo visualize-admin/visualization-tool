@@ -97,7 +97,7 @@ export const AxisWidthLinear = () => {
     <>
       <foreignObject
         x={margins.left + chartWidth / 2 - labelWidth / 2}
-        y={margins.top + chartHeight + 34}
+        y={margins.top + chartHeight + 40}
         width={chartWidth}
         height={height}
         style={{ display: "flex", textAlign: "right" }}
