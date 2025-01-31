@@ -259,7 +259,7 @@ const ColorPaletteControls = ({
       dispatch({
         type: "CHART_PALETTE_RESET",
         value: {
-          field,
+          field: isColorInConfig(chartConfig) ? "color" : field,
           colorConfigPath,
           colorMapping: mapValueIrisToColor({
             paletteId,
@@ -267,7 +267,7 @@ const ColorPaletteControls = ({
           }),
         },
       }),
-    [colorConfigPath, component, dispatch, field, paletteId]
+    [colorConfigPath, component, dispatch, field, paletteId, chartConfig]
   );
 
   if (colorMapping) {
@@ -296,7 +296,7 @@ const ColorPaletteControls = ({
             return dispatch({
               type: "CHART_CONFIG_UPDATE_COLOR_MAPPING",
               value: {
-                field,
+                field: isColorInConfig(chartConfig) ? "color" : field,
                 colorConfigPath,
                 dimensionId: component.id,
                 values: component.values,
