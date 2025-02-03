@@ -14,6 +14,9 @@ You can also check the
 - Fixes
   - Weekly-based temporal dimensions now work correctly when used in dashboard
     filters
+  - Fixed color changes when changing segment dimension
+  - Fixed Filter selection made it so that color are showing again correctly for
+    selected filters
   - Chart area doesn't overflow anymore when changing chart types in editing
     mode in Chrome
   - Tall dashboard layouts now correctly align chart elements between columns in
