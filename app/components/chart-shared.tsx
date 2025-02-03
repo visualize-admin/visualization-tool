@@ -70,11 +70,6 @@ export const CHART_GRID_ROW_COUNT = 7;
 export const useChartStyles = makeStyles<Theme, { disableBorder?: boolean }>(
   (theme) => ({
     root: {
-      flexGrow: 1,
-      display: "grid",
-      gridTemplateRows: "subgrid",
-      /** Should stay in sync with the number of rows contained in a chart */
-      gridRow: `span ${CHART_GRID_ROW_COUNT}`,
       padding: theme.spacing(6),
       backgroundColor: theme.palette.background.paper,
       border: ({ disableBorder }) =>
@@ -84,6 +79,16 @@ export const useChartStyles = makeStyles<Theme, { disableBorder?: boolean }>(
         display: "flex",
         flexDirection: "column",
       },
+    },
+    editing: {
+      display: "flex",
+      flexDirection: "column",
+    },
+    pastEditing: {
+      display: "grid",
+      gridTemplateRows: "subgrid",
+      /** Should stay in sync with the number of rows contained in a chart */
+      gridRow: `span ${CHART_GRID_ROW_COUNT}`,
     },
   })
 );
@@ -402,7 +407,7 @@ const DownloadPNGImageMenuActionItem = ({
   chartKey: string;
   components: Component[];
 } & Omit<UseScreenshotProps, "type" | "modifyNode" | "pngMetadata">) => {
-  const modifyNode = useModifyNode();
+  const modifyNode = useModifyNode(configKey);
   const metadata = usePNGMetadata({
     configKey,
     chartKey,
@@ -428,7 +433,7 @@ const DownloadPNGImageMenuActionItem = ({
   );
 };
 
-const useModifyNode = () => {
+const useModifyNode = (configKey?: string) => {
   const theme = useTheme();
   const chartWithFiltersClasses = useChartWithFiltersClasses();
 
@@ -455,13 +460,14 @@ const useModifyNode = () => {
         `.${CHART_FOOTNOTES_CLASS_NAME}`
       );
 
-      if (footnotes) {
+      if (footnotes && configKey) {
         const container = document.createElement("div");
         footnotes.appendChild(container);
         const root = createRoot(container);
         root.render(
           <ThemeProvider theme={theme}>
             <VisualizeLink
+              configKey={configKey}
               createdWith={t({ id: "metadata.link.created.with" })}
             />
           </ThemeProvider>
@@ -479,15 +485,24 @@ const useModifyNode = () => {
       // and not have underlines.
       const color = theme.palette.grey[700];
       select(clonedNode)
-        .selectAll(`p, button, a, span, div, li, h1, h2, h3, h4, h5, h6`)
+        .selectAll(
+          `:is(p, button, a, span, div, li, h1, h2, h3, h4, h5, h6):not([${DISABLE_SCREENSHOT_COLOR_WIPE_KEY}='true'])`
+        )
         .style("color", color)
         .style("text-decoration", "none");
       // SVG elements have fill instead of color. Here we only target text elements,
       // to avoid changing the color of other SVG elements (charts).
-      select(clonedNode).selectAll("text").style("fill", color);
+      select(clonedNode)
+        .selectAll(`text:not([${DISABLE_SCREENSHOT_COLOR_WIPE_KEY}='true'])`)
+        .style("fill", color);
     },
-    [chartWithFiltersClasses.chartWithFilters, theme]
+    [chartWithFiltersClasses.chartWithFilters, theme, configKey]
   );
+};
+
+const DISABLE_SCREENSHOT_COLOR_WIPE_KEY = "data-disable-screenshot-color";
+export const DISABLE_SCREENSHOT_COLOR_WIPE_ATTR = {
+  [DISABLE_SCREENSHOT_COLOR_WIPE_KEY]: true,
 };
 
 const usePNGMetadata = ({

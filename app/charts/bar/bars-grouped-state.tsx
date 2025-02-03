@@ -199,7 +199,7 @@ const useBarsGroupedState = (
           label: segment,
           color:
             fields.color.type === "segment"
-              ? fields.color.colorMapping![dvIri] ?? schemeCategory10[0]
+              ? (fields.color.colorMapping![dvIri] ?? schemeCategory10[0])
               : schemeCategory10[0],
         };
       });
@@ -336,6 +336,7 @@ const useBarsGroupedState = (
   }, [getSegment, getY, chartData, segmentSortingOrder, segments, yScale]);
 
   const { left, bottom } = useChartPadding({
+    xLabelPresent: !!xMeasure.label,
     yScale: paddingYScale,
     width,
     height,
@@ -351,7 +352,7 @@ const useBarsGroupedState = (
   const margins = {
     top: 55,
     right,
-    bottom: bottom + 30,
+    bottom: bottom + 10,
     left,
   };
   const bounds = useChartBounds(width, margins, height);
