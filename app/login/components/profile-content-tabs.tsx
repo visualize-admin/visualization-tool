@@ -15,7 +15,7 @@ const useStyles = makeStyles<Theme>((theme) => ({
   section: {
     borderBottom: 1,
     borderColor: "divider",
-    marginTop: theme.spacing(6),
+    paddingTop: theme.spacing(6),
   },
   tabList: {
     minHeight: "fit-content",
