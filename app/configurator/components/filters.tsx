@@ -940,9 +940,9 @@ export const DimensionValuesMultiFilter = ({
   const chartConfig = getChartConfig(state);
   const getValueColor = useEvent((value: string) => {
     const colorPath = getPathToColorConfigProperty({
-      field,
+      field: isColorInConfig(chartConfig) ? "color" : field,
       colorConfigPath,
-      propertyPath: `colorMapping["${value}"]`,
+      propertyPath: `["${value}"]`,
     });
     return get(chartConfig, colorPath);
   });

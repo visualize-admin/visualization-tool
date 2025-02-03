@@ -15,6 +15,8 @@ You can also check the
   - Weekly-based temporal dimensions now work correctly when used in dashboard
     filters
   - Fixed color changes when changing segment dimension
+  - Fixed Filter selection made it so that color are showing again correctly for
+    selected filters
   - Chart area doesn't overflow anymore when changing chart types in editing
     mode in Chrome
   - Tall dashboard layouts now correctly align chart elements between columns in
@@ -22,8 +24,10 @@ You can also check the
   - Map legend items do not overlap anymore in PNG image downloads
   - PNG image download now correctly retains Y axis label colors in combo charts
   - NaN values are not displayed in map tooltip anymore
+  - Fixed color shuffling & resetting to work again with custom color palettes
 - Style
   - Improved vertical spacing between map legend items
+  - Fixed the spacing between navigation and header in the /profile view
 
 # [5.2.1] - 2025-01-29
 
