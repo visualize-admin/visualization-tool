@@ -9,7 +9,8 @@ import { useChartTheme } from "../shared/use-chart-theme";
 import { ComboLineColumnState } from "./combo-line-column-state";
 import { ComboLineDualState } from "./combo-line-dual-state";
 
-export const TITLE_VPADDING = 4;
+export const TITLE_V_PADDING = 4;
+export const TITLE_H_PADDING = 8;
 
 export const ComboLineContainer = ({ children }: { children: ReactNode }) => {
   const { axisLabelFontSize } = useChartTheme();
@@ -27,7 +28,7 @@ export const ComboLineContainer = ({ children }: { children: ReactNode }) => {
     axisTitleWidth + otherAxisTitleWidth > bounds.chartWidth;
 
   const yAdjustment = overLappingTitles
-    ? (axisLabelFontSize + TITLE_VPADDING) * 2
+    ? (axisLabelFontSize + TITLE_V_PADDING) * 2
     : 0;
   return <g transform={`translate(0, ${yAdjustment})`}>{children}</g>;
 };

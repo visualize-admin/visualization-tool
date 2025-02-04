@@ -1,6 +1,10 @@
 import { useState } from "react";
 
 import { ComboLineColumnState } from "@/charts/combo/combo-line-column-state";
+import {
+  TITLE_H_PADDING,
+  TITLE_V_PADDING,
+} from "@/charts/combo/combo-line-container";
 import { ComboLineDualState } from "@/charts/combo/combo-line-dual-state";
 import {
   TICK_PADDING,
@@ -13,11 +17,6 @@ import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { theme } from "@/themes/federal";
 import { getTextWidth } from "@/utils/get-text-width";
 import { useAxisTitleAdjustments } from "@/utils/use-axis-title-adjustments";
-
-import { TITLE_VPADDING } from "./combo-line-container";
-
-const TITLE_HPADDING = 8;
-const TOP_MARGIN = 4;
 
 type AxisHeightLinearDualProps = {
   orientation?: "left" | "right";
@@ -63,7 +62,7 @@ export const AxisHeightLinearDual = (props: AxisHeightLinearDualProps) => {
     (isOverlapping ? axisTitleWidth / overlapAmount : axisTitleWidth) +
     maxRightTickWidth +
     TICK_PADDING -
-    TITLE_HPADDING * (isOverlapping ? Math.floor(overlapAmount) : 2);
+    TITLE_H_PADDING * (isOverlapping ? Math.floor(overlapAmount) : 2);
 
   const titleWidth = isOverlapping ? axisTitleWidth / overlapAmount : "auto";
 
@@ -71,11 +70,11 @@ export const AxisHeightLinearDual = (props: AxisHeightLinearDualProps) => {
     <>
       <foreignObject
         x={leftAligned ? 0 : rightXAlignment}
-        width={axisTitleWidth + TITLE_HPADDING * 2}
+        width={axisTitleWidth + TITLE_H_PADDING * 2}
         height={
           (isOverlapping
-            ? axisLabelFontSize * Math.ceil(overlapAmount) + TITLE_VPADDING
-            : axisLabelFontSize + TITLE_VPADDING) *
+            ? axisLabelFontSize * Math.ceil(overlapAmount) + TITLE_V_PADDING
+            : axisLabelFontSize + TITLE_V_PADDING) *
             2 +
           TOP_MARGIN
         }
@@ -90,7 +89,7 @@ export const AxisHeightLinearDual = (props: AxisHeightLinearDualProps) => {
               fontSize: axisLabelFontSize,
               backgroundColor: color,
               color: theme.palette.getContrastText(color),
-              padding: `${TITLE_VPADDING}px ${TITLE_HPADDING}px`,
+              padding: `${TITLE_V_PADDING}px ${TITLE_H_PADDING}px`,
               borderRadius: 4,
               wordBreak: "break-word",
             }}

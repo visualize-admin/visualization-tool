@@ -1,4 +1,4 @@
-import { TITLE_VPADDING } from "@/charts/combo/combo-line-container";
+import { TITLE_V_PADDING } from "@/charts/combo/combo-line-container";
 import { TICK_PADDING } from "@/charts/shared/axis-height-linear";
 import { TICK_FONT_SIZE } from "@/charts/shared/use-chart-theme";
 import { getTextWidth } from "@/utils/get-text-width";
@@ -36,7 +36,7 @@ export const useAxisTitleAdjustments = ({
   const axisTitleAdjustment =
     (isOverlapping
       ? fontSize * Math.ceil(overlapAmount)
-      : fontSize + TITLE_VPADDING) *
+      : fontSize + TITLE_V_PADDING) *
       2 -
     fontSize * 2;
 

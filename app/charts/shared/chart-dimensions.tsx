@@ -2,7 +2,7 @@ import { max } from "d3-array";
 import { ScaleLinear } from "d3-scale";
 import { useMemo } from "react";
 
-import { TITLE_VPADDING } from "@/charts/combo/combo-line-container";
+import { TITLE_V_PADDING } from "@/charts/combo/combo-line-container";
 import { TICK_PADDING } from "@/charts/shared/axis-height-linear";
 import { BRUSH_BOTTOM_SPACE } from "@/charts/shared/brush/constants";
 import { getTickNumber } from "@/charts/shared/ticks";
@@ -163,7 +163,7 @@ export const useChartBounds = (
       : 0;
 
     const overLappingTitles = leftTitleWidth + rightTitleWidth > chartWidth;
-    return overLappingTitles ? (axisLabelFontSize + TITLE_VPADDING) * 2 : 0;
+    return overLappingTitles ? (axisLabelFontSize + TITLE_V_PADDING) * 2 : 0;
   }, [chartWidth, yAxisLabels, axisLabelFontSize]);
 
   const chartHeight = isLayoutingFreeCanvas(state)

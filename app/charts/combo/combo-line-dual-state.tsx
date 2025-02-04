@@ -2,6 +2,7 @@ import { max, mean, min } from "d3-array";
 import { ScaleLinear, scaleLinear, ScaleOrdinal, ScaleTime } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
 
+import { TITLE_V_PADDING } from "@/charts/combo/combo-line-container";
 import {
   ComboLineDualStateVariables,
   useComboLineDualStateData,
@@ -40,8 +41,6 @@ import { useAxisTitleAdjustments } from "@/utils/use-axis-title-adjustments";
 import { useIsMobile } from "@/utils/use-is-mobile";
 
 import { ChartProps } from "../shared/ChartProps";
-
-import { TITLE_VPADDING } from "./combo-line-container";
 
 export type ComboLineDualState = CommonChartState &
   ComboLineDualStateVariables &
@@ -244,7 +243,7 @@ const ComboLineDualChartProvider = (
     axisTitleWidth + otherAxisTitleWidth > bounds.chartWidth;
 
   if (overLappingTitles) {
-    bounds.height += axisLabelFontSize + TITLE_VPADDING; // Add space for the legend if titles are overlapping
+    bounds.height += axisLabelFontSize + TITLE_V_PADDING;
   }
 
   return (
