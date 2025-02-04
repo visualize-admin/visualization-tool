@@ -2,6 +2,10 @@ name: GitLab Mirror Test
 
 on: [push, delete]
 
+# Ensures that only one mirror task will run at a time.
+concurrency:
+  group: git-mirror
+
 jobs:
   git-mirror:
     runs-on: ubuntu-latest
@@ -15,9 +19,10 @@ jobs:
           git remote show origin
           git for-each-ref
       - name: Mirror to GitLab
-        uses: yesolutions/mirror-action@master
+        uses: wearerequired/git-mirror-action@v1
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.GITLAB_TEST_PKEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.GITLAB_TEST_HOSTS }}
         with:
-          REMOTE: https://gitlab.ldbar.ch/interactivethings/visualize-mirroring-test.git
-          DEBUG: "true"
-          GIT_USERNAME: gitlab+deploy-token-8
-          GIT_PASSWORD: ${{ secrets.GITLAB_PASSWORD_TEST }}
+          source-repo: "git@github.com:visualize-admin/visualization-tool.git"
+          destination-repo: "git@gitlab.ldbar.ch:interactivethings/visualize-mirroring-test.git"
