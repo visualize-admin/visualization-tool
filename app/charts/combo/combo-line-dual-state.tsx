@@ -2,7 +2,6 @@ import { max, mean, min } from "d3-array";
 import { ScaleLinear, scaleLinear, ScaleOrdinal, ScaleTime } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
 
-import { TITLE_V_PADDING } from "@/charts/combo/combo-line-container";
 import {
   ComboLineDualStateVariables,
   useComboLineDualStateData,
@@ -14,6 +13,11 @@ import {
   useCommonComboState,
   useYScales,
 } from "@/charts/combo/combo-state";
+import {
+  SINGLE_LINE_AXIS_LABEL_HEIGHT,
+  TITLE_V_PADDING,
+  useAxisTitleSize,
+} from "@/charts/combo/shared";
 import { TICK_PADDING } from "@/charts/shared/axis-height-linear";
 import {
   useChartBounds,
@@ -37,7 +41,6 @@ import { ComboLineDualConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { getTextWidth } from "@/utils/get-text-width";
-import { useAxisTitleAdjustments } from "@/utils/use-axis-title-adjustments";
 import { useIsMobile } from "@/utils/use-is-mobile";
 
 import { ChartProps } from "../shared/ChartProps";
@@ -131,20 +134,24 @@ const useComboLineDualState = (
         TICK_PADDING
     )
   );
-
-  const { topMarginAxisTitleAdjustment } = useAxisTitleAdjustments({
-    leftAxisTitle: variables.y.left.label,
-    rightAxisTitle: variables.y.right.label,
-    containerWidth: width,
+  const axisTitleWidth = width * 0.5 - TICK_PADDING;
+  const leftAxisTitleSize = useAxisTitleSize(variables.y.left.label, {
+    width: axisTitleWidth,
   });
+  const rightAxisTitleSize = useAxisTitleSize(variables.y.right.label, {
+    width: width * 0.5 - TICK_PADDING,
+  });
+  const topAdd =
+    Math.max(leftAxisTitleSize.height, rightAxisTitleSize.height) +
+    SINGLE_LINE_AXIS_LABEL_HEIGHT;
 
   const right = Math.max(maxRightTickWidth, 40);
 
   const margins = getMargins({
     left,
     right,
-    bottom,
-    top: topMarginAxisTitleAdjustment,
+    bottom: bottom - SINGLE_LINE_AXIS_LABEL_HEIGHT,
+    top: topAdd,
   });
 
   const bounds = useChartBounds(width, margins, height, {
