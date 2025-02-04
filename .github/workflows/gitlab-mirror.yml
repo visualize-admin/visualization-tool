@@ -6,10 +6,18 @@ jobs:
   to_gitlab:
     runs-on: ubuntu-latest
     steps: # <-- must use actions/checkout@v4 before mirroring!
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: pixta-dev/repository-mirroring-action@v1
+      - name: Re-install old version of git # <-- temporary workaround for git version issue w/ v2.48.1
+        run: |
+          sudo apt-get update
+          sudo apt-get purge git
+          sudo apt-get autoremove
+          sudo apt-get install git
+      - name: Mirror to GitLab
+        uses: pixta-dev/repository-mirroring-action@v1
         with:
           target_repo_url: git@gitlab.ldbar.ch:interactivethings/visualization-tool.git
           ssh_private_key: # <-- use 'secrets' to pass credential information.
