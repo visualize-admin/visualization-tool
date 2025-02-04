@@ -16,7 +16,7 @@ import { Layout, LayoutDashboard } from "@/config-types";
 import { hasChartConfigs, LayoutBlock } from "@/configurator";
 import { useConfiguratorState } from "@/src";
 
-const useStyles = makeStyles<Theme>((theme) => ({
+const useStyles = makeStyles<Theme, { freeCanvas?: boolean }>((theme) => ({
   panelLayout: {
     containerType: "inline-size",
     display: "flex",
@@ -24,7 +24,7 @@ const useStyles = makeStyles<Theme>((theme) => ({
     gap: theme.spacing(4),
   },
   chartWrapper: {
-    display: "contents",
+    display: ({ freeCanvas }) => (freeCanvas ? "flex" : "contents"),
     overflow: "hidden",
     [`.${chartPanelLayoutGridClasses.root} &`]: {
       transition: theme.transitions.create(["box-shadow"], {
@@ -48,14 +48,16 @@ export const getChartWrapperId = (chartKey: string) =>
 
 export type ChartWrapperProps = BoxProps & {
   editing?: boolean;
-  layoutType?: Layout["type"];
+  layout?: Layout;
   chartKey: string;
 };
 
 export const ChartWrapper = forwardRef<HTMLDivElement, ChartWrapperProps>(
   (props, ref) => {
-    const { children, editing, layoutType, ...rest } = props;
-    const classes = useStyles();
+    const { children, editing, layout, ...rest } = props;
+    const classes = useStyles({
+      freeCanvas: layout?.type === "dashboard" && layout.layout === "canvas",
+    });
 
     return (
       <Box
@@ -64,7 +66,7 @@ export const ChartWrapper = forwardRef<HTMLDivElement, ChartWrapperProps>(
         id={getChartWrapperId(props.chartKey)}
         className={clsx(classes.chartWrapper, props.className)}
       >
-        {(editing || layoutType === "tab") && <ChartSelectionTabs />}
+        {(editing || layout?.type === "tab") && <ChartSelectionTabs />}
         <Box
           className={classes.chartWrapperInner}
           sx={{ minHeight: [150, 300, 500] }}
@@ -105,7 +107,7 @@ export const ChartPanelLayout = ({
   ...rest
 }: ChartPanelLayoutProps) => {
   const [state] = useConfiguratorState(hasChartConfigs);
-  const classes = useStyles();
+  const classes = useStyles({});
   const Wrapper = Wrappers[layoutType];
   const { layout } = state;
   const { blocks } = layout;
