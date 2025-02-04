@@ -30,7 +30,7 @@ msgstr "Aucun résultat"
 msgid "annotation.add.description"
 msgstr "[ Pas de description ]"
 
-#: app/components/chart-panel.tsx
+#: app/components/text-block.tsx
 msgid "annotation.add.text"
 msgstr "[ Ajouter du texte ]"
 
@@ -344,11 +344,11 @@ msgstr "Axe vertical"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.bar.grouped"
-msgstr "groupées"
+msgstr "Groupé"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.bar.stacked"
-msgstr "empilées"
+msgstr "Empilés"
 
 #: app/charts/chart-config-ui-options.ts
 #: app/charts/chart-config-ui-options.ts
@@ -699,19 +699,19 @@ msgstr "Dashboard"
 
 #: app/configurator/components/preview-breakpoint.tsx
 msgid "controls.layout.preview-lg"
-msgstr "Aperçu petit écran de bureau"
+msgstr "Aperçu en grande largeur"
 
 #: app/configurator/components/preview-breakpoint.tsx
 msgid "controls.layout.preview-md"
-msgstr "Aperçu tablette"
+msgstr "Aperçu en largeur moyenne"
 
 #: app/configurator/components/preview-breakpoint.tsx
 msgid "controls.layout.preview-sm"
-msgstr "Aperçu mobile"
+msgstr "Aperçu en petite largeur"
 
 #: app/configurator/components/preview-breakpoint.tsx
 msgid "controls.layout.preview-xl"
-msgstr "Prévisualisation en utilisant une largeur extra large"
+msgstr "Aperçu en très grande largeur"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.layout.singleURLs"
@@ -1602,11 +1602,11 @@ msgstr "Se déconnecter"
 msgid "logo.swiss.confederation"
 msgstr "Logo de la Confédération Suisse"
 
-#: app/components/mdx-editor/link-popover.tsx
+#: app/components/mdx-editor/link-dialog.tsx
 msgid "mdx-editor.link-dialog.label-placeholder"
 msgstr "Étiquette..."
 
-#: app/components/mdx-editor/link-popover.tsx
+#: app/components/mdx-editor/link-dialog.tsx
 msgid "mdx-editor.link-dialog.url-placeholder"
 msgstr "URL..."
 
