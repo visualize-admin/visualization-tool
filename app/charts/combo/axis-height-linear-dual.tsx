@@ -56,6 +56,7 @@ export const AxisHeightLinearDual = (props: AxisHeightLinearDualProps) => {
   return (
     <>
       <foreignObject
+        data-testid={`axis-title-${orientation}`}
         x={axisTitleX}
         width={axisTitleWidth}
         height={axisTitleHeight}
