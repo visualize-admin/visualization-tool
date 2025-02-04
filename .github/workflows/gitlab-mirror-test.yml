@@ -6,11 +6,16 @@ jobs:
   git-mirror:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          fetch-tags: false
-      - uses: yesolutions/mirror-action@master
+      - name: Logging
+        run: |
+          git remote show origin
+          git for-each-ref
+      - name: Mirror to GitLab
+        uses: yesolutions/mirror-action@master
         with:
           REMOTE: https://gitlab.ldbar.ch/interactivethings/visualize-mirroring-test.git
           DEBUG: "true"
