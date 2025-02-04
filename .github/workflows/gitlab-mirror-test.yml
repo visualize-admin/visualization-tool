@@ -4,10 +4,10 @@ on: [push, delete]
 
 # Ensures that only one mirror task will run at a time.
 concurrency:
-  group: git-mirror
+  group: to_gitlab
 
 jobs:
-  git-mirror:
+  to_gitlab:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
