@@ -102,13 +102,15 @@ const preloadChartsWithOptions = async (
   await preloadChartsPool(fetchedConfigs.data, concurrency);
 };
 
+const LIMIT = 250;
+
 const main = async () => {
   const concurrency = process.env.CI ? 2 : 4;
   // Latest charts
-  await preloadChartsWithOptions({ limit: 25 }, concurrency);
+  await preloadChartsWithOptions({ limit: LIMIT }, concurrency);
   // Most viewed charts
   await preloadChartsWithOptions(
-    { limit: 25, orderByViewCount: true },
+    { limit: LIMIT, orderByViewCount: true },
     concurrency
   );
   process.exit(0);

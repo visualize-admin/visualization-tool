@@ -29,6 +29,8 @@ You can also check the
   - Improved vertical spacing between map legend items
   - Fixed the spacing between navigation and header in the /profile view
   - Regular charts now have consistent margin between the Y axis label and ticks
+- Maintenance
+  - Increased the number of charts pre-loaded to Varnish cache from 25 to 250
 
 # [5.2.1] - 2025-01-29
 
