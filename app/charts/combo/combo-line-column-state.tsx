@@ -18,14 +18,10 @@ import {
 } from "@/charts/combo/combo-line-column-state-props";
 import {
   adjustScales,
-  getMargins,
   useCommonComboState,
+  useDualAxisMargins,
   useYScales,
 } from "@/charts/combo/combo-state";
-import {
-  SINGLE_LINE_AXIS_LABEL_HEIGHT,
-  useAxisTitleSize,
-} from "@/charts/combo/shared";
 import { TICK_PADDING } from "@/charts/shared/axis-height-linear";
 import {
   useChartBounds,
@@ -158,23 +154,13 @@ const useComboLineColumnState = (
         TICK_PADDING
     )
   );
-  const axisTitleWidth = width * 0.5 - TICK_PADDING;
-  const leftAxisTitleSize = useAxisTitleSize(variables.y.left.label, {
-    width: axisTitleWidth,
-  });
-  const rightAxisTitleSize = useAxisTitleSize(variables.y.right.label, {
-    width: axisTitleWidth,
-  });
-  const topAdd =
-    Math.max(leftAxisTitleSize.height, rightAxisTitleSize.height) +
-    SINGLE_LINE_AXIS_LABEL_HEIGHT;
-
-  const right = Math.max(maxRightTickWidth, 40);
-  const margins = getMargins({
+  const margins = useDualAxisMargins({
+    width,
     left,
-    right,
-    bottom: bottom - SINGLE_LINE_AXIS_LABEL_HEIGHT,
-    top: topAdd,
+    bottom,
+    maxRightTickWidth,
+    leftAxisTitle: variables.y.left.label,
+    rightAxisTitle: variables.y.right.label,
   });
   const bounds = useChartBounds(width, margins, height);
   const { chartWidth, chartHeight } = bounds;
