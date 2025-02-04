@@ -171,7 +171,13 @@ const ChartFootnotesLegendContainer = ({
 }: {
   children: React.ReactNode;
 }) => {
-  return <Box sx={{ display: "flex", gap: 3, mb: 1 }}>{children}</Box>;
+  return (
+    <Box
+      sx={{ display: "flex", flexWrap: "wrap", rowGap: 1, columnGap: 3, mb: 1 }}
+    >
+      {children}
+    </Box>
+  );
 };
 
 const ChartFootnotesComboLineColumn = ({
