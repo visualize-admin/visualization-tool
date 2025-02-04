@@ -10,12 +10,13 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Re-install old version of git # <-- temporary workaround for git version issue w/ v2.48.1
+      - name: Re-install old version of git # <-- temporary workaround for git version issue w/ v2.48.1 (installs git v2.43.0 on 24.04 LTS)
         run: |
           sudo apt-get update
           sudo apt-get purge git
           sudo apt-get autoremove
           sudo apt-get install git
+          git for-each-ref
       - name: Mirror to GitLab
         uses: pixta-dev/repository-mirroring-action@v1
         with:
