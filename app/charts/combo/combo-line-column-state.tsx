@@ -166,7 +166,7 @@ const useComboLineColumnState = (
     width: axisTitleWidth,
   });
   const topAdd =
-    Math.max(leftAxisTitleSize.height, rightAxisTitleSize.height) -
+    Math.max(leftAxisTitleSize.height, rightAxisTitleSize.height) +
     SINGLE_LINE_AXIS_LABEL_HEIGHT;
 
   const right = Math.max(maxRightTickWidth, 40);
