@@ -21,7 +21,7 @@ jobs:
       - name: Mirror to GitLab
         uses: wearerequired/git-mirror-action@v1
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.GITLAB_TEST_PKEY }}
+          SSH_PRIVATE_KEY: ${{ secrets.GITLAB_SSH_PRIVATE_KEY }}
         with:
           source-repo: "git@github.com:visualize-admin/visualization-tool.git"
           destination-repo: "git@gitlab.ldbar.ch:interactivethings/visualize-mirroring-test.git"
