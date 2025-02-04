@@ -1,0 +1,433 @@
+{
+  "key": "iZHrxhq2Op8Y",
+  "data": {
+    "state": "PUBLISHED",
+    "key": "RFaQiBA4ht7o",
+    "layout": {
+      "meta": {
+        "label": {
+          "de": "",
+          "en": "",
+          "fr": "",
+          "it": ""
+        },
+        "title": {
+          "de": "",
+          "en": "",
+          "fr": "",
+          "it": ""
+        },
+        "description": {
+          "de": "",
+          "en": "",
+          "fr": "",
+          "it": ""
+        }
+      },
+      "type": "dashboard",
+      "blocks": [
+        {
+          "key": "iZHrxhq2Op8Y",
+          "type": "chart",
+          "initialized": true
+        },
+        {
+          "key": "6S1WeaCa8imo",
+          "type": "chart",
+          "initialized": true
+        },
+        {
+          "key": "JmJGEAtbDgUw",
+          "type": "chart",
+          "initialized": true
+        }
+      ],
+      "layout": "canvas",
+      "layouts": {
+        "lg": [
+          {
+            "h": 5,
+            "i": "iZHrxhq2Op8Y",
+            "w": 1,
+            "x": 0,
+            "y": 0,
+            "maxW": 4,
+            "minH": 5,
+            "moved": false,
+            "static": false,
+            "resizeHandles": ["s", "w", "e", "n", "sw", "nw", "se", "ne"]
+          },
+          {
+            "h": 5,
+            "i": "6S1WeaCa8imo",
+            "w": 1,
+            "x": 1,
+            "y": 0,
+            "maxW": 4,
+            "minH": 5,
+            "moved": false,
+            "static": false,
+            "resizeHandles": ["s", "w", "e", "n", "sw", "nw", "se", "ne"]
+          },
+          {
+            "h": 5,
+            "i": "JmJGEAtbDgUw",
+            "w": 1,
+            "x": 2,
+            "y": 0,
+            "maxW": 4,
+            "minH": 5,
+            "moved": false,
+            "static": false,
+            "resizeHandles": ["s", "w", "e", "n", "sw", "nw", "se", "ne"]
+          }
+        ],
+        "md": [
+          {
+            "h": 5,
+            "i": "iZHrxhq2Op8Y",
+            "w": 1,
+            "x": 0,
+            "y": 0,
+            "maxW": 4,
+            "minH": 5,
+            "resizeHandles": ["s", "w", "e", "n", "sw", "nw", "se", "ne"]
+          },
+          {
+            "h": 5,
+            "i": "6S1WeaCa8imo",
+            "w": 1,
+            "x": 1,
+            "y": 0,
+            "maxW": 4,
+            "minH": 5,
+            "resizeHandles": ["s", "w", "e", "n", "sw", "nw", "se", "ne"]
+          },
+          {
+            "h": 5,
+            "i": "JmJGEAtbDgUw",
+            "w": 1,
+            "x": 2,
+            "y": 7,
+            "maxW": 4,
+            "minH": 5,
+            "resizeHandles": ["s", "w", "e", "n", "sw", "nw", "se", "ne"]
+          }
+        ],
+        "sm": [
+          {
+            "h": 5,
+            "i": "iZHrxhq2Op8Y",
+            "w": 1,
+            "x": 0,
+            "y": 0,
+            "maxW": 4,
+            "minH": 5,
+            "resizeHandles": ["s", "w", "e", "n", "sw", "nw", "se", "ne"]
+          },
+          {
+            "h": 5,
+            "i": "6S1WeaCa8imo",
+            "w": 1,
+            "x": 1,
+            "y": 0,
+            "maxW": 4,
+            "minH": 5,
+            "resizeHandles": ["s", "w", "e", "n", "sw", "nw", "se", "ne"]
+          },
+          {
+            "h": 5,
+            "i": "JmJGEAtbDgUw",
+            "w": 1,
+            "x": 2,
+            "y": 7,
+            "maxW": 4,
+            "minH": 5,
+            "resizeHandles": ["s", "w", "e", "n", "sw", "nw", "se", "ne"]
+          }
+        ],
+        "xl": [
+          {
+            "h": 5,
+            "i": "iZHrxhq2Op8Y",
+            "w": 1,
+            "x": 0,
+            "y": 0,
+            "maxW": 4,
+            "minH": 5,
+            "moved": false,
+            "static": false,
+            "resizeHandles": ["s", "w", "e", "n", "sw", "nw", "se", "ne"]
+          },
+          {
+            "h": 5,
+            "i": "6S1WeaCa8imo",
+            "w": 1,
+            "x": 1,
+            "y": 0,
+            "maxW": 4,
+            "minH": 5,
+            "moved": false,
+            "static": false,
+            "resizeHandles": ["s", "w", "e", "n", "sw", "nw", "se", "ne"]
+          },
+          {
+            "h": 5,
+            "i": "JmJGEAtbDgUw",
+            "w": 1,
+            "x": 2,
+            "y": 0,
+            "maxW": 4,
+            "minH": 5,
+            "moved": false,
+            "static": false,
+            "resizeHandles": ["s", "w", "e", "n", "sw", "nw", "se", "ne"]
+          }
+        ]
+      }
+    },
+    "version": "4.2.0",
+    "dataSource": {
+      "url": "https://lindas-cached.cluster.ldbar.ch/query",
+      "type": "sparql"
+    },
+    "chartConfigs": [
+      {
+        "key": "iZHrxhq2Op8Y",
+        "meta": {
+          "label": {
+            "de": "",
+            "en": "",
+            "fr": "",
+            "it": ""
+          },
+          "title": {
+            "de": "",
+            "en": "",
+            "fr": "",
+            "it": ""
+          },
+          "description": {
+            "de": "",
+            "en": "",
+            "fr": "",
+            "it": ""
+          }
+        },
+        "cubes": [
+          {
+            "iri": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/10",
+            "filters": {
+              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton": {
+                "type": "single",
+                "value": "https://ld.admin.ch/canton/1"
+              }
+            }
+          }
+        ],
+        "fields": {
+          "x": {
+            "sorting": {
+              "sortingType": "byAuto",
+              "sortingOrder": "asc"
+            },
+            "componentId": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr"
+          },
+          "y": {
+            "componentId": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/AnzahlAnlagen"
+          },
+          "color": {
+            "type": "single",
+            "color": "#006699",
+            "paletteId": "category10"
+          }
+        },
+        "version": "4.1.0",
+        "chartType": "column",
+        "interactiveFiltersConfig": {
+          "legend": {
+            "active": false,
+            "componentId": ""
+          },
+          "timeRange": {
+            "active": false,
+            "presets": {
+              "to": "",
+              "from": "",
+              "type": "range"
+            },
+            "componentId": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr"
+          },
+          "calculation": {
+            "type": "identity",
+            "active": false
+          },
+          "dataFilters": {
+            "active": false,
+            "componentIds": []
+          }
+        }
+      },
+      {
+        "key": "6S1WeaCa8imo",
+        "meta": {
+          "label": {
+            "de": "",
+            "en": "",
+            "fr": "",
+            "it": ""
+          },
+          "title": {
+            "de": "",
+            "en": "",
+            "fr": "",
+            "it": ""
+          },
+          "description": {
+            "de": "",
+            "en": "",
+            "fr": "",
+            "it": ""
+          }
+        },
+        "cubes": [
+          {
+            "iri": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/10",
+            "filters": {
+              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton": {
+                "type": "single",
+                "value": "https://ld.admin.ch/canton/1"
+              }
+            }
+          }
+        ],
+        "fields": {
+          "x": {
+            "componentId": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr"
+          },
+          "y": {
+            "componentId": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/AnzahlAnlagen"
+          },
+          "color": {
+            "type": "single",
+            "color": "#006699",
+            "paletteId": "category10"
+          }
+        },
+        "version": "4.1.0",
+        "chartType": "line",
+        "interactiveFiltersConfig": {
+          "legend": {
+            "active": false,
+            "componentId": ""
+          },
+          "timeRange": {
+            "active": false,
+            "presets": {
+              "to": "",
+              "from": "",
+              "type": "range"
+            },
+            "componentId": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr"
+          },
+          "calculation": {
+            "type": "identity",
+            "active": false
+          },
+          "dataFilters": {
+            "active": false,
+            "componentIds": []
+          }
+        }
+      },
+      {
+        "key": "JmJGEAtbDgUw",
+        "meta": {
+          "label": {
+            "de": "",
+            "en": "",
+            "fr": "",
+            "it": ""
+          },
+          "title": {
+            "de": "",
+            "en": "",
+            "fr": "",
+            "it": ""
+          },
+          "description": {
+            "de": "",
+            "en": "",
+            "fr": "",
+            "it": ""
+          }
+        },
+        "cubes": [
+          {
+            "iri": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/10",
+            "filters": {
+              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton": {
+                "type": "single",
+                "value": "https://ld.admin.ch/canton/1"
+              }
+            }
+          }
+        ],
+        "fields": {
+          "x": {
+            "componentId": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr"
+          },
+          "y": {
+            "componentId": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/AnzahlAnlagen",
+            "imputationType": "none"
+          },
+          "color": {
+            "type": "single",
+            "color": "#006699",
+            "paletteId": "category10"
+          }
+        },
+        "version": "4.1.0",
+        "chartType": "area",
+        "interactiveFiltersConfig": {
+          "legend": {
+            "active": false,
+            "componentId": ""
+          },
+          "timeRange": {
+            "active": false,
+            "presets": {
+              "to": "",
+              "from": "",
+              "type": "range"
+            },
+            "componentId": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr"
+          },
+          "calculation": {
+            "type": "identity",
+            "active": false
+          },
+          "dataFilters": {
+            "active": false,
+            "componentIds": []
+          }
+        }
+      }
+    ],
+    "activeChartKey": "iZHrxhq2Op8Y",
+    "dashboardFilters": {
+      "timeRange": {
+        "active": false,
+        "presets": {
+          "to": "",
+          "from": ""
+        },
+        "timeUnit": ""
+      },
+      "dataFilters": {
+        "filters": {},
+        "componentIds": []
+      }
+    }
+  }
+}

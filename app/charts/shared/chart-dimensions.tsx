@@ -204,6 +204,7 @@ export const useAxisLabelHeightOffset = ({
   const { axisLabelFontSize: fontSize } = useChartTheme();
   const labelWidth = getTextWidth(label, { fontSize });
   const lines = Math.ceil(labelWidth / (width - marginLeft - marginRight));
+
   return {
     height: fontSize * LINE_HEIGHT * lines,
     offset: fontSize * LINE_HEIGHT * (lines - 1),

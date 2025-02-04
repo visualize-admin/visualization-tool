@@ -34,6 +34,7 @@ import {
   getCenteredTooltipPlacement,
   MOBILE_TOOLTIP_PLACEMENT,
 } from "@/charts/shared/interaction/tooltip-box";
+import { DEFAULT_MARGIN_TOP } from "@/charts/shared/margins";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useSize } from "@/charts/shared/use-size";
@@ -207,7 +208,7 @@ const useBarsState = (
   });
   const right = 40;
   const margins = {
-    top: 55,
+    top: DEFAULT_MARGIN_TOP,
     right,
     bottom: bottom + 45,
     left,

@@ -30,7 +30,10 @@ You can also check the
 - Style
   - Improved vertical spacing between map legend items
   - Fixed the spacing between navigation and header in the /profile view
+  - Regular charts now have consistent margin between the Y axis label and ticks
   - Combo legend items now wrap below each other when there's not enough space
+- Maintenance
+  - Increased the number of charts pre-loaded to Varnish cache from 25 to 250
 
 # [5.2.1] - 2025-01-29
 

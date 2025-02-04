@@ -21,6 +21,7 @@ import {
 } from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import { TooltipScatterplot } from "@/charts/shared/interaction/tooltip-content";
+import { DEFAULT_MARGIN_TOP } from "@/charts/shared/margins";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useSize } from "@/charts/shared/use-size";
 import { ScatterPlotConfig, SortingField } from "@/configurator";
@@ -178,7 +179,7 @@ const useScatterplotState = (
     marginRight: right,
   });
   const margins = {
-    top: 75 + yAxisLabelMargin,
+    top: DEFAULT_MARGIN_TOP + yAxisLabelMargin,
     right,
     bottom: bottom + xAxisLabelMargin,
     left,

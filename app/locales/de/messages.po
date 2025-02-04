@@ -30,7 +30,7 @@ msgstr "Kein Ergebnis"
 msgid "annotation.add.description"
 msgstr "[ Ohne Beschreibung ]"
 
-#: app/components/chart-panel.tsx
+#: app/components/text-block.tsx
 msgid "annotation.add.text"
 msgstr "[ Text hinzufügen ]"
 
@@ -699,15 +699,15 @@ msgstr "Dashboard"
 
 #: app/configurator/components/preview-breakpoint.tsx
 msgid "controls.layout.preview-lg"
-msgstr "Vorschau mit kleinem Desktop-Bildschirm"
+msgstr "Vorschau in grosser Breite"
 
 #: app/configurator/components/preview-breakpoint.tsx
 msgid "controls.layout.preview-md"
-msgstr "Vorschau mit Tablet"
+msgstr "Vorschau in mittlerer Breite"
 
 #: app/configurator/components/preview-breakpoint.tsx
 msgid "controls.layout.preview-sm"
-msgstr "Vorschau mit Phone-Breite"
+msgstr "Vorschau in kleiner Breite"
 
 #: app/configurator/components/preview-breakpoint.tsx
 msgid "controls.layout.preview-xl"
@@ -899,7 +899,7 @@ msgstr "Titel & Beschreibung"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.dots-size"
-msgstr "Wählen Sie eine Größe"
+msgstr "Wählen Sie eine Grösse"
 
 #: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/chart-options-selector.tsx
@@ -1602,11 +1602,11 @@ msgstr "Abmelden"
 msgid "logo.swiss.confederation"
 msgstr "Logo der Schweizerischen Eidgenossenschaft"
 
-#: app/components/mdx-editor/link-popover.tsx
+#: app/components/mdx-editor/link-dialog.tsx
 msgid "mdx-editor.link-dialog.label-placeholder"
 msgstr "Etikett..."
 
-#: app/components/mdx-editor/link-popover.tsx
+#: app/components/mdx-editor/link-dialog.tsx
 msgid "mdx-editor.link-dialog.url-placeholder"
 msgstr "URL..."
 
