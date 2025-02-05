@@ -43,6 +43,7 @@ const useStyles = makeStyles<
   chartWrapperInner: {
     display: ({ freeCanvas, isEditing }) =>
       isEditing || !freeCanvas ? "contents" : "flex",
+    flexDirection: "column",
     width: "auto",
     height: "100%",
   },
