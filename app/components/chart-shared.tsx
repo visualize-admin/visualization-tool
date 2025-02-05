@@ -70,6 +70,7 @@ export const CHART_GRID_ROW_COUNT = 7;
 export const useChartStyles = makeStyles<Theme, { disableBorder?: boolean }>(
   (theme) => ({
     root: {
+      flexGrow: 1,
       padding: theme.spacing(6),
       backgroundColor: theme.palette.background.paper,
       border: ({ disableBorder }) =>

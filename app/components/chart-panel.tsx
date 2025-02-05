@@ -16,7 +16,10 @@ import { Layout, LayoutDashboard } from "@/config-types";
 import { hasChartConfigs, LayoutBlock } from "@/configurator";
 import { useConfiguratorState } from "@/src";
 
-const useStyles = makeStyles<Theme, { freeCanvas?: boolean }>((theme) => ({
+const useStyles = makeStyles<
+  Theme,
+  { freeCanvas?: boolean; isEditing?: boolean }
+>((theme) => ({
   panelLayout: {
     containerType: "inline-size",
     display: "flex",
@@ -25,6 +28,7 @@ const useStyles = makeStyles<Theme, { freeCanvas?: boolean }>((theme) => ({
   },
   chartWrapper: {
     display: ({ freeCanvas }) => (freeCanvas ? "flex" : "contents"),
+    flexDirection: "column",
     overflow: "hidden",
     [`.${chartPanelLayoutGridClasses.root} &`]: {
       transition: theme.transitions.create(["box-shadow"], {
@@ -37,7 +41,9 @@ const useStyles = makeStyles<Theme, { freeCanvas?: boolean }>((theme) => ({
       },
   },
   chartWrapperInner: {
-    display: "contents",
+    display: ({ freeCanvas, isEditing }) =>
+      isEditing || !freeCanvas ? "contents" : "flex",
+    flexDirection: "column",
     width: "auto",
     height: "100%",
   },
@@ -57,6 +63,7 @@ export const ChartWrapper = forwardRef<HTMLDivElement, ChartWrapperProps>(
     const { children, editing, layout, ...rest } = props;
     const classes = useStyles({
       freeCanvas: layout?.type === "dashboard" && layout.layout === "canvas",
+      isEditing: editing,
     });
 
     return (
