@@ -11,6 +11,10 @@ You can also check the
 
 # Unreleased
 
+Nothing yet.
+
+# [5.2.3] - 2025-02-05
+
 - Fixes
   - Charts that use most recent date filter and interactive time range filter
     are initialized correctly now
