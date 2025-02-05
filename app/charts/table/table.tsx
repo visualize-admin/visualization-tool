@@ -292,10 +292,6 @@ export const Table = () => {
       tableColumnsMeta,
     ]
   );
-  const defaultListHeightOffset = getTableUIElementsOffset({
-    showSearch,
-    width: bounds.width,
-  });
 
   return (
     <>
@@ -345,7 +341,7 @@ export const Table = () => {
             {({ width, height }: { width: number; height: number }) => (
               <VariableSizeList
                 key={rows.length} // Reset when groups are toggled because itemSize remains cached per index
-                height={height - defaultListHeightOffset}
+                height={height}
                 itemCount={rows.length}
                 itemSize={getMobileItemSize}
                 width={width}
@@ -378,7 +374,7 @@ export const Table = () => {
                   <FixedSizeList
                     outerElementType={TableContentWrapper}
                     // row height = header row height
-                    height={height - defaultListHeightOffset - rowHeight}
+                    height={height - rowHeight}
                     itemCount={rows.length}
                     itemSize={rowHeight} // depends on whether a column has bars (40px or 56px)
                     width="100%"
