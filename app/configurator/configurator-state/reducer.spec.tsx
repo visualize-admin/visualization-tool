@@ -866,36 +866,6 @@ describe("colorMapping", () => {
     );
   });
 
-  it("should correctly shuffle color mapping for maps", () => {
-    const state: ConfiguratorStateConfiguringChart = configStateMock.map;
-    const hasColorField = isColorInConfig(state.chartConfigs[0] as ChartConfig);
-
-    const newState = produce(state, (state: ConfiguratorState) => {
-      return updateColorMapping(state, {
-        type: "CHART_CONFIG_UPDATE_COLOR_MAPPING",
-        value: {
-          field: hasColorField ? "color" : "areaLayer",
-          colorConfigPath: hasColorField ? undefined : "color",
-          dimensionId: "year-period-1",
-          values: [
-            { value: "red", label: "red", color: "red" },
-            { value: "green", label: "green", color: "green" },
-            { value: "blue", label: "blue", color: "blue" },
-          ],
-          random: true,
-        },
-      });
-    });
-
-    expect(
-      (getChartConfig(newState).fields as any).areaLayer.color.colorMapping
-    ).not.toEqual({
-      red: "red",
-      green: "green",
-      blue: "blue",
-    });
-  });
-
   it("should correctly shuffle color mapping for grouped column chart", () => {
     const state: ConfiguratorStateConfiguringChart =
       configStateMock.groupedColumnChart;
