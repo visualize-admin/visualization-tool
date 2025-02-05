@@ -27,6 +27,8 @@ You can also check the
   - Fixed color shuffling & resetting to work again with custom color palettes
   - Dual-axis chart y axis titles do not overlap with other chart elements in
     specific cases anymore
+  - Changing locale when editing a chart with temporal entity-based X axis now
+    correctly updates the chart
 - Style
   - Improved vertical spacing between map legend items
   - Fixed the spacing between navigation and header in the /profile view
