@@ -25,10 +25,13 @@ You can also check the
   - PNG image download now correctly retains Y axis label colors in combo charts
   - NaN values are not displayed in map tooltip anymore
   - Fixed color shuffling & resetting to work again with custom color palettes
+  - Dual-axis chart y axis titles do not overlap with other chart elements in
+    specific cases anymore
 - Style
   - Improved vertical spacing between map legend items
   - Fixed the spacing between navigation and header in the /profile view
   - Regular charts now have consistent margin between the Y axis label and ticks
+  - Combo legend items now wrap below each other when there's not enough space
 - Maintenance
   - Increased the number of charts pre-loaded to Varnish cache from 25 to 250
 
