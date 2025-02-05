@@ -506,7 +506,7 @@ export const updateColorMapping = (
       const fieldValue: (GenericField & { paletteId: string }) | undefined =
         get(chartConfig, path);
 
-      if (fieldValue?.componentId === dimensionId) {
+      if (fieldValue?.componentId === dimensionId || fieldValue?.paletteId) {
         colorMapping = mapValueIrisToColor({
           paletteId: fieldValue.paletteId,
           dimensionValues: values,
