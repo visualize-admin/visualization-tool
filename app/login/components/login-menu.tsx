@@ -5,6 +5,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 import { MenuActionItem } from "@/components/menu-action-item";
 import { ADFS_PROFILE_URL } from "@/domain/env";
+import { Icon } from "@/icons";
 import { useUser } from "@/login/utils";
 import { useLocale } from "@/src";
 import { createMailtoLink } from "@/templates/email";
@@ -31,14 +32,16 @@ export const LoginMenu = () => {
               minWidth: 0,
               minHeight: 0,
               padding: 0,
+              gap: 1,
+              color: "muted.colored",
               "&:hover": {
+                color: "#d1d5db", // FIXME: once the new colors are in place
                 backgroundColor: "transparent !important",
               },
             }}
           >
-            <Typography variant="body2" noWrap>
-              {user.name}
-            </Typography>
+            <Typography noWrap>{user.name}</Typography>
+            <Icon name="chevronDown2" size={24} />
           </Button>
           <Menu
             anchorEl={anchorEl}
@@ -96,7 +99,14 @@ export const LoginMenu = () => {
       ) : (
         <Button
           variant="text"
-          color="primary"
+          sx={{
+            color: "muted.colored",
+            fontSize: "16px",
+            whiteSpace: "nowrap",
+            ":hover": {
+              color: "#d1d5db", // FIXME: once the new colors are in place
+            },
+          }}
           size="small"
           onClick={() => signIn("adfs")}
         >
