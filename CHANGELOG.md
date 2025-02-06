@@ -11,7 +11,8 @@ You can also check the
 
 # Unreleased
 
-Nothing yet.
+- Fixes
+  - Duplicating chart in layout mode works correctly again
 
 # [5.2.3] - 2025-02-05
 

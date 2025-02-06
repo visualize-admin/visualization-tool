@@ -585,7 +585,7 @@ const handleAddNewChartConfig = (
   draft: ConfiguratorState,
   chartConfig: ChartConfig
 ) => {
-  if (isConfiguring(draft)) {
+  if (isConfiguring(draft) || isLayouting(draft)) {
     draft.chartConfigs.push(chartConfig);
     draft.activeChartKey = chartConfig.key;
     draft.layout.blocks.push({
