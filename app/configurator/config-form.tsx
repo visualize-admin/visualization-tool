@@ -225,7 +225,7 @@ export const useChartOptionSelectField = <V extends {} = string>(
     (e) => {
       const value = e.target.value as string;
       dispatch({
-        type: "COLOR_MAPPING_UPDATED",
+        type: "COLOR_FIELD_UPDATED",
         value: {
           locale,
           field,
@@ -276,7 +276,7 @@ export const useChartOptionSliderField = ({
 
     if (isValidNumber) {
       dispatch({
-        type: "COLOR_MAPPING_UPDATED",
+        type: "COLOR_FIELD_UPDATED",
         value: {
           locale,
           field,
@@ -312,7 +312,7 @@ export const useChartOptionRadioField = <V extends string | number>(
   const [state, dispatch] = useConfiguratorState(isConfiguring);
   const handleChange = useCallback(() => {
     dispatch({
-      type: "COLOR_MAPPING_UPDATED",
+      type: "COLOR_FIELD_UPDATED",
       value: {
         locale,
         field,
@@ -347,7 +347,7 @@ export const useChartOptionBooleanField = ({
   const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
     (e) => {
       dispatch({
-        type: "COLOR_MAPPING_UPDATED",
+        type: "COLOR_FIELD_UPDATED",
         value: {
           locale,
           path,
