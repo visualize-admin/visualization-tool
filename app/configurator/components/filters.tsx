@@ -73,6 +73,7 @@ import { EditorBrush } from "@/configurator/interactive-filters/editor-brush";
 import {
   useInteractiveFiltersToggle,
   useInteractiveTimeRangeToggle,
+  useLegendVisibility,
 } from "@/configurator/interactive-filters/interactive-filters-config-state";
 import { InteractiveFilterToggle } from "@/configurator/interactive-filters/interactive-filters-configurator";
 import {
@@ -354,44 +355,86 @@ const MultiFilterContent = ({
   });
 
   const interactiveFilterProps = useInteractiveFiltersToggle("legend");
+  const visibleLegendProps = useLegendVisibility("legend");
   const chartSymbol = getChartSymbol(chartConfig.chartType);
 
   return (
     <Box sx={{ position: "relative" }}>
       <Box mb={4}>
-        <Box sx={{ justifyContent: "space-between", display: "flex" }}>
+        <Box
+          sx={{
+            justifyContent: "space-between",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-end",
+          }}
+        >
           {chartConfig.activeField === "segment" ? (
-            <FormControlLabel
-              componentsProps={{ typography: { variant: "body2" } }}
-              control={<Switch {...interactiveFilterProps} />}
-              label={
-                <MaybeTooltip
-                  tooltipProps={{ enterDelay: 600 }}
-                  title={
-                    <TooltipTitle
-                      text={
-                        <Trans id="controls.filters.interactive.tooltip">
-                          Allow users to change filters
-                        </Trans>
+            <>
+              <Flex
+                sx={{ height: "33px", alignItems: "center", width: "100%" }}
+              >
+                <FormControlLabel
+                  componentsProps={{ typography: { variant: "body2" } }}
+                  control={<Switch {...interactiveFilterProps} />}
+                  label={
+                    <MaybeTooltip
+                      tooltipProps={{ enterDelay: 600 }}
+                      title={
+                        <TooltipTitle
+                          text={
+                            <Trans id="controls.filters.interactive.tooltip">
+                              Allow users to change filters
+                            </Trans>
+                          }
+                        />
                       }
-                    />
+                    >
+                      <div>
+                        <Trans id="controls.filters.interactive.toggle">
+                          Interactive
+                        </Trans>
+                      </div>
+                    </MaybeTooltip>
                   }
-                >
-                  <div>
-                    <Trans id="controls.filters.interactive.toggle">
-                      Interactive
-                    </Trans>
-                  </div>
-                </MaybeTooltip>
-              }
-            />
+                />
+              </Flex>
+              <Flex
+                sx={{ height: "33px", alignItems: "center", width: "100%" }}
+              >
+                <FormControlLabel
+                  componentsProps={{ typography: { variant: "body2" } }}
+                  control={<Switch {...visibleLegendProps} />}
+                  label={
+                    <MaybeTooltip
+                      tooltipProps={{ enterDelay: 600 }}
+                      title={
+                        <TooltipTitle
+                          text={
+                            <Trans id="controls.filters.show-legend.tooltip">
+                              Allow users to change Legend visibility
+                            </Trans>
+                          }
+                        />
+                      }
+                    >
+                      <div>
+                        <Trans id="controls.filters.show-legend.toggle">
+                          Show legend titles
+                        </Trans>
+                      </div>
+                    </MaybeTooltip>
+                  }
+                />
+              </Flex>
+            </>
           ) : null}
           <Button
             variant="contained"
             size="small"
             color="primary"
             onClick={handleOpenAutocomplete}
-            sx={{ justifyContent: "center", mb: 2 }}
+            sx={{ justifyContent: "center", mb: 2, width: "fit-content" }}
           >
             <Trans id="controls.set-filters">Edit filters</Trans>
           </Button>
