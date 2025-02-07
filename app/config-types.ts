@@ -119,6 +119,7 @@ export type Meta = t.TypeOf<typeof Meta>;
 export type MetaKey = keyof Meta;
 
 const InteractiveFiltersLegend = t.type({
+  visible: t.boolean,
   active: t.boolean,
   componentId: t.string,
 });

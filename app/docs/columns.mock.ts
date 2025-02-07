@@ -15,7 +15,7 @@ export const columnFields = {
     type: "segment" as const,
     paletteId: "dimension",
     colorMapping: {},
-  }
+  },
 };
 
 export const chartConfig: ColumnConfig = {
@@ -46,6 +46,7 @@ export const chartConfig: ColumnConfig = {
   fields: columnFields,
   interactiveFiltersConfig: {
     legend: {
+      visible: true,
       active: false,
       componentId: "",
     },

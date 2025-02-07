@@ -298,6 +298,7 @@ describe("chart type switch", () => {
       },
       interactiveFiltersConfig: {
         legend: {
+          visible: true,
           active: false,
           componentId: "",
         },
