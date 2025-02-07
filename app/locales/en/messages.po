@@ -30,7 +30,7 @@ msgstr "No results"
 msgid "annotation.add.description"
 msgstr "[ No Description ]"
 
-#: app/components/chart-panel.tsx
+#: app/components/text-block.tsx
 msgid "annotation.add.text"
 msgstr "[ Add text ]"
 
@@ -636,6 +636,14 @@ msgstr "Selected filters"
 #: app/configurator/components/layout-configurator.tsx
 msgid "controls.filters.select.to"
 msgstr "To"
+
+#: app/configurator/components/filters.tsx
+msgid "controls.filters.show-legend.toggle"
+msgstr "Show legend titles"
+
+#: app/configurator/components/filters.tsx
+msgid "controls.filters.show-legend.tooltip"
+msgstr "Allow users to change Legend visibility"
 
 #: app/configurator/table/table-chart-configurator.tsx
 msgid "controls.groups.empty-help"
@@ -1602,11 +1610,11 @@ msgstr "Sign out"
 msgid "logo.swiss.confederation"
 msgstr "Logo of the Swiss Confederation"
 
-#: app/components/mdx-editor/link-popover.tsx
+#: app/components/mdx-editor/link-dialog.tsx
 msgid "mdx-editor.link-dialog.label-placeholder"
 msgstr "Label..."
 
-#: app/components/mdx-editor/link-popover.tsx
+#: app/components/mdx-editor/link-dialog.tsx
 msgid "mdx-editor.link-dialog.url-placeholder"
 msgstr "URL..."
 

@@ -30,7 +30,7 @@ msgstr "Aucun résultat"
 msgid "annotation.add.description"
 msgstr "[ Pas de description ]"
 
-#: app/components/chart-panel.tsx
+#: app/components/text-block.tsx
 msgid "annotation.add.text"
 msgstr "[ Ajouter du texte ]"
 
@@ -636,6 +636,14 @@ msgstr "Filtres sélectionnés"
 #: app/configurator/components/layout-configurator.tsx
 msgid "controls.filters.select.to"
 msgstr "Au"
+
+#: app/configurator/components/filters.tsx
+msgid "controls.filters.show-legend.toggle"
+msgstr "Afficher les titres des légendes"
+
+#: app/configurator/components/filters.tsx
+msgid "controls.filters.show-legend.tooltip"
+msgstr "Permettre aux utilisateurs de modifier la visibilité des légendes"
 
 #: app/configurator/table/table-chart-configurator.tsx
 msgid "controls.groups.empty-help"
@@ -1542,7 +1550,7 @@ msgstr "Demande de fonctionnalité"
 
 #: app/login/components/login-menu.tsx
 msgid "login.profile.feedback"
-msgstr ""
+msgstr "Feedback"
 
 #: app/login/components/profile-content-tabs.tsx
 msgid "login.profile.home"
@@ -1602,11 +1610,11 @@ msgstr "Se déconnecter"
 msgid "logo.swiss.confederation"
 msgstr "Logo de la Confédération Suisse"
 
-#: app/components/mdx-editor/link-popover.tsx
+#: app/components/mdx-editor/link-dialog.tsx
 msgid "mdx-editor.link-dialog.label-placeholder"
 msgstr "Étiquette..."
 
-#: app/components/mdx-editor/link-popover.tsx
+#: app/components/mdx-editor/link-dialog.tsx
 msgid "mdx-editor.link-dialog.url-placeholder"
 msgstr "URL..."
 
