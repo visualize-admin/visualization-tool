@@ -82,6 +82,7 @@ const CustomColorPicker = ({
         }}
       >
         <Saturation
+          data-testId="color-picker-saturation"
           hsva={hsva}
           onChange={(newColor) =>
             setHsva((ps) => ({ ...ps, ...newColor, a: ps.a }))
@@ -102,8 +103,10 @@ const CustomColorPicker = ({
               backgroundColor: hsvaToHex(hsva),
               borderRadius: "50%",
             }}
+            data-testId="color-square"
           />
           <Hue
+            data-testId="color-picker-hue"
             hue={hsva.h}
             onChange={(newHue) => setHsva((ps) => ({ ...ps, ...newHue }))}
             style={{ width: "100%", height: "8px" }}
@@ -127,6 +130,7 @@ const CustomColorPicker = ({
             onChange={updateColorInput}
           />
           <ChromePicker
+            data-testId="color-picker-chrome"
             showAlpha={false}
             showHue={false}
             showColorPreview={false}
