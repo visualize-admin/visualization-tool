@@ -652,12 +652,10 @@ export const Input = ({
         backgroundColor: "grey.100",
         padding: "10px 6px",
         width: "100%",
-        padding: "10px 6px",
       }}
     />
   </Box>
 );
-
 
 export const MarkdownInput = ({
   label,
