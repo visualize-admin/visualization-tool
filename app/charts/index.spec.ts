@@ -378,6 +378,7 @@ describe("chart type switch", () => {
       chartType: "scatterplot",
       interactiveFiltersConfig: {
         legend: {
+          visible: true,
           active: false,
           componentId: "",
         },
