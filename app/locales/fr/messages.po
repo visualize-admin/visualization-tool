@@ -344,11 +344,11 @@ msgstr "Axe vertical"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.bar.grouped"
-msgstr "groupées"
+msgstr "Groupé"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.bar.stacked"
-msgstr "empilées"
+msgstr "Empilés"
 
 #: app/charts/chart-config-ui-options.ts
 #: app/charts/chart-config-ui-options.ts
@@ -707,19 +707,19 @@ msgstr "Dashboard"
 
 #: app/configurator/components/preview-breakpoint.tsx
 msgid "controls.layout.preview-lg"
-msgstr "Aperçu petit écran de bureau"
+msgstr "Aperçu en grande largeur"
 
 #: app/configurator/components/preview-breakpoint.tsx
 msgid "controls.layout.preview-md"
-msgstr "Aperçu tablette"
+msgstr "Aperçu en largeur moyenne"
 
 #: app/configurator/components/preview-breakpoint.tsx
 msgid "controls.layout.preview-sm"
-msgstr "Aperçu mobile"
+msgstr "Aperçu en petite largeur"
 
 #: app/configurator/components/preview-breakpoint.tsx
 msgid "controls.layout.preview-xl"
-msgstr "Prévisualisation en utilisant une largeur extra large"
+msgstr "Aperçu en très grande largeur"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.layout.singleURLs"

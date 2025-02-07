@@ -9,10 +9,11 @@ import {
 } from "@/charts/combo/combo-line-dual-state-props";
 import {
   adjustScales,
-  getMargins,
   useCommonComboState,
+  useDualAxisMargins,
   useYScales,
 } from "@/charts/combo/combo-state";
+import { TITLE_V_PADDING } from "@/charts/combo/shared";
 import { TICK_PADDING } from "@/charts/shared/axis-height-linear";
 import {
   useChartBounds,
@@ -36,12 +37,9 @@ import { ComboLineDualConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { getTextWidth } from "@/utils/get-text-width";
-import { useAxisTitleAdjustments } from "@/utils/use-axis-title-adjustments";
 import { useIsMobile } from "@/utils/use-is-mobile";
 
 import { ChartProps } from "../shared/ChartProps";
-
-import { TITLE_VPADDING } from "./combo-line-container";
 
 export type ComboLineDualState = CommonChartState &
   ComboLineDualStateVariables &
@@ -132,27 +130,18 @@ const useComboLineDualState = (
         TICK_PADDING
     )
   );
-
-  const { topMarginAxisTitleAdjustment } = useAxisTitleAdjustments({
+  const margins = useDualAxisMargins({
+    width,
+    left,
+    bottom,
+    maxRightTickWidth,
     leftAxisTitle: variables.y.left.label,
     rightAxisTitle: variables.y.right.label,
-    containerWidth: width,
   });
-
-  const right = Math.max(maxRightTickWidth, 40);
-
-  const margins = getMargins({
-    left,
-    right,
-    bottom,
-    top: topMarginAxisTitleAdjustment,
-  });
-
   const bounds = useChartBounds(width, margins, height, {
     leftLabel: variables.y.left.label,
     rightLabel: variables.y.right.label,
   });
-
   const { chartWidth, chartHeight } = bounds;
   const xScales = [xScale, xScaleTimeRange];
   const yScales = [yScale, yScaleLeft, yScaleRight];
@@ -244,7 +233,7 @@ const ComboLineDualChartProvider = (
     axisTitleWidth + otherAxisTitleWidth > bounds.chartWidth;
 
   if (overLappingTitles) {
-    bounds.height += axisLabelFontSize + TITLE_VPADDING; // Add space for the legend if titles are overlapping
+    bounds.height += axisLabelFontSize + TITLE_V_PADDING;
   }
 
   return (

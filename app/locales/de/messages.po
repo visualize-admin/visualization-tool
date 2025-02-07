@@ -707,15 +707,15 @@ msgstr "Dashboard"
 
 #: app/configurator/components/preview-breakpoint.tsx
 msgid "controls.layout.preview-lg"
-msgstr "Vorschau mit kleinem Desktop-Bildschirm"
+msgstr "Vorschau in grosser Breite"
 
 #: app/configurator/components/preview-breakpoint.tsx
 msgid "controls.layout.preview-md"
-msgstr "Vorschau mit Tablet"
+msgstr "Vorschau in mittlerer Breite"
 
 #: app/configurator/components/preview-breakpoint.tsx
 msgid "controls.layout.preview-sm"
-msgstr "Vorschau mit Phone-Breite"
+msgstr "Vorschau in kleiner Breite"
 
 #: app/configurator/components/preview-breakpoint.tsx
 msgid "controls.layout.preview-xl"
@@ -907,7 +907,7 @@ msgstr "Titel & Beschreibung"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.dots-size"
-msgstr "Wählen Sie eine Größe"
+msgstr "Wählen Sie eine Grösse"
 
 #: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/chart-options-selector.tsx

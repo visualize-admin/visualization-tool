@@ -12,8 +12,10 @@ export const AddButton = (props: ButtonProps) => {
       startIcon={<Icon name="add" />}
       sx={{
         width: "fit-content",
+        minWidth: "auto",
         ml: "0.5rem",
         px: 3,
+        whiteSpace: "nowrap",
         ...sx,
       }}
       {...rest}
