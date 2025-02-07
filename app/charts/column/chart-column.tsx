@@ -75,6 +75,7 @@ const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
               interactive={
                 fields.segment && interactiveFiltersConfig?.legend.active
               }
+              visible={interactiveFiltersConfig?.legend.visible}
             />
           </ChartControlsContainer>
         </StackedColumnsChart>
@@ -106,6 +107,7 @@ const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
               interactive={
                 fields.segment && interactiveFiltersConfig?.legend.active
               }
+              visible={interactiveFiltersConfig?.legend.visible}
             />
           </ChartControlsContainer>
         </GroupedColumnChart>

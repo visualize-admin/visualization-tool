@@ -47,6 +47,7 @@ const ChartAreas = memo((props: ChartProps<AreaConfig>) => {
             chartConfig={chartConfig}
             symbol="square"
             interactive={interactiveFiltersConfig?.legend.active}
+            visible={interactiveFiltersConfig?.legend.visible}
           />
         </ChartControlsContainer>
       )}

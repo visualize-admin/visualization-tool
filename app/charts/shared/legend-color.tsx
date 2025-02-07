@@ -173,6 +173,7 @@ type LegendColorProps = {
   // corresponding measure to open the metadata panel.
   getLegendItemDimension?: (dimensionLabel: string) => Measure | undefined;
   interactive?: boolean;
+  visible?: boolean;
 };
 
 export const LegendColor = memo(function LegendColor(props: LegendColorProps) {
@@ -182,6 +183,7 @@ export const LegendColor = memo(function LegendColor(props: LegendColorProps) {
     symbol,
     getLegendItemDimension,
     interactive,
+    visible = true,
   } = props;
   const { colors, getColorLabel } = useChartState() as ColorsChartState;
   const values = colors.domain();
@@ -196,6 +198,7 @@ export const LegendColor = memo(function LegendColor(props: LegendColorProps) {
       symbol={symbol}
       interactive={interactive}
       numberOfOptions={values.length}
+      visible={visible}
     />
   );
 });
@@ -263,6 +266,7 @@ export const MapLegendColor = memo(function LegendColor(
       }}
       getLabel={getLabel}
       symbol="circle"
+      visible={chartConfig.interactiveFiltersConfig?.legend.visible}
       numberOfOptions={sortedValues.length}
     />
   );
@@ -275,6 +279,7 @@ type LegendColorContentProps = {
   getItemDimension?: (dimensionLabel: string) => Measure | undefined;
   symbol: LegendSymbol;
   interactive?: boolean;
+  visible?: boolean;
   numberOfOptions: number;
 };
 
@@ -287,6 +292,7 @@ const LegendColorContent = (props: LegendColorContentProps) => {
     symbol,
     interactive,
     numberOfOptions,
+    visible,
   } = props;
   const classes = useStyles();
   const categories = useChartInteractiveFilters((d) => d.categories);
@@ -309,7 +315,7 @@ const LegendColorContent = (props: LegendColorContentProps) => {
     }
   });
 
-  return (
+  return visible ? (
     <Flex
       className={clsx(
         classes.legendContainer,
@@ -363,7 +369,7 @@ const LegendColorContent = (props: LegendColorContentProps) => {
           })
         : null}
     </Flex>
-  );
+  ) : null;
 };
 
 type LegendItemProps = {

@@ -65,6 +65,7 @@ const ChartScatterplot = memo((props: ChartProps<ScatterPlotConfig>) => {
               chartConfig={chartConfig}
               symbol="circle"
               interactive={interactiveFiltersConfig?.legend.active}
+              visible={interactiveFiltersConfig?.legend.visible}
             />
           )}
         </ChartControlsContainer>
