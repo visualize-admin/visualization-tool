@@ -11,6 +11,8 @@ You can also check the
 
 # Unreleased
 
+- Features
+  - Added option for hiding legend titles using a toggle switch
 - Fixes
   - Weekly-based temporal dimensions now work correctly when used in dashboard
     filters
