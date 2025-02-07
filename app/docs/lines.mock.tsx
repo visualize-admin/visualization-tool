@@ -8,6 +8,7 @@ import { CHART_CONFIG_VERSION } from "@/utils/chart-config/constants";
 
 const interactiveFiltersConfig: InteractiveFiltersConfig = {
   legend: {
+    visible: true,
     active: true,
     componentId: "",
   },

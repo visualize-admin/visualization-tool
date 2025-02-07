@@ -72,6 +72,7 @@ export const photovoltaikChartStateMock: ConfiguratorStateConfiguringChart = {
       chartType: "column",
       interactiveFiltersConfig: {
         legend: {
+          visible: true,
           active: false,
           componentId: "",
         },

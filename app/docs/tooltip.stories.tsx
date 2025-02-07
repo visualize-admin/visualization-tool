@@ -94,7 +94,7 @@ const TooltipBoxStory = () => (
           chartType: "column",
           fields,
           interactiveFiltersConfig: {
-            legend: { active: false, componentId: "" },
+            legend: { active: false, componentId: "", visible: true },
             timeRange: {
               active: false,
               componentId: "",
@@ -259,7 +259,7 @@ const TooltipContentStory = {
           chartType: "column",
           fields,
           interactiveFiltersConfig: {
-            legend: { active: false, componentId: "" },
+            legend: { active: false, componentId: "", visible: true },
             timeRange: {
               active: false,
               componentId: "",
@@ -327,7 +327,7 @@ export const TooltipContentStory2 = {
           chartType: "column",
           fields,
           interactiveFiltersConfig: {
-            legend: { active: false, componentId: "" },
+            legend: { active: false, componentId: "", visible: true },
             timeRange: {
               active: false,
               componentId: "",

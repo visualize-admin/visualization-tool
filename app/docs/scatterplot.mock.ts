@@ -8,6 +8,7 @@ import { CHART_CONFIG_VERSION } from "@/utils/chart-config/constants";
 
 export const interactiveFiltersConfig: InteractiveFiltersConfig = {
   legend: {
+    visible: true,
     active: true,
     componentId: "",
   },
@@ -56,7 +57,6 @@ export const scatterplotFields: ScatterPlotFields = {
   segment: {
     componentId:
       "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1",
-  
   },
 };
 
