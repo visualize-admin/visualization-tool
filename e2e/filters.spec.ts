@@ -56,7 +56,6 @@ describe("Filters", () => {
     page,
     actions,
     selectors,
-    within,
   }) => {
     test.slow();
 
@@ -84,5 +83,39 @@ describe("Filters", () => {
       await page.getByRole("button", { name: year, exact: true });
     }
     await page.getByRole("button", { name: "2014", exact: true }).click();
+  });
+  test("Show legend titles, should toggle legend titles visibility", async ({
+    page,
+    actions,
+    selectors,
+  }) => {
+    test.slow();
+
+    await page.goto(
+      "/en/create/new?cube=https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/5&dataSource=Prod"
+    );
+    await selectors.chart.loaded();
+
+    await actions.editor.selectActiveField("Segmentation");
+
+    await selectors.edition.drawerLoaded();
+
+    await (await selectors.panels.drawer().within().findByText("None")).click();
+
+    await actions.mui.selectOption("Kanton");
+
+    const legend = page.locator('[data-testId="legend-container"]');
+
+    await legend.waitFor({ state: "visible", timeout: 5000 });
+    const initialCount = await legend.count();
+    expect(initialCount).toBe(1);
+
+    await (
+      await selectors.panels.drawer().within().findByText("Show legend titles")
+    ).click();
+
+    await expect(legend).toHaveCount(0);
+
+    await page.waitForTimeout(1000);
   });
 });

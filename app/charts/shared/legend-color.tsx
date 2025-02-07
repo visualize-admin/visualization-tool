@@ -317,6 +317,7 @@ const LegendColorContent = (props: LegendColorContentProps) => {
 
   return visible ? (
     <Flex
+      data-testId="legend-container"
       className={clsx(
         classes.legendContainer,
         groups.length === 1 && classes.legendContainerNoGroups
