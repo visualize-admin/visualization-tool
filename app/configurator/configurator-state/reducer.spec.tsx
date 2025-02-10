@@ -10,7 +10,6 @@ import {
   ConfiguratorStateConfiguringChart,
   ConfiguratorStatePublishing,
   Filters,
-  isColorInConfig,
   MapConfig,
 } from "@/config-types";
 import { getChartConfig } from "@/config-utils";
@@ -656,14 +655,13 @@ describe("handleChartFieldChanged", () => {
 describe("colorMapping", () => {
   it("should correctly reset color mapping for maps", () => {
     const state: ConfiguratorStateConfiguringChart = configStateMock.map;
-    const hasColorField = isColorInConfig(state.chartConfigs[0] as ChartConfig);
 
     const newState = produce(state, (state: ConfiguratorState) => {
       return updateColorMapping(state, {
         type: "CHART_CONFIG_UPDATE_COLOR_MAPPING",
         value: {
-          field: hasColorField ? "color" : "areaLayer",
-          colorConfigPath: hasColorField ? undefined : "color",
+          field: "areaLayer",
+          colorConfigPath: "color",
           dimensionId: "year-period-1",
           values: [
             { value: "red", label: "red", color: "red" },
@@ -687,14 +685,13 @@ describe("colorMapping", () => {
   it("should correctly reset color mapping for grouped column chart", () => {
     const state: ConfiguratorStateConfiguringChart =
       configStateMock.groupedColumnChart;
-    const hasColorField = isColorInConfig(state.chartConfigs[0] as ChartConfig);
 
     const newState = produce(state, (state: ConfiguratorState) => {
       return updateColorMapping(state, {
         type: "CHART_CONFIG_UPDATE_COLOR_MAPPING",
         value: {
-          field: hasColorField ? "color" : "areaLayer",
-          colorConfigPath: hasColorField ? undefined : "color",
+          field: "color",
+          colorConfigPath: undefined,
           dimensionId:
             "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton",
           values: [
@@ -869,14 +866,13 @@ describe("colorMapping", () => {
   it("should correctly shuffle color mapping for grouped column chart", () => {
     const state: ConfiguratorStateConfiguringChart =
       configStateMock.groupedColumnChart;
-    const hasColorField = isColorInConfig(state.chartConfigs[0] as ChartConfig);
 
     const newState = produce(state, (state: ConfiguratorState) => {
       return updateColorMapping(state, {
         type: "CHART_CONFIG_UPDATE_COLOR_MAPPING",
         value: {
-          field: hasColorField ? "color" : "areaLayer",
-          colorConfigPath: hasColorField ? undefined : "color",
+          field: "color",
+          colorConfigPath: undefined,
           dimensionId:
             "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton",
           values: [
