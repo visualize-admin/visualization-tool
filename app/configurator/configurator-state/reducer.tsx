@@ -477,7 +477,6 @@ export const updateColorMapping = (
       field,
       colorConfigPath,
       colorMapping: oldColorMapping,
-      dimensionId,
       values,
       random,
     } = action.value;
