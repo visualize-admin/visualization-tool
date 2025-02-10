@@ -41,7 +41,6 @@ import {
   DashboardTimeRangeFilter,
   enableLayouting,
   Filters,
-  GenericField,
   GenericFields,
   isAreaConfig,
   isColorInConfig,
@@ -503,17 +502,12 @@ export const updateColorMapping = (
         });
       }
     } else {
-      const fieldValue: (GenericField & { paletteId: string }) | undefined =
-        get(chartConfig, path);
-
-      if (fieldValue?.componentId === dimensionId || fieldValue?.paletteId) {
-        colorMapping = mapValueIrisToColor({
-          paletteId: fieldValue.paletteId,
-          dimensionValues: values,
-          colorMapping: oldColorMapping,
-          random,
-        });
-      }
+      colorMapping = mapValueIrisToColor({
+        paletteId: "dimension",
+        dimensionValues: values,
+        colorMapping: oldColorMapping,
+        random,
+      });
     }
 
     if (colorMapping) {
