@@ -77,7 +77,6 @@ import SvgIcExclamation from "@/icons/components/IcExclamation";
 import { useLocale } from "@/locales/use-locale";
 import { valueComparator } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
-
 import "@mdxeditor/editor/style.css";
 
 export const Label = ({
@@ -567,8 +566,10 @@ export const MinimalisticSelect = (props: MinimalisticSelectProps) => {
     ...rest
   } = props;
 
+  const classes = useMinimalisticSelectStyles();
+
   return (
-    <Box sx={{ color: "grey.800" }}>
+    <Box display="flex" alignItems="center">
       {label && (
         <Label htmlFor={id} smaller>
           {label}
@@ -590,25 +591,11 @@ export const MinimalisticSelect = (props: MinimalisticSelectProps) => {
               transition: "transform 0.1s",
             }}
           >
-            <Icon name="chevronDown" size={16} />
+            <Icon name="chevronDown2" size={24} />
           </span>
         )}
-        sx={{
-          borderColor: "transparent",
-          fontSize: smaller ? ["0.625rem", "0.75rem", "0.75rem"] : "inherit",
-          lineHeight: "normal !important",
-          backgroundColor: "transparent",
-          p: 0,
-          pl: 1,
-          ":focus": {
-            outline: "none",
-            borderColor: "primary.main",
-          },
-          "& .MuiInput-input": {
-            paddingRight: "1.25rem !important",
-          },
-          ...sx,
-        }}
+        className={classes.root}
+        sx={sx}
         {...rest}
       >
         {options.map((opt) => (
@@ -620,6 +607,42 @@ export const MinimalisticSelect = (props: MinimalisticSelectProps) => {
     </Box>
   );
 };
+
+const useMinimalisticSelectStyles = makeStyles<Theme>((theme) => ({
+  root: {
+    borderColor: "transparent",
+    lineHeight: "normal !important",
+    backgroundColor: "transparent",
+    //@ts-ignore
+    color: theme.palette.muted.colored, // FIXME: once the new colors are in place
+    padding: 0,
+    height: "auto",
+    minHeight: "auto",
+    boxSizing: "border-box",
+    "&:focus": {
+      outline: "none",
+      borderColor: theme.palette.primary.main,
+    },
+    "& .MuiSelect-icon": {
+      right: -10,
+      top: -2,
+    },
+    "& .MuiInput-input": {
+      paddingRight: "1.25rem !important",
+      //@ts-ignore
+      color: theme.palette.muted.colored, // FIXME: once the new colors are in place
+      marginBottom: "1px",
+      height: "auto",
+      minHeight: "auto",
+      paddingTop: 0,
+      paddingBottom: 0,
+      fontSize: "1em",
+      [theme.breakpoints.down("md")]: {
+        fontSize: "0.875rem",
+      },
+    },
+  },
+}));
 
 export const Input = ({
   label,

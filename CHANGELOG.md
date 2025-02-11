@@ -11,7 +11,8 @@ You can also check the
 
 # Unreleased
 
-Nothing yet.
+- Features
+  - Adds the new header based on the new CI/CD
 
 # [5.2.4] - 2025-02-06
 
