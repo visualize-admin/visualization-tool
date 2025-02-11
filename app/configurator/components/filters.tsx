@@ -371,7 +371,7 @@ const MultiFilterContent = ({
         >
           {chartConfig.activeField === "segment" ? (
             <>
-              <Flex sx={{ alignItems: "center", width: "100%" }}>
+              <Flex sx={{ py: 1, alignItems: "center", width: "100%" }}>
                 <FormControlLabel
                   componentsProps={{ typography: { variant: "body2" } }}
                   control={<Switch {...interactiveFilterProps} />}
@@ -397,7 +397,7 @@ const MultiFilterContent = ({
                   }
                 />
               </Flex>
-              <Flex sx={{ alignItems: "center", width: "100%" }}>
+              <Flex sx={{ py: 1, alignItems: "center", width: "100%" }}>
                 <FormControlLabel
                   componentsProps={{ typography: { variant: "body2" } }}
                   control={<Switch {...visibleLegendProps} />}

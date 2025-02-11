@@ -12,10 +12,7 @@ export const useLegendTitleVisibility = (target: "showTitle") => {
   const [state, dispatch] = useConfiguratorState(isConfiguring);
   const chartConfig = getChartConfig(state);
   const onChange = useEvent((e: ChangeEvent<HTMLInputElement>) => {
-    if (
-      isSegmentInConfig(chartConfig) &&
-      chartConfig.fields.segment?.[target]
-    ) {
+    if (isSegmentInConfig(chartConfig)) {
       dispatch({
         type: "CHART_SHOW_LEGEND_TITLE_CHANGED",
         value: e.currentTarget.checked,
@@ -23,7 +20,7 @@ export const useLegendTitleVisibility = (target: "showTitle") => {
     }
   });
 
-  const stateValue = get(chartConfig, `fields.segement.${target}`);
+  const stateValue = get(chartConfig, `fields.segment.${target}`);
   const checked = stateValue ? stateValue : false;
 
   return {
