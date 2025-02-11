@@ -60,7 +60,7 @@ describe("Filters", () => {
     test.slow();
 
     await page.goto(
-      "/en/create/new?cube=https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/5&dataSource=Prod"
+      "/en/create/new?cube=https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/10&dataSource=Prod"
     );
     await selectors.chart.loaded();
     await selectors.edition.drawerLoaded();
@@ -90,7 +90,7 @@ describe("Filters", () => {
     selectors,
   }) => {
     await page.goto(
-      "/en/create/new?cube=https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/5&dataSource=Prod"
+      "/en/create/new?cube=https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/10&dataSource=Prod"
     );
     await selectors.chart.loaded();
 
