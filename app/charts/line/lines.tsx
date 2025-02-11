@@ -5,8 +5,8 @@ import { Fragment, memo, useEffect, useMemo, useRef } from "react";
 import { LinesState } from "@/charts/line/lines-state";
 import { useChartState } from "@/charts/shared/chart-state";
 import {
-  RenderVerticalWhiskerDatum,
   renderContainer,
+  RenderVerticalWhiskerDatum,
   renderVerticalWhiskers,
 } from "@/charts/shared/rendering-utils";
 import { LineConfig } from "@/config-types";
@@ -122,7 +122,7 @@ const Line = memo(function Line({
   path: string;
   color: string;
 }) {
-  return <path d={path} stroke={color} fill="none" />;
+  return <path data-testid="chart-line" d={path} stroke={color} fill="none" />;
 });
 
 const getPointRadius = (dotSize: LineConfig["fields"]["y"]["showDotsSize"]) => {

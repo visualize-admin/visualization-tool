@@ -365,28 +365,39 @@ const makeUseParsedVariable =
     return useCallback((d: Observation) => parser(d[key]), [key]);
   };
 
-// retrieving variables
 export const useOptionalNumericVariable = makeUseParsedVariable((x) =>
   x !== null ? Number(x) : null
 );
+
 export const useStringVariable = makeUseParsedVariable((x) =>
   x !== null ? `${x}` : ""
 );
+
 export const useTemporalVariable = makeUseParsedVariable((x) =>
   parseDate(`${x}`)
 );
+
 export const useTemporalEntityVariable = (
   dimensionValues: DimensionValue[]
 ) => {
-  const indexedValues = new Map(dimensionValues.map((d) => [d.label, d]));
-  return makeUseParsedVariable((label) => {
-    const dimensionValue = indexedValues.get(`${label}`);
-    const value = dimensionValue
-      ? getTemporalEntityValue(dimensionValue)
-      : undefined;
+  const indexedValues = useMemo(() => {
+    return new Map(dimensionValues.map((d) => [d.label, d]));
+  }, [dimensionValues]);
 
-    return parseDate(`${value}`);
-  });
+  return useCallback(
+    (key: string) => {
+      return (d: Observation) => {
+        const label = d[key];
+        const dimensionValue = indexedValues.get(`${label}`);
+        const value = dimensionValue
+          ? getTemporalEntityValue(dimensionValue)
+          : undefined;
+
+        return parseDate(`${value}`);
+      };
+    },
+    [indexedValues]
+  );
 };
 
 export const getSegment =
@@ -583,7 +594,7 @@ export const normalizeData = (
 
     return {
       ...d,
-      [key]: 100 * (axisValue ? axisValue / totalGroupValue : axisValue ?? 0),
+      [key]: 100 * (axisValue ? axisValue / totalGroupValue : (axisValue ?? 0)),
       [getIdentityId(key)]: axisValue,
     };
   });

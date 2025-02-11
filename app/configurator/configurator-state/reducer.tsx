@@ -41,7 +41,6 @@ import {
   DashboardTimeRangeFilter,
   enableLayouting,
   Filters,
-  GenericField,
   GenericFields,
   isAreaConfig,
   isColorInConfig,
@@ -429,7 +428,7 @@ export const handleChartFieldChanged = (
 
 export const handleChartOptionChanged = (
   draft: ConfiguratorState,
-  action: Extract<ConfiguratorStateAction, { type: "COLOR_MAPPING_UPDATED" }>
+  action: Extract<ConfiguratorStateAction, { type: "COLOR_FIELD_UPDATED" }>
 ) => {
   if (isConfiguring(draft)) {
     const { locale, path, field, value } = action.value;
@@ -478,7 +477,6 @@ export const updateColorMapping = (
       field,
       colorConfigPath,
       colorMapping: oldColorMapping,
-      dimensionId,
       values,
       random,
     } = action.value;
@@ -503,17 +501,12 @@ export const updateColorMapping = (
         });
       }
     } else {
-      const fieldValue: (GenericField & { paletteId: string }) | undefined =
-        get(chartConfig, path);
-
-      if (fieldValue?.componentId === dimensionId) {
-        colorMapping = mapValueIrisToColor({
-          paletteId: fieldValue.paletteId,
-          dimensionValues: values,
-          colorMapping: oldColorMapping,
-          random,
-        });
-      }
+      colorMapping = mapValueIrisToColor({
+        paletteId: "dimension",
+        dimensionValues: values,
+        colorMapping: oldColorMapping,
+        random,
+      });
     }
 
     if (colorMapping) {
@@ -585,7 +578,7 @@ const handleAddNewChartConfig = (
   draft: ConfiguratorState,
   chartConfig: ChartConfig
 ) => {
-  if (isConfiguring(draft)) {
+  if (isConfiguring(draft) || isLayouting(draft)) {
     draft.chartConfigs.push(chartConfig);
     draft.activeChartKey = chartConfig.key;
     draft.layout.blocks.push({
@@ -698,7 +691,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
       return draft;
 
-    case "COLOR_MAPPING_UPDATED":
+    case "COLOR_FIELD_UPDATED":
       return handleChartOptionChanged(draft, action);
 
     case "COLOR_FIELD_SET":
