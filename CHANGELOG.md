@@ -89,6 +89,10 @@ Nothing yet.
   - Downloading images of bar charts now includes the whole chart, not just the
     visible part
   - Bar charts are now hidden behind a an enable-experimental-features flag
+  - Users can now create custom color palettes in the editor and save it to
+    their profile where they can update, add, delete and manage their colors
+    palettes (available for categorical, sequential and diverging types, fully
+    available for all chart except tables)
 - Fixes
   - Preview via API now works correctly for map charts
   - GraphQL debug panel now displays the queries correctly when in debug mode

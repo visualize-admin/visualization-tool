@@ -549,7 +549,7 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
                   const { checked } = e.target;
                   if ("y" in fields && !("showDots" in fields.y)) {
                     dispatch({
-                      type: "COLOR_MAPPING_UPDATED",
+                      type: "COLOR_FIELD_UPDATED",
                       value: {
                         locale,
                         field: "y",
@@ -559,7 +559,7 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
                     });
                   }
                   dispatch({
-                    type: "COLOR_MAPPING_UPDATED",
+                    type: "COLOR_FIELD_UPDATED",
                     value: {
                       locale,
                       field: encoding.field,
@@ -960,7 +960,7 @@ const ChartComboLineSingleYField = ({
                   }
 
                   dispatch({
-                    type: "COLOR_MAPPING_UPDATED",
+                    type: "COLOR_FIELD_UPDATED",
                     value: {
                       locale,
                       field: "y",
@@ -988,7 +988,7 @@ const ChartComboLineSingleYField = ({
 
                 if (id !== FIELD_VALUE_NONE) {
                   dispatch({
-                    type: "COLOR_MAPPING_UPDATED",
+                    type: "COLOR_FIELD_UPDATED",
                     value: {
                       locale,
                       field: "y",
@@ -1077,7 +1077,7 @@ const ChartComboLineDualYField = ({
             onChange={(e) => {
               const newId = e.target.value as string;
               dispatch({
-                type: "COLOR_MAPPING_UPDATED",
+                type: "COLOR_FIELD_UPDATED",
                 value: {
                   locale,
                   field: "y",
@@ -1102,7 +1102,7 @@ const ChartComboLineDualYField = ({
             onChange={(e) => {
               const newId = e.target.value as string;
               dispatch({
-                type: "COLOR_MAPPING_UPDATED",
+                type: "COLOR_FIELD_UPDATED",
                 value: {
                   locale,
                   field: "y",
@@ -1192,7 +1192,7 @@ const ChartComboLineColumnYField = ({
             onChange={(e) => {
               const newId = e.target.value as string;
               dispatch({
-                type: "COLOR_MAPPING_UPDATED",
+                type: "COLOR_FIELD_UPDATED",
                 value: {
                   locale,
                   field: "y",
@@ -1217,7 +1217,7 @@ const ChartComboLineColumnYField = ({
             onChange={(e) => {
               const newId = e.target.value as string;
               dispatch({
-                type: "COLOR_MAPPING_UPDATED",
+                type: "COLOR_FIELD_UPDATED",
                 value: {
                   locale,
                   field: "y",
@@ -1615,7 +1615,7 @@ const ChartFieldSorting = ({
   >(
     ({ sortingType, sortingOrder }) => {
       dispatch({
-        type: "COLOR_MAPPING_UPDATED",
+        type: "COLOR_FIELD_UPDATED",
         value: {
           locale,
           field,
@@ -1931,11 +1931,7 @@ const ChartFieldColorComponent = ({
           ) : null
         ) : colorType === "numerical" ? (
           <div>
-            <ColorRampField
-              field={field}
-              path="color.paletteId"
-              nSteps={nbClass}
-            />
+            <ColorRampField field={field} path="color" nSteps={nbClass} />
             <FieldSetLegend
               legendTitle={t({
                 id: "controls.scale.type",
@@ -2110,7 +2106,7 @@ const ChartMapBaseLayerSettings = ({
     if (chartConfig.baseLayer.locked) {
       if (map !== null) {
         dispatch({
-          type: "COLOR_MAPPING_UPDATED",
+          type: "COLOR_FIELD_UPDATED",
           value: {
             locale,
             field: null,
@@ -2122,7 +2118,7 @@ const ChartMapBaseLayerSettings = ({
       }
     } else {
       dispatch({
-        type: "COLOR_MAPPING_UPDATED",
+        type: "COLOR_FIELD_UPDATED",
         value: {
           locale,
           field: null,
