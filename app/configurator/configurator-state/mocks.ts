@@ -693,6 +693,7 @@ export const groupedColumnChartMeasures: Measure[] = [
       { value: "992", label: "992" },
     ],
     related: [],
+    limits: [],
   },
   {
     __typename: "NumericalMeasure",
@@ -915,6 +916,7 @@ export const groupedColumnChartMeasures: Measure[] = [
       { value: "98.28", label: "98.28" },
     ],
     related: [],
+    limits: [],
   },
   {
     __typename: "NumericalMeasure",
@@ -1136,6 +1138,7 @@ export const groupedColumnChartMeasures: Measure[] = [
       { value: "991739.2", label: "991739.2" },
     ],
     related: [],
+    limits: [],
   },
 ];
 

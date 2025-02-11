@@ -69,7 +69,7 @@ export const states: ConfiguratorState[] = [
             type: "single",
             paletteId: "oranges",
             color: "#ff7f0e",
-          }
+          },
         },
         interactiveFiltersConfig: {
           legend: {
@@ -180,7 +180,7 @@ export const fields: ColumnFields = {
     type: "single",
     paletteId: "oranges",
     color: "#ff7f0e",
-  }
+  },
 };
 
 export const dimensions: Dimension[] = [
@@ -247,6 +247,7 @@ export const measures: Measure[] = [
     isNumerical: true,
     isKeyDimension: false,
     values: [],
+    limits: [],
   },
   {
     cubeIri: "http://environment.ld.admin.ch/foen/px/0703030000_124",
@@ -261,6 +262,7 @@ export const measures: Measure[] = [
     isNumerical: true,
     isKeyDimension: false,
     values: [],
+    limits: [],
   },
   {
     cubeIri: "http://environment.ld.admin.ch/foen/px/0703030000_124",
@@ -275,6 +277,7 @@ export const measures: Measure[] = [
     isNumerical: true,
     isKeyDimension: false,
     values: [],
+    limits: [],
   },
   {
     cubeIri: "http://environment.ld.admin.ch/foen/px/0703030000_124",
@@ -289,6 +292,7 @@ export const measures: Measure[] = [
     isNumerical: true,
     isKeyDimension: false,
     values: [],
+    limits: [],
   },
   {
     cubeIri: "http://environment.ld.admin.ch/foen/px/0703030000_124",
@@ -303,6 +307,7 @@ export const measures: Measure[] = [
     isNumerical: true,
     isKeyDimension: false,
     values: [],
+    limits: [],
   },
   {
     cubeIri: "http://environment.ld.admin.ch/foen/px/0703030000_124",
@@ -317,6 +322,7 @@ export const measures: Measure[] = [
     isNumerical: true,
     isKeyDimension: false,
     values: [],
+    limits: [],
   },
   {
     cubeIri: "http://environment.ld.admin.ch/foen/px/0703030000_124",
@@ -331,6 +337,7 @@ export const measures: Measure[] = [
     isNumerical: true,
     isKeyDimension: false,
     values: [],
+    limits: [],
   },
   {
     cubeIri: "http://environment.ld.admin.ch/foen/px/0703030000_124",
@@ -345,6 +352,7 @@ export const measures: Measure[] = [
     isNumerical: true,
     isKeyDimension: false,
     values: [],
+    limits: [],
   },
   {
     cubeIri: "http://environment.ld.admin.ch/foen/px/0703030000_124",
@@ -359,6 +367,7 @@ export const measures: Measure[] = [
     isNumerical: true,
     isKeyDimension: false,
     values: [],
+    limits: [],
   },
   {
     cubeIri: "http://environment.ld.admin.ch/foen/px/0703030000_124",
@@ -373,6 +382,7 @@ export const measures: Measure[] = [
     isNumerical: true,
     isKeyDimension: false,
     values: [],
+    limits: [],
   },
 ];
 
@@ -607,6 +617,7 @@ export const tableMeasures: Measure[] = [
     isNumerical: false,
     isKeyDimension: false,
     values: [],
+    limits: [],
   },
   {
     __typename: "NumericalMeasure",
@@ -620,6 +631,7 @@ export const tableMeasures: Measure[] = [
     isNumerical: false,
     isKeyDimension: false,
     values: [],
+    limits: [],
   },
   {
     __typename: "NumericalMeasure",
@@ -633,6 +645,7 @@ export const tableMeasures: Measure[] = [
     isNumerical: false,
     isKeyDimension: false,
     values: [],
+    limits: [],
   },
   {
     __typename: "NumericalMeasure",
@@ -646,6 +659,7 @@ export const tableMeasures: Measure[] = [
     isNumerical: false,
     isKeyDimension: false,
     values: [],
+    limits: [],
   },
   {
     __typename: "NumericalMeasure",
@@ -659,6 +673,7 @@ export const tableMeasures: Measure[] = [
     isNumerical: false,
     isKeyDimension: false,
     values: [],
+    limits: [],
   },
   {
     __typename: "NumericalMeasure",
@@ -672,6 +687,7 @@ export const tableMeasures: Measure[] = [
     isNumerical: false,
     isKeyDimension: false,
     values: [],
+    limits: [],
   },
   {
     __typename: "NumericalMeasure",
@@ -685,6 +701,7 @@ export const tableMeasures: Measure[] = [
     isNumerical: false,
     isKeyDimension: false,
     values: [],
+    limits: [],
   },
   {
     __typename: "NumericalMeasure",
@@ -698,6 +715,7 @@ export const tableMeasures: Measure[] = [
     isNumerical: false,
     isKeyDimension: false,
     values: [],
+    limits: [],
   },
   {
     __typename: "NumericalMeasure",
@@ -711,6 +729,7 @@ export const tableMeasures: Measure[] = [
     isNumerical: false,
     isKeyDimension: false,
     values: [],
+    limits: [],
   },
 ];
 
