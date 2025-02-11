@@ -13,7 +13,6 @@ You can also check the
 
 - Features
   - Added option for hiding legend titles using a toggle switch
-Nothing yet.
 
 # [5.2.4] - 2025-02-06
 
