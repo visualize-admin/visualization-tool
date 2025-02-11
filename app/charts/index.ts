@@ -186,7 +186,6 @@ const getInitialInteractiveFiltersConfig = (options?: {
 
   return {
     legend: {
-      visible: true,
       active: false,
       componentId: "",
     },

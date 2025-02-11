@@ -46,7 +46,6 @@ const { col, val } = makeCubeNsGetters(
 
 const commonInteractiveFiltersConfig: InteractiveFiltersConfig = {
   legend: {
-    visible: true,
     active: false,
     componentId: col("2"),
   },

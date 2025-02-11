@@ -173,7 +173,7 @@ type LegendColorProps = {
   // corresponding measure to open the metadata panel.
   getLegendItemDimension?: (dimensionLabel: string) => Measure | undefined;
   interactive?: boolean;
-  visible?: boolean;
+  showTitle?: boolean;
 };
 
 export const LegendColor = memo(function LegendColor(props: LegendColorProps) {
@@ -183,7 +183,7 @@ export const LegendColor = memo(function LegendColor(props: LegendColorProps) {
     symbol,
     getLegendItemDimension,
     interactive,
-    visible = true,
+    showTitle,
   } = props;
   const { colors, getColorLabel } = useChartState() as ColorsChartState;
   const values = colors.domain();
@@ -196,9 +196,9 @@ export const LegendColor = memo(function LegendColor(props: LegendColorProps) {
       getLabel={getColorLabel}
       getItemDimension={getLegendItemDimension}
       symbol={symbol}
+      showTitle={showTitle}
       interactive={interactive}
       numberOfOptions={values.length}
-      visible={visible}
     />
   );
 });
@@ -266,7 +266,7 @@ export const MapLegendColor = memo(function LegendColor(
       }}
       getLabel={getLabel}
       symbol="circle"
-      visible={chartConfig.interactiveFiltersConfig?.legend.visible}
+      showTitle
       numberOfOptions={sortedValues.length}
     />
   );
@@ -279,8 +279,8 @@ type LegendColorContentProps = {
   getItemDimension?: (dimensionLabel: string) => Measure | undefined;
   symbol: LegendSymbol;
   interactive?: boolean;
-  visible?: boolean;
   numberOfOptions: number;
+  showTitle?: boolean;
 };
 
 const LegendColorContent = (props: LegendColorContentProps) => {
@@ -292,7 +292,7 @@ const LegendColorContent = (props: LegendColorContentProps) => {
     symbol,
     interactive,
     numberOfOptions,
-    visible,
+    showTitle,
   } = props;
   const classes = useStyles();
   const categories = useChartInteractiveFilters((d) => d.categories);
@@ -315,9 +315,8 @@ const LegendColorContent = (props: LegendColorContentProps) => {
     }
   });
 
-  return visible ? (
+  return (
     <Flex
-      data-testId="legend-container"
       className={clsx(
         classes.legendContainer,
         groups.length === 1 && classes.legendContainerNoGroups
@@ -354,7 +353,8 @@ const LegendColorContent = (props: LegendColorContentProps) => {
                   return (
                     <LegendItem
                       key={`${d}_${i}`}
-                      item={label}
+                      data-testId={`legend-title-${showTitle ? "visible" : "hidden"}`}
+                      item={showTitle ? label : ""}
                       color={getColor(d)}
                       dimension={getItemDimension?.(label)}
                       symbol={symbol}
@@ -370,7 +370,7 @@ const LegendColorContent = (props: LegendColorContentProps) => {
           })
         : null}
     </Flex>
-  ) : null;
+  );
 };
 
 type LegendItemProps = {

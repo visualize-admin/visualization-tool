@@ -119,7 +119,6 @@ export type Meta = t.TypeOf<typeof Meta>;
 export type MetaKey = keyof Meta;
 
 const InteractiveFiltersLegend = t.type({
-  visible: t.boolean,
   active: t.boolean,
   componentId: t.string,
 });
@@ -276,6 +275,7 @@ const ColumnSegmentField = t.intersection([
   GenericField,
   SortingField,
   t.type({ type: ChartSubType }),
+  t.partial({ showTitle: t.boolean }),
 ]);
 export type ColumnSegmentField = t.TypeOf<typeof ColumnSegmentField>;
 
@@ -312,12 +312,17 @@ const ColumnConfig = t.intersection([
 export type ColumnFields = t.TypeOf<typeof ColumnFields>;
 export type ColumnConfig = t.TypeOf<typeof ColumnConfig>;
 
-const LineSegmentField = t.intersection([GenericField, SortingField]);
+const LineSegmentField = t.intersection([
+  GenericField,
+  SortingField,
+  t.partial({ showTitle: t.boolean }),
+]);
 
 const BarSegmentField = t.intersection([
   GenericField,
   SortingField,
   t.type({ type: ChartSubType }),
+  t.partial({ showTitle: t.boolean }),
 ]);
 export type BarSegmentField = t.TypeOf<typeof BarSegmentField>;
 
@@ -383,7 +388,11 @@ const LineConfig = t.intersection([
 export type LineFields = t.TypeOf<typeof LineFields>;
 export type LineConfig = t.TypeOf<typeof LineConfig>;
 
-const AreaSegmentField = t.intersection([GenericField, SortingField]);
+const AreaSegmentField = t.intersection([
+  GenericField,
+  SortingField,
+  t.partial({ showTitle: t.boolean }),
+]);
 export type AreaSegmentField = t.TypeOf<typeof AreaSegmentField>;
 
 const ImputationType = t.union([
@@ -421,7 +430,10 @@ const AreaConfig = t.intersection([
 export type AreaFields = t.TypeOf<typeof AreaFields>;
 export type AreaConfig = t.TypeOf<typeof AreaConfig>;
 
-const ScatterPlotSegmentField = GenericField;
+const ScatterPlotSegmentField = t.intersection([
+  GenericField,
+  t.partial({ showTitle: t.boolean }),
+]);
 export type ScatterPlotSegmentField = t.TypeOf<typeof ScatterPlotSegmentField>;
 
 const ScatterPlotFields = t.intersection([
@@ -449,7 +461,11 @@ const ScatterPlotConfig = t.intersection([
 export type ScatterPlotFields = t.TypeOf<typeof ScatterPlotFields>;
 export type ScatterPlotConfig = t.TypeOf<typeof ScatterPlotConfig>;
 
-const PieSegmentField = t.intersection([GenericField, SortingField]);
+const PieSegmentField = t.intersection([
+  GenericField,
+  SortingField,
+  t.partial({ showTitle: t.boolean }),
+]);
 export type PieSegmentField = t.TypeOf<typeof PieSegmentField>;
 
 const PieFields = t.intersection([

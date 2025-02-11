@@ -137,7 +137,6 @@ export const configStateMock = {
         chartType: "column",
         interactiveFiltersConfig: {
           legend: {
-            visible: true,
             active: false,
             componentId: "",
           },
@@ -1609,7 +1608,7 @@ export const configJoinedCubes: Partial<
     ],
     chartType: "pie",
     interactiveFiltersConfig: {
-      legend: { visible: true, active: false, componentId: "" },
+      legend: {active: false, componentId: "" },
       timeRange: {
         active: false,
         componentId: "",

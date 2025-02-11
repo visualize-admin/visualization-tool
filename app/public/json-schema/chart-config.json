@@ -278,7 +278,7 @@
                       "anyOf": [
                         {
                           "type": "object",
-                          "description": "{ legend: { active: boolean, visible: true, componentId: string }, timeRange: { active: boolean, componentId: string, presets: { type: \"range\", from: string, to: string } }, dataFilters: { active: boolean, componentIds: Array<string> }, calculation: { active: boolean, type: (\"identity\" | \"percent\") } }",
+                          "description": "{ legend: { active: boolean, componentId: string }, timeRange: { active: boolean, componentId: string, presets: { type: \"range\", from: string, to: string } }, dataFilters: { active: boolean, componentIds: Array<string> }, calculation: { active: boolean, type: (\"identity\" | \"percent\") } }",
                           "properties": {
                             "legend": {
                               "type": "object",
@@ -382,7 +382,7 @@
                         },
                         {}
                       ],
-                      "description": "({ legend: { active: boolean, visible: true, componentId: string }, timeRange: { active: boolean, componentId: string, presets: { type: \"range\", from: string, to: string } }, dataFilters: { active: boolean, componentIds: Array<string> }, calculation: { active: boolean, type: (\"identity\" | \"percent\") } } | undefined)"
+                      "description": "({ legend: { active: boolean, componentId: string }, timeRange: { active: boolean, componentId: string, presets: { type: \"range\", from: string, to: string } }, dataFilters: { active: boolean, componentIds: Array<string> }, calculation: { active: boolean, type: (\"identity\" | \"percent\") } } | undefined)"
                     },
                     "fields": {
                       "allOf": [
@@ -868,7 +868,7 @@
                       "anyOf": [
                         {
                           "type": "object",
-                          "description": "{ legend: { active: boolean, visible: true, componentId: string }, timeRange: { active: boolean, componentId: string, presets: { type: \"range\", from: string, to: string } }, dataFilters: { active: boolean, componentIds: Array<string> }, calculation: { active: boolean, type: (\"identity\" | \"percent\") } }",
+                          "description": "{ legend: { active: boolean, componentId: string }, timeRange: { active: boolean, componentId: string, presets: { type: \"range\", from: string, to: string } }, dataFilters: { active: boolean, componentIds: Array<string> }, calculation: { active: boolean, type: (\"identity\" | \"percent\") } }",
                           "properties": {
                             "legend": {
                               "type": "object",
@@ -972,7 +972,7 @@
                         },
                         {}
                       ],
-                      "description": "({ legend: { active: boolean, visible: true, componentId: string }, timeRange: { active: boolean, componentId: string, presets: { type: \"range\", from: string, to: string } }, dataFilters: { active: boolean, componentIds: Array<string> }, calculation: { active: boolean, type: (\"identity\" | \"percent\") } } | undefined)"
+                      "description": "({ legend: { active: boolean, componentId: string }, timeRange: { active: boolean, componentId: string, presets: { type: \"range\", from: string, to: string } }, dataFilters: { active: boolean, componentIds: Array<string> }, calculation: { active: boolean, type: (\"identity\" | \"percent\") } } | undefined)"
                     },
                     "fields": {
                       "allOf": [
@@ -1592,7 +1592,7 @@
                       "anyOf": [
                         {
                           "type": "object",
-                          "description": "{ legend: { active: boolean, visible: true, componentId: string }, timeRange: { active: boolean, componentId: string, presets: { type: \"range\", from: string, to: string } }, dataFilters: { active: boolean, componentIds: Array<string> }, calculation: { active: boolean, type: (\"identity\" | \"percent\") } }",
+                          "description": "{ legend: { active: boolean, componentId: string }, timeRange: { active: boolean, componentId: string, presets: { type: \"range\", from: string, to: string } }, dataFilters: { active: boolean, componentIds: Array<string> }, calculation: { active: boolean, type: (\"identity\" | \"percent\") } }",
                           "properties": {
                             "legend": {
                               "type": "object",
@@ -1696,7 +1696,7 @@
                         },
                         {}
                       ],
-                      "description": "({ legend: { active: boolean, visible: true, componentId: string }, timeRange: { active: boolean, componentId: string, presets: { type: \"range\", from: string, to: string } }, dataFilters: { active: boolean, componentIds: Array<string> }, calculation: { active: boolean, type: (\"identity\" | \"percent\") } } | undefined)"
+                      "description": "({ legend: { active: boolean, componentId: string }, timeRange: { active: boolean, componentId: string, presets: { type: \"range\", from: string, to: string } }, dataFilters: { active: boolean, componentIds: Array<string> }, calculation: { active: boolean, type: (\"identity\" | \"percent\") } } | undefined)"
                     },
                     "fields": {
                       "allOf": [
@@ -2297,7 +2297,7 @@
                       "anyOf": [
                         {
                           "type": "object",
-                          "description": "{ legend: { active: boolean, visible: true, componentId: string }, timeRange: { active: boolean, componentId: string, presets: { type: \"range\", from: string, to: string } }, dataFilters: { active: boolean, componentIds: Array<string> }, calculation: { active: boolean, type: (\"identity\" | \"percent\") } }",
+                          "description": "{ legend: { active: boolean, componentId: string }, timeRange: { active: boolean, componentId: string, presets: { type: \"range\", from: string, to: string } }, dataFilters: { active: boolean, componentIds: Array<string> }, calculation: { active: boolean, type: (\"identity\" | \"percent\") } }",
                           "properties": {
                             "legend": {
                               "type": "object",
@@ -2401,7 +2401,7 @@
                         },
                         {}
                       ],
-                      "description": "({ legend: { active: boolean, visible: true, componentId: string }, timeRange: { active: boolean, componentId: string, presets: { type: \"range\", from: string, to: string } }, dataFilters: { active: boolean, componentIds: Array<string> }, calculation: { active: boolean, type: (\"identity\" | \"percent\") } } | undefined)"
+                      "description": "({ legend: { active: boolean, componentId: string }, timeRange: { active: boolean, componentId: string, presets: { type: \"range\", from: string, to: string } }, dataFilters: { active: boolean, componentIds: Array<string> }, calculation: { active: boolean, type: (\"identity\" | \"percent\") } } | undefined)"
                     },
                     "fields": {
                       "allOf": [
@@ -2878,7 +2878,7 @@
                       "anyOf": [
                         {
                           "type": "object",
-                          "description": "{ legend: { active: boolean, visible: true, componentId: string }, timeRange: { active: boolean, componentId: string, presets: { type: \"range\", from: string, to: string } }, dataFilters: { active: boolean, componentIds: Array<string> }, calculation: { active: boolean, type: (\"identity\" | \"percent\") } }",
+                          "description": "{ legend: { active: boolean, componentId: string }, timeRange: { active: boolean, componentId: string, presets: { type: \"range\", from: string, to: string } }, dataFilters: { active: boolean, componentIds: Array<string> }, calculation: { active: boolean, type: (\"identity\" | \"percent\") } }",
                           "properties": {
                             "legend": {
                               "type": "object",
@@ -2982,7 +2982,7 @@
                         },
                         {}
                       ],
-                      "description": "({ legend: { active: boolean, visible: true, componentId: string }, timeRange: { active: boolean, componentId: string, presets: { type: \"range\", from: string, to: string } }, dataFilters: { active: boolean, componentIds: Array<string> }, calculation: { active: boolean, type: (\"identity\" | \"percent\") } } | undefined)"
+                      "description": "({ legend: { active: boolean, componentId: string }, timeRange: { active: boolean, componentId: string, presets: { type: \"range\", from: string, to: string } }, dataFilters: { active: boolean, componentIds: Array<string> }, calculation: { active: boolean, type: (\"identity\" | \"percent\") } } | undefined)"
                     },
                     "fields": {
                       "type": "object",
@@ -3900,7 +3900,7 @@
                       "anyOf": [
                         {
                           "type": "object",
-                          "description": "{ legend: { active: boolean, visible: true, componentId: string }, timeRange: { active: boolean, componentId: string, presets: { type: \"range\", from: string, to: string } }, dataFilters: { active: boolean, componentIds: Array<string> }, calculation: { active: boolean, type: (\"identity\" | \"percent\") } }",
+                          "description": "{ legend: { active: boolean, componentId: string }, timeRange: { active: boolean, componentId: string, presets: { type: \"range\", from: string, to: string } }, dataFilters: { active: boolean, componentIds: Array<string> }, calculation: { active: boolean, type: (\"identity\" | \"percent\") } }",
                           "properties": {
                             "legend": {
                               "type": "object",
@@ -4004,7 +4004,7 @@
                         },
                         {}
                       ],
-                      "description": "({ legend: { active: boolean, visible: true, componentId: string }, timeRange: { active: boolean, componentId: string, presets: { type: \"range\", from: string, to: string } }, dataFilters: { active: boolean, componentIds: Array<string> }, calculation: { active: boolean, type: (\"identity\" | \"percent\") } } | undefined)"
+                      "description": "({ legend: { active: boolean, componentId: string }, timeRange: { active: boolean, componentId: string, presets: { type: \"range\", from: string, to: string } }, dataFilters: { active: boolean, componentIds: Array<string> }, calculation: { active: boolean, type: (\"identity\" | \"percent\") } } | undefined)"
                     },
                     "fields": {
                       "allOf": [
@@ -4504,7 +4504,7 @@
                       "anyOf": [
                         {
                           "type": "object",
-                          "description": "{ legend: { active: boolean, visible: true, componentId: string }, timeRange: { active: boolean, componentId: string, presets: { type: \"range\", from: string, to: string } }, dataFilters: { active: boolean, componentIds: Array<string> }, calculation: { active: boolean, type: (\"identity\" | \"percent\") } }",
+                          "description": "{ legend: { active: boolean, componentId: string }, timeRange: { active: boolean, componentId: string, presets: { type: \"range\", from: string, to: string } }, dataFilters: { active: boolean, componentIds: Array<string> }, calculation: { active: boolean, type: (\"identity\" | \"percent\") } }",
                           "properties": {
                             "legend": {
                               "type": "object",
@@ -4608,7 +4608,7 @@
                         },
                         {}
                       ],
-                      "description": "({ legend: { active: boolean, visible: true, componentId: string }, timeRange: { active: boolean, componentId: string, presets: { type: \"range\", from: string, to: string } }, dataFilters: { active: boolean, componentIds: Array<string> }, calculation: { active: boolean, type: (\"identity\" | \"percent\") } } | undefined)"
+                      "description": "({ legend: { active: boolean, componentId: string }, timeRange: { active: boolean, componentId: string, presets: { type: \"range\", from: string, to: string } }, dataFilters: { active: boolean, componentIds: Array<string> }, calculation: { active: boolean, type: (\"identity\" | \"percent\") } } | undefined)"
                     },
                     "fields": {
                       "allOf": [
@@ -5816,7 +5816,7 @@
                       "anyOf": [
                         {
                           "type": "object",
-                          "description": "{ legend: { active: boolean, visible: true, componentId: string }, timeRange: { active: boolean, componentId: string, presets: { type: \"range\", from: string, to: string } }, dataFilters: { active: boolean, componentIds: Array<string> }, calculation: { active: boolean, type: (\"identity\" | \"percent\") } }",
+                          "description": "{ legend: { active: boolean, componentId: string }, timeRange: { active: boolean, componentId: string, presets: { type: \"range\", from: string, to: string } }, dataFilters: { active: boolean, componentIds: Array<string> }, calculation: { active: boolean, type: (\"identity\" | \"percent\") } }",
                           "properties": {
                             "legend": {
                               "type": "object",
@@ -5920,7 +5920,7 @@
                         },
                         {}
                       ],
-                      "description": "({ legend: { active: boolean, visible: true, componentId: string }, timeRange: { active: boolean, componentId: string, presets: { type: \"range\", from: string, to: string } }, dataFilters: { active: boolean, componentIds: Array<string> }, calculation: { active: boolean, type: (\"identity\" | \"percent\") } } | undefined)"
+                      "description": "({ legend: { active: boolean, componentId: string }, timeRange: { active: boolean, componentId: string, presets: { type: \"range\", from: string, to: string } }, dataFilters: { active: boolean, componentIds: Array<string> }, calculation: { active: boolean, type: (\"identity\" | \"percent\") } } | undefined)"
                     }
                   },
                   "required": [
@@ -6262,7 +6262,7 @@
                       "anyOf": [
                         {
                           "type": "object",
-                          "description": "{ legend: { active: boolean, visible: true, componentId: string }, timeRange: { active: boolean, componentId: string, presets: { type: \"range\", from: string, to: string } }, dataFilters: { active: boolean, componentIds: Array<string> }, calculation: { active: boolean, type: (\"identity\" | \"percent\") } }",
+                          "description": "{ legend: { active: boolean, componentId: string }, timeRange: { active: boolean, componentId: string, presets: { type: \"range\", from: string, to: string } }, dataFilters: { active: boolean, componentIds: Array<string> }, calculation: { active: boolean, type: (\"identity\" | \"percent\") } }",
                           "properties": {
                             "legend": {
                               "type": "object",
@@ -6366,7 +6366,7 @@
                         },
                         {}
                       ],
-                      "description": "({ legend: { active: boolean, visible: true, componentId: string }, timeRange: { active: boolean, componentId: string, presets: { type: \"range\", from: string, to: string } }, dataFilters: { active: boolean, componentIds: Array<string> }, calculation: { active: boolean, type: (\"identity\" | \"percent\") } } | undefined)"
+                      "description": "({ legend: { active: boolean, componentId: string }, timeRange: { active: boolean, componentId: string, presets: { type: \"range\", from: string, to: string } }, dataFilters: { active: boolean, componentIds: Array<string> }, calculation: { active: boolean, type: (\"identity\" | \"percent\") } } | undefined)"
                     }
                   },
                   "required": [
@@ -6722,7 +6722,7 @@
                       "anyOf": [
                         {
                           "type": "object",
-                          "description": "{ legend: { active: boolean, visible: true, componentId: string }, timeRange: { active: boolean, componentId: string, presets: { type: \"range\", from: string, to: string } }, dataFilters: { active: boolean, componentIds: Array<string> }, calculation: { active: boolean, type: (\"identity\" | \"percent\") } }",
+                          "description": "{ legend: { active: boolean, componentId: string }, timeRange: { active: boolean, componentId: string, presets: { type: \"range\", from: string, to: string } }, dataFilters: { active: boolean, componentIds: Array<string> }, calculation: { active: boolean, type: (\"identity\" | \"percent\") } }",
                           "properties": {
                             "legend": {
                               "type": "object",
@@ -6826,7 +6826,7 @@
                         },
                         {}
                       ],
-                      "description": "({ legend: { active: boolean, visible: true, componentId: string }, timeRange: { active: boolean, componentId: string, presets: { type: \"range\", from: string, to: string } }, dataFilters: { active: boolean, componentIds: Array<string> }, calculation: { active: boolean, type: (\"identity\" | \"percent\") } } | undefined)"
+                      "description": "({ legend: { active: boolean, componentId: string }, timeRange: { active: boolean, componentId: string, presets: { type: \"range\", from: string, to: string } }, dataFilters: { active: boolean, componentIds: Array<string> }, calculation: { active: boolean, type: (\"identity\" | \"percent\") } } | undefined)"
                     }
                   },
                   "required": [

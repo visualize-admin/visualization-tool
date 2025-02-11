@@ -46,7 +46,6 @@ export const chartConfig: ColumnConfig = {
   fields: columnFields,
   interactiveFiltersConfig: {
     legend: {
-      visible: true,
       active: false,
       componentId: "",
     },

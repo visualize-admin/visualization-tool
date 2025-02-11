@@ -183,7 +183,7 @@ const ScatterplotStory = {
                 chartConfig={chartConfig}
                 symbol="square"
                 interactive
-                visible
+                showTitle
               />
             )}
           </ScatterplotChart>

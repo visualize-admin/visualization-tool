@@ -87,7 +87,7 @@ const LineChartStory = () => (
               chartConfig={chartConfig}
               symbol="line"
               interactive
-              visible
+              showTitle
             />
           )}
         </LineChart>

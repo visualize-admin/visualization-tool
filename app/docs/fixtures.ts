@@ -73,7 +73,6 @@ export const states: ConfiguratorState[] = [
         },
         interactiveFiltersConfig: {
           legend: {
-            visible: true,
             active: false,
             componentId: "",
           },

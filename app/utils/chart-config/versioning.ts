@@ -1457,44 +1457,6 @@ export const chartConfigMigrations: Migration[] = [
       return newConfig;
     },
   },
-  {
-    description: `ALL {
-      interactiveFiltersConfig {
-        legend {
-          + visible
-        }
-      }
-    }`,
-    from: "4.1.0",
-    to: "4.2.0",
-    up: (config) => {
-      const newConfig = {
-        ...config,
-        version: "4.2.0",
-      };
-
-      if (newConfig?.interactiveFiltersConfig?.legend) {
-        newConfig.interactiveFiltersConfig.legend = {
-          ...newConfig.interactiveFiltersConfig.legend,
-          visible: true,
-        };
-      }
-
-      return newConfig;
-    },
-    down: (config) => {
-      const newConfig = {
-        ...config,
-        version: "4.1.0",
-      };
-
-      if (newConfig?.interactiveFiltersConfig?.legend) {
-        delete newConfig.interactiveFiltersConfig.legend.visible;
-      }
-
-      return newConfig;
-    },
-  },
 ];
 
 export const migrateChartConfig = makeMigrate<ChartConfig>(
@@ -2162,57 +2124,6 @@ export const configuratorStateMigrations: Migration[] = [
       }
 
       delete newConfig.layout.blocks;
-
-      return newConfig;
-    },
-  },
-  {
-    description: `ALL {
-      interactiveFiltersConfig {
-        legend {
-          + visible
-        }
-      }
-    }`,
-    from: "4.2.0",
-    to: "4.3.0",
-    up: (config) => {
-      const newConfig = {
-        ...config,
-        version: "4.3.0",
-      };
-
-      newConfig.chartConfigs.map((config: any) => {
-        if (!config.interactiveFiltersConfig) {
-          return config;
-        }
-        return {
-          ...config,
-          interactiveFiltersConfig: {
-            ...config.interactiveFiltersConfig,
-            legend: {
-              ...config.interactiveFiltersConfig.legend,
-              visible: true,
-            },
-          },
-        };
-      });
-
-      return newConfig;
-    },
-    down: (config) => {
-      const newConfig = {
-        ...config,
-        version: "4.2.0",
-      };
-
-      newConfig.chartConfigs.map((config: any) => {
-        if (!config.interactiveFiltersConfig) {
-          return config;
-        }
-        delete config.interactiveFiltersConfig.legend.visible;
-        return config;
-      });
 
       return newConfig;
     },
