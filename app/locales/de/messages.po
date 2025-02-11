@@ -642,7 +642,7 @@ msgid "controls.filters.show-legend.toggle"
 msgstr "Legendentitel anzeigen"
 
 #: app/configurator/components/filters.tsx
-msgid "controls.filters.show-legend.tooltip"
+msgid "controls.filters.show-legend-toggle"
 msgstr "Benutzer können die Sichtbarkeit der Legende ändern"
 
 #: app/configurator/table/table-chart-configurator.tsx
