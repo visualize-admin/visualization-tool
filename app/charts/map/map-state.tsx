@@ -60,6 +60,7 @@ import {
 } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { getColorInterpolator } from "@/palettes";
+import { getFittingColorInterpolator } from "@/utils/color-palette-utils";
 
 export type MapState = CommonChartState &
   MapStateVariables & {
@@ -285,7 +286,10 @@ const getNumericalColorScale = ({
   data: Observation[];
   dataDomain: [number, number];
 }) => {
-  const interpolator = getColorInterpolator(color.paletteId);
+  const interpolator = getFittingColorInterpolator(
+    { color },
+    getColorInterpolator
+  );
 
   switch (color.scaleType) {
     case "continuous":
