@@ -89,8 +89,6 @@ describe("Filters", () => {
     actions,
     selectors,
   }) => {
-    test.slow();
-
     await page.goto(
       "/en/create/new?cube=https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/5&dataSource=Prod"
     );
@@ -104,7 +102,7 @@ describe("Filters", () => {
 
     await actions.mui.selectOption("Kanton");
 
-    const legend = page.locator('[data-testId="legend-container"]');
+    const legend = page.locator('[data-testId="legend-title-visible"]');
 
     await legend.waitFor({ state: "visible", timeout: 5000 });
     const initialCount = await legend.count();

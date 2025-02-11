@@ -63,7 +63,7 @@ const ChartLines = memo((props: ChartProps<LineConfig>) => {
             chartConfig={chartConfig}
             symbol="line"
             interactive={interactiveFiltersConfig?.legend.active}
-            visible={interactiveFiltersConfig?.legend.visible}
+            showTitle={fields.segment && fields.segment.showTitle}
           />
         </ChartControlsContainer>
       )}

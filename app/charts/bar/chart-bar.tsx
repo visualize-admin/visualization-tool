@@ -77,7 +77,7 @@ const ChartBars = memo((props: ChartProps<BarConfig>) => {
               interactive={
                 fields.segment && interactiveFiltersConfig?.legend.active
               }
-              visible={interactiveFiltersConfig?.legend.visible}
+              showTitle={fields.segment && fields.segment.showTitle}
             />
           </ChartControlsContainer>
         </StackedBarsChart>
@@ -109,7 +109,7 @@ const ChartBars = memo((props: ChartProps<BarConfig>) => {
               interactive={
                 fields.segment && interactiveFiltersConfig?.legend.active
               }
-              visible={interactiveFiltersConfig?.legend.visible}
+              showTitle={fields.segment && fields.segment.showTitle}
             />
           </ChartControlsContainer>
         </GroupedBarChart>
