@@ -11,8 +11,10 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 
 import { SnackbarProvider } from "@/components/snackbar";
+import "@/configurator/components/color-picker.css";
 import { PUBLIC_URL } from "@/domain/env";
 import { flag } from "@/flags/flag";
+import { useDebugShortcut } from "@/flags/useFlag";
 import { GraphqlProvider } from "@/graphql/GraphqlProvider";
 import { i18n, parseLocaleString } from "@/locales/locales";
 import { LocaleProvider } from "@/locales/use-locale";
@@ -23,8 +25,6 @@ import { analyticsPageView } from "@/utils/googleAnalytics";
 import AsyncLocalizationProvider from "@/utils/l10n-provider";
 import "@/utils/nprogress.css";
 import { useNProgress } from "@/utils/use-nprogress";
-
-import "@/configurator/components/color-picker.css";
 
 const GQLDebugPanel = dynamic(() => import("@/gql-flamegraph/devtool"), {
   ssr: false,
@@ -67,6 +67,8 @@ export default function App({
 
   const shouldShowGQLDebug =
     process.env.NODE_ENV === "development" || flag("debug");
+
+  useDebugShortcut(shouldShowGQLDebug);
 
   return (
     <>

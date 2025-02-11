@@ -11,7 +11,9 @@ You can also check the
 
 # Unreleased
 
-Nothing yet.
+- Feature
+  - flags can now be toggle by clicking "ctrl + t + d" on the keyboard (t,d =>
+    toggle debug)
 
 # [5.2.4] - 2025-02-06
 
