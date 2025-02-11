@@ -42,38 +42,6 @@ export const useInteractiveFiltersToggle = (target: "legend") => {
   };
 };
 
-export const useLegendVisibility = (target: "legend") => {
-  const [state, dispatch] = useConfiguratorState(isConfiguring);
-  const chartConfig = getChartConfig(state);
-  const onChange = useEvent((e: ChangeEvent<HTMLInputElement>) => {
-    if (chartConfig.interactiveFiltersConfig?.[target]) {
-      const newConfig = produce(
-        chartConfig.interactiveFiltersConfig,
-        (draft) => {
-          draft[target].visible = e.currentTarget.checked;
-        }
-      );
-
-      dispatch({
-        type: "INTERACTIVE_FILTER_CHANGED",
-        value: newConfig,
-      });
-    }
-  });
-
-  const stateValue = get(
-    chartConfig,
-    `interactiveFiltersConfig.${target}.visible`
-  );
-  const checked = stateValue ? stateValue : false;
-
-  return {
-    name: target,
-    checked,
-    onChange,
-  };
-};
-
 /**
  * Toggles a single data filter
  */

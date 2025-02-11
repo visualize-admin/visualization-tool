@@ -45,6 +45,7 @@ import {
   GenericFields,
   isAreaConfig,
   isColorInConfig,
+  isSegmentInConfig,
   isTableConfig,
   ReactGridLayoutType,
 } from "@/config-types";
@@ -661,6 +662,20 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
     case "CHART_FIELD_CHANGED":
       return handleChartFieldChanged(draft, action);
+
+    case "CHART_SHOW_LEGEND_TITLE_CHANGED":
+      if (isConfiguring(draft)) {
+        const chartConfig = getChartConfig(draft);
+
+        if (isSegmentInConfig(chartConfig) && chartConfig.fields.segment) {
+          chartConfig.fields.segment.showTitle = action.value;
+        }
+        const index = draft.chartConfigs.findIndex(
+          (d) => d.key === chartConfig.key
+        );
+        draft.chartConfigs[index] = chartConfig;
+      }
+      return draft;
 
     case "CHART_FIELD_DELETED":
       if (isConfiguring(draft)) {

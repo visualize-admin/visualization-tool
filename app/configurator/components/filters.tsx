@@ -73,7 +73,6 @@ import { EditorBrush } from "@/configurator/interactive-filters/editor-brush";
 import {
   useInteractiveFiltersToggle,
   useInteractiveTimeRangeToggle,
-  useLegendVisibility,
 } from "@/configurator/interactive-filters/interactive-filters-config-state";
 import { InteractiveFilterToggle } from "@/configurator/interactive-filters/interactive-filters-configurator";
 import {
@@ -107,6 +106,7 @@ import useEvent from "@/utils/use-event";
 
 import { interlace } from "../../utils/interlace";
 import { getTimeFilterOptions } from "../../utils/time-filter-options";
+import { useLegendTitleVisibility } from "../configurator-state/segment-config-state";
 
 const useStyles = makeStyles((theme: Theme) => {
   return {
@@ -355,7 +355,7 @@ const MultiFilterContent = ({
   });
 
   const interactiveFilterProps = useInteractiveFiltersToggle("legend");
-  const visibleLegendProps = useLegendVisibility("legend");
+  const visibleLegendProps = useLegendTitleVisibility("showTitle");
   const chartSymbol = getChartSymbol(chartConfig.chartType);
 
   return (
@@ -371,9 +371,7 @@ const MultiFilterContent = ({
         >
           {chartConfig.activeField === "segment" ? (
             <>
-              <Flex
-                sx={{ height: "33px", alignItems: "center", width: "100%" }}
-              >
+              <Flex sx={{ alignItems: "center", width: "100%" }}>
                 <FormControlLabel
                   componentsProps={{ typography: { variant: "body2" } }}
                   control={<Switch {...interactiveFilterProps} />}
@@ -399,9 +397,7 @@ const MultiFilterContent = ({
                   }
                 />
               </Flex>
-              <Flex
-                sx={{ height: "33px", alignItems: "center", width: "100%" }}
-              >
+              <Flex sx={{ alignItems: "center", width: "100%" }}>
                 <FormControlLabel
                   componentsProps={{ typography: { variant: "body2" } }}
                   control={<Switch {...visibleLegendProps} />}
@@ -411,7 +407,7 @@ const MultiFilterContent = ({
                       title={
                         <TooltipTitle
                           text={
-                            <Trans id="controls.filters.show-legend.tooltip">
+                            <Trans id="controls.filters.show-legend-toggle">
                               Allow users to change Legend visibility
                             </Trans>
                           }
