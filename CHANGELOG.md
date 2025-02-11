@@ -11,6 +11,9 @@ You can also check the
 
 # Unreleased
 
+- Feature
+  - flags can now be toggle by clicking "ctrl + t + d" on the keyboard (t,d =>
+    toggle debug)
 - Fixes
   - Weekly-based temporal dimensions now work correctly when used in dashboard
     filters
