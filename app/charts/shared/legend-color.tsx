@@ -31,7 +31,6 @@ import {
 } from "@/domain/data";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import { useChartInteractiveFilters } from "@/stores/interactive-filters";
-import { theme } from "@/themes/federal";
 import { interlace } from "@/utils/interlace";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
@@ -200,14 +199,18 @@ export const LegendColor = memo(function LegendColor(props: LegendColorProps) {
         isSegmentInConfig(chartConfig) &&
         chartConfig.fields.segment &&
         dimensionsById && (
-          <Typography
-            data-testId="colorLegendTitle"
-            component="div"
-            variant="subtitle1"
-            color={theme.palette.primary.main}
+          <OpenMetadataPanelWrapper
+            component={dimensionsById[chartConfig.fields.segment.componentId]}
           >
-            {dimensionsById[chartConfig.fields.segment.componentId]?.label}
-          </Typography>
+            <Typography
+              data-testId="legendTitle"
+              component="div"
+              variant="caption"
+              color="primary.main"
+            >
+              {dimensionsById[chartConfig.fields.segment.componentId]?.label}
+            </Typography>
+          </OpenMetadataPanelWrapper>
         )}
       <LegendColorContent
         groups={groups}

@@ -102,7 +102,7 @@ describe("Filters", () => {
 
     await actions.mui.selectOption("Kanton");
 
-    const legend = page.locator('[data-testId="colorLegendTitle"]');
+    const legend = page.locator('[data-testId="legendTitle"]');
 
     await legend.waitFor({ state: "hidden", timeout: 5000 });
     await expect(legend).toHaveCount(0);
