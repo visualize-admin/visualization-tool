@@ -1,5 +1,5 @@
 import { t } from "@lingui/macro";
-import { Theme, Typography } from "@mui/material";
+import { Box, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 import orderBy from "lodash/orderBy";
@@ -31,9 +31,12 @@ import {
 } from "@/domain/data";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import { useChartInteractiveFilters } from "@/stores/interactive-filters";
+import { theme } from "@/themes/federal";
 import { interlace } from "@/utils/interlace";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
+
+import { DimensionsById } from "./ChartProps";
 
 export type LegendSymbol = "square" | "line" | "circle";
 
@@ -171,6 +174,7 @@ type LegendColorProps = {
   symbol: LegendSymbol;
   // If the legend is based on measures, this function can be used to get the
   // corresponding measure to open the metadata panel.
+  dimensionsById?: DimensionsById;
   getLegendItemDimension?: (dimensionLabel: string) => Measure | undefined;
   interactive?: boolean;
   showTitle?: boolean;
@@ -184,22 +188,37 @@ export const LegendColor = memo(function LegendColor(props: LegendColorProps) {
     getLegendItemDimension,
     interactive,
     showTitle,
+    dimensionsById,
   } = props;
   const { colors, getColorLabel } = useChartState() as ColorsChartState;
   const values = colors.domain();
   const groups = useLegendGroups({ chartConfig, segmentDimension, values });
 
   return (
-    <LegendColorContent
-      groups={groups}
-      getColor={(v) => colors(v)}
-      getLabel={getColorLabel}
-      getItemDimension={getLegendItemDimension}
-      symbol={symbol}
-      showTitle={showTitle}
-      interactive={interactive}
-      numberOfOptions={values.length}
-    />
+    <Box>
+      {showTitle &&
+        isSegmentInConfig(chartConfig) &&
+        chartConfig.fields.segment &&
+        dimensionsById && (
+          <Typography
+            data-testId="colorLegendTitle"
+            component="div"
+            variant="subtitle1"
+            color={theme.palette.primary.main}
+          >
+            {dimensionsById[chartConfig.fields.segment.componentId]?.label}
+          </Typography>
+        )}
+      <LegendColorContent
+        groups={groups}
+        getColor={(v) => colors(v)}
+        getLabel={getColorLabel}
+        getItemDimension={getLegendItemDimension}
+        symbol={symbol}
+        interactive={interactive}
+        numberOfOptions={values.length}
+      />
+    </Box>
   );
 });
 
@@ -266,7 +285,6 @@ export const MapLegendColor = memo(function LegendColor(
       }}
       getLabel={getLabel}
       symbol="circle"
-      showTitle
       numberOfOptions={sortedValues.length}
     />
   );
@@ -280,7 +298,6 @@ type LegendColorContentProps = {
   symbol: LegendSymbol;
   interactive?: boolean;
   numberOfOptions: number;
-  showTitle?: boolean;
 };
 
 const LegendColorContent = (props: LegendColorContentProps) => {
@@ -292,7 +309,6 @@ const LegendColorContent = (props: LegendColorContentProps) => {
     symbol,
     interactive,
     numberOfOptions,
-    showTitle,
   } = props;
   const classes = useStyles();
   const categories = useChartInteractiveFilters((d) => d.categories);
@@ -353,8 +369,7 @@ const LegendColorContent = (props: LegendColorContentProps) => {
                   return (
                     <LegendItem
                       key={`${d}_${i}`}
-                      data-testId={`legend-title-${showTitle ? "visible" : "hidden"}`}
-                      item={showTitle ? label : ""}
+                      item={label}
                       color={getColor(d)}
                       dimension={getItemDimension?.(label)}
                       symbol={symbol}

@@ -33,7 +33,7 @@ export const ChartScatterplotVisualization = (
 };
 
 const ChartScatterplot = memo((props: ChartProps<ScatterPlotConfig>) => {
-  const { chartConfig, dimensions } = props;
+  const { chartConfig, dimensions, dimensionsById } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
   const filters = useChartConfigFilters(chartConfig);
 
@@ -62,6 +62,7 @@ const ChartScatterplot = memo((props: ChartProps<ScatterPlotConfig>) => {
           )}
           {fields.segment && (
             <LegendColor
+              dimensionsById={dimensionsById}
               chartConfig={chartConfig}
               symbol="circle"
               interactive={interactiveFiltersConfig?.legend.active}

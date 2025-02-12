@@ -22,7 +22,7 @@ export const ChartPieVisualization = (props: VisualizationProps<PieConfig>) => {
 };
 
 const ChartPie = memo((props: ChartProps<PieConfig>) => {
-  const { chartConfig, observations, dimensions } = props;
+  const { chartConfig, observations, dimensions, dimensionsById } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
   const somePositive = observations.some(
     (d) => (d[fields?.y?.componentId] as number) > 0
@@ -50,6 +50,7 @@ const ChartPie = memo((props: ChartProps<PieConfig>) => {
           />
         )}
         <LegendColor
+          dimensionsById={dimensionsById}
           chartConfig={chartConfig}
           symbol="square"
           interactive={

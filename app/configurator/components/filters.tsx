@@ -355,7 +355,7 @@ const MultiFilterContent = ({
   });
 
   const interactiveFilterProps = useInteractiveFiltersToggle("legend");
-  const visibleLegendProps = useLegendTitleVisibility("showTitle");
+  const visibleLegendProps = useLegendTitleVisibility();
   const chartSymbol = getChartSymbol(chartConfig.chartType);
 
   return (

@@ -39,7 +39,7 @@ export const ChartBarsVisualization = (
 };
 
 const ChartBars = memo((props: ChartProps<BarConfig>) => {
-  const { chartConfig, dimensions } = props;
+  const { chartConfig, dimensions, dimensionsById } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
   const filters = useChartConfigFilters(chartConfig);
   const [{ dashboardFilters }] = useConfiguratorState(hasChartConfigs);
@@ -72,6 +72,7 @@ const ChartBars = memo((props: ChartProps<BarConfig>) => {
               />
             )}
             <LegendColor
+              dimensionsById={dimensionsById}
               chartConfig={chartConfig}
               symbol="square"
               interactive={
@@ -104,6 +105,7 @@ const ChartBars = memo((props: ChartProps<BarConfig>) => {
               />
             )}
             <LegendColor
+              dimensionsById={dimensionsById}
               chartConfig={chartConfig}
               symbol="square"
               interactive={

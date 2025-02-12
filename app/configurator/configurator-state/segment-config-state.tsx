@@ -8,7 +8,7 @@ import useEvent from "@/utils/use-event";
 
 import { isConfiguring } from ".";
 
-export const useLegendTitleVisibility = (target: "showTitle") => {
+export const useLegendTitleVisibility = () => {
   const [state, dispatch] = useConfiguratorState(isConfiguring);
   const chartConfig = getChartConfig(state);
   const onChange = useEvent((e: ChangeEvent<HTMLInputElement>) => {
@@ -20,11 +20,11 @@ export const useLegendTitleVisibility = (target: "showTitle") => {
     }
   });
 
-  const stateValue = get(chartConfig, `fields.segment.${target}`);
+  const stateValue = get(chartConfig, `fields.segment.showTitle`);
   const checked = stateValue ? stateValue : false;
 
   return {
-    name: target,
+    name: "showTitle",
     checked,
     onChange,
   };

@@ -39,7 +39,7 @@ export const ChartColumnsVisualization = (
 };
 
 const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
-  const { chartConfig, dimensions } = props;
+  const { chartConfig, dimensions, dimensionsById } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
   const filters = useChartConfigFilters(chartConfig);
   const [{ dashboardFilters }] = useConfiguratorState(hasChartConfigs);
@@ -70,6 +70,7 @@ const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
               />
             )}
             <LegendColor
+              dimensionsById={dimensionsById}
               chartConfig={chartConfig}
               symbol="square"
               interactive={
@@ -102,6 +103,7 @@ const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
               />
             )}
             <LegendColor
+              dimensionsById={dimensionsById}
               chartConfig={chartConfig}
               symbol="square"
               interactive={
