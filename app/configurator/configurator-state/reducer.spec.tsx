@@ -588,6 +588,7 @@ describe("deriveFiltersFromFields", () => {
           },
         },
         "key": "ydBHrv26xvUg",
+        "limits": Object {},
         "meta": Object {
           "description": Object {
             "de": "",
@@ -608,7 +609,7 @@ describe("deriveFiltersFromFields", () => {
             "it": "",
           },
         },
-        "version": "4.1.0",
+        "version": "4.2.0",
       }
     `);
   });

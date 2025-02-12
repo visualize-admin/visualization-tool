@@ -56,6 +56,7 @@ export const states: ConfiguratorState[] = [
           },
         },
         cubes: [{ iri: "", filters: {} }],
+        limits: {},
         chartType: "column",
         fields: {
           x: {
@@ -1080,6 +1081,7 @@ export const tableConfig: TableConfig = {
     },
   },
   cubes: [{ iri: "", filters: {} }],
+  limits: {},
   chartType: "table",
   interactiveFiltersConfig: undefined,
   settings: { showSearch: true, showAllRows: true },
