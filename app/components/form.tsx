@@ -522,7 +522,7 @@ type DisabledMessageIconProps = {
   message: string;
 };
 
-const DisabledMessageIcon = (props: DisabledMessageIconProps) => {
+export const DisabledMessageIcon = (props: DisabledMessageIconProps) => {
   const { message } = props;
 
   return (
@@ -627,35 +627,35 @@ export const Input = ({
   value,
   disabled,
   onChange,
+  error,
 }: {
   label?: string | ReactNode;
   disabled?: boolean;
-} & FieldProps) => {
-  return (
-    <Box sx={{ fontSize: "1rem", pb: 2 }}>
-      {label && name ? (
-        <Label htmlFor={name} smaller sx={{ mb: 1 }}>
-          {label}
-        </Label>
-      ) : null}
-      <MUIInput
-        id={name}
-        size="small"
-        color="secondary"
-        name={name}
-        value={value}
-        disabled={disabled}
-        onChange={onChange}
-        sx={{
-          width: "100%",
-          padding: "10px 6px",
-          borderColor: "grey.500",
-          backgroundColor: "grey.100",
-        }}
-      />
-    </Box>
-  );
-};
+  error?: boolean;
+} & FieldProps) => (
+  <Box sx={{ fontSize: "1rem", pb: 2 }}>
+    {label && name && (
+      <Label htmlFor={name} smaller sx={{ mb: 1 }}>
+        {label}
+      </Label>
+    )}
+    <MUIInput
+      id={name}
+      size="small"
+      color="secondary"
+      name={name}
+      value={value}
+      disabled={disabled}
+      onChange={onChange}
+      sx={{
+        borderColor: error ? "error.main" : "grey.500",
+        backgroundColor: "grey.100",
+        padding: "10px 6px",
+        width: "100%",
+      }}
+    />
+  </Box>
+);
 
 export const MarkdownInput = ({
   label,
