@@ -643,7 +643,7 @@ msgstr "Show legend titles"
 
 #: app/configurator/components/filters.tsx
 msgid "controls.filters.show-legend-toggle"
-msgstr "Allow users to change legend visibility"
+msgstr "Allow users to change legend titles visibility"
 
 #: app/configurator/table/table-chart-configurator.tsx
 msgid "controls.groups.empty-help"
