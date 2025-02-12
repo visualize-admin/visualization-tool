@@ -102,17 +102,16 @@ describe("Filters", () => {
 
     await actions.mui.selectOption("Kanton");
 
-    const legend = page.locator('[data-testId="legend-title-visible"]');
+    const legend = page.locator('[data-testId="colorLegendTitle"]');
 
-    await legend.waitFor({ state: "visible", timeout: 5000 });
-    const initialCount = await legend.count();
-    expect(initialCount).toBe(1);
+    await legend.waitFor({ state: "hidden", timeout: 5000 });
+    await expect(legend).toHaveCount(0);
 
     await (
       await selectors.panels.drawer().within().findByText("Show legend titles")
     ).click();
 
-    await expect(legend).toHaveCount(0);
+    expect(legend).toHaveCount(1);
 
     await page.waitForTimeout(1000);
   });
