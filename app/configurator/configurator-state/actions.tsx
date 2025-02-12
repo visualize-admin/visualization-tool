@@ -11,6 +11,7 @@ import {
   ImputationType,
   InteractiveFiltersConfig,
   Layout,
+  Limit,
 } from "@/config-types";
 import { DataCubeComponents, Dimension, DimensionValue } from "@/domain/data";
 import { Locale } from "@/locales/locales";
@@ -243,6 +244,24 @@ export type ConfiguratorStateAction =
       value: {
         oldIndex: number;
         newIndex: number;
+      };
+    }
+  | {
+      type: "LIMIT_SET";
+      value: {
+        measureId: string;
+        relatedDimensionId: string;
+        relatedDimensionValue: string;
+        color: string;
+        lineType: Limit["lineType"];
+      };
+    }
+  | {
+      type: "LIMIT_REMOVE";
+      value: {
+        measureId: string;
+        relatedDimensionId: string;
+        relatedDimensionValue: string;
       };
     }
   | {

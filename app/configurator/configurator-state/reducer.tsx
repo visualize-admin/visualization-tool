@@ -46,6 +46,7 @@ import {
   isAreaConfig,
   isColorInConfig,
   isTableConfig,
+  Limit,
   ReactGridLayoutType,
 } from "@/config-types";
 import { getChartConfig, makeMultiFilter } from "@/config-utils";
@@ -1086,6 +1087,69 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         const { oldIndex, newIndex } = action.value;
         const [removed] = draft.chartConfigs.splice(oldIndex, 1);
         draft.chartConfigs.splice(newIndex, 0, removed);
+      }
+
+      return draft;
+
+    // TODO: Make sure to keep limit in sync with currently selected measure and filters!
+    case "LIMIT_SET":
+      if (isConfiguring(draft)) {
+        const {
+          measureId,
+          relatedDimensionId,
+          relatedDimensionValue,
+          color,
+          lineType,
+        } = action.value;
+        const chartConfig = getChartConfig(draft);
+        const newLimit: Limit = {
+          dimensionId: relatedDimensionId,
+          dimensionValue: relatedDimensionValue,
+          color,
+          lineType,
+        };
+
+        if (!chartConfig.limits[measureId]) {
+          chartConfig.limits[measureId] = [newLimit];
+        } else {
+          const maybeLimitIndex = chartConfig.limits[measureId].findIndex(
+            (d) =>
+              d.dimensionId === relatedDimensionId &&
+              d.dimensionValue === relatedDimensionValue
+          );
+
+          if (maybeLimitIndex !== -1) {
+            chartConfig.limits[measureId][maybeLimitIndex] = newLimit;
+          } else {
+            chartConfig.limits[measureId].push(newLimit);
+          }
+        }
+      }
+
+      return draft;
+
+    case "LIMIT_REMOVE":
+      if (isConfiguring(draft)) {
+        const { measureId, relatedDimensionId, relatedDimensionValue } =
+          action.value;
+        const chartConfig = getChartConfig(draft);
+
+        const limits = chartConfig.limits[measureId] ?? [];
+        const limit = limits.find(
+          (d) =>
+            d.dimensionId === relatedDimensionId &&
+            d.dimensionValue === relatedDimensionValue
+        );
+
+        if (limits.length === 1 && limit) {
+          delete chartConfig.limits[measureId];
+        } else {
+          chartConfig.limits[measureId] = limits.filter(
+            (d) =>
+              d.dimensionId !== relatedDimensionId ||
+              d.dimensionValue !== relatedDimensionValue
+          );
+        }
       }
 
       return draft;
