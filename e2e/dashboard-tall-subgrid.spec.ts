@@ -22,5 +22,6 @@ test("elements should be aligned with each other in tall dashboard's columns", a
   const thirdChartBox = await thirdChart.boundingBox();
 
   await argosScreenshot(page, "dashboard-tall-subgrid");
+
   expect(secondChartBox.y).toEqual(thirdChartBox.y);
 });

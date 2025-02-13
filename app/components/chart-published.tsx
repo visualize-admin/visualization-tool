@@ -75,7 +75,7 @@ const ChartPublishedIndividualChart = forwardRef<
       <ChartTablePreviewProvider key={chartConfig.key}>
         <ChartWrapper
           key={chartConfig.key}
-          layoutType={state.layout.type}
+          layout={state.layout}
           ref={ref}
           chartKey={chartConfig.key}
           {...rest}
@@ -173,8 +173,9 @@ export const ChartPublished = ({
                 layoutType={state.layout.layout}
                 renderBlock={renderBlock}
               />
-              {state.chartConfigs.length !== 1 && (
+              {state.chartConfigs.length !== 1 && configKey && (
                 <VisualizeLink
+                  configKey={configKey}
                   createdWith={t({ id: "metadata.link.created.with" })}
                 />
               )}
@@ -201,7 +202,7 @@ export const ChartPublished = ({
               <ChartTablePreviewProvider>
                 <DashboardInteractiveFilters />
                 <ChartWrapper
-                  layoutType={state.layout.type}
+                  layout={state.layout}
                   chartKey={state.activeChartKey}
                 >
                   <ChartPublishedInner
@@ -460,6 +461,7 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
               )}
             </TablePreviewWrapper>
             <ChartFootnotes
+              configKey={configKey}
               dataSource={dataSource}
               chartConfig={chartConfig}
               dashboardFilters={state.dashboardFilters}

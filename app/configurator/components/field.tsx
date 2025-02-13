@@ -879,7 +879,7 @@ export const ColorPickerField = ({
   const updateColor = useCallback(
     (value: string) =>
       dispatch({
-        type: "COLOR_MAPPING_UPDATED",
+        type: "COLOR_FIELD_UPDATED",
         value: {
           locale,
           field,

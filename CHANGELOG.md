@@ -11,9 +11,28 @@ You can also check the
 
 # Unreleased
 
+- Features
+  - Added option for hiding legend titles using a toggle switch
+
+# [5.2.4] - 2025-02-06
+
+- Fixes
+  - Duplicating chart in layout mode works correctly again
+
+# [5.2.3] - 2025-02-05
+
+- Fixes
+  - Charts that use most recent date filter and interactive time range filter
+    are initialized correctly now
+
+# [5.2.2] - 2025-02-05
+
 - Fixes
   - Weekly-based temporal dimensions now work correctly when used in dashboard
     filters
+  - Fixed color changes when changing segment dimension
+  - Fixed Filter selection made it so that color are showing again correctly for
+    selected filters
   - Chart area doesn't overflow anymore when changing chart types in editing
     mode in Chrome
   - Tall dashboard layouts now correctly align chart elements between columns in
@@ -21,13 +40,27 @@ You can also check the
   - Map legend items do not overlap anymore in PNG image downloads
   - PNG image download now correctly retains Y axis label colors in combo charts
   - NaN values are not displayed in map tooltip anymore
+  - Fixed color shuffling & resetting to work again with custom color palettes
+  - Dual-axis chart y axis titles do not overlap with other chart elements in
+    specific cases anymore
+  - Changing locale when editing a chart with temporal entity-based X axis now
+    correctly updates the chart
 - Style
   - Improved vertical spacing between map legend items
+  - Fixed the spacing between navigation and header in the /profile view
+  - Regular charts now have consistent margin between the Y axis label and ticks
+  - Combo legend items now wrap below each other when there's not enough space
 - Maintenance
+  - Increased the number of charts pre-loaded to Varnish cache from 25 to 250
   - Added authentication method to e2e tests
-  - ADded authentication to vercel previews for easier testing
+  - Added authentication to vercel previews for easier testing
 
 # [5.2.1] - 2025-01-29
+
+- Features
+
+  - Created by visualize.admin.ch Link now navigates users to the corresponding
+    Chart
 
 - Fixes
   - Bar chart tooltip doesn't go off the screen anymore during scroll
@@ -59,6 +92,10 @@ You can also check the
   - Downloading images of bar charts now includes the whole chart, not just the
     visible part
   - Bar charts are now hidden behind a an enable-experimental-features flag
+  - Users can now create custom color palettes in the editor and save it to
+    their profile where they can update, add, delete and manage their colors
+    palettes (available for categorical, sequential and diverging types, fully
+    available for all chart except tables)
 - Fixes
   - Preview via API now works correctly for map charts
   - GraphQL debug panel now displays the queries correctly when in debug mode

@@ -50,12 +50,14 @@ export const ChartFootnotes = ({
   dashboardFilters,
   components,
   showVisualizeLink = false,
+  configKey,
 }: {
   dataSource: DataSource;
   chartConfig: ChartConfig;
   dashboardFilters: DashboardFiltersConfig | undefined;
   components: Component[];
   showVisualizeLink?: boolean;
+  configKey?: string;
 }) => {
   const locale = useLocale();
   const usedComponents = useMemo(() => {
@@ -113,8 +115,11 @@ export const ChartFootnotes = ({
           ) : null}
         </div>
       ))}
-      {showVisualizeLink ? (
-        <VisualizeLink createdWith={t({ id: "metadata.link.created.with" })} />
+      {showVisualizeLink && configKey ? (
+        <VisualizeLink
+          configKey={configKey}
+          createdWith={t({ id: "metadata.link.created.with" })}
+        />
       ) : null}
     </Box>
   );
@@ -166,7 +171,13 @@ const ChartFootnotesLegendContainer = ({
 }: {
   children: React.ReactNode;
 }) => {
-  return <Box sx={{ display: "flex", gap: 3, mb: 1 }}>{children}</Box>;
+  return (
+    <Box
+      sx={{ display: "flex", flexWrap: "wrap", rowGap: 1, columnGap: 3, mb: 1 }}
+    >
+      {children}
+    </Box>
+  );
 };
 
 const ChartFootnotesComboLineColumn = ({
@@ -289,14 +300,20 @@ const ChartFootnotesComboLineSingle = ({
   ) : null;
 };
 
-export const VisualizeLink = ({ createdWith }: { createdWith: ReactNode }) => {
+export const VisualizeLink = ({
+  createdWith,
+  configKey,
+}: {
+  createdWith: ReactNode;
+  configKey: string;
+}) => {
   const locale = useLocale();
 
   return (
     <Typography variant="caption" color="grey.600" {...DISABLE_SCREENSHOT_ATTR}>
       {createdWith}
       <Link
-        href={`https://visualize.admin.ch/${locale}/`}
+        href={`https://visualize.admin.ch/${locale}/v/${configKey}`}
         target="_blank"
         rel="noopener noreferrer"
         color="primary.main"

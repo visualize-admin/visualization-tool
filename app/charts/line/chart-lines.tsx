@@ -28,7 +28,7 @@ export const ChartLinesVisualization = (
 };
 
 const ChartLines = memo((props: ChartProps<LineConfig>) => {
-  const { chartConfig } = props;
+  const { chartConfig, dimensionsById } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
   const [{ dashboardFilters }] = useConfiguratorState(hasChartConfigs);
   return (
@@ -60,9 +60,11 @@ const ChartLines = memo((props: ChartProps<LineConfig>) => {
       {fields.segment && (
         <ChartControlsContainer>
           <LegendColor
+            dimensionsById={dimensionsById}
             chartConfig={chartConfig}
             symbol="line"
             interactive={interactiveFiltersConfig?.legend.active}
+            showTitle={fields.segment && fields.segment.showTitle}
           />
         </ChartControlsContainer>
       )}

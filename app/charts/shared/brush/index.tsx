@@ -74,8 +74,6 @@ export const BrushTime = () => {
       setSelectionExtent(0);
     }
   };
-
-  const { from, to } = timeRange;
   const {
     brushOverlayColor,
     brushSelectionColor,
@@ -121,6 +119,15 @@ export const BrushTime = () => {
   const { width, margins, chartHeight } = bounds;
   const scaleTimeRange =
     chartType === "bar" ? yScaleTimeRange : xScaleTimeRange;
+
+  let { from, to } = timeRange;
+
+  // FIXME: Should be fixed in useSyncInteractiveFilters where we try to parse
+  // the date that can be a string (VISUALIZE_MOST_RECENT_VALUE).
+  if (isNaN(to?.getTime() ?? 0)) {
+    to = scaleTimeRange.domain()[1];
+  }
+
   const brushLabelsWidth =
     getTextWidth(formatDate(scaleTimeRange.domain()[0]), {
       fontSize: labelFontSize,

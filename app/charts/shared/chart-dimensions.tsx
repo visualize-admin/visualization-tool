@@ -2,7 +2,10 @@ import { max } from "d3-array";
 import { ScaleLinear } from "d3-scale";
 import { useMemo } from "react";
 
-import { TITLE_VPADDING } from "@/charts/combo/combo-line-container";
+import {
+  getAxisTitleSize,
+  SINGLE_LINE_AXIS_LABEL_HEIGHT,
+} from "@/charts/combo/shared";
 import { TICK_PADDING } from "@/charts/shared/axis-height-linear";
 import { BRUSH_BOTTOM_SPACE } from "@/charts/shared/brush/constants";
 import { getTickNumber } from "@/charts/shared/ticks";
@@ -142,29 +145,30 @@ export const useChartBounds = (
   yAxisLabels?: YAxisLabels
 ): Bounds & { yAxisTitleHeight: number } => {
   const [state] = useConfiguratorState(hasChartConfigs);
-  const { axisLabelFontSize } = useChartTheme();
   const { left, top, right, bottom } = margins;
 
   const chartWidth = width - left - right;
 
   const yAxisTitleHeight = useMemo(() => {
-    if (!yAxisLabels?.leftLabel && !yAxisLabels?.rightLabel) {
+    const leftAxisTitle = yAxisLabels?.leftLabel;
+    const rightAxisTitle = yAxisLabels?.rightLabel;
+
+    if (!leftAxisTitle && !rightAxisTitle) {
       return 0;
     }
 
-    const leftTitleWidth = yAxisLabels.leftLabel
-      ? getTextWidth(yAxisLabels.leftLabel, { fontSize: axisLabelFontSize }) +
-        TICK_PADDING
-      : 0;
+    const leftAxisTitleSize = getAxisTitleSize(leftAxisTitle ?? "", {
+      width: chartWidth,
+    });
+    const rightAxisTitleSize = getAxisTitleSize(rightAxisTitle ?? "", {
+      width: chartWidth,
+    });
 
-    const rightTitleWidth = yAxisLabels.rightLabel
-      ? getTextWidth(yAxisLabels.rightLabel, { fontSize: axisLabelFontSize }) +
-        TICK_PADDING
-      : 0;
-
-    const overLappingTitles = leftTitleWidth + rightTitleWidth > chartWidth;
-    return overLappingTitles ? (axisLabelFontSize + TITLE_VPADDING) * 2 : 0;
-  }, [chartWidth, yAxisLabels, axisLabelFontSize]);
+    return (
+      Math.max(leftAxisTitleSize.height, rightAxisTitleSize.height) -
+      SINGLE_LINE_AXIS_LABEL_HEIGHT
+    );
+  }, [chartWidth, yAxisLabels]);
 
   const chartHeight = isLayoutingFreeCanvas(state)
     ? Math.max(
@@ -200,6 +204,7 @@ export const useAxisLabelHeightOffset = ({
   const { axisLabelFontSize: fontSize } = useChartTheme();
   const labelWidth = getTextWidth(label, { fontSize });
   const lines = Math.ceil(labelWidth / (width - marginLeft - marginRight));
+
   return {
     height: fontSize * LINE_HEIGHT * lines,
     offset: fontSize * LINE_HEIGHT * (lines - 1),

@@ -70,6 +70,7 @@ export const CHART_GRID_ROW_COUNT = 7;
 export const useChartStyles = makeStyles<Theme, { disableBorder?: boolean }>(
   (theme) => ({
     root: {
+      flexGrow: 1,
       padding: theme.spacing(6),
       backgroundColor: theme.palette.background.paper,
       border: ({ disableBorder }) =>
@@ -407,7 +408,7 @@ const DownloadPNGImageMenuActionItem = ({
   chartKey: string;
   components: Component[];
 } & Omit<UseScreenshotProps, "type" | "modifyNode" | "pngMetadata">) => {
-  const modifyNode = useModifyNode();
+  const modifyNode = useModifyNode(configKey);
   const metadata = usePNGMetadata({
     configKey,
     chartKey,
@@ -433,7 +434,7 @@ const DownloadPNGImageMenuActionItem = ({
   );
 };
 
-const useModifyNode = () => {
+const useModifyNode = (configKey?: string) => {
   const theme = useTheme();
   const chartWithFiltersClasses = useChartWithFiltersClasses();
 
@@ -460,13 +461,14 @@ const useModifyNode = () => {
         `.${CHART_FOOTNOTES_CLASS_NAME}`
       );
 
-      if (footnotes) {
+      if (footnotes && configKey) {
         const container = document.createElement("div");
         footnotes.appendChild(container);
         const root = createRoot(container);
         root.render(
           <ThemeProvider theme={theme}>
             <VisualizeLink
+              configKey={configKey}
               createdWith={t({ id: "metadata.link.created.with" })}
             />
           </ThemeProvider>
@@ -495,7 +497,7 @@ const useModifyNode = () => {
         .selectAll(`text:not([${DISABLE_SCREENSHOT_COLOR_WIPE_KEY}='true'])`)
         .style("fill", color);
     },
-    [chartWithFiltersClasses.chartWithFilters, theme]
+    [chartWithFiltersClasses.chartWithFilters, theme, configKey]
   );
 };
 
