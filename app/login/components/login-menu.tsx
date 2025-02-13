@@ -100,7 +100,9 @@ export const LoginMenu = () => {
           color="primary"
           size="small"
           onClick={() =>
-            signIn("credentials", { redirect: true, callbackUrl: "/profile" })
+            process.env.E2E_ENV === "true"
+              ? signIn("credentials")
+              : signIn("adfs")
           }
         >
           <Trans id="login.sign-in">Sign in</Trans>

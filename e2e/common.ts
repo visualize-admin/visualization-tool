@@ -68,5 +68,10 @@ const setup = (contextOptions?: PlaywrightTestOptions["contextOptions"]) => {
 };
 
 const sleep = (dur: number) => new Promise((r) => setTimeout(r, dur));
+const auth = async (page: Page) => {
+  const signInBtn = page.locator('[data-testId="test-sign-in"]');
+  await signInBtn.waitFor({ state: "visible", timeout: 5000 });
+  await signInBtn.click();
+}
 
-export { setup, sleep };
+export { setup, sleep, auth };

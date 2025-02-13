@@ -35,6 +35,7 @@ jobs:
             'main' || '' }}
           E2E_BASE_URL: ${{ github.event.deployment_status.target_url }}
           E2E_HAR: ${{ secrets.E2E_HAR }}
+          E2E_ENV: ${{ secrets.E2E_ENV }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload blob report to GitHub Actions Artifacts
         if: ${{ !cancelled() }}
