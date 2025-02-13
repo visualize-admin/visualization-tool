@@ -25,11 +25,9 @@ const isProduction = process.env.NODE_ENV === "production";
 const isVercelPreview = !!process.env.VERCEL_URL;
 
 // Dynamically set NEXTAUTH_URL
-process.env.NEXTAUTH_URL = isProduction
-  ? "https://visualize.admin.com"
-  : isVercelPreview
-    ? `https://${process.env.VERCEL_URL}`
-    : "https://localhost:3000";
+if (isVercelPreview) {
+  process.env.NEXTAUTH_URL = `https://${process.env.VERCEL_URL}`;
+}
 
 console.log("NEXTAUTH_URL:", process.env.NEXTAUTH_URL);
 console.log("Version", process.env.NEXT_PUBLIC_VERSION);
