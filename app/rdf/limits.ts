@@ -77,5 +77,6 @@ export const getDimensionLimits = (
         };
       }
     })
-    .filter(truthy);
+    .filter(truthy)
+    .sort((a, b) => a.name.localeCompare(b.name));
 };
