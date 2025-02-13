@@ -23,6 +23,9 @@ You can also check the
   - NaN values are not displayed in map tooltip anymore
 - Style
   - Improved vertical spacing between map legend items
+- Maintenance
+  - Added authentication method to e2e tests
+  - ADded authentication to vercel previews for easier testing
 
 # [5.2.1] - 2025-01-29
 
