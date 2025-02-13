@@ -11,7 +11,7 @@ You can also check the
 
 # Unreleased
 
-- Feature
+- Maintenance
   - flags can now be toggle by clicking "ctrl + t + d" on the keyboard (t,d =>
     toggle debug)
 
