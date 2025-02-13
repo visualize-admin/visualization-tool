@@ -8,10 +8,12 @@ import {
   FilterValue,
   FilterValueMulti,
   FilterValueSingle,
+  Limit as ConfigLimit,
   SingleFilters,
 } from "@/config-types";
-import { ObservationValue } from "@/domain/data";
+import { Dimension, Measure, ObservationValue } from "@/domain/data";
 import { mkJoinById } from "@/graphql/join";
+import { Limit } from "@/rdf/limits";
 
 const isFilterValueSingle = (v: FilterValue): v is FilterValueSingle => {
   return v.type === "single";
@@ -108,4 +110,120 @@ export const useChartConfigFilters = (
       joined: options?.joined,
     });
   }, [chartConfig.cubes, options?.cubeIri, options?.joined]);
+};
+
+/** Get the limit from the chart config that is related to the given measure
+ * and dimension along with additional metadata.
+ */
+export const getMaybeValidChartConfigLimit = ({
+  chartConfig,
+  measureId,
+  limit,
+  relatedDimension,
+  filters,
+}: {
+  chartConfig: ChartConfig;
+  measureId: string;
+  limit: Limit;
+  relatedDimension: Dimension;
+  filters: Filters;
+}): {
+  /** The limit that is valid in the context of related dimension and filters. */
+  limit: ConfigLimit | undefined;
+  /** The related dimension id and value that is valid in the context of current related dimension. */
+  validRelated: { dimensionId: string; dimensionValue: string } | undefined;
+  /** If the limit would be valid in the context of current filters. */
+  wouldBeValid: boolean;
+} => {
+  const validRelated = limit.related.find(
+    (related) => related.dimensionId === relatedDimension.id
+  );
+
+  if (!validRelated) {
+    return { limit: undefined, validRelated: undefined, wouldBeValid: false };
+  }
+
+  const relatedToFilterBys = limit.related.filter(
+    (related) => related.dimensionId !== relatedDimension.id
+  );
+
+  for (const relatedToFilterBy of relatedToFilterBys) {
+    const maybeFilter = filters[relatedToFilterBy.dimensionId];
+    const maybeFilterValue =
+      maybeFilter && isFilterValueSingle(maybeFilter)
+        ? maybeFilter.value
+        : undefined;
+
+    if (maybeFilterValue !== relatedToFilterBy.dimensionValue) {
+      return { limit: undefined, validRelated, wouldBeValid: false };
+    }
+  }
+
+  const measureChartConfigLimits = chartConfig.limits[measureId] ?? [];
+
+  return {
+    limit: measureChartConfigLimits.find(
+      (limit) =>
+        limit.dimensionId === relatedDimension.id &&
+        limit.dimensionValue === validRelated.dimensionValue
+    ),
+    validRelated,
+    wouldBeValid: true,
+  };
+};
+
+export const getRelatedLimitDimension = ({
+  chartConfig,
+  dimensions,
+}: {
+  chartConfig: ChartConfig;
+  dimensions: Dimension[];
+}) => {
+  switch (chartConfig.chartType) {
+    case "area":
+    case "column":
+    case "line":
+      return dimensions.find((d) => d.id === chartConfig.fields.x.componentId);
+    case "bar":
+      return dimensions.find((d) => d.id === chartConfig.fields.y.componentId);
+    case "comboLineColumn":
+    case "comboLineDual":
+    case "comboLineSingle":
+    case "map":
+    case "pie":
+    case "scatterplot":
+    case "table":
+      return;
+    default:
+      const _exhaustiveCheck: never = chartConfig;
+      return _exhaustiveCheck;
+  }
+};
+
+export const getLimitMeasure = ({
+  chartConfig,
+  measures,
+}: {
+  chartConfig: ChartConfig;
+  measures: Measure[];
+}) => {
+  switch (chartConfig.chartType) {
+    case "area":
+    case "column":
+    case "line":
+      return measures.find((d) => d.id === chartConfig.fields.y.componentId);
+    case "bar":
+      return measures.find((d) => d.id === chartConfig.fields.x.componentId);
+    case "comboLineColumn":
+    case "comboLineDual":
+    case "comboLineSingle":
+    case "map":
+    case "pie":
+    case "scatterplot":
+    case "table":
+      return;
+    default:
+      const _exhaustiveCheck: never = chartConfig;
+      return _exhaustiveCheck;
+  }
 };
