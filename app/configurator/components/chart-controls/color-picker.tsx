@@ -104,10 +104,10 @@ const ColorPickerButton = styled(Button)({
   backgroundColor: "transparent",
 });
 
-const ColorPickerBox = styled(Box)({
+const ColorPickerBox = styled(Box)(({ theme }) => ({
   lineHeight: "16px",
   "& > button": {
-    backgroundColor: "grey.100",
+    backgroundColor: theme.palette.grey[100],
     borderRadius: 4,
     overflow: "hidden",
     borderWidth: 1,
@@ -119,9 +119,12 @@ const ColorPickerBox = styled(Box)({
     opacity: 0.8,
   },
   "& > button[aria-expanded]": {
-    borderColor: "primary.active",
+    borderColor: theme.palette.primary.active,
   },
-});
+  "& > button[disabled]": {
+    backgroundColor: "transparent",
+  },
+}));
 
 export const ColorPickerMenu = (props: Props) => {
   const { disabled, onChange, selectedColor } = props;
