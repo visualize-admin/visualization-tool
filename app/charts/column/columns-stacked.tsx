@@ -10,6 +10,7 @@ import { renderContainer } from "@/charts/shared/rendering-utils";
 import { useTransitionStore } from "@/stores/transition";
 
 export const ColumnsStacked = () => {
+  console.log("ColumnsStacked");
   const ref = useRef<SVGGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
