@@ -95,10 +95,13 @@ export const LoginMenu = () => {
         </>
       ) : (
         <Button
+          data-testId="test-sign-in"
           variant="text"
           color="primary"
           size="small"
-          onClick={() => signIn("adfs")}
+          onClick={() =>
+            signIn("credentials", { redirect: true, callbackUrl: "/profile" })
+          }
         >
           <Trans id="login.sign-in">Sign in</Trans>
         </Button>
