@@ -102,7 +102,7 @@ export const LoginMenu = () => {
           size="small"
           onClick={() =>
             isVercelPreviewHost(window.location.host) ||
-            process.env.NODE_ENV === "development"
+            process.env.E2E_ENV === "true"
               ? signIn("credentials")
               : signIn("adfs")
           }
