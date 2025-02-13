@@ -15,7 +15,7 @@ export const columnFields = {
     type: "segment" as const,
     paletteId: "dimension",
     colorMapping: {},
-  }
+  },
 };
 
 export const chartConfig: ColumnConfig = {

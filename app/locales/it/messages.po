@@ -707,6 +707,14 @@ msgstr "Filtri selezionati"
 msgid "controls.filters.select.to"
 msgstr "Alla"
 
+#: app/configurator/components/filters.tsx
+msgid "controls.filters.show-legend.toggle"
+msgstr "Mostra i titoli delle leggende"
+
+#: app/configurator/components/filters.tsx
+msgid "controls.filters.show-legend-toggle"
+msgstr "Consentire agli utenti di modificare la visibilità della legenda"
+
 #: app/configurator/table/table-chart-configurator.tsx
 msgid "controls.groups.empty-help"
 msgstr "Trascina qui le colonne per creare gruppi."

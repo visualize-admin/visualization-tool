@@ -11,7 +11,8 @@ You can also check the
 
 # Unreleased
 
-Nothing yet.
+- Features
+  - Added option for hiding legend titles using a toggle switch
 
 # [5.2.4] - 2025-02-06
 

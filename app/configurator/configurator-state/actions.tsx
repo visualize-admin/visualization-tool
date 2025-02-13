@@ -139,6 +139,10 @@ export type ConfiguratorStateAction =
       value: InteractiveFiltersConfig;
     }
   | {
+      type: "CHART_SHOW_LEGEND_TITLE_CHANGED";
+      value: boolean;
+    }
+  | {
       type: "CHART_CONFIG_REPLACED";
       value: {
         chartConfig: ChartConfig;

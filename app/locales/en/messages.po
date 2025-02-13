@@ -708,6 +708,14 @@ msgstr "Selected filters"
 msgid "controls.filters.select.to"
 msgstr "To"
 
+#: app/configurator/components/filters.tsx
+msgid "controls.filters.show-legend.toggle"
+msgstr "Show legend titles"
+
+#: app/configurator/components/filters.tsx
+msgid "controls.filters.show-legend-toggle"
+msgstr "Allow users to change legend titles visibility"
+
 #: app/configurator/table/table-chart-configurator.tsx
 msgid "controls.groups.empty-help"
 msgstr "Drag and drop columns here to make groups."
