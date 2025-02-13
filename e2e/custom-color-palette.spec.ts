@@ -1,26 +1,12 @@
-import { setupTestAuth } from "./auth";
+import { authenticate } from "./auth";
 import { setup } from "./common";
 const { test, expect } = setup();
 test("authenticated user can access protected page", async ({ page }) => {
   // Add debug logging
-  page.on("console", (msg) => console.log(`Browser log: ${msg.text()}`));
-  page.on("response", async (response) => {
-    if (response.url().includes("/api/auth/session")) {
-      console.log(`Auth session response: ${await response.text()}`);
-    }
-  });
 
-  await setupTestAuth(page, {
-    name: "Custom User",
-    email: "custom@example.com",
-    id: 1,
-    sub: "custom-sub-id",
-  });
+  await page.goto("/en");
 
-  // Verify auth state
-  const cookies = await page.context().cookies();
-  console.log("Cookies after setup:", cookies);
-
+  await authenticate();
   await page.goto("/en/profile");
 
   await expect(page.url()).toBe("/en/profile");
