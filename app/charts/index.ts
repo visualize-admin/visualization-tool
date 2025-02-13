@@ -846,6 +846,7 @@ const getAdjustedChartConfig = ({
       case "interactiveFiltersConfig.calculation":
       case "interactiveFiltersConfig.dataFilters":
       case "interactiveFiltersConfig.legend":
+      case "limits":
         return true;
       default:
         return false;
@@ -988,6 +989,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         draft.cubes = oldValue;
       });
     },
+    limits: ({ oldValue, newChartConfig }) => {
+      return produce(newChartConfig, (draft) => {
+        draft.limits = oldValue;
+      });
+    },
     fields: {
       x: {
         componentId: ({ oldValue, newChartConfig, dimensions }) => {
@@ -1092,6 +1098,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     cubes: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
         draft.cubes = oldValue;
+      });
+    },
+    limits: ({ oldValue, newChartConfig }) => {
+      return produce(newChartConfig, (draft) => {
+        draft.limits = oldValue;
       });
     },
     fields: {
@@ -1211,6 +1222,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         draft.cubes = oldValue;
       });
     },
+    limits: ({ oldValue, newChartConfig }) => {
+      return produce(newChartConfig, (draft) => {
+        draft.limits = oldValue;
+      });
+    },
     fields: {
       x: {
         componentId: ({ oldValue, newChartConfig, dimensions }) => {
@@ -1297,6 +1313,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     cubes: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
         draft.cubes = oldValue;
+      });
+    },
+    limits: ({ oldValue, newChartConfig }) => {
+      return produce(newChartConfig, (draft) => {
+        draft.limits = oldValue;
       });
     },
     fields: {
@@ -1399,6 +1420,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         draft.cubes = oldValue;
       });
     },
+    limits: ({ oldValue, newChartConfig }) => {
+      return produce(newChartConfig, (draft) => {
+        draft.limits = oldValue;
+      });
+    },
     fields: {
       // x is not needed, as this is the only chart type with x-axis measures.
       y: {
@@ -1465,6 +1491,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     cubes: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
         draft.cubes = oldValue;
+      });
+    },
+    limits: ({ oldValue, newChartConfig }) => {
+      return produce(newChartConfig, (draft) => {
+        draft.limits = oldValue;
       });
     },
     fields: {
@@ -1577,6 +1608,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         }
       });
     },
+    limits: ({ oldValue, newChartConfig }) => {
+      return produce(newChartConfig, (draft) => {
+        draft.limits = oldValue;
+      });
+    },
     fields: {
       areaLayer: {
         componentId: ({ oldValue, newChartConfig, dimensions }) => {
@@ -1620,6 +1656,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     cubes: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
         draft.cubes = oldValue;
+      });
+    },
+    limits: ({ oldValue, newChartConfig }) => {
+      return produce(newChartConfig, (draft) => {
+        draft.limits = oldValue;
       });
     },
     fields: {
@@ -1686,6 +1727,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     cubes: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
         draft.cubes = oldValue;
+      });
+    },
+    limits: ({ oldValue, newChartConfig }) => {
+      return produce(newChartConfig, (draft) => {
+        draft.limits = oldValue;
       });
     },
     fields: {
@@ -1802,6 +1848,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     cubes: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
         draft.cubes = oldValue;
+      });
+    },
+    limits: ({ oldValue, newChartConfig }) => {
+      return produce(newChartConfig, (draft) => {
+        draft.limits = oldValue;
       });
     },
     fields: {
